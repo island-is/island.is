@@ -31,7 +31,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseDecision,
-  CaseType,
   completedCaseStates,
   Defendant,
   isAcceptingCaseDecision,
@@ -56,6 +55,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { rcRuling as m } from './Ruling.strings'
@@ -106,7 +106,7 @@ export function getConclusionAutofill(
           decision !== CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
         caseType:
           decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-            ? CaseType.TRAVEL_BAN
+            ? CaseType.TravelBan
             : workingCase.type,
         validToDate: `${formatDate(validToDate, 'PPPPp')
           ?.replace('dagur,', 'dagsins')
@@ -595,7 +595,7 @@ export const Ruling: React.FC = () => {
                         caseType:
                           workingCase.decision ===
                           CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                            ? CaseType.TRAVEL_BAN
+                            ? CaseType.TravelBan
                             : workingCase.type,
                       },
                     ),
@@ -614,7 +614,7 @@ export const Ruling: React.FC = () => {
                           caseType:
                             workingCase.decision ===
                             CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                              ? CaseType.TRAVEL_BAN
+                              ? CaseType.TravelBan
                               : workingCase.type,
                         },
                       ),
@@ -673,8 +673,8 @@ export const Ruling: React.FC = () => {
               />
             </Box>
           )}
-        {(workingCase.type === CaseType.CUSTODY ||
-          workingCase.type === CaseType.ADMISSION_TO_FACILITY) &&
+        {(workingCase.type === CaseType.Custody ||
+          workingCase.type === CaseType.AdmissionToFacility) &&
           isAcceptingCaseDecision(workingCase.decision) && (
             <Box component="section" marginBottom={5}>
               <Box marginBottom={2}>
