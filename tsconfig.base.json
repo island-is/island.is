@@ -42,7 +42,7 @@
       "@island.is/api-catalogue/types": [
         "libs/api-catalogue/types/src/index.ts"
       ],
-      "@island.is/api-domains-sessions": [
+      "@island.is/api/domains/sessions": [
         "libs/api/domains/sessions/src/index.ts"
       ],
       "@island.is/api/domains/air-discount-scheme": [

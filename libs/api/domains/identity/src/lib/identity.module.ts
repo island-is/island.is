@@ -14,6 +14,6 @@ import { IdentityLoader } from './identity.loader'
     IdentityClientModule,
   ],
   providers: [IdentityResolver, IdentityLoader],
-  exports: [],
+  exports: [IdentityLoader],
 })
 export class IdentityModule {}
