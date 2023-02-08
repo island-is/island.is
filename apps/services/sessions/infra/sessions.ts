@@ -18,8 +18,8 @@ const workerPostgresInfo = {
   passwordSecret: '/k8s/services-sessions/DB_PASSWORD',
 }
 
-export const serviceSetup = (): ServiceBuilder<'services-sessions-api'> => {
-  return service('services-sessions-api')
+export const serviceSetup = (): ServiceBuilder<'services-sessions'> => {
+  return service('services-sessions')
     .namespace(namespace)
     .image(imageName)
     .postgres(servicePostgresInfo)
