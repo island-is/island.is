@@ -1,15 +1,17 @@
 import {
+  AsyncSearch,
+  AsyncSearchOption,
   Box,
   Breadcrumbs,
   Button,
-  ContentBlock,
   GridContainer,
   ResponsiveSpace,
   Tabs,
   Text,
 } from '@island.is/island-ui/core'
 import SubscriptionTable from '../../components/Table/SubscriptionTable'
-import { useState } from 'react'
+import TabContent from '../../components/Tab/TabContent'
+import { useEffect, useState } from 'react'
 import { Layout } from '../../components/Layout/Layout'
 import Cases from '../../utils/dummydata/api/Cases'
 import SubscriptionArray from '../../utils/dummydata/api/User/Subscriptions'
@@ -17,6 +19,23 @@ import Types from '../../utils/dummydata/api/Types'
 
 const Subscriptions = () => {
   const [currentTab, setCurrentTab] = useState('Mál')
+
+  useEffect(() => {
+    console.log('currentTab', currentTab)
+    if (currentTab === 'Mál') {
+      console.log('Mál')
+    } else if (currentTab === 'Stofnanir') {
+      console.log('Stofnanir')
+    } else if (currentTab === 'Málefnasvið') {
+      console.log('Málefnasvið')
+    }
+  }, [currentTab])
+
+  const [searchOptions, setSearchOptions] = useState<AsyncSearchOption[]>([])
+  const [searchValue, setSearchValue] = useState('')
+  const settingSearchValue = (val) => setSearchValue(val)
+  const [prevSearchValue, setPrevSearchValue] = useState('')
+
   const [casesData, setCasesData] = useState(Cases)
   const [institutionsData, setInstitutionsData] = useState(
     Object.entries(Types.institutions).map(([id, name]) => ({ id, name })),
@@ -27,25 +46,27 @@ const Subscriptions = () => {
   const [subscriptionArray, setSubscriptionArray] = useState(SubscriptionArray)
   const settingSubscriptionArray = (newSubscriptionArray) =>
     setSubscriptionArray(newSubscriptionArray)
+
   const paddingYBreadCrumbs = [3, 3, 3, 5] as ResponsiveSpace
   const paddingXContent = [0, 0, 0, 15] as ResponsiveSpace
   const paddingXTable = [0, 0, 0, 15] as ResponsiveSpace
   const paddingBottom = [3, 3, 3, 3] as ResponsiveSpace
 
-  const onLoadMore = () => {
-    console.log("clicked on load more")
+
+
+  const clearAll = () => {
+    // setOptions([])
+    // setData
   }
 
-  const CasesContent = () => {
-    return (
-      <SubscriptionTable
-        data={casesData}
-        currentTab={'Mál'}
-        subscriptionArray={subscriptionArray}
-        setSubscriptionArray={settingSubscriptionArray}
-      />
-    )
-  }
+  // useEffect(() => {
+  //   console.log("searchValue", searchValue)
+  //   if(!searchValue) {
+  //     clearAll()
+  //   } else if (searchValue != prevSearchValue) {
+  //     console.log("not the same")
+  //   }
+  // }, [searchValue, currentTab])
 
   const InstitutionsContent = () => {
     return (
@@ -73,22 +94,57 @@ const Subscriptions = () => {
     {
       id: 'Mál',
       label: 'Mál',
-      content: <CasesContent />,
+      content: (
+        <TabContent
+          data={casesData}
+          currentTab={'Mál'}
+          subscriptionArray={subscriptionArray}
+          setSubscriptionArray={settingSubscriptionArray}
+          searchOptions={searchOptions}
+          searchValue={searchValue}
+          setSearchValue={settingSearchValue}
+          searchPlaceholder={'Leitaðu að máli, stofnun eða málefnasviði'}
+        />
+      ),
       disabled: false,
     },
     {
       id: 'Stofnanir',
       label: 'Stofnanir',
-      content: <InstitutionsContent />,
+      content: (
+        <TabContent
+          data={institutionsData}
+          currentTab={'Stofnanir'}
+          subscriptionArray={subscriptionArray}
+          setSubscriptionArray={settingSubscriptionArray}
+          searchOptions={searchOptions}
+          searchValue={searchValue}
+          setSearchValue={settingSearchValue}
+          searchPlaceholder={'Leitaðu að máli, stofnun eða málefnasviði'}
+        />
+      ),
       disabled: false,
     },
     {
       id: 'Málefnasvið',
       label: 'Málefnasvið',
-      content: <PolicyAreasContent />,
+      content: (
+        <TabContent
+          data={policyAreasData}
+          currentTab={'Málefnasvið'}
+          subscriptionArray={subscriptionArray}
+          setSubscriptionArray={settingSubscriptionArray}
+          searchOptions={searchOptions}
+          searchValue={searchValue}
+          setSearchValue={settingSearchValue}
+          searchPlaceholder={'Leitaðu að máli, stofnun eða málefnasviði'}
+        />
+      ),
       disabled: false,
     },
   ]
+
+  console.log('searchValue', searchValue)
 
   return (
     <Layout>
@@ -130,15 +186,6 @@ const Subscriptions = () => {
             contentBackground="transparent"
             onChange={(e) => setCurrentTab(e)}
           />
-        </Box>
-        <Box
-          paddingX={paddingXContent}
-          paddingBottom={paddingBottom}
-          paddingTop={3}
-        >
-          <Button icon="eye" variant="text" onClick={onLoadMore}>
-            Sýna fleiri mál
-          </Button>
         </Box>
       </GridContainer>
     </Layout>
