@@ -1,4 +1,3 @@
-// TRIGGER LINE TO BUILD DEPLOY FEATURE HACK - REMOVE ME BEFORE MERGE
 import { SearchInput } from '../types'
 import { tagAggregationQueryFragment } from './tagAggregation'
 import { TagQuery, tagQuery } from './tagQuery'
