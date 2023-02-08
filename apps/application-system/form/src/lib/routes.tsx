@@ -8,42 +8,43 @@ import { Applications } from '../routes/Applications'
 import { AssignApplication } from '../routes/AssignApplication'
 import { Layout } from '../components/Layout/Layout'
 
+export const BASE_PATH = '/umsoknir'
+
 /**
- * Creates routes for application-system. All routes are defined here.
+ * Creates router for application-system. All routes are defined here.
  */
-export const createRoutes = (basename: string) =>
-  createBrowserRouter(
-    [
-      {
-        element: (
-          <HeaderInfoProvider>
-            <UserProfileLocale />
-            <Layout>
-              <Outlet />
-            </Layout>
-          </HeaderInfoProvider>
-        ),
-        children: [
-          {
-            path: '/tengjast-umsokn',
-            element: <AssignApplication />,
-          },
-          {
-            path: '/:slug',
-            element: <Applications />,
-          },
-          {
-            path: '/:slug/:id',
-            element: <Application />,
-          },
-          {
-            path: '*',
-            element: <ErrorShell />,
-          },
-        ],
-      },
-    ],
+export const router = createBrowserRouter(
+  [
     {
-      basename,
+      element: (
+        <HeaderInfoProvider>
+          <UserProfileLocale />
+          <Layout>
+            <Outlet />
+          </Layout>
+        </HeaderInfoProvider>
+      ),
+      children: [
+        {
+          path: '/tengjast-umsokn',
+          element: <AssignApplication />,
+        },
+        {
+          path: '/:slug',
+          element: <Applications />,
+        },
+        {
+          path: '/:slug/:id',
+          element: <Application />,
+        },
+        {
+          path: '*',
+          element: <ErrorShell />,
+        },
+      ],
     },
-  )
+  ],
+  {
+    basename: BASE_PATH,
+  },
+)
