@@ -61,7 +61,6 @@ export const getApplication = (allowFakeData = false): Form => {
                 title: m.dataCollectionUserFinancialInfoTitle,
                 subTitle: m.dataCollectionUserFinancialInfo,
               }),
-            
             ],
           }),
         ],
