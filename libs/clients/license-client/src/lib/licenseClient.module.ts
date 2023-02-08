@@ -4,11 +4,11 @@ import { Module } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import {
   CONFIG_PROVIDER,
-  PassTemplateIds,
   LICENSE_CLIENT_FACTORY,
   LicenseType,
   LicenseClient,
 } from './licenseClient.type'
+import type { PassTemplateIds } from './licenseClient.type'
 import { LicenseClientService } from './licenseClient.service'
 import {
   FirearmClientModule,

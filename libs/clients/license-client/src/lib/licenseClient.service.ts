@@ -4,9 +4,8 @@ import {
   LICENSE_CLIENT_FACTORY,
   LicenseClient,
   LicenseType,
-  LicenseTypeType,
-  PassTemplateIds,
 } from './licenseClient.type'
+import type { PassTemplateIds, LicenseTypeType } from './licenseClient.type'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
