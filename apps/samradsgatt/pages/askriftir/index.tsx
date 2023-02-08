@@ -50,7 +50,7 @@ const Subscriptions = () => {
 
   useEffect(() => {
     if (searchValue == prevSearchValue) {
-      return;
+      return
     }
     if (!searchValue) {
       clearAll()
