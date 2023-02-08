@@ -661,6 +661,11 @@ export class ApplicationController {
       id,
       user,
     )
+
+    if (existingApplication.pruned === true) {
+      return existingApplication
+    }
+
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
 

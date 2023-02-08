@@ -7,6 +7,7 @@ export const SUBMIT_APPLICATION = gql`
       state
       answers
       externalData
+      pruned
     }
   }
 `
