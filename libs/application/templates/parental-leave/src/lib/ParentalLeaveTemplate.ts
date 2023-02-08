@@ -679,7 +679,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       // },
       [States.APPROVED]: {
         entry: 'assignToVMST',
-        exit: 'setBirthDate',
         meta: {
           name: States.APPROVED,
           status: 'inprogress',
@@ -1424,14 +1423,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           assignees: [],
         },
       })),
-      setBirthDate: assign((context) => {
-        // Only for dev should remove
-        // before merging with main
-        const { application } = context
-        const { answers } = application
-        set(answers, 'dateOfBirth', '20230101')
-        return context
-      }),
       setPreviousState: assign((context, event) => {
         const e = (event.type as unknown) as any
         if (e === 'xstate.init') {
@@ -1447,12 +1438,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { application } = context
         const { answers } = application
         unset(answers, 'previousState')
-        return context
-      }),
-      removeResidenceGrant: assign((context) => {
-        const { application } = context
-        const { answers } = application
-        unset(answers, 'residenceGrant')
         return context
       }),
       setActionName: assign((context) => {
