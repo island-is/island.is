@@ -88,10 +88,8 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
         NO_UPDATE_NOTIFIER: 'true',
       },
     })
-    .command('node')
-    .args('--no-experimental-fetch', 'main.js', '--job=worker')
     .liveness('/liveness')
-    .readiness('/liveness')
+    .readiness('/readiness')
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',

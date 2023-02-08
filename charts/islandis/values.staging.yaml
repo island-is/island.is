@@ -1711,7 +1711,6 @@ services-sessions:
     privileged: false
 services-sessions-worker:
   args:
-    - '--no-experimental-fetch'
     - 'main.js'
     - '--job=worker'
   command:
@@ -1738,7 +1737,7 @@ services-sessions-worker:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/readiness'
       timeoutSeconds: 3
   hpa:
     scaling:
