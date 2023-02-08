@@ -49,6 +49,7 @@ const Indictment: React.FC = () => {
     createIndictmentCount,
     updateIndictmentCount,
     deleteIndictmentCount,
+    updateIndictmentCountState,
   } = useIndictmentCounts()
 
   const stepIsValid = true
@@ -84,29 +85,6 @@ const Indictment: React.FC = () => {
     workingCase.indictmentCounts,
   ])
 
-  const updateIndictmentCountState = useCallback(
-    (indictmentCountId: string, update: UpdateIndictmentCount) => {
-      setWorkingCase((theCase) => {
-        if (!theCase.indictmentCounts) {
-          return theCase
-        }
-
-        const indictmentCountIndexToUpdate = theCase.indictmentCounts.findIndex(
-          (indictmentCount) => indictmentCount.id === indictmentCountId,
-        )
-
-        const newIndictmentCounts = [...theCase.indictmentCounts]
-
-        newIndictmentCounts[indictmentCountIndexToUpdate] = {
-          ...newIndictmentCounts[indictmentCountIndexToUpdate],
-          ...update,
-        }
-        return { ...theCase, indictmentCounts: newIndictmentCounts }
-      })
-    },
-    [setWorkingCase],
-  )
-
   const handleUpdateIndictmentCount = useCallback(
     async (
       indictmentCountId: string,
@@ -121,9 +99,18 @@ const Indictment: React.FC = () => {
       if (!returnedIndictmentCount) {
         return
       }
-      updateIndictmentCountState(indictmentCountId, returnedIndictmentCount)
+      updateIndictmentCountState(
+        indictmentCountId,
+        returnedIndictmentCount,
+        setWorkingCase,
+      )
     },
-    [updateIndictmentCount, updateIndictmentCountState, workingCase.id],
+    [
+      setWorkingCase,
+      updateIndictmentCount,
+      updateIndictmentCountState,
+      workingCase.id,
+    ],
   )
 
   const handleDeleteIndictmentCount = async (indictmentCountId: string) => {
@@ -251,6 +238,8 @@ const Indictment: React.FC = () => {
                   workingCase={workingCase}
                   onDelete={index > 0 ? handleDeleteIndictmentCount : undefined}
                   onChange={handleUpdateIndictmentCount}
+                  setWorkingCase={setWorkingCase}
+                  updateIndictmentCountState={updateIndictmentCountState}
                 ></IndictmentCount>
               </AnimatePresence>
             </Box>
