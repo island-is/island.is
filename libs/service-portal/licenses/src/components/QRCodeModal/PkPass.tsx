@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import * as styles from './QRCodeModal.css'
 import {
+  AlertMessage,
   Box,
   Button,
   LoadingDots,
@@ -41,6 +42,8 @@ export const PkPass = ({
   const [modalOpen, setModalOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const [fetched, setFetched] = useState(false)
+  const [QRCodeError, setQRCodeError] = useState(false)
+  const [linkError, setLinkError] = useState(false)
   const locale = (userProfile?.locale as Locale) ?? 'is'
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
@@ -63,12 +66,16 @@ export const PkPass = ({
     if (pkpassQRCode && !isTimeMoreThen30Minutes()) {
       return
     }
-    const response = await generatePkPassQrCode({
+    await generatePkPassQrCode({
       variables: { locale, input: { licenseType } },
     })
-    if (!response.errors) {
-      setPkpassQRCode(response?.data?.generatePkPassQrCode?.pkpassQRCode)
-    }
+      .then((response) => {
+        setPkpassQRCode(response?.data?.generatePkPassQrCode?.pkpassQRCode)
+      })
+      .catch(() => {
+        setQRCodeError(true)
+        return
+      })
   }
 
   const getLink = async () => {
@@ -77,15 +84,22 @@ export const PkPass = ({
       setDisplayLoader(false)
       return
     }
-    const response = await generatePkPass({
+    await generatePkPass({
       variables: { locale, input: { licenseType } },
     })
-    if (!response.errors && window && typeof window !== 'undefined') {
-      setPkpassUrl(response?.data?.generatePkPass?.pkpassUrl)
-      window.open(response?.data?.generatePkPass?.pkpassUrl)
-      setFetched(true)
-      setDisplayLoader(false)
-    }
+      .then((response) => {
+        if (window && typeof window !== 'undefined') {
+          setPkpassUrl(response?.data?.generatePkPass?.pkpassUrl)
+          window.open(response?.data?.generatePkPass?.pkpassUrl)
+          setFetched(true)
+          setDisplayLoader(false)
+        }
+      })
+      .catch(() => {
+        setDisplayLoader(false)
+        setLinkError(true)
+        return
+      })
   }
 
   /* License is expired if 30 minutes has passed -> fetch pkpass again */
@@ -122,13 +136,23 @@ export const PkPass = ({
               onCloseModal={toggleModal}
               expires={expireDate}
             >
-              {QRCodeLoading && <SkeletonLoader height={180} width={180} />}
-              {pkpassQRCode && !QRCodeLoading && (
+              {!QRCodeError && QRCodeLoading && (
+                <SkeletonLoader height={180} width={180} />
+              )}
+              {!QRCodeError && pkpassQRCode && !QRCodeLoading && (
                 <Box>
                   <img
                     src={pkpassQRCode}
                     alt={formatMessage(m.qrCodeAltText)}
                     className={styles.code}
+                  />
+                </Box>
+              )}
+              {QRCodeError && (
+                <Box marginTop={3}>
+                  <AlertMessage
+                    type="error"
+                    title={formatMessage(m.licenseFetchError)}
                   />
                 </Box>
               )}
@@ -142,20 +166,36 @@ export const PkPass = ({
           <Button
             variant="utility"
             size="small"
-            icon={fetched ? 'checkmark' : displayLoader ? undefined : 'QRCode'}
+            icon={
+              fetched && !linkError
+                ? 'checkmark'
+                : displayLoader
+                ? undefined
+                : linkError
+                ? 'warning'
+                : 'QRCode'
+            }
             iconType="outline"
             onClick={() => {
               setDisplayLoader(true)
               getLink()
             }}
           >
-            {formatMessage(m.sendToPhone)}{' '}
+            {formatMessage(m.sendToPhone)}
             {displayLoader && (
               <span className={styles.loader}>
                 <LoadingDots single />
               </span>
             )}
           </Button>
+          {linkError && (
+            <Box marginTop={2}>
+              <AlertMessage
+                type="error"
+                title={formatMessage(m.licenseFetchError)}
+              />
+            </Box>
+          )}
         </Box>
       )}
     </>
