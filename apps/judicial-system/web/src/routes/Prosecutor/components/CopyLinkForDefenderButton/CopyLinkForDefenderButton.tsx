@@ -8,16 +8,18 @@ import {
   errors as errorMessage,
 } from '@island.is/judicial-system-web/messages'
 import { formatDefenderRoute } from '@island.is/judicial-system/formatters'
-import { CaseType } from '@island.is/judicial-system/types'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 interface Props {
   caseId: string
   type: CaseType
+  disabled: boolean
 }
 
 const CopyLinkForDefenderButton: React.FC<Props> = ({
   caseId,
   type,
+  disabled,
   children,
 }) => {
   const { formatMessage } = useIntl()
@@ -28,6 +30,7 @@ const CopyLinkForDefenderButton: React.FC<Props> = ({
       variant="ghost"
       icon="link"
       data-testid="copyLinkToCase"
+      disabled={disabled}
       onClick={() => {
         const copied = copyToClipboard(
           `${formatDefenderRoute(window.location.origin, type, caseId)}`,

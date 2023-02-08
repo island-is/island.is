@@ -11,11 +11,11 @@ import type {
   SendNotificationResponse,
   CaseTransition,
   RequestSignatureResponse,
-  CreateCase,
 } from '@island.is/judicial-system/types'
 import {
   TempCase as Case,
   TempUpdateCase as UpdateCase,
+  TempCreateCase as CreateCase,
 } from '@island.is/judicial-system-web/src/types'
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'

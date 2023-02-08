@@ -10,7 +10,7 @@ import {
 } from '@apollo/client'
 import { useIntl } from 'react-intl'
 
-import { CaseType } from '@island.is/judicial-system/types'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { Box, Text, toast } from '@island.is/island-ui/core'
 import {
   core,
@@ -158,8 +158,8 @@ export const SigningModal: React.FC<SigningModalProps> = ({
           <MarkdownWrapper
             markdown={formatMessage(m.successText, {
               summarySentToPrison:
-                workingCase.type === CaseType.CUSTODY ||
-                workingCase.type === CaseType.ADMISSION_TO_FACILITY,
+                workingCase.type === CaseType.Custody ||
+                workingCase.type === CaseType.AdmissionToFacility,
             })}
           />
         ) : (
