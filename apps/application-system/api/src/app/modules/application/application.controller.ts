@@ -722,9 +722,6 @@ export class ApplicationController {
     })
 
     if (hasError && error) {
-      this.logger.error(
-        `Application submission ended with an error: ${JSON.stringify(error)}`,
-      )
       throw new TemplateApiError(error, 500)
     }
     this.logger.info(`Application submission ended successfully`)
@@ -740,40 +737,52 @@ export class ApplicationController {
     application: BaseApplication,
     template: Unwrap<typeof getApplicationTemplateByTypeId>,
     auth: User,
-    api: TemplateApi,
+    apis: TemplateApi | TemplateApi[],
     locale: Locale,
   ): Promise<TemplateAPIModuleActionResult> {
-    const { action, externalDataId, throwOnError } = api
+    if (!Array.isArray(apis)) {
+      apis = [apis]
+    }
+
     this.logger.debug(
-      `Performing action ${action} on ${JSON.stringify(template.name)}`,
+      `Performing actions ${apis
+        .map((api) => api.action)
+        .join(', ')} on ${JSON.stringify(template.name)}`,
     )
     const namespaces = await getApplicationTranslationNamespaces(application)
     const intl = await this.intlService.useIntl(namespaces, locale)
 
     const updatedApplication = await this.templateApiActionRunner.run(
       application,
-      [api],
+      apis,
       auth,
       locale,
       intl.formatMessage,
     )
 
-    const result = updatedApplication.externalData[externalDataId || action]
-    this.logger.debug(
-      `Performing action ${action} on ${JSON.stringify(
-        template.name,
-      )} ended with ${result.status}`,
-    )
-    if (result.status === 'failure' && throwOnError) {
-      return {
-        updatedApplication,
-        hasError: true,
-        error: result.reason,
+    for (const api of apis) {
+      const result =
+        updatedApplication.externalData[api.externalDataId || api.action]
+
+      this.logger.debug(
+        `Performing action ${api.action} on ${JSON.stringify(
+          template.name,
+        )} ended with ${result.status}`,
+      )
+
+      if (result.status === 'failure' && api.throwOnError) {
+        return {
+          updatedApplication,
+          hasError: true,
+          error: result.reason,
+        }
       }
     }
+
     this.logger.debug(
       `Updated external data for application with ID ${updatedApplication.id}`,
     )
+
     return {
       updatedApplication,
       hasError: false,

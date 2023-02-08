@@ -23,9 +23,9 @@ import {
   getAllPeriodDates,
   getSelectedChild,
   requiresOtherParentApproval,
+  isParentWithoutBirthParent,
   getApplicationAnswers,
   allowOtherParent,
-  removeCountryCode,
   getApplicationExternalData,
   getMaxMultipleBirthsDays,
   getDurationTitle,
@@ -50,6 +50,7 @@ import {
 import {
   FILE_SIZE_LIMIT,
   MANUAL,
+  SPOUSE,
   NO,
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
@@ -69,6 +70,10 @@ import {
   GetUnionsQuery,
 } from '../types/schema'
 import { YesOrNo } from '../types'
+import {
+  formatPhoneNumber,
+  removeCountryCode,
+} from '@island.is/application/ui-components'
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -108,8 +113,16 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildTextField({
                   width: 'half',
                   title: parentalLeaveFormMessages.applicant.phoneNumber,
-                  defaultValue: (application: Application) =>
-                    removeCountryCode(application),
+                  defaultValue: (application: Application) => {
+                    const phoneNumber = (application.externalData.userProfile
+                      ?.data as {
+                      mobilePhoneNumber?: string
+                    })?.mobilePhoneNumber
+
+                    return formatPhoneNumber(
+                      removeCountryCode(phoneNumber ?? ''),
+                    )
+                  },
                   id: 'applicant.phoneNumber',
                   dataTestId: 'phone',
                   variant: 'tel',
@@ -388,7 +401,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildTextField({
                   id: 'personalAllowance.usage',
                   title:
-                    parentalLeaveFormMessages.personalAllowance.zeroToHundred,
+                    parentalLeaveFormMessages.personalAllowance.oneToHundred,
                   description:
                     parentalLeaveFormMessages.personalAllowance.manual,
                   suffix: '%',
@@ -404,7 +417,7 @@ export const ParentalLeaveForm: Form = buildForm({
 
                     return usingAsMuchAsPossible && usingPersonalAllowance
                   },
-                  placeholder: '0%',
+                  placeholder: '1%',
                   variant: 'number',
                   width: 'half',
                 }),
@@ -448,7 +461,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildTextField({
                   id: 'personalAllowanceFromSpouse.usage',
                   title:
-                    parentalLeaveFormMessages.personalAllowance.zeroToHundred,
+                    parentalLeaveFormMessages.personalAllowance.oneToHundred,
                   description:
                     parentalLeaveFormMessages.personalAllowance.manual,
                   suffix: '%',
@@ -470,7 +483,7 @@ export const ParentalLeaveForm: Form = buildForm({
 
                     return usingAsMuchAsPossible && usingPersonalAllowance
                   },
-                  placeholder: '0%',
+                  placeholder: '1%',
                   variant: 'number',
                   width: 'half',
                 }),
@@ -581,7 +594,7 @@ export const ParentalLeaveForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'fileUpload',
-          title: parentalLeaveFormMessages.attachmentScreen.genericTitle,
+          title: parentalLeaveFormMessages.attachmentScreen.title,
           children: [
             buildFileUploadField({
               id: 'employer.selfEmployed.file',
@@ -730,10 +743,28 @@ export const ParentalLeaveForm: Form = buildForm({
                 parentalLeaveFormMessages.selfEmployed.attachmentButton,
             }),
             buildFileUploadField({
-              id: 'fileUpload.file',
-              title: parentalLeaveFormMessages.attachmentScreen.genericTitle,
+              id: 'fileUpload.parentWithoutBirthParent',
+              title:
+                parentalLeaveFormMessages.attachmentScreen
+                  .parentWithoutBirthParentTitle,
               introduction:
-                parentalLeaveFormMessages.attachmentScreen.genericDescription,
+                parentalLeaveFormMessages.attachmentScreen
+                  .parentWithoutBirthParentDescription,
+              condition: (answers) => isParentWithoutBirthParent(answers),
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader: '',
+              uploadDescription: '',
+              uploadButtonLabel:
+                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+            }),
+            buildFileUploadField({
+              id: 'fileUpload.file',
+              title: parentalLeaveFormMessages.attachmentScreen.title,
+              introduction:
+                parentalLeaveFormMessages.attachmentScreen.description,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
@@ -812,11 +843,15 @@ export const ParentalLeaveForm: Form = buildForm({
                 'giveRights.giveDays',
               ],
               condition: (answers, externalData) => {
+                const {
+                  hasMultipleBirths,
+                  otherParent,
+                } = getApplicationAnswers(answers)
+
                 const canTransferRights =
                   getSelectedChild(answers, externalData)?.parentalRelation ===
-                    ParentalRelations.primary && allowOtherParent(answers)
-
-                const { hasMultipleBirths } = getApplicationAnswers(answers)
+                    ParentalRelations.primary &&
+                  (otherParent === SPOUSE || otherParent === MANUAL)
 
                 const multipleBirthsRequestDays = getMultipleBirthRequestDays(
                   answers,
@@ -844,11 +879,15 @@ export const ParentalLeaveForm: Form = buildForm({
               title:
                 parentalLeaveFormMessages.shared.transferRightsRequestTitle,
               condition: (answers, externalData) => {
+                const {
+                  hasMultipleBirths,
+                  otherParent,
+                } = getApplicationAnswers(answers)
+
                 const canTransferRights =
                   getSelectedChild(answers, externalData)?.parentalRelation ===
-                    ParentalRelations.primary && allowOtherParent(answers)
-
-                const { hasMultipleBirths } = getApplicationAnswers(answers)
+                    ParentalRelations.primary &&
+                  (otherParent === SPOUSE || otherParent === MANUAL)
 
                 const multipleBirthsRequestDays = getMultipleBirthRequestDays(
                   answers,

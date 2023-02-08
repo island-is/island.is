@@ -18,10 +18,7 @@ export const FirearmLicenseClientConfig = defineConfig<z.infer<typeof schema>>({
       'XROAD_FIREARM_LICENSE_PATH',
       'IS-DEV/GOV/10005/Logreglan-Protected/island-api-v1',
     ),
-    xRoadFirearmOpenApiKey: env.required(
-      '/k8s/api/RLS_OPEN_LOOKUP_API_KEY',
-      '',
-    ),
+    xRoadFirearmOpenApiKey: env.required('RLS_OPEN_LOOKUP_API_KEY', ''),
     fetch: {
       scope: [RLSScope.firearmPermit],
     },

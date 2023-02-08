@@ -7,7 +7,13 @@ import {
   coreMessages,
   getTypeFromSlug,
 } from '@island.is/application/core'
-import { Application, Form, Schema } from '@island.is/application/types'
+import {
+  Application,
+  ApplicationConfigurations,
+  ApplicationTypes,
+  Form,
+  Schema,
+} from '@island.is/application/types'
 import {
   getApplicationTemplateByTypeId,
   getApplicationUIFields,
@@ -60,6 +66,11 @@ const ApplicationLoader: FC<{
 
   if (loading) {
     return <LoadingShell />
+  }
+
+  const currentTypeId: ApplicationTypes = application.typeId
+  if (ApplicationConfigurations[currentTypeId]?.slug !== slug) {
+    return <ErrorShell />
   }
 
   if (!applicationId || error) {

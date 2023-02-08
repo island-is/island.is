@@ -256,7 +256,7 @@ export class SmartSolutionsApi {
    *
    * @param payload License properties to update
    * @param nationalId The NationalID of the user
-   * @returns The updates pass, if the update succeeded. If not, an error object
+   * @returns The updated pass, if the update succeeded. If not, an error object
    */
   async updatePkPass(
     payload: PassDataInput,
@@ -295,7 +295,6 @@ export class SmartSolutionsApi {
       //if failure, return the response
       return getPassRes
     }
-
     const passInputData = mapPassToPassDataInput(getPassRes.data.pass)
 
     const inputFieldValues = mergeInputFields(

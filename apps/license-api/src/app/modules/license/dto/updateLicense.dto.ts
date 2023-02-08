@@ -1,10 +1,10 @@
-import { ApiProperty, ApiPropertyOptional, OmitType } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   IsBoolean,
   IsEnum,
   IsISO8601,
+  IsJSON,
   IsOptional,
-  IsString,
 } from 'class-validator'
 import { LicenseId, LicenseUpdateType } from '../license.types'
 import { IsNationalId } from '@island.is/nest/validators'
@@ -27,12 +27,13 @@ export class UpdateLicenseRequest {
   readonly licenseUpdateType!: LicenseUpdateType
 
   @ApiPropertyOptional({ description: 'The expiration date of the license' })
+  @IsOptional()
   @IsISO8601()
   readonly expiryDate?: string
 
   @ApiPropertyOptional({ description: 'Data to be updated' })
   @IsOptional()
-  @IsString()
+  @IsJSON()
   //will be validated in a specific service later! we do not care whats in here as of now, or will we?
   readonly payload?: string
 }

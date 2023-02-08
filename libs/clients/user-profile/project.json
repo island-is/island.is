@@ -29,6 +29,6 @@
       }
     }
   },
-  "tags": [],
+  "tags": ["lib:client", "scope:client"],
   "implicitDependencies": ["services-user-profile"]
 }

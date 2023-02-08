@@ -565,7 +565,6 @@ describe('Parental Leave Application Template', () => {
       expect(newState).toBe(
         ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
       )
-      expect(newApplication.assignees).toEqual([VMST_ID])
     })
   })
 

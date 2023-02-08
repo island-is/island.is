@@ -29,5 +29,5 @@
       ]
     }
   },
-  "tags": []
+  "tags": ["scope:application-system", "lib:application-system"]
 }
