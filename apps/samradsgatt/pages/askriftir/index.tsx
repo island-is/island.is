@@ -29,7 +29,9 @@ const Subscriptions = () => {
   const paddingXTable = [0, 0, 0, 15] as ResponsiveSpace
   const paddingBottom = [3, 3, 3, 3] as ResponsiveSpace
 
-  const onLoadMore = () => {}
+  const onLoadMore = () => {
+    console.log("clicked on load more")
+  }
 
   const CasesContent = () => {
     return (
