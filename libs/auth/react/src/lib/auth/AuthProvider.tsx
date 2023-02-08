@@ -14,9 +14,9 @@ import { ActionType, initialState, reducer } from './Auth.state'
 import { AuthSettings } from '../AuthSettings'
 import { AuthContext } from './AuthContext'
 import { AuthErrorScreen } from './AuthErrorScreen'
-import { AuthLoadingScreen } from './AuthLoadingScreen'
 import { CheckIdpSession } from './CheckIdpSession'
 import { isDefined } from '@island.is/shared/utils'
+import { LoadingScreen } from '@island.is/react/components'
 
 interface AuthProviderProps {
   /**
@@ -248,7 +248,7 @@ export const AuthProvider = ({
       {hasError ? (
         <AuthErrorScreen basePath={basePath} />
       ) : isLoading ? (
-        <AuthLoadingScreen />
+        <LoadingScreen />
       ) : (
         <>
           {monitorUserSession && <CheckIdpSession />}
