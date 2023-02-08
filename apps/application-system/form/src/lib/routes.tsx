@@ -30,12 +30,17 @@ export const router = createBrowserRouter(
           element: <AssignApplication />,
         },
         {
-          path: '/:slug',
-          element: <Applications />,
-        },
-        {
-          path: '/:slug/:id',
-          element: <Application />,
+          errorElement: <ErrorShell />,
+          children: [
+            {
+              path: '/:slug',
+              element: <Applications />,
+            },
+            {
+              path: '/:slug/:id',
+              element: <Application />,
+            },
+          ],
         },
         {
           path: '*',
