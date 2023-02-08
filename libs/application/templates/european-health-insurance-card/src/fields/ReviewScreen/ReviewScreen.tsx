@@ -11,13 +11,15 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
   const { answers } = application
   const { formatMessage } = useLocale()
 
+  const apply = []
+  const applyForTemp = []
 
-  const apply = [];
-  const applyForTemp = [];
-
-  const nationalRegistryData = application.externalData.nationalRegistry?.data as NationalRegistry
-  const nationalRegistryDataSpouse = application?.externalData?.nationalRegistrySpouse?.data as NationalRegistry
-  const nationalRegistryDataChildren = application?.externalData?.childrenCustodyInformation as unknown as NationalRegistry
+  const nationalRegistryData = application.externalData.nationalRegistry
+    ?.data as NationalRegistry
+  const nationalRegistryDataSpouse = application?.externalData
+    ?.nationalRegistrySpouse?.data as NationalRegistry
+  const nationalRegistryDataChildren = (application?.externalData
+    ?.childrenCustodyInformation as unknown) as NationalRegistry
 
   const applicant: Person = {
     name: nationalRegistryData?.fullName,
@@ -35,16 +37,14 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
       locality: nationalRegistryData.address.locality,
       municipalityCode: nationalRegistryData.address.municipalityCode,
       postalCode: nationalRegistryData.address.postalCode,
-    }
+    },
   }
 
   function getObjectKey(obj: any, value: any) {
-    return Object.keys(obj).filter(
-      (key) => obj[key] === value
-    );
+    return Object.keys(obj).filter((key) => obj[key] === value)
   }
 
-  const applicants = getObjectKey(answers, true);
+  const applicants = getObjectKey(answers, true)
 
   if (applicants.includes(`apply-${applicant?.nationalId}`)) {
     apply.push(applicant)
@@ -55,7 +55,11 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
   }
 
   for (var i = 0; i < nationalRegistryDataChildren.data.length; i++) {
-    if (applicants.includes(`apply-${nationalRegistryDataChildren.data[i].nationalId}`)) {
+    if (
+      applicants.includes(
+        `apply-${nationalRegistryDataChildren.data[i].nationalId}`,
+      )
+    ) {
       apply.push(nationalRegistryDataChildren.data[i])
     }
   }
@@ -69,7 +73,11 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
   }
 
   for (var i = 0; i < nationalRegistryDataChildren.data.length; i++) {
-    if (applicants.includes(`temp-${nationalRegistryDataChildren.data[i].nationalId}`)) {
+    if (
+      applicants.includes(
+        `temp-${nationalRegistryDataChildren.data[i].nationalId}`,
+      )
+    ) {
       applyForTemp.push(nationalRegistryDataChildren.data[i])
     }
   }
@@ -86,28 +94,24 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
                 formatMessage,
               )}
             </Text>
-            <Text>
-              {
-                apply?.map((item, index) => (
-                  <Text>{item.name || item.fullName}</Text>
-                ))}
-            </Text>
+
+            {apply?.map((item, index) => (
+              <Text>{item.name || item.fullName}</Text>
+            ))}
           </Box>
           <Divider />
           <Box>
             <Text variant="h5">
               {formatText(
-                "Umsækjendur sem vilja fá tímabundið bráðabirgðakort",
+                'Umsækjendur sem vilja fá tímabundið bráðabirgðakort',
                 application,
                 formatMessage,
               )}
             </Text>
-            <Text>
-              {
-                applyForTemp?.map((item, index) => (
-                  <Text>{item.name || item.fullName}</Text>
-                ))}
-            </Text>
+
+            {applyForTemp?.map((item, index) => (
+              <Text>{item.name || item.fullName}</Text>
+            ))}
           </Box>
           <Divider />
           <Box>
@@ -136,7 +140,8 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
               )}
             </Text>
             <Text>
-              {residence.address.streetAddress}, {residence.address.postalCode} {residence.address.locality}
+              {residence.address.streetAddress}, {residence.address.postalCode}{' '}
+              {residence.address.locality}
             </Text>
           </Box>
           {application?.state === 'approved' && <Box marginBottom={8} />}
