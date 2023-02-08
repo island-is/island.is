@@ -6,6 +6,8 @@ import {
 import format from 'date-fns/format'
 import { format as formatSsn } from 'kennitala'
 
+export const formatNationalId = (nationalId: string) => formatSsn(nationalId)
+
 const formatDateString = (dateTime: string) =>
   dateTime ? format(new Date(dateTime), 'dd.MM.yyyy') : ''
 

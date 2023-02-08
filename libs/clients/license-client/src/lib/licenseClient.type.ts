@@ -1,5 +1,10 @@
 import { User } from '@island.is/auth-nest-tools'
-import { Pass } from '@island.is/clients/smartsolutions'
+import {
+  Pass,
+  PassDataInput,
+  RevokePassData,
+  VerifyPassData,
+} from '@island.is/clients/smartsolutions'
 import { Locale } from '@island.is/shared/types'
 
 export enum LicenseType {
@@ -123,6 +128,20 @@ export interface LicenseClient<ResultType> {
     data: string,
     passTemplateId: string,
   ) => Promise<PkPassVerification | null>
+
+  pushUpdatePass?: (
+    inputData: PassDataInput,
+    nationalId: string,
+  ) => Promise<Result<Pass | undefined>>
+
+  pullUpdatePass?: (nationalId: string) => Promise<Result<Pass | undefined>>
+
+  revokePass?: (nationalId: string) => Promise<Result<RevokePassData>>
+
+  verifyPass?: (
+    inputData: string,
+    nationalId: string,
+  ) => Promise<Result<VerifyPassData>>
 }
 
 export const LICENSE_CLIENT_FACTORY = 'license-client-factory'

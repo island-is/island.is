@@ -137,7 +137,7 @@ export class LicenseServiceServiceV2 {
     licenseType: GenericLicenseType,
   ): Promise<GenericUserLicense | null> {
     const license = AVAILABLE_LICENSES.find((i) => i.type === licenseType)
-    const licenseService = await this.licenseClient.createClientByLicenseType(
+    const licenseService = await this.licenseClient.getClientByLicenseType(
       (licenseType as unknown) as LicenseType,
     )
 
@@ -203,7 +203,7 @@ export class LicenseServiceServiceV2 {
     locale: Locale,
     licenseType: GenericLicenseType,
   ) {
-    const licenseService = await this.licenseClient.createClientByLicenseType(
+    const licenseService = await this.licenseClient.getClientByLicenseType(
       (licenseType as unknown) as LicenseType,
     )
 
@@ -235,7 +235,7 @@ export class LicenseServiceServiceV2 {
      * id is missing, then it's a drivers license.
      * Otherwise, map the id to its corresponding license type
      */
-    const licenseService = await this.licenseClient.createClientByPassTemplateId(
+    const licenseService = await this.licenseClient.getClientByPassTemplateId(
       passTemplateId,
     )
     if (!licenseService) {

@@ -10,7 +10,9 @@ import {
 import {
   Pass,
   PassDataInput,
+  RevokePassData,
   SmartSolutionsApi,
+  VerifyPassData,
 } from '@island.is/clients/smartsolutions'
 import { format } from 'kennitala'
 import { FetchError } from '@island.is/clients/middlewares'
@@ -213,5 +215,39 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
     return {
       valid: result.data.valid,
     }
+  }
+
+  async pushUpdatePass(
+    inputData: PassDataInput,
+    nationalId: string,
+  ): Promise<Result<Pass | undefined>> {
+    return await this.smartApi.updatePkPass(inputData, nationalId)
+  }
+
+  async pullUpdatePass(nationalId: string): Promise<Result<Pass | undefined>> {
+    return {
+      ok: false,
+      error: {
+        code: 99,
+        message: 'not implemented yet',
+      },
+    }
+  }
+
+  async revokePass(nationalId: string): Promise<Result<RevokePassData>> {
+    return await this.smartApi.revokePkPass(nationalId)
+  }
+
+  async verifyPass(
+    inputData: string,
+    nationalId: string,
+  ): Promise<Result<VerifyPassData>> {
+    const { code, date } = JSON.parse(inputData)
+
+    return await this.smartApi.verifyPkPass({ code, date })
+
+    //TODO: Verify license when endpoints are ready
+    //const verifyLicenseResult = await this.service.verify(nationalId?)
+    //return JSON.stringify(templates)
   }
 }

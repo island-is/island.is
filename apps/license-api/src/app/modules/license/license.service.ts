@@ -15,25 +15,28 @@ import {
   RevokeLicenseResponse,
 } from './dto'
 import { Pass, PassDataInput, Result } from '@island.is/clients/smartsolutions'
+import { LicenseId } from './license.types'
 import {
-  CLIENT_FACTORY,
-  GenericLicenseClient,
-  LicenseId,
-} from './license.types'
+  LicenseClientService,
+  LicenseType,
+} from '@island.is/clients/license-client'
 
 @Injectable()
 export class LicenseService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    @Inject(CLIENT_FACTORY)
-    private clientFactory: (
-      licenseId: LicenseId,
-    ) => Promise<GenericLicenseClient>,
+    private licenseClientService: LicenseClientService,
   ) {}
 
+  private async getLicenseClient(licenseId: LicenseId) {
+    return await this.licenseClientService.getClientByLicenseType(
+      (licenseId as unknown) as LicenseType,
+    )
+  }
+
   private async pushUpdateLicense(
-    service: GenericLicenseClient,
+    licenseId: LicenseId,
     expirationDate: string,
     nationalId: string,
     payload?: string,
@@ -55,11 +58,23 @@ export class LicenseService {
       }
     }
 
-    return await service.pushUpdate(updatePayload, nationalId)
+    const client = await this.getLicenseClient(licenseId)
+
+    if (!client.pushUpdatePass) {
+      return {
+        ok: false,
+        error: {
+          code: 99,
+          message: 'No method available',
+        },
+      }
+    }
+
+    return await client.pushUpdatePass(updatePayload, nationalId)
   }
 
   private async pullUpdateLicense(
-    service: GenericLicenseClient,
+    licenseId: LicenseId,
     nationalId: string,
   ): Promise<Result<Pass | undefined>> {
     /** PULL - Update electronic license with pulled data from service
@@ -68,17 +83,27 @@ export class LicenseService {
      * 3. With good data, update the electronic license with the validated license data!
      */
 
-    return await service.pullUpdate(nationalId)
+    const client = await this.getLicenseClient(licenseId)
+
+    if (!client.pullUpdatePass) {
+      return {
+        ok: false,
+        error: {
+          code: 99,
+          message: 'No method available',
+        },
+      }
+    }
+
+    return await client.pullUpdatePass(nationalId)
   }
 
   async updateLicense(
     inputData: UpdateLicenseRequest,
   ): Promise<UpdateLicenseResponse> {
-    const service = await this.clientFactory(inputData.licenseId)
-
     let updateRes: Result<Pass | undefined>
     if (inputData.licenseUpdateType === 'push') {
-      const { expiryDate, payload, nationalId } = inputData
+      const { licenseId, expiryDate, payload, nationalId } = inputData
 
       if (!expiryDate)
         throw new BadRequestException(
@@ -86,13 +111,14 @@ export class LicenseService {
         )
 
       updateRes = await this.pushUpdateLicense(
-        service,
+        licenseId,
         expiryDate,
         nationalId,
         payload,
       )
     } else {
-      updateRes = await this.pullUpdateLicense(service, inputData.nationalId)
+      const { licenseId, nationalId } = inputData
+      updateRes = await this.pullUpdateLicense(licenseId, nationalId)
     }
 
     if (updateRes.ok) {
@@ -111,8 +137,13 @@ export class LicenseService {
   async revokeLicense(
     inputData: RevokeLicenseRequest,
   ): Promise<RevokeLicenseResponse> {
-    const service = await this.clientFactory(inputData.licenseId)
-    const revokeData = await service.revoke(inputData.nationalId)
+    const client = await this.getLicenseClient(inputData.licenseId)
+
+    if (!client.revokePass) {
+      throw new InternalServerErrorException('Invalid method invocation')
+    }
+
+    const revokeData = await client.revokePass(inputData.nationalId)
 
     if (revokeData.ok) {
       return { revokeSuccess: revokeData.data.success }
@@ -129,10 +160,14 @@ export class LicenseService {
   async verifyLicense(
     inputData: VerifyLicenseRequest,
   ): Promise<VerifyLicenseResponse> {
-    const service = await this.clientFactory(inputData.licenseId)
+    const client = await this.getLicenseClient(inputData.licenseId)
+
+    if (!client.verifyPass) {
+      throw new InternalServerErrorException('Invalid method invocation')
+    }
 
     const { barcodeData, nationalId } = inputData
-    const verifyData = await service.verify(barcodeData, nationalId)
+    const verifyData = await client.verifyPass(barcodeData, nationalId)
 
     if (verifyData.ok) {
       return { valid: verifyData.data.valid }

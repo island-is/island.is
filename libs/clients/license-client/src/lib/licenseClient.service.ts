@@ -21,7 +21,7 @@ export class LicenseClientService {
     @Inject(CONFIG_PROVIDER) private config: PassTemplateIds,
   ) {}
 
-  private async createClient(type: LicenseType) {
+  private async getClient(type: LicenseType) {
     const client = await this.licenseFactory(type)
     return client
   }
@@ -45,15 +45,15 @@ export class LicenseClientService {
     return null
   }
 
-  async createClientByLicenseType(type: LicenseType) {
-    const client = await this.createClient(type)
+  async getClientByLicenseType(type: LicenseType) {
+    const client = await this.getClient(type)
     return client
   }
 
-  async createClientByPassTemplateId(passTemplateId: string) {
+  async getClientByPassTemplateId(passTemplateId: string) {
     const type = this.getTypeByPassTemplateId(passTemplateId)
     if (type) {
-      const client = await this.createClient(type)
+      const client = await this.getClient(type)
       return client
     }
 
