@@ -113,6 +113,11 @@ export const m = defineMessages({
     defaultMessage: 'Til greiðslu',
     description: 'Cost',
   },
+  overviewPaymentTotal: {
+    id: 'cr.application:overview.paymentTotal',
+    defaultMessage: 'Samtals',
+    description: 'Total',
+  },
   draftDescription: {
     id: 'cr.application:draft.description',
     defaultMessage: 'Á eftir að samþykkja gagnaöflun',
