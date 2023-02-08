@@ -602,6 +602,16 @@ export function getApplicationAnswers(answers: Application['answers']) {
   if (!applicationType) applicationType = PARENTAL_LEAVE as string
   else applicationType = applicationType as string
 
+  const noChildrenFoundTypeOfApplication = getValueViaPath(
+    answers,
+    'noChildrenFound.typeOfApplication',
+  ) as String
+
+  const fosterCareOrAdoptionBirthDate = getValueViaPath(
+    answers,
+    'fosterCareOrAdoption.birthDate',
+  ) as string
+
   const noPrimaryParentBirthDate = getValueViaPath(
     answers,
     'noPrimaryParent.birthDate',
@@ -865,6 +875,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   return {
     applicationType,
+    noChildrenFoundTypeOfApplication,
+    fosterCareOrAdoptionBirthDate,
     noPrimaryParentBirthDate,
     hasMultipleBirths,
     multipleBirths,

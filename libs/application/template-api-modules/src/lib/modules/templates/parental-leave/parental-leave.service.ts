@@ -171,15 +171,15 @@ export class ParentalLeaveService extends BaseTemplateApiService {
   async setBirthDateForNoPrimaryParent({
     application,
   }: TemplateApiModuleActionProps) {
-    const { noPrimaryParentBirthDate } = getApplicationAnswers(
+    const { noPrimaryParentBirthDate, fosterCareOrAdoptionBirthDate } = getApplicationAnswers(
       application.answers,
     )
 
-    if (noPrimaryParentBirthDate) {
+    if (noPrimaryParentBirthDate || fosterCareOrAdoptionBirthDate) {
       const child: ChildInformation = {
         hasRights: true,
         remainingDays: 180,
-        expectedDateOfBirth: noPrimaryParentBirthDate,
+        expectedDateOfBirth: noPrimaryParentBirthDate || fosterCareOrAdoptionBirthDate,
         parentalRelation: ParentalRelations.secondary,
         primaryParentNationalRegistryId: '',
       }

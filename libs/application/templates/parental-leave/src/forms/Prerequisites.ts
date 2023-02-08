@@ -378,12 +378,97 @@ export const PrerequisitesForm: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'noPrimaryParent',
-          title: parentalLeaveFormMessages.shared.noPrimaryParentTitle,
+          id: 'noChildrenFound',
+          title: '....',
           condition: (_, externalData) => {
             const { children } = getApplicationExternalData(externalData)
             return children.length === 0 // if no children found we want to ask these questions
           },
+          children: [
+            buildRadioField({
+              id: 'noChildrenFound.typeOfApplication',
+              title: 'Sækja um fæðingarorlof/styrk',
+              options: [
+                {
+                  value: 'adoption',
+                  label: 'Vegna frumættleiðingar barns',
+                },
+                {
+                  value: 'foster_care',
+                  label: 'Vegna töku barns í varanlegt fóstur',
+                },
+                {
+                  value: 'other',
+                  label: 'Annað',
+                },
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'fosterCareOrAdoption',
+          title: 'Fæðingardag barns',
+          condition: (answers) => {
+            const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
+              answers,
+            )
+
+            return (
+              noChildrenFoundTypeOfApplication === 'adoption' ||
+              noChildrenFoundTypeOfApplication === 'foster_care'
+            )
+          },
+          children: [
+            buildMultiField({
+              id: 'fosterCareOrAdoption',
+              title: 'Fæðingardagur barns',
+              description: 'Veldu fæðingardag barns',
+              children: [
+                buildDateField({
+                  id: 'fosterCareOrAdoption.birthDate',
+                  title:
+                    parentalLeaveFormMessages.shared
+                      .noPrimaryParentDatePickerTitle,
+                  description: '',
+                  placeholder: parentalLeaveFormMessages.startDate.placeholder,
+                }),
+                buildSubmitField({
+                  id: 'toDraft',
+                  title: parentalLeaveFormMessages.confirmation.title,
+                  refetchApplicationAfterSubmit: true,
+                  actions: [
+                    {
+                      event: 'SUBMIT',
+                      name: parentalLeaveFormMessages.selectChild.choose,
+                      type: ParentalRelations.primary, // er þetta rétt týpa?
+                    },
+                  ],
+                }),
+              ],
+            }),
+            // Has to be here so that the submit button appears (does not appear if no screen is left).
+            // Tackle that as AS task.
+            buildDescriptionField({
+              id: 'unused',
+              title: '',
+              description: '',
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'noPrimaryParent',
+          title: parentalLeaveFormMessages.shared.noPrimaryParentTitle,
+          condition: (answers) => {
+            const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
+              answers,
+            )
+
+            return noChildrenFoundTypeOfApplication === 'other'
+          },
+          // condition: (_, externalData) => {
+          //   const { children } = getApplicationExternalData(externalData)
+          //   return children.length === 0 // if no children found we want to ask these questions
+          // },
           children: [
             buildMultiField({
               id: 'noPrimaryParent',
