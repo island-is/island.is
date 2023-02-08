@@ -58,9 +58,10 @@ export const getApplication = (allowFakeData = false): Form => {
               }),
               buildDataProviderItem({
                 provider: CurrentUserTypeProvider,
-                title: '',
-                subTitle: '',
+                title: m.dataCollectionUserFinancialInfoTitle,
+                subTitle: m.dataCollectionUserFinancialInfo,
               }),
+            
             ],
           }),
         ],
