@@ -599,7 +599,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.RESIDENCE_GRAND_APPLICATION]: {
-        entry: ['setPreviousState', 'assignToVMST', 'removeResidenceGrant'],
+        entry: ['setPreviousState', 'assignToVMST'],
         meta: {
           status: 'inprogress',
           name: States.RESIDENCE_GRAND_APPLICATION,
@@ -678,8 +678,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       //   },
       // },
       [States.APPROVED]: {
-        entry: ['assignToVMST', 'removeResidenceGrant'],
-        exit: ['setBirthDate', 'removeResidenceGrant'],
+        entry: 'assignToVMST',
+        exit: 'setBirthDate',
         meta: {
           name: States.APPROVED,
           status: 'inprogress',
@@ -1453,9 +1453,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { application } = context
         const { answers } = application
         unset(answers, 'residenceGrant')
-        unset(answers, 'residentGrantApplication')
-        unset(answers, 'child')
-
         return context
       }),
       setActionName: assign((context) => {

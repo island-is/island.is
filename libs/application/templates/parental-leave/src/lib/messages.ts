@@ -1979,7 +1979,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     residenceGrantSubmit: {
       id: 'pl.application:residence.grant.submit',
-      defaultMessage: 'Sendu inn umsókn þína',
+      defaultMessage: 'Sendu inn',
       description: 'Submit',
     },
     residenceGrantReject: {
@@ -1991,6 +1991,16 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:residence.grant.go.back',
       defaultMessage: 'Farðu í umsókn.',
       description: 'Back to application',
+    },
+    residenceGrantSelectPeriodDescription: {
+      id: 'pl.application:residence.grant.select.period.description',
+      defaultMessage: 'Veldu tímabilið sem þú vilt sækja um dvalarstyrk',
+      description: 'Select the period you want to apply for residence grant',
+    },
+    residenceGrantSelectPeriodSubmitDescription: {
+      id: 'pl.application:residence.grant.select.period.submit.description',
+      defaultMessage: 'Sendu inn umsókn til að sækja um dvalarstyrk',
+      description: 'Send in you application to apply for residence grant',
     },
     residenceGrantError: {
       id: 'pl.application:residence.grant.error',

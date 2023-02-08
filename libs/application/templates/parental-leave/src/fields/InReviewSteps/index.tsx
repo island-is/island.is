@@ -116,7 +116,6 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
       onError: (e) => handleServerError(e, formatMessage),
     },
   )
-
   const { formatMessage } = useLocale()
   const [screenState, setScreenState] = useState<'steps' | 'viewApplication'>(
     'steps',

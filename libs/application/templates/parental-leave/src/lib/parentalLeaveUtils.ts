@@ -1540,6 +1540,7 @@ export const actionsResidenceGrant = (
     vinnumalastofnunApproval: 'VINNUMALASTOFNUNAPPROVAL',
     vinnumalastofnunApproveEdits: 'VINNUMALASTOFNUNAPPROVEEDITS',
   }
+  const displayMessage = parentalLeaveFormMessages.residenceGrantMessage
 
   const actions: CallToAction<AnyEventObject>[] = events.map((e) => {
     return {
@@ -1549,7 +1550,10 @@ export const actionsResidenceGrant = (
         return false
       },
       event: ((event === 'reject' ? `${e}REJECT` : e) as unknown) as Events,
-      name: event === 'reject' ? 'Reject' : 'Confirm',
+      name:
+        event === 'reject'
+          ? displayMessage.residenceGrantReject
+          : displayMessage.residenceGrantSubmit,
       type: event === 'reject' ? 'reject' : 'primary',
     }
   })

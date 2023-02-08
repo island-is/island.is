@@ -7,13 +7,22 @@ import {
 } from '../parentalLeaveUtils'
 import { buildError } from './utils'
 
+interface ResidenceGrantObject {
+  fileUpload: any
+  dateTo: string
+  dateFrom: string
+}
+
 export const residenceGrantValidationSection = (
   newAnswer: unknown,
   application: Application,
 ) => {
-  const inputAnswer = newAnswer as { dateTo: string; dateFrom: string }
   const { dateOfBirth } = application.answers
   const { hasMultipleBirths } = getApplicationAnswers(application.answers)
+
+  const inputAnswer = newAnswer as ResidenceGrantObject
+  if (inputAnswer.fileUpload) return undefined
+
   if (
     validatePeriodResidenceGrant(
       `${dateOfBirth}`,
