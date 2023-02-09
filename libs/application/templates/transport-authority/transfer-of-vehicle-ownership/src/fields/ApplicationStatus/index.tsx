@@ -18,6 +18,11 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
 
   const steps = getReviewSteps(application, coOwnersAndOperators || [])
 
+  const showReviewButton = !hasReviewerApproved(
+    reviewerNationalId,
+    application.answers,
+  )
+
   return (
     <Box marginBottom={10}>
       <Text variant="h1" marginBottom={2}>
@@ -52,17 +57,38 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
           />
         ))}
       </Box>
-      {!hasReviewerApproved(reviewerNationalId, application.answers) &&
-        application.state !== States.COMPLETED && (
-          <>
-            <Divider />
-            <Box display="flex" justifyContent="flexEnd" paddingY={5}>
-              <Button onClick={() => setStep && setStep('overview')}>
-                {formatMessage(review.status.openAgreement)}
-              </Button>
-            </Box>
-          </>
-        )}
+      {showReviewButton && application.state !== States.COMPLETED && (
+        <>
+          <Divider />
+          <Box display="flex" justifyContent="flexEnd" paddingY={5}>
+            <Button onClick={() => setStep && setStep('overview')}>
+              {formatMessage(review.status.openAgreement)}
+            </Button>
+          </Box>
+        </>
+      )}
+
+      {!showReviewButton && (
+        <Box
+          display="flex"
+          justifyContent="flexEnd"
+          paddingTop={4}
+          marginBottom={4}
+        >
+          <Button
+            icon="arrowForward"
+            iconType="outline"
+            onClick={() => {
+              window.open(
+                `${window.location.origin}/minarsidur/umsoknir#${application.id}`,
+                '_blank',
+              )
+            }}
+          >
+            {formatMessage(review.buttons.openMySiteLinkText)}
+          </Button>
+        </Box>
+      )}
     </Box>
   )
 }
