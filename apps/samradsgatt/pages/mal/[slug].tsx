@@ -13,9 +13,7 @@ import { Case, Advice } from '../../types/viewModels'
 import CaseTimeline from '../../../../apps/samradsgatt/components/CaseTimeline/CaseTimeline'
 import SubscriptionBox from '../../../../apps/samradsgatt/components/SubscriptionBox/SubscriptionBox'
 import { useLocation } from 'react-use'
-import CaseOverview from '../../components/CaseOverview/CaseOverview'
-import ReviewCard from '../../components/ReviewCard/ReviewCard'
-import WriteReviewCard from '../../components/WriteReviewCard/WriteReviewCard'
+import { CaseOverview, ReviewCard, WriteReviewCard } from '../../components'
 import Layout from '../../components/Layout/Layout'
 
 interface DetailsProps {

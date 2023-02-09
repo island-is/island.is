@@ -7,7 +7,7 @@ interface Props {
   advice: Advice
 }
 
-const ReviewCard: React.FC<Props> = ({ advice }) => {
+export const ReviewCard: React.FC<Props> = ({ advice }) => {
   return (
     <Box
       marginBottom={6}

@@ -14,7 +14,10 @@ interface CaseTimelineProps {
   updatedDate: string
 }
 
-const CaseTimeline: React.FC<CaseTimelineProps> = ({ status, updatedDate }) => {
+export const CaseTimeline: React.FC<CaseTimelineProps> = ({
+  status,
+  updatedDate,
+}) => {
   const sections = [
     {
       section: 'Samráð fyrirhugað',

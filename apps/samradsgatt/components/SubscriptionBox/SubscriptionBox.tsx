@@ -3,7 +3,7 @@ import { Box, Text, Input, Button, Icon } from '@island.is/island-ui/core'
 // Form context
 // Input
 
-const SubscriptionBox = () => {
+export const SubscriptionBox = () => {
   return (
     <Box
       borderColor="blue300"

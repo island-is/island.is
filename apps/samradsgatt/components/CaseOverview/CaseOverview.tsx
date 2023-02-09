@@ -1,5 +1,5 @@
 import { Box, GridRow, Text } from '@island.is/island-ui/core'
-import CaseStatusCard from '../CaseStatusCard/CaseStatusCard'
+import { CaseStatusCard } from '../../components'
 import { Advice, Case } from '../../types/viewModels'
 import format from 'date-fns/format'
 
@@ -8,7 +8,7 @@ interface CaseOverviewProps {
   advices?: Array<Advice>
 }
 
-const CaseOverview: React.FC<CaseOverviewProps> = ({ chosenCase }) => {
+export const CaseOverview: React.FC<CaseOverviewProps> = ({ chosenCase }) => {
   const datePublished = format(new Date(chosenCase.created), 'dd.MM.yyyy')
 
   return (

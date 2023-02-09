@@ -2,7 +2,7 @@ import { Box, CategoryCard } from '@island.is/island-ui/core'
 
 // Depending on the status of the card. Need to add props.
 
-const CaseStatusCard = () => {
+export const CaseStatusCard = () => {
   return (
     <Box paddingTop={4}>
       <CategoryCard
