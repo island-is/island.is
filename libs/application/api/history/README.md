@@ -1,4 +1,4 @@
-# application-api-history
+# Application API History
 
 This library was generated with [Nx](https://nx.dev).
 

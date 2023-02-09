@@ -230,6 +230,16 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Hætta við',
     description: 'Delete application dialog cancel',
   },
+  openApplicationHistoryLabel: {
+    id: 'application.system:core.history.open',
+    defaultMessage: 'Opna umsóknarsögu',
+    description: 'Open application history button',
+  },
+  closeApplicationHistoryLabel: {
+    id: 'application.system:core.history.close',
+    defaultMessage: 'Loka umsóknarsögu',
+    description: 'Close application history button',
+  },
 })
 
 export const coreErrorMessages = defineMessages({
