@@ -15,6 +15,7 @@ import {
   Field,
   FormValue,
   Option,
+  RepeaterProps,
 } from '@island.is/application/types'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
@@ -46,6 +47,9 @@ import {
   ChildInformation,
   ChildrenAndExistingApplications,
   PregnancyStatusAndRightsResults,
+  Files,
+  OtherParentObj,
+  VMSTPeriod,
 } from '../types'
 import { FormatMessage } from '@island.is/localization'
 import { currentDateStartTime } from './parentalLeaveTemplateUtils'
@@ -160,6 +164,15 @@ export function formatPeriods(
   })
 
   return timelinePeriods
+}
+
+export const formatBankInfo = (bankInfo: string) => {
+  const formattedBankInfo = bankInfo.replace(/[^0-9]/g, '')
+  if (formattedBankInfo && formattedBankInfo.length === 12) {
+    return formattedBankInfo
+  }
+
+  return bankInfo
 }
 
 /*
@@ -466,11 +479,17 @@ export const getSelectedChild = (
   externalData: ExternalData,
 ): ChildInformation | null => {
   const { selectedChild: selectedChildIndex } = getApplicationAnswers(answers)
-  const selectedChild = getValueViaPath(
-    externalData,
-    `children.data.children[${selectedChildIndex}]`,
-    null,
-  ) as ChildInformation | null
+  const selectedChild =
+    getValueViaPath(
+      externalData,
+      `children.data.children[${selectedChildIndex}]`,
+      null,
+    ) ??
+    (getValueViaPath(
+      externalData,
+      'noPrimaryChildren.data.children',
+      null,
+    ) as ChildInformation | null)
 
   return selectedChild
 }
@@ -543,21 +562,15 @@ export function getApplicationExternalData(
     'userProfile.data.mobilePhoneNumber',
   ) as string
 
-  const userBankInfo = getValueViaPath(
-    externalData,
-    'userProfile.data.bankInfo',
-  ) as string
-
   const applicantGenderCode = getValueViaPath(
     externalData,
     'person.data.genderCode',
   )
 
-  const applicantName = getValueViaPath(
+  const applicantName = (getValueViaPath(
     externalData,
-    'person.data.fullName',
-    '',
-  ) as string
+    'person.data.fullname',
+  ) ?? getValueViaPath(externalData, 'person.data.fullName', '')) as string
 
   const navId = getValueViaPath(externalData, 'navId', '') as string
 
@@ -580,7 +593,6 @@ export function getApplicationExternalData(
     navId,
     userEmail,
     userPhoneNumber,
-    userBankInfo,
   }
 }
 
@@ -589,6 +601,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   if (!applicationType) applicationType = PARENTAL_LEAVE as string
   else applicationType = applicationType as string
+
+  const noPrimaryParentBirthDate = getValueViaPath(
+    answers,
+    'noPrimaryParent.birthDate',
+  ) as string
 
   const hasMultipleBirths = getValueViaPath(
     answers,
@@ -813,8 +830,42 @@ export function getApplicationAnswers(answers: Application['answers']) {
   const firstPeriodStart =
     periods.length > 0 ? periods[0].firstPeriodStart : undefined
 
+  const additionalDocuments = getValueViaPath(
+    answers,
+    'fileUpload.additionalDocuments',
+  ) as Files[]
+
+  const selfEmployedFiles = getValueViaPath(
+    answers,
+    'fileUpload.selfEmployedFile',
+  ) as Files[]
+
+  const studentFiles = getValueViaPath(
+    answers,
+    'fileUpload.studentFile',
+  ) as Files[]
+
+  const singleParentFiles = getValueViaPath(
+    answers,
+    'fileUpload.singleParent',
+  ) as Files[]
+
+  const benefitsFiles = getValueViaPath(
+    answers,
+    'fileUpload.benefitsFile',
+  ) as Files[]
+
+  const commonFiles = getValueViaPath(answers, 'fileUpload.file') as Files[]
+
+  const actionName = getValueViaPath(answers, 'actionName') as
+    | 'period'
+    | 'document'
+    | 'documentPeriod'
+    | undefined
+
   return {
     applicationType,
+    noPrimaryParentBirthDate,
     hasMultipleBirths,
     multipleBirths,
     multipleBirthsRequestDays: Number(multipleBirthsRequestDays),
@@ -857,7 +908,38 @@ export function getApplicationAnswers(answers: Application['answers']) {
     firstPeriodStart,
     isRecivingUnemploymentBenefits,
     unemploymentBenefits,
+    additionalDocuments,
+    selfEmployedFiles,
+    studentFiles,
+    singleParentFiles,
+    benefitsFiles,
+    commonFiles,
+    actionName,
   }
+}
+
+export const isParentWithoutBirthParent = (answers: Application['answers']) => {
+  const questionOne = getValueViaPath(answers, 'noPrimaryParent.questionOne')
+  const questionTwo = getValueViaPath(answers, 'noPrimaryParent.questionTwo')
+  const questionThree = getValueViaPath(
+    answers,
+    'noPrimaryParent.questionThree',
+  )
+
+  return questionOne === YES && questionTwo === YES && questionThree === NO
+}
+
+export const isNotEligibleForParentWithoutBirthParent = (
+  answers: Application['answers'],
+) => {
+  const questionOne = getValueViaPath(answers, 'noPrimaryParent.questionOne')
+  const questionTwo = getValueViaPath(answers, 'noPrimaryParent.questionTwo')
+  const questionThree = getValueViaPath(
+    answers,
+    'noPrimaryParent.questionThree',
+  )
+
+  return questionOne === NO || questionTwo === NO || questionThree === YES
 }
 
 export const requiresOtherParentApproval = (
@@ -915,6 +997,13 @@ export const otherParentApprovalDescription = (
   return formatMessage(description)
 }
 
+export const allowOtherParentToUsePersonalAllowance = (
+  answers: Application['answers'],
+) => {
+  const otherParentObj = (answers?.otherParentObj as unknown) as OtherParentObj
+  return otherParentObj?.chooseOtherParent === SPOUSE
+}
+
 export const allowOtherParent = (answers: Application['answers']) => {
   const { otherParent, otherParentRightOfAccess } = getApplicationAnswers(
     answers,
@@ -929,9 +1018,15 @@ export const allowOtherParent = (answers: Application['answers']) => {
 export const getOtherParentId = (
   application: Application,
 ): string | undefined => {
-  const { otherParent, otherParentId } = getApplicationAnswers(
-    application.answers,
-  )
+  const {
+    otherParent,
+    otherParentId,
+    noPrimaryParentBirthDate,
+  } = getApplicationAnswers(application.answers)
+
+  if (noPrimaryParentBirthDate) {
+    return ''
+  }
 
   if (otherParent === SPOUSE) {
     const spouse = getSpouse(application)
@@ -1072,6 +1167,15 @@ export const getMinimumStartDate = (application: Application): Date => {
     return lastPeriodEndDate
   } else if (expectedDateOfBirth) {
     const expectedDateOfBirthDate = new Date(expectedDateOfBirth)
+
+    if (isParentalGrant(application)) {
+      const beginningOfMonthOfExpectedDateOfBirth = addDays(
+        expectedDateOfBirthDate,
+        expectedDateOfBirthDate.getDate() * -1 + 1,
+      )
+      return beginningOfMonthOfExpectedDateOfBirth
+    }
+
     const beginningOfMonth = getBeginningOfThisMonth()
     const leastStartDate = addMonths(
       expectedDateOfBirthDate,
@@ -1160,43 +1264,20 @@ export const calculatePeriodLengthInMonths = (
   return round(diffMonths + roundedDays, 1)
 }
 
-const getMobilePhoneNumber = (application: Application) => {
-  return (application.externalData.userProfile?.data as {
-    mobilePhoneNumber?: string
-  })?.mobilePhoneNumber
-}
-
-export const removeCountryCode = (application: Application) => {
-  return getMobilePhoneNumber(application)?.startsWith('+354')
-    ? getMobilePhoneNumber(application)?.slice(4)
-    : getMobilePhoneNumber(application)?.startsWith('00354')
-    ? getMobilePhoneNumber(application)?.slice(5)
-    : getMobilePhoneNumber(application)
-}
-
 // Functions that determine dynamic text changes in forms based on application type
 export const getPeriodSectionTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(application.answers)
-  if (
-    appAnswers.applicationType === PARENTAL_GRANT ||
-    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
+  if (isParentalGrant(application)) {
     return parentalLeaveFormMessages.shared.periodsGrantSection
   }
   return parentalLeaveFormMessages.shared.periodsLeaveSection
 }
 
 export const getRightsDescTitle = (application: Application) => {
-  const {
-    applicationType,
-    otherParent,
-    hasMultipleBirths,
-  } = getApplicationAnswers(application.answers)
+  const { otherParent, hasMultipleBirths } = getApplicationAnswers(
+    application.answers,
+  )
 
-  if (
-    applicationType === PARENTAL_GRANT ||
-    applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
+  if (isParentalGrant(application)) {
     return otherParent === SINGLE && hasMultipleBirths === YES
       ? parentalLeaveFormMessages.shared
           .singleParentGrantMultipleRightsDescription
@@ -1217,78 +1298,182 @@ export const getRightsDescTitle = (application: Application) => {
 }
 
 export const getPeriodImageTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(application.answers)
-  if (
-    appAnswers.applicationType === PARENTAL_GRANT ||
-    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
+  if (isParentalGrant(application)) {
     return parentalLeaveFormMessages.shared.periodsImageGrantTitle
   }
   return parentalLeaveFormMessages.shared.periodsImageTitle
 }
 
 export const getFirstPeriodTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(application.answers)
-  if (
-    appAnswers.applicationType === PARENTAL_GRANT ||
-    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
+  if (isParentalGrant(application)) {
     return parentalLeaveFormMessages.firstPeriodStart.grantTitle
   }
   return parentalLeaveFormMessages.firstPeriodStart.title
 }
 
 export const getDurationTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(application.answers)
-  if (
-    appAnswers.applicationType === PARENTAL_GRANT ||
-    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
+  if (isParentalGrant(application)) {
     return parentalLeaveFormMessages.duration.grantTitle
   }
   return parentalLeaveFormMessages.duration.title
 }
 
 export const getRatioTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(application.answers)
-  if (
-    appAnswers.applicationType === PARENTAL_GRANT ||
-    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
+  if (isParentalGrant(application)) {
     return parentalLeaveFormMessages.ratio.grantTitle
   }
   return parentalLeaveFormMessages.ratio.title
 }
 
 export const getLeavePlanTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(application.answers)
-  if (
-    appAnswers.applicationType === PARENTAL_GRANT ||
-    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
+  if (isParentalGrant(application)) {
     return parentalLeaveFormMessages.leavePlan.grantTitle
   }
   return parentalLeaveFormMessages.leavePlan.title
 }
 
 export const getStartDateTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(application.answers)
-  if (
-    appAnswers.applicationType === PARENTAL_GRANT ||
-    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
+  if (isParentalGrant(application)) {
     return parentalLeaveFormMessages.startDate.grantTitle
   }
   return parentalLeaveFormMessages.startDate.title
 }
 
 export const getStartDateDesc = (application: Application) => {
-  const appAnswers = getApplicationAnswers(application.answers)
-  if (
-    appAnswers.applicationType === PARENTAL_GRANT ||
-    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
+  if (isParentalGrant(application)) {
     return parentalLeaveFormMessages.startDate.grantDescription
   }
   return parentalLeaveFormMessages.startDate.description
+}
+
+const setLoadingStateAndRepeaterItems = async (
+  VMSTPeriods: Period[],
+  setRepeaterItems: RepeaterProps['setRepeaterItems'],
+  setFieldLoadingState: RepeaterProps['setFieldLoadingState'],
+) => {
+  setFieldLoadingState?.(true)
+  await setRepeaterItems(VMSTPeriods)
+  setFieldLoadingState?.(false)
+}
+
+export const synchronizeVMSTPeriods = (
+  data: any,
+  rights: number,
+  periods: Period[],
+  setRepeaterItems: RepeaterProps['setRepeaterItems'],
+  setFieldLoadingState: RepeaterProps['setFieldLoadingState'],
+) => {
+  // If periods is not sync with VMST periods, sync it
+  const newPeriods: Period[] = []
+  const temptVMSTPeriods: Period[] = []
+  const VMSTPeriods: VMSTPeriod[] = data?.getApplicationInformation?.periods
+  VMSTPeriods?.forEach((period, index) => {
+    /*
+     ** VMST could change startDate but still return 'date_of_birth'
+     ** Make sure if period is in the past then we use the date they sent
+     */
+    let firstPeriodStart =
+      period.firstPeriodStart === 'date_of_birth'
+        ? 'actualDateOfBirth'
+        : 'specificDate'
+    if (new Date(period.from).getTime() < new Date().getTime()) {
+      firstPeriodStart = 'specificDate'
+    }
+
+    // API returns multiple rightsCodePeriod in string ('M-L-GR, M-FS')
+    const rightsCodePeriod = period.rightsCodePeriod.split(',')[0]
+    const obj = {
+      startDate: period.from,
+      endDate: period.to,
+      ratio: period.ratio.split(',')[0],
+      rawIndex: index,
+      firstPeriodStart: firstPeriodStart,
+      useLength: NO as YesOrNo,
+      rightCodePeriod: rightsCodePeriod,
+    }
+    if (
+      period.paid ||
+      new Date(period.from).getTime() <= new Date().getTime()
+    ) {
+      newPeriods.push(obj)
+    }
+    temptVMSTPeriods.push(obj)
+  })
+
+  let index = newPeriods.length
+  if (index > 0) {
+    const VMSTEndDate = new Date(newPeriods[index - 1].endDate)
+    periods.forEach((period) => {
+      if (new Date(period.startDate) > VMSTEndDate) {
+        newPeriods.push({ ...period, rawIndex: index })
+        index += 1
+      }
+    })
+
+    const usedDayNewPeriods = calculateDaysUsedByPeriods(newPeriods)
+    // We don't want update periods if there isn't necessary. Otherwise, enable below code
+    // if (usedDayNewPeriods > rights) {
+    //   syncVMSTPeriods(temptVMSTPeriods)
+    // } else {
+    //   syncVMSTPeriods(newPeriods)
+    // }
+    let isMustSync = false
+    if (periods.length !== newPeriods.length) {
+      if (usedDayNewPeriods > rights) {
+        setLoadingStateAndRepeaterItems(
+          temptVMSTPeriods,
+          setRepeaterItems,
+          setFieldLoadingState,
+        )
+      } else {
+        setLoadingStateAndRepeaterItems(
+          newPeriods,
+          setRepeaterItems,
+          setFieldLoadingState,
+        )
+      }
+    } else if (
+      newPeriods[0].rightCodePeriod &&
+      newPeriods[0]?.rightCodePeriod !== periods[0]?.rightCodePeriod
+    ) {
+      isMustSync = true
+    } else {
+      newPeriods.forEach((period, i) => {
+        if (
+          new Date(period.startDate).getTime() !==
+            new Date(periods[i].startDate).getTime() ||
+          new Date(period.endDate).getTime() !==
+            new Date(periods[i].endDate).getTime() ||
+          period.ratio !== periods[i].ratio ||
+          period.firstPeriodStart !== periods[i].firstPeriodStart
+        ) {
+          isMustSync = true
+        }
+      })
+    }
+
+    if (isMustSync) {
+      if (usedDayNewPeriods > rights) {
+        setLoadingStateAndRepeaterItems(
+          temptVMSTPeriods,
+          setRepeaterItems,
+          setFieldLoadingState,
+        )
+      } else {
+        setLoadingStateAndRepeaterItems(
+          newPeriods,
+          setRepeaterItems,
+          setFieldLoadingState,
+        )
+      }
+    }
+  }
+}
+
+export const isParentalGrant = (application: Application) => {
+  const { applicationType } = getApplicationAnswers(application.answers)
+  return (
+    applicationType === PARENTAL_GRANT ||
+    applicationType === PARENTAL_GRANT_STUDENTS
+  )
 }

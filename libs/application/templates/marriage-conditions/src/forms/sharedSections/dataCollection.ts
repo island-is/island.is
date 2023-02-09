@@ -1,40 +1,35 @@
 import { buildDataProviderItem } from '@island.is/application/core'
+import {
+  DistrictsApi,
+  MaritalStatusApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
+  ReligionCodesApi,
+} from '../../dataProviders'
 import { m } from '../../lib/messages'
 
 export const dataCollection = [
   buildDataProviderItem({
-    id: 'nationalRegistry',
-    type: 'NationalRegistryProvider',
+    provider: NationalRegistryUserApi,
     title: m.dataCollectionNationalRegistryTitle,
     subTitle: m.dataCollectionNationalRegistrySubtitle,
   }),
   buildDataProviderItem({
-    id: 'userProfile',
-    type: 'UserProfileProvider',
+    provider: UserProfileApi,
     title: m.dataCollectionUserProfileTitle,
     subTitle: m.dataCollectionUserProfileSubtitle,
   }),
   buildDataProviderItem({
-    id: 'birthCertificate',
-    type: '',
-    title: m.dataCollectionBirthCertificateTitle,
-    subTitle: m.dataCollectionBirthCertificateDescription,
-  }),
-  buildDataProviderItem({
-    id: 'maritalStatus',
-    type: 'NationalRegistryMaritalStatusProvider',
+    provider: MaritalStatusApi,
     title: m.dataCollectionMaritalStatusTitle,
     subTitle: m.dataCollectionMaritalStatusDescription,
   }),
   buildDataProviderItem({
-    id: 'districtCommissioners',
-    type: 'DistrictsProvider',
+    provider: DistrictsApi,
     title: '',
-    subTitle: '',
   }),
   buildDataProviderItem({
-    id: 'religions',
-    type: 'ReligionsProvider',
+    provider: ReligionCodesApi,
     title: '',
     subTitle: '',
   }),

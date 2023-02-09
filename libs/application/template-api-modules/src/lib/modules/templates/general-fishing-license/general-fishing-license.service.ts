@@ -2,10 +2,10 @@ import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
 import { GeneralFishingLicenseAnswers } from '@island.is/application/templates/general-fishing-license'
-import { getValueViaPath } from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import {
-  FishingLicenseCodeType,
   FishingLicenseService,
+  mapFishingLicenseToCode,
   UmsoknirApi,
 } from '@island.is/clients/fishing-license'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -13,6 +13,8 @@ import type { Logger } from '@island.is/logging'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { error } from '@island.is/application/templates/general-fishing-license'
 
 @Injectable()
 export class GeneralFishingLicenseService extends BaseTemplateApiService {
@@ -92,6 +94,44 @@ export class GeneralFishingLicenseService extends BaseTemplateApiService {
         application.answers,
         'fishingLicense.license',
       ) as string
+      const date = getValueViaPath(
+        application.answers,
+        'fishingLicenseFurtherInformation.date',
+      ) as string
+      const area = getValueViaPath(
+        application.answers,
+        'fishingLicenseFurtherInformation.area',
+      ) as string | undefined
+      const roeNetStr = getValueViaPath(
+        application.answers,
+        'fishingLicenseFurtherInformation.railAndRoeNet.roenet',
+        '',
+      ) as string
+      const railNetStr = getValueViaPath(
+        application.answers,
+        'fishingLicenseFurtherInformation.railAndRoeNet.railnet',
+        '',
+      ) as string
+      const roeNet = parseInt(roeNetStr.trim().split('m').join(''), 10)
+      const railNet = parseInt(railNetStr.trim().split('m').join(''), 10)
+      const attachmentsRaw = getValueViaPath(
+        application.answers,
+        'fishingLicenseFurtherInformation.attachments',
+        [],
+      ) as Array<{ key: string; name: string }>
+      const attachments = await Promise.all(
+        attachmentsRaw?.map(async (a) => {
+          const vidhengiBase64 = await this.sharedTemplateAPIService.getAttachmentContentAsBase64(
+            application,
+            a.key,
+          )
+          return {
+            vidhengiBase64,
+            vidhengiNafn: a.name,
+            vidhengiTypa: a.name.split('.').pop(),
+          }
+        }) || [],
+      )
 
       await this.umsoknirApi
         .withMiddleware(new AuthMiddleware(auth as Auth))
@@ -102,13 +142,13 @@ export class GeneralFishingLicenseService extends BaseTemplateApiService {
             email: applicantEmail,
             utgerdKennitala: applicantNationalId,
             skipaskrarnumer: parseInt(registrationNumber, 10),
-            umbedinGildistaka: null,
-            veidileyfiKodi:
-              fishingLicense === 'catchMark'
-                ? FishingLicenseCodeType.catchMark
-                : fishingLicense === 'hookCatchLimit'
-                ? FishingLicenseCodeType.hookCatchLimit
-                : '0',
+            umbedinGildistaka: new Date(date),
+            veidileyfiKodi: mapFishingLicenseToCode(fishingLicense),
+            veidisvaediLykill: area,
+            fjoldiNeta: railNet,
+            teinalengd: roeNet,
+            skraarVidhengi: attachments,
+            fjarsyslaFaersluNumer: paymentStatus.paymentId,
           },
         })
       return { success: true }
@@ -123,6 +163,16 @@ export class GeneralFishingLicenseService extends BaseTemplateApiService {
 
   async getShips({ auth }: TemplateApiModuleActionProps) {
     const ships = await this.fishingLicenceApi.getShips(auth.nationalId, auth)
+
+    if (!ships || ships.length < 1) {
+      throw new TemplateApiError(
+        {
+          title: error.noShipsFoundErrorTitle,
+          summary: error.noShipsFoundError,
+        },
+        400,
+      )
+    }
     return { ships }
   }
 }

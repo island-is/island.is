@@ -1,6 +1,5 @@
-import React from 'react'
 import { ApolloProvider } from '@apollo/client'
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 import { initializeClient } from '@island.is/application/graphql'
 import { LocaleProvider } from '@island.is/localization'
@@ -19,31 +18,26 @@ import { UserProfileLocale } from '@island.is/shared/components'
 export const App = () => (
   <ApolloProvider client={initializeClient(environment.baseApiUrl)}>
     <LocaleProvider locale={defaultLanguage} messages={{}}>
-      <Router basename="/umsoknir">
+      <BrowserRouter basename="/umsoknir">
         <Authenticator>
           <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
             <HeaderInfoProvider>
               <UserProfileLocale />
               <Layout>
-                <Switch>
+                <Routes>
                   <Route
-                    exact
                     path="/tengjast-umsokn"
-                    component={AssignApplication}
+                    element={<AssignApplication />}
                   />
-
-                  <Route exact path="/:slug" component={Applications} />
-                  <Route exact path="/:slug/:id" component={Application} />
-
-                  <Route path="*">
-                    <ErrorShell errorType="notFound" />
-                  </Route>
-                </Switch>
+                  <Route path="/:slug" element={<Applications />} />
+                  <Route path="/:slug/:id" element={<Application />} />
+                  <Route path="*" element={<ErrorShell />} />
+                </Routes>
               </Layout>
             </HeaderInfoProvider>
           </FeatureFlagProvider>
         </Authenticator>
-      </Router>
+      </BrowserRouter>
     </LocaleProvider>
   </ApolloProvider>
 )

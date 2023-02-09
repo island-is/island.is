@@ -37,10 +37,12 @@ export const row = style({
   alignItems: 'center',
 })
 
-export const facebookLogo = style({
-  '@media': {
-    'screen and (max-width: 1330px)': {
-      display: 'none',
-    },
-  },
+export const logoRow = style({
+  display: 'flex',
+  gap: '32px',
+  alignItems: 'center',
+})
+
+export const noWrap = style({
+  whiteSpace: 'nowrap',
 })

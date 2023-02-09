@@ -15,13 +15,8 @@ import {
 import { Events, States, Roles } from './constants'
 import { z } from 'zod'
 import { m } from './messages'
-import {
-  NationalRegistryUserApi,
-  UserProfileApi,
-  NoDebtCertificateApi,
-} from '../dataProviders'
+import { NoDebtCertificateApi } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
-import { Features } from '@island.is/feature-flags'
 
 const NoDebtCertificateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -43,7 +38,6 @@ const template: ApplicationTemplate<
   allowedDelegations: [
     {
       type: AuthDelegationType.ProcurationHolder,
-      featureFlag: Features.noDebtCertificateCompanyDelegations,
     },
   ],
   stateMachineConfig: {
@@ -76,11 +70,7 @@ const template: ApplicationTemplate<
                 },
               ],
               write: 'all',
-              api: [
-                NationalRegistryUserApi,
-                UserProfileApi,
-                NoDebtCertificateApi,
-              ],
+              api: [NoDebtCertificateApi],
             },
           ],
         },

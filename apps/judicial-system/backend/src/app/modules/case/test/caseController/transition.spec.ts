@@ -1,6 +1,6 @@
 import each from 'jest-each'
 import { uuid } from 'uuidv4'
-import { Op, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 
 import {
   CaseFileState,
@@ -37,6 +37,9 @@ type GivenWhenThen = (
 
 describe('CaseController - Transition', () => {
   const date = randomDate()
+  const userId = uuid()
+  const user = { id: userId } as User
+
   let mockMessageService: MessageService
   let transaction: Transaction
   let mockCaseModel: typeof Case
@@ -74,7 +77,7 @@ describe('CaseController - Transition', () => {
       try {
         then.result = await caseController.transition(
           caseId,
-          { id: uuid() } as User,
+          user,
           theCase,
           transition,
         )
@@ -160,29 +163,71 @@ describe('CaseController - Transition', () => {
               [
                 {
                   type: MessageType.ARCHIVE_CASE_FILE,
+                  userId,
                   caseId,
                   caseFileId: caseFileId1,
                 },
                 {
                   type: MessageType.ARCHIVE_CASE_FILE,
+                  userId,
                   caseId,
                   caseFileId: caseFileId2,
                 },
-                { type: MessageType.SEND_RULING_NOTIFICATION, caseId },
+                { type: MessageType.SEND_RULING_NOTIFICATION, userId, caseId },
               ],
             )
           } else if (isIndictmentCase(type) && newState === CaseState.DELETED) {
             expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
               [
                 {
+                  type: MessageType.SEND_REVOKED_NOTIFICATION,
+                  userId,
+                  caseId,
+                },
+                {
                   type: MessageType.ARCHIVE_CASE_FILE,
+                  userId,
                   caseId,
                   caseFileId: caseFileId1,
                 },
                 {
                   type: MessageType.ARCHIVE_CASE_FILE,
+                  userId,
                   caseId,
                   caseFileId: caseFileId2,
+                },
+              ],
+            )
+          } else if (
+            isIndictmentCase(type) &&
+            newState === CaseState.SUBMITTED
+          ) {
+            expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
+              [
+                {
+                  type: MessageType.SEND_READY_FOR_COURT_NOTIFICATION,
+                  userId,
+                  caseId,
+                },
+              ],
+            )
+          } else if (newState === CaseState.RECEIVED) {
+            expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
+              [
+                {
+                  type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
+                  userId,
+                  caseId,
+                },
+              ],
+            )
+          } else if (newState === CaseState.DELETED) {
+            expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
+              [
+                {
+                  type: MessageType.SEND_REVOKED_NOTIFICATION,
+                  userId,
+                  caseId,
                 },
               ],
             )
@@ -200,7 +245,6 @@ describe('CaseController - Transition', () => {
               order,
               where: {
                 id: caseId,
-                state: { [Op.not]: CaseState.DELETED },
                 isArchived: false,
               },
             })

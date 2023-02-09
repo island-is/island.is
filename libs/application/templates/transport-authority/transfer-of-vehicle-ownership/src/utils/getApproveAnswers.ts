@@ -1,17 +1,21 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { CoOwnerAndOperator } from '../types'
+import { CoOwnerAndOperator } from '../shared'
 
 export const getApproveAnswers = (
   reviewerNationalId: string,
   answers: FormValue,
 ) => {
+  const returnAnswers = {}
   // If reviewer is buyer
   if (
     (getValueViaPath(answers, 'buyer.nationalId', '') as string) ===
-    reviewerNationalId
+      reviewerNationalId &&
+    (getValueViaPath(answers, 'buyer.approved', undefined) as
+      | boolean
+      | undefined) === undefined
   ) {
-    return {
+    Object.assign(returnAnswers, {
       buyer: {
         nationalId: getValueViaPath(answers, 'buyer.nationalId', '') as string,
         name: getValueViaPath(answers, 'buyer.name', '') as string,
@@ -19,7 +23,7 @@ export const getApproveAnswers = (
         phone: getValueViaPath(answers, 'buyer.phone', '') as string,
         approved: true,
       },
-    }
+    })
   }
 
   // If reviewer is buyers coowner or operator
@@ -31,8 +35,11 @@ export const getApproveAnswers = (
   const buyerCoOwnerAndOperator = buyerCoOwnersAndOperators.find(
     (coOwnerOrOperator) => coOwnerOrOperator.nationalId === reviewerNationalId,
   )
-  if (buyerCoOwnerAndOperator) {
-    return {
+  if (
+    buyerCoOwnerAndOperator &&
+    buyerCoOwnerAndOperator.approved === undefined
+  ) {
+    Object.assign(returnAnswers, {
       buyerCoOwnerAndOperator: buyerCoOwnersAndOperators.map(
         (coOwnerOrOperator) => {
           return {
@@ -48,7 +55,7 @@ export const getApproveAnswers = (
           }
         },
       ),
-    }
+    })
   }
 
   // If reviewer is sellers coowner
@@ -60,8 +67,8 @@ export const getApproveAnswers = (
   const sellerCoOwner = sellerCoOwners.find(
     (coOwner) => coOwner.nationalId === reviewerNationalId,
   )
-  if (sellerCoOwner) {
-    return {
+  if (sellerCoOwner && sellerCoOwner.approved === undefined) {
+    Object.assign(returnAnswers, {
       sellerCoOwner: sellerCoOwners.map((coOwner) => {
         return {
           nationalId: coOwner.nationalId,
@@ -75,8 +82,8 @@ export const getApproveAnswers = (
               : coOwner.approved || false,
         }
       }),
-    }
+    })
   }
 
-  return {}
+  return returnAnswers
 }

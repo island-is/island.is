@@ -1,3 +1,5 @@
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { useLocation, matchPath } from 'react-router-dom'
 import {
   useApolloClient,
   NormalizedCacheObject,
@@ -5,8 +7,6 @@ import {
 } from '@apollo/client'
 import { useAuth } from '@island.is/auth/react'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { matchPath, useLocation } from 'react-router-dom'
 import { LoadingScreen } from '../components/LoadingScreen/LoadingScreen'
 import { PortalModule, PortalRoute, PortalType } from '../types/portalCore'
 import { arrangeRoutes, filterEnabledModules } from '../utils/modules'
@@ -56,14 +56,8 @@ export const PortalProvider = ({
             })
             // Extract the path from each route
             .map(({ path }) => path)
-            // Flatten the array of arrays, since route path can be string or array of strings
-            .flat()
             // Find the route path that matches the current pathname
-            .find((path) =>
-              matchPath(pathname, {
-                path,
-              }),
-            ),
+            .find((path) => matchPath(path, pathname)),
         )
       : undefined
   }, [userInfo, modules, apolloClient, pathname])
