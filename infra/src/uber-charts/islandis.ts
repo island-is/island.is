@@ -66,6 +66,9 @@ const adsBackend = adsBackendSetup()
 const adsApi = adsApiSetup({ adsBackend })
 const adsWeb = adsWebSetup({ adsApi })
 
+const sessionsService = sessionsServiceSetup()
+const sessionsWorker = sessionsWorkerSetup()
+
 const api = apiSetup({
   appSystemApi,
   servicePortalApi,
@@ -73,6 +76,7 @@ const api = apiSetup({
   icelandicNameRegistryBackend: nameRegistryBackend,
   servicesEndorsementApi: endorsement,
   airDiscountSchemeBackend: adsBackend,
+  sessionsApi: sessionsService,
 })
 const servicePortal = servicePortalSetup({ graphql: api })
 const appSystemForm = appSystemFormSetup({ api: api })
@@ -98,9 +102,6 @@ const userNotificationWorkerService = userNotificationWorkerSetup({
 const githubActionsCache = githubActionsCacheSetup()
 
 const externalContractsTests = externalContractsTestsSetup()
-
-const sessionsService = sessionsServiceSetup()
-const sessionsWorker = sessionsWorkerSetup()
 
 export const Services: EnvironmentServices = {
   prod: [
