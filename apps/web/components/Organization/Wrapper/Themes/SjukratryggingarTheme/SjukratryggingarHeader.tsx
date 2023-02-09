@@ -15,7 +15,7 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const SjukratryggingarHeader: React.FC<HeaderProps> = ({
+const SjukratryggingarHeader: React.FC<HeaderProps> = ({
   organizationPage,
 }) => {
   const { linkResolver } = useLinkResolver()
@@ -88,3 +88,5 @@ export const SjukratryggingarHeader: React.FC<HeaderProps> = ({
     </Box>
   )
 }
+
+export default SjukratryggingarHeader

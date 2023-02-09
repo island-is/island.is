@@ -1,21 +1,28 @@
 import { json, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
-const namespace = 'services_sessions'
-const serviceName = 'services_sessions'
-const workerName = 'services_sessions_read'
+const namespace = 'services-sessions'
 const imageName = 'services-sessions'
 const dbName = 'services_sessions'
 
-export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
-  return service(serviceName)
+const servicePostgresInfo = {
+  // The service has only read permissions
+  username: 'services_sessions_read',
+  name: dbName,
+  passwordSecret: '/k8s/services-sessions/readonly/DB_PASSWORD',
+}
+
+const workerPostgresInfo = {
+  // Worker has write permissions
+  username: 'services_sessions',
+  name: dbName,
+  passwordSecret: '/k8s/services-sessions/DB_PASSWORD',
+}
+
+export const serviceSetup = (): ServiceBuilder<'services-sessions'> => {
+  return service('services-sessions')
     .namespace(namespace)
     .image(imageName)
-    .postgres({
-      // The service has only read permissions
-      username: serviceName,
-      name: dbName,
-      passwordSecret: '/k8s/services-sessions/DB_PASSWORD',
-    })
+    .postgres(servicePostgresInfo)
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
@@ -66,19 +73,23 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
     .grantNamespaces('nginx-ingress-internal', 'identity-server')
 }
 
-export const workerSetup = (): ServiceBuilder<typeof workerName> =>
-  service(workerName)
+export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
+  service('services-sessions-worker')
     .image(imageName)
     .namespace(namespace)
     .serviceAccount('sessions-worker')
     .command('node')
     .args('main.js', '--job=worker')
-    .postgres({
-      // Worker has write permissions
-      username: workerName,
-      name: dbName,
-      passwordSecret: '/k8s/services-sessions/readonly/DB_PASSWORD',
+    .postgres(workerPostgresInfo)
+    .initContainer({
+      containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
+      postgres: workerPostgresInfo,
+      envs: {
+        NO_UPDATE_NOTIFIER: 'true',
+      },
     })
+    .liveness('/liveness')
+    .readiness('/liveness')
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
@@ -98,5 +109,3 @@ export const workerSetup = (): ServiceBuilder<typeof workerName> =>
       },
       REDIS_USE_SSL: 'true',
     })
-    .liveness('/liveness')
-    .readiness('/liveness')
