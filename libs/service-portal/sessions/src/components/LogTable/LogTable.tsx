@@ -19,9 +19,8 @@ import * as styles from '../LogTable/LogTable.css'
 
 interface LogTableProps {
   data: SessionsSession[]
-  loading: boolean
 }
-const LogTable: React.FC<LogTableProps> = ({ data, loading }) => {
+const LogTable: React.FC<LogTableProps> = ({ data }) => {
   const { userInfo } = useAuth()
   const { formatMessage } = useLocale()
 
@@ -35,113 +34,68 @@ const LogTable: React.FC<LogTableProps> = ({ data, loading }) => {
           <Table.HeadData>{formatMessage(m.person)}</Table.HeadData>
         </Table.Row>
       </Table.Head>
-      {!loading ? (
-        <Table.Body>
-          {data.map((session: SessionsSession, index: number) => {
-            const type = getSessionType(
-              session,
-              userInfo?.profile.nationalId ?? '',
-            )
+      <Table.Body>
+        {data.map((session: SessionsSession, index: number) => {
+          const type = getSessionType(
+            session,
+            userInfo?.profile.nationalId ?? '',
+          )
 
-            const formatedDate = new Date(+session.timestamp).toUTCString()
+          const formatedDate = new Date(+session.timestamp).toUTCString()
 
-            return (
-              <Table.Row key={index}>
-                <Table.Data>
-                  <div>
-                    {formatDate(formatedDate, dateFormat.is).toString()}
-                  </div>
-                  <Box
-                    alignItems="center"
-                    display="flex"
-                    columnGap={'smallGutter'}
-                  >
-                    <Icon
-                      icon="time"
-                      size="small"
-                      type="outline"
-                      color="blue400"
-                    />
-                    {getTime(new Date(formatedDate).toString())}
+          return (
+            <Table.Row key={index}>
+              <Table.Data>
+                <div>{formatDate(formatedDate, dateFormat.is).toString()}</div>
+                <Box
+                  alignItems="center"
+                  display="flex"
+                  columnGap={'smallGutter'}
+                >
+                  <Icon
+                    icon="time"
+                    size="small"
+                    type="outline"
+                    color="blue400"
+                  />
+                  {getTime(new Date(formatedDate).toString())}
+                </Box>
+              </Table.Data>
+              <Table.Data>
+                <div className={styles.textEllipsis}>{session.userAgent}</div>
+                <div>{session.ipLocation}</div>
+              </Table.Data>
+              <Table.Data>
+                <Text variant="eyebrow">{session.client.name || 'Óþekkt'}</Text>
+              </Table.Data>
+              <Table.Data>
+                <Box display="flex" alignItems="center" columnGap="gutter">
+                  <Person sessionType={type} />
+
+                  <Box style={{ minWidth: 'fit-content' }}>
+                    <Text variant="eyebrow">
+                      {type === SessionType.myBehalf ||
+                      type === SessionType.company
+                        ? session.actor.name
+                        : session.subject.name}
+                    </Text>
+                    <Text variant="small">
+                      {formatNationalId(
+                        type === SessionType.myBehalf ||
+                          type === SessionType.company
+                          ? session.actor.nationalId
+                          : session.subject.nationalId,
+                      )}
+                    </Text>
                   </Box>
-                </Table.Data>
-                <Table.Data>
-                  <div className={styles.textEllipsis}>{session.userAgent}</div>
-                  <div>{session.ipLocation}</div>
-                </Table.Data>
-                <Table.Data>
-                  <Text variant="eyebrow">
-                    {session.client.name || 'Landsspítalaappið'}
-                  </Text>
-                </Table.Data>
-                <Table.Data>
-                  <Box display="flex" alignItems="center" columnGap="gutter">
-                    <Person sessionType={type} />
-
-                    <Box style={{ minWidth: 'fit-content' }}>
-                      <Text variant="eyebrow">
-                        {type === SessionType.myBehalf
-                          ? session.actor.name
-                          : session.subject.name}
-                      </Text>
-                      <Text variant="small">
-                        {formatNationalId(
-                          type === SessionType.myBehalf
-                            ? session.actor.nationalId
-                            : session.subject.nationalId,
-                        )}
-                      </Text>
-                    </Box>
-                  </Box>
-                </Table.Data>
-              </Table.Row>
-            )
-          })}
-        </Table.Body>
-      ) : (
-        <Skeleton />
-      )}
+                </Box>
+              </Table.Data>
+            </Table.Row>
+          )
+        })}
+      </Table.Body>
     </Table.Table>
   )
 }
-
-const Skeleton = () => (
-  <Table.Body>
-    {new Array(10).fill('').map((_, index) => {
-      return (
-        <Table.Row key={index}>
-          <Table.Data>
-            <div>
-              <SkeletonLoader />
-            </div>
-            <Box alignItems="center" display="flex" columnGap={'smallGutter'}>
-              <SkeletonLoader width={'16px'} height={'16px'} />
-              <SkeletonLoader />
-            </Box>
-          </Table.Data>
-          <Table.Data>
-            <SkeletonLoader />
-            <SkeletonLoader />
-          </Table.Data>
-          <Table.Data>
-            <Text variant="eyebrow">
-              <SkeletonLoader width={126} />
-            </Text>
-          </Table.Data>
-          <Table.Data>
-            <Box display="flex" alignItems="center" columnGap="gutter">
-              <Box justifyContent={'flexStart'}>
-                <SkeletonLoader height={32} width={48} />
-              </Box>
-              <Box display="flex" flexDirection={'column'}>
-                <SkeletonLoader width={122} height={20} repeat={2} />
-              </Box>
-            </Box>
-          </Table.Data>
-        </Table.Row>
-      )
-    })}
-  </Table.Body>
-)
 
 export default LogTable

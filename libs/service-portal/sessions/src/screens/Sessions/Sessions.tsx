@@ -2,9 +2,7 @@ import {
   Box,
   BreadCrumbItem,
   Breadcrumbs,
-  Button,
   GridColumn,
-  FilterInput,
   Hidden,
   LoadingDots,
   Text,
@@ -20,22 +18,11 @@ import LogTable from '../../components/LogTable/LogTable'
 import LogTableMobile from '../../components/LogTable/LogTableMobile'
 
 import { m } from '../../lib/messages'
-import PersonIcon from '../../components/PersonIcon/PersonIcon'
-import {
-  GetSessionsListQuery,
-  useGetSessionsListQuery,
-} from './Sessions.generated'
-import { Exact, SessionsInput, SessionsSession } from '@island.is/api/schema'
-import { SessionType } from '../../lib/types/sessionTypes'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import { QueryHookOptions } from '@apollo/client'
+import { useGetSessionsListQuery } from './Sessions.generated'
+import { SessionsSession } from '@island.is/api/schema'
 import { SessionsPaths } from '../../lib/paths'
 import * as kennitala from 'kennitala'
-
-const enum PaginationNavigation {
-  NEXT = 'next',
-  PREV = 'prev',
-}
+import useOnScreen from '../../utils/useOnScreen'
 
 interface CursorState {
   before: string
@@ -43,20 +30,19 @@ interface CursorState {
 }
 
 const Sessions = () => {
-  const SESSION_LIMIT = 10
-  const QUERY_PARAM_NAME = 'cursor'
+  const SESSION_LIMIT = 5
+
   const { formatMessage } = useLocale()
+
+  const [sessionsData, setSessionsData] = useState<SessionsSession[]>([])
   const [searchNationalId, setSearchNationalId] = useState('')
   const [prevSearchNationalId, setPrevSearchNationalId] = useState('')
   const [sentNationalId, setSentNationalId] = useState('')
   const [page, setPage] = useState<CursorState>({ before: '', after: '' })
+  const [isSearchingSSN, setIsSearchingSSN] = useState(false)
 
-  const getOptions = (): QueryHookOptions<
-    GetSessionsListQuery,
-    Exact<{ input: SessionsInput }>
-  > => {
-    return {}
-  }
+  const ref = useRef<HTMLDivElement>(null)
+  const isVisible = useOnScreen(ref)
 
   const { data, loading, error } = useGetSessionsListQuery({
     fetchPolicy: 'network-only',
@@ -70,19 +56,40 @@ const Sessions = () => {
         fromDate: '',
       },
     },
+    onCompleted: (data) => {
+      setSessionsData([
+        ...(sessionsData as SessionsSession[]),
+        ...(data.sessionsList.data as SessionsSession[]),
+      ])
+      setIsSearchingSSN(false)
+    },
     onError: () => {
       toast.error(formatMessage(m.error))
     },
   })
 
   React.useEffect(() => {
+    if (!data || loading) return
+    if (isVisible) {
+      handlePageChange()
+    }
+  }, [isVisible])
+
+  // If the search value changes, to a valid National ID, refetch the data with the National ID
+  // Or if the search value changes from valid to invalid, refetch the data with empty National ID
+  React.useEffect(() => {
     if (kennitala.isValid(searchNationalId)) {
       setSentNationalId(searchNationalId)
+      setIsSearchingSSN(true)
+      setSessionsData([])
     } else if (
       kennitala.isValid(prevSearchNationalId) &&
       !kennitala.isValid(searchNationalId)
     ) {
       setSentNationalId('')
+      setIsSearchingSSN(true)
+      setSessionsData([])
+      setPage({ before: '', after: '' })
     }
   }, [searchNationalId])
 
@@ -93,34 +100,14 @@ const Sessions = () => {
     setSearchNationalId(e.target.value)
   }
 
-  const handlePageChange = (action: PaginationNavigation): void => {
-    // If there is no data or if there is no previous page and we are trying to go back or if there is no next page and we are trying to go forward, return
-    if (
-      !data ||
-      (!data.sessionsList.pageInfo.hasPreviousPage && action === 'prev') ||
-      (!data.sessionsList.pageInfo.hasNextPage && action === 'next')
-    )
-      return
-    let temp = ''
-    // If we are going forward, set the cursor to the end of the current page, otherwise set it to the start of the current page
-    if (action === 'next') {
-      temp = data.sessionsList.pageInfo.endCursor ?? ''
-      setPage({
-        after: data?.sessionsList.pageInfo.endCursor ?? '',
-        before: '',
-      })
-    }
-    // If we are going back, set the cursor to the start of the current page, otherwise set it to the end of the current page
-    if (action === 'prev') {
-      temp = data.sessionsList.pageInfo.startCursor ?? ''
-      setPage({
-        after: '',
-        before: data?.sessionsList.pageInfo.startCursor ?? '',
-      })
-    }
+  const handlePageChange = (): void => {
+    if (!data) return
+    if (!data.sessionsList.pageInfo.hasNextPage) return
 
-    const path = `${SessionsPaths.LoginHistory}?${QUERY_PARAM_NAME}=${temp}`
-    window.history.pushState({ path: path }, '', path)
+    setPage({
+      after: data?.sessionsList.pageInfo.endCursor ?? '',
+      before: '',
+    })
   }
 
   return (
@@ -165,45 +152,14 @@ const Sessions = () => {
             onChange={handleChange}
           />
         </GridColumn>
-        {/*<Hidden below={'lg'}>*/}
-        <Box
-          marginLeft={'gutter'}
-          columnGap="gutter"
-          display="flex"
-          alignItems="center"
-        >
-          <Button
-            disabled={!data?.sessionsList.pageInfo.hasPreviousPage || loading}
-            circle
-            size="default"
-            colorScheme="light"
-            icon={'arrowBack'}
-            onClick={() => handlePageChange(PaginationNavigation.PREV)}
-          />
-          <Button
-            disabled={!data?.sessionsList.pageInfo.hasNextPage || loading}
-            circle
-            size="default"
-            colorScheme="light"
-            icon={'arrowForward'}
-            onClick={() => handlePageChange(PaginationNavigation.NEXT)}
-          />
-        </Box>
-        {/*</Hidden>*/}
       </Box>
       {data ? (
         <Fragment>
           <Hidden below={'lg'}>
-            <LogTable
-              loading={loading}
-              data={data.sessionsList.data as SessionsSession[]}
-            />
+            <LogTable data={sessionsData} />
           </Hidden>
           <Hidden above={'md'}>
-            <LogTableMobile
-              loading={loading}
-              sessions={data.sessionsList.data as SessionsSession[]}
-            />
+            <LogTableMobile sessions={sessionsData} />
           </Hidden>
         </Fragment>
       ) : error ? (
@@ -214,6 +170,14 @@ const Sessions = () => {
         <SkeletonLoader height={40} repeat={6} width={'100%'} />
       )}
       <ToastContainer />
+      <Box
+        marginTop={'gutter'}
+        display={'flex'}
+        justifyContent={'center'}
+        ref={ref}
+      >
+        {((loading && data) || isSearchingSSN) && <LoadingDots large />}
+      </Box>
     </>
   )
 }

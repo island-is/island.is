@@ -1,11 +1,5 @@
 import React, { FC } from 'react'
-import {
-  Box,
-  Divider,
-  Icon,
-  SkeletonLoader,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Divider, Icon, Text } from '@island.is/island-ui/core'
 import Person from '../PersonIcon/PersonIcon'
 import * as styles from '../LogTable/LogTable.css'
 import { SessionsSession } from '@island.is/api/schema'
@@ -17,7 +11,6 @@ import { dateFormat } from '@island.is/shared/constants'
 
 interface LogTableProps {
   sessions: SessionsSession[]
-  loading: boolean
 }
 
 const ExpandedDivider = () => (
@@ -26,15 +19,14 @@ const ExpandedDivider = () => (
   </div>
 )
 
-const LogTableMobile: FC<LogTableProps> = ({ sessions, loading }) => {
+const LogTableMobile: FC<LogTableProps> = ({ sessions }) => {
   const { userInfo } = useAuth()
-  return loading ? (
-    <Skeleton />
-  ) : (
+  return (
     <>
       {sessions.map((session: SessionsSession, index: number) => {
         const type = getSessionType(session, userInfo?.profile.nationalId ?? '')
-        const formatedDate = new Date(+session.timestamp).toUTCString()
+        const formattedDate = new Date(+session.timestamp).toUTCString()
+
         return (
           <div style={{ width: '100%' }} key={index}>
             <ExpandedDivider />
@@ -50,11 +42,11 @@ const LogTableMobile: FC<LogTableProps> = ({ sessions, loading }) => {
                 alignItems="center"
               >
                 <Text as="h5" variant="h5">
-                  {session.client.name || 'Landspítalaappið'}
+                  {session.client.name || 'Óþekkt'}
                 </Text>
                 <Box>
                   <Text variant="small">
-                    {formatDate(formatedDate, dateFormat.is)}
+                    {formatDate(formattedDate, dateFormat.is)}
                   </Text>
                   <Box
                     alignItems="center"
@@ -67,7 +59,7 @@ const LogTableMobile: FC<LogTableProps> = ({ sessions, loading }) => {
                       type="outline"
                       color="blue400"
                     />
-                    <Text variant="small">{getTime(formatedDate)}</Text>
+                    <Text variant="small">{getTime(formattedDate)}</Text>
                   </Box>
                 </Box>
               </Box>
@@ -77,8 +69,20 @@ const LogTableMobile: FC<LogTableProps> = ({ sessions, loading }) => {
                     <Person sessionType={type} />
                   </Box>
                   <Box>
-                    <Text variant="h5">{session.subject.name}</Text>
-                    <Text>{formatNationalId(session.subject.nationalId)}</Text>
+                    <Text variant="h5">
+                      {type === SessionType.myBehalf ||
+                      type === SessionType.company
+                        ? session.actor.name
+                        : session.subject.name}
+                    </Text>
+                    <Text>
+                      {formatNationalId(
+                        type === SessionType.myBehalf ||
+                          type === SessionType.company
+                          ? session.actor.nationalId
+                          : session.subject.nationalId,
+                      )}
+                    </Text>
                   </Box>
                 </Box>
               )}
@@ -90,50 +94,5 @@ const LogTableMobile: FC<LogTableProps> = ({ sessions, loading }) => {
     </>
   )
 }
-
-const Skeleton = () => (
-  <div style={{ width: '100%' }}>
-    {new Array(10).fill('').map((session: SessionsSession, index: number) => {
-      return (
-        <div style={{ width: '100%' }} key={index}>
-          <ExpandedDivider />
-          <Box
-            paddingY={3}
-            display={'flex'}
-            flexDirection={'column'}
-            rowGap={'gutter'}
-          >
-            <Box
-              display="flex"
-              justifyContent="spaceBetween"
-              alignItems="center"
-            >
-              <SkeletonLoader width={130} />
-              <Box>
-                <SkeletonLoader width={65} />
-
-                <Box
-                  alignItems="center"
-                  display="flex"
-                  columnGap={'smallGutter'}
-                >
-                  <SkeletonLoader width={65} />
-                </Box>
-              </Box>
-            </Box>
-            <Box display="flex" alignItems="center" columnGap="gutter">
-              <Box justifyContent="flexStart">
-                <SkeletonLoader width={48} height={32} />
-              </Box>
-              <Box display={'flex'} flexDirection={'column'}>
-                <SkeletonLoader width={130} repeat={2} />
-              </Box>
-            </Box>
-          </Box>
-        </div>
-      )
-    })}
-  </div>
-)
 
 export default LogTableMobile
