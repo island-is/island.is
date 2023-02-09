@@ -1,54 +1,79 @@
-import { FC, useCallback, useEffect, useMemo, useReducer, useRef } from 'react'
-import { Location, Routes, useLocation, Route } from 'react-router-dom'
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  ReactNode,
+  useState,
+} from 'react'
 import type { User } from 'oidc-client-ts'
-
-import OidcSignIn from './OidcSignIn'
-import OidcSilentSignIn from './OidcSilentSignIn'
 import { getAuthSettings, getUserManager } from '../userManager'
-import { ActionType, initialState, reducer } from './Authenticator.state'
-import { AuthContext } from './AuthContext'
-import { CheckAuth } from './CheckAuth'
+import { ActionType, initialState, reducer } from './Auth.state'
 import { AuthSettings } from '../AuthSettings'
+import { AuthContext } from './AuthContext'
+import { AuthErrorScreen } from './AuthErrorScreen'
+import { CheckIdpSession } from './CheckIdpSession'
+import { isDefined } from '@island.is/shared/utils'
+import { LoadingScreen } from '@island.is/react/components'
 
-interface Props {
+interface AuthProviderProps {
   /**
    * If true, Authenticator automatically starts login flow and does not render children until user is fully logged in.
    * If false, children are responsible for rendering a login button and loading indicator.
    * Default: true
    */
   autoLogin?: boolean
+  /**
+   * The base path of the application.
+   */
+  basePath: string
+  children: ReactNode
 }
 
-const getReturnUrl = (location: Location, { redirectPath }: AuthSettings) => {
-  const returnUrl = location.pathname + location.search
+type GetReturnUrl = {
+  basePath: string
+  returnUrl: string
+} & Pick<AuthSettings, 'redirectPath'>
 
+const getReturnUrl = ({ redirectPath, basePath, returnUrl }: GetReturnUrl) => {
   if (redirectPath && returnUrl.startsWith(redirectPath)) {
-    return '/'
+    return basePath
   }
 
   return returnUrl
 }
 
-export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
-  const reducerInstance = useReducer(reducer, initialState)
-  const [state, dispatch] = reducerInstance
+const getCurrentUrl = () =>
+  `${window.location.pathname}${window.location.search}`
+
+export const AuthProvider = ({
+  children,
+  autoLogin = true,
+  basePath,
+}: AuthProviderProps) => {
+  const [state, dispatch] = useReducer(reducer, initialState)
+  const [hasError, setHasError] = useState(false)
   const userManager = getUserManager()
   const authSettings = getAuthSettings()
-  const location = useLocation()
-  const locationRef = useRef(location)
-  locationRef.current = location
+  const monitorUserSession = !authSettings.scope?.includes('offline_access')
+  const url = getCurrentUrl()
 
   const signIn = useCallback(
     async function signIn() {
       dispatch({
         type: ActionType.SIGNIN_START,
       })
+
       return userManager.signinRedirect({
-        state: getReturnUrl(locationRef.current, authSettings),
+        state: getReturnUrl({
+          returnUrl: url,
+          basePath,
+          redirectPath: authSettings.redirectPath,
+        }),
       })
       // Nothing more happens here since browser will redirect to IDS.
     },
-    [dispatch, userManager, authSettings, locationRef],
+    [dispatch, userManager, authSettings, url],
   )
 
   const signInSilent = useCallback(
@@ -61,7 +86,7 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
         user = await userManager.signinSilent()
         dispatch({ type: ActionType.SIGNIN_SUCCESS, payload: user })
       } catch (error) {
-        console.error('Authenticator: Silent signin failed', error)
+        console.error('AuthProvider: Silent signin failed', error)
         dispatch({ type: ActionType.SIGNIN_FAILURE })
       }
 
@@ -71,10 +96,7 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
   )
 
   const switchUser = useCallback(
-    async function switchUser(nationalId?: string, newLocation?: Location) {
-      if (newLocation) {
-        locationRef.current = newLocation
-      }
+    async function switchUser(nationalId?: string) {
       const args =
         nationalId !== undefined
           ? {
@@ -94,15 +116,20 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
       dispatch({
         type: ActionType.SWITCH_USER,
       })
+
       return userManager.signinRedirect({
         state:
           authSettings.switchUserRedirectUrl ??
-          getReturnUrl(locationRef.current, authSettings),
+          getReturnUrl({
+            returnUrl: getCurrentUrl(),
+            basePath,
+            redirectPath: authSettings.redirectPath,
+          }),
         ...args,
       })
       // Nothing more happens here since browser will redirect to IDS.
     },
-    [userManager, dispatch, authSettings, locationRef],
+    [userManager, dispatch, authSettings, url],
   )
 
   const signOut = useCallback(
@@ -120,7 +147,6 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
       dispatch({
         type: ActionType.SIGNIN_START,
       })
-
       const storedUser = await userManager.getUser()
 
       // Check expiry.
@@ -131,7 +157,7 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
         })
       } else if (autoLogin) {
         // If we find a user in SessionStorage, there's a fine chance that
-        // it's just an expired token and we can silently log in.
+        // it's just an expired token, and we can silently log in.
         if (storedUser && (await signInSilent())) {
           return
         }
@@ -167,6 +193,7 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
         type: ActionType.LOGGED_OUT,
       })
       await userManager.removeUser()
+
       if (autoLogin) {
         signIn()
       }
@@ -180,6 +207,47 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
     }
   }, [dispatch, userManager, signIn, autoLogin, state.userInfo === null])
 
+  const isCurrentRoute = (path?: string) =>
+    isDefined(path) && url.includes(basePath + path)
+
+  const init = async () => {
+    if (isCurrentRoute(authSettings?.redirectPath)) {
+      try {
+        const user = await userManager.signinRedirectCallback(
+          window.location.href,
+        )
+
+        const url = typeof user.state === 'string' ? user.state : '/'
+        window.history.replaceState(null, '', url)
+
+        dispatch({
+          type: ActionType.SIGNIN_SUCCESS,
+          payload: user,
+        })
+      } catch (error) {
+        if (error.error === 'login_required') {
+          // If trying to switch delegations and the IDS session is expired, we'll
+          // see this error. So we'll try a proper signin.
+          return userManager.signinRedirect({ state: error.state })
+        }
+        console.error('Error in oidc callback', error)
+        setHasError(true)
+      }
+    } else if (isCurrentRoute(authSettings?.redirectPathSilent)) {
+      const userManager = getUserManager()
+      userManager.signinSilentCallback().catch((error) => {
+        // TODO: Handle error
+        console.log(error)
+      })
+    } else {
+      checkLogin()
+    }
+  }
+
+  useEffect(() => {
+    init()
+  }, [])
+
   const context = useMemo(
     () => ({
       ...state,
@@ -191,26 +259,25 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
     [state, signIn, signInSilent, switchUser, signOut],
   )
 
+  const isLoading =
+    !state.userInfo ||
+    // We need to display loading screen if current route is the redirectPath or redirectPathSilent.
+    // This is because these paths are not part of our React Router routes.
+    isCurrentRoute(authSettings?.redirectPath) ||
+    isCurrentRoute(authSettings?.redirectPathSilent)
+
   return (
     <AuthContext.Provider value={context}>
-      <Routes>
-        <Route
-          path={authSettings.redirectPath as string}
-          element={<OidcSignIn authDispatch={dispatch} />}
-        />
-        <Route
-          path={authSettings.redirectPathSilent as string}
-          element={<OidcSilentSignIn />}
-        />
-        <Route
-          path="*"
-          element={
-            <CheckAuth checkLogin={checkLogin} autoLogin={autoLogin}>
-              {children}
-            </CheckAuth>
-          }
-        />
-      </Routes>
+      {hasError ? (
+        <AuthErrorScreen basePath={basePath} />
+      ) : isLoading ? (
+        <LoadingScreen ariaLabel="Er að vinna í innskráningu" />
+      ) : (
+        <>
+          {monitorUserSession && <CheckIdpSession />}
+          {children}
+        </>
+      )}
     </AuthContext.Provider>
   )
 }

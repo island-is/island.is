@@ -1,12 +1,19 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
 import { Box, Stack, Text, Button } from '@island.is/island-ui/core'
-import * as styles from './Authenticator.css'
+import * as styles from './Auth.css'
+
+type AuthenticatorErrorScreenProps = {
+  basePath: string
+}
 
 // This screen is unfortunately not translated because at this point we don't
 // have a user locale, nor an access token to fetch translations.
-const AuthenticatorErrorScreen = () => {
-  const navigate = useNavigate()
+export const AuthErrorScreen = ({
+  basePath,
+}: AuthenticatorErrorScreenProps) => {
+  const onTryAgainHandler = () => {
+    window.location.href = `/${basePath}`
+  }
 
   return (
     <Box
@@ -20,12 +27,10 @@ const AuthenticatorErrorScreen = () => {
           Óvænt villa
         </Text>
         <Text variant="intro">Innskráning mistókst.</Text>
-        <Button variant="primary" onClick={() => navigate('/')}>
+        <Button variant="primary" onClick={onTryAgainHandler}>
           Reyna aftur
         </Button>
       </Stack>
     </Box>
   )
 }
-
-export default AuthenticatorErrorScreen

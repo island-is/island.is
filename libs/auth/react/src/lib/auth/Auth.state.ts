@@ -1,4 +1,3 @@
-import { Dispatch } from 'react'
 import { User } from '@island.is/shared/types'
 import { getBirthday } from '../utils/getBirthday'
 
@@ -26,7 +25,7 @@ export enum ActionType {
   SWITCH_USER = 'SWITCH_USER',
 }
 
-interface Action {
+export interface Action {
   type: ActionType
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload?: any
@@ -37,8 +36,6 @@ export const initialState: AuthReducerState = {
   authState: 'logged-out',
   isAuthenticated: false,
 }
-
-export type AuthDispatch = Dispatch<Action>
 
 // Add dateOfBirth Date object to user profile
 const formatUser = (payload: User): User | null => {

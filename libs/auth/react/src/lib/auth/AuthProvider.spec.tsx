@@ -1,34 +1,28 @@
-import { FC } from 'react'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import { UserManagerEvents } from 'oidc-client-ts'
-import { MemoryRouter } from 'react-router-dom'
 
 import { getAuthSettings, getUserManager } from '../userManager'
 import { useAuth } from './AuthContext'
-import { Authenticator } from './Authenticator'
+import { AuthProvider } from './AuthProvider'
+
+const BASE_PATH = '/basepath'
 
 jest.mock('../userManager')
 const mockedGetUserManager = getUserManager as jest.Mock
 const mockedGetAuthSettings = getAuthSettings as jest.Mock
 
-const RootRoute: FC = ({ children }) => <MemoryRouter>{children}</MemoryRouter>
-const CallbackRoute: FC = ({ children }) => (
-  <MemoryRouter initialEntries={[mockedGetAuthSettings().redirectPath]}>
-    {children}
-  </MemoryRouter>
-)
 const Greeting = () => {
   const { userInfo } = useAuth()
   return <>Hello {userInfo?.profile.name}</>
 }
-const renderAuthenticator = ({ wrapper = RootRoute } = {}) =>
+
+const renderAuthenticator = () =>
   render(
-    <Authenticator>
+    <AuthProvider basePath={BASE_PATH}>
       <h2>
         <Greeting />
       </h2>
-    </Authenticator>,
-    { wrapper },
+    </AuthProvider>,
   )
 
 type MinimalUser = {
@@ -39,7 +33,7 @@ type MinimalUser = {
 }
 type MinimalUserManager = {
   events: {
-    addUserLoaded: (cb: UserManagerEvents.UserLoadedCallback) => void
+    addUserLoaded: (cb: UserManagerEvents) => void
     addUserSignedOut: jest.Mock
     removeUserLoaded: () => void
     removeUserSignedOut: () => void
@@ -51,7 +45,7 @@ type MinimalUserManager = {
   removeUser: jest.Mock
 }
 
-describe('Authenticator', () => {
+describe('AuthProvider', () => {
   let userManager: MinimalUserManager
 
   const expectSignin = () =>
@@ -177,12 +171,25 @@ describe('Authenticator', () => {
 
   it('shows error screen if signin has an error', async () => {
     // Arrange
+    const location = new URL(
+      `https://www.island.is${BASE_PATH}${
+        mockedGetAuthSettings().redirectPath
+      }`,
+    )
+
+    // Overwrite the default href for this test
+    Reflect.deleteProperty(global.window, 'location')
+    Object.defineProperty(window, 'location', {
+      value: location,
+      writable: true,
+    })
+
     userManager.signinRedirectCallback.mockRejectedValue(
       new Error('Test error'),
     )
 
     // Act
-    const { findByText } = renderAuthenticator({ wrapper: CallbackRoute })
+    const { findByText } = renderAuthenticator()
 
     // Assert
     await findByText('Innskráning mistókst.')
