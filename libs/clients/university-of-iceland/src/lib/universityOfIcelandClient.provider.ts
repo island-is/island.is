@@ -29,7 +29,7 @@ export const UniversityOfIcelandApiProvider: Provider<DefaultApi> = {
                 issuer: idsClientConfig.issuer,
                 clientId: idsClientConfig.clientId,
                 clientSecret: idsClientConfig.clientSecret,
-                scope: [],
+                scope: config.fetch.scope,
               }
             : undefined,
         }),

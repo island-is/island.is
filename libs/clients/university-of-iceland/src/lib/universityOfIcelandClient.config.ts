@@ -5,6 +5,7 @@ const schema = z.object({
   xRoadServicePath: z.string(),
   fetch: z.object({
     timeout: z.number().int(),
+    scope: z.array(z.string()),
   }),
 })
 
@@ -22,6 +23,7 @@ export const UniversityOfIcelandClientConfig = defineConfig<
       ),
       fetch: {
         timeout: 30000,
+        scope: [],
       },
     }
   },
