@@ -83,7 +83,7 @@ export class IndexingService {
 
     // wait for all importers to finish
     await Promise.all(importPromises).catch((error) => {
-      logger.debug('Importer faliure error', error)
+      logger.debug('Importer failure error', error)
       logger.error('Importer failed', {
         message: error.message,
         index: elasticIndex,

@@ -174,7 +174,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     // gets all data that needs importing
     const {
       items,
-      deletedItems,
+      deletedEntryIds,
       token,
       elasticIndex,
     } = await this.contentfulService.getSyncEntries(cmsSyncOptions)
@@ -190,7 +190,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
 
     return {
       add: flatten(importableData),
-      remove: deletedItems,
+      remove: deletedEntryIds,
       postSyncOptions: {
         folderHash,
         elasticIndex,
