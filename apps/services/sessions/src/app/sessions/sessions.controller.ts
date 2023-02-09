@@ -49,16 +49,6 @@ export class SessionsController {
     response: { status: 200, type: SessionsResultDto },
     request: {
       query: {
-        from: {
-          description: 'Only return sessions from this date.',
-          required: false,
-          type: 'date',
-        },
-        to: {
-          description: 'Only return sessions to this date.',
-          required: false,
-          type: 'date',
-        },
         limit: {
           description: 'Limits the number of results in a request.',
           required: false,
@@ -75,14 +65,6 @@ export class SessionsController {
             'The value of `endCursor` from the response to query the next page of `limit` number of data items.',
           required: false,
           type: 'string',
-        },
-        order: {
-          description: 'Ordering of the results by timestamp.',
-          required: false,
-          schema: {
-            enum: ['ASC', 'DESC'],
-            default: 'DESC',
-          },
         },
       },
       header: {

@@ -6,12 +6,20 @@ import { Order, PaginationDto } from '@island.is/nest/pagination'
 export class SessionsQueryDto extends PaginationDto {
   @IsOptional()
   @IsDateString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    description: 'Only return sessions from this date.',
+
+    type: 'date',
+  })
   from?: Date
 
   @IsOptional()
   @IsDateString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    description: 'Only return sessions to this date.',
+
+    type: 'date',
+  })
   to?: Date
 
   @IsOptional()
