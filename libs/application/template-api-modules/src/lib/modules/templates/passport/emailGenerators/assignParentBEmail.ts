@@ -93,6 +93,13 @@ export const generateAssignParentBApplicationEmail: EmailTemplateGenerator = (
         {
           component: 'Copy',
           context: {
+            copy: `Þú hefur viku til að bregðast við umsókninni.`,
+            small: true,
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
             copy: `Athugið! Ef hnappur virkar ekki, getur þú afritað hlekkinn hér að neðan og límt hann inn í vafrann þinn.`,
             small: true,
           },

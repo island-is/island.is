@@ -2,7 +2,7 @@ import { Box, Tag, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { review } from '../../../lib/messages'
-import { ReviewScreenProps, ReviewSectionProps } from '../../../types'
+import { ReviewScreenProps, ReviewSectionProps } from '../../../shared'
 
 export const StatusStep: FC<ReviewSectionProps & ReviewScreenProps> = ({
   title,

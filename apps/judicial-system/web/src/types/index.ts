@@ -1,9 +1,16 @@
 import {
+  CaseType,
   Institution,
   User,
   UserRole,
+  IndictmentCount,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { Case, UpdateCase } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseListEntry,
+  CreateCase,
+  UpdateCase,
+} from '@island.is/judicial-system/types'
 
 export enum AppealDecisionRole {
   PROSECUTOR = 'PROSECUTOR',
@@ -41,6 +48,7 @@ export enum IndictmentsProsecutorSubsections {
   POLICE_CASE_FILES = 1,
   CASE_FILE = 2,
   PROCESSING = 3,
+  INDICTMENT = 4,
   CASE_FILES = 4,
   OVERVIEW = 5,
 }
@@ -241,23 +249,45 @@ export interface Lawyer {
 export interface TempCase
   extends Omit<
     Case,
-    'sharedWithProsecutorsOffice' | 'court' | 'courtDocuments' | 'parentCase'
+    | 'sharedWithProsecutorsOffice'
+    | 'court'
+    | 'courtDocuments'
+    | 'parentCase'
+    | 'childCase'
+    | 'type'
+    | 'indictmentCounts'
   > {
   sharedWithProsecutorsOffice?: Institution
   court?: Institution
   courtDocuments?: CourtDocument[]
   parentCase?: TempCase
+  childCase?: TempCase
+  type: CaseType
+  indictmentCounts?: IndictmentCount[]
 }
 
 export interface TempUpdateCase
   extends Omit<
     UpdateCase,
-    'sharedWithProsecutorsOffice' | 'court' | 'courtDocuments' | 'parentCase'
+    | 'sharedWithProsecutorsOffice'
+    | 'court'
+    | 'courtDocuments'
+    | 'parentCase'
+    | 'type'
   > {
   sharedWithProsecutorsOffice?: Institution
   court?: Institution
   courtDocuments?: CourtDocument[]
   parentCase?: TempCase
+  type?: CaseType
+}
+
+export interface TempCreateCase extends Omit<CreateCase, 'type'> {
+  type: CaseType
+}
+
+export interface TempCaseListEntry extends Omit<CaseListEntry, 'type'> {
+  type: CaseType
 }
 
 export interface CourtDocument {

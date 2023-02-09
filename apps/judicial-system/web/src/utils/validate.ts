@@ -1,6 +1,9 @@
 // TODO: Add tests
-import { CaseType, isIndictmentCase } from '@island.is/judicial-system/types'
-import { User } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isIndictmentCase } from '@island.is/judicial-system/types'
+import {
+  User,
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { isBusiness } from './stepHelper'
 import { TempCase as Case } from '../types'
@@ -16,6 +19,7 @@ export type Validation =
   | 'date-format'
   | 'R-case-number'
   | 'S-case-number'
+  | 'vehicle-registration-number'
 
 type ValidateItem = 'valid' | [string | undefined, Validation[]]
 type IsValid = { isValid: boolean; errorMessage: string }
@@ -76,6 +80,12 @@ const getRegexByValidation = (validation: Validation) => {
       return {
         regex: new RegExp(/^S-[0-9]{1,5}\/[0-9]{4}$/),
         errorMessage: `Dæmi: S-1234/${new Date().getFullYear()}`,
+      }
+    }
+    case 'vehicle-registration-number': {
+      return {
+        regex: new RegExp(/^[A-Z]{2}-[A-Z]{1}[0-9]{2}|[0-9]{3}$/),
+        errorMessage: 'Dæmi: AB-123',
       }
     }
   }
@@ -151,7 +161,7 @@ export const isDefendantStepValidRC = (
       ),
       [workingCase.defenderEmail, ['email-format']],
       [workingCase.defenderPhoneNumber, ['phonenumber']],
-      workingCase.type === CaseType.TRAVEL_BAN
+      workingCase.type === CaseType.TravelBan
         ? 'valid'
         : [workingCase.leadInvestigator, ['empty']],
     ]).isValid
@@ -206,7 +216,7 @@ export const isHearingArrangementsStepValidRC = (
       workingCase.court &&
       validate([
         [workingCase.requestedCourtDate, ['empty', 'date-format']],
-        workingCase.type !== CaseType.TRAVEL_BAN && !workingCase.parentCase
+        workingCase.type !== CaseType.TravelBan && !workingCase.parentCase
           ? [workingCase.arrestDate, ['empty', 'date-format']]
           : 'valid',
       ]).isValid) ||
@@ -230,6 +240,12 @@ export const isProcessingStepValidIndictments = (
   workingCase: Case,
 ): boolean => {
   return workingCase.prosecutor && workingCase.court ? true : false
+}
+
+export const isTrafficViolationStepValidIndictments = (
+  workingCase: Case,
+): boolean => {
+  return workingCase.demands ? true : false
 }
 
 export const isPoliceDemandsStepValidRC = (workingCase: Case): boolean => {

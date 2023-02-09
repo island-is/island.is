@@ -40,6 +40,11 @@ import { serviceSetup as adsBackendSetup } from '../../../apps/air-discount-sche
 
 import { serviceSetup as externalContractsTestsSetup } from '../../../apps/external-contracts-tests/infra/external-contracts-tests'
 
+import {
+  serviceSetup as sessionsServiceSetup,
+  workerSetup as sessionsWorkerSetup,
+} from '../../../apps/services/sessions/infra/sessions'
+
 import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
 
@@ -61,6 +66,9 @@ const adsBackend = adsBackendSetup()
 const adsApi = adsApiSetup({ adsBackend })
 const adsWeb = adsWebSetup({ adsApi })
 
+const sessionsService = sessionsServiceSetup()
+const sessionsWorker = sessionsWorkerSetup()
+
 const api = apiSetup({
   appSystemApi,
   servicePortalApi,
@@ -68,6 +76,7 @@ const api = apiSetup({
   icelandicNameRegistryBackend: nameRegistryBackend,
   servicesEndorsementApi: endorsement,
   airDiscountSchemeBackend: adsBackend,
+  sessionsApi: sessionsService,
 })
 const servicePortal = servicePortalSetup({ graphql: api })
 const appSystemForm = appSystemFormSetup({ api: api })
@@ -119,6 +128,8 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
+    sessionsService,
+    sessionsWorker,
   ],
   staging: [
     appSystemApi,
@@ -144,6 +155,8 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
+    sessionsService,
+    sessionsWorker,
   ],
   dev: [
     appSystemApi,
@@ -173,6 +186,8 @@ export const Services: EnvironmentServices = {
     externalContractsTests,
     appSystemApiWorker,
     contentfulEntryTagger,
+    sessionsService,
+    sessionsWorker,
   ],
 }
 
