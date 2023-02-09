@@ -1,9 +1,5 @@
 import { defineMessages } from 'react-intl'
 
-const bulletOne =
-  'Veiðileyfi tekur gildi næsta virka dag eftir að það hefur verið greitt, óhað greiðslukorti / kröfu.'
-const bulletTwo = 'Hægt er að nálgast leyfið í rafrænum skjölum á island.is'
-
 export const conclusion = {
   general: defineMessages({
     title: {
@@ -25,7 +21,7 @@ export const conclusion = {
     },
     bulletList: {
       id: 'gfl.application:conclusion.information.bulletList#markdown',
-      defaultMessage: `* ${bulletOne}\n* ${bulletTwo}`,
+      defaultMessage: `* Veiðileyfi tekur gildi næsta virka dag eftir að það hefur verið greitt, óhað greiðslukorti / kröfu.\n* Hægt er að nálgast leyfið í rafrænum skjölum á island.is`,
       description: 'BulletList for conclusion information box',
     },
   }),
