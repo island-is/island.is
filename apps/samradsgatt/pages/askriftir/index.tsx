@@ -68,7 +68,7 @@ const Subscriptions = () => {
       disabled: false,
     },
   ]
-
+  
   return (
     <Layout>
       <GridContainer>
@@ -99,7 +99,7 @@ const Subscriptions = () => {
             {'Kerfið er uppfært einu sinni á sólarhring.'}
           </Text>
         </Box>
-
+        
         <Box paddingX={paddingXTable}>
           <Tabs
             selected={currentTab}
