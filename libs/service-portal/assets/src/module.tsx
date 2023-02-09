@@ -4,6 +4,13 @@ import { m } from '@island.is/service-portal/core'
 import { PortalModule, PortalRoute } from '@island.is/portals/core'
 import { AssetsPaths } from './lib/paths'
 
+const AssetsOverview = lazy(() =>
+  import('./screens/AssetsOverview/AssetsOverview'),
+)
+const RealEstateAssetDetail = lazy(() =>
+  import('./screens/RealEstateAssetDetail/RealEstateAssetDetail'),
+)
+
 export const assetsModule: PortalModule = {
   name: 'Fasteignir',
   routes: ({ userInfo }) => {
@@ -12,17 +19,13 @@ export const assetsModule: PortalModule = {
         name: m.realEstate,
         path: AssetsPaths.AssetsRoot,
         enabled: userInfo.scopes.includes(ApiScope.assets),
-        render: () =>
-          lazy(() => import('./screens/AssetsOverview/AssetsOverview')),
+        element: <AssetsOverview />,
       },
       {
         name: m.detailInfo,
         path: AssetsPaths.AssetsRealEstateDetail,
         enabled: userInfo.scopes.includes(ApiScope.assets),
-        render: () =>
-          lazy(() =>
-            import('./screens/RealEstateAssetDetail/RealEstateAssetDetail'),
-          ),
+        element: <RealEstateAssetDetail />,
       },
     ]
 

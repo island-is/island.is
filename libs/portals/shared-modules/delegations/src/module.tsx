@@ -39,7 +39,7 @@ export const delegationsModule: PortalModule = {
       {
         name: m.accessControlGrant,
         path: DelegationPaths.DelegationsGrant,
-        element: <GrantAccess userInfo={userInfo} />,
+        element: <GrantAccess />,
       },
       {
         name: m.accessControlAccess,

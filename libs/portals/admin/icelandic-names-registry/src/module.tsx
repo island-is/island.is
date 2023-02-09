@@ -1,8 +1,10 @@
+import { lazy } from 'react'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { PortalModule } from '@island.is/portals/core'
-import { lazy } from 'react'
 import { m } from './lib/messages'
 import { IcelandicNamesRegistryPaths } from './lib/paths'
+
+const NamesEditor = lazy(() => import('./screens/NamesEditor/NamesEditor'))
 
 export const icelandicNamesRegistryModule: PortalModule = {
   name: m.rootName,
@@ -12,7 +14,7 @@ export const icelandicNamesRegistryModule: PortalModule = {
     {
       name: m.rootName,
       path: IcelandicNamesRegistryPaths.IcelandicNamesRegistryRoot,
-      render: () => lazy(() => import('./screens/NamesEditor/NamesEditor')),
+      element: <NamesEditor />,
     },
   ],
 }

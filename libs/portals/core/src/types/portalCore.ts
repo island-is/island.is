@@ -77,13 +77,6 @@ export type PortalModuleComponent<Props = Record<string, unknown>> = FC<
 >
 
 /**
- * The render value of a  portal route
- */
-export type PortalModuleRenderValue<
-  Props = Record<string, unknown>
-> = LazyExoticComponent<PortalModuleComponent<Props>>
-
-/**
  * A route defined by a portal module. Note that we are extending the React router RouteObject
  */
 export type PortalRoute = Omit<RouteObject, 'children'> & {
@@ -116,12 +109,6 @@ export type PortalRoute = Omit<RouteObject, 'children'> & {
    * In which case your route key would be `VehicleHistory`.
    */
   key?: string
-
-  /**
-   * The render value of this component
-   * TODO - Remove render for RR element property
-   */
-  render?(props: PortalModuleProps): PortalModuleRenderValue
 
   /**
    * Child routes of this route

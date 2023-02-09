@@ -20,7 +20,6 @@ import {
   ErrorScreen,
   IntroHeader,
   m,
-  ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
 
 import { messages } from '../../lib/messages'
@@ -98,7 +97,7 @@ const getFilteredVehicles = (
   return filteredVehicles
 }
 
-export const VehiclesHistory: ServicePortalModuleComponent = () => {
+const VehiclesHistory = () => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
 

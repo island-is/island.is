@@ -4,6 +4,15 @@ import { m } from '@island.is/service-portal/core'
 import { PortalModule } from '@island.is/portals/core'
 import { InformationPaths } from './lib/paths'
 
+const UserInfoOverview = lazy(() =>
+  import('./screens/UserInfoOverview/UserInfoOverview'),
+)
+const UserInfo = lazy(() => import('./screens/UserInfo/UserInfo'))
+const FamilyMember = lazy(() => import('./screens/FamilyMember/FamilyMember'))
+const FamilyMemberChild = lazy(() => import('./screens/FamilyMember/Child'))
+const Spouse = lazy(() => import('./screens/Spouse/Spouse'))
+const CompanyInfo = lazy(() => import('./screens/company/CompanyInfo'))
+
 export const informationModule: PortalModule = {
   name: 'Upplýsingar',
   routes: ({ userInfo }) => [
@@ -11,32 +20,31 @@ export const informationModule: PortalModule = {
       name: 'Mínar upplýsingar',
       path: InformationPaths.MyInfoRoot,
       enabled: userInfo.scopes.includes(ApiScope.meDetails),
-      render: () =>
-        lazy(() => import('./screens/UserInfoOverview/UserInfoOverview')),
+      element: <UserInfoOverview />,
     },
     {
       name: m.userInfo,
       path: InformationPaths.UserInfo,
       enabled: userInfo.scopes.includes(ApiScope.meDetails),
-      render: () => lazy(() => import('./screens/UserInfo/UserInfo')),
+      element: <UserInfo />,
     },
     {
       name: 'Family Member',
       path: InformationPaths.FamilyMember,
       enabled: userInfo.scopes.includes(ApiScope.meDetails),
-      render: () => lazy(() => import('./screens/FamilyMember/FamilyMember')),
+      element: <FamilyMember />,
     },
     {
       name: 'Child',
       path: InformationPaths.Child,
       enabled: userInfo.scopes.includes(ApiScope.meDetails),
-      render: () => lazy(() => import('./screens/FamilyMember/Child')),
+      element: <FamilyMemberChild />,
     },
     {
       name: 'Spouse',
       path: InformationPaths.Spouse,
       enabled: userInfo.scopes.includes(ApiScope.meDetails),
-      render: () => lazy(() => import('./screens/Spouse/Spouse')),
+      element: <Spouse />,
     },
   ],
   companyRoutes: ({ userInfo }) => [
@@ -44,7 +52,7 @@ export const informationModule: PortalModule = {
       name: 'Um fyrirtæki',
       path: InformationPaths.Company,
       enabled: userInfo.scopes.includes(ApiScope.company),
-      render: () => lazy(() => import('./screens/Company/CompanyInfo')),
+      element: <CompanyInfo />,
     },
   ],
 }

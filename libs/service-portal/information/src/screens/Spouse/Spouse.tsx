@@ -18,7 +18,6 @@ import {
   IntroHeader,
   m,
   NotFound,
-  ServicePortalModuleComponent,
   UserInfoLine,
 } from '@island.is/service-portal/core'
 
@@ -38,7 +37,7 @@ type UseParams = {
   nationalId: string
 }
 
-const FamilyMember: ServicePortalModuleComponent = () => {
+const FamilyMember = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
 

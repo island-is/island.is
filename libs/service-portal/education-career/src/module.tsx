@@ -4,6 +4,10 @@ import { PortalModule } from '@island.is/portals/core'
 import { EducationCareerPaths } from './lib/paths'
 import { m } from '@island.is/service-portal/core'
 
+const EducationCareer = lazy(() =>
+  import('./screens/EducationCareer/EducationCareer'),
+)
+
 export const educationCareerModule: PortalModule = {
   name: 'Námsferill',
   enabled: ({ isCompany }) => !isCompany,
@@ -12,7 +16,7 @@ export const educationCareerModule: PortalModule = {
       name: m.educationCareer,
       path: EducationCareerPaths.EducationCareer,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      render: () => lazy(() => import('./screens/EducationCareer')),
+      element: <EducationCareer />,
     },
   ],
 }

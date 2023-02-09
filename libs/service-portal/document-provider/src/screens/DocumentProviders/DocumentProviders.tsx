@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import {
   Box,
@@ -29,7 +28,7 @@ const getOrganisationsPreviewQuery = gql`
   }
 `
 
-const DocumentProviders: ServicePortalModuleComponent = () => {
+const DocumentProviders = () => {
   const [fromDate, setFromDate] = useState<Date | undefined>(undefined)
   const [toDate, setToDate] = useState<Date | undefined>(undefined)
   const { formatMessage } = useLocale()

@@ -4,6 +4,10 @@ import { PortalModule } from '@island.is/portals/core'
 import { EducationLicensePaths } from './lib/paths'
 import { m } from '@island.is/service-portal/core'
 
+const EducationLicense = lazy(() =>
+  import('./screens/EducationLicense/EducationLicense'),
+)
+
 export const educationLicenseModule: PortalModule = {
   name: 'Leyfisbréf',
   enabled: ({ isCompany }) => !isCompany,
@@ -12,7 +16,7 @@ export const educationLicenseModule: PortalModule = {
       name: m.educationLicense,
       path: EducationLicensePaths.EducationLicense,
       enabled: userInfo.scopes.includes(ApiScope.educationLicense),
-      render: () => lazy(() => import('./screens/EducationLicense')),
+      element: <EducationLicense />,
     },
   ],
 }

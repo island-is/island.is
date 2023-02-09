@@ -28,7 +28,7 @@ This is simpler for admin portal module, create a new module for each self-conta
 ```typescript
 export interface PortalModule {
   name: string
-  routes: (props: PortalModuleProps) => PortalRoute[]
+  routes: (props: PortalModuleRoutesProps) => PortalRoute[]
 }
 ```
 
@@ -36,7 +36,6 @@ All libraries are implemented by defining an interface that gets loaded into por
 
 - Name - The name of the library
 - Routes - A function that returns an array of routes
-- Global - A function that returns an array of global components
 
 ### Routes
 
@@ -50,27 +49,31 @@ export interface PortalModuleProps {
 ```
 
 ```typescript
-export type PortalRoute = {
+import { RouteObject } from 'react-router-dom'
+
+export type PortalRoute = RouteObject & {
   name: string
   path: string | string[]
-  render?: (props: PortalModuleProps) => PortalModuleRenderValue
+  element?: React.ReactNode
 }
 ```
 
 Path defines at what path or paths this route should be rendered.
 
-The render property returns a lazy loaded component to be rendered when the user navigates to the described path.
+The element property returns a lazy loaded component to be rendered when the user navigates to the described path.
 
 An example of an implementation of a route property might be something like this:
 
-```typescript
+```tsx
+const ApplicationList = lazy(() => import('./screens/ApplicationList/ApplicationList'))
+const ProtectedScreen = lazy(() => import('./screens/ProtectedScreen/ProtectedScreen'))
+
 routes: (userInfo) => {
   const applicationRoutes = [
     {
       name: 'Applications',
       path: ServicePortalPath.ApplicationRoot,
-      render: () =>
-        lazy(() => import('./screens/ApplicationList/ApplicationList')),
+      element: <ApplicationList userInfo={userInfo} />,
     },
   ]
 
@@ -80,8 +83,7 @@ routes: (userInfo) => {
     applicationRoutes.push({
       name: 'Super secret application screen',
       path: ServicePortalPath.UmsoknirSecret,
-      render: () =>
-        lazy(() => import('./screens/ProtectedScreen/ProtectedScreen')),
+      element: <ProtectedScreen />,
     })
   }
 
@@ -95,15 +97,16 @@ A portal library might then look something like this:
 import { PortalModule } from '@island.is/portals/core'
 import { lazy } from 'react'
 
+const ApplicationList = lazy(() => import('./screens/ApplicationList/ApplicationList'))
+
 export const applicationsModule: PortalModule = {
   name: 'Applications',
-  routes: (userInfo) => {
+  routes: ({ userInfo }) => {
     const applicationRoutes = [
       {
         name: 'Applications',
         path: ServicePortalPath.ApplicationRoot,
-        render: () =>
-          lazy(() => import('./screens/ApplicationList/ApplicationList')),
+        element: <ApplicationList userInfo={userInfo} />
       },
     ]
 

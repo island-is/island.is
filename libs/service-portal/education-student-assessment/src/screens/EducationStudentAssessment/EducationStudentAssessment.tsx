@@ -4,7 +4,7 @@ import { Box } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
 import { StudentAssessmentTable } from './components/StudentAssessmentTable'
 
-function EducationStudentAssessment(): JSX.Element {
+function EducationStudentAssessment() {
   useNamespaces('sp.education-student-assessment')
 
   return (

@@ -1,5 +1,4 @@
 import React from 'react'
-import { defineMessage } from 'react-intl'
 import { gql, useQuery } from '@apollo/client'
 import {
   pagingFragment,
@@ -13,7 +12,6 @@ import {
   ErrorScreen,
   IntroHeader,
   m,
-  ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
 
 import { AssetCardLoader } from '../../components/AssetCardLoader'
@@ -38,7 +36,7 @@ const GetRealEstateQuery = gql`
   ${addressFragment}
 `
 
-export const AssetsOverview: ServicePortalModuleComponent = () => {
+export const AssetsOverview = () => {
   useNamespaces('sp.assets')
   const { formatMessage } = useLocale()
 

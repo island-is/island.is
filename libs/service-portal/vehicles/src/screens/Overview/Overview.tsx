@@ -20,7 +20,6 @@ import {
   formSubmit,
   IntroHeader,
   m,
-  ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
 
 import { VehicleCard } from '../../components/VehicleCard'
@@ -30,6 +29,7 @@ import { exportVehicleOwnedDocument } from '../../utils/vehicleOwnedMapper'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { SAMGONGUSTOFA_LINK } from '../../utils/constants'
+import { useUserInfo } from '@island.is/auth/react'
 
 export const GET_USERS_VEHICLES = gql`
   query GetUsersVehicles {
@@ -104,10 +104,9 @@ const getFilteredVehicles = (
   return vehicles
 }
 
-export const VehiclesOverview: ServicePortalModuleComponent = ({
-  userInfo,
-}) => {
+const VehiclesOverview = () => {
   useNamespaces('sp.vehicles')
+  const userInfo = useUserInfo()
   const { formatMessage, lang } = useLocale()
   const [page, setPage] = useState(1)
   const [searchInteractionEventSent, setSearchInteractionEventSent] = useState(

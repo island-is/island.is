@@ -5,6 +5,11 @@ import { PortalModule, PortalRoute } from '@island.is/portals/core'
 import { EndorsementsScope } from '@island.is/auth/scopes'
 import { PetitionPaths } from './lib/paths'
 
+const Petitions = lazy(() => import('./screens/Petitions'))
+const ViewPetition = lazy(() => import('./screens/ViewPetition'))
+const PetitionsAdmin = lazy(() => import('./screens/PetitionsAdmin'))
+const ViewPetitionAdmin = lazy(() => import('./screens/ViewPetitionAdmin'))
+
 export const petitionsModule: PortalModule = {
   name: 'Almennir undirskriftalistar',
   featureFlag: Features.servicePortalPetitionsModule,
@@ -15,13 +20,13 @@ export const petitionsModule: PortalModule = {
         name: m.endorsements,
         path: PetitionPaths.Petitions,
         enabled: userInfo.scopes.includes(EndorsementsScope.main),
-        render: () => lazy(() => import('./screens/Petitions')),
+        element: <Petitions />,
       },
       {
         name: m.endorsements,
         path: PetitionPaths.PetitionList,
         enabled: userInfo.scopes.includes(EndorsementsScope.main),
-        render: () => lazy(() => import('./screens/ViewPetition')),
+        element: <ViewPetition />,
       },
     ]
 
@@ -30,12 +35,12 @@ export const petitionsModule: PortalModule = {
         {
           name: m.endorsementsAdmin,
           path: PetitionPaths.PetitionsAdminView,
-          render: () => lazy(() => import('./screens/PetitionsAdmin')),
+          element: <PetitionsAdmin />,
         },
         {
           name: m.endorsementsAdmin,
           path: PetitionPaths.PetitionListAdmin,
-          render: () => lazy(() => import('./screens/ViewPetitionAdmin')),
+          element: <ViewPetitionAdmin />,
         },
       )
     }

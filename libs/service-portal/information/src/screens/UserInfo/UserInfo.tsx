@@ -10,9 +10,9 @@ import {
   formatNationalId,
   IntroHeader,
   m,
-  ServicePortalModuleComponent,
   UserInfoLine,
 } from '@island.is/service-portal/core'
+import { useUserInfo } from '@island.is/auth/react'
 
 import {
   natRegGenderMessageDescriptorRecord,
@@ -32,8 +32,9 @@ const changeInNationalReg = defineMessage({
   defaultMessage: 'Breyta hjá Þjóðskrá',
 })
 
-const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
+const SubjectInfo = () => {
   useNamespaces('sp.family')
+  const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
   const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_USER)
   const { nationalRegistryUser } = data || {}

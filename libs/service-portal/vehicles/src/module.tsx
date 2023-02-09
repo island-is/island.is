@@ -1,8 +1,20 @@
-import { lazy } from 'react'
+import React, { lazy } from 'react'
 import { ApiScope } from '@island.is/auth/scopes'
 import { m } from '@island.is/service-portal/core'
 import { PortalModule } from '@island.is/portals/core'
 import { VehiclePaths } from './lib/paths'
+
+const Overview = lazy(() => import('./screens/Overview/Overview'))
+const VehicleDetail = lazy(() =>
+  import('./screens/VehicleDetail/VehicleDetail'),
+)
+const VehicleHistory = lazy(() =>
+  import('./screens/VehicleHistory/VehicleHistory'),
+)
+const DrivingLessonsBook = lazy(() =>
+  import('./screens/DrivingLessonsBook/DrivingLessonsBook'),
+)
+const Lookup = lazy(() => import('./screens/Lookup/Lookup'))
 
 export const vehiclesModule: PortalModule = {
   name: 'Ökutæki',
@@ -11,34 +23,32 @@ export const vehiclesModule: PortalModule = {
       name: m.yourVehicles,
       path: VehiclePaths.AssetsVehicles,
       enabled: userInfo.scopes.includes(ApiScope.vehicles),
-      render: () => lazy(() => import('./screens/Overview/Overview')),
+      element: <Overview />,
     },
     {
       name: m.yourVehicles,
       path: VehiclePaths.AssetsMyVehicles,
       enabled: userInfo.scopes.includes(ApiScope.vehicles),
-      render: () => lazy(() => import('./screens/Overview/Overview')),
+      element: <Overview />,
     },
     {
       name: m.vehicles,
       path: VehiclePaths.AssetsVehiclesDetail,
       enabled: userInfo.scopes.includes(ApiScope.vehicles),
-      render: () => lazy(() => import('./screens/VehicleDetail/VehicleDetail')),
+      element: <VehicleDetail />,
     },
     {
       name: m.vehiclesHistory,
       path: VehiclePaths.AssetsVehiclesHistory,
       enabled: userInfo.scopes.includes(ApiScope.vehicles),
-      render: () =>
-        lazy(() => import('./screens/VehicleHistory/VehicleHistory')),
+      element: <VehicleHistory />,
     },
     {
       name: m.vehiclesDrivingLessons,
       path: VehiclePaths.AssetsVehiclesDrivingLessons,
       enabled: userInfo.scopes.includes(ApiScope.vehicles),
       dynamic: true,
-      render: () =>
-        lazy(() => import('./screens/DrivingLessonsBook/DrivingLessonsBook')),
+      element: <DrivingLessonsBook />,
     },
     {
       name: m.vehiclesLookup,
@@ -47,7 +57,7 @@ export const vehiclesModule: PortalModule = {
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.internalProcuring),
       key: 'VehicleLookup',
-      render: () => lazy(() => import('./screens/Lookup/Lookup')),
+      element: <Lookup />,
     },
   ],
 }

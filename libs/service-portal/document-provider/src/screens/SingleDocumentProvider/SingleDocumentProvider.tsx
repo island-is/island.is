@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import {
   Box,
@@ -24,7 +23,7 @@ type UseParams = {
   nationalId: string
 }
 
-const SingleDocumentProvider: ServicePortalModuleComponent = ({ userInfo }) => {
+const SingleDocumentProvider = () => {
   const [fromDate, setFromDate] = useState<Date | undefined>(undefined)
   const [toDate, setToDate] = useState<Date | undefined>(undefined)
   const { nationalId } = useParams() as UseParams

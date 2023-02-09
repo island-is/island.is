@@ -24,7 +24,6 @@ import {
   formSubmit,
   IntroHeader,
   m,
-  ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
 import { checkDelegation } from '@island.is/shared/utils'
 
@@ -36,6 +35,7 @@ import {
   FinanceStatusOrganizationType,
 } from './FinanceStatusData.types'
 import * as styles from './Table.css'
+import { useUserInfo } from '@island.is/auth/react'
 
 const GetFinanceStatusQuery = gql`
   query GetFinanceStatusQuery {
@@ -54,9 +54,10 @@ const GetDebtStatusQuery = gql`
   }
 `
 
-const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
+const FinanceStatus = () => {
   useNamespaces('sp.finance-status')
   const { formatMessage } = useLocale()
+  const userInfo = useUserInfo()
 
   const isDelegation = userInfo && checkDelegation(userInfo)
 
