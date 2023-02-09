@@ -170,7 +170,6 @@ export const PhoneInputController = forwardRef(
           data-testid={dataTestId}
           placeholder={placeholder}
           label={label}
-          type="tel"
           value={value?.replace(cc, '')}
           format={
             countryCodeList.find((x) => x.dial_code === cc && !!x.format)
