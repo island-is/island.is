@@ -73,3 +73,7 @@ export const subSectionList = style({
     },
   },
 })
+
+export const historyDate = style({
+  marginTop: '4px',
+})

@@ -192,7 +192,7 @@ export const Applications: FC = () => {
     <Page>
       <GridContainer>
         {!loading && !isEmpty(data?.applicationApplications) && (
-          <Box>
+          <Box marginBottom={5}>
             <Box
               marginTop={5}
               marginBottom={5}

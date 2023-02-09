@@ -14,11 +14,10 @@ import { Hidden } from '../Hidden/Hidden'
 import { Icon as IconType } from '../IconRC/iconMap'
 import { Icon } from '../IconRC/Icon'
 import DialogPrompt from '../DialogPrompt/DialogPrompt'
-import { FormStepperThemes } from '../FormStepper/types'
-import HistorySection from '../FormStepper/HistorySection'
-import AnimateHeight from 'react-animate-height'
-import useComponentSize from '@rehooks/component-size'
-import HistoryStepper from '../FormStepper/HistoryStepper'
+import {
+  ActionCardHistory,
+  ActionCardHistoryConfig,
+} from './ActionCardHistory/ActionCardHistory'
 
 type ActionCardProps = {
   date?: string
@@ -70,18 +69,8 @@ type ActionCardProps = {
     dialogConfirmLabel?: string
     dialogCancelLabel?: string
   }
-  history?: {
-    openButtonLabel: string
-    closeButtonLabel: string
-    items?: {
-      date?: string
-      title: string
-      content?: React.ReactNode
-    }[]
-  }
+  history?: ActionCardHistoryConfig
 }
-
-const MAX_HISTORY_HEIGHT = 200
 
 const defaultCta = {
   variant: 'primary',
@@ -134,11 +123,6 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   avatar,
   logo,
 }) => {
-  const containerRef = React.useRef<HTMLDivElement>(null)
-  const { height: historyHeight } = useComponentSize(containerRef)
-  const [historyState, setHistoryState] = React.useState<'open' | 'closed'>(
-    history?.items && history.items.length > 1 ? 'closed' : 'open',
-  )
   const cta = { ...defaultCta, ..._cta }
   const progressMeter = { ...defaultProgressMeter, ..._progressMeter }
   const tag = { ...defaultTag, ..._tag }
@@ -447,47 +431,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 
       {progressMeter.active && renderProgressMeter()}
       {history?.items && history.items.length > 0 && (
-        <Box paddingTop={[2, 2, 5]}>
-          <AnimateHeight
-            height={historyState === 'open' ? 'auto' : MAX_HISTORY_HEIGHT}
-            duration={300}
-          >
-            <div ref={containerRef}>
-              <HistoryStepper
-                sections={history.items.map(
-                  ({ date, title, content }, index) => (
-                    <HistorySection
-                      key={`history-section-${index}`}
-                      section={title}
-                      sectionIndex={index}
-                      isComplete
-                      theme={FormStepperThemes.PURPLE}
-                      date={date}
-                      description={content}
-                    />
-                  ),
-                )}
-              />
-            </div>
-          </AnimateHeight>
-          {historyHeight > MAX_HISTORY_HEIGHT && (
-            <Box display="flex" justifyContent="flexEnd">
-              <Box>
-                <Button
-                  variant="text"
-                  onClick={() =>
-                    setHistoryState(historyState === 'open' ? 'closed' : 'open')
-                  }
-                  icon={historyState === 'open' ? 'arrowUp' : 'arrowDown'}
-                >
-                  {historyState === 'open'
-                    ? history.closeButtonLabel
-                    : history.openButtonLabel}
-                </Button>
-              </Box>
-            </Box>
-          )}
-        </Box>
+        <ActionCardHistory history={history} />
       )}
     </Box>
   )
