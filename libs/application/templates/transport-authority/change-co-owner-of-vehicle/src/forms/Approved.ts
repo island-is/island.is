@@ -43,7 +43,7 @@ export const Approved: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'confirmation',
+      id: 'approved',
       title: review.general.approvedSectionTitle,
       children: [
         buildCustomField({
