@@ -40,7 +40,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.MARRIAGE_CONDITIONS,
   name: m.applicationTitle,
-  dataSchema: dataSchema as any,
+  dataSchema: dataSchema,
   readyForProduction: true,
   featureFlag: Features.marriageConditions,
   stateMachineConfig: {
