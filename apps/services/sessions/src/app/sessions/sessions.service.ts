@@ -19,8 +19,8 @@ export class SessionsService {
 
   async findAll(
     user: User,
-    otherUser: string,
     query: SessionsQueryDto,
+    otherUser?: string,
   ): Promise<SessionsResultDto> {
     let whereOptions: WhereOptions
 
