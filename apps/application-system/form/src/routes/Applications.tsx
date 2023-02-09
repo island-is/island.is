@@ -220,6 +220,7 @@ export const Applications: FC = () => {
                 applications={data.applicationApplications}
                 onClick={(applicationUrl) => navigate(`../${applicationUrl}`)}
                 refetch={refetch}
+                showHistory
               />
             )}
           </Box>

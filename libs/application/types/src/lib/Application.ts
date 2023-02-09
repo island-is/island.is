@@ -1,4 +1,4 @@
-import { PendingAction } from './StateMachine'
+import { PendingActionDisplayStatus } from './StateMachine'
 import { ApplicationTypes } from './ApplicationTypes'
 import { DataProviderResult } from './DataProviderResult'
 
@@ -26,14 +26,17 @@ export type ActionCardTag = 'red' | 'blueberry' | 'blue' | 'purple' | 'mint'
 export type ApplicationHistoryItem = {
   id: string
   date: string
-  application_id: string
-  contentful_id: string
+  entry: string
 }
 
 export interface ActionCardMetaData {
   title?: string
   description?: string
-  pendingAction?: Omit<PendingAction, 'content'> & { content?: string }
+  pendingAction?: {
+    displayStatus: PendingActionDisplayStatus
+    title?: string
+    content?: string
+  }
   tag?: {
     label?: string
     variant?: ActionCardTag

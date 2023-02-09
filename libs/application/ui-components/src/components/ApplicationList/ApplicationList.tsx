@@ -131,6 +131,8 @@ interface Props {
   onClick: (id: string) => void
   refetch?: (() => void) | undefined
   focus?: boolean
+  showHistory?: boolean
+  showProgress?: boolean
 }
 
 const ApplicationList = ({
@@ -139,6 +141,8 @@ const ApplicationList = ({
   onClick,
   refetch,
   focus = false,
+  showHistory = false,
+  showProgress = true,
 }: Props) => {
   const { lang: locale, formatMessage } = useLocale()
   const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
@@ -171,7 +175,9 @@ const ApplicationList = ({
   }
 
   const buildHistoryItems = (application: ApplicationFields) => {
-    const history: {
+    if (!showHistory) return
+
+    let history: {
       title: string
       date?: string
       content?: ReactNode
@@ -185,7 +191,7 @@ const ApplicationList = ({
           return 'success'
         case 'inprogress':
           return 'info'
-        case 'rejected':
+        case 'rejected': // TODO buttons on alert message
           return 'error'
         default:
           return 'default'
@@ -195,25 +201,25 @@ const ApplicationList = ({
     if (application.actionCard?.pendingAction) {
       history.push({
         date: format(new Date(), formattedDate),
-        title: formatMessage(
-          application.actionCard.pendingAction.content ?? '',
-        ),
+        title: formatMessage(application.actionCard.pendingAction.title ?? ''),
         content: (
           <AlertMessage
             type={mapStatusToAlertType(
               application.actionCard?.pendingAction?.displayStatus,
             )}
-            message={application.actionCard?.pendingAction?.displayStatus}
+            message={formatMessage(
+              application.actionCard.pendingAction.content ?? '',
+            )}
           />
         ),
       })
     }
 
     if (application.history) {
-      history.concat(
+      history = history.concat(
         application.history.map((x) => ({
           date: format(new Date(x.date), formattedDate),
-          title: x.id,
+          title: formatMessage(x.entry),
         })),
       )
     }
@@ -260,12 +266,24 @@ const ApplicationList = ({
                   icon: undefined,
                   onClick: () => onClick(`${slug}/${application.id}`),
                 }}
-                progressMeter={{
-                  active: Boolean(application.progress),
-                  progress: application.progress,
-                  variant: stateDefaultData.progress.variant,
+                progressMeter={
+                  showProgress
+                    ? {
+                        active: Boolean(application.progress),
+                        progress: application.progress,
+                        variant: stateDefaultData.progress.variant,
+                      }
+                    : undefined
+                }
+                history={{
+                  openButtonLabel: formatMessage(
+                    coreMessages.openApplicationHistoryLabel,
+                  ),
+                  closeButtonLabel: formatMessage(
+                    coreMessages.closeApplicationHistoryLabel,
+                  ),
+                  items: buildHistoryItems(application),
                 }}
-                history={buildHistoryItems(application)}
                 deleteButton={{
                   visible: actionCard?.deleteButton,
                   onClick: handleDeleteApplication.bind(null, application.id),

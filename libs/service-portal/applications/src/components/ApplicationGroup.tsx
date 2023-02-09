@@ -12,6 +12,8 @@ interface Props {
   organizations: any[]
   refetch: () => void
   focus?: boolean
+  showHistory?: boolean
+  showProgress?: boolean
 }
 
 export const ApplicationGroup: FC<Props> = ({
@@ -20,6 +22,8 @@ export const ApplicationGroup: FC<Props> = ({
   organizations,
   refetch,
   focus = false,
+  showHistory = true,
+  showProgress = false,
 }) => {
   const [page, setPage] = useState<number>(1)
   const handlePageChange = useCallback((page: number) => setPage(page), [])
@@ -45,6 +49,8 @@ export const ApplicationGroup: FC<Props> = ({
           window.open(`${getBaseUrlForm()}/${applicationUrl}`)
         }
         focus={focus}
+        showHistory={showHistory}
+        showProgress={showProgress}
       />
       {applications.length > pageSize && (
         <Box marginX={[0, 4]} marginTop={[1, 4]}>
