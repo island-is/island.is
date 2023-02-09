@@ -2007,6 +2007,26 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Engin lýsing fannst',
       description: 'No description could be found',
     },
+    residenceGrantStartDateError: {
+      id: 'pl.application:residence.grant.start.date.error',
+      defaultMessage: 'Upphafsdagsetning er utan leyfilegs tímabils',
+      description: 'Start date is outside of the allowed date range',
+    },
+    residenceGrantEndDateError: {
+      id: 'pl.application:residence.grant.end.date.error',
+      defaultMessage: 'Lokadagsetning er utan leyfilegs tímabils',
+      description: 'End date is outside of the allowed date range',
+    },
+    residenceGrantStartBeforeEndDateError: {
+      id: 'pl.application:residence.grant.start.before.end.date.error',
+      defaultMessage: 'Lokadagur er fyrir upphafsdag',
+      description: 'End date is before start date',
+    },
+    residenceGrantGenericErrorMessage: {
+      id: 'pl.application:residence.grant.generic.error.message',
+      defaultMessage: 'Eitthvað fór úrskeiðis',
+      description: 'Something went wrong',
+    },
   }),
 }
 

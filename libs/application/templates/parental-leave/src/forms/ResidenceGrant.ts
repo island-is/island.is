@@ -59,7 +59,7 @@ export const ResidenceGrant: Form = buildForm({
           ],
         }),
         buildFileUploadField({
-          id: 'residenceGrant.fileUpload',
+          id: 'fileUpload.residenceGrant',
           title:
             parentalLeaveFormMessages.residenceGrantMessage
               .residenceGrantAttachmentTitle,

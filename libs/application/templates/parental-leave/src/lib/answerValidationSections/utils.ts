@@ -13,7 +13,11 @@ import {
   StaticTextObject,
 } from '@island.is/application/types'
 import { StartDateOptions, YES, NO } from '../../constants'
-import { getExpectedDateOfBirth } from '../parentalLeaveUtils'
+import {
+  convertBirthDay,
+  getExpectedDateOfBirth,
+  residentGrantIsOpenForApplication,
+} from '../parentalLeaveUtils'
 import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
   minimumRatio,
@@ -21,11 +25,12 @@ import {
   usageMaxMonths,
   usageMinMonths,
 } from '../../config'
-import { errorMessages } from '../messages'
+import { errorMessages, parentalLeaveFormMessages } from '../messages'
 import { calculatePeriodLength } from '../directorateOfLabour.utils'
 
 import { Period } from '../../types'
 import { MessageDescriptor } from 'react-intl'
+import { isAfter, isBefore, subDays } from 'date-fns'
 
 const hasBeenAnswered = (answer: unknown) => answer !== undefined
 export const buildError = (
@@ -270,4 +275,95 @@ export const validatePeriod = (
       return buildError('ratio', errorMessages.periodsRatioAboveMaximum)
     }
   }
+}
+
+export const validatePeriodResidenceGrant = (
+  actualBirthDay: string,
+  expectedBirthDay: string,
+  multipleBirths: string,
+  dateFrom: string,
+  dateTo: string,
+) => {
+  if (!residentGrantIsOpenForApplication(actualBirthDay))
+    return {
+      field: 'dateFrom',
+      error:
+        parentalLeaveFormMessages.residenceGrantMessage
+          .residenceGrantGenericErrorMessage,
+    }
+  const birthDayConverted = convertBirthDay(actualBirthDay)
+
+  const birthDate = new Date(
+    birthDayConverted.year,
+    birthDayConverted.month,
+    birthDayConverted.date,
+  )
+
+  const expBirthDate = expectedBirthDay.split('-').map((item) => Number(item))
+  const from = dateFrom.split('-').map((item) => Number(item))
+  const to = dateTo.split('-').map((item) => Number(item))
+
+  if (from.length !== 3 && to.length !== 3 && expBirthDate.length)
+    return {
+      field: 'dateFrom',
+      error:
+        parentalLeaveFormMessages.residenceGrantMessage
+          .residenceGrantGenericErrorMessage,
+    }
+  const expectedBirthDate = new Date(
+    expBirthDate[0],
+    expBirthDate[1] - 1,
+    expBirthDate[2],
+  )
+  const toDate = new Date(to[0], to[1] - 1, to[2])
+  const fromDate = new Date(from[0], from[1] - 1, from[2])
+
+  const birthDateMinus =
+    multipleBirths === 'yes' ? subDays(birthDate, 28) : subDays(birthDate, 14)
+
+  const expBirthDateMinus =
+    multipleBirths === 'yes'
+      ? subDays(expectedBirthDate, 28)
+      : subDays(expectedBirthDate, 14)
+
+  if (isBefore(birthDate, expectedBirthDate)) {
+    if (isAfter(toDate, birthDate))
+      return {
+        field: 'dateTo',
+        error:
+          parentalLeaveFormMessages.residenceGrantMessage
+            .residenceGrantEndDateError,
+      }
+    if (isBefore(fromDate, birthDateMinus))
+      return {
+        field: 'dateFrom',
+        error:
+          parentalLeaveFormMessages.residenceGrantMessage
+            .residenceGrantStartDateError,
+      }
+  }
+
+  if (isBefore(fromDate, expBirthDateMinus))
+    return {
+      field: 'dateFrom',
+      error:
+        parentalLeaveFormMessages.residenceGrantMessage
+          .residenceGrantStartDateError,
+    }
+  if (isAfter(toDate, birthDate))
+    return {
+      field: 'dateTo',
+      error:
+        parentalLeaveFormMessages.residenceGrantMessage
+          .residenceGrantEndDateError,
+    }
+  if (isBefore(toDate, fromDate))
+    return {
+      field: 'dateTo',
+      error:
+        parentalLeaveFormMessages.residenceGrantMessage
+          .residenceGrantStartBeforeEndDateError,
+    }
+
+  return { field: undefined, error: undefined }
 }
