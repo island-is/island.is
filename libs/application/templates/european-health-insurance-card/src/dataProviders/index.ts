@@ -3,6 +3,7 @@ import { defineTemplateApi } from '@island.is/application/types'
 export const EhicCardResponseApi = defineTemplateApi({
   action: 'getCardResponse',
   externalDataId: 'cardResponse',
+  order: 2,
 })
 
 export const EhicApplyForPhysicalCardApi = defineTemplateApi({
