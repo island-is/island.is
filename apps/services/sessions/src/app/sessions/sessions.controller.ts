@@ -48,25 +48,6 @@ export class SessionsController {
     description: 'Get all sessions for the authenticated user.',
     response: { status: 200, type: SessionsResultDto },
     request: {
-      query: {
-        limit: {
-          description: 'Limits the number of results in a request.',
-          required: false,
-          schema: { type: 'number', default: '10' },
-        },
-        before: {
-          description:
-            'The value of `startCursor` from the previous response pageInfo to query the previous page of `limit` number of data items.',
-          required: false,
-          type: 'string',
-        },
-        after: {
-          description:
-            'The value of `endCursor` from the response to query the next page of `limit` number of data items.',
-          required: false,
-          type: 'string',
-        },
-      },
       header: {
         'X-Query-OtherUser': {
           description: 'The identifier of a user associated with a session.',

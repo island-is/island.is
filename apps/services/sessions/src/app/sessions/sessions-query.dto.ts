@@ -8,8 +8,6 @@ export class SessionsQueryDto extends PaginationDto {
   @IsDateString()
   @ApiPropertyOptional({
     description: 'Only return sessions from this date.',
-
-    type: 'date',
   })
   from?: Date
 
@@ -17,8 +15,6 @@ export class SessionsQueryDto extends PaginationDto {
   @IsDateString()
   @ApiPropertyOptional({
     description: 'Only return sessions to this date.',
-
-    type: 'date',
   })
   to?: Date
 
