@@ -750,7 +750,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
   ) as string
 
   let employers = getValueViaPath(answers, 'employers', []) as EmployerRow[]
-  if (!employers){
+  if (!employers) {
     employers = []
   }
   // old employer object

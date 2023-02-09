@@ -46,7 +46,7 @@ export function hasEmployer(context: ApplicationContext) {
     oldApplicationAnswers.isRecivingUnemploymentBenefits !== undefined
   const selfEmployed =
     currentApplicationAnswers.isSelfEmployed === NO ||
-    oldApplicationAnswers.employer.isSelfEmployed === NO
+    oldApplicationAnswers.employer?.isSelfEmployed === NO
 
   // Added this check for applications that is in the db already so they can go through to next state
   if (currentApplicationAnswers.applicationType === undefined) {
