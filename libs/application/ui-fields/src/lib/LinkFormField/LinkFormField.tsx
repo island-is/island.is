@@ -3,7 +3,7 @@ import { formatText } from '@island.is/application/core'
 import { LinkField, Application } from '@island.is/application/types'
 import { Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import useGeneratePdfUrl from './hooks/useGeneratePdfUrl'
+import useGenerateFileUrl from './hooks/useGenerateFileUrl'
 
 export const LinkFormField: FC<{
   field: LinkField
@@ -15,7 +15,7 @@ export const LinkFormField: FC<{
     window.open(field.link, '_blank')
   }, [field.link])
 
-  const { getPdfUrl } = useGeneratePdfUrl(
+  const { getFileUrl } = useGenerateFileUrl(
     application.id,
     formatText(field.s3key ?? '', application, formatMessage),
   )
@@ -26,7 +26,7 @@ export const LinkFormField: FC<{
     }
 
     if (field.s3key) {
-      return getPdfUrl
+      return getFileUrl
     }
     return () => ''
   }
