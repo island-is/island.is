@@ -189,7 +189,7 @@ export const CoOwnerRepeater: FC<FieldBaseProps> = (props) => {
         <Box marginTop={4}>
           <AlertMessage
             type="error"
-            title="Það má ekki nota sömu kennitölu tvisvar"
+            title={formatMessage(information.labels.coOwner.identicalError)}
           />
         </Box>
       )}
