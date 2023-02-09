@@ -1,11 +1,5 @@
 import { defineMessage, defineMessages } from 'react-intl'
 
-const linkText = `Upplýsingar um áætlaðan afgreiðslutíma kvartana má finna á `
-const link = `https://www.personuvernd.is/efst-a-baugi/malsmedferdartimi-hja-personuvernd`
-const linkName = `vefsíðu Persónuverndar `
-
-const bulletOne = `${linkText} [${linkName}](${link})`
-
 export const confirmation = {
   general: defineMessages({
     pageTitle: {
@@ -26,7 +20,7 @@ export const confirmation = {
     },
     description: {
       id: 'dpac.application:section.overview.labels.description#markdown',
-      defaultMessage: `* ${bulletOne}`,
+      defaultMessage: `Upplýsingar um áætlaðan afgreiðslutíma kvartana má finna á [vefsíðu Persónuverndar](https://www.personuvernd.is/efst-a-baugi/malsmedferdartimi-hja-personuvernd)`,
       description: 'Bulletpoints for conclusion screen',
     },
     pdfLink: {

@@ -1,11 +1,5 @@
 import { defineMessages } from 'react-intl'
 
-const bulletOne =
-  'Við munum nú fara yfir verkefnið og við sendum á þig svör innan tíðar.'
-const bulletTwo = 'Við verðum í sambandi ef okkur vantar frekari upplýsingar.'
-const bulletThree =
-  'Ef þú þarft frekari upplýsingar þá getur þú haft samband í síma 847 3759 eða á netfangið island@island.is'
-
 export const confirmation = {
   general: defineMessages({
     title: {
@@ -32,7 +26,7 @@ export const confirmation = {
     },
     bulletList: {
       id: 'ctao.application:conclusion.general.bulletPoints#markdown',
-      defaultMessage: `* ${bulletOne}\n* ${bulletTwo}\n* ${bulletThree}`,
+      defaultMessage: `* Við munum nú fara yfir verkefnið og við sendum á þig svör innan tíðar.\n* Við verðum í sambandi ef okkur vantar frekari upplýsingar.\n* Ef þú þarft frekari upplýsingar þá getur þú haft samband í síma 847 3759 eða á netfangið island@island.is`,
       description: 'Bullettpoints of information box',
     },
   }),

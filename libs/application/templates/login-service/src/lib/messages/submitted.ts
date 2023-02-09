@@ -1,11 +1,5 @@
 import { defineMessages } from 'react-intl'
 
-const bulletOne =
-  'Við munum nú fara yfir umsóknina og hafa svo samband við ábyrgðaraðila í kjölfarið.'
-const bulletTwo = 'Við verðum í sambandi ef okkur vantar frekari upplýsingar.'
-const bulletThree =
-  'Ef þú þarft frekari upplýsingar þá getur þú haft samband með tölvupósti á netfangið [island@island.is](mailto:island@island.is)'
-
 export const submitted = {
   general: defineMessages({
     pageTitle: {
@@ -22,7 +16,7 @@ export const submitted = {
   labels: defineMessages({
     desceriptionBulletPoints: {
       id: `ls.application:section.submitted.desceriptionBulletPoints#markdown`,
-      defaultMessage: `* ${bulletOne}\n* ${bulletTwo}\n* ${bulletThree}`,
+      defaultMessage: `* Við munum nú fara yfir umsóknina og hafa svo samband við ábyrgðaraðila í kjölfarið.\n* Við verðum í sambandi ef okkur vantar frekari upplýsingar.\n* Ef þú þarft frekari upplýsingar þá getur þú haft samband með tölvupósti á netfangið [island@island.is](mailto:island@island.is)`,
       description: 'submitted desceriptionBulletPoints',
     },
     descriptionBulletOne: {

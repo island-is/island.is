@@ -1,13 +1,5 @@
 import { defineMessages } from 'react-intl'
 
-const bulletOne =
-  'Þriðji aðili fer yfir tilkynninguna og staðfestir að allar upplýsingar eru réttar.'
-const bulletTwo = 'Ef þörf er á er kallað eftir frekari upplýsingum/gögnum.'
-const bulletThree =
-  'Þegar öll nauðsynleg gögn hafa borist, fara Sjúkratryggingar Íslands yfir umsókn og er afstaða tekin til bótaskyldu.'
-const bulletFour =
-  'Þegar fallist hefur verið á að um bótaskylt slys samkvæmt almannatryggingalögum sé að ræða er hinn slasaði upplýstur um rétt sinn til greiðslu bóta.'
-
 export const conclusion = {
   general: defineMessages({
     title: {
@@ -35,7 +27,7 @@ export const conclusion = {
     },
     bulletList: {
       id: 'an.application:conclusion.information.bulletPoints#markdown',
-      defaultMessage: `* ${bulletOne}\n* ${bulletTwo}\n* ${bulletThree}\n* ${bulletFour}`,
+      defaultMessage: `* Þriðji aðili fer yfir tilkynninguna og staðfestir að allar upplýsingar eru réttar.\n* Ef þörf er á er kallað eftir frekari upplýsingum/gögnum.\n* Þegar öll nauðsynleg gögn hafa borist, fara Sjúkratryggingar Íslands yfir umsókn og er afstaða tekin til bótaskyldu.\n* Þegar fallist hefur verið á að um bótaskylt slys samkvæmt almannatryggingalögum sé að ræða er hinn slasaði upplýstur um rétt sinn til greiðslu bóta.`,
       description: 'Bullettpoints of information box',
     },
     description: {
