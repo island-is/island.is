@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
+import InputMask from 'react-input-mask'
 
 import { Box, Input, Select, Button } from '@island.is/island-ui/core'
 import {
@@ -10,22 +11,44 @@ import {
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
 import { IndictmentCount as TIndictmentCount } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  removeErrorMessageIfValid,
+  validateAndSetErrorMessage,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 
 import { indictmentCount as strings } from './IndictmentCount.strings'
 
 interface Props {
   indictmentCount: TIndictmentCount
   workingCase: Case
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   onChange: (
     indictmentCountId: string,
     updatedIndictmentCount: UpdateIndictmentCount,
   ) => void
   onDelete?: (indictmentCountId: string) => Promise<void>
+  updateIndictmentCountState: (
+    indictmentCountId: string,
+    update: UpdateIndictmentCount,
+    setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
+  ) => void
 }
 
 export const IndictmentCount: React.FC<Props> = (props) => {
-  const { indictmentCount, workingCase, onChange, onDelete } = props
+  const {
+    indictmentCount,
+    workingCase,
+    onChange,
+    onDelete,
+    updateIndictmentCountState,
+    setWorkingCase,
+  } = props
   const { formatMessage } = useIntl()
+
+  const [
+    vehicleRegistrationNumberErrorMessage,
+    setVehicleRegistrationNumberErrorMessage,
+  ] = useState<string>('')
 
   function todoHandle(index: number) {
     //(index, 'todo')
@@ -82,19 +105,60 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           required
         />
       </Box>
-      {/* TODO: Finish rest of form here below*/}
       <Box marginBottom={2}>
-        <Input
-          name="vehicleLicensePlate"
-          autoComplete="off"
-          label={formatMessage(strings.vehicleLicencePlateLabel)}
-          placeholder={formatMessage(strings.vehicleLicencePlatePlaceholder)}
-          value={''}
-          onChange={() => {
-            todoHandle(1)
+        <InputMask
+          mask={'**-*99'}
+          maskPlaceholder={null}
+          value={indictmentCount.vehicleRegistrationNumber ?? ''}
+          beforeMaskedStateChange={({ nextState }) => {
+            let { value } = nextState
+            value = value.toUpperCase()
+
+            return { ...nextState, value }
           }}
-        />
+          onChange={(event) => {
+            console.log(event, 'onChange')
+            removeErrorMessageIfValid(
+              ['empty', 'vehicle-registration-number'],
+              event.target.value,
+              vehicleRegistrationNumberErrorMessage,
+              setVehicleRegistrationNumberErrorMessage,
+            )
+
+            updateIndictmentCountState(
+              indictmentCount.id,
+              {
+                vehicleRegistrationNumber: event.target.value,
+              },
+              setWorkingCase,
+            )
+          }}
+          onBlur={async (event) => {
+            console.log(event, 'onBlur')
+            validateAndSetErrorMessage(
+              ['empty', 'vehicle-registration-number'],
+              event.target.value,
+              setVehicleRegistrationNumberErrorMessage,
+            )
+            onChange(indictmentCount.id, {
+              vehicleRegistrationNumber: event.target.value,
+            })
+          }}
+        >
+          <Input
+            name="vehicleRegistrationNumber"
+            autoComplete="off"
+            label={formatMessage(strings.vehicleRegistrationNumberLabel)}
+            placeholder={formatMessage(
+              strings.vehicleRegistrationNumberPlaceholder,
+            )}
+            hasError={vehicleRegistrationNumberErrorMessage !== ''}
+            errorMessage={vehicleRegistrationNumberErrorMessage}
+            required
+          />
+        </InputMask>
       </Box>
+      {/* TODO: Finish rest of form here below*/}
       <Box marginBottom={2}>
         <Select
           name="incident"
