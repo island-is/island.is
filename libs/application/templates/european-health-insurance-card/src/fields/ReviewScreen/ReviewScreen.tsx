@@ -11,6 +11,9 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
   const { answers } = application
   const { formatMessage } = useLocale()
 
+  console.log('review screen')
+  console.log(application.externalData)
+
   const apply = []
   const applyForTemp = []
 

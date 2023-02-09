@@ -28,7 +28,7 @@ export interface EuropeanHealthInsuranceCardProps {}
 export const EuropeanHealthInsuranceCardReview: Form = buildForm({
   id: 'EuropeanHealthInsuranceCardApplicationForm',
   title: '',
-  mode: FormModes.DRAFT,
+  mode: FormModes.APPROVED,
   children: [
     buildSection({
       id: 'intro',

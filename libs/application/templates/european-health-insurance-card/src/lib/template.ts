@@ -19,6 +19,7 @@ import {
   EhicApplyForPhysicalCardApi,
   EhicApplyForTemporaryCardApi,
   EhicCardResponseApi,
+  EhicGetTemporaryCardApi,
 } from '../dataProviders'
 import { ApiActions } from '../dataProviders/apiActions'
 import { States } from './types'
@@ -45,12 +46,12 @@ const template: ApplicationTemplate<
   readyForProduction: false,
   dataSchema,
   stateMachineConfig: {
-    initial: States.DRAFT,
+    initial: States.PLASTIC,
     states: {
-      [States.DRAFT]: {
+      [States.PLASTIC]: {
         meta: {
           name: 'EHIC-Plastic',
-          status: States.DRAFT,
+          status: 'draft',
           progress: 0.33,
           lifecycle: DefaultStateLifeCycle,
           onExit: defineTemplateApi({
@@ -87,18 +88,21 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: States.APPROVED,
+            target: States.PDF,
           },
         },
       },
-      [States.APPROVED]: {
+      [States.PDF]: {
         meta: {
           name: 'Ehic-PDF',
-          status: States.APPROVED,
+          status: 'draft',
           progress: 0.66,
           lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
             action: ApiActions.applyForPhysicalCard,
+          }),
+          onExit: defineTemplateApi({
+            action: ApiActions.applyForTemporaryCard,
           }),
           roles: [
             {
@@ -116,7 +120,7 @@ const template: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
-              api: [EhicApplyForPhysicalCardApi],
+              api: [EhicApplyForPhysicalCardApi, EhicApplyForTemporaryCardApi],
               write: 'all',
               read: 'all',
               delete: true,
@@ -136,7 +140,7 @@ const template: ApplicationTemplate<
           status: States.COMPLETED,
           progress: 1,
           onEntry: defineTemplateApi({
-            action: ApiActions.applyForTemporaryCard,
+            action: ApiActions.getTemporaryCard,
           }),
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -156,7 +160,7 @@ const template: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
-              api: [EhicApplyForTemporaryCardApi],
+              api: [EhicGetTemporaryCardApi],
               write: 'all',
               read: 'all',
               delete: true,
