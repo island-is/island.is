@@ -1,6 +1,5 @@
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
-import { XRoadConfig } from '@island.is/nest/config'
-import { Module } from '@nestjs/common'
+import { CacheModule, Module } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import {
   CONFIG_PROVIDER,
@@ -30,13 +29,16 @@ import {
   DisabilityLicenseClient,
   DisabilityLicenseClientApiConfig,
 } from './clients/disability-license-client'
+import { DrivingClientModule } from './clients/driving-license-client/drivingLicenseClient.module'
 
 @Module({
   imports: [
+    CacheModule.register(),
     FirearmClientModule,
     AdrClientModule,
     MachineClientModule,
     DisabilityClientModule,
+    DrivingClientModule,
   ],
   providers: [
     LicenseClientService,
@@ -95,7 +97,6 @@ import {
         AdrLicenseClient,
         MachineLicenseClient,
         DisabilityLicenseClient,
-        XRoadConfig.KEY,
       ],
     },
   ],

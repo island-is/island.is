@@ -1,7 +1,4 @@
-import {
-  FirearmLicenseApiProvider,
-  FirearmLicenseClientModule,
-} from '@island.is/clients/firearm-license'
+import { FirearmLicenseClientModule } from '@island.is/clients/firearm-license'
 import {
   SmartSolutionsApiClientModule,
   SmartSolutionsConfig,

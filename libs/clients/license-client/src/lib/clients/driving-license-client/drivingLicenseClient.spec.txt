@@ -1,0 +1,80 @@
+import { LicensePkPassAvailability } from '../../licenseClient.type'
+import { DrivingLicenseDto } from './genericDrivingLicense.type'
+import { DrivingLicenseClient } from './drivingLicenseClient.service'
+
+describe('license-service/client/driving-license', () => {
+  // Since the client needs to be refactored out of the service, test the
+  // logic independantly via the static method
+  // See readme for rules
+  describe('pkpass status', () => {
+    it('should be unknown for empty license', async () => {
+      const license: DrivingLicenseDto = {}
+
+      const result = DrivingLicenseClient.licenseIsValidForPkpass(license)
+
+      expect(result).toBe(LicensePkPassAvailability.Unknown)
+    })
+
+    it('should be available for a license with `mynd` on 1997-08-15', async () => {
+      const license: DrivingLicenseDto = {
+        mynd: {
+          mynd: 'not-empty',
+          skrad: '1997-08-15T00:00:00',
+        },
+      }
+
+      const result = DrivingLicenseClient.licenseIsValidForPkpass(license)
+
+      expect(result).toBe(LicensePkPassAvailability.Available)
+    })
+
+    it('should not be available for a license with `mynd` before 1997-08-15', async () => {
+      const license: DrivingLicenseDto = {
+        mynd: {
+          mynd: 'not-empty',
+          skrad: '1997-08-14T00:00:00',
+        },
+      }
+
+      const result = DrivingLicenseClient.licenseIsValidForPkpass(license)
+
+      expect(result).toBe(LicensePkPassAvailability.NotAvailable)
+    })
+
+    it('should not be availble for a license with `mynd` after 1997-08-15 but no image data', async () => {
+      const license: DrivingLicenseDto = {
+        mynd: {
+          mynd: '',
+          skrad: '2000-08-14T00:00:00',
+        },
+      }
+
+      const result = DrivingLicenseClient.licenseIsValidForPkpass(license)
+
+      expect(result).toBe(LicensePkPassAvailability.NotAvailable)
+    })
+
+    it('should not be available for a license with `mynd` with invalid date', async () => {
+      const license: DrivingLicenseDto = {
+        mynd: {
+          mynd: 'not-empty',
+          skrad: 'invalid',
+        },
+      }
+
+      const result = DrivingLicenseClient.licenseIsValidForPkpass(license)
+
+      expect(result).toBe(LicensePkPassAvailability.NotAvailable)
+    })
+
+    it('should not be available for a license with `mynd` as null', () => {
+      const license: DrivingLicenseDto = {
+        mynd: null,
+      }
+
+      const result = DrivingLicenseClient.licenseIsValidForPkpass(license)
+
+      expect(result).toBe(LicensePkPassAvailability.NotAvailable)
+    })
+  })
+})

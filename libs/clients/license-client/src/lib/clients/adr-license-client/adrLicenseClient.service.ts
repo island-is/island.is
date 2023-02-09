@@ -143,7 +143,7 @@ export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
     }
   }
 
-  async getPkPass(user: User): Promise<Result<Pass>> {
+  private async getPkPass(user: User): Promise<Result<Pass>> {
     const license = await this.fetchLicense(user)
 
     if (!license.ok || !license.data) {
@@ -193,6 +193,32 @@ export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
     )
 
     return pass
+  }
+
+  async getPkPassQRCode(user: User): Promise<Result<string>> {
+    const res = await this.getPkPass(user)
+
+    if (!res.ok) {
+      return res
+    }
+
+    return {
+      ok: true,
+      data: res.data.distributionQRCode,
+    }
+  }
+
+  async getPkPassUrl(user: User): Promise<Result<string>> {
+    const res = await this.getPkPass(user)
+
+    if (!res.ok) {
+      return res
+    }
+
+    return {
+      ok: true,
+      data: res.data.distributionUrl,
+    }
   }
 
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {

@@ -4,27 +4,23 @@ import fetch, { Response } from 'node-fetch'
 import * as kennitala from 'kennitala'
 import format from 'date-fns/format'
 import { Cache as CacheManager } from 'cache-manager'
-import { Injectable, Inject } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
-import { logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { logger } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
 
-import { GenericDrivingLicenseResponse } from './genericDrivingLicense.type'
-import { parseDrivingLicensePayload } from './drivingLicenseMappers'
+import { DrivingLicenseDto } from './drivingLicenseClient.type'
+import { ConfigType, XRoadConfig } from '@island.is/nest/config'
 import {
-  GenericLicenseClient,
-  GenericLicenseLabels,
-  GenericLicenseUserdataExternal,
-  GenericUserLicensePkPassStatus,
-  GenericUserLicenseStatus,
+  LicenseClient,
+  LicensePkPassAvailability,
   PkPassVerification,
   PkPassVerificationError,
-} from '../../licenceService.type'
-import { PkPassClient } from './pkpass.client'
-import { PkPassPayload } from './pkpass.type'
-import { Locale } from '@island.is/shared/types'
-import { GenericDrivingLicenseConfig } from './genericDrivingLicense.config'
-import { ConfigType, XRoadConfig } from '@island.is/nest/config'
+  Result,
+} from '../../licenseClient.type'
+import { PkPassClient } from './pkPassClient/pkpass.client'
+import { PkPassPayload } from './pkPassClient/pkpass.type'
+import { DrivingLicenseClientApiConfig } from './drivingLicenseClient.config'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'drivinglicense-service'
@@ -46,8 +42,7 @@ const dateToPkpassDate = (date: string): string => {
 }
 
 @Injectable()
-export class GenericDrivingLicenseApi
-  implements GenericLicenseClient<GenericDrivingLicenseResponse> {
+export class DrivingLicenseClient implements LicenseClient<DrivingLicenseDto> {
   private readonly xroadApiUrl: string
   private readonly xroadClientId: string
   private readonly xroadPath: string
@@ -58,7 +53,7 @@ export class GenericDrivingLicenseApi
   constructor(
     private logger: Logger,
     private xroadConfig: ConfigType<typeof XRoadConfig>,
-    private config: ConfigType<typeof GenericDrivingLicenseConfig>,
+    private config: ConfigType<typeof DrivingLicenseClientApiConfig>,
     private cacheManager?: CacheManager | null,
   ) {
     // TODO inject the actual RLS x-road client
@@ -82,7 +77,7 @@ export class GenericDrivingLicenseApi
     }
   }
 
-  private async requestApi(url: string): Promise<unknown | null> {
+  private async requestApi(url: string): Promise<Result<DrivingLicenseDto>> {
     let res: Response | null = null
 
     try {
@@ -96,7 +91,13 @@ export class GenericDrivingLicenseApi
             `Expected 200 status for Drivers license query, got ${res.status}`,
           )
         }
-        return null
+        return {
+          ok: false,
+          error: {
+            code: 13,
+            message: 'Service error',
+          },
+        }
       }
     } catch (e) {
       this.logger.error('Unable to query for drivers licence', {
@@ -104,7 +105,13 @@ export class GenericDrivingLicenseApi
         url,
         category: LOG_CATEGORY,
       })
-      return null
+      return {
+        ok: false,
+        error: {
+          code: 13,
+          message: 'Service error',
+        },
+      }
     }
 
     let json: unknown
@@ -116,14 +123,23 @@ export class GenericDrivingLicenseApi
         url,
         category: LOG_CATEGORY,
       })
-      return null
+      return {
+        ok: false,
+        error: {
+          code: 12,
+          message: 'JSON parse failure',
+        },
+      }
     }
-    return json
+    return {
+      ok: true,
+      data: json as DrivingLicenseDto,
+    }
   }
 
   private async requestFromXroadApi(
     nationalId: string,
-  ): Promise<GenericDrivingLicenseResponse[] | null> {
+  ): Promise<DrivingLicenseDto[] | null> {
     const response = await this.requestApi(
       `${this.xroadPath}/api/Okuskirteini/${nationalId}`,
     )
@@ -142,36 +158,31 @@ export class GenericDrivingLicenseApi
       return null
     }
 
-    const licenses = response as GenericDrivingLicenseResponse[]
+    const licenses = response as DrivingLicenseDto[]
 
     // If we get more than one license, sort in descending order so we can pick the first one as the
     // newest license later on
     // TODO(osk): This is a bug, fixed in v2 of the service (see https://www.notion.so/R-kisl-greglustj-ri-60f22ab2789e4e0296f5fe6e25fa19cf)
-    licenses.sort(
-      (
-        a?: GenericDrivingLicenseResponse,
-        b?: GenericDrivingLicenseResponse,
-      ) => {
-        const timeA = a?.utgafuDagsetning
-          ? new Date(a.utgafuDagsetning).getTime()
-          : 0
-        const timeB = b?.utgafuDagsetning
-          ? new Date(b.utgafuDagsetning).getTime()
-          : 0
+    licenses.sort((a?: DrivingLicenseDto, b?: DrivingLicenseDto) => {
+      const timeA = a?.utgafuDagsetning
+        ? new Date(a.utgafuDagsetning).getTime()
+        : 0
+      const timeB = b?.utgafuDagsetning
+        ? new Date(b.utgafuDagsetning).getTime()
+        : 0
 
-        if (isNaN(timeA) || isNaN(timeB)) {
-          return 0
-        }
+      if (isNaN(timeA) || isNaN(timeB)) {
+        return 0
+      }
 
-        return timeB - timeA
-      },
-    )
+      return timeB - timeA
+    })
 
     return licenses
   }
 
   private drivingLicenseToPkpassPayload(
-    license: GenericDrivingLicenseResponse,
+    license: DrivingLicenseDto,
   ): PkPassPayload {
     return {
       nafn: license.nafn,
@@ -205,15 +216,15 @@ export class GenericDrivingLicenseApi
     }
   }
 
-  static licenseIsValidForPkpass(
-    license: GenericDrivingLicenseResponse,
-  ): GenericUserLicensePkPassStatus {
+  private checkLicenseValidity(
+    license: DrivingLicenseDto,
+  ): LicensePkPassAvailability {
     if (!license || license.mynd === undefined) {
-      return GenericUserLicensePkPassStatus.Unknown
+      return LicensePkPassAvailability.Unknown
     }
 
     if (!license.mynd?.skrad || !license.mynd?.mynd) {
-      return GenericUserLicensePkPassStatus.NotAvailable
+      return LicensePkPassAvailability.NotAvailable
     }
 
     const cutoffDate = new Date(IMAGE_CUTOFF_DATE)
@@ -222,10 +233,10 @@ export class GenericDrivingLicenseApi
     const comparison = compareAsc(imageDate, cutoffDate)
 
     if (isNaN(comparison) || comparison < 0) {
-      return GenericUserLicensePkPassStatus.NotAvailable
+      return LicensePkPassAvailability.NotAvailable
     }
 
-    return GenericUserLicensePkPassStatus.Available
+    return LicensePkPassAvailability.Available
   }
 
   /**
@@ -248,7 +259,82 @@ export class GenericDrivingLicenseApi
     }
   }
 
-  async getPkPassUrlByNationalId(nationalId: string): Promise<string | null> {
+  licenseIsValidForPkPass(payload: unknown): LicensePkPassAvailability {
+    return this.checkLicenseValidity(payload as DrivingLicenseDto)
+  }
+
+  /**
+   * Fetch drivers license data from RLS through x-road.
+   *
+   * @param nationalId NationalId to fetch drivers licence for.
+   * @return {Promise<Result<DrivingLicenseDto | null>> } Response result containing the latest driving license or an error
+   */
+  async getLicense(user: User): Promise<Result<DrivingLicenseDto | null>> {
+    const licenses = await this.requestFromXroadApi(user.nationalId)
+
+    if (!licenses) {
+      return {
+        ok: false,
+        error: {
+          code: 13,
+          message: 'Service error',
+        },
+      }
+    }
+
+    return {
+      ok: true,
+      data: licenses[0],
+    }
+  }
+
+  async getLicenseDetail(
+    user: User,
+  ): Promise<Result<DrivingLicenseDto | null>> {
+    return await this.getLicense(user)
+  }
+
+  async getPkPassUrl(user: User): Promise<Result<string>> {
+    const pass = await this.getPkPassUrlByNationalId(user.nationalId)
+
+    if (pass) {
+      return {
+        ok: true,
+        data: pass,
+      }
+    }
+
+    return {
+      ok: false,
+      error: {
+        code: 6,
+        message: 'Driving license pkpass generation failed',
+      },
+    }
+  }
+
+  async getPkPassQRCode(user: User): Promise<Result<string>> {
+    const pass = await this.getPkPassQRCodeByNationalId(user.nationalId)
+
+    if (pass) {
+      return {
+        ok: true,
+        data: pass,
+      }
+    }
+
+    return {
+      ok: false,
+      error: {
+        code: 6,
+        message: 'Driving license pkpass generation failed',
+      },
+    }
+  }
+
+  private async getPkPassUrlByNationalId(
+    nationalId: string,
+  ): Promise<string | null> {
     const licenses = await this.requestFromXroadApi(nationalId)
 
     if (!licenses) {
@@ -261,7 +347,7 @@ export class GenericDrivingLicenseApi
       return null
     }
 
-    if (!GenericDrivingLicenseApi.licenseIsValidForPkpass(license)) {
+    if (!this.checkLicenseValidity(license)) {
       this.logger.info('License is not valid for pkpass generation', {
         category: LOG_CATEGORY,
       })
@@ -279,11 +365,7 @@ export class GenericDrivingLicenseApi
     return pkPassUrl
   }
 
-  async getPkPassUrl(user: User): Promise<string | null> {
-    return this.getPkPassUrlByNationalId(user.nationalId)
-  }
-
-  async getPkPassQRCodeByNationalId(
+  private async getPkPassQRCodeByNationalId(
     nationalId: string,
   ): Promise<string | null> {
     const licenses = await this.requestFromXroadApi(nationalId)
@@ -298,7 +380,7 @@ export class GenericDrivingLicenseApi
       return null
     }
 
-    if (!GenericDrivingLicenseApi.licenseIsValidForPkpass(license)) {
+    if (!this.checkLicenseValidity(license)) {
       this.logger.info('License is not valid for pkpass generation', {
         category: LOG_CATEGORY,
       })
@@ -307,60 +389,13 @@ export class GenericDrivingLicenseApi
 
     const payload = this.drivingLicenseToPkpassPayload(license)
 
-    const qrCode = await this.pkpassClient.getPkPassQRCode(payload)
+    const pkPassUrl = await this.pkpassClient.getPkPassUrl(payload)
 
-    if (qrCode) {
+    if (pkPassUrl) {
       this.notifyPkPassCreated(nationalId)
     }
 
-    return qrCode
-  }
-
-  async getPkPassQRCode(user: User): Promise<string | null> {
-    return this.getPkPassQRCodeByNationalId(user.nationalId)
-  }
-
-  /**
-   * Fetch drivers license data from RLS through x-road.
-   *
-   * @param nationalId NationalId to fetch drivers licence for.
-   * @return {Promise<GenericLicenseUserdataExternal | null>} Latest driving license or null if an error occured.
-   */
-  async getLicense(
-    user: User,
-    locale: Locale,
-    labels: GenericLicenseLabels,
-  ): Promise<GenericLicenseUserdataExternal | null> {
-    const licenses = await this.requestFromXroadApi(user.nationalId)
-
-    if (!licenses) {
-      return null
-    }
-
-    const payload = parseDrivingLicensePayload(licenses, locale, labels)
-
-    let pkpassStatus: GenericUserLicensePkPassStatus =
-      GenericUserLicensePkPassStatus.Unknown
-
-    if (payload) {
-      pkpassStatus = GenericDrivingLicenseApi.licenseIsValidForPkpass(
-        licenses[0],
-      )
-    }
-
-    return {
-      payload,
-      status: GenericUserLicenseStatus.HasLicense,
-      pkpassStatus,
-    }
-  }
-
-  async getLicenseDetail(
-    user: User,
-    locale: Locale,
-    labels: GenericLicenseLabels,
-  ): Promise<GenericLicenseUserdataExternal | null> {
-    return this.getLicense(user, locale, labels)
+    return pkPassUrl
   }
 
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {
@@ -404,7 +439,7 @@ export class GenericDrivingLicenseApi
     }
 
     let response:
-      | Record<string, string | null | GenericDrivingLicenseResponse['mynd']>
+      | Record<string, string | null | DrivingLicenseDto['mynd']>
       | undefined = undefined
 
     if (result.nationalId) {

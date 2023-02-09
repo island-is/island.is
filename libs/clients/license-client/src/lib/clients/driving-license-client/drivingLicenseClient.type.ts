@@ -1,4 +1,4 @@
-export interface GenericDrivingLicenseResponse {
+export interface DrivingLicenseDto {
   id?: number
   nafn?: string
   kennitala?: string
@@ -51,3 +51,5 @@ export interface GenericDrivingLicenseResponse {
     endurupptakaSkirteinis?: number | null
   }
 }
+
+export const DRIVING_LICENSE_CLIENT_FACTORY = 'driving-license-client-factory'

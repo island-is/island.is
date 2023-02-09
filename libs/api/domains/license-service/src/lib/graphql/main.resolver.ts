@@ -125,18 +125,18 @@ export class MainResolver {
     locale: Locale = 'is',
     @Args('input') input: GeneratePkPassInput,
   ): Promise<GenericPkPass> {
-    const pass = await this.licenseServiceService.generatePkPass(
+    const pkpassUrl = await this.licenseServiceService.generatePkPassUrl(
       user,
       locale,
       input.licenseType,
     )
 
-    if (!pass) {
-      throw new Error('mIssing pass')
+    if (!pkpassUrl) {
+      throw new Error('PkPass generation failed')
     }
 
     return {
-      pkpassUrl: pass.distributionUrl,
+      pkpassUrl,
     }
   }
 
@@ -148,18 +148,18 @@ export class MainResolver {
     locale: Locale = 'is',
     @Args('input') input: GeneratePkPassInput,
   ): Promise<GenericPkPassQrCode> {
-    const pass = await this.licenseServiceService.generatePkPass(
+    const pkpassQRCode = await this.licenseServiceService.generatePkPassUrl(
       user,
       locale,
       input.licenseType,
     )
 
-    if (!pass) {
-      throw new Error('mIssing pass')
+    if (!pkpassQRCode) {
+      throw new Error('PkPass generation failed')
     }
 
     return {
-      pkpassQRCode: pass.distributionQRCode,
+      pkpassQRCode,
     }
   }
 

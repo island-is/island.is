@@ -12,6 +12,7 @@ export enum LicenseType {
   AdrLicense = 'AdrLicense',
   MachineLicense = 'MachineLicense',
   DisabilityLicense = 'DisabilityLicense',
+  DriversLicense = 'DriversLicense',
 }
 
 export type LicenseTypeType = keyof typeof LicenseType
@@ -92,12 +93,16 @@ export interface ServiceError {
 /** SERVICE CODES 10+ *
  *  HTTP CODES 100+ */
 export type ServiceErrorCode =
+  /** Pass unavailable for pkpass generation */
+  | 2
   /** No license info found */
   | 3
   /** Request contains some field errors */
   | 4
   /** Invalid pass */
   | 5
+  /** Driving license pkPass generation failed */
+  | 6
   /** Missing PassTemplateId */
   | 10
   /** Fetch failed */
@@ -122,7 +127,9 @@ export interface LicenseClient<ResultType> {
 
   licenseIsValidForPkPass: (payload: unknown) => LicensePkPassAvailability
 
-  getPkPass: (user: User, locale?: Locale) => Promise<Result<Pass>>
+  getPkPassUrl: (user: User, locale?: Locale) => Promise<Result<string>>
+
+  getPkPassQRCode: (user: User, locale?: Locale) => Promise<Result<string>>
 
   verifyPkPass: (
     data: string,

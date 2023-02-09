@@ -1,6 +1,6 @@
-import { GenericDrivingLicenseResponse } from './genericDrivingLicense.type'
+import { DrivingLicenseDto } from '../drivingLicenseClient.type'
 
-export type PkPassPayload = GenericDrivingLicenseResponse & {
+export type PkPassPayload = DrivingLicenseDto & {
   faedingardagur: string
 }
 

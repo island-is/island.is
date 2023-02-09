@@ -12,13 +12,13 @@ import {
   LICENSE_MAPPER_FACTORY,
   GenericLicenseMapper,
 } from './licenceService.type'
-import { GenericDrivingLicenseModule } from './client/driving-license-client'
 import { AdrLicensePayloadMapper } from './mappers/adrLicenseMapper'
 import { DisabilityLicensePayloadMapper } from './mappers/disabilityLicenseMapper'
 import { MachineLicensePayloadMapper } from './mappers/machineLicenseMapper'
 import { FirearmLicensePayloadMapper } from './mappers/firearmLicenseMapper'
 import { LicenseServiceServiceV2 } from './licenseServiceV2.service'
 import { LicenseMapperModule } from './mappers/licenseMapper.module'
+import { DrivingLicensePayloadMapper } from './mappers/drivingLicenseMapper'
 export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
     type: GenericLicenseType.FirearmLicense,
@@ -74,7 +74,6 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
 @Module({
   imports: [
     CacheModule.register(),
-    GenericDrivingLicenseModule,
     LicenseClientModule,
     LicenseMapperModule,
     CmsModule,
@@ -86,7 +85,6 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
       provide: LOGGER_PROVIDER,
       useValue: logger,
     },
-
     {
       provide: LICENSE_MAPPER_FACTORY,
       useFactory: (
@@ -94,6 +92,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
         disability: DisabilityLicensePayloadMapper,
         machine: MachineLicensePayloadMapper,
         firearm: FirearmLicensePayloadMapper,
+        driving: DrivingLicensePayloadMapper,
       ) => async (
         type: GenericLicenseType,
       ): Promise<GenericLicenseMapper<any> | null> => {
@@ -106,6 +105,8 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
             return machine
           case GenericLicenseType.FirearmLicense:
             return firearm
+          case GenericLicenseType.DriversLicense:
+            return driving
           default:
             return null
         }
@@ -115,6 +116,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
         DisabilityLicensePayloadMapper,
         MachineLicensePayloadMapper,
         FirearmLicensePayloadMapper,
+        DrivingLicensePayloadMapper,
       ],
     },
   ],

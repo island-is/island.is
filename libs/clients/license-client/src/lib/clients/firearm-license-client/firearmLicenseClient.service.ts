@@ -232,6 +232,32 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
     return pass
   }
 
+  async getPkPassQRCode(user: User): Promise<Result<string>> {
+    const res = await this.getPkPass(user)
+
+    if (!res.ok) {
+      return res
+    }
+
+    return {
+      ok: true,
+      data: res.data.distributionQRCode,
+    }
+  }
+
+  async getPkPassUrl(user: User): Promise<Result<string>> {
+    const res = await this.getPkPass(user)
+
+    if (!res.ok) {
+      return res
+    }
+
+    return {
+      ok: true,
+      data: res.data.distributionUrl,
+    }
+  }
+
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {
     const { code, date } = JSON.parse(data) as PkPassVerificationInputData
     const result = await this.smartApi.verifyPkPass({ code, date })

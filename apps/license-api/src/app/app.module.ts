@@ -17,6 +17,7 @@ import {
   DisabilityLicenseClientApiConfig,
   FirearmLicenseClientApiConfig,
   MachineLicenseClientApiConfig,
+  DrivingLicenseClientApiConfig,
 } from '@island.is/clients/license-client'
 import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
 import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-license'
@@ -40,6 +41,7 @@ import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-mac
         DisabilityLicenseClientApiConfig,
         FirearmLicenseClientConfig,
         FirearmLicenseClientApiConfig,
+        DrivingLicenseClientApiConfig,
       ],
     }),
     LicenseModule,

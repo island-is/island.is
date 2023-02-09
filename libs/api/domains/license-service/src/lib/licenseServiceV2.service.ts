@@ -201,11 +201,11 @@ export class LicenseServiceServiceV2 {
     }
   }
 
-  async generatePkPass(
+  async generatePkPassUrl(
     user: User,
     locale: Locale,
     licenseType: GenericLicenseType,
-  ) {
+  ): Promise<string | null> {
     const client = await this.licenseClient.getClientByLicenseType(
       (licenseType as unknown) as LicenseType,
     )
@@ -215,14 +215,35 @@ export class LicenseServiceServiceV2 {
       return null
     }
 
-    const pkPassRes = await client.getPkPass(user)
+    const pkPassRes = await client.getPkPassUrl(user)
 
     if (pkPassRes.ok) {
-      const { distributionQRCode, distributionUrl } = pkPassRes.data
-      return {
-        distributionQRCode,
-        distributionUrl,
-      }
+      return pkPassRes.data
+    }
+
+    throw new InternalServerErrorException(
+      `Unable to get pkpass for ${licenseType} for user`,
+    )
+  }
+
+  async generatePkPassQRCode(
+    user: User,
+    locale: Locale,
+    licenseType: GenericLicenseType,
+  ): Promise<string | null> {
+    const client = await this.licenseClient.getClientByLicenseType(
+      (licenseType as unknown) as LicenseType,
+    )
+
+    if (!client) {
+      this.logger.warn(`Invalid license type. type: ${licenseType}`)
+      return null
+    }
+
+    const pkPassRes = await client.getPkPassQRCode(user)
+
+    if (pkPassRes.ok) {
+      return pkPassRes.data
     }
 
     throw new InternalServerErrorException(

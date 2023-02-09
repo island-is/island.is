@@ -45,10 +45,7 @@ import { AirDiscountSchemeModule } from '@island.is/api/domains/air-discount-sch
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
-import {
-  GenericDrivingLicenseConfig,
-  LicenseServiceModule,
-} from '@island.is/api/domains/license-service'
+import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
 import { AssetsClientConfig } from '@island.is/clients/assets'
 import { AuthPublicApiClientConfig } from '@island.is/clients/auth/public-api'
@@ -94,6 +91,7 @@ import {
   DisabilityLicenseClientApiConfig,
   AdrLicenseClientApiConfig,
   MachineLicenseClientApiConfig,
+  DrivingLicenseClientApiConfig,
 } from '@island.is/clients/license-client'
 
 const debug = process.env.NODE_ENV === 'development'
@@ -264,7 +262,7 @@ const autoSchemaFile = environment.production
         AdrLicenseClientApiConfig,
         MachineLicenseClientApiConfig,
         DisabilityLicenseClientConfig,
-        GenericDrivingLicenseConfig,
+        DrivingLicenseClientApiConfig,
         VehiclesClientConfig,
         AuthPublicApiClientConfig,
         AuthDelegationApiClientConfig,

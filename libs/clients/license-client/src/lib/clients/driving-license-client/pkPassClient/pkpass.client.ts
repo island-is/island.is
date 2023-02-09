@@ -12,8 +12,9 @@ import {
   PkPassServiceVerifyDriversLicenseResponse,
   PkPassVerifyResult,
 } from './pkpass.type'
-import { GenericDrivingLicenseConfig } from './genericDrivingLicense.config'
-import { ConfigType } from '@island.is/nest/config'
+import { DrivingLicenseClientApiConfig } from '../drivingLicenseClient.config'
+import { Injectable } from '@nestjs/common'
+import type { ConfigType } from '@island.is/nest/config'
 /** Set TTL to less than given expiry from service */
 const DEFAULT_CACHE_TOKEN_EXPIRY_DELTA_IN_MS = 2000
 
@@ -41,6 +42,7 @@ function strToPositiveNum(s: string): number | undefined {
  *
  * TODO: Move this to an actual client. This will be done in drivers license V2 which is coming up soon.
  */
+@Injectable()
 export class PkPassClient {
   private readonly pkpassApiKey: string
   private readonly pkpassSecretKey: string
@@ -50,7 +52,7 @@ export class PkPassClient {
   private readonly pkpassAuthRetries: number
 
   constructor(
-    private config: ConfigType<typeof GenericDrivingLicenseConfig>,
+    private config: ConfigType<typeof DrivingLicenseClientApiConfig>,
     private logger: Logger,
     private cacheManager?: CacheManager | null,
   ) {
