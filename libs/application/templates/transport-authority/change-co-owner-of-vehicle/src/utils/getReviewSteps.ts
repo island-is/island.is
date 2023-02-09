@@ -26,10 +26,16 @@ export const getReviewSteps = (application: Application) => {
     [],
   ) as UserInformation[]
 
+  const filteredCoOwners = coOwners.filter(
+    ({ wasRemoved }) => wasRemoved !== 'true',
+  )
+
   const ownerCoOwnerNotApproved = ownerCoOwners.find(
     (coOwner) => !coOwner.approved,
   )
-  const coOwnerNotApproved = coOwners.find((operator) => !operator.approved)
+  const coOwnerNotApproved = filteredCoOwners.find(
+    (coOwner) => !coOwner.approved,
+  )
 
   const steps = [
     // Transfer of vehicle: Always approved
@@ -57,7 +63,7 @@ export const getReviewSteps = (application: Application) => {
         !ownerCoOwnerNotApproved && !coOwnerNotApproved ? 'mint' : 'purple',
       title: review.step.title.coOwner,
       description: review.step.description.coOwner,
-      visible: ownerCoOwners.length > 0 || coOwners.length > 0,
+      visible: ownerCoOwners.length > 0 || filteredCoOwners.length > 0,
       reviewer: [
         ...ownerCoOwners.map((reviewer) => {
           return {
@@ -66,7 +72,7 @@ export const getReviewSteps = (application: Application) => {
             approved: reviewer.approved || false,
           }
         }),
-        ...coOwners.map((reviewer) => {
+        ...filteredCoOwners.map((reviewer) => {
           return {
             nationalId: reviewer.nationalId,
             name: reviewer.name,
