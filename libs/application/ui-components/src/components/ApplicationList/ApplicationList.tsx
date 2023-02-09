@@ -235,7 +235,7 @@ const ApplicationList = ({
       history = history.concat(
         application.history.map((x) => ({
           date: format(new Date(x.date), formattedDate),
-          title: formatMessage(x.entry),
+          title: formatMessage(x.log),
         })),
       )
     }

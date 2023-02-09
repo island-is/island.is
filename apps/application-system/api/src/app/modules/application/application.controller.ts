@@ -828,9 +828,9 @@ export class ApplicationController {
       }
     }
 
-    const historyOnExitEntry = helper.getHistoryEntry('exit', application.state)
+    const historyOnExitEntry = helper.getHistoryLog('exit', application.state)
     if (historyOnExitEntry) {
-      await this.historyService.createHistoryEntry(
+      await this.historyService.createHistoryLog(
         application,
         historyOnExitEntry,
       )
@@ -858,13 +858,10 @@ export class ApplicationController {
       }
     }
 
-    const historyOnEntryEntry = helper.getHistoryEntry(
-      'entry',
-      application.state,
-    )
+    const historyOnEntryEntry = helper.getHistoryLog('entry', application.state)
 
     if (historyOnEntryEntry) {
-      await this.historyService.createHistoryEntry(
+      await this.historyService.createHistoryLog(
         application,
         historyOnEntryEntry,
       )

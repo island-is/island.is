@@ -17,7 +17,7 @@ module.exports = {
           key: 'id',
         },
       },
-      contentful_id: {
+      log: {
         type: Sequelize.STRING,
         allowNull: true,
       },

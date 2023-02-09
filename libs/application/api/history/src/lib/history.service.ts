@@ -23,13 +23,13 @@ export class HistoryService {
     })
   }
 
-  async createHistoryEntry(
+  async createHistoryLog(
     application: ApplicationWithAttachments,
-    entry: StaticText,
+    log: StaticText,
   ): Promise<History> {
     return this.historyModel.create({
       application_id: application.id,
-      contentful_id: typeof entry === 'string' ? entry : JSON.stringify(entry),
+      log: typeof log === 'string' ? log : JSON.stringify(log),
       date: new Date(),
     })
   }

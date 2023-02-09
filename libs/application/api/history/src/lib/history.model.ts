@@ -46,5 +46,5 @@ export class History extends Model {
     allowNull: true,
   })
   @ApiProperty()
-  contentful_id?: string
+  log?: string
 }

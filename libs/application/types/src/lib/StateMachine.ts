@@ -12,7 +12,6 @@ import { Application, ActionCardTag } from './Application'
 import { Condition } from './Condition'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { TemplateApi } from './template-api/TemplateApi'
-import { VariableStatement } from 'ts-morph'
 
 export type ApplicationRole = 'applicant' | 'assignee' | string
 
@@ -93,8 +92,8 @@ export interface ApplicationStateMeta<
   actionCard?: {
     title?: StaticText
     description?: StaticText
-    onExitHistory?: StaticText
-    onEntryHistory?: StaticText
+    onExitHistoryLog?: StaticText
+    onEntryHistoryLog?: StaticText
     pendingAction?:
       | PendingAction
       | ((application: Application, role: ApplicationRole) => PendingAction)

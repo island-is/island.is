@@ -172,17 +172,9 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           actionCard: {
             description: m.draftDescription,
             pendingAction: testPendingAction,
-            onEntryHistory: m.careerHistoryCompanies,
-            onExitHistory: m.careerIndustry,
-          },
-          onEntry: [
-            ApplicationHistoryApi.configure({
-              params: {
-                contentId: m.career.id,
-              },
-            }),
-          ],
 
+            onExitHistoryLog: 'Umsókn send inn',
+          },
           progress: 0.25,
           status: 'draft',
           lifecycle: DefaultStateLifeCycle,
@@ -216,6 +208,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
             pendingAction: testPendingAction,
+            onEntryHistoryLog: 'Beðið eftir að skráningu á yfirferðaraðila',
           },
           onEntry: [
             defineTemplateApi({
@@ -237,6 +230,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: 'all',
+              delete: true,
             },
             {
               id: Roles.ASSIGNEE,
@@ -262,8 +256,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
             pendingAction: testPendingAction,
-            onEntryHistory: m.career,
-            onExitHistory: m.assignee,
+            onEntryHistoryLog: 'Umsókn send inn fyrir yfirferð',
           },
           onExit: [
             defineTemplateApi({
@@ -285,6 +278,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 answers: ['careerHistoryDetails', 'approvedByReviewer'],
               },
               read: 'all',
+              delete: true,
               shouldBeListedForRole: true,
             },
             {
@@ -308,6 +302,9 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           progress: 1,
           status: 'approved',
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            onEntryHistoryLog: 'Umsókn var samþykkt',
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -326,6 +323,9 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           progress: 1,
           status: 'rejected',
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            onEntryHistoryLog: 'Umsókn var hafnað',
+          },
           roles: [
             {
               id: Roles.APPLICANT,

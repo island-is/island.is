@@ -297,14 +297,14 @@ export class ApplicationTemplateHelper<
     }
   }
 
-  getHistoryEntry(
+  getHistoryLog(
     access: 'exit' | 'entry',
     stateKey: string = this.application.state,
   ): StaticText | undefined {
     const stateInfo = this.getApplicationStateInformation(stateKey)
 
     return access === 'entry'
-      ? stateInfo?.actionCard?.onEntryHistory
-      : stateInfo?.actionCard?.onExitHistory
+      ? stateInfo?.actionCard?.onEntryHistoryLog
+      : stateInfo?.actionCard?.onExitHistoryLog
   }
 }

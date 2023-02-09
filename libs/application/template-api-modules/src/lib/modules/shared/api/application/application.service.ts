@@ -60,7 +60,7 @@ export class ApplicationService extends BaseTemplateApiService {
     params,
   }: TemplateApiModuleActionProps<ApplicationHistoryParameters>): Promise<void> {
     if (params?.contentId) {
-      this.historyService.createHistoryEntry(application, params.contentId)
+      this.historyService.createHistoryLog(application, params.contentId)
     }
   }
 }

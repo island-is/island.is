@@ -19,24 +19,24 @@ export class HistoryResponseDto {
   @ApiProperty()
   @Expose()
   @IsString()
-  entry?: string
+  log?: string
 
   constructor(historyModel: History, formatMessage: FormatMessage) {
     this.id = historyModel.id
     this.date = historyModel.date
     console.log({ historyModel })
 
-    if (!historyModel.contentful_id) {
-      this.entry = undefined
-    } else if (historyModel.contentful_id.includes('{')) {
+    if (!historyModel.log) {
+      this.log = undefined
+    } else if (historyModel.log.includes('{')) {
       //TODO fix this
-      const entry: StaticText = historyModel?.contentful_id
-        ? JSON.parse(historyModel.contentful_id)
+      const log: StaticText = historyModel?.log
+        ? JSON.parse(historyModel.log)
         : undefined
 
-      this.entry = entry ? formatMessage(entry) : undefined
+      this.log = log ? formatMessage(log) : undefined
     } else {
-      this.entry = historyModel.contentful_id
+      this.log = historyModel.log
     }
   }
 }

@@ -122,5 +122,5 @@ export class ApplicationHistory {
   date!: Date
 
   @Field(() => String, { nullable: true })
-  entry?: string
+  log?: string
 }
