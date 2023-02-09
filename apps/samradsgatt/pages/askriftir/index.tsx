@@ -172,12 +172,12 @@ const Subscriptions = () => {
               text="Skráðu netfang hérna og svo hefst staðfestingaferlið. Þú færð tölvupóst sem þú þarft að staðfesta til að áskriftin taki gildi."
               button={{
                 label: 'Skrá áskrift',
-                onClick: () => setLoggedIn(false)
+                onClick: () => setLoggedIn(false),
               }}
               input={{
                 name: 'subscriptionEmail',
                 label: 'Netfang',
-                placeholder: 'Hér skal skrifa netfang'
+                placeholder: 'Hér skal skrifa netfang',
               }}
             />
           ) : (
