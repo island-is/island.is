@@ -63,6 +63,9 @@ const DrivingLessonsBook: ServicePortalModuleComponent = () => {
 
   const { book } = data?.drivingLicenseBookUserBook || {}
 
+  // Frontend fix before service is fixed and returns double for total driving lessons
+  const oneDrivingLessonsInMinutes = 45
+
   if (error && !loading) {
     return (
       <ErrorScreen
@@ -123,7 +126,9 @@ const DrivingLessonsBook: ServicePortalModuleComponent = () => {
             <Divider />
             <UserInfoLine
               label={formatMessage(messages.vehicleDrivingLessonsCount)}
-              content={book?.totalLessonCount.toString()}
+              content={(book?.totalLessonTime / oneDrivingLessonsInMinutes)
+                .toPrecision(3)
+                .toString()}
               loading={loading}
             />
             <Divider />
