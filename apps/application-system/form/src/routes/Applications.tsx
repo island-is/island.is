@@ -129,9 +129,7 @@ export const Applications: FC = () => {
   }
 
   if (!template) {
-    return (
-      <ErrorShell title={formatMessage(coreMessages.notFoundApplicationType)} />
-    )
+    return <ErrorShell errorType="notExist" />
   }
 
   if (!type || applicationsError) {
