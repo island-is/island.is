@@ -13,8 +13,8 @@ import {
 import NumberFormat from 'react-number-format'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { ValueType } from 'react-select'
-import { countryCodes as countryCodeList, countryCodes } from './countryCodes'
-import { parse, findPhoneNumbersInText } from 'libphonenumber-js'
+import { countryCodes as countryCodeList } from './countryCodes'
+import { parse } from 'libphonenumber-js'
 
 interface Props {
   autoFocus?: boolean
@@ -79,7 +79,7 @@ const getDefaultValue = (
 /**
  * Gets default country code.
  * This function tries to extract a country calling code from a phone number,
- * by using libphonenumber-js to parse the number
+ * by using libphonenumber-js to parse the number. Defaults to IS code.
  *
  * Example outputs:
  * getDefaultCountryCode("+3545812345") // +354
@@ -92,7 +92,7 @@ const getDefaultCountryCode = (phoneNumber?: string) => {
 
   if (parsedPhoneNumber && parsedPhoneNumber.country) {
     return (
-      countryCodes.find((x) => x.code === parsedPhoneNumber.country)
+      countryCodeList.find((x) => x.code === parsedPhoneNumber.country)
         ?.dial_code || DEFAULT_COUNTRY_CODE
     )
   }
@@ -132,11 +132,11 @@ export const PhoneInputController = forwardRef(
     const formValue = watch(name) as string
     const countryCodes = getCountryCodes(allowedCountryCodes)
     const defaultCountryCode = getDefaultCountryCode(defaultValue)
-    const [countryCode, setCountryCode] = useState<ValueType<Option>>(
-      countryCodes.find((x) => x.value === defaultCountryCode),
-    )
+    const [selectedCountryCode, setSelectedCountryCode] = useState<
+      ValueType<Option>
+    >(countryCodes.find((x) => x.value === defaultCountryCode))
 
-    const cc = (countryCode as Option).value.toString()
+    const cc = (selectedCountryCode as Option).value.toString()
 
     const handleCountryCodeChange = (value: ValueType<Option>) => {
       if (formValue && !formValue.startsWith('+')) {
@@ -150,7 +150,7 @@ export const PhoneInputController = forwardRef(
         )
         setValue(name, updatedValue)
       }
-      setCountryCode(value)
+      setSelectedCountryCode(value)
     }
 
     function renderChildInput(c: ChildParams & TestSupport) {
@@ -172,10 +172,13 @@ export const PhoneInputController = forwardRef(
           label={label}
           type="tel"
           value={value?.replace(cc, '')}
-          format="###-####"
+          format={
+            countryCodeList.find((x) => x.dial_code === cc && !!x.format)
+              ?.format
+          }
           autoComplete={autoComplete}
           loading={loading}
-          countryCodeValue={countryCode}
+          countryCodeValue={selectedCountryCode}
           onCountryCodeChange={handleCountryCodeChange}
           hasError={error !== undefined}
           errorMessage={error}
