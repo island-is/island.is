@@ -32,7 +32,7 @@ export const generateApplicationApprovedByEmployerToEmployerEmail: EmployerRejec
   } = props
 
   const { employers } = getApplicationAnswers(application.answers)
-  let employersArray: EmailToType[] = []
+  const employersArray: EmailToType[] = []
 
   employers?.forEach((e) => {
     employersArray.push({
