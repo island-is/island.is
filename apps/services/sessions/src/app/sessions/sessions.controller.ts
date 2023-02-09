@@ -4,7 +4,9 @@ import {
   Controller,
   ForbiddenException,
   Get,
+  Headers,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
@@ -23,7 +25,8 @@ import { Documentation } from '@island.is/nest/swagger'
 
 import { sessionJobName, sessionsQueueName } from '../sessions.config'
 import { CreateSessionDto } from './create-session.dto'
-import { Session } from './session.model'
+import { SessionsQueryDto } from './sessions-query.dto'
+import { SessionsResultDto } from './sessions-result.dto'
 import { SessionsService } from './sessions.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -43,14 +46,18 @@ export class SessionsController {
   @Get()
   @Documentation({
     description: 'Get all sessions for the authenticated user.',
-    response: { status: 200, type: [Session] },
+    response: { status: 200, type: SessionsResultDto },
   })
   @Scopes(ApiScope.internal, ApiScope.internalProcuring)
-  @Audit<Session[]>({
-    resources: (sessions) => sessions.map((session) => session.id),
+  @Audit<SessionsResultDto>({
+    resources: (result) => result.data.map((session) => session.id),
   })
-  findAll(@CurrentUser() user: User) {
-    return this.sessionsService.findAll(user)
+  findAll(
+    @CurrentUser() user: User,
+    @Query() query: SessionsQueryDto,
+    @Headers('X-Query-OtherUser') otherUser?: string,
+  ): Promise<SessionsResultDto> {
+    return this.sessionsService.findAll(user, query, otherUser)
   }
 
   @Post()
