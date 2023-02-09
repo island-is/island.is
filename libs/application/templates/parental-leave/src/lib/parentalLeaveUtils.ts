@@ -739,27 +739,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'personalAllowanceFromSpouse.usage',
   ) as string
 
-  let employers = getValueViaPath(answers, 'employers', []) as EmployerRow[]
-  // old employer object
-  if (!employers || employers.length === 0) {
-    const employerEmailObj = getValueViaPath(answers, 'employer.email')
-    if (employerEmailObj) {
-      employers.push({
-        email: employerEmailObj,
-        ratio: '100',
-        phoneNumber: getValueViaPath(answers, 'employerPhoneNumber'),
-        reviewerNationalRegistryId: getValueViaPath(
-          answers,
-          'employerReviewerNationalRegistryId',
-        ),
-        companyNationalRegistryId: getValueViaPath(
-          answers,
-          'employerNationalRegistryId',
-        ),
-      } as EmployerRow)
-    }
-  }
-
   const employerNationalRegistryId = getValueViaPath(
     answers,
     'employerNationalRegistryId',
@@ -769,6 +748,24 @@ export function getApplicationAnswers(answers: Application['answers']) {
     answers,
     'employerReviewerNationalRegistryId',
   ) as string
+
+  let employers = getValueViaPath(answers, 'employers', []) as EmployerRow[]
+  // old employer object
+  if (!employers || employers.length === 0) {
+    const employerEmailObj = getValueViaPath(
+      answers,
+      'employer.email',
+    ) as string
+    if (employerEmailObj) {
+      employers.push({
+        email: employerEmailObj,
+        ratio: '100',
+        phoneNumber: getValueViaPath(answers, 'employerPhoneNumber') as string,
+        reviewerNationalRegistryId: employerReviewerNationalRegistryId,
+        companyNationalRegistryId: employerNationalRegistryId,
+      } as EmployerRow)
+    }
+  }
 
   const shareInformationWithOtherParent = getValueViaPath(
     answers,

@@ -316,7 +316,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
     // send confirmation sms to employer
     try {
-      // TODO: check phoneNumber for every employers
       const phoneNumber = employers.length > 0 ? employers[0].phoneNumber : ''
       if (phoneNumber && checkIfPhoneNumberIsGSM(phoneNumber)) {
         await this.sharedTemplateAPIService.assignApplicationThroughSms(
@@ -677,6 +676,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         )
 
         if (VMSTperiods?.periods) {
+          /*
+           * Sometime applicant uses other right than basic right ( grunnréttindi)
+           * Here we make sure we only use/sync amd use basic right ( grunnréttindi ) from VMST
+           */
           const getVMSTRightCodePeriod = VMSTperiods.periods[0].rightsCodePeriod
           const periodCodeStartCharacters = ['M', 'F']
           if (
@@ -1308,7 +1311,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       isSelfEmployed,
       isReceivingUnemploymentBenefits,
       applicationType,
-      employers,
     } = getApplicationAnswers(application.answers)
 
     const nationalRegistryId = application.applicant

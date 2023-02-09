@@ -4,6 +4,7 @@ import { Message } from '@island.is/email-service'
 import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
 import { getUnApprovedEmployers } from '@island.is/application/templates/parental-leave'
+import { getValueViaPath } from '@island.is/application/core'
 
 export let assignLinkEmployerSMS = ''
 
@@ -27,9 +28,13 @@ export const generateAssignEmployerApplicationEmail: AssignEmployerEmail = (
   assignLinkEmployerSMS = assignLink
 
   const employers = getUnApprovedEmployers(application.answers)
+  const employerEmailOld = getValueViaPath(
+    application.answers,
+    'employer.email',
+  ) as string
 
-  // TODO: Check employers email
-  const employerEmail = employers.length > 0 ? employers[0].email : ''
+  const employerEmail =
+    employers.length > 0 ? employers[0].email : employerEmailOld ?? ''
   const applicantName = get(application.externalData, 'person.data.fullName')
   const subject = 'Yfirferð á umsókn um fæðingarorlof'
 

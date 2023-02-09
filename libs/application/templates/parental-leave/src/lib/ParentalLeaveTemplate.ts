@@ -1029,13 +1029,20 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       clearEmployers: assign((context) => {
         const { application } = context
         const { answers } = application
-        const { employers } = getApplicationAnswers(answers)
+        const { employers, isSelfEmployed } = getApplicationAnswers(answers)
 
-        employers?.forEach((val, i) => {
-          set(answers, `employers[${i}].reviewerNationalRegistryId`, '')
-          set(answers, `employers[${i}].companyNationalRegistryId`, '')
-          set(answers, `employers[${i}].isApproved`, false)
-        })
+        if (isSelfEmployed === NO) {
+          employers?.forEach((val, i) => {
+            if (val.phoneNumber) {
+              set(answers, `employers[${i}].phoneNumber`, val.phoneNumber)
+            }
+            set(answers, `employers[${i}].ratio`, val.ratio)
+            set(answers, `employers[${i}].email`, val.email)
+            set(answers, `employers[${i}].reviewerNationalRegistryId`, '')
+            set(answers, `employers[${i}].companyNationalRegistryId`, '')
+            set(answers, `employers[${i}].isApproved`, false)
+          })
+        }
 
         return context
       }),

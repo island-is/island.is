@@ -34,23 +34,30 @@ export function hasEmployer(context: ApplicationContext) {
     }
     isSelfEmployed: typeof YES | typeof NO
   }
+  const oldApplicationAnswers = context.application.answers as {
+    isRecivingUnemploymentBenefits: typeof YES | typeof NO
+    employer: {
+      isSelfEmployed: typeof YES | typeof NO
+    }
+  }
+
+  const receivingUnemploymentBenefits =
+    currentApplicationAnswers.isReceivingUnemploymentBenefits !== undefined ||
+    oldApplicationAnswers.isRecivingUnemploymentBenefits !== undefined
+  const selfEmployed =
+    currentApplicationAnswers.isSelfEmployed === NO ||
+    oldApplicationAnswers.employer.isSelfEmployed === NO
 
   // Added this check for applications that is in the db already so they can go through to next state
   if (currentApplicationAnswers.applicationType === undefined) {
-    if (
-      currentApplicationAnswers.isReceivingUnemploymentBenefits !== undefined
-    ) {
-      return (
-        currentApplicationAnswers.isSelfEmployed === NO &&
-        currentApplicationAnswers.isReceivingUnemploymentBenefits === NO
-      )
+    if (receivingUnemploymentBenefits) {
+      return selfEmployed && receivingUnemploymentBenefits
     }
 
-    return currentApplicationAnswers.isSelfEmployed === NO
+    return selfEmployed
   } else
     return currentApplicationAnswers.applicationType.option === PARENTAL_LEAVE
-      ? currentApplicationAnswers.isSelfEmployed === NO &&
-          currentApplicationAnswers.isReceivingUnemploymentBenefits === NO
+      ? selfEmployed && receivingUnemploymentBenefits
       : false
 }
 
