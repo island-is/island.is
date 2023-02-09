@@ -13,6 +13,8 @@ import { Layout } from '../../components/Layout/Layout'
 import Cases from '../../utils/dummydata/api/Cases'
 import SubscriptionArray from '../../utils/dummydata/api/User/Subscriptions'
 import Types from '../../utils/dummydata/api/Types'
+import SubscriptionBox from '../../components/SubscriptionBox/SubscriptionBox'
+import SubscriptionActionBox from '../../components/Card/SubscriptionActionBox'
 
 const Subscriptions = () => {
   const [currentTab, setCurrentTab] = useState('Mál')
@@ -158,6 +160,13 @@ const Subscriptions = () => {
           <Text variant="default" paddingTop={2}>
             {'Kerfið er uppfært einu sinni á sólarhring.'}
           </Text>
+        </Box>
+        <Box paddingX={paddingXTable} paddingBottom={4}>
+          <SubscriptionActionBox
+            heading="Skrá áskrift"
+            text="Þú verður að vera skráð(ur) inn til þess að geta skráð þig í áskrift."
+            cta={{ label: 'Skrá mig inn', onClick: () => null }}
+          />
         </Box>
 
         <Box paddingX={paddingXTable}>
