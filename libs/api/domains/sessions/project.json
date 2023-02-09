@@ -1,0 +1,22 @@
+{
+  "root": "libs/api/domains/sessions",
+  "sourceRoot": "libs/api/domains/sessions/src",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/api/domains/sessions/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/api/domains/sessions"],
+      "options": {
+        "jestConfig": "libs/api/domains/sessions/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": ["lib:api", "scope:api"]
+}
