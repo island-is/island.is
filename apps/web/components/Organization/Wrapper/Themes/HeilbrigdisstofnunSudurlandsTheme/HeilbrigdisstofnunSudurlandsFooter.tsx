@@ -105,7 +105,7 @@ interface HeilbrigdisstofnunSudurlandsFooterProps {
   namespace: Record<string, string>
 }
 
-export const HeilbrigdisstofnunSudurlandsFooter = ({
+const HeilbrigdisstofnunSudurlandsFooter = ({
   footerItems,
   namespace,
 }: HeilbrigdisstofnunSudurlandsFooterProps) => {
