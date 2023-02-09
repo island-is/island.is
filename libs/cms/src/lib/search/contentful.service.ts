@@ -45,6 +45,16 @@ export class ContentfulService {
       environment: environment.contentful.environment,
       host: environment.contentful.host,
       removeUnresolved: true,
+      logHandler(level, data) {
+        const logContainsRateLimitWarning =
+          level === 'warning' &&
+          typeof data === 'string' &&
+          data.includes('Rate limit')
+
+        if (logContainsRateLimitWarning) return
+
+        logger[level](data)
+      },
     }
     logger.debug('Syncer created', params)
     this.contentfulClient = createClient(params)
@@ -178,7 +188,7 @@ export class ContentfulService {
     })
   }
 
-  private async getAllEntriesFromContentful(
+  private async getPopulatedContentulEntries(
     entries: Entry<unknown>[],
     locale: ElasticsearchIndexLocale,
     chunkSize: number,
@@ -233,7 +243,7 @@ export class ContentfulService {
     })
 
     // get all sync entries from Contentful endpoints for this locale, we could parse the sync response into locales but we are opting for this for simplicity
-    const items = await this.getAllEntriesFromContentful(
+    const items = await this.getPopulatedContentulEntries(
       entries.filter((entry) =>
         // Only populate the indexable entries
         environment.indexableTypes.includes(entry.sys.id),
@@ -287,11 +297,18 @@ export class ContentfulService {
     if (syncType !== 'full' && nestedEntryIds) {
       logger.info('Finding root entries from nestedEntries')
 
+      const visitedEntryIds = new Set<string>()
+
       for (let i = 0; i < this.defaultIncludeDepth; i += 1) {
         const nextLevelOfNestedEntryIds = new Set<string>()
 
         const promises: Promise<Entry<unknown>[]>[] = []
         for (const entryId of nestedEntryIds) {
+          if (visitedEntryIds.has(entryId)) {
+            continue
+          }
+          visitedEntryIds.add(entryId)
+
           promises.push(
             this.getContentfulData(chunkSize, {
               include: this.defaultIncludeDepth,
