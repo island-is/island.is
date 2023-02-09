@@ -255,7 +255,7 @@ export class DrivingLicenseClient implements LicenseClient<DrivingLicenseDto> {
 
     return {
       ok: true,
-      data: license.data[0],
+      data: license.data,
     }
   }
 
