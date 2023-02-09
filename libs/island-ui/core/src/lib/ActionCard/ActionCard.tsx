@@ -431,7 +431,10 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 
       {progressMeter.active && renderProgressMeter()}
       {history?.items && history.items.length > 0 && (
-        <ActionCardHistory history={history} />
+        <ActionCardHistory
+          history={history}
+          size={history.items.some((x) => !!x.content) ? 'lg' : 'sm'}
+        />
       )}
     </Box>
   )
