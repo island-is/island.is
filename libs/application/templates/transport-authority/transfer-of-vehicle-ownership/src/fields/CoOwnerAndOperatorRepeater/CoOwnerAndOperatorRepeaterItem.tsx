@@ -8,7 +8,7 @@ import { ArrayField } from 'react-hook-form'
 import { useFormContext } from 'react-hook-form'
 import { NationalIdWithName } from '../NationalIdWithName'
 import { information } from '../../lib/messages'
-import { ReviewCoOwnerAndOperatorField } from '../../types'
+import { ReviewCoOwnerAndOperatorField } from '../../shared'
 
 interface Props {
   id: string
