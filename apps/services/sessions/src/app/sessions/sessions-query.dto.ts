@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import { IsDateString, IsIn, IsOptional } from 'class-validator'
+import { IsDateString, IsOptional } from 'class-validator'
 
-import { PaginationDto } from '@island.is/nest/pagination'
+import { Order, PaginationDto } from '@island.is/nest/pagination'
 
 export class SessionsQueryDto extends PaginationDto {
   @IsOptional()
@@ -15,7 +15,12 @@ export class SessionsQueryDto extends PaginationDto {
   to?: Date
 
   @IsOptional()
-  @IsIn(['ASC', 'DESC'])
-  @ApiPropertyOptional()
-  order?: string
+  @ApiPropertyOptional({
+    description: 'Orders results by date. Defaults to descending order.',
+
+    enum: Order,
+    enumName: 'Order',
+    default: Order.DESC,
+  })
+  order?: Order
 }

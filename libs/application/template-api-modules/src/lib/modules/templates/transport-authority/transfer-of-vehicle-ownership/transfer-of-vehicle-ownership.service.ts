@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
@@ -31,10 +31,13 @@ import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority
 import { VehicleCodetablesClient } from '@island.is/clients/transport-authority/vehicle-codetables'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { applicationCheck } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 @Injectable()
 export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
   constructor(
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
@@ -186,18 +189,30 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     // 2b. Send email/sms individually to each recipient
     for (let i = 0; i < recipientList.length; i++) {
       if (recipientList[i].email) {
-        await this.sharedTemplateAPIService.sendEmail(
-          (props) => generateRequestReviewEmail(props, recipientList[i]),
-          application,
-        )
+        await this.sharedTemplateAPIService
+          .sendEmail(
+            (props) => generateRequestReviewEmail(props, recipientList[i]),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending email about initReview to ${recipientList[i].email}`,
+            )
+          })
       }
 
       if (recipientList[i].phone) {
-        await this.sharedTemplateAPIService.sendSms(
-          (_, options) =>
-            generateRequestReviewSms(application, options, recipientList[i]),
-          application,
-        )
+        await this.sharedTemplateAPIService
+          .sendSms(
+            (_, options) =>
+              generateRequestReviewSms(application, options, recipientList[i]),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending sms about initReview to ${recipientList[i].phone}`,
+            )
+          })
       }
     }
 
@@ -289,22 +304,34 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     // Send email/sms individually to each recipient
     for (let i = 0; i < newlyAddedRecipientList.length; i++) {
       if (newlyAddedRecipientList[i].email) {
-        await this.sharedTemplateAPIService.sendEmail(
-          (props) =>
-            generateRequestReviewEmail(props, newlyAddedRecipientList[i]),
-          application,
-        )
+        await this.sharedTemplateAPIService
+          .sendEmail(
+            (props) =>
+              generateRequestReviewEmail(props, newlyAddedRecipientList[i]),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending email about addReview to ${newlyAddedRecipientList[i].email}`,
+            )
+          })
       }
       if (newlyAddedRecipientList[i].phone) {
-        await this.sharedTemplateAPIService.sendSms(
-          (_, options) =>
-            generateRequestReviewSms(
-              application,
-              options,
-              newlyAddedRecipientList[i],
-            ),
-          application,
-        )
+        await this.sharedTemplateAPIService
+          .sendSms(
+            (_, options) =>
+              generateRequestReviewSms(
+                application,
+                options,
+                newlyAddedRecipientList[i],
+              ),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending sms about addReview to ${newlyAddedRecipientList[i].phone}`,
+            )
+          })
       }
     }
   }
@@ -336,27 +363,39 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     const rejectedByRecipient = getRecipientBySsn(answers, auth.nationalId)
     for (let i = 0; i < recipientList.length; i++) {
       if (recipientList[i].email) {
-        await this.sharedTemplateAPIService.sendEmail(
-          (props) =>
-            generateApplicationRejectedEmail(
-              props,
-              recipientList[i],
-              rejectedByRecipient,
-            ),
-          application,
-        )
+        await this.sharedTemplateAPIService
+          .sendEmail(
+            (props) =>
+              generateApplicationRejectedEmail(
+                props,
+                recipientList[i],
+                rejectedByRecipient,
+              ),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending email about rejectApplication to ${recipientList[i].email}`,
+            )
+          })
       }
 
       if (recipientList[i].phone) {
-        await this.sharedTemplateAPIService.sendSms(
-          () =>
-            generateApplicationRejectedSms(
-              application,
-              recipientList[i],
-              rejectedByRecipient,
-            ),
-          application,
-        )
+        await this.sharedTemplateAPIService
+          .sendSms(
+            () =>
+              generateApplicationRejectedSms(
+                application,
+                recipientList[i],
+                rejectedByRecipient,
+              ),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending sms about rejectApplication to ${recipientList[i].phone}`,
+            )
+          })
       }
     }
   }
@@ -447,17 +486,31 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     // 3b. Send email/sms individually to each recipient about success of submitting application
     for (let i = 0; i < recipientList.length; i++) {
       if (recipientList[i].email) {
-        await this.sharedTemplateAPIService.sendEmail(
-          (props) => generateApplicationSubmittedEmail(props, recipientList[i]),
-          application,
-        )
+        await this.sharedTemplateAPIService
+          .sendEmail(
+            (props) =>
+              generateApplicationSubmittedEmail(props, recipientList[i]),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending email about submitApplication to ${recipientList[i].email}`,
+            )
+          })
       }
 
       if (recipientList[i].phone) {
-        await this.sharedTemplateAPIService.sendSms(
-          () => generateApplicationSubmittedSms(application, recipientList[i]),
-          application,
-        )
+        await this.sharedTemplateAPIService
+          .sendSms(
+            () =>
+              generateApplicationSubmittedSms(application, recipientList[i]),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending sms about submitApplication to ${recipientList[i].phone}`,
+            )
+          })
       }
     }
   }
