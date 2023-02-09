@@ -10,7 +10,23 @@
         "outputPath": "dist/apps/services/sessions",
         "main": "apps/services/sessions/src/main.ts",
         "tsConfig": "apps/services/sessions/tsconfig.app.json",
-        "assets": []
+        "assets": [
+          {
+            "glob": "*",
+            "input": "apps/services/sessions/migrations",
+            "output": "./migrations"
+          },
+          {
+            "glob": ".sequelizerc",
+            "input": "apps/services/sessions",
+            "output": "./"
+          },
+          {
+            "glob": "sequelize.config.js",
+            "input": "apps/services/sessions",
+            "output": "./"
+          }
+        ]
       },
       "configurations": {
         "production": {
@@ -24,13 +40,6 @@
       "executor": "@nrwl/node:node",
       "options": {
         "buildTarget": "services-sessions:build"
-      }
-    },
-    "serve-worker": {
-      "executor": "@nrwl/node:node",
-      "options": {
-        "buildTarget": "services-sessions:build",
-        "args": ["--job", "worker"]
       }
     },
     "lint": {
