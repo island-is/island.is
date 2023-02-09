@@ -597,4 +597,9 @@ export const coreErrorScreenMessages = defineMessages({
     defaultMessage: 'Fara í þínar umsóknir',
     description: 'Error screen button',
   },
+  application: {
+    id: 'application.system:core.errorScreen.application',
+    defaultMessage: 'Umsókn',
+    description: 'Error screen application',
+  },
 })

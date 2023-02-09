@@ -81,7 +81,7 @@ export const ErrorShell: FC<Props> = ({
           <Column width="2/3">
             <Box>
               <Text variant="eyebrow" color="red600" marginBottom={3}>
-                Umsókn
+                {formatMessage(coreErrorScreenMessages.application)}
               </Text>
               <Text variant="h1" as="h1" marginBottom={3}>
                 {formatMessage(
