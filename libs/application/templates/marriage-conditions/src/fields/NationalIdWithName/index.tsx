@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
-import { Box, GridRow, GridColumn } from '@island.is/island-ui/core'
+import { Box, GridRow, GridColumn, Input } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
@@ -26,9 +26,12 @@ export const NationalIdWithName: FC<FieldBaseProps> = ({
   const { id } = field
   const { formatMessage } = useLocale()
   const { setValue, errors } = useFormContext()
-  const [nationalIdInput, setNationalIdInput] = useState('')
   const nameField = `${id}.name`
   const nationaIdField = `${id}.nationalId`
+  const [nationalIdInput, setNationalIdInput] = useState('')
+  const [name, setName] = useState(
+    getValueViaPath(application.answers, nameField) ?? '',
+  )
   const nameFieldErrors = getErrorViaPath(errors, nameField)
   const nationalIdFieldErrors = getErrorViaPath(errors, nationaIdField)
 
@@ -38,6 +41,7 @@ export const NationalIdWithName: FC<FieldBaseProps> = ({
   ] = useLazyQuery<Query, { input: IdentityInput }>(IdentityQuery, {
     onCompleted: (data) => {
       setValue(nameField, data.identity?.name ?? undefined)
+      setName(data.identity?.name ?? '')
     },
   })
 
@@ -68,9 +72,13 @@ export const NationalIdWithName: FC<FieldBaseProps> = ({
             format="######-####"
             required
             backgroundColor="blue"
-            onChange={(v) =>
+            onChange={(v) => {
               setNationalIdInput(v.target.value.replace(/\W/g, ''))
-            }
+              if (nationalIdInput.length === 0) {
+                setValue(nameField, '')
+                setName('')
+              }
+            }}
             loading={queryLoading}
             error={
               id === 'spouse.person' &&
@@ -81,11 +89,12 @@ export const NationalIdWithName: FC<FieldBaseProps> = ({
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/2']} paddingTop={2} paddingBottom={2}>
-          <InputController
+          <Input
+            name={nameField}
             id={nameField}
-            defaultValue={getValueViaPath(application.answers, nameField) ?? ''}
+            value={name}
             label={formatMessage(m.name)}
-            error={
+            errorMessage={
               queryError || data?.identity === null
                 ? formatMessage(m.nameError)
                 : nameFieldErrors && !data
