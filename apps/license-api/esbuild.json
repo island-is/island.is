@@ -36,7 +36,6 @@
     "logform",
     "pg-native",
     "form-data",
-    "sequelize",
     "lru-cache",
     "swagger-ui-dist"
   ],

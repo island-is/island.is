@@ -16,16 +16,6 @@
             "glob": "*",
             "input": "apps/license-api",
             "output": "./"
-          },
-          {
-            "glob": ".sequelizerc",
-            "input": "apps/license-api",
-            "output": "./"
-          },
-          {
-            "glob": "sequelize.config.js",
-            "input": "apps/license-api",
-            "output": "./"
           }
         ],
         "maxWorkers": 2
