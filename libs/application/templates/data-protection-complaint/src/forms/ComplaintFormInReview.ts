@@ -13,7 +13,7 @@ export const ComplaintFormInReview: Form = buildForm({
       alertTitle: confirmation.labels.alertTitle,
       expandableHeader: confirmation.labels.expandableHeader,
       expandableDescription: confirmation.labels.description,
-      sFileKey: (application) => {
+      s3FileKey: (application) => {
         const submitData = application.externalData
           .sendApplication as SubmittedApplicationData
 
