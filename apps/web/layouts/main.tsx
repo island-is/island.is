@@ -49,6 +49,7 @@ import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
 } from '../utils/processMenuData'
+import { stringHash } from '@island.is/shared/utils'
 import { Locale } from '@island.is/shared/types'
 import {
   LinkType,
@@ -56,7 +57,6 @@ import {
   linkResolver as LinkResolver,
   pathIsRoute,
 } from '../hooks/useLinkResolver'
-import { stringHash } from '@island.is/web/utils/stringHash'
 import { OrganizationIslandFooter } from '../components/Organization/OrganizationIslandFooter'
 import Illustration from './Illustration'
 import * as styles from './main.css'
