@@ -5,6 +5,7 @@ import {
   RouterProvider,
 } from 'react-router-dom'
 
+import { useLocale } from '@island.is/localization'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { useAuth } from '@island.is/auth/react'
 import { LoadingScreen } from '@island.is/react/components'
@@ -12,6 +13,7 @@ import { createModuleRoutes } from '../utils/router/createModuleRoutes'
 import { PortalModule, PortalRoute } from '../types/portalCore'
 import { PortalMeta, PortalProvider } from './PortalProvider'
 import { prepareRouterData } from '../utils/router/prepareRouterData'
+import { m } from '../lib/messages'
 
 type PortalRouterProps = {
   modules: PortalModule[]
@@ -26,6 +28,7 @@ export const PortalRouter = ({
   createRoutes,
   fallbackElement,
 }: PortalRouterProps) => {
+  const { formatMessage } = useLocale()
   const router = useRef<ReturnType<typeof createBrowserRouter>>()
   const [error, setError] = useState<Error | null>(null)
   const { userInfo } = useAuth()
@@ -52,7 +55,7 @@ export const PortalRouter = ({
   }
 
   if (!(userInfo && routerData)) {
-    return <LoadingScreen />
+    return <LoadingScreen ariaLabel={formatMessage(m.loadingScreen)} />
   }
 
   if (!router.current) {
