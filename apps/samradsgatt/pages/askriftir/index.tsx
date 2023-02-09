@@ -2,7 +2,6 @@ import {
   AsyncSearchOption,
   Box,
   Breadcrumbs,
-  Checkbox,
   GridContainer,
   ResponsiveSpace,
   Tabs,
@@ -15,6 +14,7 @@ import Cases from '../../utils/dummydata/api/Cases'
 import SubscriptionArray from '../../utils/dummydata/api/User/Subscriptions'
 import Types from '../../utils/dummydata/api/Types'
 import SubscriptionActionCard from '../../components/Card/SubscriptionActionCard'
+import ChosenSubscriptionCard from '../../components/Card/ChosenSubscriptionCard'
 
 const Subscriptions = () => {
   // user logged in logic needed
@@ -33,12 +33,22 @@ const Subscriptions = () => {
     id,
     name,
   }))
-  const [institutionsData, setInstitutionsData] = useState(Institutions)
+  const [institutionsData, setInstitutionsData] = useState(
+    Object.entries(Types.institutions).map(([id, name]) => ({
+      id,
+      name,
+    })),
+  )
   const PolicyAreas = Object.entries(Types.policyAreas).map(([id, name]) => ({
     id,
     name,
   }))
-  const [policyAreasData, setPolicyAreasData] = useState(PolicyAreas)
+  const [policyAreasData, setPolicyAreasData] = useState(
+    Object.entries(Types.policyAreas).map(([id, name]) => ({
+      id,
+      name,
+    })),
+  )
   const [subscriptionArray, setSubscriptionArray] = useState(SubscriptionArray)
   const settingSubscriptionArray = (newSubscriptionArray) =>
     setSubscriptionArray(newSubscriptionArray)
@@ -194,24 +204,12 @@ const Subscriptions = () => {
           )}
         </Box>
 
-        <Box paddingX={paddingXTable}>
-          <Text variant="eyebrow">Valin mál</Text>
-          <Box
-            borderColor={'blue400'}
-            borderRadius="large"
-            borderWidth="standard"
-            background="white"
-            paddingX={3}
-            paddingY={3}
-            rowGap={3}
-          >
-            <Box display="flex" flexDirection="row">
-              <Checkbox checked={true} onChange={(e) => {}} />
-              <Text>Name</Text>
-              <Text>Label</Text>
-            </Box>
-          </Box>
-        </Box>
+        <ChosenSubscriptionCard
+          casesData={casesData}
+          institutionsData={institutionsData}
+          policyAreasData={policyAreasData}
+          subscriptionArray={subscriptionArray}
+        />
 
         <Box paddingX={paddingXTable}>
           <Tabs
