@@ -153,14 +153,16 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     )
     const person = await this.nationalRegistryApi.getIndividual(auth.nationalId)
 
-    return person && {
-      spouse: spouse && {
-        nationalId: spouse.spouseNationalId,
-        name: spouse.spouseName,
-      },
-      fullname: person.fullName,
-      genderCode: person.genderCode,
-    }
+    return (
+      person && {
+        spouse: spouse && {
+          nationalId: spouse.spouseNationalId,
+          name: spouse.spouseName,
+        },
+        fullname: person.fullName,
+        genderCode: person.genderCode,
+      }
+    )
   }
 
   async setBirthDateForNoPrimaryParent({
