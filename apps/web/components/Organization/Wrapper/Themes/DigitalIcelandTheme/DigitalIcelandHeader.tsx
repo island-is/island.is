@@ -1,4 +1,5 @@
 import React from 'react'
+import cn from 'classnames'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
   Box,
@@ -8,18 +9,15 @@ import {
   Link,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from './DigitalIcelandHeader.css'
-import cn from 'classnames'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { OrganizationPage } from '@island.is/web/graphql/schema'
+import * as styles from './DigitalIcelandHeader.css'
 
 interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const DigitalIcelandHeader: React.FC<HeaderProps> = ({
-  organizationPage,
-}) => {
+const DigitalIcelandHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   const { linkResolver } = useLinkResolver()
 
   return (
@@ -90,3 +88,5 @@ export const DigitalIcelandHeader: React.FC<HeaderProps> = ({
     </Box>
   )
 }
+
+export default DigitalIcelandHeader

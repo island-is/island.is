@@ -12,4 +12,10 @@ export const error = defineMessages({
     description:
       'Error message if there was no name associated with given national id',
   },
+  minAgeNotFulfilled: {
+    id: 'ta.cov.application:error.minAgeNotFulfilled',
+    defaultMessage:
+      'Lágmarksaldur til að mega vera umráðamaður ökutækis er 18 ára',
+    description: 'Min age not fulfilled error',
+  },
 })

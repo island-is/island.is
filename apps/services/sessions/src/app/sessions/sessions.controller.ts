@@ -54,10 +54,10 @@ export class SessionsController {
   })
   findAll(
     @CurrentUser() user: User,
-    @Headers('X-Query-OtherUser') otherUser: string,
     @Query() query: SessionsQueryDto,
+    @Headers('X-Query-OtherUser') otherUser?: string,
   ): Promise<SessionsResultDto> {
-    return this.sessionsService.findAll(user, otherUser, query)
+    return this.sessionsService.findAll(user, query, otherUser)
   }
 
   @Post()

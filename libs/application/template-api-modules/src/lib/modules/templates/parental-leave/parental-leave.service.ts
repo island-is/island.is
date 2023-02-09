@@ -38,6 +38,7 @@ import {
   ParentalRelations,
   ChildInformation,
   isParentWithoutBirthParent,
+  calculatePeriodLength,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -676,7 +677,15 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         )
 
         if (VMSTperiods?.periods) {
-          vmstRightCodePeriod = VMSTperiods.periods[0].rightsCodePeriod
+          const getVMSTRightCodePeriod = VMSTperiods.periods[0].rightsCodePeriod
+          const periodCodeStartCharacters = ['M', 'F']
+          if (
+            periodCodeStartCharacters.some((c) =>
+              getVMSTRightCodePeriod.startsWith(c),
+            )
+          ) {
+            vmstRightCodePeriod = getVMSTRightCodePeriod
+          }
         }
       } catch (e) {
         this.logger.warn(
@@ -714,7 +723,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
     for (const [index, period] of answers.entries()) {
       const isFirstPeriod = index === 0
-      const isUsingNumberOfDays = period.daysToUse !== undefined
+      const isUsingNumberOfDays =
+        period.daysToUse !== undefined && period.daysToUse !== ''
 
       // If a period doesn't have both startDate or endDate we skip it
       if (!isFirstPeriod && (!period.startDate || !period.endDate)) {
@@ -729,6 +739,17 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
       if (isUsingNumberOfDays) {
         periodLength = Number(period.daysToUse)
+      } else if (Number(period.ratio) < 100) {
+        /*
+         * We need to calculate periodLength when ratio is not 100%
+         * because there could be mis-calculate betweeen island.is and VMST
+         * for example:
+         * 8 months period with 75%
+         * island.is calculator returns: 180 days
+         * VMST returns: 184 days
+         */
+        const fullLength = calculatePeriodLength(startDate, endDate)
+        periodLength = Math.round(fullLength * (Number(period.ratio) / 100))
       } else {
         const getPeriodLength = await this.parentalLeaveApi.parentalLeaveGetPeriodLength(
           { nationalRegistryId, startDate, endDate, percentage: period.ratio },
