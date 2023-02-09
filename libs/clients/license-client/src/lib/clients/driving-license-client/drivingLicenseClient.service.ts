@@ -77,7 +77,7 @@ export class DrivingLicenseClient implements LicenseClient<DrivingLicenseDto> {
     }
   }
 
-  private async requestApi(url: string): Promise<Result<DrivingLicenseDto>> {
+  private async requestApi(url: string): Promise<Result<DrivingLicenseDto[]>> {
     let res: Response | null = null
 
     try {
@@ -133,52 +133,29 @@ export class DrivingLicenseClient implements LicenseClient<DrivingLicenseDto> {
     }
     return {
       ok: true,
-      data: json as DrivingLicenseDto,
+      data: json as DrivingLicenseDto[],
     }
   }
 
   private async requestFromXroadApi(
     nationalId: string,
-  ): Promise<DrivingLicenseDto[] | null> {
+  ): Promise<Result<DrivingLicenseDto>> {
     const response = await this.requestApi(
       `${this.xroadPath}/api/Okuskirteini/${nationalId}`,
     )
 
-    if (!response) {
+    if (!response.ok) {
       logger.warn('Falsy result from drivers license response', {
         category: LOG_CATEGORY,
       })
-      return null
+      return response
     }
 
-    if (!Array.isArray(response)) {
-      logger.warn('Expected drivers license response to be an array', {
-        category: LOG_CATEGORY,
-      })
-      return null
+    //return the first one
+    return {
+      ok: true,
+      data: response.data[0],
     }
-
-    const licenses = response as DrivingLicenseDto[]
-
-    // If we get more than one license, sort in descending order so we can pick the first one as the
-    // newest license later on
-    // TODO(osk): This is a bug, fixed in v2 of the service (see https://www.notion.so/R-kisl-greglustj-ri-60f22ab2789e4e0296f5fe6e25fa19cf)
-    licenses.sort((a?: DrivingLicenseDto, b?: DrivingLicenseDto) => {
-      const timeA = a?.utgafuDagsetning
-        ? new Date(a.utgafuDagsetning).getTime()
-        : 0
-      const timeB = b?.utgafuDagsetning
-        ? new Date(b.utgafuDagsetning).getTime()
-        : 0
-
-      if (isNaN(timeA) || isNaN(timeB)) {
-        return 0
-      }
-
-      return timeB - timeA
-    })
-
-    return licenses
   }
 
   private drivingLicenseToPkpassPayload(
@@ -270,21 +247,15 @@ export class DrivingLicenseClient implements LicenseClient<DrivingLicenseDto> {
    * @return {Promise<Result<DrivingLicenseDto | null>> } Response result containing the latest driving license or an error
    */
   async getLicense(user: User): Promise<Result<DrivingLicenseDto | null>> {
-    const licenses = await this.requestFromXroadApi(user.nationalId)
+    const license = await this.requestFromXroadApi(user.nationalId)
 
-    if (!licenses) {
-      return {
-        ok: false,
-        error: {
-          code: 13,
-          message: 'Service error',
-        },
-      }
+    if (!license.ok) {
+      return license
     }
 
     return {
       ok: true,
-      data: licenses[0],
+      data: license.data[0],
     }
   }
 
@@ -295,107 +266,97 @@ export class DrivingLicenseClient implements LicenseClient<DrivingLicenseDto> {
   }
 
   async getPkPassUrl(user: User): Promise<Result<string>> {
-    const pass = await this.getPkPassUrlByNationalId(user.nationalId)
-
-    if (pass) {
-      return {
-        ok: true,
-        data: pass,
-      }
-    }
-
-    return {
-      ok: false,
-      error: {
-        code: 6,
-        message: 'Driving license pkpass generation failed',
-      },
-    }
+    return await this.getPkPassUrlByNationalId(user.nationalId)
   }
 
   async getPkPassQRCode(user: User): Promise<Result<string>> {
-    const pass = await this.getPkPassQRCodeByNationalId(user.nationalId)
-
-    if (pass) {
-      return {
-        ok: true,
-        data: pass,
-      }
-    }
-
-    return {
-      ok: false,
-      error: {
-        code: 6,
-        message: 'Driving license pkpass generation failed',
-      },
-    }
+    return await this.getPkPassQRCodeByNationalId(user.nationalId)
   }
 
   private async getPkPassUrlByNationalId(
     nationalId: string,
-  ): Promise<string | null> {
-    const licenses = await this.requestFromXroadApi(nationalId)
+  ): Promise<Result<string>> {
+    const license = await this.requestFromXroadApi(nationalId)
 
-    if (!licenses) {
-      return null
+    if (!license.ok) {
+      return license
     }
 
-    const license = licenses[0]
-
-    if (!license) {
-      return null
-    }
-
-    if (!this.checkLicenseValidity(license)) {
+    if (!this.checkLicenseValidity(license.data)) {
       this.logger.info('License is not valid for pkpass generation', {
         category: LOG_CATEGORY,
       })
-      return null
+      return {
+        ok: false,
+        error: {
+          code: 5,
+          message: 'Invalid pass for pkpass generation',
+        },
+      }
     }
 
-    const payload = this.drivingLicenseToPkpassPayload(license)
+    const payload = this.drivingLicenseToPkpassPayload(license.data)
 
     const pkPassUrl = await this.pkpassClient.getPkPassUrl(payload)
 
-    if (pkPassUrl) {
-      this.notifyPkPassCreated(nationalId)
+    if (!pkPassUrl) {
+      return {
+        ok: false,
+        error: {
+          code: 6,
+          message: 'PkPass generation failed',
+        },
+      }
     }
 
-    return pkPassUrl
+    this.notifyPkPassCreated(nationalId)
+    return {
+      ok: true,
+      data: pkPassUrl,
+    }
   }
 
   private async getPkPassQRCodeByNationalId(
     nationalId: string,
-  ): Promise<string | null> {
-    const licenses = await this.requestFromXroadApi(nationalId)
+  ): Promise<Result<string>> {
+    const license = await this.requestFromXroadApi(nationalId)
 
-    if (!licenses) {
-      return null
+    if (!license.ok) {
+      return license
     }
 
-    const license = licenses[0]
-
-    if (!license) {
-      return null
-    }
-
-    if (!this.checkLicenseValidity(license)) {
+    if (!this.checkLicenseValidity(license.data)) {
       this.logger.info('License is not valid for pkpass generation', {
         category: LOG_CATEGORY,
       })
-      return null
+      return {
+        ok: false,
+        error: {
+          code: 5,
+          message: 'Invalid pass for pkpass generation',
+        },
+      }
     }
 
-    const payload = this.drivingLicenseToPkpassPayload(license)
+    const payload = this.drivingLicenseToPkpassPayload(license.data)
 
-    const pkPassUrl = await this.pkpassClient.getPkPassUrl(payload)
+    const pkPassUrl = await this.pkpassClient.getPkPassQRCode(payload)
 
-    if (pkPassUrl) {
-      this.notifyPkPassCreated(nationalId)
+    if (!pkPassUrl) {
+      return {
+        ok: false,
+        error: {
+          code: 6,
+          message: 'PkPass generation failed',
+        },
+      }
     }
 
-    return pkPassUrl
+    this.notifyPkPassCreated(nationalId)
+    return {
+      ok: true,
+      data: pkPassUrl,
+    }
   }
 
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {
@@ -444,20 +405,26 @@ export class DrivingLicenseClient implements LicenseClient<DrivingLicenseDto> {
 
     if (result.nationalId) {
       const nationalId = result.nationalId.replace('-', '')
-      const licenses = await this.requestFromXroadApi(nationalId)
+      const license = await this.requestFromXroadApi(nationalId)
 
-      if (!licenses) {
+      if (!license.ok) {
         error = {
           status: '0',
           message: 'missing licenses',
         }
+
+        return {
+          valid: false,
+          data: undefined,
+          error,
+        }
       }
 
-      const licenseNationalId = licenses?.[0]?.kennitala ?? null
-      const name = licenses?.[0]?.nafn ?? null
-      const photo = licenses?.[0]?.mynd ?? null
+      const licenseNationalId = license.data.kennitala ?? null
+      const name = license.data.nafn ?? null
+      const photo = license.data.mynd ?? null
 
-      const rawData = licenses?.[0] ? JSON.stringify(licenses?.[0]) : undefined
+      const rawData = license ? JSON.stringify(license) : undefined
 
       response = {
         nationalId: licenseNationalId,
