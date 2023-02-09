@@ -33,4 +33,12 @@ export class HistoryService {
       date: new Date(),
     })
   }
+
+  async deleteHistoryByApplicationId(applicationId: string): Promise<void> {
+    await this.historyModel.destroy({
+      where: {
+        application_id: applicationId,
+      },
+    })
+  }
 }
