@@ -29,7 +29,7 @@ export interface EuropeanHealthInsuranceCardProps {}
 export const EuropeanHealthInsuranceCardApplyPDF: Form = buildForm({
   id: 'EuropeanHealthInsuranceCardApplicationForm',
   title: '',
-  mode: FormModes.DRAFT,
+  mode: FormModes.APPROVED,
   children: [
     buildSection({
       id: 'intro',
@@ -81,12 +81,12 @@ export const EuropeanHealthInsuranceCardApplyPDF: Form = buildForm({
                 },
               ],
             }),
-            buildDescriptionField({
-              id: 'unused2',
-              title: 'no way',
-              description: 'fyrir neðan',
-            }),
           ],
+        }),
+        buildDescriptionField({
+          id: 'unused2',
+          title: 'no way',
+          description: 'fyrir neðan',
         }),
       ],
     }),
