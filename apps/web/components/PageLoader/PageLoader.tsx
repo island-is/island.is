@@ -1,11 +1,11 @@
 import React, { useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
-import LoadingBar from 'react-top-loading-bar'
+import LoadingBar, { LoadingBarRef } from 'react-top-loading-bar'
 import { theme } from '@island.is/island-ui/theme'
 
 export const PageLoader = () => {
   const router = useRouter()
-  const ref = useRef(null)
+  const ref = useRef<LoadingBarRef>(null)
 
   useEffect(() => {
     const start = () => {

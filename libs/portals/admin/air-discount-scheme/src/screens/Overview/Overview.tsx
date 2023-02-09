@@ -67,7 +67,7 @@ const Overview = () => {
     setFilters(data)
     refetch()
   }
-  console.log(flightLegs)
+
   return (
     <GridContainer>
       <Hidden above="md">

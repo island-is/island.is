@@ -25577,7 +25577,7 @@ __metadata:
     react-table: 7.7.0
     react-test-renderer: 17.0.2
     react-toastify: 6.0.8
-    react-top-loading-bar: 2.0.1
+    react-top-loading-bar: 2.3.1
     react-use: 15.3.3
     reakit: 1.0.2
     recharts: 2.0.9
@@ -35309,12 +35309,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-top-loading-bar@npm:2.0.1":
-  version: 2.0.1
-  resolution: "react-top-loading-bar@npm:2.0.1"
+"react-top-loading-bar@npm:2.3.1":
+  version: 2.3.1
+  resolution: "react-top-loading-bar@npm:2.3.1"
   peerDependencies:
-    react: ^16.0.0
-  checksum: 6177a7312b5df907ce8494dd2224ced7700c4fe985c71cffd43272f94ff4e2e342ab4144171cbe2dbe10a847604a60f29980b0fb77557aa1e37d9ef4b9c293bf
+    react: ^16 || ^17 || ^18
+  checksum: 29c2c357fe5349db2c3f676ca222b5ec3ac3f9eea27d3015540fc42a1c96f2e7b06728f4ee862b41fcbe9f2e4d2eefcf76e3576d1148fe039c1c0f275fb4b8e2
   languageName: node
   linkType: hard
 

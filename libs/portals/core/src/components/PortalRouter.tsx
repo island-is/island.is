@@ -78,6 +78,9 @@ export const PortalRouter = ({
   }
 
   return (
-    <RouterProvider router={router.current} fallbackElement={fallbackElement} />
+    <RouterProvider
+      router={router.current}
+      fallbackElement={fallbackElement || <LoadingScreen />}
+    />
   )
 }
