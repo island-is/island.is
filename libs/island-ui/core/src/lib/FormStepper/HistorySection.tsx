@@ -39,7 +39,7 @@ export const HistorySection: FC<{
     <Box ref={containerRef} className={styles.container}>
       <Box display="flex" alignItems="flexStart" width="full" marginBottom={1}>
         {date && (
-          <Hidden below="lg">
+          <Hidden below="xl">
             <Box paddingTop={2} paddingRight={2}>
               <Text variant="small">{date}</Text>
             </Box>

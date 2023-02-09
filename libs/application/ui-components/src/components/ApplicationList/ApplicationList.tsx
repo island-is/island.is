@@ -195,11 +195,11 @@ const ApplicationList = ({
       }
     }
 
-    if (application.actionCard?.pendingAction) {
+    if (application.actionCard?.pendingAction?.title) {
       history.push({
         date: format(new Date(), formattedDate),
         title: formatMessage(application.actionCard.pendingAction.title ?? ''),
-        content: (
+        content: application.actionCard.pendingAction.content ? (
           <AlertMessage
             type={mapStatusToAlertType(
               application.actionCard?.pendingAction?.displayStatus,
@@ -227,7 +227,7 @@ const ApplicationList = ({
               </Box>
             }
           />
-        ),
+        ) : undefined,
       })
     }
 
