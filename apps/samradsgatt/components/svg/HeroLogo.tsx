@@ -8,8 +8,8 @@ type LogoProps = {
 function HeroLogo({ width, height }: LogoProps) {
   return (
     <svg
-      width="462"
-      height="112"
+      width={width ? '100%' : '462'}
+      height={height ? '100%' : '112'}
       viewBox="0 0 462 112"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
