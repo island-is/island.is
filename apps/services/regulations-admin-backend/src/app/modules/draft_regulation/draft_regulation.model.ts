@@ -45,7 +45,7 @@ export class DraftRegulationModel extends Model {
   name?: RegName
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: false,
   })
   @ApiProperty()
