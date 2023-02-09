@@ -55,10 +55,7 @@ export const Confirmation: FC<FieldBaseProps> = ({ application }) => {
           icon="arrowForward"
           iconType="outline"
           onClick={() => {
-            window.open(
-              `${window.location.origin}/minarsidur/umsoknir#${application.id}`,
-              '_blank',
-            )
+            window.open(`${window.location.origin}/minarsidur`, '_blank')
           }}
         >
           {formatMessage(confirmation.general.openMySiteLinkText)}

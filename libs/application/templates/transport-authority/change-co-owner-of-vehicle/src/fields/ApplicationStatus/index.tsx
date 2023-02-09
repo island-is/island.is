@@ -16,11 +16,6 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
 
   const steps = getReviewSteps(application)
 
-  const showReviewButton = !hasReviewerApproved(
-    reviewerNationalId,
-    application.answers,
-  )
-
   return (
     <Box marginBottom={10}>
       <Text variant="h1" marginBottom={2}>
@@ -54,7 +49,7 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
           />
         ))}
       </Box>
-      {showReviewButton && (
+      {!hasReviewerApproved(reviewerNationalId, application.answers) && (
         <>
           <Divider />
           <Box display="flex" justifyContent="flexEnd" paddingY={5}>
@@ -63,28 +58,6 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
             </Button>
           </Box>
         </>
-      )}
-
-      {!showReviewButton && (
-        <Box
-          display="flex"
-          justifyContent="flexEnd"
-          paddingTop={4}
-          marginBottom={4}
-        >
-          <Button
-            icon="arrowForward"
-            iconType="outline"
-            onClick={() => {
-              window.open(
-                `${window.location.origin}/minarsidur/umsoknir#${application.id}`,
-                '_blank',
-              )
-            }}
-          >
-            {formatMessage(review.buttons.openMySiteLinkText)}
-          </Button>
-        </Box>
       )}
     </Box>
   )

@@ -53,9 +53,7 @@ export const RejectedConclusion: FC<FieldBaseProps> = ({ application }) => {
           </Button>
         </Link>
         <Box marginLeft={3}>
-          <Link
-            href={`${document.location.origin}/minarsidur/umsoknir#${application.id}`}
-          >
+          <Link href={`${document.location.origin}/minarsidur/`}>
             <Button>{formatMessage(conclusion.rejected.myPages)}</Button>
           </Link>
         </Box>

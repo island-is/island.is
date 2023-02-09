@@ -2,7 +2,6 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Button, Text, Divider } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
-import { States } from '../../lib/constants'
 import { review } from '../../lib/messages'
 import { ReviewScreenProps } from '../../shared'
 import { getReviewSteps, hasReviewerApproved } from '../../utils'
@@ -16,11 +15,6 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
   const { formatMessage } = useLocale()
 
   const steps = getReviewSteps(application)
-
-  const showReviewButton = !hasReviewerApproved(
-    reviewerNationalId,
-    application.answers,
-  )
 
   return (
     <Box marginBottom={10}>
@@ -55,7 +49,7 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
           />
         ))}
       </Box>
-      {showReviewButton && (
+      {!hasReviewerApproved(reviewerNationalId, application.answers) && (
         <>
           <Divider />
           <Box display="flex" justifyContent="flexEnd" paddingY={5}>
@@ -64,28 +58,6 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
             </Button>
           </Box>
         </>
-      )}
-
-      {!showReviewButton && (
-        <Box
-          display="flex"
-          justifyContent="flexEnd"
-          paddingTop={4}
-          marginBottom={4}
-        >
-          <Button
-            icon="arrowForward"
-            iconType="outline"
-            onClick={() => {
-              window.open(
-                `${window.location.origin}/minarsidur/umsoknir#${application.id}`,
-                '_blank',
-              )
-            }}
-          >
-            {formatMessage(review.buttons.openMySiteLinkText)}
-          </Button>
-        </Box>
       )}
     </Box>
   )

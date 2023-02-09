@@ -11,7 +11,7 @@ import { FC } from 'react'
 import { Jobs } from '../assets/Jobs'
 import { confirmation } from '../lib/messages'
 
-export const Confirmation: FC<FieldBaseProps> = ({ application }) => {
+export const Confirmation: FC<FieldBaseProps> = () => {
   const { formatMessage } = useLocale()
 
   return (
@@ -48,10 +48,7 @@ export const Confirmation: FC<FieldBaseProps> = ({ application }) => {
           icon="arrowForward"
           iconType="outline"
           onClick={() => {
-            window.open(
-              `${window.location.origin}/minarsidur/umsoknir#${application.id}`,
-              '_blank',
-            )
+            window.open(`${window.location.origin}/minarsidur`, '_blank')
           }}
         >
           {formatMessage(confirmation.general.openMySiteLinkText)}

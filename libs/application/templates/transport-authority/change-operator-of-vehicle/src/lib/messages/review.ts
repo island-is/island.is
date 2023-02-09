@@ -126,10 +126,5 @@ export const review = {
       defaultMessage: `Samþykkja`,
       description: 'Approve button in review process',
     },
-    openMySiteLinkText: {
-      id: 'ta.cov.application:review.buttons.openMySiteLinkText',
-      defaultMessage: 'Mínar síður',
-      description: 'Open my site link text',
-    },
   }),
 }
