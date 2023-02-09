@@ -6,6 +6,7 @@ import {
   ActionCard,
   AlertMessage,
   Box,
+  Button,
   Pagination,
   Stack,
 } from '@island.is/island-ui/core'
@@ -210,6 +211,25 @@ const ApplicationList = ({
             message={formatMessage(
               application.actionCard.pendingAction.content ?? '',
             )}
+            action={
+              <Box>
+                <Button
+                  variant="text"
+                  size="small"
+                  nowrap
+                  onClick={() =>
+                    onClick(
+                      `${getSlugFromType(application.typeId)}/${
+                        application.id
+                      }`,
+                    )
+                  }
+                  icon="pencil"
+                >
+                  {formatMessage(coreMessages.cardButtonDraft)}
+                </Button>
+              </Box>
+            }
           />
         ),
       })
@@ -260,7 +280,9 @@ const ApplicationList = ({
                 heading={actionCard?.title ?? application.name}
                 text={actionCard?.description}
                 cta={{
-                  label: formatMessage(stateDefaultData.cta.label),
+                  label: showHistory
+                    ? ''
+                    : formatMessage(stateDefaultData.cta.label),
                   variant: 'ghost',
                   size: 'small',
                   icon: undefined,
