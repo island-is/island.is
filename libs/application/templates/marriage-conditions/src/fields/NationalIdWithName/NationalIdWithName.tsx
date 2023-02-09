@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import { Box, GridRow, GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { getErrorViaPath } from '@island.is/application/core'
+import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { gql, useLazyQuery } from '@apollo/client'
 import { IdentityInput, Query } from '@island.is/api/schema'
@@ -42,7 +42,11 @@ export const NationalIdWithName: FC<FieldBaseProps> = ({
   })
 
   useEffect(() => {
-    if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
+    if (
+      nationalIdInput.length === 10 &&
+      kennitala.isValid(nationalIdInput) &&
+      nationalIdInput !== application.applicant
+    ) {
       getIdentity({
         variables: {
           input: {
@@ -68,13 +72,18 @@ export const NationalIdWithName: FC<FieldBaseProps> = ({
               setNationalIdInput(v.target.value.replace(/\W/g, ''))
             }
             loading={queryLoading}
-            error={nationalIdFieldErrors}
+            error={
+              id === 'spouse.person' &&
+              nationalIdInput === application.applicant
+                ? formatMessage(m.nationalIdDuplicateError)
+                : nationalIdFieldErrors
+            }
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/2']} paddingTop={2} paddingBottom={2}>
           <InputController
             id={nameField}
-            defaultValue={(application.answers[id] as any)?.name ?? ''}
+            defaultValue={getValueViaPath(application.answers, nameField) ?? ''}
             label={formatMessage(m.name)}
             error={
               queryError || data?.identity === null
