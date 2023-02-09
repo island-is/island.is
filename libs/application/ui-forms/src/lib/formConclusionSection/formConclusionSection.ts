@@ -4,7 +4,7 @@ import {
   buildAlertMessageField,
   buildExpandableDescriptionField,
   buildMessageWithLinkButtonField,
-  buildS3PdfLinkField,
+  buildLinkField,
 } from '@island.is/application/core'
 import { FormText } from '@island.is/application/types'
 import { MessageDescriptor } from 'react-intl'
@@ -18,7 +18,8 @@ type props = {
   expandableIntro?: MessageDescriptor
   expandableDescription: StaticText
   s3PdfKey?: FormText
-  pdfButtonText?: MessageDescriptor
+  link?: string
+  buttonText?: MessageDescriptor
 }
 
 /**
@@ -31,7 +32,8 @@ type props = {
  * @param  expandableIntro Intro text of the expandable description section.
  * @param  expandableDescription Markdown code for the expandable description section, most applications use bulletpoints.
  * @param  s3PdfKey The key of the pdf file in s3.
- * @param  pdfButtonText The text of the button that links to a pdf file in s3.
+ * @param  link Link that user can click on.
+ * @param  buttonText The text of the button that links to a url
  */
 export const formConclusionSection = (props: props) =>
   buildSection({
@@ -48,15 +50,13 @@ export const formConclusionSection = (props: props) =>
             alertType: 'success',
             message: props.alertMessage,
           }),
-          buildS3PdfLinkField({
+          buildLinkField({
             id: 'uiForms.complaintLink',
-            title: props.pdfButtonText ?? '',
+            title: props.buttonText ?? '',
             s3key: props.s3PdfKey ?? '',
+            link: props.link ?? '',
             condition: () => {
-              return (
-                props.s3PdfKey !== undefined &&
-                props.pdfButtonText !== undefined
-              )
+              return props.buttonText !== undefined
             },
           }),
           buildExpandableDescriptionField({

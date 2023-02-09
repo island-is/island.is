@@ -8,7 +8,7 @@ import {
 } from '@storybook/addon-docs'
 import { dedent } from 'ts-dedent'
 
-import { S3PdfLinkFormField } from './S3PdfLinkFormField'
+import { LinkFormField } from './LinkFormField'
 
 export const createMockApplication = (data = {}) => ({
   id: '123',
@@ -23,21 +23,18 @@ export const createMockApplication = (data = {}) => ({
   externalData: data.externalData || {},
 })
 
-<Meta
-  title="Application System/S3PdfLinkFormField"
-  component={S3PdfLinkFormField}
-/>
+<Meta title="Application System/LinkFormField" component={LinkFormField} />
 
-# S3PdfLinkFormField
+# LinkFormField
 
 ### Usage in a template
 
-You can create a S3PdfLinkFormField using the following function `S3PdfLinkFormField`.
+You can create a LinkFormField using the following function `LinkFormField`.
 
 <Source
   language="typescript"
   code={dedent(`
-    S3PdfLinkFormField({
+    LinkFormField({
       id: 'field.id',
       title: 'Download PDF',
       s3Key: 'lorem_ipsum_pdf_key',
@@ -48,7 +45,7 @@ The previous configuration object will result in the following component:
 
 <Canvas>
   <Story name="Default">
-    <S3PdfLinkFormField
+    <LinkFormField
       application={createMockApplication()}
       field={{
         id: 'field.id',
@@ -59,10 +56,10 @@ The previous configuration object will result in the following component:
   </Story>
 </Canvas>
 
-You can also use this field into a custom component by using `<S3PdfLinkFormField field={...} />` with the configuration object defined above.
+You can also use this field into a custom component by using `<LinkFormField field={...} />` with the configuration object defined above.
 
 # Props
 
-## S3PdfLinkFormField
+## LinkFormField
 
-<ArgsTable of={S3PdfLinkFormField} />
+<ArgsTable of={LinkFormField} />

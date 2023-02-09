@@ -19,7 +19,7 @@ export const ComplaintFormInReview: Form = buildForm({
 
         return submitData.data?.applicationPdfKey ?? ''
       },
-      pdfButtonText: confirmation.labels.pdfLink,
+      buttonText: confirmation.labels.pdfLink,
     }),
   ],
 })

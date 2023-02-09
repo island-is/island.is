@@ -1,27 +1,42 @@
-import React, { FC } from 'react'
+import React, { FC, useCallback } from 'react'
 import { formatText } from '@island.is/application/core'
-import { S3PdfLinkField, Application } from '@island.is/application/types'
-import { Box, Text, Divider, Button } from '@island.is/island-ui/core'
+import { LinkField, Application } from '@island.is/application/types'
+import { Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import useGeneratePdfUrl from './hooks/useGeneratePdfUrl'
 
-export const S3PdfLinkFormField: FC<{
-  field: S3PdfLinkField
+export const LinkFormField: FC<{
+  field: LinkField
   application: Application
 }> = ({ field, application }) => {
   const { formatMessage } = useLocale()
 
+  const openLink = useCallback(() => {
+    window.open(field.link, '_blank')
+  }, [field.link])
+
   const { getPdfUrl } = useGeneratePdfUrl(
     application.id,
-    formatText(field.s3key, application, formatMessage),
+    formatText(field.s3key ?? '', application, formatMessage),
   )
+
+  const getUrl = () => {
+    if (field.link) {
+      return openLink
+    }
+
+    if (field.s3key) {
+      return getPdfUrl
+    }
+    return () => ''
+  }
 
   return (
     <Button
       colorScheme="default"
       icon="open"
       iconType="outline"
-      onClick={getPdfUrl}
+      onClick={getUrl()}
       preTextIconType="filled"
       size="default"
       type="button"

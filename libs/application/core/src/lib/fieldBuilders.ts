@@ -31,7 +31,7 @@ import {
   MessageWithLinkButtonField,
   ExpandableDescriptionField,
   AlertMessageField,
-  S3PdfLinkField,
+  LinkField,
 } from '@island.is/application/types'
 import { SpanType } from '@island.is/island-ui/core/types'
 
@@ -463,15 +463,16 @@ export function buildAlertMessageField(
   }
 }
 
-export function buildS3PdfLinkField(
-  data: Omit<S3PdfLinkField, 'type' | 'component' | 'children'>,
-): S3PdfLinkField {
-  const { s3key } = data
+export function buildLinkField(
+  data: Omit<LinkField, 'type' | 'component' | 'children'>,
+): LinkField {
+  const { s3key, link } = data
   return {
     ...extractCommonFields(data),
     s3key,
+    link,
     children: undefined,
-    type: FieldTypes.S3_PDF_LINK,
-    component: FieldComponents.S3_PDF_LINK,
+    type: FieldTypes.LINK,
+    component: FieldComponents.LINK,
   }
 }
