@@ -42,13 +42,6 @@
         "buildTarget": "services-sessions:build"
       }
     },
-    "serve-worker": {
-      "executor": "@nrwl/node:node",
-      "options": {
-        "buildTarget": "services-sessions:build",
-        "args": ["--job", "worker"]
-      }
-    },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
