@@ -1,4 +1,4 @@
-import { parentalLeaveFormMessages } from '@island.is/application/templates/parental-leave'
+import { parentalLeaveFormMessages } from '../../../lib/messages'
 import { Box, Icon, Table as T } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
