@@ -132,8 +132,6 @@ interface Props {
   onClick: (id: string) => void
   refetch?: (() => void) | undefined
   focus?: boolean
-  showHistory?: boolean
-  showProgress?: boolean
 }
 
 const ApplicationList = ({
@@ -142,8 +140,6 @@ const ApplicationList = ({
   onClick,
   refetch,
   focus = false,
-  showHistory = false,
-  showProgress = true,
 }: Props) => {
   const { lang: locale, formatMessage } = useLocale()
   const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
@@ -176,7 +172,7 @@ const ApplicationList = ({
   }
 
   const buildHistoryItems = (application: ApplicationFields) => {
-    if (!showHistory) return
+    if (application.status === ApplicationStatus.DRAFT) return
 
     let history: {
       title: string
@@ -258,6 +254,7 @@ const ApplicationList = ({
               DefaultData[application.status] ||
               DefaultData[ApplicationStatus.IN_PROGRESS]
             const slug = getSlugFromType(application.typeId)
+            const showHistory = application.status !== ApplicationStatus.DRAFT
 
             if (!slug) {
               return null
@@ -289,13 +286,13 @@ const ApplicationList = ({
                   onClick: () => onClick(`${slug}/${application.id}`),
                 }}
                 progressMeter={
-                  showProgress
-                    ? {
+                  showHistory
+                    ? undefined
+                    : {
                         active: Boolean(application.progress),
                         progress: application.progress,
                         variant: stateDefaultData.progress.variant,
                       }
-                    : undefined
                 }
                 history={{
                   openButtonLabel: formatMessage(

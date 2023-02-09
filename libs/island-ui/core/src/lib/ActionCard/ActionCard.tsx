@@ -14,11 +14,11 @@ import { Hidden } from '../Hidden/Hidden'
 import { Icon as IconType } from '../IconRC/iconMap'
 import { Icon } from '../IconRC/Icon'
 import DialogPrompt from '../DialogPrompt/DialogPrompt'
-import FormStepperV2 from '../FormStepper/FormStepperV2'
 import { FormStepperThemes } from '../FormStepper/types'
 import HistorySection from '../FormStepper/HistorySection'
 import AnimateHeight from 'react-animate-height'
 import useComponentSize from '@rehooks/component-size'
+import HistoryStepper from '../FormStepper/HistoryStepper'
 
 type ActionCardProps = {
   date?: string
@@ -453,7 +453,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
             duration={300}
           >
             <div ref={containerRef}>
-              <FormStepperV2
+              <HistoryStepper
                 sections={history.items.map(
                   ({ date, title, content }, index) => (
                     <HistorySection

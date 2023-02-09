@@ -106,7 +106,7 @@ export const AlertMessage: React.FC<AlertMessageProps & TitleAndOrMessage> = ({
                 {title}
               </Text>
             )}
-            <Box display="flex">
+            <Box display="flex" alignItems="center">
               {message &&
                 (React.isValidElement(message) ? (
                   message
@@ -118,6 +118,7 @@ export const AlertMessage: React.FC<AlertMessageProps & TitleAndOrMessage> = ({
               {action && (
                 <Box
                   display="flex"
+                  style={{ alignSelf: 'flex-end' }}
                   justifyContent="flexEnd"
                   alignItems="flexEnd"
                 >

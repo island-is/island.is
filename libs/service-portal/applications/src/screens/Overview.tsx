@@ -205,8 +205,6 @@ const Overview: ServicePortalModuleComponent = () => {
                   label={formatMessage(m.incompleteApplications)}
                   organizations={organizations}
                   refetch={refetch}
-                  showProgress
-                  showHistory={false}
                 />
               )}
             {applicationsSortedByStatus.inProgress?.length > 0 &&
