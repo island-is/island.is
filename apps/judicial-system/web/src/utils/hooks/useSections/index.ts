@@ -3,9 +3,9 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
+  CaseState,
   Feature,
   Gender,
-  IndictmentSubtype,
   isInvestigationCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
@@ -23,7 +23,7 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
-import { hasIndictmentSubtype } from '../../stepHelper'
+import { isTrafficViolationCase } from '../../stepHelper'
 
 const validateFormStepper = (
   isActiveSubSectionValid: boolean,
@@ -317,13 +317,11 @@ const useSections = (
   ): RouteSection => {
     const { id } = workingCase
 
-    const caseHasBeenReceivedByCourt =
-      workingCase.courtCaseNumber !== undefined &&
-      workingCase.courtCaseNumber !== null
+    const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
     return {
       name: formatMessage(sections.indictmentCaseProsecutorSection.title),
-      // Prosecutor can only view the overview when case has been submitted to court
+      // Prosecutor can only view the overview when case has been received by court
       children: caseHasBeenReceivedByCourt
         ? []
         : [
@@ -401,10 +399,7 @@ const useSections = (
             },
             ...(features.includes(Feature.INDICTMENT_ROUTE) &&
             workingCase.type === CaseType.Indictment &&
-            hasIndictmentSubtype(
-              workingCase.indictmentSubtypes,
-              IndictmentSubtype.TRAFFIC_VIOLATION,
-            )
+            isTrafficViolationCase(workingCase.indictmentSubtypes)
               ? [
                   {
                     name: formatMessage(
