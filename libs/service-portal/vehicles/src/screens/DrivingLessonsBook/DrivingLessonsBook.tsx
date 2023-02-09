@@ -28,51 +28,27 @@ export const GET_STUDENT_BOOK = gql`
   query GetUserDrivingLessonsBook {
     drivingLicenseBookUserBook {
       book {
-        id
         licenseCategory
         createdOn
-        teacherNationalId
         teacherName
-        schoolNationalId
-        schoolName
-        isDigital
         statusName
         totalLessonTime
         totalLessonCount
         teachersAndLessons {
-          id
           registerDate
           lessonTime
-          teacherNationalId
           teacherName
         }
         drivingSchoolExams {
-          id
           examDate
-          schoolNationalId
           schoolName
-          schoolEmployeeNationalId
-          schoolEmployeeName
-          schoolTypeId
           schoolTypeName
-          schoolTypeCode
           comments
         }
         testResults {
-          id
           examDate
-          score
-          scorePart1
-          scorePart2
           hasPassed
-          testCenterNationalId
-          testCenterName
-          testExaminerNationalId
-          testExaminerName
-          testTypeId
           testTypeName
-          testTypeCode
-          comments
         }
       }
     }
@@ -118,7 +94,7 @@ const DrivingLessonsBook: ServicePortalModuleComponent = () => {
           <SkeletonLoader space={1} height={40} repeat={5} />
         </Box>
       )}
-      {book?.id && !loading && (
+      {book?.createdOn && !loading && (
         <>
           <Stack space={2}>
             <UserInfoLine
@@ -203,7 +179,7 @@ const DrivingLessonsBook: ServicePortalModuleComponent = () => {
           </Box>
         </>
       )}
-      {!loading && !error && !book?.id && (
+      {!loading && !error && !book?.createdOn && (
         <Box marginTop={8}>
           <EmptyState />
         </Box>
