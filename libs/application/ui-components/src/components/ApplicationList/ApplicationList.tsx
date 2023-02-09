@@ -188,7 +188,7 @@ const ApplicationList = ({
           return 'success'
         case 'inprogress':
           return 'info'
-        case 'rejected': // TODO buttons on alert message
+        case 'rejected':
           return 'error'
         default:
           return 'default'
@@ -254,7 +254,11 @@ const ApplicationList = ({
               DefaultData[application.status] ||
               DefaultData[ApplicationStatus.IN_PROGRESS]
             const slug = getSlugFromType(application.typeId)
-            const showHistory = application.status !== ApplicationStatus.DRAFT
+            const historyItems = buildHistoryItems(application)
+            const showHistory =
+              application.status !== ApplicationStatus.DRAFT &&
+              historyItems &&
+              historyItems.length > 0
 
             if (!slug) {
               return null
@@ -301,7 +305,7 @@ const ApplicationList = ({
                   closeButtonLabel: formatMessage(
                     coreMessages.closeApplicationHistoryLabel,
                   ),
-                  items: buildHistoryItems(application),
+                  items: historyItems,
                 }}
                 deleteButton={{
                   visible: actionCard?.deleteButton,

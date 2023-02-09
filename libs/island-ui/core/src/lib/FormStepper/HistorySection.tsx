@@ -12,6 +12,7 @@ export const HistorySection: FC<{
   section: string
   sectionIndex: number
   isComplete?: boolean
+  isLast?: boolean
   date?: string
   description?: React.ReactNode
 }> = ({
@@ -21,6 +22,7 @@ export const HistorySection: FC<{
   date,
   description,
   isComplete = false,
+  isLast = false,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const { height: activeHeight } = useComponentSize(containerRef)
@@ -37,10 +39,15 @@ export const HistorySection: FC<{
 
   return (
     <Box ref={containerRef} className={styles.container}>
-      <Box display="flex" alignItems="flexStart" width="full" marginBottom={1}>
+      <Box
+        display="flex"
+        alignItems="flexStart"
+        width="full"
+        marginBottom={isLast ? 0 : [1, 1, 3]}
+      >
         {date && (
           <Hidden below="xl">
-            <Box paddingTop={2} paddingRight={2}>
+            <Box paddingTop={2} paddingRight={2} className={styles.historyDate}>
               <Text variant="small">{date}</Text>
             </Box>
           </Hidden>
