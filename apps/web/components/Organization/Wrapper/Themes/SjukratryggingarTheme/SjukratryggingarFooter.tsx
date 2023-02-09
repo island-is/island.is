@@ -18,7 +18,7 @@ interface FooterProps {
   namespace: Record<string, string>
 }
 
-export const SjukratryggingarFooter: React.FC<FooterProps> = ({
+const SjukratryggingarFooter: React.FC<FooterProps> = ({
   footerItems,
   namespace,
 }) => {
@@ -132,3 +132,5 @@ export const SjukratryggingarFooter: React.FC<FooterProps> = ({
     </footer>
   )
 }
+
+export default SjukratryggingarFooter

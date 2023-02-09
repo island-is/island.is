@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { OrganizationPage } from '@island.is/web/graphql/schema'
 import {
   Box,
@@ -9,19 +9,40 @@ import {
 } from '@island.is/island-ui/core'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useNamespace } from '@island.is/web/hooks'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import { getScreenWidthString } from '@island.is/web/utils/screenWidth'
 import * as styles from './LandskjorstjornHeader.css'
+
+const getDefaultStyle = () => {
+  return {
+    background:
+      'url(https://images.ctfassets.net/8k0h54kbe6bj/5ublWANmR5UGrUFXQ1YGh2/4a1e3d7cc8adebf072ef41d0390e299b/Haus_-_Landskjorstjorn.png)',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+  }
+}
 
 interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const LandskjorstjornHeader: React.FC<HeaderProps> = ({
-  organizationPage,
-}) => {
+const LandskjorstjornHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   const { linkResolver } = useLinkResolver()
+  const namespace = useMemo(
+    () => JSON.parse(organizationPage.organization.namespace?.fields ?? '{}'),
+    [organizationPage.organization.namespace?.fields],
+  )
+  const n = useNamespace(namespace)
+  const { width } = useWindowSize()
+
+  const screenWidth = getScreenWidthString(width)
 
   return (
-    <Box className={styles.headerBg}>
+    <Box
+      style={n(`landskjorstjornHeader-${screenWidth}`, getDefaultStyle())}
+      className={styles.headerBg}
+    >
       <GridContainer className={styles.headerContainer}>
         <Box className={styles.headerWrapper}>
           <SidebarLayout
@@ -80,3 +101,5 @@ export const LandskjorstjornHeader: React.FC<HeaderProps> = ({
     </Box>
   )
 }
+
+export default LandskjorstjornHeader

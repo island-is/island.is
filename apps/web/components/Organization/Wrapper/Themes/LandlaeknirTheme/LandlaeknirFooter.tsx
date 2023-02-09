@@ -39,7 +39,7 @@ interface LandLaeknirFooterProps {
   namespace: Record<string, string>
 }
 
-export const LandLaeknirFooter = ({
+const LandLaeknirFooter = ({
   footerItems,
   namespace,
 }: LandLaeknirFooterProps) => {
