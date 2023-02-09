@@ -632,7 +632,7 @@ export const ComplaintForm: Form = buildForm({
       alertTitle: confirmation.labels.alertTitle,
       expandableHeader: confirmation.labels.expandableHeader,
       expandableDescription: confirmation.labels.description,
-      s3PdfKey: (application) => {
+      s3FileKey: (application) => {
         const submitData = application.externalData
           .sendApplication as SubmittedApplicationData
 

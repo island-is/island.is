@@ -13,7 +13,7 @@ export const ComplaintFormInReview: Form = buildForm({
       alertTitle: confirmation.labels.alertTitle,
       expandableHeader: confirmation.labels.expandableHeader,
       expandableDescription: confirmation.labels.description,
-      s3PdfKey: (application) => {
+      sFileKey: (application) => {
         const submitData = application.externalData
           .sendApplication as SubmittedApplicationData
 

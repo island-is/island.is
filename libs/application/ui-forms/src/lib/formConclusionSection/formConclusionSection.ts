@@ -17,7 +17,7 @@ type props = {
   expandableHeader: MessageDescriptor
   expandableIntro?: MessageDescriptor
   expandableDescription: StaticText
-  s3PdfKey?: FormText
+  s3FileKey?: FormText
   link?: string
   buttonText?: MessageDescriptor
 }
@@ -31,7 +31,7 @@ type props = {
  * @param  expandableHeader Header of the expandable description section.
  * @param  expandableIntro Intro text of the expandable description section.
  * @param  expandableDescription Markdown code for the expandable description section, most applications use bulletpoints.
- * @param  s3PdfKey The key of the pdf file in s3.
+ * @param  s3FileKey The key of file in s3.
  * @param  link Link that user can click on.
  * @param  buttonText The text of the button that links to a url
  */
@@ -53,7 +53,7 @@ export const formConclusionSection = (props: props) =>
           buildLinkField({
             id: 'uiForms.complaintLink',
             title: props.buttonText ?? '',
-            s3key: props.s3PdfKey ?? '',
+            s3key: props.s3FileKey ?? '',
             link: props.link ?? '',
             condition: () => {
               return props.buttonText !== undefined
