@@ -33,15 +33,14 @@ export class ApplicationAccessService {
   async findOneByIdAndNationalId(
     id: string,
     user: User,
-    shouldThrowIfPruned = true,
+    shouldThrowIfPruned = false,
   ) {
     const existingApplication = await this.applicationService.findOneById(
       id,
       user.nationalId,
     )
 
-    if (!shouldThrowIfPruned) {
-      //shouldThrowIfPruned && existingApplication?.pruned) {
+    if (shouldThrowIfPruned && existingApplication?.pruned) {
       throw new ProblemError({
         type: ProblemType.HTTP_NOT_FOUND,
         title: coreErrorMessages.applicationIsPrunedAndReadOnly.description,

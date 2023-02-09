@@ -36,7 +36,7 @@ export const App = () => (
                   <Route exact path="/:slug/:id" component={Application} />
 
                   <Route path="*">
-                    <ErrorShell />
+                    <ErrorShell errorType="notFound" />
                   </Route>
                 </Switch>
               </Layout>

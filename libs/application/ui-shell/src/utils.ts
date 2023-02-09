@@ -16,7 +16,6 @@ export function verifyExternalData(
   externalData: ExternalData,
   dataProviders: DataProviderItem[],
 ): boolean {
-  console.log('verfiyExternalData')
   for (let i = 0; i < dataProviders.length; i++) {
     const { id } = dataProviders[i]
     const dataProviderResult = externalData[id]

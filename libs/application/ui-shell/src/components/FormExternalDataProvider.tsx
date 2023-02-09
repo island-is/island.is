@@ -181,7 +181,6 @@ const FormExternalDataProvider: FC<{
     | undefined
 
   const activateBeforeSubmitCallback = (checked: boolean) => {
-    console.log('activateBeforeSubmitCallback', checked)
     if (checked) {
       setBeforeSubmitCallback(async () => {
         const response = await updateExternalData({
