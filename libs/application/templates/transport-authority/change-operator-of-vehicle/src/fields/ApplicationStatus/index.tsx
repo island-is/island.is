@@ -66,25 +66,28 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
       )}
 
       {!showReviewButton && (
-        <Box
-          display="flex"
-          justifyContent="flexEnd"
-          paddingTop={4}
-          marginBottom={4}
-        >
-          <Button
-            icon="arrowForward"
-            iconType="outline"
-            onClick={() => {
-              window.open(
-                `${window.location.origin}/minarsidur/umsoknir#${application.id}`,
-                '_blank',
-              )
-            }}
+        <>
+          <Divider />
+          <Box
+            display="flex"
+            justifyContent="flexEnd"
+            paddingTop={4}
+            marginBottom={4}
           >
-            {formatMessage(review.buttons.openMySiteLinkText)}
-          </Button>
-        </Box>
+            <Button
+              icon="arrowForward"
+              iconType="outline"
+              onClick={() => {
+                window.open(
+                  `${window.location.origin}/minarsidur/umsoknir#${application.id}`,
+                  '_blank',
+                )
+              }}
+            >
+              {formatMessage(review.buttons.openMySiteLinkText)}
+            </Button>
+          </Box>
+        </>
       )}
     </Box>
   )
