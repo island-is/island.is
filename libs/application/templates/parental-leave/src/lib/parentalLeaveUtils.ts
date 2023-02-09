@@ -62,7 +62,7 @@ import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
   multipleBirthsDefaultDays,
 } from '../config'
-import { isAfter, isBefore, isEqual, subMonths } from 'date-fns'
+import { isAfter, isBefore, isEqual, subDays, subMonths } from 'date-fns'
 import { AnyEventObject } from 'xstate'
 
 export function getExpectedDateOfBirth(
@@ -1563,11 +1563,18 @@ export const actionsResidenceGrant = (
   return mergedActions
 }
 
-export const setTestBirthDay = (months = 0, add = false, sub = false) => {
+export const setTestBirthAndExpectedDate = (
+  months = 0,
+  days = 0,
+  addMonth = false,
+  subMonth = false,
+  daysAdd = false,
+  daysSub = false,
+) => {
   // Set a date that is today we can either add or substract months
-  const date = sub
+  const date = subMonth
     ? subMonths(new Date(), months)
-    : add
+    : addMonth
     ? addMonths(new Date(), months)
     : new Date()
 
@@ -1579,9 +1586,27 @@ export const setTestBirthDay = (months = 0, add = false, sub = false) => {
 
   const day =
     `${date.getDate()}`.length > 1 ? `${date.getDate()}` : `0${date.getDate()}`
-  console.log(`${year}${month}${day}`)
   // returns a  string in yyyymmdd
-  return `${year}${month}${day}`
+  const birthDate = new Date(
+    date.getFullYear(),
+    date.getMonth() + 1,
+    date.getDate(),
+  )
+  const newDate = daysSub
+    ? subDays(birthDate, days)
+    : daysAdd
+    ? addDays(birthDate, days)
+    : birthDate
+
+  const expBirthDate = addDays(newDate, days)
+  const expBirthDateYear = `${expBirthDate.getFullYear()}`
+  const expBirthDateMonth = `${expBirthDate.getMonth()}`
+  const expBirthDateDate = `${expBirthDate.getDate()}`
+
+  return {
+    birthDate: `${year}${month}${day}`,
+    expBirthDate: `${expBirthDateYear}-${expBirthDateMonth}-${expBirthDateDate}`,
+  }
 }
 
 export const setTestDates = (

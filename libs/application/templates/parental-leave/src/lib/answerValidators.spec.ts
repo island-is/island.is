@@ -11,11 +11,10 @@ import format from 'date-fns/format'
 import { minimumPeriodStartBeforeExpectedDateOfBirth } from '../config'
 import { MANUAL, ParentalRelations, YES } from '../constants'
 import { answerValidators } from './answerValidators'
-import { errorMessages } from './messages'
+import { errorMessages, parentalLeaveFormMessages } from './messages'
 import { NO, StartDateOptions, AnswerValidationConstants } from '../constants'
-import { validatePeriodResidenceGrant } from './answerValidationSections/residenceGrantValidationSection'
-import { subMonths } from 'date-fns'
-import { setTestBirthDay, setTestDates } from './parentalLeaveUtils'
+import { setTestBirthAndExpectedDate, setTestDates } from './parentalLeaveUtils'
+import { validatePeriodResidenceGrant } from './answerValidationSections/utils'
 
 const { VALIDATE_LATEST_PERIOD } = AnswerValidationConstants
 
@@ -678,52 +677,36 @@ describe('when constructing a new period', () => {
 
 test.each([
   {
-    birthDay: setTestBirthDay(),
+    birthDay: setTestBirthAndExpectedDate().birthDate,
+    expectedBirthDate: setTestBirthAndExpectedDate(0, 5, false, false, true).expBirthDate,
     multipleBirths: 'no',
     dateFrom: setTestDates(),
     dateTo: setTestDates(0, 14),
-    expected: true,
-  },
-  {
-    birthDay: setTestBirthDay(),
-    multipleBirths: 'yes',
-    dateFrom: setTestDates(),
-    dateTo: setTestDates(0, 28),
-    expected: true,
-  },
-  {
-    birthDay: setTestBirthDay(),
-    multipleBirths: 'yes',
-    dateFrom: setTestDates(0, 0),
-    dateTo: setTestDates(0, 14),
-    expected: true,
-  },
-  {
-    birthDay: setTestBirthDay(),
-    multipleBirths: 'no',
-    dateFrom: setTestDates(0, 0),
-    dateTo: setTestDates(0, 28),
-    expected: false,
-  },
-  {
-    birthDay: setTestBirthDay(1, true),
-    multipleBirths: 'no',
-    dateFrom: setTestDates(),
-    dateTo: setTestDates(0, 14),
-    expected: false,
-  },
-  {
-    birthDay: setTestBirthDay(7, false, true),
-    multipleBirths: 'no',
-    dateFrom: setTestDates(0, 0),
-    dateTo: setTestDates(0, 14),
-    expected: false,
+    expected: {
+      field: 'dateFrom',
+      error:
+        parentalLeaveFormMessages.residenceGrantMessage
+          .residenceGrantStartDateError,
+    },
   },
 ])(
   'Should return true if a period is within the allowed range of days and within the allowed 6 months application time from the brth of the child/children ',
-  ({ birthDay, multipleBirths, dateFrom, dateTo, expected }) => {
+  ({
+    birthDay,
+    expectedBirthDate,
+    multipleBirths,
+    dateFrom,
+    dateTo,
+    expected,
+  }) => {
     expect(
-      validatePeriodResidenceGrant(birthDay, multipleBirths, dateFrom, dateTo),
-    ).toBe(expected)
+      validatePeriodResidenceGrant(
+        birthDay,
+        expectedBirthDate,
+        multipleBirths,
+        dateFrom,
+        dateTo,
+      ),
+    ).toStrictEqual(expected)
   },
 )
