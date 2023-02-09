@@ -13,7 +13,8 @@ import {
 import NumberFormat from 'react-number-format'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { ValueType } from 'react-select'
-import { countryCodes as countryCodeList } from './countryCodes'
+import { countryCodes as countryCodeList, countryCodes } from './countryCodes'
+import { parse, findPhoneNumbersInText } from 'libphonenumber-js'
 
 interface Props {
   autoFocus?: boolean
@@ -78,8 +79,7 @@ const getDefaultValue = (
 /**
  * Gets default country code.
  * This function tries to extract a country calling code from a phone number,
- * and it assumes that the phone number itself is always 7 characters
- * Might need to rethink this logic in the future when more country calling codes are allowed.
+ * by using libphonenumber-js to parse the number
  *
  * Example outputs:
  * getDefaultCountryCode("+3545812345") // +354
@@ -88,8 +88,16 @@ const getDefaultValue = (
  */
 const getDefaultCountryCode = (phoneNumber?: string) => {
   if (!phoneNumber) return DEFAULT_COUNTRY_CODE
-  const countryCode = phoneNumber.slice(0, -7) || DEFAULT_COUNTRY_CODE
-  return countryCode
+  const parsedPhoneNumber = parse(phoneNumber)
+
+  if (parsedPhoneNumber && parsedPhoneNumber.country) {
+    return (
+      countryCodes.find((x) => x.code === parsedPhoneNumber.country)
+        ?.dial_code || DEFAULT_COUNTRY_CODE
+    )
+  }
+
+  return DEFAULT_COUNTRY_CODE
 }
 
 export const PhoneInputController = forwardRef(
