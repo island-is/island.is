@@ -1,5 +1,5 @@
 import { Box, Button, Text } from '@island.is/island-ui/core'
-import * as styles from './SubscriptionActionBox.css'
+import * as styles from './SubscriptionLoginActionBox.css'
 
 export interface SubscriptionActionCardProps {
   heading: string

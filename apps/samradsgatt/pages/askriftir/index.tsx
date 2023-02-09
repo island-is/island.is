@@ -13,10 +13,12 @@ import { Layout } from '../../components/Layout/Layout'
 import Cases from '../../utils/dummydata/api/Cases'
 import SubscriptionArray from '../../utils/dummydata/api/User/Subscriptions'
 import Types from '../../utils/dummydata/api/Types'
-import SubscriptionBox from '../../components/SubscriptionBox/SubscriptionBox'
-import SubscriptionActionBox from '../../components/Card/SubscriptionActionBox'
+import SubscriptionActionBox from '../../components/Card/SubscriptionLoginActionBox'
 
 const Subscriptions = () => {
+  // user logged in logic needed
+  const [loggedIn, setLoggedIn] = useState(false)
+
   const [currentTab, setCurrentTab] = useState('Mál')
 
   const [searchOptions, setSearchOptions] = useState<AsyncSearchOption[]>([])
@@ -75,7 +77,7 @@ const Subscriptions = () => {
       setPolicyAreasData(filteredPolicyAreas)
       setPrevSearchValue(searchValue)
     }
-  }, [searchValue])
+  }, [searchValue, Institutions, PolicyAreas, prevSearchValue])
 
   const tabs = [
     {
@@ -162,11 +164,15 @@ const Subscriptions = () => {
           </Text>
         </Box>
         <Box paddingX={paddingXTable} paddingBottom={4}>
-          <SubscriptionActionBox
-            heading="Skrá áskrift"
-            text="Þú verður að vera skráð(ur) inn til þess að geta skráð þig í áskrift."
-            cta={{ label: 'Skrá mig inn', onClick: () => null }}
-          />
+          {loggedIn ? (
+            <p>Logged In</p>
+          ) : (
+            <SubscriptionActionBox
+              heading="Skrá áskrift"
+              text="Þú verður að vera skráð(ur) inn til þess að geta skráð þig í áskrift."
+              cta={{ label: 'Skrá mig inn', onClick: () => setLoggedIn(true) }}
+            />
+          )}
         </Box>
 
         <Box paddingX={paddingXTable}>
