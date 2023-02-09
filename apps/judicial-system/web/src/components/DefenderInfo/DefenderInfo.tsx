@@ -116,7 +116,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
                       },
                     )
                   : formatMessage(
-                      defenderInfo.restrictionCases.sections.sendRequest
+                      defenderInfo.investigationCases.sections.sendRequest
                         .tooltip,
                     )
               }
