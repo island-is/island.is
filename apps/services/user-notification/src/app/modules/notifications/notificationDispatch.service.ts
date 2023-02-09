@@ -75,16 +75,23 @@ export class NotificationDispatchService {
         title: notification.title,
         body: notification.body,
       },
-      apns: {
-        payload: {
-          aps: {
-            category: notification.category,
+
+      ...(notification.category && {
+        apns: {
+          payload: {
+            aps: {
+              category: notification.category,
+            },
           },
         },
-      },
+      }),
       data: {
-        ...(notification.appURI && { url: notification.appURI }),
-        ...(notification.appURI && { islandIsUrl: notification.appURI }),
+        createdAt: new Date().toISOString(),
+        messageId,
+        ...(notification.appURI && {
+          url: notification.appURI,
+          islandIsUrl: notification.appURI,
+        }),
         ...(notification.dataCopy && { copy: notification.dataCopy }),
       },
     }
