@@ -370,17 +370,15 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     if (applicationFundId && applicationFundId !== '') {
       if (additionalDocuments) {
         additionalDocuments.forEach(async (val, i) => {
-          if (!val?.isSend) {
-            const pdf = await this.getPdf(
-              application,
-              i,
-              'fileUpload.additionalDocuments',
-            )
-            attachments.push({
-              attachmentType: apiConstants.attachments.other,
-              attachmentBytes: pdf,
-            })
-          }
+          const pdf = await this.getPdf(
+            application,
+            i,
+            'fileUpload.additionalDocuments',
+          )
+          attachments.push({
+            attachmentType: apiConstants.attachments.other,
+            attachmentBytes: pdf,
+          })
         })
       }
       return attachments
