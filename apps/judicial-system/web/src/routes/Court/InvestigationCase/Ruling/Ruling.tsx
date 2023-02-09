@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -21,7 +21,11 @@ import {
   RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  useDeb,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   isAcceptingCaseDecision,
   completedCaseStates,
@@ -60,7 +64,6 @@ const Ruling = () => {
   const { setAndSendCaseToServer, updateCase } = useCase()
   const { formatMessage } = useIntl()
 
-  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
   const [courtCaseFactsEM, setCourtCaseFactsEM] = useState<string>('')
   const [courtLegalArgumentsEM, setCourtLegalArgumentsEM] = useState<string>('')
   const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState<string>('')
@@ -88,52 +91,42 @@ const Ruling = () => {
     'conclusion',
   ])
 
-  useEffect(() => {
-    if (isCaseUpToDate && !initialAutoFillDone) {
-      setAndSendCaseToServer(
-        [
-          {
-            introduction: formatMessage(m.sections.introduction.autofill, {
-              date: formatDate(workingCase.courtDate, 'PPP'),
-            }),
-            prosecutorDemands: workingCase.demands,
-            courtCaseFacts: formatMessage(
-              ruling.sections.courtCaseFacts.prefill,
-              {
-                caseFacts: workingCase.caseFacts,
-              },
-            ),
-            courtLegalArguments: formatMessage(
-              ruling.sections.courtLegalArguments.prefill,
-              { legalArguments: workingCase.legalArguments },
-            ),
-            ruling: !workingCase.parentCase
-              ? `\n${formatMessage(ruling.autofill, {
-                  judgeName: workingCase.judge?.name,
-                })}`
-              : isAcceptingCaseDecision(workingCase.decision)
-              ? workingCase.parentCase.ruling
-              : undefined,
-            conclusion: isAcceptingCaseDecision(workingCase.decision)
-              ? workingCase.demands
-              : undefined,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
+  const initialize = useCallback(() => {
+    setAndSendCaseToServer(
+      [
+        {
+          introduction: formatMessage(m.sections.introduction.autofill, {
+            date: formatDate(workingCase.courtDate, 'PPP'),
+          }),
+          prosecutorDemands: workingCase.demands,
+          courtCaseFacts: formatMessage(
+            ruling.sections.courtCaseFacts.prefill,
+            {
+              caseFacts: workingCase.caseFacts,
+            },
+          ),
+          courtLegalArguments: formatMessage(
+            ruling.sections.courtLegalArguments.prefill,
+            { legalArguments: workingCase.legalArguments },
+          ),
+          ruling: !workingCase.parentCase
+            ? `\n${formatMessage(ruling.autofill, {
+                judgeName: workingCase.judge?.name,
+              })}`
+            : isAcceptingCaseDecision(workingCase.decision)
+            ? workingCase.parentCase.ruling
+            : undefined,
+          conclusion: isAcceptingCaseDecision(workingCase.decision)
+            ? workingCase.demands
+            : undefined,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }, [setAndSendCaseToServer, workingCase, formatMessage, setWorkingCase])
 
-      setInitialAutoFillDone(true)
-    }
-  }, [
-    isCaseUpToDate,
-    setAndSendCaseToServer,
-    workingCase,
-    formatMessage,
-    setWorkingCase,
-    initialAutoFillDone,
-    setInitialAutoFillDone,
-  ])
+  useOnceOn(isCaseUpToDate, initialize)
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {

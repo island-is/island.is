@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import router from 'next/router'
 import { useIntl } from 'react-intl'
 import { applyCase } from 'beygla'
@@ -23,7 +23,11 @@ import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  useDeb,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
 import { isTrafficViolationStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
@@ -49,23 +53,11 @@ const Indictment: React.FC = () => {
 
   useDeb(workingCase, ['indictmentIntroduction', 'demands'])
 
-  useEffect(() => {
-    if (isCaseUpToDate && !workingCase.demands) {
-      setAndSendCaseToServer(
-        [{ demands: formatMessage(strings.demandsAutofill) }],
-        workingCase,
-        setWorkingCase,
-      )
-    }
-  })
+  const initialize = useCallback(() => {
+    let indictmentIntroductionAutofill = undefined
 
-  useEffect(() => {
-    if (
-      isCaseUpToDate &&
-      workingCase.defendants &&
-      workingCase.defendants.length > 0
-    ) {
-      const indictmentIntroductionAutofill = [
+    if (workingCase.defendants && workingCase.defendants.length > 0) {
+      indictmentIntroductionAutofill = [
         workingCase.prosecutor?.institution?.name.toUpperCase(),
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillAnnounces)}`,
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillCourt, {
@@ -81,24 +73,21 @@ const Indictment: React.FC = () => {
         })}`,
         `\n\n${workingCase.defendants[0].address}`,
       ]
-
-      setAndSendCaseToServer(
-        [
-          {
-            indictmentIntroduction: indictmentIntroductionAutofill.join(''),
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
     }
-  }, [
-    formatMessage,
-    isCaseUpToDate,
-    setAndSendCaseToServer,
-    setWorkingCase,
-    workingCase,
-  ])
+
+    setAndSendCaseToServer(
+      [
+        {
+          indictmentIntroduction: indictmentIntroductionAutofill?.join(''),
+          demands: formatMessage(strings.demandsAutofill),
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }, [workingCase, setAndSendCaseToServer, formatMessage, setWorkingCase])
+
+  useOnceOn(isCaseUpToDate, initialize)
 
   return (
     <PageLayout
