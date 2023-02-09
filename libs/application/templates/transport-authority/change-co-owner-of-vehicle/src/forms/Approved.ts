@@ -11,10 +11,12 @@ import {
   payment,
   review,
 } from '../lib/messages'
+import { Logo } from '../assets/Logo'
 
 export const Approved: Form = buildForm({
   id: 'ApprovedApplicationForm',
   title: '',
+  logo: Logo,
   mode: FormModes.COMPLETED,
   children: [
     buildSection({
