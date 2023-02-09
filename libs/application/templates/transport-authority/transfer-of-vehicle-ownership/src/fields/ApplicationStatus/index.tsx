@@ -57,7 +57,7 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
           />
         ))}
       </Box>
-      {showReviewButton && application.state !== States.COMPLETED && (
+      {showReviewButton && (
         <>
           <Divider />
           <Box display="flex" justifyContent="flexEnd" paddingY={5}>
