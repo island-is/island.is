@@ -1,14 +1,14 @@
 import {
+  AsyncSearchOption,
   Box,
   Breadcrumbs,
-  Button,
   GridContainer,
   ResponsiveSpace,
   Tabs,
   Text,
 } from '@island.is/island-ui/core'
-import SubscriptionTable from '../../components/Table/SubscriptionTable'
-import { useState } from 'react'
+import TabContent from '../../components/Tab/TabContent'
+import { useEffect, useState } from 'react'
 import { Layout } from '../../components/Layout/Layout'
 import Cases from '../../utils/dummydata/api/Cases'
 import SubscriptionArray from '../../utils/dummydata/api/User/Subscriptions'
@@ -16,75 +16,115 @@ import Types from '../../utils/dummydata/api/Types'
 
 const Subscriptions = () => {
   const [currentTab, setCurrentTab] = useState('Mál')
+
+  const [searchOptions, setSearchOptions] = useState<AsyncSearchOption[]>([])
+  const [searchValue, setSearchValue] = useState('')
+  const settingSearchValue = (val) => setSearchValue(val)
+  const [prevSearchValue, setPrevSearchValue] = useState('')
+
   const [casesData, setCasesData] = useState(Cases)
-  const [institutionsData, setInstitutionsData] = useState(
-    Object.entries(Types.institutions).map(([id, name]) => ({ id, name })),
-  )
-  const [policyAreasData, setPolicyAreasData] = useState(
-    Object.entries(Types.policyAreas).map(([id, name]) => ({ id, name })),
-  )
+  const Institutions = Object.entries(Types.institutions).map(([id, name]) => ({
+    id,
+    name,
+  }))
+  const [institutionsData, setInstitutionsData] = useState(Institutions)
+  const PolicyAreas = Object.entries(Types.policyAreas).map(([id, name]) => ({
+    id,
+    name,
+  }))
+  const [policyAreasData, setPolicyAreasData] = useState(PolicyAreas)
   const [subscriptionArray, setSubscriptionArray] = useState(SubscriptionArray)
   const settingSubscriptionArray = (newSubscriptionArray) =>
     setSubscriptionArray(newSubscriptionArray)
+
   const paddingYBreadCrumbs = [3, 3, 3, 5] as ResponsiveSpace
   const paddingXContent = [0, 0, 0, 15] as ResponsiveSpace
   const paddingXTable = [0, 0, 0, 15] as ResponsiveSpace
-  const paddingBottom = [3, 3, 3, 3] as ResponsiveSpace
 
-  const onLoadMore = () => {
-    console.log('clicked on load more')
+  const clearAll = () => {
+    setSearchOptions([])
+    setCasesData(Cases)
+    setInstitutionsData(Institutions)
+    setPolicyAreasData(PolicyAreas)
   }
 
-  const CasesContent = () => {
-    return (
-      <SubscriptionTable
-        data={casesData}
-        currentTab={'Mál'}
-        subscriptionArray={subscriptionArray}
-        setSubscriptionArray={settingSubscriptionArray}
-      />
-    )
-  }
-
-  const InstitutionsContent = () => {
-    return (
-      <SubscriptionTable
-        data={institutionsData}
-        currentTab={'Stofnanir'}
-        subscriptionArray={subscriptionArray}
-        setSubscriptionArray={settingSubscriptionArray}
-      />
-    )
-  }
-
-  const PolicyAreasContent = () => {
-    return (
-      <SubscriptionTable
-        data={policyAreasData}
-        currentTab={'Málefnasvið'}
-        subscriptionArray={subscriptionArray}
-        setSubscriptionArray={settingSubscriptionArray}
-      />
-    )
-  }
+  useEffect(() => {
+    if (searchValue == prevSearchValue) {
+      return
+    }
+    if (!searchValue) {
+      clearAll()
+    } else {
+      const filteredCases = Cases.filter(
+        (item) =>
+          item.name.includes(searchValue) ||
+          item.caseNumber.includes(searchValue) ||
+          item.institutionName.includes(searchValue) ||
+          item.policyAreaName.includes(searchValue),
+      )
+      setCasesData(filteredCases)
+      const filteredInstitutions = Institutions.filter((item) =>
+        item.name.includes(searchValue),
+      )
+      setInstitutionsData(filteredInstitutions)
+      const filteredPolicyAreas = PolicyAreas.filter((item) =>
+        item.name.includes(searchValue),
+      )
+      setPolicyAreasData(filteredPolicyAreas)
+      setPrevSearchValue(searchValue)
+    }
+  }, [searchValue])
 
   const tabs = [
     {
       id: 'Mál',
       label: 'Mál',
-      content: <CasesContent />,
+      content: (
+        <TabContent
+          data={casesData}
+          currentTab={'Mál'}
+          subscriptionArray={subscriptionArray}
+          setSubscriptionArray={settingSubscriptionArray}
+          searchOptions={searchOptions}
+          searchValue={searchValue}
+          setSearchValue={settingSearchValue}
+          searchPlaceholder={'Leitaðu að máli, stofnun eða málefnasviði'}
+        />
+      ),
       disabled: false,
     },
     {
       id: 'Stofnanir',
       label: 'Stofnanir',
-      content: <InstitutionsContent />,
+      content: (
+        <TabContent
+          data={institutionsData}
+          currentTab={'Stofnanir'}
+          subscriptionArray={subscriptionArray}
+          setSubscriptionArray={settingSubscriptionArray}
+          searchOptions={searchOptions}
+          searchValue={searchValue}
+          setSearchValue={settingSearchValue}
+          searchPlaceholder={'Leitaðu að máli, stofnun eða málefnasviði'}
+        />
+      ),
       disabled: false,
     },
     {
       id: 'Málefnasvið',
       label: 'Málefnasvið',
-      content: <PolicyAreasContent />,
+      content: (
+        <TabContent
+          data={policyAreasData}
+          currentTab={'Málefnasvið'}
+          subscriptionArray={subscriptionArray}
+          setSubscriptionArray={settingSubscriptionArray}
+          searchOptions={searchOptions}
+          searchValue={searchValue}
+          setSearchValue={settingSearchValue}
+          searchPlaceholder={'Leitaðu að máli, stofnun eða málefnasviði'}
+        />
+      ),
       disabled: false,
     },
   ]
@@ -129,15 +169,6 @@ const Subscriptions = () => {
             contentBackground="transparent"
             onChange={(e) => setCurrentTab(e)}
           />
-        </Box>
-        <Box
-          paddingX={paddingXContent}
-          paddingBottom={paddingBottom}
-          paddingTop={3}
-        >
-          <Button icon="eye" variant="text" onClick={onLoadMore}>
-            Sýna fleiri mál
-          </Button>
         </Box>
       </GridContainer>
     </Layout>
