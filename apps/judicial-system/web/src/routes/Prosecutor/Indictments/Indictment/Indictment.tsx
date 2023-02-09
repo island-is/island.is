@@ -1,31 +1,44 @@
-import React, { useCallback, useContext, useEffect } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import router from 'next/router'
 import { useIntl } from 'react-intl'
+import { AnimatePresence, motion } from 'framer-motion'
+
+import { Box, Input, Button } from '@island.is/island-ui/core'
 import { applyCase } from 'beygla'
 
 import {
+  BlueBox,
   FormContentContainer,
   FormContext,
   FormFooter,
   PageHeader,
   PageLayout,
   PageTitle,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
   IndictmentsProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { titles } from '@island.is/judicial-system-web/messages'
-import { Box, Input } from '@island.is/island-ui/core'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  useDeb,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import * as constants from '@island.is/judicial-system/consts'
-
-import { indictment as strings } from './Indictment.strings'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
+import { isTrafficViolationStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
+import useIndictmentCounts, {
+  UpdateIndictmentCount,
+} from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
+
+import { IndictmentCount } from './IndictmentCount'
+import { indictment as strings } from './Indictment.strings'
 
 const Indictment: React.FC = () => {
   const {
@@ -37,21 +50,91 @@ const Indictment: React.FC = () => {
   } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const { updateCase, setAndSendCaseToServer } = useCase()
-  const stepIsValid = true
+  const {
+    createIndictmentCount,
+    updateIndictmentCount,
+    deleteIndictmentCount,
+    updateIndictmentCountState,
+  } = useIndictmentCounts()
+
+  const stepIsValid = isTrafficViolationStepValidIndictments(workingCase)
+
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
   )
+  const [demandsErrorMessage, setDemandsErrorMessage] = useState<string>('')
 
-  useDeb(workingCase, 'indictmentIntroduction')
+  useDeb(workingCase, ['indictmentIntroduction', 'demands'])
 
-  useEffect(() => {
+  const handleCreateIndictmentCount = useCallback(async () => {
+    const indictmentCount = await createIndictmentCount(workingCase.id)
+
+    if (!indictmentCount) {
+      return
+    }
+
+    setWorkingCase((theCase) => ({
+      ...theCase,
+      indictmentCounts: theCase.indictmentCounts
+        ? [...theCase.indictmentCounts, indictmentCount]
+        : [indictmentCount],
+    }))
+  }, [createIndictmentCount, setWorkingCase, workingCase.id])
+
+  const handleUpdateIndictmentCount = useCallback(
+    async (
+      indictmentCountId: string,
+      updatedIndictmentCount: UpdateIndictmentCount,
+    ) => {
+      const returnedIndictmentCount = await updateIndictmentCount(
+        workingCase.id,
+        indictmentCountId,
+        updatedIndictmentCount,
+      )
+
+      if (!returnedIndictmentCount) {
+        return
+      }
+      updateIndictmentCountState(
+        indictmentCountId,
+        returnedIndictmentCount,
+        setWorkingCase,
+      )
+    },
+    [
+      setWorkingCase,
+      updateIndictmentCount,
+      updateIndictmentCountState,
+      workingCase.id,
+    ],
+  )
+
+  const handleDeleteIndictmentCount = async (indictmentCountId: string) => {
     if (
-      isCaseUpToDate &&
-      workingCase.defendants &&
-      workingCase.defendants.length > 0
+      workingCase.indictmentCounts &&
+      workingCase.indictmentCounts.length > 1
     ) {
-      const indictmentIntroductionAutofill = [
+      await deleteIndictmentCount(workingCase.id, indictmentCountId)
+
+      setWorkingCase((theCase) => ({
+        ...theCase,
+        indictmentCounts: theCase.indictmentCounts?.filter(
+          (count) => count.id !== indictmentCountId,
+        ),
+      }))
+    }
+  }
+
+  const initialize = useCallback(() => {
+    let indictmentIntroductionAutofill = undefined
+
+    if (workingCase.indictmentCounts?.length === 0) {
+      handleCreateIndictmentCount()
+    }
+
+    if (workingCase.defendants && workingCase.defendants.length > 0) {
+      indictmentIntroductionAutofill = [
         workingCase.prosecutor?.institution?.name.toUpperCase(),
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillAnnounces)}`,
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillCourt, {
@@ -67,24 +150,27 @@ const Indictment: React.FC = () => {
         })}`,
         `\n\n${workingCase.defendants[0].address}`,
       ]
-
-      setAndSendCaseToServer(
-        [
-          {
-            indictmentIntroduction: indictmentIntroductionAutofill.join(''),
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
     }
+
+    setAndSendCaseToServer(
+      [
+        {
+          indictmentIntroduction: indictmentIntroductionAutofill?.join(''),
+          demands: formatMessage(strings.demandsAutofill),
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
   }, [
-    formatMessage,
-    isCaseUpToDate,
-    setAndSendCaseToServer,
-    setWorkingCase,
     workingCase,
+    setAndSendCaseToServer,
+    formatMessage,
+    setWorkingCase,
+    handleCreateIndictmentCount,
   ])
+
+  useOnceOn(isCaseUpToDate, initialize)
 
   return (
     <PageLayout
@@ -101,9 +187,12 @@ const Indictment: React.FC = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
-        <Box marginBottom={5}>
+        <Box component="section" marginBottom={3}>
+          <SectionHeading
+            title={formatMessage(strings.indictmentIntroductionTitle)}
+          />
           <Input
-            name="indictmentsIntroduction"
+            name="indictmentIntroduction"
             label={formatMessage(strings.indictmentIntroductionLabel)}
             placeholder={formatMessage(
               strings.indictmentIntroductionPlaceholder,
@@ -128,9 +217,90 @@ const Indictment: React.FC = () => {
               )
             }
             textarea
+            autoComplete="off"
             rows={10}
             autoExpand={{ on: true, maxHeight: 300 }}
           />
+        </Box>
+        {workingCase.indictmentCounts?.map((indictmentCount, index) => (
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+          >
+            <Box
+              component="section"
+              marginBottom={
+                index - 1 === workingCase.indictmentCounts?.length ? 0 : 3
+              }
+            >
+              <SectionHeading
+                title={formatMessage(strings.indictmentCountHeading, {
+                  count: index + 1,
+                })}
+              />
+              <AnimatePresence>
+                <IndictmentCount
+                  indictmentCount={indictmentCount}
+                  workingCase={workingCase}
+                  onDelete={index > 0 ? handleDeleteIndictmentCount : undefined}
+                  onChange={handleUpdateIndictmentCount}
+                  setWorkingCase={setWorkingCase}
+                  updateIndictmentCountState={updateIndictmentCountState}
+                ></IndictmentCount>
+              </AnimatePresence>
+            </Box>
+          </motion.div>
+        ))}
+        <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
+          <Button
+            variant="ghost"
+            icon="add"
+            onClick={handleCreateIndictmentCount}
+            disabled={false}
+          >
+            {formatMessage(strings.addIndictmentCount)}
+          </Button>
+        </Box>
+        <Box component="section" marginBottom={10}>
+          <SectionHeading title={formatMessage(strings.demandsTitle)} />
+          <BlueBox>
+            <Input
+              name="demands"
+              label={formatMessage(strings.demandsLabel)}
+              placeholder={formatMessage(strings.demandsPlaceholder)}
+              value={workingCase.demands || ''}
+              errorMessage={demandsErrorMessage}
+              hasError={demandsErrorMessage !== ''}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'demands',
+                  event.target.value,
+                  ['empty'],
+                  workingCase,
+                  setWorkingCase,
+                  demandsErrorMessage,
+                  setDemandsErrorMessage,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'demands',
+                  event.target.value,
+                  ['empty'],
+                  workingCase,
+                  updateCase,
+                  setDemandsErrorMessage,
+                )
+              }
+              textarea
+              autoComplete="off"
+              required
+              rows={7}
+              autoExpand={{ on: true, maxHeight: 300 }}
+            />
+          </BlueBox>
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>

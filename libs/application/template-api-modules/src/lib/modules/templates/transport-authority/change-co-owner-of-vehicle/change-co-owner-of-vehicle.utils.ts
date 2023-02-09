@@ -78,7 +78,9 @@ export const getRecipients = (
   }
 
   // Added co-owners
-  const addedCoOwners = answers.coOwners
+  const addedCoOwners = answers.coOwners?.filter(
+    ({ wasRemoved }) => wasRemoved !== 'true',
+  )
   if (roles.includes(EmailRole.addedCoOwner) && addedCoOwners) {
     for (let i = 0; i < addedCoOwners.length; i++) {
       recipientList.push({
@@ -129,7 +131,9 @@ export const getRecipientBySsn = (
   }
 
   // Added co-owners
-  const addedCoOwners = answers.coOwners
+  const addedCoOwners = answers.coOwners?.filter(
+    ({ wasRemoved }) => wasRemoved !== 'true',
+  )
   if (addedCoOwners) {
     for (let i = 0; i < addedCoOwners.length; i++) {
       if (addedCoOwners[i].nationalId === ssn) {

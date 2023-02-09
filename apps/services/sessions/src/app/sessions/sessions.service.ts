@@ -1,6 +1,5 @@
-import { ForbiddenException, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import * as kennitala from 'kennitala'
 import { Op, WhereOptions } from 'sequelize'
 
 import { User } from '@island.is/auth-nest-tools'
@@ -19,8 +18,8 @@ export class SessionsService {
 
   async findAll(
     user: User,
-    otherUser: string,
     query: SessionsQueryDto,
+    otherUser?: string,
   ): Promise<SessionsResultDto> {
     let whereOptions: WhereOptions
 
@@ -45,6 +44,12 @@ export class SessionsService {
           },
         ],
       }
+    }
+
+    whereOptions = {
+      ...whereOptions,
+      ...(query.from && { timestamp: { [Op.gte]: query.from } }),
+      ...(query.to && { timestamp: { [Op.lte]: query.to } }),
     }
 
     return paginate({

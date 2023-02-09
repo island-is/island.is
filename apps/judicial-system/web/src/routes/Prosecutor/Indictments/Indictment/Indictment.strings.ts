@@ -6,6 +6,13 @@ export const indictment = defineMessages({
     defaultMessage: 'Ákæra',
     description: 'Notaður sem titill á ákæra skrefi í ákærum.',
   },
+  indictmentIntroductionTitle: {
+    id:
+      'judicial.system.core:indictments_indictment.indictment_introduction_title',
+    defaultMessage: 'Inngangur',
+    description:
+      'Notaður sem titill á Inngangur svæði á ákæra skrefi í ákærum.',
+  },
   indictmentIntroductionLabel: {
     id:
       'judicial.system.core:indictments_indictment.indictment_introduction_label',
@@ -40,5 +47,39 @@ export const indictment = defineMessages({
     defaultMessage: '{defendantName}, kt. {defendantNationalId}',
     description:
       'Notaður sem sjálfgefinn texti í Inngangur textasvæði á ákæra skrefi í ákærum.',
+  },
+  indictmentCountHeading: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count_heading',
+    defaultMessage: 'Ákæruliður {count}',
+    description: 'Notaður sem titill á ákærulið.',
+  },
+  addIndictmentCount: {
+    id: 'judicial.system.core:indictments_indictment.add_indictment_count',
+    defaultMessage: 'Bæta við ákærulið',
+    description: 'Notaður sem texti á "Bæta við ákærulið" hnappi.',
+  },
+  demandsTitle: {
+    id: 'judicial.system.core:indictments_indictment.demands_title',
+    defaultMessage: 'Refsikrafa',
+    description:
+      'Notaður sem titill á Refsikrafa svæði á ákæra skrefi í ákærum.',
+  },
+  demandsLabel: {
+    id: 'judicial.system.core:indictments_indictment.demands_label',
+    defaultMessage: 'Refsikrafa',
+    description:
+      'Notaður sem titill á Refsikrafa textasvæði á ákæra skrefi í ákærum.',
+  },
+  demandsPlaceholder: {
+    id: 'judicial.system.core:indictments_indictment.demands_placeholder',
+    defaultMessage: 'Þess er krafist að...',
+    description:
+      'Notaður sem skýritexti á Refsikrafa textasvæði á ákæra skrefi í ákærum.',
+  },
+  demandsAutofill: {
+    id: 'judicial.system.core:indictments_indictment.demands_autofill',
+    defaultMessage:
+      'Þess er krafist að ákærði verði dæmdur til refsingar og til greiðslu alls sakarkostnaðar.',
+    description: 'Notaður sem sjálfvirkur texti í Refsikrafa textasvæði.',
   },
 })
