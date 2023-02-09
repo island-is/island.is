@@ -160,7 +160,6 @@ export const CoOwnerRepeater: FC<FieldBaseProps> = (props) => {
         ))}
       {coOwners.length > 0 ? (
         coOwners.map((coOwner, index) => {
-          console.log(filteredCoOwners.indexOf(coOwner))
           return (
             <CoOwnerRepeaterItem
               id="coOwners"

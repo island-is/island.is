@@ -2,7 +2,7 @@ import { RolesRule, RulesType } from '@island.is/judicial-system/auth'
 import { CaseFileCategory, UserRole } from '@island.is/judicial-system/types'
 
 export const defenderFileRule: RolesRule = {
-  role: UserRole.REGISTRAR,
+  role: UserRole.DEFENDER,
   type: RulesType.BASIC,
   canActivate: (request) => {
     const caseFile = request.caseFile

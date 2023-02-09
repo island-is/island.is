@@ -124,6 +124,7 @@
   - [Search Indexer](apps/services/search-indexer/README.md)
     - [Elasticsearch Search Dev Server](apps/services/search-indexer/dev-services/README.md)
       - [Search Indexer Migration](apps/services/search-indexer/src/migrate/README.md)
+  - [Sessions](apps/services/sessions/README.md)
   - [User Notification](apps/services/user-notification/README.md)
   - [User Profile](apps/services/user-profile/README.md)
   - [X-Road Collector](apps/services/xroad-collector/README.md)
