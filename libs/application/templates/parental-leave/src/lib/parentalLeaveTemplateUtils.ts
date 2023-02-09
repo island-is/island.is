@@ -41,16 +41,19 @@ export function hasEmployer(context: ApplicationContext) {
     }
   }
 
-  const receivingUnemploymentBenefits =
+  const isUndifinedReceivingUnemploymentBenefits =
     currentApplicationAnswers.isReceivingUnemploymentBenefits !== undefined ||
     oldApplicationAnswers.isRecivingUnemploymentBenefits !== undefined
+  const receivingUnemploymentBenefits =
+    currentApplicationAnswers.isReceivingUnemploymentBenefits === NO ||
+    oldApplicationAnswers.isRecivingUnemploymentBenefits === NO
   const selfEmployed =
     currentApplicationAnswers.isSelfEmployed === NO ||
     oldApplicationAnswers.employer?.isSelfEmployed === NO
 
   // Added this check for applications that is in the db already so they can go through to next state
   if (currentApplicationAnswers.applicationType === undefined) {
-    if (receivingUnemploymentBenefits) {
+    if (isUndifinedReceivingUnemploymentBenefits) {
       return selfEmployed && receivingUnemploymentBenefits
     }
 
