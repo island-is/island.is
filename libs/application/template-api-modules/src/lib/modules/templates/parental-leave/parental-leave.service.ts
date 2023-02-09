@@ -17,6 +17,7 @@ import {
   ApplicationConfigurations,
   Application,
   ApplicationTypes,
+  ApplicationWithAttachments,
 } from '@island.is/application/types'
 import {
   getApplicationAnswers,
@@ -36,6 +37,7 @@ import {
   ParentalRelations,
   ChildInformation,
   isParentWithoutBirthParent,
+  calculatePeriodLength,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -61,6 +63,7 @@ import {
   transformApplicationToParentalLeaveDTO,
   getRatio,
   getRightsCode,
+  checkIfPhoneNumberIsGSM,
 } from './parental-leave.utils'
 import { apiConstants } from './constants'
 import { ConfigService } from '@nestjs/config'
@@ -150,13 +153,9 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     )
     const person = await this.nationalRegistryApi.getIndividual(auth.nationalId)
 
-    if (!person) {
-      return null
-    }
-
     return (
-      spouse && {
-        spouse: {
+      person && {
+        spouse: spouse && {
           nationalId: spouse.spouseNationalId,
           name: spouse.spouseName,
         },
@@ -203,7 +202,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     try {
       if (
         otherParentPhoneNumber &&
-        this.checkIfPhoneNumberIsGSM(otherParentPhoneNumber)
+        checkIfPhoneNumberIsGSM(otherParentPhoneNumber)
       ) {
         const clientLocationOrigin = getConfigValue(
           this.configService,
@@ -237,7 +236,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     try {
       if (
         applicantPhoneNumber &&
-        this.checkIfPhoneNumberIsGSM(applicantPhoneNumber)
+        checkIfPhoneNumberIsGSM(applicantPhoneNumber)
       ) {
         const clientLocationOrigin = getConfigValue(
           this.configService,
@@ -272,7 +271,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     try {
       if (
         applicantPhoneNumber &&
-        this.checkIfPhoneNumberIsGSM(applicantPhoneNumber)
+        checkIfPhoneNumberIsGSM(applicantPhoneNumber)
       ) {
         const clientLocationOrigin = getConfigValue(
           this.configService,
@@ -310,10 +309,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
     // send confirmation sms to employer
     try {
-      if (
-        employerPhoneNumber &&
-        this.checkIfPhoneNumberIsGSM(employerPhoneNumber)
-      ) {
+      if (employerPhoneNumber && checkIfPhoneNumberIsGSM(employerPhoneNumber)) {
         await this.sharedTemplateAPIService.assignApplicationThroughSms(
           generateAssignEmployerApplicationSms,
           application,
@@ -358,14 +354,34 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       isSelfEmployed,
       applicationType,
       otherParent,
+      selfEmployedFiles: selfEmployedPdfs,
+      studentFiles: studentPdfs,
+      singleParentFiles: singleParentPdfs,
+      additionalDocuments,
     } = getApplicationAnswers(application.answers)
+    const { applicationFundId } = getApplicationExternalData(
+      application.externalData,
+    )
+
+    // We don't want to send old files to VMST again
+    if (applicationFundId && applicationFundId !== '') {
+      if (additionalDocuments) {
+        additionalDocuments.forEach(async (val, i) => {
+          const pdf = await this.getPdf(
+            application,
+            i,
+            'fileUpload.additionalDocuments',
+          )
+          attachments.push({
+            attachmentType: apiConstants.attachments.other,
+            attachmentBytes: pdf,
+          })
+        })
+      }
+      return attachments
+    }
 
     if (isSelfEmployed === YES && applicationType === PARENTAL_LEAVE) {
-      const selfEmployedPdfs = (await getValueViaPath(
-        application.answers,
-        'fileUpload.selfEmployedFile',
-      )) as unknown[]
-
       if (selfEmployedPdfs?.length) {
         for (let i = 0; i <= selfEmployedPdfs.length - 1; i++) {
           const pdf = await this.getPdf(
@@ -401,13 +417,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         }
       }
     } else if (applicationType === PARENTAL_GRANT_STUDENTS) {
-      const stuydentPdfs = (await getValueViaPath(
-        application.answers,
-        'fileUpload.studentFile',
-      )) as unknown[]
-
-      if (stuydentPdfs?.length) {
-        for (let i = 0; i <= stuydentPdfs.length - 1; i++) {
+      if (studentPdfs?.length) {
+        for (let i = 0; i <= studentPdfs.length - 1; i++) {
           const pdf = await this.getPdf(
             application,
             i,
@@ -423,11 +434,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
 
     if (otherParent === SINGLE) {
-      const singleParentPdfs = (await getValueViaPath(
-        application.answers,
-        'fileUpload.singleParent',
-      )) as unknown[]
-
       if (singleParentPdfs?.length) {
         for (let i = 0; i <= singleParentPdfs.length - 1; i++) {
           const pdf = await this.getPdf(
@@ -447,17 +453,14 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     const {
       isRecivingUnemploymentBenefits,
       unemploymentBenefits,
+      benefitsFiles: benefitsPdfs,
+      commonFiles: genericPdfs,
     } = getApplicationAnswers(application.answers)
     if (
       isRecivingUnemploymentBenefits === YES &&
       (unemploymentBenefits === UnEmployedBenefitTypes.union ||
         unemploymentBenefits == UnEmployedBenefitTypes.healthInsurance)
     ) {
-      const benefitsPdfs = (await getValueViaPath(
-        application.answers,
-        'fileUpload.benefitsFile',
-      )) as unknown[]
-
       if (benefitsPdfs?.length) {
         for (let i = 0; i <= benefitsPdfs.length - 1; i++) {
           const pdf = await this.getPdf(
@@ -495,11 +498,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         }
       }
     }
-
-    const genericPdfs = (await getValueViaPath(
-      application.answers,
-      'fileUpload.file',
-    )) as unknown[]
 
     if (genericPdfs?.length) {
       for (let i = 0; i <= genericPdfs.length - 1; i++) {
@@ -614,7 +612,15 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         )
 
         if (VMSTperiods?.periods) {
-          vmstRightCodePeriod = VMSTperiods.periods[0].rightsCodePeriod
+          const getVMSTRightCodePeriod = VMSTperiods.periods[0].rightsCodePeriod
+          const periodCodeStartCharacters = ['M', 'F']
+          if (
+            periodCodeStartCharacters.some((c) =>
+              getVMSTRightCodePeriod.startsWith(c),
+            )
+          ) {
+            vmstRightCodePeriod = getVMSTRightCodePeriod
+          }
         }
       } catch (e) {
         this.logger.warn(
@@ -652,7 +658,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
     for (const [index, period] of answers.entries()) {
       const isFirstPeriod = index === 0
-      const isUsingNumberOfDays = period.daysToUse !== undefined
+      const isUsingNumberOfDays =
+        period.daysToUse !== undefined && period.daysToUse !== ''
 
       // If a period doesn't have both startDate or endDate we skip it
       if (!isFirstPeriod && (!period.startDate || !period.endDate)) {
@@ -667,6 +674,17 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
       if (isUsingNumberOfDays) {
         periodLength = Number(period.daysToUse)
+      } else if (Number(period.ratio) < 100) {
+        /*
+         * We need to calculate periodLength when ratio is not 100%
+         * because there could be mis-calculate betweeen island.is and VMST
+         * for example:
+         * 8 months period with 75%
+         * island.is calculator returns: 180 days
+         * VMST returns: 184 days
+         */
+        const fullLength = calculatePeriodLength(startDate, endDate)
+        periodLength = Math.round(fullLength * (Number(period.ratio) / 100))
       } else {
         const getPeriodLength = await this.parentalLeaveApi.parentalLeaveGetPeriodLength(
           { nationalRegistryId, startDate, endDate, percentage: period.ratio },
@@ -1208,12 +1226,25 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     return periods
   }
 
+  checkActionName = (application: ApplicationWithAttachments) => {
+    const { actionName } = getApplicationAnswers(application.answers)
+    if (
+      actionName === 'document' ||
+      actionName === 'documentPeriod' ||
+      actionName === 'period'
+    ) {
+      return actionName
+    }
+    return undefined
+  }
+
   async sendApplication({ application }: TemplateApiModuleActionProps) {
     const {
       isSelfEmployed,
       isRecivingUnemploymentBenefits,
       applicationType,
     } = getApplicationAnswers(application.answers)
+
     const nationalRegistryId = application.applicant
     const attachments = await this.getAttachments(application)
 
@@ -1228,6 +1259,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         periods,
         attachments,
         false, // put false in testData as this is not dummy request
+        this.checkActionName(application),
       )
 
       const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
@@ -1293,6 +1325,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         periods,
         attachments,
         true,
+        this.checkActionName(application),
       )
 
       // call SetParentalLeave API with testData: TRUE as this is a dummy request

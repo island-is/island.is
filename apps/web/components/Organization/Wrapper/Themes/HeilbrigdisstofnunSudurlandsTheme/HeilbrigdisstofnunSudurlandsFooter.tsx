@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { BLOCKS } from '@contentful/rich-text-types'
 import {
   Box,
   GridColumn,
@@ -12,8 +13,8 @@ import {
 import { webRichText } from '@island.is/web/utils/richText'
 import { FooterItem } from '@island.is/web/graphql/schema'
 import { SliceType } from '@island.is/island-ui/contentful'
-import { BLOCKS } from '@contentful/rich-text-types'
 import { SpanType } from '@island.is/island-ui/core/types'
+import { useNamespace } from '@island.is/web/hooks'
 import * as styles from './HeilbrigdisstofnunSudurlandsFooter.css'
 
 const ROWS_PER_COLUMN = 3
@@ -101,11 +102,14 @@ const convertFooterItemsToFooterColumns = (footerItems: FooterItem[]) => {
 
 interface HeilbrigdisstofnunSudurlandsFooterProps {
   footerItems: FooterItem[]
+  namespace: Record<string, string>
 }
 
-export const HeilbrigdisstofnunSudurlandsFooter = ({
+const HeilbrigdisstofnunSudurlandsFooter = ({
   footerItems,
+  namespace,
 }: HeilbrigdisstofnunSudurlandsFooterProps) => {
+  const n = useNamespace(namespace)
   const footerColumns = useMemo(
     () => convertFooterItemsToFooterColumns(footerItems),
     [footerItems],
@@ -118,7 +122,10 @@ export const HeilbrigdisstofnunSudurlandsFooter = ({
           <GridColumn className={styles.mainColumn}>
             <GridRow>
               <img
-                src="https://images.ctfassets.net/8k0h54kbe6bj/4OcAjYnwPUP4dwFA6duFaB/f188b1c188b535ec464f37cae87733a3/HSU-footer.png?h=250"
+                src={n(
+                  'hsuFooterLogo',
+                  'https://images.ctfassets.net/8k0h54kbe6bj/4OcAjYnwPUP4dwFA6duFaB/f188b1c188b535ec464f37cae87733a3/HSU-footer.png?h=250',
+                )}
                 alt="heilbrigdisstofnun-sudurlands-logo"
                 width={590}
               />
@@ -134,17 +141,26 @@ export const HeilbrigdisstofnunSudurlandsFooter = ({
               <Box marginRight={[4, 4, 12]}>
                 <Inline alignY="center" align="center" space={5}>
                   <img
-                    src="https://images.ctfassets.net/8k0h54kbe6bj/1igNLuoV9IQAwP1A4bfyXd/0d96a9a057e48b28616832552838c7a5/hsn-jafnlaunavottun.svg"
+                    src={n(
+                      'hsuJafnlaunavottunLogo',
+                      'https://images.ctfassets.net/8k0h54kbe6bj/1igNLuoV9IQAwP1A4bfyXd/0d96a9a057e48b28616832552838c7a5/hsn-jafnlaunavottun.svg',
+                    )}
                     alt="jafnlaunavottun"
                     width={60}
                   />
                   <img
-                    src="https://images.ctfassets.net/8k0h54kbe6bj/2QMl8Mw50Vj0AjlI6jzENH/cc4792e02ff1b152ede7e892da333669/greenSteps.png"
+                    src={n(
+                      'hsuGraenSkrefLogo',
+                      'https://images.ctfassets.net/8k0h54kbe6bj/2QMl8Mw50Vj0AjlI6jzENH/cc4792e02ff1b152ede7e892da333669/greenSteps.png',
+                    )}
                     alt="graen-skref"
                     width={100}
                   />
                   <img
-                    src="https://images.ctfassets.net/8k0h54kbe6bj/4wF7MeLqjkMkw11wLJf2Ko/25a5592603ca0e29aaa58c13ecbf55fe/Heilsueflandi_vinnusta__ur_logo_1.svg"
+                    src={n(
+                      'hsuHeilsueflandiVinnustadurLogo',
+                      'https://images.ctfassets.net/8k0h54kbe6bj/4wF7MeLqjkMkw11wLJf2Ko/25a5592603ca0e29aaa58c13ecbf55fe/Heilsueflandi_vinnusta__ur_logo_1.svg',
+                    )}
                     width={90}
                     alt="heilsueflandi-vinnustadur"
                   />

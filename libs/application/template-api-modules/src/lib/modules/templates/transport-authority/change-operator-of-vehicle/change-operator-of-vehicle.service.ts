@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
@@ -31,16 +31,55 @@ import {
   generateApplicationSubmittedSms,
   generateApplicationRejectedSms,
 } from './smsGenerators'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 @Injectable()
 export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
   constructor(
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly vehicleOperatorsClient: VehicleOperatorsClient,
     private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
   ) {
     super(ApplicationTypes.CHANGE_OPERATOR_OF_VEHICLE)
+  }
+
+  async validateApplication({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const answers = application.answers as ChangeOperatorOfVehicleAnswers
+
+    const permno = answers?.pickVehicle?.plate
+
+    const operators = answers?.operators.map((operator) => ({
+      ssn: operator.nationalId,
+      isMainOperator:
+        answers.operators.length > 1
+          ? operator.nationalId === answers?.mainOperator?.nationalId
+          : true,
+    }))
+
+    const result = await this.vehicleOperatorsClient.validateAllForOperatorChange(
+      auth,
+      permno,
+      operators,
+    )
+
+    // If we get any error messages, we will just throw an error with a default title
+    // We will fetch these error messages again through graphql in the template, to be able
+    // to translate the error message
+    if (result.hasError && result.errorMessages?.length) {
+      throw new TemplateApiError(
+        {
+          title: applicationCheck.validation.alertTitle,
+          summary: applicationCheck.validation.alertTitle,
+        },
+        400,
+      )
+    }
   }
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
@@ -110,18 +149,30 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     // 2b. Send email/sms individually to each recipient
     for (let i = 0; i < recipientList.length; i++) {
       if (recipientList[i].email) {
-        await this.sharedTemplateAPIService.sendEmail(
-          (props) => generateRequestReviewEmail(props, recipientList[i]),
-          application,
-        )
+        await this.sharedTemplateAPIService
+          .sendEmail(
+            (props) => generateRequestReviewEmail(props, recipientList[i]),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending email about initReview to ${recipientList[i].email}`,
+            )
+          })
       }
 
       if (recipientList[i].phone) {
-        await this.sharedTemplateAPIService.sendSms(
-          (_, options) =>
-            generateRequestReviewSms(application, options, recipientList[i]),
-          application,
-        )
+        await this.sharedTemplateAPIService
+          .sendSms(
+            (_, options) =>
+              generateRequestReviewSms(application, options, recipientList[i]),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending sms about initReview to ${recipientList[i].phone}`,
+            )
+          })
       }
     }
 
@@ -155,27 +206,39 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     const rejectedByRecipient = getRecipientBySsn(answers, auth.nationalId)
     for (let i = 0; i < recipientList.length; i++) {
       if (recipientList[i].email) {
-        await this.sharedTemplateAPIService.sendEmail(
-          (props) =>
-            generateApplicationRejectedEmail(
-              props,
-              recipientList[i],
-              rejectedByRecipient,
-            ),
-          application,
-        )
+        await this.sharedTemplateAPIService
+          .sendEmail(
+            (props) =>
+              generateApplicationRejectedEmail(
+                props,
+                recipientList[i],
+                rejectedByRecipient,
+              ),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending email about rejectApplication to ${recipientList[i].email}`,
+            )
+          })
       }
 
       if (recipientList[i].phone) {
-        await this.sharedTemplateAPIService.sendSms(
-          () =>
-            generateApplicationRejectedSms(
-              application,
-              recipientList[i],
-              rejectedByRecipient,
-            ),
-          application,
-        )
+        await this.sharedTemplateAPIService
+          .sendSms(
+            () =>
+              generateApplicationRejectedSms(
+                application,
+                recipientList[i],
+                rejectedByRecipient,
+              ),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending sms about rejectApplication to ${recipientList[i].phone}`,
+            )
+          })
       }
     }
   }
@@ -231,42 +294,15 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
       )
     }
 
-    const mainOperatorNationalId = answers?.mainOperator?.nationalId
-    const newOperators = answers?.operators.map((operator) => ({
-      startDate: new Date(),
-      endDate: null,
+    const operators = answers?.operators.map((operator) => ({
       ssn: operator.nationalId,
       isMainOperator:
         answers.operators.length > 1
-          ? operator.nationalId === mainOperatorNationalId
+          ? operator.nationalId === answers?.mainOperator?.nationalId
           : true,
     }))
 
-    // Add a second to the time because the api rejects the date with time 00:00:00:00
-    const newOldOperators = answers?.oldOperators?.map((oldOperator) => ({
-      startDate: oldOperator.startDate
-        ? new Date(new Date(oldOperator.startDate).getTime() + 60000)
-        : new Date(),
-      endDate: oldOperator.wasRemoved === 'false' ? null : new Date(),
-      ssn: oldOperator.nationalId,
-      isMainOperator:
-        answers.operators.length > 1
-          ? oldOperator.nationalId === mainOperatorNationalId
-          : true,
-    }))
-
-    if (newOperators.length === 0) {
-      await this.vehicleOperatorsClient.updateOperators(
-        auth,
-        permno,
-        newOldOperators,
-      )
-    } else {
-      await this.vehicleOperatorsClient.saveOperators(auth, permno, [
-        ...newOperators,
-        ...newOldOperators,
-      ])
-    }
+    await this.vehicleOperatorsClient.saveOperators(auth, permno, operators)
 
     // 3. Notify everyone in the process that the application has successfully been submitted
 
@@ -276,17 +312,31 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     // 3b. Send email/sms individually to each recipient about success of submitting application
     for (let i = 0; i < recipientList.length; i++) {
       if (recipientList[i].email) {
-        await this.sharedTemplateAPIService.sendEmail(
-          (props) => generateApplicationSubmittedEmail(props, recipientList[i]),
-          application,
-        )
+        await this.sharedTemplateAPIService
+          .sendEmail(
+            (props) =>
+              generateApplicationSubmittedEmail(props, recipientList[i]),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending email about submitApplication to ${recipientList[i].email}`,
+            )
+          })
       }
 
       if (recipientList[i].phone) {
-        await this.sharedTemplateAPIService.sendSms(
-          () => generateApplicationSubmittedSms(application, recipientList[i]),
-          application,
-        )
+        await this.sharedTemplateAPIService
+          .sendSms(
+            () =>
+              generateApplicationSubmittedSms(application, recipientList[i]),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending sms about submitApplication to ${recipientList[i].phone}`,
+            )
+          })
       }
     }
   }

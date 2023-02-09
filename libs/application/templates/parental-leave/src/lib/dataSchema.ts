@@ -14,13 +14,14 @@ import {
   SINGLE,
 } from '../constants'
 import { errorMessages } from './messages'
+import { formatBankInfo } from './parentalLeaveUtils'
 
 const PersonalAllowance = z
   .object({
     usePersonalAllowance: z.enum([YES, NO]),
     usage: z
       .string()
-      .refine((x) => parseFloat(x) > 0 && parseFloat(x) <= 100)
+      .refine((x) => parseFloat(x) >= 1 && parseFloat(x) <= 100)
       .optional(),
     useAsMuchAsPossible: z.enum([YES, NO]).optional(),
   })
@@ -71,8 +72,7 @@ export const dataSchema = z.object({
   payments: z.object({
     bank: z.string().refine(
       (b) => {
-        const bankAccount = b.toString()
-
+        const bankAccount = formatBankInfo(b)
         return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
       },
       { params: errorMessages.bank },

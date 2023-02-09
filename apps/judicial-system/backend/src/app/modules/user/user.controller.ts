@@ -5,7 +5,7 @@ import {
   Inject,
   Param,
   Post,
-  Put,
+  Patch,
   Query,
   UseGuards,
 } from '@nestjs/common'
@@ -47,7 +47,7 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(adminRule)
-  @Put('user/:userId')
+  @Patch('user/:userId')
   @ApiOkResponse({ type: User, description: 'Updates an existing user' })
   update(
     @Param('userId') userId: string,

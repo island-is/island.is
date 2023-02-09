@@ -71,7 +71,10 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
   )
 
   const switchUser = useCallback(
-    async function switchUser(nationalId?: string) {
+    async function switchUser(nationalId?: string, newLocation?: Location) {
+      if (newLocation) {
+        locationRef.current = newLocation
+      }
       const args =
         nationalId !== undefined
           ? {
