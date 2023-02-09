@@ -6,7 +6,11 @@ import { useLocale } from '@island.is/localization'
 import { overview } from '../../../lib/messages'
 import { OwnerCoOwnersInformation, UserInformation } from '../../../shared'
 import { getValueViaPath } from '@island.is/application/core'
-import { ReviewGroup } from '@island.is/application/ui-components'
+import {
+  formatPhoneNumber,
+  ReviewGroup,
+} from '@island.is/application/ui-components'
+import kennitala from 'kennitala'
 
 export const CoOwnersSection: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -31,18 +35,20 @@ export const CoOwnersSection: FC<FieldBaseProps> = ({ application }) => {
         wasRemoved: coOwner.wasRemoved,
       }
     }),
-    ...coOwners.map((coOwner) => {
-      return {
-        name: coOwner.name,
-        nationalId: coOwner.nationalId,
-        email: coOwner.email,
-        phone: coOwner.phone,
-        wasRemoved: 'false',
-      }
-    }),
+    ...coOwners
+      .filter(({ wasRemoved }) => wasRemoved !== 'true')
+      .map((coOwner) => {
+        return {
+          name: coOwner.name,
+          nationalId: coOwner.nationalId,
+          email: coOwner.email,
+          phone: coOwner.phone,
+          wasRemoved: 'false',
+        }
+      }),
   ]
 
-  return coOwners.length > 0 ? (
+  return allCoOwners.length > 0 ? (
     <ReviewGroup isLast>
       <GridRow>
         {allCoOwners?.map(
@@ -62,9 +68,9 @@ export const CoOwnersSection: FC<FieldBaseProps> = ({ application }) => {
                       : ''}
                   </Text>
                   <Text>{name}</Text>
-                  <Text>{nationalId}</Text>
+                  <Text>{kennitala.format(nationalId, '-')}</Text>
                   <Text>{email}</Text>
-                  <Text>{phone}</Text>
+                  <Text>{formatPhoneNumber(phone)}</Text>
                 </Box>
               </GridColumn>
             )
