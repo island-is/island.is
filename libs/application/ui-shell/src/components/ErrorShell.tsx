@@ -117,6 +117,7 @@ export const ErrorShell: FC<Props> = ({
               <Box display="flex" columnGap="p4">
                 {applicationType && (
                   <a
+                    tabIndex={-1}
                     className={styles.link}
                     href={`/umsoknir/${ApplicationConfigurations[applicationType].slug}`}
                   >
@@ -127,7 +128,11 @@ export const ErrorShell: FC<Props> = ({
                     </Button>
                   </a>
                 )}
-                <a className={styles.link} href={`/minarsidur/umsoknir`}>
+                <a
+                  tabIndex={-1}
+                  className={styles.link}
+                  href={`/minarsidur/umsoknir`}
+                >
                   <Button>
                     {formatMessage(
                       coreErrorScreenMessages.buttonMyApplications,

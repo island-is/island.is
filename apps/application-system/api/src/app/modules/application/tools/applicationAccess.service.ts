@@ -23,6 +23,10 @@ import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { ProblemType } from '@island.is/shared/problem'
 import { coreErrorMessages } from '@island.is/application/core'
 
+type config = {
+  shouldThrowIfPruned?: boolean
+}
+
 @Injectable()
 export class ApplicationAccessService {
   constructor(
@@ -30,17 +34,13 @@ export class ApplicationAccessService {
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
-  async findOneByIdAndNationalId(
-    id: string,
-    user: User,
-    shouldThrowIfPruned = false,
-  ) {
+  async findOneByIdAndNationalId(id: string, user: User, config?: config) {
     const existingApplication = await this.applicationService.findOneById(
       id,
       user.nationalId,
     )
 
-    if (shouldThrowIfPruned && existingApplication?.pruned) {
+    if (config?.shouldThrowIfPruned && existingApplication?.pruned) {
       throw new ProblemError({
         type: ProblemType.HTTP_NOT_FOUND,
         title: coreErrorMessages.applicationIsPrunedAndReadOnly.description,
