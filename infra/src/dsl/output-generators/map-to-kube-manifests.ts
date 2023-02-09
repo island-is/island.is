@@ -21,6 +21,8 @@ import { checksAndValidations } from './errors'
 import {
   postgresIdentifier,
   resolveWithMaxLength,
+  serializeKubeEnvs,
+  serializeKubeSecrets,
   serializeEnvironmentVariables,
 } from './serialization-helpers'
 
@@ -36,8 +38,10 @@ const serializeService: SerializeMethod<KubeService> = async (
 ) => {
   const { mergeObjects, getErrors } = checksAndValidations(service.name)
   const serviceDef = service
-  const { namespace, securityContext } = serviceDef
+  const { namespace } = serviceDef
   const result: KubeService = {
+    apiVersion: 'apps/v1',
+    kind: 'Deployment',
     metadata: {
       name: service.name,
       namespace: namespace,
@@ -80,6 +84,7 @@ const serializeService: SerializeMethod<KubeService> = async (
       },
       spec: {
         containers: {
+          env: [],
           name: service.name,
           securityContext: service.securityContext,
           image: `821090935708.dkr.ecr.eu-west-1.amazonaws.com/${
@@ -101,12 +106,6 @@ const serializeService: SerializeMethod<KubeService> = async (
             },
             initialDelaySeconds: service.readiness.initialDelaySeconds,
             timeoutSeconds: service.readiness.timeoutSeconds,
-          },
-          env: {
-            SERVERSIDE_FEATURES_ON: opsenv.featuresOn.join(','),
-            NODE_OPTIONS: `--max-old-space-size=${
-              parseInt(serviceDef.resources.limits.memory, 10) - 48
-            }`,
           },
           resources: service.resources,
         },
@@ -130,26 +129,16 @@ const serializeService: SerializeMethod<KubeService> = async (
       serviceDef.env,
       opsenv,
     )
-    mergeObjects(
-      result.spec.spec.containers.env as { [name: string]: string },
-      envs,
+    Object.assign(
+      result.spec.spec.containers.env,
+      serializeKubeEnvs(envs).value,
     )
   }
-
-  // secrets
   if (Object.keys(serviceDef.secrets).length > 0) {
-    Object.entries(serviceDef.secrets).forEach(([key, value]) => {
-      result.spec.spec.containers.env = {
-        [`${key}`]: {
-          valueFrom: {
-            secretKeyRef: {
-              name: key,
-              key: value,
-            },
-          },
-        },
-      }
-    })
+    Object.assign(
+      result.spec.spec.containers.env,
+      serializeKubeSecrets(service.secrets).value,
+    )
   }
 
   if (Object.keys(serviceDef.files).length > 0) {
@@ -176,6 +165,35 @@ const serializeService: SerializeMethod<KubeService> = async (
   // initContainers
   if (typeof serviceDef.initContainers !== 'undefined') {
     result.spec.spec.initContainers = []
+    if (typeof serviceDef.initContainers.secrets !== 'undefined') {
+      const { envs } = serializeEnvironmentVariables(
+        service,
+        deployment,
+        serviceDef.initContainers.envs,
+        opsenv,
+      )
+
+      result.spec.spec.initContainers.forEach((c) => {
+        c.env = serializeKubeSecrets(serviceDef.initContainers.secrets).value
+      })
+
+      serializeKubeSecrets(serviceDef.initContainers.secrets)
+      Object.entries(serviceDef.initContainers.secrets).forEach(
+        ([key, value]) => {
+          result.spec.spec.initContainers?.forEach((c) => {
+            c.env.push({
+              name: key,
+              valueFrom: {
+                secretKeyRef: {
+                  name: key,
+                  key: value,
+                },
+              },
+            })
+          })
+        },
+      )
+    }
     if (serviceDef.initContainers.containers.length > 0) {
       serviceDef.initContainers.containers.forEach((c) => {
         const legacyCommand = []
@@ -186,7 +204,7 @@ const serializeService: SerializeMethod<KubeService> = async (
             command: legacyCommand,
             name: c.name,
             image: '',
-            env: serviceDef.initContainers?.envs as { [name: string]: string },
+            env: serializeKubeEnvs(serviceDef.initContainers?.envs).value,
           })
         }
       })

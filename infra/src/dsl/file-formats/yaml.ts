@@ -27,8 +27,8 @@ export const reformatYaml = (content: string): string => {
 }
 export const dumpJobYaml = (job: FeatureKubeJob) => dump(job, dumpOpts)
 export const dumpKubeYaml = (valueFile: KubeValueFile) => {
-  const { namespaces, services } = valueFile
-  return HEADER + dump({ namespaces: { namespaces }, ...services }, dumpOpts)
+  const { services } = valueFile
+  return HEADER + dump({ ...services }, dumpOpts)
 }
 export const dumpServiceHelm = (
   env: EnvironmentConfig,

@@ -40,7 +40,7 @@ export type InitContainerKube = {
   image: string
   command?: string[]
   args?: string[]
-  env: ContainerEnvironmentVariablesOrSecrets
+  env: ContainerEnvironmentVariablesOrSecretsKube[]
   resources?: {
     limits?: {
       cpu: string
@@ -53,11 +53,10 @@ export type InitContainerKube = {
   }
 }
 export type ContainerEnvironmentVariables = { [name: string]: string }
-export type ContainerEnvironmentVariablesOrSecrets = {
-  [name: string]:
-    | string
-    | { valueFrom: { secretKeyRef: { name: string; key: string } } }
-}
+export type ContainerEnvironmentVariablesOrSecretsKube =
+  | { name: string; value: string }
+  | { name: string; valueFrom: { secretKeyRef: { name: string; key: string } } }
+
 export type ContainerSecrets = { [name: string]: string }
 export type SecurityContext = {
   allowPrivilegeEscalation: boolean
@@ -65,8 +64,8 @@ export type SecurityContext = {
   fsGroup?: number
 }
 export interface KubeService {
-  apiVersion?: 'apps/v1'
-  kind?: 'Deployment'
+  apiVersion: 'apps/v1'
+  kind: 'Deployment'
   metadata: {
     name: string
     namespace: string
@@ -121,7 +120,7 @@ export interface KubeService {
           initialDelaySeconds: number
           timeoutSeconds: number
         }
-        env: ContainerEnvironmentVariablesOrSecrets
+        env: ContainerEnvironmentVariablesOrSecretsKube[]
         resources?: {
           limits?: {
             cpu: string
@@ -296,7 +295,6 @@ export type HelmValueFile = {
 }
 
 export type KubeValueFile = {
-  namespaces: string[]
   services: Services<KubeService>
 }
 

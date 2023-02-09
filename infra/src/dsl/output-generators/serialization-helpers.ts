@@ -2,9 +2,13 @@ import {
   EnvironmentVariablesForEnv,
   ServiceDefinitionForEnv,
   ValueSource,
+  Secrets,
 } from '../types/input-types'
 import { ReferenceResolver, EnvironmentConfig } from '../types/charts'
-import { ContainerEnvironmentVariables } from '../types/output-types'
+import {
+  ContainerEnvironmentVariables,
+  ContainerEnvironmentVariablesOrSecretsKube,
+} from '../types/output-types'
 
 export const resolveWithMaxLength = (str: string, max: number) => {
   if (str.length > max) {
@@ -31,6 +35,38 @@ export function serializeValueSource(
               typeof dep === 'string' ? dep : dep.serviceDef,
             ),
         })
+  return { type: 'success', value: result }
+}
+
+export function serializeKubeEnvs(
+  env: ContainerEnvironmentVariables,
+): { type: 'success'; value: ContainerEnvironmentVariablesOrSecretsKube[] } {
+  const result: ContainerEnvironmentVariablesOrSecretsKube[] = []
+  Object.entries(env).forEach(([k, v]) => {
+    result.push({
+      name: k,
+      value: v,
+    })
+  })
+
+  return { type: 'success', value: result }
+}
+
+export function serializeKubeSecrets(
+  secrets: Secrets,
+): { type: 'success'; value: ContainerEnvironmentVariablesOrSecretsKube[] } {
+  const result: ContainerEnvironmentVariablesOrSecretsKube[] = []
+  Object.entries(secrets).forEach(([k, v]) => {
+    result.push({
+      name: k,
+      valueFrom: {
+        secretKeyRef: {
+          name: k,
+          key: v,
+        },
+      },
+    })
+  })
   return { type: 'success', value: result }
 }
 

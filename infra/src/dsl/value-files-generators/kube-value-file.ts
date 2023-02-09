@@ -7,24 +7,10 @@ export const getKubeValueFile = (
   env: EnvironmentConfig,
 ): KubeValueFile => {
   const outputFormat = renderers.kube
-  const kubeServices: Services<KubeService> = Object.entries(services).reduce(
-    (acc, [name, service]) => {
-      return {
-        ...acc,
-        [name]: Object.assign({}, service),
-      }
-    },
-    env.global,
-  )
+  const kubeServices: Services<KubeService> = services
+
   const service = { ...kubeServices }
   return {
-    namespaces: Array.from(
-      Object.values(services)
-        .map((s) => s.metadata.namespace)
-        .filter((n) => n)
-        .reduce((prev, cur) => prev.add(cur), new Set<string>())
-        .values(),
-    ),
     services: services,
   }
 }

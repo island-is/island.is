@@ -4,10 +4,9 @@
 # Run "yarn charts" instead.
 #
 #####################################################################
-namespaces:
-  namespaces:
-    - 'judicial-system'
 judicial-system-api:
+  apiVersion: 'apps/v1'
+  kind: 'Deployment'
   metadata:
     name: 'judicial-system-api'
     namespace: 'judicial-system'
@@ -31,6 +30,72 @@ judicial-system-api:
           ad.datadoghq.com/judicial-system-api.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
     spec:
       containers:
+        env:
+          - name: 'CONFIGCAT_SDK_KEY'
+            valueFrom:
+              secretKeyRef:
+                name: 'CONFIGCAT_SDK_KEY'
+                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+          - name: 'AUTH_JWT_SECRET'
+            valueFrom:
+              secretKeyRef:
+                name: 'AUTH_JWT_SECRET'
+                key: '/k8s/judicial-system/AUTH_JWT_SECRET'
+          - name: 'BACKEND_ACCESS_TOKEN'
+            valueFrom:
+              secretKeyRef:
+                name: 'BACKEND_ACCESS_TOKEN'
+                key: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
+          - name: 'CONTENTFUL_ACCESS_TOKEN'
+            valueFrom:
+              secretKeyRef:
+                name: 'CONTENTFUL_ACCESS_TOKEN'
+                key: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN'
+          - name: 'XROAD_CLIENT_CERT'
+            valueFrom:
+              secretKeyRef:
+                name: 'XROAD_CLIENT_CERT'
+                key: '/k8s/judicial-system/XROAD_CLIENT_CERT'
+          - name: 'XROAD_CLIENT_KEY'
+            valueFrom:
+              secretKeyRef:
+                name: 'XROAD_CLIENT_KEY'
+                key: '/k8s/judicial-system/XROAD_CLIENT_KEY'
+          - name: 'XROAD_CLIENT_PEM'
+            valueFrom:
+              secretKeyRef:
+                name: 'XROAD_CLIENT_PEM'
+                key: '/k8s/judicial-system/XROAD_CLIENT_PEM'
+          - name: 'XROAD_COURTS_CREDENTIALS'
+            valueFrom:
+              secretKeyRef:
+                name: 'XROAD_COURTS_CREDENTIALS'
+                key: '/k8s/judicial-system/COURTS_CREDENTIALS'
+          - name: 'XROAD_POLICE_API_KEY'
+            valueFrom:
+              secretKeyRef:
+                name: 'XROAD_POLICE_API_KEY'
+                key: '/k8s/judicial-system/XROAD_POLICE_API_KEY'
+          - name: 'HIDDEN_FEATURES'
+            value: 'INDICTMENTS'
+          - name: 'XROAD_BASE_PATH'
+            value: 'http://securityserver.island.is'
+          - name: 'XROAD_BASE_PATH_WITH_ENV'
+            value: 'http://securityserver.island.is/r1/IS'
+          - name: 'XROAD_TLS_BASE_PATH'
+            value: 'https://securityserver.island.is'
+          - name: 'XROAD_TLS_BASE_PATH_WITH_ENV'
+            value: 'https://securityserver.island.is/r1/IS'
+          - name: 'XROAD_CLIENT_ID'
+            value: 'IS/GOV/5804170510/Rettarvorslugatt-Client'
+          - name: 'XROAD_COURT_MEMBER_CODE'
+            value: '4707171140'
+          - name: 'XROAD_POLICE_MEMBER_CODE'
+            value: '5309672079'
+          - name: 'XROAD_COURT_API_PATH'
+            value: '/Domstolasyslan/JusticePortal-v1'
+          - name: 'XROAD_POLICE_API_PATH'
+            value: '/Logreglan-Private/rettarvarsla-v1'
         name: 'judicial-system-api'
         securityContext:
           allowPrivilegeEscalation: false
@@ -48,12 +113,6 @@ judicial-system-api:
             path: '/liveness'
           initialDelaySeconds: 3
           timeoutSeconds: 3
-        env:
-          XROAD_POLICE_API_KEY:
-            valueFrom:
-              secretKeyRef:
-                name: 'XROAD_POLICE_API_KEY'
-                key: '/k8s/judicial-system/XROAD_POLICE_API_KEY'
         resources:
           limits:
             memory: '256Mi'
@@ -63,6 +122,8 @@ judicial-system-api:
             cpu: '100m'
       serviceAccountName: 'judicial-system-api'
 judicial-system-backend:
+  apiVersion: 'apps/v1'
+  kind: 'Deployment'
   metadata:
     name: 'judicial-system-backend'
     namespace: 'judicial-system'
@@ -86,6 +147,127 @@ judicial-system-backend:
           ad.datadoghq.com/judicial-system-backend.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
     spec:
       containers:
+        env:
+          - name: 'CONFIGCAT_SDK_KEY'
+            valueFrom:
+              secretKeyRef:
+                name: 'CONFIGCAT_SDK_KEY'
+                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+          - name: 'NOVA_URL'
+            valueFrom:
+              secretKeyRef:
+                name: 'NOVA_URL'
+                key: '/k8s/judicial-system/NOVA_URL'
+          - name: 'NOVA_USERNAME'
+            valueFrom:
+              secretKeyRef:
+                name: 'NOVA_USERNAME'
+                key: '/k8s/judicial-system/NOVA_USERNAME'
+          - name: 'NOVA_PASSWORD'
+            valueFrom:
+              secretKeyRef:
+                name: 'NOVA_PASSWORD'
+                key: '/k8s/judicial-system/NOVA_PASSWORD'
+          - name: 'COURTS_MOBILE_NUMBERS'
+            valueFrom:
+              secretKeyRef:
+                name: 'COURTS_MOBILE_NUMBERS'
+                key: '/k8s/judicial-system/COURTS_MOBILE_NUMBERS'
+          - name: 'DOKOBIT_ACCESS_TOKEN'
+            valueFrom:
+              secretKeyRef:
+                name: 'DOKOBIT_ACCESS_TOKEN'
+                key: '/k8s/judicial-system/DOKOBIT_ACCESS_TOKEN'
+          - name: 'EMAIL_FROM'
+            valueFrom:
+              secretKeyRef:
+                name: 'EMAIL_FROM'
+                key: '/k8s/judicial-system/EMAIL_FROM'
+          - name: 'EMAIL_FROM_NAME'
+            valueFrom:
+              secretKeyRef:
+                name: 'EMAIL_FROM_NAME'
+                key: '/k8s/judicial-system/EMAIL_FROM_NAME'
+          - name: 'EMAIL_REPLY_TO'
+            valueFrom:
+              secretKeyRef:
+                name: 'EMAIL_REPLY_TO'
+                key: '/k8s/judicial-system/EMAIL_REPLY_TO'
+          - name: 'EMAIL_REPLY_TO_NAME'
+            valueFrom:
+              secretKeyRef:
+                name: 'EMAIL_REPLY_TO_NAME'
+                key: '/k8s/judicial-system/EMAIL_REPLY_TO_NAME'
+          - name: 'PRISON_EMAIL'
+            valueFrom:
+              secretKeyRef:
+                name: 'PRISON_EMAIL'
+                key: '/k8s/judicial-system/PRISON_EMAIL'
+          - name: 'PRISON_ADMIN_EMAIL'
+            valueFrom:
+              secretKeyRef:
+                name: 'PRISON_ADMIN_EMAIL'
+                key: '/k8s/judicial-system/PRISON_ADMIN_EMAIL'
+          - name: 'AUTH_JWT_SECRET'
+            valueFrom:
+              secretKeyRef:
+                name: 'AUTH_JWT_SECRET'
+                key: '/k8s/judicial-system/AUTH_JWT_SECRET'
+          - name: 'ADMIN_USERS'
+            valueFrom:
+              secretKeyRef:
+                name: 'ADMIN_USERS'
+                key: '/k8s/judicial-system/ADMIN_USERS'
+          - name: 'BACKEND_ACCESS_TOKEN'
+            valueFrom:
+              secretKeyRef:
+                name: 'BACKEND_ACCESS_TOKEN'
+                key: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
+          - name: 'CONTENTFUL_ACCESS_TOKEN'
+            valueFrom:
+              secretKeyRef:
+                name: 'CONTENTFUL_ACCESS_TOKEN'
+                key: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN'
+          - name: 'EVENT_URL'
+            valueFrom:
+              secretKeyRef:
+                name: 'EVENT_URL'
+                key: '/k8s/judicial-system/EVENT_URL'
+          - name: 'ERROR_EVENT_URL'
+            valueFrom:
+              secretKeyRef:
+                name: 'ERROR_EVENT_URL'
+                key: '/k8s/judicial-system/ERROR_EVENT_URL'
+          - name: 'ARCHIVE_ENCRYPTION_KEY'
+            valueFrom:
+              secretKeyRef:
+                name: 'ARCHIVE_ENCRYPTION_KEY'
+                key: '/k8s/judicial-system/ARCHIVE_ENCRYPTION_KEY'
+          - name: 'XROAD_CLIENT_CERT'
+            valueFrom:
+              secretKeyRef:
+                name: 'XROAD_CLIENT_CERT'
+                key: '/k8s/judicial-system/XROAD_CLIENT_CERT'
+          - name: 'XROAD_CLIENT_KEY'
+            valueFrom:
+              secretKeyRef:
+                name: 'XROAD_CLIENT_KEY'
+                key: '/k8s/judicial-system/XROAD_CLIENT_KEY'
+          - name: 'XROAD_CLIENT_PEM'
+            valueFrom:
+              secretKeyRef:
+                name: 'XROAD_CLIENT_PEM'
+                key: '/k8s/judicial-system/XROAD_CLIENT_PEM'
+          - name: 'XROAD_COURTS_CREDENTIALS'
+            valueFrom:
+              secretKeyRef:
+                name: 'XROAD_COURTS_CREDENTIALS'
+                key: '/k8s/judicial-system/COURTS_CREDENTIALS'
+          - name: 'XROAD_POLICE_API_KEY'
+            valueFrom:
+              secretKeyRef:
+                name: 'XROAD_POLICE_API_KEY'
+                key: '/k8s/judicial-system/XROAD_POLICE_API_KEY'
         name: 'judicial-system-backend'
         securityContext:
           allowPrivilegeEscalation: false
@@ -103,12 +285,6 @@ judicial-system-backend:
             path: '/liveness'
           initialDelaySeconds: 3
           timeoutSeconds: 3
-        env:
-          XROAD_POLICE_API_KEY:
-            valueFrom:
-              secretKeyRef:
-                name: 'XROAD_POLICE_API_KEY'
-                key: '/k8s/judicial-system/XROAD_POLICE_API_KEY'
         resources:
           requests:
             cpu: '100m'
@@ -125,8 +301,11 @@ judicial-system-backend:
             - 'npx'
           image: ''
           env:
-            NO_UPDATE_NOTIFIER: 'true'
+            - name: 'NO_UPDATE_NOTIFIER'
+              value: 'true'
 judicial-system-web:
+  apiVersion: 'apps/v1'
+  kind: 'Deployment'
   metadata:
     name: 'judicial-system-web'
     namespace: 'judicial-system'
@@ -150,6 +329,27 @@ judicial-system-web:
           ad.datadoghq.com/judicial-system-web.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
     spec:
       containers:
+        env:
+          - name: 'CONFIGCAT_SDK_KEY'
+            valueFrom:
+              secretKeyRef:
+                name: 'CONFIGCAT_SDK_KEY'
+                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+          - name: 'NATIONAL_REGISTRY_API_KEY'
+            valueFrom:
+              secretKeyRef:
+                name: 'NATIONAL_REGISTRY_API_KEY'
+                key: '/k8s/judicial-system/NATIONAL_REGISTRY_API_KEY'
+          - name: 'LAWYERS_ICELAND_API_KEY'
+            valueFrom:
+              secretKeyRef:
+                name: 'LAWYERS_ICELAND_API_KEY'
+                key: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY'
+          - name: 'SUPPORT_EMAIL'
+            valueFrom:
+              secretKeyRef:
+                name: 'SUPPORT_EMAIL'
+                key: '/k8s/judicial-system/SUPPORT_EMAIL'
         name: 'judicial-system-web'
         securityContext:
           privileged: false
@@ -166,12 +366,6 @@ judicial-system-web:
             path: '/readiness'
           initialDelaySeconds: 3
           timeoutSeconds: 3
-        env:
-          SUPPORT_EMAIL:
-            valueFrom:
-              secretKeyRef:
-                name: 'SUPPORT_EMAIL'
-                key: '/k8s/judicial-system/SUPPORT_EMAIL'
         resources:
           limits:
             memory: '256Mi'
@@ -180,6 +374,8 @@ judicial-system-web:
             memory: '128Mi'
             cpu: '100m'
 judicial-system-xrd-api:
+  apiVersion: 'apps/v1'
+  kind: 'Deployment'
   metadata:
     name: 'judicial-system-xrd-api'
     namespace: 'judicial-system'
@@ -203,6 +399,24 @@ judicial-system-xrd-api:
           ad.datadoghq.com/judicial-system-xrd-api.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
     spec:
       containers:
+        env:
+          - name: 'CONFIGCAT_SDK_KEY'
+            valueFrom:
+              secretKeyRef:
+                name: 'CONFIGCAT_SDK_KEY'
+                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+          - name: 'ERROR_EVENT_URL'
+            valueFrom:
+              secretKeyRef:
+                name: 'ERROR_EVENT_URL'
+                key: '/k8s/judicial-system/ERROR_EVENT_URL'
+          - name: 'BACKEND_ACCESS_TOKEN'
+            valueFrom:
+              secretKeyRef:
+                name: 'BACKEND_ACCESS_TOKEN'
+                key: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
+          - name: 'AUDIT_TRAIL_REGION'
+            value: 'eu-west-1'
         name: 'judicial-system-xrd-api'
         securityContext:
           allowPrivilegeEscalation: false
@@ -220,12 +434,6 @@ judicial-system-xrd-api:
             path: '/liveness'
           initialDelaySeconds: 3
           timeoutSeconds: 3
-        env:
-          BACKEND_ACCESS_TOKEN:
-            valueFrom:
-              secretKeyRef:
-                name: 'BACKEND_ACCESS_TOKEN'
-                key: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
         resources:
           limits:
             memory: '256Mi'
@@ -235,6 +443,8 @@ judicial-system-xrd-api:
             cpu: '100m'
       serviceAccountName: 'judicial-system-xrd-api'
 judicial-system-scheduler:
+  apiVersion: 'apps/v1'
+  kind: 'Deployment'
   metadata:
     name: 'judicial-system-scheduler'
     namespace: 'judicial-system'
@@ -258,6 +468,17 @@ judicial-system-scheduler:
           ad.datadoghq.com/judicial-system-scheduler.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
     spec:
       containers:
+        env:
+          - name: 'CONFIGCAT_SDK_KEY'
+            valueFrom:
+              secretKeyRef:
+                name: 'CONFIGCAT_SDK_KEY'
+                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+          - name: 'BACKEND_ACCESS_TOKEN'
+            valueFrom:
+              secretKeyRef:
+                name: 'BACKEND_ACCESS_TOKEN'
+                key: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
         name: 'judicial-system-scheduler'
         securityContext:
           privileged: false
@@ -274,12 +495,6 @@ judicial-system-scheduler:
             path: '/'
           initialDelaySeconds: 3
           timeoutSeconds: 3
-        env:
-          BACKEND_ACCESS_TOKEN:
-            valueFrom:
-              secretKeyRef:
-                name: 'BACKEND_ACCESS_TOKEN'
-                key: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
         resources:
           limits:
             memory: '256Mi'
@@ -293,6 +508,8 @@ judicial-system-scheduler:
           - '--no-experimental-fetch'
           - 'main.js'
 judicial-system-message-handler:
+  apiVersion: 'apps/v1'
+  kind: 'Deployment'
   metadata:
     name: 'judicial-system-message-handler'
     namespace: 'judicial-system'
@@ -316,6 +533,21 @@ judicial-system-message-handler:
           ad.datadoghq.com/judicial-system-message-handler.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
     spec:
       containers:
+        env:
+          - name: 'CONFIGCAT_SDK_KEY'
+            valueFrom:
+              secretKeyRef:
+                name: 'CONFIGCAT_SDK_KEY'
+                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+          - name: 'BACKEND_ACCESS_TOKEN'
+            valueFrom:
+              secretKeyRef:
+                name: 'BACKEND_ACCESS_TOKEN'
+                key: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
+          - name: 'SQS_REGION'
+            value: 'eu-west-1'
+          - name: 'BACKEND_URL'
+            value: 'http://web-judicial-system-backend'
         name: 'judicial-system-message-handler'
         securityContext:
           allowPrivilegeEscalation: false
@@ -333,12 +565,6 @@ judicial-system-message-handler:
             path: '/liveness'
           initialDelaySeconds: 3
           timeoutSeconds: 3
-        env:
-          BACKEND_ACCESS_TOKEN:
-            valueFrom:
-              secretKeyRef:
-                name: 'BACKEND_ACCESS_TOKEN'
-                key: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
         resources:
           limits:
             memory: '256Mi'
