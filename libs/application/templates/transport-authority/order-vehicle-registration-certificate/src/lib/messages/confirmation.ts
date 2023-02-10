@@ -14,8 +14,7 @@ export const confirmation = {
     },
     alertMessageTitle: {
       id: 'ta.ovrc.application:confirmation.general.alertMessageTitle',
-      defaultMessage:
-        'Pöntun þín á skráningarskírteini fyrir {permno} hefur verið staðfest',
+      defaultMessage: 'Pöntun þín á skráningarskírteini hefur verið staðfest',
       description: 'Confirmation general alert message title',
     },
     alertMessageText: {
@@ -24,10 +23,16 @@ export const confirmation = {
         'Skírteinið verður sent í pósti á skráð lögheimili eiganda',
       description: 'Confirmation general alert message text',
     },
-    openMySiteLinkText: {
-      id: 'ta.ovrc.application:confirmation.general.openMySiteLinkText',
-      defaultMessage: 'Mínar síður',
-      description: 'Confirmation general open my site link text',
+    accordionTitle: {
+      id: 'ta.ovrc.application:confirmation.general.accordionTitle',
+      defaultMessage: 'Hvað gerist næst?',
+      description: 'Confirmation accordion title',
+    },
+    accordionText: {
+      id: 'ta.ovrc.application:confirmation.general.accordionText',
+      defaultMessage:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed lorem tortor, dictum quis diam et, pharetra finibus sapien. Nullam pharetra ipsum quis dictum suscipit.',
+      description: 'Confirmation accordion text',
     },
   }),
 }

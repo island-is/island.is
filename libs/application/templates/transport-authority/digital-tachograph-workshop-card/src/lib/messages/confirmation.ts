@@ -22,10 +22,16 @@ export const confirmation = {
       defaultMessage: 'Umsókn hefur verið móttekin',
       description: 'Confirmation general alert message text',
     },
-    openMySiteLinkText: {
-      id: 'ta.dtwc.application:confirmation.general.openMySiteLinkText',
-      defaultMessage: 'Mínar síður',
-      description: 'Confirmation general open my site link text',
+    accordionTitle: {
+      id: 'ta.dtwc.application:confirmation.general.accordionTitle',
+      defaultMessage: 'Hvað gerist næst?',
+      description: 'Confirmation accordion title',
+    },
+    accordionText: {
+      id: 'ta.dtwc.application:confirmation.general.accordionText',
+      defaultMessage:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed lorem tortor, dictum quis diam et, pharetra finibus sapien. Nullam pharetra ipsum quis dictum suscipit.',
+      description: 'Confirmation accordion text',
     },
   }),
 }
