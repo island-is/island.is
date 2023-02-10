@@ -173,7 +173,8 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
     residentGrantIsOpenForApplication(`${dateOfBirth}`) &&
     (state === 'approved' ||
       state === 'vinnumalastofnunApproveEdits' ||
-      state === 'vinnumalastofnunApproval') && hasAppliedFor === 'residenceGrant'
+      state === 'vinnumalastofnunApproval') &&
+    hasAppliedFor === 'residenceGrant'
   ) {
     steps.push({
       state: ReviewSectionState.inProgress,
@@ -186,12 +187,12 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
       ),
     })
   } else if (
-      dateOfBirth &&
-      residentGrantIsOpenForApplication(`${dateOfBirth}`) &&
-      (state === 'approved' ||
-        state === 'vinnumalastofnunApproveEdits' ||
-        state === 'vinnumalastofnunApproval')
-    ) {
+    dateOfBirth &&
+    residentGrantIsOpenForApplication(`${dateOfBirth}`) &&
+    (state === 'approved' ||
+      state === 'vinnumalastofnunApproveEdits' ||
+      state === 'vinnumalastofnunApproval')
+  ) {
     steps.push({
       state: ReviewSectionState.optionalAction,
       title: formatMessage(
