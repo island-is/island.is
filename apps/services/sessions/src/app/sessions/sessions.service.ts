@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op, WhereOptions } from 'sequelize'
+import uaParser from 'ua-parser-js'
 
 import { User } from '@island.is/auth-nest-tools'
 import { paginate } from '@island.is/nest/pagination'
@@ -64,6 +65,15 @@ export class SessionsService {
   }
 
   create(session: Session): Promise<Session> {
-    return this.sessionModel.create(session)
+    const ua = uaParser(session.userAgent)
+    const browser = ua.browser.name || ''
+    const os = ua.os.name || ''
+    const device =
+      browser || os ? `${browser}${browser && os ? ` (${os})` : os}` : undefined
+
+    return this.sessionModel.create({
+      ...session,
+      device,
+    })
   }
 }

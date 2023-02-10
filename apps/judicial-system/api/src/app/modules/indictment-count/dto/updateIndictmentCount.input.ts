@@ -1,6 +1,7 @@
 import { Allow } from 'class-validator'
 
 import { Field, InputType } from '@nestjs/graphql'
+import { IndictmentCountOffense } from '@island.is/judicial-system/types'
 
 import { IndictmentCountOffense } from '@island.is/judicial-system/types'
 
@@ -37,4 +38,8 @@ export class UpdateIndictmentCountInput {
   @Allow()
   @Field({ nullable: true })
   readonly legalArguments?: string
+
+  @Allow()
+  @Field(() => [IndictmentCountOffense], { nullable: true })
+  readonly offenses?: IndictmentCountOffense[]
 }
