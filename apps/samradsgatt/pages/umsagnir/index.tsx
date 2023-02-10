@@ -1,13 +1,17 @@
 import {
+  AsyncSearch,
+  AsyncSearchOption,
   Box,
   Breadcrumbs,
+  Column,
+  Columns,
   GridColumn,
   GridContainer,
   GridRow,
   Text,
   Tiles,
 } from '@island.is/island-ui/core'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation } from 'react-use'
 import Layout from '../../components/Layout/Layout'
 import MyReviewCard from '../../components/MyReviewCard/MyReviewCard'
@@ -160,9 +164,33 @@ export const MyReviewPage = () => {
       review: 'Þetta er mín umsögn',
     },
   ]
-  //   const [searchValue, setSearchValue] = useState<string>('')
-  //   const [prevSearchValue, setPrevSearchValue] = useState<string>('')
+  const [searchValue, setSearchValue] = useState<string>('')
+  const [prevSearchValue, setPrevSearchValue] = useState<string>('')
   const [data, setData] = useState(dummycontent)
+  const [options, setOptions] = useState<AsyncSearchOption[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  const clearAll = () => {
+    setIsLoading(false)
+    setOptions([])
+    setData(dummycontent)
+  }
+  useEffect(() => {
+    if (!searchValue) {
+      clearAll()
+    } else if (searchValue != prevSearchValue) {
+      const filtered = dummycontent.filter(
+        (item) =>
+          item.name.includes(searchValue) ||
+          item.caseNumber.includes(searchValue) ||
+          item.institution.includes(searchValue) ||
+          item.type.includes(searchValue),
+      )
+      setData(filtered)
+      setPrevSearchValue(searchValue)
+    }
+  }, [searchValue])
+
   return (
     <Layout showIcon={false}>
       <GridContainer>
@@ -186,22 +214,22 @@ export const MyReviewPage = () => {
               ásamt því að sjá allar umsagnir sem þú ert búin að skrifa í gegnum
               tíðina.
             </Text>
-            {/* <Columns space={3} alignY="center">
-              <Column> */}
-            {/* <AsyncSearch
+            <Columns space={3} alignY="center">
+              <Column width="10/12">
+                <AsyncSearch
                   options={options}
-                  placeholder="Að hverju ertu að leita?"
+                  placeholder="Leita að máli, stofnun eða málefnasviði"
                   initialInputValue=""
                   inputValue={searchValue}
                   onInputValueChange={(value) => {
                     setSearchValue(value)
                   }}
-                /> */}
-            {/* </Column>
+                />
+              </Column>
               <Column>
                 <div></div>
               </Column>
-            </Columns> */}
+            </Columns>
           </GridColumn>
         </GridRow>
         <GridRow>
