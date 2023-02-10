@@ -31,7 +31,6 @@ interface Props {
   ) => void
   placeholder?: string
   backgroundColor?: InputBackgroundColor
-  currency?: boolean
   required?: boolean
   readOnly?: boolean
   rightAlign?: boolean

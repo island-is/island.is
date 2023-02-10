@@ -3,6 +3,8 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { render, fireEvent } from '@testing-library/react'
 import { PhoneInputController } from './PhoneInputController'
 
+const DEFAULT_COUNTRY_CODE = '+354'
+
 const Wrapper: React.FC<{ defaultValues: Record<string, any> }> = ({
   children,
   defaultValues = {},
@@ -28,6 +30,24 @@ describe('PhoneInputController', () => {
       </Wrapper>,
     )
     expect(getByDisplayValue('999-9999')).toBeInTheDocument()
+  })
+
+  it('should be initialized with default country code when no country code can be parsed from number', () => {
+    const { getByDisplayValue } = render(
+      <Wrapper defaultValues={{ id: undefined }}>
+        <PhoneInputController id="id" />
+      </Wrapper>,
+    )
+    expect(getByDisplayValue(DEFAULT_COUNTRY_CODE)).toBeInTheDocument()
+  })
+
+  it('should be initialized with parsed country code from default value', () => {
+    const { getByDisplayValue } = render(
+      <Wrapper defaultValues={{ id: undefined }}>
+        <PhoneInputController id="id" defaultValue="+4558265132" />
+      </Wrapper>,
+    )
+    expect(getByDisplayValue('+45')).toBeInTheDocument()
   })
 
   it('should be overwritten by default value stored in the react hook form state', () => {
