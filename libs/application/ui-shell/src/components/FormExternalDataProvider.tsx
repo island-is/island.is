@@ -36,6 +36,8 @@ import { useLocale } from '@island.is/localization'
 import { ExternalDataProviderScreen } from '../types'
 import { verifyExternalData } from '../utils'
 
+import { handleServerError } from '@island.is/application/ui-components'
+
 const ItemHeader: React.FC<{
   title: FormText
   subTitle?: FormText
@@ -156,6 +158,9 @@ const FormExternalDataProvider: FC<{
     onCompleted(responseData: UpdateApplicationExternalDataResponse) {
       addExternalData(getExternalDataFromResponse(responseData))
     },
+    onError: (e) => {
+      return handleServerError(e, formatMessage)
+    },
   })
 
   const {
@@ -190,9 +195,11 @@ const FormExternalDataProvider: FC<{
             locale,
           },
         })
+
         setSuppressProviderErrors(false)
 
         if (
+          response &&
           response.data &&
           verifyExternalData(
             getExternalDataFromResponse(response.data),
