@@ -1,5 +1,5 @@
 import { OrganizationPage } from '@island.is/web/graphql/schema'
-import React, { useMemo } from 'react'
+import React from 'react'
 import {
   Box,
   GridContainer,
@@ -9,42 +9,19 @@ import {
 } from '@island.is/island-ui/core'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { useNamespace } from '@island.is/web/hooks'
-import { useWindowSize } from '@island.is/web/hooks/useViewport'
-import { getScreenWidthString } from '@island.is/web/utils/screenWidth'
 import * as styles from './UtlendingastofnunHeader.css'
-
-const getDefaultStyle = () => {
-  return {
-    background:
-      'url(https://images.ctfassets.net/8k0h54kbe6bj/70WAintbuEXuwg8M3ab2A2/de41b5695a2c527180771048537890a5/Utlendingastofnun-Header.png)',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-  }
-}
 
 interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-const UtlendingastofnunHeader: React.FC<HeaderProps> = ({
+export const UtlendingastofnunHeader: React.FC<HeaderProps> = ({
   organizationPage,
 }) => {
   const { linkResolver } = useLinkResolver()
-  const namespace = useMemo(
-    () => JSON.parse(organizationPage.organization.namespace?.fields ?? '{}'),
-    [organizationPage.organization.namespace?.fields],
-  )
-  const n = useNamespace(namespace)
-  const { width } = useWindowSize()
-
-  const screenWidth = getScreenWidthString(width)
 
   return (
-    <Box
-      style={n(`utlendingastofnunHeader-${screenWidth}`, getDefaultStyle())}
-      className={styles.headerBg}
-    >
+    <Box className={styles.headerBg}>
       <GridContainer className={styles.headerContainer}>
         <Box className={styles.headerWrapper}>
           <SidebarLayout
@@ -103,5 +80,3 @@ const UtlendingastofnunHeader: React.FC<HeaderProps> = ({
     </Box>
   )
 }
-
-export default UtlendingastofnunHeader

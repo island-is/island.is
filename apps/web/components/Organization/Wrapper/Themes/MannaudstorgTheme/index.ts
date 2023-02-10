@@ -1,3 +1,1 @@
-import dynamic from 'next/dynamic'
-
-export const MannaudstorgFooter = dynamic(() => import('./MannaudstorgFooter'))
+export * from './MannaudstorgFooter'

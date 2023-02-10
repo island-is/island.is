@@ -33,7 +33,7 @@ import {
   Webreader,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import { useFeatureFlag } from '@island.is/web/hooks'
+import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { WatsonChatPanel } from '@island.is/web/components'
 
@@ -44,30 +44,29 @@ import {
 } from './Themes/SjukratryggingarTheme'
 import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
 import { DefaultHeader } from './Themes/DefaultTheme'
-import { MannaudstorgFooter } from './Themes/MannaudstorgTheme'
+import MannaudstorgFooter from './Themes/MannaudstorgTheme/MannaudstorgFooter'
 import { liveChatIncConfig, watsonConfig } from './config'
-import { LandlaeknirFooter } from './Themes/LandlaeknirTheme'
-import { HeilbrigdisstofnunNordurlandsHeader } from './Themes/HeilbrigdisstofnunNordurlandsTheme'
-import { LandlaeknirHeader } from './Themes/LandlaeknirTheme'
-import { HeilbrigdisstofnunNordurlandsFooter } from './Themes/HeilbrigdisstofnunNordurlandsTheme'
+import LandlaeknirFooter from './Themes/LandlaeknirTheme/LandlaeknirFooter'
+import { HeilbrigdisstofnunNordurlandsHeader } from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsHeader'
+import { LandlaeknirHeader } from './Themes/LandlaeknirTheme/LandlaeknirHeader'
+import HeilbrigdisstofnunNordurlandsFooter from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsFooter'
 import {
   UtlendingastofnunFooter,
   UtlendingastofnunHeader,
 } from './Themes/UtlendingastofnunTheme'
-import { FiskistofaHeader } from './Themes/FiskistofaTheme'
-import { FiskistofaFooter } from './Themes/FiskistofaTheme'
-import { LandskjorstjornFooter } from './Themes/LandkjorstjornTheme'
+import { FiskistofaHeader } from './Themes/FiskistofaTheme/FiskistofaHeader'
+import FiskistofaFooter from './Themes/FiskistofaTheme/FiskistofaFooter'
+import { LandskjorstjornFooter } from './Themes/LandkjorstjornTheme/LandkjorstjornFooter'
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
-import { RikislogmadurHeader } from './Themes/RikislogmadurTheme'
-import { RikislogmadurFooter } from './Themes/RikislogmadurTheme'
-import { LandskjorstjornHeader } from './Themes/LandkjorstjornTheme'
+import { RikislogmadurHeader } from './Themes/RikislogmadurTheme/RikislogmadurHeader'
+import { RikislogmadurFooter } from './Themes/RikislogmadurTheme/RikislogmadurFooter'
+import { LandskjorstjornHeader } from './Themes/LandkjorstjornTheme/LandskjorstjornHeader'
 import {
   FjarsyslaRikisinsHeader,
   FjarsyslaRikisinsFooter,
 } from './Themes/FjarsyslaRikisinsTheme'
-import { HeilbrigdisstofnunSudurlandsFooter } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
-import { HeilbrigdisstofnunSudurlandsHeader } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
-import { TryggingastofnunHeader } from './Themes/TryggingastofnunTheme'
+import HeilbrigdisstofnunSudurlandsFooter from './Themes/HeilbrigdisstofnunSudurlandsTheme/HeilbrigdisstofnunSudurlandsFooter'
+import { HeilbrigdisstofnunSudurlandsHeader } from './Themes/HeilbrigdisstofnunSudurlandsTheme/HeilbrigdisstofnunSudurlandsHeader'
 
 import * as styles from './OrganizationWrapper.css'
 
@@ -103,7 +102,6 @@ export const lightThemes = [
   'default',
   'fiskistofa',
   'landing_page',
-  'tryggingastofnun',
 ]
 export const footerEnabled = [
   'syslumenn',
@@ -145,11 +143,7 @@ export const getThemeConfig = (
     footerVersion = 'organization'
   }
 
-  if (
-    theme === 'sjukratryggingar' ||
-    theme === 'rikislogmadur' ||
-    theme === 'tryggingastofnun'
-  )
+  if (theme === 'sjukratryggingar' || theme === 'rikislogmadur')
     return {
       themeConfig: {
         headerButtonColorScheme: 'blueberry',
@@ -206,8 +200,6 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
       return null
     case 'fjarsysla-rikisins':
       return <FjarsyslaRikisinsHeader organizationPage={organizationPage} />
-    case 'tryggingastofnun':
-      return <TryggingastofnunHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }

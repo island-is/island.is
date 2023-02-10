@@ -2267,7 +2267,6 @@ export interface IOrganizationPageFields {
     | 'fjarsyslan'
     | 'custom'
     | 'hsu'
-    | 'tryggingastofnun'
 
   /** Description */
   description?: string | undefined

@@ -20,7 +20,7 @@ interface RikislogmadurFooterProps {
   title: string
 }
 
-const RikislogmadurFooter = ({
+export const RikislogmadurFooter = ({
   footerItems,
   logo,
   title,
@@ -76,5 +76,3 @@ const RikislogmadurFooter = ({
     </footer>
   )
 }
-
-export default RikislogmadurFooter
