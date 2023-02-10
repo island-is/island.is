@@ -11,8 +11,11 @@ import {
   VerifyPassData,
   Result,
 } from '@island.is/clients/smartsolutions'
-import { createPkPassDataInput, formatNationalId } from './firearmLicenseMapper'
-import { format } from 'kennitala'
+import { createPkPassDataInput } from './firearmLicenseMapper'
+import {
+  format as formatNationalId,
+  sanitize as sanitizeNationalId,
+} from 'kennitala'
 
 @Injectable()
 export class FirearmLicenseApiClientService implements GenericLicenseClient {
@@ -89,7 +92,10 @@ export class FirearmLicenseApiClientService implements GenericLicenseClient {
         : null,
     }
 
-    return await this.smartApi.updatePkPass(payload, format(nationalId))
+    return await this.smartApi.updatePkPass(
+      payload,
+      formatNationalId(nationalId),
+    )
   }
 
   async revoke(nationalId: string): Promise<Result<RevokePassData>> {
@@ -97,10 +103,7 @@ export class FirearmLicenseApiClientService implements GenericLicenseClient {
   }
 
   /** We need to verify the pk pass AND the license itself! */
-  async verify(
-    inputData: string,
-    nationalId: string,
-  ): Promise<Result<VerifyPassData>> {
+  async verify(inputData: string): Promise<Result<VerifyPassData>> {
     //need to parse the scanner data
     const { code, date } = JSON.parse(inputData)
     const verifyRes = await this.smartApi.verifyPkPass({ code, date })
@@ -132,8 +135,10 @@ export class FirearmLicenseApiClientService implements GenericLicenseClient {
       }
     }
 
+    const sanitizedPassNationalId = sanitizeNationalId(passNationalId)
+
     const licenseInfo = await this.firearmApi.getVerificationLicenseInfo(
-      nationalId,
+      sanitizedPassNationalId,
     )
 
     if (!licenseInfo) {
@@ -159,7 +164,7 @@ export class FirearmLicenseApiClientService implements GenericLicenseClient {
     return {
       ok: true,
       data: {
-        valid: format(licenseInfo.ssn) === passNationalId,
+        valid: licenseInfo.ssn === sanitizedPassNationalId,
       },
     }
   }

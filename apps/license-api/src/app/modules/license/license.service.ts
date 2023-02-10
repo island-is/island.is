@@ -18,13 +18,15 @@ import {
   CLIENT_FACTORY,
   GenericLicenseClient,
   LicenseId,
+  PASS_TEMPLATE_IDS,
 } from './license.types'
+import type { PassTemplateIds } from './license.types'
 
 @Injectable()
 export class LicenseService {
   constructor(
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
+    @Inject(PASS_TEMPLATE_IDS) private config: PassTemplateIds,
     @Inject(CLIENT_FACTORY)
     private clientFactory: (
       licenseId: LicenseId,
@@ -131,10 +133,20 @@ export class LicenseService {
   async verifyLicense(
     inputData: VerifyLicenseRequest,
   ): Promise<VerifyLicenseResponse> {
-    const service = await this.clientFactory(inputData.licenseId)
+    const { passTemplateId } = JSON.parse(inputData.barcodeData)
 
-    const { barcodeData, nationalId } = inputData
-    const verifyData = await service.verify(barcodeData, nationalId)
+    if (!passTemplateId) {
+      throw new BadRequestException('Missing passTemplateId')
+    }
+
+    const licenseId = this.getTypeFromPassTemplateId(passTemplateId)
+
+    if (!licenseId) {
+      throw new InternalServerErrorException('PassTemplateID parsing failed')
+    }
+
+    const service = await this.clientFactory(licenseId)
+    const verifyData = await service.verify(inputData.barcodeData)
 
     if (verifyData.ok) {
       return { valid: verifyData.data.valid }
@@ -146,5 +158,22 @@ export class LicenseService {
       throw new BadRequestException(verifyData.error.message)
     }
     throw new InternalServerErrorException(verifyData.error.message)
+  }
+
+  private getTypeFromPassTemplateId(passTemplateId: string): LicenseId | null {
+    for (const [key, value] of Object.entries(this.config)) {
+      // some license Config id === barcode id
+      if (value === passTemplateId) {
+        // firearmLicense => firearm
+        const valueFromEnum: LicenseId | undefined =
+          LicenseId[key.toUpperCase() as keyof typeof LicenseId]
+
+        if (!valueFromEnum) {
+          throw new Error(`Invalid license type: ${key}`)
+        }
+        return valueFromEnum
+      }
+    }
+    return null
   }
 }
