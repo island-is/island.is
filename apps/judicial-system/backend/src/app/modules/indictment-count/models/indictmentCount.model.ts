@@ -8,9 +8,9 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 
-import { IndictmentCountOffense } from '@island.is/judicial-system/types'
-
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+
+import { IndictmentCountOffense } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case/models/case.model'
 

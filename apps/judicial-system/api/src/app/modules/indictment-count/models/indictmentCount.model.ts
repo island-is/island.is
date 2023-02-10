@@ -1,5 +1,6 @@
-import { IndictmentCountOffense } from '@island.is/judicial-system/types'
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
+
+import { IndictmentCountOffense } from '@island.is/judicial-system/types'
 
 registerEnumType(IndictmentCountOffense, { name: 'IndictmentCountOffense' })
 

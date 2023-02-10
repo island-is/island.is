@@ -90,23 +90,4 @@ export const indictmentCount = defineMessages({
     description:
       'Notaður sem skýritexti á "heimfærslu" svæði á ákæruliða skrefi í ákærum.',
   },
-  //
-  DRIVING_WITHOUT_LICENCE: {
-    id:
-      'judicial.system.core:indictments_indictment.indictment_count.suspended_drivers_licence',
-    defaultMessage: 'Sviptingaakstur',
-    description: 'Notaður sem titill á subtype fyrir "sviptingaakstur" brot.',
-  },
-  DRUNK_DRIVING: {
-    id:
-      'judicial.system.core:indictments_indictment.indictment_count.drunk_driving',
-    defaultMessage: 'Áfengisakstur',
-    description: 'Notaður sem titill á subtype fyrir "áfengisakstur" brot.',
-  },
-  ILLEGAL_DRUGS_DRIVING: {
-    id:
-      'judicial.system.core:indictments_indictment.indictment_count.illegal_drugs_driving',
-    defaultMessage: 'Fíkniefnaakstur',
-    description: 'Notaður sem titill á subtype fyrir "Fíkniefnaakstur" brot.',
-  },
 })
