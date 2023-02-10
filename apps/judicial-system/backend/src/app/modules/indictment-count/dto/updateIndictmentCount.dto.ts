@@ -1,7 +1,6 @@
 import { IsString, IsOptional, IsArray, IsEnum } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import { IndictmentCountOffense } from '@island.is/judicial-system/types'
 
 import { IndictmentCountOffense } from '@island.is/judicial-system/types'
 

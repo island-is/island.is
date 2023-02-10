@@ -1,7 +1,6 @@
 import { Allow } from 'class-validator'
 
 import { Field, InputType } from '@nestjs/graphql'
-import { IndictmentCountOffense } from '@island.is/judicial-system/types'
 
 import { IndictmentCountOffense } from '@island.is/judicial-system/types'
 
