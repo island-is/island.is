@@ -2,11 +2,14 @@ import { Column, Columns, Divider, Text } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
-import { PropertyDetail } from '@island.is/api/schema'
 import { ChargeItemCode } from '@island.is/shared/constants'
+import { useLocale } from '@island.is/localization'
+import { formatText } from '@island.is/application/core'
+import { m } from '../../lib/messages'
 
-export const OverviewPaymentCharge: FC<FieldBaseProps> = ({ application }) => {
+export const PaymentChargeOverview: FC<FieldBaseProps> = ({ application }) => {
   const { externalData } = application
+  const { formatMessage } = useLocale()
 
   const items = externalData.payment.data as {
     priceAmount: number
@@ -15,34 +18,17 @@ export const OverviewPaymentCharge: FC<FieldBaseProps> = ({ application }) => {
   }[]
 
   const item = items?.find(
-    ({ chargeItemCode }) =>
-      chargeItemCode === ChargeItemCode.MORTGAGE_CERTIFICATE,
+    ({ chargeItemCode }) => chargeItemCode === ChargeItemCode.CRIMINAL_RECORD,
   )
-
-  const { propertyDetails } = externalData.validateMortgageCertificate
-    ?.data as {
-    propertyDetails: PropertyDetail
-  }
 
   return (
     <Box paddingTop="smallGutter">
-      <Box
-        borderRadius="standard"
-        background={'blue100'}
-        paddingX={2}
-        paddingY={1}
-        marginBottom={5}
-      >
-        <Text fontWeight="semiBold">Til greiðslu vegna fasteignar</Text>
-        <Text>
-          {propertyDetails?.propertyNumber}
-          {' - '}
-          {propertyDetails?.defaultAddress?.display}
-        </Text>
-      </Box>
       <Columns alignY="bottom" space="gutter">
         <Column>
           <Box marginBottom="gutter">
+            <Text variant="h4">
+              {formatText(m.overviewPaymentCharge, application, formatMessage)}
+            </Text>
             <Text marginTop="smallGutter">{item?.chargeItemName}</Text>
           </Box>
         </Column>
@@ -56,7 +42,9 @@ export const OverviewPaymentCharge: FC<FieldBaseProps> = ({ application }) => {
       <Columns alignY="bottom" space="gutter">
         <Column>
           <Box marginTop="gutter">
-            <Text variant="h5">Samtals</Text>
+            <Text variant="h5">
+              {formatText(m.overviewPaymentTotal, application, formatMessage)}
+            </Text>
           </Box>
         </Column>
         <Column>
