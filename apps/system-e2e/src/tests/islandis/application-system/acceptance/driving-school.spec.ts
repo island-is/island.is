@@ -5,7 +5,7 @@ import { session } from '../../../../support/session'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
-test.describe('Driving licence', () => {
+test.describe('Driving School', () => {
   let context: BrowserContext
 
   test.beforeEach(async ({ browser }) => {
