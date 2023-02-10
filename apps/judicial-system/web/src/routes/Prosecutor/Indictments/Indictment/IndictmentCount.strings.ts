@@ -109,10 +109,4 @@ export const indictmentCount = defineMessages({
     defaultMessage: 'Fíkniefnaakstur',
     description: 'Notaður sem titill á subtype fyrir "Fíkniefnaakstur" brot.',
   },
-  PRESCRIPTION_DRUGS_DRIVING: {
-    id:
-      'judicial.system.core:indictments_indictment.indictment_count.prescription_drugs_driving',
-    defaultMessage: 'Lyfjaakstur',
-    description: 'Notaður sem titill á subtype fyrir "Lyfjaakstur" brot.',
-  },
 })

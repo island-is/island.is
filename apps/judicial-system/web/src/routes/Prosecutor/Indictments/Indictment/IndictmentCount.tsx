@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
 import InputMask from 'react-input-mask'
@@ -27,6 +27,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 import { indictmentCount as strings } from './IndictmentCount.strings'
+import { indictmentCountEnum as enumStrings } from './IndictmentCountEnum.strings'
 
 interface Props {
   indictmentCount: TIndictmentCount
@@ -66,7 +67,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
 
   const offensesList = Object.values(IndictmentCountOffense).map((offense) => ({
     value: offense,
-    label: formatMessage(strings[offense]),
+    label: formatMessage(enumStrings[offense]),
     disabled: indictmentCount.offenses?.includes(offense),
   }))
 
@@ -203,7 +204,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
                 }}
               >
                 <Box display="flex" alignItems="center">
-                  {formatMessage(strings[offense])}
+                  {formatMessage(enumStrings[offense])}
                   <Icon icon="close" size="small" />
                 </Box>
               </Tag>
