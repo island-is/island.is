@@ -5,6 +5,6 @@ export class Client {
   @Field(() => ID)
   id!: string
 
-  @Field(() => String, { nullable: true })
-  name?: string
+  @Field(() => String)
+  name!: string
 }

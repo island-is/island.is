@@ -19,6 +19,7 @@ export class ClientLoader implements NestDataLoader<ClientInput, Client> {
 
     return inputs.map((input) => ({
       id: input.clientId,
+      name: input.clientId,
     }))
   }
 
