@@ -1,15 +1,12 @@
 import {
   Box,
   Breadcrumbs,
-  Column,
-  Columns,
   GridColumn,
   GridContainer,
   GridRow,
   Text,
   Tiles,
 } from '@island.is/island-ui/core'
-import { Card } from '../../components'
 import { useState } from 'react'
 import { useLocation } from 'react-use'
 import Layout from '../../components/Layout/Layout'
@@ -64,7 +61,8 @@ export const MyReviewPage = () => {
       processBegins: '2023-01-10T00:00:00',
       processEnds: '2023-01-10T23:59:59',
       created: '2023-01-10T15:48:35.207',
-      review: 'Þetta er mín umsögn',
+      review:
+        'Þetta er mín umsögn. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget vulputate massa, ac posuere erat. Sed malesuada at ipsum a efficitur. Nam pellentesque semper sem, lacinia placerat enim sodales at. Nullam commodo auctor auctor. Etiam elit lorem, maximus in suscipit vitae, luctus eget sem.',
     },
     {
       id: 3019,
@@ -79,7 +77,8 @@ export const MyReviewPage = () => {
       processBegins: '2022-10-04T00:00:00',
       processEnds: '2023-01-10T23:59:59',
       created: '2022-10-07T15:51:21.59',
-      review: 'Þetta er mín umsögn',
+      review:
+        'Þetta er mín umsögn. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget vulputate massa, ac posuere erat. Sed malesuada at ipsum a efficitur. Nam pellentesque semper sem, lacinia placerat enim sodales at. Nullam commodo auctor auctor. Etiam elit lorem, maximus in suscipit vitae, luctus eget sem.',
     },
     {
       id: 3017,
@@ -94,7 +93,8 @@ export const MyReviewPage = () => {
       processBegins: '2022-05-04T00:00:00',
       processEnds: '2022-05-18T23:59:59',
       created: '2022-05-04T11:12:59.877',
-      review: 'Þetta er mín umsögn',
+      review:
+        'Þetta er mín umsögn. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget vulputate massa, ac posuere erat. Sed malesuada at ipsum a efficitur. Nam pellentesque semper sem, lacinia placerat enim sodales at. Nullam commodo auctor auctor. Etiam elit lorem, maximus in suscipit vitae, luctus eget sem.',
     },
     {
       id: 3013,
@@ -110,7 +110,8 @@ export const MyReviewPage = () => {
       processBegins: '2022-04-26T00:00:00',
       processEnds: '2022-05-17T23:59:59',
       created: '2022-04-26T16:47:03.447',
-      review: 'Þetta er mín umsögn',
+      review:
+        'Þetta er mín umsögn. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget vulputate massa, ac posuere erat. Sed malesuada at ipsum a efficitur. Nam pellentesque semper sem, lacinia placerat enim sodales at. Nullam commodo auctor auctor. Etiam elit lorem, maximus in suscipit vitae, luctus eget sem.',
     },
     {
       id: 3016,
@@ -204,7 +205,6 @@ export const MyReviewPage = () => {
           </GridColumn>
         </GridRow>
         <GridRow>
-          {/* <GridColumn span={['0', '0', '3/12', '3/12', '3/12']}></GridColumn> */}
           <GridColumn span={['12/12', '12/12', '12/12', '12/12', '12/12']}>
             {data && (
               <Tiles space={3} columns={[1, 1, 1, 2, 3]}>
