@@ -154,13 +154,9 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     )
     const person = await this.nationalRegistryApi.getIndividual(auth.nationalId)
 
-    if (!person) {
-      return null
-    }
-
     return (
-      spouse && {
-        spouse: {
+      person && {
+        spouse: spouse && {
           nationalId: spouse.spouseNationalId,
           name: spouse.spouseName,
         },

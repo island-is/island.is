@@ -721,7 +721,7 @@ export class NotificationService {
             linkStart: `<a href="${this.config.clientUrl}${CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${theCase.id}">`,
             linkEnd: '</a>',
           })
-        : this.formatMessage(notifications.signedRuling.prosecutorBodyS3V2, {
+        : this.formatMessage(notifications.signedRuling.prosecutorBodyS3, {
             courtCaseNumber: theCase.courtCaseNumber,
             courtName: theCase.court?.name?.replace('dómur', 'dómi'),
             linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
@@ -760,7 +760,7 @@ export class NotificationService {
             )}">`,
             linkEnd: '</a>',
           })
-        : this.formatMessage(notifications.signedRuling.defenderBodyV3, {
+        : this.formatMessage(notifications.signedRuling.defenderBody, {
             isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
             courtCaseNumber: theCase.courtCaseNumber,
             courtName: theCase.court?.name?.replace('dómur', 'dómi'),
@@ -963,7 +963,7 @@ export class NotificationService {
     theCase: Case,
     user: TUser | User,
   ): Promise<SendNotificationResponse> {
-    const subject = this.formatMessage(notifications.modified.subjectV2, {
+    const subject = this.formatMessage(notifications.modified.subject, {
       courtCaseNumber: theCase.courtCaseNumber,
       caseType: theCase.type,
     })
@@ -979,7 +979,7 @@ export class NotificationService {
           validToDate: formatDate(theCase.validToDate, 'PPPp'),
           isolationToDate: formatDate(theCase.isolationToDate, 'PPPp'),
         })
-      : this.formatMessage(notifications.modified.htmlV2, {
+      : this.formatMessage(notifications.modified.html, {
           caseType: theCase.type,
           actorInstitution: user.institution?.name,
           actorName: user.name,
@@ -1107,7 +1107,7 @@ export class NotificationService {
   ): Promise<Recipient> {
     const subject = this.formatMessage(
       notifications.prisonRevokedEmail.subject,
-      { caseType: theCase.type },
+      { caseType: theCase.type, courtCaseNumber: theCase.courtCaseNumber },
     )
     // Assume there is at most one defendant
     const html = formatPrisonRevokedEmailNotification(
@@ -1116,11 +1116,9 @@ export class NotificationService {
       theCase.creatingProsecutor?.institution?.name,
       theCase.court?.name,
       theCase.courtDate,
-      theCase.defendants && theCase.defendants.length > 0
-        ? theCase.defendants[0].name
-        : undefined,
       theCase.defenderName,
       Boolean(theCase.parentCase),
+      theCase.courtCaseNumber,
     )
 
     return this.sendEmail(

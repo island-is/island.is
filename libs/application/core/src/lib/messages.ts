@@ -442,6 +442,12 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Náði ekki að sækja fæðingarstað',
     description: 'Not able to fetch birthplace',
   },
+
+  applicationIsPrunedAndReadOnly: {
+    id: 'application.system:core.fetch.data.applicationIsPrunedAndReadOnly',
+    defaultMessage: 'Umsókn hefur runnið út á tíma og hefur verið gerð óvirk.',
+    description: 'Application has been pruned and is not editable',
+  },
   nationalIdNotFoundInNationalRegistryTitle: {
     id:
       'application.system:core.fetch.data.nationalIdNotFoundInNationalRegistryTitle',
@@ -514,5 +520,86 @@ export const coreDelegationsMessages = defineMessages({
     id: 'application.system:core.delegations.delegationErrorButton',
     defaultMessage: 'Skipta um notanda',
     description: 'Delegations Screen Card Button/Link',
+  },
+})
+
+export const coreErrorScreenMessages = defineMessages({
+  notFoundTitle: {
+    id: 'application.system:core.errorScreen.notFoundTitle',
+    defaultMessage: 'Umsókn fannst ekki',
+    description: 'Error screen title',
+  },
+  notFoundSubTitle: {
+    id: 'application.system:core.errorScreen.notFoundSubTitle',
+    defaultMessage:
+      'Eftirfarandi ástæður geta verið fyrir því að umsóknin fannst ekki',
+    description: 'Error screen subtitle',
+  },
+  notFoundDescription: {
+    id: 'application.system:core.errorScreen.notFoundDescription#markdown',
+    defaultMessage: `* Þú ert á rangri slóð\n`,
+    description: 'Error screen description',
+  },
+  forbiddenTitle: {
+    id: 'application.system:core.errorScreen.forbiddenTitle',
+    defaultMessage: 'Þú hefur ekki aðgang að viðkomandi umsókn',
+    description: 'Error screen title',
+  },
+  forbiddenSubTitle: {
+    id: 'application.system:core.errorScreen.forbiddenSubTitle',
+    defaultMessage:
+      'Eftirfarandi ástæður geta verið fyrir því að umsóknin fannst ekki',
+    description: 'Error screen subtitle',
+  },
+  forbiddenDescription: {
+    id: 'application.system:core.errorScreen.forbiddenDescription#markdown',
+    defaultMessage: `* Þú ert ekki með aðgang að umsókninni\n* Umsóknin er full kláruð`,
+    description: 'Error screen description',
+  },
+  notExistTitle: {
+    id: 'application.system:core.errorScreen.notExistTitle',
+    defaultMessage: 'Umsóknartegund ekki til',
+    description: 'Error screen title',
+  },
+  notExistSubTitle: {
+    id: 'application.system:core.errorScreen.notExistSubTitle',
+    defaultMessage:
+      'Eftirfarandi ástæður geta verið fyrir því að umsóknin fannst ekki',
+    description: 'Error screen subtitle',
+  },
+  notExistDescription: {
+    id: 'application.system:core.errorScreen.notExistDescription#markdown',
+    defaultMessage: `* Þú ert á rangri slóð\n`,
+  },
+  lostTitle: {
+    id: 'application.system:core.errorScreen.lostTitle',
+    defaultMessage: 'Umsókn týnd - Ekki til',
+    description: 'Error screen title',
+  },
+  lostSubTitle: {
+    id: 'application.system:core.errorScreen.lostSubTitle',
+    defaultMessage:
+      'Eftirfarandi ástæður geta verið fyrir því að umsóknin fannst ekki',
+    description: 'Error screen subtitle',
+  },
+  lostDescription: {
+    id: 'application.system:core.errorScreen.lostDescription#markdown',
+    defaultMessage: `* Umsókn hefur verið fjarlægð\n* Umsókn rann út á tíma\n`,
+    description: 'Error screen description',
+  },
+  buttonNewApplication: {
+    id: 'application.system:core.errorScreen.buttonNew',
+    defaultMessage: 'Byrja nýja umsókn',
+    description: 'Error screen button',
+  },
+  buttonMyApplications: {
+    id: 'application.system:core.errorScreen.buttonMyApplications',
+    defaultMessage: 'Fara í þínar umsóknir',
+    description: 'Error screen button',
+  },
+  application: {
+    id: 'application.system:core.errorScreen.application',
+    defaultMessage: 'Umsókn',
+    description: 'Error screen application',
   },
 })
