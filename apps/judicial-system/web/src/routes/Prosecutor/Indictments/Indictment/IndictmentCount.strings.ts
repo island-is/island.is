@@ -20,16 +20,16 @@ export const indictmentCount = defineMessages({
     description:
       'Notaður sem skýritexti á LÖKE málsnúmers lista á ákæruliða skrefi í ákærum.',
   },
-  vehicleLicencePlateLabel: {
+  vehicleRegistrationNumberLabel: {
     id:
-      'judicial.system.core:indictments_indictment.indictment_count.vehicle_licence_plate_label',
+      'judicial.system.core:indictments_indictment.indictment_count.vehicle_registration_number_label',
     defaultMessage: 'Skráningarnúmer ökutækis',
     description:
       'Notaður sem titill á "skráningarnúmer ökutækis" svæði á ákæruliða skrefi í ákærum.',
   },
-  vehicleLicencePlatePlaceholder: {
+  vehicleRegistrationNumberPlaceholder: {
     id:
-      'judicial.system.core:indictments_indictment.indictment_count.vehicle_licence_plate_placeholder',
+      'judicial.system.core:indictments_indictment.indictment_count.vehicle_registration_number_placeholder',
     defaultMessage: 'AB-123',
     description:
       'Notaður sem skýritexti á "skráningarnúmer ökutækis" svæði á ákæruliða skrefi í ákærum.',

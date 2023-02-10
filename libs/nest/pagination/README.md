@@ -107,3 +107,18 @@ previous set of results
 ```javascript
 http://localhost/path?before={pageInfo.startCursor}
 ```
+
+## Paginated GraphQL responses
+
+This library contains a helper function to generate a typed paginated GraphQL response.
+
+```javascript
+import { ObjectType } from '@nestjs/graphql'
+
+import { PaginatedResponse } from '@island.is/nest/pagination'
+
+import { YourModel } from '../models/your.model'
+
+@ObjectType('DomainPrefixPaginatedYourModelResponse')
+export class PaginatedYourModelResponse extends PaginatedResponse(YourModel) {}
+```
