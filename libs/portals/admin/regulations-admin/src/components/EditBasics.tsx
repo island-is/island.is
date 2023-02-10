@@ -6,6 +6,7 @@ import {
   AccordionItem,
   Divider,
   Text,
+  Button,
 } from '@island.is/island-ui/core'
 import { EditorInput } from './EditorInput'
 import { editorMsgs as msg } from '../lib/messages'
@@ -49,14 +50,19 @@ export const EditBasics = () => {
 
   useEffect(() => {
     if (!text.value && draft.type.value === 'amending') {
-      const additions = formatAmendingBodyWithArticlePrefix(draft.impacts)
-
-      const additionString = additions.join('') as HTMLText
-      updateState('text', additionString)
+      updateEditorText()
       setEditorKey('newKey')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draft.impacts])
+
+  const updateEditorText = () => {
+    const additions = formatAmendingBodyWithArticlePrefix(draft.impacts)
+
+    setEditorKey(Date.now().toString())
+    const additionString = additions.join('') as HTMLText
+    updateState('text', additionString)
+  }
 
   return (
     <>
@@ -76,10 +82,27 @@ export const EditBasics = () => {
           }
           required={!!draft.title.required}
         />
-        <Box marginTop={1} marginLeft={1}>
+        <Box
+          marginTop={1}
+          marginLeft={1}
+          display="flex"
+          alignItems="center"
+          justifyContent="spaceBetween"
+        >
           <Text variant="small" color="dark200">
             {regType ? `(${regType})` : ' '}
           </Text>
+          {draft.type.value === 'amending' ? (
+            <Button
+              icon="reload"
+              onClick={updateEditorText}
+              title="Uppfæra texta reglugerðar með breytingum frá fyrsta skrefi. Allur viðbættur texti í núverandi skrefi verður hreinsaður út."
+              variant="text"
+              size="small"
+            >
+              Uppfæra texta
+            </Button>
+          ) : null}
         </Box>
       </Box>
       <Box marginBottom={[6, 6, 8]}>
