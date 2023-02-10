@@ -1945,6 +1945,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'The residence grant cannot be applied for until after the child is born. Applications shall be applied for within six months from the date of delivery.',
     },
+    residenceGrantHasBeenAppliedForDescription: {
+      id: 'pl.application:residence.grant.open.description',
+      defaultMessage: 'Verið er að vinna úr umsókn þinni',
+      description: 'Your application is being processed',
+    },
     residenceGrantApplyTitle: {
       id: 'pl.application:residence.grant.apply.title',
       defaultMessage: 'Sækja um dvalarstyrk',

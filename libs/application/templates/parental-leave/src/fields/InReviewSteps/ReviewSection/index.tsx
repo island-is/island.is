@@ -81,7 +81,8 @@ const ReviewSection: FC<ReviewSectionProps> = ({
           </Text>
           {notifyParentOnClickEvent &&
             (state === ReviewSectionState.optionalAction ||
-              state === ReviewSectionState.prerequisites) && (
+              state === ReviewSectionState.prerequisites ||
+              state === ReviewSectionState.inProgress) && (
               <Box display={'flex'} justifyContent={'flexEnd'} marginTop={1}>
                 <Box>
                   {state === ReviewSectionState.optionalAction ? (

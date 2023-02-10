@@ -633,7 +633,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.APPROVE]: {
             target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
           },
-          ['APPROVEDREJECT']: { target: States.APPROVED },
+          ['APPROVEDREJECT']: { target: States.APPROVED},
 
           ['VINNUMALASTOFNUNAPPROVALREJECT']: {
             target: States.VINNUMALASTOFNUN_APPROVAL,
@@ -956,7 +956,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_APPROVE_EDITS]: {
-        entry: ['assignToVMST', 'removeNullPeriod'],
+        entry: ['assignToVMST', 'removeNullPeriod', 'setHasApplied'],
         exit: ['clearTemp', 'resetAdditionalDocumentsArray', 'clearAssignees'],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVE_EDITS,
@@ -1453,6 +1453,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         set(answers, 'isResidenceGrant', YES)
 
+        return context
+      }),
+      setHasApplied: assign((context) => {
+        const { application } = context
+        const { answers } = application
+        if (answers.previousState === 'approved' && application.state === 'vinnumalastofnunApproveEdits') {
+          set(answers, 'hasAppliedFor', 'residenceGrant')
+        }
         return context
       }),
     },

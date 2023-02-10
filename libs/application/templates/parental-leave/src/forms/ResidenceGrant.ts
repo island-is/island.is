@@ -27,34 +27,10 @@ export const ResidenceGrant: Form = buildForm({
           .residenceGrantApplyTitle,
       children: [
         buildMultiField({
-          title: parentalLeaveFormMessages.residenceGrantMessage
-          .residenceGrantTitle,
-          id: 'residenceGrant.multiOne',
-          description: '',
-          space: 2,
-          children: [
-            buildDescriptionField({
-              id: 'residenceGrantApplication.information',
-              title:'',
-                
-              description:
-                parentalLeaveFormMessages.residenceGrantMessage
-                  .residenceGrantInformation,
-            }),
-            buildCustomField({
-              id: 'imagefield.info',
-              title: '',
-              defaultValue: 2,
-              component: 'ImageField',
-            }),
-          ],
-        }),
-
-        buildMultiField({
           title:
             parentalLeaveFormMessages.residenceGrantMessage
               .residenceGrantApplyTitle,
-          id: 'residenceGrant.multiTwo',
+          id: 'residenceGrant.multiOne',
           description:
             parentalLeaveFormMessages.residenceGrantMessage
               .residenceGrantSelectPeriodDescription,
@@ -73,12 +49,6 @@ export const ResidenceGrant: Form = buildForm({
               placeholder: '',
               backgroundColor: 'blue',
               width: 'half',
-            }),
-            buildCustomField({
-              id: 'imagefield.date',
-              title: '',
-              defaultValue: 0,
-              component: 'ImageField',
             }),
           ],
         }),
@@ -100,7 +70,7 @@ export const ResidenceGrant: Form = buildForm({
         }),
         buildMultiField({
           title: parentalLeaveFormMessages.confirmation.title,
-          id: 'residenceGrant.multiThree',
+          id: 'residenceGrant.multiTwo',
           description:
             parentalLeaveFormMessages.residenceGrantMessage
               .residenceGrantSelectPeriodSubmitDescription,
