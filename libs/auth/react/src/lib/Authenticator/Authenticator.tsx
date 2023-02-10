@@ -20,7 +20,7 @@ interface Props {
 }
 
 const getReturnUrl = (location: Location, { redirectPath }: AuthSettings) => {
-  const returnUrl = location.pathname + location.search
+  const returnUrl = location.pathname + location.search + location.hash
 
   if (redirectPath && returnUrl.startsWith(redirectPath)) {
     return '/'
