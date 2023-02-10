@@ -12,8 +12,8 @@ export enum LicenseUpdateType {
 }
 
 export enum LicenseId {
-  FIREARM = 'firearm',
-  DISABILITY = 'disability',
+  FIREARM_LICENSE = 'firearm',
+  DISABILITY_LICENSE = 'disability',
 }
 
 export type PassTemplateIds = {

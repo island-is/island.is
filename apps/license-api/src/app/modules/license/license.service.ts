@@ -164,9 +164,9 @@ export class LicenseService {
     for (const [key, value] of Object.entries(this.config)) {
       // some license Config id === barcode id
       if (value === passTemplateId) {
-        // firearmLicense => firearm
+        const keyAsEnumKey = `${key.toUpperCase()}_LICENSE`
         const valueFromEnum: LicenseId | undefined =
-          LicenseId[key.toUpperCase() as keyof typeof LicenseId]
+          LicenseId[keyAsEnumKey as keyof typeof LicenseId]
 
         if (!valueFromEnum) {
           throw new Error(`Invalid license type: ${key}`)

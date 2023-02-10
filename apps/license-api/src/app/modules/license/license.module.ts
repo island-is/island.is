@@ -49,9 +49,9 @@ import { DisabilityLicenseApiClientConfig } from './clients/disabilityLicense/di
         firearmClient: FirearmLicenseApiClientService,
       ) => async (type: LicenseId): Promise<GenericLicenseClient | null> => {
         switch (type) {
-          case LicenseId.DISABILITY:
+          case LicenseId.DISABILITY_LICENSE:
             return disabilityClient
-          case LicenseId.FIREARM:
+          case LicenseId.FIREARM_LICENSE:
             return firearmClient
           default:
             return null
