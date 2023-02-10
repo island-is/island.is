@@ -6,43 +6,33 @@ import {
 } from './constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { getValueViaPath } from '@island.is/application/core'
-import { Application, FormValue } from '@island.is/application/types'
+import { FormValue } from '@island.is/application/types'
 
 type ValidationOperation = {
   operation?: APPLICATION_TYPES
-  hotel?: {
-    type?: string
-    category?: OPERATION_CATEGORY[] | undefined
-  }
-  resturant?: {
-    type?: string
-    category?: OPERATION_CATEGORY | '' | undefined
-  }
+
+  type?: string
+  category?: OPERATION_CATEGORY | '' | undefined
 }
 
 export const validateApplicationInfoCategory = ({
   operation,
-  resturant,
+  category,
 }: ValidationOperation) => {
   if (operation === APPLICATION_TYPES.RESTURANT) {
     return (
-      resturant?.category === OPERATION_CATEGORY.ONE ||
-      resturant?.category === OPERATION_CATEGORY.TWO
+      category === OPERATION_CATEGORY.TWO ||
+      category === OPERATION_CATEGORY.THREE
     )
   } else {
-    return true
+    return (
+      category === OPERATION_CATEGORY.TWO ||
+      category === OPERATION_CATEGORY.THREE ||
+      category === OPERATION_CATEGORY.FOUR
+    )
   }
 }
 
-export const hasYes = (answer: any) => {
-  if (Array.isArray(answer)) {
-    return answer.includes(YES)
-  }
-  if (answer instanceof Object) {
-    return Object.values(answer).includes(YES)
-  }
-  return answer === YES
-}
 const getHoursMinutes = (value: string) => {
   return {
     hours: parseInt(value.slice(0, 2)),
@@ -88,8 +78,8 @@ export const displayOpeningHours = (answers: any) => {
   return (
     (answers.applicationInfo as Operation)?.operation ===
       APPLICATION_TYPES.RESTURANT ||
-    (answers.applicationInfo as Operation)?.hotel?.category?.includes(
-      OPERATION_CATEGORY.TWO,
+    (answers.applicationInfo as Operation)?.category?.includes(
+      OPERATION_CATEGORY.FOUR,
     ) ||
     false
   )
@@ -100,43 +90,18 @@ export const getChargeItemCode = (answers: FormValue) => {
     answers,
     'applicationInfo',
   ) as Operation
-  if (
-    applicationInfo.operation === APPLICATION_TYPES.RESTURANT &&
-    applicationInfo.resturant.category
-  ) {
-    if (applicationInfo.resturant.category === OPERATION_CATEGORY.ONE) {
-      return 'AY124'
-    } else if (applicationInfo.resturant.category === OPERATION_CATEGORY.TWO) {
-      return 'AY125'
-    }
-  } else if (applicationInfo.operation === APPLICATION_TYPES.HOTEL) {
-    if (applicationInfo.hotel.category) {
-      if (
-        applicationInfo.hotel.category.length > 1 ||
-        applicationInfo.hotel.category.includes(OPERATION_CATEGORY.TWO)
-      ) {
-        return 'AY123'
-      } else if (
-        applicationInfo.hotel.category.includes(OPERATION_CATEGORY.ONE)
-      ) {
-        return 'AY122'
-      }
-    } else {
-      return 'AY121'
-    }
+  const isHotel = applicationInfo.operation === APPLICATION_TYPES.HOTEL
+  switch (applicationInfo.category) {
+    case OPERATION_CATEGORY.TWO:
+      return isHotel ? 'AY121' : 'AY124'
+    case OPERATION_CATEGORY.THREE:
+      return isHotel ? 'AY122' : 'AY125'
+    case OPERATION_CATEGORY.FOUR:
+      return 'AY123'
+    default:
+      break
   }
 }
 
-const getMobilePhoneNumber = (application: Application) => {
-  return (application.externalData.userProfile?.data as {
-    mobilePhoneNumber?: string
-  })?.mobilePhoneNumber
-}
-
-export const removeCountryCode = (application: Application) => {
-  return getMobilePhoneNumber(application)?.startsWith('+354')
-    ? getMobilePhoneNumber(application)?.slice(4)
-    : getMobilePhoneNumber(application)?.startsWith('00354')
-    ? getMobilePhoneNumber(application)?.slice(5)
-    : getMobilePhoneNumber(application)
-}
+export const allowFakeCondition = (result = YES) => (answers: FormValue) =>
+  getValueViaPath(answers, 'fakeData.useFakeData') === result

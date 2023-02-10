@@ -1,5 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import router from 'next/router'
 
 import {
   AccordionListItem,
@@ -12,13 +13,17 @@ import {
   MarkdownWrapper,
   PageLayout,
   PdfButton,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   core,
   icCourtOverview,
@@ -44,7 +49,6 @@ import {
   caseTypes,
   capitalize,
 } from '@island.is/judicial-system/formatters'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { DraftConclusionModal } from '../../components'
@@ -58,36 +62,35 @@ const Overview = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
   const { formatMessage } = useIntl()
-  const { setAndSendToServer } = useCase()
+  const { setAndSendCaseToServer } = useCase()
   const { user } = useContext(UserContext)
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
 
-  useEffect(() => {
-    if (isCaseUpToDate) {
-      setAndSendToServer(
-        [
-          {
-            ruling: !workingCase.parentCase
-              ? `\n${formatMessage(ruling.autofill, {
-                  judgeName: workingCase.judge?.name,
-                })}`
-              : isAcceptingCaseDecision(workingCase.decision)
-              ? workingCase.parentCase.ruling
-              : undefined,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
-    }
-  }, [
-    setAndSendToServer,
-    formatMessage,
-    isCaseUpToDate,
-    setWorkingCase,
-    workingCase,
-  ])
+  const initialize = useCallback(() => {
+    setAndSendCaseToServer(
+      [
+        {
+          ruling: !workingCase.parentCase
+            ? `\n${formatMessage(ruling.autofill, {
+                judgeName: workingCase.judge?.name,
+              })}`
+            : isAcceptingCaseDecision(workingCase.decision)
+            ? workingCase.parentCase.ruling
+            : undefined,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }, [setAndSendCaseToServer, formatMessage, setWorkingCase, workingCase])
+
+  useOnceOn(isCaseUpToDate, initialize)
+
+  const handleNavigationTo = useCallback(
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [workingCase.id],
+  )
 
   return (
     <PageLayout
@@ -98,6 +101,8 @@ const Overview = () => {
       activeSubSection={RestrictionCaseCourtSubsections.JUDGE_OVERVIEW}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={true}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.court.investigationCases.overview)}
@@ -185,13 +190,15 @@ const Overview = () => {
                   }
                 : undefined
             }
-            defender={{
-              name: workingCase.defenderName ?? '',
-              defenderNationalId: workingCase.defenderNationalId,
-              sessionArrangement: workingCase.sessionArrangements,
-              email: workingCase.defenderEmail,
-              phoneNumber: workingCase.defenderPhoneNumber,
-            }}
+            defenders={[
+              {
+                name: workingCase.defenderName ?? '',
+                defenderNationalId: workingCase.defenderNationalId,
+                sessionArrangement: workingCase.sessionArrangements,
+                email: workingCase.defenderEmail,
+                phoneNumber: workingCase.defenderPhoneNumber,
+              },
+            ]}
           />
         </Box>
         <>
@@ -295,7 +302,11 @@ const Overview = () => {
         <FormFooter
           previousUrl={`${constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
-          nextUrl={`${constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
+          onNextButtonClick={() =>
+            handleNavigationTo(
+              constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+            )
+          }
           nextIsDisabled={uploadState === UploadState.UPLOADING}
           nextButtonText={formatMessage(icCourtOverview.continueButton.label)}
         />

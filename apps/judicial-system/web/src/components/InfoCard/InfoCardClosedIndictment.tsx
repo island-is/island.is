@@ -1,9 +1,14 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  caseTypes,
+  readableIndictmentSubtypes,
+} from '@island.is/judicial-system/formatters'
 import { Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 
 import InfoCard from './InfoCard'
 import { infoCardActiveIndictment as m } from './InfoCard.strings'
@@ -12,6 +17,16 @@ import { FormContext } from '../FormProvider/FormProvider'
 const InfoCardClosedIndictment: React.FC = () => {
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
+  const defenders = workingCase.defendants?.map((defendant) => {
+    return {
+      name: defendant.defenderName || '',
+      defenderNationalId: defendant.defenderNationalId,
+      sessionArrangement: undefined,
+      email: defendant.defenderEmail,
+      phoneNumber: defendant.defenderPhoneNumber,
+    }
+  })
+
   return (
     <InfoCard
       data={[
@@ -43,7 +58,18 @@ const InfoCardClosedIndictment: React.FC = () => {
         },
         {
           title: formatMessage(m.offence),
-          value: capitalize(caseTypes[workingCase.type]),
+          value: isIndictmentCase(workingCase.type) ? (
+            <>
+              {readableIndictmentSubtypes(
+                workingCase.policeCaseNumbers,
+                workingCase.indictmentSubtypes,
+              ).map((subtype) => (
+                <Text key={subtype}>{capitalize(subtype)}</Text>
+              ))}
+            </>
+          ) : (
+            caseTypes[workingCase.type]
+          ),
         },
       ]}
       defendants={
@@ -60,6 +86,7 @@ const InfoCardClosedIndictment: React.FC = () => {
             }
           : undefined
       }
+      defenders={defenders}
     />
   )
 }

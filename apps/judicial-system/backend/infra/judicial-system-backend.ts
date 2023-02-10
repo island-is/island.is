@@ -40,9 +40,10 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       SQS_REGION: 'eu-west-1',
       BLOCKED_API_INTEGRATION: {
         dev: '',
-        staging: 'COURT,POLICE_DOCUMENT,POLICE_CASE',
-        prod: 'POLICE_CASE',
+        staging: 'COURT,COURT_LITIGANT,POLICE_CASE',
+        prod: 'COURT_LITIGANT',
       },
+      NO_UPDATE_NOTIFIER: 'true',
     })
     .xroad(Base, JudicialSystem)
     .secrets({
@@ -68,6 +69,9 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres: postgresInfo,
+      envs: {
+        NO_UPDATE_NOTIFIER: 'true',
+      },
     })
     .liveness('/liveness')
     .readiness('/liveness')

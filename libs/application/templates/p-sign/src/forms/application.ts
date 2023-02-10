@@ -22,7 +22,6 @@ import {
   FormValue,
   DefaultEvents,
 } from '@island.is/application/types'
-import type { User } from '@island.is/api/domains/national-registry'
 import { format as formatNationalId } from 'kennitala'
 import {
   NationalRegistryUser,
@@ -45,7 +44,7 @@ export const getApplication = (): Form => {
   return buildForm({
     id: 'PMarkApplicationDraftForm',
     title: '',
-    mode: FormModes.APPLYING,
+    mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
     children: [

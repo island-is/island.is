@@ -20,6 +20,7 @@ export const institutionMapper = {
   [ApplicationTypes.LOGIN_SERVICE]: InstitutionTypes.STAFRAENT_ISLAND,
   [ApplicationTypes.INSTITUTION_COLLABORATION]:
     InstitutionTypes.STAFRAENT_ISLAND,
+  [ApplicationTypes.INHERITANCE_REPORT]: InstitutionTypes.SYSLUMENN,
   [ApplicationTypes.FUNDING_GOVERNMENT_PROJECTS]:
     InstitutionTypes.FJARMALA_EFNAHAGSRADUNEYTID,
   [ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN]: InstitutionTypes.INNHEIMTUMADUR,
@@ -44,6 +45,7 @@ export const institutionMapper = {
   [ApplicationTypes.ANNOUNCEMENT_OF_DEATH]: InstitutionTypes.SYSLUMENN,
   [ApplicationTypes.OPERATING_LCENSE]: InstitutionTypes.SYSLUMENN,
   [ApplicationTypes.MARRIAGE_CONDITIONS]: InstitutionTypes.SYSLUMENN,
+  [ApplicationTypes.ESTATE]: InstitutionTypes.SYSLUMENN,
   [ApplicationTypes.DRIVING_LICENSE_DUPLICATE]:
     InstitutionTypes.RIKISLOGREGLUSTJORI,
   [ApplicationTypes.ANONYMITY_IN_VEHICLE_REGISTRY]:
@@ -61,5 +63,7 @@ export const institutionMapper = {
   [ApplicationTypes.ORDER_VEHICLE_REGISTRATION_CERTIFICATE]:
     InstitutionTypes.SAMGONGUSTOFA,
   [ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP]:
+    InstitutionTypes.SAMGONGUSTOFA,
+  [ApplicationTypes.DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR]:
     InstitutionTypes.SAMGONGUSTOFA,
 }

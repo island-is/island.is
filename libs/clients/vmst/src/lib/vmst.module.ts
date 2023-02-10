@@ -10,6 +10,7 @@ import {
   PensionApi,
   PregnancyApi,
   UnionApi,
+  ApplicationInformationApi,
 } from '../../gen/fetch'
 import { createWrappedFetchWithLogging } from './utils'
 
@@ -42,7 +43,13 @@ export class VMSTModule {
       headers,
     })
 
-    const exportedApis = [ParentalLeaveApi, PensionApi, PregnancyApi, UnionApi]
+    const exportedApis = [
+      ParentalLeaveApi,
+      PensionApi,
+      PregnancyApi,
+      UnionApi,
+      ApplicationInformationApi,
+    ]
 
     return {
       module: VMSTModule,

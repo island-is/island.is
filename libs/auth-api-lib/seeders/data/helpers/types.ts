@@ -43,6 +43,7 @@ export interface DbClient {
   supports_procuring_holders?: boolean
   supports_custom_delegation?: boolean
   supports_legal_guardians?: boolean
+  supports_personal_representatives?: boolean
   prompt_delegations?: boolean
 }
 
@@ -60,4 +61,5 @@ export interface DbScope {
   automatic_delegation_grant: boolean
   also_for_delegated_user: boolean
   is_access_controlled: boolean
+  domain_name: string
 }

@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
-import { Box, InputError, Text } from '@island.is/island-ui/core'
+import { AlertBanner, Box, InputError, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
@@ -8,7 +8,7 @@ import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 import { format as formatNationalId } from 'kennitala'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { ELECTIONLIMIT, GREATER } from '../../lib/constants'
-import { currencyStringToNumber, formatNumber } from '../../lib/utils/helpers'
+import { formatNumber } from '../../lib/utils/helpers'
 import BottomBar from '../../components/BottomBar'
 import { useFormContext } from 'react-hook-form'
 
@@ -18,35 +18,27 @@ export const ElectionStatement = ({
   refetch,
 }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
-  const [approveOverview, setApproveOverview] = useState(false)
-  const { errors, setError } = useFormContext()
+  const { errors } = useFormContext()
   const answers = application.answers as FinancialStatementsInao
-
-  const [submitApplication] = useSubmitApplication({
+  const email = getValueViaPath(answers, 'about.email')
+  const [submitApplication, { loading }] = useSubmitApplication({
     application,
     refetch,
     event: DefaultEvents.SUBMIT,
   })
 
   const onBackButtonClick = () => {
-    const income = currencyStringToNumber(answers.individualIncome?.total)
     const incomeLimit = getValueViaPath(answers, 'election.incomeLimit')
 
     if (incomeLimit === GREATER) {
-      goToScreen && goToScreen('attachment.file')
+      goToScreen && goToScreen('attachments.file')
     } else {
       goToScreen && goToScreen('election')
     }
   }
 
   const onSendButtonClick = () => {
-    if (approveOverview) {
-      submitApplication()
-    } else {
-      setError('applicationApprove', {
-        type: 'error',
-      })
-    }
+    submitApplication()
   }
 
   return (
@@ -57,7 +49,7 @@ export const ElectionStatement = ({
           ${formatMessage(m.nationalId)}: ${formatNationalId(
             answers.about.nationalId,
           )}, ${formatMessage(m.participated)} 
-          ${answers.election.selectElection}`}
+          ${answers.election.genitiveName}`}
         </Text>
       </Box>
       <Box paddingY={2}>
@@ -68,12 +60,23 @@ export const ElectionStatement = ({
       <Box paddingY={2}>
         <Text>{formatMessage(m.electionStatementLaw)}</Text>
       </Box>
+      <Box paddingY={2}>
+        <AlertBanner
+          title={`${formatMessage(m.SignatureTitle)}`}
+          description={`${formatMessage(
+            m.SignatureMessage,
+          )} ${email} ${formatMessage(m.SignaturePossible)}`}
+          variant="info"
+        />
+      </Box>
       {errors && getErrorViaPath(errors, 'applicationApprove') ? (
         <InputError errorMessage={formatMessage(m.errorApproval)} />
       ) : null}
       <BottomBar
+        loading={loading}
         onSendButtonClick={onSendButtonClick}
         onBackButtonClick={onBackButtonClick}
+        sendText={formatMessage(m.sendStatement)}
       />
     </Box>
   )

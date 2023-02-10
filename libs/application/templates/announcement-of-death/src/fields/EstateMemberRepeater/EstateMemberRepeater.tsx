@@ -29,8 +29,8 @@ import { IdentityInput, Query } from '@island.is/api/schema'
 import { IDENTITY_QUERY } from '../../graphql/'
 import * as kennitala from 'kennitala'
 import { m } from '../../lib/messages'
-import { hasYes } from '../../lib/utils'
 import { EstateRegistrant } from '@island.is/clients/syslumenn'
+import { hasYes } from '@island.is/application/core'
 
 export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
   application,

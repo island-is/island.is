@@ -32,9 +32,9 @@ export const info = {
     },
     organizationOrInstitutionPageDescription: {
       id:
-        'dpac.application:section.info.organizationOrInstitutionPageDescription',
+        'dpac.application:section.info.organizationOrInstitutionPageDescription#markdown',
       defaultMessage:
-        'Persónuvernd þarf þessar upplýsingar til þess að hægt sé að hafa samband á meðan málið er til meðferðar og upplýsa þig um niðurstöðu þess. ',
+        'Persónuvernd þarf þessar upplýsingar til þess að hægt sé að hafa samband á meðan málið er til meðferðar og upplýsa þig um niðurstöðu þess.\n\nÞær upplýsingar sem eru stjörnumerktar þarf alltaf að gefa upp. Upplýsingar um netfang og símanúmer eru valkvæðar en það getur flýtt fyrir afgreiðslu kvörtunarinnar ef þær eru veittar.',
       description: 'Organization or Institution page description',
     },
     commissionsPageTitle: {

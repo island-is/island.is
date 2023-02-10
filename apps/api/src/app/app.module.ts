@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { APP_INTERCEPTOR } from '@nestjs/core'
 import { ApolloDriver } from '@nestjs/apollo'
 import { GraphQLModule } from '@nestjs/graphql'
 import { TerminusModule } from '@nestjs/terminus'
@@ -6,6 +7,7 @@ import { TerminusModule } from '@nestjs/terminus'
 import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/cms'
+import { DisabilityLicenseModule } from '@island.is/api/domains/disability-license'
 import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 import { DrivingLicenseBookModule } from '@island.is/api/domains/driving-license-book'
@@ -15,7 +17,8 @@ import { DirectorateOfLabourModule } from '@island.is/api/domains/directorate-of
 import { FileUploadModule } from '@island.is/api/domains/file-upload'
 import { DocumentModule } from '@island.is/api/domains/documents'
 import { CommunicationsModule } from '@island.is/api/domains/communications'
-import { MailchimpModule } from '@island.is/api/domains/mailchimp'
+import { EmailSignupModule } from '@island.is/api/domains/email-signup'
+import { ZenterSignupConfig } from '@island.is/api/domains/email-signup'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
@@ -28,19 +31,32 @@ import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
+import { ElectronicRegistrationsClientConfig } from '@island.is/clients/electronic-registration-statistics'
+import { ElectronicRegistrationsModule } from '@island.is/api/domains/electronic-registration-statistics'
+import { FiskistofaClientConfig } from '@island.is/clients/fiskistofa'
+import { FiskistofaModule } from '@island.is/api/domains/fiskistofa'
 import { CompanyRegistryModule } from '@island.is/api/domains/company-registry'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { FinanceModule } from '@island.is/api/domains/finance'
 import { VehiclesModule } from '@island.is/api/domains/vehicles'
 import { AssetsModule } from '@island.is/api/domains/assets'
+import { PassportModule } from '@island.is/api/domains/passport'
+import { AirDiscountSchemeModule } from '@island.is/api/domains/air-discount-scheme'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
-import { LicenseServiceModule } from '@island.is/api/domains/license-service'
+import {
+  GenericAdrLicenseConfig,
+  GenericDrivingLicenseConfig,
+  GenericFirearmLicenseConfig,
+  GenericMachineLicenseConfig,
+  GenericDisabilityLicenseConfig,
+  LicenseServiceModule,
+} from '@island.is/api/domains/license-service'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
 import { AssetsClientConfig } from '@island.is/clients/assets'
-import { AuthPublicApiClientConfig } from '@island.is/clients/auth-public-api'
+import { AuthPublicApiClientConfig } from '@island.is/clients/auth/public-api'
 import { FinanceClientConfig } from '@island.is/clients/finance'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 import { AuditModule } from '@island.is/nest/audit'
@@ -56,6 +72,9 @@ import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
 import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municipalities-financial-aid'
 import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
+import { TransportAuthorityApiModule } from '@island.is/api/domains/transport-authority'
+import { PowerBiModule } from '@island.is/api/domains/powerbi'
+import { PowerBiConfig } from '@island.is/api/domains/powerbi'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 import { FishingLicenseModule } from '@island.is/api/domains/fishing-license'
@@ -66,8 +85,18 @@ import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
 import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
 import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
+import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-license'
 import { PassportsClientConfig } from '@island.is/clients/passports'
 import { FileStorageConfig } from '@island.is/file-storage'
+import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegation-api'
+import { AirDiscountSchemeClientConfig } from '@island.is/clients/air-discount-scheme'
+import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financial-statements-inao'
+import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
+import { PaymentScheduleClientConfig } from '@island.is/clients/payment-schedule'
+import { DataLoaderInterceptor } from '@island.is/nest/dataloader'
+import { SessionsModule } from '@island.is/api/domains/sessions'
+import { CommunicationsConfig } from '@island.is/api/domains/communications'
+import { SessionsApiClientConfig } from '@island.is/clients/sessions'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -78,6 +107,12 @@ const autoSchemaFile = environment.production
 
 @Module({
   controllers: [HealthController],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: DataLoaderInterceptor,
+    },
+  ],
   imports: [
     GraphQLModule.forRoot({
       driver: ApolloDriver,
@@ -121,11 +156,13 @@ const autoSchemaFile = environment.production
         password: environment.nationalRegistry.password!,
         host: environment.nationalRegistry.host!,
       },
+
       fileDownloadBucket: environment.education.fileDownloadBucket!,
     }),
     ApplicationModule.register({
       baseApiUrl: environment.applicationSystem.baseApiUrl!,
     }),
+    LicenseServiceModule,
     DirectorateOfLabourModule.register(),
     FileUploadModule,
     DocumentModule.register({
@@ -165,14 +202,6 @@ const autoSchemaFile = environment.production
       },
     }),
     HealthInsuranceModule.register({
-      soapConfig: {
-        wsdlUrl: environment.healthInsurance.wsdlUrl!,
-        baseUrl: environment.healthInsurance.baseUrl!,
-        username: environment.healthInsurance.username!,
-        password: environment.healthInsurance.password!,
-        clientID: environment.healthInsurance.clientID!,
-        xroadID: environment.healthInsurance.xroadID!,
-      },
       clientV2Config: {
         xRoadBaseUrl: environment.healthInsuranceV2.xRoadBaseUrl!,
         xRoadProviderId: environment.healthInsuranceV2.xRoadProviderId!,
@@ -191,11 +220,15 @@ const autoSchemaFile = environment.production
       },
     }),
     CommunicationsModule,
-    MailchimpModule,
+    EmailSignupModule,
     ApiCatalogueModule,
     IdentityModule,
     AuthModule.register(environment.auth as AuthConfig),
     SyslumennModule,
+    DisabilityLicenseModule,
+    ElectronicRegistrationsModule,
+    FiskistofaModule,
+    PowerBiModule,
     CompanyRegistryModule,
     IcelandicNamesModule.register({
       backendUrl: environment.icelandicNamesRegistry.backendUrl!,
@@ -210,57 +243,11 @@ const autoSchemaFile = environment.production
     FinancialStatementsInaoModule,
     VehiclesModule,
     AssetsModule,
+    PassportModule,
+    AirDiscountSchemeModule,
     NationalRegistryXRoadModule,
-    ApiDomainsPaymentModule.register({
-      xRoadProviderId: environment.paymentDomain.xRoadProviderId!,
-      xRoadBaseUrl: environment.paymentDomain.xRoadBaseUrl!,
-      xRoadClientId: environment.xroad.clientId!,
-      password: environment.paymentDomain.password!,
-      username: environment.paymentDomain.username!,
-      callbackBaseUrl: environment.paymentDomain.callbackBaseUrl!,
-      callbackAdditionUrl: environment.paymentDomain.callbackAdditionUrl!,
-      arkBaseUrl: environment.paymentDomain.arkBaseUrl!,
-    }),
-    LicenseServiceModule.register({
-      firearmLicense: {
-        apiKey: environment.firearmLicense.pkPassApiKey!,
-        apiUrl: environment.smartSolutionsApiUrl!,
-        passTemplateId: environment.firearmLicense.passTemplateId!,
-      },
-      machineLicense: {
-        apiKey: environment.machineLicense.pkPassApiKey!,
-        apiUrl: environment.smartSolutionsApiUrl!,
-        passTemplateId: environment.machineLicense.passTemplateId!,
-      },
-      adrLicense: {
-        apiKey: environment.adrLicense.pkPassApiKey!,
-        apiUrl: environment.smartSolutionsApiUrl!,
-        passTemplateId: environment.adrLicense.passTemplateId!,
-      },
-      driversLicense: {
-        xroad: {
-          baseUrl: environment.xroad.baseUrl!,
-          clientId: environment.xroad.clientId!,
-          path: environment.drivingLicense.v1.xroadPath!,
-          secret: environment.drivingLicense.secret!,
-        },
-        pkpass: {
-          apiKey: environment.pkpass.apiKey!,
-          apiUrl: environment.pkpass.apiUrl!,
-          secretKey: environment.pkpass.secretKey!,
-          cacheKey: environment.pkpass.cacheKey!,
-          cacheTokenExpiryDelta: environment.pkpass.cacheTokenExpiryDelta!,
-          authRetries: environment.pkpass.authRetries!,
-        },
-      },
-    }),
-    PaymentScheduleModule.register({
-      xRoadProviderId: environment.paymentSchedule.xRoadProviderId!,
-      xRoadBaseUrl: environment.paymentSchedule.xRoadBaseUrl!,
-      xRoadClientId: environment.xroad.clientId!,
-      password: environment.paymentSchedule.password!,
-      username: environment.paymentSchedule.username!,
-    }),
+    ApiDomainsPaymentModule,
+    PaymentScheduleModule,
     ProblemModule,
     CriminalRecordModule.register({
       clientConfig: {
@@ -272,29 +259,49 @@ const autoSchemaFile = environment.production
     MunicipalitiesFinancialAidModule,
     FishingLicenseModule,
     MortgageCertificateModule,
+    TransportAuthorityApiModule,
+    SessionsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
         AdrAndMachineLicenseClientConfig,
+        AirDiscountSchemeClientConfig,
         AssetsClientConfig,
         FirearmLicenseClientConfig,
+        DisabilityLicenseClientConfig,
+        GenericFirearmLicenseConfig,
+        GenericMachineLicenseConfig,
+        GenericAdrLicenseConfig,
+        GenericDrivingLicenseConfig,
+        GenericDisabilityLicenseConfig,
         VehiclesClientConfig,
         AuthPublicApiClientConfig,
+        AuthDelegationApiClientConfig,
         DownloadServiceConfig,
         FeatureFlagConfig,
         FinanceClientConfig,
         IdsClientConfig,
         NationalRegistryClientConfig,
         SyslumennClientConfig,
+        ElectronicRegistrationsClientConfig,
         FeatureFlagConfig,
         XRoadConfig,
         MunicipalitiesFinancialAidConfig,
         CompanyRegistryConfig,
         FishingLicenseClientConfig,
+        FinancialStatementsInaoClientConfig,
         DrivingLicenseBookClientConfig,
         DrivingLicenseApiConfig,
         PassportsClientConfig,
         FileStorageConfig,
+        FiskistofaClientConfig,
+        PowerBiConfig,
+        ChargeFjsV2ClientConfig,
+        DisabilityLicenseClientConfig,
+        ZenterSignupConfig,
+        PaymentScheduleClientConfig,
+        CommunicationsConfig,
+        SessionsApiClientConfig,
       ],
     }),
   ],

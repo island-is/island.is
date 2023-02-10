@@ -88,4 +88,40 @@ export class Defendant extends Model {
     allowNull: true,
   })
   citizenship?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  defenderName?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  defenderNationalId?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  defenderEmail?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  defenderPhoneNumber?: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty()
+  defendantWaivesRightToCounsel!: boolean
 }

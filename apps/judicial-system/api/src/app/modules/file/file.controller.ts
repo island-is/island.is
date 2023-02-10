@@ -53,10 +53,11 @@ export class FileController {
     )
   }
 
-  @Get('caseFiles')
+  @Get('caseFiles/:policeCaseNumber')
   @Header('Content-Type', 'application/pdf')
   async getCaseFilesPdf(
     @Param('id') id: string,
+    @Param('policeCaseNumber') policeCaseNumber: string,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
     @Res() res: Response,
@@ -67,7 +68,7 @@ export class FileController {
       user.id,
       AuditedAction.GET_REQUEST_PDF,
       id,
-      'caseFiles',
+      `caseFiles/${policeCaseNumber}`,
       req,
       res,
     )

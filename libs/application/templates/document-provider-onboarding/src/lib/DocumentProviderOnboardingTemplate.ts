@@ -1,5 +1,5 @@
 import { assign } from 'xstate'
-import * as z from 'zod'
+import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { DefaultStateLifeCycle } from '@island.is/application/core'
@@ -11,6 +11,7 @@ import {
   ApplicationTemplate,
   Application,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { API_MODULE_ACTIONS } from '../../constants'
 
@@ -133,6 +134,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
         meta: {
           name: 'Umsókn skjalaveitu',
           progress: 0.25,
+          status: 'draft',
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
@@ -163,10 +165,11 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
         meta: {
           name: 'Waiting to assign reviewer',
           progress: 0.4,
+          status: 'inprogress',
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.assignReviewer,
-          },
+          onEntry: defineTemplateApi({
+            action: API_MODULE_ACTIONS.assignReviewer,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -187,6 +190,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
         exit: 'clearAssignees',
         meta: {
           name: States.IN_REVIEW,
+          status: 'inprogress',
           progress: 0.5,
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -225,11 +229,12 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
       [States.REJECTED]: {
         meta: {
           name: 'Rejected',
+          status: 'rejected',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.applicationRejected,
-          },
+          onEntry: defineTemplateApi({
+            action: API_MODULE_ACTIONS.applicationRejected,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -245,11 +250,12 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
       [States.TEST_PHASE]: {
         meta: {
           name: 'TestPhase',
+          status: 'inprogress',
           progress: 0.75,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.applicationApproved,
-          },
+          onEntry: defineTemplateApi({
+            action: API_MODULE_ACTIONS.applicationApproved,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -270,6 +276,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
       },
       [States.FINISHED]: {
         meta: {
+          status: 'completed',
           name: 'Finished',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
@@ -283,7 +290,6 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

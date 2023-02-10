@@ -8,6 +8,7 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { LoginServiceSchema } from './dataSchema'
 import { application } from './messages'
@@ -48,6 +49,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       [States.draft]: {
         meta: {
           name: States.draft,
+          status: 'draft',
           actionCard: {
             title: application.name,
             description: application.description,
@@ -82,15 +84,16 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       [States.submitted]: {
         meta: {
           name: States.submitted,
+          status: 'completed',
           actionCard: {
             title: application.name,
             description: application.description,
           },
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: TEMPLATE_API_ACTIONS.sendApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

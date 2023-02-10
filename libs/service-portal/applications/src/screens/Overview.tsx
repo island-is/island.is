@@ -15,7 +15,6 @@ import {
 } from '@island.is/island-ui/core'
 import { useApplications } from '@island.is/service-portal/graphql'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import * as Sentry from '@sentry/react'
 import { useLocation } from 'react-router-dom'
 import { useGetOrganizationsQuery } from '../../../graphql/src/schema'
 import { m } from '../lib/messages'
@@ -41,8 +40,6 @@ const defaultFilterValues: FilterValues = {
 const Overview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.applications')
   useNamespaces('application.system')
-  Sentry.configureScope((scope) => scope.setTransactionName('Applications'))
-
   const { formatMessage } = useLocale()
   const { data: applications, loading, error, refetch } = useApplications()
   const location = useLocation()
@@ -108,7 +105,7 @@ const Overview: ServicePortalModuleComponent = () => {
     heading = false,
   ) => {
     switch (status) {
-      case ApplicationOverViewStatus.finished:
+      case ApplicationOverViewStatus.completed:
         return heading ? m.headingFinished : m.introCopyFinished
       case ApplicationOverViewStatus.inProgress:
         return heading ? m.headingInProgress : m.introCopyInProgress
@@ -119,6 +116,28 @@ const Overview: ServicePortalModuleComponent = () => {
     }
   }
 
+  const getNoApplicationsError = (status: ApplicationOverViewStatus) => {
+    switch (status) {
+      case ApplicationOverViewStatus.completed:
+        return m.noCompletedApplicationsAvailable
+      case ApplicationOverViewStatus.inProgress:
+        return m.noInProgressApplicationsAvailable
+      case ApplicationOverViewStatus.incomplete:
+        return m.noIncompleteApplicationsAvailable
+      default:
+        return m.noApplicationsAvailable
+    }
+  }
+
+  const noApplications =
+    (applications.length === 0 && !focusedApplication) ||
+    (statusToShow === ApplicationOverViewStatus.incomplete &&
+      applicationsSortedByStatus.incomplete.length === 0) ||
+    (statusToShow === ApplicationOverViewStatus.inProgress &&
+      applicationsSortedByStatus.inProgress.length === 0) ||
+    (statusToShow === ApplicationOverViewStatus.completed &&
+      applicationsSortedByStatus.finished.length === 0)
+
   return (
     <>
       <IntroHeader
@@ -127,10 +146,6 @@ const Overview: ServicePortalModuleComponent = () => {
       />
 
       {(loading || loadingOrg || !orgData) && <ActionCardLoader repeat={3} />}
-
-      {!error && !loading && applications.length === 0 && (
-        <EmptyState description={m.noApplicationsAvailable} />
-      )}
 
       {applications &&
         applications.length > 0 &&
@@ -204,7 +219,7 @@ const Overview: ServicePortalModuleComponent = () => {
               )}
             {applicationsSortedByStatus.finished?.length > 0 &&
               (statusToShow === ApplicationOverViewStatus.all ||
-                statusToShow === ApplicationOverViewStatus.finished) && (
+                statusToShow === ApplicationOverViewStatus.completed) && (
                 <ApplicationGroup
                   applications={applicationsSortedByStatus.finished}
                   label={formatMessage(m.finishedApplications)}
@@ -214,6 +229,9 @@ const Overview: ServicePortalModuleComponent = () => {
               )}
           </>
         )}
+      {!error && !loading && noApplications && (
+        <EmptyState description={getNoApplicationsError(statusToShow)} />
+      )}
     </>
   )
 }

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -15,24 +15,24 @@ import {
   RulingInput,
   SigningModal,
   useRequestRulingSignature,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  useDeb,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   isAcceptingCaseDecision,
   completedCaseStates,
   CaseDecision,
 } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import {
-  core,
-  icRuling as m,
-  ruling,
-  titles,
-} from '@island.is/judicial-system-web/messages'
+import { core, ruling, titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   Accordion,
@@ -43,13 +43,14 @@ import {
   Text,
   Tooltip,
 } from '@island.is/island-ui/core'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isRulingValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import * as constants from '@island.is/judicial-system/consts'
+
+import { icRuling as m } from './Ruling.strings'
 
 const Ruling = () => {
   const {
@@ -60,10 +61,9 @@ const Ruling = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
   const { user } = useContext(UserContext)
-  const { setAndSendToServer, updateCase } = useCase()
+  const { setAndSendCaseToServer, updateCase } = useCase()
   const { formatMessage } = useIntl()
 
-  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
   const [courtCaseFactsEM, setCourtCaseFactsEM] = useState<string>('')
   const [courtLegalArgumentsEM, setCourtLegalArgumentsEM] = useState<string>('')
   const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState<string>('')
@@ -84,49 +84,61 @@ const Ruling = () => {
     constants.INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
   )
 
-  useDeb(workingCase, 'prosecutorDemands')
-  useDeb(workingCase, 'courtCaseFacts')
-  useDeb(workingCase, 'courtLegalArguments')
-  useDeb(workingCase, 'conclusion')
-
-  useEffect(() => {
-    if (isCaseUpToDate && !initialAutoFillDone) {
-      setAndSendToServer(
-        [
-          {
-            introduction: formatMessage(m.sections.introduction.autofill, {
-              date: formatDate(workingCase.courtDate, 'PPP'),
-            }),
-            prosecutorDemands: workingCase.demands,
-            courtCaseFacts: workingCase.caseFacts,
-            courtLegalArguments: workingCase.legalArguments,
-            ruling: !workingCase.parentCase
-              ? `\n${formatMessage(ruling.autofill, {
-                  judgeName: workingCase.judge?.name,
-                })}`
-              : isAcceptingCaseDecision(workingCase.decision)
-              ? workingCase.parentCase.ruling
-              : undefined,
-            conclusion: isAcceptingCaseDecision(workingCase.decision)
-              ? workingCase.demands
-              : undefined,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
-
-      setInitialAutoFillDone(true)
-    }
-  }, [
-    isCaseUpToDate,
-    setAndSendToServer,
-    workingCase,
-    formatMessage,
-    setWorkingCase,
-    initialAutoFillDone,
-    setInitialAutoFillDone,
+  useDeb(workingCase, [
+    'prosecutorDemands',
+    'courtCaseFacts',
+    'courtLegalArguments',
+    'conclusion',
   ])
+
+  const initialize = useCallback(() => {
+    setAndSendCaseToServer(
+      [
+        {
+          introduction: formatMessage(m.sections.introduction.autofill, {
+            date: formatDate(workingCase.courtDate, 'PPP'),
+          }),
+          prosecutorDemands: workingCase.demands,
+          courtCaseFacts: formatMessage(
+            ruling.sections.courtCaseFacts.prefill,
+            {
+              caseFacts: workingCase.caseFacts,
+            },
+          ),
+          courtLegalArguments: formatMessage(
+            ruling.sections.courtLegalArguments.prefill,
+            { legalArguments: workingCase.legalArguments },
+          ),
+          ruling: !workingCase.parentCase
+            ? `\n${formatMessage(ruling.autofill, {
+                judgeName: workingCase.judge?.name,
+              })}`
+            : isAcceptingCaseDecision(workingCase.decision)
+            ? workingCase.parentCase.ruling
+            : undefined,
+          conclusion: isAcceptingCaseDecision(workingCase.decision)
+            ? workingCase.demands
+            : undefined,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }, [setAndSendCaseToServer, workingCase, formatMessage, setWorkingCase])
+
+  useOnceOn(isCaseUpToDate, initialize)
+
+  const handleNavigationTo = useCallback(
+    async (destination: string) => {
+      if (isModifyingRuling) {
+        requestRulingSignature()
+      } else {
+        router.push(`${destination}/${workingCase.id}`)
+      }
+    },
+    [isModifyingRuling, requestRulingSignature, workingCase.id],
+  )
+  const stepIsValid = isRulingValidIC(workingCase)
 
   return (
     <PageLayout
@@ -137,6 +149,8 @@ const Ruling = () => {
       activeSubSection={RestrictionCaseCourtSubsections.RULING}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={stepIsValid}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.court.investigationCases.ruling)}
@@ -380,15 +394,22 @@ const Ruling = () => {
           <Box marginBottom={5}>
             <Decision
               workingCase={workingCase}
-              acceptedLabelText={formatMessage(m.sections.decision.acceptLabel)}
-              rejectedLabelText={formatMessage(m.sections.decision.rejectLabel)}
-              partiallyAcceptedLabelText={formatMessage(
-                m.sections.decision.partiallyAcceptLabel,
+              acceptedLabelText={formatMessage(
+                ruling.investigationCases.sections.decision.acceptLabel,
               )}
-              dismissLabelText={formatMessage(m.sections.decision.dismissLabel)}
+              rejectedLabelText={formatMessage(
+                ruling.investigationCases.sections.decision.rejectLabel,
+              )}
+              partiallyAcceptedLabelText={formatMessage(
+                ruling.investigationCases.sections.decision
+                  .partiallyAcceptLabel,
+              )}
+              dismissLabelText={formatMessage(
+                ruling.investigationCases.sections.decision.dismissLabel,
+              )}
               disabled={isModifyingRuling}
               onChange={(decision) => {
-                setAndSendToServer(
+                setAndSendCaseToServer(
                   [
                     {
                       conclusion:
@@ -469,17 +490,10 @@ const Ruling = () => {
               ? isRequestingRulingSignature || isLoadingWorkingCase
               : isLoadingWorkingCase
           }
-          nextUrl={`${constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!isRulingValidIC(workingCase)}
-          onNextButtonClick={() => {
-            if (isModifyingRuling) {
-              requestRulingSignature()
-            } else {
-              router.push(
-                `${constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`,
-              )
-            }
-          }}
+          nextIsDisabled={!stepIsValid}
+          onNextButtonClick={() =>
+            handleNavigationTo(constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE)
+          }
         />
       </FormContentContainer>
       {modalVisible === 'SigningModal' && (

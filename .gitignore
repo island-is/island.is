@@ -15,12 +15,12 @@ libs/contentful-extensions/parent-slug/.cache
 
 # dependencies
 node_modules/
-.yarn/*
-!.yarn/patches
-!.yarn/releases
-!.yarn/plugins
-!.yarn/sdks
-!.yarn/versions
+**/.yarn/*
+!**/.yarn/patches
+!**/.yarn/releases
+!**/.yarn/plugins
+!**/.yarn/sdks
+!**/.yarn/versions
 
 # IDEs and editors
 /.idea
@@ -58,8 +58,6 @@ testem.log
 Thumbs.db
 .cache
 
-.env
-
 # Used to store local secrets
 .env.secret
 .env.secret.*
@@ -81,7 +79,16 @@ possibleTypes.json
 fragmentTypes.json
 **/gen/fetch/**
 **/gen/graphql.ts
+*.generated.ts
+/apps/**/src/index.html
 
 # IDE - Visual Studio
 *.suo
 /.vs
+
+# Gitbook/Honkit
+_book
+.vscode/settings.json
+
+# Ignore generated .html files when running `serve`
+apps/**/index.html

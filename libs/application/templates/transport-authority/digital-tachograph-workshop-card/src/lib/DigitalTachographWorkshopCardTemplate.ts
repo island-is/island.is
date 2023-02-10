@@ -7,16 +7,22 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
-import { EphemeralStateLifeCycle } from '@island.is/application/core'
+import {
+  EphemeralStateLifeCycle,
+  pruneAfterDays,
+} from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
-import * as z from 'zod'
-import { m } from './messages'
+import { application } from './messages'
 import { Features } from '@island.is/feature-flags'
-
-const DigitalTachographWorkshopCardSchema = z.object({
-  approveExternalData: z.boolean().refine((v) => v),
-})
+import { ApiActions } from '../shared'
+import { DigitalTachographWorkshopCardSchema } from './dataSchema'
+import {
+  NationalRegistryUserApi,
+  UserProfileApi,
+  SamgongustofaPaymentCatalogApi,
+} from '../dataProviders'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -24,8 +30,8 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.DIGITAL_TACHOGRAPH_WORKSHOP_CARD,
-  name: m.name,
-  institution: m.institutionName,
+  name: application.name,
+  institution: application.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.DigitalTachographWorkshopCard.translation,
   ],
@@ -37,9 +43,10 @@ const template: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: 'Verkstæðiskort',
+          status: 'draft',
           actionCard: {
             tag: {
-              label: m.actionCardDraft,
+              label: application.actionCardDraft,
               variant: 'blue',
             },
           },
@@ -50,7 +57,7 @@ const template: ApplicationTemplate<
               id: Roles.APPLICANT,
               formLoader: () =>
                 import(
-                  '../forms/DigitalTachographWorkshopCardForm'
+                  '../forms/DigitalTachographWorkshopCardForm/index'
                 ).then((module) =>
                   Promise.resolve(module.DigitalTachographWorkshopCardForm),
                 ),
@@ -63,26 +70,63 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                SamgongustofaPaymentCatalogApi,
+              ],
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
+        },
+      },
+      [States.PAYMENT]: {
+        meta: {
+          name: 'Greiðsla',
+          status: 'inprogress',
+          actionCard: {
+            tag: {
+              label: application.actionCardPayment,
+              variant: 'red',
+            },
+          },
+          progress: 0.8,
+          lifecycle: pruneAfterDays(1 / 24),
+          onEntry: defineTemplateApi({
+            action: ApiActions.createCharge,
+          }),
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Payment').then((val) => val.Payment),
+              actions: [
+                { event: DefaultEvents.SUBMIT, name: 'Áfram', type: 'primary' },
+              ],
+              write: 'all',
+              delete: true,
             },
           ],
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
+          [DefaultEvents.ABORT]: { target: States.DRAFT },
         },
       },
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',
+          status: 'completed',
           progress: 1,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            // Applications that stay in this state for 3x30 days (approx. 3 months) will be pruned automatically
-            whenToPrune: 3 * 30 * 24 * 3600 * 1000,
-          },
+          lifecycle: pruneAfterDays(3 * 30),
           actionCard: {
             tag: {
-              label: m.actionCardDone,
+              label: application.actionCardDone,
               variant: 'blueberry',
             },
           },
@@ -90,14 +134,13 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Approved').then((val) =>
-                  Promise.resolve(val.Approved),
+                import('../forms/Confirmation').then((val) =>
+                  Promise.resolve(val.Confirmation),
                 ),
               read: 'all',
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

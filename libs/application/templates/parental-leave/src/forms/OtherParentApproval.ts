@@ -6,7 +6,6 @@ import {
   buildSubmitField,
   coreMessages,
   buildKeyValueField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { Form, FormModes, Application } from '@island.is/application/types'
 
@@ -15,13 +14,12 @@ import { YES } from '../constants'
 import { otherParentApprovalFormMessages } from '../lib/messages'
 import { currentDateStartTime } from '../lib/parentalLeaveTemplateUtils'
 import { getApplicationAnswers } from '../lib/parentalLeaveUtils'
-import { YesOrNo } from '../types'
 
 export const OtherParentApproval: Form = buildForm({
   id: 'OtherParentApprovalForParentalLeave',
   title: otherParentApprovalFormMessages.formTitle,
   logo: Logo,
-  mode: FormModes.REVIEW,
+  mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({
       id: 'review',
@@ -30,14 +28,10 @@ export const OtherParentApproval: Form = buildForm({
         buildMultiField({
           id: 'multi',
           title: (application: Application) => {
-            const isRequestingRights = getValueViaPath(
-              application.answers,
-              'requestRights.isRequestingRights',
-            ) as YesOrNo
-            const usePersonalAllowanceFromSpouse = getValueViaPath(
-              application.answers,
-              'usePersonalAllowanceFromSpouse',
-            ) as YesOrNo
+            const {
+              isRequestingRights,
+              usePersonalAllowanceFromSpouse,
+            } = getApplicationAnswers(application.answers)
 
             if (
               isRequestingRights === YES &&
@@ -53,14 +47,10 @@ export const OtherParentApproval: Form = buildForm({
             return otherParentApprovalFormMessages.requestAllowance
           },
           description: (application: Application) => {
-            const isRequestingRights = getValueViaPath(
-              application.answers,
-              'requestRights.isRequestingRights',
-            ) as YesOrNo
-            const usePersonalAllowanceFromSpouse = getValueViaPath(
-              application.answers,
-              'usePersonalAllowanceFromSpouse',
-            ) as YesOrNo
+            const {
+              isRequestingRights,
+              usePersonalAllowanceFromSpouse,
+            } = getApplicationAnswers(application.answers)
 
             if (
               isRequestingRights === YES &&

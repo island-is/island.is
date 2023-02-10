@@ -5,16 +5,16 @@ import { useEffectOnce } from 'react-use'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { CaseAppealDecision } from '@island.is/judicial-system/types'
 import {
-  CaseAppealDecision,
-  InstitutionType,
-} from '@island.is/judicial-system/types'
-import { BlueBox } from '@island.is/judicial-system-web/src/components'
+  BlueBox,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
 import InfoBox from '@island.is/judicial-system-web/src/components/InfoBox/InfoBox'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { signedVerdictOverview } from '@island.is/judicial-system-web/messages'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import type { Case } from '@island.is/judicial-system/types'
+import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import AccusedAppealInfo from '../Accused/AccusedAppealInfo'
 import ProsecutorAppealInfo from '../Prosecutor/ProsecutorAppealInfo'
@@ -40,7 +40,7 @@ const AppealSection: React.FC<Props> = (props) => {
   } = props
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
-  const isHighCourt = user?.institution?.type === InstitutionType.HIGH_COURT
+  const isHighCourt = user?.institution?.type === InstitutionType.HighCourt
 
   const [isInitialMount, setIsInitialMount] = useState<boolean>(true)
 
@@ -76,9 +76,9 @@ const AppealSection: React.FC<Props> = (props) => {
                 signedVerdictOverview.sections.appeal.defendantAppealed,
                 {
                   courtEndTime: `${formatDate(
-                    workingCase.rulingDate,
+                    workingCase.courtEndTime,
                     'PP',
-                  )} kl. ${formatDate(workingCase.rulingDate, 'p')}`,
+                  )} kl. ${formatDate(workingCase.courtEndTime, 'p')}`,
                 },
               )}
               fluid

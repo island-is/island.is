@@ -204,7 +204,7 @@ The certificate request is downloaded to browser's download folder.
 
 Now you can see that there are two keys in the overview, Sign and Auth.
 
-VANTAR – Senda póst á Begga
+The certificate request should be sent to [hjalp@ok.is](mailto:hjalp@ok.is).
 
 ### Importing signed certifications
 

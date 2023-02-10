@@ -20,7 +20,6 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
   const {
     version = 'latest',
     showLauncher = true,
-    cssVariables,
     namespaceKey,
     onLoad,
     pushUp = false,
@@ -52,18 +51,30 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
       }
     }
 
-    const languagePack = namespace?.[namespaceKey]
+    const namespaceValue = namespace?.[namespaceKey] ?? {}
+    const { cssVariables, ...languagePack } = namespaceValue
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const windowObject: any = window
     windowObject.watsonAssistantChatOptions = {
+      showCloseAndRestartButton: true,
+      pageLinkConfig: {
+        linkIDs: {
+          t10: {
+            text: n('t10', 'Tala við manneskju'),
+          },
+        },
+      },
+      serviceDesk: {
+        skipConnectAgentCard: true,
+      },
       ...props,
       onLoad: (instance) => {
         watsonInstance.current = instance
         if (cssVariables) {
           instance.updateCSSVariables(cssVariables)
         }
-        if (languagePack) {
+        if (Object.keys(languagePack).length > 0) {
           instance.updateLanguagePack(languagePack)
         }
         if (onLoad) {

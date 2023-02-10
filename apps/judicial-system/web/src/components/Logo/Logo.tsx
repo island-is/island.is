@@ -1,7 +1,6 @@
 import React, { useContext } from 'react'
 import { Box } from '@island.is/island-ui/core'
-
-import { InstitutionType } from '@island.is/judicial-system/types'
+import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { UserContext } from '../UserProvider/UserProvider'
 import LandWightsLogo from './LandWightsLogo'
@@ -18,24 +17,31 @@ const Logo: React.FC<Props> = ({ defaultInstitution = '' }) => {
   const institutionNameArr = institutionName.split(' ')
   const institutionNameFirstHalf = institutionNameArr.slice(
     0,
-    institutionNameArr.length - 1,
+    institutionNameArr.length < 4
+      ? institutionNameArr.length - 1
+      : institutionNameArr.length - 2,
+  )
+  const institutionNameSecondHalf = institutionNameArr.slice(
+    institutionNameArr.length < 4
+      ? institutionNameArr.length - 1
+      : institutionNameArr.length - 2,
   )
   const institutionType = user?.institution?.type
   const isPolice =
-    institutionType === InstitutionType.PROSECUTORS_OFFICE &&
+    institutionType === InstitutionType.ProsecutorsOffice &&
     institutionName !== 'Héraðssaksóknari' &&
     institutionName !== 'Ríkissaksóknari'
 
   return (
-    <div className={styles.logoContainer}>
+    <Box display="flex">
       <Box marginRight={2} marginBottom={[0, 0, 1, 0]}>
         {isPolice ? <PoliceStar /> : <LandWightsLogo />}
       </Box>
       <p className={styles.logoText}>
-        <span>{institutionNameFirstHalf.toString().replace(',', ' ')}</span>
-        <span>{institutionNameArr[institutionNameArr.length - 1]}</span>
+        <span>{institutionNameFirstHalf.join(' ')}</span>
+        <span>{institutionNameSecondHalf.join(' ')}</span>
       </p>
-    </div>
+    </Box>
   )
 }
 

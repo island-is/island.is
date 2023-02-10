@@ -28,18 +28,26 @@ export const TOTAL = 'total'
 export const ELECTIONLIMIT = 550000
 export const INPUTCHANGEINTERVAL = 300
 export const UPDATE_ELECTION_ACTION = 'updateCurrentElection'
+export const PartiesYearAllowed = 'PartiesYearAllowed'
+export const PartiesBackwardLimit = 'PartiesBackwardLimit'
+export const CemeteriesYearAllowed = 'CemeteriesYearAllowed'
+export const CemeteriesBackwardLimit = 'CemeteriesBackwardLimit'
 
 export enum USERTYPE {
-  INDIVIDUAL = '150000000',
-  PARTY = '150000001',
-  CEMETRY = '150000002',
+  INDIVIDUAL = 150000000,
+  PARTY = 150000001,
+  CEMETRY = 150000002,
 }
-
-export const BACKYEARSLIMITFALLBACK = '1'
 
 export const INDIVIDUAL = 'individual'
 export const PARTY = 'party'
 export const CEMETRY = 'cemetery'
+
+// error helpers
+export const VALIDATOR = 'validator'
+export const APPLICANTASMEMBER = 'applicantasmember'
+export const ACTORASCARETAKER = 'actorascaretaker'
+export const ACTORLONEBOARDMEMBER = 'actorloneboardmember'
 
 // input ids
 export const INDIVIDUALOPERATIONIDS = {
@@ -118,7 +126,10 @@ export const ABOUTIDS = {
   applicationType: 'conditionalAbout.applicationType',
   selectElection: 'election.selectElection',
   electionName: 'election.electionName',
+  genitiveName: 'election.genitiveName',
   incomeLimit: 'election.incomeLimit',
+  powerOfAttorneyNationalId: 'about.powerOfAttorneyNationalId',
+  powerOfAttorneyName: 'about.powerOfAttorneyName',
 }
 
 export const OPERATINGCOST = {
@@ -139,6 +150,7 @@ export const EQUITIESANDLIABILITIESIDS = {
   equityPrefix: 'equity',
   totalEquity: 'equity.totalEquity',
   totalCash: 'equity.total',
+  totalEquityAndLiabilities: 'equityAndLiabilities.total',
 }
 
 export const CEMETRYEQUITIESANDLIABILITIESIDS = {
@@ -156,4 +168,5 @@ export const CEMETRYEQUITIESANDLIABILITIESIDS = {
   reevaluateOther: 'cemetryEquity.reevaluateOther',
   operationResult: 'cemetryEquity.operationResult',
   equityTotal: 'cemetryEquity.total',
+  totalEquityAndLiabilities: 'equityAndLiabilities.total',
 }

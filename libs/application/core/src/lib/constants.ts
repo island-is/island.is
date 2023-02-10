@@ -17,3 +17,18 @@ export const pruneAfterDays = (Days: number): StateLifeCycle => {
 export const DefaultStateLifeCycle: StateLifeCycle = pruneAfterDays(30)
 
 export const NO_ANSWER = null
+
+export const YES = 'yes'
+export const NO = 'no'
+
+export const hasYes = (answer: any) => {
+  if (Array.isArray(answer)) {
+    return answer.includes(YES)
+  }
+
+  if (answer instanceof Object) {
+    return Object.values(answer).includes(YES)
+  }
+
+  return answer === YES
+}

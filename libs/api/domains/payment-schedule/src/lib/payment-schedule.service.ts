@@ -9,6 +9,7 @@ import {
 } from './graphql/dto'
 import { UpdateCurrentEmployerInput } from './graphql/dto/updateCurrentEmployerInput'
 import {
+  PaymentScheduleCompanyConditions,
   PaymentScheduleConditions,
   PaymentScheduleDebts,
   PaymentScheduleDistribution,
@@ -44,6 +45,27 @@ export class PaymentScheduleService {
     if (!conditions) {
       throw new Error('No conditions found for nationalId')
     }
+    return conditions
+  }
+
+  async getCompanyConditions(
+    user: User,
+  ): Promise<PaymentScheduleCompanyConditions> {
+    const { conditions, error } = await this.paymentScheduleApiWithAuth(
+      user,
+    ).companyConditionsnationalIdGET8({
+      nationalId: user.nationalId,
+    })
+
+    if (error) {
+      this.logger.error('Error getting company conditions', error)
+      throw new Error('Error getting company conditions')
+    }
+
+    if (!conditions) {
+      throw new Error('No company conditions found for nationalId')
+    }
+
     return conditions
   }
 
@@ -84,6 +106,32 @@ export class PaymentScheduleService {
       scheduleType: paymentDistribution.scheduleType as ScheduleType,
       nationalId: paymentDistribution.nationalId,
     }
+  }
+
+  /**
+   * Checks if the user is allowed to select specific company as his employer
+   * - returns boolean, true if allowed, false if not
+   * - FJS-Public/paymentSchedule_v1/employerValid/{usernationalid}/{employernationalid}
+   * @typedef {{user: User, nationalId: string}}
+   * @private
+   */
+  async isEmployerValid(user: User, nationalId: string): Promise<boolean> {
+    const { employerValid, error } = await this.paymentScheduleApiWithAuth(
+      user,
+    ).employerValidnationalIdemployerNationalIdGET7({
+      nationalId: user.nationalId,
+      employerNationalId: nationalId,
+    })
+    if (error) {
+      this.logger.error('Error employer information for nationalId', error)
+      throw new Error('Error employer information for nationalId')
+    }
+
+    if (!employerValid) {
+      return false
+    }
+
+    return employerValid.isEmployerValid === 'TRUE'
   }
 
   async getInitalSchedule(

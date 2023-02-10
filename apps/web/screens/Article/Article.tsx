@@ -6,7 +6,6 @@ import slugify from '@sindresorhus/slugify'
 import {
   Slice as SliceType,
   ProcessEntry,
-  richText,
 } from '@island.is/island-ui/contentful'
 import {
   Box,
@@ -32,8 +31,7 @@ import {
   footerEnabled,
   Stepper,
   stepperUtils,
-  ChartsCard,
-  OneColumnTextSlice,
+  Form,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
@@ -58,13 +56,12 @@ import {
   LinkType,
   useLinkResolver,
 } from '../../hooks/useLinkResolver'
+import { ArticleChatPanel } from './components/ArticleChatPanel'
+import { webRichText } from '@island.is/web/utils/richText'
 import { Locale } from '@island.is/shared/types'
 import { useScrollPosition } from '../../hooks/useScrollPosition'
 import { scrollTo } from '../../hooks/useScrollSpy'
-
-import { ArticleChatPanel } from './components/ArticleChatPanel'
-
-import * as styles from './Article.css'
+import { getOrganizationLink } from '@island.is/web/utils/organization'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
@@ -283,7 +280,9 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
           institutionTitle={n('organization')}
           institution={article.organization[0].title}
           locale={activeLocale}
-          linkProps={{ href: article.organization[0].link }}
+          linkProps={{
+            href: getOrganizationLink(article.organization[0], activeLocale),
+          }}
           imgContainerDisplay={['block', 'block', 'none', 'block']}
         />
       )}
@@ -568,7 +567,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
         <Box paddingTop={subArticle ? 2 : 4}>
           {!inStepperView && (
             <Box className="rs_read">
-              {richText(
+              {webRichText(
                 (subArticle ?? article).body as SliceType[],
                 {
                   renderComponent: {
@@ -587,10 +586,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
                         />
                       </Box>
                     ),
-                    GraphCard: (chart) => <ChartsCard chart={chart} />,
-                    OneColumnText: (slice) => (
-                      <OneColumnTextSlice slice={slice} />
-                    ),
+                    Form: (form) => <Form form={form} namespace={namespace} />,
                   },
                 },
                 activeLocale,
@@ -618,7 +614,10 @@ const ArticleScreen: Screen<ArticleProps> = ({
                 institution={{
                   title: article.organization[0].title,
                   label: n('organization'),
-                  href: article.organization[0].link,
+                  href: getOrganizationLink(
+                    article.organization[0],
+                    activeLocale,
+                  ),
                 }}
                 responsibleParty={article.responsibleParty.map(
                   (responsibleParty) => ({
@@ -631,7 +630,10 @@ const ArticleScreen: Screen<ArticleProps> = ({
                   (relatedOrganization) => ({
                     title: relatedOrganization.title,
                     label: n('relatedOrganization'),
-                    href: relatedOrganization.link,
+                    href: getOrganizationLink(
+                      relatedOrganization,
+                      activeLocale,
+                    ),
                   }),
                 )}
                 locale={activeLocale}

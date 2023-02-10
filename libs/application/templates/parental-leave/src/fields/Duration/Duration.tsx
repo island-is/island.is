@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useState, useCallback } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import format from 'date-fns/format'
-import * as Sentry from '@sentry/react'
 
 import {
   extractRepeaterIndexFromField,
@@ -18,6 +17,7 @@ import {
   getApplicationAnswers,
   calculateEndDateForPeriodWithStartAndLength,
   calculatePeriodLengthInMonths,
+  isParentalGrant,
 } from '../../lib/parentalLeaveUtils'
 import { errorMessages, parentalLeaveFormMessages } from '../../lib/messages'
 import { usageMaxMonths, usageMinMonths } from '../../config'
@@ -67,7 +67,7 @@ export const Duration: FC<FieldBaseProps> = ({
 
         return calculatedEndDate
       } catch (e) {
-        Sentry.captureException((e as Error).message)
+        console.error((e as Error).message)
 
         setError('component', {
           type: 'error',
@@ -102,6 +102,8 @@ export const Duration: FC<FieldBaseProps> = ({
     init()
   }, [])
 
+  const isGrant = isParentalGrant(application)
+
   const rangeDates =
     currentPeriod.firstPeriodStart !== StartDateOptions.ACTUAL_DATE_OF_BIRTH
       ? {
@@ -124,7 +126,9 @@ export const Duration: FC<FieldBaseProps> = ({
     <Box>
       <FieldDescription
         description={formatMessage(
-          parentalLeaveFormMessages.duration.monthsDescription,
+          isGrant
+            ? parentalLeaveFormMessages.duration.monthsGrantDescription
+            : parentalLeaveFormMessages.duration.monthsDescription,
         )}
       />
 

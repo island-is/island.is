@@ -6,7 +6,7 @@ These are generally "island.is" clients and scopes that need to be deployed to o
 
 ## Defining seed migrations
 
-First, create a TypeScript module with a file name describing your new client or scope, prefixed with `client-` or `scope-` respectively. E.g. `scooe-finance.ts`.
+First, create a TypeScript module with a file name describing your new client or scope, prefixed with `client-` or `scope-` respectively. E.g. `scope-finance.ts`.
 
 {% hint style="info" %}
 The filename is important in that Sequelize uses the filename to deduplicate seed migrations. Each seed migration runs only once in each environment. This means you should avoid renaming migrations after they've run in some environments.

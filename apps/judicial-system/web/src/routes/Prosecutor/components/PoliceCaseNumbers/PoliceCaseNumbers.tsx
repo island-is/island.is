@@ -2,12 +2,12 @@ import React, { useContext, useCallback, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
-import type { Case } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   MultipleValueList,
   SectionHeading,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -42,14 +42,14 @@ export const PoliceCaseNumbers: React.FC<Props> = (props) => {
     setClientPoliceNumbers,
   } = props
   const { user } = useContext(UserContext)
-  const { setAndSendToServer } = useCase()
+  const { setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
 
   const [hasError, setHasError] = useState(false)
   const updatePoliceNumbers = useCallback(
     (newPoliceCaseNumbers: string[]) => {
       setClientPoliceNumbers(newPoliceCaseNumbers)
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [
           {
             policeCaseNumbers: newPoliceCaseNumbers,
@@ -60,7 +60,12 @@ export const PoliceCaseNumbers: React.FC<Props> = (props) => {
         setWorkingCase,
       )
     },
-    [workingCase, setWorkingCase, setAndSendToServer, setClientPoliceNumbers],
+    [
+      workingCase,
+      setWorkingCase,
+      setAndSendCaseToServer,
+      setClientPoliceNumbers,
+    ],
   )
 
   const onAdd = useCallback(

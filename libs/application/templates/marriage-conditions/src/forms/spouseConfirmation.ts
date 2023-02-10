@@ -7,33 +7,32 @@ import {
   buildMultiField,
   buildSubmitField,
   buildTextField,
-  buildRadioField,
   buildSubSection,
   buildExternalDataProvider,
 } from '@island.is/application/core'
-import { YES, MarriageTermination, maritalStatuses } from '../lib/constants'
+import { YES } from '../lib/constants'
 import { m } from '../lib/messages'
 import {
   Form,
   FormModes,
   DefaultEvents,
   Application,
+  NationalRegistryIndividual,
 } from '@island.is/application/types'
-import { Individual, PersonalInfo } from '../types'
+import { Individual } from '../types'
 import { format as formatNationalId } from 'kennitala'
-import type { User } from '@island.is/api/domains/national-registry'
 import { UserProfile } from '../types/schema'
-import { removeCountryCode } from '../lib/utils'
 import { fakeDataSection } from './fakeDataSection'
-import { dataCollection } from './sharedSections/dataCollection'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
+import { removeCountryCode } from '@island.is/application/ui-components'
+import { dataCollection } from './sharedSections/dataCollection'
 
 export const spouseConfirmation = ({ allowFakeData = false }): Form =>
   buildForm({
     id: 'spouseConfirmation',
     title: '',
-    mode: FormModes.APPLYING,
+    mode: FormModes.IN_PROGRESS,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
     children: [
@@ -96,6 +95,8 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
               buildMultiField({
                 id: 'sides',
                 title: m.informationTitle,
+                description:
+                  'Beiðni um könnun hjónavígsluskilyrða mun ekki hljóta efnismeðeferð fyrr en hjónaefni hafa bæði veitt rafræna undirskrift. Vinsamlegast gangið því úr skugga um að símanúmer og netföng séu rétt rituð.',
                 children: [
                   buildDescriptionField({
                     id: 'header1',
@@ -121,7 +122,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                     readOnly: true,
                     defaultValue: (application: Application) => {
                       const nationalRegistry = application.externalData
-                        .nationalRegistry.data as User
+                        .nationalRegistry.data as NationalRegistryIndividual
                       return nationalRegistry.fullName ?? ''
                     },
                   }),
@@ -204,8 +205,8 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                     readOnly: true,
                     defaultValue: (application: Application) => {
                       const nationalRegistry = application.externalData
-                        .nationalRegistry.data as User
-                      return nationalRegistry.address.streetAddress
+                        .nationalRegistry.data as NationalRegistryIndividual
+                      return nationalRegistry?.address?.streetAddress
                     },
                   }),
                   buildTextField({
@@ -216,8 +217,8 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                     readOnly: true,
                     defaultValue: (application: Application) => {
                       const nationalRegistry = application.externalData
-                        .nationalRegistry.data as User
-                      return nationalRegistry.citizenship.code
+                        .nationalRegistry.data as NationalRegistryIndividual
+                      return nationalRegistry?.citizenship?.code
                     },
                   }),
                   buildTextField({
@@ -236,31 +237,6 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                     id: 'space',
                     space: 'containerGutter',
                     title: '',
-                  }),
-                  buildRadioField({
-                    id: 'spousePersonalInfo.previousMarriageTermination',
-                    title: m.previousMarriageTermination,
-                    options: [
-                      {
-                        value: MarriageTermination.divorce,
-                        label: m.terminationByDivorce,
-                      },
-                      {
-                        value: MarriageTermination.lostSpouse,
-                        label: m.terminationByLosingSpouse,
-                      },
-                      {
-                        value: MarriageTermination.annulment,
-                        label: m.terminationByAnnulment,
-                      },
-                    ],
-                    largeButtons: false,
-                    condition: (answers) => {
-                      return (
-                        (answers.personalInfo as PersonalInfo)
-                          ?.maritalStatus === maritalStatuses['5']
-                      )
-                    },
                   }),
                 ],
               }),

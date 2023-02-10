@@ -1,21 +1,54 @@
+import cn from 'classnames'
+import React, { useMemo } from 'react'
 import { OrganizationPage } from '@island.is/web/graphql/schema'
-import React from 'react'
 import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { getScreenWidthString } from '@island.is/web/utils/screenWidth'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import { useNamespace } from '@island.is/web/hooks'
+import { theme } from '@island.is/island-ui/theme'
 import * as styles from './SyslumennHeader.css'
+
+const getDefaultStyle = (width: number) => {
+  if (width >= theme.breakpoints.lg) {
+    return {
+      background: `linear-gradient(99.09deg, #003D85 23.68%, #4E8ECC 123.07%),
+      linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0, 0, 0, 0) 70%),
+      url('https://images.ctfassets.net/8k0h54kbe6bj/47lCoLCMeg5tCuc6HXbKyg/dc0ca3f94f536ad62e40398baa90db04/Group.svg')`,
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: '5% 25%',
+      backgroundSize: '100%, 100%, 60%',
+      backgroundBlendMode: 'saturation',
+    }
+  }
+  return {
+    background: `linear-gradient(99.09deg, #003D85 23.68%, #4E8ECC 123.07%),
+    linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0, 0, 0, 0) 70%)`,
+    backgroundBlendMode: 'saturation',
+  }
+}
 
 interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const SyslumennHeader: React.FC<HeaderProps> = ({
-  organizationPage,
-}) => {
+const SyslumennHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   const { linkResolver } = useLinkResolver()
+  const namespace = useMemo(
+    () => JSON.parse(organizationPage.organization.namespace?.fields ?? '{}'),
+    [organizationPage.organization.namespace?.fields],
+  )
+  const n = useNamespace(namespace)
+  const { width } = useWindowSize()
+
+  const screenWidth = getScreenWidthString(width)
 
   return (
-    <Box className={styles.headerBg}>
+    <Box
+      style={n(`syslumennHeader-${screenWidth}`, getDefaultStyle(width))}
+      className={cn(styles.headerBg)}
+    >
       <Box className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
@@ -67,3 +100,5 @@ export const SyslumennHeader: React.FC<HeaderProps> = ({
     </Box>
   )
 }
+
+export default SyslumennHeader

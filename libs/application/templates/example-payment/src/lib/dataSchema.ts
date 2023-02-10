@@ -1,5 +1,5 @@
-import * as z from 'zod'
+import { z } from 'zod'
 
 export const dataSchema = z.object({
-  userSelectedChargeItemCode: z.string().nonempty(),
+  userSelectedChargeItemCode: z.string().min(1),
 })

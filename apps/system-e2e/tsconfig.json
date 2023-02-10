@@ -5,7 +5,11 @@
     "outDir": "../../../dist/out-tsc",
     "types": ["node"],
     "resolveJsonModule": true,
-    "allowJs": true
+    "allowJs": true,
+    "target": "ESNext",
+    "module": "commonjs",
+    "moduleResolution": "Node",
+    "sourceMap": true
   },
   "include": ["src/**/*.ts", "src/**/*.js", "global.d.ts"]
 }

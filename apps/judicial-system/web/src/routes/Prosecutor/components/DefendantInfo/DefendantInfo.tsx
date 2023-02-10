@@ -4,12 +4,12 @@ import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
 
 import {
-  Case,
   Defendant,
   Gender,
   isIndictmentCase,
   UpdateDefendant,
 } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import {
   Box,
@@ -22,11 +22,7 @@ import {
   Select,
   Text,
 } from '@island.is/island-ui/core'
-import {
-  defendant as defendantMessages,
-  core,
-} from '@island.is/judicial-system-web/messages'
-import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
+import { core } from '@island.is/judicial-system-web/messages'
 import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
@@ -40,11 +36,13 @@ import * as strings from './DefendantInfo.strings'
 interface Props {
   defendant: Defendant
   workingCase: Case
-  onChange: (
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  onChange: (defendantId: string, updatedDefendant: UpdateDefendant) => void
+  updateDefendantState: (
     defendantId: string,
-    updatedDefendant: UpdateDefendant,
-  ) => Promise<void>
-  updateDefendantState: (defendantId: string, update: UpdateDefendant) => void
+    update: UpdateDefendant,
+    setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
+  ) => void
   onDelete?: (defendant: Defendant) => Promise<void>
 }
 
@@ -52,6 +50,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
   const {
     defendant,
     workingCase,
+    setWorkingCase,
     onDelete,
     onChange,
     updateDefendantState,
@@ -143,8 +142,8 @@ const DefendantInfo: React.FC<Props> = (props) => {
 
   return (
     <BlueBox>
-      <Box marginBottom={2} display="flex" justifyContent="flexEnd">
-        {onDelete && (
+      {onDelete && (
+        <Box marginBottom={2} display="flex" justifyContent="flexEnd">
           <Button
             onClick={() => onDelete(defendant)}
             colorScheme="destructive"
@@ -152,10 +151,10 @@ const DefendantInfo: React.FC<Props> = (props) => {
             size="small"
             data-testid="deleteDefendantButton"
           >
-            {formatMessage(defendantMessages.sections.defendantInfo.delete)}
+            {formatMessage(strings.defendantInfo.delete)}
           </Button>
-        )}
-      </Box>
+        </Box>
+      )}
       <Box marginBottom={2}>
         <Checkbox
           name={`noNationalId-${Math.random()}`}
@@ -170,10 +169,14 @@ const DefendantInfo: React.FC<Props> = (props) => {
             setNationalIdNotFound(false)
             setNationalIdErrorMessage('')
 
-            updateDefendantState(defendant.id, {
-              noNationalId: !defendant.noNationalId,
-              nationalId: undefined,
-            })
+            updateDefendantState(
+              defendant.id,
+              {
+                noNationalId: !defendant.noNationalId,
+                nationalId: undefined,
+              },
+              setWorkingCase,
+            )
 
             onChange(defendant.id, {
               noNationalId: !defendant.noNationalId,
@@ -201,9 +204,13 @@ const DefendantInfo: React.FC<Props> = (props) => {
               setNationalIdErrorMessage,
             )
 
-            updateDefendantState(defendant.id, {
-              nationalId: evt.target.value,
-            })
+            updateDefendantState(
+              defendant.id,
+              {
+                nationalId: evt.target.value,
+              },
+              setWorkingCase,
+            )
           }}
           onBlur={async (evt) => {
             validateAndSetErrorMessage(
@@ -214,7 +221,9 @@ const DefendantInfo: React.FC<Props> = (props) => {
               setNationalIdErrorMessage,
             )
 
-            onChange(defendant.id, { nationalId: evt.target.value })
+            onChange(defendant.id, {
+              nationalId: evt.target.value,
+            })
           }}
         >
           <Input
@@ -252,24 +261,30 @@ const DefendantInfo: React.FC<Props> = (props) => {
           hasError={accusedNameErrorMessage !== ''}
           onChange={(evt) => {
             removeErrorMessageIfValid(
-              ['empty'] as Validation[],
+              ['empty'],
               evt.target.value,
               accusedNameErrorMessage,
               setAccusedNameErrorMessage,
             )
 
-            updateDefendantState(defendant.id, {
-              name: evt.target.value,
-            })
+            updateDefendantState(
+              defendant.id,
+              {
+                name: evt.target.value,
+              },
+              setWorkingCase,
+            )
           }}
           onBlur={(evt) => {
             validateAndSetErrorMessage(
-              ['empty'] as Validation[],
+              ['empty'],
               evt.target.value,
               setAccusedNameErrorMessage,
             )
 
-            onChange(defendant.id, { name: evt.target.value.trim() })
+            onChange(defendant.id, {
+              name: evt.target.value.trim(),
+            })
           }}
           required
         />
@@ -289,24 +304,30 @@ const DefendantInfo: React.FC<Props> = (props) => {
           }
           onChange={(evt) => {
             removeErrorMessageIfValid(
-              ['empty'] as Validation[],
+              ['empty'],
               evt.target.value,
               accusedAddressErrorMessage,
               setAccusedAddressErrorMessage,
             )
 
-            updateDefendantState(defendant.id, {
-              address: evt.target.value,
-            })
+            updateDefendantState(
+              defendant.id,
+              {
+                address: evt.target.value,
+              },
+              setWorkingCase,
+            )
           }}
           onBlur={(evt) => {
             validateAndSetErrorMessage(
-              ['empty'] as Validation[],
+              ['empty'],
               evt.target.value,
               setAccusedAddressErrorMessage,
             )
 
-            onChange(defendant.id, { address: evt.target.value.trim() })
+            onChange(defendant.id, {
+              address: evt.target.value.trim(),
+            })
           }}
           required
         />
@@ -341,12 +362,18 @@ const DefendantInfo: React.FC<Props> = (props) => {
               placeholder={formatMessage(core.selectCitizenship)}
               value={defendant.citizenship ?? ''}
               onChange={(evt) => {
-                updateDefendantState(defendant.id, {
-                  citizenship: evt.target.value,
-                })
+                updateDefendantState(
+                  defendant.id,
+                  {
+                    citizenship: evt.target.value,
+                  },
+                  setWorkingCase,
+                )
               }}
               onBlur={(evt) => {
-                onChange(defendant.id, { citizenship: evt.target.value.trim() })
+                onChange(defendant.id, {
+                  citizenship: evt.target.value.trim(),
+                })
               }}
               disabled={isGenderAndCitizenshipDisabled}
             />

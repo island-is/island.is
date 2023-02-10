@@ -13,7 +13,7 @@ type CheckboxProps = React.ComponentProps<typeof Checkbox>
 interface Option {
   value: string
   label: React.ReactNode
-  subLabel?: string
+  subLabel?: React.ReactNode
   tooltip?: React.ReactNode
   disabled?: boolean
   excludeOthers?: boolean
@@ -34,7 +34,7 @@ interface CheckboxControllerProps {
   onSelect?: (s: string[]) => void
 }
 export const CheckboxController: FC<CheckboxControllerProps> = ({
-  defaultValue,
+  defaultValue = [],
   disabled = false,
   labelVariant,
   spacing = 2,

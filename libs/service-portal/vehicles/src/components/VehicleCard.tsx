@@ -2,7 +2,6 @@ import { VehiclesVehicle } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import React, { FC } from 'react'
-import { useHistory } from 'react-router-dom'
 import { formatDate } from '@island.is/service-portal/core'
 import differenceInMonths from 'date-fns/differenceInMonths'
 import { messages } from '../lib/messages'
@@ -14,12 +13,6 @@ interface Props {
 
 export const VehicleCard: FC<Props> = ({ vehicle }) => {
   const { formatMessage } = useLocale()
-  const history = useHistory()
-  const handleClick = () =>
-    vehicle.permno &&
-    history.push(
-      ServicePortalPath.AssetsVehiclesDetail.replace(':id', vehicle.permno),
-    )
   if (!vehicle) {
     return null
   }
@@ -56,7 +49,12 @@ export const VehicleCard: FC<Props> = ({ vehicle }) => {
           defaultMessage: 'Skoða nánar',
         }),
         variant: 'text',
-        onClick: () => handleClick(),
+        url: vehicle.permno
+          ? ServicePortalPath.AssetsVehiclesDetail.replace(
+              ':id',
+              vehicle.permno,
+            )
+          : undefined,
       }}
     />
   )

@@ -7,11 +7,12 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
+import { NoDebtCertificateApi } from '../dataProviders'
 
 export const NoDebtCertificateForm: Form = buildForm({
   id: 'NoDebtCertificateFormDraft',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'externalData',
@@ -24,14 +25,7 @@ export const NoDebtCertificateForm: Form = buildForm({
           checkboxLabel: m.externalDataAgreement,
           dataProviders: [
             buildDataProviderItem({
-              id: 'identityRegistry',
-              type: 'IdentityProvider',
-              title: m.nationalRegistryTitle,
-              subTitle: m.nationalRegistrySubTitle,
-            }),
-            buildDataProviderItem({
-              id: 'noDebtCertificate',
-              type: 'NoDebtCertificateProvider',
+              provider: NoDebtCertificateApi,
               title: m.noDebtCertificateInformationTitle,
               subTitle: m.noDebtCertificateInformationSubTitle,
             }),

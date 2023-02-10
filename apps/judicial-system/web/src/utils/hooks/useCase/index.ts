@@ -9,12 +9,14 @@ import isNil from 'lodash/isNil'
 import type {
   NotificationType,
   SendNotificationResponse,
-  Case,
   CaseTransition,
   RequestSignatureResponse,
-  UpdateCase,
-  CreateCase,
 } from '@island.is/judicial-system/types'
+import {
+  TempCase as Case,
+  TempUpdateCase as UpdateCase,
+  TempCreateCase as CreateCase,
+} from '@island.is/judicial-system-web/src/types'
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
 
@@ -188,6 +190,7 @@ const useCase = () => {
             variables: {
               input: {
                 type: theCase.type,
+                indictmentSubtypes: theCase.indictmentSubtypes,
                 description: theCase.description,
                 policeCaseNumbers: theCase.policeCaseNumbers,
                 defenderName: theCase.defenderName,
@@ -196,6 +199,7 @@ const useCase = () => {
                 defenderPhoneNumber: theCase.defenderPhoneNumber,
                 sendRequestToDefender: theCase.sendRequestToDefender,
                 leadInvestigator: theCase.leadInvestigator,
+                crimeScenes: theCase.crimeScenes,
               },
             },
           })
@@ -226,10 +230,10 @@ const useCase = () => {
           })
 
           if (data?.createCourtCase?.courtCaseNumber && !errors) {
-            setWorkingCase({
-              ...workingCase,
+            setWorkingCase((theCase) => ({
+              ...theCase,
               courtCaseNumber: data.createCourtCase.courtCaseNumber,
-            })
+            }))
 
             setCourtCaseNumberErrorMessage('')
 
@@ -269,7 +273,7 @@ const useCase = () => {
 
   const transitionCase = useMemo(
     () => async (
-      workingCase: Case,
+      caseId: string,
       transition: CaseTransition,
       setWorkingCase?: React.Dispatch<React.SetStateAction<Case>>,
     ): Promise<boolean> => {
@@ -277,8 +281,7 @@ const useCase = () => {
         const { data } = await transitionCaseMutation({
           variables: {
             input: {
-              id: workingCase.id,
-              modified: workingCase.modified,
+              id: caseId,
               transition,
             },
           },
@@ -359,7 +362,7 @@ const useCase = () => {
     [extendCaseMutation, formatMessage],
   )
 
-  const setAndSendToServer = async (
+  const setAndSendCaseToServer = async (
     updates: autofillEntry[],
     workingCase: Case,
     setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
@@ -374,7 +377,7 @@ const useCase = () => {
 
       // The case has not been created
       if (!workingCase.id) {
-        setWorkingCase({ ...workingCase, ...updatesToCase })
+        setWorkingCase((theCase) => ({ ...theCase, ...updatesToCase }))
         return
       }
 
@@ -384,7 +387,7 @@ const useCase = () => {
         throw new Error()
       }
 
-      setWorkingCase({ ...workingCase, ...newWorkingCase })
+      setWorkingCase((theCase) => ({ ...theCase, ...newWorkingCase }))
     } catch (error) {
       toast.error(formatMessage(errors.updateCase))
     }
@@ -406,7 +409,7 @@ const useCase = () => {
     isRequestingCourtRecordSignature,
     extendCase,
     isExtendingCase,
-    setAndSendToServer,
+    setAndSendCaseToServer,
   }
 }
 

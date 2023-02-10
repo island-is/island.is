@@ -25,7 +25,7 @@ export interface CheckboxProps {
   backgroundColor?: InputBackgroundColor
   labelVariant?: 'default' | 'small' | 'medium'
   /** subLabel can only be used if the 'large' prop set to true */
-  subLabel?: string
+  subLabel?: React.ReactNode
 }
 
 interface AriaError {
@@ -97,7 +97,11 @@ export const Checkbox = ({
             [styles.checkboxDisabled]: disabled,
           })}
         >
-          <Icon icon="checkmark" color={checked ? 'white' : 'transparent'} />
+          <Icon
+            icon="checkmark"
+            color={checked ? 'white' : 'transparent'}
+            ariaHidden
+          />
         </div>
         <span className={styles.labelText}>
           <Text

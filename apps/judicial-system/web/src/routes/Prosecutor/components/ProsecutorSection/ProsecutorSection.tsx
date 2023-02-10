@@ -6,15 +6,16 @@ import {
   FormContext,
   ProsecutorSelection,
 } from '@island.is/judicial-system-web/src/components'
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 
 import ProsecutorSectionHeading from './ProsecutorSectionHeading'
 
 const ProsecutorSection: React.FC = () => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
-  const { setAndSendToServer } = useCase()
+  const { setAndSendCaseToServer } = useCase()
 
   const handleProsecutorChange = (prosecutorId: string) => {
-    setAndSendToServer(
+    setAndSendCaseToServer(
       [
         {
           prosecutorId: prosecutorId,
@@ -30,7 +31,9 @@ const ProsecutorSection: React.FC = () => {
 
   return (
     <Box component="section" marginBottom={5}>
-      <ProsecutorSectionHeading />
+      <ProsecutorSectionHeading
+        isIndictment={isIndictmentCase(workingCase.type)}
+      />
       <ProsecutorSelection onChange={handleProsecutorChange} />
     </Box>
   )

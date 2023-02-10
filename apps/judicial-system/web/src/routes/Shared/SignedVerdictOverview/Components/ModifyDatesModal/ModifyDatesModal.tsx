@@ -4,19 +4,29 @@ import formatISO from 'date-fns/formatISO'
 import { useIntl, IntlShape } from 'react-intl'
 import { motion } from 'framer-motion'
 
-import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  signedVerdictOverview as m,
+} from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   DateTime,
   Modal,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { Box, Input, Text } from '@island.is/island-ui/core'
-import { Case, UpdateCase, UserRole } from '@island.is/judicial-system/types'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import * as constants from '@island.is/judicial-system/consts'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { hasDateChanged } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  TempCase as Case,
+  TempUpdateCase as UpdateCase,
+} from '@island.is/judicial-system-web/src/types'
+import {
+  UserRole,
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 interface DateTime {
   value?: Date
@@ -82,7 +92,15 @@ const getModificationSuccessText = (
     modifiedIsolationToDate?.value,
   )
 
-  if (validToDateAndIsolationToDateAreTheSame) {
+  if (workingCase.type === CaseType.TravelBan) {
+    return formatMessage(m.sections.modifyDatesModal.travelBanSuccessText, {
+      date: `${formatDate(modifiedValidToDate?.value, 'PPPP')?.replace(
+        'dagur,',
+        'dagsins',
+      )} kl. ${formatDate(modifiedValidToDate?.value, constants.TIME_FORMAT)}`,
+      userRole,
+    })
+  } else if (validToDateAndIsolationToDateAreTheSame) {
     modification = formatMessage(
       m.sections.modifyDatesModal.validToDateAndIsolationToDateAreTheSame,
       {
@@ -135,7 +153,7 @@ const getModificationSuccessText = (
   return formatMessage(m.sections.modifyDatesModal.successText, {
     modification,
     courtOrProsecutor:
-      userRole === UserRole.PROSECUTOR ? 'héraðsdómstól' : 'saksóknaraembætti',
+      userRole === UserRole.Prosecutor ? 'héraðsdómstól' : 'saksóknaraembætti',
   })
 }
 
@@ -170,21 +188,35 @@ const ModifyDatesModal: React.FC<Props> = ({
   const [successText, setSuccessText] = useState<string | undefined>(undefined)
 
   const handleDateModification = useCallback(async () => {
+    let formattedIsolationToDate = undefined
+
     if (!caseModifiedExplanation) return
 
-    if (!modifiedValidToDate?.value || !modifiedIsolationToDate?.value) return
+    if (!modifiedValidToDate?.value) return
+
+    if (
+      [CaseType.Custody, CaseType.AdmissionToFacility].includes(
+        workingCase.type,
+      )
+    ) {
+      if (!modifiedIsolationToDate?.value) {
+        return
+      } else {
+        formattedIsolationToDate = formatISO(modifiedIsolationToDate.value, {
+          representation: 'complete',
+        })
+      }
+    }
 
     const formattedValidToDate = formatISO(modifiedValidToDate.value, {
       representation: 'complete',
     })
 
-    const formattedIsolationToDate = formatISO(modifiedIsolationToDate.value, {
-      representation: 'complete',
-    })
-
     const update = {
       validToDate: formattedValidToDate,
-      isolationToDate: formattedIsolationToDate,
+      ...(formattedIsolationToDate !== undefined && {
+        isolationToDate: formattedIsolationToDate,
+      }),
       caseModifiedExplanation: createCaseModifiedExplanation(
         formatMessage,
         workingCase.caseModifiedExplanation,
@@ -202,16 +234,16 @@ const ModifyDatesModal: React.FC<Props> = ({
     }
   }, [
     caseModifiedExplanation,
-    workingCase.caseModifiedExplanation,
     modifiedValidToDate?.value,
-    modifiedIsolationToDate?.value,
-    onSubmit,
-    setSuccessText,
+    workingCase.type,
+    workingCase.caseModifiedExplanation,
     formatMessage,
-    modificationSuccessText,
-    user?.institution?.name,
     user?.name,
     user?.title,
+    user?.institution?.name,
+    onSubmit,
+    modifiedIsolationToDate?.value,
+    modificationSuccessText,
   ])
 
   useEffect(() => {
@@ -314,13 +346,11 @@ const ModifyDatesModal: React.FC<Props> = ({
       transition={{ duration: 0.5 }}
     >
       <Modal
-        title={formatMessage(m.sections.modifyDatesModal.successTitleV2, {
+        title={formatMessage(m.sections.modifyDatesModal.successTitleV3, {
           caseType: workingCase.type,
         })}
         text={successText}
-        secondaryButtonText={formatMessage(
-          m.sections.modifyDatesModal.secondaryButtonTextSuccess,
-        )}
+        secondaryButtonText={formatMessage(core.closeModal)}
         onSecondaryButtonClick={() => {
           setCaseModifiedExplanation(undefined)
           setIsModifyingDates(false)
@@ -337,12 +367,16 @@ const ModifyDatesModal: React.FC<Props> = ({
       transition={{ duration: 0.5 }}
     >
       <Modal
-        title={formatMessage(m.sections.modifyDatesModal.titleV2, {
+        title={formatMessage(m.sections.modifyDatesModal.titleV3, {
           caseType: workingCase.type,
         })}
-        text={formatMessage(m.sections.modifyDatesModal.textV2, {
-          caseType: workingCase.type,
-        })}
+        text={
+          workingCase.type === CaseType.TravelBan
+            ? formatMessage(m.sections.modifyDatesModal.travelBanText)
+            : formatMessage(m.sections.modifyDatesModal.textV2, {
+                caseType: workingCase.type,
+              })
+        }
         primaryButtonText={formatMessage(
           m.sections.modifyDatesModal.primaryButtonText,
         )}
@@ -383,7 +417,7 @@ const ModifyDatesModal: React.FC<Props> = ({
               m.sections.modifyDatesModal.reasonForChangeLabel,
             )}
             placeholder={formatMessage(
-              m.sections.modifyDatesModal.reasonForChangePlaceholderV2,
+              m.sections.modifyDatesModal.reasonForChangePlaceholderV3,
               { caseType: workingCase.type },
             )}
             onChange={(event) => {
@@ -405,7 +439,7 @@ const ModifyDatesModal: React.FC<Props> = ({
               name="modifiedValidToDate"
               size="sm"
               datepickerLabel={formatMessage(
-                m.sections.modifyDatesModal.modifiedValidToDateLabelV2,
+                m.sections.modifyDatesModal.modifiedValidToDateLabelV3,
                 {
                   caseType: workingCase.type,
                 },

@@ -1,3 +1,9 @@
+import type {
+  CreationOptional,
+  InferAttributes,
+  InferCreationAttributes,
+  NonAttribute,
+} from 'sequelize'
 import {
   Column,
   CreatedAt,
@@ -10,26 +16,27 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { DEFAULT_DOMAIN } from '../../types/defaultDomain'
-import {
-  DelegationDTO,
-  DelegationProvider,
-  DelegationType,
-} from '../dto/delegation.dto'
+import { DelegationDTO, DelegationProvider } from '../dto/delegation.dto'
 import { DelegationScope } from './delegation-scope.model'
 import { Domain } from '../../resources/models/domain.model'
+import { MergedDelegationDTO } from '../dto/merged-delegation.dto'
+import { DelegationType } from '../types/delegationType'
 
 @Table({
   tableName: 'delegation',
   timestamps: false,
 })
-export class Delegation extends Model {
+export class Delegation extends Model<
+  InferAttributes<Delegation>,
+  InferCreationAttributes<Delegation>
+> {
   @PrimaryKey
   @Column({
     type: DataType.STRING,
     primaryKey: true,
     allowNull: false,
   })
-  id!: string
+  id!: CreationOptional<string>
 
   @Column({
     type: DataType.STRING,
@@ -61,7 +68,7 @@ export class Delegation extends Model {
     defaultValue: DEFAULT_DOMAIN,
   })
   @ForeignKey(() => Domain)
-  domainName!: string
+  domainName!: CreationOptional<string>
 
   get validTo(): Date | null | undefined {
     // 1. Find a value with null as validTo. Null means that delegation scope set valid not to a specific time period
@@ -85,13 +92,13 @@ export class Delegation extends Model {
   }
 
   @CreatedAt
-  readonly created!: Date
+  readonly created!: CreationOptional<Date>
 
   @UpdatedAt
   readonly modified?: Date
 
-  @HasMany(() => DelegationScope)
-  delegationScopes?: DelegationScope[]
+  @HasMany(() => DelegationScope, { onDelete: 'cascade' })
+  delegationScopes?: NonAttribute<DelegationScope[]>
 
   toDTO(): DelegationDTO {
     return {
@@ -107,6 +114,17 @@ export class Delegation extends Model {
       provider: DelegationProvider.Custom,
       type: DelegationType.Custom,
       domainName: this.domainName,
+    }
+  }
+
+  toMergedDTO(): MergedDelegationDTO {
+    return {
+      fromName: this.fromDisplayName,
+      fromNationalId: this.fromNationalId,
+      toNationalId: this.toNationalId,
+      toName: this.toName,
+      validTo: this.validTo,
+      types: [DelegationType.Custom],
     }
   }
 }

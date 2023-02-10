@@ -5,7 +5,7 @@ import {
   Inject,
   Param,
   Post,
-  Put,
+  Patch,
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
@@ -18,7 +18,13 @@ import {
   RolesRules,
 } from '@island.is/judicial-system/auth'
 
-import { prosecutorRule } from '../../guards'
+import {
+  judgeRule,
+  prosecutorRule,
+  registrarRule,
+  representativeRule,
+  assistantRule,
+} from '../../guards'
 import { CaseExistsGuard, CaseWriteGuard } from '../case'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
@@ -37,7 +43,7 @@ export class DefendantController {
   ) {}
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard)
-  @RolesRules(prosecutorRule)
+  @RolesRules(prosecutorRule, representativeRule)
   @Post()
   @ApiCreatedResponse({
     type: Defendant,
@@ -53,8 +59,14 @@ export class DefendantController {
   }
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard, DefendantExistsGuard)
-  @RolesRules(prosecutorRule)
-  @Put(':defendantId')
+  @RolesRules(
+    prosecutorRule,
+    representativeRule,
+    judgeRule,
+    registrarRule,
+    assistantRule,
+  )
+  @Patch(':defendantId')
   @ApiOkResponse({
     type: Defendant,
     description: 'Updates a defendant',
@@ -70,7 +82,7 @@ export class DefendantController {
   }
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard, DefendantExistsGuard)
-  @RolesRules(prosecutorRule)
+  @RolesRules(prosecutorRule, representativeRule)
   @Delete(':defendantId')
   @ApiOkResponse({ description: 'Deletes a defendant' })
   async delete(

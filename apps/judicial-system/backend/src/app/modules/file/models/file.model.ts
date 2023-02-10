@@ -119,4 +119,11 @@ export class CaseFile extends Model {
   })
   @ApiProperty()
   orderWithinChapter?: number
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  displayDate?: Date
 }

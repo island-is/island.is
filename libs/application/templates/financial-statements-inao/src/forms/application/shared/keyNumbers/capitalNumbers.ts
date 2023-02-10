@@ -12,7 +12,7 @@ export const capitalNumberSection = buildSubSection({
   children: [
     buildMultiField({
       id: 'capitalNumber',
-      title: m.capitalNumbers,
+      title: m.capitalNumbersSectionTitle,
       description: m.fillOutAppopriate,
       children: [
         buildCustomField({

@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 import {
+  AlertBanner,
   Box,
   GridColumn,
   GridContainer,
@@ -7,44 +8,52 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import debounce from 'lodash/debounce'
-import { Application } from '@island.is/application/types'
 import { useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
+import { FieldBaseProps } from '@island.is/application/types'
 import { InputController } from '@island.is/shared/form-fields'
 import { m } from '../../lib/messages'
 import { Total } from '../KeyNumbers'
 import {
+  VALIDATOR,
   CEMETRYEQUITIESANDLIABILITIESIDS,
   INPUTCHANGEINTERVAL,
   OPERATINGCOST,
+  CAPITALNUMBERS,
 } from '../../lib/constants'
 import { useTotals } from '../../hooks'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
+import { getTotal } from '../../lib/utils/helpers'
 
-export const CemetryEquities = ({
+export const CemetryEquities: FC<FieldBaseProps> = ({
   application,
-}: {
-  application: Application
+  setBeforeSubmitCallback,
 }): JSX.Element => {
   const answers = application.answers
   const { formatMessage } = useLocale()
-  const { setValue, clearErrors, errors } = useFormContext()
+  const {
+    clearErrors,
+    errors,
+    setValue,
+    getValues,
+    setError,
+  } = useFormContext()
 
-  const operatingCostTotal = getValueViaPath(
-    answers,
-    OPERATINGCOST.total,
-  ) as string
+  const operatingCostTotal = Number(
+    getValueViaPath(answers, OPERATINGCOST.total),
+  )
+
+  const capitalTotal = Number(getValueViaPath(answers, CAPITALNUMBERS.total))
 
   useEffect(() => {
-    setValue(
-      CEMETRYEQUITIESANDLIABILITIESIDS.operationResult,
-      operatingCostTotal,
-    )
-    setTotalOperatingCost(operatingCostTotal)
-  }, [operatingCostTotal, setValue])
+    const total = operatingCostTotal + capitalTotal
+    setValue(CEMETRYEQUITIESANDLIABILITIESIDS.operationResult, total)
+    setTotalOperatingCost(total)
+  }, [operatingCostTotal, capitalTotal, setValue])
 
-  const [totalOperatingCost, setTotalOperatingCost] = useState('0')
+  const [totalOperatingCost, setTotalOperatingCost] = useState(0)
   const [equityTotal, setEquityTotal] = useState(0)
+  const [equityAndDebts, setEquityAndDebts] = useState(0)
 
   const [getTotalAssets, totalAssets] = useTotals(
     CEMETRYEQUITIESANDLIABILITIESIDS.assetPrefix,
@@ -57,9 +66,38 @@ export const CemetryEquities = ({
   )
 
   useEffect(() => {
-    const total = totalEquity - totalLiabilities
-    setEquityTotal(total)
-  }, [totalLiabilities, totalEquity, totalOperatingCost])
+    setEquityTotal(totalEquity)
+  }, [totalEquity, totalOperatingCost])
+
+  useEffect(() => {
+    const total = totalEquity + totalLiabilities
+    setEquityAndDebts(total)
+  }, [totalEquity, totalLiabilities])
+
+  useEffect(() => {
+    clearErrors(VALIDATOR)
+  }, [totalEquity, totalLiabilities, totalAssets, clearErrors])
+
+  // we need to validate some info before allowing submission of the current screen data
+  // since we're comparing values from different objects, doing it via zod is not an option
+  setBeforeSubmitCallback &&
+    setBeforeSubmitCallback(async () => {
+      const values = getValues()
+      const assets = getTotal(values, 'cemetryAsset')
+      const liabilties = getTotal(values, 'cemetryLiability')
+      const equities = getTotal(values, 'cemetryEquity')
+
+      // assets should equal liabilties + equities
+      const isValid = liabilties + equities === assets
+      if (!isValid) {
+        setError(VALIDATOR, {
+          type: 'custom',
+          message: formatMessage(m.equityDebtsAssetsValidatorError),
+        })
+        return [false, formatMessage(m.equityDebtsAssetsValidatorError)]
+      }
+      return [true, null]
+    })
 
   return (
     <GridContainer>
@@ -85,6 +123,7 @@ export const CemetryEquities = ({
               }, INPUTCHANGEINTERVAL)}
               label={formatMessage(m.fixedAssetsTotal)}
               backgroundColor="blue"
+              rightAlign
               currency
             />
           </Box>
@@ -105,6 +144,7 @@ export const CemetryEquities = ({
                 )
               }
               backgroundColor="blue"
+              rightAlign
               currency
             />
           </Box>
@@ -116,7 +156,7 @@ export const CemetryEquities = ({
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Text paddingY={1} as="h2" variant="h4">
-            {formatMessage(m.debtsAndCash)}
+            {formatMessage(m.debtsAndEquity)}
           </Text>
           <Box paddingY={1}>
             <InputController
@@ -135,6 +175,7 @@ export const CemetryEquities = ({
               }
               label={formatMessage(m.longTerm)}
               backgroundColor="blue"
+              rightAlign
               currency
             />
           </Box>
@@ -155,6 +196,7 @@ export const CemetryEquities = ({
               }
               label={formatMessage(m.shortTerm)}
               backgroundColor="blue"
+              rightAlign
               currency
             />
           </Box>
@@ -163,7 +205,7 @@ export const CemetryEquities = ({
             total={totalLiabilities}
             label={formatMessage(m.totalDebts)}
           />
-          <Box paddingY={1}>
+          <Box paddingBottom={1} paddingTop={2}>
             <InputController
               id={
                 CEMETRYEQUITIESANDLIABILITIESIDS.equityAtTheBeginningOfTheYear
@@ -186,6 +228,7 @@ export const CemetryEquities = ({
               }
               label={formatMessage(m.equityAtTheBeginningOfTheYear)}
               backgroundColor="blue"
+              rightAlign
               currency
             />
           </Box>
@@ -210,6 +253,7 @@ export const CemetryEquities = ({
               }
               label={formatMessage(m.revaluationDueToPriceChanges)}
               backgroundColor="blue"
+              rightAlign
               currency
             />
           </Box>
@@ -230,6 +274,7 @@ export const CemetryEquities = ({
               }
               label={formatMessage(m.reevaluateOther)}
               backgroundColor="blue"
+              rightAlign
               currency
             />
           </Box>
@@ -247,6 +292,7 @@ export const CemetryEquities = ({
               }
               label={formatMessage(m.operationResult)}
               backgroundColor="blue"
+              rightAlign
               currency
             />
           </Box>
@@ -255,8 +301,24 @@ export const CemetryEquities = ({
             total={equityTotal}
             label={formatMessage(m.totalEquity)}
           />
+          <Box paddingY={1}>
+            <Total
+              name={CEMETRYEQUITIESANDLIABILITIESIDS.totalEquityAndLiabilities}
+              total={equityAndDebts}
+              label={formatMessage(m.debtsAndCash)}
+            />
+          </Box>
         </GridColumn>
       </GridRow>
+      {errors && errors.validator ? (
+        <Box paddingY={2}>
+          <AlertBanner
+            title={formatMessage(m.equityErrorTitle)}
+            description={formatMessage(m.equityDebtsAssetsValidatorError)}
+            variant="error"
+          />
+        </Box>
+      ) : null}
     </GridContainer>
   )
 }

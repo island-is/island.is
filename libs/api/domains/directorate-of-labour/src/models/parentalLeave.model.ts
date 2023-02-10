@@ -11,6 +11,10 @@ export class ParentalLeave {
   @Field(() => ID)
   applicationId!: string
 
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  applicationFundId?: string
+
   @Field(() => String)
   applicant!: string
 
@@ -55,4 +59,12 @@ export class ParentalLeave {
   @Field(() => String, { nullable: true })
   @IsOptional()
   testData?: string
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  type?: 'period' | 'documentPeriod' | 'document' | undefined
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  noOfChildren?: string
 }

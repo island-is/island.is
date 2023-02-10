@@ -1,7 +1,10 @@
 import React, { FC } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
-import { FieldBaseProps } from '@island.is/application/types'
+import {
+  ApplicationConfigurations,
+  FieldBaseProps,
+} from '@island.is/application/types'
 import { Box, Bullet, BulletList, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
@@ -11,17 +14,29 @@ import {
   otherParentApprovalDescription,
   requiresOtherParentApproval,
 } from '../../lib/parentalLeaveUtils'
-import { NO } from '../../constants'
+import { NO, PARENTAL_LEAVE, YES } from '../../constants'
 
 import * as styles from './ConclusionImageScreen.css'
 
 const ConclusionSectionImage: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
-  const { isSelfEmployed } = useApplicationAnswers(application)
-  const history = useHistory()
+  const {
+    isSelfEmployed,
+    applicationType,
+    isRecivingUnemploymentBenefits,
+  } = useApplicationAnswers(application)
+  const navigate = useNavigate()
   const steps = [formatMessage(parentalLeaveFormMessages.finalScreen.step3)]
 
-  if (isSelfEmployed === NO) {
+  // Added this check for applications that is in the db already
+  const oldApplication = applicationType === undefined
+  const isBeneficiaries = !oldApplication
+    ? applicationType === PARENTAL_LEAVE
+      ? isRecivingUnemploymentBenefits === YES
+      : false
+    : false
+
+  if (isSelfEmployed === NO && !isBeneficiaries) {
     steps.unshift(
       formatMessage(parentalLeaveFormMessages.reviewScreen.employerDesc),
     )
@@ -36,7 +51,11 @@ const ConclusionSectionImage: FC<FieldBaseProps> = ({ application }) => {
   }
 
   const handleRefresh = () => {
-    history.go(0)
+    navigate(`/${ApplicationConfigurations.ParentalLeave.slug}`)
+    navigate(
+      `/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`,
+    )
+    navigate(0)
   }
 
   return (

@@ -3,21 +3,16 @@ import { UseGuards } from '@nestjs/common'
 
 import type { User } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
-import {
-  FeatureFlag,
-  FeatureFlagGuard,
-  Features,
-} from '@island.is/nest/feature-flags'
 
 import { ApiScopesInput } from '../dto/apiScopes.input'
-import { ApiScopeServiceV1 } from '../services-v1/apiScope.service'
+import { ApiScopeService } from '../services/apiScope.service'
 import { ApiScope } from '../models/apiScope.model'
 import { ScopeTreeNode } from '../models/scopeTreeNode.model'
 
-@UseGuards(IdsUserGuard, FeatureFlagGuard)
+@UseGuards(IdsUserGuard)
 @Resolver(() => ApiScope)
 export class ApiScopeResolver {
-  constructor(private apiScope: ApiScopeServiceV1) {}
+  constructor(private apiScope: ApiScopeService) {}
 
   @Query(() => [ApiScope], {
     name: 'authApiScopes',
@@ -30,7 +25,6 @@ export class ApiScopeResolver {
     return this.apiScope.getApiScopes(user, input)
   }
 
-  @FeatureFlag(Features.outgoingDelegationsV2)
   @Query(() => [ScopeTreeNode], { name: 'authScopeTree' })
   getScopeTree(
     @CurrentUser() user: User,

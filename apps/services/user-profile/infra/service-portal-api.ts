@@ -10,6 +10,7 @@ export const serviceSetup = (): ServiceBuilder<'service-portal-api'> =>
         dev: 'https://beta.dev01.devland.is/minarsidur',
         staging: 'https://beta.staging01.devland.is/minarsidur',
         prod: 'https://island.is/minarsidur',
+        local: 'http://localhost:4200/minarsidur',
       },
       EMAIL_REGION: 'eu-west-1',
       IDENTITY_SERVER_ISSUER_URL: {
@@ -17,6 +18,7 @@ export const serviceSetup = (): ServiceBuilder<'service-portal-api'> =>
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      NO_UPDATE_NOTIFIER: 'true',
     })
     .secrets({
       NOVA_URL: '/k8s/service-portal-api/NOVA_URL',
@@ -30,6 +32,9 @@ export const serviceSetup = (): ServiceBuilder<'service-portal-api'> =>
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres: { passwordSecret: '/k8s/service-portal/api/DB_PASSWORD' },
+      envs: {
+        NO_UPDATE_NOTIFIER: 'true',
+      },
     })
     .liveness('/liveness')
     .readiness('/readiness')

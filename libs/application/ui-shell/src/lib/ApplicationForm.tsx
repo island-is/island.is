@@ -1,6 +1,5 @@
 import React, { FC, useEffect, useState, useCallback } from 'react'
 import { useQuery } from '@apollo/client'
-import * as Sentry from '@sentry/react'
 
 import { APPLICATION_APPLICATION } from '@island.is/application/graphql'
 import {
@@ -8,7 +7,13 @@ import {
   coreMessages,
   getTypeFromSlug,
 } from '@island.is/application/core'
-import { Application, Form, Schema } from '@island.is/application/types'
+import {
+  Application,
+  ApplicationConfigurations,
+  ApplicationTypes,
+  Form,
+  Schema,
+} from '@island.is/application/types'
 import {
   getApplicationTemplateByTypeId,
   getApplicationUIFields,
@@ -61,6 +66,11 @@ const ApplicationLoader: FC<{
 
   if (loading) {
     return <LoadingShell />
+  }
+
+  const currentTypeId: ApplicationTypes = application.typeId
+  if (ApplicationConfigurations[currentTypeId]?.slug !== slug) {
+    return <ErrorShell errorType="notExist" />
   }
 
   if (!applicationId || error) {
@@ -178,29 +188,13 @@ export const ApplicationForm: FC<{
   nationalRegistryId: string
   slug: string
 }> = ({ applicationId, nationalRegistryId, slug }) => {
-  const { formatMessage } = useLocale()
-
   return (
-    <Sentry.ErrorBoundary
-      beforeCapture={(scope) => {
-        scope.setTag('errorBoundaryLocation', 'ApplicationForm')
-        scope.setExtra('applicationId', applicationId)
-        scope.setExtra('nationalRegistryId', nationalRegistryId)
-      }}
-      fallback={
-        <ErrorShell
-          title={formatMessage(coreMessages.globalErrorTitle)}
-          subTitle={formatMessage(coreMessages.globalErrorMessage)}
-        />
-      }
-    >
-      <FieldProvider>
-        <ApplicationLoader
-          applicationId={applicationId}
-          nationalRegistryId={nationalRegistryId}
-          slug={slug}
-        />
-      </FieldProvider>
-    </Sentry.ErrorBoundary>
+    <FieldProvider>
+      <ApplicationLoader
+        applicationId={applicationId}
+        nationalRegistryId={nationalRegistryId}
+        slug={slug}
+      />
+    </FieldProvider>
   )
 }

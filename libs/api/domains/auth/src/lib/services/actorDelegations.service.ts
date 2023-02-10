@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common'
 
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
-  DelegationDTO,
   ActorDelegationsControllerFindAllDirectionEnum,
   ActorDelegationsApi,
   DelegationType,
-} from '@island.is/clients/auth-public-api'
+  MergedDelegationDTO,
+} from '@island.is/clients/auth/public-api'
 
 @Injectable()
 export class ActorDelegationsService {
@@ -19,9 +19,9 @@ export class ActorDelegationsService {
   getActorDelegations(
     user: User,
     delegationTypes?: DelegationType[],
-  ): Promise<DelegationDTO[]> {
+  ): Promise<MergedDelegationDTO[]> {
     return this.delegationsApiWithAuth(user).actorDelegationsControllerFindAll({
-      direction: ActorDelegationsControllerFindAllDirectionEnum.Incoming,
+      direction: ActorDelegationsControllerFindAllDirectionEnum.incoming,
       delegationTypes,
     })
   }

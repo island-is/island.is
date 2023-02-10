@@ -12,7 +12,7 @@ import {
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import { titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import type { User } from '@island.is/judicial-system/types'
+import { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import UserForm from '../UserForm/UserForm'
@@ -39,6 +39,7 @@ export const ChangeUser: React.FC = () => {
   )
 
   const {
+    courts,
     allCourts,
     prosecutorsOffices,
     prisonInstitutions,
@@ -81,6 +82,7 @@ export const ChangeUser: React.FC = () => {
       {userData?.user && institutionLoaded && (
         <UserForm
           user={userData?.user}
+          courts={courts}
           allCourts={allCourts}
           prosecutorsOffices={prosecutorsOffices}
           prisonInstitutions={prisonInstitutions}

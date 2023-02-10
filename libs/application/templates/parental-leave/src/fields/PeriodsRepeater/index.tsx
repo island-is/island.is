@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react'
-import { useMutation } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { RepeaterProps, FieldBaseProps } from '@island.is/application/types'
@@ -24,11 +24,13 @@ import {
   getAvailableRightsInDays,
   getExpectedDateOfBirth,
   getApplicationAnswers,
+  synchronizeVMSTPeriods,
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { States } from '../../constants'
 import { useDaysAlreadyUsed } from '../../hooks/useDaysAlreadyUsed'
 import { useRemainingRights } from '../../hooks/useRemainingRights'
+import { GetApplicationInformation } from '../../graphql/queries'
 
 type FieldProps = FieldBaseProps & {
   field?: {
@@ -53,6 +55,9 @@ const PeriodsRepeater: FC<ScreenProps> = ({
     application.state === States.DRAFT ||
     application.state === States.EDIT_OR_ADD_PERIODS
 
+  // Need to be consider again when applicant could change basic information
+  const shouldCall = application.state === States.EDIT_OR_ADD_PERIODS
+
   const showDescription = field?.props?.showDescription ?? true
   const dob = getExpectedDateOfBirth(application)
   const { formatMessage, locale } = useLocale()
@@ -60,6 +65,26 @@ const PeriodsRepeater: FC<ScreenProps> = ({
   const daysAlreadyUsed = useDaysAlreadyUsed(application)
   const remainingRights = useRemainingRights(application)
   const { rawPeriods, periods } = getApplicationAnswers(application.answers)
+  const { data, loading } = useQuery(GetApplicationInformation, {
+    variables: {
+      applicationId: application.id,
+      nationalId: application.applicant,
+      shouldNotCall: !shouldCall,
+    },
+  })
+
+  useEffect(() => {
+    if (loading) {
+      return
+    }
+    synchronizeVMSTPeriods(
+      data,
+      rights,
+      periods,
+      setRepeaterItems,
+      setFieldLoadingState,
+    )
+  }, [loading])
 
   useEffect(() => {
     if (!editable) {

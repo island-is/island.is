@@ -22,6 +22,7 @@ if (userMocked) {
       ApiScope.financeOverview,
       ApiScope.financeSalary,
       ApiScope.internal,
+      ApiScope.licenses,
       ApiScope.meDetails,
     ],
   })
@@ -54,6 +55,7 @@ if (userMocked) {
       ApiScope.financeSalary,
       ApiScope.financeSchedule,
       ApiScope.internal,
+      ApiScope.internalProcuring,
       ApiScope.meDetails,
       ApiScope.licenses,
       ApiScope.licensesVerify,

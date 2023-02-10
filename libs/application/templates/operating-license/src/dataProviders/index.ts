@@ -1,2 +1,24 @@
-export { UserProfileProvider } from '@island.is/application/data-providers'
-export { FeeInfoProvider } from './FeeInfoProvider'
+import {
+  defineTemplateApi,
+  PaymentCatalogApi,
+} from '@island.is/application/types'
+import { SYSLUMADUR_NATIONAL_ID } from '../lib/constants'
+
+export { UserProfileApi } from '@island.is/application/types'
+
+export const CriminalRecordApi = defineTemplateApi({
+  action: 'criminalRecord',
+  externalDataId: 'criminalRecord',
+})
+
+export const NoDebtCertificateApi = defineTemplateApi({
+  action: 'debtLessCertificate',
+  externalDataId: 'debtStatus',
+})
+
+export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
+  params: {
+    organizationId: SYSLUMADUR_NATIONAL_ID,
+  },
+  externalDataId: 'payment',
+})

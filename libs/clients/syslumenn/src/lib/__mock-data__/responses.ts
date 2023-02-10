@@ -46,6 +46,7 @@ export const SYSLUMENN_AUCTION = [
     andlagHeiti: 'string',
     gerdarbeidendur: 'string',
     gerdartholar: 'string',
+    auglysingatexti: 'string',
     lausafjarmunir: 'string',
   },
 ] as Uppbod[]
@@ -84,6 +85,8 @@ export const OPERATING_LICENSE = [
     afgrAfgengisAdfaranottFridagaUtiveitingar: 'string',
   },
 ] as VirkLeyfi[]
+
+export const OPERATING_LICENSES_CSV = 'a,b\r\nx,y\r\nz,i'
 
 export const OPERATING_LICENSE_PAGINATION_INFO_SERVICE_RES = {
   PageSize: 10,

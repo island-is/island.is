@@ -19,9 +19,9 @@ import {
   Client,
   ClientAllowedScope,
   DelegationConfig,
-  DelegationsService,
   Domain,
   Language,
+  NamesService,
   SequelizeConfigService,
 } from '@island.is/auth-api-lib'
 
@@ -32,11 +32,15 @@ import {
   RskProcuringClientMock,
   FeatureFlagServiceMock,
 } from './mocks'
-import { createApiScope, createApiScopeGroup, CreateClient } from './fixtures'
 import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { ConfigType } from '@island.is/nest/config'
-import { createDomain } from './fixtures/domain.fixture'
+import {
+  createDomain,
+  createApiScopeGroup,
+  createApiScope,
+  CreateClient,
+} from '@island.is/services/auth/testing'
 
 export interface ScopeSetupOptions {
   name: string
@@ -116,6 +120,7 @@ const delegationConfig: ConfigType<typeof DelegationConfig> = {
     },
   ],
   userInfoUrl: 'https://localhost:6001/connect/userinfo',
+  defaultValidityPeriodInDays: 365,
 }
 
 export const setupWithAuth = async ({
@@ -200,7 +205,7 @@ export const setupWithAuth = async ({
   jest
     .spyOn(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      app.get<DelegationsService>(DelegationsService) as any,
+      app.get<NamesService>(NamesService) as any,
       'getUserName',
     )
     .mockImplementation(() => userName)
@@ -208,24 +213,19 @@ export const setupWithAuth = async ({
   return app
 }
 
-export const setupWithoutAuth = async (): Promise<TestApp> => {
-  const app = await testServer({
+export const setupWithoutAuth = async (): Promise<TestApp> =>
+  testServer({
     appModule: AppModule,
     hooks: [useDatabase({ type: 'sqlite', provider: SequelizeConfigService })],
   })
 
-  return app
-}
-
 export const setupWithoutPermission = async (): Promise<TestApp> => {
   const user = createCurrentUser()
-  const app = await testServer({
+  return testServer({
     appModule: AppModule,
     hooks: [
       useAuth({ auth: user }),
       useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
     ],
   })
-
-  return app
 }

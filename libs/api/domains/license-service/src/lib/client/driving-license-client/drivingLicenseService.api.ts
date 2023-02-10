@@ -20,10 +20,11 @@ import {
   PkPassVerification,
   PkPassVerificationError,
 } from '../../licenceService.type'
-import { DriversLicenseConfig } from '../../licenseService.module'
 import { PkPassClient } from './pkpass.client'
 import { PkPassPayload } from './pkpass.type'
 import { Locale } from '@island.is/shared/types'
+import { GenericDrivingLicenseConfig } from './genericDrivingLicense.config'
+import { ConfigType, XRoadConfig } from '@island.is/nest/config'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'drivinglicense-service'
@@ -56,12 +57,14 @@ export class GenericDrivingLicenseApi
 
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private config: DriversLicenseConfig,
+    @Inject(XRoadConfig.KEY)
+    private xroadConfig: ConfigType<typeof XRoadConfig>,
+    private config: ConfigType<typeof GenericDrivingLicenseConfig>,
     private cacheManager?: CacheManager | null,
   ) {
     // TODO inject the actual RLS x-road client
-    this.xroadApiUrl = config.xroad.baseUrl
-    this.xroadClientId = config.xroad.clientId
+    this.xroadApiUrl = xroadConfig.xRoadBasePath
+    this.xroadClientId = xroadConfig.xRoadClient
     this.xroadPath = config.xroad.path
     this.xroadSecret = config.xroad.secret
 
@@ -226,6 +229,26 @@ export class GenericDrivingLicenseApi
     return GenericUserLicensePkPassStatus.Available
   }
 
+  /**
+   * Notify RLS about the creation of a pkpass.
+   * @param nationalId National id of the user that created the pkpass.
+   */
+  private async notifyPkPassCreated(nationalId: string) {
+    try {
+      await fetch(`${this.xroadApiUrl}/api/Okuskirteini/${nationalId}`, {
+        method: 'POST',
+        headers: this.headers(),
+      })
+    } catch (e) {
+      this.logger.info('Unable to notify RLS of pkpass creation', {
+        exception: e,
+        exceptionMessage: e.message,
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
+  }
+
   async getPkPassUrlByNationalId(nationalId: string): Promise<string | null> {
     const licenses = await this.requestFromXroadApi(nationalId)
 
@@ -248,7 +271,13 @@ export class GenericDrivingLicenseApi
 
     const payload = this.drivingLicenseToPkpassPayload(license)
 
-    return this.pkpassClient.getPkPassUrl(payload)
+    const pkPassUrl = await this.pkpassClient.getPkPassUrl(payload)
+
+    if (pkPassUrl) {
+      this.notifyPkPassCreated(nationalId)
+    }
+
+    return pkPassUrl
   }
 
   async getPkPassUrl(user: User): Promise<string | null> {
@@ -279,7 +308,13 @@ export class GenericDrivingLicenseApi
 
     const payload = this.drivingLicenseToPkpassPayload(license)
 
-    return this.pkpassClient.getPkPassQRCode(payload)
+    const qrCode = await this.pkpassClient.getPkPassQRCode(payload)
+
+    if (qrCode) {
+      this.notifyPkPassCreated(nationalId)
+    }
+
+    return qrCode
   }
 
   async getPkPassQRCode(user: User): Promise<string | null> {

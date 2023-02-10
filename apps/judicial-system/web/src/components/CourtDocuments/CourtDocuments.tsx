@@ -12,11 +12,15 @@ import Select, {
 } from 'react-select'
 
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
-import { Case, CourtDocument, UserRole } from '@island.is/judicial-system/types'
 import { core, courtDocuments } from '@island.is/judicial-system-web/messages'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import {
+  TempCase as Case,
+  ReactSelectOption,
+  CourtDocument,
+} from '@island.is/judicial-system-web/src/types'
 import { formatRequestCaseType } from '@island.is/judicial-system/formatters'
 import { theme } from '@island.is/island-ui/theme'
+import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import MultipleValueList from '../MultipleValueList/MultipleValueList'
 import { useCase } from '../../utils/hooks'
@@ -30,22 +34,22 @@ interface Props {
 const CourtDocuments: FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
-  const { setAndSendToServer } = useCase()
+  const { setAndSendCaseToServer } = useCase()
   const [submittedByMenuIsOpen, setSubmittedByMenuIsOpen] = useState<boolean>(
     false,
   )
 
   const whoFiledOptions = [
     {
-      value: UserRole.PROSECUTOR,
+      value: UserRole.Prosecutor,
       label: formatMessage(courtDocuments.whoFiled.prosecutor),
     },
     {
-      value: UserRole.DEFENDER,
+      value: UserRole.Defender,
       label: formatMessage(courtDocuments.whoFiled.defendant),
     },
     {
-      value: UserRole.JUDGE,
+      value: UserRole.Judge,
       label: formatMessage(courtDocuments.whoFiled.court),
     },
   ]
@@ -81,7 +85,9 @@ const CourtDocuments: FC<Props> = (props) => {
 
   const ValueContainer = (props: ValueContainerProps<ReactSelectOption>) => (
     <components.ValueContainer {...props}>
-      <Text fontWeight="light">{props.children}</Text>
+      <Text as="span" fontWeight="light">
+        {props.children}
+      </Text>
     </components.ValueContainer>
   )
 
@@ -110,7 +116,7 @@ const CourtDocuments: FC<Props> = (props) => {
       return doc.name !== name
     })
 
-    setAndSendToServer(
+    setAndSendCaseToServer(
       [{ courtDocuments: updatedCourtDocuments, force: true }],
       workingCase,
       setWorkingCase,
@@ -123,7 +129,7 @@ const CourtDocuments: FC<Props> = (props) => {
       { name: document } as CourtDocument,
     ]
 
-    setAndSendToServer(
+    setAndSendCaseToServer(
       [{ courtDocuments: updatedCourtDocuments, force: true }],
       workingCase,
       setWorkingCase,
@@ -135,7 +141,7 @@ const CourtDocuments: FC<Props> = (props) => {
       idx === index ? ({ name: doc.name, submittedBy } as CourtDocument) : doc,
     )
 
-    setAndSendToServer(
+    setAndSendCaseToServer(
       [
         {
           courtDocuments: updatedCourtDocuments,

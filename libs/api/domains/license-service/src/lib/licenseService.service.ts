@@ -20,12 +20,12 @@ import {
   PkPassVerification,
   GenericUserLicensePkPassStatus,
   GenericLicenseOrganizationSlug,
-  CONFIG_PROVIDER_V2,
   GenericLicenseLabels,
+  CONFIG_PROVIDER,
 } from './licenceService.type'
+import type { PassTemplateIds } from './licenceService.type'
 import { Locale } from '@island.is/shared/types'
 import { AVAILABLE_LICENSES } from './licenseService.module'
-import type { LicenseServiceConfigV2 } from './licenseService.module'
 import { FetchError } from '@island.is/clients/middlewares'
 
 const CACHE_KEY = 'licenseService'
@@ -47,7 +47,7 @@ export class LicenseServiceService {
     ) => Promise<GenericLicenseClient<unknown> | null>,
     @Inject(CACHE_MANAGER) private cacheManager: CacheManager,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    @Inject(CONFIG_PROVIDER_V2) private config: LicenseServiceConfigV2,
+    @Inject(CONFIG_PROVIDER) private config: PassTemplateIds,
     private readonly cmsContentfulService: CmsContentfulService,
   ) {}
 
@@ -185,7 +185,7 @@ export class LicenseServiceService {
   ): Promise<GenericUserLicense[]> {
     const licenses: GenericUserLicense[] = []
 
-    for (const license of AVAILABLE_LICENSES) {
+    for await (const license of AVAILABLE_LICENSES) {
       if (excludedTypes && excludedTypes.indexOf(license.type) >= 0) {
         continue
       }
@@ -422,7 +422,7 @@ export class LicenseServiceService {
   ): GenericLicenseType | null {
     for (const [key, value] of Object.entries(this.config)) {
       // some license Config id === barcode id
-      if (value.passTemplateId === passTemplateId) {
+      if (value === passTemplateId) {
         // firearmLicense => FirearmLicense
         const keyAsEnumKey = key.slice(0, 1).toUpperCase() + key.slice(1)
 

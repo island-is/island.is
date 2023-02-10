@@ -15,6 +15,7 @@ import {
   DefaultEvents,
   Application,
 } from '@island.is/application/types'
+import { formConclusionSection } from '@island.is/application/ui-forms'
 import {
   section,
   application,
@@ -30,7 +31,7 @@ import { YES } from '../shared/constants'
 export const LoginServiceForm: Form = buildForm({
   id: 'LoginServiceForm',
   title: application.name,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'terms',
@@ -266,16 +267,10 @@ export const LoginServiceForm: Form = buildForm({
         }),
       ],
     }),
-    buildSection({
-      id: 'submitted',
-      title: section.submitted,
-      children: [
-        buildCustomField({
-          id: 'submittedCustomField',
-          title: submitted.general.pageTitle,
-          component: 'Submitted',
-        }),
-      ],
+    formConclusionSection({
+      alertTitle: submitted.general.pageTitle,
+      expandableHeader: submitted.general.expandableTitle,
+      expandableDescription: submitted.labels.desceriptionBulletPoints,
     }),
   ],
 })

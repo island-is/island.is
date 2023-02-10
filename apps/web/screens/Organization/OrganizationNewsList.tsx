@@ -6,6 +6,10 @@ import {
 } from '@island.is/web/components'
 import { NewsListSidebar } from '@island.is/web/components'
 import {
+  GetContentSlugQuery,
+  GetContentSlugQueryVariables,
+  GetGenericTagBySlugQuery,
+  GetGenericTagBySlugQueryVariables,
   GetNamespaceQuery,
   GetNewsDatesQuery,
   GetNewsQuery,
@@ -20,18 +24,20 @@ import { linkResolver, useNamespaceStrict } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import { withMainLayout } from '@island.is/web/layouts/main'
+import { LayoutProps, withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { Locale } from 'locale'
 import capitalize from 'lodash/capitalize'
 import { useRouter } from 'next/router'
 import {
+  GET_CONTENT_SLUG,
   GET_NAMESPACE_QUERY,
   GET_NEWS_DATES_QUERY,
   GET_NEWS_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
 } from '../queries'
+import { GET_GENERIC_TAG_BY_SLUG_QUERY } from '../queries/GenericTag'
 
 const PERPAGE = 10
 
@@ -91,7 +97,7 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
 
   const currentNavItem =
     organizationPage.menuLinks.find(
-      ({ primaryLink }) => primaryLink.url === baseRouterPath,
+      ({ primaryLink }) => primaryLink?.url === baseRouterPath,
     )?.primaryLink ??
     organizationPage.secondaryMenu?.childrenLinks.find(
       ({ url }) => url === baseRouterPath,
@@ -131,10 +137,10 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink.text,
-      href: primaryLink.url,
+      title: primaryLink?.text,
+      href: primaryLink?.url,
       active:
-        primaryLink.url === baseRouterPath ||
+        primaryLink?.url === baseRouterPath ||
         childrenLinks.some((link) => link.url === baseRouterPath),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
@@ -148,6 +154,7 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
     <OrganizationWrapper
       pageTitle={newsTitle}
       organizationPage={organizationPage}
+      showReadSpeaker={false}
       breadcrumbItems={breadCrumbs}
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
@@ -244,6 +251,7 @@ OrganizationNewsList.getInitialProps = async ({
         getNews: { items: newsList, total },
       },
     },
+    genericTagResponse,
     namespace,
   ] = await Promise.all([
     apolloClient.query<GetNewsDatesQuery, QueryGetNewsDatesArgs>({
@@ -268,6 +276,20 @@ OrganizationNewsList.getInitialProps = async ({
         },
       },
     }),
+    query.tag
+      ? apolloClient.query<
+          GetGenericTagBySlugQuery,
+          GetGenericTagBySlugQueryVariables
+        >({
+          query: GET_GENERIC_TAG_BY_SLUG_QUERY,
+          variables: {
+            input: {
+              lang: locale as Locale,
+              slug: query.tag as string,
+            },
+          },
+        })
+      : null,
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -284,6 +306,37 @@ OrganizationNewsList.getInitialProps = async ({
       }),
   ])
 
+  const genericTag = genericTagResponse?.data?.getGenericTagBySlug
+
+  const languageToggleQueryParams: LayoutProps['languageToggleQueryParams'] = {
+    en: {},
+    is: {},
+    [locale as Locale]: genericTag?.slug ? { tag: genericTag.slug } : {},
+  }
+
+  if (genericTag?.id) {
+    const contentSlugResponse = await apolloClient.query<
+      GetContentSlugQuery,
+      GetContentSlugQueryVariables
+    >({
+      query: GET_CONTENT_SLUG,
+      variables: {
+        input: {
+          id: genericTag.id,
+        },
+      },
+    })
+
+    const slugs = contentSlugResponse?.data?.getContentSlug?.slug ?? {
+      en: '',
+      is: '',
+    }
+
+    for (const lang of Object.keys(slugs)) {
+      languageToggleQueryParams[lang as Locale] = { tag: slugs[lang] }
+    }
+  }
+
   return {
     organizationPage,
     newsList: organizationPage?.newsTag ? newsList : [],
@@ -295,6 +348,7 @@ OrganizationNewsList.getInitialProps = async ({
     selectedPage,
     namespace,
     locale: locale as Locale,
+    languageToggleQueryParams,
     ...getThemeConfig(organizationPage.theme, organizationPage.slug),
   }
 }

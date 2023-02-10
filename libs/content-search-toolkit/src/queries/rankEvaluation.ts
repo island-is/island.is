@@ -26,7 +26,11 @@ export const rankEvaluationQuery = ({
       {
         id: 'search_query',
         template: {
-          source: searchQuery({ queryString: '{{query_string}}' }, false),
+          source: searchQuery(
+            { queryString: '{{query_string}}' },
+            false,
+            false,
+          ),
         },
       },
     ],

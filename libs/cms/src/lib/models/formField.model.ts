@@ -10,11 +10,24 @@ export class FormField {
   @Field()
   title!: string
 
+  @Field({ nullable: true })
+  name?: string
+
   @Field()
   placeholder!: string
 
   @Field()
-  type!: 'input' | 'text' | 'dropdown' | 'radio' | 'acceptTerms'
+  type!:
+    | 'input'
+    | 'text'
+    | 'dropdown'
+    | 'radio'
+    | 'acceptTerms'
+    | 'email'
+    | 'checkboxes'
+    | 'file'
+    | 'nationalId (kennitala)'
+    | 'information'
 
   @Field()
   required!: boolean
@@ -24,14 +37,19 @@ export class FormField {
 
   @Field(() => graphqlTypeJson, { nullable: true })
   emailConfig?: Record<string, string>
+
+  @Field(() => String, { nullable: true })
+  informationText?: string
 }
 
 export const mapFormField = ({ sys, fields }: IFormField): FormField => ({
   id: sys.id,
   title: fields.title ?? '',
+  name: fields.name ?? '',
   placeholder: fields.placeholder ?? '',
   type: fields.type ?? 'input',
   required: fields.required ?? false,
   options: fields.options ?? [],
   emailConfig: fields.emailConfig ?? {},
+  informationText: fields.informationText ?? '',
 })

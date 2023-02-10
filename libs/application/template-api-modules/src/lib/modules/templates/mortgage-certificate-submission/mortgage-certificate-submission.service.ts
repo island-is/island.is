@@ -11,32 +11,38 @@ import {
 } from '@island.is/clients/syslumenn'
 import { generateSyslumennNotifyErrorEmail } from './emailGenerators/syslumennNotifyError'
 import { generateSyslumennSubmitRequestErrorEmail } from './emailGenerators/syslumennSubmitRequestError'
-import { Application } from '@island.is/application/types'
+import { Application, ApplicationTypes } from '@island.is/application/types'
 import {
-  NationalRegistry,
+  Identity,
   UserProfile,
   SubmitRequestToSyslumennResult,
   ValidateMortgageCertificateResult,
 } from './types'
 import { ChargeItemCode } from '@island.is/shared/constants'
+import { BaseTemplateApiService } from '../../base-template-api.service'
 
 @Injectable()
-export class MortgageCertificateSubmissionService {
+export class MortgageCertificateSubmissionService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly mortgageCertificateService: MortgageCertificateService,
     private readonly syslumennService: SyslumennService,
-  ) {}
+  ) {
+    super(ApplicationTypes.MORTGAGE_CERTIFICATE)
+  }
 
   async createCharge({
     application: { id },
     auth,
   }: TemplateApiModuleActionProps) {
     try {
+      const SYSLUMADUR_NATIONAL_ID = '6509142520'
+
       const result = this.sharedTemplateAPIService.createCharge(
-        auth.authorization,
+        auth,
         id,
-        ChargeItemCode.MORTGAGE_CERTIFICATE,
+        SYSLUMADUR_NATIONAL_ID,
+        [ChargeItemCode.MORTGAGE_CERTIFICATE],
       )
       return result
     } catch (exeption) {
@@ -57,7 +63,7 @@ export class MortgageCertificateSubmissionService {
     const isPayment:
       | { fulfilled: boolean }
       | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
+      auth,
       application.id,
     )
 
@@ -128,19 +134,18 @@ export class MortgageCertificateSubmissionService {
     const { propertyNumber } = application.answers.selectProperty as {
       propertyNumber: string
     }
-    const nationalRegistryData = application.externalData.nationalRegistry
-      ?.data as NationalRegistry
+    const identityData = application.externalData.identity?.data as Identity
     const userProfileData = application.externalData.userProfile
       ?.data as UserProfile
 
     const person: Person = {
-      name: nationalRegistryData?.fullName,
-      ssn: nationalRegistryData?.nationalId,
+      name: identityData?.name,
+      ssn: identityData?.nationalId,
       phoneNumber: userProfileData?.mobilePhoneNumber,
       email: userProfileData?.email,
-      homeAddress: nationalRegistryData?.address.streetAddress,
-      postalCode: nationalRegistryData?.address.postalCode,
-      city: nationalRegistryData?.address.city,
+      homeAddress: identityData?.address?.streetAddress || '',
+      postalCode: identityData?.address?.postalCode || '',
+      city: identityData?.address?.city || '',
       signed: true,
       type: PersonType.MortgageCertificateApplicant,
     }
@@ -149,7 +154,7 @@ export class MortgageCertificateSubmissionService {
     const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
     const attachments: Attachment[] = [
       {
-        name: `vedbokarvottord_${nationalRegistryData?.nationalId}_${dateStr}.pdf`,
+        name: `vedbokarvottord_${identityData?.nationalId}_${dateStr}.pdf`,
         content: document.contentBase64,
       },
     ]
@@ -178,19 +183,18 @@ export class MortgageCertificateSubmissionService {
     const { propertyNumber } = application.answers.selectProperty as {
       propertyNumber: string
     }
-    const nationalRegistryData = application.externalData.nationalRegistry
-      ?.data as NationalRegistry
+    const identityData = application.externalData.identity?.data as Identity
     const userProfileData = application.externalData.userProfile
       ?.data as UserProfile
 
     const person: Person = {
-      name: nationalRegistryData?.fullName,
-      ssn: nationalRegistryData?.nationalId,
+      name: identityData?.name,
+      ssn: identityData?.nationalId,
       phoneNumber: userProfileData?.mobilePhoneNumber,
       email: userProfileData?.email,
-      homeAddress: nationalRegistryData?.address.streetAddress,
-      postalCode: nationalRegistryData?.address.postalCode,
-      city: nationalRegistryData?.address.city,
+      homeAddress: identityData?.address?.streetAddress || '',
+      postalCode: identityData?.address?.postalCode || '',
+      city: identityData?.address?.city || '',
       signed: true,
       type: PersonType.MortgageCertificateApplicant,
     }

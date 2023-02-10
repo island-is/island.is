@@ -12,17 +12,21 @@ import { clientInfoSection } from './shared/about/clientInfoSection'
 import { m } from '../../lib/messages'
 import { overviewSection } from './shared/overviewSection'
 import { Logo } from '../../components'
-import { USERTYPE, LESS } from '../../lib/constants'
 import { cemetryKeyNumbersSection } from './cemetry/cemetryKeyNumbers'
 import { partyKeyNumbersSection } from './party/partyKeyNumbers'
 import { individualKeyNumbersSection } from './individual/individualKeyNumbers'
 import { electionInfoSection } from './shared/electionInfo/electionInfo'
 import { sectionCemetryCaretaker } from './cemetry/sectionCemetryCaretaker'
-import { fakeDataSection } from '../prerequisites/fakeDataSection'
 import {
   currencyStringToNumber,
   getCurrentUserType,
 } from '../../lib/utils/helpers'
+import {
+  CurrentUserTypeProvider,
+  IndentityApiProvider,
+  UserProfileApi,
+} from '../../dataProviders'
+import { FSIUSERTYPE, LESS } from '../../types'
 
 export const getApplication = (allowFakeData = false): Form => {
   return buildForm({
@@ -30,36 +34,32 @@ export const getApplication = (allowFakeData = false): Form => {
     title: '',
     renderLastScreenButton: false,
     renderLastScreenBackButton: false,
-    mode: FormModes.APPLYING,
+    mode: FormModes.DRAFT,
     logo: Logo,
     children: [
       buildSection({
-        id: 'conditions',
+        id: 'ExternalDataSection',
         title: m.dataCollectionTitle,
         children: [
-          ...(allowFakeData ? [fakeDataSection] : []),
           buildExternalDataProvider({
             id: 'approveExternalData',
             title: m.dataCollectionTitle,
             checkboxLabel: m.dataCollectionCheckboxLabel,
             dataProviders: [
               buildDataProviderItem({
-                id: 'nationalRegistry',
-                type: 'NationalRegistryProvider',
+                provider: IndentityApiProvider,
                 title: m.dataCollectionNationalRegistryTitle,
                 subTitle: m.dataCollectionNationalRegistrySubtitle,
               }),
               buildDataProviderItem({
-                id: 'userProfile',
-                type: 'UserProfileProvider',
+                provider: UserProfileApi,
                 title: m.dataCollectionUserProfileTitle,
                 subTitle: m.dataCollectionUserProfileSubtitle,
               }),
               buildDataProviderItem({
-                id: 'currentUserType',
-                type: 'CurrentUserTypeProvider',
-                title: '',
-                subTitle: '',
+                provider: CurrentUserTypeProvider,
+                title: m.dataCollectionUserFinancialInfoTitle,
+                subTitle: m.dataCollectionUserFinancialInfo,
               }),
             ],
           }),
@@ -80,27 +80,26 @@ export const getApplication = (allowFakeData = false): Form => {
         },
         children: [
           buildFileUploadField({
-            id: 'attachment.file',
+            id: 'attachments.file',
             title: m.upload,
             condition: (answers, externalData) => {
               const userType = getCurrentUserType(answers, externalData)
               const applicationAnswers = answers as FinancialStatementsInao
               const careTakerLimit =
                 applicationAnswers.cemetryOperation?.incomeLimit ?? '0'
-              const currentAssets =
+              const fixedAssetsTotal =
                 applicationAnswers.cemetryAsset?.fixedAssetsTotal
-              const isCemetry = userType === USERTYPE.CEMETRY
+              const isCemetry = userType === FSIUSERTYPE.CEMETRY
               const totalIncome = isCemetry
-                ? applicationAnswers.operatingCost?.total
+                ? applicationAnswers.cemetryIncome?.total
                 : '0'
               const longTermDebt = applicationAnswers.cemetryLiability?.longTerm
               const isUnderLimit =
                 currencyStringToNumber(totalIncome) < careTakerLimit
-
               if (
                 isCemetry &&
                 isUnderLimit &&
-                currentAssets === '0' &&
+                fixedAssetsTotal === '0' &&
                 longTermDebt === '0'
               ) {
                 return false

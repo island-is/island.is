@@ -9,9 +9,10 @@ import {
   AdiliTegund,
   VedbandayfirlitReguverkiSvarSkeyti,
   SkraningaradiliDanarbusSkeyti,
-  SvarSkeytiFromJSON,
   TegundAndlags,
   AdiliDanarbus,
+  DanarbuUppl,
+  EignirDanarbus,
   Fasteignasalar,
   Logmenn,
 } from '../../gen/fetch'
@@ -33,10 +34,18 @@ import {
   EstateMember,
   EstateAsset,
   EstateRegistrant,
+  EstateInfo,
   RealEstateAgent,
   Lawyer,
+  OperatingLicensesCSV,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
+
+export const cleanPropertyNumber = (propertyNumber: string): string => {
+  return propertyNumber[0] == 'F'
+    ? propertyNumber.substring(1, propertyNumber.length)
+    : propertyNumber
+}
 
 export const mapDistrictCommissionersAgenciesResponse = (
   response: EmbaettiOgStarfsstodvar,
@@ -96,6 +105,7 @@ export const mapSyslumennAuction = (auction: Uppbod): SyslumennAuction => ({
   auctionTime: auction.klukkan ?? '',
   petitioners: auction.gerdarbeidendur ?? '',
   respondent: auction.gerdartholar ?? '',
+  publishText: auction.auglysingatexti ?? '',
   auctionTakesPlaceAt: auction.uppbodStadur ?? '',
 })
 
@@ -163,6 +173,12 @@ export const mapPaginatedOperatingLicenses = (
   paginationInfo: mapPaginationInfo(paginationInfoHeaderJSON),
   searchQuery: searchQuery,
   results: (results ?? []).map(mapOperatingLicense),
+})
+
+export const mapOperatingLicensesCSV = (
+  responseStringCSV: string,
+): OperatingLicensesCSV => ({
+  value: responseStringCSV,
 })
 
 export function constructUploadDataObject(
@@ -235,7 +251,7 @@ export const estateMemberMapper = (estateRaw: AdiliDanarbus): EstateMember => {
   }
 }
 
-export const assetMapper = (assetRaw: any): EstateAsset => {
+export const assetMapper = (assetRaw: EignirDanarbus): EstateAsset => {
   return {
     description: assetRaw.lysing ?? '',
     assetNumber: assetRaw.fastanumer ?? '',
@@ -249,12 +265,16 @@ export const mapEstateRegistrant = (
   return {
     applicantEmail: syslaData.tolvuposturSkreningaradila ?? '',
     applicantPhone: syslaData.simiSkraningaradila ?? '',
-    knowledgeOfOtherWills: syslaData.vitneskjaUmAdraErfdaskra ? 'yes' : 'no',
+    knowledgeOfOtherWills: syslaData.vitneskjaUmAdraErfdaskra ? 'Yes' : 'No',
     districtCommissionerHasWill: syslaData.erfdaskraIVorsluSyslumanns ?? false,
     assets: syslaData.eignir
       ? syslaData.eignir
-          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_0)
-          .filter((a) => a?.fastanumer && /^[fF]{0,1}\d{7}$/.test(a.fastanumer))
+          .filter(
+            (a) =>
+              a.tegundAngalgs === TegundAndlags.NUMBER_0 &&
+              a?.fastanumer &&
+              /^[fF]{0,1}\d{7}$/.test(a.fastanumer),
+          )
           .map(assetMapper)
       : [],
     vehicles: syslaData.eignir
@@ -291,5 +311,54 @@ export const mapEstateRegistrant = (
     occupationRightViaCondominium:
       syslaData.buseturetturVegnaKaupleiguIbuda ?? false,
     bankStockOrShares: syslaData.bankareikningarVerdbrefEdaHlutabref ?? false,
+  }
+}
+
+// TODO: get updated types into the client
+export const mapEstateInfo = (syslaData: DanarbuUppl): EstateInfo => {
+  return {
+    assets: syslaData.eignir
+      ? syslaData.eignir
+          .filter(
+            (a) =>
+              a.tegundAngalgs === TegundAndlags.NUMBER_0 &&
+              a?.tegundAngalgs &&
+              /^[fF]{0,1}\d{7}$/.test(a.fastanumer ?? ''),
+          )
+          .map(assetMapper)
+      : [],
+    vehicles: syslaData.eignir
+      ? syslaData.eignir
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_1)
+          .map(assetMapper)
+      : [],
+    ships: syslaData.eignir
+      ? syslaData.eignir
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_2)
+          .map(assetMapper)
+      : [],
+    cash: syslaData.eignir
+      ? syslaData.eignir
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_3)
+          .map(assetMapper)
+      : [],
+    flyers: syslaData.eignir
+      ? syslaData.eignir
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_4)
+          .map(assetMapper)
+      : [],
+    estateMembers: syslaData.erfingar
+      ? syslaData.erfingar.map(estateMemberMapper)
+      : [],
+    addressOfDeceased: syslaData?.logheimili ?? '',
+    caseNumber: syslaData?.malsnumer ?? '',
+    dateOfDeath: syslaData?.danardagur
+      ? new Date(syslaData.danardagur)
+      : new Date(),
+    districtCommissionerHasWill: Boolean(syslaData?.erfdaskra),
+    knowledgeOfOtherWills: syslaData.erfdakraVitneskja ? 'Yes' : 'No',
+    marriageSettlement: syslaData.kaupmali,
+    nameOfDeceased: syslaData?.nafn ?? '',
+    nationalIdOfDeceased: syslaData?.kennitala ?? '',
   }
 }

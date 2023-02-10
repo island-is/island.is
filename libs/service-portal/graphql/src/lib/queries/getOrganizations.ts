@@ -14,8 +14,8 @@ const OrganizationFragment = gql`
 `
 
 export const GET_ORGANIZATIONS_QUERY = gql`
-  query getOrganizations {
-    getOrganizations(input: { lang: "is-IS", perPage: 200 }) {
+  query getOrganizations($input: GetOrganizationsInput) {
+    getOrganizations(input: $input) {
       items {
         ...OrganizationFragment
       }

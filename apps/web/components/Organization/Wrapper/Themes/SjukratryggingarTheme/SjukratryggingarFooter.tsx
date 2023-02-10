@@ -1,4 +1,5 @@
 import React from 'react'
+import { BLOCKS } from '@contentful/rich-text-types'
 import { FooterItem } from '@island.is/web/graphql/schema'
 import {
   Box,
@@ -7,17 +8,21 @@ import {
   GridRow,
   Text,
 } from '@island.is/island-ui/core'
+import { SliceType } from '@island.is/island-ui/contentful'
+import { webRichText } from '@island.is/web/utils/richText'
+import { useNamespace } from '@island.is/web/hooks'
 import * as styles from './SjukratryggingarFooter.css'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
-import { BLOCKS } from '@contentful/rich-text-types'
 
 interface FooterProps {
   footerItems: Array<FooterItem>
+  namespace: Record<string, string>
 }
 
-export const SjukratryggingarFooter: React.FC<FooterProps> = ({
+const SjukratryggingarFooter: React.FC<FooterProps> = ({
   footerItems,
+  namespace,
 }) => {
+  const n = useNamespace(namespace)
   return (
     <footer aria-labelledby="organizationFooterTitle">
       <Box className={styles.footerBg} color="white" paddingTop={5}>
@@ -34,7 +39,10 @@ export const SjukratryggingarFooter: React.FC<FooterProps> = ({
             >
               <Box marginRight={4}>
                 <img
-                  src="/assets/sjukratryggingar_logo.png"
+                  src={n(
+                    'sjukratryggingarFooterLogo',
+                    '/assets/sjukratryggingar_logo.png',
+                  )}
                   alt=""
                   className={styles.logoStyle}
                 />
@@ -48,7 +56,7 @@ export const SjukratryggingarFooter: React.FC<FooterProps> = ({
                 >
                   <Box>
                     <Box marginBottom={2}>
-                      {richText(item.content as SliceType[])}
+                      {webRichText(item.content as SliceType[])}
                     </Box>
                   </Box>
                 </GridColumn>
@@ -71,7 +79,10 @@ export const SjukratryggingarFooter: React.FC<FooterProps> = ({
                   className={styles.footerSecondRow}
                 >
                   <img
-                    src="/assets/sjukratryggingar_heilbrigdisraduneytid.png"
+                    src={n(
+                      'sjukratryggingarFooterBottomLogo',
+                      '/assets/sjukratryggingar_heilbrigdisraduneytid.png',
+                    )}
                     alt="heilbrygdisraduneytid"
                   />
                 </GridColumn>
@@ -80,15 +91,18 @@ export const SjukratryggingarFooter: React.FC<FooterProps> = ({
                   className={styles.footerSecondRow}
                 >
                   <Box>
-                    {richText((footerItems?.[4].content ?? []) as SliceType[], {
-                      renderNode: {
-                        [BLOCKS.PARAGRAPH]: (_node, children) => (
-                          <Text variant="small" color="dark400" marginY={1}>
-                            {children}
-                          </Text>
-                        ),
+                    {webRichText(
+                      (footerItems?.[4].content ?? []) as SliceType[],
+                      {
+                        renderNode: {
+                          [BLOCKS.PARAGRAPH]: (_node, children) => (
+                            <Text variant="small" color="dark400" marginY={1}>
+                              {children}
+                            </Text>
+                          ),
+                        },
                       },
-                    })}
+                    )}
                   </Box>
                 </GridColumn>
                 {footerItems.slice(5, 7).map((item, index) => (
@@ -98,7 +112,7 @@ export const SjukratryggingarFooter: React.FC<FooterProps> = ({
                     key={`footer-secondary-row-column-${index}`}
                   >
                     <Box>
-                      {richText(item.content as SliceType[], {
+                      {webRichText(item.content as SliceType[], {
                         renderNode: {
                           [BLOCKS.PARAGRAPH]: (_node, children) => (
                             <Text variant="small" color="dark400" marginY={1}>
@@ -118,3 +132,5 @@ export const SjukratryggingarFooter: React.FC<FooterProps> = ({
     </footer>
   )
 }
+
+export default SjukratryggingarFooter

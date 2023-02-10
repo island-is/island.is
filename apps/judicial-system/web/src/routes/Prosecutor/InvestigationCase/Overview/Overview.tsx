@@ -28,6 +28,7 @@ import {
   PdfButton,
   CaseResubmitModal,
   FormContext,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseProsecutorSubsections,
@@ -47,7 +48,6 @@ import {
   caseTypes,
   capitalize,
 } from '@island.is/judicial-system/formatters'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -84,7 +84,11 @@ export const Overview: React.FC = () => {
     const shouldSubmitCase = workingCase.state === CaseState.DRAFT
 
     const caseSubmitted = shouldSubmitCase
-      ? await transitionCase(workingCase, CaseTransition.SUBMIT, setWorkingCase)
+      ? await transitionCase(
+          workingCase.id,
+          CaseTransition.SUBMIT,
+          setWorkingCase,
+        )
       : workingCase.state !== CaseState.NEW
 
     const notificationSent = caseSubmitted
@@ -241,13 +245,15 @@ export const Overview: React.FC = () => {
                   }
                 : undefined
             }
-            defender={{
-              name: workingCase.defenderName ?? '',
-              defenderNationalId: workingCase.defenderNationalId,
-              sessionArrangement: workingCase.sessionArrangements,
-              email: workingCase.defenderEmail,
-              phoneNumber: workingCase.defenderPhoneNumber,
-            }}
+            defenders={[
+              {
+                name: workingCase.defenderName ?? '',
+                defenderNationalId: workingCase.defenderNationalId,
+                sessionArrangement: workingCase.sessionArrangements,
+                email: workingCase.defenderEmail,
+                phoneNumber: workingCase.defenderPhoneNumber,
+              },
+            ]}
           />
         </Box>
         {workingCase.description && (
@@ -349,6 +355,10 @@ export const Overview: React.FC = () => {
               <CopyLinkForDefenderButton
                 caseId={workingCase.id}
                 type={workingCase.type}
+                disabled={
+                  workingCase.state !== CaseState.RECEIVED ||
+                  !workingCase.courtDate
+                }
               >
                 {formatMessage(m.sections.copyLinkForDefenderButton)}
               </CopyLinkForDefenderButton>
@@ -397,7 +407,7 @@ export const Overview: React.FC = () => {
             onSecondaryButtonClick={() => {
               router.push(constants.CASES_ROUTE)
             }}
-            secondaryButtonText="Loka glugga"
+            secondaryButtonText={formatMessage(core.closeModal)}
           />
         )}
       </AnimatePresence>

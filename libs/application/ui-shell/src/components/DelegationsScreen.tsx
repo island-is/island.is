@@ -1,3 +1,4 @@
+import intersection from 'lodash/intersection'
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import { useAuth } from '@island.is/auth/react'
@@ -19,10 +20,11 @@ import { getApplicationTemplateByTypeId } from '@island.is/application/template-
 import { LoadingShell } from './LoadingShell'
 import { format as formatKennitala } from 'kennitala'
 import { useLocale } from '@island.is/localization'
-import { useHistory } from 'react-router-dom'
 import { ScreenType, DelegationsScreenDataType, Delegation } from '../types'
 import { FeatureFlagClient, Features } from '@island.is/feature-flags'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { useNavigate } from 'react-router-dom'
+
 interface DelegationsScreenProps {
   alternativeSubjects?: { nationalId: string }[]
   checkDelegation: Dispatch<SetStateAction<boolean>>
@@ -40,8 +42,8 @@ export const DelegationsScreen = ({
   const { formatMessage } = useLocale()
   const type = getTypeFromSlug(slug)
   const { switchUser, userInfo: user } = useAuth()
-  const history = useHistory()
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+  const navigate = useNavigate()
 
   // Check for user delegations if application supports delegations
   const { data: delegations, error } = useQuery(ACTOR_DELEGATIONS, {
@@ -89,7 +91,7 @@ export const DelegationsScreen = ({
               screenType: ScreenType.NOT_SUPPORTED,
               authDelegations: [
                 {
-                  type: 'user',
+                  types: ['user'],
                   from: {
                     nationalId: user.profile.actor.nationalId,
                     name: user.profile.actor.name,
@@ -117,7 +119,8 @@ export const DelegationsScreen = ({
     if (delegations && !!screenData.allowedDelegations && user) {
       const authActorDelegations: Delegation[] = delegations.authActorDelegations.filter(
         (delegation: Delegation) =>
-          screenData.allowedDelegations?.includes(delegation.type),
+          intersection(screenData.allowedDelegations, delegation.types).length >
+          0,
       )
       if (authActorDelegations.length <= 0) {
         checkDelegation(true)
@@ -141,7 +144,7 @@ export const DelegationsScreen = ({
             screenType: ScreenType.NEW,
             authDelegations: [
               {
-                type: 'user',
+                types: ['user'],
                 from: user.profile.actor
                   ? {
                       nationalId: user.profile.actor.nationalId,
@@ -167,10 +170,10 @@ export const DelegationsScreen = ({
   ])
 
   const handleClick = (nationalId?: string) => {
-    if (screenData.screenType !== ScreenType.ONGOING) {
-      history.push('?delegationChecked=true')
-    }
-    if (nationalId) {
+    if (screenData.screenType !== ScreenType.ONGOING && nationalId) {
+      navigate('?delegationChecked=true')
+      switchUser(nationalId)
+    } else if (nationalId) {
       switchUser(nationalId)
     } else {
       checkDelegation(true)
@@ -180,7 +183,8 @@ export const DelegationsScreen = ({
   const screenTexts = {
     title: formatMessage(
       screenData.screenType === ScreenType.ONGOING
-        ? coreDelegationsMessages.delegationScreenTitleForOngoingApplication
+        ? screenData.templateName ||
+            coreDelegationsMessages.delegationScreenTitleForOngoingApplication
         : screenData.screenType === ScreenType.NEW
         ? coreDelegationsMessages.delegationScreenTitle
         : coreDelegationsMessages.delegationScreenTitleApplicationNoDelegationSupport,

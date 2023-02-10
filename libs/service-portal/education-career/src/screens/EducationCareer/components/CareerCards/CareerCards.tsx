@@ -2,7 +2,6 @@ import React from 'react'
 import { gql, useQuery } from '@apollo/client'
 
 import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
-import { useHistory } from 'react-router-dom'
 import { Query } from '@island.is/api/schema'
 import { ServicePortalPath, EmptyState } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
@@ -28,8 +27,6 @@ const CareerCards = () => {
   const { data, loading } = useQuery<Query>(EducationExamFamilyOverviewsQuery)
   const { formatMessage } = useLocale()
 
-  const history = useHistory()
-
   const educationExamFamilyOverviews = data?.educationExamFamilyOverviews || []
   if (loading) {
     return <LoadingTemplate />
@@ -52,13 +49,10 @@ const CareerCards = () => {
                 id: 'sp.education-career:education-more',
                 defaultMessage: 'Skoða nánar',
               }),
-              onClick: () =>
-                history.push(
-                  ServicePortalPath.EducationStudentAssessment.replace(
-                    ':familyIndex',
-                    member.familyIndex.toString(),
-                  ),
-                ),
+              url: ServicePortalPath.EducationStudentAssessment.replace(
+                ':familyIndex',
+                member.familyIndex.toString(),
+              ),
               variant: 'text',
               size: 'small',
             }}

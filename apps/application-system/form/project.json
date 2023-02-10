@@ -27,6 +27,7 @@
         "production": {
           "optimization": false,
           "outputHashing": "all",
+          "index": "apps/application-system/form/src/index.src.html",
           "sourceMap": false,
           "extractCss": true,
           "namedChunks": false,
@@ -41,7 +42,21 @@
           ]
         }
       },
-      "outputs": ["{options.outputPath}"]
+      "outputs": ["{options.outputPath}"],
+      "dependsOn": [
+        {
+          "target": "generateDevIndexHTML",
+          "projects": "self"
+        }
+      ]
+    },
+    "generateDevIndexHTML": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "node scripts/dockerfile-assets/bash/extract-environment.js apps/application-system/form/src"
+        ]
+      }
     },
     "serve": {
       "executor": "@nrwl/web:dev-server",
@@ -53,7 +68,13 @@
         "production": {
           "buildTarget": "application-system-form:build:production"
         }
-      }
+      },
+      "dependsOn": [
+        {
+          "target": "generateDevIndexHTML",
+          "projects": "self"
+        }
+      ]
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
@@ -77,7 +98,27 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/form/src/{app,routes,components}/**/*.{js,ts,tsx}'"
       }
     },
+    "dev-init": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn get-secrets application-system-form",
+          "yarn nx run application-system-api:dev-init"
+        ],
+        "parallel": false
+      }
+    },
+    "dev": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn nx run application-system-api:dev",
+          "yarn start application-system-form"
+        ],
+        "parallel": true
+      }
+    },
     "docker-static": {}
   },
-  "tags": []
+  "tags": ["scope:application-system-web"]
 }

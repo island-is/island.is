@@ -8,6 +8,7 @@ import {
   DATA_UPLOAD,
   OPERATING_LICENSE_SERVICE_RES,
   OPERATING_LICENSE_PAGINATION_INFO_SERVICE_RES,
+  OPERATING_LICENSES_CSV,
   VEDBANDAYFIRLRIT_REGLUVERKI_RESPONSE,
   MORTGAGE_CERTIFICATE_CONTENT_OK,
   MORTGAGE_CERTIFICATE_CONTENT_NO_KMARKING,
@@ -84,6 +85,14 @@ export const requestHandlers = [
           JSON.stringify(OPERATING_LICENSE_PAGINATION_INFO_SERVICE_RES),
         ),
       )
+    } else {
+      return res(ctx.status(401), ctx.json(VHFAIL))
+    }
+  }),
+  rest.get(url('/api/VirkLeyfiCsv/:id'), (req, res, ctx) => {
+    const success = req.params.id ? true : false
+    if (success) {
+      return res(ctx.status(200), ctx.body(OPERATING_LICENSES_CSV))
     } else {
       return res(ctx.status(401), ctx.json(VHFAIL))
     }

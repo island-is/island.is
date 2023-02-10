@@ -37,11 +37,14 @@ export interface ProfileCardProps {
     url: string
     text: string
   }
-
   /**
    * Choose where to place the title
    */
   variant?: 'default' | 'title-above'
+  /**
+   * Is card disabled or not
+   */
+  disabled?: boolean
 }
 
 export const ProfileCard: FC<ProfileCardProps> = ({
@@ -52,6 +55,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   size = 'default',
   link,
   variant = 'default',
+  disabled,
 }) => {
   const conditionalProps: { height?: 'full' } = {}
   if (heightFull) {
@@ -66,7 +70,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
       overflow="hidden"
       background="white"
       borderWidth="standard"
-      borderColor="blue200"
+      borderColor={disabled ? 'blue100' : 'blue200'}
       {...conditionalProps}
       position="relative"
     >
@@ -85,7 +89,11 @@ export const ProfileCard: FC<ProfileCardProps> = ({
       )}
       <Box padding={3} paddingBottom={link ? 6 : 3}>
         {title && variant === 'default' && (
-          <Text variant="h4" marginBottom={1}>
+          <Text
+            color={disabled ? 'dark300' : 'dark400'}
+            variant="h4"
+            marginBottom={1}
+          >
             {title}
           </Text>
         )}
@@ -93,7 +101,11 @@ export const ProfileCard: FC<ProfileCardProps> = ({
           <Stack space={0}>
             {strings?.map((x, idx) =>
               typeof x === 'string' ? (
-                <Text variant={size} key={idx}>
+                <Text
+                  color={disabled ? 'dark300' : 'dark400'}
+                  variant={size}
+                  key={idx}
+                >
                   {x}
                 </Text>
               ) : (

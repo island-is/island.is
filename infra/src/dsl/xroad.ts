@@ -1,36 +1,55 @@
-import { EnvironmentVariables, Secrets, XroadConfig } from './types/input-types'
-import { json } from './dsl'
+import {
+  EnvironmentVariables,
+  EnvironmentVariableValue,
+  Secrets,
+  XroadConfig,
+} from './types/input-types'
+import { json, ref } from './dsl'
 
 type XroadSectionConfig = {
   secrets?: Secrets
   env?: EnvironmentVariables
 }
 
-export class XroadConf implements XroadConfig {
+export class XroadConf<I extends XroadSectionConfig> implements XroadConfig {
   config: XroadSectionConfig
 
-  constructor(config: XroadSectionConfig) {
+  constructor(config: I) {
     this.config = config
   }
+
   getEnv(): EnvironmentVariables {
     return this.config.env || {}
   }
+
+  getEnvVarByName(name: keyof I['env']): EnvironmentVariableValue | undefined {
+    return this.config.env?.[name]
+  }
+
   getSecrets(): Secrets {
     return this.config.secrets || {}
   }
 }
 
+export type XRoadEnvs<
+  T extends XroadSectionConfig
+> = T extends XroadSectionConfig ? keyof T['env'] : never
+
 export const Base = new XroadConf({
   env: {
     XROAD_BASE_PATH: {
-      dev: 'http://securityserver.dev01.devland.is',
-      staging: 'http://securityserver.staging01.devland.is',
+      dev: ref((h) => h.svc('http://securityserver.dev01.devland.is')),
+      staging: ref((h) => h.svc('http://securityserver.staging01.devland.is')),
       prod: 'http://securityserver.island.is',
+      local: ref((h) => h.svc('http://localhost:8081')), // x-road proxy
     },
     XROAD_BASE_PATH_WITH_ENV: {
-      dev: 'http://securityserver.dev01.devland.is/r1/IS-DEV',
+      dev: ref(
+        (h) => `${h.svc('http://securityserver.dev01.devland.is')}/r1/IS-DEV`,
+      ),
       staging: 'http://securityserver.staging01.devland.is/r1/IS-TEST',
       prod: 'http://securityserver.island.is/r1/IS',
+      local: ref((h) => `${h.svc('http://localhost:8081')}/r1/IS-DEV`), // x-road proxy
     },
     XROAD_TLS_BASE_PATH: {
       dev: 'https://securityserver.dev01.devland.is',
@@ -73,13 +92,14 @@ export const JudicialSystem = new XroadConf({
       prod: '5309672079',
     },
     XROAD_COURT_API_PATH: '/Domstolasyslan/JusticePortal-v1',
-    XROAD_POLICE_API_PATH: '/Logreglan-Private/loke-api-v1',
+    XROAD_POLICE_API_PATH: '/Logreglan-Private/rettarvarsla-v1',
   },
   secrets: {
     XROAD_CLIENT_CERT: '/k8s/judicial-system/XROAD_CLIENT_CERT',
     XROAD_CLIENT_KEY: '/k8s/judicial-system/XROAD_CLIENT_KEY',
     XROAD_CLIENT_PEM: '/k8s/judicial-system/XROAD_CLIENT_PEM',
     XROAD_COURTS_CREDENTIALS: '/k8s/judicial-system/COURTS_CREDENTIALS',
+    XROAD_POLICE_API_KEY: '/k8s/judicial-system/XROAD_POLICE_API_KEY',
   },
 })
 
@@ -180,13 +200,12 @@ export const Finance = new XroadConf({
 
 export const Properties = new XroadConf({
   env: {
-    XROAD_PROPERTIES_SERVICE_PATH: {
-      dev: 'IS-DEV/GOV/10001/SKRA-Protected/Fasteignir-v1',
-      staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Fasteignir-v1',
-      prod: 'IS/GOV/6503760649/SKRA-Protected/Fasteignir-v1',
+    XROAD_PROPERTIES_SERVICE_V2_PATH: {
+      dev: 'IS-DEV/GOV/10033/HMS-Protected/Fasteignir-v1',
+      staging: 'IS-TEST/GOV/5812191480/HMS-Protected/Fasteignir-v1',
+      prod:
+        'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Fasteignir-v1',
     },
-    // Deprecated:
-    XROAD_PROPERTIES_API_PATH: '/SKRA-Protected/Fasteignir-v1',
   },
   secrets: {
     XROAD_PROPERTIES_CLIENT_SECRET:
@@ -211,6 +230,16 @@ export const Firearm = new XroadConf({
       dev: 'IS-DEV/GOV/10005/Logreglan-Protected/island-api-v1',
       staging: 'IS/GOV/5309672079/Logreglan-Protected/island-api-v1',
       prod: 'IS/GOV/5309672079/Logreglan-Protected/island-api-v1',
+    },
+  },
+})
+
+export const DisabilityLicense = new XroadConf({
+  env: {
+    XROAD_DISABILTITY_LICENSE_PATH: {
+      dev: 'IS-DEV/GOV/10008/TR-Protected/oryrki-v1',
+      staging: 'IS-TEST/GOV/5012130120/TR-Protected/oryrki-v1',
+      prod: 'IS/GOV/5012130120/TR-Protected/oryrki-v1',
     },
   },
 })
@@ -288,15 +317,11 @@ export const Labor = new XroadConf({
 
 export const PaymentSchedule = new XroadConf({
   env: {
-    PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: {
-      dev: 'IS-DEV/GOV/10021/FJS-Public',
-      staging: 'IS-DEV/GOV/10021/FJS-Public',
-      prod: 'IS/GOV/5402697509/FJS-Public',
+    XROAD_PAYMENT_SCHEDULE_PATH: {
+      dev: 'IS-DEV/GOV/10021/FJS-Public/paymentSchedule_v1',
+      staging: 'IS-DEV/GOV/10021/FJS-Public/paymentSchedule_v1',
+      prod: 'IS/GOV/5402697509/FJS-Public/paymentSchedule_v1',
     },
-  },
-  secrets: {
-    PAYMENT_SCHEDULE_USER: '/k8s/api/PAYMENT_SCHEDULE_USER',
-    PAYMENT_SCHEDULE_PASSWORD: '/k8s/api/PAYMENT_SCHEDULE_PASSWORD',
   },
 })
 
@@ -393,6 +418,59 @@ export const ChargeFjsV2 = new XroadConf({
       dev: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
       staging: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
       prod: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2',
+    },
+  },
+})
+
+export const VehicleServiceFjsV1 = new XroadConf({
+  env: {
+    XROAD_VEHICLE_SERVICE_FJS_V1_PATH: {
+      dev: 'IS-DEV/GOV/10021/FJS-Public/VehicleServiceFJS_v1',
+      staging: 'IS-DEV/GOV/10021/FJS-Public/VehicleServiceFJS_v1',
+      prod: 'IS/GOV/5402697509/FJS-Public/VehicleServiceFJS_v1',
+    },
+  },
+})
+
+export const TransportAuthority = new XroadConf({
+  env: {
+    XROAD_VEHICLE_CODETABLES_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Codetables-V1',
+      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Codetables-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Codetables-V1',
+    },
+    XROAD_VEHICLE_INFOLOCKS_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Infolocks-V1',
+      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Infolocks-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Infolocks-V1',
+    },
+    XROAD_VEHICLE_OPERATORS_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V3',
+      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V3',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Operators-V3',
+    },
+    XROAD_VEHICLE_OWNER_CHANGE_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Ownerchange-V2',
+      staging:
+        'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Ownerchange-V2',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Ownerchange-V2',
+    },
+    XROAD_VEHICLE_PLATE_ORDERING_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOrdering-V1',
+      staging:
+        'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOrdering-V1',
+      prod:
+        'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateOrdering-V1',
+    },
+    XROAD_VEHICLE_PRINTING_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1',
+      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Printing-V1',
+    },
+    XROAD_DIGITAL_TACHOGRAPH_DRIVERS_CARD_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Okuritar-V1',
+      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Okuritar-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Okuritar-V1',
     },
   },
 })

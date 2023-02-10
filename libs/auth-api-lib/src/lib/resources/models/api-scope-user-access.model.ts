@@ -11,6 +11,7 @@ import {
 } from 'sequelize-typescript'
 
 import { ApiScopeUser } from './api-scope-user.model'
+import { ApiScope } from './api-scope.model'
 
 @Table({
   tableName: 'api_scope_user_access',
@@ -31,6 +32,7 @@ export class ApiScopeUserAccess extends Model {
     allowNull: false,
     defaultValue: true,
   })
+  @ForeignKey(() => ApiScope)
   @ApiProperty({
     example: 'scope-example',
   })

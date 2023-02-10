@@ -11,10 +11,12 @@ export const buildOpenApi = async ({
   appModule,
   openApi,
   path,
+  enableVersioning,
 }: {
   appModule: Type<any>
   openApi: Omit<OpenAPIObject, 'paths'>
   path: string
+  enableVersioning?: boolean
 }) => {
   try {
     logger.info('Creating openapi.yaml file ...', { path })
@@ -22,6 +24,9 @@ export const buildOpenApi = async ({
     const app = await NestFactory.create(InfraModule.forRoot({ appModule }), {
       logger: LoggingModule.createLogger(),
     })
+    if (enableVersioning) {
+      app.enableVersioning()
+    }
     const document = SwaggerModule.createDocument(app, openApi)
 
     writeFileSync(path, yaml.dump(document, { noRefs: true }))

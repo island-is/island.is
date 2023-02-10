@@ -4,9 +4,8 @@ import {
   setupWithoutScope,
 } from '../../../../../test/setup'
 import { TestEndpointOptions } from '../../../../../test/types'
-import { getRequestMethod } from '../../../../../test/testHelpers'
 import request from 'supertest'
-import { TestApp } from '@island.is/testing/nest'
+import { TestApp, getRequestMethod } from '@island.is/testing/nest'
 import {
   PersonalRepresentativeAccess,
   PersonalRepresentativeAccessDTO,

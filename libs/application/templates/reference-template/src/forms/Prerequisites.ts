@@ -11,10 +11,16 @@ import {
 import { Application, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 
+import {
+  NationalRegistryUserApi,
+  UserProfileApi,
+} from '@island.is/application/types'
+import { ReferenceDataApi, MyMockProvider } from '../dataProviders'
+
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesDraft',
   title: 'Skilyrði',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'conditions',
@@ -25,11 +31,24 @@ export const Prerequisites: Form = buildForm({
           title: 'Utanaðkomandi gögn',
           dataProviders: [
             buildDataProviderItem({
-              id: 'sampleData',
-              type: 'SampleDataProvider',
-              title: 'Staðfesting á ákveðnu atriði',
-              subTitle:
-                'Betri lýsing á atriðinu sem er verið að sækja annarsstaðar frá',
+              provider: UserProfileApi,
+              title: 'User profile',
+              subTitle: 'User profile',
+            }),
+            buildDataProviderItem({
+              provider: ReferenceDataApi,
+              title: 'getReferenceData',
+              subTitle: 'Reference data',
+            }),
+            buildDataProviderItem({
+              provider: NationalRegistryUserApi,
+              title: 'Þjóðskrá',
+              subTitle: 'Upplýsingar um þig í Þjóðskrá.',
+            }),
+            buildDataProviderItem({
+              provider: MyMockProvider,
+              title: 'Mock Data',
+              subTitle: 'Returns data for mocking',
             }),
           ],
         }),
@@ -43,7 +62,17 @@ export const Prerequisites: Form = buildForm({
               description: (application: Application) =>
                 `Gildið frá data provider: ${get(
                   application.externalData,
-                  'sampleData.data.value',
+                  'getReferenceData.data.referenceData.numbers',
+                  'fannst ekki',
+                )}`,
+            }),
+            buildDescriptionField({
+              id: 'externalDataSuccessDescription.mock',
+              title: '',
+              description: (application: Application) =>
+                `Gildið frá mock data provider: ${get(
+                  application.externalData,
+                  'referenceMock.data.mockObject.mockString',
                   'fannst ekki',
                 )}`,
             }),

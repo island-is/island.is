@@ -163,6 +163,12 @@ const DomainCreateForm: React.FC<Props> = (props: Props) => {
                   <HelpBox
                     helpText={localization.fields['description'].helpText}
                   />
+                  <TranslationCreateFormDropdown
+                    className="domain"
+                    property="description"
+                    isEditing={isEditing}
+                    id={props.domain.name}
+                  />
                 </div>
 
                 <div className="domain-create-form__container__field">
@@ -198,7 +204,7 @@ const DomainCreateForm: React.FC<Props> = (props: Props) => {
                     className="domain"
                     property="displayName"
                     isEditing={isEditing}
-                    id={props.domain.displayName}
+                    id={props.domain.name}
                   />
                 </div>
 

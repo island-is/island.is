@@ -1,11 +1,10 @@
-import React, { useContext, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
   CaseState,
   CaseTransition,
-  Institution,
   NotificationType,
 } from '@island.is/judicial-system/types'
 import {
@@ -22,9 +21,10 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   removeTabsValidateAndSet,
+  stepValidationsType,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { Box, Input, Text } from '@island.is/island-ui/core'
+import { Box, Input, Text, toast } from '@island.is/island-ui/core'
 import {
   useCase,
   useInstitution,
@@ -35,8 +35,9 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
+import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import ArrestDate from './ArrestDate'
@@ -55,7 +56,7 @@ export const HearingArrangements: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const [modalVisible, setModalVisible] = useState<boolean>(false)
+  const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
 
   const {
     sendNotification,
@@ -64,44 +65,14 @@ export const HearingArrangements: React.FC = () => {
     transitionCase,
     isTransitioningCase,
     updateCase,
-    setAndSendToServer,
+    setAndSendCaseToServer,
   } = useCase()
 
   const { courts, loading: institutionLoading } = useInstitution()
 
-  const handleNextButtonClick = async () => {
-    if (!workingCase) {
-      return
-    }
-
-    const caseOpened =
-      workingCase.state === CaseState.NEW
-        ? await transitionCase(workingCase, CaseTransition.OPEN, setWorkingCase)
-        : true
-
-    if (caseOpened) {
-      if (
-        (workingCase.state !== CaseState.NEW &&
-          workingCase.state !== CaseState.DRAFT) ||
-        // TODO: Ignore failed notifications
-        workingCase.notifications?.find(
-          (notification) => notification.type === NotificationType.HEADS_UP,
-        )
-      ) {
-        router.push(
-          `${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
-        )
-      } else {
-        setModalVisible(true)
-      }
-    } else {
-      // TODO: Handle error
-    }
-  }
-
   const handleCourtChange = (court: Institution) => {
     if (workingCase) {
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [
           {
             courtId: court.id,
@@ -118,15 +89,57 @@ export const HearingArrangements: React.FC = () => {
     return false
   }
 
+  const handleNavigationTo = useCallback(
+    async (destination: keyof stepValidationsType) => {
+      if (!workingCase) {
+        return
+      }
+
+      const caseOpened =
+        workingCase.state === CaseState.NEW
+          ? await transitionCase(
+              workingCase.id,
+              CaseTransition.OPEN,
+              setWorkingCase,
+            )
+          : true
+
+      if (caseOpened) {
+        if (
+          (workingCase.state !== CaseState.NEW &&
+            workingCase.state !== CaseState.DRAFT) ||
+          // TODO: Ignore failed notifications
+          workingCase.notifications?.find(
+            (notification) => notification.type === NotificationType.HEADS_UP,
+          )
+        ) {
+          router.push(`${destination}/${workingCase.id}`)
+        } else {
+          setNavigateTo(destination)
+        }
+      } else {
+        toast.error(formatMessage(errors.transitionCase))
+      }
+    },
+    [formatMessage, router, setWorkingCase, transitionCase, workingCase],
+  )
+
+  const stepIsValid =
+    isHearingArrangementsStepValidRC(workingCase) || isTransitioningCase
+
   return (
     <PageLayout
       workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={RestrictionCaseProsecutorSubsections.STEP_TWO}
+      activeSubSection={
+        RestrictionCaseProsecutorSubsections.HEARING_ARRANGEMENTS
+      }
       isLoading={isLoadingWorkingCase || institutionLoading}
       notFound={caseNotFound}
+      isValid={stepIsValid}
+      onNavigationTo={stepIsValid ? handleNavigationTo : undefined}
     >
       <PageHeader
         title={formatMessage(
@@ -164,7 +177,7 @@ export const HearingArrangements: React.FC = () => {
                 workingCase={workingCase}
                 onChange={(date: Date | undefined, valid: boolean) => {
                   if (date && valid) {
-                    setAndSendToServer(
+                    setAndSendCaseToServer(
                       [
                         {
                           requestedCourtDate: formatDateForServer(date),
@@ -222,15 +235,16 @@ export const HearingArrangements: React.FC = () => {
           <FormContentContainer isFooter>
             <FormFooter
               previousUrl={`${constants.RESTRICTION_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
-              onNextButtonClick={async () => await handleNextButtonClick()}
-              nextIsDisabled={
-                !isHearingArrangementsStepValidRC(workingCase) ||
-                isTransitioningCase
+              onNextButtonClick={async () =>
+                await handleNavigationTo(
+                  constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
+                )
               }
+              nextIsDisabled={!stepIsValid || isTransitioningCase}
               nextIsLoading={isTransitioningCase}
             />
           </FormContentContainer>
-          {modalVisible && (
+          {navigateTo !== undefined && (
             <Modal
               title={formatMessage(
                 rcRequestedHearingArrangements.modal.heading,
@@ -240,11 +254,9 @@ export const HearingArrangements: React.FC = () => {
               })}
               primaryButtonText="Senda tilkynningu"
               secondaryButtonText="Halda áfram með kröfu"
-              onClose={() => setModalVisible(false)}
+              onClose={() => setNavigateTo(undefined)}
               onSecondaryButtonClick={() =>
-                router.push(
-                  `${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
-                )
+                router.push(`${navigateTo}/${workingCase.id}`)
               }
               errorMessage={
                 sendNotificationError
@@ -258,9 +270,7 @@ export const HearingArrangements: React.FC = () => {
                 )
 
                 if (notificationSent) {
-                  router.push(
-                    `${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
-                  )
+                  router.push(`${navigateTo}/${workingCase.id}`)
                 }
               }}
               isPrimaryButtonLoading={isSendingNotification}

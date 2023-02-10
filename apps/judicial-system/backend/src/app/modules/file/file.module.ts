@@ -3,20 +3,22 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 
-import { CaseModule, CourtModule, AwsS3Module } from '../index'
+import { CaseModule, UserModule, CourtModule, AwsS3Module } from '../index'
 import { CaseFile } from './models/file.model'
 import { FileService } from './file.service'
 import { FileController } from './file.controller'
+import { InternalFileController } from './internalFile.controller'
 
 @Module({
   imports: [
     CmsTranslationsModule,
     forwardRef(() => CaseModule),
+    forwardRef(() => UserModule),
     forwardRef(() => CourtModule),
     forwardRef(() => AwsS3Module),
     SequelizeModule.forFeature([CaseFile]),
   ],
-  controllers: [FileController],
+  controllers: [FileController, InternalFileController],
   providers: [FileService],
   exports: [FileService],
 })

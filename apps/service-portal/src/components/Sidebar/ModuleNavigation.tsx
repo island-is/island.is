@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import {
+  formatPlausiblePathToParams,
   ServicePortalNavigationItem,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
@@ -8,9 +9,7 @@ import { useLocation } from 'react-router-dom'
 import AnimateHeight from 'react-animate-height'
 import { useLocale } from '@island.is/localization'
 import NavItem from './NavItem/NavItem'
-import SubNavModal from './SubNavModal'
 import { servicePortalOutboundLink } from '@island.is/plausible'
-import { useStore } from '../../store/stateProvider'
 import SubNav from './NavItem/SubNav'
 import * as styles from './Sidebar.css'
 import cn from 'classnames'
@@ -23,12 +22,10 @@ interface Props {
 
 const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
   const [expand, setExpand] = useState(false)
-  const [{ sidebarState }] = useStore()
   const { formatMessage } = useLocale()
   const { pathname } = useLocation()
   const navChildren = nav?.children?.filter((child) => !child.navHide)
   const navArray = Array.isArray(navChildren) && navChildren.length > 0
-  const collapsed = sidebarState === 'closed'
 
   const isModuleActive =
     (nav.path &&
@@ -45,7 +42,8 @@ const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
   const handleRootItemClick = (external?: boolean) => {
     if (nav.path === undefined) handleExpand()
     if (onItemClick) onItemClick()
-    if (external) servicePortalOutboundLink()
+    if (external)
+      servicePortalOutboundLink(formatPlausiblePathToParams(nav.path || ''))
   }
 
   useEffect(() => {
@@ -60,16 +58,6 @@ const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
         isModuleActive && styles.itemWrapperActive,
       )}
     >
-      {/* {navArray && nav.enabled !== false && collapsed && (
-        <SubNavModal>
-          <SubNav
-            collapsed
-            navChildren={navChildren}
-            onItemClick={() => handleRootItemClick(false)}
-            pathname={pathname}
-          />
-        </SubNavModal>
-      )} */}
       <NavItem
         path={nav.path}
         icon={nav.icon}
@@ -78,9 +66,7 @@ const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
         hasArray={navArray}
         enabled={nav.enabled}
         external={nav.external}
-        onClick={() => {
-          !collapsed && handleRootItemClick(nav.external)
-        }}
+        onClick={() => handleRootItemClick(nav.external)}
         onChevronClick={() => {
           setExpand(!expand)
         }}
@@ -88,7 +74,7 @@ const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
       >
         {formatMessage(nav.name)}
       </NavItem>
-      {!collapsed && navArray && nav.enabled !== false && (
+      {navArray && nav.enabled !== false && (
         <AnimateHeight duration={300} height={expand ? 'auto' : 0}>
           <SubNav
             navChildren={navChildren}

@@ -52,7 +52,7 @@ const getInnerText = (node: any): string => {
 
   return ''
 }
-export const defaultRenderNode: RenderNode = {
+export const defaultRenderNodeObject: RenderNode = {
   [BLOCKS.HEADING_1]: (_node, children) => (
     <Box
       id={slugify(getInnerText(children))}
@@ -118,8 +118,11 @@ export const defaultRenderNode: RenderNode = {
     </Box>
   ),
   [BLOCKS.OL_LIST]: (_node, children) => (
-    <Box component="ol" className={styles.orderedList}>
-      {children}
+    // An extra box container was added due to counter not resetting
+    <Box>
+      <Box component="ol" className={styles.orderedList}>
+        {children}
+      </Box>
     </Box>
   ),
   [BLOCKS.UL_LIST]: (_node, children) => (
@@ -157,6 +160,15 @@ export const defaultRenderNode: RenderNode = {
     <T.HeadData>{children}</T.HeadData>
   ),
   [BLOCKS.TABLE_CELL]: (_node, children) => <T.Data>{children}</T.Data>,
+  [BLOCKS.EMBEDDED_ASSET]: (node) => {
+    const url = node?.data?.target?.fields?.file?.url
+    const title = node?.data?.target?.fields
+    return (
+      <Box marginTop={url ? 5 : 0}>
+        <img src={url} alt={title} />
+      </Box>
+    )
+  },
   [INLINES.HYPERLINK]: (node, children) => (
     <Hyperlink href={node.data.uri}>{children}</Hyperlink>
   ),
@@ -179,15 +191,21 @@ export const defaultRenderNode: RenderNode = {
     const type = entry?.sys?.contentType?.sys?.id
     switch (type) {
       case 'article':
-        return entry.fields.slug ? (
-          <Hyperlink href={`/${entry.fields.slug}`}>{children}</Hyperlink>
+        return entry?.fields?.slug ? (
+          <Hyperlink
+            href={`/${
+              entry.sys?.locale === 'is-IS' ? '' : entry.sys?.locale + '/'
+            }${entry?.fields?.slug}`}
+          >
+            {children}
+          </Hyperlink>
         ) : null
       case 'subArticle':
-        return entry.fields.url ? (
+        return entry?.fields?.url ? (
           <Hyperlink href={entry.fields.url}>{children}</Hyperlink>
         ) : null
       case 'organizationPage': {
-        const prefix = getOrganizationPrefix(entry.sys?.locale)
+        const prefix = getOrganizationPrefix(entry?.sys?.locale)
         return entry.fields.slug ? (
           <Hyperlink href={`/${prefix}/${entry.fields.slug}`}>
             {children}
@@ -195,8 +213,8 @@ export const defaultRenderNode: RenderNode = {
         ) : null
       }
       case 'organizationSubpage': {
-        const prefix = getOrganizationPrefix(entry.sys?.locale)
-        return entry.fields.slug &&
+        const prefix = getOrganizationPrefix(entry?.sys?.locale)
+        return entry?.fields?.slug &&
           entry.fields.organizationPage?.fields?.slug ? (
           <Hyperlink
             href={`/${prefix}/${entry.fields.organizationPage.fields.slug}/${entry.fields.slug}`}
@@ -213,7 +231,7 @@ export const defaultRenderNode: RenderNode = {
 
 const getOrganizationPrefix = (locale: string) => {
   if (locale && !locale.includes('is')) {
-    return 'o'
+    return `${locale}/o`
   }
   return 's'
 }

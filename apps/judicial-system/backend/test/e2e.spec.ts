@@ -1,4 +1,3 @@
-import { uuid } from 'uuidv4'
 import { Sequelize } from 'sequelize-typescript'
 import { execSync } from 'child_process'
 import request from 'supertest'
@@ -74,8 +73,7 @@ let admin: CUser
 let adminAuthCookie: string
 
 beforeAll(async () => {
-  // Need to use sequelize-cli becuase sequelize.sync does not keep track of completed migrations
-  // await sequelize.sync()
+  // Migrate the database
   execSync('yarn nx run judicial-system-backend:migrate')
 
   // Seed the database
@@ -98,7 +96,7 @@ beforeAll(async () => {
             }),
         })
         .overrideProvider(MessageService)
-        .useValue({ postMessageToQueue: () => uuid() }),
+        .useValue({ sendMessagesToQueue: () => undefined }),
   })
 
   sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
@@ -563,7 +561,7 @@ describe('User', () => {
       })
   })
 
-  it('PUT /api/user/:id should update fields of a user by id', async () => {
+  it('PATCH /api/user/:id should update fields of a user by id', async () => {
     const nationalId = '0987654321'
     const data = {
       name: 'The Modified User',
@@ -598,7 +596,7 @@ describe('User', () => {
         dbUser = userToCUser(value.toJSON() as User)
 
         return request(app.getHttpServer())
-          .put(`/api/user/${dbUser.id}`)
+          .patch(`/api/user/${dbUser.id}`)
           .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${adminAuthCookie}`)
           .send(data)
           .expect(200)
@@ -674,7 +672,7 @@ describe('User', () => {
 })
 
 describe('Case', () => {
-  it('PUT /api/case/:id should update prosecutor fields of a case by id', async () => {
+  it('PATCH /api/case/:id should update prosecutor fields of a case by id', async () => {
     const data = getCaseData(true, true)
     let dbCase: CCase
     let apiCase: CCase
@@ -684,9 +682,9 @@ describe('Case', () => {
         dbCase = caseToCCase(value)
 
         return request(app.getHttpServer())
-          .put(`/api/case/${dbCase.id}`)
+          .patch(`/api/case/${dbCase.id}`)
           .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
-          .send(data)
+          .send({ ...data, type: undefined })
           .expect(200)
       })
       .then((response) => {
@@ -714,7 +712,7 @@ describe('Case', () => {
       })
   })
 
-  it('PUT /api/case/:id should update judge fields of a case by id', async () => {
+  it('PATCH /api/case/:id should update judge fields of a case by id', async () => {
     const judgeCaseData = getJudgeCaseData()
     let dbCase: CCase
     let apiCase: CCase
@@ -728,7 +726,7 @@ describe('Case', () => {
         dbCase = caseToCCase(value)
 
         return request(app.getHttpServer())
-          .put(`/api/case/${dbCase.id}`)
+          .patch(`/api/case/${dbCase.id}`)
           .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
           .send(judgeCaseData)
           .expect(200)
@@ -754,7 +752,7 @@ describe('Case', () => {
       })
   })
 
-  it('PUT /api/case/:id/state should transition case to a new state', async () => {
+  it('PATCH /api/case/:id/state should transition case to a new state', async () => {
     let dbCase: CCase
     let apiCase: CCase
 
@@ -767,12 +765,11 @@ describe('Case', () => {
         dbCase = caseToCCase(value)
 
         const data = {
-          modified: value.modified.toISOString(),
           transition: CaseTransition.ACCEPT,
         }
 
         return request(app.getHttpServer())
-          .put(`/api/case/${value.id}/state`)
+          .patch(`/api/case/${value.id}/state`)
           .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
           .send(data)
           .expect(200)
@@ -850,8 +847,7 @@ describe('Notification', () => {
 
         return Notification.create({
           caseId: dbCase.id,
-          type: NotificationType.HEADS_UP,
-          message: 'Test Message',
+          type: NotificationType.READY_FOR_COURT,
         })
       })
       .then((value) => {

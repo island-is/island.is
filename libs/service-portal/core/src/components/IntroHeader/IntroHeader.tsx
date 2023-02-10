@@ -1,57 +1,22 @@
-import React from 'react'
-import { MessageDescriptor } from 'react-intl'
-
+import { GridColumn } from '@island.is/island-ui/core'
+import { ModuleAlertBannerSection } from '../AlertMessage/ModuleAlertMessageSection'
 import {
-  Box,
-  GridColumn,
-  GridRow,
-  Hidden,
-  Text,
-} from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+  IntroHeader as IntroHeaderBase,
+  IntroHeaderProps,
+} from '@island.is/portals/core'
 
-interface Props {
-  title: MessageDescriptor | string
-  intro?: MessageDescriptor | string
-  img?: string
-  hideImgPrint?: boolean
-}
+export const IntroHeader = (props: Omit<IntroHeaderProps, 'children'>) => {
+  const { marginBottom } = props
 
-export const IntroHeader = ({
-  title,
-  intro,
-  img,
-  hideImgPrint = false,
-}: Props) => {
-  const { formatMessage } = useLocale()
   return (
-    <GridRow marginBottom={6}>
-      <GridColumn span={['8/8', '6/8', '5/8']} order={[2, 1]}>
-        <Text variant="h3" as="h1">
-          {formatMessage(title)}
-        </Text>
+    <IntroHeaderBase
+      {...props}
+      marginBottom={marginBottom ? marginBottom : [0, 0, 2]}
+    >
+      <GridColumn span={['12/12', '12/12', '6/8']} order={3} paddingTop={4}>
+        <ModuleAlertBannerSection />
       </GridColumn>
-      {intro && (
-        <GridColumn span={['12/12', '12/12', '12/12', '6/12']} order={[3, 2]}>
-          <Text variant="default" paddingTop={2}>
-            {formatMessage(intro)}
-          </Text>
-        </GridColumn>
-      )}
-      {img && (
-        <GridColumn
-          span={['8/8', '2/8']}
-          offset={['0', '0', '1/8']}
-          order={[1, 3]}
-        >
-          <Hidden print={hideImgPrint}>
-            <Box textAlign={['center', 'right']} padding={[6, 0]}>
-              <img src={img} alt="" />
-            </Box>
-          </Hidden>
-        </GridColumn>
-      )}
-    </GridRow>
+    </IntroHeaderBase>
   )
 }
 

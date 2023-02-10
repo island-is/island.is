@@ -5,17 +5,11 @@ import {
   buildKeyValueField,
   buildCheckboxField,
   buildDescriptionField,
+  hasYes,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import {
-  APPLICATION_TYPES,
-  NO,
-  OpeningHours,
-  Operation,
-  OPERATION_CATEGORY,
-  YES,
-} from '../../lib/constants'
-import { displayOpeningHours, hasYes } from '../../lib/utils'
+import { NO, OpeningHours, Operation, YES } from '../../lib/constants'
+import { displayOpeningHours } from '../../lib/utils'
 
 export const subSectionOpeningHours = buildSubSection({
   id: 'openingHours',
@@ -88,19 +82,13 @@ export const subSectionOpeningHours = buildSubSection({
           description: '',
           space: 'gutter',
         }),
-        buildCheckboxField({
-          id: 'openingHours.willServe',
-          title: m.openingHoursOutside,
-          options: [{ value: YES, label: m.openingHoursOutsideCheck }],
-          defaultValue: [NO],
-        }),
         buildDescriptionField({
           id: 'outside.servingHours',
           title: m.openingHoursOutsideTitle,
           space: 'gutter',
           titleVariant: 'h3',
           condition: (answers) =>
-            hasYes((answers.openingHours as OpeningHours)?.willServe) || false,
+            hasYes((answers.applicationInfo as Operation)?.willServe) || false,
         }),
         buildDescriptionField({
           id: 'overview.space3',
@@ -108,13 +96,13 @@ export const subSectionOpeningHours = buildSubSection({
           description: '',
           space: 'gutter',
           condition: (answers) =>
-            hasYes((answers.openingHours as OpeningHours)?.willServe) || false,
+            hasYes((answers.applicationInfo as Operation)?.willServe) || false,
         }),
         buildKeyValueField({
           label: '',
           value: m.weekdays,
           condition: (answers) =>
-            hasYes((answers.openingHours as OpeningHours)?.willServe) || false,
+            hasYes((answers.applicationInfo as Operation)?.willServe) || false,
         }),
         buildTextField({
           id: 'openingHours.outside.weekdays.from',
@@ -123,7 +111,7 @@ export const subSectionOpeningHours = buildSubSection({
           format: '##:##',
           placeholder: '00:00',
           condition: (answers) =>
-            hasYes((answers.openingHours as OpeningHours)?.willServe) || false,
+            hasYes((answers.applicationInfo as Operation)?.willServe) || false,
         }),
         buildTextField({
           id: 'openingHours.outside.weekdays.to',
@@ -132,13 +120,13 @@ export const subSectionOpeningHours = buildSubSection({
           format: '##:##',
           placeholder: '00:00',
           condition: (answers) =>
-            hasYes((answers.openingHours as OpeningHours)?.willServe) || false,
+            hasYes((answers.applicationInfo as Operation)?.willServe) || false,
         }),
         buildKeyValueField({
           label: '',
           value: m.holidays,
           condition: (answers) =>
-            hasYes((answers.openingHours as OpeningHours)?.willServe) || false,
+            hasYes((answers.applicationInfo as Operation)?.willServe) || false,
         }),
         buildTextField({
           id: 'openingHours.outside.weekends.from',
@@ -147,7 +135,7 @@ export const subSectionOpeningHours = buildSubSection({
           format: '##:##',
           placeholder: '00:00',
           condition: (answers) =>
-            hasYes((answers.openingHours as OpeningHours)?.willServe) || false,
+            hasYes((answers.applicationInfo as Operation)?.willServe) || false,
         }),
         buildTextField({
           id: 'openingHours.outside.weekends.to',
@@ -156,7 +144,7 @@ export const subSectionOpeningHours = buildSubSection({
           format: '##:##',
           placeholder: '00:00',
           condition: (answers) =>
-            hasYes((answers.openingHours as OpeningHours)?.willServe) || false,
+            hasYes((answers.applicationInfo as Operation)?.willServe) || false,
         }),
       ],
     }),

@@ -5,7 +5,6 @@ import {
   m,
 } from '@island.is/service-portal/core'
 import React, { FC, useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
 import { ActionCard } from '@island.is/service-portal/core'
 
 interface Props {
@@ -23,7 +22,6 @@ export const FamilyMemberCard: FC<Props> = ({
 }) => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
-  const history = useHistory()
   const [familyRelationData, setFamilyRelationData] = useState<{
     label: string
     path: string
@@ -77,14 +75,13 @@ export const FamilyMemberCard: FC<Props> = ({
     }
   }
 
-  const handleClick = () =>
-    history.push({
-      pathname: currentUser
-        ? ServicePortalPath.UserInfo
-        : nationalId
-        ? familyRelationData?.path
-        : ServicePortalPath.UserInfo,
-    })
+  const getUrl = () => {
+    return currentUser
+      ? ServicePortalPath.UserInfo
+      : nationalId
+      ? familyRelationData?.path
+      : ServicePortalPath.UserInfo
+  }
   return (
     <ActionCard
       image={{ type: 'avatar' }}
@@ -107,7 +104,7 @@ export const FamilyMemberCard: FC<Props> = ({
           defaultMessage: 'Skoða nánar',
         }),
         variant: 'text',
-        onClick: () => handleClick(),
+        url: getUrl(),
       }}
     />
   )

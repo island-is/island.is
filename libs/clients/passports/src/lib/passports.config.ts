@@ -1,6 +1,6 @@
 import { defineConfig } from '@island.is/nest/config'
 import { NationalRegistryScope } from '@island.is/auth/scopes'
-import * as z from 'zod'
+import { z } from 'zod'
 
 const schema = z.object({
   xRoadServicePath: z.string(),
@@ -22,8 +22,10 @@ export const PassportsClientConfig = defineConfig<z.infer<typeof schema>>({
       fetch: {
         timeout: 10000,
         scope: [
-          NationalRegistryScope.passport,
           NationalRegistryScope.individuals,
+
+          // TODO: Add back in when ready.
+          // NationalRegistryScope.passport,
         ],
       },
     }

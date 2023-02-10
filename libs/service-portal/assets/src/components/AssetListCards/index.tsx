@@ -1,5 +1,4 @@
 import React, { FC } from 'react'
-import { useHistory } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
 import { ServicePortalPath, m } from '@island.is/service-portal/core'
 import { Box, Button } from '@island.is/island-ui/core'
@@ -13,7 +12,6 @@ interface Props {
 }
 
 const AssetListCards: FC<Props> = ({ assets, paginateCallback }) => {
-  const history = useHistory()
   const { formatMessage } = useLocale()
   const getMoreItems = () => {
     if (paginateCallback) {
@@ -33,13 +31,10 @@ const AssetListCards: FC<Props> = ({ assets, paginateCallback }) => {
               variant: 'text',
               size: 'small',
               icon: 'arrowForward',
-              onClick: () =>
-                history.push(
-                  ServicePortalPath.AssetsRealEstateDetail.replace(
-                    ':id',
-                    asset.propertyNumber as string,
-                  ),
-                ),
+              url: ServicePortalPath.AssetsRealEstateDetail.replace(
+                ':id',
+                asset.propertyNumber as string,
+              ),
             }}
           />
         </Box>

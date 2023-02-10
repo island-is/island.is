@@ -1,3 +1,4 @@
+import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
   ApplicationContext,
@@ -6,14 +7,23 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  defineTemplateApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
+  DistrictsApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
+import {
+  IdentityDocumentApi,
+  SyslumadurPaymentCatalogApi,
+} from '../dataProviders'
 import { m } from '../lib/messages'
 import {
   ApiActions,
   Events,
   Roles,
+  sevenDays,
   sixtyDays,
   States,
   twoDays,
@@ -43,11 +53,12 @@ const PassportTemplate: ApplicationTemplate<
       draft: {
         meta: {
           name: m.formName.defaultMessage,
+          status: 'draft',
           progress: 0.33,
           lifecycle: pruneAfter(twoDays),
-          onExit: {
-            apiModuleAction: ApiActions.checkForDiscount,
-          },
+          onExit: defineTemplateApi({
+            action: ApiActions.checkForDiscount,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -69,6 +80,13 @@ const PassportTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                SyslumadurPaymentCatalogApi,
+                IdentityDocumentApi,
+                DistrictsApi,
+              ],
             },
           ],
         },
@@ -80,14 +98,15 @@ const PassportTemplate: ApplicationTemplate<
       [States.PAYMENT]: {
         meta: {
           name: 'Payment state',
+          status: 'inprogress',
           actionCard: {
             description: m.payment,
           },
           progress: 0.7,
           lifecycle: pruneAfter(sixtyDays),
-          onEntry: {
-            apiModuleAction: ApiActions.createCharge,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.createCharge,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -113,11 +132,12 @@ const PassportTemplate: ApplicationTemplate<
         entry: 'assignToParentB',
         meta: {
           name: 'ParentB',
+          status: 'inprogress',
           progress: 0.9,
-          lifecycle: pruneAfter(sixtyDays),
-          onEntry: {
-            apiModuleAction: ApiActions.assignParentB,
-          },
+          lifecycle: pruneAfter(sevenDays),
+          onEntry: defineTemplateApi({
+            action: ApiActions.assignParentB,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -140,6 +160,13 @@ const PassportTemplate: ApplicationTemplate<
                 { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
               ],
               write: 'all',
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                SyslumadurPaymentCatalogApi,
+                IdentityDocumentApi,
+                DistrictsApi,
+              ],
             },
           ],
         },
@@ -150,6 +177,7 @@ const PassportTemplate: ApplicationTemplate<
       [States.DONE]: {
         meta: {
           name: 'Done',
+          status: 'completed',
           progress: 1,
           lifecycle: pruneAfter(sixtyDays),
           actionCard: {
@@ -157,9 +185,9 @@ const PassportTemplate: ApplicationTemplate<
               label: m.actionCardDoneTag,
             },
           },
-          onEntry: {
-            apiModuleAction: ApiActions.submitPassportApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitPassportApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -190,19 +218,22 @@ const PassportTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },
   stateMachineOptions: {
     actions: {
       assignToParentB: assign((context) => {
+        const parentB = getValueViaPath<string>(
+          context.application.answers,
+          'childsPersonalInfo.guardian2.nationalId',
+        )
+
         return {
           ...context,
           application: {
             ...context.application,
-            // Assigning Gervimaður Útlönd for testing
-            assignees: ['0101307789'],
+            assignees: parentB ? [parentB] : [],
           },
         }
       }),

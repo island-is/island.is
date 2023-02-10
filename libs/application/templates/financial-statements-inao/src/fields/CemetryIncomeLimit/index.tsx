@@ -7,11 +7,12 @@ import { m } from '../../lib/messages'
 
 import { getFinancialLimit } from '../../graphql'
 import { CEMETRYOPERATIONIDS } from '../../lib/constants'
+import { FSIUSERTYPE } from '../../types'
 
 export const CemeteryIncomeLimit = ({
   currentUserType,
 }: {
-  currentUserType?: string
+  currentUserType?: FSIUSERTYPE
 }) => {
   const { getValues, setValue } = useFormContext()
   const { formatMessage } = useLocale()
@@ -20,7 +21,7 @@ export const CemeteryIncomeLimit = ({
   const year: string = values?.conditionalAbout?.operatingYear
 
   const { data, error } = useQuery(getFinancialLimit, {
-    variables: { input: { year, clientType: currentUserType } },
+    variables: { input: { year, clientType: currentUserType?.toString() } },
   })
 
   useEffect(() => {

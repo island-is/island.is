@@ -6,7 +6,6 @@ const {
   API_URL = 'http://localhost:3333',
   API_PATH = '/app/skilavottord/api',
   WEB_PUBLIC_URL = 'http://localhost:4200',
-  SENTRY_DSN,
   DD_RUM_APPLICATION_ID,
   DD_RUM_CLIENT_TOKEN,
   APP_VERSION,
@@ -17,9 +16,6 @@ const graphqlPath = '/graphql'
 
 module.exports = withVanillaExtract({
   webpack: (config, options) => {
-    if (!options.isServer) {
-      config.resolve.alias['@sentry/node'] = '@sentry/browser'
-    }
     return config
   },
   serverRuntimeConfig: {
@@ -27,7 +23,6 @@ module.exports = withVanillaExtract({
   },
   publicRuntimeConfig: {
     graphqlEndpoint: `${API_PATH}${graphqlPath}`,
-    SENTRY_DSN,
     ddRumApplicationId: DD_RUM_APPLICATION_ID,
     ddRumClientToken: DD_RUM_CLIENT_TOKEN,
     appVersion: APP_VERSION,

@@ -1,4 +1,16 @@
-export { UserProfileProvider } from '@island.is/application/data-providers'
-export { NationalRegistryMaritalStatusProvider } from './NationalRegistryMaritalStatusProvider'
-export { DistrictsProvider } from './DistrictsProvider'
-export { NationalRegistryProvider } from '@island.is/application/data-providers'
+import { defineTemplateApi } from '@island.is/application/types'
+
+export {
+  NationalRegistryUserApi,
+  UserProfileApi,
+  DistrictsApi,
+} from '@island.is/application/types'
+
+export const MaritalStatusApi = defineTemplateApi({
+  action: 'maritalStatus',
+})
+
+export const ReligionCodesApi = defineTemplateApi({
+  action: 'religionCodes',
+  externalDataId: 'religions',
+})

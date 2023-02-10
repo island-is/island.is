@@ -1,16 +1,17 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-
 import { useMutation } from '@apollo/client'
 import { useRouter } from 'next/router'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
-import { UserRole } from '@island.is/judicial-system/types'
+import {
+  User,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { CreateUserMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { titles } from '@island.is/judicial-system-web/messages'
-import type { User } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import UserForm from '../UserForm/UserForm'
@@ -24,7 +25,7 @@ const user: User = {
   title: '',
   mobileNumber: '',
   email: '',
-  role: UserRole.PROSECUTOR,
+  role: UserRole.Prosecutor,
   institution: undefined,
   active: true,
 }
@@ -33,6 +34,7 @@ export const NewUser: React.FC = () => {
   const router = useRouter()
 
   const {
+    courts,
     allCourts,
     prosecutorsOffices,
     prisonInstitutions,
@@ -76,6 +78,7 @@ export const NewUser: React.FC = () => {
       {institutionLoaded && (
         <UserForm
           user={user}
+          courts={courts}
           allCourts={allCourts}
           prosecutorsOffices={prosecutorsOffices}
           prisonInstitutions={prisonInstitutions}

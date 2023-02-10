@@ -8,12 +8,13 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
+import { formConclusionSection } from '@island.is/application/ui-forms'
 import { m } from './messages'
 
 export const MissingInfoForm: Form = buildForm({
   id: 'HealthInsuranceReview',
   title: m.formTitle,
-  mode: FormModes.APPLYING,
+  mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({
       id: 'missingInfoSection',
@@ -73,12 +74,13 @@ export const MissingInfoForm: Form = buildForm({
             }),
           ],
         }),
-        buildCustomField({
-          id: 'successfulSubmissionMissingInfo',
-          title: '',
-          component: 'ConfirmationScreen',
-        }),
       ],
+    }),
+    formConclusionSection({
+      alertTitle: m.successfulSubmissionTitle,
+      alertMessage: m.successfulSubmissionMessage,
+      expandableHeader: m.successfulExpendableHeader,
+      expandableDescription: m.nextStepReviewTime,
     }),
   ],
 })

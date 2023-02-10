@@ -4,18 +4,13 @@ import { Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 
 import { ConfigType } from '@island.is/nest/config'
-import {
-  CaseFileState,
-  CaseState,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { CaseState, UserRole } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { uuidFactory } from '../../../../factories'
 import { Defendant, DefendantService } from '../../../defendant'
+import { IndictmentCount } from '../../../indictment-count'
 import { CaseFile, FileService } from '../../../file'
-import { User } from '../../../user'
-import { Institution } from '../../../institution'
 import { ArchiveResponse } from '../../models/archive.response'
 import { Case } from '../../models/case.model'
 import { CaseArchive } from '../../models/caseArchive.model'
@@ -85,17 +80,16 @@ describe('InternalCaseController - Archive', () => {
       expect(mockCaseModel.findOne).toHaveBeenCalledWith({
         include: [
           { model: Defendant, as: 'defendants' },
-          {
-            model: CaseFile,
-            as: 'caseFiles',
-            required: false,
-            where: {
-              state: { [Op.not]: CaseFileState.DELETED },
-            },
-          },
+          { model: IndictmentCount, as: 'indictmentCounts' },
+          { model: CaseFile, as: 'caseFiles' },
         ],
         order: [
           [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
+          [
+            { model: IndictmentCount, as: 'indictmentCounts' },
+            'created',
+            'ASC',
+          ],
           [{ model: CaseFile, as: 'caseFiles' }, 'created', 'ASC'],
         ],
         where: {
@@ -156,8 +150,18 @@ describe('InternalCaseController - Archive', () => {
         },
       ],
       caseFiles: [
-        { id: caseFileId1, name: 'original_name1', key: 'original_key1' },
-        { id: caseFileId2, name: 'original_name2', key: 'original_key2' },
+        {
+          id: caseFileId1,
+          name: 'original_name1',
+          key: 'original_key1',
+          userGeneratedFilename: 'original_user_generated_filename1',
+        },
+        {
+          id: caseFileId2,
+          name: 'original_name2',
+          key: 'original_key2',
+          userGeneratedFilename: 'original_user_generated_filename2',
+        },
       ],
       isArchived: false,
     }
@@ -205,8 +209,16 @@ describe('InternalCaseController - Archive', () => {
         },
       ],
       caseFiles: [
-        { name: 'original_name1', key: 'original_key1' },
-        { name: 'original_name2', key: 'original_key2' },
+        {
+          name: 'original_name1',
+          key: 'original_key1',
+          userGeneratedFilename: 'original_user_generated_filename1',
+        },
+        {
+          name: 'original_name2',
+          key: 'original_key2',
+          userGeneratedFilename: 'original_user_generated_filename2',
+        },
       ],
     })
     const iv = uuid()
@@ -251,7 +263,7 @@ describe('InternalCaseController - Archive', () => {
       expect(mockFileService.updateCaseFile).toHaveBeenCalledWith(
         caseId,
         caseFileId1,
-        { name: '', key: '' },
+        { name: '', key: '', userGeneratedFilename: '' },
         transaction,
       )
     })
@@ -260,7 +272,7 @@ describe('InternalCaseController - Archive', () => {
       expect(mockFileService.updateCaseFile).toHaveBeenCalledWith(
         caseId,
         caseFileId2,
-        { name: '', key: '' },
+        { name: '', key: '', userGeneratedFilename: '' },
         transaction,
       )
     })
@@ -314,6 +326,7 @@ describe('InternalCaseController - Archive', () => {
           prosecutorAppealAnnouncement: '',
           caseModifiedExplanation: '',
           caseResentExplanation: '',
+          crimeScenes: null,
           isArchived: true,
         },
         { where: { id: caseId }, transaction },

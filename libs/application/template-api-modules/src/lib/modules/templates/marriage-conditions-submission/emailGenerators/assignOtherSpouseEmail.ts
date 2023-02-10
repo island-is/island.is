@@ -27,7 +27,7 @@ export const generateAssignOtherSpouseApplicationEmail: AssignOtherSpuseEmail = 
     throw new Error('Could not find other Spouse email')
   }
 
-  const subject = 'Umsókn vegna hjónavígslu'
+  const subject = 'Umsókn um könnunarvottorð'
   const link = `${clientLocationOrigin}/${ApplicationConfigurations.MarriageConditions.slug}/${application.id}`
 
   return {
@@ -69,6 +69,13 @@ export const generateAssignOtherSpouseApplicationEmail: AssignOtherSpuseEmail = 
           component: 'Copy',
           context: {
             copy: `Þín bíður beiðni um könnun á hjónavígsluskilyrðum.`,
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy: `Þú hefur 60 daga til að bregðast við umsókninni.`,
+            small: true,
           },
         },
         {

@@ -1,9 +1,9 @@
 import React, { ReactElement, useRef } from 'react'
 import { Box, Stack } from '@island.is/island-ui/core'
-import { ServicePortalPath } from '@island.is/service-portal/core'
-import useNavigation from '../../hooks/useNavigation/useNavigation'
-import { ActionType } from '../../store/actions'
-import { useStore } from '../../store/stateProvider'
+import {
+  ServicePortalPath,
+  useDynamicRoutesWithNavigation,
+} from '@island.is/service-portal/core'
 import ModuleNavigation from '../Sidebar/ModuleNavigation'
 import * as styles from './MobileMenu.css'
 import { useListDocuments } from '@island.is/service-portal/graphql'
@@ -11,23 +11,29 @@ import { useAuth } from '@island.is/auth/react'
 import NavItem from '../Sidebar/NavItem/NavItem'
 import { sharedMessages } from '@island.is/shared/translations'
 import { useLocale } from '@island.is/localization'
+import { SERVICE_PORTAL_HEADER_HEIGHT_SM } from '@island.is/service-portal/constants'
+import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
+interface Props {
+  position: number
+  mobileMenuOpen: boolean
+  setMobileMenuOpen: () => void
+}
 
-const MobileMenu = (): ReactElement | null => {
+const MobileMenu = ({
+  position,
+  mobileMenuOpen,
+  setMobileMenuOpen,
+}: Props): ReactElement | null => {
   const ref = useRef(null)
-  const [{ mobileMenuState }, dispatch] = useStore()
   const { signOut } = useAuth()
-  const navigation = useNavigation()
+  const mainNav = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const { unreadCounter } = useListDocuments()
   const { formatMessage } = useLocale()
 
-  const handleLinkClick = () =>
-    dispatch({
-      type: ActionType.SetMobileMenuState,
-      payload: 'closed',
-    })
+  if (!mobileMenuOpen) return null
 
-  if (mobileMenuState === 'closed') return null
-
+  const topPosition = position + SERVICE_PORTAL_HEADER_HEIGHT_SM
+  // Inline style to dynamicly change position of header because of alert banners
   return (
     <Box
       position="fixed"
@@ -40,18 +46,19 @@ const MobileMenu = (): ReactElement | null => {
       display="flex"
       flexDirection="column"
       justifyContent="spaceBetween"
+      style={{ top: topPosition, maxHeight: `calc(100vh - ${topPosition})` }}
     >
-      {navigation.map((rootItem, rootIndex) => (
+      {[mainNav].map((rootItem, rootIndex) => (
         <Box key={rootIndex} paddingX={0} marginTop={3}>
           <Stack space={2}>
-            {rootItem.children?.map(
+            {rootItem?.children?.map(
               (navRoot, index) =>
                 navRoot.path !== ServicePortalPath.MinarSidurRoot &&
                 !navRoot.navHide && (
                   <ModuleNavigation
                     key={index}
                     nav={navRoot}
-                    onItemClick={handleLinkClick}
+                    onItemClick={setMobileMenuOpen}
                     badge={
                       navRoot.subscribesTo === 'documents' && unreadCounter > 0
                     }

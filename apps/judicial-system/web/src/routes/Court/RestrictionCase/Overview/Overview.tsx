@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -13,6 +13,7 @@ import {
   InfoCard,
   FormContext,
   MarkdownWrapper,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseCourtSubsections,
@@ -36,7 +37,10 @@ import {
   CaseLegalProvisions,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   Text,
   Accordion,
@@ -47,7 +51,6 @@ import {
 } from '@island.is/island-ui/core'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { DraftConclusionModal } from '../../components'
@@ -66,35 +69,34 @@ export const JudgeOverview: React.FC = () => {
   const id = router.query.id
 
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
-  const { setAndSendToServer } = useCase()
+  const { setAndSendCaseToServer } = useCase()
 
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
 
-  useEffect(() => {
-    if (isCaseUpToDate) {
-      setAndSendToServer(
-        [
-          {
-            ruling: !workingCase.parentCase
-              ? `\n${formatMessage(ruling.autofill, {
-                  judgeName: workingCase.judge?.name,
-                })}`
-              : isAcceptingCaseDecision(workingCase.decision)
-              ? workingCase.parentCase.ruling
-              : undefined,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
-    }
-  }, [
-    setAndSendToServer,
-    formatMessage,
-    isCaseUpToDate,
-    setWorkingCase,
-    workingCase,
-  ])
+  const initialize = useCallback(() => {
+    setAndSendCaseToServer(
+      [
+        {
+          ruling: !workingCase.parentCase
+            ? `\n${formatMessage(ruling.autofill, {
+                judgeName: workingCase.judge?.name,
+              })}`
+            : isAcceptingCaseDecision(workingCase.decision)
+            ? workingCase.parentCase.ruling
+            : undefined,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }, [setAndSendCaseToServer, formatMessage, setWorkingCase, workingCase])
+
+  useOnceOn(isCaseUpToDate, initialize)
+
+  const handleNavigationTo = useCallback(
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [router, workingCase.id],
+  )
 
   return (
     <PageLayout
@@ -105,6 +107,8 @@ export const JudgeOverview: React.FC = () => {
       activeSubSection={RestrictionCaseCourtSubsections.JUDGE_OVERVIEW}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={true}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.court.restrictionCases.overview)}
@@ -208,12 +212,14 @@ export const JudgeOverview: React.FC = () => {
                   }
                 : undefined
             }
-            defender={{
-              name: workingCase.defenderName ?? '',
-              email: workingCase.defenderEmail,
-              sessionArrangement: workingCase.sessionArrangements,
-              phoneNumber: workingCase.defenderPhoneNumber,
-            }}
+            defenders={[
+              {
+                name: workingCase.defenderName ?? '',
+                email: workingCase.defenderEmail,
+                sessionArrangement: workingCase.sessionArrangements,
+                phoneNumber: workingCase.defenderPhoneNumber,
+              },
+            ]}
           />
         </Box>
         <Box marginBottom={5}>
@@ -340,7 +346,11 @@ export const JudgeOverview: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`}
-          nextUrl={`${constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${id}`}
+          onNextButtonClick={() =>
+            handleNavigationTo(
+              constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+            )
+          }
           nextIsDisabled={uploadState === UploadState.UPLOADING}
           nextButtonText={formatMessage(rcCourtOverview.continueButton.label)}
         />

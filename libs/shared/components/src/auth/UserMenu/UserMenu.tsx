@@ -5,19 +5,27 @@ import { UserButton } from './UserButton'
 import { UserDropdown } from './UserDropdown'
 import { UserLanguageSwitcher } from './UserLanguageSwitcher'
 
+type UserMenuProps = {
+  fullscreen?: boolean
+  small?: boolean
+  showDropdownLanguage?: boolean
+  setUserMenuOpen?(state: boolean): void
+  userMenuOpen?: boolean
+  iconOnlyMobile?: boolean
+  showLanguageSwitcher?: boolean
+  showActorButton?: boolean
+}
+
 export const UserMenu = ({
   fullscreen = false,
   showDropdownLanguage = false,
   userMenuOpen,
   small = false,
   setUserMenuOpen,
-}: {
-  fullscreen?: boolean
-  small?: boolean
-  showDropdownLanguage?: boolean
-  setUserMenuOpen?: (state: boolean) => void
-  userMenuOpen?: boolean
-}) => {
+  showLanguageSwitcher = true,
+  showActorButton = true,
+  iconOnlyMobile = false,
+}: UserMenuProps) => {
   const [dropdownState, setDropdownState] = useState<'closed' | 'open'>(
     'closed',
   )
@@ -42,10 +50,17 @@ export const UserMenu = ({
 
   return (
     <Box display="flex" position="relative" height="full">
-      <Hidden below="md">
-        <UserLanguageSwitcher user={user} />
-      </Hidden>
-      <UserButton user={user} onClick={handleClick} small={small} />
+      {showLanguageSwitcher && (
+        <Hidden below="md">
+          <UserLanguageSwitcher user={user} />
+        </Hidden>
+      )}
+      <UserButton
+        user={user}
+        onClick={handleClick}
+        small={small}
+        iconOnlyMobile={iconOnlyMobile}
+      />
       <UserDropdown
         user={user}
         dropdownState={dropdownState}
@@ -60,6 +75,7 @@ export const UserMenu = ({
         }}
         fullscreen={fullscreen}
         showDropdownLanguage={showDropdownLanguage}
+        showActorButton={showActorButton}
       />
     </Box>
   )

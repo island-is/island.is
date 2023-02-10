@@ -11,7 +11,7 @@ import { formatText, getValueViaPath } from '@island.is/application/core'
 import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import WarningSection, { Step } from './WarningSection'
-import { hasYes } from '../../lib/utils'
+import { hasYes } from '@island.is/application/core'
 import { B_FULL, DrivingLicenseApplicationFor } from '../../shared'
 
 interface ReasonsProps {

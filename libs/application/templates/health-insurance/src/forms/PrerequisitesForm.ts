@@ -13,6 +13,11 @@ import {
   FormValue,
   ExternalData,
 } from '@island.is/application/types'
+import {
+  HealthInsuranceApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
+} from '../dataProviders'
 import { m } from './messages'
 import Logo from '../assets/Logo'
 import { prerequisitesFailed } from '../healthInsuranceUtils'
@@ -21,7 +26,7 @@ export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',
   title: m.prerequisitesFormTitle,
   logo: Logo,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'PrerequisitesInfoSection',
@@ -34,8 +39,7 @@ export const PrerequisitesForm: Form = buildForm({
           checkboxLabel: m.externalDataCheckbox,
           dataProviders: [
             buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: 'NationalRegistryProvider',
+              provider: NationalRegistryUserApi,
               title: m.nationalRegistryTitle,
               subTitle: m.nationalRegistrySubTitle,
             }),
@@ -64,26 +68,12 @@ export const PrerequisitesForm: Form = buildForm({
               subTitle: m.dataProvidersMoreInfo,
             }),
             buildDataProviderItem({
-              id: 'userProfile',
-              type: 'UserProfileProvider',
+              provider: UserProfileApi,
               title: '',
               subTitle: '',
             }),
             buildDataProviderItem({
-              id: 'applications',
-              type: 'ApplicationsProvider',
-              title: '',
-              subTitle: '',
-            }),
-            buildDataProviderItem({
-              id: 'healthInsurance',
-              type: 'HealthInsuranceProvider',
-              title: '',
-              subTitle: '',
-            }),
-            buildDataProviderItem({
-              id: 'pendingApplications',
-              type: 'PendingApplications',
+              provider: HealthInsuranceApi,
               title: '',
               subTitle: '',
             }),

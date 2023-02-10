@@ -6,10 +6,10 @@ import {
 import {
   EQUITIESANDLIABILITIESIDS,
   PARTYOPERATIONIDS,
-  USERTYPE,
 } from '../../../lib/constants'
 import { m } from '../../../lib/messages'
 import { getCurrentUserType } from '../../../lib/utils/helpers'
+import { FSIUSERTYPE } from '../../../types'
 import { capitalNumberSection } from '../shared/keyNumbers/capitalNumbers'
 
 export const partyKeyNumbersSection = buildSection({
@@ -17,7 +17,7 @@ export const partyKeyNumbersSection = buildSection({
   title: m.keyNumbers,
   condition: (answers, externalData) => {
     const userType = getCurrentUserType(answers, externalData)
-    return userType === USERTYPE.PARTY
+    return userType === FSIUSERTYPE.PARTY
   },
   children: [
     buildSubSection({
@@ -29,7 +29,7 @@ export const partyKeyNumbersSection = buildSection({
           title: m.keyNumbersIncomeAndExpenses,
           condition: (answers, externalData) => {
             const userType = getCurrentUserType(answers, externalData)
-            return userType === USERTYPE.PARTY
+            return userType === FSIUSERTYPE.PARTY
           },
           description: m.fillOutAppopriate,
           component: 'PartyOperatingIncome',
@@ -40,7 +40,7 @@ export const partyKeyNumbersSection = buildSection({
     capitalNumberSection,
     buildSubSection({
       id: 'keyNumbers.equitiesAndLiabilities',
-      title: m.keyNumbersProperty,
+      title: m.propertiesAndDebts,
       children: [
         buildCustomField({
           id: 'equitiesAndLiabilities',

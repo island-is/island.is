@@ -77,7 +77,7 @@ jobs:
       - name: Building NodeJS dependencies
         if: steps.node-modules.outputs.cache-hit != 'true'
         working-directory: infra
-        run: yarn install --frozen-lock
+        run: yarn install --immutable
 
       - name: Run unit tests
         run: ./infra/scripts/ci/test-unit.sh
@@ -115,7 +115,7 @@ jobs:
       - name: Building NodeJS dependencies
         if: steps.node-modules.outputs.cache-hit != 'true'
         working-directory: infra
-        run: yarn install --frozen-lock
+        run: yarn install --immutable
 
       - name: Select role
         env:

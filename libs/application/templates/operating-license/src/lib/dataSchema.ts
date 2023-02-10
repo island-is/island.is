@@ -1,4 +1,4 @@
-import * as z from 'zod'
+import { z } from 'zod'
 import { error } from './error'
 import { APPLICATION_TYPES, NO, OPERATION_CATEGORY, YES } from './constants'
 import {
@@ -14,6 +14,15 @@ const FileSchema = z.object({
   key: z.string(),
   url: z.string().optional(),
 })
+
+const Properties = z
+  .object({
+    propertyNumber: z.string(),
+    address: z.string(),
+    spaceNumber: z.string(),
+    customerCount: z.string(),
+  })
+  .array()
 
 const TimeRefine = z.object({
   from: z.string().refine((x) => (x ? isValid24HFormatTime(x) : false), {
@@ -58,60 +67,51 @@ export const dataSchema = z.object({
   applicationInfo: z
     .object({
       operation: z.enum([APPLICATION_TYPES.HOTEL, APPLICATION_TYPES.RESTURANT]),
-      hotel: z
-        .object({
-          type: z.string().optional(),
-          category: z
-            .array(z.enum([OPERATION_CATEGORY.ONE, OPERATION_CATEGORY.TWO]))
-            .optional(),
-        })
-        .optional(),
-      resturant: z
-        .object({
-          type: z.string().optional(),
-          category: z
-            .enum([OPERATION_CATEGORY.ONE, OPERATION_CATEGORY.TWO, ''])
-            .optional(),
-        })
-        .optional(),
+      typeHotel: z.string().optional(),
+      typeResturant: z.array(z.string()).optional(),
+      category: z.enum([
+        OPERATION_CATEGORY.TWO,
+        OPERATION_CATEGORY.THREE,
+        OPERATION_CATEGORY.FOUR,
+      ]),
+      willServe: z.array(z.enum([YES, NO])).optional(),
     })
     .partial()
     // Check category
     .refine(
-      ({ operation, hotel, resturant }) =>
+      ({ operation, category }) =>
         (operation === APPLICATION_TYPES.HOTEL &&
-          validateApplicationInfoCategory({ operation, hotel, resturant })) ||
+          validateApplicationInfoCategory({ operation, category })) ||
         (operation === APPLICATION_TYPES.RESTURANT &&
-          validateApplicationInfoCategory({ operation, hotel, resturant })),
+          validateApplicationInfoCategory({ operation, category })),
       {
         message: error.invalidValue.defaultMessage,
-        path: ['resturant', 'category'],
+        path: ['category'],
       },
     )
     // Check type for hotel
     .refine(
-      ({ operation, hotel, resturant }) =>
-        (operation === APPLICATION_TYPES.HOTEL &&
-          (!!resturant?.type || !resturant?.type) &&
-          !!hotel?.type) ||
-        (operation === APPLICATION_TYPES.RESTURANT &&
-          (!!hotel?.type || !hotel?.type) &&
-          !!resturant?.type),
-      { message: error.invalidValue.defaultMessage, path: ['hotel', 'type'] },
+      ({ operation, typeHotel }) =>
+        (operation === APPLICATION_TYPES.HOTEL && !!typeHotel) ||
+        operation === APPLICATION_TYPES.RESTURANT,
+      {
+        message: error.invalidValue.defaultMessage,
+        path: ['typeHotel'],
+      },
     )
     // Check type for resturant
     .refine(
-      ({ operation, hotel, resturant }) =>
-        (operation === APPLICATION_TYPES.HOTEL &&
-          (!!resturant?.type || !resturant?.type)) ||
+      ({ operation, typeResturant }) =>
+        operation === APPLICATION_TYPES.HOTEL ||
         (operation === APPLICATION_TYPES.RESTURANT &&
-          (!!hotel?.type || !hotel?.type) &&
-          !!resturant?.type),
+          typeResturant?.length &&
+          typeResturant?.length > 0),
       {
         message: error.invalidValue.defaultMessage,
-        path: ['resturant', 'type'],
+        path: ['typeResturant'],
       },
     )
+
     // check operation
     .refine(({ operation }) => !!operation, {
       message: error.invalidValue.defaultMessage,
@@ -119,7 +119,7 @@ export const dataSchema = z.object({
     }),
 
   info: z.object({
-    operationName: z.string().nonempty(),
+    operationName: z.string().min(1),
     vskNr: z
       .string()
       .refine((v) => isValidVskNr(v), { params: error.invalidValue }),
@@ -131,14 +131,11 @@ export const dataSchema = z.object({
       .min(7)
       .refine((v) => isValidPhoneNumber(v), { params: error.invalidValue }),
   }),
-  properties: z
-    .object({
-      propertyNumber: z.string(),
-      address: z.string(),
-      spaceNumber: z.string(),
-      customerCount: z.string(),
-    })
-    .array(),
+  properties: z.object({
+    stay: Properties.optional(),
+    dining: Properties.optional(),
+    outside: Properties.optional(),
+  }),
   openingHours: z
     .object({
       alcohol: OpeningHours,
@@ -164,19 +161,15 @@ export const dataSchema = z.object({
         path: ['willServe'],
       },
     ),
-  temporaryLicense: z.array(z.enum([YES, NO])).nonempty(),
-  debtClaim: z.array(z.enum([YES, NO])).nonempty(),
+  temporaryLicense: z.array(z.enum([YES, NO])).optional(),
+  debtClaim: z.array(z.enum([YES, NO])).optional(),
   otherInfoText: z.string().optional(),
   attachments: z.object({
     healthLicense: z.object({
-      file: z
-        .array(FileSchema)
-        .refine((v) => v.length > 0, { params: error.invalidValue }),
+      file: z.array(FileSchema).optional(),
     }),
     formerLicenseHolderConfirmation: z.object({
-      file: z
-        .array(FileSchema)
-        .refine((v) => v.length > 0, { params: error.invalidValue }),
+      file: z.array(FileSchema).optional(),
     }),
     houseBlueprints: z.object({
       file: z

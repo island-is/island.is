@@ -12,6 +12,8 @@ import { serviceSetup as appSystemFormSetup } from '../../../apps/application-sy
 import { serviceSetup as servicePortalApiSetup } from '../../../apps/services/user-profile/infra/service-portal-api'
 import { serviceSetup as servicePortalSetup } from '../../../apps/service-portal/infra/service-portal'
 
+import { serviceSetup as adminPortalSetup } from '../../../apps/portals/admin/infra/portals-admin'
+import { serviceSetup as samradsgattSetup } from '../../../apps/samradsgatt/infra/samradsgatt'
 import { serviceSetup as xroadCollectorSetup } from '../../../apps/services/xroad-collector/infra/xroad-collector'
 
 import { serviceSetup as skilavottordWsSetup } from '../../../apps/skilavottord/ws/infra/ws'
@@ -38,7 +40,13 @@ import { serviceSetup as adsBackendSetup } from '../../../apps/air-discount-sche
 
 import { serviceSetup as externalContractsTestsSetup } from '../../../apps/external-contracts-tests/infra/external-contracts-tests'
 
+import {
+  serviceSetup as sessionsServiceSetup,
+  workerSetup as sessionsWorkerSetup,
+} from '../../../apps/services/sessions/infra/sessions'
+
 import { EnvironmentServices } from '.././dsl/types/charts'
+import { ServiceBuilder } from '../dsl/dsl'
 
 const endorsement = endorsementServiceSetup({})
 
@@ -48,18 +56,30 @@ const appSystemApi = appSystemApiSetup({
   servicesEndorsementApi: endorsement,
 })
 const appSystemApiWorker = appSystemApiWorkerSetup()
-const appSystemForm = appSystemFormSetup({})
 
 const servicePortalApi = servicePortalApiSetup()
-const servicePortal = servicePortalSetup({})
+const adminPortal = adminPortalSetup()
+const samradsgatt = samradsgattSetup()
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
+
+const adsBackend = adsBackendSetup()
+const adsApi = adsApiSetup({ adsBackend })
+const adsWeb = adsWebSetup({ adsApi })
+
+const sessionsService = sessionsServiceSetup()
+const sessionsWorker = sessionsWorkerSetup()
+
 const api = apiSetup({
   appSystemApi,
   servicePortalApi,
   documentsService,
   icelandicNameRegistryBackend: nameRegistryBackend,
   servicesEndorsementApi: endorsement,
+  airDiscountSchemeBackend: adsBackend,
+  sessionsApi: sessionsService,
 })
+const servicePortal = servicePortalSetup({ graphql: api })
+const appSystemForm = appSystemFormSetup({ api: api })
 const web = webSetup({ api: api })
 const searchIndexer = searchIndexerSetup()
 const contentfulEntryTagger = contentfulEntryTaggerSetup()
@@ -79,9 +99,6 @@ const userNotificationWorkerService = userNotificationWorkerSetup({
   userProfileApi: servicePortalApi,
 })
 
-const adsBackend = adsBackendSetup()
-const adsApi = adsApiSetup({ adsBackend })
-const adsWeb = adsWebSetup({ adsApi })
 const githubActionsCache = githubActionsCacheSetup()
 
 const externalContractsTests = externalContractsTestsSetup()
@@ -92,6 +109,7 @@ export const Services: EnvironmentServices = {
     appSystemForm,
     servicePortal,
     servicePortalApi,
+    adminPortal,
     api,
     web,
     searchIndexer,
@@ -110,12 +128,15 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
+    sessionsService,
+    sessionsWorker,
   ],
   staging: [
     appSystemApi,
     appSystemForm,
     servicePortal,
     servicePortalApi,
+    adminPortal,
     api,
     web,
     skilavottordWeb,
@@ -134,12 +155,16 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
+    sessionsService,
+    sessionsWorker,
   ],
   dev: [
     appSystemApi,
     appSystemForm,
     servicePortal,
     servicePortalApi,
+    adminPortal,
+    samradsgatt,
     api,
     web,
     searchIndexer,
@@ -161,15 +186,18 @@ export const Services: EnvironmentServices = {
     externalContractsTests,
     appSystemApiWorker,
     contentfulEntryTagger,
+    sessionsService,
+    sessionsWorker,
   ],
 }
 
 // Services that are not included in any environment above but should be used in feature deployments
-export const FeatureDeploymentServices = []
+export const FeatureDeploymentServices: ServiceBuilder<any>[] = []
 
 // Services that are included in some environment above but should be excluded from feature deployments
-export const ExcludedFeatureDeploymentServices = [
+export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   userNotificationService,
   userNotificationWorkerService,
   contentfulEntryTagger,
+  searchIndexer,
 ]

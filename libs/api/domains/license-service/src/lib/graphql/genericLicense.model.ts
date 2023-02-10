@@ -62,6 +62,9 @@ export class GenericUserLicenseMetadata {
   @Field(() => Boolean, { nullable: true })
   expired?: boolean | null
 
+  @Field(() => String, { nullable: true })
+  expireDate?: string | null
+
   @Field(() => String)
   title?: string
 

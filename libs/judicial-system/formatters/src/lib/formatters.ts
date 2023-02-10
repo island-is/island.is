@@ -1,6 +1,7 @@
 import { format, parseISO, isValid } from 'date-fns' // eslint-disable-line no-restricted-imports
 // Importing 'is' directly from date-fns/locale/is has caused unexpected problems
 import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-imports
+import _uniq from 'lodash/uniq'
 
 import {
   CaseAppealDecision,
@@ -9,8 +10,10 @@ import {
   CaseType,
   isRestrictionCase,
   isIndictmentCase,
-  SessionArrangements,
+  IndictmentSubtype,
+  IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
+import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
   if (typeof date === 'string' || date instanceof String) {
@@ -95,29 +98,13 @@ export const laws = {
 
 type CaseTypes = { [c in CaseType]: string }
 export const caseTypes: CaseTypes = {
-  CHILD_PROTECTION_LAWS: 'barnaverndarlög',
-  PROPERTY_DAMAGE: 'eignaspjöll',
-  NARCOTICS_OFFENSE: 'fíkniefnalagabrot',
-  EMBEZZLEMENT: 'fjárdráttur',
-  FRAUD: 'fjársvik',
-  DOMESTIC_VIOLENCE: 'heimilisofbeldi',
-  ASSAULT_LEADING_TO_DEATH: 'líkamsáras sem leiðir til dauða',
-  MURDER: 'manndráp',
-  MAJOR_ASSAULT: 'meiriháttar líkamsárás',
-  MINOR_ASSAULT: 'minniháttar líkamsárás',
-  RAPE: 'nauðgun',
-  UTILITY_THEFT: 'nytjastuldur',
-  AGGRAVATED_ASSAULT: 'sérlega hættuleg líkamsáras',
-  TAX_VIOLATION: 'skattalagabrot',
-  ATTEMPTED_MURDER: 'tilraun til manndráps',
-  TRAFFIC_VIOLATION: 'umferðarlagabrot',
-  THEFT: 'þjófnaður',
-  OTHER_CRIMINAL_OFFENSES: 'önnur hegningarlagabrot',
-  SEXUAL_OFFENSES_OTHER_THAN_RAPE: 'önnur kynferðisbrot en nauðgun',
-  OTHER_OFFENSES: 'önnur sérrefsilagabrot',
+  // Indicitment cases
+  INDICTMENT: 'ákæra',
+  // Restriction cases
   CUSTODY: 'gæsluvarðhald',
   TRAVEL_BAN: 'farbann',
   ADMISSION_TO_FACILITY: 'vistun á viðeigandi stofnun',
+  // Investigation Cases
   SEARCH_WARRANT: 'húsleit',
   BANKING_SECRECY_WAIVER: 'rof bankaleyndar',
   PHONE_TAPPING: 'símhlustun',
@@ -135,6 +122,44 @@ export const caseTypes: CaseTypes = {
   ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'rannsókn á rafrænum gögnum',
   VIDEO_RECORDING_EQUIPMENT: 'myndupptökubúnaði komið fyrir',
   OTHER: 'annað',
+}
+
+type IndictmentSubtypes = { [c in IndictmentSubtype]: string }
+export const indictmentSubtypes: IndictmentSubtypes = {
+  ALCOHOL_LAWS: 'áfengislagabrot',
+  CHILD_PROTECTION_LAWS: 'barnaverndarlög',
+  INDECENT_EXPOSURE: 'blygðunarsemisbrot',
+  LEGAL_ENFORCEMENT_LAWS: 'brot gegn lögreglulögum',
+  POLICE_REGULATIONS: 'brot gegn lögreglusamþykkt',
+  INTIMATE_RELATIONS: 'brot í nánu sambandi',
+  PUBLIC_SERVICE_VIOLATION: 'brot í opinberu starfi',
+  PROPERTY_DAMAGE: 'eignaspjöll',
+  NARCOTICS_OFFENSE: 'fíkniefnalagabrot',
+  EMBEZZLEMENT: 'fjárdráttur',
+  FRAUD: 'fjársvik',
+  LOOTING: 'gripdeild',
+  OTHER_CRIMINAL_OFFENSES: 'hegningarlagabrot önnur',
+  DOMESTIC_VIOLENCE: 'heimilisofbeldi',
+  THREAT: 'hótun',
+  BREAKING_AND_ENTERING: 'húsbrot',
+  COVER_UP: 'hylming',
+  SEXUAL_OFFENSES_OTHER_THAN_RAPE: 'kynferðisbrot önnur en nauðgun',
+  MAJOR_ASSAULT: 'líkamsárás - meiriháttar',
+  MINOR_ASSAULT: 'líkamsárás - minniháttar',
+  AGGRAVATED_ASSAULT: 'líkamsárás - sérlega hættuleg',
+  ASSAULT_LEADING_TO_DEATH: 'líkamsárás sem leiðir til dauða',
+  MURDER: 'manndráp',
+  RAPE: 'nauðgun',
+  UTILITY_THEFT: 'nytjastuldur',
+  MONEY_LAUNDERING: 'peningaþvætti',
+  OTHER_OFFENSES: 'sérrefsilagabrot önnur',
+  NAVAL_LAW_VIOLATION: 'siglingalagabrot',
+  TAX_VIOLATION: 'skattalagabrot',
+  ATTEMPTED_MURDER: 'tilraun til manndráps',
+  CUSTOMS_VIOLATION: 'tollalagabrot',
+  TRAFFIC_VIOLATION: 'umferðarlagabrot',
+  WEPONS_VIOLATION: 'vopnalagabrot',
+  THEFT: 'þjófnaður',
 }
 
 export const getShortRestrictionByValue = (value: CaseCustodyRestrictions) => {
@@ -238,19 +263,25 @@ export function formatAppeal(
   }
 }
 
-export function formatRequestCaseType(type: CaseType): string {
-  return isRestrictionCase(type) ||
-    type === CaseType.RESTRAINING_ORDER ||
-    type === CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME ||
-    type === CaseType.EXPULSION_FROM_HOME ||
-    type === CaseType.PSYCHIATRIC_EXAMINATION
-    ? caseTypes[type]
+export function formatRequestCaseType(type: string): string {
+  const caseType = type as CaseType
+
+  return isRestrictionCase(caseType) ||
+    caseType === CaseType.RESTRAINING_ORDER ||
+    caseType === CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME ||
+    caseType === CaseType.EXPULSION_FROM_HOME ||
+    caseType === CaseType.PSYCHIATRIC_EXAMINATION
+    ? caseTypes[caseType]
     : 'rannsóknarheimild'
 }
 
-export const formatDOB = (nationalId?: string, noNationalId?: boolean) => {
+export const formatDOB = (
+  nationalId?: string,
+  noNationalId?: boolean,
+  fallback = '-',
+) => {
   if (!nationalId) {
-    return '-'
+    return fallback
   }
 
   return noNationalId
@@ -278,10 +309,43 @@ export const displayFirstPlusRemaining = (
 
 export const formatDefenderRoute = (
   baseUrl: string,
-  caseType: CaseType,
+  type: string,
   id: string,
 ) => {
-  return `${baseUrl}/verjandi${
+  const caseType = type as CaseType
+  return `${baseUrl}${DEFENDER_ROUTE}${
     isIndictmentCase(caseType) ? '/akaera' : ''
   }/${id}`
+}
+
+export const splitStringByComma = (str?: string): string[] => {
+  return str?.trim().split(/[, ]+/) || []
+}
+
+export const readableIndictmentSubtypes = (
+  policeCaseNumbers: string[],
+  rawIndictmentSubtypes?: IndictmentSubtypeMap,
+): string[] => {
+  if (!rawIndictmentSubtypes) {
+    return []
+  }
+
+  const returnValue: string[] = []
+
+  for (let i = 0; i < policeCaseNumbers.length; i++) {
+    const subtypesOfPoliceCaseNumber =
+      rawIndictmentSubtypes[policeCaseNumbers[i]]
+
+    if (!subtypesOfPoliceCaseNumber) {
+      break
+    }
+
+    returnValue.push(
+      ...subtypesOfPoliceCaseNumber.map(
+        (subtype) => indictmentSubtypes[subtype],
+      ),
+    )
+  }
+
+  return _uniq(returnValue)
 }

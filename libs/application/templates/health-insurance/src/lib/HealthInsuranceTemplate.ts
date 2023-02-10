@@ -7,6 +7,10 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  defineTemplateApi,
+  NationalRegistryUserApi,
+  HealthInsuranceApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import { API_MODULE } from '../shared'
 import { answerValidators } from './answerValidators'
@@ -36,12 +40,14 @@ const HealthInsuranceTemplate: ApplicationTemplate<
   name: applicationName,
   readyForProduction: true,
   dataSchema: HealthInsuranceSchema,
+  allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: ApplicationStates.PREREQUESITES,
     states: {
       [ApplicationStates.PREREQUESITES]: {
         meta: {
           name: applicationName,
+          status: 'draft',
           progress: 0,
           lifecycle: {
             shouldBeListed: false,
@@ -65,6 +71,11 @@ const HealthInsuranceTemplate: ApplicationTemplate<
               ],
               delete: true,
               write: 'all',
+              api: [
+                NationalRegistryUserApi,
+                HealthInsuranceApi,
+                UserProfileApi,
+              ],
             },
           ],
         },
@@ -74,6 +85,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
       },
       [ApplicationStates.DRAFT]: {
         meta: {
+          status: 'draft',
           name: applicationName,
           progress: 0.25,
           lifecycle: DefaultStateLifeCycle,
@@ -104,10 +116,11 @@ const HealthInsuranceTemplate: ApplicationTemplate<
       },
       [ApplicationStates.IN_REVIEW]: {
         meta: {
+          status: 'completed',
           name: applicationName,
-          onEntry: {
-            apiModuleAction: API_MODULE.sendApplyHealthInsuranceApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: API_MODULE.sendApplyHealthInsuranceApplication,
+          }),
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           roles: [

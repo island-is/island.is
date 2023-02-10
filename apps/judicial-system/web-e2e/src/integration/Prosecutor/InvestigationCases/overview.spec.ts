@@ -1,7 +1,15 @@
 import faker from 'faker'
 
-import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
-import { INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE } from '@island.is/judicial-system/consts'
+import {
+  Case,
+  CaseState,
+  CaseType,
+  UserRole,
+} from '@island.is/judicial-system/types'
+import {
+  DEFENDER_ROUTE,
+  INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
+} from '@island.is/judicial-system/consts'
 
 import {
   mockCase,
@@ -9,6 +17,8 @@ import {
   intercept,
   mockName,
   mockAddress,
+  hasOperationName,
+  Operation,
 } from '../../../utils'
 
 describe(`${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
@@ -18,21 +28,22 @@ describe(`${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
   const defenderPhoneNumber = faker.phone.phoneNumber()
   const caseData = mockCase(CaseType.INTERNET_USAGE)
 
-  beforeEach(() => {
-    const caseDataAddition: Case = {
-      ...caseData,
-      defenderNationalId: '0000000000',
-      defenderName,
-      defenderEmail,
-      defenderPhoneNumber,
-      demands,
-      seenByDefender: '2020-09-16T19:50:08.033Z',
-      state: CaseState.RECEIVED,
-      prosecutor: makeProsecutor(),
-      creatingProsecutor: makeProsecutor(),
-      requestedCourtDate: '2020-09-20T19:50:08.033Z',
-    }
+  const caseDataAddition: Case = {
+    ...caseData,
+    defenderNationalId: '0000000000',
+    defenderName,
+    defenderEmail,
+    defenderPhoneNumber,
+    demands,
+    seenByDefender: '2020-09-16T19:50:08.033Z',
+    state: CaseState.SUBMITTED,
+    prosecutor: makeProsecutor(),
+    creatingProsecutor: makeProsecutor(),
+    requestedCourtDate: '2020-09-20T19:50:08.033Z',
+  }
 
+  beforeEach(() => {
+    cy.login(UserRole.PROSECUTOR)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(`${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/test_id`)
@@ -40,10 +51,6 @@ describe(`${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
 
   it('should let the user know if the assigned defender has viewed the case', () => {
     cy.getByTestid('alertMessageSeenByDefender').should('not.match', ':empty')
-  })
-
-  it('should have a info panel about how to resend a case if the case has been received', () => {
-    cy.getByTestid('ic-overview-info-panel').should('exist')
   })
 
   it('should display information about the case in an info card', () => {
@@ -71,16 +78,15 @@ describe(`${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
     cy.getByTestid('requestPDFButton').should('exist')
   })
 
-  it('should have a button that copies link to case for defender', () => {
-    cy.getByTestid('copyLinkToCase').click()
-    cy.window()
-      .its('navigator.clipboard')
-      .invoke('readText')
-      .then((data) => data)
-      .should('equal', `${window.location.origin}/verjandi/${caseData.id}`)
-  })
+  it('should navigate to /krofur on successful confirmation', () => {
+    cy.intercept('POST', '**/api/graphql', (req) => {
+      if (hasOperationName(req, Operation.CaseListQuery)) {
+        req.reply({
+          fixture: 'cases',
+        })
+      }
+    })
 
-  it.skip('should navigate to /krofur on successful confirmation', () => {
     cy.getByTestid('continueButton').click()
     cy.getByTestid('modalSecondaryButton').click()
     cy.url().should('contain', '/krofur')
@@ -90,6 +96,48 @@ describe(`${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
      * the overview in isolation anymore. Leaving this here until a better
      * way presents itself.
      */
-    cy.getByTestid('tdTag').should('contain', 'Krafa móttekin')
+    cy.getByTestid('tdTag').should('contain', 'Móttekið')
+  })
+})
+
+describe(`${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/:id - copy link`, () => {
+  const demands = faker.lorem.paragraph()
+  const defenderName = faker.name.findName()
+  const defenderEmail = faker.internet.email()
+  const defenderPhoneNumber = faker.phone.phoneNumber()
+  const caseData = mockCase(CaseType.INTERNET_USAGE)
+
+  const caseDataAddition: Case = {
+    ...caseData,
+    defenderNationalId: '0000000000',
+    defenderName,
+    defenderEmail,
+    defenderPhoneNumber,
+    demands,
+    seenByDefender: '2020-09-16T19:50:08.033Z',
+    state: CaseState.RECEIVED,
+    prosecutor: makeProsecutor(),
+    creatingProsecutor: makeProsecutor(),
+    requestedCourtDate: '2020-09-20T19:50:08.033Z',
+    courtDate: '2020-09-20T19:50:08.033Z',
+  }
+
+  beforeEach(() => {
+    cy.login(UserRole.PROSECUTOR)
+    cy.stubAPIResponses()
+    intercept(caseDataAddition)
+    cy.visit(`${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/test_id`)
+  })
+
+  it('should have a button that copies link to case for defender', () => {
+    cy.getByTestid('copyLinkToCase').click()
+    cy.window()
+      .its('navigator.clipboard')
+      .invoke('readText')
+      .then((data) => data)
+      .should(
+        'equal',
+        `${window.location.origin}${DEFENDER_ROUTE}/${caseData.id}`,
+      )
   })
 })

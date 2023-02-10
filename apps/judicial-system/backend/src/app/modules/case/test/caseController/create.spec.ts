@@ -3,20 +3,20 @@ import { Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 
 import {
-  CaseFileState,
   CaseOrigin,
   CaseState,
-  CaseType,
+  indictmentCases,
+  investigationCases,
+  restrictionCases,
   User as TUser,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
-import { Defendant, DefendantService } from '../../../defendant'
-import { User } from '../../../user'
-import { Institution } from '../../../institution'
+import { DefendantService } from '../../../defendant'
 import { CreateCaseDto } from '../../dto/createCase.dto'
 import { Case } from '../../models/case.model'
-import { CaseFile } from '../../../file'
+import { include, order } from '../../case.service'
 
 interface Then {
   result: Case
@@ -38,6 +38,7 @@ describe('CaseController - Create', () => {
       caseModel,
       caseController,
     } = await createTestingCaseModule()
+
     mockDefendantService = defendantService
     mockCaseModel = caseModel
 
@@ -60,21 +61,59 @@ describe('CaseController - Create', () => {
     }
   })
 
-  describe('case created', () => {
+  describe.each([...restrictionCases, ...investigationCases])(
+    '%s case created',
+    (type) => {
+      const userId = uuid()
+      const courtId = uuid()
+      const user = {
+        id: userId,
+        role: UserRole.PROSECUTOR,
+        institution: { defaultCourtId: courtId },
+      } as TUser
+      const caseToCreate = {
+        type,
+        description: 'Some details',
+        policeCaseNumbers: ['007-2021-777'],
+        defenderName: 'John John',
+        defenderNationalId: '0000000009',
+        defenderEmail: 'john@dummy.is',
+        defenderPhoneNumber: '1234567',
+        sendRequestToDefender: false,
+        leadInvestigator: 'The Boss',
+      }
+
+      beforeEach(async () => {
+        await givenWhenThen(user, caseToCreate)
+      })
+
+      it('should create a case', () => {
+        expect(mockCaseModel.create).toHaveBeenCalledWith(
+          {
+            ...caseToCreate,
+            origin: CaseOrigin.RVG,
+            creatingProsecutorId: userId,
+            prosecutorId: userId,
+            courtId,
+          },
+          { transaction },
+        )
+      })
+    },
+  )
+
+  describe.each(indictmentCases)('%s case created', (type) => {
     const userId = uuid()
     const courtId = uuid()
     const user = {
       id: userId,
+      role: UserRole.PROSECUTOR,
       institution: { defaultCourtId: courtId },
     } as TUser
     const caseToCreate = {
-      type: CaseType.AUTOPSY,
+      type,
       description: 'Some details',
       policeCaseNumbers: ['007-2021-777'],
-      defenderName: 'John John',
-      defenderNationalId: '0000000009',
-      defenderEmail: 'john@dummy.is',
-      defenderPhoneNumber: '1234567',
       sendRequestToDefender: false,
       leadInvestigator: 'The Boss',
     }
@@ -87,6 +126,7 @@ describe('CaseController - Create', () => {
       expect(mockCaseModel.create).toHaveBeenCalledWith(
         {
           ...caseToCreate,
+          state: CaseState.DRAFT,
           origin: CaseOrigin.RVG,
           creatingProsecutorId: userId,
           prosecutorId: userId,
@@ -135,47 +175,8 @@ describe('CaseController - Create', () => {
 
     it('should lookup the newly created case', () => {
       expect(mockCaseModel.findOne).toHaveBeenCalledWith({
-        include: [
-          { model: Defendant, as: 'defendants' },
-          { model: Institution, as: 'court' },
-          {
-            model: User,
-            as: 'creatingProsecutor',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          {
-            model: User,
-            as: 'prosecutor',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          { model: Institution, as: 'sharedWithProsecutorsOffice' },
-          {
-            model: User,
-            as: 'judge',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          {
-            model: User,
-            as: 'registrar',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          {
-            model: User,
-            as: 'courtRecordSignatory',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          { model: Case, as: 'parentCase' },
-          { model: Case, as: 'childCase' },
-          {
-            model: CaseFile,
-            as: 'caseFiles',
-            required: false,
-            where: {
-              state: { [Op.not]: CaseFileState.DELETED },
-            },
-          },
-        ],
-        order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
+        include,
+        order,
         where: {
           id: caseId,
           isArchived: false,

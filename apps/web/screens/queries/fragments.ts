@@ -40,27 +40,6 @@ export const slices = gql`
     hasBorderAbove
   }
 
-  fragment MailingListSignupFields on MailingListSignupSlice {
-    __typename
-    id
-    title
-    variant
-    description
-    inputLabel
-    fullNameLabel
-    questionLabel
-    yesLabel
-    noLabel
-    disclaimerLabel
-    categoryLabel
-    categories
-    buttonText
-    signupUrl
-    image {
-      ...ImageFields
-    }
-  }
-
   fragment StoryFields on StorySlice {
     __typename
     id
@@ -174,6 +153,7 @@ export const slices = gql`
       answer {
         ...BaseSlices
       }
+      publishDate
     }
   }
 
@@ -182,6 +162,7 @@ export const slices = gql`
     id
     title
     json
+    configJson
     componentType: type
   }
 
@@ -347,6 +328,7 @@ export const slices = gql`
     }
     automaticallyFetchArticles
     sortBy
+    hasBorderAbove
     articles {
       id
       slug
@@ -434,6 +416,8 @@ export const slices = gql`
     title
     type
     hasBorderAbove
+    showTitle
+    titleHeadingLevel
     accordionItems {
       id
       title
@@ -500,13 +484,14 @@ export const slices = gql`
     id
     title
     intro
-    recipient
     fields {
       title
+      name
       placeholder
       type
       required
       options
+      informationText
     }
     successText
     aboutYouHeadingText
@@ -597,11 +582,94 @@ export const slices = gql`
     id
     title
     powerBiEmbedProps
+    workspaceId
+    reportId
+    owner
+  }
+
+  fragment TableSliceFields on TableSlice {
+    __typename
+    id
+    title
+    tableContent
+  }
+
+  fragment EmailSignupFields on EmailSignup {
+    __typename
+    id
+    title
+    description
+    formFields {
+      id
+      title
+      name
+      placeholder
+      type
+      required
+      options
+      informationText
+    }
+    translations
+  }
+
+  fragment FeaturedSupportQNAsFields on FeaturedSupportQNAs {
+    __typename
+    id
+    renderedTitle
+    resolvedSupportQNAs {
+      id
+      title
+      slug
+      answer {
+        ...BaseSlices
+      }
+      organization {
+        id
+        title
+        slug
+      }
+      category {
+        title
+        description
+        slug
+      }
+      subCategory {
+        title
+        description
+        slug
+      }
+    }
+    link {
+      text
+      url
+    }
+    supportQNAs {
+      id
+      title
+      slug
+      answer {
+        ...BaseSlices
+      }
+      organization {
+        id
+        title
+        slug
+      }
+      category {
+        title
+        description
+        slug
+      }
+      subCategory {
+        title
+        description
+        slug
+      }
+    }
   }
 
   fragment BaseSlices on Slice {
     ...TimelineFields
-    ...MailingListSignupFields
     ...StoryFields
     ...LatestNewsFields
     ...LinkCardFields
@@ -634,11 +702,14 @@ export const slices = gql`
     ...LifeEventPageListSliceFields
     ...SidebarCardFields
     ...PowerBiSliceFields
+    ...TableSliceFields
+    ...EmailSignupFields
   }
 
   fragment AllSlices on Slice {
     ...BaseSlices
     ...FaqListFields
+    ...FeaturedSupportQNAsFields
   }
 `
 
@@ -651,7 +722,7 @@ export const nestedOneColumnTextFields = gql`
   }
 `
 
-export const nestedAccordionAndFaqListFields = `
+const nestedContainerFields = `
   ... on AccordionSlice {
     ...AccordionSliceFields
     accordionItems {
@@ -671,6 +742,31 @@ export const nestedAccordionAndFaqListFields = `
       answer {
         ...AllSlices
       }
+      publishDate
     }
   }
+  ... on TabSection {
+    ...TabSectionFields 
+    tabs {
+      tabTitle
+      contentTitle
+      image {
+        ...ImageFields
+      }
+      body {
+        ...AllSlices
+      }
+    }
+  }
+`
+
+export const nestedFields = `
+  ... on OneColumnText {
+    ...OneColumnTextFields
+    content {
+      ...AllSlices
+      ${nestedContainerFields}
+    }
+  }
+  ${nestedContainerFields}
 `

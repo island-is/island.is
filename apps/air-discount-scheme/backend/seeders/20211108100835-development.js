@@ -1,9 +1,9 @@
 'use strict'
 const faker = require('faker')
 
-// Good to have one test user accumulate more than the statistically
+// Good to have test users accumulate more than the statistically
 // likely singular flight leg.
-const specific_test_user = faker.phone.phoneNumber('##########')
+const specific_test_users = ['0101302399', '2222222229']
 
 const pairings = [
   [
@@ -43,9 +43,9 @@ const getRandomFlightLeg = (flightId, flightDate, pairing) => {
 }
 
 const getRandomFlight = (nationalId) => {
-  // Random time, max 30 days in the past
+  // Random time, max 1 day into the future
   const randomDate = new Date(
-    Date.now() - Math.ceil(Math.random() * 2592000000),
+    Date.now() + Math.ceil(Math.random() * 1000 * 60 * 60 * 24),
   ).toISOString()
   return {
     id: faker.datatype.uuid(),
@@ -55,7 +55,7 @@ const getRandomFlight = (nationalId) => {
     booking_date: randomDate,
     user_info: JSON.stringify({
       age: faker.datatype.number(99),
-      gender: faker.datatype.boolean() ? 'kk' : 'kvk',
+      gender: ['kk', 'kvk', 'x'][faker.datatype.number(2)],
       postalCode: '600',
     }),
     connectable: faker.datatype.boolean(),
@@ -68,7 +68,11 @@ module.exports = {
     const flight_legs = []
     for (let i = 0; i < 100; i++) {
       const nationalId =
-        i < 2 ? specific_test_user : faker.phone.phoneNumber('##########')
+        i < 2
+          ? specific_test_users[0]
+          : i < 4
+          ? specific_test_users[1]
+          : faker.phone.phoneNumber('##########')
       const pairingLeg = Math.round(Math.random() * (pairings[0].length - 1))
       const flight = getRandomFlight(nationalId)
       flights.push(flight)

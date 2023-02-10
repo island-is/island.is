@@ -10,7 +10,6 @@ import {
   InfoCardActiveIndictment,
   Modal,
   PageLayout,
-  PdfButton,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -18,17 +17,20 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import { Box, Text } from '@island.is/island-ui/core'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
-  useCase,
-  useFileList,
-} from '@island.is/judicial-system-web/src/utils/hooks'
-import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
+  CaseState,
+  CaseTransition,
+  Feature,
+} from '@island.is/judicial-system/types'
+import IndictmentCaseFilesList from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
+import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './Overview.strings'
-import * as styles from './Overview.css'
 
 const Overview: React.FC = () => {
   const {
@@ -41,34 +43,39 @@ const Overview: React.FC = () => {
     'noModal',
   )
   const { formatMessage } = useIntl()
+  const { features } = useContext(FeatureContext)
   const router = useRouter()
-  const { onOpen } = useFileList({ caseId: workingCase.id })
   const { transitionCase } = useCase()
+  const isTrafficViolationCaseCheck =
+    features.includes(Feature.INDICTMENT_ROUTE) &&
+    isTrafficViolationCase(workingCase.indictmentSubtypes)
 
   const isNewIndictment =
     workingCase.state === CaseState.NEW || workingCase.state === CaseState.DRAFT
 
+  const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
+
   const handleNextButtonClick = async () => {
     if (isNewIndictment) {
-      await transitionCase(workingCase, CaseTransition.SUBMIT, setWorkingCase)
+      await transitionCase(
+        workingCase.id,
+        CaseTransition.SUBMIT,
+        setWorkingCase,
+      )
     }
 
     setModal('caseSubmittedModal')
   }
 
-  const caseHasBeenSentToCourt =
-    workingCase.state !== CaseState.NEW && workingCase.state !== CaseState.DRAFT
-
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
-      }
+      activeSection={Sections.PROSECUTOR}
       activeSubSection={
-        caseHasBeenSentToCourt
+        caseHasBeenReceivedByCourt
           ? undefined
-          : IndictmentsProsecutorSubsections.OVERVIEW
+          : IndictmentsProsecutorSubsections.OVERVIEW +
+            (isTrafficViolationCaseCheck ? 1 : 0)
       }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
@@ -86,41 +93,21 @@ const Overview: React.FC = () => {
         <Box component="section" marginBottom={5}>
           <InfoCardActiveIndictment />
         </Box>
-        {workingCase.caseFiles && (
-          <Box component="section" marginBottom={10}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                {formatMessage(strings.overview.caseFilesHeading)}
-              </Text>
-            </Box>
-            {workingCase.caseFiles.map((caseFile, index) => {
-              return (
-                <Box key={index} className={styles.caseFileContainer}>
-                  <PdfButton
-                    renderAs="row"
-                    caseId={workingCase.id}
-                    title={caseFile.name}
-                    handleClick={() => onOpen(caseFile.id)}
-                  />
-                </Box>
-              )
-            })}
-          </Box>
-        )}
+        <IndictmentCaseFilesList workingCase={workingCase} />
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={
-            caseHasBeenSentToCourt
+            caseHasBeenReceivedByCourt
               ? constants.CASES_ROUTE
-              : `${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${workingCase.id}`
+              : `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`
           }
           nextButtonText={formatMessage(strings.overview.nextButtonText, {
             isNewIndictment,
           })}
-          hideNextButton={caseHasBeenSentToCourt}
+          hideNextButton={caseHasBeenReceivedByCourt}
           infoBoxText={
-            caseHasBeenSentToCourt
+            caseHasBeenReceivedByCourt
               ? formatMessage(strings.overview.caseSendToCourt)
               : undefined
           }
@@ -135,7 +122,7 @@ const Overview: React.FC = () => {
             onPrimaryButtonClick={() => {
               router.push(constants.CASES_ROUTE)
             }}
-            primaryButtonText={formatMessage(strings.overview.modalButtonText)}
+            primaryButtonText={formatMessage(core.closeModal)}
           />
         )}
       </AnimatePresence>

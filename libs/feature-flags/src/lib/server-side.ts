@@ -5,9 +5,12 @@ export class ServerSideFeatures implements ServerSideFeatureClientType {
   input?: string
   processed = false
   featuresOn: ServerSideFeature[] = []
+
   constructor(featuresOn?: string) {
-    this.input = featuresOn
+    const isDev = process.env.NODE_ENV !== 'production'
+    this.input = isDev ? featuresOn ?? '' : featuresOn
   }
+
   isOn(feature: ServerSideFeature): boolean {
     if (!this.processed) {
       if (typeof this.input === 'undefined') {

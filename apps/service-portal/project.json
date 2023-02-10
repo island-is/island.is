@@ -27,6 +27,7 @@
         "production": {
           "optimization": true,
           "outputHashing": "all",
+          "index": "apps/service-portal/src/index.src.html",
           "sourceMap": false,
           "extractCss": true,
           "namedChunks": false,
@@ -41,7 +42,21 @@
           ]
         }
       },
-      "outputs": ["{options.outputPath}"]
+      "outputs": ["{options.outputPath}"],
+      "dependsOn": [
+        {
+          "target": "generateDevIndexHTML",
+          "projects": "self"
+        }
+      ]
+    },
+    "generateDevIndexHTML": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "node scripts/dockerfile-assets/bash/extract-environment.js apps/service-portal/src"
+        ]
+      }
     },
     "serve": {
       "executor": "@nrwl/web:dev-server",
@@ -52,7 +67,13 @@
         "production": {
           "buildTarget": "service-portal:build:production"
         }
-      }
+      },
+      "dependsOn": [
+        {
+          "target": "generateDevIndexHTML",
+          "projects": "self"
+        }
+      ]
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
@@ -74,7 +95,27 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/service-portal/src/{screens,components}/**/*.{js,ts,tsx}'"
       }
     },
+    "dev-init": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn get-secrets service-portal",
+          "yarn nx run services-user-profile:dev-init"
+        ],
+        "parallel": false
+      }
+    },
+    "dev": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn nx run services-user-profile:dev",
+          "yarn start service-portal"
+        ],
+        "parallel": true
+      }
+    },
     "docker-static": {}
   },
-  "tags": []
+  "tags": ["scope:portals-mypages"]
 }

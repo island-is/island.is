@@ -131,12 +131,17 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
       />
       <Stack space={2}>
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+          <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>
             {financeStatusData.organizations?.length > 0 ||
             financeStatusZero ? (
-              <Box display="flex" justifyContent="flexStart" printHidden>
+              <Box
+                display="flex"
+                flexWrap="wrap"
+                justifyContent="flexStart"
+                printHidden
+              >
                 {!isDelegation && scheduleButtonVisible && (
-                  <Box paddingRight={2}>
+                  <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
                     <a
                       href="/umsoknir/greidsluaaetlun/"
                       target="_blank"
@@ -159,7 +164,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                   </Box>
                 )}
 
-                <Box paddingRight={2}>
+                <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
                   <Button
                     colorScheme="default"
                     icon="print"

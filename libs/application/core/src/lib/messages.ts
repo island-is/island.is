@@ -41,6 +41,21 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Opna umsókn',
     description: 'Button label when application is in progress',
   },
+  cardButtonDraft: {
+    id: 'application.system:card.button.Draft',
+    defaultMessage: 'Opna umsókn',
+    description: 'Button label when application is in draft',
+  },
+  cardButtonRejected: {
+    id: 'application.system:card.button.Rejected',
+    defaultMessage: 'Skoða yfirlit',
+    description: 'Button label when application is rejected',
+  },
+  cardButtonApproved: {
+    id: 'application.system:card.button.Approved',
+    defaultMessage: 'Skoða yfirlit',
+    description: 'Button label when application is approved',
+  },
   cardButtonNotStarted: {
     id: 'application:card.button.notStarted',
     defaultMessage: 'Hefja umsókn',
@@ -141,6 +156,16 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Hafnað',
     description: 'Rejected status for an application',
   },
+  tagsApproved: {
+    id: 'application.system:tags.approved',
+    defaultMessage: 'Samþykkt',
+    description: 'Approved status for an application',
+  },
+  tagsDraft: {
+    id: 'application.system:tags.draft',
+    defaultMessage: 'Umsókn í vinnslu hjá þér',
+    description: 'Draft status for an application',
+  },
   tagsRequiresAction: {
     id: 'application.system:tags.requiresAction',
     defaultMessage: 'Krefst aðgerða',
@@ -208,6 +233,11 @@ export const coreMessages = defineMessages({
 })
 
 export const coreErrorMessages = defineMessages({
+  defaultTemplateApiError: {
+    id: 'application.system:core.defaultTemplateApiError',
+    defaultMessage: 'Villa kom upp',
+    description: 'Unkonwn template api error',
+  },
   defaultError: {
     id: 'application.system:core.default.error',
     defaultMessage: 'Ógilt gildi',
@@ -298,6 +328,17 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Ógild kennitala',
     description: 'Message indicating national id is invalid',
   },
+  invalidCompanySelectedTitle: {
+    id: 'application.system:core.payment.invalidCompanySelectedTitle',
+    defaultMessage: 'Þú mátt ekki velja þetta fyrirtæki',
+    description:
+      'Title error message when a user selects company on forbidden list',
+  },
+  invalidCompanySelectedMessage: {
+    id: 'application.system:core.payment.invalidCompanySelectedMessage',
+    defaultMessage: 'Þetta fyrirtæki er á bannlista, vinsamlegast veldu annað',
+    description: 'Error message when a user selects company on forbidden list',
+  },
   noCompanySearchResultsFoundTitle: {
     id: 'application.system:core.payment.noCompanySearchResultsFoundTitle',
     defaultMessage: 'Engar niðurstöður fundust hjá fyrirtækjaskrá',
@@ -308,8 +349,119 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Vinsamlegast athugaðu hvort að rétt var slegið inn.',
     description: 'Error Message when no company search result is found',
   },
-})
+  nationalRegistryAgeLimitNotMetTitle: {
+    id:
+      'application.system:core.fetch.data.nationalRegistryAgeLimitNotMetTitle',
+    defaultMessage: 'Þú hefur ekki náð tilskyldum aldri fyrir þessa umsókn',
+    description:
+      'Error Title when age restriciton from national registry is not met',
+  },
+  nationalRegistryAgeLimitNotMetSummary: {
+    id:
+      'application.system:core.fetch.data.nationalRegistryAgeLimitNotMetSummary',
+    defaultMessage: 'Þú hefur ekki náð tilskyldum aldri fyrir þessa umsókn ',
+    description:
+      'Error message when age restriciton from national registry is not met',
+  },
+  drivingLicenseNoTeachingRightsTitle: {
+    id:
+      'application.system:core.fetch.data.drivingLicenseNoTeachingRightsTitle',
+    defaultMessage: 'Þú hefur ekki ökukennararéttindi í ökuskírteinaskrá.',
+    description: 'Driving License provider no teaching rights error',
+  },
+  drivingLicenseNoTeachingRightsSummary: {
+    id:
+      'application.system:core.fetch.data.drivingLicenseNoTeachingRightsSummary',
+    defaultMessage:
+      'Vinsamlega hafðu samband við næsta sýslumannsembætti ef þú telur um villu vera að ræða.',
+    description: 'Driving License provider no teaching rights error',
+  },
+  drivingLicenseNotEmployeeTitle: {
+    id: 'application.system:core.fetch.data.drivingLicenseNotEmployeeTitle',
+    defaultMessage: 'Ekki fannst staðfesting á skráningarréttindum',
+    description: 'Driving License provider no teaching rights error',
+  },
+  drivingLicenseNotEmployeeSummary: {
+    id: 'application.system:core.fetch.data.drivingLicenseNotEmployeeSummary',
+    defaultMessage:
+      'Vinsamlega hafðu samband við Samgöngustofu til að athuga hvort þú hafir sannarlega réttindi til skráningar ökuskóla',
+    description: 'Driving License provider no teaching rights error',
+  },
+  vehiclesEmptyListOwner: {
+    id: 'application.system:core.fetch.data.vehiclesEmptyListOwner',
+    defaultMessage: 'Þú átt engin ökutæki þar sem þú ert aðaleigandi',
+    description: 'You do not have any vehicles where you are the main owner',
+  },
+  vehiclesEmptyListOwnerOrCoOwner: {
+    id: 'application.system:core.fetch.data.vehiclesEmptyListOwnerOrCoOwner',
+    defaultMessage:
+      'Þú átt engin ökutæki þar sem þú ert aðaleigandi eða meðeigandi',
+    description: 'You do not have any vehicles where you are the main owner',
+  },
+  vehiclesEmptyListDefault: {
+    id: 'application.system:core.fetch.data.vehiclesEmptyListDefault',
+    defaultMessage: 'Ekki fundust nein ökutæki',
+    description: 'Did not find any vehicles',
+  },
+  dataCollectionCriminalRecordErrorTitle: {
+    id: 'ol.application:missingCriominalRecordTitle',
+    defaultMessage: 'Skilyrði um hreina sakaskrá er ekki uppfyllt',
+    description: '',
+  },
+  dataCollectionCriminalRecordTitle: {
+    id: 'ol.application:dataCollection.criminalRecordTitle',
+    defaultMessage: 'Sakaskrá ríkisins',
+    description: 'Some description',
+  },
+  missingCertificateTitle: {
+    id: 'ndc.application:missingCertificateTitle',
+    defaultMessage: 'Ekki tókst að staðfesta skuldleysi',
+    description: '',
+  },
+  missingCertificateSummary: {
+    id: 'ndc.application:missingCertificateSummary',
+    defaultMessage:
+      'Staðfesting á skuldleysi fékkst ekki úr gagnagrunni Fjársýslu ríkisins',
+    description: '',
+  },
+  drivingLicenseMissingValidCategory: {
+    id: 'application.system:core.fetch.data.drivingLicenseMissingValidCategory',
+    defaultMessage:
+      'Þú ert ekki með nauðsynleg ökuréttindi til að sækja um þessa umsókn',
+    description:
+      'You do not have enough driving permission to apply for this application',
+  },
+  nationalRegistryLegalDomicileNotIceland: {
+    id:
+      'application.system:core.fetch.data.nationalRegistryLegalDomicileNotIceland',
+    defaultMessage: 'Þú ert ekki með lögheimili á Íslandi',
+    description: 'You do not have a domicile in Iceland',
+  },
+  nationalRegistryBirthplaceMissing: {
+    id: 'application.system:core.fetch.data.nationalRegistryBirthplaceMissing',
+    defaultMessage: 'Náði ekki að sækja fæðingarstað',
+    description: 'Not able to fetch birthplace',
+  },
 
+  applicationIsPrunedAndReadOnly: {
+    id: 'application.system:core.fetch.data.applicationIsPrunedAndReadOnly',
+    defaultMessage: 'Umsókn hefur runnið út á tíma og hefur verið gerð óvirk.',
+    description: 'Application has been pruned and is not editable',
+  },
+  nationalIdNotFoundInNationalRegistryTitle: {
+    id:
+      'application.system:core.fetch.data.nationalIdNotFoundInNationalRegistryTitle',
+    defaultMessage: 'Ekki tókst að sækja gögn úr Þjóðskrá',
+    description: 'Not able to fetch data from national registry title',
+  },
+  nationalIdNotFoundInNationalRegistrySummary: {
+    id:
+      'application.system:core.fetch.data.nationalIdNotFoundInNationalRegistrySummary',
+    defaultMessage:
+      'Ekki tókst að sækja gögn úr Þjóðskrá fyrir þessa kennitölu.',
+    description: 'Not able to fetch data from national registry description',
+  },
+})
 export const coreDelegationsMessages = defineMessages({
   delegationScreenTitle: {
     id: 'application.system:core.delegations.delegationScreenTitle',
@@ -335,7 +487,7 @@ export const coreDelegationsMessages = defineMessages({
   delegationScreenTitleForOngoingApplication: {
     id:
       'application.system:core.delegations.delegationScreenTitleForOngoingApplication',
-    defaultMessage: 'Umsókn um stæðiskort',
+    defaultMessage: 'Umsókn',
     description: 'Delegations screen title for ongoing application',
   },
   delegationScreenSubtitleForOngoingApplication: {
@@ -368,5 +520,86 @@ export const coreDelegationsMessages = defineMessages({
     id: 'application.system:core.delegations.delegationErrorButton',
     defaultMessage: 'Skipta um notanda',
     description: 'Delegations Screen Card Button/Link',
+  },
+})
+
+export const coreErrorScreenMessages = defineMessages({
+  notFoundTitle: {
+    id: 'application.system:core.errorScreen.notFoundTitle',
+    defaultMessage: 'Umsókn fannst ekki',
+    description: 'Error screen title',
+  },
+  notFoundSubTitle: {
+    id: 'application.system:core.errorScreen.notFoundSubTitle',
+    defaultMessage:
+      'Eftirfarandi ástæður geta verið fyrir því að umsóknin fannst ekki',
+    description: 'Error screen subtitle',
+  },
+  notFoundDescription: {
+    id: 'application.system:core.errorScreen.notFoundDescription#markdown',
+    defaultMessage: `* Þú ert á rangri slóð\n`,
+    description: 'Error screen description',
+  },
+  forbiddenTitle: {
+    id: 'application.system:core.errorScreen.forbiddenTitle',
+    defaultMessage: 'Þú hefur ekki aðgang að viðkomandi umsókn',
+    description: 'Error screen title',
+  },
+  forbiddenSubTitle: {
+    id: 'application.system:core.errorScreen.forbiddenSubTitle',
+    defaultMessage:
+      'Eftirfarandi ástæður geta verið fyrir því að umsóknin fannst ekki',
+    description: 'Error screen subtitle',
+  },
+  forbiddenDescription: {
+    id: 'application.system:core.errorScreen.forbiddenDescription#markdown',
+    defaultMessage: `* Þú ert ekki með aðgang að umsókninni\n* Umsóknin er full kláruð`,
+    description: 'Error screen description',
+  },
+  notExistTitle: {
+    id: 'application.system:core.errorScreen.notExistTitle',
+    defaultMessage: 'Umsóknartegund ekki til',
+    description: 'Error screen title',
+  },
+  notExistSubTitle: {
+    id: 'application.system:core.errorScreen.notExistSubTitle',
+    defaultMessage:
+      'Eftirfarandi ástæður geta verið fyrir því að umsóknin fannst ekki',
+    description: 'Error screen subtitle',
+  },
+  notExistDescription: {
+    id: 'application.system:core.errorScreen.notExistDescription#markdown',
+    defaultMessage: `* Þú ert á rangri slóð\n`,
+  },
+  lostTitle: {
+    id: 'application.system:core.errorScreen.lostTitle',
+    defaultMessage: 'Umsókn týnd - Ekki til',
+    description: 'Error screen title',
+  },
+  lostSubTitle: {
+    id: 'application.system:core.errorScreen.lostSubTitle',
+    defaultMessage:
+      'Eftirfarandi ástæður geta verið fyrir því að umsóknin fannst ekki',
+    description: 'Error screen subtitle',
+  },
+  lostDescription: {
+    id: 'application.system:core.errorScreen.lostDescription#markdown',
+    defaultMessage: `* Umsókn hefur verið fjarlægð\n* Umsókn rann út á tíma\n`,
+    description: 'Error screen description',
+  },
+  buttonNewApplication: {
+    id: 'application.system:core.errorScreen.buttonNew',
+    defaultMessage: 'Byrja nýja umsókn',
+    description: 'Error screen button',
+  },
+  buttonMyApplications: {
+    id: 'application.system:core.errorScreen.buttonMyApplications',
+    defaultMessage: 'Fara í þínar umsóknir',
+    description: 'Error screen button',
+  },
+  application: {
+    id: 'application.system:core.errorScreen.application',
+    defaultMessage: 'Umsókn',
+    description: 'Error screen application',
   },
 })

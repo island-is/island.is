@@ -5,7 +5,10 @@ import { Message } from '@island.is/email-service'
 
 import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
-import { isRunningInProduction } from '../constants'
+import {
+  getApplicationAnswers,
+  getApplicationExternalData,
+} from '@island.is/application/templates/parental-leave'
 
 export let linkOtherParentSMS = ''
 
@@ -18,16 +21,14 @@ export type AssignOtherParentEmail = (
 // TODO handle translations
 export const generateAssignOtherParentApplicationEmail: AssignOtherParentEmail = (
   props,
-  senderName,
-  senderEmail,
 ): Message => {
   const {
     application,
     options: { email, clientLocationOrigin },
   } = props
 
-  const otherParentEmail = get(application.answers, 'otherParentEmail')
-  const applicantName = get(application.externalData, 'person.data.fullName')
+  const { otherParentEmail } = getApplicationAnswers(application.answers)
+  const { applicantName } = getApplicationExternalData(application.externalData)
 
   if (!otherParentEmail) {
     throw new Error('Could not find other parent email')

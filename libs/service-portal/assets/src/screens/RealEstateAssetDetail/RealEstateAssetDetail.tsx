@@ -85,10 +85,14 @@ export const GET_SINGLE_PROPERTY_QUERY = gql`
   ${addressFragment}
 `
 
+type UseParams = {
+  id: string
+}
+
 export const AssetsOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.assets')
   const { formatMessage } = useLocale()
-  const { id }: { id: string | undefined } = useParams()
+  const { id } = useParams() as UseParams
 
   const { loading, error, data } = useQuery<Query>(GET_SINGLE_PROPERTY_QUERY, {
     variables: {
@@ -160,6 +164,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
     (assetData.registeredOwners?.paging?.hasNextPage &&
       !ownersQuery?.data?.assetsPropertyOwners?.paging)
 
+  const hasOwners = owners?.flat()?.length > 0
   return (
     <>
       <DetailHeader
@@ -169,37 +174,41 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
         <TableUnits
           paginateCallback={() => paginate()}
           tables={[
-            {
-              header: [
-                formatMessage(messages.legalOwners),
-                formatMessage(messages.ssn),
-                formatMessage(messages.authorization),
-                formatMessage(messages.holdings),
-                formatMessage(messages.purchaseDate),
-              ],
-              rows: owners,
-              paginate: paginateOwners,
-            },
-            {
-              header: [
-                `${formatMessage(messages.appraisal)} ${
-                  assetData.appraisal?.activeYear
-                }`,
-                `${formatMessage(messages.appraisal)} ${
-                  assetData.appraisal?.plannedYear
-                }`,
-              ],
-              rows: [
-                [
-                  assetData.appraisal?.activeAppraisal
-                    ? amountFormat(assetData.appraisal?.activeAppraisal)
-                    : '',
-                  assetData.appraisal?.plannedAppraisal
-                    ? amountFormat(assetData.appraisal?.plannedAppraisal)
-                    : '',
-                ],
-              ],
-            },
+            hasOwners
+              ? {
+                  header: [
+                    formatMessage(messages.legalOwners),
+                    formatMessage(messages.ssn),
+                    formatMessage(messages.authorization),
+                    formatMessage(messages.holdings),
+                    formatMessage(messages.purchaseDate),
+                  ],
+                  rows: owners,
+                  paginate: paginateOwners,
+                }
+              : null,
+            assetData.appraisal
+              ? {
+                  header: [
+                    `${formatMessage(messages.appraisal)} ${
+                      assetData.appraisal?.activeYear
+                    }`,
+                    `${formatMessage(messages.appraisal)} ${
+                      assetData.appraisal?.plannedYear
+                    }`,
+                  ],
+                  rows: [
+                    [
+                      assetData.appraisal?.activeAppraisal
+                        ? amountFormat(assetData.appraisal?.activeAppraisal)
+                        : '',
+                      assetData.appraisal?.plannedAppraisal
+                        ? amountFormat(assetData.appraisal?.plannedAppraisal)
+                        : '',
+                    ],
+                  ],
+                }
+              : null,
           ]}
         />
       </Box>

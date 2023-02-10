@@ -3,7 +3,7 @@ type Item = {
 }
 
 const order =
-  '0123456789aAáÁbBcCdDeEéÉfFgGhHiIíÍjJkKlLmMnNoOóÓpPqQrRsStTuUúÚvVwWxXyYýÝzZþÞæÆöÖ'
+  '0123456789aAáÁbBcCdDðÐeEéÉfFgGhHiIíÍjJkKlLmMnNoOóÓpPqQrRsStTuUúÚvVwWxXyYýÝzZþÞæÆöÖ'
 
 const charOrder = (a: string) => {
   const ix = order.indexOf(a)

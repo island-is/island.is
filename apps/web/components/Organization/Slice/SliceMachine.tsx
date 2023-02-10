@@ -7,7 +7,9 @@ import {
   GridRow,
   ResponsiveSpace,
 } from '@island.is/island-ui/core'
-import { RichText } from '@island.is/web/components'
+import { RichText, EmailSignup } from '@island.is/web/components'
+import { webRenderConnectedComponent } from '@island.is/web/utils/richText'
+import { FeaturedSupportQNAs } from '../../FeaturedSupportQNAs'
 
 const DistrictsSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.DistrictsSlice),
@@ -65,10 +67,6 @@ const EventSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.EventSlice),
 )
 
-const MailingListSignupSlice = dynamic(() =>
-  import('@island.is/web/components').then((mod) => mod.MailingListSignupSlice),
-)
-
 const MultipleStatistics = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.MultipleStatistics),
 )
@@ -82,24 +80,14 @@ interface SliceMachineProps {
   namespace?: Record<string, string>
   fullWidth?: boolean
   slug?: string
-  renderedOnOrganizationSubpage?: boolean
   marginBottom?: ResponsiveSpace
   params?: Record<string, any>
+  paddingTop?: ResponsiveSpace
 }
 
-const fullWidthSlices = [
-  'TimelineSlice',
-  'LogoListSlice',
-  'MailingListSignupSlice',
-]
+const fullWidthSlices = ['TimelineSlice', 'LogoListSlice', 'EmailSignup']
 
-const renderSlice = (
-  slice,
-  namespace,
-  slug,
-  renderedOnOrganizationSubpage = false,
-  params,
-) => {
+const renderSlice = (slice, namespace, slug, params) => {
   switch (slice.__typename) {
     case 'HeadingSlice':
       return <HeadingSlice slice={slice} />
@@ -116,7 +104,7 @@ const renderSlice = (
     case 'AccordionSlice':
       return <AccordionSlice slice={slice} />
     case 'TimelineSlice':
-      return <TimelineSlice slice={slice} />
+      return <TimelineSlice slice={slice} namespace={namespace} />
     case 'LogoListSlice':
       return <LogoListSlice slice={slice} />
     case 'TabSection':
@@ -130,16 +118,7 @@ const renderSlice = (
     case 'EventSlice':
       return <EventSlice slice={slice} />
     case 'LatestNewsSlice':
-      return (
-        <LatestNewsSlice
-          slice={slice}
-          slug={slug}
-          renderedOnOrganizationSubpage={renderedOnOrganizationSubpage}
-          {...params}
-        />
-      )
-    case 'MailingListSignupSlice':
-      return <MailingListSignupSlice slice={slice} namespace={namespace} />
+      return <LatestNewsSlice slice={slice} slug={slug} {...params} />
     case 'LifeEventPageListSlice':
       return (
         <LifeEventPageListSlice
@@ -148,6 +127,12 @@ const renderSlice = (
           {...params}
         />
       )
+    case 'EmailSignup':
+      return <EmailSignup slice={slice} marginLeft={[0, 0, 0, 6]} />
+    case 'ConnectedComponent':
+      return webRenderConnectedComponent(slice)
+    case 'FeaturedSupportQNAs':
+      return <FeaturedSupportQNAs slice={slice} />
     default:
       return <RichText body={[slice]} />
   }
@@ -158,15 +143,15 @@ export const SliceMachine = ({
   namespace,
   fullWidth = false,
   slug = '',
-  renderedOnOrganizationSubpage = false,
   marginBottom = 0,
   params,
+  paddingTop = 6,
 }: SliceMachineProps) => {
   return !fullWidth ? (
     <GridContainer>
       <GridRow marginBottom={marginBottom}>
         <GridColumn
-          paddingTop={6}
+          paddingTop={paddingTop}
           span={
             fullWidthSlices.includes(slice.__typename)
               ? '9/9'
@@ -176,25 +161,13 @@ export const SliceMachine = ({
             fullWidthSlices.includes(slice.__typename) ? '0' : ['0', '0', '1/9']
           }
         >
-          {renderSlice(
-            slice,
-            namespace,
-            slug,
-            renderedOnOrganizationSubpage,
-            params,
-          )}
+          {renderSlice(slice, namespace, slug, params)}
         </GridColumn>
       </GridRow>
     </GridContainer>
   ) : (
     <Box marginBottom={marginBottom}>
-      {renderSlice(
-        slice,
-        namespace,
-        slug,
-        renderedOnOrganizationSubpage,
-        params,
-      )}
+      {renderSlice(slice, namespace, slug, params)}
     </Box>
   )
 }

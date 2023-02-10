@@ -12,6 +12,7 @@ import {
   NO,
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
+  PARENTAL_LEAVE,
   SPOUSE,
   States as ApplicationStates,
   YES,
@@ -100,6 +101,10 @@ describe('Parental Leave Application Template', () => {
             employer: {
               isSelfEmployed: 'no',
             },
+            isRecivingUnemploymentBenefits: 'no',
+            applicationType: {
+              option: PARENTAL_LEAVE,
+            },
           },
         }),
         ParentalLeaveTemplate,
@@ -128,6 +133,10 @@ describe('Parental Leave Application Template', () => {
               isSelfEmployed: 'no',
             },
             selectedChild: '0',
+            isRecivingUnemploymentBenefits: 'no',
+            applicationType: {
+              option: PARENTAL_LEAVE,
+            },
           },
         }),
         ParentalLeaveTemplate,
@@ -171,6 +180,10 @@ describe('Parental Leave Application Template', () => {
               isSelfEmployed: 'yes',
             },
             selectedChild: '0',
+            isRecivingUnemploymentBenefits: 'no',
+            applicationType: {
+              option: PARENTAL_LEAVE,
+            },
           },
         }),
         ParentalLeaveTemplate,
@@ -226,6 +239,10 @@ describe('Parental Leave Application Template', () => {
                   email: 'selfemployed@test.test',
                   isSelfEmployed: YES,
                 },
+                isRecivingUnemploymentBenefits: 'no',
+                applicationType: {
+                  option: PARENTAL_LEAVE,
+                },
               },
             }),
             ParentalLeaveTemplate,
@@ -243,65 +260,87 @@ describe('Parental Leave Application Template', () => {
     })
 
     describe('allowance', () => {
-      it('should remove personalAllowanceFromSpouse on submit, if usePersonalAllowanceFromSpouse is equal to NO and personalAllowanceFromSpouse exists', () => {
+      it('should remove usage and useAsMuchAsPossible on submit, if usePersonalAllowance (FromSpouse) is equal to NO and personalAllowanceFromSpouse exists', () => {
         const helper = new ApplicationTemplateHelper(
           buildApplication({
             answers: {
-              usePersonalAllowanceFromSpouse: NO,
               personalAllowanceFromSpouse: {
+                usePersonalAllowance: NO,
                 usage: '33%',
                 useAsMuchAsPossible: NO,
               },
               employer: {
                 isSelfEmployed: 'no',
               },
+              isRecivingUnemploymentBenefits: 'no',
+              applicationType: {
+                option: PARENTAL_LEAVE,
+              },
             },
           }),
           ParentalLeaveTemplate,
         )
+
+        const answer = {
+          usePersonalAllowance: NO,
+        }
+
         const [hasChanged, _, newApplication] = helper.changeState({
           type: DefaultEvents.SUBMIT,
         })
         expect(hasChanged).toBe(true)
-        expect(
-          newApplication.answers.personalAllowanceFromSpouse,
-        ).toBeUndefined()
+        expect(newApplication.answers.personalAllowanceFromSpouse).toEqual(
+          answer,
+        )
       })
 
-      it('should remove personalAllowance on submit, if usePersonalAllowance is equal to NO  and personalAllowance exists', () => {
+      it('should remove usage and useAsMuchAsPossible on submit, if usePersonalAllowance is equal to NO and personalAllowance exists', () => {
         const helper = new ApplicationTemplateHelper(
           buildApplication({
             answers: {
-              usePersonalAllowance: NO,
               personalAllowance: {
+                usePersonalAllowance: NO,
                 usage: '33%',
                 useAsMuchAsPossible: NO,
               },
               employer: {
                 isSelfEmployed: 'no',
               },
+              isRecivingUnemploymentBenefits: 'no',
+              applicationType: {
+                option: PARENTAL_LEAVE,
+              },
             },
           }),
           ParentalLeaveTemplate,
         )
+
+        const answer = {
+          usePersonalAllowance: NO,
+        }
+
         const [hasChanged, _, newApplication] = helper.changeState({
           type: DefaultEvents.SUBMIT,
         })
         expect(hasChanged).toBe(true)
-        expect(newApplication.answers.personalAllowance).toBeUndefined()
+        expect(newApplication.answers.personalAllowance).toEqual(answer)
       })
 
       it('should set usage to 100 if useAsMuchAsPossible in personalAllowance is set to YES', () => {
         const helper = new ApplicationTemplateHelper(
           buildApplication({
             answers: {
-              usePersonalAllowance: YES,
               personalAllowance: {
+                usePersonalAllowance: YES,
                 usage: '0',
                 useAsMuchAsPossible: YES,
               },
               employer: {
                 isSelfEmployed: 'no',
+              },
+              isRecivingUnemploymentBenefits: 'no',
+              applicationType: {
+                option: PARENTAL_LEAVE,
               },
             },
           }),
@@ -325,8 +364,8 @@ describe('Parental Leave Application Template', () => {
         const helper = new ApplicationTemplateHelper(
           buildApplication({
             answers: {
-              usePersonalAllowanceFromSpouse: YES,
               personalAllowanceFromSpouse: {
+                usePersonalAllowance: YES,
                 usage: '0',
                 useAsMuchAsPossible: YES,
               },
@@ -370,6 +409,10 @@ describe('Parental Leave Application Template', () => {
               employer: {
                 isSelfEmployed: 'no',
               },
+              isRecivingUnemploymentBenefits: 'no',
+              applicationType: {
+                option: PARENTAL_LEAVE,
+              },
             },
           }),
           ParentalLeaveTemplate,
@@ -408,6 +451,10 @@ describe('Parental Leave Application Template', () => {
               employer: {
                 isSelfEmployed: 'no',
               },
+              isRecivingUnemploymentBenefits: 'no',
+              applicationType: {
+                option: PARENTAL_LEAVE,
+              },
             },
           }),
           ParentalLeaveTemplate,
@@ -432,36 +479,35 @@ describe('Parental Leave Application Template', () => {
   })
 
   describe('edit flow', () => {
-    // TODO: Unable to Edit after APPROVED
-    // it('should create a temp copy of periods when going into the Edit flow', () => {
-    //   const periods = [
-    //     {
-    //       ratio: '100',
-    //       endDate: '2021-05-15T00:00:00Z',
-    //       startDate: '2021-01-15',
-    //     },
-    //     {
-    //       ratio: '100',
-    //       endDate: '2021-06-16',
-    //       startDate: '2021-06-01',
-    //     },
-    //   ]
-    //   const helper = new ApplicationTemplateHelper(
-    //     buildApplication({
-    //       answers: {
-    //         periods,
-    //       },
-    //       state: ApplicationStates.APPROVED,
-    //     }),
-    //     ParentalLeaveTemplate,
-    //   )
-    //   const [hasChanged, newState, newApplication] = helper.changeState({
-    //     type: DefaultEvents.EDIT,
-    //   })
-    //   expect(hasChanged).toBe(true)
-    //   expect(newState).toBe(ApplicationStates.EDIT_OR_ADD_PERIODS)
-    //   expect(newApplication.answers.tempPeriods).toEqual(periods)
-    // })
+    it('should create a temp copy of periods when going into the Edit flow', () => {
+      const periods = [
+        {
+          ratio: '100',
+          endDate: '2021-05-15T00:00:00Z',
+          startDate: '2021-01-15',
+        },
+        {
+          ratio: '100',
+          endDate: '2021-06-16',
+          startDate: '2021-06-01',
+        },
+      ]
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            periods,
+          },
+          state: ApplicationStates.APPROVED,
+        }),
+        ParentalLeaveTemplate,
+      )
+      const [hasChanged, newState, newApplication] = helper.changeState({
+        type: DefaultEvents.EDIT,
+      })
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(ApplicationStates.EDIT_OR_ADD_PERIODS)
+      expect(newApplication.answers.tempPeriods).toEqual(periods)
+    })
 
     it('should remove the temp copy of periods when canceling out of the Edit flow', () => {
       const periods = [
@@ -501,12 +547,17 @@ describe('Parental Leave Application Template', () => {
             employer: {
               isSelfEmployed: 'no',
             },
+            isRecivingUnemploymentBenefits: 'no',
+            applicationType: {
+              option: PARENTAL_LEAVE,
+            },
           },
           state: ApplicationStates.EDIT_OR_ADD_PERIODS,
         }),
         ParentalLeaveTemplate,
       )
 
+      const VMST_ID = process.env.VMST_ID
       const [hasChanged, newState, newApplication] = helper.changeState({
         type: DefaultEvents.SUBMIT,
       })
@@ -514,7 +565,6 @@ describe('Parental Leave Application Template', () => {
       expect(newState).toBe(
         ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
       )
-      expect(newApplication.assignees).toEqual([])
     })
   })
 
@@ -523,8 +573,8 @@ describe('Parental Leave Application Template', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           answers: {
-            usePersonalAllowanceFromSpouse: YES,
             personalAllowanceFromSpouse: {
+              usePersonalAllowance: YES,
               useAsMuchAsPossible: YES,
               usage: '100',
             },

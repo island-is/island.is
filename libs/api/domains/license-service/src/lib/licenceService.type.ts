@@ -7,6 +7,7 @@ export enum GenericLicenseType {
   AdrLicense = 'AdrLicense',
   MachineLicense = 'MachineLicense',
   FirearmLicense = 'FirearmLicense',
+  DisabilityLicense = 'DisabilityLicense',
 }
 
 /**
@@ -19,6 +20,7 @@ export enum GenericLicenseOrganizationSlug {
   HuntingLicense = 'umhverfisstofnun',
   AdrLicense = 'vinnueftirlitid',
   MachineLicense = 'vinnueftirlitid',
+  DisabilityLicense = 'tryggingastofnun',
 }
 export type GenericLicenseTypeType = keyof typeof GenericLicenseType
 
@@ -26,6 +28,7 @@ export enum GenericLicenseProviderId {
   NationalPoliceCommissioner = 'NationalPoliceCommissioner',
   EnvironmentAgency = 'EnvironmentAgency',
   AdministrationOfOccupationalSafetyAndHealth = 'AdministrationOfOccupationalSafetyAndHealth',
+  SocialInsuranceAdministration = 'SocialInsuranceAdministration', // Tryggingastofnun
 }
 
 export type GenericLicenseProviderIdType = keyof typeof GenericLicenseProviderId
@@ -111,6 +114,7 @@ export type GenericUserLicenseMetadata = {
   links?: GenericUserLicenseMetaLinks[]
   licenseNumber: string
   expired: boolean | null
+  expireDate?: string
 }
 
 export type GenericUserLicensePayload = {
@@ -143,7 +147,7 @@ export type GenericLicenseCached = {
   payload?: GenericUserLicensePayload
 }
 
-type LicenseLabelsObject = {
+export type LicenseLabelsObject = {
   [x: string]: string
 }
 export type GenericLicenseLabels = {
@@ -182,6 +186,13 @@ export type PkPassVerificationError = {
    * data is used to pass along the error from originator, e.g. SmartSolution
    */
   data?: string
+}
+
+export type PassTemplateIds = {
+  firearmLicense: string
+  adrLicense: string
+  machineLicense: string
+  disabilityLicense: string
 }
 
 export type PkPassVerificationData = {
@@ -246,5 +257,3 @@ export interface GenericLicenseClient<LicenseType> {
 export const GENERIC_LICENSE_FACTORY = 'generic_license_factory'
 
 export const CONFIG_PROVIDER = 'config_provider'
-
-export const CONFIG_PROVIDER_V2 = 'config_provider_v2'

@@ -12,6 +12,13 @@ import {
   FishingLicense,
   MunicipalitiesFinancialAid,
   ChargeFjsV2,
+  Finance,
+  Properties,
+  RskCompanyInfo,
+  VehicleServiceFjsV1,
+  TransportAuthority,
+  Vehicles,
+  Passports,
 } from '../../../../infra/src/dsl/xroad'
 import {
   ref,
@@ -74,8 +81,14 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
         staging: 'island-is-staging-upload-api',
         prod: 'island-is-prod-upload-api',
       },
+      CLIENT_LOCATION_ORIGIN: {
+        dev: 'https://beta.dev01.devland.is/umsoknir',
+        staging: 'https://beta.staging01.devland.is/umsoknir',
+        prod: 'https://island.is/umsoknir',
+        local: 'http://localhost:4200/umsoknir',
+      },
     })
-    .xroad(Base, Client)
+    .xroad(Base, Client, Payment)
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET',
@@ -90,6 +103,7 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
         '/k8s/application-system-api/DRIVING_LICENSE_BOOK_PASSWORD',
       DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN',
       DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL',
+      ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL',
     })
     .args('main.js', '--job', 'worker')
     .command('node')
@@ -106,6 +120,8 @@ export const serviceSetup = (services: {
   service('application-system-api')
     .namespace(namespace)
     .serviceAccount(serviceAccount)
+    .command('node')
+    .args('main.js')
     .env({
       EMAIL_REGION: 'eu-west-1',
       IDENTITY_SERVER_ISSUER_URL: {
@@ -134,6 +150,7 @@ export const serviceSetup = (services: {
         dev: 'https://beta.dev01.devland.is/umsoknir',
         staging: 'https://beta.staging01.devland.is/umsoknir',
         prod: 'https://island.is/umsoknir',
+        local: 'http://localhost:4200/umsoknir',
       },
       APPLICATION_ATTACHMENT_BUCKET: {
         dev: 'island-is-dev-storage-application-system',
@@ -208,6 +225,7 @@ export const serviceSetup = (services: {
       ENDORSEMENTS_API_BASE_PATH: ref(
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
       ),
+      NO_UPDATE_NOTIFIER: 'true',
     })
     .xroad(
       Base,
@@ -223,6 +241,13 @@ export const serviceSetup = (services: {
       FishingLicense,
       MunicipalitiesFinancialAid,
       ChargeFjsV2,
+      Finance,
+      Properties,
+      RskCompanyInfo,
+      VehicleServiceFjsV1,
+      TransportAuthority,
+      Vehicles,
+      Passports,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
@@ -253,10 +278,16 @@ export const serviceSetup = (services: {
         '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID',
       FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET:
         '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET',
+      ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
+      ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
+      VMST_ID: '/k8s/application-system/VMST_ID',
     })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres: postgresInfo,
+      envs: {
+        NO_UPDATE_NOTIFIER: 'true',
+      },
     })
     .postgres(postgresInfo)
     .liveness('/liveness')
@@ -270,6 +301,7 @@ export const serviceSetup = (services: {
       max: 60,
       min: 10,
     })
+    .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
       primary: {
         host: {

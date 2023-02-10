@@ -51,7 +51,7 @@ describe('Signed verdict overview - Court - Accepted restriction cases', () => {
     cy.get('[data-testid=inputErrorMessage]').should('not.exist')
     cy.getByTestid('datepicker').first().click()
     cy.getByTestid('datepickerIncreaseMonth').click()
-    cy.contains('15').click()
+    cy.get('.react-datepicker-popper').contains('15').click()
 
     cy.getByTestid('modifiedValidToDate-time').clear().blur()
     cy.getByTestid('modalPrimaryButton').should('be.disabled')

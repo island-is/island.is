@@ -72,7 +72,7 @@
         "cwd": "apps/services/endorsements/api"
       }
     },
-    "dev/init": {
+    "dev-init": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
@@ -138,5 +138,5 @@
     },
     "docker-express": {}
   },
-  "tags": []
+  "tags": ["scope:nest"]
 }

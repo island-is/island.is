@@ -1,6 +1,8 @@
 import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
+import compareAsc from 'date-fns/compareAsc'
+import parseISO from 'date-fns/parseISO'
 
 import {
   CourtArrangements,
@@ -30,6 +32,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 import * as constants from '@island.is/judicial-system/consts'
+import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 import { subpoena as strings } from './Subpoena.strings'
 
@@ -40,55 +43,66 @@ const Subpoena: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const [modalVisible, setModalVisible] = useState(false)
+  const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
   const { formatMessage } = useIntl()
   const {
     courtDate,
     handleCourtDateChange,
     courtDateHasChanged,
   } = useCourtArrangements(workingCase)
-  const { setAndSendToServer, sendNotification } = useCase()
+  const { setAndSendCaseToServer, sendNotification } = useCase()
 
   const handleSubpoenaTypeChange = (subpoenaType: SubpoenaType) => {
-    setAndSendToServer(
+    setAndSendCaseToServer(
       [{ subpoenaType, force: true }],
       workingCase,
       setWorkingCase,
     )
   }
 
-  const handleNextButtonClick = useCallback(() => {
-    const hasSentNotification = workingCase?.notifications?.find(
-      (notification) => notification.type === NotificationType.COURT_DATE,
-    )
-
-    setAndSendToServer(
-      [
-        {
-          courtDate: courtDate
-            ? formatDateForServer(new Date(courtDate))
-            : undefined,
-          force: true,
-        },
-      ],
-      workingCase,
-      setWorkingCase,
-    )
-
-    if (hasSentNotification && !courtDateHasChanged) {
-      router.push(
-        `${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`,
+  const handleNavigationTo = useCallback(
+    async (destination: keyof stepValidationsType) => {
+      const courtDateNotifications = workingCase.notifications?.filter(
+        (notification) => notification.type === NotificationType.COURT_DATE,
       )
-    } else {
-      setModalVisible(true)
-    }
-  }, [
-    workingCase,
-    setAndSendToServer,
-    courtDate,
-    setWorkingCase,
-    courtDateHasChanged,
-  ])
+
+      const latestCourtDateNotification = courtDateNotifications?.sort((a, b) =>
+        compareAsc(parseISO(b.created), parseISO(a.created)),
+      )[0]
+
+      const hasSentNotification = latestCourtDateNotification?.recipients.some(
+        (recipient) => recipient.success,
+      )
+
+      await setAndSendCaseToServer(
+        [
+          {
+            courtDate: courtDate
+              ? formatDateForServer(new Date(courtDate))
+              : undefined,
+            force: true,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
+
+      if (hasSentNotification && !courtDateHasChanged) {
+        router.push(`${destination}/${workingCase.id}`)
+      } else {
+        setNavigateTo(destination)
+      }
+    },
+    [
+      workingCase,
+      setAndSendCaseToServer,
+      courtDate,
+      setWorkingCase,
+      courtDateHasChanged,
+    ],
+  )
+
+  const stepIsValid = isSubpoenaStepValid(workingCase, courtDate)
 
   return (
     <PageLayout
@@ -97,6 +111,8 @@ const Subpoena: React.FC = () => {
       activeSubSection={IndictmentsCourtSubsections.SUBPEONA}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={stepIsValid}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader title={formatMessage(titles.court.indictments.subpoena)} />
       <FormContentContainer>
@@ -105,6 +121,7 @@ const Subpoena: React.FC = () => {
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(strings.selectSubpoenaTypeHeading)}
+            required
           />
           <SelectSubpoenaType
             workingCase={workingCase}
@@ -127,24 +144,26 @@ const Subpoena: React.FC = () => {
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
-          onNextButtonClick={handleNextButtonClick}
+          onNextButtonClick={() =>
+            handleNavigationTo(
+              constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE,
+            )
+          }
           nextButtonText={formatMessage(strings.nextButtonText)}
-          nextIsDisabled={!isSubpoenaStepValid(workingCase, courtDate)}
+          nextIsDisabled={!stepIsValid}
         />
       </FormContentContainer>
-      {modalVisible && (
+      {navigateTo !== undefined && (
         <Modal
-          title={formatMessage(strings.modalTitle)}
+          title={formatMessage(strings.modalTitle, {
+            courtDateHasChanged,
+          })}
           onPrimaryButtonClick={() => {
             sendNotification(workingCase.id, NotificationType.COURT_DATE)
-            router.push(
-              `${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`,
-            )
+            router.push(`${navigateTo}/${workingCase.id}`)
           }}
           onSecondaryButtonClick={() => {
-            router.push(
-              `${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`,
-            )
+            router.push(`${navigateTo}/${workingCase.id}`)
           }}
           primaryButtonText={formatMessage(strings.modalPrimaryButtonText)}
           secondaryButtonText={formatMessage(core.continue)}

@@ -16,8 +16,6 @@ import getConfig from 'next/config'
 import { NextComponentType, NextPageContext } from 'next'
 import { Screen, GetInitialPropsContext } from '../types'
 import Cookies from 'js-cookie'
-import * as Sentry from '@sentry/node'
-import { RewriteFrames } from '@sentry/integrations'
 import { userMonitoring } from '@island.is/user-monitoring'
 import { useRouter } from 'next/router'
 import {
@@ -104,24 +102,10 @@ export interface LayoutProps {
   organizationAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   articleAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   customAlertBanners?: GetAlertBannerQuery['getAlertBanner'][]
+  languageToggleQueryParams?: Record<Locale, Record<string, string>>
   footerVersion?: 'default' | 'organization'
   respOrigin
   megaMenuData
-}
-
-if (environment.sentryDsn) {
-  Sentry.init({
-    dsn: environment.sentryDsn,
-    enabled: environment.production,
-    integrations: [
-      new RewriteFrames({
-        iteratee: (frame) => {
-          frame.filename = frame.filename.replace(`~/.next`, 'app:///_next')
-          return frame
-        },
-      }),
-    ],
-  })
 }
 
 if (
@@ -161,6 +145,7 @@ const Layout: NextComponentType<
   organizationAlertBannerContent,
   articleAlertBannerContent,
   customAlertBanners,
+  languageToggleQueryParams,
   footerVersion = 'default',
   respOrigin,
   children,
@@ -169,25 +154,8 @@ const Layout: NextComponentType<
   const { activeLocale, t } = useI18n()
   const { linkResolver } = useLinkResolver()
   const n = useNamespace(namespace)
-  const { route, pathname, query, asPath } = useRouter()
+  const { asPath } = useRouter()
   const fullUrl = `${respOrigin}${asPath}`
-
-  Sentry.configureScope((scope) => {
-    scope.setExtra('lang', activeLocale)
-
-    scope.setContext('router', {
-      route,
-      pathname,
-      query,
-      asPath,
-    })
-  })
-
-  Sentry.addBreadcrumb({
-    category: 'pages/main',
-    message: `Rendering from ${process.browser ? 'browser' : 'server'}`,
-    level: Sentry.Severity.Debug,
-  })
 
   const menuTabs = [
     {
@@ -233,12 +201,12 @@ const Layout: NextComponentType<
         },
       ]
         .concat(
-          customAlertBanners.map((banner) => ({
+          customAlertBanners?.map((banner) => ({
             bannerId: `custom-alert-${stringHash(
               JSON.stringify(banner ?? {}),
             )}`,
             ...banner,
-          })),
+          })) ?? [],
         )
         .filter(
           (banner) => !Cookies.get(banner.bannerId) && banner?.showAlertBanner,
@@ -386,6 +354,7 @@ const Layout: NextComponentType<
                 buttonColorScheme={headerButtonColorScheme}
                 showSearchInHeader={showSearchInHeader}
                 megaMenuData={megaMenuData}
+                languageToggleQueryParams={languageToggleQueryParams}
               />
             </ColorSchemeContext.Provider>
           )}
@@ -417,6 +386,10 @@ const Layout: NextComponentType<
                       'privacyPolicyHref',
                       '/personuverndarstefna-stafraent-islands',
                     ),
+                  }}
+                  termsLink={{
+                    title: n('termsTitle', 'Skilmálar'),
+                    href: n('termsHref', '/skilmalar-island-is'),
                   }}
                   showMiddleLinks
                 />
@@ -667,18 +640,23 @@ export const withMainLayout = <T,>(
 
     const organizationAlertBannerContent: GetAlertBannerQuery['getAlertBanner'] =
       'organizationPage' in componentProps
-        ? componentProps['organizationPage']['alertBanner']
+        ? componentProps['organizationPage']?.['alertBanner']
         : undefined
 
     const articleAlertBannerContent: GetAlertBannerQuery['getAlertBanner'] =
       'article' in componentProps
-        ? componentProps['article']['alertBanner']
+        ? componentProps['article']?.['alertBanner']
         : undefined
 
     const customAlertBanners =
       'customAlertBanners' in componentProps
         ? componentProps['customAlertBanners']
         : []
+
+    const languageToggleQueryParams =
+      'languageToggleQueryParams' in componentProps
+        ? componentProps['languageToggleQueryParams']
+        : undefined
 
     return {
       layoutProps: {
@@ -688,6 +666,7 @@ export const withMainLayout = <T,>(
         organizationAlertBannerContent,
         articleAlertBannerContent,
         customAlertBanners,
+        languageToggleQueryParams,
       },
       componentProps,
     }

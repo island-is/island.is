@@ -29,6 +29,7 @@ import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import { exportVehicleOwnedDocument } from '../../utils/vehicleOwnedMapper'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { SAMGONGUSTOFA_LINK } from '../../utils/constants'
 
 export const GET_USERS_VEHICLES = gql`
   query GetUsersVehicles {
@@ -180,9 +181,9 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
       )}
 
       {!loading && !error && filteredVehicles.length > 0 && (
-        <Box marginBottom={3} display="flex" flexDirection="row">
+        <Box marginBottom={3} display="flex" flexWrap="wrap">
           {modalFlagEnabled && !loading && ownershipPdf && (
-            <Box marginRight={2}>
+            <Box marginRight={2} marginBottom={[1, 1, 1, 0]}>
               <DropdownExport
                 onGetPDF={() => formSubmit(`${ownershipPdf}`)}
                 onGetExcel={() =>
@@ -196,7 +197,7 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
               />
             </Box>
           )}
-          <Box>
+          <Box marginRight={2} marginBottom={[1, 1, 1, 0]}>
             <a
               href="/app/skilavottord/my-cars"
               target="_blank"
@@ -209,6 +210,22 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
                 iconType="outline"
               >
                 {formatMessage(messages.recycleCar)}
+              </Button>
+            </a>
+          </Box>
+          <Box marginBottom={[1, 1, 1, 0]}>
+            <a
+              href={SAMGONGUSTOFA_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button
+                variant="utility"
+                size="small"
+                icon="eyeOff"
+                iconType="outline"
+              >
+                {formatMessage(messages.vehicleNameSecret)}
               </Button>
             </a>
           </Box>

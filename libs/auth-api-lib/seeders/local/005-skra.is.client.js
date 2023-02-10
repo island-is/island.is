@@ -24,6 +24,7 @@ const skra_is_individuals_scope = {
   also_for_delegated_user: false,
   automatic_delegation_grant: false,
   is_access_controlled: false,
+  domain_name: '@island.is',
 }
 
 const api_resource_scope_tmp = {
@@ -40,6 +41,7 @@ const api_resource_scope_tmp = {
   also_for_delegated_user: false,
   automatic_delegation_grant: false,
   is_access_controlled: false,
+  domain_name: '@island.is',
 }
 
 const api_scopes = [skra_is_individuals_scope, api_resource_scope_tmp]

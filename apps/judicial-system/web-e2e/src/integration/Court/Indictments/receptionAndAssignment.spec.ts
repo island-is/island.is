@@ -1,4 +1,9 @@
-import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  CaseType,
+  IndictmentSubtype,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import {
   INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
   INDICTMENTS_SUBPOENA_ROUTE,
@@ -15,7 +20,10 @@ import {
 
 describe(`${INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
   beforeEach(() => {
-    const caseData = mockCase(CaseType.MAJOR_ASSAULT)
+    const caseData = mockCase(
+      CaseType.INDICTMENT,
+      IndictmentSubtype.MAJOR_ASSAULT,
+    )
 
     const caseDataAddition = {
       ...caseData,
@@ -61,6 +69,6 @@ describe(`${INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
 
     cy.getByTestid('continueButton').should('be.enabled')
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', `${INDICTMENTS_SUBPOENA_ROUTE}/test`)
+    cy.url().should('include', `${INDICTMENTS_SUBPOENA_ROUTE}`)
   })
 })

@@ -5,7 +5,6 @@ const devConfig = {
   environment: 'local',
   name: 'local',
   baseApiUrl: 'http://localhost:4444',
-  sentryDsn: '',
   audit: {
     defaultNamespace: '@island.is/applications',
   },
@@ -49,32 +48,8 @@ const devConfig = {
     },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
-    paymentOptions: {
-      arkBaseUrl: process.env.ARK_BASE_URL,
-      xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8081',
-      xRoadClientId:
-        process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
-      xRoadProviderId:
-        process.env.XROAD_PAYMENT_PROVIDER_ID ?? 'IS-DEV/GOV/10021/FJS-Public',
-      callbackAdditionUrl:
-        process.env.XROAD_PAYMENT_ADDITION_CALLBACK_URL ?? '/',
-      callbackBaseUrl:
-        process.env.XROAD_PAYMENT_BASE_CALLBACK_URL ??
-        'https://localhost:3333/applications/',
-      username: process.env.XROAD_PAYMENT_USER,
-      password: process.env.XROAD_PAYMENT_PASSWORD,
-    },
     generalPetition: {
       endorsementsApiBasePath: 'http://localhost:4246',
-    },
-    paymentScheduleConfig: {
-      xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
-      xRoadProviderId:
-        process.env.PAYMENT_SCHEDULE_XROAD_PROVIDER_ID ??
-        'IS-DEV/GOV/10021/FJS-Public',
-      xRoadClientId: process.env.XROAD_CLIENT_ID,
-      username: process.env.PAYMENT_SCHEDULE_USER,
-      password: process.env.PAYMENT_SCHEDULE_PASSWORD,
     },
     healthInsuranceV2: {
       xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
@@ -93,7 +68,22 @@ const devConfig = {
       xRoadClientId: process.env.XROAD_CLIENT_ID,
       xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
     },
+    userProfile: {
+      serviceBasePath: 'http://localhost:3366',
+    },
+    nationalRegistry: {
+      baseSoapUrl: 'https://localhost:8443',
+      user: process.env.SOFFIA_USER ?? '',
+      password: process.env.SOFFIA_PASS ?? '',
+      host: 'soffiaprufa.skra.is',
+    },
+    islykill: {
+      cert: process.env.ISLYKILL_CERT,
+      passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
+      basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
+    },
   },
+
   contentful: {
     accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
   },
@@ -102,8 +92,6 @@ const devConfig = {
 const prodConfig = {
   production: true,
   environment: process.env.ENVIRONMENT,
-  sentryDsn:
-    'https://22093678b2b24a0cad25111c1806a8d7@o406638.ingest.sentry.io/5530607',
   name: process.env.name,
   baseApiUrl: process.env.GRAPHQL_API_URL,
   audit: {
@@ -145,25 +133,8 @@ const prodConfig = {
         xroadPath: process.env.XROAD_CRIMINAL_RECORD_PATH,
       },
     },
-    paymentOptions: {
-      arkBaseUrl: process.env.ARK_BASE_URL,
-      xRoadBaseUrl: process.env.XROAD_BASE_PATH,
-      xRoadClientId: process.env.XROAD_CLIENT_ID,
-      xRoadProviderId: process.env.XROAD_PAYMENT_PROVIDER_ID,
-      callbackAdditionUrl: process.env.XROAD_PAYMENT_ADDITION_CALLBACK_URL,
-      callbackBaseUrl: process.env.XROAD_PAYMENT_BASE_CALLBACK_URL,
-      username: process.env.XROAD_PAYMENT_USER,
-      password: process.env.XROAD_PAYMENT_PASSWORD,
-    },
     generalPetition: {
       endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
-    },
-    paymentScheduleConfig: {
-      xRoadBaseUrl: process.env.XROAD_BASE_PATH,
-      xRoadProviderId: process.env.PAYMENT_SCHEDULE_XROAD_PROVIDER_ID,
-      xRoadClientId: process.env.XROAD_CLIENT_ID,
-      username: process.env.PAYMENT_SCHEDULE_USER,
-      password: process.env.PAYMENT_SCHEDULE_PASSWORD,
     },
     healthInsuranceV2: {
       xRoadBaseUrl: process.env.XROAD_BASE_PATH,
@@ -179,10 +150,27 @@ const prodConfig = {
       xRoadClientId: process.env.XROAD_CLIENT_ID,
       xRoadBaseUrl: process.env.XROAD_BASE_PATH,
     },
+    userProfile: {
+      serviceBasePath: process.env.SERVICE_USER_PROFILE_URL,
+    },
+    nationalRegistry: {
+      baseSoapUrl: process.env.SOFFIA_SOAP_URL,
+      user: process.env.SOFFIA_USER,
+      password: process.env.SOFFIA_PASS,
+      host: process.env.SOFFIA_HOST_URL,
+    },
+    islykill: {
+      cert: process.env.ISLYKILL_CERT,
+      passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
+      basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
+    },
   },
   contentful: {
     accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
   },
 } as Environment
 
-export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig
+export default process.env.PROD_MODE === 'true' ||
+process.env.NODE_ENV === 'production'
+  ? prodConfig
+  : devConfig

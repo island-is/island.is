@@ -15,7 +15,7 @@ export const EditsInReview: Form = buildForm({
   id: 'ParentalLeaveInReview',
   title: inReviewFormMessages.formTitle,
   logo: Logo,
-  mode: FormModes.REVIEW,
+  mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({
       id: 'review',
@@ -24,7 +24,7 @@ export const EditsInReview: Form = buildForm({
         buildCustomField({
           id: 'EditsInReviewSteps',
           title: parentalLeaveFormMessages.reviewScreen.titleInReview,
-          component: 'EditsInReviewSteps',
+          component: 'InReviewSteps',
         }),
       ],
     }),

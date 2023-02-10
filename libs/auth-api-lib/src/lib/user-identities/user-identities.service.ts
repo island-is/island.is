@@ -6,6 +6,7 @@ import { Claim } from './models/claim.model'
 import { Sequelize } from 'sequelize-typescript'
 import { UserIdentity } from './models/user-identity.model'
 import { UserIdentityDto } from './dto/user-identity.dto'
+import { ClaimDto } from './dto/claim.dto'
 
 @Injectable()
 export class UserIdentitiesService {
@@ -13,6 +14,8 @@ export class UserIdentitiesService {
     private sequelize: Sequelize,
     @InjectModel(UserIdentity)
     private userIdentityModel: typeof UserIdentity,
+    @InjectModel(Claim)
+    private claimModel: typeof Claim,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -213,5 +216,34 @@ export class UserIdentitiesService {
     }
 
     return null
+  }
+
+  async updateClaims(
+    subjectId: string,
+    claims: ClaimDto[],
+  ): Promise<ClaimDto[]> {
+    await this.sequelize.transaction(async (t) => {
+      await this.claimModel.destroy({
+        where: { subjectId: subjectId },
+        transaction: t,
+      })
+
+      await this.claimModel.bulkCreate(
+        claims.map((c) => ({
+          subjectId: subjectId,
+          type: c.type,
+          value: c.value,
+          valueType: c.valueType,
+          issuer: c.issuer,
+          originalIssuer: c.originalIssuer,
+        })),
+        { transaction: t },
+      )
+    })
+
+    return this.claimModel.findAll({
+      where: { subjectId: subjectId },
+      useMaster: true,
+    })
   }
 }

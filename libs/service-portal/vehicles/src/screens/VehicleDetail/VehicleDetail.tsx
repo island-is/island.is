@@ -1,5 +1,5 @@
 import isNumber from 'lodash/isNumber'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useParams } from 'react-router-dom'
 import { useQuery, gql } from '@apollo/client'
 import {
@@ -43,9 +43,9 @@ import {
   technicalInfoArray,
 } from '../../utils/createUnits'
 import { displayWithUnit } from '../../utils/displayWithUnit'
-import { FeatureFlagClient } from '@island.is/feature-flags'
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import AxleTable from '../../components/DetailTable/AxleTable'
+import Dropdown from '../../components/Dropdown/Dropdown'
+import { SAMGONGUSTOFA_LINK } from '../../utils/constants'
 
 export const GET_USERS_VEHICLE_DETAIL = gql`
   query GetUsersVehiclesDetail($input: GetVehicleDetailInput!) {
@@ -162,10 +162,14 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
   }
 `
 
+type UseParams = {
+  id: string
+}
+
 const VehicleDetail: ServicePortalModuleComponent = () => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
-  const { id }: { id: string | undefined } = useParams()
+  const { id } = useParams() as UseParams
 
   const { data, loading, error } = useQuery<Query>(GET_USERS_VEHICLE_DETAIL, {
     variables: {
@@ -224,7 +228,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
 
   return (
     <>
-      <Box marginBottom={6}>
+      <Box marginBottom={[2, 2, 6]}>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
             <Stack space={2}>
@@ -251,14 +255,20 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
           </GridColumn>
         </GridRow>
         {!loading && downloadServiceURL && (
-          <GridRow marginTop={6}>
-            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-              <Box display="flex" justifyContent="flexStart" printHidden>
-                <Box paddingRight={2}>
+          <GridRow marginTop={[2, 2, 6]}>
+            <GridColumn span="12/12">
+              <Box
+                display="flex"
+                flexDirection="row"
+                flexWrap="wrap"
+                justifyContent="flexStart"
+                printHidden
+              >
+                <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
                   <Button
                     colorScheme="default"
                     icon="receipt"
-                    iconType="filled"
+                    iconType="outline"
                     size="default"
                     type="button"
                     variant="utility"
@@ -266,6 +276,46 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
                   >
                     {formatMessage(messages.vehicleHistoryReport)}
                   </Button>
+                </Box>
+                <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
+                  <a
+                    href={SAMGONGUSTOFA_LINK}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button
+                      colorScheme="default"
+                      icon="open"
+                      iconType="outline"
+                      size="default"
+                      type="button"
+                      variant="utility"
+                    >
+                      {formatMessage(messages.changeOfOwnership)}
+                    </Button>
+                  </a>
+                </Box>
+                <Box paddingRight={2}>
+                  <Dropdown
+                    dropdownItems={[
+                      {
+                        title: formatMessage(messages.orderRegistrationNumber),
+                        href: SAMGONGUSTOFA_LINK,
+                      },
+                      {
+                        title: formatMessage(messages.orderRegistrationLicense),
+                        href: SAMGONGUSTOFA_LINK,
+                      },
+                      {
+                        title: formatMessage(messages.addCoOwner),
+                        href: SAMGONGUSTOFA_LINK,
+                      },
+                      {
+                        title: formatMessage(messages.addOperator),
+                        href: SAMGONGUSTOFA_LINK,
+                      },
+                    ]}
+                  />
                 </Box>
               </Box>
             </GridColumn>
@@ -276,6 +326,11 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
         <UserInfoLine
           label={formatMessage(messages.numberPlate)}
           content={mainInfo?.regno ?? ''}
+          editLink={{
+            title: messages.orderRegistrationNumber,
+            url: SAMGONGUSTOFA_LINK,
+            external: true,
+          }}
           loading={loading}
         />
         <Divider />

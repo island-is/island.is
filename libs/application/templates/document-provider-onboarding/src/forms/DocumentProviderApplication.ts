@@ -13,7 +13,7 @@ import { m } from './messages'
 export const DocumentProviderOnboarding: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
   title: m.formName,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'termsOfAgreement',

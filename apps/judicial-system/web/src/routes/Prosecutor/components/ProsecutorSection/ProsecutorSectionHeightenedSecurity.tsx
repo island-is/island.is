@@ -4,12 +4,12 @@ import { useRouter } from 'next/router'
 
 import { Box, Checkbox } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   BlueBox,
   FormContext,
   Modal,
   ProsecutorSelection,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
@@ -27,11 +27,11 @@ const ProsecutorSectionHeightenedSecurity: React.FC = () => {
     isProsecutorAccessModalVisible,
     setIsProsecutorAccessModalVisible,
   ] = useState<boolean>(false)
-  const { setAndSendToServer } = useCase()
+  const { setAndSendCaseToServer } = useCase()
 
   const setProsecutor = async (prosecutorId: string) => {
     if (workingCase) {
-      return setAndSendToServer(
+      return setAndSendCaseToServer(
         [
           {
             prosecutorId: prosecutorId,
@@ -81,7 +81,7 @@ const ProsecutorSectionHeightenedSecurity: React.FC = () => {
           }
           checked={workingCase.isHeightenedSecurityLevel}
           onChange={(event) =>
-            setAndSendToServer(
+            setAndSendCaseToServer(
               [
                 {
                   isHeightenedSecurityLevel: event.target.checked,

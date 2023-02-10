@@ -17,28 +17,30 @@ import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import {
   CaseFileCategory,
   CaseFileState,
+  isIndictmentCase,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
+import type { User as TUser } from '@island.is/judicial-system/types'
 
-import { environment } from '../../../environments'
-import { writeFile } from '../../formatters'
-import { courtUpload } from '../../messages'
 import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
+import { User } from '../user'
 import { Case } from '../case'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
-import { PresignedPost } from './models/presignedPost.model'
-import { CaseFile } from './models/file.model'
-import { DeleteFileResponse } from './models/deleteFile.response'
-import { SignedUrl } from './models/signedUrl.model'
-import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { UpdateFileDto } from './dto/updateFile.dto'
+import { PresignedPost } from './models/presignedPost.model'
+import { DeleteFileResponse } from './models/deleteFile.response'
+import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
+import { SignedUrl } from './models/signedUrl.model'
+import { CaseFile } from './models/file.model'
 
-// Files are stored in AWS S3 under a key which has the following format:
-// uploads/<uuid>/<uuid>/<filename>
+// Files are stored in AWS S3 under a key which has the following formats:
+// uploads/<uuid>/<uuid>/<filename> for restriction and investigation cases
 // As uuid-s have length 36, the filename starts at position 82 in the key.
 const NAME_BEGINS_INDEX = 82
+// indictments/<uuid>/<uuid>/<filename> for indictment cases
+// As uuid-s have length 36, the filename starts at position 82 in the key.
+const INDICTMENT_NAME_BEGINS_INDEX = 86
 
 @Injectable()
 export class FileService {
@@ -57,8 +59,8 @@ export class FileService {
     throw new InternalServerErrorException('Format message not initialized')
   }
 
-  private refreshFormatMessage: () => Promise<void> = async () =>
-    this.intlService
+  private async refreshFormatMessage(): Promise<void> {
+    return this.intlService
       .useIntl(['judicial.system.backend'], 'is')
       .then((res) => {
         this.formatMessage = res.formatMessage
@@ -66,14 +68,25 @@ export class FileService {
       .catch((reason) => {
         this.logger.error('Unable to refresh format messages', { reason })
       })
+  }
 
-  private async deleteFileFromDatabase(fileId: string): Promise<boolean> {
+  private async deleteFileFromDatabase(
+    fileId: string,
+    transaction?: Transaction,
+  ): Promise<boolean> {
     this.logger.debug(`Deleting file ${fileId} from the database`)
 
-    const [numberOfAffectedRows] = await this.fileModel.update(
-      { state: CaseFileState.DELETED, key: null },
-      { where: { id: fileId } },
-    )
+    const promisedUpdate = transaction
+      ? this.fileModel.update(
+          { state: CaseFileState.DELETED, key: null },
+          { where: { id: fileId }, transaction },
+        )
+      : this.fileModel.update(
+          { state: CaseFileState.DELETED, key: null },
+          { where: { id: fileId } },
+        )
+
+    const [numberOfAffectedRows] = await promisedUpdate
 
     if (numberOfAffectedRows !== 1) {
       // Tolerate failure, but log error
@@ -85,86 +98,60 @@ export class FileService {
     return numberOfAffectedRows > 0
   }
 
-  private tryDeleteFileFromS3(key: string) {
-    this.logger.debug(`Attempting to delete file ${key} from AWS S3`)
+  private async tryDeleteFileFromS3(file: CaseFile): Promise<boolean> {
+    this.logger.debug(`Attempting to delete file ${file.key} from AWS S3`)
 
-    this.awsS3Service.deleteObject(key).catch((reason) => {
+    if (!file.key) {
+      return true
+    }
+
+    return this.awsS3Service.deleteObject(file.key).catch((reason) => {
       // Tolerate failure, but log what happened
-      this.logger.info(`Could not delete file ${key} from AWS S3`, { reason })
+      this.logger.error(
+        `Could not delete file ${file.id} of case ${file.caseId} from AWS S3`,
+        { reason },
+      )
+
+      return false
     })
   }
 
-  private getFileProperties(file: CaseFile, theCase: Case) {
+  private getCourtDocumentFolder(file: CaseFile) {
     let courtDocumentFolder: CourtDocumentFolder
-    let subject: string
 
     switch (file.category) {
       case CaseFileCategory.COVER_LETTER:
         courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
-        subject = this.formatMessage(courtUpload.coverLetter, {
-          courtCaseNumber: theCase.courtCaseNumber,
-        })
         break
       case CaseFileCategory.INDICTMENT:
         courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
-        subject = this.formatMessage(courtUpload.indictment, {
-          courtCaseNumber: theCase.courtCaseNumber,
-        })
         break
       case CaseFileCategory.CRIMINAL_RECORD:
         courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
-        subject = this.formatMessage(courtUpload.criminalRecord, {
-          courtCaseNumber: theCase.courtCaseNumber,
-        })
         break
       case CaseFileCategory.COST_BREAKDOWN:
         courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
-        subject = this.formatMessage(courtUpload.costBreakdown, {
-          courtCaseNumber: theCase.courtCaseNumber,
-        })
         break
       case CaseFileCategory.COURT_RECORD:
         courtDocumentFolder = CourtDocumentFolder.COURT_DOCUMENTS
-        subject = this.formatMessage(courtUpload.courtRecord, {
-          courtCaseNumber: theCase.courtCaseNumber,
-        })
         break
       case CaseFileCategory.RULING:
         courtDocumentFolder = CourtDocumentFolder.COURT_DOCUMENTS
-        subject = this.formatMessage(courtUpload.verdict, {
-          courtCaseNumber: theCase.courtCaseNumber,
-        })
-        break
-      case CaseFileCategory.CASE_FILE_CONTENTS:
-        courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS
-        subject = this.formatMessage(courtUpload.caseFileContents, {
-          courtCaseNumber: theCase.courtCaseNumber,
-        })
         break
       case CaseFileCategory.CASE_FILE:
         courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS
-        subject = this.formatMessage(courtUpload.caseFile, {
-          courtCaseNumber: theCase.courtCaseNumber,
-        })
         break
       default:
         courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS
-        subject = file.name
     }
 
-    const fileNameWithoutEnding = /^.+\./
-
-    const fileName = file.category
-      ? file.name.replace(fileNameWithoutEnding, `${subject}.`)
-      : file.name
-
-    return { courtDocumentFolder, subject, fileName }
+    return courtDocumentFolder
   }
 
   private async throttleUpload(
     file: CaseFile,
     theCase: Case,
-    user?: User,
+    user: TUser | User,
   ): Promise<string> {
     await this.throttle.catch((reason) => {
       this.logger.info('Previous upload failed', { reason })
@@ -172,25 +159,18 @@ export class FileService {
 
     const content = await this.awsS3Service.getObject(file.key ?? '')
 
-    if (!environment.production) {
-      writeFile(`${file.name}`, content)
-    }
-
-    const { courtDocumentFolder, subject, fileName } = this.getFileProperties(
-      file,
-      theCase,
-    )
+    const courtDocumentFolder = this.getCourtDocumentFolder(file)
 
     return this.courtService.createDocument(
+      user,
       theCase.id,
       theCase.courtId,
       theCase.courtCaseNumber,
       courtDocumentFolder,
-      subject,
-      fileName,
+      file.name,
+      file.name,
       file.type,
       content,
-      user,
     )
   }
 
@@ -209,43 +189,46 @@ export class FileService {
   }
 
   createPresignedPost(
-    caseId: string,
+    theCase: Case,
     createPresignedPost: CreatePresignedPostDto,
   ): Promise<PresignedPost> {
     const { fileName, type } = createPresignedPost
 
     return this.awsS3Service.createPresignedPost(
-      `uploads/${caseId}/${uuid()}/${fileName}`,
+      `${isIndictmentCase(theCase.type) ? 'indictments' : 'uploads'}/${
+        theCase.id
+      }/${uuid()}/${fileName}`,
       type,
     )
   }
 
   async createCaseFile(
-    caseId: string,
+    theCase: Case,
     createFile: CreateFileDto,
   ): Promise<CaseFile> {
     const { key } = createFile
 
-    const regExp = new RegExp(`^uploads/${caseId}/.{36}/(.*)$`)
+    const regExp = new RegExp(
+      `^${isIndictmentCase(theCase.type) ? 'indictments' : 'uploads'}/${
+        theCase.id
+      }/.{36}/(.*)$`,
+    )
 
     if (!regExp.test(key)) {
       throw new BadRequestException(
-        `${key} is not a valid key for case ${caseId}`,
+        `${key} is not a valid key for case ${theCase.id}`,
       )
     }
 
     return this.fileModel.create({
       ...createFile,
       state: CaseFileState.STORED_IN_RVG,
-      caseId,
-      name: createFile.key.slice(NAME_BEGINS_INDEX),
-    })
-  }
-
-  async getAllCaseFiles(caseId: string): Promise<CaseFile[]> {
-    return this.fileModel.findAll({
-      where: { caseId, state: { [Op.not]: CaseFileState.DELETED } },
-      order: [['created', 'DESC']],
+      caseId: theCase.id,
+      name: createFile.key.slice(
+        isIndictmentCase(theCase.type)
+          ? INDICTMENT_NAME_BEGINS_INDEX
+          : NAME_BEGINS_INDEX,
+      ),
     })
   }
 
@@ -266,12 +249,15 @@ export class FileService {
     return this.awsS3Service.getSignedUrl(file.key)
   }
 
-  async deleteCaseFile(file: CaseFile): Promise<DeleteFileResponse> {
-    const success = await this.deleteFileFromDatabase(file.id)
+  async deleteCaseFile(
+    file: CaseFile,
+    transaction?: Transaction,
+  ): Promise<DeleteFileResponse> {
+    const success = await this.deleteFileFromDatabase(file.id, transaction)
 
-    if (success && file.key) {
+    if (success) {
       // Fire and forget, no need to wait for the result
-      this.tryDeleteFileFromS3(file.key)
+      this.tryDeleteFileFromS3(file)
     }
 
     return { success }
@@ -280,7 +266,7 @@ export class FileService {
   async uploadCaseFileToCourt(
     file: CaseFile,
     theCase: Case,
-    user?: User,
+    user: TUser | User,
   ): Promise<UploadFileToCourtResponse> {
     await this.refreshFormatMessage()
 
@@ -361,18 +347,11 @@ export class FileService {
   ): Promise<CaseFile[]> {
     return this.sequelize.transaction((transaction) => {
       const updates = caseFileUpdates.map(async (update) => {
-        const [affectedNumber, file] = await this.fileModel.update(
-          {
-            orderWithinChapter: update.orderWithinChapter,
-            chapter: update.chapter,
-            userGeneratedFilename: update.userGeneratedFilename,
-          },
-          {
-            where: { caseId, id: update.id },
-            returning: true,
-            transaction,
-          },
-        )
+        const [affectedNumber, file] = await this.fileModel.update(update, {
+          where: { caseId, id: update.id },
+          returning: true,
+          transaction,
+        })
         if (affectedNumber !== 1 || !file[0]) {
           throw new InternalServerErrorException(
             `Could not update file ${update.id} of case ${caseId}`,
@@ -383,5 +362,45 @@ export class FileService {
 
       return Promise.all(updates)
     })
+  }
+
+  async archive(file: CaseFile): Promise<boolean> {
+    if (
+      !file.key ||
+      !file.key.startsWith('indictments/') ||
+      file.key.startsWith('indictments/completed/')
+    ) {
+      return true
+    }
+
+    return this.awsS3Service
+      .copyObject(
+        file.key,
+        file.key.replace('indictments/', 'indictments/completed/'),
+      )
+      .then((newKey) =>
+        this.fileModel.update({ key: newKey }, { where: { id: file.id } }),
+      )
+      .then(() => {
+        // Fire and forget, no need to wait for the result
+        this.tryDeleteFileFromS3(file)
+
+        return true
+      })
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to archive file ${file.id} of case ${file.caseId}`,
+          { reason },
+        )
+
+        return false
+      })
+  }
+
+  async resetCaseFileStates(caseId: string, transaction: Transaction) {
+    await this.fileModel.update(
+      { state: CaseFileState.STORED_IN_RVG },
+      { where: { caseId, state: CaseFileState.STORED_IN_COURT }, transaction },
+    )
   }
 }

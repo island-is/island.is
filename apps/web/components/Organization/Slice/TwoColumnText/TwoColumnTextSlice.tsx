@@ -11,7 +11,8 @@ import {
   Link,
   Text,
 } from '@island.is/island-ui/core'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { SliceType } from '@island.is/island-ui/contentful'
+import { webRichText } from '@island.is/web/utils/richText'
 
 interface SliceProps {
   slice: TwoColumnText
@@ -57,7 +58,7 @@ export const TwoColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
                   </Text>
                 </Hidden>
               )}
-              {richText(slice.leftContent as SliceType[])}
+              {webRichText(slice.leftContent as SliceType[])}
               {slice.leftLink && slice.leftLink.url && (
                 <Link href={slice.leftLink.url}>
                   <Button
@@ -82,7 +83,7 @@ export const TwoColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
                   </Text>
                 </Hidden>
               )}
-              {richText(slice.rightContent as SliceType[])}
+              {webRichText(slice.rightContent as SliceType[])}
               {slice.rightLink && slice.rightLink.url && (
                 <Link href={slice.rightLink.url}>
                   <Button

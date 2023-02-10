@@ -59,12 +59,6 @@ export const signingModal = defineMessages({
     description:
       'Notaður sem texti á aðalhnapp í modal glugga þegar undirritun mistókst.',
   },
-  secondaryButtonSuccessText: {
-    id: 'judicial.system.core:signing_modal.secondary_button_success_text',
-    defaultMessage: 'Loka glugga',
-    description:
-      'Notaður sem texti á aðrarhnapp í modal glugga þegar undirritun tókst.',
-  },
   secondaryButtonErrorText: {
     id: 'judicial.system.core:signing_modal.secondary_button_error_text',
     defaultMessage: 'Reyna aftur',

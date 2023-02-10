@@ -1,6 +1,6 @@
 import { defineConfig } from '@island.is/nest/config'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import * as z from 'zod'
+import { z } from 'zod'
 
 const ApplicationFilesModule = z.object({
   attachmentBucket: z.string(),

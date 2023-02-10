@@ -15,118 +15,31 @@ import {
   Form,
   FormModes,
   Comparators,
-  Application,
   FormValue,
 } from '@island.is/application/types'
 import { m } from './messages'
 import { YES, NO, FILE_SIZE_LIMIT, StatusTypes } from '../shared'
-import { Address } from '@island.is/api/schema'
 import Logo from '../assets/Logo'
 import {
   requireConfirmationOfResidency,
   requireWaitingPeriod,
 } from '../healthInsuranceUtils'
 import { Countries } from '../lib/Countries'
+import {
+  applicantInformationMultiField,
+  formConclusionSection,
+} from '@island.is/application/ui-forms'
 
 export const HealthInsuranceForm: Form = buildForm({
   id: 'HealthInsuranceDraft',
   title: m.formTitle,
   logo: Logo,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'applicantInfoSection',
       title: m.applicantInfoSection,
-      children: [
-        buildMultiField({
-          id: 'contactInfoSection',
-          title: m.contactInfoTitle,
-          children: [
-            buildTextField({
-              id: 'applicant.name',
-              title: m.name,
-              width: 'half',
-              disabled: true,
-              defaultValue: (application: Application) =>
-                (application.externalData.nationalRegistry?.data as {
-                  fullName?: string
-                })?.fullName,
-            }),
-            buildTextField({
-              id: 'applicant.nationalId',
-              title: m.nationalId,
-              width: 'half',
-              disabled: true,
-              defaultValue: (application: Application) =>
-                (application.externalData.nationalRegistry?.data as {
-                  nationalId?: string
-                })?.nationalId,
-            }),
-            buildTextField({
-              id: 'applicant.address',
-              title: m.address,
-              width: 'half',
-              disabled: true,
-              defaultValue: (application: Application) =>
-                (application.externalData.nationalRegistry?.data as {
-                  address?: Address
-                }).address?.streetAddress,
-            }),
-            buildTextField({
-              id: 'applicant.postalCode',
-              title: m.postalCode,
-              width: 'half',
-              disabled: true,
-              defaultValue: (application: Application) =>
-                (application.externalData.nationalRegistry?.data as {
-                  address?: Address
-                }).address?.postalCode,
-            }),
-            buildTextField({
-              id: 'applicant.city',
-              title: m.city,
-              width: 'half',
-              disabled: true,
-              defaultValue: (application: Application) =>
-                (application.externalData.nationalRegistry?.data as {
-                  address?: Address
-                }).address?.city,
-            }),
-            buildCustomField({
-              id: 'applicant.citizenship',
-              title: '',
-              component: 'CitizenshipField',
-            }),
-            buildDescriptionField({
-              id: 'editNationalRegistryData',
-              title: '',
-              description: m.editNationalRegistryData,
-            }),
-            buildTextField({
-              id: 'applicant.email',
-              title: m.email,
-              width: 'half',
-              variant: 'email',
-              defaultValue: (application: Application) =>
-                (application.externalData.userProfile?.data as {
-                  email?: string
-                })?.email,
-            }),
-            buildTextField({
-              id: 'applicant.phoneNumber',
-              title: m.phoneNumber,
-              width: 'half',
-              variant: 'tel',
-              format: '###-####',
-              placeholder: '000-0000',
-              defaultValue: (application: Application) =>
-                (application.externalData.userProfile?.data as {
-                  mobilePhoneNumber?: string
-                })?.mobilePhoneNumber,
-            }),
-          ],
-        }),
-      ],
+      children: [applicantInformationMultiField],
     }),
     buildSection({
       id: 'statusAndChildrenSection',
@@ -136,11 +49,17 @@ export const HealthInsuranceForm: Form = buildForm({
           id: 'statusAndChildren',
           title: m.statusAndChildren,
           children: [
+            buildCustomField({
+              id: 'citizenship',
+              title: '',
+              component: 'CitizenshipField',
+            }),
             buildRadioField({
               id: 'status.type',
               title: '',
               description: m.statusDescription,
               width: 'half',
+              required: true,
               largeButtons: true,
               options: [
                 {
@@ -192,6 +111,7 @@ export const HealthInsuranceForm: Form = buildForm({
               description: m.childrenDescription,
               width: 'half',
               largeButtons: true,
+              required: true,
               options: [
                 { label: m.noOptionLabel, value: NO },
                 { label: m.yesOptionLabel, value: YES },
@@ -220,6 +140,7 @@ export const HealthInsuranceForm: Form = buildForm({
               title: '',
               description: m.formerInsuranceRegistration,
               largeButtons: true,
+              required: true,
               options: [
                 { label: m.formerInsuranceNoOption, value: NO },
                 { label: m.yesOptionLabel, value: YES },
@@ -230,6 +151,7 @@ export const HealthInsuranceForm: Form = buildForm({
               title: m.formerInsuranceCountry,
               description: m.formerInsuranceDetails,
               placeholder: m.formerInsuranceCountryPlaceholder,
+              required: true,
               backgroundColor: 'blue',
               options: Countries.map(({ name, alpha2Code: countryCode }) => {
                 const option = { name, countryCode }
@@ -244,12 +166,14 @@ export const HealthInsuranceForm: Form = buildForm({
               title: m.formerPersonalId,
               width: 'half',
               backgroundColor: 'blue',
+              required: true,
             }),
             buildTextField({
               id: 'formerInsurance.institution',
               title: m.formerInsuranceInstitution,
               width: 'half',
               backgroundColor: 'blue',
+              required: true,
             }),
             buildCustomField({
               id: 'waitingPeriodInfo',
@@ -260,8 +184,8 @@ export const HealthInsuranceForm: Form = buildForm({
                   formerInsurance: { country: string }
                 })?.formerInsurance?.country
                 const citizenship = (answers as {
-                  applicant: { citizenship: string }
-                })?.applicant?.citizenship
+                  citizenship: string
+                })?.citizenship
                 return (
                   !!formerCountry &&
                   requireWaitingPeriod(formerCountry, citizenship)
@@ -297,8 +221,8 @@ export const HealthInsuranceForm: Form = buildForm({
                   formerInsurance: { country: string }
                 })?.formerInsurance?.country
                 const citizenship = (answers as {
-                  applicant: { citizenship: string }
-                })?.applicant?.citizenship
+                  citizenship: string
+                })?.citizenship
                 return !requireWaitingPeriod(formerCountry, citizenship)
               },
             }),
@@ -316,8 +240,8 @@ export const HealthInsuranceForm: Form = buildForm({
                   formerInsurance: { country: string }
                 })?.formerInsurance?.country
                 const citizenship = (answers as {
-                  applicant: { citizenship: string }
-                })?.applicant?.citizenship
+                  citizenship: string
+                }).citizenship
                 return !requireWaitingPeriod(formerCountry, citizenship)
               },
             }),
@@ -333,8 +257,8 @@ export const HealthInsuranceForm: Form = buildForm({
                   formerInsurance: { country: string }
                 })?.formerInsurance?.country
                 const citizenship = (answers as {
-                  applicant: { citizenship: string }
-                })?.applicant?.citizenship
+                  citizenship: string
+                })?.citizenship
                 return !requireWaitingPeriod(formerCountry, citizenship)
               },
             }),
@@ -417,12 +341,13 @@ export const HealthInsuranceForm: Form = buildForm({
             }),
           ],
         }),
-        buildCustomField({
-          id: 'successfulSubmission',
-          title: '',
-          component: 'ConfirmationScreen',
-        }),
       ],
+    }),
+    formConclusionSection({
+      alertTitle: m.successfulSubmissionTitle,
+      alertMessage: m.successfulSubmissionMessage,
+      expandableHeader: m.successfulExpendableHeader,
+      expandableDescription: m.nextStepReviewTime,
     }),
   ],
 })

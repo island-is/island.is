@@ -1,0 +1,2723 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Gagnaveita Fiskistofu",
+    "contact": {
+      "name": "Ólafur Pálmi Guðnason",
+      "email": "olafur.palmi.gudnason@fiskistofa.is"
+    },
+    "version": "1.0"
+  },
+  "paths": {
+    "/v1/kvotastadaskipa/{skipnumer}": {
+      "get": {
+        "tags": ["KvotastadaSkipa"],
+        "summary": "Sækir gögn um kvótastöðu skips út frá skipanúmeri.",
+        "parameters": [
+          {
+            "name": "skipnumer",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/KvotastadaSkipsDTO" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/KvotastadaSkipsDTO" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/KvotastadaSkipsDTO" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/v1/kvotastadaskipa": {
+      "get": {
+        "tags": ["KvotastadaSkipa"],
+        "summary": "Sækir gögn um kvótastöðu allra skipa.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/KvotastadaSkipaDTO" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/KvotastadaSkipaDTO" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/KvotastadaSkipaDTO" }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/v1/landanir/dagsetningar": {
+      "get": {
+        "tags": ["Landanir"],
+        "summary": "Sækir gögn um landanir út frá dagsetningum.",
+        "parameters": [
+          {
+            "name": "DagsFra",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "format": "date-time" }
+          },
+          {
+            "name": "DagsTil",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "format": "date-time" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/LondunDTO" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/LondunDTO" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/LondunDTO" }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/v1/landanir/skipnumer/{skipnumer}": {
+      "get": {
+        "tags": ["Landanir"],
+        "summary": "Sækir gögn um landanir útfrá skipanúmeri.",
+        "parameters": [
+          {
+            "name": "skipnumer",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/LondunDTO" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/LondunDTO" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/LondunDTO" }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/v1/landanir/seljendur/{seljandikennitala}/dagsetningar": {
+      "get": {
+        "tags": ["Landanir"],
+        "summary": "Sækir gögn um landanir út frá kennitölu seljanda og dagsetningum.",
+        "parameters": [
+          {
+            "name": "seljandikennitala",
+            "in": "path",
+            "required": true,
+            "schema": { "pattern": "^\\d{10}$", "type": "string" }
+          },
+          {
+            "name": "DagsFra",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "format": "date-time" }
+          },
+          {
+            "name": "DagsTil",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "format": "date-time" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/LondunDTO" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/LondunDTO" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/LondunDTO" }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/v1/medalverdfisks/dagsetningar": {
+      "get": {
+        "tags": ["MedalverdFisks"],
+        "summary": "Sækir gögn um meðalaverð fisks.",
+        "parameters": [
+          {
+            "name": "DagsFra",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "format": "date-time" }
+          },
+          {
+            "name": "DagsTil",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "format": "date-time" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MedalverdFisksDTO" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MedalverdFisksDTO" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MedalverdFisksDTO" }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/v1/skip/heiti/{heiti}": {
+      "get": {
+        "tags": ["Skip"],
+        "summary": "Sækir gögn um öll skip sem falla undir leitarstreng út frá heiti skips.",
+        "parameters": [
+          {
+            "name": "heiti",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/SkipLeitDTO" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/SkipLeitDTO" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/SkipLeitDTO" }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/v1/skip/utgerd/{kennitalaHeiti}": {
+      "get": {
+        "tags": ["Skip"],
+        "summary": "Sækir gögn um öll skip sem falla undir leitarstreng út frá kennitölu eða heiti útgerðar.",
+        "parameters": [
+          {
+            "name": "kennitalaHeiti",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/SkipLeitDTO" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/SkipLeitDTO" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/SkipLeitDTO" }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/v1/skip/{skipnumer}": {
+      "get": {
+        "tags": ["Skip"],
+        "summary": "Sækir gögn um skip út frá skipanúmeri.",
+        "parameters": [
+          {
+            "name": "skipnumer",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/SkipDTO" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SkipDTO" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/SkipDTO" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/v1/skip/eigandaskipti/dagsetningar": {
+      "get": {
+        "tags": ["Skip"],
+        "summary": "Sækir gögn um eigandaskipti skips út frá dagsetningum.",
+        "parameters": [
+          {
+            "name": "DagsFra",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "format": "date-time" }
+          },
+          {
+            "name": "DagsTil",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "format": "date-time" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SkipEigandaskiptiDTO"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SkipEigandaskiptiDTO"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SkipEigandaskiptiDTO"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/v1/skip/kennitala/{kennitala}": {
+      "get": {
+        "tags": ["Skip"],
+        "summary": "Sækir lista af skipum eftir kennitölu útgerðaraðila eða eiganda.",
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "required": true,
+            "schema": { "pattern": "^\\d{10}$", "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/SkipDTO" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/SkipDTO" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/SkipDTO" }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/v1/stadaskips/kvotategundir/fiskveidiar/{fiskveidiar}": {
+      "get": {
+        "tags": ["StadaSkips"],
+        "summary": "Sækir gögn um kvótategundir sem falla undir reikning samkvæmt fiskveiðiári.",
+        "parameters": [
+          {
+            "name": "fiskveidiar",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AflamarkTegundirByTimabilDTO"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AflamarkTegundirByTimabilDTO"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AflamarkTegundirByTimabilDTO"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/v1/stadaskips/kvotategundir/almanaksar/{ar}": {
+      "get": {
+        "tags": ["StadaSkips"],
+        "summary": "Sækir gögn um kvótategundir sem falla undir reikning samkvæmt almanaksári.",
+        "parameters": [
+          {
+            "name": "ar",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AflamarkTegundirByTimabilDTO"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AflamarkTegundirByTimabilDTO"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AflamarkTegundirByTimabilDTO"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/v1/stadaskips/{skipnumer}/fiskveidiar/{fiskveidiar}": {
+      "get": {
+        "tags": ["StadaSkips"],
+        "summary": "Sækir gögn um aflamark skips og ýmsar tilfærslur afla út frá skipaskrárnúmeri og tímabili.",
+        "parameters": [
+          {
+            "name": "skipnumer",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "fiskveidiar",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AflamarkSkipsUpphafDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AflamarkSkipsUpphafDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AflamarkSkipsUpphafDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/v1/stadaskips/{skipnumer}/fiskveidiar/{fiskveidiar}/breytt": {
+      "post": {
+        "tags": ["StadaSkips"],
+        "summary": "Skilar breyttum gögnum um aflamark skips og ýmsum tilfærslum út frá breytingum, skipaskrárnúmeri og tímabili.",
+        "parameters": [
+          {
+            "name": "skipnumer",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "fiskveidiar",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AflamarkSkipsBreytingar"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AflamarkSkipsBreytingar"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AflamarkSkipsBreytingar"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AflamarkSkipsBreyttDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AflamarkSkipsBreyttDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AflamarkSkipsBreyttDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/stadaskips/{skipnumer}/almanaksar/{ar}/deilistofnar": {
+      "get": {
+        "tags": ["StadaSkips"],
+        "summary": "Sækir gögn um deilistofna skips og ýmsum tilfærslum út frá skipaskrárnúmeri og ártali.",
+        "parameters": [
+          {
+            "name": "skipnumer",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "ar",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AflamarkSkipsUpphafDeilistofnDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AflamarkSkipsUpphafDeilistofnDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AflamarkSkipsUpphafDeilistofnDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/stadaskips/{skipnumer}/almanaksar/{ar}/deilistofnar/breytt": {
+      "post": {
+        "tags": ["StadaSkips"],
+        "summary": "Skilar breyttum gögnum um deilistofna skips og ýmsum tilfærslum út frá breytingum, skipaskrárnúmeri og ártali.",
+        "parameters": [
+          {
+            "name": "skipnumer",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "ar",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AflamarkSkipsBreytingar"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AflamarkSkipsBreytingar"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AflamarkSkipsBreytingar"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AflamarkSkipsBreyttDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AflamarkSkipsBreyttDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AflamarkSkipsBreyttDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/stadaskips/{skipnumer}/fiskveidiar/{fiskveidiar}/kvoti/breytt": {
+      "post": {
+        "tags": ["StadaSkips"],
+        "summary": "Skilar breyttum gögnum um kvótareiknisdálka eftir því hverju er óskað eftir að breyta.",
+        "parameters": [
+          {
+            "name": "skipnumer",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "fiskveidiar",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AflamarkSkipsKvotaParams"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AflamarkSkipsKvotaParams"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AflamarkSkipsKvotaParams"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AflamarkSkipsKvotaParamsDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AflamarkSkipsKvotaParamsDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AflamarkSkipsKvotaParamsDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/stodtoflur/astond": {
+      "get": {
+        "tags": ["Stodtoflur"],
+        "summary": "Sækir gögn um ástand frá stoðtöflu.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/AstandDTO" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/AstandDTO" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/AstandDTO" }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/v1/stodtoflur/geymsluadferdir": {
+      "get": {
+        "tags": ["Stodtoflur"],
+        "summary": "Sækir gögn um geymsluaðferðir frá stoðtöflu.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/GeymsluadferdDTO" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/GeymsluadferdDTO" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/GeymsluadferdDTO" }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/v1/stodtoflur/veidisvaedi": {
+      "get": {
+        "tags": ["Stodtoflur"],
+        "summary": "Sækir gögn um veiðisvæði frá stoðtöflu.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/VeidisvaediDTO" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/VeidisvaediDTO" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/VeidisvaediDTO" }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/v1/stodtoflur/fisktegundir": {
+      "get": {
+        "tags": ["Stodtoflur"],
+        "summary": "Sækir gögn um fiskitegundir frá stoðtöflu.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/FisktegundDTO" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/FisktegundDTO" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/FisktegundDTO" }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/v1/stodtoflur/veidistofnar": {
+      "get": {
+        "tags": ["Stodtoflur"],
+        "summary": "Sækir gögn um veiðistofna frá stoðtöflu.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/VeidistofnDTO" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/VeidistofnDTO" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/VeidistofnDTO" }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/v1/stodtoflur/veidarfaeri": {
+      "get": {
+        "tags": ["Stodtoflur"],
+        "summary": "Sækir gögn um veiðarfæri frá stoðtöflu.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/VeidarfaeriDTO" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/VeidarfaeriDTO" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/VeidarfaeriDTO" }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/v1/veidileyfi/dagsetning": {
+      "get": {
+        "tags": ["Veidileyfi"],
+        "summary": "Sækir gögn um veiðileyfi út frá dagsetningu.",
+        "parameters": [
+          {
+            "name": "dagsetning",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "format": "date-time" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/VeidileyfiDTO" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/VeidileyfiDTO" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/VeidileyfiDTO" }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/v1/veidileyfi/sviptingar/dagsetning": {
+      "get": {
+        "tags": ["Veidileyfi"],
+        "summary": "Sækir gögn um veiðileyfis sviptingar út frá dagsetningu.",
+        "parameters": [
+          {
+            "name": "dagsetning",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "format": "date-time" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VeidileyfissviptingarDTO"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VeidileyfissviptingarDTO"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VeidileyfissviptingarDTO"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AflamarkSkipsBreytingar": {
+        "required": ["breytingarFisktegundar"],
+        "type": "object",
+        "properties": {
+          "breytingarFisktegundar": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AflamarkSkipsBreytingarParams"
+            },
+            "description": "Listi með upplýsingum um breytingar fyrir tiltekið númer kvótategundar."
+          }
+        },
+        "additionalProperties": false
+      },
+      "AflamarkSkipsBreytingarParams": {
+        "required": ["aflabreyting", "aflamarksbreyting", "kvotategund"],
+        "type": "object",
+        "properties": {
+          "kvotategund": {
+            "type": "integer",
+            "description": "Númer kvótategundar sem skal breyta.",
+            "format": "int32"
+          },
+          "aflabreyting": {
+            "type": "integer",
+            "description": "Magn afla sem skal breyta fyrir ofangreinda fisktegund.",
+            "format": "int32"
+          },
+          "aflamarksbreyting": {
+            "type": "integer",
+            "description": "Magn aflamarks sem skal breyta fyrir ofangreinda fisktegund.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AflamarkSkipsBreyttDTO": {
+        "type": "object",
+        "properties": {
+          "skipUppl": { "$ref": "#/components/schemas/AflamarkSkipsUpplDTO" },
+          "aflamarkstegundir": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AflamarkTegundirBreyttDTO"
+            },
+            "description": "Listi aflamarkstegunda eftir beytta stöðu.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AflamarkSkipsKvotaParams": {
+        "required": ["kvotategund"],
+        "type": "object",
+        "properties": {
+          "kvotategund": {
+            "type": "integer",
+            "description": "Númer kvótategundar sem skal breyta.",
+            "format": "int32"
+          },
+          "hlutdeildBreytt": {
+            "type": "number",
+            "description": "Magn heildaraflamarks (Kg) fyrir kvótategund.",
+            "format": "float"
+          },
+          "uthlutadAflamarkBreytt": {
+            "type": "integer",
+            "description": "Úthlutað aflamark sem skal breyta í Kg.",
+            "format": "int32"
+          },
+          "aNaestaArKvotiBreytt": {
+            "type": "integer",
+            "description": "Breyting á magni (Kg) sem skal flytja yfir á næsta ár.",
+            "format": "int32"
+          },
+          "afNaestaAriKvotiBreytt": {
+            "type": "integer",
+            "description": "Breyting á magni (Kg) sem skal taka af næsta ári.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AflamarkSkipsKvotaParamsDTO": {
+        "type": "object",
+        "properties": {
+          "kvotategund": {
+            "type": "integer",
+            "description": "Númer kvótategundar sem skal breyta.",
+            "format": "int32"
+          },
+          "kvotategundHeiti": {
+            "type": "string",
+            "description": "Heiti kvótategundar.",
+            "nullable": true
+          },
+          "thorskigildi": {
+            "type": "number",
+            "description": "Þorskígildisstuðull kvótategundar.",
+            "format": "float"
+          },
+          "heildarAflamark": {
+            "type": "integer",
+            "description": "Magn heildaraflamarks fyrir kvótategund.",
+            "format": "int32"
+          },
+          "hlutdeildBreytt": {
+            "type": "number",
+            "description": "Breytt hlutdeild fyrir kvótategund.",
+            "format": "double"
+          },
+          "uthlutadAflamarkBreytt": {
+            "type": "integer",
+            "description": "Breytt úthlutað aflamark (Kg) fyrir kvótategund.",
+            "format": "int32"
+          },
+          "aNaestaArKvotiBreytt": {
+            "type": "integer",
+            "description": "Breytt magn (Kg) sem leyfilegt er að setja á næsta ár.",
+            "format": "int32"
+          },
+          "afNaestaAriKvotiBreytt": {
+            "type": "integer",
+            "description": "Breytt magn (Kg) sem er leyfilegt að taka af næsta ári.",
+            "format": "int32"
+          },
+          "prosentaAflamarkFra": {
+            "type": "integer",
+            "description": "Prósenta sem er leyfilegt að flytja frá fyrir kvótategund (Gefið í heiltölu, 25 => 0,25 eða 25%).",
+            "format": "int32"
+          },
+          "prosentaAflamarkTil": {
+            "type": "integer",
+            "description": "Prósenta sem er leyfilegt að flytja til fyrirkvótategund (Gefið í heiltölu, 25 => 0,25 eða 25%).",
+            "format": "int32"
+          },
+          "aNaestaArAflamark": {
+            "type": "integer",
+            "description": "Breytt magn (Kg) sem er sett á næsta ár skv. aflamarksreikni.",
+            "format": "int32"
+          },
+          "nyStada": {
+            "type": "integer",
+            "description": "Ný staða kvótategundar tekið tillit til afla og tilfærslu.",
+            "format": "int32"
+          },
+          "umframafli": {
+            "type": "integer",
+            "description": "Breyttur umframafli miðað við breyttar niðurstöður kvótaParams.",
+            "format": "int32"
+          },
+          "onotad": {
+            "type": "integer",
+            "description": "Breytt ónotað miðað við breyttar niðurstöður kvótaParams.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AflamarkSkipsUpphafDeilistofnDTO": {
+        "type": "object",
+        "properties": {
+          "skipUpplysingar": {
+            "$ref": "#/components/schemas/AflamarkSkipsUpplDTO"
+          },
+          "aflamarkstegundir": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AflamarkTegundirDeilistofnDTO"
+            },
+            "description": "Listi raunverulegrar stöðu aflamarkstegunda deilistofna.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AflamarkSkipsUpphafDTO": {
+        "type": "object",
+        "properties": {
+          "skipUpplysingar": {
+            "$ref": "#/components/schemas/AflamarkSkipsUpplDTO"
+          },
+          "aflamarkstegundir": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AflamarkstegundirDTO" },
+            "description": "Listi raunverulegrar stöðu aflamarkstegunda.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AflamarkSkipsUpplDTO": {
+        "type": "object",
+        "properties": {
+          "skipaskrarNumer": {
+            "type": "integer",
+            "description": "Skipaskrárnúmer.",
+            "format": "int32"
+          },
+          "timabil": {
+            "type": "string",
+            "description": "Fiskveiðiár.",
+            "nullable": true
+          },
+          "heitiSkips": {
+            "type": "string",
+            "description": "Heiti skips.",
+            "nullable": true
+          },
+          "einkenni": {
+            "type": "string",
+            "description": "Einkennisstafir - einkennisnúmer skips.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AflamarkstegundirDTO": {
+        "type": "object",
+        "properties": {
+          "kvotategund": {
+            "type": "integer",
+            "description": "Auðkenni fisktegundar.",
+            "format": "int32"
+          },
+          "kvotategundHeiti": {
+            "type": "string",
+            "description": "Heiti fisktegundar.",
+            "nullable": true
+          },
+          "thorskigildi": {
+            "type": "number",
+            "description": "Þorskígildi fisktegundar. Stuðull sem segir til um verðmæti fisktegundar út frá þorsk.",
+            "format": "float"
+          },
+          "uthlutun": {
+            "type": "integer",
+            "description": "Magn sem skip fékk úthlutað af fisktegund á timabilinu.",
+            "format": "int32"
+          },
+          "serstokUthlutun": {
+            "type": "integer",
+            "description": "Magn sem skip fékk úthlutað sérstaklega af fisktegund á tímabilinu.",
+            "format": "int32"
+          },
+          "milliAra": {
+            "type": "integer",
+            "description": "Magn sem skip setti á milli fiskveiðiára af fisktegund.",
+            "format": "int32"
+          },
+          "milliSkipa": {
+            "type": "integer",
+            "description": "Magn sem skip setti á milli skipa af fisktegund.",
+            "format": "int32"
+          },
+          "aflamark": {
+            "type": "integer",
+            "description": "Magn aflamarks skips fyrir fisktegund (uthlutun, sertsok_uthlutun, milli_ara, milli_skipa lagt saman).",
+            "format": "int32"
+          },
+          "afli": {
+            "type": "integer",
+            "description": "Magn af fisktegund sem skipið hefur raunverulega veitt á tímabilinu.",
+            "format": "int32"
+          },
+          "stada": {
+            "type": "integer",
+            "description": "Staða skips á tímabilinu (afli dreginn frá aflamarki).",
+            "format": "int32"
+          },
+          "tilfaersla": {
+            "type": "integer",
+            "description": "Magn sem skip hefur fært til af fisktegund á aðrar fisktegundir á tímabilinu.",
+            "format": "int32"
+          },
+          "nyStada": {
+            "type": "integer",
+            "description": "Uppfærð staða skips (tekið tillit af tilfærslu: tilfærsla dregin frá stöðu).",
+            "format": "int32"
+          },
+          "aNaestaAr": {
+            "type": "integer",
+            "description": "Magn sem skip sendir á næsta ár af fisktegund fyrir tímabilið.",
+            "format": "int32"
+          },
+          "umframafli": {
+            "type": "integer",
+            "description": "magn umframafla tegundar fyrir skip á tímabilinu.",
+            "format": "int32"
+          },
+          "onotad": {
+            "type": "integer",
+            "description": "Magn fisktegundar sem er ónotuð eftir útreikninga á tímabilinu.",
+            "format": "int32"
+          },
+          "heildarAflaMark": {
+            "type": "integer",
+            "description": "Magn heildaraflamarks tiltekinnar fsktegundar á tímabilinu.",
+            "format": "int32"
+          },
+          "hlutdeild": {
+            "type": "number",
+            "description": "hlutfall hlutdeildar sem skip á í fisktegund á tímabilinu. (0,5 => 0,5%).",
+            "format": "float"
+          },
+          "uthlutadAflamarkKvoti": {
+            "type": "integer",
+            "description": "Úthlutað aflamark birt sem kvóti. Sama tala og uthlutun hér að ofan.",
+            "format": "int32"
+          },
+          "aNaestaArKvoti": {
+            "type": "integer",
+            "description": "Magn sem skip setur yfir á næsta ár af fisktegund fyrir tímabil út frá kvóta.",
+            "format": "int32"
+          },
+          "afNaestaAriKvoti": {
+            "type": "integer",
+            "description": "Magn sem skip tekur af næsta ári af fisktegund fyrir tímabil út frá kvóta.",
+            "format": "int32"
+          },
+          "prosentaANaestaArKvoti": {
+            "type": "integer",
+            "description": "Föst prósenta sem skip þarf að setja á næsta ár af fisktegund fyrir tímabil út frá kvóta.",
+            "format": "int32"
+          },
+          "prosentaAfNaestaAriKvoti": {
+            "type": "integer",
+            "description": "Föst prósenta sem skip þarf að setja af næsta ári af fisktegund fyrir tímabil út frá kvóta.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AflamarkTegundirBreyttDTO": {
+        "type": "object",
+        "properties": {
+          "aflabreyting": {
+            "type": "integer",
+            "description": "breyting afla fyrir fisktegund sem var send.",
+            "format": "int32"
+          },
+          "aflamarkbreyting": {
+            "type": "integer",
+            "description": "breyting aflamarks fyrir fisktegund sem var send.",
+            "format": "int32"
+          },
+          "kvotategund": {
+            "type": "integer",
+            "description": "Auðkenni fisktegundar.",
+            "format": "int32"
+          },
+          "kvotategundHeiti": {
+            "type": "string",
+            "description": "Heiti fisktegundar.",
+            "nullable": true
+          },
+          "uthlutun": {
+            "type": "integer",
+            "description": "Magn sem skip fékk úthlutað af fisktegund á timabilinu.",
+            "format": "int32"
+          },
+          "serstokUthlutun": {
+            "type": "integer",
+            "description": "Magn sem skip fékk úthlutað sérstaklega af fisktegund á tímabilinu.",
+            "format": "int32"
+          },
+          "milliAra": {
+            "type": "integer",
+            "description": "Magn sem skip setti á milli fiskveiðiára af fisktegund.",
+            "format": "int32"
+          },
+          "milliSkipa": {
+            "type": "integer",
+            "description": "Magn sem skip setti á milli skipa af fisktegund.",
+            "format": "int32"
+          },
+          "aflamark": {
+            "type": "integer",
+            "description": "Magn aflamarks skips fyrir fisktegund (uthlutun, sertsok_uthlutun, milli_ara, milli_skipa lagt saman).",
+            "format": "int32"
+          },
+          "afli": {
+            "type": "integer",
+            "description": "Magn af fisktegund sem skipið hefur raunverulega veitt á tímabilinu.",
+            "format": "int32"
+          },
+          "stada": {
+            "type": "integer",
+            "description": "Staða skips á tímabilinu (afli dreginn frá aflamarki).",
+            "format": "int32"
+          },
+          "tilfaersla": {
+            "type": "integer",
+            "description": "Magn sem skip hefur fært til af fisktegund á aðrar fisktegundir á tímabilinu.",
+            "format": "int32"
+          },
+          "nyStada": {
+            "type": "integer",
+            "description": "Uppfærð staða skips (tekið tillit af tilfærslu: tilfærsla dregin frá stöðu).",
+            "format": "int32"
+          },
+          "aNaestaAr": {
+            "type": "integer",
+            "description": "Magn sem skip sendir á næsta ár af fisktegund fyrir tímabilið.",
+            "format": "int32"
+          },
+          "umframafli": {
+            "type": "integer",
+            "description": "magn umframafla tegundar fyrir skip á tímabilinu.",
+            "format": "int32"
+          },
+          "onotad": {
+            "type": "integer",
+            "description": "Magn fisktegundar sem er ónotuð eftir útreikninga á tímabilinu.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AflamarkTegundirByTimabilDTO": {
+        "type": "object",
+        "properties": {
+          "kvotategund": {
+            "type": "integer",
+            "description": "Auðkenni kvótategundar.",
+            "format": "int32"
+          },
+          "kvotategundHeiti": {
+            "type": "string",
+            "description": "Heiti kvótategundar.",
+            "nullable": true
+          },
+          "gildirFra": {
+            "type": "string",
+            "description": "Dagsetning hvenær kvótategund tók gildi.",
+            "format": "date-time"
+          },
+          "gildirTil": {
+            "type": "string",
+            "description": "Dagsetning hvenær kvótategund fellur úr gildi.",
+            "format": "date-time"
+          },
+          "thorskigildi": {
+            "type": "number",
+            "description": "Þorskígildisstuðull fisktegundar.",
+            "format": "float"
+          },
+          "heildarAflamark": {
+            "type": "integer",
+            "description": "Heildar magn sem var úthlutað til aflamarks.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AflamarkTegundirDeilistofnDTO": {
+        "type": "object",
+        "properties": {
+          "kvotategund": {
+            "type": "integer",
+            "description": "Auðkenni fisktegundar.",
+            "format": "int32"
+          },
+          "kvotategundHeiti": {
+            "type": "string",
+            "description": "Heiti fisktegundar.",
+            "nullable": true
+          },
+          "thorskigildi": {
+            "type": "number",
+            "description": "Þorskígildi fisktegundar. Stuðull sem segir til um verðmæti fisktegundar út frá þorsk.",
+            "format": "float"
+          },
+          "uthlutun": {
+            "type": "integer",
+            "description": "Magn sem skip fékk úthlutað af fisktegund á timabilinu.",
+            "format": "int32"
+          },
+          "serstokUthlutun": {
+            "type": "integer",
+            "description": "Magn sem skip fékk úthlutað sérstaklega af fisktegund á tímabilinu.",
+            "format": "int32"
+          },
+          "milliAra": {
+            "type": "integer",
+            "description": "Magn sem skip setti á milli fiskveiðiára af fisktegund.",
+            "format": "int32"
+          },
+          "milliSkipa": {
+            "type": "integer",
+            "description": "Magn sem skip setti á milli skipa af fisktegund.",
+            "format": "int32"
+          },
+          "aflamark": {
+            "type": "integer",
+            "description": "Magn aflamarks skips fyrir fisktegund (uthlutun, sertsok_uthlutun, milli_ara, milli_skipa lagt saman).",
+            "format": "int32"
+          },
+          "afli": {
+            "type": "integer",
+            "description": "Magn af fisktegund sem skipið hefur raunverulega veitt á tímabilinu.",
+            "format": "int32"
+          },
+          "stada": {
+            "type": "integer",
+            "description": "Staða skips á tímabilinu (afli dreginn frá aflamarki).",
+            "format": "int32"
+          },
+          "tilfaersla": {
+            "type": "integer",
+            "description": "Magn sem skip hefur fært til af fisktegund á aðrar fisktegundir á tímabilinu.",
+            "format": "int32"
+          },
+          "nyStada": {
+            "type": "integer",
+            "description": "Uppfærð staða skips (tekið tillit af tilfærslu: tilfærsla dregin frá stöðu).",
+            "format": "int32"
+          },
+          "aNaestaAr": {
+            "type": "integer",
+            "description": "Magn sem skip sendir á næsta ár af fisktegund fyrir tímabilið.",
+            "format": "int32"
+          },
+          "umframafli": {
+            "type": "integer",
+            "description": "magn umframafla tegundar fyrir skip á tímabilinu.",
+            "format": "int32"
+          },
+          "onotad": {
+            "type": "integer",
+            "description": "Magn fisktegundar sem er ónotuð eftir útreikninga á tímabilinu.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AstandDTO": {
+        "type": "object",
+        "properties": {
+          "astandKodi": {
+            "type": "integer",
+            "description": "Auðkenni ástands.",
+            "format": "int32"
+          },
+          "heiti": {
+            "type": "string",
+            "description": "Heiti ástands.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FisktegundDTO": {
+        "type": "object",
+        "properties": {
+          "fisktegundKodi": {
+            "type": "integer",
+            "description": "Auðkenni fisktegundar.",
+            "format": "int32"
+          },
+          "heiti": {
+            "type": "string",
+            "description": "Heiti fiskitegundar.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GeymsluadferdDTO": {
+        "type": "object",
+        "properties": {
+          "geymsluadferdKodi": {
+            "type": "integer",
+            "description": "Auðkenni geymsluaðferðar.",
+            "format": "int32"
+          },
+          "heiti": {
+            "type": "string",
+            "description": "Heiti geymsluaðferðar.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "KvotastadaSkipaDTO": {
+        "type": "object",
+        "properties": {
+          "dagsTimi": {
+            "type": "string",
+            "description": "Dagsetning þegar náð er í gögnin.",
+            "format": "date-time"
+          },
+          "veidiTimabil": {
+            "type": "string",
+            "description": "Yfirstandi fiskveiðiár",
+            "nullable": true
+          },
+          "kvotastadaSkipa": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/KvotastadaSkipsDTO" },
+            "description": "Skip grunnupplýsingar og listi af kvótategundum skips.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "KvotastadaSkipsDTO": {
+        "type": "object",
+        "properties": {
+          "skipGrunnupplysingar": {
+            "$ref": "#/components/schemas/SkipGrunnupplysingarDTO"
+          },
+          "kvotategundir": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/KvotategundDTO" },
+            "description": "Listi af kvótategundum skips.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "KvotategundDTO": {
+        "type": "object",
+        "properties": {
+          "kvotategundarNumer": {
+            "type": "string",
+            "description": "Kvótategundarnúmer.",
+            "nullable": true
+          },
+          "heiti": {
+            "type": "string",
+            "description": "Heiti kvótategundar.",
+            "nullable": true
+          },
+          "thorskigildi": {
+            "type": "string",
+            "description": "Þorskígildisstuðull fisktegundar.",
+            "nullable": true
+          },
+          "hlutdeild": {
+            "type": "string",
+            "description": "Hlutdeildarstaða skips í dag.",
+            "nullable": true
+          },
+          "upphafsstadaHlutdeildar": {
+            "type": "string",
+            "description": "Hlutdeildarstaða skips í upphaf hludeildarárs.",
+            "nullable": true
+          },
+          "uthlutunKg": {
+            "type": "integer",
+            "description": "Úthlutað aflamark.",
+            "format": "int32",
+            "nullable": true
+          },
+          "aflamarkKg": {
+            "type": "integer",
+            "description": "Samanlögð aflaheimild skips.",
+            "format": "int32",
+            "nullable": true
+          },
+          "jofnunarsjodurKg": {
+            "type": "integer",
+            "description": "Aðrar úthlutanir og bætur.",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LondunAfliDTO": {
+        "type": "object",
+        "properties": {
+          "veidarfaeri": {
+            "type": "integer",
+            "description": "Númer veiðarfæris.",
+            "format": "int32"
+          },
+          "veidisvaedi": {
+            "type": "string",
+            "description": "Kóði veiðisvæðis.",
+            "nullable": true
+          },
+          "veidistofn": {
+            "type": "integer",
+            "description": "Kóði veiðistofns.",
+            "format": "int32"
+          },
+          "fisktegund": {
+            "type": "integer",
+            "description": "Auðkenni fisktegundar.",
+            "format": "int32"
+          },
+          "astand": {
+            "type": "integer",
+            "description": "Auðkenni ástands.",
+            "format": "int32"
+          },
+          "geymsluadferd": {
+            "type": "integer",
+            "description": "Auðkenni geymsluaðferðar.",
+            "format": "int32"
+          },
+          "samtalsMagnSlaegt": {
+            "type": "integer",
+            "description": "Samtals slægt magn afla af viðkomandi fisktegund.",
+            "format": "int32"
+          },
+          "samtalsMagnOslaegt": {
+            "type": "integer",
+            "description": "Samtals óslægt magn afla af viðkomandi fisktegund.",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LondunarKvotaAfliDTO": {
+        "type": "object",
+        "properties": {
+          "fisktegund": {
+            "type": "integer",
+            "description": "Númer fisktegundar",
+            "format": "int32"
+          },
+          "kvotategundHeiti": {
+            "type": "string",
+            "description": "Heiti kvótategundar.",
+            "nullable": true
+          },
+          "magn": {
+            "type": "integer",
+            "description": "Afli sem er reiknaður til kvóta af löndunar afla af viðkomandi fisktegund.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LondunDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Frumlykill löndunar.",
+            "format": "int32"
+          },
+          "londunarAflar": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/LondunAfliDTO" },
+            "description": "Listi af afla löndunar.",
+            "nullable": true
+          },
+          "londunarKvotaAflar": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/LondunarKvotaAfliDTO" },
+            "description": "Listi af kvótaafla löndunar.",
+            "nullable": true
+          },
+          "londunHefst": {
+            "type": "string",
+            "description": "Dagsetning sem segir til um hvenær viðkomandi löndun hófst.",
+            "format": "date-time"
+          },
+          "londunarstadurHeiti": {
+            "type": "string",
+            "description": "Heiti löndunarstaðar.",
+            "nullable": true
+          },
+          "bruttotonn": {
+            "type": "number",
+            "description": "Brúttótonn samkvæmt Siglingastofnun.",
+            "format": "double",
+            "nullable": true
+          },
+          "skipHeiti": {
+            "type": "string",
+            "description": "Heiti skips.",
+            "nullable": true
+          },
+          "skipNumer": {
+            "type": "integer",
+            "description": "Skipanúmer",
+            "format": "int32"
+          },
+          "eigandiKennitala": {
+            "type": "string",
+            "description": "Kennitala eiganda skips.",
+            "nullable": true
+          },
+          "rekjanleikanumer": {
+            "type": "integer",
+            "description": "Rekjanleikanúmer löndunar",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MedalverdFisksDTO": {
+        "type": "object",
+        "properties": {
+          "vegidMedalverd": {
+            "type": "integer",
+            "description": "Heildarverðmæti/heildarmagn allra viðskipta bæði í beinni sölu og gegnum fiskmarkaði/uppboðsmarkaði.",
+            "format": "int32",
+            "nullable": true
+          },
+          "markadsVerd": {
+            "type": "integer",
+            "description": "Meðalverð afurða í viðskiptum sem að fara í gegnum fiskmarkaði/uppboðsmarkaði.",
+            "format": "int32",
+            "nullable": true
+          },
+          "markadsSala": {
+            "type": "integer",
+            "description": "Selt magn í kg sem að fer fram í viðskiptum gegnum fiskmarkaði/uppboðsmarkaði.",
+            "format": "int32",
+            "nullable": true
+          },
+          "londunardagur": {
+            "type": "string",
+            "description": "Löndunardagur",
+            "format": "date-time"
+          },
+          "fragangurHeiti": {
+            "type": "string",
+            "description": "Heiti frágangs (óslægt, slægt, heill o.s.frv.)",
+            "nullable": true
+          },
+          "fragang": {
+            "type": "integer",
+            "description": "Númer frágangs",
+            "format": "int32"
+          },
+          "fisktegundHeiti": {
+            "type": "string",
+            "description": "Heiti fisktegundar",
+            "nullable": true
+          },
+          "fisktegund": {
+            "type": "integer",
+            "description": "Númer fisktegundar",
+            "format": "int32"
+          },
+          "beintVerd": {
+            "type": "integer",
+            "description": "Meðalverð í beinum viðskiptum",
+            "format": "int32",
+            "nullable": true
+          },
+          "beinSala": {
+            "type": "integer",
+            "description": "Selt magn í kg í beinum viðskiptum",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "nullable": true },
+          "title": { "type": "string", "nullable": true },
+          "status": { "type": "integer", "format": "int32", "nullable": true },
+          "detail": { "type": "string", "nullable": true },
+          "instance": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "SkipDTO": {
+        "type": "object",
+        "properties": {
+          "utgerdarflokkurHeiti": {
+            "type": "string",
+            "description": "Heiti útgerðarflokks.",
+            "nullable": true
+          },
+          "bruttotonn": {
+            "type": "number",
+            "description": "Brúttótonn.",
+            "format": "double",
+            "nullable": true
+          },
+          "heiti": {
+            "type": "string",
+            "description": "Heiti skips.",
+            "nullable": true
+          },
+          "rekstraradiliKennitala": {
+            "type": "string",
+            "description": "Kennitala útgerðaraðila skips.",
+            "nullable": true
+          },
+          "rekstraradiliHeiti": {
+            "type": "string",
+            "description": "Heiti rekstraraðila.",
+            "nullable": true
+          },
+          "eigandiKennitala": {
+            "type": "string",
+            "description": "Kennitala eiganda skips.",
+            "nullable": true
+          },
+          "eigandiHeiti": {
+            "type": "string",
+            "description": "Heiti eiganda skips.",
+            "nullable": true
+          },
+          "skipNumer": {
+            "type": "integer",
+            "description": "Skipanúmer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SkipEigandaskiptiDTO": {
+        "type": "object",
+        "properties": {
+          "utgerdarflokkurHeiti": {
+            "type": "string",
+            "description": "Heiti útgerðarflokks.",
+            "nullable": true
+          },
+          "bruttotonn": {
+            "type": "number",
+            "description": "Brúttótonn.",
+            "format": "double",
+            "nullable": true
+          },
+          "gildirTil": {
+            "type": "string",
+            "description": "Lokadagur gildistíma færslunnar.",
+            "format": "date-time"
+          },
+          "heiti": {
+            "type": "string",
+            "description": "Heiti skips.",
+            "nullable": true
+          },
+          "rekstraradiliKennitala": {
+            "type": "string",
+            "description": "Kennitala útgerðaraðila skips.",
+            "nullable": true
+          },
+          "rekstraradiliHeiti": {
+            "type": "string",
+            "description": "Heiti rekstraraðila.",
+            "nullable": true
+          },
+          "eigandiKennitala": {
+            "type": "string",
+            "description": "Kennitala eiganda skips.",
+            "nullable": true
+          },
+          "eigandiHeiti": {
+            "type": "string",
+            "description": "Heiti eiganda skips.",
+            "nullable": true
+          },
+          "skipNumer": {
+            "type": "integer",
+            "description": "Skipanúmer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SkipGrunnupplysingarDTO": {
+        "type": "object",
+        "properties": {
+          "skipNumer": {
+            "type": "integer",
+            "description": "Skipanúmer",
+            "format": "int32"
+          },
+          "heiti": {
+            "type": "string",
+            "description": "Heiti skips.",
+            "nullable": true
+          },
+          "eigandiKennitala": {
+            "type": "string",
+            "description": "Kennitala eiganda skips.",
+            "nullable": true
+          },
+          "rekstraradiliKennitala": {
+            "type": "string",
+            "description": "Kennitala útgerðaraðila skips.",
+            "nullable": true
+          },
+          "veidikerfi": {
+            "type": "string",
+            "description": "Útgerðaflokkur í skipaskrá",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SkipLeitDTO": {
+        "type": "object",
+        "properties": {
+          "skipaskraNumer": {
+            "type": "integer",
+            "description": "Númer sem skip hefur í skipaskrá.",
+            "format": "int32"
+          },
+          "heiti": {
+            "type": "string",
+            "description": "Heiti skips.",
+            "nullable": true
+          },
+          "utgerdarflokkur": {
+            "type": "string",
+            "description": "Útgerðarflokkur skips",
+            "nullable": true
+          },
+          "utgerd": {
+            "type": "string",
+            "description": "Útgerð skips.",
+            "nullable": true
+          },
+          "heimahofn": {
+            "type": "string",
+            "description": "Heimahöfn skips.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "VeidarfaeriDTO": {
+        "type": "object",
+        "properties": {
+          "veidarfaeriKodi": {
+            "type": "integer",
+            "description": "Númer veiðarfæris.",
+            "format": "int32"
+          },
+          "heiti": {
+            "type": "string",
+            "description": "Heiti veiðarfæris.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "VeidileyfiDTO": {
+        "type": "object",
+        "properties": {
+          "skipNumer": {
+            "type": "integer",
+            "description": "Skipanúmer",
+            "format": "int32"
+          },
+          "skipHeiti": {
+            "type": "string",
+            "description": "Heiti, einkennistafir og einkennisnúmer skips.",
+            "nullable": true
+          },
+          "skipKallamerki": {
+            "type": "string",
+            "description": "Kallmerki, einkvæmt á hverjum tíma og einkennisnúmer skips.",
+            "nullable": true
+          },
+          "skyring": {
+            "type": "string",
+            "description": "Skýring á því hvers konar veiðileyfi um er að ræða.",
+            "nullable": true
+          },
+          "svaedi": {
+            "type": "string",
+            "description": "Kóði fyrir svæði þar sem veiðileyfið gildir.",
+            "nullable": true
+          },
+          "iGildi": {
+            "type": "string",
+            "description": "Dagsetning þegar veiðileyfi tekur gildi.",
+            "format": "date-time"
+          },
+          "urGildi": {
+            "type": "string",
+            "description": "Dagsetning þegar veiðileyfi fellur úr gildi.",
+            "format": "date-time"
+          },
+          "veidarfaeriHeiti": {
+            "type": "string",
+            "description": "Heiti veiðarfæris.",
+            "nullable": true
+          },
+          "londunHefst": {
+            "type": "string",
+            "description": "Dagsetning á síðustu löndun fyrir eða á valdri dagsetningu.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "londunarstadurHeiti": {
+            "type": "string",
+            "description": "Heiti löndunarstaðs á síðustu löndun fyrir eða á valdri dagsetningu.",
+            "nullable": true
+          },
+          "tegundLeyfis": {
+            "type": "string",
+            "description": "Tegund veiðileyfis.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "VeidileyfissviptingarDTO": {
+        "type": "object",
+        "properties": {
+          "skipNumer": {
+            "type": "integer",
+            "description": "Skipanúmer",
+            "format": "int32"
+          },
+          "iGildi": {
+            "type": "string",
+            "description": "Dagsetning þegar veiðileyfissvipting tekur gildi.",
+            "format": "date-time"
+          },
+          "urGildi": {
+            "type": "string",
+            "description": "Dagsetning þegar svipting fellur úr gildi.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "skipKallmerki": {
+            "type": "string",
+            "description": "Kallmerki, einkvæmt á hverjum tíma.",
+            "nullable": true
+          },
+          "skyringSviptingar": {
+            "type": "string",
+            "description": "Skýring á því hvers vegna veiðleyfissviptingin var gerð.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "VeidistofnDTO": {
+        "type": "object",
+        "properties": {
+          "veidistofnKodi": {
+            "type": "integer",
+            "description": "Kóði veiðistofns.",
+            "format": "int32"
+          },
+          "heiti": {
+            "type": "string",
+            "description": "Heiti veiðistofns.",
+            "nullable": true
+          },
+          "fisktegundKodi": {
+            "type": "integer",
+            "description": "Kóði fisktegundar.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "VeidisvaediDTO": {
+        "type": "object",
+        "properties": {
+          "veidisvaediKodi": {
+            "type": "string",
+            "description": "Kóði veiðisvæðis.",
+            "nullable": true
+          },
+          "heiti": {
+            "type": "string",
+            "description": "Heiti veiðisvæðis.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "description": "Sláðu inn JWT bearer token, einungis það og ekkert á undan.\nEnter the JWT bearer token, only that, with nothing in front.",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [{ "Bearer": [] }]
+}

@@ -4,7 +4,6 @@ import { Document, BLOCKS, Block } from '@contentful/rich-text-types'
 import { logger } from '@island.is/logging'
 import {
   ITimeline,
-  IMailingListSignup,
   ISectionHeading,
   ICardSection,
   IStorySection,
@@ -35,13 +34,12 @@ import {
   ILifeEventPageListSlice,
   ISidebarCard,
   IPowerBiSlice,
+  ITableSlice,
+  IEmailSignup,
+  IFeaturedSupportQnAs,
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
 import { Asset, mapAsset } from '../models/asset.model'
-import {
-  MailingListSignupSlice,
-  mapMailingListSignup,
-} from '../models/mailingListSignupSlice.model'
 import { mapTimelineSlice, TimelineSlice } from '../models/timelineSlice.model'
 import { HeadingSlice, mapHeadingSlice } from '../models/headingSlice.model'
 import { mapStorySlice, StorySlice } from '../models/storySlice.model'
@@ -98,10 +96,15 @@ import {
 } from '../models/lifeEventPageListSlice.model'
 import { mapSidebarCard, SidebarCard } from '../models/sidebarCard.model'
 import { PowerBiSlice, mapPowerBiSlice } from '../models/powerBiSlice.model'
+import { mapTableSlice, TableSlice } from '../models/tableSlice.model'
+import { EmailSignup, mapEmailSignup } from '../models/emailSignup.model'
+import {
+  FeaturedSupportQNAs,
+  mapFeaturedSupportQNAs,
+} from '../models/featuredSupportQNAs.model'
 
 type SliceTypes =
   | ITimeline
-  | IMailingListSignup
   | ISectionHeading
   | ICardSection
   | IStorySection
@@ -132,12 +135,14 @@ type SliceTypes =
   | ILifeEventPageListSlice
   | ISidebarCard
   | IPowerBiSlice
+  | ITableSlice
+  | IEmailSignup
+  | IFeaturedSupportQnAs
 
 export const SliceUnion = createUnionType({
   name: 'Slice',
   types: () => [
     TimelineSlice,
-    MailingListSignupSlice,
     HeadingSlice,
     LinkCardSlice,
     StorySlice,
@@ -171,6 +176,9 @@ export const SliceUnion = createUnionType({
     LifeEventPageListSlice,
     SidebarCard,
     PowerBiSlice,
+    TableSlice,
+    EmailSignup,
+    FeaturedSupportQNAs,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
@@ -180,8 +188,6 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
   switch (contentType) {
     case 'timeline':
       return mapTimelineSlice(slice as ITimeline)
-    case 'mailingListSignup':
-      return mapMailingListSignup(slice as IMailingListSignup)
     case 'sectionHeading':
       return mapHeadingSlice(slice as ISectionHeading)
     case 'cardSection':
@@ -242,6 +248,12 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapSidebarCard(slice as ISidebarCard)
     case 'powerBiSlice':
       return mapPowerBiSlice(slice as IPowerBiSlice)
+    case 'tableSlice':
+      return mapTableSlice(slice as ITableSlice)
+    case 'emailSignup':
+      return mapEmailSignup(slice as IEmailSignup)
+    case 'featuredSupportQNAs':
+      return mapFeaturedSupportQNAs(slice as IFeaturedSupportQnAs)
     default:
       throw new ApolloError(`Can not convert to slice: ${contentType}`)
   }

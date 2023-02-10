@@ -3,37 +3,55 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { getValueViaPath } from '@island.is/application/core'
-import { PASSPORT_CHARGE_CODES, YES, YesOrNo, DiscountCheck } from './constants'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import { YES, YesOrNo, DiscountCheck } from './constants'
 import { info } from 'kennitala'
 import { generateAssignParentBApplicationEmail } from './emailGenerators/assignParentBEmail'
+import { PassportSchema } from '@island.is/application/templates/passport'
+import { PassportsService } from '@island.is/clients/passports'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 @Injectable()
-export class PassportService {
+export class PassportService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-  ) {}
+    private passportApi: PassportsService,
+  ) {
+    super(ApplicationTypes.PASSPORT)
+  }
+
+  async identityDocument({ application, auth }: TemplateApiModuleActionProps) {
+    const identityDocument = await this.passportApi.getCurrentPassport(auth)
+    if (!identityDocument) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProvider,
+          summary: coreErrorMessages.errorDataProvider,
+        },
+        400,
+      )
+    }
+    return identityDocument
+  }
 
   async createCharge({
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
-    const type = getValueViaPath<'regular' | 'express'>(
-      answers,
-      'type',
-      'regular',
-    )
+    const SYSLUMADUR_NATIONAL_ID = '6509142520'
 
-    const chargeItemCode =
-      type === 'regular'
-        ? PASSPORT_CHARGE_CODES.REGULAR
-        : PASSPORT_CHARGE_CODES.EXPRESS
-
+    const chargeItemCode = getValueViaPath<string>(answers, 'chargeItemCode')
+    if (!chargeItemCode) {
+      throw new Error('chargeItemCode missing in request')
+    }
     const response = await this.sharedTemplateAPIService.createCharge(
-      auth.authorization,
+      auth,
       id,
-      chargeItemCode,
+      SYSLUMADUR_NATIONAL_ID,
+      [chargeItemCode],
     )
     // last chance to validate before the user receives a dummy
     if (!response?.paymentUrl) {
@@ -80,12 +98,10 @@ export class PassportService {
     auth,
   }: TemplateApiModuleActionProps): Promise<{
     success: boolean
-    orderId?: string
+    orderId?: string[]
   }> {
-    const { answers } = application
-
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
+      auth,
       application.id,
     )
 
@@ -97,28 +113,61 @@ export class PassportService {
         'Ekki er hægt að skila inn umsókn af því að ekki hefur tekist að taka við greiðslu.',
       )
     }
-
-    let result
     try {
-      // TODO: Submit to skilrikjaskra
-      result = { success: true, errorMessage: null }
+      const {
+        passport,
+        personalInfo,
+        childsPersonalInfo,
+        service,
+      }: PassportSchema = application.answers as PassportSchema
+
+      const forUser = !!passport.userPassport
+      let result
+      if (forUser) {
+        result = await this.passportApi.preregisterIdentityDocument(auth, {
+          appliedForPersonId: auth.nationalId,
+          priority: service.type === 'regular' ? 0 : 1,
+          deliveryName: service.dropLocation,
+          contactInfo: {
+            phoneAtHome: personalInfo.phoneNumber,
+            phoneAtWork: personalInfo.phoneNumber,
+            phoneMobile: personalInfo.phoneNumber,
+            email: personalInfo.email,
+          },
+        })
+      } else {
+        result = await this.passportApi.preregisterChildIdentityDocument(auth, {
+          appliedForPersonId: childsPersonalInfo.nationalId,
+          priority: service.type === 'regular' ? 0 : 1,
+          deliveryName: service.dropLocation,
+          approvalA: {
+            personId: childsPersonalInfo.guardian1.nationalId.replace('-', ''),
+            approved: application.created,
+          },
+          approvalB: {
+            personId: childsPersonalInfo.guardian2.nationalId.replace('-', ''),
+            approved: new Date(),
+          },
+          contactInfo: {
+            phoneAtHome: childsPersonalInfo.guardian1.phoneNumber,
+            phoneAtWork: childsPersonalInfo.guardian1.phoneNumber,
+            phoneMobile: childsPersonalInfo.guardian1.phoneNumber,
+            email: childsPersonalInfo.guardian1.email,
+          },
+        })
+      }
+
+      if (!result || !result.success) {
+        throw new Error(`Application submission failed (${result})`)
+      }
+
+      return result
     } catch (e) {
       this.log('error', 'Submitting passport failed', {
         e,
-        applicationFor: answers.type,
-        jurisdiction: answers.dropLocation,
       })
 
       throw e
-    }
-
-    if (!result.success) {
-      throw new Error(`Application submission failed (${result.errorMessage})`)
-    }
-
-    return {
-      success: true,
-      orderId: 'PÖNTUN12345',
     }
   }
 

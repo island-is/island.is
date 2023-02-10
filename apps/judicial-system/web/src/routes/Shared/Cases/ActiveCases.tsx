@@ -13,12 +13,17 @@ import {
 
 import { theme } from '@island.is/island-ui/theme'
 import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
-import { CaseState, UserRole } from '@island.is/judicial-system/types'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import {
+  CaseState,
+  isExtendedCourtRole,
+  isProsecutionRole,
+} from '@island.is/judicial-system/types'
+import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
   directionType,
   sortableTableColumn,
   SortConfig,
+  TempCaseListEntry as CaseListEntry,
 } from '@island.is/judicial-system-web/src/types'
 import {
   capitalize,
@@ -26,7 +31,6 @@ import {
   formatDOB,
 } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
-import type { Case } from '@island.is/judicial-system/types'
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { displayCaseType, mapCaseStateToTagVariant } from './utils'
@@ -35,21 +39,14 @@ import MobileCase from './MobileCase'
 import { cases as m } from './Cases.strings'
 
 interface Props {
-  cases: Case[]
+  cases: CaseListEntry[]
   onRowClick: (id: string) => void
   isDeletingCase: boolean
-  onDeleteCase?: (caseToDelete: Case) => Promise<void>
-  setActiveCases?: React.Dispatch<React.SetStateAction<Case[] | undefined>>
+  onDeleteCase?: (caseToDelete: CaseListEntry) => Promise<void>
 }
 
 const ActiveCases: React.FC<Props> = (props) => {
-  const {
-    cases,
-    onRowClick,
-    isDeletingCase,
-    onDeleteCase,
-    setActiveCases,
-  } = props
+  const { cases, onRowClick, isDeletingCase, onDeleteCase } = props
 
   const controls = useAnimation()
 
@@ -62,9 +59,8 @@ const ActiveCases: React.FC<Props> = (props) => {
 
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-  const isProsecutor = user?.role === UserRole.PROSECUTOR
-  const isCourtRole =
-    user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR
+  const isProsecution = user?.role && isProsecutionRole(user.role)
+  const isCourt = (user?.role && isExtendedCourtRole(user.role)) || false
 
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     column: 'createdAt',
@@ -76,7 +72,7 @@ const ActiveCases: React.FC<Props> = (props) => {
 
   useMemo(() => {
     if (cases && sortConfig) {
-      cases.sort((a: Case, b: Case) => {
+      cases.sort((a: CaseListEntry, b: CaseListEntry) => {
         // Credit: https://stackoverflow.com/a/51169
         return sortConfig.direction === 'ascending'
           ? (sortConfig.column === 'defendant' &&
@@ -131,12 +127,12 @@ const ActiveCases: React.FC<Props> = (props) => {
 
   return width < theme.breakpoints.md ? (
     <>
-      {cases.map((theCase: Case) => (
+      {cases.map((theCase: CaseListEntry) => (
         <Box marginTop={2} key={theCase.id}>
           <MobileCase
             onClick={() => onRowClick(theCase.id)}
             theCase={theCase}
-            isCourtRole={isCourtRole}
+            isCourtRole={isCourt}
           >
             {theCase.courtDate ? (
               <Text fontWeight={'medium'} variant="small">
@@ -310,7 +306,7 @@ const ActiveCases: React.FC<Props> = (props) => {
                     <Text as="span">
                       {displayCaseType(formatMessage, c.type, c.decision)}
                     </Text>
-                    {c.parentCase && (
+                    {c.parentCaseId && (
                       <Text as="span" variant="small" color="dark400">
                         Framlenging
                       </Text>
@@ -323,7 +319,7 @@ const ActiveCases: React.FC<Props> = (props) => {
                       mapCaseStateToTagVariant(
                         formatMessage,
                         c.state,
-                        isCourtRole,
+                        isCourt,
                         c.type,
                         c.isValidToDateInThePast,
                         c.courtDate,
@@ -336,7 +332,7 @@ const ActiveCases: React.FC<Props> = (props) => {
                       mapCaseStateToTagVariant(
                         formatMessage,
                         c.state,
-                        isCourtRole,
+                        isCourt,
                         c.type,
                         c.isValidToDateInThePast,
                         c.courtDate,
@@ -369,7 +365,7 @@ const ActiveCases: React.FC<Props> = (props) => {
                   )}
                 </td>
                 <td className={cn(styles.td, 'secondLast')}>
-                  {isProsecutor &&
+                  {isProsecution &&
                     (c.state === CaseState.NEW ||
                       c.state === CaseState.DRAFT ||
                       c.state === CaseState.SUBMITTED ||
@@ -403,21 +399,14 @@ const ActiveCases: React.FC<Props> = (props) => {
                     size="small"
                     loading={isDeletingCase}
                     onClick={async (evt) => {
-                      if (onDeleteCase && setActiveCases) {
+                      if (onDeleteCase) {
                         evt.stopPropagation()
 
                         await onDeleteCase(cases[i])
 
-                        controls
-                          .start('isNotDeleting')
-                          .then(() => {
-                            setRequestToRemoveIndex(undefined)
-                          })
-                          .then(() => {
-                            setActiveCases(
-                              cases.filter((c: Case) => c !== cases[i]),
-                            )
-                          })
+                        controls.start('isNotDeleting').then(() => {
+                          setRequestToRemoveIndex(undefined)
+                        })
                       }
                     }}
                   >

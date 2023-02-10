@@ -24,6 +24,7 @@ import {
   TilkynnandiOrSlasadi,
 } from './types/applicationSubmit'
 import { AccidentNotificationAttachment } from './types/attachments'
+import { objectToXML } from '../../shared/shared.utils'
 
 export const pathToAsset = (file: string) => {
   if (isRunningOnEnvironment('local')) {
@@ -381,30 +382,6 @@ const determineSubType = (
     }
   }
   return undefined
-}
-
-export const objectToXML = (obj: object) => {
-  let xml = ''
-  Object.entries(obj).forEach((entry) => {
-    const [key, value] = entry
-    if (value === undefined) {
-      return
-    }
-    xml += value instanceof Array ? '' : '<' + key + '>'
-    if (value instanceof Array) {
-      for (const i in value) {
-        xml += '<' + key + '>'
-        xml += objectToXML(value[i])
-        xml += '</' + key + '>'
-      }
-    } else if (typeof value == 'object') {
-      xml += objectToXML(new Object(value))
-    } else {
-      xml += value
-    }
-    xml += value instanceof Array ? '' : '</' + key + '>'
-  })
-  return xml
 }
 
 export const getApplicationDocumentId = (application: Application): number => {

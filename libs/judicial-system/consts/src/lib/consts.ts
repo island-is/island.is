@@ -77,85 +77,6 @@ export const InvestigationCaseTypes = [
   },
 ]
 
-export const IndictmentTypes = [
-  {
-    label: 'Barnaverndarlög',
-    value: CaseType.CHILD_PROTECTION_LAWS,
-  },
-  {
-    label: 'Eignaspjöll',
-    value: CaseType.PROPERTY_DAMAGE,
-  },
-  {
-    label: 'Fíkniefnalagabrot',
-    value: CaseType.NARCOTICS_OFFENSE,
-  },
-  {
-    label: 'Fjárdráttur',
-    value: CaseType.EMBEZZLEMENT,
-  },
-  {
-    label: 'Fjárdráttur',
-    value: CaseType.FRAUD,
-  },
-  {
-    label: 'Heimilisofbeldi',
-    value: CaseType.DOMESTIC_VIOLENCE,
-  },
-  {
-    label: 'Líkamsáras sem leiðir til dauða',
-    value: CaseType.ASSAULT_LEADING_TO_DEATH,
-  },
-  {
-    label: 'Manndráp',
-    value: CaseType.MURDER,
-  },
-  {
-    label: 'Meiriháttar líkamsárás',
-    value: CaseType.MAJOR_ASSAULT,
-  },
-  {
-    label: 'Minniháttar líkamsárás',
-    value: CaseType.MINOR_ASSAULT,
-  },
-  {
-    label: 'Nauðgun',
-    value: CaseType.RAPE,
-  },
-  {
-    label: 'Nytjastuldur',
-    value: CaseType.UTILITY_THEFT,
-  },
-  {
-    label: 'Sérlega hættuleg líkamsáras',
-    value: CaseType.AGGRAVATED_ASSAULT,
-  },
-  {
-    label: 'Tilraun til manndráps',
-    value: CaseType.ATTEMPTED_MURDER,
-  },
-  {
-    label: 'Umferðarlagabrot',
-    value: CaseType.TRAFFIC_VIOLATION,
-  },
-  {
-    label: 'Þjófnaður',
-    value: CaseType.THEFT,
-  },
-  {
-    label: 'Önnur hegningarlagabrot',
-    value: CaseType.OTHER_CRIMINAL_OFFENSES,
-  },
-  {
-    label: 'Önnur kynferðisbrot en nauðgun',
-    value: CaseType.SEXUAL_OFFENSES_OTHER_THAN_RAPE,
-  },
-  {
-    label: 'Önnur sérrefsilagabrot',
-    value: CaseType.OTHER_OFFENSES,
-  },
-]
-
 // Date/time formats
 export const TIME_FORMAT = 'HH:mm'
 
@@ -165,12 +86,12 @@ export const USERS_ROUTE = '/notendur'
 export const CREATE_USER_ROUTE = '/notendur/nyr'
 export const CHANGE_USER_ROUTE = '/notendur/breyta'
 export const SIGNED_VERDICT_OVERVIEW_ROUTE = '/krafa/yfirlit'
-export const CLOSED_INDICTMENT_OVERVIEW_ROUTE = '/krafa/akaera/yfirlit'
+export const CLOSED_INDICTMENT_OVERVIEW_ROUTE = '/akaera/yfirlit'
 
 export const CREATE_RESTRICTION_CASE_ROUTE = '/krafa/ny/gaesluvardhald'
 export const CREATE_TRAVEL_BAN_ROUTE = '/krafa/ny/farbann'
 export const CREATE_INVESTIGATION_CASE_ROUTE = '/krafa/ny/rannsoknarheimild'
-export const CREATE_INDICTMENT_ROUTE = '/krafa/ny/akaera'
+export const CREATE_INDICTMENT_ROUTE = '/akaera/ny'
 
 export const DEFENDER_ROUTE = '/verjandi'
 
@@ -196,11 +117,13 @@ export const INVESTIGATION_CASE_CASE_FILES_ROUTE =
 export const INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE =
   '/krafa/rannsoknarheimild/stadfesta'
 
-export const INDICTMENTS_DEFENDANT_ROUTE = '/krafa/akaera/akaerdi'
-export const INDICTMENTS_PROCESSING_ROUTE = '/krafa/akaera/malsmedferd'
-export const INDICTMENTS_CASE_FILES_ROUTE = '/krafa/akaera/domskjol'
-export const INDICTMENTS_POLICE_CASE_FILES_ROUTE = '/krafa/akaera/malsgogn'
-export const INDICTMENTS_OVERVIEW_ROUTE = '/krafa/akaera/stadfesta'
+export const INDICTMENTS_DEFENDANT_ROUTE = '/akaera/akaerdi'
+export const INDICTMENTS_POLICE_CASE_FILES_ROUTE = '/akaera/malsgogn'
+export const INDICTMENTS_CASE_FILE_ROUTE = '/akaera/skjalaskra'
+export const INDICTMENTS_PROCESSING_ROUTE = '/akaera/malsmedferd'
+export const INDICTMENTS_TRAFFIC_VIOLATION_ROUTE = '/akaera/akaera'
+export const INDICTMENTS_CASE_FILES_ROUTE = '/akaera/domskjol'
+export const INDICTMENTS_OVERVIEW_ROUTE = '/akaera/stadfesta'
 /* PROSECUTOR ROUTES END */
 
 /* COURT ROUTES START */
@@ -208,8 +131,8 @@ export const RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE = '/domur/mottaka'
 export const RESTRICTION_CASE_COURT_OVERVIEW_ROUTE = '/domur/krafa'
 export const RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE =
   '/domur/fyrirtokutimi'
-export const RESTRICTION_CASE_COURT_RECORD_ROUTE = '/domur/thingbok'
 export const RESTRICTION_CASE_RULING_ROUTE = '/domur/urskurdur'
+export const RESTRICTION_CASE_COURT_RECORD_ROUTE = '/domur/thingbok'
 export const RESTRICTION_CASE_CONFIRMATION_ROUTE = '/domur/stadfesta'
 export const RESTRICTION_CASE_MODIFY_RULING_ROUTE = '/domur/urskurdur/leidretta'
 
@@ -236,6 +159,52 @@ export const INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE =
   '/domur/akaera/malflytjendur'
 export const INDICTMENTS_COURT_RECORD_ROUTE = '/domur/akaera/thingbok'
 /* COURT ROUTES END */
+
+export const prosecutorRestrictionCasesRoutes = [
+  RESTRICTION_CASE_DEFENDANT_ROUTE,
+  RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+  RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
+  RESTRICTION_CASE_POLICE_REPORT_ROUTE,
+  RESTRICTION_CASE_CASE_FILES_ROUTE,
+  RESTRICTION_CASE_OVERVIEW_ROUTE,
+]
+
+export const prosecutorInvestigationCasesRoutes = [
+  INVESTIGATION_CASE_DEFENDANT_ROUTE,
+  INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+  INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
+  INVESTIGATION_CASE_POLICE_REPORT_ROUTE,
+  INVESTIGATION_CASE_CASE_FILES_ROUTE,
+  INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
+]
+
+export const prosecutorIndictmentRoutes = [
+  INDICTMENTS_DEFENDANT_ROUTE,
+  INDICTMENTS_POLICE_CASE_FILES_ROUTE,
+  INDICTMENTS_CASE_FILE_ROUTE,
+  INDICTMENTS_PROCESSING_ROUTE,
+  INDICTMENTS_CASE_FILES_ROUTE,
+  INDICTMENTS_OVERVIEW_ROUTE,
+]
+
+export const courtRestrictionCasesRoutes = [
+  RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+  RESTRICTION_CASE_COURT_OVERVIEW_ROUTE,
+  RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+  RESTRICTION_CASE_RULING_ROUTE,
+  RESTRICTION_CASE_COURT_RECORD_ROUTE,
+  RESTRICTION_CASE_CONFIRMATION_ROUTE,
+]
+
+export const courtInvestigationCasesRoutes = [
+  INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+  INVESTIGATION_CASE_OVERVIEW_ROUTE,
+  INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+  INVESTIGATION_CASE_COURT_RECORD_ROUTE,
+  INVESTIGATION_CASE_RULING_ROUTE,
+  INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
+  INVESTIGATION_CASE_CONFIRMATION_ROUTE,
+]
 
 // Feedback
 export const FEEDBACK_FORM_ROUTE = '/feedback-from'

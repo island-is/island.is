@@ -32,6 +32,7 @@ const root = {
   allow_explicit_delegation_grant: false,
   automatic_delegation_grant: false,
   also_for_delegated_user: false,
+  domain_name: '@island.is',
 }
 
 const full = {
@@ -47,6 +48,7 @@ const full = {
   allow_explicit_delegation_grant: false,
   automatic_delegation_grant: false,
   also_for_delegated_user: false,
+  domain_name: '@island.is',
 }
 
 const api_scopes = [root, full]

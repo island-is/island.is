@@ -1,5 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
+import router from 'next/router'
 
 import {
   BlueBox,
@@ -13,17 +14,17 @@ import {
   CourtDocuments,
   FormContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  Case,
-  CaseAppealDecision,
-  CaseType,
-  SessionArrangements,
-} from '@island.is/judicial-system/types'
+import { SessionArrangements } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  useDeb,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   closedCourt,
   core,
@@ -34,7 +35,6 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import {
   GridRow,
   GridColumn,
-  RadioButton,
   GridContainer,
   Box,
   Text,
@@ -46,8 +46,11 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isCourtRecordStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import * as constants from '@island.is/judicial-system/consts'
+
+import AppealSections from '../../components/AppealSections/AppealSections'
 
 const getSessionBookingsAutofill = (
   formatMessage: IntlShape['formatMessage'],
@@ -86,9 +89,7 @@ const getSessionBookingsAutofill = (
 }
 
 const CourtRecord = () => {
-  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-
-  const { setAndSendToServer, updateCase } = useCase()
+  const { setAndSendCaseToServer, updateCase } = useCase()
   const { formatMessage } = useIntl()
   const {
     workingCase,
@@ -104,111 +105,104 @@ const CourtRecord = () => {
     setSessionBookingsMessage,
   ] = useState<string>('')
 
-  useDeb(workingCase, 'courtAttendees')
-  useDeb(workingCase, 'sessionBookings')
-  useDeb(workingCase, 'accusedAppealAnnouncement')
-  useDeb(workingCase, 'prosecutorAppealAnnouncement')
-  useDeb(workingCase, 'endOfSessionBookings')
-
-  useEffect(() => {
-    if (isCaseUpToDate && !initialAutoFillDone) {
-      const autofillAttendees = []
-
-      if (workingCase.courtAttendees !== '') {
-        if (workingCase.prosecutor) {
-          autofillAttendees.push(
-            `${workingCase.prosecutor.name} ${workingCase.prosecutor.title}`,
-          )
-        }
-
-        if (
-          workingCase.defenderName &&
-          workingCase.sessionArrangements !==
-            SessionArrangements.PROSECUTOR_PRESENT
-        ) {
-          autofillAttendees.push(
-            `\n${workingCase.defenderName} skipaður ${
-              workingCase.sessionArrangements ===
-              SessionArrangements.ALL_PRESENT_SPOKESPERSON
-                ? 'talsmaður'
-                : 'verjandi'
-            } ${formatMessage(core.defendant, { suffix: 'a' })}`,
-          )
-        }
-
-        if (workingCase.translator) {
-          autofillAttendees.push(`\n${workingCase.translator} túlkur`)
-        }
-
-        if (workingCase.defendants && workingCase.defendants.length > 0) {
-          if (
-            workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT
-          ) {
-            workingCase.defendants.forEach((defendant) => {
-              autofillAttendees.push(
-                `\n${defendant.name} ${formatMessage(core.defendant, {
-                  suffix: 'i',
-                })}`,
-              )
-            })
-          }
-        }
-      }
-
-      setAndSendToServer(
-        [
-          {
-            courtStartDate: workingCase.courtDate,
-            courtLocation: workingCase.court
-              ? `í ${
-                  workingCase.court.name.indexOf('dómur') > -1
-                    ? workingCase.court.name.replace('dómur', 'dómi')
-                    : workingCase.court.name
-                }`
-              : undefined,
-            courtAttendees:
-              autofillAttendees.length > 0
-                ? autofillAttendees.join('')
-                : undefined,
-            sessionBookings:
-              workingCase.type === CaseType.RESTRAINING_ORDER ||
-              workingCase.type ===
-                CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME
-                ? formatMessage(
-                    m.sections.sessionBookings.autofillRestrainingOrder,
-                  )
-                : workingCase.type === CaseType.EXPULSION_FROM_HOME
-                ? formatMessage(
-                    m.sections.sessionBookings.autofillExpulsionFromHome,
-                  )
-                : workingCase.type === CaseType.AUTOPSY
-                ? formatMessage(m.sections.sessionBookings.autofillAutopsy)
-                : workingCase.sessionArrangements ===
-                  SessionArrangements.ALL_PRESENT
-                ? getSessionBookingsAutofill(formatMessage, workingCase)
-                : workingCase.sessionArrangements ===
-                  SessionArrangements.ALL_PRESENT_SPOKESPERSON
-                ? formatMessage(m.sections.sessionBookings.autofillSpokeperson)
-                : workingCase.sessionArrangements ===
-                  SessionArrangements.PROSECUTOR_PRESENT
-                ? formatMessage(m.sections.sessionBookings.autofillProsecutor)
-                : undefined,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
-
-      setInitialAutoFillDone(true)
-    }
-  }, [
-    setAndSendToServer,
-    formatMessage,
-    initialAutoFillDone,
-    isCaseUpToDate,
-    setWorkingCase,
-    workingCase,
+  useDeb(workingCase, [
+    'courtAttendees',
+    'sessionBookings',
+    'accusedAppealAnnouncement',
+    'prosecutorAppealAnnouncement',
+    'endOfSessionBookings',
   ])
+
+  const initialize = useCallback(() => {
+    const autofillAttendees = []
+
+    if (workingCase.prosecutor) {
+      autofillAttendees.push(
+        `${workingCase.prosecutor.name} ${workingCase.prosecutor.title}`,
+      )
+    }
+
+    if (
+      workingCase.defenderName &&
+      workingCase.sessionArrangements !== SessionArrangements.PROSECUTOR_PRESENT
+    ) {
+      autofillAttendees.push(
+        `\n${workingCase.defenderName} skipaður ${
+          workingCase.sessionArrangements ===
+          SessionArrangements.ALL_PRESENT_SPOKESPERSON
+            ? 'talsmaður'
+            : 'verjandi'
+        } ${formatMessage(core.defendant, { suffix: 'a' })}`,
+      )
+    }
+
+    if (workingCase.translator) {
+      autofillAttendees.push(`\n${workingCase.translator} túlkur`)
+    }
+
+    if (workingCase.defendants && workingCase.defendants.length > 0) {
+      if (workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+        workingCase.defendants.forEach((defendant) => {
+          autofillAttendees.push(
+            `\n${defendant.name} ${formatMessage(core.defendant, {
+              suffix: 'i',
+            })}`,
+          )
+        })
+      }
+    }
+
+    setAndSendCaseToServer(
+      [
+        {
+          courtStartDate: workingCase.courtDate,
+          courtLocation: workingCase.court
+            ? `í ${
+                workingCase.court.name.indexOf('dómur') > -1
+                  ? workingCase.court.name.replace('dómur', 'dómi')
+                  : workingCase.court.name
+              }`
+            : undefined,
+          courtAttendees:
+            autofillAttendees.length > 0
+              ? autofillAttendees.join('')
+              : undefined,
+          sessionBookings:
+            workingCase.type === CaseType.RestrainingOrder ||
+            workingCase.type === CaseType.RestrainingOrderAndExpulsionFromHome
+              ? formatMessage(
+                  m.sections.sessionBookings.autofillRestrainingOrder,
+                )
+              : workingCase.type === CaseType.ExpulsionFromHome
+              ? formatMessage(
+                  m.sections.sessionBookings.autofillExpulsionFromHome,
+                )
+              : workingCase.type === CaseType.Autopsy
+              ? formatMessage(m.sections.sessionBookings.autofillAutopsy)
+              : workingCase.sessionArrangements ===
+                SessionArrangements.ALL_PRESENT
+              ? getSessionBookingsAutofill(formatMessage, workingCase)
+              : workingCase.sessionArrangements ===
+                SessionArrangements.ALL_PRESENT_SPOKESPERSON
+              ? formatMessage(m.sections.sessionBookings.autofillSpokeperson)
+              : workingCase.sessionArrangements ===
+                SessionArrangements.PROSECUTOR_PRESENT
+              ? formatMessage(m.sections.sessionBookings.autofillProsecutor)
+              : undefined,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }, [setAndSendCaseToServer, formatMessage, setWorkingCase, workingCase])
+
+  useOnceOn(isCaseUpToDate, initialize)
+
+  const stepIsValid = isCourtRecordStepValidIC(workingCase)
+  const handleNavigationTo = useCallback(
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [workingCase.id],
+  )
 
   return (
     <PageLayout
@@ -219,6 +213,8 @@ const CourtRecord = () => {
       activeSubSection={RestrictionCaseCourtSubsections.COURT_RECORD}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={stepIsValid}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.court.investigationCases.courtRecord)}
@@ -243,7 +239,7 @@ const CourtRecord = () => {
                 selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
                   if (date && valid) {
-                    setAndSendToServer(
+                    setAndSendCaseToServer(
                       [
                         {
                           courtStartDate: formatDateForServer(date),
@@ -300,7 +296,7 @@ const CourtRecord = () => {
               text={formatMessage(closedCourt.text)}
               isHidden={workingCase.isClosedCourtHidden}
               onToggleVisibility={(isVisible: boolean) =>
-                setAndSendToServer(
+                setAndSendCaseToServer(
                   [
                     {
                       isClosedCourtHidden: isVisible,
@@ -404,349 +400,10 @@ const CourtRecord = () => {
           </Box>
         )}
         <Box component="section" marginBottom={8}>
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.appealDecision.title)}
-            </Text>
-          </Box>
-          {workingCase.sessionArrangements ===
-            SessionArrangements.ALL_PRESENT && (
-            <Box marginBottom={3}>
-              <Text variant="h4" fontWeight="light">
-                {formatMessage(m.sections.appealDecision.disclaimer)}
-              </Text>
-            </Box>
-          )}
-          {workingCase.defendants && workingCase.defendants.length > 0 && (
-            <Box marginBottom={3}>
-              <BlueBox>
-                <Box marginBottom={2}>
-                  <Text as="h4" variant="h4">
-                    {formatMessage(m.sections.appealDecision.accusedTitle)}{' '}
-                    <Text as="span" color="red600" fontWeight="semiBold">
-                      *
-                    </Text>
-                  </Text>
-                </Box>
-                <Box marginBottom={2}>
-                  <GridRow>
-                    <GridColumn span="6/12">
-                      <RadioButton
-                        name="accused-appeal-decision"
-                        id="accused-appeal"
-                        label={formatMessage(
-                          workingCase.defendants.length > 1
-                            ? m.sections.appealDecision.multipleAccusedAppeal
-                            : m.sections.appealDecision.accusedAppeal,
-                        )}
-                        value={CaseAppealDecision.APPEAL}
-                        checked={
-                          workingCase.accusedAppealDecision ===
-                          CaseAppealDecision.APPEAL
-                        }
-                        onChange={() => {
-                          setWorkingCase({
-                            ...workingCase,
-                            accusedAppealDecision: CaseAppealDecision.APPEAL,
-                          })
-
-                          updateCase(workingCase.id, {
-                            accusedAppealDecision: CaseAppealDecision.APPEAL,
-                          })
-                        }}
-                        large
-                        backgroundColor="white"
-                      />
-                    </GridColumn>
-                    <GridColumn span="6/12">
-                      <RadioButton
-                        name="accused-appeal-decision"
-                        id="accused-accept"
-                        label={formatMessage(
-                          workingCase.defendants.length > 1
-                            ? m.sections.appealDecision.multipleAccusedAccept
-                            : m.sections.appealDecision.accusedAccept,
-                        )}
-                        value={CaseAppealDecision.ACCEPT}
-                        checked={
-                          workingCase.accusedAppealDecision ===
-                          CaseAppealDecision.ACCEPT
-                        }
-                        onChange={() => {
-                          setWorkingCase({
-                            ...workingCase,
-                            accusedAppealDecision: CaseAppealDecision.ACCEPT,
-                          })
-
-                          updateCase(workingCase.id, {
-                            accusedAppealDecision: CaseAppealDecision.ACCEPT,
-                          })
-                        }}
-                        large
-                        backgroundColor="white"
-                      />
-                    </GridColumn>
-                  </GridRow>
-                </Box>
-                <Box marginBottom={2}>
-                  <GridRow>
-                    <GridColumn span="7/12">
-                      <RadioButton
-                        name="accused-appeal-decision"
-                        id="accused-postpone"
-                        label={formatMessage(
-                          workingCase.defendants.length > 1
-                            ? m.sections.appealDecision.multipleAccusedPostpone
-                            : m.sections.appealDecision.accusedPostpone,
-                        )}
-                        value={CaseAppealDecision.POSTPONE}
-                        checked={
-                          workingCase.accusedAppealDecision ===
-                          CaseAppealDecision.POSTPONE
-                        }
-                        onChange={() => {
-                          setWorkingCase({
-                            ...workingCase,
-                            accusedAppealDecision: CaseAppealDecision.POSTPONE,
-                          })
-
-                          updateCase(workingCase.id, {
-                            accusedAppealDecision: CaseAppealDecision.POSTPONE,
-                          })
-                        }}
-                        large
-                        backgroundColor="white"
-                      />
-                    </GridColumn>
-                    <GridColumn span="5/12">
-                      <RadioButton
-                        name="accused-appeal-decision"
-                        id="accused-not-applicable"
-                        label={formatMessage(
-                          m.sections.appealDecision.accusedNotApplicable,
-                        )}
-                        value={CaseAppealDecision.NOT_APPLICABLE}
-                        checked={
-                          workingCase.accusedAppealDecision ===
-                          CaseAppealDecision.NOT_APPLICABLE
-                        }
-                        onChange={() => {
-                          setWorkingCase({
-                            ...workingCase,
-                            accusedAppealDecision:
-                              CaseAppealDecision.NOT_APPLICABLE,
-                          })
-
-                          updateCase(workingCase.id, {
-                            accusedAppealDecision:
-                              CaseAppealDecision.NOT_APPLICABLE,
-                          })
-                        }}
-                        large
-                        backgroundColor="white"
-                      />
-                    </GridColumn>
-                  </GridRow>
-                </Box>
-                <Input
-                  name="accusedAppealAnnouncement"
-                  data-testid="accusedAppealAnnouncement"
-                  label={formatMessage(
-                    m.sections.appealDecision.accusedAnnouncementLabel,
-                  )}
-                  value={workingCase.accusedAppealAnnouncement || ''}
-                  placeholder={formatMessage(
-                    workingCase.defendants.length > 1
-                      ? m.sections.appealDecision
-                          .multipleAccusedAnnouncementPlaceholder
-                      : m.sections.appealDecision
-                          .accusedAnnouncementPlaceholder,
-                  )}
-                  onChange={(event) =>
-                    removeTabsValidateAndSet(
-                      'accusedAppealAnnouncement',
-                      event.target.value,
-                      [],
-                      workingCase,
-                      setWorkingCase,
-                    )
-                  }
-                  onBlur={(event) =>
-                    validateAndSendToServer(
-                      'accusedAppealAnnouncement',
-                      event.target.value,
-                      [],
-                      workingCase,
-                      updateCase,
-                    )
-                  }
-                  textarea
-                  rows={7}
-                  autoExpand={{ on: true, maxHeight: 300 }}
-                />
-              </BlueBox>
-            </Box>
-          )}
-          <Box marginBottom={5}>
-            <BlueBox>
-              <Box marginBottom={2}>
-                <Text as="h4" variant="h4">
-                  {formatMessage(m.sections.appealDecision.prosecutorTitle)}{' '}
-                  <Text as="span" color="red400" fontWeight="semiBold">
-                    *
-                  </Text>
-                </Text>
-              </Box>
-              <Box marginBottom={2}>
-                <GridRow>
-                  <GridColumn span="6/12">
-                    <RadioButton
-                      name="prosecutor-appeal-decision"
-                      id="prosecutor-appeal"
-                      label={formatMessage(
-                        m.sections.appealDecision.prosecutorAppeal,
-                      )}
-                      value={CaseAppealDecision.APPEAL}
-                      checked={
-                        workingCase.prosecutorAppealDecision ===
-                        CaseAppealDecision.APPEAL
-                      }
-                      onChange={() => {
-                        setWorkingCase({
-                          ...workingCase,
-                          prosecutorAppealDecision: CaseAppealDecision.APPEAL,
-                        })
-
-                        updateCase(workingCase.id, {
-                          prosecutorAppealDecision: CaseAppealDecision.APPEAL,
-                        })
-                      }}
-                      large
-                      backgroundColor="white"
-                    />
-                  </GridColumn>
-                  <GridColumn span="6/12">
-                    <RadioButton
-                      name="prosecutor-appeal-decision"
-                      id="prosecutor-accept"
-                      label={formatMessage(
-                        m.sections.appealDecision.prosecutorAccept,
-                      )}
-                      value={CaseAppealDecision.ACCEPT}
-                      checked={
-                        workingCase.prosecutorAppealDecision ===
-                        CaseAppealDecision.ACCEPT
-                      }
-                      onChange={() => {
-                        setWorkingCase({
-                          ...workingCase,
-                          prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
-                        })
-
-                        updateCase(workingCase.id, {
-                          prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
-                        })
-                      }}
-                      large
-                      backgroundColor="white"
-                    />
-                  </GridColumn>
-                </GridRow>
-              </Box>
-              <Box marginBottom={2}>
-                <GridRow>
-                  <GridColumn span="7/12">
-                    <RadioButton
-                      name="prosecutor-appeal-decision"
-                      id="prosecutor-postpone"
-                      label={formatMessage(
-                        m.sections.appealDecision.prosecutorPostpone,
-                      )}
-                      value={CaseAppealDecision.POSTPONE}
-                      checked={
-                        workingCase.prosecutorAppealDecision ===
-                        CaseAppealDecision.POSTPONE
-                      }
-                      onChange={() => {
-                        setWorkingCase({
-                          ...workingCase,
-                          prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
-                        })
-
-                        updateCase(workingCase.id, {
-                          prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
-                        })
-                      }}
-                      large
-                      backgroundColor="white"
-                    />
-                  </GridColumn>
-                  <GridColumn span="5/12">
-                    <RadioButton
-                      name="prosecutor-appeal-decision"
-                      id="prosecutor-not-applicable"
-                      label={formatMessage(
-                        m.sections.appealDecision.prosecutorNotApplicable,
-                      )}
-                      value={CaseAppealDecision.NOT_APPLICABLE}
-                      checked={
-                        workingCase.prosecutorAppealDecision ===
-                        CaseAppealDecision.NOT_APPLICABLE
-                      }
-                      onChange={() => {
-                        setWorkingCase({
-                          ...workingCase,
-                          prosecutorAppealDecision:
-                            CaseAppealDecision.NOT_APPLICABLE,
-                        })
-
-                        updateCase(workingCase.id, {
-                          prosecutorAppealDecision:
-                            CaseAppealDecision.NOT_APPLICABLE,
-                        })
-                      }}
-                      large
-                      backgroundColor="white"
-                    />
-                  </GridColumn>
-                </GridRow>
-              </Box>
-              <Box>
-                <Input
-                  name="prosecutorAppealAnnouncement"
-                  data-testid="prosecutorAppealAnnouncement"
-                  label={formatMessage(
-                    m.sections.appealDecision.prosecutorAnnouncementLabel,
-                  )}
-                  value={workingCase.prosecutorAppealAnnouncement || ''}
-                  placeholder={formatMessage(
-                    m.sections.appealDecision.prosecutorAnnouncementPlaceholder,
-                  )}
-                  onChange={(event) =>
-                    removeTabsValidateAndSet(
-                      'prosecutorAppealAnnouncement',
-                      event.target.value,
-                      [],
-                      workingCase,
-                      setWorkingCase,
-                    )
-                  }
-                  onBlur={(event) =>
-                    validateAndSendToServer(
-                      'prosecutorAppealAnnouncement',
-                      event.target.value,
-                      [],
-                      workingCase,
-                      updateCase,
-                    )
-                  }
-                  textarea
-                  rows={7}
-                  autoExpand={{ on: true, maxHeight: 300 }}
-                />
-              </Box>
-            </BlueBox>
-          </Box>
+          <AppealSections
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+          />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
@@ -810,7 +467,7 @@ const CourtRecord = () => {
                   maxDate={new Date()}
                   selectedDate={workingCase.courtEndTime}
                   onChange={(date: Date | undefined, valid: boolean) => {
-                    setAndSendToServer(
+                    setAndSendCaseToServer(
                       [
                         {
                           courtEndTime:
@@ -843,8 +500,10 @@ const CourtRecord = () => {
         <FormFooter
           previousUrl={`${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
-          nextUrl={`${constants.INVESTIGATION_CASE_CONFIRMATION_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!isCourtRecordStepValidIC(workingCase)}
+          onNextButtonClick={() =>
+            handleNavigationTo(constants.INVESTIGATION_CASE_CONFIRMATION_ROUTE)
+          }
+          nextIsDisabled={!stepIsValid}
           hideNextButton={
             !workingCase.decision ||
             !workingCase.conclusion ||

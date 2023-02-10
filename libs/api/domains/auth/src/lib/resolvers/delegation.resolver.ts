@@ -10,12 +10,9 @@ import { UseGuards } from '@nestjs/common'
 
 import type { User } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
-import { Identity, IdentityService } from '@island.is/api/domains/identity'
-import {
-  FeatureFlag,
-  FeatureFlagGuard,
-  Features,
-} from '@island.is/nest/feature-flags'
+
+import { Identity } from '@island.is/api/domains/identity'
+import { IdentityClientService } from '@island.is/clients/identity'
 
 import {
   CreateDelegationInput,
@@ -29,23 +26,24 @@ import { Delegation } from '../models'
 import { ActorDelegationsService } from '../services/actorDelegations.service'
 import { ActorDelegationInput } from '../dto/actorDelegation.input'
 import { MeDelegationsService } from '../services/meDelegations.service'
-import type { DelegationDTO } from '../services/types'
+import type { DelegationDTO, MergedDelegationDTO } from '../services/types'
+import { MergedDelegation } from '../models/delegation.model'
 
-@UseGuards(IdsUserGuard, FeatureFlagGuard)
+@UseGuards(IdsUserGuard)
 @Resolver(() => Delegation)
 export class DelegationResolver {
   constructor(
     private meDelegationsService: MeDelegationsService,
     private actorDelegationsService: ActorDelegationsService,
-    private identityService: IdentityService,
+    private identityService: IdentityClientService,
   ) {}
 
-  @Query(() => [Delegation], { name: 'authActorDelegations' })
+  @Query(() => [MergedDelegation], { name: 'authActorDelegations' })
   getActorDelegations(
     @CurrentUser() user: User,
     @Args('input', { type: () => ActorDelegationInput, nullable: true })
     input?: ActorDelegationInput,
-  ): Promise<DelegationDTO[]> {
+  ): Promise<MergedDelegationDTO[]> {
     return this.actorDelegationsService.getActorDelegations(
       user,
       input?.delegationTypes,
@@ -91,7 +89,6 @@ export class DelegationResolver {
     return this.meDelegationsService.updateDelegation(user, input)
   }
 
-  @FeatureFlag(Features.outgoingDelegationsV2)
   @Mutation(() => Delegation, { name: 'patchAuthDelegation' })
   patchDelegation(
     @CurrentUser() user: User,

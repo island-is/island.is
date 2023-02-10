@@ -11,6 +11,7 @@ import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { NotificationType } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
@@ -19,7 +20,13 @@ import {
   RolesRules,
 } from '@island.is/judicial-system/auth'
 
-import { judgeRule, prosecutorRule, registrarRule } from '../../guards'
+import {
+  judgeRule,
+  prosecutorRule,
+  registrarRule,
+  representativeRule,
+  assistantRule,
+} from '../../guards'
 import {
   Case,
   CaseExistsGuard,
@@ -27,15 +34,16 @@ import {
   CaseWriteGuard,
   CurrentCase,
 } from '../case'
-import { SendNotificationDto } from './dto/sendNotification.dto'
-import { Notification } from './models/notification.model'
-import { SendNotificationResponse } from './models/sendNotification.resopnse'
-import { NotificationService } from './notification.service'
 import {
   judgeNotificationRule,
   prosecutorNotificationRule,
   registrarNotificationRule,
+  assistantNotificationRule,
 } from './guards/rolesRules'
+import { SendNotificationDto } from './dto/sendNotification.dto'
+import { Notification } from './models/notification.model'
+import { SendNotificationResponse } from './models/sendNotification.response'
+import { NotificationService } from './notification.service'
 
 @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard)
 @Controller('api/case/:caseId')
@@ -51,6 +59,7 @@ export class NotificationController {
     prosecutorNotificationRule,
     judgeNotificationRule,
     registrarNotificationRule,
+    assistantNotificationRule,
   )
   @Post('notification')
   @ApiCreatedResponse({
@@ -67,6 +76,22 @@ export class NotificationController {
       `Sending ${notification.type} notification for case ${caseId}`,
     )
 
+    if (
+      [
+        NotificationType.HEADS_UP,
+        NotificationType.READY_FOR_COURT,
+        NotificationType.RECEIVED_BY_COURT,
+        NotificationType.COURT_DATE,
+      ].includes(notification.type)
+    ) {
+      // Notifications put on queue will call the internal notification controller
+      return this.notificationService.addMessagesForNotificationToQueue(
+        notification,
+        theCase,
+        user,
+      )
+    }
+
     return this.notificationService.sendCaseNotification(
       notification,
       theCase,
@@ -75,7 +100,13 @@ export class NotificationController {
   }
 
   @UseGuards(CaseReadGuard)
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @RolesRules(
+    prosecutorRule,
+    representativeRule,
+    judgeRule,
+    registrarRule,
+    assistantRule,
+  )
   @Get('notifications')
   @ApiOkResponse({
     type: Notification,

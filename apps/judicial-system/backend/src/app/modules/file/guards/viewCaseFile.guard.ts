@@ -11,6 +11,8 @@ import {
   completedCaseStates,
   User,
   UserRole,
+  isProsecutionRole,
+  isExtendedCourtRole,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case'
@@ -33,14 +35,14 @@ export class ViewCaseFileGuard implements CanActivate {
     }
 
     // Prosecutors have permission to view all case files
-    if (user.role === UserRole.PROSECUTOR) {
+    if (isProsecutionRole(user.role)) {
       return true
     }
 
-    // Judges and registrars have permission to view files of submitted and
-    // completed cases
+    // Judges, registrars, assistants and defenders have permission to view files of
+    // submitted, received and completed cases
     if (
-      [UserRole.JUDGE, UserRole.REGISTRAR].includes(user.role) &&
+      (isExtendedCourtRole(user.role) || user.role === UserRole.DEFENDER) &&
       [
         CaseState.SUBMITTED,
         CaseState.RECEIVED,

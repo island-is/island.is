@@ -1,5 +1,5 @@
 import { defineConfig } from '@island.is/nest/config'
-import * as z from 'zod'
+import { z } from 'zod'
 
 const schema = z.object({
   url: z.string(),
@@ -17,7 +17,7 @@ export const SyslumennClientConfig = defineConfig({
     return {
       url: env.required('SYSLUMENN_HOST', 'https://api.syslumenn.is/dev'),
       fetch: {
-        timeout: env.optionalJSON('SYSLUMENN_TIMEOUT') ?? 10000,
+        timeout: env.optionalJSON('SYSLUMENN_TIMEOUT') ?? 40000,
       },
       username: env.required('SYSLUMENN_USERNAME'),
       password: env.required('SYSLUMENN_PASSWORD'),

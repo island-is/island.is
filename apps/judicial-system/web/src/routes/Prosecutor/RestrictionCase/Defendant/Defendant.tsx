@@ -24,17 +24,15 @@ import {
   core,
   titles,
 } from '@island.is/judicial-system-web/messages'
-import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   validateAndSendToServer,
   validateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
-  Case,
-  CaseType,
-  UpdateDefendant,
-} from '@island.is/judicial-system/types'
+import { UpdateDefendant } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import {
@@ -44,18 +42,16 @@ import {
 } from '../../components'
 
 export const StepOne: React.FC = () => {
-  const router = useRouter()
-  const [
-    leadInvestigatorErrorMessage,
-    setLeadInvestigatorErrorMessage,
-  ] = useState<string>('')
-
   const {
     workingCase,
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
+  const [
+    leadInvestigatorErrorMessage,
+    setLeadInvestigatorErrorMessage,
+  ] = useState<string>('')
   const { createCase, isCreatingCase, updateCase } = useCase()
   const { updateDefendant } = useDefendants()
   const { loading: institutionLoading } = useInstitution()
@@ -63,37 +59,7 @@ export const StepOne: React.FC = () => {
   const { clientPoliceNumbers, setClientPoliceNumbers } = usePoliceCaseNumbers(
     workingCase,
   )
-
-  const handleNextButtonClick = async (theCase: Case) => {
-    if (!theCase.id) {
-      const createdCase = await createCase(theCase)
-
-      if (
-        createdCase &&
-        createdCase.defendants &&
-        createdCase.defendants.length > 0 &&
-        theCase.defendants &&
-        theCase.defendants.length > 0
-      ) {
-        await updateDefendant(createdCase.id, createdCase.defendants[0].id, {
-          gender: theCase.defendants[0].gender,
-          name: theCase.defendants[0].name,
-          address: theCase.defendants[0].address,
-          nationalId: theCase.defendants[0].nationalId,
-          noNationalId: theCase.defendants[0].noNationalId,
-          citizenship: theCase.defendants[0].citizenship,
-        })
-
-        router.push(
-          `${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${createdCase.id}`,
-        )
-      }
-    } else {
-      router.push(
-        `${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${theCase.id}`,
-      )
-    }
-  }
+  const router = useRouter()
 
   const updateDefendantState = useCallback(
     (defendantId: string, update: UpdateDefendant) => {
@@ -129,16 +95,50 @@ export const StepOne: React.FC = () => {
     [workingCase.id, updateDefendantState, updateDefendant],
   )
 
+  const handleNavigationTo = useCallback(
+    async (destination: string) => {
+      if (!workingCase.id) {
+        const createdCase = await createCase(workingCase)
+
+        if (
+          createdCase &&
+          createdCase.defendants &&
+          createdCase.defendants.length > 0 &&
+          workingCase.defendants &&
+          workingCase.defendants.length > 0
+        ) {
+          await updateDefendant(createdCase.id, createdCase.defendants[0].id, {
+            gender: workingCase.defendants[0].gender,
+            name: workingCase.defendants[0].name,
+            address: workingCase.defendants[0].address,
+            nationalId: workingCase.defendants[0].nationalId,
+            noNationalId: workingCase.defendants[0].noNationalId,
+            citizenship: workingCase.defendants[0].citizenship,
+          })
+
+          router.push(`${destination}/${createdCase.id}`)
+        }
+      } else {
+        router.push(`${destination}/${workingCase.id}`)
+      }
+    },
+    [createCase, router, updateDefendant, workingCase],
+  )
+
+  const stepIsValid = isDefendantStepValidRC(workingCase, clientPoliceNumbers)
+
   return (
     <PageLayout
       workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={RestrictionCaseProsecutorSubsections.STEP_ONE}
+      activeSubSection={RestrictionCaseProsecutorSubsections.DEFENDANT}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isExtension={workingCase?.parentCase && true}
+      onNavigationTo={handleNavigationTo}
+      isValid={stepIsValid}
     >
       <PageHeader
         title={formatMessage(titles.prosecutor.restrictionCases.defendant)}
@@ -169,6 +169,7 @@ export const StepOne: React.FC = () => {
                 <DefendantInfo
                   defendant={workingCase.defendants[0]}
                   workingCase={workingCase}
+                  setWorkingCase={setWorkingCase}
                   onChange={handleUpdateDefendant}
                   updateDefendantState={updateDefendantState}
                 />
@@ -180,7 +181,7 @@ export const StepOne: React.FC = () => {
                 setWorkingCase={setWorkingCase}
               />
             </Box>
-            {workingCase.type !== CaseType.TRAVEL_BAN && (
+            {workingCase.type !== CaseType.TravelBan && (
               <Box component="section" marginBottom={10}>
                 <Box
                   display="flex"
@@ -237,10 +238,12 @@ export const StepOne: React.FC = () => {
           <FormContentContainer isFooter>
             <FormFooter
               previousUrl={constants.CASES_ROUTE}
-              onNextButtonClick={() => handleNextButtonClick(workingCase)}
               nextIsLoading={isCreatingCase}
-              nextIsDisabled={
-                !isDefendantStepValidRC(workingCase, clientPoliceNumbers)
+              nextIsDisabled={!stepIsValid}
+              onNextButtonClick={() =>
+                handleNavigationTo(
+                  constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+                )
               }
               nextButtonText={formatMessage(
                 workingCase.id === '' ? core.createCase : core.continue,

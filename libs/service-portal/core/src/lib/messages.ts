@@ -222,6 +222,10 @@ export const m = defineMessages({
     id: 'service.portal:vehicles-lookup',
     defaultMessage: 'Uppfletting í ökutækjaskrá',
   },
+  vehiclesDrivingLessons: {
+    id: 'service.portal:vehicles-driving-lessons',
+    defaultMessage: 'Ökunám',
+  },
   yourVehicles: {
     id: 'service.portal:your-vehicles',
     defaultMessage: 'Þín ökutæki',
@@ -535,6 +539,18 @@ export const m = defineMessages({
     id: 'service.portal:accessControl',
     defaultMessage: 'Aðgangsstýring',
   },
+  accessControlDelegations: {
+    id: 'service.portal:delegations',
+    defaultMessage: 'Umboð',
+  },
+  accessControlDelegationsIncoming: {
+    id: 'service.portal:to-me',
+    defaultMessage: 'Til mín',
+  },
+  accessControlDelegationsOutgoing: {
+    id: 'service.portal:from-me',
+    defaultMessage: 'Frá mér',
+  },
   accessControlDescription: {
     id: 'service.portal:accessControl-description',
     defaultMessage: 'Umboðsveiting og yfirlit yfir umboð sem þú hefur gefið',
@@ -800,6 +816,18 @@ export const m = defineMessages({
   clearSelected: {
     id: 'service.portal:clear-selected',
     defaultMessage: 'Hreinsa val',
+  },
+  passport: {
+    id: 'service.portal:passport',
+    defaultMessage: 'Vegabréf',
+  },
+  yes: {
+    id: 'service.portal:yes',
+    defaultMessage: 'Já',
+  },
+  no: {
+    id: 'service.portal:no',
+    defaultMessage: 'Nei',
   },
   errorTitle: {
     id: 'service.portal:error-screen-title',

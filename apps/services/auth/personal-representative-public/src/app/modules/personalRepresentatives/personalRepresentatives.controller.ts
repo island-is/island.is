@@ -62,10 +62,9 @@ export class PersonalRepresentativesController {
       )
     }
 
-    const personalReps = await this.prService.getByPersonalRepresentative(
-      prId,
-      false,
-    )
+    const personalReps = await this.prService.getByPersonalRepresentative({
+      nationalIdPersonalRepresentative: prId,
+    })
 
     return personalReps.map((pr) => PersonalRepresentativePublicDTO.fromDTO(pr))
   }

@@ -6,11 +6,13 @@ import {
   ArticleResolver,
   LatestNewsSliceResolver,
   FeaturedArticlesResolver,
+  FeaturedSupportQNAsResolver,
 } from './cms.resolver'
 import { CmsContentfulService } from './cms.contentful.service'
 import { ContentfulRepository } from './contentful.repository'
 import { CmsElasticsearchService } from './cms.elasticsearch.service'
 import { CmsHealthIndicator } from './cms.health'
+import { OrganizationLogoLoader } from './loaders/organizationLogo.loader'
 
 @Module({
   imports: [TerminusModule],
@@ -24,7 +26,14 @@ import { CmsHealthIndicator } from './cms.health'
     CmsHealthIndicator,
     LatestNewsSliceResolver,
     FeaturedArticlesResolver,
+    FeaturedSupportQNAsResolver,
+    OrganizationLogoLoader,
   ],
-  exports: [ContentfulRepository, CmsHealthIndicator, CmsContentfulService],
+  exports: [
+    ContentfulRepository,
+    CmsHealthIndicator,
+    CmsContentfulService,
+    OrganizationLogoLoader,
+  ],
 })
 export class CmsModule {}

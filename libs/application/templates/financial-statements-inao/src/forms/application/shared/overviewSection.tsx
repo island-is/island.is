@@ -1,26 +1,37 @@
 import {
-  buildDescriptionField,
   buildCustomField,
   buildMultiField,
   buildSection,
-  buildSubmitField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { DefaultEvents } from '@island.is/application/types'
-import { GREATER, USERTYPE, LESS, ABOUTIDS } from '../../../lib/constants'
+import { GREATER, ABOUTIDS } from '../../../lib/constants'
 import { m } from '../../../lib/messages'
 import { getCurrentUserType } from '../../../lib/utils/helpers'
+import { FSIUSERTYPE, LESS } from '../../../types'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
-  title: m.overviewSectionTitle,
+  title: (application) => {
+    const answers = application.answers
+    const externalData = application.externalData
+    if (getCurrentUserType(answers, externalData) === FSIUSERTYPE.INDIVIDUAL) {
+      return getValueViaPath(application.answers, 'election.incomeLimit') ===
+        LESS
+        ? m.statement
+        : m.overviewSectionTitle
+    } else {
+      return m.overviewSectionTitle
+    }
+  },
   children: [
     buildMultiField({
       id: 'overview',
       title: (application) => {
         const answers = application.answers
         const externalData = application.externalData
-        if (getCurrentUserType(answers, externalData) === USERTYPE.INDIVIDUAL) {
+        if (
+          getCurrentUserType(answers, externalData) === FSIUSERTYPE.INDIVIDUAL
+        ) {
           return getValueViaPath(
             application.answers,
             'election.incomeLimit',
@@ -34,7 +45,9 @@ export const overviewSection = buildSection({
       description: (application) => {
         const answers = application.answers
         const externalData = application.externalData
-        if (getCurrentUserType(answers, externalData) === USERTYPE.INDIVIDUAL) {
+        if (
+          getCurrentUserType(answers, externalData) === FSIUSERTYPE.INDIVIDUAL
+        ) {
           return getValueViaPath(
             application.answers,
             'election.incomeLimit',
@@ -42,7 +55,7 @@ export const overviewSection = buildSection({
             ? m.overviewDescription
             : `${m.electionStatement.defaultMessage} ${getValueViaPath(
                 application.answers,
-                ABOUTIDS.electionName,
+                ABOUTIDS.genitiveName,
               )}`
         } else {
           return m.review
@@ -54,7 +67,7 @@ export const overviewSection = buildSection({
           title: '',
           condition: (answers, externalData) => {
             const userType = getCurrentUserType(answers, externalData)
-            return userType === USERTYPE.CEMETRY
+            return userType === FSIUSERTYPE.CEMETRY
           },
           doesNotRequireAnswer: true,
           component: 'CemetryOverview',
@@ -64,7 +77,7 @@ export const overviewSection = buildSection({
           title: '',
           condition: (answers, externalData) => {
             const userType = getCurrentUserType(answers, externalData)
-            return userType === USERTYPE.PARTY
+            return userType === FSIUSERTYPE.PARTY
           },
           doesNotRequireAnswer: true,
           component: 'PartyOverview',

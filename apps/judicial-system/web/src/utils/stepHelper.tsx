@@ -1,13 +1,16 @@
 import parseISO from 'date-fns/parseISO'
 import addDays from 'date-fns/addDays'
+import flatten from 'lodash/flatten'
 
 import { TagVariant } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  Case,
   CaseCustodyRestrictions,
   Gender,
+  IndictmentSubtype,
+  IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 /**
  * A value is considered dirty if it's a string, either an empty string or not.
@@ -87,4 +90,21 @@ export const createCaseResentExplanation = (
       ? `${workingCase.caseResentExplanation}<br/><br/>`
       : ''
   }Krafa endursend ${formatDate(now, 'PPPp')} - ${explanation}`
+}
+
+export const isTrafficViolationCase = (
+  indictmentSubtypes: IndictmentSubtypeMap | undefined,
+): boolean => {
+  if (!indictmentSubtypes) {
+    return false
+  }
+
+  const flatIndictmentSubtypes = flatten(Object.values(indictmentSubtypes))
+
+  return Boolean(
+    flatIndictmentSubtypes.length > 0 &&
+      flatIndictmentSubtypes.every(
+        (val) => val === IndictmentSubtype.TRAFFIC_VIOLATION,
+      ),
+  )
 }

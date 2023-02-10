@@ -26,8 +26,9 @@ export const subpoena = defineMessages({
       'Notaður sem texti í áfram takka á Fyrirkall skrefi í dómaraflæði í ákærum.',
   },
   modalTitle: {
-    id: 'judicial.system.core:subpoena.modal_title',
-    defaultMessage: 'Viltu senda sækjanda boð í þingfestingu?',
+    id: 'judicial.system.core:subpoena.modal_title_v2',
+    defaultMessage:
+      'Viltu senda sækjanda {courtDateHasChanged, select, true {nýtt } other {}}boð í þingfestingu?',
     description: 'Notaður sem titill í modal glugga á Fyrirkallsskjá í ákærum.',
   },
   modalPrimaryButtonText: {

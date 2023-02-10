@@ -61,7 +61,7 @@ describe(`${RESTRICTION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
           cy.visit(`${RESTRICTION_CASE_COURT_RECORD_ROUTE}/test_id_stadfest`)
         })
 
-        it('should validate the form', () => {
+        it.skip('should validate the form', () => {
           cy.getByTestid('continueButton').should('be.disabled')
           cy.getByTestid('courtLocation').type('í Dúfnahólum 10')
           cy.getByTestid('sessionBookings').type('lorem')

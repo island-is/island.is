@@ -1,6 +1,7 @@
 import React, { FC, useState } from 'react'
 import format from 'date-fns/format'
 import { useMutation } from '@apollo/client'
+import { MessageDescriptor } from '@formatjs/intl'
 
 import { useLocale } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
@@ -13,12 +14,19 @@ import ReviewSection, { ReviewSectionState } from './ReviewSection'
 import { Review } from '../Review/Review'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
+  getApplicationAnswers,
   getExpectedDateOfBirth,
   otherParentApprovalDescription,
   requiresOtherParentApproval,
 } from '../../lib/parentalLeaveUtils'
-import { NO, States as ApplicationStates } from '../../constants'
+import {
+  NO,
+  PARENTAL_LEAVE,
+  States as ApplicationStates,
+  YES,
+} from '../../constants'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
+import { useRemainingRights } from '../../hooks/useRemainingRights'
 
 type StateMapEntry = { [key: string]: ReviewSectionState }
 
@@ -33,30 +41,72 @@ const statesMap: StatesMap = {
     [ApplicationStates.OTHER_PARENT_APPROVAL]: ReviewSectionState.inProgress,
     [ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN]: ReviewSectionState.complete,
     [ApplicationStates.EMPLOYER_APPROVAL]: ReviewSectionState.complete,
+    [ApplicationStates.EMPLOYER_APPROVE_EDITS]: ReviewSectionState.complete,
+    [ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS]:
+      ReviewSectionState.complete,
     [ApplicationStates.VINNUMALASTOFNUN_APPROVAL]: ReviewSectionState.complete,
+    [ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS]:
+      ReviewSectionState.complete,
     [ApplicationStates.APPROVED]: ReviewSectionState.complete,
+    [ApplicationStates.CLOSED]: ReviewSectionState.complete,
+    [ApplicationStates.ADDITIONAL_DOCUMENTS_REQUIRED]:
+      ReviewSectionState.complete,
+    [ApplicationStates.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED]:
+      ReviewSectionState.complete,
   },
   employer: {
     [ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN]:
       ReviewSectionState.inProgress,
     [ApplicationStates.EMPLOYER_APPROVAL]: ReviewSectionState.inProgress,
+    [ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS]:
+      ReviewSectionState.inProgress,
+    [ApplicationStates.EMPLOYER_APPROVE_EDITS]: ReviewSectionState.inProgress,
     [ApplicationStates.VINNUMALASTOFNUN_APPROVAL]: ReviewSectionState.complete,
+    [ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS]:
+      ReviewSectionState.complete,
     [ApplicationStates.APPROVED]: ReviewSectionState.complete,
+    [ApplicationStates.CLOSED]: ReviewSectionState.complete,
+    [ApplicationStates.ADDITIONAL_DOCUMENTS_REQUIRED]:
+      ReviewSectionState.complete,
+    [ApplicationStates.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED]:
+      ReviewSectionState.complete,
   },
   vinnumalastofnun: {
+    [ApplicationStates.ADDITIONAL_DOCUMENTS_REQUIRED]:
+      ReviewSectionState.requiresAction,
+    [ApplicationStates.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED]:
+      ReviewSectionState.requiresAction,
     [ApplicationStates.VINNUMALASTOFNUN_APPROVAL]:
       ReviewSectionState.inProgress,
     [ApplicationStates.APPROVED]: ReviewSectionState.complete,
+    [ApplicationStates.CLOSED]: ReviewSectionState.complete,
   },
 }
 
-const InReviewSteps: FC<FieldBaseProps> = ({
-  application,
-  field,
-  refetch,
-  errors,
-}) => {
-  const { isSelfEmployed } = useApplicationAnswers(application)
+const descKey: { [key: string]: MessageDescriptor } = {
+  [ApplicationStates.EMPLOYER_APPROVAL]:
+    parentalLeaveFormMessages.reviewScreen.employerDesc,
+  [ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN]:
+    parentalLeaveFormMessages.reviewScreen.employerDesc,
+  [ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS]:
+    parentalLeaveFormMessages.editFlow.employerApprovesDesc,
+  [ApplicationStates.EMPLOYER_APPROVE_EDITS]:
+    parentalLeaveFormMessages.editFlow.employerApprovesDesc,
+}
+
+const InReviewSteps: FC<FieldBaseProps> = (props) => {
+  const { application, field, refetch, errors } = props
+  const {
+    isSelfEmployed,
+    applicationType,
+    isRecivingUnemploymentBenefits,
+  } = useApplicationAnswers(application)
+  const oldApplication = applicationType === undefined // Added this check for applications that is in the db already
+  const isBeneficiaries = !oldApplication
+    ? applicationType === PARENTAL_LEAVE
+      ? isRecivingUnemploymentBenefits === YES
+      : false
+    : false
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
@@ -68,26 +118,36 @@ const InReviewSteps: FC<FieldBaseProps> = ({
   const [screenState, setScreenState] = useState<'steps' | 'viewApplication'>(
     'steps',
   )
+  const isAdditionalDocumentRequiredState =
+    application.state ===
+      ApplicationStates.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED ||
+    application.state === ApplicationStates.ADDITIONAL_DOCUMENTS_REQUIRED
 
   const steps = [
     {
       state: statesMap['vinnumalastofnun'][application.state],
-      title: formatMessage(parentalLeaveFormMessages.reviewScreen.deptTitle),
+      title: formatMessage(
+        isAdditionalDocumentRequiredState
+          ? parentalLeaveFormMessages.reviewScreen
+              .additionalDocumentRequiredTitle
+          : parentalLeaveFormMessages.reviewScreen.deptTitle,
+      ),
       description: formatMessage(
-        parentalLeaveFormMessages.reviewScreen.deptDesc,
+        isAdditionalDocumentRequiredState
+          ? parentalLeaveFormMessages.reviewScreen
+              .additionalDocumentRequiredDesc
+          : parentalLeaveFormMessages.reviewScreen.deptDesc,
       ),
     },
   ]
 
-  if (isSelfEmployed === NO) {
+  if (isSelfEmployed === NO && !isBeneficiaries) {
     steps.unshift({
       state: statesMap['employer'][application.state],
       title: formatMessage(
         parentalLeaveFormMessages.reviewScreen.employerTitle,
       ),
-      description: formatMessage(
-        parentalLeaveFormMessages.reviewScreen.employerDesc,
-      ),
+      description: formatMessage(descKey[application.state]),
     })
   }
 
@@ -112,10 +172,19 @@ const InReviewSteps: FC<FieldBaseProps> = ({
   const canBeEdited =
     application.state === ApplicationStates.OTHER_PARENT_APPROVAL ||
     application.state === ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN ||
-    application.state === ApplicationStates.EMPLOYER_APPROVAL
-  // TODO: enable if user could Edit application after APPROVED
-  // application.state === ApplicationStates.APPROVED
+    application.state === ApplicationStates.EMPLOYER_APPROVAL ||
+    application.state === ApplicationStates.VINNUMALASTOFNUN_APPROVAL ||
+    application.state === ApplicationStates.APPROVED ||
+    application.state ===
+      ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS ||
+    application.state === ApplicationStates.EMPLOYER_APPROVE_EDITS ||
+    application.state === ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS
 
+  const { periods } = getApplicationAnswers(application.answers)
+  const lastEndDate = new Date(periods[periods.length - 1].endDate)
+  const isUsedAllRights =
+    useRemainingRights(application) > 0 ||
+    lastEndDate.getTime() > new Date().getTime()
   return (
     <Box marginBottom={10}>
       <Box
@@ -160,7 +229,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({
                 )}
             </Button>
           </Box>
-          {canBeEdited && (
+          {canBeEdited && isUsedAllRights && (
             <Box display="inlineBlock">
               <Button
                 colorScheme="default"
@@ -200,12 +269,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({
       {screenState === 'steps' ? (
         <Box marginTop={7} marginBottom={8}>
           {steps.map((step, index) => (
-            <ReviewSection
-              key={index}
-              application={application}
-              index={index + 1}
-              {...step}
-            />
+            <ReviewSection key={index} index={index + 1} {...props} {...step} />
           ))}
         </Box>
       ) : (

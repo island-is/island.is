@@ -7,9 +7,11 @@ import {
   ServiceWebBackground,
   ServiceWebDynamicFooter,
   HeadWithSocialSharing,
+  WatsonChatPanel,
 } from '@island.is/web/components'
+import { useI18n } from '@island.is/web/i18n'
 import { BackgroundVariations, Options, TextModes } from '../types'
-import config from '../config'
+import config, { watsonConfig } from '../config'
 
 import * as styles from './Wrapper.css'
 
@@ -55,6 +57,7 @@ export const Wrapper: FC<WrapperProps> = ({
   indexableBySearchEngine = false,
   children,
 }) => {
+  const { activeLocale } = useI18n()
   const [options, setOptions] = useState<Options>({
     textMode: 'dark',
   })
@@ -105,6 +108,7 @@ export const Wrapper: FC<WrapperProps> = ({
               ? DEFAULT_INSTITUTION_SLUG
               : institutionSlug
           }
+          namespace={namespace}
           small={smallBackground}
         />
         {!!showSearchSection && (
@@ -126,6 +130,9 @@ export const Wrapper: FC<WrapperProps> = ({
           namespace={namespace}
         />
       </ServiceWebContext.Provider>
+      {organization?.id in watsonConfig[activeLocale] && (
+        <WatsonChatPanel {...watsonConfig[activeLocale][organization.id]} />
+      )}
     </>
   )
 }

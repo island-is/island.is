@@ -1,1 +1,7 @@
-export { ConfirmationField } from './ConfirmationField'
+export { PaymentChargeOverview } from './Payment/PaymentChargeOverview'
+export { PaymentPendingField } from './Payment/PaymentPendingField'
+export { VehiclesField } from './VehiclesField'
+export { CoOwner } from './CoOwner'
+export { CoOwnerRepeater } from './CoOwnerRepeater'
+export { Review } from './Review'
+export { ValidationErrorMessages } from './ValidationErrorMessages'

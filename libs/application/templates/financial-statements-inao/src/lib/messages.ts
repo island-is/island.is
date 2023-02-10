@@ -6,6 +6,11 @@ export const m = defineMessages({
     defaultMessage: 'Skil á ársreikningi',
     description: 'Application for Digital',
   },
+  applicationTitleAlt: {
+    id: 'fsn.application:applicationTitleAlt',
+    defaultMessage: 'Skil á upplýsingum ',
+    description: 'Application for Individual elections',
+  },
   inao: {
     id: 'fsn.application:inao',
     defaultMessage: 'Ríkisendurskoðun',
@@ -62,6 +67,17 @@ export const m = defineMessages({
     defaultMessage: 'Mínar síður á Ísland.is/stillingar',
     description: 'Your user profile information',
   },
+  dataCollectionUserFinancialInfoTitle: {
+    id: 'fsn.application:dataCollectionUserFinancialInfoTitle',
+    defaultMessage: 'Fjárhagsupplýsingar',
+    description: 'Financial info',
+  },
+  dataCollectionUserFinancialInfo: {
+    id: 'fsn.application:dataCollectionUserFinancialInfo',
+    defaultMessage:
+      'Til þess að auðvelda fyrir sækjum við fjárhagsupplýsingar til Ríkisendurskoðunar, sem embættið aflar frá viðeigandi aðilum á grundvelli aðgangs- og skoðunarheimilda sem það hefur, og forskráum þær.',
+    description: 'Financial info',
+  },
   dataCollectionUserProfileSubtitle: {
     id: 'fsn.application:dataCollectionUserProfileSubtitle',
     defaultMessage:
@@ -88,6 +104,11 @@ export const m = defineMessages({
     id: 'fsn.application:reviewContact',
     defaultMessage: 'Vinsamlega yfirfarið upplýsingar um tengilið hér að neðan',
     description: 'Review contact info',
+  },
+  reviewInfo: {
+    id: 'fsn.application:reviewInfo',
+    defaultMessage: 'Vinsamlega yfirfarið upplýsingarnar hér að neðan',
+    description: 'Review info',
   },
   fullName: {
     id: 'fsn.application:fullName',
@@ -151,6 +172,22 @@ export const m = defineMessages({
       'Það staðfestist hér með að heildartekjur eða -kostnaður vegna framboðsins voru ekki umfram þau fjárhæðarmörk sem tilgreind eru í 3. mgr. 10. gr. laga nr. 162/2006, um starfsemi stjórnmálasamtaka, og er framboðið því undanþegið uppgjörsskyldu.',
     description: 'statement',
   },
+  SignatureTitle: {
+    id: 'fsn.application:SignatureTitle',
+    defaultMessage: 'Rafræn undirritun',
+    description: 'Signature alert title',
+  },
+  SignatureMessage: {
+    id: 'fsn.application:SignatureMessage',
+    defaultMessage:
+      'Eftir að þú hefur sent inn umsókn mun rafræn undirritun verða send á netfangið',
+    description: 'Signature message',
+  },
+  SignaturePossible: {
+    id: 'fsn.application:SignaturePossible',
+    defaultMessage: 'svo hægt sé að undirrita hana með rafrænum skilríkjum.',
+    description: 'Signature possible message',
+  },
   nationalId: {
     id: 'fsn.application:nationalId',
     defaultMessage: 'Kennitala',
@@ -195,6 +232,16 @@ export const m = defineMessages({
     id: 'fsn.application:keyNumbers.properties',
     defaultMessage: 'Eignir, skuldir og eigið fé',
     description: 'Statement property numbers',
+  },
+  debts: {
+    id: 'fsn.application:keyNumbers.debts',
+    defaultMessage: 'Skuldir',
+    description: 'debts',
+  },
+  debtsAndEquity: {
+    id: 'fsn.application:keyNumbers.debtsAndEquity',
+    defaultMessage: 'Skuldir og eigið fé',
+    description: 'debts and equity',
   },
   keyNumbersDebt: {
     id: 'fsn.application:keyNumbers.debt',
@@ -241,6 +288,11 @@ export const m = defineMessages({
     defaultMessage: 'Rekstrarniðurstaða alls',
     description: 'Operating Cost',
   },
+  operatingCostBefore: {
+    id: 'fsn.application:keyNumbers.operatingCostBeforeCapital',
+    defaultMessage: 'Rekstrarniðurstaða fyrir fjármagnsliði',
+    description: 'Operating Cost Capital',
+  },
   operatingYear: {
     id: 'fsn.application:keyNumbers.operatingYear',
     defaultMessage: 'Rekstrarár',
@@ -254,6 +306,11 @@ export const m = defineMessages({
   fillOutAppopriate: {
     id: 'fsn.application:fillOutAppopriate',
     defaultMessage: 'Vinsamlegast fylltu út þá reiti sem eiga við',
+    description: 'Fill out fields',
+  },
+  fillOutElectionInfo: {
+    id: 'fsn.application:fillOutElectionInfo',
+    defaultMessage: 'Vinsamlegast veldu þær kosningar sem við eiga',
     description: 'Fill out fields',
   },
   properties: {
@@ -291,6 +348,16 @@ export const m = defineMessages({
     defaultMessage: 'Framlög lögaðila',
     description: 'Donations',
   },
+  errorNationalIdIncorrect: {
+    id: 'fsn.application:error.nationalIdIncorrect',
+    defaultMessage: 'Þessi kennitala virðist ekki vera rétt',
+    description: 'National id is invalid',
+  },
+  errorFetchingName: {
+    id: 'fsn.application:error.errorFetchingName',
+    defaultMessage: 'Tókst ekki að sækja nafn umboðsmanns',
+    description: 'Could not fetch powerofattorney name',
+  },
   errorEmpty: {
     id: 'fsn.application:error.empty',
     defaultMessage: 'Reitur má ekki vera tómur',
@@ -302,7 +369,7 @@ export const m = defineMessages({
     description: 'Approval missing',
   },
   errorSignature: {
-    id: 'fsn.application:error.errorApproval',
+    id: 'fsn.application:error.errorSignature',
     defaultMessage: 'Samþykkja þarf yfirlit með rafrænni undirritun',
     description: 'Signature missing',
   },
@@ -310,6 +377,29 @@ export const m = defineMessages({
     id: 'fsn.application:error.errorMembersMissing',
     defaultMessage: 'Skrá þarf bæði skoðunarmann og stjórnarmann',
     description: 'Members missing',
+  },
+  errormemberNotUnique: {
+    id: 'fsn.application:error.errormemberNotUnique',
+    defaultMessage:
+      'Ekki er hægt að skrá sama aðila sem Stjórnarmann og Skoðunarmann',
+    description: 'Members missing',
+  },
+  errormemberCanNotIncludeApplicant: {
+    id: 'fsn.application:error.errormemberCanNotIncludeApplicant',
+    defaultMessage:
+      'Umsækjandi má ekki vera skráður sem stjórnarmaður eða skoðunarmaður',
+    description: 'error, applicant regsitered as caretaker/boardmember',
+  },
+  errorcaretakerCanNotIncludeActor: {
+    id: 'fsn.application:error.errorcaretakerCanNotIncludeActor',
+    defaultMessage: 'Innskráður aðili má ekki vera skráður sem skoðunarmaður',
+    description: 'error, applicant regsitered as caretaker',
+  },
+  errorBoardmembersCanNotJustIncludeActor: {
+    id: 'fsn.application:error.errorBoardmembersCanNotJustIncludeActor',
+    defaultMessage:
+      'Innskráður aðili má ekki vera skráður einn sem stjórnarmaður',
+    description: 'error, applicant regsitered as caretaker',
   },
   contributionsFromTheTreasury: {
     id: 'fsn.application:income.contributionsFromTheTreasury',
@@ -371,6 +461,11 @@ export const m = defineMessages({
     defaultMessage: 'Fjármagnsliðir',
     description: 'capital numbers',
   },
+  capitalNumbersSectionTitle: {
+    id: 'fsn.application:income.capitalNumbersSectionTitle',
+    defaultMessage: 'Lykiltölur Fjármagnsliðir',
+    description: 'capital numbers',
+  },
   electionOffice: {
     id: 'fsn.application:income.electionOffice',
     defaultMessage: 'Kosningaskrifstofa',
@@ -418,7 +513,7 @@ export const m = defineMessages({
   },
   donationsToCemeteryFund: {
     id: 'fsn.application:income.donationsToCemeteryFund',
-    defaultMessage: 'Styrkur frá kirkjugarðasjóði',
+    defaultMessage: 'Framlög til kirkjugarðasjóðs',
     description: 'donations from cemetry fund',
   },
   cemeteryCaretakers: {
@@ -514,7 +609,7 @@ export const m = defineMessages({
   },
   equity: {
     id: 'fsn.application:keyNumbers.equity',
-    defaultMessage: 'Eigið fé samtals',
+    defaultMessage: 'Eigið fé',
     description: 'total equity',
   },
   equityAtTheBeginningOfTheYear: {
@@ -598,6 +693,11 @@ export const m = defineMessages({
     defaultMessage: 'Senda umsókn',
     description: 'Send application',
   },
+  sendStatement: {
+    id: 'fsn.application:sendStatement',
+    defaultMessage: 'Senda yfirlýsingu',
+    description: 'Send statement',
+  },
   participated: {
     id: 'fsn.application:overview.participated',
     defaultMessage: 'tók þátt í kjöri til',
@@ -643,6 +743,11 @@ export const m = defineMessages({
     defaultMessage: 'Ársreikningur mótekinn',
     description: 'financial statement received',
   },
+  infoReceived: {
+    id: 'fsn.application:infoReceived',
+    defaultMessage: 'Uppgjör móttekið',
+    description: 'election info received',
+  },
   dataCollectionCheckboxLabel: {
     id: 'fsn.application:dataCollectionCheckboxLabel',
     defaultMessage:
@@ -687,6 +792,11 @@ export const m = defineMessages({
     defaultMessage: 'Vinsamlegast veldu það sem við á',
     description: 'Please select',
   },
+  pleaseSelectElection: {
+    id: 'fsn.application:pleaseSelectElection',
+    defaultMessage: 'Vinsamlegast veldu þær kosningar sem við eiga',
+    description: 'Please select election',
+  },
   applicationAccept: {
     id: 'fsn.application:applicationAccept',
     defaultMessage: 'Umsókn móttekin',
@@ -695,6 +805,11 @@ export const m = defineMessages({
   required: {
     id: 'fsn.application:error.required',
     defaultMessage: 'Reitur má ekki vera tómur',
+    description: 'Error message when a required field has not been filled',
+  },
+  negativeNumberError: {
+    id: 'fsn.application:error.negativeNumberError',
+    defaultMessage: 'Ekki er leyfilegt að setja inn neikvæðar tölur',
     description: 'Error message when a required field has not been filled',
   },
   nationalIdError: {
@@ -724,7 +839,7 @@ export const m = defineMessages({
     description: 'Second part of audit received message',
   },
   operatingYearMsgFirst: {
-    id: 'fsn.application:individualReceivedMsgFirst',
+    id: 'fsn.application:operatingYearMsgFirst',
     defaultMessage: 'Ársreikningi fyrir rekstrarárið',
     description: 'First part of audit received message',
   },
@@ -732,6 +847,11 @@ export const m = defineMessages({
     id: 'fsn.application:individualReceivedMsgSecond',
     defaultMessage: 'hefur verið skilað þann',
     description: 'Second part of audit received message',
+  },
+  equityErrorTitle: {
+    id: 'fsn.application:equityErrorTitle',
+    defaultMessage: 'Ósamræmi í tölum',
+    description: 'Error msg title when E = S+E.fé is incorrect',
   },
   fetchErrorTitle: {
     id: 'fsn.application:fetchErrorMsg',
@@ -754,11 +874,27 @@ export const m = defineMessages({
     defaultMessage: 'Reyndu aftur síðar',
     description: 'Unhandled error in data provider',
   },
+  genericError: {
+    id: 'fsn.application:error.genericError',
+    defaultMessage: 'Eitthvað fór úrskeiðis',
+    description: 'Generic error message',
+  },
   submitErrorTitle: {
     id: 'fsn.application:submitErrorTitle',
     defaultMessage: 'Móttaka ársreiknings tókst ekki',
     description:
       'Title that shows up when an error occurs while submitting the application',
+  },
+  equityDebtsAssetsValidatorError: {
+    id: 'fsn.application:equityValidatorError',
+    defaultMessage: 'Skuldir og eigið fé þarf að vera jafnt og eignir samtals',
+    description: 'Equity + debts shout equal assets',
+  },
+  wrongDelegation: {
+    id: 'fsn.application:wrongDelegation',
+    defaultMessage:
+      'Eingöngu er hægt að skila fyrir hönd Kirkjugarða eða Stjórnmálasamtaka',
+    description: 'Logged in user with incorrect delegation type',
   },
   submitErrorMessage: {
     id: 'fsn.application:submitErrorMessage',

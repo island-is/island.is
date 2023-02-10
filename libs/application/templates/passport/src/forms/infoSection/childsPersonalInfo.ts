@@ -5,10 +5,10 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { Application, DefaultEvents } from '@island.is/application/types'
+import { removeCountryCode } from '@island.is/application/ui-components'
 import { format as formatKennitala } from 'kennitala'
-import { Passport } from '../../lib/constants'
+import { IdentityDocumentData, Passport } from '../../lib/constants'
 import { m } from '../../lib/messages'
-import { removeCountryCode } from '../../utils/removeCountryCode'
 
 export const childsPersonalInfo = buildMultiField({
   id: 'childsPersonalInfo',
@@ -22,7 +22,12 @@ export const childsPersonalInfo = buildMultiField({
       backgroundColor: 'white',
       width: 'half',
       readOnly: true,
-      defaultValue: 'Adam Jónsson',
+      defaultValue: (application: Application) => {
+        return (
+          (application.externalData.identityDocument
+            ?.data as IdentityDocumentData).childPassports[0].childName ?? ''
+        )
+      },
     }),
     buildTextField({
       id: 'childsPersonalInfo.nationalId',
@@ -30,11 +35,18 @@ export const childsPersonalInfo = buildMultiField({
       backgroundColor: 'white',
       width: 'half',
       readOnly: true,
-      defaultValue: '111111-1111',
+      format: '######-####',
+      defaultValue: (application: Application) => {
+        return (
+          (application.externalData.identityDocument
+            ?.data as IdentityDocumentData).childPassports[0].childNationalId ??
+          ''
+        )
+      },
     }),
     buildDescriptionField({
       id: 'childsPersonalInfo.guardian1',
-      title: 'Forráðamaður 1',
+      title: m.parent1,
       titleVariant: 'h3',
       space: 'containerGutter',
       marginBottom: 'smallGutter',
@@ -57,11 +69,7 @@ export const childsPersonalInfo = buildMultiField({
       width: 'half',
       readOnly: true,
       defaultValue: (application: Application) =>
-        formatKennitala(
-          (application.externalData.nationalRegistry?.data as {
-            nationalId?: string
-          })?.nationalId ?? '',
-        ),
+        formatKennitala(application.applicant),
     }),
     buildTextField({
       id: 'childsPersonalInfo.guardian1.email',
@@ -89,7 +97,7 @@ export const childsPersonalInfo = buildMultiField({
     }),
     buildDescriptionField({
       id: 'childsPersonalInfo.guardian2',
-      title: 'Forráðamaður 2',
+      title: m.parent2,
       titleVariant: 'h3',
       space: 'containerGutter',
       marginBottom: 'smallGutter',
@@ -99,7 +107,13 @@ export const childsPersonalInfo = buildMultiField({
       title: m.name,
       backgroundColor: 'white',
       width: 'half',
-      defaultValue: 'Gervimaður Útlönd',
+      defaultValue: (application: Application) => {
+        return (
+          (application.externalData.identityDocument
+            ?.data as IdentityDocumentData).childPassports[0]
+            .secondParentName ?? ''
+        )
+      },
     }),
     buildTextField({
       id: 'childsPersonalInfo.guardian2.nationalId',
@@ -107,7 +121,13 @@ export const childsPersonalInfo = buildMultiField({
       backgroundColor: 'white',
       width: 'half',
       readOnly: true,
-      defaultValue: '010130-7789',
+      format: '######-####',
+      defaultValue: (application: Application) => {
+        return (
+          (application.externalData.identityDocument
+            ?.data as IdentityDocumentData).childPassports[0].secondParent ?? ''
+        )
+      },
     }),
     buildTextField({
       id: 'childsPersonalInfo.guardian2.email',
