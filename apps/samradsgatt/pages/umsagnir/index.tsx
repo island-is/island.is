@@ -208,11 +208,21 @@ export const MyReviewPage = () => {
                 ]}
               />
             </Box>
-            <Text variant="h1">Mínar umsagnir</Text>
-            <Text variant="default" marginY={2}>
+            <Text variant="h1" marginTop={2}>
+              Mínar umsagnir
+            </Text>
+            <Text variant="default" marginY={3}>
               Hér er hægt að fylgjast með þeim áskriftum sem þú ert skráð(ur) í
               ásamt því að sjá allar umsagnir sem þú ert búin að skrifa í gegnum
               tíðina.
+            </Text>
+            <Text
+              marginTop={4}
+              marginBottom={2}
+              fontWeight="semiBold"
+              variant="medium"
+            >
+              Leit
             </Text>
             <Columns space={3} alignY="center">
               <Column width="10/12">
