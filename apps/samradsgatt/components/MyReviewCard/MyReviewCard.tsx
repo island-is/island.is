@@ -18,6 +18,8 @@ type CardProps = {
   shortDescription: string
   id: number
   review: string
+  type: string
+  institution: string
 }
 
 export const MyReviewCard = (caseData: CardProps) => {
@@ -47,7 +49,7 @@ export const MyReviewCard = (caseData: CardProps) => {
       </Box>
       <Box display="flex" flexDirection="row" alignItems="center" paddingY={1}>
         <Text as="p" variant="eyebrow" color="blue600">
-          Stöðumat og valkostir
+          {caseData.type}
         </Text>
         <div
           style={{
@@ -57,6 +59,9 @@ export const MyReviewCard = (caseData: CardProps) => {
             border: '1px solid #ccdfff',
           }}
         />
+        <Text variant="eyebrow" color="blue600">
+          {caseData.institution}
+        </Text>
       </Box>
       <Box style={{ height: '50px', overflow: 'hidden' }} paddingBottom={2}>
         <Text as="h4" fontWeight="semiBold">
