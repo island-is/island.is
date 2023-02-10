@@ -31,26 +31,38 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
 })
 
 applicationTest.describe('Driving Asessment Approval', () => {
-  applicationTest('should pass all, except submit', async ({ applicationPage }) => {
-    const page = applicationPage
-    await page.goto(homeUrl);
+  applicationTest(
+    'should pass all, except submit',
+    async ({ applicationPage }) => {
+      const page = applicationPage
+      await page.goto(homeUrl)
 
-    // Data Providers
-    await page.getByTestId('agree-to-data-providers').click();
-    await page.getByTestId('proceed').click();
+      // Data Providers
+      await page.getByTestId('agree-to-data-providers').click()
+      await page.getByTestId('proceed').click()
 
-    // Student info
-    await page.getByLabel('Kennitala nemanda').click();
-    await page.getByLabel('Kennitala nemanda').fill('0101307789');
-    await page.getByLabel('Tölvupóstfang nemanda').fill('email@domain.test');
-    await expect(page.getByText('Gervimaður útlönd')).toBeVisible()
-    await page.getByTestId('proceed').click();
+      // Student info
+      await page.getByLabel('Kennitala nemanda').click()
+      await page.getByLabel('Kennitala nemanda').fill('0101307789')
+      await page.getByLabel('Tölvupóstfang nemanda').fill('email@domain.test')
+      await expect(page.getByText('Gervimaður útlönd')).toBeVisible()
+      await page.getByTestId('proceed').click()
 
-    // Confirmation
-    await page.getByText('Ég staðfesti að akstursmat hefur farið fram í samræmi við ákvæði í reglugerð um ').first().click();
-    await page.getByRole('button', { name: 'Staðfesta' }).click();
+      // Confirmation
+      await page
+        .getByText(
+          'Ég staðfesti að akstursmat hefur farið fram í samræmi við ákvæði í reglugerð um ',
+        )
+        .first()
+        .click()
+      await page.getByRole('button', { name: 'Staðfesta' }).click()
 
-    // Error message
-    await page.getByText('Nýtt akstursmat: Einstaklingur á fullnaðarskírteini, ekki er leyfilegt að senda ').dblclick();
-  });
+      // Error message
+      await page
+        .getByText(
+          'Nýtt akstursmat: Einstaklingur á fullnaðarskírteini, ekki er leyfilegt að senda ',
+        )
+        .dblclick()
+    },
+  )
 })
