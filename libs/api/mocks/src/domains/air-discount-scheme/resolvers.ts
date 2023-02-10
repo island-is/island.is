@@ -12,5 +12,8 @@ export const resolvers: Resolvers = {
     airDiscountSchemeDiscounts: () => {
       return store.airDiscounts
     },
+    airDiscountSchemeUserAndRelationsFlights: () => {
+      return store.flights
+    },
   },
 }
