@@ -35,6 +35,9 @@ type GetReturnUrl = {
   returnUrl: string
 } & Pick<AuthSettings, 'redirectPath'>
 
+const isCurrentRoute = (url: string, path?: string) =>
+  isDefined(path) && url.startsWith(path)
+
 const getReturnUrl = ({ redirectPath, basePath, returnUrl }: GetReturnUrl) => {
   if (redirectPath && returnUrl.startsWith(redirectPath)) {
     return basePath
@@ -63,7 +66,6 @@ export const AuthProvider = ({
   const userManager = getUserManager()
   const authSettings = getAuthSettings()
   const monitorUserSession = !authSettings.scope?.includes('offline_access')
-  const url = getCurrentUrl()
 
   const signIn = useCallback(
     async function signIn() {
@@ -73,14 +75,14 @@ export const AuthProvider = ({
 
       return userManager.signinRedirect({
         state: getReturnUrl({
-          returnUrl: url,
+          returnUrl: getCurrentUrl(basePath),
           basePath,
           redirectPath: authSettings.redirectPath,
         }),
       })
       // Nothing more happens here since browser will redirect to IDS.
     },
-    [dispatch, userManager, authSettings, url],
+    [dispatch, userManager, authSettings, basePath],
   )
 
   const signInSilent = useCallback(
@@ -128,7 +130,7 @@ export const AuthProvider = ({
         state:
           authSettings.switchUserRedirectUrl ??
           getReturnUrl({
-            returnUrl: getCurrentUrl(),
+            returnUrl: getCurrentUrl(basePath),
             basePath,
             redirectPath: authSettings.redirectPath,
           }),
@@ -136,7 +138,7 @@ export const AuthProvider = ({
       })
       // Nothing more happens here since browser will redirect to IDS.
     },
-    [userManager, dispatch, authSettings, url],
+    [userManager, dispatch, authSettings, basePath],
   )
 
   const signOut = useCallback(
@@ -214,18 +216,17 @@ export const AuthProvider = ({
     }
   }, [dispatch, userManager, signIn, autoLogin, state.userInfo === null])
 
-  const isCurrentRoute = (path?: string) =>
-    isDefined(path) && url.includes(basePath + path)
-
   const init = async () => {
-    if (isCurrentRoute(authSettings?.redirectPath)) {
+    const currentUrl = getCurrentUrl(basePath)
+
+    if (isCurrentRoute(currentUrl, authSettings.redirectPath)) {
       try {
         const user = await userManager.signinRedirectCallback(
           window.location.href,
         )
 
-        const url = typeof user.state === 'string' ? user.state : '/'
-        window.history.replaceState(null, '', url)
+        const url = typeof user.state === 'string' ? user.state : basePath
+        window.history.replaceState(null, '', basePath + url)
 
         dispatch({
           type: ActionType.SIGNIN_SUCCESS,
@@ -240,7 +241,7 @@ export const AuthProvider = ({
         console.error('Error in oidc callback', error)
         setHasError(true)
       }
-    } else if (isCurrentRoute(authSettings?.redirectPathSilent)) {
+    } else if (isCurrentRoute(currentUrl, authSettings.redirectPathSilent)) {
       const userManager = getUserManager()
       userManager.signinSilentCallback().catch((error) => {
         // TODO: Handle error
@@ -266,12 +267,13 @@ export const AuthProvider = ({
     [state, signIn, signInSilent, switchUser, signOut],
   )
 
+  const url = getCurrentUrl(basePath)
   const isLoading =
     !state.userInfo ||
     // We need to display loading screen if current route is the redirectPath or redirectPathSilent.
     // This is because these paths are not part of our React Router routes.
-    isCurrentRoute(authSettings?.redirectPath) ||
-    isCurrentRoute(authSettings?.redirectPathSilent)
+    isCurrentRoute(url, authSettings?.redirectPath) ||
+    isCurrentRoute(url, authSettings?.redirectPathSilent)
 
   return (
     <AuthContext.Provider value={context}>
