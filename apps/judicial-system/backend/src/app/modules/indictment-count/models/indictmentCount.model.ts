@@ -59,6 +59,20 @@ export class IndictmentCount extends Model {
   vehicleRegistrationNumber?: string
 
   @Column({
+    type: DataType.JSONB,
+    allowNull: true,
+  })
+  @ApiPropertyOptional({ enum: IndictmentCountOffense, isArray: true })
+  offenses?: IndictmentCountOffense[]
+
+  @Column({
+    type: DataType.JSONB,
+    allowNull: true,
+  })
+  @ApiPropertyOptional({ type: [[Number, Number]], isArray: true })
+  lawsBroken?: [number, number][]
+
+  @Column({
     type: DataType.TEXT,
     allowNull: true,
   })
@@ -71,11 +85,4 @@ export class IndictmentCount extends Model {
   })
   @ApiPropertyOptional()
   legal_arguments?: string
-
-  @Column({
-    type: DataType.JSONB,
-    allowNull: true,
-  })
-  @ApiPropertyOptional({ enum: IndictmentCountOffense, isArray: true })
-  offenses?: IndictmentCountOffense[]
 }
