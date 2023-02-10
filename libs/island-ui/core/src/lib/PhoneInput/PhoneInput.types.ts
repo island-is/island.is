@@ -22,6 +22,7 @@ export interface CountryCodeSelectProps {
   ariaError?: AriaError
   isClearable?: boolean
   inputHasFocus?: boolean
+  inputHasLabel?: boolean
   onFocus?: () => void
   onBlur?: () => void
   onMenuOpen?: () => void

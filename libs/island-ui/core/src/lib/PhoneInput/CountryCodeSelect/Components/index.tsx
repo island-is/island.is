@@ -48,11 +48,13 @@ export const IndicatorsContainer = (
 ) => {
   const { icon } = props.selectProps
   const size: CountryCodeSelectProps['size'] = props.selectProps.size || 'md'
+  const hasLabel: boolean = props.selectProps.inputHasLabel
   return (
     <components.IndicatorsContainer
       className={cn(styles.indicatorsContainer, {
         [styles.dontRotateIconOnOpen]: icon !== 'chevronDown',
         [styles.indicatorsContainerExtraSmall]: size === 'xs',
+        [styles.indicatorContainerWithLabel]: hasLabel,
       })}
       {...props}
     />
@@ -82,12 +84,15 @@ export const DropdownIndicator = (props: IndicatorProps<ReactSelectOption>) => {
 
 export const SingleValue = (props: SingleValueProps<ReactSelectOption>) => {
   const size: NonNullableSize = props.selectProps.size || 'md'
+  const hasLabel: boolean = props.selectProps.inputHasLabel
   const value = (props.hasValue ? props.getValue() : null) as
     | ReactSelectOption[]
     | null
   return (
     <components.SingleValue
-      className={cn(styles.singleValue, styles.singleValueSizes[size])}
+      className={cn(styles.singleValue, styles.singleValueSizes[size], {
+        [styles.singleValuePushTop]: hasLabel,
+      })}
       {...props}
     >
       {value ? value[0].value : ''}
@@ -97,7 +102,15 @@ export const SingleValue = (props: SingleValueProps<ReactSelectOption>) => {
 
 export const ValueContainer = (
   props: ValueContainerProps<ReactSelectOption>,
-) => <components.ValueContainer className={styles.valueContainer} {...props} />
+) => {
+  const hasLabel: boolean = props.selectProps.inputHasLabel
+  return (
+    <components.ValueContainer
+      className={cn({ [styles.valueContainer]: hasLabel })}
+      {...props}
+    />
+  )
+}
 
 export const Placeholder = (props: PlaceholderProps<ReactSelectOption>) => {
   const size: NonNullableSize = props.selectProps.size || 'md'

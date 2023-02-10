@@ -171,8 +171,13 @@ export const singleValue = style(
     marginLeft: 0,
     marginRight: 0,
     paddingRight: 0,
-    marginTop: theme.spacing[1],
     ...inputMixins.input,
+  },
+  'singleValue',
+)
+export const singleValuePushTop = style(
+  {
+    marginTop: theme.spacing[1],
   },
   'singleValue',
 )
@@ -192,12 +197,23 @@ export const indicatorsContainer = style(
         height: '100%',
         position: 'absolute',
         right: theme.spacing[2],
-        top: theme.spacing[1],
+        top: 0,
         bottom: 0,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         transition: 'transform .2s',
+      },
+    },
+  },
+  'indicatorsContainer',
+)
+
+export const indicatorContainerWithLabel = style(
+  {
+    selectors: {
+      [`${wrapper} &`]: {
+        top: theme.spacing[1],
       },
     },
   },

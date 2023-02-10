@@ -77,8 +77,9 @@ const getDefaultValue = (
 
 /**
  * Gets default country code.
- * This function tries to extract a country calling code from a phone number,
- * by using libphonenumber-js to parse the number. Defaults to IS code.
+ * This function tries to extract a country calling code
+ * by using libphonenumber-js to parse the code from the number.
+ * Defaults to IS code.
  *
  * Example outputs:
  * getDefaultCountryCode("+3545812345") // +354

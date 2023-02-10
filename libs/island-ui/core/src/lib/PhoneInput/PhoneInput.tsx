@@ -160,6 +160,7 @@ export const PhoneInput = forwardRef(
                   options={countryCodes}
                   disabled={disabled || readOnly}
                   backgroundColor={backgroundColor}
+                  inputHasLabel={!!label}
                   size={size}
                   onFocus={() => setHasFocus(true)}
                   onBlur={() => setHasFocus(false)}

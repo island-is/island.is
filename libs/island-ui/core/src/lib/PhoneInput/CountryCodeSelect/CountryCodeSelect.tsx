@@ -28,6 +28,7 @@ export const CountryCodeSelect = ({
   size = 'md',
   backgroundColor = 'white',
   dataTestId,
+  inputHasLabel,
   onChange,
   onFocus,
   onBlur,
@@ -61,6 +62,7 @@ export const CountryCodeSelect = ({
         dataTestId={dataTestId}
         placeholder={placeholder}
         defaultValue={defaultValue}
+        inputHasLabel={inputHasLabel}
         size={size}
         components={{
           Control,

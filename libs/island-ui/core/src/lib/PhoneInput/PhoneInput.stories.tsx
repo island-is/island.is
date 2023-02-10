@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { PropsWithChildren, useState } from 'react'
 import { ValueType } from 'react-select'
 import { withFigma } from '../../utils/withFigma'
 import { PhoneInput } from './PhoneInput'
@@ -19,6 +19,10 @@ export default {
     },
   },
 }
+
+const Wrap = ({ children }: PropsWithChildren<{}>) => (
+  <div style={{ height: 300 }}>{children}</div>
+)
 
 const countryCodeList = [
   {
@@ -64,21 +68,23 @@ export const Template = (args) => {
   }
 
   return (
-    <NumberFormat
-      customInput={PhoneInput}
-      size="md"
-      format={
-        countryCodeList.find((x) => x.dial_code === cc && !!x.format)?.format
-      }
-      countryCodes={countryCodes}
-      value={value?.replace(cc, '')}
-      onChange={(e) => setValue(e.target.value)}
-      countryCodeValue={selectedCountryCode}
-      onCountryCodeChange={handleCountryCodeChange}
-      label="Phone"
-      name="Test1"
-      {...args}
-    />
+    <Wrap>
+      <NumberFormat
+        customInput={PhoneInput}
+        size="md"
+        format={
+          countryCodeList.find((x) => x.dial_code === cc && !!x.format)?.format
+        }
+        countryCodes={countryCodes}
+        value={value?.replace(cc, '')}
+        onChange={(e) => setValue(e.target.value)}
+        countryCodeValue={selectedCountryCode}
+        onCountryCodeChange={handleCountryCodeChange}
+        label="Phone"
+        name="Test1"
+        {...args}
+      />
+    </Wrap>
   )
 }
 
