@@ -271,7 +271,7 @@ export const AuthProvider = ({
       {hasError ? (
         <AuthErrorScreen basePath={basePath} />
       ) : isLoading ? (
-        <LoadingScreen />
+        <LoadingScreen ariaLabel="Er að vinna í innskráningu" />
       ) : (
         <>
           {monitorUserSession && <CheckIdpSession />}
