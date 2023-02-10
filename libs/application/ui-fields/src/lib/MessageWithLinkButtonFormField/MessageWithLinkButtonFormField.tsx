@@ -16,6 +16,14 @@ export const MessageWithLinkButtonFormField: FC<Props> = ({
   field,
 }) => {
   const { formatMessage } = useLocale()
+
+  const getUrl = () => {
+    if (field.url === '/minarsidur/umsoknir') {
+      return `${field.url}#${application.id}`
+    }
+    return field.url
+  }
+
   return (
     <Box
       borderRadius="standard"
@@ -34,7 +42,7 @@ export const MessageWithLinkButtonFormField: FC<Props> = ({
       <Box marginTop={[2, 2, 0]} marginLeft={[0, 0, 3]}>
         <Button
           onClick={() => {
-            window.open(`${field.url}`, '_blank')
+            window.open(`${getUrl()}`, '_blank')
           }}
           size="small"
           icon="arrowForward"
