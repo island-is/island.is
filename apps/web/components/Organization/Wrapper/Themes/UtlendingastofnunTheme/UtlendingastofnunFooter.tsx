@@ -18,7 +18,7 @@ interface FooterProps {
   footerItems: Array<FooterItem>
 }
 
-const UtlendingastofnunFooter: React.FC<FooterProps> = ({
+export const UtlendingastofnunFooter: React.FC<FooterProps> = ({
   title,
   logo,
   footerItems,
@@ -87,5 +87,3 @@ const UtlendingastofnunFooter: React.FC<FooterProps> = ({
     </footer>
   )
 }
-
-export default UtlendingastofnunFooter

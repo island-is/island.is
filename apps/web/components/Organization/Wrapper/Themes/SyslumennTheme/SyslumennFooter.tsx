@@ -29,7 +29,7 @@ interface FooterProps {
   namespace: Record<string, string>
 }
 
-const SyslumennFooter: React.FC<FooterProps> = ({
+export const SyslumennFooter: React.FC<FooterProps> = ({
   title,
   logo,
   footerItems,
@@ -192,5 +192,3 @@ const HeaderLink: FC<HeaderLink> = ({
     </LinkContext.Provider>
   )
 }
-
-export default SyslumennFooter

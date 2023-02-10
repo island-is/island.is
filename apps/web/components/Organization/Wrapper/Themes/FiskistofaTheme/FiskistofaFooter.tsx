@@ -23,7 +23,7 @@ interface FiskistofaFooterProps {
   namespace: Record<string, string>
 }
 
-const FiskistofaFooter = ({
+export const FiskistofaFooter = ({
   footerItems,
   namespace,
 }: FiskistofaFooterProps) => {

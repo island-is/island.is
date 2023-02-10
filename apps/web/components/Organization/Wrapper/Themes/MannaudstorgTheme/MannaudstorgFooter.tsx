@@ -23,7 +23,11 @@ interface Props {
   footerItems: FooterItem[]
 }
 
-const MannaudstorgFooter: FC<Props> = ({ title, logoSrc, footerItems }) => {
+export const MannaudstorgFooter: FC<Props> = ({
+  title,
+  logoSrc,
+  footerItems,
+}) => {
   const { activeLocale } = useI18n()
 
   return (
