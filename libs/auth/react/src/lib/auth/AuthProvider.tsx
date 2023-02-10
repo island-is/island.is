@@ -44,7 +44,7 @@ const getReturnUrl = ({ redirectPath, basePath, returnUrl }: GetReturnUrl) => {
 }
 
 const getCurrentUrl = () =>
-  `${window.location.pathname}${window.location.search}`
+  `${window.location.pathname}${window.location.search}${window.location.hash}`
 
 export const AuthProvider = ({
   children,
