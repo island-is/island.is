@@ -1,17 +1,12 @@
-import { asDiv, HTMLText, RegName } from '@island.is/regulations'
+import { asDiv, HTMLText } from '@island.is/regulations'
 import qq from '@hugsmidjan/qj/qq'
-import {
-  DraftImpactForm,
-  GroupedDraftImpactForms,
-  RegDraftForm,
-} from '../state/types'
-import { DraftImpactName } from '@island.is/regulations/admin'
+import { GroupedDraftImpactForms, RegDraftForm } from '../state/types'
 import flatten from 'lodash/flatten'
 
 // ----------------------------------------------------------------------
 const PREFIX = 'Reglugerð um '
 const PREFIX_AMENDING = 'breytingu á reglugerð nr. '
-const PREFIX_REPEALING = 'brottfellingu á reglugerð nr. ' // repealingTitleRe
+const PREFIX_REPEALING = 'brottfellingu á reglugerð nr. '
 
 const removeRegPrefix = (title: string) => {
   if (/^Reglugerð/.test(title)) {
@@ -64,6 +59,7 @@ const formatListItemDiff = (item: Element) => {
   let newLiText = ''
   let liItemHtml = '' as HTMLText
   let lidur = 0
+  const returningArray: HTMLText[] = []
   qq('ol > li', item).forEach((liItem) => {
     lidur++
 
@@ -80,9 +76,27 @@ const formatListItemDiff = (item: Element) => {
       newLiText = newLiElement.textContent || ''
 
       const directArray = Array.from(liItem.children)
-      const containsDirect = directArray.find((e) =>
-        e.classList.contains('diffdel'),
-      )
+      const containsDirect = directArray.find((e) => {
+        let returning = false
+        const containing =
+          e.classList.contains('diffdel') ||
+          e.classList.contains('diffmod') ||
+          e.classList.contains('diffins')
+        if (containing) {
+          returning = true
+        }
+        const needsMoreDrilling = e.nodeName === 'EM' || e.nodeName === 'STRONG'
+        if (needsMoreDrilling) {
+          const nestedArray = Array.from(e.children)
+          returning = !!nestedArray.find(
+            (ee) =>
+              ee.classList.contains('diffdel') ||
+              ee.classList.contains('diffins') ||
+              ee.classList.contains('diffmod'),
+          )
+        }
+        return returning
+      })
 
       const isStaflidur =
         liItem?.parentElement?.getAttribute('type')?.toLowerCase() === 'a'
@@ -101,25 +115,48 @@ const formatListItemDiff = (item: Element) => {
       }
 
       const isLiDeleted = newLiText === '' || newLiText === null
+      const isLiAddition = oldLiText === '' || oldLiText === null
+
+      const liLidur = isStaflidur ? 'stafliður' : 'töluliður'
+
+      const lidurMaybeCapitalized =
+        liItemHtml === ''
+          ? liLidur.charAt(0).toUpperCase() + liLidur.slice(1).toLowerCase()
+          : liLidur
 
       if (isLiDeleted) {
         liItemHtml = (liItemHtml +
-          `${isStaflidur ? 'staflið' : 'tölulið'} ${getLiPoint(
+          `${lidurMaybeCapitalized} ${getLiPoint(
             lidur,
             isStaflidur,
-          )}, ${oldLiText} hefur verið eytt út. Eftirkomandi röðun ${
-            isStaflidur ? 'stafliða' : 'töluliða'
-          } breytist m.t.t. þessara breytinga.`) as HTMLText
+          )}, ${oldLiText} fellur brott og breytist númer annarra liða til samræmis.`) as HTMLText
+
+        // Finish up:
+        returningArray.push(liItemHtml)
+        liItemHtml = '' as HTMLText
+      } else if (isLiAddition) {
+        liItemHtml = (liItemHtml +
+          `Á eftir ${getLiPoint(lidur - 1, isStaflidur)}. ${
+            isStaflidur ? 'staflið' : 'tölulið'
+          } kemur nýr liður svohljóðandi, og breytist númer annarra lið til samræmis: ${newLiText}`) as HTMLText
+
+        // Finish up:
+        returningArray.push(liItemHtml)
+        liItemHtml = '' as HTMLText
       } else {
         liItemHtml = (liItemHtml +
-          `${isStaflidur ? 'Stafliður' : 'Töluliður'} ${getLiPoint(
+          `${lidurMaybeCapitalized} ${getLiPoint(
             lidur,
             isStaflidur,
-          )} verður nú: ${newLiText}`) as HTMLText
+          )}, orðast svo: ${newLiText}`) as HTMLText
+
+        // Finish up:
+        returningArray.push(liItemHtml)
+        liItemHtml = '' as HTMLText
       }
     }
   })
-  return `${liItemHtml}`
+  return returningArray
 }
 
 export const formatAmendingRegBody = (
@@ -128,7 +165,9 @@ export const formatAmendingRegBody = (
   diff?: HTMLText | string | undefined,
 ) => {
   if (repeal) {
-    return [`<p>Fellir brott reglugerð nr. ${regName}</p>` as HTMLText]
+    return [
+      `<p>Jafnframt fellur brott reglugerð nr. ${regName}</p>` as HTMLText,
+    ]
   }
 
   if (!diff) {
@@ -189,7 +228,9 @@ export const formatAmendingRegBody = (
 
       let liHtml = '' as HTMLText
       if (isStaflidur || isTolulidur) {
-        liHtml = `<p>${formatListItemDiff(item)}</p>` as HTMLText
+        liHtml = `<p>${formatListItemDiff(item).join(
+          '</p><p>',
+        )}</p>` as HTMLText
       } else {
         oldTextElement.querySelectorAll('ins').forEach((e) => e.remove())
         oldText = oldTextElement.textContent || ''
@@ -199,43 +240,74 @@ export const formatAmendingRegBody = (
       }
 
       const isDeleted = newText === '' || newText === null
+      const isAddition = oldText === '' || oldText === null
 
       const regNameDisplay =
         regName && regName !== 'self'
-          ? `reglugerðar ${regName}`
+          ? `reglugerðar nr. ${regName}`
           : 'reglugerðarinnar'
       let pushHtml = '' as HTMLText
       if (isDeleted) {
         if (isMalsgrein) {
           // Paragraph was deleted
-          pushHtml = `<p>${malsgrein}. mgr. ${grein}. gr. ${regNameDisplay} er eytt út</p>` as HTMLText
+          pushHtml = `<p>${malsgrein}. mgr. ${grein}. gr. ${regNameDisplay} fellur brott</p>` as HTMLText
         } else if (isGreinTitle) {
           // Title was deleted
-          pushHtml = `<p>Titli ${grein}. gr. ${regNameDisplay} er eytt út</p>` as HTMLText
+          pushHtml = `<p>Fyrirsögn ${grein}. gr. ${regNameDisplay} fellur brott</p>` as HTMLText
         } else if (isStaflidur || isTolulidur) {
           // List was deleted
           pushHtml = `<p>${
-            isStaflidur ? 'Stafliðum' : 'Töluliðum'
-          } eftir ${malsgrein}. mgr. ${grein}. gr. ${regNameDisplay} er eytt út</p>` as HTMLText
+            isStaflidur ? 'Stafliðir' : 'Töluliðir'
+          } eftir ${malsgrein}. mgr. ${grein}. gr. ${regNameDisplay} falla brott</p>` as HTMLText
         } else {
           // We don't know what you deleted, but there was a deletion, and here's the deletelog:
-          pushHtml = `<p>Texta í ${grein}. gr. ${regNameDisplay} er eytt út</p>` as HTMLText
+          pushHtml = `<p>Texti í ${grein}. gr. ${regNameDisplay} fellur brott:</p><p>${oldText}</p>` as HTMLText
+        }
+      } else if (isAddition) {
+        if (isMalsgrein) {
+          // Paragraph was added
+          pushHtml = `<p>Á eftir ${
+            malsgrein - 1
+          }. mgr. ${grein}. gr. ${regNameDisplay} kemur ný málsgrein sem orðast svo:</p><p>${newText}</p>` as HTMLText
+        } else if (isGreinTitle) {
+          // Title was added
+          pushHtml = `<p>Á eftir ${
+            malsgrein - 1
+          }. mgr. ${grein}. gr. ${regNameDisplay} kemur ný fyrirsögn sem orðast svo:</p><p>${newText}</p>` as HTMLText
+        } else if (isStaflidur || isTolulidur) {
+          // List was added
+
+          // Clean list addition:
+          const liCleanArray: (string | null)[] = []
+          newTextElement.querySelectorAll('ins').forEach((e) => {
+            if (e.textContent) liCleanArray.push(e.textContent)
+          })
+
+          const newLiTextBody =
+            liCleanArray.length > 0
+              ? `<ol><li>${liCleanArray.join('</li><li>')}</li><ol>`
+              : `<p>${newText}</p>`
+
+          pushHtml = `<p>${
+            isStaflidur ? 'Stafliðum' : 'Töluliðum'
+          } eftir ${malsgrein}. mgr. ${grein}. gr. ${regNameDisplay} er bætt við:</p>${newLiTextBody}` as HTMLText
+        } else {
+          // We don't know what you added, but there was an addition, and here's the additionlog:
+          pushHtml = `<p>Eftirfarandi texta ${regNameDisplay} var bætt við:</p><p>${newText}</p>` as HTMLText
         }
       } else {
         if (isGreinTitle) {
           // Title was changed
-          pushHtml = `<p>Eftirfarandi breytingar verða á titli fyrir ${grein}. gr. ${regNameDisplay}:</p><p>Í stað ${oldText} kemur ${newText}</p>` as HTMLText
+          pushHtml = `<p>Fyrirsögn ${grein}. gr. ${regNameDisplay} orðast svo:</p><p>${newText}</p>` as HTMLText
         } else if (isMalsgrein) {
           // Paragraph was changed
-          pushHtml = `<p>Eftirfarandi breytingar verða á ${malsgrein}. mgr. ${grein}. gr. ${regNameDisplay}:</p><p>Málsgreinin verður svohljóðandi: ${newText}</p>` as HTMLText
+          pushHtml = `<p>${malsgrein}. mgr. ${grein}. gr. ${regNameDisplay} orðast svo:</p><p>${newText}</p>` as HTMLText
         } else if (isStaflidur || isTolulidur) {
           // List was changed
-          pushHtml = `<p>Eftirfarandi breytingar verða á ${
-            isStaflidur ? 'Staflið' : 'Tölulið'
-          } eftir ${malsgrein}. mgr. ${grein}. gr. ${regNameDisplay}: ${liHtml}` as HTMLText
+          pushHtml = `<p>${malsgrein}. mgr. ${grein}. gr. ${regNameDisplay} breytist:</p> ${liHtml}` as HTMLText
         } else {
           // We don't know what you changed, but there was a change, and here's the changelog:
-          pushHtml = `<p>Eftirfarandi breytingar ${regNameDisplay} áttu sér stað:</p<p>${
+          pushHtml = `<p>Eftirfarandi breytingar ${regNameDisplay} áttu sér stað:</p><p>${
             oldText ? `Í stað ${oldText} kemur ` : ''
           }${newText}</p>` as HTMLText
         }
