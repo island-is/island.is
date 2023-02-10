@@ -155,6 +155,9 @@
       "@island.is/api/domains/regulations": [
         "libs/api/domains/regulations/src/index.ts"
       ],
+      "@island.is/api/domains/sessions": [
+        "libs/api/domains/sessions/src/index.ts"
+      ],
       "@island.is/api/domains/syslumenn": [
         "libs/api/domains/syslumenn/src/index.ts"
       ],
@@ -455,6 +458,7 @@
       "@island.is/clients/rsk/procuring": [
         "libs/clients/rsk/procuring/src/index.ts"
       ],
+      "@island.is/clients/sessions": ["libs/clients/sessions/src/index.ts"],
       "@island.is/clients/smartsolutions": [
         "libs/clients/smartsolutions/src/index.ts"
       ],
@@ -596,6 +600,7 @@
       "@island.is/portals/shared-modules/delegations": [
         "libs/portals/shared-modules/delegations/src/index.ts"
       ],
+      "@island.is/react/components": ["libs/react/components/src/index.ts"],
       "@island.is/react/feature-flags": [
         "libs/react/feature-flags/src/index.ts"
       ],

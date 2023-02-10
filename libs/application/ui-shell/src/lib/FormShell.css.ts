@@ -8,7 +8,6 @@ const headerHeight = 112
 export const root = style({
   minHeight: '-webkit-fill-available',
   display: 'flex',
-  flexDirection: 'column',
   background: theme.color.white,
 
   '@media': {
@@ -47,5 +46,11 @@ export const sidebarInner = style({
     [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
       ...escapeGrid(),
     },
+  },
+})
+
+export const link = style({
+  ':hover': {
+    textDecoration: 'none',
   },
 })
