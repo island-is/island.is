@@ -30,7 +30,7 @@ interface CursorState {
 }
 
 const Sessions = () => {
-  const SESSION_LIMIT = 5
+  const SESSION_LIMIT = 20
 
   const { formatMessage } = useLocale()
 
@@ -82,6 +82,7 @@ const Sessions = () => {
       setSentNationalId(searchNationalId)
       setIsSearchingSSN(true)
       setSessionsData([])
+      setPage({ before: '', after: '' })
     } else if (
       kennitala.isValid(prevSearchNationalId) &&
       !kennitala.isValid(searchNationalId)

@@ -23,3 +23,10 @@ export const textEllipsis = style({
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
 })
+
+export const logo = style({
+  backgroundSize: 'contain',
+  backgroundRepeat: 'no-repeat',
+  width: '16px',
+  height: '16px',
+})

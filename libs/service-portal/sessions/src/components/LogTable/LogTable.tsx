@@ -41,12 +41,12 @@ const LogTable: React.FC<LogTableProps> = ({ data }) => {
             userInfo?.profile.nationalId ?? '',
           )
 
-          const formatedDate = new Date(+session.timestamp).toUTCString()
+          const formattedDate = new Date(+session.timestamp).toUTCString()
 
           return (
             <Table.Row key={index}>
               <Table.Data>
-                <div>{formatDate(formatedDate, dateFormat.is).toString()}</div>
+                <div>{formatDate(formattedDate, dateFormat.is).toString()}</div>
                 <Box
                   alignItems="center"
                   display="flex"
@@ -58,7 +58,7 @@ const LogTable: React.FC<LogTableProps> = ({ data }) => {
                     type="outline"
                     color="blue400"
                   />
-                  {getTime(new Date(formatedDate).toString())}
+                  {getTime(new Date(formattedDate).toString())}
                 </Box>
               </Table.Data>
               <Table.Data>
@@ -98,4 +98,4 @@ const LogTable: React.FC<LogTableProps> = ({ data }) => {
   )
 }
 
-export default LogTable
+export default React.memo(LogTable)
