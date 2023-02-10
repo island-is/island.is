@@ -1,2 +1,1 @@
-export * from './lib/consultationPortal.module'
-export * from './lib/consultationPortal.resolver'
+export * from './lib/api-domains-consultation-portal.module'
