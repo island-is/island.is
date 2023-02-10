@@ -67,20 +67,22 @@ export const Employment = ({
           </GridColumn>
         </GridRow>
       )}
-      <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-          <Label>
-            {formatMessage(parentalLeaveFormMessages.employer.title)}
-          </Label>
-        </GridColumn>
-        <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-          {employers?.length > 0 && (
-            <Box paddingTop={2}>
-              <EmployersTable employers={employers} />
-            </Box>
-          )}
-        </GridColumn>
-      </GridRow>
+      {isSelfEmployed === NO && (
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            <Label>
+              {formatMessage(parentalLeaveFormMessages.employer.title)}
+            </Label>
+          </GridColumn>
+          <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+            {employers?.length > 0 && (
+              <Box paddingTop={2}>
+                <EmployersTable employers={employers} />
+              </Box>
+            )}
+          </GridColumn>
+        </GridRow>
+      )}
     </ReviewGroup>
   )
 }

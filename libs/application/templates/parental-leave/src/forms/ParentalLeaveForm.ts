@@ -631,6 +631,9 @@ export const ParentalLeaveForm: Form = buildForm({
                       isSelfEmployed: string
                     }
                   })?.employer?.isSelfEmployed === YES
+                const isNewSelfEmployed =
+                  (answers as { isSelfEmployed: string })?.isSelfEmployed ===
+                  YES
                 const hasOldSelfEmployedFile =
                   (answers as {
                     employer: {
@@ -640,7 +643,10 @@ export const ParentalLeaveForm: Form = buildForm({
                     }
                   })?.employer?.selfEmployed?.file?.length > 0
 
-                return isSelfEmployed && hasOldSelfEmployedFile
+                return (
+                  (isSelfEmployed && hasOldSelfEmployedFile) ||
+                  isNewSelfEmployed
+                )
               },
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
@@ -665,6 +671,9 @@ export const ParentalLeaveForm: Form = buildForm({
                       isSelfEmployed: string
                     }
                   })?.employer?.isSelfEmployed === YES
+                const isNewSelfEmployed =
+                  (answers as { isSelfEmployed: string })?.isSelfEmployed ===
+                  YES
                 const hasOldSelfEmployedFile =
                   (answers as {
                     employer: {
@@ -674,7 +683,10 @@ export const ParentalLeaveForm: Form = buildForm({
                     }
                   })?.employer?.selfEmployed?.file?.length > 0
 
-                return isSelfEmployed && !hasOldSelfEmployedFile
+                return (
+                  (isSelfEmployed || isNewSelfEmployed) &&
+                  !hasOldSelfEmployedFile
+                )
               },
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
