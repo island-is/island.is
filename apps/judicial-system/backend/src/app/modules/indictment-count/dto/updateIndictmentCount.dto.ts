@@ -1,6 +1,7 @@
 import { IsString, IsOptional } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
+import { IndictmentCountOffense } from '@island.is/judicial-system/types'
 
 export class UpdateIndictmentCountDto {
   @IsOptional()
@@ -22,4 +23,8 @@ export class UpdateIndictmentCountDto {
   @IsString()
   @ApiPropertyOptional()
   readonly legalArguments?: string
+
+  @IsOptional()
+  @ApiPropertyOptional({ enum: IndictmentCountOffense, isArray: true })
+  readonly offenses?: IndictmentCountOffense[]
 }
