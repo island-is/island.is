@@ -72,7 +72,6 @@ import { getConfigValue } from '../../shared/shared.utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ChildrenService } from './children/children.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { ApplicationService } from '@island.is/application/api/core'
 
 interface VMSTError {
   type: string
@@ -106,7 +105,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private parentalLeaveApi: ParentalLeaveApi,
     private applicationInformationAPI: ApplicationInformationApi,
-    private applicationService: ApplicationService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     @Inject(APPLICATION_ATTACHMENT_BUCKET)
     private readonly attachmentBucket: string,
@@ -471,7 +469,11 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
         if (oldSelfEmployedPdfs?.length) {
           for (let i = 0; i <= oldSelfEmployedPdfs.length - 1; i++) {
-            const pdf = await this.getPdf(application, i, 'selfEmployed.file')
+            const pdf = await this.getPdf(
+              application,
+              i,
+              'employer.selfEmployed.file',
+            )
 
             attachments.push({
               attachmentType: apiConstants.attachments.selfEmployed,
