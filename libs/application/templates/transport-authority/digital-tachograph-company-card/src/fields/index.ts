@@ -1,4 +1,3 @@
 export { PaymentChargeOverview } from './Payment/PaymentChargeOverview'
-export { PaymentPending } from './Payment/PaymentPending'
-export { PaymentUrlNotFound } from './Payment/PaymentUrlNotFound'
+export { PaymentPendingField } from './Payment/PaymentPendingField'
 export { Confirmation } from './Confirmation'
