@@ -55,6 +55,33 @@ export type PortalRoute = RouteObject & {
   name: string
   path: string | string[]
   element?: React.ReactNode
+
+  // ------------------------------------------------------------------
+  // React Router RouteObject properties that are being used in modules
+  // ------------------------------------------------------------------
+  
+  /**
+   * The component prop is rendered when the path matches.
+   */
+  element: RouteObject['element']
+  /**
+   * Each route can define a "loader" function to provide data to the route element before it renders.
+   */
+  loader?: RouteObject['loader']
+  /**
+   * When exceptions are thrown in loaders, actions, or component rendering, the errorElement will be rendered.
+   */
+  errorElement?: RouteObject['errorElement']
+  /**
+   * Route actions are the "writes" to route loader "reads". 
+   * They provide a way for apps to perform data mutations with simple HTML and HTTP semantics 
+   * while React Router abstracts away the complexity of asynchronous UI and revalidation.
+   */
+  action?: RouteObject['action']
+  /**
+   * The children prop is rendered when the path matches. Remember to use <Outlet /> in the parent compoennt to render the children.
+   */
+  children?: RouteObject['children']
 }
 ```
 

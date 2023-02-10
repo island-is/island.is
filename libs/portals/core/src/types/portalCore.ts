@@ -1,5 +1,5 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
-import { FC, LazyExoticComponent } from 'react'
+import { FC } from 'react'
 import { MessageDescriptor } from 'react-intl'
 import { RouteObject } from 'react-router-dom'
 
