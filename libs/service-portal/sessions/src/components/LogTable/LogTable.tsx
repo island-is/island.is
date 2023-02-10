@@ -11,7 +11,11 @@ import { SessionsSession } from '@island.is/api/schema'
 import { formatNationalId, getSessionType } from '../../utils/utils'
 import { useAuth } from '@island.is/auth/react'
 import { dateFormat } from '@island.is/shared/constants'
-import { formatDate, getTime } from '@island.is/shared/utils'
+import {
+  formatDate,
+  getOrganizationLogoUrl,
+  getTime,
+} from '@island.is/shared/utils'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { SessionType } from '../../lib/types/sessionTypes'
@@ -62,8 +66,10 @@ const LogTable: React.FC<LogTableProps> = ({ data }) => {
                 </Box>
               </Table.Data>
               <Table.Data>
-                <div className={styles.textEllipsis}>{session.userAgent}</div>
-                <div>{session.ipLocation}</div>
+                <Box>
+                  <div className={styles.textEllipsis}>{session.userAgent}</div>
+                  <div>{session.ip}</div>
+                </Box>
               </Table.Data>
               <Table.Data>
                 <Text variant="eyebrow">{session.client.name || 'Óþekkt'}</Text>
