@@ -9,11 +9,13 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   IndictmentCount,
   UpdateIndictmentCountInput,
+  IndictmentCountOffense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { UpdateIndictmentCountMutation } from './updateIndictmentCountGql'
 import { CreateIndictmentCountMutation } from './createIndictmentCountGql'
 import { DeleteIndictmentCountMutation } from './deleteIndictmentCountGql'
+import { indictmentCount } from '@island.is/judicial-system-web/src/routes/Prosecutor/Indictments/Indictment/IndictmentCount.strings'
 
 interface CreateIndictmentCountMutationResponse {
   createIndictmentCount: IndictmentCount

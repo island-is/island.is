@@ -3,14 +3,24 @@ import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
 import InputMask from 'react-input-mask'
 
-import { Box, Input, Select, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  Input,
+  Select,
+  Button,
+  Tag,
+  Icon,
+} from '@island.is/island-ui/core'
 import {
   ReactSelectOption,
   TempCase as Case,
 } from '@island.is/judicial-system-web/src/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
-import { IndictmentCount as TIndictmentCount } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  IndictmentCount as TIndictmentCount,
+  IndictmentCountOffense,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
@@ -54,13 +64,10 @@ export const IndictmentCount: React.FC<Props> = (props) => {
     //(index, 'todo')
   }
 
-  const todoOptions = [
-    'Sviptingarakstur',
-    'Ölvunarakstur',
-    'Fíkniefnaakstur',
-  ].map((option) => ({
-    value: option,
-    label: option,
+  const offensesList = Object.values(IndictmentCountOffense).map((offense) => ({
+    value: offense,
+    label: formatMessage(strings[offense]),
+    disabled: indictmentCount.offenses?.includes(offense),
   }))
 
   return (
@@ -158,25 +165,57 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           />
         </InputMask>
       </Box>
-      {/* TODO: Finish rest of form here below*/}
       <Box marginBottom={2}>
         <Select
-          name="incident"
-          options={todoOptions}
+          name="offenses"
+          options={offensesList}
           label={formatMessage(strings.incidentLabel)}
           placeholder={formatMessage(strings.incidentPlaceholder)}
-          onChange={() => {
-            todoHandle(1)
+          onChange={(so: ValueType<ReactSelectOption>) => {
+            const selectedOffense = (so as ReactSelectOption)
+              .value as IndictmentCountOffense
+            onChange(indictmentCount.id, {
+              offenses: [...(indictmentCount.offenses || []), selectedOffense],
+            })
           }}
           value={null}
           required
         />
       </Box>
+      {indictmentCount.offenses && indictmentCount.offenses.length > 0 && (
+        <Box marginBottom={2}>
+          {indictmentCount.offenses.map((offense) => (
+            <Box
+              display="inlineBlock"
+              key={`${offense}`}
+              component="span"
+              marginBottom={1}
+              marginRight={1}
+            >
+              <Tag
+                variant="darkerBlue"
+                onClick={() => {
+                  onChange(indictmentCount.id, {
+                    offenses: indictmentCount.offenses?.filter(
+                      (o) => o !== offense,
+                    ),
+                  })
+                }}
+              >
+                <Box display="flex" alignItems="center">
+                  {formatMessage(strings[offense])}
+                  <Icon icon="close" size="small" />
+                </Box>
+              </Tag>
+            </Box>
+          ))}
+        </Box>
+      )}
       <Box marginBottom={2}>
         <Select
           name="legalArgument"
           icon="search"
-          options={todoOptions}
+          options={[]}
           label={formatMessage(strings.legalArgumentLabel)}
           placeholder={formatMessage(strings.legalArgumentPlaceholder)}
           value={null}

@@ -8,6 +8,8 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 
+import { IndictmentCountOffense } from '@island.is/judicial-system/types'
+
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { Case } from '../../case/models/case.model'
@@ -69,4 +71,11 @@ export class IndictmentCount extends Model {
   })
   @ApiPropertyOptional()
   legal_arguments?: string
+
+  @Column({
+    type: DataType.JSONB,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  offenses?: IndictmentCountOffense[]
 }
