@@ -16,9 +16,10 @@ import { AdrLicensePayloadMapper } from './mappers/adrLicenseMapper'
 import { DisabilityLicensePayloadMapper } from './mappers/disabilityLicenseMapper'
 import { MachineLicensePayloadMapper } from './mappers/machineLicenseMapper'
 import { FirearmLicensePayloadMapper } from './mappers/firearmLicenseMapper'
-import { LicenseServiceServiceV2 } from './licenseServiceV2.service'
+import { LicenseServiceService } from './licenseService.service'
 import { LicenseMapperModule } from './mappers/licenseMapper.module'
 import { DrivingLicensePayloadMapper } from './mappers/drivingLicenseMapper'
+
 export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
     type: GenericLicenseType.FirearmLicense,
@@ -80,7 +81,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   ],
   providers: [
     MainResolver,
-    LicenseServiceServiceV2,
+    LicenseServiceService,
     {
       provide: LOGGER_PROVIDER,
       useValue: logger,
@@ -120,6 +121,6 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
       ],
     },
   ],
-  exports: [LicenseServiceServiceV2],
+  exports: [LicenseServiceService],
 })
 export class LicenseServiceModule {}

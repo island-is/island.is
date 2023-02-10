@@ -15,7 +15,6 @@ import {
   LicenseClient,
   LicensePkPassAvailability,
   PkPassVerification,
-  PkPassVerificationError,
   Result,
 } from '../../licenseClient.type'
 import { PkPassClient } from './pkPassClient/pkpass.client'
@@ -359,17 +358,22 @@ export class DrivingLicenseClient implements LicenseClient<DrivingLicenseDto> {
     }
   }
 
-  async verifyPkPass(data: string): Promise<PkPassVerification | null> {
+  async verifyPkPass(data: string): Promise<Result<PkPassVerification>> {
     const result = await this.pkpassClient.verifyPkpassByPdf417(data)
 
     if (!result) {
       this.logger.warn('Missing pkpass verify from client', {
         category: LOG_CATEGORY,
       })
-      return null
+      return {
+        ok: false,
+        error: {
+          code: 13,
+          message:
+            'Driving license pkpass verification failed, nothing returned from client',
+        },
+      }
     }
-
-    let error: PkPassVerificationError | undefined
 
     if (result.error) {
       let data = ''
@@ -386,16 +390,13 @@ export class DrivingLicenseClient implements LicenseClient<DrivingLicenseDto> {
       // Use status code, or http status code from serivce, or "0" for unknown
       const status = serviceErrorStatus ?? (result.error.statusCode || 0)
 
-      error = {
-        status: status.toString(),
-        message: result.error.serviceError?.message || 'Unknown error',
-        data,
-      }
-
       return {
-        valid: false,
-        data: undefined,
-        error,
+        ok: false,
+        error: {
+          code: status,
+          message: result.error.serviceError?.message || 'Unknown error',
+          data,
+        },
       }
     }
 
@@ -408,15 +409,12 @@ export class DrivingLicenseClient implements LicenseClient<DrivingLicenseDto> {
       const license = await this.requestFromXroadApi(nationalId)
 
       if (!license.ok) {
-        error = {
-          status: '0',
-          message: 'missing licenses',
-        }
-
         return {
-          valid: false,
-          data: undefined,
-          error,
+          ok: false,
+          error: {
+            code: 0,
+            message: 'Missing driver licenses',
+          },
         }
       }
 
@@ -435,9 +433,11 @@ export class DrivingLicenseClient implements LicenseClient<DrivingLicenseDto> {
     }
 
     return {
-      valid: result.valid,
-      data: response ? JSON.stringify(response) : undefined,
-      error,
+      ok: true,
+      data: {
+        valid: result.valid,
+        data: response ? JSON.stringify(response) : undefined,
+      },
     }
   }
 }

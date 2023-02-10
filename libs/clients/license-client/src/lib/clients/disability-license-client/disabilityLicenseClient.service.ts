@@ -201,52 +201,38 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
     }
   }
 
-  async verifyPkPass(data: string): Promise<PkPassVerification | null> {
+  async verifyPkPass(data: string): Promise<Result<PkPassVerification>> {
     const { code, date } = JSON.parse(data) as PkPassVerificationInputData
     const result = await this.smartApi.verifyPkPass({ code, date })
 
-    if (!result) {
-      this.logger.warn('Missing pkpass verify from client', {
-        category: LOG_CATEGORY,
-      })
-      return null
-    }
-
     if (!result.ok) {
-      return {
-        valid: false,
-        data: undefined,
-        error: {
-          status: result.error.code.toString(),
-          message: result.error.message ?? '',
-          data: result.error.data,
-        },
-      }
+      return result
     }
 
     /*
-      TODO: VERIFICATION Máni (thorkellmani @ github)
+      TODO: VERIFICATION!!!!!!!! Máni (thorkellmani @ github)
       Currently Impossible
       A robust verification needs to both check that the PkPass is valid,
       and that the user being scanned does indeed have a license!.
       This method currently checks the validity of the PkPass, but we can't
-      inspect the validity of their actual disability license. As of now, we can
+      inspect the validity of their actual ADR license. As of now, we can
       only retrieve the license of a logged in user, not the user being scanned!
     */
 
     return {
-      valid: result.data.valid,
+      ok: true,
+      data: result.data,
     }
   }
 
   async pushUpdatePass(
     inputData: PassDataInput,
     nationalId: string,
-  ): Promise<Result<Pass | undefined>> {
+  ): Promise<Result<Pass>> {
     return await this.smartApi.updatePkPass(inputData, nationalId)
   }
 
-  async pullUpdatePass(nationalId: string): Promise<Result<Pass | undefined>> {
+  async pullUpdatePass(nationalId: string): Promise<Result<Pass>> {
     return {
       ok: false,
       error: {
@@ -260,10 +246,7 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
     return await this.smartApi.revokePkPass(nationalId)
   }
 
-  async verifyPass(
-    inputData: string,
-    nationalId: string,
-  ): Promise<Result<VerifyPassData>> {
+  async verifyPass(inputData: string): Promise<Result<VerifyPassData>> {
     const { code, date } = JSON.parse(inputData)
 
     return await this.smartApi.verifyPkPass({ code, date })

@@ -37,7 +37,7 @@ export type GetGenericLicenseOptions = {
   onlyList?: boolean
 }
 @Injectable()
-export class LicenseServiceServiceV2 {
+export class LicenseServiceService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly licenseClient: LicenseClientService,
@@ -275,9 +275,9 @@ export class LicenseServiceServiceV2 {
     const verification = await licenseService.verifyPkPass(data, passTemplateId)
 
     // TODO BETTER ERROR HANDLING
-    if (!verification) {
+    if (!verification.ok) {
       throw new Error(`Unable to verify pkpass for user`)
     }
-    return verification
+    return verification.data
   }
 }

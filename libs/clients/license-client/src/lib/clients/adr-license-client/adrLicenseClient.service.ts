@@ -221,27 +221,12 @@ export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
     }
   }
 
-  async verifyPkPass(data: string): Promise<PkPassVerification | null> {
+  async verifyPkPass(data: string): Promise<Result<PkPassVerification>> {
     const { code, date } = JSON.parse(data) as PkPassVerificationInputData
     const result = await this.smartApi.verifyPkPass({ code, date })
 
-    if (!result) {
-      this.logger.warn('Missing pkpass verify from client', {
-        category: LOG_CATEGORY,
-      })
-      return null
-    }
-
     if (!result.ok) {
-      return {
-        valid: false,
-        data: undefined,
-        error: {
-          status: result.error.code.toString(),
-          message: result.error.message ?? '',
-          data: result.error.data,
-        },
-      }
+      return result
     }
 
     /*
@@ -255,7 +240,8 @@ export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
     */
 
     return {
-      valid: result.data.valid,
+      ok: true,
+      data: result.data,
     }
   }
 }

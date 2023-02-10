@@ -28,7 +28,7 @@ import {
   GenericLicenseType,
   GenericLicenseTypeType,
 } from '../licenceService.type'
-import { LicenseServiceServiceV2 } from '../licenseServiceV2.service'
+import { LicenseServiceService } from '../licenseService.service'
 
 @InputType()
 export class GetGenericLicensesInput {
@@ -76,9 +76,7 @@ export class VerifyPkPassInput {
 @Resolver()
 @Audit({ namespace: '@island.is/api/license-service' })
 export class MainResolver {
-  constructor(
-    private readonly licenseServiceService: LicenseServiceServiceV2,
-  ) {}
+  constructor(private readonly licenseServiceService: LicenseServiceService) {}
 
   @Query(() => [GenericUserLicense])
   @Audit()

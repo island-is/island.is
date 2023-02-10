@@ -23,25 +23,6 @@ export enum LicensePkPassAvailability {
   Unknown = 'Unknown',
 }
 
-export type PkPassVerificationError = {
-  /**
-   * Generic placeholder for a status code, could be the HTTP status code, code
-   * from API, or empty string. Semantics need to be defined per license type
-   */
-  status: string
-
-  /**
-   * Generic placeholder for a status message, from API, or empty "Unknown error".
-   * Semantics need to be defined per license type
-   */
-  message: string
-
-  /**
-   * data is used to pass along the error from originator, e.g. SmartSolution
-   */
-  data?: string
-}
-
 export type PassTemplateIds = {
   firearmLicense: string
   adrLicense: string
@@ -63,7 +44,6 @@ export type PkPassVerificationData = {
 export type PkPassVerification = {
   valid: boolean
   data?: string
-  error?: PkPassVerificationError
 }
 
 export type PkPassVerificationInputData = {
@@ -109,7 +89,7 @@ export type ServiceErrorCode =
   | 11
   /** JSON parse failed */
   | 12
-  /** External service error */
+  /** Service error */
   | 13
   /** Incomplete service response */
   | 14
@@ -134,14 +114,14 @@ export interface LicenseClient<ResultType> {
   verifyPkPass: (
     data: string,
     passTemplateId: string,
-  ) => Promise<PkPassVerification | null>
+  ) => Promise<Result<PkPassVerification>>
 
   pushUpdatePass?: (
     inputData: PassDataInput,
     nationalId: string,
-  ) => Promise<Result<Pass | undefined>>
+  ) => Promise<Result<Pass>>
 
-  pullUpdatePass?: (nationalId: string) => Promise<Result<Pass | undefined>>
+  pullUpdatePass?: (nationalId: string) => Promise<Result<Pass>>
 
   revokePass?: (nationalId: string) => Promise<Result<RevokePassData>>
 
