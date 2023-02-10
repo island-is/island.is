@@ -1,6 +1,10 @@
-import { defineTemplateApi } from '@island.is/application/types'
+import {
+  defineTemplateApi,
+  PaymentCatalogApi,
+} from '@island.is/application/types'
+import { SYSLUMADUR_NATIONAL_ID } from '../lib/constants'
 
-export { PaymentCatalogApi, UserProfileApi } from '@island.is/application/types'
+export { UserProfileApi } from '@island.is/application/types'
 
 export const CriminalRecordApi = defineTemplateApi({
   action: 'criminalRecord',
@@ -11,8 +15,14 @@ export const NoDebtCertificateApi = defineTemplateApi({
   action: 'debtLessCertificate',
   externalDataId: 'debtStatus',
 })
-
 export const CourtBankruptcyCertApi = defineTemplateApi({
   action: 'courtBankruptcyCert',
   externalDataId: 'courtBankruptcyCert',
+})
+
+export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
+  params: {
+    organizationId: SYSLUMADUR_NATIONAL_ID,
+  },
+  externalDataId: 'payment',
 })

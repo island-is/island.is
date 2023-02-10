@@ -20,10 +20,10 @@ import { getApplicationTemplateByTypeId } from '@island.is/application/template-
 import { LoadingShell } from './LoadingShell'
 import { format as formatKennitala } from 'kennitala'
 import { useLocale } from '@island.is/localization'
-import { useHistory } from 'react-router-dom'
 import { ScreenType, DelegationsScreenDataType, Delegation } from '../types'
 import { FeatureFlagClient, Features } from '@island.is/feature-flags'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { useNavigate } from 'react-router-dom'
 
 interface DelegationsScreenProps {
   alternativeSubjects?: { nationalId: string }[]
@@ -42,8 +42,8 @@ export const DelegationsScreen = ({
   const { formatMessage } = useLocale()
   const type = getTypeFromSlug(slug)
   const { switchUser, userInfo: user } = useAuth()
-  const history = useHistory()
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+  const navigate = useNavigate()
 
   // Check for user delegations if application supports delegations
   const { data: delegations, error } = useQuery(ACTOR_DELEGATIONS, {
@@ -170,10 +170,10 @@ export const DelegationsScreen = ({
   ])
 
   const handleClick = (nationalId?: string) => {
-    if (screenData.screenType !== ScreenType.ONGOING) {
-      history.push('?delegationChecked=true')
-    }
-    if (nationalId) {
+    if (screenData.screenType !== ScreenType.ONGOING && nationalId) {
+      navigate('?delegationChecked=true')
+      switchUser(nationalId)
+    } else if (nationalId) {
       switchUser(nationalId)
     } else {
       checkDelegation(true)

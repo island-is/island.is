@@ -22,7 +22,6 @@ import {
   FormValue,
   DefaultEvents,
 } from '@island.is/application/types'
-import type { User } from '@island.is/api/domains/national-registry'
 import { format as formatNationalId } from 'kennitala'
 import {
   NationalRegistryUser,

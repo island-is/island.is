@@ -1,7 +1,7 @@
 import { Application } from '@island.is/application/types'
 import { GiveRightsObj } from '../../types'
 import { getApplicationAnswers, getSelectedChild } from '../parentalLeaveUtils'
-import { ParentalRelations, YES } from '../../constants'
+import { ParentalRelations, YES, MANUAL } from '../../constants'
 import { buildError } from './utils'
 import { errorMessages } from '../messages'
 
@@ -14,6 +14,8 @@ export const giveRightsValidationSection = (
   const {
     multipleBirthsRequestDays,
     hasMultipleBirths,
+    otherParent,
+    otherParentRightOfAccess,
   } = getApplicationAnswers(application.answers)
 
   const selectedChild = getSelectedChild(
@@ -27,6 +29,16 @@ export const giveRightsValidationSection = (
     selectedChild?.parentalRelation === ParentalRelations.primary
   ) {
     return buildError(errorMessages.notAllowedToGiveRights, 'transferRights')
+  }
+  if (
+    givingRightsObj.isGivingRights === YES &&
+    otherParent === MANUAL &&
+    otherParentRightOfAccess !== YES
+  ) {
+    return buildError(
+      errorMessages.notAllowedToGiveRightsOtherParentNotAllowed,
+      'transferRights',
+    )
   }
 
   return undefined

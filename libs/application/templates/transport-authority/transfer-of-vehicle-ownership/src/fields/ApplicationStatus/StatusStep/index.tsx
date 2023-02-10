@@ -2,7 +2,7 @@ import { Box, Tag, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { review } from '../../../lib/messages'
-import { ReviewScreenProps, ReviewSectionProps } from '../../../types'
+import { ReviewScreenProps, ReviewSectionProps } from '../../../shared'
 
 export const StatusStep: FC<ReviewSectionProps & ReviewScreenProps> = ({
   title,
@@ -13,6 +13,7 @@ export const StatusStep: FC<ReviewSectionProps & ReviewScreenProps> = ({
   reviewer = [],
   reviewerNationalId = '',
   messageValue = '',
+  isComplete = false,
 }) => {
   const { formatMessage } = useLocale()
   if (!visible) return null
@@ -47,6 +48,7 @@ export const StatusStep: FC<ReviewSectionProps & ReviewScreenProps> = ({
             </Text>
           </Box>
           {reviewer.length > 0 &&
+            !isComplete &&
             !!reviewer.find((reviewerItem) => !reviewerItem.approved) && (
               <Box>
                 {reviewer.map((reviewerItem, index) => {

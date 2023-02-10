@@ -36,6 +36,7 @@ export const serviceSetup = (services: {
   documentsService: ServiceBuilder<'services-documents'>
   servicesEndorsementApi: ServiceBuilder<'services-endorsement-api'>
   airDiscountSchemeBackend: ServiceBuilder<'air-discount-scheme-backend'>
+  sessionsApi: ServiceBuilder<'services-sessions-api'>
 }): ServiceBuilder<'api'> => {
   return service('api')
     .namespace('islandis')
@@ -53,6 +54,11 @@ export const serviceSetup = (services: {
       AIR_DISCOUNT_SCHEME_BACKEND_URL: ref(
         (h) => `http://${h.svc(services.airDiscountSchemeBackend)}`,
       ),
+      AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: {
+        dev: ref((h) => h.svc('loftbru.dev01.devland.is')),
+        staging: ref((h) => h.svc('loftbru.staging01.devland.is')),
+        prod: ref((h) => h.svc('loftbru.island.is')),
+      },
       FILE_STORAGE_UPLOAD_BUCKET: {
         dev: 'island-is-dev-upload-api',
         staging: 'island-is-staging-upload-api',
@@ -162,10 +168,17 @@ export const serviceSetup = (services: {
       },
       NO_UPDATE_NOTIFIER: 'true',
       FISKISTOFA_ZENTER_CLIENT_ID: '1114',
+      SOFFIA_SOAP_URL: {
+        dev: ref((h) => h.svc('https://soffiaprufa.skra.is')),
+        staging: ref((h) => h.svc('https://soffiaprufa.skra.is')),
+        prod: ref((h) => h.svc('https://soffia2.skra.is')),
+        local: ref((h) => h.svc('https://localhost:8443')),
+      },
+      HSN_WEB_FORM_ID: '1dimJFHLFYtnhoYEA3JxRK',
+      SESSIONS_API_URL: ref((h) => `http://${h.svc(services.sessionsApi)}`),
     })
 
     .secrets({
-      SOFFIA_SOAP_URL: '/k8s/api/SOFFIA_SOAP_URL',
       DOCUMENT_PROVIDER_BASE_PATH: '/k8s/api/DOCUMENT_PROVIDER_BASE_PATH',
       DOCUMENT_PROVIDER_TOKEN_URL: '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL',
       DOCUMENT_PROVIDER_BASE_PATH_TEST:
@@ -207,9 +220,12 @@ export const serviceSetup = (services: {
       PKPASS_SECRET_KEY: '/k8s/api/PKPASS_SECRET_KEY',
       VE_PKPASS_API_KEY: '/k8s/api/VE_PKPASS_API_KEY',
       RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY',
+      TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY',
       SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL',
       FIREARM_LICENSE_PASS_TEMPLATE_ID:
         '/k8s/api/FIREARM_LICENSE_PASS_TEMPLATE_ID',
+      DISABILITY_LICENSE_PASS_TEMPLATE_ID:
+        '/k8s/DISABILITY_LICENSE_PASS_TEMPLATE_ID',
       MACHINE_LICENSE_PASS_TEMPLATE_ID:
         '/k8s/api/MACHINE_LICENSE_PASS_TEMPLATE_ID',
       ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID',
@@ -237,6 +253,8 @@ export const serviceSetup = (services: {
       FISKISTOFA_POWERBI_CLIENT_SECRET:
         '/k8s/api/FISKISTOFA_POWERBI_CLIENT_SECRET',
       FISKISTOFA_POWERBI_TENANT_ID: '/k8s/api/FISKISTOFA_POWERBI_TENANT_ID',
+      HSN_WEB_FORM_RESPONSE_URL: '/k8s/api/HSN_WEB_FORM_RESPONSE_URL',
+      HSN_WEB_FORM_RESPONSE_SECRET: '/k8s/api/HSN_WEB_FORM_RESPONSE_SECRET',
     })
     .xroad(
       AdrAndMachine,

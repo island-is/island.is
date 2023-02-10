@@ -1,6 +1,8 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
+import compareAsc from 'date-fns/compareAsc'
+import parseISO from 'date-fns/parseISO'
 
 import {
   BlueBox,
@@ -23,12 +25,12 @@ import {
   RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
-  titles,
-  icHearingArrangements as m,
-} from '@island.is/judicial-system-web/messages'
+  useCase,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
   AlertMessage,
   RadioButton,
@@ -40,6 +42,8 @@ import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-syste
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as constants from '@island.is/judicial-system/consts'
+
+import { icHearingArrangements as m } from './HearingArrangements.strings'
 
 const HearingArrangements = () => {
   const {
@@ -63,47 +67,43 @@ const HearingArrangements = () => {
     handleCourtDateChange,
   } = useCourtArrangements(workingCase)
 
-  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
 
-  useEffect(() => {
-    if (isCaseUpToDate && !initialAutoFillDone) {
-      if (!workingCase.courtDate) {
-        setCourtDate(workingCase.requestedCourtDate)
-
-        setInitialAutoFillDone(true)
-      }
-
-      setAndSendCaseToServer(
-        [
-          {
-            sessionArrangements: workingCase.defenderName
-              ? SessionArrangements.ALL_PRESENT
-              : undefined,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
-
-      setInitialAutoFillDone(true)
+  const initialize = useCallback(() => {
+    if (!workingCase.courtDate) {
+      setCourtDate(workingCase.requestedCourtDate)
     }
-  }, [
-    setAndSendCaseToServer,
-    initialAutoFillDone,
-    isCaseUpToDate,
-    setCourtDate,
-    setWorkingCase,
-    workingCase,
-  ])
+
+    setAndSendCaseToServer(
+      [
+        {
+          sessionArrangements: workingCase.defenderName
+            ? SessionArrangements.ALL_PRESENT
+            : undefined,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }, [setAndSendCaseToServer, setCourtDate, setWorkingCase, workingCase])
+
+  useOnceOn(isCaseUpToDate, initialize)
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
-      const hasSentNotification = workingCase?.notifications?.find(
+      const courtDateNotifications = workingCase.notifications?.filter(
         (notification) => notification.type === NotificationType.COURT_DATE,
       )
 
-      setAndSendCaseToServer(
+      const latestCourtDateNotification = courtDateNotifications?.sort((a, b) =>
+        compareAsc(parseISO(b.created), parseISO(a.created)),
+      )[0]
+
+      const hasSentNotification = latestCourtDateNotification?.recipients.some(
+        (recipient) => recipient.success,
+      )
+
+      await setAndSendCaseToServer(
         [
           {
             courtDate: courtDate
@@ -343,7 +343,9 @@ const HearingArrangements = () => {
                 router.push(`${navigateTo}/${workingCase.id}`)
               }}
               primaryButtonText={formatMessage(m.modal.primaryButtonText)}
-              secondaryButtonText={formatMessage(m.modal.secondaryButtonText)}
+              secondaryButtonText={formatMessage(m.modal.secondaryButtonText, {
+                courtDateHasChanged,
+              })}
               isPrimaryButtonLoading={isSendingNotification}
             />
           )}

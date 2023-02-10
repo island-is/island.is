@@ -34,23 +34,26 @@ import {
   TUploadFile,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { CaseFileCategory } from '@island.is/judicial-system/types'
+import { CaseFileCategory, Feature } from '@island.is/judicial-system/types'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
+import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './CaseFiles.strings'
 
 const CaseFiles: React.FC = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
+    FormContext,
+  )
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
   const { formatMessage } = useIntl()
   const { upload, remove } = useS3Upload(workingCase.id)
+  const { features } = useContext(FeatureContext)
+  const isTrafficViolationCaseCheck =
+    features.includes(Feature.INDICTMENT_ROUTE) &&
+    isTrafficViolationCase(workingCase.indictmentSubtypes)
 
   useEffect(() => {
     if (workingCase.caseFiles) {
@@ -117,18 +120,15 @@ const CaseFiles: React.FC = () => {
       try {
         if (file.id) {
           await remove(file.id)
-          setWorkingCase((prev) => ({
-            ...prev,
-            caseFiles: prev.caseFiles?.filter(
-              (caseFile) => caseFile.id !== file.id,
-            ),
-          }))
+          setDisplayFiles((prev) => {
+            return prev.filter((caseFile) => caseFile.id !== file.id)
+          })
         }
       } catch {
         toast.error(formatMessage(errors.general))
       }
     },
-    [formatMessage, remove, setWorkingCase],
+    [formatMessage, remove, setDisplayFiles],
   )
 
   const handleRetry = useCallback(
@@ -159,7 +159,10 @@ const CaseFiles: React.FC = () => {
     <PageLayout
       workingCase={workingCase}
       activeSection={Sections.PROSECUTOR}
-      activeSubSection={IndictmentsProsecutorSubsections.CASE_FILES}
+      activeSubSection={
+        IndictmentsProsecutorSubsections.CASE_FILES +
+        (isTrafficViolationCaseCheck ? 1 : 0)
+      }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
@@ -272,7 +275,11 @@ const CaseFiles: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.INDICTMENTS_PROCESSING_ROUTE}/${workingCase.id}`}
+          previousUrl={`${
+            isTrafficViolationCaseCheck
+              ? constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE
+              : constants.INDICTMENTS_PROCESSING_ROUTE
+          }/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(constants.INDICTMENTS_OVERVIEW_ROUTE)
           }

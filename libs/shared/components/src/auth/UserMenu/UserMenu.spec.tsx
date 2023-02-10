@@ -1,5 +1,5 @@
 import React, { FC, ReactNode } from 'react'
-import { BrowserRouter as Router } from 'react-router-dom'
+import { BrowserRouter } from 'react-router-dom'
 import {
   render,
   screen,
@@ -11,7 +11,7 @@ import {
 import '@testing-library/jest-dom'
 import { MockedProvider } from '@apollo/client/testing'
 import { LocaleProvider, LocaleContext } from '@island.is/localization'
-import { MockedAuthenticator, MockUser } from '@island.is/auth/react'
+import { MockedAuthProvider, MockUser } from '@island.is/auth/react'
 import {
   Features,
   MockedFeatureFlagProvider,
@@ -59,9 +59,9 @@ const mocks = [
 const wrapper: FC = ({ children }) => (
   <MockedFeatureFlagProvider flags={[Features.delegationsEnabled]}>
     <MockedProvider mocks={mocks} addTypename={false}>
-      <Router>
+      <BrowserRouter>
         <LocaleProvider skipPolyfills>{children}</LocaleProvider>
-      </Router>
+      </BrowserRouter>
     </MockedProvider>
   </MockedFeatureFlagProvider>
 )
@@ -83,13 +83,9 @@ describe('UserMenu', () => {
     { user }: { user?: MockUser } = {},
   ) =>
     render(
-      <MockedAuthenticator
-        switchUser={switchUser}
-        signOut={signOut}
-        user={user}
-      >
+      <MockedAuthProvider switchUser={switchUser} signOut={signOut} user={user}>
         {ui}
-      </MockedAuthenticator>,
+      </MockedAuthProvider>,
       {
         wrapper,
       },

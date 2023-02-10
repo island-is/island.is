@@ -39,7 +39,7 @@ describe('FileController - Create presigned post', () => {
       const then = {} as Then
 
       await fileController
-        .createPresignedPost(caseId, createPresignedPost, theCase)
+        .createPresignedPost(caseId, theCase, createPresignedPost)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 

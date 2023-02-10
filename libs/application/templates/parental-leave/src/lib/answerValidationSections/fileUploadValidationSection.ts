@@ -3,10 +3,14 @@ import {
   AnswerValidationConstants,
   PARENTAL_GRANT_STUDENTS,
   SINGLE,
+  States,
   UnEmployedBenefitTypes,
   YES,
 } from '../../constants'
-import { getApplicationAnswers } from '../parentalLeaveUtils'
+import {
+  getApplicationAnswers,
+  isParentWithoutBirthParent,
+} from '../parentalLeaveUtils'
 import isEmpty from 'lodash/isEmpty'
 import { buildError } from './utils'
 import { errorMessages } from '../messages'
@@ -24,6 +28,7 @@ export const fileUploadValidationSection = (
     isRecivingUnemploymentBenefits,
     unemploymentBenefits,
     otherParent,
+    additionalDocuments,
   } = getApplicationAnswers(application.answers)
   if (isSelfEmployed === YES && obj.selfEmployedFile) {
     if (isEmpty((obj as { selfEmployedFile: unknown[] }).selfEmployedFile))
@@ -72,6 +77,39 @@ export const fileUploadValidationSection = (
 
       return undefined
     }
+  }
+
+  if (
+    isParentWithoutBirthParent(application.answers) &&
+    obj.parentWithoutBirthParent
+  ) {
+    if (
+      isEmpty(
+        (obj as { parentWithoutBirthParent: unknown[] })
+          .parentWithoutBirthParent,
+      )
+    )
+      return buildError(
+        errorMessages.requiredAttachment,
+        'parentWithoutBirthParent',
+        FILEUPLOAD,
+      )
+
+    return undefined
+  }
+
+  if (application.state === States.ADDITIONAL_DOCUMENTS_REQUIRED) {
+    if (
+      additionalDocuments ||
+      isEmpty((obj as { additionalDocuments: unknown[] }).additionalDocuments)
+    ) {
+      return {
+        path: 'additionalDocumentsScreen.fileUpload.additionalDocuments',
+        message: errorMessages.requiredAttachment,
+      }
+    }
+
+    return undefined
   }
 
   return undefined

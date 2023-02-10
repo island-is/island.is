@@ -23,6 +23,7 @@ import {
   directionType,
   sortableTableColumn,
   SortConfig,
+  TempCaseListEntry as CaseListEntry,
 } from '@island.is/judicial-system-web/src/types'
 import {
   capitalize,
@@ -30,7 +31,6 @@ import {
   formatDOB,
 } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
-import type { Case } from '@island.is/judicial-system/types'
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { displayCaseType, mapCaseStateToTagVariant } from './utils'
@@ -39,10 +39,10 @@ import MobileCase from './MobileCase'
 import { cases as m } from './Cases.strings'
 
 interface Props {
-  cases: Case[]
+  cases: CaseListEntry[]
   onRowClick: (id: string) => void
   isDeletingCase: boolean
-  onDeleteCase?: (caseToDelete: Case) => Promise<void>
+  onDeleteCase?: (caseToDelete: CaseListEntry) => Promise<void>
 }
 
 const ActiveCases: React.FC<Props> = (props) => {
@@ -72,7 +72,7 @@ const ActiveCases: React.FC<Props> = (props) => {
 
   useMemo(() => {
     if (cases && sortConfig) {
-      cases.sort((a: Case, b: Case) => {
+      cases.sort((a: CaseListEntry, b: CaseListEntry) => {
         // Credit: https://stackoverflow.com/a/51169
         return sortConfig.direction === 'ascending'
           ? (sortConfig.column === 'defendant' &&
@@ -127,7 +127,7 @@ const ActiveCases: React.FC<Props> = (props) => {
 
   return width < theme.breakpoints.md ? (
     <>
-      {cases.map((theCase: Case) => (
+      {cases.map((theCase: CaseListEntry) => (
         <Box marginTop={2} key={theCase.id}>
           <MobileCase
             onClick={() => onRowClick(theCase.id)}
@@ -306,7 +306,7 @@ const ActiveCases: React.FC<Props> = (props) => {
                     <Text as="span">
                       {displayCaseType(formatMessage, c.type, c.decision)}
                     </Text>
-                    {c.parentCase && (
+                    {c.parentCaseId && (
                       <Text as="span" variant="small" color="dark400">
                         Framlenging
                       </Text>

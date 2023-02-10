@@ -52,6 +52,10 @@ import { FinancialStatementsInaoTemplateModule } from './financial-statements-in
 import { FinancialStatementsInaoTemplateService } from './financial-statements-inao/financial-statements-inao.service'
 import { NoDebtCertificateModule } from './no-debt-certificate/no-debt-certificate.module'
 import { NoDebtCertificateService } from './no-debt-certificate/no-debt-certificate.service'
+import { InheritanceReportService } from './inheritance-report/inheritance-report.service'
+import { InheritanceReportModule } from './inheritance-report/inheritance-report.module'
+import { EstateTemplateModule } from './estate/estate.module'
+import { EstateTemplateService } from './estate/estate.service'
 import { AnonymityInVehicleRegistryModule } from './transport-authority/anonymity-in-vehicle-registry/anonymity-in-vehicle-registry.module'
 import { AnonymityInVehicleRegistryService } from './transport-authority/anonymity-in-vehicle-registry/anonymity-in-vehicle-registry.service'
 import { ChangeCoOwnerOfVehicleModule } from './transport-authority/change-co-owner-of-vehicle/change-co-owner-of-vehicle.module'
@@ -70,8 +74,8 @@ import { OrderVehicleRegistrationCertificateModule } from './transport-authority
 import { OrderVehicleRegistrationCertificateService } from './transport-authority/order-vehicle-registration-certificate/order-vehicle-registration-certificate.service'
 import { TransferOfVehicleOwnershipModule } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.module'
 import { TransferOfVehicleOwnershipService } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.service'
-import { EstateTemplateModule } from './estate/estate.module'
-import { EstateTemplateService } from './estate/estate.service'
+import { DrivingLicenseBookUpdateInstructorModule } from './driving-license-book-update-instructor/driving-license-book-update-instructor.module'
+import { DrivingLicenseBookUpdateInstructorService } from './driving-license-book-update-instructor/driving-license-book-update-instructor.service'
 
 //TODO: ADD These templates.
 import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
@@ -106,6 +110,8 @@ export const modules = [
   OperatingLicenseModule,
   FinancialStatementsInaoTemplateModule,
   NoDebtCertificateModule,
+  InheritanceReportModule,
+  EstateTemplateModule,
   AnonymityInVehicleRegistryModule,
   ChangeCoOwnerOfVehicleModule,
   ChangeOperatorOfVehicleModule,
@@ -115,7 +121,7 @@ export const modules = [
   OrderVehicleLicensePlateModule,
   OrderVehicleRegistrationCertificateModule,
   TransferOfVehicleOwnershipModule,
-  EstateTemplateModule,
+  DrivingLicenseBookUpdateInstructorModule,
 ]
 
 export const services = [
@@ -148,6 +154,8 @@ export const services = [
   FinancialStatementsInaoTemplateService,
   MarriageConditionsSubmissionService,
   NoDebtCertificateService,
+  InheritanceReportService,
+  EstateTemplateService,
   AnonymityInVehicleRegistryService,
   ChangeCoOwnerOfVehicleService,
   ChangeOperatorOfVehicleService,
@@ -157,5 +165,5 @@ export const services = [
   OrderVehicleLicensePlateService,
   OrderVehicleRegistrationCertificateService,
   TransferOfVehicleOwnershipService,
-  EstateTemplateService,
+  DrivingLicenseBookUpdateInstructorService,
 ]

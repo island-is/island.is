@@ -7,17 +7,10 @@ import {
   DefaultEvents,
   ApplicationRole,
   defineTemplateApi,
-  PaymentCatalogApi,
   UserProfileApi,
 } from '@island.is/application/types'
 import { dataSchema } from './dataSchema'
-import {
-  Roles,
-  States,
-  Events,
-  ApiActions,
-  SYSLUMADUR_NATIONAL_ID,
-} from './constants'
+import { Roles, States, Events, ApiActions } from './constants'
 import { m } from './messages'
 import { FeatureFlagClient, Features } from '@island.is/feature-flags'
 import { AuthDelegationType } from '../types/schema'
@@ -29,6 +22,7 @@ import {
   CourtBankruptcyCertApi,
   CriminalRecordApi,
   NoDebtCertificateApi,
+  SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 
 const oneDay = 24 * 3600 * 1000
@@ -88,10 +82,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                PaymentCatalogApi.configure({
-                  params: { organizationId: SYSLUMADUR_NATIONAL_ID },
-                  externalDataId: 'payment',
-                }),
+                SyslumadurPaymentCatalogApi,
                 UserProfileApi,
                 CriminalRecordApi,
                 NoDebtCertificateApi,

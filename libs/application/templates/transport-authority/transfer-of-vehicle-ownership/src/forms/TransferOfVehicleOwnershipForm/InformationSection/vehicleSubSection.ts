@@ -6,7 +6,7 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
-import { VehiclesCurrentVehicle } from '../../../types'
+import { VehiclesCurrentVehicle } from '../../../shared'
 import { getSelectedVehicle } from '../../../utils'
 
 export const vehicleSubSection = buildSubSection({

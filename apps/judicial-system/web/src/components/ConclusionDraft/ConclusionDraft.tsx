@@ -2,12 +2,13 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Box, Text } from '@island.is/island-ui/core'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   Decision,
   RulingInput,
 } from '@island.is/judicial-system-web/src/components'
-import { icRuling, rcRuling } from '@island.is/judicial-system-web/messages'
+
+import { ruling as m } from '@island.is/judicial-system-web/messages'
 
 import { useCase } from '../../utils/hooks'
 
@@ -38,52 +39,82 @@ const ConclusionDraft: React.FC<Props> = (props) => {
           workingCase={workingCase}
           acceptedLabelText={
             isRestrictionCase(workingCase.type)
-              ? formatMessage(rcRuling.sections.decision.acceptLabel, {
-                  caseType: formatMessage(rcRuling.sections.decision.caseType, {
-                    caseType: workingCase.type,
-                  }),
-                })
-              : formatMessage(icRuling.sections.decision.acceptLabel)
-          }
-          rejectedLabelText={
-            isRestrictionCase(workingCase.type)
-              ? formatMessage(rcRuling.sections.decision.rejectLabel, {
-                  caseType: formatMessage(rcRuling.sections.decision.caseType, {
-                    caseType: workingCase.type,
-                  }),
-                })
-              : formatMessage(icRuling.sections.decision.rejectLabel)
-          }
-          partiallyAcceptedLabelText={`${
-            isRestrictionCase(workingCase.type)
               ? formatMessage(
-                  rcRuling.sections.decision.partiallyAcceptLabelV2,
+                  m.restrictionCases.sections.decision.acceptLabel,
                   {
                     caseType: formatMessage(
-                      rcRuling.sections.decision.caseType,
+                      m.restrictionCases.sections.decision.caseType,
                       {
                         caseType: workingCase.type,
                       },
                     ),
                   },
                 )
-              : formatMessage(icRuling.sections.decision.partiallyAcceptLabel)
+              : formatMessage(
+                  m.investigationCases.sections.decision.acceptLabel,
+                )
+          }
+          rejectedLabelText={
+            isRestrictionCase(workingCase.type)
+              ? formatMessage(
+                  m.restrictionCases.sections.decision.rejectLabel,
+                  {
+                    caseType: formatMessage(
+                      m.restrictionCases.sections.decision.caseType,
+                      {
+                        caseType: workingCase.type,
+                      },
+                    ),
+                  },
+                )
+              : formatMessage(
+                  m.investigationCases.sections.decision.rejectLabel,
+                )
+          }
+          partiallyAcceptedLabelText={`${
+            isRestrictionCase(workingCase.type)
+              ? formatMessage(
+                  m.restrictionCases.sections.decision.partiallyAcceptLabel,
+                  {
+                    caseType: formatMessage(
+                      m.restrictionCases.sections.decision.caseType,
+                      {
+                        caseType: workingCase.type,
+                      },
+                    ),
+                  },
+                )
+              : formatMessage(
+                  m.investigationCases.sections.decision.partiallyAcceptLabel,
+                )
           }`}
           dismissLabelText={
             isRestrictionCase(workingCase.type)
-              ? formatMessage(rcRuling.sections.decision.dismissLabel, {
-                  caseType: formatMessage(rcRuling.sections.decision.caseType, {
-                    caseType: workingCase.type,
-                  }),
-                })
-              : formatMessage(icRuling.sections.decision.dismissLabel)
+              ? formatMessage(
+                  m.restrictionCases.sections.decision.dismissLabel,
+                  {
+                    caseType: formatMessage(
+                      m.restrictionCases.sections.decision.caseType,
+                      {
+                        caseType: workingCase.type,
+                      },
+                    ),
+                  },
+                )
+              : formatMessage(
+                  m.investigationCases.sections.decision.dismissLabel,
+                )
           }
           acceptingAlternativeTravelBanLabelText={formatMessage(
-            rcRuling.sections.decision.acceptingAlternativeTravelBanLabelV2,
+            m.restrictionCases.sections.decision
+              .acceptingAlternativeTravelBanLabel,
             {
-              caseType: formatMessage(rcRuling.sections.decision.caseType, {
-                caseType: workingCase.type,
-              }),
+              caseType: formatMessage(
+                m.restrictionCases.sections.decision.caseType,
+                {
+                  caseType: workingCase.type,
+                },
+              ),
             },
           )}
           onChange={(decision) => {

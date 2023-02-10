@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { APP_INTERCEPTOR } from '@nestjs/core'
 import { ApolloDriver } from '@nestjs/apollo'
 import { GraphQLModule } from '@nestjs/graphql'
 import { TerminusModule } from '@nestjs/terminus'
@@ -6,7 +7,6 @@ import { TerminusModule } from '@nestjs/terminus'
 import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/cms'
-import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-license'
 import { DisabilityLicenseModule } from '@island.is/api/domains/disability-license'
 import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
@@ -51,6 +51,7 @@ import {
   GenericDrivingLicenseConfig,
   GenericFirearmLicenseConfig,
   GenericMachineLicenseConfig,
+  GenericDisabilityLicenseConfig,
   LicenseServiceModule,
 } from '@island.is/api/domains/license-service'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
@@ -84,6 +85,7 @@ import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
 import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
 import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
+import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-license'
 import { PassportsClientConfig } from '@island.is/clients/passports'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegation-api'
@@ -95,6 +97,10 @@ import {
   CourtBankruptcyCertClientConfig,
   CourtBankruptcyCertClientModule,
 } from '@island.is/clients/court-bankruptcy-cert'
+import { DataLoaderInterceptor } from '@island.is/nest/dataloader'
+import { SessionsModule } from '@island.is/api/domains/sessions'
+import { CommunicationsConfig } from '@island.is/api/domains/communications'
+import { SessionsApiClientConfig } from '@island.is/clients/sessions'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -105,6 +111,12 @@ const autoSchemaFile = environment.production
 
 @Module({
   controllers: [HealthController],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: DataLoaderInterceptor,
+    },
+  ],
   imports: [
     GraphQLModule.forRoot({
       driver: ApolloDriver,
@@ -253,6 +265,7 @@ const autoSchemaFile = environment.production
     MortgageCertificateModule,
     TransportAuthorityApiModule,
     CourtBankruptcyCertClientModule,
+    SessionsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -260,10 +273,12 @@ const autoSchemaFile = environment.production
         AirDiscountSchemeClientConfig,
         AssetsClientConfig,
         FirearmLicenseClientConfig,
+        DisabilityLicenseClientConfig,
         GenericFirearmLicenseConfig,
         GenericMachineLicenseConfig,
         GenericAdrLicenseConfig,
         GenericDrivingLicenseConfig,
+        GenericDisabilityLicenseConfig,
         VehiclesClientConfig,
         AuthPublicApiClientConfig,
         AuthDelegationApiClientConfig,
@@ -291,6 +306,8 @@ const autoSchemaFile = environment.production
         ZenterSignupConfig,
         PaymentScheduleClientConfig,
         CourtBankruptcyCertClientConfig,
+        CommunicationsConfig,
+        SessionsApiClientConfig,
       ],
     }),
   ],

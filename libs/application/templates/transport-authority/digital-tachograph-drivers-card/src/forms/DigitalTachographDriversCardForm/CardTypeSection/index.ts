@@ -8,7 +8,7 @@ import {
   buildDescriptionField,
   buildMultiField,
 } from '@island.is/application/core'
-import { Application } from '../../../types/schema'
+import { Application } from '@island.is/api/schema'
 import format from 'date-fns/format'
 import {
   newestCardExists,
@@ -127,9 +127,7 @@ export const cardTypeSection = buildSection({
             {
               value: 'firstEdition',
               label: cardType.labels.cardType.firstEditionOptionTitle,
-              subLabel:
-                cardType.labels.cardType.firstEditionOptionSubTitle
-                  .defaultMessage,
+              subLabel: cardType.labels.cardType.firstEditionOptionSubTitle,
             },
           ],
           width: 'half',
@@ -145,8 +143,7 @@ export const cardTypeSection = buildSection({
             {
               value: 'reissue',
               label: cardType.labels.cardType.reissueOptionTitle,
-              subLabel:
-                cardType.labels.cardType.reissueOptionSubTitle.defaultMessage,
+              subLabel: cardType.labels.cardType.reissueOptionSubTitle,
             },
           ],
           width: 'half',
@@ -164,20 +161,17 @@ export const cardTypeSection = buildSection({
             {
               value: 'reissue',
               label: cardType.labels.cardType.reissueOptionTitle,
-              subLabel:
-                cardType.labels.cardType.reissueOptionSubTitle.defaultMessage,
+              subLabel: cardType.labels.cardType.reissueOptionSubTitle,
             },
             {
               value: 'renewal',
               label: cardType.labels.cardType.renewalOptionTitle,
-              subLabel:
-                cardType.labels.cardType.renewalOptionSubTitle.defaultMessage,
+              subLabel: cardType.labels.cardType.renewalOptionSubTitle,
             },
             {
               value: 'reprint',
               label: cardType.labels.cardType.reprintOptionTitle,
-              subLabel:
-                cardType.labels.cardType.reprintOptionSubTitle.defaultMessage,
+              subLabel: cardType.labels.cardType.reprintOptionSubTitle,
             },
           ],
           width: 'half',
@@ -195,14 +189,12 @@ export const cardTypeSection = buildSection({
             {
               value: 'reissue',
               label: cardType.labels.cardType.reissueOptionTitle,
-              subLabel:
-                cardType.labels.cardType.reissueOptionSubTitle.defaultMessage,
+              subLabel: cardType.labels.cardType.reissueOptionSubTitle,
             },
             {
               value: 'reprint',
               label: cardType.labels.cardType.reprintOptionTitle,
-              subLabel:
-                cardType.labels.cardType.reprintOptionSubTitle.defaultMessage,
+              subLabel: cardType.labels.cardType.reprintOptionSubTitle,
             },
           ],
           width: 'half',
@@ -219,20 +211,17 @@ export const cardTypeSection = buildSection({
             {
               value: 'reissue',
               label: cardType.labels.cardType.reissueOptionTitle,
-              subLabel:
-                cardType.labels.cardType.reissueOptionSubTitle.defaultMessage,
+              subLabel: cardType.labels.cardType.reissueOptionSubTitle,
             },
             {
               value: 'renewal',
               label: cardType.labels.cardType.renewalOptionTitle,
-              subLabel:
-                cardType.labels.cardType.renewalOptionSubTitle.defaultMessage,
+              subLabel: cardType.labels.cardType.renewalOptionSubTitle,
             },
             {
               value: 'reprint',
               label: cardType.labels.cardType.reprintOptionTitle,
-              subLabel:
-                cardType.labels.cardType.reprintOptionSubTitle.defaultMessage,
+              subLabel: cardType.labels.cardType.reprintOptionSubTitle,
             },
           ],
           width: 'half',

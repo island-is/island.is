@@ -26,7 +26,8 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
-          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10017/Samgongustofa-Protected/getOpenAPI?serviceCode=Vehicle-Codetables-V1 -H 'Accept: application/json' > src/clientConfig.json"
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10017/Samgongustofa-Protected/getOpenAPI?serviceCode=Vehicle-Codetables-V1 -H 'Accept: application/json' > src/clientConfig.json",
+          "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json"
         ],
         "parallel": false,
         "cwd": "libs/clients/transport-authority/vehicle-codetables"
@@ -41,5 +42,5 @@
       }
     }
   },
-  "tags": []
+  "tags": ["lib:client", "scope:client"]
 }

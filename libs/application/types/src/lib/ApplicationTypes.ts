@@ -9,6 +9,7 @@ export enum ApplicationTypes {
   CHILDREN_RESIDENCE_CHANGE = 'ChildrenResidenceChange',
   DATA_PROTECTION_AUTHORITY_COMPLAINT = 'DataProtectionAuthorityComplaint',
   LOGIN_SERVICE = 'LoginService',
+  INHERITANCE_REPORT = 'InheritanceReport',
   INSTITUTION_COLLABORATION = 'InstitutionCollaboration',
   FUNDING_GOVERNMENT_PROJECTS = 'FundingGovernmentProjects',
   PUBLIC_DEBT_PAYMENT_PLAN = 'PublicDebtPaymentPlan',
@@ -39,6 +40,7 @@ export enum ApplicationTypes {
   ORDER_VEHICLE_LICENSE_PLATE = 'OrderVehicleLicensePlate',
   ORDER_VEHICLE_REGISTRATION_CERTIFICATE = 'OrderVehicleRegistrationCertificate',
   TRANSFER_OF_VEHICLE_OWNERSHIP = 'TransferOfVehicleOwnership',
+  DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR = 'DrivingLicenseBookUpdateInstructor',
 }
 
 export const ApplicationConfigurations = {
@@ -81,6 +83,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.LOGIN_SERVICE]: {
     slug: 'innskraningarthjonusta',
     translation: 'ls.application',
+  },
+  [ApplicationTypes.INHERITANCE_REPORT]: {
+    slug: 'erfdafjarskyrsla',
+    translation: 'ir.application',
   },
   [ApplicationTypes.INSTITUTION_COLLABORATION]: {
     slug: 'samstarf',
@@ -201,5 +207,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP]: {
     slug: 'eigendaskipti-okutaekis',
     translation: 'ta.tvo.application',
+  },
+  [ApplicationTypes.DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR]: {
+    slug: 'okunam-okukennari',
+    translation: 'dlbui.application',
   },
 }

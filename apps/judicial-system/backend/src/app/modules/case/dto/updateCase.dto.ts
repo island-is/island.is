@@ -363,4 +363,9 @@ export class UpdateCaseDto {
   @IsObject()
   @ApiPropertyOptional()
   readonly crimeScenes?: CrimeSceneMap
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly indictmentIntroduction?: string
 }

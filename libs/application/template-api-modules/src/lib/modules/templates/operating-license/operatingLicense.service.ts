@@ -18,6 +18,7 @@ import {
   File,
   ApplicationAttachments,
   AttachmentPaths,
+  CriminalRecord,
 } from './types/attachments'
 import {
   ApplicationTypes,
@@ -37,7 +38,6 @@ import { CourtBankruptcyCertService } from '@island.is/clients/court-bankruptcy-
 export class OperatingLicenseService extends BaseTemplateApiService {
   s3: S3
   constructor(
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly syslumennService: SyslumennService,
     private readonly criminalRecordService: CriminalRecordService,
@@ -78,16 +78,16 @@ export class OperatingLicenseService extends BaseTemplateApiService {
         applicantSsn,
       )
       if (hasCriminalRecord) {
-        throw new TemplateApiError(
-          {
-            title: coreErrorMessages.dataCollectionCriminalRecordTitle,
-            summary: coreErrorMessages.dataCollectionCriminalRecordErrorTitle,
-          },
-          400,
-        )
+        return { success: true }
       }
 
-      return { success: true }
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.dataCollectionCriminalRecordTitle,
+          summary: coreErrorMessages.errorDataProvider,
+        },
+        400,
+      )
     } catch (e) {
       throw new TemplateApiError(
         {
@@ -206,11 +206,6 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     )
 
     if (!isPayment?.fulfilled) {
-      this.log(
-        'info',
-        'Trying to submit OperatingLicenseapplication that has not been paid.',
-        {},
-      )
       throw new Error(
         'Ekki er hægt að skila inn umsókn af því að ekki hefur tekist að taka við greiðslu.',
       )
@@ -267,22 +262,47 @@ export class OperatingLicenseService extends BaseTemplateApiService {
         orderId: '',
       }
     } catch (e) {
-      this.log('error', 'Submitting operating license failed', {
-        e,
-      })
-
-      throw e
+      return {
+        success: false,
+        orderId: '',
+      }
     }
   }
 
-  private log(lvl: 'error' | 'info', message: string, meta: unknown) {
-    this.logger.log(lvl, `[operation-license] ${message}`, meta)
+  async getCriminalRecord(nationalId: string): Promise<CriminalRecord> {
+    const document = await this.criminalRecordService.getCriminalRecord(
+      nationalId,
+    )
+
+    // Call sýslumaður to get the document sealed before handing it over to the user
+    const sealedDocumentResponse = await this.syslumennService.sealDocument(
+      document.contentBase64,
+    )
+
+    if (!sealedDocumentResponse?.skjal) {
+      throw new Error('Eitthvað fór úrskeiðis.')
+    }
+
+    const sealedDocument: CriminalRecord = {
+      contentBase64: sealedDocumentResponse.skjal,
+    }
+
+    return sealedDocument
   }
 
   private async getAttachments(
     application: ApplicationWithAttachments,
   ): Promise<Attachment[]> {
     const attachments: Attachment[] = []
+
+    const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
+
+    const criminalRecord = await this.getCriminalRecord(application.applicant)
+
+    attachments.push({
+      name: `sakavottord_${application.applicant}_${dateStr}.pdf`,
+      content: criminalRecord.contentBase64,
+    })
 
     for (let i = 0; i < AttachmentPaths.length; i++) {
       const { path, prefix } = AttachmentPaths[i]
@@ -294,9 +314,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
 
       if (attachmentAnswer) {
         const fileType = attachmentAnswer.name?.split('.').pop()
-        const name = `${prefix}_${new Date(Date.now())
-          .toISOString()
-          .substring(0, 10)}.${fileType}`
+        const name = `${prefix}_${dateStr}.${fileType}`
         const fileName = (application.attachments as ApplicationAttachments)[
           attachmentAnswer?.key
         ]
@@ -321,9 +339,6 @@ export class OperatingLicenseService extends BaseTemplateApiService {
       const fileContent = file.Body as Buffer
       return fileContent?.toString('base64') || ''
     } catch (e) {
-      this.log('error', 'Fetching uploaded file failed', {
-        e,
-      })
       return 'err'
     }
   }

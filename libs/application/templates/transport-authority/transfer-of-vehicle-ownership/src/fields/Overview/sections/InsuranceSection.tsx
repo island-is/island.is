@@ -5,8 +5,9 @@ import { FC } from 'react'
 import { Text, GridRow, GridColumn, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { error, overview } from '../../../lib/messages'
+import { States } from '../../../lib/constants'
 import { ReviewGroup } from '../../ReviewGroup'
-import { ReviewScreenProps, InsuranceCompany } from '../../../types'
+import { ReviewScreenProps, InsuranceCompany } from '../../../shared'
 import { getValueViaPath } from '@island.is/application/core'
 import { hasReviewerApproved } from '../../../utils'
 
@@ -50,7 +51,9 @@ export const InsuranceSection: FC<
   return (
     <ReviewGroup
       editMessage={
-        isBuyer && !hasReviewerApproved(reviewerNationalId, answers)
+        isBuyer &&
+        !hasReviewerApproved(reviewerNationalId, answers) &&
+        application.state !== States.COMPLETED
           ? formatMessage(overview.labels.addInsuranceButton)
           : undefined
       }
