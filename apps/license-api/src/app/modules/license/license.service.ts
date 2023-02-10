@@ -8,7 +8,6 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   UpdateLicenseRequest,
-  RevokeLicenseRequest,
   VerifyLicenseRequest,
   UpdateLicenseResponse,
   VerifyLicenseResponse,
@@ -72,13 +71,15 @@ export class LicenseService {
   }
 
   async updateLicense(
+    licenseId: LicenseId,
+    nationalId: string,
     inputData: UpdateLicenseRequest,
   ): Promise<UpdateLicenseResponse> {
-    const service = await this.clientFactory(inputData.licenseId)
+    const service = await this.clientFactory(licenseId)
 
     let updateRes: Result<Pass | undefined>
     if (inputData.licenseUpdateType === 'push') {
-      const { expiryDate, payload, nationalId } = inputData
+      const { expiryDate, payload } = inputData
 
       if (!expiryDate)
         throw new BadRequestException(
@@ -92,7 +93,7 @@ export class LicenseService {
         payload,
       )
     } else {
-      updateRes = await this.pullUpdateLicense(service, inputData.nationalId)
+      updateRes = await this.pullUpdateLicense(service, nationalId)
     }
 
     if (updateRes.ok) {
@@ -109,10 +110,11 @@ export class LicenseService {
   }
 
   async revokeLicense(
-    inputData: RevokeLicenseRequest,
+    licenseId: LicenseId,
+    nationalId: string,
   ): Promise<RevokeLicenseResponse> {
-    const service = await this.clientFactory(inputData.licenseId)
-    const revokeData = await service.revoke(inputData.nationalId)
+    const service = await this.clientFactory(licenseId)
+    const revokeData = await service.revoke(nationalId)
 
     if (revokeData.ok) {
       return { revokeSuccess: revokeData.data.success }

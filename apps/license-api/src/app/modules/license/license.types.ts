@@ -12,8 +12,8 @@ export enum LicenseUpdateType {
 }
 
 export enum LicenseId {
-  FIREARM_LICENSE = 'FirearmLicense',
-  DISABILITY_LICENSE = 'DisabilityLicense',
+  FIREARM_LICENSE = 'firearm',
+  DISABILITY_LICENSE = 'disability',
 }
 /**
  * Interface for client services, fetches generic payload and status from a third party API.
