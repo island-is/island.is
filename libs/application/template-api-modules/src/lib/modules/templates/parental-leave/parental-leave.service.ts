@@ -330,66 +330,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
   }
 
-  // async assignEmployers({ application }: TemplateApiModuleActionProps) {
-  //   const { employers } = getApplicationAnswers(application.answers)
-  //   const employerTokenMap: Record<string, string> = {}
-
-  //   await Promise.all(
-  //     employers.map(async (e) => {
-  //       const token = await this.sharedTemplateAPIService.createAssignToken(
-  //         application,
-  //         SIX_MONTHS_IN_SECONDS_EXPIRES,
-  //       )
-
-  //       // Assign the token to this employer, so it can be validated later on.
-  //       employerTokenMap[e.name.nationalId] = token
-
-  //       const applicationWithEmployerContactInfo = {
-  //         ...application,
-  //         answers: {
-  //           ...application.answers,
-  //           contact: {
-  //             email: e.email,
-  //             phoneNumber: e.phoneNumber,
-  //           },
-  //         },
-  //       }
-
-  //       await this.sharedTemplateAPIService.assignApplicationThroughEmail(
-  //         generateAssignEmployerApplicationEmail,
-  //         applicationWithEmployerContactInfo,
-  //         token,
-  //       )
-
-  //       // send confirmation sms to employer
-  //       try {
-  //         if (e.phoneNumber && this.checkIfPhoneNumberIsGSM(e.phoneNumber)) {
-  //           await this.sharedTemplateAPIService.assignApplicationThroughSms(
-  //             generateAssignEmployerApplicationSms,
-  //             applicationWithEmployerContactInfo,
-  //             token,
-  //           )
-  //         }
-  //       } catch (e) {
-  //         this.logger.error(
-  //           `Failed to send assign SMS notification to employer (${e.phoneNumber}) in parental leave application`,
-  //           e,
-  //         )
-  //       }
-  //     }),
-  //   )
-
-  //   await this.applicationService.update(application.id, {
-  //     answers: {
-  //       ...application.answers,
-  //       employers: employers.map((employer) => ({
-  //         ...employer,
-  //         token: employerTokenMap[employer.name.nationalId],
-  //       })),
-  //     },
-  //   })
-  // }
-
   async getPdf(application: Application, index = 0, fileUpload: string) {
     try {
       const filename = getValueViaPath(

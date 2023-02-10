@@ -21,6 +21,7 @@ import {
   getPrivatePensionFundRatio,
   getRightsCode,
   getRatio,
+  getEmployer,
 } from './parental-leave.utils'
 import { apiConstants } from './constants'
 
@@ -139,37 +140,96 @@ describe('getPersonalAllowance', () => {
 })
 
 // TODO: Update with multiple employers
-// describe('getEmployer', () => {
-//   it('should return applicant if self employed', () => {
-//     const expectedEmail = 'applicant@test.test'
-//     const expectedNationalRegistryId = '1234567899'
+describe('getEmployer', () => {
+  it('should return applicant if self employed', () => {
+    const expectedEmail = 'applicant@test.test'
+    const expectedNationalRegistryId = '1234567899'
 
-//     set(application.answers, 'applicant.email', expectedEmail)
-//     set(application, 'applicant', expectedNationalRegistryId)
+    set(application.answers, 'applicant.email', expectedEmail)
+    set(application, 'applicant', expectedNationalRegistryId)
 
-//     expect(getEmployer(application, true)).toEqual({
-//       email: expectedEmail,
-//       nationalRegistryId: expectedNationalRegistryId,
-//     })
-//   })
+    expect(getEmployer(application, true)).toEqual([
+      {
+        email: expectedEmail,
+        nationalRegistryId: expectedNationalRegistryId,
+      },
+    ])
+  })
 
-//   it('should return employer if applicant is employee', () => {
-//     const expectedEmail = 'employer@test.test'
-//     const expectedNationalRegistryId = '1234567889'
+  it('should return employer if applicant is employee', () => {
+    const expectedEmail = 'employer@test.test'
+    const expectedNationalRegistryId = '1234567889'
 
-//     set(application.answers, 'employer.email', expectedEmail)
-//     set(
-//       application.answers,
-//       'employerNationalRegistryId',
-//       expectedNationalRegistryId,
-//     )
+    set(application.answers, 'employer.email', expectedEmail)
+    set(
+      application.answers,
+      'employerNationalRegistryId',
+      expectedNationalRegistryId,
+    )
 
-//     expect(getEmployer(application)).toEqual({
-//       email: expectedEmail,
-//       nationalRegistryId: expectedNationalRegistryId,
-//     })
-//   })
-// })
+    expect(getEmployer(application)).toEqual([
+      {
+        email: expectedEmail,
+        nationalRegistryId: expectedNationalRegistryId,
+      },
+    ])
+  })
+
+  it('should return employer array if applicant is employee', () => {
+    const expectedEmail1 = 'employer@test.test'
+    const expectedNationalRegistryId1 = '1234567889'
+
+    set(application.answers, 'employers[0].email', expectedEmail1)
+    set(application.answers, 'employers[0].ratio', '100')
+    set(
+      application.answers,
+      'employers[0].companyNationalRegistryId',
+      expectedNationalRegistryId1,
+    )
+
+    expect(getEmployer(application)).toEqual([
+      {
+        email: expectedEmail1,
+        nationalRegistryId: expectedNationalRegistryId1,
+      },
+    ])
+  })
+
+  it('should return multiple employers if applicant is employee', () => {
+    const expectedEmail1 = 'employer@test.test'
+    const expectedNationalRegistryId1 = '1234567889'
+
+    const expectedEmail2 = 'employer2@test2.test2'
+    const expectedNationalRegistryId2 = '0987654119'
+
+    set(application.answers, 'employers[0].email', expectedEmail1)
+    set(application.answers, 'employers[0].ratio', '100')
+    set(
+      application.answers,
+      'employers[0].companyNationalRegistryId',
+      expectedNationalRegistryId1,
+    )
+
+    set(application.answers, 'employers[1].email', expectedEmail2)
+    set(application.answers, 'employers[1].ratio', '100')
+    set(
+      application.answers,
+      'employers[1].companyNationalRegistryId',
+      expectedNationalRegistryId2,
+    )
+
+    expect(getEmployer(application)).toEqual([
+      {
+        email: expectedEmail1,
+        nationalRegistryId: expectedNationalRegistryId1,
+      },
+      {
+        email: expectedEmail2,
+        nationalRegistryId: expectedNationalRegistryId2,
+      },
+    ])
+  })
+})
 
 describe('getPensionFund', () => {
   it('should return required pension fund', () => {
