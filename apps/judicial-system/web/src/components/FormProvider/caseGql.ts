@@ -183,6 +183,7 @@ const CaseQuery = gql`
         vehicleRegistrationNumber
         incidentDescription
         legalArguments
+        offenses
       }
     }
   }

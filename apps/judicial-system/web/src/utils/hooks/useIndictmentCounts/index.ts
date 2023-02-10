@@ -14,7 +14,6 @@ import {
 import { UpdateIndictmentCountMutation } from './updateIndictmentCountGql'
 import { CreateIndictmentCountMutation } from './createIndictmentCountGql'
 import { DeleteIndictmentCountMutation } from './deleteIndictmentCountGql'
-
 interface CreateIndictmentCountMutationResponse {
   createIndictmentCount: IndictmentCount
 }
