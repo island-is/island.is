@@ -142,10 +142,12 @@ export const Input: ComponentType<InputProps> = (
   )
 }
 export const Control = (props: ControlProps<ReactSelectOption>) => {
+  const size = (props?.selectProps?.size || 'md') as NonNullableSize
   return (
     <components.Control
       className={cn(styles.container, {
         [styles.hasError]: props.selectProps.hasError,
+        [styles.containerXS]: size === 'xs',
       })}
       {...props}
     >

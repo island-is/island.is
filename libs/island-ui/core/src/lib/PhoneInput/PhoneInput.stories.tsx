@@ -3,7 +3,6 @@ import { ValueType } from 'react-select'
 import { withFigma } from '../../utils/withFigma'
 import { PhoneInput } from './PhoneInput'
 import { Option } from '../Select/Select'
-import NumberFormat from 'react-number-format'
 
 export default {
   title: 'Form/PhoneInput',
@@ -69,8 +68,7 @@ export const Template = (args) => {
 
   return (
     <Wrap>
-      <NumberFormat
-        customInput={PhoneInput}
+      <PhoneInput
         size="md"
         format={
           countryCodeList.find((x) => x.dial_code === cc && !!x.format)?.format
@@ -99,7 +97,7 @@ export const Tooltip = Template.bind({})
 Tooltip.args = {
   label: 'This is the label',
   placeholder: 'This is the placeholder',
-  name: 'Test2',
+  name: 'Test3',
   tooltip:
     'Bacon ipsum dolor amet ball tip leberkas pork belly pork chop, meatloaf swine jerky doner andouille tenderloin',
 }
@@ -124,7 +122,7 @@ export const Error = Template.bind({})
 Error.args = {
   label: 'Phone',
   placeholder: 'This is the placeholder',
-  name: 'Test3',
+  name: 'Test6',
   hasError: true,
   errorMessage: 'This is the error message',
 }
@@ -133,7 +131,15 @@ export const ReadOnly = Template.bind({})
 ReadOnly.args = {
   label: 'Read only label',
   placeholder: 'Read only',
-  name: 'Test4',
+  name: 'Test7',
   backgroundColor: 'blue',
   readOnly: true,
+}
+
+export const WithLabelAbove = Template.bind({})
+WithLabelAbove.args = {
+  label: 'Phone',
+  placeholder: 'This is the placeholder',
+  name: 'Test8',
+  size: 'xs',
 }

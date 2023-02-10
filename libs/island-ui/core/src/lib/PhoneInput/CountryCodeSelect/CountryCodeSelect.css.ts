@@ -90,6 +90,16 @@ export const container = style(
   },
   'container',
 )
+
+export const containerXS = style(
+  {
+    ':before': {
+      top: theme.spacing[3],
+    },
+  },
+  'container',
+)
+
 export const containerSizes = styleVariants(inputMixins.containerSizes)
 
 globalStyle(`${wrapper} .css-1uccc91-singleValue`, {
@@ -107,6 +117,9 @@ globalStyle(`${wrapper} .country-code-select__control${container}`, {
   borderBottomRightRadius: 0,
   borderTopRightRadius: 0,
   border: 0,
+})
+globalStyle(`${wrapper} .country-code-select__control${containerXS}`, {
+  width: '120px',
 })
 globalStyle(
   `${wrapper}${wrapperColor.blue} .country-code-select__control${container}`,
@@ -223,7 +236,8 @@ export const indicatorContainerWithLabel = style(
 export const indicatorsContainerExtraSmall = style({
   selectors: {
     [`${wrapper} &`]: {
-      right: 20,
+      top: 12,
+      right: 12,
     },
   },
 })
