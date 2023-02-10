@@ -1,24 +1,38 @@
-import { AppProps } from 'next/app'
+import App, { AppContext, AppProps } from 'next/app'
 import Head from 'next/head'
-import Errorpage from './404'
+import { FC } from 'react'
+import { client } from '../graphql'
+import { ApolloProvider } from '@apollo/client'
 
-function CustomApp({ Component, pageProps }: AppProps) {
-  if (pageProps.pageError) {
-    const { error } = pageProps.pageError
-    console.log('page error:', pageProps.pageError)
-    console.log('page error:', error)
-    return <Errorpage />
-  }
+const Layout: FC = ({ children }) => {
   return (
-    <>
+    <div>
       <Head>
-        <title>Samráðsgátt</title>
+        <title>Ísland.is</title>
       </Head>
-      <main className="app">
-        <Component {...pageProps} />
-      </main>
-    </>
+      {children}
+    </div>
   )
 }
 
-export default CustomApp
+class ConsultationPortalApplication extends App<AppProps> {
+  static async getInitialProps(appContext: AppContext) {
+    const pageProps = await App.getInitialProps(appContext)
+    return { ...pageProps }
+  }
+  render() {
+    const { Component, pageProps } = this.props
+
+    return (
+      <>
+        <ApolloProvider client={client}>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </ApolloProvider>
+      </>
+    )
+  }
+}
+
+export default ConsultationPortalApplication

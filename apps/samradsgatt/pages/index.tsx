@@ -8,6 +8,16 @@ import {
 import React, { useEffect, useState } from 'react'
 import Card from '../components/Card/Card'
 import Layout from '../components/Layout/Layout'
+import { useQuery } from '@apollo/client'
+import gql from 'graphql-tag'
+const GetAllCases = gql`
+  query getAllCases {
+    cases {
+      id
+    }
+  }
+`
+
 type arrayDummy = Array<info>
 type info = {
   caseNumber: string
@@ -115,6 +125,7 @@ export const Index = () => {
   const [data, setData] = useState(dummycontent)
   const [options, setOptions] = useState<AsyncSearchOption[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { data: mtda, error, called } = useQuery(GetAllCases)
 
   const clearAll = () => {
     setIsLoading(false)
