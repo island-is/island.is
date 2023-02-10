@@ -1,50 +1,53 @@
-import { Box, Checkbox, Text } from '@island.is/island-ui/core'
-import { useEffect, useState } from 'react'
+import { Box, Checkbox, Icon, Text } from '@island.is/island-ui/core'
+import { mapIsToEn } from '../../utils/helpers'
+import { useState } from 'react'
 
 const ChosenSubscriptionCard = ({
-  casesData,
-  institutionsData,
-  policyAreasData,
+  data,
   subscriptionArray,
+  setSubscriptionArray,
 }) => {
-  const [subscriptionsSelected, setSubscriptionsSelected] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
+  const onClick = () => {
+    setIsOpen(!isOpen)
+  }
 
-  useEffect(() => {
-    if (
-      subscriptionArray.caseIds.length === 0 &&
-      subscriptionArray.institutionIds.length === 0 &&
-      subscriptionArray.policyAreaIds.length === 0
-    ) {
-      setSubscriptionsSelected(false)
-      return
-    } else {
-      setSubscriptionsSelected(true)
-
-
-      
-    }
-  }, [subscriptionArray])
-
-  console.log('subscriptionsSelected', subscriptionsSelected)
+  const onCheckboxChange = (id: number) => {
+    const sub = [...subscriptionArray[mapIsToEn[data.area]]]
+    const subArr = { ...subscriptionArray }
+    const idx = sub.indexOf(id)
+    sub.splice(idx, 1)
+    subArr[mapIsToEn[data.area]] = sub
+    return setSubscriptionArray(subArr)
+  }
 
   return (
-    <Box paddingX={[0, 0, 0, 0]}>
-      <Text variant="eyebrow">Valin mál</Text>
-      <Box
-        borderColor={'blue400'}
-        borderRadius="large"
-        borderWidth="standard"
-        background="white"
-        paddingX={3}
-        paddingY={3}
-        rowGap={3}
-      >
-        <Box display="flex" flexDirection="row">
-          <Checkbox checked={true} onChange={(e) => {}} />
-          <Text>Name</Text>
-          <Text>Label</Text>
+    <Box
+      borderColor={'blue400'}
+      borderRadius="large"
+      borderWidth="standard"
+      background="white"
+      paddingX={3}
+      paddingY={3}
+      rowGap={3}
+    >
+      <Box display="flex" flexDirection="row" justifyContent={'spaceBetween'}>
+        <Box display="flex" flexDirection="row" columnGap={3}>
+          <Checkbox checked={true} onChange={() => onCheckboxChange(data.id)} />
+          <Text
+            lineHeight="sm"
+            variant="h5"
+            color={data?.area === 'Mál' ? 'dark400' : 'blue400'}
+          >
+            {data?.area === 'Mál' ? data?.caseNumber : data?.name}
+          </Text>
+          {data?.area === 'Mál' && <Text variant="medium">{data?.name}</Text>}
         </Box>
+        <div onClick={onClick} style={{ height: '24px' }}>
+          <Icon icon={isOpen ? 'chevronUp' : 'chevronDown'} color="blue400" />
+        </div>
       </Box>
+      {isOpen && <Box paddingTop={3}>Items</Box>}
     </Box>
   )
 }
