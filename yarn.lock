@@ -11010,6 +11010,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/ua-parser-js@npm:^0.7.36":
+  version: 0.7.36
+  resolution: "@types/ua-parser-js@npm:0.7.36"
+  checksum: 8c24d4dc12ed1b8b98195838093391c358c81bf75e9cae0ecec8f7824b441e069daaa17b974a3e257172caddb671439f0c0b44bf43bfcf409b7a574a25aab948
+  languageName: node
+  linkType: hard
+
 "@types/uglify-js@npm:*":
   version: 3.13.0
   resolution: "@types/uglify-js@npm:3.13.0"
@@ -25410,6 +25417,7 @@ __metadata:
     "@types/stream-buffers": 3.0.3
     "@types/supertest": 2.0.11
     "@types/triple-beam": 1.3.2
+    "@types/ua-parser-js": ^0.7.36
     "@types/validator": 13.7.2
     "@types/xml2js": 0.4.9
     "@types/yup": 0.29.6
@@ -25633,6 +25641,7 @@ __metadata:
     tslib: 1.14.1
     type-fest: 1.1.3
     typescript: 4.4.2
+    ua-parser-js: ^1.0.33
     unified: 9.2.0
     uuidv4: 6.0.8
     webpack-bundle-analyzer: 4.5.0
@@ -40687,6 +40696,13 @@ __metadata:
   version: 0.7.24
   resolution: "ua-parser-js@npm:0.7.24"
   checksum: 722e0291fe6ad0d439cd29c4cd919f4e1b7262fe78e4c2149756180f8ad723ae04713839115eeb8738aca6d6258a743668090fb1e1417bc1fba27acc815a84e2
+  languageName: node
+  linkType: hard
+
+"ua-parser-js@npm:^1.0.33":
+  version: 1.0.33
+  resolution: "ua-parser-js@npm:1.0.33"
+  checksum: 460adef51235267345b221842979b6b167543725d03f7c9c4f9ca6af4da835a71d016390da139d2b32828063c4730dcfae6e53b9dce815f4000be4e1fe1c7737
   languageName: node
   linkType: hard
 
