@@ -36,11 +36,11 @@ const RikislogmadurHeader = ({ organizationPage }: HeaderProps) => {
   const screenWidth = getScreenWidthString(width)
 
   return (
-    <Box
+    <div
       style={n(`rikislogmadurHeader-${screenWidth}`, getDefaultStyle())}
       className={styles.headerBg}
     >
-      <Box className={styles.headerWrapper}>
+      <div className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
             !!organizationPage.organization.logo && (
@@ -87,8 +87,8 @@ const RikislogmadurHeader = ({ organizationPage }: HeaderProps) => {
             </Link>
           </Box>
         </SidebarLayout>
-      </Box>
-    </Box>
+      </div>
+    </div>
   )
 }
 

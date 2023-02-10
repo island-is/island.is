@@ -28,51 +28,27 @@ export const GET_STUDENT_BOOK = gql`
   query GetUserDrivingLessonsBook {
     drivingLicenseBookUserBook {
       book {
-        id
         licenseCategory
         createdOn
-        teacherNationalId
         teacherName
-        schoolNationalId
-        schoolName
-        isDigital
         statusName
         totalLessonTime
         totalLessonCount
         teachersAndLessons {
-          id
           registerDate
           lessonTime
-          teacherNationalId
           teacherName
         }
         drivingSchoolExams {
-          id
           examDate
-          schoolNationalId
           schoolName
-          schoolEmployeeNationalId
-          schoolEmployeeName
-          schoolTypeId
           schoolTypeName
-          schoolTypeCode
           comments
         }
         testResults {
-          id
           examDate
-          score
-          scorePart1
-          scorePart2
           hasPassed
-          testCenterNationalId
-          testCenterName
-          testExaminerNationalId
-          testExaminerName
-          testTypeId
           testTypeName
-          testTypeCode
-          comments
         }
       }
     }
@@ -86,6 +62,9 @@ const DrivingLessonsBook: ServicePortalModuleComponent = () => {
   const { data, loading, error } = useQuery<Query>(GET_STUDENT_BOOK)
 
   const { book } = data?.drivingLicenseBookUserBook || {}
+
+  // Frontend fix before service is fixed and returns double for total driving lessons
+  const oneDrivingLessonsInMinutes = 45
 
   if (error && !loading) {
     return (
@@ -115,7 +94,7 @@ const DrivingLessonsBook: ServicePortalModuleComponent = () => {
           <SkeletonLoader space={1} height={40} repeat={5} />
         </Box>
       )}
-      {book?.id && !loading && (
+      {book?.createdOn && !loading && (
         <>
           <Stack space={2}>
             <UserInfoLine
@@ -147,7 +126,9 @@ const DrivingLessonsBook: ServicePortalModuleComponent = () => {
             <Divider />
             <UserInfoLine
               label={formatMessage(messages.vehicleDrivingLessonsCount)}
-              content={book?.totalLessonCount.toString()}
+              content={(book?.totalLessonTime / oneDrivingLessonsInMinutes)
+                .toPrecision(3)
+                .toString()}
               loading={loading}
             />
             <Divider />
@@ -198,7 +179,7 @@ const DrivingLessonsBook: ServicePortalModuleComponent = () => {
           </Box>
         </>
       )}
-      {!loading && !error && !book?.id && (
+      {!loading && !error && !book?.createdOn && (
         <Box marginTop={8}>
           <EmptyState />
         </Box>

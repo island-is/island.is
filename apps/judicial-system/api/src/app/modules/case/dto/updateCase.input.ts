@@ -292,6 +292,6 @@ export class UpdateCaseInput implements UpdateCase {
   readonly crimeScenes?: CrimeSceneMap
 
   @Allow()
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   readonly indictmentIntroduction?: string
 }

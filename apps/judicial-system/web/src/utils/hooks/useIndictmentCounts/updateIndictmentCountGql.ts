@@ -5,9 +5,10 @@ export const UpdateIndictmentCountMutation = gql`
     updateIndictmentCount(input: $input) {
       id
       caseId
-      created
       policeCaseNumber
       vehicleRegistrationNumber
+      offenses
+      lawsBroken
       incidentDescription
       legalArguments
     }
