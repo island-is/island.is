@@ -7,6 +7,7 @@ export const CreateIndictmentCountMutation = gql`
       caseId
       policeCaseNumber
       vehicleRegistrationNumber
+      lawsBroken
       incidentDescription
       legalArguments
     }

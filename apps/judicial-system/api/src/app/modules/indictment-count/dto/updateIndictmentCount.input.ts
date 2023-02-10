@@ -21,6 +21,10 @@ export class UpdateIndictmentCountInput {
   readonly vehicleRegistrationNumber?: string
 
   @Allow()
+  @Field(() => [[Number, Number]], { nullable: true })
+  readonly lawsBroken?: [number, number][]
+
+  @Allow()
   @Field({ nullable: true })
   readonly incidentDescription?: string
 

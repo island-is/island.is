@@ -57,6 +57,13 @@ export class IndictmentCount extends Model {
   vehicleRegistrationNumber?: string
 
   @Column({
+    type: DataType.JSONB,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  lawsBroken?: [number, number][]
+
+  @Column({
     type: DataType.TEXT,
     allowNull: true,
   })

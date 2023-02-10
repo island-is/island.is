@@ -31,7 +31,7 @@ interface DeleteIndictmentCountMutationResponse {
 
 export type UpdateIndictmentCount = Omit<
   UpdateIndictmentCountInput,
-  'caseId' | 'indictmentCountId'
+  'caseId' | 'indictmentCountId' | 'created' | 'modified'
 >
 
 const useIndictmentCounts = () => {

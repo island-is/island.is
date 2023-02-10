@@ -20,6 +20,9 @@ export class IndictmentCount {
   @Field({ nullable: true })
   readonly vehicleRegistrationNumber?: string
 
+  @Field(() => [[Number, Number]], { nullable: true })
+  readonly lawsBroken?: [number, number][]
+
   @Field({ nullable: true })
   readonly incidentDescription?: string
 

@@ -181,6 +181,7 @@ const CaseQuery = gql`
         created
         modified
         vehicleRegistrationNumber
+        lawsBroken
         incidentDescription
         legalArguments
       }
