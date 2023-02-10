@@ -2,15 +2,13 @@ import compareAsc from 'date-fns/compareAsc'
 import fetch, { Response } from 'node-fetch'
 
 import * as kennitala from 'kennitala'
-import format from 'date-fns/format'
-import { Cache as CacheManager } from 'cache-manager'
 import { Injectable, Inject } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
 
 import { GenericDrivingLicenseResponse } from './genericDrivingLicense.type'
-import { parseDrivingLicensePayload } from './drivingLicenseMappers'
+import { parseDrivingLicensePayload } from './drivingLicenseMapper'
 import {
   GenericLicenseClient,
   GenericLicenseLabels,
@@ -18,7 +16,6 @@ import {
   GenericUserLicensePkPassStatus,
   GenericUserLicenseStatus,
   PkPassVerification,
-  PkPassVerificationError,
   PkPassVerificationInputData,
 } from '../../licenceService.type'
 import { Locale } from '@island.is/shared/types'
@@ -36,19 +33,6 @@ const LOG_CATEGORY = 'drivinglicense-service'
 
 /** Defined cut-off point for driving license images */
 const IMAGE_CUTOFF_DATE = '1997-08-15'
-
-// PkPass service wants dates in DD-MM-YYYY format
-const dateToPkpassDate = (date: string): string => {
-  if (!date) {
-    return ''
-  }
-
-  try {
-    return format(new Date(date), 'dd-MM-yyyy')
-  } catch (e) {
-    return ''
-  }
-}
 
 @Injectable()
 export class GenericDrivingLicenseApi
