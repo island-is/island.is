@@ -38,8 +38,4 @@ export class UpdateIndictmentCountInput {
   @Allow()
   @Field({ nullable: true })
   readonly legalArguments?: string
-
-  @Allow()
-  @Field(() => [IndictmentCountOffense], { nullable: true })
-  readonly offenses?: IndictmentCountOffense[]
 }

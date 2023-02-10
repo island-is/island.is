@@ -185,7 +185,6 @@ const CaseQuery = gql`
         lawsBroken
         incidentDescription
         legalArguments
-        offenses
       }
     }
   }

@@ -35,8 +35,4 @@ export class UpdateIndictmentCountDto {
   @IsString()
   @ApiPropertyOptional()
   readonly legalArguments?: string
-
-  @IsOptional()
-  @ApiPropertyOptional({ enum: IndictmentCountOffense, isArray: true })
-  readonly offenses?: IndictmentCountOffense[]
 }

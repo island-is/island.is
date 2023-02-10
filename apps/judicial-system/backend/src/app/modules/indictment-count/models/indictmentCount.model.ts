@@ -85,11 +85,4 @@ export class IndictmentCount extends Model {
   })
   @ApiPropertyOptional()
   legal_arguments?: string
-
-  @Column({
-    type: DataType.JSONB,
-    allowNull: true,
-  })
-  @ApiPropertyOptional({ enum: IndictmentCountOffense, isArray: true })
-  offenses?: IndictmentCountOffense[]
 }
