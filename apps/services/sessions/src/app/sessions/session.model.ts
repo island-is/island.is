@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   CreationOptional,
   InferAttributes,
@@ -63,6 +63,13 @@ export class Session extends Model<
     allowNull: false,
   })
   userAgent!: string
+
+  @ApiPropertyOptional()
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  device?: string
 
   @ApiProperty()
   @Column({
