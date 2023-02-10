@@ -27,6 +27,7 @@ type ActionCardProps = {
   eyebrow?: string
   logo?: string
   backgroundColor?: 'white' | 'blue' | 'red'
+  focused?: boolean
   tag?: {
     label: string
     variant?: TagVariant
@@ -122,6 +123,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   history,
   avatar,
   logo,
+  focused = false,
 }) => {
   const cta = { ...defaultCta, ..._cta }
   const progressMeter = { ...defaultProgressMeter, ..._progressMeter }
@@ -366,7 +368,9 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       display="flex"
       flexDirection="column"
       borderColor={
-        backgroundColor === 'red'
+        focused
+          ? 'mint400'
+          : backgroundColor === 'red'
           ? 'red200'
           : backgroundColor === 'blue'
           ? 'blue100'

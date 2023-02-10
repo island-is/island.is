@@ -277,7 +277,8 @@ const ApplicationList = ({
                     actionCard?.tag?.variant || stateDefaultData.tag.variant,
                   outlined: false,
                 }}
-                backgroundColor={focus ? 'blue' : 'white'}
+                backgroundColor="white"
+                focused={focus}
                 heading={actionCard?.title ?? application.name}
                 text={actionCard?.description}
                 cta={{
