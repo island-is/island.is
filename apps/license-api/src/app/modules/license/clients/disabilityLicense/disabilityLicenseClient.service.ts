@@ -35,9 +35,9 @@ export class DisabilityLicenseClientService implements GenericLicenseClient {
     }
   }
 
-  async revoke(queryId: string): Promise<Result<RevokePassData>> {
+  async revoke(nationalId: string): Promise<Result<RevokePassData>> {
     this.logger.debug('in revoke for Disability license')
-    return await this.smartApi.revokePkPass(queryId)
+    return await this.smartApi.revokePkPass(nationalId)
   }
 
   /** We need to verify the pk pass AND the license itself! */

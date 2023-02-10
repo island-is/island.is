@@ -25,7 +25,7 @@ export interface GenericLicenseClient {
     nationalId: string,
   ) => Promise<Result<Pass | undefined>>
   pullUpdate: (nationalId: string) => Promise<Result<Pass | undefined>>
-  revoke: (queryId: string) => Promise<Result<RevokePassData>>
+  revoke: (nationalId: string) => Promise<Result<RevokePassData>>
   verify: (
     inputData: string,
     nationalId: string,

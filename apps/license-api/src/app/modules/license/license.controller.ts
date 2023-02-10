@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Headers,
   Param,
   Post,
@@ -20,7 +21,7 @@ import {
 import { ApiTags } from '@nestjs/swagger'
 import { LicenseId } from './license.types'
 
-@Controller({ path: 'users/.nationalId/licenses', version: ['1'] })
+@Controller({ version: ['1'] })
 @ApiTags('license-api')
 @Audit()
 export class LicenseController {
@@ -35,7 +36,7 @@ export class LicenseController {
       type: UpdateLicenseResponse,
     },
   })
-  @Put(':licenseId')
+  @Put('users/.nationalId/licenses/:licenseId')
   async update(
     @Headers('X-Param-NationalId') nationalId: string,
     @Param('licenseId') licenseId: LicenseId,
@@ -49,7 +50,7 @@ export class LicenseController {
     return response
   }
 
-  @Delete(':licenseId')
+  @Delete('users/.nationalId/licenses/:licenseId')
   @Documentation({
     description: `This endpoint revokes a user's license`,
     response: {

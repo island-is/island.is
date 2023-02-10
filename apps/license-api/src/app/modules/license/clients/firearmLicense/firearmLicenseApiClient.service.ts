@@ -44,7 +44,8 @@ export class FirearmLicenseApiClientService implements GenericLicenseClient {
         ok: false,
         error: {
           code: 13,
-          message: 'External service error',
+          message: 'Service error',
+          data: JSON.stringify(e),
         },
       }
     }
@@ -91,9 +92,8 @@ export class FirearmLicenseApiClientService implements GenericLicenseClient {
     return await this.smartApi.updatePkPass(payload, format(nationalId))
   }
 
-  async revoke(queryId: string): Promise<Result<RevokePassData>> {
-    this.logger.debug('in revoke for Disability license')
-    return await this.smartApi.revokePkPass(queryId)
+  async revoke(nationalId: string): Promise<Result<RevokePassData>> {
+    return await this.smartApi.revokePkPass(formatNationalId(nationalId))
   }
 
   /** We need to verify the pk pass AND the license itself! */
@@ -101,8 +101,6 @@ export class FirearmLicenseApiClientService implements GenericLicenseClient {
     inputData: string,
     nationalId: string,
   ): Promise<Result<VerifyPassData>> {
-    this.logger.debug('in verify for Firearm license')
-
     //need to parse the scanner data
     const { code, date } = JSON.parse(inputData)
     const verifyRes = await this.smartApi.verifyPkPass({ code, date })
@@ -147,12 +145,21 @@ export class FirearmLicenseApiClientService implements GenericLicenseClient {
         },
       }
     }
-    //now we compare the data
 
+    if (!licenseInfo.ssn) {
+      return {
+        ok: false,
+        error: {
+          code: 3,
+          message: 'Missing ssn for user',
+        },
+      }
+    }
+    //now we compare the data
     return {
       ok: true,
       data: {
-        valid: licenseInfo.ssn === passNationalId,
+        valid: format(licenseInfo.ssn) === passNationalId,
       },
     }
   }
