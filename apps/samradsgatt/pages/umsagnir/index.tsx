@@ -217,6 +217,7 @@ export const MyReviewPage = () => {
             <Columns space={3} alignY="center">
               <Column width="10/12">
                 <AsyncSearch
+                  colored
                   options={options}
                   placeholder="Leita að máli, stofnun eða málefnasviði"
                   initialInputValue=""
