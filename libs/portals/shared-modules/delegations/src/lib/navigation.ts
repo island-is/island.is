@@ -35,3 +35,29 @@ export const delegationsNavigation: PortalNavigationItem = {
     },
   ],
 }
+
+export const delegationsNavigationChildrenWithFolder: PortalNavigationItem[] = [
+  {
+    name: m.accessControlDelegations,
+    path: DelegationPaths.Delegations,
+    navHide: false,
+    children: [
+      {
+        name: m.accessControlGrant,
+        path: DelegationPaths.DelegationsGrant,
+        navHide: true,
+      },
+    ],
+  },
+  {
+    name: m.accessControlDelegationsIncoming,
+    path: DelegationPaths.DelegationsIncoming,
+    navHide: true,
+    breadcrumbHide: true,
+  },
+  {
+    name: m.accessControlAccess,
+    path: DelegationPaths.DelegationAccess,
+    navHide: true,
+  },
+]

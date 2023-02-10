@@ -14,7 +14,11 @@ import { licenseNavigation } from '@island.is/service-portal/licenses'
 import { educationLicenseNavigation } from '@island.is/service-portal/education-license'
 import { vehiclesNavigation } from '@island.is/service-portal/vehicles'
 import { personalInformationNavigation } from '@island.is/service-portal/settings/personal-information'
-import { delegationsNavigation } from '@island.is/portals/shared-modules/delegations'
+import {
+  delegationsNavigation,
+  delegationsNavigationChildrenWithFolder,
+} from '@island.is/portals/shared-modules/delegations'
+import { sessionsNavigation } from '@island.is/service-portal/sessions'
 
 export const rootNavigationItem: PortalNavigationItem = {
   name: m.overview,
@@ -40,6 +44,12 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
     assetsNavigation,
     financeNavigation,
     vehiclesNavigation,
-    delegationsNavigation,
+    {
+      ...delegationsNavigation,
+      children: [
+        ...delegationsNavigationChildrenWithFolder,
+        sessionsNavigation,
+      ],
+    },
   ],
 }

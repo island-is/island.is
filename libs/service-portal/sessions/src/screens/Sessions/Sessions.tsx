@@ -113,22 +113,6 @@ const Sessions = () => {
 
   return (
     <>
-      <Box paddingBottom={'containerGutter'}>
-        <Breadcrumbs
-          items={
-            [
-              {
-                title: formatMessage(m.delegations),
-                href: SessionsPaths.Delegate,
-              },
-              {
-                title: formatMessage(m.sessions),
-                href: SessionsPaths.LoginHistory,
-              },
-            ] as BreadCrumbItem[]
-          }
-        />
-      </Box>
       <IntroHeader
         title={formatMessage(m.sessions)}
         intro={formatMessage(m.sessionsHeaderIntro)}
