@@ -17,13 +17,20 @@ export type ActionCardHistoryConfig = {
   }[]
 }
 
+type ActionCardHistorySize = 'sm' | 'lg'
+
 interface Props {
   history: ActionCardHistoryConfig
+  size?: ActionCardHistorySize
 }
 
-const MAX_HISTORY_HEIGHT = 200
+const sizeMapper: Record<ActionCardHistorySize, number> = {
+  sm: 144,
+  lg: 216,
+}
 
-export const ActionCardHistory = ({ history }: Props) => {
+export const ActionCardHistory = ({ history, size = 'sm' }: Props) => {
+  const maxHistoryHeight = sizeMapper[size]
   const containerRef = useRef<HTMLDivElement>(null)
   const { height: historyHeight } = useComponentSize(containerRef)
   const [historyState, setHistoryState] = useState<'open' | 'closed'>(
@@ -32,12 +39,7 @@ export const ActionCardHistory = ({ history }: Props) => {
 
   if (!history.items) return null
 
-  const height =
-    history.items.length < 3
-      ? 'auto'
-      : historyState === 'open'
-      ? 'auto'
-      : MAX_HISTORY_HEIGHT
+  const height = historyState === 'open' ? 'auto' : maxHistoryHeight
 
   return (
     <Box paddingTop={[2, 2, 5]}>
@@ -59,7 +61,7 @@ export const ActionCardHistory = ({ history }: Props) => {
           />
         </div>
       </AnimateHeight>
-      {history.items.length > 2 && historyHeight > MAX_HISTORY_HEIGHT && (
+      {historyHeight > maxHistoryHeight && (
         <Box display="flex" justifyContent="flexEnd">
           <Box>
             <Button
