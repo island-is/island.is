@@ -572,9 +572,9 @@ export const ParentalLeaveForm: Form = buildForm({
               component: 'EmployersOverview',
               children: [
                 buildMultiField({
-                  id: '',
+                  id: 'addEmployers',
                   title: parentalLeaveFormMessages.employer.registration,
-                  isPartOfRepeater: true,
+                  // isPartOfRepeater: true,
                   children: [
                     // buildCompanySearchField({
                     //   id: 'name',

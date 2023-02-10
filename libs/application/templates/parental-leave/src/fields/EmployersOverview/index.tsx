@@ -1,5 +1,5 @@
 import { RepeaterProps } from '@island.is/application/types'
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import {
   AlertMessage,
   Box,
@@ -9,14 +9,13 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { getValueViaPath } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { useDeepCompareEffect } from 'react-use'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useMutation } from '@apollo/client'
-import { EmployerRow } from '../../types'
 import { EmployersTable } from '../components/EmployersTable'
 import { States } from '../../constants'
+import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
 
 const EmployersOverview: FC<RepeaterProps> = ({
   error,
@@ -25,13 +24,29 @@ const EmployersOverview: FC<RepeaterProps> = ({
   setRepeaterItems,
   setBeforeSubmitCallback,
 }) => {
-  const employers: EmployerRow[] | undefined = getValueViaPath(
-    application.answers,
-    'employers',
-  )
+  const answers = getApplicationAnswers(application.answers)
+  let employers = answers.employers
 
   const { formatMessage, locale } = useLocale()
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
+
+  useEffect(() => {
+    const newAnswers = getApplicationAnswers(application.answers)
+    employers = newAnswers.employers
+
+    if (employers.length === 0) {
+      expandRepeater()
+    }
+  }, [
+    application,
+    expandRepeater,
+    formatMessage,
+    locale,
+    employers,
+    setBeforeSubmitCallback,
+    setRepeaterItems,
+    updateApplication,
+  ])
 
   const onDeleteEmployer = async (email: string) => {
     const reducedEmployers = employers?.filter((e) => e.email !== email)
