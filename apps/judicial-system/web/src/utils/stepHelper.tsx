@@ -1,6 +1,5 @@
 import parseISO from 'date-fns/parseISO'
 import addDays from 'date-fns/addDays'
-import concat from 'lodash/concat'
 import flatten from 'lodash/flatten'
 
 import { TagVariant } from '@island.is/island-ui/core'
@@ -93,14 +92,19 @@ export const createCaseResentExplanation = (
   }Krafa endursend ${formatDate(now, 'PPPp')} - ${explanation}`
 }
 
-export const hasIndictmentSubtype = (
+export const isTrafficViolationCase = (
   indictmentSubtypes: IndictmentSubtypeMap | undefined,
-  indictmentSubType: IndictmentSubtype,
 ): boolean => {
+  if (!indictmentSubtypes) {
+    return false
+  }
+
+  const flatIndictmentSubtypes = flatten(Object.values(indictmentSubtypes))
+
   return Boolean(
-    indictmentSubtypes &&
-      flatten(concat(Object.values(indictmentSubtypes))).includes(
-        indictmentSubType,
+    flatIndictmentSubtypes.length > 0 &&
+      flatIndictmentSubtypes.every(
+        (val) => val === IndictmentSubtype.TRAFFIC_VIOLATION,
       ),
   )
 }
