@@ -60,7 +60,7 @@ export type PortalRoute = RouteObject & {
 
 Path defines at what path or paths this route should be rendered.
 
-The element property returns a lazy loaded component to be rendered when the user navigates to the described path.
+The element property has lazy loaded component to be rendered when the user navigates to the described path.
 
 An example of an implementation of a route property might be something like this:
 

@@ -20,7 +20,10 @@ import { DelegationsOutgoingHeader } from './DelegationsOutgoingHeader'
 import { DomainOption, useDomains } from '../../../hooks/useDomains/useDomains'
 import { useAuthDelegationsOutgoingQuery } from './DelegationsOutgoing.generated'
 import { AuthCustomDelegationOutgoing } from '../../../types/customDelegation'
-import { prepareDomainName } from '../../../lib/loaders'
+import { ALL_DOMAINS } from '../../../constants/domain'
+
+const prepareDomainName = (domainName: string | null) =>
+  domainName === ALL_DOMAINS ? null : domainName
 
 export const DelegationsOutgoing = () => {
   const { formatMessage, lang = 'is' } = useLocale()

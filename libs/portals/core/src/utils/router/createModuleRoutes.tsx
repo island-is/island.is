@@ -4,19 +4,17 @@ import {
   AccessDenied,
   ModuleRoute,
   NotFound,
-  PrepareRouterDataReturnType,
+  PortalModule,
+  PortalRoute,
 } from '../..'
 import { ModuleErrorScreen } from '../../screens/ModuleErrorScreen'
 
 type CreateRoutes = {
+  routes: PortalRoute[]
   childRoute?: boolean
-} & Pick<PrepareRouterDataReturnType, 'routes' | 'userInfo'>
+}
 
-const createRoutes = ({
-  routes,
-  userInfo,
-  childRoute,
-}: CreateRoutes): RouteObject[] => {
+const createRoutes = ({ routes, childRoute }: CreateRoutes): RouteObject[] => {
   return routes.map((route) =>
     route.enabled === false
       ? {
@@ -40,7 +38,6 @@ const createRoutes = ({
           ...(route.children && {
             children: createRoutes({
               routes: route.children,
-              userInfo,
               childRoute: true,
             }),
           }),
@@ -48,13 +45,14 @@ const createRoutes = ({
   )
 }
 
-export const createModuleRoutes = ({
-  routes,
-  modules,
-  userInfo,
-}: PrepareRouterDataReturnType) => {
+type CreateModuleRoutes = {
+  modules: PortalModule[]
+  routes: PortalRoute[]
+}
+
+export const createModuleRoutes = ({ routes, modules }: CreateModuleRoutes) => {
   if (modules.length > 0) {
-    const moduleRoutes = createRoutes({ routes, userInfo })
+    const moduleRoutes = createRoutes({ routes })
 
     if (routes.length > 0) {
       moduleRoutes.push({

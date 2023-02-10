@@ -32,7 +32,7 @@ export const useUserInfo = () => {
   const { userInfo } = useContext(AuthContext)
 
   if (!userInfo) {
-    throw new Error('User info is not available.')
+    throw new Error('User info is not available. Is the user authenticated?')
   }
 
   return userInfo

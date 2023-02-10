@@ -8,12 +8,10 @@ export const PageLoader = () => {
   const ref = useRef<LoadingBarRef>(null)
 
   useEffect(() => {
-    if (ref.current) {
-      if (state === 'loading') {
-        ref.current.continuousStart()
-      } else if (state === 'idle') {
-        ref.current.complete()
-      }
+    if (state === 'loading') {
+      ref.current?.continuousStart()
+    } else if (state === 'idle') {
+      ref.current?.complete()
     }
   }, [state])
 

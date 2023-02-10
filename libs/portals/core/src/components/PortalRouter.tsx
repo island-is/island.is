@@ -66,7 +66,7 @@ export const PortalRouter = ({
   }
 
   if (!router.current) {
-    const moduleRoutes = createModuleRoutes({ ...routerData, userInfo })
+    const moduleRoutes = createModuleRoutes({ ...routerData })
     router.current = createBrowserRouter(
       [
         {
@@ -83,7 +83,11 @@ export const PortalRouter = ({
   return (
     <RouterProvider
       router={router.current}
-      fallbackElement={fallbackElement || <LoadingScreen ariaLabel={formatMessage(m.loadingScreen)} />}
+      fallbackElement={
+        fallbackElement || (
+          <LoadingScreen ariaLabel={formatMessage(m.loadingScreen)} />
+        )
+      }
     />
   )
 }
