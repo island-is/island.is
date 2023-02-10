@@ -6,8 +6,8 @@ import { SessionsSession } from '@island.is/api/schema'
 import { formatNationalId, getSessionType } from '../../utils/utils'
 import { useAuth } from '@island.is/auth/react'
 import { SessionType } from '../../lib/types/sessionTypes'
-import { formatDate, getTime } from '@island.is/shared/utils'
-import { dateFormat } from '@island.is/shared/constants'
+import { dateFormat, timeFormat } from '@island.is/shared/constants'
+import { useLocale } from '@island.is/localization'
 
 interface LogTableProps {
   sessions: SessionsSession[]
@@ -21,11 +21,12 @@ const ExpandedDivider = () => (
 
 const LogTableMobile: FC<LogTableProps> = ({ sessions }) => {
   const { userInfo } = useAuth()
+  const { formatDateFns } = useLocale()
+
   return (
     <>
       {sessions.map((session: SessionsSession, index: number) => {
         const type = getSessionType(session, userInfo?.profile.nationalId ?? '')
-        const formattedDate = new Date(+session.timestamp).toUTCString()
 
         return (
           <div style={{ width: '100%' }} key={index}>
@@ -42,11 +43,11 @@ const LogTableMobile: FC<LogTableProps> = ({ sessions }) => {
                 alignItems="center"
               >
                 <Text as="h5" variant="h5">
-                  {session.client.name || 'Óþekkt'}
+                  {session.client.name}
                 </Text>
                 <Box>
                   <Text variant="small">
-                    {formatDate(formattedDate, dateFormat.is)}
+                    {formatDateFns(session.timestamp, dateFormat.is)}
                   </Text>
                   <Box
                     alignItems="center"
@@ -59,7 +60,9 @@ const LogTableMobile: FC<LogTableProps> = ({ sessions }) => {
                       type="outline"
                       color="blue400"
                     />
-                    <Text variant="small">{getTime(formattedDate)}</Text>
+                    <Text variant="small">
+                      {formatDateFns(session.timestamp, timeFormat.is)}
+                    </Text>
                   </Box>
                 </Box>
               </Box>

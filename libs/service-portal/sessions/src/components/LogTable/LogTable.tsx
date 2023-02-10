@@ -10,12 +10,8 @@ import Person from '../PersonIcon/PersonIcon'
 import { SessionsSession } from '@island.is/api/schema'
 import { formatNationalId, getSessionType } from '../../utils/utils'
 import { useAuth } from '@island.is/auth/react'
-import { dateFormat } from '@island.is/shared/constants'
-import {
-  formatDate,
-  getOrganizationLogoUrl,
-  getTime,
-} from '@island.is/shared/utils'
+import { dateFormat, timeFormat } from '@island.is/shared/constants'
+
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { SessionType } from '../../lib/types/sessionTypes'
@@ -26,7 +22,7 @@ interface LogTableProps {
 }
 const LogTable: React.FC<LogTableProps> = ({ data }) => {
   const { userInfo } = useAuth()
-  const { formatMessage } = useLocale()
+  const { formatMessage, formatDateFns } = useLocale()
 
   return (
     <Table.Table>
@@ -45,12 +41,10 @@ const LogTable: React.FC<LogTableProps> = ({ data }) => {
             userInfo?.profile.nationalId ?? '',
           )
 
-          const formattedDate = new Date(+session.timestamp).toUTCString()
-
           return (
             <Table.Row key={index}>
               <Table.Data>
-                <div>{formatDate(formattedDate, dateFormat.is).toString()}</div>
+                <div>{formatDateFns(session.timestamp, dateFormat.is)}</div>
                 <Box
                   alignItems="center"
                   display="flex"
@@ -62,7 +56,7 @@ const LogTable: React.FC<LogTableProps> = ({ data }) => {
                     type="outline"
                     color="blue400"
                   />
-                  {getTime(new Date(formattedDate).toString())}
+                  {formatDateFns(session.timestamp, timeFormat.is)}
                 </Box>
               </Table.Data>
               <Table.Data>
