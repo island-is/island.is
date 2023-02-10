@@ -10,7 +10,6 @@ import {
   ValidationRules,
   useFormContext,
 } from 'react-hook-form'
-import NumberFormat from 'react-number-format'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { ValueType } from 'react-select'
 import { countryCodes as countryCodeList } from './countryCodes'
@@ -157,9 +156,8 @@ export const PhoneInputController = forwardRef(
       const { value, onChange, ...props } = c
 
       return (
-        <NumberFormat
+        <PhoneInput
           size={size}
-          customInput={PhoneInput}
           id={id}
           autoFocus={autoFocus}
           disabled={disabled}
@@ -182,10 +180,13 @@ export const PhoneInputController = forwardRef(
           hasError={error !== undefined}
           errorMessage={error}
           required={required}
-          getInputRef={ref}
+          ref={ref}
           onChange={(
             e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
           ) => {
+            e.target.value
+              ? onChange(cc + e.target.value)
+              : onChange(e.target.value)
             if (onInputChange) {
               onInputChange(e)
             }

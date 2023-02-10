@@ -11,6 +11,7 @@ import { Icon } from '../IconRC/Icon'
 import { ActionMeta, OptionsType, ValueType } from 'react-select'
 import { Option as OptionType } from '../Select/Select'
 import { CountryCodeSelect } from './CountryCodeSelect/CountryCodeSelect'
+import NumberFormat, { NumberFormatValues } from 'react-number-format'
 
 type PhoneInputProps = Omit<
   InputProps,
@@ -19,6 +20,8 @@ type PhoneInputProps = Omit<
   countryCodes: OptionsType<OptionType>
   backgroundColor?: InputBackgroundColor
   countryCodeValue?: ValueType<OptionType>
+  onValueChange?: (values: NumberFormatValues) => void
+  format?: string
   onCountryCodeChange?: ((
     value: ValueType<OptionType>,
     actionMeta: ActionMeta<OptionType>,
@@ -27,7 +30,10 @@ type PhoneInputProps = Omit<
 }
 
 export const PhoneInput = forwardRef(
-  (props: PhoneInputProps, ref?: React.Ref<HTMLInputElement>) => {
+  (
+    props: PhoneInputProps,
+    ref?: React.Ref<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const {
       name,
       label,
@@ -60,7 +66,7 @@ export const PhoneInput = forwardRef(
 
     const [hasFocus, setHasFocus] = useState(false)
     const [isMenuOpen, setIsMenuOpen] = useState(false)
-    const inputRef = useRef<HTMLInputElement>(null)
+    const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
     const mergedRefs = useMergeRefs(inputRef, ref || null)
 
     const errorId = `${id}-error`
@@ -168,7 +174,7 @@ export const PhoneInput = forwardRef(
                   onMenuClose={() => setIsMenuOpen(false)}
                   dataTestId={`country-code-test-${id}`}
                 />
-                <input
+                <NumberFormat
                   className={cn(
                     styles.input,
                     resolveResponsiveProp(
@@ -185,28 +191,28 @@ export const PhoneInput = forwardRef(
                   type="tel"
                   disabled={disabled}
                   name={name}
-                  ref={mergedRefs}
+                  getInputRef={mergedRefs}
                   placeholder={placeholder}
                   value={value}
                   defaultValue={defaultValue}
                   readOnly={readOnly}
-                  onFocus={(e) => {
+                  onFocus={(e: React.FocusEvent<HTMLInputElement>) => {
                     setHasFocus(true)
                     if (onFocus) {
                       onFocus(e)
                     }
                   }}
-                  onClick={(e) => {
+                  onClick={(e: React.MouseEvent<HTMLInputElement>) => {
                     if (onClick) {
                       onClick(e)
                     }
                   }}
-                  onKeyDown={(e) => {
+                  onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                     if (onKeyDown) {
                       onKeyDown(e)
                     }
                   }}
-                  onBlur={(e) => {
+                  onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
                     setHasFocus(false)
                     if (onBlur) {
                       onBlur(e)
