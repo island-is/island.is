@@ -324,7 +324,10 @@ export class ContentfulService {
         for (const linkedEntries of responses) {
           for (const linkedEntry of linkedEntries) {
             counter += 1
-            if (environment.indexableTypes.includes(linkedEntry.sys.id)) {
+            if (
+              environment.indexableTypes.includes(linkedEntry.sys.id) &&
+              !environment.nestedContentTypes.includes(linkedEntry.sys.id)
+            ) {
               indexableEntryMap.set(linkedEntry.sys.id, linkedEntry)
             } else {
               nextLevelOfNestedEntryIds.add(linkedEntry.sys.id)
