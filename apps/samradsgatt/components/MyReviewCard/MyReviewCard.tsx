@@ -4,7 +4,9 @@ import {
   Divider,
   Text,
   ArrowLink,
-  LinkV2,
+  Columns,
+  Column,
+  Icon,
 } from '@island.is/island-ui/core'
 import getTagVariants from '../../utils/helpers/getTagVariants'
 
@@ -87,30 +89,26 @@ export const MyReviewCard = (caseData: CardProps) => {
           lineBreak: 'anywhere',
         }}
       >
-        <Box
-          style={{
-            maxLines: 3,
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-          }}
-        >
-          <Text variant="small" color="dark400">
+        <Box>
+          <Text variant="small" color="dark400" truncate>
             {caseData.review}
           </Text>
         </Box>
       </Box>
-      {/* <Box> */}
-      <LinkV2
-        href="/something"
-        color="blue400"
-        underline="normal"
-        underlineVisibility="always"
-      >
-        Viðhengi
-      </LinkV2>
-
-      <ArrowLink href={`/mal/${caseData.id}`}>Skoða mál</ArrowLink>
+      <Columns>
+        <Column width="content">
+          <Box>
+            <Text variant="h5" color="purple400">
+              Viðhengi <Icon icon="chevronDown" />
+            </Text>
+          </Box>
+        </Column>
+        <Column width="content">
+          <Box marginLeft={20}>
+            <ArrowLink href={`/mal/${caseData.id}`}>Skoða mál</ArrowLink>
+          </Box>
+        </Column>
+      </Columns>
     </Box>
   )
 }
