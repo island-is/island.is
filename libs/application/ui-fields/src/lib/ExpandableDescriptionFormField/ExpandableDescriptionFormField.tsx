@@ -13,7 +13,6 @@ import {
   FieldBaseProps,
 } from '@island.is/application/types'
 import Markdown from 'markdown-to-jsx'
-
 interface Props extends FieldBaseProps {
   field: ExpandableDescriptionField
 }
@@ -32,14 +31,14 @@ export const ExpandableDescriptionFormField: FC<Props> = ({
         label={formatText(field.title, application, formatMessage)}
         labelVariant="h3"
       >
-        <Text marginBottom={4}>
-          {formatText(field.introText, application, formatMessage)}
-        </Text>
-
-        <BulletList space={2} type="ul">
+        {field.introText && (
+          <Text marginBottom={4}>
+            {formatText(field.introText, application, formatMessage)}
+          </Text>
+        )}
+        <BulletList space="gutter" type="ul">
           <Markdown
             options={{
-              forceBlock: true,
               overrides: {
                 li: {
                   component: Bullet,

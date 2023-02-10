@@ -297,6 +297,7 @@ api:
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
     SERVICE_USER_PROFILE_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
+    SESSIONS_API_URL: 'http://web-services-sessions.services-sessions.svc.cluster.local'
     SOFFIA_SOAP_URL: 'https://soffiaprufa.skra.is'
     SYSLUMENN_TIMEOUT: '40000'
     TELL_US_A_STORY_EMAIL: 's@kogk.is'
@@ -1963,13 +1964,13 @@ services-documents:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-services-sessions-api:
+services-sessions:
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-    DB_USER: 'services_sessions'
+    DB_USER: 'services_sessions_read'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
@@ -2036,7 +2037,7 @@ services-sessions-worker:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-    DB_USER: 'services_sessions_worker'
+    DB_USER: 'services_sessions'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
@@ -2083,7 +2084,7 @@ services-sessions-worker:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'services_sessions'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-      DB_USER: 'services_sessions_worker'
+      DB_USER: 'services_sessions'
       NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
