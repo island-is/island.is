@@ -31,11 +31,11 @@ export class CourtBankruptcyCertService {
   public async searchBankruptcy(
     auth: Auth,
   ): Promise<BankruptcyHistoryResult[]> {
-    // const authenticationToken = await this.getAuthenticationToken(auth)
+    const authenticationToken = await this.getAuthenticationToken(auth)
     const cert = await this.searchBankruptcyApi
       .withMiddleware(new AuthMiddleware(auth))
       .searchBankruptcyHistory({
-        authenticationToken: 'b20e34aa-c4e0-4bff-aa7d-6b3e7035224b',
+        authenticationToken,
         idNumber: auth.nationalId ?? '',
       })
     console.log('CERT', JSON.stringify(cert))
