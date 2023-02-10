@@ -1,8 +1,6 @@
-import React, { PropsWithChildren, useState } from 'react'
-import { ValueType } from 'react-select'
+import React, { PropsWithChildren } from 'react'
 import { withFigma } from '../../utils/withFigma'
 import { PhoneInput } from './PhoneInput'
-import { Option } from '../Select/Select'
 
 export default {
   title: 'Form/PhoneInput',
@@ -20,71 +18,14 @@ export default {
 }
 
 const Wrap = ({ children }: PropsWithChildren<{}>) => (
-  <div style={{ height: 300 }}>{children}</div>
+  <div style={{ height: 400 }}>{children}</div>
 )
 
-const countryCodeList = [
-  {
-    name: 'Iceland',
-    format: '###-####',
-    flag: '🇮🇸',
-    code: 'IS',
-    dial_code: '+354',
-  },
-  {
-    name: 'Denmark',
-    format: '## ## ## ##',
-    flag: '🇩🇰',
-    code: 'DK',
-    dial_code: '+45',
-  },
-]
-
-const countryCodes = countryCodeList.map((x) => ({
-  label: `${x.name} ${x.dial_code}`,
-  value: x.dial_code,
-  description: x.flag,
-}))
-
-export const Template = (args) => {
-  const [value, setValue] = useState('')
-  const [selectedCountryCode, setSelectedCountryCode] = useState<
-    ValueType<Option>
-  >(countryCodes[0])
-
-  const cc = (selectedCountryCode as Option).value.toString()
-
-  const handleCountryCodeChange = (opt: ValueType<Option>) => {
-    if (value && !value.startsWith('+')) {
-      // Form value has no country code prefix, set it
-      setValue(`${(opt as Option).value.toString()}${value}`)
-    } else if (value?.startsWith(cc)) {
-      // Update existing country code with updated value
-      const updatedValue = value.replace(cc, (opt as Option).value.toString())
-      setValue(updatedValue)
-    }
-    setSelectedCountryCode(opt)
-  }
-
-  return (
-    <Wrap>
-      <PhoneInput
-        size="md"
-        format={
-          countryCodeList.find((x) => x.dial_code === cc && !!x.format)?.format
-        }
-        countryCodes={countryCodes}
-        value={value?.replace(cc, '')}
-        onChange={(e) => setValue(e.target.value)}
-        countryCodeValue={selectedCountryCode}
-        onCountryCodeChange={handleCountryCodeChange}
-        label="Phone"
-        name="Test1"
-        {...args}
-      />
-    </Wrap>
-  )
-}
+export const Template = (args) => (
+  <Wrap>
+    <PhoneInput size="md" label="Phone" name="Test1" {...args} />
+  </Wrap>
+)
 
 export const Default = Template.bind({})
 Default.args = {

@@ -8,25 +8,84 @@ import { UseBoxStylesProps } from '../Box/useBoxStyles'
 import { resolveResponsiveProp } from '../../utils/responsiveProp'
 import { useMergeRefs } from '../../hooks/useMergeRefs'
 import { Icon } from '../IconRC/Icon'
-import { ActionMeta, OptionsType, ValueType } from 'react-select'
-import { Option as OptionType } from '../Select/Select'
+import { ValueType } from 'react-select'
+import { Option, Option as OptionType } from '../Select/Select'
 import { CountryCodeSelect } from './CountryCodeSelect/CountryCodeSelect'
 import NumberFormat, { NumberFormatValues } from 'react-number-format'
+import { countryCodes as countryCodeList } from './countryCodes'
+import { parse } from 'libphonenumber-js'
+import { useEffectOnce } from 'react-use'
+
+const DEFAULT_COUNTRY_CODE = '+354'
+
+const getCountryCodes = (allowedCountryCodes?: string[]) => {
+  return countryCodeList
+    .filter((x) =>
+      allowedCountryCodes ? allowedCountryCodes.includes(x.code) : true,
+    )
+    .map((x) => ({
+      label: `${x.name} ${x.dial_code}`,
+      value: x.dial_code,
+      description: x.flag,
+    }))
+}
+
+/**
+ * Gets default value for the controller.
+ * If the incoming value is empty or starts with "+",
+ * then we don't have to prefix it with the country code.
+ */
+const getDefaultValue = (
+  defaultValue?: string,
+  defaultCountryCode?: string,
+) => {
+  return !defaultValue || defaultValue?.startsWith('+')
+    ? defaultValue
+    : `${defaultCountryCode ?? ''}${defaultValue}`
+}
+
+/**
+ * Gets default country code.
+ * This function tries to extract a country calling code
+ * by using libphonenumber-js to parse the code from the number.
+ * Defaults to IS code.
+ *
+ * Example outputs:
+ * getDefaultCountryCode("+3545812345") // +354
+ * getDefaultCountryCode("+455812345") // +45
+ * getDefaultCountryCode("5812345") // +354
+ */
+const getDefaultCountryCode = (phoneNumber?: string) => {
+  if (!phoneNumber) return DEFAULT_COUNTRY_CODE
+  const parsedPhoneNumber = parse(phoneNumber)
+
+  if (parsedPhoneNumber && parsedPhoneNumber.country) {
+    return (
+      countryCodeList.find((x) => x.code === parsedPhoneNumber.country)
+        ?.dial_code || DEFAULT_COUNTRY_CODE
+    )
+  }
+
+  return DEFAULT_COUNTRY_CODE
+}
 
 type PhoneInputProps = Omit<
   InputProps,
-  'rows' | 'type' | 'icon' | 'iconType' | 'backgroundColor'
+  | 'rows'
+  | 'type'
+  | 'icon'
+  | 'iconType'
+  | 'backgroundColor'
+  | 'defaultValue'
+  | 'value'
 > & {
-  countryCodes: OptionsType<OptionType>
+  defaultValue?: string
+  value?: string
   backgroundColor?: InputBackgroundColor
-  countryCodeValue?: ValueType<OptionType>
   onValueChange?: (values: NumberFormatValues) => void
+  allowedCountryCodes?: string[]
   format?: string
-  onCountryCodeChange?: ((
-    value: ValueType<OptionType>,
-    actionMeta: ActionMeta<OptionType>,
-  ) => void) &
-    ((value: ValueType<OptionType>, action: ActionMeta<OptionType>) => void)
+  onFormatValueChange?: (...event: any[]) => void
 }
 
 export const PhoneInput = forwardRef(
@@ -54,20 +113,26 @@ export const PhoneInput = forwardRef(
       fixedFocusState,
       autoExpand,
       loading,
-      countryCodeValue,
-      countryCodes,
+      allowedCountryCodes,
+      onFormatValueChange,
       onFocus,
       onBlur,
       onClick,
       onKeyDown,
-      onCountryCodeChange,
       ...inputProps
     } = props
 
+    const countryCodes = getCountryCodes(allowedCountryCodes)
+    const defaultCountryCode = getDefaultCountryCode(defaultValue)
+    const [selectedCountryCode, setSelectedCountryCode] = useState<
+      ValueType<Option>
+    >(countryCodes.find((x) => x.value === defaultCountryCode))
     const [hasFocus, setHasFocus] = useState(false)
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
     const mergedRefs = useMergeRefs(inputRef, ref || null)
+
+    const cc = (selectedCountryCode as Option).value.toString()
 
     const errorId = `${id}-error`
     const selectId = `country-code-select-${id}`
@@ -84,15 +149,19 @@ export const PhoneInput = forwardRef(
       ? backgroundColor.map(mapBlue)
       : mapBlue(backgroundColor as InputBackgroundColor)
 
-    const handleSelectChange = (
-      value: ValueType<OptionType>,
-      actionMeta: ActionMeta<OptionType>,
-    ) => {
-      onCountryCodeChange?.(value, actionMeta)
+    const handleSelectChange = (value: ValueType<OptionType>) => {
+      setSelectedCountryCode(value)
       if (inputRef.current) {
         inputRef.current.focus()
       }
     }
+
+    useEffectOnce(() => {
+      // We need to initialize defaultValues with country code prefix if it is missing
+      if (value && !value.startsWith('+') && onFormatValueChange) {
+        onFormatValueChange(getDefaultValue(defaultValue, defaultCountryCode))
+      }
+    })
 
     return (
       <>
@@ -162,7 +231,7 @@ export const PhoneInput = forwardRef(
                   id={selectId}
                   name={selectId}
                   onChange={handleSelectChange}
-                  value={countryCodeValue}
+                  value={selectedCountryCode}
                   options={countryCodes}
                   disabled={disabled || readOnly}
                   backgroundColor={backgroundColor}
@@ -188,14 +257,28 @@ export const PhoneInput = forwardRef(
                     styles.inputSize[size],
                   )}
                   id={id}
+                  name={name}
                   type="tel"
                   disabled={disabled}
-                  name={name}
                   getInputRef={mergedRefs}
                   placeholder={placeholder}
-                  value={value}
-                  defaultValue={defaultValue}
+                  value={value?.replace(cc, '')}
+                  defaultValue={getDefaultValue(
+                    defaultValue,
+                    defaultCountryCode,
+                  )}
                   readOnly={readOnly}
+                  format={
+                    countryCodeList.find(
+                      (x) => x.dial_code === cc && !!x.format,
+                    )?.format
+                  }
+                  onValueChange={({ value }) => {
+                    // Don't prefix value with country code it it's empty.
+                    value
+                      ? onFormatValueChange?.(cc + value)
+                      : onFormatValueChange?.(value)
+                  }}
                   onFocus={(e: React.FocusEvent<HTMLInputElement>) => {
                     setHasFocus(true)
                     if (onFocus) {
