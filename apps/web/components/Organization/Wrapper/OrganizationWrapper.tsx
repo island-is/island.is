@@ -33,7 +33,7 @@ import {
   Webreader,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
+import { useFeatureFlag } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { WatsonChatPanel } from '@island.is/web/components'
 
@@ -67,6 +67,7 @@ import {
 } from './Themes/FjarsyslaRikisinsTheme'
 import HeilbrigdisstofnunSudurlandsFooter from './Themes/HeilbrigdisstofnunSudurlandsTheme/HeilbrigdisstofnunSudurlandsFooter'
 import { HeilbrigdisstofnunSudurlandsHeader } from './Themes/HeilbrigdisstofnunSudurlandsTheme/HeilbrigdisstofnunSudurlandsHeader'
+import { TryggingastofnunHeader } from './Themes/TryggingastofnunTheme'
 
 import * as styles from './OrganizationWrapper.css'
 
@@ -143,7 +144,11 @@ export const getThemeConfig = (
     footerVersion = 'organization'
   }
 
-  if (theme === 'sjukratryggingar' || theme === 'rikislogmadur')
+  if (
+    theme === 'sjukratryggingar' ||
+    theme === 'rikislogmadur' ||
+    theme === 'tryggingastofnun'
+  )
     return {
       themeConfig: {
         headerButtonColorScheme: 'blueberry',
@@ -200,6 +205,8 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
       return null
     case 'fjarsysla-rikisins':
       return <FjarsyslaRikisinsHeader organizationPage={organizationPage} />
+    case 'tryggingastofnun':
+      return <TryggingastofnunHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
