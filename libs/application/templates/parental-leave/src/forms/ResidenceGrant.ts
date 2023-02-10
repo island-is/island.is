@@ -27,20 +27,16 @@ export const ResidenceGrant: Form = buildForm({
           .residenceGrantApplyTitle,
       children: [
         buildMultiField({
-          title:
-            parentalLeaveFormMessages.residenceGrantMessage
-              .residenceGrantApplyTitle,
+          title: parentalLeaveFormMessages.residenceGrantMessage
+          .residenceGrantTitle,
           id: 'residenceGrant.multiOne',
-          description:
-            parentalLeaveFormMessages.residenceGrantMessage
-              .residenceGrantSelectPeriodDescription,
+          description: '',
           space: 2,
           children: [
             buildDescriptionField({
               id: 'residenceGrantApplication.information',
-              title:
-                parentalLeaveFormMessages.residenceGrantMessage
-                  .residenceGrantTitle,
+              title:'',
+                
               description:
                 parentalLeaveFormMessages.residenceGrantMessage
                   .residenceGrantInformation,

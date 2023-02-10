@@ -1615,24 +1615,3 @@ export const setTestBirthAndExpectedDate = (
     expBirthDate: `${expBirthDateYear}-${expBirthDateMonth}-${expBirthDateDate}`,
   }
 }
-
-export const setTestDates = (
-  months = 0,
-  days = 0,
-  add = false,
-  sub = false,
-) => {
-  // Set a date that is today we can either add or substract months
-  const newDate = sub
-    ? subMonths(new Date(), months)
-    : add
-    ? addMonths(new Date(), months)
-    : new Date()
-  // Set the number of days we want to check
-  const date = addDays(newDate, days)
-  const year = `${date.getFullYear()}`
-  const month = `${date.getMonth()}`
-  const day = `${date.getDate()}`
-
-  return `${year}-${month}-${day}`
-}

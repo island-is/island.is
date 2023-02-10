@@ -284,13 +284,6 @@ export const validatePeriodResidenceGrant = (
   dateFrom: string,
   dateTo: string,
 ) => {
-  if (!residentGrantIsOpenForApplication(actualBirthDay))
-    return {
-      field: 'dateFrom',
-      error:
-        parentalLeaveFormMessages.residenceGrantMessage
-          .residenceGrantGenericErrorMessage,
-    }
   const birthDayConverted = convertBirthDay(actualBirthDay)
 
   const birthDate = new Date(
@@ -318,15 +311,27 @@ export const validatePeriodResidenceGrant = (
   const toDate = new Date(to[0], to[1] - 1, to[2])
   const fromDate = new Date(from[0], from[1] - 1, from[2])
 
-  const birthDateMinus =
-    multipleBirths === 'yes' ? subDays(birthDate, 28) : subDays(birthDate, 14)
-
   const expBirthDateMinus =
     multipleBirths === 'yes'
       ? subDays(expectedBirthDate, 28)
       : subDays(expectedBirthDate, 14)
 
   if (isBefore(birthDate, expectedBirthDate)) {
+    // If the actual birth date is before the expected birthdate
+    if (isBefore(birthDate, expBirthDateMinus))
+      return {
+        field: 'dateFrom',
+        error:
+          parentalLeaveFormMessages.residenceGrantMessage
+            .residenceGrantStartDateError,
+      }
+    if (isBefore(fromDate, expBirthDateMinus))
+      return {
+        field: 'dateFrom',
+        error:
+          parentalLeaveFormMessages.residenceGrantMessage
+            .residenceGrantStartDateError,
+      }
     if (isAfter(toDate, birthDate))
       return {
         field: 'dateTo',
@@ -334,29 +339,24 @@ export const validatePeriodResidenceGrant = (
           parentalLeaveFormMessages.residenceGrantMessage
             .residenceGrantEndDateError,
       }
-    if (isBefore(fromDate, birthDateMinus))
+  } else {
+    // If the actual birth date is after or on the expected birthdate
+    if (isBefore(fromDate, expBirthDateMinus))
       return {
         field: 'dateFrom',
         error:
           parentalLeaveFormMessages.residenceGrantMessage
             .residenceGrantStartDateError,
       }
+    if (isAfter(toDate, birthDate))
+      return {
+        field: 'dateTo',
+        error:
+          parentalLeaveFormMessages.residenceGrantMessage
+            .residenceGrantEndDateError,
+      }
   }
 
-  if (isBefore(fromDate, expBirthDateMinus))
-    return {
-      field: 'dateFrom',
-      error:
-        parentalLeaveFormMessages.residenceGrantMessage
-          .residenceGrantStartDateError,
-    }
-  if (isAfter(toDate, birthDate))
-    return {
-      field: 'dateTo',
-      error:
-        parentalLeaveFormMessages.residenceGrantMessage
-          .residenceGrantEndDateError,
-    }
   if (isBefore(toDate, fromDate))
     return {
       field: 'dateTo',
@@ -365,5 +365,5 @@ export const validatePeriodResidenceGrant = (
           .residenceGrantStartBeforeEndDateError,
     }
 
-  return { field: undefined, error: undefined }
+  return false
 }
