@@ -1,4 +1,8 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
+
+import { IndictmentCountOffense } from '@island.is/judicial-system/types'
+
+registerEnumType(IndictmentCountOffense, { name: 'IndictmentCountOffense' })
 
 @ObjectType()
 export class IndictmentCount {
@@ -25,4 +29,7 @@ export class IndictmentCount {
 
   @Field({ nullable: true })
   readonly legalArguments?: string
+
+  @Field(() => [IndictmentCountOffense], { nullable: true })
+  readonly offenses?: IndictmentCountOffense[]
 }

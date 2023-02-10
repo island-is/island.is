@@ -9,6 +9,7 @@ export const UpdateIndictmentCountMutation = gql`
       vehicleRegistrationNumber
       incidentDescription
       legalArguments
+      offenses
     }
   }
 `
