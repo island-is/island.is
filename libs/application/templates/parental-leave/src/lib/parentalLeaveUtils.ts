@@ -682,6 +682,12 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'unemploymentBenefits',
   ) as string
 
+  const isResidenceGrant = getValueViaPath(
+    answers,
+    'isResidenceGrant',
+    NO,
+  ) as YesOrNo
+
   const otherParentName = (getValueViaPath(
     answers,
     'otherParentObj.otherParentName',
@@ -919,6 +925,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     benefitsFiles,
     commonFiles,
     actionName,
+    isResidenceGrant,
   }
 }
 

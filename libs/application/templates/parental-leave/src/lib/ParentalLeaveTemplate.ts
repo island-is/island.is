@@ -599,7 +599,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.RESIDENCE_GRAND_APPLICATION]: {
-        entry: ['setPreviousState', 'assignToVMST'],
+        entry: ['setPreviousState', 'assignToVMST', 'setResidenceGrant'],
         meta: {
           status: 'inprogress',
           name: States.RESIDENCE_GRAND_APPLICATION,
@@ -1445,6 +1445,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { answers } = application
         const actionName = findActionName(context)
         set(answers, 'actionName', actionName)
+        return context
+      }),
+      setResidenceGrant: assign((context) => {
+        const { application } = context
+        const { answers } = application
+
+        set(answers, 'isResidenceGrant', YES)
+
         return context
       }),
     },

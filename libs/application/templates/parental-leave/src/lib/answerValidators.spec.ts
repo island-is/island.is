@@ -678,7 +678,8 @@ describe('when constructing a new period', () => {
 test.each([
   {
     birthDay: setTestBirthAndExpectedDate().birthDate,
-    expectedBirthDate: setTestBirthAndExpectedDate(0, 5, false, false, true).expBirthDate,
+    expectedBirthDate: setTestBirthAndExpectedDate(0, 5, false, false, true)
+      .expBirthDate,
     multipleBirths: 'no',
     dateFrom: setTestDates(),
     dateTo: setTestDates(0, 14),

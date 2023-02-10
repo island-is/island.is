@@ -36,6 +36,34 @@ export const ResidenceGrant: Form = buildForm({
               .residenceGrantSelectPeriodDescription,
           space: 2,
           children: [
+            buildDescriptionField({
+              id: 'residenceGrantApplication.information',
+              title:
+                parentalLeaveFormMessages.residenceGrantMessage
+                  .residenceGrantTitle,
+              description:
+                parentalLeaveFormMessages.residenceGrantMessage
+                  .residenceGrantInformation,
+            }),
+            buildCustomField({
+              id: 'imagefield.info',
+              title: '',
+              defaultValue: 2,
+              component: 'ImageField',
+            }),
+          ],
+        }),
+
+        buildMultiField({
+          title:
+            parentalLeaveFormMessages.residenceGrantMessage
+              .residenceGrantApplyTitle,
+          id: 'residenceGrant.multiTwo',
+          description:
+            parentalLeaveFormMessages.residenceGrantMessage
+              .residenceGrantSelectPeriodDescription,
+          space: 2,
+          children: [
             buildDateField({
               id: 'residenceGrant.dateFrom',
               title: 'From',
@@ -51,7 +79,7 @@ export const ResidenceGrant: Form = buildForm({
               width: 'half',
             }),
             buildCustomField({
-              id: 'imagefield',
+              id: 'imagefield.date',
               title: '',
               defaultValue: 0,
               component: 'ImageField',
@@ -76,7 +104,7 @@ export const ResidenceGrant: Form = buildForm({
         }),
         buildMultiField({
           title: parentalLeaveFormMessages.confirmation.title,
-          id: 'residenceGrant.multiTwo',
+          id: 'residenceGrant.multiThree',
           description:
             parentalLeaveFormMessages.residenceGrantMessage
               .residenceGrantSelectPeriodSubmitDescription,
@@ -95,7 +123,7 @@ export const ResidenceGrant: Form = buildForm({
               ]),
             }),
             buildCustomField({
-              id: 'imagefield',
+              id: 'imagefield.submit',
               title: '',
               defaultValue: 1,
               component: 'ImageField',
