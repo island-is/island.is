@@ -1,4 +1,5 @@
 import { Box, Checkbox, Text } from '@island.is/island-ui/core'
+import { useEffect, useState } from 'react'
 
 const ChosenSubscriptionCard = ({
   casesData,
@@ -6,8 +7,25 @@ const ChosenSubscriptionCard = ({
   policyAreasData,
   subscriptionArray,
 }) => {
-  console.log('data', policyAreasData)
-  console.log('subscriptionArray', subscriptionArray)
+  const [subscriptionsSelected, setSubscriptionsSelected] = useState(false)
+
+  useEffect(() => {
+    if (
+      subscriptionArray.caseIds.length === 0 &&
+      subscriptionArray.institutionIds.length === 0 &&
+      subscriptionArray.policyAreaIds.length === 0
+    ) {
+      setSubscriptionsSelected(false)
+      return
+    } else {
+      setSubscriptionsSelected(true)
+
+
+      
+    }
+  }, [subscriptionArray])
+
+  console.log('subscriptionsSelected', subscriptionsSelected)
 
   return (
     <Box paddingX={[0, 0, 0, 0]}>
