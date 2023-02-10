@@ -125,7 +125,6 @@ export const IndictmentCount: React.FC<Props> = (props) => {
             return { ...nextState, value }
           }}
           onChange={(event) => {
-            console.log(event, 'onChange')
             removeErrorMessageIfValid(
               ['empty', 'vehicle-registration-number'],
               event.target.value,
@@ -142,7 +141,6 @@ export const IndictmentCount: React.FC<Props> = (props) => {
             )
           }}
           onBlur={async (event) => {
-            console.log(event, 'onBlur')
             validateAndSetErrorMessage(
               ['empty', 'vehicle-registration-number'],
               event.target.value,
