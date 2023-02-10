@@ -14,11 +14,9 @@ module.exports = {
 
   async down(queryInterface) {
     return queryInterface.sequelize.transaction((t) =>
-      queryInterface.removeColumn(
-        'indictment_count',
-        'laws_broken',
-        { transaction: t },
-      ),
+      queryInterface.removeColumn('indictment_count', 'laws_broken', {
+        transaction: t,
+      }),
     )
   },
 }

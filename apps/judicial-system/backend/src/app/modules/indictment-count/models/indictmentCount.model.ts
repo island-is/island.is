@@ -60,7 +60,7 @@ export class IndictmentCount extends Model {
     type: DataType.JSONB,
     allowNull: true,
   })
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: [[Number, Number]], isArray: true })
   lawsBroken?: [number, number][]
 
   @Column({
