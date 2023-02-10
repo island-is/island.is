@@ -225,7 +225,7 @@ export const AuthProvider = ({
           window.location.href,
         )
 
-        const url = typeof user.state === 'string' ? user.state : basePath
+        const url = typeof user.state === 'string' ? user.state : '/'
         window.history.replaceState(null, '', basePath + url)
 
         dispatch({
