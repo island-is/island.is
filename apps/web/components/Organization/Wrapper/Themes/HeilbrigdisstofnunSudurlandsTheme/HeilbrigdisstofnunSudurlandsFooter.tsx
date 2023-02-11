@@ -117,7 +117,7 @@ const HeilbrigdisstofnunSudurlandsFooter = ({
 
   return (
     <footer aria-labelledby="heilbrigdisstofnun-sudurlands-footer">
-      <Box className={styles.container}>
+      <div className={styles.container}>
         <GridContainer>
           <GridColumn className={styles.mainColumn}>
             <GridRow>
@@ -169,7 +169,7 @@ const HeilbrigdisstofnunSudurlandsFooter = ({
             </GridRow>
           </GridColumn>
         </GridContainer>
-      </Box>
+      </div>
     </footer>
   )
 }
