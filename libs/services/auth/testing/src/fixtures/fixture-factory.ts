@@ -25,7 +25,10 @@ import {
 import startOfDay from 'date-fns/startOfDay'
 import { CreateDomain } from './domain.fixture'
 import { CreateApiScopeGroup } from './apiScopeGroup.fixture'
-import { CreateClient } from './client.fixture'
+import {
+  CreateClient,
+  createClient as createClientFixture,
+} from './client.fixture'
 
 export class FixtureFactory {
   constructor(private app: TestApp) {}
@@ -39,11 +42,13 @@ export class FixtureFactory {
     description,
     nationalId,
     apiScopes = [],
+    organisationLogoKey,
   }: CreateDomain): Promise<Domain> {
     const domain = await this.get(Domain).create({
       name: name ?? faker.random.word(),
       description: description ?? faker.lorem.sentence(),
       nationalId: nationalId ?? createNationalId('company'),
+      organisationLogoKey: organisationLogoKey ?? faker.random.word(),
     })
     domain.scopes = await Promise.all(
       apiScopes.map((apiScope) =>
@@ -53,8 +58,8 @@ export class FixtureFactory {
     return domain
   }
 
-  async createClient(client: CreateClient): Promise<Client> {
-    return this.get(Client).create(client)
+  async createClient(client?: Partial<CreateClient>): Promise<Client> {
+    return this.get(Client).create(createClientFixture(client))
   }
 
   async createClientAllowedScope(
