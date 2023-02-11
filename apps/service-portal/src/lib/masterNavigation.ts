@@ -16,7 +16,7 @@ import { vehiclesNavigation } from '@island.is/service-portal/vehicles'
 import { personalInformationNavigation } from '@island.is/service-portal/settings/personal-information'
 import {
   delegationsNavigation,
-  delegationsNavigationChildrenWithFolder,
+  delegationsNavigationChildren,
 } from '@island.is/portals/shared-modules/delegations'
 import { sessionsNavigation } from '@island.is/service-portal/sessions'
 
@@ -46,10 +46,7 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
     vehiclesNavigation,
     {
       ...delegationsNavigation,
-      children: [
-        ...delegationsNavigationChildrenWithFolder,
-        sessionsNavigation,
-      ],
+      children: [...delegationsNavigationChildren, sessionsNavigation],
     },
   ],
 }
