@@ -1,4 +1,10 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  ParseArrayPipe,
+  Query,
+  UseGuards,
+} from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import { ClientsService, ResourcesService } from '@island.is/auth-api-lib'
@@ -53,7 +59,11 @@ export class ClientsController {
   })
   async findAll(
     @Query('lang') lang?: string,
-    @Query('clientIds') clientIds?: string[],
+    @Query(
+      'clientIds',
+      new ParseArrayPipe({ items: String, separator: ',', optional: true }),
+    )
+    clientIds?: string[],
   ): Promise<ClientDto[]> {
     const clients = await this.clientsService.findAllWithTranslation(
       clientIds,

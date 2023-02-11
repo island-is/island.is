@@ -66,7 +66,7 @@ const getTestCases: Record<string, TestCase> = {
       },
     ],
   },
-  'should filter response by clientIds qyery param': {
+  'should filter response by clientIds query param': {
     domains: [
       {
         name: 'test-domain-1',
@@ -83,18 +83,27 @@ const getTestCases: Record<string, TestCase> = {
         clientName: 'Test client 1',
       },
       {
+        clientId: 'test-domain-1/test-client-3',
+        clientName: 'Test client 3',
+      },
+      {
         clientId: 'test-domain-2/test-client-2',
         clientName: 'Test client 2',
       },
     ],
     filters: {
-      clientIds: ['test-domain-1/test-client-1'],
+      clientIds: ['test-domain-1/test-client-1', 'test-domain-2/test-client-2'],
     },
     expected: [
       {
         clientId: 'test-domain-1/test-client-1',
         clientName: 'Test client 1',
         domainName: 'test-domain-1',
+      },
+      {
+        clientId: 'test-domain-2/test-client-2',
+        clientName: 'Test client 2',
+        domainName: 'test-domain-2',
       },
     ],
   },
