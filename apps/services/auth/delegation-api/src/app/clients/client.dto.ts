@@ -15,8 +15,9 @@ export class ClientDto {
   clientName!: string
 
   @ApiProperty({
-    example: 'Stafrænt Ísland',
-    description: 'This key is used to look up the organisation in Contentful.',
+    example: '@island.is/web',
+    description:
+      'This is the domain name, unique identifier for the domain the client belongs to.',
   })
-  organisationLogoKey?: string
+  domainName!: string
 }

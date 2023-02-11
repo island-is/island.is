@@ -71,8 +71,16 @@ export class ClientsService {
     })
   }
 
-  async findAllWithTranslation(lang?: string): Promise<Client[]> {
-    const clients = await this.clientModel.findAll()
+  async findAllWithTranslation(
+    clientIds?: string[],
+    lang?: string,
+  ): Promise<Client[]> {
+    const clients = await this.clientModel.findAll({
+      where: {
+        ...(clientIds && clientIds.length > 0 ? { clientId: clientIds } : {}),
+      },
+      attributes: ['clientId', 'clientName'],
+    })
 
     if (lang) {
       return this.clientsTranslationService.translateClients(clients, lang)

@@ -16,16 +16,18 @@ interface TestCase {
   domains: {
     name: string
     description: string
-    organisationLogoKey: string
   }[]
   clients: {
     clientId: string
     clientName: string
   }[]
+  filters?: {
+    clientIds?: string[]
+  }
   expected: {
     clientId: string
     clientName: string
-    organisationLogoKey: string
+    domainName: string
   }[]
 }
 
@@ -35,12 +37,10 @@ const getTestCases: Record<string, TestCase> = {
       {
         name: 'test-domain-1',
         description: 'Test domain 1',
-        organisationLogoKey: 'test-logo-key-1',
       },
       {
         name: 'test-domain-2',
         description: 'Test domain 2',
-        organisationLogoKey: 'test-logo-key-2',
       },
     ],
     clients: [
@@ -57,12 +57,44 @@ const getTestCases: Record<string, TestCase> = {
       {
         clientId: 'test-domain-1/test-client-1',
         clientName: 'Test client 1',
-        organisationLogoKey: 'test-logo-key-1',
+        domainName: 'test-domain-1',
       },
       {
         clientId: 'test-domain-2/test-client-2',
         clientName: 'Test client 2',
-        organisationLogoKey: 'test-logo-key-2',
+        domainName: 'test-domain-2',
+      },
+    ],
+  },
+  'should filter response by clientIds qyery param': {
+    domains: [
+      {
+        name: 'test-domain-1',
+        description: 'Test domain 1',
+      },
+      {
+        name: 'test-domain-2',
+        description: 'Test domain 2',
+      },
+    ],
+    clients: [
+      {
+        clientId: 'test-domain-1/test-client-1',
+        clientName: 'Test client 1',
+      },
+      {
+        clientId: 'test-domain-2/test-client-2',
+        clientName: 'Test client 2',
+      },
+    ],
+    filters: {
+      clientIds: ['test-domain-1/test-client-1'],
+    },
+    expected: [
+      {
+        clientId: 'test-domain-1/test-client-1',
+        clientName: 'Test client 1',
+        domainName: 'test-domain-1',
       },
     ],
   },
@@ -71,7 +103,6 @@ const getTestCases: Record<string, TestCase> = {
       {
         name: 'test-domain-1',
         description: 'Test domain 1',
-        organisationLogoKey: 'test-logo-key-1',
       },
     ],
     clients: [],
@@ -82,6 +113,14 @@ const getTestCases: Record<string, TestCase> = {
 const user = createCurrentUser({
   scope: [AuthScope.delegations],
 })
+
+const buildQueryString = (params: Record<string, string | string[]>) =>
+  `?${Object.entries(params)
+    .map(
+      ([key, value]) =>
+        `${key}=${Array.isArray(value) ? value.join(',') : value}`,
+    )
+    .join('&')}`
 
 describe('ClientsController', () => {
   describe('with auth', () => {
@@ -112,8 +151,13 @@ describe('ClientsController', () => {
         })
 
         it('should pass', async () => {
+          // Arrange
+          const query = testCase.filters
+            ? buildQueryString(testCase.filters)
+            : ''
+
           // Act
-          const res = await server.get('/v1/clients')
+          const res = await server.get(`/v1/clients${query}`)
 
           // Assert
           expect(res.status).toBe(200)

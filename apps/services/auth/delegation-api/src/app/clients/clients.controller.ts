@@ -34,31 +34,45 @@ export class ClientsController {
           required: false,
           type: 'string',
         },
+        clientIds: {
+          description: 'List of clientIds to filter by.',
+          required: false,
+          schema: {
+            type: 'array',
+            items: {
+              type: 'string',
+              example: ['@island.is/web', '@admin.island.is/web'],
+            },
+          },
+        },
       },
     },
   })
   @Audit<ClientDto[]>({
     resources: (clients) => clients.map((client) => client.clientId),
   })
-  async findAll(@Query('lang') lang?: string): Promise<ClientDto[]> {
-    const clients = await this.clientsService.findAllWithTranslation(lang)
+  async findAll(
+    @Query('lang') lang?: string,
+    @Query('clientIds') clientIds?: string[],
+  ): Promise<ClientDto[]> {
+    const clients = await this.clientsService.findAllWithTranslation(
+      clientIds,
+      lang,
+    )
 
     if (!clients) {
       return []
     }
 
-    return Promise.all(
-      clients.map(async (client) => {
-        // Todo: This is a temporary solution until we have linked clients to domains
-        const clientDomain = client.clientId.split('/')[0]
-        const domain = await this.resourcesService.findDomainByPk(clientDomain)
+    return clients.map((client) => {
+      // Todo: This is a temporary solution until we have linked clients to domains
+      const domainName = client.clientId.split('/')[0]
 
-        return {
-          clientId: client.clientId,
-          clientName: client.clientName ?? client.clientId,
-          organisationLogoKey: domain?.organisationLogoKey,
-        }
-      }),
-    )
+      return {
+        clientId: client.clientId,
+        clientName: client.clientName ?? client.clientId,
+        domainName,
+      }
+    })
   }
 }
