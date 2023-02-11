@@ -46,6 +46,9 @@ const WITH_SEARCH = [
 
   'utlendingastofnun',
   'directorate-of-immigration',
+
+  'landlaeknir',
+  'directorate-of-health',
 ]
 
 const parseOrganizationLinkHref = (organization: Query['getOrganization']) => {
