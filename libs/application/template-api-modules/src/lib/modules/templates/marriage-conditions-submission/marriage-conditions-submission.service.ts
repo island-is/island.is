@@ -46,9 +46,21 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
       return this.handleReturn(fakeData?.maritalStatus || '')
     }
 
-    const spouse = await this.nationalRegistryService.getSpouse(auth.nationalId)
-    const maritalStatus = spouse?.maritalStatus || '1'
-    return this.handleReturn(maritalStatus)
+    try {
+      const spouse = await this.nationalRegistryService.getSpouse(
+        auth.nationalId,
+      )
+      const maritalStatus = spouse?.maritalStatus || '1'
+      return this.handleReturn(maritalStatus)
+    } catch (e) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProvider,
+          summary: coreErrorMessages.errorDataProvider,
+        },
+        400,
+      )
+    }
   }
 
   private formatMaritalStatus(maritalCode: string): string {
@@ -72,7 +84,7 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
       throw new TemplateApiError(
         {
           title: coreErrorMessages.failedDataProvider,
-          summary: coreErrorMessages.errorDataProvider,
+          summary: coreErrorMessages.errorDataProviderMaritalStatus,
         },
         400,
       )
