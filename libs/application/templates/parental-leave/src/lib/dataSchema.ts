@@ -44,7 +44,7 @@ export const dataSchema = z.object({
   applicationType: z.object({
     option: z.enum([PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, PARENTAL_LEAVE]),
   }),
-  dvalarstyrk: z.object({
+  residenceGrant: z.object({
     dateFrom: z.string(),
     dateTo: z.string(),
   }),

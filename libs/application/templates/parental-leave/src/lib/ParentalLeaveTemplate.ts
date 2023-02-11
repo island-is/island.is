@@ -4,6 +4,7 @@ import unset from 'lodash/unset'
 import cloneDeep from 'lodash/cloneDeep'
 
 import {
+  coreMessages,
   EphemeralStateLifeCycle,
   pruneAfterDays,
 } from '@island.is/application/core'
@@ -566,6 +567,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           name: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           actionCard: {
             description: statesMessages.additionalDocumentRequiredDescription,
+            tag: {
+              label: coreMessages.tagsRequiresAction,
+              variant: 'red',
+            },
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.5,
@@ -594,7 +599,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.RESIDENCE_GRAND_APPLICATION]: {
-        entry: ['setPreviousState', 'assignToVMST'],
+        entry: ['setPreviousState', 'assignToVMST', 'setResidenceGrant'],
         meta: {
           status: 'inprogress',
           name: States.RESIDENCE_GRAND_APPLICATION,
@@ -674,7 +679,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       // },
       [States.APPROVED]: {
         entry: 'assignToVMST',
-        exit: 'setBirthDate',
         meta: {
           name: States.APPROVED,
           status: 'inprogress',
@@ -952,7 +956,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_APPROVE_EDITS]: {
-        entry: ['assignToVMST', 'removeNullPeriod'],
+        entry: ['assignToVMST', 'removeNullPeriod', 'setHasApplied'],
         exit: ['clearTemp', 'resetAdditionalDocumentsArray', 'clearAssignees'],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVE_EDITS,
@@ -1419,14 +1423,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           assignees: [],
         },
       })),
-      setBirthDate: assign((context) => {
-        // Only for dev should remove
-        // before merging with main
-        const { application } = context
-        const { answers } = application
-        set(answers, 'dateOfBirth', '20230101')
-        return context
-      }),
       setPreviousState: assign((context, event) => {
         const e = (event.type as unknown) as any
         if (e === 'xstate.init') {
@@ -1449,6 +1445,25 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { answers } = application
         const actionName = findActionName(context)
         set(answers, 'actionName', actionName)
+        return context
+      }),
+      setResidenceGrant: assign((context) => {
+        const { application } = context
+        const { answers } = application
+
+        set(answers, 'isResidenceGrant', YES)
+
+        return context
+      }),
+      setHasApplied: assign((context) => {
+        const { application } = context
+        const { answers } = application
+        if (
+          answers.previousState === 'approved' &&
+          application.state === 'vinnumalastofnunApproveEdits'
+        ) {
+          set(answers, 'hasAppliedFor', 'residenceGrant')
+        }
         return context
       }),
     },

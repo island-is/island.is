@@ -62,7 +62,7 @@ import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
   multipleBirthsDefaultDays,
 } from '../config'
-import { isAfter, isBefore } from 'date-fns'
+import { isAfter, isBefore, isEqual, subDays, subMonths } from 'date-fns'
 import { AnyEventObject } from 'xstate'
 
 export function getExpectedDateOfBirth(
@@ -682,6 +682,12 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'unemploymentBenefits',
   ) as string
 
+  const isResidenceGrant = getValueViaPath(
+    answers,
+    'isResidenceGrant',
+    NO,
+  ) as YesOrNo
+
   const otherParentName = (getValueViaPath(
     answers,
     'otherParentObj.otherParentName',
@@ -919,6 +925,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     benefitsFiles,
     commonFiles,
     actionName,
+    isResidenceGrant,
   }
 }
 
@@ -1482,10 +1489,12 @@ export const isParentalGrant = (application: Application) => {
   )
 }
 
-const convertBirthDay = (birthDay: string) => {
+export const convertBirthDay = (birthDay: string) => {
   // Regex check if only decimals are used in the string
   const reg = new RegExp(/^\d+$/)
+  // Default
   const convertedBirthDay = { year: 0, month: 0, date: 0 }
+  // Checks on length and only contain decimal or we return default
   if (birthDay.length !== 8) return convertedBirthDay
   if (!birthDay.match(reg)) return convertedBirthDay
   // The string is expected to be yyyymmdd
@@ -1496,6 +1505,7 @@ const convertBirthDay = (birthDay: string) => {
   return { year, month, date }
 }
 export const residentGrantIsOpenForApplication = (childBirthDay: string) => {
+  // We expect the childBirthDay to be yyyymmdd
   const convertedBirthDay = convertBirthDay(childBirthDay)
   // Guard that the method used above did not return 0 0 0
   if (
@@ -1509,10 +1519,12 @@ export const residentGrantIsOpenForApplication = (childBirthDay: string) => {
     convertedBirthDay.month,
     convertedBirthDay.date,
   )
-  const dateToday = new Date()
+  const dateToday = new Date().setHours(0, 0, 0, 0)
+  if (isEqual(dateToday, birthDay)) return true
   if (!isAfter(dateToday, birthDay)) return false
   // Adds 6 months to the birthday
   const fullPeriod = addMonths(birthDay, 6)
+  if (isEqual(dateToday, fullPeriod)) return true
   if (!isBefore(dateToday, fullPeriod)) return false
   return true
 }
@@ -1535,6 +1547,7 @@ export const actionsResidenceGrant = (
     vinnumalastofnunApproval: 'VINNUMALASTOFNUNAPPROVAL',
     vinnumalastofnunApproveEdits: 'VINNUMALASTOFNUNAPPROVEEDITS',
   }
+  const displayMessage = parentalLeaveFormMessages.residenceGrantMessage
 
   const actions: CallToAction<AnyEventObject>[] = events.map((e) => {
     return {
@@ -1544,7 +1557,10 @@ export const actionsResidenceGrant = (
         return false
       },
       event: ((event === 'reject' ? `${e}REJECT` : e) as unknown) as Events,
-      name: event === 'reject' ? 'Reject' : 'Confirm',
+      name:
+        event === 'reject'
+          ? displayMessage.residenceGrantReject
+          : displayMessage.residenceGrantSubmit,
       type: event === 'reject' ? 'reject' : 'primary',
     }
   })
@@ -1552,4 +1568,50 @@ export const actionsResidenceGrant = (
   const mergedActions: CallToAction<AnyEventObject>[] =
     [...actions, ...buttons] || []
   return mergedActions
+}
+
+export const setTestBirthAndExpectedDate = (
+  months = 0,
+  days = 0,
+  addMonth = false,
+  subMonth = false,
+  daysAdd = false,
+  daysSub = false,
+) => {
+  // Set a date that is today we can either add or substract months
+  const date = subMonth
+    ? subMonths(new Date(), months)
+    : addMonth
+    ? addMonths(new Date(), months)
+    : new Date()
+
+  const year = `${date.getFullYear()}`
+  const month =
+    `${date.getMonth() + 1}`.length > 1
+      ? `${date.getMonth() + 1}`
+      : `0${date.getMonth() + 1}`
+
+  const day =
+    `${date.getDate()}`.length > 1 ? `${date.getDate()}` : `0${date.getDate()}`
+  // returns a  string in yyyymmdd
+  const birthDate = new Date(
+    date.getFullYear(),
+    date.getMonth() + 1,
+    date.getDate(),
+  )
+  const newDate = daysSub
+    ? subDays(birthDate, days)
+    : daysAdd
+    ? addDays(birthDate, days)
+    : birthDate
+
+  const expBirthDate = addDays(newDate, days)
+  const expBirthDateYear = `${expBirthDate.getFullYear()}`
+  const expBirthDateMonth = `${expBirthDate.getMonth()}`
+  const expBirthDateDate = `${expBirthDate.getDate()}`
+
+  return {
+    birthDate: `${year}${month}${day}`,
+    expBirthDate: `${expBirthDateYear}-${expBirthDateMonth}-${expBirthDateDate}`,
+  }
 }

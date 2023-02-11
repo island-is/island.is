@@ -11,8 +11,9 @@ import format from 'date-fns/format'
 import { minimumPeriodStartBeforeExpectedDateOfBirth } from '../config'
 import { MANUAL, ParentalRelations, YES } from '../constants'
 import { answerValidators } from './answerValidators'
-import { errorMessages } from './messages'
+import { errorMessages, parentalLeaveFormMessages } from './messages'
 import { NO, StartDateOptions, AnswerValidationConstants } from '../constants'
+import { validatePeriodResidenceGrant } from './answerValidationSections/utils'
 
 const { VALIDATE_LATEST_PERIOD } = AnswerValidationConstants
 
@@ -672,3 +673,55 @@ describe('when constructing a new period', () => {
     })
   })
 })
+
+test.each([
+  {
+    birthDay: '20230116',
+    expectedBirthDate: '2023-01-14',
+    multipleBirths: 'no',
+    dateFrom: '2023-01-01',
+    dateTo: '2023-01-16',
+    expected: false,
+  },
+  {
+    birthDay: '20221230',
+    expectedBirthDate: '2023-01-14',
+    multipleBirths: 'no',
+    dateFrom: '2023-01-01',
+    dateTo: '2023-01-05',
+    expected: {
+      field: 'dateFrom',
+      error:
+        parentalLeaveFormMessages.residenceGrantMessage
+          .residenceGrantStartDateError,
+    },
+  },
+  {
+    birthDay: '20230110',
+    expectedBirthDate: '2023-01-14',
+    multipleBirths: 'no',
+    dateFrom: '2023-01-01',
+    dateTo: '2023-01-10',
+    expected: false,
+  },
+])(
+  'Should return false if a period is within the allowed range of days and within the allowed 6 months application time from the brth of the child/children. Otherwise it will return an error and the field this error is associated with',
+  ({
+    birthDay,
+    expectedBirthDate,
+    multipleBirths,
+    dateFrom,
+    dateTo,
+    expected,
+  }) => {
+    expect(
+      validatePeriodResidenceGrant(
+        birthDay,
+        expectedBirthDate,
+        multipleBirths,
+        dateFrom,
+        dateTo,
+      ),
+    ).toStrictEqual(expected)
+  },
+)

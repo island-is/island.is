@@ -109,14 +109,13 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
       : false
     : false
   const { state } = application
-  const { dateOfBirth } = application.answers
+  const { dateOfBirth, hasAppliedFor } = application.answers
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
       onError: (e) => handleServerError(e, formatMessage),
     },
   )
-
   const { formatMessage } = useLocale()
   const [screenState, setScreenState] = useState<'steps' | 'viewApplication'>(
     'steps',
@@ -170,6 +169,24 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
   }
 
   if (
+    dateOfBirth &&
+    residentGrantIsOpenForApplication(`${dateOfBirth}`) &&
+    (state === 'approved' ||
+      state === 'vinnumalastofnunApproveEdits' ||
+      state === 'vinnumalastofnunApproval') &&
+    hasAppliedFor === 'residenceGrant'
+  ) {
+    steps.push({
+      state: ReviewSectionState.inProgress,
+      title: formatMessage(
+        parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle,
+      ),
+      description: formatMessage(
+        parentalLeaveFormMessages.residenceGrantMessage
+          .residenceGrantHasBeenAppliedForDescription,
+      ),
+    })
+  } else if (
     dateOfBirth &&
     residentGrantIsOpenForApplication(`${dateOfBirth}`) &&
     (state === 'approved' ||

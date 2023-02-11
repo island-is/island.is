@@ -1,4 +1,5 @@
 import {
+  buildCustomField,
   buildDateField,
   buildDescriptionField,
   buildFileUploadField,
@@ -20,27 +21,30 @@ export const ResidenceGrant: Form = buildForm({
   logo: Logo,
   children: [
     buildSection({
-      id: 'residentGrantApplication',
+      id: 'residenceGrant',
       title:
         parentalLeaveFormMessages.residenceGrantMessage
           .residenceGrantApplyTitle,
       children: [
         buildMultiField({
-          title: 'DateField',
-          id: 'dvalarstyrk',
+          title:
+            parentalLeaveFormMessages.residenceGrantMessage
+              .residenceGrantApplyTitle,
+          id: 'residenceGrant.multiOne',
           description:
-            'Add the date form when you wish to apply for Dvalastyrkur',
+            parentalLeaveFormMessages.residenceGrantMessage
+              .residenceGrantSelectPeriodDescription,
           space: 2,
           children: [
             buildDateField({
-              id: 'dvalarstyrk.dateFrom',
+              id: 'residenceGrant.dateFrom',
               title: 'From',
               placeholder: '',
               backgroundColor: 'blue',
               width: 'half',
             }),
             buildDateField({
-              id: 'dvalarstyrk.dateTo',
+              id: 'residenceGrant.dateTo',
               title: 'To',
               placeholder: '',
               backgroundColor: 'blue',
@@ -49,7 +53,7 @@ export const ResidenceGrant: Form = buildForm({
           ],
         }),
         buildFileUploadField({
-          id: 'residenceGrantApplication.fileUpload',
+          id: 'fileUpload.residenceGrant',
           title:
             parentalLeaveFormMessages.residenceGrantMessage
               .residenceGrantAttachmentTitle,
@@ -64,19 +68,35 @@ export const ResidenceGrant: Form = buildForm({
           uploadButtonLabel:
             parentalLeaveFormMessages.selfEmployed.attachmentButton,
         }),
-        buildSubmitField({
-          id: 'residenceGrantApplication.submit',
-          placement: 'footer',
+        buildMultiField({
           title: parentalLeaveFormMessages.confirmation.title,
-          refetchApplicationAfterSubmit: true,
-          actions: actionsResidenceGrant('reject', [
-            {
-              event: 'APPROVE',
-              name: parentalLeaveFormMessages.confirmation.title,
-              type: 'primary',
-            },
-          ]),
+          id: 'residenceGrant.multiTwo',
+          description:
+            parentalLeaveFormMessages.residenceGrantMessage
+              .residenceGrantSelectPeriodSubmitDescription,
+          children: [
+            buildSubmitField({
+              id: 'residenceGrant.submit',
+              placement: 'footer',
+              title: parentalLeaveFormMessages.confirmation.title,
+              refetchApplicationAfterSubmit: true,
+              actions: actionsResidenceGrant('reject', [
+                {
+                  event: 'APPROVE',
+                  name: parentalLeaveFormMessages.confirmation.title,
+                  type: 'primary',
+                },
+              ]),
+            }),
+            buildCustomField({
+              id: 'imagefield.submit',
+              title: '',
+              defaultValue: 1,
+              component: 'ImageField',
+            }),
+          ],
         }),
+
         buildDescriptionField({
           id: 'unused',
           title: '',

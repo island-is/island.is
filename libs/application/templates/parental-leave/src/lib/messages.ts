@@ -1941,9 +1941,14 @@ export const parentalLeaveFormMessages: MessageDir = {
     residenceGrantClosedDescription: {
       id: 'pl.application:residence.grant.closed.description',
       defaultMessage:
-        'Ekki er hægt að sækja um dvalarstyrk fyrr en eftir að barn er fætt',
+        'Ekki er hægt að sækja um dvalarstyrk fyrr en eftir að barn er fætt. Sækja skal um innan sex mánaða frá fæðingardegi barns.',
       description:
-        'The residence grant cannot be applied for until after the child is born',
+        'The residence grant cannot be applied for until after the child is born. Applications shall be applied for within six months from the date of delivery.',
+    },
+    residenceGrantHasBeenAppliedForDescription: {
+      id: 'pl.application:residence.grant.open.description',
+      defaultMessage: 'Verið er að vinna úr umsókn þinni',
+      description: 'Your application is being processed',
     },
     residenceGrantApplyTitle: {
       id: 'pl.application:residence.grant.apply.title',
@@ -1963,10 +1968,18 @@ export const parentalLeaveFormMessages: MessageDir = {
     residenceGrantAttachmentDescription: {
       id: 'pl.application:residence.grant.attachment.description',
       defaultMessage:
-        'Til að sækja um dvalarstyrk þarf að senda inn vottorð þess sérfræðilæknis sem annast hefur foreldrið. Vottorð um dvalarstyrk skal berast á því formi sem aðgengilegt er í Sögukerfi heilbrigðisstofnana. Á vottorðinu þarf að koma fram rökstuðningur sérfræðilæknis fyrir því að viðkomandi foreldri sé nauðsynlegt að hans mati að dvelja fjarri heimili sínu í tiltekinn tíma fyrir áætlaðan fæðingardag barns í tengslum við nauðsynlega fæðingarþjónustu vegna fæðingar barns „svo sem vegna fjarlægðar, færðar, óveðurs, verkfalls eða áhættumeðgöngu“. Einnig þarf að koma fram á vottorðinu hvort að foreldrið hafi dvalið á sjúkrahúsi eða heilbrigðisstofnun á því tímabili. Vinnumálastofnun þarf að berast frumrit af vottorðinu með undirskrift læknis. Athugaðu að skjalið þarf að vera á .pdf formi.',
+        'Til að sækja um dvalarstyrk þarf að senda inn vottorð þess sérfræðilæknis sem annast hefur foreldrið. Vottorð um dvalarstyrk skal berast á því formi sem aðgengilegt er í Sögukerfi heilbrigðisstofnana. Á vottorðinu þarf að koma fram rökstuðningur sérfræðilæknis fyrir því að viðkomandi foreldri sé nauðsynlegt að hans mati að dvelja fjarri heimili sínu í tiltekinn tíma fyrir áætlaðan fæðingardag barns. Einnig þarf að koma fram á vottorðinu hvort að foreldrið hafi dvalið á sjúkrahúsi eða heilbrigðisstofnun á því tímabili. Vinnumálastofnun þarf að berast frumrit af vottorðinu með undirskrift læknis. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description:
-        'When applying for a residence grant, a certificate from the parent’s specialist doctor needs to be submitted with the application. A residence grant certificate shall be submitted using the form available in the health care history system. The certificate must stipulate the specialist doctor’s reasoning for the necessity of the relevant parent to live far from her home for a certain amount of time before the expected date of delivery relating to necessary maternity services because of the birth of a child, “regarding, for instance, distance, bad weather, strike or pregnancy risk factors”. The certificate must also stipulate information about whether the parent has stayed in a hospital or a health institute during that period. The original certificate must be submitted with a doctor’s signature. Note that the document needs to be on .pdf format.',
+        'When applying for a residence grant, a certificate from the parent’s specialist doctor needs to be submitted with the application. A residence grant certificate shall be submitted using the form available in the health care history system. The certificate must stipulate the specialist doctor’s reasoning for the necessity of the relevant parent to live far from her home for a certain amount of time before the expected date of delivery. The certificate must also stipulate information about whether the parent has stayed in a hospital or a health institute during that period. The original certificate must be submitted with a doctor’s signature. Note that the document needs to be on .pdf format.',
     },
+    residenceGrantInformation: {
+      id: 'pl.application:residence.grant.information',
+      defaultMessage:
+        'A residence grant is a financial grant to a pregnant mother who, in the opinion of a specialist doctor, must live far from her home for services needed due to the birth of a child, such as distance, bad weather, a workplace strike or pregnancy risk factors. The grant is paid retroactively. ',
+      description:
+        'A residence grant is a financial grant to a pregnant mother who, in the opinion of a specialist doctor, must live far from her home for services needed due to the birth of a child, such as distance, bad weather, a workplace strike or pregnancy risk factors. The grant is paid retroactively. ',
+    },
+
     residenceGrantOpen: {
       id: 'pl.application:residence.grant.open',
       defaultMessage: 'Hér getur þú sent inn umsókn þína.',
@@ -1979,7 +1992,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     residenceGrantSubmit: {
       id: 'pl.application:residence.grant.submit',
-      defaultMessage: 'Sendu inn umsókn þína',
+      defaultMessage: 'Sendu inn',
       description: 'Submit',
     },
     residenceGrantReject: {
@@ -1992,10 +2005,40 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Farðu í umsókn.',
       description: 'Back to application',
     },
+    residenceGrantSelectPeriodDescription: {
+      id: 'pl.application:residence.grant.select.period.description',
+      defaultMessage: 'Veldu tímabilið sem þú vilt sækja um dvalarstyrk',
+      description: 'Select the period you want to apply for residence grant',
+    },
+    residenceGrantSelectPeriodSubmitDescription: {
+      id: 'pl.application:residence.grant.select.period.submit.description',
+      defaultMessage: 'Sendu inn umsókn til að sækja um dvalarstyrk',
+      description: 'Send in you application to apply for residence grant',
+    },
     residenceGrantError: {
       id: 'pl.application:residence.grant.error',
       defaultMessage: 'Engin lýsing fannst',
       description: 'No description could be found',
+    },
+    residenceGrantStartDateError: {
+      id: 'pl.application:residence.grant.start.date.error',
+      defaultMessage: 'Upphafsdagsetning er utan leyfilegs tímabils',
+      description: 'Start date is outside of the allowed date range',
+    },
+    residenceGrantEndDateError: {
+      id: 'pl.application:residence.grant.end.date.error',
+      defaultMessage: 'Lokadagsetning er utan leyfilegs tímabils',
+      description: 'End date is outside of the allowed date range',
+    },
+    residenceGrantStartBeforeEndDateError: {
+      id: 'pl.application:residence.grant.start.before.end.date.error',
+      defaultMessage: 'Lokadagur er fyrir upphafsdag',
+      description: 'End date is before start date',
+    },
+    residenceGrantGenericErrorMessage: {
+      id: 'pl.application:residence.grant.generic.error.message',
+      defaultMessage: 'Eitthvað fór úrskeiðis',
+      description: 'Something went wrong',
     },
   }),
 }
@@ -2424,6 +2467,11 @@ export const errorMessages = defineMessages({
     defaultMessage:
       'Ekki er hægt að færa daga ef forsjárlausa foreldrið hefur ekki samþykki fyrir umgengni í þessu fæðingarorlofi. Vinsamlegast veljið annan möguleika.',
     description: 'Unable to transfer days!',
+  },
+  residenceGrantPeriodError: {
+    id: 'pl.application:errors.residence.grant.period.error',
+    defaultMessage: 'Tímabilið sem þú hefur valið er ekki gilt',
+    description: 'The period you requested is not valid',
   },
 })
 
