@@ -1,6 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
-// Test
 @ObjectType()
 export class NationalRegistryChild {
   @Field(() => ID)
