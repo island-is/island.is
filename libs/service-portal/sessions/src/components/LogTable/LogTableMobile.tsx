@@ -3,11 +3,12 @@ import { Box, Divider, Icon, Text } from '@island.is/island-ui/core'
 import Person from '../PersonIcon/PersonIcon'
 import * as styles from '../LogTable/LogTable.css'
 import { SessionsSession } from '@island.is/api/schema'
-import { formatNationalId, getSessionType } from '../../utils/utils'
+import { getSessionType } from '../../utils/utils'
 import { useAuth } from '@island.is/auth/react'
 import { SessionType } from '../../lib/types/sessionTypes'
 import { dateFormat, timeFormat } from '@island.is/shared/constants'
 import { useLocale } from '@island.is/localization'
+import * as kennitala from 'kennitala'
 
 interface LogTableProps {
   sessions: SessionsSession[]
@@ -79,7 +80,7 @@ const LogTableMobile: FC<LogTableProps> = ({ sessions }) => {
                         : session.subject.name}
                     </Text>
                     <Text>
-                      {formatNationalId(
+                      {kennitala.format(
                         type === SessionType.myBehalf ||
                           type === SessionType.company
                           ? session.actor.nationalId

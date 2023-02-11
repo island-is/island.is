@@ -8,7 +8,7 @@ import {
 import React from 'react'
 import Person from '../PersonIcon/PersonIcon'
 import { SessionsSession } from '@island.is/api/schema'
-import { formatNationalId, getSessionType } from '../../utils/utils'
+import { getSessionType } from '../../utils/utils'
 import { useAuth } from '@island.is/auth/react'
 import { dateFormat, timeFormat } from '@island.is/shared/constants'
 
@@ -16,6 +16,7 @@ import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { SessionType } from '../../lib/types/sessionTypes'
 import * as styles from '../LogTable/LogTable.css'
+import * as kennitala from 'kennitala'
 
 interface LogTableProps {
   data: SessionsSession[]
@@ -80,7 +81,7 @@ const LogTable: React.FC<LogTableProps> = ({ data }) => {
                         : session.subject.name}
                     </Text>
                     <Text variant="small">
-                      {formatNationalId(
+                      {kennitala.format(
                         type === SessionType.myBehalf ||
                           type === SessionType.company
                           ? session.actor.nationalId

@@ -1,10 +1,6 @@
 import { SessionsSession } from '@island.is/api/schema'
 import * as kennitala from 'kennitala'
 import { SessionType } from '../lib/types/sessionTypes'
-
-export const formatNationalId = (nationalId: string) => {
-  return kennitala.format(nationalId)
-}
 export const getSessionType = (
   session: SessionsSession,
   userNationalId: string,

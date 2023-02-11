@@ -68,8 +68,17 @@ const Sessions = () => {
     },
   })
 
-  React.useEffect(() => {
+  const handlePageChange = (): void => {
     if (!data || loading) return
+    if (!data.sessionsList.pageInfo.hasNextPage) return
+
+    setPage({
+      after: data?.sessionsList.pageInfo.endCursor ?? '',
+      before: '',
+    })
+  }
+
+  React.useEffect(() => {
     if (isVisible) {
       handlePageChange()
     }
@@ -99,16 +108,6 @@ const Sessions = () => {
   ): void => {
     setPrevSearchNationalId(searchNationalId)
     setSearchNationalId(e.target.value)
-  }
-
-  const handlePageChange = (): void => {
-    if (!data) return
-    if (!data.sessionsList.pageInfo.hasNextPage) return
-
-    setPage({
-      after: data?.sessionsList.pageInfo.endCursor ?? '',
-      before: '',
-    })
   }
 
   return (
