@@ -11,9 +11,9 @@ import {
   UpdateIndictmentCountInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { UpdateIndictmentCountMutation } from './updateIndictmentCountGql'
-import { CreateIndictmentCountMutation } from './createIndictmentCountGql'
-import { DeleteIndictmentCountMutation } from './deleteIndictmentCountGql'
+import { UpdateIndictmentCountMutation } from './updateIndictmentCount.graphql'
+import { CreateIndictmentCountMutation } from './createIndictmentCount.graphql'
+import { DeleteIndictmentCountMutation } from './deleteIndictmentCount.graphql'
 interface CreateIndictmentCountMutationResponse {
   createIndictmentCount: IndictmentCount
 }
