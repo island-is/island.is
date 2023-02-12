@@ -83,6 +83,10 @@ export const IndictmentCount: React.FC<Props> = (props) => {
     vehicleRegistrationNumberErrorMessage,
     setVehicleRegistrationNumberErrorMessage,
   ] = useState<string>('')
+  const [
+    legalArgumentsErrorMessage,
+    setLegalArgumentsErrorMessage,
+  ] = useState<string>('')
 
   function todoHandle(index: number) {
     //(index, 'todo')
@@ -320,11 +324,34 @@ export const IndictmentCount: React.FC<Props> = (props) => {
             name="legalArguments"
             label={formatMessage(strings.legalArgumentsLabel)}
             placeholder={formatMessage(strings.legalArgumentsPlaceholder)}
-            errorMessage={''}
-            hasError={false}
-            value={''}
-            onChange={() => todoHandle(1)}
-            onBlur={() => todoHandle(1)}
+            errorMessage={legalArgumentsErrorMessage}
+            hasError={legalArgumentsErrorMessage !== ''}
+            value={indictmentCount.legalArguments ?? ''}
+            onChange={(event) => {
+              removeErrorMessageIfValid(
+                ['empty'],
+                event.target.value,
+                legalArgumentsErrorMessage,
+                setLegalArgumentsErrorMessage,
+              )
+
+              updateIndictmentCountState(
+                indictmentCount.id,
+                { legalArguments: event.target.value },
+                setWorkingCase,
+              )
+            }}
+            onBlur={(event) => {
+              validateAndSetErrorMessage(
+                ['empty'],
+                event.target.value,
+                setLegalArgumentsErrorMessage,
+              )
+
+              onChange(indictmentCount.id, {
+                legalArguments: event.target.value.trim(),
+              })
+            }}
             autoComplete="off"
             required
             rows={7}
