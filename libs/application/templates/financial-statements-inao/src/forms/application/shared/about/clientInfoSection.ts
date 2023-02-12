@@ -31,8 +31,8 @@ export const clientInfoSection = buildSection({
       children: [
         buildDescriptionField({
           id: ABOUTIDS.operatingYear,
-          title: ''
-         }),
+          title: '',
+        }),
         buildCustomField({
           id: 'OperatingYear',
           childInputIds: [ABOUTIDS.operatingYear],
