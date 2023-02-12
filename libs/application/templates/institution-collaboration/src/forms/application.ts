@@ -8,6 +8,7 @@ import {
   buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
+import { formConclusionSection } from '@island.is/application/ui-forms'
 
 import { YES } from '../constants'
 import { institutionApplicationMessages as m } from '../lib/messages'
@@ -176,16 +177,10 @@ export const application: Form = buildForm({
         }),
       ],
     }),
-    buildSection({
-      id: 'successfulSubmissionSection',
-      title: m.confirmation.sectionLabel,
-      children: [
-        buildCustomField({
-          id: 'successfulSubmission',
-          title: 'Takk fyrir umsóknina!',
-          component: 'ConfirmationScreen',
-        }),
-      ],
+    formConclusionSection({
+      alertTitle: m.confirmation.sectionTitle,
+      expandableHeader: m.confirmation.sectionInfoHeader,
+      expandableDescription: m.confirmation.sectionInfoBulletPoints,
     }),
   ],
 })

@@ -7,7 +7,7 @@ export const Layout: FC<LayoutProps> = ({ children, showIcon }) => {
   return (
     <div>
       <Menu showIcon={showIcon} />
-      <div>{children}</div>
+      {children}
     </div>
   )
 }

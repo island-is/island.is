@@ -9,7 +9,6 @@ import formatISO from 'date-fns/formatISO'
 import {
   CaseDecision,
   CaseState,
-  CaseType,
   isInvestigationCase,
   isRestrictionCase,
   RequestSignatureResponse,
@@ -76,6 +75,7 @@ import {
   InstitutionType,
   User,
   UserRole,
+  CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -95,7 +95,7 @@ function showCustodyNotice(
   decision?: CaseDecision,
 ) {
   return (
-    (type === CaseType.CUSTODY || type === CaseType.ADMISSION_TO_FACILITY) &&
+    (type === CaseType.Custody || type === CaseType.AdmissionToFacility) &&
     state === CaseState.ACCEPTED &&
     isAcceptingCaseDecision(decision)
   )
@@ -107,7 +107,7 @@ export const titleForCase = (
 ) => {
   const isTravelBan =
     theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-    theCase.type === CaseType.TRAVEL_BAN
+    theCase.type === CaseType.TravelBan
 
   if (theCase.state === CaseState.REJECTED) {
     if (isInvestigationCase(theCase.type)) {
@@ -123,14 +123,14 @@ export const titleForCase = (
 
   if (theCase.isValidToDateInThePast) {
     return formatMessage(m.validToDateInThePast, {
-      caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
+      caseType: isTravelBan ? CaseType.TravelBan : theCase.type,
     })
   }
 
   return isInvestigationCase(theCase.type)
     ? formatMessage(m.investigationAccepted)
     : formatMessage(m.restrictionActive, {
-        caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
+        caseType: isTravelBan ? CaseType.TravelBan : theCase.type,
       })
 }
 

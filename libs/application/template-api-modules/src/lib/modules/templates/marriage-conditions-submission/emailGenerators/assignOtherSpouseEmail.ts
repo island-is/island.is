@@ -72,6 +72,13 @@ export const generateAssignOtherSpouseApplicationEmail: AssignOtherSpuseEmail = 
           },
         },
         {
+          component: 'Copy',
+          context: {
+            copy: `Þú hefur 60 daga til að bregðast við umsókninni.`,
+            small: true,
+          },
+        },
+        {
           component: 'Button',
           context: {
             copy: 'Skoða umsókn',

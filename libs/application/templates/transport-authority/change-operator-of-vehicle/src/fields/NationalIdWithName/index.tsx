@@ -47,11 +47,19 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
       ? errorMessage
       : undefined
     : getErrorViaPath(errors, nameField)
-  const nationalIdFieldErrors = errorMessage
-    ? nationalIdDefaultValue?.length === 0
-      ? errorMessage
-      : undefined
-    : getErrorViaPath(errors, nationaIdField)
+
+  let nationalIdFieldErrors: string | undefined
+  if (errorMessage && nationalIdDefaultValue?.length === 0) {
+    nationalIdFieldErrors = errorMessage
+  } else if (
+    kennitala.isValid(nationalIdInput) &&
+    !kennitala.isCompany(nationalIdInput) &&
+    kennitala.info(nationalIdInput).age < 18
+  ) {
+    nationalIdFieldErrors = formatMessage(error.minAgeNotFulfilled)
+  } else if (!errorMessage) {
+    nationalIdFieldErrors = getErrorViaPath(errors, nationaIdField)
+  }
 
   const defaultNationalId = nationalIdDefaultValue
     ? nationalIdDefaultValue

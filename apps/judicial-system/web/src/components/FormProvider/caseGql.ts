@@ -173,6 +173,19 @@ const CaseQuery = gql`
       subpoenaType
       defendantWaivesRightToCounsel
       crimeScenes
+      indictmentIntroduction
+      indictmentCounts {
+        id
+        caseId
+        policeCaseNumber
+        created
+        modified
+        vehicleRegistrationNumber
+        offenses
+        lawsBroken
+        incidentDescription
+        legalArguments
+      }
     }
   }
 `

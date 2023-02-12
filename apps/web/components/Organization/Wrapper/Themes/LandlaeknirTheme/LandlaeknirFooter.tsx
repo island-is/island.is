@@ -1,3 +1,4 @@
+import { BLOCKS } from '@contentful/rich-text-types'
 import {
   Box,
   GridColumn,
@@ -11,8 +12,8 @@ import {
 } from '@island.is/island-ui/core'
 import { FooterItem, Slice } from '@island.is/web/graphql/schema'
 import { SliceType } from '@island.is/island-ui/contentful'
-import { BLOCKS } from '@contentful/rich-text-types'
 import { webRichText } from '@island.is/web/utils/richText'
+import { useNamespace } from '@island.is/web/hooks'
 import * as styles from './LandlaeknirFooter.css'
 
 const renderParagraphs = (
@@ -35,9 +36,14 @@ const renderParagraphs = (
 
 interface LandLaeknirFooterProps {
   footerItems: Array<FooterItem>
+  namespace: Record<string, string>
 }
 
-export const LandLaeknirFooter = ({ footerItems }: LandLaeknirFooterProps) => {
+const LandLaeknirFooter = ({
+  footerItems,
+  namespace,
+}: LandLaeknirFooterProps) => {
+  const n = useNamespace(namespace)
   return (
     <footer aria-labelledby="organizationFooterTitle">
       <Box className={styles.container}>
@@ -46,7 +52,11 @@ export const LandLaeknirFooter = ({ footerItems }: LandLaeknirFooterProps) => {
             <GridRow>
               <Box marginLeft={2}>
                 <img
-                  src="https://images.ctfassets.net/8k0h54kbe6bj/3aKn7lTVtvZVVHJVPSs6Gh/bf8844713aa03d44916e98ae612ea5da/landlaeknir-heilbrigdisraduneytid.png"
+                  width="100%"
+                  src={n(
+                    'landlaeknirFooterImage',
+                    'https://images.ctfassets.net/8k0h54kbe6bj/3aKn7lTVtvZVVHJVPSs6Gh/bf8844713aa03d44916e98ae612ea5da/landlaeknir-heilbrigdisraduneytid.png',
+                  )}
                   alt="landlaeknirLogo"
                 />
               </Box>
@@ -145,7 +155,10 @@ export const LandLaeknirFooter = ({ footerItems }: LandLaeknirFooterProps) => {
                       {renderParagraphs(footerItems[5].content, 0)}
                     </Box>
                     <img
-                      src="https://images.ctfassets.net/8k0h54kbe6bj/1hx4HeCK1OFzPIjtKkMmrL/fa769439b9221a92bfb124b598494ba4/Facebook-Logo-Dark.svg"
+                      src={n(
+                        'landlaeknirFacebookLogo',
+                        'https://images.ctfassets.net/8k0h54kbe6bj/1hx4HeCK1OFzPIjtKkMmrL/fa769439b9221a92bfb124b598494ba4/Facebook-Logo-Dark.svg',
+                      )}
                       alt="facebookLogo"
                     />
                   </Box>
@@ -167,7 +180,10 @@ export const LandLaeknirFooter = ({ footerItems }: LandLaeknirFooterProps) => {
                     alignItems="center"
                   >
                     <img
-                      src="https://images.ctfassets.net/8k0h54kbe6bj/3vtLh2dJ55PA1Y1aOXIkM9/6c60a95ed3db8136a49e9734adbc8c7c/Jafnlaunavottun.svg"
+                      src={n(
+                        'landlaeknirJafnlaunavottunLogo',
+                        'https://images.ctfassets.net/8k0h54kbe6bj/3vtLh2dJ55PA1Y1aOXIkM9/6c60a95ed3db8136a49e9734adbc8c7c/Jafnlaunavottun.svg',
+                      )}
                       alt="jafnlaunavottunLogo"
                     />
                     <Box marginLeft={2}>
@@ -178,12 +194,18 @@ export const LandLaeknirFooter = ({ footerItems }: LandLaeknirFooterProps) => {
 
                   <img
                     width={114}
-                    src="https://images.ctfassets.net/8k0h54kbe6bj/2w9jCgdlKvT1gG5Vyk2arB/e3043e0ae9331ebad4e6e6bca684b87a/grSkref1080x680_BW.png"
+                    src={n(
+                      'landlaeknirGraenskrefLogo',
+                      'https://images.ctfassets.net/8k0h54kbe6bj/2w9jCgdlKvT1gG5Vyk2arB/e3043e0ae9331ebad4e6e6bca684b87a/grSkref1080x680_BW.png',
+                    )}
                     alt=""
                   />
                   <img
                     width={114}
-                    src="https://images.ctfassets.net/8k0h54kbe6bj/4wF7MeLqjkMkw11wLJf2Ko/25a5592603ca0e29aaa58c13ecbf55fe/Heilsueflandi_vinnusta__ur_logo_1.svg"
+                    src={n(
+                      'landlaeknirHeilsueflandiVinnustadurLogo',
+                      'https://images.ctfassets.net/8k0h54kbe6bj/4wF7MeLqjkMkw11wLJf2Ko/25a5592603ca0e29aaa58c13ecbf55fe/Heilsueflandi_vinnusta__ur_logo_1.svg',
+                    )}
                     alt=""
                   />
                 </GridRow>

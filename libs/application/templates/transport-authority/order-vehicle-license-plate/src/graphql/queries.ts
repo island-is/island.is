@@ -1,10 +1,19 @@
-export const GET_CURRENT_VEHICLES = `
-  query GetCurrentVehicles($input: GetCurrentVehiclesInput!) {
-    currentVehicles(input: $input) {
+export const GET_CURRENT_VEHICLES_WITH_PLATE_ORDER_CHECKS = `
+  query GetCurrentVehiclesWithPlateOrderChecks($input: GetCurrentVehiclesInput!) {
+    currentVehiclesWithPlateOrderChecks(input: $input) {
       permno
       make
       color
       role
+      duplicateOrderExists
+    }
+  } 
+`
+
+export const GET_VEHICLE_PLATE_ORDER_CHECKS_BY_PERMNO = `
+  query GetVehiclePlateOrderChecksByPermno($permno: String!) {
+    vehiclePlateOrderChecksByPermno(permno: $permno) {
+      duplicateOrderExists
     }
   } 
 `

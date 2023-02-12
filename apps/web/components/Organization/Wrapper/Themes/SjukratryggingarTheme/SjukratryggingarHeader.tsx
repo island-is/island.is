@@ -15,17 +15,17 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const SjukratryggingarHeader: React.FC<HeaderProps> = ({
+const SjukratryggingarHeader: React.FC<HeaderProps> = ({
   organizationPage,
 }) => {
   const { linkResolver } = useLinkResolver()
 
   return (
-    <Box className={styles.headerBg}>
+    <div className={styles.headerBg}>
       <div className={styles.trianglesLeft}></div>
       <div className={styles.trianglesRight}></div>
       <GridContainer className={styles.headerContainer}>
-        <Box className={styles.headerWrapper}>
+        <div className={styles.headerWrapper}>
           <SidebarLayout
             sidebarContent={
               !!organizationPage.organization.logo && (
@@ -83,8 +83,10 @@ export const SjukratryggingarHeader: React.FC<HeaderProps> = ({
               </Link>
             </Box>
           </SidebarLayout>
-        </Box>
+        </div>
       </GridContainer>
-    </Box>
+    </div>
   )
 }
+
+export default SjukratryggingarHeader
