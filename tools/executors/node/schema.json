@@ -161,6 +161,14 @@
       "type": "string",
       "description": "Name of the main output file. (defaults to `main.js`)",
       "default": "main.js"
+    },
+    "preBuildCommands": {
+      "type": "array",
+      "description": "List of commands to run before the build.",
+      "default": [],
+      "items": {
+        "type": "string"
+      }
     }
   },
   "required": ["tsConfig", "main"],

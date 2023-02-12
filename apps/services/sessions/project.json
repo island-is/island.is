@@ -26,6 +26,9 @@
             "input": "apps/services/sessions",
             "output": "./"
           }
+        ],
+        "preBuildCommands": [
+          "node -e 'process.exit(process.env.CI ? 1 : 0);' || yarn nx run services-sessions:update-geoip"
         ]
       },
       "configurations": {
@@ -34,6 +37,13 @@
           "extractLicenses": true,
           "inspect": false
         }
+      }
+    },
+    "update-geoip": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "npm run-script updatedb license_key=${GEOIP_LICENSE_KEY}",
+        "cwd": "node_modules/geoip-lite"
       }
     },
     "serve": {

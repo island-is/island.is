@@ -5,7 +5,7 @@
 
 import { runExecutor } from '@nrwl/devkit'
 import type { ExecutorContext } from '@nrwl/devkit'
-import { createTmpTsConfig } from './utils'
+import { createTmpTsConfig, exec } from './utils'
 
 const EXTERNAL_DEPENDENCIES_DEFAULT_VALUE = 'all'
 
@@ -13,6 +13,7 @@ export interface BuildExecutorOptions {
   watch: boolean
   tsConfig: string
   externalDependencies?: string
+  preBuildCommands?: string[]
 }
 
 /**
@@ -30,6 +31,14 @@ export default async function* buildExecutor(
 
   if (!project || !target || !projectInfo || !targets) {
     throw new Error('Missing project or target')
+  }
+
+  if (options.preBuildCommands && options.preBuildCommands.length > 0) {
+    console.log('Running pre-build commands...')
+    for (const cmd of options.preBuildCommands) {
+      await exec(cmd)
+    }
+    console.log('Running pre-build done ✅')
   }
 
   // Override the executor of the current task and re-run.

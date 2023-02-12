@@ -28,7 +28,7 @@ ENV APP=${APP}
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=8192"
 
-RUN yarn run build ${APP} --prod
+RUN CI=true yarn run build ${APP} --prod
 
 FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as output-base
 # this is base image for containers that are to be deployed
