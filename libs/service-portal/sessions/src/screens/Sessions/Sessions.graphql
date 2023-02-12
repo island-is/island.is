@@ -18,8 +18,12 @@ query GetSessionsList($input: SessionsInput!) {
         name
       }
       client {
-        id
-        name
+        clientId
+        clientName
+        domain {
+          displayName
+          organisationLogoUrl
+        }
       }
       timestamp
       userAgent

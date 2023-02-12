@@ -43,9 +43,17 @@ const LogTableMobile: FC<LogTableProps> = ({ sessions }) => {
                 justifyContent="spaceBetween"
                 alignItems="center"
               >
-                <Text as="h5" variant="h5">
-                  {session.client.name}
-                </Text>
+                <Box display={'flex'} columnGap={1} alignItems={'center'}>
+                  <Box
+                    className={styles.logo}
+                    style={{
+                      backgroundImage: `url(${session.client.domain?.organisationLogoUrl})`,
+                    }}
+                  ></Box>
+                  <Text as="h5" variant="h5">
+                    {session.client.clientName}
+                  </Text>
+                </Box>
                 <Box>
                   <Text variant="small">
                     {formatDateFns(session.timestamp, dateFormat.is)}

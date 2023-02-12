@@ -30,7 +30,7 @@ interface CursorState {
 }
 
 const Sessions = () => {
-  const SESSION_LIMIT = 20
+  const SESSION_LIMIT = 10
 
   const { formatMessage } = useLocale()
 

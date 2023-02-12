@@ -67,7 +67,15 @@ const LogTable: React.FC<LogTableProps> = ({ data }) => {
                 </Box>
               </Table.Data>
               <Table.Data>
-                <Text variant="eyebrow">{session.client.name || 'Óþekkt'}</Text>
+                <Box display={'flex'} columnGap={1} alignItems={'center'}>
+                  <Box
+                    className={styles.logo}
+                    style={{
+                      backgroundImage: `url(${session.client.domain?.organisationLogoUrl})`,
+                    }}
+                  ></Box>
+                  <Text variant="eyebrow">{session.client.clientName}</Text>
+                </Box>
               </Table.Data>
               <Table.Data>
                 <Box display="flex" alignItems="center" columnGap="gutter">
