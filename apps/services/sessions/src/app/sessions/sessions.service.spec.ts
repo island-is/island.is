@@ -14,8 +14,8 @@ const mockSession = {
   subjectNationalId: createNationalId(),
   clientId: 'clientId',
   timestamp: new Date(),
-  //userAgent:
-  // 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
+  userAgent:
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
   ip: '127.0.0.1',
 } as Session
 
@@ -47,7 +47,7 @@ describe('SessionsService', () => {
     ${mockSession} | ${'Macintosh; Intel Mac OS X 10_15_7'}                                                                                     | ${'Mac OS'}
     ${mockSession} | ${'Bogus User Agent'}                                                                                                      | ${null}
   `(
-    'should create session with matching user agent parsing',
+    'should create session with matching user agent parsing to $device',
     async ({ session, userAgent, device }) => {
       // Act
       await sessionsService.create({
@@ -60,8 +60,30 @@ describe('SessionsService', () => {
       expect(sessions).toHaveLength(1)
       expect(sessions[0]).toMatchObject({
         ...session,
+        userAgent,
         device,
       })
     },
   )
+
+  it.each`
+    session        | ip                  | ipLocation
+    ${mockSession} | ${'153.92.156.131'} | ${'Reykjavik, IS'}
+    ${mockSession} | ${'127.0.0.1'}      | ${null}
+  `('should parse location from ip', async ({ session, ip, ipLocation }) => {
+    // Act
+    await sessionsService.create({
+      ...session,
+      ip,
+    })
+
+    // Assert
+    const sessions = await factory.get(Session).findAll()
+    expect(sessions).toHaveLength(1)
+    expect(sessions[0]).toMatchObject({
+      ...session,
+      ip,
+      ipLocation,
+    })
+  })
 })

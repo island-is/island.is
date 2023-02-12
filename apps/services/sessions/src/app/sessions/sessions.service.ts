@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import geoip from 'geoip-lite'
 import { Op, WhereOptions } from 'sequelize'
 import uaParser from 'ua-parser-js'
 
@@ -71,9 +72,15 @@ export class SessionsService {
     const device =
       browser || os ? `${browser}${browser && os ? ` (${os})` : os}` : undefined
 
+    const geoLocation = geoip.lookup(session.ip)
+    const ipLocation = geoLocation
+      ? `${geoLocation.city}, ${geoLocation.country}`
+      : undefined
+
     return this.sessionModel.create({
       ...session,
       device,
+      ipLocation,
     })
   }
 }
