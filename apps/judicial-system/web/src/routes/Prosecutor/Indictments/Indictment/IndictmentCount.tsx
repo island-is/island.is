@@ -61,6 +61,42 @@ function lawLabel(law: number[]): string {
   return `${law[0]}. mgr. ${law[1]}. gr. 77/2019`
 }
 
+function lawSort(law1: number[], law2: number[]) {
+  if (law1[0] < law2[0]) {
+    return -1
+  }
+  if (law1[0] > law2[0]) {
+    return 1
+  }
+  if (law1[1] < law2[1]) {
+    return -1
+  }
+  if (law1[1] > law2[1]) {
+    return 1
+  }
+  return 0
+}
+
+function legalArguments(lawsBroken?: number[][] | null) {
+  if (!lawsBroken || lawsBroken.length === 0) {
+    return ''
+  }
+
+  let legalArguments = `Telst háttsemi þessi varða við ${lawsBroken[0][1]}. mgr.`
+
+  for (let i = 1; i < lawsBroken.length; i++) {
+    if (lawsBroken[i][0] !== lawsBroken[i - 1][0]) {
+      legalArguments = `${legalArguments} ${lawsBroken[i - 1][0]}. gr.`
+    }
+
+    legalArguments = `${legalArguments}, sbr. ${lawsBroken[i][1]}. mgr.`
+  }
+
+  return `${legalArguments} ${
+    lawsBroken[lawsBroken.length - 1][0]
+  }. gr. umferðarlaga nr. 77/2019.`
+}
+
 interface LawsBrokenOption {
   label: string
   value: string
@@ -261,8 +297,13 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           value={null}
           onChange={(selectedOption: ValueType<ReactSelectOption>) => {
             const index = (selectedOption as LawsBrokenOption).index
+            const lawsBroken = [
+              ...(indictmentCount.lawsBroken ?? []),
+              laws[index],
+            ].sort(lawSort)
             onChange(indictmentCount.id, {
-              lawsBroken: [...(indictmentCount.lawsBroken ?? []), laws[index]],
+              lawsBroken: lawsBroken,
+              legalArguments: legalArguments(lawsBroken),
             })
           }}
           required
@@ -282,10 +323,12 @@ export const IndictmentCount: React.FC<Props> = (props) => {
                 variant="darkerBlue"
                 onClick={() => {
                   if (indictmentCount.lawsBroken) {
+                    const lawsBroken = indictmentCount.lawsBroken
+                      .slice(0, index)
+                      .concat(indictmentCount.lawsBroken.slice(index + 1))
                     onChange(indictmentCount.id, {
-                      lawsBroken: indictmentCount.lawsBroken
-                        .slice(0, index)
-                        .concat(indictmentCount.lawsBroken.slice(index + 1)),
+                      lawsBroken: lawsBroken,
+                      legalArguments: legalArguments(lawsBroken),
                     })
                   }
                 }}
