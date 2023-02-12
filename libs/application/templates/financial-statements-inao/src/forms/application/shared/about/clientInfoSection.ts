@@ -78,6 +78,10 @@ export const clientInfoSection = buildSection({
             return nationalRegistry.name
           },
         }),
+        buildDescriptionField({
+          id: ABOUTIDS.powerOfAttorneyName,
+          title: '',
+        }),
         buildCustomField({
           id: 'powerOfAttorney',
           title: '',
