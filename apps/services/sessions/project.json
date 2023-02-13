@@ -62,7 +62,7 @@
     "serve": {
       "executor": "@nrwl/node:node",
       "options": {
-        "buildTarget": "services-sessions:build"
+        "buildTarget": "services-sessions:esbuild"
       }
     },
     "lint": {
@@ -83,7 +83,7 @@
     "worker": {
       "executor": "@nrwl/node:node",
       "options": {
-        "buildTarget": "services-sessions:build",
+        "buildTarget": "services-sessions:esbuild",
         "args": ["--job", "worker"]
       }
     },
