@@ -189,6 +189,32 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
   }
 
+  async setBirthDate({
+    application,
+  }: TemplateApiModuleActionProps) {
+    const { applicationFundId } = getApplicationExternalData(
+      application.externalData,
+    )
+    if (applicationFundId) {
+      try {
+        const app = await this.applicationInformationAPI.applicationGetApplicationInformation(
+          {
+            applicationId: application.id,
+          },
+        )
+        return {
+          dateOfBirth:
+          app.dateOfBirth
+        }
+      } catch (e) {
+      }
+    }
+    return {
+      dateOfBirth:
+      ''
+    }
+  }
+
   async assignOtherParent({ application }: TemplateApiModuleActionProps) {
     const { otherParentPhoneNumber } = getApplicationAnswers(
       application.answers,
@@ -362,7 +388,23 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     const { applicationFundId } = getApplicationExternalData(
       application.externalData,
     )
-
+    const attachmentsFiles = application.answers.fileUpload as unknown as {
+      residenceGrant: Array<{key: string; name: string}>
+    }
+    if (attachmentsFiles.residenceGrant) {
+      attachmentsFiles.residenceGrant.forEach(async (item, index) => {
+        const pdf = await this.getPdf(
+          application,
+          index,
+          'fileUpload.residenceGrant',
+        )
+        attachments.push({
+          attachmentType: apiConstants.attachments.residenceGrant,
+          attachmentBytes: pdf,
+        })
+      })
+      return attachments
+    }
     // We don't want to send old files to VMST again
     if (applicationFundId && applicationFundId !== '') {
       if (additionalDocuments) {
@@ -655,6 +697,27 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     let numberOfDaysAlreadySpent = 0
     const basicRightCodePeriod =
       vmstRightCodePeriod ?? getRightsCode(application)
+    
+      if (application.answers.residenceGrant) {
+        const residenceGrant = application.answers.residenceGrant as unknown as  {
+          dateTo: string
+          dateFrom: string
+        }
+        const multipleBirths = application.answers.multipleBirths as unknown as  {
+          hasMultipleBirths: 'yes' | 'no'
+          multipleBirths: string
+        }
+
+        const newPeriod = {
+          from: residenceGrant.dateFrom,
+          to: residenceGrant.dateTo,
+          ratio: multipleBirths.hasMultipleBirths === 'yes' ? 'D28' : 'D14',
+          approved: false,
+          paid: false,
+          rightsCodePeriod: multipleBirths.hasMultipleBirths === 'yes' ? 'DVAL.FJÖL' : 'DVALSTYRK'
+        }
+        periods.push(newPeriod)
+      }
 
     for (const [index, period] of answers.entries()) {
       const isFirstPeriod = index === 0
@@ -1222,7 +1285,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       // Add each period to the total number of days spent when an iteration is finished
       numberOfDaysAlreadySpent += periodLength
     }
-
     return periods
   }
 
@@ -1247,13 +1309,17 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
     const nationalRegistryId = application.applicant
     const attachments = await this.getAttachments(application)
+    console.log('sned application ******')
+
+    console.log(JSON.stringify(attachments, null, 2))
 
     try {
       const periods = await this.createPeriodsDTO(
         application,
         nationalRegistryId,
       )
-
+      console.log('*****+ application ******')
+      console.log(JSON.stringify(attachments, null, 2))
       const parentalLeaveDTO = transformApplicationToParentalLeaveDTO(
         application,
         periods,

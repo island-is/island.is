@@ -704,6 +704,22 @@ test.each([
     dateTo: '2023-01-10',
     expected: false,
   },
+  {
+    birthDay: '2023-01-10',
+    expectedBirthDate: '2023-01-14',
+    multipleBirths: 'no',
+    dateFrom: '2023-01-01',
+    dateTo: '2023-01-10',
+    expected: false,
+  },
+  {
+    birthDay: '2023-01-10T00:00:00.000Z',
+    expectedBirthDate: '2023-01-14',
+    multipleBirths: 'no',
+    dateFrom: '2023-01-01',
+    dateTo: '2023-01-10',
+    expected: false,
+  },
 ])(
   'Should return false if a period is within the allowed range of days and within the allowed 6 months application time from the brth of the child/children. Otherwise it will return an error and the field this error is associated with',
   ({

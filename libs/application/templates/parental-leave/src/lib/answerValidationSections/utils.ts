@@ -16,7 +16,6 @@ import { StartDateOptions, YES, NO } from '../../constants'
 import {
   convertBirthDay,
   getExpectedDateOfBirth,
-  residentGrantIsOpenForApplication,
 } from '../parentalLeaveUtils'
 import {
   minimumPeriodStartBeforeExpectedDateOfBirth,

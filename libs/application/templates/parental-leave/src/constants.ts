@@ -36,6 +36,7 @@ export enum ApiModuleActions {
   validateApplication = 'validateApplication',
   notifyApplicantOfRejectionFromEmployer = 'notifyApplicantOfRejectionFromEmployer',
   setBirthDateForNoPrimaryParent = 'setBirthDateForNoPrimaryParent',
+  setBirthDate = 'setBirthDate',
 }
 
 export enum StartDateOptions {
@@ -83,6 +84,7 @@ export enum States {
   VINNUMALASTOFNUN_EDITS_ACTION = 'vinnumalastofnunRequiresActionOnEdits',
 
   RESIDENCE_GRAND_APPLICATION = 'residenceGrantApplication',
+  RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE = 'residenceGrantApplicationNoBirthDate',
   RESIDENCE_GRAND_APPLICATION_IN_PROGRESS = 'residenceGrantApplicationInProgress',
 }
 

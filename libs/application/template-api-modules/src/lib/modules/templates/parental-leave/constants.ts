@@ -23,6 +23,7 @@ export const apiConstants = {
     other: 'Other',
     artificialInsemination: 'ArtificialInsemination',
     parentWithoutBirthParent: 'ParentWithoutBirthParent',
+    residenceGrant: 'ResidenceGrant',
   },
 }
 
