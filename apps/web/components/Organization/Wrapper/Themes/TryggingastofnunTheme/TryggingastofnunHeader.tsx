@@ -43,11 +43,11 @@ const TryggingastofnunHeader: React.FC<HeaderProps> = ({
   const screenWidth = getScreenWidthString(width)
 
   return (
-    <Box
+    <div
       style={n(`tryggingastofnunHeader-${screenWidth}`, getDefaultStyle(width))}
       className={styles.headerBg}
     >
-      <Box className={styles.headerWrapper}>
+      <div className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
             !!organizationPage.organization.logo && (
@@ -94,8 +94,8 @@ const TryggingastofnunHeader: React.FC<HeaderProps> = ({
             </Link>
           </Box>
         </SidebarLayout>
-      </Box>
-    </Box>
+      </div>
+    </div>
   )
 }
 

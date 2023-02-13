@@ -10,6 +10,8 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
+import { IndictmentCountOffense } from '@island.is/judicial-system/types'
+
 import { Case } from '../../case/models/case.model'
 
 @Table({
@@ -55,6 +57,20 @@ export class IndictmentCount extends Model {
   })
   @ApiPropertyOptional()
   vehicleRegistrationNumber?: string
+
+  @Column({
+    type: DataType.JSONB,
+    allowNull: true,
+  })
+  @ApiPropertyOptional({ enum: IndictmentCountOffense, isArray: true })
+  offenses?: IndictmentCountOffense[]
+
+  @Column({
+    type: DataType.JSONB,
+    allowNull: true,
+  })
+  @ApiPropertyOptional({ type: [[Number, Number]], isArray: true })
+  lawsBroken?: [number, number][]
 
   @Column({
     type: DataType.TEXT,
