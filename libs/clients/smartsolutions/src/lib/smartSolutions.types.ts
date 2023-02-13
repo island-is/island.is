@@ -37,7 +37,7 @@ export type ServiceErrorCode =
   | 1
   /** License expired */
   | 2
-  /** No license info found */
+  /** No/incomplete license info found */
   | 3
   /** Request contains some field errors */
   | 4

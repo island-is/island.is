@@ -64,4 +64,6 @@ export const institutionMapper = {
     InstitutionTypes.SAMGONGUSTOFA,
   [ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP]:
     InstitutionTypes.SAMGONGUSTOFA,
+  [ApplicationTypes.DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR]:
+    InstitutionTypes.SAMGONGUSTOFA,
 }

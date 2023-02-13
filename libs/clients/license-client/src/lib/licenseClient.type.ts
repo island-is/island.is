@@ -125,10 +125,7 @@ export interface LicenseClient<ResultType> {
 
   revokePass?: (nationalId: string) => Promise<Result<RevokePassData>>
 
-  verifyPass?: (
-    inputData: string,
-    nationalId: string,
-  ) => Promise<Result<VerifyPassData>>
+  verifyPass?: (inputData: string) => Promise<Result<VerifyPassData>>
 }
 
 export const LICENSE_CLIENT_FACTORY = 'license-client-factory'

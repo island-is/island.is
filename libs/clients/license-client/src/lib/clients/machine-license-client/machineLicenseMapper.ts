@@ -4,10 +4,43 @@ import {
 } from '@island.is/clients/adr-and-machine-license'
 
 import format from 'date-fns/format'
+import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
 import is from 'date-fns/locale/is'
 import enGB from 'date-fns/locale/en-GB'
 import { format as formatSsn } from 'kennitala'
+
+export const checkLicenseExpirationDate = (license: VinnuvelaDto) => {
+  return license.vinnuvelaRettindi
+    ? license.vinnuvelaRettindi
+        .filter((field) => field.kenna || field.stjorna)
+        .every(
+          (field: VinnuvelaRettindiDto) =>
+            field.kenna &&
+            !isAfter(new Date(field.kenna), new Date()) &&
+            field.stjorna &&
+            !isAfter(new Date(field.stjorna), new Date()),
+        )
+    : null
+}
+
+export const findLatestExpirationDate = (license: VinnuvelaDto) => {
+  if (!license.vinnuvelaRettindi) {
+    return null
+  }
+
+  let maxDate = new Date()
+  for (const right of license.vinnuvelaRettindi) {
+    if (right.stjorna && new Date(right.stjorna) > maxDate) {
+      maxDate = new Date(right.stjorna)
+    }
+    if (right.kenna && new Date(right.kenna) > maxDate) {
+      maxDate = new Date(right.kenna)
+    }
+  }
+
+  return maxDate.toISOString()
+}
 
 const formatDateString = (
   dateTime: string,

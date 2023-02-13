@@ -227,6 +227,29 @@ export class SmartSolutionsApi {
     }
   }
 
+  private async getPassDataById(passId: string): Promise<Result<Pass>> {
+    const getPassQuery = JSON.stringify({
+      query: GET_PASS,
+      variables: {
+        id: passId,
+      },
+    })
+
+    const getPassRes = await this.query<GetPassResponseData>(getPassQuery)
+
+    if (!getPassRes.ok) {
+      //if failure, return the response
+      return getPassRes
+    }
+
+    const pass = getPassRes.data.pass
+
+    return {
+      ok: true,
+      data: pass,
+    }
+  }
+
   async verifyPkPass(
     payload: DynamicBarcodeDataInput,
   ): Promise<Result<VerifyPassData>> {
@@ -355,16 +378,6 @@ export class SmartSolutionsApi {
           },
         }
       }
-      if (pass.status === PassStatus.DeleteInProgress) {
-        //pass is being revoked
-        return {
-          ok: false,
-          error: {
-            code: 5,
-            message: 'Pass is being revoked',
-          },
-        }
-      }
 
       //pass is good
       return await this.getPassDataById(pass.id)
@@ -394,17 +407,6 @@ export class SmartSolutionsApi {
     }
 
     const pass = findPassRes.data
-
-    //if pass is being deleted, abort
-    if (pass.status === PassStatus.DeleteInProgress) {
-      return {
-        ok: false,
-        error: {
-          code: 5,
-          message: 'Invalid pass state, pass is already being revoked',
-        },
-      }
-    }
 
     //find the proper pass and void it, if it isn't voided already
     if (pass.status !== PassStatus.Voided) {

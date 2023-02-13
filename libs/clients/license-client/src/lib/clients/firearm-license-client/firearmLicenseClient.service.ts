@@ -2,9 +2,12 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
 import { Inject, Injectable } from '@nestjs/common'
-import { createPkPassDataInput, formatNationalId } from './firearmLicenseMapper'
+import { createPkPassDataInput } from './firearmLicenseMapper'
 import { FirearmApi, OpenFirearmApi } from '@island.is/clients/firearm-license'
-import { format } from 'kennitala'
+import {
+  format as formatNationalId,
+  sanitize as sanitizeNationalId,
+} from 'kennitala'
 import {
   Pass,
   PassDataInput,
@@ -226,7 +229,7 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
 
     const pass = await this.smartApi.generatePkPass(
       payload,
-      format(user.nationalId),
+      formatNationalId(user.nationalId),
     )
 
     return pass
@@ -347,7 +350,10 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
         : null,
     }
 
-    return await this.smartApi.updatePkPass(payload, format(nationalId))
+    return await this.smartApi.updatePkPass(
+      payload,
+      formatNationalId(nationalId),
+    )
   }
 
   async revoke(queryId: string): Promise<Result<RevokePassData>> {
@@ -355,10 +361,7 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
   }
 
   /** We need to verify the pk pass AND the license itself! */
-  async verify(
-    inputData: string,
-    nationalId: string,
-  ): Promise<Result<VerifyPassData>> {
+  async verify(inputData: string): Promise<Result<VerifyPassData>> {
     //need to parse the scanner data
     const { code, date } = JSON.parse(inputData)
     const verifyRes = await this.smartApi.verifyPkPass({ code, date })
@@ -389,9 +392,10 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
         },
       }
     }
+    const sanitizedPassNationalId = sanitizeNationalId(passNationalId)
 
     const licenseInfo = await this.openFirearmApi.getVerificationLicenseInfo(
-      nationalId,
+      sanitizedPassNationalId,
     )
 
     if (!licenseInfo) {
@@ -403,12 +407,22 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
         },
       }
     }
+
+    if (!licenseInfo.ssn) {
+      return {
+        ok: false,
+        error: {
+          code: 3,
+          message: 'Missing ssn for user',
+        },
+      }
+    }
     //now we compare the data
 
     return {
       ok: true,
       data: {
-        valid: licenseInfo.ssn === passNationalId,
+        valid: licenseInfo.ssn === sanitizedPassNationalId,
       },
     }
   }

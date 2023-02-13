@@ -8,29 +8,29 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   UpdateLicenseRequest,
-  RevokeLicenseRequest,
   VerifyLicenseRequest,
   UpdateLicenseResponse,
   VerifyLicenseResponse,
   RevokeLicenseResponse,
 } from './dto'
 import { Pass, PassDataInput, Result } from '@island.is/clients/smartsolutions'
-import { LicenseId } from './license.types'
+import { LicenseId, PASS_TEMPLATE_IDS } from './license.types'
 import {
   LicenseClientService,
   LicenseType,
 } from '@island.is/clients/license-client'
+import type { PassTemplateIds } from './license.types'
 
 @Injectable()
 export class LicenseService {
   constructor(
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
-    private licenseClientService: LicenseClientService,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
+    @Inject(PASS_TEMPLATE_IDS) private config: PassTemplateIds,
+    private clientFactory: LicenseClientService,
   ) {}
 
   private async getLicenseClient(licenseId: LicenseId) {
-    return await this.licenseClientService.getClientByLicenseType(
+    return await this.clientFactory.getClientByLicenseType(
       (licenseId as unknown) as LicenseType,
     )
   }
@@ -99,11 +99,13 @@ export class LicenseService {
   }
 
   async updateLicense(
+    licenseId: LicenseId,
+    nationalId: string,
     inputData: UpdateLicenseRequest,
   ): Promise<UpdateLicenseResponse> {
     let updateRes: Result<Pass | undefined>
     if (inputData.licenseUpdateType === 'push') {
-      const { licenseId, expiryDate, payload, nationalId } = inputData
+      const { expiryDate, payload } = inputData
 
       if (!expiryDate)
         throw new BadRequestException(
@@ -117,7 +119,6 @@ export class LicenseService {
         payload,
       )
     } else {
-      const { licenseId, nationalId } = inputData
       updateRes = await this.pullUpdateLicense(licenseId, nationalId)
     }
 
@@ -135,15 +136,16 @@ export class LicenseService {
   }
 
   async revokeLicense(
-    inputData: RevokeLicenseRequest,
+    licenseId: LicenseId,
+    nationalId: string,
   ): Promise<RevokeLicenseResponse> {
-    const client = await this.getLicenseClient(inputData.licenseId)
+    const client = await this.getLicenseClient(licenseId)
 
     if (!client.revokePass) {
       throw new InternalServerErrorException('Invalid method invocation')
     }
 
-    const revokeData = await client.revokePass(inputData.nationalId)
+    const revokeData = await client.revokePass(nationalId)
 
     if (revokeData.ok) {
       return { revokeSuccess: revokeData.data.success }
@@ -160,14 +162,24 @@ export class LicenseService {
   async verifyLicense(
     inputData: VerifyLicenseRequest,
   ): Promise<VerifyLicenseResponse> {
-    const client = await this.getLicenseClient(inputData.licenseId)
+    const { passTemplateId } = JSON.parse(inputData.barcodeData)
 
-    if (!client.verifyPass) {
-      throw new InternalServerErrorException('Invalid method invocation')
+    if (!passTemplateId) {
+      throw new BadRequestException('Missing passTemplateId')
     }
 
-    const { barcodeData, nationalId } = inputData
-    const verifyData = await client.verifyPass(barcodeData, nationalId)
+    const licenseId = this.getTypeFromPassTemplateId(passTemplateId)
+
+    if (!licenseId) {
+      throw new InternalServerErrorException('PassTemplateID parsing failed')
+    }
+
+    const client = await this.getLicenseClient(licenseId)
+
+    if (!client.verifyPass) {
+      throw new InternalServerErrorException('Service verify failure')
+    }
+    const verifyData = await client.verifyPass(inputData.barcodeData)
 
     if (verifyData.ok) {
       return { valid: verifyData.data.valid }
@@ -179,5 +191,22 @@ export class LicenseService {
       throw new BadRequestException(verifyData.error.message)
     }
     throw new InternalServerErrorException(verifyData.error.message)
+  }
+
+  private getTypeFromPassTemplateId(passTemplateId: string): LicenseId | null {
+    for (const [key, value] of Object.entries(this.config)) {
+      // some license Config id === barcode id
+      if (value === passTemplateId) {
+        const keyAsEnumKey = `${key.toUpperCase()}_LICENSE`
+        const valueFromEnum: LicenseId | undefined =
+          LicenseId[keyAsEnumKey as keyof typeof LicenseId]
+
+        if (!valueFromEnum) {
+          throw new Error(`Invalid license type: ${key}`)
+        }
+        return valueFromEnum
+      }
+    }
+    return null
   }
 }
