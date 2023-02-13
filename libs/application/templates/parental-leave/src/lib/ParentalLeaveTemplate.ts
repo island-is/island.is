@@ -729,7 +729,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       // },
       [States.APPROVED]: {
         entry: 'assignToVMST',
-        exit: 'checkBirthDate',
         meta: {
           name: States.APPROVED,
           status: 'inprogress',
@@ -1526,16 +1525,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           const dateOfBirth = data.dateOfBirth
           set(answers, 'dateOfBirth', dateOfBirth)
         }
-        return context
-      }),
-      checkBirthDate: assign((context) => {
-        const { application } = context
-        const { answers } = application
-        console.log('hmm')
-        //if (!answers.dateOfBirth) {
-
-        unset(answers, 'residenceGrant')
-        // }
         return context
       }),
     },
