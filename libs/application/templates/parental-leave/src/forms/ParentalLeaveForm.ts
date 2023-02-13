@@ -497,7 +497,7 @@ export const ParentalLeaveForm: Form = buildForm({
             const { applicationType } = getApplicationAnswers(answers)
             return applicationType === PARENTAL_LEAVE
           },
-          id: 'employment',
+          id: 'selfEmployed',
           title: parentalLeaveFormMessages.employer.subSection,
           children: [
             buildMultiField({
@@ -554,18 +554,35 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
               ],
             }),
+          ],
+        }),
+        buildSubSection({
+          condition: (answers) => {
+            const {
+              applicationType,
+              isReceivingUnemploymentBenefits,
+              isSelfEmployed,
+            } = getApplicationAnswers(answers)
+            const isNotSelfEmployed = isSelfEmployed !== YES
+
+            return (
+              applicationType === PARENTAL_LEAVE &&
+              isReceivingUnemploymentBenefits &&
+              isNotSelfEmployed
+            )
+          },
+          id: 'employment',
+          title: parentalLeaveFormMessages.employer.subSection,
+          children: [
             buildRepeater({
               id: 'employers',
               title: parentalLeaveFormMessages.employer.title,
               condition: (answers) => {
-                const isReceivingUnemploymentBenefits =
-                  (answers as {
-                    isReceivingUnemploymentBenefits: YesOrNo
-                  })?.isReceivingUnemploymentBenefits === NO
-                const isNotSelfEmployed =
-                  (answers as {
-                    isSelfEmployed: string
-                  })?.isSelfEmployed !== YES
+                const {
+                  isReceivingUnemploymentBenefits,
+                  isSelfEmployed,
+                } = getApplicationAnswers(answers)
+                const isNotSelfEmployed = isSelfEmployed !== YES
 
                 return isReceivingUnemploymentBenefits && isNotSelfEmployed
               },
@@ -574,7 +591,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildMultiField({
                   id: 'addEmployers',
                   title: parentalLeaveFormMessages.employer.registration,
-                  // isPartOfRepeater: true,
+                  isPartOfRepeater: true,
                   children: [
                     // buildCompanySearchField({
                     //   id: 'name',
@@ -600,11 +617,11 @@ export const ParentalLeaveForm: Form = buildForm({
                       title: parentalLeaveFormMessages.employer.ratio,
                       placeholder:
                         parentalLeaveFormMessages.employer.ratioPlaceholder,
-                      options: Array(10)
+                      options: Array(100)
                         .fill(undefined)
                         .map((_, idx, array) => ({
-                          value: `${10 * (array.length - idx)}`,
-                          label: `${10 * (array.length - idx)}%`,
+                          value: `${array.length - idx}`,
+                          label: `${array.length - idx}%`,
                         })),
                     }),
                   ],

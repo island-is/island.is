@@ -2145,6 +2145,16 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Þú þarft að skilgreina netfang vinnuveitanda.',
     description: 'Invalid employer copy',
   },
+  employersRatioMissing: {
+    id: 'pl.application:answerValidators.employersRatioMissing',
+    defaultMessage: 'Ekkert hlutfall hefur verið valið',
+    description: 'Copy when days to be used by period is missing',
+  },
+  employersNotAList: {
+    id: 'pl.application:answerValidators.employersNotAList',
+    defaultMessage: 'Svar þarf að vera listi af vinnuveitanda',
+    description: 'Copy when employers is not a list',
+  },
   employerNationalRegistryId: {
     id: 'pl.application:dataSchema.invalidEmployerNationalRegistryId',
     defaultMessage: 'Kennitala þarf að vera gild.',

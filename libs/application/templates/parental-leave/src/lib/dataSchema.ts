@@ -34,7 +34,7 @@ const PersonalAllowance = z
   )
 
 /**
- * Both periods and employer objects had been removed from here, and the logic has
+ * Both periods and employers objects had been removed from here, and the logic has
  * been moved to the answerValidators because it needs to be more advanced than
  * what zod can handle.
  */
@@ -85,39 +85,6 @@ export const dataSchema = z.object({
   shareInformationWithOtherParent: z.enum([YES, NO]),
   useUnion: z.enum([YES, NO]),
   usePrivatePensionFund: z.enum([YES, NO]),
-  employers: z.array(
-    z.object({
-      phoneNumber: z
-        .string()
-        .refine(
-          (p) => {
-            const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-            if (phoneNumber) return phoneNumber.isValid()
-            else return true
-          },
-          { params: errorMessages.phoneNumber },
-        )
-        .optional(),
-      email: z.string().email(),
-      ratio: z.string().refine((value) => {
-        const intValue = parseInt(value)
-        return intValue >= 0 && intValue <= 100
-      }),
-      isApproved: z.boolean().optional(),
-      reviewerNationalRegistryId: z
-        .string()
-        .optional()
-        .refine((n) => !n || (kennitala.isValid(n) && kennitala.isPerson(n)), {
-          params: errorMessages.employerNationalRegistryId,
-        }),
-      companyNationalRegistryId: z
-        .string()
-        .optional()
-        .refine((n) => !n || (kennitala.isValid(n) && kennitala.isCompany(n)), {
-          params: errorMessages.employerNationalRegistryId,
-        }),
-    }),
-  ),
   isReceivingUnemploymentBenefits: z.enum([YES, NO]),
   employerNationalRegistryId: z.string().refine((n) => kennitala.isCompany(n), {
     params: errorMessages.employerNationalRegistryId,
