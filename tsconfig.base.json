@@ -600,12 +600,16 @@
       "@island.is/portals/shared-modules/delegations": [
         "libs/portals/shared-modules/delegations/src/index.ts"
       ],
+      "@island.is/react/components": ["libs/react/components/src/index.ts"],
       "@island.is/react/feature-flags": [
         "libs/react/feature-flags/src/index.ts"
       ],
       "@island.is/regulations": ["libs/regulations/src/index.ts"],
       "@island.is/regulations/*": ["libs/regulations/src/sub/*"],
       "@island.is/residence-history": ["libs/residence-history/src/index.ts"],
+      "@island.is/service-portal/air-discount": [
+        "libs/service-portal/air-discount/src/index.ts"
+      ],
       "@island.is/service-portal/applications": [
         "libs/service-portal/applications/src/index.ts"
       ],

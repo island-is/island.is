@@ -125,4 +125,7 @@ export enum ServicePortalPath {
   // DocumentProviderSettingsEditEndpoints = '/skjalaveita/skjalaveita-stillingar/breyta-endapunkt',
   // DocumentProviderTechnicalInfo = '/skjalaveita/taeknilegar-upplysingar',
   // DocumentProviderStatistics = '/skjalaveita/tolfraedi',
+
+  // Air Discount
+  AirDiscountRoot = '/loftbru',
 }
