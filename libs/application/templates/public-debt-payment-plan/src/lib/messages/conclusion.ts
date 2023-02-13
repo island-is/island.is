@@ -22,7 +22,7 @@ export const conclusion = {
   information: defineMessages({
     title: {
       id: 'pdpp.application:conclusion.information.title',
-      defaultMessage: 'Hér eru næstu skref',
+      defaultMessage: 'Hvað gerist næst?',
       description: 'Title of conclusion information box',
     },
     intro: {
