@@ -53,7 +53,8 @@ test.describe('Driving School Confirmation', () => {
 
     // Change date, school, and submit
     await expect(nameInfo).toHaveText('Gervimaður Bandaríkin')
-    await schoolSelector(1).click()
+    // Schools 1 & 2 suddenly disappeared :(
+    await schoolSelector(3).click()
     await dateField.fill(format(monthAgo, 'dd.MM.yyyy'))
     await submitButton.click()
 
