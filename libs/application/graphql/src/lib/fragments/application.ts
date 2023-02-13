@@ -17,6 +17,8 @@ export const ApplicationFragment = gql`
         variant
       }
       deleteButton
+      draftTotalSteps
+      draftFinishedSteps
     }
     typeId
     answers
