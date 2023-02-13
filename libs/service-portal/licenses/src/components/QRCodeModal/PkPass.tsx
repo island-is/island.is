@@ -88,11 +88,14 @@ export const PkPass = ({
     })
       .then((response) => {
         const windowReference = window.open()
-        if (windowReference && typeof windowReference !== 'undefined') {
+        if (windowReference) {
           setPkpassUrl(response?.data?.generatePkPass?.pkpassUrl)
           windowReference.location = response?.data?.generatePkPass?.pkpassUrl
           setFetched(true)
           setDisplayLoader(false)
+        } else {
+          setDisplayLoader(false)
+          setLinkError(true)
         }
       })
       .catch(() => {
