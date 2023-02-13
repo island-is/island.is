@@ -65,4 +65,4 @@ export const maritalStatuses: {
   L: married,
 }
 
-export const ALLOWED_MARITAL_STATUSES = ['1', '5', '4']
+export const ALLOWED_MARITAL_STATUSES = ['1', '6', '4']

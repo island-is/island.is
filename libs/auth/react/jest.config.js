@@ -1,6 +1,7 @@
 module.exports = {
   displayName: 'auth-react',
   preset: '../../../jest.preset.js',
+  setupFilesAfterEnv: ['./test/setup.ts'],
   transform: {
     '^.+\\.[tj]sx?$': [
       'babel-jest',
