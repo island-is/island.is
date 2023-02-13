@@ -35,6 +35,4 @@ export interface GenericLicenseClient {
   verify: (inputData: string) => Promise<Result<VerifyPassData>>
 }
 
-export const CLIENT_FACTORY = 'client-factory'
-
 export const PASS_TEMPLATE_IDS = 'pass-template-ids'

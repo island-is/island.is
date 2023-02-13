@@ -89,14 +89,14 @@ import { PaymentScheduleClientConfig } from '@island.is/clients/payment-schedule
 import { DataLoaderInterceptor } from '@island.is/nest/dataloader'
 import { SessionsModule } from '@island.is/api/domains/sessions'
 import { CommunicationsConfig } from '@island.is/api/domains/communications'
-import {
-  FirearmLicenseClientApiConfig,
-  DisabilityLicenseClientApiConfig,
-  AdrLicenseClientApiConfig,
-  MachineLicenseClientApiConfig,
-  DrivingLicenseClientApiConfig,
-} from '@island.is/clients/license-client'
 import { SessionsApiClientConfig } from '@island.is/clients/sessions'
+import {
+  FirearmDigitalLicenseConfig,
+  DisabilityDigitalLicenseConfig,
+  AdrDigitalLicenseConfig,
+  MachineDigitalLicenseConfig,
+  DrivingDigitalLicenseConfig,
+} from '@island.is/clients/license-client'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -268,12 +268,12 @@ const autoSchemaFile = environment.production
         AirDiscountSchemeClientConfig,
         AssetsClientConfig,
         FirearmLicenseClientConfig,
-        FirearmLicenseClientApiConfig,
-        DisabilityLicenseClientApiConfig,
-        AdrLicenseClientApiConfig,
-        MachineLicenseClientApiConfig,
+        FirearmDigitalLicenseConfig,
+        DisabilityDigitalLicenseConfig,
+        AdrDigitalLicenseConfig,
+        MachineDigitalLicenseConfig,
         DisabilityLicenseClientConfig,
-        DrivingLicenseClientApiConfig,
+        DrivingDigitalLicenseConfig,
         VehiclesClientConfig,
         AuthPublicApiClientConfig,
         AuthDelegationApiClientConfig,

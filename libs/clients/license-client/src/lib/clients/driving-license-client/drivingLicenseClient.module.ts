@@ -1,10 +1,10 @@
-import { CacheModule, Module } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import { XRoadConfig } from '@island.is/nest/config'
 import { Cache as CacheManager } from 'cache-manager'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { DrivingLicenseClient } from './drivingLicenseClient.service'
-import { DrivingLicenseClientApiConfig } from './drivingLicenseClient.config'
+import { DrivingDigitalLicenseConfig } from './drivingLicenseClient.config'
 import { LicenseClient } from '../../licenseClient.type'
 import { DRIVING_LICENSE_CLIENT_FACTORY } from './drivingLicenseClient.type'
 
@@ -13,7 +13,7 @@ import { DRIVING_LICENSE_CLIENT_FACTORY } from './drivingLicenseClient.type'
     {
       provide: DRIVING_LICENSE_CLIENT_FACTORY,
       useFactory: (
-        drivingLicenseConfig: ConfigType<typeof DrivingLicenseClientApiConfig>,
+        drivingLicenseConfig: ConfigType<typeof DrivingDigitalLicenseConfig>,
         xRoadConfig: ConfigType<typeof XRoadConfig>,
         logger: Logger,
       ) => async (
@@ -26,7 +26,7 @@ import { DRIVING_LICENSE_CLIENT_FACTORY } from './drivingLicenseClient.type'
           cacheManager,
         ),
       inject: [
-        DrivingLicenseClientApiConfig.KEY,
+        DrivingDigitalLicenseConfig.KEY,
         XRoadConfig.KEY,
         LOGGER_PROVIDER,
       ],

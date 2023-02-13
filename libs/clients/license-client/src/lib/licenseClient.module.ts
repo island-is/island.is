@@ -12,22 +12,22 @@ import { LicenseClientService } from './licenseClient.service'
 import {
   FirearmClientModule,
   FirearmLicenseClient,
-  FirearmLicenseClientApiConfig,
+  FirearmDigitalLicenseConfig,
 } from './clients/firearm-license-client'
 import {
   AdrClientModule,
   AdrLicenseClient,
-  AdrLicenseClientApiConfig,
+  AdrDigitalLicenseConfig,
 } from './clients/adr-license-client'
 import {
   MachineClientModule,
   MachineLicenseClient,
-  MachineLicenseClientApiConfig,
+  MachineDigitalLicenseConfig,
 } from './clients/machine-license-client'
 import {
   DisabilityClientModule,
   DisabilityLicenseClient,
-  DisabilityLicenseClientApiConfig,
+  DisabilityDigitalLicenseConfig,
 } from './clients/disability-license-client'
 import { DrivingClientModule } from './clients/driving-license-client/drivingLicenseClient.module'
 
@@ -49,10 +49,10 @@ import { DrivingClientModule } from './clients/driving-license-client/drivingLic
     {
       provide: CONFIG_PROVIDER,
       useFactory: (
-        firearmConfig: ConfigType<typeof FirearmLicenseClientApiConfig>,
-        adrConfig: ConfigType<typeof AdrLicenseClientApiConfig>,
-        machineConfig: ConfigType<typeof MachineLicenseClientApiConfig>,
-        disabilityConfig: ConfigType<typeof DisabilityLicenseClientApiConfig>,
+        firearmConfig: ConfigType<typeof FirearmDigitalLicenseConfig>,
+        adrConfig: ConfigType<typeof AdrDigitalLicenseConfig>,
+        machineConfig: ConfigType<typeof MachineDigitalLicenseConfig>,
+        disabilityConfig: ConfigType<typeof DisabilityDigitalLicenseConfig>,
       ) => {
         const ids: PassTemplateIds = {
           firearmLicense: firearmConfig.passTemplateId,
@@ -63,10 +63,10 @@ import { DrivingClientModule } from './clients/driving-license-client/drivingLic
         return ids
       },
       inject: [
-        FirearmLicenseClientApiConfig.KEY,
-        AdrLicenseClientApiConfig.KEY,
-        MachineLicenseClientApiConfig.KEY,
-        DisabilityLicenseClientApiConfig.KEY,
+        FirearmDigitalLicenseConfig.KEY,
+        AdrDigitalLicenseConfig.KEY,
+        MachineDigitalLicenseConfig.KEY,
+        DisabilityDigitalLicenseConfig.KEY,
       ],
     },
     {

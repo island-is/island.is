@@ -227,29 +227,6 @@ export class SmartSolutionsApi {
     }
   }
 
-  private async getPassDataById(passId: string): Promise<Result<Pass>> {
-    const getPassQuery = JSON.stringify({
-      query: GET_PASS,
-      variables: {
-        id: passId,
-      },
-    })
-
-    const getPassRes = await this.query<GetPassResponseData>(getPassQuery)
-
-    if (!getPassRes.ok) {
-      //if failure, return the response
-      return getPassRes
-    }
-
-    const pass = getPassRes.data.pass
-
-    return {
-      ok: true,
-      data: pass,
-    }
-  }
-
   async verifyPkPass(
     payload: DynamicBarcodeDataInput,
   ): Promise<Result<VerifyPassData>> {

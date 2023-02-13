@@ -2,11 +2,13 @@ import { Module } from '@nestjs/common'
 import { LicenseController } from './license.controller'
 import { LicenseService } from './license.service'
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
-import { LicenseClientModule } from '@island.is/clients/license-client'
+import {
+  DisabilityDigitalLicenseConfig,
+  FirearmDigitalLicenseConfig,
+  LicenseClientModule,
+} from '@island.is/clients/license-client'
 import { PASS_TEMPLATE_IDS, PassTemplateIds } from './license.types'
 import { ConfigType } from '@nestjs/config'
-import { FirearmLicenseApiClientConfig } from './clients/firearmLicense/firearmLicenseApiClient.config'
-import { DisabilityLicenseApiClientConfig } from './clients/disabilityLicense/disabilityLicenseClient.config'
 
 @Module({
   imports: [LicenseClientModule],
@@ -19,8 +21,8 @@ import { DisabilityLicenseApiClientConfig } from './clients/disabilityLicense/di
     {
       provide: PASS_TEMPLATE_IDS,
       useFactory: (
-        firearmConfig: ConfigType<typeof FirearmLicenseApiClientConfig>,
-        disabilityConfig: ConfigType<typeof DisabilityLicenseApiClientConfig>,
+        firearmConfig: ConfigType<typeof FirearmDigitalLicenseConfig>,
+        disabilityConfig: ConfigType<typeof DisabilityDigitalLicenseConfig>,
       ) => {
         const ids: PassTemplateIds = {
           firearm: firearmConfig.passTemplateId,
@@ -29,8 +31,8 @@ import { DisabilityLicenseApiClientConfig } from './clients/disabilityLicense/di
         return ids
       },
       inject: [
-        FirearmLicenseApiClientConfig.KEY,
-        DisabilityLicenseApiClientConfig.KEY,
+        FirearmDigitalLicenseConfig.KEY,
+        DisabilityDigitalLicenseConfig.KEY,
       ],
     },
     LicenseService,

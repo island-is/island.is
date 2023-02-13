@@ -16,29 +16,29 @@ export const schema = z.object({
   }),
 })
 
-export const DrivingLicenseClientApiConfig = defineConfig<
-  z.infer<typeof schema>
->({
-  name: 'DrivingLicenseClientApiConfig',
-  schema,
-  load: (env) => ({
-    xroad: {
-      secret: env.required('XROAD_DRIVING_LICENSE_SECRET', ''),
-      path: env.required(
-        'XROAD_DRIVING_LICENSE_PATH',
-        'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1',
-      ),
-    },
-    pkpass: {
-      apiKey: env.required('PKPASS_API_KEY', ''),
-      apiUrl: env.required('PKPASS_API_URL', ''),
-      secretKey: env.required('PKPASS_SECRET_KEY', ''),
-      cacheKey: env.required('PKPASS_CACHE_KEY', 'smartsolution:apitoken'),
-      cacheTokenExpiryDelta: env.required(
-        'PKPASS_CACHE_TOKEN_EXPIRY_DELTA',
-        '2000',
-      ),
-      authRetries: env.required('PKPASS_AUTH_RETRIES', '1'),
-    },
-  }),
-})
+export const DrivingDigitalLicenseConfig = defineConfig<z.infer<typeof schema>>(
+  {
+    name: 'DrivingDigitalLicenseConfig',
+    schema,
+    load: (env) => ({
+      xroad: {
+        secret: env.required('XROAD_DRIVING_LICENSE_SECRET', ''),
+        path: env.required(
+          'XROAD_DRIVING_LICENSE_PATH',
+          'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1',
+        ),
+      },
+      pkpass: {
+        apiKey: env.required('PKPASS_API_KEY', ''),
+        apiUrl: env.required('PKPASS_API_URL', ''),
+        secretKey: env.required('PKPASS_SECRET_KEY', ''),
+        cacheKey: env.required('PKPASS_CACHE_KEY', 'smartsolution:apitoken'),
+        cacheTokenExpiryDelta: env.required(
+          'PKPASS_CACHE_TOKEN_EXPIRY_DELTA',
+          '2000',
+        ),
+        authRetries: env.required('PKPASS_AUTH_RETRIES', '1'),
+      },
+    }),
+  },
+)

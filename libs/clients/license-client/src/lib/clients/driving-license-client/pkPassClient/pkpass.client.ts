@@ -12,7 +12,7 @@ import {
   PkPassServiceVerifyDriversLicenseResponse,
   PkPassVerifyResult,
 } from './pkpass.type'
-import { DrivingLicenseClientApiConfig } from '../drivingLicenseClient.config'
+import { DrivingDigitalLicenseConfig } from '../drivingLicenseClient.config'
 import { Injectable } from '@nestjs/common'
 import type { ConfigType } from '@island.is/nest/config'
 /** Set TTL to less than given expiry from service */
@@ -52,7 +52,7 @@ export class PkPassClient {
   private readonly pkpassAuthRetries: number
 
   constructor(
-    private config: ConfigType<typeof DrivingLicenseClientApiConfig>,
+    private config: ConfigType<typeof DrivingDigitalLicenseConfig>,
     private logger: Logger,
     private cacheManager?: CacheManager | null,
   ) {

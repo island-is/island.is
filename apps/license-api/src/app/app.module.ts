@@ -11,13 +11,17 @@ import {
   IdsClientConfig,
   XRoadConfig,
 } from '@island.is/nest/config'
-import {
-  DisabilityLicenseApiClientConfig,
-  FirearmLicenseApiClientConfig,
-} from './modules/license'
 import { ProblemModule } from '@island.is/nest/problem'
 import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
 import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-license'
+import {
+  FirearmDigitalLicenseConfig,
+  DisabilityDigitalLicenseConfig,
+  AdrDigitalLicenseConfig,
+  MachineDigitalLicenseConfig,
+  DrivingDigitalLicenseConfig,
+} from '@island.is/clients/license-client'
+import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
 
 @Module({
   imports: [
@@ -31,9 +35,13 @@ import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-lic
         XRoadConfig,
         IdsClientConfig,
         FirearmLicenseClientConfig,
-        FirearmLicenseApiClientConfig,
-        DisabilityLicenseApiClientConfig,
+        FirearmDigitalLicenseConfig,
+        DisabilityDigitalLicenseConfig,
         DisabilityLicenseClientConfig,
+        AdrAndMachineLicenseClientConfig,
+        AdrDigitalLicenseConfig,
+        MachineDigitalLicenseConfig,
+        DrivingDigitalLicenseConfig,
       ],
     }),
     LicenseModule,
