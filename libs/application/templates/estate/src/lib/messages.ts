@@ -502,6 +502,11 @@ export const m = defineMessages({
       'Þú hefur nú útfyllt beiðni um leyfi til setu í óskiptu búi.',
     description: '',
   },
+  overviewSubtitlePrivateExchange: {
+    id: 'es.application:overviewSubtitlePrivateExchange#markdown',
+    defaultMessage: 'Þú hefur nú útfyllt beiðni um einkaskipti.',
+    description: '',
+  },
 
   // Submit
   submitApplication: {
@@ -532,6 +537,12 @@ export const m = defineMessages({
     id: 'es.application:residencePermitSubtitle#markdown',
     defaultMessage:
       'Sýslumaður hefur móttekið beiðni þína um leyfi til setu í óskiptu búi. Hún verður nú tekin til afgreiðslu og upplýsingar um afgreiðslu beiðninnar send í pósthólf þitt á Ísland.is.',
+    description: '',
+  },
+  privateExchangeSubtitle: {
+    id: 'es.application:privateExchangeSubtitle#markdown',
+    defaultMessage:
+      'Sýslumaður hefur móttekið beiðni þína um einkaskipti. Hún verður nú tekin til afgreiðslu og upplýsingar um afgreiðslu beiðninnar send í pósthólf þitt á Ísland.is.',
     description: '',
   },
 
