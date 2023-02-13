@@ -131,7 +131,7 @@ export const PrerequisitesForm: Form = buildForm({
                       buildRadioField({
                         id: 'mock.noPrimaryParent',
                         title:
-                          parentalLeaveFormMessages.shared.noPrimaryParentLabel,
+                          parentalLeaveFormMessages.shared.noChildrenFoundLabel,
                         width: 'half',
                         condition: (answers) => {
                           const useMockData =
@@ -407,7 +407,7 @@ export const PrerequisitesForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'fosterCareOrAdoption',
-          title: 'Fæðingardag barns',
+          title: parentalLeaveFormMessages.selectChild.screenTitle,
           condition: (answers) => {
             const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
               answers,
@@ -420,18 +420,24 @@ export const PrerequisitesForm: Form = buildForm({
           },
           children: [
             buildMultiField({
-              id: 'fosterCareOrAdoption',
-              title: 'Fæðingardagur barns',
-              description: 'Veldu fæðingardag barns',
+              id: 'fosterCare',
+              title: parentalLeaveFormMessages.selectChild.screenTitle,
+              description: 'Settu inn kennitölu barns sem er tekið í varanlegt fóstur',
               children: [
-                buildDateField({
-                  id: 'fosterCareOrAdoption.birthDate',
-                  title:
-                    parentalLeaveFormMessages.shared
-                      .noPrimaryParentDatePickerTitle,
-                  description: '',
-                  placeholder: parentalLeaveFormMessages.startDate.placeholder,
-                }),
+                // buildDateField({
+                //   id: 'fosterCareOrAdoption.birthDate',
+                //   title:
+                //     parentalLeaveFormMessages.shared
+                //       .noPrimaryParentDatePickerTitle,
+                //   description: '',
+                //   placeholder: parentalLeaveFormMessages.startDate.placeholder,
+                // }),
+                buildTextField({
+                  id: 'fosterCare.socialSecurityId',
+                  title: 'Kennitala barns',
+                  format: '######-####',
+                  placeholder: '000000-0000',
+                }), 
                 buildSubmitField({
                   id: 'toDraft',
                   title: parentalLeaveFormMessages.confirmation.title,
@@ -554,12 +560,12 @@ export const PrerequisitesForm: Form = buildForm({
         buildSubSection({
           id: 'selectChild',
           title: parentalLeaveFormMessages.selectChild.screenTitle,
+          condition: (_, externalData) =>
+                isEligibleForParentalLeave(externalData),
           children: [
             buildMultiField({
               id: 'selectedChildScreen',
               title: parentalLeaveFormMessages.selectChild.screenTitle,
-              condition: (_, externalData) =>
-                isEligibleForParentalLeave(externalData),
               children: [
                 buildCustomField({
                   id: 'selectedChild',

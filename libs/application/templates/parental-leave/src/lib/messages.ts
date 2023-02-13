@@ -354,11 +354,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Nei',
       description: 'No',
     },
-    noPrimaryParentLabel: {
-      id: 'pl.application:no.primary.parent.label',
-      defaultMessage: 'Viltu sækja um Faðir án móður umsókn?',
+    noChildrenFoundLabel: {
+      id: 'pl.application:no.children.found.label',
+      defaultMessage: 'Viltu búa til umsókn vegna varanlegst fóstur eða föður án móður?',
       description:
-        'Do you want to apply for Father without mother application?',
+        'Do you want to apply for parmanent foster care or Father without mother application?',
     },
     rightsSection: {
       id: 'pl.application:rights.section',

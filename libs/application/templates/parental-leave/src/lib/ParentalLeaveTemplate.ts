@@ -104,7 +104,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           lifecycle: EphemeralStateLifeCycle,
           progress: 0.25,
           onExit: defineTemplateApi({
-            action: ApiModuleActions.setBirthDateForNoPrimaryParent,
+            action: ApiModuleActions.setChildrenInformation,
             externalDataId: 'noPrimaryChildren',
             throwOnError: true,
           }),
