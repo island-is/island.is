@@ -67,6 +67,7 @@ import {
 } from './Themes/FjarsyslaRikisinsTheme'
 import HeilbrigdisstofnunSudurlandsFooter from './Themes/HeilbrigdisstofnunSudurlandsTheme/HeilbrigdisstofnunSudurlandsFooter'
 import { HeilbrigdisstofnunSudurlandsHeader } from './Themes/HeilbrigdisstofnunSudurlandsTheme/HeilbrigdisstofnunSudurlandsHeader'
+import { SAkHeader } from './Themes/SAkTheme/SAkHeader'
 
 import * as styles from './OrganizationWrapper.css'
 
@@ -200,6 +201,8 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
       return null
     case 'fjarsysla-rikisins':
       return <FjarsyslaRikisinsHeader organizationPage={organizationPage} />
+    case 'sak':
+      return <SAkHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
