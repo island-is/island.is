@@ -7,75 +7,62 @@
 judicial-system-api:
   apiVersion: 'apps/v1'
   kind: 'Deployment'
-  metadata:
-    name: 'judicial-system-api'
-    namespace: 'judicial-system'
   labels:
     tags.datadoghq.com/env: 'dev'
     tags.datadoghq.com/service: 'judicial-system-api'
     tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-api'
+  metadata:
+    name: 'judicial-system-api'
+    namespace: 'judicial-system'
   spec:
-    strategy:
-      type: 'RollingUpdate'
-      rollingUpdate:
-        maxSurge: '25%'
-        maxUnavailable: '25%'
-    template:
-      metadata:
-        labels:
-          tags.datadoghq.com/env: 'dev'
-          tags.datadoghq.com/service: 'judicial-system-api'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-api'
-        annotations:
-          ad.datadoghq.com/judicial-system-api.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
     spec:
       containers:
         env:
           - name: 'CONFIGCAT_SDK_KEY'
             valueFrom:
               secretKeyRef:
-                name: 'CONFIGCAT_SDK_KEY'
                 key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+                name: 'CONFIGCAT_SDK_KEY'
           - name: 'AUTH_JWT_SECRET'
             valueFrom:
               secretKeyRef:
-                name: 'AUTH_JWT_SECRET'
                 key: '/k8s/judicial-system/AUTH_JWT_SECRET'
+                name: 'AUTH_JWT_SECRET'
           - name: 'BACKEND_ACCESS_TOKEN'
             valueFrom:
               secretKeyRef:
-                name: 'BACKEND_ACCESS_TOKEN'
                 key: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
+                name: 'BACKEND_ACCESS_TOKEN'
           - name: 'CONTENTFUL_ACCESS_TOKEN'
             valueFrom:
               secretKeyRef:
-                name: 'CONTENTFUL_ACCESS_TOKEN'
                 key: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN'
+                name: 'CONTENTFUL_ACCESS_TOKEN'
           - name: 'XROAD_CLIENT_CERT'
             valueFrom:
               secretKeyRef:
-                name: 'XROAD_CLIENT_CERT'
                 key: '/k8s/judicial-system/XROAD_CLIENT_CERT'
+                name: 'XROAD_CLIENT_CERT'
           - name: 'XROAD_CLIENT_KEY'
             valueFrom:
               secretKeyRef:
-                name: 'XROAD_CLIENT_KEY'
                 key: '/k8s/judicial-system/XROAD_CLIENT_KEY'
+                name: 'XROAD_CLIENT_KEY'
           - name: 'XROAD_CLIENT_PEM'
             valueFrom:
               secretKeyRef:
-                name: 'XROAD_CLIENT_PEM'
                 key: '/k8s/judicial-system/XROAD_CLIENT_PEM'
+                name: 'XROAD_CLIENT_PEM'
           - name: 'XROAD_COURTS_CREDENTIALS'
             valueFrom:
               secretKeyRef:
-                name: 'XROAD_COURTS_CREDENTIALS'
                 key: '/k8s/judicial-system/COURTS_CREDENTIALS'
+                name: 'XROAD_COURTS_CREDENTIALS'
           - name: 'XROAD_POLICE_API_KEY'
             valueFrom:
               secretKeyRef:
-                name: 'XROAD_POLICE_API_KEY'
                 key: '/k8s/judicial-system/XROAD_POLICE_API_KEY'
+                name: 'XROAD_POLICE_API_KEY'
           - name: 'HIDDEN_FEATURES'
             value: ''
           - name: 'XROAD_BASE_PATH'
@@ -96,11 +83,6 @@ judicial-system-api:
             value: '/Domstolasyslan/JusticePortal-v1'
           - name: 'XROAD_POLICE_API_PATH'
             value: '/Logreglan-Private/rettarvarsla-v1'
-        name: 'judicial-system-api'
-        securityContext:
-          allowPrivilegeEscalation: false
-          privileged: false
-          fsGroup: 65534
         image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-api'
         imagePullPolicy: 'IfNotPresent'
         livenessProbe:
@@ -108,6 +90,7 @@ judicial-system-api:
             path: '/liveness'
           initialDelaySeconds: 3
           timeoutSeconds: 3
+        name: 'judicial-system-api'
         readinessProbe:
           httpGet:
             path: '/liveness'
@@ -115,164 +98,154 @@ judicial-system-api:
           timeoutSeconds: 3
         resources:
           limits:
-            memory: '256Mi'
             cpu: '200m'
+            memory: '256Mi'
           requests:
-            memory: '128Mi'
             cpu: '100m'
+            memory: '128Mi'
+        securityContext:
+          allowPrivilegeEscalation: false
+          fsGroup: 65534
+          privileged: false
       serviceAccountName: 'judicial-system-api'
+    strategy:
+      rollingUpdate:
+        maxSurge: '25%'
+        maxUnavailable: '25%'
+      type: 'RollingUpdate'
+    template:
+      metadata:
+        annotations:
+          ad.datadoghq.com/judicial-system-api.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+        labels:
+          tags.datadoghq.com/env: 'dev'
+          tags.datadoghq.com/service: 'judicial-system-api'
+          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-api'
 judicial-system-backend:
   apiVersion: 'apps/v1'
   kind: 'Deployment'
-  metadata:
-    name: 'judicial-system-backend'
-    namespace: 'judicial-system'
   labels:
     tags.datadoghq.com/env: 'dev'
     tags.datadoghq.com/service: 'judicial-system-backend'
     tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-backend'
+  metadata:
+    name: 'judicial-system-backend'
+    namespace: 'judicial-system'
   spec:
-    strategy:
-      type: 'RollingUpdate'
-      rollingUpdate:
-        maxSurge: '25%'
-        maxUnavailable: '25%'
-    template:
-      metadata:
-        labels:
-          tags.datadoghq.com/env: 'dev'
-          tags.datadoghq.com/service: 'judicial-system-backend'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-backend'
-        annotations:
-          ad.datadoghq.com/judicial-system-backend.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
     spec:
       containers:
         env:
-          - name: 'CONFIGCAT_SDK_KEY'
+          - name: 'DB_PASS'
             valueFrom:
               secretKeyRef:
-                name: 'CONFIGCAT_SDK_KEY'
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-          - name: 'NOVA_URL'
-            valueFrom:
-              secretKeyRef:
-                name: 'NOVA_URL'
-                key: '/k8s/judicial-system/NOVA_URL'
-          - name: 'NOVA_USERNAME'
-            valueFrom:
-              secretKeyRef:
-                name: 'NOVA_USERNAME'
-                key: '/k8s/judicial-system/NOVA_USERNAME'
-          - name: 'NOVA_PASSWORD'
-            valueFrom:
-              secretKeyRef:
-                name: 'NOVA_PASSWORD'
-                key: '/k8s/judicial-system/NOVA_PASSWORD'
+                key: '/k8s/judicial-system/DB_PASSWORD'
+                name: 'DB_PASS'
+          - name: 'DB_NAME'
+            value: 'judicial_system'
+          - name: 'DB_HOST'
+            value: 'postgres-applications.internal'
+          - name: 'DB_REPLICAS_HOST'
+            value: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
           - name: 'COURTS_MOBILE_NUMBERS'
             valueFrom:
               secretKeyRef:
-                name: 'COURTS_MOBILE_NUMBERS'
                 key: '/k8s/judicial-system/COURTS_MOBILE_NUMBERS'
+                name: 'COURTS_MOBILE_NUMBERS'
           - name: 'DOKOBIT_ACCESS_TOKEN'
             valueFrom:
               secretKeyRef:
-                name: 'DOKOBIT_ACCESS_TOKEN'
                 key: '/k8s/judicial-system/DOKOBIT_ACCESS_TOKEN'
+                name: 'DOKOBIT_ACCESS_TOKEN'
           - name: 'EMAIL_FROM'
             valueFrom:
               secretKeyRef:
-                name: 'EMAIL_FROM'
                 key: '/k8s/judicial-system/EMAIL_FROM'
+                name: 'EMAIL_FROM'
           - name: 'EMAIL_FROM_NAME'
             valueFrom:
               secretKeyRef:
-                name: 'EMAIL_FROM_NAME'
                 key: '/k8s/judicial-system/EMAIL_FROM_NAME'
+                name: 'EMAIL_FROM_NAME'
           - name: 'EMAIL_REPLY_TO'
             valueFrom:
               secretKeyRef:
-                name: 'EMAIL_REPLY_TO'
                 key: '/k8s/judicial-system/EMAIL_REPLY_TO'
+                name: 'EMAIL_REPLY_TO'
           - name: 'EMAIL_REPLY_TO_NAME'
             valueFrom:
               secretKeyRef:
-                name: 'EMAIL_REPLY_TO_NAME'
                 key: '/k8s/judicial-system/EMAIL_REPLY_TO_NAME'
+                name: 'EMAIL_REPLY_TO_NAME'
           - name: 'PRISON_EMAIL'
             valueFrom:
               secretKeyRef:
-                name: 'PRISON_EMAIL'
                 key: '/k8s/judicial-system/PRISON_EMAIL'
+                name: 'PRISON_EMAIL'
           - name: 'PRISON_ADMIN_EMAIL'
             valueFrom:
               secretKeyRef:
-                name: 'PRISON_ADMIN_EMAIL'
                 key: '/k8s/judicial-system/PRISON_ADMIN_EMAIL'
+                name: 'PRISON_ADMIN_EMAIL'
           - name: 'AUTH_JWT_SECRET'
             valueFrom:
               secretKeyRef:
-                name: 'AUTH_JWT_SECRET'
                 key: '/k8s/judicial-system/AUTH_JWT_SECRET'
+                name: 'AUTH_JWT_SECRET'
           - name: 'ADMIN_USERS'
             valueFrom:
               secretKeyRef:
-                name: 'ADMIN_USERS'
                 key: '/k8s/judicial-system/ADMIN_USERS'
+                name: 'ADMIN_USERS'
           - name: 'BACKEND_ACCESS_TOKEN'
             valueFrom:
               secretKeyRef:
-                name: 'BACKEND_ACCESS_TOKEN'
                 key: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
+                name: 'BACKEND_ACCESS_TOKEN'
           - name: 'CONTENTFUL_ACCESS_TOKEN'
             valueFrom:
               secretKeyRef:
-                name: 'CONTENTFUL_ACCESS_TOKEN'
                 key: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN'
+                name: 'CONTENTFUL_ACCESS_TOKEN'
           - name: 'EVENT_URL'
             valueFrom:
               secretKeyRef:
-                name: 'EVENT_URL'
                 key: '/k8s/judicial-system/EVENT_URL'
+                name: 'EVENT_URL'
           - name: 'ERROR_EVENT_URL'
             valueFrom:
               secretKeyRef:
-                name: 'ERROR_EVENT_URL'
                 key: '/k8s/judicial-system/ERROR_EVENT_URL'
+                name: 'ERROR_EVENT_URL'
           - name: 'ARCHIVE_ENCRYPTION_KEY'
             valueFrom:
               secretKeyRef:
-                name: 'ARCHIVE_ENCRYPTION_KEY'
                 key: '/k8s/judicial-system/ARCHIVE_ENCRYPTION_KEY'
+                name: 'ARCHIVE_ENCRYPTION_KEY'
           - name: 'XROAD_CLIENT_CERT'
             valueFrom:
               secretKeyRef:
-                name: 'XROAD_CLIENT_CERT'
                 key: '/k8s/judicial-system/XROAD_CLIENT_CERT'
+                name: 'XROAD_CLIENT_CERT'
           - name: 'XROAD_CLIENT_KEY'
             valueFrom:
               secretKeyRef:
-                name: 'XROAD_CLIENT_KEY'
                 key: '/k8s/judicial-system/XROAD_CLIENT_KEY'
+                name: 'XROAD_CLIENT_KEY'
           - name: 'XROAD_CLIENT_PEM'
             valueFrom:
               secretKeyRef:
-                name: 'XROAD_CLIENT_PEM'
                 key: '/k8s/judicial-system/XROAD_CLIENT_PEM'
+                name: 'XROAD_CLIENT_PEM'
           - name: 'XROAD_COURTS_CREDENTIALS'
             valueFrom:
               secretKeyRef:
-                name: 'XROAD_COURTS_CREDENTIALS'
                 key: '/k8s/judicial-system/COURTS_CREDENTIALS'
+                name: 'XROAD_COURTS_CREDENTIALS'
           - name: 'XROAD_POLICE_API_KEY'
             valueFrom:
               secretKeyRef:
-                name: 'XROAD_POLICE_API_KEY'
                 key: '/k8s/judicial-system/XROAD_POLICE_API_KEY'
-        name: 'judicial-system-backend'
-        securityContext:
-          allowPrivilegeEscalation: false
-          privileged: false
-          fsGroup: 65534
+                name: 'XROAD_POLICE_API_KEY'
         image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-backend'
         imagePullPolicy: 'IfNotPresent'
         livenessProbe:
@@ -280,279 +253,80 @@ judicial-system-backend:
             path: '/liveness'
           initialDelaySeconds: 3
           timeoutSeconds: 3
+        name: 'judicial-system-backend'
         readinessProbe:
           httpGet:
             path: '/liveness'
           initialDelaySeconds: 3
           timeoutSeconds: 3
         resources:
-          requests:
-            cpu: '100m'
-            memory: '256Mi'
           limits:
             cpu: '400m'
             memory: '512Mi'
-      serviceAccountName: 'judicial-system-backend'
+          requests:
+            cpu: '100m'
+            memory: '256Mi'
+        securityContext:
+          allowPrivilegeEscalation: false
+          fsGroup: 65534
+          privileged: false
       initContainers:
         - args:
             - 'sequelize-cli'
             - 'db:migrate'
           command:
             - 'npx'
-          image: ''
           env:
             - name: 'NO_UPDATE_NOTIFIER'
               value: 'true'
-judicial-system-web:
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
-  metadata:
-    name: 'judicial-system-web'
-    namespace: 'judicial-system'
-  labels:
-    tags.datadoghq.com/env: 'dev'
-    tags.datadoghq.com/service: 'judicial-system-web'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-web'
-  spec:
+          image: ''
+      serviceAccountName: 'judicial-system-backend'
     strategy:
-      type: 'RollingUpdate'
       rollingUpdate:
         maxSurge: '25%'
         maxUnavailable: '25%'
-    template:
-      metadata:
-        labels:
-          tags.datadoghq.com/env: 'dev'
-          tags.datadoghq.com/service: 'judicial-system-web'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-web'
-        annotations:
-          ad.datadoghq.com/judicial-system-web.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
-    spec:
-      containers:
-        env:
-          - name: 'CONFIGCAT_SDK_KEY'
-            valueFrom:
-              secretKeyRef:
-                name: 'CONFIGCAT_SDK_KEY'
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-          - name: 'NATIONAL_REGISTRY_API_KEY'
-            valueFrom:
-              secretKeyRef:
-                name: 'NATIONAL_REGISTRY_API_KEY'
-                key: '/k8s/judicial-system/NATIONAL_REGISTRY_API_KEY'
-          - name: 'LAWYERS_ICELAND_API_KEY'
-            valueFrom:
-              secretKeyRef:
-                name: 'LAWYERS_ICELAND_API_KEY'
-                key: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY'
-          - name: 'SUPPORT_EMAIL'
-            valueFrom:
-              secretKeyRef:
-                name: 'SUPPORT_EMAIL'
-                key: '/k8s/judicial-system/SUPPORT_EMAIL'
-        name: 'judicial-system-web'
-        securityContext:
-          privileged: false
-          allowPrivilegeEscalation: false
-        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-web'
-        imagePullPolicy: 'IfNotPresent'
-        livenessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        readinessProbe:
-          httpGet:
-            path: '/readiness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        resources:
-          limits:
-            memory: '256Mi'
-            cpu: '200m'
-          requests:
-            memory: '128Mi'
-            cpu: '100m'
-judicial-system-xrd-api:
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
-  metadata:
-    name: 'judicial-system-xrd-api'
-    namespace: 'judicial-system'
-  labels:
-    tags.datadoghq.com/env: 'dev'
-    tags.datadoghq.com/service: 'judicial-system-xrd-api'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-xrd-api'
-  spec:
-    strategy:
       type: 'RollingUpdate'
-      rollingUpdate:
-        maxSurge: '25%'
-        maxUnavailable: '25%'
     template:
       metadata:
+        annotations:
+          ad.datadoghq.com/judicial-system-backend.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
         labels:
           tags.datadoghq.com/env: 'dev'
-          tags.datadoghq.com/service: 'judicial-system-xrd-api'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-xrd-api'
-        annotations:
-          ad.datadoghq.com/judicial-system-xrd-api.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
-    spec:
-      containers:
-        env:
-          - name: 'CONFIGCAT_SDK_KEY'
-            valueFrom:
-              secretKeyRef:
-                name: 'CONFIGCAT_SDK_KEY'
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-          - name: 'ERROR_EVENT_URL'
-            valueFrom:
-              secretKeyRef:
-                name: 'ERROR_EVENT_URL'
-                key: '/k8s/judicial-system/ERROR_EVENT_URL'
-          - name: 'BACKEND_ACCESS_TOKEN'
-            valueFrom:
-              secretKeyRef:
-                name: 'BACKEND_ACCESS_TOKEN'
-                key: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
-          - name: 'AUDIT_TRAIL_REGION'
-            value: 'eu-west-1'
-        name: 'judicial-system-xrd-api'
-        securityContext:
-          allowPrivilegeEscalation: false
-          privileged: false
-          fsGroup: 65534
-        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-xrd-api'
-        imagePullPolicy: 'IfNotPresent'
-        livenessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        readinessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        resources:
-          limits:
-            memory: '256Mi'
-            cpu: '200m'
-          requests:
-            memory: '128Mi'
-            cpu: '100m'
-      serviceAccountName: 'judicial-system-xrd-api'
-judicial-system-scheduler:
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
-  metadata:
-    name: 'judicial-system-scheduler'
-    namespace: 'judicial-system'
-  labels:
-    tags.datadoghq.com/env: 'dev'
-    tags.datadoghq.com/service: 'judicial-system-scheduler'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-scheduler'
-  spec:
-    strategy:
-      type: 'RollingUpdate'
-      rollingUpdate:
-        maxSurge: '25%'
-        maxUnavailable: '25%'
-    template:
-      metadata:
-        labels:
-          tags.datadoghq.com/env: 'dev'
-          tags.datadoghq.com/service: 'judicial-system-scheduler'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-scheduler'
-        annotations:
-          ad.datadoghq.com/judicial-system-scheduler.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
-    spec:
-      containers:
-        env:
-          - name: 'CONFIGCAT_SDK_KEY'
-            valueFrom:
-              secretKeyRef:
-                name: 'CONFIGCAT_SDK_KEY'
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-          - name: 'BACKEND_ACCESS_TOKEN'
-            valueFrom:
-              secretKeyRef:
-                name: 'BACKEND_ACCESS_TOKEN'
-                key: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
-        name: 'judicial-system-scheduler'
-        securityContext:
-          privileged: false
-          allowPrivilegeEscalation: false
-        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-scheduler'
-        imagePullPolicy: 'IfNotPresent'
-        livenessProbe:
-          httpGet:
-            path: '/'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        readinessProbe:
-          httpGet:
-            path: '/'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        resources:
-          limits:
-            memory: '256Mi'
-            cpu: '200m'
-          requests:
-            memory: '128Mi'
-            cpu: '100m'
-        command:
-          - 'node'
-        args:
-          - '--no-experimental-fetch'
-          - 'main.js'
+          tags.datadoghq.com/service: 'judicial-system-backend'
+          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-backend'
 judicial-system-message-handler:
   apiVersion: 'apps/v1'
   kind: 'Deployment'
-  metadata:
-    name: 'judicial-system-message-handler'
-    namespace: 'judicial-system'
   labels:
     tags.datadoghq.com/env: 'dev'
     tags.datadoghq.com/service: 'judicial-system-message-handler'
     tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-message-handler'
+  metadata:
+    name: 'judicial-system-message-handler'
+    namespace: 'judicial-system'
   spec:
-    strategy:
-      type: 'RollingUpdate'
-      rollingUpdate:
-        maxSurge: '25%'
-        maxUnavailable: '25%'
-    template:
-      metadata:
-        labels:
-          tags.datadoghq.com/env: 'dev'
-          tags.datadoghq.com/service: 'judicial-system-message-handler'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-message-handler'
-        annotations:
-          ad.datadoghq.com/judicial-system-message-handler.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
     spec:
       containers:
+        args:
+          - '--no-experimental-fetch'
+          - 'main.js'
+        command:
+          - 'node'
         env:
           - name: 'CONFIGCAT_SDK_KEY'
             valueFrom:
               secretKeyRef:
-                name: 'CONFIGCAT_SDK_KEY'
                 key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+                name: 'CONFIGCAT_SDK_KEY'
           - name: 'BACKEND_ACCESS_TOKEN'
             valueFrom:
               secretKeyRef:
-                name: 'BACKEND_ACCESS_TOKEN'
                 key: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
+                name: 'BACKEND_ACCESS_TOKEN'
           - name: 'SQS_REGION'
             value: 'eu-west-1'
           - name: 'BACKEND_URL'
             value: 'http://web-judicial-system-backend'
-        name: 'judicial-system-message-handler'
-        securityContext:
-          allowPrivilegeEscalation: false
-          privileged: false
-          fsGroup: 65534
         image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-message-handler'
         imagePullPolicy: 'IfNotPresent'
         livenessProbe:
@@ -560,6 +334,7 @@ judicial-system-message-handler:
             path: '/liveness'
           initialDelaySeconds: 3
           timeoutSeconds: 3
+        name: 'judicial-system-message-handler'
         readinessProbe:
           httpGet:
             path: '/liveness'
@@ -567,14 +342,230 @@ judicial-system-message-handler:
           timeoutSeconds: 3
         resources:
           limits:
-            memory: '256Mi'
             cpu: '200m'
+            memory: '256Mi'
           requests:
-            memory: '128Mi'
             cpu: '100m'
-        command:
-          - 'node'
+            memory: '128Mi'
+        securityContext:
+          allowPrivilegeEscalation: false
+          fsGroup: 65534
+          privileged: false
+      serviceAccountName: 'judicial-system-message-handler'
+    strategy:
+      rollingUpdate:
+        maxSurge: '25%'
+        maxUnavailable: '25%'
+      type: 'RollingUpdate'
+    template:
+      metadata:
+        annotations:
+          ad.datadoghq.com/judicial-system-message-handler.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+        labels:
+          tags.datadoghq.com/env: 'dev'
+          tags.datadoghq.com/service: 'judicial-system-message-handler'
+          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-message-handler'
+judicial-system-scheduler:
+  apiVersion: 'apps/v1'
+  kind: 'Deployment'
+  labels:
+    tags.datadoghq.com/env: 'dev'
+    tags.datadoghq.com/service: 'judicial-system-scheduler'
+    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-scheduler'
+  metadata:
+    name: 'judicial-system-scheduler'
+    namespace: 'judicial-system'
+  spec:
+    spec:
+      containers:
         args:
           - '--no-experimental-fetch'
           - 'main.js'
-      serviceAccountName: 'judicial-system-message-handler'
+        command:
+          - 'node'
+        env:
+          - name: 'CONFIGCAT_SDK_KEY'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+                name: 'CONFIGCAT_SDK_KEY'
+          - name: 'BACKEND_ACCESS_TOKEN'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
+                name: 'BACKEND_ACCESS_TOKEN'
+        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-scheduler'
+        imagePullPolicy: 'IfNotPresent'
+        livenessProbe:
+          httpGet:
+            path: '/'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        name: 'judicial-system-scheduler'
+        readinessProbe:
+          httpGet:
+            path: '/'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '100m'
+            memory: '128Mi'
+        securityContext:
+          allowPrivilegeEscalation: false
+          privileged: false
+    strategy:
+      rollingUpdate:
+        maxSurge: '25%'
+        maxUnavailable: '25%'
+      type: 'RollingUpdate'
+    template:
+      metadata:
+        annotations:
+          ad.datadoghq.com/judicial-system-scheduler.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+        labels:
+          tags.datadoghq.com/env: 'dev'
+          tags.datadoghq.com/service: 'judicial-system-scheduler'
+          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-scheduler'
+judicial-system-web:
+  apiVersion: 'apps/v1'
+  kind: 'Deployment'
+  labels:
+    tags.datadoghq.com/env: 'dev'
+    tags.datadoghq.com/service: 'judicial-system-web'
+    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-web'
+  metadata:
+    name: 'judicial-system-web'
+    namespace: 'judicial-system'
+  spec:
+    spec:
+      containers:
+        env:
+          - name: 'CONFIGCAT_SDK_KEY'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+                name: 'CONFIGCAT_SDK_KEY'
+          - name: 'NATIONAL_REGISTRY_API_KEY'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/judicial-system/NATIONAL_REGISTRY_API_KEY'
+                name: 'NATIONAL_REGISTRY_API_KEY'
+          - name: 'LAWYERS_ICELAND_API_KEY'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY'
+                name: 'LAWYERS_ICELAND_API_KEY'
+          - name: 'SUPPORT_EMAIL'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/judicial-system/SUPPORT_EMAIL'
+                name: 'SUPPORT_EMAIL'
+        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-web'
+        imagePullPolicy: 'IfNotPresent'
+        livenessProbe:
+          httpGet:
+            path: '/liveness'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        name: 'judicial-system-web'
+        readinessProbe:
+          httpGet:
+            path: '/readiness'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '100m'
+            memory: '128Mi'
+        securityContext:
+          allowPrivilegeEscalation: false
+          privileged: false
+    strategy:
+      rollingUpdate:
+        maxSurge: '25%'
+        maxUnavailable: '25%'
+      type: 'RollingUpdate'
+    template:
+      metadata:
+        annotations:
+          ad.datadoghq.com/judicial-system-web.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+        labels:
+          tags.datadoghq.com/env: 'dev'
+          tags.datadoghq.com/service: 'judicial-system-web'
+          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-web'
+judicial-system-xrd-api:
+  apiVersion: 'apps/v1'
+  kind: 'Deployment'
+  labels:
+    tags.datadoghq.com/env: 'dev'
+    tags.datadoghq.com/service: 'judicial-system-xrd-api'
+    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-xrd-api'
+  metadata:
+    name: 'judicial-system-xrd-api'
+    namespace: 'judicial-system'
+  spec:
+    spec:
+      containers:
+        env:
+          - name: 'CONFIGCAT_SDK_KEY'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+                name: 'CONFIGCAT_SDK_KEY'
+          - name: 'ERROR_EVENT_URL'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/judicial-system/ERROR_EVENT_URL'
+                name: 'ERROR_EVENT_URL'
+          - name: 'BACKEND_ACCESS_TOKEN'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
+                name: 'BACKEND_ACCESS_TOKEN'
+          - name: 'AUDIT_TRAIL_REGION'
+            value: 'eu-west-1'
+        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-xrd-api'
+        imagePullPolicy: 'IfNotPresent'
+        livenessProbe:
+          httpGet:
+            path: '/liveness'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        name: 'judicial-system-xrd-api'
+        readinessProbe:
+          httpGet:
+            path: '/liveness'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '100m'
+            memory: '128Mi'
+        securityContext:
+          allowPrivilegeEscalation: false
+          fsGroup: 65534
+          privileged: false
+      serviceAccountName: 'judicial-system-xrd-api'
+    strategy:
+      rollingUpdate:
+        maxSurge: '25%'
+        maxUnavailable: '25%'
+      type: 'RollingUpdate'
+    template:
+      metadata:
+        annotations:
+          ad.datadoghq.com/judicial-system-xrd-api.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+        labels:
+          tags.datadoghq.com/env: 'dev'
+          tags.datadoghq.com/service: 'judicial-system-xrd-api'
+          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-xrd-api'

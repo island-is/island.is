@@ -4,213 +4,862 @@
 # Run "yarn charts" instead.
 #
 #####################################################################
-application-system-api:
+air-discount-scheme-api:
   apiVersion: 'apps/v1'
   kind: 'Deployment'
-  metadata:
-    name: 'application-system-api'
-    namespace: 'application-system'
   labels:
     tags.datadoghq.com/env: 'staging'
-    tags.datadoghq.com/service: 'application-system-api'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
+    tags.datadoghq.com/service: 'air-discount-scheme-api'
+    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-api'
+  metadata:
+    name: 'air-discount-scheme-api'
+    namespace: 'air-discount-scheme'
   spec:
-    strategy:
-      type: 'RollingUpdate'
-      rollingUpdate:
-        maxSurge: '25%'
-        maxUnavailable: '25%'
-    template:
-      metadata:
-        labels:
-          tags.datadoghq.com/env: 'staging'
-          tags.datadoghq.com/service: 'application-system-api'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
-        annotations:
-          ad.datadoghq.com/application-system-api.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
     spec:
       containers:
         env:
           - name: 'CONFIGCAT_SDK_KEY'
             valueFrom:
               secretKeyRef:
-                name: 'CONFIGCAT_SDK_KEY'
                 key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-          - name: 'NOVA_URL'
-            valueFrom:
-              secretKeyRef:
-                name: 'NOVA_URL'
-                key: '/k8s/application-system-api/NOVA_URL'
-          - name: 'DOKOBIT_URL'
-            valueFrom:
-              secretKeyRef:
-                name: 'DOKOBIT_URL'
-                key: '/k8s/application-system-api/DOKOBIT_URL'
-          - name: 'SYSLUMENN_HOST'
-            valueFrom:
-              secretKeyRef:
-                name: 'SYSLUMENN_HOST'
-                key: '/k8s/application-system-api/SYSLUMENN_HOST'
-          - name: 'CONTENTFUL_ACCESS_TOKEN'
-            valueFrom:
-              secretKeyRef:
-                name: 'CONTENTFUL_ACCESS_TOKEN'
-                key: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
+                name: 'CONFIGCAT_SDK_KEY'
           - name: 'AUTH_JWT_SECRET'
             valueFrom:
               secretKeyRef:
+                key: '/k8s/air-discount-scheme/api/AUTH_JWT_SECRET'
                 name: 'AUTH_JWT_SECRET'
-                key: '/k8s/application-system/api/AUTH_JWT_SECRET'
-          - name: 'DOKOBIT_ACCESS_TOKEN'
+          - name: 'CONTENTFUL_ACCESS_TOKEN'
             valueFrom:
               secretKeyRef:
-                name: 'DOKOBIT_ACCESS_TOKEN'
-                key: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN'
-          - name: 'EMAIL_FROM'
+                key: '/k8s/air-discount-scheme/api/CONTENTFUL_ACCESS_TOKEN'
+                name: 'CONTENTFUL_ACCESS_TOKEN'
+          - name: 'DEVELOPERS'
             valueFrom:
               secretKeyRef:
-                name: 'EMAIL_FROM'
-                key: '/k8s/application-system/api/EMAIL_FROM'
-          - name: 'EMAIL_FROM_NAME'
+                key: '/k8s/air-discount-scheme/api/DEVELOPERS'
+                name: 'DEVELOPERS'
+          - name: 'ADMINS'
             valueFrom:
               secretKeyRef:
-                name: 'EMAIL_FROM_NAME'
-                key: '/k8s/application-system/api/EMAIL_FROM_NAME'
-          - name: 'EMAIL_REPLY_TO'
+                key: '/k8s/air-discount-scheme/api/ADMINS'
+                name: 'ADMINS'
+          - name: 'NO_UPDATE_NOTIFIER'
+            value: 'true'
+        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-api'
+        imagePullPolicy: 'IfNotPresent'
+        livenessProbe:
+          httpGet:
+            path: '/liveness'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        name: 'air-discount-scheme-api'
+        readinessProbe:
+          httpGet:
+            path: '/liveness'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: '400m'
+            memory: '512Mi'
+          requests:
+            cpu: '200m'
+            memory: '256Mi'
+        securityContext:
+          allowPrivilegeEscalation: false
+          fsGroup: 65534
+          privileged: false
+      serviceAccountName: 'air-discount-scheme-api'
+    strategy:
+      rollingUpdate:
+        maxSurge: '25%'
+        maxUnavailable: '25%'
+      type: 'RollingUpdate'
+    template:
+      metadata:
+        annotations:
+          ad.datadoghq.com/air-discount-scheme-api.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+        labels:
+          tags.datadoghq.com/env: 'staging'
+          tags.datadoghq.com/service: 'air-discount-scheme-api'
+          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-api'
+air-discount-scheme-backend:
+  apiVersion: 'apps/v1'
+  kind: 'Deployment'
+  labels:
+    tags.datadoghq.com/env: 'staging'
+    tags.datadoghq.com/service: 'air-discount-scheme-backend'
+    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-backend'
+  metadata:
+    name: 'air-discount-scheme-backend'
+    namespace: 'air-discount-scheme'
+  spec:
+    spec:
+      containers:
+        env:
+          - name: 'DB_PASS'
             valueFrom:
               secretKeyRef:
-                name: 'EMAIL_REPLY_TO'
-                key: '/k8s/application-system/api/EMAIL_REPLY_TO'
-          - name: 'EMAIL_REPLY_TO_NAME'
+                key: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
+                name: 'DB_PASS'
+          - name: 'DB_NAME'
+            value: 'air_discount_scheme_backend'
+          - name: 'DB_HOST'
+            value: 'postgres-applications.internal'
+          - name: 'DB_REPLICAS_HOST'
+            value: 'postgres-applications.internal'
+          - name: 'NATIONAL_REGISTRY_PASSWORD'
             valueFrom:
               secretKeyRef:
-                name: 'EMAIL_REPLY_TO_NAME'
-                key: '/k8s/application-system/api/EMAIL_REPLY_TO_NAME'
+                key: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_PASSWORD'
+                name: 'NATIONAL_REGISTRY_PASSWORD'
+          - name: 'NATIONAL_REGISTRY_USERNAME'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_USERNAME'
+                name: 'NATIONAL_REGISTRY_USERNAME'
+          - name: 'NATIONAL_REGISTRY_URL'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_URL'
+                name: 'NATIONAL_REGISTRY_URL'
           - name: 'IDENTITY_SERVER_CLIENT_SECRET'
             valueFrom:
               secretKeyRef:
+                key: '/k8s/air-discount-scheme-backend/VEGAGERDIN_IDS_CLIENTS_ADS_SECRET'
                 name: 'IDENTITY_SERVER_CLIENT_SECRET'
-                key: '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET'
-          - name: 'DOCUMENT_PROVIDER_ONBOARDING_REVIEWER'
+          - name: 'XROAD_TLS_BASE_PATH_WITH_ENV'
+            value: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
+          - name: 'XROAD_CLIENT_ID'
+            value: 'IS-TEST/GOV/5501692829/island-is-client'
+          - name: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH'
+            value: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
+          - name: 'XROAD_NATIONAL_REGISTRY_REDIS_NODES'
+            value: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+          - name: 'XROAD_TJODSKRA_API_PATH'
+            value: '/SKRA-Protected/Einstaklingar-v1'
+          - name: 'XROAD_TJODSKRA_MEMBER_CODE'
+            value: '6503760649'
+        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-backend'
+        imagePullPolicy: 'IfNotPresent'
+        livenessProbe:
+          httpGet:
+            path: '/liveness'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        name: 'air-discount-scheme-backend'
+        readinessProbe:
+          httpGet:
+            path: '/liveness'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: '400m'
+            memory: '512Mi'
+          requests:
+            cpu: '200m'
+            memory: '256Mi'
+        securityContext:
+          allowPrivilegeEscalation: false
+          privileged: false
+      initContainers:
+        - args:
+            - 'sequelize-cli'
+            - 'db:migrate'
+          command:
+            - 'npx'
+          env:
+            - name: 'NO_UPDATE_NOTIFIER'
+              value: 'true'
+          image: ''
+    strategy:
+      rollingUpdate:
+        maxSurge: '25%'
+        maxUnavailable: '25%'
+      type: 'RollingUpdate'
+    template:
+      metadata:
+        annotations:
+          ad.datadoghq.com/air-discount-scheme-backend.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+        labels:
+          tags.datadoghq.com/env: 'staging'
+          tags.datadoghq.com/service: 'air-discount-scheme-backend'
+          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-backend'
+air-discount-scheme-web:
+  apiVersion: 'apps/v1'
+  kind: 'Deployment'
+  labels:
+    tags.datadoghq.com/env: 'staging'
+    tags.datadoghq.com/service: 'air-discount-scheme-web'
+    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web'
+  metadata:
+    name: 'air-discount-scheme-web'
+    namespace: 'air-discount-scheme'
+  spec:
+    spec:
+      containers:
+        env:
+          - name: 'CONFIGCAT_SDK_KEY'
             valueFrom:
               secretKeyRef:
-                name: 'DOCUMENT_PROVIDER_ONBOARDING_REVIEWER'
-                key: '/k8s/application-system/api/DOCUMENT_PROVIDER_ONBOARDING_REVIEWER'
+                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+                name: 'CONFIGCAT_SDK_KEY'
+          - name: 'DD_RUM_APPLICATION_ID'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/DD_RUM_APPLICATION_ID'
+                name: 'DD_RUM_APPLICATION_ID'
+          - name: 'DD_RUM_CLIENT_TOKEN'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/DD_RUM_CLIENT_TOKEN'
+                name: 'DD_RUM_CLIENT_TOKEN'
+          - name: 'IDENTITY_SERVER_SECRET'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/air-discount-scheme/web/IDENTITY_SERVER_SECRET'
+                name: 'IDENTITY_SERVER_SECRET'
+        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web'
+        imagePullPolicy: 'IfNotPresent'
+        livenessProbe:
+          httpGet:
+            path: '/liveness'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        name: 'air-discount-scheme-web'
+        readinessProbe:
+          httpGet:
+            path: '/readiness'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '100m'
+            memory: '128Mi'
+        securityContext:
+          allowPrivilegeEscalation: false
+          privileged: false
+    strategy:
+      rollingUpdate:
+        maxSurge: '25%'
+        maxUnavailable: '25%'
+      type: 'RollingUpdate'
+    template:
+      metadata:
+        annotations:
+          ad.datadoghq.com/air-discount-scheme-web.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+        labels:
+          tags.datadoghq.com/env: 'staging'
+          tags.datadoghq.com/service: 'air-discount-scheme-web'
+          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web'
+api:
+  apiVersion: 'apps/v1'
+  kind: 'Deployment'
+  labels:
+    tags.datadoghq.com/env: 'staging'
+    tags.datadoghq.com/service: 'api'
+    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
+  metadata:
+    name: 'api'
+    namespace: 'islandis'
+  spec:
+    spec:
+      containers:
+        args:
+          - '--tls-min-v1.0'
+          - '--no-experimental-fetch'
+          - 'main.js'
+        command:
+          - 'node'
+        env:
+          - name: 'CONFIGCAT_SDK_KEY'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+                name: 'CONFIGCAT_SDK_KEY'
+          - name: 'DOCUMENT_PROVIDER_BASE_PATH'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/DOCUMENT_PROVIDER_BASE_PATH'
+                name: 'DOCUMENT_PROVIDER_BASE_PATH'
+          - name: 'DOCUMENT_PROVIDER_TOKEN_URL'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL'
+                name: 'DOCUMENT_PROVIDER_TOKEN_URL'
+          - name: 'DOCUMENT_PROVIDER_BASE_PATH_TEST'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/DOCUMENT_PROVIDER_BASE_PATH_TEST'
+                name: 'DOCUMENT_PROVIDER_BASE_PATH_TEST'
+          - name: 'DOCUMENT_PROVIDER_TOKEN_URL_TEST'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL_TEST'
+                name: 'DOCUMENT_PROVIDER_TOKEN_URL_TEST'
+          - name: 'SYSLUMENN_HOST'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/SYSLUMENN_HOST'
+                name: 'SYSLUMENN_HOST'
+          - name: 'REGULATIONS_API_URL'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/REGULATIONS_API_URL'
+                name: 'REGULATIONS_API_URL'
+          - name: 'SOFFIA_HOST_URL'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/SOFFIA_HOST_URL'
+                name: 'SOFFIA_HOST_URL'
+          - name: 'CONTENTFUL_ACCESS_TOKEN'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
+                name: 'CONTENTFUL_ACCESS_TOKEN'
+          - name: 'ZENDESK_CONTACT_FORM_EMAIL'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL'
+                name: 'ZENDESK_CONTACT_FORM_EMAIL'
+          - name: 'ZENDESK_CONTACT_FORM_TOKEN'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN'
+                name: 'ZENDESK_CONTACT_FORM_TOKEN'
+          - name: 'SOFFIA_USER'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/service-portal/SOFFIA_USER'
+                name: 'SOFFIA_USER'
+          - name: 'SOFFIA_PASS'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/service-portal/SOFFIA_PASS'
+                name: 'SOFFIA_PASS'
+          - name: 'POSTHOLF_CLIENTID'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/documents/POSTHOLF_CLIENTID'
+                name: 'POSTHOLF_CLIENTID'
+          - name: 'POSTHOLF_CLIENT_SECRET'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/documents/POSTHOLF_CLIENT_SECRET'
+                name: 'POSTHOLF_CLIENT_SECRET'
+          - name: 'POSTHOLF_TOKEN_URL'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/documents/POSTHOLF_TOKEN_URL'
+                name: 'POSTHOLF_TOKEN_URL'
+          - name: 'POSTHOLF_BASE_PATH'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/documents/POSTHOLF_BASE_PATH'
+                name: 'POSTHOLF_BASE_PATH'
+          - name: 'DOCUMENT_PROVIDER_CLIENTID'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENTID'
+                name: 'DOCUMENT_PROVIDER_CLIENTID'
+          - name: 'DOCUMENT_PROVIDER_CLIENT_SECRET'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENT_SECRET'
+                name: 'DOCUMENT_PROVIDER_CLIENT_SECRET'
+          - name: 'DOCUMENT_PROVIDER_CLIENTID_TEST'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENTID_TEST'
+                name: 'DOCUMENT_PROVIDER_CLIENTID_TEST'
+          - name: 'DOCUMENT_PROVIDER_CLIENT_SECRET_TEST'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENT_SECRET_TEST'
+                name: 'DOCUMENT_PROVIDER_CLIENT_SECRET_TEST'
           - name: 'SYSLUMENN_USERNAME'
             valueFrom:
               secretKeyRef:
+                key: '/k8s/api/SYSLUMENN_USERNAME'
                 name: 'SYSLUMENN_USERNAME'
-                key: '/k8s/application-system/api/SYSLUMENN_USERNAME'
           - name: 'SYSLUMENN_PASSWORD'
             valueFrom:
               secretKeyRef:
+                key: '/k8s/api/SYSLUMENN_PASSWORD'
                 name: 'SYSLUMENN_PASSWORD'
-                key: '/k8s/application-system/api/SYSLUMENN_PASSWORD'
-          - name: 'DRIVING_LICENSE_BOOK_XROAD_PATH'
+          - name: 'DOCUMENT_PROVIDER_ADMINS'
             valueFrom:
               secretKeyRef:
-                name: 'DRIVING_LICENSE_BOOK_XROAD_PATH'
-                key: '/k8s/application-system-api/DRIVING_LICENSE_BOOK_XROAD_PATH'
-          - name: 'DRIVING_LICENSE_BOOK_USERNAME'
+                key: '/k8s/documentprovider/DOCUMENT_PROVIDER_ADMINS'
+                name: 'DOCUMENT_PROVIDER_ADMINS'
+          - name: 'PKPASS_API_KEY'
             valueFrom:
               secretKeyRef:
-                name: 'DRIVING_LICENSE_BOOK_USERNAME'
-                key: '/k8s/application-system-api/DRIVING_LICENSE_BOOK_USERNAME'
-          - name: 'DRIVING_LICENSE_BOOK_PASSWORD'
+                key: '/k8s/api/PKPASS_API_KEY'
+                name: 'PKPASS_API_KEY'
+          - name: 'PKPASS_API_URL'
             valueFrom:
               secretKeyRef:
-                name: 'DRIVING_LICENSE_BOOK_PASSWORD'
-                key: '/k8s/application-system-api/DRIVING_LICENSE_BOOK_PASSWORD'
-          - name: 'NOVA_PASSWORD'
+                key: '/k8s/api/PKPASS_API_URL'
+                name: 'PKPASS_API_URL'
+          - name: 'PKPASS_AUTH_RETRIES'
             valueFrom:
               secretKeyRef:
-                name: 'NOVA_PASSWORD'
-                key: '/k8s/application-system/api/NOVA_PASSWORD'
-          - name: 'ARK_BASE_URL'
+                key: '/k8s/api/PKPASS_AUTH_RETRIES'
+                name: 'PKPASS_AUTH_RETRIES'
+          - name: 'PKPASS_CACHE_KEY'
             valueFrom:
               secretKeyRef:
-                name: 'ARK_BASE_URL'
-                key: '/k8s/application-system-api/ARK_BASE_URL'
-          - name: 'FINANCIAL_STATEMENTS_INAO_CLIENT_ID'
+                key: '/k8s/api/PKPASS_CACHE_KEY'
+                name: 'PKPASS_CACHE_KEY'
+          - name: 'PKPASS_CACHE_TOKEN_EXPIRY_DELTA'
             valueFrom:
               secretKeyRef:
-                name: 'FINANCIAL_STATEMENTS_INAO_CLIENT_ID'
-                key: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID'
-          - name: 'FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
+                key: '/k8s/api/PKPASS_CACHE_TOKEN_EXPIRY_DELTA'
+                name: 'PKPASS_CACHE_TOKEN_EXPIRY_DELTA'
+          - name: 'PKPASS_SECRET_KEY'
             valueFrom:
               secretKeyRef:
-                name: 'FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
-                key: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
+                key: '/k8s/api/PKPASS_SECRET_KEY'
+                name: 'PKPASS_SECRET_KEY'
+          - name: 'VE_PKPASS_API_KEY'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/VE_PKPASS_API_KEY'
+                name: 'VE_PKPASS_API_KEY'
+          - name: 'RLS_PKPASS_API_KEY'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/RLS_PKPASS_API_KEY'
+                name: 'RLS_PKPASS_API_KEY'
+          - name: 'TR_PKPASS_API_KEY'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/TR_PKPASS_API_KEY'
+                name: 'TR_PKPASS_API_KEY'
+          - name: 'SMART_SOLUTIONS_API_URL'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/SMART_SOLUTIONS_API_URL'
+                name: 'SMART_SOLUTIONS_API_URL'
+          - name: 'FIREARM_LICENSE_PASS_TEMPLATE_ID'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/FIREARM_LICENSE_PASS_TEMPLATE_ID'
+                name: 'FIREARM_LICENSE_PASS_TEMPLATE_ID'
+          - name: 'DISABILITY_LICENSE_PASS_TEMPLATE_ID'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/DISABILITY_LICENSE_PASS_TEMPLATE_ID'
+                name: 'DISABILITY_LICENSE_PASS_TEMPLATE_ID'
+          - name: 'MACHINE_LICENSE_PASS_TEMPLATE_ID'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/MACHINE_LICENSE_PASS_TEMPLATE_ID'
+                name: 'MACHINE_LICENSE_PASS_TEMPLATE_ID'
+          - name: 'ADR_LICENSE_PASS_TEMPLATE_ID'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
+                name: 'ADR_LICENSE_PASS_TEMPLATE_ID'
           - name: 'ISLYKILL_SERVICE_PASSPHRASE'
             valueFrom:
               secretKeyRef:
-                name: 'ISLYKILL_SERVICE_PASSPHRASE'
                 key: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
+                name: 'ISLYKILL_SERVICE_PASSPHRASE'
           - name: 'ISLYKILL_SERVICE_BASEPATH'
             valueFrom:
               secretKeyRef:
-                name: 'ISLYKILL_SERVICE_BASEPATH'
                 key: '/k8s/api/ISLYKILL_SERVICE_BASEPATH'
-          - name: 'VMST_ID'
+                name: 'ISLYKILL_SERVICE_BASEPATH'
+          - name: 'IDENTITY_SERVER_CLIENT_SECRET'
             valueFrom:
               secretKeyRef:
-                name: 'VMST_ID'
-                key: '/k8s/application-system/VMST_ID'
-          - name: 'XROAD_VMST_API_KEY'
+                key: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET'
+                name: 'IDENTITY_SERVER_CLIENT_SECRET'
+          - name: 'FINANCIAL_STATEMENTS_INAO_CLIENT_ID'
             valueFrom:
               secretKeyRef:
-                name: 'XROAD_VMST_API_KEY'
-                key: '/k8s/vmst-client/VMST_API_KEY'
+                key: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID'
+                name: 'FINANCIAL_STATEMENTS_INAO_CLIENT_ID'
+          - name: 'FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
+                name: 'FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
+          - name: 'FISKISTOFA_ZENTER_EMAIL'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/FISKISTOFA_ZENTER_EMAIL'
+                name: 'FISKISTOFA_ZENTER_EMAIL'
+          - name: 'FISKISTOFA_ZENTER_PASSWORD'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/FISKISTOFA_ZENTER_PASSWORD'
+                name: 'FISKISTOFA_ZENTER_PASSWORD'
+          - name: 'FISKISTOFA_ZENTER_CLIENT_PASSWORD'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/FISKISTOFA_ZENTER_CLIENT_PASSWORD'
+                name: 'FISKISTOFA_ZENTER_CLIENT_PASSWORD'
+          - name: 'FISKISTOFA_API_URL'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/FISKISTOFA_API_URL'
+                name: 'FISKISTOFA_API_URL'
+          - name: 'FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_SECRET'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_SECRET'
+                name: 'FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_SECRET'
+          - name: 'FISKISTOFA_API_ACCESS_TOKEN_SERVICE_URL'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_URL'
+                name: 'FISKISTOFA_API_ACCESS_TOKEN_SERVICE_URL'
+          - name: 'FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_ID'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_ID'
+                name: 'FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_ID'
+          - name: 'FISKISTOFA_API_ACCESS_TOKEN_SERVICE_AUDIENCE'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_AUDIENCE'
+                name: 'FISKISTOFA_API_ACCESS_TOKEN_SERVICE_AUDIENCE'
+          - name: 'FISKISTOFA_POWERBI_CLIENT_ID'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/FISKISTOFA_POWERBI_CLIENT_ID'
+                name: 'FISKISTOFA_POWERBI_CLIENT_ID'
+          - name: 'FISKISTOFA_POWERBI_CLIENT_SECRET'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/FISKISTOFA_POWERBI_CLIENT_SECRET'
+                name: 'FISKISTOFA_POWERBI_CLIENT_SECRET'
+          - name: 'FISKISTOFA_POWERBI_TENANT_ID'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/FISKISTOFA_POWERBI_TENANT_ID'
+                name: 'FISKISTOFA_POWERBI_TENANT_ID'
           - name: 'XROAD_HEALTH_INSURANCE_USERNAME'
             valueFrom:
               secretKeyRef:
-                name: 'XROAD_HEALTH_INSURANCE_USERNAME'
                 key: '/k8s/health-insurance/XROAD-USER'
+                name: 'XROAD_HEALTH_INSURANCE_USERNAME'
           - name: 'XROAD_HEALTH_INSURANCE_PASSWORD'
             valueFrom:
               secretKeyRef:
-                name: 'XROAD_HEALTH_INSURANCE_PASSWORD'
                 key: '/k8s/health-insurance/XROAD-PASSWORD'
+                name: 'XROAD_HEALTH_INSURANCE_PASSWORD'
           - name: 'XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME'
             valueFrom:
               secretKeyRef:
-                name: 'XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME'
                 key: '/k8s/api/HEALTH_INSURANCE_V2_XROAD_USERNAME'
+                name: 'XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME'
           - name: 'XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD'
             valueFrom:
               secretKeyRef:
-                name: 'XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD'
                 key: '/k8s/api/HEALTH_INSURANCE_V2_XROAD_PASSWORD'
-          - name: 'XROAD_PAYMENT_USER'
+                name: 'XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD'
+          - name: 'XROAD_VMST_API_KEY'
             valueFrom:
               secretKeyRef:
-                name: 'XROAD_PAYMENT_USER'
-                key: '/k8s/application-system-api/PAYMENT_USER'
-          - name: 'XROAD_PAYMENT_PASSWORD'
-            valueFrom:
-              secretKeyRef:
-                name: 'XROAD_PAYMENT_PASSWORD'
-                key: '/k8s/application-system-api/PAYMENT_PASSWORD'
+                key: '/k8s/vmst-client/VMST_API_KEY'
+                name: 'XROAD_VMST_API_KEY'
           - name: 'XROAD_DRIVING_LICENSE_SECRET'
             valueFrom:
               secretKeyRef:
-                name: 'XROAD_DRIVING_LICENSE_SECRET'
                 key: '/k8s/api/DRIVING_LICENSE_SECRET'
-          - name: 'DATA_PROTECTION_COMPLAINT_API_USERNAME'
+                name: 'XROAD_DRIVING_LICENSE_SECRET'
+          - name: 'XROAD_PAYMENT_USER'
             valueFrom:
               secretKeyRef:
-                name: 'DATA_PROTECTION_COMPLAINT_API_USERNAME'
-                key: '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_USERNAME'
-          - name: 'DATA_PROTECTION_COMPLAINT_API_PASSWORD'
+                key: '/k8s/application-system-api/PAYMENT_USER'
+                name: 'XROAD_PAYMENT_USER'
+          - name: 'XROAD_PAYMENT_PASSWORD'
             valueFrom:
               secretKeyRef:
-                name: 'DATA_PROTECTION_COMPLAINT_API_PASSWORD'
-                key: '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_PASSWORD'
+                key: '/k8s/application-system-api/PAYMENT_PASSWORD'
+                name: 'XROAD_PAYMENT_PASSWORD'
           - name: 'XROAD_PROPERTIES_CLIENT_SECRET'
             valueFrom:
               secretKeyRef:
-                name: 'XROAD_PROPERTIES_CLIENT_SECRET'
                 key: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
+                name: 'XROAD_PROPERTIES_CLIENT_SECRET'
+          - name: 'DRIVING_LICENSE_BOOK_XROAD_PATH'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/DRIVING_LICENSE_BOOK_XROAD_PATH'
+                name: 'DRIVING_LICENSE_BOOK_XROAD_PATH'
+          - name: 'DRIVING_LICENSE_BOOK_USERNAME'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/DRIVING_LICENSE_BOOK_USERNAME'
+                name: 'DRIVING_LICENSE_BOOK_USERNAME'
+          - name: 'DRIVING_LICENSE_BOOK_PASSWORD'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/DRIVING_LICENSE_BOOK_PASSWORD'
+                name: 'DRIVING_LICENSE_BOOK_PASSWORD'
+          - name: 'XROAD_FINANCIAL_AID_BACKEND_PATH'
+            value: 'IS-TEST/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend'
+          - name: 'XROAD_VEHICLES_PATH'
+            value: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1'
+          - name: 'XROAD_PASSPORT_LICENSE_PATH'
+            value: 'IS-TEST/GOV/6503760649/SKRA-Protected/Forskraning-V1'
+          - name: 'XROAD_VEHICLE_SERVICE_FJS_V1_PATH'
+            value: 'IS-DEV/GOV/10021/FJS-Public/VehicleServiceFJS_v1'
+          - name: 'XROAD_VEHICLE_CODETABLES_PATH'
+            value: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Codetables-V1'
+          - name: 'XROAD_VEHICLE_INFOLOCKS_PATH'
+            value: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Infolocks-V1'
+          - name: 'XROAD_VEHICLE_OPERATORS_PATH'
+            value: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V3'
+          - name: 'XROAD_VEHICLE_OWNER_CHANGE_PATH'
+            value: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Ownerchange-V2'
+          - name: 'XROAD_VEHICLE_PLATE_ORDERING_PATH'
+            value: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOrdering-V1'
+          - name: 'XROAD_VEHICLE_PRINTING_PATH'
+            value: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1'
+          - name: 'XROAD_DIGITAL_TACHOGRAPH_DRIVERS_CARD_PATH'
+            value: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Okuritar-V1'
+          - name: 'XROAD_CHARGE_FJS_V2_PATH'
+            value: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2'
+        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
+        imagePullPolicy: 'IfNotPresent'
+        livenessProbe:
+          httpGet:
+            path: '/liveness'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        name: 'api'
+        readinessProbe:
+          httpGet:
+            path: '/health'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: '800m'
+            memory: '2048Mi'
+          requests:
+            cpu: '200m'
+            memory: '1024Mi'
+        securityContext:
+          allowPrivilegeEscalation: false
+          fsGroup: 65534
+          privileged: false
+        volumeMounts:
+          - mountPath: '/etc/config/islyklar.p12'
+            name: 'islyklar.p12'
+      serviceAccountName: 'api'
+    strategy:
+      rollingUpdate:
+        maxSurge: '25%'
+        maxUnavailable: '25%'
+      type: 'RollingUpdate'
+    template:
+      metadata:
+        annotations:
+          ad.datadoghq.com/api.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+        labels:
+          tags.datadoghq.com/env: 'staging'
+          tags.datadoghq.com/service: 'api'
+          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
+application-system-api:
+  apiVersion: 'apps/v1'
+  kind: 'Deployment'
+  labels:
+    tags.datadoghq.com/env: 'staging'
+    tags.datadoghq.com/service: 'application-system-api'
+    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
+  metadata:
+    name: 'application-system-api'
+    namespace: 'application-system'
+  spec:
+    spec:
+      containers:
+        args:
+          - 'main.js'
+        command:
+          - 'node'
+        env:
+          - name: 'DB_PASS'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system/api/DB_PASSWORD'
+                name: 'DB_PASS'
+          - name: 'DB_NAME'
+            value: 'application_system_api'
+          - name: 'DB_HOST'
+            value: 'postgres-applications.internal'
+          - name: 'DB_REPLICAS_HOST'
+            value: 'postgres-applications.internal'
+          - name: 'CONTENTFUL_ACCESS_TOKEN'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
+                name: 'CONTENTFUL_ACCESS_TOKEN'
+          - name: 'AUTH_JWT_SECRET'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system/api/AUTH_JWT_SECRET'
+                name: 'AUTH_JWT_SECRET'
+          - name: 'DOKOBIT_ACCESS_TOKEN'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN'
+                name: 'DOKOBIT_ACCESS_TOKEN'
+          - name: 'EMAIL_FROM'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system/api/EMAIL_FROM'
+                name: 'EMAIL_FROM'
+          - name: 'EMAIL_FROM_NAME'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system/api/EMAIL_FROM_NAME'
+                name: 'EMAIL_FROM_NAME'
+          - name: 'EMAIL_REPLY_TO'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system/api/EMAIL_REPLY_TO'
+                name: 'EMAIL_REPLY_TO'
+          - name: 'EMAIL_REPLY_TO_NAME'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system/api/EMAIL_REPLY_TO_NAME'
+                name: 'EMAIL_REPLY_TO_NAME'
+          - name: 'IDENTITY_SERVER_CLIENT_SECRET'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET'
+                name: 'IDENTITY_SERVER_CLIENT_SECRET'
+          - name: 'DOCUMENT_PROVIDER_ONBOARDING_REVIEWER'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system/api/DOCUMENT_PROVIDER_ONBOARDING_REVIEWER'
+                name: 'DOCUMENT_PROVIDER_ONBOARDING_REVIEWER'
+          - name: 'SYSLUMENN_USERNAME'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system/api/SYSLUMENN_USERNAME'
+                name: 'SYSLUMENN_USERNAME'
+          - name: 'SYSLUMENN_PASSWORD'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system/api/SYSLUMENN_PASSWORD'
+                name: 'SYSLUMENN_PASSWORD'
+          - name: 'DRIVING_LICENSE_BOOK_XROAD_PATH'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system-api/DRIVING_LICENSE_BOOK_XROAD_PATH'
+                name: 'DRIVING_LICENSE_BOOK_XROAD_PATH'
+          - name: 'DRIVING_LICENSE_BOOK_USERNAME'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system-api/DRIVING_LICENSE_BOOK_USERNAME'
+                name: 'DRIVING_LICENSE_BOOK_USERNAME'
+          - name: 'DRIVING_LICENSE_BOOK_PASSWORD'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system-api/DRIVING_LICENSE_BOOK_PASSWORD'
+                name: 'DRIVING_LICENSE_BOOK_PASSWORD'
+          - name: 'NOVA_PASSWORD'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system/api/NOVA_PASSWORD'
+                name: 'NOVA_PASSWORD'
+          - name: 'ARK_BASE_URL'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system-api/ARK_BASE_URL'
+                name: 'ARK_BASE_URL'
+          - name: 'FINANCIAL_STATEMENTS_INAO_CLIENT_ID'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID'
+                name: 'FINANCIAL_STATEMENTS_INAO_CLIENT_ID'
+          - name: 'FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
+                name: 'FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
+          - name: 'ISLYKILL_SERVICE_PASSPHRASE'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
+                name: 'ISLYKILL_SERVICE_PASSPHRASE'
+          - name: 'ISLYKILL_SERVICE_BASEPATH'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/ISLYKILL_SERVICE_BASEPATH'
+                name: 'ISLYKILL_SERVICE_BASEPATH'
+          - name: 'VMST_ID'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system/VMST_ID'
+                name: 'VMST_ID'
+          - name: 'XROAD_VMST_API_KEY'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/vmst-client/VMST_API_KEY'
+                name: 'XROAD_VMST_API_KEY'
+          - name: 'XROAD_HEALTH_INSURANCE_USERNAME'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/health-insurance/XROAD-USER'
+                name: 'XROAD_HEALTH_INSURANCE_USERNAME'
+          - name: 'XROAD_HEALTH_INSURANCE_PASSWORD'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/health-insurance/XROAD-PASSWORD'
+                name: 'XROAD_HEALTH_INSURANCE_PASSWORD'
+          - name: 'XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/HEALTH_INSURANCE_V2_XROAD_USERNAME'
+                name: 'XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME'
+          - name: 'XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/HEALTH_INSURANCE_V2_XROAD_PASSWORD'
+                name: 'XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD'
+          - name: 'XROAD_PAYMENT_USER'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system-api/PAYMENT_USER'
+                name: 'XROAD_PAYMENT_USER'
+          - name: 'XROAD_PAYMENT_PASSWORD'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system-api/PAYMENT_PASSWORD'
+                name: 'XROAD_PAYMENT_PASSWORD'
+          - name: 'XROAD_DRIVING_LICENSE_SECRET'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/api/DRIVING_LICENSE_SECRET'
+                name: 'XROAD_DRIVING_LICENSE_SECRET'
+          - name: 'DATA_PROTECTION_COMPLAINT_API_USERNAME'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_USERNAME'
+                name: 'DATA_PROTECTION_COMPLAINT_API_USERNAME'
+          - name: 'DATA_PROTECTION_COMPLAINT_API_PASSWORD'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_PASSWORD'
+                name: 'DATA_PROTECTION_COMPLAINT_API_PASSWORD'
+          - name: 'XROAD_PROPERTIES_CLIENT_SECRET'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
+                name: 'XROAD_PROPERTIES_CLIENT_SECRET'
           - name: 'XROAD_TJODSKRA_API_PATH'
             value: '/SKRA-Protected/Einstaklingar-v1'
           - name: 'XROAD_TJODSKRA_MEMBER_CODE'
@@ -265,11 +914,6 @@ application-system-api:
             value: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1'
           - name: 'XROAD_PASSPORT_LICENSE_PATH'
             value: 'IS-TEST/GOV/6503760649/SKRA-Protected/Forskraning-V1'
-        name: 'application-system-api'
-        securityContext:
-          allowPrivilegeEscalation: false
-          privileged: false
-          fsGroup: 65534
         image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
         imagePullPolicy: 'IfNotPresent'
         livenessProbe:
@@ -277,6 +921,7 @@ application-system-api:
             path: '/liveness'
           initialDelaySeconds: 3
           timeoutSeconds: 3
+        name: 'application-system-api'
         readinessProbe:
           httpGet:
             path: '/liveness'
@@ -289,75 +934,200 @@ application-system-api:
           requests:
             cpu: '100m'
             memory: '512Mi'
-        command:
-          - 'node'
-        args:
-          - 'main.js'
+        securityContext:
+          allowPrivilegeEscalation: false
+          fsGroup: 65534
+          privileged: false
         volumeMounts:
-          - name: 'islyklar.p12'
-            mountPath: '/etc/config/islyklar.p12'
-      serviceAccountName: 'application-system-api'
+          - mountPath: '/etc/config/islyklar.p12'
+            name: 'islyklar.p12'
       initContainers:
         - args:
             - 'sequelize-cli'
             - 'db:migrate'
           command:
             - 'npx'
-          image: ''
           env:
             - name: 'NO_UPDATE_NOTIFIER'
               value: 'true'
+          image: ''
+      serviceAccountName: 'application-system-api'
+    strategy:
+      rollingUpdate:
+        maxSurge: '25%'
+        maxUnavailable: '25%'
+      type: 'RollingUpdate'
+    template:
+      metadata:
+        annotations:
+          ad.datadoghq.com/application-system-api.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+        labels:
+          tags.datadoghq.com/env: 'staging'
+          tags.datadoghq.com/service: 'application-system-api'
+          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
+application-system-api-worker:
+  apiVersion: 'apps/v1'
+  kind: 'Deployment'
+  labels:
+    tags.datadoghq.com/env: 'staging'
+    tags.datadoghq.com/service: 'application-system-api-worker'
+    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
+  metadata:
+    name: 'application-system-api-worker'
+    namespace: 'application-system'
+  spec:
+    spec:
+      containers:
+        args:
+          - 'main.js'
+          - '--job'
+          - 'worker'
+        command:
+          - 'node'
+        env:
+          - name: 'CONFIGCAT_SDK_KEY'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+                name: 'CONFIGCAT_SDK_KEY'
+          - name: 'IDENTITY_SERVER_CLIENT_SECRET'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET'
+                name: 'IDENTITY_SERVER_CLIENT_SECRET'
+          - name: 'SYSLUMENN_HOST'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system-api/SYSLUMENN_HOST'
+                name: 'SYSLUMENN_HOST'
+          - name: 'SYSLUMENN_USERNAME'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system/api/SYSLUMENN_USERNAME'
+                name: 'SYSLUMENN_USERNAME'
+          - name: 'SYSLUMENN_PASSWORD'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system/api/SYSLUMENN_PASSWORD'
+                name: 'SYSLUMENN_PASSWORD'
+          - name: 'DRIVING_LICENSE_BOOK_XROAD_PATH'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system-api/DRIVING_LICENSE_BOOK_XROAD_PATH'
+                name: 'DRIVING_LICENSE_BOOK_XROAD_PATH'
+          - name: 'DRIVING_LICENSE_BOOK_USERNAME'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system-api/DRIVING_LICENSE_BOOK_USERNAME'
+                name: 'DRIVING_LICENSE_BOOK_USERNAME'
+          - name: 'DRIVING_LICENSE_BOOK_PASSWORD'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system-api/DRIVING_LICENSE_BOOK_PASSWORD'
+                name: 'DRIVING_LICENSE_BOOK_PASSWORD'
+          - name: 'DOKOBIT_ACCESS_TOKEN'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN'
+                name: 'DOKOBIT_ACCESS_TOKEN'
+          - name: 'DOKOBIT_URL'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system-api/DOKOBIT_URL'
+                name: 'DOKOBIT_URL'
+          - name: 'ARK_BASE_URL'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system-api/ARK_BASE_URL'
+                name: 'ARK_BASE_URL'
+          - name: 'XROAD_PAYMENT_USER'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system-api/PAYMENT_USER'
+                name: 'XROAD_PAYMENT_USER'
+          - name: 'XROAD_PAYMENT_PASSWORD'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/application-system-api/PAYMENT_PASSWORD'
+                name: 'XROAD_PAYMENT_PASSWORD'
+          - name: 'XROAD_PAYMENT_PROVIDER_ID'
+            value: 'IS-TEST/GOV/10021/FJS-DEV-Public'
+          - name: 'XROAD_PAYMENT_BASE_CALLBACK_URL'
+            value: 'XROAD:'
+          - name: 'XROAD_PAYMENT_ADDITION_CALLBACK_URL'
+            value: '/'
+        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
+        imagePullPolicy: 'IfNotPresent'
+        livenessProbe:
+          httpGet:
+            path: '/'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        name: 'application-system-api-worker'
+        readinessProbe:
+          httpGet:
+            path: '/'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '100m'
+            memory: '128Mi'
+        securityContext:
+          allowPrivilegeEscalation: false
+          fsGroup: 65534
+          privileged: false
+      serviceAccountName: 'application-system-api-worker'
+    strategy:
+      rollingUpdate:
+        maxSurge: '25%'
+        maxUnavailable: '25%'
+      type: 'RollingUpdate'
+    template:
+      metadata:
+        annotations:
+          ad.datadoghq.com/application-system-api-worker.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+        labels:
+          tags.datadoghq.com/env: 'staging'
+          tags.datadoghq.com/service: 'application-system-api-worker'
+          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
 application-system-form:
   apiVersion: 'apps/v1'
   kind: 'Deployment'
-  metadata:
-    name: 'application-system-form'
-    namespace: 'application-system'
   labels:
     tags.datadoghq.com/env: 'staging'
     tags.datadoghq.com/service: 'application-system-form'
     tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-form'
+  metadata:
+    name: 'application-system-form'
+    namespace: 'application-system'
   spec:
-    strategy:
-      type: 'RollingUpdate'
-      rollingUpdate:
-        maxSurge: '25%'
-        maxUnavailable: '25%'
-    template:
-      metadata:
-        labels:
-          tags.datadoghq.com/env: 'staging'
-          tags.datadoghq.com/service: 'application-system-form'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-form'
-        annotations:
-          ad.datadoghq.com/application-system-form.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
     spec:
       containers:
         env:
           - name: 'CONFIGCAT_SDK_KEY'
             valueFrom:
               secretKeyRef:
-                name: 'CONFIGCAT_SDK_KEY'
                 key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+                name: 'CONFIGCAT_SDK_KEY'
           - name: 'SI_PUBLIC_CONFIGCAT_SDK_KEY'
             valueFrom:
               secretKeyRef:
-                name: 'SI_PUBLIC_CONFIGCAT_SDK_KEY'
                 key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+                name: 'SI_PUBLIC_CONFIGCAT_SDK_KEY'
           - name: 'SI_PUBLIC_DD_RUM_APPLICATION_ID'
             valueFrom:
               secretKeyRef:
-                name: 'SI_PUBLIC_DD_RUM_APPLICATION_ID'
                 key: '/k8s/DD_RUM_APPLICATION_ID'
+                name: 'SI_PUBLIC_DD_RUM_APPLICATION_ID'
           - name: 'SI_PUBLIC_DD_RUM_CLIENT_TOKEN'
             valueFrom:
               secretKeyRef:
-                name: 'SI_PUBLIC_DD_RUM_CLIENT_TOKEN'
                 key: '/k8s/DD_RUM_CLIENT_TOKEN'
-        name: 'application-system-form'
-        securityContext:
-          privileged: false
-          allowPrivilegeEscalation: false
+                name: 'SI_PUBLIC_DD_RUM_CLIENT_TOKEN'
         image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-form'
         imagePullPolicy: 'IfNotPresent'
         livenessProbe:
@@ -365,6 +1135,7 @@ application-system-form:
             path: '/liveness'
           initialDelaySeconds: 3
           timeoutSeconds: 3
+        name: 'application-system-form'
         readinessProbe:
           httpGet:
             path: '/readiness'
@@ -372,1256 +1143,46 @@ application-system-form:
           timeoutSeconds: 3
         resources:
           limits:
-            memory: '256Mi'
             cpu: '200m'
+            memory: '256Mi'
           requests:
+            cpu: '100m'
             memory: '128Mi'
-            cpu: '100m'
-service-portal:
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
-  metadata:
-    name: 'service-portal'
-    namespace: 'service-portal'
-  labels:
-    tags.datadoghq.com/env: 'staging'
-    tags.datadoghq.com/service: 'service-portal'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/service-portal'
-  spec:
-    strategy:
-      type: 'RollingUpdate'
-      rollingUpdate:
-        maxSurge: '25%'
-        maxUnavailable: '25%'
-    template:
-      metadata:
-        labels:
-          tags.datadoghq.com/env: 'staging'
-          tags.datadoghq.com/service: 'service-portal'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/service-portal'
-        annotations:
-          ad.datadoghq.com/service-portal.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
-    spec:
-      containers:
-        env:
-          - name: 'CONFIGCAT_SDK_KEY'
-            valueFrom:
-              secretKeyRef:
-                name: 'CONFIGCAT_SDK_KEY'
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-          - name: 'SI_PUBLIC_CONFIGCAT_SDK_KEY'
-            valueFrom:
-              secretKeyRef:
-                name: 'SI_PUBLIC_CONFIGCAT_SDK_KEY'
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-          - name: 'SI_PUBLIC_DD_RUM_APPLICATION_ID'
-            valueFrom:
-              secretKeyRef:
-                name: 'SI_PUBLIC_DD_RUM_APPLICATION_ID'
-                key: '/k8s/DD_RUM_APPLICATION_ID'
-          - name: 'SI_PUBLIC_DD_RUM_CLIENT_TOKEN'
-            valueFrom:
-              secretKeyRef:
-                name: 'SI_PUBLIC_DD_RUM_CLIENT_TOKEN'
-                key: '/k8s/DD_RUM_CLIENT_TOKEN'
-        name: 'service-portal'
-        securityContext:
-          privileged: false
-          allowPrivilegeEscalation: false
-        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/service-portal'
-        imagePullPolicy: 'IfNotPresent'
-        livenessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        readinessProbe:
-          httpGet:
-            path: '/readiness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        resources:
-          limits:
-            cpu: '400m'
-            memory: '512Mi'
-          requests:
-            cpu: '200m'
-            memory: '256Mi'
-service-portal-api:
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
-  metadata:
-    name: 'service-portal-api'
-    namespace: 'service-portal'
-  labels:
-    tags.datadoghq.com/env: 'staging'
-    tags.datadoghq.com/service: 'service-portal-api'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
-  spec:
-    strategy:
-      type: 'RollingUpdate'
-      rollingUpdate:
-        maxSurge: '25%'
-        maxUnavailable: '25%'
-    template:
-      metadata:
-        labels:
-          tags.datadoghq.com/env: 'staging'
-          tags.datadoghq.com/service: 'service-portal-api'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
-        annotations:
-          ad.datadoghq.com/service-portal-api.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
-    spec:
-      containers:
-        env:
-          - name: 'CONFIGCAT_SDK_KEY'
-            valueFrom:
-              secretKeyRef:
-                name: 'CONFIGCAT_SDK_KEY'
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-          - name: 'NOVA_URL'
-            valueFrom:
-              secretKeyRef:
-                name: 'NOVA_URL'
-                key: '/k8s/service-portal-api/NOVA_URL'
-          - name: 'NOVA_PASSWORD'
-            valueFrom:
-              secretKeyRef:
-                name: 'NOVA_PASSWORD'
-                key: '/k8s/gjafakort/NOVA_PASSWORD'
-          - name: 'NOVA_USERNAME'
-            valueFrom:
-              secretKeyRef:
-                name: 'NOVA_USERNAME'
-                key: '/k8s/gjafakort/NOVA_USERNAME'
-          - name: 'EMAIL_FROM'
-            valueFrom:
-              secretKeyRef:
-                name: 'EMAIL_FROM'
-                key: '/k8s/service-portal/api/EMAIL_FROM'
-          - name: 'EMAIL_FROM_NAME'
-            valueFrom:
-              secretKeyRef:
-                name: 'EMAIL_FROM_NAME'
-                key: '/k8s/service-portal/api/EMAIL_FROM_NAME'
-          - name: 'EMAIL_REPLY_TO'
-            valueFrom:
-              secretKeyRef:
-                name: 'EMAIL_REPLY_TO'
-                key: '/k8s/service-portal/api/EMAIL_REPLY_TO'
-          - name: 'EMAIL_REPLY_TO_NAME'
-            valueFrom:
-              secretKeyRef:
-                name: 'EMAIL_REPLY_TO_NAME'
-                key: '/k8s/service-portal/api/EMAIL_REPLY_TO_NAME'
-        name: 'service-portal-api'
         securityContext:
           allowPrivilegeEscalation: false
           privileged: false
-          fsGroup: 65534
-        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
-        imagePullPolicy: 'IfNotPresent'
-        livenessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        readinessProbe:
-          httpGet:
-            path: '/readiness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        resources:
-          limits:
-            cpu: '800m'
-            memory: '1024Mi'
-          requests:
-            cpu: '400m'
-            memory: '512Mi'
-      serviceAccountName: 'service-portal-api'
-      initContainers:
-        - args:
-            - 'sequelize-cli'
-            - 'db:migrate'
-          command:
-            - 'npx'
-          image: ''
-          env:
-            - name: 'NO_UPDATE_NOTIFIER'
-              value: 'true'
-portals-admin:
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
-  metadata:
-    name: 'portals-admin'
-    namespace: 'portals-admin'
-  labels:
-    tags.datadoghq.com/env: 'staging'
-    tags.datadoghq.com/service: 'portals-admin'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/portals-admin'
-  spec:
     strategy:
-      type: 'RollingUpdate'
       rollingUpdate:
         maxSurge: '25%'
         maxUnavailable: '25%'
-    template:
-      metadata:
-        labels:
-          tags.datadoghq.com/env: 'staging'
-          tags.datadoghq.com/service: 'portals-admin'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/portals-admin'
-        annotations:
-          ad.datadoghq.com/portals-admin.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
-    spec:
-      containers:
-        env:
-          - name: 'CONFIGCAT_SDK_KEY'
-            valueFrom:
-              secretKeyRef:
-                name: 'CONFIGCAT_SDK_KEY'
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-          - name: 'SI_PUBLIC_CONFIGCAT_SDK_KEY'
-            valueFrom:
-              secretKeyRef:
-                name: 'SI_PUBLIC_CONFIGCAT_SDK_KEY'
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-          - name: 'SI_PUBLIC_DD_RUM_APPLICATION_ID'
-            valueFrom:
-              secretKeyRef:
-                name: 'SI_PUBLIC_DD_RUM_APPLICATION_ID'
-                key: '/k8s/DD_RUM_APPLICATION_ID'
-          - name: 'SI_PUBLIC_DD_RUM_CLIENT_TOKEN'
-            valueFrom:
-              secretKeyRef:
-                name: 'SI_PUBLIC_DD_RUM_CLIENT_TOKEN'
-                key: '/k8s/DD_RUM_CLIENT_TOKEN'
-        name: 'portals-admin'
-        securityContext:
-          privileged: false
-          allowPrivilegeEscalation: false
-        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/portals-admin'
-        imagePullPolicy: 'IfNotPresent'
-        livenessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        readinessProbe:
-          httpGet:
-            path: '/readiness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        resources:
-          limits:
-            cpu: '400m'
-            memory: '512Mi'
-          requests:
-            cpu: '200m'
-            memory: '256Mi'
-api:
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
-  metadata:
-    name: 'api'
-    namespace: 'islandis'
-  labels:
-    tags.datadoghq.com/env: 'staging'
-    tags.datadoghq.com/service: 'api'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
-  spec:
-    strategy:
       type: 'RollingUpdate'
-      rollingUpdate:
-        maxSurge: '25%'
-        maxUnavailable: '25%'
     template:
       metadata:
+        annotations:
+          ad.datadoghq.com/application-system-form.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
         labels:
           tags.datadoghq.com/env: 'staging'
-          tags.datadoghq.com/service: 'api'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
-        annotations:
-          ad.datadoghq.com/api.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
-    spec:
-      containers:
-        env:
-          - name: 'CONFIGCAT_SDK_KEY'
-            valueFrom:
-              secretKeyRef:
-                name: 'CONFIGCAT_SDK_KEY'
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-          - name: 'DOCUMENT_PROVIDER_BASE_PATH'
-            valueFrom:
-              secretKeyRef:
-                name: 'DOCUMENT_PROVIDER_BASE_PATH'
-                key: '/k8s/api/DOCUMENT_PROVIDER_BASE_PATH'
-          - name: 'DOCUMENT_PROVIDER_TOKEN_URL'
-            valueFrom:
-              secretKeyRef:
-                name: 'DOCUMENT_PROVIDER_TOKEN_URL'
-                key: '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL'
-          - name: 'DOCUMENT_PROVIDER_BASE_PATH_TEST'
-            valueFrom:
-              secretKeyRef:
-                name: 'DOCUMENT_PROVIDER_BASE_PATH_TEST'
-                key: '/k8s/api/DOCUMENT_PROVIDER_BASE_PATH_TEST'
-          - name: 'DOCUMENT_PROVIDER_TOKEN_URL_TEST'
-            valueFrom:
-              secretKeyRef:
-                name: 'DOCUMENT_PROVIDER_TOKEN_URL_TEST'
-                key: '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL_TEST'
-          - name: 'SYSLUMENN_HOST'
-            valueFrom:
-              secretKeyRef:
-                name: 'SYSLUMENN_HOST'
-                key: '/k8s/api/SYSLUMENN_HOST'
-          - name: 'REGULATIONS_API_URL'
-            valueFrom:
-              secretKeyRef:
-                name: 'REGULATIONS_API_URL'
-                key: '/k8s/api/REGULATIONS_API_URL'
-          - name: 'SOFFIA_HOST_URL'
-            valueFrom:
-              secretKeyRef:
-                name: 'SOFFIA_HOST_URL'
-                key: '/k8s/api/SOFFIA_HOST_URL'
-          - name: 'CONTENTFUL_ACCESS_TOKEN'
-            valueFrom:
-              secretKeyRef:
-                name: 'CONTENTFUL_ACCESS_TOKEN'
-                key: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
-          - name: 'ZENDESK_CONTACT_FORM_EMAIL'
-            valueFrom:
-              secretKeyRef:
-                name: 'ZENDESK_CONTACT_FORM_EMAIL'
-                key: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL'
-          - name: 'ZENDESK_CONTACT_FORM_TOKEN'
-            valueFrom:
-              secretKeyRef:
-                name: 'ZENDESK_CONTACT_FORM_TOKEN'
-                key: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN'
-          - name: 'SOFFIA_USER'
-            valueFrom:
-              secretKeyRef:
-                name: 'SOFFIA_USER'
-                key: '/k8s/service-portal/SOFFIA_USER'
-          - name: 'SOFFIA_PASS'
-            valueFrom:
-              secretKeyRef:
-                name: 'SOFFIA_PASS'
-                key: '/k8s/service-portal/SOFFIA_PASS'
-          - name: 'POSTHOLF_CLIENTID'
-            valueFrom:
-              secretKeyRef:
-                name: 'POSTHOLF_CLIENTID'
-                key: '/k8s/documents/POSTHOLF_CLIENTID'
-          - name: 'POSTHOLF_CLIENT_SECRET'
-            valueFrom:
-              secretKeyRef:
-                name: 'POSTHOLF_CLIENT_SECRET'
-                key: '/k8s/documents/POSTHOLF_CLIENT_SECRET'
-          - name: 'POSTHOLF_TOKEN_URL'
-            valueFrom:
-              secretKeyRef:
-                name: 'POSTHOLF_TOKEN_URL'
-                key: '/k8s/documents/POSTHOLF_TOKEN_URL'
-          - name: 'POSTHOLF_BASE_PATH'
-            valueFrom:
-              secretKeyRef:
-                name: 'POSTHOLF_BASE_PATH'
-                key: '/k8s/documents/POSTHOLF_BASE_PATH'
-          - name: 'DOCUMENT_PROVIDER_CLIENTID'
-            valueFrom:
-              secretKeyRef:
-                name: 'DOCUMENT_PROVIDER_CLIENTID'
-                key: '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENTID'
-          - name: 'DOCUMENT_PROVIDER_CLIENT_SECRET'
-            valueFrom:
-              secretKeyRef:
-                name: 'DOCUMENT_PROVIDER_CLIENT_SECRET'
-                key: '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENT_SECRET'
-          - name: 'DOCUMENT_PROVIDER_CLIENTID_TEST'
-            valueFrom:
-              secretKeyRef:
-                name: 'DOCUMENT_PROVIDER_CLIENTID_TEST'
-                key: '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENTID_TEST'
-          - name: 'DOCUMENT_PROVIDER_CLIENT_SECRET_TEST'
-            valueFrom:
-              secretKeyRef:
-                name: 'DOCUMENT_PROVIDER_CLIENT_SECRET_TEST'
-                key: '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENT_SECRET_TEST'
-          - name: 'SYSLUMENN_USERNAME'
-            valueFrom:
-              secretKeyRef:
-                name: 'SYSLUMENN_USERNAME'
-                key: '/k8s/api/SYSLUMENN_USERNAME'
-          - name: 'SYSLUMENN_PASSWORD'
-            valueFrom:
-              secretKeyRef:
-                name: 'SYSLUMENN_PASSWORD'
-                key: '/k8s/api/SYSLUMENN_PASSWORD'
-          - name: 'DOCUMENT_PROVIDER_ADMINS'
-            valueFrom:
-              secretKeyRef:
-                name: 'DOCUMENT_PROVIDER_ADMINS'
-                key: '/k8s/documentprovider/DOCUMENT_PROVIDER_ADMINS'
-          - name: 'PKPASS_API_KEY'
-            valueFrom:
-              secretKeyRef:
-                name: 'PKPASS_API_KEY'
-                key: '/k8s/api/PKPASS_API_KEY'
-          - name: 'PKPASS_API_URL'
-            valueFrom:
-              secretKeyRef:
-                name: 'PKPASS_API_URL'
-                key: '/k8s/api/PKPASS_API_URL'
-          - name: 'PKPASS_AUTH_RETRIES'
-            valueFrom:
-              secretKeyRef:
-                name: 'PKPASS_AUTH_RETRIES'
-                key: '/k8s/api/PKPASS_AUTH_RETRIES'
-          - name: 'PKPASS_CACHE_KEY'
-            valueFrom:
-              secretKeyRef:
-                name: 'PKPASS_CACHE_KEY'
-                key: '/k8s/api/PKPASS_CACHE_KEY'
-          - name: 'PKPASS_CACHE_TOKEN_EXPIRY_DELTA'
-            valueFrom:
-              secretKeyRef:
-                name: 'PKPASS_CACHE_TOKEN_EXPIRY_DELTA'
-                key: '/k8s/api/PKPASS_CACHE_TOKEN_EXPIRY_DELTA'
-          - name: 'PKPASS_SECRET_KEY'
-            valueFrom:
-              secretKeyRef:
-                name: 'PKPASS_SECRET_KEY'
-                key: '/k8s/api/PKPASS_SECRET_KEY'
-          - name: 'VE_PKPASS_API_KEY'
-            valueFrom:
-              secretKeyRef:
-                name: 'VE_PKPASS_API_KEY'
-                key: '/k8s/api/VE_PKPASS_API_KEY'
-          - name: 'RLS_PKPASS_API_KEY'
-            valueFrom:
-              secretKeyRef:
-                name: 'RLS_PKPASS_API_KEY'
-                key: '/k8s/api/RLS_PKPASS_API_KEY'
-          - name: 'TR_PKPASS_API_KEY'
-            valueFrom:
-              secretKeyRef:
-                name: 'TR_PKPASS_API_KEY'
-                key: '/k8s/api/TR_PKPASS_API_KEY'
-          - name: 'SMART_SOLUTIONS_API_URL'
-            valueFrom:
-              secretKeyRef:
-                name: 'SMART_SOLUTIONS_API_URL'
-                key: '/k8s/api/SMART_SOLUTIONS_API_URL'
-          - name: 'FIREARM_LICENSE_PASS_TEMPLATE_ID'
-            valueFrom:
-              secretKeyRef:
-                name: 'FIREARM_LICENSE_PASS_TEMPLATE_ID'
-                key: '/k8s/api/FIREARM_LICENSE_PASS_TEMPLATE_ID'
-          - name: 'DISABILITY_LICENSE_PASS_TEMPLATE_ID'
-            valueFrom:
-              secretKeyRef:
-                name: 'DISABILITY_LICENSE_PASS_TEMPLATE_ID'
-                key: '/k8s/DISABILITY_LICENSE_PASS_TEMPLATE_ID'
-          - name: 'MACHINE_LICENSE_PASS_TEMPLATE_ID'
-            valueFrom:
-              secretKeyRef:
-                name: 'MACHINE_LICENSE_PASS_TEMPLATE_ID'
-                key: '/k8s/api/MACHINE_LICENSE_PASS_TEMPLATE_ID'
-          - name: 'ADR_LICENSE_PASS_TEMPLATE_ID'
-            valueFrom:
-              secretKeyRef:
-                name: 'ADR_LICENSE_PASS_TEMPLATE_ID'
-                key: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
-          - name: 'ISLYKILL_SERVICE_PASSPHRASE'
-            valueFrom:
-              secretKeyRef:
-                name: 'ISLYKILL_SERVICE_PASSPHRASE'
-                key: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
-          - name: 'ISLYKILL_SERVICE_BASEPATH'
-            valueFrom:
-              secretKeyRef:
-                name: 'ISLYKILL_SERVICE_BASEPATH'
-                key: '/k8s/api/ISLYKILL_SERVICE_BASEPATH'
-          - name: 'IDENTITY_SERVER_CLIENT_SECRET'
-            valueFrom:
-              secretKeyRef:
-                name: 'IDENTITY_SERVER_CLIENT_SECRET'
-                key: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET'
-          - name: 'FINANCIAL_STATEMENTS_INAO_CLIENT_ID'
-            valueFrom:
-              secretKeyRef:
-                name: 'FINANCIAL_STATEMENTS_INAO_CLIENT_ID'
-                key: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID'
-          - name: 'FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
-            valueFrom:
-              secretKeyRef:
-                name: 'FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
-                key: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
-          - name: 'FISKISTOFA_ZENTER_EMAIL'
-            valueFrom:
-              secretKeyRef:
-                name: 'FISKISTOFA_ZENTER_EMAIL'
-                key: '/k8s/api/FISKISTOFA_ZENTER_EMAIL'
-          - name: 'FISKISTOFA_ZENTER_PASSWORD'
-            valueFrom:
-              secretKeyRef:
-                name: 'FISKISTOFA_ZENTER_PASSWORD'
-                key: '/k8s/api/FISKISTOFA_ZENTER_PASSWORD'
-          - name: 'FISKISTOFA_ZENTER_CLIENT_PASSWORD'
-            valueFrom:
-              secretKeyRef:
-                name: 'FISKISTOFA_ZENTER_CLIENT_PASSWORD'
-                key: '/k8s/api/FISKISTOFA_ZENTER_CLIENT_PASSWORD'
-          - name: 'FISKISTOFA_API_URL'
-            valueFrom:
-              secretKeyRef:
-                name: 'FISKISTOFA_API_URL'
-                key: '/k8s/api/FISKISTOFA_API_URL'
-          - name: 'FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_SECRET'
-            valueFrom:
-              secretKeyRef:
-                name: 'FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_SECRET'
-                key: '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_SECRET'
-          - name: 'FISKISTOFA_API_ACCESS_TOKEN_SERVICE_URL'
-            valueFrom:
-              secretKeyRef:
-                name: 'FISKISTOFA_API_ACCESS_TOKEN_SERVICE_URL'
-                key: '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_URL'
-          - name: 'FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_ID'
-            valueFrom:
-              secretKeyRef:
-                name: 'FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_ID'
-                key: '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_ID'
-          - name: 'FISKISTOFA_API_ACCESS_TOKEN_SERVICE_AUDIENCE'
-            valueFrom:
-              secretKeyRef:
-                name: 'FISKISTOFA_API_ACCESS_TOKEN_SERVICE_AUDIENCE'
-                key: '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_AUDIENCE'
-          - name: 'FISKISTOFA_POWERBI_CLIENT_ID'
-            valueFrom:
-              secretKeyRef:
-                name: 'FISKISTOFA_POWERBI_CLIENT_ID'
-                key: '/k8s/api/FISKISTOFA_POWERBI_CLIENT_ID'
-          - name: 'FISKISTOFA_POWERBI_CLIENT_SECRET'
-            valueFrom:
-              secretKeyRef:
-                name: 'FISKISTOFA_POWERBI_CLIENT_SECRET'
-                key: '/k8s/api/FISKISTOFA_POWERBI_CLIENT_SECRET'
-          - name: 'FISKISTOFA_POWERBI_TENANT_ID'
-            valueFrom:
-              secretKeyRef:
-                name: 'FISKISTOFA_POWERBI_TENANT_ID'
-                key: '/k8s/api/FISKISTOFA_POWERBI_TENANT_ID'
-          - name: 'XROAD_HEALTH_INSURANCE_USERNAME'
-            valueFrom:
-              secretKeyRef:
-                name: 'XROAD_HEALTH_INSURANCE_USERNAME'
-                key: '/k8s/health-insurance/XROAD-USER'
-          - name: 'XROAD_HEALTH_INSURANCE_PASSWORD'
-            valueFrom:
-              secretKeyRef:
-                name: 'XROAD_HEALTH_INSURANCE_PASSWORD'
-                key: '/k8s/health-insurance/XROAD-PASSWORD'
-          - name: 'XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME'
-            valueFrom:
-              secretKeyRef:
-                name: 'XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME'
-                key: '/k8s/api/HEALTH_INSURANCE_V2_XROAD_USERNAME'
-          - name: 'XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD'
-            valueFrom:
-              secretKeyRef:
-                name: 'XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD'
-                key: '/k8s/api/HEALTH_INSURANCE_V2_XROAD_PASSWORD'
-          - name: 'XROAD_VMST_API_KEY'
-            valueFrom:
-              secretKeyRef:
-                name: 'XROAD_VMST_API_KEY'
-                key: '/k8s/vmst-client/VMST_API_KEY'
-          - name: 'XROAD_DRIVING_LICENSE_SECRET'
-            valueFrom:
-              secretKeyRef:
-                name: 'XROAD_DRIVING_LICENSE_SECRET'
-                key: '/k8s/api/DRIVING_LICENSE_SECRET'
-          - name: 'XROAD_PAYMENT_USER'
-            valueFrom:
-              secretKeyRef:
-                name: 'XROAD_PAYMENT_USER'
-                key: '/k8s/application-system-api/PAYMENT_USER'
-          - name: 'XROAD_PAYMENT_PASSWORD'
-            valueFrom:
-              secretKeyRef:
-                name: 'XROAD_PAYMENT_PASSWORD'
-                key: '/k8s/application-system-api/PAYMENT_PASSWORD'
-          - name: 'XROAD_PROPERTIES_CLIENT_SECRET'
-            valueFrom:
-              secretKeyRef:
-                name: 'XROAD_PROPERTIES_CLIENT_SECRET'
-                key: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
-          - name: 'DRIVING_LICENSE_BOOK_XROAD_PATH'
-            valueFrom:
-              secretKeyRef:
-                name: 'DRIVING_LICENSE_BOOK_XROAD_PATH'
-                key: '/k8s/api/DRIVING_LICENSE_BOOK_XROAD_PATH'
-          - name: 'DRIVING_LICENSE_BOOK_USERNAME'
-            valueFrom:
-              secretKeyRef:
-                name: 'DRIVING_LICENSE_BOOK_USERNAME'
-                key: '/k8s/api/DRIVING_LICENSE_BOOK_USERNAME'
-          - name: 'DRIVING_LICENSE_BOOK_PASSWORD'
-            valueFrom:
-              secretKeyRef:
-                name: 'DRIVING_LICENSE_BOOK_PASSWORD'
-                key: '/k8s/api/DRIVING_LICENSE_BOOK_PASSWORD'
-          - name: 'XROAD_FINANCIAL_AID_BACKEND_PATH'
-            value: 'IS-TEST/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend'
-          - name: 'XROAD_VEHICLES_PATH'
-            value: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1'
-          - name: 'XROAD_PASSPORT_LICENSE_PATH'
-            value: 'IS-TEST/GOV/6503760649/SKRA-Protected/Forskraning-V1'
-          - name: 'XROAD_VEHICLE_SERVICE_FJS_V1_PATH'
-            value: 'IS-DEV/GOV/10021/FJS-Public/VehicleServiceFJS_v1'
-          - name: 'XROAD_VEHICLE_CODETABLES_PATH'
-            value: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Codetables-V1'
-          - name: 'XROAD_VEHICLE_INFOLOCKS_PATH'
-            value: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Infolocks-V1'
-          - name: 'XROAD_VEHICLE_OPERATORS_PATH'
-            value: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V3'
-          - name: 'XROAD_VEHICLE_OWNER_CHANGE_PATH'
-            value: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Ownerchange-V2'
-          - name: 'XROAD_VEHICLE_PLATE_ORDERING_PATH'
-            value: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOrdering-V1'
-          - name: 'XROAD_VEHICLE_PRINTING_PATH'
-            value: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1'
-          - name: 'XROAD_DIGITAL_TACHOGRAPH_DRIVERS_CARD_PATH'
-            value: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Okuritar-V1'
-          - name: 'XROAD_CHARGE_FJS_V2_PATH'
-            value: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2'
-        name: 'api'
-        securityContext:
-          allowPrivilegeEscalation: false
-          privileged: false
-          fsGroup: 65534
-        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
-        imagePullPolicy: 'IfNotPresent'
-        livenessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        readinessProbe:
-          httpGet:
-            path: '/health'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        resources:
-          limits:
-            cpu: '800m'
-            memory: '2048Mi'
-          requests:
-            cpu: '200m'
-            memory: '1024Mi'
-        command:
-          - 'node'
-        args:
-          - '--tls-min-v1.0'
-          - '--no-experimental-fetch'
-          - 'main.js'
-        volumeMounts:
-          - name: 'islyklar.p12'
-            mountPath: '/etc/config/islyklar.p12'
-      serviceAccountName: 'api'
-web:
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
-  metadata:
-    name: 'web'
-    namespace: 'islandis'
-  labels:
-    tags.datadoghq.com/env: 'staging'
-    tags.datadoghq.com/service: 'web'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/web'
-  spec:
-    strategy:
-      type: 'RollingUpdate'
-      rollingUpdate:
-        maxSurge: '25%'
-        maxUnavailable: '25%'
-    template:
-      metadata:
-        labels:
-          tags.datadoghq.com/env: 'staging'
-          tags.datadoghq.com/service: 'web'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/web'
-        annotations:
-          ad.datadoghq.com/web.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
-    spec:
-      containers:
-        env:
-          - name: 'CONFIGCAT_SDK_KEY'
-            valueFrom:
-              secretKeyRef:
-                name: 'CONFIGCAT_SDK_KEY'
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-          - name: 'DD_RUM_APPLICATION_ID'
-            valueFrom:
-              secretKeyRef:
-                name: 'DD_RUM_APPLICATION_ID'
-                key: '/k8s/DD_RUM_APPLICATION_ID'
-          - name: 'DD_RUM_CLIENT_TOKEN'
-            valueFrom:
-              secretKeyRef:
-                name: 'DD_RUM_CLIENT_TOKEN'
-                key: '/k8s/DD_RUM_CLIENT_TOKEN'
-          - name: 'DISABLE_SYSLUMENN_PAGE'
-            value: 'false'
-          - name: 'DISABLE_ORGANIZATION_CHATBOT'
-            value: 'false'
-          - name: 'ENVIRONMENT'
-            value: 'staging'
-        name: 'web'
-        securityContext:
-          privileged: false
-          allowPrivilegeEscalation: false
-        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/web'
-        imagePullPolicy: 'IfNotPresent'
-        livenessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        readinessProbe:
-          httpGet:
-            path: '/readiness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        resources:
-          limits:
-            cpu: '400m'
-            memory: '512Mi'
-          requests:
-            cpu: '200m'
-            memory: '256Mi'
-skilavottord-web:
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
-  metadata:
-    name: 'skilavottord-web'
-    namespace: 'skilavottord'
-  labels:
-    tags.datadoghq.com/env: 'staging'
-    tags.datadoghq.com/service: 'skilavottord-web'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-web'
-  spec:
-    strategy:
-      type: 'RollingUpdate'
-      rollingUpdate:
-        maxSurge: '25%'
-        maxUnavailable: '25%'
-    template:
-      metadata:
-        labels:
-          tags.datadoghq.com/env: 'staging'
-          tags.datadoghq.com/service: 'skilavottord-web'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-web'
-        annotations:
-          ad.datadoghq.com/skilavottord-web.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
-    spec:
-      containers:
-        env:
-          - name: 'CONFIGCAT_SDK_KEY'
-            valueFrom:
-              secretKeyRef:
-                name: 'CONFIGCAT_SDK_KEY'
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-          - name: 'IDENTITY_SERVER_DOMAIN'
-            valueFrom:
-              secretKeyRef:
-                name: 'IDENTITY_SERVER_DOMAIN'
-                key: '/k8s/skilavottord/web/IDENTITY_SERVER_DOMAIN'
-          - name: 'SKILAVOTTORD_WEB_IDS_CLIENT_SECRET'
-            valueFrom:
-              secretKeyRef:
-                name: 'SKILAVOTTORD_WEB_IDS_CLIENT_SECRET'
-                key: '/k8s/skilavottord/web/IDENTITY_SERVER_CLIENT_SECRET'
-          - name: 'IDENTITY_SERVER_LOGOUT_REDIRECT_URL'
-            valueFrom:
-              secretKeyRef:
-                name: 'IDENTITY_SERVER_LOGOUT_REDIRECT_URL'
-                key: '/k8s/skilavottord/web/IDENTITY_SERVER_LOGOUT_REDIRECT_URL'
-          - name: 'NEXTAUTH_URL'
-            valueFrom:
-              secretKeyRef:
-                name: 'NEXTAUTH_URL'
-                key: '/k8s/skilavottord/web/NEXTAUTH_URL'
-          - name: 'DD_RUM_APPLICATION_ID'
-            valueFrom:
-              secretKeyRef:
-                name: 'DD_RUM_APPLICATION_ID'
-                key: '/k8s/DD_RUM_APPLICATION_ID'
-          - name: 'DD_RUM_CLIENT_TOKEN'
-            valueFrom:
-              secretKeyRef:
-                name: 'DD_RUM_CLIENT_TOKEN'
-                key: '/k8s/DD_RUM_CLIENT_TOKEN'
-        name: 'skilavottord-web'
-        securityContext:
-          privileged: false
-          allowPrivilegeEscalation: false
-        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-web'
-        imagePullPolicy: 'IfNotPresent'
-        livenessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        readinessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        resources:
-          limits:
-            memory: '256Mi'
-            cpu: '200m'
-          requests:
-            memory: '128Mi'
-            cpu: '100m'
-skilavottord-ws:
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
-  metadata:
-    name: 'skilavottord-ws'
-    namespace: 'skilavottord'
-  labels:
-    tags.datadoghq.com/env: 'staging'
-    tags.datadoghq.com/service: 'skilavottord-ws'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-ws'
-  spec:
-    strategy:
-      type: 'RollingUpdate'
-      rollingUpdate:
-        maxSurge: '25%'
-        maxUnavailable: '25%'
-    template:
-      metadata:
-        labels:
-          tags.datadoghq.com/env: 'staging'
-          tags.datadoghq.com/service: 'skilavottord-ws'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-ws'
-        annotations:
-          ad.datadoghq.com/skilavottord-ws.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
-    spec:
-      containers:
-        env:
-          - name: 'CONFIGCAT_SDK_KEY'
-            valueFrom:
-              secretKeyRef:
-                name: 'CONFIGCAT_SDK_KEY'
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-          - name: 'SAMGONGUSTOFA_SOAP_URL'
-            valueFrom:
-              secretKeyRef:
-                name: 'SAMGONGUSTOFA_SOAP_URL'
-                key: '/k8s/skilavottord-ws/SAMGONGUSTOFA_SOAP_URL'
-          - name: 'SAMGONGUSTOFA_REST_AUTH_URL'
-            valueFrom:
-              secretKeyRef:
-                name: 'SAMGONGUSTOFA_REST_AUTH_URL'
-                key: '/k8s/skilavottord-ws/SAMGONGUSTOFA_REST_AUTH_URL'
-          - name: 'SAMGONGUSTOFA_REST_DEREG_URL'
-            valueFrom:
-              secretKeyRef:
-                name: 'SAMGONGUSTOFA_REST_DEREG_URL'
-                key: '/k8s/skilavottord-ws/SAMGONGUSTOFA_REST_DEREG_URL'
-          - name: 'FJARSYSLA_REST_URL'
-            valueFrom:
-              secretKeyRef:
-                name: 'FJARSYSLA_REST_URL'
-                key: '/k8s/skilavottord-ws/FJARSYSLA_REST_URL'
-          - name: 'SAMGONGUSTOFA_REST_PASS'
-            valueFrom:
-              secretKeyRef:
-                name: 'SAMGONGUSTOFA_REST_PASS'
-                key: '/k8s/skilavottord/SAMGONGUSTOFA_REST_PASS'
-          - name: 'SAMGONGUSTOFA_SOAP_PASS'
-            valueFrom:
-              secretKeyRef:
-                name: 'SAMGONGUSTOFA_SOAP_PASS'
-                key: '/k8s/skilavottord/SAMGONGUSTOFA_SOAP_PASS'
-          - name: 'FJARSYSLA_REST_PASS'
-            valueFrom:
-              secretKeyRef:
-                name: 'FJARSYSLA_REST_PASS'
-                key: '/k8s/skilavottord/FJARSYSLA_REST_PASS'
-          - name: 'SAMGONGUSTOFA_SOAP_USER'
-            valueFrom:
-              secretKeyRef:
-                name: 'SAMGONGUSTOFA_SOAP_USER'
-                key: '/k8s/skilavottord/SAMGONGUSTOFA_SOAP_USER'
-          - name: 'SAMGONGUSTOFA_REST_USER'
-            valueFrom:
-              secretKeyRef:
-                name: 'SAMGONGUSTOFA_REST_USER'
-                key: '/k8s/skilavottord/SAMGONGUSTOFA_REST_USER'
-          - name: 'FJARSYSLA_REST_USER'
-            valueFrom:
-              secretKeyRef:
-                name: 'FJARSYSLA_REST_USER'
-                key: '/k8s/skilavottord/FJARSYSLA_REST_USER'
-        name: 'skilavottord-ws'
-        securityContext:
-          privileged: false
-          allowPrivilegeEscalation: false
-        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-ws'
-        imagePullPolicy: 'IfNotPresent'
-        livenessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        readinessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        resources:
-          limits:
-            memory: '256Mi'
-            cpu: '200m'
-          requests:
-            memory: '128Mi'
-            cpu: '100m'
-      initContainers:
-        - args:
-            - 'sequelize-cli'
-            - 'db:migrate'
-          command:
-            - 'npx'
-          image: ''
-          env:
-            - name: 'NO_UPDATE_NOTIFIER'
-              value: 'true'
-search-indexer-service:
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
-  metadata:
-    name: 'search-indexer-service'
-    namespace: 'search-indexer'
-  labels:
-    tags.datadoghq.com/env: 'staging'
-    tags.datadoghq.com/service: 'search-indexer-service'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-search-indexer'
-  spec:
-    strategy:
-      type: 'RollingUpdate'
-      rollingUpdate:
-        maxSurge: '25%'
-        maxUnavailable: '25%'
-    template:
-      metadata:
-        labels:
-          tags.datadoghq.com/env: 'staging'
-          tags.datadoghq.com/service: 'search-indexer-service'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-search-indexer'
-        annotations:
-          ad.datadoghq.com/search-indexer-service.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
-    spec:
-      containers:
-        env:
-          - name: 'CONFIGCAT_SDK_KEY'
-            valueFrom:
-              secretKeyRef:
-                name: 'CONFIGCAT_SDK_KEY'
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-          - name: 'CONTENTFUL_ACCESS_TOKEN'
-            valueFrom:
-              secretKeyRef:
-                name: 'CONTENTFUL_ACCESS_TOKEN'
-                key: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
-          - name: 'API_CMS_SYNC_TOKEN'
-            valueFrom:
-              secretKeyRef:
-                name: 'API_CMS_SYNC_TOKEN'
-                key: '/k8s/search-indexer/API_CMS_SYNC_TOKEN'
-          - name: 'CONTENTFUL_SPACE'
-            value: '8k0h54kbe6bj'
-          - name: 'CONTENTFUL_ENVIRONMENT'
-            value: 'master'
-          - name: 'CONTENTFUL_HOST'
-            value: 'cdn.contentful.com'
-          - name: 'CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE'
-            value: '40'
-          - name: 'AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME'
-            value: 'loftbru.staging01.devland.is'
-        name: 'search-indexer-service'
-        securityContext:
-          allowPrivilegeEscalation: false
-          privileged: false
-          fsGroup: 65534
-        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-search-indexer'
-        imagePullPolicy: 'IfNotPresent'
-        livenessProbe:
-          httpGet:
-            path: '/'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        readinessProbe:
-          httpGet:
-            path: '/'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        resources:
-          requests:
-            cpu: '100m'
-            memory: '512Mi'
-          limits:
-            cpu: '400m'
-            memory: '2048Mi'
-      serviceAccountName: 'search-indexer'
-      initContainers:
-        - args:
-            - '/webapp/migrateAws.js'
-          command:
-            - '/usr/local/bin/node'
-          name: 'migrate-aws'
-          image: ''
-          env:
-            - name: 'APPLICATION_URL'
-              value: 'http://search-indexer-service'
-            - name: 'ELASTIC_NODE'
-              value: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
-            - name: 'ELASTIC_INDEX'
-              value: 'island-is'
-            - name: 'CONTENTFUL_SPACE'
-              value: '8k0h54kbe6bj'
-            - name: 'CONTENTFUL_ENVIRONMENT'
-              value: 'master'
-            - name: 'CONTENTFUL_HOST'
-              value: 'cdn.contentful.com'
-            - name: 'CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE'
-              value: '40'
-            - name: 'AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME'
-              value: 'loftbru.staging01.devland.is'
-            - name: 'S3_BUCKET'
-              value: 'staging-es-custom-packages'
-            - name: 'ELASTIC_DOMAIN'
-              value: 'search'
-        - args:
-            - '/webapp/migrateElastic.js'
-          command:
-            - '/usr/local/bin/node'
-          name: 'migrate-elastic'
-          image: ''
-          env:
-            - name: 'APPLICATION_URL'
-              value: 'http://search-indexer-service'
-            - name: 'ELASTIC_NODE'
-              value: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
-            - name: 'ELASTIC_INDEX'
-              value: 'island-is'
-            - name: 'CONTENTFUL_SPACE'
-              value: '8k0h54kbe6bj'
-            - name: 'CONTENTFUL_ENVIRONMENT'
-              value: 'master'
-            - name: 'CONTENTFUL_HOST'
-              value: 'cdn.contentful.com'
-            - name: 'CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE'
-              value: '40'
-            - name: 'AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME'
-              value: 'loftbru.staging01.devland.is'
-            - name: 'S3_BUCKET'
-              value: 'staging-es-custom-packages'
-            - name: 'ELASTIC_DOMAIN'
-              value: 'search'
-        - args:
-            - '/webapp/migrateKibana.js'
-          command:
-            - '/usr/local/bin/node'
-          name: 'migrate-kibana'
-          image: ''
-          env:
-            - name: 'APPLICATION_URL'
-              value: 'http://search-indexer-service'
-            - name: 'ELASTIC_NODE'
-              value: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
-            - name: 'ELASTIC_INDEX'
-              value: 'island-is'
-            - name: 'CONTENTFUL_SPACE'
-              value: '8k0h54kbe6bj'
-            - name: 'CONTENTFUL_ENVIRONMENT'
-              value: 'master'
-            - name: 'CONTENTFUL_HOST'
-              value: 'cdn.contentful.com'
-            - name: 'CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE'
-              value: '40'
-            - name: 'AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME'
-              value: 'loftbru.staging01.devland.is'
-            - name: 'S3_BUCKET'
-              value: 'staging-es-custom-packages'
-            - name: 'ELASTIC_DOMAIN'
-              value: 'search'
-services-documents:
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
-  metadata:
-    name: 'services-documents'
-    namespace: 'services-documents'
-  labels:
-    tags.datadoghq.com/env: 'staging'
-    tags.datadoghq.com/service: 'services-documents'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-documents'
-  spec:
-    strategy:
-      type: 'RollingUpdate'
-      rollingUpdate:
-        maxSurge: '25%'
-        maxUnavailable: '25%'
-    template:
-      metadata:
-        labels:
-          tags.datadoghq.com/env: 'staging'
-          tags.datadoghq.com/service: 'services-documents'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-documents'
-        annotations:
-          ad.datadoghq.com/services-documents.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
-    spec:
-      containers:
-        env:
-          - name: 'CONFIGCAT_SDK_KEY'
-            valueFrom:
-              secretKeyRef:
-                name: 'CONFIGCAT_SDK_KEY'
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-          - name: 'NO_UPDATE_NOTIFIER'
-            value: 'true'
-        name: 'services-documents'
-        securityContext:
-          privileged: false
-          allowPrivilegeEscalation: false
-        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-documents'
-        imagePullPolicy: 'IfNotPresent'
-        livenessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        readinessProbe:
-          httpGet:
-            path: '/readiness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        resources:
-          limits:
-            memory: '256Mi'
-            cpu: '200m'
-          requests:
-            memory: '128Mi'
-            cpu: '100m'
-      initContainers:
-        - args:
-            - 'sequelize-cli'
-            - 'db:migrate'
-          command:
-            - 'npx'
-          image: ''
-          env:
-            - name: 'NO_UPDATE_NOTIFIER'
-              value: 'true'
-island-ui-storybook:
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
-  metadata:
-    name: 'island-ui-storybook'
-    namespace: 'storybook'
-  labels:
-    tags.datadoghq.com/env: 'staging'
-    tags.datadoghq.com/service: 'island-ui-storybook'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/island-ui-storybook'
-  spec:
-    strategy:
-      type: 'RollingUpdate'
-      rollingUpdate:
-        maxSurge: '25%'
-        maxUnavailable: '25%'
-    template:
-      metadata:
-        labels:
-          tags.datadoghq.com/env: 'staging'
-          tags.datadoghq.com/service: 'island-ui-storybook'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/island-ui-storybook'
-        annotations:
-          ad.datadoghq.com/island-ui-storybook.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
-    spec:
-      containers:
-        env:
-          - name: 'CONFIGCAT_SDK_KEY'
-            valueFrom:
-              secretKeyRef:
-                name: 'CONFIGCAT_SDK_KEY'
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-        name: 'island-ui-storybook'
-        securityContext:
-          privileged: false
-          allowPrivilegeEscalation: false
-        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/island-ui-storybook'
-        imagePullPolicy: 'IfNotPresent'
-        livenessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        readinessProbe:
-          httpGet:
-            path: '/readiness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        resources:
-          limits:
-            memory: '256Mi'
-            cpu: '200m'
-          requests:
-            memory: '128Mi'
-            cpu: '100m'
+          tags.datadoghq.com/service: 'application-system-form'
+          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-form'
 contentful-translation-extension:
   apiVersion: 'apps/v1'
   kind: 'Deployment'
-  metadata:
-    name: 'contentful-translation-extension'
-    namespace: 'contentful-translation-extension'
   labels:
     tags.datadoghq.com/env: 'staging'
     tags.datadoghq.com/service: 'contentful-translation-extension'
     tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/contentful-translation-extension'
+  metadata:
+    name: 'contentful-translation-extension'
+    namespace: 'contentful-translation-extension'
   spec:
-    strategy:
-      type: 'RollingUpdate'
-      rollingUpdate:
-        maxSurge: '25%'
-        maxUnavailable: '25%'
-    template:
-      metadata:
-        labels:
-          tags.datadoghq.com/env: 'staging'
-          tags.datadoghq.com/service: 'contentful-translation-extension'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/contentful-translation-extension'
-        annotations:
-          ad.datadoghq.com/contentful-translation-extension.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
     spec:
       containers:
         env:
           - name: 'CONFIGCAT_SDK_KEY'
             valueFrom:
               secretKeyRef:
-                name: 'CONFIGCAT_SDK_KEY'
                 key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-        name: 'contentful-translation-extension'
-        securityContext:
-          privileged: false
-          allowPrivilegeEscalation: false
+                name: 'CONFIGCAT_SDK_KEY'
         image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/contentful-translation-extension'
         imagePullPolicy: 'IfNotPresent'
         livenessProbe:
@@ -1629,6 +1190,7 @@ contentful-translation-extension:
             path: '/liveness'
           initialDelaySeconds: 3
           timeoutSeconds: 3
+        name: 'contentful-translation-extension'
         readinessProbe:
           httpGet:
             path: '/readiness'
@@ -1636,152 +1198,77 @@ contentful-translation-extension:
           timeoutSeconds: 3
         resources:
           limits:
-            memory: '256Mi'
             cpu: '200m'
+            memory: '256Mi'
           requests:
-            memory: '128Mi'
             cpu: '100m'
-xroad-collector:
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
-  metadata:
-    name: 'xroad-collector'
-    namespace: 'xroad-collector'
-  labels:
-    tags.datadoghq.com/env: 'staging'
-    tags.datadoghq.com/service: 'xroad-collector'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector'
-  spec:
-    strategy:
-      type: 'RollingUpdate'
-      rollingUpdate:
-        maxSurge: '25%'
-        maxUnavailable: '25%'
-    template:
-      metadata:
-        labels:
-          tags.datadoghq.com/env: 'staging'
-          tags.datadoghq.com/service: 'xroad-collector'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector'
-        annotations:
-          ad.datadoghq.com/xroad-collector.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
-    spec:
-      containers:
-        env:
-          - name: 'CONFIGCAT_SDK_KEY'
-            valueFrom:
-              secretKeyRef:
-                name: 'CONFIGCAT_SDK_KEY'
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-          - name: 'ELASTIC_NODE'
-            value: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
-          - name: 'XROAD_BASE_PATH'
-            value: 'http://securityserver.staging01.devland.is'
-          - name: 'XROAD_BASE_PATH_WITH_ENV'
-            value: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
-          - name: 'XROAD_TLS_BASE_PATH'
-            value: 'https://securityserver.staging01.devland.is'
-          - name: 'XROAD_TLS_BASE_PATH_WITH_ENV'
-            value: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
-          - name: 'XROAD_CLIENT_ID'
-            value: 'IS-TEST/GOV/5501692829/island-is-client'
-        name: 'xroad-collector'
+            memory: '128Mi'
         securityContext:
           allowPrivilegeEscalation: false
           privileged: false
-          fsGroup: 65534
-        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector'
-        imagePullPolicy: 'IfNotPresent'
-        livenessProbe:
-          httpGet:
-            path: '/'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        readinessProbe:
-          httpGet:
-            path: '/'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        resources:
-          limits:
-            memory: '256Mi'
-            cpu: '200m'
-          requests:
-            memory: '128Mi'
-            cpu: '100m'
-        command:
-          - 'node'
-        args:
-          - '--no-experimental-fetch'
-          - 'main.js'
-      serviceAccountName: 'xroad-collector'
+    strategy:
+      rollingUpdate:
+        maxSurge: '25%'
+        maxUnavailable: '25%'
+      type: 'RollingUpdate'
+    template:
+      metadata:
+        annotations:
+          ad.datadoghq.com/contentful-translation-extension.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+        labels:
+          tags.datadoghq.com/env: 'staging'
+          tags.datadoghq.com/service: 'contentful-translation-extension'
+          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/contentful-translation-extension'
 download-service:
   apiVersion: 'apps/v1'
   kind: 'Deployment'
-  metadata:
-    name: 'download-service'
-    namespace: 'download-service'
   labels:
     tags.datadoghq.com/env: 'staging'
     tags.datadoghq.com/service: 'download-service'
     tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/download-service'
+  metadata:
+    name: 'download-service'
+    namespace: 'download-service'
   spec:
-    strategy:
-      type: 'RollingUpdate'
-      rollingUpdate:
-        maxSurge: '25%'
-        maxUnavailable: '25%'
-    template:
-      metadata:
-        labels:
-          tags.datadoghq.com/env: 'staging'
-          tags.datadoghq.com/service: 'download-service'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/download-service'
-        annotations:
-          ad.datadoghq.com/download-service.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
     spec:
       containers:
         env:
           - name: 'CONFIGCAT_SDK_KEY'
             valueFrom:
               secretKeyRef:
-                name: 'CONFIGCAT_SDK_KEY'
                 key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+                name: 'CONFIGCAT_SDK_KEY'
           - name: 'IDENTITY_SERVER_CLIENT_SECRET'
             valueFrom:
               secretKeyRef:
-                name: 'IDENTITY_SERVER_CLIENT_SECRET'
                 key: '/k8s/download-service/IDENTITY_SERVER_CLIENT_SECRET'
+                name: 'IDENTITY_SERVER_CLIENT_SECRET'
           - name: 'POSTHOLF_CLIENTID'
             valueFrom:
               secretKeyRef:
-                name: 'POSTHOLF_CLIENTID'
                 key: '/k8s/documents/POSTHOLF_CLIENTID'
+                name: 'POSTHOLF_CLIENTID'
           - name: 'POSTHOLF_CLIENT_SECRET'
             valueFrom:
               secretKeyRef:
-                name: 'POSTHOLF_CLIENT_SECRET'
                 key: '/k8s/documents/POSTHOLF_CLIENT_SECRET'
+                name: 'POSTHOLF_CLIENT_SECRET'
           - name: 'POSTHOLF_TOKEN_URL'
             valueFrom:
               secretKeyRef:
-                name: 'POSTHOLF_TOKEN_URL'
                 key: '/k8s/documents/POSTHOLF_TOKEN_URL'
+                name: 'POSTHOLF_TOKEN_URL'
           - name: 'POSTHOLF_BASE_PATH'
             valueFrom:
               secretKeyRef:
-                name: 'POSTHOLF_BASE_PATH'
                 key: '/k8s/documents/POSTHOLF_BASE_PATH'
+                name: 'POSTHOLF_BASE_PATH'
           - name: 'XROAD_CLIENT_ID'
             value: 'IS-TEST/GOV/5501692829/island-is-client'
           - name: 'XROAD_FINANCES_PATH'
             value: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
           - name: 'XROAD_VEHICLES_PATH'
             value: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1'
-        name: 'download-service'
-        securityContext:
-          privileged: false
-          allowPrivilegeEscalation: false
         image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/download-service'
         imagePullPolicy: 'IfNotPresent'
         livenessProbe:
@@ -1789,6 +1276,7 @@ download-service:
             path: 'download/v1/liveness'
           initialDelaySeconds: 3
           timeoutSeconds: 3
+        name: 'download-service'
         readinessProbe:
           httpGet:
             path: 'download/v1/readiness'
@@ -1801,141 +1289,58 @@ download-service:
           requests:
             cpu: '200m'
             memory: '256Mi'
-icelandic-names-registry-backend:
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
-  metadata:
-    name: 'icelandic-names-registry-backend'
-    namespace: 'icelandic-names-registry'
-  labels:
-    tags.datadoghq.com/env: 'staging'
-    tags.datadoghq.com/service: 'icelandic-names-registry-backend'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/icelandic-names-registry-backend'
-  spec:
+        securityContext:
+          allowPrivilegeEscalation: false
+          privileged: false
     strategy:
-      type: 'RollingUpdate'
       rollingUpdate:
         maxSurge: '25%'
         maxUnavailable: '25%'
+      type: 'RollingUpdate'
     template:
       metadata:
+        annotations:
+          ad.datadoghq.com/download-service.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
         labels:
           tags.datadoghq.com/env: 'staging'
-          tags.datadoghq.com/service: 'icelandic-names-registry-backend'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/icelandic-names-registry-backend'
-        annotations:
-          ad.datadoghq.com/icelandic-names-registry-backend.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
-    spec:
-      containers:
-        env:
-          - name: 'CONFIGCAT_SDK_KEY'
-            valueFrom:
-              secretKeyRef:
-                name: 'CONFIGCAT_SDK_KEY'
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-          - name: 'NO_UPDATE_NOTIFIER'
-            value: 'true'
-        name: 'icelandic-names-registry-backend'
-        securityContext:
-          privileged: false
-          allowPrivilegeEscalation: false
-        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/icelandic-names-registry-backend'
-        imagePullPolicy: 'IfNotPresent'
-        livenessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        readinessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        resources:
-          limits:
-            memory: '256Mi'
-            cpu: '200m'
-          requests:
-            memory: '128Mi'
-            cpu: '100m'
-      initContainers:
-        - args:
-            - 'sequelize-cli'
-            - 'db:migrate'
-          command:
-            - 'npx'
-          name: 'migrations'
-          image: ''
-          env:
-            - name: 'NO_UPDATE_NOTIFIER'
-              value: 'true'
-        - args:
-            - 'sequelize-cli'
-            - 'db:seed:all'
-          command:
-            - 'npx'
-          name: 'seeds'
-          image: ''
-          env:
-            - name: 'NO_UPDATE_NOTIFIER'
-              value: 'true'
+          tags.datadoghq.com/service: 'download-service'
+          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/download-service'
 endorsement-system-api:
   apiVersion: 'apps/v1'
   kind: 'Deployment'
-  metadata:
-    name: 'endorsement-system-api'
-    namespace: 'endorsement-system'
   labels:
     tags.datadoghq.com/env: 'staging'
     tags.datadoghq.com/service: 'endorsement-system-api'
     tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-endorsements-api'
+  metadata:
+    name: 'endorsement-system-api'
+    namespace: 'endorsement-system'
   spec:
-    strategy:
-      type: 'RollingUpdate'
-      rollingUpdate:
-        maxSurge: '25%'
-        maxUnavailable: '25%'
-    template:
-      metadata:
-        labels:
-          tags.datadoghq.com/env: 'staging'
-          tags.datadoghq.com/service: 'endorsement-system-api'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-endorsements-api'
-        annotations:
-          ad.datadoghq.com/endorsement-system-api.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
     spec:
       containers:
+        args:
+          - '--tls-min-v1.0'
+          - '--no-experimental-fetch'
+          - 'main.js'
+        command:
+          - 'node'
         env:
-          - name: 'CONFIGCAT_SDK_KEY'
+          - name: 'DB_PASS'
             valueFrom:
               secretKeyRef:
-                name: 'CONFIGCAT_SDK_KEY'
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-          - name: 'SOFFIA_HOST_URL'
-            valueFrom:
-              secretKeyRef:
-                name: 'SOFFIA_HOST_URL'
-                key: '/k8s/endorsement-system-api/SOFFIA_HOST_URL'
-          - name: 'SOFFIA_SOAP_URL'
-            valueFrom:
-              secretKeyRef:
-                name: 'SOFFIA_SOAP_URL'
-                key: '/k8s/endorsement-system-api/SOFFIA_SOAP_URL'
-          - name: 'SOFFIA_USER'
-            valueFrom:
-              secretKeyRef:
-                name: 'SOFFIA_USER'
-                key: '/k8s/service-portal/SOFFIA_USER'
+                key: '/k8s/services-endorsements-api/DB_PASSWORD'
+                name: 'DB_PASS'
+          - name: 'DB_NAME'
+            value: 'services_endorsements_api'
+          - name: 'DB_HOST'
+            value: 'postgres-applications.internal'
+          - name: 'DB_REPLICAS_HOST'
+            value: 'postgres-applications.internal'
           - name: 'SOFFIA_PASS'
             valueFrom:
               secretKeyRef:
-                name: 'SOFFIA_PASS'
                 key: '/k8s/service-portal/SOFFIA_PASS'
-        name: 'endorsement-system-api'
-        securityContext:
-          allowPrivilegeEscalation: false
-          privileged: false
-          fsGroup: 65534
+                name: 'SOFFIA_PASS'
         image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-endorsements-api'
         imagePullPolicy: 'IfNotPresent'
         livenessProbe:
@@ -1943,6 +1348,7 @@ endorsement-system-api:
             path: '/liveness'
           initialDelaySeconds: 3
           timeoutSeconds: 3
+        name: 'endorsement-system-api'
         readinessProbe:
           httpGet:
             path: '/liveness'
@@ -1950,87 +1356,149 @@ endorsement-system-api:
           timeoutSeconds: 3
         resources:
           limits:
-            memory: '256Mi'
             cpu: '200m'
+            memory: '256Mi'
           requests:
-            memory: '128Mi'
             cpu: '100m'
-        command:
-          - 'node'
-        args:
-          - '--tls-min-v1.0'
-          - '--no-experimental-fetch'
-          - 'main.js'
-      serviceAccountName: 'endorsement-system-api'
+            memory: '128Mi'
+        securityContext:
+          allowPrivilegeEscalation: false
+          fsGroup: 65534
+          privileged: false
       initContainers:
         - args:
             - 'sequelize-cli'
             - 'db:migrate'
           command:
             - 'npx'
-          name: 'migrations'
-          image: ''
           env:
             - name: 'NO_UPDATE_NOTIFIER'
               value: 'true'
-air-discount-scheme-web:
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
-  metadata:
-    name: 'air-discount-scheme-web'
-    namespace: 'air-discount-scheme'
-  labels:
-    tags.datadoghq.com/env: 'staging'
-    tags.datadoghq.com/service: 'air-discount-scheme-web'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web'
-  spec:
+          image: ''
+          name: 'migrations'
+      serviceAccountName: 'endorsement-system-api'
     strategy:
-      type: 'RollingUpdate'
       rollingUpdate:
         maxSurge: '25%'
         maxUnavailable: '25%'
+      type: 'RollingUpdate'
     template:
       metadata:
+        annotations:
+          ad.datadoghq.com/endorsement-system-api.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
         labels:
           tags.datadoghq.com/env: 'staging'
-          tags.datadoghq.com/service: 'air-discount-scheme-web'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web'
-        annotations:
-          ad.datadoghq.com/air-discount-scheme-web.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+          tags.datadoghq.com/service: 'endorsement-system-api'
+          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-endorsements-api'
+icelandic-names-registry-backend:
+  apiVersion: 'apps/v1'
+  kind: 'Deployment'
+  labels:
+    tags.datadoghq.com/env: 'staging'
+    tags.datadoghq.com/service: 'icelandic-names-registry-backend'
+    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/icelandic-names-registry-backend'
+  metadata:
+    name: 'icelandic-names-registry-backend'
+    namespace: 'icelandic-names-registry'
+  spec:
     spec:
       containers:
         env:
-          - name: 'CONFIGCAT_SDK_KEY'
+          - name: 'DB_PASS'
             valueFrom:
               secretKeyRef:
-                name: 'CONFIGCAT_SDK_KEY'
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-          - name: 'DD_RUM_APPLICATION_ID'
-            valueFrom:
-              secretKeyRef:
-                name: 'DD_RUM_APPLICATION_ID'
-                key: '/k8s/DD_RUM_APPLICATION_ID'
-          - name: 'DD_RUM_CLIENT_TOKEN'
-            valueFrom:
-              secretKeyRef:
-                name: 'DD_RUM_CLIENT_TOKEN'
-                key: '/k8s/DD_RUM_CLIENT_TOKEN'
-          - name: 'IDENTITY_SERVER_SECRET'
-            valueFrom:
-              secretKeyRef:
-                name: 'IDENTITY_SERVER_SECRET'
-                key: '/k8s/air-discount-scheme/web/IDENTITY_SERVER_SECRET'
-        name: 'air-discount-scheme-web'
-        securityContext:
-          privileged: false
-          allowPrivilegeEscalation: false
-        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web'
+                key: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
+                name: 'DB_PASS'
+          - name: 'DB_NAME'
+            value: 'icelandic_names_registry_backend'
+          - name: 'DB_HOST'
+            value: 'postgres-applications.internal'
+          - name: 'DB_REPLICAS_HOST'
+            value: 'postgres-applications.internal'
+        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/icelandic-names-registry-backend'
         imagePullPolicy: 'IfNotPresent'
         livenessProbe:
           httpGet:
             path: '/liveness'
           initialDelaySeconds: 3
           timeoutSeconds: 3
+        name: 'icelandic-names-registry-backend'
+        readinessProbe:
+          httpGet:
+            path: '/liveness'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '100m'
+            memory: '128Mi'
+        securityContext:
+          allowPrivilegeEscalation: false
+          privileged: false
+      initContainers:
+        - args:
+            - 'sequelize-cli'
+            - 'db:migrate'
+          command:
+            - 'npx'
+          env:
+            - name: 'NO_UPDATE_NOTIFIER'
+              value: 'true'
+          image: ''
+          name: 'migrations'
+        - args:
+            - 'sequelize-cli'
+            - 'db:seed:all'
+          command:
+            - 'npx'
+          env:
+            - name: 'NO_UPDATE_NOTIFIER'
+              value: 'true'
+          image: ''
+          name: 'seeds'
+    strategy:
+      rollingUpdate:
+        maxSurge: '25%'
+        maxUnavailable: '25%'
+      type: 'RollingUpdate'
+    template:
+      metadata:
+        annotations:
+          ad.datadoghq.com/icelandic-names-registry-backend.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+        labels:
+          tags.datadoghq.com/env: 'staging'
+          tags.datadoghq.com/service: 'icelandic-names-registry-backend'
+          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/icelandic-names-registry-backend'
+island-ui-storybook:
+  apiVersion: 'apps/v1'
+  kind: 'Deployment'
+  labels:
+    tags.datadoghq.com/env: 'staging'
+    tags.datadoghq.com/service: 'island-ui-storybook'
+    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/island-ui-storybook'
+  metadata:
+    name: 'island-ui-storybook'
+    namespace: 'storybook'
+  spec:
+    spec:
+      containers:
+        env:
+          - name: 'CONFIGCAT_SDK_KEY'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+                name: 'CONFIGCAT_SDK_KEY'
+        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/island-ui-storybook'
+        imagePullPolicy: 'IfNotPresent'
+        livenessProbe:
+          httpGet:
+            path: '/liveness'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        name: 'island-ui-storybook'
         readinessProbe:
           httpGet:
             path: '/readiness'
@@ -2038,104 +1506,72 @@ air-discount-scheme-web:
           timeoutSeconds: 3
         resources:
           limits:
-            memory: '256Mi'
             cpu: '200m'
+            memory: '256Mi'
           requests:
-            memory: '128Mi'
             cpu: '100m'
-air-discount-scheme-backend:
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
-  metadata:
-    name: 'air-discount-scheme-backend'
-    namespace: 'air-discount-scheme'
-  labels:
-    tags.datadoghq.com/env: 'staging'
-    tags.datadoghq.com/service: 'air-discount-scheme-backend'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-backend'
-  spec:
+            memory: '128Mi'
+        securityContext:
+          allowPrivilegeEscalation: false
+          privileged: false
     strategy:
-      type: 'RollingUpdate'
       rollingUpdate:
         maxSurge: '25%'
         maxUnavailable: '25%'
+      type: 'RollingUpdate'
     template:
       metadata:
+        annotations:
+          ad.datadoghq.com/island-ui-storybook.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
         labels:
           tags.datadoghq.com/env: 'staging'
-          tags.datadoghq.com/service: 'air-discount-scheme-backend'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-backend'
-        annotations:
-          ad.datadoghq.com/air-discount-scheme-backend.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+          tags.datadoghq.com/service: 'island-ui-storybook'
+          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/island-ui-storybook'
+portals-admin:
+  apiVersion: 'apps/v1'
+  kind: 'Deployment'
+  labels:
+    tags.datadoghq.com/env: 'staging'
+    tags.datadoghq.com/service: 'portals-admin'
+    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/portals-admin'
+  metadata:
+    name: 'portals-admin'
+    namespace: 'portals-admin'
+  spec:
     spec:
       containers:
         env:
           - name: 'CONFIGCAT_SDK_KEY'
             valueFrom:
               secretKeyRef:
-                name: 'CONFIGCAT_SDK_KEY'
                 key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-          - name: 'ICELANDAIR_API_KEY'
+                name: 'CONFIGCAT_SDK_KEY'
+          - name: 'SI_PUBLIC_CONFIGCAT_SDK_KEY'
             valueFrom:
               secretKeyRef:
-                name: 'ICELANDAIR_API_KEY'
-                key: '/k8s/air-discount-scheme/backend/ICELANDAIR_API_KEY'
-          - name: 'ERNIR_API_KEY'
+                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+                name: 'SI_PUBLIC_CONFIGCAT_SDK_KEY'
+          - name: 'SI_PUBLIC_DD_RUM_APPLICATION_ID'
             valueFrom:
               secretKeyRef:
-                name: 'ERNIR_API_KEY'
-                key: '/k8s/air-discount-scheme/backend/ERNIR_API_KEY'
-          - name: 'NORLANDAIR_API_KEY'
+                key: '/k8s/DD_RUM_APPLICATION_ID'
+                name: 'SI_PUBLIC_DD_RUM_APPLICATION_ID'
+          - name: 'SI_PUBLIC_DD_RUM_CLIENT_TOKEN'
             valueFrom:
               secretKeyRef:
-                name: 'NORLANDAIR_API_KEY'
-                key: '/k8s/air-discount-scheme/backend/NORLANDAIR_API_KEY'
-          - name: 'NATIONAL_REGISTRY_PASSWORD'
-            valueFrom:
-              secretKeyRef:
-                name: 'NATIONAL_REGISTRY_PASSWORD'
-                key: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_PASSWORD'
-          - name: 'NATIONAL_REGISTRY_USERNAME'
-            valueFrom:
-              secretKeyRef:
-                name: 'NATIONAL_REGISTRY_USERNAME'
-                key: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_USERNAME'
-          - name: 'NATIONAL_REGISTRY_URL'
-            valueFrom:
-              secretKeyRef:
-                name: 'NATIONAL_REGISTRY_URL'
-                key: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_URL'
-          - name: 'IDENTITY_SERVER_CLIENT_SECRET'
-            valueFrom:
-              secretKeyRef:
-                name: 'IDENTITY_SERVER_CLIENT_SECRET'
-                key: '/k8s/air-discount-scheme-backend/VEGAGERDIN_IDS_CLIENTS_ADS_SECRET'
-          - name: 'XROAD_TLS_BASE_PATH_WITH_ENV'
-            value: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
-          - name: 'XROAD_CLIENT_ID'
-            value: 'IS-TEST/GOV/5501692829/island-is-client'
-          - name: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH'
-            value: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
-          - name: 'XROAD_NATIONAL_REGISTRY_REDIS_NODES'
-            value: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
-          - name: 'XROAD_TJODSKRA_API_PATH'
-            value: '/SKRA-Protected/Einstaklingar-v1'
-          - name: 'XROAD_TJODSKRA_MEMBER_CODE'
-            value: '6503760649'
-        name: 'air-discount-scheme-backend'
-        securityContext:
-          privileged: false
-          allowPrivilegeEscalation: false
-        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-backend'
+                key: '/k8s/DD_RUM_CLIENT_TOKEN'
+                name: 'SI_PUBLIC_DD_RUM_CLIENT_TOKEN'
+        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/portals-admin'
         imagePullPolicy: 'IfNotPresent'
         livenessProbe:
           httpGet:
             path: '/liveness'
           initialDelaySeconds: 3
           timeoutSeconds: 3
+        name: 'portals-admin'
         readinessProbe:
           httpGet:
-            path: '/liveness'
+            path: '/readiness'
           initialDelaySeconds: 3
           timeoutSeconds: 3
         resources:
@@ -2145,85 +1581,804 @@ air-discount-scheme-backend:
           requests:
             cpu: '200m'
             memory: '256Mi'
+        securityContext:
+          allowPrivilegeEscalation: false
+          privileged: false
+    strategy:
+      rollingUpdate:
+        maxSurge: '25%'
+        maxUnavailable: '25%'
+      type: 'RollingUpdate'
+    template:
+      metadata:
+        annotations:
+          ad.datadoghq.com/portals-admin.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+        labels:
+          tags.datadoghq.com/env: 'staging'
+          tags.datadoghq.com/service: 'portals-admin'
+          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/portals-admin'
+search-indexer-service:
+  apiVersion: 'apps/v1'
+  kind: 'Deployment'
+  labels:
+    tags.datadoghq.com/env: 'staging'
+    tags.datadoghq.com/service: 'search-indexer-service'
+    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-search-indexer'
+  metadata:
+    name: 'search-indexer-service'
+    namespace: 'search-indexer'
+  spec:
+    spec:
+      containers:
+        env:
+          - name: 'CONFIGCAT_SDK_KEY'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+                name: 'CONFIGCAT_SDK_KEY'
+          - name: 'CONTENTFUL_ACCESS_TOKEN'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
+                name: 'CONTENTFUL_ACCESS_TOKEN'
+          - name: 'API_CMS_SYNC_TOKEN'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/search-indexer/API_CMS_SYNC_TOKEN'
+                name: 'API_CMS_SYNC_TOKEN'
+          - name: 'CONTENTFUL_SPACE'
+            value: '8k0h54kbe6bj'
+          - name: 'CONTENTFUL_ENVIRONMENT'
+            value: 'master'
+          - name: 'CONTENTFUL_HOST'
+            value: 'cdn.contentful.com'
+          - name: 'CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE'
+            value: '40'
+          - name: 'AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME'
+            value: 'loftbru.staging01.devland.is'
+        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-search-indexer'
+        imagePullPolicy: 'IfNotPresent'
+        livenessProbe:
+          httpGet:
+            path: '/'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        name: 'search-indexer-service'
+        readinessProbe:
+          httpGet:
+            path: '/'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: '400m'
+            memory: '2048Mi'
+          requests:
+            cpu: '100m'
+            memory: '512Mi'
+        securityContext:
+          allowPrivilegeEscalation: false
+          fsGroup: 65534
+          privileged: false
+      initContainers:
+        - args:
+            - '/webapp/migrateAws.js'
+          command:
+            - '/usr/local/bin/node'
+          env:
+            - name: 'APPLICATION_URL'
+              value: 'http://search-indexer-service'
+            - name: 'ELASTIC_NODE'
+              value: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
+            - name: 'ELASTIC_INDEX'
+              value: 'island-is'
+            - name: 'CONTENTFUL_SPACE'
+              value: '8k0h54kbe6bj'
+            - name: 'CONTENTFUL_ENVIRONMENT'
+              value: 'master'
+            - name: 'CONTENTFUL_HOST'
+              value: 'cdn.contentful.com'
+            - name: 'CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE'
+              value: '40'
+            - name: 'AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME'
+              value: 'loftbru.staging01.devland.is'
+            - name: 'S3_BUCKET'
+              value: 'staging-es-custom-packages'
+            - name: 'ELASTIC_DOMAIN'
+              value: 'search'
+          image: ''
+          name: 'migrate-aws'
+        - args:
+            - '/webapp/migrateElastic.js'
+          command:
+            - '/usr/local/bin/node'
+          env:
+            - name: 'APPLICATION_URL'
+              value: 'http://search-indexer-service'
+            - name: 'ELASTIC_NODE'
+              value: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
+            - name: 'ELASTIC_INDEX'
+              value: 'island-is'
+            - name: 'CONTENTFUL_SPACE'
+              value: '8k0h54kbe6bj'
+            - name: 'CONTENTFUL_ENVIRONMENT'
+              value: 'master'
+            - name: 'CONTENTFUL_HOST'
+              value: 'cdn.contentful.com'
+            - name: 'CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE'
+              value: '40'
+            - name: 'AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME'
+              value: 'loftbru.staging01.devland.is'
+            - name: 'S3_BUCKET'
+              value: 'staging-es-custom-packages'
+            - name: 'ELASTIC_DOMAIN'
+              value: 'search'
+          image: ''
+          name: 'migrate-elastic'
+        - args:
+            - '/webapp/migrateKibana.js'
+          command:
+            - '/usr/local/bin/node'
+          env:
+            - name: 'APPLICATION_URL'
+              value: 'http://search-indexer-service'
+            - name: 'ELASTIC_NODE'
+              value: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
+            - name: 'ELASTIC_INDEX'
+              value: 'island-is'
+            - name: 'CONTENTFUL_SPACE'
+              value: '8k0h54kbe6bj'
+            - name: 'CONTENTFUL_ENVIRONMENT'
+              value: 'master'
+            - name: 'CONTENTFUL_HOST'
+              value: 'cdn.contentful.com'
+            - name: 'CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE'
+              value: '40'
+            - name: 'AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME'
+              value: 'loftbru.staging01.devland.is'
+            - name: 'S3_BUCKET'
+              value: 'staging-es-custom-packages'
+            - name: 'ELASTIC_DOMAIN'
+              value: 'search'
+          image: ''
+          name: 'migrate-kibana'
+      serviceAccountName: 'search-indexer'
+    strategy:
+      rollingUpdate:
+        maxSurge: '25%'
+        maxUnavailable: '25%'
+      type: 'RollingUpdate'
+    template:
+      metadata:
+        annotations:
+          ad.datadoghq.com/search-indexer-service.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+        labels:
+          tags.datadoghq.com/env: 'staging'
+          tags.datadoghq.com/service: 'search-indexer-service'
+          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-search-indexer'
+service-portal:
+  apiVersion: 'apps/v1'
+  kind: 'Deployment'
+  labels:
+    tags.datadoghq.com/env: 'staging'
+    tags.datadoghq.com/service: 'service-portal'
+    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/service-portal'
+  metadata:
+    name: 'service-portal'
+    namespace: 'service-portal'
+  spec:
+    spec:
+      containers:
+        env:
+          - name: 'CONFIGCAT_SDK_KEY'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+                name: 'CONFIGCAT_SDK_KEY'
+          - name: 'SI_PUBLIC_CONFIGCAT_SDK_KEY'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+                name: 'SI_PUBLIC_CONFIGCAT_SDK_KEY'
+          - name: 'SI_PUBLIC_DD_RUM_APPLICATION_ID'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/DD_RUM_APPLICATION_ID'
+                name: 'SI_PUBLIC_DD_RUM_APPLICATION_ID'
+          - name: 'SI_PUBLIC_DD_RUM_CLIENT_TOKEN'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/DD_RUM_CLIENT_TOKEN'
+                name: 'SI_PUBLIC_DD_RUM_CLIENT_TOKEN'
+        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/service-portal'
+        imagePullPolicy: 'IfNotPresent'
+        livenessProbe:
+          httpGet:
+            path: '/liveness'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        name: 'service-portal'
+        readinessProbe:
+          httpGet:
+            path: '/readiness'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: '400m'
+            memory: '512Mi'
+          requests:
+            cpu: '200m'
+            memory: '256Mi'
+        securityContext:
+          allowPrivilegeEscalation: false
+          privileged: false
+    strategy:
+      rollingUpdate:
+        maxSurge: '25%'
+        maxUnavailable: '25%'
+      type: 'RollingUpdate'
+    template:
+      metadata:
+        annotations:
+          ad.datadoghq.com/service-portal.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+        labels:
+          tags.datadoghq.com/env: 'staging'
+          tags.datadoghq.com/service: 'service-portal'
+          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/service-portal'
+service-portal-api:
+  apiVersion: 'apps/v1'
+  kind: 'Deployment'
+  labels:
+    tags.datadoghq.com/env: 'staging'
+    tags.datadoghq.com/service: 'service-portal-api'
+    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
+  metadata:
+    name: 'service-portal-api'
+    namespace: 'service-portal'
+  spec:
+    spec:
+      containers:
+        env:
+          - name: 'DB_PASS'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/service-portal/api/DB_PASSWORD'
+                name: 'DB_PASS'
+          - name: 'DB_NAME'
+            value: 'service_portal_api'
+          - name: 'DB_HOST'
+            value: 'postgres-applications.internal'
+          - name: 'DB_REPLICAS_HOST'
+            value: 'postgres-applications.internal'
+          - name: 'EMAIL_FROM'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/service-portal/api/EMAIL_FROM'
+                name: 'EMAIL_FROM'
+          - name: 'EMAIL_FROM_NAME'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/service-portal/api/EMAIL_FROM_NAME'
+                name: 'EMAIL_FROM_NAME'
+          - name: 'EMAIL_REPLY_TO'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/service-portal/api/EMAIL_REPLY_TO'
+                name: 'EMAIL_REPLY_TO'
+          - name: 'EMAIL_REPLY_TO_NAME'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/service-portal/api/EMAIL_REPLY_TO_NAME'
+                name: 'EMAIL_REPLY_TO_NAME'
+        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
+        imagePullPolicy: 'IfNotPresent'
+        livenessProbe:
+          httpGet:
+            path: '/liveness'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        name: 'service-portal-api'
+        readinessProbe:
+          httpGet:
+            path: '/readiness'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: '800m'
+            memory: '1024Mi'
+          requests:
+            cpu: '400m'
+            memory: '512Mi'
+        securityContext:
+          allowPrivilegeEscalation: false
+          fsGroup: 65534
+          privileged: false
       initContainers:
         - args:
             - 'sequelize-cli'
             - 'db:migrate'
           command:
             - 'npx'
-          image: ''
           env:
             - name: 'NO_UPDATE_NOTIFIER'
               value: 'true'
-air-discount-scheme-api:
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
-  metadata:
-    name: 'air-discount-scheme-api'
-    namespace: 'air-discount-scheme'
-  labels:
-    tags.datadoghq.com/env: 'staging'
-    tags.datadoghq.com/service: 'air-discount-scheme-api'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-api'
-  spec:
+          image: ''
+      serviceAccountName: 'service-portal-api'
     strategy:
-      type: 'RollingUpdate'
       rollingUpdate:
         maxSurge: '25%'
         maxUnavailable: '25%'
+      type: 'RollingUpdate'
     template:
       metadata:
+        annotations:
+          ad.datadoghq.com/service-portal-api.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
         labels:
           tags.datadoghq.com/env: 'staging'
-          tags.datadoghq.com/service: 'air-discount-scheme-api'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-api'
-        annotations:
-          ad.datadoghq.com/air-discount-scheme-api.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+          tags.datadoghq.com/service: 'service-portal-api'
+          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
+services-documents:
+  apiVersion: 'apps/v1'
+  kind: 'Deployment'
+  labels:
+    tags.datadoghq.com/env: 'staging'
+    tags.datadoghq.com/service: 'services-documents'
+    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-documents'
+  metadata:
+    name: 'services-documents'
+    namespace: 'services-documents'
+  spec:
     spec:
       containers:
         env:
-          - name: 'CONFIGCAT_SDK_KEY'
+          - name: 'DB_PASS'
             valueFrom:
               secretKeyRef:
-                name: 'CONFIGCAT_SDK_KEY'
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-          - name: 'AUTH_JWT_SECRET'
-            valueFrom:
-              secretKeyRef:
-                name: 'AUTH_JWT_SECRET'
-                key: '/k8s/air-discount-scheme/api/AUTH_JWT_SECRET'
-          - name: 'CONTENTFUL_ACCESS_TOKEN'
-            valueFrom:
-              secretKeyRef:
-                name: 'CONTENTFUL_ACCESS_TOKEN'
-                key: '/k8s/air-discount-scheme/api/CONTENTFUL_ACCESS_TOKEN'
-          - name: 'DEVELOPERS'
-            valueFrom:
-              secretKeyRef:
-                name: 'DEVELOPERS'
-                key: '/k8s/air-discount-scheme/api/DEVELOPERS'
-          - name: 'ADMINS'
-            valueFrom:
-              secretKeyRef:
-                name: 'ADMINS'
-                key: '/k8s/air-discount-scheme/api/ADMINS'
-          - name: 'NO_UPDATE_NOTIFIER'
-            value: 'true'
-        name: 'air-discount-scheme-api'
-        securityContext:
-          allowPrivilegeEscalation: false
-          privileged: false
-          fsGroup: 65534
-        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-api'
+                key: '/k8s/services-documents/DB_PASSWORD'
+                name: 'DB_PASS'
+          - name: 'DB_NAME'
+            value: 'services_documents'
+          - name: 'DB_HOST'
+            value: 'postgres-applications.internal'
+          - name: 'DB_REPLICAS_HOST'
+            value: 'postgres-applications.internal'
+        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-documents'
         imagePullPolicy: 'IfNotPresent'
         livenessProbe:
           httpGet:
             path: '/liveness'
           initialDelaySeconds: 3
           timeoutSeconds: 3
+        name: 'services-documents'
+        readinessProbe:
+          httpGet:
+            path: '/readiness'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '100m'
+            memory: '128Mi'
+        securityContext:
+          allowPrivilegeEscalation: false
+          privileged: false
+      initContainers:
+        - args:
+            - 'sequelize-cli'
+            - 'db:migrate'
+          command:
+            - 'npx'
+          env:
+            - name: 'NO_UPDATE_NOTIFIER'
+              value: 'true'
+          image: ''
+    strategy:
+      rollingUpdate:
+        maxSurge: '25%'
+        maxUnavailable: '25%'
+      type: 'RollingUpdate'
+    template:
+      metadata:
+        annotations:
+          ad.datadoghq.com/services-documents.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+        labels:
+          tags.datadoghq.com/env: 'staging'
+          tags.datadoghq.com/service: 'services-documents'
+          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-documents'
+skilavottord-web:
+  apiVersion: 'apps/v1'
+  kind: 'Deployment'
+  labels:
+    tags.datadoghq.com/env: 'staging'
+    tags.datadoghq.com/service: 'skilavottord-web'
+    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-web'
+  metadata:
+    name: 'skilavottord-web'
+    namespace: 'skilavottord'
+  spec:
+    spec:
+      containers:
+        env:
+          - name: 'CONFIGCAT_SDK_KEY'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+                name: 'CONFIGCAT_SDK_KEY'
+          - name: 'IDENTITY_SERVER_DOMAIN'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/skilavottord/web/IDENTITY_SERVER_DOMAIN'
+                name: 'IDENTITY_SERVER_DOMAIN'
+          - name: 'SKILAVOTTORD_WEB_IDS_CLIENT_SECRET'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/skilavottord/web/IDENTITY_SERVER_CLIENT_SECRET'
+                name: 'SKILAVOTTORD_WEB_IDS_CLIENT_SECRET'
+          - name: 'IDENTITY_SERVER_LOGOUT_REDIRECT_URL'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/skilavottord/web/IDENTITY_SERVER_LOGOUT_REDIRECT_URL'
+                name: 'IDENTITY_SERVER_LOGOUT_REDIRECT_URL'
+          - name: 'NEXTAUTH_URL'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/skilavottord/web/NEXTAUTH_URL'
+                name: 'NEXTAUTH_URL'
+          - name: 'DD_RUM_APPLICATION_ID'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/DD_RUM_APPLICATION_ID'
+                name: 'DD_RUM_APPLICATION_ID'
+          - name: 'DD_RUM_CLIENT_TOKEN'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/DD_RUM_CLIENT_TOKEN'
+                name: 'DD_RUM_CLIENT_TOKEN'
+        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-web'
+        imagePullPolicy: 'IfNotPresent'
+        livenessProbe:
+          httpGet:
+            path: '/liveness'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        name: 'skilavottord-web'
         readinessProbe:
           httpGet:
             path: '/liveness'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '100m'
+            memory: '128Mi'
+        securityContext:
+          allowPrivilegeEscalation: false
+          privileged: false
+    strategy:
+      rollingUpdate:
+        maxSurge: '25%'
+        maxUnavailable: '25%'
+      type: 'RollingUpdate'
+    template:
+      metadata:
+        annotations:
+          ad.datadoghq.com/skilavottord-web.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+        labels:
+          tags.datadoghq.com/env: 'staging'
+          tags.datadoghq.com/service: 'skilavottord-web'
+          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-web'
+skilavottord-ws:
+  apiVersion: 'apps/v1'
+  kind: 'Deployment'
+  labels:
+    tags.datadoghq.com/env: 'staging'
+    tags.datadoghq.com/service: 'skilavottord-ws'
+    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-ws'
+  metadata:
+    name: 'skilavottord-ws'
+    namespace: 'skilavottord'
+  spec:
+    spec:
+      containers:
+        env:
+          - name: 'DB_PASS'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/skilavottord/DB_PASSWORD'
+                name: 'DB_PASS'
+          - name: 'DB_NAME'
+            value: 'skilavottord'
+          - name: 'DB_HOST'
+            value: 'postgres-applications.internal'
+          - name: 'DB_REPLICAS_HOST'
+            value: 'postgres-applications.internal'
+          - name: 'FJARSYSLA_REST_URL'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/skilavottord-ws/FJARSYSLA_REST_URL'
+                name: 'FJARSYSLA_REST_URL'
+          - name: 'SAMGONGUSTOFA_REST_PASS'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/skilavottord/SAMGONGUSTOFA_REST_PASS'
+                name: 'SAMGONGUSTOFA_REST_PASS'
+          - name: 'SAMGONGUSTOFA_SOAP_PASS'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/skilavottord/SAMGONGUSTOFA_SOAP_PASS'
+                name: 'SAMGONGUSTOFA_SOAP_PASS'
+          - name: 'FJARSYSLA_REST_PASS'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/skilavottord/FJARSYSLA_REST_PASS'
+                name: 'FJARSYSLA_REST_PASS'
+          - name: 'SAMGONGUSTOFA_SOAP_USER'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/skilavottord/SAMGONGUSTOFA_SOAP_USER'
+                name: 'SAMGONGUSTOFA_SOAP_USER'
+          - name: 'SAMGONGUSTOFA_REST_USER'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/skilavottord/SAMGONGUSTOFA_REST_USER'
+                name: 'SAMGONGUSTOFA_REST_USER'
+          - name: 'FJARSYSLA_REST_USER'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/skilavottord/FJARSYSLA_REST_USER'
+                name: 'FJARSYSLA_REST_USER'
+        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-ws'
+        imagePullPolicy: 'IfNotPresent'
+        livenessProbe:
+          httpGet:
+            path: '/liveness'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        name: 'skilavottord-ws'
+        readinessProbe:
+          httpGet:
+            path: '/liveness'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '100m'
+            memory: '128Mi'
+        securityContext:
+          allowPrivilegeEscalation: false
+          privileged: false
+      initContainers:
+        - args:
+            - 'sequelize-cli'
+            - 'db:migrate'
+          command:
+            - 'npx'
+          env:
+            - name: 'NO_UPDATE_NOTIFIER'
+              value: 'true'
+          image: ''
+    strategy:
+      rollingUpdate:
+        maxSurge: '25%'
+        maxUnavailable: '25%'
+      type: 'RollingUpdate'
+    template:
+      metadata:
+        annotations:
+          ad.datadoghq.com/skilavottord-ws.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+        labels:
+          tags.datadoghq.com/env: 'staging'
+          tags.datadoghq.com/service: 'skilavottord-ws'
+          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-ws'
+user-notification:
+  apiVersion: 'apps/v1'
+  kind: 'Deployment'
+  labels:
+    tags.datadoghq.com/env: 'staging'
+    tags.datadoghq.com/service: 'user-notification'
+    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
+  metadata:
+    name: 'user-notification'
+    namespace: 'user-notification'
+  spec:
+    spec:
+      containers:
+        args:
+          - '--no-experimental-fetch'
+          - 'main.js'
+        command:
+          - 'node'
+        env:
+          - name: 'CONFIGCAT_SDK_KEY'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+                name: 'CONFIGCAT_SDK_KEY'
+          - name: 'FIREBASE_CREDENTIALS'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/user-notification/firestore-credentials'
+                name: 'FIREBASE_CREDENTIALS'
+        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
+        imagePullPolicy: 'IfNotPresent'
+        livenessProbe:
+          httpGet:
+            path: '/liveness'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        name: 'user-notification'
+        readinessProbe:
+          httpGet:
+            path: '/liveness'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '100m'
+            memory: '128Mi'
+        securityContext:
+          allowPrivilegeEscalation: false
+          fsGroup: 65534
+          privileged: false
+      serviceAccountName: 'user-notification'
+    strategy:
+      rollingUpdate:
+        maxSurge: '25%'
+        maxUnavailable: '25%'
+      type: 'RollingUpdate'
+    template:
+      metadata:
+        annotations:
+          ad.datadoghq.com/user-notification.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+        labels:
+          tags.datadoghq.com/env: 'staging'
+          tags.datadoghq.com/service: 'user-notification'
+          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
+user-notification-worker:
+  apiVersion: 'apps/v1'
+  kind: 'Deployment'
+  labels:
+    tags.datadoghq.com/env: 'staging'
+    tags.datadoghq.com/service: 'user-notification-worker'
+    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
+  metadata:
+    name: 'user-notification-worker'
+    namespace: 'user-notification'
+  spec:
+    spec:
+      containers:
+        args:
+          - '--no-experimental-fetch'
+          - 'main.js'
+          - '--job=worker'
+        command:
+          - 'node'
+        env:
+          - name: 'CONFIGCAT_SDK_KEY'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+                name: 'CONFIGCAT_SDK_KEY'
+          - name: 'FIREBASE_CREDENTIALS'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/user-notification/firestore-credentials'
+                name: 'FIREBASE_CREDENTIALS'
+          - name: 'USER_NOTIFICATION_CLIENT_ID'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID'
+                name: 'USER_NOTIFICATION_CLIENT_ID'
+          - name: 'USER_NOTIFICATION_CLIENT_SECRET'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET'
+                name: 'USER_NOTIFICATION_CLIENT_SECRET'
+          - name: 'CONTENTFUL_ACCESS_TOKEN'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN'
+                name: 'CONTENTFUL_ACCESS_TOKEN'
+          - name: 'CONTENTFUL_HOST'
+            value: 'cdn.contentful.com'
+        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
+        imagePullPolicy: 'IfNotPresent'
+        livenessProbe:
+          httpGet:
+            path: '/liveness'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        name: 'user-notification-worker'
+        readinessProbe:
+          httpGet:
+            path: '/liveness'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '100m'
+            memory: '128Mi'
+        securityContext:
+          allowPrivilegeEscalation: false
+          fsGroup: 65534
+          privileged: false
+      serviceAccountName: 'user-notification-worker'
+    strategy:
+      rollingUpdate:
+        maxSurge: '25%'
+        maxUnavailable: '25%'
+      type: 'RollingUpdate'
+    template:
+      metadata:
+        annotations:
+          ad.datadoghq.com/user-notification-worker.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+        labels:
+          tags.datadoghq.com/env: 'staging'
+          tags.datadoghq.com/service: 'user-notification-worker'
+          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
+web:
+  apiVersion: 'apps/v1'
+  kind: 'Deployment'
+  labels:
+    tags.datadoghq.com/env: 'staging'
+    tags.datadoghq.com/service: 'web'
+    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/web'
+  metadata:
+    name: 'web'
+    namespace: 'islandis'
+  spec:
+    spec:
+      containers:
+        env:
+          - name: 'CONFIGCAT_SDK_KEY'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+                name: 'CONFIGCAT_SDK_KEY'
+          - name: 'DD_RUM_APPLICATION_ID'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/DD_RUM_APPLICATION_ID'
+                name: 'DD_RUM_APPLICATION_ID'
+          - name: 'DD_RUM_CLIENT_TOKEN'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/DD_RUM_CLIENT_TOKEN'
+                name: 'DD_RUM_CLIENT_TOKEN'
+          - name: 'DISABLE_SYSLUMENN_PAGE'
+            value: 'false'
+          - name: 'DISABLE_ORGANIZATION_CHATBOT'
+            value: 'false'
+          - name: 'ENVIRONMENT'
+            value: 'staging'
+        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/web'
+        imagePullPolicy: 'IfNotPresent'
+        livenessProbe:
+          httpGet:
+            path: '/liveness'
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        name: 'web'
+        readinessProbe:
+          httpGet:
+            path: '/readiness'
           initialDelaySeconds: 3
           timeoutSeconds: 3
         resources:
@@ -2233,117 +2388,66 @@ air-discount-scheme-api:
           requests:
             cpu: '200m'
             memory: '256Mi'
-      serviceAccountName: 'air-discount-scheme-api'
-application-system-api-worker:
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
-  metadata:
-    name: 'application-system-api-worker'
-    namespace: 'application-system'
-  labels:
-    tags.datadoghq.com/env: 'staging'
-    tags.datadoghq.com/service: 'application-system-api-worker'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
-  spec:
+        securityContext:
+          allowPrivilegeEscalation: false
+          privileged: false
     strategy:
-      type: 'RollingUpdate'
       rollingUpdate:
         maxSurge: '25%'
         maxUnavailable: '25%'
+      type: 'RollingUpdate'
     template:
       metadata:
+        annotations:
+          ad.datadoghq.com/web.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
         labels:
           tags.datadoghq.com/env: 'staging'
-          tags.datadoghq.com/service: 'application-system-api-worker'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
-        annotations:
-          ad.datadoghq.com/application-system-api-worker.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+          tags.datadoghq.com/service: 'web'
+          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/web'
+xroad-collector:
+  apiVersion: 'apps/v1'
+  kind: 'Deployment'
+  labels:
+    tags.datadoghq.com/env: 'staging'
+    tags.datadoghq.com/service: 'xroad-collector'
+    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector'
+  metadata:
+    name: 'xroad-collector'
+    namespace: 'xroad-collector'
+  spec:
     spec:
       containers:
+        args:
+          - '--no-experimental-fetch'
+          - 'main.js'
+        command:
+          - 'node'
         env:
           - name: 'CONFIGCAT_SDK_KEY'
             valueFrom:
               secretKeyRef:
-                name: 'CONFIGCAT_SDK_KEY'
                 key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-          - name: 'IDENTITY_SERVER_CLIENT_SECRET'
-            valueFrom:
-              secretKeyRef:
-                name: 'IDENTITY_SERVER_CLIENT_SECRET'
-                key: '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET'
-          - name: 'SYSLUMENN_HOST'
-            valueFrom:
-              secretKeyRef:
-                name: 'SYSLUMENN_HOST'
-                key: '/k8s/application-system-api/SYSLUMENN_HOST'
-          - name: 'SYSLUMENN_USERNAME'
-            valueFrom:
-              secretKeyRef:
-                name: 'SYSLUMENN_USERNAME'
-                key: '/k8s/application-system/api/SYSLUMENN_USERNAME'
-          - name: 'SYSLUMENN_PASSWORD'
-            valueFrom:
-              secretKeyRef:
-                name: 'SYSLUMENN_PASSWORD'
-                key: '/k8s/application-system/api/SYSLUMENN_PASSWORD'
-          - name: 'DRIVING_LICENSE_BOOK_XROAD_PATH'
-            valueFrom:
-              secretKeyRef:
-                name: 'DRIVING_LICENSE_BOOK_XROAD_PATH'
-                key: '/k8s/application-system-api/DRIVING_LICENSE_BOOK_XROAD_PATH'
-          - name: 'DRIVING_LICENSE_BOOK_USERNAME'
-            valueFrom:
-              secretKeyRef:
-                name: 'DRIVING_LICENSE_BOOK_USERNAME'
-                key: '/k8s/application-system-api/DRIVING_LICENSE_BOOK_USERNAME'
-          - name: 'DRIVING_LICENSE_BOOK_PASSWORD'
-            valueFrom:
-              secretKeyRef:
-                name: 'DRIVING_LICENSE_BOOK_PASSWORD'
-                key: '/k8s/application-system-api/DRIVING_LICENSE_BOOK_PASSWORD'
-          - name: 'DOKOBIT_ACCESS_TOKEN'
-            valueFrom:
-              secretKeyRef:
-                name: 'DOKOBIT_ACCESS_TOKEN'
-                key: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN'
-          - name: 'DOKOBIT_URL'
-            valueFrom:
-              secretKeyRef:
-                name: 'DOKOBIT_URL'
-                key: '/k8s/application-system-api/DOKOBIT_URL'
-          - name: 'ARK_BASE_URL'
-            valueFrom:
-              secretKeyRef:
-                name: 'ARK_BASE_URL'
-                key: '/k8s/application-system-api/ARK_BASE_URL'
-          - name: 'XROAD_PAYMENT_USER'
-            valueFrom:
-              secretKeyRef:
-                name: 'XROAD_PAYMENT_USER'
-                key: '/k8s/application-system-api/PAYMENT_USER'
-          - name: 'XROAD_PAYMENT_PASSWORD'
-            valueFrom:
-              secretKeyRef:
-                name: 'XROAD_PAYMENT_PASSWORD'
-                key: '/k8s/application-system-api/PAYMENT_PASSWORD'
-          - name: 'XROAD_PAYMENT_PROVIDER_ID'
-            value: 'IS-TEST/GOV/10021/FJS-DEV-Public'
-          - name: 'XROAD_PAYMENT_BASE_CALLBACK_URL'
-            value: 'XROAD:'
-          - name: 'XROAD_PAYMENT_ADDITION_CALLBACK_URL'
-            value: '/'
-        name: 'application-system-api-worker'
-        securityContext:
-          allowPrivilegeEscalation: false
-          privileged: false
-          fsGroup: 65534
-        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
+                name: 'CONFIGCAT_SDK_KEY'
+          - name: 'ELASTIC_NODE'
+            value: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
+          - name: 'XROAD_BASE_PATH'
+            value: 'http://securityserver.staging01.devland.is'
+          - name: 'XROAD_BASE_PATH_WITH_ENV'
+            value: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
+          - name: 'XROAD_TLS_BASE_PATH'
+            value: 'https://securityserver.staging01.devland.is'
+          - name: 'XROAD_TLS_BASE_PATH_WITH_ENV'
+            value: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
+          - name: 'XROAD_CLIENT_ID'
+            value: 'IS-TEST/GOV/5501692829/island-is-client'
+        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector'
         imagePullPolicy: 'IfNotPresent'
         livenessProbe:
           httpGet:
             path: '/'
           initialDelaySeconds: 3
           timeoutSeconds: 3
+        name: 'xroad-collector'
         readinessProbe:
           httpGet:
             path: '/'
@@ -2351,167 +2455,26 @@ application-system-api-worker:
           timeoutSeconds: 3
         resources:
           limits:
-            memory: '256Mi'
             cpu: '200m'
+            memory: '256Mi'
           requests:
-            memory: '128Mi'
             cpu: '100m'
-        command:
-          - 'node'
-        args:
-          - 'main.js'
-          - '--job'
-          - 'worker'
-      serviceAccountName: 'application-system-api-worker'
-user-notification:
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
-  metadata:
-    name: 'user-notification'
-    namespace: 'user-notification'
-  labels:
-    tags.datadoghq.com/env: 'staging'
-    tags.datadoghq.com/service: 'user-notification'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
-  spec:
+            memory: '128Mi'
+        securityContext:
+          allowPrivilegeEscalation: false
+          fsGroup: 65534
+          privileged: false
+      serviceAccountName: 'xroad-collector'
     strategy:
-      type: 'RollingUpdate'
       rollingUpdate:
         maxSurge: '25%'
         maxUnavailable: '25%'
-    template:
-      metadata:
-        labels:
-          tags.datadoghq.com/env: 'staging'
-          tags.datadoghq.com/service: 'user-notification'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
-        annotations:
-          ad.datadoghq.com/user-notification.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
-    spec:
-      containers:
-        env:
-          - name: 'CONFIGCAT_SDK_KEY'
-            valueFrom:
-              secretKeyRef:
-                name: 'CONFIGCAT_SDK_KEY'
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-          - name: 'FIREBASE_CREDENTIALS'
-            valueFrom:
-              secretKeyRef:
-                name: 'FIREBASE_CREDENTIALS'
-                key: '/k8s/user-notification/firestore-credentials'
-        name: 'user-notification'
-        securityContext:
-          allowPrivilegeEscalation: false
-          privileged: false
-          fsGroup: 65534
-        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
-        imagePullPolicy: 'IfNotPresent'
-        livenessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        readinessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        resources:
-          limits:
-            memory: '256Mi'
-            cpu: '200m'
-          requests:
-            memory: '128Mi'
-            cpu: '100m'
-        command:
-          - 'node'
-        args:
-          - '--no-experimental-fetch'
-          - 'main.js'
-      serviceAccountName: 'user-notification'
-user-notification-worker:
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
-  metadata:
-    name: 'user-notification-worker'
-    namespace: 'user-notification'
-  labels:
-    tags.datadoghq.com/env: 'staging'
-    tags.datadoghq.com/service: 'user-notification-worker'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
-  spec:
-    strategy:
       type: 'RollingUpdate'
-      rollingUpdate:
-        maxSurge: '25%'
-        maxUnavailable: '25%'
     template:
       metadata:
+        annotations:
+          ad.datadoghq.com/xroad-collector.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
         labels:
           tags.datadoghq.com/env: 'staging'
-          tags.datadoghq.com/service: 'user-notification-worker'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
-        annotations:
-          ad.datadoghq.com/user-notification-worker.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
-    spec:
-      containers:
-        env:
-          - name: 'CONFIGCAT_SDK_KEY'
-            valueFrom:
-              secretKeyRef:
-                name: 'CONFIGCAT_SDK_KEY'
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-          - name: 'FIREBASE_CREDENTIALS'
-            valueFrom:
-              secretKeyRef:
-                name: 'FIREBASE_CREDENTIALS'
-                key: '/k8s/user-notification/firestore-credentials'
-          - name: 'USER_NOTIFICATION_CLIENT_ID'
-            valueFrom:
-              secretKeyRef:
-                name: 'USER_NOTIFICATION_CLIENT_ID'
-                key: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID'
-          - name: 'USER_NOTIFICATION_CLIENT_SECRET'
-            valueFrom:
-              secretKeyRef:
-                name: 'USER_NOTIFICATION_CLIENT_SECRET'
-                key: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET'
-          - name: 'CONTENTFUL_ACCESS_TOKEN'
-            valueFrom:
-              secretKeyRef:
-                name: 'CONTENTFUL_ACCESS_TOKEN'
-                key: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN'
-          - name: 'CONTENTFUL_HOST'
-            value: 'cdn.contentful.com'
-        name: 'user-notification-worker'
-        securityContext:
-          allowPrivilegeEscalation: false
-          privileged: false
-          fsGroup: 65534
-        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
-        imagePullPolicy: 'IfNotPresent'
-        livenessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        readinessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        resources:
-          limits:
-            memory: '256Mi'
-            cpu: '200m'
-          requests:
-            memory: '128Mi'
-            cpu: '100m'
-        command:
-          - 'node'
-        args:
-          - '--no-experimental-fetch'
-          - 'main.js'
-          - '--job=worker'
-      serviceAccountName: 'user-notification-worker'
+          tags.datadoghq.com/service: 'xroad-collector'
+          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector'

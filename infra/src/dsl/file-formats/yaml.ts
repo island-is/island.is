@@ -16,10 +16,10 @@ const HEADER =
 
 export const dumpOpts = {
   // Temporary overrides on sortKeys and skipInvalid
-  sortKeys: false,
+  sortKeys: true,
   noRefs: true,
   forceQuotes: true,
-  skipInvalid: true,
+  skipInvalid: false,
 }
 export const reformatYaml = (content: string): string => {
   const obj = load(content, { json: true })

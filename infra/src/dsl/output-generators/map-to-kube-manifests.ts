@@ -36,7 +36,9 @@ const serializeService: SerializeMethod<KubeService> = async (
   deployment: ReferenceResolver,
   opsenv: EnvironmentConfig,
 ) => {
-  const { mergeObjects, getErrors } = checksAndValidations(service.name)
+  const { mergeObjects, addToErrors, getErrors } = checksAndValidations(
+    service.name,
+  )
   const serviceDef = service
   const { namespace } = serviceDef
   const result: KubeService = {
@@ -223,6 +225,54 @@ const serializeService: SerializeMethod<KubeService> = async (
         })
       })
     }
+    if (serviceDef.initContainers.postgres) {
+      const { env, secrets, errors } = serializePostgres(
+        serviceDef,
+        deployment,
+        opsenv,
+        service,
+        serviceDef.initContainers.postgres,
+      )
+      Object.assign(
+        result.spec.spec.containers.env,
+        serializeKubeEnvs(env).value,
+      )
+
+      Object.assign(
+        result.spec.spec.containers.env,
+        serializeKubeSecrets(secrets).value,
+      )
+      addToErrors(errors)
+    }
+    function serializePostgres(
+      serviceDef: ServiceDefinitionForEnv,
+      deployment: ReferenceResolver,
+      envConf: EnvironmentConfig,
+      service: ServiceDefinitionForEnv,
+      postgres: PostgresInfoForEnv,
+    ) {
+      const env: { [name: string]: string } = {}
+      const secrets: { [name: string]: string } = {}
+      const errors: string[] = []
+      env['DB_USER'] = postgres.username ?? postgresIdentifier(serviceDef.name)
+      env['DB_NAME'] = postgres.name ?? postgresIdentifier(serviceDef.name)
+      try {
+        const { reader, writer } = resolveDbHost(
+          service,
+          envConf,
+          postgres.host,
+        )
+        env['DB_HOST'] = writer
+        env['DB_REPLICAS_HOST'] = reader
+      } catch (e) {
+        errors.push(
+          `Could not resolve DB_HOST variable for service: ${serviceDef.name}`,
+        )
+      }
+      secrets['DB_PASS'] =
+        postgres.passwordSecret ?? `/k8s/${serviceDef.name}/DB_PASSWORD`
+      return { env, secrets, errors }
+    }
   }
   const allErrors = getErrors()
   return allErrors.length === 0
@@ -245,7 +295,20 @@ export const KubeOutput: OutputFormat<KubeService> = {
     throw new Error('Not used')
   },
 }
-
+export const resolveDbHost = (
+  service: ServiceDefinitionForEnv,
+  env: EnvironmentConfig,
+  host?: string,
+) => {
+  if (host) {
+    return { writer: host, reader: host }
+  } else {
+    return {
+      writer: env.auroraHost,
+      reader: env.auroraReplica ?? env.auroraHost,
+    }
+  }
+}
 /*
       if (serviceDef.initContainers.postgres) {
         const { env, secrets, errors } = serializePostgres(
