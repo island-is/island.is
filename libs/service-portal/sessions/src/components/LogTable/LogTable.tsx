@@ -1,23 +1,26 @@
-import { Box, Icon, Table, Text } from '@island.is/island-ui/core'
+import * as kennitala from 'kennitala'
 import React from 'react'
-import Person from '../PersonIcon/PersonIcon'
+import { useIntl } from 'react-intl'
+
 import { SessionsSession } from '@island.is/api/schema'
-import { getSessionType } from '../../utils/utils'
 import { useAuth } from '@island.is/auth/react'
-import { dateFormat, timeFormat } from '@island.is/shared/constants'
+import { Box, Icon, Table, Text, Tooltip } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 
 import { m } from '../../lib/messages'
-import { useLocale } from '@island.is/localization'
 import { SessionType } from '../../lib/types/sessionTypes'
+import { getSessionType } from '../../utils/utils'
 import * as styles from '../LogTable/LogTable.css'
-import * as kennitala from 'kennitala'
+import Person from '../PersonIcon/PersonIcon'
+import { Client } from '../Client/Client'
 
 interface LogTableProps {
   data: SessionsSession[]
 }
 const LogTable: React.FC<LogTableProps> = ({ data }) => {
   const { userInfo } = useAuth()
-  const { formatMessage, formatDateFns } = useLocale()
+  const { formatMessage } = useLocale()
+  const { formatDate, formatTime } = useIntl()
 
   return (
     <Table.Table>
@@ -39,7 +42,9 @@ const LogTable: React.FC<LogTableProps> = ({ data }) => {
           return (
             <Table.Row key={index}>
               <Table.Data>
-                <div>{formatDateFns(session.timestamp, dateFormat.is)}</div>
+                <div>
+                  {formatDate(session.timestamp, { dateStyle: 'medium' })}
+                </div>
                 <Box
                   alignItems="center"
                   display="flex"
@@ -51,25 +56,20 @@ const LogTable: React.FC<LogTableProps> = ({ data }) => {
                     type="outline"
                     color="blue400"
                   />
-                  {formatDateFns(session.timestamp, timeFormat.is)}
+                  {formatTime(session.timestamp, { timeStyle: 'short' })}
                 </Box>
               </Table.Data>
               <Table.Data>
-                <Box>
-                  <div className={styles.textEllipsis}>{session.userAgent}</div>
-                  <div>{session.ip}</div>
-                </Box>
+                <div className={styles.textEllipsis}>{session.device}</div>
+                {!session.ipLocation && <div>{session.ip}</div>}
+                {session.ipLocation && (
+                  <Tooltip text={formatMessage(m.ipLocation)}>
+                    <div>{session.ipLocation}</div>
+                  </Tooltip>
+                )}
               </Table.Data>
               <Table.Data>
-                <Box display={'flex'} columnGap={1} alignItems={'center'}>
-                  <Box
-                    className={styles.logo}
-                    style={{
-                      backgroundImage: `url(${session.client.domain?.organisationLogoUrl})`,
-                    }}
-                  ></Box>
-                  <Text variant="eyebrow">{session.client.clientName}</Text>
-                </Box>
+                <Client client={session.client} />
               </Table.Data>
               <Table.Data>
                 <Box display="flex" alignItems="center" columnGap="gutter">

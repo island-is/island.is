@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common'
+import { Injectable, UnauthorizedException } from '@nestjs/common'
 import DataLoader from 'dataloader'
 
 import { GraphQLContext, User } from '@island.is/auth-nest-tools'
@@ -29,29 +25,23 @@ export class ClientLoader implements NestDataLoader<ClientInput, Client> {
   async loadClients(
     user: User | undefined,
     inputs: readonly ClientInput[],
-  ): Promise<Array<Client | Error>> {
+  ): Promise<Array<Client>> {
     if (!user) {
       throw new UnauthorizedException()
     }
 
     // Only support one language at a time.
     const lang = inputs[0].lang
-    const authClients = await this.clientService.getClients(user, {
+    const clients = await this.clientService.getClients(user, {
       lang,
       clientIds: inputs.map((input) => input.clientId),
     })
-    const domains = await this.domainsService.getDomains(user, { lang })
-
-    const clients: Client[] = authClients.map((client) => ({
-      clientId: client.clientId,
-      clientName: client.clientName,
-      domain: domains.find((domain) => domain.name === client.domainName),
-    }))
 
     return inputs.map(
       (input) =>
-        clients.find((client) => client.clientId === input.clientId) ??
-        new NotFoundException(`Could not find client: ${input.clientId}`),
+        clients.find((client) => client.clientId === input.clientId) ?? {
+          clientId: input.clientId,
+        },
     )
   }
 

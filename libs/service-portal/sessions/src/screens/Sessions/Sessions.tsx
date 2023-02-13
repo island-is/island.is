@@ -1,3 +1,7 @@
+import * as kennitala from 'kennitala'
+import React, { Fragment, useRef, useState } from 'react'
+
+import { SessionsSession } from '@island.is/api/schema'
 import {
   Box,
   GridColumn,
@@ -11,15 +15,12 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
-import React, { Fragment, useRef, useState } from 'react'
+
 import LogTable from '../../components/LogTable/LogTable'
 import LogTableMobile from '../../components/LogTable/LogTableMobile'
-
+import useOnScreen from '../../utils/useOnScreen'
 import { m } from '../../lib/messages'
 import { useGetSessionsListQuery } from './Sessions.generated'
-import { SessionsSession } from '@island.is/api/schema'
-import * as kennitala from 'kennitala'
-import useOnScreen from '../../utils/useOnScreen'
 
 interface CursorState {
   before: string
