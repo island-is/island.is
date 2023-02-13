@@ -2,13 +2,13 @@ import { WrappedLoaderFn } from '@island.is/portals/core'
 import {
   FlightLegsDocument,
   FlightLegsQuery,
+  FlightLegsQueryVariables,
 } from '../screens/Overview/Overview.generated'
 import { FlightLegsFilters } from '../screens/Overview/types'
-import { AirDiscountSchemeFlightLegsInput } from '@island.is/api/schema'
 
 export const prepareFlightLegsQuery = (): {
   filters: FlightLegsFilters
-  input: AirDiscountSchemeFlightLegsInput
+  input: FlightLegsQueryVariables['input']
 } => {
   const TODAY = new Date()
   const filters = {
@@ -56,5 +56,5 @@ export const overviewLoader: WrappedLoaderFn = ({ client }) => async () => {
     throw flightLegs.error
   }
 
-  return flightLegs.data?.airDiscountSchemeFlightLegs
+  return flightLegs.data
 }

@@ -1,7 +1,5 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SubmitHandler } from 'react-hook-form'
-
-import { AirDiscountSchemeFlightLegsInput } from '@island.is/api/schema'
 import {
   Box,
   Stack,
@@ -17,20 +15,26 @@ import { PortalNavigation } from '@island.is/portals/core'
 import { Filters, Panel, Summary } from './components'
 import { downloadCSV } from './utils'
 import {
+  FlightLegsQuery,
+  FlightLegsQueryVariables,
   useConfirmInvoiceMutation,
-  useFlightLegsQuery,
+  useFlightLegsLazyQuery,
 } from './Overview.generated'
 import { FlightLegsFilters } from './types'
 import { airDiscountSchemeNavigation } from '../../lib/navigation'
 import Modal from '../../components/Modal/Modal'
 import { prepareFlightLegsQuery } from '../../lib/loaders'
+import { useLoaderData } from 'react-router-dom'
 
 const Overview = () => {
+  const loaderData = useLoaderData() as FlightLegsQuery
+  const { airDiscountSchemeFlightLegs = [] } = loaderData ?? {}
+  const [flightLegs, setFlightLegs] = useState(airDiscountSchemeFlightLegs)
   const [showModal, setModal] = useState(false)
   const queryData = prepareFlightLegsQuery()
   const [filters, setFilters] = useState<FlightLegsFilters>(queryData.filters)
 
-  const input: AirDiscountSchemeFlightLegsInput = {
+  const input: FlightLegsQueryVariables['input'] = {
     ...queryData.input,
     airline: filters.airline?.value,
     gender: filters.gender?.value || undefined,
@@ -52,20 +56,28 @@ const Overview = () => {
     { loading: confirmInvoiceLoading },
   ] = useConfirmInvoiceMutation()
 
-  const { data, loading: queryLoading, refetch } = useFlightLegsQuery({
+  const [
+    getFlightLegs,
+    { loading: flightLegsLoading, data },
+  ] = useFlightLegsLazyQuery({
     ssr: false,
     variables: {
       input,
     },
   })
-  const { airDiscountSchemeFlightLegs: flightLegs = [] } = data ?? {}
 
-  const loading = queryLoading || confirmInvoiceLoading
+  useEffect(() => {
+    if (data?.airDiscountSchemeFlightLegs) {
+      setFlightLegs(data.airDiscountSchemeFlightLegs)
+    }
+  }, [data?.airDiscountSchemeFlightLegs])
+
+  const loading = flightLegsLoading || confirmInvoiceLoading
   const applyFilters: SubmitHandler<FlightLegsFilters> = (
     data: FlightLegsFilters,
   ) => {
     setFilters(data)
-    refetch()
+    getFlightLegs()
   }
 
   return (
