@@ -46,6 +46,16 @@ class ActionCardMetaData {
   @Expose()
   @IsBoolean()
   deleteButton?: boolean
+
+  @ApiProperty()
+  @Expose()
+  @IsNumber()
+  draftFinishedSteps?: number
+
+  @ApiProperty()
+  @Expose()
+  @IsNumber()
+  draftTotalSteps?: number
 }
 
 export class ApplicationResponseDto {

@@ -24,6 +24,7 @@ export const delegationsModule: PortalModule = {
     const commonProps = {
       name: m.accessControlDelegations,
       navHide: !hasAccess,
+      enabled: hasAccess,
       element: <AccessControl />,
     }
 

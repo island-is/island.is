@@ -17,11 +17,12 @@ export const sessionsModule: PortalModule = {
   enabled({ userInfo }) {
     return userInfo.scopes.some((scope) => allowedScopes.includes(scope))
   },
-  routes() {
+  routes({ userInfo }) {
     return [
       {
         name: m.sessions,
         path: SessionsPaths.Sessions,
+        enabled: userInfo.scopes.some((scope) => allowedScopes.includes(scope)),
         element: <Sessions />,
       },
     ]

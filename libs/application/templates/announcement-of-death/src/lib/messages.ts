@@ -164,13 +164,13 @@ export const m = defineMessages({
   /* Testament step */
   testamentTitle: {
     id: 'aod.application:testamentTitle',
-    defaultMessage: 'Erfðaskrá og kaupmáli',
+    defaultMessage: 'Erfðaskrá',
     description: 'Testament step title',
   },
   testamentDescription: {
     id: 'aod.application:testamentDescription',
     defaultMessage:
-      'Upplýsingar um erfðaskrá og kaupmála eru sóttar til Sýslumanns. Ef fleiri en ein erfðaskrá er til staðar er mikilvægt að koma frumriti eða upplýsingum um þær til sýslumanns eins fljótt og kostur er.',
+      'Upplýsingar um erfðaskrá eru sóttar til Sýslumanns. Ef fleiri en ein erfðaskrá er til staðar er mikilvægt að koma frumriti eða upplýsingum um þær til sýslumanns eins fljótt og kostur er.',
     description: 'Testament step description',
   },
   testamentTestamentAvailable: {
