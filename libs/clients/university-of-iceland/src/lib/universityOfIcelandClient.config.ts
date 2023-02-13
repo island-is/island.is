@@ -23,7 +23,7 @@ export const UniversityOfIcelandClientConfig = defineConfig<
       ),
       fetch: {
         timeout: 30000,
-        scope: [],
+        scope: ['@hi.is/brautskraningar'],
       },
     }
   },
