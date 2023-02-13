@@ -1,5 +1,3 @@
-// TRIGGER LINE TO BUILD DEPLOY FEATURE HACK - REMOVE ME BEFORE MERGE
-
 import { Module } from '@nestjs/common'
 import { APP_INTERCEPTOR } from '@nestjs/core'
 import { ApolloDriver } from '@nestjs/apollo'
