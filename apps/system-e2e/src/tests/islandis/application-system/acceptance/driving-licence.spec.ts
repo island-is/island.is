@@ -19,7 +19,9 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     })
 
     const applicationPage = await applicationContext.newPage()
-    // await disableObjectKey(applicationPage, 'existing')
+    await disableObjectKey(applicationPage, 'existingApplication')
+    //TODO: allow multiple mocked keys
+    //await disableObjectKey(applicationPage, 'currentLicence')
     await disablePreviousApplications(applicationPage)
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
@@ -50,7 +52,8 @@ applicationTest.describe('Driving Instructor Registrations', () => {
     }
   })
 
-  applicationTest('should be able to apply', async ({ page }) => {
+  applicationTest('should be able to apply', async ({ applicationPage }) => {
+    const page = applicationPage
     // Data providers
     await page.getByTestId('agree-to-data-providers').click()
     await page.getByTestId('proceed').click()
