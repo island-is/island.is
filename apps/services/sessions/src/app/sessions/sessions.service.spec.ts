@@ -67,9 +67,10 @@ describe('SessionsService', () => {
   )
 
   it.each`
-    session        | ip                  | ipLocation
-    ${mockSession} | ${'153.92.156.131'} | ${'Reykjavik, IS'}
-    ${mockSession} | ${'127.0.0.1'}      | ${null}
+    session        | ip                   | ipLocation
+    ${mockSession} | ${'153.92.156.131'}  | ${'Reykjavik, IS'}
+    ${mockSession} | ${'213.181.112.165'} | ${'Kopavogur, IS'}
+    ${mockSession} | ${'127.0.0.1'}       | ${null}
   `('should parse location from ip', async ({ session, ip, ipLocation }) => {
     // Act
     await sessionsService.create({
