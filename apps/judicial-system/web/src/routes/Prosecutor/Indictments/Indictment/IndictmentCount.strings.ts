@@ -76,6 +76,12 @@ export const indictmentCount = defineMessages({
     description:
       'Notaður sem skýritexti á "lagaákvæði" leitarboxi á ákæruliða skrefi í ákærum.',
   },
+  lawsBrokenTag: {
+    id:
+      'judicial.system.core:indictments_indictment.indictment_count.laws_broken_tag',
+    defaultMessage: '{paragraph}. mgr. {article}. gr. umfl.',
+    description: 'Notaður sem texti í lagaákvæði taggi.',
+  },
   legalArgumentsLabel: {
     id:
       'judicial.system.core:indictments_indictment.indictment_count.legal_arguments_label',

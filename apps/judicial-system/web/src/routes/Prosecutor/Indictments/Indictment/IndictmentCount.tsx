@@ -57,11 +57,7 @@ const laws = [
   [95, 1], // á alltaf við öll þessi brot,
 ]
 
-function lawLabel(law: number[]): string {
-  return `${law[1]}. mgr. ${law[0]}. gr. 77/2019`
-}
-
-function lawSort(law1: number[], law2: number[]) {
+function lawsCompare(law1: number[], law2: number[]) {
   if (law1[0] < law2[0]) {
     return -1
   }
@@ -114,10 +110,19 @@ export const IndictmentCount: React.FC<Props> = (props) => {
     disabled: indictmentCount.offenses?.includes(offense),
   }))
 
+  const lawTag = useCallback(
+    (law: number[]): string =>
+      formatMessage(strings.lawsBrokenTag, {
+        paragraph: law[1],
+        article: law[0],
+      }),
+    [formatMessage],
+  )
+
   const lawsBrokenOptions: LawsBrokenOption[] = useMemo(
     () =>
       laws.map((law, index) => ({
-        label: lawLabel(law),
+        label: lawTag(law),
         value: `${index}`,
         index: index,
         disabled: Boolean(
@@ -126,7 +131,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           ),
         ),
       })),
-    [indictmentCount.lawsBroken],
+    [lawTag, indictmentCount.lawsBroken],
   )
 
   const legalArguments = useCallback(
@@ -305,7 +310,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
             const lawsBroken = [
               ...(indictmentCount.lawsBroken ?? []),
               laws[index],
-            ].sort(lawSort)
+            ].sort(lawsCompare)
             onChange(indictmentCount.id, {
               lawsBroken: lawsBroken,
               legalArguments: legalArguments(lawsBroken),
@@ -327,20 +332,22 @@ export const IndictmentCount: React.FC<Props> = (props) => {
               <Tag
                 variant="darkerBlue"
                 onClick={() => {
-                  if (indictmentCount.lawsBroken) {
-                    const lawsBroken = indictmentCount.lawsBroken
-                      .slice(0, index)
-                      .concat(indictmentCount.lawsBroken.slice(index + 1))
-                    onChange(indictmentCount.id, {
-                      lawsBroken: lawsBroken,
-                      legalArguments: legalArguments(lawsBroken),
-                    })
+                  if (!indictmentCount.lawsBroken) {
+                    return
                   }
+
+                  const lawsBroken = indictmentCount.lawsBroken
+                    .slice(0, index)
+                    .concat(indictmentCount.lawsBroken.slice(index + 1))
+                  onChange(indictmentCount.id, {
+                    lawsBroken: lawsBroken,
+                    legalArguments: legalArguments(lawsBroken),
+                  })
                 }}
-                aria-label={lawLabel(brokenLaw)}
+                aria-label={lawTag(brokenLaw)}
               >
                 <Box display="flex" alignItems="center">
-                  {lawLabel(brokenLaw)}
+                  {lawTag(brokenLaw)}
                   <Icon icon="close" size="small" />
                 </Box>
               </Tag>
