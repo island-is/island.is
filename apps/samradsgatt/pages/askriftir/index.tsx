@@ -13,10 +13,13 @@ import { Layout } from '../../components/Layout/Layout'
 import Cases from '../../utils/dummydata/api/Cases'
 import SubscriptionArray from '../../utils/dummydata/api/User/Subscriptions'
 import Types from '../../utils/dummydata/api/Types'
-import SubscriptionBox from '../../components/SubscriptionBox/SubscriptionBox'
-import SubscriptionActionBox from '../../components/Card/SubscriptionActionBox'
+import SubscriptionActionCard from '../../components/Card/SubscriptionActionCard'
 
 const Subscriptions = () => {
+  // user logged in logic needed
+  const [loggedIn, setLoggedIn] = useState(false)
+  // const [subscriptionEmail, setSubscriptionEmail] = useState('')
+
   const [currentTab, setCurrentTab] = useState('Mál')
 
   const [searchOptions, setSearchOptions] = useState<AsyncSearchOption[]>([])
@@ -75,7 +78,7 @@ const Subscriptions = () => {
       setPolicyAreasData(filteredPolicyAreas)
       setPrevSearchValue(searchValue)
     }
-  }, [searchValue])
+  }, [searchValue, Institutions, PolicyAreas, prevSearchValue])
 
   const tabs = [
     {
@@ -162,11 +165,32 @@ const Subscriptions = () => {
           </Text>
         </Box>
         <Box paddingX={paddingXTable} paddingBottom={4}>
-          <SubscriptionActionBox
-            heading="Skrá áskrift"
-            text="Þú verður að vera skráð(ur) inn til þess að geta skráð þig í áskrift."
-            cta={{ label: 'Skrá mig inn', onClick: () => null }}
-          />
+          {loggedIn ? (
+            <SubscriptionActionCard
+              userIsLoggedIn={true}
+              heading="Skrá áskrift"
+              text="Skráðu netfang hérna og svo hefst staðfestingaferlið. Þú færð tölvupóst sem þú þarft að staðfesta til að áskriftin taki gildi."
+              button={{
+                label: 'Skrá áskrift',
+                onClick: () => setLoggedIn(false),
+              }}
+              input={{
+                name: 'subscriptionEmail',
+                label: 'Netfang',
+                placeholder: 'Hér skal skrifa netfang',
+              }}
+            />
+          ) : (
+            <SubscriptionActionCard
+              userIsLoggedIn={false}
+              heading="Skrá áskrift"
+              text="Þú verður að vera skráð(ur) inn til þess að geta skráð þig í áskrift."
+              button={{
+                label: 'Skrá mig inn',
+                onClick: () => setLoggedIn(true),
+              }}
+            />
+          )}
         </Box>
 
         <Box paddingX={paddingXTable}>
