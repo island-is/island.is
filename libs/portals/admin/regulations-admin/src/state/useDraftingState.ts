@@ -30,6 +30,7 @@ import {
   isDraftPublishable,
 } from './validations'
 import { toast } from 'react-toastify'
+import { findRegulationType } from '../utils/guessers'
 
 // ---------------------------------------------------------------------------
 
@@ -174,6 +175,21 @@ const useMakeDraftingState = (inputs: StateInputs) => {
               !draft.title.dirty &&
                 actions.updateState('title', draft.title.value)
               !draft.text.dirty && actions.updateState('text', draft.text.value)
+              return // Prevent the user going forward
+            }
+
+            const isTitleAmending =
+              findRegulationType(draft.title.value) === 'amending'
+
+            const amendingTitleAndBaseType =
+              isTitleAmending && draft.type.value === 'base'
+
+            const baseTitleAndAmendingType =
+              !isTitleAmending && draft.type.value === 'amending'
+            if (
+              step.name === 'basics' &&
+              (amendingTitleAndBaseType || baseTitleAndAmendingType)
+            ) {
               return // Prevent the user going forward
             }
 

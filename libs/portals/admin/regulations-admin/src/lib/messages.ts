@@ -501,6 +501,15 @@ export const errorMsgs = defineMessages({
     id: 'ap.regulations-admin:error-field-required',
     defaultMessage: 'Þessi reitur má ekki vera tómur',
   },
+  amendingTitleBaseType: {
+    id: 'ap.regulations-admin:error-amending-title-base-type',
+    defaultMessage:
+      'Breytingareglugerðartitill ekki leyfilegur á stofnreglugerð',
+  },
+  baseTitleAmendingType: {
+    id: 'ap.regulations-admin:error-base-title-amending-type',
+    defaultMessage: 'Breytingareglugerð þarf að nefna breytingarnar í titli',
+  },
   htmlWarnings: {
     id: 'ap.regulations-admin:error-html-warnings',
     defaultMessage: 'Villur í uppsetningu/innihaldi texta',

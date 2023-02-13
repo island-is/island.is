@@ -9,7 +9,7 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import { EditorInput } from './EditorInput'
-import { editorMsgs as msg } from '../lib/messages'
+import { editorMsgs as msg, errorMsgs } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { Appendixes } from './Appendixes'
 import { MagicTextarea } from './MagicTextarea'
@@ -20,11 +20,13 @@ import {
   formatAmendingBodyWithArticlePrefix,
 } from '../utils/formatAmendingRegulation'
 import { HTMLText } from '@island.is/regulations'
+import { findRegulationType } from '../utils/guessers'
 
 export const EditBasics = () => {
   const t = useLocale().formatMessage
   const { draft, actions } = useDraftingState()
   const [editorKey, setEditorKey] = useState('initial')
+  const [titleError, setTitleError] = useState<string | undefined>(undefined)
 
   const { text, appendixes } = draft
   const { updateState } = actions
@@ -47,6 +49,30 @@ export const EditBasics = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draft.type.value])
+
+  // Show error if title and type don't match. Stop the user going forward in useDraftingState (goForward).
+  useEffect(() => {
+    if (draft.title.showError && draft.title.error) {
+      setTitleError(t(draft.title.error))
+      return
+    }
+
+    const isTitleAmending = findRegulationType(draft.title.value) === 'amending'
+    if (isTitleAmending && draft.type.value === 'base') {
+      setTitleError(t(errorMsgs.amendingTitleBaseType))
+      return
+    }
+
+    if (!isTitleAmending && draft.type.value === 'amending') {
+      setTitleError(t(errorMsgs.baseTitleAmendingType))
+      return
+    }
+
+    if (draft.title.value) {
+      setTitleError(undefined)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [draft.title.value])
 
   useEffect(() => {
     if (!text.value && draft.type.value === 'amending') {
@@ -77,9 +103,7 @@ export const EditBasics = () => {
           onBlur={(value) => {
             updateState('title', cleanTitle(value))
           }}
-          error={
-            draft.title.showError && draft.title.error && t(draft.title.error)
-          }
+          error={titleError}
           required={!!draft.title.required}
         />
         <Box
