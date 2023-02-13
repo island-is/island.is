@@ -16,7 +16,7 @@ import {
   ApplicationStatus,
   ActionCardTag,
   ApplicationTypes,
-  PendingActionDisplayStatus,
+  PendingActionDisplayType,
 } from '@island.is/application/types'
 import { institutionMapper } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
@@ -180,30 +180,13 @@ const ApplicationList = ({
       content?: ReactNode
     }[] = []
 
-    const mapStatusToAlertType = (status?: PendingActionDisplayStatus) => {
-      switch (status) {
-        case 'actionable':
-          return 'warning'
-        case 'completed':
-          return 'success'
-        case 'inprogress':
-          return 'info'
-        case 'rejected':
-          return 'error'
-        default:
-          return 'default'
-      }
-    }
-
     if (application.actionCard?.pendingAction?.title) {
       history.push({
         date: format(new Date(), formattedDate),
         title: formatMessage(application.actionCard.pendingAction.title ?? ''),
         content: application.actionCard.pendingAction.content ? (
           <AlertMessage
-            type={mapStatusToAlertType(
-              application.actionCard?.pendingAction?.displayStatus,
-            )}
+            type={application.actionCard?.pendingAction?.displayStatus}
             message={formatMessage(
               application.actionCard.pendingAction.content ?? '',
             )}

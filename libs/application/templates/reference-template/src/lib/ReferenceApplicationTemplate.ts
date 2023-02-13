@@ -14,7 +14,6 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
   defineTemplateApi,
-  ApplicationHistoryApi,
   PendingAction,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
@@ -81,7 +80,7 @@ const testPendingAction = (
   if (currentRole === Roles.APPLICANT) {
     return {
       title: 'Þetta er titill inn á þessu',
-      displayStatus: 'actionable',
+      displayStatus: 'warning',
       content: 'Þú átt þessa umsókn',
     }
   }
@@ -89,14 +88,14 @@ const testPendingAction = (
   if (currentRole === Roles.ASSIGNEE) {
     return {
       title: 'Þetta er líka titill inn á þessu',
-      displayStatus: 'inprogress',
+      displayStatus: 'info',
       content: 'Þú þarft að bíða eftir öðrum',
     }
   }
 
   return {
     title: 'Þetta er bara búið',
-    displayStatus: 'completed',
+    displayStatus: 'success',
     content: 'Þú ert búinn',
   }
 }
@@ -171,8 +170,6 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
 
           actionCard: {
             description: m.draftDescription,
-            pendingAction: testPendingAction,
-
             onExitHistoryLog: 'Umsókn send inn',
           },
           progress: 0.25,
@@ -207,8 +204,13 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           progress: 0.75,
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
-            pendingAction: testPendingAction,
-            onEntryHistoryLog: 'Beðið eftir að skráningu á yfirferðaraðila',
+            pendingAction: {
+              title: 'Skráning yfirferðaraðila',
+              content:
+                'Umsóknin bíður nú þess að yfirferðaraðili sé skráður á umsóknina. Þú getur líka skráð þig sjálfur inn og farið yfir umsóknina.',
+              displayStatus: 'warning',
+            },
+            onExitHistoryLog: 'Yfirferðaraðili skráður á umsókn og látin vita',
           },
           onEntry: [
             defineTemplateApi({
@@ -255,8 +257,13 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           status: 'inprogress',
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
-            pendingAction: testPendingAction,
-            onEntryHistoryLog: 'Umsókn send inn fyrir yfirferð',
+            pendingAction: {
+              title: 'Verið er að fara yfir umsóknina',
+              content:
+                'Example stofnun fer núna yfir umsóknina því getur þetta tekið nokkrar daga',
+              displayStatus: 'info',
+            },
+            onEntryHistoryLog: 'Yfirferð hafin',
           },
           onExit: [
             defineTemplateApi({
@@ -303,7 +310,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           status: 'approved',
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
-            onEntryHistoryLog: 'Umsókn var samþykkt',
+            onEntryHistoryLog: 'Umsókn var samþykkt af yfirferðaraðila',
           },
           roles: [
             {
@@ -324,7 +331,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           status: 'rejected',
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
-            onEntryHistoryLog: 'Umsókn var hafnað',
+            onEntryHistoryLog: 'Umsókn var hafnað af yfirferðaraðila',
           },
           roles: [
             {

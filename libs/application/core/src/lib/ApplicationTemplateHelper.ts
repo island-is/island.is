@@ -272,20 +272,22 @@ export class ApplicationTemplateHelper<
 
     if (!pendingAction) {
       return {
-        displayStatus: 'inprogress',
+        displayStatus: 'warning',
       }
     }
 
     if (typeof pendingAction === 'function') {
       const action = pendingAction(application, currentRole)
-
+      console.log('action function')
+      console.log({ action })
       return {
         displayStatus: action.displayStatus,
         content: action.content ? formatMessage(action.content) : undefined,
         title: action.title ? formatMessage(action.title) : undefined,
       }
     }
-
+    console.log('action pendingAction')
+    console.log({ pendingAction })
     return {
       displayStatus: pendingAction.displayStatus,
       title: pendingAction.title

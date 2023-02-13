@@ -1,4 +1,4 @@
-import { PendingActionDisplayStatus } from './StateMachine'
+import { PendingActionDisplayType } from './StateMachine'
 import { ApplicationTypes } from './ApplicationTypes'
 import { DataProviderResult } from './DataProviderResult'
 
@@ -33,7 +33,7 @@ export interface ActionCardMetaData {
   title?: string
   description?: string
   pendingAction?: {
-    displayStatus: PendingActionDisplayStatus
+    displayStatus: PendingActionDisplayType
     title?: string
     content?: string
   }

@@ -858,7 +858,7 @@ export class ApplicationController {
       }
     }
 
-    const historyOnEntryEntry = helper.getHistoryLog('entry', application.state)
+    const historyOnEntryEntry = helper.getHistoryLog('entry', newState)
 
     if (historyOnEntryEntry) {
       await this.historyService.createHistoryLog(
@@ -1237,7 +1237,10 @@ export class ApplicationController {
       await this.historyService.getHistoryByApplicationId(
         existingApplication.id,
       )
-    ).map((history) => new HistoryResponseDto(history, intl.formatMessage))
+    )
+      .map((history) => new HistoryResponseDto(history, intl.formatMessage))
+      .slice()
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
   }
 
   @Scopes(ApplicationScope.write)

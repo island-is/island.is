@@ -71,14 +71,10 @@ export type StateLifeCycle =
       shouldDeleteChargeIfPaymentFulfilled?: boolean | null
     }
 
-export type PendingActionDisplayStatus =
-  | 'inprogress'
-  | 'rejected'
-  | 'actionable'
-  | 'completed'
+export type PendingActionDisplayType = 'warning' | 'success' | 'info' | 'error'
 
 export type PendingAction = {
-  displayStatus: PendingActionDisplayStatus
+  displayStatus: PendingActionDisplayType
   title?: StaticText
   content?: StaticText
 }
