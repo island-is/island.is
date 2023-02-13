@@ -56,6 +56,11 @@ const Indictment: React.FC = () => {
     deleteIndictmentCount,
     updateIndictmentCountState,
   } = useIndictmentCounts()
+  const [
+    indictmentIntroductionErrorMessage,
+    setIndictmentIntroductionErrorMessage,
+  ] = useState<string>('')
+  const [demandsErrorMessage, setDemandsErrorMessage] = useState<string>('')
 
   const stepIsValid = isTrafficViolationStepValidIndictments(workingCase)
 
@@ -63,7 +68,6 @@ const Indictment: React.FC = () => {
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
   )
-  const [demandsErrorMessage, setDemandsErrorMessage] = useState<string>('')
 
   useDeb(workingCase, ['indictmentIntroduction', 'demands'])
 
@@ -198,22 +202,27 @@ const Indictment: React.FC = () => {
               strings.indictmentIntroductionPlaceholder,
             )}
             value={workingCase.indictmentIntroduction || ''}
+            errorMessage={indictmentIntroductionErrorMessage}
+            hasError={indictmentIntroductionErrorMessage !== ''}
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'indictmentIntroduction',
                 event.target.value,
-                [],
+                ['empty'],
                 workingCase,
                 setWorkingCase,
+                indictmentIntroductionErrorMessage,
+                setIndictmentIntroductionErrorMessage,
               )
             }
             onBlur={(event) =>
               validateAndSendToServer(
                 'indictmentIntroduction',
                 event.target.value,
-                [],
+                ['empty'],
                 workingCase,
                 updateCase,
+                setIndictmentIntroductionErrorMessage,
               )
             }
             textarea
