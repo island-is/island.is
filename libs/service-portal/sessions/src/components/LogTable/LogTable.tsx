@@ -1,10 +1,4 @@
-import {
-  Box,
-  Icon,
-  SkeletonLoader,
-  Table,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Icon, Table, Text } from '@island.is/island-ui/core'
 import React from 'react'
 import Person from '../PersonIcon/PersonIcon'
 import { SessionsSession } from '@island.is/api/schema'

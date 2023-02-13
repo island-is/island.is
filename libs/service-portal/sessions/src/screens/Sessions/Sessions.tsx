@@ -1,7 +1,5 @@
 import {
   Box,
-  BreadCrumbItem,
-  Breadcrumbs,
   GridColumn,
   Hidden,
   LoadingDots,
@@ -20,7 +18,6 @@ import LogTableMobile from '../../components/LogTable/LogTableMobile'
 import { m } from '../../lib/messages'
 import { useGetSessionsListQuery } from './Sessions.generated'
 import { SessionsSession } from '@island.is/api/schema'
-import { SessionsPaths } from '../../lib/paths'
 import * as kennitala from 'kennitala'
 import useOnScreen from '../../utils/useOnScreen'
 
@@ -30,7 +27,7 @@ interface CursorState {
 }
 
 const Sessions = () => {
-  const SESSION_LIMIT = 10
+  const SESSION_LIMIT = 20
 
   const { formatMessage } = useLocale()
 
