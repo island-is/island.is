@@ -24,6 +24,8 @@ export const getReviewSteps = (
     [],
   ) as UserInformation[]
 
+  const buyer = getValueViaPath(application.answers, 'buyer') as UserInformation
+
   const buyerApproved = getValueViaPath(
     application.answers,
     'buyer.approved',
@@ -92,6 +94,13 @@ export const getReviewSteps = (
       tagVariant: buyerApproved || isComplete ? 'mint' : 'purple',
       title: review.step.title.buyer,
       description: review.step.description.buyer,
+      reviewer: [
+        {
+          nationalId: buyer.nationalId || '',
+          name: buyer.name || '',
+          approved: buyerApproved || isComplete,
+        },
+      ],
     },
     // Buyers coowner
     {
