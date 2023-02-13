@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { Controller, useFormContext } from 'react-hook-form'
 import Markdown from 'markdown-to-jsx'
@@ -37,6 +37,7 @@ import { ExternalDataProviderScreen } from '../types'
 import { verifyExternalData } from '../utils'
 
 import { handleServerError } from '@island.is/application/ui-components'
+import { ProviderErrorReason } from '@island.is/shared/problem'
 
 const ItemHeader: React.FC<{
   title: FormText
@@ -67,12 +68,8 @@ const ProviderItem: FC<{
   provider: DataProviderItem
   suppressProviderError: boolean
   application: Application
-}> = ({
-  dataProviderResult = {},
-  provider,
-  suppressProviderError,
-  application,
-}) => {
+}> = ({ dataProviderResult, provider, suppressProviderError, application }) => {
+  const [reasons, setReasons] = useState<ProviderErrorReason[]>([])
   const { title, subTitle } = provider
   const { formatMessage } = useLocale()
   const showError =
@@ -82,29 +79,44 @@ const ProviderItem: FC<{
 
   const errorCode = dataProviderResult?.statusCode ?? 500
   const errorType = errorCode < 500 ? 'warning' : 'error'
-  const { title: errorTitle, summary } = getErrorReasonIfPresent(
-    dataProviderResult?.reason,
-  )
+
+  useEffect(() => {
+    if (dataProviderResult?.reason) {
+      if (Array.isArray(dataProviderResult.reason)) {
+        setReasons(dataProviderResult.reason)
+      } else {
+        setReasons([dataProviderResult.reason as ProviderErrorReason])
+      }
+    }
+  }, [dataProviderResult?.reason, setReasons])
+
+  const getAlertMessage = (reason: ProviderErrorReason) => {
+    const { title: errorTitle, summary } = getErrorReasonIfPresent(reason)
+    return (
+      <AlertMessage
+        type={errorType}
+        title={
+          isTranslationObject(errorTitle)
+            ? formatMessage(errorTitle)
+            : (errorTitle as string)
+        }
+        message={
+          isTranslationObject(summary) ? formatMessage(summary) : summary
+        }
+      />
+    )
+  }
 
   return (
     <Box marginBottom={3}>
       <ItemHeader application={application} title={title} subTitle={subTitle} />
 
-      {showError && (
-        <Box marginTop={2}>
-          <AlertMessage
-            type={errorType}
-            title={
-              isTranslationObject(errorTitle)
-                ? formatMessage(errorTitle)
-                : (errorTitle as string)
-            }
-            message={
-              isTranslationObject(summary) ? formatMessage(summary) : summary
-            }
-          />
-        </Box>
-      )}
+      {showError &&
+        reasons.map((reason, index) => (
+          <Box key={`dataprovider-error-${index}-${reason}`} marginTop={2}>
+            {getAlertMessage(reason)}
+          </Box>
+        ))}
     </Box>
   )
 }
@@ -197,7 +209,6 @@ const FormExternalDataProvider: FC<{
         })
 
         setSuppressProviderErrors(false)
-
         if (
           response &&
           response.data &&
