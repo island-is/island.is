@@ -1,5 +1,10 @@
 import React from 'react'
-import { Box, ContentBlock, AlertMessage } from '@island.is/island-ui/core'
+import {
+  Box,
+  ContentBlock,
+  ActionCard,
+  AlertMessage,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import format from 'date-fns/format'
@@ -43,6 +48,17 @@ export const Success = ({ application }: PropTypes): JSX.Element => {
             message={getDescriptionText()}
           />
         </ContentBlock>
+        <Box paddingTop={2}>
+          <ActionCard
+            heading=""
+            text={formatMessage(m.myPagesLinkText)}
+            cta={{
+              label: formatMessage(m.continue),
+              onClick: () => window.open('/minarsidur', '_blank'),
+            }}
+            backgroundColor="blue"
+          />
+        </Box>
       </Box>
     </Box>
   )
