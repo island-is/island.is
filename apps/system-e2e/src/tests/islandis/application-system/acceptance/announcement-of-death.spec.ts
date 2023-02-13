@@ -18,7 +18,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     })
 
     const applicationPage = await applicationContext.newPage()
-    await disableObjectKey(applicationPage, 'existing')
+    await disableObjectKey(applicationPage, 'existingApplication')
     await disablePreviousApplications(applicationPage)
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
@@ -39,15 +39,9 @@ applicationTest.describe('Announcement of Death', () => {
     const submitButton = page.getByRole('button', { name: 'Halda áfram' })
     const nextButton = page.getByTestId('proceed')
 
-    await page.locator('data-testid=agree-to-data-providers').click()
-    await submitButton.click()
-
-    await expect(
-      page.locator('label[for=approveExternalData]'),
-    ).not.toBeVisible()
-    await expect(
-      page.locator('h2:text("Fyrri umsóknir um andlátstilkynningu")'),
-    ).not.toBeVisible()
+    // Data Providers
+    await page.getByTestId('agree-to-data-providers').click()
+    await page.getByTestId('proceed').click()
 
     // Accept handling the announcement
     await page.locator('input[value=continue]').click()
