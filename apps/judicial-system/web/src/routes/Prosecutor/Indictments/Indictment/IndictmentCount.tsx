@@ -185,7 +185,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
       }
 
       incidentDescription = offenses
-        .map((offense, index, arr) => {
+        .map((offense) => {
           return formatMessage(
             strings.trafficViolationIncidentDescriptionAutofill,
             {
