@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
 import InputMask from 'react-input-mask'
@@ -77,26 +77,6 @@ function lawSort(law1: number[], law2: number[]) {
   return 0
 }
 
-function legalArguments(lawsBroken?: number[][] | null) {
-  if (!lawsBroken || lawsBroken.length === 0) {
-    return ''
-  }
-
-  let legalArguments = `Telst háttsemi þessi varða við ${lawsBroken[0][1]}.`
-
-  for (let i = 1; i < lawsBroken.length; i++) {
-    if (lawsBroken[i][0] !== lawsBroken[i - 1][0]) {
-      legalArguments = `${legalArguments} mgr. ${lawsBroken[i - 1][0]}. gr.`
-    }
-
-    legalArguments = `${legalArguments}, sbr. ${lawsBroken[i][1]}.`
-  }
-
-  return `${legalArguments} mgr. ${
-    lawsBroken[lawsBroken.length - 1][0]
-  }. gr. umferðarlaga nr. 77/2019.`
-}
-
 interface LawsBrokenOption {
   label: string
   value: string
@@ -147,6 +127,31 @@ export const IndictmentCount: React.FC<Props> = (props) => {
         ),
       })),
     [indictmentCount.lawsBroken],
+  )
+
+  const legalArguments = useCallback(
+    (lawsBroken?: number[][] | null) => {
+      if (!lawsBroken || lawsBroken.length === 0) {
+        return ''
+      }
+
+      let articles = `${lawsBroken[0][1]}.`
+
+      for (let i = 1; i < lawsBroken.length; i++) {
+        if (lawsBroken[i][0] !== lawsBroken[i - 1][0]) {
+          articles = `${articles} mgr. ${lawsBroken[i - 1][0]}. gr.`
+        }
+
+        articles = `${articles}, sbr. ${lawsBroken[i][1]}.`
+      }
+
+      return formatMessage(strings.legalArgumentsAutofill, {
+        articles: `${articles} mgr. ${
+          lawsBroken[lawsBroken.length - 1][0]
+        }. gr.`,
+      })
+    },
+    [formatMessage],
   )
 
   return (
