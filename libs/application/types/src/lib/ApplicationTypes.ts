@@ -177,11 +177,11 @@ export const ApplicationConfigurations = {
     translation: 'ta.avr.application',
   },
   [ApplicationTypes.CHANGE_CO_OWNER_OF_VEHICLE]: {
-    slug: 'medeigandi-okutaekis',
+    slug: 'breyta-medeigandi-okutaekis',
     translation: 'ta.ccov.application',
   },
   [ApplicationTypes.CHANGE_OPERATOR_OF_VEHICLE]: {
-    slug: 'umradamadur-okutaekis',
+    slug: 'breyta-umradamadur-okutaekis',
     translation: 'ta.cov.application',
   },
   [ApplicationTypes.DIGITAL_TACHOGRAPH_COMPANY_CARD]: {
