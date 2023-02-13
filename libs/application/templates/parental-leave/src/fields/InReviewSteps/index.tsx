@@ -169,8 +169,8 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
 
   if (
     state === 'approved' ||
-      state === 'vinnumalastofnunApproveEdits' ||
-      state === 'vinnumalastofnunApproval'
+    state === 'vinnumalastofnunApproveEdits' ||
+    state === 'vinnumalastofnunApproval'
   ) {
     steps.push({
       state: ReviewSectionState.optionalAction,
@@ -219,7 +219,6 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
     }
   }, [])
 
-  console.log(application)
   return (
     <Box marginBottom={10}>
       <Box
@@ -296,7 +295,11 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
               index={index + 1}
               {...step}
               notifyParentOnClickEvent={() =>
-                handleSubmit(application.answers.dateOfBirth ? 'RESIDENCEGRANTAPPLICATION' : 'RESIDENCEGRANTAPPLICATIONNOBIRTHDATE')
+                handleSubmit(
+                  application.answers.dateOfBirth
+                    ? 'RESIDENCEGRANTAPPLICATION'
+                    : 'RESIDENCEGRANTAPPLICATIONNOBIRTHDATE',
+                )
               }
             />
           ))}

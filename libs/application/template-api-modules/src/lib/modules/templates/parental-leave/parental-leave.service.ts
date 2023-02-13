@@ -189,9 +189,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
   }
 
-  async setBirthDate({
-    application,
-  }: TemplateApiModuleActionProps) {
+  async setBirthDate({ application }: TemplateApiModuleActionProps) {
     const { applicationFundId } = getApplicationExternalData(
       application.externalData,
     )
@@ -203,15 +201,12 @@ export class ParentalLeaveService extends BaseTemplateApiService {
           },
         )
         return {
-          dateOfBirth:
-          app.dateOfBirth
+          dateOfBirth: app.dateOfBirth,
         }
-      } catch (e) {
-      }
+      } catch (e) {}
     }
     return {
-      dateOfBirth:
-      ''
+      dateOfBirth: '',
     }
   }
 
@@ -388,8 +383,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     const { applicationFundId } = getApplicationExternalData(
       application.externalData,
     )
-    const attachmentsFiles = application.answers.fileUpload as unknown as {
-      residenceGrant: Array<{key: string; name: string}>
+    const attachmentsFiles = (application.answers.fileUpload as unknown) as {
+      residenceGrant: Array<{ key: string; name: string }>
     }
     if (attachmentsFiles.residenceGrant) {
       attachmentsFiles.residenceGrant.forEach(async (item, index) => {
@@ -697,27 +692,32 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     let numberOfDaysAlreadySpent = 0
     const basicRightCodePeriod =
       vmstRightCodePeriod ?? getRightsCode(application)
-    
-      if (application.answers.residenceGrant) {
-        const residenceGrant = application.answers.residenceGrant as unknown as  {
-          dateTo: string
-          dateFrom: string
-        }
-        const multipleBirths = application.answers.multipleBirths as unknown as  {
-          hasMultipleBirths: 'yes' | 'no'
-          multipleBirths: string
-        }
 
-        const newPeriod = {
-          from: residenceGrant.dateFrom,
-          to: residenceGrant.dateTo,
-          ratio: multipleBirths.hasMultipleBirths === 'yes' ? 'D28' : 'D14',
-          approved: false,
-          paid: false,
-          rightsCodePeriod: multipleBirths.hasMultipleBirths === 'yes' ? 'DVAL.FJÖL' : 'DVALSTYRK'
-        }
-        periods.push(newPeriod)
+    if (application.answers.residenceGrant) {
+      const residenceGrant = (application.answers
+        .residenceGrant as unknown) as {
+        dateTo: string
+        dateFrom: string
       }
+      const multipleBirths = (application.answers
+        .multipleBirths as unknown) as {
+        hasMultipleBirths: 'yes' | 'no'
+        multipleBirths: string
+      }
+
+      const newPeriod = {
+        from: residenceGrant.dateFrom,
+        to: residenceGrant.dateTo,
+        ratio: multipleBirths.hasMultipleBirths === 'yes' ? 'D28' : 'D14',
+        approved: false,
+        paid: false,
+        rightsCodePeriod:
+          multipleBirths.hasMultipleBirths === 'yes'
+            ? 'DVAL.FJÖL'
+            : 'DVALSTYRK',
+      }
+      periods.push(newPeriod)
+    }
 
     for (const [index, period] of answers.entries()) {
       const isFirstPeriod = index === 0
@@ -1309,17 +1309,12 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
     const nationalRegistryId = application.applicant
     const attachments = await this.getAttachments(application)
-    console.log('sned application ******')
-
-    console.log(JSON.stringify(attachments, null, 2))
 
     try {
       const periods = await this.createPeriodsDTO(
         application,
         nationalRegistryId,
       )
-      console.log('*****+ application ******')
-      console.log(JSON.stringify(attachments, null, 2))
       const parentalLeaveDTO = transformApplicationToParentalLeaveDTO(
         application,
         periods,

@@ -600,7 +600,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE]: {
-        entry: ['setPreviousState', 'assignToVMST', 'setResidenceGrant', 'setDateOfBirth'],
+        entry: [
+          'setPreviousState',
+          'assignToVMST',
+          'setResidenceGrant',
+          'setDateOfBirth',
+        ],
         exit: 'setResidenceGrantPeriod',
         meta: {
           status: 'inprogress',
@@ -638,7 +643,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.RESIDENCE_GRAND_APPLICATION]: {
-        entry: ['setPreviousState', 'assignToVMST', 'setResidenceGrant', 'setDateOfBirth'],
+        entry: [
+          'setPreviousState',
+          'assignToVMST',
+          'setResidenceGrant',
+          'setDateOfBirth',
+        ],
         exit: 'setResidenceGrantPeriod',
         meta: {
           status: 'inprogress',
@@ -729,7 +739,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(970),
           progress: 1,
           onExit: defineTemplateApi({
-            action: ApiModuleActions.validateApplication && ApiModuleActions.setBirthDate,
+            action:
+              ApiModuleActions.validateApplication &&
+              ApiModuleActions.setBirthDate,
             externalDataId: 'dateOfBirth',
             throwOnError: true,
           }),
@@ -1507,8 +1519,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       setDateOfBirth: assign((context) => {
         const { application } = context
         const { answers } = application
-        const data = application.externalData.dateOfBirth.data as unknown as {dateOfBirth :string}
-        if ( data.dateOfBirth) {
+        const data = (application.externalData.dateOfBirth.data as unknown) as {
+          dateOfBirth: string
+        }
+        if (data.dateOfBirth) {
           const dateOfBirth = data.dateOfBirth
           set(answers, 'dateOfBirth', dateOfBirth)
         }
@@ -1520,8 +1534,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         console.log('hmm')
         //if (!answers.dateOfBirth) {
 
-          unset(answers, 'residenceGrant')
-       // }
+        unset(answers, 'residenceGrant')
+        // }
         return context
       }),
     },

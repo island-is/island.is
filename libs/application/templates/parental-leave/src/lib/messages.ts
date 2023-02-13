@@ -1947,10 +1947,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     residenceGrantClosedTitle: {
       id: 'pl.application:residence.grant.closed.title',
-      defaultMessage:
-        'Þú getur ekki sótt um ennþá.',
-      description:
-        'You can not apply yet.',
+      defaultMessage: 'Þú getur ekki sótt um ennþá.',
+      description: 'You can not apply yet.',
     },
     residenceGrantHasBeenAppliedForDescription: {
       id: 'pl.application:residence.grant.open.description',

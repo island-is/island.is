@@ -865,10 +865,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'fileUpload.benefitsFile',
   ) as Files[]
 
-  const dateOfBirth = getValueViaPath(
-    answers,
-    'dateOfBirth',
-  ) as string
+  const dateOfBirth = getValueViaPath(answers, 'dateOfBirth') as string
 
   const commonFiles = getValueViaPath(answers, 'fileUpload.file') as Files[]
 
@@ -931,7 +928,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     commonFiles,
     actionName,
     isResidenceGrant,
-    dateOfBirth
+    dateOfBirth,
   }
 }
 
@@ -1504,7 +1501,8 @@ export const convertBirthDay = (birthDay: string) => {
   const convertedBirthDay = { year: 0, month: 0, date: 0 }
   // Checks on length and only contain decimal or we return default
   const newBirthDay = birthDay.replace(regex, '')
-  const birthDaySliced = newBirthDay?.length > 8 ? newBirthDay.slice(0, 8) : newBirthDay
+  const birthDaySliced =
+    newBirthDay?.length > 8 ? newBirthDay.slice(0, 8) : newBirthDay
 
   if (birthDaySliced.length !== 8) return convertedBirthDay
   if (!birthDaySliced.match(reg)) return convertedBirthDay

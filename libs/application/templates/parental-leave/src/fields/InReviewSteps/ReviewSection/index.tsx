@@ -98,8 +98,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
                   </Button>
                 </Box>
               </Box>
-            )
-          }
+            )}
         </Box>
 
         {state === ReviewSectionState.inProgress && (
