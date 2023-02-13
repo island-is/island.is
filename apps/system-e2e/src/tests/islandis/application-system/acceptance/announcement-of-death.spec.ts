@@ -31,7 +31,6 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
 })
 
 applicationTest.describe('Announcement of Death', () => {
-
   applicationTest('test', async ({ applicationPage }) => {
     const page = applicationPage
     await expect(page).toBeApplication()
@@ -95,6 +94,8 @@ applicationTest.describe('Announcement of Death', () => {
       .click()
 
     // Confirmation screen
-    await expect(page.getByRole('heading', { name: "Tilkynning móttekin" })).toBeVisible()
+    await expect(
+      page.getByRole('heading', { name: 'Tilkynning móttekin' }),
+    ).toBeVisible()
   })
 })
