@@ -3,6 +3,12 @@ import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { mockApi } from '../../../../support/api-tools'
 import { regex as uuidRegex } from 'uuidv4'
+import {
+  disableI18n,
+  disablePreviousApplications,
+  disableDelegations,
+  disableObjectKey,
+} from '../../../../support/disablers'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
@@ -24,14 +30,9 @@ test.describe('P-sign', () => {
     const page = await context.newPage()
     await page.goto('/umsoknir/p-merki?delegationChecked=true')
 
-    await mockApi(page, '/api/graphql?op=ActorDelegations', {
-      data: { authActorDelegations: [] },
-    })
-    await mockApi(page, '/api/graphql?op=ApplicationApplications', {
-      data: {
-        applicationApplications: [],
-      },
-    })
+    await disablePreviousApplications(page)
+    await disableDelegations(page)
+    await disableI18n(page)
 
     await expect(page.locator('role=heading[name=Gagnaöflun]')).toBeVisible()
     expect(new URL(page.url()).pathname.split('/').pop()).toMatch(uuidRegex.v4)
