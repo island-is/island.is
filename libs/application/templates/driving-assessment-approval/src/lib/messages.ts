@@ -231,7 +231,7 @@ export const m = defineMessages({
   },
   studentEmail: {
     id: 'dla.application:student.email',
-    defaultMessage: 'Netfang',
+    defaultMessage: 'Tölvupóstfang nemanda',
     description: 'E-mail of driving student',
   },
   studentLookup: {
