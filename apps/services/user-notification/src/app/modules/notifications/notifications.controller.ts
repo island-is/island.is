@@ -78,7 +78,7 @@ export class NotificationsController {
     },
   })
   @Get('/templates')
-  @Version('1')
+  @Version('2')
   async getNotificationTemplates(
     @Query('locale') locale: string,
   ): Promise<HnippTemplate[]> {
@@ -108,7 +108,7 @@ export class NotificationsController {
     },
   })
   @Get('/template/:templateId')
-  @Version('1')
+  @Version('2')
   async getNotificationTemplate(
     @Param('templateId')
     templateId: string,
@@ -118,7 +118,7 @@ export class NotificationsController {
   }
 
   @Post('/')
-  @Version('1')
+  @Version('2')
   async createHnippNotification(
     @Body() body: CreateHnippNotificationDto,
   ): Promise<CreateNotificationResponse> {
