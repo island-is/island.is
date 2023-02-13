@@ -65,6 +65,20 @@ export const FormShell: FC<{
   const currentScreen = screens[activeScreen]
   const FormLogo = form.logo
 
+  const getDraftSectionCurrentScreen = (): number => {
+    const currentDraftScreenSection = sections.find(
+      (s, i) => i === currentScreen.sectionIndex,
+    )
+    return currentDraftScreenSection?.draftPageNumber ?? 0
+  }
+
+  const getDraftSectionTotalScreens = (): number | undefined => {
+    const totalDraftScreens = Math.max(
+      ...sections.map((s) => s.draftPageNumber ?? -1),
+    )
+    return totalDraftScreens === -1 ? undefined : totalDraftScreens
+  }
+
   useHistorySync(state, dispatch)
   useApplicationTitle(state)
 
@@ -129,6 +143,8 @@ export const FormShell: FC<{
                   numberOfScreens={screens.length}
                   renderLastScreenButton={renderLastScreenButton}
                   renderLastScreenBackButton={renderLastScreenBackButton}
+                  currentDraftScreen={getDraftSectionCurrentScreen()}
+                  totalDraftScreens={getDraftSectionTotalScreens()}
                   screen={currentScreen}
                   mode={mode}
                 />

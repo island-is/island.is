@@ -1,0 +1,39 @@
+import React from 'react'
+import { DraftProgressMeter } from './DraftProgressMeter'
+
+export default {
+  title: 'Components/DraftProgressMeter',
+  component: DraftProgressMeter,
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'A progress meter that shows the progress of a multi-step process.',
+      },
+    },
+  },
+}
+
+export const Default = () => {
+  return <DraftProgressMeter draftFinishedSteps={1} draftTotalSteps={2} />
+}
+
+export const RedColorScheme = () => {
+  return (
+    <DraftProgressMeter
+      draftFinishedSteps={1}
+      draftTotalSteps={2}
+      variant="red"
+    />
+  )
+}
+
+export const RoseColorScheme = () => {
+  return (
+    <DraftProgressMeter
+      draftFinishedSteps={1}
+      draftTotalSteps={2}
+      variant="rose"
+    />
+  )
+}

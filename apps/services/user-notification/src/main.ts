@@ -6,4 +6,5 @@ bootstrap({
   appModule: AppModule,
   name: 'services-user-notifications',
   openApi,
+  enableVersioning: true,
 })

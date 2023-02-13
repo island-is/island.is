@@ -7,11 +7,4 @@ export const sessionsNavigation: PortalNavigationItem = {
   name: m.sessions,
   path: SessionsPaths.Sessions,
   description: m.sessionsDescription,
-  children: [
-    {
-      name: m.sessions,
-      path: SessionsPaths.Sessions,
-      //navHide: true,
-    },
-  ],
 }

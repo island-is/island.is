@@ -219,6 +219,8 @@ export class ApplicationService {
         | 'externalData'
         | 'pruned'
         | 'applicantActors'
+        | 'draftTotalSteps'
+        | 'draftFinishedSteps'
       >
     >,
   ) {
