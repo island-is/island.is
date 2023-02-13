@@ -27,7 +27,7 @@ export const ResidenceGrantNoBirthDate: Form = buildForm({
           title:
             parentalLeaveFormMessages.residenceGrantMessage
               .residenceGrantClosedTitle,
-          id: 'residenceGrantApplicationNoBirthDate.multiTwo',
+          id: 'residenceGrantApplicationNoBirthDate.multi',
           description:
             parentalLeaveFormMessages.residenceGrantMessage
               .residenceGrantClosedDescription,
@@ -40,7 +40,7 @@ export const ResidenceGrantNoBirthDate: Form = buildForm({
               actions: actionsResidenceGrant('reject', []),
             }),
             buildCustomField({
-              id: 'residenceGrantApplicationNoBirthDate.submit',
+              id: 'residenceGrantApplicationNoBirthDate.image',
               title: '',
               defaultValue: 1,
               component: 'ImageField',
