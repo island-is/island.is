@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
@@ -13,7 +13,9 @@ export const ModuleErrorScreen = ({ name }: ModuleErrorScreenProps) => {
   const { formatMessage } = useLocale()
   const error = useRouteError()
 
-  console.error(error)
+  useEffect(() => {
+    console.error(error)
+  }, [error])
 
   return (
     <Box padding={8}>
