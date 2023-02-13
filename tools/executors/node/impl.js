@@ -14,10 +14,10 @@ var EXTERNAL_DEPENDENCIES_DEFAULT_VALUE = 'all';
  * We do this because we need esbuildnx for production builds but its watch logic is broken and hurts DX.
  */
 function buildExecutor(options, context) {
-    return (0, tslib_1.__asyncGenerator)(this, arguments, function buildExecutor_1() {
-        var project, target, workspace, projectInfo, targets, _i, _a, cmd;
-        return (0, tslib_1.__generator)(this, function (_b) {
-            switch (_b.label) {
+    return tslib_1.__asyncGenerator(this, arguments, function buildExecutor_1() {
+        var project, target, workspace, projectInfo, targets;
+        return tslib_1.__generator(this, function (_a) {
+            switch (_a.label) {
                 case 0:
                     project = context.projectName, target = context.targetName, workspace = context.workspace;
                     projectInfo = workspace.projects[project];
@@ -25,24 +25,6 @@ function buildExecutor(options, context) {
                     if (!project || !target || !projectInfo || !targets) {
                         throw new Error('Missing project or target');
                     }
-                    if (!(options.preBuildCommands && options.preBuildCommands.length > 0)) return [3 /*break*/, 5];
-                    console.log('Running pre-build commands...');
-                    _i = 0, _a = options.preBuildCommands;
-                    _b.label = 1;
-                case 1:
-                    if (!(_i < _a.length)) return [3 /*break*/, 4];
-                    cmd = _a[_i];
-                    return [4 /*yield*/, (0, tslib_1.__await)((0, utils_1.exec)(cmd))];
-                case 2:
-                    _b.sent();
-                    _b.label = 3;
-                case 3:
-                    _i++;
-                    return [3 /*break*/, 1];
-                case 4:
-                    console.log('Running pre-build done ✅');
-                    _b.label = 5;
-                case 5:
                     // Override the executor of the current task and re-run.
                     // This was the only way to run different executors with the same options.
                     if (!options.watch) {
@@ -56,7 +38,7 @@ function buildExecutor(options, context) {
                         // for many of our projects. They also configure tsConfig in node projects to emit commonjs modules, which works
                         // better in this case. However, telling esbuild to emit commonjs modules triggers more CD errors :(
                         // -- So we override tsConfig for webpack only.
-                        options.tsConfig = (0, utils_1.createTmpTsConfig)(options.tsConfig, context.root, projectInfo.root);
+                        options.tsConfig = utils_1.createTmpTsConfig(options.tsConfig, context.root, projectInfo.root);
                     }
                     // This setting in the webpack executor supports an enum and an array. The default
                     // value is "all", but `runExecutor` converts it into ["all"] which has different
@@ -64,13 +46,13 @@ function buildExecutor(options, context) {
                     if (options.externalDependencies === EXTERNAL_DEPENDENCIES_DEFAULT_VALUE) {
                         delete options.externalDependencies;
                     }
-                    return [4 /*yield*/, (0, tslib_1.__await)((0, devkit_1.runExecutor)({ project: project, target: target, configuration: context.configurationName }, options, context))];
-                case 6: return [5 /*yield**/, (0, tslib_1.__values)(tslib_1.__asyncDelegator.apply(void 0, [tslib_1.__asyncValues.apply(void 0, [_b.sent()])]))];
-                case 7: return [4 /*yield*/, tslib_1.__await.apply(void 0, [_b.sent()])];
-                case 8: return [4 /*yield*/, tslib_1.__await.apply(void 0, [_b.sent()])];
-                case 9: 
+                    return [4 /*yield*/, tslib_1.__await(devkit_1.runExecutor({ project: project, target: target, configuration: context.configurationName }, options, context))];
+                case 1: return [5 /*yield**/, tslib_1.__values(tslib_1.__asyncDelegator.apply(void 0, [tslib_1.__asyncValues.apply(void 0, [_a.sent()])]))];
+                case 2: return [4 /*yield*/, tslib_1.__await.apply(void 0, [_a.sent()])];
+                case 3: return [4 /*yield*/, tslib_1.__await.apply(void 0, [_a.sent()])];
+                case 4: 
                 // Inception!
-                return [2 /*return*/, _b.sent()];
+                return [2 /*return*/, _a.sent()];
             }
         });
     });
