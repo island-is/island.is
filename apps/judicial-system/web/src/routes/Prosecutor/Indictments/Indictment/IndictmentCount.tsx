@@ -177,25 +177,23 @@ export const IndictmentCount: React.FC<Props> = (props) => {
 
       if (workingCase.crimeScenes && policeCaseNumber) {
         const crimeScenes = workingCase.crimeScenes
+        const crimeDate = crimeScenes[policeCaseNumber].date
 
         incidentLocation = crimeScenes[policeCaseNumber].place ?? ''
-
-        if (crimeScenes[policeCaseNumber].date !== undefined) {
-          const crimeDate = crimeScenes[policeCaseNumber].date
-          incidentDate =
-            formatDate(crimeDate, 'PPPP')?.replace('dagur,', 'daginn') ?? ''
-        }
+        incidentDate =
+          formatDate(crimeDate, 'PPPP')?.replace('dagur,', 'daginn') ?? ''
       }
 
       offenses.forEach((offense, index, arr) => {
         incidentDescription += formatMessage(
           strings.trafficViolationIncidentDescriptionAutofill,
           {
-            incidentDate: incidentDate !== '' ? incidentDate : '[Dagsetning]',
+            incidentDate: incidentDate ? incidentDate : '[Dagsetning]',
             vehicleRegistrationNumber: vehicleRegistrationNumber,
             offense: offense,
-            incidentLocation:
-              incidentLocation !== '' ? incidentLocation : '[Vettvangur]',
+            incidentLocation: incidentLocation
+              ? incidentLocation
+              : '[Vettvangur]',
           },
         )
         if (!(index === arr.length - 1)) {
