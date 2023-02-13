@@ -18,7 +18,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     })
 
     const applicationPage = await applicationContext.newPage()
-    await disableObjectKey(applicationPage, 'existing')
+    // await disableObjectKey(applicationPage, 'existingApplication')
     await disablePreviousApplications(applicationPage)
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
@@ -44,7 +44,7 @@ applicationTest.describe('Driving Asessment Approval', () => {
       // Student info
       await page.getByLabel('Kennitala nemanda').click()
       await page.getByLabel('Kennitala nemanda').fill('0101307789')
-      await page.getByLabel('Tölvupóstfang nemanda').fill('email@domain.test')
+      await page.getByLabel('Netfang').fill('email@domain.test')
       await expect(page.getByText('Gervimaður útlönd')).toBeVisible()
       await page.getByTestId('proceed').click()
 
