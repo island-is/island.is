@@ -10,7 +10,7 @@ import { FC } from 'react'
 import { conclusion } from '../../lib/messages'
 import { CopyLink } from '@island.is/application/ui-components'
 import { ApplicationConfigurations } from '@island.is/application/types'
-import { ConclusionMessageWithLinkButtonFormField } from '../MessageWithLinkButtonField'
+import { ConclusionMessageWithLinkButtonFormField } from '../ConclusionMessageWithLinkButtonFormField'
 
 export const Conclusion: FC<FieldBaseProps> = (props) => {
   const { application } = props

@@ -5,7 +5,7 @@ import { FC } from 'react'
 import { review } from '../../lib/messages'
 import { ReviewScreenProps } from '../../shared'
 import { getReviewSteps, hasReviewerApproved } from '../../utils'
-import { ConclusionMessageWithLinkButtonFormField } from '../MessageWithLinkButtonField'
+import { ConclusionMessageWithLinkButtonFormField } from '../ConclusionMessageWithLinkButtonFormField'
 import { StatusStep } from './StatusStep'
 
 export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = (
