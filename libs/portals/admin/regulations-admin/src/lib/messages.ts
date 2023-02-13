@@ -622,9 +622,9 @@ export const buttonsMsgs = defineMessages({
     id: 'ap.regulations-admin:btn-savestatus',
     defaultMessage: 'Vista stöðu',
   },
-  saveAndClose: {
-    id: 'ap.regulations-admin:btn-savestatus-and-close',
-    defaultMessage: 'Vista og loka',
+  close: {
+    id: 'ap.regulations-admin:btn-close',
+    defaultMessage: 'Loka',
   },
   saveSuccess: {
     id: 'ap.regulations-admin:btn-savestatus-success',
@@ -654,6 +654,10 @@ export const buttonsMsgs = defineMessages({
     id: 'ap.regulations-admin:btn-delete-confirm',
     defaultMessage:
       'Þessu uppkasti að reglugerð verður eytt varanlega. Ertu viss um að þú viljir halda áfram?',
+  },
+  hasBeenDeleted: {
+    id: 'ap.regulations-admin:delete-confirmed',
+    defaultMessage: 'Þessu uppkasti hefur verið eytt.',
   },
 })
 

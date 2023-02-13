@@ -249,13 +249,20 @@ const useMakeDraftingState = (inputs: StateInputs) => {
               },
             },
           }).then(() => {
-            // TODO: Láta notanda vita að færslu hefur verið eytt út?
+            toast.info(t(buttonsMsgs.hasBeenDeleted))
             navigate(getHomeUrl())
           })
         } catch (e) {
           console.error('Failed to delete regulation draft: ', e)
           return
         }
+      },
+
+      closeDraft: async () => {
+        if (isDraftEmpty(draft)) {
+          await actions.deleteDraft()
+        }
+        navigate(getHomeUrl())
       },
 
       saveStatus: async (silent?: boolean) => {
@@ -271,8 +278,6 @@ const useMakeDraftingState = (inputs: StateInputs) => {
             type: 'SAVING_STATUS_DONE',
             error: error && { message: buttonsMsgs.saveFailure, error },
           })
-
-          navigate(getHomeUrl())
         })
         return true
       },

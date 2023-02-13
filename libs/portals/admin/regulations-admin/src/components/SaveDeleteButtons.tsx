@@ -5,6 +5,7 @@ import { buttonsMsgs, buttonsMsgs as msg } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useDraftingState } from '../state/useDraftingState'
 import ConfirmModal from './ConfirmModal/ConfirmModal'
+import { useNavigate } from 'react-router-dom'
 
 // ===========================================================================
 
@@ -21,10 +22,11 @@ export type SaveDeleteButtonsProps =
 
 export const SaveDeleteButtons = (props: SaveDeleteButtonsProps) => {
   const { wrap, classes = s } = props
+  const navigate = useNavigate()
 
   const t = useLocale().formatMessage
   const { saving, actions } = useDraftingState()
-  const { saveStatus, deleteDraft, propose } = actions
+  const { saveStatus, deleteDraft, closeDraft, propose } = actions
   const [isConfirmationVisible, setIsConfirmationVisible] = useState(false)
   const { formatMessage } = useLocale()
 
@@ -35,11 +37,11 @@ export const SaveDeleteButtons = (props: SaveDeleteButtonsProps) => {
           onClick={() => saveStatus()}
           icon="save"
           iconType="outline"
-          variant="text"
+          variant="utility"
           size="small"
           disabled={saving}
         >
-          {t(msg.saveAndClose)}
+          {t(msg.save)}
         </Button>
       </Box>
       {propose && (
@@ -58,10 +60,21 @@ export const SaveDeleteButtons = (props: SaveDeleteButtonsProps) => {
       )}
       <Box className={classes.deleteDraft}>
         <Button
+          onClick={closeDraft}
+          icon="close"
+          iconType="outline"
+          variant="utility"
+          size="small"
+        >
+          {t(msg.close)}
+        </Button>
+      </Box>{' '}
+      <Box className={classes.deleteDraft}>
+        <Button
           onClick={() => setIsConfirmationVisible(true)}
           icon="trash"
           iconType="outline"
-          variant="text"
+          variant="utility"
           colorScheme="destructive"
           size="small"
         >
