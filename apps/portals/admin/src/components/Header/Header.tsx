@@ -8,7 +8,7 @@ import {
   Inline,
   GridContainer,
 } from '@island.is/island-ui/core'
-import { PageLoader } from '@island.is/portals/core'
+import { PortalPageLoader } from '@island.is/portals/core'
 import { UserMenu } from '@island.is/shared/components'
 
 import { ModuleSwitcher } from '../ModuleSwitcher/ModuleSwitcher'
@@ -17,7 +17,7 @@ import * as styles from './Header.css'
 export const Header = () => {
   return (
     <div className={styles.placeholder}>
-      <PageLoader />
+      <PortalPageLoader />
       <header className={styles.header}>
         <GridContainer>
           <Box

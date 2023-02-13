@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
-import LoadingBar, { LoadingBarRef } from 'react-top-loading-bar'
-import { theme } from '@island.is/island-ui/theme'
+import { LoadingBarRef } from 'react-top-loading-bar'
+import { PageLoader as PageLoaderUI } from '@island.is/island-ui/core'
 
 export const PageLoader = () => {
   const router = useRouter()
@@ -25,15 +25,7 @@ export const PageLoader = () => {
     }
   }, [])
 
-  const colorGradiant = `linear-gradient(90deg,
-    ${theme.color.blue400} 0%,
-    ${theme.color.blue600} 25%,
-    ${theme.color.purple400} 50%,
-    ${theme.color.roseTinted400} 75%,
-    ${theme.color.red400} 100%
-  )`
-
-  return <LoadingBar color={colorGradiant} ref={ref} />
+  return <PageLoaderUI ref={ref} />
 }
 
 export default PageLoader
