@@ -150,10 +150,10 @@ const Sessions = () => {
             </Box>
           }
         >
-          <Hidden key={'lg'} below={'lg'}>
+          <Hidden below={'lg'}>
             <LogTable data={sessionsData} />
           </Hidden>
-          <Hidden key={'md'} above={'md'}>
+          <Hidden above={'md'}>
             <LogTableMobile sessions={sessionsData} />
           </Hidden>
         </InfiniteScroll>
