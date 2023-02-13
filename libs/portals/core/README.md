@@ -54,8 +54,6 @@ import { RouteObject } from 'react-router-dom'
 export type PortalRoute = RouteObject & {
   name: string
   path: string | string[]
-  element?: React.ReactNode
-
   // ------------------------------------------------------------------
   // React Router RouteObject properties that are being used in modules
   // ------------------------------------------------------------------
@@ -63,7 +61,7 @@ export type PortalRoute = RouteObject & {
   /**
    * The component prop is rendered when the path matches.
    */
-  element: RouteObject['element']
+  element?: RouteObject['element']
   /**
    * Each route can define a "loader" function to provide data to the route element before it renders.
    */
@@ -81,7 +79,7 @@ export type PortalRoute = RouteObject & {
   /**
    * The children prop is rendered when the path matches. Remember to use <Outlet /> in the parent compoennt to render the children.
    */
-  children?: RouteObject['children']
+  children?: PortalRoute['children']
 }
 ```
 
@@ -95,12 +93,12 @@ An example of an implementation of a route property might be something like this
 const ApplicationList = lazy(() => import('./screens/ApplicationList/ApplicationList'))
 const ProtectedScreen = lazy(() => import('./screens/ProtectedScreen/ProtectedScreen'))
 
-routes: (userInfo) => {
+routes: () => {
   const applicationRoutes = [
     {
       name: 'Applications',
       path: ServicePortalPath.ApplicationRoot,
-      element: <ApplicationList userInfo={userInfo} />,
+      element: <ApplicationList />,
     },
   ]
 
@@ -128,12 +126,12 @@ const ApplicationList = lazy(() => import('./screens/ApplicationList/Application
 
 export const applicationsModule: PortalModule = {
   name: 'Applications',
-  routes: ({ userInfo }) => {
+  routes: () => {
     const applicationRoutes = [
       {
         name: 'Applications',
         path: ServicePortalPath.ApplicationRoot,
-        element: <ApplicationList userInfo={userInfo} />
+        element: <ApplicationList  />
       },
     ]
 
@@ -142,14 +140,17 @@ export const applicationsModule: PortalModule = {
 }
 
 // ApplicationList.tsx
-const ApplicationList: PortalModuleComponent = ({ userInfo }) => (
-  <>
-    <h1>Applications for {userInfo.profile.name}</h1>
-    <div>Application 1</div>
-    <div>Application 2</div>
-    <div>Application 3</div>
-  </>
-)
+const ApplicationList = () => {
+    const userInfo = useUserInfo()
+    return (
+      <>
+        <h1>Applications for {userInfo.profile.name}</h1>
+        <div>Application 1</div>
+        <div>Application 2</div>
+        <div>Application 3</div>
+      </>
+  )
+}
 ```
 
 ## Running unit tests
