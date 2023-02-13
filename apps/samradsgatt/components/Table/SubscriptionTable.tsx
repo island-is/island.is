@@ -9,17 +9,12 @@ import {
 } from '@island.is/island-ui/core'
 import * as styles from './SubscriptionTable.css'
 import tableRowBackgroundColor from '../../utils/helpers/tableRowBackgroundColor'
+import { mapIsToEn } from '../../utils/helpers'
 
 const Headers = {
   Mál: ['Málsnr.', 'Heiti máls'],
   Stofnanir: ['Stofnun'],
   Málefnasvið: ['Málefnasvið'],
-}
-
-const MapIsToEn = {
-  Mál: 'caseIds',
-  Stofnanir: 'institutionIds',
-  Málefnasvið: 'policyAreaIds',
 }
 
 const SubscriptionTable = ({
@@ -31,7 +26,7 @@ const SubscriptionTable = ({
   let headerKey = 0
 
   const onCheckboxChange = (id: number, action: boolean) => {
-    const sub = [...subscriptionArray[MapIsToEn[currentTab]]]
+    const sub = [...subscriptionArray[mapIsToEn[currentTab]]]
     const subArr = { ...subscriptionArray }
     if (action) {
       sub.push(id)
@@ -39,12 +34,12 @@ const SubscriptionTable = ({
       const idx = sub.indexOf(id)
       sub.splice(idx, 1)
     }
-    subArr[MapIsToEn[currentTab]] = sub
+    subArr[mapIsToEn[currentTab]] = sub
     return setSubscriptionArray(subArr)
   }
 
   const checkboxStatus = (id: number) => {
-    return subscriptionArray[MapIsToEn[currentTab]].includes(id)
+    return subscriptionArray[mapIsToEn[currentTab]].includes(id)
   }
 
   const paddingTop = [3, 3, 3, 9] as ResponsiveSpace
