@@ -22,7 +22,6 @@ export const CoOwnersSection: FC<FieldBaseProps & ReviewScreenProps> = ({
         {coOwners?.map(({ name, nationalId, email, phone }, index: number) => {
           if (name.length === 0) return null
           const isCoOwner = nationalId === reviewerNationalId
-          console.log(isCoOwner, reviewerNationalId, nationalId)
           return (
             <GridColumn
               span={['12/12', '12/12', '12/12', '6/12']}
