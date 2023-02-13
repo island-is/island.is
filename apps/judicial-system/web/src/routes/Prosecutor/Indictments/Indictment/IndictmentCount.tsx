@@ -58,7 +58,7 @@ const laws = [
 ]
 
 function lawLabel(law: number[]): string {
-  return `${law[0]}. mgr. ${law[1]}. gr. 77/2019`
+  return `${law[1]}. mgr. ${law[0]}. gr. 77/2019`
 }
 
 function lawSort(law1: number[], law2: number[]) {
@@ -82,17 +82,17 @@ function legalArguments(lawsBroken?: number[][] | null) {
     return ''
   }
 
-  let legalArguments = `Telst háttsemi þessi varða við ${lawsBroken[0][1]}. mgr.`
+  let legalArguments = `Telst háttsemi þessi varða við ${lawsBroken[0][1]}.`
 
   for (let i = 1; i < lawsBroken.length; i++) {
     if (lawsBroken[i][0] !== lawsBroken[i - 1][0]) {
-      legalArguments = `${legalArguments} ${lawsBroken[i - 1][0]}. gr.`
+      legalArguments = `${legalArguments} mgr. ${lawsBroken[i - 1][0]}. gr.`
     }
 
-    legalArguments = `${legalArguments}, sbr. ${lawsBroken[i][1]}. mgr.`
+    legalArguments = `${legalArguments}, sbr. ${lawsBroken[i][1]}.`
   }
 
-  return `${legalArguments} ${
+  return `${legalArguments} mgr. ${
     lawsBroken[lawsBroken.length - 1][0]
   }. gr. umferðarlaga nr. 77/2019.`
 }
