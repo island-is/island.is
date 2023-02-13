@@ -6,7 +6,9 @@ import { debuglog } from 'util'
 function debug(msg: string, ...args: unknown[]) {
   debuglog('system-e2e')(msg, args)
 }
-function mergeOverwrite(_: unknown, source: unknown) { source }
+function mergeOverwrite(_: unknown, source: unknown) {
+  source
+}
 
 type Matchable = string | RegExp
 type MockGQLOptions = {
@@ -60,8 +62,8 @@ function deepMock<T = Dict>(
       })
   }
   if (mocked.isMocked) {
-      debug(`Deep mocking mocked data:`, mocked)
-      debug(`Deep mocking original data:`, original)
+    debug(`Deep mocking mocked data:`, mocked)
+    debug(`Deep mocking original data:`, original)
   }
   return mocked
 }
@@ -98,7 +100,13 @@ export async function mockQGL<T>(
     debug(`Got route `, { routeUrl, routeOp, casedRouteOp })
 
     // Get original
-    const response = patchResponse ? await (await route.fetch({headers: {...route.request().headers(), MOCKED_PATCH: "yes"}})).json() : {}
+    const response = patchResponse
+      ? await (
+          await route.fetch({
+            headers: { ...route.request().headers(), MOCKED_PATCH: 'yes' },
+          })
+        ).json()
+      : {}
     const originalResponse = { ...response?.data }
 
     // Set mock
@@ -135,7 +143,10 @@ export async function mockQGL<T>(
     // Mock injection
     const body = JSON.stringify(data)
     debug('Body:', body)
-    route.fulfill({ body, headers: { 'MOCKED': 'yes', 'DEEP_MOCKED': deepMockKey ? 'yes' : 'no' } })
+    route.fulfill({
+      body,
+      headers: { MOCKED: 'yes', DEEP_MOCKED: deepMockKey ? 'yes' : 'no' },
+    })
   })
 }
 
