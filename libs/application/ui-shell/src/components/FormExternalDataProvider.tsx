@@ -8,15 +8,12 @@ import {
   Box,
   Checkbox,
   Icon,
-  InputError,
   Text,
 } from '@island.is/island-ui/core'
 import {
   getValueViaPath,
   coreMessages,
-  coreErrorMessages,
   getErrorReasonIfPresent,
-  isTranslationObject,
   formatText,
 } from '@island.is/application/core'
 import {
@@ -95,14 +92,8 @@ const ProviderItem: FC<{
     return (
       <AlertMessage
         type={errorType}
-        title={
-          isTranslationObject(errorTitle)
-            ? formatMessage(errorTitle)
-            : (errorTitle as string)
-        }
-        message={
-          isTranslationObject(summary) ? formatMessage(summary) : summary
-        }
+        title={formatMessage(errorTitle)}
+        message={formatMessage(summary)}
       />
     )
   }
