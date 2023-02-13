@@ -156,7 +156,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           incidentDescription += '\n \n'
         }
       })
-
+      setIncidentDescriptionErrorMessage('')
       return incidentDescription
     },
     [formatMessage, workingCase.crimeScenes],

@@ -66,7 +66,7 @@ export const indictmentCount = defineMessages({
     id:
       'judicial.system.core:indictments_indictment.indictment_count.traffic_violation_incident_description_auto_fill',
     defaultMessage:
-      'fyrir umferðalagabrot með því að hafa, {incidentDate}, ekið bifreiðinni {vehicleRegistrationNumber} {offense, select, DRIVING_WITHOUT_LICENCE {án leyfis} DRUNK_DRIVING {undir áhrifum áfengis} other {óskilgreint}} um {incidentLocation}, þar sem lögregla stöðvaði aksturinn.',
+      'fyrir umferðalagabrot með því að hafa, {incidentDate}, ekið bifreiðinni {vehicleRegistrationNumber} {offense, select, DRIVING_WITHOUT_LICENCE {án leyfis} DRUNK_DRIVING {undir áhrifum áfengis} other {[Brot]}} um {incidentLocation}, þar sem lögregla stöðvaði aksturinn.',
     description:
       'Notaður sem skýritexti á "atvikalýsing" svæði á ákæruliða skrefi í ákærum.',
   },
