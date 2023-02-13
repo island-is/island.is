@@ -1,16 +1,19 @@
 import { Page } from '@playwright/test'
 import mergeWith from 'lodash/merge'
 import camelCase from 'lodash/camelCase'
+import { debuglog } from 'util'
 
-function debug(...args: unknown[]) {
-  if (process.env.SYSTEM_E2E_DEBUG) console.log(...args)
+function debug(msg: string, ...args: unknown[]) {
+  debuglog('system-e2e')(msg, args)
 }
+function mergeOverwrite(_: unknown, source: unknown) { source }
 
+type Matchable = string | RegExp
 type MockGQLOptions = {
   responseKey?: string
   camelCaseResponseKey?: boolean
   patchResponse?: boolean
-  deepMockKey?: string | RegExp
+  deepMockKey?: Matchable // TODO  type for this: | Matchable[]
   useResponseKey?: boolean
   pattern?: string
 }
@@ -21,7 +24,7 @@ type Dict<T = unknown> = Record<string, T>
  */
 function deepMock<T = Dict>(
   original: T | T[],
-  mockKey: string | RegExp,
+  mockKey: Matchable,
   mockData: unknown = {},
   { exactMatch = false, deepPath = 'data' } = {},
 ): T | T[] | Dict | Dict[] {
@@ -32,15 +35,18 @@ function deepMock<T = Dict>(
       (item: T) => deepMock(item, mockKey, mockData, { exactMatch }) as T,
     )
   }
-  if (typeof original != 'object')
+  if (typeof original != 'object') {
     return String(original).match(mockKey) ? (mockData as T) : original
+  }
 
   if (typeof mockKey == 'string')
     mockKey = new RegExp(exactMatch ? `^${mockKey}$` : `${mockKey}`)
   const mocked: Dict = {}
   for (const key in original) {
+    if (key.match('currenLic')) debug('Mocking currentLic', original)
     const updatedDeepPath = `${deepPath}.${key}`
     if (key.match(mockKey)) {
+      mocked.isMocked = true
       mocked[key] = mockData
       debug(`Found deepMock match `, {
         mockKey,
@@ -48,12 +54,14 @@ function deepMock<T = Dict>(
         updatedDeepPath,
         mockData,
       })
-      debug(`Deep mocking mocked   data:`, mocked)
-      debug(`Deep mocking original data:`, original)
     } else
       mocked[key] = deepMock(original[key], mockKey, mockData, {
         deepPath: updatedDeepPath,
       })
+  }
+  if (mocked.isMocked) {
+      debug(`Deep mocking mocked data:`, mocked)
+      debug(`Deep mocking original data:`, original)
   }
   return mocked
 }
@@ -90,7 +98,7 @@ export async function mockQGL<T>(
     debug(`Got route `, { routeUrl, routeOp, casedRouteOp })
 
     // Get original
-    const response = patchResponse ? await (await route.fetch()).json() : {}
+    const response = patchResponse ? await (await route.fetch({headers: {...route.request().headers(), MOCKED_PATCH: "yes"}})).json() : {}
     const originalResponse = { ...response?.data }
 
     // Set mock
@@ -115,7 +123,7 @@ export async function mockQGL<T>(
     const patchedData = mergeWith(
       { ...originalResponse },
       mockResponse,
-      (_: unknown, source: unknown) => source,
+      mergeOverwrite,
     )
     const data: Dict<Dict> = { data: {} }
     data.data = patchedData
@@ -127,12 +135,12 @@ export async function mockQGL<T>(
     // Mock injection
     const body = JSON.stringify(data)
     debug('Body:', body)
-    route.fulfill({ body })
+    route.fulfill({ body, headers: { 'MOCKED': 'yes', 'DEEP_MOCKED': deepMockKey ? 'yes' : 'no' } })
   })
 }
 
-export async function disableObjectKey(page: Page, key: string | RegExp) {
-  return await mockQGL(page, '**', `MOCKED-${key}`, {
+export async function disableObjectKey(page: Page, key: Matchable) {
+  return await mockQGL(page, '**', null, {
     deepMockKey: key,
     patchResponse: true,
   })
