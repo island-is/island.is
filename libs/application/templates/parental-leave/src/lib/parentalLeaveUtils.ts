@@ -578,6 +578,8 @@ export function getApplicationExternalData(
 
   const navId = getValueViaPath(externalData, 'navId', '') as string
 
+  const dateOfBirth = getValueViaPath(externalData, 'dateOfBirth') as string
+
   let applicationFundId = navId
   if (!applicationFundId || applicationFundId === '') {
     applicationFundId = getValueViaPath(
@@ -597,6 +599,7 @@ export function getApplicationExternalData(
     navId,
     userEmail,
     userPhoneNumber,
+    dateOfBirth,
   }
 }
 
@@ -865,6 +868,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'fileUpload.benefitsFile',
   ) as Files[]
 
+  const residenceGrantFiles = getValueViaPath(
+    answers,
+    'fileUpload.residenceGrant',
+  ) as Files[]
+
   const dateOfBirth = getValueViaPath(answers, 'dateOfBirth') as string
 
   const commonFiles = getValueViaPath(answers, 'fileUpload.file') as Files[]
@@ -929,6 +937,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     actionName,
     isResidenceGrant,
     dateOfBirth,
+    residenceGrantFiles,
   }
 }
 

@@ -190,21 +190,17 @@ export class ParentalLeaveService extends BaseTemplateApiService {
   }
 
   async setBirthDate({ application }: TemplateApiModuleActionProps) {
-    const { applicationFundId } = getApplicationExternalData(
-      application.externalData,
-    )
-    if (applicationFundId) {
-      try {
-        const app = await this.applicationInformationAPI.applicationGetApplicationInformation(
-          {
-            applicationId: application.id,
-          },
-        )
-        return {
-          dateOfBirth: app.dateOfBirth,
-        }
-      } catch (e) {}
-    }
+    try {
+      const app = await this.applicationInformationAPI.applicationGetApplicationInformation(
+        {
+          applicationId: application.id,
+        },
+      )
+      return {
+        dateOfBirth: app.dateOfBirth,
+      }
+    } catch (e) {}
+
     return {
       dateOfBirth: '',
     }
@@ -383,11 +379,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     const { applicationFundId } = getApplicationExternalData(
       application.externalData,
     )
-    const attachmentsFiles = (application.answers.fileUpload as unknown) as {
-      residenceGrant: Array<{ key: string; name: string }>
-    }
-    if (attachmentsFiles.residenceGrant) {
-      attachmentsFiles.residenceGrant.forEach(async (item, index) => {
+    const { residenceGrantFiles } = getApplicationAnswers(application.answers)
+
+    if (residenceGrantFiles) {
+      residenceGrantFiles.forEach(async (item, index) => {
         const pdf = await this.getPdf(
           application,
           index,

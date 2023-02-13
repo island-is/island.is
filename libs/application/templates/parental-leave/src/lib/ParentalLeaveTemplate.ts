@@ -1518,11 +1518,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       setDateOfBirth: assign((context) => {
         const { application } = context
         const { answers } = application
-        const data = (application.externalData.dateOfBirth.data as unknown) as {
-          dateOfBirth: string
-        }
-        if (data.dateOfBirth) {
-          const dateOfBirth = data.dateOfBirth
+        const { dateOfBirth } = getApplicationExternalData(
+          application.externalData,
+        )
+        if (dateOfBirth) {
           set(answers, 'dateOfBirth', dateOfBirth)
         }
         return context
