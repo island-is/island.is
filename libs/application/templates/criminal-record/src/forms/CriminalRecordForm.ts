@@ -67,7 +67,7 @@ export const CriminalRecordForm: Form = buildForm({
             buildCustomField({
               id: 'payment.over',
               title: '',
-              component: 'OverviewPaymentCharge',
+              component: 'PaymentChargeOverview',
             }),
             buildSubmitField({
               id: 'submit',

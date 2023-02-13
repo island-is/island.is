@@ -37,11 +37,11 @@ const HeilbrigdisstofnunNordurlandsHeader: React.FC<HeaderProps> = ({
   const screenWidth = getScreenWidthString(width)
 
   return (
-    <Box
+    <div
       style={n(`hsnHeader-${screenWidth}`, getDefaultStyle())}
       className={styles.headerBg}
     >
-      <Box className={styles.headerWrapper}>
+      <div className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
             !!organizationPage.organization.logo && (
@@ -88,8 +88,8 @@ const HeilbrigdisstofnunNordurlandsHeader: React.FC<HeaderProps> = ({
             </Link>
           </Box>
         </SidebarLayout>
-      </Box>
-    </Box>
+      </div>
+    </div>
   )
 }
 
