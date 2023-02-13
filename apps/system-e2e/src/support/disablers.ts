@@ -4,7 +4,7 @@ import camelCase from 'lodash/camelCase'
 import { debuglog } from 'util'
 
 function debug(msg: string, ...args: unknown[]) {
-  debuglog('system-e2e')(msg, args)
+  debuglog('system-e2e')(msg, ...args)
 }
 function mergeOverwrite(_: unknown, source: unknown) {
   source
@@ -97,7 +97,7 @@ export async function mockQGL<T>(
     const routeUrl = route.request().url()
     const routeOp = routeUrl.split('op=')[1]
     const casedRouteOp = camelCaseResponseKey ? camelCase(routeOp) : routeOp
-    debug(`Got route `, { routeUrl, routeOp, casedRouteOp })
+    debug(`Got route `, { routeUrl, routeOp, casedRouteOp, op })
 
     // Get original
     const response = patchResponse
@@ -150,8 +150,8 @@ export async function mockQGL<T>(
   })
 }
 
-export async function disableObjectKey(page: Page, key: Matchable) {
-  return await mockQGL(page, '**', `MOCKED-${key}`, {
+export async function disableObjectKey<T>(page: Page, key: Matchable, mockData?: T) {
+  return await mockQGL(page, '**', mockData ?? `MOCKED-${key}`, {
     deepMockKey: key,
     patchResponse: true,
   })
