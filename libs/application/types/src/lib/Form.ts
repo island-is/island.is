@@ -45,6 +45,7 @@ export enum FormItemTypes {
 export type Schema = ZodObject<any>
 
 export enum FormModes {
+  NOT_STARTED = 'notstarted',
   DRAFT = 'draft',
   IN_PROGRESS = 'inprogress',
   COMPLETED = 'completed',
@@ -85,6 +86,7 @@ export interface FormItem extends TestSupport {
 export interface Section extends FormItem {
   type: FormItemTypes.SECTION
   children: SectionChildren[]
+  draftPageNumber?: number
 }
 
 export interface SubSection extends FormItem {
