@@ -11,7 +11,12 @@ import * as styles from './Markdown.css'
 
 const markdownOverrides: MarkdownToJSX.Overrides = {
   ul: BulletList,
-  ol: BulletList,
+  ol: {
+    component: BulletList,
+    props: {
+      type: 'ol',
+    },
+  },
   li: Bullet,
   a: {
     component: Link,
