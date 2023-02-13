@@ -68,7 +68,7 @@ export const indictmentCount = defineMessages({
     defaultMessage:
       'fyrir umferðalagabrot með því að hafa, {incidentDate}, ekið bifreiðinni {vehicleRegistrationNumber} {offense, select, DRIVING_WITHOUT_LICENCE {án leyfis} DRUNK_DRIVING {undir áhrifum áfengis} other {[Brot]}} um {incidentLocation}, þar sem lögregla stöðvaði aksturinn.',
     description:
-      'Notaður sem skýritexti á "atvikalýsing" svæði á ákæruliða skrefi í ákærum.',
+      'Notaður sem skýritexti á "atvikalýsing" svæði á ákæruliða skrefi í umferðalagabrots ákærum.',
   },
   lawsBrokenLabel: {
     id:
