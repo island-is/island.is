@@ -23,7 +23,7 @@ interface AsyncSearchOptionWithIsArticleField extends AsyncSearchOption {
 
 interface SearchBoxProps {
   id?: string
-  organizationPage: Query['getOrganizationPage']
+  organizationSlug: string
   placeholder: string
   noResultsText: string
   searchAllText: string
@@ -31,7 +31,7 @@ interface SearchBoxProps {
 
 export const SearchBox = ({
   id = 'id',
-  organizationPage,
+  organizationSlug,
   placeholder,
   noResultsText,
   searchAllText,
@@ -57,7 +57,7 @@ export const SearchBox = ({
           variables: {
             input: {
               lang: router.asPath.includes('/en/') ? 'en' : 'is',
-              organization: organizationPage.slug,
+              organization: organizationSlug,
               size: 500,
               sort: SortField.Popular,
             },
@@ -209,7 +209,7 @@ export const SearchBox = ({
   const busy = loading || isLoading || waitingForNextPageToLoad
 
   return (
-    <Box marginTop={3}>
+    <Box>
       <AsyncSearch
         id={`organization-search-box-${id}`}
         size={'medium'}
