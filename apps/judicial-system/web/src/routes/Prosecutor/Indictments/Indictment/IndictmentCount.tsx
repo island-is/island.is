@@ -184,22 +184,24 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           formatDate(crimeDate, 'PPPP')?.replace('dagur,', 'daginn') ?? ''
       }
 
-      offenses.forEach((offense, index, arr) => {
-        incidentDescription += formatMessage(
-          strings.trafficViolationIncidentDescriptionAutofill,
-          {
-            incidentDate: incidentDate ? incidentDate : '[Dagsetning]',
-            vehicleRegistrationNumber: vehicleRegistrationNumber,
-            offense: offense,
-            incidentLocation: incidentLocation
-              ? incidentLocation
-              : '[Vettvangur]',
-          },
-        )
-        if (!(index === arr.length - 1)) {
-          incidentDescription += '\n \n'
-        }
-      })
+      incidentDescription = offenses
+        .map((offense, index, arr) => {
+          return formatMessage(
+            strings.trafficViolationIncidentDescriptionAutofill,
+            {
+              incidentDate: incidentDate ? incidentDate : '[Dagsetning]',
+              vehicleRegistrationNumber: vehicleRegistrationNumber
+                ? vehicleRegistrationNumber
+                : '[Skráningarnúmer ökutækis]',
+              offense: offense,
+              incidentLocation: incidentLocation
+                ? incidentLocation
+                : '[Vettvangur]',
+            },
+          )
+        })
+        .join('\n\n')
+
       setIncidentDescriptionErrorMessage('')
       return incidentDescription
     },
