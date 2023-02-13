@@ -11,6 +11,7 @@ export const UpdateIndictmentCountMutation = gql`
       lawsBroken
       incidentDescription
       legalArguments
+      offenses
     }
   }
 `
