@@ -75,6 +75,7 @@ type Events =
   | { type: 'VINNUMALASTOFNUNAPPROVALREJECT' }
   | { type: 'RESIDENCEGRANTAPPLICATIONREJECT' }
   | { type: 'VINNUMALASTOFNUNAPPROVEEDITSREJECT' }
+  | { type: 'RESIDENCEGRANTAPPLICATIONNOBIRTHDATE' }
 
 enum Roles {
   APPLICANT = 'applicant',
@@ -598,8 +599,57 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
+      [States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE]: {
+        entry: [
+          'setPreviousState',
+          'assignToVMST',
+          'setResidenceGrant',
+          'setDateOfBirth',
+        ],
+        exit: 'setResidenceGrantPeriod',
+        meta: {
+          status: 'inprogress',
+          name: States.RESIDENCE_GRAND_APPLICATION,
+          lifecycle: pruneAfterDays(970),
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.validateApplication,
+            throwOnError: true,
+          }),
+          progress: 0.5,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/ResidenceGrantNoBirthDate').then((val) =>
+                  Promise.resolve(val.ResidenceGrantNoBirthDate),
+                ),
+              read: 'all',
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: {
+            target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+          },
+          ['APPROVEDREJECT']: { target: States.APPROVED },
+
+          ['VINNUMALASTOFNUNAPPROVALREJECT']: {
+            target: States.VINNUMALASTOFNUN_APPROVAL,
+          },
+          ['VINNUMALASTOFNUNAPPROVEEDITSREJECT']: {
+            target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+          },
+        },
+      },
       [States.RESIDENCE_GRAND_APPLICATION]: {
-        entry: ['setPreviousState', 'assignToVMST', 'setResidenceGrant'],
+        entry: [
+          'setPreviousState',
+          'assignToVMST',
+          'setResidenceGrant',
+          'setDateOfBirth',
+        ],
+        exit: 'setResidenceGrantPeriod',
         meta: {
           status: 'inprogress',
           name: States.RESIDENCE_GRAND_APPLICATION,
@@ -687,6 +737,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           progress: 1,
+          onExit: defineTemplateApi({
+            action:
+              ApiModuleActions.validateApplication &&
+              ApiModuleActions.setBirthDate,
+            externalDataId: 'dateOfBirth',
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -712,6 +769,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
           ['RESIDENCEGRANTAPPLICATION']: {
             target: States.RESIDENCE_GRAND_APPLICATION,
+          },
+          ['RESIDENCEGRANTAPPLICATIONNOBIRTHDATE']: {
+            target: States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE,
           },
         },
       },
@@ -956,7 +1016,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_APPROVE_EDITS]: {
-        entry: ['assignToVMST', 'removeNullPeriod', 'setHasApplied'],
+        entry: ['assignToVMST', 'removeNullPeriod'],
         exit: ['clearTemp', 'resetAdditionalDocumentsArray', 'clearAssignees'],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVE_EDITS,
@@ -1455,14 +1515,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         return context
       }),
-      setHasApplied: assign((context) => {
+      setDateOfBirth: assign((context) => {
         const { application } = context
         const { answers } = application
-        if (
-          answers.previousState === 'approved' &&
-          application.state === 'vinnumalastofnunApproveEdits'
-        ) {
-          set(answers, 'hasAppliedFor', 'residenceGrant')
+        const { dateOfBirth } = getApplicationExternalData(
+          application.externalData,
+        )
+        if (dateOfBirth) {
+          set(answers, 'dateOfBirth', dateOfBirth)
         }
         return context
       }),

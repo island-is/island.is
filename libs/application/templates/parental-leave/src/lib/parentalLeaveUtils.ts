@@ -578,6 +578,8 @@ export function getApplicationExternalData(
 
   const navId = getValueViaPath(externalData, 'navId', '') as string
 
+  const dateOfBirth = getValueViaPath(externalData, 'dateOfBirth') as string
+
   let applicationFundId = navId
   if (!applicationFundId || applicationFundId === '') {
     applicationFundId = getValueViaPath(
@@ -597,6 +599,7 @@ export function getApplicationExternalData(
     navId,
     userEmail,
     userPhoneNumber,
+    dateOfBirth,
   }
 }
 
@@ -865,6 +868,13 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'fileUpload.benefitsFile',
   ) as Files[]
 
+  const residenceGrantFiles = getValueViaPath(
+    answers,
+    'fileUpload.residenceGrant',
+  ) as Files[]
+
+  const dateOfBirth = getValueViaPath(answers, 'dateOfBirth') as string
+
   const commonFiles = getValueViaPath(answers, 'fileUpload.file') as Files[]
 
   const actionName = getValueViaPath(answers, 'actionName') as
@@ -926,6 +936,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
     commonFiles,
     actionName,
     isResidenceGrant,
+    dateOfBirth,
+    residenceGrantFiles,
   }
 }
 
@@ -1492,16 +1504,22 @@ export const isParentalGrant = (application: Application) => {
 export const convertBirthDay = (birthDay: string) => {
   // Regex check if only decimals are used in the string
   const reg = new RegExp(/^\d+$/)
+  // If the birthDay comes in format yyyy-mm-dd we remove the -
+  const regex = new RegExp(/-/g)
   // Default
   const convertedBirthDay = { year: 0, month: 0, date: 0 }
   // Checks on length and only contain decimal or we return default
-  if (birthDay.length !== 8) return convertedBirthDay
-  if (!birthDay.match(reg)) return convertedBirthDay
+  const newBirthDay = birthDay.replace(regex, '')
+  const birthDaySliced =
+    newBirthDay?.length > 8 ? newBirthDay.slice(0, 8) : newBirthDay
+
+  if (birthDaySliced.length !== 8) return convertedBirthDay
+  if (!birthDaySliced.match(reg)) return convertedBirthDay
   // The string is expected to be yyyymmdd
-  const year = Number(birthDay.slice(0, 4))
+  const year = Number(birthDaySliced.slice(0, 4))
   // Substract one month to take care of js zero index on dates
-  const month = Number(birthDay.slice(4, 6)) - 1
-  const date = Number(birthDay.slice(6, 8))
+  const month = Number(birthDaySliced.slice(4, 6)) - 1
+  const date = Number(birthDaySliced.slice(6, 8))
   return { year, month, date }
 }
 export const residentGrantIsOpenForApplication = (childBirthDay: string) => {

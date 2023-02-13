@@ -13,11 +13,7 @@ import {
   StaticTextObject,
 } from '@island.is/application/types'
 import { StartDateOptions, YES, NO } from '../../constants'
-import {
-  convertBirthDay,
-  getExpectedDateOfBirth,
-  residentGrantIsOpenForApplication,
-} from '../parentalLeaveUtils'
+import { convertBirthDay, getExpectedDateOfBirth } from '../parentalLeaveUtils'
 import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
   minimumRatio,

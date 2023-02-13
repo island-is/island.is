@@ -18,7 +18,6 @@ import {
   getExpectedDateOfBirth,
   otherParentApprovalDescription,
   requiresOtherParentApproval,
-  residentGrantIsOpenForApplication,
 } from '../../lib/parentalLeaveUtils'
 import {
   NO,
@@ -169,29 +168,9 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
   }
 
   if (
-    dateOfBirth &&
-    residentGrantIsOpenForApplication(`${dateOfBirth}`) &&
-    (state === 'approved' ||
-      state === 'vinnumalastofnunApproveEdits' ||
-      state === 'vinnumalastofnunApproval') &&
-    hasAppliedFor === 'residenceGrant'
-  ) {
-    steps.push({
-      state: ReviewSectionState.inProgress,
-      title: formatMessage(
-        parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle,
-      ),
-      description: formatMessage(
-        parentalLeaveFormMessages.residenceGrantMessage
-          .residenceGrantHasBeenAppliedForDescription,
-      ),
-    })
-  } else if (
-    dateOfBirth &&
-    residentGrantIsOpenForApplication(`${dateOfBirth}`) &&
-    (state === 'approved' ||
-      state === 'vinnumalastofnunApproveEdits' ||
-      state === 'vinnumalastofnunApproval')
+    state === 'approved' ||
+    state === 'vinnumalastofnunApproveEdits' ||
+    state === 'vinnumalastofnunApproval'
   ) {
     steps.push({
       state: ReviewSectionState.optionalAction,
@@ -201,17 +180,6 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
       description: formatMessage(
         parentalLeaveFormMessages.residenceGrantMessage
           .residenceGrantOpenDescription,
-      ),
-    })
-  } else {
-    steps.push({
-      state: ReviewSectionState.prerequisites,
-      title: formatMessage(
-        parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle,
-      ),
-      description: formatMessage(
-        parentalLeaveFormMessages.residenceGrantMessage
-          .residenceGrantClosedDescription,
       ),
     })
   }
@@ -250,6 +218,7 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
       refetch?.()
     }
   }, [])
+
   return (
     <Box marginBottom={10}>
       <Box
@@ -326,7 +295,11 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
               index={index + 1}
               {...step}
               notifyParentOnClickEvent={() =>
-                handleSubmit('RESIDENCEGRANTAPPLICATION')
+                handleSubmit(
+                  application.answers.dateOfBirth
+                    ? 'RESIDENCEGRANTAPPLICATION'
+                    : 'RESIDENCEGRANTAPPLICATIONNOBIRTHDATE',
+                )
               }
             />
           ))}

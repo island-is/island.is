@@ -96,7 +96,6 @@ export const ResidenceGrant: Form = buildForm({
             }),
           ],
         }),
-
         buildDescriptionField({
           id: 'unused',
           title: '',

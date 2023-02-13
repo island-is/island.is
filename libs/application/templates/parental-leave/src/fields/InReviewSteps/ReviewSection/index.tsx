@@ -3,7 +3,7 @@ import cn from 'classnames'
 import { useLocale } from '@island.is/localization'
 import { formatText, coreMessages } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { Box, Button, Icon, Link, Tag, Text } from '@island.is/island-ui/core'
+import { Box, Button, Icon, Tag, Text } from '@island.is/island-ui/core'
 import { parentalLeaveFormMessages } from '../../../lib/messages'
 
 import * as styles from './ReviewSection.css'
@@ -85,32 +85,17 @@ const ReviewSection: FC<ReviewSectionProps> = ({
               state === ReviewSectionState.inProgress) && (
               <Box display={'flex'} justifyContent={'flexEnd'} marginTop={1}>
                 <Box>
-                  {state === ReviewSectionState.optionalAction ? (
-                    <Button
-                      variant="text"
-                      size="small"
-                      icon="arrowForward"
-                      onClick={() => notifyParentOnClickEvent()}
-                    >
-                      {formatMessage(
-                        parentalLeaveFormMessages.residenceGrantMessage
-                          .residenceGrantApplyTitle,
-                      )}
-                    </Button>
-                  ) : (
-                    <Link
-                      href={
-                        'https://www.vinnumalastofnun.is/faedingarorlofssjodur/dvalarstyrkur'
-                      }
-                    >
-                      <Button variant="text" size="small" icon="arrowForward">
-                        {formatMessage(
-                          parentalLeaveFormMessages.residenceGrantMessage
-                            .residenceGrantActionLinkTitle,
-                        )}
-                      </Button>
-                    </Link>
-                  )}
+                  <Button
+                    variant="text"
+                    size="small"
+                    icon="arrowForward"
+                    onClick={() => notifyParentOnClickEvent()}
+                  >
+                    {formatMessage(
+                      parentalLeaveFormMessages.residenceGrantMessage
+                        .residenceGrantApplyTitle,
+                    )}
+                  </Button>
                 </Box>
               </Box>
             )}
