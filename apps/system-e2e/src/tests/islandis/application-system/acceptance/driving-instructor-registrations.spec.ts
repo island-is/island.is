@@ -31,7 +31,8 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
 })
 
 applicationTest.describe('Driving Instructor Registrations', () => {
-  applicationTest('test', async ({ page }) => {
+  applicationTest('should be able to only register minutes for valid student', async ({ applicationPage }) => {
+    const page = applicationPage
     // Data providers
     await page.getByTestId('agree-to-data-providers').click()
     await page.getByTestId('proceed').click()
