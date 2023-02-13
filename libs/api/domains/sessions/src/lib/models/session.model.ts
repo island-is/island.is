@@ -17,8 +17,8 @@ export class Session {
   @Field(() => Client)
   client!: Client
 
-  @Field(() => String)
-  timestamp!: string
+  @Field(() => Date)
+  timestamp!: Date
 
   @Field(() => String)
   userAgent!: string
