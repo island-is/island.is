@@ -6,7 +6,7 @@ import { review } from '../../lib/messages'
 import { ReviewScreenProps } from '../../shared'
 import { getReviewSteps, hasReviewerApproved } from '../../utils'
 import { StatusStep } from './StatusStep'
-import { MessageWithLinkButtonFormField } from '../MessageWithLinkButtonField'
+import { ConclusionMessageWithLinkButtonFormField } from '../MessageWithLinkButtonField'
 
 export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = (
   props,
@@ -65,7 +65,9 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = (
         </>
       )}
 
-      {!showReviewButton && <MessageWithLinkButtonFormField {...props} />}
+      {!showReviewButton && (
+        <ConclusionMessageWithLinkButtonFormField {...props} />
+      )}
     </Box>
   )
 }

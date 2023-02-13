@@ -4,7 +4,7 @@ import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { conclusion } from '../../lib/messages'
 
-export const MessageWithLinkButtonFormField: FC<FieldBaseProps> = ({
+export const ConclusionMessageWithLinkButtonFormField: FC<FieldBaseProps> = ({
   application,
 }) => {
   const { formatMessage } = useLocale()

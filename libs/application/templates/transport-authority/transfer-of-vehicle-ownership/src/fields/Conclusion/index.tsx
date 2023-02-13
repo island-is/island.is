@@ -10,7 +10,7 @@ import { FC } from 'react'
 import { conclusion } from '../../lib/messages'
 import { CopyLink } from '@island.is/application/ui-components'
 import { ApplicationConfigurations } from '@island.is/application/types'
-import { MessageWithLinkButtonFormField } from '../MessageWithLinkButtonField'
+import { ConclusionMessageWithLinkButtonFormField } from '../MessageWithLinkButtonField'
 
 export const Conclusion: FC<FieldBaseProps> = (props) => {
   const { application } = props
@@ -44,7 +44,7 @@ export const Conclusion: FC<FieldBaseProps> = (props) => {
       </Box>
 
       <Box marginTop={3} marginBottom={5}>
-        <MessageWithLinkButtonFormField {...props} />
+        <ConclusionMessageWithLinkButtonFormField {...props} />
       </Box>
     </Box>
   )
