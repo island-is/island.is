@@ -66,11 +66,15 @@ describe('SessionsService', () => {
     },
   )
 
+  /**
+   * This test is based on un-updated database for the geoip package.
+   * This is due to running the test in CI without needing to update the data.
+   * If the geoip-lite package is updated this test could fail and the ipLocation updated.
+   */
   it.each`
-    session        | ip                   | ipLocation
-    ${mockSession} | ${'153.92.156.131'}  | ${'Reykjavik, IS'}
-    ${mockSession} | ${'213.181.112.165'} | ${'Kopavogur, IS'}
-    ${mockSession} | ${'127.0.0.1'}       | ${null}
+    session        | ip                  | ipLocation
+    ${mockSession} | ${'153.92.156.131'} | ${'Reykjavik, IS'}
+    ${mockSession} | ${'127.0.0.1'}      | ${null}
   `('should parse location from ip', async ({ session, ip, ipLocation }) => {
     // Act
     await sessionsService.create({
