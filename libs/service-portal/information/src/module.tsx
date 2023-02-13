@@ -11,7 +11,7 @@ const UserInfo = lazy(() => import('./screens/UserInfo/UserInfo'))
 const FamilyMember = lazy(() => import('./screens/FamilyMember/FamilyMember'))
 const FamilyMemberChild = lazy(() => import('./screens/FamilyMember/Child'))
 const Spouse = lazy(() => import('./screens/Spouse/Spouse'))
-const CompanyInfo = lazy(() => import('./screens/company/CompanyInfo'))
+const CompanyInfo = lazy(() => import('./screens/Company/CompanyInfo'))
 
 export const informationModule: PortalModule = {
   name: 'Upplýsingar',
