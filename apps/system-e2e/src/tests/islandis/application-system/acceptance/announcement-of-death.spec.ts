@@ -31,16 +31,17 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
 })
 
 applicationTest.describe('Announcement of Death', () => {
-  // Custom continue button
-  const submitButton = 'button[type=submit]'
-  const nextButton = 'button[data-testid=proceed]'
 
   applicationTest('test', async ({ applicationPage }) => {
     const page = applicationPage
     await expect(page).toBeApplication()
 
+    // Custom continue button
+    const submitButton = page.getByRole('button', { name: 'Halda áfram' })
+    const nextButton = page.getByTestId('proceed')
+
     await page.locator('data-testid=agree-to-data-providers').click()
-    await page.locator(submitButton).click()
+    await submitButton.click()
 
     await expect(
       page.locator('label[for=approveExternalData]'),
@@ -51,7 +52,7 @@ applicationTest.describe('Announcement of Death', () => {
 
     // Accept handling the announcement
     await page.locator('input[value=continue]').click()
-    await page.locator(submitButton).click()
+    await submitButton.click()
 
     // Relations screen
     // TODO improve selectability in this screen
@@ -59,23 +60,25 @@ applicationTest.describe('Announcement of Death', () => {
     await page.locator('div:text("Systir")').click()
     await page.locator('input[name=applicantPhone]').fill('500-5000')
     await page.locator('input[name=applicantEmail]').fill('e@mail.com')
-    await page.locator(nextButton).click()
+    await nextButton.click()
 
     // Other wills and prenup screen
     await page.locator('label[for=knowledgeOfOtherWills-1]').click()
-    await page.locator(nextButton).click()
+    await nextButton.click()
 
     // Heirs -> add a new heir
     await page.getByText('Bæta við erfingja').click()
     await page.getByLabel('Kennitala').last().fill('010130-5069')
     await page.getByLabel('Tengsl').last().click()
     await page.locator('div:text("Systir")').last().click()
-    await page.locator(nextButton).click()
+    await expect(page.getByLabel('Nafn').last()).not.toBeEmpty()
+    await nextButton.click()
 
     // Assets
-    await page.getByLabel('Eignir erlendis').check()
-    await page.getByLabel('Eignir erlendis').uncheck()
-    await page.locator(nextButton).click()
+    const foreignAssets = page.getByLabel('Eignir erlendis')
+    await foreignAssets.check()
+    await foreignAssets.uncheck()
+    await nextButton.click()
 
     // Recipients of documents
     const dropdowns = page.getByLabel('Enginn viðtakandi') //locator('label[for=certificateOfDeathAnnouncement]')
@@ -83,16 +86,15 @@ applicationTest.describe('Announcement of Death', () => {
       await dropdown.click()
       await dropdown.getByText('Gervimaður').first().click()
     }
-    await page.locator(nextButton).click()
+    await nextButton.click()
 
     // Overview screen
     await page.getByLabel('Upplýsingar').fill('test test þæö')
     await page
       .getByRole('button', { name: 'Staðfesta andlátstilkynningu' })
       .click()
-    await page.locator(submitButton).click()
 
     // Confirmation screen
-    await expect(page.getByText('Tilkynning móttekin')).toBeVisible()
+    await expect(page.getByRole('heading', { name: "Tilkynning móttekin" })).toBeVisible()
   })
 })
