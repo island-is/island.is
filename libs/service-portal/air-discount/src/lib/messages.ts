@@ -11,7 +11,7 @@ export const messages = defineMessages({
       'Hver einstaklingur með lögheimili innan skilgreinds svæðis á rétt á afslætti á sex flugleggjum á ári, með notkun afsláttar með Loftbrú staðfestir þú að hafa lesið ',
   },
   introDescriptionLink: {
-    id: 'sp.air-discount: intro-description-link',
+    id: 'sp.air-discount:intro-description-link',
     defaultMessage: 'notendaskilmála',
   },
   introDescriptionSecond: {
