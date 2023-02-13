@@ -62,30 +62,30 @@ export const indictmentCount = defineMessages({
     description:
       'Notaður sem skýritexti á "atvikalýsing" svæði á ákæruliða skrefi í ákærum.',
   },
-  legalArgumentLabel: {
+  lawsBrokenLabel: {
     id:
-      'judicial.system.core:indictments_indictment.indictment_count.legal_argument_label',
+      'judicial.system.core:indictments_indictment.indictment_count.laws_broken_label',
     defaultMessage: 'Lagaákvæði',
     description:
       'Notaður sem titill á "lagaákvæði" leitarboxi á ákæruliða skrefi í ákærum.',
   },
-  legalArgumentPlaceholder: {
+  lawsBrokenPlaceholder: {
     id:
-      'judicial.system.core:indictments_indictment.indictment_count.legal_argument_placeholder',
+      'judicial.system.core:indictments_indictment.indictment_count.laws_broken_placeholder',
     defaultMessage: 'Leitaðu að lagaákvæði',
     description:
       'Notaður sem skýritexti á "lagaákvæði" leitarboxi á ákæruliða skrefi í ákærum.',
   },
-  legalArgumentDescriptionLabel: {
+  legalArgumentsLabel: {
     id:
-      'judicial.system.core:indictments_indictment.indictment_count.legal_argument_description_label',
+      'judicial.system.core:indictments_indictment.indictment_count.legal_arguments_label',
     defaultMessage: 'Heimfærsla',
     description:
       'Notaður sem titill á "heimfærslu" svæði á ákæruliða skrefi í ákærum.',
   },
-  legalArgumentDescriptionPlaceholder: {
+  legalArgumentsPlaceholder: {
     id:
-      'judicial.system.core:indictments_indictment.indictment_count.legal_argument_description_placeholder',
+      'judicial.system.core:indictments_indictment.indictment_count.legal_arguments_placeholder',
     defaultMessage: 'Skrifaðu heimfærslu',
     description:
       'Notaður sem skýritexti á "heimfærslu" svæði á ákæruliða skrefi í ákærum.',

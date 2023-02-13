@@ -16,7 +16,7 @@ import {
 } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
-import { formatPhoneNumber } from '../../utils/index'
+import { formatPhoneNumber } from '@island.is/application/ui-components'
 import format from 'date-fns/format'
 import { Asset, Answers as AODAnswers, OtherPropertiesEnum } from '../../types'
 import { FormatMessage } from '@island.is/localization'
@@ -111,22 +111,6 @@ const testament: Field[] = [
     title: m.testamentTitle,
     marginBottom: 2,
     titleVariant: 'h3',
-  }),
-  buildKeyValueField({
-    label: m.testamentTestamentAvailable,
-    width: 'half',
-    value: ({ answers }) =>
-      answers.districtCommissionerHasWill
-        ? m.testamentKnowledgeOfOtherTestamentYes
-        : m.testamentKnowledgeOfOtherTestamentNo,
-  }),
-  buildKeyValueField({
-    label: m.testamentBuyration,
-    width: 'half',
-    value: ({ answers }) =>
-      answers.marriageSettlement
-        ? m.testamentKnowledgeOfOtherTestamentYes
-        : m.testamentKnowledgeOfOtherTestamentNo,
   }),
   buildKeyValueField({
     label: m.testamentKnowledgeOfOtherTestament,
