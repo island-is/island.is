@@ -7,6 +7,8 @@ import {
   CacheInterceptor,
   UseInterceptors,
   BadRequestException,
+  Version,
+  VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { Controller, Post, HttpCode } from '@nestjs/common'
 import {
@@ -49,6 +51,7 @@ export class NotificationsController {
   @ApiOperation({ deprecated: true })
   @HttpCode(201)
   @Post()
+  @Version(VERSION_NEUTRAL)
   async createNotification(
     @Body() body: CreateNotificationDto,
   ): Promise<CreateNotificationResponse> {
@@ -75,6 +78,7 @@ export class NotificationsController {
     },
   })
   @Get('/templates')
+  @Version('1')
   async getNotificationTemplates(
     @Query('locale') locale: string,
   ): Promise<HnippTemplate[]> {
@@ -104,6 +108,7 @@ export class NotificationsController {
     },
   })
   @Get('/template/:templateId')
+  @Version('1')
   async getNotificationTemplate(
     @Param('templateId')
     templateId: string,
@@ -112,7 +117,8 @@ export class NotificationsController {
     return await this.notificationsService.getTemplate(templateId, locale)
   }
 
-  @Post('/create-notification')
+  @Post('/')
+  @Version('1')
   async createHnippNotification(
     @Body() body: CreateHnippNotificationDto,
   ): Promise<CreateNotificationResponse> {
