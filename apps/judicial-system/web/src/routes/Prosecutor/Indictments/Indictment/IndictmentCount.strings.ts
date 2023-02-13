@@ -84,6 +84,12 @@ export const indictmentCount = defineMessages({
     description:
       'Notaður sem skýritexti á "lagaákvæði" leitarboxi á ákæruliða skrefi í ákærum.',
   },
+  lawsBrokenTag: {
+    id:
+      'judicial.system.core:indictments_indictment.indictment_count.laws_broken_tag',
+    defaultMessage: '{paragraph}. mgr. {article}. gr. umfl.',
+    description: 'Notaður sem texti í lagaákvæði taggi.',
+  },
   legalArgumentsLabel: {
     id:
       'judicial.system.core:indictments_indictment.indictment_count.legal_arguments_label',
@@ -97,5 +103,12 @@ export const indictmentCount = defineMessages({
     defaultMessage: 'Skrifaðu heimfærslu',
     description:
       'Notaður sem skýritexti á "heimfærslu" svæði á ákæruliða skrefi í ákærum.',
+  },
+  legalArgumentsAutofill: {
+    id:
+      'judicial.system.core:indictments_indictment.indictment_count.legal_arguments_autofill',
+    defaultMessage:
+      'Telst háttsemi þessi varða við {articles} umferðarlaga nr. 77/2019.',
+    description: 'Notaður sem sjálfgefinn texti í heimfærslu svæði.',
   },
 })

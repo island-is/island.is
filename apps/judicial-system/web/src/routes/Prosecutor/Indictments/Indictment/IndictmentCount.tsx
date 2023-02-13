@@ -59,8 +59,20 @@ const laws = [
   [95, 1], // á alltaf við öll þessi brot,
 ]
 
-function lawLabel(law: number[]): string {
-  return `${law[0]}. mgr. ${law[1]}. gr. 77/2019`
+function lawsCompare(law1: number[], law2: number[]) {
+  if (law1[0] < law2[0]) {
+    return -1
+  }
+  if (law1[0] > law2[0]) {
+    return 1
+  }
+  if (law1[1] < law2[1]) {
+    return -1
+  }
+  if (law1[1] > law2[1]) {
+    return 1
+  }
+  return 0
 }
 
 interface LawsBrokenOption {
@@ -100,10 +112,19 @@ export const IndictmentCount: React.FC<Props> = (props) => {
     disabled: indictmentCount.offenses?.includes(offense),
   }))
 
+  const lawTag = useCallback(
+    (law: number[]): string =>
+      formatMessage(strings.lawsBrokenTag, {
+        paragraph: law[1],
+        article: law[0],
+      }),
+    [formatMessage],
+  )
+
   const lawsBrokenOptions: LawsBrokenOption[] = useMemo(
     () =>
       laws.map((law, index) => ({
-        label: lawLabel(law),
+        label: lawTag(law),
         value: `${index}`,
         index: index,
         disabled: Boolean(
@@ -112,7 +133,32 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           ),
         ),
       })),
-    [indictmentCount.lawsBroken],
+    [lawTag, indictmentCount.lawsBroken],
+  )
+
+  const legalArguments = useCallback(
+    (lawsBroken?: number[][] | null) => {
+      if (!lawsBroken || lawsBroken.length === 0) {
+        return ''
+      }
+
+      let articles = `${lawsBroken[0][1]}.`
+
+      for (let i = 1; i < lawsBroken.length; i++) {
+        if (lawsBroken[i][0] !== lawsBroken[i - 1][0]) {
+          articles = `${articles} mgr. ${lawsBroken[i - 1][0]}. gr.`
+        }
+
+        articles = `${articles}, sbr. ${lawsBroken[i][1]}.`
+      }
+
+      return formatMessage(strings.legalArgumentsAutofill, {
+        articles: `${articles} mgr. ${
+          lawsBroken[lawsBroken.length - 1][0]
+        }. gr.`,
+      })
+    },
+    [formatMessage],
   )
 
   const incidentDescription = useCallback(
@@ -161,10 +207,6 @@ export const IndictmentCount: React.FC<Props> = (props) => {
     },
     [formatMessage, workingCase.crimeScenes],
   )
-
-  function todoHandle(arg0: number): void {
-    throw new Error('Function not implemented.')
-  }
 
   return (
     <BlueBox>
@@ -341,8 +383,13 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           value={null}
           onChange={(selectedOption: ValueType<ReactSelectOption>) => {
             const index = (selectedOption as LawsBrokenOption).index
+            const lawsBroken = [
+              ...(indictmentCount.lawsBroken ?? []),
+              laws[index],
+            ].sort(lawsCompare)
             onChange(indictmentCount.id, {
-              lawsBroken: [...(indictmentCount.lawsBroken ?? []), laws[index]],
+              lawsBroken: lawsBroken,
+              legalArguments: legalArguments(lawsBroken),
             })
           }}
           required
@@ -361,18 +408,22 @@ export const IndictmentCount: React.FC<Props> = (props) => {
               <Tag
                 variant="darkerBlue"
                 onClick={() => {
-                  if (indictmentCount.lawsBroken) {
-                    onChange(indictmentCount.id, {
-                      lawsBroken: indictmentCount.lawsBroken
-                        .slice(0, index)
-                        .concat(indictmentCount.lawsBroken.slice(index + 1)),
-                    })
+                  if (!indictmentCount.lawsBroken) {
+                    return
                   }
+
+                  const lawsBroken = indictmentCount.lawsBroken
+                    .slice(0, index)
+                    .concat(indictmentCount.lawsBroken.slice(index + 1))
+                  onChange(indictmentCount.id, {
+                    lawsBroken: lawsBroken,
+                    legalArguments: legalArguments(lawsBroken),
+                  })
                 }}
-                aria-label={lawLabel(brokenLaw)}
+                aria-label={lawTag(brokenLaw)}
               >
                 <Box display="flex" alignItems="center">
-                  {lawLabel(brokenLaw)}
+                  {lawTag(brokenLaw)}
                   <Icon icon="close" size="small" />
                 </Box>
               </Tag>
@@ -427,11 +478,34 @@ export const IndictmentCount: React.FC<Props> = (props) => {
             name="legalArguments"
             label={formatMessage(strings.legalArgumentsLabel)}
             placeholder={formatMessage(strings.legalArgumentsPlaceholder)}
-            errorMessage={''}
-            hasError={false}
-            value={''}
-            onChange={() => todoHandle(1)}
-            onBlur={() => todoHandle(1)}
+            errorMessage={legalArgumentsErrorMessage}
+            hasError={legalArgumentsErrorMessage !== ''}
+            value={indictmentCount.legalArguments ?? ''}
+            onChange={(event) => {
+              removeErrorMessageIfValid(
+                ['empty'],
+                event.target.value,
+                legalArgumentsErrorMessage,
+                setLegalArgumentsErrorMessage,
+              )
+
+              updateIndictmentCountState(
+                indictmentCount.id,
+                { legalArguments: event.target.value },
+                setWorkingCase,
+              )
+            }}
+            onBlur={(event) => {
+              validateAndSetErrorMessage(
+                ['empty'],
+                event.target.value,
+                setLegalArgumentsErrorMessage,
+              )
+
+              onChange(indictmentCount.id, {
+                legalArguments: event.target.value.trim(),
+              })
+            }}
             autoComplete="off"
             required
             rows={7}
