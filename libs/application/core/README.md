@@ -316,6 +316,60 @@ The structure of a form describes how questions and other fields are displayed, 
 
 A form field can be a question that the applicant needs to answer, or just something purely cosmetic or informational. This library provides prebuilt reusable fields (such as TextField, CheckboxField, RadioField and more), and also an interface for a custom field. In order to get data schema validation for a field, the `id` of the field needs to be present in the application template `dataSchema` object. It is even possible to provide a field with pure `defaultValue` if no answer has been provided by the user.
 
+### How to create a new field component
+
+1. Add the new name of your field to both `FieldTypes` and `FieldComponents` enums in `libs/application/types/src/lib/fields.ts`
+2. Create a new interface in `libs/application/types/src/lib/fields.ts` that extends `BaseField`. Add your custom props to the interface along with type and component.
+
+```typescript
+export interface NewField extends BaseField {
+  readonly type: FieldTypes.NEW_FIELD
+  component: FieldComponents.NEW_FIELD
+  myProp: string
+  myOtherProp: number
+}
+```
+
+3. In the same file, add your new field to the exported `Field` type.
+
+4. Create a new function in `libs/application/core/src/lib/fieldBuilders.ts`. This function accepts a parameter of the new type we created, `NewField`, but we have to omit `type`, `component` and `children`. Then add the props as follows.
+
+```typescript
+export function buildNewField(
+  data: Omit<NewField, 'type' | 'component' | 'children'>,
+): NewField {
+  const { myProp, myOtherProp } = data
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    myProp,
+    myOtherProp,
+    type: FieldTypes.NEW_FIELD,
+    component: FieldComponents.NEW_FIELD,
+  }
+}
+```
+
+5. Create a new folder with the name of your field in `libs/application/ui-fields/src/lib/`. Also create your react component there with the same name and with `.tsx` file ending.
+
+![image](https://user-images.githubusercontent.com/16030946/217768803-ddf18c5a-21e6-4542-a704-0e770403c997.png)
+
+6. Create new function in the new file with the same name you created in step 1 in the `FieldComponents` enum. This functions props should extend `FieldBaseProps`. Add Field to your props with the type of the interface you created in step 2.
+
+```typescript
+interface Props extends FieldBaseProps {
+  field: NewField
+}
+
+export const NewFormField: FC<Props> = ({ application, field }) => {
+  return <Box>Your new component.</Box>
+}
+```
+
+7. Remember to add your new component as a new export in the parent `index.ts` file.
+
+8. You have now created a new field component. You can now use it in your application forms.
+
 ### Conditions
 
 Fields can have conditions to be shown/hidden under some given circumstances. These conditions can be _dynamic_ (open-ended function), or _static_ (depend on answers to other questions).

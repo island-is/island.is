@@ -174,6 +174,18 @@ const CaseQuery = gql`
       defendantWaivesRightToCounsel
       crimeScenes
       indictmentIntroduction
+      indictmentCounts {
+        id
+        caseId
+        policeCaseNumber
+        created
+        modified
+        vehicleRegistrationNumber
+        offenses
+        lawsBroken
+        incidentDescription
+        legalArguments
+      }
     }
   }
 `

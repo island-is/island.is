@@ -67,6 +67,7 @@ type ScreenProps = {
   renderLastScreenButton?: boolean
   renderLastScreenBackButton?: boolean
   goToScreen: (id: string) => void
+  setUpdateForbidden: (value: boolean) => void
 }
 
 const getServerValidationErrors = (error: ApolloError | undefined) => {
@@ -80,6 +81,7 @@ const getServerValidationErrors = (error: ApolloError | undefined) => {
 }
 
 const Screen: FC<ScreenProps> = ({
+  setUpdateForbidden,
   activeScreenIndex,
   addExternalData,
   answerQuestions,
@@ -119,6 +121,9 @@ const Screen: FC<ScreenProps> = ({
     onError: (e) => {
       // We handle validation problems separately.
       const problem = findProblemInApolloError(e)
+      if (problem?.type === ProblemType.HTTP_NOT_FOUND) {
+        setUpdateForbidden(true)
+      }
       if (problem?.type === ProblemType.VALIDATION_FAILED) {
         return
       }

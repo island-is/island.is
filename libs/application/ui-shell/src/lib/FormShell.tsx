@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useReducer } from 'react'
+import React, { FC, useEffect, useReducer, useState } from 'react'
 import cn from 'classnames'
 
 import {
@@ -25,6 +25,8 @@ import { useHistorySync } from '../hooks/useHistorySync'
 import { useApplicationTitle } from '../hooks/useApplicationTitle'
 import { useHeaderInfo } from '../context/HeaderInfoProvider'
 import * as styles from './FormShell.css'
+import { ErrorShell } from '../components/ErrorShell'
+import { m } from './messages'
 
 export const FormShell: FC<{
   application: Application
@@ -32,6 +34,7 @@ export const FormShell: FC<{
   form: Form
   dataSchema: Schema
 }> = ({ application, nationalRegistryId, form, dataSchema }) => {
+  const [updateForbidden, setUpdateForbidden] = useState(false)
   const { setInfo } = useHeaderInfo()
   const [state, dispatch] = useReducer(
     ApplicationReducer,
@@ -86,6 +89,10 @@ export const FormShell: FC<{
     })
   }, [setInfo, application])
 
+  if (updateForbidden) {
+    return <ErrorShell errorType="lost" applicationType={application.typeId} />
+  }
+
   return (
     <Box className={styles.root}>
       <Box
@@ -107,6 +114,7 @@ export const FormShell: FC<{
                 background="white"
               >
                 <Screen
+                  setUpdateForbidden={setUpdateForbidden}
                   application={storedApplication}
                   addExternalData={(payload) =>
                     dispatch({ type: ActionTypes.ADD_EXTERNAL_DATA, payload })

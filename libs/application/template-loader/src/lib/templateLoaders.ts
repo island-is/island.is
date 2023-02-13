@@ -101,6 +101,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
     ),
+  [ApplicationTypes.DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR]: () =>
+    import(
+      '@island.is/application/templates/driving-license-book-update-instructor'
+    ),
 }
 
 export default templates

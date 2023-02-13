@@ -229,9 +229,9 @@ export const PaymentPlanForm: Form = buildForm({
     formConclusionSection({
       alertMessage: conclusion.general.alertMessage,
       alertTitle: conclusion.general.alertTitle,
-      bulletHeader: conclusion.information.title,
-      bulletIntro: conclusion.information.intro,
-      bulletPoints: conclusion.information.bulletList,
+      expandableHeader: conclusion.information.title,
+      expandableIntro: conclusion.information.intro,
+      expandableDescription: conclusion.information.bulletList,
     }),
   ],
 })

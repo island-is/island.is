@@ -129,9 +129,7 @@ export const Applications: FC = () => {
   }
 
   if (!template) {
-    return (
-      <ErrorShell title={formatMessage(coreMessages.notFoundApplicationType)} />
-    )
+    return <ErrorShell errorType="notExist" />
   }
 
   if (!type || applicationsError) {
@@ -153,14 +151,7 @@ export const Applications: FC = () => {
         />
       )
     }
-    return (
-      <ErrorShell
-        title={formatMessage(coreMessages.notFoundApplicationType)}
-        subTitle={formatMessage(coreMessages.notFoundApplicationTypeMessage, {
-          type,
-        })}
-      />
-    )
+    return <ErrorShell errorType="notExist" />
   }
 
   if (createError) {
@@ -170,6 +161,7 @@ export const Applications: FC = () => {
         subTitle={formatMessage(coreMessages.createErrorApplicationMessage, {
           type,
         })}
+        description=""
       />
     )
   }
