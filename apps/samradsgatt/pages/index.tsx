@@ -126,7 +126,7 @@ export const Index = () => {
   const [options, setOptions] = useState<AsyncSearchOption[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { data: mtda, error, called } = useQuery(GetAllCases)
-
+  console.log(mtda)
   const clearAll = () => {
     setIsLoading(false)
     setOptions([])

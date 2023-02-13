@@ -25,11 +25,9 @@ class ConsultationPortalApplication extends App<AppProps> {
 
     return (
       <>
-        <ApolloProvider client={client}>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
-        </ApolloProvider>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
       </>
     )
   }

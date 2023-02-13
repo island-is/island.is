@@ -1,6 +1,6 @@
 {
   "/api": {
-    "target": "http://localhost:3333",
+    "target": "https://samradapi-test.island.is/",
     "secure": false
   }
 }

@@ -17,7 +17,7 @@ export class CaseResolver {
   constructor(private caseService: CaseResultService) {}
 
   @Query(() => [CaseResult], { name: 'consulationPortalCaseResult' })
-  async getDiscount(@CurrentUser() user: User): Promise<CaseResult[]> {
+  async getCases(@CurrentUser() user: User): Promise<CaseResult[]> {
     return this.caseService.getAllCases()
   }
 }
