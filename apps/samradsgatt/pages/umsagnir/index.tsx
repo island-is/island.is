@@ -27,6 +27,12 @@ type info = {
   processEnds: string
   created: string
   review: string
+  documents: Array<Document>
+}
+
+type Document = {
+  id: number
+  name: string
 }
 
 export const MyReviewPage = () => {
@@ -47,6 +53,10 @@ export const MyReviewPage = () => {
       created: '2023-01-13T15:46:27.82',
       review:
         'Þetta er mín umsögn. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget vulputate massa, ac posuere erat. Sed malesuada at ipsum a efficitur. Nam pellentesque semper sem, lacinia placerat enim sodales at. Nullam commodo auctor auctor. Etiam elit lorem, maximus in suscipit vitae, luctus eget sem.',
+      documents: [
+        { id: 1, name: 'Viðhengi 1' },
+        { id: 2, name: 'Viðhengi 2' },
+      ],
     },
     {
       id: 3025,
@@ -63,6 +73,10 @@ export const MyReviewPage = () => {
       created: '2023-01-10T15:48:35.207',
       review:
         'Þetta er mín umsögn. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget vulputate massa, ac posuere erat. Sed malesuada at ipsum a efficitur. Nam pellentesque semper sem, lacinia placerat enim sodales at. Nullam commodo auctor auctor. Etiam elit lorem, maximus in suscipit vitae, luctus eget sem.',
+      documents: [
+        { id: 1, name: 'Viðhengi 1' },
+        { id: 2, name: 'Viðhengi 2' },
+      ],
     },
     {
       id: 3019,
@@ -79,6 +93,10 @@ export const MyReviewPage = () => {
       created: '2022-10-07T15:51:21.59',
       review:
         'Þetta er mín umsögn. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget vulputate massa, ac posuere erat. Sed malesuada at ipsum a efficitur. Nam pellentesque semper sem, lacinia placerat enim sodales at. Nullam commodo auctor auctor. Etiam elit lorem, maximus in suscipit vitae, luctus eget sem.',
+      documents: [
+        { id: 1, name: 'Viðhengi 1' },
+        { id: 2, name: 'Viðhengi 2' },
+      ],
     },
     {
       id: 3017,
@@ -95,6 +113,10 @@ export const MyReviewPage = () => {
       created: '2022-05-04T11:12:59.877',
       review:
         'Þetta er mín umsögn. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget vulputate massa, ac posuere erat. Sed malesuada at ipsum a efficitur. Nam pellentesque semper sem, lacinia placerat enim sodales at. Nullam commodo auctor auctor. Etiam elit lorem, maximus in suscipit vitae, luctus eget sem.',
+      documents: [
+        { id: 1, name: 'Viðhengi 1' },
+        { id: 2, name: 'Viðhengi 2' },
+      ],
     },
     {
       id: 3013,
@@ -112,6 +134,10 @@ export const MyReviewPage = () => {
       created: '2022-04-26T16:47:03.447',
       review:
         'Þetta er mín umsögn. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget vulputate massa, ac posuere erat. Sed malesuada at ipsum a efficitur. Nam pellentesque semper sem, lacinia placerat enim sodales at. Nullam commodo auctor auctor. Etiam elit lorem, maximus in suscipit vitae, luctus eget sem.',
+      documents: [
+        { id: 1, name: 'Viðhengi 1' },
+        { id: 2, name: 'Viðhengi 2' },
+      ],
     },
     {
       id: 3016,
@@ -127,6 +153,10 @@ export const MyReviewPage = () => {
       processEnds: '2022-04-28T23:59:59',
       created: '2022-04-27T16:35:32.923',
       review: 'Þetta er mín umsögn',
+      documents: [
+        { id: 1, name: 'Viðhengi 1' },
+        { id: 2, name: 'Viðhengi 2' },
+      ],
     },
     {
       id: 3012,
@@ -143,6 +173,10 @@ export const MyReviewPage = () => {
       processEnds: '2022-05-02T23:59:59',
       created: '2022-04-26T16:26:59.167',
       review: 'Þetta er mín umsögn',
+      documents: [
+        { id: 1, name: 'Viðhengi 1' },
+        { id: 2, name: 'Viðhengi 2' },
+      ],
     },
     {
       id: 3011,
@@ -158,6 +192,10 @@ export const MyReviewPage = () => {
       processEnds: '2022-02-26T23:59:59',
       created: '2022-02-24T10:16:32.093',
       review: 'Þetta er mín umsögn',
+      documents: [
+        { id: 1, name: 'Viðhengi 1' },
+        { id: 2, name: 'Viðhengi 2' },
+      ],
     },
   ]
   //   const [searchValue, setSearchValue] = useState<string>('')

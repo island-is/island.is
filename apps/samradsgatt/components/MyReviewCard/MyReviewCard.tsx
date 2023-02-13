@@ -6,7 +6,7 @@ import {
   ArrowLink,
   Columns,
   Column,
-  Icon,
+  DropdownMenu,
 } from '@island.is/island-ui/core'
 import getTagVariants from '../../utils/helpers/getTagVariants'
 
@@ -20,6 +20,7 @@ type CardProps = {
   review: string
   type: string
   institution: string
+  documents: any
 }
 
 export const MyReviewCard = (caseData: CardProps) => {
@@ -103,9 +104,28 @@ export const MyReviewCard = (caseData: CardProps) => {
       <Columns>
         <Column width="content">
           <Box>
-            <Text variant="h5" color="purple400">
-              Viðhengi <Icon icon="chevronDown" />
-            </Text>
+            <DropdownMenu
+              icon="chevronDown"
+              // items =
+              // {...caseData.documents.map((document) => }
+              // items={caseData.documents}
+              items={[
+                {
+                  // href: '#',
+                  title: 'Viðhengi 1',
+                  onClick: () => {
+                    console.log('Viðhengi 1')
+                  },
+                },
+                {
+                  title: 'Viðhengi 2',
+                  onClick: () => {
+                    console.log('Viðhengi 2')
+                  },
+                },
+              ]}
+              title="Viðhengi"
+            />
           </Box>
         </Column>
         <Column width="content">
