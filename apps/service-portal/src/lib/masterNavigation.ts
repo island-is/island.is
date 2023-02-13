@@ -14,6 +14,7 @@ import { licenseNavigation } from '@island.is/service-portal/licenses'
 import { educationLicenseNavigation } from '@island.is/service-portal/education-license'
 import { vehiclesNavigation } from '@island.is/service-portal/vehicles'
 import { personalInformationNavigation } from '@island.is/service-portal/settings/personal-information'
+import { airDiscountNavigation } from '@island.is/service-portal/air-discount'
 import {
   delegationsNavigation,
   delegationsNavigationChildren,
@@ -44,6 +45,7 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
     assetsNavigation,
     financeNavigation,
     vehiclesNavigation,
+    airDiscountNavigation,
     {
       ...delegationsNavigation,
       children: [...delegationsNavigationChildren, sessionsNavigation],
