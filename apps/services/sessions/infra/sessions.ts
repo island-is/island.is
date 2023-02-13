@@ -6,20 +6,20 @@ const dbName = 'services_sessions'
 
 const servicePostgresInfo = {
   // The service has only read permissions
+  username: 'services_sessions_read',
+  name: dbName,
+  passwordSecret: '/k8s/services-sessions/readonly/DB_PASSWORD',
+}
+
+const workerPostgresInfo = {
+  // Worker has write permissions
   username: 'services_sessions',
   name: dbName,
   passwordSecret: '/k8s/services-sessions/DB_PASSWORD',
 }
 
-const workerPostgresInfo = {
-  // Worker has write permissions
-  username: 'services_sessions_worker',
-  name: dbName,
-  passwordSecret: '/k8s/services-sessions-worker/DB_PASSWORD',
-}
-
-export const serviceSetup = (): ServiceBuilder<'services-sessions-api'> => {
-  return service('services-sessions-api')
+export const serviceSetup = (): ServiceBuilder<'services-sessions'> => {
+  return service('services-sessions')
     .namespace(namespace)
     .image(imageName)
     .postgres(servicePostgresInfo)
@@ -88,6 +88,8 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
         NO_UPDATE_NOTIFIER: 'true',
       },
     })
+    .liveness('/liveness')
+    .readiness('/liveness')
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
@@ -107,5 +109,3 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
       },
       REDIS_USE_SSL: 'true',
     })
-    .liveness('/liveness')
-    .readiness('/liveness')

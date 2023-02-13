@@ -241,6 +241,7 @@
     - [Core](libs/portals/admin/core/README.md)
   - [Core](libs/portals/core/README.md)
 - [React Libraries](libs/react/README.md)
+  - [React Components](libs/react/components/README.md)
   - [Feature Flags](libs/react/feature-flags/README.md)
 - [Regulations](libs/regulations/README.md)
 - [Residence History](libs/residence-history/README.md)

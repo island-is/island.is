@@ -289,6 +289,7 @@ api:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
     SERVICE_USER_PROFILE_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
+    SESSIONS_API_URL: 'http://web-services-sessions.services-sessions.svc.cluster.local'
     SOFFIA_SOAP_URL: 'https://soffia2.skra.is'
     SYSLUMENN_TIMEOUT: '40000'
     TELL_US_A_STORY_EMAIL: 'sogur@island.is'
@@ -1645,13 +1646,13 @@ services-documents:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-services-sessions-api:
+services-sessions:
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
-    DB_USER: 'services_sessions'
+    DB_USER: 'services_sessions_read'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
@@ -1718,7 +1719,7 @@ services-sessions-worker:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
-    DB_USER: 'services_sessions_worker'
+    DB_USER: 'services_sessions'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
@@ -1765,7 +1766,7 @@ services-sessions-worker:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'services_sessions'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
-      DB_USER: 'services_sessions_worker'
+      DB_USER: 'services_sessions'
       NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
