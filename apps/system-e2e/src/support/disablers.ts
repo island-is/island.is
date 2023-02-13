@@ -150,7 +150,11 @@ export async function mockQGL<T>(
   })
 }
 
-export async function disableObjectKey<T>(page: Page, key: Matchable, mockData?: T) {
+export async function disableObjectKey<T>(
+  page: Page,
+  key: Matchable,
+  mockData?: T,
+) {
   return await mockQGL(page, '**', mockData ?? `MOCKED-${key}`, {
     deepMockKey: key,
     patchResponse: true,
