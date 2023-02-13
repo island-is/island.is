@@ -118,6 +118,7 @@ const EstateTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT_PRIVATE_EXCHANGE,
               formLoader: () =>
+                //TODO: check if we can merge PrivateExchange and ResidencePermit forms
                 import('../forms/PrivateExchange/form').then((module) =>
                   Promise.resolve(module.form),
                 ),
