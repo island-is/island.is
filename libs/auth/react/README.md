@@ -46,9 +46,9 @@ Then you can render the Authenticator component around your application to wrap 
 ```typescript jsx
 ReactDOM.render(
   <Router>
-    <Authenticator>
+    <AuthProvider basePath="/some_base_path">
       <App />
-    </Authenticator>
+    </AuthProvider>
   </Router>,
   document.getElementById('root'),
 )

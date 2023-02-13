@@ -67,8 +67,8 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
           {formatMessage(overview.general.description)}
         </Text>
         <VehicleSection {...props} />
-        <OwnerSection {...props} />
-        <CoOwnersSection {...props} />
+        <OwnerSection reviewerNationalId={reviewerNationalId} {...props} />
+        <CoOwnersSection reviewerNationalId={reviewerNationalId} {...props} />
         <Box marginTop={14}>
           <Divider />
           <Box display="flex" justifyContent="spaceBetween" paddingY={5}>

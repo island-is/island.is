@@ -297,6 +297,7 @@ api:
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
     SERVICE_USER_PROFILE_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
+    SESSIONS_API_URL: 'http://web-services-sessions.services-sessions.svc.cluster.local'
     SOFFIA_SOAP_URL: 'https://soffiaprufa.skra.is'
     SYSLUMENN_TIMEOUT: '40000'
     TELL_US_A_STORY_EMAIL: 's@kogk.is'
@@ -1892,7 +1893,7 @@ services-documents:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-services-sessions-api:
+services-sessions:
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
@@ -2261,6 +2262,7 @@ user-notification:
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN'
     FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials'
   securityContext:
     allowPrivilegeEscalation: false

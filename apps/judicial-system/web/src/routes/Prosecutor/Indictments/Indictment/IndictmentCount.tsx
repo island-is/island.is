@@ -1,44 +1,163 @@
-import React from 'react'
+import React, { useMemo, useState, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
+import InputMask from 'react-input-mask'
 
-import { Box, Input, Select, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  Input,
+  Select,
+  Button,
+  Tag,
+  Icon,
+} from '@island.is/island-ui/core'
 import {
   ReactSelectOption,
   TempCase as Case,
 } from '@island.is/judicial-system-web/src/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
-import { IndictmentCount as TIndictmentCount } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  IndictmentCount as TIndictmentCount,
+  IndictmentCountOffense,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  removeErrorMessageIfValid,
+  validateAndSetErrorMessage,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 
 import { indictmentCount as strings } from './IndictmentCount.strings'
+import { indictmentCountEnum as enumStrings } from './IndictmentCountEnum.strings'
 
 interface Props {
   indictmentCount: TIndictmentCount
   workingCase: Case
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   onChange: (
     indictmentCountId: string,
     updatedIndictmentCount: UpdateIndictmentCount,
   ) => void
   onDelete?: (indictmentCountId: string) => Promise<void>
+  updateIndictmentCountState: (
+    indictmentCountId: string,
+    update: UpdateIndictmentCount,
+    setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
+  ) => void
+}
+
+const laws = [
+  [48, 1], // lyf
+  [48, 2], // lyf
+  [49, 1], // ölvun
+  [49, 2], // ölvun
+  [49, 3], // ölvun
+  [50, 1], // fíkniefni
+  [50, 2], // fíkniefni
+  [58, 1], // sviptingarakstur
+  [95, 1], // á alltaf við öll þessi brot,
+]
+
+function lawsCompare(law1: number[], law2: number[]) {
+  if (law1[0] < law2[0]) {
+    return -1
+  }
+  if (law1[0] > law2[0]) {
+    return 1
+  }
+  if (law1[1] < law2[1]) {
+    return -1
+  }
+  if (law1[1] > law2[1]) {
+    return 1
+  }
+  return 0
+}
+
+interface LawsBrokenOption {
+  label: string
+  value: string
+  index: number
+  disabled: boolean
 }
 
 export const IndictmentCount: React.FC<Props> = (props) => {
-  const { indictmentCount, workingCase, onChange, onDelete } = props
+  const {
+    indictmentCount,
+    workingCase,
+    onChange,
+    onDelete,
+    updateIndictmentCountState,
+    setWorkingCase,
+  } = props
   const { formatMessage } = useIntl()
+
+  const [
+    vehicleRegistrationNumberErrorMessage,
+    setVehicleRegistrationNumberErrorMessage,
+  ] = useState<string>('')
+  const [
+    legalArgumentsErrorMessage,
+    setLegalArgumentsErrorMessage,
+  ] = useState<string>('')
 
   function todoHandle(index: number) {
     //(index, 'todo')
   }
 
-  const todoOptions = [
-    'Sviptingarakstur',
-    'Ölvunarakstur',
-    'Fíkniefnaakstur',
-  ].map((option) => ({
-    value: option,
-    label: option,
+  const offensesList = Object.values(IndictmentCountOffense).map((offense) => ({
+    value: offense,
+    label: formatMessage(enumStrings[offense]),
+    disabled: indictmentCount.offenses?.includes(offense),
   }))
+
+  const lawTag = useCallback(
+    (law: number[]): string =>
+      formatMessage(strings.lawsBrokenTag, {
+        paragraph: law[1],
+        article: law[0],
+      }),
+    [formatMessage],
+  )
+
+  const lawsBrokenOptions: LawsBrokenOption[] = useMemo(
+    () =>
+      laws.map((law, index) => ({
+        label: lawTag(law),
+        value: `${index}`,
+        index: index,
+        disabled: Boolean(
+          indictmentCount.lawsBroken?.find(
+            (brokenLaw) => brokenLaw[0] === law[0] && brokenLaw[1] === law[1],
+          ),
+        ),
+      })),
+    [lawTag, indictmentCount.lawsBroken],
+  )
+
+  const legalArguments = useCallback(
+    (lawsBroken?: number[][] | null) => {
+      if (!lawsBroken || lawsBroken.length === 0) {
+        return ''
+      }
+
+      let articles = `${lawsBroken[0][1]}.`
+
+      for (let i = 1; i < lawsBroken.length; i++) {
+        if (lawsBroken[i][0] !== lawsBroken[i - 1][0]) {
+          articles = `${articles} mgr. ${lawsBroken[i - 1][0]}. gr.`
+        }
+
+        articles = `${articles}, sbr. ${lawsBroken[i][1]}.`
+      }
+
+      return formatMessage(strings.legalArgumentsAutofill, {
+        articles: `${articles} mgr. ${
+          lawsBroken[lawsBroken.length - 1][0]
+        }. gr.`,
+      })
+    },
+    [formatMessage],
+  )
 
   return (
     <BlueBox>
@@ -82,47 +201,160 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           required
         />
       </Box>
-      {/* TODO: Finish rest of form here below*/}
       <Box marginBottom={2}>
-        <Input
-          name="vehicleLicensePlate"
-          autoComplete="off"
-          label={formatMessage(strings.vehicleLicencePlateLabel)}
-          placeholder={formatMessage(strings.vehicleLicencePlatePlaceholder)}
-          value={''}
-          onChange={() => {
-            todoHandle(1)
+        <InputMask
+          mask={'**-*99'}
+          maskPlaceholder={null}
+          value={indictmentCount.vehicleRegistrationNumber ?? ''}
+          beforeMaskedStateChange={({ nextState }) => {
+            let { value } = nextState
+            value = value.toUpperCase()
+
+            return { ...nextState, value }
           }}
-        />
+          onChange={(event) => {
+            removeErrorMessageIfValid(
+              ['empty', 'vehicle-registration-number'],
+              event.target.value,
+              vehicleRegistrationNumberErrorMessage,
+              setVehicleRegistrationNumberErrorMessage,
+            )
+
+            updateIndictmentCountState(
+              indictmentCount.id,
+              {
+                vehicleRegistrationNumber: event.target.value,
+              },
+              setWorkingCase,
+            )
+          }}
+          onBlur={async (event) => {
+            validateAndSetErrorMessage(
+              ['empty', 'vehicle-registration-number'],
+              event.target.value,
+              setVehicleRegistrationNumberErrorMessage,
+            )
+            onChange(indictmentCount.id, {
+              vehicleRegistrationNumber: event.target.value,
+            })
+          }}
+        >
+          <Input
+            name="vehicleRegistrationNumber"
+            autoComplete="off"
+            label={formatMessage(strings.vehicleRegistrationNumberLabel)}
+            placeholder={formatMessage(
+              strings.vehicleRegistrationNumberPlaceholder,
+            )}
+            hasError={vehicleRegistrationNumberErrorMessage !== ''}
+            errorMessage={vehicleRegistrationNumberErrorMessage}
+            required
+          />
+        </InputMask>
       </Box>
       <Box marginBottom={2}>
         <Select
-          name="incident"
-          options={todoOptions}
+          name="offenses"
+          options={offensesList}
           label={formatMessage(strings.incidentLabel)}
           placeholder={formatMessage(strings.incidentPlaceholder)}
-          onChange={() => {
-            todoHandle(1)
+          onChange={(so: ValueType<ReactSelectOption>) => {
+            const selectedOffense = (so as ReactSelectOption)
+              .value as IndictmentCountOffense
+            onChange(indictmentCount.id, {
+              offenses: [...(indictmentCount.offenses || []), selectedOffense],
+            })
           }}
           value={null}
           required
         />
       </Box>
+      {indictmentCount.offenses && indictmentCount.offenses.length > 0 && (
+        <Box marginBottom={2}>
+          {indictmentCount.offenses.map((offense) => (
+            <Box
+              display="inlineBlock"
+              key={`${offense}`}
+              component="span"
+              marginBottom={1}
+              marginRight={1}
+            >
+              <Tag
+                variant="darkerBlue"
+                onClick={() => {
+                  onChange(indictmentCount.id, {
+                    offenses: indictmentCount.offenses?.filter(
+                      (o) => o !== offense,
+                    ),
+                  })
+                }}
+              >
+                <Box display="flex" alignItems="center">
+                  {formatMessage(enumStrings[offense])}
+                  <Icon icon="close" size="small" />
+                </Box>
+              </Tag>
+            </Box>
+          ))}
+        </Box>
+      )}
       <Box marginBottom={2}>
         <Select
-          name="legalArgument"
-          icon="search"
-          options={todoOptions}
-          label={formatMessage(strings.legalArgumentLabel)}
-          placeholder={formatMessage(strings.legalArgumentPlaceholder)}
+          name="lawsBroken"
+          options={lawsBrokenOptions}
+          label={formatMessage(strings.lawsBrokenLabel)}
+          placeholder={formatMessage(strings.lawsBrokenPlaceholder)}
           value={null}
-          onChange={() => {
-            todoHandle(1)
+          onChange={(selectedOption: ValueType<ReactSelectOption>) => {
+            const index = (selectedOption as LawsBrokenOption).index
+            const lawsBroken = [
+              ...(indictmentCount.lawsBroken ?? []),
+              laws[index],
+            ].sort(lawsCompare)
+            onChange(indictmentCount.id, {
+              lawsBroken: lawsBroken,
+              legalArguments: legalArguments(lawsBroken),
+            })
           }}
-          filterConfig={{ matchFrom: 'start' }}
-          isCreatable
+          required
         />
       </Box>
+      {indictmentCount.lawsBroken && indictmentCount.lawsBroken.length > 0 && (
+        <Box marginBottom={2}>
+          {indictmentCount.lawsBroken.map((brokenLaw, index) => (
+            <Box
+              display="inlineBlock"
+              key={`${indictmentCount.id}-${brokenLaw}`}
+              component="span"
+              marginBottom={1}
+              marginRight={1}
+            >
+              <Tag
+                variant="darkerBlue"
+                onClick={() => {
+                  if (!indictmentCount.lawsBroken) {
+                    return
+                  }
+
+                  const lawsBroken = indictmentCount.lawsBroken
+                    .slice(0, index)
+                    .concat(indictmentCount.lawsBroken.slice(index + 1))
+                  onChange(indictmentCount.id, {
+                    lawsBroken: lawsBroken,
+                    legalArguments: legalArguments(lawsBroken),
+                  })
+                }}
+                aria-label={lawTag(brokenLaw)}
+              >
+                <Box display="flex" alignItems="center">
+                  {lawTag(brokenLaw)}
+                  <Icon icon="close" size="small" />
+                </Box>
+              </Tag>
+            </Box>
+          ))}
+        </Box>
+      )}
       <Box component="section" marginBottom={2}>
         <Box marginBottom={2}>
           <Input
@@ -144,16 +376,38 @@ export const IndictmentCount: React.FC<Props> = (props) => {
       <Box component="section" marginBottom={2}>
         <Box marginBottom={2}>
           <Input
-            name="legalArgumentDescription"
-            label={formatMessage(strings.legalArgumentDescriptionLabel)}
-            placeholder={formatMessage(
-              strings.legalArgumentDescriptionPlaceholder,
-            )}
-            errorMessage={''}
-            hasError={false}
-            value={''}
-            onChange={() => todoHandle(1)}
-            onBlur={() => todoHandle(1)}
+            name="legalArguments"
+            label={formatMessage(strings.legalArgumentsLabel)}
+            placeholder={formatMessage(strings.legalArgumentsPlaceholder)}
+            errorMessage={legalArgumentsErrorMessage}
+            hasError={legalArgumentsErrorMessage !== ''}
+            value={indictmentCount.legalArguments ?? ''}
+            onChange={(event) => {
+              removeErrorMessageIfValid(
+                ['empty'],
+                event.target.value,
+                legalArgumentsErrorMessage,
+                setLegalArgumentsErrorMessage,
+              )
+
+              updateIndictmentCountState(
+                indictmentCount.id,
+                { legalArguments: event.target.value },
+                setWorkingCase,
+              )
+            }}
+            onBlur={(event) => {
+              validateAndSetErrorMessage(
+                ['empty'],
+                event.target.value,
+                setLegalArgumentsErrorMessage,
+              )
+
+              onChange(indictmentCount.id, {
+                legalArguments: event.target.value.trim(),
+              })
+            }}
+            autoComplete="off"
             required
             rows={7}
             autoExpand={{ on: true, maxHeight: 600 }}

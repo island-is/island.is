@@ -20,16 +20,16 @@ export const indictmentCount = defineMessages({
     description:
       'Notaður sem skýritexti á LÖKE málsnúmers lista á ákæruliða skrefi í ákærum.',
   },
-  vehicleLicencePlateLabel: {
+  vehicleRegistrationNumberLabel: {
     id:
-      'judicial.system.core:indictments_indictment.indictment_count.vehicle_licence_plate_label',
+      'judicial.system.core:indictments_indictment.indictment_count.vehicle_registration_number_label',
     defaultMessage: 'Skráningarnúmer ökutækis',
     description:
       'Notaður sem titill á "skráningarnúmer ökutækis" svæði á ákæruliða skrefi í ákærum.',
   },
-  vehicleLicencePlatePlaceholder: {
+  vehicleRegistrationNumberPlaceholder: {
     id:
-      'judicial.system.core:indictments_indictment.indictment_count.vehicle_licence_plate_placeholder',
+      'judicial.system.core:indictments_indictment.indictment_count.vehicle_registration_number_placeholder',
     defaultMessage: 'AB-123',
     description:
       'Notaður sem skýritexti á "skráningarnúmer ökutækis" svæði á ákæruliða skrefi í ákærum.',
@@ -62,32 +62,45 @@ export const indictmentCount = defineMessages({
     description:
       'Notaður sem skýritexti á "atvikalýsing" svæði á ákæruliða skrefi í ákærum.',
   },
-  legalArgumentLabel: {
+  lawsBrokenLabel: {
     id:
-      'judicial.system.core:indictments_indictment.indictment_count.legal_argument_label',
+      'judicial.system.core:indictments_indictment.indictment_count.laws_broken_label',
     defaultMessage: 'Lagaákvæði',
     description:
       'Notaður sem titill á "lagaákvæði" leitarboxi á ákæruliða skrefi í ákærum.',
   },
-  legalArgumentPlaceholder: {
+  lawsBrokenPlaceholder: {
     id:
-      'judicial.system.core:indictments_indictment.indictment_count.legal_argument_placeholder',
+      'judicial.system.core:indictments_indictment.indictment_count.laws_broken_placeholder',
     defaultMessage: 'Leitaðu að lagaákvæði',
     description:
       'Notaður sem skýritexti á "lagaákvæði" leitarboxi á ákæruliða skrefi í ákærum.',
   },
-  legalArgumentDescriptionLabel: {
+  lawsBrokenTag: {
     id:
-      'judicial.system.core:indictments_indictment.indictment_count.legal_argument_description_label',
+      'judicial.system.core:indictments_indictment.indictment_count.laws_broken_tag',
+    defaultMessage: '{paragraph}. mgr. {article}. gr. umfl.',
+    description: 'Notaður sem texti í lagaákvæði taggi.',
+  },
+  legalArgumentsLabel: {
+    id:
+      'judicial.system.core:indictments_indictment.indictment_count.legal_arguments_label',
     defaultMessage: 'Heimfærsla',
     description:
       'Notaður sem titill á "heimfærslu" svæði á ákæruliða skrefi í ákærum.',
   },
-  legalArgumentDescriptionPlaceholder: {
+  legalArgumentsPlaceholder: {
     id:
-      'judicial.system.core:indictments_indictment.indictment_count.legal_argument_description_placeholder',
+      'judicial.system.core:indictments_indictment.indictment_count.legal_arguments_placeholder',
     defaultMessage: 'Skrifaðu heimfærslu',
     description:
       'Notaður sem skýritexti á "heimfærslu" svæði á ákæruliða skrefi í ákærum.',
+  },
+  legalArgumentsAutofill: {
+    id:
+      'judicial.system.core:indictments_indictment.indictment_count.legal_arguments_autofill',
+    defaultMessage:
+      'Telst háttsemi þessi varða við {articles} umferðarlaga nr. 77/2019.',
+    description: 'Notaður sem sjálfgefinn texti í heimfærslu svæði.',
   },
 })

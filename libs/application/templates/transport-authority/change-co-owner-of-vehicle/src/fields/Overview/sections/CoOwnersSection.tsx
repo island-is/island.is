@@ -3,12 +3,23 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { FC } from 'react'
 import { Text, GridRow, GridColumn, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { overview } from '../../../lib/messages'
-import { OwnerCoOwnersInformation, UserInformation } from '../../../shared'
+import { overview, review } from '../../../lib/messages'
+import {
+  OwnerCoOwnersInformation,
+  UserInformation,
+  ReviewScreenProps,
+} from '../../../shared'
 import { getValueViaPath } from '@island.is/application/core'
-import { ReviewGroup } from '@island.is/application/ui-components'
+import {
+  formatPhoneNumber,
+  ReviewGroup,
+} from '@island.is/application/ui-components'
+import kennitala from 'kennitala'
 
-export const CoOwnersSection: FC<FieldBaseProps> = ({ application }) => {
+export const CoOwnersSection: FC<FieldBaseProps & ReviewScreenProps> = ({
+  application,
+  reviewerNationalId = '',
+}) => {
   const { formatMessage } = useLocale()
   const ownerCoOwners = getValueViaPath(
     application.answers,
@@ -31,23 +42,26 @@ export const CoOwnersSection: FC<FieldBaseProps> = ({ application }) => {
         wasRemoved: coOwner.wasRemoved,
       }
     }),
-    ...coOwners.map((coOwner) => {
-      return {
-        name: coOwner.name,
-        nationalId: coOwner.nationalId,
-        email: coOwner.email,
-        phone: coOwner.phone,
-        wasRemoved: 'false',
-      }
-    }),
+    ...coOwners
+      .filter(({ wasRemoved }) => wasRemoved !== 'true')
+      .map((coOwner) => {
+        return {
+          name: coOwner.name,
+          nationalId: coOwner.nationalId,
+          email: coOwner.email,
+          phone: coOwner.phone,
+          wasRemoved: 'false',
+        }
+      }),
   ]
 
-  return coOwners.length > 0 ? (
+  return allCoOwners.length > 0 ? (
     <ReviewGroup isLast>
       <GridRow>
         {allCoOwners?.map(
           ({ name, nationalId, email, phone, wasRemoved }, index: number) => {
             if (name.length === 0) return null
+            const isCoOwner = nationalId === reviewerNationalId
             return (
               <GridColumn
                 span={['12/12', '12/12', '12/12', '6/12']}
@@ -59,12 +73,13 @@ export const CoOwnersSection: FC<FieldBaseProps> = ({ application }) => {
                     {allCoOwners.length > 1 ? index + 1 : ''}{' '}
                     {wasRemoved === 'true'
                       ? `(${formatMessage(overview.labels.coOwnerRemoved)})`
-                      : ''}
+                      : ''}{' '}
+                    {isCoOwner && `(${formatMessage(review.status.youLabel)})`}
                   </Text>
                   <Text>{name}</Text>
-                  <Text>{nationalId}</Text>
+                  <Text>{kennitala.format(nationalId, '-')}</Text>
                   <Text>{email}</Text>
-                  <Text>{phone}</Text>
+                  <Text>{formatPhoneNumber(phone)}</Text>
                 </Box>
               </GridColumn>
             )
