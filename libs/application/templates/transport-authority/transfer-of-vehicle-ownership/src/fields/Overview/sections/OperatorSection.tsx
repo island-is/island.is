@@ -3,7 +3,7 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { FC } from 'react'
 import { Text, GridRow, GridColumn, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { information } from '../../../lib/messages'
+import { information, review } from '../../../lib/messages'
 import { ReviewScreenProps } from '../../../shared'
 import { ReviewGroup } from '../../ReviewGroup'
 import kennitala from 'kennitala'
@@ -11,6 +11,7 @@ import { formatPhoneNumber } from '../../../utils'
 
 export const OperatorSection: FC<FieldBaseProps & ReviewScreenProps> = ({
   coOwnersAndOperators = [],
+  reviewerNationalId = '',
 }) => {
   const { formatMessage } = useLocale()
 
@@ -21,6 +22,7 @@ export const OperatorSection: FC<FieldBaseProps & ReviewScreenProps> = ({
       <GridRow>
         {operators?.map(({ name, nationalId, email, phone }, index: number) => {
           if (name.length === 0) return null
+          const isOperator = nationalId === reviewerNationalId
           return (
             <GridColumn
               span={['12/12', '12/12', '12/12', '6/12']}
@@ -32,7 +34,8 @@ export const OperatorSection: FC<FieldBaseProps & ReviewScreenProps> = ({
                   {operators.length > 1 ? index + 1 : ''}{' '}
                   {operators.length > 1 && index === 0
                     ? `(${formatMessage(information.labels.operator.main)})`
-                    : ''}
+                    : ''}{' '}
+                  {isOperator && `(${formatMessage(review.status.youLabel)})`}
                 </Text>
                 <Text>{name}</Text>
                 <Text>{kennitala.format(nationalId, '-')}</Text>
