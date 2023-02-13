@@ -37,8 +37,8 @@ export const Confirmation: Form = buildForm({
       children: [],
     }),
     formConclusionSection({
-      alertTitle: confirmation.general.title,
-      alertMessage: confirmation.general.alertMessageTitle,
+      alertTitle: confirmation.general.alertTitle,
+      alertMessage: confirmation.general.alertMessage,
       expandableHeader: confirmation.general.accordionTitle,
       expandableDescription: confirmation.general.accordionText,
     }),

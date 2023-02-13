@@ -2,25 +2,20 @@ import { defineMessages } from 'react-intl'
 
 export const confirmation = {
   general: defineMessages({
-    title: {
-      id: 'ta.dtwc.application:confirmation.general.title',
-      defaultMessage: 'Umsókn móttekin!',
-      description: 'Title of confirmation screen',
-    },
     sectionTitle: {
       id: 'ta.dtwc.application:confirmation.general.sectionTitle',
       defaultMessage: 'Staðfesting',
       description: 'Title of confirmation screen',
     },
-    alertMessageTitle: {
-      id: 'ta.dtwc.application:confirmation.general.alertMessageTitle',
-      defaultMessage: 'Umsókn móttekin',
-      description: 'Confirmation general alert message title',
+    alertTitle: {
+      id: 'ta.dtwc.application:confirmation.general.alertTitle',
+      defaultMessage: 'Umsókn þín hefur verið móttekin',
+      description: 'Confirmation general alert title',
     },
-    alertMessageText: {
-      id: 'ta.dtwc.application:confirmation.general.alertMessageText',
-      defaultMessage: 'Umsókn hefur verið móttekin',
-      description: 'Confirmation general alert message text',
+    alertMessage: {
+      id: 'ta.dtwc.application:confirmation.general.alertMessage',
+      defaultMessage: 'Umsókn þín um verkstæðiskort hefur verið móttekin',
+      description: 'Confirmation general alert message',
     },
     accordionTitle: {
       id: 'ta.dtwc.application:confirmation.general.accordionTitle',
