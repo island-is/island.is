@@ -6,12 +6,12 @@ import { review } from '../../lib/messages'
 import { ReviewScreenProps } from '../../shared'
 import { getReviewSteps, hasReviewerApproved } from '../../utils'
 import { StatusStep } from './StatusStep'
+import { MessageWithLinkButtonFormField } from '../MessageWithLinkButtonField'
 
-export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
-  application,
-  setStep,
-  reviewerNationalId = '',
-}) => {
+export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = (
+  props,
+) => {
+  const { application, setStep, reviewerNationalId = '' } = props
   const { formatMessage } = useLocale()
 
   const steps = getReviewSteps(application)
@@ -65,30 +65,7 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
         </>
       )}
 
-      {!showReviewButton && (
-        <>
-          <Divider />
-          <Box
-            display="flex"
-            justifyContent="flexEnd"
-            paddingTop={4}
-            marginBottom={4}
-          >
-            <Button
-              icon="arrowForward"
-              iconType="outline"
-              onClick={() => {
-                window.open(
-                  `${window.location.origin}/minarsidur/umsoknir#${application.id}`,
-                  '_blank',
-                )
-              }}
-            >
-              {formatMessage(review.buttons.openMySiteLinkText)}
-            </Button>
-          </Box>
-        </>
-      )}
+      {!showReviewButton && <MessageWithLinkButtonFormField {...props} />}
     </Box>
   )
 }
