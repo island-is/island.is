@@ -151,7 +151,7 @@ export async function mockQGL<T>(
 }
 
 export async function disableObjectKey(page: Page, key: Matchable) {
-  return await mockQGL(page, '**', null, {
+  return await mockQGL(page, '**', `MOCKED-${key}`, {
     deepMockKey: key,
     patchResponse: true,
   })
@@ -179,4 +179,8 @@ export async function disableI18n(page: Page) {
   return await mockQGL(page, 'GetTranslations', {
     'mock.translation': 'YES-mocked',
   })
+}
+
+export async function disableDelegations(page: Page) {
+  return await mockQGL(page, 'ActorDelegations', [])
 }
