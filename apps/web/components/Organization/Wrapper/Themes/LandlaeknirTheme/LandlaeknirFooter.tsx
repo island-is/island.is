@@ -46,7 +46,7 @@ const LandLaeknirFooter = ({
   const n = useNamespace(namespace)
   return (
     <footer aria-labelledby="organizationFooterTitle">
-      <Box className={styles.container}>
+      <div className={styles.container}>
         <GridContainer className={styles.mainColumn}>
           <GridColumn>
             <GridRow>
@@ -213,7 +213,7 @@ const LandLaeknirFooter = ({
             </GridRow>
           </GridColumn>
         </GridContainer>
-      </Box>
+      </div>
     </footer>
   )
 }

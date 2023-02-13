@@ -5,11 +5,17 @@ import { Text, GridRow, GridColumn } from '@island.is/island-ui/core'
 import { getValueViaPath } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { information } from '../../../lib/messages'
-import { ReviewGroup } from '@island.is/application/ui-components'
+import {
+  formatPhoneNumber,
+  ReviewGroup,
+} from '@island.is/application/ui-components'
+import kennitala from 'kennitala'
 
 export const OwnerSection: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const { answers } = application
+  const phone = getValueViaPath(answers, 'owner.phone', '') as string
+  const nationalId = getValueViaPath(answers, 'owner.nationalId', '') as string
   return (
     <ReviewGroup isLast>
       <GridRow>
@@ -18,11 +24,9 @@ export const OwnerSection: FC<FieldBaseProps> = ({ application }) => {
             {formatMessage(information.labels.owner.title)}
           </Text>
           <Text>{getValueViaPath(answers, 'owner.name', '') as string}</Text>
-          <Text>
-            {getValueViaPath(answers, 'owner.nationalId', '') as string}
-          </Text>
+          <Text>{kennitala.format(nationalId, '-')}</Text>
           <Text>{getValueViaPath(answers, 'owner.email', '') as string}</Text>
-          <Text>{getValueViaPath(answers, 'owner.phone', '') as string}</Text>
+          <Text>{formatPhoneNumber(phone)}</Text>
         </GridColumn>
       </GridRow>
     </ReviewGroup>
