@@ -21,6 +21,7 @@ import { ActorDelegationsService } from './services/actorDelegations.service'
 import { DomainService } from './services/domain.service'
 import { MeDelegationsService } from './services/meDelegations.service'
 import { ApiScopeService } from './services/apiScope.service'
+import { ClientsService } from './services/clients.service'
 
 @Module({
   providers: [
@@ -38,6 +39,7 @@ import { ApiScopeService } from './services/apiScope.service'
     ClientLoader,
     DomainLoader,
     CmsModule,
+    ClientsService,
   ],
   imports: [
     AuthPublicApiClientModule,
