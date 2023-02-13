@@ -55,7 +55,8 @@
     "url-parse-lax",
     "safer-buffer",
     "ioredis",
-    "bull"
+    "bull",
+    "geoip-lite"
   ],
   "keepNames": true
 }
