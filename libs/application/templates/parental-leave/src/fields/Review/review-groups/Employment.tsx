@@ -67,7 +67,7 @@ export const Employment = ({
           </GridColumn>
         </GridRow>
       )}
-      {isSelfEmployed === NO && (
+      {isSelfEmployed === NO && isReceivingUnemploymentBenefits === NO && (
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <Label>

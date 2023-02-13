@@ -567,7 +567,7 @@ export const ParentalLeaveForm: Form = buildForm({
 
             return (
               applicationType === PARENTAL_LEAVE &&
-              isReceivingUnemploymentBenefits &&
+              isReceivingUnemploymentBenefits === NO &&
               isNotSelfEmployed
             )
           },
@@ -577,15 +577,6 @@ export const ParentalLeaveForm: Form = buildForm({
             buildRepeater({
               id: 'employers',
               title: parentalLeaveFormMessages.employer.title,
-              condition: (answers) => {
-                const {
-                  isReceivingUnemploymentBenefits,
-                  isSelfEmployed,
-                } = getApplicationAnswers(answers)
-                const isNotSelfEmployed = isSelfEmployed !== YES
-
-                return isReceivingUnemploymentBenefits && isNotSelfEmployed
-              },
               component: 'EmployersOverview',
               children: [
                 buildMultiField({

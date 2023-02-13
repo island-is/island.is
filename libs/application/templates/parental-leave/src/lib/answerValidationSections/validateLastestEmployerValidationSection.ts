@@ -4,7 +4,9 @@ import { AnswerValidationError } from '@island.is/application/core'
 import { buildError, ValidateField, validateFieldInDictionary } from './utils'
 import { isValidEmail } from '../isValidEmail'
 import { isArray } from 'lodash'
-import { AnswerValidationConstants } from '../../constants'
+import { AnswerValidationConstants, PARENTAL_LEAVE, YES } from '../../constants'
+import { Application } from '@island.is/application/types'
+import { getApplicationAnswers } from '../parentalLeaveUtils'
 const { EMPLOYERS } = AnswerValidationConstants
 
 const validateEmployerRepeaterFields = (
@@ -38,8 +40,24 @@ const validateEmployerRepeaterFields = (
   }
 }
 
-export const validateLatestEmployerValidationSection = (newAnswer: unknown) => {
+export const validateLatestEmployerValidationSection = (
+  newAnswer: unknown,
+  application: Application,
+) => {
   const employers = newAnswer as EmployerRow[] | undefined
+  const {
+    isSelfEmployed,
+    isReceivingUnemploymentBenefits,
+    applicationType,
+  } = getApplicationAnswers(application.answers)
+
+  if (
+    isSelfEmployed === YES ||
+    isReceivingUnemploymentBenefits === YES ||
+    applicationType !== PARENTAL_LEAVE
+  ) {
+    return undefined
+  }
 
   if (!isArray(employers)) {
     return buildError(errorMessages.employersNotAList, 'employers', EMPLOYERS)
