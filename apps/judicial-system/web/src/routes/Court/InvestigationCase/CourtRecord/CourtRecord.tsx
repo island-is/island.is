@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -20,7 +20,11 @@ import {
   RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  useDeb,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   closedCourt,
   core,
@@ -85,8 +89,6 @@ const getSessionBookingsAutofill = (
 }
 
 const CourtRecord = () => {
-  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-
   const { setAndSendCaseToServer, updateCase } = useCase()
   const { formatMessage } = useIntl()
   const {
@@ -111,104 +113,90 @@ const CourtRecord = () => {
     'endOfSessionBookings',
   ])
 
-  useEffect(() => {
-    if (isCaseUpToDate && !initialAutoFillDone) {
-      const autofillAttendees = []
+  const initialize = useCallback(() => {
+    const autofillAttendees = []
 
-      if (workingCase.courtAttendees !== '') {
-        if (workingCase.prosecutor) {
-          autofillAttendees.push(
-            `${workingCase.prosecutor.name} ${workingCase.prosecutor.title}`,
-          )
-        }
-
-        if (
-          workingCase.defenderName &&
-          workingCase.sessionArrangements !==
-            SessionArrangements.PROSECUTOR_PRESENT
-        ) {
-          autofillAttendees.push(
-            `\n${workingCase.defenderName} skipaður ${
-              workingCase.sessionArrangements ===
-              SessionArrangements.ALL_PRESENT_SPOKESPERSON
-                ? 'talsmaður'
-                : 'verjandi'
-            } ${formatMessage(core.defendant, { suffix: 'a' })}`,
-          )
-        }
-
-        if (workingCase.translator) {
-          autofillAttendees.push(`\n${workingCase.translator} túlkur`)
-        }
-
-        if (workingCase.defendants && workingCase.defendants.length > 0) {
-          if (
-            workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT
-          ) {
-            workingCase.defendants.forEach((defendant) => {
-              autofillAttendees.push(
-                `\n${defendant.name} ${formatMessage(core.defendant, {
-                  suffix: 'i',
-                })}`,
-              )
-            })
-          }
-        }
-      }
-
-      setAndSendCaseToServer(
-        [
-          {
-            courtStartDate: workingCase.courtDate,
-            courtLocation: workingCase.court
-              ? `í ${
-                  workingCase.court.name.indexOf('dómur') > -1
-                    ? workingCase.court.name.replace('dómur', 'dómi')
-                    : workingCase.court.name
-                }`
-              : undefined,
-            courtAttendees:
-              autofillAttendees.length > 0
-                ? autofillAttendees.join('')
-                : undefined,
-            sessionBookings:
-              workingCase.type === CaseType.RestrainingOrder ||
-              workingCase.type === CaseType.RestrainingOrderAndExpulsionFromHome
-                ? formatMessage(
-                    m.sections.sessionBookings.autofillRestrainingOrder,
-                  )
-                : workingCase.type === CaseType.ExpulsionFromHome
-                ? formatMessage(
-                    m.sections.sessionBookings.autofillExpulsionFromHome,
-                  )
-                : workingCase.type === CaseType.Autopsy
-                ? formatMessage(m.sections.sessionBookings.autofillAutopsy)
-                : workingCase.sessionArrangements ===
-                  SessionArrangements.ALL_PRESENT
-                ? getSessionBookingsAutofill(formatMessage, workingCase)
-                : workingCase.sessionArrangements ===
-                  SessionArrangements.ALL_PRESENT_SPOKESPERSON
-                ? formatMessage(m.sections.sessionBookings.autofillSpokeperson)
-                : workingCase.sessionArrangements ===
-                  SessionArrangements.PROSECUTOR_PRESENT
-                ? formatMessage(m.sections.sessionBookings.autofillProsecutor)
-                : undefined,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
+    if (workingCase.prosecutor) {
+      autofillAttendees.push(
+        `${workingCase.prosecutor.name} ${workingCase.prosecutor.title}`,
       )
-
-      setInitialAutoFillDone(true)
     }
-  }, [
-    setAndSendCaseToServer,
-    formatMessage,
-    initialAutoFillDone,
-    isCaseUpToDate,
-    setWorkingCase,
-    workingCase,
-  ])
+
+    if (
+      workingCase.defenderName &&
+      workingCase.sessionArrangements !== SessionArrangements.PROSECUTOR_PRESENT
+    ) {
+      autofillAttendees.push(
+        `\n${workingCase.defenderName} skipaður ${
+          workingCase.sessionArrangements ===
+          SessionArrangements.ALL_PRESENT_SPOKESPERSON
+            ? 'talsmaður'
+            : 'verjandi'
+        } ${formatMessage(core.defendant, { suffix: 'a' })}`,
+      )
+    }
+
+    if (workingCase.translator) {
+      autofillAttendees.push(`\n${workingCase.translator} túlkur`)
+    }
+
+    if (workingCase.defendants && workingCase.defendants.length > 0) {
+      if (workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+        workingCase.defendants.forEach((defendant) => {
+          autofillAttendees.push(
+            `\n${defendant.name} ${formatMessage(core.defendant, {
+              suffix: 'i',
+            })}`,
+          )
+        })
+      }
+    }
+
+    setAndSendCaseToServer(
+      [
+        {
+          courtStartDate: workingCase.courtDate,
+          courtLocation: workingCase.court
+            ? `í ${
+                workingCase.court.name.indexOf('dómur') > -1
+                  ? workingCase.court.name.replace('dómur', 'dómi')
+                  : workingCase.court.name
+              }`
+            : undefined,
+          courtAttendees:
+            autofillAttendees.length > 0
+              ? autofillAttendees.join('')
+              : undefined,
+          sessionBookings:
+            workingCase.type === CaseType.RestrainingOrder ||
+            workingCase.type === CaseType.RestrainingOrderAndExpulsionFromHome
+              ? formatMessage(
+                  m.sections.sessionBookings.autofillRestrainingOrder,
+                )
+              : workingCase.type === CaseType.ExpulsionFromHome
+              ? formatMessage(
+                  m.sections.sessionBookings.autofillExpulsionFromHome,
+                )
+              : workingCase.type === CaseType.Autopsy
+              ? formatMessage(m.sections.sessionBookings.autofillAutopsy)
+              : workingCase.sessionArrangements ===
+                SessionArrangements.ALL_PRESENT
+              ? getSessionBookingsAutofill(formatMessage, workingCase)
+              : workingCase.sessionArrangements ===
+                SessionArrangements.ALL_PRESENT_SPOKESPERSON
+              ? formatMessage(m.sections.sessionBookings.autofillSpokeperson)
+              : workingCase.sessionArrangements ===
+                SessionArrangements.PROSECUTOR_PRESENT
+              ? formatMessage(m.sections.sessionBookings.autofillProsecutor)
+              : undefined,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }, [setAndSendCaseToServer, formatMessage, setWorkingCase, workingCase])
+
+  useOnceOn(isCaseUpToDate, initialize)
 
   const stepIsValid = isCourtRecordStepValidIC(workingCase)
   const handleNavigationTo = useCallback(
