@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
 import InputMask from 'react-input-mask'
@@ -11,6 +11,7 @@ import {
   Tag,
   Icon,
 } from '@island.is/island-ui/core'
+
 import {
   ReactSelectOption,
   TempCase as Case,
@@ -21,6 +22,7 @@ import {
   IndictmentCount as TIndictmentCount,
   IndictmentCountOffense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
@@ -126,13 +128,13 @@ export const IndictmentCount: React.FC<Props> = (props) => {
     setVehicleRegistrationNumberErrorMessage,
   ] = useState<string>('')
   const [
+    incidentDescriptionErrorMessage,
+    setIncidentDescriptionErrorMessage,
+  ] = useState<string>('')
+  const [
     legalArgumentsErrorMessage,
     setLegalArgumentsErrorMessage,
   ] = useState<string>('')
-
-  function todoHandle(index: number) {
-    //(index, 'todo')
-  }
 
   const offensesList = useMemo(
     () =>
@@ -193,6 +195,53 @@ export const IndictmentCount: React.FC<Props> = (props) => {
     [formatMessage],
   )
 
+  const incidentDescription = useCallback(
+    (
+      offenses: IndictmentCountOffense[] | undefined,
+      policeCaseNumber?: string,
+      vehicleRegistrationNumber?: string,
+    ) => {
+      if (offenses === undefined) {
+        return ''
+      }
+
+      let incidentLocation = ''
+      let incidentDate = ''
+      let incidentDescription = ''
+
+      if (workingCase.crimeScenes && policeCaseNumber) {
+        const crimeScenes = workingCase.crimeScenes
+        const crimeDate = crimeScenes[policeCaseNumber].date
+
+        incidentLocation = crimeScenes[policeCaseNumber].place ?? ''
+        incidentDate =
+          formatDate(crimeDate, 'PPPP')?.replace('dagur,', 'daginn') ?? ''
+      }
+
+      incidentDescription = offenses
+        .map((offense) => {
+          return formatMessage(
+            strings.trafficViolationIncidentDescriptionAutofill,
+            {
+              incidentDate: incidentDate ? incidentDate : '[Dagsetning]',
+              vehicleRegistrationNumber: vehicleRegistrationNumber
+                ? vehicleRegistrationNumber
+                : '[Skráningarnúmer ökutækis]',
+              offense: offense,
+              incidentLocation: incidentLocation
+                ? incidentLocation
+                : '[Vettvangur]',
+            },
+          )
+        })
+        .join('\n\n')
+
+      setIncidentDescriptionErrorMessage('')
+      return incidentDescription
+    },
+    [formatMessage, workingCase.crimeScenes],
+  )
+
   return (
     <BlueBox>
       {onDelete && (
@@ -216,9 +265,16 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           }))}
           label={formatMessage(strings.policeCaseNumberLabel)}
           placeholder={formatMessage(strings.policeCaseNumberPlaceholder)}
-          onChange={(so: ValueType<ReactSelectOption>) => {
+          onChange={async (so: ValueType<ReactSelectOption>) => {
+            const policeCaseNumber = (so as ReactSelectOption).value as string
+
             onChange(indictmentCount.id, {
-              policeCaseNumber: (so as ReactSelectOption).value as string,
+              policeCaseNumber: policeCaseNumber,
+              incidentDescription: incidentDescription(
+                indictmentCount.offenses ?? [],
+                policeCaseNumber,
+                indictmentCount.vehicleRegistrationNumber ?? '',
+              ),
             })
           }}
           value={
@@ -270,6 +326,11 @@ export const IndictmentCount: React.FC<Props> = (props) => {
             )
             onChange(indictmentCount.id, {
               vehicleRegistrationNumber: event.target.value,
+              incidentDescription: incidentDescription(
+                indictmentCount.offenses ?? [],
+                indictmentCount.policeCaseNumber ?? '',
+                event.target.value,
+              ),
             })
           }}
         >
@@ -295,14 +356,19 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           onChange={(so: ValueType<ReactSelectOption>) => {
             const selectedOffense = (so as ReactSelectOption)
               .value as IndictmentCountOffense
-            const offences = [
+            const offenses = [
               ...(indictmentCount.offenses || []),
               selectedOffense,
             ]
-            const lawsBroken = getLawsBroken(offences)
+            const lawsBroken = getLawsBroken(offenses)
             onChange(indictmentCount.id, {
-              offenses: offences,
+              offenses: offenses,
               lawsBroken: lawsBroken,
+              incidentDescription: incidentDescription(
+                offenses,
+                indictmentCount.policeCaseNumber ?? '',
+                indictmentCount.vehicleRegistrationNumber ?? '',
+              ),
               legalArguments: legalArguments(lawsBroken),
             })
           }}
@@ -323,13 +389,18 @@ export const IndictmentCount: React.FC<Props> = (props) => {
               <Tag
                 variant="darkerBlue"
                 onClick={() => {
-                  const offences = (indictmentCount.offenses || []).filter(
+                  const offenses = (indictmentCount.offenses || []).filter(
                     (o) => o !== offense,
                   )
-                  const lawsBroken = getLawsBroken(offences)
+                  const lawsBroken = getLawsBroken(offenses)
                   onChange(indictmentCount.id, {
-                    offenses: offences,
+                    offenses: offenses,
                     lawsBroken: lawsBroken,
+                    incidentDescription: incidentDescription(
+                      offenses,
+                      indictmentCount.policeCaseNumber ?? '',
+                      indictmentCount.vehicleRegistrationNumber ?? '',
+                    ),
                     legalArguments: legalArguments(lawsBroken),
                   })
                 }}
@@ -402,11 +473,34 @@ export const IndictmentCount: React.FC<Props> = (props) => {
             name="incidentDescription"
             label={formatMessage(strings.incidentDescriptionLabel)}
             placeholder={formatMessage(strings.incidentDescriptionPlaceholder)}
-            errorMessage={''}
-            hasError={false}
-            value={''}
-            onChange={() => todoHandle(1)}
-            onBlur={() => todoHandle(1)}
+            errorMessage={incidentDescriptionErrorMessage}
+            hasError={incidentDescriptionErrorMessage !== ''}
+            value={indictmentCount.incidentDescription ?? ''}
+            onChange={(event) => {
+              removeErrorMessageIfValid(
+                ['empty'],
+                event.target.value,
+                incidentDescriptionErrorMessage,
+                setIncidentDescriptionErrorMessage,
+              )
+
+              updateIndictmentCountState(
+                indictmentCount.id,
+                { incidentDescription: event.target.value },
+                setWorkingCase,
+              )
+            }}
+            onBlur={(event) => {
+              validateAndSetErrorMessage(
+                ['empty'],
+                event.target.value,
+                setIncidentDescriptionErrorMessage,
+              )
+
+              onChange(indictmentCount.id, {
+                incidentDescription: event.target.value.trim(),
+              })
+            }}
             required
             rows={7}
             autoExpand={{ on: true, maxHeight: 600 }}
