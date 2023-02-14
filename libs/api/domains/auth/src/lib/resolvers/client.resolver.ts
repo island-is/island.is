@@ -4,7 +4,8 @@ import { Args, Parent, ResolveField, Resolver } from '@nestjs/graphql'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { Loader } from '@island.is/nest/dataloader'
 
-import { DomainDataLoader, DomainLoader } from '../loaders/domain.loader'
+import { DomainLoader } from '../loaders/domain.loader'
+import type { DomainDataLoader } from '../loaders/domain.loader'
 import { Client } from '../models/client.model'
 import { Domain } from '../models/domain.model'
 

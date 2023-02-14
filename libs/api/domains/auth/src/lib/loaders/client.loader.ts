@@ -7,16 +7,12 @@ import { NestDataLoader } from '@island.is/nest/dataloader'
 import { ClientInput } from '../dto/client.input'
 import { Client } from '../models/client.model'
 import { ClientsService } from '../services/clients.service'
-import { DomainService } from '../services/domain.service'
 
 export type ClientDataLoader = DataLoader<ClientInput, Client>
 
 @Injectable()
 export class ClientLoader implements NestDataLoader<ClientInput, Client> {
-  constructor(
-    private readonly clientService: ClientsService,
-    private readonly domainsService: DomainService,
-  ) {}
+  constructor(private readonly clientService: ClientsService) {}
 
   keyFn(input: ClientInput): string {
     return `${input.lang}##${input.clientId}`
