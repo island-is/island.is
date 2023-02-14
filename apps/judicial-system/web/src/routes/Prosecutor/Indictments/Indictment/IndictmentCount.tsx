@@ -88,7 +88,7 @@ const laws = Object.values(offenceLawsMap)
   .sort(lawsCompare)
 
 function getLawsBroken(offences: IndictmentCountOffense[]) {
-  if (!offences || offences.length === 0) {
+  if (offences.length === 0) {
     return []
   }
 
@@ -171,8 +171,8 @@ export const IndictmentCount: React.FC<Props> = (props) => {
   )
 
   const legalArguments = useCallback(
-    (lawsBroken?: number[][] | null) => {
-      if (!lawsBroken || lawsBroken.length === 0) {
+    (lawsBroken: number[][]) => {
+      if (lawsBroken.length === 0) {
         return ''
       }
 
@@ -357,7 +357,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
             const selectedOffense = (so as ReactSelectOption)
               .value as IndictmentCountOffense
             const offenses = [
-              ...(indictmentCount.offenses || []),
+              ...(indictmentCount.offenses ?? []),
               selectedOffense,
             ]
             const lawsBroken = getLawsBroken(offenses)
@@ -389,7 +389,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
               <Tag
                 variant="darkerBlue"
                 onClick={() => {
-                  const offenses = (indictmentCount.offenses || []).filter(
+                  const offenses = (indictmentCount.offenses ?? []).filter(
                     (o) => o !== offense,
                   )
                   const lawsBroken = getLawsBroken(offenses)
@@ -424,7 +424,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           onChange={(selectedOption: ValueType<ReactSelectOption>) => {
             const law = (selectedOption as LawsBrokenOption).law
             const lawsBroken = [
-              ...(indictmentCount.lawsBroken || []),
+              ...(indictmentCount.lawsBroken ?? []),
               law,
             ].sort(lawsCompare)
             onChange(indictmentCount.id, {
@@ -448,7 +448,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
               <Tag
                 variant="darkerBlue"
                 onClick={() => {
-                  const lawsBroken = (indictmentCount.lawsBroken || []).filter(
+                  const lawsBroken = (indictmentCount.lawsBroken ?? []).filter(
                     (b) => lawsCompare(b, brokenLaw) !== 0,
                   )
                   onChange(indictmentCount.id, {
