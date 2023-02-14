@@ -21,6 +21,7 @@ import {
   IntroHeader,
   m,
 } from '@island.is/service-portal/core'
+import { useUserInfo } from '@island.is/auth/react'
 
 import { VehicleCard } from '../../components/VehicleCard'
 import { messages } from '../../lib/messages'
@@ -28,8 +29,7 @@ import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import { exportVehicleOwnedDocument } from '../../utils/vehicleOwnedMapper'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
-import { SAMGONGUSTOFA_LINK } from '../../utils/constants'
-import { useUserInfo } from '@island.is/auth/react'
+import { VEHICLE_HIDE_NAME } from '../../utils/constants'
 
 export const GET_USERS_VEHICLES = gql`
   query GetUsersVehicles {
@@ -214,7 +214,7 @@ const VehiclesOverview = () => {
           </Box>
           <Box marginBottom={[1, 1, 1, 0]}>
             <a
-              href={SAMGONGUSTOFA_LINK}
+              href={VEHICLE_HIDE_NAME}
               target="_blank"
               rel="noopener noreferrer"
             >

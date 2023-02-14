@@ -20,6 +20,7 @@ type ActionCardProps = {
   date?: string
   heading?: string
   text?: string
+  secondaryText?: string
   eyebrow?: string
   loading?: boolean
   backgroundColor?: 'white' | 'blue' | 'red'
@@ -37,6 +38,8 @@ type ActionCardProps = {
     icon?: IconMapIcon
     onClick?: () => void
     disabled?: boolean
+    centered?: boolean
+    hide?: boolean
   }
   secondaryCta?: {
     label: string
@@ -45,6 +48,7 @@ type ActionCardProps = {
     icon?: IconMapIcon
     onClick?: () => void
     disabled?: boolean
+    centered?: boolean
   }
   image?: {
     type: 'avatar' | 'image' | 'logo'
@@ -57,6 +61,7 @@ const defaultCta = {
   icon: 'arrowForward',
   onClick: () => null,
 } as const
+
 const defaultTag = {
   variant: 'blue',
   outlined: true,
@@ -67,6 +72,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   date,
   heading,
   text,
+  secondaryText,
   eyebrow,
   loading,
   backgroundColor = 'white',
@@ -228,32 +234,34 @@ export const ActionCard: React.FC<ActionCardProps> = ({
               </Button>
             </Box>
           )}
-          <Box marginLeft={[0, 3]}>
-            {cta.url ? (
-              <LinkResolver href={cta.url}>
+          {!cta.hide && (
+            <Box marginLeft={[0, 3]}>
+              {cta.url ? (
+                <LinkResolver href={cta.url}>
+                  <Button
+                    icon={isExternalLink(cta.url) ? 'open' : cta.icon}
+                    colorScheme="default"
+                    iconType="outline"
+                    size="small"
+                    type="button"
+                    variant="text"
+                  >
+                    {cta.label}
+                  </Button>
+                </LinkResolver>
+              ) : (
                 <Button
-                  icon={isExternalLink(cta.url) ? 'open' : cta.icon}
-                  colorScheme="default"
-                  iconType="outline"
+                  variant={cta.variant}
                   size="small"
-                  type="button"
-                  variant="text"
+                  onClick={cta.onClick}
+                  disabled={cta.disabled}
+                  icon={cta.icon}
                 >
                   {cta.label}
                 </Button>
-              </LinkResolver>
-            ) : (
-              <Button
-                variant={cta.variant}
-                size="small"
-                onClick={cta.onClick}
-                disabled={cta.disabled}
-                icon={cta.icon}
-              >
-                {cta.label}
-              </Button>
-            )}
-          </Box>
+              )}
+            </Box>
+          )}
         </Box>
       )
     )
@@ -288,6 +296,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       {renderDate()}
       <Box
         alignItems={['flexStart', 'center']}
+        justifyContent="center"
         display="flex"
         flexDirection={['column', 'row']}
       >
@@ -318,8 +327,17 @@ export const ActionCard: React.FC<ActionCardProps> = ({
               </Hidden>
             </Box>
           )}
-
           {text && <Text paddingTop={heading ? 1 : 0}>{text}</Text>}
+        </Box>
+        <Box
+          display="flex"
+          flexDirection="column"
+          justifyContent="spaceBetween"
+          alignItems="flexStart"
+        >
+          {secondaryText && (
+            <Text paddingTop={tag.label ? 6 : 0}>{secondaryText}</Text>
+          )}
         </Box>
 
         <Box
@@ -329,7 +347,9 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           flexShrink={0}
           marginTop={[1, 0]}
           marginLeft={[0, 'auto']}
-          className={tag?.label ? styles.tag : styles.button}
+          className={
+            tag?.label ? styles.tag : cta.centered ? undefined : styles.button
+          }
         >
           <Hidden below="sm">{!date && !eyebrow && renderTag()}</Hidden>
           {renderDefault()}
