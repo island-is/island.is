@@ -11,6 +11,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import React, { useEffect, useState } from 'react'
+import { HeroBanner } from '../components'
 import Card from '../components/Card/Card'
 import Layout from '../components/Layout/Layout'
 type arrayDummy = Array<info>
@@ -173,6 +174,7 @@ export const Index = () => {
 
   return (
     <Layout showIcon={false}>
+      <HeroBanner />
       <GridContainer>
         <GridRow>
           <GridColumn span="12/12" paddingBottom={4} paddingTop={4}>
@@ -194,6 +196,7 @@ export const Index = () => {
             </Columns>
           </GridColumn>
         </GridRow>
+
         <GridRow>
           <GridColumn span={['0', '0', '3/12', '3/12', '3/12']}></GridColumn>
           <GridColumn span={['12/12', '12/12', '9/12', '9/12', '9/12']}>
