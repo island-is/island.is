@@ -25,7 +25,7 @@ export const Client = ({ client }: ClientProps) => {
               backgroundImage: `url(${client.domain?.organisationLogoUrl})`,
             }}
           ></Box>
-          <Text variant={width > theme.breakpoints.md ? 'eyebrow' : 'h5'}>
+          <Text variant={width > theme.breakpoints.lg ? 'eyebrow' : 'h5'}>
             {client.clientName}
           </Text>
         </Box>
