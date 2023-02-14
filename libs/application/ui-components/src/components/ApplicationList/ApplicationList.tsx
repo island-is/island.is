@@ -127,7 +127,6 @@ const ApplicationList = ({
   const { lang: locale, formatMessage } = useLocale()
   const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
   const [page, setPage] = useState<number>(1)
-
   const handlePageChange = useCallback((page: number) => setPage(page), [])
 
   const pagedDocuments = {
@@ -172,6 +171,7 @@ const ApplicationList = ({
 
             return (
               <ActionCard
+                renderDraftStatusBar={false}
                 logo={getLogo(application.typeId)}
                 key={`${application.id}-${index}`}
                 date={format(new Date(application.modified), formattedDate)}
@@ -195,6 +195,7 @@ const ApplicationList = ({
                 }}
                 progressMeter={{
                   active: Boolean(application.progress),
+                  progress: application.progress,
                   variant: stateDefaultData.progress.variant,
                   draftFinishedSteps: actionCard?.draftFinishedSteps,
                   draftTotalSteps: actionCard?.draftTotalSteps,
