@@ -6,8 +6,11 @@ export class Client {
   @Field(() => ID)
   clientId!: string
 
-  @Field(() => String)
-  clientName!: string
+  @Field(() => String, { nullable: true })
+  clientName?: string
+
+  @Field(() => String, { nullable: true })
+  domainName?: string
 
   @Field(() => Domain, { nullable: true })
   domain?: Domain
