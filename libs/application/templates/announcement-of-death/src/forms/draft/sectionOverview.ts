@@ -8,11 +8,7 @@ import {
   buildCustomField,
   buildTextField,
 } from '@island.is/application/core'
-import {
-  Application,
-  DefaultEvents,
-  Field,
-} from '@island.is/application/types'
+import { Application, DefaultEvents, Field } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
