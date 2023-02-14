@@ -16,6 +16,7 @@ import { dateFormat } from '@island.is/shared/constants'
 import { useDeleteApplication } from './hooks/useDeleteApplication'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import { Organization } from '@island.is/shared/types'
+import { useFeatureFlag } from '@island.is/react/feature-flags'
 
 const pageSize = 5
 interface DefaultStateData {
@@ -130,6 +131,11 @@ const ApplicationList = ({
 
   const handlePageChange = useCallback((page: number) => setPage(page), [])
 
+  const { value: isDraftProgressBarEnabledForApplication } = useFeatureFlag(
+    'isDraftProgressBarEnabledForApplication',
+    false,
+  )
+
   const pagedDocuments = {
     from: (page - 1) * pageSize,
     to: pageSize * page,
@@ -172,6 +178,7 @@ const ApplicationList = ({
 
             return (
               <ActionCard
+                renderDraftStatusBar={isDraftProgressBarEnabledForApplication}
                 logo={getLogo(application.typeId)}
                 key={`${application.id}-${index}`}
                 date={format(new Date(application.modified), formattedDate)}
