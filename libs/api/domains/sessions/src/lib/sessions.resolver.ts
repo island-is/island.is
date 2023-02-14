@@ -17,12 +17,6 @@ import { Session } from './models/session.model'
 import { SessionsService } from './services/sessions.service'
 import { PaginatedSessionResponse } from './dto/paginated-session.response'
 import { SessionsInput } from './dto/sessions.input'
-import { CustomDelegation, Domain } from '../../../auth/src/lib/models'
-import {
-  DomainDataLoader,
-  DomainLoader,
-} from '../../../auth/src/lib/loaders/domain.loader'
-import { ISLAND_DOMAIN } from '../../../auth/src/lib/services/constants'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Session)
