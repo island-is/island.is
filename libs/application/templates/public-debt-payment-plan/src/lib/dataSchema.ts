@@ -1,5 +1,6 @@
 import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import * as kennitala from 'kennitala'
+import { isValidNumber } from 'libphonenumber-js'
 import { z } from 'zod'
 import { AMOUNT, MONTHS, NO, YES } from '../shared/constants'
 import { error } from './messages'
@@ -23,7 +24,9 @@ export const ApplicantSchema = z.object({
   email: z.string(),
   name: z.string().optional(),
   nationalId: z.string().optional(),
-  phoneNumber: z.string().optional(),
+  phoneNumber: z.string().refine((x) => isValidNumber(x) || !x, {
+    params: error.invalidPhoneNumber,
+  }),
   postalCode: z.string(),
 })
 

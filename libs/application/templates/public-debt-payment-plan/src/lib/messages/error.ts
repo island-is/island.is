@@ -16,6 +16,11 @@ export const error = defineMessages({
     defaultMessage: 'Ekki er hægt að velja þennan launagreiðanda',
     description: 'Invalid employer error message',
   },
+  invalidPhoneNumber: {
+    id: `pdpp.application:application.error.invalidPhoneNumber`,
+    defaultMessage: 'Símanúmer þarf að vera gilt',
+    description: 'Phone number must be valid',
+  },
   nationalIdIsNotCompany: {
     id: `pdpp.application:application.error.nationalIdIsNotCompany`,
     defaultMessage: 'Ekkert fyrirtæki fannst á kennitölu',
