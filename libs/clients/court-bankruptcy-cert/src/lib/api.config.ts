@@ -20,15 +20,7 @@ export const ApiConfig = {
       fetchApi: createEnhancedFetch({
         name: 'court-bankruptcy-cert',
         logErrorResponseBody: true,
-        autoAuth: idsClientConfig.isConfigured
-          ? {
-              mode: 'tokenExchange',
-              issuer: idsClientConfig.issuer,
-              clientId: idsClientConfig.clientId,
-              clientSecret: idsClientConfig.clientSecret,
-              scope: config.fetch.scope,
-            }
-          : undefined,
+
         timeout: config.fetch.timeout,
       }),
       basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,

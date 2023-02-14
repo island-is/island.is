@@ -725,10 +725,10 @@
         }
       },
       "CredentialsData": {
-        "required": ["password", "username"],
+        "required": ["password", "userName"],
         "type": "object",
         "properties": {
-          "username": {
+          "userName": {
             "type": "string",
             "description": "Name of the user."
           },

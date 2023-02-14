@@ -17,28 +17,29 @@ export class CourtBankruptcyCertService {
     private readonly searchBankruptcyApi: SearchBankruptcyHistoryApi,
   ) {}
 
-  private async getAuthenticationToken(auth: Auth): Promise<string> {
-    return this.authenticateApi
-      .withMiddleware(new AuthMiddleware(auth))
+  private async getAuthenticationToken(): Promise<string> {
+    const authenticationToken =  await  this.authenticateApi
       .authenticateUser({
         credentials: {
-          username: this.clientConfig.username,
+          userName: this.clientConfig.username,
           password: this.clientConfig.password,
         },
       })
+    //  The client returns the string with extra quotations
+    // so we remove them before returning the object
+    return authenticationToken.replace(/['"]+/g, '')
   }
 
   public async searchBankruptcy(
     auth: Auth,
   ): Promise<BankruptcyHistoryResult[]> {
-    const authenticationToken = await this.getAuthenticationToken(auth)
+    const authenticationToken = await this.getAuthenticationToken()
     const cert = await this.searchBankruptcyApi
       .withMiddleware(new AuthMiddleware(auth))
       .searchBankruptcyHistory({
         authenticationToken,
         idNumber: auth.nationalId ?? '',
       })
-    console.log('CERT', JSON.stringify(cert))
     return cert
   }
 }
