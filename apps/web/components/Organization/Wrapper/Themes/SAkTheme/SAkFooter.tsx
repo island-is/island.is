@@ -9,7 +9,9 @@ import {
   Hidden,
   Inline,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { FooterItem } from '@island.is/web/graphql/schema'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
 
 import * as styles from './SAkFooter.css'
 
@@ -20,6 +22,7 @@ interface SAkFooterProps {
 }
 
 export const SAkFooter = ({ footerItems, logo, title }: SAkFooterProps) => {
+  const { width } = useWindowSize()
   return (
     <footer className={styles.container} aria-labelledby="sak-footer">
       <GridContainer>
@@ -46,7 +49,10 @@ export const SAkFooter = ({ footerItems, logo, title }: SAkFooterProps) => {
             </GridColumn>
           </Hidden>
           {footerItems.map((item, index) => (
-            <GridColumn key={index}>
+            <GridColumn
+              key={index}
+              span={width > theme.breakpoints.sm ? undefined : '1/1'}
+            >
               <Box marginRight={[8, 8, 4, 4, 8]}>
                 {richText(item.content as SliceType[], {
                   renderNode: {
