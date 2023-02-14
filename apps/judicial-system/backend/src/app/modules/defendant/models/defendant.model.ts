@@ -52,21 +52,21 @@ export class Defendant extends Model {
     type: DataType.BOOLEAN,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   noNationalId?: boolean
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   nationalId?: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   name?: string
 
   @Column({
@@ -74,47 +74,49 @@ export class Defendant extends Model {
     allowNull: true,
     values: Object.values(Gender),
   })
+  @ApiPropertyOptional()
   gender?: Gender
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   address?: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
+  @ApiPropertyOptional()
   citizenship?: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   defenderName?: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   defenderNationalId?: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   defenderEmail?: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   defenderPhoneNumber?: string
 
   @Column({

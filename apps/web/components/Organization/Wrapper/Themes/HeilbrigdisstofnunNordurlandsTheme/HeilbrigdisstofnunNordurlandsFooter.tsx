@@ -75,7 +75,7 @@ const HeilbrigdisstofnunNordurlandsFooter = ({
   const n = useNamespace(namespace)
   return (
     <footer aria-labelledby="heilbrigdisstofnun-nordurlands-footer">
-      <Box className={styles.container}>
+      <div className={styles.container}>
         <GridContainer>
           <GridColumn className={styles.mainColumn}>
             <GridRow>
@@ -122,7 +122,7 @@ const HeilbrigdisstofnunNordurlandsFooter = ({
             </GridRow>
           </GridColumn>
         </GridContainer>
-      </Box>
+      </div>
     </footer>
   )
 }
