@@ -10,13 +10,13 @@ import Card from '../components/Card/Card'
 import Layout from '../components/Layout/Layout'
 import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
-const GetAllCases = gql`
-  query getAllCases {
-    cases {
-      id
-    }
-  }
-`
+// const GetAllCases = gql`
+//   query getAllCases {
+//     cases {
+//       id
+//     }
+//   }
+// `
 
 type arrayDummy = Array<info>
 type info = {
@@ -125,8 +125,8 @@ export const Index = () => {
   const [data, setData] = useState(dummycontent)
   const [options, setOptions] = useState<AsyncSearchOption[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const { data: mtda, error, called } = useQuery(GetAllCases)
-  console.log(mtda)
+  // const { data: mtda, error, called } = useQuery(GetAllCases)
+  // console.log(mtda)
   const clearAll = () => {
     setIsLoading(false)
     setOptions([])

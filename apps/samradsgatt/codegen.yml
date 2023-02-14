@@ -1,6 +1,6 @@
 schema:
   - apps/api/src/api.graphql
-documents: apps/samradsgatt/screens/**/*.{ts,tsx,graphql}
+documents: apps/samradsgatt/**/**/*.{ts,tsx,graphql}
 generates:
   apps/samradsgatt/graphql/schema.ts:
     plugins:

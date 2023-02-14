@@ -1,12 +1,13 @@
 import { bootstrap } from '@island.is/infra-next-server'
+
 import proxyConfig from './proxy.config.json'
 
 bootstrap({
-  name: 'samradsgatt',
-  appDir: 'apps/samradsgatt',
+  name: 'web',
+  appDir: 'apps/web',
   proxyConfig,
   externalEndpointDependencies: (nextConfig) => {
-    const { graphqlEndpoint } = nextConfig.serverRuntimeConfig
-    return [graphqlEndpoint]
+    const { graphqlUrl } = nextConfig.serverRuntimeConfig
+    return [graphqlUrl]
   },
 })
