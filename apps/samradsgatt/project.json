@@ -68,6 +68,12 @@
         "passWithNoTests": true
       }
     },
+    "schemas/codegen": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "graphql-codegen --config apps/samradsgatt/codegen.yml"
+      }
+    },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {

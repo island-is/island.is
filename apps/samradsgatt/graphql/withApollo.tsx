@@ -1,50 +1,32 @@
-import { NextPage } from 'next'
-
-import {
-  ApolloClient,
-  NormalizedCacheObject,
-  InMemoryCache,
-  ApolloProvider,
-  createHttpLink,
-} from '@apollo/client'
-import {
-  NextApiRequestCookies,
-  // @ts-ignore This path is generated at build time and conflicts otherwise
-} from 'next-server/server/api-utils'
-import { IncomingMessage } from 'http'
+import React from 'react'
+import { useRouter } from 'next/router'
+import { NextPageContext } from 'next'
+import { ApolloProvider } from '@apollo/client/react'
 import initApollo from './client'
 
-export type ApolloClientContext = {
-  req?: IncomingMessage & {
-    cookies: NextApiRequestCookies
+export const withApollo = (Component) => {
+  const NewComponent = ({ apolloState, pageProps }) => {
+    const { asPath } = useRouter()
+    return (
+      <ApolloProvider client={initApollo({ ...apolloState })}>
+        <Component {...pageProps} />
+      </ApolloProvider>
+    )
+  }
+  return NewComponent
+}
+export const getServerSideProps = async (ctx, Component) => {
+  const apolloClient = initApollo({})
+  const newContext = { ...ctx, apolloClient }
+  const props = Component.getInitialProps
+    ? await Component.getInitialProps(newContext)
+    : {}
+  const cache = apolloClient.cache.extract()
+  return {
+    pageProps: props,
+    apolloState: cache,
+    apolloClient,
   }
 }
 
-export const withApollo = (Comp: NextPage) => (props: any) => {
-  return (
-    <ApolloProvider client={getApolloClient(undefined, props.apolloState)}>
-      <Comp />
-    </ApolloProvider>
-  )
-}
-
-export const getApolloClient = (
-  ctx?: ApolloClientContext,
-  initialState?: NormalizedCacheObject,
-) => {
-  if (ctx && ctx.req) {
-    let { req } = ctx
-    // Do something with the cookies here, maybe add a header for authentication
-    req.cookies
-  }
-
-  const httpLink = createHttpLink({
-    uri: 'https://samradapi-test.island.is/',
-    fetch,
-  })
-  const cache = new InMemoryCache().restore(initialState || {})
-  return new ApolloClient({
-    link: httpLink,
-    cache,
-  })
-}
+export default withApollo

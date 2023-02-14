@@ -15,6 +15,14 @@ export class CaseResultService {
     private logger: Logger,
     private caseApi: CasesApi,
   ) {}
+  handleError(error: FetchError | ApolloError): void {
+    this.logger.error(error)
+
+    throw new ApolloError(
+      'Failed to resolve request',
+      error?.message ?? error?.response?.message,
+    )
+  }
 
   async getAllCases(): Promise<CaseResult[]> {
     const cases = await this.getAllCases()

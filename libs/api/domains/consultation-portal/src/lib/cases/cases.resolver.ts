@@ -12,6 +12,7 @@ import { Audit } from '@island.is/nest/audit'
 import { CaseResultService } from './cases.service'
 import { CaseResult } from '../models/caseResult.model'
 
+@UseGuards(IdsUserGuard)
 @Resolver(() => CaseResult)
 export class CaseResolver {
   constructor(private caseService: CaseResultService) {}

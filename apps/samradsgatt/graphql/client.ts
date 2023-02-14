@@ -3,17 +3,14 @@ import {
   ApolloLink,
   createHttpLink,
   InMemoryCache,
+  NormalizedCacheObject,
 } from '@apollo/client'
-import getConfig from 'next/config'
-// import authLink from './authLink'
-// import errorLink from './errorLink'
-// import httpLink from './httpLink'
-// import retryLink from './retryLink'
+import { BatchHttpLink } from '@apollo/client/link/batch-http'
 import { onError } from '@apollo/client/link/error'
 import { GraphQLError } from 'graphql'
 import { graphQLResultHasError } from '@apollo/client/utilities'
+import getConfig from 'next/config'
 const { publicRuntimeConfig, serverRuntimeConfig } = getConfig()
-
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
     graphQLErrors.map(({ message, locations, path }) => {
@@ -21,19 +18,61 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
     })
   }
 })
-const httpLink = createHttpLink({
-  uri: 'https://samradapi-test.island.is/api',
-  useGETForQueries: true,
-})
-const link = ApolloLink.from([errorLink, httpLink])
+const isBrowser: boolean = process.browser
+let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
 
-const cache = new InMemoryCache({ possibleTypes: {} })
+function create(initialState?: any) {
+  // handle server vs client side calls
+  const {
+    graphqlUrl: graphqlServerUrl,
+    graphqlEndpoint: graphqlServerEndpoint,
+  } = serverRuntimeConfig
+  const {
+    graphqlUrl: graphqlClientUrl,
+    graphqlEndpoint: graphqlClientEndpoint,
+  } = publicRuntimeConfig
+  const errorLink = onError(({ graphQLErrors, networkError }) => {
+    if (graphQLErrors) {
+      graphQLErrors.map(({ message, locations, path }) => {
+        alert(`Graphql error ${message}`)
+      })
+    }
+  })
+  const graphqlUrl = graphqlServerUrl || graphqlClientUrl
+  const graphqlEndpoint = graphqlServerEndpoint || graphqlClientEndpoint
+  const httpLink = new BatchHttpLink({ uri: `${graphqlUrl}${graphqlEndpoint}` })
+  const link = ApolloLink.from([errorLink, httpLink])
 
-const client = new ApolloClient({
-  name: 'consultation-portal-client',
-  version: '0.1',
-  link,
-  cache,
-})
+  // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
+  return new ApolloClient({
+    name: 'consultation-portal-client',
+    version: '0.1',
+    connectToDevTools: isBrowser,
+    ssrMode: !isBrowser, // Disables forceFetch on the server (so queries are only run once)
+    link, //: httpLink,
+    cache: new InMemoryCache().restore(initialState || {}),
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': 'true',
+    },
+  })
+}
+// export default client
+export default function initApollo(initialState?: any) {
+  // Make sure to create a new client for every server-side request so that data
+  // isn't shared between connections (which would be bad)
+  if (!isBrowser) {
+    return create(initialState)
+  }
 
-export default client
+  // Reuse client on the client-side
+  if (!apolloClient) {
+    apolloClient = create(initialState)
+    return apolloClient
+  }
+
+  // Create new instance if client is changing language
+
+  return apolloClient
+}

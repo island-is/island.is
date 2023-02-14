@@ -3,7 +3,7 @@ const withNx = require('@nrwl/next/plugins/with-nx')
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 
 const {
-  API_URL = 'http://localhost:4242',
+  API_URL = 'http://localhost:4444',
   WEB_PUBLIC_URL = 'http://localhost:4200',
   NODE_ENV,
 

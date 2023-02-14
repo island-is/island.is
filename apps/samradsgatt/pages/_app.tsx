@@ -3,6 +3,7 @@ import Head from 'next/head'
 import { FC } from 'react'
 import { client } from '../graphql'
 import { ApolloProvider } from '@apollo/client'
+import withApollo from '../graphql/withApollo'
 
 const Layout: FC = ({ children }) => {
   return (
