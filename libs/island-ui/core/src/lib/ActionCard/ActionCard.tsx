@@ -419,7 +419,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         </Box>
       </Box>
 
-      {progressMeter.active && (
+      {progressMeter?.active && (
         <Box
           width="full"
           paddingTop={[2, 2, 2, 3]}
