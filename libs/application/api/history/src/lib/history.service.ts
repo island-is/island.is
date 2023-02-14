@@ -31,7 +31,6 @@ export class HistoryService {
     ).find((x) => x.exitTimestamp === null)
 
     if (lastState) {
-      console.log('updaten', lastState)
       //update with a new exit timestamp.
       this.historyModel.update(
         {
