@@ -40,10 +40,10 @@ import { serviceSetup as adsBackendSetup } from '../../../apps/air-discount-sche
 
 import { serviceSetup as externalContractsTestsSetup } from '../../../apps/external-contracts-tests/infra/external-contracts-tests'
 
-import {
-  serviceSetup as sessionsServiceSetup,
-  workerSetup as sessionsWorkerSetup,
-} from '../../../apps/services/sessions/infra/sessions'
+import { serviceSetup as sessionsServiceSetup } from '../../../apps/services/sessions/infra/sessions'
+
+import { workerSetup as sessionsWorkerSetup } from '../../../apps/services/sessions/infra/sessions-worker'
+
 
 import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
