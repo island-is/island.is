@@ -12,6 +12,7 @@ import { Icon as IconType } from '../IconRC/iconMap'
 import { Icon } from '../IconRC/Icon'
 import DialogPrompt from '../DialogPrompt/DialogPrompt'
 import { DraftProgressMeter } from '../DraftProgressMeter/DraftProgressMeter'
+import { ProgressMeter } from '../ProgressMeter/ProgressMeter'
 
 type ActionCardProps = {
   date?: string
@@ -44,6 +45,7 @@ type ActionCardProps = {
   }
   progressMeter?: {
     active?: boolean
+    progress?: number
     variant?: DraftProgressMeterVariant
     draftTotalSteps?: number
     draftFinishedSteps?: number
@@ -81,6 +83,7 @@ const defaultTag = {
 const defaultProgressMeter = {
   variant: 'blue',
   active: false,
+  progress: 0,
 } as const
 
 const defaultUnavailable = {
@@ -339,6 +342,38 @@ export const ActionCard: React.FC<ActionCardProps> = ({
     )
   }
 
+  const renderProgressMeter = () => {
+    const { variant, progress } = progressMeter
+    const paddingWithDate = date ? 0 : 1
+    const alignWithDate = date ? 'flexEnd' : 'center'
+
+    return (
+      <Box
+        width="full"
+        paddingTop={[1, 1, 1, paddingWithDate]}
+        display="flex"
+        alignItems={['flexStart', 'flexStart', alignWithDate]}
+        flexDirection={['column', 'column', 'row']}
+      >
+        <ProgressMeter
+          variant={variant}
+          progress={progress}
+          className={styles.progressMeter}
+        />
+
+        <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
+          <Button
+            variant={cta.variant}
+            onClick={cta.onClick}
+            icon={cta.icon}
+            size={cta.size}
+          >
+            {cta.label}
+          </Button>
+        </Box>
+      </Box>
+    )
+  }
   const renderLogo = () => {
     if (!logo || logo.length === 0) return null
     return (
@@ -417,22 +452,33 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           <Hidden below="sm">{!date && !eyebrow && renderTag()}</Hidden>
           {unavailable.active ? renderDisabled() : renderDefault()}
         </Box>
-      </Box>
 
-      {progressMeter?.active && (
-        <Box
-          width="full"
-          paddingTop={[2, 2, 2, 3]}
+        {/* <Box
           display="flex"
-          flexGrow={1}
+          alignItems={['flexStart', 'flexEnd']}
+          flexDirection="column"
           flexShrink={0}
-          alignItems={['stretch', 'stretch', alignWithDate]}
-          flexDirection={['column', 'column', 'row']}
+          marginTop={[1, 0]}
+          marginLeft={[0, 'auto']}
+          className={progressMeter.active && tag ? styles.tag : styles.button}
         >
-          {status === 'draft' && renderDraftProgressMeter()}
-          {renderProgressMeterButton()}
-        </Box>
-      )}
+          <Hidden below="sm">{!date && !eyebrow && renderTag()}</Hidden>
+          {unavailable.active ? renderDisabled() : renderDefault()}
+        </Box> */}
+      </Box>
+      {progressMeter.active && renderProgressMeter()}
+      {/* <Box
+        width="full"
+        paddingTop={[2, 2, 2, 3]}
+        display="flex"
+        flexGrow={1}
+        flexShrink={0}
+        alignItems={['stretch', 'stretch', alignWithDate]}
+        flexDirection={['column', 'column', 'row']}
+      >
+        {status === 'draft' && renderDraftProgressMeter()}
+        {renderProgressMeterButton()}
+      </Box> */}
     </Box>
   )
 }
