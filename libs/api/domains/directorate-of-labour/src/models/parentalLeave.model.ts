@@ -62,5 +62,9 @@ export class ParentalLeave {
 
   @Field(() => String, { nullable: true })
   @IsOptional()
+  type?: 'period' | 'documentPeriod' | 'document' | undefined
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
   noOfChildren?: string
 }

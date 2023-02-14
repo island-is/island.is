@@ -1,9 +1,11 @@
 import { Option } from '@island.is/island-ui/core'
 
 export enum ApplicationOverViewStatus {
-  incomplete = 'incomplete',
-  inProgress = 'inProgress',
-  finished = 'finished',
+  incomplete = 'draft',
+  inProgress = 'inprogress',
+  completed = 'completed',
+  rejected = 'rejected',
+  approved = 'approved',
   all = 'all',
 }
 

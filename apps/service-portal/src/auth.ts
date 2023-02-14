@@ -55,6 +55,7 @@ if (userMocked) {
       ApiScope.financeSalary,
       ApiScope.financeSchedule,
       ApiScope.internal,
+      ApiScope.internalProcuring,
       ApiScope.meDetails,
       ApiScope.licenses,
       ApiScope.licensesVerify,

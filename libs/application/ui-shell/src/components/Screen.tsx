@@ -60,11 +60,14 @@ type ScreenProps = {
   expandRepeater(): void
   mode?: FormModes
   numberOfScreens: number
+  totalDraftScreens?: number
+  currentDraftScreen?: number
   prevScreen(): void
   screen: FormScreen
   renderLastScreenButton?: boolean
   renderLastScreenBackButton?: boolean
   goToScreen: (id: string) => void
+  setUpdateForbidden: (value: boolean) => void
 }
 
 const getServerValidationErrors = (error: ApolloError | undefined) => {
@@ -78,6 +81,7 @@ const getServerValidationErrors = (error: ApolloError | undefined) => {
 }
 
 const Screen: FC<ScreenProps> = ({
+  setUpdateForbidden,
   activeScreenIndex,
   addExternalData,
   answerQuestions,
@@ -89,6 +93,8 @@ const Screen: FC<ScreenProps> = ({
   mode,
   numberOfScreens,
   prevScreen,
+  totalDraftScreens,
+  currentDraftScreen,
   renderLastScreenButton,
   renderLastScreenBackButton,
   screen,
@@ -115,6 +121,9 @@ const Screen: FC<ScreenProps> = ({
     onError: (e) => {
       // We handle validation problems separately.
       const problem = findProblemInApolloError(e)
+      if (problem?.type === ProblemType.HTTP_NOT_FOUND) {
+        setUpdateForbidden(true)
+      }
       if (problem?.type === ProblemType.VALIDATION_FAILED) {
         return
       }
@@ -217,11 +226,33 @@ const Screen: FC<ScreenProps> = ({
         screen,
       )
 
+      let finishedSteps = 0
+      // Defaulting to 5 to show some steps for user experience if the user has not yet finished the first screen
+      let stepsTotal = 5
+
+      if (mode === FormModes.DRAFT) {
+        if (totalDraftScreens === undefined) {
+          // +1 because its index in array and starts at 0
+          finishedSteps = activeScreenIndex + 1
+          // -1 because its a length of an array and starts at 1
+          // and we dont want to count the last screen as a step
+          // because its just the conclusion screen
+          stepsTotal = numberOfScreens - 1
+        } else {
+          finishedSteps = currentDraftScreen ?? 0
+          stepsTotal = totalDraftScreens
+        }
+      }
+
       response = await updateApplication({
         variables: {
           input: {
             id: applicationId,
             answers: extractedAnswers,
+            draftProgress: {
+              stepsFinished: finishedSteps,
+              totalSteps: stepsTotal,
+            },
           },
           locale,
         },

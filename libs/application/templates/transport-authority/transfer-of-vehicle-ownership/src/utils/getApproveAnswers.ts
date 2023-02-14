@@ -1,6 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { CoOwnerAndOperator } from '../types'
+import { CoOwnerAndOperator } from '../shared'
 
 export const getApproveAnswers = (
   reviewerNationalId: string,

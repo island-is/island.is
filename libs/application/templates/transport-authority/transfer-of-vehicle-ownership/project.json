@@ -23,12 +23,6 @@
         "passWithNoTests": true
       }
     },
-    "schemas/codegen": {
-      "executor": "@nrwl/workspace:run-commands",
-      "options": {
-        "command": "graphql-codegen --config libs/application/templates/transport-authority/transfer-of-vehicle-ownership/codegen.yml"
-      }
-    },
     "extract-strings": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {

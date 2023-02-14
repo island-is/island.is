@@ -6,7 +6,7 @@ import {
   Get,
   Param,
   Post,
-  Put,
+  Patch,
   ForbiddenException,
   Query,
   Res,
@@ -138,7 +138,7 @@ export class CaseController {
     assistantUpdateRule,
     staffUpdateRule,
   )
-  @Put('case/:caseId')
+  @Patch('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
     @Param('caseId') caseId: string,
@@ -184,7 +184,7 @@ export class CaseController {
     return this.caseService.update(theCase, caseToUpdate, user) as Promise<Case> // Never returns undefined
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(JwtAuthGuard, CaseExistsGuard, RolesGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorTransitionRule,
     representativeTransitionRule,
@@ -192,7 +192,7 @@ export class CaseController {
     registrarTransitionRule,
     assistantTransitionRule,
   )
-  @Put('case/:caseId/state')
+  @Patch('case/:caseId/state')
   @ApiOkResponse({
     type: Case,
     description: 'Transitions an existing case to a new state',

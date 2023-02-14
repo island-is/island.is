@@ -57,6 +57,7 @@ export const funeralCost = buildSection({
             }),
             buildKeyValueField({
               label: m.totalAmount,
+              display: 'flex',
               value: ({ answers }) =>
                 formatCurrency(String(answers.funeralCostAmount)),
             }),

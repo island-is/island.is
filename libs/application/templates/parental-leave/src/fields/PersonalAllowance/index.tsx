@@ -61,6 +61,12 @@ export const PersonalAllowance: FC<FieldBaseProps> = ({
               // YES in usePersonalAllowance then NO without selecting in useAsMuchAsPossible,
               // the user cannot go forward but doesn't see the error message from useAsMuchAsPossible.
               setValue(allowance + '.useAsMuchAsPossible', YES)
+
+              // usage set to 1 so the user can go forward, because if user first selects
+              // YES in usePersonalAllowance, NO in useAsMuchAsPossible and inputs a invalid number
+              // in usage then selects NO in usePersonalAllowance, the user cannot go forward but
+              // doesn't see the error message from usage.
+              setValue(allowance + '.usage', '1')
             }
           },
         }}

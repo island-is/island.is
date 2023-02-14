@@ -41,6 +41,7 @@ import { PoliceService } from '../police'
 import { Institution } from '../institution'
 import { User, UserService } from '../user'
 import { Defendant, DefendantService } from '../defendant'
+import { IndictmentCount } from '../indictment-count'
 import { CaseFile, FileService } from '../file'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { oldFilter } from './filters/case.filters'
@@ -426,10 +427,12 @@ export class InternalCaseService {
     const theCase = await this.caseModel.findOne({
       include: [
         { model: Defendant, as: 'defendants' },
+        { model: IndictmentCount, as: 'indictmentCounts' },
         { model: CaseFile, as: 'caseFiles' },
       ],
       order: [
         [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
+        [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
         [{ model: CaseFile, as: 'caseFiles' }, 'created', 'ASC'],
       ],
       where: {

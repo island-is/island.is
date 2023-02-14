@@ -13,12 +13,12 @@ import {
   CaseType,
   CaseState,
   Recipient,
-  User,
   IndictmentSubtype,
 } from '@island.is/judicial-system/types'
 
 import { randomDate } from '../../../../test'
-import { Case } from '../../../case/models/case.model'
+import { User } from '../../../user'
+import { Case } from '../../../case'
 import { Institution } from '../../../institution/institution.model'
 import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -91,7 +91,12 @@ describe('InternalNotificationController - Send ready for court notifications fo
       const then = {} as Then
 
       await internalNotificationController
-        .sendCaseNotification(caseId, theCase, notification)
+        .sendCaseNotification(
+          caseId,
+          { id: userId } as User,
+          theCase,
+          notification,
+        )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -253,7 +258,12 @@ describe('InternalNotificationController - Send ready for court notifications fo
       const then = {} as Then
 
       await internalNotificationController
-        .sendCaseNotification(caseId, theCase, notification)
+        .sendCaseNotification(
+          caseId,
+          { id: userId } as User,
+          theCase,
+          notification,
+        )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 

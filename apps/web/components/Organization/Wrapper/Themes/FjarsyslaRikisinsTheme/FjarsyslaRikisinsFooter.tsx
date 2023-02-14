@@ -9,27 +9,33 @@ import {
   Hidden,
 } from '@island.is/island-ui/core'
 import { FooterItem } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
 
 import * as styles from './FjarsyslaRikisinsFooter.css'
 
 interface FjarsyslaRikisinsFooterProps {
   footerItems: FooterItem[]
   logo?: string
+  namespace: Record<string, string>
 }
 
 const FjarsyslaRikisinsFooter = ({
   footerItems,
   logo,
+  namespace,
 }: FjarsyslaRikisinsFooterProps) => {
+  const n = useNamespace(namespace)
+
   return (
     <footer className={styles.container} aria-labelledby="fjarsyslan-footer">
       <GridContainer>
         <Box className={styles.firstRow}>
           {!!logo && <img width={80} height={80} src={logo} alt="" />}
-          <img
-            src="https://images.ctfassets.net/8k0h54kbe6bj/2SjyMU3OtnoSqJg4fan1Tc/3d94afd4232f59f056e9f803e07d1433/Fja__rsy__slan.svg"
-            alt="Fjársýslan"
-          />
+          <Text variant="h2" as="div">
+            <span className={styles.heading}>
+              {n('fjarsyslanTitle', 'Fjársýslan')}
+            </span>
+          </Text>
         </Box>
 
         <Box marginY={2} borderTopWidth="standard" borderColor="blue600" />

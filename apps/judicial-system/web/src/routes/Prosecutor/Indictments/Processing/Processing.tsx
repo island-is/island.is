@@ -19,17 +19,14 @@ import {
   processing as m,
 } from '@island.is/judicial-system-web/messages'
 import { Box, Text } from '@island.is/island-ui/core'
-import {
-  CaseState,
-  CaseTransition,
-  Institution,
-} from '@island.is/judicial-system/types'
+import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
 import {
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'
 import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
+import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { ProsecutorSection, SelectCourt } from '../../components'

@@ -383,7 +383,7 @@ export const m = defineMessages({
   },
   bankAccount: {
     id: 'ir.application:bankAccount',
-    defaultMessage: 'Innstæða',
+    defaultMessage: 'Bankareikningur',
     description: '',
   },
   bankAccountBalance: {
@@ -413,8 +413,8 @@ export const m = defineMessages({
     defaultMessage: 'Útgefandi og fjárhæð með vöxtum.',
     description: '',
   },
-  claimsPublisher: {
-    id: 'ir.application:claimsPublisher',
+  claimsIssuer: {
+    id: 'ir.application:claimsIssuer',
     defaultMessage: 'Útgefandi',
     description: '',
   },
@@ -881,6 +881,11 @@ export const m = defineMessages({
     defaultMessage: 'Erfingi',
     description: '',
   },
+  heirs: {
+    id: 'ir.application:heirs',
+    defaultMessage: 'Erfingjar',
+    description: '',
+  },
   heirAdditionalInfo: {
     id: 'ir.application:heirAdditionalInfo',
     defaultMessage: 'Athugasemdir erfingja',
@@ -907,9 +912,24 @@ export const m = defineMessages({
     defaultMessage: 'Samtals arfshlutfall',
     description: '',
   },
+  totalPercentageError: {
+    id: 'ir.application:totalPercentageError',
+    defaultMessage: 'Samtals arfshlutfall þarf að vera 100%',
+    description: '',
+  },
   overviewTotal: {
     id: 'ir.application:overviewTotal',
     defaultMessage: 'Samtals alls',
+    description: '',
+  },
+  overviewTotalInheritance: {
+    id: 'ir.application:overviewTotalInheritance',
+    defaultMessage: 'Samtals erfðafjárskattur',
+    description: '',
+  },
+  overviewPrint: {
+    id: 'ir.application:overviewPrint',
+    defaultMessage: 'Prenta yfirlit',
     description: '',
   },
 

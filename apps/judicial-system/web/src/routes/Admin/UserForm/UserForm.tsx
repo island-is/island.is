@@ -1,4 +1,7 @@
 import React, { useState } from 'react'
+import InputMask from 'react-input-mask'
+import { ValueType } from 'react-select/src/types'
+
 import {
   Box,
   Checkbox,
@@ -7,19 +10,18 @@ import {
   Select,
   Text,
 } from '@island.is/island-ui/core'
-import InputMask from 'react-input-mask'
-import { ValueType } from 'react-select/src/types'
 import {
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  Institution,
   InstitutionType,
-  isCourtRole,
-  isProsecutionRole,
+  User,
   UserRole,
-} from '@island.is/judicial-system/types'
-import type { Institution, User } from '@island.is/judicial-system/types'
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import * as constants from '@island.is/judicial-system/consts'
+
 import { ReactSelectOption } from '../../../types'
 import {
   isAdminUserFormValid,
@@ -27,7 +29,11 @@ import {
   Validation,
 } from '../../../utils/validate'
 import * as styles from './UserForm.css'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  isCourtRole,
+  isProsecutionRole,
+} from '@island.is/judicial-system/types'
+
 type ExtendedOption = ReactSelectOption & { institution: Institution }
 
 interface Props {
@@ -56,9 +62,9 @@ export const UserForm: React.FC<Props> = (props) => {
     ? props.prosecutorsOffices
     : isCourtRole(user.role)
     ? props.allCourts
-    : user.role === UserRole.ASSISTANT
+    : user.role === UserRole.Assistant
     ? props.courts
-    : user.role === UserRole.STAFF
+    : user.role === UserRole.Staff
     ? props.prisonInstitutions
     : []
   ).map((institution) => ({
@@ -78,15 +84,15 @@ export const UserForm: React.FC<Props> = (props) => {
     }
 
     return isProsecutionRole(user.role)
-      ? user.institution?.type === InstitutionType.PROSECUTORS_OFFICE
+      ? user.institution?.type === InstitutionType.ProsecutorsOffice
       : isCourtRole(user.role)
-      ? user.institution?.type === InstitutionType.COURT ||
-        user.institution?.type === InstitutionType.HIGH_COURT
-      : user.role === UserRole.ASSISTANT
-      ? user.institution?.type === InstitutionType.COURT
-      : user.role === UserRole.STAFF
-      ? user.institution?.type === InstitutionType.PRISON ||
-        user.institution?.type === InstitutionType.PRISON_ADMIN
+      ? user.institution?.type === InstitutionType.Court ||
+        user.institution?.type === InstitutionType.HighCourt
+      : user.role === UserRole.Assistant
+      ? user.institution?.type === InstitutionType.Court
+      : user.role === UserRole.Staff
+      ? user.institution?.type === InstitutionType.Prison ||
+        user.institution?.type === InstitutionType.PrisonAdmin
       : false
   }
 
@@ -195,8 +201,8 @@ export const UserForm: React.FC<Props> = (props) => {
                 name="role"
                 id="roleProsecutor"
                 label="Saksóknari"
-                checked={user.role === UserRole.PROSECUTOR}
-                onChange={() => setUser({ ...user, role: UserRole.PROSECUTOR })}
+                checked={user.role === UserRole.Prosecutor}
+                onChange={() => setUser({ ...user, role: UserRole.Prosecutor })}
                 large
               />
             </Box>
@@ -205,9 +211,9 @@ export const UserForm: React.FC<Props> = (props) => {
                 name="role"
                 id="roleRepresentative"
                 label="Fulltrúi"
-                checked={user.role === UserRole.REPRESENTATIVE}
+                checked={user.role === UserRole.Representative}
                 onChange={() =>
-                  setUser({ ...user, role: UserRole.REPRESENTATIVE })
+                  setUser({ ...user, role: UserRole.Representative })
                 }
                 large
               />
@@ -219,8 +225,8 @@ export const UserForm: React.FC<Props> = (props) => {
                 name="role"
                 id="roleJudge"
                 label="Dómari"
-                checked={user.role === UserRole.JUDGE}
-                onChange={() => setUser({ ...user, role: UserRole.JUDGE })}
+                checked={user.role === UserRole.Judge}
+                onChange={() => setUser({ ...user, role: UserRole.Judge })}
                 large
               />
             </Box>
@@ -229,8 +235,8 @@ export const UserForm: React.FC<Props> = (props) => {
                 name="role"
                 id="roleRegistrar"
                 label="Dómritari"
-                checked={user.role === UserRole.REGISTRAR}
-                onChange={() => setUser({ ...user, role: UserRole.REGISTRAR })}
+                checked={user.role === UserRole.Registrar}
+                onChange={() => setUser({ ...user, role: UserRole.Registrar })}
                 large
               />
             </Box>
@@ -241,8 +247,8 @@ export const UserForm: React.FC<Props> = (props) => {
                 name="role"
                 id="roleAssistant"
                 label="Aðstoðarmaður dómara"
-                checked={user.role === UserRole.ASSISTANT}
-                onChange={() => setUser({ ...user, role: UserRole.ASSISTANT })}
+                checked={user.role === UserRole.Assistant}
+                onChange={() => setUser({ ...user, role: UserRole.Assistant })}
                 large
               />
             </Box>
@@ -251,8 +257,8 @@ export const UserForm: React.FC<Props> = (props) => {
                 name="role"
                 id="roleStaff"
                 label="Fangelsisyfirvöld"
-                checked={user.role === UserRole.STAFF}
-                onChange={() => setUser({ ...user, role: UserRole.STAFF })}
+                checked={user.role === UserRole.Staff}
+                onChange={() => setUser({ ...user, role: UserRole.Staff })}
                 large
               />
             </Box>

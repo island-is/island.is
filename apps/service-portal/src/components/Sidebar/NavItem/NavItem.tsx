@@ -37,7 +37,7 @@ const NavItemContent: FC<Props> = ({
   const isMobile = width < theme.breakpoints.md
   const showLock = enabled === false
   const pathName = window.location.pathname
-  const isDashboard = pathName === '/minarsidur/'
+  const isDashboard = pathName === '/minarsidur'
 
   const navItemActive: keyof typeof styles.navItemActive = active
     ? 'active'

@@ -6,9 +6,12 @@ const Skeleton = () => {
     <Stack space={3}>
       <>
         <Box display="flex" justifyContent="spaceBetween">
-          <SkeletonLoader height={70} width="30%" borderRadius="large" />
-          <SkeletonLoader height={70} width="30%" borderRadius="large" />
-          <SkeletonLoader height={70} width="30%" borderRadius="large" />
+          <SkeletonLoader height={70} width="40%" borderRadius="large" />
+          <SkeletonLoader height={70} width="40%" borderRadius="large" />
+        </Box>
+        <Box display="flex" justifyContent="spaceBetween">
+          <SkeletonLoader height={70} width="40%" borderRadius="large" />
+          <SkeletonLoader height={70} width="40%" borderRadius="large" />
         </Box>
         <Box display="flex" justifyContent="spaceBetween">
           <SkeletonLoader height={70} width="40%" borderRadius="large" />

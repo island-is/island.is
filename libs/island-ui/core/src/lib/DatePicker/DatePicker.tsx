@@ -239,7 +239,8 @@ const CustomHeader = ({
             changeMonth(months.indexOf(value))
           }
           style={{
-            width: monthRef?.current?.offsetWidth ?? 'auto',
+            textAlign: 'center',
+            width: 'auto',
             marginRight: 8,
           }}
         >

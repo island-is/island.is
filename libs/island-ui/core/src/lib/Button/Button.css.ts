@@ -378,6 +378,11 @@ export const colors = {
       theme.color.blueberry400,
       theme.color.blue300,
     ),
+    blueberry: textColors(
+      theme.color.blueberry600,
+      theme.color.blueberry400,
+      theme.color.blueberry300,
+    ),
   }),
   utility: styleVariants({
     default: utilityColors(

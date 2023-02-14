@@ -52,7 +52,11 @@ export const Prerequisites: Form = buildForm({
                   label: 'Búsetuleyfi',
                   tooltip: 'Sjá nánar linkur hér',
                 },
-                //{ value: 'Einkaskipti', label: 'Einkaskipti', tooltip: 'Sjá nánar linkur hér' },
+                {
+                  value: 'Einkaskipti',
+                  label: 'Einkaskipti',
+                  tooltip: 'Sjá nánar linkur hér',
+                },
               ],
             }),
             buildSubmitField({

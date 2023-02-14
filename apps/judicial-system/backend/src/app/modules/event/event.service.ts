@@ -73,7 +73,7 @@ export class EventService {
     private readonly logger: Logger,
   ) {}
 
-  postEvent(event: CaseEvent, theCase: Case) {
+  postEvent(event: CaseEvent, theCase: Case, eventOnly = false) {
     try {
       if (!environment.events.url) {
         return
@@ -82,7 +82,7 @@ export class EventService {
       const title =
         event === CaseEvent.ACCEPT && isIndictmentCase(theCase.type)
           ? caseEvent[CaseEvent.ACCEPT_INDICTMENT]
-          : caseEvent[event]
+          : `${caseEvent[event]}${eventOnly ? ' - aðgerð ekki framkvæmd' : ''}`
       const typeText = `${capitalize(
         isIndictmentCase(theCase.type)
           ? readableIndictmentSubtypes(

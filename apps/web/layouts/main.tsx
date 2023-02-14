@@ -387,6 +387,10 @@ const Layout: NextComponentType<
                       '/personuverndarstefna-stafraent-islands',
                     ),
                   }}
+                  termsLink={{
+                    title: n('termsTitle', 'Skilmálar'),
+                    href: n('termsHref', '/skilmalar-island-is'),
+                  }}
                   showMiddleLinks
                 />
               </>

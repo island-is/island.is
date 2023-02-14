@@ -43,8 +43,6 @@ export const DelegationsOutgoing = () => {
       },
     },
     skip: !domainName || !lang,
-    // Make sure that loading state is shown when refetching
-    notifyOnNetworkStatusChange: true,
     fetchPolicy: 'cache-and-network',
     errorPolicy: 'all',
   })

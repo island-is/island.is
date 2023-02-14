@@ -39,13 +39,17 @@ const CREATE_UPLOAD_URL = gql`
   }
 `
 
-enum FormFieldType {
+export enum FormFieldType {
   CHECKBOXES = 'checkboxes',
   INPUT = 'input',
   EMAIL = 'email',
   ACCEPT_TERMS = 'acceptTerms',
   FILE = 'file',
   NATIONAL_ID = 'nationalId (kennitala)',
+  INFORMATION = 'information',
+  TEXT = 'text',
+  DROPDOWN = 'dropdown',
+  RADIO = 'radio',
 }
 
 interface FormFieldProps {
@@ -85,7 +89,7 @@ export const FormField = ({
           onChange={(e) => onChange(slug, e.target.value)}
         />
       )
-    case 'text':
+    case FormFieldType.TEXT:
       return (
         <Input
           key={slug}
@@ -101,7 +105,7 @@ export const FormField = ({
           onChange={(e) => onChange(slug, e.target.value)}
         />
       )
-    case 'dropdown': {
+    case FormFieldType.DROPDOWN: {
       const options = field.options.map((option) => ({
         label: option,
         value: option,
@@ -123,7 +127,7 @@ export const FormField = ({
         />
       )
     }
-    case 'radio':
+    case FormFieldType.RADIO:
       return (
         <Box>
           <Text variant="h5" color="blue600">
@@ -153,7 +157,7 @@ export const FormField = ({
           </Stack>
         </Box>
       )
-    case 'acceptTerms':
+    case FormFieldType.ACCEPT_TERMS:
       return (
         <Stack space={2}>
           <Text variant="h5" color="blue600">
@@ -178,7 +182,7 @@ export const FormField = ({
           />
         </Stack>
       )
-    case 'checkboxes':
+    case FormFieldType.CHECKBOXES:
       return (
         <Stack space={2}>
           <Text variant="h5" color="blue600">
@@ -205,6 +209,10 @@ export const FormField = ({
           })}
         </Stack>
       )
+    case FormFieldType.INFORMATION:
+      return <Text>{field.informationText}</Text>
+    default:
+      return null
   }
 }
 
@@ -219,6 +227,7 @@ export const Form = ({ form, namespace }: FormProps) => {
   const [data, setData] = useState<Record<string, string>>(() =>
     Object.fromEntries(
       form.fields
+        .filter((field) => field.type !== FormFieldType.INFORMATION)
         .map((field): [string, string] => [slugify(field.title), ''])
         .concat([
           ['name', ''],
@@ -237,7 +246,7 @@ export const Form = ({ form, namespace }: FormProps) => {
   const [isSubmitting, setSubmitting] = useState<boolean>(false)
   const [submitError, setSubmitError] = useState<boolean>(false)
 
-  const [submit, { data: result, loading, error }] = useMutation<
+  const [submit, { data: result, error }] = useMutation<
     GenericFormMutation,
     GenericFormMutationVariables
   >(GENERIC_FORM_MUTATION)
@@ -345,6 +354,7 @@ export const Form = ({ form, namespace }: FormProps) => {
   const formatBody = (data) => {
     return `Sendandi: ${data['name']} <${data['email']}>\n\n`.concat(
       form.fields
+        .filter((field) => field.type !== FormFieldType.INFORMATION)
         .map((field) => {
           const value = data[slugify(field.title)]
           if (field.type === FormFieldType.ACCEPT_TERMS) {

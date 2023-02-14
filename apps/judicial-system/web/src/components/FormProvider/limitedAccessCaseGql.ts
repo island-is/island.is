@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 const LimitedAccessCaseQuery = gql`
-  query LimitedAccessCaseQuery($input: CaseQueryInput!) {
+  query LimitedAccessCase($input: CaseQueryInput!) {
     limitedAccessCase(input: $input) {
       id
       created

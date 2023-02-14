@@ -2,6 +2,9 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { IProcessEntry } from '../generated/contentfulTypes'
 import { SystemMetadata } from '@island.is/shared/types'
 
+const AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME =
+  process.env.AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME
+
 @ObjectType()
 export class ProcessEntry {
   @Field(() => ID)
@@ -34,6 +37,13 @@ export const mapProcessEntry = ({
       prefix = 'https:'
     }
     processLink = prefix + fields.processAsset.fields.file.url
+  }
+
+  if (AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME) {
+    processLink = processLink.replace(
+      '{{AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME}}',
+      AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME,
+    )
   }
 
   return {

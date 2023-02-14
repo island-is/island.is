@@ -7,7 +7,7 @@ import { useLocale } from '@island.is/localization'
 import { error, overview } from '../../../lib/messages'
 import { States } from '../../../lib/constants'
 import { ReviewGroup } from '../../ReviewGroup'
-import { ReviewScreenProps, InsuranceCompany } from '../../../types'
+import { ReviewScreenProps, InsuranceCompany } from '../../../shared'
 import { getValueViaPath } from '@island.is/application/core'
 import { hasReviewerApproved } from '../../../utils'
 

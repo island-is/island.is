@@ -79,6 +79,7 @@ module.exports = {
           '../../../shared/components/src',
         ),
         '@island.is/localization': rootDir('../../../localization/src'),
+        '@island.is/react/components': rootDir('../../../react/components/src'),
       },
     }
 

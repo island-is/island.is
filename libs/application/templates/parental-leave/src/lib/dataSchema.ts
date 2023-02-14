@@ -14,13 +14,14 @@ import {
   SINGLE,
 } from '../constants'
 import { errorMessages } from './messages'
+import { formatBankInfo } from './parentalLeaveUtils'
 
 const PersonalAllowance = z
   .object({
     usePersonalAllowance: z.enum([YES, NO]),
     usage: z
       .string()
-      .refine((x) => parseFloat(x) > 0 && parseFloat(x) <= 100)
+      .refine((x) => parseFloat(x) >= 1 && parseFloat(x) <= 100)
       .optional(),
     useAsMuchAsPossible: z.enum([YES, NO]).optional(),
   })
@@ -33,7 +34,7 @@ const PersonalAllowance = z
   )
 
 /**
- * Both periods and employer objects had been removed from here, and the logic has
+ * Both periods and employers objects had been removed from here, and the logic has
  * been moved to the answerValidators because it needs to be more advanced than
  * what zod can handle.
  */
@@ -42,6 +43,12 @@ export const dataSchema = z.object({
   selectedChild: z.string().min(1),
   applicationType: z.object({
     option: z.enum([PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, PARENTAL_LEAVE]),
+  }),
+  noPrimaryParent: z.object({
+    questionOne: z.enum([YES, NO]),
+    questionTwo: z.enum([YES, NO]),
+    questionThree: z.enum([YES, NO]),
+    birthDate: z.string(),
   }),
   applicant: z.object({
     email: z.string().email(),
@@ -52,7 +59,9 @@ export const dataSchema = z.object({
         return (
           phoneNumber &&
           phoneNumber.isValid() &&
-          phoneNumberStartStr.some((substr) => p.startsWith(substr))
+          phoneNumberStartStr.some((substr) =>
+            phoneNumber.nationalNumber.startsWith(substr),
+          )
         )
       },
       { params: errorMessages.phoneNumber },
@@ -63,8 +72,7 @@ export const dataSchema = z.object({
   payments: z.object({
     bank: z.string().refine(
       (b) => {
-        const bankAccount = b.toString()
-
+        const bankAccount = formatBankInfo(b)
         return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
       },
       { params: errorMessages.bank },
@@ -77,6 +85,7 @@ export const dataSchema = z.object({
   shareInformationWithOtherParent: z.enum([YES, NO]),
   useUnion: z.enum([YES, NO]),
   usePrivatePensionFund: z.enum([YES, NO]),
+  isReceivingUnemploymentBenefits: z.enum([YES, NO]),
   employerNationalRegistryId: z.string().refine((n) => kennitala.isCompany(n), {
     params: errorMessages.employerNationalRegistryId,
   }),
@@ -89,7 +98,9 @@ export const dataSchema = z.object({
         if (phoneNumber)
           return (
             phoneNumber.isValid() &&
-            phoneNumberStartStr.some((substr) => p.startsWith(substr))
+            phoneNumberStartStr.some((substr) =>
+              phoneNumber.nationalNumber.startsWith(substr),
+            )
           )
         else return true
       },
@@ -150,7 +161,9 @@ export const dataSchema = z.object({
         if (phoneNumber)
           return (
             phoneNumber.isValid() &&
-            phoneNumberStartStr.some((substr) => p.startsWith(substr))
+            phoneNumberStartStr.some((substr) =>
+              phoneNumber.nationalNumber.startsWith(substr),
+            )
           )
         else return true
       },

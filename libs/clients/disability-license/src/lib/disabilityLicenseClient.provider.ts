@@ -41,7 +41,6 @@ export const DisabilityLicenseApiProvider: Provider<DefaultApi> = {
         },
       }),
     ),
-
   inject: [
     XRoadConfig.KEY,
     DisabilityLicenseClientConfig.KEY,

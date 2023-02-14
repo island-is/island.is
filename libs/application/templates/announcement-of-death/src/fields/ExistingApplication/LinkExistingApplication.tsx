@@ -1,5 +1,4 @@
 import React, { FC, useCallback, useEffect, useState } from 'react'
-
 import { useLocale } from '@island.is/localization'
 import { Box, Text } from '@island.is/island-ui/core'
 import { getValueViaPath, formatText } from '@island.is/application/core'
@@ -8,11 +7,10 @@ import {
   Application,
   ApplicationStatus,
   ApplicationTypes,
-  ExistingApplicationApi,
 } from '@island.is/application/types'
 import { ApplicationList } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useDeleteApplication } from './hooks/useDeleteApplication'
 import { EstateRegistrant } from '@island.is/clients/syslumenn'
 import { useMutation } from '@apollo/client'
@@ -36,7 +34,7 @@ export const LinkExistingApplication: FC<FieldBaseProps> = ({
 }) => {
   const { locale, formatMessage } = useLocale()
   const { description } = field
-  const history = useHistory()
+  const navigate = useNavigate()
   const [continueConf, setContinueConf] = useState<IContinueConf>()
   const [updateApplication, { loading }] = useMutation(UPDATE_APPLICATION)
   const [
@@ -115,7 +113,7 @@ export const LinkExistingApplication: FC<FieldBaseProps> = ({
               })
               if (!deleteLoading) {
                 // push to existing application
-                history.push(`../../${continueConf.url}`)
+                navigate(`../../${continueConf.url}`)
               }
             }
             break

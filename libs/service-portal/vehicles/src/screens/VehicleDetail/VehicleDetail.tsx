@@ -162,10 +162,14 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
   }
 `
 
+type UseParams = {
+  id: string
+}
+
 const VehicleDetail: ServicePortalModuleComponent = () => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
-  const { id }: { id: string | undefined } = useParams()
+  const { id } = useParams() as UseParams
 
   const { data, loading, error } = useQuery<Query>(GET_USERS_VEHICLE_DETAIL, {
     variables: {

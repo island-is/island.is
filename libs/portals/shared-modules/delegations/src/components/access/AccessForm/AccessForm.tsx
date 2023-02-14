@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { useParams, useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useForm, FormProvider } from 'react-hook-form'
 import classNames from 'classnames'
 
@@ -38,6 +39,10 @@ type AccessFormProps = {
   validityPeriod: Date | null
 }
 
+type UseParams = {
+  delegationId: string
+}
+
 export const AccessForm = ({
   delegation,
   scopeTree,
@@ -46,10 +51,8 @@ export const AccessForm = ({
   const { formatMessage } = useLocale()
   const { basePath } = usePortalMeta()
   const routes = useRoutes()
-  const { delegationId } = useParams<{
-    delegationId: string
-  }>()
-  const history = useHistory()
+  const { delegationId } = useParams() as UseParams
+  const navigate = useNavigate()
   const { lg } = useBreakpoint()
   const [openConfirmModal, setOpenConfirmModal] = useState(false)
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
@@ -98,14 +101,14 @@ export const AccessForm = ({
       const { data, errors } = await updateDelegation({
         variables: {
           input: {
-            delegationId,
+            delegationId: delegationId as string,
             scopes,
           },
         },
       })
 
       if (data && !errors && !err) {
-        history.push(DelegationPaths.Delegations)
+        navigate(DelegationPaths.Delegations)
         servicePortalSaveAccessControl(
           formatPlausiblePathToParams({
             path: DelegationPaths.DelegationsGrant,
@@ -166,7 +169,7 @@ export const AccessForm = ({
         </form>
         <Box position="sticky" bottom={0} marginTop={20}>
           <DelegationsFormFooter
-            onCancel={() => history.push(DelegationPaths.Delegations)}
+            onCancel={() => navigate(DelegationPaths.Delegations)}
             onConfirm={() => {
               // Only open confirm modal if there are scopes
               // else open delete modal
@@ -202,7 +205,7 @@ export const AccessForm = ({
         error={updateError}
       />
       <AccessDeleteModal
-        onDelete={() => history.push(DelegationPaths.Delegations)}
+        onDelete={() => navigate(DelegationPaths.Delegations)}
         onClose={() => setOpenDeleteModal(false)}
         isVisible={openDeleteModal}
         delegation={delegation}

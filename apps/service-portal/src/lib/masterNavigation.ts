@@ -4,9 +4,7 @@ import { documentsNavigation } from '@island.is/service-portal/documents'
 import { financeNavigation } from '@island.is/service-portal/finance'
 import { applicationsNavigation } from '@island.is/service-portal/applications'
 import { assetsNavigation } from '@island.is/service-portal/assets'
-import { documentProviderNavigation } from '@island.is/service-portal/document-provider'
 import { educationNavigation } from '@island.is/service-portal/education'
-import { icelandicNamesRegistryNavigation } from '@island.is/service-portal/icelandic-names-registry'
 import {
   companyNavigation,
   informationNavigation,
@@ -15,7 +13,12 @@ import { licenseNavigation } from '@island.is/service-portal/licenses'
 import { educationLicenseNavigation } from '@island.is/service-portal/education-license'
 import { vehiclesNavigation } from '@island.is/service-portal/vehicles'
 import { personalInformationNavigation } from '@island.is/service-portal/settings/personal-information'
-import { delegationsNavigation } from '@island.is/portals/shared-modules/delegations'
+import { airDiscountNavigation } from '@island.is/service-portal/air-discount'
+import {
+  delegationsNavigation,
+  delegationsNavigationChildren,
+} from '@island.is/portals/shared-modules/delegations'
+import { sessionsNavigation } from '@island.is/service-portal/sessions'
 
 export const rootNavigationItem: PortalNavigationItem = {
   name: m.overview,
@@ -29,7 +32,6 @@ export const rootNavigationItem: PortalNavigationItem = {
 export const MAIN_NAVIGATION: PortalNavigationItem = {
   ...rootNavigationItem,
   children: [
-    documentProviderNavigation,
     documentsNavigation,
     applicationsNavigation,
     personalInformationNavigation,
@@ -39,9 +41,12 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
     educationLicenseNavigation,
     educationNavigation,
     assetsNavigation,
-    icelandicNamesRegistryNavigation,
     financeNavigation,
     vehiclesNavigation,
-    delegationsNavigation,
+    airDiscountNavigation,
+    {
+      ...delegationsNavigation,
+      children: [...delegationsNavigationChildren, sessionsNavigation],
+    },
   ],
 }

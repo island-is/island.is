@@ -12,6 +12,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { FormField } from '@island.is/web/components'
+import { FormFieldType } from '../../../Form/Form'
 import {
   EmailSignup as EmailSignupSchema,
   EmailSignupInputField,
@@ -21,14 +22,9 @@ import {
 import { EMAIL_SIGNUP_MUTATION } from '@island.is/web/screens/queries'
 import { useNamespace } from '@island.is/web/hooks'
 import { isValidEmail } from '@island.is/web/utils/isValidEmail'
+import { isValidNationalId } from '@island.is/web/utils/isValidNationalId'
 
 import * as styles from './EmailSignup.css'
-
-enum FormFieldType {
-  CHECKBOXES = 'checkboxes',
-  EMAIL = 'email',
-  ACCEPT_TERMS = 'acceptTerms',
-}
 
 type SubmitResponse = {
   message: string
@@ -51,7 +47,10 @@ interface EmailSignupProps {
 const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
   const n = useNamespace(slice.translations ?? {})
   const formFields = useMemo(
-    () => slice.formFields?.filter((field) => field?.name) ?? [],
+    () =>
+      slice.formFields?.filter(
+        (field) => field?.name && field?.type !== FormFieldType.INFORMATION,
+      ) ?? [],
     [slice.formFields],
   )
 
@@ -95,6 +94,15 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
         newErrors[fieldName] = n(
           'fieldIsRequired',
           'Þennan reit þarf að fylla út',
+        )
+      } else if (
+        field.type === FormFieldType.NATIONAL_ID &&
+        field.required &&
+        !isValidNationalId(value)
+      ) {
+        newErrors[fieldName] = n(
+          'formInvalidNationalId',
+          'Þetta er ekki gild kennitala.',
         )
       }
     }
@@ -191,7 +199,7 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
                   </Box>
                 ) : (
                   <Box width="full" marginTop={5}>
-                    {formFields.map((field) => {
+                    {slice.formFields.map((field) => {
                       return (
                         <Box key={field.id} marginBottom={3} width="full">
                           <FormField
