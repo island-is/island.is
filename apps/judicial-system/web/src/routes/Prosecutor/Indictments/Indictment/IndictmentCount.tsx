@@ -45,13 +45,14 @@ interface Props {
   ) => void
 }
 
-const drunkDrivingMinor = `${IndictmentCountOffense.DrunkDriving}_MINOR`
-const drunkDrivingMajor = `${IndictmentCountOffense.DrunkDriving}_MAJOR`
-const offenceLawsMap: { [key: string]: [number, number][] } = {
+const offenceLawsMap: Record<
+  IndictmentCountOffense | 'DRUNK_DRIVING_MINOR' | 'DRUNK_DRIVING_MAJOR',
+  [number, number][]
+> = {
   [IndictmentCountOffense.DrivingWithoutLicence]: [[58, 1]],
   [IndictmentCountOffense.DrunkDriving]: [[49, 1]],
-  [drunkDrivingMinor]: [[49, 2]],
-  [drunkDrivingMajor]: [[49, 3]],
+  DRUNK_DRIVING_MINOR: [[49, 2]],
+  DRUNK_DRIVING_MAJOR: [[49, 3]],
   [IndictmentCountOffense.IllegalDrugsDriving]: [
     [50, 1],
     [50, 2],
@@ -95,7 +96,7 @@ function getLawsBroken(offences: IndictmentCountOffense[]) {
     lawsBroken = lawsBroken.concat(offenceLawsMap[offence])
 
     if (offence === IndictmentCountOffense.DrunkDriving) {
-      lawsBroken = lawsBroken.concat(offenceLawsMap[drunkDrivingMinor])
+      lawsBroken = lawsBroken.concat(offenceLawsMap['DRUNK_DRIVING_MINOR'])
     }
   })
 
