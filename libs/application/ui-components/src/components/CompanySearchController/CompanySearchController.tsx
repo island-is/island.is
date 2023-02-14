@@ -52,7 +52,7 @@ export const CompanySearchController: FC<Props> = ({
 
   useEffect(() => {
     const isValid = employerValidData?.isEmployerValid ?? true
-    const currForm = getValues(id)
+    const currForm = { ...getValues(id) }
     currForm.validEmployer = isValid
     setCompanyIsValid(isValid)
     setValue(id, currForm)
