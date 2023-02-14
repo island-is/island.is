@@ -188,7 +188,10 @@ export const getRightsCode = (application: Application): string => {
    */
   const rightCodePeriod = answers.periods[0]?.rightCodePeriod
   if (rightCodePeriod) {
-    return rightCodePeriod
+    const periodCodeStartCharacters = ['M', 'F']
+    if (periodCodeStartCharacters.some((c) => rightCodePeriod.startsWith(c))) {
+      return rightCodePeriod
+    }
   }
 
   const isSelfEmployed = answers.isSelfEmployed === YES

@@ -15,6 +15,7 @@ import {
   DelegationScopeResolver,
   CustomDelegationResolver,
   DomainResolver,
+  ClientResolver,
   MergedDelegationResolver,
 } from './resolvers'
 import { ActorDelegationsService } from './services/actorDelegations.service'
@@ -31,6 +32,7 @@ import { ClientsService } from './services/clients.service'
     DelegationScopeResolver,
     ApiScopeResolver,
     DomainResolver,
+    ClientResolver,
     DomainService,
     ActorDelegationsService,
     MeDelegationsService,
