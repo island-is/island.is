@@ -57,7 +57,7 @@ export type PortalRoute = RouteObject & {
   // ------------------------------------------------------------------
   // React Router RouteObject properties that are being used in modules
   // ------------------------------------------------------------------
-  
+
   /**
    * The component prop is rendered when the path matches.
    */
@@ -71,8 +71,8 @@ export type PortalRoute = RouteObject & {
    */
   errorElement?: RouteObject['errorElement']
   /**
-   * Route actions are the "writes" to route loader "reads". 
-   * They provide a way for apps to perform data mutations with simple HTML and HTTP semantics 
+   * Route actions are the "writes" to route loader "reads".
+   * They provide a way for apps to perform data mutations with simple HTML and HTTP semantics
    * while React Router abstracts away the complexity of asynchronous UI and revalidation.
    */
   action?: RouteObject['action']
@@ -90,8 +90,12 @@ The element property should be a lazy-loaded component which is rendered when th
 An example of an implementation of a route property might be something like this:
 
 ```tsx
-const ApplicationList = lazy(() => import('./screens/ApplicationList/ApplicationList'))
-const ProtectedScreen = lazy(() => import('./screens/ProtectedScreen/ProtectedScreen'))
+const ApplicationList = lazy(
+  () => import('./screens/ApplicationList/ApplicationList'),
+)
+const ProtectedScreen = lazy(
+  () => import('./screens/ProtectedScreen/ProtectedScreen'),
+)
 
 routes: () => {
   const applicationRoutes = [
@@ -122,7 +126,9 @@ A portal library might then look something like this:
 import { PortalModule } from '@island.is/portals/core'
 import { lazy } from 'react'
 
-const ApplicationList = lazy(() => import('./screens/ApplicationList/ApplicationList'))
+const ApplicationList = lazy(
+  () => import('./screens/ApplicationList/ApplicationList'),
+)
 
 export const applicationsModule: PortalModule = {
   name: 'Applications',
@@ -131,7 +137,7 @@ export const applicationsModule: PortalModule = {
       {
         name: 'Applications',
         path: ServicePortalPath.ApplicationRoot,
-        element: <ApplicationList  />
+        element: <ApplicationList />,
       },
     ]
 
@@ -141,14 +147,14 @@ export const applicationsModule: PortalModule = {
 
 // ApplicationList.tsx
 const ApplicationList = () => {
-    const userInfo = useUserInfo()
-    return (
-      <>
-        <h1>Applications for {userInfo.profile.name}</h1>
-        <div>Application 1</div>
-        <div>Application 2</div>
-        <div>Application 3</div>
-      </>
+  const userInfo = useUserInfo()
+  return (
+    <>
+      <h1>Applications for {userInfo.profile.name}</h1>
+      <div>Application 1</div>
+      <div>Application 2</div>
+      <div>Application 3</div>
+    </>
   )
 }
 ```
