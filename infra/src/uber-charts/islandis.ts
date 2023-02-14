@@ -44,7 +44,6 @@ import { serviceSetup as sessionsServiceSetup } from '../../../apps/services/ses
 
 import { workerSetup as sessionsWorkerSetup } from '../../../apps/services/sessions/infra/sessions-worker'
 
-
 import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
 
