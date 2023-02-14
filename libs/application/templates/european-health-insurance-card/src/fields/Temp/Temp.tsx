@@ -19,11 +19,13 @@ const Temp: FC<FieldBaseProps> = ({ field, application }) => {
       `${id}.${constraintId}` as string,
       false,
     ) as boolean
+  console.log(answers)
+  console.log(application)
+  console.log(field)
 
   const applyForTempApplicant = [];
   const applyForTempSpouse = [];
   const applyForTempChildren = [];
-
   const nationalRegistryData = application.externalData.nationalRegistry?.data as NationalRegistry
   const tempapplicant: Person = {
     name: nationalRegistryData?.fullName,

@@ -9,16 +9,15 @@ import { useLocale } from '@island.is/localization'
 
 const Applicants: FC<FieldBaseProps> = ({ field, application }) => {
   const { formatMessage } = useLocale()
-  const { answers } = application
+  const { answers, assignees } = application
   const { id } = field
-  console.log(application.externalData)
+  // console.log(application.externalData)
   const getConstraintVal = (constraintId: string) =>
     getValueViaPath(
       answers,
       `${id}.${constraintId}` as string,
       false,
     ) as boolean
-
   const nationalRegistryData = application.externalData.nationalRegistry
     ?.data as NationalRegistry
   const applicant: Person = {
@@ -35,34 +34,40 @@ const Applicants: FC<FieldBaseProps> = ({ field, application }) => {
   const nationalRegistryDataChildren = (application?.externalData
     ?.childrenCustodyInformation as unknown) as NationalRegistry
 
-  return (
+    return (
     <Box>
       <Stack space={2}>
         <ApplicantsController
+          id={id}
+          checkboxId={id}
+          label={formatText(applicant.name, application, formatMessage)}
+          defaultValue={getConstraintVal(id)}
+        />
+        {/* <ApplicantsController
           id={`apply-${applicant.nationalId}`}
           checkboxId={`apply-${applicant.nationalId}`}
           label={formatText(applicant.name, application, formatMessage)}
           defaultValue={getConstraintVal(`apply-${applicant.nationalId}`)}
-        />
-        {nationalRegistryDataSpouse !== null && (
+        /> */}
+        {/* {nationalRegistryDataSpouse !== null && (
           <ApplicantsController
-            id={`apply-${spouse.nationalId}`}
-            checkboxId={`apply-${spouse.nationalId}`}
+            id={`apply-${id}`}
+            checkboxId={`apply-${id}`}
             label={formatText(spouse.name, application, formatMessage)}
-            defaultValue={getConstraintVal(`apply-${spouse.nationalId}`)}
+            defaultValue={getConstraintVal(`apply-${id}`)}
           />
         )}
         {nationalRegistryDataChildren?.data?.length > 0 &&
           nationalRegistryDataChildren?.data?.map((item: any) => (
             <ApplicantsController
-              id={`apply-${item.nationalId}`}
-              checkboxId={`apply-${item.nationalId}`}
+              id={`apply-${id}`}
+              checkboxId={`apply-${id}`}
               label={
                 formatText(item.fullName, application, formatMessage) as string
               }
-              defaultValue={getConstraintVal(`apply-${item.nationalId}`)}
+              defaultValue={getConstraintVal(`apply-${id}`)}
             />
-          ))}
+          ))} */}
       </Stack>
     </Box>
   )

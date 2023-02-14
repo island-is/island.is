@@ -1,11 +1,17 @@
 import {
+  Application,
   ChildrenCustodyInformationApi,
   DefaultEvents,
   NationalRegistrySpouseApi,
   NationalRegistryUserApi,
 } from '@island.is/application/types'
+import {
+  EhicApplyForPhysicalCardApi,
+  EhicCardResponseApi,
+} from '../dataProviders'
 import { Form, FormModes } from '@island.is/application/types'
 import {
+  buildCheckboxField,
   buildCustomField,
   buildDataProviderItem,
   buildDescriptionField,
@@ -14,17 +20,13 @@ import {
   buildMultiField,
   buildSection,
   buildSubmitField,
-  buildTextField,
 } from '@island.is/application/core'
 
-import {
-  EhicApplyForPhysicalCardApi,
-  EhicCardResponseApi,
-} from '../dataProviders'
+import { NationalRegistry } from '../lib/types'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 
 /* eslint-disable-next-line */
-export interface EuropeanHealthInsuranceCardProps {}
+export interface EuropeanHealthInsuranceCardProps { }
 
 export const EuropeanHealthInsuranceCardApplyPDF: Form = buildForm({
   id: 'EuropeanHealthInsuranceCardApplicationForm',
@@ -58,15 +60,24 @@ export const EuropeanHealthInsuranceCardApplyPDF: Form = buildForm({
           title: e.temp.sectionTitle,
           description: e.temp.sectionDescription,
           children: [
-            buildCustomField({
-              id: 'temp-cn',
+            buildCheckboxField({
+              id: 'applyForPDF',
+              backgroundColor: 'white',
               title: '',
-              component: 'TempScreen',
-            }),
-            buildDescriptionField({
-              id: 'unused',
-              title: 'adsg',
-              description: 'asdgasdgasdg',
+              options: (application: Application) => {
+                const applying = [];
+                const ans = application.answers.applyForPlastic as Array<any>
+                for (const i in ans) {
+                  console.log([ans[i][0], ans[i][1]])
+                  applying.push(
+                    {
+                      value: [ans[i][0], ans[i][1]],
+                      label: ans[i][1],
+                    }
+                  )
+                }
+                return applying as Array<{ value: any; label: string }>
+              },
             }),
             buildSubmitField({
               id: 'submit-23',

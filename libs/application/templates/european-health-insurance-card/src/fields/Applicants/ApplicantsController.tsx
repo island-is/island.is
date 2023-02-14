@@ -20,7 +20,6 @@ const ApplicantsController: FC<Props> = ({
 }) => {
   const { register, setValue } = useFormContext()
   const [isChecked, setIsChecked] = useState(defaultValue)
-
   return (
     <Stack space={2}>
       <Box background="white">
