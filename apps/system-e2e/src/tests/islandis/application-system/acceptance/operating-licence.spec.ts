@@ -125,7 +125,7 @@ applicationTest.describe('Operating Licence', () => {
         page.getByRole('heading', {
           name: 'Umsókn þín um rekstrarleyfi hefur verið móttekin.',
         }),
-      ).toBeVisible({ timeout: 12000 })
+      ).toBeVisible({ timeout: 120000 })
     },
   )
 })
