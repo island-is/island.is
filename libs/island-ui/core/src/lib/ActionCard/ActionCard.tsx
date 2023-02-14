@@ -419,18 +419,20 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         </Box>
       </Box>
 
-      <Box
-        width="full"
-        paddingTop={[2, 2, 2, 3]}
-        display="flex"
-        flexGrow={1}
-        flexShrink={0}
-        alignItems={['stretch', 'stretch', alignWithDate]}
-        flexDirection={['column', 'column', 'row']}
-      >
-        {status === 'draft' && renderDraftProgressMeter()}
-        {renderProgressMeterButton()}
-      </Box>
+      {progressMeter.active && (
+        <Box
+          width="full"
+          paddingTop={[2, 2, 2, 3]}
+          display="flex"
+          flexGrow={1}
+          flexShrink={0}
+          alignItems={['stretch', 'stretch', alignWithDate]}
+          flexDirection={['column', 'column', 'row']}
+        >
+          {status === 'draft' && renderDraftProgressMeter()}
+          {renderProgressMeterButton()}
+        </Box>
+      )}
     </Box>
   )
 }
