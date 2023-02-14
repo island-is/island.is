@@ -1,18 +1,20 @@
 import { SessionsSession } from '@island.is/api/schema'
 import { Box, Text, Tooltip } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { theme } from '@island.is/island-ui/theme'
 
 import { m } from '../../lib/messages'
 
 import * as styles from '../LogTable/LogTable.css'
+import { useWindowSize } from 'react-use'
 
 interface ClientProps {
   client: SessionsSession['client']
 }
 
 export const Client = ({ client }: ClientProps) => {
+  const { width } = useWindowSize()
   const { formatMessage } = useLocale()
-
   return (
     <>
       {client.clientName && (
@@ -23,7 +25,7 @@ export const Client = ({ client }: ClientProps) => {
               backgroundImage: `url(${client.domain?.organisationLogoUrl})`,
             }}
           ></Box>
-          <Text as="h5" variant="h5">
+          <Text variant={width > theme.breakpoints.lg ? 'eyebrow' : 'h5'}>
             {client.clientName}
           </Text>
         </Box>
