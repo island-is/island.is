@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-export const GET_ALLL_CASES = gql`
+export const GET_ALL_CASES = gql`
   query consulationPortalCaseResult {
     consulationPortalCaseResult {
       id
