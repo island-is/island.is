@@ -31,13 +31,6 @@ function create(initialState?: any) {
     graphqlUrl: graphqlClientUrl,
     graphqlEndpoint: graphqlClientEndpoint,
   } = publicRuntimeConfig
-  const errorLink = onError(({ graphQLErrors, networkError }) => {
-    if (graphQLErrors) {
-      graphQLErrors.map(({ message, locations, path }) => {
-        alert(`Graphql error ${message}`)
-      })
-    }
-  })
   const graphqlUrl = graphqlServerUrl || graphqlClientUrl
   const graphqlEndpoint = graphqlServerEndpoint || graphqlClientEndpoint
   const httpLink = new BatchHttpLink({ uri: `${graphqlUrl}${graphqlEndpoint}` })

@@ -2,16 +2,18 @@ import { withApollo } from '../graphql/withApollo'
 import { GetServerSideProps } from 'next'
 import { useQuery } from '@apollo/client'
 import { GET_ALL_CASES } from '../graphql/getAllCases'
-import { GetAllCasesQuery } from '../graphql/schema'
+import { GetAllCasesQuery, useGetAllCasesQuery } from '../graphql/schema'
 import initApollo from '../graphql/client'
 
 export const Test = (props) => {
+  const { data, error, client } = useGetAllCasesQuery({})
+
   return <div>Test</div>
 }
 export default withApollo(Test)
 
 export const getServerSideProps = async (ctx) => {
-  const apolloClient = initApollo({})
+  const apolloClient = initApollo()
   try {
     const test = await apolloClient.query({ query: GET_ALL_CASES })
   } catch (error) {
@@ -20,6 +22,5 @@ export const getServerSideProps = async (ctx) => {
 
   return {
     props: {},
-    //props //: me,
   }
 }
