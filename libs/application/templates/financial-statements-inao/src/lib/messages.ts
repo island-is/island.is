@@ -67,6 +67,17 @@ export const m = defineMessages({
     defaultMessage: 'Mínar síður á Ísland.is/stillingar',
     description: 'Your user profile information',
   },
+  dataCollectionUserFinancialInfoTitle: {
+    id: 'fsn.application:dataCollectionUserFinancialInfoTitle',
+    defaultMessage: 'Fjárhagsupplýsingar',
+    description: 'Financial info',
+  },
+  dataCollectionUserFinancialInfo: {
+    id: 'fsn.application:dataCollectionUserFinancialInfo',
+    defaultMessage:
+      'Til þess að auðvelda fyrir sækjum við fjárhagsupplýsingar til Ríkisendurskoðunar, sem embættið aflar frá viðeigandi aðilum á grundvelli aðgangs- og skoðunarheimilda sem það hefur, og forskráum þær.',
+    description: 'Financial info',
+  },
   dataCollectionUserProfileSubtitle: {
     id: 'fsn.application:dataCollectionUserProfileSubtitle',
     defaultMessage:

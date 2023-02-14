@@ -68,14 +68,14 @@ interface HeilbrigdisstofnunNordurlandsFooterProps {
   namespace: Record<string, string>
 }
 
-export const HeilbrigdisstofnunNordurlandsFooter = ({
+const HeilbrigdisstofnunNordurlandsFooter = ({
   footerItems,
   namespace,
 }: HeilbrigdisstofnunNordurlandsFooterProps) => {
   const n = useNamespace(namespace)
   return (
     <footer aria-labelledby="heilbrigdisstofnun-nordurlands-footer">
-      <Box className={styles.container}>
+      <div className={styles.container}>
         <GridContainer>
           <GridColumn className={styles.mainColumn}>
             <GridRow>
@@ -122,7 +122,7 @@ export const HeilbrigdisstofnunNordurlandsFooter = ({
             </GridRow>
           </GridColumn>
         </GridContainer>
-      </Box>
+      </div>
     </footer>
   )
 }

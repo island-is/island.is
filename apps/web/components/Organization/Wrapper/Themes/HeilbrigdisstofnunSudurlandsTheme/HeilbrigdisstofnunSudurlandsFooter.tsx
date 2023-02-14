@@ -105,7 +105,7 @@ interface HeilbrigdisstofnunSudurlandsFooterProps {
   namespace: Record<string, string>
 }
 
-export const HeilbrigdisstofnunSudurlandsFooter = ({
+const HeilbrigdisstofnunSudurlandsFooter = ({
   footerItems,
   namespace,
 }: HeilbrigdisstofnunSudurlandsFooterProps) => {
@@ -117,7 +117,7 @@ export const HeilbrigdisstofnunSudurlandsFooter = ({
 
   return (
     <footer aria-labelledby="heilbrigdisstofnun-sudurlands-footer">
-      <Box className={styles.container}>
+      <div className={styles.container}>
         <GridContainer>
           <GridColumn className={styles.mainColumn}>
             <GridRow>
@@ -169,7 +169,7 @@ export const HeilbrigdisstofnunSudurlandsFooter = ({
             </GridRow>
           </GridColumn>
         </GridContainer>
-      </Box>
+      </div>
     </footer>
   )
 }

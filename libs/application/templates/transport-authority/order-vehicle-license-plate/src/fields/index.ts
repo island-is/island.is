@@ -1,7 +1,5 @@
 export { PaymentChargeOverview } from './Payment/PaymentChargeOverview'
-export { PaymentPending } from './Payment/PaymentPending'
-export { PaymentUrlNotFound } from './Payment/PaymentUrlNotFound'
-export { Confirmation } from './Confirmation'
+export { PaymentPendingField } from './Payment/PaymentPendingField'
 export { VehiclesField } from './VehiclesField'
 export { AlertWarningLostPlate } from './AlertWarningLostPlate'
 export { PickPlateSize } from './PickPlateSize'

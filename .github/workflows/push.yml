@@ -161,7 +161,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '18.8.0'
 
       - name: Setup yarn
         run: npm install -g yarn
@@ -491,6 +491,7 @@ jobs:
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
       PUBLISH: true
+      GEOIP_LICENSE_KEY: ${{ secrets.GEOIP_LICENSE_KEY }}
     strategy:
       fail-fast: false
       matrix:

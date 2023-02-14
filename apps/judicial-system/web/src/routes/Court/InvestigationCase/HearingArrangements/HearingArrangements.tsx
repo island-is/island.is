@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 import compareAsc from 'date-fns/compareAsc'
@@ -25,7 +25,10 @@ import {
   RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -64,39 +67,27 @@ const HearingArrangements = () => {
     handleCourtDateChange,
   } = useCourtArrangements(workingCase)
 
-  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
 
-  useEffect(() => {
-    if (isCaseUpToDate && !initialAutoFillDone) {
-      if (!workingCase.courtDate) {
-        setCourtDate(workingCase.requestedCourtDate)
-
-        setInitialAutoFillDone(true)
-      }
-
-      setAndSendCaseToServer(
-        [
-          {
-            sessionArrangements: workingCase.defenderName
-              ? SessionArrangements.ALL_PRESENT
-              : undefined,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
-
-      setInitialAutoFillDone(true)
+  const initialize = useCallback(() => {
+    if (!workingCase.courtDate) {
+      setCourtDate(workingCase.requestedCourtDate)
     }
-  }, [
-    setAndSendCaseToServer,
-    initialAutoFillDone,
-    isCaseUpToDate,
-    setCourtDate,
-    setWorkingCase,
-    workingCase,
-  ])
+
+    setAndSendCaseToServer(
+      [
+        {
+          sessionArrangements: workingCase.defenderName
+            ? SessionArrangements.ALL_PRESENT
+            : undefined,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }, [setAndSendCaseToServer, setCourtDate, setWorkingCase, workingCase])
+
+  useOnceOn(isCaseUpToDate, initialize)
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {

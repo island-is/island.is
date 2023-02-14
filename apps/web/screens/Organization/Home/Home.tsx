@@ -15,7 +15,6 @@ import {
   getThemeConfig,
   SliceMachine,
   OrganizationWrapper,
-  SearchBox,
   IconTitleCard,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -36,17 +35,6 @@ import {
 } from '../../queries'
 import { getCustomAlertBanners } from './utils'
 import { LandingPage, LandingPageFooter } from './LandingPage'
-
-const WITH_SEARCH = [
-  'syslumenn',
-  'district-commissioner',
-
-  'sjukratryggingar',
-  'health-insurance-in-iceland',
-
-  'utlendingastofnun',
-  'directorate-of-immigration',
-]
 
 const parseOrganizationLinkHref = (organization: Query['getOrganization']) => {
   if (!organization?.link) return ''
@@ -199,23 +187,6 @@ const OrganizationHomePage: Screen<HomeProps> = ({
             )
           })}
         </Box>
-      }
-      sidebarContent={
-        WITH_SEARCH.includes(organizationPage.slug) && (
-          <SearchBox
-            id="sidebar"
-            organizationPage={organizationPage}
-            placeholder={n('searchServices', 'Leitaðu að þjónustu')}
-            noResultsText={n(
-              'noServicesFound',
-              'Engar niðurstöður í þjónustu sýslumanna',
-            )}
-            searchAllText={n(
-              'searchAllServices',
-              'Leita í öllu efni Ísland.is',
-            )}
-          />
-        )
       }
     >
       {organizationPage.bottomSlices.map((slice) => (

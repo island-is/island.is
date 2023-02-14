@@ -8,7 +8,7 @@ export default async () => {
     .withExposedPorts(4566)
     .withWaitStrategy(Wait.forLogMessage('Ready.'))
     .start()
-
+  // eslint-disable-next-line
   ;(global as any).__localstack__ = lc
 
   process.env.SQS_ENDPOINT = `http://${lc.getHost()}:${lc.getMappedPort(4566)}`

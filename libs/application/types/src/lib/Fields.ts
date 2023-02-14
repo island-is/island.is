@@ -105,6 +105,7 @@ export enum FieldTypes {
   MESSAGE_WITH_LINK_BUTTON_FIELD = 'MESSAGE_WITH_LINK_BUTTON_FIELD',
   EXPANDABLE_DESCRIPTION = 'EXPANDABLE_DESCRIPTION',
   ALERT_MESSAGE = 'ALERT_MESSAGE',
+  LINK = 'LINK',
 }
 
 export enum FieldComponents {
@@ -126,6 +127,7 @@ export enum FieldComponents {
   MESSAGE_WITH_LINK_BUTTON_FIELD = 'MessageWithLinkButtonFormField',
   EXPANDABLE_DESCRIPTION = 'ExpandableDescriptionFormField',
   ALERT_MESSAGE = 'AlertMessageFormField',
+  LINK = 'LinkFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -300,7 +302,7 @@ export interface MessageWithLinkButtonField extends BaseField {
 export interface ExpandableDescriptionField extends BaseField {
   readonly type: FieldTypes.EXPANDABLE_DESCRIPTION
   component: FieldComponents.EXPANDABLE_DESCRIPTION
-  introText: FormText
+  introText?: FormText
   description: StaticText
   startExpanded?: boolean
 }
@@ -310,6 +312,13 @@ export interface AlertMessageField extends BaseField {
   component: FieldComponents.ALERT_MESSAGE
   alertType?: 'default' | 'warning' | 'error' | 'info' | 'success'
   message?: FormText
+}
+
+export interface LinkField extends BaseField {
+  readonly type: FieldTypes.LINK
+  component: FieldComponents.LINK
+  s3key?: FormText
+  link?: string
 }
 
 export type Field =
@@ -331,3 +340,4 @@ export type Field =
   | MessageWithLinkButtonField
   | ExpandableDescriptionField
   | AlertMessageField
+  | LinkField

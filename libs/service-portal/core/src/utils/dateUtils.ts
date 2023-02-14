@@ -16,3 +16,12 @@ export const formatDate = (date: string) => {
     return date
   }
 }
+
+// Takes in date string
+export const formatDateWithTime = (date: string) => {
+  try {
+    return format(new Date(date), 'dd.MM.yyyy - HH:mm')
+  } catch {
+    return date
+  }
+}

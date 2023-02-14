@@ -35,6 +35,7 @@ export const serviceSetup = (services: {
   documentsService: ServiceBuilder<'services-documents'>
   servicesEndorsementApi: ServiceBuilder<'services-endorsement-api'>
   airDiscountSchemeBackend: ServiceBuilder<'air-discount-scheme-backend'>
+  sessionsApi: ServiceBuilder<'services-sessions-api'>
 }): ServiceBuilder<'api'> => {
   return service('api')
     .namespace('islandis')
@@ -173,6 +174,7 @@ export const serviceSetup = (services: {
         local: ref((h) => h.svc('https://localhost:8443')),
       },
       HSN_WEB_FORM_ID: '1dimJFHLFYtnhoYEA3JxRK',
+      SESSIONS_API_URL: ref((h) => `http://${h.svc(services.sessionsApi)}`),
     })
 
     .secrets({
@@ -204,8 +206,6 @@ export const serviceSetup = (services: {
         '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENT_SECRET_TEST',
       SYSLUMENN_USERNAME: '/k8s/api/SYSLUMENN_USERNAME',
       SYSLUMENN_PASSWORD: '/k8s/api/SYSLUMENN_PASSWORD',
-      DOCUMENT_PROVIDER_ADMINS:
-        '/k8s/documentprovider/DOCUMENT_PROVIDER_ADMINS',
       PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY',
       PKPASS_API_URL: '/k8s/api/PKPASS_API_URL',
       PKPASS_AUTH_RETRIES: '/k8s/api/PKPASS_AUTH_RETRIES',
