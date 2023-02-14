@@ -4,6 +4,7 @@ import {
   buildCustomField,
   buildForm,
   buildMultiField,
+  buildPhoneField,
   buildSection,
   buildSubmitField,
   buildTextField,
@@ -70,11 +71,9 @@ export const application: Form = buildForm({
               defaultValue: '',
             }),
 
-            buildTextField({
+            buildPhoneField({
               id: 'contact.phoneNumber',
               title: m.applicant.contactPhoneLabel,
-              variant: 'tel',
-              format: '###-####',
               backgroundColor: 'blue',
               required: true,
               defaultValue: '',

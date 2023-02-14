@@ -62,6 +62,14 @@ describe('formatters', () => {
       expect(formatPhoneNumber(phoneNumber)).toBe(expectedPhoneNumber)
     })
 
+    it('should format phone number with country code if it starts with +354 and is 11 characters in length', async () => {
+      // arrange
+      const phoneNumber = '+3549999999'
+      const expectedPhoneNumber = '+354 999-9999'
+      // assert
+      expect(formatPhoneNumber(phoneNumber)).toBe(expectedPhoneNumber)
+    })
+
     it('should return the same value if phone number comes in weird format', async () => {
       // arrange
       const phoneNumber = '99999-99-9999'

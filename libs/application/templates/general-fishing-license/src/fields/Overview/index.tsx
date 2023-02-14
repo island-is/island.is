@@ -8,7 +8,10 @@ import {
 } from '@island.is/island-ui/core'
 import React, { FC, useEffect, useState } from 'react'
 import { ShipInformation } from '../components'
-import { ReviewGroup } from '@island.is/application/ui-components'
+import {
+  formatPhoneNumber,
+  ReviewGroup,
+} from '@island.is/application/ui-components'
 import { ValueLine } from './ValueLine'
 import kennitala from 'kennitala'
 import { GeneralFishingLicense } from '../../lib/dataSchema'
@@ -18,7 +21,7 @@ import {
   fishingLicenseFurtherInformation,
   overview,
 } from '../../lib/messages'
-import { formatIsk, formatPhonenumber } from '../../utils'
+import { formatIsk } from '../../utils'
 import { FishingLicenseShip } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import {
@@ -112,7 +115,7 @@ export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
             <OverviewItem
               paddingBottom={0}
               label={applicantInformation.labels.tel}
-              value={formatPhonenumber(answers.applicant.phoneNumber)}
+              value={formatPhoneNumber(answers.applicant.phoneNumber)}
             />
           )}
         </GridRow>

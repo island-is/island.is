@@ -6,6 +6,7 @@ import {
   GridColumn,
   GridRow,
   Input,
+  PhoneInput,
   Stack,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -116,13 +117,16 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application }) => {
               />
             </GridColumn>
             <GridColumn span={['12/12', '6/12']}>
-              <Input
+              <PhoneInput
                 id="applicant.phoneNumber"
                 name="applicant.phoneNumber"
                 label={formatText(m.phoneNumber, application, formatMessage)}
                 ref={register}
                 disabled
-                defaultValue={userProfile?.mobilePhoneNumber as string}
+                value={getValueViaPath(
+                  application.answers,
+                  'applicant.phoneNumber',
+                )}
               />
             </GridColumn>
           </GridRow>
