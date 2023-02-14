@@ -1,5 +1,9 @@
 import { expect, test as base, Page } from '@playwright/test'
-import { sleep } from '../../../../../src/support/utils'
+import {
+  createMockPdf,
+  deleteMockPdf,
+  sleep,
+} from '../../../../../src/support/utils'
 import {
   disableI18n,
   disablePreviousApplications,
@@ -83,15 +87,24 @@ applicationTest.describe('Operating Licence', () => {
       await page.getByTestId('proceed').click()
 
       // Extra documents
-      // Trigger invalid document
-      await page.getByTestId('proceed').click()
+      await expect(
+        page.getByRole('heading', { name: 'Fylgiskjöl' }),
+      ).toBeVisible()
       createMockPdf()
-      await page
+      for (const uploadButton of await page
         .getByRole('button', {
-          name: 'Ógilt gildi.',
+          name: 'Velja skjöl til að hlaða upp',
+          exact: true,
         })
-        .getByRole('button', { name: 'Velja skjöl til að hlaða upp' })
-        .setInputFiles('./mockPdf.pdf')
+        .all()) {
+        const fileChooserPromise = page.waitForEvent('filechooser')
+        await uploadButton.click()
+        const chooser = await fileChooserPromise
+        await chooser.setFiles('./mockPdf.pdf')
+      }
+      deleteMockPdf()
+      await sleep(1000)
+      await expect(page.getByText('Ógilt gildi.')).not.toBeVisible()
       await page.getByTestId('proceed').click()
 
       // Overview
@@ -108,11 +121,11 @@ applicationTest.describe('Operating Licence', () => {
       await page.getByRole('button', { name: 'Áfram' }).click()
 
       // Payment verification
-      await page
-        .getByRole('heading', {
+      await expect(
+        page.getByRole('heading', {
           name: 'Umsókn þín um rekstrarleyfi hefur verið móttekin.',
-        })
-        .dblclick()
+        }),
+      ).toBeVisible({ timeout: 12000 })
     },
   )
 })
