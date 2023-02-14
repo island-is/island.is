@@ -108,7 +108,6 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
       : false
     : false
   const { state } = application
-  const { dateOfBirth, hasAppliedFor } = application.answers
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
