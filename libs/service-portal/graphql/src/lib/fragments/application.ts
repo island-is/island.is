@@ -27,7 +27,6 @@ export const ApplicationFragment = gql`
     progress
     status
     history {
-      id
       log
       date
     }

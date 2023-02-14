@@ -4,7 +4,6 @@ import {
   CustomTemplateFindQuery,
   Application,
   ExistingApplicationParameters,
-  ApplicationHistoryParameters,
 } from '@island.is/application/types'
 import { ApplicationService as ApplicationApiService } from '@island.is/application/api/core'
 import { TemplateApiModuleActionProps } from '../../../../types'
@@ -53,14 +52,5 @@ export class ApplicationService extends BaseTemplateApiService {
 
   async mockProvider({ params }: TemplateApiModuleActionProps): Promise<any> {
     return params
-  }
-
-  async createHistoryEntry({
-    application,
-    params,
-  }: TemplateApiModuleActionProps<ApplicationHistoryParameters>): Promise<void> {
-    if (params?.contentId) {
-      this.historyService.createHistoryLog(application, params.contentId)
-    }
   }
 }

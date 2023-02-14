@@ -1,8 +1,6 @@
-import { ApplicationWithAttachments } from '@island.is/application/types'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
-import { StaticText } from 'static-text'
 import { History } from './history.model'
 
 @Injectable()
@@ -13,9 +11,9 @@ export class HistoryService {
     private sequelize: Sequelize,
   ) {}
 
-  async getHistoryByApplicationId(
+  async getStateHistoryByApplicationId(
     applicationId: string,
-  ): Promise<History[] | []> {
+  ): Promise<History[]> {
     return this.historyModel.findAll({
       where: {
         application_id: applicationId,
@@ -23,14 +21,31 @@ export class HistoryService {
     })
   }
 
-  async createHistoryLog(
-    application: ApplicationWithAttachments,
-    log: StaticText,
+  async saveStateTransition(
+    applicationId: string,
+    newStateKey: string,
   ): Promise<History> {
+    // Look for a state that has not been exited.
+    const lastState = (
+      await this.getStateHistoryByApplicationId(applicationId)
+    ).find((x) => x.exitTimestamp === null)
+
+    if (lastState) {
+      console.log('updaten', lastState)
+      //update with a new exit timestamp.
+      this.historyModel.update(
+        {
+          ...lastState,
+          exitTimestamp: new Date(),
+        },
+        { where: { id: lastState.id } },
+      )
+    }
+
     return this.historyModel.create({
-      application_id: application.id,
-      log: typeof log === 'string' ? log : JSON.stringify(log),
-      date: new Date(),
+      application_id: applicationId,
+      stateKey: newStateKey,
+      entryTimestamp: new Date(),
     })
   }
 

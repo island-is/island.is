@@ -8,7 +8,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger'
 import { Application } from '@island.is/application/api/core'
 @Table({
-  tableName: 'history',
+  tableName: 'state_history',
   timestamps: false,
   indexes: [
     {
@@ -31,7 +31,14 @@ export class History extends Model {
     allowNull: false,
   })
   @ApiProperty()
-  date!: Date
+  entryTimestamp!: Date
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  exitTimestamp?: Date
 
   @ApiProperty()
   @ForeignKey(() => Application)
@@ -43,8 +50,7 @@ export class History extends Model {
 
   @Column({
     type: DataType.STRING,
-    allowNull: true,
   })
   @ApiProperty()
-  log?: string
+  stateKey!: string
 }

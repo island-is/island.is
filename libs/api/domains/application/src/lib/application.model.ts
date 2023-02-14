@@ -115,9 +115,6 @@ export class ApplicationPayment {
 
 @ObjectType()
 export class ApplicationHistory {
-  @Field(() => ID)
-  id!: string
-
   @Field(() => Date)
   date!: Date
 

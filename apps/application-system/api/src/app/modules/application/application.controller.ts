@@ -353,6 +353,11 @@ export class ApplicationController {
       attachments: {},
     }
 
+    await this.historyService.saveStateTransition(
+      updatedApplication.id,
+      updatedApplication.state,
+    )
+
     // Trigger meta.onEntry for initial state on application creation
     const onEnterStateAction = new ApplicationTemplateHelper(
       actionDto,
@@ -828,14 +833,6 @@ export class ApplicationController {
       }
     }
 
-    const historyOnExitEntry = helper.getHistoryLog('exit', application.state)
-    if (historyOnExitEntry) {
-      await this.historyService.createHistoryLog(
-        application,
-        historyOnExitEntry,
-      )
-    }
-
     const [
       hasChanged,
       newState,
@@ -858,14 +855,7 @@ export class ApplicationController {
       }
     }
 
-    const historyOnEntryEntry = helper.getHistoryLog('entry', newState)
-
-    if (historyOnEntryEntry) {
-      await this.historyService.createHistoryLog(
-        application,
-        historyOnEntryEntry,
-      )
-    }
+    await this.historyService.saveStateTransition(application.id, newState)
 
     const onEnterStateAction = new ApplicationTemplateHelper(
       updatedApplication,
@@ -1231,15 +1221,46 @@ export class ApplicationController {
     const namespaces = await getApplicationTranslationNamespaces(
       existingApplication as BaseApplication,
     )
-    const intl = await this.intlService.useIntl(namespaces, locale)
 
-    return (
-      await this.historyService.getHistoryByApplicationId(
-        existingApplication.id,
-      )
+    const templateId = existingApplication.typeId as ApplicationTypes
+    const template = await getApplicationTemplateByTypeId(templateId)
+
+    const helper = new ApplicationTemplateHelper(
+      existingApplication as BaseApplication,
+      template,
     )
-      .map((history) => new HistoryResponseDto(history, intl.formatMessage))
-      .slice()
+
+    const intl = await this.intlService.useIntl(namespaces, locale)
+    const history = await this.historyService.getStateHistoryByApplicationId(
+      existingApplication.id,
+    )
+
+    return history
+      .reduce((acc: HistoryResponseDto[], historyEntry) => {
+        const { entryTimestamp, exitTimestamp, stateKey } = historyEntry
+        const entryLog = helper.getHistoryLog('entry', stateKey)
+        const exitLog = exitTimestamp
+          ? helper.getHistoryLog('exit', stateKey)
+          : undefined
+
+        if (entryLog) {
+          acc.push(
+            new HistoryResponseDto(
+              entryTimestamp,
+              entryLog,
+              intl.formatMessage,
+            ),
+          )
+        }
+
+        if (exitTimestamp && exitLog) {
+          acc.push(
+            new HistoryResponseDto(exitTimestamp, exitLog, intl.formatMessage),
+          )
+        }
+
+        return acc
+      }, [])
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
   }
 

@@ -2,7 +2,7 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('history', {
+    return queryInterface.createTable('state_history', {
       id: {
         type: Sequelize.UUID,
         primaryKey: true,
@@ -17,18 +17,23 @@ module.exports = {
           key: 'id',
         },
       },
-      log: {
+      state_key: {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      date: {
+      entry_timestamp: {
         type: 'TIMESTAMP WITH TIME ZONE',
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
         allowNull: false,
       },
+      exit_timestamp: {
+        type: 'TIMESTAMP WITH TIME ZONE',
+        defaultValue: null,
+        allowNull: true,
+      },
     })
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('history')
+    return queryInterface.dropTable('state_history')
   },
 }

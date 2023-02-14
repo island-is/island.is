@@ -31,7 +31,6 @@ export const ApplicationFragment = gql`
     institution
     status
     history {
-      id
       log
       date
     }

@@ -286,8 +286,6 @@ export class ApplicationTemplateHelper<
         title: action.title ? formatMessage(action.title) : undefined,
       }
     }
-    console.log('action pendingAction')
-    console.log({ pendingAction })
     return {
       displayStatus: pendingAction.displayStatus,
       title: pendingAction.title
@@ -300,12 +298,12 @@ export class ApplicationTemplateHelper<
   }
 
   getHistoryLog(
-    access: 'exit' | 'entry',
+    transition: 'exit' | 'entry',
     stateKey: string = this.application.state,
   ): StaticText | undefined {
     const stateInfo = this.getApplicationStateInformation(stateKey)
 
-    return access === 'entry'
+    return transition === 'entry'
       ? stateInfo?.actionCard?.onEntryHistoryLog
       : stateInfo?.actionCard?.onExitHistoryLog
   }
