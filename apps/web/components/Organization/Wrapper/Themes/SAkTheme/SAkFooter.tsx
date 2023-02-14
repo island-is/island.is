@@ -47,12 +47,7 @@ export const SAkFooter = ({ footerItems, logo, title }: SAkFooterProps) => {
           </Hidden>
           {footerItems.map((item, index) => (
             <GridColumn key={index}>
-              <Box marginRight={8}>
-                {!!item.title?.trim()?.length && (
-                  <Text fontWeight="semiBold" color="white" marginBottom={2}>
-                    {item.title}
-                  </Text>
-                )}
+              <Box marginRight={[8, 8, 4, 4, 8]}>
                 {richText(item.content as SliceType[], {
                   renderNode: {
                     [BLOCKS.PARAGRAPH]: (_node, children) => (
