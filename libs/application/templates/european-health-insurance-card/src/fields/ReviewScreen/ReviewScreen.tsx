@@ -10,29 +10,9 @@ import { useLocale } from '@island.is/localization'
 const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
   const { answers } = application
   const { formatMessage } = useLocale()
-
-  console.log('review screen')
-  console.log(application.externalData)
-
-  const apply = []
-  const applyForTemp = []
-
+  
   const nationalRegistryData = application.externalData.nationalRegistry
     ?.data as NationalRegistry
-  const nationalRegistryDataSpouse = application?.externalData
-    ?.nationalRegistrySpouse?.data as NationalRegistry
-  const nationalRegistryDataChildren = (application?.externalData
-    ?.childrenCustodyInformation as unknown) as NationalRegistry
-
-  const applicant: Person = {
-    name: nationalRegistryData?.fullName,
-    nationalId: nationalRegistryData.nationalId,
-  }
-
-  const spouse: Person = {
-    name: nationalRegistryDataSpouse?.name,
-    nationalId: nationalRegistryDataSpouse?.nationalId,
-  }
 
   const residence: Address = {
     address: {
@@ -43,80 +23,50 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
     },
   }
 
-  function getObjectKey(obj: any, value: any) {
-    return Object.keys(obj).filter((key) => obj[key] === value)
-  }
+  const plastic = application.answers.applyForPlastic as Array<any>
+  const pdf = application.answers.applyForPDF as Array<any>
 
-  const applicants = getObjectKey(answers, true)
-
-  if (applicants.includes(`apply-${applicant?.nationalId}`)) {
-    apply.push(applicant)
-  }
-
-  if (applicants.includes(`apply-${spouse?.nationalId}`)) {
-    apply.push(spouse)
-  }
-
-  for (var i = 0; i < nationalRegistryDataChildren.data.length; i++) {
-    if (
-      applicants.includes(
-        `apply-${nationalRegistryDataChildren.data[i].nationalId}`,
-      )
-    ) {
-      apply.push(nationalRegistryDataChildren.data[i])
-    }
-  }
-
-  if (applicants.includes(`temp-${applicant?.nationalId}`)) {
-    applyForTemp.push(applicant)
-  }
-
-  if (applicants.includes(`temp-${spouse?.nationalId}`)) {
-    applyForTemp.push(spouse)
-  }
-
-  for (var i = 0; i < nationalRegistryDataChildren.data.length; i++) {
-    if (
-      applicants.includes(
-        `temp-${nationalRegistryDataChildren.data[i].nationalId}`,
-      )
-    ) {
-      applyForTemp.push(nationalRegistryDataChildren.data[i])
-    }
-  }
 
   return (
     <Box marginTop={4}>
       <Stack space={7}>
         <Stack space={3}>
-          <Box>
-            <Text variant="h5">
-              {formatText(
-                e.review.sectionPersonsLabel,
-                application,
-                formatMessage,
-              )}
-            </Text>
+          {plastic.length > 0 && (
+            <>
+              <Box>
+                <Text variant="h5">
+                  {formatText(
+                    e.review.sectionPersonsLabel,
+                    application,
+                    formatMessage,
+                  )}
+                </Text>
 
-            {apply?.map((item, index) => (
-              <Text>{item.name || item.fullName}</Text>
-            ))}
-          </Box>
-          <Divider />
-          <Box>
-            <Text variant="h5">
-              {formatText(
-                'Umsækjendur sem vilja fá tímabundið bráðabirgðakort',
-                application,
-                formatMessage,
-              )}
-            </Text>
+                {plastic?.map((item, index) => (
+                  <Text>{item[1]}</Text>
+                ))}
+              </Box>
+              <Divider />
+            </>
+          )}
+          {pdf.length > 0 && (
+            <>
+              <Box>
+                <Text variant="h5">
+                  {formatText(
+                    'Umsækjendur sem vilja fá tímabundið bráðabirgðakort',
+                    application,
+                    formatMessage,
+                  )}
+                </Text>
 
-            {applyForTemp?.map((item, index) => (
-              <Text>{item.name || item.fullName}</Text>
-            ))}
-          </Box>
-          <Divider />
+                {pdf?.map((item, index) => (
+                  <Text>{item[1]}</Text>
+                  ))}
+              </Box>
+              <Divider />
+            </>
+          )}
           <Box>
             <Text variant="h5">
               {formatText(
@@ -134,7 +84,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
             </Text>
           </Box>
           <Divider />
-          <Box>
+          <Box paddingBottom={8}>
             <Text variant="h5">
               {formatText(
                 e.review.sectionAddressLabel,

@@ -1,9 +1,13 @@
 import {
+  Application,
   ChildrenCustodyInformationApi,
   DefaultEvents,
-  NationalRegistrySpouseApi,
   NationalRegistryUserApi,
 } from '@island.is/application/types'
+import {
+  EhicApplyForPhysicalCardApi,
+  EhicCardResponseApi,
+} from '../dataProviders'
 import { Form, FormModes } from '@island.is/application/types'
 import {
   buildCustomField,
@@ -16,10 +20,6 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 
-import {
-  EhicApplyForPhysicalCardApi,
-  EhicCardResponseApi,
-} from '../dataProviders'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 
 /* eslint-disable-next-line */

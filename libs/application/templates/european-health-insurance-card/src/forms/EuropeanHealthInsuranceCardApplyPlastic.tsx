@@ -1,4 +1,5 @@
 import {
+  Application,
   ChildrenCustodyInformationApi,
   DefaultEvents,
   NationalRegistrySpouseApi,
@@ -6,21 +7,20 @@ import {
 } from '@island.is/application/types'
 import { Form, FormModes } from '@island.is/application/types'
 import {
+  buildCheckboxField,
   buildCustomField,
   buildDataProviderItem,
-  buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
   buildMultiField,
   buildSection,
   buildSubmitField,
-  buildTextField,
 } from '@island.is/application/core'
 
 import {
-  EhicApplyForPhysicalCardApi,
   EhicCardResponseApi,
 } from '../dataProviders'
+import { NationalRegistry } from '../lib/types'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 
 export const EuropeanHealthInsuranceCardApplyPlastic: Form = buildForm({
@@ -54,7 +54,7 @@ export const EuropeanHealthInsuranceCardApplyPlastic: Form = buildForm({
         buildExternalDataProvider({
           title: e.data.sectionTitle,
           checkboxLabel: e.data.dataCollectionCheckboxLabel,
-          id: 'dataScreen',
+          id: 'approveExternalData',
           description: '',
           dataProviders: [
             buildDataProviderItem({
@@ -82,14 +82,44 @@ export const EuropeanHealthInsuranceCardApplyPlastic: Form = buildForm({
           ],
         }),
         buildMultiField({
-          id: 'applicants',
+          id: 'plastic',
           title: e.applicants.sectionTitle,
           description: e.applicants.sectionDescription,
           children: [
-            buildCustomField({
-              id: 'applicants',
+            buildCheckboxField({
+              id: 'applyForPlastic',
+              backgroundColor: 'white',
               title: '',
-              component: 'Applicants',
+              options: (application: Application) => {
+                console.log(application, " here")
+                const nationalRegistry = application.externalData.nationalRegistry.data as NationalRegistry
+                const nationalRegistrySpouse = application.externalData.nationalRegistrySpouse.data as NationalRegistry
+                const nationalRegistryDataChildren = (application?.externalData?.childrenCustodyInformation as unknown) as NationalRegistry
+                const applying = [];
+
+                applying.push(
+                  {
+                    value: [nationalRegistry.nationalId, nationalRegistry.fullName],
+                    label: nationalRegistry.fullName,
+                  }
+                )
+                applying.push(
+                  {
+                    value: [nationalRegistrySpouse.nationalId, nationalRegistrySpouse.name],
+                    label: nationalRegistrySpouse.name,
+                  }
+                )
+
+                for (const i in nationalRegistryDataChildren.data) {
+                  applying.push(
+                    {
+                      value: [nationalRegistryDataChildren.data[i].nationalId, nationalRegistryDataChildren.data[i].fullName],
+                      label: nationalRegistryDataChildren.data[i].fullName,
+                    }
+                  )
+                }
+                return applying as Array<{ value: any; label: string }>
+              },
             }),
             buildSubmitField({
               id: 'submit',
