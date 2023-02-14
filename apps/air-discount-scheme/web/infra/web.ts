@@ -58,7 +58,6 @@ export const serviceSetup = (services: {
               'rewrite /$ https://beta.staging01.devland.is/loftbru; rewrite /en$ https://beta.staging01.devland.is/en/lower-airfares-for-residents-in-rural-areas;',
           },
           prod: {
-            ...extraAnnotations,
             'nginx.ingress.kubernetes.io/configuration-snippet':
               'rewrite /$ https://island.is/loftbru; rewrite /en$ https://island.is/en/lower-airfares-for-residents-in-rural-areas;',
           },

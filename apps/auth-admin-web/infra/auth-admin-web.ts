@@ -45,7 +45,10 @@ export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> => {
         extraAnnotations: {
           dev: { ...extraAnnotations },
           staging: { ...extraAnnotations },
-          prod: { ...extraAnnotations },
+          prod: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
         },
       },
     })
