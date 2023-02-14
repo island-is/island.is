@@ -31,16 +31,15 @@ interface AuthProviderProps {
 }
 
 type GetReturnUrl = {
-  basePath: string
   returnUrl: string
 } & Pick<AuthSettings, 'redirectPath'>
 
 const isCurrentRoute = (url: string, path?: string) =>
   isDefined(path) && url.startsWith(path)
 
-const getReturnUrl = ({ redirectPath, basePath, returnUrl }: GetReturnUrl) => {
+const getReturnUrl = ({ redirectPath, returnUrl }: GetReturnUrl) => {
   if (redirectPath && returnUrl.startsWith(redirectPath)) {
-    return basePath
+    return '/'
   }
 
   return returnUrl
@@ -53,7 +52,7 @@ const getCurrentUrl = (basePath: string) => {
     return url.slice(basePath.length)
   }
 
-  return basePath
+  return '/'
 }
 
 export const AuthProvider = ({
@@ -76,7 +75,6 @@ export const AuthProvider = ({
       return userManager.signinRedirect({
         state: getReturnUrl({
           returnUrl: getCurrentUrl(basePath),
-          basePath,
           redirectPath: authSettings.redirectPath,
         }),
       })
@@ -131,7 +129,6 @@ export const AuthProvider = ({
           authSettings.switchUserRedirectUrl ??
           getReturnUrl({
             returnUrl: getCurrentUrl(basePath),
-            basePath,
             redirectPath: authSettings.redirectPath,
           }),
         ...args,
@@ -244,9 +241,31 @@ export const AuthProvider = ({
     } else if (isCurrentRoute(currentUrl, authSettings.redirectPathSilent)) {
       const userManager = getUserManager()
       userManager.signinSilentCallback().catch((error) => {
-        // TODO: Handle error
         console.log(error)
+        setHasError(true)
       })
+    } else if (isCurrentRoute(currentUrl, authSettings.initiateLoginPath)) {
+      const userManager = getUserManager()
+      const searchParams = new URL(window.location.href).searchParams
+
+      const loginHint = searchParams.get('login_hint')
+      const targetLinkUri = searchParams.get('target_link_uri')
+      const path =
+        targetLinkUri &&
+        authSettings.baseUrl &&
+        targetLinkUri.startsWith(authSettings.baseUrl)
+          ? targetLinkUri.slice(authSettings.baseUrl.length)
+          : '/'
+      let prompt = searchParams.get('prompt')
+      prompt =
+        prompt && ['login', 'select_account'].includes(prompt) ? prompt : null
+
+      const args = {
+        state: path,
+        prompt: prompt ?? undefined,
+        login_hint: loginHint ?? undefined,
+      }
+      userManager.signinRedirect(args)
     } else {
       checkLogin()
     }

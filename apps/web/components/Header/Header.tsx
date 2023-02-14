@@ -14,7 +14,7 @@ import {
   ColorSchemeContext,
   FocusableBox,
   ButtonTypes,
-  Link,
+  DropdownMenu,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { FixedNav, SearchInput } from '@island.is/web/components'
@@ -32,6 +32,7 @@ interface HeaderProps {
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
 const minarsidurLink = '/minarsidur/'
+const minarsidurDelegationsLink = '/minarsidur/login?prompt=select_account'
 
 export const Header: FC<HeaderProps> = ({
   showSearchInHeader = true,
@@ -99,29 +100,38 @@ export const Header: FC<HeaderProps> = ({
 
                     <Hidden below="lg">
                       <Box marginLeft={marginLeft}>
-                        <a tabIndex={-1} href={minarsidurLink}>
-                          <Button
-                            colorScheme={buttonColorScheme}
-                            variant="utility"
-                            icon="person"
-                            as="span"
-                          >
-                            {t.login}
-                          </Button>
-                        </a>
+                        <DropdownMenu
+                          icon="person"
+                          items={[
+                            {
+                              href: minarsidurLink,
+                              title: t.loginIndividuals,
+                            },
+                            {
+                              href: minarsidurDelegationsLink,
+                              title: t.loginDelegations,
+                            },
+                          ]}
+                          title={t.login}
+                        />
                       </Box>
                     </Hidden>
 
                     <Hidden above="md">
                       <Box marginLeft={marginLeft}>
-                        <a tabIndex={-1} href={minarsidurLink}>
-                          <Button
-                            colorScheme={buttonColorScheme}
-                            variant="utility"
-                            icon="person"
-                            as="span"
-                          />
-                        </a>
+                        <DropdownMenu
+                          icon="person"
+                          items={[
+                            {
+                              href: minarsidurLink,
+                              title: t.loginIndividuals,
+                            },
+                            {
+                              href: minarsidurDelegationsLink,
+                              title: t.loginDelegations,
+                            },
+                          ]}
+                        />
                       </Box>
                     </Hidden>
 
