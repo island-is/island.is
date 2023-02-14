@@ -58,6 +58,10 @@ export const m = defineMessages({
     id: 'portals-my-pages.session-history:person',
     defaultMessage: 'Aðili',
   },
+  geoInfoDesc: {
+    id: 'portals-my-pages.session-history:geoInfoDesc',
+    defaultMessage: 'Staðsetning er áætluð út frá IP tölu tengingar.',
+  },
   error: {
     id: 'portals-my-pages.session-history:error',
     defaultMessage: 'Villa kom upp, vinsamlegast reyndu aftur síðar',
