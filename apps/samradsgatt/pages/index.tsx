@@ -1,12 +1,14 @@
 import {
   AsyncSearch,
   AsyncSearchOption,
+  Box,
   Column,
   Columns,
   GridColumn,
   GridContainer,
   GridRow,
   Tiles,
+  Text,
 } from '@island.is/island-ui/core'
 import React, { useEffect, useState } from 'react'
 import { HeroBanner } from '../components'
@@ -201,7 +203,31 @@ export const Index = () => {
             {data && (
               <Tiles space={3} columns={[1, 1, 1, 2, 3]}>
                 {data.map((item, index) => {
-                  return <Card key={index} {...item} />
+                  const card = {
+                    id: item.id,
+                    title: item.name,
+                    tag: item.status,
+                    eyebrows: [item.type, item.institution],
+                  }
+                  return (
+                    <Card key={index} card={card}>
+                      <Box
+                        display="flex"
+                        flexDirection="row"
+                        alignItems="center"
+                        justifyContent="spaceBetween"
+                      >
+                        <Text variant="eyebrow" color="purple400">
+                          {`Fjöldi umsagna: ${item.adviceCount}`}
+                        </Text>
+                      </Box>
+                      <Box style={{ minHeight: 132, lineBreak: 'anywhere' }}>
+                        <Text variant="small" color="dark400">
+                          {item.shortDescription}
+                        </Text>
+                      </Box>
+                    </Card>
+                  )
                 })}
               </Tiles>
             )}

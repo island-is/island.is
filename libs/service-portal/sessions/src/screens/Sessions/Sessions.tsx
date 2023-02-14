@@ -1,3 +1,8 @@
+import * as kennitala from 'kennitala'
+import React, { useState } from 'react'
+import InfiniteScroll from 'react-infinite-scroller'
+
+import { SessionsSession } from '@island.is/api/schema'
 import {
   Box,
   GridColumn,
@@ -11,15 +16,11 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
-import React, { useState } from 'react'
+
 import LogTable from '../../components/LogTable/LogTable'
 import LogTableMobile from '../../components/LogTable/LogTableMobile'
-
 import { m } from '../../lib/messages'
 import { useGetSessionsListQuery } from './Sessions.generated'
-import { SessionsSession } from '@island.is/api/schema'
-import * as kennitala from 'kennitala'
-import InfiniteScroll from 'react-infinite-scroller'
 
 const SESSION_LIMIT = 20
 
