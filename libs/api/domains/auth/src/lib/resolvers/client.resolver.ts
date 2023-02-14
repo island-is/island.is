@@ -12,7 +12,7 @@ import { Domain } from '../models/domain.model'
 @UseGuards(IdsUserGuard)
 @Resolver(() => Client)
 export class ClientResolver {
-  @ResolveField('domain', () => Domain)
+  @ResolveField('domain', () => Domain, { nullable: true })
   async resolveDomain(
     @Loader(DomainLoader) domainLoader: DomainDataLoader,
     @Parent() client: Client,
