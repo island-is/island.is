@@ -45,18 +45,18 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions'> => {
     .readiness('/liveness')
     .liveness('/liveness')
     .replicaCount({
-      default: 2,
-      min: 2,
+      default: 1,
+      min: 1,
       max: 10,
     })
     .resources({
       limits: {
         cpu: '400m',
-        memory: '256Mi',
+        memory: '512Mi',
       },
       requests: {
         cpu: '100m',
-        memory: '128Mi',
+        memory: '256Mi',
       },
     })
     .ingress({
@@ -90,6 +90,16 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
     })
     .liveness('/liveness')
     .readiness('/liveness')
+    .resources({
+      limits: {
+        cpu: '400m',
+        memory: '512Mi',
+      },
+      requests: {
+        cpu: '100m',
+        memory: '256Mi',
+      },
+    })
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
