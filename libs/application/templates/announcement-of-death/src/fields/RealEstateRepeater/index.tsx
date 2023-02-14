@@ -18,20 +18,19 @@ import {
 } from '@island.is/island-ui/core'
 import { Answers, Asset } from '../../types'
 
-import * as styles from './RealEstateAndLandsRepeater.css'
+import * as styles from './styles.css'
 import { m } from '../../lib/messages'
 import { useLazyQuery } from '@apollo/client'
 import { SEARCH_FOR_PROPERTY_QUERY } from '../../graphql'
 import { Query, SearchForPropertyInput } from '@island.is/api/schema'
 import { EstateAsset } from '@island.is/clients/syslumenn'
 
-export const RealEstateAndLandsRepeater: FC<FieldBaseProps<Answers>> = ({
+export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
   application,
   field,
   errors,
 }) => {
   const error = (errors as any)?.assets?.assets
-
   const { id } = field
   const { formatMessage } = useLocale()
   const { fields, append, remove } = useFieldArray<Asset>({

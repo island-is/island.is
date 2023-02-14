@@ -1,1 +1,0 @@
-export { RealEstateAndLandsRepeater } from './RealEstateAndLandsRepeater'

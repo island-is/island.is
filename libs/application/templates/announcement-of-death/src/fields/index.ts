@@ -1,7 +1,7 @@
 export { ElectPerson } from './ElectPerson/index'
 export { Completed, Delegated, AnnouncementCompleteImage } from './Done'
 export { EstateMemberRepeater } from './EstateMemberRepeater'
-export { RealEstateAndLandsRepeater } from './RealEstateAndLandsRepeater'
+export { RealEstateRepeater } from './RealEstateRepeater'
 export { VehiclesRepeater } from './VehiclesRepeater'
 export { FilesRecipientCard } from './FilesRecipientCard'
 export { InfoCard } from './InfoCard'

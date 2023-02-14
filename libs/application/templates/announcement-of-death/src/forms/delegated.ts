@@ -14,7 +14,7 @@ export const delegated: Form = buildForm({
   logo: CoatOfArms,
   children: [
     buildMultiField({
-      id: 'delegataed',
+      id: 'delegated',
       title: m.delegatedTitle,
       description: m.delegatedDescription,
       space: 1,
