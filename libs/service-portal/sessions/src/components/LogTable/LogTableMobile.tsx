@@ -26,11 +26,11 @@ const LogTableMobile: FC<LogTableProps> = ({ sessions }) => {
 
   return (
     <>
-      {sessions.map((session: SessionsSession, index: number) => {
+      {sessions.map((session: SessionsSession) => {
         const type = getSessionType(session, userInfo?.profile.nationalId ?? '')
 
         return (
-          <div style={{ width: '100%' }} key={index}>
+          <div style={{ width: '100%' }} key={session.id}>
             <ExpandedDivider />
             <Box
               paddingY={3}

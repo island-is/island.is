@@ -10694,6 +10694,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-infinite-scroller@npm:^1.2.3":
+  version: 1.2.3
+  resolution: "@types/react-infinite-scroller@npm:1.2.3"
+  dependencies:
+    "@types/react": "*"
+  checksum: ae11063b5e114bff1f06e9d3d2ca0948a3a224f13b4a30fbfe56f84e535ee6232de9667456695bbbb409de51887d701f8558fd28c36a2ea172e8593346de85d1
+  languageName: node
+  linkType: hard
+
 "@types/react-input-mask@npm:3.0.0":
   version: 3.0.0
   resolution: "@types/react-input-mask@npm:3.0.0"
@@ -25449,6 +25458,7 @@ __metadata:
     "@types/react-datepicker": 3.1.1
     "@types/react-dom": 17.0.3
     "@types/react-html-parser": 2.0.1
+    "@types/react-infinite-scroller": ^1.2.3
     "@types/react-input-mask": 3.0.0
     "@types/react-modal": 3.13.1
     "@types/react-pdf": 5.0.9
@@ -25630,6 +25640,7 @@ __metadata:
     react-focus-lock: 2.4.1
     react-hook-form: 6.4.1
     react-html-parser: 2.0.2
+    react-infinite-scroller: ^1.2.6
     react-input-mask: 3.0.0-alpha.2
     react-intl: 5.13.1
     react-is: 18.0.0
@@ -34956,6 +34967,17 @@ __metadata:
   peerDependencies:
     react: ^0.14.0 || ^15.0.0 || ^16.0.0-0
   checksum: 2e6bf4cd90b07667de5771eec7738155c3df39114b28df4a117722b17412015aa9115fd2cb76ca959fd364909de70ebc6032f13ae0fec16d888c792fbaa2226c
+  languageName: node
+  linkType: hard
+
+"react-infinite-scroller@npm:^1.2.6":
+  version: 1.2.6
+  resolution: "react-infinite-scroller@npm:1.2.6"
+  dependencies:
+    prop-types: ^15.5.8
+  peerDependencies:
+    react: ^0.14.9 || ^15.3.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+  checksum: 5f5aae76c484b4039bada87070d5f8c54d2786697ae600be19a68f4e85158ff550122f15dccc5997d8b01fa487da47b9ffbc3e9d9a29f2cf71c77275f72551fd
   languageName: node
   linkType: hard
 

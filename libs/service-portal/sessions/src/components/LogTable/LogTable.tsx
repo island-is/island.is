@@ -30,14 +30,14 @@ const LogTable: React.FC<LogTableProps> = ({ data }) => {
         </Table.Row>
       </Table.Head>
       <Table.Body>
-        {data.map((session: SessionsSession, index: number) => {
+        {data.map((session: SessionsSession) => {
           const type = getSessionType(
             session,
             userInfo?.profile.nationalId ?? '',
           )
 
           return (
-            <Table.Row key={index}>
+            <Table.Row key={session.id}>
               <Table.Data>
                 <div>{formatDateFns(session.timestamp, dateFormat.is)}</div>
                 <Box
