@@ -26,7 +26,7 @@ export const done: Form = buildForm({
         buildCustomField({
           id: 'completeStepImage',
           title: '',
-          component: 'AnnouncementCompleteImage',
+          component: 'Done',
         }),
       ],
     }),

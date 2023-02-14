@@ -12,6 +12,7 @@ export const delegated: Form = buildForm({
   title: '',
   mode: FormModes.IN_PROGRESS,
   logo: CoatOfArms,
+  renderLastScreenButton: true,
   children: [
     buildMultiField({
       id: 'delegated',
@@ -22,12 +23,7 @@ export const delegated: Form = buildForm({
         buildCustomField({
           id: 'completeStepImage',
           title: '',
-          component: 'AnnouncementCompleteImage',
-        }),
-        buildCustomField({
-          id: 'myPagesButton',
-          title: '',
-          component: 'Delegated',
+          component: 'Done',
         }),
       ],
     }),
