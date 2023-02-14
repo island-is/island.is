@@ -213,8 +213,13 @@ export const formatAmendingRegBody = (
 
     const hasDeletion = !!item.querySelector('del')
     const hasInsert = !!item.querySelector('ins')
+    const isGildistokuGrein =
+      isMalsgrein &&
+      /öðlast.*gildi|sett.*með.*(?:heimild|stoð)/.test(
+        (item.textContent || '').toLowerCase(),
+      )
 
-    if (hasDeletion || hasInsert) {
+    if (hasDeletion || hasInsert || isGildistokuGrein) {
       const oldTextElement = item.cloneNode(true) as Element
       const newTextElement = item.cloneNode(true) as Element
       let oldText = ''
@@ -247,7 +252,10 @@ export const formatAmendingRegBody = (
           ? `reglugerðar nr. ${regName}`
           : 'reglugerðarinnar'
       let pushHtml = '' as HTMLText
-      if (isDeleted) {
+
+      if (isGildistokuGrein) {
+        pushHtml = `<p>${oldText}</p>` as HTMLText
+      } else if (isDeleted) {
         if (isMalsgrein) {
           // Paragraph was deleted
           pushHtml = `<p>${malsgrein}. mgr. ${grein}. gr. ${regNameDisplay} fellur brott</p>` as HTMLText
