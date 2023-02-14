@@ -44,7 +44,6 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
   }
 
   useEffect(() => {
-    console.log(application.answers)
     if (
       fields.length === 0 &&
       (!application.answers.assets ||
@@ -69,7 +68,6 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
     <Box marginTop={2}>
       <GridRow>
         {fields.reduce((acc, asset, index) => {
-          console.log(asset)
           if (!asset.initial) {
             return acc
           }
