@@ -59,12 +59,10 @@ applicationTest.describe('Operating Licence', () => {
       await page.getByTestId('agree-to-data-providers').check()
       await page.getByTestId('proceed').click()
 
-
-
       // Operation type
       await page.getByLabel('Gististaður').check()
       await page.getByLabel('Flokkur II').first().check()
-      await page .getByLabel( 'Stærra gistiheimili',) .check()
+      await page.getByLabel('Stærra gistiheimili').check()
       await page.getByTestId('proceed').click()
 
       // Accommodation info
@@ -79,21 +77,9 @@ applicationTest.describe('Operating Licence', () => {
       await page.getByTestId('proceed').click()
 
       // Additional checks
-      await page
-        .getByLabel(
-          'Ég óska eftir leyfi til bráðabirgða',
-        )
-        .check()
-      await page
-        .getByLabel(
-          'Ég lýsi því yfir að skuldastaða',
-        )
-        .check()
-      await page
-        .getByLabel(
-          'Annað',
-        )
-        .fill('This is something else... ÞÆÖ 🤷')
+      await page.getByLabel('Ég óska eftir leyfi til bráðabirgða').check()
+      await page.getByLabel('Ég lýsi því yfir að skuldastaða').check()
+      await page.getByLabel('Annað').fill('This is something else... ÞÆÖ 🤷')
       await page.getByTestId('proceed').click()
 
       // Extra documents
@@ -102,8 +88,7 @@ applicationTest.describe('Operating Licence', () => {
       createMockPdf()
       await page
         .getByRole('button', {
-          name:
-            'Ógilt gildi.',
+          name: 'Ógilt gildi.',
         })
         .getByRole('button', { name: 'Velja skjöl til að hlaða upp' })
         .setInputFiles('./mockPdf.pdf')
