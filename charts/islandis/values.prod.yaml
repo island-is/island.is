@@ -1658,6 +1658,7 @@ services-sessions:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-internal'
+    - 'islandis'
     - 'identity-server'
   grantNamespacesEnabled: true
   healthCheck:
@@ -1725,6 +1726,7 @@ services-sessions-worker:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-internal'
+    - 'islandis'
     - 'identity-server'
   grantNamespacesEnabled: true
   healthCheck:

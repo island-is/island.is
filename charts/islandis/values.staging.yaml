@@ -1661,6 +1661,7 @@ services-sessions:
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'
+    - 'islandis'
     - 'identity-server'
   grantNamespacesEnabled: true
   healthCheck:
@@ -1728,6 +1729,7 @@ services-sessions-worker:
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'
+    - 'islandis'
     - 'identity-server'
   grantNamespacesEnabled: true
   healthCheck:
