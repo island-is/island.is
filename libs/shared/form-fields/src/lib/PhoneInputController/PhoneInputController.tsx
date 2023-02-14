@@ -1,11 +1,6 @@
 import React, { forwardRef } from 'react'
 import { InputBackgroundColor, PhoneInput } from '@island.is/island-ui/core'
-import {
-  Controller,
-  Control,
-  ValidationRules,
-  useFormContext,
-} from 'react-hook-form'
+import { Controller, Control, ValidationRules } from 'react-hook-form'
 import { TestSupport } from '@island.is/island-ui/utils'
 
 interface Props {
@@ -67,46 +62,40 @@ export const PhoneInputController = forwardRef(
       allowedCountryCodes,
     } = props
 
-    const { watch } = useFormContext()
-    const formValue = watch(name) as string
-
     function renderChildInput(c: ChildParams & TestSupport) {
       const { value, onChange, ...props } = c
 
       return (
-        <>
-          <PhoneInput
-            size={size}
-            id={id}
-            autoFocus={autoFocus}
-            disabled={disabled}
-            readOnly={readOnly}
-            rightAlign={rightAlign}
-            backgroundColor={backgroundColor}
-            data-testid={dataTestId}
-            placeholder={placeholder}
-            label={label}
-            value={value}
-            defaultValue={defaultValue}
-            autoComplete={autoComplete}
-            loading={loading}
-            hasError={error !== undefined}
-            errorMessage={error}
-            required={required}
-            ref={ref}
-            onFormatValueChange={onChange}
-            allowedCountryCodes={allowedCountryCodes}
-            onChange={(
-              e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-            ) => {
-              if (onInputChange) {
-                onInputChange(e)
-              }
-            }}
-            {...props}
-          />
-          {formValue}
-        </>
+        <PhoneInput
+          size={size}
+          id={id}
+          autoFocus={autoFocus}
+          disabled={disabled}
+          readOnly={readOnly}
+          rightAlign={rightAlign}
+          backgroundColor={backgroundColor}
+          data-testid={dataTestId}
+          placeholder={placeholder}
+          label={label}
+          value={value}
+          defaultValue={defaultValue}
+          autoComplete={autoComplete}
+          loading={loading}
+          hasError={error !== undefined}
+          errorMessage={error}
+          required={required}
+          ref={ref}
+          onFormatValueChange={onChange}
+          allowedCountryCodes={allowedCountryCodes}
+          onChange={(
+            e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+          ) => {
+            if (onInputChange) {
+              onInputChange(e)
+            }
+          }}
+          {...props}
+        />
       )
     }
 

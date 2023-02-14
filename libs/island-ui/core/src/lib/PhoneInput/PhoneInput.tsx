@@ -14,6 +14,7 @@ import { CountryCodeSelect } from './CountryCodeSelect/CountryCodeSelect'
 import NumberFormat, { NumberFormatValues } from 'react-number-format'
 import { countryCodes as countryCodeList } from './countryCodes'
 import { parse } from 'libphonenumber-js'
+import { useFormContext } from 'react-hook-form'
 import { useEffectOnce } from 'react-use'
 
 const DEFAULT_COUNTRY_CODE = '+354'
@@ -122,17 +123,22 @@ export const PhoneInput = forwardRef(
       ...inputProps
     } = props
 
-    const countryCodes = getCountryCodes(allowedCountryCodes)
-    const defaultCountryCode = getDefaultCountryCode(defaultValue)
-    const [selectedCountryCode, setSelectedCountryCode] = useState<
-      ValueType<Option>
-    >(countryCodes.find((x) => x.value === defaultCountryCode))
     const [hasFocus, setHasFocus] = useState(false)
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
     const mergedRefs = useMergeRefs(inputRef, ref || null)
+    const form = useFormContext()
+    const formValue = form.watch(name)
 
-    const cc = (selectedCountryCode as Option).value.toString()
+    // Extract default country code from value, with value from form context having priority
+    const defaultCountryCode = getDefaultCountryCode(
+      formValue || value || defaultValue,
+    )
+    const countryCodes = getCountryCodes(allowedCountryCodes)
+    const [selectedCountryCode, setSelectedCountryCode] = useState<
+      ValueType<Option>
+    >(countryCodes.find((x) => x.value === defaultCountryCode))
+    const cc = (selectedCountryCode as Option)?.value?.toString()
 
     const errorId = `${id}-error`
     const selectId = `country-code-select-${id}`
@@ -159,7 +165,7 @@ export const PhoneInput = forwardRef(
     useEffectOnce(() => {
       // We need to initialize defaultValues with country code prefix if it is missing
       if (value && !value.startsWith('+') && onFormatValueChange) {
-        onFormatValueChange(getDefaultValue(defaultValue, defaultCountryCode))
+        onFormatValueChange(getDefaultValue(value, defaultCountryCode))
       }
     })
 
@@ -232,6 +238,9 @@ export const PhoneInput = forwardRef(
                   name={selectId}
                   onChange={handleSelectChange}
                   value={selectedCountryCode}
+                  defaultValue={countryCodes.find(
+                    (x) => x.value === defaultCountryCode,
+                  )}
                   options={countryCodes}
                   disabled={disabled || readOnly}
                   backgroundColor={backgroundColor}
