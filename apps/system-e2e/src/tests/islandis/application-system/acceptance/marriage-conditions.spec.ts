@@ -39,11 +39,18 @@ applicationTest.describe('Marriage Conditions', () => {
 
       // Fake data
       await expect(page.locator('form')).toBeVisible()
-      if ((await page.getByRole('heading', {name: 'Gervigögn'}).all()).length > 0) {
+      if (
+        (await page.getByRole('heading', { name: 'Gervigögn' }).all()).length >
+        0
+      ) {
         await page.getByLabel('Já').check()
-        const maritalStatusDropdown = page.getByTestId('select-fakeData.maritalStatus')
+        const maritalStatusDropdown = page.getByTestId(
+          'select-fakeData.maritalStatus',
+        )
         await maritalStatusDropdown.getByText('Hjúskaparstaða').click()
-        await maritalStatusDropdown.locator('[id="react-select-fakeData\\.maritalStatus-option-0"]').click()
+        await maritalStatusDropdown
+          .locator('[id="react-select-fakeData\\.maritalStatus-option-0"]')
+          .click()
         await page.getByTestId('proceed').click()
       }
 
@@ -82,15 +89,13 @@ applicationTest.describe('Marriage Conditions', () => {
       const societyDropdown = page.getByTestId('select-ceremony.place.society')
       await societyDropdown.click()
       await societyDropdown
-        .locator('[id="react-select-ceremony\\.place\\.society-option-0"]').click()
+        .locator('[id="react-select-ceremony\\.place\\.society-option-0"]')
+        .click()
 
       await placeRegion.getByText('Embætti sýslumanns').click()
       const officeDropdown = page.getByTestId('select-ceremony.place.office')
       await officeDropdown.click()
-      await officeDropdown
-        .getByText('Sýslumaðurinn')
-        .last()
-        .click()
+      await officeDropdown.getByText('Sýslumaðurinn').last().click()
       await page.getByTestId('proceed').click()
 
       // Witnesses
