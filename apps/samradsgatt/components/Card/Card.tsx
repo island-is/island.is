@@ -1,22 +1,45 @@
-import { Tag, Box, Divider, Text, ArrowLink } from '@island.is/island-ui/core'
+import {
+  Tag,
+  Box,
+  Divider,
+  Text,
+  ArrowLink,
+  Columns,
+  Column,
+  Icon,
+} from '@island.is/island-ui/core'
+import { ReactNode } from 'react'
 import getTagVariants from '../../utils/helpers/getTagVariants'
 
-type CardProps = {
-  caseNumber: string
-  status: string
-  name: string
-  adviceCount: number
-  shortDescription: string
+type CardInfo = {
+  tag?: string
   id: number
+  title: string
+  eyebrows: Array<string>
+}
+type CardProps = {
+  card: CardInfo
+  height?: string
+  width?: string
+  dropdown?: ReactNode
+  showAttachment?: boolean
+  children: any
 }
 
-export const Card = (caseData: CardProps) => {
+export const Card = ({
+  card,
+  showAttachment,
+  width,
+  height,
+  dropdown,
+  children,
+}: CardProps) => {
   return (
     <Box
       style={{
-        width: '328px',
+        width: width ? width : '328px',
         minWidth: '287px',
-        height: '460px',
+        height: height ? height : '460px',
         flexWrap: 'wrap',
       }}
       padding={3}
@@ -30,14 +53,14 @@ export const Card = (caseData: CardProps) => {
         alignItems="center"
         justifyContent="spaceBetween"
       >
-        <Tag variant={getTagVariants(caseData.status)}>{caseData.status}</Tag>
+        <Tag variant={getTagVariants(card.tag)}>{card.tag}</Tag>
         <Text as="p" variant="eyebrow" color="purple400">
-          Nr. S-{caseData.caseNumber}
+          Nr. S-{card.id}
         </Text>
       </Box>
       <Box display="flex" flexDirection="row" alignItems="center" paddingY={1}>
         <Text as="p" variant="eyebrow" color="blue600">
-          Stöðumat og valkostir
+          {card.eyebrows[0]}
         </Text>
         <div
           style={{
@@ -47,10 +70,16 @@ export const Card = (caseData: CardProps) => {
             border: '1px solid #ccdfff',
           }}
         />
+        <Text as="p" variant="eyebrow" color="blue600">
+          {card.eyebrows[1]}
+        </Text>
       </Box>
-      <Box style={{ height: '90px', overflow: 'hidden' }} paddingBottom={2}>
+      <Box
+        style={{ height: showAttachment ? '50px' : '90px', overflow: 'hidden' }}
+        paddingBottom={2}
+      >
         <Text as="h4" fontWeight="semiBold">
-          {caseData.name}
+          {card.title}
         </Text>
       </Box>
 
@@ -65,23 +94,19 @@ export const Card = (caseData: CardProps) => {
       <Box paddingY={1}>
         <Divider />
       </Box>
-      <Box
-        display="flex"
-        flexDirection="row"
-        alignItems="center"
-        justifyContent="spaceBetween"
-      >
-        <Text variant="eyebrow" color="purple400">
-          {`Fjöldi umsagna: ${caseData.adviceCount}`}
-        </Text>
-      </Box>
-      <Box style={{ minHeight: 132, lineBreak: 'anywhere' }}>
-        <Text variant="small" color="dark400">
-          {caseData.shortDescription}
-        </Text>
-      </Box>
-
-      <ArrowLink href={`/mal/${caseData.id}`}>Skoða mál</ArrowLink>
+      {children}
+      <Columns>
+        {showAttachment && (
+          <Column width="content">
+            <Box>{dropdown}</Box>
+          </Column>
+        )}
+        <Column width="content">
+          <Box marginLeft={showAttachment ? 20 : 0}>
+            <ArrowLink href={`/mal/${card.id}`}>Skoða mál</ArrowLink>
+          </Box>
+        </Column>
+      </Columns>
     </Box>
   )
 }

@@ -27,6 +27,7 @@ query GetSessionsList($input: SessionsInput!) {
       }
       timestamp
       userAgent
+      device
       ip
       ipLocation
     }

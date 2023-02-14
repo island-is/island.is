@@ -1,3 +1,8 @@
+import * as kennitala from 'kennitala'
+import React, { useState } from 'react'
+import InfiniteScroll from 'react-infinite-scroller'
+
+import { SessionsSession } from '@island.is/api/schema'
 import {
   Box,
   GridColumn,
@@ -11,100 +16,97 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
-import React, { Fragment, useRef, useState } from 'react'
+
 import LogTable from '../../components/LogTable/LogTable'
 import LogTableMobile from '../../components/LogTable/LogTableMobile'
-
+import useOnScreen from '../../utils/useOnScreen'
 import { m } from '../../lib/messages'
 import { useGetSessionsListQuery } from './Sessions.generated'
-import { SessionsSession } from '@island.is/api/schema'
-import * as kennitala from 'kennitala'
-import useOnScreen from '../../utils/useOnScreen'
 
-interface CursorState {
-  before: string
-  after: string
-}
+const SESSION_LIMIT = 20
 
 const Sessions = () => {
-  const SESSION_LIMIT = 20
-
   const { formatMessage } = useLocale()
 
   const [sessionsData, setSessionsData] = useState<SessionsSession[]>([])
   const [searchNationalId, setSearchNationalId] = useState('')
-  const [prevSearchNationalId, setPrevSearchNationalId] = useState('')
-  const [sentNationalId, setSentNationalId] = useState('')
-  const [page, setPage] = useState<CursorState>({ before: '', after: '' })
-  const [isSearchingSSN, setIsSearchingSSN] = useState(false)
+  const [nextCursor, setNextCursor] = useState<string>('')
+  const [customLoading, setCustomLoading] = React.useState(true)
 
-  const ref = useRef<HTMLDivElement>(null)
-  const isVisible = useOnScreen(ref)
-
-  const { data, loading, error } = useGetSessionsListQuery({
-    fetchPolicy: 'network-only',
-    variables: {
+  const getQueryVariables = (next: string, nationalId: string) => {
+    return {
       input: {
         limit: SESSION_LIMIT,
-        before: page.before,
-        after: page.after,
-        nationalId: sentNationalId ?? '',
+        before: '',
+        after: next,
+        nationalId: kennitala.isValid(nationalId) ? nationalId : '',
         toDate: '',
         fromDate: '',
       },
-    },
+    }
+  }
+
+  const { data, error, refetch } = useGetSessionsListQuery({
+    variables: getQueryVariables('', ''),
     onCompleted: (data) => {
       setSessionsData([
         ...(sessionsData as SessionsSession[]),
         ...(data.sessionsList.data as SessionsSession[]),
       ])
-      setIsSearchingSSN(false)
+      setNextCursor(data.sessionsList.pageInfo.endCursor ?? '')
+      setCustomLoading(false)
     },
     onError: () => {
       toast.error(formatMessage(m.error))
     },
   })
 
-  const handlePageChange = (): void => {
-    if (!data || loading) return
-    if (!data.sessionsList.pageInfo.hasNextPage) return
+  const loadMore = () => {
+    if (customLoading || !data) return
 
-    setPage({
-      after: data?.sessionsList.pageInfo.endCursor ?? '',
-      before: '',
-    })
+    if (data?.sessionsList.pageInfo.hasNextPage) {
+      setCustomLoading(true)
+      refetch({ ...getQueryVariables(nextCursor, searchNationalId) }).then(
+        (res) => {
+          setSessionsData([
+            ...(sessionsData as SessionsSession[]),
+            ...(res.data?.sessionsList.data as SessionsSession[]),
+          ])
+          setNextCursor(res.data?.sessionsList.pageInfo.endCursor ?? '')
+          setCustomLoading(false)
+        },
+      )
+    }
   }
-
-  React.useEffect(() => {
-    if (isVisible) {
-      handlePageChange()
-    }
-  }, [isVisible])
-
-  // If the search value changes, to a valid National ID, refetch the data with the National ID
-  // Or if the search value changes from valid to invalid, refetch the data with empty National ID
-  React.useEffect(() => {
-    if (kennitala.isValid(searchNationalId)) {
-      setSentNationalId(searchNationalId)
-      setIsSearchingSSN(true)
-      setSessionsData([])
-      setPage({ before: '', after: '' })
-    } else if (
-      kennitala.isValid(prevSearchNationalId) &&
-      !kennitala.isValid(searchNationalId)
-    ) {
-      setSentNationalId('')
-      setIsSearchingSSN(true)
-      setSessionsData([])
-      setPage({ before: '', after: '' })
-    }
-  }, [searchNationalId])
 
   const handleChange = (
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
   ): void => {
-    setPrevSearchNationalId(searchNationalId)
     setSearchNationalId(e.target.value)
+    if (kennitala.isValid(e.target.value)) {
+      setSessionsData([])
+      setCustomLoading(true)
+      refetch({
+        ...getQueryVariables('', e.target.value),
+      }).then((res) => {
+        setSessionsData(res.data?.sessionsList.data as SessionsSession[])
+        setNextCursor(res.data?.sessionsList.pageInfo.endCursor ?? '')
+        setCustomLoading(false)
+      })
+    } else if (
+      !kennitala.isValid(e.target.value) &&
+      kennitala.isValid(searchNationalId)
+    ) {
+      setSessionsData([])
+      setCustomLoading(true)
+      refetch({
+        ...getQueryVariables('', ''),
+      }).then((res) => {
+        setSessionsData(res.data?.sessionsList.data as SessionsSession[])
+        setNextCursor(res.data?.sessionsList.pageInfo.endCursor ?? '')
+        setCustomLoading(false)
+      })
+    }
   }
 
   return (
@@ -135,14 +137,28 @@ const Sessions = () => {
         </GridColumn>
       </Box>
       {data ? (
-        <Fragment>
+        <InfiniteScroll
+          pageStart={0}
+          loadMore={loadMore}
+          hasMore={data?.sessionsList.pageInfo.hasNextPage}
+          loader={
+            <Box
+              key={'sessions.screens.sessions.loader'}
+              marginTop={'gutter'}
+              display={'flex'}
+              justifyContent={'center'}
+            >
+              {customLoading && <LoadingDots large />}
+            </Box>
+          }
+        >
           <Hidden below={'lg'}>
             <LogTable data={sessionsData} />
           </Hidden>
           <Hidden above={'md'}>
             <LogTableMobile sessions={sessionsData} />
           </Hidden>
-        </Fragment>
+        </InfiniteScroll>
       ) : error ? (
         <Box display={'flex'} justifyContent={'center'}>
           <Text>{formatMessage(m.error)}</Text>
@@ -151,14 +167,6 @@ const Sessions = () => {
         <SkeletonLoader height={40} repeat={6} width={'100%'} />
       )}
       <ToastContainer />
-      <Box
-        marginTop={'gutter'}
-        display={'flex'}
-        justifyContent={'center'}
-        ref={ref}
-      >
-        {((loading && data) || isSearchingSSN) && <LoadingDots large />}
-      </Box>
     </>
   )
 }
