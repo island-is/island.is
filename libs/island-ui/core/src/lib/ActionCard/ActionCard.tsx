@@ -5,15 +5,13 @@ import { Tag, TagVariant } from '../Tag/Tag'
 import { Text } from '../Text/Text'
 import { Tooltip } from '../Tooltip/Tooltip'
 import { Inline } from '../Inline/Inline'
-import {
-  ProgressMeter,
-  ProgressMeterVariant,
-} from '../ProgressMeter/ProgressMeter'
+import { DraftProgressMeterVariant } from '../DraftProgressMeter/DraftProgressMeter'
 import * as styles from './ActionCard.css'
 import { Hidden } from '../Hidden/Hidden'
 import { Icon as IconType } from '../IconRC/iconMap'
 import { Icon } from '../IconRC/Icon'
 import DialogPrompt from '../DialogPrompt/DialogPrompt'
+import { DraftProgressMeter } from '../DraftProgressMeter/DraftProgressMeter'
 
 type ActionCardProps = {
   date?: string
@@ -46,8 +44,9 @@ type ActionCardProps = {
   }
   progressMeter?: {
     active?: boolean
-    variant?: ProgressMeterVariant
-    progress?: number
+    variant?: DraftProgressMeterVariant
+    draftTotalSteps?: number
+    draftFinishedSteps?: number
   }
   unavailable?: {
     active?: boolean
@@ -65,6 +64,7 @@ type ActionCardProps = {
     dialogConfirmLabel?: string
     dialogCancelLabel?: string
   }
+  status?: string
 }
 
 const defaultCta = {
@@ -81,7 +81,6 @@ const defaultTag = {
 const defaultProgressMeter = {
   variant: 'blue',
   active: false,
-  progress: 0,
 } as const
 
 const defaultUnavailable = {
@@ -116,12 +115,14 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   deleteButton: _delete,
   avatar,
   logo,
+  status,
 }) => {
   const cta = { ...defaultCta, ..._cta }
   const progressMeter = { ...defaultProgressMeter, ..._progressMeter }
   const tag = { ...defaultTag, ..._tag }
   const unavailable = { ...defaultUnavailable, ..._unavailable }
   const deleteButton = { ...defaultDelete, ..._delete }
+  const alignWithDate = date ? 'flexEnd' : 'center'
   const bgr =
     backgroundColor === 'white'
       ? 'white'
@@ -310,35 +311,30 @@ export const ActionCard: React.FC<ActionCardProps> = ({
     )
   }
 
-  const renderProgressMeter = () => {
-    const { variant, progress } = progressMeter
-    const paddingWithDate = date ? 0 : 1
-    const alignWithDate = date ? 'flexEnd' : 'center'
-
+  const renderDraftProgressMeter = () => {
+    const { variant, draftFinishedSteps, draftTotalSteps } = progressMeter
     return (
-      <Box
-        width="full"
-        paddingTop={[1, 1, 1, paddingWithDate]}
-        display="flex"
-        alignItems={['flexStart', 'flexStart', alignWithDate]}
-        flexDirection={['column', 'column', 'row']}
-      >
-        <ProgressMeter
+      <Box flexGrow={1} className={styles.draftProgressMeter}>
+        <DraftProgressMeter
           variant={variant}
-          progress={progress}
-          className={styles.progressMeter}
+          draftTotalSteps={draftTotalSteps ?? 1}
+          draftFinishedSteps={draftFinishedSteps ?? 1}
         />
+      </Box>
+    )
+  }
 
-        <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
-          <Button
-            variant={cta.variant}
-            onClick={cta.onClick}
-            icon={cta.icon}
-            size={cta.size}
-          >
-            {cta.label}
-          </Button>
-        </Box>
+  const renderProgressMeterButton = () => {
+    return (
+      <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
+        <Button
+          variant={cta.variant}
+          onClick={cta.onClick}
+          icon={cta.icon}
+          size={cta.size}
+        >
+          {cta.label}
+        </Button>
       </Box>
     )
   }
@@ -423,7 +419,20 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         </Box>
       </Box>
 
-      {progressMeter.active && renderProgressMeter()}
+      {progressMeter?.active && (
+        <Box
+          width="full"
+          paddingTop={[2, 2, 2, 3]}
+          display="flex"
+          flexGrow={1}
+          flexShrink={0}
+          alignItems={['stretch', 'stretch', alignWithDate]}
+          flexDirection={['column', 'column', 'row']}
+        >
+          {status === 'draft' && renderDraftProgressMeter()}
+          {renderProgressMeterButton()}
+        </Box>
+      )}
     </Box>
   )
 }

@@ -21,10 +21,12 @@ export enum Roles {
   APPLICANT_OFFICIAL_ESTATE = 'applicant_official_estate',
   APPLICANT_NO_PROPERTY = 'applicant_no_property',
   APPLICANT_RESIDENCE_PERMIT = 'applicant_residence_permit',
+  APPLICANT_PRIVATE_EXCHANGE = 'applicant_private_exchange',
 }
 
 export const EstateTypes = {
   officialEstate: 'Opinber skipti',
   noPropertyEstate: 'Eignalaust dánarbú',
   residencePermit: 'Búsetuleyfi',
+  privateExchange: 'Einkaskipti',
 }

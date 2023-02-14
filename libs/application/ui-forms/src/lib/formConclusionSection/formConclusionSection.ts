@@ -69,7 +69,7 @@ export const formConclusionSection = (props: props) =>
           buildMessageWithLinkButtonField({
             id: 'uiForms.conclusionGoToServicePortal',
             title: '',
-            url: '/minarsidur',
+            url: '/minarsidur/umsoknir',
             buttonTitle: conclusion.information.buttonTitle,
             message: conclusion.information.messageText,
           }),

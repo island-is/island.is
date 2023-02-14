@@ -1,5 +1,7 @@
 export * from './About'
 export * from './Card/Card'
+export * from './HeroBanner/HeroBanner'
+export * from './StatisticBox/StatisticBox'
 export * from './CaseOverview/CaseOverview'
 export * from './CaseStatusCard/CaseStatusCard'
 export * from './CaseTimeline/CaseTimeline'

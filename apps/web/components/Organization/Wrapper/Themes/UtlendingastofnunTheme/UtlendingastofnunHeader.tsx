@@ -41,12 +41,12 @@ const UtlendingastofnunHeader: React.FC<HeaderProps> = ({
   const screenWidth = getScreenWidthString(width)
 
   return (
-    <Box
+    <div
       style={n(`utlendingastofnunHeader-${screenWidth}`, getDefaultStyle())}
       className={styles.headerBg}
     >
       <GridContainer className={styles.headerContainer}>
-        <Box className={styles.headerWrapper}>
+        <div className={styles.headerWrapper}>
           <SidebarLayout
             sidebarContent={
               !!organizationPage.organization.logo && (
@@ -98,9 +98,9 @@ const UtlendingastofnunHeader: React.FC<HeaderProps> = ({
               </Link>
             </Box>
           </SidebarLayout>
-        </Box>
+        </div>
       </GridContainer>
-    </Box>
+    </div>
   )
 }
 

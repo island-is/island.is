@@ -14,10 +14,12 @@ export const delegationsModule: PortalModule = {
     const hasAccess = delegationScopes.some((scope) =>
       userInfo.scopes.includes(scope),
     )
+
     const commonProps = {
       name: m.accessControlDelegations,
       path: DelegationPaths.Delegations,
       navHide: !hasAccess,
+      enabled: hasAccess,
       render: () => lazy(() => import('./screens/AccessControl')),
     }
 
