@@ -31,6 +31,7 @@ import {
   Sticky,
   SidebarShipSearchInput,
   Webreader,
+  SearchBox,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useFeatureFlag } from '@island.is/web/hooks'
@@ -485,6 +486,8 @@ const renderConnectedComponent = (slice) => {
       return (
         <SidebarShipSearchInput key={slice?.id} namespace={slice?.json ?? {}} />
       )
+    case 'OrganizationSearchBox':
+      return <SearchBox key={slice?.id} {...slice?.json} />
     default:
       return null
   }

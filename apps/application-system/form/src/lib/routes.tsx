@@ -1,4 +1,4 @@
-import { createBrowserRouter, Outlet } from 'react-router-dom'
+import { Outlet, RouteObject } from 'react-router-dom'
 
 import { UserProfileLocale } from '@island.is/shared/components'
 import { ErrorShell, HeaderInfoProvider } from '@island.is/application/ui-shell'
@@ -11,45 +11,40 @@ import { Layout } from '../components/Layout/Layout'
 export const BASE_PATH = '/umsoknir'
 
 /**
- * Creates router for application-system. All routes are defined here.
+ * Creates routes for application-system. All routes are defined here.
  */
-export const router = createBrowserRouter(
-  [
-    {
-      element: (
-        <HeaderInfoProvider>
-          <UserProfileLocale />
-          <Layout>
-            <Outlet />
-          </Layout>
-        </HeaderInfoProvider>
-      ),
-      children: [
-        {
-          path: '/tengjast-umsokn',
-          element: <AssignApplication />,
-        },
-        {
-          errorElement: <ErrorShell />,
-          children: [
-            {
-              path: '/:slug',
-              element: <Applications />,
-            },
-            {
-              path: '/:slug/:id',
-              element: <Application />,
-            },
-          ],
-        },
-        {
-          path: '*',
-          element: <ErrorShell />,
-        },
-      ],
-    },
-  ],
+export const routes: RouteObject[] = [
   {
-    basename: BASE_PATH,
+    element: (
+      <HeaderInfoProvider>
+        <UserProfileLocale />
+        <Layout>
+          <Outlet />
+        </Layout>
+      </HeaderInfoProvider>
+    ),
+    children: [
+      {
+        path: '/tengjast-umsokn',
+        element: <AssignApplication />,
+      },
+      {
+        errorElement: <ErrorShell />,
+        children: [
+          {
+            path: '/:slug',
+            element: <Applications />,
+          },
+          {
+            path: '/:slug/:id',
+            element: <Application />,
+          },
+        ],
+      },
+      {
+        path: '*',
+        element: <ErrorShell />,
+      },
+    ],
   },
-)
+]
