@@ -19,7 +19,6 @@ import { IntroHeader } from '@island.is/portals/core'
 
 import LogTable from '../../components/LogTable/LogTable'
 import LogTableMobile from '../../components/LogTable/LogTableMobile'
-import useOnScreen from '../../utils/useOnScreen'
 import { m } from '../../lib/messages'
 import { useGetSessionsListQuery } from './Sessions.generated'
 
