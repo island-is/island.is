@@ -11,7 +11,7 @@ test.describe('Admin portal', () => {
     context = await session({
       browser: browser,
       homeUrl: `/stjornbord`,
-      phoneNumber: '0103019',
+      phoneNumber: '0102399',
       idsLoginOn: true,
     })
   })
@@ -20,8 +20,8 @@ test.describe('Admin portal', () => {
   })
   test('should see welcome title', async () => {
     const page = await context.newPage()
-    const { findByRole } = helpers(page)
+    const { findByTestId } = helpers(page)
     await page.goto('/stjornbord')
-    await expect(findByRole('heading', 'Yfirlit')).toBeVisible()
+    await expect(findByTestId('active-module-name')).toBeVisible()
   })
 })

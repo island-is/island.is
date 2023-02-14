@@ -18,6 +18,7 @@ export const ModuleAlertBannerSection = () => {
     }
     return false
   })
+
   return (
     <Stack space={2}>
       {currentBanners.map((banner) => (

@@ -1,7 +1,8 @@
-import { ForbiddenException, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import * as kennitala from 'kennitala'
+import { lookup } from 'geoip-lite'
 import { Op, WhereOptions } from 'sequelize'
+import uaParser from 'ua-parser-js'
 
 import { User } from '@island.is/auth-nest-tools'
 import { paginate } from '@island.is/nest/pagination'
@@ -19,8 +20,8 @@ export class SessionsService {
 
   async findAll(
     user: User,
-    otherUser: string,
     query: SessionsQueryDto,
+    otherUser?: string,
   ): Promise<SessionsResultDto> {
     let whereOptions: WhereOptions
 
@@ -47,6 +48,12 @@ export class SessionsService {
       }
     }
 
+    whereOptions = {
+      ...whereOptions,
+      ...(query.from && { timestamp: { [Op.gte]: query.from } }),
+      ...(query.to && { timestamp: { [Op.lte]: query.to } }),
+    }
+
     return paginate({
       Model: this.sessionModel,
       limit: Math.min(query.limit || 10, 100),
@@ -59,6 +66,31 @@ export class SessionsService {
   }
 
   create(session: Session): Promise<Session> {
-    return this.sessionModel.create(session)
+    return this.sessionModel.create({
+      ...session,
+      device: this.formatUserAgent(session.userAgent),
+      ipLocation: this.formatIp(session.ip),
+    })
+  }
+
+  private formatUserAgent(userAgent: string): string | undefined {
+    const ua = uaParser(userAgent)
+    const browser = ua.browser.name || ''
+    const os = ua.os.name || ''
+    const device =
+      browser || os ? `${browser}${browser && os ? ` (${os})` : os}` : undefined
+
+    return device
+  }
+
+  private formatIp(ip: string): string | undefined {
+    const geoLocation = lookup(ip)
+    const ipLocation = geoLocation
+      ? geoLocation.city
+        ? `${geoLocation.city}, ${geoLocation.country}`
+        : geoLocation.country
+      : undefined
+
+    return ipLocation
   }
 }

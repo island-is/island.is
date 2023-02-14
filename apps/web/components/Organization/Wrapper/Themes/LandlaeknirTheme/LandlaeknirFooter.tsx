@@ -39,14 +39,14 @@ interface LandLaeknirFooterProps {
   namespace: Record<string, string>
 }
 
-export const LandLaeknirFooter = ({
+const LandLaeknirFooter = ({
   footerItems,
   namespace,
 }: LandLaeknirFooterProps) => {
   const n = useNamespace(namespace)
   return (
     <footer aria-labelledby="organizationFooterTitle">
-      <Box className={styles.container}>
+      <div className={styles.container}>
         <GridContainer className={styles.mainColumn}>
           <GridColumn>
             <GridRow>
@@ -213,7 +213,7 @@ export const LandLaeknirFooter = ({
             </GridRow>
           </GridColumn>
         </GridContainer>
-      </Box>
+      </div>
     </footer>
   )
 }

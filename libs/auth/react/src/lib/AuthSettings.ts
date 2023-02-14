@@ -39,7 +39,7 @@ export interface AuthSettings
   switchUserRedirectUrl?: string
 
   /**
-   * Wich PATH on the AUTHORITY to use for checking the session expiry.
+   * Which PATH on the AUTHORITY to use for checking the session expiry.
    */
   checkSessionPath?: string
 }
