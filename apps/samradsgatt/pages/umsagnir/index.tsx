@@ -94,6 +94,50 @@ export const MyReviewPage = () => {
       review:
         'Þetta er mín umsögn. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget vulputate massa, ac posuere erat. Sed malesuada at ipsum a efficitur. Nam pellentesque semper sem, lacinia placerat enim sodales at. Nullam commodo auctor auctor. Etiam elit lorem, maximus in suscipit vitae, luctus eget sem.',
     },
+    {
+      id: 3027,
+      caseNumber: '3/2023',
+      name: 'Númer 3 TESTE',
+      adviceCount: 22,
+      shortDescription: 'test',
+      status: 'Til umsagnar',
+      institution: 'Fjármála- og efnahagsráðuneytið',
+      type: 'Drög að stefnu',
+      policyArea: 'Fjölmiðlun',
+      processBegins: '2023-01-13T00:00:00',
+      processEnds: '2023-01-27T23:59:59',
+      created: '2023-01-13T15:46:27.82',
+      documents: [
+        {
+          id: 1,
+          name: 'jo',
+        },
+      ],
+      review:
+        'Þetta er mín umsögn. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget vulputate massa, ac posuere erat. Sed malesuada at ipsum a efficitur. Nam pellentesque semper sem, lacinia placerat enim sodales at. Nullam commodo auctor auctor. Etiam elit lorem, maximus in suscipit vitae, luctus eget sem.',
+    },
+    {
+      id: 3027,
+      caseNumber: '3/2023',
+      name: 'Númer 3 TESTE',
+      adviceCount: 22,
+      shortDescription: 'test',
+      status: 'Til umsagnar',
+      institution: 'Fjármála- og efnahagsráðuneytið',
+      type: 'Drög að stefnu',
+      policyArea: 'Fjölmiðlun',
+      processBegins: '2023-01-13T00:00:00',
+      processEnds: '2023-01-27T23:59:59',
+      created: '2023-01-13T15:46:27.82',
+      documents: [
+        {
+          id: 1,
+          name: 'jo',
+        },
+      ],
+      review:
+        'Þetta er mín umsögn. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget vulputate massa, ac posuere erat. Sed malesuada at ipsum a efficitur. Nam pellentesque semper sem, lacinia placerat enim sodales at. Nullam commodo auctor auctor. Etiam elit lorem, maximus in suscipit vitae, luctus eget sem.',
+    },
   ]
   const [searchValue, setSearchValue] = useState<string>('')
   const [prevSearchValue, setPrevSearchValue] = useState<string>('')
