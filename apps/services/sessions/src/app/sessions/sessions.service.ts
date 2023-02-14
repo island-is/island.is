@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { lookup } from 'geoip-lite'
 import { Op, WhereOptions } from 'sequelize'
 import uaParser from 'ua-parser-js'
 
@@ -65,15 +66,31 @@ export class SessionsService {
   }
 
   create(session: Session): Promise<Session> {
-    const ua = uaParser(session.userAgent)
+    return this.sessionModel.create({
+      ...session,
+      device: this.formatUserAgent(session.userAgent),
+      ipLocation: this.formatIp(session.ip),
+    })
+  }
+
+  private formatUserAgent(userAgent: string): string | undefined {
+    const ua = uaParser(userAgent)
     const browser = ua.browser.name || ''
     const os = ua.os.name || ''
     const device =
       browser || os ? `${browser}${browser && os ? ` (${os})` : os}` : undefined
 
-    return this.sessionModel.create({
-      ...session,
-      device,
-    })
+    return device
+  }
+
+  private formatIp(ip: string): string | undefined {
+    const geoLocation = lookup(ip)
+    const ipLocation = geoLocation
+      ? geoLocation.city
+        ? `${geoLocation.city}, ${geoLocation.country}`
+        : geoLocation.country
+      : undefined
+
+    return ipLocation
   }
 }
