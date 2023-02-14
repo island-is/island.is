@@ -457,6 +457,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             shouldPersistToExternalData: true,
             throwOnError: true,
           }),
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.setBirthDate,
+            externalDataId: 'dateOfBirth',
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -1032,6 +1037,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           onEntry: defineTemplateApi({
             action: ApiModuleActions.sendApplication,
             shouldPersistToExternalData: true,
+            throwOnError: true,
+          }),
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.setBirthDate,
+            externalDataId: 'dateOfBirth',
             throwOnError: true,
           }),
           roles: [

@@ -700,7 +700,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         multipleBirths: string
       }
 
-      const newPeriod = {
+      const residenceGrantPeriod = {
         from: residenceGrant.dateFrom,
         to: residenceGrant.dateTo,
         ratio: multipleBirths.hasMultipleBirths === 'yes' ? 'D28' : 'D14',
@@ -711,7 +711,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
             ? 'DVAL.FJÖL'
             : 'DVALSTYRK',
       }
-      periods.push(newPeriod)
+      periods.push(residenceGrantPeriod)
     }
 
     for (const [index, period] of answers.entries()) {
