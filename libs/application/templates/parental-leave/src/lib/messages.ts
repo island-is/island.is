@@ -2025,6 +2025,13 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Engin lýsing fannst',
       description: 'No description could be found',
     },
+    residenceGrantRedirectMessage: {
+      id: 'pl.application:residence.grant.redirect.message',
+      defaultMessage:
+        'Dvalarstyrkur er í boði. Við munum beina þér að dagskránni fljótlega.',
+      description:
+        'Residence Grant is available. We will redirect you to the application shortly.',
+    },
     residenceGrantStartDateError: {
       id: 'pl.application:residence.grant.start.date.error',
       defaultMessage: 'Upphafsdagsetning er utan leyfilegs tímabils',

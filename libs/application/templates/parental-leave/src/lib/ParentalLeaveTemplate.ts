@@ -457,11 +457,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             shouldPersistToExternalData: true,
             throwOnError: true,
           }),
-          onExit: defineTemplateApi({
-            action: ApiModuleActions.setBirthDate,
-            externalDataId: 'dateOfBirth',
-            throwOnError: true,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -608,19 +603,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE]: {
-        entry: [
-          'setPreviousState',
-          'assignToVMST',
-          'setResidenceGrant',
-          'setDateOfBirth',
-        ],
-        exit: 'setResidenceGrantPeriod',
+        entry: ['setPreviousState', 'assignToVMST', 'setDateOfBirth'],
         meta: {
           status: 'inprogress',
           name: States.RESIDENCE_GRAND_APPLICATION,
           lifecycle: pruneAfterDays(970),
-          onExit: defineTemplateApi({
-            action: ApiModuleActions.validateApplication,
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.setBirthDate,
+            externalDataId: 'dateOfBirth',
             throwOnError: true,
           }),
           progress: 0.5,
@@ -637,16 +627,15 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.APPROVE]: {
-            target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
-          },
           ['APPROVEDREJECT']: { target: States.APPROVED },
-
           ['VINNUMALASTOFNUNAPPROVALREJECT']: {
             target: States.VINNUMALASTOFNUN_APPROVAL,
           },
           ['VINNUMALASTOFNUNAPPROVEEDITSREJECT']: {
             target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+          },
+          ['RESIDENCEGRANTAPPLICATION']: {
+            target: States.RESIDENCE_GRAND_APPLICATION,
           },
         },
       },
@@ -662,6 +651,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           status: 'inprogress',
           name: States.RESIDENCE_GRAND_APPLICATION,
           lifecycle: pruneAfterDays(970),
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.setBirthDate,
+            externalDataId: 'dateOfBirth',
+            throwOnError: true,
+          }),
           onExit: defineTemplateApi({
             action: ApiModuleActions.validateApplication,
             throwOnError: true,
@@ -692,7 +686,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
           },
           ['APPROVEDREJECT']: { target: States.APPROVED },
-
           ['VINNUMALASTOFNUNAPPROVALREJECT']: {
             target: States.VINNUMALASTOFNUN_APPROVAL,
           },
@@ -736,7 +729,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       //   },
       // },
       [States.APPROVED]: {
-        entry: 'assignToVMST',
+        entry: ['assignToVMST'],
         meta: {
           name: States.APPROVED,
           status: 'inprogress',
@@ -746,10 +739,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(970),
           progress: 1,
           onExit: defineTemplateApi({
-            action:
-              ApiModuleActions.validateApplication &&
-              ApiModuleActions.setBirthDate,
-            externalDataId: 'dateOfBirth',
+            action: ApiModuleActions.validateApplication,
             throwOnError: true,
           }),
           roles: [
@@ -1034,16 +1024,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.75,
-          onEntry: defineTemplateApi({
-            action: ApiModuleActions.sendApplication,
-            shouldPersistToExternalData: true,
-            throwOnError: true,
-          }),
-          onExit: defineTemplateApi({
-            action: ApiModuleActions.setBirthDate,
-            externalDataId: 'dateOfBirth',
-            throwOnError: true,
-          }),
+
+          onEntry: [
+            defineTemplateApi({
+              action: ApiModuleActions.sendApplication,
+              shouldPersistToExternalData: true,
+              throwOnError: true,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,
@@ -1504,6 +1492,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         if (e === 'xstate.init') {
           return context
         }
+        if (e === 'RESIDENCEGRANTAPPLICATION') {
+          return context
+        }
         const { application } = context
         const { state } = application
         const { answers } = application
@@ -1537,9 +1528,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { dateOfBirth } = getApplicationExternalData(
           application.externalData,
         )
-        if (dateOfBirth) {
-          set(answers, 'dateOfBirth', dateOfBirth)
-        }
+        set(answers, 'dateOfBirth', dateOfBirth?.data?.dateOfBirth)
         return context
       }),
     },

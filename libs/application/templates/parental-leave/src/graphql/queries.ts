@@ -49,3 +49,19 @@ export const GetApplicationInformation = gql`
     }
   }
 `
+
+export const GetApplicationInformation2 = gql`
+  query App(
+    $applicationId: String!
+    $nationalId: String!
+    $shouldNotCall: Boolean!
+  ) {
+    getApplicationInformation(
+      applicationId: $applicationId
+      nationalId: $nationalId
+      shouldNotCall: $shouldNotCall
+    ) {
+      dateOfBirth
+    }
+  }
+`

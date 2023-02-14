@@ -199,6 +199,7 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
 
   const { periods } = getApplicationAnswers(application.answers)
   const lastEndDate = new Date(periods[periods.length - 1].endDate)
+  const dateOfBirth = application?.answers?.dateOfBirth
   const isUsedAllRights =
     useRemainingRights(application) > 0 ||
     lastEndDate.getTime() > new Date().getTime()
@@ -217,7 +218,6 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
       refetch?.()
     }
   }, [])
-
   return (
     <Box marginBottom={10}>
       <Box
@@ -295,7 +295,7 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
               {...step}
               notifyParentOnClickEvent={() =>
                 handleSubmit(
-                  application.answers.dateOfBirth
+                  dateOfBirth
                     ? 'RESIDENCEGRANTAPPLICATION'
                     : 'RESIDENCEGRANTAPPLICATIONNOBIRTHDATE',
                 )

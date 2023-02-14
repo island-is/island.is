@@ -13,7 +13,6 @@ const ImageField: FC<FieldBaseProps> = ({ application, field }) => {
     <WomanWithLaptopIllustration />,
     <WomanWithPhoneIllustration />,
   ]
-
   return (
     <Box>
       <PeriodsSectionImage

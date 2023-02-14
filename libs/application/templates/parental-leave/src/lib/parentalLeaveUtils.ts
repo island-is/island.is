@@ -578,7 +578,9 @@ export function getApplicationExternalData(
 
   const navId = getValueViaPath(externalData, 'navId', '') as string
 
-  const dateOfBirth = getValueViaPath(externalData, 'dateOfBirth') as string
+  const dateOfBirth = getValueViaPath(externalData, 'dateOfBirth') as {
+    data: { dateOfBirth: string }
+  }
 
   let applicationFundId = navId
   if (!applicationFundId || applicationFundId === '') {

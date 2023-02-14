@@ -197,7 +197,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         },
       )
       return {
-        dateOfBirth: applicationInformation.dateOfBirth,
+        dateOfBirth: applicationInformation.dateOfBirth, //if you want to mock use'2023-02-04'
       }
     } catch (e) {}
 
@@ -1334,11 +1334,14 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       // There has been case when island.is got Access Denied from AWS when sending out emails
       // This try/catch keeps application in correct state
       try {
+        const { residenceGrantFiles } = getApplicationAnswers(
+          application.answers,
+        )
+        if (residenceGrantFiles) return
         const selfEmployed =
           applicationType === PARENTAL_LEAVE ? isSelfEmployed === YES : true
         const recivingUnemploymentBenefits =
           isRecivingUnemploymentBenefits === YES
-
         if (!selfEmployed && !recivingUnemploymentBenefits) {
           // Only needs to send an email if being approved by employer
           // Self employed applicant was aware of the approval
