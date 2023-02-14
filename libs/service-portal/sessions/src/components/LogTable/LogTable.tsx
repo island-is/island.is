@@ -27,7 +27,20 @@ const LogTable: React.FC<LogTableProps> = ({ data }) => {
       <Table.Head>
         <Table.Row>
           <Table.HeadData>{formatMessage(m.date)}</Table.HeadData>
-          <Table.HeadData>{formatMessage(m.geolocation)}</Table.HeadData>
+          <Table.HeadData>
+            <Box
+              display={'flex'}
+              textAlign={'center'}
+              columnGap={'smallGutter'}
+            >
+              {formatMessage(m.geolocation)}{' '}
+              <Tooltip
+                placement="right"
+                as="button"
+                text={formatMessage(m.geoInfoDesc)}
+              />
+            </Box>
+          </Table.HeadData>
           <Table.HeadData>{formatMessage(m.client)}</Table.HeadData>
           <Table.HeadData>{formatMessage(m.person)}</Table.HeadData>
         </Table.Row>
