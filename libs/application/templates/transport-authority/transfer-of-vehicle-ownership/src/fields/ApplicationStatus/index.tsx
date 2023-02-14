@@ -7,16 +7,25 @@ import { States } from '../../lib/constants'
 import { ReviewScreenProps } from '../../shared'
 import { getReviewSteps, hasReviewerApproved } from '../../utils'
 import { StatusStep } from './StatusStep'
+import { ConclusionMessageWithLinkButtonFormField } from '../ConclusionMessageWithLinkButtonFormField'
 
-export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
-  application,
-  setStep,
-  reviewerNationalId = '',
-  coOwnersAndOperators,
-}) => {
+export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = (
+  props,
+) => {
+  const {
+    application,
+    setStep,
+    reviewerNationalId = '',
+    coOwnersAndOperators,
+  } = props
   const { formatMessage } = useLocale()
 
   const steps = getReviewSteps(application, coOwnersAndOperators || [])
+
+  const showReviewButton = !hasReviewerApproved(
+    reviewerNationalId,
+    application.answers,
+  )
 
   return (
     <Box marginBottom={10}>
@@ -52,17 +61,20 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
           />
         ))}
       </Box>
-      {!hasReviewerApproved(reviewerNationalId, application.answers) &&
-        application.state !== States.COMPLETED && (
-          <>
-            <Divider />
-            <Box display="flex" justifyContent="flexEnd" paddingY={5}>
-              <Button onClick={() => setStep && setStep('overview')}>
-                {formatMessage(review.status.openAgreement)}
-              </Button>
-            </Box>
-          </>
-        )}
+      {showReviewButton && (
+        <>
+          <Divider />
+          <Box display="flex" justifyContent="flexEnd" paddingY={5}>
+            <Button onClick={() => setStep && setStep('overview')}>
+              {formatMessage(review.status.openAgreement)}
+            </Button>
+          </Box>
+        </>
+      )}
+
+      {!showReviewButton && (
+        <ConclusionMessageWithLinkButtonFormField {...props} />
+      )}
     </Box>
   )
 }

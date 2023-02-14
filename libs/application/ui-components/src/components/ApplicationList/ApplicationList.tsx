@@ -197,6 +197,8 @@ const ApplicationList = ({
                   active: Boolean(application.progress),
                   progress: application.progress,
                   variant: stateDefaultData.progress.variant,
+                  draftFinishedSteps: actionCard?.draftFinishedSteps,
+                  draftTotalSteps: actionCard?.draftTotalSteps,
                 }}
                 deleteButton={{
                   visible: actionCard?.deleteButton,
@@ -215,6 +217,7 @@ const ApplicationList = ({
                     coreMessages.deleteApplicationDialogCancelLabel
                       .defaultMessage,
                 }}
+                status={application.status}
               />
             )
           })}

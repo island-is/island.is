@@ -148,8 +148,8 @@ export const information = {
       },
       remove: {
         id: 'ta.cov.application:information.labels.coOwner.remove',
-        defaultMessage: 'Fjarlægja umráðamann',
-        description: 'Operator remove label',
+        defaultMessage: 'Fjarlægja meðeiganda',
+        description: 'Co-owner remove label',
       },
       identicalError: {
         id: 'ta.cov.application:information.labels.coOwner.identicalError',
