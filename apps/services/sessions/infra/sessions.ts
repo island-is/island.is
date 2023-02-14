@@ -70,7 +70,7 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions'> => {
         public: false,
       },
     })
-    .grantNamespaces('nginx-ingress-internal', 'identity-server')
+    .grantNamespaces('nginx-ingress-internal', 'islandis', 'identity-server')
 }
 
 export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
