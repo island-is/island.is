@@ -1,7 +1,11 @@
 import {
+  AsyncSearch,
+  AsyncSearchOption,
   Box,
   Breadcrumbs,
   DropdownMenu,
+  Column,
+  Columns,
   GridColumn,
   GridContainer,
   GridRow,
@@ -9,7 +13,7 @@ import {
   Tiles,
 } from '@island.is/island-ui/core'
 import { Card } from '../../components'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation } from 'react-use'
 import Layout from '../../components/Layout/Layout'
 
@@ -90,10 +94,78 @@ export const MyReviewPage = () => {
       review:
         'Þetta er mín umsögn. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget vulputate massa, ac posuere erat. Sed malesuada at ipsum a efficitur. Nam pellentesque semper sem, lacinia placerat enim sodales at. Nullam commodo auctor auctor. Etiam elit lorem, maximus in suscipit vitae, luctus eget sem.',
     },
+    {
+      id: 3027,
+      caseNumber: '3/2023',
+      name: 'Númer 3 TESTE',
+      adviceCount: 22,
+      shortDescription: 'test',
+      status: 'Til umsagnar',
+      institution: 'Fjármála- og efnahagsráðuneytið',
+      type: 'Drög að stefnu',
+      policyArea: 'Fjölmiðlun',
+      processBegins: '2023-01-13T00:00:00',
+      processEnds: '2023-01-27T23:59:59',
+      created: '2023-01-13T15:46:27.82',
+      documents: [
+        {
+          id: 1,
+          name: 'jo',
+        },
+      ],
+      review:
+        'Þetta er mín umsögn. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget vulputate massa, ac posuere erat. Sed malesuada at ipsum a efficitur. Nam pellentesque semper sem, lacinia placerat enim sodales at. Nullam commodo auctor auctor. Etiam elit lorem, maximus in suscipit vitae, luctus eget sem.',
+    },
+    {
+      id: 3027,
+      caseNumber: '3/2023',
+      name: 'Númer 3 TESTE',
+      adviceCount: 22,
+      shortDescription: 'test',
+      status: 'Til umsagnar',
+      institution: 'Fjármála- og efnahagsráðuneytið',
+      type: 'Drög að stefnu',
+      policyArea: 'Fjölmiðlun',
+      processBegins: '2023-01-13T00:00:00',
+      processEnds: '2023-01-27T23:59:59',
+      created: '2023-01-13T15:46:27.82',
+      documents: [
+        {
+          id: 1,
+          name: 'jo',
+        },
+      ],
+      review:
+        'Þetta er mín umsögn. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget vulputate massa, ac posuere erat. Sed malesuada at ipsum a efficitur. Nam pellentesque semper sem, lacinia placerat enim sodales at. Nullam commodo auctor auctor. Etiam elit lorem, maximus in suscipit vitae, luctus eget sem.',
+    },
   ]
-  //   const [searchValue, setSearchValue] = useState<string>('')
-  //   const [prevSearchValue, setPrevSearchValue] = useState<string>('')
+  const [searchValue, setSearchValue] = useState<string>('')
+  const [prevSearchValue, setPrevSearchValue] = useState<string>('')
   const [data, setData] = useState(dummycontent)
+  const [options, setOptions] = useState<AsyncSearchOption[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  const clearAll = () => {
+    setIsLoading(false)
+    setOptions([])
+    setData(dummycontent)
+  }
+  useEffect(() => {
+    if (!searchValue) {
+      clearAll()
+    } else if (searchValue != prevSearchValue) {
+      const filtered = dummycontent.filter(
+        (item) =>
+          item.name.includes(searchValue) ||
+          item.caseNumber.includes(searchValue) ||
+          item.institution.includes(searchValue) ||
+          item.type.includes(searchValue),
+      )
+      setData(filtered)
+      setPrevSearchValue(searchValue)
+    }
+  }, [searchValue])
+
   return (
     <Layout showIcon={false}>
       <GridContainer>
@@ -111,12 +183,39 @@ export const MyReviewPage = () => {
                 ]}
               />
             </Box>
-            <Text variant="h1">Mínar umsagnir</Text>
-            <Text variant="default" marginY={2}>
+            <Text variant="h1" marginTop={2}>
+              Mínar umsagnir
+            </Text>
+            <Text variant="default" marginY={3}>
               Hér er hægt að fylgjast með þeim áskriftum sem þú ert skráð(ur) í
               ásamt því að sjá allar umsagnir sem þú ert búin að skrifa í gegnum
               tíðina.
             </Text>
+            <Text
+              marginTop={4}
+              marginBottom={2}
+              fontWeight="semiBold"
+              variant="medium"
+            >
+              Leit
+            </Text>
+            <Columns space={3} alignY="center">
+              <Column width="10/12">
+                <AsyncSearch
+                  colored
+                  options={options}
+                  placeholder="Leita að máli, stofnun eða málefnasviði"
+                  initialInputValue=""
+                  inputValue={searchValue}
+                  onInputValueChange={(value) => {
+                    setSearchValue(value)
+                  }}
+                />
+              </Column>
+              <Column>
+                <div></div>
+              </Column>
+            </Columns>
           </GridColumn>
         </GridRow>
         <GridRow>
