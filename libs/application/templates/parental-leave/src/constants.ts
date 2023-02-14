@@ -85,7 +85,6 @@ export enum States {
 
   RESIDENCE_GRAND_APPLICATION = 'residenceGrantApplication',
   RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE = 'residenceGrantApplicationNoBirthDate',
-  RESIDENCE_GRAND_APPLICATION_IN_PROGRESS = 'residenceGrantApplicationInProgress',
 }
 
 export enum AnswerValidationConstants {
