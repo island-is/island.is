@@ -17,11 +17,11 @@ import {
 
 import {
   getPersonalAllowance,
-  getEmployer,
   getPensionFund,
   getPrivatePensionFundRatio,
   getRightsCode,
   getRatio,
+  getEmployer,
 } from './parental-leave.utils'
 import { apiConstants } from './constants'
 
@@ -139,6 +139,7 @@ describe('getPersonalAllowance', () => {
   })
 })
 
+// TODO: Update with multiple employers
 describe('getEmployer', () => {
   it('should return applicant if self employed', () => {
     const expectedEmail = 'applicant@test.test'
@@ -147,10 +148,12 @@ describe('getEmployer', () => {
     set(application.answers, 'applicant.email', expectedEmail)
     set(application, 'applicant', expectedNationalRegistryId)
 
-    expect(getEmployer(application, true)).toEqual({
-      email: expectedEmail,
-      nationalRegistryId: expectedNationalRegistryId,
-    })
+    expect(getEmployer(application, true)).toEqual([
+      {
+        email: expectedEmail,
+        nationalRegistryId: expectedNationalRegistryId,
+      },
+    ])
   })
 
   it('should return employer if applicant is employee', () => {
@@ -164,10 +167,67 @@ describe('getEmployer', () => {
       expectedNationalRegistryId,
     )
 
-    expect(getEmployer(application)).toEqual({
-      email: expectedEmail,
-      nationalRegistryId: expectedNationalRegistryId,
-    })
+    expect(getEmployer(application)).toEqual([
+      {
+        email: expectedEmail,
+        nationalRegistryId: expectedNationalRegistryId,
+      },
+    ])
+  })
+
+  it('should return employer array if applicant is employee', () => {
+    const expectedEmail1 = 'employer@test.test'
+    const expectedNationalRegistryId1 = '1234567889'
+
+    set(application.answers, 'employers[0].email', expectedEmail1)
+    set(application.answers, 'employers[0].ratio', '100')
+    set(
+      application.answers,
+      'employers[0].companyNationalRegistryId',
+      expectedNationalRegistryId1,
+    )
+
+    expect(getEmployer(application)).toEqual([
+      {
+        email: expectedEmail1,
+        nationalRegistryId: expectedNationalRegistryId1,
+      },
+    ])
+  })
+
+  it('should return multiple employers if applicant is employee', () => {
+    const expectedEmail1 = 'employer@test.test'
+    const expectedNationalRegistryId1 = '1234567889'
+
+    const expectedEmail2 = 'employer2@test2.test2'
+    const expectedNationalRegistryId2 = '0987654119'
+
+    set(application.answers, 'employers[0].email', expectedEmail1)
+    set(application.answers, 'employers[0].ratio', '100')
+    set(
+      application.answers,
+      'employers[0].companyNationalRegistryId',
+      expectedNationalRegistryId1,
+    )
+
+    set(application.answers, 'employers[1].email', expectedEmail2)
+    set(application.answers, 'employers[1].ratio', '100')
+    set(
+      application.answers,
+      'employers[1].companyNationalRegistryId',
+      expectedNationalRegistryId2,
+    )
+
+    expect(getEmployer(application)).toEqual([
+      {
+        email: expectedEmail1,
+        nationalRegistryId: expectedNationalRegistryId1,
+      },
+      {
+        email: expectedEmail2,
+        nationalRegistryId: expectedNationalRegistryId2,
+      },
+    ])
   })
 })
 
@@ -259,7 +319,7 @@ describe('getRightsCode', () => {
       createExternalDataChild(true, '2022-03-01'),
     ])
     set(base, 'answers.selectedChild', '0')
-    set(base, 'answers.employer.isSelfEmployed', 'no')
+    set(base, 'answers.isSelfEmployed', 'no')
 
     const expected = 'M-L-GR'
     const result = getRightsCode(base)
@@ -272,7 +332,7 @@ describe('getRightsCode', () => {
       createExternalDataChild(true, '2022-03-01'),
     ])
     set(base, 'answers.selectedChild', '0')
-    set(base, 'answers.employer.isSelfEmployed', 'yes')
+    set(base, 'answers.isSelfEmployed', 'yes')
 
     const expected = 'M-S-GR'
     const result = getRightsCode(base)
@@ -382,7 +442,7 @@ describe('getRightsCode', () => {
       },
     })
     set(base, 'answers.selectedChild', '0')
-    set(base, 'answers.employer.isSelfEmployed', 'no')
+    set(base, 'answers.isSelfEmployed', 'no')
 
     const expected = 'FO-L-GR'
     const result = getRightsCode(base)
@@ -403,7 +463,7 @@ describe('getRightsCode', () => {
       },
     })
     set(base, 'answers.selectedChild', '0')
-    set(base, 'answers.employer.isSelfEmployed', 'yes')
+    set(base, 'answers.isSelfEmployed', 'yes')
 
     const expected = 'FO-S-GR'
     const result = getRightsCode(base)
@@ -465,7 +525,7 @@ describe('getRightsCode', () => {
       createExternalDataChild(false, '2022-03-01'),
     ])
     set(base, 'answers.selectedChild', '0')
-    set(base, 'answers.employer.isSelfEmployed', 'no')
+    set(base, 'answers.isSelfEmployed', 'no')
 
     const expected = 'FO-FL-L-GR'
     const result = getRightsCode(base)
@@ -478,7 +538,7 @@ describe('getRightsCode', () => {
       createExternalDataChild(false, '2022-03-01'),
     ])
     set(base, 'answers.selectedChild', '0')
-    set(base, 'answers.employer.isSelfEmployed', 'yes')
+    set(base, 'answers.isSelfEmployed', 'yes')
 
     const expected = 'FO-FL-S-GR'
     const result = getRightsCode(base)
@@ -593,7 +653,7 @@ describe('getRightsCode', () => {
       genderCode: '0',
     })
     set(base, 'answers.selectedChild', '0')
-    set(base, 'answers.employer.isSelfEmployed', 'no')
+    set(base, 'answers.isSelfEmployed', 'no')
 
     const expected = 'FO-L-GR'
     const result = getRightsCode(base)
@@ -620,7 +680,7 @@ describe('getRightsCode', () => {
       genderCode: '1',
     })
     set(base, 'answers.selectedChild', '0')
-    set(base, 'answers.employer.isSelfEmployed', 'no')
+    set(base, 'answers.isSelfEmployed', 'no')
 
     const expected = 'F-L-GR'
     const result = getRightsCode(base)
