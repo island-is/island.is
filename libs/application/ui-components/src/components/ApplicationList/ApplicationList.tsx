@@ -195,6 +195,7 @@ const ApplicationList = ({
                 }}
                 progressMeter={{
                   active: Boolean(application.progress),
+                  progress: application.progress,
                   variant: stateDefaultData.progress.variant,
                   draftFinishedSteps: actionCard?.draftFinishedSteps,
                   draftTotalSteps: actionCard?.draftTotalSteps,
