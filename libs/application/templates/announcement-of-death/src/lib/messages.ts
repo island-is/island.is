@@ -349,7 +349,7 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
   },
   addProperty: {
     id: 'aod.application:addProperty',
-    defaultMessage: 'Bæta við fasteign eða lóð',
+    defaultMessage: 'Bæta við fasteign',
     description: 'Add property',
   },
   addVehicle: {

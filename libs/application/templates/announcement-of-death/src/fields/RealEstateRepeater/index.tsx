@@ -36,6 +36,7 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
   const { fields, append, remove } = useFieldArray<Asset>({
     name: `${id}.assets`,
   })
+
   const { setValue } = useFormContext()
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
@@ -43,6 +44,7 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
   }
 
   useEffect(() => {
+    console.log(application.answers)
     if (
       fields.length === 0 &&
       (!application.answers.assets ||
@@ -67,6 +69,7 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
     <Box marginTop={2}>
       <GridRow>
         {fields.reduce((acc, asset, index) => {
+          console.log(asset)
           if (!asset.initial) {
             return acc
           }
@@ -151,6 +154,7 @@ const Item = ({
   const address = useWatch({ name: addressField, defaultValue: '' })
   const initialField = `${fieldIndex}.initial`
   const dummyField = `${fieldIndex}.dummy`
+  const shareField = `${fieldIndex}.share`
   const { control, setValue } = useFormContext()
   const { formatMessage } = useLocale()
 
@@ -200,6 +204,12 @@ const Item = ({
         control={control}
         defaultValue={field.dummy || false}
       />
+      <Controller
+        name={shareField}
+        control={control}
+        defaultValue={field.share || 0}
+      />
+
       <Box position="absolute" className={styles.removeFieldButton}>
         <Button
           variant="ghost"

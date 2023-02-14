@@ -25,6 +25,8 @@ type FilesRecipientCardProps = {
 export const FilesRecipientCard: FC<
   FieldBaseProps<AODAnswers> & FilesRecipientCardProps
 > = ({ application, field }) => {
+  console.log('ENHER??', application.answers.assets)
+
   const { formatMessage } = useLocale()
   let options =
     application.answers?.estateMembers?.members?.length &&
