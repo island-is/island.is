@@ -487,6 +487,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ['RESIDENCEGRANTAPPLICATION']: {
             target: States.RESIDENCE_GRAND_APPLICATION,
           },
+          ['RESIDENCEGRANTAPPLICATIONNOBIRTHDATE']: {
+            target: States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE,
+          },
         },
       },
       [States.VINNUMALASTOFNUN_ACTION]: {
@@ -1062,6 +1065,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           ['RESIDENCEGRANTAPPLICATION']: {
             target: States.RESIDENCE_GRAND_APPLICATION,
+          },
+          ['RESIDENCEGRANTAPPLICATIONNOBIRTHDATE']: {
+            target: States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE,
           },
         },
       },
