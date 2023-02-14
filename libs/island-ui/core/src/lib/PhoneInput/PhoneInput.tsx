@@ -128,7 +128,7 @@ export const PhoneInput = forwardRef(
     const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
     const mergedRefs = useMergeRefs(inputRef, ref || null)
     const form = useFormContext()
-    const formValue = form.watch(name)
+    const formValue = form?.watch(name)
 
     // Extract default country code from value, with value from form context having priority
     const defaultCountryCode = getDefaultCountryCode(
