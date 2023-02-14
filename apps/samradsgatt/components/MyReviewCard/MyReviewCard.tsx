@@ -8,38 +8,27 @@ import {
   Column,
   Icon,
 } from '@island.is/island-ui/core'
-import { ReactNode } from 'react'
 import getTagVariants from '../../utils/helpers/getTagVariants'
 
-type CardInfo = {
-  tag?: string
-  id: number
-  title: string
-  eyebrows: Array<string>
-}
 type CardProps = {
-  card: CardInfo
-  height?: string
-  width?: string
-  dropdown?: ReactNode
-  showAttachment?: boolean
-  children: any
+  caseNumber: string
+  status: string
+  name: string
+  adviceCount: number
+  shortDescription: string
+  id: number
+  review: string
+  type: string
+  institution: string
 }
 
-export const Card = ({
-  card,
-  showAttachment,
-  width,
-  height,
-  dropdown,
-  children,
-}: CardProps) => {
+export const MyReviewCard = (caseData: CardProps) => {
   return (
     <Box
       style={{
-        width: width ? width : '328px',
+        width: '440px',
         minWidth: '287px',
-        height: height ? height : '460px',
+        height: '376px',
         flexWrap: 'wrap',
       }}
       padding={3}
@@ -53,14 +42,14 @@ export const Card = ({
         alignItems="center"
         justifyContent="spaceBetween"
       >
-        <Tag variant={getTagVariants(card.tag)}>{card.tag}</Tag>
+        <Tag variant={getTagVariants(caseData.status)}>{caseData.status}</Tag>
         <Text as="p" variant="eyebrow" color="purple400">
-          Nr. S-{card.id}
+          Nr. S-{caseData.caseNumber}
         </Text>
       </Box>
       <Box display="flex" flexDirection="row" alignItems="center" paddingY={1}>
         <Text as="p" variant="eyebrow" color="blue600">
-          {card.eyebrows[0]}
+          {caseData.type}
         </Text>
         <div
           style={{
@@ -70,16 +59,13 @@ export const Card = ({
             border: '1px solid #ccdfff',
           }}
         />
-        <Text as="p" variant="eyebrow" color="blue600">
-          {card.eyebrows[1]}
+        <Text variant="eyebrow" color="blue600">
+          {caseData.institution}
         </Text>
       </Box>
-      <Box
-        style={{ height: showAttachment ? '50px' : '90px', overflow: 'hidden' }}
-        paddingBottom={2}
-      >
+      <Box style={{ height: '50px', overflow: 'hidden' }} paddingBottom={2}>
         <Text as="h4" fontWeight="semiBold">
-          {card.title}
+          {caseData.name}
         </Text>
       </Box>
 
@@ -94,16 +80,37 @@ export const Card = ({
       <Box paddingY={1}>
         <Divider />
       </Box>
-      {children}
+      <Box
+        display="flex"
+        flexDirection="row"
+        alignItems="center"
+        justifyContent="spaceBetween"
+      >
+        <Text variant="eyebrow">Þín umsögn</Text>
+      </Box>
+      <Box
+        style={{
+          minHeight: 110,
+          lineBreak: 'anywhere',
+        }}
+      >
+        <Box>
+          <Text variant="small" color="dark400" truncate>
+            {caseData.review}
+          </Text>
+        </Box>
+      </Box>
       <Columns>
-        {showAttachment && (
-          <Column width="content">
-            <Box>{dropdown}</Box>
-          </Column>
-        )}
         <Column width="content">
-          <Box marginLeft={showAttachment ? 20 : 0}>
-            <ArrowLink href={`/mal/${card.id}`}>Skoða mál</ArrowLink>
+          <Box>
+            <Text variant="h5" color="purple400">
+              Viðhengi <Icon icon="chevronDown" />
+            </Text>
+          </Box>
+        </Column>
+        <Column width="content">
+          <Box marginLeft={20}>
+            <ArrowLink href={`/mal/${caseData.id}`}>Skoða mál</ArrowLink>
           </Box>
         </Column>
       </Columns>
@@ -111,4 +118,4 @@ export const Card = ({
   )
 }
 
-export default Card
+export default MyReviewCard
