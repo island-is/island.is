@@ -675,8 +675,12 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'isReceivingUnemploymentBenefits',
   ) as YesOrNo
 
-  if (!isReceivingUnemploymentBenefits)
-    isReceivingUnemploymentBenefits = NO as YesOrNo
+  if (!isReceivingUnemploymentBenefits) {
+    isReceivingUnemploymentBenefits = getValueViaPath(
+      answers,
+      'isRecivingUnemploymentBenefits',
+    ) as YesOrNo
+  }
 
   const unemploymentBenefits = getValueViaPath(
     answers,

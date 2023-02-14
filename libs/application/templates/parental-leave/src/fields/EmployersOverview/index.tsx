@@ -75,15 +75,6 @@ const EmployersOverview: FC<RepeaterProps> = ({
         ]
       }
 
-      // const { errors } = await updateApplication({
-      //   variables: {
-      //     input: {
-      //       id: application.id,
-      //       answers: { employers: employers }
-      //     }
-      //   }
-      // })
-
       return [true, null]
     })
   }, [setBeforeSubmitCallback, employers])
