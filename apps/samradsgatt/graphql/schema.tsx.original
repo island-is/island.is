@@ -1,0 +1,40 @@
+import { gql } from '@apollo/client'
+import * as Apollo from '@apollo/client'
+export type Maybe<T> = T | null
+export type InputMaybe<T> = Maybe<T>
+export type Exact<T extends { [key: string]: unknown }> = {
+  [K in keyof T]: T[K]
+}
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> &
+  { [SubKey in K]?: Maybe<T[SubKey]> }
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> &
+  { [SubKey in K]: Maybe<T[SubKey]> }
+const defaultOptions = {} as const
+/** All built-in and custom scalars, mapped to their actual values */
+export type Scalars = {
+  ID: string
+  String: string
+  Boolean: boolean
+  Int: number
+  Float: number
+  /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
+  DateTime: any
+  /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
+  JSON: any
+}
+
+export type CaseItem = {
+  __typename?: 'CaseItem'
+  id: Scalars['ID']
+  caseNumber?: Maybe<Scalars['String']>
+  name?: Maybe<Scalars['String']>
+  adviceCount: Scalars['Int']
+  shortDescription?: Maybe<Scalars['String']>
+  statusName?: Maybe<Scalars['String']>
+  institutionName?: Maybe<Scalars['String']>
+  typeName?: Maybe<Scalars['String']>
+  policyAreaName?: Maybe<Scalars['String']>
+  processBegines: Scalars['DateTime']
+  processEnds: Scalars['DateTime']
+  created: Scalars['DateTime']
+}

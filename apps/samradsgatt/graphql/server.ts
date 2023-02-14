@@ -1,61 +1,41 @@
-// import { bootstrap } from '@island.is/infra-next-server'
-// import proxyConfig from './proxy.config.json'
-
-// bootstrap({
-//   name: 'samradsgatt',
-//   appDir: 'apps/samradsgatt',
-//   proxyConfig,
-//   externalEndpointDependencies: (nextConfig) => {
-//     const { graphqlEndpoint } = nextConfig.serverRuntimeConfig
-//     return [graphqlEndpoint]
-//   },
-// })
-
 import express from 'express'
 import { ApolloServer, gql } from 'apollo-server-express'
 import type { Server } from 'http'
 import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core'
 
-// const books = [
-//   {
-//     title: 'Parable of the Sower',
-//     author: 'Octavia E. Butler',
-//   },
-//   {
-//     title: 'Jurassic Park',
-//     author: 'Michael Crichton',
-//   },
-// ]
+const books = [
+  {
+    title: 'Parable of the Sower',
+    author: 'Octavia E. Butler',
+  },
+  {
+    title: 'Jurassic Park',
+    author: 'Michael Crichton',
+  },
+]
 
-// const typeDefs = gql`
-//   type Book {
-//     title: String
-//     author: String
-//   }
+const typeDefs = gql`
+  type Book {
+    title: String
+    author: String
+  }
 
-//   type Query {
-//     books: [Book]
-//   }
-// `
+  type Query {
+    books: [Book]
+  }
+`
 
-// const resolvers = {
-//   Query: {
-//     books: () => books,
-//   },
-// }
-
-import typeDefs from "./api/schema"
-import { resolvers } from "./api/resolvers"
-import LaunchAPI from './api/datasources/launch'
+const resolvers = {
+  Query: {
+    books: () => books,
+  },
+}
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
   csrfPrevention: false,
   plugins: [ApolloServerPluginLandingPageLocalDefault({ embed: true })],
-  dataSources: () => ({
-    launchAPI: new LaunchAPI
-  })
 })
 
 const app = express()
@@ -65,7 +45,7 @@ async function startApolloServer() {
 
   server.applyMiddleware({
     app,
-    path: '/graphql',
+    path: '/testAPI',
   })
 
   let httpServer: Server
