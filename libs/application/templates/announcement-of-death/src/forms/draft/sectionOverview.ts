@@ -12,7 +12,6 @@ import {
   Application,
   DefaultEvents,
   Field,
-  Answer,
 } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
@@ -22,7 +21,6 @@ import { Asset, Answers as AODAnswers, OtherPropertiesEnum } from '../../types'
 import { FormatMessage } from '@island.is/localization'
 import { getFileRecipientName } from '../../lib/utils'
 import { EstateRegistrant } from '@island.is/clients/syslumenn'
-import { application } from 'express'
 
 const theDeceased: Field[] = [
   buildDividerField({}),
@@ -112,14 +110,6 @@ const testament: Field[] = [
   }),
   buildKeyValueField({
     label: m.testamentKnowledgeOfOtherTestament,
-    width: 'half',
-    value: ({ answers }) =>
-      answers.knowledgeOfOtherWills === 'yes'
-        ? m.testamentKnowledgeOfOtherTestamentYes
-        : m.testamentKnowledgeOfOtherTestamentNo,
-  }),
-  buildKeyValueField({
-    label: 'meow',
     width: 'half',
     value: ({ answers }) =>
       answers.knowledgeOfOtherWills === 'yes'
@@ -245,7 +235,7 @@ const properties: Field[] = [
         (answers?.assets as { assets: Asset[] }).assets
           .filter((asset) => !asset?.dummy)
           .map((property) => ({
-            title: property.assetNumber,
+            title: property.description,
             description: (formatMessage: FormatMessage) => [
               `${formatMessage(m.propertyNumber)}: ${property.assetNumber}`,
               property.share

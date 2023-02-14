@@ -185,7 +185,7 @@ const Item = ({
           },
         },
       })
-    } else {
+    } else if (!field.initial) {
       setValue(addressField, '')
     }
   }, [getProperty, address, addressField, propertyNumberInput, setValue])
