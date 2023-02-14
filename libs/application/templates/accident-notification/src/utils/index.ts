@@ -19,7 +19,8 @@ export const formatPhonenumber = (value: string) => {
     x.slice(0, index),
     x.slice(index),
   ]
-  if (value.length > 3) return splitAt(3)(value).join('-')
+  if (value.length === 7) return splitAt(3)(value).join('-')
+  if (value.length === 11) return splitAt(4)(value).join(' ')
   return value
 }
 
