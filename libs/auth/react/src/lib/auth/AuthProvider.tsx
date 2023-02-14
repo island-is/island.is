@@ -7,6 +7,7 @@ import React, {
   useState,
 } from 'react'
 import type { User } from 'oidc-client-ts'
+import { useEffectOnce } from 'react-use'
 import { getAuthSettings, getUserManager } from '../userManager'
 import { ActionType, initialState, reducer } from './Auth.state'
 import { AuthSettings } from '../AuthSettings'
@@ -178,10 +179,11 @@ export const AuthProvider = ({
     [userManager, dispatch, signIn, signInSilent, autoLogin],
   )
 
+  const hasUserInfo = state.userInfo !== null
   useEffect(() => {
     // Only add events when we have userInfo, to avoid race conditions with
     // oidc hooks.
-    if (state.userInfo === null) {
+    if (!hasUserInfo) {
       return
     }
 
@@ -211,7 +213,7 @@ export const AuthProvider = ({
       userManager.events.removeUserLoaded(userLoaded)
       userManager.events.removeUserSignedOut(userSignedOut)
     }
-  }, [dispatch, userManager, signIn, autoLogin, state.userInfo === null])
+  }, [dispatch, userManager, signIn, autoLogin, hasUserInfo])
 
   const init = async () => {
     const currentUrl = getCurrentUrl(basePath)
@@ -271,9 +273,9 @@ export const AuthProvider = ({
     }
   }
 
-  useEffect(() => {
+  useEffectOnce(() => {
     init()
-  }, [])
+  })
 
   const context = useMemo(
     () => ({
