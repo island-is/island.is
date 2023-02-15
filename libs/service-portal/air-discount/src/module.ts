@@ -14,6 +14,7 @@ const rootName = defineMessage({
 export const airDiscountModule: PortalModule = {
   name: rootName,
   featureFlag: Features.servicePortalAirDiscountModule,
+  enabled: ({ isCompany }) => !isCompany,
   routes: ({ userInfo }) => [
     {
       name: rootName,
