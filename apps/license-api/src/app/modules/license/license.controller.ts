@@ -18,7 +18,7 @@ import {
   VerifyLicenseRequest,
   VerifyLicenseResponse,
 } from './dto'
-import { ApiHeader, ApiTags } from '@nestjs/swagger'
+import { ApiHeader, ApiParam, ApiTags } from '@nestjs/swagger'
 import { LicenseId } from './license.types'
 import { NationalId } from '../../decorators/nationalId'
 
@@ -41,6 +41,12 @@ export class LicenseController {
       type: UpdateLicenseResponse,
     },
   })
+  @ApiParam({
+    name: 'License Id',
+    description: 'The license type',
+    enum: LicenseId,
+    enumName: 'LicenseId',
+  })
   @Put('users/.nationalId/licenses/:licenseId')
   async update(
     @NationalId() nationalId: string,
@@ -62,7 +68,6 @@ export class LicenseController {
     return response
   }
 
-  @Delete('users/.nationalId/licenses/:licenseId')
   @Documentation({
     description: `This endpoint revokes a user's license`,
     response: {
@@ -70,6 +75,13 @@ export class LicenseController {
       type: RevokeLicenseResponse,
     },
   })
+  @ApiParam({
+    name: 'License Id',
+    description: 'The license type',
+    enum: LicenseId,
+    enumName: 'LicenseId',
+  })
+  @Delete('users/.nationalId/licenses/:licenseId')
   async revoke(
     @NationalId() nationalId: string,
     @Param(
