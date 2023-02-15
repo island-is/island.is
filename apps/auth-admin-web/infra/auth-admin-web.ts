@@ -5,7 +5,7 @@ const extraAnnotations = {
   'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
   'nginx.ingress.kubernetes.io/proxy-buffers-number': '4',
   'nginx.ingress.kubernetes.io/server-snippet':
-    'client_header_buffer_size 16k; large_client_header_buffers 4 16k',
+    'client_header_buffer_size 16k; large_client_header_buffers 4 16k;',
 }
 
 export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> => {

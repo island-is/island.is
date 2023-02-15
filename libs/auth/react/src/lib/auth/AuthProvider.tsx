@@ -7,6 +7,7 @@ import React, {
   useState,
 } from 'react'
 import type { User } from 'oidc-client-ts'
+import { useEffectOnce } from 'react-use'
 import { getAuthSettings, getUserManager } from '../userManager'
 import { ActionType, initialState, reducer } from './Auth.state'
 import { AuthSettings } from '../AuthSettings'
@@ -31,16 +32,15 @@ interface AuthProviderProps {
 }
 
 type GetReturnUrl = {
-  basePath: string
   returnUrl: string
 } & Pick<AuthSettings, 'redirectPath'>
 
 const isCurrentRoute = (url: string, path?: string) =>
   isDefined(path) && url.startsWith(path)
 
-const getReturnUrl = ({ redirectPath, basePath, returnUrl }: GetReturnUrl) => {
+const getReturnUrl = ({ redirectPath, returnUrl }: GetReturnUrl) => {
   if (redirectPath && returnUrl.startsWith(redirectPath)) {
-    return basePath
+    return '/'
   }
 
   return returnUrl
@@ -53,7 +53,7 @@ const getCurrentUrl = (basePath: string) => {
     return url.slice(basePath.length)
   }
 
-  return basePath
+  return '/'
 }
 
 export const AuthProvider = ({
@@ -76,7 +76,6 @@ export const AuthProvider = ({
       return userManager.signinRedirect({
         state: getReturnUrl({
           returnUrl: getCurrentUrl(basePath),
-          basePath,
           redirectPath: authSettings.redirectPath,
         }),
       })
@@ -131,7 +130,6 @@ export const AuthProvider = ({
           authSettings.switchUserRedirectUrl ??
           getReturnUrl({
             returnUrl: getCurrentUrl(basePath),
-            basePath,
             redirectPath: authSettings.redirectPath,
           }),
         ...args,
@@ -181,10 +179,11 @@ export const AuthProvider = ({
     [userManager, dispatch, signIn, signInSilent, autoLogin],
   )
 
+  const hasUserInfo = state.userInfo !== null
   useEffect(() => {
     // Only add events when we have userInfo, to avoid race conditions with
     // oidc hooks.
-    if (state.userInfo === null) {
+    if (!hasUserInfo) {
       return
     }
 
@@ -214,7 +213,7 @@ export const AuthProvider = ({
       userManager.events.removeUserLoaded(userLoaded)
       userManager.events.removeUserSignedOut(userSignedOut)
     }
-  }, [dispatch, userManager, signIn, autoLogin, state.userInfo === null])
+  }, [dispatch, userManager, signIn, autoLogin, hasUserInfo])
 
   const init = async () => {
     const currentUrl = getCurrentUrl(basePath)
@@ -244,17 +243,39 @@ export const AuthProvider = ({
     } else if (isCurrentRoute(currentUrl, authSettings.redirectPathSilent)) {
       const userManager = getUserManager()
       userManager.signinSilentCallback().catch((error) => {
-        // TODO: Handle error
         console.log(error)
+        setHasError(true)
       })
+    } else if (isCurrentRoute(currentUrl, authSettings.initiateLoginPath)) {
+      const userManager = getUserManager()
+      const searchParams = new URL(window.location.href).searchParams
+
+      const loginHint = searchParams.get('login_hint')
+      const targetLinkUri = searchParams.get('target_link_uri')
+      const path =
+        targetLinkUri &&
+        authSettings.baseUrl &&
+        targetLinkUri.startsWith(authSettings.baseUrl)
+          ? targetLinkUri.slice(authSettings.baseUrl.length)
+          : '/'
+      let prompt = searchParams.get('prompt')
+      prompt =
+        prompt && ['login', 'select_account'].includes(prompt) ? prompt : null
+
+      const args = {
+        state: path,
+        prompt: prompt ?? undefined,
+        login_hint: loginHint ?? undefined,
+      }
+      userManager.signinRedirect(args)
     } else {
       checkLogin()
     }
   }
 
-  useEffect(() => {
+  useEffectOnce(() => {
     init()
-  }, [])
+  })
 
   const context = useMemo(
     () => ({
