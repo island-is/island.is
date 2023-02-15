@@ -9,6 +9,7 @@ import {
 import { handleServerError } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
 import { parentalLeaveFormMessages } from '../../lib/messages'
+import { disableResidenceGrantApplication } from '../../lib/answerValidationSections/utils'
 
 type DOBType = {
   applicationApplication: {
@@ -23,6 +24,7 @@ type DOBType = {
 }
 const RedirectField: FC<FieldBaseProps> = ({ application, refetch }) => {
   const [hasDateOfBirth, setHasDateOfBirth] = useState(false)
+  const [dateOfBirth, setDateOfBirth] = useState('')
   const { formatMessage } = useLocale()
   const [getApplicationInfo, { data }] = useLazyQuery(APPLICATION_APPLICATION)
   const [submitApplication] = useMutation(SUBMIT_APPLICATION, {
@@ -53,20 +55,23 @@ const RedirectField: FC<FieldBaseProps> = ({ application, refetch }) => {
         },
       })
       const dobObj = data as DOBType
-      const dateOfBirth =
+      const dob =
         dobObj?.applicationApplication?.externalData?.dateOfBirth?.data
           ?.dateOfBirth
-      if (dateOfBirth) {
+      if (dob) {
         setHasDateOfBirth(true)
+        setDateOfBirth(dob)
       }
     }
   }, [data])
+  const isDisabled = !disableResidenceGrantApplication(dateOfBirth)
+  console.log(dateOfBirth)
   return (
     <Box>
       <Box display={'flex'} justifyContent={'center'} marginTop={5}>
         <Box>
           <Button
-            disabled={!hasDateOfBirth}
+            disabled={isDisabled}
             variant="ghost"
             size="small"
             icon="arrowForward"

@@ -693,6 +693,12 @@ export function getApplicationAnswers(answers: Application['answers']) {
     NO,
   ) as YesOrNo
 
+  const hasAppliedForReidenceGrant = getValueViaPath(
+    answers,
+    'hasAppliedForReidenceGrant',
+    NO,
+  ) as YesOrNo
+
   const otherParentName = (getValueViaPath(
     answers,
     'otherParentObj.otherParentName',
@@ -940,6 +946,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     isResidenceGrant,
     dateOfBirth,
     residenceGrantFiles,
+    hasAppliedForReidenceGrant,
   }
 }
 

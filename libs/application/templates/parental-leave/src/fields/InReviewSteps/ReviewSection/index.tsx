@@ -79,26 +79,23 @@ const ReviewSection: FC<ReviewSectionProps> = ({
           <Text marginTop={1} variant="default">
             {description}
           </Text>
-          {notifyParentOnClickEvent &&
-            (state === ReviewSectionState.optionalAction ||
-              state === ReviewSectionState.prerequisites ||
-              state === ReviewSectionState.inProgress) && (
-              <Box display={'flex'} justifyContent={'flexEnd'} marginTop={1}>
-                <Box>
-                  <Button
-                    variant="text"
-                    size="small"
-                    icon="arrowForward"
-                    onClick={() => notifyParentOnClickEvent()}
-                  >
-                    {formatMessage(
-                      parentalLeaveFormMessages.residenceGrantMessage
-                        .residenceGrantApplyTitle,
-                    )}
-                  </Button>
-                </Box>
+          {notifyParentOnClickEvent && title.toLowerCase() === 'dvalarstyrkur' && (
+            <Box display={'flex'} justifyContent={'flexEnd'} marginTop={1}>
+              <Box>
+                <Button
+                  variant="text"
+                  size="small"
+                  icon="arrowForward"
+                  onClick={() => notifyParentOnClickEvent()}
+                >
+                  {formatMessage(
+                    parentalLeaveFormMessages.residenceGrantMessage
+                      .residenceGrantApplyTitle,
+                  )}
+                </Button>
               </Box>
-            )}
+            </Box>
+          )}
         </Box>
 
         {state === ReviewSectionState.inProgress && (

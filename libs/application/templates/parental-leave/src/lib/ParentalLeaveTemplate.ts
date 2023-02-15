@@ -603,11 +603,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE]: {
-        entry: ['setPreviousState', 'assignToVMST', 'setDateOfBirth'],
+        entry: ['setPreviousState', 'assignToVMST'],
+        exit: 'setActionName',
         meta: {
           status: 'inprogress',
           name: States.RESIDENCE_GRAND_APPLICATION,
-          lifecycle: pruneAfterDays(970),
+          lifecycle: pruneAfterDays(1),
           onEntry: defineTemplateApi({
             action: ApiModuleActions.setBirthDate,
             externalDataId: 'dateOfBirth',
@@ -644,13 +645,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'setPreviousState',
           'assignToVMST',
           'setResidenceGrant',
-          'setDateOfBirth',
+          'setActionName',
         ],
-        exit: 'setResidenceGrantPeriod',
+        exit: ['setResidenceGrantPeriod', 'setHasAppliedForReidenceGrant'],
         meta: {
           status: 'inprogress',
           name: States.RESIDENCE_GRAND_APPLICATION,
-          lifecycle: pruneAfterDays(970),
+          lifecycle: pruneAfterDays(1),
           onEntry: defineTemplateApi({
             action: ApiModuleActions.setBirthDate,
             externalDataId: 'dateOfBirth',
@@ -1501,10 +1502,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         set(answers, 'previousState', state)
         return context
       }),
-      removePreviousState: assign((context) => {
+      setHasAppliedForReidenceGrant: assign((context, event) => {
         const { application } = context
         const { answers } = application
-        unset(answers, 'previousState')
+        const e = (event.type as unknown) as any
+        if (e === 'APPROVE') {
+          set(answers, 'hasAppliedForReidenceGrant', YES)
+        }
+
         return context
       }),
       setActionName: assign((context) => {
@@ -1520,15 +1525,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         set(answers, 'isResidenceGrant', YES)
 
-        return context
-      }),
-      setDateOfBirth: assign((context) => {
-        const { application } = context
-        const { answers } = application
-        const { dateOfBirth } = getApplicationExternalData(
-          application.externalData,
-        )
-        set(answers, 'dateOfBirth', dateOfBirth?.data?.dateOfBirth)
         return context
       }),
     },

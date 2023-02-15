@@ -39,8 +39,9 @@ export const ResidenceGrant: Form = buildForm({
             buildDescriptionField({
               id: 'residenceGrant.description',
               title: '',
-              description: parentalLeaveFormMessages.residenceGrantMessage
-                .residenceGrantSelectPeriodDescription,
+              description:
+                parentalLeaveFormMessages.residenceGrantMessage
+                  .residenceGrantSelectPeriodDescription,
             }),
             buildDateField({
               id: 'residenceGrant.dateFrom',

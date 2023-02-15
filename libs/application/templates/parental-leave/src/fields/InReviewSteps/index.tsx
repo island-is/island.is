@@ -5,7 +5,7 @@ import { MessageDescriptor } from '@formatjs/intl'
 
 import { useLocale } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
-import { FieldBaseProps } from '@island.is/application/types'
+import { Application, FieldBaseProps } from '@island.is/application/types'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { handleServerError } from '@island.is/application/ui-components'
@@ -14,7 +14,7 @@ import ReviewSection, { ReviewSectionState } from './ReviewSection'
 import { Review } from '../Review/Review'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
-  getApplicationAnswers,
+  getApplicationExternalData,
   getExpectedDateOfBirth,
   otherParentApprovalDescription,
   requiresOtherParentApproval,
@@ -27,6 +27,7 @@ import {
 } from '../../constants'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 import { useRemainingRights } from '../../hooks/useRemainingRights'
+import { disableResidenceGrantApplication } from '../../lib/answerValidationSections/utils'
 
 type StateMapEntry = { [key: string]: ReviewSectionState }
 
@@ -100,6 +101,8 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
     isSelfEmployed,
     applicationType,
     isRecivingUnemploymentBenefits,
+    hasAppliedForReidenceGrant,
+    periods,
   } = useApplicationAnswers(application)
   const oldApplication = applicationType === undefined // Added this check for applications that is in the db already
   const isBeneficiaries = !oldApplication
@@ -107,7 +110,7 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
       ? isRecivingUnemploymentBenefits === YES
       : false
     : false
-  const { state } = application
+
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
@@ -165,20 +168,26 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
       ),
     })
   }
-
-  if (
-    state === 'approved' ||
-    state === 'vinnumalastofnunApproveEdits' ||
-    state === 'vinnumalastofnunApproval'
-  ) {
+  if (hasAppliedForReidenceGrant === YES) {
     steps.push({
-      state: ReviewSectionState.optionalAction,
+      state: ReviewSectionState.complete,
       title: formatMessage(
         parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle,
       ),
       description: formatMessage(
         parentalLeaveFormMessages.residenceGrantMessage
-          .residenceGrantOpenDescription,
+          .residenceGrantClosedDescription,
+      ),
+    })
+  } else {
+    steps.push({
+      state: ReviewSectionState.prerequisites,
+      title: formatMessage(
+        parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle,
+      ),
+      description: formatMessage(
+        parentalLeaveFormMessages.residenceGrantMessage
+          .residenceGrantClosedDescription,
       ),
     })
   }
@@ -197,9 +206,9 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
     application.state === ApplicationStates.EMPLOYER_APPROVE_EDITS ||
     application.state === ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS
 
-  const { periods } = getApplicationAnswers(application.answers)
   const lastEndDate = new Date(periods[periods.length - 1].endDate)
-  const dateOfBirth = application?.answers?.dateOfBirth
+  const { dateOfBirth } = getApplicationExternalData(application.externalData)
+
   const isUsedAllRights =
     useRemainingRights(application) > 0 ||
     lastEndDate.getTime() > new Date().getTime()
@@ -284,7 +293,6 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
           )}
         </Box>
       </Box>
-
       {screenState === 'steps' ? (
         <Box marginTop={7} marginBottom={8}>
           {steps.map((step, index) => (
@@ -295,7 +303,9 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
               {...step}
               notifyParentOnClickEvent={() =>
                 handleSubmit(
-                  dateOfBirth
+                  disableResidenceGrantApplication(
+                    dateOfBirth?.data?.dateOfBirth || '',
+                  )
                     ? 'RESIDENCEGRANTAPPLICATION'
                     : 'RESIDENCEGRANTAPPLICATIONNOBIRTHDATE',
                 )

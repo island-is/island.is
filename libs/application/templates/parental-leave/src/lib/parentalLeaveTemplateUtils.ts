@@ -56,6 +56,9 @@ export function currentDateStartTime() {
 export function findActionName(context: ApplicationContext) {
   const { application } = context
   const { state } = application
+  if (state === States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE)
+    return 'documentPeriod'
+  if (state === States.RESIDENCE_GRAND_APPLICATION) return 'documentPeriod'
   if (state === States.ADDITIONAL_DOCUMENTS_REQUIRED) return 'document'
   if (state === States.EDIT_OR_ADD_PERIODS) return 'period'
 
