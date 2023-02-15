@@ -14,7 +14,7 @@ export const subSectionFiles = buildSubSection({
       id: 'filesTitle',
       title: m.filesTitle,
       description: m.filesDescription,
-      space: 1,
+      space: 2,
       children: [
         buildDescriptionField({
           id: 'selectMainRecipient',
