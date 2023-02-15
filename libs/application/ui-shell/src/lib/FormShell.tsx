@@ -114,6 +114,7 @@ export const FormShell: FC<{
                 background="white"
               >
                 <Screen
+                  sections={sections}
                   setUpdateForbidden={setUpdateForbidden}
                   application={storedApplication}
                   addExternalData={(payload) =>
