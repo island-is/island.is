@@ -1,10 +1,10 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
-  Get,
-  Headers,
   Param,
+  ParseEnumPipe,
   Post,
   Put,
 } from '@nestjs/common'
@@ -18,9 +18,14 @@ import {
   VerifyLicenseRequest,
   VerifyLicenseResponse,
 } from './dto'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiHeader, ApiTags } from '@nestjs/swagger'
 import { LicenseId } from './license.types'
+import { NationalId } from '../../decorators/nationalId'
 
+@ApiHeader({
+  name: 'X-Param-NationalId',
+  description: "The user's nationl id",
+})
 @Controller({ version: ['1'] })
 @ApiTags('license-api')
 @Audit()
@@ -38,8 +43,15 @@ export class LicenseController {
   })
   @Put('users/.nationalId/licenses/:licenseId')
   async update(
-    @Headers('X-Param-NationalId') nationalId: string,
-    @Param('licenseId') licenseId: LicenseId,
+    @NationalId() nationalId: string,
+    @Param(
+      'licenseId',
+      new ParseEnumPipe(LicenseId, {
+        exceptionFactory: () =>
+          new BadRequestException('Invalid LicenseId in route'),
+      }),
+    )
+    licenseId: LicenseId,
     @Body() data: UpdateLicenseRequest,
   ): Promise<UpdateLicenseResponse> {
     const response = await this.licenseService.updateLicense(
@@ -59,8 +71,15 @@ export class LicenseController {
     },
   })
   async revoke(
-    @Headers('X-Param-NationalId') nationalId: string,
-    @Param('licenseId') licenseId: LicenseId,
+    @NationalId() nationalId: string,
+    @Param(
+      'licenseId',
+      new ParseEnumPipe(LicenseId, {
+        exceptionFactory: () =>
+          new BadRequestException('Invalid LicenseId in route parameter'),
+      }),
+    )
+    licenseId: LicenseId,
   ) {
     const response = await this.licenseService.revokeLicense(
       licenseId,
