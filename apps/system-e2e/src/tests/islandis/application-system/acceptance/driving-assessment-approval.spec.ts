@@ -2,7 +2,6 @@ import { expect, test as base, Page } from '@playwright/test'
 import {
   disableI18n,
   disablePreviousApplications,
-  disableObjectKey,
 } from '../../../../support/disablers'
 import { session } from '../../../../support/session'
 
