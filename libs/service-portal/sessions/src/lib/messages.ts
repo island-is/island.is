@@ -7,7 +7,7 @@ export const m = defineMessages({
   },
   sessions: {
     id: 'portals-my-pages.session-history:sessions',
-    defaultMessage: 'Innskráningar',
+    defaultMessage: 'Notkun',
   },
   sessionsDescription: {
     id: 'portals-my-pages.session-history:description',
@@ -42,13 +42,25 @@ export const m = defineMessages({
     id: 'portals-my-pages.session-history:geolocation',
     defaultMessage: 'Tæki og staður',
   },
+  ipLocation: {
+    id: 'portals-my-pages.session-history:ipLocation',
+    defaultMessage: 'Áætluð staðsetning út frá ip tölu: ',
+  },
   client: {
-    id: 'portals-my-pages.session-history:cleint',
+    id: 'portals-my-pages.session-history:client',
     defaultMessage: 'Kerfi',
+  },
+  clientUnknown: {
+    id: 'portals-my-pages.session-history:clientUnknown',
+    defaultMessage: 'Óþekkt',
   },
   person: {
     id: 'portals-my-pages.session-history:person',
     defaultMessage: 'Aðili',
+  },
+  geoInfoDesc: {
+    id: 'portals-my-pages.session-history:geoInfoDesc',
+    defaultMessage: 'Staðsetning er áætluð út frá IP tölu tengingar.',
   },
   error: {
     id: 'portals-my-pages.session-history:error',
