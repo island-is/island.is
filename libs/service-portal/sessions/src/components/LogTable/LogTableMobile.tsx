@@ -1,14 +1,17 @@
-import React, { FC } from 'react'
-import { Box, Divider, Icon, Text } from '@island.is/island-ui/core'
-import Person from '../PersonIcon/PersonIcon'
-import * as styles from '../LogTable/LogTable.css'
-import { SessionsSession } from '@island.is/api/schema'
-import { getSessionType } from '../../utils/utils'
-import { useAuth } from '@island.is/auth/react'
-import { SessionType } from '../../lib/types/sessionTypes'
-import { dateFormat, timeFormat } from '@island.is/shared/constants'
-import { useLocale } from '@island.is/localization'
 import * as kennitala from 'kennitala'
+import { FC } from 'react'
+import { useIntl } from 'react-intl'
+
+import { SessionsSession } from '@island.is/api/schema'
+import { useAuth } from '@island.is/auth/react'
+import { Box, Divider, Icon, Text } from '@island.is/island-ui/core'
+
+import { SessionType } from '../../lib/types/sessionTypes'
+import { getSessionType } from '../../utils/utils'
+import Person from '../PersonIcon/PersonIcon'
+
+import * as styles from '../LogTable/LogTable.css'
+import { Client } from '../Client/Client'
 
 interface LogTableProps {
   sessions: SessionsSession[]
@@ -22,7 +25,7 @@ const ExpandedDivider = () => (
 
 const LogTableMobile: FC<LogTableProps> = ({ sessions }) => {
   const { userInfo } = useAuth()
-  const { formatDateFns } = useLocale()
+  const { formatDate, formatTime } = useIntl()
 
   return (
     <>
@@ -43,20 +46,10 @@ const LogTableMobile: FC<LogTableProps> = ({ sessions }) => {
                 justifyContent="spaceBetween"
                 alignItems="center"
               >
-                <Box display={'flex'} columnGap={1} alignItems={'center'}>
-                  <Box
-                    className={styles.logo}
-                    style={{
-                      backgroundImage: `url(${session.client.domain?.organisationLogoUrl})`,
-                    }}
-                  ></Box>
-                  <Text as="h5" variant="h5">
-                    {session.client.clientName}
-                  </Text>
-                </Box>
+                <Client client={session.client} />
                 <Box>
                   <Text variant="small">
-                    {formatDateFns(session.timestamp, dateFormat.is)}
+                    {formatDate(session.timestamp, { dateStyle: 'medium' })}
                   </Text>
                   <Box
                     alignItems="center"
@@ -70,7 +63,7 @@ const LogTableMobile: FC<LogTableProps> = ({ sessions }) => {
                       color="blue400"
                     />
                     <Text variant="small">
-                      {formatDateFns(session.timestamp, timeFormat.is)}
+                      {formatTime(session.timestamp, { timeStyle: 'short' })}
                     </Text>
                   </Box>
                 </Box>

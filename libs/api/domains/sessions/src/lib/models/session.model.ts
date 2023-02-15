@@ -23,6 +23,9 @@ export class Session {
   @Field(() => String)
   userAgent!: string
 
+  @Field(() => String, { nullable: true })
+  device?: string
+
   @Field(() => String)
   ip!: string
 
