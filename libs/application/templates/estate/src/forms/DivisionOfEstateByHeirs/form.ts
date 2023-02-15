@@ -14,7 +14,7 @@ import { dataCollection } from '../sharedSections/dataCollection'
 import { overview } from './overviewSection'
 
 export const form: Form = buildForm({
-  id: 'residencePermitForm',
+  id: 'divisionOfEstateByHeirsForm',
   title: '',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
