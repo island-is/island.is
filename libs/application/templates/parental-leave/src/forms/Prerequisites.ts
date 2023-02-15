@@ -390,10 +390,6 @@ export const PrerequisitesForm: Form = buildForm({
               title: 'Sækja um fæðingarorlof/styrk',
               options: [
                 {
-                  value: 'adoption',
-                  label: 'Vegna frumættleiðingar barns',
-                },
-                {
                   value: 'foster_care',
                   label: 'Vegna töku barns í varanlegt fóstur',
                 },

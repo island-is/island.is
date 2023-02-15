@@ -139,6 +139,106 @@ export class ChildrenService {
     }
   }
 
+  async provideApplication(
+    application: Application,
+    nationalId: string,
+  ): Promise<ChildrenWithoutRightsAndExistingApplications> {
+    const customTemplateFindQuery = this.applicationApiService.customTemplateFindQuery(
+      application.typeId,
+    ) as CustomTemplateFindQuery
+   
+    // þarf þetta?
+    // const useMockData =
+    //   getValueViaPath<string>(application.answers, 'mock.useMockData', NO) ===
+    //   YES
+    // const shouldUseMockData = useMockData && !this.isRunningOnProduction
+
+    // if (shouldUseMockData) {
+    //   return await this.getMockData(application, customTemplateFindQuery)
+    // }
+
+    console.log('inni provide application')
+    // þarf ekki
+    const pregnancyStatus = await this.queryParentalLeavesAndPregnancyStatus(
+      nationalId,
+    )
+
+    // Applications where this parent is applicant
+    const applicationsWhereApplicant = (
+      await customTemplateFindQuery({
+        applicant: application.applicant,
+      })
+    ).filter(({ state }) => state !== States.PREREQUISITES)
+
+    console.log('applicationsWhereApplicant ', applicationsWhereApplicant)
+    // Applications where this parent is other parent
+    // otherParentId are in two difference places (answers.otheParentId and answers.otherParentObj.otherParentId)
+    // TODO: remove answers.otherParentId
+
+    let getAppsWhereOtherParentHasApplied = await customTemplateFindQuery({
+      'answers.otherParentObj.otherParentId': application.applicant,
+    })
+    if (getAppsWhereOtherParentHasApplied.length <= 0) {
+      getAppsWhereOtherParentHasApplied = await customTemplateFindQuery({
+        'answers.otherParentId': application.applicant,
+      })
+    }
+    console.log('getAppsWhereOtherParentHasApplied ', getAppsWhereOtherParentHasApplied)
+    const applicationsWhereOtherParentHasApplied = getAppsWhereOtherParentHasApplied.filter(
+      (application) => {
+        const { state } = application
+        const { applicationFundId } = getApplicationExternalData(
+          application.externalData,
+        )
+
+        const isInProgress =
+          state === States.PREREQUISITES ||
+          state === States.DRAFT ||
+          state === States.OTHER_PARENT_APPROVAL ||
+          state === States.OTHER_PARENT_ACTION ||
+          state === States.EMPLOYER_WAITING_TO_ASSIGN ||
+          state === States.EMPLOYER_APPROVAL ||
+          state === States.EMPLOYER_ACTION
+
+        if (isInProgress && applicationFundId === '') {
+          // The application of the primary parent has to be completed
+          return false
+        }
+
+        const selectedChild = getSelectedChild(
+          application.answers,
+          application.externalData,
+        )
+        console.log('sel child ', selectedChild)
+        if (!selectedChild) {
+          return false
+        }
+
+        // only return application where kennitala is the same as birth date
+        if(selectedChild.expectedDateOfBirth !== '2022-01-01') {
+          return false
+        }
+
+        // We only use applications from primary parents to allow
+        // secondary parents to apply, not the other way around
+        if (selectedChild.parentalRelation !== ParentalRelations.primary) {
+          return false
+        }
+
+        return true
+      },
+    )
+
+    console.log('FINAL applicationsWhereOtherParentHasApplied ', applicationsWhereOtherParentHasApplied)
+
+    return getChildrenAndExistingApplications(
+      applicationsWhereApplicant,
+      applicationsWhereOtherParentHasApplied,
+      pregnancyStatus.getPregnancyStatus,
+    )
+    
+  }
+
   async getMockData(
     application: Application,
     customTemplateFindQuery: CustomTemplateFindQuery,
@@ -341,16 +441,17 @@ export class ChildrenService {
        * The limitation in question is that VMST allows only one application at a time for a given parent(or something like that).
        * On Dev however we can create as many as we want as long as the baby birth date is not on the same day.
        */
-      const babyBDayRandomFactor = Math.ceil(Math.random() * 85)
-      return {
-        hasActivePregnancy: true,
-        expectedDateOfBirth: formatISO(
-          addDays(addMonths(new Date(), 6), babyBDayRandomFactor),
-          {
-            representation: 'date',
-          },
-        ),
-      }
+      return null
+      // const babyBDayRandomFactor = Math.ceil(Math.random() * 85)
+      // return {
+      //   hasActivePregnancy: true,
+      //   expectedDateOfBirth: formatISO(
+      //     addDays(addMonths(new Date(), 6), babyBDayRandomFactor),
+      //     {
+      //       representation: 'date',
+      //     },
+      //   ),
+      // }
     }
 
     try {

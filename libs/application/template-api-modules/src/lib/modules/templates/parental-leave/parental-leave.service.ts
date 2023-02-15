@@ -169,7 +169,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
   // and the application is adoption | foster care | without primary parent
   // we make a children data
   async setChildrenInformation({
-    application,
+    application, auth
   }: TemplateApiModuleActionProps) {
     const { noPrimaryParentBirthDate, fosterCareId } = getApplicationAnswers(
       application.answers,
@@ -179,7 +179,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       const child: ChildInformation = {
         hasRights: true,
         remainingDays: 180,
-        expectedDateOfBirth: noPrimaryParentBirthDate || fosterCareId, // should we put the foster care social security id somewhere else?
+        expectedDateOfBirth: noPrimaryParentBirthDate,
         parentalRelation: ParentalRelations.secondary,
         primaryParentNationalRegistryId: '',
       }
@@ -192,14 +192,15 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
 
     if (fosterCareId) { 
+      console.log('er herna')
+      this.childrenService.provideApplication(application, auth.nationalId)
       // can we check if the other parent has an application with the same 
       // child id so we know what the parentalRelation we should put here
       const child: ChildInformation = {
         hasRights: true,
         remainingDays: 180,
-        expectedDateOfBirth: fosterCareId, // should we put the foster care social security id somewhere else?
-        parentalRelation: ParentalRelations.secondary,
-        primaryParentNationalRegistryId: '',
+        expectedDateOfBirth: '2022-01-01', // should we put the foster care social security id somewhere else?
+        parentalRelation: ParentalRelations.primary,
       }
 
       const children: ChildInformation[] = [child]
