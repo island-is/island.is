@@ -235,8 +235,8 @@ const Screen: FC<ScreenProps> = ({
             id: applicationId,
             answers: extractedAnswers,
             draftProgress: {
-              stepsFinished: screen.sectionIndex,
-              totalSteps: sections.length,
+              stepsFinished: currentDraftScreen ?? screen.sectionIndex + 1,
+              totalSteps: totalDraftScreens ?? sections.length - 1,
             },
           },
           locale,
