@@ -156,12 +156,12 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: States.SUBMITTED,
+            target: States.COMPLETED,
           },
         },
       },
 
-      [States.SUBMITTED]: {
+      [States.COMPLETED]: {
         meta: {
           name: 'EHIC-Completed',
           status: 'completed',
