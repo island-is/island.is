@@ -8,12 +8,7 @@ import {
   buildCustomField,
   buildTextField,
 } from '@island.is/application/core'
-import {
-  Application,
-  DefaultEvents,
-  Field,
-  Answer,
-} from '@island.is/application/types'
+import { Application, DefaultEvents, Field } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
@@ -28,7 +23,6 @@ const theDeceased: Field[] = [
   buildDescriptionField({
     id: 'theDeceased',
     title: m.overviewTheDeceased,
-    marginBottom: 2,
     titleVariant: 'h3',
   }),
   buildKeyValueField({
@@ -78,7 +72,6 @@ const theAnnouncer: Field[] = [
   buildDescriptionField({
     id: 'theAnnouncer',
     title: m.announcementTitle,
-    marginBottom: 2,
     titleVariant: 'h3',
   }),
   buildKeyValueField({
@@ -109,7 +102,6 @@ const testament: Field[] = [
   buildDescriptionField({
     id: 'testament',
     title: m.testamentTitle,
-    marginBottom: 2,
     titleVariant: 'h3',
   }),
   buildKeyValueField({
@@ -183,14 +175,14 @@ const extraInfo: Field[] = [
 const inheritance: Field[] = [
   buildDividerField({
     condition: (application) =>
-      (application?.estateMembers as Answer[])?.length > 0,
+      (application?.estateMembers as any)?.members?.length > 0,
   }),
   buildDescriptionField({
     id: 'inheritance',
     title: m.inheritanceTitle,
     titleVariant: 'h3',
-    condition: (application) =>
-      (application?.estateMembers as Answer[])?.length > 0,
+    condition: (answers) =>
+      (answers?.estateMembers as any)?.members?.length > 0,
   }),
   buildCustomField(
     {
@@ -199,11 +191,11 @@ const inheritance: Field[] = [
       component: 'InfoCard',
       width: 'full',
       condition: (application) =>
-        (application?.estateMembers as Answer[])?.length > 0,
+        (application?.estateMembers as any)?.members?.length > 0,
     },
     {
       cards: (application: Application) =>
-        (application?.answers?.estateMembers as {
+        ((application?.answers?.estateMembers as any).members as {
           name: string
           nationalId: string
           relation: string
@@ -220,7 +212,7 @@ const inheritance: Field[] = [
 const properties: Field[] = [
   buildDividerField({}),
   buildDescriptionField({
-    id: 'realEstatesAndLandsTitle',
+    id: 'realEstatesTitle',
     title: m.realEstatesTitle,
     titleVariant: 'h3',
     description: m.realEstatesDescription,
@@ -282,6 +274,7 @@ const files: Field[] = [
     id: 'selectMainRecipient',
     title: m.filesSelectMainRecipient,
     titleVariant: 'h3',
+    marginBottom: 2,
   }),
   buildCustomField(
     {
@@ -358,7 +351,7 @@ export const sectionOverview = buildSection({
     buildMultiField({
       id: 'overview',
       title: m.overviewSectionTitle,
-      space: 1,
+      space: 2,
       description: m.overviewSectionDescription,
       children: [
         ...theDeceased,
