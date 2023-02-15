@@ -7,11 +7,13 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
-import { Jobs } from '../../assets/Jobs'
 import { conclusion } from '../../lib/messages'
 import { CopyLink } from '@island.is/application/ui-components'
+import { ApplicationConfigurations } from '@island.is/application/types'
+import { ConclusionMessageWithLinkButtonFormField } from '../ConclusionMessageWithLinkButtonFormField'
 
-export const Conclusion: FC<FieldBaseProps> = ({ application }) => {
+export const Conclusion: FC<FieldBaseProps> = (props) => {
+  const { application } = props
   const { formatMessage } = useLocale()
 
   return (
@@ -27,28 +29,23 @@ export const Conclusion: FC<FieldBaseProps> = ({ application }) => {
       <AccordionCard
         id="conclustion-card"
         label={formatMessage(conclusion.default.accordionTitle)}
+        startExpanded={true}
       >
         <Text>{formatMessage(conclusion.default.accordionText)}</Text>
       </AccordionCard>
+
       <Box marginTop={3}>
         <Text variant="h4">{formatMessage(conclusion.default.shareLink)}</Text>
         <Box marginTop={2}>
           <CopyLink
-            linkUrl={
-              `${document.location.origin}/umsoknir/breyta-umradamadur-okutaekis/` +
-              application.id
-            }
+            linkUrl={`${document.location.origin}/umsoknir/${ApplicationConfigurations.ChangeOperatorOfVehicle.slug}/${application.id}`}
             buttonTitle={formatMessage(conclusion.default.copyLink)}
           />
         </Box>
       </Box>
-      <Box
-        marginTop={[5, 5, 5]}
-        marginBottom={[5, 8]}
-        display="flex"
-        justifyContent="center"
-      >
-        <Jobs />
+
+      <Box marginTop={3} marginBottom={5}>
+        <ConclusionMessageWithLinkButtonFormField {...props} />
       </Box>
     </Box>
   )
