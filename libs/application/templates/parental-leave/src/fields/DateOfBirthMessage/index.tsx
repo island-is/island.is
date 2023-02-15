@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useEffect, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import { useLazyQuery, useMutation } from '@apollo/client'
 import {
   APPLICATION_APPLICATION,
@@ -58,24 +58,27 @@ const RedirectField: FC<FieldBaseProps> = ({ application, refetch }) => {
           ?.dateOfBirth
       if (dateOfBirth) {
         setHasDateOfBirth(true)
-        setTimeout(() => {
-          handleSubmit('RESIDENCEGRANTAPPLICATION')
-        }, 5000)
       }
     }
   }, [data])
   return (
     <Box>
-      {hasDateOfBirth ? (
-        <Text>
-          {formatMessage(
-            parentalLeaveFormMessages.residenceGrantMessage
-              .residenceGrantRedirectMessage,
-          )}
-        </Text>
-      ) : (
-        ''
-      )}
+      <Box display={'flex'} justifyContent={'center'} marginTop={5}>
+        <Box>
+          <Button
+            disabled={!hasDateOfBirth}
+            variant="ghost"
+            size="small"
+            icon="arrowForward"
+            onClick={() => handleSubmit('RESIDENCEGRANTAPPLICATION')}
+          >
+            {formatMessage(
+              parentalLeaveFormMessages.residenceGrantMessage
+                .residenceGrantApplyTitle,
+            )}
+          </Button>
+        </Box>
+      </Box>
     </Box>
   )
 }
