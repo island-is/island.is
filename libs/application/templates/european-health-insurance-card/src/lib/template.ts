@@ -164,7 +164,7 @@ const template: ApplicationTemplate<
       [States.COMPLETED]: {
         meta: {
           name: 'EHIC-Completed',
-          status: 'completed',
+          status: 'draft',
           progress: 1,
           onEntry: defineTemplateApi({
             action: ApiActions.getTemporaryCard,
@@ -176,9 +176,9 @@ const template: ApplicationTemplate<
 
               formLoader: () =>
                 import(
-                  '../forms/EuropeanHealthInsuranceCardReview'
+                  '../forms/EuropeanHealthInsuranceCardCompleted'
                 ).then((val) =>
-                  Promise.resolve(val.EuropeanHealthInsuranceCardReview),
+                  Promise.resolve(val.EuropeanHealthInsuranceCardCompleted),
                 ),
               actions: [
                 {

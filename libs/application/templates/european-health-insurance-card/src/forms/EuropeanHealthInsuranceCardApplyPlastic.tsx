@@ -105,15 +105,17 @@ export const EuropeanHealthInsuranceCardApplyPlastic: Form = buildForm({
                   ],
                   label: nationalRegistry.fullName,
                 })
-                applying.push({
-                  value: [
-                    nationalRegistrySpouse.nationalId,
-                    nationalRegistrySpouse.name,
-                  ],
-                  label: nationalRegistrySpouse.name,
-                })
+                if (nationalRegistrySpouse?.nationalId) {
+                  applying.push({
+                    value: [
+                      nationalRegistrySpouse.nationalId,
+                      nationalRegistrySpouse.name,
+                    ],
+                    label: nationalRegistrySpouse.name,
+                  })
+                }
 
-                for (const i in nationalRegistryDataChildren.data) {
+                for (const i in nationalRegistryDataChildren?.data) {
                   applying.push({
                     value: [
                       nationalRegistryDataChildren.data[i].nationalId,

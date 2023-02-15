@@ -12,6 +12,7 @@ import { Form, FormModes } from '@island.is/application/types'
 import {
   buildCustomField,
   buildDataProviderItem,
+  buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
   buildMultiField,
@@ -28,7 +29,7 @@ export interface EuropeanHealthInsuranceCardProps {}
 export const EuropeanHealthInsuranceCardReview: Form = buildForm({
   id: 'EuropeanHealthInsuranceCardApplicationForm',
   title: '',
-  mode: FormModes.APPROVED,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'intro',
@@ -76,10 +77,15 @@ export const EuropeanHealthInsuranceCardReview: Form = buildForm({
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'TODO: label',
+                  name: 'ksdksd',
                   type: 'primary',
                 },
               ],
+            }),
+            buildDescriptionField({
+              id: 'unused',
+              title: 'adg',
+              description: '',
             }),
           ],
         }),
@@ -88,7 +94,7 @@ export const EuropeanHealthInsuranceCardReview: Form = buildForm({
 
     buildSection({
       id: 'completed',
-      title: e.temp.sectionLabel,
+      title: 'TODO: complete',
       children: [],
     }),
   ],

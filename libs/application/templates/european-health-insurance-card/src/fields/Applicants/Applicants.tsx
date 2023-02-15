@@ -33,8 +33,8 @@ const Applicants: FC<FieldBaseProps> = ({ field, application }) => {
 
   const nationalRegistryDataChildren = (application?.externalData
     ?.childrenCustodyInformation as unknown) as NationalRegistry
-
-    return (
+  console.log(application)
+  return (
     <Box>
       <Stack space={2}>
         <ApplicantsController

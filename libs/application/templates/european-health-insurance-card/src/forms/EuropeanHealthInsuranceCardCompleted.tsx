@@ -25,10 +25,10 @@ import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/mess
 /* eslint-disable-next-line */
 export interface EuropeanHealthInsuranceCardProps {}
 
-export const EuropeanHealthInsuranceCardReview: Form = buildForm({
+export const EuropeanHealthInsuranceCardCompleted: Form = buildForm({
   id: 'EuropeanHealthInsuranceCardApplicationForm',
   title: '',
-  mode: FormModes.APPROVED,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'intro',
@@ -57,33 +57,7 @@ export const EuropeanHealthInsuranceCardReview: Form = buildForm({
     buildSection({
       id: 'applicationReviewSection',
       title: e.review.sectionLabel,
-      children: [
-        buildMultiField({
-          id: 'applicationReviewSection.applicationReview',
-          title: e.review.sectionReviewTitle,
-          description: e.review.sectionReviewDescription,
-          children: [
-            buildCustomField({
-              id: 'reviewScreen',
-              title: '',
-              component: 'ReviewScreen',
-            }),
-            buildSubmitField({
-              id: 'submit',
-              title: e.review.submitButtonLabel,
-              refetchApplicationAfterSubmit: true,
-              placement: 'footer',
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'TODO: Sækja um pdf',
-                  type: 'primary',
-                },
-              ],
-            }),
-          ],
-        }),
-      ],
+      children: [],
     }),
 
     buildSection({
@@ -107,4 +81,4 @@ export const EuropeanHealthInsuranceCardReview: Form = buildForm({
   ],
 })
 
-export default EuropeanHealthInsuranceCardReview
+export default EuropeanHealthInsuranceCardCompleted
