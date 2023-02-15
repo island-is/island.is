@@ -4,10 +4,11 @@ import {
   buildForm,
   buildMultiField,
   buildSection,
+  buildSubmitField,
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
@@ -378,5 +379,30 @@ export const form: Form = buildForm({
       ],
     }),
     overview,
+    buildSection({
+      id: 'approveSubmission',
+      title: m.doneTitle,
+      children: [
+        buildMultiField({
+          id: 'approveSubmission',
+          title: m.doneTitle,
+          description: m.divisionOfEstateByHeirsSubtitle,
+          children: [
+            buildSubmitField({
+              id: 'divisionOfEstateByHeirs.submit',
+              title: '',
+              refetchApplicationAfterSubmit: true,
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: m.submitApplication,
+                  type: 'primary',
+                },
+              ],
+            })
+          ]
+        })
+      ]
+    })
   ],
 })
