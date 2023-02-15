@@ -122,8 +122,11 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
   }
 
   async applyForPhysicalAndTemporary(obj: TemplateApiModuleActionProps) {
+    this.logger.info('applyForPhysicalAndTemporary')
+    this.logger.info(obj)
     await this.applyForPhysicalCard(obj)
     await this.applyForTemporaryCard(obj)
+    this.logger.info('applyForPhysicalAndTemporary return')
     return true
   }
 
@@ -165,6 +168,9 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
 
   async getTemporaryCard({ auth, application }: TemplateApiModuleActionProps) {
     this.logger.info('getTemporaryCard')
+
+    return { name: 'dummy name', fileHref: 'https://www' }
+
     return this.ehicApi.fetchTempPDFCard({
       applicantnationalid: auth.nationalId,
       cardnumber: '00',
