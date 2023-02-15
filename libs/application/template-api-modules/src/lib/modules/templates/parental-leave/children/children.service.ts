@@ -147,7 +147,7 @@ export class ChildrenService {
       application.typeId,
     ) as CustomTemplateFindQuery
    
-    // þarf þetta?
+    // todo - skoða varðandi mock
     // const useMockData =
     //   getValueViaPath<string>(application.answers, 'mock.useMockData', NO) ===
     //   YES
@@ -158,10 +158,6 @@ export class ChildrenService {
     // }
 
     console.log('inni provide application')
-    // þarf ekki
-    const pregnancyStatus = await this.queryParentalLeavesAndPregnancyStatus(
-      nationalId,
-    )
 
     // Applications where this parent is applicant
     const applicationsWhereApplicant = (
@@ -234,9 +230,8 @@ export class ChildrenService {
     return getChildrenAndExistingApplications(
       applicationsWhereApplicant,
       applicationsWhereOtherParentHasApplied,
-      pregnancyStatus.getPregnancyStatus,
+      null,
     )
-    
   }
 
   async getMockData(
