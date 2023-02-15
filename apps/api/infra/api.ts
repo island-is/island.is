@@ -35,7 +35,7 @@ export const serviceSetup = (services: {
   documentsService: ServiceBuilder<'services-documents'>
   servicesEndorsementApi: ServiceBuilder<'services-endorsement-api'>
   airDiscountSchemeBackend: ServiceBuilder<'air-discount-scheme-backend'>
-  sessionsApi: ServiceBuilder<'services-sessions-api'>
+  sessionsApi: ServiceBuilder<'services-sessions'>
 }): ServiceBuilder<'api'> => {
   return service('api')
     .namespace('islandis')
