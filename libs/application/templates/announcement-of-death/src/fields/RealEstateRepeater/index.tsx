@@ -18,25 +18,25 @@ import {
 } from '@island.is/island-ui/core'
 import { Answers, Asset } from '../../types'
 
-import * as styles from './RealEstateAndLandsRepeater.css'
+import * as styles from './styles.css'
 import { m } from '../../lib/messages'
 import { useLazyQuery } from '@apollo/client'
 import { SEARCH_FOR_PROPERTY_QUERY } from '../../graphql'
 import { Query, SearchForPropertyInput } from '@island.is/api/schema'
 import { EstateAsset } from '@island.is/clients/syslumenn'
 
-export const RealEstateAndLandsRepeater: FC<FieldBaseProps<Answers>> = ({
+export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
   application,
   field,
   errors,
 }) => {
   const error = (errors as any)?.assets?.assets
-
   const { id } = field
   const { formatMessage } = useLocale()
   const { fields, append, remove } = useFieldArray<Asset>({
     name: `${id}.assets`,
   })
+
   const { setValue } = useFormContext()
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
@@ -152,6 +152,7 @@ const Item = ({
   const address = useWatch({ name: addressField, defaultValue: '' })
   const initialField = `${fieldIndex}.initial`
   const dummyField = `${fieldIndex}.dummy`
+  const shareField = `${fieldIndex}.share`
   const { control, setValue } = useFormContext()
   const { formatMessage } = useLocale()
 
@@ -184,7 +185,7 @@ const Item = ({
           },
         },
       })
-    } else {
+    } else if (!field.initial) {
       setValue(addressField, '')
     }
   }, [getProperty, address, addressField, propertyNumberInput, setValue])
@@ -201,6 +202,12 @@ const Item = ({
         control={control}
         defaultValue={field.dummy || false}
       />
+      <Controller
+        name={shareField}
+        control={control}
+        defaultValue={field.share || 0}
+      />
+
       <Box position="absolute" className={styles.removeFieldButton}>
         <Button
           variant="ghost"
