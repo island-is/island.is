@@ -399,10 +399,10 @@ export const form: Form = buildForm({
                   type: 'primary',
                 },
               ],
-            })
-          ]
-        })
-      ]
-    })
+            }),
+          ],
+        }),
+      ],
+    }),
   ],
 })
