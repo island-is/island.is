@@ -17,9 +17,7 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 
-import {
-  EhicCardResponseApi,
-} from '../dataProviders'
+import { EhicCardResponseApi } from '../dataProviders'
 import { NationalRegistry } from '../lib/types'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 
@@ -91,32 +89,38 @@ export const EuropeanHealthInsuranceCardApplyPlastic: Form = buildForm({
               backgroundColor: 'white',
               title: '',
               options: (application: Application) => {
-                console.log(application, " here")
-                const nationalRegistry = application.externalData.nationalRegistry.data as NationalRegistry
-                const nationalRegistrySpouse = application.externalData.nationalRegistrySpouse.data as NationalRegistry
-                const nationalRegistryDataChildren = (application?.externalData?.childrenCustodyInformation as unknown) as NationalRegistry
-                const applying = [];
+                console.log(application, ' here')
+                const nationalRegistry = application.externalData
+                  .nationalRegistry.data as NationalRegistry
+                const nationalRegistrySpouse = application.externalData
+                  .nationalRegistrySpouse.data as NationalRegistry
+                const nationalRegistryDataChildren = (application?.externalData
+                  ?.childrenCustodyInformation as unknown) as NationalRegistry
+                const applying = []
 
-                applying.push(
-                  {
-                    value: [nationalRegistry.nationalId, nationalRegistry.fullName],
-                    label: nationalRegistry.fullName,
-                  }
-                )
-                applying.push(
-                  {
-                    value: [nationalRegistrySpouse.nationalId, nationalRegistrySpouse.name],
-                    label: nationalRegistrySpouse.name,
-                  }
-                )
+                applying.push({
+                  value: [
+                    nationalRegistry.nationalId,
+                    nationalRegistry.fullName,
+                  ],
+                  label: nationalRegistry.fullName,
+                })
+                applying.push({
+                  value: [
+                    nationalRegistrySpouse.nationalId,
+                    nationalRegistrySpouse.name,
+                  ],
+                  label: nationalRegistrySpouse.name,
+                })
 
                 for (const i in nationalRegistryDataChildren.data) {
-                  applying.push(
-                    {
-                      value: [nationalRegistryDataChildren.data[i].nationalId, nationalRegistryDataChildren.data[i].fullName],
-                      label: nationalRegistryDataChildren.data[i].fullName,
-                    }
-                  )
+                  applying.push({
+                    value: [
+                      nationalRegistryDataChildren.data[i].nationalId,
+                      nationalRegistryDataChildren.data[i].fullName,
+                    ],
+                    label: nationalRegistryDataChildren.data[i].fullName,
+                  })
                 }
                 return applying as Array<{ value: any; label: string }>
               },
@@ -175,6 +179,12 @@ export const EuropeanHealthInsuranceCardApplyPlastic: Form = buildForm({
     buildSection({
       id: 'applicationReviewSection',
       title: e.review.sectionLabel,
+      children: [],
+    }),
+
+    buildSection({
+      id: 'completed',
+      title: 'TODO: completed label',
       children: [],
     }),
   ],

@@ -26,7 +26,7 @@ import { NationalRegistry } from '../lib/types'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 
 /* eslint-disable-next-line */
-export interface EuropeanHealthInsuranceCardProps { }
+export interface EuropeanHealthInsuranceCardProps {}
 
 export const EuropeanHealthInsuranceCardApplyPDF: Form = buildForm({
   id: 'EuropeanHealthInsuranceCardApplicationForm',
@@ -65,16 +65,14 @@ export const EuropeanHealthInsuranceCardApplyPDF: Form = buildForm({
               backgroundColor: 'white',
               title: '',
               options: (application: Application) => {
-                const applying = [];
+                const applying = []
                 const ans = application.answers.applyForPlastic as Array<any>
                 for (const i in ans) {
                   console.log([ans[i][0], ans[i][1]])
-                  applying.push(
-                    {
-                      value: [ans[i][0], ans[i][1]],
-                      label: ans[i][1],
-                    }
-                  )
+                  applying.push({
+                    value: [ans[i][0], ans[i][1]],
+                    label: ans[i][1],
+                  })
                 }
                 return applying as Array<{ value: any; label: string }>
               },
@@ -105,6 +103,12 @@ export const EuropeanHealthInsuranceCardApplyPDF: Form = buildForm({
     buildSection({
       id: 'applicationReviewSection',
       title: e.review.sectionLabel,
+      children: [],
+    }),
+
+    buildSection({
+      id: 'completed',
+      title: 'TODO: completed label',
       children: [],
     }),
   ],

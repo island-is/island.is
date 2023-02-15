@@ -16,12 +16,13 @@ import { DefaultStateLifeCycle } from '@island.is/application/core'
 import { dataSchema } from './dataSchema'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 import {
+  EhicApplyForPhysicalAndTemporary,
   EhicApplyForPhysicalCardApi,
   EhicApplyForTemporaryCardApi,
   EhicCardResponseApi,
   EhicGetTemporaryCardApi,
 } from '../dataProviders'
-import { ApiActions } from '../dataProviders/apiActions'
+import { ApiActions } from '../dataProviders/apiActions.enum'
 import { States } from './types'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.ABORT }
@@ -54,9 +55,6 @@ const template: ApplicationTemplate<
           status: 'draft',
           progress: 0.33,
           lifecycle: DefaultStateLifeCycle,
-          onExit: defineTemplateApi({
-            action: ApiActions.applyForPhysicalCard,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -78,7 +76,6 @@ const template: ApplicationTemplate<
                 NationalRegistrySpouseApi,
                 ChildrenCustodyInformationApi,
                 EhicCardResponseApi,
-                EhicApplyForPhysicalCardApi,
               ],
               write: 'all',
               read: 'all',
@@ -98,12 +95,6 @@ const template: ApplicationTemplate<
           status: 'draft',
           progress: 0.66,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: defineTemplateApi({
-            action: ApiActions.applyForPhysicalCard,
-          }),
-          onExit: defineTemplateApi({
-            action: ApiActions.applyForTemporaryCard,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -120,7 +111,43 @@ const template: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
-              api: [EhicApplyForPhysicalCardApi, EhicApplyForTemporaryCardApi],
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.REVIEW,
+          },
+        },
+      },
+
+      [States.REVIEW]: {
+        meta: {
+          name: 'EHIC-Review',
+          status: 'draft',
+          progress: 1,
+          onExit: defineTemplateApi({
+            action: ApiActions.applyForPhysicalAndTemporary,
+          }),
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+
+              formLoader: () =>
+                import(
+                  '../forms/EuropeanHealthInsuranceCardReview'
+                ).then((val) =>
+                  Promise.resolve(val.EuropeanHealthInsuranceCardReview),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'EHIC-Approved-Submit',
+                  type: 'primary',
+                },
+              ],
+              api: [EhicApplyForPhysicalAndTemporary],
               write: 'all',
               read: 'all',
               delete: true,
@@ -136,8 +163,8 @@ const template: ApplicationTemplate<
 
       [States.COMPLETED]: {
         meta: {
-          name: 'EHIC-Approved',
-          status: States.COMPLETED,
+          name: 'EHIC-Completed',
+          status: 'completed',
           progress: 1,
           onEntry: defineTemplateApi({
             action: ApiActions.getTemporaryCard,

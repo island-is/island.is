@@ -3,4 +3,5 @@ export enum ApiActions {
   applyForPhysicalCard = 'applyForPhysicalCard',
   applyForTemporaryCard = 'applyForTemporaryCard',
   getTemporaryCard = 'getTemporaryCard',
+  applyForPhysicalAndTemporary = 'applyForPhysicalAndTemporary',
 }

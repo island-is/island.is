@@ -27,8 +27,7 @@ export enum States {
   PLASTIC = 'plastic',
   PDF = 'pdf',
   DRAFT = 'draft',
-  PAYMENT = 'payment',
+  REVIEW = 'review',
   SUBMITTED = 'submitted',
-  DECLINED = 'declined',
   COMPLETED = 'completed',
 }

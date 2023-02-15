@@ -121,6 +121,12 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     return null
   }
 
+  async applyForPhysicalAndTemporary(obj: TemplateApiModuleActionProps) {
+    await this.applyForPhysicalCard(obj)
+    await this.applyForTemporaryCard(obj)
+    return true
+  }
+
   async applyForPhysicalCard({
     auth,
     application,

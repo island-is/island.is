@@ -76,7 +76,7 @@ export const EuropeanHealthInsuranceCardReview: Form = buildForm({
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'TODO: label',
+                  name: 'TODO: Sækja um pdf',
                   type: 'primary',
                 },
               ],
@@ -88,8 +88,21 @@ export const EuropeanHealthInsuranceCardReview: Form = buildForm({
 
     buildSection({
       id: 'completed',
-      title: e.temp.sectionLabel,
-      children: [],
+      title: 'TODO: label',
+      children: [
+        buildMultiField({
+          id: 'TODO.ID',
+          title: 'TODO: title',
+          description: e.review.sectionReviewDescription,
+          children: [
+            buildCustomField({
+              id: 'completedScreen',
+              title: '',
+              component: 'CompletedScreen',
+            }),
+          ],
+        }),
+      ],
     }),
   ],
 })
