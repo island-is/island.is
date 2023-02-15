@@ -24,7 +24,7 @@ import { NationalId } from '../../decorators/nationalId'
 
 @ApiHeader({
   name: 'X-Param-NationalId',
-  description: "The user's nationl id",
+  description: "The user's national id",
 })
 @Controller({ version: ['1'] })
 @ApiTags('license-api')
