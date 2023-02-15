@@ -86,7 +86,8 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     const applicants = application.answers[cardType] as Array<any>
     const apply: string[] = []
 
-    for (let i = 0; i < applicants.length; i++) {
+    for (let i = 0; i < applicants?.length; i++) {
+      console.log('Adding: ' + applicants[i][0])
       apply.push(applicants[i][0])
     }
 

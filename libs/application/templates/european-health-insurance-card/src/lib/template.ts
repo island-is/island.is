@@ -125,7 +125,7 @@ const template: ApplicationTemplate<
         meta: {
           name: 'EHIC-Review',
           status: 'draft',
-          progress: 1,
+          progress: 0.8,
           onExit: defineTemplateApi({
             action: ApiActions.applyForPhysicalAndTemporary,
           }),
@@ -143,7 +143,7 @@ const template: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'EHIC-Approved-Submit',
+                  name: 'EHIC-Review-Submit',
                   type: 'primary',
                 },
               ],
@@ -156,15 +156,15 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: States.COMPLETED,
+            target: States.SUBMITTED,
           },
         },
       },
 
-      [States.COMPLETED]: {
+      [States.SUBMITTED]: {
         meta: {
           name: 'EHIC-Completed',
-          status: 'draft',
+          status: 'completed',
           progress: 1,
           onEntry: defineTemplateApi({
             action: ApiActions.getTemporaryCard,
