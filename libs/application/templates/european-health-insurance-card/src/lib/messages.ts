@@ -39,6 +39,7 @@ export const europeanHealthInsuranceCardApplicationMessages = {
     },
   }),
 
+  // Data collection
   data: defineMessages({
     sectionLabel: {
       id: 'ehic.application:data.section.label',
@@ -50,14 +51,37 @@ export const europeanHealthInsuranceCardApplicationMessages = {
       defaultMessage: 'Gagnaöflun',
       description: 'Applicants for European Health Insurance Card',
     },
+    dataCollectionNationalRegistryTitle: {
+      id: 'ehic.application:data.national.registry.name',
+      defaultMessage: 'Þjóðskrá Íslands',
+      description: 'Title for NationalRegistry',
+    },
+    dataCollectionNationalRegistryDescription: {
+      id: 'ehic.application:data.national.registry.description',
+      defaultMessage:
+        'Við þurfum að sækja þessi gögn úr þjóðskrá. Lögheimili, hjúskaparstaða, maki og afkvæmi.',
+      description: 'Description for NationalRegistry',
+    },
+    dataCollectionHealthInsuranceTitle: {
+      id: 'ehic.application:data.health.insurance.name',
+      defaultMessage: 'Sjúkratryggingar',
+      description: 'Title for Health Insurance (Sjúkratryggingar Íslands)',
+    },
+    dataCollectionHealthInsuranceDescription: {
+      id: 'ehic.application:data.health.insurance.description',
+      defaultMessage:
+        'Upplýsingar um stöðu heimildar á evrópska sjúktryggingakortinu',
+      description:
+        'Description for Health Insurance (Sjúkratryggingar Íslands)',
+    },
     dataCollectionCheckboxLabel: {
       id: 'ehic.application:data.dataCollectionCheckboxLabel',
-      defaultMessage:
-        'Ég skil að ofangreindra upplýsinga verður aflað.',
+      defaultMessage: 'Ég skil að ofangreindra upplýsinga verður aflað.',
       description: 'Section description',
     },
   }),
 
+  // Plastic
   applicants: defineMessages({
     sectionLabel: {
       id: 'ehic.application:applicant.section.label',
@@ -65,18 +89,24 @@ export const europeanHealthInsuranceCardApplicationMessages = {
       description: 'Section label',
     },
     sectionTitle: {
-      id: 'ehic.application:application.name',
+      id: 'ehic.application:applicant.name',
       defaultMessage: 'Umsækjendur',
       description: 'Applicants for European Health Insurance Card',
     },
     sectionDescription: {
-      id: 'ehic.application:application.institutionName',
+      id: 'ehic.application:applicant.description',
       defaultMessage:
         'Haka þarf við hvern einstakling til þess að umsókn hans verði virk.',
       description: 'Section description',
     },
+    submitButtonLabel: {
+      id: 'ehic.application:applicant.submitButtonLabel',
+      defaultMessage: 'Halda áfram',
+      description: 'Button label for Plastic card step',
+    },
   }),
 
+  // PDF
   temp: defineMessages({
     sectionLabel: {
       id: 'ehic.application:temp.section.label',
@@ -89,13 +119,19 @@ export const europeanHealthInsuranceCardApplicationMessages = {
       description: 'Applicants for European Health Insurance Card',
     },
     sectionDescription: {
-      id: 'ehic.application:temp.institutionName',
+      id: 'ehic.application:temp.description',
       defaultMessage:
         'þá kemur stuttur texti um notkun á bráðabirgðakorti vs plastkorti og svo getur þú niðurhalað PDF skjali með bráðabirgðakorti og það sendist í stafrænt pósthólf. Plast er betra og þetta dugar ekki jafn vel. Vinsamlegast hakaðu við þá aðila sem vilja fá bráða',
       description: 'Section description',
     },
+    submitButtonLabel: {
+      id: 'ehic.application:temp.submitButtonLabel',
+      defaultMessage: 'Halda áfram',
+      description: 'Button label for PDF step',
+    },
   }),
 
+  // Review Screen
   review: defineMessages({
     sectionLabel: {
       id: 'ehic.application:review.section.label',
@@ -146,6 +182,7 @@ export const europeanHealthInsuranceCardApplicationMessages = {
     },
   }),
 
+  // Completed
   confirmation: defineMessages({
     sectionLabel: {
       id: 'ehic.application:confirmation.section.label',

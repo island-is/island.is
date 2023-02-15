@@ -56,7 +56,7 @@ export const EuropeanHealthInsuranceCardApplyPDF: Form = buildForm({
       title: e.temp.sectionLabel,
       children: [
         buildMultiField({
-          id: 'temp-mf',
+          id: 'tempApplicants',
           title: e.temp.sectionTitle,
           description: e.temp.sectionDescription,
           children: [
@@ -78,24 +78,26 @@ export const EuropeanHealthInsuranceCardApplyPDF: Form = buildForm({
               },
             }),
             buildSubmitField({
-              id: 'submit-23',
+              id: 'submitPdf',
               title: e.review.submitButtonLabel,
               refetchApplicationAfterSubmit: true,
               placement: 'footer',
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'pdf-button',
+                  name: e.temp.submitButtonLabel,
                   type: 'primary',
                 },
               ],
             }),
           ],
         }),
+        // Has to be here so that the submit button appears (does not appear if no screen is left).
+        // Tackle that as AS task.
         buildDescriptionField({
-          id: 'unused2',
-          title: 'no way',
-          description: 'fyrir neðan',
+          id: 'pdf-Unused',
+          title: '',
+          description: '',
         }),
       ],
     }),
@@ -108,7 +110,7 @@ export const EuropeanHealthInsuranceCardApplyPDF: Form = buildForm({
 
     buildSection({
       id: 'completed',
-      title: 'TODO: completed label',
+      title: e.confirmation.sectionLabel,
       children: [],
     }),
   ],

@@ -12,7 +12,7 @@ const CompletedScreen: FC<FieldBaseProps> = ({ application }) => {
   return (
     <Stack space={1}>
       <Box marginBottom={2} marginTop={2}>
-        <Text lineHeight="lg">TODO: Texti</Text>
+        <Text lineHeight="lg">TODO: Hér koma PDF tenglar</Text>
       </Box>
     </Stack>
   )

@@ -57,9 +57,8 @@ export const EuropeanHealthInsuranceCardApplyPlastic: Form = buildForm({
           dataProviders: [
             buildDataProviderItem({
               provider: NationalRegistryUserApi,
-              title: 'Þjóðskrá Íslands',
-              subTitle:
-                'Við þurfum að sækja þessi gögn úr þjóðskrá. Lögheimili, hjúskaparstaða, maki og afkvæmi.',
+              title: e.data.dataCollectionNationalRegistryTitle,
+              subTitle: e.data.dataCollectionNationalRegistryDescription,
             }),
             buildDataProviderItem({
               provider: NationalRegistrySpouseApi,
@@ -73,9 +72,8 @@ export const EuropeanHealthInsuranceCardApplyPlastic: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: EhicCardResponseApi,
-              title: 'Sjúkratryggingar',
-              subTitle:
-                'Upplýsingar um stöðu heimildar á evrópska sjúktryggingakortinu',
+              title: e.data.dataCollectionHealthInsuranceTitle,
+              subTitle: e.data.dataCollectionHealthInsuranceDescription,
             }),
           ],
         }),
@@ -135,7 +133,7 @@ export const EuropeanHealthInsuranceCardApplyPlastic: Form = buildForm({
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Sækja um plast',
+                  name: e.applicants.submitButtonLabel,
                   type: 'primary',
                 },
               ],
@@ -186,7 +184,7 @@ export const EuropeanHealthInsuranceCardApplyPlastic: Form = buildForm({
 
     buildSection({
       id: 'completed',
-      title: 'TODO: completed label',
+      title: e.confirmation.sectionLabel,
       children: [],
     }),
   ],

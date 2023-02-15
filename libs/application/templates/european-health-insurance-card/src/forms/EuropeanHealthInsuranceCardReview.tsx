@@ -77,7 +77,7 @@ export const EuropeanHealthInsuranceCardReview: Form = buildForm({
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'ksdksd',
+                  name: e.review.submitButtonLabel,
                   type: 'primary',
                 },
               ],
@@ -94,7 +94,7 @@ export const EuropeanHealthInsuranceCardReview: Form = buildForm({
 
     buildSection({
       id: 'completed',
-      title: 'TODO: complete',
+      title: e.confirmation.sectionLabel,
       children: [],
     }),
   ],
