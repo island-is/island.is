@@ -38,9 +38,9 @@ const TabContent = ({
     if (val === 'Stafrófsröð') {
       dataCopy.sort((a, b) => a.name.localeCompare(b.name))
     } else if (val === 'Nýjast efst') {
-      dataCopy.sort((a, b) => (a.id < b.id ? -1 : 1))
-    } else if (val === 'Elst efst') {
       dataCopy.sort((a, b) => (a.id > b.id ? -1 : 1))
+    } else if (val === 'Elst efst') {
+      dataCopy.sort((a, b) => (a.id < b.id ? -1 : 1))
     }
     sortTitle[currentTab] = val
     setSortTitle(sortTitle)
