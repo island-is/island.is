@@ -13,7 +13,7 @@ import { dataCollection } from '../sharedSections/dataCollection'
 import { deceasedInfoFields } from '../sharedSections/deceasedInfoFields'
 
 export const form: Form = buildForm({
-  id: 'officialExchange',
+  id: 'divisionOfEstate',
   title: '',
   mode: FormModes.IN_PROGRESS,
   renderLastScreenButton: true,
@@ -22,13 +22,13 @@ export const form: Form = buildForm({
     dataCollection,
     announcerInfo,
     buildSection({
-      id: 'overviewOfficialExchange',
+      id: 'overviewDivisionOfEstate',
       title: m.overviewTitle,
       children: [
         buildMultiField({
-          id: 'overviewOfficialExchange',
+          id: 'overviewDivisionOfEstate',
           title: m.overviewTitle,
-          description: m.overviewSubtitleOfficialEstate,
+          description: m.overviewSubtitleDivisionOfEstate,
           children: [
             buildDividerField({}),
             buildDescriptionField({
@@ -43,7 +43,7 @@ export const form: Form = buildForm({
             }),
             ...deceasedInfoFields,
             buildSubmitField({
-              id: 'officialExchange.submit',
+              id: 'divisionOfEstate.submit',
               title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
