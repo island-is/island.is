@@ -39,6 +39,7 @@ export const estateSchema = z.object({
     EstateTypes.officialEstate,
     EstateTypes.noPropertyEstate,
     EstateTypes.residencePermit,
+    EstateTypes.privateExchange,
   ]),
 
   // Eignir

@@ -47,6 +47,7 @@ import {
   ChildInformation,
   ChildrenAndExistingApplications,
   PregnancyStatusAndRightsResults,
+  EmployerRow,
   Files,
   OtherParentObj,
   VMSTPeriod,
@@ -660,18 +661,26 @@ export function getApplicationAnswers(answers: Application['answers']) {
     '0',
   ) as string
 
-  const isSelfEmployed = getValueViaPath(
+  let isSelfEmployed = getValueViaPath(answers, 'isSelfEmployed') as YesOrNo
+  // olf Empployer obj
+  if (!isSelfEmployed) {
+    isSelfEmployed = getValueViaPath(
+      answers,
+      'employer.isSelfEmployed',
+    ) as YesOrNo
+  }
+
+  let isReceivingUnemploymentBenefits = getValueViaPath(
     answers,
-    'employer.isSelfEmployed',
+    'isReceivingUnemploymentBenefits',
   ) as YesOrNo
 
-  let isRecivingUnemploymentBenefits = getValueViaPath(
-    answers,
-    'isRecivingUnemploymentBenefits',
-  ) as YesOrNo
-
-  if (!isRecivingUnemploymentBenefits)
-    isRecivingUnemploymentBenefits = NO as YesOrNo
+  if (!isReceivingUnemploymentBenefits) {
+    isReceivingUnemploymentBenefits = getValueViaPath(
+      answers,
+      'isRecivingUnemploymentBenefits',
+    ) as YesOrNo
+  }
 
   const unemploymentBenefits = getValueViaPath(
     answers,
@@ -734,13 +743,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'personalAllowanceFromSpouse.usage',
   ) as string
 
-  const employerEmail = getValueViaPath(answers, 'employer.email') as string
-
-  const employerPhoneNumber = getValueViaPath(
-    answers,
-    'employerPhoneNumber',
-  ) as string
-
   const employerNationalRegistryId = getValueViaPath(
     answers,
     'employerNationalRegistryId',
@@ -750,6 +752,27 @@ export function getApplicationAnswers(answers: Application['answers']) {
     answers,
     'employerReviewerNationalRegistryId',
   ) as string
+
+  let employers = getValueViaPath(answers, 'employers', []) as EmployerRow[]
+  if (!employers) {
+    employers = []
+  }
+  // old employer object
+  if (employers.length === 0) {
+    const employerEmailObj = getValueViaPath(
+      answers,
+      'employer.email',
+    ) as string
+    if (employerEmailObj) {
+      employers.push({
+        email: employerEmailObj,
+        ratio: '100',
+        phoneNumber: getValueViaPath(answers, 'employerPhoneNumber') as string,
+        reviewerNationalRegistryId: employerReviewerNationalRegistryId,
+        companyNationalRegistryId: employerNationalRegistryId,
+      } as EmployerRow)
+    }
+  }
 
   const shareInformationWithOtherParent = getValueViaPath(
     answers,
@@ -889,8 +912,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     personalUsage,
     spouseUseAsMuchAsPossible,
     spouseUsage,
-    employerEmail,
-    employerPhoneNumber,
+    employers,
     employerNationalRegistryId,
     employerReviewerNationalRegistryId,
     shareInformationWithOtherParent,
@@ -906,7 +928,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     periods,
     rawPeriods,
     firstPeriodStart,
-    isRecivingUnemploymentBenefits,
+    isReceivingUnemploymentBenefits,
     unemploymentBenefits,
     additionalDocuments,
     selfEmployedFiles,
@@ -916,6 +938,36 @@ export function getApplicationAnswers(answers: Application['answers']) {
     commonFiles,
     actionName,
   }
+}
+
+export const getUnApprovedEmployers = (
+  answers: Application['answers'],
+): EmployerRow[] => {
+  const { employers } = getApplicationAnswers(answers)
+  const newEmployers: EmployerRow[] = []
+
+  employers?.forEach((e) => {
+    if (!e.isApproved) {
+      newEmployers.push(e)
+    }
+  })
+
+  return newEmployers
+}
+
+export const getApprovedEmployers = (
+  answers: Application['answers'],
+): EmployerRow[] => {
+  const { employers } = getApplicationAnswers(answers)
+  const newEmployers: EmployerRow[] = []
+
+  employers?.forEach((e) => {
+    if (e.isApproved) {
+      newEmployers.push(e)
+    }
+  })
+
+  return newEmployers
 }
 
 export const isParentWithoutBirthParent = (answers: Application['answers']) => {
