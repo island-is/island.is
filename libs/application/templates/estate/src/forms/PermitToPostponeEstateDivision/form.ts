@@ -14,7 +14,7 @@ import { dataCollection } from '../sharedSections/dataCollection'
 import { overview } from './overviewSection'
 
 export const form: Form = buildForm({
-  id: 'PrivateExchangeForm',
+  id: 'permitToPostponeEstateDivisionForm',
   title: '',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
