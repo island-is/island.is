@@ -130,5 +130,5 @@ export const estateSchema = z.object({
   // is: Hefur umsækjandi forræði á búi?
   applicantHasLegalCustodyOverEstate: z.enum([YES, NO]),
 
-  readTerms: z.array(z.enum([YES, NO])).nonempty(),
+  readTerms: z.array(z.enum([YES])).length(1),
 })
