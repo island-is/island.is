@@ -199,7 +199,7 @@ const ApplicationList = ({
                   onClick: () => onClick(`${slug}/${application.id}`),
                 }}
                 progressMeter={{
-                  active: Boolean(application.progress),
+                  active: application.progress !== undefined,
                   progress: application.progress,
                   variant: stateDefaultData.progress.variant,
                   draftFinishedSteps: actionCard?.draftFinishedSteps,

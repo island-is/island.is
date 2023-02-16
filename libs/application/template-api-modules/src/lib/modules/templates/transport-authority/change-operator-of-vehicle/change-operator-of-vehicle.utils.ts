@@ -79,14 +79,16 @@ export const getRecipients = (
   const operators = answers.operators
   if (roles.includes(EmailRole.operator) && operators) {
     for (let i = 0; i < operators.length; i++) {
-      recipientList.push({
-        ssn: operators[i].nationalId,
-        name: operators[i].name,
-        email: operators[i].email,
-        phone: operators[i].phone,
-        role: EmailRole.operator,
-        approved: operators[i].approved,
-      })
+      if (operators[i].wasRemoved !== 'true') {
+        recipientList.push({
+          ssn: operators[i].nationalId,
+          name: operators[i].name,
+          email: operators[i].email,
+          phone: operators[i].phone,
+          role: EmailRole.operator,
+          approved: operators[i].approved,
+        })
+      }
     }
   }
 
@@ -127,7 +129,9 @@ export const getRecipientBySsn = (
   }
 
   // Operator
-  const operators = answers.operators
+  const operators = answers.operators?.filter(
+    ({ wasRemoved }) => wasRemoved !== 'true',
+  )
   if (operators) {
     for (let i = 0; i < operators.length; i++) {
       if (operators[i].nationalId === ssn) {
