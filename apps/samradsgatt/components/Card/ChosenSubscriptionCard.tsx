@@ -1,6 +1,7 @@
 import { Box, Checkbox, Icon, Text } from '@island.is/island-ui/core'
 import { mapIsToEn } from '../../utils/helpers'
 import { useState } from 'react'
+import SubscriptionChoices from '../SubscriptionChoices/SubscriptionChoices'
 
 const ChosenSubscriptionCard = ({
   data,
@@ -47,7 +48,11 @@ const ChosenSubscriptionCard = ({
           <Icon icon={isOpen ? 'chevronUp' : 'chevronDown'} color="blue400" />
         </div>
       </Box>
-      {isOpen && <Box paddingTop={3}>Items</Box>}
+      {isOpen && (
+        <Box paddingTop={3}>
+          <SubscriptionChoices />
+        </Box>
+      )}
     </Box>
   )
 }
