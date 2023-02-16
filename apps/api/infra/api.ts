@@ -20,7 +20,7 @@ import {
   Vehicles,
   AdrAndMachine,
   Firearm,
-  DisabilityLicense,
+  Disability,
   VehicleServiceFjsV1,
   TransportAuthority,
   ChargeFjsV2,
@@ -255,7 +255,7 @@ export const serviceSetup = (services: {
     .xroad(
       AdrAndMachine,
       Firearm,
-      DisabilityLicense,
+      Disability,
       Base,
       Client,
       HealthInsurance,
