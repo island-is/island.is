@@ -191,7 +191,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
   }
 
   async setBirthDate({ application }: TemplateApiModuleActionProps) {
-  /*
+    /*
     MOCK
     return {
       dateOfBirth: '2023-02-04',
@@ -1369,10 +1369,11 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       // There has been case when island.is got Access Denied from AWS when sending out emails
       // This try/catch keeps application in correct state
       try {
-        const { residenceGrantFiles } = getApplicationAnswers(
-          application.answers,
+        if (
+          application.state === States.RESIDENCE_GRAND_APPLICATION ||
+          application.state === States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE
         )
-        if (residenceGrantFiles) return
+          return
         const selfEmployed =
           applicationType === PARENTAL_LEAVE ? isSelfEmployed === YES : true
         const recivingUnemploymentBenefits =
