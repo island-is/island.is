@@ -1,0 +1,27 @@
+{
+  "root": "libs/application/templates/driving-license-book-update-instructor",
+  "sourceRoot": "libs/application/templates/driving-license-book-update-instructor/src",
+  "projectType": "library",
+  "tags": ["scope:application-system", "lib:application-system"],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/driving-license-book-update-instructor/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/libs/application/templates/driving-license-book-update-instructor"
+      ],
+      "options": {
+        "jestConfig": "libs/application/templates/driving-license-book-update-instructor/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

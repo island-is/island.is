@@ -19,6 +19,7 @@ export type Validation =
   | 'date-format'
   | 'R-case-number'
   | 'S-case-number'
+  | 'vehicle-registration-number'
 
 type ValidateItem = 'valid' | [string | undefined, Validation[]]
 type IsValid = { isValid: boolean; errorMessage: string }
@@ -79,6 +80,12 @@ const getRegexByValidation = (validation: Validation) => {
       return {
         regex: new RegExp(/^S-[0-9]{1,5}\/[0-9]{4}$/),
         errorMessage: `Dæmi: S-1234/${new Date().getFullYear()}`,
+      }
+    }
+    case 'vehicle-registration-number': {
+      return {
+        regex: new RegExp(/^[A-Z]{2}-[A-Z]{1}[0-9]{2}|[0-9]{3}$/),
+        errorMessage: 'Dæmi: AB-123',
       }
     }
   }
@@ -235,11 +242,10 @@ export const isProcessingStepValidIndictments = (
   return workingCase.prosecutor && workingCase.court ? true : false
 }
 
-// TODO: Add validation for traffic violation
 export const isTrafficViolationStepValidIndictments = (
   workingCase: Case,
 ): boolean => {
-  return true
+  return workingCase.demands ? true : false
 }
 
 export const isPoliceDemandsStepValidRC = (workingCase: Case): boolean => {

@@ -9,4 +9,5 @@ export const menu = style({
 
   paddingLeft: theme.spacing[4],
   paddingRight: theme.spacing[4],
+  borderBottom: `1px solid ${theme.color.blue200}`,
 })

@@ -5,15 +5,14 @@ import { Tag, TagVariant } from '../Tag/Tag'
 import { Text } from '../Text/Text'
 import { Tooltip } from '../Tooltip/Tooltip'
 import { Inline } from '../Inline/Inline'
-import {
-  ProgressMeter,
-  ProgressMeterVariant,
-} from '../ProgressMeter/ProgressMeter'
+import { DraftProgressMeterVariant } from '../DraftProgressMeter/DraftProgressMeter'
 import * as styles from './ActionCard.css'
 import { Hidden } from '../Hidden/Hidden'
 import { Icon as IconType } from '../IconRC/iconMap'
 import { Icon } from '../IconRC/Icon'
 import DialogPrompt from '../DialogPrompt/DialogPrompt'
+import { DraftProgressMeter } from '../DraftProgressMeter/DraftProgressMeter'
+import { ProgressMeter } from '../ProgressMeter/ProgressMeter'
 
 type ActionCardProps = {
   date?: string
@@ -46,8 +45,10 @@ type ActionCardProps = {
   }
   progressMeter?: {
     active?: boolean
-    variant?: ProgressMeterVariant
     progress?: number
+    variant?: DraftProgressMeterVariant
+    draftTotalSteps?: number
+    draftFinishedSteps?: number
   }
   unavailable?: {
     active?: boolean
@@ -65,6 +66,8 @@ type ActionCardProps = {
     dialogConfirmLabel?: string
     dialogCancelLabel?: string
   }
+  status?: string
+  renderDraftStatusBar?: boolean
 }
 
 const defaultCta = {
@@ -116,12 +119,15 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   deleteButton: _delete,
   avatar,
   logo,
+  status,
+  renderDraftStatusBar = false,
 }) => {
   const cta = { ...defaultCta, ..._cta }
   const progressMeter = { ...defaultProgressMeter, ..._progressMeter }
   const tag = { ...defaultTag, ..._tag }
   const unavailable = { ...defaultUnavailable, ..._unavailable }
   const deleteButton = { ...defaultDelete, ..._delete }
+  const alignWithDate = date ? 'flexEnd' : 'center'
   const bgr =
     backgroundColor === 'white'
       ? 'white'
@@ -310,6 +316,34 @@ export const ActionCard: React.FC<ActionCardProps> = ({
     )
   }
 
+  const renderDraftProgressMeter = () => {
+    const { variant, draftFinishedSteps, draftTotalSteps } = progressMeter
+    return (
+      <Box flexGrow={1} className={styles.draftProgressMeter}>
+        <DraftProgressMeter
+          variant={variant}
+          draftTotalSteps={draftTotalSteps ?? 1}
+          draftFinishedSteps={draftFinishedSteps ?? 1}
+        />
+      </Box>
+    )
+  }
+
+  const renderProgressMeterButton = () => {
+    return (
+      <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
+        <Button
+          variant={cta.variant}
+          onClick={cta.onClick}
+          icon={cta.icon}
+          size={cta.size}
+        >
+          {cta.label}
+        </Button>
+      </Box>
+    )
+  }
+
   const renderProgressMeter = () => {
     const { variant, progress } = progressMeter
     const paddingWithDate = date ? 0 : 1
@@ -342,7 +376,6 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       </Box>
     )
   }
-
   const renderLogo = () => {
     if (!logo || logo.length === 0) return null
     return (
@@ -408,7 +441,6 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 
           {text && <Text paddingTop={heading ? 1 : 0}>{text}</Text>}
         </Box>
-
         <Box
           display="flex"
           alignItems={['flexStart', 'flexEnd']}
@@ -422,8 +454,21 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           {unavailable.active ? renderDisabled() : renderDefault()}
         </Box>
       </Box>
-
-      {progressMeter.active && renderProgressMeter()}
+      {progressMeter.active && !renderDraftStatusBar && renderProgressMeter()}
+      {renderDraftStatusBar && (
+        <Box
+          width="full"
+          paddingTop={[2, 2, 2, 3]}
+          display="flex"
+          flexGrow={1}
+          flexShrink={0}
+          alignItems={['stretch', 'stretch', alignWithDate]}
+          flexDirection={['column', 'column', 'row']}
+        >
+          {status === 'draft' && renderDraftProgressMeter()}
+          {renderProgressMeterButton()}
+        </Box>
+      )}
     </Box>
   )
 }

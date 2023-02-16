@@ -29,7 +29,7 @@ export const createWrappedFetchWithLogging = (
           logger.info(
             `vmst-module.success: input - ${JSON.stringify(
               input,
-            )}, init - ${JSON.stringify(newInit)}`,
+            )}, init - ${JSON.stringify(init?.body ? newInit : init)}`,
           )
         } else {
           const body = await response.json()

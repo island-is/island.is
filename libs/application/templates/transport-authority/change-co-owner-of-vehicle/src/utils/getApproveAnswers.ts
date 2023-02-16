@@ -9,7 +9,7 @@ export const getApproveAnswers = (
   // If reviewer is owners coowner
   const ownerCoOwners = getValueViaPath(
     answers,
-    'ownerCoOwner',
+    'ownerCoOwners',
     [],
   ) as OwnerCoOwnersInformation[]
   const ownerCoOwner = ownerCoOwners.find(
@@ -47,6 +47,7 @@ export const getApproveAnswers = (
           name: coOwner.name,
           email: coOwner.email,
           phone: coOwner.phone,
+          wasRemoved: coOwner.wasRemoved,
           approved:
             coOwner.nationalId === reviewerNationalId
               ? true

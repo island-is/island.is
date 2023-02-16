@@ -1,6 +1,4 @@
 export { PaymentChargeOverview } from './Payment/PaymentChargeOverview'
-export { PaymentPending } from './Payment/PaymentPending'
-export { PaymentUrlNotFound } from './Payment/PaymentUrlNotFound'
+export { PaymentPendingField } from './Payment/PaymentPendingField'
 export { VehiclesField } from './VehiclesField'
-export { Confirmation } from './Confirmation'
 export { MainOwner } from './MainOwner'

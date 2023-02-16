@@ -2,32 +2,32 @@ import { defineMessages } from 'react-intl'
 
 export const confirmation = {
   general: defineMessages({
-    title: {
-      id: 'ta.ovrc.application:confirmation.general.title',
-      defaultMessage: 'Pöntun móttekin!',
-      description: 'Title of confirmation screen',
-    },
     sectionTitle: {
       id: 'ta.ovrc.application:confirmation.general.sectionTitle',
       defaultMessage: 'Staðfesting',
       description: 'Title of confirmation screen',
     },
-    alertMessageTitle: {
-      id: 'ta.ovrc.application:confirmation.general.alertMessageTitle',
-      defaultMessage:
-        'Pöntun þín á skráningarskírteini fyrir {permno} hefur verið staðfest',
-      description: 'Confirmation general alert message title',
+    alertTitle: {
+      id: 'ta.ovrc.application:confirmation.general.alertTitle',
+      defaultMessage: 'Umsókn þín hefur verið móttekin',
+      description: 'Confirmation general alert title',
     },
-    alertMessageText: {
-      id: 'ta.ovrc.application:confirmation.general.alertMessageText',
-      defaultMessage:
-        'Skírteinið verður sent í pósti á skráð lögheimili eiganda',
-      description: 'Confirmation general alert message text',
+    alertMessage: {
+      id: 'ta.ovrc.application:confirmation.general.alertMessage',
+      defaultMessage: 'Umsókn þín um skráningarskírteini hefur verið móttekin',
+      description: 'Confirmation general alert message',
     },
-    openMySiteLinkText: {
-      id: 'ta.ovrc.application:confirmation.general.openMySiteLinkText',
-      defaultMessage: 'Mínar síður',
-      description: 'Confirmation general open my site link text',
+    accordionTitle: {
+      id: 'ta.ovrc.application:confirmation.general.accordionTitle',
+      defaultMessage: 'Hvað gerist næst?',
+      description: 'Confirmation accordion title',
+    },
+    accordionText: {
+      id: 'ta.ovrc.application:confirmation.general.accordionText',
+      defaultMessage:
+        `* Skírteinið verður sent í pósti á skráð lögheimili eiganda\n` +
+        `* Staðfesting/kvittun verður send í rafræn skjöl á island.is\n`,
+      description: 'Confirmation accordion text',
     },
   }),
 }

@@ -105,6 +105,8 @@ export class ApplicationSerializer
             : null,
         },
         deleteButton: roleInState?.delete,
+        draftFinishedSteps: application.draftFinishedSteps,
+        draftTotalSteps: application.draftTotalSteps,
       },
       name: getApplicationName(),
       institution: template.institution

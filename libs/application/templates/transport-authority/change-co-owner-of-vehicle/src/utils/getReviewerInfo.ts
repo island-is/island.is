@@ -23,9 +23,9 @@ export const getReviewerInfo = (
   // If reviewer is operator
   const coOwners = getValueViaPath(answers, 'coOwners', []) as UserInformation[]
 
-  const coOwner = coOwners.find(
-    (operator) => operator.nationalId === reviewerNationalId,
-  )
+  const coOwner = coOwners
+    .filter(({ wasRemoved }) => wasRemoved !== 'true')
+    .find((operator) => operator.nationalId === reviewerNationalId)
   if (coOwner) {
     return coOwner
   }
