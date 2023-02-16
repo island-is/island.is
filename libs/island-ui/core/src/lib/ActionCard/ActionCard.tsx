@@ -67,6 +67,7 @@ type ActionCardProps = {
     dialogCancelLabel?: string
   }
   status?: string
+  renderDraftStatusBar?: boolean
 }
 
 const defaultCta = {
@@ -119,6 +120,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   avatar,
   logo,
   status,
+  renderDraftStatusBar = false,
 }) => {
   const cta = { ...defaultCta, ..._cta }
   const progressMeter = { ...defaultProgressMeter, ..._progressMeter }
@@ -439,7 +441,6 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 
           {text && <Text paddingTop={heading ? 1 : 0}>{text}</Text>}
         </Box>
-
         <Box
           display="flex"
           alignItems={['flexStart', 'flexEnd']}
@@ -452,33 +453,22 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           <Hidden below="sm">{!date && !eyebrow && renderTag()}</Hidden>
           {unavailable.active ? renderDisabled() : renderDefault()}
         </Box>
-
-        {/* <Box
-          display="flex"
-          alignItems={['flexStart', 'flexEnd']}
-          flexDirection="column"
-          flexShrink={0}
-          marginTop={[1, 0]}
-          marginLeft={[0, 'auto']}
-          className={progressMeter.active && tag ? styles.tag : styles.button}
-        >
-          <Hidden below="sm">{!date && !eyebrow && renderTag()}</Hidden>
-          {unavailable.active ? renderDisabled() : renderDefault()}
-        </Box> */}
       </Box>
-      {progressMeter.active && renderProgressMeter()}
-      {/* <Box
-        width="full"
-        paddingTop={[2, 2, 2, 3]}
-        display="flex"
-        flexGrow={1}
-        flexShrink={0}
-        alignItems={['stretch', 'stretch', alignWithDate]}
-        flexDirection={['column', 'column', 'row']}
-      >
-        {status === 'draft' && renderDraftProgressMeter()}
-        {renderProgressMeterButton()}
-      </Box> */}
+      {progressMeter.active && !renderDraftStatusBar && renderProgressMeter()}
+      {renderDraftStatusBar && (
+        <Box
+          width="full"
+          paddingTop={[2, 2, 2, 3]}
+          display="flex"
+          flexGrow={1}
+          flexShrink={0}
+          alignItems={['stretch', 'stretch', alignWithDate]}
+          flexDirection={['column', 'column', 'row']}
+        >
+          {status === 'draft' && renderDraftProgressMeter()}
+          {renderProgressMeterButton()}
+        </Box>
+      )}
     </Box>
   )
 }

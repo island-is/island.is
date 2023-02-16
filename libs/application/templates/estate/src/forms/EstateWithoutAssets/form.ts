@@ -71,7 +71,7 @@ export const form: Form = buildForm({
         buildMultiField({
           id: 'overview',
           title: m.overviewTitle,
-          description: m.overviewSubtitleWithNoProperty,
+          description: m.overviewSubtitleWithoutAssets,
           children: [
             buildDividerField({}),
             buildDescriptionField({
@@ -106,7 +106,7 @@ export const form: Form = buildForm({
             }),
             ...propertiesFields,
             buildSubmitField({
-              id: 'estateWithNoProperty.submit',
+              id: 'estateWithoutAssets.submit',
               title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
