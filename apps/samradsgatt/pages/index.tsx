@@ -1,16 +1,11 @@
 import {
-  AsyncSearch,
   AsyncSearchOption,
   Box,
-  Column,
-  Columns,
   GridColumn,
   GridContainer,
   GridRow,
   Tiles,
   Text,
-  Select,
-  Stack,
 } from '@island.is/island-ui/core'
 import React, { useEffect, useState } from 'react'
 import { HeroBanner } from '../components'
@@ -189,47 +184,6 @@ export const Index = () => {
       setPrevSearchValue(searchValue)
     }
   }, [searchValue])
-
-  const [institutionValue, setInstitutionValue] = useState('')
-  const [policyAreaValue, setPolicyAreaValue] = useState('')
-
-  const onChange = (e, isInstitutions: Boolean) => {
-    // e is not null so we know it has a selection
-    if (e) {
-      let label = 'policyArea'
-      if (isInstitutions) {
-        label = 'institution'
-        setInstitutionValue(e.label)
-      } else {
-        setPolicyAreaValue(e.label)
-      }
-      const filtered = data.filter((item) => item[label] === e.label)
-      setData(filtered)
-    } else {
-      // check which one should be cleared
-      if (isInstitutions) {
-        if (policyAreaValue !== '') {
-          const filtered = dummycontent.filter(
-            (item) => item.policyArea === policyAreaValue,
-          )
-          setData(filtered)
-          setInstitutionValue('')
-        } else {
-          setData(dummycontent)
-        }
-      } else {
-        if (institutionValue !== '') {
-          const filtered = dummycontent.filter(
-            (item) => item.institution === institutionValue,
-          )
-          setData(filtered)
-          setPolicyAreaValue('')
-        } else {
-          setData(dummycontent)
-        }
-      }
-    }
-  }
 
   return (
     <Layout showIcon={false}>

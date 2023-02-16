@@ -5,7 +5,6 @@ import {
   GridContainer,
   GridRow,
   Hidden,
-  Inline,
   Select,
   Stack,
   Text,
@@ -25,7 +24,7 @@ const SearchAndFilter = ({
   const [institutionValue, setInstitutionValue] = useState('')
   const [policyAreaValue, setPolicyAreaValue] = useState('')
 
-  const onChange = (e, isInstitutions: Boolean) => {
+  const onChange = (e, isInstitutions: boolean) => {
     // e is not null so we know it has a selection
     if (e) {
       let label = 'policyArea'
@@ -120,7 +119,24 @@ const SearchAndFilter = ({
           </Box>
         </GridContainer>
       </Hidden>
-      <Hidden above={'md'}><p>hidden</p></Hidden>
+      <Hidden above={'md'}>
+        <GridContainer>
+          <Box paddingY={4}>
+            <AsyncSearch
+              colored
+              label="Leit"
+              size="medium"
+              options={options}
+              placeholder="Að hverju ertu að leita?"
+              initialInputValue=""
+              inputValue={searchValue}
+              onInputValueChange={(value) => {
+                setSearchValue(value)
+              }}
+            />
+          </Box>
+        </GridContainer>
+      </Hidden>
     </>
   )
 }
