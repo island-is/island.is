@@ -12,7 +12,6 @@ import { Form, FormModes } from '@island.is/application/types'
 import {
   buildCustomField,
   buildDataProviderItem,
-  buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
   buildMultiField,
@@ -26,7 +25,7 @@ import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/mess
 /* eslint-disable-next-line */
 export interface EuropeanHealthInsuranceCardProps {}
 
-export const EuropeanHealthInsuranceCardReview: Form = buildForm({
+export const EuropeanHealthInsuranceCardCompleted: Form = buildForm({
   id: 'EuropeanHealthInsuranceCardApplicationForm',
   title: '',
   mode: FormModes.DRAFT,
@@ -58,46 +57,28 @@ export const EuropeanHealthInsuranceCardReview: Form = buildForm({
     buildSection({
       id: 'applicationReviewSection',
       title: e.review.sectionLabel,
-      children: [
-        buildMultiField({
-          id: 'applicationReviewSection.applicationReview',
-          title: e.review.sectionReviewTitle,
-          description: e.review.sectionReviewDescription,
-          children: [
-            buildCustomField({
-              id: 'reviewScreen',
-              title: '',
-              component: 'ReviewScreen',
-            }),
-            buildSubmitField({
-              id: 'submit',
-              title: e.review.submitButtonLabel,
-              refetchApplicationAfterSubmit: true,
-              placement: 'footer',
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: e.review.submitButtonLabel,
-                  type: 'primary',
-                },
-              ],
-            }),
-          ],
-        }),
-        buildDescriptionField({
-          id: 'unused4',
-          title: '',
-          description: '',
-        }),
-      ],
+      children: [],
     }),
 
     buildSection({
       id: 'completed',
       title: e.confirmation.sectionLabel,
-      children: [],
+      children: [
+        buildMultiField({
+          id: 'completedStep',
+          title: e.confirmation.sectionTitle,
+          description: e.confirmation.sectionInfoBulletFirst,
+          children: [
+            buildCustomField({
+              id: 'completedScreen',
+              title: '',
+              component: 'CompletedScreen',
+            }),
+          ],
+        }),
+      ],
     }),
   ],
 })
 
-export default EuropeanHealthInsuranceCardReview
+export default EuropeanHealthInsuranceCardCompleted

@@ -10,7 +10,7 @@ import { useLocale } from '@island.is/localization'
 const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
   const { answers } = application
   const { formatMessage } = useLocale()
-  
+
   const nationalRegistryData = application.externalData.nationalRegistry
     ?.data as NationalRegistry
 
@@ -26,12 +26,13 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
   const plastic = application.answers.applyForPlastic as Array<any>
   const pdf = application.answers.applyForPDF as Array<any>
 
+  console.log(application)
 
   return (
     <Box marginTop={4}>
       <Stack space={7}>
         <Stack space={3}>
-          {plastic.length > 0 && (
+          {plastic?.length > 0 && (
             <>
               <Box>
                 <Text variant="h5">
@@ -49,7 +50,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
               <Divider />
             </>
           )}
-          {pdf.length > 0 && (
+          {pdf?.length > 0 && (
             <>
               <Box>
                 <Text variant="h5">
@@ -62,7 +63,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
 
                 {pdf?.map((item, index) => (
                   <Text>{item[1]}</Text>
-                  ))}
+                ))}
               </Box>
               <Divider />
             </>

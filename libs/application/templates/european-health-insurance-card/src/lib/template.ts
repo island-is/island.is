@@ -16,12 +16,13 @@ import { DefaultStateLifeCycle } from '@island.is/application/core'
 import { dataSchema } from './dataSchema'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 import {
+  EhicApplyForPhysicalAndTemporary,
   EhicApplyForPhysicalCardApi,
   EhicApplyForTemporaryCardApi,
   EhicCardResponseApi,
   EhicGetTemporaryCardApi,
 } from '../dataProviders'
-import { ApiActions } from '../dataProviders/apiActions'
+import { ApiActions } from '../dataProviders/apiActions.enum'
 import { States } from './types'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.ABORT }
@@ -46,25 +47,20 @@ const template: ApplicationTemplate<
   readyForProduction: false,
   dataSchema,
   stateMachineConfig: {
-    initial: States.PLASTIC,
+    initial: States.DRAFT,
     states: {
-      [States.PLASTIC]: {
+      [States.DRAFT]: {
         meta: {
-          name: 'EHIC-Plastic',
+          name: 'EHIC-FORM',
           status: 'draft',
-          progress: 0.33,
+          progress: 0.1,
           lifecycle: DefaultStateLifeCycle,
-          onExit: defineTemplateApi({
-            action: ApiActions.applyForPhysicalCard,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import(
-                  '../forms/EuropeanHealthInsuranceCardApplyPlastic'
-                ).then((val) =>
-                  Promise.resolve(val.EuropeanHealthInsuranceCardApplyPlastic),
+                import('../forms/EuropeanHealthInsuranceCardForm').then((val) =>
+                  Promise.resolve(val.EuropeanHealthInsuranceCardForm),
                 ),
               actions: [
                 {
@@ -78,7 +74,6 @@ const template: ApplicationTemplate<
                 NationalRegistrySpouseApi,
                 ChildrenCustodyInformationApi,
                 EhicCardResponseApi,
-                EhicApplyForPhysicalCardApi,
               ],
               write: 'all',
               read: 'all',
@@ -88,39 +83,38 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: States.PDF,
+            target: States.REVIEW,
           },
         },
       },
-      [States.PDF]: {
+
+      [States.REVIEW]: {
         meta: {
-          name: 'Ehic-PDF',
+          name: 'EHIC-Review',
           status: 'draft',
-          progress: 0.66,
-          lifecycle: DefaultStateLifeCycle,
-          onEntry: defineTemplateApi({
-            action: ApiActions.applyForPhysicalCard,
-          }),
+          progress: 0.8,
           onExit: defineTemplateApi({
-            action: ApiActions.applyForTemporaryCard,
+            action: ApiActions.applyForPhysicalAndTemporary,
           }),
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
+
               formLoader: () =>
                 import(
-                  '../forms/EuropeanHealthInsuranceCardApplyPDF'
+                  '../forms/EuropeanHealthInsuranceCardReview'
                 ).then((val) =>
-                  Promise.resolve(val.EuropeanHealthInsuranceCardApplyPDF),
+                  Promise.resolve(val.EuropeanHealthInsuranceCardReview),
                 ),
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Ehic-PDF-submit',
+                  name: 'EHIC-Approved-Submit',
                   type: 'primary',
                 },
               ],
-              api: [EhicApplyForPhysicalCardApi, EhicApplyForTemporaryCardApi],
+              api: [EhicApplyForPhysicalAndTemporary],
               write: 'all',
               read: 'all',
               delete: true,
@@ -136,8 +130,8 @@ const template: ApplicationTemplate<
 
       [States.COMPLETED]: {
         meta: {
-          name: 'EHIC-Approved',
-          status: States.COMPLETED,
+          name: 'EHIC-Completed',
+          status: 'completed',
           progress: 1,
           onEntry: defineTemplateApi({
             action: ApiActions.getTemporaryCard,
@@ -149,9 +143,9 @@ const template: ApplicationTemplate<
 
               formLoader: () =>
                 import(
-                  '../forms/EuropeanHealthInsuranceCardReview'
+                  '../forms/EuropeanHealthInsuranceCardCompleted'
                 ).then((val) =>
-                  Promise.resolve(val.EuropeanHealthInsuranceCardReview),
+                  Promise.resolve(val.EuropeanHealthInsuranceCardCompleted),
                 ),
               actions: [
                 {
