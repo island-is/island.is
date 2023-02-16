@@ -11,8 +11,6 @@ export const getChargeItemCodes = (
     (x) => x.wasRemoved === 'true',
   )
 
-  console.log(answers.oldOperators, operatorWasRemoved)
-
   const result = []
 
   if (operatorWasAdded) {
