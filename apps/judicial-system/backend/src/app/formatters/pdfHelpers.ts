@@ -7,6 +7,7 @@ export const mediumFontSize = 14
 export const mediumPlusFontSize = 16
 export const largeFontSize = 18
 export const hugeFontSize = 26
+export const giganticFontSize = 33
 
 function setFont(doc: PDFKit.PDFDocument, font?: string) {
   if (font) {
@@ -103,6 +104,14 @@ export function addEmptyLines(doc: PDFKit.PDFDocument, lines = 1) {
   for (let i = 0; i < lines; i++) {
     doc.text(' ')
   }
+}
+
+export function addGiganticHeading(
+  doc: PDFKit.PDFDocument,
+  heading: string,
+  font?: string,
+) {
+  addCenteredText(doc, giganticFontSize, heading, font)
 }
 
 export function addHugeHeading(
