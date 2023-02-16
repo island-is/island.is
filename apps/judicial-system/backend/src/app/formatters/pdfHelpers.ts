@@ -172,6 +172,14 @@ export function addNormalPlusText(
   addText(doc, basePlusFontSize, text, font, continued)
 }
 
+export function addNormalPlusCenteredText(
+  doc: PDFKit.PDFDocument,
+  text: string,
+  font?: string,
+) {
+  addCenteredText(doc, basePlusFontSize, text, font)
+}
+
 export function addNormalText(
   doc: PDFKit.PDFDocument,
   text: string,
