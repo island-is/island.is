@@ -15,9 +15,9 @@ import {
   DisabilityLicenseApiClientConfig,
   FirearmLicenseApiClientConfig,
 } from './modules/license'
-import { ProblemModule } from '@island.is/nest/problem'
 import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
 import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-license'
+import { ProblemModule } from '@island.is/nest/problem'
 
 @Module({
   imports: [
@@ -33,6 +33,7 @@ import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-lic
         FirearmLicenseClientConfig,
         DisabilityLicenseClientConfig,
         FirearmLicenseApiClientConfig,
+        DisabilityLicenseClientConfig,
         DisabilityLicenseApiClientConfig,
       ],
     }),
