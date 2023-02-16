@@ -21,13 +21,13 @@ import { estateSchema } from '../../lib/dataSchema'
 type EstateSchema = zinfer<typeof estateSchema>
 
 export const overview = buildSection({
-  id: 'overviewPrivateExchange',
+  id: 'overviewPermitToPostponeEstateDivision',
   title: m.overviewTitle,
   children: [
     buildMultiField({
-      id: 'overviewPrivateExchange',
+      id: 'overviewPermitToPostponeEstateDivision',
       title: m.overviewTitle,
-      description: m.overviewSubtitlePrivateExchange,
+      description: m.overviewSubtitlePermitToPostpone,
       children: [
         buildDividerField({}),
         buildDescriptionField({
@@ -362,7 +362,7 @@ export const overview = buildSection({
           },
         ),
         buildSubmitField({
-          id: 'privateExchange.submit',
+          id: 'permitToPostponeEstateDivision.submit',
           title: '',
           refetchApplicationAfterSubmit: true,
           actions: [

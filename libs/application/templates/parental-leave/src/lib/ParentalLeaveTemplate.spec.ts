@@ -98,10 +98,8 @@ describe('Parental Leave Application Template', () => {
             otherParentObj: {
               otherParentId,
             },
-            employer: {
-              isSelfEmployed: 'no',
-            },
-            isRecivingUnemploymentBenefits: 'no',
+            isSelfEmployed: 'no',
+            isReceivingUnemploymentBenefits: 'no',
             applicationType: {
               option: PARENTAL_LEAVE,
             },
@@ -129,11 +127,9 @@ describe('Parental Leave Application Template', () => {
             otherParentObj: {
               otherParentId,
             },
-            employer: {
-              isSelfEmployed: 'no',
-            },
+            isSelfEmployed: 'no',
             selectedChild: '0',
-            isRecivingUnemploymentBenefits: 'no',
+            isReceivingUnemploymentBenefits: 'no',
             applicationType: {
               option: PARENTAL_LEAVE,
             },
@@ -176,11 +172,9 @@ describe('Parental Leave Application Template', () => {
             otherParentObj: {
               otherParentId,
             },
-            employer: {
-              isSelfEmployed: 'yes',
-            },
+            isSelfEmployed: 'yes',
             selectedChild: '0',
-            isRecivingUnemploymentBenefits: 'no',
+            isReceivingUnemploymentBenefits: 'no',
             applicationType: {
               option: PARENTAL_LEAVE,
             },
@@ -235,11 +229,13 @@ describe('Parental Leave Application Template', () => {
                 otherParentObj: {
                   chooseOtherParent: SPOUSE,
                 },
-                employer: {
-                  email: 'selfemployed@test.test',
-                  isSelfEmployed: YES,
-                },
-                isRecivingUnemploymentBenefits: 'no',
+                employers: [
+                  {
+                    email: 'selfemployed@test.test',
+                  },
+                ],
+                isSelfEmployed: YES,
+                isReceivingUnemploymentBenefits: 'no',
                 applicationType: {
                   option: PARENTAL_LEAVE,
                 },
@@ -269,10 +265,8 @@ describe('Parental Leave Application Template', () => {
                 usage: '33%',
                 useAsMuchAsPossible: NO,
               },
-              employer: {
-                isSelfEmployed: 'no',
-              },
-              isRecivingUnemploymentBenefits: 'no',
+              isSelfEmployed: 'no',
+              isReceivingUnemploymentBenefits: 'no',
               applicationType: {
                 option: PARENTAL_LEAVE,
               },
@@ -303,10 +297,8 @@ describe('Parental Leave Application Template', () => {
                 usage: '33%',
                 useAsMuchAsPossible: NO,
               },
-              employer: {
-                isSelfEmployed: 'no',
-              },
-              isRecivingUnemploymentBenefits: 'no',
+              isSelfEmployed: 'no',
+              isReceivingUnemploymentBenefits: 'no',
               applicationType: {
                 option: PARENTAL_LEAVE,
               },
@@ -335,10 +327,8 @@ describe('Parental Leave Application Template', () => {
                 usage: '0',
                 useAsMuchAsPossible: YES,
               },
-              employer: {
-                isSelfEmployed: 'no',
-              },
-              isRecivingUnemploymentBenefits: 'no',
+              isSelfEmployed: 'no',
+              isReceivingUnemploymentBenefits: 'no',
               applicationType: {
                 option: PARENTAL_LEAVE,
               },
@@ -406,10 +396,8 @@ describe('Parental Leave Application Template', () => {
                 privatePensionFundPercentage: '',
               },
               usePrivatePensionFund: NO,
-              employer: {
-                isSelfEmployed: 'no',
-              },
-              isRecivingUnemploymentBenefits: 'no',
+              isSelfEmployed: 'no',
+              isReceivingUnemploymentBenefits: 'no',
               applicationType: {
                 option: PARENTAL_LEAVE,
               },
@@ -448,10 +436,8 @@ describe('Parental Leave Application Template', () => {
                 privatePensionFundPercentage: '0',
               },
               useUnion: NO,
-              employer: {
-                isSelfEmployed: 'no',
-              },
-              isRecivingUnemploymentBenefits: 'no',
+              isSelfEmployed: 'no',
+              isReceivingUnemploymentBenefits: 'no',
               applicationType: {
                 option: PARENTAL_LEAVE,
               },
@@ -544,10 +530,8 @@ describe('Parental Leave Application Template', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           answers: {
-            employer: {
-              isSelfEmployed: 'no',
-            },
-            isRecivingUnemploymentBenefits: 'no',
+            isSelfEmployed: 'no',
+            isReceivingUnemploymentBenefits: 'no',
             applicationType: {
               option: PARENTAL_LEAVE,
             },

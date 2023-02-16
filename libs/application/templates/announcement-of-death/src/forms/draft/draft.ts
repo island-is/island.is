@@ -12,7 +12,7 @@ import { sectionOverview } from './sectionOverview'
 export const draft = (): Form => {
   return buildForm({
     id: 'AnnouncementOfDeathApplicationDraftForm',
-    title: '', // m.applicationTitle,
+    title: m.applicationTitle,
     logo: CoatOfArms,
     mode: FormModes.DRAFT,
     renderLastScreenButton: true,

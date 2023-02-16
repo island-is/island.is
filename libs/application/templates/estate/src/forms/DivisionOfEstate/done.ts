@@ -7,7 +7,7 @@ import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 
 export const done: Form = buildForm({
-  id: 'residencePermitDone',
+  id: 'divisionOfEstateDone',
   title: '',
   mode: FormModes.COMPLETED,
   renderLastScreenButton: true,
@@ -15,7 +15,7 @@ export const done: Form = buildForm({
     buildMultiField({
       id: 'done',
       title: m.doneTitle,
-      description: m.residencePermitSubtitle,
+      description: m.divisionOfEstateDoneSubtitle,
       children: [
         buildCustomField({
           id: 'doneImage',
