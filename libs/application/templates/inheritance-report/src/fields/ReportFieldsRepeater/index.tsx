@@ -15,7 +15,6 @@ import * as styles from '../styles.css'
 import { getValueViaPath } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { currencyStringToNumber } from '../../lib/utils/currencyStringToNumber'
-import { TaxFreeLimit } from '../../lib/constants'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 
@@ -50,6 +49,9 @@ export const ReportFieldsRepeater: FC<
 
   const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
+  const taxFreeLimit = Number(
+    formatMessage(m.taxFreeLimit).replace(/[^0-9]/, ''),
+  )
   const answersValues = getValueViaPath(answers, id) as Array<object>
 
   /* ------ Stocks ------ */
@@ -107,7 +109,7 @@ export const ReportFieldsRepeater: FC<
 
   /* ------ Set heirs calculations ------ */
   useEffect(() => {
-    setTaxFreeInheritance(TaxFreeLimit * percentage)
+    setTaxFreeInheritance(taxFreeLimit * percentage)
     setInheritance(
       (Number(getValueViaPath(answers, 'assets.assetsTotal')) -
         Number(getValueViaPath(answers, 'debts.debtsTotal')) +

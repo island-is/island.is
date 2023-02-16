@@ -54,13 +54,16 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
 
     const permno = answers?.pickVehicle?.plate
 
-    const operators = answers?.operators.map((operator) => ({
-      ssn: operator.nationalId,
-      isMainOperator:
-        answers.operators.length > 1
-          ? operator.nationalId === answers?.mainOperator?.nationalId
-          : true,
-    }))
+    const operators = answers?.operators
+      .filter(({ wasRemoved }) => wasRemoved !== 'true')
+      .map((operator) => ({
+        ssn: operator.nationalId,
+        isMainOperator:
+          answers.operators.filter(({ wasRemoved }) => wasRemoved !== 'true')
+            .length > 1
+            ? operator.nationalId === answers?.mainOperator?.nationalId
+            : true,
+      }))
 
     const result = await this.vehicleOperatorsClient.validateAllForOperatorChange(
       auth,
@@ -294,13 +297,16 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
       )
     }
 
-    const operators = answers?.operators.map((operator) => ({
-      ssn: operator.nationalId,
-      isMainOperator:
-        answers.operators.length > 1
-          ? operator.nationalId === answers?.mainOperator?.nationalId
-          : true,
-    }))
+    const operators = answers?.operators
+      .filter(({ wasRemoved }) => wasRemoved !== 'true')
+      .map((operator) => ({
+        ssn: operator.nationalId,
+        isMainOperator:
+          answers.operators.filter(({ wasRemoved }) => wasRemoved !== 'true')
+            .length > 1
+            ? operator.nationalId === answers?.mainOperator?.nationalId
+            : true,
+      }))
 
     await this.vehicleOperatorsClient.saveOperators(auth, permno, operators)
 
