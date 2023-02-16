@@ -98,7 +98,7 @@ export async function session({
   authUrl,
   idsLoginOn,
   delegation,
-  storageState = `${homeUrl}-${phoneNumber}`,
+  storageState = `playwright-sessions-${homeUrl}-${phoneNumber}`,
 }: {
   browser: Browser
   homeUrl: string
