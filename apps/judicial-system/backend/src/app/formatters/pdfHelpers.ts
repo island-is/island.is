@@ -3,6 +3,7 @@ import { policeStar } from './policeStar'
 
 export const smallFontSize = 9
 export const baseFontSize = 11
+export const basePlusFontSize = 12
 export const mediumFontSize = 14
 export const mediumPlusFontSize = 16
 export const largeFontSize = 18
@@ -160,6 +161,15 @@ export function addMediumText(
   font?: string,
 ) {
   addText(doc, mediumFontSize, text, font)
+}
+
+export function addNormalPlusText(
+  doc: PDFKit.PDFDocument,
+  text: string,
+  font?: string,
+  continued?: boolean,
+) {
+  addText(doc, basePlusFontSize, text, font, continued)
 }
 
 export function addNormalText(

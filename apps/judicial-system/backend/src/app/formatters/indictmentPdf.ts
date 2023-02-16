@@ -10,7 +10,7 @@ import { indictment } from '../messages'
 import {
   addEmptyLines,
   addGiganticHeading,
-  addNormalText,
+  addNormalPlusText,
   setTitle,
 } from './pdfHelpers'
 import { setLineCap } from 'pdf-lib'
@@ -37,23 +37,23 @@ export const createIndictment = async (
   setTitle(doc, title)
 
   addGiganticHeading(doc, title, 'Times-Roman')
-  addNormalText(doc, ' ')
+  addNormalPlusText(doc, ' ')
   setLineCap(4)
-  addNormalText(doc, theCase.indictmentIntroduction || '')
+  addNormalPlusText(doc, theCase.indictmentIntroduction || '')
 
   theCase.indictmentCounts?.forEach((count) => {
     addEmptyLines(doc)
-    addNormalText(doc, count.incidentDescription || '')
+    addNormalPlusText(doc, count.incidentDescription || '')
     addEmptyLines(doc)
-    addNormalText(doc, count.legalArguments || '')
+    addNormalPlusText(doc, count.legalArguments || '')
     addEmptyLines(doc)
-    addNormalText(doc, `M: ${count.policeCaseNumber || ''}`)
+    addNormalPlusText(doc, `M: ${count.policeCaseNumber || ''}`)
   })
 
   addEmptyLines(doc, 2)
-  addNormalText(doc, theCase.demands || '')
+  addNormalPlusText(doc, theCase.demands || '')
   addEmptyLines(doc, 2)
-  addNormalText(
+  addNormalPlusText(
     doc,
     formatMessage(
       indictment.signature,
