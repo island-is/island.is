@@ -145,15 +145,18 @@ const Indictment: React.FC = () => {
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillCourt, {
           court: workingCase.court?.name?.replace('dómur', 'dómi'),
         })}`,
-        `\n\n${formatMessage(strings.indictmentIntroductionAutofillDefendant, {
-          defendantName: workingCase.defendants[0].name
-            ? applyCase('þgf', workingCase.defendants[0].name)
-            : 'Ekki skráð',
-          defendantNationalId: workingCase.defendants[0].nationalId
-            ? formatNationalId(workingCase.defendants[0].nationalId)
-            : 'Ekki skráð',
-        })}`,
-        `\n\n${workingCase.defendants[0].address}`,
+        `\n\n\n          ${formatMessage(
+          strings.indictmentIntroductionAutofillDefendant,
+          {
+            defendantName: workingCase.defendants[0].name
+              ? applyCase('þgf', workingCase.defendants[0].name)
+              : 'Ekki skráð',
+            defendantNationalId: workingCase.defendants[0].nationalId
+              ? formatNationalId(workingCase.defendants[0].nationalId)
+              : 'Ekki skráð',
+          },
+        )}`,
+        `\n          ${workingCase.defendants[0].address}`,
       ]
     }
 

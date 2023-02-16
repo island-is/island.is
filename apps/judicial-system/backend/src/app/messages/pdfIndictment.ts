@@ -6,4 +6,10 @@ export const indictment = defineMessages({
     defaultMessage: 'ÁKÆRA',
     description: 'Notaður sem titill í ákæru PDF',
   },
+  signature: {
+    id: 'judicial.system.backend:pdf.core.signature',
+    defaultMessage:
+      '                    Skrifstofu {prosecutorsOfficeName}, {date}.',
+    description: 'Notaður sem undirskrift í ákæru PDF',
+  },
 })

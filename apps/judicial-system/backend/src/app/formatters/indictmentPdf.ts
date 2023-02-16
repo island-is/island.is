@@ -2,10 +2,18 @@ import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
 
 import { FormatMessage } from '@island.is/cms-translations'
+import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
 
 import { Case } from '../modules/case'
+import { nowFactory } from '../factories'
 import { indictment } from '../messages'
-import { addGiganticHeading, setTitle } from './pdfHelpers'
+import {
+  addEmptyLines,
+  addGiganticHeading,
+  addNormalText,
+  setTitle,
+} from './pdfHelpers'
+import { setLineCap } from 'pdf-lib'
 
 export const createIndictment = async (
   theCase: Case,
@@ -28,7 +36,26 @@ export const createIndictment = async (
 
   setTitle(doc, title)
 
-  addGiganticHeading(doc, title)
+  addGiganticHeading(doc, title, 'Times-Roman')
+  addNormalText(doc, ' ')
+  setLineCap(4)
+  addNormalText(doc, theCase.indictmentIntroduction || '')
+  addEmptyLines(doc, 2)
+  addNormalText(doc, theCase.demands || '')
+  addEmptyLines(doc, 2)
+  addNormalText(
+    doc,
+    formatMessage(
+      indictment.signature,
+      {
+        prosecutorsOfficeName:
+          lowercase(theCase.creatingProsecutor?.institution?.name)
+            .replace('lögreglustjórinn', 'lögreglustjórans')
+            .replace('saksóknari', 'saksóknara') ?? '',
+        date: formatDate(nowFactory(), 'PPP'),
+      } ?? '',
+    ),
+  )
 
   doc.end()
 
