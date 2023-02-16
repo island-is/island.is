@@ -3,6 +3,7 @@ import { airDiscountSchemeAdminModule } from '@island.is/portals/admin/air-disco
 import { regulationAdminModule } from '@island.is/portals/admin/regulations-admin'
 import { PortalModule } from '@island.is/portals/core'
 import { icelandicNamesRegistryModule } from '@island.is/portals/admin/icelandic-names-registry'
+import { documentProviderModule } from '@island.is/portals/admin/document-provider'
 
 /**
  * NOTE:
@@ -16,4 +17,5 @@ export const modules: PortalModule[] = [
   airDiscountSchemeAdminModule,
   regulationAdminModule,
   icelandicNamesRegistryModule,
+  documentProviderModule,
 ]

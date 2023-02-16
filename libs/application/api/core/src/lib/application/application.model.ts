@@ -133,4 +133,20 @@ export class Application extends Model {
   })
   @ApiProperty()
   assignNonces!: string[]
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  })
+  @ApiProperty()
+  draftFinishedSteps!: number
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  })
+  @ApiProperty()
+  draftTotalSteps!: number
 }

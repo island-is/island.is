@@ -1,0 +1,35 @@
+query GetSessionsList($input: SessionsInput!) {
+  sessionsList(input: $input) {
+    totalCount
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    data {
+      id
+      actor {
+        nationalId
+        name
+      }
+      subject {
+        nationalId
+        name
+      }
+      client {
+        clientId
+        clientName
+        domain {
+          displayName
+          organisationLogoUrl
+        }
+      }
+      timestamp
+      userAgent
+      device
+      ip
+      ipLocation
+    }
+  }
+}

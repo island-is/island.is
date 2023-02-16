@@ -1,5 +1,4 @@
 import {
-  PortalGlobalComponent,
   PortalModule,
   PortalModuleComponent,
   PortalModuleProps,
@@ -27,12 +26,6 @@ export type ServicePortalModuleComponent<P = {}> = PortalModuleComponent<P>
  * The render value of a service portal route
  */
 export type ServicePortalModuleRenderValue<P = {}> = PortalModuleRenderValue<P>
-
-/**
- * A global component provides functionality that
- * is applicable system wide and does not belong in one route
- */
-export type ServicePortalGlobalComponent = PortalGlobalComponent
 
 /**
  * A route defined by a service portal module

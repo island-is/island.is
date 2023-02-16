@@ -18,7 +18,7 @@ import { Nudge } from './components/Inputs/Nudge'
 import { msg } from '../../../lib/messages'
 import { DropModalType, DataStatus } from './types/form'
 import { bankInfoObject } from '../../../utils/bankInfoHelper'
-import { diffModifiedOverMaxDate } from '../../../utils/showModal'
+import { diffModifiedOverMaxDate } from '../../../utils/showUserOnboardingModal'
 
 interface Props {
   onCloseOverlay?: () => void

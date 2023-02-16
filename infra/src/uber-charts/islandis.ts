@@ -69,6 +69,9 @@ const adsApi = adsApiSetup({ adsBackend })
 const adsWeb = adsWebSetup({ adsApi })
 const rabBackend = rabBackendSetup()
 
+const sessionsService = sessionsServiceSetup()
+const sessionsWorker = sessionsWorkerSetup()
+
 const api = apiSetup({
   appSystemApi,
   servicePortalApi,
@@ -77,6 +80,7 @@ const api = apiSetup({
   servicesEndorsementApi: endorsement,
   airDiscountSchemeBackend: adsBackend,
   regulationsAdminBackend: rabBackend,
+  sessionsApi: sessionsService,
 })
 const servicePortal = servicePortalSetup({ graphql: api })
 const appSystemForm = appSystemFormSetup({ api: api })
@@ -105,9 +109,6 @@ const githubActionsCache = githubActionsCacheSetup()
 
 const externalContractsTests = externalContractsTestsSetup()
 
-const sessionsService = sessionsServiceSetup()
-const sessionsWorker = sessionsWorkerSetup()
-
 export const Services: EnvironmentServices = {
   prod: [
     appSystemApi,
@@ -134,6 +135,8 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
+    sessionsService,
+    sessionsWorker,
   ],
   staging: [
     appSystemApi,
@@ -160,6 +163,8 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
+    sessionsService,
+    sessionsWorker,
   ],
   dev: [
     appSystemApi,
