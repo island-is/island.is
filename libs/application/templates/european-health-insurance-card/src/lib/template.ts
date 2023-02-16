@@ -47,11 +47,11 @@ const template: ApplicationTemplate<
   readyForProduction: false,
   dataSchema,
   stateMachineConfig: {
-    initial: States.PREREQUISITES,
+    initial: States.DRAFT,
     states: {
-      [States.PREREQUISITES]: {
+      [States.DRAFT]: {
         meta: {
-          name: 'EHIC-DataCollection',
+          name: 'EHIC-FORM',
           status: 'draft',
           progress: 0.1,
           lifecycle: DefaultStateLifeCycle,
@@ -59,12 +59,8 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import(
-                  '../forms/EuropeanHealthInsuranceCardDataCollection'
-                ).then((val) =>
-                  Promise.resolve(
-                    val.EuropeanHealthInsuranceCardDataCollection,
-                  ),
+                import('../forms/EuropeanHealthInsuranceCardForm').then((val) =>
+                  Promise.resolve(val.EuropeanHealthInsuranceCardForm),
                 ),
               actions: [
                 {
@@ -82,68 +78,6 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.PLASTIC,
-          },
-        },
-      },
-      [States.PLASTIC]: {
-        meta: {
-          name: 'EHIC-Plastic',
-          status: 'draft',
-          progress: 0.33,
-          lifecycle: DefaultStateLifeCycle,
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import(
-                  '../forms/EuropeanHealthInsuranceCardApplyPlastic'
-                ).then((val) =>
-                  Promise.resolve(val.EuropeanHealthInsuranceCardApplyPlastic),
-                ),
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'EHIC-Plastic-submit',
-                  type: 'primary',
-                },
-              ],
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.PDF,
-          },
-        },
-      },
-      [States.PDF]: {
-        meta: {
-          name: 'Ehic-PDF',
-          status: 'draft',
-          progress: 0.66,
-          lifecycle: DefaultStateLifeCycle,
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import(
-                  '../forms/EuropeanHealthInsuranceCardApplyPDF'
-                ).then((val) =>
-                  Promise.resolve(val.EuropeanHealthInsuranceCardApplyPDF),
-                ),
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Ehic-PDF-submit',
-                  type: 'primary',
-                },
-              ],
             },
           ],
         },
@@ -209,9 +143,9 @@ const template: ApplicationTemplate<
 
               formLoader: () =>
                 import(
-                  '../forms/EuropeanHealthInsuranceCardReview'
+                  '../forms/EuropeanHealthInsuranceCardCompleted'
                 ).then((val) =>
-                  Promise.resolve(val.EuropeanHealthInsuranceCardReview),
+                  Promise.resolve(val.EuropeanHealthInsuranceCardCompleted),
                 ),
               actions: [
                 {
