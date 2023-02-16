@@ -23,7 +23,7 @@ export const VehiclesField: FC<FieldBaseProps> = (props) => {
         input: {
           id: application.id,
           answers: {
-            ownerCoOwners: [],
+            ownerCoOwner: [],
             oldOperators: [],
           },
         },

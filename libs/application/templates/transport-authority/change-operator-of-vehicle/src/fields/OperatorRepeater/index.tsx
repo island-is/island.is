@@ -1,17 +1,27 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useEffect, useState } from 'react'
-import { useFieldArray, useFormContext } from 'react-hook-form'
+import { FC, useCallback, useEffect, useState } from 'react'
+import { useFormContext } from 'react-hook-form'
 import { information } from '../../lib/messages'
-import { OperatorInformation } from '../../shared'
+import {
+  OldOperatorInformation,
+  OperatorInformation,
+  UserInformation,
+} from '../../shared'
 import { OperatorRepeaterItem } from './OperatorRepeaterItem'
+import { gql, useLazyQuery } from '@apollo/client'
+import { GET_OPERATOR_INFO } from '../../graphql/queries'
+import { useMutation } from '@apollo/client'
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
+import { OldOperatorItem } from './OldOperatorItem'
 
 export const OperatorRepeater: FC<FieldBaseProps> = (props) => {
-  const { application } = props
-  const { formatMessage } = useLocale()
+  const { application, setFieldLoadingState, setBeforeSubmitCallback } = props
+  const { locale, formatMessage } = useLocale()
   const { setValue } = useFormContext()
+  const [updateApplication] = useMutation(UPDATE_APPLICATION)
   const [operators, setOperators] = useState<OperatorInformation[]>(
     getValueViaPath(
       application.answers,
@@ -19,9 +29,117 @@ export const OperatorRepeater: FC<FieldBaseProps> = (props) => {
       [],
     ) as OperatorInformation[],
   )
+  const [oldOperators, setOldOperators] = useState<OldOperatorInformation[]>(
+    getValueViaPath(
+      application.answers,
+      'oldOperators',
+      [],
+    ) as OldOperatorInformation[],
+  )
+  const [identicalError, setIdenticalError] = useState<boolean>(false)
 
   const filteredOperators = operators.filter(
     ({ wasRemoved }) => wasRemoved !== 'true',
+  )
+  const filteredOldOperators = oldOperators.filter(
+    ({ wasRemoved }) => wasRemoved !== 'true',
+  )
+
+  const updateDataByPosition = useCallback(async (position: number) => {
+    await updateApplication({
+      variables: {
+        input: {
+          id: application.id,
+          answers: {
+            oldOperators: oldOperators.map((oldOperator, index) => {
+              if (index === position) {
+                return { ...oldOperator, wasRemoved: 'true' }
+              } else {
+                return oldOperator
+              }
+            }),
+          },
+        },
+        locale,
+      },
+    })
+  }, [])
+
+  const updateData = useCallback(
+    async (operators: OldOperatorInformation[]) => {
+      await updateApplication({
+        variables: {
+          input: {
+            id: application.id,
+            answers: {
+              oldOperators: operators,
+            },
+          },
+          locale,
+        },
+      })
+    },
+    [],
+  )
+
+  const addNationalIdToCoOwners = (nationalId: string, newIndex: number) => {
+    setOperators(
+      operators.map((operator, index) => {
+        if (newIndex === index) {
+          return {
+            ...operator,
+            nationalId,
+          }
+        }
+        return operator
+      }),
+    )
+  }
+
+  const checkDuplicate = () => {
+    const existingOperators = filteredOperators.map(({ nationalId }) => {
+      return nationalId
+    })
+    const existingOldOperators = filteredOldOperators.map(({ nationalId }) => {
+      return nationalId
+    })
+    const coOwners = (getValueViaPath(
+      application.answers,
+      'ownerCoOwner',
+      [],
+    ) as UserInformation[])?.map(({ nationalId }) => {
+      return nationalId
+    })
+
+    const jointOperators = [
+      ...existingOperators,
+      ...existingOldOperators,
+      ...coOwners,
+      application.applicant,
+    ]
+    return !!jointOperators.some((nationalId, index) => {
+      return (
+        jointOperators.indexOf(nationalId) !== index && nationalId.length > 0
+      )
+    })
+  }
+
+  const [getOperatorInfo, { loading, error }] = useLazyQuery(
+    gql`
+      ${GET_OPERATOR_INFO}
+    `,
+    {
+      onCompleted: (result) => {
+        const data = result.vehiclesDetail
+        if (data?.operators.length !== oldOperators.length) {
+          setOldOperators(data?.operators || [])
+          updateData(data?.operators || [])
+        }
+        if (data?.operators?.length === 0) {
+          setValue('oldOperators', [])
+        }
+      },
+    },
   )
 
   const handleAdd = () =>
@@ -48,14 +166,87 @@ export const OperatorRepeater: FC<FieldBaseProps> = (props) => {
     }
   }
 
+  const handleRemoveOld = (index: number) => {
+    if (index > -1) {
+      setOldOperators(
+        oldOperators.map((operator, oldIndex) => {
+          if (oldIndex === index) {
+            return { ...operator, wasRemoved: 'true' }
+          }
+          return operator
+        }),
+      )
+      updateDataByPosition(index)
+    }
+  }
+
+  useEffect(() => {
+    setFieldLoadingState?.(loading || !!error)
+  }, [loading, error])
+
+  useEffect(() => {
+    getOperatorInfo({
+      variables: {
+        input: {
+          permno: getValueViaPath(
+            application.answers,
+            'pickVehicle.plate',
+            undefined,
+          ),
+          regno: '',
+          vin: '',
+        },
+      },
+    })
+  }, [oldOperators])
+
   useEffect(() => {
     if (operators.length === 0) {
       setValue('operators', [])
     }
   }, [operators, setValue])
 
+  setBeforeSubmitCallback &&
+    setBeforeSubmitCallback(async () => {
+      setIdenticalError(checkDuplicate())
+      if (checkDuplicate()) {
+        return [false, 'Identical nationalIds']
+      }
+      return [true, null]
+    })
+
   return (
     <Box>
+      {!loading && !error ? (
+        <Box>
+          {oldOperators.map(
+            (operator: OldOperatorInformation, index: number) => {
+              return (
+                <OldOperatorItem
+                  id="oldOperators"
+                  repeaterField={operator}
+                  index={index}
+                  rowLocation={
+                    filteredOldOperators.indexOf(operator) > -1
+                      ? filteredOldOperators.indexOf(operator) + 1
+                      : index + 1
+                  }
+                  key={`old-operator-${index}`}
+                  handleRemove={handleRemoveOld}
+                  {...props}
+                />
+              )
+            },
+          )}
+        </Box>
+      ) : error ? (
+        <Box marginTop={3}>
+          <AlertMessage
+            type="error"
+            title={formatMessage(information.labels.operator.error)}
+          />
+        </Box>
+      ) : null}
       {operators.length > 0 ? (
         operators.map((operator, index) => {
           return (
@@ -70,6 +261,7 @@ export const OperatorRepeater: FC<FieldBaseProps> = (props) => {
               }
               key={`operator-${index}`}
               handleRemove={handleRemove}
+              addNationalIdToCoOwners={addNationalIdToCoOwners}
               {...props}
             />
           )
@@ -82,6 +274,14 @@ export const OperatorRepeater: FC<FieldBaseProps> = (props) => {
       <Button variant="ghost" icon="add" iconType="outline" onClick={handleAdd}>
         {formatMessage(information.labels.operator.add)}
       </Button>
+      {identicalError && (
+        <Box marginTop={4}>
+          <AlertMessage
+            type="error"
+            title={formatMessage(information.labels.operator.identicalError)}
+          />
+        </Box>
+      )}
     </Box>
   )
 }

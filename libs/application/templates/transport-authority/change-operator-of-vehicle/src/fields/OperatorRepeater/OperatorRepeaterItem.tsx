@@ -21,6 +21,7 @@ interface Props {
   rowLocation: number
   repeaterField: OperatorInformation
   handleRemove: (index: number) => void
+  addNationalIdToCoOwners: (nationalId: string, index: number) => void
 }
 
 export const OperatorRepeaterItem: FC<Props & FieldBaseProps> = ({
@@ -29,6 +30,7 @@ export const OperatorRepeaterItem: FC<Props & FieldBaseProps> = ({
   rowLocation,
   handleRemove,
   repeaterField,
+  addNationalIdToCoOwners,
   ...props
 }) => {
   const { register } = useFormContext()
@@ -38,6 +40,10 @@ export const OperatorRepeaterItem: FC<Props & FieldBaseProps> = ({
   const emailField = `${fieldIndex}.email`
   const phoneField = `${fieldIndex}.phone`
   const wasRemovedField = `${fieldIndex}.wasRemoved`
+
+  const onNationalIdChange = (nationalId: string) => {
+    addNationalIdToCoOwners(nationalId, index)
+  }
 
   return (
     <Box
@@ -63,6 +69,7 @@ export const OperatorRepeaterItem: FC<Props & FieldBaseProps> = ({
         customNationalIdLabel={formatMessage(
           information.labels.operator.nationalId,
         )}
+        onNationalIdChange={onNationalIdChange}
       />
       <GridRow>
         <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
