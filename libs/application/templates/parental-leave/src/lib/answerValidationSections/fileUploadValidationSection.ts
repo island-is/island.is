@@ -25,7 +25,7 @@ export const fileUploadValidationSection = (
   const {
     isSelfEmployed,
     applicationType,
-    isRecivingUnemploymentBenefits,
+    isReceivingUnemploymentBenefits,
     unemploymentBenefits,
     otherParent,
     additionalDocuments,
@@ -63,7 +63,7 @@ export const fileUploadValidationSection = (
     return undefined
   }
 
-  if (isRecivingUnemploymentBenefits) {
+  if (isReceivingUnemploymentBenefits) {
     if (
       (unemploymentBenefits === UnEmployedBenefitTypes.union ||
         unemploymentBenefits === UnEmployedBenefitTypes.healthInsurance) &&

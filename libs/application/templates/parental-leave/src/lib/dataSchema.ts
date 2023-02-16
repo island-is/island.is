@@ -34,7 +34,7 @@ const PersonalAllowance = z
   )
 
 /**
- * Both periods and employer objects had been removed from here, and the logic has
+ * Both periods and employers objects had been removed from here, and the logic has
  * been moved to the answerValidators because it needs to be more advanced than
  * what zod can handle.
  */
@@ -89,6 +89,7 @@ export const dataSchema = z.object({
   shareInformationWithOtherParent: z.enum([YES, NO]),
   useUnion: z.enum([YES, NO]),
   usePrivatePensionFund: z.enum([YES, NO]),
+  isReceivingUnemploymentBenefits: z.enum([YES, NO]),
   employerNationalRegistryId: z.string().refine((n) => kennitala.isCompany(n), {
     params: errorMessages.employerNationalRegistryId,
   }),

@@ -100,7 +100,7 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
   const {
     isSelfEmployed,
     applicationType,
-    isRecivingUnemploymentBenefits,
+    isReceivingUnemploymentBenefits,
     hasAppliedForReidenceGrant,
     periods,
   } = useApplicationAnswers(application)

@@ -34,6 +34,7 @@ import {
   getAdditionalSingleParentRightsInDays,
   getApplicationExternalData,
   DAYS_IN_MONTH,
+  getUnApprovedEmployers,
   ParentalRelations,
   ChildInformation,
   isParentWithoutBirthParent,
@@ -318,7 +319,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
   }
 
   async assignEmployer({ application }: TemplateApiModuleActionProps) {
-    const { employerPhoneNumber } = getApplicationAnswers(application.answers)
+    const employers = getUnApprovedEmployers(application.answers)
 
     const token = await this.sharedTemplateAPIService.createAssignToken(
       application,
@@ -333,7 +334,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
     // send confirmation sms to employer
     try {
-      if (employerPhoneNumber && checkIfPhoneNumberIsGSM(employerPhoneNumber)) {
+      const phoneNumber = employers.length > 0 ? employers[0].phoneNumber : ''
+      if (phoneNumber && checkIfPhoneNumberIsGSM(phoneNumber)) {
         await this.sharedTemplateAPIService.assignApplicationThroughSms(
           generateAssignEmployerApplicationSms,
           application,
@@ -494,13 +496,13 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
 
     const {
-      isRecivingUnemploymentBenefits,
+      isReceivingUnemploymentBenefits,
       unemploymentBenefits,
       benefitsFiles: benefitsPdfs,
       commonFiles: genericPdfs,
     } = getApplicationAnswers(application.answers)
     if (
-      isRecivingUnemploymentBenefits === YES &&
+      isReceivingUnemploymentBenefits === YES &&
       (unemploymentBenefits === UnEmployedBenefitTypes.union ||
         unemploymentBenefits == UnEmployedBenefitTypes.healthInsurance)
     ) {
@@ -655,6 +657,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         )
 
         if (VMSTperiods?.periods) {
+          /*
+           * Sometime applicant uses other right than basic right ( grunnréttindi)
+           * Here we make sure we only use/sync amd use basic right ( grunnréttindi ) from VMST
+           */
           const getVMSTRightCodePeriod = VMSTperiods.periods[0].rightsCodePeriod
           const periodCodeStartCharacters = ['M', 'F']
           if (
@@ -1316,7 +1322,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
   async sendApplication({ application, params }: TemplateApiModuleActionProps) {
     const {
       isSelfEmployed,
-      isRecivingUnemploymentBenefits,
+      isReceivingUnemploymentBenefits,
       applicationType,
       previousState,
     } = getApplicationAnswers(application.answers)
@@ -1366,6 +1372,12 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         )
       }
 
+      // If applicant is sending additional documents then don't need to send email
+      const { actionName } = getApplicationAnswers(application.answers)
+      if (actionName === 'document') {
+        return
+      }
+
       // There has been case when island.is got Access Denied from AWS when sending out emails
       // This try/catch keeps application in correct state
       try {
@@ -1377,7 +1389,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         const selfEmployed =
           applicationType === PARENTAL_LEAVE ? isSelfEmployed === YES : true
         const recivingUnemploymentBenefits =
-          isRecivingUnemploymentBenefits === YES
+          recivingUnemploymentBenefits === YES
+
         if (!selfEmployed && !recivingUnemploymentBenefits) {
           // Only needs to send an email if being approved by employer
           // Self employed applicant was aware of the approval
