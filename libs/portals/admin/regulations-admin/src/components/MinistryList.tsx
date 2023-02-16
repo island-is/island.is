@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   ActionCard,
   Box,
@@ -34,11 +33,8 @@ export const MinistryList = () => {
             <ActionCard
               key={slug + '-' + i}
               heading={name}
-              // text={''}
               cta={{
                 label: t(msg.cta),
-                // variant: draftingStatus === 'draft' ? 'ghost' : undefined,
-                // onClick: () => {},
               }}
             />
           )

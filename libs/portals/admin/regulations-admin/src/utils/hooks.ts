@@ -29,7 +29,7 @@ export const useGetRegulationHistory = (
 
   const { effects } = useMemo(() => {
     const effects = regulation?.history.reduce<Effects>(
-      (obj, item, i) => {
+      (obj, item) => {
         const arr = item.date > today ? obj.future : obj.past
         arr.push(item)
         return obj

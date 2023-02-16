@@ -1,6 +1,6 @@
 import * as s from './impacts/Impacts.css'
 
-import React, { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { useDraftingState } from '../state/useDraftingState'
 import { impactMsgs } from '../lib/messages'
@@ -55,7 +55,7 @@ export const EditImpacts = () => {
   const closeModal = (reload?: boolean) => {
     setChooseType(undefined)
     if (reload) {
-      // updateState('impacts', CLEAR_PREVIOUSLY_CREATED_EMPTY_IMPACT)
+      // TODO: fetch new regulations instead of reloading page?
       document.location.reload()
     }
   }

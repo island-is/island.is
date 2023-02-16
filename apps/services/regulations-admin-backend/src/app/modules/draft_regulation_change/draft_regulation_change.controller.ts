@@ -71,7 +71,7 @@ export class DraftRegulationChangeController {
   async update(
     @Param('id') id: string,
     @Body() draftRegulationChangeToUpdate: UpdateDraftRegulationChangeDto,
-    // @CurrentUser() user: User,
+    @CurrentUser() user: User,
   ): Promise<DraftRegulationChange> {
     const {
       numberOfAffectedRows,

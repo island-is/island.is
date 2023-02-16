@@ -410,6 +410,10 @@ export const impactMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-opts-mentionedrepealed',
     defaultMessage: 'brottfallin',
   },
+  regSelect_baseNotFound: {
+    id: 'ap.regulations-admin:draft-opts-mentionednotfound',
+    defaultMessage: 'Stofnreglugerð fannst ekki við leit að ',
+  },
   regSelect_placeholder: {
     id: 'ap.regulations-admin:draft-opts-impactedreg_placeholder',
     defaultMessage: 'Veldu reglugerð',
@@ -496,6 +500,15 @@ export const errorMsgs = defineMessages({
   fieldRequired: {
     id: 'ap.regulations-admin:error-field-required',
     defaultMessage: 'Þessi reitur má ekki vera tómur',
+  },
+  amendingTitleBaseType: {
+    id: 'ap.regulations-admin:error-amending-title-base-type',
+    defaultMessage:
+      'Breytingareglugerðartitill ekki leyfilegur á stofnreglugerð',
+  },
+  baseTitleAmendingType: {
+    id: 'ap.regulations-admin:error-base-title-amending-type',
+    defaultMessage: 'Breytingareglugerð þarf að nefna breytingarnar í titli',
   },
   htmlWarnings: {
     id: 'ap.regulations-admin:error-html-warnings',
@@ -618,9 +631,9 @@ export const buttonsMsgs = defineMessages({
     id: 'ap.regulations-admin:btn-savestatus',
     defaultMessage: 'Vista stöðu',
   },
-  saveAndClose: {
-    id: 'ap.regulations-admin:btn-savestatus-and-close',
-    defaultMessage: 'Vista og loka',
+  close: {
+    id: 'ap.regulations-admin:btn-close',
+    defaultMessage: 'Loka',
   },
   saveSuccess: {
     id: 'ap.regulations-admin:btn-savestatus-success',
@@ -650,6 +663,10 @@ export const buttonsMsgs = defineMessages({
     id: 'ap.regulations-admin:btn-delete-confirm',
     defaultMessage:
       'Þessu uppkasti að reglugerð verður eytt varanlega. Ertu viss um að þú viljir halda áfram?',
+  },
+  hasBeenDeleted: {
+    id: 'ap.regulations-admin:delete-confirmed',
+    defaultMessage: 'Þessu uppkasti hefur verið eytt.',
   },
 })
 

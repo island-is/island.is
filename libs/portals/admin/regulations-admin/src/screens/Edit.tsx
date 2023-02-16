@@ -1,5 +1,5 @@
-import React, { FC, useEffect } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { FC, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { DraftImpactId, RegulationDraftId } from '@island.is/regulations/admin'
@@ -35,7 +35,6 @@ import {
 import { SaveDeleteButtons } from '../components/SaveDeleteButtons'
 import { DraftingNotes } from '../components/DraftingNotes'
 import { ButtonBar } from '../components/ButtonBar'
-import { RegulationType } from '@island.is/regulations'
 
 // ---------------------------------------------------------------------------
 
@@ -103,7 +102,7 @@ const stepData: Record<
 
 const EditScreen = () => {
   const t = useLocale().formatMessage
-  const { error: errorSate, step: stepState } = useDraftingState()
+  const { draft, error: errorSate, step: stepState } = useDraftingState()
   const step = stepData[stepState.name]
 
   useEffect(() => {
@@ -119,6 +118,11 @@ const EditScreen = () => {
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Box marginBottom={[4, 4, 5]}>
+            <Text as="p" marginBottom={[2, 2]}>
+              {draft.type.value === 'base'
+                ? t(editorMsgs.type_base)
+                : t(editorMsgs.type_amending)}
+            </Text>
             <Text as="h1" variant="h1" paddingBottom={3}>
               {t(step.title)}
             </Text>

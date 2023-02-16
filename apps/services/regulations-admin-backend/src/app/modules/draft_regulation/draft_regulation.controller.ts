@@ -28,7 +28,7 @@ import { Audit, AuditService } from '@island.is/nest/audit'
 
 import { environment } from '../../../environments'
 import { ShippedSummary, TaskListType } from '@island.is/regulations/admin'
-import { Kennitala, RegQueryName } from '@island.is/regulations'
+import { RegQueryName } from '@island.is/regulations'
 const namespace = `${environment.audit.defaultNamespace}/draft_regulations`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -157,10 +157,7 @@ export class DraftRegulationController {
     type: DraftRegulationModel,
     description: 'Gets a DraftRegulation',
   })
-  async getById(
-    @Param('id') id: string,
-    // @CurrentUser() user: User
-  ) {
+  async getById(@Param('id') id: string, @CurrentUser() user: User) {
     const draftRegulation = await this.draftRegulationService.findById(id)
 
     if (!draftRegulation) {
@@ -177,7 +174,7 @@ export class DraftRegulationController {
   })
   async getImpactsByName(
     @Param('name') name: RegQueryName,
-    // @CurrentUser() user: User,
+    @CurrentUser() user: User,
   ) {
     const draftRegulationImpacts = await this.draftRegulationService.getRegulationImpactsByName(
       name,

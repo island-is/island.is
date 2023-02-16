@@ -1,4 +1,3 @@
-import {} from '@island.is/regulations-tools/useTextWarnings'
 import { makeDraftAppendixForm, stepsBase, stepsAmending } from './makeFields'
 import { Action, ActionName, DraftingState } from './types'
 import {

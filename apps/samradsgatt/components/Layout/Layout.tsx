@@ -1,3 +1,4 @@
+import { GridContainer } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
 import Menu from '../Menu/Menu'
 type LayoutProps = {
@@ -7,7 +8,7 @@ export const Layout: FC<LayoutProps> = ({ children, showIcon }) => {
   return (
     <div>
       <Menu showIcon={showIcon} />
-      <div>{children}</div>
+      {children}
     </div>
   )
 }

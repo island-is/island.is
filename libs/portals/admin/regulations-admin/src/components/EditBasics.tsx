@@ -6,9 +6,10 @@ import {
   AccordionItem,
   Divider,
   Text,
+  Button,
 } from '@island.is/island-ui/core'
 import { EditorInput } from './EditorInput'
-import { editorMsgs as msg } from '../lib/messages'
+import { editorMsgs as msg, errorMsgs } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { Appendixes } from './Appendixes'
 import { MagicTextarea } from './MagicTextarea'
@@ -16,15 +17,16 @@ import { useDraftingState } from '../state/useDraftingState'
 import { cleanTitle } from '@island.is/regulations-tools/cleanTitle'
 import {
   formatAmendingRegTitle,
-  formatAmendingRegBody,
+  formatAmendingBodyWithArticlePrefix,
 } from '../utils/formatAmendingRegulation'
-import { DraftChangeForm } from '../state/types'
 import { HTMLText } from '@island.is/regulations'
+import { findRegulationType } from '../utils/guessers'
 
 export const EditBasics = () => {
   const t = useLocale().formatMessage
   const { draft, actions } = useDraftingState()
-  const [editorKey, setEditorKey] = useState('abc123')
+  const [editorKey, setEditorKey] = useState('initial')
+  const [titleError, setTitleError] = useState<string | undefined>(undefined)
 
   const { text, appendixes } = draft
   const { updateState } = actions
@@ -45,18 +47,48 @@ export const EditBasics = () => {
         updateState('title', formatAmendingRegTitle(draft))
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draft.type.value])
+
+  // Show error if title and type don't match. Stop the user going forward in useDraftingState (goForward).
+  useEffect(() => {
+    if (draft.title.showError && draft.title.error) {
+      setTitleError(t(draft.title.error))
+      return
+    }
+
+    const isTitleAmending = findRegulationType(draft.title.value) === 'amending'
+    if (isTitleAmending && draft.type.value === 'base') {
+      setTitleError(t(errorMsgs.amendingTitleBaseType))
+      return
+    }
+
+    if (!isTitleAmending && draft.type.value === 'amending') {
+      setTitleError(t(errorMsgs.baseTitleAmendingType))
+      return
+    }
+
+    if (draft.title.value) {
+      setTitleError(undefined)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [draft.title.value])
 
   useEffect(() => {
     if (!text.value && draft.type.value === 'amending') {
-      const THE_IMPACT = draft.impacts?.['0221/2001']?.[0] as DraftChangeForm
-      const additions = formatAmendingRegBody(THE_IMPACT.diff?.value)
-
-      const additionString = additions.join('') as HTMLText
-      updateState('text', additionString)
+      updateEditorText()
       setEditorKey('newKey')
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draft.impacts])
+
+  const updateEditorText = () => {
+    const additions = formatAmendingBodyWithArticlePrefix(draft.impacts)
+
+    setEditorKey(Date.now().toString())
+    const additionString = additions.join('') as HTMLText
+    updateState('text', additionString)
+  }
 
   return (
     <>
@@ -71,15 +103,30 @@ export const EditBasics = () => {
           onBlur={(value) => {
             updateState('title', cleanTitle(value))
           }}
-          error={
-            draft.title.showError && draft.title.error && t(draft.title.error)
-          }
+          error={titleError}
           required={!!draft.title.required}
         />
-        <Box marginTop={1} marginLeft={1}>
+        <Box
+          marginTop={1}
+          marginLeft={1}
+          display="flex"
+          alignItems="center"
+          justifyContent="spaceBetween"
+        >
           <Text variant="small" color="dark200">
             {regType ? `(${regType})` : ' '}
           </Text>
+          {draft.type.value === 'amending' ? (
+            <Button
+              icon="reload"
+              onClick={updateEditorText}
+              title="Uppfæra texta reglugerðar með breytingum frá fyrsta skrefi. Allur viðbættur texti í núverandi skrefi verður hreinsaður út."
+              variant="text"
+              size="small"
+            >
+              Uppfæra texta
+            </Button>
+          ) : null}
         </Box>
       </Box>
       <Box marginBottom={[6, 6, 8]}>
@@ -91,11 +138,11 @@ export const EditBasics = () => {
           >
             <Box marginBottom={3}>
               <EditorInput
-                label={t(msg.text)}
                 key={editorKey} // Force re-render of TinyMCE
+                label={t(msg.text)}
                 hiddenLabel
                 draftId={draft.id}
-                value={text.value}
+                value={draft.text.value}
                 onChange={(value) => updateState('text', value)}
                 error={text.showError && text.error && t(text.error)}
               />

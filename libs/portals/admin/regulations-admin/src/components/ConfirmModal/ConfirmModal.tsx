@@ -1,7 +1,5 @@
-import React, { FC } from 'react'
-
+import { FC } from 'react'
 import { Box, Button, ModalBase, Stack, Text } from '@island.is/island-ui/core'
-
 import * as styles from './ConfirmModal.css'
 
 interface ConfirmModalProps {

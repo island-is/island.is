@@ -1,4 +1,3 @@
-import React from 'react'
 import { SkeletonLoader, Tabs } from '@island.is/island-ui/core'
 import { homeMessages } from '../lib/messages'
 import { useLocale } from '@island.is/localization'

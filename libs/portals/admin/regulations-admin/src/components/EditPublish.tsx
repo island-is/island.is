@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   Box,
   Button,
@@ -27,7 +26,6 @@ export const EditPublish = () => {
               <Input
                 label={t(msg.name)}
                 value={draft.name.value}
-                // placeholder={}
                 name="_name"
                 size="sm"
                 hasError={draft.name.showError && !!draft.name.error}

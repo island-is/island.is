@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   HTMLText,
   RegName,
@@ -52,7 +51,7 @@ const t = getTexts({
 })
 
 export const ReferenceText = (props: ReferenceTextProps) => {
-  const { regulation, baseName } = props
+  const { regulation } = props
   const { name, text, type, publishedDate, appendixes, comments } = regulation
   return (
     <div className={s.referenceTextContainer}>

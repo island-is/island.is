@@ -140,6 +140,7 @@ export const useS3Upload = () => {
 
   const resetUploadLocation = () => setUploadLocation(undefined)
 
+  // TODO: implement delete
   //const deleteFromS3 = async (presignedPost: PresignedPost) => {}
 
   const onChange = async (newFiles: File[], regId: string) => {
@@ -168,7 +169,7 @@ export const useS3Upload = () => {
     onChange([file], regId)
   }
 
-  /*
+  /* TODO: implement delete
   const onRemove = async (file?: UploadFile, regId?: string) => {
     setUploadErrorMessage(undefined)
 

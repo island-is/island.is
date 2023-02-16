@@ -7,4 +7,19 @@ export class UpdateIndictmentCountDto {
   @IsString()
   @ApiPropertyOptional()
   readonly policeCaseNumber?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly vehicleRegistrationNumber?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly incidentDescription?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly legalArguments?: string
 }

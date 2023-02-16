@@ -1,7 +1,7 @@
 import * as s from './EditorInput.css'
 import { classes } from './Editor.css'
 
-import React, { useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { Box } from '@island.is/island-ui/core'
 import {
   Editor as RegulationsEditor,

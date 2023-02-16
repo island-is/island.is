@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { ActionCard, Box, Stack } from '@island.is/island-ui/core'
 import { homeMessages, statusMsgs } from '../lib/messages'
 import { prettyName } from '@island.is/regulations'

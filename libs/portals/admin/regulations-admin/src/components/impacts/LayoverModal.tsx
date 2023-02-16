@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import { ReactNode } from 'react'
 import { Box, ModalBase } from '@island.is/island-ui/core'
 import { ModalHeader } from './ModalHeader'
 import * as s from './Impacts.css'

@@ -1,5 +1,5 @@
 import { Box, Text, Button, AlertMessage } from '@island.is/island-ui/core'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { editorMsgs, reviewMessages } from '../lib/messages'
 import { DraftingState } from '../state/types'

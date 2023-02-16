@@ -5,8 +5,6 @@ export const saveDraft = style({
   selectors: {
     '&:not(:first-child)': {
       marginLeft: spacing[2],
-      borderLeft: `1px solid ${theme.color.dark200}`,
-      paddingLeft: spacing[2],
     },
   },
 })

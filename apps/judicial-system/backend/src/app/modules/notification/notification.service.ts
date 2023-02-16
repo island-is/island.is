@@ -565,9 +565,6 @@ export class NotificationService {
       theCase.court?.name,
       theCase.courtDate,
       theCase.defendants && theCase.defendants.length > 0
-        ? theCase.defendants[0].name
-        : undefined,
-      theCase.defendants && theCase.defendants.length > 0
         ? theCase.defendants[0].gender
         : undefined,
       theCase.requestedValidToDate,

@@ -8,7 +8,7 @@ import {
   GridColumn,
   Text,
 } from '@island.is/island-ui/core'
-import React, { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import {
   AppendixDraftForm,
   AppendixFormSimpleProps,
@@ -37,7 +37,6 @@ import {
 import { MagicTextarea } from '../MagicTextarea'
 import { MiniDiff } from '../MiniDiff'
 import { EditorInput } from '../EditorInput'
-import * as s from './Impacts.css'
 import { ReferenceText } from './ReferenceText'
 import {
   fDate,
@@ -380,6 +379,7 @@ export const EditChange = (props: EditChangeProp) => {
       })
     },
 
+    // TODO: implement appendix revoke?
     revokeAppendix: (idx: number, revoked: boolean) => undefined,
   }
 

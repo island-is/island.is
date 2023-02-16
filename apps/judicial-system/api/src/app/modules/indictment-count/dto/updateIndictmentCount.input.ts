@@ -15,4 +15,16 @@ export class UpdateIndictmentCountInput {
   @Allow()
   @Field({ nullable: true })
   readonly policeCaseNumber?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly vehicleRegistrationNumber?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly incidentDescription?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly legalArguments?: string
 }

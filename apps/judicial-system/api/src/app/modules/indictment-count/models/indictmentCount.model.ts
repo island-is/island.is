@@ -16,4 +16,13 @@ export class IndictmentCount {
 
   @Field({ nullable: true })
   readonly policeCaseNumber?: string
+
+  @Field({ nullable: true })
+  readonly vehicleRegistrationNumber?: string
+
+  @Field({ nullable: true })
+  readonly incidentDescription?: string
+
+  @Field({ nullable: true })
+  readonly legalArguments?: string
 }

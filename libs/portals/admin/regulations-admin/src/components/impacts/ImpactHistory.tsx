@@ -1,4 +1,3 @@
-import React from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { ImpactListItem } from './ImpactListItem'
 import { nameToSlug, prettyName, toISODate } from '@island.is/regulations'

@@ -51,7 +51,7 @@ export class DraftRegulationChangeModel extends Model {
   date!: ISODate
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
   })
   @ApiProperty()
   title!: PlainText

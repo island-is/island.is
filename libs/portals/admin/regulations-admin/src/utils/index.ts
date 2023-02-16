@@ -2,11 +2,8 @@ import { getHolidays } from 'fridagar'
 import { ISODate, toISODate } from '@island.is/regulations'
 import { startOfDay, addDays } from 'date-fns/esm'
 import { OptionTypeBase, ValueType } from 'react-select'
-import { RegDraftFormSimpleProps, RegDraftForm } from '../state/types'
 
 import { Option } from '@island.is/island-ui/core'
-import { MessageDescriptor, useIntl } from 'react-intl'
-import { errorMsgs } from '../lib/messages'
 
 // ---------------------------------------------------------------------------
 

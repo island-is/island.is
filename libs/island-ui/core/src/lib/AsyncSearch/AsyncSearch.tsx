@@ -143,6 +143,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
                 colored={colored}
                 size={size}
                 item={item}
+                disabled={item.disabled}
                 {...getItemProps({
                   key: item.value,
                   index,

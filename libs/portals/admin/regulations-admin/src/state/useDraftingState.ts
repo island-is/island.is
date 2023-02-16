@@ -1,4 +1,5 @@
-import React, {
+import {
+  createElement,
   useEffect,
   useMemo,
   createContext,
@@ -29,6 +30,7 @@ import {
   isDraftPublishable,
 } from './validations'
 import { toast } from 'react-toastify'
+import { findRegulationType } from '../utils/guessers'
 
 // ---------------------------------------------------------------------------
 
@@ -176,6 +178,21 @@ const useMakeDraftingState = (inputs: StateInputs) => {
               return // Prevent the user going forward
             }
 
+            const isTitleAmending =
+              findRegulationType(draft.title.value) === 'amending'
+
+            const amendingTitleAndBaseType =
+              isTitleAmending && draft.type.value === 'base'
+
+            const baseTitleAndAmendingType =
+              !isTitleAmending && draft.type.value === 'amending'
+            if (
+              step.name === 'basics' &&
+              (amendingTitleAndBaseType || baseTitleAndAmendingType)
+            ) {
+              return // Prevent the user going forward
+            }
+
             actions.goToStep(nextStep)
           }
         : undefined,
@@ -248,13 +265,20 @@ const useMakeDraftingState = (inputs: StateInputs) => {
               },
             },
           }).then(() => {
-            // TODO: Láta notanda vita að færslu hefur verið eytt út?
+            toast.info(t(buttonsMsgs.hasBeenDeleted))
             navigate(getHomeUrl())
           })
         } catch (e) {
           console.error('Failed to delete regulation draft: ', e)
           return
         }
+      },
+
+      closeDraft: async () => {
+        if (isDraftEmpty(draft)) {
+          await actions.deleteDraft()
+        }
+        navigate(getHomeUrl())
       },
 
       saveStatus: async (silent?: boolean) => {
@@ -270,18 +294,17 @@ const useMakeDraftingState = (inputs: StateInputs) => {
             type: 'SAVING_STATUS_DONE',
             error: error && { message: buttonsMsgs.saveFailure, error },
           })
-
-          navigate(getHomeUrl())
         })
+        return true
       },
 
       propose: !state.isEditor
-        ? () => {
+        ? async () => {
             if (isDraftLocked(draft)) {
               return false
             }
             dispatch({ type: 'SAVING_STATUS' })
-            saveDraftStatus('proposal').then(({ success, error }) => {
+            await saveDraftStatus('proposal').then(({ success, error }) => {
               if (error) {
                 dispatch({
                   type: 'SAVING_STATUS_DONE',
@@ -291,6 +314,7 @@ const useMakeDraftingState = (inputs: StateInputs) => {
                 navigate(getHomeUrl())
               }
             })
+            return true
           }
         : undefined,
 
@@ -298,12 +322,12 @@ const useMakeDraftingState = (inputs: StateInputs) => {
         state.isEditor &&
         // only offer shipping from "review" step
         state.step.name === 'review'
-          ? () => {
+          ? async () => {
               if (!isDraftErrorFree(state)) {
                 return false
               }
               dispatch({ type: 'SAVING_STATUS' })
-              saveDraftStatus('shipped').then(({ success, error }) => {
+              await saveDraftStatus('shipped').then(({ success, error }) => {
                 if (error) {
                   dispatch({
                     type: 'SAVING_STATUS_DONE',
@@ -313,6 +337,7 @@ const useMakeDraftingState = (inputs: StateInputs) => {
                   navigate(getHomeUrl())
                 }
               })
+              return true
             }
           : undefined,
 
@@ -320,12 +345,12 @@ const useMakeDraftingState = (inputs: StateInputs) => {
         state.isEditor &&
         // only offer publish from "publish" step
         state.step.name === 'publish'
-          ? () => {
+          ? async () => {
               if (!isDraftPublishable(state)) {
                 return false
               }
               dispatch({ type: 'SAVING_STATUS' })
-              saveDraftStatus('published').then(({ success, error }) => {
+              await saveDraftStatus('published').then(({ success, error }) => {
                 if (error) {
                   dispatch({
                     type: 'SAVING_STATUS_DONE',
@@ -335,6 +360,7 @@ const useMakeDraftingState = (inputs: StateInputs) => {
                   navigate(getHomeUrl())
                 }
               })
+              return true
             }
           : undefined,
     }
@@ -374,7 +400,7 @@ export const RegDraftingProvider = (props: RegDraftingProviderProps) => {
     children,
   } = props
 
-  return React.createElement(RegDraftingContext.Provider, {
+  return createElement(RegDraftingContext.Provider, {
     value: useMakeDraftingState({
       regulationDraft,
       activeImpact,

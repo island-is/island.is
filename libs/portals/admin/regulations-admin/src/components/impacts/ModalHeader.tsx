@@ -6,7 +6,6 @@ import {
   Hidden,
   Logo,
 } from '@island.is/island-ui/core'
-import React from 'react'
 
 type ModalHeaderProps = {
   closeModal: () => void

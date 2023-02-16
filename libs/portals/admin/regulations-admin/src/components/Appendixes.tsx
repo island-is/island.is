@@ -1,7 +1,7 @@
 import * as s from './Appendixes.css'
 
 import { EditorInput } from './EditorInput'
-import React, { MutableRefObject, useState } from 'react'
+import { MutableRefObject, useState } from 'react'
 import { MiniDiff } from './MiniDiff'
 import { editorMsgs as msg } from '../lib/messages'
 import { HTMLText, PlainText, Appendix } from '@island.is/regulations'
@@ -110,7 +110,6 @@ const AppendixEditing = (props: AppendixEditingProps) => {
               name="title"
               value={title.value}
               onChange={(value) => {
-                // console.log('setAppendixProp', idx, 'title', value)
                 actions.setAppendixProp(idx, 'title', value)
               }}
               onFocus={handleFocus}
@@ -127,7 +126,6 @@ const AppendixEditing = (props: AppendixEditingProps) => {
               baseText={baseText}
               value={text.value}
               onChange={(newValue) =>
-                // console.log('setAppendixProp', idx, 'text', newValue)
                 actions.setAppendixProp(idx, 'text', newValue)
               }
               draftId={draftId}
@@ -142,9 +140,6 @@ const AppendixEditing = (props: AppendixEditingProps) => {
                 size="small"
                 variant="text"
                 preTextIcon="arrowUp"
-                // circle
-                // variant="ghost"
-                // icon="arrowUp"
                 onClick={() => actions.moveAppendixUp(idx)}
                 title={t(msg.appendix_shiftup, { idx: idx + 1 })}
               >
@@ -156,9 +151,6 @@ const AppendixEditing = (props: AppendixEditingProps) => {
                 size="small"
                 variant="text"
                 preTextIcon="arrowDown"
-                // circle
-                // variant="ghost"
-                // icon="arrowUp"
                 onClick={() => actions.moveAppendixDown(idx)}
                 title={t(msg.appendix_shiftdown, { idx: idx + 1 })}
               >
@@ -169,9 +161,6 @@ const AppendixEditing = (props: AppendixEditingProps) => {
               size="small"
               variant="text"
               preTextIcon="trash"
-              // circle
-              // variant="ghost"
-              // icon="trash"
               onClick={removeAppendix}
               title={t(msg.appendix_remove, { idx: idx + 1 })}
             >
@@ -252,7 +241,6 @@ export const Appendixes = (props: AppendixesProps) => {
         <Button
           variant="text"
           preTextIcon="add"
-          // size="large"
           onClick={props.actions.addAppendix}
         >
           {t(msg.appendix_add)}
