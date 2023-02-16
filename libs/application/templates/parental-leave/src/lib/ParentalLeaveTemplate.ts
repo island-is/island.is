@@ -39,8 +39,11 @@ import { answerValidators } from './answerValidators'
 import { parentalLeaveFormMessages, statesMessages } from './messages'
 import {
   findActionName,
+  hasDateOfBirth,
   hasEmployer,
   needsOtherParentApproval,
+  previousStateApproved,
+  previousStateVinnumalastofnunApproval,
 } from './parentalLeaveTemplateUtils'
 import {
   getApplicationAnswers,
@@ -54,7 +57,7 @@ import {
 } from '../lib/parentalLeaveUtils'
 import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 
-type Events =
+export type Events =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.ASSIGN }
   | { type: DefaultEvents.REJECT }
@@ -68,14 +71,7 @@ type Events =
    *  Takes previous state and add
    *  a postfix of REJECT if rejected button is pushed
    */
-  | { type: 'APPROVED' }
-  | { type: 'RESIDENCEGRANTAPPLICATION' } // Ex: when the baby is born a parent can apply for resident grant
   | { type: 'ADDITIONALDOCUMENTSREQUIRED' } // Ex: VMST ask for more documents
-  | { type: 'APPROVEDREJECT' }
-  | { type: 'VINNUMALASTOFNUNAPPROVALREJECT' }
-  | { type: 'RESIDENCEGRANTAPPLICATIONREJECT' }
-  | { type: 'VINNUMALASTOFNUNAPPROVEEDITSREJECT' }
-  | { type: 'RESIDENCEGRANTAPPLICATIONNOBIRTHDATE' }
 
 enum Roles {
   APPLICANT = 'applicant',
@@ -484,12 +480,15 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
           [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
-          ['RESIDENCEGRANTAPPLICATION']: {
-            target: States.RESIDENCE_GRAND_APPLICATION,
-          },
-          ['RESIDENCEGRANTAPPLICATIONNOBIRTHDATE']: {
-            target: States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE,
-          },
+          SUBMIT: [
+            {
+              cond: hasDateOfBirth,
+              target: States.RESIDENCE_GRAND_APPLICATION,
+            },
+            {
+              target: States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE,
+            },
+          ],
         },
       },
       [States.VINNUMALASTOFNUN_ACTION]: {
@@ -604,17 +603,17 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE]: {
         entry: ['setPreviousState', 'assignToVMST'],
-        exit: 'setActionName',
+        exit: 'setPreviousState',
         meta: {
           status: 'inprogress',
-          name: States.RESIDENCE_GRAND_APPLICATION,
+          name: States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE,
           lifecycle: pruneAfterDays(1),
           onEntry: defineTemplateApi({
             action: ApiModuleActions.setBirthDate,
             externalDataId: 'dateOfBirth',
             throwOnError: true,
           }),
-          progress: 0.5,
+          progress: 1,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -628,40 +627,50 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          ['APPROVEDREJECT']: { target: States.APPROVED },
-          ['VINNUMALASTOFNUNAPPROVALREJECT']: {
-            target: States.VINNUMALASTOFNUN_APPROVAL,
-          },
-          ['VINNUMALASTOFNUNAPPROVEEDITSREJECT']: {
-            target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
-          },
-          ['RESIDENCEGRANTAPPLICATION']: {
+          [DefaultEvents.REJECT]: [
+            {
+              cond: previousStateApproved,
+              target: States.APPROVED,
+            },
+            {
+              cond: previousStateVinnumalastofnunApproval,
+              target: States.VINNUMALASTOFNUN_APPROVAL,
+            },
+            {
+              target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+            },
+          ],
+          APPROVE: {
             target: States.RESIDENCE_GRAND_APPLICATION,
           },
         },
       },
       [States.RESIDENCE_GRAND_APPLICATION]: {
-        entry: [
+        entry: ['assignToVMST', 'setResidenceGrant'],
+        exit: [
+          'setResidenceGrantPeriod',
+          'setHasAppliedForReidenceGrant',
           'setPreviousState',
-          'assignToVMST',
-          'setResidenceGrant',
-          'setActionName',
         ],
-        exit: ['setResidenceGrantPeriod', 'setHasAppliedForReidenceGrant'],
         meta: {
           status: 'inprogress',
           name: States.RESIDENCE_GRAND_APPLICATION,
           lifecycle: pruneAfterDays(1),
-          onEntry: defineTemplateApi({
-            action: ApiModuleActions.setBirthDate,
-            externalDataId: 'dateOfBirth',
-            throwOnError: true,
-          }),
-          onExit: defineTemplateApi({
-            action: ApiModuleActions.validateApplication,
-            throwOnError: true,
-          }),
-          progress: 0.5,
+          onExit: [
+            defineTemplateApi({
+              action: ApiModuleActions.validateApplication,
+              params: 'documentPeriod',
+              order: 1,
+              throwOnError: true,
+            }),
+            defineTemplateApi({
+              action: ApiModuleActions.sendApplication,
+              params: 'documentPeriod',
+              order: 2,
+              throwOnError: true,
+            }),
+          ],
+          progress: 1,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -672,27 +681,35 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
-            {
-              id: Roles.ORGINISATION_REVIEWER,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
-              write: 'all',
-            },
           ],
         },
         on: {
-          [DefaultEvents.APPROVE]: {
-            target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
-          },
-          ['APPROVEDREJECT']: { target: States.APPROVED },
-          ['VINNUMALASTOFNUNAPPROVALREJECT']: {
-            target: States.VINNUMALASTOFNUN_APPROVAL,
-          },
-          ['VINNUMALASTOFNUNAPPROVEEDITSREJECT']: {
-            target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
-          },
+          APPROVE: [
+            {
+              cond: previousStateApproved,
+              target: States.APPROVED,
+            },
+            {
+              cond: previousStateVinnumalastofnunApproval,
+              target: States.VINNUMALASTOFNUN_APPROVAL,
+            },
+            {
+              target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+            },
+          ],
+          REJECT: [
+            {
+              cond: previousStateApproved,
+              target: States.APPROVED,
+            },
+            {
+              cond: previousStateVinnumalastofnunApproval,
+              target: States.VINNUMALASTOFNUN_APPROVAL,
+            },
+            {
+              target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+            },
+          ],
         },
       },
       // [States.RECEIVED]: {
@@ -730,7 +747,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       //   },
       // },
       [States.APPROVED]: {
-        entry: ['assignToVMST'],
+        entry: 'assignToVMST',
+        exit: 'setPreviousState',
         meta: {
           name: States.APPROVED,
           status: 'inprogress',
@@ -739,10 +757,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           progress: 1,
-          onExit: defineTemplateApi({
-            action: ApiModuleActions.validateApplication,
-            throwOnError: true,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -766,12 +780,15 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         on: {
           CLOSED: { target: States.CLOSED },
           [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
-          ['RESIDENCEGRANTAPPLICATION']: {
-            target: States.RESIDENCE_GRAND_APPLICATION,
-          },
-          ['RESIDENCEGRANTAPPLICATIONNOBIRTHDATE']: {
-            target: States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE,
-          },
+          SUBMIT: [
+            {
+              target: States.RESIDENCE_GRAND_APPLICATION,
+              cond: hasDateOfBirth,
+            },
+            {
+              target: States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE,
+            },
+          ],
         },
       },
       [States.CLOSED]: {
@@ -813,10 +830,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.25,
-          onExit: defineTemplateApi({
-            action: ApiModuleActions.validateApplication,
-            throwOnError: true,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -1062,12 +1075,15 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.REJECT]: {
             target: States.VINNUMALASTOFNUN_EDITS_ACTION,
           },
-          ['RESIDENCEGRANTAPPLICATION']: {
-            target: States.RESIDENCE_GRAND_APPLICATION,
-          },
-          ['RESIDENCEGRANTAPPLICATIONNOBIRTHDATE']: {
-            target: States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE,
-          },
+          SUBMIT: [
+            {
+              cond: hasDateOfBirth,
+              target: States.RESIDENCE_GRAND_APPLICATION,
+            },
+            {
+              target: States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE,
+            },
+          ],
         },
       },
       [States.VINNUMALASTOFNUN_EDITS_ACTION]: {
@@ -1489,16 +1505,19 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       })),
       setPreviousState: assign((context, event) => {
+        const { application } = context
+        const { state } = application
+        const { answers } = application
         const e = (event.type as unknown) as any
         if (e === 'xstate.init') {
           return context
         }
-        if (e === 'RESIDENCEGRANTAPPLICATION') {
+        if (
+          e === 'SUBMIT' &&
+          state === 'residenceGrantApplicationNoBirthDate'
+        ) {
           return context
         }
-        const { application } = context
-        const { state } = application
-        const { answers } = application
         set(answers, 'previousState', state)
         return context
       }),

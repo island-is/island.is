@@ -10,7 +10,6 @@ import { Form } from '@island.is/application/types'
 
 import Logo from '../assets/Logo'
 import { parentalLeaveFormMessages } from '../lib/messages'
-import { actionsResidenceGrant } from '../lib/parentalLeaveUtils'
 
 export const ResidenceGrantNoBirthDate: Form = buildForm({
   id: 'residenceGrantApplicationNoBirthDate',
@@ -33,11 +32,17 @@ export const ResidenceGrantNoBirthDate: Form = buildForm({
               .residenceGrantClosedDescription,
           children: [
             buildSubmitField({
-              id: 'residenceGrantApplicationNoBirthDate.submit',
+              id: 'residenceGrantApplicationNoBirthDate.reject',
               placement: 'footer',
               title: '',
               refetchApplicationAfterSubmit: true,
-              actions: actionsResidenceGrant('reject', []),
+              actions: [
+                {
+                  name: parentalLeaveFormMessages.confirmation.cancel,
+                  event: 'REJECT',
+                  type: 'reject',
+                },
+              ],
             }),
             buildCustomField({
               id: 'residenceGrantApplicationNoBirthDate.image',
@@ -48,7 +53,7 @@ export const ResidenceGrantNoBirthDate: Form = buildForm({
             buildCustomField({
               id: 'residenceGrantApplicationNoBirthDate.dob',
               title: '',
-              component: 'DateOfBirthMessage',
+              component: 'FetchDateOfBirthField',
             }),
           ],
         }),

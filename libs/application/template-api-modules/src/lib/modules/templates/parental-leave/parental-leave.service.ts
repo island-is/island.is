@@ -38,6 +38,7 @@ import {
   ChildInformation,
   isParentWithoutBirthParent,
   calculatePeriodLength,
+  States,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -190,6 +191,12 @@ export class ParentalLeaveService extends BaseTemplateApiService {
   }
 
   async setBirthDate({ application }: TemplateApiModuleActionProps) {
+  /*
+    MOCK
+    return {
+      dateOfBirth: '2023-02-04',
+    }
+  */
     try {
       const applicationInformation = await this.applicationInformationAPI.applicationGetApplicationInformation(
         {
@@ -197,7 +204,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         },
       )
       return {
-        dateOfBirth: applicationInformation.dateOfBirth, //if you want to mock use'2023-02-04'
+        dateOfBirth: applicationInformation.dateOfBirth,
       }
     } catch (e) {}
 
@@ -380,20 +387,24 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       application.externalData,
     )
     const { residenceGrantFiles } = getApplicationAnswers(application.answers)
+    const { state } = application
 
-    if (residenceGrantFiles) {
-      residenceGrantFiles.forEach(async (item, index) => {
-        const pdf = await this.getPdf(
-          application,
-          index,
-          'fileUpload.residenceGrant',
-        )
-        attachments.push({
-          attachmentType: apiConstants.attachments.residenceGrant,
-          attachmentBytes: pdf,
+    if (state === 'residenceGrantApplication') {
+      if (residenceGrantFiles) {
+        residenceGrantFiles.forEach(async (item, index) => {
+          const pdf = await this.getPdf(
+            application,
+            index,
+            'fileUpload.residenceGrant',
+          )
+          attachments.push({
+            attachmentType: apiConstants.attachments.residenceGrant,
+            attachmentBytes: pdf,
+          })
         })
-      })
-      return attachments
+
+        return attachments
+      }
     }
     // We don't want to send old files to VMST again
     if (applicationFundId && applicationFundId !== '') {
@@ -703,13 +714,11 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       const residenceGrantPeriod = {
         from: residenceGrant.dateFrom,
         to: residenceGrant.dateTo,
-        ratio: multipleBirths.hasMultipleBirths === 'yes' ? 'D28' : 'D14',
+        ratio: multipleBirths.hasMultipleBirths === YES ? 'D28' : 'D14',
         approved: false,
         paid: false,
         rightsCodePeriod:
-          multipleBirths.hasMultipleBirths === 'yes'
-            ? 'DVAL.FJÖL'
-            : 'DVALSTYRK',
+          multipleBirths.hasMultipleBirths === YES ? 'DVAL.FJÖL' : 'DVALSTYRK',
       }
       periods.push(residenceGrantPeriod)
     }
@@ -1283,8 +1292,17 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     return periods
   }
 
-  checkActionName = (application: ApplicationWithAttachments) => {
+  checkActionName = (
+    application: ApplicationWithAttachments,
+    params: 'period' | 'document' | 'documentPeriod' | undefined = undefined,
+  ) => {
     const { actionName } = getApplicationAnswers(application.answers)
+    if (params) {
+      params === 'document' ||
+        params === 'documentPeriod' ||
+        params === 'period'
+      return params
+    }
     if (
       actionName === 'document' ||
       actionName === 'documentPeriod' ||
@@ -1295,17 +1313,34 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     return undefined
   }
 
-  async sendApplication({ application }: TemplateApiModuleActionProps) {
+  async sendApplication({ application, params }: TemplateApiModuleActionProps) {
     const {
       isSelfEmployed,
       isRecivingUnemploymentBenefits,
       applicationType,
+      previousState,
     } = getApplicationAnswers(application.answers)
 
+    /* This is to avoid calling the api every time the user leaves the residenceGrantApplicationNoBirthDate state or residenceGrantApplication state */
+    if (
+      previousState === States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE &&
+      application.state !== States.RESIDENCE_GRAND_APPLICATION
+    ) {
+      return
+    }
+    if (previousState === States.RESIDENCE_GRAND_APPLICATION) {
+      return
+    }
     const nationalRegistryId = application.applicant
     const attachments = await this.getAttachments(application)
 
     try {
+      const actionName = params as
+        | 'period'
+        | 'document'
+        | 'documentPeriod'
+        | undefined
+
       const periods = await this.createPeriodsDTO(
         application,
         nationalRegistryId,
@@ -1315,7 +1350,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         periods,
         attachments,
         false, // put false in testData as this is not dummy request
-        this.checkActionName(application),
+        this.checkActionName(application, actionName),
       )
 
       const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
@@ -1370,10 +1405,30 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
   }
 
-  async validateApplication({ application }: TemplateApiModuleActionProps) {
+  async validateApplication({
+    application,
+    params,
+  }: TemplateApiModuleActionProps) {
     const nationalRegistryId = application.applicant
+    const { previousState } = getApplicationAnswers(application.answers)
+
+    /* This is to avoid calling the api every time the user leaves the residenceGrantApplicationNoBirthDate state or residenceGrantApplication state */
+    if (
+      previousState === States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE &&
+      application.state !== States.RESIDENCE_GRAND_APPLICATION
+    ) {
+      return
+    }
+    if (previousState === States.RESIDENCE_GRAND_APPLICATION) {
+      return
+    }
     const attachments = await this.getAttachments(application)
     try {
+      const actionName = params as
+        | 'period'
+        | 'document'
+        | 'documentPeriod'
+        | undefined
       const periods = await this.createPeriodsDTO(
         application,
         nationalRegistryId,
@@ -1384,7 +1439,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         periods,
         attachments,
         true,
-        this.checkActionName(application),
+        this.checkActionName(application, actionName),
       )
 
       // call SetParentalLeave API with testData: TRUE as this is a dummy request

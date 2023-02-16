@@ -13,7 +13,6 @@ import { Form } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { FILE_SIZE_LIMIT } from '../constants'
 import { parentalLeaveFormMessages } from '../lib/messages'
-import { actionsResidenceGrant } from '../lib/parentalLeaveUtils'
 
 export const ResidenceGrant: Form = buildForm({
   id: 'residenceGrantApplication',
@@ -87,13 +86,22 @@ export const ResidenceGrant: Form = buildForm({
               placement: 'footer',
               title: parentalLeaveFormMessages.confirmation.title,
               refetchApplicationAfterSubmit: true,
-              actions: actionsResidenceGrant('reject', [
+              actions: [
                 {
                   event: 'APPROVE',
-                  name: parentalLeaveFormMessages.confirmation.title,
+                  name:
+                    parentalLeaveFormMessages.residenceGrantMessage
+                      .residenceGrantSubmit,
                   type: 'primary',
                 },
-              ]),
+                {
+                  event: 'REJECT',
+                  name:
+                    parentalLeaveFormMessages.residenceGrantMessage
+                      .residenceGrantReject,
+                  type: 'reject',
+                },
+              ],
             }),
             buildCustomField({
               id: 'imagefield.submit',

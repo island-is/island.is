@@ -23,11 +23,11 @@ import {
   NO,
   PARENTAL_LEAVE,
   States as ApplicationStates,
+  States,
   YES,
 } from '../../constants'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 import { useRemainingRights } from '../../hooks/useRemainingRights'
-import { disableResidenceGrantApplication } from '../../lib/answerValidationSections/utils'
 
 type StateMapEntry = { [key: string]: ReviewSectionState }
 
@@ -168,28 +168,34 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
       ),
     })
   }
-  if (hasAppliedForReidenceGrant === YES) {
-    steps.push({
-      state: ReviewSectionState.complete,
-      title: formatMessage(
-        parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle,
-      ),
-      description: formatMessage(
-        parentalLeaveFormMessages.residenceGrantMessage
-          .residenceGrantClosedDescription,
-      ),
-    })
-  } else {
-    steps.push({
-      state: ReviewSectionState.prerequisites,
-      title: formatMessage(
-        parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle,
-      ),
-      description: formatMessage(
-        parentalLeaveFormMessages.residenceGrantMessage
-          .residenceGrantClosedDescription,
-      ),
-    })
+  if (
+    application.state === States.APPROVED ||
+    application.state === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
+    application.state === States.VINNUMALASTOFNUN_APPROVAL
+  ) {
+    if (hasAppliedForReidenceGrant === YES) {
+      steps.push({
+        state: ReviewSectionState.complete,
+        title: formatMessage(
+          parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle,
+        ),
+        description: formatMessage(
+          parentalLeaveFormMessages.residenceGrantMessage
+            .residenceGrantClosedDescription,
+        ),
+      })
+    } else {
+      steps.push({
+        state: ReviewSectionState.prerequisites,
+        title: formatMessage(
+          parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle,
+        ),
+        description: formatMessage(
+          parentalLeaveFormMessages.residenceGrantMessage
+            .residenceGrantClosedDescription,
+        ),
+      })
+    }
   }
 
   const dob = getExpectedDateOfBirth(application)
@@ -207,7 +213,6 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
     application.state === ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS
 
   const lastEndDate = new Date(periods[periods.length - 1].endDate)
-  const { dateOfBirth } = getApplicationExternalData(application.externalData)
 
   const isUsedAllRights =
     useRemainingRights(application) > 0 ||
@@ -301,15 +306,7 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
               application={application}
               index={index + 1}
               {...step}
-              notifyParentOnClickEvent={() =>
-                handleSubmit(
-                  disableResidenceGrantApplication(
-                    dateOfBirth?.data?.dateOfBirth || '',
-                  )
-                    ? 'RESIDENCEGRANTAPPLICATION'
-                    : 'RESIDENCEGRANTAPPLICATIONNOBIRTHDATE',
-                )
-              }
+              notifyParentOnClickEvent={() => handleSubmit('SUBMIT')}
             />
           ))}
         </Box>

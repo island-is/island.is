@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useEffect, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Button } from '@island.is/island-ui/core'
-import { useLazyQuery, useMutation } from '@apollo/client'
+import { useLazyQuery, useMutation, useQuery } from '@apollo/client'
 import {
   APPLICATION_APPLICATION,
   SUBMIT_APPLICATION,
@@ -22,7 +22,10 @@ type DOBType = {
     }
   }
 }
-const RedirectField: FC<FieldBaseProps> = ({ application, refetch }) => {
+const FetchDateOfBirthField: FC<FieldBaseProps> = ({
+  application,
+  refetch,
+}) => {
   const [hasDateOfBirth, setHasDateOfBirth] = useState(false)
   const [dateOfBirth, setDateOfBirth] = useState('')
   const { formatMessage } = useLocale()
@@ -65,7 +68,6 @@ const RedirectField: FC<FieldBaseProps> = ({ application, refetch }) => {
     }
   }, [data])
   const isDisabled = !disableResidenceGrantApplication(dateOfBirth)
-  console.log(dateOfBirth)
   return (
     <Box>
       <Box display={'flex'} justifyContent={'center'} marginTop={5}>
@@ -75,7 +77,7 @@ const RedirectField: FC<FieldBaseProps> = ({ application, refetch }) => {
             variant="ghost"
             size="small"
             icon="arrowForward"
-            onClick={() => handleSubmit('RESIDENCEGRANTAPPLICATION')}
+            onClick={() => handleSubmit('APPROVE')}
           >
             {formatMessage(
               parentalLeaveFormMessages.residenceGrantMessage
@@ -88,4 +90,4 @@ const RedirectField: FC<FieldBaseProps> = ({ application, refetch }) => {
   )
 }
 
-export default RedirectField
+export default FetchDateOfBirthField
