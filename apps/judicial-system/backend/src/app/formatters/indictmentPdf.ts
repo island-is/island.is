@@ -40,6 +40,16 @@ export const createIndictment = async (
   addNormalText(doc, ' ')
   setLineCap(4)
   addNormalText(doc, theCase.indictmentIntroduction || '')
+
+  theCase.indictmentCounts?.forEach((count) => {
+    addEmptyLines(doc)
+    addNormalText(doc, count.incidentDescription || '')
+    addEmptyLines(doc)
+    addNormalText(doc, count.legalArguments || '')
+    addEmptyLines(doc)
+    addNormalText(doc, `M: ${count.policeCaseNumber || ''}`)
+  })
+
   addEmptyLines(doc, 2)
   addNormalText(doc, theCase.demands || '')
   addEmptyLines(doc, 2)
