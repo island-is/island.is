@@ -86,7 +86,6 @@ export const PaymentPlanForm: Form = buildForm({
     buildSection({
       id: 'employer',
       title: section.employer,
-      draftPageNumber: 1,
       children: [
         buildMultiField({
           id: 'employerMultiField',
@@ -165,7 +164,6 @@ export const PaymentPlanForm: Form = buildForm({
       id: 'disposableIncomeSection',
       title: section.disposableIncome,
       condition: isApplicantPerson,
-      draftPageNumber: 2,
       children: [
         buildCustomField({
           id: 'disposableIncome',
@@ -179,7 +177,6 @@ export const PaymentPlanForm: Form = buildForm({
     buildSection({
       id: 'deptOverview',
       title: section.deptOverview,
-      draftPageNumber: 3,
       children: [
         buildCustomField({
           id: `payment-plan-list`,
@@ -192,13 +189,11 @@ export const PaymentPlanForm: Form = buildForm({
     buildSection({
       id: 'paymentPlanSection',
       title: section.paymentPlan,
-      draftPageNumber: 4,
       children: [...buildPaymentPlanSteps()],
     }),
     buildSection({
       id: 'overview',
       title: section.overview,
-      draftPageNumber: 5,
       children: [
         buildMultiField({
           id: 'overviewMultiField',
