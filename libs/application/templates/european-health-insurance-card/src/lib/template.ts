@@ -47,8 +47,50 @@ const template: ApplicationTemplate<
   readyForProduction: false,
   dataSchema,
   stateMachineConfig: {
-    initial: States.PLASTIC,
+    initial: States.PREREQUISITES,
     states: {
+      [States.PREREQUISITES]: {
+        meta: {
+          name: 'EHIC-DataCollection',
+          status: 'draft',
+          progress: 0.1,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import(
+                  '../forms/EuropeanHealthInsuranceCardDataCollection'
+                ).then((val) =>
+                  Promise.resolve(
+                    val.EuropeanHealthInsuranceCardDataCollection,
+                  ),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'EHIC-Plastic-submit',
+                  type: 'primary',
+                },
+              ],
+              api: [
+                NationalRegistryUserApi,
+                NationalRegistrySpouseApi,
+                ChildrenCustodyInformationApi,
+                EhicCardResponseApi,
+              ],
+              write: 'all',
+              read: 'all',
+              delete: true,
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.PLASTIC,
+          },
+        },
+      },
       [States.PLASTIC]: {
         meta: {
           name: 'EHIC-Plastic',
@@ -71,15 +113,6 @@ const template: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
-              api: [
-                NationalRegistryUserApi,
-                NationalRegistrySpouseApi,
-                ChildrenCustodyInformationApi,
-                EhicCardResponseApi,
-              ],
-              write: 'all',
-              read: 'all',
-              delete: true,
             },
           ],
         },
@@ -143,7 +176,7 @@ const template: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'EHIC-Review-Submit',
+                  name: 'EHIC-Approved-Submit',
                   type: 'primary',
                 },
               ],
@@ -176,9 +209,9 @@ const template: ApplicationTemplate<
 
               formLoader: () =>
                 import(
-                  '../forms/EuropeanHealthInsuranceCardCompleted'
+                  '../forms/EuropeanHealthInsuranceCardReview'
                 ).then((val) =>
-                  Promise.resolve(val.EuropeanHealthInsuranceCardCompleted),
+                  Promise.resolve(val.EuropeanHealthInsuranceCardReview),
                 ),
               actions: [
                 {

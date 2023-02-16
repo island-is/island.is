@@ -46,7 +46,7 @@ export const EuropeanHealthInsuranceCardApplyPDF: Form = buildForm({
     }),
 
     buildSection({
-      id: 'applicants',
+      id: 'plastic',
       title: e.applicants.sectionLabel,
       children: [],
     }),
@@ -66,7 +66,10 @@ export const EuropeanHealthInsuranceCardApplyPDF: Form = buildForm({
               title: '',
               options: (application: Application) => {
                 const applying = []
+                console.log(application)
                 const ans = application.answers.applyForPlastic as Array<any>
+                console.log('answers')
+                console.log(ans)
                 for (const i in ans) {
                   console.log([ans[i][0], ans[i][1]])
                   applying.push({
@@ -80,7 +83,6 @@ export const EuropeanHealthInsuranceCardApplyPDF: Form = buildForm({
             buildSubmitField({
               id: 'submitPdf',
               title: e.review.submitButtonLabel,
-              refetchApplicationAfterSubmit: true,
               placement: 'footer',
               actions: [
                 {

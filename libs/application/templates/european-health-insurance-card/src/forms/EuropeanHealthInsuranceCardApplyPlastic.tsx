@@ -10,6 +10,7 @@ import {
   buildCheckboxField,
   buildCustomField,
   buildDataProviderItem,
+  buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
   buildMultiField,
@@ -48,35 +49,13 @@ export const EuropeanHealthInsuranceCardApplyPlastic: Form = buildForm({
     buildSection({
       id: 'data',
       title: e.data.sectionLabel,
+      children: [],
+    }),
+
+    buildSection({
+      id: 'plastic',
+      title: e.applicants.sectionTitle,
       children: [
-        buildExternalDataProvider({
-          title: e.data.sectionTitle,
-          checkboxLabel: e.data.dataCollectionCheckboxLabel,
-          id: 'approveExternalData',
-          description: '',
-          dataProviders: [
-            buildDataProviderItem({
-              provider: NationalRegistryUserApi,
-              title: e.data.dataCollectionNationalRegistryTitle,
-              subTitle: e.data.dataCollectionNationalRegistryDescription,
-            }),
-            buildDataProviderItem({
-              provider: NationalRegistrySpouseApi,
-              title: '',
-              subTitle: '',
-            }),
-            buildDataProviderItem({
-              provider: ChildrenCustodyInformationApi,
-              title: '',
-              subTitle: '',
-            }),
-            buildDataProviderItem({
-              provider: EhicCardResponseApi,
-              title: e.data.dataCollectionHealthInsuranceTitle,
-              subTitle: e.data.dataCollectionHealthInsuranceDescription,
-            }),
-          ],
-        }),
         buildMultiField({
           id: 'plastic',
           title: e.applicants.sectionTitle,
@@ -140,32 +119,12 @@ export const EuropeanHealthInsuranceCardApplyPlastic: Form = buildForm({
             }),
           ],
         }),
-
         // Has to be here so that the submit button appears (does not appear if no screen is left).
         // Tackle that as AS task.
-        // buildDescriptionField({
-        //   id: 'unused',
-        //   title: '',
-        //   description: '',
-        // }),
-      ],
-    }),
-
-    buildSection({
-      id: 'applicants',
-      title: e.applicants.sectionLabel,
-      children: [
-        buildMultiField({
-          id: 'applicants',
-          title: e.applicants.sectionTitle,
-          description: e.applicants.sectionDescription,
-          children: [
-            buildCustomField({
-              id: 'applicants',
-              title: '',
-              component: 'Applicants',
-            }),
-          ],
+        buildDescriptionField({
+          id: 'unused5',
+          title: '',
+          description: '',
         }),
       ],
     }),

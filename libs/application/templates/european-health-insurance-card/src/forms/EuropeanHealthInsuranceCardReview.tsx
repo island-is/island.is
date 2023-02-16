@@ -44,7 +44,7 @@ export const EuropeanHealthInsuranceCardReview: Form = buildForm({
     }),
 
     buildSection({
-      id: 'applicants',
+      id: 'plastic',
       title: e.applicants.sectionLabel,
       children: [],
     }),
