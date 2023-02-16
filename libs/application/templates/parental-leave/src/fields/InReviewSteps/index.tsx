@@ -14,7 +14,6 @@ import ReviewSection, { ReviewSectionState } from './ReviewSection'
 import { Review } from '../Review/Review'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
-  getApplicationExternalData,
   getExpectedDateOfBirth,
   otherParentApprovalDescription,
   requiresOtherParentApproval,
@@ -107,7 +106,7 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
   const oldApplication = applicationType === undefined // Added this check for applications that is in the db already
   const isBeneficiaries = !oldApplication
     ? applicationType === PARENTAL_LEAVE
-      ? isRecivingUnemploymentBenefits === YES
+      ? isReceivingUnemploymentBenefits === YES
       : false
     : false
 

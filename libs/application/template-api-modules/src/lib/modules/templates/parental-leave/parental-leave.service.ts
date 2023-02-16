@@ -1341,7 +1341,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     const attachments = await this.getAttachments(application)
 
     try {
-      const actionName = params as
+      const actionNameFromParams = params as
         | 'period'
         | 'document'
         | 'documentPeriod'
@@ -1356,7 +1356,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         periods,
         attachments,
         false, // put false in testData as this is not dummy request
-        this.checkActionName(application, actionName),
+        this.checkActionName(application, actionNameFromParams),
       )
 
       const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
@@ -1389,7 +1389,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         const selfEmployed =
           applicationType === PARENTAL_LEAVE ? isSelfEmployed === YES : true
         const recivingUnemploymentBenefits =
-          recivingUnemploymentBenefits === YES
+          isReceivingUnemploymentBenefits === YES
 
         if (!selfEmployed && !recivingUnemploymentBenefits) {
           // Only needs to send an email if being approved by employer
@@ -1438,7 +1438,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
     const attachments = await this.getAttachments(application)
     try {
-      const actionName = params as
+      const actionNameFromParams = params as
         | 'period'
         | 'document'
         | 'documentPeriod'
@@ -1453,7 +1453,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         periods,
         attachments,
         true,
-        this.checkActionName(application, actionName),
+        this.checkActionName(application, actionNameFromParams),
       )
 
       // call SetParentalLeave API with testData: TRUE as this is a dummy request
