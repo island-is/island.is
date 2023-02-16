@@ -18,13 +18,12 @@ export class CourtBankruptcyCertService {
   ) {}
 
   private async getAuthenticationToken(): Promise<string> {
-    const authenticationToken =  await  this.authenticateApi
-      .authenticateUser({
-        credentials: {
-          userName: this.clientConfig.username,
-          password: this.clientConfig.password,
-        },
-      })
+    const authenticationToken = await this.authenticateApi.authenticateUser({
+      credentials: {
+        userName: this.clientConfig.username,
+        password: this.clientConfig.password,
+      },
+    })
     //  The client returns the string with extra quotations
     // so we remove them before returning the object
     return authenticationToken.replace(/['"]+/g, '')

@@ -33,6 +33,7 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import { FinanceClientService } from '@island.is/clients/finance'
 import { OperatingLicenseFakeData } from '@island.is/application/templates/operating-license/types'
 import { CourtBankruptcyCertService } from '@island.is/clients/court-bankruptcy-cert'
+import { ALLOWED_BANKRUPTCY_STATUSES } from './constants'
 
 @Injectable()
 export class OperatingLicenseService extends BaseTemplateApiService {
@@ -160,12 +161,26 @@ export class OperatingLicenseService extends BaseTemplateApiService {
   }
 
   async courtBankruptcyCert({
-    application,
     auth,
   }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
     const cert = await this.courtBankruptcyCertService.searchBankruptcy(auth)
-    console.log('CERT', cert)
-    return { success: true }
+    console.log('CERT', cert, Object.entries(cert))
+    for (const [_, value] of Object.entries(cert)) {
+      console.log(value.bankruptcyStatus)
+      if (
+        value.bankruptcyStatus &&
+        ALLOWED_BANKRUPTCY_STATUSES.includes(value.bankruptcyStatus)
+      ) {
+        return { success: true }
+      }
+    }
+    throw new TemplateApiError(
+      {
+        title: coreErrorMessages.missingCourtBankruptcyCertificateTitle,
+        summary: coreErrorMessages.missingCourtBankruptcyCertificateSummary,
+      },
+      400,
+    )
   }
 
   async createCharge({

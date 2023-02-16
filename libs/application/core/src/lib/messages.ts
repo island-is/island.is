@@ -424,6 +424,17 @@ export const coreErrorMessages = defineMessages({
       'Staðfesting á skuldleysi fékkst ekki úr gagnagrunni Fjársýslu ríkisins',
     description: '',
   },
+  missingCourtBankruptcyCertificateTitle: {
+    id: 'ndc.application:missingCourtBankruptcyCertificateTitle',
+    defaultMessage: 'Ekki tókst að staðfesta búsforræðisvottorð',
+    description: '',
+  },
+  missingCourtBankruptcyCertificateSummary: {
+    id: 'ndc.application:missingCourtBankruptcyCertificateSummary',
+    defaultMessage:
+      'Staðfesting á skuldleysi fékkst ekki úr gagnagrunni Dómstólasýslu ríkisins',
+    description: '',
+  },
   drivingLicenseMissingValidCategory: {
     id: 'application.system:core.fetch.data.drivingLicenseMissingValidCategory',
     defaultMessage:

@@ -66,13 +66,22 @@ export const sectionOverview = buildMultiField({
     buildKeyValueField({
       label: m.typeHotel,
       width: 'half',
-      value: ({ answers }: Application) =>
+      condition: (answers) =>
         (answers.applicationInfo as Operation)?.operation ===
-        APPLICATION_TYPES.HOTEL
-          ? (answers.applicationInfo as Operation)?.typeHotel?.substring(2)
-          : (answers.applicationInfo as Operation)?.typeResturant?.map((type) =>
-              type.substring(2),
-            ),
+        APPLICATION_TYPES.HOTEL,
+      value: ({ answers }: Application) =>
+        (answers.applicationInfo as Operation)?.typeHotel?.substring(2),
+    }),
+    buildKeyValueField({
+      label: m.typeResturant,
+      width: 'half',
+      condition: (answers) =>
+        (answers.applicationInfo as Operation)?.operation ===
+        APPLICATION_TYPES.RESTURANT,
+      value: ({ answers }: Application) =>
+        (answers.applicationInfo as Operation)?.typeResturant?.map((type) =>
+          type.substring(2),
+        ),
     }),
     buildKeyValueField({
       label: m.openingHoursOutside,
