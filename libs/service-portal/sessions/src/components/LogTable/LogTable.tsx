@@ -76,8 +76,12 @@ const LogTable: React.FC<LogTableProps> = ({ data }) => {
                 <div className={styles.textEllipsis}>{session.device}</div>
                 {!session.ipLocation && <div>{session.ip}</div>}
                 {session.ipLocation && (
-                  <Tooltip text={formatMessage(m.ipLocation)}>
-                    <div>{session.ipLocation}</div>
+                  <Tooltip
+                    text={formatMessage(m.ipLocation) + ' ' + session.ip}
+                  >
+                    <div style={{ width: 'fit-content' }}>
+                      {session.ipLocation}
+                    </div>
                   </Tooltip>
                 )}
               </Table.Data>

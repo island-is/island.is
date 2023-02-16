@@ -10,6 +10,8 @@ import { paginate } from '@island.is/nest/pagination'
 import { Session } from './session.model'
 import { SessionsQueryDto } from './sessions-query.dto'
 import { SessionsResultDto } from './sessions-result.dto'
+import addDays from 'date-fns/addDays'
+import parseISO from 'date-fns/parseISO'
 
 @Injectable()
 export class SessionsService {
@@ -50,8 +52,20 @@ export class SessionsService {
 
     whereOptions = {
       ...whereOptions,
-      ...(query.from && { timestamp: { [Op.gte]: query.from } }),
-      ...(query.to && { timestamp: { [Op.lte]: query.to } }),
+      ...(query.to && query.from
+        ? {
+            timestamp: {
+              [Op.between]: [
+                query.from,
+                addDays(parseISO(query.to.toString()), 1),
+              ],
+            },
+          }
+        : query.from
+        ? { timestamp: { [Op.gte]: query.from } }
+        : query.to
+        ? { timestamp: { [Op.lte]: addDays(parseISO(query.to.toString()), 1) } }
+        : {}),
     }
 
     return paginate({
@@ -77,20 +91,18 @@ export class SessionsService {
     const ua = uaParser(userAgent)
     const browser = ua.browser.name || ''
     const os = ua.os.name || ''
-    const device =
-      browser || os ? `${browser}${browser && os ? ` (${os})` : os}` : undefined
 
-    return device
+    return browser || os
+      ? `${browser}${browser && os ? ` (${os})` : os}`
+      : undefined
   }
 
   private formatIp(ip: string): string | undefined {
     const geoLocation = lookup(ip)
-    const ipLocation = geoLocation
+    return geoLocation
       ? geoLocation.city
         ? `${geoLocation.city}, ${geoLocation.country}`
         : geoLocation.country
       : undefined
-
-    return ipLocation
   }
 }
