@@ -38,7 +38,7 @@ export const fishingLicenseFurtherInformation = {
       description: 'Attachments',
     },
     area: {
-      id: 'gfl.application:fishingLicenseFurtherInformation.labels.attachments',
+      id: 'gfl.application:fishingLicenseFurtherInformation.labels.area',
       defaultMessage: 'Veiðisvæði',
       description: 'Area',
     },

@@ -39,12 +39,12 @@ const LandskjorstjornHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   const screenWidth = getScreenWidthString(width)
 
   return (
-    <Box
+    <div
       style={n(`landskjorstjornHeader-${screenWidth}`, getDefaultStyle())}
       className={styles.headerBg}
     >
       <GridContainer className={styles.headerContainer}>
-        <Box className={styles.headerWrapper}>
+        <div className={styles.headerWrapper}>
           <SidebarLayout
             sidebarContent={
               !!organizationPage.organization.logo && (
@@ -96,9 +96,9 @@ const LandskjorstjornHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
               </Link>
             </Box>
           </SidebarLayout>
-        </Box>
+        </div>
       </GridContainer>
-    </Box>
+    </div>
   )
 }
 
