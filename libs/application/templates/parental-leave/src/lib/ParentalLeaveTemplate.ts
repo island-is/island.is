@@ -57,7 +57,7 @@ import {
 } from '../lib/parentalLeaveUtils'
 import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 
-export type Events =
+type Events =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.ASSIGN }
   | { type: DefaultEvents.REJECT }

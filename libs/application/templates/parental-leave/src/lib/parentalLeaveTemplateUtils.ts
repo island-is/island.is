@@ -81,8 +81,6 @@ export function hasDateOfBirth(context: ApplicationContext) {
 export function previousStateApproved(context: ApplicationContext) {
   const { application } = context
   const { previousState } = getApplicationAnswers(application.answers)
-  console.log(previousState)
-  console.log(previousState === 'approved')
   return previousState === 'approved'
 }
 export function previousStateVinnumalastofnunApproval(
@@ -90,7 +88,5 @@ export function previousStateVinnumalastofnunApproval(
 ) {
   const { application } = context
   const { previousState } = getApplicationAnswers(application.answers)
-  console.log(previousState)
-  console.log(previousState === 'vinnumalastofnunApproval')
   return previousState === 'vinnumalastofnunApproval'
 }
