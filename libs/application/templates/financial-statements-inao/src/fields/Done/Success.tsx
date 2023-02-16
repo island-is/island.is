@@ -54,7 +54,7 @@ export const Success = ({ application }: PropTypes): JSX.Element => {
             text={formatMessage(m.myPagesLinkText)}
             cta={{
               label: formatMessage(m.continue),
-              onClick: () => window.open('/minarsidur', '_blank'),
+              onClick: () => window.open('/minarsidur/postholf', '_blank'),
             }}
             backgroundColor="blue"
           />
