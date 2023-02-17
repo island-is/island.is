@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import addDays from 'date-fns/addDays'
+import addSeconds from 'date-fns/addSeconds'
 import { lookup } from 'geoip-lite'
 import { Op, WhereOptions } from 'sequelize'
 import uaParser from 'ua-parser-js'
@@ -10,9 +12,6 @@ import { paginate } from '@island.is/nest/pagination'
 import { Session } from './session.model'
 import { SessionsQueryDto } from './sessions-query.dto'
 import { SessionsResultDto } from './sessions-result.dto'
-import addDays from 'date-fns/addDays'
-import parseISO from 'date-fns/parseISO'
-import addSeconds from 'date-fns/addSeconds'
 
 @Injectable()
 export class SessionsService {
@@ -51,9 +50,7 @@ export class SessionsService {
       }
     }
 
-    const parsedToDate = query.to
-      ? addSeconds(addDays(parseISO(query.to.toString()), 1), -1)
-      : null
+    const parsedToDate = query.to ? addSeconds(addDays(query.to, 1), -1) : null
     whereOptions = {
       ...whereOptions,
       ...(query.to && query.from
