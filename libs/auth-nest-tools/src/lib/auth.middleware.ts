@@ -1,5 +1,6 @@
 import { Auth } from './auth'
 import fetch from 'isomorphic-fetch'
+import { logger } from '@island.is/logging'
 // These types are copied from our OpenAPI generated api clients.
 type FetchAPI = WindowOrWorkerGlobalScope['fetch']
 
@@ -62,6 +63,7 @@ export class AuthMiddleware implements Middleware {
     })
 
     if (this.options.forwardUserInfo) {
+      logger.info(`${this.auth.ip} - Logged IP`)
       context.init.headers = Object.assign({}, context.init.headers, {
         'User-Agent': this.auth.userAgent,
         'X-Forwarded-For': this.auth.ip,
