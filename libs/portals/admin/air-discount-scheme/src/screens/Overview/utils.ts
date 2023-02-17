@@ -4,7 +4,7 @@ import { Airlines } from '@island.is/air-discount-scheme/consts'
 
 import { financialStateOptions } from './consts'
 import { FlightLeg } from './types'
-import type { FlightLegsFilters } from './Overview.loaders'
+import type { FlightLegsFilters } from './Overview.loader'
 
 const getAirlinesAvailableForCSVDownload = (filters: FlightLegsFilters) =>
   Object.keys(Airlines).filter(
