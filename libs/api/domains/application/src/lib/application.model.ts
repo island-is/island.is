@@ -36,6 +36,15 @@ class PendingAction {
 }
 
 @ObjectType()
+export class ApplicationHistory {
+  @Field(() => Date)
+  date!: Date
+
+  @Field(() => String, { nullable: true })
+  log?: string
+}
+
+@ObjectType()
 class ActionCardMetaData {
   @Field(() => String, { nullable: true })
   title?: string
@@ -51,6 +60,9 @@ class ActionCardMetaData {
 
   @Field(() => PendingAction, { nullable: true })
   pendingAction?: PendingAction
+
+  @Field(() => [ApplicationHistory], { nullable: true })
+  history?: ApplicationHistory[]
 }
 
 @ObjectType()
@@ -99,9 +111,6 @@ export class Application {
 
   @Field(() => ApplicationResponseDtoStatusEnum)
   status!: ApplicationResponseDtoStatusEnum
-
-  @Field(() => [ApplicationHistory], { nullable: true })
-  history?: ApplicationHistory[] | []
 }
 
 @ObjectType()
@@ -111,13 +120,4 @@ export class ApplicationPayment {
 
   @Field()
   paymentUrl!: string
-}
-
-@ObjectType()
-export class ApplicationHistory {
-  @Field(() => Date)
-  date!: Date
-
-  @Field(() => String, { nullable: true })
-  log?: string
 }

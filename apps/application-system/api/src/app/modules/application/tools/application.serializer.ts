@@ -11,6 +11,8 @@ import { ApplicationTemplateHelper } from '@island.is/application/core'
 import {
   ApplicationTypes,
   Application as BaseApplication,
+  ApplicationContext,
+  ApplicationStateSchema,
 } from '@island.is/application/types'
 import {
   getApplicationTemplateByTypeId,
@@ -24,11 +26,24 @@ import { Application } from '@island.is/application/api/core'
 import { ApplicationResponseDto } from '../dto/application.response.dto'
 import { getCurrentLocale } from '../utils/currentLocale'
 import isObject from 'lodash/isObject'
+import {
+  HistoryService,
+  History,
+  HistoryBuilder,
+} from '@island.is/application/api/history'
+import { EventObject } from 'xstate'
 
 @Injectable()
-export class ApplicationSerializer
-  implements NestInterceptor<Application, Promise<unknown>> {
-  constructor(private intlService: IntlService) {}
+export class ApplicationSerializer<
+  TContext extends ApplicationContext,
+  TStateSchema extends ApplicationStateSchema<TEvents>,
+  TEvents extends EventObject
+> implements NestInterceptor<Application, Promise<unknown>> {
+  constructor(
+    private intlService: IntlService,
+    private historyService: HistoryService,
+    private historyBuilder: HistoryBuilder<TContext, TStateSchema, TEvents>,
+  ) {}
 
   intercept(
     context: ExecutionContext,
@@ -42,9 +57,20 @@ export class ApplicationSerializer
         const isArray = Array.isArray(res)
 
         if (isArray) {
+          const applications = res as Application[]
+
+          const histories = await this.historyService.getStateHistory(
+            applications.map((item) => item.id),
+          )
+
           return Promise.all(
-            (res as Application[]).map((item) =>
-              this.serialize(item, user.nationalId, locale),
+            applications.map((item) =>
+              this.serialize(
+                item,
+                user.nationalId,
+                locale,
+                histories.filter((x) => x.application_id === item.id),
+              ),
             ),
           )
         }
@@ -54,7 +80,12 @@ export class ApplicationSerializer
     )
   }
 
-  async serialize(model: Application, nationalId: string, locale: Locale) {
+  async serialize(
+    model: Application,
+    nationalId: string,
+    locale: Locale,
+    history: History[] = [],
+  ) {
     const application = model.toJSON() as BaseApplication
     const template = await getApplicationTemplateByTypeId(
       application.typeId as ApplicationTypes,
@@ -110,6 +141,11 @@ export class ApplicationSerializer
           intl.formatMessage,
         ),
         deleteButton: roleInState?.delete,
+        history: await this.historyBuilder.buildApplicationHistory(
+          application.typeId,
+          history,
+          intl.formatMessage,
+        ),
       },
       name: getApplicationName(),
       institution: template.institution

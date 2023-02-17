@@ -21,6 +21,10 @@ export const ApplicationFragment = gql`
         content
         title
       }
+      history {
+        log
+        date
+      }
       deleteButton
     }
     typeId
@@ -30,9 +34,5 @@ export const ApplicationFragment = gql`
     name
     institution
     status
-    history {
-      log
-      date
-    }
   }
 `

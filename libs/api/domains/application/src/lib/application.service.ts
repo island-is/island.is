@@ -62,6 +62,7 @@ export class ApplicationService {
     locale: Locale,
     input?: ApplicationApplicationsInput,
   ) {
+    console.log('calling ')
     const sall = await this.applicationApiWithAuth(
       user,
     ).applicationControllerFindAll({
@@ -70,6 +71,7 @@ export class ApplicationService {
       typeId: input?.typeId?.join(','),
       status: input?.status?.join(','),
     })
+    console.log({ sall })
     return sall
   }
 
@@ -201,14 +203,6 @@ export class ApplicationService {
     ).applicationControllerGetAttachmentPresignedURL({
       id,
       attachmentKey,
-    })
-  }
-
-  async getHistoryquery(id: string, auth: Auth) {
-    return await this.applicationApiWithAuth(
-      auth,
-    ).applicationControllerGetHistory({
-      id,
     })
   }
 }

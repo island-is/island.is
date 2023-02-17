@@ -103,7 +103,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BypassDelegation } from './guards/bypass-delegation.decorator'
-import { HistoryResponseDto } from './dto/history.dto'
+import { TemplateService } from './tools/templateHelper.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
@@ -116,7 +116,11 @@ import { HistoryResponseDto } from './dto/history.dto'
   description: 'Front-end language selected',
 })
 @Controller()
-export class ApplicationController {
+export class ApplicationController<
+  TContext extends ApplicationContext,
+  TStateSchema extends ApplicationStateSchema<TEvents>,
+  TEvents extends EventObject
+> {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly templateAPIService: TemplateAPIService,
@@ -131,6 +135,11 @@ export class ApplicationController {
     private applicationChargeService: ApplicationChargeService,
     private readonly historyService: HistoryService,
     private readonly templateApiActionRunner: TemplateApiActionRunner,
+    private readonly templateService: TemplateService<
+      TContext,
+      TStateSchema,
+      TEvents
+    >,
   ) {}
 
   @Scopes(ApplicationScope.read)
@@ -1190,78 +1199,6 @@ export class ApplicationController {
     } catch (error) {
       throw new NotFoundException('Attachment not found')
     }
-  }
-
-  @Get('applications/:id/history')
-  @Scopes(ApplicationScope.read)
-  @Documentation({
-    description: 'Gets the event history of an application',
-    response: { status: 200, type: [HistoryResponseDto] },
-    request: {
-      query: {},
-      params: {
-        id: {
-          type: 'string',
-          description: 'application id',
-          required: true,
-        },
-      },
-    },
-  })
-  async getHistory(
-    @Param('id', new ParseUUIDPipe()) id: string,
-    @CurrentUser() user: User,
-    @CurrentLocale() locale: Locale,
-  ): Promise<HistoryResponseDto[] | []> {
-    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
-      id,
-      user,
-    )
-
-    const namespaces = await getApplicationTranslationNamespaces(
-      existingApplication as BaseApplication,
-    )
-
-    const templateId = existingApplication.typeId as ApplicationTypes
-    const template = await getApplicationTemplateByTypeId(templateId)
-
-    const helper = new ApplicationTemplateHelper(
-      existingApplication as BaseApplication,
-      template,
-    )
-
-    const intl = await this.intlService.useIntl(namespaces, locale)
-    const history = await this.historyService.getStateHistoryByApplicationId(
-      existingApplication.id,
-    )
-
-    return history
-      .reduce((acc: HistoryResponseDto[], historyEntry) => {
-        const { entryTimestamp, exitTimestamp, stateKey } = historyEntry
-        const entryLog = helper.getHistoryLog('entry', stateKey)
-        const exitLog = exitTimestamp
-          ? helper.getHistoryLog('exit', stateKey)
-          : undefined
-
-        if (entryLog) {
-          acc.push(
-            new HistoryResponseDto(
-              entryTimestamp,
-              entryLog,
-              intl.formatMessage,
-            ),
-          )
-        }
-
-        if (exitTimestamp && exitLog) {
-          acc.push(
-            new HistoryResponseDto(exitTimestamp, exitLog, intl.formatMessage),
-          )
-        }
-
-        return acc
-      }, [])
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
   }
 
   @Scopes(ApplicationScope.write)

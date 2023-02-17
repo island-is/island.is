@@ -3,7 +3,7 @@ import {
   ApplicationTypes,
 } from '@island.is/application/types'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { Expose } from 'class-transformer'
+import { Expose, Type } from 'class-transformer'
 import {
   IsDate,
   IsEnum,
@@ -43,6 +43,18 @@ class PendingAction {
   content?: string
 }
 
+class History {
+  @ApiProperty()
+  @Expose()
+  @IsDate()
+  date!: Date
+
+  @ApiProperty()
+  @Expose()
+  @IsString()
+  log?: string
+}
+
 class ActionCardMetaData {
   @ApiPropertyOptional()
   @Expose()
@@ -68,6 +80,12 @@ class ActionCardMetaData {
   @Expose()
   @IsObject()
   pendingAction?: PendingAction
+
+  @IsArray()
+  @Expose()
+  @Type(() => History)
+  @ApiPropertyOptional({ type: [History], default: [] })
+  history?: History[]
 }
 
 export class ApplicationResponseDto {

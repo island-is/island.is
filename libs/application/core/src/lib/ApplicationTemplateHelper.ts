@@ -278,8 +278,6 @@ export class ApplicationTemplateHelper<
 
     if (typeof pendingAction === 'function') {
       const action = pendingAction(application, currentRole)
-      console.log('action function')
-      console.log({ action })
       return {
         displayStatus: action.displayStatus,
         content: action.content ? formatMessage(action.content) : undefined,

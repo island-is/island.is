@@ -1,7 +1,6 @@
 import { IsDate, IsString } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 import { Expose } from 'class-transformer'
-import { History } from '@island.is/application/api/history'
 import { FormatMessage } from '@island.is/application/types'
 import { StaticText } from 'static-text'
 

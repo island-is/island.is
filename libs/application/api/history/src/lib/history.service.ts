@@ -11,12 +11,10 @@ export class HistoryService {
     private sequelize: Sequelize,
   ) {}
 
-  async getStateHistoryByApplicationId(
-    applicationId: string,
-  ): Promise<History[]> {
+  async getStateHistory(applicationIds: string[]): Promise<History[]> {
     return this.historyModel.findAll({
       where: {
-        application_id: applicationId,
+        application_id: applicationIds,
       },
     })
   }
@@ -26,9 +24,9 @@ export class HistoryService {
     newStateKey: string,
   ): Promise<History> {
     // Look for a state that has not been exited.
-    const lastState = (
-      await this.getStateHistoryByApplicationId(applicationId)
-    ).find((x) => x.exitTimestamp === null)
+    const lastState = (await this.getStateHistory([applicationId])).find(
+      (x) => x.exitTimestamp === null,
+    )
 
     if (lastState) {
       //update with a new exit timestamp.

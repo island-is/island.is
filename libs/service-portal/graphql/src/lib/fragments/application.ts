@@ -20,15 +20,15 @@ export const ApplicationFragment = gql`
         content
         title
       }
+      history {
+        log
+        date
+      }
       deleteButton
     }
     typeId
     name
     progress
     status
-    history {
-      log
-      date
-    }
   }
 `

@@ -86,17 +86,6 @@ export class ApplicationResolver {
     return this.applicationService.findAll(user, locale, input)
   }
 
-  @ResolveField(() => ApplicationHistory)
-  async history(
-    @CurrentUser() user: User,
-    @Parent() input: Application,
-  ): Promise<ApplicationHistory[] | []> {
-    if (!input || !input.id) {
-      return []
-    }
-    return this.applicationService.getHistoryquery(input.id, user)
-  }
-
   @Mutation(() => Application, { nullable: true })
   async createApplication(
     @Args('locale', { type: () => String, nullable: true })

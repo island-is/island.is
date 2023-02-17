@@ -116,14 +116,7 @@ const DefaultData: Record<ApplicationStatus, DefaultStateData> = {
 
 type ApplicationFields = Pick<
   Application,
-  | 'actionCard'
-  | 'id'
-  | 'typeId'
-  | 'status'
-  | 'modified'
-  | 'name'
-  | 'progress'
-  | 'history'
+  'actionCard' | 'id' | 'typeId' | 'status' | 'modified' | 'name' | 'progress'
 >
 
 interface Props {
@@ -214,9 +207,9 @@ const ApplicationList = ({
       })
     }
 
-    if (application.history) {
+    if (application.actionCard?.history) {
       history = history.concat(
-        application.history.map((x) => ({
+        application.actionCard?.history.map((x) => ({
           date: format(new Date(x.date), formattedDate),
           title: formatMessage(x.log),
         })),
