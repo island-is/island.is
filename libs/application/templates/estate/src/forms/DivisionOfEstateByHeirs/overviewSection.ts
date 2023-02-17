@@ -361,18 +361,6 @@ export const overview = buildSection({
               ),
           },
         ),
-        buildSubmitField({
-          id: 'divisionOfEstateByHeirs.submit',
-          title: '',
-          refetchApplicationAfterSubmit: true,
-          actions: [
-            {
-              event: DefaultEvents.SUBMIT,
-              name: m.submitApplication,
-              type: 'primary',
-            },
-          ],
-        }),
       ],
     }),
   ],
