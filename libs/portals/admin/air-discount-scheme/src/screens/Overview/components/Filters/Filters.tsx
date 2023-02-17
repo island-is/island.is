@@ -1,10 +1,6 @@
 import React from 'react'
-import {
-  useForm,
-  FormProvider,
-  Controller,
-  SubmitHandler,
-} from 'react-hook-form'
+import { useForm, FormProvider, Controller } from 'react-hook-form'
+import { useSubmit } from 'react-router-dom'
 
 import {
   Box,
@@ -24,18 +20,29 @@ import {
   financialStateOptions,
   genderOptions,
 } from '../../consts'
-import { FlightLegsFilters } from '../../types'
+import type { FlightLegsFilters } from '../../Overview.loaders'
 
 interface PropTypes {
-  onSubmit: SubmitHandler<FlightLegsFilters>
   defaultValues: FlightLegsFilters
 }
 
-function Filters({ onSubmit, defaultValues }: PropTypes) {
+function Filters({ defaultValues }: PropTypes) {
+  const submit = useSubmit()
+
   const hookFormData = useForm<FlightLegsFilters>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
-    defaultValues: defaultValues,
+    defaultValues: {
+      ...defaultValues,
+      age: {
+        from: defaultValues.age.from > -1 ? defaultValues.age.from : undefined,
+        to: defaultValues.age.to < 1000 ? defaultValues.age.to : undefined,
+      },
+      period: {
+        from: new Date(defaultValues.period.from),
+        to: new Date(defaultValues.period.to),
+      },
+    },
     shouldUnregister: false,
   })
 
@@ -48,7 +55,10 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
           flexDirection="column"
           justifyContent="spaceBetween"
           height="full"
-          onSubmit={hookFormData.handleSubmit(onSubmit)}
+          onSubmit={hookFormData.handleSubmit((values, event) => {
+            submit(event?.target)
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+          })}
         >
           <Stack space={4}>
             <Stack space={2}>
@@ -58,6 +68,8 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
                 render={({ onChange, value }) => (
                   <DatePicker
                     label="Frá"
+                    id="period.from"
+                    name="period.from"
                     placeholderText="Veldu dagsetningu"
                     locale="is"
                     size="xs"
@@ -72,6 +84,8 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
                 render={({ onChange, value }) => (
                   <DatePicker
                     label="Til"
+                    id="period.to"
+                    name="period.to"
                     placeholderText="Veldu dagsetningu"
                     locale="is"
                     size="xs"
