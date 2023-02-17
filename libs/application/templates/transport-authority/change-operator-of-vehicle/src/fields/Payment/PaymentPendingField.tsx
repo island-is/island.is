@@ -5,13 +5,19 @@ import { Conclusion } from '../Conclusion'
 import { useLazyQuery } from '@apollo/client'
 import { APPLICATION_APPLICATION } from '@island.is/application/graphql'
 import { States } from '../../lib/constants'
+import { isRemovingOperatorOnly } from '../../utils'
+import { ReviewConclusion } from '../ReviewConclusion'
+import { useAuth } from '@island.is/auth/react'
 
 export const PaymentPendingField: FC<FieldBaseProps> = (props) => {
   const { application, refetch } = props
+  const { userInfo } = useAuth()
 
   const [conclusionScreen, setConclusionScreen] = useState(false)
 
   const [getApplicationInfo, { data }] = useLazyQuery(APPLICATION_APPLICATION)
+
+  const reviewerNationalId = userInfo?.profile.nationalId || null
 
   useEffect(() => {
     const updatedApplication = data?.applicationApplication
@@ -31,7 +37,12 @@ export const PaymentPendingField: FC<FieldBaseProps> = (props) => {
   }, [data, refetch])
 
   if (conclusionScreen) {
-    return <Conclusion {...props} />
+    if (!reviewerNationalId) return null
+    return isRemovingOperatorOnly(props) ? (
+      <ReviewConclusion reviewerNationalId={reviewerNationalId} {...props} />
+    ) : (
+      <Conclusion {...props} />
+    )
   }
 
   return (

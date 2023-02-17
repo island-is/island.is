@@ -231,6 +231,8 @@ const ViewStudent = ({
 
     if (res && res.data.drivingLicenseBookAllowPracticeDriving.success) {
       resetFields('allow')
+    } else {
+      toast.error(formatMessage(m.errorOnAllowPracticeDriving))
     }
   }
 

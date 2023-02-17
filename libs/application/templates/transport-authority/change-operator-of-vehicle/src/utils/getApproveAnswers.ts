@@ -49,6 +49,7 @@ export const getApproveAnswers = (
           name: operator.name,
           email: operator.email,
           phone: operator.phone,
+          wasRemoved: operator.wasRemoved,
           approved:
             operator.nationalId === reviewerNationalId
               ? true

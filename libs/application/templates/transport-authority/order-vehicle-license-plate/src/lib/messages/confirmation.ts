@@ -2,30 +2,30 @@ import { defineMessages } from 'react-intl'
 
 export const confirmation = {
   general: defineMessages({
-    title: {
-      id: 'ta.ovlp.application:confirmation.general.title',
-      defaultMessage: 'Umsókn móttekin!',
-      description: 'Title of confirmation screen',
-    },
     sectionTitle: {
       id: 'ta.ovlp.application:confirmation.general.sectionTitle',
       defaultMessage: 'Staðfesting',
       description: 'Title of confirmation screen',
     },
-    alertMessageTitle: {
-      id: 'ta.ovlp.application:confirmation.general.alertMessageTitle',
-      defaultMessage: 'Umsókn móttekin',
-      description: 'Confirmation general alert message title',
+    alertTitle: {
+      id: 'ta.ovlp.application:confirmation.general.alertTitle',
+      defaultMessage: 'Umsókn þín hefur verið móttekin',
+      description: 'Confirmation general alert title',
     },
-    alertMessageText: {
-      id: 'ta.ovlp.application:confirmation.general.alertMessageText',
-      defaultMessage: 'Umsókn hefur verið móttekin',
-      description: 'Confirmation general alert message text',
+    alertMessage: {
+      id: 'ta.ovlp.application:confirmation.general.alertMessage',
+      defaultMessage: 'Umsókn þín um skráningarmerki hefur verið móttekin',
+      description: 'Confirmation general alert message',
     },
-    openMySiteLinkText: {
-      id: 'ta.ovlp.application:confirmation.general.openMySiteLinkText',
-      defaultMessage: 'Mínar síður',
-      description: 'Confirmation general open my site link text',
+    accordionTitle: {
+      id: 'ta.ovlp.application:confirmation.general.accordionTitle',
+      defaultMessage: 'Hvað gerist næst?',
+      description: 'Confirmation accordion title',
+    },
+    accordionText: {
+      id: 'ta.ovlp.application:confirmation.general.accordionText',
+      defaultMessage: `Framleiðsla skráningarmerkja tekur 3 virka daga. Þegar framleiðslu er lokið koma merkin til Samgöngustofu. Ef valið var að sækja merkin á skoðunarstöð eru merkin send þangað. Sendingartími fer eftir stöð.`,
+      description: 'Confirmation accordion text',
     },
   }),
 }

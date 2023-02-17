@@ -29,11 +29,11 @@ import { DocumentProviderService } from '../document-provider.service'
 import { CreateProviderDto } from '../dto/createProvider.dto'
 import { UpdateProviderDto } from '../dto/updateProvider.dto'
 import { Provider } from '../models/provider.model'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
 const namespace = `${environment.audit.defaultNamespace}/providers`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
 @ApiTags('providers')
 @ApiHeader({
   name: 'authorization',
@@ -48,6 +48,7 @@ export class ProviderController {
   ) {}
 
   @Get()
+  @Scopes(AdminPortalScope.documentProvider)
   @ApiOkResponse({ type: [Provider] })
   @Audit<Provider[]>({
     resources: (providers) => providers.map((provider) => provider.id),
@@ -57,6 +58,7 @@ export class ProviderController {
   }
 
   @Get(':id')
+  @Scopes(AdminPortalScope.documentProvider)
   @ApiOkResponse({ type: Provider })
   @Audit<Provider>({
     resources: (provider) => provider.id,
@@ -72,6 +74,7 @@ export class ProviderController {
   }
 
   @Get('/external/:id')
+  @Scopes(ApiScope.internal, AdminPortalScope.documentProvider)
   @ApiOkResponse({ type: Provider })
   @Audit<Provider>({
     resources: (provider) => provider.id,
@@ -91,6 +94,7 @@ export class ProviderController {
   }
 
   @Post()
+  @Scopes(ApiScope.internal, AdminPortalScope.documentProvider)
   @ApiCreatedResponse({ type: Provider })
   @Audit<Provider>({
     resources: (provider) => provider?.id,
@@ -106,6 +110,7 @@ export class ProviderController {
   }
 
   @Put(':id')
+  @Scopes(ApiScope.internal, AdminPortalScope.documentProvider)
   @ApiOkResponse({ type: Provider })
   async updateProvider(
     @Param('id') id: string,

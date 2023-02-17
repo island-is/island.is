@@ -84,5 +84,5 @@ export class IndictmentCount extends Model {
     allowNull: true,
   })
   @ApiPropertyOptional()
-  legal_arguments?: string
+  legalArguments?: string
 }

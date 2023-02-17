@@ -193,6 +193,11 @@ export const information = {
         defaultMessage: 'Það kom upp villa við að sækja upplýsingar um bifreið',
         description: 'Operator error message',
       },
+      identicalError: {
+        id: 'ta.cov.application:information.labels.operator.identicalError',
+        defaultMessage: 'Það má ekki nota sömu kennitölu tvisvar',
+        description: 'operator identical error',
+      },
     }),
     mainOperator: defineMessages({
       sectionTitle: {

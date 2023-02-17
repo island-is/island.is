@@ -12,7 +12,8 @@ export function createMockPdf() {
 }
 
 export function deleteMockPdf() {
-  fs.unlink('./mockPdf.pdf', () =>
-    console.log('Failed to delete mockPdf file.'),
-  )
+  fs.unlink('./mockPdf.pdf', (err) => {
+    if (err) throw err
+    console.log('Successfully deleted mockPdf file.')
+  })
 }
