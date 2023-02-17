@@ -9,7 +9,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { UserRole } from '@island.is/judicial-system/types'
 
@@ -86,11 +86,11 @@ export class User extends Model {
     type: DataType.UUID,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   institutionId?: string
 
   @BelongsTo(() => Institution, 'institutionId')
-  @ApiProperty({ type: Institution })
+  @ApiPropertyOptional({ type: Institution })
   institution?: Institution
 
   @Column({

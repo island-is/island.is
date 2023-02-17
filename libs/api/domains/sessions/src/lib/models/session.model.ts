@@ -17,11 +17,14 @@ export class Session {
   @Field(() => Client)
   client!: Client
 
-  @Field(() => String)
-  timestamp!: string
+  @Field(() => Date)
+  timestamp!: Date
 
   @Field(() => String)
   userAgent!: string
+
+  @Field(() => String, { nullable: true })
+  device?: string
 
   @Field(() => String)
   ip!: string

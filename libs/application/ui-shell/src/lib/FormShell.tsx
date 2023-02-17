@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useReducer } from 'react'
+import React, { FC, useEffect, useReducer, useState } from 'react'
 import cn from 'classnames'
 
 import {
@@ -25,6 +25,8 @@ import { useHistorySync } from '../hooks/useHistorySync'
 import { useApplicationTitle } from '../hooks/useApplicationTitle'
 import { useHeaderInfo } from '../context/HeaderInfoProvider'
 import * as styles from './FormShell.css'
+import { ErrorShell } from '../components/ErrorShell'
+import { m } from './messages'
 
 export const FormShell: FC<{
   application: Application
@@ -32,6 +34,7 @@ export const FormShell: FC<{
   form: Form
   dataSchema: Schema
 }> = ({ application, nationalRegistryId, form, dataSchema }) => {
+  const [updateForbidden, setUpdateForbidden] = useState(false)
   const { setInfo } = useHeaderInfo()
   const [state, dispatch] = useReducer(
     ApplicationReducer,
@@ -62,6 +65,20 @@ export const FormShell: FC<{
   const currentScreen = screens[activeScreen]
   const FormLogo = form.logo
 
+  const getDraftSectionCurrentScreen = (): number | undefined => {
+    const currentDraftScreenSection = sections.find(
+      (s, i) => i === currentScreen.sectionIndex,
+    )
+    return currentDraftScreenSection?.draftPageNumber ?? undefined
+  }
+
+  const getDraftSectionTotalScreens = (): number | undefined => {
+    const totalDraftScreens = Math.max(
+      ...sections.map((s) => s.draftPageNumber ?? -1),
+    )
+    return totalDraftScreens === -1 ? undefined : totalDraftScreens
+  }
+
   useHistorySync(state, dispatch)
   useApplicationTitle(state)
 
@@ -71,6 +88,10 @@ export const FormShell: FC<{
       institutionName: application?.institution,
     })
   }, [setInfo, application])
+
+  if (updateForbidden) {
+    return <ErrorShell errorType="lost" applicationType={application.typeId} />
+  }
 
   return (
     <Box className={styles.root}>
@@ -93,6 +114,8 @@ export const FormShell: FC<{
                 background="white"
               >
                 <Screen
+                  sections={sections}
+                  setUpdateForbidden={setUpdateForbidden}
                   application={storedApplication}
                   addExternalData={(payload) =>
                     dispatch({ type: ActionTypes.ADD_EXTERNAL_DATA, payload })
@@ -121,6 +144,8 @@ export const FormShell: FC<{
                   numberOfScreens={screens.length}
                   renderLastScreenButton={renderLastScreenButton}
                   renderLastScreenBackButton={renderLastScreenBackButton}
+                  currentDraftScreen={getDraftSectionCurrentScreen()}
+                  totalDraftScreens={getDraftSectionTotalScreens()}
                   screen={currentScreen}
                   mode={mode}
                 />

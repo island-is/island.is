@@ -73,7 +73,6 @@ const pageSize = 15
 
 export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   userInfo,
-  client,
 }) => {
   useNamespaces('sp.documents')
 

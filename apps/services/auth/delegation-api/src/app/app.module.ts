@@ -18,6 +18,7 @@ import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
 
 import { environment } from '../environments'
+import { ClientsModule } from './clients/clients.module'
 import { DelegationsModule } from './delegations/delegations.module'
 import { DomainsModule } from './domains/domains.module'
 
@@ -28,6 +29,7 @@ import { DomainsModule } from './domains/domains.module'
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
+    ClientsModule,
     DelegationsModule,
     DomainsModule,
     ProblemModule,

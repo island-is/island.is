@@ -89,39 +89,6 @@ routes: (userInfo) => {
 }
 ```
 
-### Global Components
-
-Global components will always be rendered by default
-These are usually utility components that prompt the user about certain things or provide other global functionality
-Example: A modal providing onboarding for unfilled user profiles
-
-Global components should be used very sparingly to reduce harrassment on the user.
-
-```typescript
-interface PortalModule {
-  global?: (props: PortalModuleProps) => Promise<PortalGlobalComponent[]>
-}
-```
-
-An example of how a global component might be implemented
-
-```typescript
-global: async ({ client }) => {
-  if (client.userDoesNotHaveAUserProfile())
-    return [
-      {
-        render: () =>
-          lazy(
-            () =>
-              import('./components/UserOnboardingModal/UserOnboardingModal'),
-          ),
-      },
-    ]
-
-  return []
-}
-```
-
 A portal library might then look something like this:
 
 ```tsx

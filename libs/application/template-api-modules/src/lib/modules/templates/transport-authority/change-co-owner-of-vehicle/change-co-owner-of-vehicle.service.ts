@@ -82,10 +82,12 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
               }))
             : []),
           ...(answers?.coOwners
-            ? answers.coOwners.map((x) => ({
-                ssn: x.nationalId,
-                email: x.email,
-              }))
+            ? answers.coOwners
+                .filter(({ wasRemoved }) => wasRemoved !== 'true')
+                .map((x) => ({
+                  ssn: x.nationalId,
+                  email: x.email,
+                }))
             : []),
         ],
         operators: null,
@@ -315,10 +317,12 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     const permno = answers?.pickVehicle?.plate
     const ownerSsn = answers?.owner?.nationalId
     const ownerEmail = answers?.owner?.email
-    const newCoOwners = answers?.coOwners?.map((coOwner) => ({
-      ssn: coOwner.nationalId,
-      email: coOwner.email,
-    }))
+    const newCoOwners = answers?.coOwners
+      ?.filter(({ wasRemoved }) => wasRemoved !== 'true')
+      .map((coOwner) => ({
+        ssn: coOwner.nationalId,
+        email: coOwner.email,
+      }))
     const ownerCoOwners = answers?.ownerCoOwners?.filter(
       (coOwner) => coOwner.wasRemoved !== 'true',
     )

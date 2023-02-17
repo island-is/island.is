@@ -16,6 +16,7 @@ export const userNotificationServiceSetup = (): ServiceBuilder<'user-notificatio
     })
     .secrets({
       FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials',
+      CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN',
     })
     .liveness('/liveness')
     .readiness('/liveness')
