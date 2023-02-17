@@ -69,11 +69,6 @@ type Events =
   | { type: DefaultEvents.EDIT }
   | { type: 'MODIFY' } // Ex: The user might modify their 'edits'.
   | { type: 'CLOSED' } // Ex: Close application
-  /**
-   * States for routing Dvalarstyrkur
-   *  Takes previous state and add
-   *  a postfix of REJECT if rejected button is pushed
-   */
   | { type: 'ADDITIONALDOCUMENTSREQUIRED' } // Ex: VMST ask for more documents
 
 enum Roles {
