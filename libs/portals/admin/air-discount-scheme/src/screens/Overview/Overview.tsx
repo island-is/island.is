@@ -18,7 +18,7 @@ import { useConfirmInvoiceMutation } from './Overview.generated'
 
 import { airDiscountSchemeNavigation } from '../../lib/navigation'
 import Modal from '../../components/Modal/Modal'
-import { OverviewLoaderReturnType } from './Overview.loaders'
+import { OverviewLoaderReturnType } from './Overview.loader'
 
 const Overview = () => {
   const { data, filters } = useLoaderData() as OverviewLoaderReturnType

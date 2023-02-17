@@ -20,7 +20,7 @@ import {
   financialStateOptions,
   genderOptions,
 } from '../../consts'
-import type { FlightLegsFilters } from '../../Overview.loaders'
+import type { FlightLegsFilters } from '../../Overview.loader'
 
 interface PropTypes {
   defaultValues: FlightLegsFilters
