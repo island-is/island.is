@@ -34,11 +34,11 @@ export const LinkFormField: FC<{
   return (
     <Button
       colorScheme="default"
-      icon="open"
+      icon={field.icon ?? 'download'}
       iconType="outline"
       onClick={getUrl()}
       preTextIconType="filled"
-      size="default"
+      size="small"
       type="button"
       variant="ghost"
     >

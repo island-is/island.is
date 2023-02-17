@@ -14,6 +14,7 @@ import { Application } from './Application'
 import { FormatInputValueFunction } from 'react-number-format'
 import { TestSupport } from '@island.is/island-ui/utils'
 import React from 'react'
+import { IconMapIcon } from '@island.is/island-ui/core'
 
 export type RecordObject<T = unknown> = Record<string, T>
 export type MaybeWithApplicationAndField<T> =
@@ -304,6 +305,7 @@ export interface LinkField extends BaseField {
   component: FieldComponents.LINK
   s3key?: FormText
   link?: string
+  icon?: IconMapIcon
 }
 
 export type Field =
