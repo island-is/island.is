@@ -94,7 +94,7 @@ export const Dashboard: FC<{}> = () => {
                         <Box
                           borderRadius="circle"
                           className={cn(styles.badge[badgeActive])}
-                        ></Box>
+                        />
                       )}
                     </>
                   )}

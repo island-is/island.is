@@ -4,11 +4,12 @@ import { m } from '@island.is/service-portal/core'
 import { PortalModule } from '@island.is/portals/core'
 import { TransportPaths } from './lib/paths'
 
-<<<<<<<< HEAD:libs/service-portal/transports/src/module.ts
-export const transportsModule: PortalModule = {
-  name: 'Farartæki',
-========
+const TransportsOverview = lazy(() =>
+  import('./screens/TransportsOverview/TransportsOverview'),
+)
+
 const Overview = lazy(() => import('./screens/Overview/Overview'))
+
 const VehicleDetail = lazy(() =>
   import('./screens/VehicleDetail/VehicleDetail'),
 )
@@ -20,16 +21,14 @@ const DrivingLessonsBook = lazy(() =>
 )
 const Lookup = lazy(() => import('./screens/Lookup/Lookup'))
 
-export const vehiclesModule: PortalModule = {
-  name: 'Ökutæki',
->>>>>>>> main:libs/service-portal/transports/src/module.tsx
+export const transportsModule: PortalModule = {
+  name: 'Farartæki',
   routes: ({ userInfo }) => [
     {
       name: m.transports,
       path: TransportPaths.TransportRoot,
       enabled: userInfo.scopes.includes(ApiScope.vehicles),
-      render: () =>
-        lazy(() => import('./screens/TransportsOverview/TransportsOverview')),
+      element: <TransportsOverview />,
     },
     {
       name: m.myVehicles,
