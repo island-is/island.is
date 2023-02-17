@@ -34,9 +34,11 @@ import {
   getAdditionalSingleParentRightsInDays,
   getApplicationExternalData,
   DAYS_IN_MONTH,
+  getUnApprovedEmployers,
   ParentalRelations,
   ChildInformation,
   isParentWithoutBirthParent,
+  calculatePeriodLength,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -152,13 +154,9 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     )
     const person = await this.nationalRegistryApi.getIndividual(auth.nationalId)
 
-    if (!person) {
-      return null
-    }
-
     return (
-      spouse && {
-        spouse: {
+      person && {
+        spouse: spouse && {
           nationalId: spouse.spouseNationalId,
           name: spouse.spouseName,
         },
@@ -297,7 +295,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
   }
 
   async assignEmployer({ application }: TemplateApiModuleActionProps) {
-    const { employerPhoneNumber } = getApplicationAnswers(application.answers)
+    const employers = getUnApprovedEmployers(application.answers)
 
     const token = await this.sharedTemplateAPIService.createAssignToken(
       application,
@@ -312,7 +310,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
     // send confirmation sms to employer
     try {
-      if (employerPhoneNumber && checkIfPhoneNumberIsGSM(employerPhoneNumber)) {
+      const phoneNumber = employers.length > 0 ? employers[0].phoneNumber : ''
+      if (phoneNumber && checkIfPhoneNumberIsGSM(phoneNumber)) {
         await this.sharedTemplateAPIService.assignApplicationThroughSms(
           generateAssignEmployerApplicationSms,
           application,
@@ -454,13 +453,13 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
 
     const {
-      isRecivingUnemploymentBenefits,
+      isReceivingUnemploymentBenefits,
       unemploymentBenefits,
       benefitsFiles: benefitsPdfs,
       commonFiles: genericPdfs,
     } = getApplicationAnswers(application.answers)
     if (
-      isRecivingUnemploymentBenefits === YES &&
+      isReceivingUnemploymentBenefits === YES &&
       (unemploymentBenefits === UnEmployedBenefitTypes.union ||
         unemploymentBenefits == UnEmployedBenefitTypes.healthInsurance)
     ) {
@@ -615,7 +614,19 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         )
 
         if (VMSTperiods?.periods) {
-          vmstRightCodePeriod = VMSTperiods.periods[0].rightsCodePeriod
+          /*
+           * Sometime applicant uses other right than basic right ( grunnréttindi)
+           * Here we make sure we only use/sync amd use basic right ( grunnréttindi ) from VMST
+           */
+          const getVMSTRightCodePeriod = VMSTperiods.periods[0].rightsCodePeriod
+          const periodCodeStartCharacters = ['M', 'F']
+          if (
+            periodCodeStartCharacters.some((c) =>
+              getVMSTRightCodePeriod.startsWith(c),
+            )
+          ) {
+            vmstRightCodePeriod = getVMSTRightCodePeriod
+          }
         }
       } catch (e) {
         this.logger.warn(
@@ -653,7 +664,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
     for (const [index, period] of answers.entries()) {
       const isFirstPeriod = index === 0
-      const isUsingNumberOfDays = period.daysToUse !== undefined
+      const isUsingNumberOfDays =
+        period.daysToUse !== undefined && period.daysToUse !== ''
 
       // If a period doesn't have both startDate or endDate we skip it
       if (!isFirstPeriod && (!period.startDate || !period.endDate)) {
@@ -668,6 +680,17 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
       if (isUsingNumberOfDays) {
         periodLength = Number(period.daysToUse)
+      } else if (Number(period.ratio) < 100) {
+        /*
+         * We need to calculate periodLength when ratio is not 100%
+         * because there could be mis-calculate betweeen island.is and VMST
+         * for example:
+         * 8 months period with 75%
+         * island.is calculator returns: 180 days
+         * VMST returns: 184 days
+         */
+        const fullLength = calculatePeriodLength(startDate, endDate)
+        periodLength = Math.round(fullLength * (Number(period.ratio) / 100))
       } else {
         const getPeriodLength = await this.parentalLeaveApi.parentalLeaveGetPeriodLength(
           { nationalRegistryId, startDate, endDate, percentage: period.ratio },
@@ -1224,7 +1247,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
   async sendApplication({ application }: TemplateApiModuleActionProps) {
     const {
       isSelfEmployed,
-      isRecivingUnemploymentBenefits,
+      isReceivingUnemploymentBenefits,
       applicationType,
     } = getApplicationAnswers(application.answers)
 
@@ -1258,13 +1281,19 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         )
       }
 
+      // If applicant is sending additional documents then don't need to send email
+      const { actionName } = getApplicationAnswers(application.answers)
+      if (actionName === 'document') {
+        return
+      }
+
       // There has been case when island.is got Access Denied from AWS when sending out emails
       // This try/catch keeps application in correct state
       try {
         const selfEmployed =
           applicationType === PARENTAL_LEAVE ? isSelfEmployed === YES : true
         const recivingUnemploymentBenefits =
-          isRecivingUnemploymentBenefits === YES
+          isReceivingUnemploymentBenefits === YES
 
         if (!selfEmployed && !recivingUnemploymentBenefits) {
           // Only needs to send an email if being approved by employer

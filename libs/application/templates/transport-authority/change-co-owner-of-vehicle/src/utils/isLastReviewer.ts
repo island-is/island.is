@@ -9,7 +9,7 @@ export const isLastReviewer = (
   // First check if any reviewer that is not the current user has not approved
   const ownerCoOwners = getValueViaPath(
     answers,
-    'ownerCoOwner',
+    'ownerCoOwners',
     [],
   ) as OwnerCoOwnersInformation[]
   const approvedOwnerCoOwner = ownerCoOwners.find((ownerCoOwner) => {
@@ -22,9 +22,12 @@ export const isLastReviewer = (
   }
 
   const coOwners = getValueViaPath(answers, 'coOwners', []) as UserInformation[]
-  const approvedCoOwner = coOwners.find(
-    (coOwner) => coOwner.nationalId !== reviewerNationalId && !coOwner.approved,
-  )
+  const approvedCoOwner = coOwners
+    .filter(({ wasRemoved }) => wasRemoved !== 'true')
+    .find(
+      (coOwner) =>
+        coOwner.nationalId !== reviewerNationalId && !coOwner.approved,
+    )
   if (approvedCoOwner) {
     return false
   }

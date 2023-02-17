@@ -57,7 +57,7 @@ const AccessOutgoing = () => {
         setEnableValidityPeriod(!!delegation.validTo)
         setValidityPeriod(new Date(delegation.validTo))
       } else if (scopesCnt === 0) {
-        // We do not wan't to set validity period to default date if there are scopes already set
+        // We do not want to set validity period to default date if there are scopes already set
         setEnableValidityPeriod(true)
         setValidityPeriod(defaultDate)
       }

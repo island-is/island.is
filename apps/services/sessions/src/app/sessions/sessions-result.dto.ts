@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-import { PageInfo } from '@island.is/nest/pagination'
+import { PageInfoDto } from '@island.is/nest/pagination'
 
 import { Session } from './session.model'
 
@@ -12,5 +12,5 @@ export class SessionsResultDto {
   data!: Session[]
 
   @ApiProperty()
-  pageInfo!: PageInfo
+  pageInfo!: PageInfoDto
 }

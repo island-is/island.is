@@ -40,6 +40,7 @@ const FormStepper: FC<FormStepperProps> = ({
   const { formatMessage } = useLocale()
 
   const progressTheme: Record<FormModes, FormStepperThemes> = {
+    [FormModes.NOT_STARTED]: FormStepperThemes.PURPLE,
     [FormModes.DRAFT]: FormStepperThemes.PURPLE,
     [FormModes.APPROVED]: FormStepperThemes.GREEN,
     [FormModes.IN_PROGRESS]: FormStepperThemes.BLUE,

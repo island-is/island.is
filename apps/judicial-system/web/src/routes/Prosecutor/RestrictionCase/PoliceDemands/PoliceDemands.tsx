@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -16,7 +16,11 @@ import {
   RestrictionCaseProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  useDeb,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   core,
   rcDemands,
@@ -112,15 +116,15 @@ export const PoliceDemands: React.FC = () => {
     'requestedOtherRestrictions',
   ])
 
-  useEffect(() => {
+  const initialize = useCallback(() => {
     if (
-      isCaseUpToDate &&
       !workingCase.requestedOtherRestrictions &&
       workingCase.requestedCustodyRestrictions &&
       workingCase.requestedCustodyRestrictions.indexOf(
         CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
       ) > -1 &&
-      workingCase.defendants
+      workingCase.defendants &&
+      workingCase.defendants.length > 0
     ) {
       setAndSendCaseToServer(
         [
@@ -136,13 +140,9 @@ export const PoliceDemands: React.FC = () => {
         setWorkingCase,
       )
     }
-  }, [
-    setAndSendCaseToServer,
-    formatMessage,
-    setWorkingCase,
-    workingCase,
-    isCaseUpToDate,
-  ])
+  }, [setAndSendCaseToServer, formatMessage, setWorkingCase, workingCase])
+
+  useOnceOn(isCaseUpToDate, initialize)
 
   const onDemandsChange = React.useCallback(
     (

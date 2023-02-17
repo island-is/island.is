@@ -18,8 +18,8 @@ const workerPostgresInfo = {
   passwordSecret: '/k8s/services-sessions/DB_PASSWORD',
 }
 
-export const serviceSetup = (): ServiceBuilder<'services-sessions-api'> => {
-  return service('services-sessions-api')
+export const serviceSetup = (): ServiceBuilder<'services-sessions'> => {
+  return service('services-sessions')
     .namespace(namespace)
     .image(imageName)
     .postgres(servicePostgresInfo)
@@ -45,18 +45,18 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions-api'> => {
     .readiness('/liveness')
     .liveness('/liveness')
     .replicaCount({
-      default: 2,
-      min: 2,
+      default: 1,
+      min: 1,
       max: 10,
     })
     .resources({
       limits: {
         cpu: '400m',
-        memory: '256Mi',
+        memory: '512Mi',
       },
       requests: {
         cpu: '100m',
-        memory: '128Mi',
+        memory: '256Mi',
       },
     })
     .ingress({
@@ -70,7 +70,7 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions-api'> => {
         public: false,
       },
     })
-    .grantNamespaces('nginx-ingress-internal', 'identity-server')
+    .grantNamespaces('nginx-ingress-internal', 'islandis', 'identity-server')
 }
 
 export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
@@ -86,6 +86,18 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
       postgres: workerPostgresInfo,
       envs: {
         NO_UPDATE_NOTIFIER: 'true',
+      },
+    })
+    .liveness('/liveness')
+    .readiness('/liveness')
+    .resources({
+      limits: {
+        cpu: '400m',
+        memory: '512Mi',
+      },
+      requests: {
+        cpu: '100m',
+        memory: '256Mi',
       },
     })
     .env({
@@ -107,5 +119,3 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
       },
       REDIS_USE_SSL: 'true',
     })
-    .liveness('/liveness')
-    .readiness('/liveness')

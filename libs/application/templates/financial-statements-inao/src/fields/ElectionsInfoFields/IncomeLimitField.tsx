@@ -60,12 +60,14 @@ export const IncomeLimitFields = ({ clientType, year }: IncomeLimitProps) => {
             limit,
           )} ${formatMessage(m.crowns)}`,
           value: LESS,
+          dataTestId: 'radio-incomeLimit-lessThan',
         },
         {
           label: `${formatMessage(m.moreThanLimit)} ${formatNumber(
             limit,
           )} ${formatMessage(m.crowns)}`,
           value: GREATER,
+          dataTestId: 'radio-incomeLimit-moreThan',
         },
       ]}
     />
