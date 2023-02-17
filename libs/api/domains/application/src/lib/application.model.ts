@@ -1,10 +1,14 @@
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
+import {
+  ApplicationListAdminResponseDtoStatusEnum,
+  ApplicationListAdminResponseDtoTypeIdEnum,
+} from '../../gen/fetch'
 
 import {
   ApplicationResponseDtoStatusEnum,
   ApplicationResponseDtoTypeIdEnum,
-} from '../../gen/fetch/models/ApplicationResponseDto'
+} from '../../gen/fetch'
 
 registerEnumType(ApplicationResponseDtoTypeIdEnum, {
   name: 'ApplicationResponseDtoTypeIdEnum',
@@ -12,6 +16,14 @@ registerEnumType(ApplicationResponseDtoTypeIdEnum, {
 
 registerEnumType(ApplicationResponseDtoStatusEnum, {
   name: 'ApplicationResponseDtoStatusEnum',
+})
+
+registerEnumType(ApplicationListAdminResponseDtoTypeIdEnum, {
+  name: 'ApplicationListAdminResponseDtoTypeIdEnum',
+})
+
+registerEnumType(ApplicationListAdminResponseDtoStatusEnum, {
+  name: 'ApplicationListAdminResponseDtoStatusEnum',
 })
 
 @ObjectType()
@@ -83,6 +95,48 @@ export class Application {
 
   @Field(() => ApplicationResponseDtoStatusEnum)
   status!: ApplicationResponseDtoStatusEnum
+}
+
+@ObjectType()
+export class ApplicationAdmin {
+  @Field(() => ID)
+  id!: string
+
+  @Field(() => Date)
+  created!: Date
+
+  @Field(() => Date)
+  modified!: Date
+
+  @Field(() => String)
+  applicant!: string
+
+  @Field(() => [String])
+  assignees!: string[]
+
+  @Field(() => [String])
+  applicantActors!: string[]
+
+  @Field(() => String)
+  state!: string
+
+  @Field(() => ActionCardMetaData, { nullable: true })
+  actionCard?: ActionCardMetaData
+
+  @Field(() => ApplicationListAdminResponseDtoTypeIdEnum)
+  typeId!: ApplicationListAdminResponseDtoTypeIdEnum
+
+  @Field(() => String, { nullable: true })
+  name?: string
+
+  @Field(() => String, { nullable: true })
+  institution?: string
+
+  @Field(() => Number, { nullable: true })
+  progress?: number
+
+  @Field(() => ApplicationListAdminResponseDtoStatusEnum)
+  status!: ApplicationListAdminResponseDtoStatusEnum
 }
 
 @ObjectType()

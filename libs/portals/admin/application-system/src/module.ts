@@ -6,12 +6,11 @@ import { ApplicationSystemPaths } from './lib/paths'
 
 const ExampleScreen = lazy(() => import('./screens/ExampleScreen/example'))
 
-// todo reintroduce     userInfo.scopes.includes(AdminPortalScope.applicationSystem),
-
 export const applicationSystemAdminModule: PortalModule = {
   name: m.applicationSystem,
   layout: 'full',
-  enabled: ({ userInfo }) => true,
+  enabled: ({ userInfo }) =>
+    userInfo.scopes.includes(AdminPortalScope.applicationSystem),
   routes: () => [
     {
       name: m.overview,

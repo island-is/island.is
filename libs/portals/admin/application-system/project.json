@@ -24,7 +24,7 @@
     "schemas/codegen": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "output": "libs/portals/admin/application-system/src//*.codegen.ts",
+        "output": "libs/portals/admin/application-system/src/**/*.codegen.ts",
         "command": "graphql-codegen --config libs/portals/admin/application-system/codegen.yml"
       }
     }

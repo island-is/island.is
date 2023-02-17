@@ -53,7 +53,7 @@ import {
   Scopes,
   CurrentUser,
 } from '@island.is/auth-nest-tools'
-import { ApplicationScope } from '@island.is/auth/scopes'
+import { AdminPortalScope, ApplicationScope } from '@island.is/auth/scopes'
 import {
   getApplicationTemplateByTypeId,
   getApplicationTranslationNamespaces,
@@ -75,7 +75,10 @@ import { UploadSignedFileDto } from './dto/uploadSignedFile.dto'
 import { ApplicationValidationService } from './tools/applicationTemplateValidation.service'
 import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
-import { ApplicationResponseDto } from './dto/application.response.dto'
+import {
+  ApplicationListAdminResponseDto,
+  ApplicationResponseDto,
+} from './dto/application.response.dto'
 import { PresignedUrlResponseDto } from './dto/presignedUrl.response.dto'
 import { RequestFileSignatureResponseDto } from './dto/requestFileSignature.response.dto'
 import { UploadSignedFileResponseDto } from './dto/uploadSignedFile.response.dto'
@@ -100,7 +103,6 @@ import { ApplicationChargeService } from './charge/application-charge.service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { logger as islandis_logger } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BypassDelegation } from './guards/bypass-delegation.decorator'
 
@@ -191,6 +193,7 @@ export class ApplicationController {
     @Query('status') status?: string,
   ): Promise<ApplicationResponseDto[]> {
     if (nationalId !== user.nationalId) {
+      this.logger.debug('User is not authorized to get applications')
       throw new UnauthorizedException()
     }
 
@@ -243,7 +246,7 @@ export class ApplicationController {
       templates[application.typeId] = applicationTemplate
 
       if (
-        await this.validationService.isTemplateReady(user, applicationTemplate)
+        await this.validationService.isTemplateReady(applicationTemplate, user)
       ) {
         templateTypeToIsReady[application.typeId] = true
         if (
@@ -257,6 +260,122 @@ export class ApplicationController {
         }
       } else {
         templateTypeToIsReady[application.typeId] = false
+      }
+    }
+    return filteredApplications
+  }
+
+  @Scopes(AdminPortalScope.applicationSystem)
+  @BypassDelegation()
+  @Get('admin/:nationalId/applications')
+  @UseInterceptors(ApplicationSerializer)
+  @Audit<ApplicationListAdminResponseDto[]>({
+    resources: (apps) => apps.map((app) => app.id),
+  })
+  @Documentation({
+    description: 'Get applications for a specific user',
+    response: {
+      status: 200,
+      type: [ApplicationListAdminResponseDto],
+    },
+    request: {
+      params: {
+        nationalId: {
+          type: 'string',
+          required: true,
+          description: `To get the applications for a specific user's national id.`,
+        },
+      },
+      query: {
+        typeId: {
+          type: 'string',
+          required: false,
+          description:
+            'To filter applications by type. Comma-separated for multiple values.',
+        },
+        status: {
+          type: 'string',
+          required: false,
+          description:
+            'To filter applications by status. Comma-separated for multiple values.',
+        },
+      },
+    },
+  })
+  async findAllAdmin(
+    @Param('nationalId') nationalId: string,
+    @Query('typeId') typeId?: string,
+    @Query('status') status?: string,
+  ) {
+    this.logger.debug(`Getting applications with status ${status}`)
+
+    const applications = await this.applicationService.findAllByNationalIdAndFilters(
+      nationalId,
+      typeId,
+      status,
+      nationalId,
+    )
+
+    console.log(applications)
+
+    // keep all templates that have been fetched in order to avoid fetching them again
+    const templates: Partial<
+      Record<
+        ApplicationTypes,
+        ApplicationTemplate<
+          ApplicationContext,
+          ApplicationStateSchema<EventObject>,
+          EventObject
+        >
+      >
+    > = {}
+    const templateTypeToIsReady: Partial<Record<ApplicationTypes, boolean>> = {}
+    const filteredApplications: Omit<
+      Application,
+      'answers' | 'externalData'
+    >[] = []
+    for (const application of applications) {
+      // We've already checked an application with this type and it is ready
+      if (
+        templateTypeToIsReady[application.typeId] &&
+        templates[application.typeId] !== undefined
+      ) {
+        // getting payment status for the applciation if it is a payment application
+        const payment = await this.paymentService.findPaymentByApplicationId(
+          application.id,
+        )
+        console.log(`the payment fulfillment? ${payment?.fulfilled}`)
+
+        filteredApplications.push(application)
+        continue
+      } else if (templateTypeToIsReady[application.typeId] === false) {
+        // We've already checked an application with this type
+        // and it is NOT ready so we will skip it
+        continue
+      }
+
+      try {
+        const applicationTemplate = await getApplicationTemplateByTypeId(
+          application.typeId,
+        )
+        templates[application.typeId] = applicationTemplate
+        const payment = await this.paymentService.findPaymentByApplicationId(
+          application.id,
+        )
+        console.log(`the payment fulfillment? ${payment?.fulfilled}`)
+
+        filteredApplications.push(application)
+        // Add template to avoid fetching it again for the same types
+        if (await this.validationService.isTemplateReady(applicationTemplate)) {
+          templateTypeToIsReady[application.typeId] = true
+
+          filteredApplications.push(application)
+          // }
+        } else {
+          templateTypeToIsReady[application.typeId] = false
+        }
+      } catch (e) {
+        // If template is not found, we will skip it
       }
     }
     return filteredApplications
@@ -440,7 +559,7 @@ export class ApplicationController {
       )
     }
 
-    await this.validationService.validateThatTemplateIsReady(user, template)
+    await this.validationService.validateThatTemplateIsReady(template, user)
 
     const assignees = [user.nationalId]
 

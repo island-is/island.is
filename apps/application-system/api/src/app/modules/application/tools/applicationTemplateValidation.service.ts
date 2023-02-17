@@ -25,7 +25,7 @@ import type { FormatMessage } from '@island.is/cms-translations'
 
 const isRunningOnProductionEnvironment = () => {
   return (
-    environment.production === true &&
+    environment.production &&
     environment.name !== 'local' &&
     environment.name !== 'dev' &&
     environment.name !== 'staging'
@@ -54,10 +54,10 @@ export class ApplicationValidationService {
       )
     }
 
-    await this.validateThatTemplateIsReady(user, applicationTemplate)
+    await this.validateThatTemplateIsReady(applicationTemplate, user)
   }
 
-  async isTemplateFeatureFlaggedReady(featureFlag: Features, user: User) {
+  async isTemplateFeatureFlaggedReady(featureFlag: Features, user?: User) {
     return await this.featureFlagService.getValue(featureFlag, false, user)
   }
 
@@ -65,11 +65,11 @@ export class ApplicationValidationService {
   // If configcat flag is not present, use the readyForProduction flag
   // TODO: Remove the readyForProduction flag and assume that applications that have no featureFlag are ready for production
   async isTemplateReady(
-    user: User,
     template: Pick<
       Unwrap<typeof getApplicationTemplateByTypeId>,
       'readyForProduction' | 'featureFlag'
     >,
+    user?: User,
   ): Promise<boolean> {
     if (template.featureFlag) {
       return await this.isTemplateFeatureFlaggedReady(
@@ -87,10 +87,10 @@ export class ApplicationValidationService {
   }
 
   async validateThatTemplateIsReady(
-    user: User,
     template: Unwrap<typeof getApplicationTemplateByTypeId>,
+    user?: User,
   ): Promise<void> {
-    const results = await this.isTemplateReady(user, template)
+    const results = await this.isTemplateReady(template, user)
     if (!results) {
       throw new BadRequestException(
         `Template ${template.type} is not ready for production`,
@@ -114,7 +114,7 @@ export class ApplicationValidationService {
       )
     }
 
-    await this.validateThatTemplateIsReady(user, applicationTemplate)
+    await this.validateThatTemplateIsReady(applicationTemplate, user)
 
     const schemaFormValidationError = validateAnswers({
       dataSchema: applicationTemplate.dataSchema,
