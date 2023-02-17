@@ -35,8 +35,8 @@ export const LinkFormField: FC<{
     <Box marginY={2}>
       <Button
         colorScheme="default"
-        icon={field.icon ?? 'download'}
-        iconType="outline"
+        icon={field.iconProps?.icon ?? 'download'}
+        iconType={field.iconProps?.type ?? 'outline'}
         onClick={getUrl()}
         preTextIconType="filled"
         size="small"
