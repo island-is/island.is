@@ -33,7 +33,7 @@ import {
   NO_UNION,
   TransferRightsOption,
   SINGLE,
-  FileType
+  FileType,
 } from '../constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'

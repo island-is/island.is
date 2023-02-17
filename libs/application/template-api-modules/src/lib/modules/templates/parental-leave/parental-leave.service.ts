@@ -1342,12 +1342,13 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     const attachments = await this.getAttachments(application)
 
     try {
-      const actionNameFromParams = (
+      const actionNameFromParams =
         typeof params === 'string' &&
         (params === 'period' ||
-        params === 'document' ||
-        params === 'documentPeriod')
-        ) ? params as FileType : undefined
+          params === 'document' ||
+          params === 'documentPeriod')
+          ? (params as FileType)
+          : undefined
 
       const periods = await this.createPeriodsDTO(
         application,
@@ -1440,12 +1441,13 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
     const attachments = await this.getAttachments(application)
     try {
-      const actionNameFromParams = (
+      const actionNameFromParams =
         typeof params === 'string' &&
         (params === 'period' ||
-        params === 'document' ||
-        params === 'documentPeriod')
-        ) ? params as FileType : undefined
+          params === 'document' ||
+          params === 'documentPeriod')
+          ? (params as FileType)
+          : undefined
       const periods = await this.createPeriodsDTO(
         application,
         nationalRegistryId,
