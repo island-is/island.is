@@ -22,7 +22,7 @@ import {
   exists,
 } from '../util/mortgageCertificateValidation'
 import {
-  NationalRegistryUserApi,
+  IdentityApi,
   NationalRegistryRealEstateApi,
   UserProfileApi,
   SyslumadurPaymentCatalogApi,
@@ -48,6 +48,7 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.MORTGAGE_CERTIFICATE,
   name: m.name,
   institution: m.institutionName,
+  readyForProduction: true,
   translationNamespaces: [
     ApplicationConfigurations.MortgageCertificate.translation,
   ],
@@ -92,7 +93,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               api: [
-                NationalRegistryUserApi,
+                IdentityApi,
                 NationalRegistryRealEstateApi,
                 UserProfileApi,
                 SyslumadurPaymentCatalogApi,

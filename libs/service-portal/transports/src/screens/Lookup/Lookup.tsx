@@ -17,7 +17,6 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   IntroHeader,
   m,
-  ServicePortalModuleComponent,
   TableGrid,
   formatDate,
   ErrorScreen,
@@ -62,7 +61,7 @@ export const GET_VEHICLES_SEARCH = gql`
   }
 `
 
-export const Lookup: ServicePortalModuleComponent = () => {
+const Lookup = () => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
   const [termsAccepted, setTermsAccepted] = useState(false)

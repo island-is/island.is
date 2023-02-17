@@ -40,6 +40,7 @@ export enum ApplicationTypes {
   ORDER_VEHICLE_LICENSE_PLATE = 'OrderVehicleLicensePlate',
   ORDER_VEHICLE_REGISTRATION_CERTIFICATE = 'OrderVehicleRegistrationCertificate',
   TRANSFER_OF_VEHICLE_OWNERSHIP = 'TransferOfVehicleOwnership',
+  DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR = 'DrivingLicenseBookUpdateInstructor',
 }
 
 export const ApplicationConfigurations = {
@@ -176,11 +177,11 @@ export const ApplicationConfigurations = {
     translation: 'ta.avr.application',
   },
   [ApplicationTypes.CHANGE_CO_OWNER_OF_VEHICLE]: {
-    slug: 'breyta-medeigandi-okutaekis',
+    slug: 'medeigandi-okutaekis',
     translation: 'ta.ccov.application',
   },
   [ApplicationTypes.CHANGE_OPERATOR_OF_VEHICLE]: {
-    slug: 'breyta-umradamadur-okutaekis',
+    slug: 'umradamadur-okutaekis',
     translation: 'ta.cov.application',
   },
   [ApplicationTypes.DIGITAL_TACHOGRAPH_COMPANY_CARD]: {
@@ -206,5 +207,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP]: {
     slug: 'eigendaskipti-okutaekis',
     translation: 'ta.tvo.application',
+  },
+  [ApplicationTypes.DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR]: {
+    slug: 'okunam-okukennari',
+    translation: 'dlbui.application',
   },
 }

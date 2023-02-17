@@ -922,4 +922,9 @@ export const m = defineMessages({
     id: 'service.portal:zoom-out',
     defaultMessage: 'Þysja út',
   },
+  airDiscount: {
+    id: 'service.portal:air-discount',
+    defaultMessage: 'Loftbrú',
+    description: 'Airfare discount',
+  },
 })

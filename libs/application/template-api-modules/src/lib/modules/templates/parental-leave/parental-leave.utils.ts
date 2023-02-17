@@ -5,10 +5,10 @@ import get from 'lodash/get'
 import {
   ParentalLeave,
   Period,
-  Employer,
   Union,
   PensionFund,
   Attachment,
+  Employer,
 } from '@island.is/clients/vmst'
 import { Application } from '@island.is/application/types'
 import {
@@ -25,10 +25,17 @@ import {
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   NO,
+  formatBankInfo,
 } from '@island.is/application/templates/parental-leave'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { apiConstants } from './constants'
+
+// Check whether phoneNumber is GSM
+export const checkIfPhoneNumberIsGSM = (phoneNumber: string): boolean => {
+  const phoneNumberStartStr = ['6', '7', '8']
+  return phoneNumberStartStr.some((substr) => phoneNumber.startsWith(substr))
+}
 
 export const getPersonalAllowance = (
   application: Application,
@@ -74,19 +81,27 @@ export const getPersonalAllowance = (
 export const getEmployer = (
   application: Application,
   isSelfEmployed = false,
-): Employer => {
+): Employer[] => {
   const {
     applicantEmail,
-    employerEmail,
+    employers,
     employerNationalRegistryId,
   } = getApplicationAnswers(application.answers)
 
-  return {
-    email: isSelfEmployed ? applicantEmail : employerEmail,
-    nationalRegistryId: isSelfEmployed
-      ? application.applicant
-      : employerNationalRegistryId,
+  if (isSelfEmployed) {
+    return [
+      {
+        email: applicantEmail,
+        nationalRegistryId: application.applicant,
+      },
+    ]
   }
+
+  return employers.map((e) => ({
+    email: e.email,
+    nationalRegistryId:
+      e.companyNationalRegistryId ?? employerNationalRegistryId ?? '',
+  }))
 }
 
 export const getPensionFund = (
@@ -182,7 +197,10 @@ export const getRightsCode = (application: Application): string => {
    */
   const rightCodePeriod = answers.periods[0]?.rightCodePeriod
   if (rightCodePeriod) {
-    return rightCodePeriod
+    const periodCodeStartCharacters = ['M', 'F']
+    if (periodCodeStartCharacters.some((c) => rightCodePeriod.startsWith(c))) {
+      return rightCodePeriod
+    }
   }
 
   const isSelfEmployed = answers.isSelfEmployed === YES
@@ -254,6 +272,7 @@ export const transformApplicationToParentalLeaveDTO = (
   periods: Period[],
   attachments?: Attachment[],
   onlyValidate?: boolean,
+  type?: 'period' | 'documentPeriod' | 'document' | undefined,
 ): ParentalLeave => {
   const selectedChild = getSelectedChild(
     application.answers,
@@ -265,12 +284,12 @@ export const transformApplicationToParentalLeaveDTO = (
   }
 
   const {
-    isSelfEmployed,
     union,
     bank,
     applicationType,
-    isRecivingUnemploymentBenefits,
     multipleBirths,
+    isSelfEmployed,
+    isReceivingUnemploymentBenefits,
   } = getApplicationAnswers(application.answers)
 
   const { applicationFundId } = getApplicationExternalData(
@@ -279,7 +298,7 @@ export const transformApplicationToParentalLeaveDTO = (
 
   const { email, phoneNumber } = getApplicantContactInfo(application)
   const selfEmployed = isSelfEmployed === YES
-  const recivingUnemploymentBenefits = isRecivingUnemploymentBenefits === YES
+  const receivingUnemploymentBenefits = isReceivingUnemploymentBenefits === YES
 
   const testData: string = onlyValidate!.toString()
 
@@ -295,7 +314,7 @@ export const transformApplicationToParentalLeaveDTO = (
     email,
     phoneNumber,
     paymentInfo: {
-      bankAccount: bank,
+      bankAccount: formatBankInfo(bank),
       personalAllowance: getPersonalAllowance(application),
       personalAllowanceFromSpouse: getPersonalAllowance(application, true),
       union: {
@@ -312,8 +331,8 @@ export const transformApplicationToParentalLeaveDTO = (
     },
     periods,
     employers:
-      applicationType === PARENTAL_LEAVE && !recivingUnemploymentBenefits
-        ? [getEmployer(application, selfEmployed)]
+      applicationType === PARENTAL_LEAVE && !receivingUnemploymentBenefits
+        ? getEmployer(application, selfEmployed)
         : [],
     status: 'In Progress',
     rightsCode: getRightsCode(application),
@@ -323,6 +342,7 @@ export const transformApplicationToParentalLeaveDTO = (
       multipleBirths && multipleBirths > 1
         ? multipleBirths.toString()
         : undefined,
+    type,
   }
 }
 

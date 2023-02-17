@@ -16,6 +16,7 @@ import { useListDocuments } from '@island.is/service-portal/graphql'
 import cn from 'classnames'
 import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
+import { PortalPageLoader } from '@island.is/portals/core'
 
 interface Props {
   position: number
@@ -34,6 +35,7 @@ export const Header = ({ position }: Props) => {
 
   return (
     <div className={styles.placeholder}>
+      <PortalPageLoader />
       {/*  Inline style to dynamicly change position of header because of alert banners */}
       <header className={styles.header} style={{ top: position }}>
         <Box width="full" paddingX={[3, 3, 3, 6, 6]}>

@@ -197,7 +197,7 @@ export const m = defineMessages({
     description: '',
   },
   continueWithoutVehicles: {
-    id: 'ir.application:continueWithoutAssests',
+    id: 'ir.application:continueWithoutVehicles',
     defaultMessage:
       'Ef hinn látni átti ekki farartæki vinsamlegast haltu áfram í ferlinu.',
     description: '',
@@ -209,7 +209,7 @@ export const m = defineMessages({
     description: '',
   },
   continueWithoutBankAccounts: {
-    id: 'ir.application:continueWithoutInnventory',
+    id: 'ir.application:continueWithoutBankAccounts',
     defaultMessage:
       'Ef hinn látni átti ekki innstæður í bönkum vinsamlegast haltu áfram í ferlinu.',
     description: '',
@@ -881,6 +881,11 @@ export const m = defineMessages({
     defaultMessage: 'Erfingi',
     description: '',
   },
+  heirs: {
+    id: 'ir.application:heirs',
+    defaultMessage: 'Erfingjar',
+    description: '',
+  },
   heirAdditionalInfo: {
     id: 'ir.application:heirAdditionalInfo',
     defaultMessage: 'Athugasemdir erfingja',
@@ -917,6 +922,16 @@ export const m = defineMessages({
     defaultMessage: 'Samtals alls',
     description: '',
   },
+  overviewTotalInheritance: {
+    id: 'ir.application:overviewTotalInheritance',
+    defaultMessage: 'Samtals erfðafjárskattur',
+    description: '',
+  },
+  overviewPrint: {
+    id: 'ir.application:overviewPrint',
+    defaultMessage: 'Prenta yfirlit',
+    description: '',
+  },
 
   // Done
   submitReport: {
@@ -933,6 +948,13 @@ export const m = defineMessages({
     id: 'ir.application:doneDescription',
     defaultMessage:
       'Sýslumaður hefur móttekið erfðafjárskýrslu. Hún verður nú yfirfarin. Ef sýslumaður staðfestir skýrsluna að þá fá erfingjar/umboðsmaður senda tilkynningu um álagningu erfðafjárskatts í pósthólf á Íslands.is. Ef sýslumaður hefur athugasemdir við innsenda skýrslu mun sýslumaður senda bréf í pósthólf erfingja inn á Ísland.is',
+    description: '',
+  },
+
+  // Tax Free Limit
+  taxFreeLimit: {
+    id: 'ir.application:taxFreeLimit',
+    defaultMessage: '5757759',
     description: '',
   },
 })

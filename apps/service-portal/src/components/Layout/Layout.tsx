@@ -38,7 +38,7 @@ import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { theme } from '@island.is/island-ui/theme'
 
-const Layout: FC = ({ children }) => {
+export const Layout: FC = ({ children }) => {
   useNamespaces(['service.portal', 'global'])
   const { formatMessage } = useLocale()
   const { pathname } = useLocation()
@@ -230,4 +230,3 @@ const Layout: FC = ({ children }) => {
     </>
   )
 }
-export default Layout

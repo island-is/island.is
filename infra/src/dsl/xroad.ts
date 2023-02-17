@@ -445,9 +445,9 @@ export const TransportAuthority = new XroadConf({
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Infolocks-V1',
     },
     XROAD_VEHICLE_OPERATORS_PATH: {
-      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V2',
-      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V2',
-      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Operators-V2',
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V3',
+      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V3',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Operators-V3',
     },
     XROAD_VEHICLE_OWNER_CHANGE_PATH: {
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Ownerchange-V2',

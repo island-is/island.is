@@ -1,7 +1,10 @@
 import React, { FC } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { FieldBaseProps } from '@island.is/application/types'
+import {
+  ApplicationConfigurations,
+  FieldBaseProps,
+} from '@island.is/application/types'
 import { Box, Bullet, BulletList, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
@@ -20,7 +23,7 @@ const ConclusionSectionImage: FC<FieldBaseProps> = ({ application }) => {
   const {
     isSelfEmployed,
     applicationType,
-    isRecivingUnemploymentBenefits,
+    isReceivingUnemploymentBenefits,
   } = useApplicationAnswers(application)
   const navigate = useNavigate()
   const steps = [formatMessage(parentalLeaveFormMessages.finalScreen.step3)]
@@ -29,7 +32,7 @@ const ConclusionSectionImage: FC<FieldBaseProps> = ({ application }) => {
   const oldApplication = applicationType === undefined
   const isBeneficiaries = !oldApplication
     ? applicationType === PARENTAL_LEAVE
-      ? isRecivingUnemploymentBenefits === YES
+      ? isReceivingUnemploymentBenefits === YES
       : false
     : false
 
@@ -48,6 +51,10 @@ const ConclusionSectionImage: FC<FieldBaseProps> = ({ application }) => {
   }
 
   const handleRefresh = () => {
+    navigate(`/${ApplicationConfigurations.ParentalLeave.slug}`)
+    navigate(
+      `/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`,
+    )
     navigate(0)
   }
 

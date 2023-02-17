@@ -175,14 +175,14 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           },
         ],
       },
-
+      // Menntun
       {
-        name: m.documentProvider,
-        path: ServicePortalPath.DocumentProviderRoot,
+        name: m.education,
+        path: ServicePortalPath.EducationRoot,
         icon: {
-          icon: 'receipt',
+          icon: 'school',
         },
-        serviceProvider: '6JoPZKqmUVnRAVrj0vadTy',
+        description: m.educationDescription,
       },
 
       // Fasteignir
@@ -295,11 +295,17 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         ],
       },
 
-      // // Heilsa
-      // {
-      //   name: 'Heilsa',
-      //   path: ServicePortalPath.HealthRoot,
-      // },
+      // Loftbrú
+      {
+        name: m.airDiscount,
+        path: ServicePortalPath.AirDiscountRoot,
+
+        icon: {
+          icon: 'globe',
+          type: 'outline',
+        },
+      },
+
       // Stillingar - hidden from nav
       {
         name: m.settings,

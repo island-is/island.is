@@ -1,15 +1,11 @@
-import {
-  Gender,
-  CaseState,
-  CaseType,
-  CaseOrigin,
-} from '@island.is/judicial-system/types'
+import { Gender, CaseState, CaseOrigin } from '@island.is/judicial-system/types'
 import { CurrentUserQuery } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   InstitutionType,
   User,
   UserRole,
+  CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export const mockCourt = {

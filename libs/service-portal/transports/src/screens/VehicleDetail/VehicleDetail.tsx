@@ -24,7 +24,6 @@ import {
   ErrorScreen,
   formSubmit,
   NotFound,
-  ServicePortalModuleComponent,
   TableGrid,
   UserInfoLine,
   m,
@@ -166,7 +165,7 @@ type UseParams = {
   id: string
 }
 
-const VehicleDetail: ServicePortalModuleComponent = () => {
+const VehicleDetail = () => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
   const { id } = useParams() as UseParams

@@ -6,7 +6,7 @@ import {
   Get,
   Param,
   Post,
-  Put,
+  Patch,
   ForbiddenException,
   Query,
   Res,
@@ -138,7 +138,7 @@ export class CaseController {
     assistantUpdateRule,
     staffUpdateRule,
   )
-  @Put('case/:caseId')
+  @Patch('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
     @Param('caseId') caseId: string,
@@ -184,7 +184,7 @@ export class CaseController {
     return this.caseService.update(theCase, caseToUpdate, user) as Promise<Case> // Never returns undefined
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(JwtAuthGuard, CaseExistsGuard, RolesGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorTransitionRule,
     representativeTransitionRule,
@@ -192,7 +192,7 @@ export class CaseController {
     registrarTransitionRule,
     assistantTransitionRule,
   )
-  @Put('case/:caseId/state')
+  @Patch('case/:caseId/state')
   @ApiOkResponse({
     type: Case,
     description: 'Transitions an existing case to a new state',
@@ -435,6 +435,40 @@ export class CaseController {
     }
 
     const pdf = await this.caseService.getCustodyPdf(theCase)
+
+    res.end(pdf)
+  }
+
+  @UseGuards(
+    JwtAuthGuard,
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard([...indictmentCases]),
+    CaseReadGuard,
+  )
+  @RolesRules(
+    prosecutorRule,
+    representativeRule,
+    judgeRule,
+    registrarRule,
+    assistantRule,
+  )
+  @Get('case/:caseId/indictment')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description: 'Gets the indictment for an existing case as a pdf document',
+  })
+  async getIndictmentPdf(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Res() res: Response,
+  ): Promise<void> {
+    this.logger.debug(
+      `Getting the indictment for case ${caseId} as a pdf document`,
+    )
+
+    const pdf = await this.caseService.getIndictmentPdf(theCase)
 
     res.end(pdf)
   }

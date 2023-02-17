@@ -354,6 +354,7 @@ export const Form = ({ form, namespace }: FormProps) => {
   const formatBody = (data) => {
     return `Sendandi: ${data['name']} <${data['email']}>\n\n`.concat(
       form.fields
+        .filter((field) => field.type !== FormFieldType.INFORMATION)
         .map((field) => {
           const value = data[slugify(field.title)]
           if (field.type === FormFieldType.ACCEPT_TERMS) {

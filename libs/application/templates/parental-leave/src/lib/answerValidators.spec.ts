@@ -277,6 +277,62 @@ describe('answerValidators', () => {
         answerValidators['giveRights'](newAnswer, newApplication),
       ).toStrictEqual(undefined)
     })
+
+    it('should return error if other parent MANUAL, not otherParentRightOfAccess and giving days', () => {
+      const newAnswer = {
+        isGivingRights: YES,
+        giveDays: 14,
+      }
+
+      const appAnswers = {
+        ...application.answers,
+        otherParentRightOfAccess: NO,
+        otherParentObj: {
+          chooseOtherParent: MANUAL,
+          otherParentName: 'Spouse Spousson',
+          otherParentId: '',
+        },
+      }
+
+      const newApplication = {
+        ...application,
+        answers: appAnswers,
+      }
+
+      expect(
+        answerValidators['giveRights'](newAnswer, newApplication),
+      ).toStrictEqual({
+        message: errorMessages.notAllowedToGiveRightsOtherParentNotAllowed,
+        path: 'transferRights',
+        values: undefined,
+      })
+    })
+
+    it('should return not error if other parent MANUAL, otherParentRightOfAccess and giving days', () => {
+      const newAnswer = {
+        isGivingRights: YES,
+        giveDays: 14,
+      }
+
+      const appAnswers = {
+        ...application.answers,
+        otherParentRightOfAccess: YES,
+        otherParentObj: {
+          chooseOtherParent: MANUAL,
+          otherParentName: 'Spouse Spousson',
+          otherParentId: '',
+        },
+      }
+
+      const newApplication = {
+        ...application,
+        answers: appAnswers,
+      }
+
+      expect(
+        answerValidators['giveRights'](newAnswer, newApplication),
+      ).toStrictEqual(undefined)
+    })
   })
 
   describe('union', () => {

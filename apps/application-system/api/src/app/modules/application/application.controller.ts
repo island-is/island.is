@@ -499,6 +499,7 @@ export class ApplicationController {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
       user,
+      { shouldThrowIfPruned: true },
     )
     const namespaces = await getApplicationTranslationNamespaces(
       existingApplication as BaseApplication,
@@ -532,6 +533,8 @@ export class ApplicationController {
       {
         answers: mergedAnswers,
         applicantActors: applicantActors,
+        draftFinishedSteps: application.draftProgress?.stepsFinished ?? 0,
+        draftTotalSteps: application.draftProgress?.totalSteps ?? 0,
       },
     )
 
@@ -654,6 +657,7 @@ export class ApplicationController {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
       user,
+      { shouldThrowIfPruned: true },
     )
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
@@ -722,9 +726,6 @@ export class ApplicationController {
     })
 
     if (hasError && error) {
-      this.logger.error(
-        `Application submission ended with an error: ${JSON.stringify(error)}`,
-      )
       throw new TemplateApiError(error, 500)
     }
     this.logger.info(`Application submission ended successfully`)

@@ -28,6 +28,10 @@ import {
   Field,
   CompanySearchField,
   RedirectToServicePortalField,
+  MessageWithLinkButtonField,
+  ExpandableDescriptionField,
+  AlertMessageField,
+  LinkField,
 } from '@island.is/application/types'
 import { SpanType } from '@island.is/island-ui/core/types'
 
@@ -410,5 +414,65 @@ export function buildRedirectToServicePortalField(data: {
     title,
     type: FieldTypes.REDIRECT_TO_SERVICE_PORTAL,
     component: FieldComponents.REDIRECT_TO_SERVICE_PORTAL,
+  }
+}
+
+export function buildMessageWithLinkButtonField(
+  data: Omit<MessageWithLinkButtonField, 'type' | 'component' | 'children'>,
+): MessageWithLinkButtonField {
+  const { id, title, url, message, buttonTitle } = data
+  return {
+    children: undefined,
+    id,
+    title,
+    url,
+    message,
+    buttonTitle,
+    type: FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD,
+    component: FieldComponents.MESSAGE_WITH_LINK_BUTTON_FIELD,
+  }
+}
+
+export function buildExpandableDescriptionField(
+  data: Omit<ExpandableDescriptionField, 'type' | 'component' | 'children'>,
+): ExpandableDescriptionField {
+  const { id, title, description, introText, startExpanded } = data
+  return {
+    children: undefined,
+    id,
+    title,
+    description,
+    introText,
+    startExpanded,
+    type: FieldTypes.EXPANDABLE_DESCRIPTION,
+    component: FieldComponents.EXPANDABLE_DESCRIPTION,
+  }
+}
+export function buildAlertMessageField(
+  data: Omit<AlertMessageField, 'type' | 'component' | 'children'>,
+): AlertMessageField {
+  const { id, title, message, alertType } = data
+  return {
+    children: undefined,
+    id,
+    title,
+    message,
+    alertType,
+    type: FieldTypes.ALERT_MESSAGE,
+    component: FieldComponents.ALERT_MESSAGE,
+  }
+}
+
+export function buildLinkField(
+  data: Omit<LinkField, 'type' | 'component' | 'children'>,
+): LinkField {
+  const { s3key, link } = data
+  return {
+    ...extractCommonFields(data),
+    s3key,
+    link,
+    children: undefined,
+    type: FieldTypes.LINK,
+    component: FieldComponents.LINK,
   }
 }

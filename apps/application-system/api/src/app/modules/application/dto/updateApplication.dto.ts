@@ -6,4 +6,12 @@ export class UpdateApplicationDto {
   @IsObject()
   @ApiPropertyOptional()
   readonly answers?: object
+
+  @IsOptional()
+  @IsObject()
+  @ApiPropertyOptional()
+  readonly draftProgress?: {
+    stepsFinished: number
+    totalSteps: number
+  }
 }

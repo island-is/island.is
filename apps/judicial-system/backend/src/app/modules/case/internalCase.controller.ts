@@ -81,7 +81,11 @@ export class InternalCaseController {
     return this.internalCaseService.deliverProsecutorToCourt(theCase, user)
   }
 
-  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    UserExistsGuard,
+  )
   @Post('case/:caseId/deliverCaseFilesRecordToCourt/:policeCaseNumber')
   @ApiOkResponse({
     type: DeliverResponse,
@@ -114,6 +118,7 @@ export class InternalCaseController {
   @UseGuards(
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    UserExistsGuard,
   )
   @Post('case/:caseId/deliverRequestToCourt')
   @ApiOkResponse({
@@ -135,6 +140,7 @@ export class InternalCaseController {
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseCompletedGuard,
+    UserExistsGuard,
   )
   @Post('case/:caseId/deliverCourtRecordToCourt')
   @ApiOkResponse({
@@ -156,6 +162,7 @@ export class InternalCaseController {
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseCompletedGuard,
+    UserExistsGuard,
   )
   @Post('case/:caseId/deliverSignedRulingToCourt')
   @ApiOkResponse({
@@ -177,6 +184,7 @@ export class InternalCaseController {
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseCompletedGuard,
+    UserExistsGuard,
   )
   @Post('case/:caseId/deliverCaseToPolice')
   @ApiOkResponse({

@@ -362,4 +362,46 @@ export class DrivingLicenseBookClientApiFactory {
       return { success: false }
     }
   }
+
+  async updateActiveStudentBookInstructor(
+    user: User,
+    newTeacherSsn: string,
+  ): Promise<{ success: boolean }> {
+    const api = await this.create()
+
+    const { data } = await api.apiStudentGetStudentOverviewSsnGet({
+      ssn: user.nationalId,
+      showInactiveBooks: false,
+    })
+
+    const activeBook = data?.books?.reduce((a, b) =>
+      new Date(a.createdOn ?? '') > new Date(b.createdOn ?? '') ? a : b,
+    )
+
+    if (!activeBook?.id || !activeBook?.createdOn) {
+      throw new NotFoundException(
+        `Active book for national id ${user.nationalId} not found`,
+      )
+    }
+
+    const hasPracticeDriving = await this.hasPracticeDriving(activeBook.id)
+
+    try {
+      await api.apiStudentUpdateLicenseBookIdPut({
+        id: activeBook.id,
+        digitalBookUpdateRequestBody: {
+          createdOn: activeBook.createdOn,
+          teacherSsn: newTeacherSsn,
+          schoolSsn: activeBook.schoolSsn,
+          studentEmail: data?.email,
+          studentPrimaryPhoneNumber: data?.primaryPhoneNumber,
+          studentSecondaryPhoneNumber: data?.secondaryPhoneNumber,
+          practiceDriving: hasPracticeDriving,
+        },
+      })
+      return { success: true }
+    } catch (e) {
+      return { success: false }
+    }
+  }
 }

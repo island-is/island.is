@@ -19,7 +19,7 @@ import { Features } from '@island.is/feature-flags'
 import { ApiActions, OperatorInformation, UserInformation } from '../shared'
 import { ChangeOperatorOfVehicleSchema } from './dataSchema'
 import {
-  NationalRegistryUserApi,
+  IdentityApi,
   UserProfileApi,
   SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
@@ -85,6 +85,9 @@ const template: ApplicationTemplate<
           },
           progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
+          onExit: defineTemplateApi({
+            action: ApiActions.validateApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -104,7 +107,7 @@ const template: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi,
+                IdentityApi,
                 UserProfileApi,
                 SamgongustofaPaymentCatalogApi,
                 CurrentVehiclesApi,
@@ -177,9 +180,6 @@ const template: ApplicationTemplate<
               pruneInDaysAtMidnight(application, 7),
             shouldDeleteChargeIfPaymentFulfilled: true,
           },
-          /* onExit: defineTemplateApi({
-            action: ApiActions.validateApplication,
-          }), */
           roles: [
             {
               id: Roles.APPLICANT,

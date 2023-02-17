@@ -2,6 +2,35 @@ import { PortalNavigationItem } from '@island.is/portals/core'
 import { DelegationPaths } from './paths'
 import { m } from './messages'
 
+export const delegationsNavigationChildren: PortalNavigationItem[] = [
+  {
+    name: m.accessControlDelegations,
+    path: DelegationPaths.Delegations,
+    navHide: false,
+    serviceProvider: '1JHJe1NDwbBjEr7OVdjuFD',
+    children: [
+      {
+        name: m.accessControlGrant,
+        path: DelegationPaths.DelegationsGrant,
+        navHide: true,
+      },
+    ],
+  },
+  {
+    name: m.accessControlDelegationsIncoming,
+    path: DelegationPaths.DelegationsIncoming,
+    navHide: true,
+    serviceProvider: '1JHJe1NDwbBjEr7OVdjuFD',
+    breadcrumbHide: true,
+  },
+  {
+    name: m.accessControlAccess,
+    path: DelegationPaths.DelegationAccess,
+    navHide: true,
+    serviceProvider: '1JHJe1NDwbBjEr7OVdjuFD',
+  },
+]
+
 export const delegationsNavigation: PortalNavigationItem = {
   name: m.accessControl,
   path: DelegationPaths.Delegations,
@@ -9,33 +38,6 @@ export const delegationsNavigation: PortalNavigationItem = {
     icon: 'lockClosed',
   },
   description: m.accessControlDescription,
+  children: delegationsNavigationChildren,
   serviceProvider: '1JHJe1NDwbBjEr7OVdjuFD',
-
-  children: [
-    {
-      name: m.accessControlDelegationsOutgoingLong,
-      path: DelegationPaths.Delegations,
-      children: [
-        {
-          name: m.accessControlGrant,
-          path: DelegationPaths.DelegationsGrant,
-          navHide: true,
-        },
-      ],
-      serviceProvider: '1JHJe1NDwbBjEr7OVdjuFD',
-    },
-    {
-      name: m.accessControlDelegationsIncomingLong,
-      path: DelegationPaths.DelegationsIncoming,
-      breadcrumbHide: true,
-      serviceProvider: '1JHJe1NDwbBjEr7OVdjuFD',
-    },
-    {
-      name: m.accessControlAccess,
-      path: DelegationPaths.DelegationAccess,
-      navHide: true,
-      serviceProvider: '1JHJe1NDwbBjEr7OVdjuFD',
-    },
-  ],
-  isKeyitem: true,
 }
