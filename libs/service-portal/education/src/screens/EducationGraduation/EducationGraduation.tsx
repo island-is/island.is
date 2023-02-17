@@ -39,7 +39,7 @@ const GetStudentInfoQuery = gql`
   }
 `
 
-export const EducationGraduation: PortalModuleComponent = () => {
+export const EducationGraduation = () => {
   useNamespaces('sp.education-graduation')
   const { lang, formatMessage } = useLocale()
 

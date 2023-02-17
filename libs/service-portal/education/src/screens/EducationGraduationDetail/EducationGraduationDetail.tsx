@@ -62,7 +62,7 @@ type UseParams = {
   id: string
 }
 
-export const EducationGraduationDetail: PortalModuleComponent = () => {
+export const EducationGraduationDetail = () => {
   useNamespaces('sp.education-graduation')
   const { id } = useParams() as UseParams
   const { formatMessage, lang } = useLocale()
