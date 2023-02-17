@@ -12,7 +12,7 @@ import { Response } from 'express'
 import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
-  NemandiKtFerillFerillFileTranscriptGetLocaleEnum,
+  NemandiFerillFerillFileTranscriptGetLocaleEnum,
   UniversityOfIcelandService,
 } from '@island.is/clients/university-of-iceland'
 import {
@@ -55,7 +55,7 @@ export class EducationController {
     const documentResponse = await this.universityOfIcelandApi.studentCareerPDF(
       authUser,
       parseInt(trackNumber),
-      lang as NemandiKtFerillFerillFileTranscriptGetLocaleEnum,
+      lang as NemandiFerillFerillFileTranscriptGetLocaleEnum,
     )
 
     if (documentResponse) {
