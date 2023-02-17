@@ -2,14 +2,12 @@ import React from 'react'
 import {
   Icon,
   Table as T,
-  Checkbox,
-  Text,
   Box,
   ResponsiveSpace,
 } from '@island.is/island-ui/core'
 import * as styles from './SubscriptionTable.css'
-import tableRowBackgroundColor from '../../utils/helpers/tableRowBackgroundColor'
 import { mapIsToEn } from '../../utils/helpers'
+import SubscriptionTableItem from './SubscriptionTableItem'
 
 const Headers = {
   Mál: ['Málsnr.', 'Heiti máls'],
@@ -48,68 +46,37 @@ const SubscriptionTable = ({
     <Box paddingTop={paddingTop}>
       <T.Table>
         <T.Head>
-          <T.Row>
+          <T.HeadData
+            width="10"
+            key={headerKey++}
+            box={{ background: 'transparent', borderColor: 'transparent' }}
+          >
+            <Icon
+              icon="checkmark"
+              color="blue400"
+              className={styles.checkmarkIcon}
+            />
+          </T.HeadData>
+          {Headers[currentTab].map((header) => (
             <T.HeadData
-              box={{
-                background: 'transparent',
-                borderColor: 'transparent',
-                width: 'touchable',
-              }}
+              text={{ variant: 'h4' }}
+              box={{ background: 'transparent', borderColor: 'transparent' }}
               key={headerKey++}
             >
-              <Icon
-                icon="checkmark"
-                color="blue400"
-                className={styles.checkmarkIcon}
-              />
+              {header}
             </T.HeadData>
-            {Headers[currentTab].map((header) => (
-              <T.HeadData
-                text={{ variant: 'h4' }}
-                box={{ background: 'transparent', borderColor: 'transparent' }}
-                key={headerKey++}
-              >
-                {header}
-              </T.HeadData>
-            ))}
-          </T.Row>
+          ))}
         </T.Head>
         <T.Body>
           {data.map((item, idx) => (
-            <T.Row key={item.id}>
-              <T.Data
-                borderColor="transparent"
-                box={{
-                  className: styles.tableRowLeft,
-                  background: tableRowBackgroundColor(idx),
-                  width: 'touchable',
-                }}
-              >
-                <Checkbox
-                  checked={checkboxStatus(item.id)}
-                  onChange={(e) => onCheckboxChange(item.id, e.target.checked)}
-                />
-              </T.Data>
-              {currentTab === 'Mál' && (
-                <T.Data
-                  borderColor="transparent"
-                  box={{ background: tableRowBackgroundColor(idx) }}
-                >
-                  <Text variant="h5">{item.caseNumber}</Text>
-                </T.Data>
-              )}
-              <T.Data
-                borderColor="transparent"
-                box={{
-                  className: styles.tableRowRight,
-                  background: tableRowBackgroundColor(idx),
-                }}
-              >
-                <Text variant={currentTab === 'Mál' ? 'medium' : 'h5'}>
-                  {item.name}
-                </Text>
-              </T.Data>
-            </T.Row>
+            <SubscriptionTableItem
+              key={item.id}
+              item={item}
+              idx={idx}
+              checkboxStatus={checkboxStatus}
+              onCheckboxChange={onCheckboxChange}
+              currentTab={currentTab}
+            />
           ))}
         </T.Body>
       </T.Table>

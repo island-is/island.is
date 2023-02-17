@@ -57,8 +57,8 @@ export const NotebookIllustration: FC = () => (
         y2="286.96"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#4C90FF" />
-        <stop offset="1" stop-color="#FF4C84" />
+        <stop stopColor="#4C90FF" />
+        <stop offset="1" stopColor="#FF4C84" />
       </linearGradient>
     </defs>
   </svg>
