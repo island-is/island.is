@@ -3,7 +3,11 @@ import request from 'supertest'
 import { AuthScope } from '@island.is/auth/scopes'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import { createCurrentUser } from '@island.is/testing/fixtures'
-import { getRequestMethod, TestApp } from '@island.is/testing/nest'
+import {
+  buildQueryString,
+  getRequestMethod,
+  TestApp,
+} from '@island.is/testing/nest'
 
 import {
   setupWithAuth,
@@ -122,14 +126,6 @@ const getTestCases: Record<string, TestCase> = {
 const user = createCurrentUser({
   scope: [AuthScope.delegations],
 })
-
-const buildQueryString = (params: Record<string, string | string[]>) =>
-  `?${Object.entries(params)
-    .map(
-      ([key, value]) =>
-        `${key}=${Array.isArray(value) ? value.join(',') : value}`,
-    )
-    .join('&')}`
 
 describe('ClientsController', () => {
   describe('with auth', () => {

@@ -1,4 +1,11 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Param,
+  ParseArrayPipe,
+  Query,
+  UseGuards,
+} from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
@@ -59,11 +66,36 @@ export class DomainsController {
 
   @Get()
   @Documentation({
-    description: 'Get all domains supporting delegations.',
+    description: `Get all domains. Provides query parameters to filter domains
+      delegation support and/or specific delegation direction.`,
     request: {
       query: {
         lang,
-        direction,
+        direction: {
+          ...direction,
+          description: `The direction of the delegations to apply on domain filtering.
+            Setting this param implicitly filters by delegation support.
+            Default returns all domains.`,
+        },
+        domainNames: {
+          description: 'A list of domain names to filter by.',
+          required: false,
+          schema: {
+            type: 'array',
+            items: {
+              type: 'string',
+              example: ['@island.is', '@admin.island.is'],
+            },
+          },
+        },
+        supportsDelegations: {
+          description: `A boolean to filter by delegation support.
+            If set to true, only domains with delegation support are returned.
+            If set to false or not set, all domains are returned.
+            This param is implicitly set to true when direction param is used.`,
+          required: false,
+          type: 'boolean',
+        },
       },
     },
     response: { status: 200, type: [DomainDTO] },
@@ -75,8 +107,19 @@ export class DomainsController {
     @CurrentUser() user: User,
     @Query('lang') language?: string,
     @Query('direction') direction?: DelegationDirection,
+    @Query(
+      'domainNames',
+      new ParseArrayPipe({ optional: true, separator: ',' }),
+    )
+    domainNames?: string[],
+    @Query('supportsDelegations') supportsDelegations?: boolean,
   ): Promise<DomainDTO[]> {
-    return this.resourceService.findAllDomains(user, language, direction)
+    return this.resourceService.findAllDomains(user, {
+      language,
+      direction,
+      domainNames,
+      supportsDelegations,
+    })
   }
 
   @Get(':domainName')
