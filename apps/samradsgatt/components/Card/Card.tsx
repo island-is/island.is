@@ -75,7 +75,7 @@ export const Card = ({
         </Text>
       </Box>
       <Box
-        style={{ height: showAttachment ? '50px' : '90px', overflow: 'hidden' }}
+        style={{ height: showAttachment ? '25px' : '90px', overflow: 'hidden' }}
         paddingBottom={2}
       >
         <Text as="h4" fontWeight="semiBold">
@@ -98,11 +98,14 @@ export const Card = ({
       <Columns>
         {showAttachment && (
           <Column width="content">
-            <Box>{dropdown}</Box>
+            <Box marginBottom={10}>{dropdown}</Box>
           </Column>
         )}
         <Column width="content">
-          <Box marginLeft={showAttachment ? 20 : 0}>
+          <Box
+            marginLeft={showAttachment ? 20 : 0}
+            marginTop={showAttachment ? 1 : 0}
+          >
             <ArrowLink href={`/mal/${card.id}`}>Skoða mál</ArrowLink>
           </Box>
         </Column>

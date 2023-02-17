@@ -5,10 +5,10 @@ import get from 'lodash/get'
 import {
   ParentalLeave,
   Period,
-  Employer,
   Union,
   PensionFund,
   Attachment,
+  Employer,
 } from '@island.is/clients/vmst'
 import { Application } from '@island.is/application/types'
 import {
@@ -25,6 +25,7 @@ import {
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   NO,
+  formatBankInfo,
 } from '@island.is/application/templates/parental-leave'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
@@ -80,19 +81,27 @@ export const getPersonalAllowance = (
 export const getEmployer = (
   application: Application,
   isSelfEmployed = false,
-): Employer => {
+): Employer[] => {
   const {
     applicantEmail,
-    employerEmail,
+    employers,
     employerNationalRegistryId,
   } = getApplicationAnswers(application.answers)
 
-  return {
-    email: isSelfEmployed ? applicantEmail : employerEmail,
-    nationalRegistryId: isSelfEmployed
-      ? application.applicant
-      : employerNationalRegistryId,
+  if (isSelfEmployed) {
+    return [
+      {
+        email: applicantEmail,
+        nationalRegistryId: application.applicant,
+      },
+    ]
   }
+
+  return employers.map((e) => ({
+    email: e.email,
+    nationalRegistryId:
+      e.companyNationalRegistryId ?? employerNationalRegistryId ?? '',
+  }))
 }
 
 export const getPensionFund = (
@@ -275,12 +284,12 @@ export const transformApplicationToParentalLeaveDTO = (
   }
 
   const {
-    isSelfEmployed,
     union,
     bank,
     applicationType,
-    isRecivingUnemploymentBenefits,
     multipleBirths,
+    isSelfEmployed,
+    isReceivingUnemploymentBenefits,
   } = getApplicationAnswers(application.answers)
 
   const { applicationFundId } = getApplicationExternalData(
@@ -289,7 +298,7 @@ export const transformApplicationToParentalLeaveDTO = (
 
   const { email, phoneNumber } = getApplicantContactInfo(application)
   const selfEmployed = isSelfEmployed === YES
-  const recivingUnemploymentBenefits = isRecivingUnemploymentBenefits === YES
+  const receivingUnemploymentBenefits = isReceivingUnemploymentBenefits === YES
 
   const testData: string = onlyValidate!.toString()
 
@@ -305,7 +314,7 @@ export const transformApplicationToParentalLeaveDTO = (
     email,
     phoneNumber,
     paymentInfo: {
-      bankAccount: bank,
+      bankAccount: formatBankInfo(bank),
       personalAllowance: getPersonalAllowance(application),
       personalAllowanceFromSpouse: getPersonalAllowance(application, true),
       union: {
@@ -322,8 +331,8 @@ export const transformApplicationToParentalLeaveDTO = (
     },
     periods,
     employers:
-      applicationType === PARENTAL_LEAVE && !recivingUnemploymentBenefits
-        ? [getEmployer(application, selfEmployed)]
+      applicationType === PARENTAL_LEAVE && !receivingUnemploymentBenefits
+        ? getEmployer(application, selfEmployed)
         : [],
     status: 'In Progress',
     rightsCode: getRightsCode(application),
