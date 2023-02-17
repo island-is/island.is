@@ -10,7 +10,7 @@ export const done: Form = buildForm({
   mode: FormModes.COMPLETED,
   children: [
     buildCustomField({
-      id: 'thankYou',
+      id: 'done',
       title: m.finalTitle,
       component: 'ListSubmitted',
     }),

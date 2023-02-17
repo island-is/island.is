@@ -22,53 +22,13 @@ export const m = defineMessages({
     defaultMessage: 'Ég samþykki skilmála hér að ofan',
     description: '',
   },
-  collectEndorsementsTitle: {
-    id: 'gpl.application:collectEndorsementsTitle',
-    defaultMessage: 'Safna meðmælum',
-    description: '',
-  },
-  linkDescription: {
-    id: 'gpl.application:linkDescription',
-    defaultMessage: 'Hér er hlekkur til að senda út á meðmælendur',
-    description: '',
-  },
   copyLinkButton: {
     id: 'gpl.application:copyLinkButton',
     defaultMessage: 'Afrita hlekk',
     description: '',
   },
-  namesCount: {
-    id: 'gpl.application:namesCount',
-    defaultMessage: 'Meðmæli á lista',
-    description: '',
-  },
-  invalidEndorsements: {
-    id: 'gpl.application:endorsement.invalidEndorsements',
-    defaultMessage: 'Sjá einungis meðmæli í vafa',
-    description: '',
-  },
-  searchbar: {
-    id: 'gpl.application:searchbar',
-    defaultMessage: 'Leitaðu að nafni',
-    description: '',
-  },
-  emailTitle: {
-    id: 'gpl.application:emailTitle',
-    defaultMessage: 'Vinsamlegast sláðu inn rétt netfang',
-    description: '',
-  },
-  titleSidebar: {
-    id: 'gpl.application:email.titleSidebar',
-    defaultMessage: 'Netfang og staðfesting',
-    description: '',
-  },
-  subtitle: {
-    id: 'gpl.application:email.subtitle',
-    defaultMessage: '',
-    description: '',
-  },
 
-  //Endorsement List Information
+  //Petition List Information
   listInformationTitle: {
     id: 'gpl.application:listTitle',
     defaultMessage: 'Upplýsingar um lista',
@@ -115,44 +75,44 @@ export const m = defineMessages({
   overviewTitle: {
     id: 'gpl.application:overviewTitle',
     defaultMessage: 'Yfirlit',
-    description: 'Overview title',
+    description: '',
   },
   overviewSubtitle: {
     id: 'gpl.application:overviewSubtitle',
     defaultMessage:
       'Vinsamlegast farðu yfir upplýsingarnar hér að neðan og staðfestu að þær séu réttar. Eftir að listi er stofnaður er ekki hægt að breyta upplýsingum um lista.',
-    description: 'Overview subtitle',
+    description: '',
   },
   overviewApplicant: {
     id: 'gpl.application:overviewApplicant',
     defaultMessage: 'Ábyrgðarmaður',
-    description: 'Applicant',
+    description: '',
   },
   listPeriod: {
     id: 'gpl.application:listPeriod',
     defaultMessage: 'Tímabil lista',
-    description: 'List period',
+    description: '',
   },
   ageInterval: {
     id: 'gpl.application:ageInterval',
     defaultMessage: 'Aldursbil á lista',
-    description: 'Age interval of the list',
+    description: '',
   },
   submitButton: {
     id: 'gpl.application:submit',
     defaultMessage: 'Senda inn umsókn',
-    description: 'Overview submit button',
+    description: '',
   },
   finalTitle: {
     id: 'gpl.application:finalTitle',
     defaultMessage: 'Umsókn móttekin',
-    description: 'Title after submit',
+    description: '',
   },
   finalSubtitle: {
     id: 'gpl.application:finalSubtitle',
     defaultMessage:
       'Þú munt fá skilaboð í tölvupósti þegar umsókn er í vinnslu',
-    description: 'Subtitle after submit',
+    description: '',
   },
 
   //List submitted
@@ -224,23 +184,6 @@ export const m = defineMessages({
   validationTilBeforeFrom: {
     id: 'gpl.application:validationTilBeforeFrom',
     defaultMessage: 'Lokadagsetning má ekki vera á undan upphafsdagsetningu',
-    description: '',
-  },
-
-  // Endorsed
-  endorsementApprovedTitle: {
-    id: 'gpl.application:endorsementApprovedTitle',
-    defaultMessage: 'Staðfesting',
-    description: '',
-  },
-  cardTitle: {
-    id: 'gpl.application:cardTitle',
-    defaultMessage: 'Þú hefur sett nafn þitt á listann.',
-    description: '',
-  },
-  cardSubtitle: {
-    id: 'gpl.application:cardSubtitle',
-    defaultMessage: 'Yfirlit yfir öll meðmæli má finna á Mínum Síðum.',
     description: '',
   },
 })

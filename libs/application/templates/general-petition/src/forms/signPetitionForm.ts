@@ -14,7 +14,7 @@ export const signPetitionForm: Form = buildForm({
   mode: FormModes.DRAFT,
   children: [
     buildSection({
-      id: 'intro',
+      id: 'signPetitionForm',
       title: '',
       children: [
         buildCustomField({

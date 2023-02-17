@@ -50,7 +50,7 @@ export const form: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'information',
+      id: 'petitionInformation',
       title: m.listInformationTitle,
       children: [
         buildMultiField({
@@ -91,7 +91,7 @@ export const form: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'reviewApplication',
+      id: 'reviewPetition',
       title: m.overviewTitle,
       children: [
         buildMultiField({

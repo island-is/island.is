@@ -5,7 +5,7 @@ import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { useMutation, useQuery } from '@apollo/client'
-import EndorsementApproved from '../EndorsementApproved'
+import PetitionListCreated from '../PetitionListCreated'
 import { useHasEndorsed } from '../../hooks/useHasEndorsed'
 import { useGetSinglePetitionList } from '../../hooks/useGetSinglePetitionList'
 import { GetFullName } from '../../graphql/queries'
@@ -54,7 +54,7 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
   return (
     <Box>
       {endorsedBefore || hasEndorsed ? (
-        <EndorsementApproved />
+        <PetitionListCreated />
       ) : (
         <Box>
           {Object.entries(petition).length > 0 ? (

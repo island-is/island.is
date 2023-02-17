@@ -5,7 +5,7 @@ import { Approved } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
 import School from '../../assets/School'
 
-const EndorsementApproved = () => {
+const PetitionListCreated = () => {
   const { formatMessage } = useLocale()
 
   return (
@@ -30,4 +30,4 @@ const EndorsementApproved = () => {
   )
 }
 
-export default EndorsementApproved
+export default PetitionListCreated
