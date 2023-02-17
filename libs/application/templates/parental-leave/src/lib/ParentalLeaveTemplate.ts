@@ -657,8 +657,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: [
           'setParam',
           'setResidenceGrantPeriod',
-          'setHasAppliedForReidenceGrant',
           'setPreviousState',
+          'setHasAppliedForReidenceGrant',
         ],
         meta: {
           status: 'inprogress',
@@ -1030,7 +1030,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_APPROVE_EDITS]: {
-        entry: ['assignToVMST', 'removeNullPeriod'],
+        entry: [
+          'assignToVMST',
+          'removeNullPeriod',
+          'setHasAppliedForReidenceGrant',
+        ],
         exit: ['clearTemp', 'resetAdditionalDocumentsArray', 'clearAssignees'],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVE_EDITS,
@@ -1581,9 +1585,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       }),
       setHasAppliedForReidenceGrant: assign((context, event) => {
         const { application } = context
-        const { answers } = application
+        const { state, answers } = application
         const e = (event.type as unknown) as any
-        if (e === 'APPROVE') {
+        if (
+          state === States.RESIDENCE_GRAND_APPLICATION &&
+          e === DefaultEvents.APPROVE
+        ) {
           set(answers, 'hasAppliedForReidenceGrant', YES)
         }
 

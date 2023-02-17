@@ -198,8 +198,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       return dateOfBirth?.data?.dateOfBirth
     }
     /*
-    MOCK
-     return '2023-02-10'
+      MOCK
+      return {
+        dateOfBirth: '2023-02-10',
+      }
     */
     try {
       const applicationInformation = await this.applicationInformationAPI.applicationGetApplicationInformation(

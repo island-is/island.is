@@ -109,7 +109,6 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
       ? isReceivingUnemploymentBenefits === YES
       : false
     : false
-
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {

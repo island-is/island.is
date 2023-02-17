@@ -32,7 +32,7 @@ export const ResidenceGrant: Form = buildForm({
           id: 'residenceGrant.multiOne',
           description:
             parentalLeaveFormMessages.residenceGrantMessage
-              .residenceGrantClosedDescription,
+              .residenceGrantPeriodDescriptionLineOne,
           space: 2,
           children: [
             buildDescriptionField({
@@ -40,7 +40,7 @@ export const ResidenceGrant: Form = buildForm({
               title: '',
               description:
                 parentalLeaveFormMessages.residenceGrantMessage
-                  .residenceGrantSelectPeriodDescription,
+                  .residenceGrantPeriodDescriptionLineTwo,
             }),
             buildDateField({
               id: 'residenceGrant.dateFrom',
@@ -88,18 +88,18 @@ export const ResidenceGrant: Form = buildForm({
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
-                  event: 'APPROVE',
-                  name:
-                    parentalLeaveFormMessages.residenceGrantMessage
-                      .residenceGrantSubmit,
-                  type: 'primary',
-                },
-                {
                   event: 'REJECT',
                   name:
                     parentalLeaveFormMessages.residenceGrantMessage
                       .residenceGrantReject,
                   type: 'reject',
+                },
+                {
+                  event: 'APPROVE',
+                  name:
+                    parentalLeaveFormMessages.residenceGrantMessage
+                      .residenceGrantSubmit,
+                  type: 'primary',
                 },
               ],
             }),

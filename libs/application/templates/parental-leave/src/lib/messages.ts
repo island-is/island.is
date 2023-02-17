@@ -2002,6 +2002,20 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Verið er að vinna úr umsókn þinni',
       description: 'Your application is being processed',
     },
+    residenceGrantPeriodDescriptionLineOne: {
+      id: 'pl.application:residence.grant.period.description.line.one',
+      defaultMessage:
+        'Heimilt er að greiða dvalarkostnað barnshafandi foreldris fjarri heimili 14 dögum fyrir áætlaðan fæðingardag og fram að fæðingu',
+      description:
+        'It is permitted to pay the expenses of a pregnant parent´s stay away from home 14 days before the expected date of birth and until the birth',
+    },
+    residenceGrantPeriodDescriptionLineTwo: {
+      id: 'pl.application:residence.grant.period.description.line.two',
+      defaultMessage:
+        'Ef um fjölburameðgöngu er að ræða er heimilt að byrja að greiða dvalarkostnað 28 dögum fyrir áætlaðan fæðingardag og fram að fæðingu',
+      description:
+        'In the case of a multiple pregnancy, it is permitted to start paying accommodation expenses 28 days before the expected date of birth and until the birth',
+    },
     residenceGrantApplyTitle: {
       id: 'pl.application:residence.grant.apply.title',
       defaultMessage: 'Sækja um dvalarstyrk',

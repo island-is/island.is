@@ -2,11 +2,12 @@ import React, { FC } from 'react'
 import cn from 'classnames'
 import { useLocale } from '@island.is/localization'
 import { formatText, coreMessages } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
+import { Application, YES } from '@island.is/application/types'
 import { Box, Button, Icon, Tag, Text } from '@island.is/island-ui/core'
 import { parentalLeaveFormMessages } from '../../../lib/messages'
 
 import * as styles from './ReviewSection.css'
+import { getApplicationAnswers } from '../../../lib/parentalLeaveUtils'
 
 export enum ReviewSectionState {
   prerequisites = 'Prerequisites',
@@ -33,6 +34,9 @@ const ReviewSection: FC<ReviewSectionProps> = ({
   notifyParentOnClickEvent,
 }) => {
   const { formatMessage } = useLocale()
+  const { hasAppliedForReidenceGrant } = getApplicationAnswers(
+    application.answers,
+  )
 
   return (
     <Box
@@ -76,23 +80,25 @@ const ReviewSection: FC<ReviewSectionProps> = ({
           <Text marginTop={1} variant="default">
             {description}
           </Text>
-          {notifyParentOnClickEvent && title.toLowerCase() === 'dvalarstyrkur' && (
-            <Box display={'flex'} justifyContent={'flexEnd'} marginTop={1}>
-              <Box>
-                <Button
-                  variant="text"
-                  size="small"
-                  icon="arrowForward"
-                  onClick={() => notifyParentOnClickEvent()}
-                >
-                  {formatMessage(
-                    parentalLeaveFormMessages.residenceGrantMessage
-                      .residenceGrantApplyTitle,
-                  )}
-                </Button>
+          {notifyParentOnClickEvent &&
+            title.toLowerCase() === 'dvalarstyrkur' &&
+            hasAppliedForReidenceGrant !== YES && (
+              <Box display={'flex'} justifyContent={'flexEnd'} marginTop={1}>
+                <Box>
+                  <Button
+                    variant="text"
+                    size="small"
+                    icon="arrowForward"
+                    onClick={() => notifyParentOnClickEvent()}
+                  >
+                    {formatMessage(
+                      parentalLeaveFormMessages.residenceGrantMessage
+                        .residenceGrantApplyTitle,
+                    )}
+                  </Button>
+                </Box>
               </Box>
-            </Box>
-          )}
+            )}
         </Box>
 
         {state === ReviewSectionState.inProgress && (

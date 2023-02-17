@@ -917,7 +917,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const previousState = getValueViaPath(answers, 'previousState') as string
 
-  const residenceGrant = getValueViaPath(answers, 'previousState') as {
+  const residenceGrant = getValueViaPath(answers, 'residenceGrant') as {
     dateTo: string
     dateFrom: string
   }
