@@ -1,5 +1,8 @@
 import { Module } from '@nestjs/common'
-import { LicenseController } from './license.controller'
+import {
+  LicensesController,
+  UserLicensesController,
+} from './license.controller'
 import { LicenseService } from './license.service'
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
 import { DisabilityLicenseApiClientModule } from './clients/disabilityLicense/disabilityLicenseClient.module'
@@ -19,7 +22,7 @@ import { DisabilityLicenseApiClientConfig } from './clients/disabilityLicense/di
 
 @Module({
   imports: [DisabilityLicenseApiClientModule, FirearmLicenseApiClientModule],
-  controllers: [LicenseController],
+  controllers: [LicensesController, UserLicensesController],
   providers: [
     {
       provide: LOGGER_PROVIDER,

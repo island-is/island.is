@@ -26,10 +26,10 @@ import { NationalId } from '../../decorators/nationalId'
   name: 'X-Param-NationalId',
   description: "The user's national id",
 })
-@Controller({ version: ['1'] })
-@ApiTags('license-api')
+@Controller({ version: ['1'], path: 'users/.nationalId/licenses/' })
+@ApiTags('users-licenses')
 @Audit()
-export class LicenseController {
+export class UserLicensesController {
   constructor(private readonly licenseService: LicenseService) {}
 
   @Documentation({
@@ -47,7 +47,7 @@ export class LicenseController {
     enum: LicenseId,
     enumName: 'LicenseId',
   })
-  @Put('users/.nationalId/licenses/:licenseId')
+  @Put(':licenseId')
   async update(
     @NationalId() nationalId: string,
     @Param(
@@ -81,7 +81,7 @@ export class LicenseController {
     enum: LicenseId,
     enumName: 'LicenseId',
   })
-  @Delete('users/.nationalId/licenses/:licenseId')
+  @Delete(':licenseId')
   async revoke(
     @NationalId() nationalId: string,
     @Param(
@@ -99,7 +99,13 @@ export class LicenseController {
     )
     return response
   }
+}
 
+@Controller({ version: ['1'], path: 'licenses/' })
+@ApiTags('licenses')
+@Audit()
+export class LicensesController {
+  constructor(private readonly licenseService: LicenseService) {}
   @Documentation({
     description: `This endpoint verifies a user's license. Which means that the digital license and the actual license held by the
     relevant institution are compared. If everything adds up, the license is verified.`,
