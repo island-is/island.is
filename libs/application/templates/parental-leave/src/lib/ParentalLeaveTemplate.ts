@@ -33,6 +33,7 @@ import {
   NO_UNION,
   TransferRightsOption,
   SINGLE,
+  FileType
 } from '../constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
@@ -668,13 +669,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           onExit: [
             defineTemplateApi({
               action: ApiModuleActions.validateApplication,
-              params: 'documentPeriod',
+              params: FileType.DOCUMENTPERIOD,
               order: 1,
               throwOnError: true,
             }),
             defineTemplateApi({
               action: ApiModuleActions.sendApplication,
-              params: 'documentPeriod',
+              params: FileType.DOCUMENTPERIOD,
               order: 2,
               throwOnError: true,
             }),

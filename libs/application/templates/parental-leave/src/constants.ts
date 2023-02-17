@@ -110,3 +110,9 @@ export enum AnswerValidationConstants {
 }
 
 export const DATE_FORMAT = 'yyyy-MM-dd'
+
+export enum FileType {
+  PERIOD = 'period',
+  DOCUMENT = 'document',
+  DOCUMENTPERIOD = 'documentPeriod'
+  }

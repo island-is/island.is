@@ -40,6 +40,7 @@ import {
   isParentWithoutBirthParent,
   calculatePeriodLength,
   States,
+  FileType,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -1341,11 +1342,12 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     const attachments = await this.getAttachments(application)
 
     try {
-      const actionNameFromParams = params as
-        | 'period'
-        | 'document'
-        | 'documentPeriod'
-        | undefined
+      const actionNameFromParams = (
+        typeof params === 'string' &&
+        (params === 'period' ||
+        params === 'document' ||
+        params === 'documentPeriod')
+        ) ? params as FileType : undefined
 
       const periods = await this.createPeriodsDTO(
         application,
@@ -1438,11 +1440,12 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
     const attachments = await this.getAttachments(application)
     try {
-      const actionNameFromParams = params as
-        | 'period'
-        | 'document'
-        | 'documentPeriod'
-        | undefined
+      const actionNameFromParams = (
+        typeof params === 'string' &&
+        (params === 'period' ||
+        params === 'document' ||
+        params === 'documentPeriod')
+        ) ? params as FileType : undefined
       const periods = await this.createPeriodsDTO(
         application,
         nationalRegistryId,
