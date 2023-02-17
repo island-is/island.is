@@ -5,7 +5,7 @@ import {
   DefaultEvents,
   ExternalData,
 } from '@island.is/application/types'
-import GeneralPetitionApplicationTemplate from './generalPetitionApplicationTemplate'
+import GeneralPetitionTemplate from './GeneralPetitionTemplate'
 import { createApplication } from '@island.is/application/testing'
 
 describe('General petition application template', () => {
@@ -13,7 +13,7 @@ describe('General petition application template', () => {
     it('should transition from draft to approved', () => {
       const helper = new ApplicationTemplateHelper(
         createApplication(),
-        GeneralPetitionApplicationTemplate,
+        GeneralPetitionTemplate,
       )
 
       const [hasChanged, newState, _] = helper.changeState({
@@ -51,7 +51,7 @@ describe('General petition application template', () => {
           },
           externalData,
         }),
-        GeneralPetitionApplicationTemplate,
+        GeneralPetitionTemplate,
       )
     })
 

@@ -9,20 +9,22 @@ import {
   defineTemplateApi,
   NationalRegistryUserApi,
 } from '@island.is/application/types'
+import { Features } from '@island.is/feature-flags'
 import { ApiModuleActions, States, Roles } from '../constants'
 import { GeneralPetitionSchema } from './dataSchema'
 
 type Events = { type: DefaultEvents.SUBMIT }
 
-const GeneralPetitionApplicationTemplate: ApplicationTemplate<
+const GeneralPetitionTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
   type: ApplicationTypes.GENERAL_PETITION,
-  name: 'Meðmælendalisti',
+  name: '',
   dataSchema: GeneralPetitionSchema,
-  readyForProduction: true,
+  readyForProduction: false,
+  featureFlag: Features.generaPetition,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
@@ -103,4 +105,4 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
   },
 }
 
-export default GeneralPetitionApplicationTemplate
+export default GeneralPetitionTemplate
