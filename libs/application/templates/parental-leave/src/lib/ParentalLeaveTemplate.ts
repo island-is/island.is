@@ -603,7 +603,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.EDIT]: { target: States.DRAFT },
+          [DefaultEvents.APPROVE]: {
+            target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+          },
         },
       },
       [States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE]: {
@@ -653,6 +655,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.RESIDENCE_GRAND_APPLICATION]: {
         entry: ['assignToVMST', 'setResidenceGrant'],
         exit: [
+          'setParam',
           'setResidenceGrantPeriod',
           'setHasAppliedForReidenceGrant',
           'setPreviousState',
@@ -665,13 +668,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             defineTemplateApi({
               action: ApiModuleActions.validateApplication,
               params: FileType.DOCUMENTPERIOD,
-              order: 1,
-              throwOnError: true,
-            }),
-            defineTemplateApi({
-              action: ApiModuleActions.sendApplication,
-              params: FileType.DOCUMENTPERIOD,
-              order: 2,
               throwOnError: true,
             }),
           ],
@@ -690,14 +686,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           APPROVE: [
-            {
-              cond: previousStateApproved,
-              target: States.APPROVED,
-            },
-            {
-              cond: previousStateVinnumalastofnunApproval,
-              target: States.VINNUMALASTOFNUN_APPROVAL,
-            },
             {
               target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
             },
@@ -836,6 +824,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.25,
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.validateApplication,
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -1052,6 +1044,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           onEntry: [
             defineTemplateApi({
               action: ApiModuleActions.sendApplication,
+              params: FileType.DOCUMENTPERIOD,
               shouldPersistToExternalData: true,
               throwOnError: true,
             }),
@@ -1572,12 +1565,17 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         if (e === 'xstate.init') {
           return context
         }
+
         if (
-          e === 'SUBMIT' &&
+          e === 'APPROVE' &&
           state === 'residenceGrantApplicationNoBirthDate'
         ) {
           return context
         }
+        if (e === 'REJECT' && state === 'residenceGrantApplication') {
+          return context
+        }
+
         set(answers, 'previousState', state)
         return context
       }),

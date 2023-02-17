@@ -11,7 +11,7 @@ import format from 'date-fns/format'
 import { minimumPeriodStartBeforeExpectedDateOfBirth } from '../config'
 import { MANUAL, ParentalRelations, YES } from '../constants'
 import { answerValidators } from './answerValidators'
-import { errorMessages, parentalLeaveFormMessages } from './messages'
+import { errorMessages } from './messages'
 import { NO, StartDateOptions, AnswerValidationConstants } from '../constants'
 
 const { VALIDATE_LATEST_PERIOD } = AnswerValidationConstants

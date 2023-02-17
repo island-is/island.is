@@ -61,7 +61,11 @@ import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
   multipleBirthsDefaultDays,
 } from '../config'
-import { isAfter, isBefore, isEqual, subDays, subMonths } from 'date-fns'
+import subDays from 'date-fns/subDays'
+import subMonths from 'date-fns/subMonths'
+import isBefore from 'date-fns/isBefore'
+import isEqual from 'date-fns/isEqual'
+import isAfter from 'date-fns/isAfter'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -913,6 +917,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const previousState = getValueViaPath(answers, 'previousState') as string
 
+  const residenceGrant = getValueViaPath(answers, 'previousState') as {
+    dateTo: string
+    dateFrom: string
+  }
+
   return {
     applicationType,
     noPrimaryParentBirthDate,
@@ -969,6 +978,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     residenceGrantFiles,
     hasAppliedForReidenceGrant,
     previousState,
+    residenceGrant,
   }
 }
 

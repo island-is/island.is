@@ -15,6 +15,7 @@ import {
 } from '../lib/parentalLeaveUtils'
 import { EmployerRow } from '../types'
 import { getValueViaPath } from '@island.is/application/core'
+import { disableResidenceGrantApplication } from './answerValidationSections/utils'
 
 export function allEmployersHaveApproved(context: ApplicationContext) {
   const employers = getValueViaPath<EmployerRow[]>(
@@ -26,7 +27,6 @@ export function allEmployersHaveApproved(context: ApplicationContext) {
   }
   return employers.every((e) => !!e.isApproved)
 }
-import { disableResidenceGrantApplication } from './answerValidationSections/utils'
 
 export function hasEmployer(context: ApplicationContext) {
   const currentApplicationAnswers = context.application.answers as {
