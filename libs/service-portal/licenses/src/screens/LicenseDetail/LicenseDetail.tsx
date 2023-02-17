@@ -15,7 +15,6 @@ import {
   Pagination,
 } from '@island.is/island-ui/core'
 import {
-  ServicePortalModuleComponent,
   UserInfoLine,
   CardLoader,
   ErrorScreen,
@@ -318,7 +317,7 @@ type UseParams = {
   provider: string
 }
 
-const LicenseDetail: ServicePortalModuleComponent = () => {
+const LicenseDetail = () => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const { data: userProfile } = useUserProfile()
