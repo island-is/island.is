@@ -12,6 +12,7 @@ import { SessionsQueryDto } from './sessions-query.dto'
 import { SessionsResultDto } from './sessions-result.dto'
 import addDays from 'date-fns/addDays'
 import parseISO from 'date-fns/parseISO'
+import addSeconds from 'date-fns/addSeconds'
 
 @Injectable()
 export class SessionsService {
@@ -50,21 +51,25 @@ export class SessionsService {
       }
     }
 
+    const parsedToDate = query.to
+      ? addSeconds(addDays(parseISO(query.to.toString()), 1), -1)
+      : null
     whereOptions = {
       ...whereOptions,
       ...(query.to && query.from
         ? {
             timestamp: {
-              [Op.between]: [
-                query.from,
-                addDays(parseISO(query.to.toString()), 1),
-              ],
+              [Op.between]: [query.from, parsedToDate],
             },
           }
         : query.from
         ? { timestamp: { [Op.gte]: query.from } }
         : query.to
-        ? { timestamp: { [Op.lte]: addDays(parseISO(query.to.toString()), 1) } }
+        ? {
+            timestamp: {
+              [Op.lte]: parsedToDate,
+            },
+          }
         : {}),
     }
 
