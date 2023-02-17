@@ -157,45 +157,45 @@ export const m = defineMessages({
 
   //List submitted
   listSubmittedTitle: {
-    id: 'gpl.application.listSubmittedTitle',
+    id: 'gpl.application:listSubmittedTitle',
     defaultMessage: 'Meðmælendalista hefur verið skilað',
     description: '',
   },
   approvedTitle: {
-    id: 'gpl.application.approvedTitle',
+    id: 'gpl.application:approvedTitle',
     defaultMessage: 'Meðmælendalista hefur verið skilað til Ísland.is',
     description: '',
   },
   approvedSubtitle: {
-    id: 'gpl.application.approvedSubtitle',
+    id: 'gpl.application:approvedSubtitle',
     defaultMessage:
       'Staðfesting á móttöku verður send í pósthólf á Mínum Síðum. Hægt er að sýsla með lista þar.',
     description: '',
   },
   bulletListTitle: {
-    id: 'gpl.application.bulletListTitle',
+    id: 'gpl.application:bulletListTitle',
     defaultMessage: 'Vert að skoða',
     description: '',
   },
   bulletLink1: {
-    id: 'gpl.application.bulletLink1',
+    id: 'gpl.application:bulletLink1',
     defaultMessage:
       'https://www.stjornarradid.is/raduneyti/domsmalaraduneytid/',
     description: '',
   },
   bulletLink1Title: {
-    id: 'gpl.application.bulletLink1Title',
+    id: 'gpl.application:bulletLink1Title',
     defaultMessage: 'Vefur dómsmálaráðuneytis',
     description: '',
   },
   bulletLink2: {
-    id: 'gpl.application.bulletLink2',
+    id: 'gpl.application:bulletLink2',
     defaultMessage:
       'https://www.stjornarradid.is/verkefni/kosningar/althingiskosningar/frambod-leidbeiningar/listabokstafir/',
     description: '',
   },
   bulletLink2Title: {
-    id: 'gpl.application.bulletLink2Title',
+    id: 'gpl.application:bulletLink2Title',
     defaultMessage: 'kosning.is',
     description: '',
   },
