@@ -5,6 +5,14 @@ import { PortalModule } from '@island.is/portals/core'
 import { LicensePaths } from './lib/paths'
 import { defineMessage } from 'react-intl'
 
+const LicensesOverview = lazy(() => import('./screens/LicensesOverview'))
+const LicenseDetail = lazy(() =>
+  import('./screens/LicenseDetail/LicenseDetail'),
+)
+const PassportDetail = lazy(() =>
+  import('./screens/PassportDetail/PassportDetail'),
+)
+
 export const licensesModule: PortalModule = {
   name: m.licenseNavTitle,
   enabled: ({ isCompany }) => !isCompany,
@@ -16,20 +24,19 @@ export const licensesModule: PortalModule = {
       }),
       path: LicensePaths.LicensesRoot,
       enabled: userInfo.scopes.includes(ApiScope.licenses),
-      render: () => lazy(() => import('./screens/LicensesOverview')),
+      element: <LicensesOverview />,
     },
     {
       name: 'Skírteini',
       path: LicensePaths.LicensesDetail,
       enabled: userInfo.scopes.includes(ApiScope.licenses),
-      render: () => lazy(() => import('./screens/LicenseDetail/LicenseDetail')),
+      element: <LicenseDetail />,
     },
     {
       name: m.passport,
       path: LicensePaths.LicensesPassportDetail,
       enabled: userInfo.scopes.includes(ApiScope.licenses),
-      render: () =>
-        lazy(() => import('./screens/PassportDetail/PassportDetail')),
+      element: <PassportDetail />,
     },
   ],
 }

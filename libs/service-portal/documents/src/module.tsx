@@ -10,6 +10,8 @@ const rootName = defineMessage({
   defaultMessage: 'Pósthólf',
 })
 
+const Overview = lazy(() => import('./screens/Overview/Overview'))
+
 export const documentsModule: PortalModule = {
   name: rootName,
   routes: ({ userInfo }) => [
@@ -17,7 +19,7 @@ export const documentsModule: PortalModule = {
       name: rootName,
       path: DocumentsPaths.ElectronicDocumentsRoot,
       enabled: userInfo.scopes?.includes(DocumentsScope.main),
-      render: () => lazy(() => import('./screens/Overview/Overview')),
+      element: <Overview />,
     },
   ],
 }
