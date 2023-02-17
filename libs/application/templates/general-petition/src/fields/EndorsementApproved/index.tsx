@@ -11,10 +11,7 @@ const EndorsementApproved = () => {
   return (
     <Box>
       <Box marginTop={5} marginBottom={12}>
-        <Approved
-          title={formatMessage(m.endorsementApproved.cardTitle)}
-          subtitle={formatMessage(m.endorsementApproved.cardSubtitle)}
-        />
+        <Approved title={formatMessage('')} subtitle={formatMessage('')} />
       </Box>
       <Box height="full" marginTop={8} marginBottom={10}>
         <School />
@@ -26,9 +23,7 @@ const EndorsementApproved = () => {
         marginBottom={7}
       >
         <Button variant="ghost">
-          <Link href={formatMessage(m.endorsementApproved.myPagesUrl)}>
-            {formatMessage(m.endorsementApproved.myPagesButton)}
-          </Link>
+          <Link href={formatMessage('')}>{formatMessage('')}</Link>
         </Button>
       </Box>
     </Box>

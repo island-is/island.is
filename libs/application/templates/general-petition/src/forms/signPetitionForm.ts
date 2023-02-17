@@ -7,15 +7,15 @@ import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import Logo from '../assets/Logo'
 
-export const EndorsementForm: Form = buildForm({
-  id: 'Endorsement form',
+export const signPetitionForm: Form = buildForm({
+  id: 'signPetitionForm',
   title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'intro',
-      title: m.endorsementForm.stepTitle,
+      title: '',
       children: [
         buildCustomField({
           id: 'disclaimer',

@@ -18,17 +18,14 @@ const ListSubmited: FC<FieldBaseProps> = ({ application }) => {
 
   return (
     <>
-      <Approved
-        title={formatMessage(m.listSubmitted.approvedTitle)}
-        subtitle={formatMessage(m.listSubmitted.approvedSubtitle)}
-      />
+      <Approved title={formatMessage('')} subtitle={formatMessage('')} />
       <Text marginBottom={2} variant="h3">
         {'Hlekkur á lista'}
       </Text>
       <Box marginBottom={2}>
         <CopyLink
           linkUrl={baseUrlForm + createdList?.id}
-          buttonTitle={formatMessage(m.endorsementList.copyLinkButton)}
+          buttonTitle={formatMessage('')}
         />
       </Box>
       <Box height="full" marginTop={8} marginBottom={10}>

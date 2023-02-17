@@ -15,10 +15,10 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
   return (
     <>
       <Box marginBottom={3}>
-        <Text variant="h3">{formatMessage(m.overview.overviewTitle)}</Text>
+        <Text variant="h3">{formatMessage(m.overviewTitle)}</Text>
       </Box>
       <Box marginBottom={3}>
-        <Text variant="h4">{formatMessage(m.overview.applicant)}</Text>
+        <Text variant="h4">{formatMessage('')}</Text>
         <Text variant="default">
           {
             (externalData.nationalRegistry?.data as {
@@ -28,15 +28,15 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
         </Text>
       </Box>
       <Box marginBottom={3}>
-        <Text variant="h4">{formatMessage(m.overview.listName)}</Text>
+        <Text variant="h4">{formatMessage(m.listName)}</Text>
         <Text variant="default">{answers.listName}</Text>
       </Box>
       <Box marginBottom={3}>
-        <Text variant="h4">{formatMessage(m.overview.aboutList)}</Text>
+        <Text variant="h4">{formatMessage(m.aboutList)}</Text>
         <Text variant="default">{answers.aboutList}</Text>
       </Box>
       <Box marginBottom={3}>
-        <Text variant="h4">{formatMessage(m.overview.listPeriod)}</Text>
+        <Text variant="h4">{formatMessage(m.listPeriod)}</Text>
         <Text variant="default">
           {format(new Date(dates.dateFrom as string), 'dd. MMMM yyyy', {
             locale: is,

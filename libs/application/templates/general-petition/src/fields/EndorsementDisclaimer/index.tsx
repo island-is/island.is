@@ -43,7 +43,7 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
         },
       },
     }).catch(() => {
-      toast.error(formatMessage(m.endorsementForm.errorToast))
+      toast.error(formatMessage(''))
     })
 
     if (success) {
@@ -68,9 +68,7 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
                 </Text>
               </Box>
               <Box marginBottom={3}>
-                <Text variant="h4">
-                  {formatMessage(m.endorsementForm.openTil)}
-                </Text>
+                <Text variant="h4">{formatMessage('')}</Text>
                 {petition && petition.closedDate && (
                   <Text variant="default">
                     {format(new Date(petition.closedDate), 'dd.MM.yyyy')}
@@ -78,16 +76,14 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
                 )}
               </Box>
               <Box marginBottom={3}>
-                <Text variant="h4">
-                  {formatMessage(m.endorsementForm.listOwner)}
-                </Text>
+                <Text variant="h4">{formatMessage('')}</Text>
                 <Text variant="default">{petition.ownerName}</Text>
               </Box>
               <Box display="flex" marginBottom={10}>
                 <Box width="half">
                   <Input
-                    label={formatMessage(m.endorsementForm.nameInput)}
-                    name={formatMessage(m.endorsementForm.nameInput)}
+                    label={formatMessage('')}
+                    name={formatMessage('')}
                     value={userData?.nationalRegistryUser?.fullName}
                     backgroundColor="blue"
                   />
@@ -102,7 +98,7 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
                     options={[
                       {
                         value: 'allow',
-                        label: formatMessage(m.endorsementForm.allowNameLabel),
+                        label: formatMessage(''),
                       },
                     ]}
                   />
@@ -119,7 +115,7 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
                 options={[
                   {
                     value: 'agree',
-                    label: formatMessage(m.endorsementForm.agreeTermsLabel),
+                    label: formatMessage(''),
                   },
                 ]}
               />
@@ -129,7 +125,7 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
           )}
           {isClosed && (
             <Text variant="eyebrow" color="red400">
-              {formatMessage(m.endorsementForm.isClosedMessage)}
+              {formatMessage('')}
             </Text>
           )}
           <Box
@@ -144,7 +140,7 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
               icon="arrowForward"
               onClick={() => onEndorse()}
             >
-              {formatMessage(m.endorsementForm.submitButton)}
+              {formatMessage('')}
             </Button>
           </Box>
         </Box>

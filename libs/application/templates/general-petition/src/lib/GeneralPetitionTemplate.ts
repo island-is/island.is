@@ -38,13 +38,13 @@ const GeneralPetitionTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ApplicationForm').then((module) =>
-                  Promise.resolve(module.PetitionApplicationForm),
+                import('../forms/createPetitionForm').then((module) =>
+                  Promise.resolve(module.form),
                 ),
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Staðfesta',
+                  name: '',
                   type: 'primary',
                 },
               ],
@@ -56,14 +56,14 @@ const GeneralPetitionTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: States.APPROVED,
+            target: States.DONE,
           },
         },
       },
-      [States.APPROVED]: {
+      [States.DONE]: {
         meta: {
-          name: 'Approved',
-          status: 'approved',
+          name: 'Done',
+          status: 'completed',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
@@ -75,16 +75,16 @@ const GeneralPetitionTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/PetitionApplicationApproved').then((val) =>
-                  Promise.resolve(val.PetitionApplicationApproved),
+                import('../forms/done').then((val) =>
+                  Promise.resolve(val.done),
                 ),
               read: 'all',
             },
             {
               id: Roles.SIGNATUREE,
               formLoader: () =>
-                import('../forms/EndorsementForm').then((val) =>
-                  Promise.resolve(val.EndorsementForm),
+                import('../forms/signPetitionForm').then((val) =>
+                  Promise.resolve(val.signPetitionForm),
                 ),
               read: {
                 answers: ['documents', 'listName', 'aboutList', 'dates'],
@@ -99,7 +99,7 @@ const GeneralPetitionTemplate: ApplicationTemplate<
   mapUserToRole(nationalId: string, application: Application) {
     if (application.applicant === nationalId) {
       return Roles.APPLICANT
-    } else if (application.state === States.APPROVED) {
+    } else if (application.state === States.DONE) {
       return Roles.SIGNATUREE
     }
   },

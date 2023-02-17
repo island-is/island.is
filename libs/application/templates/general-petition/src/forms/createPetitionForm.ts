@@ -17,22 +17,22 @@ import {
 import { m } from '../lib/messages'
 import Logo from '../assets/Logo'
 
-export const PetitionApplicationForm: Form = buildForm({
-  id: 'PetitionApplicationForm',
-  title: 'Meðmælendalistar',
+export const form: Form = buildForm({
+  id: 'GeneralPetitionForm',
+  title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'termsAndConditions',
-      title: m.externalDataSection.title,
+      title: m.externalDataSectionTitle,
       children: [
         buildExternalDataProvider({
           id: 'approveTermsAndConditions',
-          title: m.externalDataSection.title,
-          subTitle: m.externalDataSection.subtitle,
-          description: m.externalDataSection.termsAndConditions,
-          checkboxLabel: m.externalDataSection.agree,
+          title: m.externalDataSectionTitle,
+          subTitle: m.externalDataSectionSubtitle,
+          description: m.externalDataSectionTermsAndConditions,
+          checkboxLabel: m.externalDataSectionCheckbox,
           dataProviders: [
             buildDataProviderItem({
               provider: NationalRegistryUserApi,
@@ -45,22 +45,22 @@ export const PetitionApplicationForm: Form = buildForm({
     }),
     buildSection({
       id: 'information',
-      title: m.information.titleSidebar,
+      title: m.listInformationTitle,
       children: [
         buildMultiField({
           id: 'list',
-          title: m.information.title,
+          title: m.listInformationTitle,
           children: [
             buildTextField({
               id: 'listName',
-              title: m.information.listName,
+              title: m.listName,
               backgroundColor: 'white',
               defaultValue: () => '',
             }),
             buildTextField({
               id: 'aboutList',
-              title: m.information.aboutList,
-              placeholder: m.information.aboutListPlaceholder,
+              title: m.aboutList,
+              placeholder: m.aboutListPlaceholder,
               variant: 'textarea',
               rows: 5,
               backgroundColor: 'white',
@@ -68,15 +68,15 @@ export const PetitionApplicationForm: Form = buildForm({
             }),
             buildDateField({
               id: 'dates.dateFrom',
-              title: m.information.dateTitle,
-              placeholder: m.information.dateFromPlaceholder,
+              title: m.dateTitle,
+              placeholder: m.dateFromPlaceholder,
               width: 'half',
               backgroundColor: 'white',
             }),
             buildDateField({
               id: 'dates.dateTil',
-              title: m.information.dateTitle,
-              placeholder: m.information.dateToPlaceholder,
+              title: m.dateTitle,
+              placeholder: m.dateToPlaceholder,
               width: 'half',
               backgroundColor: 'white',
             }),
@@ -86,12 +86,12 @@ export const PetitionApplicationForm: Form = buildForm({
     }),
     buildSection({
       id: 'reviewApplication',
-      title: m.overview.title,
+      title: m.overviewTitle,
       children: [
         buildMultiField({
           id: 'overview',
-          title: m.overview.title,
-          description: m.overview.subtitle,
+          title: m.overviewTitle,
+          description: m.overviewSubtitle,
           children: [
             buildCustomField({
               id: 'applicantInfoOverview',
@@ -105,7 +105,7 @@ export const PetitionApplicationForm: Form = buildForm({
               actions: [
                 {
                   event: 'SUBMIT',
-                  name: 'Stofna lista',
+                  name: '',
                   type: 'primary',
                 },
               ],
@@ -116,7 +116,7 @@ export const PetitionApplicationForm: Form = buildForm({
     }),
     buildCustomField({
       id: 'listSubmitted',
-      title: m.listSubmitted.title,
+      title: m.listSubmittedTitle,
       component: 'ListSubmitted',
     }),
   ],
