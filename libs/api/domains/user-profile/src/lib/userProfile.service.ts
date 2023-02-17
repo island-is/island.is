@@ -75,45 +75,34 @@ export class UserProfileService {
     }
   }
 
-  async getUserProfileStatus(user: User) {
+  async getUserProfileLocale(user: User) {
     /**
-     * this.getUserProfile can be a bit slower with the addition of islyklar data call.
-     * getUserProfileStatus can be used for a check if the userprofile exists, or if the userdata is old
-     * Old userdata can mean a user will be prompted to verify their info in the UI.
+     * The logged in user has no business using the locale of a delegated user,
+     * they will need to fetch their own locale.
      */
+    const DEFAULT_LOCALE = 'is'
+    const nationalIdForLocale = user.actor?.nationalId ?? user.nationalId
+
     try {
       const profile = await this.userProfileApiWithAuth(
         user,
       ).userProfileControllerFindOneByNationalId({
-        nationalId: user.nationalId,
+        nationalId: nationalIdForLocale,
+        actorRequest: Boolean(user.actor?.nationalId),
       })
 
-      /**
-       * If user has empty email or tel data
-       * Then the user will be prompted every 6 months (MAX_OUT_OF_DATE_MONTHS)
-       * to verify if they want to keep their info empty
-       */
-      const emptyMail = profile?.emailStatus === 'EMPTY'
-      const emptyMobile = profile?.mobileStatus === 'EMPTY'
-      const modifiedProfileDate = profile?.modified
-      const dateNow = new Date()
-      const dateModified = new Date(modifiedProfileDate)
-      const diffInMonths = differenceInMonths(dateNow, dateModified)
-      const diffOutOfDate = diffInMonths >= MAX_OUT_OF_DATE_MONTHS
-      const outOfDateEmailMobile = (emptyMail || emptyMobile) && diffOutOfDate
-
       return {
-        hasData: !!modifiedProfileDate,
-        hasModifiedDateLate: outOfDateEmailMobile,
+        locale: profile.locale || DEFAULT_LOCALE,
+        nationalId: nationalIdForLocale,
       }
     } catch (error) {
       if (error.status === 404) {
         return {
-          hasData: false,
-          hasModifiedDateLate: true,
+          locale: DEFAULT_LOCALE,
+          nationalId: nationalIdForLocale,
         }
       }
-      handleError(error, `getUserProfileStatus error`)
+      handleError(error, `getUserProfileLocale error`)
     }
   }
 

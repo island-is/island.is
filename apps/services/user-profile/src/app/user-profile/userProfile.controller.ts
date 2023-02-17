@@ -21,6 +21,7 @@ import {
   HttpCode,
   Delete,
   Patch,
+  Query,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
@@ -29,6 +30,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger'
@@ -67,6 +69,12 @@ export class UserProfileController {
     description: 'The nationalId of the application to update.',
     allowEmptyValue: false,
   })
+  @ApiQuery({
+    name: 'actorRequest',
+    required: false,
+    type: 'boolean',
+    description: 'Is the user requesting the actor information?',
+  })
   @ApiOkResponse({ type: UserProfile })
   @Audit<UserProfile>({
     resources: (profile) => profile.nationalId,
@@ -76,9 +84,16 @@ export class UserProfileController {
     nationalId: string,
     @CurrentUser()
     user: User,
+    @Query('actorRequest') actorRequest?: boolean,
   ): Promise<UserProfile> {
-    if (nationalId != user.nationalId) {
-      throw new ForbiddenException()
+    if (actorRequest) {
+      if (nationalId != user.actor.nationalId) {
+        throw new ForbiddenException()
+      }
+    } else {
+      if (nationalId != user.nationalId) {
+        throw new ForbiddenException()
+      }
     }
 
     const userProfile = await this.userProfileService.findByNationalId(

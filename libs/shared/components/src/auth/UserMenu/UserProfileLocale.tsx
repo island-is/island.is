@@ -19,7 +19,7 @@ export const UserProfileLocale = () => {
   const [getUserProfile, { data }] = useGetUserProfileLocaleLazyQuery()
   const location = useLocation()
 
-  const userProfile = data?.getUserProfile || null
+  const userProfile = data?.getUserProfileLocale || null
 
   useEffect(() => {
     if (userInfo?.profile.nationalId) getUserProfile()
