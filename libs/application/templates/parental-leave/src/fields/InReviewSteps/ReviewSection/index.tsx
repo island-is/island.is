@@ -13,7 +13,6 @@ export enum ReviewSectionState {
   inProgress = 'In progress',
   requiresAction = 'Requires action',
   complete = 'Complete',
-  optionalAction = 'Optional action',
 }
 
 type ReviewSectionProps = {
@@ -56,8 +55,6 @@ const ReviewSection: FC<ReviewSectionProps> = ({
           [styles.sectionNumberRequiresAction]:
             state === ReviewSectionState.requiresAction,
           [styles.sectionNumberComplete]: state === ReviewSectionState.complete,
-          [styles.sectionNumberOptionalAction]:
-            state === ReviewSectionState.optionalAction,
           [styles.sectionNumberPrerequisites]:
             state === ReviewSectionState.prerequisites,
         })}
