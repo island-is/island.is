@@ -3,25 +3,31 @@ import {
   buildForm,
   buildMultiField,
   buildSection,
-  buildCustomField,
   buildSubmitField,
   buildExternalDataProvider,
   buildDataProviderItem,
   buildDateField,
+  buildKeyValueField,
+  buildDividerField,
 } from '@island.is/application/core'
 import {
+  DefaultEvents,
   Form,
   FormModes,
   NationalRegistryUserApi,
 } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import Logo from '../assets/Logo'
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
 
 export const form: Form = buildForm({
   id: 'GeneralPetitionForm',
   title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
+  renderLastScreenButton: true,
+  renderLastScreenBackButton: true,
   children: [
     buildSection({
       id: 'termsAndConditions',
@@ -92,20 +98,51 @@ export const form: Form = buildForm({
           id: 'overview',
           title: m.overviewTitle,
           description: m.overviewSubtitle,
+          space: 3,
           children: [
-            buildCustomField({
-              id: 'applicantInfoOverview',
-              title: '',
-              component: 'Overview',
+            buildDividerField({}),
+            buildKeyValueField({
+              label: 'Stofnandi lista',
+              value: ({ externalData }) =>
+                (externalData.nationalRegistry?.data as {
+                  fullName?: string
+                })?.fullName,
+            }),
+            buildKeyValueField({
+              label: m.listName,
+              value: ({ answers }) => answers.listName as string,
+            }),
+            buildKeyValueField({
+              label: m.aboutList,
+              value: ({ answers }) => answers.aboutList as string,
+            }),
+            buildKeyValueField({
+              label: m.listPeriod,
+              value: ({ answers }) =>
+                format(
+                  new Date((answers.dates as any).dateFrom as string),
+                  'dd. MMMM yyyy',
+                  {
+                    locale: is,
+                  },
+                ) +
+                ' - ' +
+                format(
+                  new Date((answers.dates as any).dateTil as string),
+                  'dd. MMMM yyyy',
+                  {
+                    locale: is,
+                  },
+                ),
             }),
             buildSubmitField({
-              id: 'submit',
+              id: 'createPetition.submit',
               title: '',
-              placement: 'footer',
+              refetchApplicationAfterSubmit: true,
               actions: [
                 {
-                  event: 'SUBMIT',
-                  name: '',
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Stofna lista',
                   type: 'primary',
                 },
               ],
@@ -113,11 +150,6 @@ export const form: Form = buildForm({
           ],
         }),
       ],
-    }),
-    buildCustomField({
-      id: 'listSubmitted',
-      title: m.listSubmittedTitle,
-      component: 'ListSubmitted',
     }),
   ],
 })

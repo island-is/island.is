@@ -11,9 +11,9 @@ const Logo: FC = () => {
     <Box display="flex" alignItems="center">
       <CoatOfArms />
       <Box marginLeft={2}>
-        <Text variant="eyebrow">{formatMessage(m.logo.service)}</Text>
+        <Text variant="eyebrow">{formatMessage('')}</Text>
         <Text variant="h5">
-          <Hyphen>{formatMessage(m.logo.organization)}</Hyphen>
+          <Hyphen>{formatMessage('')}</Hyphen>
         </Text>
       </Box>
     </Box>

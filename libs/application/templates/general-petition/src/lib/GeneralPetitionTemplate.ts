@@ -21,7 +21,7 @@ const GeneralPetitionTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.GENERAL_PETITION,
-  name: '',
+  name: 'Undirskriftalisti',
   dataSchema: GeneralPetitionSchema,
   readyForProduction: false,
   featureFlag: Features.generaPetition,
@@ -66,11 +66,11 @@ const GeneralPetitionTemplate: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: defineTemplateApi({
+          /*onEntry: defineTemplateApi({
             action: ApiModuleActions.CreateEndorsementList,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          }),
+          }),*/
           roles: [
             {
               id: Roles.APPLICANT,
