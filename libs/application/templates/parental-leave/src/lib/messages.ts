@@ -2007,6 +2007,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Sækja um dvalarstyrk',
       description: 'Apply for residence grant',
     },
+    residenceGrantApplyHeader: {
+      id: 'pl.application:residence.grant.apply.header',
+      defaultMessage: 'Tímabil dvalarstyrks',
+      description: 'Period of residency',
+    },
     residenceGrantActionLinkTitle: {
       id: 'pl.application:residence.grant.action.link.title',
       defaultMessage: 'Sjá upplýsingar um dvalarstyrk',
