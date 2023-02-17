@@ -31,7 +31,6 @@ import { ProblemModule } from '@island.is/nest/problem'
         XRoadConfig,
         IdsClientConfig,
         FirearmLicenseClientConfig,
-        DisabilityLicenseClientConfig,
         FirearmLicenseApiClientConfig,
         DisabilityLicenseClientConfig,
         DisabilityLicenseApiClientConfig,
