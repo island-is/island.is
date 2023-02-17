@@ -5,6 +5,11 @@ import {
   RouterProvider,
 } from 'react-router-dom'
 
+import {
+  useApolloClient,
+  ApolloClient,
+  NormalizedCacheObject,
+} from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { useAuth } from '@island.is/auth/react'
@@ -28,6 +33,7 @@ export const PortalRouter = ({
   createRoutes,
   fallbackElement,
 }: PortalRouterProps) => {
+  const client = useApolloClient() as ApolloClient<NormalizedCacheObject>
   const { formatMessage } = useLocale()
   const router = useRef<ReturnType<typeof createBrowserRouter>>()
   const [error, setError] = useState<Error | null>(null)
@@ -44,6 +50,7 @@ export const PortalRouter = ({
         userInfo,
         featureFlagClient,
         modules,
+        client,
       })
         .then((data) => setRouterData(data))
         .catch((err) => setError(err))
@@ -59,7 +66,7 @@ export const PortalRouter = ({
   }
 
   if (!router.current) {
-    const moduleRoutes = createModuleRoutes({ ...routerData, userInfo })
+    const moduleRoutes = createModuleRoutes({ ...routerData })
     router.current = createBrowserRouter(
       [
         {
@@ -74,6 +81,13 @@ export const PortalRouter = ({
   }
 
   return (
-    <RouterProvider router={router.current} fallbackElement={fallbackElement} />
+    <RouterProvider
+      router={router.current}
+      fallbackElement={
+        fallbackElement || (
+          <LoadingScreen ariaLabel={formatMessage(m.loadingScreen)} />
+        )
+      }
+    />
   )
 }

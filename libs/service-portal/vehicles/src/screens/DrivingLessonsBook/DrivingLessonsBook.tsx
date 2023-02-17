@@ -11,7 +11,6 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ErrorScreen,
-  ServicePortalModuleComponent,
   UserInfoLine,
   m,
   formatDate,
@@ -55,7 +54,7 @@ export const GET_STUDENT_BOOK = gql`
   }
 `
 
-const DrivingLessonsBook: ServicePortalModuleComponent = () => {
+const DrivingLessonsBook = () => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
 
