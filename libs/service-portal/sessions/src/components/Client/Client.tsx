@@ -19,12 +19,24 @@ export const Client = ({ client }: ClientProps) => {
     <>
       {client.clientName && (
         <Box display={'flex'} columnGap={1} alignItems={'center'}>
-          <Box
-            className={styles.logo}
-            style={{
-              backgroundImage: `url(${client.domain?.organisationLogoUrl})`,
-            }}
-          ></Box>
+          {client.domain?.displayName ? (
+            <Tooltip text={client.domain?.displayName}>
+              <Box
+                className={styles.logo}
+                style={{
+                  backgroundImage: `url(${client.domain?.organisationLogoUrl})`,
+                }}
+              ></Box>
+            </Tooltip>
+          ) : (
+            <Box
+              className={styles.logo}
+              style={{
+                backgroundImage: `url(${client.domain?.organisationLogoUrl})`,
+              }}
+            ></Box>
+          )}
+
           <Text variant={width > theme.breakpoints.lg ? 'eyebrow' : 'h5'}>
             {client.clientName}
           </Text>

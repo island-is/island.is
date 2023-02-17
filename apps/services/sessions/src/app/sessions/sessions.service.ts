@@ -12,6 +12,7 @@ import { paginate } from '@island.is/nest/pagination'
 import { Session } from './session.model'
 import { SessionsQueryDto } from './sessions-query.dto'
 import { SessionsResultDto } from './sessions-result.dto'
+import parseISO from 'date-fns/parseISO'
 
 @Injectable()
 export class SessionsService {
@@ -50,7 +51,9 @@ export class SessionsService {
       }
     }
 
-    const parsedToDate = query.to ? addSeconds(addDays(query.to, 1), -1) : null
+    const parsedToDate = query.to
+      ? addSeconds(addDays(parseISO(query.to.toString()), 1), -1)
+      : null
     whereOptions = {
       ...whereOptions,
       ...(query.to && query.from
