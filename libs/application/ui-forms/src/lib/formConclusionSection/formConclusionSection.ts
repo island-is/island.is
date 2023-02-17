@@ -5,6 +5,7 @@ import {
   buildExpandableDescriptionField,
   buildMessageWithLinkButtonField,
   buildLinkField,
+  coreMessages,
 } from '@island.is/application/core'
 import { FormText } from '@island.is/application/types'
 import { MessageDescriptor } from 'react-intl'
@@ -70,8 +71,8 @@ export const formConclusionSection = (props: props) =>
             id: 'uiForms.conclusionGoToServicePortal',
             title: '',
             url: '/minarsidur/umsoknir',
-            buttonTitle: conclusion.information.buttonTitle,
-            message: conclusion.information.messageText,
+            buttonTitle: coreMessages.openServicePortalButtonTitle,
+            message: coreMessages.openServicePortalMessageText,
           }),
         ],
       }),
