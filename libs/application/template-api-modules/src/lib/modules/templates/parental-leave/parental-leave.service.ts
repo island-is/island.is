@@ -193,14 +193,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
 
     if (fosterCareId) { 
-      console.log('er herna')
-      this.childrenService.provideApplication(application, auth.nationalId)
-      // can we check if the other parent has an application with the same 
-      // child id so we know what the parentalRelation we should put here
       const child: ChildInformation = {
         hasRights: true,
         remainingDays: 180,
-        expectedDateOfBirth: '2022-01-01', // should we put the foster care social security id somewhere else?
+        expectedDateOfBirth: '2022-01-03', // should we put the foster care social security id somewhere else?
         parentalRelation: ParentalRelations.primary,
       }
 
