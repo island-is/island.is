@@ -179,7 +179,7 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
         ),
         description: formatMessage(
           parentalLeaveFormMessages.residenceGrantMessage
-            .residenceGrantClosedDescription,
+            .residenceGrantApplicationSendInformation,
         ),
       })
     } else {

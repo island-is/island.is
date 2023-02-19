@@ -197,13 +197,21 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     if (dateOfBirth?.data?.dateOfBirth) {
       return dateOfBirth?.data?.dateOfBirth
     }
-    /*
-      MOCK
-      return {
-        dateOfBirth: '2023-02-10',
-      }
-    */
+
     try {
+      /* MOCK async/await
+      const promise = new Promise(function (resolve) {
+        setTimeout(() => {
+          console.log('2023-02-10')
+          resolve('2023-02-10')
+        }, 5000)
+      })
+
+      const newValue = await promise
+      return {
+        dateOfBirth: newValue,
+      }
+      */
       const applicationInformation = await this.applicationInformationAPI.applicationGetApplicationInformation(
         {
           applicationId: application.id,
@@ -396,7 +404,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     const { residenceGrantFiles } = getApplicationAnswers(application.answers)
     const { state } = application
 
-    if (state === 'residenceGrantApplication') {
+    if (
+      state === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
+      state === States.RESIDENCE_GRAND_APPLICATION
+    ) {
       if (residenceGrantFiles) {
         residenceGrantFiles.forEach(async (item, index) => {
           const pdf = await this.getPdf(
@@ -409,8 +420,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
             attachmentBytes: pdf,
           })
         })
-
-        return attachments
       }
     }
     // We don't want to send old files to VMST again

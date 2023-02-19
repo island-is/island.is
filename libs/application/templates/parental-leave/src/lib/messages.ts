@@ -1997,11 +1997,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Þú getur ekki sótt um ennþá.',
       description: 'You can not apply yet.',
     },
-    residenceGrantHasBeenAppliedForDescription: {
-      id: 'pl.application:residence.grant.open.description',
-      defaultMessage: 'Verið er að vinna úr umsókn þinni',
-      description: 'Your application is being processed',
-    },
     residenceGrantPeriodDescriptionLineOne: {
       id: 'pl.application:residence.grant.period.description.line.one',
       defaultMessage:
@@ -2043,14 +2038,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'When applying for a residence grant, a certificate from the parent’s specialist doctor needs to be submitted with the application. A residence grant certificate shall be submitted using the form available in the health care history system. The certificate must stipulate the specialist doctor’s reasoning for the necessity of the relevant parent to live far from her home for a certain amount of time before the expected date of delivery. The certificate must also stipulate information about whether the parent has stayed in a hospital or a health institute during that period. The original certificate must be submitted with a doctor’s signature. Note that the document needs to be on .pdf format.',
     },
-    residenceGrantInformation: {
-      id: 'pl.application:residence.grant.information',
-      defaultMessage:
-        'A residence grant is a financial grant to a pregnant mother who, in the opinion of a specialist doctor, must live far from her home for services needed due to the birth of a child, such as distance, bad weather, a workplace strike or pregnancy risk factors. The grant is paid retroactively. ',
-      description:
-        'A residence grant is a financial grant to a pregnant mother who, in the opinion of a specialist doctor, must live far from her home for services needed due to the birth of a child, such as distance, bad weather, a workplace strike or pregnancy risk factors. The grant is paid retroactively. ',
-    },
-
     residenceGrantOpen: {
       id: 'pl.application:residence.grant.open',
       defaultMessage: 'Hér getur þú sent inn umsókn þína.',
@@ -2091,12 +2078,12 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Engin lýsing fannst',
       description: 'No description could be found',
     },
-    residenceGrantRedirectMessage: {
-      id: 'pl.application:residence.grant.redirect.message',
+    residenceGrantApplicationSendInformation: {
+      id: 'pl.application:residence.grant.application.send.information',
       defaultMessage:
-        'Dvalarstyrkur er í boði. Við munum beina þér að dagskránni fljótlega.',
+        'Þú hefur sótt um dvalarstyrk og umsókn þín er í vinnslu.',
       description:
-        'Residence Grant is available. We will redirect you to the application shortly.',
+        'You have applied for a residence grant, and your application is being processed.',
     },
     residenceGrantStartDateError: {
       id: 'pl.application:residence.grant.start.date.error',
