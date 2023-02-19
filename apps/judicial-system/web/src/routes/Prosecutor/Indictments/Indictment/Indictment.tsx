@@ -2,9 +2,9 @@ import React, { useCallback, useContext, useState } from 'react'
 import router from 'next/router'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'framer-motion'
+import { applyCase } from 'beygla'
 
 import { Box, Input, Button } from '@island.is/island-ui/core'
-import { applyCase } from 'beygla'
 
 import {
   BlueBox,
@@ -14,6 +14,7 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  PdfButton,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -144,15 +145,18 @@ const Indictment: React.FC = () => {
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillCourt, {
           court: workingCase.court?.name?.replace('dómur', 'dómi'),
         })}`,
-        `\n\n${formatMessage(strings.indictmentIntroductionAutofillDefendant, {
-          defendantName: workingCase.defendants[0].name
-            ? applyCase('þgf', workingCase.defendants[0].name)
-            : 'Ekki skráð',
-          defendantNationalId: workingCase.defendants[0].nationalId
-            ? formatNationalId(workingCase.defendants[0].nationalId)
-            : 'Ekki skráð',
-        })}`,
-        `\n\n${workingCase.defendants[0].address}`,
+        `\n\n\n          ${formatMessage(
+          strings.indictmentIntroductionAutofillDefendant,
+          {
+            defendantName: workingCase.defendants[0].name
+              ? applyCase('þgf', workingCase.defendants[0].name)
+              : 'Ekki skráð',
+            defendantNationalId: workingCase.defendants[0].nationalId
+              ? formatNationalId(workingCase.defendants[0].nationalId)
+              : 'Ekki skráð',
+          },
+        )}`,
+        `\n          ${workingCase.defendants[0].address}`,
       ]
     }
 
@@ -273,7 +277,7 @@ const Indictment: React.FC = () => {
             {formatMessage(strings.addIndictmentCount)}
           </Button>
         </Box>
-        <Box component="section" marginBottom={10}>
+        <Box component="section" marginBottom={6}>
           <SectionHeading title={formatMessage(strings.demandsTitle)} />
           <BlueBox>
             <Input
@@ -311,6 +315,13 @@ const Indictment: React.FC = () => {
               autoExpand={{ on: true, maxHeight: 300 }}
             />
           </BlueBox>
+        </Box>
+        <Box marginBottom={10}>
+          <PdfButton
+            caseId={workingCase.id}
+            title={formatMessage(strings.pdfButtonIndictment)}
+            pdfType="indictment"
+          />
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>

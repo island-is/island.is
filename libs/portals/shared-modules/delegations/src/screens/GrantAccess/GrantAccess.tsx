@@ -19,12 +19,9 @@ import {
   SelectController,
 } from '@island.is/shared/form-fields'
 import { IntroHeader } from '@island.is/portals/core'
-import {
-  formatNationalId,
-  m as coreMessages,
-  PortalModuleComponent,
-} from '@island.is/portals/core'
+import { formatNationalId, m as coreMessages } from '@island.is/portals/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { useUserInfo } from '@island.is/auth/react'
 
 import { DelegationsFormFooter } from '../../components/delegations/DelegationsFormFooter'
 import { IdentityCard } from '../../components/IdentityCard/IdentityCard'
@@ -38,8 +35,9 @@ import {
 } from './GrantAccess.generated'
 import * as styles from './GrantAccess.css'
 
-const GrantAccess: PortalModuleComponent = ({ userInfo }) => {
+const GrantAccess = () => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
+  const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
   const [name, setName] = useState('')
   const inputRef = React.useRef<HTMLInputElement>(null)

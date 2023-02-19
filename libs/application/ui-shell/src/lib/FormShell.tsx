@@ -65,11 +65,11 @@ export const FormShell: FC<{
   const currentScreen = screens[activeScreen]
   const FormLogo = form.logo
 
-  const getDraftSectionCurrentScreen = (): number => {
+  const getDraftSectionCurrentScreen = (): number | undefined => {
     const currentDraftScreenSection = sections.find(
       (s, i) => i === currentScreen.sectionIndex,
     )
-    return currentDraftScreenSection?.draftPageNumber ?? 0
+    return currentDraftScreenSection?.draftPageNumber ?? undefined
   }
 
   const getDraftSectionTotalScreens = (): number | undefined => {
@@ -114,6 +114,7 @@ export const FormShell: FC<{
                 background="white"
               >
                 <Screen
+                  sections={sections}
                   setUpdateForbidden={setUpdateForbidden}
                   application={storedApplication}
                   addExternalData={(payload) =>

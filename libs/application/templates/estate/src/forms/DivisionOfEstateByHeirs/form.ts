@@ -1,13 +1,16 @@
 import {
+  buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
   buildForm,
   buildMultiField,
   buildSection,
+  buildSubmitField,
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import { YES } from '../../lib/constants'
 import { m } from '../../lib/messages'
 import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
@@ -378,5 +381,49 @@ export const form: Form = buildForm({
       ],
     }),
     overview,
+    buildSection({
+      id: 'approveSubmission',
+      title: m.divisionOfEstateByHeirsTerms,
+      children: [
+        buildMultiField({
+          id: 'approveSubmission',
+          title: m.divisionOfEstateByHeirsTerms,
+          description: m.divisionOfEstateByHeirsText,
+          children: [
+            buildDescriptionField({
+              id: 'space',
+              title: '',
+              space: 'containerGutter',
+            }),
+            buildCheckboxField({
+              id: 'readTerms',
+              title: '',
+              large: false,
+              backgroundColor: 'white',
+              defaultValue: [],
+              options: [
+                {
+                  value: YES,
+                  label:
+                    m.divisionOfEstateByHeirsSubmissionCheckbox.defaultMessage,
+                },
+              ],
+            }),
+            buildSubmitField({
+              id: 'divisionOfEstateByHeirs.submit',
+              title: '',
+              refetchApplicationAfterSubmit: true,
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: m.submitApplication,
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
+        }),
+      ],
+    }),
   ],
 })
