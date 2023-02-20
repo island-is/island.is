@@ -345,6 +345,9 @@
       "@island.is/application/templates/transport-authority/digital-tachograph-workshop-card": [
         "libs/application/templates/transport-authority/digital-tachograph-workshop-card/src/index.ts"
       ],
+      "@island.is/application/templates/transport-authority/license-plate-renewal": [
+        "libs/application/templates/transport-authority/license-plate-renewal/src/index.ts"
+      ],
       "@island.is/application/templates/transport-authority/order-vehicle-license-plate": [
         "libs/application/templates/transport-authority/order-vehicle-license-plate/src/index.ts"
       ],
@@ -480,6 +483,9 @@
       ],
       "@island.is/clients/transport-authority/vehicle-plate-ordering": [
         "libs/clients/transport-authority/vehicle-plate-ordering/src/index.ts"
+      ],
+      "@island.is/clients/transport-authority/vehicle-plate-renewal": [
+        "libs/clients/transport-authority/vehicle-plate-renewal/src/index.ts"
       ],
       "@island.is/clients/transport-authority/vehicle-printing": [
         "libs/clients/transport-authority/vehicle-printing/src/index.ts"

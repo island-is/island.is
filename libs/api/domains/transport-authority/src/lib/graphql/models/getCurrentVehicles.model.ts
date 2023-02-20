@@ -1,6 +1,15 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
+export class VehicleValidationErrorMessage {
+  @Field(() => String, { nullable: true })
+  errorNo?: string | null
+
+  @Field(() => String, { nullable: true })
+  defaultMessage?: string | null
+}
+
+@ObjectType()
 export class VehiclesCurrentVehicleWithOwnerchangeChecks {
   @Field({ nullable: true })
   permno?: string
@@ -19,15 +28,6 @@ export class VehiclesCurrentVehicleWithOwnerchangeChecks {
 
   @Field(() => [VehicleValidationErrorMessage], { nullable: true })
   validationErrorMessages?: VehicleValidationErrorMessage[] | null
-}
-
-@ObjectType()
-export class VehicleValidationErrorMessage {
-  @Field(() => String, { nullable: true })
-  errorNo?: string | null
-
-  @Field(() => String, { nullable: true })
-  defaultMessage?: string | null
 }
 
 @ObjectType()
@@ -59,12 +59,20 @@ export class VehiclesCurrentVehicleWithPlateOrderChecks {
   @Field({ nullable: true })
   role?: string
 
+  //TODOx change to validationErrorMessages
   @Field(() => Boolean, { nullable: true })
   duplicateOrderExists?: boolean
 }
 
 @ObjectType()
 export class VehiclePlateOrderChecksByPermno {
+  //TODOx change to validationErrorMessages
   @Field(() => Boolean, { nullable: true })
   duplicateOrderExists?: boolean
+}
+
+@ObjectType()
+export class MyPlateOwnershipChecksByRegno {
+  @Field(() => [VehicleValidationErrorMessage], { nullable: true })
+  validationErrorMessages?: VehicleValidationErrorMessage[] | null
 }

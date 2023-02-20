@@ -35,6 +35,7 @@ export enum Features {
   transportAuthorityOrderVehicleLicensePlate = 'isTransportAuthorityOrderVehicleLicensePlateEnabled',
   transportAuthorityOrderVehicleRegistrationCertificate = 'isTransportAuthorityOrderVehicleRegistrationCertificateEnabled',
   transportAuthorityTransferOfVehicleOwnership = 'isTransportAuthorityTransferOfVehicleOwnershipEnabled',
+  transportAuthorityLicensePlateRenewal = 'isTransportAuthorityLicensePlateRenewalEnabled',
   drivingLicenseBookUpdateInstructor = 'isDrivingLicenseBookUpdateInstructorEnabled',
 
   // Application System Delegations active

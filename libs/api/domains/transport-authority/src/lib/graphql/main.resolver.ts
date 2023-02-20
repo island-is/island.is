@@ -25,6 +25,7 @@ import {
   VehiclesCurrentVehicleWithPlateOrderChecks,
   VehiclesCurrentVehicleWithOperatorChangeChecks,
   VehiclesCurrentVehicleWithOwnerchangeChecks,
+  MyPlateOwnershipChecksByRegno,
 } from './models'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -158,6 +159,21 @@ export class MainResolver {
     return await this.transportAuthorityApi.getVehiclePlateOrderChecksByPermno(
       user,
       permno,
+    )
+  }
+
+  @Scopes(ApiScope.internal)
+  @Query(() => MyPlateOwnershipChecksByRegno, {
+    name: 'myPlateOwnershipChecksByRegno',
+    nullable: true,
+  })
+  async getMyPlateOwnershipChecksByRegno(
+    @Args('regno', { type: () => String }) regno: string,
+    @CurrentUser() user: User,
+  ) {
+    return await this.transportAuthorityApi.getMyPlateOwnershipChecksByRegno(
+      user,
+      regno,
     )
   }
 }

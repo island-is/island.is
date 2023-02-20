@@ -39,6 +39,7 @@ export class VehiclePlateOrderingClient {
     frontType: string,
     rearType: string,
   ): Promise<boolean> {
+    //TODOx ekki nóg að skila bara boolean hér, geta verið aðrar villur líka
     try {
       // Dummy values
       // Note: option "Pick up at Samgöngustofa" which is always valid

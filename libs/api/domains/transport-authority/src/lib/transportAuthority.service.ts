@@ -4,6 +4,7 @@ import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority
 import { DigitalTachographDriversCardClient } from '@island.is/clients/transport-authority/digital-tachograph-drivers-card'
 import { VehicleOperatorsClient } from '@island.is/clients/transport-authority/vehicle-operators'
 import { VehiclePlateOrderingClient } from '@island.is/clients/transport-authority/vehicle-plate-ordering'
+import { VehiclePlateRenewalClient } from '@island.is/clients/transport-authority/vehicle-plate-renewal'
 import { VehicleServiceFjsV1Client } from '@island.is/clients/vehicle-service-fjs-v1'
 import { VehicleMiniDto, VehicleSearchApi } from '@island.is/clients/vehicles'
 import {
@@ -31,6 +32,7 @@ export class TransportAuthorityApi {
     private readonly digitalTachographDriversCardClient: DigitalTachographDriversCardClient,
     private readonly vehicleOperatorsClient: VehicleOperatorsClient,
     private readonly vehiclePlateOrderingClient: VehiclePlateOrderingClient,
+    private readonly vehiclePlateRenewalClient: VehiclePlateRenewalClient,
     private readonly vehicleServiceFjsV1Client: VehicleServiceFjsV1Client,
     private readonly vehiclesApi: VehicleSearchApi,
   ) {}
@@ -51,6 +53,11 @@ export class TransportAuthorityApi {
     return { exists: hasActiveCard }
   }
 
+  //------------------------------
+  // transfer of vehicle ownership
+  //------------------------------
+
+  // TODOx remove?
   async getCurrentVehiclesWithOwnerchangeChecks(
     auth: User,
     showOwned: boolean,
@@ -193,6 +200,11 @@ export class TransportAuthorityApi {
     return result
   }
 
+  //------------------------------
+  // change operator of vehicle
+  //------------------------------
+
+  // TODOx remove?
   async getCurrentVehiclesWithOperatorChangeChecks(
     auth: User,
     showOwned: boolean,
@@ -313,6 +325,11 @@ export class TransportAuthorityApi {
     return result
   }
 
+  //------------------------------
+  // order vehicle license plate
+  //------------------------------
+
+  // TODOx remove?
   async getCurrentVehiclesWithPlateOrderChecks(
     auth: User,
     showOwned: boolean,
@@ -360,6 +377,7 @@ export class TransportAuthorityApi {
           make: vehicle.make || undefined,
           color: vehicle.color || undefined,
           role: vehicle.role || undefined,
+          //TODOx return field validationErrorMessages instead
           duplicateOrderExists: exists,
         }
       }),
@@ -405,7 +423,29 @@ export class TransportAuthorityApi {
     )
 
     return {
+      //TODOx return field validationErrorMessages instead
       duplicateOrderExists: exists || false,
+    }
+  }
+
+  //------------------------------
+  // license plate renewal
+  //------------------------------
+
+  async getMyPlateOwnershipChecksByRegno(
+    auth: User,
+    regno: string,
+  ): Promise<VehicleOperatorChangeChecksByPermno | null | ApolloError> {
+    // Get validation
+    const validation = await this.vehiclePlateRenewalClient.validateRenewPlateOwnership(
+      auth,
+      regno,
+    )
+
+    return {
+      validationErrorMessages: validation?.hasError
+        ? validation.errorMessages
+        : null,
     }
   }
 }
