@@ -6,19 +6,19 @@ import {
   XRoadConfig,
 } from '@island.is/nest/config'
 import { Configuration } from '../../gen/fetch'
-import { CourtBankruptcyCertClientConfig } from './courtBankruptcyCert.config'
+import { JudicialAdministrationClientConfig } from './judicialAdministration.config'
 
 export const ApiConfig = {
-  provide: 'CourtBankruptcyCertClientProviderConfiguration',
+  provide: 'JudicialAdministrationClientProviderConfiguration',
   scope: LazyDuringDevScope,
   useFactory: (
     xroadConfig: ConfigType<typeof XRoadConfig>,
-    config: ConfigType<typeof CourtBankruptcyCertClientConfig>,
+    config: ConfigType<typeof JudicialAdministrationClientConfig>,
     idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) =>
     new Configuration({
       fetchApi: createEnhancedFetch({
-        name: 'court-bankruptcy-cert',
+        name: 'judicial-administration',
         logErrorResponseBody: true,
 
         timeout: config.fetch.timeout,
@@ -31,7 +31,7 @@ export const ApiConfig = {
     }),
   inject: [
     XRoadConfig.KEY,
-    CourtBankruptcyCertClientConfig.KEY,
+    JudicialAdministrationClientConfig.KEY,
     IdsClientConfig.KEY,
   ],
 }

@@ -424,13 +424,13 @@ export const coreErrorMessages = defineMessages({
       'Staðfesting á skuldleysi fékkst ekki úr gagnagrunni Fjársýslu ríkisins',
     description: '',
   },
-  missingCourtBankruptcyCertificateTitle: {
-    id: 'ndc.application:missingCourtBankruptcyCertificateTitle',
+  missingJudicialAdministrationificateTitle: {
+    id: 'ndc.application:missingJudicialAdministrationificateTitle',
     defaultMessage: 'Ekki tókst að staðfesta búsforræðisvottorð',
     description: '',
   },
-  missingCourtBankruptcyCertificateSummary: {
-    id: 'ndc.application:missingCourtBankruptcyCertificateSummary',
+  missingJudicialAdministrationificateSummary: {
+    id: 'ndc.application:missingJudicialAdministrationificateSummary',
     defaultMessage:
       'Staðfesting á skuldleysi fékkst ekki úr gagnagrunni Dómstólasýslu ríkisins',
     description: '',

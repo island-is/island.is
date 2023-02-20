@@ -11,10 +11,10 @@ const schema = z.object({
   password: z.string(),
 })
 
-export const CourtBankruptcyCertClientConfig = defineConfig<
+export const JudicialAdministrationClientConfig = defineConfig<
   z.infer<typeof schema>
 >({
-  name: 'CourtBankruptcyCertClient',
+  name: 'JudicialAdministrationClient',
   schema,
   load: (env) => ({
     xRoadServicePath: env.required(

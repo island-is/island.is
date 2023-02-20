@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'court-bankruptcy-cert',
+  displayName: 'judicial-administration',
   preset: '../../../jest.preset.js',
   globals: {
     'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' },
@@ -8,5 +8,5 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/clients/court-bankruptcy-cert',
+  coverageDirectory: '../../../coverage/libs/clients/judicial-administration',
 }

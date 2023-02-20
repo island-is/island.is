@@ -22,4 +22,4 @@ export const AttachmentPaths: AttachmentPath[] = [
 export const YES = 'yes'
 export const NO = 'no'
 
-export const ALLOWED_BANKRUPTCY_STATUSES = ['3', '0']
+export const BANNED_BANKRUPTCY_STATUSES = ['3', '0']

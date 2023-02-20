@@ -5,14 +5,14 @@ import {
   BankruptcyHistoryResult,
   SearchBankruptcyHistoryApi,
 } from '../../gen/fetch'
-import { CourtBankruptcyCertClientConfig } from './courtBankruptcyCert.config'
+import { JudicialAdministrationClientConfig } from './judicialAdministration.config'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 
 @Injectable()
-export class CourtBankruptcyCertService {
+export class JudicialAdministrationService {
   constructor(
-    @Inject(CourtBankruptcyCertClientConfig.KEY)
-    private clientConfig: ConfigType<typeof CourtBankruptcyCertClientConfig>,
+    @Inject(JudicialAdministrationClientConfig.KEY)
+    private clientConfig: ConfigType<typeof JudicialAdministrationClientConfig>,
     private readonly authenticateApi: AuthenticateApi,
     private readonly searchBankruptcyApi: SearchBankruptcyHistoryApi,
   ) {}

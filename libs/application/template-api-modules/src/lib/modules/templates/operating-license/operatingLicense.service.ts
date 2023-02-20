@@ -32,8 +32,8 @@ import { CriminalRecordService } from '@island.is/api/domains/criminal-record'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { FinanceClientService } from '@island.is/clients/finance'
 import { OperatingLicenseFakeData } from '@island.is/application/templates/operating-license/types'
-import { CourtBankruptcyCertService } from '@island.is/clients/court-bankruptcy-cert'
-import { ALLOWED_BANKRUPTCY_STATUSES } from './constants'
+import { JudicialAdministrationService } from '@island.is/clients/judicial-administration'
+import { BANNED_BANKRUPTCY_STATUSES } from './constants'
 
 @Injectable()
 export class OperatingLicenseService extends BaseTemplateApiService {
@@ -43,7 +43,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     private readonly syslumennService: SyslumennService,
     private readonly criminalRecordService: CriminalRecordService,
     private readonly financeService: FinanceClientService,
-    private readonly courtBankruptcyCertService: CourtBankruptcyCertService,
+    private readonly judicialAdministrationService: JudicialAdministrationService,
   ) {
     super(ApplicationTypes.OPERATING_LCENSE)
     this.s3 = new S3()
@@ -163,21 +163,21 @@ export class OperatingLicenseService extends BaseTemplateApiService {
   async courtBankruptcyCert({
     auth,
   }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
-    const cert = await this.courtBankruptcyCertService.searchBankruptcy(auth)
+    const cert = await this.judicialAdministrationService.searchBankruptcy(auth)
     console.log('CERT', cert, Object.entries(cert))
     for (const [_, value] of Object.entries(cert)) {
       console.log(value.bankruptcyStatus)
       if (
         value.bankruptcyStatus &&
-        ALLOWED_BANKRUPTCY_STATUSES.includes(value.bankruptcyStatus)
+        BANNED_BANKRUPTCY_STATUSES.includes(value.bankruptcyStatus)
       ) {
         return { success: true }
       }
     }
     throw new TemplateApiError(
       {
-        title: coreErrorMessages.missingCourtBankruptcyCertificateTitle,
-        summary: coreErrorMessages.missingCourtBankruptcyCertificateSummary,
+        title: coreErrorMessages.missingJudicialAdministrationificateTitle,
+        summary: coreErrorMessages.missingJudicialAdministrationificateSummary,
       },
       400,
     )

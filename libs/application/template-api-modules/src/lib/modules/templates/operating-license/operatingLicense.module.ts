@@ -5,7 +5,7 @@ import { BaseTemplateAPIModuleConfig } from '../../../types'
 import { SyslumennClientModule } from '@island.is/clients/syslumenn'
 import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
 import { FinanceClientModule } from '@island.is/clients/finance'
-import { CourtBankruptcyCertClientModule } from '@island.is/clients/court-bankruptcy-cert'
+import { JudicialAdministrationClientModule } from '@island.is/clients/judicial-administration'
 
 export class OperatingLicenseModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -16,7 +16,7 @@ export class OperatingLicenseModule {
         SharedTemplateAPIModule.register(config),
         CriminalRecordModule.register(config.criminalRecord),
         FinanceClientModule,
-        CourtBankruptcyCertClientModule,
+        JudicialAdministrationClientModule,
       ],
       providers: [OperatingLicenseService],
       exports: [OperatingLicenseService],

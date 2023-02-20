@@ -224,7 +224,7 @@ export const AdrAndMachine = new XroadConf({
   },
 })
 
-export const CourtBankruptcyCert = new XroadConf({
+export const JudicialAdministration = new XroadConf({
   env: {
     XROAD_COURT_BANKRUPTCY_CERT_PATH: {
       dev: 'IS-DEV/GOV/10019/Domstolasyslan-DEV/Domstolasyslan',

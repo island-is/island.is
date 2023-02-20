@@ -391,9 +391,6 @@
       "@island.is/clients/charge-fjs-v2": [
         "libs/clients/charge-fjs-v2/src/index.ts"
       ],
-      "@island.is/clients/court-bankruptcy-cert": [
-        "libs/clients/court-bankruptcy-cert/src/index.ts"
-      ],
       "@island.is/clients/criminal-record": [
         "libs/clients/criminal-record/src/index.ts"
       ],
@@ -432,6 +429,9 @@
       ],
       "@island.is/clients/identity": ["libs/clients/identity/src/index.ts"],
       "@island.is/clients/islykill": ["libs/clients/islykill/src/index.ts"],
+      "@island.is/clients/judicial-administration": [
+        "libs/clients/judicial-administration/src/index.ts"
+      ],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
       ],

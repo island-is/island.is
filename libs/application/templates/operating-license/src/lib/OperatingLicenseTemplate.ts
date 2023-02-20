@@ -19,7 +19,7 @@ import {
   OperatingLicenseFeatureFlags,
 } from './getApplicationFeatureFlags'
 import {
-  CourtBankruptcyCertApi,
+  JudicialAdministrationApi,
   CriminalRecordApi,
   NoDebtCertificateApi,
   SyslumadurPaymentCatalogApi,
@@ -86,7 +86,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
                 UserProfileApi,
                 CriminalRecordApi,
                 NoDebtCertificateApi,
-                CourtBankruptcyCertApi,
+                JudicialAdministrationApi,
               ],
             },
           ],
