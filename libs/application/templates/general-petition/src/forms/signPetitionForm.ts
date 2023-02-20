@@ -16,9 +16,9 @@ export const signPetitionForm: Form = buildForm({
       title: '',
       children: [
         buildCustomField({
-          id: 'disclaimer',
+          id: 'signPetitionForm',
           title: '',
-          component: 'EndorsementDisclaimer',
+          component: 'SignPetitionView',
         }),
       ],
     }),
