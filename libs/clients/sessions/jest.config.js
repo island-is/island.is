@@ -1,9 +1,9 @@
 module.exports = {
   displayName: 'clients-sessions',
-  preset: '../../../jest.preset.js',
+  preset: './jest.preset.js',
   globals: {
     'ts-jest': {
-      tsconfig: '<rootDir>/tsconfig.spec.json',
+      tsconfig: `${__dirname}/tsconfig.spec.json`,
     },
   },
   testEnvironment: 'node',
@@ -11,5 +11,5 @@ module.exports = {
     '^.+\\.[tj]s$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../../coverage/libs/clients/sessions',
+  coverageDirectory: '<rootDir>/coverage/libs/clients/sessions',
 }
