@@ -1,0 +1,15 @@
+query getApplications($input: ApplicationApplicationsAdminInput!) {
+    applicationApplicationsAdmin(input: $input) {
+      id
+      typeId
+      applicant
+      state
+      created
+      modified
+      name
+      institution
+      progress
+      status
+    }
+  }
+
