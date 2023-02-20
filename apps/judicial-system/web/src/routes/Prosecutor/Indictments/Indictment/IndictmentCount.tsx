@@ -47,17 +47,24 @@ interface Props {
   ) => void
 }
 
-const laws = [
-  [48, 1], // lyf
-  [48, 2], // lyf
-  [49, 1], // ölvun
-  [49, 2], // ölvun
-  [49, 3], // ölvun
-  [50, 1], // fíkniefni
-  [50, 2], // fíkniefni
-  [58, 1], // sviptingarakstur
-  [95, 1], // á alltaf við öll þessi brot,
-]
+const offenceLawsMap: Record<
+  IndictmentCountOffense | 'DRUNK_DRIVING_MINOR' | 'DRUNK_DRIVING_MAJOR',
+  [number, number][]
+> = {
+  [IndictmentCountOffense.DrivingWithoutLicence]: [[58, 1]],
+  [IndictmentCountOffense.DrunkDriving]: [[49, 1]],
+  DRUNK_DRIVING_MINOR: [[49, 2]],
+  DRUNK_DRIVING_MAJOR: [[49, 3]],
+  [IndictmentCountOffense.IllegalDrugsDriving]: [
+    [50, 1],
+    [50, 2],
+  ],
+  [IndictmentCountOffense.PrescriptionDrugsDriving]: [
+    [48, 1],
+    [48, 2],
+  ],
+}
+const generalLaws: [number, number][] = [[95, 1]]
 
 function lawsCompare(law1: number[], law2: number[]) {
   if (law1[0] < law2[0]) {
@@ -75,10 +82,33 @@ function lawsCompare(law1: number[], law2: number[]) {
   return 0
 }
 
+const laws = Object.values(offenceLawsMap)
+  .flat()
+  .concat(generalLaws)
+  .sort(lawsCompare)
+
+function getLawsBroken(offences: IndictmentCountOffense[]) {
+  if (offences.length === 0) {
+    return []
+  }
+
+  let lawsBroken: [number, number][] = []
+
+  offences.forEach((offence) => {
+    lawsBroken = lawsBroken.concat(offenceLawsMap[offence])
+
+    if (offence === IndictmentCountOffense.DrunkDriving) {
+      lawsBroken = lawsBroken.concat(offenceLawsMap['DRUNK_DRIVING_MINOR'])
+    }
+  })
+
+  return lawsBroken.concat(generalLaws).sort(lawsCompare)
+}
+
 interface LawsBrokenOption {
   label: string
   value: string
-  index: number
+  law: [number, number]
   disabled: boolean
 }
 
@@ -106,14 +136,18 @@ export const IndictmentCount: React.FC<Props> = (props) => {
     setLegalArgumentsErrorMessage,
   ] = useState<string>('')
 
-  const offensesList = Object.values(IndictmentCountOffense).map((offense) => ({
-    value: offense,
-    label: formatMessage(enumStrings[offense]),
-    disabled: indictmentCount.offenses?.includes(offense),
-  }))
+  const offensesList = useMemo(
+    () =>
+      Object.values(IndictmentCountOffense).map((offense) => ({
+        value: offense,
+        label: formatMessage(enumStrings[offense]),
+        disabled: indictmentCount.offenses?.includes(offense),
+      })),
+    [formatMessage, indictmentCount.offenses],
+  )
 
   const lawTag = useCallback(
-    (law: number[]): string =>
+    (law: number[]) =>
       formatMessage(strings.lawsBrokenTag, {
         paragraph: law[1],
         article: law[0],
@@ -126,7 +160,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
       laws.map((law, index) => ({
         label: lawTag(law),
         value: `${index}`,
-        index: index,
+        law,
         disabled: Boolean(
           indictmentCount.lawsBroken?.find(
             (brokenLaw) => brokenLaw[0] === law[0] && brokenLaw[1] === law[1],
@@ -137,8 +171,8 @@ export const IndictmentCount: React.FC<Props> = (props) => {
   )
 
   const legalArguments = useCallback(
-    (lawsBroken?: number[][] | null) => {
-      if (!lawsBroken || lawsBroken.length === 0) {
+    (lawsBroken: number[][]) => {
+      if (lawsBroken.length === 0) {
         return ''
       }
 
@@ -323,16 +357,19 @@ export const IndictmentCount: React.FC<Props> = (props) => {
             const selectedOffense = (so as ReactSelectOption)
               .value as IndictmentCountOffense
             const offenses = [
-              ...(indictmentCount.offenses || []),
+              ...(indictmentCount.offenses ?? []),
               selectedOffense,
             ]
+            const lawsBroken = getLawsBroken(offenses)
             onChange(indictmentCount.id, {
               offenses: offenses,
+              lawsBroken: lawsBroken,
               incidentDescription: incidentDescription(
                 offenses,
                 indictmentCount.policeCaseNumber ?? '',
                 indictmentCount.vehicleRegistrationNumber ?? '',
               ),
+              legalArguments: legalArguments(lawsBroken),
             })
           }}
           value={null}
@@ -344,7 +381,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           {indictmentCount.offenses.map((offense) => (
             <Box
               display="inlineBlock"
-              key={`${offense}`}
+              key={`${indictmentCount.id}-${offense}`}
               component="span"
               marginBottom={1}
               marginRight={1}
@@ -352,16 +389,19 @@ export const IndictmentCount: React.FC<Props> = (props) => {
               <Tag
                 variant="darkerBlue"
                 onClick={() => {
-                  const offenses = indictmentCount.offenses?.filter(
+                  const offenses = (indictmentCount.offenses ?? []).filter(
                     (o) => o !== offense,
                   )
+                  const lawsBroken = getLawsBroken(offenses)
                   onChange(indictmentCount.id, {
                     offenses: offenses,
+                    lawsBroken: lawsBroken,
                     incidentDescription: incidentDescription(
                       offenses,
                       indictmentCount.policeCaseNumber ?? '',
                       indictmentCount.vehicleRegistrationNumber ?? '',
                     ),
+                    legalArguments: legalArguments(lawsBroken),
                   })
                 }}
               >
@@ -382,10 +422,10 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           placeholder={formatMessage(strings.lawsBrokenPlaceholder)}
           value={null}
           onChange={(selectedOption: ValueType<ReactSelectOption>) => {
-            const index = (selectedOption as LawsBrokenOption).index
+            const law = (selectedOption as LawsBrokenOption).law
             const lawsBroken = [
               ...(indictmentCount.lawsBroken ?? []),
-              laws[index],
+              law,
             ].sort(lawsCompare)
             onChange(indictmentCount.id, {
               lawsBroken: lawsBroken,
@@ -397,7 +437,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
       </Box>
       {indictmentCount.lawsBroken && indictmentCount.lawsBroken.length > 0 && (
         <Box marginBottom={2}>
-          {indictmentCount.lawsBroken.map((brokenLaw, index) => (
+          {indictmentCount.lawsBroken.map((brokenLaw) => (
             <Box
               display="inlineBlock"
               key={`${indictmentCount.id}-${brokenLaw}`}
@@ -408,13 +448,9 @@ export const IndictmentCount: React.FC<Props> = (props) => {
               <Tag
                 variant="darkerBlue"
                 onClick={() => {
-                  if (!indictmentCount.lawsBroken) {
-                    return
-                  }
-
-                  const lawsBroken = indictmentCount.lawsBroken
-                    .slice(0, index)
-                    .concat(indictmentCount.lawsBroken.slice(index + 1))
+                  const lawsBroken = (indictmentCount.lawsBroken ?? []).filter(
+                    (b) => lawsCompare(b, brokenLaw) !== 0,
+                  )
                   onChange(indictmentCount.id, {
                     lawsBroken: lawsBroken,
                     legalArguments: legalArguments(lawsBroken),

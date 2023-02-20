@@ -70,7 +70,7 @@ export const Layout: FC = ({ children }) => {
                 <Hidden print>
                   <ContentBreadcrumbs />
                 </Hidden>
-                <div>{children}</div>
+                {children}
               </GridColumn>
             </GridRow>
           </GridContainer>
