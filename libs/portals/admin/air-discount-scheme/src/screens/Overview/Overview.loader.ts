@@ -1,11 +1,10 @@
 import { z } from 'zod'
 import startOfMonth from 'date-fns/startOfMonth'
 import endOfDay from 'date-fns/endOfDay'
-import {
-  transformDate,
-  validateRequestWithSchema,
-} from '@island.is/react-spa/shared'
+import parseDate from 'date-fns/parse'
+import { validateRequestWithSchema } from '@island.is/react-spa/shared'
 import type { WrappedLoaderFn } from '@island.is/portals/core'
+import { isValidDate } from '@island.is/shared/utils'
 import { zfd } from 'zod-form-data'
 import {
   AirDiscountSchemeFlightLegGender,
@@ -18,6 +17,14 @@ import {
 } from './Overview.generated'
 
 const TODAY = new Date()
+
+export const transformDate = (val: string) => {
+  if (isValidDate(new Date(val))) {
+    return val
+  }
+
+  return parseDate(val, 'dd.mm.yyyy', endOfDay(new Date()))
+}
 
 const schema = z.object({
   age: z
