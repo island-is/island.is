@@ -59,6 +59,13 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions'> => {
         memory: '256Mi',
       },
     })
+    .initContainer({
+      containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
+      postgres: servicePostgresInfo,
+      envs: {
+        NO_UPDATE_NOTIFIER: 'true',
+      },
+    })
     .ingress({
       internal: {
         host: {
