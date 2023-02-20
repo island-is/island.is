@@ -10,7 +10,7 @@ interface PropTypes {
 }
 
 const OwnersTable = ({ data, title }: PropTypes) => {
-  useNamespaces('sp.vehicles')
+  useNamespaces('sp.transports')
   const { formatMessage } = useLocale()
   return (
     <Box marginBottom={4} marginTop="containerGutter">

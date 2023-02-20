@@ -105,7 +105,7 @@ const getFilteredVehicles = (
 }
 
 const VehiclesOverview = () => {
-  useNamespaces('sp.vehicles')
+  useNamespaces('sp.transports')
   const userInfo = useUserInfo()
   const { formatMessage, lang } = useLocale()
   const [page, setPage] = useState(1)

@@ -295,17 +295,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         ],
       },
 
-      // Loftbrú
-      {
-        name: m.airDiscount,
-        path: ServicePortalPath.AirDiscountRoot,
-
-        icon: {
-          icon: 'globe',
-          type: 'outline',
-        },
-      },
-
       // Stillingar - hidden from nav
       {
         name: m.settings,

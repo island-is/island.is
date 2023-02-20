@@ -62,7 +62,7 @@ export const GET_VEHICLES_SEARCH = gql`
 `
 
 const Lookup = () => {
-  useNamespaces('sp.vehicles')
+  useNamespaces('sp.transports')
   const { formatMessage } = useLocale()
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [expanded, setExpanded] = useState(!termsAccepted)

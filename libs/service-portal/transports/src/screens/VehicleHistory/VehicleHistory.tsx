@@ -98,7 +98,7 @@ const getFilteredVehicles = (
 }
 
 const VehiclesHistory = () => {
-  useNamespaces('sp.vehicles')
+  useNamespaces('sp.transports')
   const { formatMessage } = useLocale()
 
   const [checkbox, setCheckbox] = useState(false)

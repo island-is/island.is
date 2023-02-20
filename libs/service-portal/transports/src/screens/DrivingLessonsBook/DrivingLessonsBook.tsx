@@ -55,7 +55,7 @@ export const GET_STUDENT_BOOK = gql`
 `
 
 const DrivingLessonsBook = () => {
-  useNamespaces('sp.vehicles')
+  useNamespaces('sp.transports')
   const { formatMessage } = useLocale()
 
   const { data, loading, error } = useQuery<Query>(GET_STUDENT_BOOK)

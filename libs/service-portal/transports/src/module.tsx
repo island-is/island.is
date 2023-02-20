@@ -4,6 +4,10 @@ import { m } from '@island.is/service-portal/core'
 import { PortalModule } from '@island.is/portals/core'
 import { TransportPaths } from './lib/paths'
 
+const AirDiscountOverview = lazy(() =>
+  import('./screens/AirDiscountOverview/AirDiscountOverview'),
+)
+
 const TransportsOverview = lazy(() =>
   import('./screens/TransportsOverview/TransportsOverview'),
 )
@@ -71,12 +75,12 @@ export const transportsModule: PortalModule = {
       element: <Lookup />,
     },
     {
-      name: 'Loftbrú',
+      name: m.airDiscount,
       path: TransportPaths.TransportAirDiscount,
       enabled:
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.internalProcuring),
-      render: () => lazy(() => import('./screens/Lookup/Lookup')),
+      element: <AirDiscountOverview />,
     },
   ],
 }

@@ -4,7 +4,7 @@ import { useNamespaces } from '@island.is/localization'
 import { TransportPaths } from '../..'
 
 export const TransportsOverview = () => {
-  useNamespaces('sp.vehicles')
+  useNamespaces('sp.transports')
 
   return <Navigate to={TransportPaths.AssetsMyVehicles} />
 }

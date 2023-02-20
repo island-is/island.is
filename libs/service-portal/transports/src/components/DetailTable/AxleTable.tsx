@@ -11,7 +11,7 @@ interface PropTypes {
 }
 
 const AxleTable = ({ axles, tyres }: PropTypes) => {
-  useNamespaces('sp.vehicles')
+  useNamespaces('sp.transports')
   const { formatMessage } = useLocale()
 
   const tyreArray: string[] = []

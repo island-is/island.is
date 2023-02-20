@@ -2,7 +2,7 @@ import React from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { AirDiscountSchemeFlightLeg } from '@island.is/api/schema'
-import { messages as m } from '../lib/messages'
+import { messages as m } from '../../lib/messages'
 import { formatDateWithTime } from '@island.is/service-portal/core'
 
 interface PropTypes {
@@ -10,7 +10,7 @@ interface PropTypes {
 }
 
 const UsageTable = ({ data }: PropTypes) => {
-  useNamespaces('sp.air-discount')
+  useNamespaces('sp.transports')
   const { formatMessage } = useLocale()
   return (
     <Box marginBottom={4}>

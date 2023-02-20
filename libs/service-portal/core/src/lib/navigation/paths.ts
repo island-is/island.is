@@ -116,7 +116,4 @@ export enum ServicePortalPath {
   MachineLicensesDetail = '/skirteini/vinnueftirlitid/vinnuvelarettindi',
   LicensesPassportDetail = '/skirteini/tjodskra/vegabref/:id',
   LicensesDetail = '/skirteini/:provider/:type',
-
-  // Air Discount
-  AirDiscountRoot = '/loftbru',
 }

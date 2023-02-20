@@ -25,7 +25,7 @@ import {
 import { messages as m } from '../../lib/messages'
 import copyToClipboard from 'copy-to-clipboard'
 import { ModuleAlertBannerSection } from '@island.is/service-portal/core'
-import UsageTable from '../../components/UsageTable'
+import UsageTable from '../../components/UsageTable/UsageTable'
 import { formatDateWithTime } from '@island.is/service-portal/core'
 import { AirDiscountSchemeDiscount } from '@island.is/service-portal/graphql'
 
@@ -72,8 +72,8 @@ type CopiedCode = {
   copied: boolean
 }
 
-export const AirDiscountOverview: ServicePortalModuleComponent = () => {
-  useNamespaces('sp.air-discount')
+export const AirDiscountOverview = () => {
+  useNamespaces('sp.transports')
   const { formatMessage } = useLocale()
   const { data, loading, error } = useQuery<Query>(AirDiscountQuery)
   const {
