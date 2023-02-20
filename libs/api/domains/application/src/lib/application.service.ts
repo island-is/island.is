@@ -62,8 +62,7 @@ export class ApplicationService {
     locale: Locale,
     input?: ApplicationApplicationsInput,
   ) {
-    console.log('calling ')
-    const sall = await this.applicationApiWithAuth(
+    return await this.applicationApiWithAuth(
       user,
     ).applicationControllerFindAll({
       nationalId: user.nationalId,
@@ -71,8 +70,6 @@ export class ApplicationService {
       typeId: input?.typeId?.join(','),
       status: input?.status?.join(','),
     })
-    console.log({ sall })
-    return sall
   }
 
   async create(input: CreateApplicationInput, auth: Auth) {
