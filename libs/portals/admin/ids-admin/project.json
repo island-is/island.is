@@ -1,0 +1,25 @@
+{
+  "root": "libs/portals/admin/ids-admin",
+  "sourceRoot": "libs/portals/admin/ids-admin/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/portals/admin/ids-admin/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/portals/admin/ids-admin"],
+      "options": {
+        "jestConfig": "libs/portals/admin/ids-admin/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  }
+}
