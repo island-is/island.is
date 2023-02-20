@@ -1,4 +1,8 @@
-import { buildForm, buildCustomField, buildMultiField } from '@island.is/application/core'
+import {
+  buildForm,
+  buildCustomField,
+  buildMultiField,
+} from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 
@@ -18,7 +22,7 @@ export const done: Form = buildForm({
           title: m.listCreatedTitle,
           component: 'ListCreated',
         }),
-      ]
-    })
+      ],
+    }),
   ],
 })
