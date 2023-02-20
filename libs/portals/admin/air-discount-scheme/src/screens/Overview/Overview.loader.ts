@@ -1,8 +1,10 @@
 import { z } from 'zod'
-import parseDate from 'date-fns/parse'
 import startOfMonth from 'date-fns/startOfMonth'
 import endOfDay from 'date-fns/endOfDay'
-import { validateRequestWithSchema } from '@island.is/react-spa/shared'
+import {
+  transformDate,
+  validateRequestWithSchema,
+} from '@island.is/react-spa/shared'
 import type { WrappedLoaderFn } from '@island.is/portals/core'
 import { zfd } from 'zod-form-data'
 import {
@@ -14,18 +16,6 @@ import {
   FlightLegsQuery,
   FlightLegsQueryVariables,
 } from './Overview.generated'
-
-function isValidDate(date: Date) {
-  return date instanceof Date && !isNaN(date.getTime())
-}
-
-const transformDate = (val: string) => {
-  if (isValidDate(new Date(val))) {
-    return val
-  }
-
-  return parseDate(val, 'dd.mm.yyyy', endOfDay(new Date()))
-}
 
 const TODAY = new Date()
 
