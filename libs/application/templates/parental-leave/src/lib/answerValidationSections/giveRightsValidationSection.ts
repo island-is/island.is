@@ -33,7 +33,8 @@ export const giveRightsValidationSection = (
   if (
     givingRightsObj.isGivingRights === YES &&
     otherParent === MANUAL &&
-    otherParentRightOfAccess !== YES
+    otherParentRightOfAccess !== YES &&
+    selectedChild?.parentalRelation === ParentalRelations.primary
   ) {
     return buildError(
       errorMessages.notAllowedToGiveRightsOtherParentNotAllowed,

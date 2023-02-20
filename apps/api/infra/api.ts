@@ -20,7 +20,7 @@ import {
   Vehicles,
   AdrAndMachine,
   Firearm,
-  DisabilityLicense,
+  Disability,
   VehicleServiceFjsV1,
   TransportAuthority,
   ChargeFjsV2,
@@ -35,7 +35,7 @@ export const serviceSetup = (services: {
   documentsService: ServiceBuilder<'services-documents'>
   servicesEndorsementApi: ServiceBuilder<'services-endorsement-api'>
   airDiscountSchemeBackend: ServiceBuilder<'air-discount-scheme-backend'>
-  sessionsApi: ServiceBuilder<'services-sessions-api'>
+  sessionsApi: ServiceBuilder<'services-sessions'>
 }): ServiceBuilder<'api'> => {
   return service('api')
     .namespace('islandis')
@@ -206,8 +206,6 @@ export const serviceSetup = (services: {
         '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENT_SECRET_TEST',
       SYSLUMENN_USERNAME: '/k8s/api/SYSLUMENN_USERNAME',
       SYSLUMENN_PASSWORD: '/k8s/api/SYSLUMENN_PASSWORD',
-      DOCUMENT_PROVIDER_ADMINS:
-        '/k8s/documentprovider/DOCUMENT_PROVIDER_ADMINS',
       PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY',
       PKPASS_API_URL: '/k8s/api/PKPASS_API_URL',
       PKPASS_AUTH_RETRIES: '/k8s/api/PKPASS_AUTH_RETRIES',
@@ -257,7 +255,7 @@ export const serviceSetup = (services: {
     .xroad(
       AdrAndMachine,
       Firearm,
-      DisabilityLicense,
+      Disability,
       Base,
       Client,
       HealthInsurance,

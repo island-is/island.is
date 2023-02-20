@@ -7,6 +7,7 @@ import React, {
   useState,
 } from 'react'
 import type { User } from 'oidc-client-ts'
+import { useEffectOnce } from 'react-use'
 import { getAuthSettings, getUserManager } from '../userManager'
 import { ActionType, initialState, reducer } from './Auth.state'
 import { AuthSettings } from '../AuthSettings'
@@ -31,20 +32,29 @@ interface AuthProviderProps {
 }
 
 type GetReturnUrl = {
-  basePath: string
   returnUrl: string
 } & Pick<AuthSettings, 'redirectPath'>
 
-const getReturnUrl = ({ redirectPath, basePath, returnUrl }: GetReturnUrl) => {
+const isCurrentRoute = (url: string, path?: string) =>
+  isDefined(path) && url.startsWith(path)
+
+const getReturnUrl = ({ redirectPath, returnUrl }: GetReturnUrl) => {
   if (redirectPath && returnUrl.startsWith(redirectPath)) {
-    return basePath
+    return '/'
   }
 
   return returnUrl
 }
 
-const getCurrentUrl = () =>
-  `${window.location.pathname}${window.location.search}`
+const getCurrentUrl = (basePath: string) => {
+  const url = `${window.location.pathname}${window.location.search}${window.location.hash}`
+
+  if (url.startsWith(basePath)) {
+    return url.slice(basePath.length)
+  }
+
+  return '/'
+}
 
 export const AuthProvider = ({
   children,
@@ -56,7 +66,6 @@ export const AuthProvider = ({
   const userManager = getUserManager()
   const authSettings = getAuthSettings()
   const monitorUserSession = !authSettings.scope?.includes('offline_access')
-  const url = getCurrentUrl()
 
   const signIn = useCallback(
     async function signIn() {
@@ -66,14 +75,13 @@ export const AuthProvider = ({
 
       return userManager.signinRedirect({
         state: getReturnUrl({
-          returnUrl: url,
-          basePath,
+          returnUrl: getCurrentUrl(basePath),
           redirectPath: authSettings.redirectPath,
         }),
       })
       // Nothing more happens here since browser will redirect to IDS.
     },
-    [dispatch, userManager, authSettings, url],
+    [dispatch, userManager, authSettings, basePath],
   )
 
   const signInSilent = useCallback(
@@ -121,15 +129,14 @@ export const AuthProvider = ({
         state:
           authSettings.switchUserRedirectUrl ??
           getReturnUrl({
-            returnUrl: getCurrentUrl(),
-            basePath,
+            returnUrl: getCurrentUrl(basePath),
             redirectPath: authSettings.redirectPath,
           }),
         ...args,
       })
       // Nothing more happens here since browser will redirect to IDS.
     },
-    [userManager, dispatch, authSettings, url],
+    [userManager, dispatch, authSettings, basePath],
   )
 
   const signOut = useCallback(
@@ -172,10 +179,11 @@ export const AuthProvider = ({
     [userManager, dispatch, signIn, signInSilent, autoLogin],
   )
 
+  const hasUserInfo = state.userInfo !== null
   useEffect(() => {
     // Only add events when we have userInfo, to avoid race conditions with
     // oidc hooks.
-    if (state.userInfo === null) {
+    if (!hasUserInfo) {
       return
     }
 
@@ -205,20 +213,19 @@ export const AuthProvider = ({
       userManager.events.removeUserLoaded(userLoaded)
       userManager.events.removeUserSignedOut(userSignedOut)
     }
-  }, [dispatch, userManager, signIn, autoLogin, state.userInfo === null])
-
-  const isCurrentRoute = (path?: string) =>
-    isDefined(path) && url.includes(basePath + path)
+  }, [dispatch, userManager, signIn, autoLogin, hasUserInfo])
 
   const init = async () => {
-    if (isCurrentRoute(authSettings?.redirectPath)) {
+    const currentUrl = getCurrentUrl(basePath)
+
+    if (isCurrentRoute(currentUrl, authSettings.redirectPath)) {
       try {
         const user = await userManager.signinRedirectCallback(
           window.location.href,
         )
 
         const url = typeof user.state === 'string' ? user.state : '/'
-        window.history.replaceState(null, '', url)
+        window.history.replaceState(null, '', basePath + url)
 
         dispatch({
           type: ActionType.SIGNIN_SUCCESS,
@@ -233,20 +240,42 @@ export const AuthProvider = ({
         console.error('Error in oidc callback', error)
         setHasError(true)
       }
-    } else if (isCurrentRoute(authSettings?.redirectPathSilent)) {
+    } else if (isCurrentRoute(currentUrl, authSettings.redirectPathSilent)) {
       const userManager = getUserManager()
       userManager.signinSilentCallback().catch((error) => {
-        // TODO: Handle error
         console.log(error)
+        setHasError(true)
       })
+    } else if (isCurrentRoute(currentUrl, authSettings.initiateLoginPath)) {
+      const userManager = getUserManager()
+      const searchParams = new URL(window.location.href).searchParams
+
+      const loginHint = searchParams.get('login_hint')
+      const targetLinkUri = searchParams.get('target_link_uri')
+      const path =
+        targetLinkUri &&
+        authSettings.baseUrl &&
+        targetLinkUri.startsWith(authSettings.baseUrl)
+          ? targetLinkUri.slice(authSettings.baseUrl.length)
+          : '/'
+      let prompt = searchParams.get('prompt')
+      prompt =
+        prompt && ['login', 'select_account'].includes(prompt) ? prompt : null
+
+      const args = {
+        state: path,
+        prompt: prompt ?? undefined,
+        login_hint: loginHint ?? undefined,
+      }
+      userManager.signinRedirect(args)
     } else {
       checkLogin()
     }
   }
 
-  useEffect(() => {
+  useEffectOnce(() => {
     init()
-  }, [])
+  })
 
   const context = useMemo(
     () => ({
@@ -259,12 +288,13 @@ export const AuthProvider = ({
     [state, signIn, signInSilent, switchUser, signOut],
   )
 
+  const url = getCurrentUrl(basePath)
   const isLoading =
     !state.userInfo ||
     // We need to display loading screen if current route is the redirectPath or redirectPathSilent.
     // This is because these paths are not part of our React Router routes.
-    isCurrentRoute(authSettings?.redirectPath) ||
-    isCurrentRoute(authSettings?.redirectPathSilent)
+    isCurrentRoute(url, authSettings?.redirectPath) ||
+    isCurrentRoute(url, authSettings?.redirectPathSilent)
 
   return (
     <AuthContext.Provider value={context}>

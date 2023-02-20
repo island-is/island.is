@@ -1,5 +1,5 @@
 import { ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
-import { Base, Client, Firearm } from '../../../infra/src/dsl/xroad'
+import { Base, Client, Disability, Firearm } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (): ServiceBuilder<'license-api'> =>
   service('license-api')
@@ -28,7 +28,7 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
       DISABILITY_LICENSE_PASS_TEMPLATE_ID:
         '/k8s/DISABILITY_LICENSE_PASS_TEMPLATE_ID',
     })
-    .xroad(Base, Client, Firearm)
+    .xroad(Base, Client, Firearm, Disability)
     .ingress({
       primary: {
         host: {

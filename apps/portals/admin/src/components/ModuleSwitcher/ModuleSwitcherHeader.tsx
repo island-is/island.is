@@ -29,7 +29,7 @@ export const ModuleSwitcherHeader = ({
       <div>
         <Text variant="eyebrow">{formatMessage(m.shortTitle)}</Text>
         {(!isStaticSwitcher || activeModule) && (
-          <Text>
+          <Text dataTestId="active-module-name">
             {formatMessage(
               activeModule ? activeModule.name : rootNavigationItem.name,
             )}

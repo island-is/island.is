@@ -35,6 +35,12 @@ class ActionCardMetaData {
 
   @Field(() => Boolean, { nullable: true })
   deleteButton?: boolean
+
+  @Field(() => Number, { nullable: true })
+  draftFinishedSteps?: number
+
+  @Field(() => Number, { nullable: true })
+  draftTotalSteps?: number
 }
 
 @ObjectType()

@@ -12,19 +12,21 @@ import { EstateTypes } from '../../lib/constants'
 export const announcerInfo = buildSection({
   id: 'information',
   title: (application) =>
-    application.answers.selectedEstate === EstateTypes.noPropertyEstate
-      ? m.announcerNoProperty
-      : application.answers.selectedEstate === EstateTypes.residencePermit
-      ? m.announcerRP
+    application.answers.selectedEstate === EstateTypes.estateWithoutAssets
+      ? m.announcerNoAssets
+      : application.answers.selectedEstate ===
+        EstateTypes.permitToPostponeEstateDivision
+      ? m.announcerPTP
       : m.announcer,
   children: [
     buildMultiField({
       id: 'applicant',
       title: (application) =>
-        application.answers.selectedEstate === EstateTypes.noPropertyEstate
-          ? m.announcerNoProperty
-          : application.answers.selectedEstate === EstateTypes.residencePermit
-          ? m.announcerResidencePermit
+        application.answers.selectedEstate === EstateTypes.estateWithoutAssets
+          ? m.announcerNoAssets
+          : application.answers.selectedEstate ===
+            EstateTypes.permitToPostponeEstateDivision
+          ? m.announcerPermitToPostpone
           : m.announcer,
       description: m.applicantsInfoSubtitle,
       children: [

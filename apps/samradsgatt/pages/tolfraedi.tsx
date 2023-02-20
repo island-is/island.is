@@ -1,5 +1,5 @@
 import Layout from '../components/Layout/Layout'
-import { Box, GridColumn, GridRow, Tiles } from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 const Statistics = () => {
   return (
     <Layout>

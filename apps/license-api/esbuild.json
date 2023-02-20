@@ -37,6 +37,7 @@
     "pg-native",
     "form-data",
     "lru-cache",
+    "safer-buffer",
     "swagger-ui-dist"
   ],
   "keepNames": true

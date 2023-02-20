@@ -13,6 +13,7 @@ export const OperatorInformationSchema = z.object({
   name: z.string().min(1),
   email: z.string().min(1),
   phone: z.string().min(1),
+  wasRemoved: z.string().optional(),
   approved: z.boolean().optional(),
 })
 

@@ -1,10 +1,10 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
-  Get,
-  Headers,
   Param,
+  ParseEnumPipe,
   Post,
   Put,
 } from '@nestjs/common'
@@ -18,13 +18,18 @@ import {
   VerifyLicenseRequest,
   VerifyLicenseResponse,
 } from './dto'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiHeader, ApiParam, ApiTags } from '@nestjs/swagger'
 import { LicenseId } from './license.types'
+import { NationalId } from '../../decorators/nationalId'
 
-@Controller({ version: ['1'] })
-@ApiTags('license-api')
+@ApiHeader({
+  name: 'X-Param-NationalId',
+  description: "The user's national id",
+})
+@Controller({ version: ['1'], path: 'users/.nationalId/licenses/' })
+@ApiTags('users-licenses')
 @Audit()
-export class LicenseController {
+export class UserLicensesController {
   constructor(private readonly licenseService: LicenseService) {}
 
   @Documentation({
@@ -36,10 +41,23 @@ export class LicenseController {
       type: UpdateLicenseResponse,
     },
   })
-  @Put('users/.nationalId/licenses/:licenseId')
+  @ApiParam({
+    name: 'License Id',
+    description: 'The license type',
+    enum: LicenseId,
+    enumName: 'LicenseId',
+  })
+  @Put(':licenseId')
   async update(
-    @Headers('X-Param-NationalId') nationalId: string,
-    @Param('licenseId') licenseId: LicenseId,
+    @NationalId() nationalId: string,
+    @Param(
+      'licenseId',
+      new ParseEnumPipe(LicenseId, {
+        exceptionFactory: () =>
+          new BadRequestException('Invalid LicenseId in route'),
+      }),
+    )
+    licenseId: LicenseId,
     @Body() data: UpdateLicenseRequest,
   ): Promise<UpdateLicenseResponse> {
     const response = await this.licenseService.updateLicense(
@@ -50,7 +68,6 @@ export class LicenseController {
     return response
   }
 
-  @Delete('users/.nationalId/licenses/:licenseId')
   @Documentation({
     description: `This endpoint revokes a user's license`,
     response: {
@@ -58,9 +75,23 @@ export class LicenseController {
       type: RevokeLicenseResponse,
     },
   })
+  @ApiParam({
+    name: 'License Id',
+    description: 'The license type',
+    enum: LicenseId,
+    enumName: 'LicenseId',
+  })
+  @Delete(':licenseId')
   async revoke(
-    @Headers('X-Param-NationalId') nationalId: string,
-    @Param('licenseId') licenseId: LicenseId,
+    @NationalId() nationalId: string,
+    @Param(
+      'licenseId',
+      new ParseEnumPipe(LicenseId, {
+        exceptionFactory: () =>
+          new BadRequestException('Invalid LicenseId in route parameter'),
+      }),
+    )
+    licenseId: LicenseId,
   ) {
     const response = await this.licenseService.revokeLicense(
       licenseId,
@@ -68,7 +99,13 @@ export class LicenseController {
     )
     return response
   }
+}
 
+@Controller({ version: ['1'], path: 'licenses/' })
+@ApiTags('licenses')
+@Audit()
+export class LicensesController {
+  constructor(private readonly licenseService: LicenseService) {}
   @Documentation({
     description: `This endpoint verifies a user's license. Which means that the digital license and the actual license held by the
     relevant institution are compared. If everything adds up, the license is verified.`,

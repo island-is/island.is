@@ -230,6 +230,18 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Hætta við',
     description: 'Delete application dialog cancel',
   },
+  openServicePortalMessageText: {
+    id: 'application.system:openServicePortal.messageText',
+    defaultMessage:
+      'Upplýsingar í mínum síðum og í appi hefur þú aðgang að margvíslegum upplýsingum s.s stafrænt pósthólf, þínar upplýsingar, fjármál, umsóknir, menntun, fasteignir, ökutæki, skírteini, starfsleyfi ofl.',
+    description:
+      'Text for form builder component left side of button to go to the service portal',
+  },
+  openServicePortalButtonTitle: {
+    id: 'application.system:openServicePortal.buttonTitle',
+    defaultMessage: 'Áfram',
+    description: 'Button text for form builder component, go to service portal',
+  },
 })
 
 export const coreErrorMessages = defineMessages({
@@ -246,6 +258,12 @@ export const coreErrorMessages = defineMessages({
   errorDataProvider: {
     id: 'application.system:core.error.dataProvider',
     defaultMessage: 'Úps! Eitthvað fór úrskeiðis við að sækja gögnin þín',
+    description: 'Oops! Something went wrong when fetching your data',
+  },
+  errorDataProviderMaritalStatus: {
+    id: 'application.system:core.error.dataProviderMaritalStatus',
+    defaultMessage:
+      'Núverandi hjúskaparstaða þín leyfir þér ekki að halda áfram með þessa umsókn. Vinsamlega hafðu samband við Sýslumanninn í Vestmannaeyjum fyrir nánari upplýsingar.',
     description: 'Oops! Something went wrong when fetching your data',
   },
   fileUpload: {
