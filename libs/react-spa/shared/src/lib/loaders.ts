@@ -95,7 +95,7 @@ export const createObjFromReqSearchParams = (request: Request) => {
   return Object.keys(result).length === 0 ? null : result
 }
 
-export const validateRequest = <T extends z.ZodTypeAny>({
+export const validateRequestWithSchema = <T extends z.ZodTypeAny>({
   request,
   schema,
 }: {
