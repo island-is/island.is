@@ -20,8 +20,8 @@ import {
   formSubmit,
   IntroHeader,
   m,
-  ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
+import { useUserInfo } from '@island.is/auth/react'
 
 import { VehicleCard } from '../../components/VehicleCard'
 import { messages } from '../../lib/messages'
@@ -104,10 +104,9 @@ const getFilteredVehicles = (
   return vehicles
 }
 
-export const VehiclesOverview: ServicePortalModuleComponent = ({
-  userInfo,
-}) => {
+const VehiclesOverview = () => {
   useNamespaces('sp.vehicles')
+  const userInfo = useUserInfo()
   const { formatMessage, lang } = useLocale()
   const [page, setPage] = useState(1)
   const [searchInteractionEventSent, setSearchInteractionEventSent] = useState(

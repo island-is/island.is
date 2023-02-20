@@ -12,7 +12,6 @@ import { gql, useQuery } from '@apollo/client'
 import { Organisation } from '@island.is/api/schema'
 import { DocumentProvidersSearch } from './DocumentProvidersSearch'
 import { DocumentProvidersDashboard } from './DocumentProvidersDashboard'
-import { PortalModuleComponent } from '@island.is/portals/core'
 
 export type OrganisationPreview = Pick<
   Organisation,
@@ -29,7 +28,7 @@ const getOrganisationsPreviewQuery = gql`
   }
 `
 
-const DocumentProviders: PortalModuleComponent = () => {
+const DocumentProviders = () => {
   const [fromDate, setFromDate] = useState<Date | undefined>(undefined)
   const [toDate, setToDate] = useState<Date | undefined>(undefined)
   const { formatMessage } = useLocale()
