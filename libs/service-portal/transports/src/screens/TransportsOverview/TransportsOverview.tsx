@@ -6,7 +6,7 @@ import { TransportPaths } from '../..'
 export const TransportsOverview = () => {
   useNamespaces('sp.transports')
 
-  return <Navigate to={TransportPaths.AssetsMyVehicles} />
+  return <Navigate to={TransportPaths.AssetsMyVehicles} replace={true} />
 }
 
 export default TransportsOverview
