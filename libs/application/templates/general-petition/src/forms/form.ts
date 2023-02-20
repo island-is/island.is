@@ -54,6 +54,7 @@ export const form: Form = buildForm({
         buildMultiField({
           id: 'list',
           title: m.listInformationTitle,
+          space: 2,
           children: [
             buildTextField({
               id: 'listName',
