@@ -1,6 +1,6 @@
 module.exports = {
   preset: './jest.preset.js',
-  rootDir: '../../..',
+  rootDir: '../../../..',
   roots: [__dirname],
   transform: {
     '^.+\\.[tj]sx?$': [

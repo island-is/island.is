@@ -9,7 +9,6 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory:
-    '<rootDir>/coverage/libs/application/templates/driving-instructor-registrations',
+  coverageDirectory: '<rootDir>/coverage/libs/application/templates/driving-instructor-registrations',
   displayName: 'application-templates-driving-instructor-registrations',
 }

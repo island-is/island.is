@@ -10,7 +10,6 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory:
-    '<rootDir>/coverage/libs/api/domains/national-registry-x-road',
+  coverageDirectory: '<rootDir>/coverage/libs/api/domains/national-registry-x-road',
   displayName: 'api-domains-national-registry-x-road',
 }

@@ -1,5 +1,4 @@
 const path = require('path')
-
 module.exports = {
   preset: './jest.preset.js',
   rootDir: '../../..',

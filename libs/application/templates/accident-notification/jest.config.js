@@ -10,6 +10,5 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory:
-    '<rootDir>/coverage/libs/application/templates/accident-notification',
+  coverageDirectory: '<rootDir>/coverage/libs/application/templates/accident-notification',
 }

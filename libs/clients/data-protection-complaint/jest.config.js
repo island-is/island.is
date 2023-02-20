@@ -11,6 +11,5 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory:
-    '<rootDir>/coverage/libs/clients/data-protection-complaint',
+  coverageDirectory: '<rootDir>/coverage/libs/clients/data-protection-complaint',
 }

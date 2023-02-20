@@ -9,7 +9,6 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory:
-    '<rootDir>/coverage/libs/application/templates/driving-assessment-approval',
+  coverageDirectory: '<rootDir>/coverage/libs/application/templates/driving-assessment-approval',
   displayName: 'application-templates-driving-assessment-approval',
 }

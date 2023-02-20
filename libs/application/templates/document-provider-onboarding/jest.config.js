@@ -9,7 +9,6 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory:
-    '<rootDir>/coverage/libs/application/templates/document-provider-onboarding',
+  coverageDirectory: '<rootDir>/coverage/libs/application/templates/document-provider-onboarding',
   displayName: 'application-templates-document-provider-onboarding',
 }

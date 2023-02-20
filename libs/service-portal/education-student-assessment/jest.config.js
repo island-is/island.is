@@ -10,6 +10,5 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory:
-    '<rootDir>/coverage/libs/service-portal/education-student-assessment',
+  coverageDirectory: '<rootDir>/coverage/libs/service-portal/education-student-assessment',
 }

@@ -8,6 +8,5 @@ module.exports = {
     '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nrwl/next/babel'] }],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory:
-    '<rootDir>/coverage/apps/tools/contentful-role-permissions',
+  coverageDirectory: '<rootDir>/coverage/apps/tools/contentful-role-permissions',
 }

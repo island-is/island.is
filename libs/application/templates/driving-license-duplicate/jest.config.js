@@ -9,7 +9,6 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory:
-    '<rootDir>/coverage/libs/application/templates/driving-license-duplicate',
+  coverageDirectory: '<rootDir>/coverage/libs/application/templates/driving-license-duplicate',
   displayName: 'application-templates-driving-license-duplicate',
 }

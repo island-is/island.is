@@ -7,6 +7,5 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'babel-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory:
-    '<rootDir>/coverage/libs/portals/admin/air-discount-scheme',
+  coverageDirectory: '<rootDir>/coverage/libs/portals/admin/air-discount-scheme',
 }

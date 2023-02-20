@@ -9,7 +9,6 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory:
-    '<rootDir>/coverage/libs/application/templates/institution-collaboration',
+  coverageDirectory: '<rootDir>/coverage/libs/application/templates/institution-collaboration',
   displayName: 'application-templates-institution-collaboration',
 }

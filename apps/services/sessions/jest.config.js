@@ -1,6 +1,8 @@
 module.exports = {
   displayName: 'services-sessions',
   preset: './jest.preset.js',
+  rootDir: '../../..',
+  roots: [__dirname],
   globals: {
     'ts-jest': {
       tsconfig: `${__dirname}/tsconfig.spec.json`,
