@@ -192,7 +192,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     if (!chargeItemCode) {
       throw new Error('chargeItemCode missing in request')
     }
-    console.log(chargeItemCode)
+    
     const response = await this.sharedTemplateAPIService.createCharge(
       auth,
       id,

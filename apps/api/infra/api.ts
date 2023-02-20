@@ -207,7 +207,7 @@ export const serviceSetup = (services: {
         '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENT_SECRET_TEST',
       SYSLUMENN_USERNAME: '/k8s/api/SYSLUMENN_USERNAME',
       SYSLUMENN_PASSWORD: '/k8s/api/SYSLUMENN_PASSWORD',
-      DOMSYSLA_USERNAME: '/k8s/api/DOMSYSLA_USERNAME', //TODO: fá þetta inn með hjálp devops
+      DOMSYSLA_USERNAME: '/k8s/api/DOMSYSLA_USERNAME',
       DOMSYSLA_PASSWORD: '/k8s/api/DOMSYSLA_PASSWORD',
       DOCUMENT_PROVIDER_ADMINS:
         '/k8s/documentprovider/DOCUMENT_PROVIDER_ADMINS',
