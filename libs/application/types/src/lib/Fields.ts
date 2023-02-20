@@ -4,6 +4,7 @@ import type {
   InputBackgroundColor,
   BoxProps,
   SpanType,
+  IconProps,
 } from '@island.is/island-ui/core/types'
 
 import { ApolloClient } from '@apollo/client'
@@ -13,7 +14,6 @@ import { CallToAction } from './StateMachine'
 import { Application } from './Application'
 import { FormatInputValueFunction } from 'react-number-format'
 import { TestSupport } from '@island.is/island-ui/utils'
-import { IconProps } from '@island.is/island-ui/core'
 import React from 'react'
 
 export type RecordObject<T = unknown> = Record<string, T>

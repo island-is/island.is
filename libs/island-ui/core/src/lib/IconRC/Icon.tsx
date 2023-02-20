@@ -1,37 +1,12 @@
 import React, { Suspense, useMemo } from 'react'
 import cn from 'classnames'
 import { theme } from '@island.is/island-ui/theme'
-import iconMap, { Icon as IconType, Type } from './iconMap'
+import iconMap from './iconMap'
 import { Box } from '../Box/Box'
 import * as styles from './Icon.css'
+import { IconProps, SvgProps } from './types'
 
 const colors = theme.color
-
-export type Size = 'small' | 'medium' | 'large'
-export type IconMapType = Type
-export type IconMapIcon = IconType
-
-export interface IconProps {
-  type?: Type
-  icon: IconType
-  title?: string
-  titleId?: string
-  color?: keyof typeof colors
-  size?: Size
-  className?: string
-  skipPlaceholderSize?: boolean
-  ariaHidden?: boolean
-}
-
-export interface SvgProps {
-  title?: string
-  titleId?: string
-  className?: string
-  width?: string
-  height?: string
-  fill?: string
-  color?: string
-}
 
 const sizes = {
   small: '16px',
