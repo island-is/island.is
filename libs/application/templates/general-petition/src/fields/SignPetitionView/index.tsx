@@ -43,7 +43,7 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
         },
       },
     }).catch(() => {
-      toast.error(formatMessage(''))
+      toast.error(formatMessage(m.toastError))
     })
 
     if (success) {
@@ -68,7 +68,7 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
                 </Text>
               </Box>
               <Box marginBottom={3}>
-                <Text variant="h4">{formatMessage('')}</Text>
+                <Text variant="h4">{formatMessage(m.listOpenTil)}</Text>
                 {petition && petition.closedDate && (
                   <Text variant="default">
                     {format(new Date(petition.closedDate), 'dd.MM.yyyy')}
@@ -76,14 +76,14 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
                 )}
               </Box>
               <Box marginBottom={3}>
-                <Text variant="h4">{formatMessage('')}</Text>
+                <Text variant="h4">{formatMessage(m.applicationName)}</Text>
                 <Text variant="default">{petition.ownerName}</Text>
               </Box>
               <Box display="flex" marginBottom={10}>
                 <Box width="half">
                   <Input
-                    label={formatMessage('')}
-                    name={formatMessage('')}
+                    label={formatMessage(m.name)}
+                    name={formatMessage(m.name)}
                     value={userData?.nationalRegistryUser?.fullName}
                     backgroundColor="blue"
                   />
@@ -98,7 +98,7 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
                     options={[
                       {
                         value: 'allow',
-                        label: formatMessage(''),
+                        label: formatMessage(m.hideNameLabel),
                       },
                     ]}
                   />
@@ -115,7 +115,7 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
                 options={[
                   {
                     value: 'agree',
-                    label: formatMessage(''),
+                    label: formatMessage(m.agreeToTermsLabel),
                   },
                 ]}
               />
@@ -125,7 +125,7 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
           )}
           {isClosed && (
             <Text variant="eyebrow" color="red400">
-              {formatMessage('')}
+              {formatMessage(m.listClosedMessage)}
             </Text>
           )}
           <Box
@@ -140,7 +140,7 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
               icon="arrowForward"
               onClick={() => onEndorse()}
             >
-              {formatMessage('')}
+              {formatMessage(m.signPetition)}
             </Button>
           </Box>
         </Box>

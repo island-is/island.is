@@ -124,7 +124,7 @@ export const m = defineMessages({
     description: '',
   },
 
-  //Done
+  // Done
   listCreatedTitle: {
     id: 'gpl.application:listCreatedTitle',
     defaultMessage: 'Undirskriftalista hefur verið skilað til Island.is',
@@ -147,7 +147,46 @@ export const m = defineMessages({
     description: '',
   },
 
-  //Validation
+  // Sign Petition
+  toastError: {
+    id: 'gpl.application:toastError',
+    defaultMessage:
+      'Ekki tókst að setja nafn þitt á lista. Vinsamlegast reyndu aftur síðar',
+    description: '',
+  },
+  listOpenTil: {
+    id: 'gpl.application:listOpenTil',
+    defaultMessage: 'Undirskriftalistinn er opinn til:',
+    description: '',
+  },
+  name: {
+    id: 'gpl.application:name',
+    defaultMessage: 'Nafn',
+    description: '',
+  },
+  hideNameLabel: {
+    id: 'gpl.application:hideNameLabel',
+    defaultMessage: 'Ekki birta nafn mitt á lista',
+    description: '',
+  },
+  agreeToTermsLabel: {
+    id: 'gpl.application:agreeToTermsLabel',
+    defaultMessage:
+      'Ég hef kynnt mér ofangreint málefni og samþykki uppflettingu í Þjóðskrá',
+    description: '',
+  },
+  listClosedMessage: {
+    id: 'gpl.application:listClosedMessage',
+    defaultMessage: 'Undirskriftalista hefur verið lokað',
+    description: '',
+  },
+  signPetition: {
+    id: 'gpl.application:signPetition',
+    defaultMessage: 'Setja nafn mitt á lista',
+    description: '',
+  },
+
+  // Validation
   validationApproveTerms: {
     id: 'gpl.application:validationApproveTerms',
     defaultMessage: 'Vinsamlegast samþykktu skilmála',
