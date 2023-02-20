@@ -1,2 +1,2 @@
 // Libs
-export * from './lib/loaders'
+export * from './lib/loaders/loaders'

@@ -18,7 +18,7 @@ import { z } from 'zod'
  *   airline: 'W6',
  * }
  */
-const createSearchParamObj = (searchParams: URLSearchParams) => {
+export const createSearchParamObj = (searchParams: URLSearchParams) => {
   const obj: Record<string, unknown> = {}
 
   for (const [objPath, value] of searchParams.entries()) {
@@ -70,7 +70,7 @@ const createSearchParamObj = (searchParams: URLSearchParams) => {
  *   isExplicit: true,
  * }
  */
-const createObjFromObjWithPath = (obj: Record<string, unknown>) => {
+export const createObjFromObjWithPath = (obj: Record<string, unknown>) => {
   return Object.entries(obj).reduce((parentAcc, [key, value]) => {
     key
       .split('.')
