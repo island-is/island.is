@@ -199,19 +199,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
 
     try {
-      /* MOCK async/await
-      const promise = new Promise(function (resolve) {
-        setTimeout(() => {
-          console.log('2023-02-10')
-          resolve('2023-02-10')
-        }, 5000)
-      })
-
-      const newValue = await promise
-      return {
-        dateOfBirth: newValue,
-      }
-      */
       const applicationInformation = await this.applicationInformationAPI.applicationGetApplicationInformation(
         {
           applicationId: application.id,
@@ -221,7 +208,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         dateOfBirth: applicationInformation.dateOfBirth,
       }
     } catch (e) {
-      this.logger.error('Failed to fetch application information', e)
+      this.logger.warning('Failed to fetch application information', e)
     }
 
     return {
