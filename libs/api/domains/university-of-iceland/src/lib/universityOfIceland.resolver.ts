@@ -20,7 +20,8 @@ import { StudentInfoModel } from './models/studentInfo.model'
 import { StudentInfoDetailModel } from './models/studentInfoDetail.model'
 import { GetStudentInfoDetailInput } from './dto/getStudentInfoDetail.input'
 import { GetStudentInfoInput } from './dto/getStudentInfo.input'
-import { ConfigType, DownloadServiceConfig } from '@island.is/nest/config'
+import { DownloadServiceConfig } from '@island.is/nest/config'
+import type { ConfigType } from '@island.is/nest/config'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
