@@ -188,8 +188,8 @@ const CaseFiles: React.FC = () => {
               (file) => file.category === CaseFileCategory.COVER_LETTER,
             )}
             accept={Object.values(fileExtensionWhitelist)}
-            header={formatMessage(strings.caseFiles.inputFieldLabelSection)}
-            buttonLabel={formatMessage(strings.caseFiles.buttonLabelSection)}
+            header={formatMessage(strings.caseFiles.inputFieldLabel)}
+            buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             multiple={false}
             onChange={(files) =>
               handleChange(files, CaseFileCategory.COVER_LETTER)
@@ -208,8 +208,8 @@ const CaseFiles: React.FC = () => {
                 (file) => file.category === CaseFileCategory.INDICTMENT,
               )}
               accept={Object.values(fileExtensionWhitelist)}
-              header={formatMessage(strings.caseFiles.inputFieldLabelSection)}
-              buttonLabel={formatMessage(strings.caseFiles.buttonLabelSection)}
+              header={formatMessage(strings.caseFiles.inputFieldLabel)}
+              buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
               multiple={false}
               onChange={(files) =>
                 handleChange(files, CaseFileCategory.INDICTMENT)
@@ -228,8 +228,8 @@ const CaseFiles: React.FC = () => {
               (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
             )}
             accept={Object.values(fileExtensionWhitelist)}
-            header={formatMessage(strings.caseFiles.inputFieldLabelSection)}
-            buttonLabel={formatMessage(strings.caseFiles.buttonLabelSection)}
+            header={formatMessage(strings.caseFiles.inputFieldLabel)}
+            buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
               handleChange(files, CaseFileCategory.CRIMINAL_RECORD)
             }
@@ -246,8 +246,8 @@ const CaseFiles: React.FC = () => {
               (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
             )}
             accept={Object.values(fileExtensionWhitelist)}
-            header={formatMessage(strings.caseFiles.inputFieldLabelSection)}
-            buttonLabel={formatMessage(strings.caseFiles.buttonLabelSection)}
+            header={formatMessage(strings.caseFiles.inputFieldLabel)}
+            buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
               handleChange(files, CaseFileCategory.COST_BREAKDOWN)
             }
@@ -266,8 +266,8 @@ const CaseFiles: React.FC = () => {
                 !file.policeCaseNumber,
             )}
             accept={Object.values(fileExtensionWhitelist)}
-            header={formatMessage(strings.caseFiles.inputFieldLabelSection)}
-            buttonLabel={formatMessage(strings.caseFiles.buttonLabelSection)}
+            header={formatMessage(strings.caseFiles.inputFieldLabel)}
+            buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
               handleChange(files, CaseFileCategory.CASE_FILE)
             }

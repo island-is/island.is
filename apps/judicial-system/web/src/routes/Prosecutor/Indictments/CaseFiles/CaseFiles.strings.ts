@@ -12,13 +12,13 @@ export const caseFiles = defineMessages({
     description:
       'Notaður sem texti á hnappi til að sækja ákæru sem PDF skjal á dómskjöl skrefi.',
   },
-  inputFieldLabelSection: {
-    id: 'judicial.system.core:indictments.case_files.input_field_label_section',
+  inputFieldLabel: {
+    id: 'judicial.system.core:indictments.case_files.input_field_label',
     defaultMessage: 'Dragðu gögn hingað til að hlaða upp',
     description: 'Texti í öllum file upload svæðum.',
   },
-  buttonLabelSection: {
-    id: 'judicial.system.core:indictments.case_files.button_label_section',
+  buttonLabel: {
+    id: 'judicial.system.core:indictments.case_files.button_label',
     defaultMessage: 'Velja gögn til að hlaða upp',
     description: 'Texti í tökkum í öllum file upload svæðum.',
   },
