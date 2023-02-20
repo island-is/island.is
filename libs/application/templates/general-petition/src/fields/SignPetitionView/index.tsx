@@ -1,6 +1,13 @@
-import { FC, useState } from 'react'
-import { FieldBaseProps } from '@island.is/application/types'
-import { Text, Box, Button, Input, toast } from '@island.is/island-ui/core'
+import { FC, useEffect, useState } from 'react'
+import { FieldBaseProps, YES } from '@island.is/application/types'
+import {
+  Text,
+  Box,
+  Button,
+  Input,
+  toast,
+  Stack,
+} from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { CheckboxController } from '@island.is/shared/form-fields'
@@ -12,33 +19,34 @@ import { EndorseList } from '../../graphql/mutations'
 import format from 'date-fns/format'
 import { EndorsementList } from '../../types/schema'
 import Skeleton from './Skeleton'
-import ListCreated from '../ListCreated'
+import School from '../../assets/School'
 
 const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
 
   const endorsementListId = (application.externalData?.createEndorsementList
     .data as any).id
+  const [acceptTerms, setAcceptTerms] = useState(false)
+  const [showName, setShowName] = useState(true)
 
-  const [agreed, setAgreed] = useState(false)
-  const [allowName, setAllowName] = useState(true)
-  const [hasEndorsed, setHasEndorsed] = useState(false)
+  const checkForSigned = useHasEndorsed(endorsementListId)
+  const [hasSigned, setHasSigned] = useState(checkForSigned)
 
   const { petitionData } = useGetSinglePetitionList(endorsementListId)
-  const petition = petitionData as EndorsementList
-
-  const endorsedBefore = useHasEndorsed(endorsementListId)
-  const isClosed = new Date() >= new Date(petition.closedDate)
+  const petitionList = petitionData as EndorsementList
+  const listClosed = new Date() >= new Date(petitionList.closedDate)
   const [createEndorsement, { loading: submitLoad }] = useMutation(EndorseList)
   const { data: userData } = useQuery(GetFullName)
 
-  const onEndorse = async () => {
+  useEffect(() => setHasSigned(checkForSigned), [checkForSigned])
+
+  const signPetition = async () => {
     const success = await createEndorsement({
       variables: {
         input: {
           listId: endorsementListId,
           endorsementDto: {
-            showName: allowName,
+            showName: showName,
           },
         },
       },
@@ -47,98 +55,98 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
     })
 
     if (success) {
-      setHasEndorsed(true)
+      setHasSigned(true)
     }
   }
 
   return (
     <Box>
-      {endorsedBefore || hasEndorsed ? (
-        <ListCreated application={application} />
+      {hasSigned ? (
+        <Box>
+          <Text marginBottom={2} variant="h2">
+            {formatMessage(m.petitionSigned)}
+          </Text>
+          
+          <Box marginY={8} display="flex" justifyContent="center">
+            <School />
+          </Box>
+        </Box>
       ) : (
         <Box>
-          {Object.entries(petition).length > 0 ? (
-            <>
-              <Box marginBottom={2}>
-                <Text variant="h2" marginBottom={1}>
-                  {petition?.title}
-                </Text>
-                <Text variant="default" marginBottom={3}>
-                  {petition?.description}
-                </Text>
+          {Object.entries(petitionList).length > 0 ? (
+            <Stack space={5}>
+              <Box>
+                <Text variant="h2" marginBottom={2}>{petitionList?.title}</Text>
+                <Text>{petitionList?.description}</Text>
               </Box>
-              <Box marginBottom={3}>
-                <Text variant="h4">{formatMessage(m.listOpenTil)}</Text>
-                {petition && petition.closedDate && (
-                  <Text variant="default">
-                    {format(new Date(petition.closedDate), 'dd.MM.yyyy')}
-                  </Text>
-                )}
-              </Box>
-              <Box marginBottom={3}>
-                <Text variant="h4">{formatMessage(m.applicationName)}</Text>
-                <Text variant="default">{petition.ownerName}</Text>
-              </Box>
-              <Box display="flex" marginBottom={10}>
+              
+              <Box display={'flex'}>
                 <Box width="half">
+                  <Text variant="h4">{formatMessage(m.listOpenTil)}</Text>
+                  {petitionList && petitionList.closedDate && (
+                    <Text>
+                      {format(new Date(petitionList.closedDate), 'dd.MM.yyyy')}
+                    </Text>
+                  )}
+                </Box>
+                <Box width="half">
+                  <Text variant="h4">{formatMessage(m.listOwner)}</Text>
+                  <Text>{petitionList.ownerName}</Text>
+                </Box>
+              </Box>
+              
+              <Box marginTop={5}>
+                <Box width="half" marginBottom={2}>
                   <Input
                     label={formatMessage(m.name)}
                     name={formatMessage(m.name)}
                     value={userData?.nationalRegistryUser?.fullName}
-                    backgroundColor="blue"
+                    readOnly
                   />
                 </Box>
-                <Box marginTop={3} marginLeft={4}>
-                  <CheckboxController
-                    id="allowName"
-                    name="allowName"
-                    large={false}
-                    defaultValue={[]}
-                    onSelect={() => setAllowName(!allowName)}
-                    options={[
-                      {
-                        value: 'allow',
-                        label: formatMessage(m.hideNameLabel),
-                      },
-                    ]}
-                  />
-                </Box>
+                <CheckboxController
+                  id="showName"
+                  large={false}
+                  onSelect={() => setShowName(!showName)}
+                  options={[
+                    {
+                      value: 'allow',
+                      label: formatMessage(m.hideNameLabel),
+                    },
+                  ]}
+                />
               </Box>
-              <CheckboxController
-                id="terms"
-                name="terms"
-                large={true}
-                backgroundColor="blue"
-                defaultValue={[]}
-                disabled={isClosed}
-                onSelect={() => setAgreed(!agreed)}
-                options={[
-                  {
-                    value: 'agree',
-                    label: formatMessage(m.agreeToTermsLabel),
-                  },
-                ]}
-              />
-            </>
+              
+              <Box marginTop={5}>
+                <CheckboxController
+                  id="terms"
+                  large={true}
+                  backgroundColor="blue"
+                  disabled={listClosed}
+                  onSelect={() => setAcceptTerms(!acceptTerms)}
+                  options={[
+                    {
+                      value: YES,
+                      label: formatMessage(m.agreeToTermsLabel),
+                    },
+                  ]}
+                />
+              </Box>
+            </Stack>
           ) : (
             <Skeleton />
           )}
-          {isClosed && (
+          {listClosed && (
             <Text variant="eyebrow" color="red400">
               {formatMessage(m.listClosedMessage)}
             </Text>
           )}
-          <Box
-            marginTop={5}
-            marginBottom={8}
-            display="flex"
-            justifyContent="flexEnd"
-          >
+          <Box marginTop={8} marginBottom={5} display="flex" justifyContent="flexEnd">
             <Button
               loading={submitLoad}
-              disabled={!agreed}
-              icon="arrowForward"
-              onClick={() => onEndorse()}
+              disabled={!acceptTerms}
+              icon="checkmark"
+              onClick={() => signPetition()}
             >
               {formatMessage(m.signPetition)}
             </Button>

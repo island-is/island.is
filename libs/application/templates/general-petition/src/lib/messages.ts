@@ -156,7 +156,12 @@ export const m = defineMessages({
   },
   listOpenTil: {
     id: 'gpl.application:listOpenTil',
-    defaultMessage: 'Undirskriftalistinn er opinn til:',
+    defaultMessage: 'Undirskriftalistinn er opinn til',
+    description: '',
+  },
+  listOwner: {
+    id: 'gpl.application:listOwner',
+    defaultMessage: 'Ábyrgðarmaður',
     description: '',
   },
   name: {
@@ -183,6 +188,11 @@ export const m = defineMessages({
   signPetition: {
     id: 'gpl.application:signPetition',
     defaultMessage: 'Setja nafn mitt á lista',
+    description: '',
+  },
+  petitionSigned: {
+    id: 'gpl.application:petitionSigned',
+    defaultMessage: 'Þú hefur sett nafn þitt á listann',
     description: '',
   },
 
