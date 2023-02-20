@@ -9,6 +9,7 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '<rootDir>/coverage/libs/application/templates/operating-license',
+  coverageDirectory:
+    '<rootDir>/coverage/libs/application/templates/operating-license',
   displayName: 'application-templates-operating-license',
 }

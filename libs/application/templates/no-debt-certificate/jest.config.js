@@ -10,5 +10,6 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'js'],
   testEnvironment: 'node',
-  coverageDirectory: '<rootDir>/coverage/libs/application/templates/no-debt-certificate',
+  coverageDirectory:
+    '<rootDir>/coverage/libs/application/templates/no-debt-certificate',
 }

@@ -13,7 +13,8 @@ module.exports = {
     '^.+\\.[tj]s$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'js', 'html', 'json'],
-  coverageDirectory: '<rootDir>/coverage/apps/services/auth/personal-representative-public',
+  coverageDirectory:
+    '<rootDir>/coverage/apps/services/auth/personal-representative-public',
   setupFiles: [`${__dirname}/test/environment.jest.ts`],
   collectCoverageFrom: [
     '**/*.{js,jsx,ts,tsx}',

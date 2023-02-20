@@ -9,6 +9,7 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '<rootDir>/coverage/libs/application/templates/driving-school-confirmation',
+  coverageDirectory:
+    '<rootDir>/coverage/libs/application/templates/driving-school-confirmation',
   displayName: 'application-templates-driving-school-confirmation',
 }

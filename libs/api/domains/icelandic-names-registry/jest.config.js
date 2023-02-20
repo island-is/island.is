@@ -6,7 +6,8 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
-  coverageDirectory: '<rootDir>/coverage/libs/api/domains/icelandic-names-registry',
+  coverageDirectory:
+    '<rootDir>/coverage/libs/api/domains/icelandic-names-registry',
   displayName: 'api-domains-icelandic-names-registry',
   testEnvironment: 'node',
 }
