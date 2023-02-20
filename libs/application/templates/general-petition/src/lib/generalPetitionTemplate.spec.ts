@@ -10,7 +10,7 @@ import { createApplication } from '@island.is/application/testing'
 
 describe('General petition application template', () => {
   describe('state transitions', () => {
-    it('should transition from draft to done', () => {
+    it('should transition from prereqs to draft', () => {
       const helper = new ApplicationTemplateHelper(
         createApplication(),
         GeneralPetitionTemplate,
@@ -21,7 +21,7 @@ describe('General petition application template', () => {
       })
 
       expect(hasChanged).toBe(true)
-      expect(newState).toBe('done')
+      expect(newState).toBe('draft')
     })
   })
 
