@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # API Domains University of Iceland
 
 This library was generated with [Nx](https://nx.dev).
