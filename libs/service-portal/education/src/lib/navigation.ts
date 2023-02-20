@@ -27,12 +27,6 @@ export const educationNavigation: PortalNavigationItem = {
     {
       name: m.educationGraduation,
       path: EducationPaths.EducationHaskoliGraduation,
-      // children: [
-      //   {
-      //     name: m.educationGraduation,
-      //     path: EducationPaths.EducationHaskoliGraduation,
-      //   },
-      // ],
     },
   ],
 }

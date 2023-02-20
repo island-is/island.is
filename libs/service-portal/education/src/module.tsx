@@ -3,6 +3,10 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { PortalModule } from '@island.is/portals/core'
 import { EducationPaths } from './lib/paths'
 
+const EducationOverview = lazy(() =>
+  import('./screens/EducationOverview/EducationOverview'),
+)
+
 const EducationCareer = lazy(() =>
   import('../../education-career/src/screens/EducationCareer/EducationCareer'),
 )
@@ -22,6 +26,12 @@ export const educationModule: PortalModule = {
     {
       name: 'Menntun',
       path: EducationPaths.EducationRoot,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      element: <EducationOverview />,
+    },
+    {
+      name: 'Námsmat',
+      path: EducationPaths.EducationAssessment,
       enabled: userInfo.scopes.includes(ApiScope.education),
       element: <EducationCareer />,
     },
