@@ -66,7 +66,7 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
           <Text marginBottom={2} variant="h2">
             {formatMessage(m.petitionSigned)}
           </Text>
-          
+
           <Box marginY={8} display="flex" justifyContent="center">
             <School />
           </Box>
@@ -76,10 +76,12 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
           {Object.entries(petitionList).length > 0 ? (
             <Stack space={5}>
               <Box>
-                <Text variant="h2" marginBottom={2}>{petitionList?.title}</Text>
+                <Text variant="h2" marginBottom={2}>
+                  {petitionList?.title}
+                </Text>
                 <Text>{petitionList?.description}</Text>
               </Box>
-              
+
               <Box display={'flex'}>
                 <Box width="half">
                   <Text variant="h4">{formatMessage(m.listOpenTil)}</Text>
@@ -94,7 +96,7 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
                   <Text>{petitionList.ownerName}</Text>
                 </Box>
               </Box>
-              
+
               <Box marginTop={5}>
                 <Box width="half" marginBottom={2}>
                   <Input
@@ -116,7 +118,7 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
                   ]}
                 />
               </Box>
-              
+
               <Box marginTop={5}>
                 <CheckboxController
                   id="terms"
@@ -141,7 +143,12 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
               {formatMessage(m.listClosedMessage)}
             </Text>
           )}
-          <Box marginTop={8} marginBottom={5} display="flex" justifyContent="flexEnd">
+          <Box
+            marginTop={8}
+            marginBottom={5}
+            display="flex"
+            justifyContent="flexEnd"
+          >
             <Button
               loading={submitLoad}
               disabled={!acceptTerms}
