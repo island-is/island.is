@@ -16,6 +16,7 @@ export type {
 export type { ResponsiveProp } from './src/utils/responsiveProp'
 export type { GridColumns } from './src/lib/Grid/GridColumn/GridColumn.css'
 export type { SpanType } from './src/lib/Grid/GridColumn/GridColumn.css'
+export * from './src/lib/IconRC/types'
 export const fileExtensionWhitelist = {
   '.pdf': 'application/pdf',
   '.doc': 'application/msword',
