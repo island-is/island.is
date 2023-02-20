@@ -2011,6 +2011,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'In the case of a multiple pregnancy, it is permitted to start paying accommodation expenses 28 days before the expected date of birth and until the birth',
     },
+    residenceGrantDateDescription: {
+      id: 'pl.application:residence.grant.date.description',
+      defaultMessage: 'Þú hefur valið eftirfarandi tímabil: {dateFrom} - {dateTo}',
+      description: 'You have choosen the following period: {dateFrom} - {dateTo}',
+    },
     residenceGrantApplyTitle: {
       id: 'pl.application:residence.grant.apply.title',
       defaultMessage: 'Sækja um dvalarstyrk',

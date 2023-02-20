@@ -81,6 +81,11 @@ export const ResidenceGrant: Form = buildForm({
             parentalLeaveFormMessages.residenceGrantMessage
               .residenceGrantSelectPeriodSubmitDescription,
           children: [
+            buildCustomField({
+              id: 'datefield',
+              title: '',
+              component: 'DateField',
+            }),
             buildSubmitField({
               id: 'residenceGrant.submit',
               placement: 'footer',
