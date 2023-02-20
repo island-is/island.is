@@ -4,6 +4,10 @@ import { PortalModule } from '@island.is/portals/core'
 import { EducationStudentAssessmentPaths } from './lib/paths'
 import { m } from '@island.is/service-portal/core'
 
+const EducationStudentAssessment = lazy(() =>
+  import('./screens/EducationStudentAssessment/EducationStudentAssessment'),
+)
+
 export const educationStudentAssessmentModule: PortalModule = {
   name: 'Samræmd könnunarpróf',
   enabled: ({ isCompany }) => !isCompany,
@@ -12,7 +16,7 @@ export const educationStudentAssessmentModule: PortalModule = {
       name: m.educationStudentAssessment,
       path: EducationStudentAssessmentPaths.EducationStudentAssessment,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      render: () => lazy(() => import('./screens/EducationStudentAssessment')),
+      element: <EducationStudentAssessment />,
     },
   ],
 }
