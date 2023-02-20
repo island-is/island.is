@@ -4,7 +4,8 @@ import { AppModule } from './app/app.module'
 import { openApi } from './openApi'
 
 buildOpenApi({
-  path: 'apps/license-api/src/openapi.yaml',
+  path: 'apps/services/license-api/src/openapi.yaml',
   appModule: AppModule,
   openApi,
+  enableVersioning: true,
 })

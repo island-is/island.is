@@ -1,15 +1,14 @@
 # License API
 
-## TODO
+REST-ish API that enables the updating of digital licenses
 
-- [ ] Refactor license service to work both here and in API/service portal
-- [ ] Do we need a db?
-  - Run log for debugging, keep highlevel events and PII in audit log?
-  - Persist config for services VS keeping in code?
-- [ ] `PUT` method
-- [ ] `DELETE` method
-- [ ] Tests
-- [ ] Auth via IDS
+## Quickstart
+
+To run,
+
+```
+yarn start license-api
+```
 
 ## About
 

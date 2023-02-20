@@ -1,5 +1,10 @@
-import { ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
-import { Base, Client, Disability, Firearm } from '../../../infra/src/dsl/xroad'
+import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import {
+  Base,
+  Client,
+  Disability,
+  Firearm,
+} from '../../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (): ServiceBuilder<'license-api'> =>
   service('license-api')

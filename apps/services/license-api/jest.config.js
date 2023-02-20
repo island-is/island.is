@@ -1,6 +1,6 @@
 module.exports = {
-  preset: '../../jest.preset.js',
-  coverageDirectory: '../../coverage/apps/license-api',
+  preset: '../../../jest.preset.js',
+  coverageDirectory: '../../../coverage/apps/services/license-api',
   globalSetup: './test/globalSetup.ts',
   globalTeardown: './test/globalTeardown.ts',
   setupFilesAfterEnv: ['./test/setup.ts'],

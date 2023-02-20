@@ -16,7 +16,7 @@ import { serviceSetup as adminPortalSetup } from '../../../apps/portals/admin/in
 import { serviceSetup as samradsgattSetup } from '../../../apps/samradsgatt/infra/samradsgatt'
 import { serviceSetup as xroadCollectorSetup } from '../../../apps/services/xroad-collector/infra/xroad-collector'
 
-import { serviceSetup as licenseApiSetup } from '../../../apps/license-api/infra/license-api'
+import { serviceSetup as licenseApiSetup } from '../../../apps/services/license-api/infra/license-api'
 
 import { serviceSetup as skilavottordWsSetup } from '../../../apps/skilavottord/ws/infra/ws'
 import { serviceSetup as skilavottordWebSetup } from '../../../apps/skilavottord/web/infra/web'
