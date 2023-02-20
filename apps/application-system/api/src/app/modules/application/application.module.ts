@@ -23,8 +23,6 @@ import { ApplicationChargeModule } from './charge/application-charge.module'
 import { ApplicationFilesModule } from '@island.is/application/api/files'
 import { PaymentModule } from '@island.is/application/api/payment'
 import { HistoryModule } from '@island.is/application/api/history'
-import { TemplateService } from './tools/templateHelper.service'
-
 @Module({
   imports: [
     PaymentModule,
@@ -50,7 +48,6 @@ import { TemplateService } from './tools/templateHelper.service'
     ApplicationAccessService,
     ApplicationValidationService,
     TemplateApiActionRunner,
-    TemplateService,
   ],
 })
 export class ApplicationModule {}

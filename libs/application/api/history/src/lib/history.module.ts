@@ -1,6 +1,5 @@
 import {
   SequelizeConfigService,
-  TemplateService,
 } from '@island.is/application/api/core'
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
@@ -17,7 +16,7 @@ import { CmsTranslationsModule } from '@island.is/cms-translations'
     SequelizeModule.forFeature([History]),
     CmsTranslationsModule,
   ],
-  providers: [HistoryService, HistoryBuilder, TemplateService],
+  providers: [HistoryService, HistoryBuilder],
   exports: [HistoryService, HistoryBuilder],
 })
 export class HistoryModule {}

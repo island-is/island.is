@@ -42,7 +42,7 @@ export class ApplicationSerializer<
   constructor(
     private intlService: IntlService,
     private historyService: HistoryService,
-    private historyBuilder: HistoryBuilder<TContext, TStateSchema, TEvents>,
+    private historyBuilder: HistoryBuilder,
   ) {}
 
   intercept(
@@ -142,9 +142,9 @@ export class ApplicationSerializer<
         ),
         deleteButton: roleInState?.delete,
         history: await this.historyBuilder.buildApplicationHistory(
-          application.typeId,
           history,
           intl.formatMessage,
+          helper
         ),
       },
       name: getApplicationName(),

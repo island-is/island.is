@@ -103,7 +103,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BypassDelegation } from './guards/bypass-delegation.decorator'
-import { TemplateService } from './tools/templateHelper.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
@@ -116,14 +115,9 @@ import { TemplateService } from './tools/templateHelper.service'
   description: 'Front-end language selected',
 })
 @Controller()
-export class ApplicationController<
-  TContext extends ApplicationContext,
-  TStateSchema extends ApplicationStateSchema<TEvents>,
-  TEvents extends EventObject
-> {
+export class ApplicationController {
   constructor(
     private readonly applicationService: ApplicationService,
-    private readonly templateAPIService: TemplateAPIService,
     private readonly fileService: FileService,
     private readonly auditService: AuditService,
     private readonly validationService: ApplicationValidationService,
@@ -135,11 +129,6 @@ export class ApplicationController<
     private applicationChargeService: ApplicationChargeService,
     private readonly historyService: HistoryService,
     private readonly templateApiActionRunner: TemplateApiActionRunner,
-    private readonly templateService: TemplateService<
-      TContext,
-      TStateSchema,
-      TEvents
-    >,
   ) {}
 
   @Scopes(ApplicationScope.read)

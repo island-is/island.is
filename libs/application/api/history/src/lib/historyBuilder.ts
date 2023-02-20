@@ -1,4 +1,3 @@
-import {TemplateService} from '@island.is/application/api/core'
 import {
   ApplicationContext,
   ApplicationStateSchema,
@@ -9,43 +8,34 @@ import {Injectable} from '@nestjs/common'
 import {EventObject} from 'xstate'
 import {HistoryResponseDto} from './dto/history.dto'
 import {History} from './history.model'
+import {ApplicationTemplateHelper} from "@island.is/application/core";
 
 @Injectable()
-export class HistoryBuilder<
-  TContext extends ApplicationContext,
-  TStateSchema extends ApplicationStateSchema<TEvents>,
-  TEvents extends EventObject
-> {
-  constructor(
-    private readonly templateService: TemplateService<
-      TContext,
-      TStateSchema,
-      TEvents
-    >,
-  ) {
-  }
+export class HistoryBuilder{
 
-  async buildApplicationHistory(
-    applicationTypeId: ApplicationTypes,
+  async buildApplicationHistory<
+    TContext extends ApplicationContext,
+    TStateSchema extends ApplicationStateSchema<TEvents>,
+    TEvents extends EventObject
+  >(
     history: History[],
     formatMessage: FormatMessage,
+    templateHelper: ApplicationTemplateHelper<TContext, TStateSchema, TEvents>
   ): Promise<HistoryResponseDto[] | []> {
     const result = []
 
     for (const entry of history) {
       const {entryTimestamp, exitTimestamp, stateKey} = entry
 
-      const entryLogPromise = this.templateService.getHistoryLog(
+      const entryLogPromise = await templateHelper.getHistoryLog(
         'entry',
-        stateKey,
-        applicationTypeId,
+        stateKey
       )
 
       const exitLogPromise = exitTimestamp
-        ? this.templateService.getHistoryLog(
+        ? await templateHelper.getHistoryLog(
           'exit',
-          stateKey,
-          applicationTypeId,
+          stateKey
         )
         : undefined
 
