@@ -21,7 +21,7 @@ const DigitalIcelandHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   const { linkResolver } = useLinkResolver()
 
   return (
-    <Box className={styles.headerBg}>
+    <div className={styles.headerBg}>
       <Box
         className={cn(styles.headerWrapper, styles.dotBg)}
         display={['none', 'none', 'block']}
@@ -85,7 +85,7 @@ const DigitalIcelandHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
           {organizationPage.title}
         </Text>
       </Box>
-    </Box>
+    </div>
   )
 }
 

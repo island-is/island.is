@@ -748,6 +748,12 @@ export const m = defineMessages({
     defaultMessage: 'Uppgjör móttekið',
     description: 'election info received',
   },
+  myPagesLinkText: {
+    id: 'fsn.application:myPagesLinkText',
+    defaultMessage:
+      'Á Mínum síðum Ísland.is hefur þú aðgang að marvíslegum upplýsingum s.s stafrænt pósthólf, þínar upplýsingar, fjármál, umsóknir, menntun, fasteignir, ökutæki, skírteini, starfsleyfi ofl. ',
+    description: 'island.is my pages info',
+  },
   dataCollectionCheckboxLabel: {
     id: 'fsn.application:dataCollectionCheckboxLabel',
     defaultMessage:

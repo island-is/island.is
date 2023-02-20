@@ -50,6 +50,7 @@ export class NotificationDispatchService {
     nationalId: string
     messageId: string
   }): Promise<void> {
+    // add user profile to readme and setup instructions
     const deviceTokensResponse = await this.userProfileApi.userTokenControllerGetDeviceTokens(
       { nationalId },
     )
@@ -68,26 +69,37 @@ export class NotificationDispatchService {
       )
     }
 
-    const {
-      responses,
-      successCount,
-    } = await this.firebase.messaging().sendMulticast({
+    const multiCastMessage = {
       tokens,
       notification: {
         title: notification.title,
         body: notification.body,
       },
-      apns: {
-        payload: {
-          aps: {
-            category: notification.category,
+
+      ...(notification.category && {
+        apns: {
+          payload: {
+            aps: {
+              category: notification.category,
+            },
           },
         },
-      },
+      }),
       data: {
-        ...(notification.appURI && { url: notification.appURI }),
+        createdAt: new Date().toISOString(),
+        messageId,
+        ...(notification.appURI && {
+          url: notification.appURI,
+          islandIsUrl: notification.appURI,
+        }),
+        ...(notification.dataCopy && { copy: notification.dataCopy }),
       },
-    })
+    }
+
+    const {
+      responses,
+      successCount,
+    } = await this.firebase.messaging().sendMulticast(multiCastMessage)
 
     const errors = responses
       .map((r) => r.error)

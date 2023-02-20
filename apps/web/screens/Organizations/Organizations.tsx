@@ -17,6 +17,7 @@ import {
   Select,
 } from '@island.is/island-ui/core'
 import { helperStyles, theme } from '@island.is/island-ui/theme'
+import { sortAlpha } from '@island.is/shared/utils'
 import {
   Query,
   QueryGetNamespaceArgs,
@@ -30,7 +31,6 @@ import { useNamespace } from '@island.is/web/hooks'
 import { Screen } from '@island.is/web/types'
 import { useI18n } from '@island.is/web/i18n'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import sortAlpha from '@island.is/web/utils/sortAlpha'
 import { getOrganizationLink } from '@island.is/web/utils/organization'
 
 import { CustomNextError } from '../../units/errors'

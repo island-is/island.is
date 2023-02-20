@@ -2,7 +2,6 @@ import {
   Box,
   Logo,
   Button,
-  Inline,
   GridColumn,
   GridRow,
   Divider,

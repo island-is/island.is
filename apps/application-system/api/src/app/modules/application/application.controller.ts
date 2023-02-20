@@ -533,6 +533,8 @@ export class ApplicationController {
       {
         answers: mergedAnswers,
         applicantActors: applicantActors,
+        draftFinishedSteps: application.draftProgress?.stepsFinished ?? 0,
+        draftTotalSteps: application.draftProgress?.totalSteps ?? 0,
       },
     )
 

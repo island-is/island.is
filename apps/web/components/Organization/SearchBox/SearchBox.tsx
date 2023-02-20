@@ -5,6 +5,7 @@ import {
   Text,
   Button,
   AsyncSearchOption,
+  ResponsiveSpace,
 } from '@island.is/island-ui/core'
 import { useLazyQuery } from '@apollo/client'
 import {
@@ -23,18 +24,20 @@ interface AsyncSearchOptionWithIsArticleField extends AsyncSearchOption {
 
 interface SearchBoxProps {
   id?: string
-  organizationPage: Query['getOrganizationPage']
+  organizationSlug: string
   placeholder: string
   noResultsText: string
   searchAllText: string
+  marginTop?: ResponsiveSpace
 }
 
 export const SearchBox = ({
   id = 'id',
-  organizationPage,
+  organizationSlug,
   placeholder,
   noResultsText,
   searchAllText,
+  marginTop = 0,
 }: SearchBoxProps) => {
   const { linkResolver } = useLinkResolver()
   const router = useRouter()
@@ -57,7 +60,7 @@ export const SearchBox = ({
           variables: {
             input: {
               lang: router.asPath.includes('/en/') ? 'en' : 'is',
-              organization: organizationPage.slug,
+              organization: organizationSlug,
               size: 500,
               sort: SortField.Popular,
             },
@@ -209,7 +212,7 @@ export const SearchBox = ({
   const busy = loading || isLoading || waitingForNextPageToLoad
 
   return (
-    <Box marginTop={3}>
+    <Box marginTop={marginTop}>
       <AsyncSearch
         id={`organization-search-box-${id}`}
         size={'medium'}

@@ -1,7 +1,5 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SubmitHandler } from 'react-hook-form'
-
-import { AirDiscountSchemeFlightLegsInput } from '@island.is/api/schema'
 import {
   Box,
   Stack,
@@ -17,66 +15,69 @@ import { PortalNavigation } from '@island.is/portals/core'
 import { Filters, Panel, Summary } from './components'
 import { downloadCSV } from './utils'
 import {
+  FlightLegsQuery,
+  FlightLegsQueryVariables,
   useConfirmInvoiceMutation,
-  useFlightLegsQuery,
+  useFlightLegsLazyQuery,
 } from './Overview.generated'
 import { FlightLegsFilters } from './types'
 import { airDiscountSchemeNavigation } from '../../lib/navigation'
 import Modal from '../../components/Modal/Modal'
-
-const TODAY = new Date()
+import { prepareFlightLegsQuery } from '../../lib/loaders'
+import { useLoaderData } from 'react-router-dom'
 
 const Overview = () => {
+  const loaderData = useLoaderData() as FlightLegsQuery
+  const { airDiscountSchemeFlightLegs = [] } = loaderData ?? {}
+  const [flightLegs, setFlightLegs] = useState(airDiscountSchemeFlightLegs)
   const [showModal, setModal] = useState(false)
-  const [filters, setFilters] = useState<FlightLegsFilters>({
-    nationalId: '',
-    state: [],
-    period: {
-      from: new Date(TODAY.getFullYear(), TODAY.getMonth(), 1, 0, 0, 0, 0),
-      to: new Date(
-        TODAY.getFullYear(),
-        TODAY.getMonth(),
-        TODAY.getDate(),
-        23,
-        59,
-        59,
-        999,
-      ),
-    },
-  })
-  const input: AirDiscountSchemeFlightLegsInput = {
-    ...filters,
+  const queryData = prepareFlightLegsQuery()
+  const [filters, setFilters] = useState<FlightLegsFilters>(queryData.filters)
+
+  const input: FlightLegsQueryVariables['input'] = {
+    ...queryData.input,
     airline: filters.airline?.value,
     gender: filters.gender?.value || undefined,
     age: {
-      from: parseInt(Number(filters.age?.from).toString()) || -1,
-      to: parseInt(Number(filters.age?.to).toString()) || 1000,
+      from:
+        parseInt(Number(filters.age?.from).toString()) ||
+        queryData.input.age.from,
+      to:
+        parseInt(Number(filters.age?.to).toString()) || queryData.input.age.to,
     },
     postalCode: filters.postalCode
       ? parseInt(filters.postalCode.toString())
       : undefined,
     isExplicit: Boolean(filters.isExplicit),
   }
+
   const [
     confirmInvoice,
     { loading: confirmInvoiceLoading },
   ] = useConfirmInvoiceMutation()
 
-  const { data, loading: queryLoading, refetch } = useFlightLegsQuery({
+  const [
+    getFlightLegs,
+    { loading: flightLegsLoading, data },
+  ] = useFlightLegsLazyQuery({
     ssr: false,
-    fetchPolicy: 'network-only',
     variables: {
       input,
     },
   })
-  const { airDiscountSchemeFlightLegs: flightLegs = [] } = data ?? {}
 
-  const loading = queryLoading || confirmInvoiceLoading
+  useEffect(() => {
+    if (data?.airDiscountSchemeFlightLegs) {
+      setFlightLegs(data.airDiscountSchemeFlightLegs)
+    }
+  }, [data?.airDiscountSchemeFlightLegs])
+
+  const loading = flightLegsLoading || confirmInvoiceLoading
   const applyFilters: SubmitHandler<FlightLegsFilters> = (
     data: FlightLegsFilters,
   ) => {
     setFilters(data)
-    refetch()
+    getFlightLegs()
   }
 
   return (
