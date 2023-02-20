@@ -14,6 +14,7 @@ import {
   FocusableBox,
   ButtonTypes,
   DropdownMenu,
+  Button,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { FixedNav, SearchInput } from '@island.is/web/components'
@@ -98,6 +99,15 @@ export const Header: FC<HeaderProps> = ({
                     <Hidden below="lg">
                       <Box marginLeft={marginLeft}>
                         <DropdownMenu
+                          disclosure={
+                            <Button
+                              colorScheme={buttonColorScheme}
+                              variant="utility"
+                              icon="person"
+                            >
+                              {t.login}
+                            </Button>
+                          }
                           icon="person"
                           items={[
                             {
@@ -117,6 +127,13 @@ export const Header: FC<HeaderProps> = ({
                     <Hidden above="md">
                       <Box marginLeft={marginLeft}>
                         <DropdownMenu
+                          disclosure={
+                            <Button
+                              colorScheme={buttonColorScheme}
+                              variant="utility"
+                              icon="person"
+                            />
+                          }
                           icon="person"
                           items={[
                             {
