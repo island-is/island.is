@@ -1,11 +1,10 @@
-import React, { FC, useState } from 'react'
+import { FC, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Text, Box, Button, Input, toast } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { useMutation, useQuery } from '@apollo/client'
-import PetitionListCreated from '../PetitionListCreated'
 import { useHasEndorsed } from '../../hooks/useHasEndorsed'
 import { useGetSinglePetitionList } from '../../hooks/useGetSinglePetitionList'
 import { GetFullName } from '../../graphql/queries'
@@ -13,8 +12,9 @@ import { EndorseList } from '../../graphql/mutations'
 import format from 'date-fns/format'
 import { EndorsementList } from '../../types/schema'
 import Skeleton from './Skeleton'
+import ListCreated from '../ListCreated'
 
-const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
+const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
 
   const endorsementListId = (application.externalData?.createEndorsementList
@@ -54,7 +54,7 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
   return (
     <Box>
       {endorsedBefore || hasEndorsed ? (
-        <PetitionListCreated />
+        <ListCreated application={application} />
       ) : (
         <Box>
           {Object.entries(petition).length > 0 ? (
@@ -149,4 +149,4 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
   )
 }
 
-export default EndorsementDisclaimer
+export default SignPetitionView

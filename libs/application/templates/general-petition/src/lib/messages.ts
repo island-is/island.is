@@ -1,6 +1,31 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  // Application Name
+  applicationName: {
+    id: 'gpl.application:applicationName',
+    defaultMessage: 'Undirskriftalisti',
+    description: '',
+  },
+
+  // Inngangur
+  introTitle: {
+    id: 'gpl.application:introTitle',
+    defaultMessage: 'Inngangur',
+    description: '',
+  },
+  introDescription: {
+    id: 'gpl.application:introDescription',
+    defaultMessage: 'Vantar texta hér',
+    description: '',
+  },
+  introSubmit: {
+    id: 'gpl.application:introSubmit',
+    defaultMessage: 'Halda áfram',
+    description: '',
+  },
+
+  // Terms
   externalDataSectionTitle: {
     id: 'gpl.application:externalDataSectionTitle',
     defaultMessage: 'Skilmálar',
@@ -8,7 +33,7 @@ export const m = defineMessages({
   },
   externalDataSectionSubtitle: {
     id: 'gpl.application:externalDataSectionSubtitle',
-    defaultMessage: 'Eftirfarandi gildir um söfnun meðmæla',
+    defaultMessage: 'Eftirfarandi gildir um söfnun undirskrifta',
     description: '',
   },
   externalDataSectionTermsAndConditions: {
@@ -22,13 +47,8 @@ export const m = defineMessages({
     defaultMessage: 'Ég samþykki skilmála hér að ofan',
     description: '',
   },
-  copyLinkButton: {
-    id: 'gpl.application:copyLinkButton',
-    defaultMessage: 'Afrita hlekk',
-    description: '',
-  },
 
-  //Petition List Information
+  // Petition List Information
   listInformationTitle: {
     id: 'gpl.application:listTitle',
     defaultMessage: 'Upplýsingar um lista',
@@ -41,18 +61,23 @@ export const m = defineMessages({
   },
   listName: {
     id: 'gpl.application:listName',
-    defaultMessage: 'Heiti meðmælendalista',
+    defaultMessage: 'Heiti undirskriftalista',
+    description: '',
+  },
+  listNamePlaceholder: {
+    id: 'gpl.application:listNamePlaceholder',
+    defaultMessage: 'Veldu nafn á lista',
     description: '',
   },
   aboutList: {
     id: 'gpl.application:aboutList',
-    defaultMessage: 'Um meðmælendalista',
+    defaultMessage: 'Um undirskriftalista',
     description: '',
   },
   aboutListPlaceholder: {
     id: 'gpl.application:aboutListPlaceholder',
     defaultMessage:
-      'Texti sem birtist með meðmælendalista. Ekki er hægt að breyta texta eftir að meðmælendalisti hefur verið birtur',
+      'Texti sem birtist með undirskriftalista. Ekki er hægt að breyta texta eftir að undirskriftalisti hefur verið birtur.',
     description: '',
   },
   dateTitle: {
@@ -71,7 +96,7 @@ export const m = defineMessages({
     description: '',
   },
 
-  //Overview
+  // Overview
   overviewTitle: {
     id: 'gpl.application:overviewTitle',
     defaultMessage: 'Yfirlit',
@@ -80,12 +105,12 @@ export const m = defineMessages({
   overviewSubtitle: {
     id: 'gpl.application:overviewSubtitle',
     defaultMessage:
-      'Vinsamlegast farðu yfir upplýsingarnar hér að neðan og staðfestu að þær séu réttar. Eftir að listi er stofnaður er ekki hægt að breyta upplýsingum um lista.',
+      'Vinsamlegast farðu yfir upplýsingarnar hér að neðan og staðfestu að þær séu réttar. Eftir að listi er stofnaður ekki er hægt að breyta upplýsingum um lista.',
     description: '',
   },
   overviewApplicant: {
     id: 'gpl.application:overviewApplicant',
-    defaultMessage: 'Ábyrgðarmaður',
+    defaultMessage: 'Stofnandi lista',
     description: '',
   },
   listPeriod: {
@@ -93,70 +118,32 @@ export const m = defineMessages({
     defaultMessage: 'Tímabil lista',
     description: '',
   },
-  ageInterval: {
-    id: 'gpl.application:ageInterval',
-    defaultMessage: 'Aldursbil á lista',
-    description: '',
-  },
   submitButton: {
     id: 'gpl.application:submit',
-    defaultMessage: 'Senda inn umsókn',
-    description: '',
-  },
-  finalTitle: {
-    id: 'gpl.application:finalTitle',
-    defaultMessage: 'Umsókn móttekin',
-    description: '',
-  },
-  finalSubtitle: {
-    id: 'gpl.application:finalSubtitle',
-    defaultMessage:
-      'Þú munt fá skilaboð í tölvupósti þegar umsókn er í vinnslu',
+    defaultMessage: 'Stofna lista',
     description: '',
   },
 
-  //List submitted
-  listSubmittedTitle: {
-    id: 'gpl.application:listSubmittedTitle',
-    defaultMessage: 'Meðmælendalista hefur verið skilað',
+  //Done
+  listCreatedTitle: {
+    id: 'gpl.application:listCreatedTitle',
+    defaultMessage: 'Undirskriftalista hefur verið skilað til Island.is',
     description: '',
   },
-  approvedTitle: {
-    id: 'gpl.application:approvedTitle',
-    defaultMessage: 'Meðmælendalista hefur verið skilað til Ísland.is',
-    description: '',
-  },
-  approvedSubtitle: {
-    id: 'gpl.application:approvedSubtitle',
+  listCreatedSubtitle: {
+    id: 'gpl.application:listCreatedSubtitle#markdown',
     defaultMessage:
-      'Staðfesting á móttöku verður send í pósthólf á Mínum Síðum. Hægt er að sýsla með lista þar.',
+      'Hægt er að sjá stöðu lista, undirskriftir og einnig er hægt að breyta gildisdagsetningu lista inná Mínum Síðum.',
     description: '',
   },
-  bulletListTitle: {
-    id: 'gpl.application:bulletListTitle',
-    defaultMessage: 'Vert að skoða',
+  linkToList: {
+    id: 'gpl.application:linkToList',
+    defaultMessage: 'Hlekkur á lista',
     description: '',
   },
-  bulletLink1: {
-    id: 'gpl.application:bulletLink1',
-    defaultMessage:
-      'https://www.stjornarradid.is/raduneyti/domsmalaraduneytid/',
-    description: '',
-  },
-  bulletLink1Title: {
-    id: 'gpl.application:bulletLink1Title',
-    defaultMessage: 'Vefur dómsmálaráðuneytis',
-    description: '',
-  },
-  bulletLink2: {
-    id: 'gpl.application:bulletLink2',
-    defaultMessage:
-      'https://www.stjornarradid.is/verkefni/kosningar/althingiskosningar/frambod-leidbeiningar/listabokstafir/',
-    description: '',
-  },
-  bulletLink2Title: {
-    id: 'gpl.application:bulletLink2Title',
-    defaultMessage: 'kosning.is',
+  copyLinkButton: {
+    id: 'gpl.application:copyLinkButton',
+    defaultMessage: 'Afrita hlekk',
     description: '',
   },
 

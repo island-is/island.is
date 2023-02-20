@@ -17,14 +17,12 @@ import {
   NationalRegistryUserApi,
 } from '@island.is/application/types'
 import { m } from '../lib/messages'
-import Logo from '../assets/Logo'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 
 export const form: Form = buildForm({
   id: 'GeneralPetitionForm',
   title: '',
-  logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
@@ -60,6 +58,9 @@ export const form: Form = buildForm({
             buildTextField({
               id: 'listName',
               title: m.listName,
+              placeholder: m.listNamePlaceholder,
+              variant: 'textarea',
+              rows: 1,
               backgroundColor: 'white',
               defaultValue: () => '',
             }),
@@ -78,6 +79,7 @@ export const form: Form = buildForm({
               placeholder: m.dateFromPlaceholder,
               width: 'half',
               backgroundColor: 'white',
+              minDate: new Date(),
             }),
             buildDateField({
               id: 'dates.dateTil',
@@ -85,13 +87,14 @@ export const form: Form = buildForm({
               placeholder: m.dateToPlaceholder,
               width: 'half',
               backgroundColor: 'white',
+              minDate: new Date(),
             }),
           ],
         }),
       ],
     }),
     buildSection({
-      id: 'reviewPetition',
+      id: 'overview',
       title: m.overviewTitle,
       children: [
         buildMultiField({
@@ -102,7 +105,7 @@ export const form: Form = buildForm({
           children: [
             buildDividerField({}),
             buildKeyValueField({
-              label: 'Stofnandi lista',
+              label: m.overviewApplicant,
               value: ({ externalData }) =>
                 (externalData.nationalRegistry?.data as {
                   fullName?: string
@@ -142,7 +145,7 @@ export const form: Form = buildForm({
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Stofna lista',
+                  name: m.submitButton,
                   type: 'primary',
                 },
               ],

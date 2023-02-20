@@ -12,6 +12,7 @@ import {
 import { Features } from '@island.is/feature-flags'
 import { ApiModuleActions, States, Roles } from '../constants'
 import { GeneralPetitionSchema } from './dataSchema'
+import { m } from './messages'
 
 type Events = { type: DefaultEvents.SUBMIT }
 
@@ -21,13 +22,44 @@ const GeneralPetitionTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.GENERAL_PETITION,
-  name: 'Undirskriftalisti',
+  name: m.applicationName,
   dataSchema: GeneralPetitionSchema,
   readyForProduction: false,
   featureFlag: Features.generaPetition,
   stateMachineConfig: {
-    initial: States.DRAFT,
+    initial: States.PREREQUISITES,
     states: {
+      [States.PREREQUISITES]: {
+        meta: {
+          name: 'prerequisites',
+          status: 'draft',
+          progress: 0.2,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/prerequisites').then((module) =>
+                  Promise.resolve(module.prerequisites),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: '',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              delete: true,
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.DRAFT,
+          },
+        },
+      },
       [States.DRAFT]: {
         meta: {
           name: 'draft',
@@ -38,7 +70,7 @@ const GeneralPetitionTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/createPetitionForm').then((module) =>
+                import('../forms/form').then((module) =>
                   Promise.resolve(module.form),
                 ),
               actions: [

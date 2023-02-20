@@ -1,3 +1,2 @@
-export { default as EndorsementDisclaimer } from './EndorsementDisclaimer'
-export { default as PetitionListCreated } from './PetitionListCreated'
-export { default as ListSubmitted } from './ListSubmitted'
+export { default as SignPetitionView } from './SignPetitionView'
+export { default as ListCreated } from './ListCreated'

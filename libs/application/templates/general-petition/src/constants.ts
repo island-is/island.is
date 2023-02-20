@@ -3,6 +3,7 @@ export enum ApiModuleActions {
 }
 
 export enum States {
+  PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
   DONE = 'done',
 }
