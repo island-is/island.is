@@ -64,24 +64,19 @@ export const sectionOverview = buildMultiField({
       space: 'gutter',
     }),
     buildKeyValueField({
-      label: m.typeHotel,
-      width: 'half',
-      condition: (answers) =>
+      label: ({ answers }: Application) =>
         (answers.applicationInfo as Operation)?.operation ===
-        APPLICATION_TYPES.HOTEL,
-      value: ({ answers }: Application) =>
-        (answers.applicationInfo as Operation)?.typeHotel?.substring(2),
-    }),
-    buildKeyValueField({
-      label: m.typeResturant,
+        APPLICATION_TYPES.HOTEL
+          ? m.typeHotel
+          : m.typeResturant,
       width: 'half',
-      condition: (answers) =>
-        (answers.applicationInfo as Operation)?.operation ===
-        APPLICATION_TYPES.RESTURANT,
       value: ({ answers }: Application) =>
-        (answers.applicationInfo as Operation)?.typeResturant?.map((type) =>
-          type.substring(2),
-        ),
+        (answers.applicationInfo as Operation)?.operation ===
+        APPLICATION_TYPES.HOTEL
+          ? (answers.applicationInfo as Operation)?.typeHotel?.substring(2)
+          : (answers.applicationInfo as Operation)?.typeResturant?.map((type) =>
+              type.substring(2),
+            ),
     }),
     buildKeyValueField({
       label: m.openingHoursOutside,

@@ -160,7 +160,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
               }),
               buildDescriptionField({
                 id: 'overview.attachments.five',
-                title: attachmentNames.four,
+                title: attachmentNames.five,
                 titleVariant: 'h3',
                 space: 'gutter',
               }),

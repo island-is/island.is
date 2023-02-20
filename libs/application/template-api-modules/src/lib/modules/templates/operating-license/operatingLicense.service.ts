@@ -1,6 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
@@ -171,16 +169,17 @@ export class OperatingLicenseService extends BaseTemplateApiService {
         value.bankruptcyStatus &&
         BANNED_BANKRUPTCY_STATUSES.includes(value.bankruptcyStatus)
       ) {
-        return { success: true }
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.missingJudicialAdministrationificateTitle,
+            summary:
+              coreErrorMessages.missingJudicialAdministrationificateSummary,
+          },
+          400,
+        )
       }
     }
-    throw new TemplateApiError(
-      {
-        title: coreErrorMessages.missingJudicialAdministrationificateTitle,
-        summary: coreErrorMessages.missingJudicialAdministrationificateSummary,
-      },
-      400,
-    )
+    return { success: true }
   }
 
   async createCharge({
@@ -193,7 +192,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     if (!chargeItemCode) {
       throw new Error('chargeItemCode missing in request')
     }
-
+    console.log(chargeItemCode)
     const response = await this.sharedTemplateAPIService.createCharge(
       auth,
       id,
