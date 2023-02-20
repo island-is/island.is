@@ -50,6 +50,7 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import NewDocumentLine from '../../components/DocumentLine/NewDocumentLine'
 import NoPDF from '../../components/NoPDF/NoPDF'
 import { SERVICE_PORTAL_HEADER_HEIGHT_LG } from '@island.is/service-portal/constants'
+import { useUserInfo } from '@island.is/auth/react'
 
 export type ActiveDocumentType = {
   document: DocumentDetails
@@ -89,11 +90,9 @@ const GET_DOCUMENT_SENDERS = gql`
 
 const pageSize = 10
 
-export const ServicePortalDocuments: ServicePortalModuleComponent = ({
-  userInfo,
-}) => {
+export const ServicePortalDocuments = () => {
   useNamespaces('sp.documents')
-
+  const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
   const [isEmpty, setEmpty] = useState(false)
