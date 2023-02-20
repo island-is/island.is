@@ -1,8 +1,8 @@
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import flatten from 'lodash/flatten'
 import type { User } from '@island.is/shared/types'
 import { FeatureFlagClient } from '@island.is/react/feature-flags'
 import type { PortalModule, PortalRoute } from '../types/portalCore'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 
 interface FilterEnabledModulesArgs {
   modules: PortalModule[]
@@ -42,15 +42,15 @@ export const filterEnabledModules = async ({
 interface ArrangeRoutesArgs {
   userInfo: User
   modules: PortalModule[]
-  apolloClient: ApolloClient<NormalizedCacheObject>
   featureFlagClient: FeatureFlagClient
+  client: ApolloClient<NormalizedCacheObject>
 }
 
 export const arrangeRoutes = async ({
   userInfo,
   modules,
-  apolloClient,
   featureFlagClient,
+  client,
 }: ArrangeRoutesArgs) => {
   const IS_COMPANY = userInfo?.profile?.subjectType === 'legalEntity'
   const portalRoutes = modules.map((module) => {
@@ -59,7 +59,7 @@ export const arrangeRoutes = async ({
 
     return routesObject({
       userInfo,
-      client: apolloClient,
+      client,
     })
   })
 
@@ -78,7 +78,6 @@ export const arrangeRoutes = async ({
       return route
     }),
   )
-  const filteredRoutes = mappedRoutes.filter(Boolean) as PortalRoute[]
 
-  return filteredRoutes
+  return mappedRoutes.filter(Boolean) as PortalRoute[]
 }

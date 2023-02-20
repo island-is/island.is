@@ -3,6 +3,7 @@ import {
   Institution,
   User,
   UserRole,
+  IndictmentCount,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   Case,
@@ -254,6 +255,7 @@ export interface TempCase
     | 'parentCase'
     | 'childCase'
     | 'type'
+    | 'indictmentCounts'
   > {
   sharedWithProsecutorsOffice?: Institution
   court?: Institution
@@ -261,6 +263,7 @@ export interface TempCase
   parentCase?: TempCase
   childCase?: TempCase
   type: CaseType
+  indictmentCounts?: IndictmentCount[]
 }
 
 export interface TempUpdateCase

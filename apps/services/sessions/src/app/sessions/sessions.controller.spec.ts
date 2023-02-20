@@ -293,6 +293,60 @@ describe('SessionsController', () => {
       )
     })
 
+    it('GET /v1/me/sessions should support from parameter', async () => {
+      const from = '2022-01-01'
+
+      // Act
+      const res1 = await server.get(`/v1/me/sessions?from=${from}`)
+
+      // Assert
+      expect(res1.status).toEqual(200)
+      expect(
+        res1.body.data.every(
+          (session: Session) => session.actorNationalId === user.nationalId,
+        ),
+      )
+      expect(res1.body.data).toMatchObject(
+        sortBy(sessions, 'timestamp')
+          .reverse()
+          .filter(
+            (session) =>
+              (session.actorNationalId === user.nationalId ||
+                session.subjectNationalId == user.nationalId) &&
+              session.timestamp >= new Date(from),
+          )
+          .map((session) => ({ id: session.id }))
+          .slice(0, 10),
+      )
+    })
+
+    it('GET /v1/me/sessions should support to parameter', async () => {
+      const to = '2022-01-01'
+
+      // Act
+      const res1 = await server.get(`/v1/me/sessions?to=${to}`)
+
+      // Assert
+      expect(res1.status).toEqual(200)
+      expect(
+        res1.body.data.every(
+          (session: Session) => session.actorNationalId === user.nationalId,
+        ),
+      )
+      expect(res1.body.data).toMatchObject(
+        sortBy(sessions, 'timestamp')
+          .reverse()
+          .filter(
+            (session) =>
+              (session.actorNationalId === user.nationalId ||
+                session.subjectNationalId == user.nationalId) &&
+              session.timestamp <= new Date(to),
+          )
+          .map((session) => ({ id: session.id }))
+          .slice(0, 10),
+      )
+    })
+
     it('POST /v1/me/sessions should return success', async () => {
       // Act
       const res = await server
