@@ -2,9 +2,9 @@ import { z } from 'zod'
 import parseDate from 'date-fns/parse'
 import startOfMonth from 'date-fns/startOfMonth'
 import endOfDay from 'date-fns/endOfDay'
-import { getParsedObjectFromRequest } from '@island.is/react-spa/shared'
+import { validateRequest } from '@island.is/react-spa/shared'
 import type { WrappedLoaderFn } from '@island.is/portals/core'
-import { coerceArray } from '@island.is/react-spa/shared'
+import { zfd } from 'zod-form-data'
 import {
   AirDiscountSchemeFlightLegGender,
   AirDiscountSchemeFlightLegState,
@@ -59,10 +59,7 @@ const schema = z.object({
     })
     .default({}),
   postalCode: z.coerce.number().optional(),
-  state: z.preprocess(
-    coerceArray,
-    z.array(z.nativeEnum(AirDiscountSchemeFlightLegState)).optional(),
-  ),
+  state: zfd.repeatable(z.array(z.nativeEnum(AirDiscountSchemeFlightLegState))),
 })
 
 export type FlightLegsFilters = z.infer<typeof schema>
@@ -72,27 +69,27 @@ export type OverviewLoaderReturnType = {
   filters: FlightLegsFilters
 }
 
-export const overviewLoader: WrappedLoaderFn = ({ client }) => async ({
-  request,
-}): Promise<OverviewLoaderReturnType> => {
-  const input = getParsedObjectFromRequest(request, schema)
+export const overviewLoader: WrappedLoaderFn = ({ client }) => {
+  return async ({ request }): Promise<OverviewLoaderReturnType> => {
+    const input = validateRequest({ request, schema })
 
-  const flightLegs = await client.query<
-    FlightLegsQuery,
-    FlightLegsQueryVariables
-  >({
-    query: FlightLegsDocument,
-    variables: {
-      input,
-    },
-  })
+    const flightLegs = await client.query<
+      FlightLegsQuery,
+      FlightLegsQueryVariables
+    >({
+      query: FlightLegsDocument,
+      variables: {
+        input,
+      },
+    })
 
-  if (flightLegs.error) {
-    throw flightLegs.error
-  }
+    if (flightLegs.error) {
+      throw flightLegs.error
+    }
 
-  return {
-    data: flightLegs.data,
-    filters: input,
+    return {
+      data: flightLegs.data,
+      filters: input,
+    }
   }
 }

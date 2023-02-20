@@ -95,10 +95,13 @@ export const createObjFromReqSearchParams = (request: Request) => {
   return Object.keys(result).length === 0 ? null : result
 }
 
-export const getParsedObjectFromRequest = <T extends z.ZodTypeAny>(
-  request: Request,
-  schema: T,
-) => {
+export const validateRequest = <T extends z.ZodTypeAny>({
+  request,
+  schema,
+}: {
+  request: Request
+  schema: T
+}) => {
   const parsedObject = createObjFromReqSearchParams(request)
   const result = schema.parse(parsedObject ?? {})
 
