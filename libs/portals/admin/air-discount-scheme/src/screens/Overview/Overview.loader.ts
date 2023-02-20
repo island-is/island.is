@@ -2,10 +2,7 @@ import { z } from 'zod'
 import parseDate from 'date-fns/parse'
 import startOfMonth from 'date-fns/startOfMonth'
 import endOfDay from 'date-fns/endOfDay'
-import {
-  validateRequest,
-  validateRequestWithSchema,
-} from '@island.is/react-spa/shared'
+import { validateRequestWithSchema } from '@island.is/react-spa/shared'
 import type { WrappedLoaderFn } from '@island.is/portals/core'
 import { zfd } from 'zod-form-data'
 import {
