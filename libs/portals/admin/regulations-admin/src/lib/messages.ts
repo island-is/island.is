@@ -528,6 +528,10 @@ export const errorMsgs = defineMessages({
     defaultMessage:
       'Hvergi er minnst á þessa reglugerð í texta nýju reglugerðarinnar.',
   },
+  titleTooLong: {
+    id: 'ap.regulations-admin:title-is-too-long',
+    defaultMessage: 'Titill reglugerðar er of langur.',
+  },
 })
 
 export const homeMessages = defineMessages({

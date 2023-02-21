@@ -193,6 +193,11 @@ const useMakeDraftingState = (inputs: StateInputs) => {
               return // Prevent the user going forward
             }
 
+            const isTitleTooLong = draft.title.value.length > 1024
+            if (isTitleTooLong) {
+              return // Prevent the user going forward
+            }
+
             actions.goToStep(nextStep)
           }
         : undefined,
