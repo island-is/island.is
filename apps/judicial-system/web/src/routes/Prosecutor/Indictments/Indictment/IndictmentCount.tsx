@@ -10,9 +10,12 @@ import {
   Button,
   Tag,
   Icon,
+  GridContainer,
+  GridRow,
+  GridColumn,
+  Text,
 } from '@island.is/island-ui/core'
 
-import { Substance } from '@island.is/judicial-system/types'
 import {
   ReactSelectOption,
   TempCase as Case,
@@ -422,63 +425,74 @@ export const IndictmentCount: React.FC<Props> = (props) => {
         IndictmentCountOffense.DrunkDriving,
       ) && (
         <Box marginBottom={2}>
-          <InputMask
-            mask={'9,99'}
-            maskPlaceholder={null}
-            value={indictmentCount.substances?.DRUNK_DRIVING?.ALCOHOL ?? ''}
-            onChange={(event) => {
-              removeErrorMessageIfValid(
-                ['empty'],
-                event.target.value,
-                bloodAlcoholContentErrorMessage,
-                setBloodAlcoholContentErrorMessage,
-              )
+          <GridContainer>
+            <GridRow alignItems="center">
+              <GridColumn span="11/12">
+                <InputMask
+                  mask={'9,99'}
+                  maskPlaceholder={null}
+                  value={
+                    indictmentCount.substances?.DRUNK_DRIVING?.ALCOHOL ?? ''
+                  }
+                  onChange={(event) => {
+                    removeErrorMessageIfValid(
+                      ['empty'],
+                      event.target.value,
+                      bloodAlcoholContentErrorMessage,
+                      setBloodAlcoholContentErrorMessage,
+                    )
 
-              updateIndictmentCountState(
-                indictmentCount.id,
-                {
-                  substances: {
-                    ...indictmentCount.substances,
-                    DRUNK_DRIVING: { ALCOHOL: event.target.value },
-                  },
-                },
-                setWorkingCase,
-              )
-            }}
-            onBlur={(event) => {
-              const value =
-                event.target.value.length > 0
-                  ? `${event.target.value}${'0,00'.slice(
-                      event.target.value.length,
-                    )}`
-                  : event.target.value
+                    updateIndictmentCountState(
+                      indictmentCount.id,
+                      {
+                        substances: {
+                          ...indictmentCount.substances,
+                          DRUNK_DRIVING: { ALCOHOL: event.target.value },
+                        },
+                      },
+                      setWorkingCase,
+                    )
+                  }}
+                  onBlur={(event) => {
+                    const value =
+                      event.target.value.length > 0
+                        ? `${event.target.value}${'0,00'.slice(
+                            event.target.value.length,
+                          )}`
+                        : event.target.value
 
-              validateAndSetErrorMessage(
-                ['empty'],
-                value,
-                setBloodAlcoholContentErrorMessage,
-              )
+                    validateAndSetErrorMessage(
+                      ['empty'],
+                      value,
+                      setBloodAlcoholContentErrorMessage,
+                    )
 
-              onChange(indictmentCount.id, {
-                substances: {
-                  ...indictmentCount.substances,
-                  DRUNK_DRIVING: { ALCOHOL: value },
-                },
-              })
-            }}
-          >
-            <Input
-              name="alcohol"
-              autoComplete="off"
-              label={formatMessage(strings.bloodAlcoholContentLabel)}
-              placeholder={formatMessage(
-                strings.bloodAlcoholContentPlaceholder,
-              )}
-              errorMessage={bloodAlcoholContentErrorMessage}
-              hasError={bloodAlcoholContentErrorMessage !== ''}
-              required
-            />
-          </InputMask>
+                    onChange(indictmentCount.id, {
+                      substances: {
+                        ...indictmentCount.substances,
+                        DRUNK_DRIVING: { ALCOHOL: value },
+                      },
+                    })
+                  }}
+                >
+                  <Input
+                    name="alcohol"
+                    autoComplete="off"
+                    label={formatMessage(strings.bloodAlcoholContentLabel)}
+                    placeholder={formatMessage(
+                      strings.bloodAlcoholContentPlaceholder,
+                    )}
+                    errorMessage={bloodAlcoholContentErrorMessage}
+                    hasError={bloodAlcoholContentErrorMessage !== ''}
+                    required
+                  />
+                </InputMask>
+              </GridColumn>
+              <GridColumn span="1/12">
+                <Text variant="h2">{'\u{2030}'}</Text>
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
         </Box>
       )}
       <Box marginBottom={2}>
