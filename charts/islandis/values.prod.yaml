@@ -580,6 +580,10 @@ application-system-api:
           paths:
             - '/application-payment'
             - '/applications'
+        - host: 'application-callback-xrd.internal.island.is'
+          paths:
+            - '/application-payment'
+            - '/applications'
   initContainer:
     containers:
       - args:

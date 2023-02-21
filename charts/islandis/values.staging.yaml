@@ -588,6 +588,10 @@ application-system-api:
           paths:
             - '/application-payment'
             - '/applications'
+        - host: 'application-callback-xrd.internal.staging01.devland.is'
+          paths:
+            - '/application-payment'
+            - '/applications'
   initContainer:
     containers:
       - args:
