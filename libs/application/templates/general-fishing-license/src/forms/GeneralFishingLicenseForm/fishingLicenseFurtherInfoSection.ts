@@ -16,6 +16,7 @@ import {
   licenseHasFileUploadField,
   licenseHasRailNetAndRoeNetField,
   FILE_UPLOAD_ACCEPT,
+  FILE_SIZE_LIMIT,
 } from '../../utils/licenses'
 
 // Condition that determines whether given license has file upload field
@@ -118,6 +119,9 @@ export const fishingLicenseFurtherInfoSection = buildSection({
           id: ATTACHMENTS_FIELD_ID,
           title: fishingLicenseFurtherInformation.labels.attachments,
           maxSize: FILE_SIZE_LIMIT,
+          maxSizeErrorText:
+            fishingLicenseFurtherInformation.errorMessages
+              .attachmentMaxSizeError,
           uploadHeader: fishingLicenseFurtherInformation.attachmentInfo.title,
           uploadDescription:
             fishingLicenseFurtherInformation.attachmentInfo.subtitle,
