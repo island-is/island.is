@@ -9,23 +9,57 @@ import {
   defineTemplateApi,
   NationalRegistryUserApi,
 } from '@island.is/application/types'
+import { Features } from '@island.is/feature-flags'
 import { ApiModuleActions, States, Roles } from '../constants'
 import { GeneralPetitionSchema } from './dataSchema'
+import { m } from './messages'
 
 type Events = { type: DefaultEvents.SUBMIT }
 
-const GeneralPetitionApplicationTemplate: ApplicationTemplate<
+const GeneralPetitionTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
   type: ApplicationTypes.GENERAL_PETITION,
-  name: 'Meðmælendalisti',
+  name: m.applicationName,
   dataSchema: GeneralPetitionSchema,
-  readyForProduction: true,
+  readyForProduction: false,
+  featureFlag: Features.generalPetition,
   stateMachineConfig: {
-    initial: States.DRAFT,
+    initial: States.PREREQUISITES,
     states: {
+      [States.PREREQUISITES]: {
+        meta: {
+          name: 'prerequisites',
+          status: 'draft',
+          progress: 0.2,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/prerequisites').then((module) =>
+                  Promise.resolve(module.prerequisites),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: '',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              delete: true,
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.DRAFT,
+          },
+        },
+      },
       [States.DRAFT]: {
         meta: {
           name: 'draft',
@@ -36,13 +70,13 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ApplicationForm').then((module) =>
-                  Promise.resolve(module.PetitionApplicationForm),
+                import('../forms/form').then((module) =>
+                  Promise.resolve(module.form),
                 ),
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Staðfesta',
+                  name: '',
                   type: 'primary',
                 },
               ],
@@ -54,14 +88,14 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: States.APPROVED,
+            target: States.DONE,
           },
         },
       },
-      [States.APPROVED]: {
+      [States.DONE]: {
         meta: {
-          name: 'Approved',
-          status: 'approved',
+          name: 'Done',
+          status: 'completed',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
@@ -73,16 +107,16 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/PetitionApplicationApproved').then((val) =>
-                  Promise.resolve(val.PetitionApplicationApproved),
+                import('../forms/done').then((val) =>
+                  Promise.resolve(val.done),
                 ),
               read: 'all',
             },
             {
               id: Roles.SIGNATUREE,
               formLoader: () =>
-                import('../forms/EndorsementForm').then((val) =>
-                  Promise.resolve(val.EndorsementForm),
+                import('../forms/signPetitionForm').then((val) =>
+                  Promise.resolve(val.signPetitionForm),
                 ),
               read: {
                 answers: ['documents', 'listName', 'aboutList', 'dates'],
@@ -97,10 +131,10 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
   mapUserToRole(nationalId: string, application: Application) {
     if (application.applicant === nationalId) {
       return Roles.APPLICANT
-    } else if (application.state === States.APPROVED) {
+    } else if (application.state === States.DONE) {
       return Roles.SIGNATUREE
     }
   },
 }
 
-export default GeneralPetitionApplicationTemplate
+export default GeneralPetitionTemplate

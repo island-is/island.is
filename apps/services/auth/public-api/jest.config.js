@@ -1,18 +1,20 @@
 module.exports = {
   displayName: 'services-auth-public-api',
-  preset: '../../../../jest.preset.js',
+  preset: './jest.preset.js',
+  rootDir: '../../../..',
+  roots: [__dirname],
   globals: {
     'ts-jest': {
       diagnostics: false,
-      tsconfig: '<rootDir>/tsconfig.spec.json',
+      tsconfig: `${__dirname}/tsconfig.spec.json`,
     },
   },
   transform: {
     '^.+\\.[tj]s$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'js', 'html', 'json'],
-  coverageDirectory: '../../../../coverage/apps/services/auth/public-api',
-  setupFilesAfterEnv: ['./test/setup.ts'],
+  coverageDirectory: '<rootDir>/coverage/apps/services/auth/public-api',
+  setupFilesAfterEnv: [`${__dirname}/test/setup.ts`],
   collectCoverageFrom: [
     '**/*.{js,jsx,ts,tsx}',
     '!**/*.css.*',
