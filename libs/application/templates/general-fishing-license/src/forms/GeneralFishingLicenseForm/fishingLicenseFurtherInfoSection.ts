@@ -128,6 +128,7 @@ export const fishingLicenseFurtherInfoSection = buildSection({
           uploadButtonLabel:
             fishingLicenseFurtherInformation.attachmentInfo.buttonLabel,
           uploadAccept: FILE_UPLOAD_ACCEPT,
+          uploadMultiple: false,
           condition: hasFileUpload,
         }),
         // Roe net and rail net information fields - only for selected license(s)
