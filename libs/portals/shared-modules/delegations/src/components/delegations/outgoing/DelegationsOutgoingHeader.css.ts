@@ -3,8 +3,8 @@ import { themeUtils, theme } from '@island.is/island-ui/theme'
 
 export const container = style({
   display: 'grid',
-  gridTemplateColumns: 'minmax(100px, 65%) minmax(115px, 35%)',
-  gridTemplateAreas: `"select button" "search search"`,
+  gridTemplateColumns: '1fr',
+  gridTemplateAreas: `"select" "search"`,
   gridTemplateRows: '1fr',
   alignItems: 'end',
   gridColumnGap: theme.spacing[2],
@@ -13,7 +13,7 @@ export const container = style({
     lg: {
       gridTemplateColumns:
         'minmax(200px, 35%) minmax(200px, auto) minmax(150px, 172px)',
-      gridTemplateAreas: `"select search button"`,
+      gridTemplateAreas: `"select search"`,
     },
   }),
 })
@@ -24,8 +24,4 @@ export const selectContainer = style({
 
 export const searchContainer = style({
   gridArea: 'search',
-})
-
-export const buttonContainer = style({
-  gridArea: 'button',
 })

@@ -1,3 +1,4 @@
+import { useUserInfo } from '@island.is/auth/react'
 import * as kennitala from 'kennitala'
 import React, { useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroller'
@@ -14,7 +15,7 @@ import {
   toast,
   Input,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
 
 import LogTable from '../../components/LogTable/LogTable'
@@ -25,6 +26,9 @@ import { useGetSessionsListQuery } from './Sessions.generated'
 const SESSION_LIMIT = 20
 
 const Sessions = () => {
+  useNamespaces('portals-my-pages.session-history')
+  const user = useUserInfo()
+  const isCompany = user.profile.subjectType === 'legalEntity'
   const { formatMessage } = useLocale()
 
   const [sessionsData, setSessionsData] = useState<SessionsSession[]>([])
@@ -112,7 +116,9 @@ const Sessions = () => {
     <>
       <IntroHeader
         title={formatMessage(m.sessions)}
-        intro={formatMessage(m.sessionsHeaderIntro)}
+        intro={formatMessage(
+          isCompany ? m.sessionsHeaderIntroCompany : m.sessionsHeaderIntro,
+        )}
       />
       <Box
         display="flex"
