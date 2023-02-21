@@ -127,7 +127,7 @@ export class DocumentClient {
 
   async customersDocument(
     requestParameters: CustomersDocumentRequest,
-    auth: string,
+    auth?: string,
   ): Promise<DocumentDTO | null> {
     const { kennitala, messageId, authenticationType } = requestParameters
     const requestRoute = `/api/mail/v1/customers/${kennitala}/messages/${messageId}?authenticationType=${authenticationType}`
