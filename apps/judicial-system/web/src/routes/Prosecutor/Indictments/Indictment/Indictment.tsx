@@ -20,6 +20,7 @@ import {
 import {
   IndictmentsProsecutorSubsections,
   Sections,
+  TempIndictmentCount as TIndictmentCount,
 } from '@island.is/judicial-system-web/src/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -32,15 +33,13 @@ import {
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as constants from '@island.is/judicial-system/consts'
+import { Substance } from '@island.is/judicial-system/types'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
 import { isTrafficViolationStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 import useIndictmentCounts, {
   UpdateIndictmentCount,
 } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
-import {
-  IndictmentCount as TIndictmentCount,
-  IndictmentCountOffense,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { IndictmentCount } from './IndictmentCount'
 import { indictment as strings } from './Indictment.strings'
@@ -80,35 +79,31 @@ const Indictment: React.FC = () => {
     (indictmentCounts?: TIndictmentCount[]) => {
       let requestDriversLicenseSuspension = false
 
-      const reduce = () =>
-        indictmentCounts?.forEach((count) =>
-          count.offenses?.forEach((offence) => {
-            switch (offence) {
-              case IndictmentCountOffense.DrivingWithoutLicence:
-                requestDriversLicenseSuspension = false
-                return
-              case IndictmentCountOffense.DrunkDriving:
-                if (
-                  count.substances &&
-                  count.substances[IndictmentCountOffense.DrunkDriving] &&
-                  count.substances[IndictmentCountOffense.DrunkDriving][
-                    'ALCOHOL'
-                  ] >= '1,20'
-                ) {
-                  requestDriversLicenseSuspension = true
-                }
-                break
-              case IndictmentCountOffense.IllegalDrugsDriving:
-              case IndictmentCountOffense.PrescriptionDrugsDriving:
-                requestDriversLicenseSuspension = true
-                break
-              default:
-                break
-            }
-          }),
+      if (
+        !indictmentCounts?.some((count) =>
+          count.offenses?.some(
+            (offence) =>
+              offence === IndictmentCountOffense.DrivingWithoutLicence,
+          ),
+        ) &&
+        indictmentCounts?.some((count) =>
+          count.offenses?.some(
+            (offense) =>
+              (offense === IndictmentCountOffense.DrunkDriving &&
+                (count.substances?.DRUNK_DRIVING?.ALCOHOL ?? '') >= '1,20') ||
+              [
+                IndictmentCountOffense.IllegalDrugsDriving,
+                IndictmentCountOffense.PrescriptionDrugsDriving,
+              ].includes(offense),
+          ),
         )
-
-      reduce()
+      ) {
+        // If the case has no counts with the offence "Driving without a licence" and
+        // at least one count with the offence "Driving under the influence of alcohol" and the alcohol level is 1,20 or higher or
+        // at least one count with the offence "Driving under the influence of illegal drugs" or "Driving under the influence of prescription drugs"
+        // then by default the prosecutor requests a suspension of the driver's licence.
+        requestDriversLicenseSuspension = true
+      }
 
       if (
         requestDriversLicenseSuspension !==
@@ -131,9 +126,10 @@ const Indictment: React.FC = () => {
       return
     }
 
-    const indictmentCounts = workingCase.indictmentCounts
-      ? [...workingCase.indictmentCounts, indictmentCount]
-      : [indictmentCount]
+    const indictmentCounts = [
+      ...(workingCase.indictmentCounts ?? []),
+      indictmentCount,
+    ]
 
     setDriversLicenseSuspensionRequest(indictmentCounts)
 
@@ -378,7 +374,7 @@ const Indictment: React.FC = () => {
               <Box marginBottom={3}>
                 <Checkbox
                   name="requestDriversLicenseSuspension"
-                  label="Krefjast sviptingar"
+                  label={formatMessage(strings.demandsRequestSuspension)}
                   checked={workingCase.requestDriversLicenseSuspension}
                   onChange={() => {
                     setAndSendCaseToServer(

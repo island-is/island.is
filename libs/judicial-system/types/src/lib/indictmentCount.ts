@@ -5,9 +5,10 @@ export enum IndictmentCountOffense {
   PRESCRIPTION_DRUGS_DRIVING = 'PRESCRIPTION_DRUGS_DRIVING',
 }
 
-type Substance = 'ALCOHOL'
+export enum Substance {
+  ALCOHOL = 'ALCOHOL',
+}
 
-export type SubstanceMap = Record<
-  IndictmentCountOffense,
-  Record<Substance, string>
->
+export type SubstanceMap = {
+  [key in IndictmentCountOffense]?: { [key in Substance]?: string }
+}

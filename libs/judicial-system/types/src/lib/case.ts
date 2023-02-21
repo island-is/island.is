@@ -73,6 +73,7 @@ export enum IndictmentSubtype {
   UTILITY_THEFT = 'UTILITY_THEFT',
   WEPONS_VIOLATION = 'WEPONS_VIOLATION',
 }
+
 export interface IndictmentSubtypeMap {
   [key: string]: IndictmentSubtype[]
 }
