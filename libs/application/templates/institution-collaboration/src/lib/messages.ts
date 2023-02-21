@@ -40,7 +40,11 @@ export const institutionApplicationMessages = {
     sectionApplicantDescription: {
       id: 'ia.application:applicant.section.applicantDescription',
       defaultMessage:
+<<<<<<< HEAD
         'Stofnun eða ráðuneyti sem sækir um samstarf við Stafrænt Ísland og upplýsingar um tengilið(i)',
+=======
+        'Stofnun eða ráðuneyti sem sækist eftir samstarfi við Stafrænt Ísland og málefnasvið sem verkefnið tilheyrir. ',
+>>>>>>> 0911e4ecf2 (txt msg)
       description: 'Section description',
     },
 
@@ -308,6 +312,10 @@ export const institutionApplicationMessages = {
       defaultMessage: 'Áskoranir, skorður og úrlausnarefni',
       description: 'Sub section label',
     },
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0911e4ecf2 (txt msg)
     sectionTitle: {
       id: 'ia.application:constraints.section.title',
       defaultMessage: 'Þjónustur sem sótt er um',
