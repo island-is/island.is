@@ -52,11 +52,15 @@ export class DocumentClient {
     }
   }
 
-  private async getRequest<T>(requestRoute: string): Promise<T | null> {
-    await this.rehydrateToken()
+  private async getRequest<T>(
+    requestRoute: string,
+    auth?: string,
+  ): Promise<T | null> {
+    !auth && (await this.rehydrateToken())
+
     const config: AxiosRequestConfig = {
       headers: {
-        Authorization: `Bearer ${this.accessToken}`,
+        Authorization: `Bearer ${auth ?? this.accessToken}`,
       },
     }
 
@@ -123,10 +127,11 @@ export class DocumentClient {
 
   async customersDocument(
     requestParameters: CustomersDocumentRequest,
+    auth: string,
   ): Promise<DocumentDTO | null> {
     const { kennitala, messageId, authenticationType } = requestParameters
     const requestRoute = `/api/mail/v1/customers/${kennitala}/messages/${messageId}?authenticationType=${authenticationType}`
-    return await this.getRequest<DocumentDTO>(requestRoute)
+    return await this.getRequest<DocumentDTO>(requestRoute, auth)
   }
 
   async customersCategories(

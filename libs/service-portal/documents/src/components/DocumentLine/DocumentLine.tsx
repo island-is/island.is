@@ -84,6 +84,7 @@ const DocumentLine: FC<Props> = ({
       const tokenInput = document.createElement('input')
 
       const token = userInfo?.access_token
+      console.log('hello')
 
       if (!token) return
 

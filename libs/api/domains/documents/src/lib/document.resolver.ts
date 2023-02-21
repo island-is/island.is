@@ -42,6 +42,7 @@ export class DocumentResolver {
         action: 'getDocument',
         resources: input.id,
       },
+
       this.documentService.findByDocumentId(user.nationalId, input.id),
     )
   }

@@ -44,12 +44,14 @@ export class DocumentController {
     @Body() resource: GetDocumentDto,
     @Res() res: Response,
   ) {
-    console.log('EG ER REQUESTA')
-    const rawDocumentDTO = await this.documentClient.customersDocument({
-      kennitala: user.nationalId,
-      messageId: pdfId,
-      authenticationType: 'HIGH',
-    })
+    const rawDocumentDTO = await this.documentClient.customersDocument(
+      {
+        kennitala: user.nationalId,
+        messageId: pdfId,
+        authenticationType: 'HIGH',
+      },
+      resource.__accessToken,
+    )
 
     if (!rawDocumentDTO || !rawDocumentDTO.content) {
       return res.end()
