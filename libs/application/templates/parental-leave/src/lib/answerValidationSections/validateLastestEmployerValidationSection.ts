@@ -1,4 +1,3 @@
-/* @typescript-eslint/no-inferrable-types */
 import { EmployerRow } from '../../types'
 import { errorMessages } from '../messages'
 import { AnswerValidationError } from '@island.is/application/core'
@@ -91,6 +90,7 @@ export const validateLatestEmployerValidationSection = (
     return undefined
   }
 
+  /* eslint-disable-next-line @typescript-eslint/no-inferrable-types */
   let index: number = -1
   employers?.map((e, i) => {
     if (!e.ratio) {
