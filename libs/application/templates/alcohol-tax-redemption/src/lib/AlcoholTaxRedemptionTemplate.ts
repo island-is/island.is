@@ -13,6 +13,7 @@ import {
 import { Events, States, Roles } from './constants'
 import { application } from './messages'
 import { dataSchema } from './dataSchema'
+import { Features } from '@island.is/feature-flags'
 
 const AlcoholTaxRedemptionTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -22,6 +23,7 @@ const AlcoholTaxRedemptionTemplate: ApplicationTemplate<
   type: ApplicationTypes.ALCOHOL_TAX_REDEMPTION,
   name: application.applicationTitle,
   institution: application.institutionName,
+  featureFlag: Features.alcoholTaxRedemption,
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
