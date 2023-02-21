@@ -139,5 +139,11 @@ export const fishingLicenseFurtherInformation = {
       defaultMessage: 'Hámark 5 MB á skrá',
       description: 'Max 5 MB per file',
     },
+    attachmentLimitError: {
+      id:
+        'gfl.application:fishingLicenseFurtherInformation.errorMessages.attachmentLimitError',
+      defaultMessage: 'Hlaða á upp aðeins einni skrá',
+      description: 'Max one file',
+    },
   }),
 }
