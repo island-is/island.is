@@ -33,7 +33,7 @@ export class NotificationsService {
   }
 
   async mapLocale(locale: string | null | undefined): Promise<string> {
-    if (locale == 'en') {
+    if (locale === 'en') {
       return 'en'
     }
     return 'is-IS'
