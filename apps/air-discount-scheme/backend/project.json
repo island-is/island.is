@@ -1,5 +1,6 @@
 {
-  "root": "apps/air-discount-scheme/backend",
+  "name": "air-discount-scheme-backend",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/air-discount-scheme/backend/src",
   "projectType": "application",
   "prefix": "air-discount-scheme-backend",
@@ -56,21 +57,21 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "apps/air-discount-scheme/backend/jest.config.js",
+        "jestConfig": "apps/air-discount-scheme/backend/jest.config.ts",
         "runInBand": true,
         "passWithNoTests": true
       },
-      "outputs": ["coverage/apps/air-discount-scheme/backend"]
+      "outputs": ["{workspaceRoot}/coverage/apps/air-discount-scheme/backend"]
     },
     "dev-services": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "docker-compose up -d",
         "cwd": "apps/air-discount-scheme/backend"
       }
     },
     "schemas/build-openapi": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "outputPath": [
           "apps/air-discount-scheme/backend/src/openapi.yaml",
@@ -83,28 +84,28 @@
       }
     },
     "migrate": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "sequelize-cli db:migrate",
         "cwd": "apps/air-discount-scheme/backend"
       }
     },
     "migrate/generate": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "sequelize-cli migration:generate --name $(whoami)",
         "cwd": "apps/air-discount-scheme/backend"
       }
     },
     "migrate/undo": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "sequelize-cli db:migrate:undo",
         "cwd": "apps/air-discount-scheme/backend"
       }
     },
     "seed": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "sequelize-cli db:seed:all",
         "cwd": "apps/air-discount-scheme/backend"

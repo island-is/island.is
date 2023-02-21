@@ -1,5 +1,6 @@
 {
-  "root": "libs/infra-next-server",
+  "name": "infra-next-server",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/infra-next-server/src",
   "projectType": "library",
   "generators": {},
@@ -13,10 +14,10 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "libs/infra-next-server/jest.config.js",
+        "jestConfig": "libs/infra-next-server/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/infra-next-server"]
+      "outputs": ["{workspaceRoot}/coverage/libs/infra-next-server"]
     }
   },
   "tags": ["lib:node", "scope:node"]

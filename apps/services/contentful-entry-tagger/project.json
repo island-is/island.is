@@ -1,5 +1,6 @@
 {
-  "root": "apps/services/contentful-entry-tagger",
+  "name": "services-contentful-entry-tagger",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/contentful-entry-tagger/src",
   "projectType": "application",
   "prefix": "services-contentful-entry-tagger",
@@ -37,9 +38,11 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/services/contentful-entry-tagger"],
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/services/contentful-entry-tagger"
+      ],
       "options": {
-        "jestConfig": "apps/services/contentful-entry-tagger/jest.config.js",
+        "jestConfig": "apps/services/contentful-entry-tagger/jest.config.ts",
         "passWithNoTests": true
       }
     },

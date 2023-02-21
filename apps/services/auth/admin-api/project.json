@@ -1,5 +1,6 @@
 {
-  "root": "apps/services/auth/admin-api",
+  "name": "services-auth-admin-api",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/auth/admin-api/src",
   "projectType": "application",
   "prefix": "auth-admin-api",
@@ -40,10 +41,10 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "apps/services/auth/admin-api/jest.config.js",
+        "jestConfig": "apps/services/auth/admin-api/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/apps/services/auth/admin-api"]
+      "outputs": ["{workspaceRoot}/coverage/apps/services/auth/admin-api"]
     },
     "docker-express": {}
   },

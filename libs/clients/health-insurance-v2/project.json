@@ -1,5 +1,6 @@
 {
-  "root": "libs/clients/health-insurance-v2",
+  "name": "clients-health-insurance-v2",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/health-insurance-v2/src",
   "projectType": "library",
   "targets": {
@@ -13,14 +14,14 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/health-insurance-v2"],
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/health-insurance-v2"],
       "options": {
-        "jestConfig": "libs/clients/health-insurance-v2/jest.config.js",
+        "jestConfig": "libs/clients/health-insurance-v2/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/health-insurance-v2/gen/fetch -i libs/clients/health-insurance-v2/src/openapi.yml"
       }

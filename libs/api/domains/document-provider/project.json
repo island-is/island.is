@@ -1,5 +1,6 @@
 {
-  "root": "libs/api/domains/document-provider",
+  "name": "api-domains-document-provider",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/document-provider/src",
   "projectType": "library",
   "generators": {},
@@ -15,13 +16,13 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "libs/api/domains/document-provider/jest.config.js",
+        "jestConfig": "libs/api/domains/document-provider/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/api/domains/document-provider"]
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/document-provider"]
     },
     "schemas/openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "outputPath": "libs/api/domains/document-provider/gen/fetch",
         "command": "yarn openapi-generator -o libs/api/domains/document-provider/gen/fetch -i apps/services/documents/src/openapi.yaml"

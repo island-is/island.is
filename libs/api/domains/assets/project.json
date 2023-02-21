@@ -1,5 +1,6 @@
 {
-  "root": "libs/api/domains/assets",
+  "name": "api-domains-assets",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/assets/src",
   "projectType": "library",
   "targets": {
@@ -11,9 +12,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/api/domains/assets"],
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/assets"],
       "options": {
-        "jestConfig": "libs/api/domains/assets/jest.config.js",
+        "jestConfig": "libs/api/domains/assets/jest.config.ts",
         "passWithNoTests": true
       }
     }

@@ -1,5 +1,6 @@
 {
-  "root": "libs/testing/containers",
+  "name": "testing-containers",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/testing/containers/src",
   "projectType": "library",
   "targets": {
@@ -11,9 +12,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/testing/containers"],
+      "outputs": ["{workspaceRoot}/coverage/libs/testing/containers"],
       "options": {
-        "jestConfig": "libs/testing/containers/jest.config.js",
+        "jestConfig": "libs/testing/containers/jest.config.ts",
         "passWithNoTests": true
       }
     }

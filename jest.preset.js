@@ -1,5 +1,5 @@
 const path = require('path')
-const nxPreset = require('@nrwl/jest/preset')
+const nxPreset = require('@nrwl/jest/preset').default;
 
 const customResolver = path.join(__dirname, 'jest.resolver.js')
 

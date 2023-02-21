@@ -1,5 +1,6 @@
 {
-  "root": "libs/auth-nest-tools",
+  "name": "auth-nest-tools",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/auth-nest-tools/src",
   "projectType": "library",
   "generators": {},
@@ -13,10 +14,10 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "libs/auth-nest-tools/jest.config.js",
+        "jestConfig": "libs/auth-nest-tools/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/auth-nest-tools"]
+      "outputs": ["{workspaceRoot}/coverage/libs/auth-nest-tools"]
     }
   },
   "tags": ["lib:nest", "scope:nest"]

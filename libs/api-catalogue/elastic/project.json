@@ -1,5 +1,6 @@
 {
-  "root": "libs/api-catalogue/elastic",
+  "name": "api-catalogue-elastic",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api-catalogue/elastic/src",
   "projectType": "library",
   "generators": {},
@@ -13,10 +14,10 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "libs/api-catalogue/elastic/jest.config.js",
+        "jestConfig": "libs/api-catalogue/elastic/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/api-catalogue/elastic"]
+      "outputs": ["{workspaceRoot}/coverage/libs/api-catalogue/elastic"]
     }
   },
   "tags": ["lib:nest", "scope:nest"]

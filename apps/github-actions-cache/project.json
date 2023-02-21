@@ -1,5 +1,6 @@
 {
-  "root": "apps/github-actions-cache",
+  "name": "github-actions-cache",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/github-actions-cache/src",
   "projectType": "application",
   "prefix": "github-actions-cache",
@@ -35,9 +36,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/github-actions-cache"],
+      "outputs": ["{workspaceRoot}/coverage/apps/github-actions-cache"],
       "options": {
-        "jestConfig": "apps/github-actions-cache/jest.config.js",
+        "jestConfig": "apps/github-actions-cache/jest.config.ts",
         "passWithNoTests": true
       }
     },

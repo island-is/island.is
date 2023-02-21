@@ -1,5 +1,6 @@
 {
-  "root": "libs/infra-tracing",
+  "name": "infra-tracing",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/infra-tracing/src",
   "projectType": "library",
   "generators": {},
@@ -13,10 +14,10 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "libs/infra-tracing/jest.config.js",
+        "jestConfig": "libs/infra-tracing/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/infra-tracing"]
+      "outputs": ["{workspaceRoot}/coverage/libs/infra-tracing"]
     }
   },
   "tags": ["scope:js", "lib:js"]

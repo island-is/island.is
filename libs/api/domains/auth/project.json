@@ -1,5 +1,6 @@
 {
-  "root": "libs/api/domains/auth",
+  "name": "api-domains-auth",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/auth/src",
   "projectType": "library",
   "targets": {
@@ -11,9 +12,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/api/domains/auth"],
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/auth"],
       "options": {
-        "jestConfig": "libs/api/domains/auth/jest.config.js",
+        "jestConfig": "libs/api/domains/auth/jest.config.ts",
         "passWithNoTests": true
       }
     }

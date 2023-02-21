@@ -1,5 +1,6 @@
 {
-  "root": "libs/clients/firearm-license",
+  "name": "clients-firearm-license",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/firearm-license/src",
   "projectType": "library",
   "targets": {
@@ -13,14 +14,14 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/firearm-license"],
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/firearm-license"],
       "options": {
-        "jestConfig": "libs/clients/firearm-license/jest.config.js",
+        "jestConfig": "libs/clients/firearm-license/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/firearm-license/gen/fetch -i libs/clients/firearm-license/src/clientConfig.json"
       }

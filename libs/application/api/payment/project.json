@@ -1,5 +1,6 @@
 {
-  "root": "libs/application/api/payment",
+  "name": "application-api-payment",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/api/payment/src",
   "targets": {
     "lint": {
@@ -11,9 +12,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/application/api/payment"],
+      "outputs": ["{workspaceRoot}/coverage/libs/application/api/payment"],
       "options": {
-        "jestConfig": "libs/application/api/payment/jest.config.js",
+        "jestConfig": "libs/application/api/payment/jest.config.ts",
         "passWithNoTests": true
       }
     }

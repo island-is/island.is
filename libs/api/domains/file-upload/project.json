@@ -1,5 +1,6 @@
 {
-  "root": "libs/api/domains/file-upload",
+  "name": "api-domains-file-upload",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/file-upload/src",
   "projectType": "library",
   "generators": {},
@@ -15,10 +16,10 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "libs/api/domains/file-upload/jest.config.js",
+        "jestConfig": "libs/api/domains/file-upload/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/api/domains/file-upload"]
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/file-upload"]
     }
   },
   "tags": ["lib:api", "scope:api"]

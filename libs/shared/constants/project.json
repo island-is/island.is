@@ -1,5 +1,6 @@
 {
-  "root": "libs/shared/constants",
+  "name": "shared-constants",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared/constants/src",
   "projectType": "library",
   "targets": {
@@ -11,9 +12,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/shared/constants"],
+      "outputs": ["{workspaceRoot}/coverage/libs/shared/constants"],
       "options": {
-        "jestConfig": "libs/shared/constants/jest.config.js",
+        "jestConfig": "libs/shared/constants/jest.config.ts",
         "passWithNoTests": true
       }
     }

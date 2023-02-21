@@ -1,5 +1,6 @@
 {
-  "root": "libs/nest/aws",
+  "name": "nest-aws",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/nest/aws/src",
   "projectType": "library",
   "targets": {
@@ -11,9 +12,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/nest/aws"],
+      "outputs": ["{workspaceRoot}/coverage/libs/nest/aws"],
       "options": {
-        "jestConfig": "libs/nest/aws/jest.config.js",
+        "jestConfig": "libs/nest/aws/jest.config.ts",
         "passWithNoTests": true
       }
     }

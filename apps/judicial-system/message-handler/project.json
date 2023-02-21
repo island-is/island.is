@@ -1,5 +1,6 @@
 {
-  "root": "apps/judicial-system/message-handler",
+  "name": "judicial-system-message-handler",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/judicial-system/message-handler/src",
   "projectType": "application",
   "prefix": "judicial-system-message-handler",
@@ -43,14 +44,16 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/judicial-system/message-handler"],
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/judicial-system/message-handler"
+      ],
       "options": {
-        "jestConfig": "apps/judicial-system/message-handler/jest.config.js",
+        "jestConfig": "apps/judicial-system/message-handler/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "dev-services": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "docker-compose up -d",
         "cwd": "apps/judicial-system/message-handler"

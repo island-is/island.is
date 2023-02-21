@@ -1,5 +1,6 @@
 {
-  "root": "apps/tools/contentful-role-permissions",
+  "name": "contentful-role-permissions",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/tools/contentful-role-permissions",
   "projectType": "application",
   "targets": {
@@ -12,7 +13,10 @@
         "outputPath": "dist/apps/tools/contentful-role-permissions"
       },
       "configurations": {
-        "production": {}
+        "production": {},
+        "development": {
+          "outputPath": "apps/tools/contentful-role-permissions"
+        }
       }
     },
     "serve": {
@@ -25,8 +29,13 @@
         "production": {
           "buildTarget": "contentful-role-permissions:build:production",
           "dev": false
+        },
+        "development": {
+          "buildTarget": "contentful-role-permissions:build:development",
+          "dev": true
         }
-      }
+      },
+      "defaultConfiguration": "development"
     },
     "export": {
       "executor": "@nrwl/next:export",
@@ -36,9 +45,11 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/tools/contentful-role-permissions"],
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/tools/contentful-role-permissions"
+      ],
       "options": {
-        "jestConfig": "apps/tools/contentful-role-permissions/jest.config.js",
+        "jestConfig": "apps/tools/contentful-role-permissions/jest.config.ts",
         "passWithNoTests": true
       }
     },

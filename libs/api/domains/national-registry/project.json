@@ -1,5 +1,6 @@
 {
-  "root": "libs/api/domains/national-registry",
+  "name": "api-domains-national-registry",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/national-registry/src",
   "projectType": "library",
   "generators": {},
@@ -15,10 +16,10 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "libs/api/domains/national-registry/jest.config.js",
+        "jestConfig": "libs/api/domains/national-registry/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/api/domains/national-registry"]
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/national-registry"]
     }
   },
   "tags": ["lib:api", "scope:api"]

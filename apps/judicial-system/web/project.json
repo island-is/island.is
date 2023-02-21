@@ -1,11 +1,12 @@
 {
-  "root": "apps/judicial-system/web",
+  "name": "judicial-system-web",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/judicial-system/web",
   "projectType": "application",
   "generators": {},
   "targets": {
     "build": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "outputPath": "dist/apps/judicial-system/web",
         "commands": [
@@ -69,14 +70,14 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "apps/judicial-system/web/jest.config.js",
+        "jestConfig": "apps/judicial-system/web/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/apps/judicial-system/web"]
+      "outputs": ["{workspaceRoot}/coverage/apps/judicial-system/web"]
     },
     "docker-next": {},
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/judicial-system/web/{messages/**/*,**/*.strings}.{js,ts,tsx}'"
       }

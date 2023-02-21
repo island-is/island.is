@@ -1,5 +1,6 @@
 {
-  "root": "libs/clients/rsk/procuring",
+  "name": "clients-rsk-procuring",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/rsk/procuring/src",
   "projectType": "library",
   "targets": {
@@ -11,14 +12,14 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/rsk/procuring"],
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/rsk/procuring"],
       "options": {
-        "jestConfig": "libs/clients/rsk/procuring/jest.config.js",
+        "jestConfig": "libs/clients/rsk/procuring/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "update-openapi-document": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10006/Skatturinn/getOpenAPI?serviceCode=prokura-v1 | jq > src/clientConfig.json"
@@ -28,7 +29,7 @@
       }
     },
     "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn openapi-generator -o libs/clients/rsk/procuring/gen/fetch -i libs/clients/rsk/procuring/src/clientConfig.json"

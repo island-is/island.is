@@ -1,5 +1,6 @@
 {
-  "root": "apps/external-contracts-tests",
+  "name": "external-contracts-tests",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/external-contracts-tests/src",
   "projectType": "application",
   "prefix": "external-contracts-tests",
@@ -32,10 +33,10 @@
     "external-test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "apps/external-contracts-tests/jest.config.js",
+        "jestConfig": "apps/external-contracts-tests/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/apps/external-contracts-tests"]
+      "outputs": ["{workspaceRoot}/coverage/apps/external-contracts-tests"]
     },
     "docker-jest": {}
   },

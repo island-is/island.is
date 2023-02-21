@@ -1,5 +1,6 @@
 {
-  "root": "libs/island-ui/storybook",
+  "name": "island-ui-storybook",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/island-ui/storybook/src",
   "projectType": "library",
   "generators": {},
@@ -15,9 +16,7 @@
       "options": {
         "uiFramework": "@storybook/react",
         "port": 4400,
-        "config": {
-          "configFolder": "libs/island-ui/storybook/config"
-        }
+        "configDir": "libs/island-ui/storybook/config"
       },
       "configurations": {
         "ci": {
@@ -29,10 +28,8 @@
       "executor": "@nrwl/storybook:build",
       "options": {
         "uiFramework": "@storybook/react",
-        "outputPath": "dist/storybook/island-ui",
-        "config": {
-          "configFolder": "libs/island-ui/storybook/config"
-        }
+        "configDir": "libs/island-ui/storybook/config",
+        "outputDir": "dist/storybook/island-ui"
       },
       "configurations": {
         "ci": {
@@ -44,7 +41,7 @@
           "inspect": false
         }
       },
-      "outputs": ["{options.outputPath}"]
+      "outputs": ["{options.outputDir}"]
     },
     "docker-static": {}
   },

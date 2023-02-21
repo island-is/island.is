@@ -1,16 +1,4 @@
 {
-  "implicitDependencies": {
-    "eslint-local-rules.js": "*",
-    "workspace.json": "*",
-    "package.json": {
-      "version": "*",
-      "dependencies": "*",
-      "devDependencies": "*",
-      "resolutions": "*"
-    },
-    "nx.json": "*",
-    "tsconfig.base.json": "*"
-  },
   "affected": {
     "defaultBase": "main"
   },
@@ -40,17 +28,6 @@
         "cacheDirectory": ".cache/nx"
       }
     }
-  },
-  "targetDependencies": {
-    "build": [
-      {
-        "target": "build",
-        "projects": "dependencies"
-      }
-    ]
-  },
-  "cli": {
-    "defaultCollection": "@nrwl/react"
   },
   "defaultProject": "web",
   "generators": {
@@ -116,5 +93,43 @@
         "linter": "eslint"
       }
     }
+  },
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "targetDefaults": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
+    },
+    "test": {
+      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
+    },
+    "external-test": {
+      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
+    },
+    "lint": {
+      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"]
+    },
+    "e2e": {
+      "inputs": ["default", "^production"]
+    }
+  },
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "sharedGlobals": [
+      "{workspaceRoot}/eslint-local-rules.js",
+      "{workspaceRoot}/workspace.json",
+      "{workspaceRoot}/nx.json",
+      "{workspaceRoot}/tsconfig.base.json",
+      "{workspaceRoot}/babel.config.json"
+    ],
+    "production": [
+      "default",
+      "!{projectRoot}/.storybook/**/*",
+      "!{projectRoot}/**/*.stories.@(js|jsx|ts|tsx|mdx)",
+      "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
+      "!{projectRoot}/tsconfig.spec.json",
+      "!{projectRoot}/jest.config.[jt]s",
+      "!{projectRoot}/.eslintrc.json"
+    ]
   }
 }

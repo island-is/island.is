@@ -132,7 +132,7 @@ const mockDelegations = {
 }
 
 beforeAll(() => {
-  jest.useFakeTimers().setSystemTime(today.getTime())
+  jest.useFakeTimers()
 })
 
 describe('ActorDelegationsController', () => {

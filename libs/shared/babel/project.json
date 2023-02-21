@@ -1,5 +1,6 @@
 {
-  "root": "libs/shared/babel",
+  "name": "shared-babel",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared/babel/src",
   "projectType": "library",
   "generators": {},
@@ -13,10 +14,10 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "libs/shared/babel/jest.config.js",
+        "jestConfig": "libs/shared/babel/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/shared/babel"]
+      "outputs": ["{workspaceRoot}/coverage/libs/shared/babel"]
     }
   },
   "tags": ["lib:react", "scope:react"]

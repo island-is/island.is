@@ -1,5 +1,6 @@
 {
-  "root": "apps/download-service",
+  "name": "download-service",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/download-service/src",
   "projectType": "application",
   "prefix": "download-service",
@@ -35,9 +36,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/download-service"],
+      "outputs": ["{workspaceRoot}/coverage/apps/download-service"],
       "options": {
-        "jestConfig": "apps/download-service/jest.config.js",
+        "jestConfig": "apps/download-service/jest.config.ts",
         "passWithNoTests": true
       }
     },

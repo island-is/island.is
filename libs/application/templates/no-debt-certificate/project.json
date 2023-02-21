@@ -1,5 +1,6 @@
 {
-  "root": "libs/application/templates/no-debt-certificate",
+  "name": "application-templates-no-debt-certificate",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/no-debt-certificate/src",
   "projectType": "library",
   "targets": {
@@ -13,14 +14,16 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/application/templates/no-debt-certificate"],
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/application/templates/no-debt-certificate"
+      ],
       "options": {
-        "jestConfig": "libs/application/templates/no-debt-certificate/jest.config.js",
+        "jestConfig": "libs/application/templates/no-debt-certificate/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/no-debt-certificate/src/**/*.{js,ts,tsx}'"
       }

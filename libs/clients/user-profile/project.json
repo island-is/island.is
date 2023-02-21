@@ -1,5 +1,6 @@
 {
-  "root": "libs/clients/user-profile",
+  "name": "clients-user-profile",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/user-profile/src",
   "projectType": "library",
   "targets": {
@@ -11,14 +12,14 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/user-profile"],
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/user-profile"],
       "options": {
-        "jestConfig": "libs/clients/user-profile/jest.config.js",
+        "jestConfig": "libs/clients/user-profile/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "outputPath": "libs/clients/user-profile/gen",
         "commands": [

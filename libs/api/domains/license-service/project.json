@@ -1,5 +1,6 @@
 {
-  "root": "libs/api/domains/license-service",
+  "name": "api-domains-license-service",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/license-service/src",
   "projectType": "library",
   "targets": {
@@ -13,9 +14,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/api/domains/license-service"],
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/license-service"],
       "options": {
-        "jestConfig": "libs/api/domains/license-service/jest.config.js",
+        "jestConfig": "libs/api/domains/license-service/jest.config.ts",
         "passWithNoTests": true
       }
     }

@@ -1,5 +1,6 @@
 {
-  "root": "libs/clients/disability-license",
+  "name": "clients-disability-license",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/disability-license/src",
   "projectType": "library",
   "targets": {
@@ -12,14 +13,14 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/disability-license"],
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/disability-license"],
       "options": {
-        "jestConfig": "libs/clients/disability-license/jest.config.js",
+        "jestConfig": "libs/clients/disability-license/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/disability-license/gen/fetch -i libs/clients/disability-license/src/clientConfig.yml"
       }

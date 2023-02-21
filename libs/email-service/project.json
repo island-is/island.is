@@ -1,5 +1,6 @@
 {
-  "root": "libs/email-service",
+  "name": "email-service",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/email-service/src",
   "projectType": "library",
   "generators": {},
@@ -11,7 +12,7 @@
       }
     },
     "generate-html": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "cross-env NODE_ENV=development yarn ts-node -P libs/email-service/tsconfig.json libs/email-service/src/tools/generate-html/generate-html.ts"
       }
@@ -19,10 +20,10 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "libs/email-service/jest.config.js",
+        "jestConfig": "libs/email-service/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/email-service"]
+      "outputs": ["{workspaceRoot}/coverage/libs/email-service"]
     }
   },
   "tags": ["lib:nest", "scope:nest"]

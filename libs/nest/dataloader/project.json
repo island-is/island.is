@@ -1,5 +1,6 @@
 {
-  "root": "libs/nest/dataloader",
+  "name": "nest-dataloader",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/nest/dataloader/src",
   "targets": {
     "lint": {
@@ -11,9 +12,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/nest/dataloader"],
+      "outputs": ["{workspaceRoot}/coverage/libs/nest/dataloader"],
       "options": {
-        "jestConfig": "libs/nest/dataloader/jest.config.js",
+        "jestConfig": "libs/nest/dataloader/jest.config.ts",
         "passWithNoTests": true
       }
     }

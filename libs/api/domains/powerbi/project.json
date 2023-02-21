@@ -1,5 +1,6 @@
 {
-  "root": "libs/api/domains/powerbi",
+  "name": "api-domains-powerbi",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/powerbi/src",
   "projectType": "library",
   "targets": {
@@ -12,9 +13,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/api/domains/powerbi"],
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/powerbi"],
       "options": {
-        "jestConfig": "libs/api/domains/powerbi/jest.config.js",
+        "jestConfig": "libs/api/domains/powerbi/jest.config.ts",
         "passWithNoTests": true
       }
     }

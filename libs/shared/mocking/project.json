@@ -1,5 +1,6 @@
 {
-  "root": "libs/shared/mocking",
+  "name": "shared-mocking",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared/mocking/src",
   "projectType": "library",
   "generators": {},
@@ -13,10 +14,10 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "libs/shared/mocking/jest.config.js",
+        "jestConfig": "libs/shared/mocking/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/shared/mocking"]
+      "outputs": ["{workspaceRoot}/coverage/libs/shared/mocking"]
     }
   },
   "tags": ["lib:js", "scope:js"]

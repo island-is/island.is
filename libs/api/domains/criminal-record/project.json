@@ -1,5 +1,6 @@
 {
-  "root": "libs/api/domains/criminal-record",
+  "name": "api-domains-criminal-record",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/criminal-record/src",
   "projectType": "library",
   "targets": {
@@ -13,9 +14,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/api/domains/criminal-record"],
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/criminal-record"],
       "options": {
-        "jestConfig": "libs/api/domains/criminal-record/jest.config.js",
+        "jestConfig": "libs/api/domains/criminal-record/jest.config.ts",
         "passWithNoTests": true
       }
     }

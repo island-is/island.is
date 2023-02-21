@@ -1,5 +1,6 @@
 {
-  "root": "libs/air-discount-scheme/consts",
+  "name": "air-discount-scheme-consts",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/air-discount-scheme/consts/src",
   "projectType": "library",
   "generators": {},
@@ -15,10 +16,10 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "libs/air-discount-scheme/consts/jest.config.js",
+        "jestConfig": "libs/air-discount-scheme/consts/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/air-discount-scheme/consts"]
+      "outputs": ["{workspaceRoot}/coverage/libs/air-discount-scheme/consts"]
     }
   },
   "tags": ["scope:js", "lib:js"]

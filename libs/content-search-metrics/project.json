@@ -1,5 +1,6 @@
 {
-  "root": "libs/content-search-metrics",
+  "name": "content-search-metrics",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/content-search-metrics/src",
   "projectType": "library",
   "generators": {},
@@ -13,10 +14,10 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "libs/content-search-metrics/jest.config.js",
+        "jestConfig": "libs/content-search-metrics/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/content-search-metrics"]
+      "outputs": ["{workspaceRoot}/coverage/libs/content-search-metrics"]
     }
   },
   "tags": ["lib:nest", "scope:nest"]

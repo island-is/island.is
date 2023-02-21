@@ -1,11 +1,12 @@
 {
-  "root": "apps/service-portal",
+  "name": "service-portal",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/service-portal/src",
   "projectType": "application",
   "generators": {},
   "targets": {
     "build": {
-      "executor": "@nrwl/web:webpack",
+      "executor": "@nrwl/webpack:webpack",
       "options": {
         "baseHref": "/minarsidur/",
         "outputPath": "dist/apps/service-portal",
@@ -51,7 +52,7 @@
       ]
     },
     "generateDevIndexHTML": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "node scripts/dockerfile-assets/bash/extract-environment.js apps/service-portal/src"
@@ -59,7 +60,7 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/web:dev-server",
+      "executor": "@nrwl/webpack:dev-server",
       "options": {
         "buildTarget": "service-portal:build"
       },
@@ -84,19 +85,19 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "apps/service-portal/jest.config.js",
+        "jestConfig": "apps/service-portal/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/apps/service-portal"]
+      "outputs": ["{workspaceRoot}/coverage/apps/service-portal"]
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/service-portal/src/{screens,components}/**/*.{js,ts,tsx}'"
       }
     },
     "dev-init": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn get-secrets service-portal",
@@ -106,7 +107,7 @@
       }
     },
     "dev": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn nx run services-user-profile:dev",

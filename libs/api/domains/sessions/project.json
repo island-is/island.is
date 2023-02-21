@@ -1,5 +1,6 @@
 {
-  "root": "libs/api/domains/sessions",
+  "name": "api-domains-sessions",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/sessions/src",
   "targets": {
     "lint": {
@@ -11,9 +12,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/api/domains/sessions"],
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/sessions"],
       "options": {
-        "jestConfig": "libs/api/domains/sessions/jest.config.js",
+        "jestConfig": "libs/api/domains/sessions/jest.config.ts",
         "passWithNoTests": true
       }
     }

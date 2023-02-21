@@ -1,5 +1,6 @@
 {
-  "root": "libs/island-ui/contentful",
+  "name": "island-ui-contentful",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/island-ui/contentful/src",
   "projectType": "library",
   "generators": {},
@@ -13,10 +14,10 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "libs/island-ui/contentful/jest.config.js",
+        "jestConfig": "libs/island-ui/contentful/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/island-ui/contentful"]
+      "outputs": ["{workspaceRoot}/coverage/libs/island-ui/contentful"]
     }
   },
   "tags": ["lib:react", "scope:react"]

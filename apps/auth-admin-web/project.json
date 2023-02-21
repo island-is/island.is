@@ -1,11 +1,12 @@
 {
-  "root": "apps/auth-admin-web",
+  "name": "auth-admin-web",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/auth-admin-web",
   "projectType": "application",
   "generators": {},
   "targets": {
     "build": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "outputPath": "dist/apps/auth-admin-web",
         "commands": [
@@ -69,10 +70,10 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "apps/auth-admin-web/jest.config.js",
+        "jestConfig": "apps/auth-admin-web/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/apps/auth-admin-web"]
+      "outputs": ["{workspaceRoot}/coverage/apps/auth-admin-web"]
     },
     "docker-next": {}
   },

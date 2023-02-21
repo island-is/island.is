@@ -1,5 +1,6 @@
 {
-  "root": "libs/application/templates/driving-license",
+  "name": "application-templates-driving-license",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/driving-license/src",
   "projectType": "library",
   "generators": {},
@@ -15,19 +16,21 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "libs/application/templates/driving-license/jest.config.js",
+        "jestConfig": "libs/application/templates/driving-license/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/application/templates/driving-license"]
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/application/templates/driving-license"
+      ]
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/driving-license/src/**/*.{js,ts,tsx}'"
       }
     },
     "schemas/codegen": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "graphql-codegen --config libs/application/templates/driving-license/codegen.yml"
       }

@@ -1,5 +1,6 @@
 {
-  "root": "libs/application/templates/driving-license-book-update-instructor",
+  "name": "application-templates-driving-license-book-update-instructor",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/driving-license-book-update-instructor/src",
   "projectType": "library",
   "tags": ["scope:application-system", "lib:application-system"],
@@ -16,10 +17,10 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "outputs": [
-        "coverage/libs/application/templates/driving-license-book-update-instructor"
+        "{workspaceRoot}/coverage/libs/application/templates/driving-license-book-update-instructor"
       ],
       "options": {
-        "jestConfig": "libs/application/templates/driving-license-book-update-instructor/jest.config.js",
+        "jestConfig": "libs/application/templates/driving-license-book-update-instructor/jest.config.ts",
         "passWithNoTests": true
       }
     }

@@ -1,5 +1,6 @@
 {
-  "root": "libs/api/domains/financial-statements-inao",
+  "name": "api-domains-financial-statements-inao",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/financial-statements-inao/src",
   "projectType": "library",
   "targets": {
@@ -13,9 +14,11 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/api/domains/financial-statements-inao"],
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/api/domains/financial-statements-inao"
+      ],
       "options": {
-        "jestConfig": "libs/api/domains/financial-statements-inao/jest.config.js",
+        "jestConfig": "libs/api/domains/financial-statements-inao/jest.config.ts",
         "passWithNoTests": true
       }
     }

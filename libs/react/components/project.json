@@ -1,5 +1,6 @@
 {
-  "root": "libs/react/components",
+  "name": "react-components",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/react/components/src",
   "projectType": "library",
   "targets": {
@@ -12,9 +13,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/react/components"],
+      "outputs": ["{workspaceRoot}/coverage/libs/react/components"],
       "options": {
-        "jestConfig": "libs/react/components/jest.config.js",
+        "jestConfig": "libs/react/components/jest.config.ts",
         "passWithNoTests": true
       }
     }

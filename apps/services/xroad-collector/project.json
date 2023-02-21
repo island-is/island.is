@@ -1,5 +1,6 @@
 {
-  "root": "apps/services/xroad-collector",
+  "name": "services-xroad-collector",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/xroad-collector/src",
   "projectType": "application",
   "prefix": "services-xroad-collector",
@@ -40,10 +41,10 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "apps/services/xroad-collector/jest.config.js",
+        "jestConfig": "apps/services/xroad-collector/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/apps/services/xroad-collector"]
+      "outputs": ["{workspaceRoot}/coverage/apps/services/xroad-collector"]
     },
     "docker-express": {}
   },

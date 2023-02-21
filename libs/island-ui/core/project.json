@@ -1,5 +1,6 @@
 {
-  "root": "libs/island-ui/core",
+  "name": "island-ui-core",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/island-ui/core/src",
   "projectType": "library",
   "generators": {},
@@ -13,10 +14,10 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "libs/island-ui/core/jest.config.js",
+        "jestConfig": "libs/island-ui/core/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/island-ui/core"]
+      "outputs": ["{workspaceRoot}/coverage/libs/island-ui/core"]
     }
   },
   "tags": ["lib:react", "scope:react"],

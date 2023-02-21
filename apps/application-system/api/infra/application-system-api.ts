@@ -308,7 +308,7 @@ export const serviceSetup = (services: {
           dev: ['application-payment-callback-xrd', 'application-callback-xrd'],
           staging: [
             'application-payment-callback-xrd',
-            'application-callback-xrd',
+            'application-callback',
           ],
           prod: [
             'application-payment-callback-xrd',

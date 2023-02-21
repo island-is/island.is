@@ -1,5 +1,6 @@
 {
-  "root": "libs/shared/utils",
+  "name": "shared-utils",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared/utils/src",
   "projectType": "library",
   "targets": {
@@ -11,9 +12,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/shared/utils"],
+      "outputs": ["{workspaceRoot}/coverage/libs/shared/utils"],
       "options": {
-        "jestConfig": "libs/shared/utils/jest.config.js",
+        "jestConfig": "libs/shared/utils/jest.config.ts",
         "passWithNoTests": true
       }
     }

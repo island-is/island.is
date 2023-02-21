@@ -1,5 +1,6 @@
 {
-  "root": "libs/infra-nest-server",
+  "name": "infra-nest-server",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/infra-nest-server/src",
   "projectType": "library",
   "generators": {},
@@ -13,10 +14,10 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "libs/infra-nest-server/jest.config.js",
+        "jestConfig": "libs/infra-nest-server/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/infra-nest-server"]
+      "outputs": ["{workspaceRoot}/coverage/libs/infra-nest-server"]
     }
   },
   "tags": ["lib:nest", "scope:nest"]

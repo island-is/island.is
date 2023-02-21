@@ -1,5 +1,6 @@
 {
-  "root": "apps/services/auth/personal-representative-public",
+  "name": "services-auth-personal-representative-public",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/auth/personal-representative-public/src",
   "projectType": "application",
   "prefix": "personal-representative-public",
@@ -39,14 +40,16 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/services/auth/personal-representative-public"],
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/services/auth/personal-representative-public"
+      ],
       "options": {
-        "jestConfig": "apps/services/auth/personal-representative-public/jest.config.js",
+        "jestConfig": "apps/services/auth/personal-representative-public/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "schemas/build-openapi": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "outputPath": "apps/services/auth/personal-representative-public/src/openapi.yaml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/auth/personal-representative-public/tsconfig.app.json apps/services/auth/personal-representative-public/src/buildOpenApi.ts"

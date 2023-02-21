@@ -1,5 +1,6 @@
 {
-  "root": "libs/feature-flags",
+  "name": "feature-flags",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/feature-flags/src",
   "projectType": "library",
   "generators": {},
@@ -13,10 +14,10 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "libs/feature-flags/jest.config.js",
+        "jestConfig": "libs/feature-flags/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/feature-flags"]
+      "outputs": ["{workspaceRoot}/coverage/libs/feature-flags"]
     }
   },
   "tags": ["lib:js", "scope:js"]

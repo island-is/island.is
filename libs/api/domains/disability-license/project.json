@@ -1,5 +1,6 @@
 {
-  "root": "libs/api/domains/disability-license",
+  "name": "api-domains-disability-license",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/disability-license/src",
   "projectType": "library",
   "targets": {
@@ -12,9 +13,11 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/api/domains/disability-license"],
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/api/domains/disability-license"
+      ],
       "options": {
-        "jestConfig": "libs/api/domains/disability-license/jest.config.js",
+        "jestConfig": "libs/api/domains/disability-license/jest.config.ts",
         "passWithNoTests": true
       }
     }

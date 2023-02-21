@@ -1,5 +1,6 @@
 {
-  "root": "libs/regulations",
+  "name": "regulations",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/regulations/src",
   "projectType": "library",
   "targets": {
@@ -11,9 +12,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/regulations"],
+      "outputs": ["{workspaceRoot}/coverage/libs/regulations"],
       "options": {
-        "jestConfig": "libs/regulations/jest.config.js",
+        "jestConfig": "libs/regulations/jest.config.ts",
         "passWithNoTests": true
       }
     }

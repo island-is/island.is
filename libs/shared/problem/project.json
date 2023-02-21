@@ -1,5 +1,6 @@
 {
-  "root": "libs/shared/problem",
+  "name": "shared-problem",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared/problem/src",
   "projectType": "library",
   "targets": {
@@ -11,9 +12,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/shared/problem"],
+      "outputs": ["{workspaceRoot}/coverage/libs/shared/problem"],
       "options": {
-        "jestConfig": "libs/shared/problem/jest.config.js",
+        "jestConfig": "libs/shared/problem/jest.config.ts",
         "passWithNoTests": true
       }
     }

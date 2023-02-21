@@ -1,11 +1,12 @@
 {
-  "root": "apps/financial-aid/web-veita",
+  "name": "financial-aid-web-veita",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/financial-aid/web-veita",
   "projectType": "application",
   "generators": {},
   "targets": {
     "build": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "outputPath": "dist/apps/financial-aid/web-veita",
         "commands": [
@@ -78,10 +79,10 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "apps/financial-aid/web-veita/jest.config.js",
+        "jestConfig": "apps/financial-aid/web-veita/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/apps/financial-aid/web-veita"]
+      "outputs": ["{workspaceRoot}/coverage/apps/financial-aid/web-veita"]
     },
     "docker-next": {}
   },

@@ -1,11 +1,12 @@
 {
-  "root": "apps/reference-next-app",
+  "name": "reference-next-app",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/reference-next-app",
   "projectType": "application",
   "generators": {},
   "targets": {
     "build": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "outputPath": "dist/apps/reference-next-app",
         "commands": [
@@ -68,13 +69,13 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "apps/reference-next-app/jest.config.js",
+        "jestConfig": "apps/reference-next-app/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/apps/reference-next-app"]
+      "outputs": ["{workspaceRoot}/coverage/apps/reference-next-app"]
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/reference-next-app/{screens,pages,components}/*.{js,ts,tsx}'"
       }

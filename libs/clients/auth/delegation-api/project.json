@@ -1,5 +1,6 @@
 {
-  "root": "libs/clients/auth/delegation-api",
+  "name": "clients-auth-delegation-api",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/auth/delegation-api/src",
   "targets": {
     "lint": {
@@ -11,14 +12,14 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/auth/delegation-api"],
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/auth/delegation-api"],
       "options": {
-        "jestConfig": "libs/clients/auth/delegation-api/jest.config.js",
+        "jestConfig": "libs/clients/auth/delegation-api/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "schemas/openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "outputPath": "libs/clients/auth/delegation-api/gen",
         "command": "yarn openapi-generator -o libs/clients/auth/delegation-api/gen/fetch -i apps/services/auth/delegation-api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"

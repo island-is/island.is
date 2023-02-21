@@ -1,5 +1,6 @@
 {
-  "root": "libs/shared/pii",
+  "name": "shared-pii",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared/pii/src",
   "projectType": "library",
   "targets": {
@@ -11,9 +12,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/shared/pii"],
+      "outputs": ["{workspaceRoot}/coverage/libs/shared/pii"],
       "options": {
-        "jestConfig": "libs/shared/pii/jest.config.js",
+        "jestConfig": "libs/shared/pii/jest.config.ts",
         "passWithNoTests": true
       }
     }

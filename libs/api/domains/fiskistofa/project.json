@@ -1,5 +1,6 @@
 {
-  "root": "libs/api/domains/fiskistofa",
+  "name": "api-domains-fiskistofa",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/fiskistofa/src",
   "projectType": "library",
   "targets": {
@@ -12,9 +13,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/api/domains/fiskistofa"],
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/fiskistofa"],
       "options": {
-        "jestConfig": "libs/api/domains/fiskistofa/jest.config.js",
+        "jestConfig": "libs/api/domains/fiskistofa/jest.config.ts",
         "passWithNoTests": true
       }
     }

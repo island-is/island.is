@@ -1,5 +1,6 @@
 {
-  "root": "libs/application/templates/data-protection-complaint",
+  "name": "application-templates-data-protection-complaint",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/data-protection-complaint/src",
   "projectType": "library",
   "generators": {},
@@ -13,7 +14,7 @@
       }
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/data-protection-complaint/src/**/*.{js,ts,tsx}'"
       }
@@ -21,11 +22,11 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "libs/application/templates/data-protection-complaint/jest.config.js",
+        "jestConfig": "libs/application/templates/data-protection-complaint/jest.config.ts",
         "passWithNoTests": true
       },
       "outputs": [
-        "coverage/libs/application/templates/data-protection-complaint"
+        "{workspaceRoot}/coverage/libs/application/templates/data-protection-complaint"
       ]
     }
   },

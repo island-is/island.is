@@ -1,5 +1,6 @@
 {
-  "root": "libs/message-queue",
+  "name": "message-queue",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/message-queue/src",
   "projectType": "library",
   "generators": {},
@@ -13,11 +14,11 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "libs/message-queue/jest.config.js",
+        "jestConfig": "libs/message-queue/jest.config.ts",
         "passWithNoTests": true,
         "runInBand": true
       },
-      "outputs": ["coverage/libs/message-queue"]
+      "outputs": ["{workspaceRoot}/coverage/libs/message-queue"]
     }
   },
   "tags": ["lib:nest", "scope:nest"]

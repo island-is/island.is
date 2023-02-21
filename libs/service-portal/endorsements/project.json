@@ -1,5 +1,6 @@
 {
-  "root": "libs/service-portal/endorsements",
+  "name": "service-portal-endorsements",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/service-portal/endorsements/src",
   "projectType": "library",
   "generators": {},
@@ -18,10 +19,10 @@
         "jestConfig": "libs/service-portal/eligibility/jest.config.js",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/service-portal/eligibility"]
+      "outputs": ["{workspaceRoot}/coverage/libs/service-portal/eligibility"]
     },
     "schemas/codegen": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "graphql-codegen --config libs/service-portal/endorsements/codegen.yml"
       }

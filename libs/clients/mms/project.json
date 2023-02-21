@@ -1,5 +1,6 @@
 {
-  "root": "libs/clients/mms",
+  "name": "clients-mms",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/mms/src",
   "projectType": "library",
   "targets": {
@@ -11,9 +12,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/mms"],
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/mms"],
       "options": {
-        "jestConfig": "libs/clients/mms/jest.config.js",
+        "jestConfig": "libs/clients/mms/jest.config.ts",
         "passWithNoTests": true
       }
     }

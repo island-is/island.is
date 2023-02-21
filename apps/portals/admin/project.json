@@ -1,10 +1,11 @@
 {
-  "root": "apps/portals/admin",
+  "name": "portals-admin",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/portals/admin/src",
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/web:webpack",
+      "executor": "@nrwl/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
@@ -22,7 +23,8 @@
         ],
         "styles": ["apps/portals/admin/src/styles.css"],
         "scripts": [],
-        "webpackConfig": "apps/portals/admin/webpack.config.js"
+        "webpackConfig": "apps/portals/admin/webpack.config.js",
+        "isolatedConfig": true
       },
       "configurations": {
         "production": {
@@ -42,7 +44,7 @@
       ]
     },
     "generateDevIndexHTML": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "node scripts/dockerfile-assets/bash/extract-environment.js apps/portals/admin/src"
@@ -50,7 +52,7 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/web:dev-server",
+      "executor": "@nrwl/webpack:dev-server",
       "options": {
         "buildTarget": "portals-admin:build",
         "hmr": true
@@ -77,27 +79,27 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/portals/admin"],
+      "outputs": ["{workspaceRoot}/coverage/apps/portals/admin"],
       "options": {
-        "jestConfig": "apps/portals/admin/jest.config.js",
+        "jestConfig": "apps/portals/admin/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/portals/admin/src/{screens,components}/**/*.{js,ts,tsx}'"
       }
     },
     "dev-init": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": ["yarn get-secrets portals-admin"],
         "parallel": false
       }
     },
     "dev": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": ["yarn start portals-admin"],
         "parallel": true

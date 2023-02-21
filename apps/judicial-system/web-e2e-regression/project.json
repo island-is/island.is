@@ -1,5 +1,6 @@
 {
-  "root": "apps/judicial-system/web-e2e-regression",
+  "name": "judicial-system-web-e2e-regression",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/judicial-system/web-e2e-regression/src",
   "projectType": "application",
   "targets": {

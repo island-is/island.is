@@ -1,5 +1,6 @@
 {
-  "root": "libs/clients/driving-license",
+  "name": "clients-driving-license",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/driving-license/src",
   "projectType": "library",
   "targets": {
@@ -13,14 +14,14 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/driving-license"],
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/driving-license"],
       "options": {
-        "jestConfig": "libs/clients/driving-license/jest.config.js",
+        "jestConfig": "libs/clients/driving-license/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "update-openapi-document": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "[[ '{args.apiVersion}' =~ v1|v2 ]] && >&2 echo \"Missing required --apiVersion, only v1 or v2 are valid\"",
@@ -33,7 +34,7 @@
       }
     },
     "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn openapi-generator -o libs/clients/driving-license/gen/fetch/v1 -i libs/clients/driving-license/src/v1/clientConfig.json",
@@ -42,7 +43,7 @@
       }
     },
     "dev": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn nx run clients-driving-license:update-openapi-document --apiVersion=v2",

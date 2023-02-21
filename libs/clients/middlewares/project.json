@@ -1,5 +1,6 @@
 {
-  "root": "libs/clients/middlewares",
+  "name": "clients-middlewares",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/middlewares/src",
   "projectType": "library",
   "targets": {
@@ -11,9 +12,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/middlewares"],
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/middlewares"],
       "options": {
-        "jestConfig": "libs/clients/middlewares/jest.config.js",
+        "jestConfig": "libs/clients/middlewares/jest.config.ts",
         "passWithNoTests": true
       }
     }

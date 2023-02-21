@@ -1,5 +1,6 @@
 {
-  "root": "libs/service-portal/sessions",
+  "name": "service-portal-sessions",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/service-portal/sessions/src",
   "projectType": "library",
   "tags": ["lib:portals-mypages", "scope:portals-mypages"],
@@ -14,7 +15,7 @@
       }
     },
     "schemas/codegen": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "output": "libs/service-portal/sessions/src/**/*.generated.ts",
         "command": "graphql-codegen --config libs/service-portal/sessions/codegen.yml"
@@ -22,9 +23,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/service-portal/sessions"],
+      "outputs": ["{workspaceRoot}/coverage/libs/service-portal/sessions"],
       "options": {
-        "jestConfig": "libs/service-portal/sessions/jest.config.js",
+        "jestConfig": "libs/service-portal/sessions/jest.config.ts",
         "passWithNoTests": true
       }
     }

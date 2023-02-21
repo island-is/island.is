@@ -1,5 +1,6 @@
 {
-  "root": "libs/api/domains/documents",
+  "name": "api-domains-documents",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/documents/src",
   "projectType": "library",
   "generators": {},
@@ -13,10 +14,10 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "libs/api/domains/documents/jest.config.js",
+        "jestConfig": "libs/api/domains/documents/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/api/domains/documents"]
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/documents"]
     }
   },
   "tags": ["lib:api", "scope:api"]

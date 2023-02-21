@@ -10,7 +10,8 @@
     "**/*.spec.tsx",
     "**/*.test.tsx",
     "**/*.stories.ts",
-    "**/*.stories.js"
+    "**/*.stories.js",
+    "jest.config.ts"
   ],
   "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"],
   "files": [

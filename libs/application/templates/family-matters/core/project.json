@@ -1,5 +1,6 @@
 {
-  "root": "libs/application/templates/family-matters/core",
+  "name": "application-templates-family-matters-core",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/family-matters/core/src",
   "projectType": "library",
   "generators": {},

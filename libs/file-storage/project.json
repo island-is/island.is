@@ -1,5 +1,6 @@
 {
-  "root": "libs/file-storage",
+  "name": "file-storage",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/file-storage/src",
   "projectType": "library",
   "generators": {},
@@ -13,10 +14,10 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "libs/file-storage/jest.config.js",
+        "jestConfig": "libs/file-storage/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/file-storage"]
+      "outputs": ["{workspaceRoot}/coverage/libs/file-storage"]
     }
   },
   "tags": ["lib:nest", "scope:nest"]

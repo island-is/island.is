@@ -1,5 +1,6 @@
 {
-  "root": "libs/clients/national-registry/v1",
+  "name": "clients-national-registry-v1",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/national-registry/v1/src",
   "projectType": "library",
   "targets": {
@@ -13,9 +14,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/national-registry/v1"],
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/national-registry/v1"],
       "options": {
-        "jestConfig": "libs/clients/national-registry/v1/jest.config.js",
+        "jestConfig": "libs/clients/national-registry/v1/jest.config.ts",
         "passWithNoTests": true
       }
     }

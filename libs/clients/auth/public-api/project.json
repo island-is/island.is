@@ -1,5 +1,6 @@
 {
-  "root": "libs/clients/auth/public-api",
+  "name": "clients-auth-public-api",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/auth/public-api/src",
   "projectType": "library",
   "targets": {
@@ -13,14 +14,14 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/auth/public-api"],
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/auth/public-api"],
       "options": {
-        "jestConfig": "libs/clients/auth/public-api/jest.config.js",
+        "jestConfig": "libs/clients/auth/public-api/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "schemas/openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "outputPath": "libs/clients/auth/public-api/gen",
         "command": "yarn openapi-generator -o libs/clients/auth/public-api/gen/fetch -i apps/services/auth/public-api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"

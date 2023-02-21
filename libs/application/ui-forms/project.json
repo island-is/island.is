@@ -1,5 +1,6 @@
 {
-  "root": "libs/application/ui-forms",
+  "name": "application-ui-forms",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/ui-forms/src",
   "projectType": "library",
   "targets": {
@@ -12,14 +13,14 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/application/ui-forms"],
+      "outputs": ["{workspaceRoot}/coverage/libs/application/ui-forms"],
       "options": {
-        "jestConfig": "libs/application/ui-forms/jest.config.js",
+        "jestConfig": "libs/application/ui-forms/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/ui-forms/src/**/*.{js,ts,tsx}'"
       }

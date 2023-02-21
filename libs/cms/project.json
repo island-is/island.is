@@ -1,5 +1,6 @@
 {
-  "root": "libs/cms",
+  "name": "cms",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/cms/src",
   "projectType": "library",
   "generators": {},
@@ -13,10 +14,10 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "libs/cms/jest.config.js",
+        "jestConfig": "libs/cms/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/cms"]
+      "outputs": ["{workspaceRoot}/coverage/libs/cms"]
     }
   },
   "tags": ["lib:nest", "scope:nest"]

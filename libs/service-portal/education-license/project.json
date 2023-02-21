@@ -1,5 +1,6 @@
 {
-  "root": "libs/service-portal/education-license",
+  "name": "service-portal-education-license",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/service-portal/education-license/src",
   "projectType": "library",
   "generators": {},
@@ -15,10 +16,12 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "libs/service-portal/education-license/jest.config.js",
+        "jestConfig": "libs/service-portal/education-license/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/service-portal/education-license"]
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/service-portal/education-license"
+      ]
     }
   },
   "tags": ["lib:portals-mypages", "scope:portals-mypages"]

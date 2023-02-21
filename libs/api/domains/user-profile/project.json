@@ -1,5 +1,6 @@
 {
-  "root": "libs/api/domains/user-profile",
+  "name": "api-domains-user-profile",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/user-profile/src",
   "projectType": "library",
   "generators": {},
@@ -15,10 +16,10 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "libs/api/domains/user-profile/jest.config.js",
+        "jestConfig": "libs/api/domains/user-profile/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/api/domains/user-profile"]
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/user-profile"]
     }
   },
   "tags": ["lib:api", "scope:api"]

@@ -1,11 +1,12 @@
 {
-  "root": "apps/samradsgatt",
+  "name": "samradsgatt",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/samradsgatt",
   "projectType": "application",
   "generators": {},
   "targets": {
     "build": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "outputPath": "dist/apps/samradsgatt",
         "commands": [
@@ -62,9 +63,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/samradsgatt"],
+      "outputs": ["{workspaceRoot}/coverage/apps/samradsgatt"],
       "options": {
-        "jestConfig": "apps/samradsgatt/jest.config.js",
+        "jestConfig": "apps/samradsgatt/jest.config.ts",
         "passWithNoTests": true
       }
     },

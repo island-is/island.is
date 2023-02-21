@@ -1,5 +1,6 @@
 {
-  "root": "libs/application/templates/financial-aid",
+  "name": "application-templates-financial-aid",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/financial-aid/src",
   "projectType": "library",
   "generators": {},
@@ -14,13 +15,15 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/application/templates/financial-aid"],
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/application/templates/financial-aid"
+      ],
       "options": {
-        "jestConfig": "libs/application/templates/financial-aid/jest.config.js"
+        "jestConfig": "libs/application/templates/financial-aid/jest.config.ts"
       }
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/financial-aid/src/**/*.{js,ts,tsx}'"
       }
