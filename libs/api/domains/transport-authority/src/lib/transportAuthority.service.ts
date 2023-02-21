@@ -19,7 +19,6 @@ import {
   VehicleOwnerchangeChecksByPermno,
   VehiclesCurrentVehicleWithOperatorChangeChecks,
   VehicleOperatorChangeChecksByPermno,
-  VehiclesCurrentVehicleWithPlateOrderChecks,
   VehiclePlateOrderChecksByPermno,
 } from './graphql/models'
 import { ApolloError } from 'apollo-server-express'
@@ -330,55 +329,6 @@ export class TransportAuthorityApi {
   //------------------------------
   // order vehicle license plate
   //------------------------------
-
-  // TODOx move into template-api-modules
-  async getCurrentVehiclesWithPlateOrderChecks(
-    auth: User,
-    showOwned: boolean,
-    showCoOwned: boolean,
-    showOperated: boolean,
-  ): Promise<
-    VehiclesCurrentVehicleWithPlateOrderChecks[] | null | ApolloError
-  > {
-    return await Promise.all(
-      (
-        await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
-          persidNo: auth.nationalId,
-          showOwned: showOwned,
-          showCoowned: showCoOwned,
-          showOperated: showOperated,
-        })
-      )?.map(async (vehicle: VehicleMiniDto) => {
-        // Get basic information about vehicle
-        const vehicleInfo = await this.vehiclesApiWithAuth(
-          auth,
-        ).basicVehicleInformationGet({
-          clientPersidno: auth.nationalId,
-          permno: vehicle.permno || '',
-          regno: undefined,
-          vin: undefined,
-        })
-
-        // Get validation
-        const validation = await this.vehiclePlateOrderingClient.validatePlateOrder(
-          auth,
-          vehicle.permno || '',
-          vehicleInfo?.platetypefront || '',
-          vehicleInfo?.platetyperear || '',
-        )
-
-        return {
-          permno: vehicle.permno || undefined,
-          make: vehicle.make || undefined,
-          color: vehicle.color || undefined,
-          role: vehicle.role || undefined,
-          validationErrorMessages: validation?.hasError
-            ? validation.errorMessages
-            : null,
-        }
-      }),
-    )
-  }
 
   async getVehiclePlateOrderChecksByPermno(
     auth: User,

@@ -46,24 +46,6 @@ export class VehiclesCurrentVehicleWithOperatorChangeChecks extends VehiclesCurr
 export class VehicleOperatorChangeChecksByPermno extends VehicleOwnerchangeChecksByPermno {}
 
 @ObjectType()
-export class VehiclesCurrentVehicleWithPlateOrderChecks {
-  @Field({ nullable: true })
-  permno?: string
-
-  @Field({ nullable: true })
-  make?: string
-
-  @Field({ nullable: true })
-  color?: string
-
-  @Field({ nullable: true })
-  role?: string
-
-  @Field(() => [VehicleValidationErrorMessage], { nullable: true })
-  validationErrorMessages?: VehicleValidationErrorMessage[] | null
-}
-
-@ObjectType()
 export class VehiclePlateOrderChecksByPermno {
   @Field(() => [VehicleValidationErrorMessage], { nullable: true })
   validationErrorMessages?: VehicleValidationErrorMessage[] | null
