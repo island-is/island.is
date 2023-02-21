@@ -117,6 +117,7 @@ export const fishingLicenseFurtherInfoSection = buildSection({
         buildFileUploadField({
           id: ATTACHMENTS_FIELD_ID,
           title: fishingLicenseFurtherInformation.labels.attachments,
+          maxSize: FILE_SIZE_LIMIT,
           uploadHeader: fishingLicenseFurtherInformation.attachmentInfo.title,
           uploadDescription:
             fishingLicenseFurtherInformation.attachmentInfo.subtitle,
