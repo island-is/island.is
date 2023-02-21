@@ -4,9 +4,7 @@ import {
   LicenseInfo,
 } from '@island.is/clients/firearm-license'
 import format from 'date-fns/format'
-import { format as formatSsn } from 'kennitala'
-
-export const formatNationalId = (nationalId: string) => formatSsn(nationalId)
+import { format as formatNationalId } from 'kennitala'
 
 const formatDateString = (dateTime: string) =>
   dateTime ? format(new Date(dateTime), 'dd.MM.yyyy') : ''
