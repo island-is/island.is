@@ -46,6 +46,8 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
     )
   }
 
+  //TODOx get currentVehicles and validation if fewer than 5 items
+
   async getPlateTypeList() {
     return await this.vehicleCodetablesClient.getPlateTypes()
   }

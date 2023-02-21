@@ -65,7 +65,7 @@ export const VehicleRadioField: FC<
     const options = [] as Option[]
 
     for (const [index, vehicle] of vehicles.entries()) {
-      const disabled = !!vehicle.duplicateOrderExists
+      const disabled = !!vehicle.validationErrorMessages?.length
       options.push({
         value: `${index}`,
         label: (
@@ -88,14 +88,22 @@ export const VehicleRadioField: FC<
                   message={
                     <Box>
                       <BulletList>
-                        {vehicle.duplicateOrderExists && (
-                          <Bullet>
-                            {formatMessage(
-                              information.labels.pickVehicle
-                                .duplicateOrderExistsTag,
-                            )}
-                          </Bullet>
-                        )}
+                        {!!vehicle.validationErrorMessages?.length &&
+                          vehicle.validationErrorMessages?.map((err) => {
+                            const defaultMessage = err.defaultMessage
+                            const fallbackMessage =
+                              formatMessage(
+                                error.validationFallbackErrorMessage,
+                              ) +
+                              ' - ' +
+                              err.errorNo
+
+                            return (
+                              <Bullet>
+                                {defaultMessage || fallbackMessage}
+                              </Bullet>
+                            )
+                          })}
                       </BulletList>
                     </Box>
                   }

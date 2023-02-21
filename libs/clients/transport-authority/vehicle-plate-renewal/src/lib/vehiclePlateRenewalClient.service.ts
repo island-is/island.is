@@ -34,7 +34,7 @@ export class VehiclePlateRenewalClient {
     }))
   }
 
-  public async validateRenewPlateOwnership(
+  public async validatePlateOwnership(
     auth: User,
     regno: string,
   ): Promise<PlateOwnershipValidation> {

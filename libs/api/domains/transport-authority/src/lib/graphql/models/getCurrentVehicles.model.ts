@@ -59,16 +59,14 @@ export class VehiclesCurrentVehicleWithPlateOrderChecks {
   @Field({ nullable: true })
   role?: string
 
-  //TODOx change to validationErrorMessages
-  @Field(() => Boolean, { nullable: true })
-  duplicateOrderExists?: boolean
+  @Field(() => [VehicleValidationErrorMessage], { nullable: true })
+  validationErrorMessages?: VehicleValidationErrorMessage[] | null
 }
 
 @ObjectType()
 export class VehiclePlateOrderChecksByPermno {
-  //TODOx change to validationErrorMessages
-  @Field(() => Boolean, { nullable: true })
-  duplicateOrderExists?: boolean
+  @Field(() => [VehicleValidationErrorMessage], { nullable: true })
+  validationErrorMessages?: VehicleValidationErrorMessage[] | null
 }
 
 @ObjectType()

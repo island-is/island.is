@@ -33,7 +33,7 @@ export class LicensePlateRenewalService extends BaseTemplateApiService {
 
       // Only validate if fewer than 5 items
       if (result.length <= 5) {
-        validation = await this.vehiclePlateRenewalClient.validateRenewPlateOwnership(
+        validation = await this.vehiclePlateRenewalClient.validatePlateOwnership(
           auth,
           item.regno,
         )
@@ -53,7 +53,7 @@ export class LicensePlateRenewalService extends BaseTemplateApiService {
     const answers = application.answers as LicensePlateRenewalAnswers
     const regno = answers?.pickPlate?.regno
 
-    const result = await this.vehiclePlateRenewalClient.validateRenewPlateOwnership(
+    const result = await this.vehiclePlateRenewalClient.validatePlateOwnership(
       auth,
       regno,
     )

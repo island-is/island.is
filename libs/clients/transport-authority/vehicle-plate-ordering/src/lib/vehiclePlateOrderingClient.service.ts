@@ -1,11 +1,13 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
+import { ReturnTypeMessage } from '../../gen/fetch'
 import { PlateOrderingApi } from '../../gen/fetch/apis'
 import {
   DeliveryStation,
   SGS_DELIVERY_STATION_CODE,
   SGS_DELIVERY_STATION_TYPE,
   PlateOrder,
+  PlateOrderValidation,
 } from './vehiclePlateOrderingClient.types'
 
 @Injectable()
@@ -33,13 +35,14 @@ export class VehiclePlateOrderingClient {
     }))
   }
 
-  public async checkIfPlateOrderExists(
+  public async validatePlateOrder(
     auth: User,
     permno: string,
     frontType: string,
     rearType: string,
-  ): Promise<boolean> {
-    //TODOx ekki nóg að skila bara boolean hér, geta verið aðrar villur líka
+  ): Promise<PlateOrderValidation> {
+    let errorList: ReturnTypeMessage[] = []
+
     try {
       // Dummy values
       // Note: option "Pick up at Samgöngustofa" which is always valid
@@ -61,10 +64,35 @@ export class VehiclePlateOrderingClient {
         },
       })
     } catch (e) {
-      return true
+      // Note: We need to wrap in try-catch to get the error messages, because if this action results in error,
+      // we get 400 error (instead of 200 with error messages) with the errorList in this field (problem.Errors),
+      // that is of the same class as 200 result schema
+      if (e?.problem?.Errors) {
+        errorList = e.problem.Errors as ReturnTypeMessage[]
+      } else if (e?.body as ReturnTypeMessage[]) {
+        errorList = e.body as ReturnTypeMessage[] //TODOx þarf þetta? Ef já á að bæta við í hinum umsóknunum
+      } else {
+        throw e
+      }
     }
 
-    return false
+    const warnSeverityError = 'E'
+    const warnSeverityWarning = 'W' //TODOx á W að vera með?
+    errorList = errorList.filter(
+      (x) =>
+        x.warnSever === warnSeverityError ||
+        x.warnSever === warnSeverityWarning,
+    )
+
+    return {
+      hasError: errorList.length > 0,
+      errorMessages: errorList.map((item) => {
+        return {
+          errorNo: (item.warnSever || '_') + item.warningSerialNumber,
+          defaultMessage: item.errorMess,
+        }
+      }),
+    }
   }
 
   public async savePlateOrders(
