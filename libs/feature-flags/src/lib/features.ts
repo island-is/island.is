@@ -3,15 +3,6 @@ export enum Features {
   // Integrate auth-api with user-profile-api.
   userProfileClaims = 'shouldAuthApiReturnUserProfileClaims',
 
-  // Shows delegation picker in Identity Server and the Service Portal.
-  delegationsEnabled = 'identityserverDelegationsEnabled',
-
-  // Toggles the different kinds of delegations.
-  customDelegations = 'isServicePortalAccessControlModuleEnabled',
-  companyDelegations = 'identityserverCompanyDelegations',
-  legalGuardianDelegations = 'identityserverLegalGuardianDelegations',
-  personalRepresentativeDelegations = 'identityserverPersonalRepresentative',
-
   // Application visibility flags
   exampleApplication = 'isExampleApplicationEnabled',
   accidentNotification = 'isAccidentNotificationEnabled',
@@ -41,8 +32,6 @@ export enum Features {
   applicationSystemDelegations = 'applicationSystemDelegations',
 
   // Service portal modules
-  servicePortalDocumentProviderModule = 'isServicePortalDocumentProviderModuleEnabled',
-  servicePortalIcelandicNamesRegistryModule = 'isServicePortalIcelandicNamesRegistryModuleEnabled',
   servicePortalPetitionsModule = 'isServicePortalPetitionsModuleEnabled',
   servicePortalDrivingLessonsBookModule = 'isServicePortalDrivingLessonsBookModuleEnabled',
   servicePortalAirDiscountModule = 'isServicePortalAirDiscountModuleEnabled',
@@ -61,5 +50,4 @@ export enum Features {
 export enum ServerSideFeature {
   testing = 'do-not-remove-for-testing-only',
   drivingLicense = 'driving-license-use-v1-endpoint-for-v2-comms',
-  delegationApi = 'delegation-api',
 }
