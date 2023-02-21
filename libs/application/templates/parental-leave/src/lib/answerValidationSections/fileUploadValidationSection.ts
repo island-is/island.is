@@ -2,6 +2,7 @@ import { Answer, Application } from '@island.is/application/types'
 import {
   AnswerValidationConstants,
   PARENTAL_GRANT_STUDENTS,
+  PERMANENT_FOSTER_CARE,
   SINGLE,
   States,
   UnEmployedBenefitTypes,
@@ -29,7 +30,9 @@ export const fileUploadValidationSection = (
     unemploymentBenefits,
     otherParent,
     additionalDocuments,
+    noChildrenFoundTypeOfApplication,
   } = getApplicationAnswers(application.answers)
+
   if (isSelfEmployed === YES && obj.selfEmployedFile) {
     if (isEmpty((obj as { selfEmployedFile: unknown[] }).selfEmployedFile))
       return buildError(
@@ -95,6 +98,16 @@ export const fileUploadValidationSection = (
         FILEUPLOAD,
       )
 
+    return undefined
+  }
+
+  if (noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE && obj.permanentFosterCare) {
+    if (isEmpty((obj as { permanentFosterCare: unknown[] }).permanentFosterCare))
+      return buildError(
+        errorMessages.requiredAttachment,
+        'permanentFosterCare',
+        FILEUPLOAD,
+      )
     return undefined
   }
 

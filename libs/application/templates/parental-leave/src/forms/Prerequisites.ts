@@ -29,7 +29,7 @@ import {
   isNotEligibleForParentWithoutBirthParent,
   isParentWithoutBirthParent,
 } from '../lib/parentalLeaveUtils'
-import { NO, YES, ParentalRelations } from '../constants'
+import { NO, YES, ParentalRelations, PERMANENT_FOSTER_CARE, OTHER_NO_CHILDREN_FOUND } from '../constants'
 import { defaultMultipleBirthsMonths } from '../config'
 
 const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
@@ -387,53 +387,54 @@ export const PrerequisitesForm: Form = buildForm({
           children: [
             buildRadioField({
               id: 'noChildrenFound.typeOfApplication',
-              title: 'Sækja um fæðingarorlof/styrk',
+              title: parentalLeaveFormMessages.shared.noChildrenFoundTypeOfApplication,
               options: [
                 {
-                  value: 'foster_care',
-                  label: 'Vegna töku barns í varanlegt fóstur',
+                  value: PERMANENT_FOSTER_CARE,
+                  label: parentalLeaveFormMessages.shared.noChildrenFoundFosterCare,
                 },
                 {
-                  value: 'other',
-                  label: 'Annað',
+                  value: OTHER_NO_CHILDREN_FOUND,
+                  label: parentalLeaveFormMessages.shared.noChildrenFoundOther,
                 },
               ],
             }),
           ],
         }),
         buildSubSection({
-          id: 'fosterCareOrAdoption',
+          id: 'fosterCareApplication',
           title: parentalLeaveFormMessages.selectChild.screenTitle,
           condition: (answers) => {
             const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
               answers,
             )
 
-            return (
-              noChildrenFoundTypeOfApplication === 'adoption' ||
-              noChildrenFoundTypeOfApplication === 'foster_care'
-            )
+            return noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE
           },
           children: [
             buildMultiField({
               id: 'fosterCare',
               title: parentalLeaveFormMessages.selectChild.screenTitle,
-              description: 'Settu inn kennitölu barns sem er tekið í varanlegt fóstur',
+              description: parentalLeaveFormMessages.selectChild.fosterCareDescription,
               children: [
-                // buildDateField({
-                //   id: 'fosterCareOrAdoption.birthDate',
-                //   title:
-                //     parentalLeaveFormMessages.shared
-                //       .noPrimaryParentDatePickerTitle,
-                //   description: '',
-                //   placeholder: parentalLeaveFormMessages.startDate.placeholder,
-                // }),
-                buildTextField({
-                  id: 'fosterCare.socialSecurityId',
-                  title: 'Kennitala barns',
-                  format: '######-####',
-                  placeholder: '000000-0000',
-                }), 
+                buildDateField({
+                  id: 'fosterCare.birthDate',
+                  title: parentalLeaveFormMessages.selectChild.fosterCareBirthDate,
+                  description: '',
+                  placeholder: parentalLeaveFormMessages.startDate.placeholder,
+                }),
+                buildDateField({
+                  id: 'fosterCare.adoptionDate',
+                  title: parentalLeaveFormMessages.selectChild.fosterCareAdoptionDate,
+                  description: '',
+                  placeholder: parentalLeaveFormMessages.startDate.placeholder,
+                }),
+                // buildTextField({
+                //   id: 'fosterCare.nationalId',
+                //   title: parentalLeaveFormMessages.selectChild.fosterCareNationalId,
+                //   format: '######-####',
+                //   placeholder: '000000-0000',
+                // }), 
                 buildSubmitField({
                   id: 'toDraft',
                   title: parentalLeaveFormMessages.confirmation.title,
@@ -465,7 +466,7 @@ export const PrerequisitesForm: Form = buildForm({
               answers,
             )
 
-            return noChildrenFoundTypeOfApplication === 'other'
+            return noChildrenFoundTypeOfApplication === OTHER_NO_CHILDREN_FOUND
           },
           // condition: (_, externalData) => {
           //   const { children } = getApplicationExternalData(externalData)

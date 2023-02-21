@@ -12,9 +12,13 @@ import {
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
   SINGLE,
+  PERMANENT_FOSTER_CARE,
+  OTHER_NO_CHILDREN_FOUND,
 } from '../constants'
 import { errorMessages } from './messages'
 import { formatBankInfo } from './parentalLeaveUtils'
+import { addMonths, parseISO } from 'date-fns'
+import { yearFosterCare, yearInMonths } from '../config'
 
 const PersonalAllowance = z
   .object({
@@ -43,6 +47,29 @@ export const dataSchema = z.object({
   selectedChild: z.string().min(1),
   applicationType: z.object({
     option: z.enum([PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, PARENTAL_LEAVE]),
+  }),
+  noChildrenFound: z.object({
+    typeOfApplication: z.enum([PERMANENT_FOSTER_CARE, OTHER_NO_CHILDREN_FOUND])
+  }),
+  fosterCare: z.object({
+    birthDate: z
+    .string()
+    .refine(
+      (p) => {
+        const birthDateDob = parseISO(p)
+        const today = new Date()
+        const minimumStartDate = addMonths(today, -yearFosterCare * yearInMonths)
+       
+        return birthDateDob >= minimumStartDate
+      },
+      { params: errorMessages.fosterCare },
+    ),
+    adoptionDate: z.string(),
+    // socialSecurityId: z
+    //   .string()
+    //   .refine((n) => (kennitala.isValid(n) && kennitala.isPerson(n)), {
+    //     params: errorMessages.otherParentId,
+    //   }),
   }),
   noPrimaryParent: z.object({
     questionOne: z.enum([YES, NO]),

@@ -6,6 +6,8 @@ export const SINGLE = 'single'
 export const PARENTAL_LEAVE = 'parentalLeave'
 export const PARENTAL_GRANT = 'parentalGrant'
 export const PARENTAL_GRANT_STUDENTS = 'parentalGrantStudents'
+export const PERMANENT_FOSTER_CARE = 'foster_care'
+export const OTHER_NO_CHILDREN_FOUND = 'other'
 
 export const FILE_SIZE_LIMIT = 10000000 // 10MB
 

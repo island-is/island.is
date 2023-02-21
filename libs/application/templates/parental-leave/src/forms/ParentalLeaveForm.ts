@@ -2,7 +2,6 @@ import addDays from 'date-fns/addDays'
 
 import {
   buildAsyncSelectField,
-  buildCompanySearchField,
   buildCustomField,
   buildDateField,
   buildFileUploadField,
@@ -62,6 +61,7 @@ import {
   StartDateOptions,
   UnEmployedBenefitTypes,
   YES,
+  PERMANENT_FOSTER_CARE,
 } from '../constants'
 import Logo from '../assets/Logo'
 import { minPeriodDays } from '../config'
@@ -792,6 +792,28 @@ export const ParentalLeaveForm: Form = buildForm({
                 parentalLeaveFormMessages.attachmentScreen
                   .parentWithoutBirthParentDescription,
               condition: (answers) => isParentWithoutBirthParent(answers),
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader: '',
+              uploadDescription: '',
+              uploadButtonLabel:
+                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+            }),
+            buildFileUploadField({
+              id: 'fileUpload.permanentFosterCare',
+              title:
+                parentalLeaveFormMessages.attachmentScreen
+                  .permanentFostercareTitle,
+              introduction:
+                parentalLeaveFormMessages.attachmentScreen
+                  .permanentFostercareDescription,
+              condition: (answers) => {
+                const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(answers)
+
+                return noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE
+              },
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,

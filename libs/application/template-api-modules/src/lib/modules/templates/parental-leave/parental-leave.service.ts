@@ -39,6 +39,8 @@ import {
   ChildInformation,
   isParentWithoutBirthParent,
   calculatePeriodLength,
+  PERMANENT_FOSTER_CARE,
+  OTHER_NO_CHILDREN_FOUND,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -172,11 +174,11 @@ export class ParentalLeaveService extends BaseTemplateApiService {
   async setChildrenInformation({
     application, auth
   }: TemplateApiModuleActionProps) {
-    const { noPrimaryParentBirthDate, fosterCareId } = getApplicationAnswers(
+    const { noPrimaryParentBirthDate, noChildrenFoundTypeOfApplication, fosterCareAdoptionDate } = getApplicationAnswers(
       application.answers,
     )
 
-    if (noPrimaryParentBirthDate) {
+    if (noChildrenFoundTypeOfApplication === OTHER_NO_CHILDREN_FOUND) {
       const child: ChildInformation = {
         hasRights: true,
         remainingDays: 180,
@@ -192,11 +194,11 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       }
     }
 
-    if (fosterCareId) { 
+    if (noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE) { 
       const child: ChildInformation = {
         hasRights: true,
         remainingDays: 180,
-        expectedDateOfBirth: '2022-01-03', // should we put the foster care social security id somewhere else?
+        expectedDateOfBirth: fosterCareAdoptionDate, // er þetta ok? 
         parentalRelation: ParentalRelations.primary,
       }
 
@@ -378,6 +380,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       studentFiles: studentPdfs,
       singleParentFiles: singleParentPdfs,
       additionalDocuments,
+      noChildrenFoundTypeOfApplication,
     } = getApplicationAnswers(application.answers)
     const { applicationFundId } = getApplicationExternalData(
       application.externalData,
@@ -513,6 +516,28 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
           attachments.push({
             attachmentType: apiConstants.attachments.parentWithoutBirthParent,
+            attachmentBytes: pdf,
+          })
+        }
+      }
+    }
+
+    if (noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE) {
+      const permanentFosterCarePdfs = (await getValueViaPath(
+        application.answers,
+        'fileUpload.permanentFosterCare',
+      )) as unknown[]
+
+      if (permanentFosterCarePdfs?.length) {
+        for (let i = 0; i <= permanentFosterCarePdfs.length - 1; i++) {
+          const pdf = await this.getPdf(
+            application,
+            i,
+            'fileUpload.permanentFosterCare',
+          )
+
+          attachments.push({
+            attachmentType: apiConstants.attachments.permanentFosterCare,
             attachmentBytes: pdf,
           })
         }

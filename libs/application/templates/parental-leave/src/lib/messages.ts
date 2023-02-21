@@ -853,6 +853,21 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'I want to customize my leave into multiple periods and/or to stretch it out over time at less than 100% time off.',
     },
+    noChildrenFoundTypeOfApplication: {
+      id: 'pl.application:no.children.found.type.of.application',
+      defaultMessage: 'Sækja um',
+      description: 'Apply for',
+    },
+    noChildrenFoundFosterCare: {
+      id: 'pl.application:no.children.found.foster.care',
+      defaultMessage: 'Vegna töku barns í varanlegt fóstur',
+      description: 'Due to receipt of a child in permanent foster care',
+    },
+    noChildrenFoundOther: {
+      id: 'pl.application:no.children.found.other',
+      defaultMessage: 'Annað',
+      description: 'Other',
+    },
   }),
 
   selectChild: defineMessages({
@@ -902,6 +917,26 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Hér má sjá lista yfir börnin þín. Vinsamlegast veldu barn til að sækja um.',
       description:
         'Below you can see a list with your children. Please select a child to apply for.',
+    },
+    fosterCareDescription: {
+      id: 'pl.application:foster.care.description',
+      defaultMessage: 'Settu inn upplýsingar um barn sem tekið er í varanlegt fóstur',
+      description: 'Enter information about a child who is taken into permanent foster care',
+    },
+    fosterCareBirthDate: {
+      id: 'pl.application:foster.care.birth.date',
+      defaultMessage: 'Fæðingardagur barns',
+      description: `Child's birth date`
+    },
+    fosterCareAdoptionDate: {
+      id: 'pl.application:foster.care.adoption.date',
+      defaultMessage: 'Dagsetning sem forsjárskipting á sér stað',
+      description: 'Date on which the division of custody takes place'
+    },
+    fosterCareNationalId: {
+      id: 'pl.application:foster.care.national.id',
+      defaultMessage: 'Kennitala barns',
+      description: `Child's national id`
     },
     secondaryParent: {
       id: 'pl.application:selectChild.secondaryParent',
@@ -2118,6 +2153,11 @@ export const errorMessages = defineMessages({
     id: 'pl.application:dataSchema.phoneNumber',
     defaultMessage: 'Símanúmerið þarf að vera gilt.',
     description: 'Error message when phone number is invalid.',
+  },
+  fosterCare: {
+    id: 'pl.application:dataSchema.foster.care.birth.date',
+    defaultMessage: 'Barn þarf að vera yngra en 8 ára',
+    description: 'Child must be under 8 years old',
   },
   otherParentId: {
     id: 'pl.application:dataSchema.otherParent.id',

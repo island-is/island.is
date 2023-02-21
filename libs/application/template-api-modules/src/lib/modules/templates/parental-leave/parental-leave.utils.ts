@@ -26,6 +26,7 @@ import {
   PARENTAL_GRANT_STUDENTS,
   NO,
   formatBankInfo,
+  PERMANENT_FOSTER_CARE,
 } from '@island.is/application/templates/parental-leave'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
@@ -206,16 +207,19 @@ export const getRightsCode = (application: Application): string => {
   const isSelfEmployed = answers.isSelfEmployed === YES
   const isUnemployed = answers.applicationType === PARENTAL_GRANT
   const isStudent = answers.applicationType === PARENTAL_GRANT_STUDENTS
+  const isPermanentFosterCare = answers.noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE
+
+  const primaryParentPrefix = isPermanentFosterCare ? 'M-FÓ' : 'M'
 
   if (selectedChild.parentalRelation === ParentalRelations.primary) {
     if (isUnemployed) {
-      return 'M-FS'
+      return `${primaryParentPrefix}-FS`
     } else if (isStudent) {
-      return 'M-FSN'
+      return `${primaryParentPrefix}-FSN`
     } else if (isSelfEmployed) {
-      return 'M-S-GR'
+      return `${primaryParentPrefix}-S-GR`
     } else {
-      return 'M-L-GR'
+      return `${primaryParentPrefix}-L-GR`
     }
   }
 
@@ -223,7 +227,7 @@ export const getRightsCode = (application: Application): string => {
   const parentsAreInRegisteredCohabitation =
     selectedChild.primaryParentNationalRegistryId === spouse?.nationalId
 
-  const parentPrefix = applicantIsMale(application) ? 'F' : 'FO'
+  const parentPrefix = applicantIsMale(application) ? (isPermanentFosterCare ? 'F-FÓ' : 'F') : (isPermanentFosterCare ? 'FO-FÓ' : 'FO')
 
   if (parentsAreInRegisteredCohabitation) {
     // If this secondary parent is in registered cohabitation with primary parent
@@ -290,6 +294,9 @@ export const transformApplicationToParentalLeaveDTO = (
     multipleBirths,
     isSelfEmployed,
     isReceivingUnemploymentBenefits,
+    noChildrenFoundTypeOfApplication,
+    fosterCareAdoptionDate,
+    fosterCareBirthDate,
   } = getApplicationAnswers(application.answers)
 
   const { applicationFundId } = getApplicationExternalData(
@@ -307,10 +314,11 @@ export const transformApplicationToParentalLeaveDTO = (
     applicationFundId: applicationFundId,
     applicant: application.applicant,
     otherParentId: getOtherParentId(application),
-    expectedDateOfBirth: selectedChild.expectedDateOfBirth,
+    expectedDateOfBirth: noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE ? '' : selectedChild.expectedDateOfBirth,
     // TODO: get true date of birth, not expected
     // will get it from a new Þjóðskrá API (returns children in custody of a national registry id)
-    dateOfBirth: '',
+    dateOfBirth: noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE ? fosterCareBirthDate : '',
+    adoptionDate: noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE ? fosterCareAdoptionDate : '',
     email,
     phoneNumber,
     paymentInfo: {
