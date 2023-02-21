@@ -3,7 +3,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { CopyLink } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
-import School from '../../assets/School'
+import Illustration from '../../assets/Illustration'
 
 const ListCreated = ({ application }: { application: Application }) => {
   const { formatMessage } = useLocale()
@@ -27,7 +27,7 @@ const ListCreated = ({ application }: { application: Application }) => {
         />
       </Box>
       <Box marginY={8} display="flex" justifyContent="center">
-        <School />
+        <Illustration />
       </Box>
     </Box>
   )
