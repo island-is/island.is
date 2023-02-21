@@ -93,10 +93,7 @@ import { AirDiscountSchemeClientConfig } from '@island.is/clients/air-discount-s
 import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financial-statements-inao'
 import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
 import { PaymentScheduleClientConfig } from '@island.is/clients/payment-schedule'
-import {
-  JudicialAdministrationClientConfig,
-  JudicialAdministrationClientModule,
-} from '@island.is/clients/judicial-administration'
+import { JudicialAdministrationClientConfig } from '@island.is/clients/judicial-administration'
 import { DataLoaderInterceptor } from '@island.is/nest/dataloader'
 import { SessionsModule } from '@island.is/api/domains/sessions'
 import { CommunicationsConfig } from '@island.is/api/domains/communications'
@@ -264,7 +261,6 @@ const autoSchemaFile = environment.production
     FishingLicenseModule,
     MortgageCertificateModule,
     TransportAuthorityApiModule,
-    JudicialAdministrationClientModule,
     SessionsModule,
     ConfigModule.forRoot({
       isGlobal: true,

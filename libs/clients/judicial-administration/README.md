@@ -1,4 +1,4 @@
-<!-- gitbook-navigation: "Court Bankruptcy Certificate" -->
+<!-- gitbook-ignore -->
 
 # Court Bankruptcy Certificate Client
 

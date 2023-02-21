@@ -1,7 +1,6 @@
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import {
   ConfigType,
-  IdsClientConfig,
   LazyDuringDevScope,
   XRoadConfig,
 } from '@island.is/nest/config'
@@ -14,7 +13,6 @@ export const ApiConfig = {
   useFactory: (
     xroadConfig: ConfigType<typeof XRoadConfig>,
     config: ConfigType<typeof JudicialAdministrationClientConfig>,
-    idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) =>
     new Configuration({
       fetchApi: createEnhancedFetch({
@@ -29,9 +27,5 @@ export const ApiConfig = {
         Accept: 'application/json',
       },
     }),
-  inject: [
-    XRoadConfig.KEY,
-    JudicialAdministrationClientConfig.KEY,
-    IdsClientConfig.KEY,
-  ],
+  inject: [XRoadConfig.KEY, JudicialAdministrationClientConfig.KEY],
 }

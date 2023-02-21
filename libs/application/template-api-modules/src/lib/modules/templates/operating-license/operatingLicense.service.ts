@@ -32,6 +32,7 @@ import { FinanceClientService } from '@island.is/clients/finance'
 import { OperatingLicenseFakeData } from '@island.is/application/templates/operating-license/types'
 import { JudicialAdministrationService } from '@island.is/clients/judicial-administration'
 import { BANNED_BANKRUPTCY_STATUSES } from './constants'
+import { error } from '@island.is/application/templates/operating-license'
 
 @Injectable()
 export class OperatingLicenseService extends BaseTemplateApiService {
@@ -61,8 +62,8 @@ export class OperatingLicenseService extends BaseTemplateApiService {
         ? Promise.resolve({ success: true })
         : Promise.reject({
             reason: {
-              title: coreErrorMessages.dataCollectionCriminalRecordTitle,
-              summary: coreErrorMessages.dataCollectionCriminalRecordErrorTitle,
+              title: error.dataCollectionCriminalRecordTitle,
+              summary: error.dataCollectionCriminalRecordErrorTitle,
               hideSubmitError: true,
             },
             statusCode: 404,
@@ -82,7 +83,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
 
       throw new TemplateApiError(
         {
-          title: coreErrorMessages.dataCollectionCriminalRecordTitle,
+          title: error.dataCollectionCriminalRecordTitle,
           summary: coreErrorMessages.errorDataProvider,
         },
         400,
@@ -90,7 +91,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     } catch (e) {
       throw new TemplateApiError(
         {
-          title: coreErrorMessages.dataCollectionCriminalRecordTitle,
+          title: error.dataCollectionCriminalRecordTitle,
           summary: coreErrorMessages.errorDataProvider,
         },
         400,
@@ -114,8 +115,8 @@ export class OperatingLicenseService extends BaseTemplateApiService {
         ? Promise.resolve({ success: true })
         : Promise.reject({
             reason: {
-              title: coreErrorMessages.missingCertificateTitle,
-              summary: coreErrorMessages.missingCertificateSummary,
+              title: error.missingCertificateTitle,
+              summary: error.missingCertificateSummary,
               hideSubmitError: true,
             },
             statusCode: 404,
@@ -148,8 +149,8 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     ) {
       throw new TemplateApiError(
         {
-          title: coreErrorMessages.missingCertificateTitle,
-          summary: coreErrorMessages.missingCertificateSummary,
+          title: error.missingCertificateTitle,
+          summary: error.missingCertificateSummary,
         },
         400,
       )
@@ -162,18 +163,15 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
     const cert = await this.judicialAdministrationService.searchBankruptcy(auth)
-    console.log('CERT', cert, Object.entries(cert))
     for (const [_, value] of Object.entries(cert)) {
-      console.log(value.bankruptcyStatus)
       if (
         value.bankruptcyStatus &&
         BANNED_BANKRUPTCY_STATUSES.includes(value.bankruptcyStatus)
       ) {
         throw new TemplateApiError(
           {
-            title: coreErrorMessages.missingJudicialAdministrationificateTitle,
-            summary:
-              coreErrorMessages.missingJudicialAdministrationificateSummary,
+            title: error.missingJudicialAdministrationificateTitle,
+            summary: error.missingJudicialAdministrationificateSummary,
           },
           400,
         )
