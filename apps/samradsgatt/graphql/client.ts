@@ -14,7 +14,7 @@ const { publicRuntimeConfig, serverRuntimeConfig } = getConfig()
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
     graphQLErrors.map(({ message, locations, path }) => {
-      alert(`Graphql error ${message}`)
+      console.error(`Graphql error ${message}`)
     })
   }
 })
@@ -31,9 +31,9 @@ function create(initialState?: any) {
     graphqlUrl: graphqlClientUrl,
     graphqlEndpoint: graphqlClientEndpoint,
   } = publicRuntimeConfig
-  const graphqlUrl = graphqlServerUrl || graphqlClientUrl
+  // const graphqlUrl = graphqlServerUrl || graphqlClientUrl
   const graphqlEndpoint = graphqlServerEndpoint || graphqlClientEndpoint
-  const httpLink = new BatchHttpLink({ uri: `${graphqlUrl}${graphqlEndpoint}` })
+  const httpLink = new BatchHttpLink({ uri: `${graphqlEndpoint}` })
   const link = ApolloLink.from([errorLink, httpLink])
 
   // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient

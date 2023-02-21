@@ -6,8 +6,8 @@ import { GetAllCasesQuery, useGetAllCasesQuery } from '../graphql/schema'
 import initApollo from '../graphql/client'
 
 export const Test = (props) => {
-  const { data, error, client } = useGetAllCasesQuery({})
-
+  const { data, error, client, loading } = useGetAllCasesQuery({})
+  if (loading) return <div>loading..</div>
   return <div>Test</div>
 }
 export default withApollo(Test)

@@ -6,9 +6,12 @@ const {
   API_URL = 'http://localhost:4444',
   WEB_PUBLIC_URL = 'http://localhost:4200',
   NODE_ENV,
-
+  DISABLE_API_CATALOGUE,
+  DD_RUM_APPLICATION_ID,
+  DD_RUM_CLIENT_TOKEN,
   APP_VERSION,
   ENVIRONMENT,
+  CONFIGCAT_SDK_KEY,
 } = process.env
 const apiPath = '/api'
 const graphqlPath = '/api/graphql'
@@ -21,9 +24,8 @@ module.exports = withNx(
     },
     publicRuntimeConfig: {
       // Will be available on both server and client
-      apiUrl: `${WEB_PUBLIC_URL}/api`,
+      graphqlUrl: '',
       graphqlEndpoint: graphqlPath,
-
       appVersion: APP_VERSION,
       environment: ENVIRONMENT,
     },

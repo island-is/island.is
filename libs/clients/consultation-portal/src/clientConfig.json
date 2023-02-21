@@ -241,6 +241,9 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Not Found"
           }
         }
       }
@@ -254,17 +257,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubscriptionsResult"
+                  "$ref": "#/components/schemas/UserSubscriptionsResult"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubscriptionsResult"
+                  "$ref": "#/components/schemas/UserSubscriptionsResult"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubscriptionsResult"
+                  "$ref": "#/components/schemas/UserSubscriptionsResult"
                 }
               }
             }
@@ -317,6 +320,9 @@
         "responses": {
           "200": {
             "description": "Success"
+          },
+          "404": {
+            "description": "Not Found"
           }
         }
       }
@@ -365,6 +371,9 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Not Found"
           }
         }
       },
@@ -388,14 +397,10 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "CaseId": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "Content": {
+                  "content": {
                     "type": "string"
                   },
-                  "Files": {
+                  "files": {
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -405,13 +410,10 @@
                 }
               },
               "encoding": {
-                "CaseId": {
+                "content": {
                   "style": "form"
                 },
-                "Content": {
-                  "style": "form"
-                },
-                "Files": {
+                "files": {
                   "style": "form"
                 }
               }
@@ -421,6 +423,9 @@
         "responses": {
           "200": {
             "description": "Success"
+          },
+          "404": {
+            "description": "Not Found"
           },
           "422": {
             "description": "Client Error",
@@ -460,9 +465,31 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CaseSubscribeCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CaseSubscribeCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CaseSubscribeCommand"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Success"
+          },
+          "404": {
+            "description": "Not Found"
           }
         }
       }
@@ -485,6 +512,9 @@
         "responses": {
           "200": {
             "description": "Success"
+          },
+          "404": {
+            "description": "Not Found"
           }
         }
       }
@@ -732,10 +762,48 @@
         },
         "additionalProperties": false
       },
+      "CaseSubscribeCommand": {
+        "type": "object",
+        "properties": {
+          "subscriptionType": {
+            "$ref": "#/components/schemas/CaseSubscriptionType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CaseSubscriptionCommand": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "subscriptionType": {
+            "$ref": "#/components/schemas/CaseSubscriptionType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CaseSubscriptionResult": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "subscriptionType": {
+            "$ref": "#/components/schemas/CaseSubscriptionType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CaseSubscriptionType": {
+        "enum": ["AllChanges", "StatusChanges"],
+        "type": "string"
+      },
       "CasesOrderBy": {
-        "enum": [0, 1, 2],
-        "type": "integer",
-        "format": "int32"
+        "enum": ["LastUpdated", "LatestCases", "AdviceDeadline"],
+        "type": "string"
       },
       "DocumentInfoResult": {
         "type": "object",
@@ -759,9 +827,35 @@
         },
         "additionalProperties": false
       },
-      "SubscriptionsResult": {
+      "SubscriptionCommand": {
         "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "subscriptionType": {
+            "$ref": "#/components/schemas/SubscriptionType"
+          }
+        },
         "additionalProperties": false
+      },
+      "SubscriptionResult": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "subscriptionType": {
+            "$ref": "#/components/schemas/SubscriptionType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SubscriptionType": {
+        "enum": ["AllChanges", "StatusChanges", "OnlyNew"],
+        "type": "string"
       },
       "UserAdviceResult": {
         "type": "object",
@@ -803,27 +897,68 @@
       "UserSubscriptionsCommand": {
         "type": "object",
         "properties": {
+          "subscribeToAll": {
+            "type": "boolean"
+          },
           "caseIds": {
             "type": "array",
             "items": {
-              "type": "integer",
-              "format": "int32"
+              "$ref": "#/components/schemas/CaseSubscriptionCommand"
             },
             "nullable": true
           },
           "institutionIds": {
             "type": "array",
             "items": {
-              "type": "integer",
-              "format": "int32"
+              "$ref": "#/components/schemas/SubscriptionCommand"
             },
             "nullable": true
           },
           "policyAreaIds": {
             "type": "array",
             "items": {
-              "type": "integer",
-              "format": "int32"
+              "$ref": "#/components/schemas/SubscriptionCommand"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserSubscriptionsResult": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "emailVerified": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "subscribedToAll": {
+            "type": "boolean"
+          },
+          "subscribedToAllNew": {
+            "type": "boolean"
+          },
+          "cases": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CaseSubscriptionResult"
+            },
+            "nullable": true
+          },
+          "institutions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SubscriptionResult"
+            },
+            "nullable": true
+          },
+          "policyAreas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SubscriptionResult"
             },
             "nullable": true
           }
