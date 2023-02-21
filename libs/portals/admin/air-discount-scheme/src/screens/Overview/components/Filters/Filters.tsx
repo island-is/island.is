@@ -1,6 +1,5 @@
 import React from 'react'
-import { useForm, FormProvider, Controller } from 'react-hook-form'
-import { useSubmit } from 'react-router-dom'
+import { Form } from 'react-router-dom'
 
 import {
   Box,
@@ -13,8 +12,8 @@ import {
   Select,
   Columns,
   Column,
+  Checkbox,
 } from '@island.is/island-ui/core'
-import { CheckboxController } from '@island.is/shared/form-fields'
 import {
   airlineOptions,
   financialStateOptions,
@@ -22,219 +21,144 @@ import {
 } from '../../consts'
 import type { FlightLegsFilters } from '../../Overview.loader'
 
-interface PropTypes {
+interface FiltersPropTypes {
   defaultValues: FlightLegsFilters
 }
 
-function Filters({ defaultValues }: PropTypes) {
-  const submit = useSubmit()
-
-  const hookFormData = useForm<FlightLegsFilters>({
-    mode: 'onBlur',
-    reValidateMode: 'onBlur',
-    defaultValues: {
-      ...defaultValues,
-      age: {
-        from: defaultValues.age.from > -1 ? defaultValues.age.from : undefined,
-        to: defaultValues.age.to < 1000 ? defaultValues.age.to : undefined,
-      },
-      period: {
-        from: new Date(defaultValues.period.from),
-        to: new Date(defaultValues.period.to),
-      },
-    },
-    shouldUnregister: false,
-  })
-
+export const Filters = ({ defaultValues }: FiltersPropTypes) => {
   return (
     <Stack space={3}>
-      <FormProvider {...hookFormData}>
+      <Form
+        onSubmit={() => {
+          window.scrollTo({ top: 0, behavior: 'smooth' })
+        }}
+      >
         <Box
-          component="form"
           display="flex"
           flexDirection="column"
           justifyContent="spaceBetween"
           height="full"
-          onSubmit={hookFormData.handleSubmit((values, event) => {
-            submit(event?.target)
-            window.scrollTo({ top: 0, behavior: 'smooth' })
-          })}
         >
           <Stack space={4}>
             <Stack space={2}>
-              <Controller
+              <DatePicker
+                label="Frá"
+                id="period.from"
                 name="period.from"
-                defaultValue=""
-                render={({ onChange, value }) => (
-                  <DatePicker
-                    label="Frá"
-                    id="period.from"
-                    name="period.from"
-                    placeholderText="Veldu dagsetningu"
-                    locale="is"
-                    size="xs"
-                    selected={value}
-                    handleChange={onChange}
-                  />
-                )}
+                placeholderText="Veldu dagsetningu"
+                locale="is"
+                size="xs"
+                selected={new Date(defaultValues.period.from)}
               />
-              <Controller
+              <DatePicker
+                label="Til"
+                id="period.to"
                 name="period.to"
-                defaultValue=""
-                render={({ onChange, value }) => (
-                  <DatePicker
-                    label="Til"
-                    id="period.to"
-                    name="period.to"
-                    placeholderText="Veldu dagsetningu"
-                    locale="is"
-                    size="xs"
-                    selected={value}
-                    handleChange={onChange}
-                  />
-                )}
+                placeholderText="Veldu dagsetningu"
+                locale="is"
+                size="xs"
+                selected={new Date(defaultValues.period.to)}
               />
             </Stack>
             <Divider weight="purple200" />
             <Stack space={2}>
               <Text variant="h5">Flug</Text>
-              <Controller
+              <Select
                 name="airline"
-                defaultValue=""
-                render={({ onChange, value }) => {
-                  return (
-                    <Select
-                      name="airline"
-                      options={airlineOptions}
-                      label="Flugfélag"
-                      size="xs"
-                      value={airlineOptions.find(
-                        (option) => option.value === value,
-                      )}
-                      onChange={onChange}
-                    />
-                  )
-                }}
+                options={airlineOptions}
+                label="Flugfélag"
+                size="xs"
+                defaultValue={airlineOptions.find(
+                  (option) => option.value === defaultValues.airline,
+                )}
               />
-              <Controller
+
+              <Input
                 name="flightLeg.from"
-                defaultValue=""
-                render={({ onChange, value }) => (
-                  <Input
-                    name="flightLeg.from"
-                    label="Brottfararstaður"
-                    size="xs"
-                    value={value}
-                    onChange={onChange}
-                  />
-                )}
+                label="Brottfararstaður"
+                size="xs"
+                defaultValue={defaultValues.flightLeg?.from}
               />
-              <Controller
+              <Input
                 name="flightLeg.to"
-                defaultValue=""
-                render={({ onChange, value }) => (
-                  <Input
-                    name="flightLeg.to"
-                    label="Áfangastaður"
-                    size="xs"
-                    value={value}
-                    onChange={onChange}
-                  />
-                )}
+                label="Áfangastaður"
+                size="xs"
+                defaultValue={defaultValues.flightLeg?.to}
               />
             </Stack>
             <Divider weight="purple200" />
             <Stack space={2}>
               <Text variant="h5">Einstaklingur</Text>
-              <Controller
+              <Input
                 name="nationalId"
-                defaultValue=""
-                render={({ onChange, value }) => (
-                  <Input
-                    name="nationalId"
-                    label="Kennitala"
-                    size="xs"
-                    value={value}
-                    onChange={onChange}
-                  />
-                )}
+                label="Kennitala"
+                size="xs"
+                defaultValue={defaultValues.nationalId}
               />
             </Stack>
             <Divider weight="purple200" />
             <Stack space={2}>
               <Text variant="h5">Notandi</Text>
-              <Controller
+              <Input
                 name="postalCode"
-                defaultValue=""
-                render={({ onChange, value }) => (
-                  <Input
-                    name="postalCode"
-                    label="Póstnúmer"
-                    size="xs"
-                    value={value}
-                    onChange={onChange}
-                  />
-                )}
+                label="Póstnúmer"
+                size="xs"
+                defaultValue={defaultValues.postalCode}
               />
               <Columns space={[1, 2, 2, 1]}>
                 <Column>
-                  <Controller
+                  <Input
                     name="age.from"
-                    defaultValue=""
-                    render={({ onChange, value }) => (
-                      <Input
-                        name="age.from"
-                        label="Aldur frá"
-                        size="xs"
-                        value={value}
-                        onChange={onChange}
-                      />
-                    )}
+                    label="Aldur frá"
+                    size="xs"
+                    defaultValue={
+                      defaultValues.age.from > -1
+                        ? defaultValues.age.from
+                        : undefined
+                    }
                   />
                 </Column>
                 <Column>
-                  <Controller
+                  <Input
                     name="age.to"
-                    defaultValue=""
-                    render={({ onChange, value }) => (
-                      <Input
-                        name="age.to"
-                        label="Aldur til"
-                        size="xs"
-                        value={value}
-                        onChange={onChange}
-                      />
-                    )}
+                    label="Aldur til"
+                    size="xs"
+                    defaultValue={
+                      defaultValues.age.to < 1000
+                        ? defaultValues.age.to
+                        : undefined
+                    }
                   />
                 </Column>
               </Columns>
-              <Controller
+              <Select
                 name="gender"
-                defaultValue=""
-                render={({ onChange, value }) => {
-                  return (
-                    <Select
-                      name="gender"
-                      options={genderOptions}
-                      label="Kyn"
-                      size="xs"
-                      value={genderOptions.find(
-                        (option) => option.value === value,
-                      )}
-                      onChange={onChange}
-                    />
-                  )
-                }}
+                options={genderOptions}
+                label="Kyn"
+                size="xs"
+                defaultValue={genderOptions.find(
+                  (option) => option.value === defaultValues.gender,
+                )}
               />
-              <CheckboxController
+              <Checkbox
+                name="isExplicit"
                 id="isExplicit"
-                options={[{ value: 'true', label: 'Handvirkur kóði' }]}
+                label="Handvirkur kóði"
               />
             </Stack>
             <Divider weight="purple200" />
             <Stack space={2}>
               <Text variant="h5">Fjármál</Text>
-              <CheckboxController id="state" options={financialStateOptions} />
+              {financialStateOptions.map(({ value, label }, index) => (
+                <Checkbox
+                  key={value}
+                  id={`state-${index}`}
+                  name="state"
+                  value={value}
+                  checked={defaultValues.state.includes(value)}
+                  label={label}
+                />
+              ))}
             </Stack>
             <Box paddingTop={2}>
               <Button type="submit" fluid>
@@ -243,9 +167,7 @@ function Filters({ defaultValues }: PropTypes) {
             </Box>
           </Stack>
         </Box>
-      </FormProvider>
+      </Form>
     </Stack>
   )
 }
-
-export default Filters

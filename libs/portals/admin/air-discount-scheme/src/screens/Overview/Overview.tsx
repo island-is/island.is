@@ -24,7 +24,6 @@ const Overview = () => {
   const { data, filters } = useLoaderData() as OverviewLoaderReturnType
   const [showModal, setModal] = useState(false)
   const { airDiscountSchemeFlightLegs: flightLegs = [] } = data ?? {}
-
   const [confirmInvoice, { loading }] = useConfirmInvoiceMutation()
 
   return (

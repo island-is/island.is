@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import cn from 'classnames'
 import { Text } from '../Text/Text'
 import { Icon } from '../IconRC/Icon'
@@ -52,6 +52,7 @@ export const Checkbox = ({
   dataTestId,
   filled = false,
 }: CheckboxProps & TestSupport) => {
+  const [isChecked, setIsChecked] = useState(checked || false)
   const errorId = `${id}-error`
   const ariaError = hasError
     ? {
@@ -62,6 +63,11 @@ export const Checkbox = ({
 
   const background =
     backgroundColor && backgroundColor === 'blue' ? 'blue100' : undefined
+
+  const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsChecked(event.target.checked)
+    onChange?.(event)
+  }
 
   return (
     <Box
@@ -78,9 +84,11 @@ export const Checkbox = ({
         disabled={disabled}
         id={id}
         data-testid={dataTestId}
-        onChange={onChange}
-        value={value}
-        checked={checked}
+        onChange={onChangeHandler}
+        // We default to a string value of 'true' or 'false' if no value is provided
+        // This is to ensure that when we make a native Form request the value is present in the request body and query string
+        value={value || isChecked.toString()}
+        checked={isChecked}
         {...(ariaError as AriaError)}
       />
       <label
@@ -92,14 +100,14 @@ export const Checkbox = ({
       >
         <div
           className={cn(styles.checkbox, {
-            [styles.checkboxChecked]: checked,
+            [styles.checkboxChecked]: isChecked,
             [styles.checkboxError]: hasError,
             [styles.checkboxDisabled]: disabled,
           })}
         >
           <Icon
             icon="checkmark"
-            color={checked ? 'white' : 'transparent'}
+            color={isChecked ? 'white' : 'transparent'}
             ariaHidden
           />
         </div>
@@ -107,7 +115,7 @@ export const Checkbox = ({
           <Text
             as="span"
             variant={labelVariant}
-            fontWeight={checked || strong ? 'semiBold' : 'light'}
+            fontWeight={isChecked || strong ? 'semiBold' : 'light'}
           >
             {label}
           </Text>
