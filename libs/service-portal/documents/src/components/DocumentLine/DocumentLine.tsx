@@ -84,7 +84,6 @@ const DocumentLine: FC<Props> = ({
       const tokenInput = document.createElement('input')
 
       const token = userInfo?.access_token
-      console.log('hello')
 
       if (!token) return
 
@@ -135,7 +134,7 @@ const DocumentLine: FC<Props> = ({
         [styles.unopened]: !documentLine.opened,
       })}
       // Check if data is already fetched, if so go straight to download/display
-      onClick={async () => {
+      onClick={() => {
         if (getFileByIdData && !loading) {
           onClickHandler()
         } else {

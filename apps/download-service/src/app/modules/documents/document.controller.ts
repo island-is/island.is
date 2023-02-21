@@ -6,7 +6,6 @@ import {
   Res,
   Param,
   UseGuards,
-  Get,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { GetDocumentDto } from './dto/getDocument.dto'
@@ -75,23 +74,5 @@ export class DocumentController {
     res.header('Cache-Control: nmax-age=0')
 
     return res.status(200).end(buffer)
-  }
-  // TODO: CLEANUP
-  @Get('/:pdfId')
-  @Header('Content-Type', 'application/pdf')
-  @ApiOkResponse({
-    content: { 'application/pdf': {} },
-    description: 'Get a PDF document from the Documents service',
-  })
-  async getPdfRequest(
-    @Param('pdfId') pdfId: string,
-    @CurrentUser() user: User,
-    @Res() res: Response,
-  ) {
-    res.header('Pragma: no-cache')
-    res.header('Cache-Control: no-cache')
-    res.header('Cache-Control: nmax-age=0')
-
-    return res.end()
   }
 }
