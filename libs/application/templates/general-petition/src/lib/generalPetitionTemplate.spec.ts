@@ -5,15 +5,15 @@ import {
   DefaultEvents,
   ExternalData,
 } from '@island.is/application/types'
-import GeneralPetitionApplicationTemplate from './generalPetitionApplicationTemplate'
+import GeneralPetitionTemplate from './GeneralPetitionTemplate'
 import { createApplication } from '@island.is/application/testing'
 
 describe('General petition application template', () => {
   describe('state transitions', () => {
-    it('should transition from draft to approved', () => {
+    it('should transition from prereqs to draft', () => {
       const helper = new ApplicationTemplateHelper(
         createApplication(),
-        GeneralPetitionApplicationTemplate,
+        GeneralPetitionTemplate,
       )
 
       const [hasChanged, newState, _] = helper.changeState({
@@ -21,12 +21,11 @@ describe('General petition application template', () => {
       })
 
       expect(hasChanged).toBe(true)
-      expect(newState).toBe('approved')
-      // expect(newApplication.assignees).toEqual([otherParentId])
+      expect(newState).toBe('draft')
     })
   })
 
-  describe('access control for approved state', () => {
+  describe('access control for done state', () => {
     let helper: ApplicationTemplateHelper<
       ApplicationContext,
       ApplicationStateSchema<{ type: DefaultEvents.SUBMIT }>,
@@ -45,13 +44,13 @@ describe('General petition application template', () => {
     beforeEach(() => {
       helper = new ApplicationTemplateHelper(
         createApplication({
-          state: 'approved',
+          state: 'done',
           answers: {
             listName: 'listName',
           },
           externalData,
         }),
-        GeneralPetitionApplicationTemplate,
+        GeneralPetitionTemplate,
       )
     })
 
