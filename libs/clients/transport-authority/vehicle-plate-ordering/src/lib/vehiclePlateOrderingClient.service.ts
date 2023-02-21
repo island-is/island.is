@@ -77,7 +77,7 @@ export class VehiclePlateOrderingClient {
     }
 
     const warnSeverityError = 'E'
-    const warnSeverityWarning = 'W' //TODOx á W að vera með?
+    const warnSeverityWarning = 'W' //TODOx á W að vera með? Ef já, á þetta líka að bætast við í operators/plate-renewal?
     errorList = errorList.filter(
       (x) =>
         x.warnSever === warnSeverityError ||

@@ -1,8 +1,18 @@
+import { VehicleValidationErrorMessage } from '@island.is/api/schema'
+
 export type VehiclesCurrentVehicle = {
   permno?: string
   make?: string
   color?: string
   role?: string
+}
+
+export type VehiclesCurrentVehicleWithPlateOrderChecks = {
+  permno?: string
+  make?: string
+  color?: string
+  role?: string
+  validationErrorMessages?: VehicleValidationErrorMessage[] | null
 }
 
 export type DeliveryStation = {
