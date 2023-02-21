@@ -77,6 +77,7 @@ const caseEncryptionProperties: (keyof Case)[] = [
   'caseModifiedExplanation',
   'caseResentExplanation',
   'crimeScenes',
+  'indictmentIntroduction',
 ]
 
 const defendantEncryptionProperties: (keyof Defendant)[] = [
@@ -137,9 +138,9 @@ export class InternalCaseService {
     private readonly policeService: PoliceService,
     @Inject(forwardRef(() => UserService))
     private readonly userService: UserService,
-    @Inject(forwardRef(() => FileService))
+    @Inject(forwardRef(() => IndictmentCountService))
     private readonly indictmentCountService: IndictmentCountService,
-    @Inject(forwardRef(() => DefendantService))
+    @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
     @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,

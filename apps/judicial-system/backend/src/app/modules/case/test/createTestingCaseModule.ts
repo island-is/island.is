@@ -20,6 +20,7 @@ import { UserService } from '../../user'
 import { FileService } from '../../file'
 import { AwsS3Service } from '../../aws-s3'
 import { DefendantService } from '../../defendant'
+import { IndictmentCountService } from '../../indictment-count'
 import { Case } from '../models/case.model'
 import { CaseArchive } from '../models/caseArchive.model'
 import { caseModuleConfig } from '../case.config'
@@ -38,6 +39,7 @@ jest.mock('../../user/user.service')
 jest.mock('../../file/file.service')
 jest.mock('../../aws-s3/awsS3.service')
 jest.mock('../../defendant/defendant.service')
+jest.mock('../../indictment-count/indictmentCount.service')
 
 export const createTestingCaseModule = async () => {
   const caseModule = await Test.createTestingModule({
@@ -63,6 +65,7 @@ export const createTestingCaseModule = async () => {
       EventService,
       SigningService,
       DefendantService,
+      IndictmentCountService,
       {
         provide: IntlService,
         useValue: {
@@ -122,6 +125,10 @@ export const createTestingCaseModule = async () => {
 
   const defendantService = caseModule.get<DefendantService>(DefendantService)
 
+  const indictmentCountService = caseModule.get<IndictmentCountService>(
+    IndictmentCountService,
+  )
+
   const logger = caseModule.get<Logger>(LOGGER_PROVIDER)
 
   const sequelize = caseModule.get<Sequelize>(Sequelize)
@@ -160,6 +167,7 @@ export const createTestingCaseModule = async () => {
     fileService,
     awsS3Service,
     defendantService,
+    indictmentCountService,
     logger,
     sequelize,
     caseModel,
