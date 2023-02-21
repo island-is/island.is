@@ -195,6 +195,11 @@ export const m = defineMessages({
     defaultMessage: 'Þú hefur sett nafn þitt á listann',
     description: '',
   },
+  backtoSP: {
+    id: 'gpl.application:backtoSP',
+    defaultMessage: 'Til baka á Mínar Síður',
+    description: '',
+  },
 
   // Validation
   validationApproveTerms: {
