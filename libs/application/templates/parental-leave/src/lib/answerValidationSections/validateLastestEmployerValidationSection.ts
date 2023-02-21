@@ -94,6 +94,7 @@ export const validateLatestEmployerValidationSection = (
   employers?.map((e, i) => {
     if (!e.ratio) {
       index = i
+      return
     }
   })
   if (index >= 0) {
