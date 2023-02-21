@@ -8,7 +8,7 @@ import {
   ApplicationContext,
   ApplicationStateSchema,
   DefaultEvents,
-  UserProfileApi,
+  NationalRegistryUserApi,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { application } from './messages'
@@ -46,7 +46,13 @@ const AlcoholTaxRedemptionTemplate: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
-              api: [UserProfileApi],
+              api: [
+                NationalRegistryUserApi.configure({
+                  params: {
+                    ageToValidate: 20,
+                  },
+                }),
+              ],
               write: 'all',
               read: 'all',
               delete: true,
@@ -55,7 +61,7 @@ const AlcoholTaxRedemptionTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: States.DRAFT,
+            target: States.DONE,
           },
         },
       },

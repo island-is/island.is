@@ -62,7 +62,6 @@ export function getFieldsWithNoAnswer(
 }
 
 export function findSubmitField(screen: FormScreen): SubmitField | undefined {
-  console.log('findSubmitField', screen)
   if (screen.type === FieldTypes.SUBMIT) {
     return screen
   }

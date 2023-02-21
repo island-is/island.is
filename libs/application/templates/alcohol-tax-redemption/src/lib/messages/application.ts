@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const application = defineMessages({
   applicationTitle: {
     id: 'atr.application:application.applicationTitle',
-    defaultMessage: 'Umsókn um eitthvað',
+    defaultMessage: 'Umsókn um endurgreiðslu áfengisgjalda',
     description: 'Title for application',
   },
   institutionName: {

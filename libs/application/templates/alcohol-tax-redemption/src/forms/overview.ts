@@ -7,15 +7,13 @@ export const overviewForm: Form = buildForm({
   id: 'OverviewForm',
   title: overview.sectionTitle,
   mode: FormModes.COMPLETED,
-  renderLastScreenButton: true,
-  renderLastScreenBackButton: true,
   children: [
     formConclusionSection({
       alertMessage: overview.alertMessage,
       alertTitle: overview.alertTitle,
-      buttonText: overview.buttonText,
       expandableDescription: overview.expandableDescription,
       expandableHeader: overview.expandeableHeader,
+      expandableIntro: overview.expandableIntro,
     }),
   ],
 })
