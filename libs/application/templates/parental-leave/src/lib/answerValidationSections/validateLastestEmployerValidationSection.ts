@@ -1,3 +1,4 @@
+/* @typescript-eslint/no-inferrable-types */
 import { EmployerRow } from '../../types'
 import { errorMessages } from '../messages'
 import { AnswerValidationError } from '@island.is/application/core'
