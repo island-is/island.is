@@ -1355,8 +1355,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     phoneNumber: {
       id: 'pl.application:employer.phone.number',
-      defaultMessage: 'Símanúmer vinnuveitanda',
-      description: "Employer's phone number",
+      defaultMessage: 'Símanúmer vinnuveitanda ( valfrjálst )',
+      description: "Employer's phone number ( optional )",
     },
     phoneNumberHeader: {
       id: 'pl.application:employer.phone.number.header',
@@ -2158,6 +2158,11 @@ export const errorMessages = defineMessages({
     id: 'pl.application:dataSchema.foster.care.birth.date',
     defaultMessage: 'Barn þarf að vera yngra en 8 ára',
     description: 'Child must be under 8 years old',
+  },
+  GSMPhoneNumber: {
+    id: 'pl.application:dataSchema.GSMPhoneNumber',
+    defaultMessage: 'Símanúmerið þarf að vera GSM númer.',
+    description: 'Invalid phoneNumber. Has to be a GSM number.',
   },
   otherParentId: {
     id: 'pl.application:dataSchema.otherParent.id',
