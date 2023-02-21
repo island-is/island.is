@@ -281,7 +281,9 @@ const ViewStudent = ({
                 {formatMessage(m.viewStudentCompleteHours)}
               </Text>
               <Text variant="default">
-                {student.book?.totalLessonCount ?? 0}
+                {student.totalLessonCount % 2 === 0
+                  ? student.totalLessonCount
+                  : student.totalLessonCount.toFixed(2) ?? 0}
               </Text>
             </GridColumn>
             {/* Practice driving */}
