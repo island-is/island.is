@@ -2,30 +2,33 @@ import { defineMessages } from 'react-intl'
 
 export const confirmation = {
   general: defineMessages({
-    title: {
-      id: 'ta.dtdc.application:confirmation.general.title',
-      defaultMessage: 'Umsókn móttekin!',
-      description: 'Title of confirmation screen',
-    },
     sectionTitle: {
       id: 'ta.dtdc.application:confirmation.general.sectionTitle',
       defaultMessage: 'Staðfesting',
       description: 'Title of confirmation screen',
     },
-    alertMessageTitle: {
-      id: 'ta.dtdc.application:confirmation.general.alertMessageTitle',
-      defaultMessage: 'Umsókn um ökuritakort hefur verið móttekin!',
-      description: 'Confirmation general alert message title',
+    alertTitle: {
+      id: 'ta.dtdc.application:confirmation.general.alertTitle',
+      defaultMessage: 'Umsókn þín hefur verið móttekin',
+      description: 'Confirmation general alert title',
     },
-    alertMessageText: {
-      id: 'ta.dtdc.application:confirmation.general.alertMessageText',
-      defaultMessage: 'Ökumannskortið verður sent á lögheimili yðar',
-      description: 'Confirmation general alert message text',
+    alertMessage: {
+      id: 'ta.dtdc.application:confirmation.general.alertMessage',
+      defaultMessage: 'Umsókn þín um ökuritakort hefur verið móttekin',
+      description: 'Confirmation general alert message',
     },
-    openMySiteLinkText: {
-      id: 'ta.dtdc.application:confirmation.general.openMySiteLinkText',
-      defaultMessage: 'Mínar síður',
-      description: 'Confirmation general open my site link text',
+    accordionTitle: {
+      id: 'ta.dtdc.application:confirmation.general.accordionTitle',
+      defaultMessage: 'Hvað gerist næst?',
+      description: 'Confirmation accordion title',
+    },
+    accordionText: {
+      id: 'ta.dtdc.application:confirmation.general.accordionText',
+      defaultMessage:
+        `* Skírteinið verður sent annað hvort í pósti á skráð lögheimili eiganda eða til Samgöngustofu\n` +
+        `* Ökuritakort má einungis afhenda til umsækjanda. Umsækjandi getur veitt öðrum heimild til að sækja kort og skal þá framvísa fullgildu umboði þess efnis\n` +
+        `* Staðfesting/kvittun verður send í rafræn skjöl á island.is\n`,
+      description: 'Confirmation accordion text',
     },
   }),
 }

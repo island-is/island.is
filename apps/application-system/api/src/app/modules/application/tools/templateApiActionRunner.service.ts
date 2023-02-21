@@ -164,7 +164,9 @@ export class TemplateApiActionRunner {
       [externalDataId || action]: {
         status: 'failure',
         date: new Date(),
-        reason,
+        reason: Array.isArray(problem.errorReason)
+          ? problem.errorReason
+          : reason,
         statusCode: problem.status,
         data: {},
       },

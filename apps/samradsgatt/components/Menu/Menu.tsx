@@ -2,10 +2,14 @@ import {
   Box,
   Logo,
   Button,
-  Inline,
   GridColumn,
   GridRow,
   Divider,
+  GridContainer,
+  Columns,
+  Column,
+  ResponsiveSpace,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import * as styles from './Menu.css'
@@ -17,55 +21,76 @@ type MenuProps = {
 }
 export const Menu = ({ showIcon = true }: MenuProps) => {
   const router = useRouter()
+  const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
+  const biggerMarginLeft = [3, 3, 3, 4] as ResponsiveSpace
+
   return (
-    <nav className={styles.menu}>
-      <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '4/12', '6/12']}>
-          <Inline>
-            <Box>
-              <Logo iconOnly width={26} />
-            </Box>
-            <Box
-              style={{
-                transform: 'rotate(90deg)',
-                width: 56,
-                display: 'inline-table',
-                verticalAlign: 'bottom',
-              }}
-              marginX={1}
-            >
-              <Divider />
-            </Box>
-            {showIcon && (
-              <Box onClick={() => router.push('/')}>
-                <MenuLogo />
-              </Box>
-            )}
-          </Inline>
-        </GridColumn>
-        <GridColumn span={['0', '0', '0', '6/12', '4/12']} hiddenBelow={'lg'}>
-          <Inline align={'right'} space={2}>
-            {menuItems.map((item, index) => {
-              return (
-                <Button
-                  key={index}
-                  variant="utility"
-                  size="medium"
-                  onClick={() => router.push(item.href)}
-                >
-                  {item.label}
-                </Button>
-              )
-            })}
-          </Inline>
-        </GridColumn>
-        <GridColumn span={['0', '0', '0', '2/12', '2/12']} hiddenBelow={'lg'}>
-          <Inline justifyContent={'center'}>
-            <Button size="small">Innskráning</Button>
-          </Inline>
-        </GridColumn>
-      </GridRow>
-    </nav>
+    <header className={styles.menu}>
+      <Hidden print={true}>
+        <GridContainer>
+          <GridRow>
+            <GridColumn span="12/12" paddingBottom={3} paddingTop={3}>
+              <Columns alignY="center" space={2}>
+                <Column width="content">
+                  <Box>
+                    <Logo iconOnly width={26} />
+                  </Box>
+                </Column>
+                <Column width="content">
+                  <Box>
+                    <Box
+                      style={{
+                        transform: 'rotate(90deg)',
+                        width: 56,
+                      }}
+                      marginX={1}
+                    >
+                      <Divider />
+                    </Box>
+                  </Box>
+                </Column>
+
+                <Column width="content">
+                  <Hidden screen={!showIcon}>
+                    <Box onClick={() => router.push('/')}>
+                      <MenuLogo />
+                    </Box>
+                  </Hidden>
+                </Column>
+
+                <Column>
+                  <Hidden below="lg">
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="flexEnd"
+                      width="full"
+                    >
+                      {menuItems.map((item, index) => {
+                        return (
+                          <Box marginLeft={marginLeft} key={index}>
+                            <Button
+                              variant="utility"
+                              size="medium"
+                              onClick={() => router.push(item.href)}
+                            >
+                              {item.label}
+                            </Button>
+                          </Box>
+                        )
+                      })}
+                      <Box marginLeft={biggerMarginLeft}>
+                        <Button size="small">Innskráning</Button>
+                      </Box>
+                    </Box>
+                  </Hidden>
+                </Column>
+              </Columns>
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      </Hidden>
+    </header>
   )
 }
 export default Menu

@@ -1,11 +1,11 @@
 import { Injectable, Inject, OnApplicationBootstrap } from '@nestjs/common'
 import { InjectWorker, WorkerService } from '@island.is/message-queue'
-import { Message } from './dto/createNotification.dto'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { UserProfileApi } from '@island.is/clients/user-profile'
 import { NotificationDispatchService } from './notificationDispatch.service'
 import { MessageProcessorService } from './messageProcessor.service'
+import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 
 export const IS_RUNNING_AS_WORKER = Symbol('IS_NOTIFICATION_WORKER')
 
@@ -30,10 +30,10 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
   }
 
   async run() {
-    await this.worker.run<Message>(
+    await this.worker.run<CreateHnippNotificationDto>(
       async (message, job): Promise<void> => {
         const messageId = job.id
-        this.logger.info('Message received by worker', { messageId })
+        this.logger.info('Message received by worker ... ...', { messageId })
 
         const profile = await this.userProfileApi.userTokenControllerFindOneByNationalId(
           {
@@ -50,9 +50,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         }
 
         // don't send message unless user wants this type of notification
-        if (
-          !this.messageProcessor.shouldSendNotification(message.type, profile)
-        ) {
+        if (!profile.documentNotifications) {
           this.logger.info(
             'User does not have notifications enabled this message type',
             { messageId },
@@ -64,16 +62,24 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
           })
         }
 
-        const notification = await this.messageProcessor.convertToNotification(
-          message,
-          profile,
-        )
+        if (profile.documentNotifications) {
+          const notification = await this.messageProcessor.convertToNotification(
+            message,
+            profile,
+          )
 
-        await this.notificationDispatch.sendPushNotification({
-          nationalId: profile.nationalId,
-          notification,
-          messageId,
-        })
+          await this.notificationDispatch.sendPushNotification({
+            nationalId: profile.nationalId,
+            notification,
+            messageId,
+          })
+        } else {
+          this.logger.info(
+            'User does not have notifications enabled this message type',
+            { messageId },
+          )
+          return
+        }
       },
     )
   }

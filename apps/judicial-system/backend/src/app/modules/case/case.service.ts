@@ -46,9 +46,11 @@ import {
   getCourtRecordPdfAsString,
   formatRulingModifiedHistory,
   createCaseFilesRecord,
+  createIndictment,
 } from '../../formatters'
 import { CaseFile, FileService } from '../file'
 import { DefendantService, Defendant } from '../defendant'
+import { IndictmentCount } from '../indictment-count'
 import { Institution } from '../institution'
 import { User } from '../user'
 import { AwsS3Service } from '../aws-s3'
@@ -63,6 +65,7 @@ import { transitionCase } from './state/case.state'
 
 export const include: Includeable[] = [
   { model: Defendant, as: 'defendants' },
+  { model: IndictmentCount, as: 'indictmentCounts' },
   { model: Institution, as: 'court' },
   {
     model: User,
@@ -102,6 +105,11 @@ export const include: Includeable[] = [
   },
 ]
 
+export const order: OrderItem[] = [
+  [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
+  [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
+]
+
 export const caseListInclude: Includeable[] = [
   { model: Defendant, as: 'defendants' },
   {
@@ -126,7 +134,7 @@ export const caseListInclude: Includeable[] = [
   },
 ]
 
-export const order: OrderItem[] = [
+export const listOrder: OrderItem[] = [
   [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
 ]
 
@@ -608,7 +616,7 @@ export class CaseService {
   getAll(user: TUser): Promise<Case[]> {
     return this.caseModel.findAll({
       include: caseListInclude,
-      order,
+      order: listOrder,
       where: getCasesQueryFilter(user),
     })
   }
@@ -782,6 +790,12 @@ export class CaseService {
     await this.refreshFormatMessage()
 
     return getRulingPdfAsBuffer(theCase, this.formatMessage)
+  }
+
+  async getIndictmentPdf(theCase: Case): Promise<Buffer> {
+    await this.refreshFormatMessage()
+
+    return createIndictment(theCase, this.formatMessage)
   }
 
   async getCustodyPdf(theCase: Case): Promise<Buffer> {

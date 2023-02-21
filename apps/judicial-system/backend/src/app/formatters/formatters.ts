@@ -294,7 +294,6 @@ export function formatPrisonCourtDateEmailNotification(
   prosecutorOffice?: string,
   court?: string,
   courtDate?: Date,
-  accusedName?: string,
   accusedGender?: Gender,
   requestedValidToDate?: Date,
   isolation?: boolean,
@@ -307,7 +306,6 @@ export function formatPrisonCourtDateEmailNotification(
     notifications.prisonCourtDateEmail.courtText,
     { court: court || 'NONE' },
   ).replace('dómur', 'dóms')
-
   const courtDateText = formatMessage(
     notifications.prisonCourtDateEmail.courtDateText,
     {
@@ -318,7 +316,6 @@ export function formatPrisonCourtDateEmailNotification(
         : 'NONE',
     },
   )
-
   const requestedValidToDateText = formatMessage(
     notifications.prisonCourtDateEmail.requestedValidToDateText,
     {
@@ -329,7 +326,6 @@ export function formatPrisonCourtDateEmailNotification(
         : 'NONE',
     },
   )
-
   const requestText = formatMessage(
     notifications.prisonCourtDateEmail.requestText,
     {
@@ -338,7 +334,6 @@ export function formatPrisonCourtDateEmailNotification(
       requestedValidToDateText,
     },
   )
-
   const isolationText = formatMessage(
     notifications.prisonCourtDateEmail.isolationTextV2,
     { isolation: Boolean(isolation) },
@@ -348,7 +343,7 @@ export function formatPrisonCourtDateEmailNotification(
     sessionArrangements,
   })
 
-  return formatMessage(notifications.prisonCourtDateEmail.bodyV3, {
+  return formatMessage(notifications.prisonCourtDateEmail.body, {
     caseType: type,
     prosecutorOffice: prosecutorOffice || 'NONE',
     courtText,
@@ -490,7 +485,6 @@ export function formatCourtRevokedSmsNotification(
         time: formatDate(requestedCourtDate, 'p'),
       })
     : undefined
-
   const courtRevokedText = formatMessage(
     notifications.courtRevoked.caseTypeRevoked,
     { caseType: type },
@@ -507,13 +501,12 @@ export function formatPrisonRevokedEmailNotification(
   prosecutorOffice?: string,
   court?: string,
   courtDate?: Date,
-  accusedName?: string,
   defenderName?: string,
   isExtension?: boolean,
+  courtCaseNumber?: string,
 ): string {
   const cf = notifications.prisonRevokedEmail
   const courtText = formatMessage(cf.court, { court })?.replace('dómur', 'dóms')
-
   const courtDateText = formatMessage(cf.courtDate, {
     courtDate: courtDate
       ? formatDate(courtDate, 'PPPPp')
@@ -521,23 +514,21 @@ export function formatPrisonRevokedEmailNotification(
           ?.replace(' kl.', ', kl.')
       : 'NONE',
   })
-  const accusedNameText = formatMessage(notifications.accused, {
-    accusedName: accusedName || 'NONE',
-  })
   const defenderText = formatMessage(cf.defender, {
     defenderName: defenderName || 'NONE',
   })
-  const revokedCaseText = formatMessage(cf.revokedCaseV2, {
+  const revokedCaseText = formatMessage(cf.revokedCase, {
     caseType: type,
     prosecutorOffice: prosecutorOffice || 'NONE',
     isExtension,
     courtText,
     courtDateText,
   })
+
   return formatMessage(cf.body, {
     revokedCaseText,
-    accusedNameText,
     defenderText,
+    courtCaseNumber,
   })
 }
 
@@ -554,7 +545,6 @@ export function formatDefenderRevokedEmailNotification(
   const courtText = formatMessage(cf.court, {
     court: court || 'NONE',
   }).replace('dómur', 'dómi')
-
   const courtDateText = formatMessage(cf.courtDate, {
     courtDate: courtDate
       ? formatDate(courtDate, 'PPPPp')
@@ -578,7 +568,6 @@ export function formatDefenderRevokedEmailNotification(
             : 'noPrefix',
         courtTypeName: caseTypes[type],
       })
-
   const defendantNationalIdText = defendantNoNationalId
     ? defendantNationalId || 'NONE'
     : formatNationalId(defendantNationalId || 'NONE')
@@ -665,7 +654,7 @@ export function formatDefenderAssignedEmailNotification(
     court: capitalize(theCase.court?.name ?? ''),
   })
 
-  const body = formatMessage(notifications.defenderAssignedEmail.bodyV2, {
+  const body = formatMessage(notifications.defenderAssignedEmail.body, {
     defenderHasAccessToRVG: Boolean(overviewUrl),
     courtCaseNumber: capitalize(theCase.courtCaseNumber ?? ''),
     court: theCase.court?.name ?? '',

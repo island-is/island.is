@@ -11,17 +11,21 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { FooterItem } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
 import { webRichText } from '@island.is/web/utils/richText'
 
 import * as styles from './LandskjorstjornFooter.css'
 
 interface LandskjorstjornFooterProps {
   footerItems: FooterItem[]
+  namespace: Record<string, string>
 }
 
-export const LandskjorstjornFooter = ({
+const LandskjorstjornFooter = ({
   footerItems,
+  namespace,
 }: LandskjorstjornFooterProps) => {
+  const n = useNamespace(namespace)
   return (
     <footer
       className={styles.container}
@@ -34,7 +38,10 @@ export const LandskjorstjornFooter = ({
               <img
                 width={80}
                 height={78}
-                src="https://images.ctfassets.net/8k0h54kbe6bj/60DIqBGQ8ejcpEak0bSrak/9481d5d92bcf9b2ea5f2efe3fee952f7/Landskjorstjorn-logo-hvitt.svg"
+                src={n(
+                  'landskjorstjornFooterLogo',
+                  'https://images.ctfassets.net/8k0h54kbe6bj/60DIqBGQ8ejcpEak0bSrak/9481d5d92bcf9b2ea5f2efe3fee952f7/Landskjorstjorn-logo-hvitt.svg',
+                )}
                 alt=""
               />
             </Box>
@@ -104,3 +111,5 @@ export const LandskjorstjornFooter = ({
     </footer>
   )
 }
+
+export default LandskjorstjornFooter
