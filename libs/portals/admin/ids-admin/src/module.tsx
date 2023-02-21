@@ -26,37 +26,35 @@ export const idsAdminModule: PortalModule = {
         name: 'Domains',
         path: IDSAdminPaths.IDSAdminDomains,
         element: <Domains />,
+        children: [
+          {
+            name: 'Applications',
+            path: IDSAdminPaths.IDSAdminDomainsApplications,
+            element: <div>Applications</div>,
+          },
+          {
+            name: 'APIs',
+            path: IDSAdminPaths.IDSAdminDomainsAPIS,
+            element: <div>APIs</div>,
+          },
+        ],
       },
-      {
-        name: 'Applications',
-        path: IDSAdminPaths.IDSAdminDomainsApplications,
-        element: <div>Applications</div>,
-      },
-      {
-        name: 'APIs',
-        path: IDSAdminPaths.IDSAdminDomainsAPIS,
-        element: <div>APIs</div>,
-      },
-      {
-        name: 'Admin Control',
-        path: IDSAdminPaths.IDSAdminDomainsAdminControl,
-        element: <div>AdminControl</div>,
-      },
-      {
-        name: 'ApplicationsSettings',
-        path: IDSAdminPaths.IDSAdminDomainsApplications,
-        element: <div>Applications</div>,
-      },
-      {
-        name: 'Authentication',
-        path: IDSAdminPaths.IDSAdminApplicationAuthentication,
-        element: <div>Authentication</div>,
-      },
-      {
-        name: 'AdvancedSettings',
-        path: IDSAdminPaths.IDSAdminApplicationAdvancedSettings,
-        element: <div>AdvancedSettings</div>,
-      },
+
+      // {
+      //   name: 'ApplicationsSettings',
+      //   path: IDSAdminPaths.IDSAdminDomainsApplications,
+      //   element: <div>Applications</div>,
+      // },
+      // {
+      //   name: 'Authentication',
+      //   path: IDSAdminPaths.IDSAdminApplicationAuthentication,
+      //   element: <div>Authentication</div>,
+      // },
+      // {
+      //   name: 'AdvancedSettings',
+      //   path: IDSAdminPaths.IDSAdminApplicationAdvancedSettings,
+      //   element: <div>AdvancedSettings</div>,
+      // },
     ]
   },
 }

@@ -13,18 +13,27 @@ export const useNavigation = (
   const routes = useRoutes()
   const { pathname } = useLocation()
 
+  const filterNavigation = (navigation: PortalNavigationItem) => {
+    return {
+      ...navigation,
+      children: navigation?.children?.filter((navItem) => {
+        navItem.children?.forEach((child) => filterNavigation(child))
+
+        return filterNavigationTree({
+          item: navItem,
+          routes,
+          dynamicRouteArray,
+          currentLocationPath: pathname,
+        })
+      }),
+    }
+  }
+
   const filteredNavigation = useMemo(() => {
     if (userInfo) {
       return {
         ...navigation,
-        children: navigation?.children?.filter((navItem) =>
-          filterNavigationTree({
-            item: navItem,
-            routes,
-            dynamicRouteArray,
-            currentLocationPath: pathname,
-          }),
-        ),
+        children: navigation?.children?.filter(filterNavigation),
       }
     }
 

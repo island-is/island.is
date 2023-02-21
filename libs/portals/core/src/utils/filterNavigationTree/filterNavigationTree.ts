@@ -20,16 +20,6 @@ export const filterNavigationTree = ({
 
   const included = routeItem !== undefined || item.systemRoute === true
 
-  // Filters out any children that do not have a module route defined
-  item.children = item.children?.filter((child) => {
-    return filterNavigationTree({
-      item: child,
-      routes,
-      dynamicRouteArray,
-      currentLocationPath,
-    })
-  })
-
   // If the item is not included but one or more of it's descendants are
   // We remove the item's path but include it in the tree
   const onlyDescendantsIncluded =

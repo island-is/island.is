@@ -5,27 +5,20 @@ import {
   GridRow,
   GridColumn,
   Stack,
-  Navigation,
 } from '@island.is/island-ui/core'
-import { Link, Outlet, useParams } from 'react-router-dom'
-import { idsAdminNavigation } from '@island.is/portals/admin/ids-admin'
-import { PortalNavigation, PortalNavigationItem } from '@island.is/portals/core'
+import { Outlet, useParams } from 'react-router-dom'
+import { PortalNavigation } from '@island.is/portals/core'
 import React from 'react'
+import { idsAdminNavigation } from '../lib/navigation'
 
 const Domains = () => {
   const params = useParams()
-  console.log(params)
+
   return (
     <GridContainer>
       <Hidden above="md">
         <Box paddingBottom={4}>
-          <PortalNavigation
-            navigation={
-              idsAdminNavigation.children
-                ? idsAdminNavigation.children[0]
-                : ({} as PortalNavigationItem)
-            }
-          />
+          <PortalNavigation navigation={idsAdminNavigation} />
         </Box>
       </Hidden>
       <GridRow>
@@ -35,28 +28,7 @@ const Domains = () => {
         >
           <Stack space={3}>
             <Hidden below="lg">
-              <Navigation
-                title="Domain name"
-                baseId={'navigation'}
-                renderLink={(link, item) => {
-                  console.log(item?.href)
-                  return item?.href ? <Link to={item.href}>{link}</Link> : link
-                }}
-                items={
-                  idsAdminNavigation.children
-                    ? idsAdminNavigation.children[0].children?.map((child) => ({
-                        href: child.path,
-                        title: child.name as string,
-                        active: child.active,
-                        items: child.children?.map((grandChild) => ({
-                          href: grandChild.path,
-                          title: grandChild.name as string,
-                          active: child.active,
-                        })),
-                      })) ?? []
-                    : []
-                }
-              />
+              <PortalNavigation navigation={idsAdminNavigation} />
             </Hidden>
           </Stack>
         </GridColumn>
