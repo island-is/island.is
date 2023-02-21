@@ -110,13 +110,21 @@ const Indictment: React.FC = () => {
         workingCase.requestDriversLicenseSuspension
       ) {
         setAndSendCaseToServer(
-          [{ requestDriversLicenseSuspension, force: true }],
+          [
+            {
+              requestDriversLicenseSuspension,
+              demands: requestDriversLicenseSuspension
+                ? formatMessage(strings.demandsAutofillWithSuspension)
+                : formatMessage(strings.demandsAutofill),
+              force: true,
+            },
+          ],
           workingCase,
           setWorkingCase,
         )
       }
     },
-    [setAndSendCaseToServer, setWorkingCase, workingCase],
+    [formatMessage, setAndSendCaseToServer, setWorkingCase, workingCase],
   )
 
   const handleCreateIndictmentCount = useCallback(async () => {
