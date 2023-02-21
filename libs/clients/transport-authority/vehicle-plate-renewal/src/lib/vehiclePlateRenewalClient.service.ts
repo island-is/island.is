@@ -18,6 +18,20 @@ export class VehiclePlateRenewalClient {
   public async getMyPlateOwnerships(
     auth: User,
   ): Promise<Array<PlateOwnership>> {
+    // TODOX dummy data while API is not ready
+    return [
+      {
+        regno: 'STINNA',
+        startDate: new Date(),
+        endDate: null,
+      },
+      {
+        regno: 'JAMJAM',
+        startDate: new Date(),
+        endDate: null,
+      },
+    ]
+
     const result = await this.plateRenewalApiWithAuth(auth).plateownershipGet({
       apiVersion: '1.0',
       apiVersion2: '1.0',
@@ -38,6 +52,17 @@ export class VehiclePlateRenewalClient {
     auth: User,
     regno: string,
   ): Promise<PlateOwnershipValidation> {
+    // TODOX dummy data while API is not ready
+    return regno === 'JAMJAM'
+      ? {
+          hasError: true,
+          errorMessages: [{ errorNo: '', defaultMessage: 'Dummy error' }],
+        }
+      : {
+          hasError: false,
+          errorMessages: [],
+        }
+
     let errorList: ReturnTypeMessage[] = []
 
     try {
@@ -76,6 +101,9 @@ export class VehiclePlateRenewalClient {
   }
 
   public async renewPlateOwnership(auth: User, regno: string): Promise<void> {
+    // TODOX dummy data while API is not ready
+    return
+
     await this.plateRenewalApiWithAuth(auth).renewplateownershipPost({
       apiVersion: '1.0',
       apiVersion2: '1.0',

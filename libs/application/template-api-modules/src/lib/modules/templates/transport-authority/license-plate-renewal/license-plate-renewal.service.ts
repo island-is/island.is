@@ -8,6 +8,7 @@ import {
   LicensePlateRenewalAnswers,
 } from '@island.is/application/templates/transport-authority/license-plate-renewal'
 import {
+  PlateOwnership,
   PlateOwnershipValidation,
   VehiclePlateRenewalClient,
 } from '@island.is/clients/transport-authority/vehicle-plate-renewal'
@@ -28,22 +29,26 @@ export class LicensePlateRenewalService extends BaseTemplateApiService {
       auth,
     )
 
-    return result.map(async (item) => {
-      let validation: PlateOwnershipValidation | undefined
+    return await Promise.all(
+      result.map(async (item: PlateOwnership) => {
+        let validation: PlateOwnershipValidation | undefined
 
-      // Only validate if fewer than 5 items
-      if (result.length <= 5) {
-        validation = await this.vehiclePlateRenewalClient.validatePlateOwnership(
-          auth,
-          item.regno,
-        )
-      }
+        // Only validate if fewer than 5 items
+        if (result.length <= 5) {
+          validation = await this.vehiclePlateRenewalClient.validatePlateOwnership(
+            auth,
+            item.regno,
+          )
+        }
 
-      return {
-        regno: item.regno,
-        validationErrorMessages: validation?.errorMessages,
-      }
-    })
+        return {
+          regno: item.regno,
+          validationErrorMessages: validation?.hasError
+            ? validation.errorMessages
+            : null,
+        }
+      }),
+    )
   }
 
   async validateApplication({
