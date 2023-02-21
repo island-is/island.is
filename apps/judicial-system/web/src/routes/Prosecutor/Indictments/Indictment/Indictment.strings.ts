@@ -89,7 +89,8 @@ export const indictment = defineMessages({
     description: 'Notaður sem sjálfvirkur texti í Refsikrafa textasvæði.',
   },
   demandsAutofillWithSuspension: {
-    id: 'judicial.system.core:indictments_indictment.demands_autofill',
+    id:
+      'judicial.system.core:indictments_indictment.demands_autofill_with_suspension',
     defaultMessage:
       'Þess er krafist að ákærði verði dæmdur til refsingar, til greiðslu alls sakarkostnaðar og til að sæta sviptingu ökuréttar skv. 99. gr. og 101. gr. laga nr. 77/2019.',
     description:
