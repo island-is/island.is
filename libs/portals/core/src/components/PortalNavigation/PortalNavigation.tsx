@@ -35,9 +35,9 @@ export function PortalNavigation({ navigation }: PortalNavigationProps) {
       baseId={'navigation'}
       isMenuDialog={!lg}
       activeItemTitle={activeNav ? formatMessage(activeNav.name) : undefined}
-      renderLink={(link, item) =>
-        item?.href ? <Link to={item.href}>{link}</Link> : link
-      }
+      renderLink={(link, item) => {
+        return item?.href ? <Link to={item.href}>{link}</Link> : link
+      }}
       items={
         nav.children?.map((child) => ({
           href: child.path,

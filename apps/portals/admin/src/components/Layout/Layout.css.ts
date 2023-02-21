@@ -18,3 +18,7 @@ export const contentBox = style({
     },
   },
 })
+
+export const relative = style({
+  position: 'relative',
+})

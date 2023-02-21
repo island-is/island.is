@@ -9,4 +9,48 @@ export const idsAdminNavigation: PortalNavigationItem = {
     icon: 'settings',
   },
   description: m.idsAdmin,
+  children: [
+    {
+      name: 'Domains',
+      path: IDSAdminPaths.IDSAdminDomains,
+      description: m.idsAdmin,
+      children: [
+        {
+          name: 'Applications',
+          path: IDSAdminPaths.IDSAdminDomainsApplications,
+          description: m.idsAdmin,
+        },
+        {
+          name: 'APIs',
+          path: IDSAdminPaths.IDSAdminDomainsAPIS,
+          description: m.idsAdmin,
+        },
+        {
+          name: 'Admin Control',
+          path: IDSAdminPaths.IDSAdminDomainsAdminControl,
+          description: m.idsAdmin,
+        },
+        {
+          name: 'Application',
+          path: IDSAdminPaths.IDSAdminApplicationSettings,
+          description: m.idsAdmin,
+          navHide: true,
+          children: [
+            {
+              name: 'Authentication',
+              path: IDSAdminPaths.IDSAdminApplicationAuthentication,
+              description: m.idsAdmin,
+            },
+            {
+              name: 'Advanced Settings',
+              path: IDSAdminPaths.IDSAdminApplicationAdvancedSettings,
+              description: m.idsAdmin,
+            },
+          ],
+        },
+      ],
+    },
+  ],
 }
+
+console.log('ids-admin-module', idsAdminNavigation)
