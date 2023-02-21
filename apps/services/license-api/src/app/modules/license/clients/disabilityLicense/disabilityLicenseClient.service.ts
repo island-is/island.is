@@ -22,10 +22,12 @@ export class DisabilityLicenseClientService implements GenericLicenseClient {
     inputData: PassDataInput,
     nationalId: string,
   ): Promise<Result<Pass | undefined>> {
+    this.logger.debug('in push update for Disability license')
     return this.smartApi.updatePkPass(inputData, nationalId)
   }
 
-  async pullUpdate(nationalId: string): Promise<Result<Pass | undefined>> {
+  async pullUpdate(): Promise<Result<Pass | undefined>> {
+    this.logger.debug('in pull update for Disability license')
     return {
       ok: false,
       error: {
@@ -46,9 +48,5 @@ export class DisabilityLicenseClientService implements GenericLicenseClient {
     const { code, date } = JSON.parse(inputData)
 
     return this.smartApi.verifyPkPass({ code, date })
-
-    //TODO: Verify license when endpoints are ready
-    //const verifyLicenseResult = await this.service.verify(nationalId?)
-    //return JSON.stringify(templates)
   }
 }

@@ -1,18 +1,24 @@
 # License API
 
-REST-ish API that enables the updating of digital licenses
+## About
+
+A REST-ish API that enables the updating of digital licenses for authenticated external parties.
 
 ## Quickstart
 
-To run,
+Ensure docker is running, then run the following when running for the first time:
 
+```bash
+yarn dev-init license-api
 ```
-yarn start license-api
+
+To start the app:
+
+```bash
+yarn dev license-api
 ```
 
-## About
-
-API for updating license data. [See docs in Notion](https://www.notion.so/WIP-RFC-API-to-update-licenses-9809728a87b84345bc6e6f198447d879).
+Afterwards, you can view the open api specs at localhost:4248/swagger/
 
 ## Urls
 

@@ -49,19 +49,25 @@
       },
       "outputs": ["coverage/apps/services/license-api"]
     },
-    "docker-express": {},
-    "dev-services": {
-      "executor": "@nrwl/workspace:run-commands",
-      "options": {
-        "command": "docker-compose up -d",
-        "cwd": "apps/services/license-api"
-      }
-    },
     "schemas/build-openapi": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "outputPath": "apps/services/license-api/src/openapi.yaml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/license-api/tsconfig.app.json apps/services/license-api/src/buildOpenApi.ts"
+      }
+    },
+    "dev-init": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["yarn get-secrets license-api"],
+        "parallel": false
+      }
+    },
+    "dev": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["yarn start license-api"],
+        "parallel": true
       }
     }
   },
