@@ -1,10 +1,10 @@
-import React, { useCallback, useContext, useState } from 'react'
+import React, { useCallback, useContext, useMemo, useState } from 'react'
 import router from 'next/router'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'framer-motion'
 import { applyCase } from 'beygla'
 
-import { Box, Input, Button } from '@island.is/island-ui/core'
+import { Box, Input, Button, Checkbox } from '@island.is/island-ui/core'
 
 import {
   BlueBox,
@@ -37,6 +37,10 @@ import { isTrafficViolationStepValidIndictments } from '@island.is/judicial-syst
 import useIndictmentCounts, {
   UpdateIndictmentCount,
 } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
+import {
+  IndictmentCount as TIndictmentCount,
+  IndictmentCountOffense,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { IndictmentCount } from './IndictmentCount'
 import { indictment as strings } from './Indictment.strings'
@@ -72,6 +76,54 @@ const Indictment: React.FC = () => {
 
   useDeb(workingCase, ['indictmentIntroduction', 'demands'])
 
+  const setDriversLicenseSuspensionRequest = useCallback(
+    (indictmentCounts?: TIndictmentCount[]) => {
+      let requestDriversLicenseSuspension = false
+
+      const reduce = () =>
+        indictmentCounts?.forEach((count) =>
+          count.offenses?.forEach((offence) => {
+            switch (offence) {
+              case IndictmentCountOffense.DrivingWithoutLicence:
+                requestDriversLicenseSuspension = false
+                return
+              case IndictmentCountOffense.DrunkDriving:
+                if (
+                  count.substances &&
+                  count.substances[IndictmentCountOffense.DrunkDriving] &&
+                  count.substances[IndictmentCountOffense.DrunkDriving][
+                    'ALCOHOL'
+                  ] >= '1,20'
+                ) {
+                  requestDriversLicenseSuspension = true
+                }
+                break
+              case IndictmentCountOffense.IllegalDrugsDriving:
+              case IndictmentCountOffense.PrescriptionDrugsDriving:
+                requestDriversLicenseSuspension = true
+                break
+              default:
+                break
+            }
+          }),
+        )
+
+      reduce()
+
+      if (
+        requestDriversLicenseSuspension !==
+        workingCase.requestDriversLicenseSuspension
+      ) {
+        setAndSendCaseToServer(
+          [{ requestDriversLicenseSuspension, force: true }],
+          workingCase,
+          setWorkingCase,
+        )
+      }
+    },
+    [setAndSendCaseToServer, setWorkingCase, workingCase],
+  )
+
   const handleCreateIndictmentCount = useCallback(async () => {
     const indictmentCount = await createIndictmentCount(workingCase.id)
 
@@ -79,13 +131,23 @@ const Indictment: React.FC = () => {
       return
     }
 
+    const indictmentCounts = workingCase.indictmentCounts
+      ? [...workingCase.indictmentCounts, indictmentCount]
+      : [indictmentCount]
+
+    setDriversLicenseSuspensionRequest(indictmentCounts)
+
     setWorkingCase((theCase) => ({
       ...theCase,
-      indictmentCounts: theCase.indictmentCounts
-        ? [...theCase.indictmentCounts, indictmentCount]
-        : [indictmentCount],
+      indictmentCounts,
     }))
-  }, [createIndictmentCount, setWorkingCase, workingCase.id])
+  }, [
+    createIndictmentCount,
+    setDriversLicenseSuspensionRequest,
+    setWorkingCase,
+    workingCase.id,
+    workingCase.indictmentCounts,
+  ])
 
   const handleUpdateIndictmentCount = useCallback(
     async (
@@ -101,6 +163,13 @@ const Indictment: React.FC = () => {
       if (!returnedIndictmentCount) {
         return
       }
+
+      setDriversLicenseSuspensionRequest(
+        workingCase.indictmentCounts?.map((count) =>
+          count.id === indictmentCountId ? returnedIndictmentCount : count,
+        ),
+      )
+
       updateIndictmentCountState(
         indictmentCountId,
         returnedIndictmentCount,
@@ -108,28 +177,43 @@ const Indictment: React.FC = () => {
       )
     },
     [
+      setDriversLicenseSuspensionRequest,
       setWorkingCase,
       updateIndictmentCount,
       updateIndictmentCountState,
       workingCase.id,
+      workingCase.indictmentCounts,
     ],
   )
 
-  const handleDeleteIndictmentCount = async (indictmentCountId: string) => {
-    if (
-      workingCase.indictmentCounts &&
-      workingCase.indictmentCounts.length > 1
-    ) {
-      await deleteIndictmentCount(workingCase.id, indictmentCountId)
+  const handleDeleteIndictmentCount = useCallback(
+    async (indictmentCountId: string) => {
+      if (
+        workingCase.indictmentCounts &&
+        workingCase.indictmentCounts.length > 1
+      ) {
+        await deleteIndictmentCount(workingCase.id, indictmentCountId)
 
-      setWorkingCase((theCase) => ({
-        ...theCase,
-        indictmentCounts: theCase.indictmentCounts?.filter(
+        const indictmentCounts = workingCase.indictmentCounts?.filter(
           (count) => count.id !== indictmentCountId,
-        ),
-      }))
-    }
-  }
+        )
+
+        setDriversLicenseSuspensionRequest(indictmentCounts)
+
+        setWorkingCase((theCase) => ({
+          ...theCase,
+          indictmentCounts,
+        }))
+      }
+    },
+    [
+      deleteIndictmentCount,
+      setDriversLicenseSuspensionRequest,
+      setWorkingCase,
+      workingCase.id,
+      workingCase.indictmentCounts,
+    ],
+  )
 
   const initialize = useCallback(() => {
     let indictmentIntroductionAutofill = undefined
@@ -164,7 +248,9 @@ const Indictment: React.FC = () => {
       [
         {
           indictmentIntroduction: indictmentIntroductionAutofill?.join(''),
-          demands: formatMessage(strings.demandsAutofill),
+          demands: workingCase.requestDriversLicenseSuspension
+            ? formatMessage(strings.demandsAutofillWithSuspension)
+            : formatMessage(strings.demandsAutofill),
         },
       ],
       workingCase,
@@ -179,6 +265,14 @@ const Indictment: React.FC = () => {
   ])
 
   useOnceOn(isCaseUpToDate, initialize)
+
+  const enableDriversLicenseSuspension = useMemo(
+    () =>
+      !workingCase.indictmentCounts?.some((count) =>
+        count.offenses?.includes(IndictmentCountOffense.DrivingWithoutLicence),
+      ),
+    [workingCase.indictmentCounts],
+  )
 
   return (
     <PageLayout
@@ -280,6 +374,29 @@ const Indictment: React.FC = () => {
         <Box component="section" marginBottom={6}>
           <SectionHeading title={formatMessage(strings.demandsTitle)} />
           <BlueBox>
+            {enableDriversLicenseSuspension && (
+              <Box marginBottom={3}>
+                <Checkbox
+                  name="requestDriversLicenseSuspension"
+                  label="Krefjast sviptingar"
+                  checked={workingCase.requestDriversLicenseSuspension}
+                  onChange={() => {
+                    setAndSendCaseToServer(
+                      [
+                        {
+                          requestDriversLicenseSuspension: !workingCase.requestDriversLicenseSuspension,
+                          force: true,
+                        },
+                      ],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }}
+                  filled
+                  large
+                />
+              </Box>
+            )}
             <Input
               name="demands"
               label={formatMessage(strings.demandsLabel)}

@@ -86,5 +86,6 @@ export type {
 } from './lib/policeFile'
 
 export { IndictmentCountOffense } from './lib/indictmentCount'
+export type { SubstanceMap } from './lib/indictmentCount'
 
 export type { CourtDocument } from './lib/courtDocument'

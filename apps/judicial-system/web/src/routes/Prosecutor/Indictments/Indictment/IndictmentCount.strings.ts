@@ -62,6 +62,20 @@ export const indictmentCount = defineMessages({
     description:
       'Notaður sem skýritexti á "atvikalýsing" svæði á ákæruliða skrefi í ákærum.',
   },
+  bloodAlcoholContentLabel: {
+    id:
+      'judicial.system.core:indictments_indictment.indictment_count.blood_alcohol_content_label',
+    defaultMessage: 'Vínandamagn',
+    description:
+      'Notaður sem titill á "vínandamagn" svæði á ákæruliða skrefi í ákærum.',
+  },
+  bloodAlcoholContentPlaceholder: {
+    id:
+      'judicial.system.core:indictments_indictment.indictment_count.blood_alcohol_content_placeholder',
+    defaultMessage: '0,00',
+    description:
+      'Notaður sem skýritexti á "vínandamagn" svæði á ákæruliða skrefi í ákærum.',
+  },
   trafficViolationIncidentDescriptionAutofill: {
     id:
       'judicial.system.core:indictments_indictment.indictment_count.traffic_violation_incident_description_auto_fill',

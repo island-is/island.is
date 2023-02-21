@@ -4,3 +4,10 @@ export enum IndictmentCountOffense {
   ILLEGAL_DRUGS_DRIVING = 'ILLEGAL_DRUGS_DRIVING',
   PRESCRIPTION_DRUGS_DRIVING = 'PRESCRIPTION_DRUGS_DRIVING',
 }
+
+type Substance = 'ALCOHOL'
+
+export type SubstanceMap = Record<
+  IndictmentCountOffense,
+  Record<Substance, string>
+>

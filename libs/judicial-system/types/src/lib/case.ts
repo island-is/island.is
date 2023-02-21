@@ -242,6 +242,7 @@ export interface Case {
   defendantWaivesRightToCounsel?: boolean
   crimeScenes?: CrimeSceneMap
   indictmentIntroduction?: string
+  requestDriversLicenseSuspension?: boolean
 }
 
 export interface CaseListEntry
@@ -352,6 +353,7 @@ export interface UpdateCase
     | 'defendantWaivesRightToCounsel'
     | 'crimeScenes'
     | 'indictmentIntroduction'
+    | 'requestDriversLicenseSuspension'
   > {
   type?: CaseType
   policeCaseNumbers?: string[]
