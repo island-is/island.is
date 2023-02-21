@@ -49,7 +49,7 @@ export const VehicleSelectField: FC<
           make: currentVehicle?.make || '',
           color: currentVehicle?.color || '',
           role: currentVehicle?.role,
-          duplicateOrderExists: false,
+          validationErrorMessages: [],
         }
       : null,
   )
@@ -81,12 +81,13 @@ export const VehicleSelectField: FC<
             make: currentVehicle?.make || '',
             color: currentVehicle?.color || '',
             role: currentVehicle?.role,
-            duplicateOrderExists:
-              response?.vehiclePlateOrderChecksByPermno?.duplicateOrderExists,
+            validationErrorMessages:
+              response?.vehiclePlateOrderChecksByPermno
+                ?.validationErrorMessages,
           })
 
-          const disabled =
-            response?.vehiclePlateOrderChecksByPermno?.duplicateOrderExists
+          const disabled = !!response?.vehiclePlateOrderChecksByPermno
+            ?.validationErrorMessages?.length
           setPlate(disabled ? '' : currentVehicle.permno || '')
           setIsLoading(false)
         })
@@ -94,7 +95,8 @@ export const VehicleSelectField: FC<
     }
   }
 
-  const disabled = selectedVehicle && selectedVehicle.duplicateOrderExists
+  const disabled =
+    selectedVehicle && !!selectedVehicle.validationErrorMessages?.length
 
   return (
     <Box>
@@ -134,14 +136,24 @@ export const VehicleSelectField: FC<
                   message={
                     <Box>
                       <BulletList>
-                        {selectedVehicle.duplicateOrderExists && (
-                          <Bullet>
-                            {formatMessage(
-                              information.labels.pickVehicle
-                                .duplicateOrderExistsTag,
-                            )}
-                          </Bullet>
-                        )}
+                        {!!selectedVehicle.validationErrorMessages?.length &&
+                          selectedVehicle.validationErrorMessages?.map(
+                            (err) => {
+                              const defaultMessage = err.defaultMessage
+                              const fallbackMessage =
+                                formatMessage(
+                                  error.validationFallbackErrorMessage,
+                                ) +
+                                ' - ' +
+                                err.errorNo
+
+                              return (
+                                <Bullet>
+                                  {defaultMessage || fallbackMessage}
+                                </Bullet>
+                              )
+                            },
+                          )}
                       </BulletList>
                     </Box>
                   }

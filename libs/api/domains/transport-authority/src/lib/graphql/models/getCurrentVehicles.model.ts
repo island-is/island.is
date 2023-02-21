@@ -59,12 +59,12 @@ export class VehiclesCurrentVehicleWithPlateOrderChecks {
   @Field({ nullable: true })
   role?: string
 
-  @Field(() => Boolean, { nullable: true })
-  duplicateOrderExists?: boolean
+  @Field(() => [VehicleValidationErrorMessage], { nullable: true })
+  validationErrorMessages?: VehicleValidationErrorMessage[] | null
 }
 
 @ObjectType()
 export class VehiclePlateOrderChecksByPermno {
-  @Field(() => Boolean, { nullable: true })
-  duplicateOrderExists?: boolean
+  @Field(() => [VehicleValidationErrorMessage], { nullable: true })
+  validationErrorMessages?: VehicleValidationErrorMessage[] | null
 }
