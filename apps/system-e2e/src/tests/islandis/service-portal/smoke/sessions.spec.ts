@@ -1,4 +1,6 @@
 import { test, expect, BrowserContext } from '@playwright/test'
+import { format } from 'kennitala'
+
 import { env, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 
@@ -31,7 +33,7 @@ test.describe('Service portal, in session history', () => {
     await page.goto(sessionHistoryUrl, {
       waitUntil: 'networkidle',
     })
-    const sessionsRows = page.getByRole('row')
+    const sessionsRows = page.locator('table > tbody > tr')
 
     // Assert
     await expect(sessionsRows).toHaveCountGreaterThan(0)
@@ -49,7 +51,9 @@ test.describe('Service portal, in session history', () => {
 
     // Act
     await page.locator('#filterInput').fill(filterSubjectNationalId)
-    const sessionsRows = page.getByRole('row')
+    const sessionsRows = page.locator('table > tbody > tr', {
+      hasText: format(filterSubjectNationalId),
+    })
 
     // Assert
     await expect(sessionsRows).toHaveCountGreaterThan(0)
@@ -71,7 +75,7 @@ test.describe('Service portal, in session history', () => {
     await page.goto(sessionHistoryUrl, {
       waitUntil: 'networkidle',
     })
-    const sessionsRows = page.getByRole('row')
+    const sessionsRows = page.locator('table > tbody > tr')
 
     // Assert
     await expect(sessionsRows).toHaveCountGreaterThan(0)
