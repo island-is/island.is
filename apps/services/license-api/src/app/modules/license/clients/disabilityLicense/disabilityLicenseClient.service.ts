@@ -18,11 +18,11 @@ export class DisabilityLicenseClientService implements GenericLicenseClient {
     private smartApi: SmartSolutionsApi,
   ) {}
 
-  async pushUpdate(
+  pushUpdate(
     inputData: PassDataInput,
     nationalId: string,
   ): Promise<Result<Pass | undefined>> {
-    return await this.smartApi.updatePkPass(inputData, nationalId)
+    return this.smartApi.updatePkPass(inputData, nationalId)
   }
 
   async pullUpdate(nationalId: string): Promise<Result<Pass | undefined>> {
@@ -35,17 +35,17 @@ export class DisabilityLicenseClientService implements GenericLicenseClient {
     }
   }
 
-  async revoke(nationalId: string): Promise<Result<RevokePassData>> {
+  revoke(nationalId: string): Promise<Result<RevokePassData>> {
     this.logger.debug('in revoke for Disability license')
-    return await this.smartApi.revokePkPass(nationalId)
+    return this.smartApi.revokePkPass(nationalId)
   }
 
   /** We need to verify the pk pass AND the license itself! */
-  async verify(inputData: string): Promise<Result<VerifyPassData>> {
+  verify(inputData: string): Promise<Result<VerifyPassData>> {
     this.logger.debug('in verify for Firearm license')
     const { code, date } = JSON.parse(inputData)
 
-    return await this.smartApi.verifyPkPass({ code, date })
+    return this.smartApi.verifyPkPass({ code, date })
 
     //TODO: Verify license when endpoints are ready
     //const verifyLicenseResult = await this.service.verify(nationalId?)

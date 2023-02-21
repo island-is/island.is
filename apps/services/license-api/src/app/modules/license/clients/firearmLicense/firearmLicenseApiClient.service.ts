@@ -25,14 +25,11 @@ export class FirearmLicenseApiClientService implements GenericLicenseClient {
     private smartApi: SmartSolutionsApi,
   ) {}
 
-  async pushUpdate(
+  pushUpdate(
     inputData: PassDataInput,
     nationalId: string,
   ): Promise<Result<Pass | undefined>> {
-    return await this.smartApi.updatePkPass(
-      inputData,
-      formatNationalId(nationalId),
-    )
+    return this.smartApi.updatePkPass(inputData, formatNationalId(nationalId))
   }
 
   async pullUpdate(nationalId: string): Promise<Result<Pass | undefined>> {
@@ -92,14 +89,11 @@ export class FirearmLicenseApiClientService implements GenericLicenseClient {
         : null,
     }
 
-    return await this.smartApi.updatePkPass(
-      payload,
-      formatNationalId(nationalId),
-    )
+    return this.smartApi.updatePkPass(payload, formatNationalId(nationalId))
   }
 
-  async revoke(nationalId: string): Promise<Result<RevokePassData>> {
-    return await this.smartApi.revokePkPass(formatNationalId(nationalId))
+  revoke(nationalId: string): Promise<Result<RevokePassData>> {
+    return this.smartApi.revokePkPass(formatNationalId(nationalId))
   }
 
   /** We need to verify the pk pass AND the license itself! */
