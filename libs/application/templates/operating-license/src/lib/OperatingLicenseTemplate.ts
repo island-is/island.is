@@ -13,7 +13,7 @@ import { dataSchema } from './dataSchema'
 import { Roles, States, Events, ApiActions } from './constants'
 import { m } from './messages'
 import { FeatureFlagClient, Features } from '@island.is/feature-flags'
-import { AuthDelegationType } from '../types/schema'
+import { AuthDelegationType } from '@island.is/shared/types'
 import {
   getApplicationFeatureFlags,
   OperatingLicenseFeatureFlags,
