@@ -158,7 +158,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.draftDescription,
           },
-          lifecycle: pruneAfterDays(365),
+          lifecycle: pruneAfterDays(970),
           progress: 0.25,
           onExit: defineTemplateApi({
             action: ApiModuleActions.validateApplication,
@@ -205,7 +205,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.otherParentApprovalDescription,
           },
-          lifecycle: pruneAfterDays(365),
+          lifecycle: pruneAfterDays(970),
           progress: 0.4,
           onEntry: defineTemplateApi({
             action: ApiModuleActions.assignOtherParent,
@@ -277,7 +277,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.otherParentActionDescription,
           },
-          lifecycle: pruneAfterDays(365),
+          lifecycle: pruneAfterDays(970),
           progress: 0.4,
           onEntry: defineTemplateApi({
             action: ApiModuleActions.notifyApplicantOfRejectionFromOtherParent,
@@ -308,7 +308,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.employerWaitingToAssignDescription,
           },
-          lifecycle: pruneAfterDays(365),
+          lifecycle: pruneAfterDays(970),
           progress: 0.4,
           onEntry: defineTemplateApi({
             action: ApiModuleActions.assignEmployer,
@@ -342,7 +342,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.employerApprovalDescription,
           },
-          lifecycle: pruneAfterDays(365),
+          lifecycle: pruneAfterDays(970),
           progress: 0.5,
           roles: [
             {
@@ -415,7 +415,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.employerActionDescription,
           },
-          lifecycle: pruneAfterDays(365),
+          lifecycle: pruneAfterDays(970),
           progress: 0.5,
           onEntry: defineTemplateApi({
             action: ApiModuleActions.notifyApplicantOfRejectionFromEmployer,
@@ -668,7 +668,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.closedDescription,
           },
-          lifecycle: pruneAfterDays(730),
+          lifecycle: EphemeralStateLifeCycle,
           progress: 1,
           roles: [
             {
