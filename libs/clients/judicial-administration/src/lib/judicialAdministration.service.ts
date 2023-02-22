@@ -34,7 +34,6 @@ export class JudicialAdministrationService {
   ): Promise<BankruptcyHistoryResult[]> {
     const authenticationToken = await this.getAuthenticationToken()
     const cert = await this.searchBankruptcyApi
-      .withMiddleware(new AuthMiddleware(auth))
       .searchBankruptcyHistory({
         authenticationToken,
         idNumber: auth.nationalId ?? '',
