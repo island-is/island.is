@@ -2217,8 +2217,8 @@ user-notification:
     - 'node'
   enabled: true
   env:
-    DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
-    MAIN_QUEUE_NAME: 'user-notification'
+    DEAD_LETTER_QUEUE_NAME: 'user-notification-failure-feature-branch'
+    MAIN_QUEUE_NAME: 'user-notification-feature-branch'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -2290,9 +2290,9 @@ user-notification-worker:
   enabled: true
   env:
     CONTENTFUL_HOST: 'preview.contentful.com'
-    DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
+    DEAD_LETTER_QUEUE_NAME: 'user-notification-failure-feature-branch'
     IDENTITY_SERVER_PATH: 'https://identity-server.dev01.devland.is'
-    MAIN_QUEUE_NAME: 'user-notification'
+    MAIN_QUEUE_NAME: 'user-notification-feature-branch'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_USER_PROFILE_BASEPATH: 'http://web-service-portal-api.service-portal.svc.cluster.local'
