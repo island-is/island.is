@@ -32,7 +32,7 @@ export class MessageProcessorService {
       template,
     )
 
-    this.logger.info(message,notification)
+    this.logger.info(message, notification)
 
     const prefix = new Date().toISOString() + '🔥🔥🔥'
 
