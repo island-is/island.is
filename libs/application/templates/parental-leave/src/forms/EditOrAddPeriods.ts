@@ -41,7 +41,6 @@ export const EditOrAddPeriods: Form = buildForm({
           id: 'periodsImageScreen',
           title: getPeriodImageTitle,
           component: 'PeriodsSectionImage',
-          doesNotRequireAnswer: true,
         }),
         buildSubSection({
           id: 'addPeriods',
