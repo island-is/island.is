@@ -6,7 +6,7 @@ import {
   SearchBankruptcyHistoryApi,
 } from '../../gen/fetch'
 import { JudicialAdministrationClientConfig } from './judicialAdministration.config'
-import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { Auth } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class JudicialAdministrationService {
@@ -33,11 +33,10 @@ export class JudicialAdministrationService {
     auth: Auth,
   ): Promise<BankruptcyHistoryResult[]> {
     const authenticationToken = await this.getAuthenticationToken()
-    const cert = await this.searchBankruptcyApi
-      .searchBankruptcyHistory({
-        authenticationToken,
-        idNumber: auth.nationalId ?? '',
-      })
+    const cert = await this.searchBankruptcyApi.searchBankruptcyHistory({
+      authenticationToken,
+      idNumber: auth.nationalId ?? '',
+    })
     return cert
   }
 }
