@@ -23,7 +23,7 @@ import {
   SamgongustofaPaymentCatalogApi,
   MyPlateOwnershipsApi,
 } from '../dataProviders'
-// import { AuthDelegationType } from '@island.is/shared/types'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const regno = getValueViaPath(
@@ -49,12 +49,12 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.LicensePlateRenewal.translation,
   ],
   dataSchema: LicensePlateRenewalSchema,
-  // allowedDelegations: [
-  //   {
-  //     type: AuthDelegationType.ProcurationHolder,
-  //     featureFlag: Features.transportAuthorityLicensePlateRenewalDelegations,
-  //   },
-  // ],
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+      featureFlag: Features.transportAuthorityLicensePlateRenewalDelegations,
+    },
+  ],
   featureFlag: Features.transportAuthorityLicensePlateRenewal,
   stateMachineConfig: {
     initial: States.DRAFT,
