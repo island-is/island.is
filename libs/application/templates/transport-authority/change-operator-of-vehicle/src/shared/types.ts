@@ -7,13 +7,17 @@ import {
 } from '../lib/dataSchema'
 import { MessageDescriptor } from '@formatjs/intl'
 import { TagVariant } from '@island.is/island-ui/core'
-import { VehicleValidationErrorMessage } from '@island.is/api/schema'
 
 export type VehiclesCurrentVehicle = {
   permno?: string
   make?: string
   color?: string
   role?: string
+}
+
+type VehicleValidationErrorMessage = {
+  errorNo?: string | null
+  defaultMessage?: string | null
 }
 
 export type VehiclesCurrentVehicleWithOperatorChangeChecks = {
