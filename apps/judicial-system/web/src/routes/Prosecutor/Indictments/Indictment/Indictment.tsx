@@ -76,9 +76,11 @@ const Indictment: React.FC = () => {
 
   const setDriversLicenseSuspensionRequest = useCallback(
     (indictmentCounts?: TIndictmentCount[]) => {
-      let requestDriversLicenseSuspension = false
-
-      if (
+      // If the case has no counts with the offence "Driving without a licence" and
+      // at least one count with the offence "Driving under the influence of alcohol" and the alcohol level is 1,20 or higher or
+      // at least one count with the offence "Driving under the influence of illegal drugs" or "Driving under the influence of prescription drugs"
+      // then by default the prosecutor requests a suspension of the driver's licence.
+      const requestDriversLicenseSuspension =
         !indictmentCounts?.some((count) =>
           count.offenses?.some(
             (offence) =>
@@ -96,13 +98,6 @@ const Indictment: React.FC = () => {
               ].includes(offense),
           ),
         )
-      ) {
-        // If the case has no counts with the offence "Driving without a licence" and
-        // at least one count with the offence "Driving under the influence of alcohol" and the alcohol level is 1,20 or higher or
-        // at least one count with the offence "Driving under the influence of illegal drugs" or "Driving under the influence of prescription drugs"
-        // then by default the prosecutor requests a suspension of the driver's licence.
-        requestDriversLicenseSuspension = true
-      }
 
       if (
         requestDriversLicenseSuspension !==

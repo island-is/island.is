@@ -296,7 +296,6 @@ describe('InternalCaseController - Archive', () => {
     })
 
     it('should clear encrypted case file one properties', () => {
-      console.log(then)
       expect(mockFileService.updateCaseFile).toHaveBeenCalledWith(
         caseId,
         caseFileId1,
@@ -315,7 +314,6 @@ describe('InternalCaseController - Archive', () => {
     })
 
     it('should clear encrypted indictment count one properties', () => {
-      console.log(then)
       expect(mockIndictmentCountService.update).toHaveBeenCalledWith(
         caseId,
         indictmentCountId1,

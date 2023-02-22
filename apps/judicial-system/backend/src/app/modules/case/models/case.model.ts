@@ -964,7 +964,7 @@ export class Case extends Model {
    **********/
   @Column({
     type: DataType.BOOLEAN,
-    allowNull: false,
+    allowNull: true,
   })
   @ApiProperty()
   requestDriversLicenseSuspension?: boolean
