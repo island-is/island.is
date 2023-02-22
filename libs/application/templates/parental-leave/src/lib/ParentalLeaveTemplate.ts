@@ -39,6 +39,7 @@ import { parentalLeaveFormMessages, statesMessages } from './messages'
 import {
   allEmployersHaveApproved,
   findActionName,
+  goToState,
   hasEmployer,
   needsOtherParentApproval,
 } from './parentalLeaveTemplateUtils'
@@ -627,6 +628,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       // },
       [States.APPROVED]: {
         entry: 'assignToVMST',
+        exit: 'setPreviousState',
         meta: {
           name: States.APPROVED,
           status: 'inprogress',
@@ -657,7 +659,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           CLOSED: { target: States.CLOSED },
-          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+          [DefaultEvents.EDIT]: {
+            target: States.EDIT_OR_ADD_PERIODS,
+          },
         },
       },
       [States.CLOSED]: {
@@ -684,7 +688,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       // Edit Flow States
       [States.EDIT_OR_ADD_PERIODS]: {
-        entry: ['createTempPeriods', 'removeNullPeriod', 'setNavId'],
+        entry: [
+          'createTempPeriods',
+          'removeNullPeriod',
+          'setNavId',
+          'setEvent',
+        ],
         exit: [
           'restorePeriodsFromTemp',
           'removeNullPeriod',
@@ -700,10 +709,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.25,
-          onExit: defineTemplateApi({
-            action: ApiModuleActions.validateApplication,
-            throwOnError: true,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -727,22 +732,68 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         on: {
           [DefaultEvents.SUBMIT]: [
             {
-              target: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
-              cond: hasEmployer,
-            },
-            {
-              target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+              target: States.EDIT_OR_ADD_PERIODS_VALIDATE,
             },
           ],
-          [DefaultEvents.ABORT]: [
+          [DefaultEvents.REJECT]: [
             {
+              cond: (application) => goToState(application, States.APPROVED),
               target: States.APPROVED,
+            },
+            {
+              cond: (application) =>
+                goToState(application, States.VINNUMALASTOFNUN_APPROVAL),
+              target: States.VINNUMALASTOFNUN_APPROVAL,
+            },
+            {
+              cond: (application) =>
+                goToState(application, States.EMPLOYER_EDITS_ACTION),
+              target: States.EMPLOYER_EDITS_ACTION,
+            },
+            {
+              cond: (application) =>
+                goToState(application, States.EMPLOYER_APPROVE_EDITS),
+              target: States.EMPLOYER_APPROVE_EDITS,
+            },
+            {
+              cond: (application) =>
+                goToState(
+                  application,
+                  States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
+                ),
+              target: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
             },
           ],
         },
       },
+      [States.EDIT_OR_ADD_PERIODS_VALIDATE]: {
+        always: [
+          {
+            target: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
+            cond: hasEmployer,
+          },
+          {
+            target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+          },
+        ],
+        meta: {
+          name: States.EDIT_OR_ADD_PERIODS_VALIDATE,
+          status: 'inprogress',
+          actionCard: {
+            description: statesMessages.editOrAddPeriodsDescription,
+          },
+          lifecycle: pruneAfterDays(1),
+          progress: 0.25,
+          onExit: [
+            defineTemplateApi({
+              action: ApiModuleActions.validateApplication,
+              throwOnError: true,
+            }),
+          ],
+        },
+      },
       [States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS]: {
-        exit: 'setEmployerReviewerNationalRegistryId',
+        exit: ['setEmployerReviewerNationalRegistryId', 'setPreviousState'],
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
           status: 'inprogress',
@@ -783,7 +834,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_APPROVE_EDITS]: {
-        entry: ['assignToVMST', 'removeNullPeriod'],
+        entry: ['assignToVMST', 'removeNullPeriod', 'setPreviousState'],
         exit: ['clearAssignees', 'setIsApprovedOnEmployer'],
         meta: {
           name: States.EMPLOYER_APPROVE_EDITS,
@@ -865,7 +916,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_EDITS_ACTION]: {
-        exit: 'restorePeriodsFromTemp',
+        exit: ['restorePeriodsFromTemp', 'setPreviousState'],
         meta: {
           name: States.EMPLOYER_EDITS_ACTION,
           status: 'inprogress',
@@ -906,7 +957,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_APPROVE_EDITS]: {
-        entry: ['assignToVMST', 'removeNullPeriod'],
+        entry: ['assignToVMST', 'removeNullPeriod', 'setPreviousState'],
         exit: ['clearTemp', 'resetAdditionalDocumentsArray', 'clearAssignees'],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVE_EDITS,
@@ -1420,6 +1471,28 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           assignees: [],
         },
       })),
+      setPreviousState: assign((context, event) => {
+        console.log(event)
+        const { application } = context
+        const { state } = application
+        const { answers } = application
+        const e = (event.type as unknown) as any
+        if (e === 'xstate.init') {
+          return context
+        }
+
+        if (
+          e === 'APPROVE' &&
+          state === 'residenceGrantApplicationNoBirthDate'
+        ) {
+          return context
+        }
+        if (e === 'REJECT' && state === 'residenceGrantApplication') {
+          return context
+        }
+        set(answers, 'previousState', state)
+        return context
+      }),
       setActionName: assign((context) => {
         const { application } = context
         const { answers } = application

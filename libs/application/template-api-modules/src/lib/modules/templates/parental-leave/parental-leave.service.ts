@@ -1253,7 +1253,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
     const nationalRegistryId = application.applicant
     const attachments = await this.getAttachments(application)
-
     try {
       const periods = await this.createPeriodsDTO(
         application,
@@ -1315,7 +1314,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
           e,
         )
       }
-
       return response
     } catch (e) {
       this.logger.error('Failed to send the parental leave application', e)
@@ -1346,7 +1344,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         nationalRegistryId,
         parentalLeave: parentalLeaveDTO,
       })
-
       return
     } catch (e) {
       this.logger.error('Failed to validate the parental leave application', e)

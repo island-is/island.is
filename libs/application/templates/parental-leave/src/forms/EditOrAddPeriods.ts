@@ -187,7 +187,7 @@ export const EditOrAddPeriods: Form = buildForm({
               title: parentalLeaveFormMessages.confirmation.title,
               actions: [
                 {
-                  event: 'ABORT',
+                  event: 'REJECT',
                   name: parentalLeaveFormMessages.confirmation.cancel,
                   type: 'reject',
                 },
