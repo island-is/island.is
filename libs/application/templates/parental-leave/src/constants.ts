@@ -73,7 +73,6 @@ export enum States {
 
   // Edit Flow
   EDIT_OR_ADD_PERIODS = 'editOrAddPeriods',
-  EDIT_OR_ADD_PERIODS_VALIDATE = 'editOrAddPeriodsValidate',
 
   EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS = 'employerWaitingToAssignForEdits',
   EMPLOYER_APPROVE_EDITS = 'employerApproveEdits',

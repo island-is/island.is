@@ -709,6 +709,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.25,
+          onExit: [
+            defineTemplateApi({
+              action: ApiModuleActions.validateApplication,
+              throwOnError: true,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,
@@ -732,10 +738,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         on: {
           [DefaultEvents.SUBMIT]: [
             {
-              target: States.EDIT_OR_ADD_PERIODS_VALIDATE,
+              target: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
+              cond: hasEmployer,
+            },
+            {
+              target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
             },
           ],
-          [DefaultEvents.REJECT]: [
+          [DefaultEvents.ABORT]: [
             {
               cond: (application) => goToState(application, States.APPROVED),
               target: States.APPROVED,
@@ -763,32 +773,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 ),
               target: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
             },
-          ],
-        },
-      },
-      [States.EDIT_OR_ADD_PERIODS_VALIDATE]: {
-        always: [
-          {
-            target: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
-            cond: hasEmployer,
-          },
-          {
-            target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
-          },
-        ],
-        meta: {
-          name: States.EDIT_OR_ADD_PERIODS_VALIDATE,
-          status: 'inprogress',
-          actionCard: {
-            description: statesMessages.editOrAddPeriodsDescription,
-          },
-          lifecycle: pruneAfterDays(1),
-          progress: 0.25,
-          onExit: [
-            defineTemplateApi({
-              action: ApiModuleActions.validateApplication,
-              throwOnError: true,
-            }),
           ],
         },
       },
