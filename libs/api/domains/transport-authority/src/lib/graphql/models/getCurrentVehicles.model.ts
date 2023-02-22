@@ -10,27 +10,6 @@ export class VehicleValidationErrorMessage {
 }
 
 @ObjectType()
-export class VehiclesCurrentVehicleWithOwnerchangeChecks {
-  @Field({ nullable: true })
-  permno?: string
-
-  @Field({ nullable: true })
-  make?: string
-
-  @Field({ nullable: true })
-  color?: string
-
-  @Field({ nullable: true })
-  role?: string
-
-  @Field(() => Boolean, { nullable: true })
-  isDebtLess?: boolean
-
-  @Field(() => [VehicleValidationErrorMessage], { nullable: true })
-  validationErrorMessages?: VehicleValidationErrorMessage[] | null
-}
-
-@ObjectType()
 export class VehicleOwnerchangeChecksByPermno {
   @Field(() => Boolean, { nullable: true })
   isDebtLess?: boolean
