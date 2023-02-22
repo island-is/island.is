@@ -1,24 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import Cookies from 'js-cookie'
+import { stringHash } from '@island.is/shared/utils'
 import { useQuery } from '@apollo/client'
 import { AlertBanner as AlertBannerSchema } from '@island.is/api/schema'
 import { GET_SERVICE_PORTAL_ALERT_BANNERS_QUERY } from '../../lib/queries/alertBanners'
 import { useLocale } from '@island.is/localization'
 
 export type AlertBannerType = AlertBannerSchema & { bannerId: string }
-
-// Taken from here: https://stackoverflow.com/a/7616484
-const stringHash = (str: string): number => {
-  let hash = 0,
-    i,
-    chr
-  for (i = 0; i < str.length; i++) {
-    chr = str.charCodeAt(i)
-    hash = (hash << 5) - hash + chr
-    hash |= 0 // Convert to 32bit integer
-  }
-  return hash
-}
 
 export const useAlertBanners = () => {
   const allBanners = useRef<AlertBannerSchema[]>([])
