@@ -23,18 +23,20 @@ const CompletedScreen: FC<FieldBaseProps> = ({ application }) => {
       // return URL.createObjectURL(blob)
       const uri = URL.createObjectURL(blob)
       links.push(
-        <Button
-          colorScheme="default"
-          icon="open"
-          iconType="outline"
-          onClick={() => window.open(uri, '_blank')}
-          preTextIconType="filled"
-          size="default"
-          type="button"
-          variant="ghost"
-        >
-          {tempData[i].fileName}
-        </Button>,
+        <Box marginBottom={2} marginTop={2}>
+          <Button
+            colorScheme="default"
+            icon="open"
+            iconType="outline"
+            onClick={() => window.open(uri, '_blank')}
+            preTextIconType="filled"
+            size="default"
+            type="button"
+            variant="ghost"
+          >
+            {tempData[i].fileName}
+          </Button>
+        </Box>,
       )
     }
   }
@@ -43,8 +45,6 @@ const CompletedScreen: FC<FieldBaseProps> = ({ application }) => {
     <Stack space={1}>
       <Box marginBottom={2} marginTop={2}>
         {links}
-
-        <Text lineHeight="lg">TODO: Hér koma PDF tenglar</Text>
       </Box>
     </Stack>
   )
