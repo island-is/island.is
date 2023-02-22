@@ -12,6 +12,8 @@ import {
   ExistingChildApplication,
   PregnancyStatus,
   ChildrenWithoutRightsAndExistingApplications,
+  getApplicationAnswers,
+  getApplicationExternalData,
 } from '@island.is/application/templates/parental-leave'
 
 // We do not require hasRights or remainingDays in this step
@@ -28,6 +30,9 @@ export const applicationsToChildInformation = (
   const result: ChildInformationWithoutRights[] = []
 
   for (const application of applications) {
+    const { applicantGenderCode } = getApplicationExternalData(application.externalData)
+    const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(application.answers)
+
     const selectedChild = getSelectedChild(
       application.answers,
       application.externalData,
@@ -58,6 +63,10 @@ export const applicationsToChildInformation = (
           primaryParentNationalRegistryId: application.applicant,
           transferredDays,
           multipleBirthsDays: maxMultipleBirthDays - multipleBirthsRequestDays,
+          primaryParentGenderCode: applicantGenderCode,
+          primaryParentTypeOfApplication: noChildrenFoundTypeOfApplication,
+          adoptionDate: selectedChild.adoptionDate,
+          dateOfBirth: selectedChild.dateOfBirth,
         })
       } else {
         result.push({
@@ -99,6 +108,9 @@ export const applicationsToExistingChildApplication = (
 export const getChildrenFromMockData = (
   application: Application,
 ): ChildInformation => {
+  const { applicantGenderCode } = getApplicationExternalData(application.externalData)
+  const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(application.answers)
+
   const parentalRelation = getValueViaPath(
     application.answers,
     'mock.useMockedParentalRelation',
@@ -147,6 +159,8 @@ export const getChildrenFromMockData = (
           primaryParentNationalRegistryId,
           hasRights: secondaryParentRightsDays > 0,
           remainingDays: secondaryParentRightsDays,
+          primaryParentGenderCode: applicantGenderCode,
+          primaryParentTypeOfApplication: noChildrenFoundTypeOfApplication,
         }
 
   return child

@@ -125,7 +125,7 @@ export class ChildrenService {
 
     if (children.length <= 0 && existingApplications.length <= 0) {
       // Instead of throwing error, ask applicant questions
-      // father without mother application
+      // foster care or father without mother
 
       return {
         children: [],

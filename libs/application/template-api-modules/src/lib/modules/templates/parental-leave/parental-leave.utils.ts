@@ -27,6 +27,7 @@ import {
   NO,
   formatBankInfo,
   PERMANENT_FOSTER_CARE,
+  ChildInformation,
 } from '@island.is/application/templates/parental-leave'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
@@ -207,9 +208,8 @@ export const getRightsCode = (application: Application): string => {
   const isSelfEmployed = answers.isSelfEmployed === YES
   const isUnemployed = answers.applicationType === PARENTAL_GRANT
   const isStudent = answers.applicationType === PARENTAL_GRANT_STUDENTS
-  const isPermanentFosterCare = answers.noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE
 
-  const primaryParentPrefix = isPermanentFosterCare ? 'M-FÓ' : 'M'
+  const primaryParentPrefix = parentPrefix(application, selectedChild)
 
   if (selectedChild.parentalRelation === ParentalRelations.primary) {
     if (isUnemployed) {
@@ -227,31 +227,66 @@ export const getRightsCode = (application: Application): string => {
   const parentsAreInRegisteredCohabitation =
     selectedChild.primaryParentNationalRegistryId === spouse?.nationalId
 
-  const parentPrefix = applicantIsMale(application) ? (isPermanentFosterCare ? 'F-FÓ' : 'F') : (isPermanentFosterCare ? 'FO-FÓ' : 'FO')
+  const secondaryParentPrefix = parentPrefix(application, selectedChild)
 
   if (parentsAreInRegisteredCohabitation) {
     // If this secondary parent is in registered cohabitation with primary parent
     // then they will automatically be granted custody
     if (isUnemployed) {
-      return `${parentPrefix}-FS`
+      return `${secondaryParentPrefix}-FS`
     } else if (isStudent) {
-      return `${parentPrefix}-FSN`
+      return `${secondaryParentPrefix}-FSN`
     } else if (isSelfEmployed) {
-      return `${parentPrefix}-S-GR`
+      return `${secondaryParentPrefix}-S-GR`
     } else {
-      return `${parentPrefix}-L-GR`
+      return `${secondaryParentPrefix}-L-GR`
     }
   }
 
   if (isUnemployed) {
-    return `${parentPrefix}-FL-FS`
+    return `${secondaryParentPrefix}-FL-FS`
   } else if (isStudent) {
-    return `${parentPrefix}-FL-FSN`
+    return `${secondaryParentPrefix}-FL-FSN`
   } else if (isSelfEmployed) {
-    return `${parentPrefix}-FL-S-GR`
+    return `${secondaryParentPrefix}-FL-S-GR`
   } else {
-    return `${parentPrefix}-FL-L-GR`
+    return `${secondaryParentPrefix}-FL-L-GR`
   }
+}
+
+export const parentPrefix = (
+  application: Application,
+  selectedChild: ChildInformation,
+) => {
+  const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
+    application.answers,
+  )
+
+  const isFosterCare = isPermanentFosterCare(selectedChild, noChildrenFoundTypeOfApplication)
+   
+  if (isFosterCare) {
+    if (selectedChild.parentalRelation === ParentalRelations.primary) {
+      return applicantIsMale(application) ? 'F-FÓ' : 'M-FÓ'
+    } else {
+      if (selectedChild.primaryParentGenderCode === '1') {
+        return applicantIsMale(application) ? 'FO-FÓ' : 'M-FÓ'
+      } else {
+        return applicantIsMale(application) ?  'F-FÓ' : 'FO-FÓ'
+      }
+    }
+  } else {
+    return selectedChild.parentalRelation === ParentalRelations.primary
+      ? 'M'
+      : applicantIsMale(application)
+      ? 'F'
+      : 'FO'
+  }
+}
+
+export const isPermanentFosterCare = (selectedChild: ChildInformation, noChildrenFoundTypeOfApplication: string) => {
+  return  selectedChild.parentalRelation === ParentalRelations.primary
+  ? noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE
+  : selectedChild.primaryParentTypeOfApplication === PERMANENT_FOSTER_CARE
 }
 
 export const answerToPeriodsDTO = (answers: AnswerPeriod[]) => {
@@ -295,8 +330,6 @@ export const transformApplicationToParentalLeaveDTO = (
     isSelfEmployed,
     isReceivingUnemploymentBenefits,
     noChildrenFoundTypeOfApplication,
-    fosterCareAdoptionDate,
-    fosterCareBirthDate,
   } = getApplicationAnswers(application.answers)
 
   const { applicationFundId } = getApplicationExternalData(
@@ -306,19 +339,21 @@ export const transformApplicationToParentalLeaveDTO = (
   const { email, phoneNumber } = getApplicantContactInfo(application)
   const selfEmployed = isSelfEmployed === YES
   const receivingUnemploymentBenefits = isReceivingUnemploymentBenefits === YES
-
   const testData: string = onlyValidate!.toString()
+  const isFosterCare = isPermanentFosterCare(selectedChild, noChildrenFoundTypeOfApplication)
 
   return {
     applicationId: application.id,
     applicationFundId: applicationFundId,
     applicant: application.applicant,
     otherParentId: getOtherParentId(application),
-    expectedDateOfBirth: noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE ? '' : selectedChild.expectedDateOfBirth,
+    expectedDateOfBirth: isFosterCare
+      ? ''
+      : selectedChild.expectedDateOfBirth,
     // TODO: get true date of birth, not expected
     // will get it from a new Þjóðskrá API (returns children in custody of a national registry id)
-    dateOfBirth: noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE ? fosterCareBirthDate : '',
-    adoptionDate: noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE ? fosterCareAdoptionDate : '',
+    dateOfBirth: isFosterCare ? selectedChild.dateOfBirth! : '',
+    adoptionDate: isFosterCare ? selectedChild.adoptionDate : '',
     email,
     phoneNumber,
     paymentInfo: {

@@ -172,10 +172,18 @@ export class ParentalLeaveService extends BaseTemplateApiService {
   // and the application is adoption | foster care | without primary parent
   // we make a children data
   async setChildrenInformation({
-    application, auth
+    application,
+    auth,
   }: TemplateApiModuleActionProps) {
-    const { noPrimaryParentBirthDate, noChildrenFoundTypeOfApplication, fosterCareAdoptionDate } = getApplicationAnswers(
-      application.answers,
+    const {
+      noPrimaryParentBirthDate,
+      noChildrenFoundTypeOfApplication,
+      fosterCareAdoptionDate,
+      fosterCareBirthDate,
+    } = getApplicationAnswers(application.answers)
+
+    const { applicantGenderCode } = getApplicationExternalData(
+      application.externalData,
     )
 
     if (noChildrenFoundTypeOfApplication === OTHER_NO_CHILDREN_FOUND) {
@@ -185,6 +193,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         expectedDateOfBirth: noPrimaryParentBirthDate,
         parentalRelation: ParentalRelations.secondary,
         primaryParentNationalRegistryId: '',
+        primaryParentGenderCode: applicantGenderCode,
+        primaryParentTypeOfApplication: noChildrenFoundTypeOfApplication,
       }
 
       const children: ChildInformation[] = [child]
@@ -194,11 +204,13 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       }
     }
 
-    if (noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE) { 
+    if (noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE) {
       const child: ChildInformation = {
         hasRights: true,
         remainingDays: 180,
-        expectedDateOfBirth: fosterCareAdoptionDate, // er þetta ok? 
+        expectedDateOfBirth: fosterCareAdoptionDate, // sleppa að setja þetta, eða er þetta ok?
+        adoptionDate: fosterCareAdoptionDate,
+        dateOfBirth: fosterCareBirthDate,
         parentalRelation: ParentalRelations.primary,
       }
 

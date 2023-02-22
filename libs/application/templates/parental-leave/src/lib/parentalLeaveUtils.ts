@@ -566,7 +566,7 @@ export function getApplicationExternalData(
   const applicantGenderCode = getValueViaPath(
     externalData,
     'person.data.genderCode',
-  )
+  ) as string
 
   const applicantName = (getValueViaPath(
     externalData,
@@ -606,7 +606,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
   const noChildrenFoundTypeOfApplication = getValueViaPath(
     answers,
     'noChildrenFound.typeOfApplication',
-  ) as String
+  ) as string
 
   const fosterCareBirthDate = getValueViaPath(
     answers,

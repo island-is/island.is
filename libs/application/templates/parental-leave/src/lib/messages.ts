@@ -881,6 +881,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Barn væntanlegt {dateOfBirth}',
       description: 'Child copy radio button',
     },
+    fosterCare: {
+      id: 'pl.application:selectChild.foster.care',
+      defaultMessage: 'Barn tekið í varanlegt fóstur {dateOfBirth}',
+      description: 'Child copy radio button',
+    },
     choose: {
       id: 'pl.application:selectChild.choose',
       defaultMessage: 'Velja',
