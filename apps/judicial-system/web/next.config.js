@@ -24,7 +24,4 @@ module.exports = withVanillaExtract({
   env: {
     API_MOCKS: process.env.API_MOCKS ?? '',
   },
-  devIndicators: {
-    autoPrerender: false,
-  },
 })

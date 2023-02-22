@@ -32,7 +32,7 @@
       "outputs": ["{options.outputPath}"]
     },
     "build-server": {
-      "executor": "@nrwl/node:webpack",
+      "executor": "@nrwl/webpack:webpack",
       "options": {
         "outputPath": "dist/apps/judicial-system/web",
         "main": "apps/judicial-system/web/server.ts",
