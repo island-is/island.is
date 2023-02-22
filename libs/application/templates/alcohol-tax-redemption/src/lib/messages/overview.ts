@@ -14,7 +14,7 @@ export const overview = defineMessages({
   },
   alertTitle: {
     id: 'atr.application:overview.alertTitle',
-    defaultMessage: 'Þú hefur hlaupið 1. apríl!',
+    defaultMessage: 'Til hamingju!',
     description: 'Title for overviewSection',
   },
   expandableDescription: {
