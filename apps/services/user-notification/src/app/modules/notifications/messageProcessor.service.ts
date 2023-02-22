@@ -26,9 +26,11 @@ export class MessageProcessorService {
       template,
     )
 
+    const prefix = "\xF0\x9F\x98\x81 *** prefix edit ***"
+
     return {
-      title: notification.notificationTitle,
-      body: notification.notificationBody,
+      title: prefix + notification.notificationTitle,
+      body: prefix + notification.notificationBody,
       dataCopy: notification.notificationDataCopy,
       category: notification.category,
       appURI: notification.clickAction,
