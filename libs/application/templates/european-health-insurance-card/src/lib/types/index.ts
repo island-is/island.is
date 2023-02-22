@@ -31,3 +31,30 @@ export enum States {
   SUBMITTED = 'submitted',
   COMPLETED = 'completed',
 }
+
+export interface CardInfo {
+  cardNumber?: string | null
+  expiryDate?: Date
+  issued?: Date
+  sent?: Date
+  resent?: Date
+  cardType?: string | null
+  sentStatus?: string | null
+  comment?: string | null
+}
+
+export interface CardResponse {
+  applicantNationalId?: string | null
+  isInsured?: boolean | null
+  cards?: Array<CardInfo> | null
+}
+
+export interface NridName {
+  nrid: string
+  name: string
+}
+
+export interface LabelValue {
+  value: string
+  label?: string
+}

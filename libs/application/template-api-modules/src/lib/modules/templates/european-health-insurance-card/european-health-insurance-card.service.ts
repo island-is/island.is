@@ -131,6 +131,20 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
         applicantnationalids: this.toCommaDelimitedList(nridArr),
       })
 
+      // TODO: Remove. Temporary malipulation of dummy data for Emilía Íris Sveinsdóttir
+      for (let i = 0; i < resp.length; i++) {
+        if (i === 0) {
+          resp[i].applicantNationalId = '2409151460'
+        }
+        if (i === 1) {
+          resp[i].applicantNationalId = '0107721419'
+        }
+
+        if (i === 2) {
+          resp[i].applicantNationalId = '1111111119'
+        }
+      }
+
       return resp
     } catch (e) {
       this.logger.error(e)

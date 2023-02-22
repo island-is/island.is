@@ -22,8 +22,9 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 
-import { NationalRegistry } from '../lib/types'
+import { CardResponse, NationalRegistry } from '../lib/types'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
+import { getFromRegistry } from '../lib/helpers/applicantHelper'
 
 /* eslint-disable-next-line */
 export interface EuropeanHealthInsuranceCardProps {}
@@ -96,40 +97,28 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               title: '',
               options: (application: Application) => {
                 console.log(application, ' here')
-                const nationalRegistry = application.externalData
-                  .nationalRegistry.data as NationalRegistry
-                const nationalRegistrySpouse = application.externalData
-                  .nationalRegistrySpouse.data as NationalRegistry
-                const nationalRegistryDataChildren = (application?.externalData
-                  ?.childrenCustodyInformation as unknown) as NationalRegistry
-                const applying = []
+                const fromNationaRegistry = getFromRegistry(application)
+                console.log(fromNationaRegistry, 'fromNationaRegistry')
+                const applying: Array<{ value: any; label: string }> = []
 
-                applying.push({
-                  value: [
-                    nationalRegistry.nationalId,
-                    nationalRegistry.fullName,
-                  ],
-                  label: nationalRegistry.fullName,
+                const cardResponse = application.externalData.cardResponse
+                  .data as CardResponse[]
+
+                console.log(cardResponse, 'CardResponse')
+
+                cardResponse.forEach((x) => {
+                  const name = fromNationaRegistry.find(
+                    (y) => y.nrid === x.applicantNationalId,
+                  )?.name!
+                  // const value = x.applicantNationalId + ',' + name
+                  applying.push({
+                    value: [x.applicantNationalId, name],
+                    label: name,
+                  })
                 })
-                if (nationalRegistrySpouse?.nationalId) {
-                  applying.push({
-                    value: [
-                      nationalRegistrySpouse.nationalId,
-                      nationalRegistrySpouse.name,
-                    ],
-                    label: nationalRegistrySpouse.name,
-                  })
-                }
 
-                for (const i in nationalRegistryDataChildren?.data) {
-                  applying.push({
-                    value: [
-                      nationalRegistryDataChildren.data[i].nationalId,
-                      nationalRegistryDataChildren.data[i].fullName,
-                    ],
-                    label: nationalRegistryDataChildren.data[i].fullName,
-                  })
-                }
+                console.log(applying, 'Applying')
+
                 return applying as Array<{ value: any; label: string }>
               },
             }),

@@ -1,8 +1,44 @@
 import { FormValue, Application } from '@island.is/application/types'
-import { NationalRegistry } from '../types'
+import { NationalRegistry, NridName } from '../types'
 
 function getObjectKey(obj: any, value: any) {
   return Object.keys(obj).filter((key) => obj[key] === value)
+}
+
+export function getFromRegistry(formValues: Application<FormValue>) {
+  const nridArr: NridName[] = []
+  console.log(formValues.externalData, 'formValues.externalData')
+  const userData = formValues.externalData.nationalRegistry
+    ?.data as NationalRegistry
+
+  console.log(userData, 'userData')
+  if (userData?.nationalId) {
+    nridArr.push({ nrid: userData?.nationalId, name: userData?.fullName })
+  }
+  const spouseData = formValues?.externalData?.nationalRegistrySpouse
+    ?.data as NationalRegistry
+
+  if (spouseData?.nationalId) {
+    console.log(spouseData, 'spouseData')
+    nridArr.push({ nrid: spouseData?.nationalId, name: spouseData?.name })
+  }
+
+  const custodyData = (formValues?.externalData?.childrenCustodyInformation
+    ?.data as unknown) as NationalRegistry[]
+
+  if (custodyData) {
+    for (let i = 0; i < custodyData.length; i++) {
+      console.log(custodyData, 'custodyData')
+      nridArr.push({
+        nrid: custodyData[i].nationalId,
+        name: custodyData[i].fullName,
+      })
+    }
+  }
+
+  console.log(nridArr, 'nridArr')
+
+  return nridArr
 }
 
 export function getEhicApplicants(
