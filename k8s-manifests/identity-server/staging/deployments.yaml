@@ -18,6 +18,14 @@ auth-admin-web:
     spec:
       containers:
         env:
+          - name: 'NEXT_PUBLIC_BACKEND_URL'
+            value: '/backend'
+          - name: 'IDENTITYSERVER_DOMAIN'
+            value: 'identity-server.staging01.devland.is'
+          - name: 'BASE_URL'
+            value: 'https://identity-server.staging01.devland.is/admin'
+          - name: 'NEXTAUTH_URL'
+            value: 'https://identity-server.staging01.devland.is/admin/api/auth'
           - name: 'CONFIGCAT_SDK_KEY'
             valueFrom:
               secretKeyRef:
@@ -28,10 +36,6 @@ auth-admin-web:
               secretKeyRef:
                 key: '/k8s/auth-admin-web/IDENTITYSERVER_SECRET'
                 name: 'IDENTITYSERVER_SECRET'
-          - name: 'BASE_URL'
-            value: 'https://identity-server.staging01.devland.is/admin'
-          - name: 'NEXTAUTH_URL'
-            value: 'https://identity-server.staging01.devland.is/admin/api/auth'
         image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/auth-admin-web'
         imagePullPolicy: 'IfNotPresent'
         livenessProbe:
@@ -82,6 +86,50 @@ identity-server:
     spec:
       containers:
         env:
+          - name: 'AWS__CloudWatch__AuditLogGroup'
+            value: '/identity-server/audit-log'
+          - name: 'ASPNETCORE_URLS'
+            value: 'http://*:5000'
+          - name: 'CORECLR_ENABLE_PROFILING'
+            value: '1'
+          - name: 'CORECLR_PROFILER'
+            value: '{846F5F1C-F9AE-4B07-969E-05C26BC060D8}'
+          - name: 'CORECLR_PROFILER_PATH'
+            value: '/opt/datadog/Datadog.Trace.ClrProfiler.Native.so'
+          - name: 'DD_INTEGRATIONS'
+            value: '/opt/datadog/integrations.json'
+          - name: 'DD_DOTNET_TRACER_HOME'
+            value: '/opt/datadog'
+          - name: 'Datadog__Metrics__Port'
+            value: '5003'
+          - name: 'AudkenniSettings__Retries'
+            value: '24'
+          - name: 'AWS__SystemsManager__ParameterStore__DataProtectionPrefix'
+            value: '/k8s/identity-server/DataProtectionSecret'
+          - name: 'CacheSettings__Enabled'
+            value: 'true'
+          - name: 'CacheSettings__Memcached__Address'
+            value: 'identity-server.ab9ckb.cfg.euw1.cache.amazonaws.com'
+          - name: 'CacheSettings__Memcached__Port'
+            value: '11211'
+          - name: 'CacheSettings__Redis__Address'
+            value: 'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com'
+          - name: 'CacheSettings__Redis__Port'
+            value: '6379'
+          - name: 'IdentityServer__EnableFakeLogin'
+            value: 'true'
+          - name: 'IdentityServer__EnableFeatureDeploymentWildcards'
+            value: 'true'
+          - name: 'IdentityServer__KeyManagement__Enabled'
+            value: 'true'
+          - name: 'PersistenceSettings__BaseAddress'
+            value: 'http://web-services-auth-ids-api'
+          - name: 'PersistenceSettings__UserProfileBaseAddress'
+            value: 'http://web-service-portal-api.service-portal.svc.cluster.local'
+          - name: 'Application__MinCompletionPortThreads'
+            value: '10'
+          - name: 'NO_UPDATE_NOTIFIER'
+            value: 'true'
           - name: 'CONFIGCAT_SDK_KEY'
             valueFrom:
               secretKeyRef:
@@ -127,32 +175,6 @@ identity-server:
               secretKeyRef:
                 key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
                 name: 'FeatureFlags__ConfigCatSdkKey'
-          - name: 'AWS__SystemsManager__ParameterStore__DataProtectionPrefix'
-            value: '/k8s/identity-server/DataProtectionSecret'
-          - name: 'CacheSettings__Enabled'
-            value: 'true'
-          - name: 'CacheSettings__Memcached__Address'
-            value: 'identity-server.ab9ckb.cfg.euw1.cache.amazonaws.com'
-          - name: 'CacheSettings__Memcached__Port'
-            value: '11211'
-          - name: 'CacheSettings__Redis__Address'
-            value: 'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com'
-          - name: 'CacheSettings__Redis__Port'
-            value: '6379'
-          - name: 'IdentityServer__EnableFakeLogin'
-            value: 'true'
-          - name: 'IdentityServer__EnableFeatureDeploymentWildcards'
-            value: 'true'
-          - name: 'IdentityServer__KeyManagement__Enabled'
-            value: 'true'
-          - name: 'PersistenceSettings__BaseAddress'
-            value: 'http://web-services-auth-ids-api'
-          - name: 'PersistenceSettings__UserProfileBaseAddress'
-            value: 'http://web-service-portal-api.service-portal.svc.cluster.local'
-          - name: 'Application__MinCompletionPortThreads'
-            value: '10'
-          - name: 'NO_UPDATE_NOTIFIER'
-            value: 'true'
         image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/identity-server'
         imagePullPolicy: 'IfNotPresent'
         livenessProbe:
@@ -182,6 +204,8 @@ identity-server:
         volumeMounts:
           - mountPath: '/etc/config/ids-signing.pfx'
             name: 'ids-signing.pfx'
+          - mountPath: '/keys'
+            name: 'identity-server'
       serviceAccountName: 'identity-server'
     strategy:
       rollingUpdate:
@@ -210,11 +234,26 @@ services-auth-admin-api:
     spec:
       containers:
         env:
+          - name: 'IDENTITY_SERVER_ISSUER_URL'
+            value: 'https://identity-server.staging01.devland.is'
           - name: 'CONFIGCAT_SDK_KEY'
             valueFrom:
               secretKeyRef:
                 key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
                 name: 'CONFIGCAT_SDK_KEY'
+          - name: 'DB_USER'
+            value: 'servicesauth'
+          - name: 'DB_NAME'
+            value: 'servicesauth'
+          - name: 'DB_HOST'
+            value: 'postgres-applications.internal'
+          - name: 'DB_REPLICAS_HOST'
+            value: 'postgres-applications.internal'
+          - name: 'DB_PASS'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/services-auth/api/DB_PASSWORD'
+                name: 'DB_PASS'
         image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-admin-api'
         imagePullPolicy: 'IfNotPresent'
         livenessProbe:
@@ -265,6 +304,30 @@ services-auth-delegation-api:
     spec:
       containers:
         env:
+          - name: 'IDENTITY_SERVER_CLIENT_ID'
+            value: '@island.is/clients/auth-api'
+          - name: 'IDENTITY_SERVER_ISSUER_URL'
+            value: 'https://identity-server.staging01.devland.is'
+          - name: 'XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN'
+            value: 'true'
+          - name: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH'
+            value: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
+          - name: 'XROAD_NATIONAL_REGISTRY_REDIS_NODES'
+            value: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+          - name: 'XROAD_BASE_PATH'
+            value: 'http://securityserver.staging01.devland.is'
+          - name: 'XROAD_BASE_PATH_WITH_ENV'
+            value: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
+          - name: 'XROAD_TLS_BASE_PATH'
+            value: 'https://securityserver.staging01.devland.is'
+          - name: 'XROAD_TLS_BASE_PATH_WITH_ENV'
+            value: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
+          - name: 'XROAD_CLIENT_ID'
+            value: 'IS-TEST/GOV/5501692829/island-is-client'
+          - name: 'XROAD_RSK_PROCURING_REDIS_NODES'
+            value: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+          - name: 'XROAD_RSK_PROCURING_PATH'
+            value: 'IS-TEST/GOV/5402696029/Skatturinn/prokura-v1'
           - name: 'CONFIGCAT_SDK_KEY'
             valueFrom:
               secretKeyRef:
@@ -290,20 +353,19 @@ services-auth-delegation-api:
               secretKeyRef:
                 key: '/k8s/xroad/client/RSK/PASSWORD'
                 name: 'RSK_PASSWORD'
-          - name: 'XROAD_BASE_PATH'
-            value: 'http://securityserver.staging01.devland.is'
-          - name: 'XROAD_BASE_PATH_WITH_ENV'
-            value: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
-          - name: 'XROAD_TLS_BASE_PATH'
-            value: 'https://securityserver.staging01.devland.is'
-          - name: 'XROAD_TLS_BASE_PATH_WITH_ENV'
-            value: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
-          - name: 'XROAD_CLIENT_ID'
-            value: 'IS-TEST/GOV/5501692829/island-is-client'
-          - name: 'XROAD_RSK_PROCURING_REDIS_NODES'
-            value: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
-          - name: 'XROAD_RSK_PROCURING_PATH'
-            value: 'IS-TEST/GOV/5402696029/Skatturinn/prokura-v1'
+          - name: 'DB_USER'
+            value: 'servicesauth'
+          - name: 'DB_NAME'
+            value: 'servicesauth'
+          - name: 'DB_HOST'
+            value: 'postgres-applications.internal'
+          - name: 'DB_REPLICAS_HOST'
+            value: 'postgres-applications.internal'
+          - name: 'DB_PASS'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/services-auth/api/DB_PASSWORD'
+                name: 'DB_PASS'
         image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-delegation-api'
         imagePullPolicy: 'IfNotPresent'
         livenessProbe:
@@ -354,17 +416,14 @@ services-auth-ids-api:
     spec:
       containers:
         env:
-          - name: 'DB_PASS'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/services-auth/api/DB_PASSWORD'
-                name: 'DB_PASS'
-          - name: 'DB_NAME'
-            value: 'servicesauth'
-          - name: 'DB_HOST'
-            value: 'postgres-applications.internal'
-          - name: 'DB_REPLICAS_HOST'
-            value: 'postgres-applications.internal'
+          - name: 'IDENTITY_SERVER_CLIENT_ID'
+            value: '@island.is/clients/auth-api'
+          - name: 'IDENTITY_SERVER_ISSUER_URL'
+            value: 'https://identity-server.staging01.devland.is'
+          - name: 'PUBLIC_URL'
+            value: 'https://identity-server.staging01.devland.is/api'
+          - name: 'USER_PROFILE_CLIENT_URL'
+            value: 'http://web-service-portal-api.service-portal.svc.cluster.local'
           - name: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH'
             value: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
           - name: 'XROAD_NATIONAL_REGISTRY_REDIS_NODES'
@@ -391,6 +450,39 @@ services-auth-ids-api:
             value: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
           - name: 'XROAD_RSK_PROCURING_PATH'
             value: 'IS-TEST/GOV/5402696029/Skatturinn/prokura-v1'
+          - name: 'CONFIGCAT_SDK_KEY'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+                name: 'CONFIGCAT_SDK_KEY'
+          - name: 'IDENTITY_SERVER_CLIENT_SECRET'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
+                name: 'IDENTITY_SERVER_CLIENT_SECRET'
+          - name: 'RSK_USERNAME'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/xroad/client/RSK/USERNAME'
+                name: 'RSK_USERNAME'
+          - name: 'RSK_PASSWORD'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/xroad/client/RSK/PASSWORD'
+                name: 'RSK_PASSWORD'
+          - name: 'DB_USER'
+            value: 'servicesauth'
+          - name: 'DB_NAME'
+            value: 'servicesauth'
+          - name: 'DB_HOST'
+            value: 'postgres-applications.internal'
+          - name: 'DB_REPLICAS_HOST'
+            value: 'postgres-applications.internal'
+          - name: 'DB_PASS'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/services-auth/api/DB_PASSWORD'
+                name: 'DB_PASS'
         image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-ids-api'
         imagePullPolicy: 'IfNotPresent'
         livenessProbe:
@@ -420,7 +512,20 @@ services-auth-ids-api:
             - 'db:migrate'
           command:
             - 'npx'
-          env: []
+          env:
+            - name: 'DB_USER'
+              value: 'servicesauth'
+            - name: 'DB_NAME'
+              value: 'servicesauth'
+            - name: 'DB_HOST'
+              value: 'postgres-applications.internal'
+            - name: 'DB_REPLICAS_HOST'
+              value: 'postgres-applications.internal'
+            - name: 'DB_PASS'
+              valueFrom:
+                secretKeyRef:
+                  key: '/k8s/services-auth/api/DB_PASSWORD'
+                  name: 'DB_PASS'
           image: ''
           name: 'migrations'
         - args:
@@ -428,7 +533,20 @@ services-auth-ids-api:
             - 'db:seed:all'
           command:
             - 'npx'
-          env: []
+          env:
+            - name: 'DB_USER'
+              value: 'servicesauth'
+            - name: 'DB_NAME'
+              value: 'servicesauth'
+            - name: 'DB_HOST'
+              value: 'postgres-applications.internal'
+            - name: 'DB_REPLICAS_HOST'
+              value: 'postgres-applications.internal'
+            - name: 'DB_PASS'
+              valueFrom:
+                secretKeyRef:
+                  key: '/k8s/services-auth/api/DB_PASSWORD'
+                  name: 'DB_PASS'
           image: ''
           name: 'seed'
     strategy:
@@ -458,11 +576,26 @@ services-auth-personal-representative:
     spec:
       containers:
         env:
+          - name: 'IDENTITY_SERVER_ISSUER_URL'
+            value: 'https://identity-server.staging01.devland.is'
           - name: 'CONFIGCAT_SDK_KEY'
             valueFrom:
               secretKeyRef:
                 key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
                 name: 'CONFIGCAT_SDK_KEY'
+          - name: 'DB_USER'
+            value: 'servicesauth'
+          - name: 'DB_NAME'
+            value: 'servicesauth'
+          - name: 'DB_HOST'
+            value: 'postgres-applications.internal'
+          - name: 'DB_REPLICAS_HOST'
+            value: 'postgres-applications.internal'
+          - name: 'DB_PASS'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/services-auth/api/DB_PASSWORD'
+                name: 'DB_PASS'
         image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative'
         imagePullPolicy: 'IfNotPresent'
         livenessProbe:
@@ -513,11 +646,26 @@ services-auth-personal-representative-public:
     spec:
       containers:
         env:
+          - name: 'IDENTITY_SERVER_ISSUER_URL'
+            value: 'https://identity-server.staging01.devland.is'
           - name: 'CONFIGCAT_SDK_KEY'
             valueFrom:
               secretKeyRef:
                 key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
                 name: 'CONFIGCAT_SDK_KEY'
+          - name: 'DB_USER'
+            value: 'servicesauth'
+          - name: 'DB_NAME'
+            value: 'servicesauth'
+          - name: 'DB_HOST'
+            value: 'postgres-applications.internal'
+          - name: 'DB_REPLICAS_HOST'
+            value: 'postgres-applications.internal'
+          - name: 'DB_PASS'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/services-auth/api/DB_PASSWORD'
+                name: 'DB_PASS'
         image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative-public'
         imagePullPolicy: 'IfNotPresent'
         livenessProbe:
@@ -568,6 +716,36 @@ services-auth-public-api:
     spec:
       containers:
         env:
+          - name: 'IDENTITY_SERVER_CLIENT_ID'
+            value: '@island.is/clients/auth-api'
+          - name: 'IDENTITY_SERVER_ISSUER_URL'
+            value: 'https://identity-server.staging01.devland.is'
+          - name: 'PUBLIC_URL'
+            value: 'https://identity-server.staging01.devland.is/api'
+          - name: 'XROAD_TJODSKRA_API_PATH'
+            value: '/SKRA-Protected/Einstaklingar-v1'
+          - name: 'XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN'
+            value: 'true'
+          - name: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH'
+            value: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
+          - name: 'XROAD_NATIONAL_REGISTRY_REDIS_NODES'
+            value: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+          - name: 'XROAD_TJODSKRA_MEMBER_CODE'
+            value: '6503760649'
+          - name: 'XROAD_BASE_PATH'
+            value: 'http://securityserver.staging01.devland.is'
+          - name: 'XROAD_BASE_PATH_WITH_ENV'
+            value: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
+          - name: 'XROAD_TLS_BASE_PATH'
+            value: 'https://securityserver.staging01.devland.is'
+          - name: 'XROAD_TLS_BASE_PATH_WITH_ENV'
+            value: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
+          - name: 'XROAD_CLIENT_ID'
+            value: 'IS-TEST/GOV/5501692829/island-is-client'
+          - name: 'XROAD_RSK_PROCURING_REDIS_NODES'
+            value: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+          - name: 'XROAD_RSK_PROCURING_PATH'
+            value: 'IS-TEST/GOV/5402696029/Skatturinn/prokura-v1'
           - name: 'CONFIGCAT_SDK_KEY'
             valueFrom:
               secretKeyRef:
@@ -593,26 +771,19 @@ services-auth-public-api:
               secretKeyRef:
                 key: '/k8s/xroad/client/RSK/PASSWORD'
                 name: 'RSK_PASSWORD'
-          - name: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH'
-            value: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
-          - name: 'XROAD_NATIONAL_REGISTRY_REDIS_NODES'
-            value: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
-          - name: 'XROAD_TJODSKRA_MEMBER_CODE'
-            value: '6503760649'
-          - name: 'XROAD_BASE_PATH'
-            value: 'http://securityserver.staging01.devland.is'
-          - name: 'XROAD_BASE_PATH_WITH_ENV'
-            value: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
-          - name: 'XROAD_TLS_BASE_PATH'
-            value: 'https://securityserver.staging01.devland.is'
-          - name: 'XROAD_TLS_BASE_PATH_WITH_ENV'
-            value: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
-          - name: 'XROAD_CLIENT_ID'
-            value: 'IS-TEST/GOV/5501692829/island-is-client'
-          - name: 'XROAD_RSK_PROCURING_REDIS_NODES'
-            value: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
-          - name: 'XROAD_RSK_PROCURING_PATH'
-            value: 'IS-TEST/GOV/5402696029/Skatturinn/prokura-v1'
+          - name: 'DB_USER'
+            value: 'servicesauth'
+          - name: 'DB_NAME'
+            value: 'servicesauth'
+          - name: 'DB_HOST'
+            value: 'postgres-applications.internal'
+          - name: 'DB_REPLICAS_HOST'
+            value: 'postgres-applications.internal'
+          - name: 'DB_PASS'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/services-auth/api/DB_PASSWORD'
+                name: 'DB_PASS'
         image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-public-api'
         imagePullPolicy: 'IfNotPresent'
         livenessProbe:

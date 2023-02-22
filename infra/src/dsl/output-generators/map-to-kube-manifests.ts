@@ -9,6 +9,7 @@ import {
 } from '../types/input-types'
 import {
   ContainerRunHelm,
+  ContainerEnvironmentVariablesOrSecretsKube,
   OutputFormat,
   OutputVolumeMountNative,
   SerializeErrors,
@@ -123,23 +124,19 @@ const serializeService: SerializeMethod<KubeService> = async (
     result.spec.spec.containers.args = serviceDef.args
   }
 
-  // environment vars
-  if (Object.keys(serviceDef.env).length > 0) {
+  if (
+    Object.keys(serviceDef.secrets).length > 0 ||
+    Object.keys(serviceDef.env).length > 0
+  ) {
     const { envs } = serializeEnvironmentVariables(
       service,
       deployment,
       serviceDef.env,
       opsenv,
     )
-    Object.assign(
-      result.spec.spec.containers.env,
-      serializeKubeEnvs(envs).value,
-    )
-  }
-  if (Object.keys(serviceDef.secrets).length > 0) {
-    Object.assign(
-      result.spec.spec.containers.env,
-      serializeKubeSecrets(service.secrets).value,
+    result.spec.spec.containers.env.push(
+      ...serializeKubeEnvs(envs).value,
+      ...serializeKubeSecrets(service.secrets).value,
     )
   }
 
@@ -153,6 +150,36 @@ const serializeService: SerializeMethod<KubeService> = async (
     })
   }
 
+  // Postgres
+  if (serviceDef.postgres) {
+    const { env, secrets, errors } = serializePostgres(
+      serviceDef,
+      deployment,
+      opsenv,
+      service,
+      serviceDef.postgres,
+    )
+    result.spec.spec.containers.env.push(
+      ...(serializeKubeEnvs(env).value || {}),
+      ...(serializeKubeSecrets(secrets).value || {}),
+    )
+    addToErrors(errors)
+  }
+  // Volumes
+  if (Object.keys(serviceDef.volumes.length > 0)) {
+    serviceDef.volumes.forEach((v) => {
+      result.spec.spec.containers.volumes?.push({
+        name: v.name ? v.name : service.name,
+        persistentVolumeClaim: {
+          claimName: v.name ? v.name : service.name,
+        },
+      })
+      result.spec.spec.containers.volumeMounts?.push({
+        name: v.name ? v.name : service.name,
+        mountPath: v.mountPath,
+      })
+    })
+  }
   // service account
   if (serviceDef.serviceAccountEnabled) {
     result.spec.spec.containers.securityContext = {
@@ -170,25 +197,10 @@ const serializeService: SerializeMethod<KubeService> = async (
     if (typeof serviceDef.initContainers.secrets !== 'undefined') {
       result.spec.spec.initContainers.forEach((c) => {
         if (serviceDef.initContainers)
-          c.env = serializeKubeSecrets(serviceDef.initContainers.secrets).value
+          c.env.push(
+            ...serializeKubeSecrets(serviceDef.initContainers.secrets).value,
+          )
       })
-
-      serializeKubeSecrets(serviceDef.initContainers.secrets)
-      Object.entries(serviceDef.initContainers.secrets).forEach(
-        ([key, value]) => {
-          result.spec.spec.initContainers?.forEach((c) => {
-            c.env.push({
-              name: key,
-              valueFrom: {
-                secretKeyRef: {
-                  name: key,
-                  key: value,
-                },
-              },
-            })
-          })
-        },
-      )
     }
     if (serviceDef.initContainers.containers.length > 0) {
       const { envs } = serializeEnvironmentVariables(
@@ -199,6 +211,9 @@ const serializeService: SerializeMethod<KubeService> = async (
       )
       serviceDef.initContainers.containers.forEach((c) => {
         const legacyCommand = []
+        const envsAndSecrets = serializeKubeEnvs(envs).value.concat(
+          serializeKubeSecrets(serviceDef.initContainers?.secrets ?? {}).value,
+        )
         legacyCommand.push(c.command)
         if (result.spec.spec.initContainers) {
           result.spec.spec.initContainers.push({
@@ -206,25 +221,12 @@ const serializeService: SerializeMethod<KubeService> = async (
             command: legacyCommand,
             name: c.name,
             image: '',
-            env: serializeKubeEnvs(envs).value,
+            env: envsAndSecrets,
           })
         }
       })
     }
-    if (Object.keys(serviceDef.volumes.length > 0)) {
-      serviceDef.volumes.forEach((v) => {
-        result.spec.spec.containers.volumes?.push({
-          name: v.name ? v.name : service.name,
-          persistentVolumeClaim: {
-            claimName: v.name ? v.name : service.name,
-          },
-        })
-        result.spec.spec.containers.volumeMounts?.push({
-          name: v.name ? v.name : service.name,
-          mountPath: v.mountPath,
-        })
-      })
-    }
+
     if (serviceDef.initContainers.postgres) {
       const { env, secrets, errors } = serializePostgres(
         serviceDef,
@@ -233,45 +235,13 @@ const serializeService: SerializeMethod<KubeService> = async (
         service,
         serviceDef.initContainers.postgres,
       )
-      Object.assign(
-        result.spec.spec.containers.env,
-        serializeKubeEnvs(env).value,
-      )
-
-      Object.assign(
-        result.spec.spec.containers.env,
-        serializeKubeSecrets(secrets).value,
-      )
+      result.spec.spec.initContainers.forEach((c) => {
+        c.env.push(
+          ...serializeKubeEnvs(env).value,
+          ...serializeKubeSecrets(secrets).value,
+        )
+      })
       addToErrors(errors)
-    }
-    function serializePostgres(
-      serviceDef: ServiceDefinitionForEnv,
-      deployment: ReferenceResolver,
-      envConf: EnvironmentConfig,
-      service: ServiceDefinitionForEnv,
-      postgres: PostgresInfoForEnv,
-    ) {
-      const env: { [name: string]: string } = {}
-      const secrets: { [name: string]: string } = {}
-      const errors: string[] = []
-      env['DB_USER'] = postgres.username ?? postgresIdentifier(serviceDef.name)
-      env['DB_NAME'] = postgres.name ?? postgresIdentifier(serviceDef.name)
-      try {
-        const { reader, writer } = resolveDbHost(
-          service,
-          envConf,
-          postgres.host,
-        )
-        env['DB_HOST'] = writer
-        env['DB_REPLICAS_HOST'] = reader
-      } catch (e) {
-        errors.push(
-          `Could not resolve DB_HOST variable for service: ${serviceDef.name}`,
-        )
-      }
-      secrets['DB_PASS'] =
-        postgres.passwordSecret ?? `/k8s/${serviceDef.name}/DB_PASSWORD`
-      return { env, secrets, errors }
     }
   }
   const allErrors = getErrors()
@@ -308,6 +278,32 @@ export const resolveDbHost = (
       reader: env.auroraReplica ?? env.auroraHost,
     }
   }
+}
+
+function serializePostgres(
+  serviceDef: ServiceDefinitionForEnv,
+  deployment: ReferenceResolver,
+  envConf: EnvironmentConfig,
+  service: ServiceDefinitionForEnv,
+  postgres: PostgresInfoForEnv,
+) {
+  const env: { [name: string]: string } = {}
+  const secrets: { [name: string]: string } = {}
+  const errors: string[] = []
+  env['DB_USER'] = postgres.username ?? postgresIdentifier(serviceDef.name)
+  env['DB_NAME'] = postgres.name ?? postgresIdentifier(serviceDef.name)
+  try {
+    const { reader, writer } = resolveDbHost(service, envConf, postgres.host)
+    env['DB_HOST'] = writer
+    env['DB_REPLICAS_HOST'] = reader
+  } catch (e) {
+    errors.push(
+      `Could not resolve DB_HOST variable for service: ${serviceDef.name}`,
+    )
+  }
+  secrets['DB_PASS'] =
+    postgres.passwordSecret ?? `/k8s/${serviceDef.name}/DB_PASSWORD`
+  return { env, secrets, errors }
 }
 /*
       if (serviceDef.initContainers.postgres) {

@@ -18,6 +18,44 @@ judicial-system-api:
     spec:
       containers:
         env:
+          - name: 'SAML_ENTRY_POINT'
+            value: 'https://innskraning.island.is/?id=rettarvorslugatt.prod'
+          - name: 'AUTH_AUDIENCE'
+            value: 'rettarvorslugatt.island.is'
+          - name: 'ALLOW_AUTH_BYPASS'
+            value: 'false'
+          - name: 'BACKEND_URL'
+            value: 'http://web-judicial-system-backend'
+          - name: 'AUDIT_TRAIL_USE_GENERIC_LOGGER'
+            value: 'false'
+          - name: 'AUDIT_TRAIL_GROUP_NAME'
+            value: 'k8s/judicial-system/audit-log'
+          - name: 'AUDIT_TRAIL_REGION'
+            value: 'eu-west-1'
+          - name: 'CONTENTFUL_HOST'
+            value: 'cdn.contentful.com'
+          - name: 'CONTENTFUL_ENVIRONMENT'
+            value: 'master'
+          - name: 'HIDDEN_FEATURES'
+            value: 'INDICTMENTS'
+          - name: 'XROAD_BASE_PATH'
+            value: 'http://securityserver.island.is'
+          - name: 'XROAD_BASE_PATH_WITH_ENV'
+            value: 'http://securityserver.island.is/r1/IS'
+          - name: 'XROAD_TLS_BASE_PATH'
+            value: 'https://securityserver.island.is'
+          - name: 'XROAD_TLS_BASE_PATH_WITH_ENV'
+            value: 'https://securityserver.island.is/r1/IS'
+          - name: 'XROAD_CLIENT_ID'
+            value: 'IS/GOV/5804170510/Rettarvorslugatt-Client'
+          - name: 'XROAD_COURT_MEMBER_CODE'
+            value: '4707171140'
+          - name: 'XROAD_POLICE_MEMBER_CODE'
+            value: '5309672079'
+          - name: 'XROAD_COURT_API_PATH'
+            value: '/Domstolasyslan/JusticePortal-v1'
+          - name: 'XROAD_POLICE_API_PATH'
+            value: '/Logreglan-Private/rettarvarsla-v1'
           - name: 'CONFIGCAT_SDK_KEY'
             valueFrom:
               secretKeyRef:
@@ -63,26 +101,6 @@ judicial-system-api:
               secretKeyRef:
                 key: '/k8s/judicial-system/XROAD_POLICE_API_KEY'
                 name: 'XROAD_POLICE_API_KEY'
-          - name: 'HIDDEN_FEATURES'
-            value: 'INDICTMENTS'
-          - name: 'XROAD_BASE_PATH'
-            value: 'http://securityserver.island.is'
-          - name: 'XROAD_BASE_PATH_WITH_ENV'
-            value: 'http://securityserver.island.is/r1/IS'
-          - name: 'XROAD_TLS_BASE_PATH'
-            value: 'https://securityserver.island.is'
-          - name: 'XROAD_TLS_BASE_PATH_WITH_ENV'
-            value: 'https://securityserver.island.is/r1/IS'
-          - name: 'XROAD_CLIENT_ID'
-            value: 'IS/GOV/5804170510/Rettarvorslugatt-Client'
-          - name: 'XROAD_COURT_MEMBER_CODE'
-            value: '4707171140'
-          - name: 'XROAD_POLICE_MEMBER_CODE'
-            value: '5309672079'
-          - name: 'XROAD_COURT_API_PATH'
-            value: '/Domstolasyslan/JusticePortal-v1'
-          - name: 'XROAD_POLICE_API_PATH'
-            value: '/Logreglan-Private/rettarvarsla-v1'
         image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-api'
         imagePullPolicy: 'IfNotPresent'
         livenessProbe:
@@ -135,17 +153,70 @@ judicial-system-backend:
     spec:
       containers:
         env:
-          - name: 'DB_PASS'
+          - name: 'DOKOBIT_URL'
+            value: 'https://ws.dokobit.com'
+          - name: 'EMAIL_REGION'
+            value: 'eu-west-1'
+          - name: 'S3_REGION'
+            value: 'eu-west-1'
+          - name: 'S3_BUCKET'
+            value: 'island-is-prod-upload-judicial-system'
+          - name: 'S3_TIME_TO_LIVE_POST'
+            value: '15'
+          - name: 'S3_TIME_TO_LIVE_GET'
+            value: '5'
+          - name: 'CONTENTFUL_HOST'
+            value: 'cdn.contentful.com'
+          - name: 'CLIENT_URL'
+            value: 'https://rettarvorslugatt.island.is'
+          - name: 'SQS_QUEUE_NAME'
+            value: 'sqs-judicial-system'
+          - name: 'SQS_DEAD_LETTER_QUEUE_NAME'
+            value: 'sqs-judicial-system-dlq'
+          - name: 'SQS_REGION'
+            value: 'eu-west-1'
+          - name: 'BLOCKED_API_INTEGRATION'
+            value: 'COURT_LITIGANT'
+          - name: 'NO_UPDATE_NOTIFIER'
+            value: 'true'
+          - name: 'XROAD_BASE_PATH'
+            value: 'http://securityserver.island.is'
+          - name: 'XROAD_BASE_PATH_WITH_ENV'
+            value: 'http://securityserver.island.is/r1/IS'
+          - name: 'XROAD_TLS_BASE_PATH'
+            value: 'https://securityserver.island.is'
+          - name: 'XROAD_TLS_BASE_PATH_WITH_ENV'
+            value: 'https://securityserver.island.is/r1/IS'
+          - name: 'XROAD_CLIENT_ID'
+            value: 'IS/GOV/5804170510/Rettarvorslugatt-Client'
+          - name: 'XROAD_COURT_MEMBER_CODE'
+            value: '4707171140'
+          - name: 'XROAD_POLICE_MEMBER_CODE'
+            value: '5309672079'
+          - name: 'XROAD_COURT_API_PATH'
+            value: '/Domstolasyslan/JusticePortal-v1'
+          - name: 'XROAD_POLICE_API_PATH'
+            value: '/Logreglan-Private/rettarvarsla-v1'
+          - name: 'CONFIGCAT_SDK_KEY'
             valueFrom:
               secretKeyRef:
-                key: '/k8s/judicial-system/DB_PASSWORD'
-                name: 'DB_PASS'
-          - name: 'DB_NAME'
-            value: 'judicial_system'
-          - name: 'DB_HOST'
-            value: 'postgres-applications.internal'
-          - name: 'DB_REPLICAS_HOST'
-            value: 'postgres-applications.internal'
+                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+                name: 'CONFIGCAT_SDK_KEY'
+          - name: 'NOVA_URL'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/judicial-system/NOVA_URL'
+                name: 'NOVA_URL'
+          - name: 'NOVA_USERNAME'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/judicial-system/NOVA_USERNAME'
+                name: 'NOVA_USERNAME'
+          - name: 'NOVA_PASSWORD'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/judicial-system/NOVA_PASSWORD'
+                name: 'NOVA_PASSWORD'
           - name: 'COURTS_MOBILE_NUMBERS'
             valueFrom:
               secretKeyRef:
@@ -246,6 +317,19 @@ judicial-system-backend:
               secretKeyRef:
                 key: '/k8s/judicial-system/XROAD_POLICE_API_KEY'
                 name: 'XROAD_POLICE_API_KEY'
+          - name: 'DB_USER'
+            value: 'judicial_system'
+          - name: 'DB_NAME'
+            value: 'judicial_system'
+          - name: 'DB_HOST'
+            value: 'postgres-applications.internal'
+          - name: 'DB_REPLICAS_HOST'
+            value: 'postgres-applications.internal'
+          - name: 'DB_PASS'
+            valueFrom:
+              secretKeyRef:
+                key: '/k8s/judicial-system/DB_PASSWORD'
+                name: 'DB_PASS'
         image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-backend'
         imagePullPolicy: 'IfNotPresent'
         livenessProbe:
@@ -279,6 +363,19 @@ judicial-system-backend:
           env:
             - name: 'NO_UPDATE_NOTIFIER'
               value: 'true'
+            - name: 'DB_USER'
+              value: 'judicial_system'
+            - name: 'DB_NAME'
+              value: 'judicial_system'
+            - name: 'DB_HOST'
+              value: 'postgres-applications.internal'
+            - name: 'DB_REPLICAS_HOST'
+              value: 'postgres-applications.internal'
+            - name: 'DB_PASS'
+              valueFrom:
+                secretKeyRef:
+                  key: '/k8s/judicial-system/DB_PASSWORD'
+                  name: 'DB_PASS'
           image: ''
       serviceAccountName: 'judicial-system-backend'
     strategy:
@@ -313,6 +410,14 @@ judicial-system-message-handler:
         command:
           - 'node'
         env:
+          - name: 'SQS_QUEUE_NAME'
+            value: 'sqs-judicial-system'
+          - name: 'SQS_DEAD_LETTER_QUEUE_NAME'
+            value: 'sqs-judicial-system-dlq'
+          - name: 'SQS_REGION'
+            value: 'eu-west-1'
+          - name: 'BACKEND_URL'
+            value: 'http://web-judicial-system-backend'
           - name: 'CONFIGCAT_SDK_KEY'
             valueFrom:
               secretKeyRef:
@@ -323,10 +428,6 @@ judicial-system-message-handler:
               secretKeyRef:
                 key: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
                 name: 'BACKEND_ACCESS_TOKEN'
-          - name: 'SQS_REGION'
-            value: 'eu-west-1'
-          - name: 'BACKEND_URL'
-            value: 'http://web-judicial-system-backend'
         image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-message-handler'
         imagePullPolicy: 'IfNotPresent'
         livenessProbe:
@@ -384,6 +485,10 @@ judicial-system-scheduler:
         command:
           - 'node'
         env:
+          - name: 'BACKEND_URL'
+            value: 'http://web-judicial-system-backend'
+          - name: 'TIME_TO_LIVE_MINUTES'
+            value: '30'
           - name: 'CONFIGCAT_SDK_KEY'
             valueFrom:
               secretKeyRef:
@@ -444,6 +549,10 @@ judicial-system-web:
     spec:
       containers:
         env:
+          - name: 'API_URL'
+            value: 'https://rettarvorslugatt.island.is'
+          - name: 'INTERNAL_API_URL'
+            value: 'http://web-judicial-system-api'
           - name: 'CONFIGCAT_SDK_KEY'
             valueFrom:
               secretKeyRef:
@@ -514,6 +623,14 @@ judicial-system-xrd-api:
     spec:
       containers:
         env:
+          - name: 'BACKEND_URL'
+            value: 'http://web-judicial-system-backend'
+          - name: 'AUDIT_TRAIL_USE_GENERIC_LOGGER'
+            value: 'false'
+          - name: 'AUDIT_TRAIL_GROUP_NAME'
+            value: 'k8s/judicial-system/audit-log'
+          - name: 'AUDIT_TRAIL_REGION'
+            value: 'eu-west-1'
           - name: 'CONFIGCAT_SDK_KEY'
             valueFrom:
               secretKeyRef:
@@ -529,8 +646,6 @@ judicial-system-xrd-api:
               secretKeyRef:
                 key: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
                 name: 'BACKEND_ACCESS_TOKEN'
-          - name: 'AUDIT_TRAIL_REGION'
-            value: 'eu-west-1'
         image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-xrd-api'
         imagePullPolicy: 'IfNotPresent'
         livenessProbe:
