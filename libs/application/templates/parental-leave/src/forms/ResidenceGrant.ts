@@ -42,19 +42,11 @@ export const ResidenceGrant: Form = buildForm({
                 parentalLeaveFormMessages.residenceGrantMessage
                   .residenceGrantPeriodDescriptionLineTwo,
             }),
-            buildDateField({
-              id: 'residenceGrant.dateFrom',
-              title: 'From',
-              placeholder: '',
-              backgroundColor: 'blue',
-              width: 'half',
-            }),
-            buildDateField({
-              id: 'residenceGrant.dateTo',
-              title: 'To',
-              placeholder: '',
-              backgroundColor: 'blue',
-              width: 'half',
+            buildCustomField({
+              id: 'imagefield.submit',
+              title: '',
+              defaultValue: 2,
+              component: 'ImageField',
             }),
           ],
         }),
@@ -81,11 +73,6 @@ export const ResidenceGrant: Form = buildForm({
             parentalLeaveFormMessages.residenceGrantMessage
               .residenceGrantSelectPeriodSubmitDescription,
           children: [
-            buildCustomField({
-              id: 'datefield',
-              title: '',
-              component: 'DateField',
-            }),
             buildSubmitField({
               id: 'residenceGrant.submit',
               placement: 'footer',

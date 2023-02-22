@@ -198,6 +198,19 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       return dateOfBirth?.data?.dateOfBirth
     }
 
+    const promise = new Promise(function (resolve) {
+      setTimeout(() => {
+        console.log('2023-02-10')
+        resolve('2023-02-10')
+      }, 5000)
+    })
+
+    const newValue = await promise
+    return {
+      dateOfBirth: newValue,
+    }
+
+
     try {
       const applicationInformation = await this.applicationInformationAPI.applicationGetApplicationInformation(
         {
@@ -638,7 +651,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       applicationType,
       otherParent,
       hasMultipleBirths,
-      residenceGrant,
+
     } = getApplicationAnswers(application.answers)
 
     const { applicationFundId } = getApplicationExternalData(
@@ -709,18 +722,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     let numberOfDaysAlreadySpent = 0
     const basicRightCodePeriod =
       vmstRightCodePeriod ?? getRightsCode(application)
-
-    if (residenceGrant) {
-      const residenceGrantPeriod = {
-        from: residenceGrant.dateFrom,
-        to: residenceGrant.dateTo,
-        ratio: hasMultipleBirths === YES ? 'D28' : 'D14',
-        approved: false,
-        paid: false,
-        rightsCodePeriod: hasMultipleBirths === YES ? 'DVAL.FJÖL' : 'DVALSTYRK',
-      }
-      periods.push(residenceGrantPeriod)
-    }
 
     for (const [index, period] of answers.entries()) {
       const isFirstPeriod = index === 0

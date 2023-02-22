@@ -2013,8 +2013,10 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     residenceGrantDateDescription: {
       id: 'pl.application:residence.grant.date.description',
-      defaultMessage: 'Þú hefur valið eftirfarandi tímabil: {dateFrom} - {dateTo}',
-      description: 'You have choosen the following period: {dateFrom} - {dateTo}',
+      defaultMessage:
+        'Þú hefur valið eftirfarandi tímabil: {dateFrom} - {dateTo}',
+      description:
+        'You have choosen the following period: {dateFrom} - {dateTo}',
     },
     residenceGrantApplyTitle: {
       id: 'pl.application:residence.grant.apply.title',

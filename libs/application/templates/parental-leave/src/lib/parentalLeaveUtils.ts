@@ -917,11 +917,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const previousState = getValueViaPath(answers, 'previousState') as string
 
-  const residenceGrant = getValueViaPath(answers, 'residenceGrant') as {
-    dateTo: string
-    dateFrom: string
-  }
-
   return {
     applicationType,
     noPrimaryParentBirthDate,
@@ -978,7 +973,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
     residenceGrantFiles,
     hasAppliedForReidenceGrant,
     previousState,
-    residenceGrant,
   }
 }
 
@@ -1474,24 +1468,26 @@ export const synchronizeVMSTPeriods = (
       firstPeriodStart = 'specificDate'
     }
 
-    // API returns multiple rightsCodePeriod in string ('M-L-GR, M-FS')
-    const rightsCodePeriod = period.rightsCodePeriod.split(',')[0]
-    const obj = {
-      startDate: period.from,
-      endDate: period.to,
-      ratio: period.ratio.split(',')[0],
-      rawIndex: index,
-      firstPeriodStart: firstPeriodStart,
-      useLength: NO as YesOrNo,
-      rightCodePeriod: rightsCodePeriod,
+    if (!period.rightsCodePeriod.includes('DVAL')) {
+      // API returns multiple rightsCodePeriod in string ('M-L-GR, M-FS')
+      const rightsCodePeriod = period.rightsCodePeriod.split(',')[0]
+      const obj = {
+        startDate: period.from,
+        endDate: period.to,
+        ratio: period.ratio.split(',')[0],
+        rawIndex: index,
+        firstPeriodStart: firstPeriodStart,
+        useLength: NO as YesOrNo,
+        rightCodePeriod: rightsCodePeriod,
+      }
+      if (
+        period.paid ||
+        new Date(period.from).getTime() <= new Date().getTime()
+      ) {
+        newPeriods.push(obj)
+      }
+      temptVMSTPeriods.push(obj)
     }
-    if (
-      period.paid ||
-      new Date(period.from).getTime() <= new Date().getTime()
-    ) {
-      newPeriods.push(obj)
-    }
-    temptVMSTPeriods.push(obj)
   })
 
   let index = newPeriods.length

@@ -282,10 +282,10 @@ export const showResidenceGrant = (application: Application) => {
   const childrenData = (children as unknown) as ChildInformation[]
   if (
     childrenData?.length &&
-    !childrenData[0]?.parentalRelation?.match('primary')
+    childrenData[0]?.parentalRelation?.match('primary')
   )
-    return false
-  return true
+    return true
+  return false
 }
 
 export const disableResidenceGrantApplication = (dateOfBirth: string) => {
