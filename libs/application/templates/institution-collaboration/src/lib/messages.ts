@@ -40,11 +40,7 @@ export const institutionApplicationMessages = {
     sectionApplicantDescription: {
       id: 'ia.application:applicant.section.applicantDescription',
       defaultMessage:
-<<<<<<< HEAD
         'Stofnun eða ráðuneyti sem sækir um samstarf við Stafrænt Ísland og upplýsingar um tengilið(i)',
-=======
-        'Stofnun eða ráðuneyti sem sækist eftir samstarfi við Stafrænt Ísland og málefnasvið sem verkefnið tilheyrir. ',
->>>>>>> 0911e4ecf2 (txt msg)
       description: 'Section description',
     },
 
@@ -312,10 +308,6 @@ export const institutionApplicationMessages = {
       defaultMessage: 'Áskoranir, skorður og úrlausnarefni',
       description: 'Sub section label',
     },
-<<<<<<< HEAD
-=======
-
->>>>>>> 0911e4ecf2 (txt msg)
     sectionTitle: {
       id: 'ia.application:constraints.section.title',
       defaultMessage: 'Þjónustur sem sótt er um',
@@ -610,72 +602,6 @@ export const institutionApplicationMessages = {
       defaultMessage:
         'Við munum fara yfir umsóknina og sendum á þig svör innan tíðar. Við verðum í sambandi ef okkur vantar frekari upplýsingar. ',
       description: 'Section title',
-    },
-  }),
-
-  urls: defineMessages({
-    allServices: {
-      id: 'ia.application:url.all',
-      defaultMessage: 'https://island.is/s/stafraent-island/thjonustur',
-      description: 'Url',
-    },
-    mailService: {
-      id: 'ia.application:url.mail',
-      defaultMessage: '/s/stafraent-island/thjonustur/postholf',
-      description: 'Url',
-    },
-    loginService: {
-      id: 'ia.application:url.login',
-      defaultMessage:
-        'https://island.is/s/stafraent-island/thjonustur/innskraning-fyrir-alla',
-      description: 'Url',
-    },
-    myPageService: {
-      id: 'ia.application:url.mypage',
-      defaultMessage:
-        'https://island.is/s/stafraent-island/thjonustur/minar-sidur',
-      description: 'Url',
-    },
-    certificateService: {
-      id: 'ia.application:url.certificate',
-      defaultMessage:
-        'https://island.is/s/stafraent-island/thjonustur/skirteini',
-      description: 'Url',
-    },
-    straumurService: {
-      id: 'ia.application:url.straumur',
-      defaultMessage:
-        'https://island.is/s/stafraent-island/thjonustur/straumurinn',
-      description: 'Url',
-    },
-    applyService: {
-      id: 'ia.application:url.apply',
-      defaultMessage:
-        'https://island.is/s/stafraent-island/thjonustur/umsoknarkerfi',
-      description: 'Url',
-    },
-    authorityService: {
-      id: 'ia.application:url.authority',
-      defaultMessage:
-        'https://island.is/s/stafraent-island/thjonustur/umbodskerfi',
-      description: 'Url',
-    },
-    webService: {
-      id: 'ia.application:url.web',
-      defaultMessage:
-        'https://island.is/s/stafraent-island/thjonustur/vefur-stofnana',
-      description: 'Url',
-    },
-    appService: {
-      id: 'ia.application:url.app',
-      defaultMessage: '/https://island.iss/stafraent-island/thjonustur/app',
-      description: 'Url',
-    },
-    islandService: {
-      id: 'ia.application:url.island',
-      defaultMessage:
-        'https://island.is/s/stafraent-island/thjonustur/island-is',
-      description: 'Url',
     },
   }),
 }
