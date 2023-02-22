@@ -12,7 +12,6 @@ import { TransportAuthorityApi } from '../transportAuthority.service'
 import {
   OwnerChangeAnswers,
   CheckTachoNetInput,
-  GetCurrentVehiclesInput,
   OperatorChangeAnswers,
 } from './dto'
 import {
@@ -22,7 +21,6 @@ import {
   VehicleOperatorChangeChecksByPermno,
   VehicleOwnerchangeChecksByPermno,
   VehiclePlateOrderChecksByPermno,
-  VehiclesCurrentVehicleWithOwnerchangeChecks,
 } from './models'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -37,23 +35,6 @@ export class MainResolver {
     @Args('input') input: CheckTachoNetInput,
   ) {
     return this.transportAuthorityApi.checkTachoNet(user, input)
-  }
-
-  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
-  @Query(() => [VehiclesCurrentVehicleWithOwnerchangeChecks], {
-    name: 'currentVehiclesWithOwnerchangeChecks',
-    nullable: true,
-  })
-  async getCurrentVehiclesWithOwnerchangeChecks(
-    @Args('input') input: GetCurrentVehiclesInput,
-    @CurrentUser() user: User,
-  ) {
-    return await this.transportAuthorityApi.getCurrentVehiclesWithOwnerchangeChecks(
-      user,
-      input.showOwned,
-      input.showCoOwned,
-      input.showOperated,
-    )
   }
 
   @Scopes(ApiScope.internal, ApiScope.internalProcuring)

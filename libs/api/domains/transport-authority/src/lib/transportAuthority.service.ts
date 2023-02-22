@@ -15,7 +15,6 @@ import {
   OwnerChangeValidation,
   OperatorChangeValidation,
   CheckTachoNetExists,
-  VehiclesCurrentVehicleWithOwnerchangeChecks,
   VehicleOwnerchangeChecksByPermno,
   VehicleOperatorChangeChecksByPermno,
   VehiclePlateOrderChecksByPermno,
@@ -52,58 +51,6 @@ export class TransportAuthorityApi {
   //------------------------------
   // transfer of vehicle ownership
   //------------------------------
-
-  // TODOx move into template-api-modules?
-  async getCurrentVehiclesWithOwnerchangeChecks(
-    auth: User,
-    showOwned: boolean,
-    showCoOwned: boolean,
-    showOperated: boolean,
-  ): Promise<
-    VehiclesCurrentVehicleWithOwnerchangeChecks[] | null | ApolloError
-  > {
-    // Make sure user is only fetching information for vehicles where he is either owner or co-owner
-    // (mainly debt status info that is sensitive)
-    if (showOperated) {
-      throw Error(
-        'You can only fetch this information for vehicles where you are either owner or co-owner',
-      )
-    }
-
-    return await Promise.all(
-      (
-        await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
-          persidNo: auth.nationalId,
-          showOwned: showOwned,
-          showCoowned: showCoOwned,
-          showOperated: showOperated,
-        })
-      )?.map(async (vehicle: VehicleMiniDto) => {
-        // Get debt status
-        const debtStatus = await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
-          auth,
-          vehicle.permno || '',
-        )
-
-        // Get owner change validation
-        const ownerChangeValidation = await this.vehicleOwnerChangeClient.validateVehicleForOwnerChange(
-          auth,
-          vehicle.permno || '',
-        )
-
-        return {
-          permno: vehicle.permno || undefined,
-          make: vehicle.make || undefined,
-          color: vehicle.color || undefined,
-          role: vehicle.role || undefined,
-          isDebtLess: debtStatus.isDebtLess,
-          validationErrorMessages: ownerChangeValidation?.hasError
-            ? ownerChangeValidation.errorMessages
-            : null,
-        }
-      }),
-    )
-  }
 
   async getVehicleOwnerchangeChecksByPermno(
     auth: User,

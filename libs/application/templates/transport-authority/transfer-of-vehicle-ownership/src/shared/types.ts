@@ -6,6 +6,7 @@ import {
 import { TagVariant } from '@island.is/island-ui/core'
 import { MessageDescriptor } from '@formatjs/intl'
 import { z } from 'zod'
+import { VehicleValidationErrorMessage } from '@island.is/api/schema'
 
 export type ReviewCoOwnerAndOperatorField = {
   nationalId: string
@@ -64,4 +65,13 @@ export type VehiclesCurrentVehicle = {
   make?: string
   color?: string
   role?: string
+}
+
+export type VehiclesCurrentVehicleWithOwnerchangeChecks = {
+  permno?: string
+  make?: string
+  color?: string
+  role?: string
+  isDebtLess?: boolean | null
+  validationErrorMessages?: VehicleValidationErrorMessage[] | null
 }
