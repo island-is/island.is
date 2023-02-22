@@ -65,7 +65,7 @@ export const indictmentCount = defineMessages({
   bloodAlcoholContentLabel: {
     id:
       'judicial.system.core:indictments_indictment.indictment_count.blood_alcohol_content_label',
-    defaultMessage: 'Vínandamagn',
+    defaultMessage: 'Vínandamagn (‰)',
     description:
       'Notaður sem titill á "vínandamagn" svæði á ákæruliða skrefi í ákærum.',
   },
