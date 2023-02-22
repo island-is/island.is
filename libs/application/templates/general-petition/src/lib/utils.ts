@@ -1,4 +1,4 @@
-import { Endorsement } from '../../types/schema'
+import { Endorsement } from '../types/schema'
 
 export const PAGE_SIZE = 10
 
