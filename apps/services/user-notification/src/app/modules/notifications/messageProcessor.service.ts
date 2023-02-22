@@ -25,7 +25,6 @@ export class MessageProcessorService {
       message,
       template,
     )
-    
 
     const prefix = new Date().toISOString() + '🔥🔥🔥'
 
