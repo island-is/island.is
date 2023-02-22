@@ -1,13 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLocation } from 'react-use'
-import {
-  Box,
-  Button,
-  GridColumn,
-  Hidden,
-  Tabs,
-} from '@island.is/island-ui/core'
+import { Box, Button, GridColumn, Tabs } from '@island.is/island-ui/core'
 import { IntroHeader } from '@island.is/portals/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useAuth } from '@island.is/auth/react'

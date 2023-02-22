@@ -2,7 +2,6 @@ import { GridColumn, GridRow, Input } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { DomainOption } from '../../../hooks/useDomains/useDomains'
 import { DelegationsDomainSelect } from '../DelegationsDomainSelect'
-import * as styles from './DelegationsOutgoingHeader.css'
 import { m } from '../../../lib/messages'
 
 interface DelegationsOutgoingHeaderProps {
