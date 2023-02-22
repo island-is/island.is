@@ -1,4 +1,4 @@
-# Application Templates Alcohol Tax Redemption
+# Alcohol Tax Redemption
 
 This library was generated with [Nx](https://nx.dev).
 
