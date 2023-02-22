@@ -97,7 +97,7 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
         {coverLetters && coverLetters.length > 0 && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4" marginBottom={1}>
-              {formatMessage(caseFiles.sections.coverLetter)}
+              {formatMessage(caseFiles.coverLetterSection)}
             </Text>
             <RenderFiles
               caseFiles={coverLetters}
@@ -109,7 +109,7 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
         {indictments && indictments.length > 0 && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4" marginBottom={1}>
-              {formatMessage(caseFiles.sections.indictment)}
+              {formatMessage(caseFiles.indictmentSection)}
             </Text>
             <RenderFiles
               caseFiles={indictments}
@@ -121,7 +121,7 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
         {criminalRecords && criminalRecords.length > 0 && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4" marginBottom={1}>
-              {formatMessage(caseFiles.sections.criminalRecord)}
+              {formatMessage(caseFiles.criminalRecordSection)}
             </Text>
             <RenderFiles
               caseFiles={criminalRecords}
@@ -133,7 +133,7 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
         {costBreakdowns && costBreakdowns.length > 0 && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4" marginBottom={1}>
-              {formatMessage(caseFiles.sections.costBreakdown)}
+              {formatMessage(caseFiles.costBreakdownSection)}
             </Text>
             <RenderFiles
               caseFiles={costBreakdowns}
@@ -145,7 +145,7 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
         {others && others.length > 0 && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4" marginBottom={1}>
-              {formatMessage(caseFiles.sections.otherDocuments)}
+              {formatMessage(caseFiles.otherDocumentsSection)}
             </Text>
             <RenderFiles
               caseFiles={others}

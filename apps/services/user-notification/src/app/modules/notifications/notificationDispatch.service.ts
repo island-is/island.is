@@ -50,7 +50,6 @@ export class NotificationDispatchService {
     nationalId: string
     messageId: string
   }): Promise<void> {
-    // add user profile to readme and setup instructions
     const deviceTokensResponse = await this.userProfileApi.userTokenControllerGetDeviceTokens(
       { nationalId },
     )
