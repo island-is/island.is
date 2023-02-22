@@ -45,12 +45,6 @@ export const formConclusionSection = (props: props) =>
         id: 'uiForms.conclusionMultifield',
         title: conclusion.information.formTitle,
         children: [
-          buildAlertMessageField({
-            id: 'uiForms.conclusionAlert',
-            title: props.alertTitle,
-            alertType: 'success',
-            message: props.alertMessage,
-          }),
           buildLinkField({
             id: 'uiForms.complaintLink',
             title: props.buttonText ?? '',
@@ -59,6 +53,12 @@ export const formConclusionSection = (props: props) =>
             condition: () => {
               return props.buttonText !== undefined
             },
+          }),
+          buildAlertMessageField({
+            id: 'uiForms.conclusionAlert',
+            title: props.alertTitle,
+            alertType: 'success',
+            message: props.alertMessage,
           }),
           buildExpandableDescriptionField({
             id: 'uiForms.conclusionBullet',

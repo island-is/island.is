@@ -1,11 +1,13 @@
 module.exports = {
-  preset: '../../../jest.preset.js',
-  coverageDirectory: '../../../coverage/apps/financial-aid/backend',
-  globalSetup: './test/globalSetup.ts',
-  globalTeardown: './test/globalTeardown.ts',
+  preset: './jest.preset.js',
+  rootDir: '../../..',
+  roots: [__dirname],
+  coverageDirectory: '<rootDir>/coverage/apps/financial-aid/backend',
+  globalSetup: `${__dirname}/test/globalSetup.ts`,
+  globalTeardown: `${__dirname}/test/globalTeardown.ts`,
   moduleFileExtensions: ['ts', 'js', 'html', 'json'],
   globals: {
-    'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' },
+    'ts-jest': { tsconfig: `${__dirname}/tsconfig.spec.json` },
   },
   displayName: 'financial-aid-backend',
   testEnvironment: 'node',
