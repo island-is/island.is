@@ -6,7 +6,7 @@ HTTPS communication is required. The backend system will identify itself with JW
 
 ## Document
 
-The operation returns an owners document. The service should only return a document if the identifier (SkjalId) and owner kennitala matches in the document provider systems.
+The operation returns an owner's document. The service should only return a document if the identifier (SkjalId) and owner kennitala matches in the document provider systems.
 
 > GET \$BASE_URL\$/{kennitala}/documents/{documentId}?authenticationType={authenticationType}
 
