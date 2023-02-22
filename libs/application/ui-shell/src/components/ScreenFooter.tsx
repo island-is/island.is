@@ -21,6 +21,7 @@ interface FooterProps {
   loading: boolean
   canProceed: boolean
   renderLastScreenButton?: boolean
+  shouldLastScreenButtonSubmit?: boolean
   renderLastScreenBackButton?: boolean
 }
 
