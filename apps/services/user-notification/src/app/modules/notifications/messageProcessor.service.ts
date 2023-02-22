@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { Notification } from './types'
 import { UserProfile } from '@island.is/clients/user-profile'
 import { NotificationsService } from './notifications.service'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 export const APP_PROTOCOL = Symbol('APP_PROTOCOL')
 export interface MessageProcessorServiceConfig {
@@ -11,7 +13,11 @@ export interface MessageProcessorServiceConfig {
 
 @Injectable()
 export class MessageProcessorService {
-  constructor(private readonly notificationsService: NotificationsService) {}
+  constructor(
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
+    private readonly notificationsService: NotificationsService,
+  ) {}
 
   async convertToNotification(
     message: CreateHnippNotificationDto,
@@ -21,10 +27,12 @@ export class MessageProcessorService {
       message.templateId,
       profile.locale,
     )
-    const notification = await this.notificationsService.formatArguments(
+    const notification = this.notificationsService.formatArguments(
       message,
       template,
     )
+
+    this.logger.info(notification)
 
     const prefix = new Date().toISOString() + '🔥🔥🔥'
 

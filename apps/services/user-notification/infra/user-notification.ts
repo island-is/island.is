@@ -1,6 +1,6 @@
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
-// TOTALLY REMEMBER TO CHANGE THIS BACK ORIGINAL VALUES BEFORE MERGING !!!
+// TODO TOTALLY REMEMBER TO CHANGE THIS BACK ORIGINAL VALUES BEFORE MERGING !!!
 // const MAIN_QUEUE_NAME = 'user-notification'
 // const DEAD_LETTER_QUEUE_NAME = 'user-notification-failure'
 const MAIN_QUEUE_NAME = 'user-notification-feature-branch'
