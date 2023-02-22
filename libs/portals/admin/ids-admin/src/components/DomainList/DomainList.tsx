@@ -6,37 +6,7 @@ import {
 } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
 import * as styles from './DomainList.css'
-
-const MockData = [
-  {
-    id: '1',
-    title: 'Ísland.is,stjórnborð',
-    domain: '@admin.island.is',
-    numberOfApplications: 5,
-    numberOfApis: 10,
-  },
-  {
-    id: '2',
-    title: 'Þjóðskrá',
-    domain: '@skra.is',
-    numberOfApplications: 2,
-    numberOfApis: 3,
-  },
-  {
-    id: '3',
-    title: 'Ísland.is,stjórnborð',
-    domain: '@admin.island.is',
-    numberOfApplications: 5,
-    numberOfApis: 10,
-  },
-  {
-    id: '4',
-    title: 'Þjóðskrá',
-    domain: '@skra.is',
-    numberOfApplications: 2,
-    numberOfApis: 3,
-  },
-]
+import MockData from '../../lib/MockData'
 
 const DomainList = () => {
   return (
@@ -48,7 +18,7 @@ const DomainList = () => {
               autoStack
               hyphenate
               truncateHeading
-              to={'/ids-admin/' + item.id}
+              to={'/innskraningarkerfi/' + item.id}
               key={item.id}
               heading={item.title}
               text={item.domain}

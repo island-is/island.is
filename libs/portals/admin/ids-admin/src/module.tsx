@@ -4,13 +4,15 @@ import { PortalModule } from '@island.is/portals/core'
 import { IDSAdminPaths } from './lib/paths'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import Domains from './screens/Domains'
+import Applications from './components/Applications/Applications'
+import ApplicationsScreen from './screens/ApplicationsScreen'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 
 const allowedScopes: string[] = [AdminPortalScope.idsAdmin]
 
 export const idsAdminModule: PortalModule = {
-  name: 'IDSAdmin',
+  name: 'Innskráningarkerfi',
   layout: 'full',
   enabled({ userInfo }) {
     return userInfo.scopes.some((scope) => allowedScopes.includes(scope))
@@ -18,44 +20,48 @@ export const idsAdminModule: PortalModule = {
   routes() {
     return [
       {
-        name: 'IDSAdmin',
+        name: 'Innskráningarkerfi',
         path: IDSAdminPaths.IDSAdmin,
         element: <IDSAdmin />,
+      },
+      {
+        name: 'Applications',
+        path: IDSAdminPaths.IDSAdminApplication,
+        element: <ApplicationsScreen />,
+        children: [
+          {
+            name: 'Settings',
+            path: IDSAdminPaths.IDSAdminApplication,
+            element: <div>Settings</div>,
+          },
+          {
+            name: 'Authentication',
+            path: IDSAdminPaths.IDSAdminApplicationAuthentication,
+            element: <div>Authentication</div>,
+          },
+          {
+            name: 'AdvancedSettings',
+            path: IDSAdminPaths.IDSAdminApplicationAdvancedSettings,
+            element: <div>AdvancedSettings</div>,
+          },
+        ],
       },
       {
         name: 'Domains',
         path: IDSAdminPaths.IDSAdminDomains,
         element: <Domains />,
-      },
-      {
-        name: 'Applications',
-        path: IDSAdminPaths.IDSAdminDomainsApplications,
-        element: <div>Applications</div>,
-      },
-      {
-        name: 'APIs',
-        path: IDSAdminPaths.IDSAdminDomainsAPIS,
-        element: <div>APIs</div>,
-      },
-      {
-        name: 'Admin Control',
-        path: IDSAdminPaths.IDSAdminDomainsAdminControl,
-        element: <div>AdminControl</div>,
-      },
-      {
-        name: 'ApplicationsSettings',
-        path: IDSAdminPaths.IDSAdminDomainsApplications,
-        element: <div>Applications</div>,
-      },
-      {
-        name: 'Authentication',
-        path: IDSAdminPaths.IDSAdminApplicationAuthentication,
-        element: <div>Authentication</div>,
-      },
-      {
-        name: 'AdvancedSettings',
-        path: IDSAdminPaths.IDSAdminApplicationAdvancedSettings,
-        element: <div>AdvancedSettings</div>,
+        children: [
+          {
+            name: 'Applications',
+            path: IDSAdminPaths.IDSAdminDomains,
+            element: <Applications />,
+          },
+          {
+            name: 'APIs',
+            path: IDSAdminPaths.IDSAdminDomainsAPIS,
+            element: <div>APIs</div>,
+          },
+        ],
       },
     ]
   },
