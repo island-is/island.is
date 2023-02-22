@@ -48,10 +48,6 @@ export class TransportAuthorityApi {
     return { exists: hasActiveCard }
   }
 
-  //------------------------------
-  // transfer of vehicle ownership
-  //------------------------------
-
   async getVehicleOwnerchangeChecksByPermno(
     auth: User,
     permno: string,
@@ -145,10 +141,6 @@ export class TransportAuthorityApi {
     return result
   }
 
-  //------------------------------
-  // change operator of vehicle
-  //------------------------------
-
   async getVehicleOperatorChangeChecksByPermno(
     auth: User,
     permno: string,
@@ -219,10 +211,6 @@ export class TransportAuthorityApi {
 
     return result
   }
-
-  //------------------------------
-  // order vehicle license plate
-  //------------------------------
 
   async getVehiclePlateOrderChecksByPermno(
     auth: User,
