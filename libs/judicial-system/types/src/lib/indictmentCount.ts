@@ -9,6 +9,4 @@ export enum Substance {
   ALCOHOL = 'ALCOHOL',
 }
 
-export type SubstanceMap = {
-  [key in IndictmentCountOffense]?: { [key in Substance]?: string }
-}
+export type SubstanceMap = { [key in Substance]?: string }

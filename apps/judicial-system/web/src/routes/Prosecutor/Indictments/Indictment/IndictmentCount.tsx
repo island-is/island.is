@@ -89,7 +89,10 @@ const laws = Object.values(offenceLawsMap)
   .concat(generalLaws)
   .sort(lawsCompare)
 
-function getLawsBroken(offences: IndictmentCountOffense[]) {
+function getLawsBroken(
+  offences: IndictmentCountOffense[],
+  bloodAlcoholContent?: string,
+) {
   if (offences.length === 0) {
     return []
   }
@@ -100,7 +103,11 @@ function getLawsBroken(offences: IndictmentCountOffense[]) {
     lawsBroken = lawsBroken.concat(offenceLawsMap[offence])
 
     if (offence === IndictmentCountOffense.DrunkDriving) {
-      lawsBroken = lawsBroken.concat(offenceLawsMap['DRUNK_DRIVING_MINOR'])
+      lawsBroken = lawsBroken.concat(
+        (bloodAlcoholContent ?? '') >= '1,20'
+          ? offenceLawsMap.DRUNK_DRIVING_MAJOR
+          : offenceLawsMap.DRUNK_DRIVING_MINOR,
+      )
     }
   })
 
@@ -367,7 +374,10 @@ export const IndictmentCount: React.FC<Props> = (props) => {
               ...(indictmentCount.offenses ?? []),
               selectedOffense,
             ]
-            const lawsBroken = getLawsBroken(offenses)
+            const lawsBroken = getLawsBroken(
+              offenses,
+              indictmentCount.substances?.ALCOHOL,
+            )
             onChange(indictmentCount.id, {
               offenses: offenses,
               lawsBroken: lawsBroken,
@@ -399,7 +409,10 @@ export const IndictmentCount: React.FC<Props> = (props) => {
                   const offenses = (indictmentCount.offenses ?? []).filter(
                     (o) => o !== offense,
                   )
-                  const lawsBroken = getLawsBroken(offenses)
+                  const lawsBroken = getLawsBroken(
+                    offenses,
+                    indictmentCount.substances?.ALCOHOL,
+                  )
                   onChange(indictmentCount.id, {
                     offenses: offenses,
                     lawsBroken: lawsBroken,
@@ -431,9 +444,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
                 <InputMask
                   mask={'9,99'}
                   maskPlaceholder={null}
-                  value={
-                    indictmentCount.substances?.DRUNK_DRIVING?.ALCOHOL ?? ''
-                  }
+                  value={indictmentCount.substances?.ALCOHOL ?? ''}
                   onChange={(event) => {
                     removeErrorMessageIfValid(
                       ['empty'],
@@ -447,7 +458,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
                       {
                         substances: {
                           ...indictmentCount.substances,
-                          DRUNK_DRIVING: { ALCOHOL: event.target.value },
+                          ALCOHOL: event.target.value,
                         },
                       },
                       setWorkingCase,
@@ -467,11 +478,18 @@ export const IndictmentCount: React.FC<Props> = (props) => {
                       setBloodAlcoholContentErrorMessage,
                     )
 
+                    const lawsBroken = getLawsBroken(
+                      indictmentCount.offenses || [],
+                      value,
+                    )
+
                     onChange(indictmentCount.id, {
+                      lawsBroken,
                       substances: {
                         ...indictmentCount.substances,
-                        DRUNK_DRIVING: { ALCOHOL: value },
+                        ALCOHOL: value,
                       },
+                      legalArguments: legalArguments(lawsBroken),
                     })
                   }}
                 >

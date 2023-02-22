@@ -33,7 +33,6 @@ import {
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as constants from '@island.is/judicial-system/consts'
-import { Substance } from '@island.is/judicial-system/types'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
 import { isTrafficViolationStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 import useIndictmentCounts, {
@@ -90,7 +89,7 @@ const Indictment: React.FC = () => {
           count.offenses?.some(
             (offense) =>
               (offense === IndictmentCountOffense.DrunkDriving &&
-                (count.substances?.DRUNK_DRIVING?.ALCOHOL ?? '') >= '1,20') ||
+                (count.substances?.ALCOHOL ?? '') >= '1,20') ||
               [
                 IndictmentCountOffense.IllegalDrugsDriving,
                 IndictmentCountOffense.PrescriptionDrugsDriving,
