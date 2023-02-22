@@ -3,7 +3,7 @@ import { defineMessages } from '@formatjs/intl'
 export const indictment = defineMessages({
   title: {
     id: 'judicial.system.backend:pdf.indictment.title',
-    defaultMessage: 'Ákæraaaaaa',
+    defaultMessage: 'Ákæra',
     description: 'Notaður sem titill í ákæru PDF',
   },
   signature: {
