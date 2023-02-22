@@ -4,7 +4,7 @@ API that document providers use to submit and maintain document references.
 
 Clients (Document Providers) authenticate themselves with OAuth 2.0 Authentication using Client Credentials Grant (https://tools.ietf.org/html/rfc6749#section-4.4)
 
-All operations that maintain references can take an array of 1-200 changes at time. They return an array result for each change in the same order were they entered.
+All operations that modify document references can take an array of 1-200 changes at time. They return an array result for each change in the same order as they were entered.
 
 ## Categories
 
