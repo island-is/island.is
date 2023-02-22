@@ -67,11 +67,11 @@ export const createIndictment = async (
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
   const title = formatMessage(indictment.title)
-  const tabTitle = formatMessage(indictment.tabTitle)
+  const heading = formatMessage(indictment.heading)
 
-  setTitle(doc, tabTitle)
+  setTitle(doc, title)
 
-  addGiganticHeading(doc, title, 'Times-Roman')
+  addGiganticHeading(doc, heading, 'Times-Roman')
   addNormalPlusText(doc, ' ')
   setLineCap(4)
   addNormalPlusText(doc, theCase.indictmentIntroduction || '')
