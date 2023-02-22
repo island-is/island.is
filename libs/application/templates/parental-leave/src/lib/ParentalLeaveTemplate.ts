@@ -714,14 +714,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
-            {
-              id: Roles.ORGINISATION_REVIEWER,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
-              write: 'all',
-            },
           ],
         },
         on: {
@@ -764,14 +756,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   Promise.resolve(val.EditsInReview),
                 ),
               read: 'all',
-              write: 'all',
-            },
-            {
-              id: Roles.ORGINISATION_REVIEWER,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
               write: 'all',
             },
           ],
@@ -840,14 +824,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
-            {
-              id: Roles.ORGINISATION_REVIEWER,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
-              write: 'all',
-            },
           ],
         },
         on: {
@@ -886,14 +862,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   Promise.resolve(val.EditsRequireAction),
                 ),
               read: 'all',
-              write: 'all',
-            },
-            {
-              id: Roles.ORGINISATION_REVIEWER,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
               write: 'all',
             },
           ],
