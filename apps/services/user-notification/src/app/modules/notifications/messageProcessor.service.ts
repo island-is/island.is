@@ -26,7 +26,7 @@ export class MessageProcessorService {
       template,
     )
 
-    const prefix = '\xF0\x9F\x98\x81 *** prefix edit ***'
+    const prefix = '🔥🔥🔥 prefix edit 🔥🔥🔥'
 
     return {
       title: prefix + notification.notificationTitle,
