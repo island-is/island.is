@@ -1,6 +1,6 @@
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
-const MAIN_QUEUE_NAME = 'user-notification-feature'
+const MAIN_QUEUE_NAME = 'user-notification'
 const DEAD_LETTER_QUEUE_NAME = 'user-notification-failure'
 
 export const userNotificationServiceSetup = (): ServiceBuilder<'user-notification'> =>
