@@ -243,10 +243,6 @@ export class TransportAuthorityApi {
     }
   }
 
-  //------------------------------
-  // license plate renewal
-  //------------------------------
-
   async getMyPlateOwnershipChecksByRegno(
     auth: User,
     regno: string,
