@@ -2,7 +2,7 @@ import React from 'react'
 
 const School: React.FC = () => (
   <svg
-    width="100%"
+    width="80%"
     viewBox="0 0 789 327"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
