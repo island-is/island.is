@@ -148,7 +148,7 @@
   - [Template API Modules](libs/application/template-api-modules/README.md)
   - [Template Loader](libs/application/template-loader/README.md)
   - [Templates](libs/application/templates/README.md)
-    - [Application Templates Alcohol Tax Redemption](libs/application/templates/alcohol-tax-redemption/README.md)
+    - [Alcohol Tax Redemption](libs/application/templates/alcohol-tax-redemption/README.md)
     - [Estate](libs/application/templates/estate/README.md)
     - [Application Templates Example Payment](libs/application/templates/example-payment/README.md)
     - [Application Templates General Fishing License](libs/application/templates/general-fishing-license/README.md)
