@@ -204,6 +204,9 @@
       "@island.is/application/templates/accident-notification": [
         "libs/application/templates/accident-notification/src/index.ts"
       ],
+      "@island.is/application/templates/alcohol-tax-redemption": [
+        "libs/application/templates/alcohol-tax-redemption/src/index.ts"
+      ],
       "@island.is/application/templates/announcement-of-death": [
         "libs/application/templates/announcement-of-death/src/index.ts"
       ],
