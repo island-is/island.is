@@ -7,10 +7,7 @@ import {
   InputError,
 } from '@island.is/island-ui/core'
 import { FC, useState } from 'react'
-import {
-  VehiclesCurrentVehicle,
-  VehiclesCurrentVehicleWithOperatorChangeChecks,
-} from '../../shared'
+import { VehiclesCurrentVehicleWithOperatorChangeChecks } from '../../shared'
 import { RadioController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
@@ -25,7 +22,7 @@ interface Option {
 }
 
 interface VehicleSearchFieldProps {
-  currentVehicleList: VehiclesCurrentVehicle[]
+  currentVehicleList: VehiclesCurrentVehicleWithOperatorChangeChecks[]
 }
 
 export const VehicleRadioField: FC<

@@ -8,10 +8,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
-import {
-  VehiclesCurrentVehicle,
-  VehiclesCurrentVehicleWithOwnerchangeChecks,
-} from '../../shared'
+import { VehiclesCurrentVehicleWithOwnerchangeChecks } from '../../shared'
 import { information, applicationCheck, error } from '../../lib/messages'
 import { RadioController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
@@ -25,7 +22,7 @@ interface Option {
 }
 
 interface VehicleSearchFieldProps {
-  currentVehicleList: VehiclesCurrentVehicle[]
+  currentVehicleList: VehiclesCurrentVehicleWithOwnerchangeChecks[]
 }
 
 export const VehicleRadioField: FC<
