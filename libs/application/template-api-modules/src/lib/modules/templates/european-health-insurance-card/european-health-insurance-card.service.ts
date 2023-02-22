@@ -111,13 +111,24 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     return apply
   }
 
+  toCommaDelimitedList(arr: string[]) {
+    let listString = ''
+    for (let i = 0; i < arr.length; i++) {
+      listString += arr[i]
+      if (i !== arr.length - 1) {
+        listString += ','
+      }
+    }
+    return listString
+  }
+
   async getCardResponse({ auth, application }: TemplateApiModuleActionProps) {
     const nridArr = this.getApplicants(application)
 
     try {
       const resp = await this.ehicApi.cardStatus({
         usernationalid: auth.nationalId,
-        applicantnationalids: nridArr,
+        applicantnationalids: this.toCommaDelimitedList(nridArr),
       })
 
       return resp
@@ -182,10 +193,6 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
   }
 
   async getTemporaryCard({ auth, application }: TemplateApiModuleActionProps) {
-    this.logger.info('getTemporaryCard')
-
-    return { name: 'dummy name', fileHref: 'https://www' }
-
     return this.ehicApi.fetchTempPDFCard({
       applicantnationalid: auth.nationalId,
       cardnumber: '00',
