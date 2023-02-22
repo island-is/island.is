@@ -232,6 +232,10 @@ export const JudicialAdministration = new XroadConf({
       prod: 'IS/GOV/4707171140/Domstolasyslan-PROD-1/Domstolasyslan',
     },
   },
+  secrets: {
+    DOMSYSLA_PASSWORD: '/k8s/api/DOMSYSLA_PASSWORD',
+    DOMSYSLA_USERNAME: '/k8s/api/DOMSYSLA_USERNAME'
+  }
 })
 
 export const Firearm = new XroadConf({
