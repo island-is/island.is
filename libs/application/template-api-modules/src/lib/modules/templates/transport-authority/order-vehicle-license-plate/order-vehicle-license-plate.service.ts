@@ -14,8 +14,8 @@ import {
   VehiclePlateOrderingClient,
 } from '@island.is/clients/transport-authority/vehicle-plate-ordering'
 import { VehicleCodetablesClient } from '@island.is/clients/transport-authority/vehicle-codetables'
-import { YES } from '@island.is/application/core'
 import { VehicleSearchApi } from '@island.is/clients/vehicles'
+import { YES } from '@island.is/application/core'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 
 @Injectable()

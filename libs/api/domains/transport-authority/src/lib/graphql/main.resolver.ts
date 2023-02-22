@@ -22,7 +22,6 @@ import {
   VehicleOperatorChangeChecksByPermno,
   VehicleOwnerchangeChecksByPermno,
   VehiclePlateOrderChecksByPermno,
-  VehiclesCurrentVehicleWithOperatorChangeChecks,
   VehiclesCurrentVehicleWithOwnerchangeChecks,
 } from './models'
 
@@ -81,23 +80,6 @@ export class MainResolver {
     return this.transportAuthorityApi.validateApplicationForOwnerChange(
       user,
       answers,
-    )
-  }
-
-  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
-  @Query(() => [VehiclesCurrentVehicleWithOperatorChangeChecks], {
-    name: 'currentVehiclesWithOperatorChangeChecks',
-    nullable: true,
-  })
-  async getCurrentVehiclesWithOperatorChangeChecks(
-    @Args('input') input: GetCurrentVehiclesInput,
-    @CurrentUser() user: User,
-  ) {
-    return await this.transportAuthorityApi.getCurrentVehiclesWithOperatorChangeChecks(
-      user,
-      input.showOwned,
-      input.showCoOwned,
-      input.showOperated,
     )
   }
 

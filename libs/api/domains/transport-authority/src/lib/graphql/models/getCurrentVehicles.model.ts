@@ -40,9 +40,6 @@ export class VehicleOwnerchangeChecksByPermno {
 }
 
 @ObjectType()
-export class VehiclesCurrentVehicleWithOperatorChangeChecks extends VehiclesCurrentVehicleWithOwnerchangeChecks {}
-
-@ObjectType()
 export class VehicleOperatorChangeChecksByPermno extends VehicleOwnerchangeChecksByPermno {}
 
 @ObjectType()
