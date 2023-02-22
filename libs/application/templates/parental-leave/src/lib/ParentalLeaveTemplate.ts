@@ -762,27 +762,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             {
               cond: (application) =>
-                goToState(application, States.EMPLOYER_EDITS_ACTION),
-              target: States.EMPLOYER_EDITS_ACTION,
-            },
-            {
-              cond: (application) =>
-                goToState(application, States.EMPLOYER_APPROVE_EDITS),
-              target: States.EMPLOYER_APPROVE_EDITS,
-            },
-            {
-              cond: (application) =>
-                goToState(
-                  application,
-                  States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
-                ),
-              target: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
+                goToState(application, States.VINNUMALASTOFNUN_APPROVE_EDITS),
+              target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
             },
           ],
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS]: {
-        exit: ['setEmployerReviewerNationalRegistryId', 'setPreviousState'],
+        exit: ['setEmployerReviewerNationalRegistryId'],
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
           status: 'inprogress',
@@ -823,7 +810,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_APPROVE_EDITS]: {
-        entry: ['assignToVMST', 'removeNullPeriod', 'setPreviousState'],
+        entry: ['assignToVMST', 'removeNullPeriod'],
         exit: ['clearAssignees', 'setIsApprovedOnEmployer'],
         meta: {
           name: States.EMPLOYER_APPROVE_EDITS,
@@ -905,7 +892,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_EDITS_ACTION]: {
-        exit: ['restorePeriodsFromTemp', 'setPreviousState'],
+        exit: 'restorePeriodsFromTemp',
         meta: {
           name: States.EMPLOYER_EDITS_ACTION,
           status: 'inprogress',
