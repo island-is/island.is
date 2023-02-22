@@ -252,7 +252,7 @@ export class ServiceBuilder<ServiceType> {
     return this
   }
 
-  private assertUnset<T>(current: T, envs: T) {
+  private assertUnset<T extends object>(current: T, envs: T) {
     const intersection = Object.keys({
       ...current,
     }).filter({}.hasOwnProperty.bind(envs))
