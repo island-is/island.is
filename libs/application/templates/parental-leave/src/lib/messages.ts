@@ -1320,8 +1320,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     phoneNumber: {
       id: 'pl.application:employer.phone.number',
-      defaultMessage: 'Símanúmer vinnuveitanda',
-      description: "Employer's phone number",
+      defaultMessage: 'Símanúmer vinnuveitanda ( valfrjálst )',
+      description: "Employer's phone number ( optional )",
     },
     phoneNumberHeader: {
       id: 'pl.application:employer.phone.number.header',
@@ -2257,6 +2257,11 @@ export const errorMessages = defineMessages({
     id: 'pl.application:dataSchema.phoneNumber',
     defaultMessage: 'Símanúmerið þarf að vera gilt.',
     description: 'Error message when phone number is invalid.',
+  },
+  GSMPhoneNumber: {
+    id: 'pl.application:dataSchema.GSMPhoneNumber',
+    defaultMessage: 'Símanúmerið þarf að vera GSM númer.',
+    description: 'Invalid phoneNumber. Has to be a GSM number.',
   },
   otherParentId: {
     id: 'pl.application:dataSchema.otherParent.id',
