@@ -88,3 +88,14 @@ export function getEhicApplicants(
 
   return applying
 }
+
+export function base64ToArrayBuffer(base64Pdf: string) {
+  const binaryString = window.atob(base64Pdf)
+  const binaryLen = binaryString.length
+  const bytes = new Uint8Array(binaryLen)
+  for (let i = 0; i < binaryLen; i++) {
+    const ascii = binaryString.charCodeAt(i)
+    bytes[i] = ascii
+  }
+  return bytes
+}

@@ -111,13 +111,18 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                     (y) => y.nrid === x.applicantNationalId,
                   )?.name!
                   // const value = x.applicantNationalId + ',' + name
-                  applying.push({
-                    value: [x.applicantNationalId, name],
-                    label: name,
-                  })
+                  //  TODO: if x.canApply
+                  if (x.isInsured) {
+                    applying.push({
+                      value: [x.applicantNationalId, name],
+                      label: name,
+                    })
+                  }
                 })
 
                 console.log(applying, 'Applying')
+
+                // TODO: if apply is empty. Nobody is insured.
 
                 return applying as Array<{ value: any; label: string }>
               },

@@ -35,6 +35,14 @@ export interface NationalRegistry {
   data: any
 }
 
+export interface TempData {
+  data?: string | null
+
+  fileName?: string | null
+
+  contentType?: string | null
+}
+
 @Injectable()
 export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
   constructor(
@@ -91,20 +99,6 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
 
       apply.push(applicants[i][0])
     }
-
-    // if (applicants.includes(`${cardType}-${userData?.nationalId}`)) {
-    //   apply.push(userData?.nationalId)
-    // }
-
-    // if (applicants.includes(`${cardType}-${spouseData?.nationalId}`)) {
-    //   apply.push(userData?.nationalId)
-    // }
-
-    // for (let i = 0; i < custodyData?.length; i++) {
-    //   if (applicants.includes(`${cardType}-${custodyData[i].nationalId}`)) {
-    //     apply.push(custodyData[i].nationalId)
-    //   }
-    // }
 
     this.logger.info(apply)
 
@@ -192,7 +186,7 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     this.logger.info('Applicants')
     this.logger.info(application.applicant)
 
-    const applicants = this.getApplicants(application, 'applyForPdf')
+    const applicants = this.getApplicants(application, 'applyForPDF')
     this.logger.info('applicants tenmp')
     this.logger.info(applicants)
     this.logger.info(applicants.toString())
@@ -207,10 +201,30 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
   }
 
   async getTemporaryCard({ auth, application }: TemplateApiModuleActionProps) {
-    return this.ehicApi.fetchTempPDFCard({
-      applicantnationalid: auth.nationalId,
-      cardnumber: '00',
-      usernationalid: auth.nationalId,
-    })
+    this.logger.info('getTemporaryCard')
+    const applicants = this.getApplicants(application, 'applyForPDF')
+    this.logger.info('applicants.length')
+    this.logger.info(applicants.length)
+    this.logger.info(applicants)
+    const pdfArray: TempData[] = []
+
+    for (let i = 0; i < applicants.length; i++) {
+      this.logger.info('fetching' + i)
+      this.logger.info(applicants[i])
+      const res = await this.ehicApi.fetchTempPDFCard({
+        applicantnationalid: applicants[i],
+        cardnumber: '00',
+        usernationalid: auth.nationalId,
+      })
+
+      this.logger.info('response')
+      this.logger.info(res)
+      pdfArray.push(res)
+    }
+
+    this.logger.info('pdfArray.length')
+    this.logger.info(pdfArray.length)
+
+    return pdfArray
   }
 }

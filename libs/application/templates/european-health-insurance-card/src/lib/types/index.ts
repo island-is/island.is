@@ -58,3 +58,9 @@ export interface LabelValue {
   value: string
   label?: string
 }
+
+export interface TempData {
+  contentType: string
+  data: string
+  fileName: string
+}
