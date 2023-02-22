@@ -22,29 +22,19 @@ export class DisabilityLicenseClientService implements GenericLicenseClient {
     inputData: PassDataInput,
     nationalId: string,
   ): Promise<Result<Pass | undefined>> {
-    this.logger.debug('in push update for Disability license')
     return this.smartApi.updatePkPass(inputData, nationalId)
   }
 
   async pullUpdate(): Promise<Result<Pass | undefined>> {
-    this.logger.debug('in pull update for Disability license')
-    return {
-      ok: false,
-      error: {
-        code: 99,
-        message: 'not implemented yet',
-      },
-    }
+    throw new Error('Not yet implemented')
   }
 
   revoke(nationalId: string): Promise<Result<RevokePassData>> {
-    this.logger.debug('in revoke for Disability license')
     return this.smartApi.revokePkPass(nationalId)
   }
 
   /** We need to verify the pk pass AND the license itself! */
   verify(inputData: string): Promise<Result<VerifyPassData>> {
-    this.logger.debug('in verify for Firearm license')
     const { code, date } = JSON.parse(inputData)
 
     return this.smartApi.verifyPkPass({ code, date })
