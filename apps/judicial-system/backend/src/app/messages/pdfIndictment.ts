@@ -15,6 +15,6 @@ export const indictment = defineMessages({
   heading: {
     id: 'judicial.system.backend:pdf.indictment.heading',
     defaultMessage: 'ÁKÆRA',
-    description: 'Notaður sem heading á ákæru PDF flipa',
+    description: 'Notaður sem heading á ákæru PDF',
   },
 })
