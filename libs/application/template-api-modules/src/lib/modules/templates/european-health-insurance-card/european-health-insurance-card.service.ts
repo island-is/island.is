@@ -3,8 +3,6 @@ import { Inject, Injectable } from '@nestjs/common'
 import { Auth, User } from '@island.is/auth-nest-tools'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 
-import { EhicApi } from '@island.is/clients/ehic-client-v1'
-
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import {
@@ -23,6 +21,8 @@ import {
   SentStatus,
 } from './dto/european-health-insurance-card.dtos'
 import { TemplateApiModuleActionProps } from '../../../types'
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import { EhicApi } from '@island.is/clients/ehic-client-v1'
 
 // TODO: move to shared location
 export interface NationalRegistry {
@@ -182,10 +182,6 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
   }
 
   async getTemporaryCard({ auth, application }: TemplateApiModuleActionProps) {
-    this.logger.info('getTemporaryCard')
-
-    return { name: 'dummy name', fileHref: 'https://www' }
-
     return this.ehicApi.fetchTempPDFCard({
       applicantnationalid: auth.nationalId,
       cardnumber: '00',

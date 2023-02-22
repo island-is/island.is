@@ -31,3 +31,8 @@ export enum States {
   SUBMITTED = 'submitted',
   COMPLETED = 'completed',
 }
+
+export interface CheckObject {
+  value: any
+  label: string
+}

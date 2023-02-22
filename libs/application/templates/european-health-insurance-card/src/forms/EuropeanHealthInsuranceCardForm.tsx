@@ -22,7 +22,7 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 
-import { NationalRegistry } from '../lib/types'
+import { CheckObject, NationalRegistry } from '../lib/types'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 
 /* eslint-disable-next-line */
@@ -94,8 +94,10 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               id: 'applyForPlastic',
               backgroundColor: 'white',
               title: '',
+
               options: (application: Application) => {
                 console.log(application, ' here')
+
                 const nationalRegistry = application.externalData
                   .nationalRegistry.data as NationalRegistry
                 const nationalRegistrySpouse = application.externalData
@@ -130,7 +132,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                     label: nationalRegistryDataChildren.data[i].fullName,
                   })
                 }
-                return applying as Array<{ value: any; label: string }>
+                return applying as Array<CheckObject>
               },
             }),
           ],
