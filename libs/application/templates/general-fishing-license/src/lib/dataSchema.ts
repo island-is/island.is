@@ -75,7 +75,7 @@ export const GeneralFishingLicenseSchema = z.object({
     attachments: z
       .array(FileSchema)
       .optional()
-      .refine((x) => x === undefined || (x.length > 0 && x.length < 2), {
+      .refine((x) => x === undefined || x.length === 1), {
         params:
           fishingLicenseFurtherInformation.errorMessages.attachmentLimitError,
       }),
