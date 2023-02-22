@@ -1,21 +1,20 @@
 import {
   Box,
   Text,
-  SkeletonLoader,
   AlertMessage,
   BulletList,
   Bullet,
   InputError,
 } from '@island.is/island-ui/core'
 import { FC, useState } from 'react'
-import { VehiclesCurrentVehicle } from '../../shared'
+import {
+  VehiclesCurrentVehicle,
+  VehiclesCurrentVehicleWithOperatorChangeChecks,
+} from '../../shared'
 import { RadioController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { gql, useQuery } from '@apollo/client'
-import { GET_CURRENT_VEHICLES_WITH_OPERATOR_CHANGE_CHECKS } from '../../graphql/queries'
-import { VehiclesCurrentVehicleWithOperatorChangeChecks } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { applicationCheck, information, error } from '../../lib/messages'
 
@@ -47,21 +46,6 @@ export const VehicleRadioField: FC<
     getValueViaPath(application.answers, 'pickVehicle.type', undefined) as
       | string
       | undefined,
-  )
-
-  const { data, loading } = useQuery(
-    gql`
-      ${GET_CURRENT_VEHICLES_WITH_OPERATOR_CHANGE_CHECKS}
-    `,
-    {
-      variables: {
-        input: {
-          showOwned: true,
-          showCoOwned: false,
-          showOperated: false,
-        },
-      },
-    },
   )
 
   const onRadioControllerSelect = (s: string) => {
@@ -147,24 +131,15 @@ export const VehicleRadioField: FC<
 
   return (
     <div>
-      {loading ? (
-        <SkeletonLoader
-          height={100}
-          space={2}
-          repeat={currentVehicleList.length}
-          borderRadius="large"
-        />
-      ) : (
-        <RadioController
-          id="pickVehicle.vehicle"
-          largeButtons
-          backgroundColor="blue"
-          onSelect={onRadioControllerSelect}
-          options={vehicleOptions(
-            data.currentVehiclesWithOperatorChangeChecks as VehiclesCurrentVehicleWithOperatorChangeChecks[],
-          )}
-        />
-      )}
+      <RadioController
+        id="pickVehicle.vehicle"
+        largeButtons
+        backgroundColor="blue"
+        onSelect={onRadioControllerSelect}
+        options={vehicleOptions(
+          currentVehicleList as VehiclesCurrentVehicleWithOperatorChangeChecks[],
+        )}
+      />
       <input
         type="hidden"
         value={plate}

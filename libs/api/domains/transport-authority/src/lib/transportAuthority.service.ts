@@ -18,7 +18,6 @@ import {
   CheckTachoNetExists,
   VehiclesCurrentVehicleWithOwnerchangeChecks,
   VehicleOwnerchangeChecksByPermno,
-  VehiclesCurrentVehicleWithOperatorChangeChecks,
   VehicleOperatorChangeChecksByPermno,
   VehiclePlateOrderChecksByPermno,
 } from './graphql/models'
@@ -204,58 +203,6 @@ export class TransportAuthorityApi {
   //------------------------------
   // change operator of vehicle
   //------------------------------
-
-  // TODOx move into template-api-modules?
-  async getCurrentVehiclesWithOperatorChangeChecks(
-    auth: User,
-    showOwned: boolean,
-    showCoOwned: boolean,
-    showOperated: boolean,
-  ): Promise<
-    VehiclesCurrentVehicleWithOperatorChangeChecks[] | null | ApolloError
-  > {
-    // Make sure user is only fetching information for vehicles where he is either owner or co-owner
-    // (mainly debt status info that is sensitive)
-    if (showOperated) {
-      throw Error(
-        'You can only fetch this information for vehicles where you are either owner or co-owner',
-      )
-    }
-
-    return await Promise.all(
-      (
-        await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
-          persidNo: auth.nationalId,
-          showOwned: showOwned,
-          showCoowned: showCoOwned,
-          showOperated: showOperated,
-        })
-      )?.map(async (vehicle: VehicleMiniDto) => {
-        // Get debt status
-        const debtStatus = await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
-          auth,
-          vehicle.permno || '',
-        )
-
-        // Get owner change validation
-        const operatorChangeValidation = await this.vehicleOperatorsClient.validateVehicleForOperatorChange(
-          auth,
-          vehicle.permno || '',
-        )
-
-        return {
-          permno: vehicle.permno || undefined,
-          make: vehicle.make || undefined,
-          color: vehicle.color || undefined,
-          role: vehicle.role || undefined,
-          isDebtLess: debtStatus.isDebtLess,
-          validationErrorMessages: operatorChangeValidation?.hasError
-            ? operatorChangeValidation.errorMessages
-            : null,
-        }
-      }),
-    )
-  }
 
   async getVehicleOperatorChangeChecksByPermno(
     auth: User,
