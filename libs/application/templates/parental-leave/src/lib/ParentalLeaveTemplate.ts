@@ -441,7 +441,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.VINNUMALASTOFNUN_APPROVAL]: {
         entry: ['assignToVMST', 'setNavId', 'removeNullPeriod'],
-        exit: ['clearAssignees', 'setNavId', 'resetAdditionalDocumentsArray'],
+        exit: [
+          'clearAssignees',
+          'setNavId',
+          'resetAdditionalDocumentsArray',
+          'setPreviousState',
+        ],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVAL,
           status: 'inprogress',
