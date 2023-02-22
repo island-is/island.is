@@ -4,7 +4,11 @@ import { ProblemError } from './ProblemError'
 
 export class TemplateApiError extends ProblemError {
   constructor(
-    errorReason: ProviderErrorReason | StaticText | string,
+    errorReason:
+      | ProviderErrorReason
+      | StaticText
+      | string
+      | ProviderErrorReason[],
     status: number,
   ) {
     super({

@@ -1,14 +1,17 @@
 import {
   AsyncSearch,
   AsyncSearchOption,
+  Box,
   Column,
   Columns,
   GridColumn,
   GridContainer,
   GridRow,
   Tiles,
+  Text,
 } from '@island.is/island-ui/core'
 import React, { useEffect, useState } from 'react'
+import { HeroBanner } from '../components'
 import Card from '../components/Card/Card'
 import Layout from '../components/Layout/Layout'
 type arrayDummy = Array<info>
@@ -171,6 +174,7 @@ export const Index = () => {
 
   return (
     <Layout showIcon={false}>
+      <HeroBanner />
       <GridContainer>
         <GridRow>
           <GridColumn span="12/12" paddingBottom={4} paddingTop={4}>
@@ -192,13 +196,38 @@ export const Index = () => {
             </Columns>
           </GridColumn>
         </GridRow>
+
         <GridRow>
           <GridColumn span={['0', '0', '3/12', '3/12', '3/12']}></GridColumn>
           <GridColumn span={['12/12', '12/12', '9/12', '9/12', '9/12']}>
             {data && (
               <Tiles space={3} columns={[1, 1, 1, 2, 3]}>
                 {data.map((item, index) => {
-                  return <Card key={index} {...item} />
+                  const card = {
+                    id: item.id,
+                    title: item.name,
+                    tag: item.status,
+                    eyebrows: [item.type, item.institution],
+                  }
+                  return (
+                    <Card key={index} card={card}>
+                      <Box
+                        display="flex"
+                        flexDirection="row"
+                        alignItems="center"
+                        justifyContent="spaceBetween"
+                      >
+                        <Text variant="eyebrow" color="purple400">
+                          {`Fjöldi umsagna: ${item.adviceCount}`}
+                        </Text>
+                      </Box>
+                      <Box style={{ minHeight: 132, lineBreak: 'anywhere' }}>
+                        <Text variant="small" color="dark400">
+                          {item.shortDescription}
+                        </Text>
+                      </Box>
+                    </Card>
+                  )
                 })}
               </Tiles>
             )}

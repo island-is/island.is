@@ -21,7 +21,7 @@ interface LandskjorstjornFooterProps {
   namespace: Record<string, string>
 }
 
-export const LandskjorstjornFooter = ({
+const LandskjorstjornFooter = ({
   footerItems,
   namespace,
 }: LandskjorstjornFooterProps) => {
@@ -111,3 +111,5 @@ export const LandskjorstjornFooter = ({
     </footer>
   )
 }
+
+export default LandskjorstjornFooter

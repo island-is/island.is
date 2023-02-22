@@ -77,17 +77,17 @@ export const AssignApplication = () => {
     <>
       {isMissingToken && (
         <ErrorShell
-          status={graphQLError?.statusCode}
           title={coreErrorMessages.isMissingTokenErrorTitle}
           subTitle={coreErrorMessages.isMissingTokenErrorDescription}
+          description=""
         />
       )}
 
       {couldNotAssignApplication && (
         <ErrorShell
-          status={graphQLError?.statusCode}
           title={coreErrorMessages.couldNotAssignApplicationErrorTitle}
           subTitle={coreErrorMessages.couldNotAssignApplicationErrorDescription}
+          description=""
         />
       )}
     </>

@@ -13,11 +13,7 @@ import {
   AlertBanner,
   AlertMessage,
 } from '@island.is/island-ui/core'
-import {
-  LinkResolver,
-  ServicePortalModuleComponent,
-  UserInfoLine,
-} from '@island.is/service-portal/core'
+import { LinkResolver, UserInfoLine } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import { formatDate } from '../../utils/dateUtils'
 import { m } from '../../lib/messages'
@@ -65,7 +61,7 @@ type UseParams = {
   id: string
 }
 
-const PassportDetail: ServicePortalModuleComponent = () => {
+const PassportDetail = () => {
   useNamespaces('sp.license')
   const { formatMessage, lang } = useLocale()
   const { id } = useParams() as UseParams

@@ -187,17 +187,19 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
           {formatMessage(overview.general.description)}
         </Text>
         <VehicleSection {...props} reviewerNationalId={reviewerNationalId} />
-        <SellerSection {...props} />
+        <SellerSection {...props} reviewerNationalId={reviewerNationalId} />
         <BuyerSection
           setStep={setStep}
           {...props}
           reviewerNationalId={reviewerNationalId}
         />
         <CoOwnersSection
+          reviewerNationalId={reviewerNationalId}
           coOwnersAndOperators={coOwnersAndOperators}
           {...props}
         />
         <OperatorSection
+          reviewerNationalId={reviewerNationalId}
           coOwnersAndOperators={coOwnersAndOperators}
           {...props}
         />

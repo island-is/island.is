@@ -1,0 +1,23 @@
+{
+  "root": "libs/react/components",
+  "sourceRoot": "libs/react/components/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/react/components/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/react/components"],
+      "options": {
+        "jestConfig": "libs/react/components/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": ["lib:react-spa", "scope:react-spa"]
+}

@@ -40,42 +40,4 @@ export const payment = {
       description: 'Total amount label',
     },
   }),
-  paymentPending: defineMessages({
-    examplePaymentPendingFieldError: {
-      id: 'ta.ccov.application:example.waitingForPaymentError',
-      defaultMessage: 'Villa kom upp við að sækja upplýsingar um greiðslu',
-      description: 'An error came up while getting payment information',
-    },
-    submitErrorTitle: {
-      id: 'ta.ccov.application:submitErrorTitle',
-      defaultMessage: 'Móttaka umsóknar tókst ekki',
-      description:
-        'title that shows up when an error occurs while submitting the application',
-    },
-    submitErrorMessage: {
-      id: 'ta.ccov.application:submitErrorMessage',
-      defaultMessage:
-        'Eitthvað fór úrskeiðis við að senda inn umsókn. Reyndu aftur síðar.',
-      description:
-        'Text that shows up when an error occurs while submitting the application',
-    },
-    submitErrorButtonCaption: {
-      id: 'ta.ccov.application:submitErrorButtonCaption',
-      defaultMessage: 'Reyna aftur',
-      description:
-        'Button that shows up when submitting the application fails, allowing you to retry',
-    },
-    paymentPendingDescription: {
-      id: 'ta.ccov.application:paymentPendingDescription',
-      defaultMessage: 'Augnablik meðan beðið er eftir staðfestingu',
-      description: 'Please wait until the payment is confirmed',
-    },
-  }),
-  paymentUrlNotFound: defineMessages({
-    examplePaymentPendingFieldError: {
-      id: 'ta.ccov.application:example.waitingForPaymentError',
-      defaultMessage: 'Villa kom upp við að sækja upplýsingar um greiðslu',
-      description: 'An error came up while getting payment information',
-    },
-  }),
 }
