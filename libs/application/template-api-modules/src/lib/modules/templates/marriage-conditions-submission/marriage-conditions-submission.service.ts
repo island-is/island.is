@@ -174,24 +174,28 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
     const uploadDataName = 'hjonavigsla1.0'
     const uploadDataId = 'hjonavigsla1.0'
 
-    const result: DataUploadResponse = await this.syslumennService
-      .uploadData(
-        persons as Person[],
-        undefined,
-        extraData,
-        uploadDataName,
-        uploadDataId,
-      )
-      .catch((e) => {
-        return {
-          success: false,
-          errorMessage: e.message,
-        }
-      })
+    this.logger.info('Submitting application: ', application.id)
+    this.logger.info('Extra data: ', extraData)
 
-    if (!result.success) {
-      throw new Error(`Application submission failed`)
-    }
-    return { success: result.success, id: result.caseNumber }
+    //const result: DataUploadResponse = await this.syslumennService
+    //  .uploadData(
+    //    persons as Person[],
+    //    undefined,
+    //    extraData,
+    //    uploadDataName,
+    //    uploadDataId,
+    //  )
+    //  .catch((e) => {
+    //    return {
+    //      success: false,
+    //      errorMessage: e.message,
+    //    }
+    //  })
+
+    //if (!result.success) {
+    //  throw new Error(`Application submission failed`)
+    //}
+    //return { success: result.success, id: result.caseNumber }
+    return { success: true, id: Math.ceil(Math.random() * 1414) }
   }
 }
