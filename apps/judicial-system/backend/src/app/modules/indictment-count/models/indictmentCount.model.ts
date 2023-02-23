@@ -10,10 +10,8 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import {
-  IndictmentCountOffense,
-  SubstanceMap,
-} from '@island.is/judicial-system/types'
+import { IndictmentCountOffense } from '@island.is/judicial-system/types'
+import type { SubstanceMap } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case/models/case.model'
 
