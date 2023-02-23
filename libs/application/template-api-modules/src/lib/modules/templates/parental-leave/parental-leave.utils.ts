@@ -258,12 +258,8 @@ export const parentPrefix = (
   application: Application,
   selectedChild: ChildInformation,
 ) => {
-  const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
-    application.answers,
-  )
+  const isFosterCare = isPermanentFosterCare(selectedChild, application)
 
-  const isFosterCare = isPermanentFosterCare(selectedChild, noChildrenFoundTypeOfApplication)
-   
   if (isFosterCare) {
     if (selectedChild.parentalRelation === ParentalRelations.primary) {
       return applicantIsMale(application) ? 'F-FÓ' : 'M-FÓ'
@@ -271,7 +267,7 @@ export const parentPrefix = (
       if (selectedChild.primaryParentGenderCode === '1') {
         return applicantIsMale(application) ? 'FO-FÓ' : 'M-FÓ'
       } else {
-        return applicantIsMale(application) ?  'F-FÓ' : 'FO-FÓ'
+        return applicantIsMale(application) ? 'F-FÓ' : 'FO-FÓ'
       }
     }
   } else {
@@ -283,10 +279,14 @@ export const parentPrefix = (
   }
 }
 
-export const isPermanentFosterCare = (selectedChild: ChildInformation, noChildrenFoundTypeOfApplication: string) => {
-  return  selectedChild.parentalRelation === ParentalRelations.primary
-  ? noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE
-  : selectedChild.primaryParentTypeOfApplication === PERMANENT_FOSTER_CARE
+export const isPermanentFosterCare = (selectedChild: ChildInformation, application: Application) => {
+  const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
+    application.answers,
+  )
+
+  return selectedChild.parentalRelation === ParentalRelations.primary
+    ? noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE
+    : selectedChild.primaryParentTypeOfApplication === PERMANENT_FOSTER_CARE
 }
 
 export const answerToPeriodsDTO = (answers: AnswerPeriod[]) => {
@@ -340,16 +340,14 @@ export const transformApplicationToParentalLeaveDTO = (
   const selfEmployed = isSelfEmployed === YES
   const receivingUnemploymentBenefits = isReceivingUnemploymentBenefits === YES
   const testData: string = onlyValidate!.toString()
-  const isFosterCare = isPermanentFosterCare(selectedChild, noChildrenFoundTypeOfApplication)
+  const isFosterCare = isPermanentFosterCare(selectedChild, application)
 
   return {
     applicationId: application.id,
     applicationFundId: applicationFundId,
     applicant: application.applicant,
     otherParentId: getOtherParentId(application),
-    expectedDateOfBirth: isFosterCare
-      ? ''
-      : selectedChild.expectedDateOfBirth,
+    expectedDateOfBirth: isFosterCare ? '' : selectedChild.expectedDateOfBirth,
     // TODO: get true date of birth, not expected
     // will get it from a new Þjóðskrá API (returns children in custody of a national registry id)
     dateOfBirth: isFosterCare ? selectedChild.dateOfBirth! : '',

@@ -32,6 +32,7 @@ import {
   PARENTAL_LEAVE,
   PARENTAL_GRANT,
   SINGLE,
+  PERMANENT_FOSTER_CARE,
 } from '../constants'
 import { SchemaFormValues } from '../lib/dataSchema'
 
@@ -794,7 +795,9 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'shareInformationWithOtherParent',
   ) as YesOrNo
 
-  const selectedChild = getValueViaPath(answers, 'selectedChild') as string
+  // default value as 0 for adoption, foster care and father without mother
+  // since primary parent doesn't choose a child
+  const selectedChild = getValueViaPath(answers, 'selectedChild', '0') as string
 
   const transferRights = getValueViaPath(
     answers,
@@ -1546,4 +1549,23 @@ export const isParentalGrant = (application: Application) => {
     applicationType === PARENTAL_GRANT ||
     applicationType === PARENTAL_GRANT_STUDENTS
   )
+}
+
+export const isPermanentFosterCare = (application: Application) => {
+  const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
+    application.answers,
+  )
+
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
+
+  if (!selectedChild) {
+    throw new Error('Missing selected child')
+  }
+
+  return  selectedChild.parentalRelation === ParentalRelations.primary
+  ? noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE
+  : selectedChild.primaryParentTypeOfApplication === PERMANENT_FOSTER_CARE
 }

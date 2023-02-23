@@ -356,7 +356,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     noChildrenFoundLabel: {
       id: 'pl.application:no.children.found.label',
-      defaultMessage: 'Viltu búa til umsókn vegna varanlegst fóstur eða föður án móður?',
+      defaultMessage:
+        'Viltu búa til umsókn vegna varanlegst fóstur eða föður án móður?',
       description:
         'Do you want to apply for parmanent foster care or Father without mother application?',
     },
@@ -930,18 +931,20 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     fosterCareDescription: {
       id: 'pl.application:foster.care.description',
-      defaultMessage: 'Settu inn upplýsingar um barn sem tekið er í varanlegt fóstur',
-      description: 'Enter information about a child who is taken into permanent foster care',
+      defaultMessage:
+        'Settu inn upplýsingar um barn sem tekið er í varanlegt fóstur',
+      description:
+        'Enter information about a child who is taken into permanent foster care',
     },
     fosterCareBirthDate: {
       id: 'pl.application:foster.care.birth.date',
       defaultMessage: 'Fæðingardagur barns',
-      description: `Child's birth date`
+      description: `Child's birth date`,
     },
     fosterCareAdoptionDate: {
       id: 'pl.application:foster.care.adoption.date',
       defaultMessage: 'Dagsetning sem forsjárskipting á sér stað',
-      description: 'Date on which the division of custody takes place'
+      description: 'Date on which the division of custody takes place',
     },
     secondaryParent: {
       id: 'pl.application:selectChild.secondaryParent',
@@ -1177,6 +1180,12 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage:
         'Þú getur valið um að byrja fæðingarstyrk á áætluðum fæðingardegi, frá raunverulegum fæðingardegi eða ákveðinni dagsetningu. Athugaðu að ekki er hægt að nýta réttindi til fæðingarstyrks 24 mánuðum eftir fæðingu barnsins.',
       description: 'Add translation',
+    },
+    adoptionDateOption: {
+      id: 'pl.application:periods.first.period.adoption.date',
+      defaultMessage: 'Ég vil byrja á degi sem forsjárskipting á sér stað',
+      description:
+        'I want to start on the day the division of custody takes place',
     },
     estimatedDateOfBirthOption: {
       id: 'pl.application:periods.first.period.estimatedDateOfBirth',
