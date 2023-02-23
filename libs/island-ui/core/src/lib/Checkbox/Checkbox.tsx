@@ -87,6 +87,8 @@ export const Checkbox = ({
       // If the component is not controlled, we need to update its internal state.
       setInternalState({
         value:
+          // If the value is empty, we need to convert checked to a boolean representation of a string.
+          // This is to make sure that input value can be extracted from the query string
           event.target.value === ''
             ? event.target.checked.toString()
             : event.target.value,
