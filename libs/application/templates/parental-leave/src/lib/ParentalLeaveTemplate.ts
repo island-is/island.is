@@ -766,7 +766,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
             },
             {
-              cond: (application) => goToState(application, States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS),
+              cond: (application) =>
+                goToState(
+                  application,
+                  States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
+                ),
               target: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
             },
           ],
@@ -1456,7 +1460,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { state } = application
         const { answers } = application
         const e = (event.type as unknown) as any
-        if (e === 'xstate.init' && state === States.VINNUMALASTOFNUN_APPROVE_EDITS) {
+        if (
+          e === 'xstate.init' &&
+          state === States.VINNUMALASTOFNUN_APPROVE_EDITS
+        ) {
           set(answers, 'previousState', state)
         }
         if (e === DefaultEvents.ABORT) {
