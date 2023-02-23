@@ -18,7 +18,7 @@ import { AdviceResult } from '../models/adviceResult.model'
 export class CaseResultResolver {
   constructor(private caseResultService: CaseResultService) {}
 
-  @Query(() => [CaseItemResult], { name: 'consulationPortalAllCases' })
+  @Query(() => [CaseItemResult], { name: 'consultationPortalAllCases' })
   async getAllCases(): Promise<CaseItemResult[]> {
     return await this.caseResultService.getAllCases()
   }
@@ -28,18 +28,18 @@ export class CaseResultResolver {
   //   return await this.caseResultService.getCase()
   // }
 
-  @Query(() => CaseResult, { name: 'consulationPortalCaseById' })
+  @Query(() => CaseResult, { name: 'consultationPortalCaseById' })
   async getCase(@Args('caseId') caseId: number): Promise<CaseResult> {
     return await this.caseResultService.getCase(caseId)
   }
 
-  @Query(() => [AdviceResult], { name: 'consulationPortalAdviceByCaseId' })
+  @Query(() => [AdviceResult], { name: 'consultationPortalAdviceByCaseId' })
   async getAdvices(@Args('caseId') caseId: number): Promise<string[]> {
     const advices = await this.caseResultService.getAdvices(caseId)
     return advices.map((advice) => advice.content as string)
   }
 
-  @Mutation(() => CaseResult, { name: 'consulationPortalPostAdvice' })
+  @Mutation(() => CaseResult, { name: 'consultationPortalPostAdvice' })
   async postAdvice(
     @Args('caseId') caseId: number,
     @Args('content') content: string,
@@ -58,11 +58,11 @@ export class CaseResultResolver {
 // export class CaseResolver {
 //   constructor(private caseService: CaseResultService) {}
 
-//   @Query(() => [CaseResult], { name: 'consulationPortalAllCases' })
+//   @Query(() => [CaseResult], { name: 'consultationPortalAllCases' })
 //   async getCases(): Promise<CaseResult[]> {
 //     return this.caseService.getAllCases()
 //   }
-//   // @Query(() => [CaseResult], { name: 'consulationPortalAllCases' })
+//   // @Query(() => [CaseResult], { name: 'consultationPortalAllCases' })
 //   // async getCase(id): Promise<CaseResult> {
 //   //   return this.caseService.getAllCases()
 //   // }

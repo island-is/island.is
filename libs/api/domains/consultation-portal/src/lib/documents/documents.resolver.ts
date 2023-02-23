@@ -6,7 +6,7 @@ import { DocumentInfoResult } from '../models/documentInfoResult.model'
 export class DocumentResolver {
   constructor(private documentService: DocumentService) {}
 
-  @Query(() => [DocumentInfoResult], { name: 'consulationPortalDocument' })
+  @Query(() => [DocumentInfoResult], { name: 'consultationPortalDocument' })
   async getDocument(@Args('documentId') documentId: string): Promise<void> {
     return this.documentService.getDocument(documentId)
   }
