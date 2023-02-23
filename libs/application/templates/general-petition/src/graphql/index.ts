@@ -48,12 +48,28 @@ export const GetEndorsements = gql`
     }
   }
 `
+
 export const GetSingleEndorsement = gql`
   query endorsementSystemGetSingleEndorsement(
     $input: FindEndorsementListInput!
   ) {
     endorsementSystemGetSingleEndorsement(input: $input) {
       hasEndorsed
+    }
+  }
+`
+
+export const EndorseList = gql`
+  mutation endorsementSystemEndorseList($input: CreateEndorsementInput!) {
+    endorsementSystemEndorseList(input: $input) {
+      id
+      endorser
+      endorsementListId
+      meta {
+        fullName
+      }
+      created
+      modified
     }
   }
 `

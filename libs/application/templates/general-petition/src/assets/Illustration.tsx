@@ -1,6 +1,6 @@
 import React from 'react'
 
-const School: React.FC = () => (
+const Illustration: React.FC = () => (
   <svg
     width="80%"
     viewBox="0 0 789 327"
@@ -4094,4 +4094,4 @@ const School: React.FC = () => (
   </svg>
 )
 
-export default School
+export default Illustration

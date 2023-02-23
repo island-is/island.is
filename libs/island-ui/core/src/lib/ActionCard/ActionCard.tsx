@@ -455,7 +455,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         </Box>
       </Box>
       {progressMeter.active && !renderDraftStatusBar && renderProgressMeter()}
-      {renderDraftStatusBar && (
+      {progressMeter.active && renderDraftStatusBar && (
         <Box
           width="full"
           paddingTop={[2, 2, 2, 3]}
