@@ -44,6 +44,22 @@ interface Props {
   ) => void
 }
 
+function offencesCompare(
+  offence1: IndictmentCountOffense,
+  offence2: IndictmentCountOffense,
+) {
+  const offence1Index = Object.values(IndictmentCountOffense).indexOf(offence1)
+  const offence2Index = Object.values(IndictmentCountOffense).indexOf(offence2)
+
+  if (offence1Index < offence2Index) {
+    return -1
+  }
+  if (offence1Index > offence2Index) {
+    return 1
+  }
+  return 0
+}
+
 const offenceLawsMap: Record<
   IndictmentCountOffense | 'DRUNK_DRIVING_MINOR' | 'DRUNK_DRIVING_MAJOR',
   [number, number][]
@@ -144,7 +160,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
     setLegalArgumentsErrorMessage,
   ] = useState<string>('')
 
-  const offensesList = useMemo(
+  const offensesOptions = useMemo(
     () =>
       Object.values(IndictmentCountOffense).map((offense) => ({
         value: offense,
@@ -205,11 +221,11 @@ export const IndictmentCount: React.FC<Props> = (props) => {
 
   const incidentDescription = useCallback(
     (
-      offenses?: IndictmentCountOffense[],
-      policeCaseNumber?: string,
-      vehicleRegistrationNumber?: string,
+      offenses: IndictmentCountOffense[],
+      policeCaseNumber: string,
+      vehicleRegistrationNumber: string,
     ) => {
-      if (offenses === undefined) {
+      if (offenses.length === 0) {
         return ''
       }
 
@@ -226,23 +242,64 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           formatDate(crimeDate, 'PPPP')?.replace('dagur,', 'daginn') ?? ''
       }
 
-      incidentDescription = offenses
-        .map((offense) => {
-          return formatMessage(
-            strings.trafficViolationIncidentDescriptionAutofill,
-            {
-              incidentDate: incidentDate ? incidentDate : '[Dagsetning]',
-              vehicleRegistrationNumber: vehicleRegistrationNumber
-                ? vehicleRegistrationNumber
-                : '[Skráningarnúmer ökutækis]',
-              offense: offense,
-              incidentLocation: incidentLocation
-                ? incidentLocation
-                : '[Vettvangur]',
-            },
-          )
-        })
-        .join('\n\n')
+      const reason = offenses.reduce((acc, offense, index) => {
+        if (
+          offenses.length > 1 &&
+          (index === offenses.length - 1 ||
+            offense === IndictmentCountOffense.IllegalDrugsDriving)
+        ) {
+          acc += ' og '
+        } else if (index > 0) {
+          acc += ', '
+        }
+        switch (offense) {
+          case IndictmentCountOffense.DrivingWithoutLicence:
+            acc += formatMessage(
+              strings.trafficViolationIncidentDescriptionDrivingWithoutLicenceAutofill,
+            )
+            break
+          case IndictmentCountOffense.DrunkDriving:
+            acc += formatMessage(
+              strings.trafficViolationIncidentDescriptionDrunkDrivingAutofill,
+            )
+            break
+          case IndictmentCountOffense.IllegalDrugsDriving:
+            acc +=
+              formatMessage(
+                strings.trafficViolationIncidentDescriptionDrugsDrivingPrefixAutofill,
+              ) +
+              formatMessage(
+                strings.trafficViolationIncidentDescriptionIllegalDrugsDrivingAutofill,
+              )
+            break
+          case IndictmentCountOffense.PrescriptionDrugsDriving:
+            acc +=
+              (offenses.includes(IndictmentCountOffense.IllegalDrugsDriving)
+                ? ''
+                : formatMessage(
+                    strings.trafficViolationIncidentDescriptionDrugsDrivingPrefixAutofill,
+                  )) +
+              formatMessage(
+                strings.trafficViolationIncidentDescriptionPrescriptionDrugsDrivingAutofill,
+              )
+            break
+        }
+        return acc
+      }, '')
+
+      incidentDescription = formatMessage(
+        strings.trafficViolationIncidentDescriptionAutofill,
+        {
+          incidentDate: incidentDate ? incidentDate : '[Dagsetning]',
+          vehicleRegistrationNumber: vehicleRegistrationNumber
+            ? vehicleRegistrationNumber
+            : '[Skráningarnúmer ökutækis]',
+          reason: reason,
+          incidentLocation: incidentLocation
+            ? incidentLocation
+            : '[Vettvangur]',
+        },
+      )
 
       setIncidentDescriptionErrorMessage('')
 
@@ -333,6 +390,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
               event.target.value,
               setVehicleRegistrationNumberErrorMessage,
             )
+
             onChange(indictmentCount.id, {
               vehicleRegistrationNumber: event.target.value,
               incidentDescription: incidentDescription(
@@ -359,7 +417,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
       <Box marginBottom={2}>
         <Select
           name="offenses"
-          options={offensesList}
+          options={offensesOptions}
           label={formatMessage(strings.incidentLabel)}
           placeholder={formatMessage(strings.incidentPlaceholder)}
           onChange={(so: ValueType<ReactSelectOption>) => {
@@ -368,11 +426,12 @@ export const IndictmentCount: React.FC<Props> = (props) => {
             const offenses = [
               ...(indictmentCount.offenses ?? []),
               selectedOffense,
-            ]
+            ].sort(offencesCompare)
             const lawsBroken = getLawsBroken(
               offenses,
               indictmentCount.substances?.ALCOHOL,
             )
+
             onChange(indictmentCount.id, {
               offenses: offenses,
               lawsBroken: lawsBroken,
@@ -408,6 +467,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
                     offenses,
                     indictmentCount.substances?.ALCOHOL,
                   )
+
                   onChange(indictmentCount.id, {
                     offenses: offenses,
                     lawsBroken: lawsBroken,
@@ -512,6 +572,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
               ...(indictmentCount.lawsBroken ?? []),
               law,
             ].sort(lawsCompare)
+
             onChange(indictmentCount.id, {
               lawsBroken: lawsBroken,
               legalArguments: legalArguments(lawsBroken),
@@ -536,6 +597,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
                   const lawsBroken = (indictmentCount.lawsBroken ?? []).filter(
                     (b) => lawsCompare(b, brokenLaw) !== 0,
                   )
+
                   onChange(indictmentCount.id, {
                     lawsBroken: lawsBroken,
                     legalArguments: legalArguments(lawsBroken),
