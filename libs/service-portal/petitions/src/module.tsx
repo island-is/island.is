@@ -6,12 +6,12 @@ import { EndorsementsScope } from '@island.is/auth/scopes'
 import { PetitionPaths } from './lib/paths'
 
 const Petitions = lazy(() => import('./screens/Petitions'))
-const ViewPetition = lazy(() => import('./screens/ViewPetition'))
+const ViewPetition = lazy(() => import('./screens/ViewPetitionList'))
 const PetitionsAdmin = lazy(() => import('./screens/PetitionsAdmin'))
 const ViewPetitionAdmin = lazy(() => import('./screens/ViewPetitionAdmin'))
 
 export const petitionsModule: PortalModule = {
-  name: 'Almennir undirskriftalistar',
+  name: 'Undirskriftalistar',
   featureFlag: Features.servicePortalPetitionsModule,
   enabled: ({ isCompany }) => !isCompany,
   routes: ({ userInfo }) => {

@@ -10,9 +10,8 @@ import {
 import { useLocale } from '@island.is/localization'
 
 import { m } from '../../lib/messages'
-import { PAGE_SIZE, pages, paginate } from '../pagination'
 import { ExportAsCSV } from '@island.is/shared/components'
-import { formatDate } from '../../lib/utils'
+import { formatDate, pages, PAGE_SIZE, paginate } from '../../lib/utils'
 
 const PetitionsTable = (data: any) => {
   const { formatMessage } = useLocale()

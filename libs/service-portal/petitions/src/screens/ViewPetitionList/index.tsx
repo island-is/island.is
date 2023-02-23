@@ -30,7 +30,7 @@ import {
 } from '../queries'
 import Skeleton from '../Skeletons/Skeleton'
 
-const ViewPetition = () => {
+const ViewPetitionList = () => {
   const { formatMessage } = useLocale()
   const location: any = useLocation()
 
@@ -325,4 +325,4 @@ const ViewPetition = () => {
   )
 }
 
-export default ViewPetition
+export default ViewPetitionList
