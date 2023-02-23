@@ -36,8 +36,10 @@ const Sessions = () => {
   const [searchNationalId, setSearchNationalId] = useState('')
   const [nextCursor, setNextCursor] = useState<string>('')
   const [customLoading, setCustomLoading] = React.useState(true)
-  const [fromDate, setFromDate] = useState<Date>(initialDates.fromDate)
-  const [toDate, setToDate] = useState<Date>(initialDates.toDate)
+  const [filterDates, setFilterDates] = useState<{
+    fromDate: Date
+    toDate: Date
+  }>(initialDates)
   const getQueryVariables = (
     next: string,
     nationalId: string,
@@ -82,7 +84,12 @@ const Sessions = () => {
     if (data?.sessionsList.pageInfo.hasNextPage) {
       setCustomLoading(true)
       refetch({
-        ...getQueryVariables(nextCursor, searchNationalId, fromDate, toDate),
+        ...getQueryVariables(
+          nextCursor,
+          searchNationalId,
+          filterDates.fromDate,
+          filterDates.toDate,
+        ),
       }).then((res) => {
         setSessionsData([
           ...(sessionsData as SessionsSession[]),
@@ -105,8 +112,12 @@ const Sessions = () => {
           ? initialDates.fromDate
           : type === 'from'
           ? date
-          : fromDate,
-        type === 'clear' ? initialDates.toDate : type === 'to' ? date : toDate,
+          : filterDates.fromDate,
+        type === 'clear'
+          ? initialDates.toDate
+          : type === 'to'
+          ? date
+          : filterDates.toDate,
       ),
     }).then((res) => {
       setSessionsData(res.data?.sessionsList.data as SessionsSession[])
@@ -114,23 +125,26 @@ const Sessions = () => {
       setCustomLoading(false)
     })
     if (type === 'clear') {
-      setFromDate(initialDates.fromDate)
-      setToDate(initialDates.toDate)
-    }
-    if (type === 'from') {
-      setFromDate(date)
-    } else {
-      setToDate(date)
+      setFilterDates(initialDates)
+    } else if (type === 'from') {
+      setFilterDates((prev) => ({ ...prev, fromDate: date }))
+    } else if (type === 'to') {
+      setFilterDates((prev) => ({ ...prev, toDate: date }))
     }
   }
 
-  const handleChange = (value: string): void => {
+  const handleNationalIdChange = (value: string): void => {
     setSearchNationalId(value)
     if (kennitala.isValid(value)) {
       setSessionsData([])
       setCustomLoading(true)
       refetch({
-        ...getQueryVariables('', value, fromDate, toDate),
+        ...getQueryVariables(
+          '',
+          value,
+          filterDates.fromDate,
+          filterDates.toDate,
+        ),
       }).then((res) => {
         setSessionsData(res.data?.sessionsList.data as SessionsSession[])
         setNextCursor(res.data?.sessionsList.pageInfo.endCursor ?? '')
@@ -143,7 +157,7 @@ const Sessions = () => {
       setSessionsData([])
       setCustomLoading(true)
       refetch({
-        ...getQueryVariables('', '', fromDate, toDate),
+        ...getQueryVariables('', '', filterDates.fromDate, filterDates.toDate),
       }).then((res) => {
         setSessionsData(res.data?.sessionsList.data as SessionsSession[])
         setNextCursor(res.data?.sessionsList.pageInfo.endCursor ?? '')
@@ -165,10 +179,10 @@ const Sessions = () => {
         paddingBottom={[3, 3, 4, 4]}
       >
         <SessionFilter
-          fromDate={fromDate}
-          toDate={toDate}
+          fromDate={filterDates.fromDate}
+          toDate={filterDates.toDate}
           handleDateChange={handleDateChange}
-          onFilterChange={handleChange}
+          onNationalIdFilterChange={handleNationalIdChange}
           nationalId={searchNationalId}
           resultCount={
             data?.sessionsList.totalCount ? data?.sessionsList.totalCount : 0

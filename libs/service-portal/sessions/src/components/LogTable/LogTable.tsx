@@ -92,7 +92,7 @@ const LogTable: React.FC<LogTableProps> = ({ data }) => {
                 <Box display="flex" alignItems="center" columnGap="gutter">
                   <Person sessionType={type} />
 
-                  <Box style={{ minWidth: 'fit-content' }}>
+                  <Box className={styles.fitContent}>
                     <Text variant="eyebrow">
                       {type === SessionType.myBehalf ||
                       type === SessionType.company

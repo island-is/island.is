@@ -31,3 +31,7 @@ export const logo = style({
   width: '16px',
   height: '16px',
 })
+
+export const fitContent = style({
+  width: 'fit-content',
+})

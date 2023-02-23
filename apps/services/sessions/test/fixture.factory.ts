@@ -20,7 +20,7 @@ export class FixtureFactory {
     to: Date,
     from: Date,
   ): Promise<Session[]> {
-    // Create sessions for [before from, at to, before to, at from, after to]
+    // Create sessions for [before from, at from, before to, at to, after to]
     const dates = [addDays(from, -1), from, addDays(to, -1), to, addDays(to, 1)]
 
     const dateSessions = dates.map((date) =>

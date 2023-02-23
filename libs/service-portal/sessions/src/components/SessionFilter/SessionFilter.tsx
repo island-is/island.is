@@ -5,6 +5,7 @@ import {
   DatePicker,
   Filter,
   FilterInput,
+  Stack,
   useBreakpoint,
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
@@ -17,7 +18,7 @@ import addYears from 'date-fns/addYears'
 const defaultCalState = { top: false, lower: false }
 
 interface IProps {
-  onFilterChange: (value: string) => void
+  onNationalIdFilterChange: (value: string) => void
   nationalId: string
   fromDate?: Date
   toDate?: Date
@@ -26,7 +27,7 @@ interface IProps {
 }
 
 const SessionFilter: React.FC<IProps> = ({
-  onFilterChange,
+  onNationalIdFilterChange,
   nationalId,
   handleDateChange,
   toDate,
@@ -56,7 +57,7 @@ const SessionFilter: React.FC<IProps> = ({
             placeholder={formatMessage(m.searchByNationalId)}
             name="session-nationalId-input"
             value={nationalId}
-            onChange={onFilterChange}
+            onChange={onNationalIdFilterChange}
             backgroundColor="blue"
           />
         }
@@ -93,22 +94,24 @@ const SessionFilter: React.FC<IProps> = ({
                   display="flex"
                   flexDirection="column"
                 >
-                  <DatePicker
-                    label={formatMessage(m.datepickerFromLabel)}
-                    placeholderText={formatMessage(m.datepickLabel)}
-                    locale="is"
-                    backgroundColor="blue"
-                    size="xs"
-                    handleChange={(d) => handleDateChange(d, 'from')}
-                    handleOpenCalendar={() =>
-                      setOpenCal({ top: true, lower: false })
-                    }
-                    minDate={addYears(new Date(), -1)}
-                    maxDate={new Date()}
-                    handleCloseCalendar={() => setOpenCal(defaultCalState)}
-                    selected={fromDate}
-                  />
-                  <Box marginTop={3}>
+                  <Stack space={3}>
+                    <h1>test</h1>
+                    <DatePicker
+                      id="date-from"
+                      label={formatMessage(m.datepickerFromLabel)}
+                      placeholderText={formatMessage(m.datepickLabel)}
+                      locale="is"
+                      backgroundColor="blue"
+                      size="xs"
+                      handleChange={(d) => handleDateChange(d, 'from')}
+                      handleOpenCalendar={() =>
+                        setOpenCal({ top: true, lower: false })
+                      }
+                      minDate={addYears(new Date(), -1)}
+                      maxDate={new Date()}
+                      handleCloseCalendar={() => setOpenCal(defaultCalState)}
+                      selected={fromDate}
+                    />
                     <DatePicker
                       id="date-to"
                       label={formatMessage(m.datepickerToLabel)}
@@ -125,7 +128,7 @@ const SessionFilter: React.FC<IProps> = ({
                       handleCloseCalendar={() => setOpenCal(defaultCalState)}
                       selected={toDate}
                     />
-                  </Box>
+                  </Stack>
                 </Box>
               </AccordionItem>
             </Accordion>

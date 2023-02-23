@@ -358,14 +358,8 @@ describe('SessionsController', () => {
         expect(res1.body.data).toMatchObject(
           sortBy(mockSessions, 'timestamp')
             .reverse()
-            .filter(
-              (session) =>
-                (session.actorNationalId === user.nationalId ||
-                  session.subjectNationalId == user.nationalId) &&
-                session.timestamp >= new Date(from),
-            )
-            .map((session) => ({ id: session.id }))
-            .slice(0, 10),
+            .filter((session) => session.timestamp >= new Date(from))
+            .map((session) => ({ id: session.id })),
         )
       })
 
@@ -384,14 +378,8 @@ describe('SessionsController', () => {
         expect(res1.body.data).toMatchObject(
           sortBy(mockSessions, 'timestamp')
             .reverse()
-            .filter(
-              (session) =>
-                (session.actorNationalId === user.nationalId ||
-                  session.subjectNationalId == user.nationalId) &&
-                session.timestamp <= new Date(to),
-            )
-            .map((session) => ({ id: session.id }))
-            .slice(0, 10),
+            .filter((session) => session.timestamp <= new Date(to))
+            .map((session) => ({ id: session.id })),
         )
       })
 
