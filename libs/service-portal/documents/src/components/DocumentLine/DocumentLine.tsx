@@ -40,6 +40,14 @@ const GET_DOCUMENT_BY_ID = gql`
     }
   }
 `
+
+const GET_DOCUMENT_PDF = gql`
+  query getDocumentPDF($input: GetDocumentPDFByIdInput!) {
+    getDocumentPDFById(input: $input) {
+      file
+    }
+  }
+`
 const DocumentLine: FC<Props> = ({
   documentLine,
   img,
@@ -50,6 +58,20 @@ const DocumentLine: FC<Props> = ({
   const isMobile = width < theme.breakpoints.sm
   const { formatMessage } = useLocale()
 
+  const [
+    getDocumentPDFById,
+    { data: pdfData, loading: pdfLoading, error: pdfError },
+  ] = useLazyQuery(GET_DOCUMENT_PDF, {
+    variables: {
+      input: {
+        pdfId: documentLine.id,
+      },
+    },
+    onCompleted: () => {
+      onClickHandler()
+    },
+  })
+
   const [getDocument, { data: getFileByIdData, loading, error }] = useLazyQuery(
     GET_DOCUMENT_BY_ID,
     {
@@ -58,13 +80,11 @@ const DocumentLine: FC<Props> = ({
           id: documentLine.id,
         },
       },
-      onCompleted: () => {
-        onClickHandler()
-      },
     },
   )
 
   const singleDocument = getFileByIdData?.getDocument || ({} as DocumentDetails)
+  const pdf = pdfData?.getDocumentPDFById
 
   const onClickHandler = async () => {
     let html: string | undefined = undefined
@@ -78,37 +98,12 @@ const DocumentLine: FC<Props> = ({
         win?.focus()
       }, 250)
     } else {
-      // Create form elements
-      const form = document.createElement('form')
-      const documentIdInput = document.createElement('input')
-      const tokenInput = document.createElement('input')
-
-      const token = userInfo?.access_token
-
-      if (!token) return
-
-      form.appendChild(documentIdInput)
-      form.appendChild(tokenInput)
-
-      // Form values
-      form.method = 'post'
-      // TODO: Use correct url
-      form.action = documentLine.url
-      //form.target = '_blank'
-
-      // Document Id values
-      documentIdInput.type = 'hidden'
-      documentIdInput.name = 'documentId'
-      documentIdInput.value = documentLine.id
-
-      // National Id values
-      tokenInput.type = 'hidden'
-      tokenInput.name = '__accessToken'
-      tokenInput.value = token
-
-      document.body.appendChild(form)
-      form.submit()
-      document.body.removeChild(form)
+      const linkSource = `data:application/pdf;base64,${pdf.file}`
+      const downloadLink = document.createElement('a')
+      const fileName = `${documentLine.subject}.pdf`
+      downloadLink.href = linkSource
+      downloadLink.download = fileName
+      downloadLink.click()
     }
   }
 
@@ -135,10 +130,11 @@ const DocumentLine: FC<Props> = ({
       })}
       // Check if data is already fetched, if so go straight to download/display
       onClick={async () => {
-        if (getFileByIdData && !loading) {
+        if (getFileByIdData && !loading && pdfData && !pdfLoading) {
           await onClickHandler()
         } else {
           getDocument({ variables: { input: { id: documentLine.id } } })
+          getDocumentPDFById()
         }
       }}
     >
