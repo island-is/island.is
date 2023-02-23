@@ -149,6 +149,7 @@ export const Layout: FC = ({ children }) => {
                         linkHref={currentOrganization?.link ?? ''}
                         img={currentOrganization?.logo?.url ?? ''}
                         imgContainerDisplay="block"
+                        size="small"
                       />
                     )}
                   </Box>

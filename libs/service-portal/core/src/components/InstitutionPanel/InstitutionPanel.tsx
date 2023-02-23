@@ -17,7 +17,6 @@ interface InstitutionPanelProps {
   linkHref: string
   imgContainerDisplay?: BoxProps['display']
   loading?: boolean
-  size?: 'default' | 'small'
   backgroundColor?: 'purple100' | 'blue100' | 'white'
 }
 
@@ -29,7 +28,6 @@ export const InstitutionPanel = ({
   linkHref,
   imgContainerDisplay,
   loading = false,
-  size = 'default',
   backgroundColor = 'purple100',
 }: InstitutionPanelProps) => {
   return (
@@ -67,32 +65,6 @@ export const InstitutionPanel = ({
               width="full"
               height="full"
             />
-          )}
-        </Box>
-        <Box>
-          {loading ? (
-            <SkeletonLoader
-              display="block"
-              height={32}
-              width={185}
-              background="purple200"
-            />
-          ) : (
-            size === 'default' && (
-              <>
-                <Text variant="eyebrow" color="purple600">
-                  {institutionTitle}
-                </Text>
-                <Text
-                  variant={institution.length > 24 ? 'h5' : 'h3'}
-                  as="h3"
-                  color="purple600"
-                  lineHeight="sm"
-                >
-                  <Hyphen locale={locale}>{institution}</Hyphen>
-                </Text>
-              </>
-            )
           )}
         </Box>
       </Box>

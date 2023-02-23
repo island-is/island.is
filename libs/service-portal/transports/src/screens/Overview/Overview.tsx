@@ -29,7 +29,7 @@ import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import { exportVehicleOwnedDocument } from '../../utils/vehicleOwnedMapper'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
-import { VEHICLE_HIDE_NAME } from '../../utils/constants'
+import { SAMGONGUSTOFA_ID, VEHICLE_HIDE_NAME } from '../../utils/constants'
 
 export const GET_USERS_VEHICLES = gql`
   query GetUsersVehicles {
@@ -171,7 +171,11 @@ const VehiclesOverview = () => {
   }
   return (
     <>
-      <IntroHeader title={messages.title} intro={messages.intro} />
+      <IntroHeader
+        title={messages.title}
+        intro={messages.intro}
+        serviceProviderID={SAMGONGUSTOFA_ID}
+      />
 
       {!loading && !error && vehicles.length === 0 && (
         <Box marginTop={[0, 8]}>
