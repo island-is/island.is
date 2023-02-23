@@ -2,7 +2,7 @@
 
 ## About
 
-A REST-ish API that enables the updating of digital licenses for authenticated external parties.
+A RESTful API that enables the updating of digital licenses for authenticated external parties.
 
 ## Quickstart
 
@@ -18,7 +18,7 @@ To start the app:
 yarn dev license-api
 ```
 
-Afterwards, you can view the open api specs at localhost:4248/swagger/
+Afterwards, you can view the open api specs at http://localhost:4248/swagger/
 
 ## Urls
 

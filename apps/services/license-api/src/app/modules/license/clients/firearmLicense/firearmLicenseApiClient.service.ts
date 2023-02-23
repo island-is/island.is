@@ -177,7 +177,7 @@ export class FirearmLicenseApiClientService implements GenericLicenseClient {
         ok: false,
         error: {
           code: 3,
-          message: 'Missing ssn for user',
+          message: 'Missing nationalId for user',
         },
       }
     }
