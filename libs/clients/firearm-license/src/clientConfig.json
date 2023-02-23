@@ -32,24 +32,82 @@
         }
       }
     },
-    "/api/FirearmApplication/PropertyInfo": {
+    "/api/FirearmApplication/WithAPIKey/LicenseInfo/{ssn}": {
       "get": {
         "tags": ["FirearmApplication"],
         "parameters": [
           {
-            "name": "PageNumber",
-            "in": "query",
+            "name": "ssn",
+            "in": "path",
+            "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int32"
+              "type": "string",
+              "nullable": true
             }
-          },
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LicenseInfo"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LicenseInfo"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LicenseInfo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/FirearmApplication/PropertyInfo": {
+      "get": {
+        "tags": ["FirearmApplication"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FirearmPropertyList"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FirearmPropertyList"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FirearmPropertyList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/FirearmApplication/WithAPIKey/PropertyInfo/{ssn}": {
+      "get": {
+        "tags": ["FirearmApplication"],
+        "parameters": [
           {
-            "name": "PageSize",
-            "in": "query",
+            "name": "ssn",
+            "in": "path",
+            "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int32"
+              "type": "string",
+              "nullable": true
             }
           }
         ],

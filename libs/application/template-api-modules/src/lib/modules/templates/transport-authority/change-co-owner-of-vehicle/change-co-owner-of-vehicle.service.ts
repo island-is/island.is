@@ -8,8 +8,16 @@ import {
   ChangeCoOwnerOfVehicleAnswers,
   getChargeItemCodes,
 } from '@island.is/application/templates/transport-authority/change-co-owner-of-vehicle'
-import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
+import {
+  OwnerChangeValidation,
+  VehicleOwnerChangeClient,
+} from '@island.is/clients/transport-authority/vehicle-owner-change'
 import { VehicleOperatorsClient } from '@island.is/clients/transport-authority/vehicle-operators'
+import {
+  VehicleDebtStatus,
+  VehicleServiceFjsV1Client,
+} from '@island.is/clients/vehicle-service-fjs-v1'
+import { VehicleSearchApi } from '@island.is/clients/vehicles'
 import { EmailRecipient, EmailRole } from './types'
 import {
   getAllRoles,
@@ -33,6 +41,7 @@ import {
 } from './smsGenerators'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
@@ -42,8 +51,58 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
     private readonly vehicleOperatorsClient: VehicleOperatorsClient,
     private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
+    private readonly vehicleServiceFjsV1Client: VehicleServiceFjsV1Client,
+    private readonly vehiclesApi: VehicleSearchApi,
   ) {
     super(ApplicationTypes.CHANGE_CO_OWNER_OF_VEHICLE)
+  }
+
+  private vehiclesApiWithAuth(auth: Auth) {
+    return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  async getCurrentVehiclesWithOwnerchangeChecks({
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const result = await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
+      persidNo: auth.nationalId,
+      showOwned: true,
+      showCoowned: false,
+      showOperated: false,
+    })
+
+    return await Promise.all(
+      result?.map(async (vehicle) => {
+        let validation: OwnerChangeValidation | undefined
+        let debtStatus: VehicleDebtStatus | undefined
+
+        // Only validate if fewer than 5 items
+        if (result.length <= 5) {
+          // Get debt status
+          debtStatus = await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
+            auth,
+            vehicle.permno || '',
+          )
+
+          // Get validation
+          validation = await this.vehicleOwnerChangeClient.validateVehicleForOwnerChange(
+            auth,
+            vehicle.permno || '',
+          )
+        }
+
+        return {
+          permno: vehicle.permno || undefined,
+          make: vehicle.make || undefined,
+          color: vehicle.color || undefined,
+          role: vehicle.role || undefined,
+          isDebtLess: debtStatus?.isDebtLess,
+          validationErrorMessages: validation?.hasError
+            ? validation.errorMessages
+            : null,
+        }
+      }),
+    )
   }
 
   async validateApplication({
