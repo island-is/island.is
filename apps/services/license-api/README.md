@@ -18,7 +18,7 @@ To start the app:
 yarn dev license-api
 ```
 
-Afterwards, you can view the open api specs at localhost:4248/swagger/
+Afterwards, you can view the open api specs at http://localhost:4248/swagger/
 
 ## Urls
 
