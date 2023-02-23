@@ -198,19 +198,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       return dateOfBirth?.data?.dateOfBirth
     }
 
-    const promise = new Promise(function (resolve) {
-      setTimeout(() => {
-        console.log('2023-02-10')
-        resolve('2023-02-10')
-      }, 5000)
-    })
-
-    const newValue = await promise
-    return {
-      dateOfBirth: newValue,
-    }
-
-
     try {
       const applicationInformation = await this.applicationInformationAPI.applicationGetApplicationInformation(
         {
@@ -651,7 +638,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       applicationType,
       otherParent,
       hasMultipleBirths,
-
     } = getApplicationAnswers(application.answers)
 
     const { applicationFundId } = getApplicationExternalData(
