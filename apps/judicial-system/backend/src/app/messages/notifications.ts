@@ -352,11 +352,10 @@ export const notifications = {
         'Fyrirsögn í pósti til fangeslis þegar vistunarseðill og þingbók eru send',
     },
     body: {
-      id: 'judicial.system.backend:notifications.prison_ruling_email',
+      id: 'judicial.system.backend:notifications.prison_ruling_email_v2',
       defaultMessage:
-        'Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í {caseType, select, ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} other {gæsluvarðhald}} í héraðsdómi {courtEndTime, select, NONE {á ótilgreindum tíma} other {{courtEndTime}}}, auk þingbókar þar sem úrskurðarorðin koma fram.',
-      description:
-        'Texti í pósti til fangelis þegar vistunarseðill og þingbók eru send',
+        '{institutionName} hefur úrskurðað aðila í {caseType, select, ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} other {gæsluvarðhald}} í þinghaldi sem lauk rétt í þessu. Hægt er að nálgast þingbók og vistunarseðil í {linkStart}Réttarvörslugátt{linkEnd}.',
+      description: 'Texti í pósti til fangelis með link á réttarvörslugátt',
     },
   }),
   prisonRevokedEmail: defineMessages({

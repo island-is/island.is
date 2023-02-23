@@ -41,6 +41,7 @@ export enum ApplicationTypes {
   ORDER_VEHICLE_REGISTRATION_CERTIFICATE = 'OrderVehicleRegistrationCertificate',
   TRANSFER_OF_VEHICLE_OWNERSHIP = 'TransferOfVehicleOwnership',
   DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR = 'DrivingLicenseBookUpdateInstructor',
+  ALCOHOL_TAX_REDEMPTION = 'AlcoholTaxRedemption',
 }
 
 export const ApplicationConfigurations = {
@@ -109,8 +110,8 @@ export const ApplicationConfigurations = {
     translation: 'an.application',
   },
   [ApplicationTypes.GENERAL_PETITION]: {
-    slug: 'medmaelendalisti',
-    translation: 'gpt.application',
+    slug: 'undirskriftalisti',
+    translation: 'gpl.application',
   },
   [ApplicationTypes.GENERAL_FISHING_LICENSE]: {
     slug: 'veidileyfi',
@@ -211,5 +212,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR]: {
     slug: 'okunam-okukennari',
     translation: 'dlbui.application',
+  },
+  [ApplicationTypes.ALCOHOL_TAX_REDEMPTION]: {
+    slug: 'afengisgjold',
+    translation: 'atr.application',
   },
 }

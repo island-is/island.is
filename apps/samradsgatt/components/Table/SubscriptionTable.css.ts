@@ -1,4 +1,4 @@
-// import { theme } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
 
 export const checkmarkIcon = style({
@@ -6,11 +6,11 @@ export const checkmarkIcon = style({
 })
 
 export const tableRowLeft = style({
-  borderTopLeftRadius: '8px',
+  borderTopLeftRadius: theme.spacing[1],
   borderBottomLeftRadius: '8px',
 })
 
 export const tableRowRight = style({
-  borderTopRightRadius: '8px',
-  borderBottomRightRadius: '8px',
+  borderTopRightRadius: theme.spacing[1],
+  borderBottomRightRadius: theme.spacing[1],
 })
