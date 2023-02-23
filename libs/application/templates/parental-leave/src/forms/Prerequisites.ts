@@ -29,7 +29,13 @@ import {
   isNotEligibleForParentWithoutBirthParent,
   isParentWithoutBirthParent,
 } from '../lib/parentalLeaveUtils'
-import { NO, YES, ParentalRelations, PERMANENT_FOSTER_CARE, OTHER_NO_CHILDREN_FOUND } from '../constants'
+import {
+  NO,
+  YES,
+  ParentalRelations,
+  PERMANENT_FOSTER_CARE,
+  OTHER_NO_CHILDREN_FOUND,
+} from '../constants'
 import { defaultMultipleBirthsMonths } from '../config'
 
 const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
@@ -379,7 +385,7 @@ export const PrerequisitesForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'noChildrenFound',
-          title: '....',
+          title: parentalLeaveFormMessages.shared.noChildrenFoundSubTitle,
           condition: (_, externalData) => {
             const { children } = getApplicationExternalData(externalData)
             return children.length === 0 // if no children found we want to ask these questions
@@ -387,11 +393,14 @@ export const PrerequisitesForm: Form = buildForm({
           children: [
             buildRadioField({
               id: 'noChildrenFound.typeOfApplication',
-              title: parentalLeaveFormMessages.shared.noChildrenFoundTypeOfApplication,
+              title:
+                parentalLeaveFormMessages.shared
+                  .noChildrenFoundTypeOfApplication,
               options: [
                 {
                   value: PERMANENT_FOSTER_CARE,
-                  label: parentalLeaveFormMessages.shared.noChildrenFoundFosterCare,
+                  label:
+                    parentalLeaveFormMessages.shared.noChildrenFoundFosterCare,
                 },
                 {
                   value: OTHER_NO_CHILDREN_FOUND,
@@ -415,17 +424,21 @@ export const PrerequisitesForm: Form = buildForm({
             buildMultiField({
               id: 'fosterCare',
               title: parentalLeaveFormMessages.selectChild.screenTitle,
-              description: parentalLeaveFormMessages.selectChild.fosterCareDescription,
+              description:
+                parentalLeaveFormMessages.selectChild.fosterCareDescription,
               children: [
                 buildDateField({
                   id: 'fosterCare.birthDate',
-                  title: parentalLeaveFormMessages.selectChild.fosterCareBirthDate,
+                  title:
+                    parentalLeaveFormMessages.selectChild.fosterCareBirthDate,
                   description: '',
                   placeholder: parentalLeaveFormMessages.startDate.placeholder,
                 }),
                 buildDateField({
                   id: 'fosterCare.adoptionDate',
-                  title: parentalLeaveFormMessages.selectChild.fosterCareAdoptionDate,
+                  title:
+                    parentalLeaveFormMessages.selectChild
+                      .fosterCareAdoptionDate,
                   description: '',
                   placeholder: parentalLeaveFormMessages.startDate.placeholder,
                 }),
@@ -548,7 +561,7 @@ export const PrerequisitesForm: Form = buildForm({
           id: 'selectChild',
           title: parentalLeaveFormMessages.selectChild.screenTitle,
           condition: (_, externalData) =>
-                isEligibleForParentalLeave(externalData),
+            isEligibleForParentalLeave(externalData),
           children: [
             buildMultiField({
               id: 'selectedChildScreen',

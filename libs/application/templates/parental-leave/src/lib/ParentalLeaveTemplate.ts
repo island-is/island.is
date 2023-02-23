@@ -110,7 +110,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           progress: 0.25,
           onExit: defineTemplateApi({
             action: ApiModuleActions.setChildrenInformation,
-            externalDataId: 'noPrimaryChildren',
+            externalDataId: 'children',
             throwOnError: true,
           }),
           roles: [

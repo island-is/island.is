@@ -853,6 +853,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'I want to customize my leave into multiple periods and/or to stretch it out over time at less than 100% time off.',
     },
+    noChildrenFoundSubTitle: {
+      id: 'pl.application:no.children.found.sub.title',
+      defaultMessage: 'Umsókn vegna',
+      description: 'Application due to',
+    },
     noChildrenFoundTypeOfApplication: {
       id: 'pl.application:no.children.found.type.of.application',
       defaultMessage: 'Sækja um',

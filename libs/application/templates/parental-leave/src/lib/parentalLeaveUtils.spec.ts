@@ -122,41 +122,6 @@ describe('getExpectedDateOfBirth', () => {
 
     expect(res).toEqual('2021-05-17')
   })
-
-  it('should return the selected child expected DOB when the child is as noPrimaryChildren', () => {
-    const application = buildApplication({
-      answers: {
-        selectedChild: 0,
-      },
-      externalData: {
-        children: {
-          data: {
-            children: [],
-            existingApplications: [],
-          },
-          date: new Date(),
-          status: 'success',
-        },
-        noPrimaryChildren: {
-          data: {
-            children: {
-              hasRights: true,
-              remainingDays: 180,
-              parentalRelation: ParentalRelations.secondary,
-              expectedDateOfBirth: '2021-05-17',
-              primaryParentNationalRegistryId: '',
-            },
-          },
-          date: new Date(),
-          status: 'success',
-        },
-      },
-    })
-
-    const res = getExpectedDateOfBirth(application)
-
-    expect(res).toEqual('2021-05-17')
-  })
 })
 
 describe('formatIsk', () => {
