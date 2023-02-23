@@ -54,6 +54,13 @@ const Subscriptions = () => {
   const settingSubscriptionArray = (newSubscriptionArray) =>
     setSubscriptionArray(newSubscriptionArray)
 
+  const [sortTitle, setSortTitle] = useState({
+    Mál: 'Nýjast efst',
+    Stofnanir: 'Nýjast efst',
+    Málefnasvið: 'Nýjast efst',
+  })
+  const settingSortTitle = (obj) => setSortTitle(obj)
+
   const paddingYBreadCrumbs = [3, 3, 3, 5] as ResponsiveSpace
   const paddingXContent = [0, 0, 0, 15] as ResponsiveSpace
   const paddingXTable = [0, 0, 0, 15] as ResponsiveSpace
@@ -99,6 +106,7 @@ const Subscriptions = () => {
       content: (
         <TabContent
           data={casesData}
+          setData={(newData) => setCasesData(newData)}
           currentTab={'Mál'}
           subscriptionArray={subscriptionArray}
           setSubscriptionArray={settingSubscriptionArray}
@@ -106,6 +114,8 @@ const Subscriptions = () => {
           searchValue={searchValue}
           setSearchValue={settingSearchValue}
           searchPlaceholder={'Leitaðu að máli, stofnun eða málefnasviði'}
+          sortTitle={sortTitle}
+          setSortTitle={settingSortTitle}
         />
       ),
       disabled: false,
@@ -116,6 +126,7 @@ const Subscriptions = () => {
       content: (
         <TabContent
           data={institutionsData}
+          setData={(newData) => setInstitutionsData(newData)}
           currentTab={'Stofnanir'}
           subscriptionArray={subscriptionArray}
           setSubscriptionArray={settingSubscriptionArray}
@@ -123,6 +134,8 @@ const Subscriptions = () => {
           searchValue={searchValue}
           setSearchValue={settingSearchValue}
           searchPlaceholder={'Leitaðu að máli, stofnun eða málefnasviði'}
+          sortTitle={sortTitle}
+          setSortTitle={settingSortTitle}
         />
       ),
       disabled: false,
@@ -133,6 +146,7 @@ const Subscriptions = () => {
       content: (
         <TabContent
           data={policyAreasData}
+          setData={(newData) => setPolicyAreasData(newData)}
           currentTab={'Málefnasvið'}
           subscriptionArray={subscriptionArray}
           setSubscriptionArray={settingSubscriptionArray}
@@ -140,6 +154,8 @@ const Subscriptions = () => {
           searchValue={searchValue}
           setSearchValue={settingSearchValue}
           searchPlaceholder={'Leitaðu að máli, stofnun eða málefnasviði'}
+          sortTitle={sortTitle}
+          setSortTitle={settingSortTitle}
         />
       ),
       disabled: false,

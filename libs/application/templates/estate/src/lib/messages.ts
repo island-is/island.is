@@ -507,6 +507,22 @@ export const m = defineMessages({
     defaultMessage: 'Þú hefur nú útfyllt beiðni um einkaskipti.',
     description: '',
   },
+  divisionOfEstateByHeirsTerms: {
+    id: 'es.application:divisionOfEstateByHeirsTerms',
+    defaultMessage: 'Skilmálar',
+    description: '',
+  },
+  divisionOfEstateByHeirsText: {
+    id: 'es.application:divisionOfEstateByHeirsText#markdown',
+    defaultMessage:
+      'Sýslumaður hefur móttekið beiðni þína um einkaskipti. Hún verður nú tekin til afgreiðslu og upplýsingar um afgreiðslu beiðninnar send í pósthólf þitt á Ísland.is.',
+    description: '',
+  },
+  divisionOfEstateByHeirsSubmissionCheckbox: {
+    id: 'es.application:divisionOfEstateByHeirsSubmissionCheckbox',
+    defaultMessage: 'Ég hef lesið skilmálana',
+    description: '',
+  },
 
   // Submit
   submitApplication: {

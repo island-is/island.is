@@ -82,4 +82,9 @@ export const indictment = defineMessages({
       'Þess er krafist að ákærði verði dæmdur til refsingar og til greiðslu alls sakarkostnaðar.',
     description: 'Notaður sem sjálfvirkur texti í Refsikrafa textasvæði.',
   },
+  pdfButtonIndictment: {
+    id: 'judicial.system.core:indictments_indictment.pdf_button_indictment',
+    defaultMessage: 'Ákæra - PDF',
+    description: 'Notaður sem texti á hnappi til að sækja ákæru sem PDF skjal.',
+  },
 })

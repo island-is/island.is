@@ -1281,6 +1281,12 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         )
       }
 
+      // If applicant is sending additional documents then don't need to send email
+      const { actionName } = getApplicationAnswers(application.answers)
+      if (actionName === 'document') {
+        return
+      }
+
       // There has been case when island.is got Access Denied from AWS when sending out emails
       // This try/catch keeps application in correct state
       try {

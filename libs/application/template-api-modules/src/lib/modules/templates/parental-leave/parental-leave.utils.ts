@@ -25,6 +25,7 @@ import {
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   NO,
+  formatBankInfo,
 } from '@island.is/application/templates/parental-leave'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
@@ -313,7 +314,7 @@ export const transformApplicationToParentalLeaveDTO = (
     email,
     phoneNumber,
     paymentInfo: {
-      bankAccount: bank,
+      bankAccount: formatBankInfo(bank),
       personalAllowance: getPersonalAllowance(application),
       personalAllowanceFromSpouse: getPersonalAllowance(application, true),
       union: {
