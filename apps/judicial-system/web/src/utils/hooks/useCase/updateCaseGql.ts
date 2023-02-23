@@ -162,6 +162,7 @@ export const UpdateCaseMutation = gql`
       defendantWaivesRightToCounsel
       crimeScenes
       indictmentIntroduction
+      requestDriversLicenseSuspension
     }
   }
 `
