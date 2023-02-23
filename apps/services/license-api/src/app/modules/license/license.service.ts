@@ -64,7 +64,7 @@ export class LicenseService {
     nationalId: string,
   ): Promise<Result<Pass | undefined>> {
     /** PULL - Update electronic license with pulled data from service
-     * 1. Fetch data from TR
+     * 1. Fetch data from provider
      * 2. Parse and validate license data
      * 3. With good data, update the electronic license with the validated license data!
      */

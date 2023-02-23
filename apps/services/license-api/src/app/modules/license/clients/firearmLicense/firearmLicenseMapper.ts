@@ -9,7 +9,7 @@ import { format as formatNationalId } from 'kennitala'
 const formatDateString = (dateTime: string) =>
   dateTime ? format(new Date(dateTime), 'dd.MM.yyyy') : ''
 
-const parsePropertyForPkpassInput = (properties?: Array<FirearmProperty>) => {
+const formatPropertyForPkpassInput = (properties?: Array<FirearmProperty>) => {
   if (!properties?.length) return 'Engin skráð skotvopn'
 
   const propertyString = properties
