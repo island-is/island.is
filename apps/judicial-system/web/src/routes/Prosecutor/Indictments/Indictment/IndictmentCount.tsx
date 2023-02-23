@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { useIntl } from 'react-intl'
+import { MessageDescriptor, useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
 import InputMask from 'react-input-mask'
 
@@ -27,6 +27,8 @@ import {
 
 import { indictmentCount as strings } from './IndictmentCount.strings'
 import { indictmentCountEnum as enumStrings } from './IndictmentCountEnum.strings'
+import { SubstanceMap } from '@island.is/judicial-system/types'
+import { PrimitiveType, FormatXMLElementFn, Options } from 'intl-messageformat'
 
 interface Props {
   indictmentCount: TIndictmentCount
@@ -132,6 +134,88 @@ interface LawsBrokenOption {
   disabled: boolean
 }
 
+function getIndictmentDescriptionReason(
+  offenses: IndictmentCountOffense[],
+  substances: SubstanceMap,
+  formatMessage: {
+    (
+      descriptor: MessageDescriptor,
+      values?:
+        | Record<string, PrimitiveType | FormatXMLElementFn<string, string>>
+        | undefined,
+      opts?: Options | undefined,
+    ): string
+    (
+      descriptor: MessageDescriptor,
+      values?:
+        | Record<
+            string,
+            | string
+            | number
+            | boolean
+            | {}
+            | React.ReactElement<any, string | React.JSXElementConstructor<any>>
+            | React.ReactNodeArray
+            | React.ReactPortal
+            | Date
+            | FormatXMLElementFn<React.ReactNode, React.ReactNode>
+            | null
+            | undefined
+          >
+        | undefined,
+      opts?: Options | undefined,
+    ): React.ReactNode
+    (arg0: { id: string; defaultMessage: string; description: string }): string
+  },
+) {
+  const reason = offenses.reduce((acc, offense, index) => {
+    if (
+      offenses.length > 1 &&
+      (index === offenses.length - 1 ||
+        offense === IndictmentCountOffense.IllegalDrugsDriving)
+    ) {
+      acc += ' og '
+    } else if (index > 0) {
+      acc += ', '
+    }
+    switch (offense) {
+      case IndictmentCountOffense.DrivingWithoutLicence:
+        acc += formatMessage(
+          strings.trafficViolationIncidentDescriptionDrivingWithoutLicenceAutofill,
+        )
+        break
+      case IndictmentCountOffense.DrunkDriving:
+        acc += formatMessage(
+          strings.trafficViolationIncidentDescriptionDrunkDrivingAutofill,
+        )
+        break
+      case IndictmentCountOffense.IllegalDrugsDriving:
+        acc +=
+          formatMessage(
+            strings.trafficViolationIncidentDescriptionDrugsDrivingPrefixAutofill,
+          ) +
+          formatMessage(
+            strings.trafficViolationIncidentDescriptionIllegalDrugsDrivingAutofill,
+          )
+        break
+      case IndictmentCountOffense.PrescriptionDrugsDriving:
+        acc +=
+          (offenses.includes(IndictmentCountOffense.IllegalDrugsDriving)
+            ? ''
+            : formatMessage(
+                strings.trafficViolationIncidentDescriptionDrugsDrivingPrefixAutofill,
+              )) +
+          formatMessage(
+            strings.trafficViolationIncidentDescriptionPrescriptionDrugsDrivingAutofill,
+          )
+        break
+    }
+    return acc
+  }, '')
+
+  return reason
+}
+
 export const IndictmentCount: React.FC<Props> = (props) => {
   const {
     indictmentCount,
@@ -221,9 +305,10 @@ export const IndictmentCount: React.FC<Props> = (props) => {
 
   const incidentDescription = useCallback(
     (
-      offenses: IndictmentCountOffense[],
       policeCaseNumber: string,
       vehicleRegistrationNumber: string,
+      offenses: IndictmentCountOffense[],
+      substances: SubstanceMap,
     ) => {
       if (offenses.length === 0) {
         return ''
@@ -242,50 +327,11 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           formatDate(crimeDate, 'PPPP')?.replace('dagur,', 'daginn') ?? ''
       }
 
-      const reason = offenses.reduce((acc, offense, index) => {
-        if (
-          offenses.length > 1 &&
-          (index === offenses.length - 1 ||
-            offense === IndictmentCountOffense.IllegalDrugsDriving)
-        ) {
-          acc += ' og '
-        } else if (index > 0) {
-          acc += ', '
-        }
-        switch (offense) {
-          case IndictmentCountOffense.DrivingWithoutLicence:
-            acc += formatMessage(
-              strings.trafficViolationIncidentDescriptionDrivingWithoutLicenceAutofill,
-            )
-            break
-          case IndictmentCountOffense.DrunkDriving:
-            acc += formatMessage(
-              strings.trafficViolationIncidentDescriptionDrunkDrivingAutofill,
-            )
-            break
-          case IndictmentCountOffense.IllegalDrugsDriving:
-            acc +=
-              formatMessage(
-                strings.trafficViolationIncidentDescriptionDrugsDrivingPrefixAutofill,
-              ) +
-              formatMessage(
-                strings.trafficViolationIncidentDescriptionIllegalDrugsDrivingAutofill,
-              )
-            break
-          case IndictmentCountOffense.PrescriptionDrugsDriving:
-            acc +=
-              (offenses.includes(IndictmentCountOffense.IllegalDrugsDriving)
-                ? ''
-                : formatMessage(
-                    strings.trafficViolationIncidentDescriptionDrugsDrivingPrefixAutofill,
-                  )) +
-              formatMessage(
-                strings.trafficViolationIncidentDescriptionPrescriptionDrugsDrivingAutofill,
-              )
-            break
-        }
-        return acc
-      }, '')
+      const reason = getIndictmentDescriptionReason(
+        offenses,
+        substances,
+        formatMessage,
+      )
 
       incidentDescription = formatMessage(
         strings.trafficViolationIncidentDescriptionAutofill,
@@ -337,9 +383,10 @@ export const IndictmentCount: React.FC<Props> = (props) => {
             onChange(indictmentCount.id, {
               policeCaseNumber: policeCaseNumber,
               incidentDescription: incidentDescription(
-                indictmentCount.offenses ?? [],
                 policeCaseNumber,
                 indictmentCount.vehicleRegistrationNumber ?? '',
+                indictmentCount.offenses ?? [],
+                indictmentCount.substances ?? {},
               ),
             })
           }}
@@ -394,9 +441,10 @@ export const IndictmentCount: React.FC<Props> = (props) => {
             onChange(indictmentCount.id, {
               vehicleRegistrationNumber: event.target.value,
               incidentDescription: incidentDescription(
-                indictmentCount.offenses ?? [],
                 indictmentCount.policeCaseNumber ?? '',
                 event.target.value,
+                indictmentCount.offenses ?? [],
+                indictmentCount.substances ?? {},
               ),
             })
           }}
@@ -433,12 +481,13 @@ export const IndictmentCount: React.FC<Props> = (props) => {
             )
 
             onChange(indictmentCount.id, {
-              offenses: offenses,
-              lawsBroken: lawsBroken,
+              offenses,
+              lawsBroken,
               incidentDescription: incidentDescription(
-                offenses,
                 indictmentCount.policeCaseNumber ?? '',
                 indictmentCount.vehicleRegistrationNumber ?? '',
+                offenses,
+                indictmentCount.substances ?? {},
               ),
               legalArguments: legalArguments(lawsBroken),
             })
@@ -469,12 +518,13 @@ export const IndictmentCount: React.FC<Props> = (props) => {
                   )
 
                   onChange(indictmentCount.id, {
-                    offenses: offenses,
-                    lawsBroken: lawsBroken,
+                    offenses,
+                    lawsBroken,
                     incidentDescription: incidentDescription(
-                      offenses,
                       indictmentCount.policeCaseNumber ?? '',
                       indictmentCount.vehicleRegistrationNumber ?? '',
+                      offenses,
+                      indictmentCount.substances ?? {},
                     ),
                     legalArguments: legalArguments(lawsBroken),
                   })
@@ -534,13 +584,20 @@ export const IndictmentCount: React.FC<Props> = (props) => {
                 indictmentCount.offenses || [],
                 value,
               )
+              const substances = {
+                ...indictmentCount.substances,
+                ALCOHOL: value,
+              }
 
               onChange(indictmentCount.id, {
+                substances,
                 lawsBroken,
-                substances: {
-                  ...indictmentCount.substances,
-                  ALCOHOL: value,
-                },
+                incidentDescription: incidentDescription(
+                  indictmentCount.policeCaseNumber ?? '',
+                  indictmentCount.vehicleRegistrationNumber ?? '',
+                  indictmentCount.offenses ?? [],
+                  substances,
+                ),
                 legalArguments: legalArguments(lawsBroken),
               })
             }}
