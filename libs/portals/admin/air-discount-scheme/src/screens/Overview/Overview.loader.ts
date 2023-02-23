@@ -62,7 +62,7 @@ const schema = z.object({
 export type FlightLegsFilters = z.infer<typeof schema>
 
 export type OverviewLoaderReturnType = {
-  data: FlightLegsQuery | undefined
+  flightLegs: FlightLegsQuery['airDiscountSchemeFlightLegs']
   filters: FlightLegsFilters
 }
 
@@ -85,7 +85,7 @@ export const overviewLoader: WrappedLoaderFn = ({ client }) => {
     }
 
     return {
-      data: flightLegs.data,
+      flightLegs: flightLegs.data?.airDiscountSchemeFlightLegs ?? [],
       filters: input,
     }
   }
