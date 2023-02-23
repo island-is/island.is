@@ -858,4 +858,8 @@ export const m = defineMessages({
     defaultMessage: 'Loftbrú',
     description: 'Airfare discount',
   },
+  sessions: {
+    id: 'service.portal:sessions',
+    defaultMessage: 'Notkun',
+  },
 })
