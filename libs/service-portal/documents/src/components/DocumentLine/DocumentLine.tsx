@@ -94,7 +94,7 @@ const DocumentLine: FC<Props> = ({
       form.method = 'post'
       // TODO: Use correct url
       form.action = documentLine.url
-      form.target = '_blank'
+      //form.target = '_blank'
 
       // Document Id values
       documentIdInput.type = 'hidden'
@@ -134,9 +134,9 @@ const DocumentLine: FC<Props> = ({
         [styles.unopened]: !documentLine.opened,
       })}
       // Check if data is already fetched, if so go straight to download/display
-      onClick={() => {
+      onClick={async () => {
         if (getFileByIdData && !loading) {
-          onClickHandler()
+          await onClickHandler()
         } else {
           getDocument({ variables: { input: { id: documentLine.id } } })
         }
