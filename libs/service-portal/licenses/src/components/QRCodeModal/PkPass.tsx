@@ -49,7 +49,7 @@ export const PkPass = ({
   const { width } = useWindowSize()
   const timeFetched = new Date() // Used to compare if license is expired
   const isDriversLicense = licenseType === GenericLicenseType.DriversLicense
-  //const windowReference = window.open()
+  const windowReference = window.open()
 
   const toggleModal = () => {
     setModalOpen(!modalOpen)
@@ -80,20 +80,25 @@ export const PkPass = ({
 
   const getLink = async () => {
     if (pkpassUrl && !isTimeMoreThen30Minutes()) {
-      window.open(pkpassUrl)
-      setDisplayLoader(false)
+      if (windowReference) {
+        windowReference.location = pkpassUrl
+        setDisplayLoader(false)
+      } else setLinkError(true)
       return
     }
     await generatePkPass({
       variables: { locale, input: { licenseType } },
     })
       .then((response) => {
-        setTimeout(() => {
-          window.open(response?.data?.generatePkPass?.pkpassUrl, '_top')
-        }, 500)
-        setPkpassUrl(response?.data?.generatePkPass?.pkpassUrl)
-        setFetched(true)
-        setDisplayLoader(false)
+        if (windowReference) {
+          windowReference.location = response?.data?.generatePkPass?.pkpassUrl
+          setPkpassUrl(response?.data?.generatePkPass?.pkpassUrl)
+          setFetched(true)
+          setDisplayLoader(false)
+        } else {
+          setDisplayLoader(false)
+          setLinkError(true)
+        }
       })
       .catch(() => {
         setDisplayLoader(false)
