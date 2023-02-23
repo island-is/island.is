@@ -65,6 +65,7 @@
     "application-template-api-modules": "libs/application/template-api-modules",
     "application-template-loader": "libs/application/template-loader",
     "application-templates-accident-notification": "libs/application/templates/accident-notification",
+    "application-templates-alcohol-tax-redemption": "libs/application/templates/alcohol-tax-redemption",
     "application-templates-announcement-of-death": "libs/application/templates/announcement-of-death",
     "application-templates-children-residence-change": "libs/application/templates/family-matters/children-residence-change",
     "application-templates-complaints-to-althingi-ombudsman": "libs/application/templates/complaints-to-althingi-ombudsman",

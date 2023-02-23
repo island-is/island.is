@@ -1,7 +1,7 @@
 import React, { FC, useCallback } from 'react'
 import { formatText } from '@island.is/application/core'
 import { LinkField, Application } from '@island.is/application/types'
-import { Button } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import useGenerateFileUrl from './hooks/useGenerateFileUrl'
 
@@ -32,17 +32,19 @@ export const LinkFormField: FC<{
   }
 
   return (
-    <Button
-      colorScheme="default"
-      icon="open"
-      iconType="outline"
-      onClick={getUrl()}
-      preTextIconType="filled"
-      size="default"
-      type="button"
-      variant="ghost"
-    >
-      {formatText(field.title, application, formatMessage)}
-    </Button>
+    <Box marginY={2}>
+      <Button
+        colorScheme="default"
+        icon={field.iconProps?.icon ?? 'download'}
+        iconType={field.iconProps?.type ?? 'outline'}
+        onClick={getUrl()}
+        preTextIconType="filled"
+        size="small"
+        type="button"
+        variant="ghost"
+      >
+        {formatText(field.title, application, formatMessage)}
+      </Button>
+    </Box>
   )
 }

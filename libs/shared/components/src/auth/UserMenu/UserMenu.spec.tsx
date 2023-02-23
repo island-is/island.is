@@ -12,10 +12,6 @@ import '@testing-library/jest-dom'
 import { MockedProvider } from '@apollo/client/testing'
 import { LocaleProvider, LocaleContext } from '@island.is/localization'
 import { MockedAuthProvider, MockUser } from '@island.is/auth/react'
-import {
-  Features,
-  MockedFeatureFlagProvider,
-} from '@island.is/react/feature-flags'
 import { UserMenu } from './UserMenu'
 import { ACTOR_DELEGATIONS } from './actorDelegations.graphql'
 import { ActorDelegationsQuery } from '../../../gen/graphql'
@@ -57,13 +53,11 @@ const mocks = [
 ]
 
 const wrapper: FC = ({ children }) => (
-  <MockedFeatureFlagProvider flags={[Features.delegationsEnabled]}>
-    <MockedProvider mocks={mocks} addTypename={false}>
-      <BrowserRouter>
-        <LocaleProvider skipPolyfills>{children}</LocaleProvider>
-      </BrowserRouter>
-    </MockedProvider>
-  </MockedFeatureFlagProvider>
+  <MockedProvider mocks={mocks} addTypename={false}>
+    <BrowserRouter>
+      <LocaleProvider skipPolyfills>{children}</LocaleProvider>
+    </BrowserRouter>
+  </MockedProvider>
 )
 
 async function openMenu() {
