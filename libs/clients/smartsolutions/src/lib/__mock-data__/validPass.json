@@ -1,0 +1,24 @@
+{
+  "id": "2ef92dea-2e9c-40b6-adda-57bccfb16c0b",
+  "expirationDate": "2028-01-01T12:00:00Z",
+  "inputFieldValues": [
+    {
+      "value": "15.01.2024",
+      "passInputField": {
+        "identifier": "gildir"
+      }
+    },
+    {
+      "value": "BINGG",
+      "passInputField": {
+        "identifier": "name"
+      }
+    },
+    {
+      "value": "0102491479",
+      "passInputField": {
+        "identifier": "kennitala"
+      }
+    }
+  ]
+}
