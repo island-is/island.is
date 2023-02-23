@@ -272,7 +272,6 @@
     "soap": "0.45.0",
     "sqs-consumer": "5.4.0",
     "stream-buffers": "3.0.2",
-    "styled-components": "5.3.5",
     "supertest": "4.0.2",
     "swagger-ui-express": "4.3.0",
     "swr": "1.2.0",

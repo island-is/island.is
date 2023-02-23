@@ -201,7 +201,6 @@
               "lodash",
               "date-fns",
               "date-fns/locale",
-              "styled-components",
               "."
             ]
           }
