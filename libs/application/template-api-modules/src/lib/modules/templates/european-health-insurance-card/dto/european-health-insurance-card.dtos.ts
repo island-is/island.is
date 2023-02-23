@@ -1,34 +1,16 @@
-export interface CardResponse {
-  isInsured: boolean
-  // national registry id
-  nrid: string
-  // valid cards
-  cards: CardInfo[]
-}
-
 export interface CardInfo {
-  id: number | string
-  nrid: string
-  expires: Date
-  issued: Date
-  // When resent
-  reSent: Date
-  // When was is it sent
-  sent: Date
-  type: CardType
-  sentStatus: SentStatus
+  cardNumber?: string | null
+  expiryDate?: Date
+  issued?: Date
+  sent?: Date
+  resent?: Date
+  cardType?: string | null
+  sentStatus?: string | null
+  comment?: string | null
 }
 
-export enum SentStatus {
-  SENT,
-  // Has been returned to sender
-  RETURNED,
-  // Is in progress, waiting to be sent
-  WAITING,
-}
-
-// Plastic card, Temporary card
-export enum CardType {
-  PHYSICAL,
-  TEMPORARY,
+export interface CardResponse {
+  applicantNationalId?: string | null
+  isInsured?: boolean | null
+  cards?: Array<CardInfo> | null
 }

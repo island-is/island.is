@@ -8,6 +8,7 @@ import {
 import {
   EhicApplyForPhysicalCardApi,
   EhicCardResponseApi,
+  EhicHasInsuranceApi,
 } from '../dataProviders'
 import { Form, FormModes } from '@island.is/application/types'
 import {
@@ -84,6 +85,11 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               subTitle:
                 'Upplýsingar um stöðu heimildar á evrópska sjúktryggingakortinu',
             }),
+            buildDataProviderItem({
+              provider: EhicHasInsuranceApi,
+              title: '',
+              subTitle: '',
+            }),
           ],
         }),
         buildMultiField({
@@ -95,6 +101,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               id: 'applyForPlastic',
               backgroundColor: 'white',
               title: '',
+              condition: formValueBreakWord.
               options: (application: Application) => {
                 console.log(application, ' here')
                 const fromNationaRegistry = getFromRegistry(application)
