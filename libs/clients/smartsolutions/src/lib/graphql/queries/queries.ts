@@ -56,8 +56,6 @@ export const GET_PASS = `
     pass(id: $id) {
       expirationDate
       externalIdentifier
-      distributionUrl
-      distributionQRCode
       id
       inputFieldValues {
         id

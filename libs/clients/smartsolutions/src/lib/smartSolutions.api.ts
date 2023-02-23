@@ -179,7 +179,7 @@ export class SmartSolutionsApi {
    * @param nationalId the user's national id
    * @returns A pass if one was found, or undefined
    */
-  private async findPassByNationalId(
+  private async findPass(
     nationalId: string,
   ): Promise<Result<Pass | undefined>> {
     const listPassesQuery = JSON.stringify({
@@ -196,34 +196,18 @@ export class SmartSolutionsApi {
       return listRes
     }
 
-    const pass = listRes.data.passes?.data[0]
+    for (const pass of listRes.data.passes?.data ?? []) {
+      if (pass.status !== PassStatus.DeleteInProgress) {
+        return {
+          ok: true,
+          data: pass,
+        }
+      }
+    }
 
     return {
       ok: true,
-      data: pass,
-    }
-  }
-
-  private async getPassDataById(passId: string): Promise<Result<Pass>> {
-    const getPassQuery = JSON.stringify({
-      query: GET_PASS,
-      variables: {
-        id: passId,
-      },
-    })
-
-    const getPassRes = await this.query<GetPassResponseData>(getPassQuery)
-
-    if (!getPassRes.ok) {
-      //if failure, return the response
-      return getPassRes
-    }
-
-    const pass = getPassRes.data.pass
-
-    return {
-      ok: true,
-      data: pass,
+      data: undefined,
     }
   }
 
@@ -285,7 +269,7 @@ export class SmartSolutionsApi {
     payload: PassDataInput,
     nationalId: string,
   ): Promise<Result<Pass>> {
-    const findPassRes = await this.findPassByNationalId(nationalId)
+    const findPassRes = await this.findPass(nationalId)
 
     if (!findPassRes.ok) {
       return findPassRes
@@ -302,14 +286,23 @@ export class SmartSolutionsApi {
       }
     }
 
-    const passDataRes = await this.getPassDataById(findPassRes.data.id)
+    const pass = findPassRes.data
 
-    if (!passDataRes.ok) {
+    //get the pass data
+    const getPassQuery = JSON.stringify({
+      query: GET_PASS,
+      variables: {
+        id: pass.id,
+      },
+    })
+
+    const getPassRes = await this.query<GetPassResponseData>(getPassQuery)
+
+    if (!getPassRes.ok) {
       //if failure, return the response
-      return passDataRes
+      return getPassRes
     }
-
-    const passInputData = mapPassToPassDataInput(passDataRes.data)
+    const passInputData = mapPassToPassDataInput(getPassRes.data.pass)
 
     const inputFieldValues = mergeInputFields(
       passInputData.inputFieldValues ?? undefined,
@@ -336,7 +329,7 @@ export class SmartSolutionsApi {
     payload: PassDataInput,
     nationalId: string,
   ): Promise<Result<Pass>> {
-    const findPassRes = await this.findPassByNationalId(nationalId)
+    const findPassRes = await this.findPass(nationalId)
 
     if (!findPassRes.ok) {
       return findPassRes
@@ -357,7 +350,10 @@ export class SmartSolutionsApi {
       }
 
       //pass is good
-      return await this.getPassDataById(pass.id)
+      return {
+        ok: true,
+        data: pass,
+      }
     }
     this.logger.debug('No active pkpass found for user, creating a new one')
 
@@ -366,7 +362,7 @@ export class SmartSolutionsApi {
   }
 
   async revokePkPass(nationalId: string): Promise<Result<RevokePassData>> {
-    const findPassRes = await this.findPassByNationalId(nationalId)
+    const findPassRes = await this.findPass(nationalId)
 
     if (!findPassRes.ok) {
       return findPassRes
