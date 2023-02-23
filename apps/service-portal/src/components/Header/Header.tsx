@@ -15,6 +15,7 @@ import { UserMenu } from '@island.is/shared/components'
 import { m } from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
 import { useAuth } from '@island.is/auth/react'
+import { PortalPageLoader } from '@island.is/portals/core'
 
 interface Props {
   position: number
@@ -53,6 +54,7 @@ export const Header = ({
 
   return (
     <div className={styles.placeholder}>
+      <PortalPageLoader />
       {/*  Inline style to dynamicly change position of header because of alert banners */}
       <header className={styles.header} style={{ top: position }}>
         <Box width="full">

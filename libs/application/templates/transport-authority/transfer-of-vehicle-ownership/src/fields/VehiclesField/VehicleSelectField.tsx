@@ -19,7 +19,7 @@ import { SelectController } from '@island.is/shared/form-fields'
 import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
-import { VehiclesCurrentVehicle } from '../../types'
+import { VehiclesCurrentVehicle } from '../../shared'
 
 interface VehicleSearchFieldProps {
   currentVehicleList: VehiclesCurrentVehicle[]

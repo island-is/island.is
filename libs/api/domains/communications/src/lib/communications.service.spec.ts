@@ -12,6 +12,7 @@ import {
 import { CmsModule } from '@island.is/cms'
 import { FileStorageConfig, FileStorageModule } from '@island.is/file-storage'
 import { ConfigModule } from '@nestjs/config'
+import { CommunicationsConfig } from './communications.config'
 
 describe('communicationsService', () => {
   const fakeServiceWebInput: ServiceWebFormsInput = {
@@ -60,7 +61,7 @@ describe('communicationsService', () => {
         FileStorageModule,
         ConfigModule.forRoot({
           isGlobal: true,
-          load: [FileStorageConfig],
+          load: [FileStorageConfig, CommunicationsConfig],
         }),
       ],
       providers: [CommunicationsService],

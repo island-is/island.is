@@ -30,7 +30,7 @@ export const ownerSubSection = buildSubSection({
           readOnly: true,
           format: '######-####',
           defaultValue: (application: Application) =>
-            application.externalData?.nationalRegistry?.data?.nationalId,
+            application.externalData?.identity?.data?.nationalId,
         }),
         buildTextField({
           id: 'owner.name',
@@ -39,7 +39,7 @@ export const ownerSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) =>
-            application.externalData?.nationalRegistry?.data?.fullName,
+            application.externalData?.identity?.data?.name,
         }),
         buildTextField({
           id: 'owner.email',

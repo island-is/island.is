@@ -10,7 +10,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
 import { VehiclesCurrentVehicleWithOwnerchangeChecks } from '@island.is/api/schema'
-import { VehiclesCurrentVehicle } from '../../types'
+import { VehiclesCurrentVehicle } from '../../shared'
 import { information, applicationCheck, error } from '../../lib/messages'
 import { RadioController } from '@island.is/shared/form-fields'
 import { gql, useQuery } from '@apollo/client'

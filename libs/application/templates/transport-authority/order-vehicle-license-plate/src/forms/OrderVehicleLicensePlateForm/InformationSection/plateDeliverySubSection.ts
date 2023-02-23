@@ -12,7 +12,7 @@ import {
 } from '@island.is/application/core'
 import { ChargeItemCode } from '@island.is/shared/constants'
 import { information } from '../../../lib/messages'
-import { DeliveryStation } from '../../../types'
+import { DeliveryStation } from '../../../shared'
 
 export const plateDeliverySubSection = buildSubSection({
   id: 'plateDelivery',

@@ -16,6 +16,7 @@ import {
   LinkContext,
   Button,
 } from '@island.is/island-ui/core'
+import { sortAlpha } from '@island.is/shared/utils'
 import { Card, Sticky } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
@@ -44,7 +45,6 @@ import {
 import { CustomNextError } from '@island.is/web/units/errors'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
-import sortAlpha from '@island.is/web/utils/sortAlpha'
 
 type Articles = GetArticlesQuery['getArticles']
 type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']

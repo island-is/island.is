@@ -3,6 +3,7 @@ import {
   AnswerValidationConstants,
   PARENTAL_GRANT_STUDENTS,
   SINGLE,
+  States,
   UnEmployedBenefitTypes,
   YES,
 } from '../../constants'
@@ -24,9 +25,10 @@ export const fileUploadValidationSection = (
   const {
     isSelfEmployed,
     applicationType,
-    isRecivingUnemploymentBenefits,
+    isReceivingUnemploymentBenefits,
     unemploymentBenefits,
     otherParent,
+    additionalDocuments,
   } = getApplicationAnswers(application.answers)
   if (isSelfEmployed === YES && obj.selfEmployedFile) {
     if (isEmpty((obj as { selfEmployedFile: unknown[] }).selfEmployedFile))
@@ -60,7 +62,7 @@ export const fileUploadValidationSection = (
     return undefined
   }
 
-  if (isRecivingUnemploymentBenefits) {
+  if (isReceivingUnemploymentBenefits) {
     if (
       (unemploymentBenefits === UnEmployedBenefitTypes.union ||
         unemploymentBenefits === UnEmployedBenefitTypes.healthInsurance) &&
@@ -92,6 +94,20 @@ export const fileUploadValidationSection = (
         'parentWithoutBirthParent',
         FILEUPLOAD,
       )
+
+    return undefined
+  }
+
+  if (application.state === States.ADDITIONAL_DOCUMENTS_REQUIRED) {
+    if (
+      additionalDocuments ||
+      isEmpty((obj as { additionalDocuments: unknown[] }).additionalDocuments)
+    ) {
+      return {
+        path: 'additionalDocumentsScreen.fileUpload.additionalDocuments',
+        message: errorMessages.requiredAttachment,
+      }
+    }
 
     return undefined
   }
