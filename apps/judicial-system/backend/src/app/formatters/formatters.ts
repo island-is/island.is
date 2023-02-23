@@ -432,19 +432,6 @@ export function formatDefenderCourtDateLinkEmailNotification(
   return `${body}${link}`
 }
 
-// This function is only intended for case type CUSTODY and
-// ADMISSION_TO_FACILITY
-export function formatPrisonRulingEmailNotification(
-  formatMessage: FormatMessage,
-  type: CaseType,
-  courtEndTime?: Date,
-): string {
-  return formatMessage(notifications.prisonRulingEmail.body, {
-    courtEndTime: courtEndTime ? formatDate(courtEndTime, 'PPP') : 'NONE',
-    caseType: type,
-  })
-}
-
 export function formatPrisonAdministrationRulingNotification(
   formatMessage: FormatMessage,
   courtCaseNumber: string | undefined,

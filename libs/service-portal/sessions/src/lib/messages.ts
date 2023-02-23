@@ -1,22 +1,19 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
-  delegations: {
-    id: 'portals-my-pages.session-history:delegations',
-    defaultMessage: 'Aðgangsstýring',
-  },
   sessions: {
     id: 'portals-my-pages.session-history:sessions',
     defaultMessage: 'Notkun',
   },
-  sessionsDescription: {
-    id: 'portals-my-pages.session-history:description',
-    defaultMessage: 'Yfirlit yfir innskráningar hreyfingar á Ísland.is',
-  },
   sessionsHeaderIntro: {
     id: 'portals-my-pages.session-history:sessions-header-intro',
     defaultMessage:
-      'Hér er yfirlit yfir innskráningar þínar á Ísland.is, sem þú sjálfur, aðrir hafa gert í þínu umboði eða sem þú hefur gert í umboði fyrir aðra.',
+      'Hér er yfirlit yfir innskráningar í innskráningarkerfi Ísland.is. Hér sérðu allar innskráningar sem tengjast þér, einnig þegar þú skráir þig inn í umboði fyrir aðra eða þegar aðrir skrá sig inn í umboði fyrir þig.',
+  },
+  sessionsHeaderIntroCompany: {
+    id: 'portals-my-pages.session-history:sessions-header-intro-company',
+    defaultMessage:
+      'Hér er yfirlit yfir allar innskráningar í innskráningarkerfi Ísland.is. Þú sérð innskráningar hjá prókúruhöfum fyrirtækisins og hjá þeim sem hafa fengið sérstakan aðgang.',
   },
   filter: {
     id: 'portals-my-pages.session-history:filter',
