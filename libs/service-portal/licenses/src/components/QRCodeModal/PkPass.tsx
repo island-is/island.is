@@ -90,7 +90,7 @@ export const PkPass = ({
       .then((response) => {
         setTimeout(() => {
           window.open(response?.data?.generatePkPass?.pkpassUrl, '_top')
-        })
+        }, 500)
         setPkpassUrl(response?.data?.generatePkPass?.pkpassUrl)
         setFetched(true)
         setDisplayLoader(false)
