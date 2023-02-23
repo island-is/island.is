@@ -16,6 +16,7 @@ import {
   format as formatNationalId,
   sanitize as sanitizeNationalId,
 } from 'kennitala'
+import { VerifyInputData } from '../../dto/verifyLicense.input'
 
 @Injectable()
 export class FirearmLicenseApiClientService implements GenericLicenseClient {
@@ -99,8 +100,34 @@ export class FirearmLicenseApiClientService implements GenericLicenseClient {
   /** We need to verify the pk pass AND the license itself! */
   async verify(inputData: string): Promise<Result<VerifyPassData>> {
     //need to parse the scanner data
-    const { code, date } = JSON.parse(inputData)
-    const verifyRes = await this.smartApi.verifyPkPass({ code, date })
+    let parsedInput
+    try {
+      parsedInput = JSON.parse(inputData) as VerifyInputData
+      this.logger.debug(JSON.stringify(parsedInput))
+    } catch (ex) {
+      return {
+        ok: false,
+        error: {
+          code: 12,
+          message: 'Invalid input data',
+        },
+      }
+    }
+
+    const { code, date } = parsedInput
+
+    if (!code || !date) {
+      return {
+        ok: false,
+        error: {
+          code: 4,
+          message:
+            'Invalid input data,  either code or date are missing or invalid',
+        },
+      }
+    }
+
+    const verifyRes = await this.smartApi.verifyPkPass(parsedInput)
 
     if (!verifyRes.ok) {
       return verifyRes

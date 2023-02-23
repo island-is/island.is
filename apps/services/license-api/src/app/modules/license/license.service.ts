@@ -136,7 +136,7 @@ export class LicenseService {
     const { passTemplateId } = JSON.parse(inputData.barcodeData)
 
     if (!passTemplateId) {
-      throw new BadRequestException('Missing passTemplateId')
+      throw new BadRequestException('Missing passTemplateId from request input')
     }
 
     const licenseId = this.getTypeFromPassTemplateId(passTemplateId)
