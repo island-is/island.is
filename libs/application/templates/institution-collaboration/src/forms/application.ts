@@ -71,9 +71,11 @@ export const application: Form = buildForm({
               defaultValue: '',
             }),
 
-            buildPhoneField({
+            buildTextField({
               id: 'contact.phoneNumber',
               title: m.applicant.contactPhoneLabel,
+              variant: 'tel',
+              format: '###-####',
               backgroundColor: 'blue',
               required: true,
               defaultValue: '',

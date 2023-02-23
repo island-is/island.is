@@ -257,12 +257,12 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
               )}
             </Text>
             <Text>
-              {formatPhoneNumber(
+              {
                 getValueViaPath(
                   application.answers,
                   'contact.phoneNumber',
-                ) as string,
-              )}
+                ) as string
+              }
             </Text>
           </Box>
           <Divider />

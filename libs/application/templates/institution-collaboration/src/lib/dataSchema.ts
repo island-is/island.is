@@ -1,11 +1,10 @@
 import { z } from 'zod'
-import { isValidNumber } from 'libphonenumber-js'
 import { NO, YES } from '../constants'
 
 export const contactSchema = z.object({
   name: z.string().min(1),
   email: z.string().email().nonempty(),
-  phoneNumber: z.string().refine(isValidNumber),
+  phoneNumber: z.string().min(1),
 })
 
 export const dataSchema = z.object({
