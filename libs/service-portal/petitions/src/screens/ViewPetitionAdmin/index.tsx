@@ -22,7 +22,7 @@ import { m } from '../../lib/messages'
 import PetitionsTable from '../PetitionsTable'
 import { EndorsementList } from '../../types/schema'
 import { useMutation } from '@apollo/client'
-import Skeleton from './Skeleton'
+import Skeleton from '../Skeletons/SkeletonAdmin'
 
 const ViewPetitionAdmin = () => {
   const { formatMessage } = useLocale()
@@ -73,11 +73,11 @@ const ViewPetitionAdmin = () => {
         },
       },
     }).catch(() => {
-      toast.error(formatMessage(m.viewPetition.toastErrorLockList))
+      toast.error(formatMessage(m.toastError))
     })
 
     if (success) {
-      toast.success(formatMessage(m.viewPetition.toastSuccessLockList))
+      toast.success(formatMessage(m.toastSuccess))
     }
   }
 
@@ -89,11 +89,11 @@ const ViewPetitionAdmin = () => {
         },
       },
     }).catch(() => {
-      toast.error(formatMessage(m.viewPetition.toastErrorOpenList))
+      toast.error(formatMessage(m.toastError))
     })
 
     if (success) {
-      toast.success(formatMessage(m.viewPetition.toastSuccessOpenList))
+      toast.success(formatMessage(m.toastSuccess))
     }
   }
 
@@ -111,11 +111,11 @@ const ViewPetitionAdmin = () => {
         },
       },
     }).catch(() => {
-      toast.error(formatMessage(m.viewPetition.toastErrorOpenList))
+      toast.error(formatMessage(m.toastError))
     })
 
     if (success) {
-      toast.success(formatMessage(m.viewPetition.toastSuccessOpenList))
+      toast.success(formatMessage(m.toastSuccess))
     }
   }
 
@@ -124,11 +124,7 @@ const ViewPetitionAdmin = () => {
       {Object.entries(petition).length !== 0 ? (
         <Stack space={3}>
           {petition.adminLock && (
-            <AlertMessage
-              type="error"
-              title={formatMessage(m.viewPetition.adminLockedList)}
-              message=""
-            />
+            <AlertMessage type="error" title={'Lorem ipsum'} message="" />
           )}
           <Input
             name={title as string}
@@ -136,7 +132,7 @@ const ViewPetitionAdmin = () => {
             onChange={(e) => {
               setTitle(e.target.value)
             }}
-            label={formatMessage(m.viewPetition.listTitleHeader)}
+            label={'Heiti lista'}
             size="xs"
           />
           <Input
@@ -146,7 +142,7 @@ const ViewPetitionAdmin = () => {
             onChange={(e) => {
               setDescription(e.target.value)
             }}
-            label={formatMessage(m.viewPetition.aboutListHeader)}
+            label={'Um lista'}
             textarea
             rows={10}
           />
@@ -181,7 +177,7 @@ const ViewPetitionAdmin = () => {
             disabled
             name={petition?.ownerName ?? ''}
             value={petition?.ownerName ?? ''}
-            label={formatMessage(m.viewPetition.listOwner)}
+            label={formatMessage(m.listOwner)}
           />
 
           <Box
@@ -193,66 +189,48 @@ const ViewPetitionAdmin = () => {
             {!petition.adminLock ? (
               <DialogPrompt
                 baseId="demo_dialog"
-                title={formatMessage(m.viewPetition.dialogPromptLockListTitle)}
-                ariaLabel={formatMessage(
-                  m.viewPetition.dialogPromptLockListTitle,
-                )}
+                title={'Lorem ipsum'}
+                ariaLabel={'Lorem ipsum'}
                 disclosureElement={
                   <Button
                     icon="lockClosed"
                     iconType="outline"
                     colorScheme="destructive"
                   >
-                    {formatMessage(m.viewPetition.LockListButton)}
+                    {'Loka lista'}
                   </Button>
                 }
                 onConfirm={() => onLockList()}
-                buttonTextConfirm={formatMessage(
-                  m.viewPetition.dialogPromptConfirm,
-                )}
-                buttonTextCancel={formatMessage(
-                  m.viewPetition.dialogPromptCancel,
-                )}
+                buttonTextConfirm={'Já'}
+                buttonTextCancel={'Nei'}
               />
             ) : (
               <DialogPrompt
                 baseId="demo_dialog"
-                title={formatMessage(m.viewPetition.dialogPromptOpenListTitle)}
-                ariaLabel={formatMessage(
-                  m.viewPetition.dialogPromptOpenListTitle,
-                )}
+                title={'Lorem ipsum'}
+                ariaLabel={'Lorem ipsum'}
                 disclosureElement={
                   <Button icon="reload" iconType="outline">
-                    {formatMessage(m.viewPetition.openListTitle)}
+                    {'Opna lista'}
                   </Button>
                 }
                 onConfirm={() => onUnlockList()}
-                buttonTextConfirm={formatMessage(
-                  m.viewPetition.dialogPromptConfirm,
-                )}
-                buttonTextCancel={formatMessage(
-                  m.viewPetition.dialogPromptCancel,
-                )}
+                buttonTextConfirm={'Já'}
+                buttonTextCancel={'Nei'}
               />
             )}
             <DialogPrompt
               baseId="demo_dialog"
-              title={formatMessage(m.viewPetition.dialogPromptUpdateListTitle)}
-              ariaLabel={formatMessage(
-                m.viewPetition.dialogPromptUpdateListTitle,
-              )}
+              title={'Lorem ipsum'}
+              ariaLabel={'Lorem ipsum'}
               disclosureElement={
                 <Button icon="checkmark" iconType="outline">
-                  {formatMessage(m.viewPetition.updateListButton)}
+                  {'Uppfæra lista'}
                 </Button>
               }
               onConfirm={() => onUpdateList()}
-              buttonTextConfirm={formatMessage(
-                m.viewPetition.dialogPromptConfirm,
-              )}
-              buttonTextCancel={formatMessage(
-                m.viewPetition.dialogPromptCancel,
-              )}
+              buttonTextConfirm={'Já'}
+              buttonTextCancel={'Nei'}
             />
           </Box>
 

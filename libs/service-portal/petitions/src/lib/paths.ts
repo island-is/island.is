@@ -1,6 +1,7 @@
 export enum PetitionPaths {
   Petitions = '/medmaeli',
-  PetitionsAdminView = '/medmaeli-admin',
   PetitionList = '/medmaeli/:listId',
+
+  PetitionsAdminView = '/medmaeli-admin',
   PetitionListAdmin = '/medmaeli-admin/:listId',
 }

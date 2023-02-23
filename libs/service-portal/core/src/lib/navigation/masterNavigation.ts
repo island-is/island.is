@@ -82,7 +82,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
           {
             // Petitions
-            name: m.endorsements,
+            name: m.petitions,
             path: ServicePortalPath.Petitions,
           },
           {

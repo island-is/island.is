@@ -17,13 +17,13 @@ export const petitionsModule: PortalModule = {
   routes: ({ userInfo }) => {
     const applicationRoutes: PortalRoute[] = [
       {
-        name: m.endorsements,
+        name: m.petitions,
         path: PetitionPaths.Petitions,
         enabled: userInfo.scopes.includes(EndorsementsScope.main),
         element: <Petitions />,
       },
       {
-        name: m.endorsements,
+        name: m.petitions,
         path: PetitionPaths.PetitionList,
         enabled: userInfo.scopes.includes(EndorsementsScope.main),
         element: <ViewPetition />,
