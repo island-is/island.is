@@ -16,6 +16,8 @@ export enum AuthUrl {
   local = dev,
 }
 
+export const JUDICIAL_SYSTEM_HOME_URL = '/api/auth/login?nationalId=9999999999'
+
 export const getEnvironmentBaseUrl = (authority: string) => {
   const baseurlPrefix = process.env.BASE_URL_PREFIX ?? ''
   const prefix =
@@ -64,5 +66,4 @@ const envs: {
 }
 
 export const env = (process.env.TEST_ENVIRONMENT ?? 'local') as TestEnvironment
-console.log(`Using environment: ${envs.dev.judicialSystemBaseUrl}`)
 export const urls = envs[env]
