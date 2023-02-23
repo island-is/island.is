@@ -42,6 +42,7 @@ const format = spawn.sync('npx', [
 
 if (format.stderr.toString() !== '') {
   logger.error(format.stderr.toString())
+  logger.error('Did not extract or upload messages!')
   process.exit()
 }
 
