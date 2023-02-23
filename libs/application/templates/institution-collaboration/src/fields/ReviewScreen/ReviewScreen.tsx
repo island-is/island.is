@@ -7,7 +7,6 @@ import { formatText } from '@island.is/application/core'
 import { getValueViaPath } from '@island.is/application/core'
 import { institutionApplicationMessages as m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
 
 const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
