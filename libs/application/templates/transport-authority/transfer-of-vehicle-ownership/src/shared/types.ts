@@ -65,3 +65,17 @@ export type VehiclesCurrentVehicle = {
   color?: string
   role?: string
 }
+
+type VehicleValidationErrorMessage = {
+  errorNo?: string | null
+  defaultMessage?: string | null
+}
+
+export type VehiclesCurrentVehicleWithOwnerchangeChecks = {
+  permno?: string
+  make?: string
+  color?: string
+  role?: string
+  isDebtLess?: boolean | null
+  validationErrorMessages?: VehicleValidationErrorMessage[] | null
+}
