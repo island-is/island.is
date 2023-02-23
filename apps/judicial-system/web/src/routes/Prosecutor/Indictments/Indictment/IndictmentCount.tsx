@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { MessageDescriptor, useIntl } from 'react-intl'
+import { IntlShape, useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
 import InputMask from 'react-input-mask'
 
@@ -21,14 +21,18 @@ import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/
 import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  offenseSubstances,
+  Substance,
+  SubstanceMap,
+} from '@island.is/judicial-system/types'
+import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 import { indictmentCount as strings } from './IndictmentCount.strings'
 import { indictmentCountEnum as enumStrings } from './IndictmentCountEnum.strings'
-import { SubstanceMap } from '@island.is/judicial-system/types'
-import { PrimitiveType, FormatXMLElementFn, Options } from 'intl-messageformat'
+import { indictmentCountSubstanceEnum as substanceStrings } from './IndictmentCountSubstanceEnum.strings'
 
 interface Props {
   indictmentCount: TIndictmentCount
@@ -46,23 +50,23 @@ interface Props {
   ) => void
 }
 
-function offencesCompare(
-  offence1: IndictmentCountOffense,
-  offence2: IndictmentCountOffense,
+function offensesCompare(
+  offense1: IndictmentCountOffense,
+  offense2: IndictmentCountOffense,
 ) {
-  const offence1Index = Object.values(IndictmentCountOffense).indexOf(offence1)
-  const offence2Index = Object.values(IndictmentCountOffense).indexOf(offence2)
+  const offense1Index = Object.values(IndictmentCountOffense).indexOf(offense1)
+  const offense2Index = Object.values(IndictmentCountOffense).indexOf(offense2)
 
-  if (offence1Index < offence2Index) {
+  if (offense1Index < offense2Index) {
     return -1
   }
-  if (offence1Index > offence2Index) {
+  if (offense1Index > offense2Index) {
     return 1
   }
   return 0
 }
 
-const offenceLawsMap: Record<
+const offenseLawsMap: Record<
   IndictmentCountOffense | 'DRUNK_DRIVING_MINOR' | 'DRUNK_DRIVING_MAJOR',
   [number, number][]
 > = {
@@ -97,29 +101,29 @@ function lawsCompare(law1: number[], law2: number[]) {
   return 0
 }
 
-const laws = Object.values(offenceLawsMap)
+const laws = Object.values(offenseLawsMap)
   .flat()
   .concat(generalLaws)
   .sort(lawsCompare)
 
 function getLawsBroken(
-  offences: IndictmentCountOffense[],
+  offenses: IndictmentCountOffense[],
   bloodAlcoholContent?: string,
 ) {
-  if (offences.length === 0) {
+  if (offenses.length === 0) {
     return []
   }
 
   let lawsBroken: [number, number][] = []
 
-  offences.forEach((offence) => {
-    lawsBroken = lawsBroken.concat(offenceLawsMap[offence])
+  offenses.forEach((offence) => {
+    lawsBroken = lawsBroken.concat(offenseLawsMap[offence])
 
     if (offence === IndictmentCountOffense.DrunkDriving) {
       lawsBroken = lawsBroken.concat(
         (bloodAlcoholContent ?? '') >= '1,20'
-          ? offenceLawsMap.DRUNK_DRIVING_MAJOR
-          : offenceLawsMap.DRUNK_DRIVING_MINOR,
+          ? offenseLawsMap.DRUNK_DRIVING_MAJOR
+          : offenseLawsMap.DRUNK_DRIVING_MINOR,
       )
     }
   })
@@ -137,38 +141,9 @@ interface LawsBrokenOption {
 function getIndictmentDescriptionReason(
   offenses: IndictmentCountOffense[],
   substances: SubstanceMap,
-  formatMessage: {
-    (
-      descriptor: MessageDescriptor,
-      values?:
-        | Record<string, PrimitiveType | FormatXMLElementFn<string, string>>
-        | undefined,
-      opts?: Options | undefined,
-    ): string
-    (
-      descriptor: MessageDescriptor,
-      values?:
-        | Record<
-            string,
-            | string
-            | number
-            | boolean
-            | {}
-            | React.ReactElement<any, string | React.JSXElementConstructor<any>>
-            | React.ReactNodeArray
-            | React.ReactPortal
-            | Date
-            | FormatXMLElementFn<React.ReactNode, React.ReactNode>
-            | null
-            | undefined
-          >
-        | undefined,
-      opts?: Options | undefined,
-    ): React.ReactNode
-    (arg0: { id: string; defaultMessage: string; description: string }): string
-  },
+  formatMessage: IntlShape['formatMessage'],
 ) {
-  const reason = offenses.reduce((acc, offense, index) => {
+  let reason = offenses.reduce((acc, offense, index) => {
     if (
       offenses.length > 1 &&
       (index === offenses.length - 1 ||
@@ -212,6 +187,30 @@ function getIndictmentDescriptionReason(
     }
     return acc
   }, '')
+
+  const allowedSubstances: string[] = offenses
+    .map((offense) => offenseSubstances[offense])
+    .flat()
+  const relevantSubstances = Object.entries(substances).filter((substance) =>
+    allowedSubstances.includes(substance[0]),
+  )
+
+  reason += relevantSubstances.reduce((acc, substance, index) => {
+    if (index === 0) {
+      acc += ' ('
+    } else if (index === relevantSubstances.length - 1) {
+      acc += ' og '
+    } else {
+      acc += ', '
+    }
+    acc += formatMessage(substanceStrings[substance[0] as Substance], {
+      amount: substance[1],
+    })
+    if (index === relevantSubstances.length - 1) {
+      acc += ')'
+    }
+    return acc
+  }, reason)
 
   return reason
 }
@@ -474,7 +473,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
             const offenses = [
               ...(indictmentCount.offenses ?? []),
               selectedOffense,
-            ].sort(offencesCompare)
+            ].sort(offensesCompare)
             const lawsBroken = getLawsBroken(
               offenses,
               indictmentCount.substances?.ALCOHOL,
