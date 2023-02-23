@@ -958,4 +958,14 @@ export class Case extends Model {
   @HasMany(() => IndictmentCount, 'caseId')
   @ApiPropertyOptional({ type: IndictmentCount, isArray: true })
   indictmentCounts?: IndictmentCount[]
+
+  /**********
+   * Indicates whether the prosecutor requests a drivers license suspension
+   **********/
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  requestDriversLicenseSuspension?: boolean
 }
