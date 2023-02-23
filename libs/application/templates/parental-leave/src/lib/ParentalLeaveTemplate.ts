@@ -714,12 +714,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.25,
-          onExit: [
-            defineTemplateApi({
-              action: ApiModuleActions.validateApplication,
-              throwOnError: true,
-            }),
-          ],
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.validateApplication,
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

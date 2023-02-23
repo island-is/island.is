@@ -88,13 +88,9 @@ export function findActionName(context: ApplicationContext) {
   return 'period' // Have default on period so we always reset actionName
 }
 
-export const goToState = (
-  applicationContext: ApplicationContext,
-  state: States,
-) => {
-  const { previousState } = getApplicationAnswers(
-    applicationContext.application.answers,
-  )
+export const goToState = (context: ApplicationContext, state: States) => {
+  const { application } = context
+  const { previousState } = getApplicationAnswers(application.answers)
   if (previousState === state) return true
   return false
 }
