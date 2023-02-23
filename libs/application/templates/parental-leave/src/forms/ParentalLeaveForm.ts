@@ -2,7 +2,6 @@ import addDays from 'date-fns/addDays'
 
 import {
   buildAsyncSelectField,
-  buildCompanySearchField,
   buildCustomField,
   buildDateField,
   buildFileUploadField,

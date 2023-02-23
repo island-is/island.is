@@ -765,11 +765,15 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 goToState(application, States.VINNUMALASTOFNUN_APPROVE_EDITS),
               target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
             },
+            {
+              cond: (application) => goToState(application, States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS),
+              target: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
+            },
           ],
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS]: {
-        exit: ['setEmployerReviewerNationalRegistryId'],
+        exit: ['setEmployerReviewerNationalRegistryId', 'setPreviousState'],
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
           status: 'inprogress',
@@ -1448,15 +1452,19 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       })),
       setPreviousState: assign((context, event) => {
-        console.log(event)
         const { application } = context
         const { state } = application
         const { answers } = application
         const e = (event.type as unknown) as any
+        if (e === 'xstate.init' && state === States.VINNUMALASTOFNUN_APPROVE_EDITS) {
+          set(answers, 'previousState', state)
+        }
+        if (e === DefaultEvents.ABORT) {
+          return context
+        }
         if (e === 'xstate.init') {
           return context
         }
-
         if (
           e === 'APPROVE' &&
           state === 'residenceGrantApplicationNoBirthDate'
@@ -1466,7 +1474,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         if (e === 'REJECT' && state === 'residenceGrantApplication') {
           return context
         }
-        set(answers, 'previousState', state)
         return context
       }),
       setActionName: assign((context) => {
