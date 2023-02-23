@@ -1,4 +1,4 @@
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import format from 'date-fns/format'
 import { VisuallyHidden } from 'reakit/VisuallyHidden'
 import * as kennitala from 'kennitala'
@@ -60,7 +60,7 @@ export const AccessCard = ({
   variant = 'outgoing',
 }: AccessCardProps) => {
   const { formatMessage } = useLocale()
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const tags = useMemo(() => getTags(delegation), [delegation])
 
@@ -302,7 +302,7 @@ export const AccessCard = ({
                     iconType="outline"
                     size="small"
                     variant="utility"
-                    onClick={() => history.push(href)}
+                    onClick={() => navigate(href)}
                   >
                     {formatMessage(coreMessages.buttonEdit)}
                   </Button>
@@ -312,7 +312,7 @@ export const AccessCard = ({
                     iconType="outline"
                     size="small"
                     variant="utility"
-                    onClick={() => history.push(href)}
+                    onClick={() => navigate(href)}
                   >
                     {formatMessage(coreMessages.buttonRenew)}
                   </Button>

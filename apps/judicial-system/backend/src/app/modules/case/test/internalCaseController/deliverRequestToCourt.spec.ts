@@ -13,6 +13,7 @@ import { randomDate } from '../../../../test'
 import { nowFactory } from '../../../../factories'
 import { getRequestPdfAsBuffer } from '../../../../formatters'
 import { CourtDocumentFolder, CourtService } from '../../../court'
+import { User } from '../../../user'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Case } from '../../models/case.model'
 
@@ -28,6 +29,8 @@ type GivenWhenThen = (caseId: string, theCase: Case) => Promise<Then>
 
 describe('InternalCaseController - Deliver requst to court', () => {
   const now = randomDate()
+  const userId = uuid()
+  const user = { id: userId } as User
 
   let mockCourtService: CourtService
   let givenWhenThen: GivenWhenThen
@@ -51,7 +54,7 @@ describe('InternalCaseController - Deliver requst to court', () => {
       const then = {} as Then
 
       await internalCaseController
-        .deliverRequestToCourt(caseId, theCase)
+        .deliverRequestToCourt(caseId, user, theCase, { userId })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -87,6 +90,7 @@ describe('InternalCaseController - Deliver requst to court', () => {
 
       it('should create a request at court', async () => {
         expect(mockCourtService.createDocument).toHaveBeenCalledWith(
+          user,
           caseId,
           courtId,
           courtCaseNumber,

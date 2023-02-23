@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/api-catalogue/consts"]
     }
   },
-  "tags": []
+  "tags": ["scope:js", "lib:js"]
 }

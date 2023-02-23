@@ -11,11 +11,7 @@ import { useQuery, useLazyQuery, gql } from '@apollo/client'
 import { Query, PropertyOwner } from '@island.is/api/schema'
 import { useNamespaces, useLocale } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
-import {
-  ServicePortalModuleComponent,
-  NotFound,
-  amountFormat,
-} from '@island.is/service-portal/core'
+import { NotFound, amountFormat } from '@island.is/service-portal/core'
 import AssetGrid from '../../components/AssetGrid'
 import AssetLoader from '../../components/AssetLoader'
 import AssetDisclaimer from '../../components/AssetDisclaimer'
@@ -85,10 +81,14 @@ export const GET_SINGLE_PROPERTY_QUERY = gql`
   ${addressFragment}
 `
 
-export const AssetsOverview: ServicePortalModuleComponent = () => {
+type UseParams = {
+  id: string
+}
+
+export const AssetsOverview = () => {
   useNamespaces('sp.assets')
   const { formatMessage } = useLocale()
-  const { id }: { id: string | undefined } = useParams()
+  const { id } = useParams() as UseParams
 
   const { loading, error, data } = useQuery<Query>(GET_SINGLE_PROPERTY_QUERY, {
     variables: {

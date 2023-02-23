@@ -97,7 +97,6 @@ export const OperatingYear = ({
         placeholder={formatMessage(m.selectOperatingYear)}
         error={errors && getErrorViaPath(errors, ABOUTIDS.operatingYear)}
         options={operatingYear}
-        defaultValue={operatingYear[0].value}
       />
     </Box>
   )

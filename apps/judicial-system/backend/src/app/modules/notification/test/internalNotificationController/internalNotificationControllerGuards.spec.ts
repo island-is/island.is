@@ -2,7 +2,8 @@ import { CanActivate } from '@nestjs/common'
 
 import { TokenGuard } from '@island.is/judicial-system/auth'
 
-import { CaseExistsGuard } from '../../../case'
+import { UserExistsGuard } from '../../../user'
+import { CaseHasExistedGuard } from '../../../case'
 import { InternalNotificationController } from '../../internalNotification.controller'
 
 describe('InternalNotificationController - guards', () => {
@@ -13,8 +14,8 @@ describe('InternalNotificationController - guards', () => {
     guards = Reflect.getMetadata('__guards__', InternalNotificationController)
   })
 
-  it('should have two guards', () => {
-    expect(guards).toHaveLength(2)
+  it('should have three guards', () => {
+    expect(guards).toHaveLength(3)
   })
 
   describe('TokenGuard', () => {
@@ -24,20 +25,32 @@ describe('InternalNotificationController - guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have TokenGuard as guard 0', () => {
+    it('should have TokenGuard as guard 1', () => {
       expect(guard).toBeInstanceOf(TokenGuard)
     })
   })
 
-  describe('CaseExistsGuard', () => {
+  describe('CaseHasExistedGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[1]()
     })
 
-    it('should have CaseExistsGuard as guard 1', () => {
-      expect(guard).toBeInstanceOf(CaseExistsGuard)
+    it('should have CaseHasExistedGuard as guard 2', () => {
+      expect(guard).toBeInstanceOf(CaseHasExistedGuard)
+    })
+  })
+
+  describe('UserExistsGuard', () => {
+    let guard: CanActivate
+
+    beforeEach(() => {
+      guard = new guards[2]()
+    })
+
+    it('should have UserExistsGuard as guard 3', () => {
+      expect(guard).toBeInstanceOf(UserExistsGuard)
     })
   })
 })

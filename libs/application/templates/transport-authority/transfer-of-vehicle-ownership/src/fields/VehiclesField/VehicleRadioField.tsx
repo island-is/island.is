@@ -10,7 +10,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
 import { VehiclesCurrentVehicleWithOwnerchangeChecks } from '@island.is/api/schema'
-import { VehiclesCurrentVehicle } from '../../types'
+import { VehiclesCurrentVehicle } from '../../shared'
 import { information, applicationCheck, error } from '../../lib/messages'
 import { RadioController } from '@island.is/shared/form-fields'
 import { gql, useQuery } from '@apollo/client'
@@ -75,7 +75,7 @@ export const VehicleRadioField: FC<
 
     for (const [index, vehicle] of vehicles.entries()) {
       const disabled =
-        !vehicle.isDebtLess || !!vehicle.ownerChangeErrorMessages?.length
+        !vehicle.isDebtLess || !!vehicle.validationErrorMessages?.length
       options.push({
         value: `${index}`,
         label: (
@@ -105,8 +105,8 @@ export const VehicleRadioField: FC<
                             )}
                           </Bullet>
                         )}
-                        {!!vehicle.ownerChangeErrorMessages?.length &&
-                          vehicle.ownerChangeErrorMessages?.map((error) => {
+                        {!!vehicle.validationErrorMessages?.length &&
+                          vehicle.validationErrorMessages?.map((error) => {
                             const message = formatMessage(
                               getValueViaPath(
                                 applicationCheck.validation,

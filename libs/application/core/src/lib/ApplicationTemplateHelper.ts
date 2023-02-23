@@ -90,7 +90,9 @@ export class ApplicationTemplateHelper<
     )
   }
 
-  private getTemplateAPIAction(action: TemplateApi | null): TemplateApi | null {
+  private getTemplateAPIAction(
+    action: TemplateApi | TemplateApi[] | null,
+  ): TemplateApi | TemplateApi[] | null {
     if (action === null) {
       return null
     }
@@ -100,7 +102,7 @@ export class ApplicationTemplateHelper<
 
   getOnExitStateAPIAction(
     stateKey: string = this.application.state,
-  ): TemplateApi | null {
+  ): TemplateApi | TemplateApi[] | null {
     const action =
       this.template.stateMachineConfig.states[stateKey]?.meta?.onExit ?? null
 
@@ -109,7 +111,7 @@ export class ApplicationTemplateHelper<
 
   getOnEntryStateAPIAction(
     stateKey: string = this.application.state,
-  ): TemplateApi | null {
+  ): TemplateApi | TemplateApi[] | null {
     const action =
       this.template.stateMachineConfig.states[stateKey]?.meta?.onEntry ?? null
 

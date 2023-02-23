@@ -20,5 +20,5 @@
       "outputs": ["coverage/libs/message-queue"]
     }
   },
-  "tags": []
+  "tags": ["lib:nest", "scope:nest"]
 }

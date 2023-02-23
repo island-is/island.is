@@ -26,10 +26,6 @@ export const serviceSetup = (): ServiceBuilder<'icelandic-names-registry-backend
         NO_UPDATE_NOTIFIER: 'true',
       },
     })
-    .secrets({
-      ALLOWED_NATIONAL_IDS:
-        '/k8s/icelandic-names-registry-backend/ALLOWED_NATIONAL_IDS',
-    })
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',

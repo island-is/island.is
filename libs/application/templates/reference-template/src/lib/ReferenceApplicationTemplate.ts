@@ -172,9 +172,16 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           name: 'Waiting to assign',
           progress: 0.75,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: defineTemplateApi({
-            action: ApiActions.createApplication,
-          }),
+          onEntry: [
+            defineTemplateApi({
+              action: ApiActions.createApplication,
+              order: 1,
+            }),
+            defineTemplateApi({
+              action: 'getAnotherReferenceData',
+              order: 2,
+            }),
+          ],
           status: 'inprogress',
           roles: [
             {
@@ -208,9 +215,11 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           progress: 0.75,
           status: 'inprogress',
           lifecycle: DefaultStateLifeCycle,
-          onExit: defineTemplateApi({
-            action: ApiActions.completeApplication,
-          }),
+          onExit: [
+            defineTemplateApi({
+              action: ApiActions.completeApplication,
+            }),
+          ],
           roles: [
             {
               id: Roles.ASSIGNEE,

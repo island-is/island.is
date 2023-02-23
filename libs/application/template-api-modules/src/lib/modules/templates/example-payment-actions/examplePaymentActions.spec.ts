@@ -1,9 +1,6 @@
 import { Test } from '@nestjs/testing'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  createCurrentUser,
-  createApplication,
-} from '@island.is/testing/fixtures'
+import { createCurrentUser } from '@island.is/testing/fixtures'
 
 import {
   ApplicationStatus,
@@ -18,6 +15,7 @@ import {
   EMAIL_OPTIONS,
 } from '@island.is/email-service'
 import { ConfigService } from '@nestjs/config'
+import { createApplication } from '@island.is/application/testing'
 
 describe('ExamplePaymentActionsService', () => {
   let service: ExamplePaymentActionsService

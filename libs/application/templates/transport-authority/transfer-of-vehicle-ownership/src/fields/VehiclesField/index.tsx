@@ -4,7 +4,7 @@ import { FC, useEffect } from 'react'
 import { VehicleSelectField } from './VehicleSelectField'
 import { VehicleRadioField } from './VehicleRadioField'
 import { useFormContext } from 'react-hook-form'
-import { VehiclesCurrentVehicle } from '../../types'
+import { VehiclesCurrentVehicle } from '../../shared'
 
 export const VehiclesField: FC<FieldBaseProps> = (props) => {
   const { setValue } = useFormContext()

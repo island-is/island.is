@@ -1,6 +1,7 @@
 import { uuid } from 'uuidv4'
 
 import { CourtClientService } from '@island.is/judicial-system/court-client'
+import { User } from '@island.is/judicial-system/types'
 
 import { randomEnum } from '../../../test'
 import { CourtDocumentFolder } from '../court.service'
@@ -23,6 +24,7 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('CourtService - Create document', () => {
+  const user = { id: uuid() } as User
   const caseId = uuid()
   const courtId = uuid()
   const courtCaseNumber = uuid()
@@ -62,6 +64,7 @@ describe('CourtService - Create document', () => {
 
       try {
         then.result = await courtService.createDocument(
+          user,
           caseId,
           courtId,
           courtCaseNumber,

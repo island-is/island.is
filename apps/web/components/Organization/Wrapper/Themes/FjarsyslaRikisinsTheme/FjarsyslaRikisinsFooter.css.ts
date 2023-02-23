@@ -15,3 +15,7 @@ export const firstRow = style({
   alignItems: 'center',
   gap: '20px',
 })
+
+export const heading = style({
+  color: '#2222c6',
+})

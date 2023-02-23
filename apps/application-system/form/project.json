@@ -120,5 +120,5 @@
     },
     "docker-static": {}
   },
-  "tags": []
+  "tags": ["scope:application-system-web"]
 }

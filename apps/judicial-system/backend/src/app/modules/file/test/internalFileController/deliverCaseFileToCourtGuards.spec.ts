@@ -1,5 +1,6 @@
 import { CanActivate } from '@nestjs/common'
 
+import { UserExistsGuard } from '../../../user'
 import { CaseExistsGuard } from '../../../case'
 import { CaseFileExistsGuard } from '../../guards/caseFileExists.guard'
 import { InternalFileController } from '../../internalFile.controller'
@@ -15,8 +16,8 @@ describe('InternalFileController - Deliver case file to court guards', () => {
     )
   })
 
-  it('should have two guards', () => {
-    expect(guards).toHaveLength(2)
+  it('should have three guards', () => {
+    expect(guards).toHaveLength(3)
   })
 
   describe('CaseExistsGuard', () => {
@@ -40,6 +41,18 @@ describe('InternalFileController - Deliver case file to court guards', () => {
 
     it('should have CaseFileExistsGuard as quard 2', () => {
       expect(guard).toBeInstanceOf(CaseFileExistsGuard)
+    })
+  })
+
+  describe('UserExistsGuard', () => {
+    let guard: CanActivate
+
+    beforeEach(() => {
+      guard = new guards[2]()
+    })
+
+    it('should have UserExistsGuard as guard 3', () => {
+      expect(guard).toBeInstanceOf(UserExistsGuard)
     })
   })
 })

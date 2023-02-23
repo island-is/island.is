@@ -5,12 +5,6 @@ export const headerBg = style({
   height: 385,
   marginTop: -130,
   paddingTop: 130,
-  backgroundColor: '#004065',
-  backgroundRepeat: 'no-repeat',
-  backgroundPositionX: '110%',
-  backgroundPositionY: '30%',
-  backgroundImage:
-    'url(https://images.ctfassets.net/8k0h54kbe6bj/4v20729OMrRYkktuaCTWRi/675807c8c848895833c4a6a162f2813a/hsn-header-icon.svg)',
 })
 
 export const iconCircle = style({

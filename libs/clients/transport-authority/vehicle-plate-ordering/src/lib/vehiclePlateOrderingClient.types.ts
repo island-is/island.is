@@ -12,3 +12,7 @@ export interface PlateOrder {
   deliveryStationCode?: string
   expressOrder: boolean
 }
+
+// Note: type=R and code=1 is the option "Pick up at Samgöngustofa"
+export const SGS_DELIVERY_STATION_TYPE = 'R'
+export const SGS_DELIVERY_STATION_CODE = '1'

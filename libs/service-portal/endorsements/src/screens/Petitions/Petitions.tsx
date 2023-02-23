@@ -1,5 +1,4 @@
 import format from 'date-fns/format'
-import React from 'react'
 import { Link } from 'react-router-dom'
 
 import { Box, Bullet, BulletList, Stack, Text } from '@island.is/island-ui/core'
@@ -68,13 +67,11 @@ const Petitions = () => {
                   <Link
                     style={{ textDecoration: 'none' }}
                     key={list.id}
-                    to={{
-                      pathname: ServicePortalPath.PetitionList.replace(
-                        ':listId',
-                        list.id,
-                      ),
-                      state: { type: 'edit', listId: list.id },
-                    }}
+                    state={{ type: 'edit', listId: list.id }}
+                    to={ServicePortalPath.PetitionList.replace(
+                      ':listId',
+                      list.id,
+                    )}
                   >
                     <ActionCard
                       backgroundColor="blue"
@@ -112,15 +109,13 @@ const Petitions = () => {
                   <Link
                     style={{ textDecoration: 'none' }}
                     key={list.id}
-                    to={{
-                      pathname: ServicePortalPath.PetitionList.replace(
-                        ':listId',
-                        list.id,
-                      ),
-                      state: {
-                        listId: list.endorsementList?.id,
-                      },
+                    state={{
+                      listId: list.endorsementList?.id,
                     }}
+                    to={ServicePortalPath.PetitionList.replace(
+                      ':listId',
+                      list.id,
+                    )}
                   >
                     <ActionCard
                       backgroundColor="white"
@@ -158,15 +153,13 @@ const Petitions = () => {
                   <Link
                     style={{ textDecoration: 'none' }}
                     key={list.id}
-                    to={{
-                      pathname: ServicePortalPath.PetitionList.replace(
-                        ':listId',
-                        list.id,
-                      ),
-                      state: {
-                        listId: list.endorsementList?.id,
-                      },
+                    state={{
+                      listId: list.endorsementList?.id,
                     }}
+                    to={ServicePortalPath.PetitionList.replace(
+                      ':listId',
+                      list.id,
+                    )}
                   >
                     <ActionCard
                       backgroundColor="red"

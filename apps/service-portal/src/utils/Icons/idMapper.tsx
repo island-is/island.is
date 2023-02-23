@@ -11,6 +11,7 @@ import Person from '../../components/AnimatedIcon/Person'
 import Business from '../../components/AnimatedIcon/Business'
 import LogOut from '../../components/AnimatedIcon/LogOut'
 import People from '../../components/AnimatedIcon/People'
+import Airplane from '../../components/AnimatedIcon/Airplane'
 
 export const iconIdMapper = (iconType: string) => {
   switch (iconType) {
@@ -65,6 +66,10 @@ export const iconIdMapper = (iconType: string) => {
     // Skírteini
     case 'wallet':
       return 'eEhIQFj01l21'
+      break
+    // Loftbrú
+    case 'airplane':
+      return 'eVmYWJSTuUd1'
       break
     default:
       return ''
@@ -125,6 +130,10 @@ export const iconTypeToSVG = (iconType: string, iconId: string) => {
     // Fyrirtæki
     case 'business':
       return <Business />
+      break
+    // Loftbrú
+    case 'airplane':
+      return <Airplane />
       break
     default:
       return <Reader />

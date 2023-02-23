@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import compareAsc from 'date-fns/compareAsc'
 
 import { Box, Input } from '@island.is/island-ui/core'
-import { Case } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import BlueBox from '../BlueBox/BlueBox'
 import DateTime from '../DateTime/DateTime'

@@ -7,7 +7,11 @@ import {
   OrderVehicleLicensePlateAnswers,
   getChargeItemCodes,
 } from '@island.is/application/templates/transport-authority/order-vehicle-license-plate'
-import { VehiclePlateOrderingClient } from '@island.is/clients/transport-authority/vehicle-plate-ordering'
+import {
+  SGS_DELIVERY_STATION_CODE,
+  SGS_DELIVERY_STATION_TYPE,
+  VehiclePlateOrderingClient,
+} from '@island.is/clients/transport-authority/vehicle-plate-ordering'
 import { VehicleCodetablesClient } from '@island.is/clients/transport-authority/vehicle-codetables'
 import { YES } from '@island.is/application/core'
 
@@ -28,8 +32,12 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
 
     return (
       result
-        // Filtering out type=R and code=1 (that is the option "Pick up at Samgöngustofa")
-        .filter((x) => x.type !== 'R' && x.code !== '1')
+        // Filtering out the option "Pick up at Samgöngustofa"
+        .filter(
+          (x) =>
+            x.type !== SGS_DELIVERY_STATION_TYPE &&
+            x.code !== SGS_DELIVERY_STATION_CODE,
+        )
         .map((item) => ({
           name: item.name,
           // Since the result is only unique per type+code, we will just merge them together here
@@ -107,12 +115,12 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
       deliveryStationType = deliveryStationTypeCode.split('_')[0]
       deliveryStationCode = deliveryStationTypeCode.split('_')[1]
     } else {
-      // Otherwise we will default to "Pick up at Samgöngustofa" which is type=R and code=1
-      deliveryStationType = 'R'
-      deliveryStationCode = '1'
+      // Otherwise we will default to option "Pick up at Samgöngustofa"
+      deliveryStationType = SGS_DELIVERY_STATION_TYPE
+      deliveryStationCode = SGS_DELIVERY_STATION_CODE
     }
 
-    await this.vehiclePlateOrderingClient.orderPlates(auth, {
+    await this.vehiclePlateOrderingClient.savePlateOrders(auth, {
       permno: answers?.pickVehicle?.plate,
       frontType: answers?.plateSize?.frontPlateSize,
       rearType: answers?.plateSize?.rearPlateSize,

@@ -39,5 +39,5 @@
     },
     "docker-playwright": {}
   },
-  "tags": []
+  "tags": ["scope:e2e"]
 }

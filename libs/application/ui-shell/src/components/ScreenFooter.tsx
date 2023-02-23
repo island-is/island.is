@@ -1,5 +1,4 @@
-import React, { FC } from 'react'
-import { useHistory } from 'react-router-dom'
+import { FC } from 'react'
 import { Box, Button, ButtonTypes, GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { formatText, coreMessages } from '@island.is/application/core'
@@ -22,6 +21,7 @@ interface FooterProps {
   loading: boolean
   canProceed: boolean
   renderLastScreenButton?: boolean
+  shouldLastScreenButtonSubmit?: boolean
   renderLastScreenBackButton?: boolean
 }
 
@@ -64,7 +64,6 @@ export const ScreenFooter: FC<FooterProps> = ({
   renderLastScreenBackButton,
 }) => {
   const { formatMessage } = useLocale()
-  const history = useHistory()
   const hasSubmitField = submitField !== undefined
   const isLastScreen = activeScreenIndex === numberOfScreens - 1
   const showGoBack =
@@ -72,7 +71,9 @@ export const ScreenFooter: FC<FooterProps> = ({
 
   if (
     (isLastScreen && !renderLastScreenButton) ||
-    (mode !== FormModes.IN_PROGRESS && mode !== FormModes.DRAFT)
+    (mode !== FormModes.IN_PROGRESS &&
+      mode !== FormModes.DRAFT &&
+      mode !== FormModes.NOT_STARTED)
   ) {
     return null
   }
@@ -136,19 +137,21 @@ export const ScreenFooter: FC<FooterProps> = ({
               renderSubmitButtons()
             ) : isLastScreen ? (
               <Box display="inlineFlex">
-                <Button
-                  loading={loading}
-                  onClick={() => history.push('/minarsidur')}
-                  icon="arrowForward"
-                  data-testid="applications-home"
-                  type="button"
-                >
-                  {formatMessage({
-                    id: 'application.system:button.servicePortal',
-                    defaultMessage: 'Til baka á Mínar Síður',
-                    description: 'Service Portal button text',
-                  })}
-                </Button>
+                <a href="/minarsidur" className={styles.linkNoStyle}>
+                  <Button
+                    as="span"
+                    loading={loading}
+                    icon="arrowForward"
+                    data-testid="applications-home"
+                    type="button"
+                  >
+                    {formatMessage({
+                      id: 'application.system:button.servicePortal',
+                      defaultMessage: 'Til baka á Mínar Síður',
+                      description: 'Service Portal button text',
+                    })}
+                  </Button>
+                </a>
               </Box>
             ) : (
               <Box display="inlineFlex">

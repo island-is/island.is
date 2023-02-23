@@ -16,14 +16,15 @@ import {
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { ApiActions } from '../shared'
+import { AuthDelegationType } from '@island.is/shared/types'
 import { Features } from '@island.is/feature-flags'
 import { TransferOfVehicleOwnershipSchema } from './dataSchema'
 import { application as applicationMessage } from './messages'
-import { CoOwnerAndOperator, UserInformation } from '../types'
+import { CoOwnerAndOperator, UserInformation } from '../shared'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import {
-  NationalRegistryUserApi,
+  IdentityApi,
   UserProfileApi,
   SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
@@ -62,6 +63,13 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.TransferOfVehicleOwnership.translation,
   ],
   dataSchema: TransferOfVehicleOwnershipSchema,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+      featureFlag:
+        Features.transportAuthorityTransferOfVehicleOwnershipDelegations,
+    },
+  ],
   featureFlag: Features.transportAuthorityTransferOfVehicleOwnership,
   stateMachineConfig: {
     initial: States.DRAFT,
@@ -100,7 +108,7 @@ const template: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi,
+                IdentityApi,
                 UserProfileApi,
                 SamgongustofaPaymentCatalogApi,
                 CurrentVehiclesApi,
@@ -183,7 +191,13 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.ReviewForm),
                 ),
               write: {
-                answers: [],
+                answers: [
+                  'sellerCoOwner',
+                  'buyerCoOwnerAndOperator',
+                  'rejecter',
+                  'insurance',
+                  'buyer',
+                ],
               },
               read: 'all',
               delete: true,

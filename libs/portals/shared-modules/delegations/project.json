@@ -34,5 +34,5 @@
       }
     }
   },
-  "tags": ["lib:react"]
+  "tags": ["lib:portals", "scope:portals"]
 }

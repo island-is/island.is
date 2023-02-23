@@ -1,4 +1,7 @@
-import { FieldBaseProps } from '@island.is/application/types'
+import {
+  ApplicationConfigurations,
+  FieldBaseProps,
+} from '@island.is/application/types'
 import {
   Box,
   AlertMessage,
@@ -11,7 +14,7 @@ import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { Jobs } from '../../assets/Jobs'
 import { conclusion } from '../../lib/messages'
-import { ReviewScreenProps } from '../../types'
+import { ReviewScreenProps } from '../../shared'
 import { isLastReviewer } from '../../utils'
 import { CopyLink } from '@island.is/application/ui-components'
 
@@ -62,10 +65,7 @@ export const ReviewConclusion: FC<FieldBaseProps & ReviewScreenProps> = ({
         <Text variant="h4">{formatMessage(conclusion.default.shareLink)}</Text>
         <Box marginTop={2}>
           <CopyLink
-            linkUrl={
-              `${document.location.origin}/umsoknir/eigendaskipti-okutaekis/` +
-              application.id
-            }
+            linkUrl={`${document.location.origin}/umsoknir/${ApplicationConfigurations.TransferOfVehicleOwnership.slug}/${application.id}`}
             buttonTitle={formatMessage(conclusion.default.copyLink)}
           />
         </Box>

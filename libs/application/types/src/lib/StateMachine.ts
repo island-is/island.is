@@ -88,8 +88,8 @@ export interface ApplicationStateMeta<
    */
   status: 'approved' | 'rejected' | 'draft' | 'completed' | 'inprogress'
   roles?: RoleInState<T>[]
-  onExit?: TemplateApi<R>
-  onEntry?: TemplateApi<R>
+  onExit?: TemplateApi<R>[] | TemplateApi<R>
+  onEntry?: TemplateApi<R>[] | TemplateApi<R>
 }
 
 export interface ApplicationStateSchema<T extends EventObject = AnyEventObject>
