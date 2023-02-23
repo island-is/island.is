@@ -2,7 +2,7 @@ import { z } from 'zod'
 import startOfMonth from 'date-fns/startOfMonth'
 import endOfDay from 'date-fns/endOfDay'
 import parseDate from 'date-fns/parse'
-import { validateRequestWithSchema } from '@island.is/react-spa/shared'
+import { validateSearchParams } from '@island.is/react-spa/shared'
 import type { WrappedLoaderFn } from '@island.is/portals/core'
 import { isValidDate } from '@island.is/shared/utils'
 import { zfd } from 'zod-form-data'
@@ -68,7 +68,7 @@ export type OverviewLoaderReturnType = {
 
 export const overviewLoader: WrappedLoaderFn = ({ client }) => {
   return async ({ request }): Promise<OverviewLoaderReturnType> => {
-    const input = validateRequestWithSchema({ request, schema })
+    const input = validateSearchParams({ request, schema })
 
     const flightLegs = await client.query<
       FlightLegsQuery,

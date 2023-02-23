@@ -18,7 +18,7 @@ import { z } from 'zod'
  *   airline: 'W6',
  * }
  */
-export const createSearchParamObj = (searchParams: URLSearchParams) => {
+export const createSearchParamsObj = (searchParams: URLSearchParams) => {
   const obj: Record<string, unknown> = {}
 
   for (const [objPath, value] of searchParams.entries()) {
@@ -38,7 +38,7 @@ export const createSearchParamObj = (searchParams: URLSearchParams) => {
 }
 
 /**
- * Creates an object from a one level deep object with dot notation
+ * Creates a deeply nested object from a one level deep object with dot notation
  *
  * @example
  * const obj = {
@@ -52,7 +52,7 @@ export const createSearchParamObj = (searchParams: URLSearchParams) => {
  *   isExplicit: 'true',
  *   airline: 'W6',
  * }
- * const result = createObjFromObjWithPath(obj)
+ * const result = dotNotationToNestedObject(obj)
  * {
  *   age: {
  *     from: 1,
@@ -70,7 +70,7 @@ export const createSearchParamObj = (searchParams: URLSearchParams) => {
  *   isExplicit: true,
  * }
  */
-export const createObjFromObjWithPath = (obj: Record<string, unknown>) => {
+export const dotNotationToNestedObject = (obj: Record<string, unknown>) => {
   return Object.entries(obj).reduce((parentAcc, [key, value]) => {
     key
       .split('.')
@@ -84,26 +84,30 @@ export const createObjFromObjWithPath = (obj: Record<string, unknown>) => {
   }, {} as Record<string, unknown>)
 }
 
-/**
- * Creates an object from a request's search params
- */
-export const createObjFromReqSearchParams = (request: Request) => {
-  const searchParams = new URL(request.url).searchParams
-  const obj = createSearchParamObj(searchParams)
-  const result = createObjFromObjWithPath(obj)
-
-  return Object.keys(result).length === 0 ? null : result
-}
-
-export const validateRequestWithSchema = <T extends z.ZodTypeAny>({
+export const validateSearchParams = <T extends z.ZodTypeAny>({
   request,
   schema,
 }: {
   request: Request
   schema: T
 }) => {
-  const parsedObject = createObjFromReqSearchParams(request)
-  const result = schema.parse(parsedObject ?? {})
+  const searchParams = new URL(request.url).searchParams
+  const values = createSearchParamsObj(searchParams)
+  const nestedObject = dotNotationToNestedObject(values)
 
-  return result as z.infer<typeof schema>
+  return schema.parse(nestedObject) as z.infer<typeof schema>
+}
+
+export const validateFormData = async <T extends z.ZodTypeAny>({
+  request,
+  schema,
+}: {
+  request: Request
+  schema: T
+}) => {
+  const formData = await request.formData()
+  const values = Object.fromEntries(formData)
+  const nestedObject = dotNotationToNestedObject(values)
+
+  return schema.parse(nestedObject) as z.infer<typeof schema>
 }

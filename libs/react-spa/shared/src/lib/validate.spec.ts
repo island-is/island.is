@@ -1,11 +1,10 @@
 import { z, ZodError } from 'zod'
-import {
-  createSearchParamObj,
-  createObjFromObjWithPath,
-  createObjFromReqSearchParams,
-  validateRequestWithSchema,
-} from './loaders'
 import { zfd } from 'zod-form-data'
+import {
+  dotNotationToNestedObject,
+  createSearchParamsObj,
+  validateSearchParams,
+} from './validate'
 
 class MockedRequest {
   url: string
@@ -28,32 +27,7 @@ const schema = z.object({
 })
 
 describe('loaders utility methods', () => {
-  describe('createSearchParamObj', () => {
-    it('should create an object from a URLSearchParams', () => {
-      // Arrange
-      const searchParams = new URLSearchParams(
-        'age.from=1&age.to=2&flightLeg.from=KEF&flightLeg.to=AER&period.from=2021-01-01&period.to=2021-01-02&state=active&state=inactive&isExplicit=true&airline=W6',
-      )
-
-      // Act
-      const result = createSearchParamObj(searchParams)
-
-      // Assert
-      expect(result).toEqual({
-        'age.from': '1',
-        'age.to': '2',
-        'flightLeg.from': 'KEF',
-        'flightLeg.to': 'AER',
-        'period.from': '2021-01-01',
-        'period.to': '2021-01-02',
-        state: ['active', 'inactive'],
-        isExplicit: 'true',
-        airline: 'W6',
-      })
-    })
-  })
-
-  describe('createObjFromObjWithPath', () => {
+  describe('dotNotationToNestedObject', () => {
     it('should create deeply nested object from one level deep object with path as keys ', () => {
       // Arrange
       const obj = {
@@ -70,7 +44,7 @@ describe('loaders utility methods', () => {
       }
 
       // Act
-      const result = createObjFromObjWithPath(obj)
+      const result = dotNotationToNestedObject(obj)
 
       // Assert
       expect(result).toEqual({
@@ -98,30 +72,25 @@ describe('loaders utility methods', () => {
     })
   })
 
-  describe('createObjFromReqSearchParams', () => {
+  describe('createSearchParamsObj', () => {
     it('should create an object from a URLSearchParams', () => {
       // Arrange
-      const request = new MockedRequest(
-        'https://island.is/?age.from=1&age.to=2&flightLeg.from=KEF&flightLeg.to=AER&period.from=2021-01-01&period.to=2021-01-02&state=active&state=inactive&isExplicit=true&airline=W6',
-      ) as Request
+      const searchParams = new URLSearchParams(
+        '?age.from=1&age.to=2&flightLeg.from=KEF&flightLeg.to=AER&period.from=2021-01-01&period.to=2021-01-02&state=active&state=inactive&isExplicit=true&airline=W6&deeply.nested.key=value',
+      )
 
       // Act
-      const result = createObjFromReqSearchParams(request)
+      const result = createSearchParamsObj(searchParams)
 
       // Assert
       expect(result).toEqual({
-        age: {
-          from: '1',
-          to: '2',
-        },
-        flightLeg: {
-          from: 'KEF',
-          to: 'AER',
-        },
-        period: {
-          from: '2021-01-01',
-          to: '2021-01-02',
-        },
+        'age.from': '1',
+        'age.to': '2',
+        'deeply.nested.key': 'value',
+        'flightLeg.from': 'KEF',
+        'flightLeg.to': 'AER',
+        'period.from': '2021-01-01',
+        'period.to': '2021-01-02',
         state: ['active', 'inactive'],
         isExplicit: 'true',
         airline: 'W6',
@@ -129,7 +98,7 @@ describe('loaders utility methods', () => {
     })
   })
 
-  describe('validateRequestWithSchema', () => {
+  describe('validateSearchParams', () => {
     it('should fail to validate a request with a schema', () => {
       // Arrange
       const request = new MockedRequest(
@@ -138,7 +107,7 @@ describe('loaders utility methods', () => {
 
       try {
         // Act
-        const result = validateRequestWithSchema({
+        const result = validateSearchParams({
           request,
           schema,
         })
@@ -177,7 +146,7 @@ describe('loaders utility methods', () => {
       ) as Request
 
       // Act
-      const result = validateRequestWithSchema({
+      const result = validateSearchParams({
         request,
         schema,
       })

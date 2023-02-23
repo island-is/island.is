@@ -1,2 +1,2 @@
 // Libs
-export * from './lib/loaders/loaders'
+export * from './lib/validate'
