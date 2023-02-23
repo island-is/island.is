@@ -74,28 +74,26 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
 
   const cf = workingCase.caseFiles
 
-  if (!cf || cf.length <= 0) {
-    return null
-  }
-
-  const coverLetters = cf.filter(
+  const coverLetters = cf?.filter(
     (file) => file.category === CaseFileCategory.COVER_LETTER,
   )
-  const indictments = cf.filter(
+  const indictments = cf?.filter(
     (file) => file.category === CaseFileCategory.INDICTMENT,
   )
-  const criminalRecords = cf.filter(
+  const criminalRecords = cf?.filter(
     (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
   )
-  const costBreakdowns = cf.filter(
+  const costBreakdowns = cf?.filter(
     (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
   )
-  const others = cf.filter(
+  const others = cf?.filter(
     (file) =>
       file.category === CaseFileCategory.CASE_FILE && !file.policeCaseNumber,
   )
-  const rulings = cf.filter((file) => file.category === CaseFileCategory.RULING)
-  const courtRecords = cf.filter(
+  const rulings = cf?.filter(
+    (file) => file.category === CaseFileCategory.RULING,
+  )
+  const courtRecords = cf?.filter(
     (file) => file.category === CaseFileCategory.COURT_RECORD,
   )
 

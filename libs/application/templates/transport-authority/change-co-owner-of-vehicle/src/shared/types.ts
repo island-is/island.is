@@ -14,6 +14,20 @@ export type VehiclesCurrentVehicle = {
   role?: string
 }
 
+type VehicleValidationErrorMessage = {
+  errorNo?: string | null
+  defaultMessage?: string | null
+}
+
+export type VehiclesCurrentVehicleWithOwnerchangeChecks = {
+  permno?: string
+  make?: string
+  color?: string
+  role?: string
+  isDebtLess?: boolean | null
+  validationErrorMessages?: VehicleValidationErrorMessage[] | null
+}
+
 interface ReviewerProps {
   nationalId: string
   name: string
