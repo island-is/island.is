@@ -59,6 +59,7 @@ auth-admin-web:
         securityContext:
           allowPrivilegeEscalation: false
           privileged: false
+      replicas: 2
     strategy:
       rollingUpdate:
         maxSurge: '25%'
@@ -281,6 +282,7 @@ services-auth-admin-api:
         securityContext:
           allowPrivilegeEscalation: false
           privileged: false
+      replicas: 2
     strategy:
       rollingUpdate:
         maxSurge: '25%'
@@ -393,6 +395,7 @@ services-auth-delegation-api:
         securityContext:
           allowPrivilegeEscalation: false
           privileged: false
+      replicas: 2
     strategy:
       rollingUpdate:
         maxSurge: '25%'
@@ -553,6 +556,7 @@ services-auth-ids-api:
                   name: 'DB_PASS'
           image: ''
           name: 'seed'
+      replicas: 2
     strategy:
       rollingUpdate:
         maxSurge: '25%'
@@ -623,6 +627,7 @@ services-auth-personal-representative:
         securityContext:
           allowPrivilegeEscalation: false
           privileged: false
+      replicas: 2
     strategy:
       rollingUpdate:
         maxSurge: '25%'
@@ -693,6 +698,7 @@ services-auth-personal-representative-public:
         securityContext:
           allowPrivilegeEscalation: false
           privileged: false
+      replicas: 2
     strategy:
       rollingUpdate:
         maxSurge: '25%'
@@ -811,6 +817,7 @@ services-auth-public-api:
         securityContext:
           allowPrivilegeEscalation: false
           privileged: false
+      replicas: 2
     strategy:
       rollingUpdate:
         maxSurge: '25%'

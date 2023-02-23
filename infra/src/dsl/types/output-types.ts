@@ -79,7 +79,7 @@ export type SecurityContext = {
   privileged: boolean
   fsGroup?: number
 }
-export interface KubeService {
+export interface KubeDeployment {
   apiVersion: 'apps/v1'
   kind: 'Deployment'
   metadata: {
@@ -109,6 +109,7 @@ export interface KubeService {
       }
     }
     spec: {
+      replicas?: number
       imagePullSecrets?: string
       securityContext?: SecurityContext
       serviceAccountName?: string
@@ -156,7 +157,6 @@ export interface KubeService {
     volumes?: OutputVolumeNative[]
   }
 }
-
 
 export interface HelmService {
   replicaCount?: {
@@ -288,7 +288,7 @@ export type SerializeErrors = {
   errors: string[]
 }
 
-export type ServiceOutputType = HelmService | LocalrunService | KubeService
+export type ServiceOutputType = HelmService | LocalrunService | KubeDeployment
 
 export type SerializeMethod<T extends ServiceOutputType> = (
   service: ServiceDefinitionForEnv,
@@ -307,7 +307,7 @@ export type HelmValueFile = {
 }
 
 export type KubeValueFile = {
-  services: Services<KubeService>
+  services: Services<KubeDeployment>
 }
 
 export type LocalrunValueFile = {

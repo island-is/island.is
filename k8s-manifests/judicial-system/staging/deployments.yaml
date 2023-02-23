@@ -377,6 +377,7 @@ judicial-system-backend:
                   key: '/k8s/judicial-system/DB_PASSWORD'
                   name: 'DB_PASS'
           image: ''
+      replicas: 4
       serviceAccountName: 'judicial-system-backend'
     strategy:
       rollingUpdate:
@@ -522,6 +523,7 @@ judicial-system-scheduler:
         securityContext:
           allowPrivilegeEscalation: false
           privileged: false
+      replicas: 1
     strategy:
       rollingUpdate:
         maxSurge: '25%'

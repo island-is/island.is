@@ -858,6 +858,7 @@ api:
         volumeMounts:
           - mountPath: '/etc/config/islyklar.p12'
             name: 'islyklar.p12'
+      replicas: 10
       serviceAccountName: 'api'
     strategy:
       rollingUpdate:
@@ -1259,6 +1260,7 @@ application-system-api:
                   key: '/k8s/application-system/api/DB_PASSWORD'
                   name: 'DB_PASS'
           image: ''
+      replicas: 10
       serviceAccountName: 'application-system-api'
     strategy:
       rollingUpdate:
@@ -2039,6 +2041,7 @@ portals-admin:
         securityContext:
           allowPrivilegeEscalation: false
           privileged: false
+      replicas: 5
     strategy:
       rollingUpdate:
         maxSurge: '25%'
@@ -2218,6 +2221,7 @@ search-indexer-service:
                   name: 'CONTENTFUL_ACCESS_TOKEN'
           image: ''
           name: 'migrate-kibana'
+      replicas: 1
       serviceAccountName: 'search-indexer'
     strategy:
       rollingUpdate:
@@ -2297,6 +2301,7 @@ service-portal:
         securityContext:
           allowPrivilegeEscalation: false
           privileged: false
+      replicas: 5
     strategy:
       rollingUpdate:
         maxSurge: '25%'
@@ -2432,6 +2437,7 @@ service-portal-api:
                   key: '/k8s/service-portal/api/DB_PASSWORD'
                   name: 'DB_PASS'
           image: ''
+      replicas: 2
       serviceAccountName: 'service-portal-api'
     strategy:
       rollingUpdate:
@@ -3007,6 +3013,7 @@ web:
         securityContext:
           allowPrivilegeEscalation: false
           privileged: false
+      replicas: 10
     strategy:
       rollingUpdate:
         maxSurge: '25%'

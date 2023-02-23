@@ -1,27 +1,18 @@
 import {
-  AccessModes,
-  IngressForEnv,
-  PostgresInfo,
   PostgresInfoForEnv,
-  Resources,
-  ServiceDefinition,
   ServiceDefinitionForEnv,
 } from '../types/input-types'
 import {
-  ContainerRunHelm,
-  ContainerEnvironmentVariablesOrSecretsKube,
   OutputFormat,
-  OutputVolumeMountNative,
   SerializeErrors,
   SerializeMethod,
   SerializeSuccess,
-  KubeService,
+  KubeDeployment,
 } from '../types/output-types'
 import { ReferenceResolver, EnvironmentConfig } from '../types/charts'
 import { checksAndValidations } from './errors'
 import {
   postgresIdentifier,
-  resolveWithMaxLength,
   serializeKubeEnvs,
   serializeKubeSecrets,
   serializeEnvironmentVariables,
@@ -32,7 +23,7 @@ import {
  * @param service Our service definition
  * @param deployment Uber chart in a specific environment the service will be part of
  */
-const serializeService: SerializeMethod<KubeService> = async (
+const serializeService: SerializeMethod<KubeDeployment> = async (
   service: ServiceDefinitionForEnv,
   deployment: ReferenceResolver,
   opsenv: EnvironmentConfig,
@@ -42,7 +33,7 @@ const serializeService: SerializeMethod<KubeService> = async (
   )
   const serviceDef = service
   const { namespace } = serviceDef
-  const result: KubeService = {
+  const result: KubeDeployment = {
     apiVersion: 'apps/v1',
     kind: 'Deployment',
     metadata: {
@@ -86,6 +77,7 @@ const serializeService: SerializeMethod<KubeService> = async (
         },
       },
       spec: {
+        replicas: serviceDef.replicaCount?.default,
         containers: {
           env: [],
           name: service.name,
@@ -251,18 +243,18 @@ const serializeService: SerializeMethod<KubeService> = async (
     : { type: 'error', errors: allErrors }
 }
 
-export const KubeOutput: OutputFormat<KubeService> = {
+export const KubeOutput: OutputFormat<KubeDeployment> = {
   serializeService(
     service: ServiceDefinitionForEnv,
     deployment: ReferenceResolver,
     env: EnvironmentConfig,
-  ): Promise<SerializeSuccess<KubeService> | SerializeErrors> {
+  ): Promise<SerializeSuccess<KubeDeployment> | SerializeErrors> {
     return serializeService(service, deployment, env)
   },
-  featureDeployment(options): KubeService {
+  featureDeployment(options): KubeDeployment {
     throw new Error('Not used')
   },
-  serviceMockDef(options): KubeService {
+  serviceMockDef(options): KubeDeployment {
     throw new Error('Not used')
   },
 }
