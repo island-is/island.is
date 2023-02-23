@@ -69,6 +69,7 @@ import {
 import { HeilbrigdisstofnunSudurlandsFooter } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
 import { HeilbrigdisstofnunSudurlandsHeader } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
 import { TryggingastofnunHeader } from './Themes/TryggingastofnunTheme'
+import { SAkFooter, SAkHeader } from './Themes/SAkTheme'
 
 import * as styles from './OrganizationWrapper.css'
 
@@ -134,6 +135,8 @@ export const footerEnabled = [
 
   'fjarsyslan',
   'the-financial-management-authority',
+
+  'sak',
 ]
 
 export const getThemeConfig = (
@@ -209,6 +212,8 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
       return <FjarsyslaRikisinsHeader organizationPage={organizationPage} />
     case 'tryggingastofnun':
       return <TryggingastofnunHeader organizationPage={organizationPage} />
+    case 'sak':
+      return <SAkHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
@@ -377,6 +382,17 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         />
       )
       break
+    case 'sak':
+    case 'sjukrahusid-akureyri':
+    case 'akureyri-hospital':
+      OrganizationFooterComponent = (
+        <SAkFooter
+          title={organization.title}
+          footerItems={organization.footerItems}
+          logo={organization.logo?.url}
+        />
+      )
+      break
     case 'fjarsysla-rikisins':
     case 'the-financial-management-authority':
       OrganizationFooterComponent = (
@@ -386,6 +402,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
           namespace={namespace}
         />
       )
+      break
   }
 
   return OrganizationFooterComponent

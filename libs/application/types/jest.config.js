@@ -1,14 +1,16 @@
 module.exports = {
   displayName: 'application-types',
-  preset: '../../../jest.preset.js',
+  preset: './jest.preset.js',
+  rootDir: '../../..',
+  roots: [__dirname],
   globals: {
     'ts-jest': {
-      tsConfig: '<rootDir>/tsconfig.spec.json',
+      tsconfig: `${__dirname}/tsconfig.spec.json`,
     },
   },
   transform: {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/application/types',
+  coverageDirectory: '<rootDir>/coverage/libs/application/types',
 }

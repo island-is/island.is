@@ -24,5 +24,3 @@ export enum ApiActions {
   completeApplication = 'completeApplication',
   syslumennOnEntry = 'syslumennOnEntry',
 }
-
-export const TaxFreeLimit = 5757759

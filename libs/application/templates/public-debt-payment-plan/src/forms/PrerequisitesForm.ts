@@ -84,17 +84,6 @@ export const PrerequisitesForm: Form = buildForm({
             buildDataProviderItem({
               provider: UserProfileApi,
               title: (formValue) =>
-                isApplicantCompany(formValue)
-                  ? externalData.companyLabels.companyTaxTitle
-                  : externalData.labels.userProfileTitle,
-              subTitle: (formValue) =>
-                isApplicantCompany(formValue)
-                  ? externalData.companyLabels.companyTaxSubTitle
-                  : externalData.labels.userProfileSubTitle,
-            }),
-            buildDataProviderItem({
-              provider: PaymentPlanPrerequisitesApi,
-              title: (formValue) =>
                 isApplicantPerson(formValue)
                   ? externalData.labels.paymentPlanTitle
                   : '',
@@ -103,6 +92,17 @@ export const PrerequisitesForm: Form = buildForm({
                 isApplicantPerson(formValue)
                   ? externalData.labels.paymentPlanSubtitle
                   : '',
+            }),
+            buildDataProviderItem({
+              provider: PaymentPlanPrerequisitesApi,
+              title: (formValue) =>
+                isApplicantCompany(formValue)
+                  ? externalData.companyLabels.companyTaxTitle
+                  : externalData.labels.userProfileTitle,
+              subTitle: (formValue) =>
+                isApplicantCompany(formValue)
+                  ? externalData.companyLabels.companyTaxSubTitle
+                  : externalData.labels.userProfileSubTitle,
             }),
             buildDataProviderItem({
               title: externalData.labels.paymentEmployerTitle,

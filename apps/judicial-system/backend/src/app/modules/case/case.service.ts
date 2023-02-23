@@ -46,6 +46,7 @@ import {
   getCourtRecordPdfAsString,
   formatRulingModifiedHistory,
   createCaseFilesRecord,
+  createIndictment,
 } from '../../formatters'
 import { CaseFile, FileService } from '../file'
 import { DefendantService, Defendant } from '../defendant'
@@ -789,6 +790,12 @@ export class CaseService {
     await this.refreshFormatMessage()
 
     return getRulingPdfAsBuffer(theCase, this.formatMessage)
+  }
+
+  async getIndictmentPdf(theCase: Case): Promise<Buffer> {
+    await this.refreshFormatMessage()
+
+    return createIndictment(theCase, this.formatMessage)
   }
 
   async getCustodyPdf(theCase: Case): Promise<Buffer> {

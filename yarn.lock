@@ -7182,15 +7182,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:1.25.2":
-  version: 1.25.2
-  resolution: "@playwright/test@npm:1.25.2"
+"@playwright/test@npm:1.29":
+  version: 1.29.2
+  resolution: "@playwright/test@npm:1.29.2"
   dependencies:
     "@types/node": "*"
-    playwright-core: 1.25.2
+    playwright-core: 1.29.2
   bin:
     playwright: cli.js
-  checksum: 3c24027bd9b305a3985cae35a4046e656dd0ffb76ef4dfcfc864f6c8492a643fc21c79048ee8169c5c1562d3cae493e7223a5473b127fef3bda7c7c52795c17d
+  checksum: 614cd4ed3baa4e41a6c7865f3c49733caef2c9d5a1aae5832b3d145ffdb0be2dd9d30136c0cb8aed5f9d452782baf2f380e5b12092958bf9fa7578a6d5fa61bf
   languageName: node
   linkType: hard
 
@@ -10691,6 +10691,15 @@ __metadata:
     "@types/htmlparser2": "*"
     "@types/react": "*"
   checksum: 9b33d62ab0465920ca6bd9b1e6039fb0bbff73481d8d57d1539de1c3889a020c70521285a546a9f6d49e399809155a2ba02138b5a474b990bade6fbbd94caaa4
+  languageName: node
+  linkType: hard
+
+"@types/react-infinite-scroller@npm:^1.2.3":
+  version: 1.2.3
+  resolution: "@types/react-infinite-scroller@npm:1.2.3"
+  dependencies:
+    "@types/react": "*"
+  checksum: ae11063b5e114bff1f06e9d3d2ca0948a3a224f13b4a30fbfe56f84e535ee6232de9667456695bbbb409de51887d701f8558fd28c36a2ea172e8593346de85d1
   languageName: node
   linkType: hard
 
@@ -25390,7 +25399,7 @@ __metadata:
     "@nrwl/web": 13.10.5
     "@nrwl/workspace": 13.10.5
     "@openapitools/openapi-generator-cli": 1.0.15-4.3.1
-    "@playwright/test": 1.25.2
+    "@playwright/test": 1.29
     "@rehooks/component-size": 1.0.3
     "@sindresorhus/slugify": 1.0.0
     "@statoscope/webpack-plugin": 5.20.1
@@ -25449,6 +25458,7 @@ __metadata:
     "@types/react-datepicker": 3.1.1
     "@types/react-dom": 17.0.3
     "@types/react-html-parser": 2.0.1
+    "@types/react-infinite-scroller": ^1.2.3
     "@types/react-input-mask": 3.0.0
     "@types/react-modal": 3.13.1
     "@types/react-pdf": 5.0.9
@@ -25630,6 +25640,7 @@ __metadata:
     react-focus-lock: 2.4.1
     react-hook-form: 6.4.1
     react-html-parser: 2.0.2
+    react-infinite-scroller: ^1.2.6
     react-input-mask: 3.0.0-alpha.2
     react-intl: 5.13.1
     react-is: 18.0.0
@@ -25644,7 +25655,7 @@ __metadata:
     react-table: 7.7.0
     react-test-renderer: 17.0.2
     react-toastify: 6.0.8
-    react-top-loading-bar: 2.0.1
+    react-top-loading-bar: 2.3.1
     react-use: 15.3.3
     reakit: 1.0.2
     recharts: 2.0.9
@@ -32818,12 +32829,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.25.2":
-  version: 1.25.2
-  resolution: "playwright-core@npm:1.25.2"
+"playwright-core@npm:1.29.2":
+  version: 1.29.2
+  resolution: "playwright-core@npm:1.29.2"
   bin:
     playwright: cli.js
-  checksum: 24ada61e2132bd7278cf0aa0ef711280e1519c437efa0088a99c47ef994202f4c9880521d8c0c51ab854bef08806f372477d754aac1e790ea64f18cd346b5b2f
+  checksum: 19e00e162a24eb99878408518930346c1d2c8ce83bb02993e3dd890c99df4530240cfebe4ec4e5aca01656462695b6328fb8f913cf2e229c2c73941623ac524e
   languageName: node
   linkType: hard
 
@@ -34959,6 +34970,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-infinite-scroller@npm:^1.2.6":
+  version: 1.2.6
+  resolution: "react-infinite-scroller@npm:1.2.6"
+  dependencies:
+    prop-types: ^15.5.8
+  peerDependencies:
+    react: ^0.14.9 || ^15.3.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+  checksum: 5f5aae76c484b4039bada87070d5f8c54d2786697ae600be19a68f4e85158ff550122f15dccc5997d8b01fa487da47b9ffbc3e9d9a29f2cf71c77275f72551fd
+  languageName: node
+  linkType: hard
+
 "react-input-autosize@npm:^2.2.2":
   version: 2.2.2
   resolution: "react-input-autosize@npm:2.2.2"
@@ -35391,12 +35413,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-top-loading-bar@npm:2.0.1":
-  version: 2.0.1
-  resolution: "react-top-loading-bar@npm:2.0.1"
+"react-top-loading-bar@npm:2.3.1":
+  version: 2.3.1
+  resolution: "react-top-loading-bar@npm:2.3.1"
   peerDependencies:
-    react: ^16.0.0
-  checksum: 6177a7312b5df907ce8494dd2224ced7700c4fe985c71cffd43272f94ff4e2e342ab4144171cbe2dbe10a847604a60f29980b0fb77557aa1e37d9ef4b9c293bf
+    react: ^16 || ^17 || ^18
+  checksum: 29c2c357fe5349db2c3f676ca222b5ec3ac3f9eea27d3015540fc42a1c96f2e7b06728f4ee862b41fcbe9f2e4d2eefcf76e3576d1148fe039c1c0f275fb4b8e2
   languageName: node
   linkType: hard
 

@@ -21,6 +21,7 @@ export * from './utils/formatNationalId'
 export * from './utils/modules'
 export * from './utils/plausible'
 export * from './utils/router/prepareRouterData'
+export * from './utils/router/wrappedLoaderFn'
 
 // components
 export * from './components/ApplicationErrorBoundary/ApplicationErrorBoundary'
@@ -28,3 +29,4 @@ export * from './components/PortalNavigation/PortalNavigation'
 export * from './components/PortalProvider'
 export * from './components/IntroHeader'
 export * from './components/PortalRouter'
+export * from './components/PortalPageLoader'

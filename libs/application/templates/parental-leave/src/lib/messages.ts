@@ -1283,41 +1283,78 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     title: {
       id: 'pl.application:employer.title',
-      defaultMessage: 'Hver er vinnuveitandi þinn?',
-      description: 'Who is your employer?',
+      defaultMessage: 'Vinnuveitendur',
+      description: 'Employers',
     },
     description: {
       id: 'pl.application:employer.description',
       defaultMessage:
-        'Vinnuveitandi þarf að samþykkja tilhögun fæðingarorlofsins (ef þú hefur marga vinnuveitendur skal velja hæsta starfshlutfall). ' +
-        'Þegar þú hefur sent umsóknina verður sendur tölvupóstur og sms til vinnuveitanda. ' +
-        ' Viðtakandi fær aðgang að umsókninni, en getur einungis séð upplýsingar sem varða tilhögun fæðingarorlofs.' +
-        'Ef vinnuveitandi hafnar tilhögun fæðingarorlofs þarft þú að gera viðeigandi breytingar á henni.',
+        'Hver og einn skráður vinnuveitandi þarf að samþykkja tilhögun fæðingarorlofs. Þegar þú hefur sent umsóknina verður sendur tölvupóstur og sms til vinnuveitenda. Viðtakendur fá aðgang að umsókninni, en getur einungis séð upplýsingar sem varða tilhögun fæðingarorlofs. Ef einhver skráðra vinnuveitenda hafna tilhögun fæðingarorlofs þarft þú að gera viðeigandi breytingar á henni.',
       description:
-        'Your employer is required to approve your parental leave arrangement. Once you have submitted your application, an email and sms will be sent to your employer. The recipient will get access to the application, but will only be able to see the timing arrangement. If your employer rejects the timing arrangement, you will need to change your application.',
+        'Each registered employer is required to approve your parental leave arrangement. Once you have submitted your application, an email and sms will be sent to all registered employers. The recipients will get access to  the application, but will only be able to see the timing arrangements. If any registered employers reject the timing arrangement, you will need to change your application.',
+    },
+    registration: {
+      id: 'pl.application:employer.registration',
+      defaultMessage: 'Skráning vinnuveitanda',
+      description: 'Register an employer',
+    },
+    name: {
+      id: 'pl.application:employer.name',
+      defaultMessage: 'Nafn vinnuveitanda',
+      description: 'Employer name',
+    },
+    nameSearchPlaceholder: {
+      id: 'pl.application:employer.nameSearchPlaceholder',
+      defaultMessage: 'Leitaðu eftir vinnuveitanda',
+      description: 'Search for an employer',
     },
     email: {
       id: 'pl.application:employer.email',
       defaultMessage: 'Netfang vinnuveitanda',
       description: 'Employer email',
     },
+    emailHeader: {
+      id: 'pl.application:employer.email.header',
+      defaultMessage: 'Netfang',
+      description: 'Email',
+    },
     phoneNumber: {
       id: 'pl.application:employer.phone.number',
-      defaultMessage: 'Farsími vinnuveitanda (mælum með skráningu)',
-      description: 'Employer’s mobile phone (we recommend registration)',
+      defaultMessage: 'Símanúmer vinnuveitanda ( valfrjálst )',
+      description: "Employer's phone number ( optional )",
     },
-    emailConfirm: {
-      id: 'pl.application:employer.email.confirm',
-      defaultMessage: 'Staðfestu netfang vinnuveitanda',
-      description: 'Confirm employer email',
+    phoneNumberHeader: {
+      id: 'pl.application:employer.phone.number.header',
+      defaultMessage: 'Símanúmer',
+      description: 'Phone number',
     },
-    isRecivingUnemploymentBenefitsTitle: {
-      id: 'pl.application:employer.isRecivingUnemploymentBenefits',
+    ratio: {
+      id: 'pl.application:employer.ratio',
+      defaultMessage: 'Starfshlutfall',
+      description: 'Employment ratio',
+    },
+    ratioHeader: {
+      id: 'pl.application:employer.ratio.header',
+      defaultMessage: 'Starfshlutfall',
+      description: 'Ratio',
+    },
+    ratioPlaceholder: {
+      id: 'pl.application:employer.ratioPlaceholder',
+      defaultMessage: 'Veldu starfshlutfall',
+      description: 'Select an employment ratio',
+    },
+    approvedHeader: {
+      id: 'pl.application:employer.approved.header',
+      defaultMessage: 'Samþykkt',
+      description: 'Approved',
+    },
+    isReceivingUnemploymentBenefitsTitle: {
+      id: 'pl.application:employer.isReceivingUnemploymentBenefits',
       defaultMessage: 'Ertu að þiggja bætur?',
       description: 'Are you receiving benefits?',
     },
-    isRecivingUnemploymentBenefitsDescription: {
-      id: 'pl.application:employer.isRecivingUnemploymentBenefitsDesc',
+    isReceivingUnemploymentBenefitsDescription: {
+      id: 'pl.application:employer.isReceivingUnemploymentBenefitsDesc',
       defaultMessage:
         'Bótaþegar sem þiggja bætur frá stéttarfélagi eða sjúkradagpeninga þurfa að skila inn staðfestingu ef við á.',
       description:
@@ -1327,6 +1364,16 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:employer.unemploymentBenefits',
       defaultMessage: `Hvaðan ertu að þiggja bætur?`,
       description: 'Where are you receiving benefits from?',
+    },
+    addEmployer: {
+      id: 'pl.application:employer.add',
+      defaultMessage: 'Bæta við vinnuveitanda',
+      description: 'Add an employer',
+    },
+    addEmployerError: {
+      id: 'pl.application:employer.add.error',
+      defaultMessage: 'Nauðsynlegt er að bæta við amk einum vinnuveitanda',
+      description: 'It is required to add at least one employer',
     },
   }),
 
@@ -2072,6 +2119,11 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Símanúmerið þarf að vera gilt.',
     description: 'Error message when phone number is invalid.',
   },
+  GSMPhoneNumber: {
+    id: 'pl.application:dataSchema.GSMPhoneNumber',
+    defaultMessage: 'Símanúmerið þarf að vera GSM númer.',
+    description: 'Invalid phoneNumber. Has to be a GSM number.',
+  },
   otherParentId: {
     id: 'pl.application:dataSchema.otherParent.id',
     defaultMessage: 'Kennitala þarf að vera gild.',
@@ -2097,6 +2149,16 @@ export const errorMessages = defineMessages({
     id: 'pl.application:answerValidators.employerEmail',
     defaultMessage: 'Þú þarft að skilgreina netfang vinnuveitanda.',
     description: 'Invalid employer copy',
+  },
+  employersRatioMissing: {
+    id: 'pl.application:answerValidators.employersRatioMissing',
+    defaultMessage: 'Ekkert hlutfall hefur verið valið',
+    description: 'Copy when days to be used by period is missing',
+  },
+  employersNotAList: {
+    id: 'pl.application:answerValidators.employersNotAList',
+    defaultMessage: 'Svar þarf að vera listi af vinnuveitanda',
+    description: 'Copy when employers is not a list',
   },
   employerNationalRegistryId: {
     id: 'pl.application:dataSchema.invalidEmployerNationalRegistryId',

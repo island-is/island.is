@@ -136,7 +136,9 @@ const StudentsOverview: FC<FieldBaseProps> = ({ application }) => {
                           {formatKennitala(student.nationalId)}
                         </T.Data>
                         <T.Data box={{ textAlign: 'center' }}>
-                          {student.totalLessonCount ?? 0}
+                          {student.totalLessonCount % 2 === 0
+                            ? student.totalLessonCount
+                            : student.totalLessonCount.toFixed(2) ?? 0}
                         </T.Data>
                         <T.Data
                           box={{ textAlign: 'center' }}

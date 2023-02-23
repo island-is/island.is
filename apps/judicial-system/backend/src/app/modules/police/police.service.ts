@@ -252,7 +252,7 @@ export class PoliceService {
         caseNumber: policeCaseNumber,
         ssn:
           defendantNationalIds && defendantNationalIds[0]
-            ? defendantNationalIds[0]
+            ? defendantNationalIds[0].replace('-', '')
             : '',
         type: caseType,
         courtVerdict: caseState,

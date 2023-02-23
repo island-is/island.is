@@ -492,11 +492,12 @@ export function buildAlertMessageField(
 export function buildLinkField(
   data: Omit<LinkField, 'type' | 'component' | 'children'>,
 ): LinkField {
-  const { s3key, link } = data
+  const { s3key, link, iconProps } = data
   return {
     ...extractCommonFields(data),
     s3key,
     link,
+    iconProps,
     children: undefined,
     type: FieldTypes.LINK,
     component: FieldComponents.LINK,

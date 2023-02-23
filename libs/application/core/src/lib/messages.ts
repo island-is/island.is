@@ -230,6 +230,18 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Hætta við',
     description: 'Delete application dialog cancel',
   },
+  openServicePortalMessageText: {
+    id: 'application.system:openServicePortal.messageText',
+    defaultMessage:
+      'Upplýsingar í mínum síðum og í appi hefur þú aðgang að margvíslegum upplýsingum s.s stafrænt pósthólf, þínar upplýsingar, fjármál, umsóknir, menntun, fasteignir, ökutæki, skírteini, starfsleyfi ofl.',
+    description:
+      'Text for form builder component left side of button to go to the service portal',
+  },
+  openServicePortalButtonTitle: {
+    id: 'application.system:openServicePortal.buttonTitle',
+    defaultMessage: 'Áfram',
+    description: 'Button text for form builder component, go to service portal',
+  },
 })
 
 export const coreErrorMessages = defineMessages({
@@ -442,6 +454,17 @@ export const coreErrorMessages = defineMessages({
       'application.system:core.fetch.data.nationalRegistryLegalDomicileNotIceland',
     defaultMessage: 'Þú ert ekki með lögheimili á Íslandi',
     description: 'You do not have a domicile in Iceland',
+  },
+  nationalRegistryAgeNotValid: {
+    id: 'application.system:core.fetch.data.nationalRegistryAgeNotValid',
+    defaultMessage: 'Þú hefur ekki náð tilskyldum aldri fyrir þessa umsókn',
+    description: 'You are not old enough to apply for this application',
+  },
+  nationalRegistryAgeNotValidDescription: {
+    id:
+      'application.system:core.fetch.data.nationalRegistryAgeNotValidDescription',
+    defaultMessage: 'Þú hefur ekki náð tilskyldum aldri fyrir þessa umsókn',
+    description: 'You are not old enough to apply for this application',
   },
   nationalRegistryBirthplaceMissing: {
     id: 'application.system:core.fetch.data.nationalRegistryBirthplaceMissing',
