@@ -77,7 +77,7 @@ export const createPkPassDataInput = (
     {
       identifier: 'skotvopn',
       value: propertyInfo
-        ? parsePropertyForPkpassInput(propertyInfo.properties ?? [])
+        ? formatPropertyForPkpassInput(propertyInfo.properties ?? [])
         : '',
     },
     {
