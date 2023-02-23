@@ -341,17 +341,16 @@ export class ChildrenService {
        * The limitation in question is that VMST allows only one application at a time for a given parent(or something like that).
        * On Dev however we can create as many as we want as long as the baby birth date is not on the same day.
        */
-      return null
-      // const babyBDayRandomFactor = Math.ceil(Math.random() * 85)
-      // return {
-      //   hasActivePregnancy: true,
-      //   expectedDateOfBirth: formatISO(
-      //     addDays(addMonths(new Date(), 6), babyBDayRandomFactor),
-      //     {
-      //       representation: 'date',
-      //     },
-      //   ),
-      // }
+      const babyBDayRandomFactor = Math.ceil(Math.random() * 85)
+      return {
+        hasActivePregnancy: true,
+        expectedDateOfBirth: formatISO(
+          addDays(addMonths(new Date(), 6), babyBDayRandomFactor),
+          {
+            representation: 'date',
+          },
+        ),
+      }
     }
 
     try {

@@ -173,7 +173,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
   // we make a children data
   async setChildrenInformation({
     application,
-    auth,
   }: TemplateApiModuleActionProps) {
     const {
       noPrimaryParentBirthDate,

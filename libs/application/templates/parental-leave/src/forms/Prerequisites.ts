@@ -429,12 +429,6 @@ export const PrerequisitesForm: Form = buildForm({
                   description: '',
                   placeholder: parentalLeaveFormMessages.startDate.placeholder,
                 }),
-                // buildTextField({
-                //   id: 'fosterCare.nationalId',
-                //   title: parentalLeaveFormMessages.selectChild.fosterCareNationalId,
-                //   format: '######-####',
-                //   placeholder: '000000-0000',
-                // }), 
                 buildSubmitField({
                   id: 'toDraft',
                   title: parentalLeaveFormMessages.confirmation.title,
@@ -468,10 +462,6 @@ export const PrerequisitesForm: Form = buildForm({
 
             return noChildrenFoundTypeOfApplication === OTHER_NO_CHILDREN_FOUND
           },
-          // condition: (_, externalData) => {
-          //   const { children } = getApplicationExternalData(externalData)
-          //   return children.length === 0 // if no children found we want to ask these questions
-          // },
           children: [
             buildMultiField({
               id: 'noPrimaryParent',

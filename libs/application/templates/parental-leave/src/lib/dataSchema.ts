@@ -65,11 +65,6 @@ export const dataSchema = z.object({
       { params: errorMessages.fosterCare },
     ),
     adoptionDate: z.string(),
-    // socialSecurityId: z
-    //   .string()
-    //   .refine((n) => (kennitala.isValid(n) && kennitala.isPerson(n)), {
-    //     params: errorMessages.otherParentId,
-    //   }),
   }),
   noPrimaryParent: z.object({
     questionOne: z.enum([YES, NO]),

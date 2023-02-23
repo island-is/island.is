@@ -938,11 +938,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Dagsetning sem forsjárskipting á sér stað',
       description: 'Date on which the division of custody takes place'
     },
-    fosterCareNationalId: {
-      id: 'pl.application:foster.care.national.id',
-      defaultMessage: 'Kennitala barns',
-      description: `Child's national id`
-    },
     secondaryParent: {
       id: 'pl.application:selectChild.secondaryParent',
       defaultMessage:

@@ -618,11 +618,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'fosterCare.adoptionDate',
   ) as string
 
-  // const fosterCareId = getValueViaPath(
-  //   answers,
-  //   'fosterCare.socialSecurityId',
-  // ) as string
-
   const noPrimaryParentBirthDate = getValueViaPath(
     answers,
     'noPrimaryParent.birthDate',
@@ -909,7 +904,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
   return {
     applicationType,
     noChildrenFoundTypeOfApplication,
-    //fosterCareId,
     fosterCareBirthDate,
     fosterCareAdoptionDate,
     noPrimaryParentBirthDate,
