@@ -68,4 +68,5 @@ export const institutionMapper = {
     InstitutionTypes.SAMGONGUSTOFA,
   [ApplicationTypes.DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR]:
     InstitutionTypes.SAMGONGUSTOFA,
+  [ApplicationTypes.ALCOHOL_TAX_REDEMPTION]: InstitutionTypes.STAFRAENT_ISLAND,
 }
