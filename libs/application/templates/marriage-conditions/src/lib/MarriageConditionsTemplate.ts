@@ -98,7 +98,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
         meta: {
           name: 'Payment state',
           status: 'inprogress',
-          progress: 0.9,
+          progress: 0.8,
           lifecycle: pruneAfter(sixtyDays),
           onEntry: defineTemplateApi({
             action: ApiActions.createCharge,
