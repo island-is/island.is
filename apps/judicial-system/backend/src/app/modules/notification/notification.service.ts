@@ -52,14 +52,12 @@ import {
   formatCourtReadyForCourtSmsNotification,
   formatDefenderCourtDateEmailNotification,
   stripHtmlTags,
-  formatPrisonRulingEmailNotification,
   formatCourtRevokedSmsNotification,
   formatPrisonRevokedEmailNotification,
   formatDefenderRevokedEmailNotification,
   getCustodyNoticePdfAsString,
   formatProsecutorReceivedByCourtSmsNotification,
   formatCourtResubmittedToCourtSmsNotification,
-  getCourtRecordPdfAsString,
   formatProsecutorReadyForCourtEmailNotification,
   formatPrisonAdministrationRulingNotification,
   formatDefenderCourtDateLinkEmailNotification,
@@ -702,7 +700,7 @@ export class NotificationService {
 
   /* RULING notifications */
 
-  private sendRunlingEmailNotificationToProsecutor(
+  private sendRulingEmailNotificationToProsecutor(
     theCase: Case,
   ): Promise<Recipient> {
     return this.sendEmail(
@@ -784,42 +782,18 @@ export class NotificationService {
       notifications.prisonRulingEmail.subject,
       { caseType: theCase.type },
     )
-    const html = formatPrisonRulingEmailNotification(
-      this.formatMessage,
-      theCase.type,
-      theCase.rulingDate,
-    )
-    const custodyNoticePdf = await getCustodyNoticePdfAsString(
-      theCase,
-      this.formatMessage,
-    )
-    const courtRecordPdf = await getCourtRecordPdfAsString(
-      theCase,
-      this.formatMessage,
-    )
-
-    const attachments = [
-      {
-        filename: `Vistunarseðill ${theCase.courtCaseNumber}.pdf`,
-        content: custodyNoticePdf,
-        encoding: 'binary',
-      },
-      {
-        filename: this.formatMessage(
-          notifications.signedRuling.courtRecordAttachment,
-          { courtCaseNumber: theCase.courtCaseNumber },
-        ),
-        content: courtRecordPdf,
-        encoding: 'binary',
-      },
-    ]
+    const html = this.formatMessage(notifications.prisonRulingEmail.body, {
+      institutionName: theCase.court?.name,
+      caseType: theCase.type,
+      linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
+      linkEnd: '</a>',
+    })
 
     return this.sendEmail(
       subject,
       html,
       'Gæsluvarðhaldsfangelsi',
       this.config.email.prisonEmail,
-      attachments,
     )
   }
 
@@ -882,7 +856,7 @@ export class NotificationService {
   private async sendRulingNotifications(
     theCase: Case,
   ): Promise<SendNotificationResponse> {
-    const promises = [this.sendRunlingEmailNotificationToProsecutor(theCase)]
+    const promises = [this.sendRulingEmailNotificationToProsecutor(theCase)]
 
     if (isIndictmentCase(theCase.type)) {
       theCase.defendants?.forEach((defendant) => {
