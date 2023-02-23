@@ -86,9 +86,11 @@ export const applicantInformationMultiField = buildMultiField({
       width: 'half',
       variant: 'tel',
       defaultValue: '',
-      // submitButtonDisabled: (value) => {
-      //   return value !== '4671927'
-      // },
+      // Example on how to use the condition
+      // Will not go on main branch.
+      submitButtonDisabled: (value) => {
+        return value !== '4671927'
+      },
     }),
   ],
 })
