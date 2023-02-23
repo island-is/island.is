@@ -88,7 +88,7 @@ export function findActionName(context: ApplicationContext) {
   return 'period' // Have default on period so we always reset actionName
 }
 
-export function goToState (
+export function goToState(
   applicationContext: ApplicationContext,
   state: States,
 ) {
