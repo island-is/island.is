@@ -2,7 +2,7 @@
 
 ## About
 
-A REST-ish API that enables the updating of digital licenses for authenticated external parties.
+A RESTful API that enables the updating of digital licenses for authenticated external parties.
 
 ## Quickstart
 
