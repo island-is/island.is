@@ -39,6 +39,7 @@ export const TextFormField: FC<Props> = ({
     maxLength,
     dataTestId,
     rightAlign,
+    value,
     onChange = () => undefined,
   } = field
   const { clearErrors } = useFormContext()

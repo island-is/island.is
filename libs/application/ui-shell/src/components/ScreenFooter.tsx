@@ -23,6 +23,7 @@ interface FooterProps {
   renderLastScreenButton?: boolean
   shouldLastScreenButtonSubmit?: boolean
   renderLastScreenBackButton?: boolean
+  submitButtonDisabled?: boolean
 }
 
 type SubmitButton = Omit<ButtonTypes, 'circle'> & {
@@ -62,6 +63,7 @@ export const ScreenFooter: FC<FooterProps> = ({
   submitField,
   renderLastScreenButton,
   renderLastScreenBackButton,
+  submitButtonDisabled,
 }) => {
   const { formatMessage } = useLocale()
   const hasSubmitField = submitField !== undefined
@@ -86,6 +88,7 @@ export const ScreenFooter: FC<FooterProps> = ({
           data-testid={submitField?.dataTestId}
           loading={!canProceed || loading}
           type="submit"
+          disabled={submitButtonDisabled}
         >
           {formatText(coreMessages.buttonSubmit, application, formatMessage)}
         </Button>
@@ -105,6 +108,7 @@ export const ScreenFooter: FC<FooterProps> = ({
           <Box key={`cta-${event}`} marginLeft={idx === 0 ? 0 : 2}>
             <Button
               type="submit"
+              disabled={submitButtonDisabled}
               loading={!canProceed || loading}
               colorScheme={buttonConfig.colorScheme as any}
               data-testid={dataTestId}
@@ -160,6 +164,7 @@ export const ScreenFooter: FC<FooterProps> = ({
                   icon="arrowForward"
                   data-testid="proceed"
                   type="submit"
+                  disabled={submitButtonDisabled}
                 >
                   {formatMessage(coreMessages.buttonNext)}
                 </Button>

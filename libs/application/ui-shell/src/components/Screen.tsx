@@ -115,6 +115,7 @@ const Screen: FC<ScreenProps> = ({
   })
   const [fieldLoadingState, setFieldLoadingState] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false)
   const refetch = useContext<() => void>(RefetchContext)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [
@@ -165,6 +166,7 @@ const Screen: FC<ScreenProps> = ({
   }
 
   const goBack = useCallback(() => {
+    setSubmitButtonDisabled(false)
     // using deepmerge to prevent some weird react-hook-form read-only bugs
     reset(deepmerge({}, formValue))
     prevScreen()
@@ -354,6 +356,7 @@ const Screen: FC<ScreenProps> = ({
                 application={application}
                 goToScreen={goToScreen}
                 refetch={refetch}
+                setSubmitButtonDisabled={setSubmitButtonDisabled}
               />
             ) : screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER ? (
               <FormExternalDataProvider
@@ -372,6 +375,7 @@ const Screen: FC<ScreenProps> = ({
                   autoFocus
                   setBeforeSubmitCallback={setBeforeSubmitCallback}
                   setFieldLoadingState={setFieldLoadingState}
+                  setSubmitButtonDisabled={setSubmitButtonDisabled}
                   errors={dataSchemaOrApiErrors}
                   field={screen}
                   application={application}
@@ -396,6 +400,7 @@ const Screen: FC<ScreenProps> = ({
           submitField={submitField}
           loading={loading}
           canProceed={!isLoadingOrPending}
+          submitButtonDisabled={submitButtonDisabled}
         />
       </Box>
     </FormProvider>

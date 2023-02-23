@@ -86,6 +86,9 @@ export const applicantInformationMultiField = buildMultiField({
       width: 'half',
       variant: 'tel',
       defaultValue: '',
+      // submitButtonDisabled: (value) => {
+      //   return value !== '4671927'
+      // },
     }),
   ],
 })

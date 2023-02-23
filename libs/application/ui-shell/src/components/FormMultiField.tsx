@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { Dispatch, FC, SetStateAction, useEffect } from 'react'
 
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { formatText } from '@island.is/application/core'
@@ -26,6 +26,7 @@ const FormMultiField: FC<{
   answerQuestions(answers: FormValue): void
   goToScreen: (id: string) => void
   refetch: () => void
+  setSubmitButtonDisabled: Dispatch<SetStateAction<boolean>>
   setBeforeSubmitCallback?: SetBeforeSubmitCallback
   setFieldLoadingState?: SetFieldLoadingState
 }> = ({
@@ -37,9 +38,11 @@ const FormMultiField: FC<{
   refetch,
   setBeforeSubmitCallback,
   setFieldLoadingState,
+  setSubmitButtonDisabled,
 }) => {
   const { description, children, space = 0 } = multiField
   const { formatMessage } = useLocale()
+
   return (
     <GridRow>
       <ConditionHandler
@@ -94,6 +97,7 @@ const FormMultiField: FC<{
                 refetch={refetch}
                 setBeforeSubmitCallback={setBeforeSubmitCallback}
                 setFieldLoadingState={setFieldLoadingState}
+                setSubmitButtonDisabled={setSubmitButtonDisabled}
               />
             </Box>
           </GridColumn>

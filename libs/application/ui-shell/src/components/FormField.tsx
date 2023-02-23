@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { Dispatch, FC, SetStateAction, useEffect } from 'react'
 import { getErrorViaPath } from '@island.is/application/core'
 import {
   Application,
@@ -11,6 +11,7 @@ import {
 
 import { useFields } from '../context/FieldContext'
 import { FieldDef } from '../types'
+import { useFormContext, useWatch } from 'react-hook-form'
 
 const FormField: FC<{
   application: Application
@@ -22,6 +23,7 @@ const FormField: FC<{
   errors: RecordObject
   goToScreen: (id: string) => void
   refetch: () => void
+  setSubmitButtonDisabled: Dispatch<SetStateAction<boolean>>
 }> = ({
   application,
   setBeforeSubmitCallback,
@@ -32,8 +34,22 @@ const FormField: FC<{
   goToScreen,
   showFieldName,
   refetch,
+  setSubmitButtonDisabled,
 }) => {
   const [allFields] = useFields()
+
+  const { getValues, control } = useFormContext()
+  const watchField = useWatch({ control, name: field.id })
+
+  useEffect(() => {
+    setSubmitButtonDisabled(false)
+    if (field.submitButtonDisabled === undefined) {
+      return
+    }
+    if (field.submitButtonDisabled(getValues(field.id))) {
+      setSubmitButtonDisabled(true)
+    }
+  }, [field, application, setSubmitButtonDisabled, getValues, watchField])
 
   if (!field.isNavigable) {
     return null

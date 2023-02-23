@@ -74,6 +74,7 @@ export interface BaseField extends FormItem {
   readonly title: FormText
   readonly description?: FormText
   readonly children: undefined
+  submitButtonDisabled?(value: unknown): boolean
   disabled?: boolean
   width?: FieldWidth
   colSpan?: SpanType
@@ -220,6 +221,7 @@ export interface TextField extends BaseField {
   suffix?: string
   rows?: number
   required?: boolean
+  value?: string
   onChange?: (...event: any[]) => void
 }
 

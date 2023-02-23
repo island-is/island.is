@@ -44,6 +44,7 @@ const extractCommonFields = (
     description,
     disabled = false,
     doesNotRequireAnswer = false,
+    submitButtonDisabled,
     id,
     title,
     dataTestId,
@@ -58,6 +59,7 @@ const extractCommonFields = (
     disabled,
     dataTestId,
     doesNotRequireAnswer,
+    submitButtonDisabled,
     title,
     width,
   }
