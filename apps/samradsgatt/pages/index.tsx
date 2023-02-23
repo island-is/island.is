@@ -1,9 +1,6 @@
 import {
-  AsyncSearch,
   AsyncSearchOption,
   Box,
-  Column,
-  Columns,
   GridColumn,
   GridContainer,
   GridRow,
@@ -14,6 +11,8 @@ import React, { useEffect, useState } from 'react'
 import { HeroBanner } from '../components'
 import Card from '../components/Card/Card'
 import Layout from '../components/Layout/Layout'
+import SearchAndFilter from '../components/SearchAndFilter/SearchAndFilter'
+import Types from '../utils/dummydata/api/Types'
 
 type arrayDummy = Array<info>
 type info = {
@@ -31,6 +30,19 @@ type info = {
   created: string
 }
 export const Index = () => {
+  const Institutions = Object.entries(Types.institutions).map(
+    ([value, label]) => ({
+      value,
+      label,
+    }),
+  )
+  const PolicyAreas = Object.entries(Types.policyAreas).map(
+    ([value, label]) => ({
+      value,
+      label,
+    }),
+  )
+
   const dummycontent: arrayDummy = [
     {
       id: 3027,
@@ -125,9 +137,9 @@ export const Index = () => {
       shortDescription:
         'Innviðaráðuneytið hefur undanfarið unnið að setningu reglna um sjálfstætt eftirlit með öryggi vegamannvirkja og birtir nú til umsagnar drög að reglugerð um breytingu á reglugerð nr. 866/2011',
       status: 'Til umsagnar',
-      institution: 'Innviðaráðuneytið',
+      institution: 'Landbúnaður',
       type: 'Drög að reglugerð',
-      policyArea: 'Samgöngu- og fjarskiptamál',
+      policyArea: 'Dómstólar',
       processBegins: '2022-04-18T00:00:00',
       processEnds: '2022-05-02T23:59:59',
       created: '2022-04-26T16:26:59.167',
@@ -139,7 +151,7 @@ export const Index = () => {
       adviceCount: 0,
       shortDescription: 'test',
       status: 'Niðurstöður birtar',
-      institution: 'Utanríkisráðuneytið',
+      institution: 'Landbúnaður',
       type: 'Áform um lagasetningu',
       policyArea: 'Landbúnaður',
       processBegins: '2022-02-21T00:00:00',
@@ -175,28 +187,19 @@ export const Index = () => {
   return (
     <Layout showIcon={false}>
       <HeroBanner />
-      <GridContainer>
-        <GridRow>
-          <GridColumn span="12/12" paddingBottom={4} paddingTop={4}>
-            <Columns space={3} alignY="center">
-              <Column>
-                <AsyncSearch
-                  options={options}
-                  placeholder="Að hverju ertu að leita?"
-                  initialInputValue=""
-                  inputValue={searchValue}
-                  onInputValueChange={(value) => {
-                    setSearchValue(value)
-                  }}
-                />
-              </Column>
-              <Column>
-                <div></div>
-              </Column>
-            </Columns>
-          </GridColumn>
-        </GridRow>
 
+      <SearchAndFilter
+        data={data}
+        setData={(newData) => setData(newData)}
+        dummycontent={dummycontent}
+        searchValue={searchValue}
+        setSearchValue={(newValue) => setSearchValue(newValue)}
+        PolicyAreas={PolicyAreas}
+        Institutions={Institutions}
+        options={options}
+      />
+
+      <GridContainer>
         <GridRow>
           <GridColumn span={['0', '0', '3/12', '3/12', '3/12']}></GridColumn>
           <GridColumn span={['12/12', '12/12', '9/12', '9/12', '9/12']}>
