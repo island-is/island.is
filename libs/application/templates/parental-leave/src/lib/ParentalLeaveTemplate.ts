@@ -440,7 +440,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_APPROVAL]: {
-        entry: ['assignToVMST', 'setNavId', 'removeNullPeriod'],
+        entry: [
+          'assignToVMST',
+          'setNavId',
+          'removeNullPeriod',
+          'setPreviousState',
+        ],
         exit: [
           'clearAssignees',
           'setNavId',
@@ -632,7 +637,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       //   },
       // },
       [States.APPROVED]: {
-        entry: 'assignToVMST',
+        entry: ['assignToVMST', 'removePreviousState'],
         exit: 'setPreviousState',
         meta: {
           name: States.APPROVED,
@@ -903,8 +908,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_APPROVE_EDITS]: {
-        entry: ['assignToVMST', 'removeNullPeriod', 'setPreviousState'],
-        exit: ['clearTemp', 'resetAdditionalDocumentsArray', 'clearAssignees'],
+        entry: ['assignToVMST', 'removeNullPeriod', 'removePreviousState'],
+        exit: [
+          'clearTemp',
+          'resetAdditionalDocumentsArray',
+          'clearAssignees',
+          'setPreviousState',
+        ],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVE_EDITS,
           status: 'inprogress',
@@ -1422,6 +1432,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           assignees: [],
         },
       })),
+      removePreviousState: assign((context) => {
+        const { application } = context
+
+        unset(application.answers, 'previousState')
+        return context
+      }),
       setPreviousState: assign((context) => {
         const { application } = context
         const { state, answers } = application
