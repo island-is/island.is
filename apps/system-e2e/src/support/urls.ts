@@ -4,6 +4,7 @@ export enum BaseAuthority {
   dev = 'beta.dev01.devland.is',
   staging = 'beta.staging01.devland.is',
   ads = 'loftbru.dev01.devland.is',
+  judicialSystem = 'judicial-system.dev01.devland.is',
   prod = 'island.is',
   local = 'localhost',
 }
@@ -29,28 +30,39 @@ const envs: {
     authUrl: string
     islandisBaseUrl: string
     adsBaseUrl: string
+    judicialSystemBaseUrl: string
   }
 } = {
   dev: {
     authUrl: AuthUrl.dev,
     islandisBaseUrl: getEnvironmentBaseUrl(BaseAuthority.dev),
     adsBaseUrl: getEnvironmentBaseUrl(BaseAuthority.ads),
+    judicialSystemBaseUrl: getEnvironmentBaseUrl(
+      'judicial-system.dev01.devland.is',
+    ),
   },
   staging: {
     authUrl: AuthUrl.staging,
     islandisBaseUrl: getEnvironmentBaseUrl(BaseAuthority.staging),
     adsBaseUrl: getEnvironmentBaseUrl('loftbru.staging01.devland.is'),
+    judicialSystemBaseUrl: getEnvironmentBaseUrl(
+      'judicial-system.staging01.devland.is',
+    ),
   },
   prod: {
     authUrl: AuthUrl.prod,
     islandisBaseUrl: getEnvironmentBaseUrl(BaseAuthority.prod),
     adsBaseUrl: getEnvironmentBaseUrl('loftbru.island.is'),
+    judicialSystemBaseUrl: getEnvironmentBaseUrl(BaseAuthority.prod),
   },
   local: {
     authUrl: AuthUrl.local,
     islandisBaseUrl: localUrl,
     adsBaseUrl: localUrl,
+    judicialSystemBaseUrl: localUrl,
   },
 }
+
 export const env = (process.env.TEST_ENVIRONMENT ?? 'local') as TestEnvironment
+console.log(`Using environment: ${envs.dev.judicialSystemBaseUrl}`)
 export const urls = envs[env]

@@ -3,7 +3,7 @@ import { BrowserContext, expect, test } from '@playwright/test'
 import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 
-test.use({ baseURL: urls.islandisBaseUrl })
+test.use({ baseURL: urls.judicialSystemBaseUrl })
 
 test.describe('Restriction case', () => {
   let context: BrowserContext
@@ -11,7 +11,7 @@ test.describe('Restriction case', () => {
   test.beforeAll(async ({ browser }) => {
     context = await session({
       browser,
-      homeUrl: '/krofur',
+      homeUrl: '/api/auth/login?nationalId=2510654469',
       phoneNumber: '0103019',
       idsLoginOn: false,
     })
@@ -21,7 +21,6 @@ test.describe('Restriction case', () => {
 
   test('should have a table visible on the screen', async () => {
     const page = await context.newPage()
-    await page.goto('/api/auth/login?nationalId=0000000009')
     await expect(page.locator('role=table')).toBeVisible()
   })
 })
