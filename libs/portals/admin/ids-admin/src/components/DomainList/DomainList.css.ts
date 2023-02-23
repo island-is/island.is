@@ -7,3 +7,7 @@ export const relative = style({
 globalStyle(`${relative} a`, {
   textDecoration: 'none',
 })
+
+export const subLink = style({
+  width: 'fit-content',
+})

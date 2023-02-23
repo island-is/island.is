@@ -5,6 +5,7 @@ const MockData = [
     domain: '@admin.island.is',
     numberOfApplications: 5,
     numberOfApis: 10,
+    tags: ['Production', 'Development'],
   },
   {
     id: '2',
@@ -12,6 +13,7 @@ const MockData = [
     domain: '@skra.is',
     numberOfApplications: 2,
     numberOfApis: 3,
+    tags: ['Development', 'Staging', 'Production'],
   },
   {
     id: '3',
@@ -19,6 +21,7 @@ const MockData = [
     domain: '@admin.island.is',
     numberOfApplications: 5,
     numberOfApis: 10,
+    tags: ['Production', 'Development'],
   },
   {
     id: '4',
@@ -26,6 +29,7 @@ const MockData = [
     domain: '@skra.is',
     numberOfApplications: 2,
     numberOfApis: 3,
+    tags: ['Staging', 'Development'],
   },
 ]
 export default MockData
