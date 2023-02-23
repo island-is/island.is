@@ -9,4 +9,7 @@ export class Tenant {
 
   @Field(() => [TenantEnvironment])
   environments!: TenantEnvironment[]
+
+  @Field(() => TenantEnvironment)
+  defaultEnvironment!: TenantEnvironment
 }

@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 
-import { Environment } from './environment'
-import { TranslatedValue } from './translated-value.model'
+import { Environment } from '../../models/environment'
+import { TranslatedValue } from '../../models/translated-value.model'
 
 @ObjectType('AuthAdminTenantEnvironment')
 export class TenantEnvironment {
@@ -11,12 +11,15 @@ export class TenantEnvironment {
   @Field(() => Environment)
   environment!: Environment
 
+  @Field(() => String)
+  name!: string
+
   @Field(() => [TranslatedValue])
   displayName!: TranslatedValue[]
 
   @Field(() => Int)
-  applicationsCount!: number
+  applicationCount!: number
 
   @Field(() => Int)
-  apisCount!: number
+  apiCount!: number
 }

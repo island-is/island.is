@@ -1,18 +1,17 @@
 import { Injectable } from '@nestjs/common'
 
-import { TenantsPayload } from '../dto/tenants.payload'
 import { Environment } from '../models/environment'
 
 @Injectable()
 export class TenantsService {
-  getTenants(): TenantsPayload {
+  getTenants() {
     return {
       data: [
         {
           id: '@admin.island.is',
           environments: [
             {
-              id: '@admin.island.is',
+              name: '@admin.island.is',
               environment: Environment.Production,
               displayName: [
                 {
@@ -20,11 +19,11 @@ export class TenantsService {
                   value: 'Ísland.is stjórnborð',
                 },
               ],
-              applicationsCount: 2,
-              apisCount: 1,
+              applicationCount: 2,
+              apiCount: 1,
             },
             {
-              id: '@admin.island.is',
+              name: '@admin.island.is',
               environment: Environment.Staging,
               displayName: [
                 {
@@ -32,11 +31,11 @@ export class TenantsService {
                   value: 'Ísland.is stjórnborð',
                 },
               ],
-              applicationsCount: 2,
-              apisCount: 1,
+              applicationCount: 2,
+              apiCount: 1,
             },
             {
-              id: '@admin.island.is',
+              name: '@admin.island.is',
               environment: Environment.Dev,
               displayName: [
                 {
@@ -44,16 +43,28 @@ export class TenantsService {
                   value: 'Ísland.is stjórnborð',
                 },
               ],
-              applicationsCount: 2,
-              apisCount: 1,
+              applicationCount: 4,
+              apiCount: 1,
             },
           ],
+          defaultEnvironment: {
+            name: '@admin.island.is',
+            environment: Environment.Production,
+            displayName: [
+              {
+                locale: 'is',
+                value: 'Ísland.is stjórnborð',
+              },
+            ],
+            applicationCount: 4,
+            apiCount: 1,
+          },
         },
         {
           id: '@island.is',
           environments: [
             {
-              id: '@island.is',
+              name: '@island.is',
               environment: Environment.Production,
               displayName: [
                 {
@@ -61,11 +72,11 @@ export class TenantsService {
                   value: 'Ísland.is mínar síður',
                 },
               ],
-              applicationsCount: 3,
-              apisCount: 2,
+              applicationCount: 3,
+              apiCount: 2,
             },
             {
-              id: '@island.is',
+              name: '@island.is',
               environment: Environment.Staging,
               displayName: [
                 {
@@ -73,11 +84,11 @@ export class TenantsService {
                   value: 'Ísland.is mínar síður',
                 },
               ],
-              applicationsCount: 4,
-              apisCount: 3,
+              applicationCount: 4,
+              apiCount: 3,
             },
             {
-              id: '@island.is',
+              name: '@island.is',
               environment: Environment.Dev,
               displayName: [
                 {
@@ -85,16 +96,28 @@ export class TenantsService {
                   value: 'Ísland.is mínar síður',
                 },
               ],
-              applicationsCount: 5,
-              apisCount: 4,
+              applicationCount: 5,
+              apiCount: 4,
             },
           ],
+          defaultEnvironment: {
+            name: '@island.is',
+            environment: Environment.Production,
+            displayName: [
+              {
+                locale: 'is',
+                value: 'Ísland.is mínar síður',
+              },
+            ],
+            applicationCount: 5,
+            apiCount: 4,
+          },
         },
         {
           id: '@reykjavik.is',
           environments: [
             {
-              id: '@reykjavik.is',
+              name: '@reykjavik.is',
               environment: Environment.Production,
               displayName: [
                 {
@@ -102,11 +125,11 @@ export class TenantsService {
                   value: 'Reykjavík mínar síður',
                 },
               ],
-              applicationsCount: 2,
-              apisCount: 2,
+              applicationCount: 2,
+              apiCount: 2,
             },
             {
-              id: '@reykjavik.is',
+              name: '@reykjavik.is',
               environment: Environment.Staging,
               displayName: [
                 {
@@ -114,10 +137,22 @@ export class TenantsService {
                   value: 'Reykjavík mínar síður',
                 },
               ],
-              applicationsCount: 4,
-              apisCount: 3,
+              applicationCount: 4,
+              apiCount: 3,
             },
           ],
+          defaultEnvironment: {
+            name: '@reykjavik.is',
+            environment: Environment.Production,
+            displayName: [
+              {
+                locale: 'is',
+                value: 'Reykjavík mínar síður',
+              },
+            ],
+            applicationCount: 4,
+            apiCount: 3,
+          },
         },
       ],
       totalCount: 3,
