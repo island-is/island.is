@@ -242,7 +242,7 @@ export const MyReviewPage = () => {
                           title="Viðhengi"
                           items={item.documents.map((doc) => {
                             return {
-                              title: doc.name,
+                              title: 'Viðhengi ' + doc.id + ' - ' + doc.name,
                               onClick: console.log,
                             }
                           })}

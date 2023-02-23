@@ -29,9 +29,11 @@ export const ValidationErrorMessages: FC<FieldBaseProps> = (props) => {
           owner: {
             nationalId: answers?.owner?.nationalId,
           },
-          operators: answers?.operators?.map((x) => ({
-            nationalId: x.nationalId,
-          })),
+          operators: answers?.operators
+            ?.filter(({ wasRemoved }) => wasRemoved !== 'true')
+            .map((x) => ({
+              nationalId: x.nationalId,
+            })),
           mainOperator: answers?.mainOperator
             ? {
                 nationalId: answers.mainOperator.nationalId,
