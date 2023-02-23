@@ -366,10 +366,12 @@ const template: ApplicationTemplate<
       reviewerNationalIdList.push(nationalId)
       return nationalId
     })
-    buyerCoOwnerAndOperator?.map(({ nationalId }) => {
-      reviewerNationalIdList.push(nationalId)
-      return nationalId
-    })
+    buyerCoOwnerAndOperator
+      ?.filter(({ wasRemoved }) => wasRemoved !== 'true')
+      .map(({ nationalId }) => {
+        reviewerNationalIdList.push(nationalId)
+        return nationalId
+      })
     if (id === application.applicant) {
       return Roles.APPLICANT
     }
@@ -411,10 +413,12 @@ const getNationalIdListOfReviewers = (application: Application) => {
       reviewerNationalIdList.push(nationalId)
       return nationalId
     })
-    buyerCoOwnerAndOperator?.map(({ nationalId }) => {
-      reviewerNationalIdList.push(nationalId)
-      return nationalId
-    })
+    buyerCoOwnerAndOperator
+      ?.filter(({ wasRemoved }) => wasRemoved !== 'true')
+      .map(({ nationalId }) => {
+        reviewerNationalIdList.push(nationalId)
+        return nationalId
+      })
     return reviewerNationalIdList
   } catch (error) {
     console.error(error)

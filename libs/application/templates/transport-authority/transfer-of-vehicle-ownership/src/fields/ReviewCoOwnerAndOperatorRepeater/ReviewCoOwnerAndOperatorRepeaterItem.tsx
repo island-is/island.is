@@ -8,7 +8,7 @@ import { useFormContext } from 'react-hook-form'
 import { NationalIdWithName } from '../NationalIdWithName'
 import { information } from '../../lib/messages'
 import debounce from 'lodash/debounce'
-import { ReviewCoOwnerAndOperatorField } from '../../shared'
+import { CoOwnerAndOperator } from '../../shared'
 
 const DEBOUNCE_INTERVAL = 300
 
@@ -16,10 +16,10 @@ interface Props {
   id: string
   index: number
   rowLocation: number
-  repeaterField: Partial<ArrayField<ReviewCoOwnerAndOperatorField, 'id'>>
+  repeaterField: Partial<ArrayField<CoOwnerAndOperator, 'id'>>
   handleRemove: (index: number) => void
-  setCoOwnersAndOperators?: (s: ReviewCoOwnerAndOperatorField[]) => void
-  coOwnersAndOperators?: ReviewCoOwnerAndOperatorField[]
+  setCoOwnersAndOperators?: (s: CoOwnerAndOperator[]) => void
+  coOwnersAndOperators?: CoOwnerAndOperator[]
   errorMessage?: string
 }
 
@@ -52,6 +52,7 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
   const nationalIdField = `${fieldIndex}.nationalId`
   const nameField = `${fieldIndex}.name`
   const typeField = `${fieldIndex}.type`
+  const wasRemovedField = `${fieldIndex}.wasRemoved`
 
   useEffect(() => {
     if (setCoOwnersAndOperators && coOwnersAndOperators && index > -1) {
@@ -61,7 +62,7 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
         phone,
         nationalId,
         name,
-        type: userMessageId,
+        type: userMessageId as 'operator' | 'coOwner',
       }
       temp[index] = itemValue
       setCoOwnersAndOperators(temp)
@@ -73,7 +74,11 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
   }, [email, phone, nationalId, name, userMessageId])
 
   return (
-    <Box position="relative" key={repeaterField.id} marginTop={3}>
+    <Box
+      position="relative"
+      hidden={repeaterField.wasRemoved === 'true'}
+      marginTop={3}
+    >
       <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
         <Text variant="h5">
           {formatMessage(information.labels[userMessageId].title)} {rowLocation}
@@ -134,6 +139,12 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
         value={userMessageId}
         ref={register({ required: true })}
         name={typeField}
+      />
+      <input
+        type="hidden"
+        value={repeaterField.wasRemoved}
+        ref={register({ required: true })}
+        name={wasRemovedField}
       />
     </Box>
   )

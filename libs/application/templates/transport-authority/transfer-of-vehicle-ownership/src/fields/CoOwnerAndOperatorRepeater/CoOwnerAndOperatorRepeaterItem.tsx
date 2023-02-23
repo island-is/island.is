@@ -4,17 +4,16 @@ import { Box, Text, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { FC } from 'react'
-import { ArrayField } from 'react-hook-form'
 import { useFormContext } from 'react-hook-form'
 import { NationalIdWithName } from '../NationalIdWithName'
 import { information } from '../../lib/messages'
-import { ReviewCoOwnerAndOperatorField } from '../../shared'
+import { CoOwnerAndOperator } from '../../shared'
 
 interface Props {
   id: string
   index: number
   rowLocation: number
-  repeaterField: Partial<ArrayField<ReviewCoOwnerAndOperatorField, 'id'>>
+  repeaterField: CoOwnerAndOperator
   handleRemove: (index: number) => void
 }
 
@@ -34,9 +33,14 @@ export const CoOwnerAndOperatorRepeaterItem: FC<Props & FieldBaseProps> = ({
   const emailField = `${fieldIndex}.email`
   const phoneField = `${fieldIndex}.phone`
   const typeField = `${fieldIndex}.type`
+  const wasRemovedField = `${fieldIndex}.wasRemoved`
 
   return (
-    <Box position="relative" key={repeaterField.id} marginTop={3}>
+    <Box
+      position="relative"
+      marginTop={3}
+      hidden={repeaterField.wasRemoved === 'true'}
+    >
       <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
         <Text variant="h5">
           {formatMessage(information.labels[userMessageId].title)} {rowLocation}
@@ -84,6 +88,12 @@ export const CoOwnerAndOperatorRepeaterItem: FC<Props & FieldBaseProps> = ({
           }
         />
       </Box>
+      <input
+        type="hidden"
+        value={repeaterField.wasRemoved}
+        ref={register({ required: true })}
+        name={wasRemovedField}
+      />
       <input
         type="hidden"
         value={userMessageId}

@@ -14,6 +14,7 @@ export const CoOwnerAndOperatorSchema = z.object({
   email: z.string().min(1),
   phone: z.string().min(7),
   approved: z.boolean().optional(),
+  wasRemoved: z.string().optional(),
   type: z.enum(['operator', 'coOwner']),
 })
 

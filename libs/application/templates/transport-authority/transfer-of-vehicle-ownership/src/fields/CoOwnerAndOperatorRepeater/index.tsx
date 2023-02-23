@@ -1,40 +1,107 @@
+import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC } from 'react'
-import { useFieldArray } from 'react-hook-form'
+import { FC, useState, useCallback, useEffect } from 'react'
 import { information } from '../../lib/messages'
-import { ReviewCoOwnerAndOperatorField } from '../../shared'
+import { CoOwnerAndOperator, UserInformation } from '../../shared'
+import { BuyerItem } from './BuyerItem'
 import { repeaterButtons } from './CoOwnerAndOperatorRepeater.css'
 import { CoOwnerAndOperatorRepeaterItem } from './CoOwnerAndOperatorRepeaterItem'
+import { useMutation } from '@apollo/client'
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 
 export const CoOwnerAndOperatorRepeater: FC<FieldBaseProps> = (props) => {
-  const { formatMessage } = useLocale()
-
-  const {
-    fields,
-    append,
-    remove,
-  } = useFieldArray<ReviewCoOwnerAndOperatorField>({
-    name: 'buyerCoOwnerAndOperator',
-  })
-
-  const handleAdd = (type: 'operator' | 'coOwner') =>
-    append({
+  const { locale, formatMessage } = useLocale()
+  const { application, setBeforeSubmitCallback } = props
+  const [updateApplication] = useMutation(UPDATE_APPLICATION)
+  const [buyer, setBuyer] = useState<UserInformation>(
+    getValueViaPath(application.answers, 'buyer', {
       name: '',
       nationalId: '',
-      email: '',
       phone: '',
-      type,
+      email: '',
+    }) as UserInformation,
+  )
+  const [buyerCoOwnerAndOperator, setBuyerCoOwnerAndOperator] = useState<
+    CoOwnerAndOperator[]
+  >(
+    getValueViaPath(
+      application.answers,
+      'buyerCoOwnerAndOperator',
+      [],
+    ) as CoOwnerAndOperator[],
+  )
+
+  const updateBuyer = useCallback(async (buyer: UserInformation) => {
+    await updateApplication({
+      variables: {
+        input: {
+          id: application.id,
+          answers: {
+            buyer: buyer,
+          },
+        },
+        locale,
+      },
+    })
+  }, [])
+
+  const handleAdd = (type: 'operator' | 'coOwner') =>
+    setBuyerCoOwnerAndOperator([
+      ...buyerCoOwnerAndOperator,
+      {
+        name: '',
+        nationalId: '',
+        email: '',
+        phone: '',
+        type,
+      },
+    ])
+
+  const handleRemove = (position: number) => {
+    if (position > -1) {
+      setBuyerCoOwnerAndOperator(
+        buyerCoOwnerAndOperator.map((coOwnerAndOperator, index) => {
+          if (index === position) {
+            return { ...coOwnerAndOperator, wasRemoved: 'true' }
+          }
+          return coOwnerAndOperator
+        }),
+      )
+    }
+  }
+  const filteredCoOwnersAndOperators = buyerCoOwnerAndOperator.filter(
+    ({ wasRemoved }) => wasRemoved !== 'true',
+  )
+  const allOperators = filteredCoOwnersAndOperators.filter(
+    (field) => field.type === 'operator',
+  )
+  const allCoOwners = filteredCoOwnersAndOperators.filter(
+    (field) => field.type === 'coOwner',
+  )
+
+  useEffect(() => {
+    if (
+      buyer.name.length > 0 &&
+      buyer.nationalId.length === 10 &&
+      buyer.phone.length === 7 &&
+      buyer.email.length > 0
+    ) {
+      updateBuyer(buyer)
+    }
+  }, [buyer])
+
+  setBeforeSubmitCallback &&
+    setBeforeSubmitCallback(async () => {
+      console.log('hello here')
+      return [true, null]
     })
 
-  const handleRemove = (index: number) => remove(index)
-
-  const allOperators = fields.filter((field) => field.type === 'operator')
-  const allCoOwners = fields.filter((field) => field.type === 'coOwner')
   return (
     <Box>
-      {fields.map((field, index) => {
+      <BuyerItem id="buyer" buyer={buyer} setBuyer={setBuyer} {...props} />
+      {buyerCoOwnerAndOperator.map((field, index) => {
         const rowLocation =
           field.type === 'operator'
             ? allOperators.indexOf(field)
@@ -45,7 +112,7 @@ export const CoOwnerAndOperatorRepeater: FC<FieldBaseProps> = (props) => {
             repeaterField={field}
             index={index}
             rowLocation={rowLocation + 1}
-            key={field.id}
+            key={`buyerCoOwnerAndOperator-${index}`}
             handleRemove={handleRemove}
             {...props}
           />

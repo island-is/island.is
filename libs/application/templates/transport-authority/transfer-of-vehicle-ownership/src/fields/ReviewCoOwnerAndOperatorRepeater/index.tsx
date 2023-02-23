@@ -3,7 +3,7 @@ import { Box, Button, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
 import { error, information, review } from '../../lib/messages'
-import { ReviewCoOwnerAndOperatorField, ReviewScreenProps } from '../../shared'
+import { CoOwnerAndOperator, ReviewScreenProps } from '../../shared'
 import { ReviewCoOwnerAndOperatorRepeaterItem } from './ReviewCoOwnerAndOperatorRepeaterItem'
 import { repeaterButtons } from './ReviewCoOwnerAndOperatorRepeater.css'
 import { useMutation } from '@apollo/client'
@@ -27,7 +27,7 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
     string | undefined
   >(undefined)
   const [tempCoOwnersAndOperators, setTempCoOwnersAndOperators] = useState<
-    ReviewCoOwnerAndOperatorField[]
+    CoOwnerAndOperator[]
   >(coOwnersAndOperators)
 
   const handleAdd = (type: 'operator' | 'coOwner') =>
@@ -42,18 +42,26 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
       },
     ])
 
-  const handleRemove = (index: number) => {
-    if (index > -1) {
-      const temp = [...tempCoOwnersAndOperators]
-      temp.splice(index, 1)
-      setTempCoOwnersAndOperators(temp)
+  const handleRemove = (position: number) => {
+    if (position > -1) {
+      setTempCoOwnersAndOperators(
+        tempCoOwnersAndOperators.map((coOwnerAndOperator, index) => {
+          if (index === position) {
+            return { ...coOwnerAndOperator, wasRemoved: 'true' }
+          }
+          return coOwnerAndOperator
+        }),
+      )
     }
   }
 
-  const allOperators = tempCoOwnersAndOperators.filter(
+  const filteredCoOwnersAndOperators = tempCoOwnersAndOperators.filter(
+    ({ wasRemoved }) => wasRemoved !== 'true',
+  )
+  const allOperators = filteredCoOwnersAndOperators.filter(
     (field) => field.type === 'operator',
   )
-  const allCoOwners = tempCoOwnersAndOperators.filter(
+  const allCoOwners = filteredCoOwnersAndOperators.filter(
     (field) => field.type === 'coOwner',
   )
 
@@ -65,7 +73,7 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
 
   const onForwardButtonClick = async () => {
     if (tempCoOwnersAndOperators && setCoOwnersAndOperators) {
-      const notValid = tempCoOwnersAndOperators.find((field) => {
+      const notValid = filteredCoOwnersAndOperators.find((field) => {
         if (
           field.email.length === 0 ||
           field.name.length === 0 ||
