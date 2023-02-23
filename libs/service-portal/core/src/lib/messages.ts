@@ -481,6 +481,10 @@ export const m = defineMessages({
     id: 'service.portal:search-placeholder',
     defaultMessage: 'Sláðu inn leitarorð',
   },
+  searchByNationalId: {
+    id: 'service.portal:search-by-national-id',
+    defaultMessage: 'Leita eftir kennitölu',
+  },
   actions: {
     id: 'service.portal:actions',
     defaultMessage: 'Aðgerðir',
