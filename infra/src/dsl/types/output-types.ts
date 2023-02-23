@@ -34,6 +34,22 @@ export type OutputVolumeMountNative = {
   name: string
   mountPath: string
 }
+
+export type OutputVolumeNative =
+  | {
+      name: string
+      persistentVolumeClaim: {
+        claimName: string
+      }
+    }
+  | {
+      configMap: {
+        defaultMode: number
+        name: string
+      }
+      name: string
+    }
+
 export type InitContainerKube = {
   name?: string
   securityContext?: string
@@ -132,19 +148,15 @@ export interface KubeService {
           }
         }
         volumeMounts?: OutputVolumeMountNative[]
-        nodeSelector?: { [name: string]: string }
-        affinity?: { [name: string]: string }
-        tolerations?: { [name: string]: string }
-        volumes?: {
-          name: string
-          persistentVolumeClaim?: {
-            claimName: string
-          }
-        }[]
       }
     }
+    nodeSelector?: { [name: string]: string }
+    affinity?: { [name: string]: string }
+    tolerations?: { [name: string]: string }
+    volumes?: OutputVolumeNative[]
   }
 }
+
 
 export interface HelmService {
   replicaCount?: {

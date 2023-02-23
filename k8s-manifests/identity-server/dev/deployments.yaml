@@ -220,6 +220,10 @@ identity-server:
           tags.datadoghq.com/env: 'dev'
           tags.datadoghq.com/service: 'identity-server'
           tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/identity-server'
+    volumes:
+      - name: 'identity-server'
+        persistentVolumeClaim:
+          claimName: 'identity-server'
 services-auth-admin-api:
   apiVersion: 'apps/v1'
   kind: 'Deployment'
