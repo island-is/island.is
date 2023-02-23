@@ -83,7 +83,7 @@ const LayoutOuterContainer: FC = ({ children }) => (
 )
 
 export const Layout: FC = ({ children }) => {
-  useNamespaces(['admin.portal', 'global'])
+  useNamespaces(['admin.portal', 'global', 'portals'])
   const activeModule = useActiveModule()
   const modules = useModules()
   const { layout = 'default' } = activeModule || {}
