@@ -693,12 +693,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       // Edit Flow States
       [States.EDIT_OR_ADD_PERIODS]: {
-        entry: [
-          'createTempPeriods',
-          'removeNullPeriod',
-          'setNavId',
-          'setEvent',
-        ],
+        entry: ['createTempPeriods', 'removeNullPeriod', 'setNavId'],
         exit: [
           'restorePeriodsFromTemp',
           'removeNullPeriod',
@@ -757,19 +752,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 goToState(application, States.VINNUMALASTOFNUN_APPROVE_EDITS),
               target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
             },
-            {
-              cond: (application) =>
-                goToState(
-                  application,
-                  States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
-                ),
-              target: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
-            },
           ],
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS]: {
-        exit: ['setEmployerReviewerNationalRegistryId', 'setPreviousState'],
+        exit: [
+          'setEmployerReviewerNationalRegistryId',
+          'restorePeriodsFromTemp',
+        ],
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
           status: 'inprogress',
@@ -803,7 +793,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.EMPLOYER_APPROVE_EDITS]: {
         entry: ['assignToVMST', 'removeNullPeriod'],
-        exit: ['clearAssignees', 'setIsApprovedOnEmployer'],
+        exit: [
+          'clearAssignees',
+          'setIsApprovedOnEmployer',
+          'restorePeriodsFromTemp',
+        ],
         meta: {
           name: States.EMPLOYER_APPROVE_EDITS,
           status: 'inprogress',
@@ -1017,7 +1011,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
        * Restore the periods to their original state from temp.
        */
       restorePeriodsFromTemp: assign((context, event) => {
-        if (event.type !== DefaultEvents.ABORT) {
+        if (
+          !(
+            event.type === DefaultEvents.ABORT ||
+            event.type === DefaultEvents.EDIT
+          )
+        ) {
           return context
         }
 
@@ -1423,32 +1422,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           assignees: [],
         },
       })),
-      setPreviousState: assign((context, event) => {
+      setPreviousState: assign((context) => {
         const { application } = context
-        const { state } = application
-        const { answers } = application
-        const e = (event.type as unknown) as any
-        if (
-          e === 'xstate.init' &&
-          state === States.VINNUMALASTOFNUN_APPROVE_EDITS
-        ) {
-          set(answers, 'previousState', state)
-        }
-        if (e === DefaultEvents.ABORT) {
-          return context
-        }
-        if (e === 'xstate.init') {
-          return context
-        }
-        if (
-          e === 'APPROVE' &&
-          state === 'residenceGrantApplicationNoBirthDate'
-        ) {
-          return context
-        }
-        if (e === 'REJECT' && state === 'residenceGrantApplication') {
-          return context
-        }
+        const { state, answers } = application
+
+        set(answers, 'previousState', state)
         return context
       }),
       setActionName: assign((context) => {

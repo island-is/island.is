@@ -1250,14 +1250,17 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       isSelfEmployed,
       isReceivingUnemploymentBenefits,
       applicationType,
+      previousState,
     } = getApplicationAnswers(application.answers)
-    const { previousState } = getApplicationAnswers(application.answers)
+
     if (
       previousState === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
-      previousState === States.VINNUMALASTOFNUN_APPROVAL
+      previousState === States.VINNUMALASTOFNUN_APPROVAL ||
+      previousState === States.APPROVED
     ) {
       return
     }
+
     const nationalRegistryId = application.applicant
     const attachments = await this.getAttachments(application)
     try {
