@@ -2,15 +2,11 @@ import { CasesApi, Configuration, DocumentsApi } from '../../gen/fetch'
 import { Provider } from '@nestjs/common/interfaces/modules/provider.interface'
 
 import { ConsultationPortalClientConfig } from './consultationPortalClient.config'
-import { caching } from 'cache-manager'
-import redisStore from 'cache-manager-ioredis'
 import { ConfigType } from '@nestjs/config'
-import { createRedisCluster } from '../../../../cache/src'
-import { createEnhancedFetch } from '../../../middlewares/src'
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
 
 const provideApi = <T>(
   Api: new (configuration: Configuration) => T,
-  scope?: string[],
 ): Provider<T> => ({
   provide: Api,
   useFactory: (config: ConfigType<typeof ConsultationPortalClientConfig>) =>

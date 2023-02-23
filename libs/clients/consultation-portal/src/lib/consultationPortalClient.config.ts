@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { defineConfig } from '../../../../nest/config/src'
+import { defineConfig } from '@island.is/nest/config';
 
 const schema = z.object({
   basePath: z.string(),
