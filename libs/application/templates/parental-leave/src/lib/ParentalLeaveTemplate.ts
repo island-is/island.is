@@ -444,7 +444,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'assignToVMST',
           'setNavId',
           'removeNullPeriod',
-          'setPreviousState',
+          'removePreviousState',
         ],
         exit: [
           'clearAssignees',
