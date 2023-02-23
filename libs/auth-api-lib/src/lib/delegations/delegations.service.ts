@@ -22,7 +22,6 @@ import {
 import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { NoContentException } from '@island.is/nest/problem'
 import { isDefined } from '@island.is/shared/utils'
 
@@ -72,7 +71,6 @@ export class DelegationsService {
     private rskProcuringClient: RskProcuringClient,
     private nationalRegistryClient: NationalRegistryClientService,
     private delegationScopeService: DelegationScopeService,
-    private featureFlagService: FeatureFlagService,
     private prService: PersonalRepresentativeService,
     private resourcesService: ResourcesService,
     private readonly auditService: AuditService,
@@ -404,15 +402,6 @@ export class DelegationsService {
    */
   private async findAllWardsIncoming(user: User): Promise<DelegationDTO[]> {
     try {
-      const supported = await this.featureFlagService.getValue(
-        Features.legalGuardianDelegations,
-        false,
-        user,
-      )
-      if (!supported) {
-        return []
-      }
-
       const response = await this.nationalRegistryClient.getCustodyChildren(
         user,
       )
@@ -453,15 +442,6 @@ export class DelegationsService {
    */
   private async findAllCompaniesIncoming(user: User): Promise<DelegationDTO[]> {
     try {
-      const feature = await this.featureFlagService.getValue(
-        Features.companyDelegations,
-        false,
-        user,
-      )
-      if (!feature) {
-        return []
-      }
-
       const person = await this.rskProcuringClient.getSimple(user)
 
       if (person && person.companies) {
@@ -492,15 +472,6 @@ export class DelegationsService {
     user: User,
   ): Promise<DelegationDTO[]> {
     try {
-      const feature = await this.featureFlagService.getValue(
-        Features.personalRepresentativeDelegations,
-        false,
-        user,
-      )
-      if (!feature) {
-        return []
-      }
-
       const toDelegationDTO = (
         name: string,
         representative: PersonalRepresentativeDTO,
@@ -586,15 +557,6 @@ export class DelegationsService {
   private async findAllValidCustomIncoming(
     user: User,
   ): Promise<DelegationDTO[]> {
-    const feature = await this.featureFlagService.getValue(
-      Features.customDelegations,
-      false,
-      user,
-    )
-    if (!feature) {
-      return []
-    }
-
     const delegations = await this.delegationModel.findAll({
       where: {
         toNationalId: user.nationalId,
