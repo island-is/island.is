@@ -144,6 +144,7 @@ export const Filters = ({ defaultValues }: FiltersPropTypes) => {
                 name="isExplicit"
                 id="isExplicit"
                 label="Handvirkur kóði"
+                defaultChecked={defaultValues.isExplicit}
               />
             </Stack>
             <Divider weight="purple200" />
@@ -155,7 +156,7 @@ export const Filters = ({ defaultValues }: FiltersPropTypes) => {
                   id={`state-${index}`}
                   name="state"
                   value={value}
-                  checked={defaultValues.state.includes(value)}
+                  defaultChecked={defaultValues.state.includes(value)}
                   label={label}
                 />
               ))}

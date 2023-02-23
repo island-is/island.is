@@ -19,6 +19,8 @@ export interface CheckboxProps {
   hasError?: boolean
   errorMessage?: string
   value?: string
+  defaultValue?: string
+  defaultChecked?: boolean
   strong?: boolean
   filled?: boolean
   large?: boolean
@@ -39,20 +41,21 @@ export const Checkbox = ({
   labelVariant = 'default',
   name,
   id = name,
-  checked,
   disabled,
   onChange,
   tooltip,
   hasError,
   errorMessage,
-  value,
+  value: valueFromProps,
+  defaultValue,
+  checked: checkedFromProps,
+  defaultChecked,
   large,
   strong,
   backgroundColor,
   dataTestId,
   filled = false,
 }: CheckboxProps & TestSupport) => {
-  const [isChecked, setIsChecked] = useState(checked || false)
   const errorId = `${id}-error`
   const ariaError = hasError
     ? {
@@ -64,8 +67,33 @@ export const Checkbox = ({
   const background =
     backgroundColor && backgroundColor === 'blue' ? 'blue100' : undefined
 
+  // If a defaultValue or defaultCheck is specified, we will use it as our initial state.
+  const [internalState, setInternalState] = useState({
+    value: defaultValue !== undefined ? defaultValue : '',
+    checked: defaultChecked !== undefined ? defaultChecked : false,
+  })
+
+  // We need to know whether the component is controlled or not.
+  const isValueControlled = valueFromProps !== undefined
+  const isCheckedControlled = checkedFromProps !== undefined
+  // Internally, we need to deal with some value. Depending on whether
+  // the component is controlled or not, that value comes from its
+  // props or from its internal state.
+  const value = isValueControlled ? valueFromProps : internalState.value
+  const checked = isCheckedControlled ? checkedFromProps : internalState.checked
+
   const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setIsChecked(event.target.checked)
+    if (!isValueControlled || !isCheckedControlled) {
+      // If the component is not controlled, we need to update its internal state.
+      setInternalState({
+        value:
+          event.target.value === ''
+            ? event.target.checked.toString()
+            : event.target.value,
+        checked: event.target.checked,
+      })
+    }
+
     onChange?.(event)
   }
 
@@ -85,10 +113,8 @@ export const Checkbox = ({
         id={id}
         data-testid={dataTestId}
         onChange={onChangeHandler}
-        // We default to a string value of 'true' or 'false' if no value is provided
-        // This is to ensure that when we make a native Form request the value is present in the request body and query string
-        value={value || isChecked.toString()}
-        checked={isChecked}
+        value={value}
+        checked={checked}
         {...(ariaError as AriaError)}
       />
       <label
@@ -100,14 +126,14 @@ export const Checkbox = ({
       >
         <div
           className={cn(styles.checkbox, {
-            [styles.checkboxChecked]: isChecked,
+            [styles.checkboxChecked]: checked,
             [styles.checkboxError]: hasError,
             [styles.checkboxDisabled]: disabled,
           })}
         >
           <Icon
             icon="checkmark"
-            color={isChecked ? 'white' : 'transparent'}
+            color={checked ? 'white' : 'transparent'}
             ariaHidden
           />
         </div>
@@ -115,7 +141,7 @@ export const Checkbox = ({
           <Text
             as="span"
             variant={labelVariant}
-            fontWeight={isChecked || strong ? 'semiBold' : 'light'}
+            fontWeight={checked || strong ? 'semiBold' : 'light'}
           >
             {label}
           </Text>
