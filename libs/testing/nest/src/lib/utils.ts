@@ -3,12 +3,16 @@ export const buildQueryString = (
 ) => {
   const entries = Object.entries(params ?? {})
 
-  return entries.length > 0
-    ? `?${entries
-        .map(
-          ([key, value]) =>
-            `${key}=${Array.isArray(value) ? value.join(',') : value}`,
-        )
-        .join('&')}`
-    : ''
+  if (entries.length === 0) {
+    return ''
+  }
+
+  const search = new URLSearchParams()
+  entries.forEach(([key, value]) =>
+    Array.isArray(value)
+      ? value.forEach((v) => search.append(key, v))
+      : search.append(key, value),
+  )
+
+  return `?${search.toString()}`
 }

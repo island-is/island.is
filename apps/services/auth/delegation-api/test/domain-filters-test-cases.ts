@@ -81,7 +81,7 @@ export const domainFiltersTestCases: Record<string, TestCase> = {
       },
     ],
     query: {
-      domainNames: ['d1', 'd2'],
+      domainName: ['d1', 'd2'],
     },
     expected: [
       {

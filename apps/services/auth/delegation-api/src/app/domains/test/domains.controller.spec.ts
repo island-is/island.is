@@ -6,10 +6,7 @@ import request from 'supertest'
 
 import { AuthScope } from '@island.is/auth/scopes'
 import { FixtureFactory } from '@island.is/services/auth/testing'
-import {
-  createCurrentUser,
-  createNationalId,
-} from '@island.is/testing/fixtures'
+import { createCurrentUser } from '@island.is/testing/fixtures'
 import {
   buildQueryString,
   getRequestMethod,

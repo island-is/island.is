@@ -77,16 +77,11 @@ export class DomainsController {
             Setting this param implicitly filters by delegation support.
             Default returns all domains.`,
         },
-        domainNames: {
+        domainName: {
           description: 'A list of domain names to filter by.',
           required: false,
-          schema: {
-            type: 'array',
-            items: {
-              type: 'string',
-              example: ['@island.is', '@admin.island.is'],
-            },
-          },
+          isArray: true,
+          type: String,
         },
         supportsDelegations: {
           description: `A boolean to filter by delegation support.
@@ -107,11 +102,7 @@ export class DomainsController {
     @CurrentUser() user: User,
     @Query('lang') language?: string,
     @Query('direction') direction?: DelegationDirection,
-    @Query(
-      'domainNames',
-      new ParseArrayPipe({ optional: true, separator: ',' }),
-    )
-    domainNames?: string[],
+    @Query('domainName') domainNames?: string[],
     @Query('supportsDelegations') supportsDelegations?: boolean,
   ): Promise<DomainDTO[]> {
     return this.resourceService.findAllDomains(user, {
