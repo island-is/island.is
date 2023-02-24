@@ -86,9 +86,11 @@ export const WriteReviewCard = ({ card, isLoggedIn }: CardProps) => {
               justifyContent: 'space-between',
             }}
           >
-            <Text variant="h5" color="blue400">
-              Hlaða upp viðhengi
-            </Text>
+            <Box paddingRight={1}>
+              <Text variant="h5" color="blue400">
+                Hlaða upp viðhengi
+              </Text>
+            </Box>
             <Icon type="outline" icon="documents" color="blue400"></Icon>
           </Box>
         </Column>
