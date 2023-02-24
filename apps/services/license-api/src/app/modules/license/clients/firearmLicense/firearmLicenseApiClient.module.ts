@@ -1,9 +1,6 @@
 import { Module } from '@nestjs/common'
 import { SmartSolutionsApiClientModule } from '@island.is/clients/smartsolutions'
-import {
-  FirearmLicenseApiProvider,
-  FirearmLicenseClientModule,
-} from '@island.is/clients/firearm-license'
+import { FirearmLicenseClientModule } from '@island.is/clients/firearm-license'
 import { ConfigType } from '@nestjs/config'
 import { FirearmLicenseApiClientConfig } from './firearmLicenseApiClient.config'
 import { FirearmLicenseApiClientService } from './firearmLicenseApiClient.service'
@@ -17,7 +14,7 @@ import { FirearmLicenseApiClientService } from './firearmLicenseApiClient.servic
       inject: [FirearmLicenseApiClientConfig.KEY],
     }),
   ],
-  providers: [FirearmLicenseApiClientService, FirearmLicenseApiProvider],
+  providers: [FirearmLicenseApiClientService],
   exports: [FirearmLicenseApiClientService],
 })
 export class FirearmLicenseApiClientModule {}
