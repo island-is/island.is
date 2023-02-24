@@ -8,7 +8,7 @@ import {
   PARENTAL_GRANT_STUDENTS,
   States,
 } from '../constants'
-import { requiresOtherParentApproval } from '../lib/parentalLeaveUtils'
+import { getApplicationAnswers, requiresOtherParentApproval } from '../lib/parentalLeaveUtils'
 import { EmployerRow } from '../types'
 import { getValueViaPath } from '@island.is/application/core'
 
@@ -83,4 +83,15 @@ export function findActionName(context: ApplicationContext) {
   if (state === States.EDIT_OR_ADD_PERIODS) return 'period'
 
   return 'period' // Have default on period so we always reset actionName
+}
+
+export function goToState(
+  applicationContext: ApplicationContext,
+  state: States,
+) {
+  const { previousState } = getApplicationAnswers(
+    applicationContext.application.answers,
+  )
+  if (previousState === state) return true
+  return false
 }
