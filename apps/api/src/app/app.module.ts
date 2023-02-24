@@ -91,11 +91,11 @@ import { SessionsModule } from '@island.is/api/domains/sessions'
 import { CommunicationsConfig } from '@island.is/api/domains/communications'
 import { SessionsApiClientConfig } from '@island.is/clients/sessions'
 import {
-  FirearmDigitalLicenseConfig,
-  DisabilityDigitalLicenseConfig,
-  AdrDigitalLicenseConfig,
-  MachineDigitalLicenseConfig,
-  DrivingDigitalLicenseConfig,
+  FirearmDigitalLicenseClientConfig,
+  DisabilityDigitalLicenseClientConfig,
+  AdrDigitalLicenseClientConfig,
+  MachineDigitalLicenseClientConfig,
+  DrivingDigitalLicenseClientConfig,
 } from '@island.is/clients/license-client'
 
 const debug = process.env.NODE_ENV === 'development'
@@ -264,16 +264,16 @@ const autoSchemaFile = environment.production
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
-        AdrAndMachineLicenseClientConfig,
         AirDiscountSchemeClientConfig,
         AssetsClientConfig,
+        AdrAndMachineLicenseClientConfig,
         FirearmLicenseClientConfig,
-        FirearmDigitalLicenseConfig,
-        DisabilityDigitalLicenseConfig,
-        AdrDigitalLicenseConfig,
-        MachineDigitalLicenseConfig,
         DisabilityLicenseClientConfig,
-        DrivingDigitalLicenseConfig,
+        AdrDigitalLicenseClientConfig,
+        FirearmDigitalLicenseClientConfig,
+        DisabilityDigitalLicenseClientConfig,
+        MachineDigitalLicenseClientConfig,
+        DrivingDigitalLicenseClientConfig,
         VehiclesClientConfig,
         AuthPublicApiClientConfig,
         AuthDelegationApiClientConfig,
@@ -297,7 +297,6 @@ const autoSchemaFile = environment.production
         FiskistofaClientConfig,
         PowerBiConfig,
         ChargeFjsV2ClientConfig,
-        DisabilityLicenseClientConfig,
         ZenterSignupConfig,
         PaymentScheduleClientConfig,
         CommunicationsConfig,

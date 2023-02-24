@@ -19,7 +19,7 @@ import {
 } from '../../licenseClient.type'
 import { PkPassClient } from './pkPassClient/pkpass.client'
 import { PkPassPayload } from './pkPassClient/pkpass.type'
-import { DrivingDigitalLicenseConfig } from './drivingLicenseClient.config'
+import { DrivingDigitalLicenseClientConfig } from './drivingLicenseClient.config'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'drivinglicense-service'
@@ -52,7 +52,7 @@ export class DrivingLicenseClient implements LicenseClient<DrivingLicenseDto> {
   constructor(
     private logger: Logger,
     private xroadConfig: ConfigType<typeof XRoadConfig>,
-    private config: ConfigType<typeof DrivingDigitalLicenseConfig>,
+    private config: ConfigType<typeof DrivingDigitalLicenseClientConfig>,
     private cacheManager?: CacheManager | null,
   ) {
     // TODO inject the actual RLS x-road client

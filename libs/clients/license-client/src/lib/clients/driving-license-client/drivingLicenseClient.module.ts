@@ -4,7 +4,7 @@ import { XRoadConfig } from '@island.is/nest/config'
 import { Cache as CacheManager } from 'cache-manager'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { DrivingLicenseClient } from './drivingLicenseClient.service'
-import { DrivingDigitalLicenseConfig } from './drivingLicenseClient.config'
+import { DrivingDigitalLicenseClientConfig } from './drivingLicenseClient.config'
 import { LicenseClient } from '../../licenseClient.type'
 import { DRIVING_LICENSE_CLIENT_FACTORY } from './drivingLicenseClient.type'
 
@@ -13,7 +13,9 @@ import { DRIVING_LICENSE_CLIENT_FACTORY } from './drivingLicenseClient.type'
     {
       provide: DRIVING_LICENSE_CLIENT_FACTORY,
       useFactory: (
-        drivingLicenseConfig: ConfigType<typeof DrivingDigitalLicenseConfig>,
+        drivingLicenseConfig: ConfigType<
+          typeof DrivingDigitalLicenseClientConfig
+        >,
         xRoadConfig: ConfigType<typeof XRoadConfig>,
         logger: Logger,
       ) => async (
@@ -26,7 +28,7 @@ import { DRIVING_LICENSE_CLIENT_FACTORY } from './drivingLicenseClient.type'
           cacheManager,
         ),
       inject: [
-        DrivingDigitalLicenseConfig.KEY,
+        DrivingDigitalLicenseClientConfig.KEY,
         XRoadConfig.KEY,
         LOGGER_PROVIDER,
       ],

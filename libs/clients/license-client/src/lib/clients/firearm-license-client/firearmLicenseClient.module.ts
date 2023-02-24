@@ -6,13 +6,15 @@ import {
 import { Module } from '@nestjs/common'
 import { ConfigType } from '@island.is/nest/config'
 import { FirearmLicenseClient } from './firearmLicenseClient.service'
-import { FirearmDigitalLicenseConfig } from './firearmLicenseClient.config'
+import { FirearmDigitalLicenseClientConfig } from './firearmLicenseClient.config'
 
 @Module({
   imports: [
     FirearmLicenseClientModule,
     SmartSolutionsApiClientModule.registerAsync({
-      useFactory: (config: ConfigType<typeof FirearmDigitalLicenseConfig>) => {
+      useFactory: (
+        config: ConfigType<typeof FirearmDigitalLicenseClientConfig>,
+      ) => {
         const smartConfig: SmartSolutionsConfig = {
           apiKey: config.apiKey,
           apiUrl: config.apiUrl,
@@ -20,7 +22,7 @@ import { FirearmDigitalLicenseConfig } from './firearmLicenseClient.config'
         }
         return smartConfig
       },
-      inject: [FirearmDigitalLicenseConfig.KEY],
+      inject: [FirearmDigitalLicenseClientConfig.KEY],
     }),
   ],
   providers: [FirearmLicenseClient],

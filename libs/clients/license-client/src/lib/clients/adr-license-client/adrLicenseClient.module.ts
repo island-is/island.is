@@ -6,13 +6,15 @@ import {
 import { Module } from '@nestjs/common'
 import { ConfigType } from '@island.is/nest/config'
 import { AdrLicenseClient } from './adrLicenseClient.service'
-import { AdrDigitalLicenseConfig } from './adrLicenseClient.config'
+import { AdrDigitalLicenseClientConfig } from './adrLicenseClient.config'
 
 @Module({
   imports: [
     AdrAndMachineLicenseClientModule,
     SmartSolutionsApiClientModule.registerAsync({
-      useFactory: (config: ConfigType<typeof AdrDigitalLicenseConfig>) => {
+      useFactory: (
+        config: ConfigType<typeof AdrDigitalLicenseClientConfig>,
+      ) => {
         const smartConfig: SmartSolutionsConfig = {
           apiKey: config.apiKey,
           apiUrl: config.apiUrl,
@@ -20,7 +22,7 @@ import { AdrDigitalLicenseConfig } from './adrLicenseClient.config'
         }
         return smartConfig
       },
-      inject: [AdrDigitalLicenseConfig.KEY],
+      inject: [AdrDigitalLicenseClientConfig.KEY],
     }),
   ],
   providers: [AdrLicenseClient],
