@@ -45,13 +45,6 @@ export const information = {
         defaultMessage: 'Ekki er hægt að velja þessa bifreið vegna:',
         description: 'Pick vehicle has an error title',
       },
-      duplicateOrderExistsTag: {
-        id:
-          'ta.ovlp.application:information.labels.pickVehicle.duplicateOrderExistsTag',
-        defaultMessage:
-          'Það er nú þegar til pöntun um skráningarmerki fyrir þessa bifreið',
-        description: 'Pick vehicle duplicate plate order exists tag',
-      },
     }),
     plateSize: defineMessages({
       sectionTitle: {
