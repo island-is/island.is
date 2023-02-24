@@ -38,7 +38,9 @@ export const CemetryExpenses = ({
       if (!donationsToCemeteryFund) {
         setValue(
           CEMETRYOPERATIONIDS.donationsToCemeteryFund,
-          data.financialStatementsInaoTaxInfo?.[3]?.value?.toString() ?? '',
+          data.financialStatementsInaoTaxInfo
+            ?.find((x) => x.key === 334)
+            ?.value?.toString() ?? '',
         )
       }
     }

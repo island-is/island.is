@@ -17,6 +17,7 @@
     "api-domains-application": "libs/api/domains/application",
     "api-domains-assets": "libs/api/domains/assets",
     "api-domains-auth": "libs/api/domains/auth",
+    "api-domains-auth-admin": "libs/api/domains/auth-admin",
     "api-domains-communications": "libs/api/domains/communications",
     "api-domains-company-registry": "libs/api/domains/company-registry",
     "api-domains-content-search": "libs/api/domains/content-search",
