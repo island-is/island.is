@@ -102,7 +102,7 @@ export const ServicePortalDocuments = () => {
     activeDocument,
     setActiveDocument,
   ] = useState<ActiveDocumentType | null>(null)
-
+  console.log('activeDocument - Overview', activeDocument)
   const isLegal = userInfo.profile.delegationType?.includes(
     AuthDelegationType.LegalGuardian,
   )
@@ -458,6 +458,7 @@ export const ServicePortalDocuments = () => {
     )
   }
 
+  console.log('active', activeDocument)
   return (
     <GridContainer>
       <GridRow>
@@ -494,9 +495,9 @@ export const ServicePortalDocuments = () => {
             documentsLength={totalCount}
           />
         </GridColumn>
-        <Hidden below="md">
-          {activeDocument?.document && (
-            <GridColumn span="7/12">
+        <GridColumn span="7/12">
+          <Hidden below="md">
+            {activeDocument?.document && (
               <Box paddingLeft={8}>
                 <Text variant="h5" paddingBottom={1}>
                   {activeDocument.subject}
@@ -510,9 +511,9 @@ export const ServicePortalDocuments = () => {
                   <Text variant="medium">{activeDocument.date}</Text>
                 </Box>
               </Box>
-            </GridColumn>
-          )}
-        </Hidden>
+            )}
+          </Hidden>
+        </GridColumn>
       </GridRow>
       <Hidden above="md">
         <GridRow>

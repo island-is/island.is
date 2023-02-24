@@ -71,6 +71,7 @@ export interface NavigationItem {
   typename?: string
   slug?: string[]
 }
+
 interface MobileNavigationDialogProps {
   Title: ReactNode
   colorScheme: keyof typeof styles.colorScheme

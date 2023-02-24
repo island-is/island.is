@@ -64,33 +64,36 @@ const NewDocumentLine: FC<Props> = ({
   const { formatMessage } = useLocale()
   const date = format(new Date(documentLine.date), dateFormat.is)
 
+  const displayPdf = () => {
+    onClick({
+      document: singleDocument,
+      id: documentLine.id,
+      subject: documentLine.subject,
+      sender: documentLine.senderName,
+      date: date,
+      downloadUrl: documentLine.url,
+    })
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    })
+  }
   const [
     getDocument,
-    { data: getFileByIdData, loading: fileLoading, error },
+    { data: getFileByIdData, loading: fileLoading, error, refetch, called },
   ] = useLazyQuery(GET_DOCUMENT_BY_ID, {
     variables: {
       input: {
         id: documentLine.id,
       },
     },
+    fetchPolicy: 'no-cache',
     onCompleted: () => {
-      onClick({
-        document: singleDocument,
-        id: documentLine.id,
-        subject: documentLine.subject,
-        sender: documentLine.senderName,
-        date: date,
-        downloadUrl: documentLine.url,
-      })
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-      })
+      displayPdf()
     },
   })
 
   const singleDocument = getFileByIdData?.getDocument || ({} as DocumentDetails)
-
   const isLink = documentLine.fileType === 'url' && documentLine.url
 
   const displayError = () => {
@@ -129,11 +132,11 @@ const NewDocumentLine: FC<Props> = ({
         onClick={
           !isLink
             ? async () => {
-                if (getFileByIdData && !loading) {
-                  //onClickHandler()
-                } else {
-                  getDocument({ variables: { input: { id: documentLine.id } } })
-                }
+                getFileByIdData
+                  ? displayPdf()
+                  : getDocument({
+                      variables: { input: { id: documentLine.id } },
+                    })
               }
             : undefined
         }
@@ -143,7 +146,7 @@ const NewDocumentLine: FC<Props> = ({
             display="flex"
             alignItems="center"
             justifyContent="center"
-            background="blue100"
+            background={documentLine.opened ? 'blue100' : 'white'}
             borderRadius="circle"
             className={styles.imageContainer}
           >
@@ -155,7 +158,7 @@ const NewDocumentLine: FC<Props> = ({
             <Text
               fontWeight="semiBold"
               paddingBottom={1}
-              color={active ? 'blue400' : undefined}
+              color={active || !documentLine.opened ? 'blue400' : undefined}
             >
               {documentLine.subject}
               {!documentLine.opened && (
