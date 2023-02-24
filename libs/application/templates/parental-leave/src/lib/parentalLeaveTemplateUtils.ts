@@ -101,18 +101,6 @@ export function hasDateOfBirth(context: ApplicationContext) {
   return disableResidenceGrantApplication(dateOfBirth?.data?.dateOfBirth || '')
 }
 
-export function previousStateApproved(context: ApplicationContext) {
-  const { application } = context
-  const { previousState } = getApplicationAnswers(application.answers)
-  return previousState === 'approved'
-}
-export function previousStateVinnumalastofnunApproval(
-  context: ApplicationContext,
-) {
-  const { application } = context
-  const { previousState } = getApplicationAnswers(application.answers)
-  return previousState === 'vinnumalastofnunApproval'
-}
 export function goToState(
   applicationContext: ApplicationContext,
   state: States,

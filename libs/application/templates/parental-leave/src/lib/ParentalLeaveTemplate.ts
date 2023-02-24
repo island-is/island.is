@@ -45,8 +45,6 @@ import {
   hasDateOfBirth,
   hasEmployer,
   needsOtherParentApproval,
-  previousStateApproved,
-  previousStateVinnumalastofnunApproval,
 } from './parentalLeaveTemplateUtils'
 import {
   getApplicationAnswers,
@@ -697,11 +695,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
           REJECT: [
             {
-              cond: previousStateApproved,
+              cond: (application) => goToState(application, States.APPROVED),
               target: States.APPROVED,
             },
             {
-              cond: previousStateVinnumalastofnunApproval,
+              cond: (application) =>
+                goToState(application, States.VINNUMALASTOFNUN_APPROVAL),
               target: States.VINNUMALASTOFNUN_APPROVAL,
             },
             {
