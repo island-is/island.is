@@ -94,17 +94,17 @@ export class NotificationsService {
   ): Promise<HnippTemplate> {
     locale = await this.mapLocale(locale)
     //check cache
-    // const cacheKey = templateId + '-' + locale
-    // const cachedTemplate = await this.getFromCache(cacheKey)
-    // if (cachedTemplate) {
-    //   this.logger.info('cache hit for: ' + cacheKey)
-    //   return cachedTemplate as HnippTemplate
-    // }
+    const cacheKey = templateId + '-' + locale
+    const cachedTemplate = await this.getFromCache(cacheKey)
+    if (cachedTemplate) {
+      this.logger.info('cache hit for: ' + cacheKey)
+      return cachedTemplate as HnippTemplate
+    }
 
     try {
       for (const template of await this.getTemplates(locale)) {
         if (template.templateId == templateId) {
-          // await this.addToCache(cacheKey, template)
+          await this.addToCache(cacheKey, template)
           return template
         }
       }

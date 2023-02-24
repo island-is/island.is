@@ -32,8 +32,7 @@ import { NotificationsService } from './notifications.service'
 
 @Controller('notifications')
 @ApiExtraModels(CreateNotificationDto)
-// // TODO TURNING OFF AND ON AGAIN TO CHECK IF ITS A CULPRIT
-// @UseInterceptors(CacheInterceptor) // auto-caching GET responses
+@UseInterceptors(CacheInterceptor) // auto-caching GET responses
 export class NotificationsController {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
