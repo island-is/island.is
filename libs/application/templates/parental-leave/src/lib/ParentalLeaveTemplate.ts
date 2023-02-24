@@ -39,8 +39,9 @@ import { parentalLeaveFormMessages, statesMessages } from './messages'
 import {
   allEmployersHaveApproved,
   findActionName,
-  goToState,
   hasEmployer,
+  isPreviousStateApproved,
+  isPreviousStateVinnumalastofnunApproval,
   needsOtherParentApproval,
 } from './parentalLeaveTemplateUtils'
 import {
@@ -742,12 +743,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
           [DefaultEvents.ABORT]: [
             {
-              cond: (application) => goToState(application, States.APPROVED),
+              cond: isPreviousStateApproved,
               target: States.APPROVED,
             },
             {
-              cond: (application) =>
-                goToState(application, States.VINNUMALASTOFNUN_APPROVAL),
+              cond: isPreviousStateVinnumalastofnunApproval,
               target: States.VINNUMALASTOFNUN_APPROVAL,
             },
             {
