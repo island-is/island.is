@@ -791,7 +791,11 @@ test.each([
   },
   {
     data: ({
-      application: { answers: { previousState: ApplicationStates.VINNUMALASTOFNUN_EDITS_ACTION } },
+      application: {
+        answers: {
+          previousState: ApplicationStates.VINNUMALASTOFNUN_EDITS_ACTION,
+        },
+      },
     } as unknown) as ApplicationContext,
     state: ApplicationStates.VINNUMALASTOFNUN_EDITS_ACTION,
     expected: true,
