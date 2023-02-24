@@ -495,7 +495,7 @@ describe('Parental Leave Application Template', () => {
       expect(newApplication.answers.tempPeriods).toEqual(periods)
     })
 
-    /*
+    
     it('should remove the temp copy of periods when canceling out of the Edit flow', () => {
       const periods = [
         {
@@ -526,7 +526,7 @@ describe('Parental Leave Application Template', () => {
       expect(newState).toBe(ApplicationStates.APPROVED)
       expect(newApplication.answers.tempPeriods).toEqual(undefined)
     })
-*/
+
     it('should assign the application to the employer when the user submits their edits', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
