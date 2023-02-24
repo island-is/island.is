@@ -17,7 +17,12 @@ import {
   ChosenSubscriptionCard,
 } from '../../components/Card'
 import { Area } from '../../types/enums'
-import { ArrOfIdAndName, Case } from '../../types/interfaces'
+import {
+  ArrOfIdAndName,
+  Case,
+  SortTitle,
+  SubscriptionArray,
+} from '../../types/interfaces'
 
 const Subscriptions = () => {
   // user logged in logic needed
@@ -52,16 +57,18 @@ const Subscriptions = () => {
       name,
     })),
   )
-  const [subscriptionArray, setSubscriptionArray] = useState(SubscriptionsArray)
-  const settingSubscriptionArray = (newSubscriptionArray) =>
+  const [subscriptionArray, setSubscriptionArray] = useState<SubscriptionArray>(
+    SubscriptionsArray,
+  )
+  const settingSubscriptionArray = (newSubscriptionArray: SubscriptionArray) =>
     setSubscriptionArray(newSubscriptionArray)
 
-  const [sortTitle, setSortTitle] = useState({
+  const [sortTitle, setSortTitle] = useState<SortTitle>({
     Mál: 'Nýjast efst',
     Stofnanir: 'Nýjast efst',
     Málefnasvið: 'Nýjast efst',
   })
-  const settingSortTitle = (obj) => setSortTitle(obj)
+  const settingSortTitle = (obj: SortTitle) => setSortTitle(obj)
 
   const paddingYBreadCrumbs = [3, 3, 3, 5] as ResponsiveSpace
   const paddingXContent = [0, 0, 0, 15] as ResponsiveSpace
@@ -128,7 +135,9 @@ const Subscriptions = () => {
       content: (
         <TabContent
           data={institutionsData}
-          setData={(newData: Array<ArrOfIdAndName>) => setInstitutionsData(newData)}
+          setData={(newData: Array<ArrOfIdAndName>) =>
+            setInstitutionsData(newData)
+          }
           currentTab={Area.institution}
           subscriptionArray={subscriptionArray}
           setSubscriptionArray={settingSubscriptionArray}
@@ -148,7 +157,9 @@ const Subscriptions = () => {
       content: (
         <TabContent
           data={policyAreasData}
-          setData={(newData: Array<ArrOfIdAndName>) => setPolicyAreasData(newData)}
+          setData={(newData: Array<ArrOfIdAndName>) =>
+            setPolicyAreasData(newData)
+          }
           currentTab={Area.policyArea}
           subscriptionArray={subscriptionArray}
           setSubscriptionArray={settingSubscriptionArray}
@@ -249,7 +260,7 @@ const Subscriptions = () => {
                         data={{
                           name: filteredItem.name,
                           caseNumber: filteredItem.caseNumber,
-                          id: filteredItem.id,
+                          id: filteredItem.id.toString(),
                           area: Area.case,
                         }}
                         subscriptionArray={subscriptionArray}
@@ -262,7 +273,7 @@ const Subscriptions = () => {
               {subscriptionArray.institutionIds.length !== 0 &&
                 subscriptionArray.institutionIds.map((institutionId) => {
                   const chosen = institutionsData
-                    .filter((item) => institutionId === item.id)
+                    .filter((item) => institutionId.toString() === item.id)
                     .map((filteredItem) => (
                       <ChosenSubscriptionCard
                         data={{
@@ -280,7 +291,7 @@ const Subscriptions = () => {
               {subscriptionArray.policyAreaIds.length !== 0 &&
                 subscriptionArray.policyAreaIds.map((policyAreaId) => {
                   const chosen = policyAreasData
-                    .filter((item) => policyAreaId === item.id)
+                    .filter((item) => policyAreaId.toString() === item.id)
                     .map((filteredItem) => (
                       <ChosenSubscriptionCard
                         data={{

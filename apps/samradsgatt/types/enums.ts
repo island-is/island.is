@@ -1,6 +1,5 @@
 export enum Area {
-    case = 'Mál',
-    institution = 'Stofnanir',
-    policyArea = 'Málefnasvið',
-  }
-  
+  case = 'Mál',
+  institution = 'Stofnanir',
+  policyArea = 'Málefnasvið',
+}

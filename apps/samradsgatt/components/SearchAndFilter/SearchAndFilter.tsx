@@ -15,7 +15,7 @@ import { ArrOfValueAndLabel, Case } from '../../types/interfaces'
 
 export interface SearchAndFilterProps {
   data: Array<Case>
-  setData: (arr: Array<any>) => void
+  setData: (arr: Array<Case>) => void
   cases: Array<Case>
   searchValue: string
   setSearchValue: (val: string) => void

@@ -8,14 +8,14 @@ import {
 import * as styles from './SubscriptionTable.css'
 import { mapIsToEn } from '../../utils/helpers'
 import SubscriptionTableItem from './SubscriptionTableItem'
-import { ArrOfIdAndName, Case } from '../../types/interfaces'
+import { ArrOfIdAndName, Case, SubscriptionArray } from '../../types/interfaces'
 import { Area } from '../../types/enums'
 
 export interface SubscriptionTableProps {
   data: Array<Case> | Array<ArrOfIdAndName>
   currentTab: Area
-  subscriptionArray: Object
-  setSubscriptionArray: (obj: Object) => void
+  subscriptionArray: SubscriptionArray
+  setSubscriptionArray: (obj: SubscriptionArray) => void
 }
 
 const Headers = {

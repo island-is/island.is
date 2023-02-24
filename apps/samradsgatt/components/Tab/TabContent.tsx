@@ -12,7 +12,12 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { Area } from '../../types/enums'
-import { ArrOfIdAndName, Case } from '../../types/interfaces'
+import {
+  ArrOfIdAndName,
+  Case,
+  SortTitle,
+  SubscriptionArray,
+} from '../../types/interfaces'
 import DropdownSort from '../DropdownSort/DropdownSort'
 import SubscriptionTable from '../Table/SubscriptionTable'
 
@@ -20,15 +25,15 @@ export interface TabContentProps {
   data: Array<Case> | Array<ArrOfIdAndName>
   setData: (arr: Array<any>) => void
   currentTab: Area
-  subscriptionArray: Object
-  setSubscriptionArray: (obj: Object) => void
+  subscriptionArray: SubscriptionArray
+  setSubscriptionArray: (obj: SubscriptionArray) => void
   searchOptions: AsyncSearchOption[]
   searchValue: string
   setSearchValue: (str: string) => void
   searchPlaceholder: string
   label?: string
-  sortTitle: Object
-  setSortTitle: (obj: Object) => void
+  sortTitle: SortTitle
+  setSortTitle: (obj: SortTitle) => void
 }
 
 export const TabContent = ({
