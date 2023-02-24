@@ -70,15 +70,17 @@ export class DelegationResourcesService {
             domainNameFilter,
           )
         : domainNameFilter,
-      include: [
-        {
-          model: ApiScope,
-          attributes: [],
-          required: onlyDelegations,
-          duplicating: false,
-          include: [...this.apiScopeInclude(user, direction)],
-        },
-      ],
+      include: onlyDelegations
+        ? [
+            {
+              model: ApiScope,
+              attributes: [],
+              required: true,
+              duplicating: false,
+              include: [...this.apiScopeInclude(user, direction)],
+            },
+          ]
+        : [],
     })
 
     if (language) {
