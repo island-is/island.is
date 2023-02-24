@@ -99,7 +99,7 @@ const buildIngressComment = (data: HelmService[]): string =>
     .join('\n')
 
 const buildComment = (data: Services<HelmService>): string => {
-  if (Object.values(data.ingress).length > 0) {
+  if (data.ingress) {
     return `Feature deployment of your services will begin shortly. Your feature will be accessible here:\n\n${buildIngressComment(
       Object.values(data),
     )}`
@@ -112,7 +112,7 @@ const deployedComment = (
   excluded: string[],
 ): string => {
   return `Deployed services: ${data
-    .map((d) => d.name)
+    .map((d) => d.name())
     .join(',')}. \n Excluded services: ${excluded.join(',')}`
 }
 
@@ -157,7 +157,7 @@ yargs(process.argv.slice(2))
         env,
       )
       const affectedServicesComment = `Affected services: ${affectedServices
-        .map((s) => s.name)
+        .map((s) => s.name())
         .join(',')}`
       const ingressComment = buildComment(
         (await renderHelmServices(env, habitat, featureYaml, 'no-mocks'))
