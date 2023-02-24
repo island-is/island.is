@@ -441,40 +441,21 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 
           {text && <Text paddingTop={heading ? 1 : 0}>{text}</Text>}
         </Box>
-
-        {!renderDraftStatusBar && (
-          <Box
-            display="flex"
-            alignItems={['flexStart', 'flexEnd']}
-            flexDirection="column"
-            flexShrink={0}
-            marginTop={[1, 0]}
-            marginLeft={[0, 'auto']}
-            className={progressMeter.active && tag ? styles.tag : styles.button}
-          >
-            <Hidden below="sm">{!date && !eyebrow && renderTag()}</Hidden>
-            {unavailable.active ? renderDisabled() : renderDefault()}
-          </Box>
-        )}
-
-        {renderDraftStatusBar && (
-          <Box
-            display="flex"
-            alignItems={['flexStart', 'flexEnd']}
-            flexDirection="column"
-            flexShrink={0}
-            marginTop={[1, 0]}
-            marginLeft={[0, 'auto']}
-            className={progressMeter.active && tag ? styles.tag : styles.button}
-          >
-            <Hidden below="sm">{!date && !eyebrow && renderTag()}</Hidden>
-            {unavailable.active ? renderDisabled() : renderDefault()}
-          </Box>
-        )}
+        <Box
+          display="flex"
+          alignItems={['flexStart', 'flexEnd']}
+          flexDirection="column"
+          flexShrink={0}
+          marginTop={[1, 0]}
+          marginLeft={[0, 'auto']}
+          className={progressMeter.active && tag ? styles.tag : styles.button}
+        >
+          <Hidden below="sm">{!date && !eyebrow && renderTag()}</Hidden>
+          {unavailable.active ? renderDisabled() : renderDefault()}
+        </Box>
       </Box>
       {progressMeter.active && !renderDraftStatusBar && renderProgressMeter()}
-
-      {renderDraftStatusBar && (
+      {progressMeter.active && renderDraftStatusBar && (
         <Box
           width="full"
           paddingTop={[2, 2, 2, 3]}

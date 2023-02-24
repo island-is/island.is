@@ -7,12 +7,34 @@ import isArray from 'lodash/isArray'
 import { AnswerValidationConstants, PARENTAL_LEAVE, YES } from '../../constants'
 import { Application } from '@island.is/application/types'
 import { getApplicationAnswers } from '../parentalLeaveUtils'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 const { EMPLOYERS } = AnswerValidationConstants
 
 const validateEmployerRepeaterFields = (
   employers: EmployerRow[] | undefined,
 ): AnswerValidationError | undefined => {
   const periodDictionary = (employers as unknown) as Record<string, EmployerRow>
+
+  const verfifyPhoneNumber = (e: string | undefined) => {
+    if (e) {
+      const phoneNumber = parsePhoneNumberFromString(e, 'IS')
+      const phoneNumberStartStr = ['6', '7', '8']
+      if (phoneNumber) {
+        if (
+          !(
+            phoneNumber.isValid() &&
+            phoneNumberStartStr.some((substr) =>
+              phoneNumber.nationalNumber.startsWith(substr),
+            )
+          )
+        ) {
+          return true
+        }
+      }
+    }
+    return false
+  }
+
   const validations: ValidateField<EmployerRow>[] = [
     {
       fieldName: 'email',
@@ -20,9 +42,9 @@ const validateEmployerRepeaterFields = (
       message: errorMessages.employerEmail,
     },
     {
-      fieldName: 'ratio',
-      validationFn: (p) => !p.ratio,
-      message: errorMessages.employersRatioMissing,
+      fieldName: 'phoneNumber',
+      validationFn: (p) => verfifyPhoneNumber(p?.phoneNumber),
+      message: errorMessages.GSMPhoneNumber,
     },
   ]
 
@@ -68,13 +90,15 @@ export const validateLatestEmployerValidationSection = (
     return undefined
   }
 
-  let index = undefined
-  employers.map((e, i) => {
+  /* eslint-disable-next-line @typescript-eslint/no-inferrable-types */
+  let index: number = -1
+  employers?.map((e, i) => {
     if (!e.ratio) {
       index = i
+      return
     }
   })
-  if (index) {
+  if (index >= 0) {
     return buildError(
       errorMessages.employersRatioMissing,
       `employers[${index}].ratio`,

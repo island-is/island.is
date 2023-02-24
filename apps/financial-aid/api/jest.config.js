@@ -1,10 +1,12 @@
 module.exports = {
-  preset: '../../../jest.preset.js',
+  preset: './jest.preset.js',
+  rootDir: '../../..',
+  roots: [__dirname],
   globals: {
-    'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' },
+    'ts-jest': { tsconfig: `${__dirname}/tsconfig.spec.json` },
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../../coverage/apps/financial-aid/api',
+  coverageDirectory: '<rootDir>/coverage/apps/financial-aid/api',
   displayName: 'financial-aid-api',
   testEnvironment: 'node',
 }

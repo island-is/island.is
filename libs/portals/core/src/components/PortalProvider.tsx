@@ -2,6 +2,11 @@ import { createContext, useContext, useMemo } from 'react'
 import { useLocation, matchPath, Outlet } from 'react-router-dom'
 import { PortalModule, PortalRoute, PortalType } from '../types/portalCore'
 import { useAuth } from '@island.is/auth/react'
+import {
+  ApolloClient,
+  useApolloClient,
+  NormalizedCacheObject,
+} from '@apollo/client'
 
 export type PortalMeta = {
   portalType: PortalType
@@ -28,6 +33,7 @@ export const PortalProvider = ({
 }: PortalProviderProps) => {
   const { pathname } = useLocation()
   const { userInfo } = useAuth()
+  const client = useApolloClient() as ApolloClient<NormalizedCacheObject>
 
   const activeModule = useMemo(
     () =>
@@ -37,6 +43,7 @@ export const PortalProvider = ({
               // Get all routes for the module
               .routes({
                 userInfo,
+                client,
               })
               // Extract the path from each route
               .map(({ path }) => path)

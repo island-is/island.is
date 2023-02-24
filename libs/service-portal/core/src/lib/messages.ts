@@ -481,6 +481,10 @@ export const m = defineMessages({
     id: 'service.portal:search-placeholder',
     defaultMessage: 'Sláðu inn leitarorð',
   },
+  searchByNationalId: {
+    id: 'service.portal:search-by-national-id',
+    defaultMessage: 'Leita eftir kennitölu',
+  },
   actions: {
     id: 'service.portal:actions',
     defaultMessage: 'Aðgerðir',
@@ -857,5 +861,9 @@ export const m = defineMessages({
     id: 'service.portal:air-discount',
     defaultMessage: 'Loftbrú',
     description: 'Airfare discount',
+  },
+  sessions: {
+    id: 'service.portal:sessions',
+    defaultMessage: 'Notkun',
   },
 })
