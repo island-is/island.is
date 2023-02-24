@@ -642,11 +642,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         on: {
           [DefaultEvents.REJECT]: [
             {
-              cond: previousStateApproved,
+              cond: (application) => goToState(application, States.APPROVED),
               target: States.APPROVED,
             },
             {
-              cond: previousStateVinnumalastofnunApproval,
+              cond: (application) =>
+                goToState(application, States.VINNUMALASTOFNUN_APPROVAL),
               target: States.VINNUMALASTOFNUN_APPROVAL,
             },
             {
