@@ -36,7 +36,7 @@ import {
 import * as styles from './GrantAccess.css'
 
 const GrantAccess = () => {
-  useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
+  useNamespaces(['sp.access-control-delegations'])
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
   const [name, setName] = useState('')
@@ -56,12 +56,7 @@ const GrantAccess = () => {
   ] = useCreateAuthDelegationMutation()
 
   const noUserFoundToast = () => {
-    toast.error(
-      formatMessage({
-        id: 'sp.settings-access-control:grant-identity-error',
-        defaultMessage: 'Enginn notandi fannst með þessa kennitölu.',
-      }),
-    )
+    toast.error(formatMessage(m.grantIdentityError))
   }
 
   const [getIdentity, { data, loading: queryLoading }] = useIdentityLazyQuery({
@@ -129,12 +124,7 @@ const GrantAccess = () => {
         )
       }
     } catch (error) {
-      toast.error(
-        formatMessage({
-          id: 'sp.settings-access-control:grant-create-error',
-          defaultMessage: 'Ekki tókst að búa til aðgang fyrir þennan notanda.',
-        }),
-      )
+      toast.error(formatMessage(m.grantCreateError))
     }
   })
 
@@ -154,26 +144,16 @@ const GrantAccess = () => {
   return (
     <>
       <IntroHeader
-        title={formatMessage({
-          id: 'sp.access-control-delegations:grant-title',
-          defaultMessage: 'Veita aðgang',
-        })}
-        intro={defineMessage({
-          id: 'sp.access-control-delegations:grant-intro',
-          defaultMessage:
-            'Hér getur þú gefið öðrum aðgang til að sýsla með þín gögn hjá island.is',
-        })}
-        marginBottom={1}
+        title={formatMessage(m.grantTitle)}
+        intro={defineMessage(m.grantIntro)}
+        marginBottom={4}
       />
       <div className={styles.container}>
         <FormProvider {...methods}>
           <form onSubmit={onSubmit}>
             <Box display="flex" flexDirection="column" rowGap={[5, 6]}>
               <IdentityCard
-                label={formatMessage({
-                  id: 'sp.access-control-delegations:delegation-to',
-                  defaultMessage: 'Aðgangsveitandi',
-                })}
+                label={formatMessage(m.accessOwner)}
                 title={userInfo.profile.name}
                 description={formatNationalId(userInfo.profile.nationalId)}
                 color="blue"
@@ -184,11 +164,7 @@ const GrantAccess = () => {
                     name="name"
                     defaultValue={name}
                     aria-live="assertive"
-                    label={formatMessage({
-                      id:
-                        'sp.access-control-delegations:grant-form-access-holder',
-                      defaultMessage: 'Kennitala aðgangshafa',
-                    })}
+                    label={formatMessage(m.grantFormAccessHolder)}
                     backgroundColor="blue"
                     size="md"
                   />
@@ -202,10 +178,7 @@ const GrantAccess = () => {
                     rules={{
                       required: {
                         value: true,
-                        message: formatMessage({
-                          id: 'sp.settings-access-control:grant-required-ssn',
-                          defaultMessage: 'Þú þarft að setja inn kennitölu',
-                        }),
+                        message: formatMessage(m.grantRequiredSsn),
                       },
                       validate: {
                         value: (value: number) => {
@@ -213,23 +186,14 @@ const GrantAccess = () => {
                             value.toString().length === 10 &&
                             !kennitala.isValid(value)
                           ) {
-                            return formatMessage({
-                              id:
-                                'sp.settings-access-control:grant-invalid-ssn',
-                              defaultMessage:
-                                'Kennitalan er ekki gild kennitala',
-                            })
+                            return formatMessage(m.grantInvalidSsn)
                           }
                         },
                       },
                     }}
                     type="tel"
                     format="######-####"
-                    label={formatMessage({
-                      id:
-                        'sp.access-control-delegations:grant-form-access-holder',
-                      defaultMessage: 'Kennitala aðgangshafa',
-                    })}
+                    label={formatMessage(m.grantFormAccessHolder)}
                     placeholder={'000000-0000'}
                     error={errors.toNationalId?.message}
                     onChange={(value) => {
@@ -264,10 +228,7 @@ const GrantAccess = () => {
                     id="domainName"
                     name="domainName"
                     label={formatMessage(m.accessControl)}
-                    placeholder={formatMessage({
-                      id: 'sp.access-control-delegations:choose-domain',
-                      defaultMessage: 'Veldu kerfi',
-                    })}
+                    placeholder={formatMessage(m.chooseDomain)}
                     error={errors.domainName?.message}
                     options={options}
                     onSelect={(option) => {
@@ -280,11 +241,7 @@ const GrantAccess = () => {
                     rules={{
                       required: {
                         value: true,
-                        message: formatMessage({
-                          id:
-                            'sp.access-control-delegations:grant-required-domain',
-                          defaultMessage: 'Skylda er að velja aðgangsstýringu',
-                        }),
+                        message: formatMessage(m.grantRequiredDomain),
                       },
                     }}
                   />
@@ -293,11 +250,7 @@ const GrantAccess = () => {
             </Box>
             <Box display="flex" flexDirection="column" rowGap={5} marginTop={5}>
               <Text variant="small">
-                {formatMessage({
-                  id: 'sp.access-control-delegations:next-step-description',
-                  defaultMessage:
-                    'Í næsta skrefi velurðu hvaða gögn viðkomandi getur skoðað eða sýslað með.',
-                })}
+                {formatMessage(m.grantNextStepDescription)}
               </Text>
               <Box marginBottom={7}>
                 <DelegationsFormFooter
@@ -305,10 +258,7 @@ const GrantAccess = () => {
                   loading={mutationLoading}
                   onCancel={() => navigate(DelegationPaths.Delegations)}
                   showShadow={false}
-                  confirmLabel={formatMessage({
-                    id: 'sp.access-control-delegations:choose-access-rights',
-                    defaultMessage: 'Velja réttindi',
-                  })}
+                  confirmLabel={formatMessage(m.grantChoosePermissions)}
                   confirmIcon="arrowForward"
                 />
               </Box>

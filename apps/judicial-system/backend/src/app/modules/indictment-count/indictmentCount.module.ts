@@ -13,5 +13,6 @@ import { IndictmentCountController } from './indictmentCount.controller'
   ],
   controllers: [IndictmentCountController],
   providers: [IndictmentCountService],
+  exports: [IndictmentCountService],
 })
 export class IndictmentCountModule {}

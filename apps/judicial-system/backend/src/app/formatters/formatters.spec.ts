@@ -23,7 +23,6 @@ import {
   formatPrisonCourtDateEmailNotification,
   stripHtmlTags,
   formatDefenderCourtDateEmailNotification,
-  formatPrisonRulingEmailNotification,
   formatCourtRevokedSmsNotification,
   formatPrisonRevokedEmailNotification,
   formatDefenderRevokedEmailNotification,
@@ -1377,68 +1376,6 @@ describe('formatDefenderCourtDateLinkEmailNotification', () => {
     // Assert
     expect(res).toBe(
       'Sækjandi hefur valið að deila kröfu með þér sem verjanda sakbornings í máli R-77/2021.<br /><br />Þú getur nálgast gögn málsins í <a href="https://example.com/overview">Réttarvörslugátt</a> með rafrænum skilríkjum.',
-    )
-  })
-})
-
-describe('formatPrisonRulingEmailNotification', () => {
-  let formatMessage: FormatMessage
-  beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
-  })
-
-  test('should format prison ruling notification for custody', () => {
-    // Arrange
-    const courtEndTime = new Date('2020-12-20T13:32')
-    const caseType = CaseType.CUSTODY
-
-    // Act
-    const res = formatPrisonRulingEmailNotification(
-      formatMessage,
-      caseType,
-      courtEndTime,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í gæsluvarðhald í héraðsdómi 20. desember 2020, auk þingbókar þar sem úrskurðarorðin koma fram.',
-    )
-  })
-
-  test('should format prison ruling notification when date is missing', () => {
-    // Arrange
-    const courtEndTime = undefined
-    const caseType = CaseType.ADMISSION_TO_FACILITY
-
-    // Act
-    const res = formatPrisonRulingEmailNotification(
-      formatMessage,
-      caseType,
-      courtEndTime,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í vistun á viðeigandi stofnun í héraðsdómi á ótilgreindum tíma, auk þingbókar þar sem úrskurðarorðin koma fram.',
-    )
-  })
-
-  test('should format prison ruling notification for admission to facility', () => {
-    // Arrange
-    const courtEndTime = new Date('2020-12-20T13:32')
-    const caseType = CaseType.ADMISSION_TO_FACILITY
-
-    // Act
-    const res = formatPrisonRulingEmailNotification(
-      formatMessage,
-      caseType,
-      courtEndTime,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í vistun á viðeigandi stofnun í héraðsdómi 20. desember 2020, auk þingbókar þar sem úrskurðarorðin koma fram.',
     )
   })
 })
