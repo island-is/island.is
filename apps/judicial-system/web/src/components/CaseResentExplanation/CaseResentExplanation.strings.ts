@@ -1,6 +1,5 @@
 import { defineMessage } from 'react-intl'
 
-// Strings on signed verdict overview screen
 export const caseResentExplanation = {
   title: defineMessage({
     id: 'judicial.system.core:case_resent_explanation.title',
