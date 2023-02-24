@@ -56,6 +56,9 @@
       ],
       "@island.is/api/domains/assets": ["libs/api/domains/assets/src/index.ts"],
       "@island.is/api/domains/auth": ["libs/api/domains/auth/src/index.ts"],
+      "@island.is/api/domains/auth-admin": [
+        "libs/api/domains/auth-admin/src/index.ts"
+      ],
       "@island.is/api/domains/communications": [
         "libs/api/domains/communications/src/index.ts"
       ],
