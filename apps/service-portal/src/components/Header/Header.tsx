@@ -5,11 +5,12 @@ import {
   Button,
   Logo,
   FocusableBox,
+  Icon,
 } from '@island.is/island-ui/core'
 import * as styles from './Header.css'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
-import { UserMenu } from '@island.is/shared/components'
+import { UserLanguageSwitcher, UserMenu } from '@island.is/shared/components'
 import { m } from '@island.is/service-portal/core'
 import { Link, useNavigate } from 'react-router-dom'
 import { useListDocuments } from '@island.is/service-portal/graphql'
@@ -17,11 +18,14 @@ import cn from 'classnames'
 import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
 import { PortalPageLoader } from '@island.is/portals/core'
+import { useAuth } from '@island.is/auth/react'
 
 interface Props {
   position: number
+  sideMenuOpen: boolean
+  setSideMenuOpen: (set: boolean) => void
 }
-export const Header = ({ position }: Props) => {
+export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
   const { formatMessage } = useLocale()
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const { unreadCounter } = useListDocuments()
@@ -29,10 +33,26 @@ export const Header = ({ position }: Props) => {
   const { width } = useWindowSize()
 
   const isMobile = width < theme.breakpoints.md
-
+  const { userInfo: user } = useAuth()
   const badgeActive: keyof typeof styles.badge =
     unreadCounter > 0 ? 'active' : 'inactive'
 
+  const closeButton = () => {
+    return (
+      <FocusableBox
+        display="flex"
+        alignItems="center"
+        component="button"
+        onClick={() => setSideMenuOpen(false)}
+        padding={1}
+        borderRadius="circle"
+        background="blue100"
+        className={styles.closeButton}
+      >
+        <Icon icon="close" color="blue400" />
+      </FocusableBox>
+    )
+  }
   return (
     <div className={styles.placeholder}>
       <PortalPageLoader />
@@ -77,23 +97,32 @@ export const Header = ({ position }: Props) => {
                   <Box
                     borderRadius="circle"
                     className={cn(styles.badge[badgeActive])}
-                  ></Box>
+                  />
                 </Box>
-                <Box marginRight={[1, 2]}>
-                  <Button
-                    variant="utility"
-                    colorScheme="white"
-                    icon="dots"
-                    onClick={() => navigate('/')}
-                  >
-                    {!isMobile && formatMessage(m.overview)}
-                  </Button>
-                </Box>
+
                 <UserMenu
                   fullscreen
                   setUserMenuOpen={setUserMenuOpen}
                   userMenuOpen={userMenuOpen}
                 />
+
+                {!sideMenuOpen ? (
+                  <Box marginLeft={[1, 2]}>
+                    <Button
+                      variant="utility"
+                      colorScheme="white"
+                      icon="dots"
+                      onClick={() => setSideMenuOpen(true)}
+                    >
+                      {!isMobile && formatMessage(m.overview)}
+                    </Button>
+                  </Box>
+                ) : (
+                  <Box display="flex" flexDirection="row" alignItems="center">
+                    {user && <UserLanguageSwitcher user={user} />}
+                    {closeButton()}
+                  </Box>
+                )}
               </Box>
             </Hidden>
           </Box>

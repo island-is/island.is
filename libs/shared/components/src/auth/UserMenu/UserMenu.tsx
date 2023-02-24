@@ -13,7 +13,6 @@ type UserMenuProps = {
   userMenuOpen?: boolean
   iconOnlyMobile?: boolean
   showLanguageSwitcher?: boolean
-  showLanguageButton?: boolean
   showActorButton?: boolean
 }
 
@@ -23,8 +22,7 @@ export const UserMenu = ({
   userMenuOpen,
   small = false,
   setUserMenuOpen,
-  showLanguageSwitcher = false,
-  showLanguageButton = true,
+  showLanguageSwitcher = true,
   showActorButton = true,
   iconOnlyMobile = false,
 }: UserMenuProps) => {
@@ -77,7 +75,6 @@ export const UserMenu = ({
         }}
         fullscreen={fullscreen}
         showDropdownLanguage={showDropdownLanguage}
-        showLanguageButton={showLanguageButton}
         showActorButton={showActorButton}
       />
     </Box>

@@ -32,7 +32,6 @@ interface UserDropdownProps {
   fullscreen: boolean
   showActorButton: boolean
   showDropdownLanguage: boolean
-  showLanguageButton: boolean
 }
 
 export const UserDropdown = ({
@@ -44,7 +43,6 @@ export const UserDropdown = ({
   fullscreen,
   showActorButton,
   showDropdownLanguage,
-  showLanguageButton,
 }: UserDropdownProps) => {
   const { formatMessage, changeLanguage, lang } = useLocale()
   const [updateUserProfileMutation] = useUpdateUserProfileMutation()
@@ -162,21 +160,6 @@ export const UserDropdown = ({
               showActorButton={showActorButton}
             />
           </Box>
-
-          {showLanguageButton && (
-            <Box paddingTop={1}>
-              <UserDropdownItem
-                onClick={() => handleLanguageChange()}
-                text={
-                  lang === 'is'
-                    ? formatMessage(sharedMessages.switchToEnglish)
-                    : formatMessage(sharedMessages.switchToIcelandic)
-                }
-                icon={lang === 'is' ? { icon: 'en' } : { icon: 'is' }}
-                data-testid="language-switcher-button"
-              />
-            </Box>
-          )}
 
           {(!isDelegation || isProcurationHolder) && (
             <Box paddingTop={1}>

@@ -130,7 +130,11 @@ export const Layout: FC = ({ children }) => {
         {globalBanners.length > 0 && (
           <GlobalAlertBannerSection ref={ref} banners={globalBanners} />
         )}
-        <Header position={height ? height : 0} />
+        <Header
+          setSideMenuOpen={(set: boolean) => setSideMenuOpen(set)}
+          sideMenuOpen={sideMenuOpen}
+          position={height ? height : 0}
+        />
 
         {!isDashboard && !isMailbox && activeParent && (
           <SidebarLayout
