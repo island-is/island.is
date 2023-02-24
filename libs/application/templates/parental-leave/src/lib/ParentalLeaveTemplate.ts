@@ -1573,15 +1573,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         if (e === 'xstate.init') {
           return context
         }
-
         if (
           e === 'APPROVE' &&
           state === 'residenceGrantApplicationNoBirthDate'
         ) {
-          return context
-        }
-        if (e === 'APPROVE' && state === 'residenceGrantApplication') {
-          set(answers, 'previousState', state)
           return context
         }
         if (e === 'REJECT' && state === 'residenceGrantApplication') {
