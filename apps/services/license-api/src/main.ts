@@ -2,6 +2,7 @@ import { bootstrap } from '@island.is/infra-nest-server'
 
 import { AppModule } from './app/app.module'
 import { openApi } from './openApi'
+import { deleteMe } from './deleteme'
 
 bootstrap({
   appModule: AppModule,
