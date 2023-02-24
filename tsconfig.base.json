@@ -30,9 +30,6 @@
       "@island.is/air-discount-scheme/types": [
         "libs/air-discount-scheme/types/src/index.ts"
       ],
-      "@island.is/samradsgatt/*": [
-        "apps/samradsgatt/*"
-      ],
       "@island.is/api-catalogue/consts": [
         "libs/api-catalogue/consts/src/index.ts"
       ],
@@ -622,6 +619,7 @@
       "@island.is/regulations": ["libs/regulations/src/index.ts"],
       "@island.is/regulations/*": ["libs/regulations/src/sub/*"],
       "@island.is/residence-history": ["libs/residence-history/src/index.ts"],
+      "@island.is/samradsgatt/*": ["apps/samradsgatt/*"],
       "@island.is/service-portal/air-discount": [
         "libs/service-portal/air-discount/src/index.ts"
       ],
