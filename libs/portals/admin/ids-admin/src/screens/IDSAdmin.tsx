@@ -1,5 +1,5 @@
 import { IntroHeader } from '@island.is/portals/core'
-import DomainList from '../components/DomainList/DomainList'
+import TenantsList from '../components/TenantsList/TenantsList'
 
 const IDSAdmin = () => {
   return (
@@ -8,7 +8,7 @@ const IDSAdmin = () => {
         title="Innskráningarkerfi"
         intro="Veldu það domain sem þú villt skoða frekar"
       />
-      <DomainList />
+      <TenantsList />
     </div>
   )
 }

@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Filter,
   FilterInput,
   GridContainer,
@@ -10,23 +9,22 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from './DomainList.css'
+import * as styles from './TenantsList.css'
 import React, { useState } from 'react'
-import { useDomainsListQuery } from './DomainsList.generated'
 import { toast } from 'react-toastify'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { AuthAdminTenant } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
+import { useTenantsListQuery } from './TenantsList.generated'
 
-const DomainList = () => {
-  const navigate = useNavigate()
+const TenantsList = () => {
   const { formatMessage } = useLocale()
 
   const [inputSearchValue, setInputSearchValue] = useState('')
   const [tenantList, setTenantList] = useState<AuthAdminTenant[]>([])
 
-  const { data, loading, error } = useDomainsListQuery({
+  const { data, loading, error } = useTenantsListQuery({
     onCompleted: (data) => {
       setTenantList(data?.authAdminTenants?.data as AuthAdminTenant[])
     },
@@ -41,10 +39,10 @@ const DomainList = () => {
     if (value.length > 0) {
       const filteredList = tenantList.filter((tenant) => {
         return (
-          tenant.mergedEnvironment.displayName[0].value
+          tenant.defaultEnvironment.displayName[0].value
             .toLowerCase()
             .includes(value.toLowerCase()) ||
-          tenant.mergedEnvironment.id
+          tenant.defaultEnvironment.id
             .toLowerCase()
             .includes(value.toLowerCase())
         )
@@ -112,40 +110,11 @@ const DomainList = () => {
                     <Box>
                       <Stack space={1}>
                         <Text variant={'h3'} color={'blue400'}>
-                          {item.mergedEnvironment.displayName[0].value}
+                          {item.defaultEnvironment.displayName[0].value}
                         </Text>
                         <Text variant={'default'}>
-                          {item.mergedEnvironment.name}
+                          {item.defaultEnvironment.name}
                         </Text>
-                        <Box
-                          display={'flex'}
-                          flexDirection={'row'}
-                          columnGap={'gutter'}
-                        >
-                          <Button
-                            onClick={(e) => {
-                              e.preventDefault()
-                              navigate(`/innskraningarkerfi/${item.id}/`)
-                            }}
-                            size="small"
-                            variant="text"
-                          >
-                            {item.mergedEnvironment.applicationCount +
-                              ' applications'}
-                          </Button>
-                          <Button
-                            onClick={(e) => {
-                              e.preventDefault()
-                              navigate(
-                                `/innskraningarkerfi/${item.id}/vefthjonustur`,
-                              )
-                            }}
-                            size="small"
-                            variant="text"
-                          >
-                            {item.mergedEnvironment.apiCount + ' APIs'}
-                          </Button>
-                        </Box>
                       </Stack>
                     </Box>
                     <Box
@@ -154,7 +123,7 @@ const DomainList = () => {
                       alignItems={'flexEnd'}
                       justifyContent={'flexEnd'}
                     >
-                      {item.mergedEnvironment.environment.map((tag) => (
+                      {item.availableEnvironments.map((tag) => (
                         <Box margin={'smallGutter'}>
                           <Tag variant="purple" outlined>
                             {tag}
@@ -173,4 +142,4 @@ const DomainList = () => {
   )
 }
 
-export default DomainList
+export default TenantsList

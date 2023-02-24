@@ -9,7 +9,7 @@ import {
 } from '@island.is/island-ui/core'
 import { Link, useParams } from 'react-router-dom'
 import MockApplications from '../../lib/MockApplications'
-import * as styles from '../DomainList/DomainList.css'
+import * as styles from '../TenantsList/TenantsList.css'
 import React from 'react'
 
 const Applications = () => {
@@ -29,7 +29,7 @@ const Applications = () => {
       <Box paddingTop={'gutter'}>
         <Stack space={[1, 1, 2, 2]}>
           {MockApplications.map((item) => (
-            <GridRow>
+            <GridRow key={item.id}>
               <Link
                 className={styles.fill}
                 to={`/innskraningarkerfi/${tenant}/forrit/${item.id}/`}

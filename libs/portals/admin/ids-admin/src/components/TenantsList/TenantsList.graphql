@@ -1,9 +1,10 @@
 # Write your query or mutation here
-query DomainsList {
+query TenantsList {
   authAdminTenants {
     data {
       id
-      mergedEnvironment {
+      availableEnvironments
+      defaultEnvironment {
         id
         name
         environment
@@ -11,8 +12,6 @@ query DomainsList {
           locale
           value
         }
-        applicationCount
-        apiCount
       }
     }
   }
