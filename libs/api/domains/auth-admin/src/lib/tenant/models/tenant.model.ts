@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { Environment } from '../../models/environment'
 
 import { TenantEnvironment } from './tenant-environment.model'
-import { TenantMergedEnvironment } from './tenant-merged-environment.model'
 
 @ObjectType('AuthAdminTenant')
 export class Tenant {
@@ -11,6 +11,9 @@ export class Tenant {
   @Field(() => [TenantEnvironment])
   environments!: TenantEnvironment[]
 
-  @Field(() => TenantMergedEnvironment)
-  mergedEnvironment!: TenantMergedEnvironment
+  @Field(() => [Environment])
+  availableEnvironments!: Environment[]
+
+  @Field(() => TenantEnvironment)
+  defaultEnvironment!: TenantEnvironment
 }
