@@ -1326,6 +1326,13 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       return
     }
 
+    if (
+      previousState === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
+      previousState === States.VINNUMALASTOFNUN_APPROVAL ||
+      previousState === States.APPROVED
+    ) {
+      return
+    }
     const nationalRegistryId = application.applicant
     const attachments = await this.getAttachments(application)
 

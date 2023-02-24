@@ -113,3 +113,14 @@ export function previousStateVinnumalastofnunApproval(
   const { previousState } = getApplicationAnswers(application.answers)
   return previousState === 'vinnumalastofnunApproval'
 }
+export function goToState(
+  applicationContext: ApplicationContext,
+  state: States,
+) {
+  const { previousState } = getApplicationAnswers(
+    applicationContext.application.answers,
+  )
+  if (previousState === state) return true
+  return false
+
+}

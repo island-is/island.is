@@ -41,6 +41,7 @@ import { parentalLeaveFormMessages, statesMessages } from './messages'
 import {
   allEmployersHaveApproved,
   findActionName,
+  goToState,
   hasDateOfBirth,
   hasEmployer,
   needsOtherParentApproval,
@@ -443,7 +444,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_APPROVAL]: {
-        entry: ['assignToVMST', 'setNavId', 'removeNullPeriod'],
+        entry: [
+          'assignToVMST',
+          'setNavId',
+          'removeNullPeriod',
+          'removePreviousState',
+        ],
         exit: [
           'clearAssignees',
           'setNavId',
@@ -743,7 +749,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       //   },
       // },
       [States.APPROVED]: {
-        entry: 'assignToVMST',
+        entry: ['assignToVMST', 'removePreviousState'],
         exit: 'setPreviousState',
         meta: {
           name: States.APPROVED,
@@ -855,13 +861,25 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
           [DefaultEvents.ABORT]: [
             {
+              cond: (application) => goToState(application, States.APPROVED),
               target: States.APPROVED,
+            },
+            {
+              cond: (application) =>
+                goToState(application, States.VINNUMALASTOFNUN_APPROVAL),
+              target: States.VINNUMALASTOFNUN_APPROVAL,
+            },
+            {
+              target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
             },
           ],
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS]: {
-        exit: 'setEmployerReviewerNationalRegistryId',
+        exit: [
+          'setEmployerReviewerNationalRegistryId',
+          'restorePeriodsFromTemp',
+        ],
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
           status: 'inprogress',
@@ -895,7 +913,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.EMPLOYER_APPROVE_EDITS]: {
         entry: ['assignToVMST', 'removeNullPeriod'],
-        exit: ['clearAssignees', 'setIsApprovedOnEmployer'],
+        exit: [
+          'clearAssignees',
+          'setIsApprovedOnEmployer',
+          'restorePeriodsFromTemp',
+        ],
         meta: {
           name: States.EMPLOYER_APPROVE_EDITS,
           status: 'inprogress',
@@ -1003,7 +1025,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.VINNUMALASTOFNUN_APPROVE_EDITS]: {
         entry: [
           'assignToVMST',
-          'removeNullPeriod',
+          'removeNullPeriod', 'removePreviousState',
           'setHasAppliedForReidenceGrant',
         ],
         exit: [
@@ -1131,7 +1153,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
        * Restore the periods to their original state from temp.
        */
       restorePeriodsFromTemp: assign((context, event) => {
-        if (event.type !== DefaultEvents.ABORT) {
+        if (
+          !(
+            event.type === DefaultEvents.ABORT ||
+            event.type === DefaultEvents.EDIT
+          )
+        ) {
           return context
         }
 
@@ -1537,6 +1564,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           assignees: [],
         },
       })),
+      removePreviousState: assign((context) => {
+        const { application } = context
+
+        unset(application.answers, 'previousState')
+        return context
+      }),
+ 
       setPreviousState: assign((context, event) => {
         const { application } = context
         const { state } = application
@@ -1573,7 +1607,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         ) {
           set(answers, 'hasAppliedForReidenceGrant', YES)
         }
-
         return context
       }),
       setActionName: assign((context) => {
