@@ -6,6 +6,7 @@ import {
   Box,
   BreadcrumbsDeprecated as Breadcrumbs,
   Hidden,
+  Icon,
   Tag,
   TagProps,
 } from '@island.is/island-ui/core'
@@ -17,7 +18,7 @@ import {
 
 import { isDefined } from '@island.is/shared/utils'
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
-
+import * as styles from './ContentBreadcrumbs.css'
 interface ContentBreadcrumb {
   name: string | MessageDescriptor
   path?: string
@@ -106,12 +107,18 @@ const ContentBreadcrumbs: FC<{
       paddingBottom={[2, 3]}
       paddingTop={[1, 1, 0]}
     >
-      <Box paddingTop={0}>
+      <Box paddingTop={0} position="relative">
         <Breadcrumbs color="blue400" separatorColor="blue400">
           {items.map((item, index) =>
             isDefined(item.path) && !item.hidden ? (
               <Link key={index} to={item.path}>
-                {formatMessage(item.name)}
+                {index === 0 ? (
+                  <div className={styles.dots}>
+                    <Icon icon="dots" size="small" />
+                  </div>
+                ) : (
+                  formatMessage(item.name)
+                )}
               </Link>
             ) : null,
           )}

@@ -24,7 +24,7 @@ export const rootNavigationItem: PortalNavigationItem = {
   systemRoute: true,
   path: ServicePortalPaths.Root,
   icon: {
-    icon: 'home',
+    icon: 'dots',
   },
 }
 
