@@ -15,7 +15,6 @@ import * as styles from './HeroBanner.css'
 import { HeroLogo } from '../svg'
 import { StatisticBox } from '..'
 import HeroTiles from './HeroTiles'
-// import Splash from '../svg/Splash'
 import SplashSmall from '../svg/SplashSmall'
 
 export const HeroBanner = () => {
@@ -63,14 +62,9 @@ export const HeroBanner = () => {
             span={['12/12', '12/12', '12/12', '6/12']}
             order={[1, 1, 1, 2, 2]}
           >
-            {/* <Hidden below="lg"> */}
             <Box className={styles.bg}>
               <SplashSmall />
             </Box>
-            {/* <Box style={{ width: 432, height: 445 }}> */}
-            {/* <SchoolIllustration width="238" height="188" /> */}
-            {/* </Box> */}
-            {/* </Hidden> */}
             <Box className={styles.alignTiles}>
               <HeroTiles space={2} columns={[1, 1, 1, 2, 2]}>
                 <StatisticBox label="Mál til umsagnar" statistic="32 mál" />
