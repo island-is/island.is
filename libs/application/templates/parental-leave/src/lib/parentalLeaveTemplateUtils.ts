@@ -88,29 +88,13 @@ export function findActionName(context: ApplicationContext) {
   return 'period' // Have default on period so we always reset actionName
 }
 
-export function isPreviousStateApproved(context: ApplicationContext) {
-  const { application } = context
-  const { previousState } = getApplicationAnswers(application.answers)
-
-  return previousState === States.APPROVED
-}
-
-export function isPreviousStateVinnumalastofnunApproval(
-  context: ApplicationContext,
+export function goToState(
+  applicationContext: ApplicationContext,
+  state: States,
 ) {
-  const { application } = context
-  const { previousState } = getApplicationAnswers(application.answers)
-
-  return previousState === States.VINNUMALASTOFNUN_APPROVAL
+  const { previousState } = getApplicationAnswers(
+    applicationContext.application.answers,
+  )
+  if (previousState === state) return true
+  return false
 }
-
-// export function goToState(
-//   applicationContext: ApplicationContext,
-//   state: States,
-// ) {
-//   const { previousState } = getApplicationAnswers(
-//     applicationContext.application.answers,
-//   )
-//   if (previousState === state) return true
-//   return false
-// }
