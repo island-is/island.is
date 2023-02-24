@@ -3,7 +3,7 @@ import { m } from './messages'
 import { IDSAdminPaths } from './paths'
 
 export const domainNav: PortalNavigationItem = {
-  name: 'Domains',
+  name: m.tenants,
   path: IDSAdminPaths.IDSAdminDomains,
   description: m.idsAdmin,
   activeIfExact: true,

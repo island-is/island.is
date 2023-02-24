@@ -2,7 +2,6 @@
   "root": "libs/portals/admin/ids-admin",
   "sourceRoot": "libs/portals/admin/ids-admin/src",
   "projectType": "library",
-  "tags": [],
   "targets": {
     "lint": {
       "executor": "@nrwl/linter:eslint",
@@ -13,6 +12,13 @@
         ]
       }
     },
+    "schemas/codegen": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "output": "libs/portals/admin/ids-admin/src/**/*.generated.ts",
+        "command": "graphql-codegen --config libs/portals/admin/ids-admin/codegen.yml"
+      }
+    },
     "test": {
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/libs/portals/admin/ids-admin"],
@@ -21,5 +27,6 @@
         "passWithNoTests": true
       }
     }
-  }
+  },
+  "tags": ["scope:portals-admin", "lib:portals-admin"]
 }

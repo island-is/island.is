@@ -3,11 +3,14 @@ import {
   Button,
   GridContainer,
   GridRow,
+  Stack,
   Tag,
-  Typography,
+  Text,
 } from '@island.is/island-ui/core'
 import { Link, useParams } from 'react-router-dom'
 import MockApplications from '../../lib/MockApplications'
+import * as styles from '../DomainList/DomainList.css'
+import React from 'react'
 
 const Applications = () => {
   const { tenant } = useParams()
@@ -16,38 +19,60 @@ const Applications = () => {
       <GridRow rowGap={3}>
         <Box display={'flex'} justifyContent={'spaceBetween'} columnGap={4}>
           <Box>
-            <Typography variant={'h2'}>Applications</Typography>
-            <Typography variant={'p'}>
-              Lorem ipsum dolor sit amet consectetur. A non ut nulla vitae
-              mauris accumsan at tellus facilisi.
-            </Typography>
+            <Text variant={'h2'}>Applications</Text>
           </Box>
           <Box>
             <Button>Create Application</Button>
           </Box>
         </Box>
       </GridRow>
-      <GridRow marginTop={'gutter'}>
-        {MockApplications.map((item) => (
-          <Box
-            marginTop={'gutter'}
-            padding={'gutter'}
-            borderRadius={'large'}
-            border={'standard'}
-            width={'full'}
-          >
-            <Typography variant={'h3'}>
-              <Link to={'/innskraningarkerfi/' + tenant + '/forrit/' + item.id}>
-                {item.name}{' '}
+      <Box paddingTop={'gutter'}>
+        <Stack space={[1, 1, 2, 2]}>
+          {MockApplications.map((item) => (
+            <GridRow>
+              <Link
+                className={styles.fill}
+                to={`/innskraningarkerfi/${tenant}/forrit/${item.id}/`}
+              >
+                <Box
+                  className={styles.linkContainer}
+                  display={'flex'}
+                  borderRadius={'large'}
+                  border={'standard'}
+                  width={'full'}
+                  paddingX={4}
+                  paddingY={3}
+                  justifyContent={'spaceBetween'}
+                  alignItems={'center'}
+                >
+                  <Box>
+                    <Stack space={1}>
+                      <Text variant={'h3'} color={'blue400'}>
+                        {item.name}
+                      </Text>
+                      <Text variant={'default'}>{item.tenant}</Text>
+                    </Stack>
+                  </Box>
+                  <Box
+                    display="flex"
+                    flexDirection={['column', 'column', 'row', 'row', 'row']}
+                    alignItems={'flexEnd'}
+                    justifyContent={'flexEnd'}
+                  >
+                    {item.environmentTags.map((tag) => (
+                      <Box margin={1}>
+                        <Tag variant="purple" outlined>
+                          {tag}
+                        </Tag>
+                      </Box>
+                    ))}
+                  </Box>
+                </Box>
               </Link>
-            </Typography>
-            <Typography variant={'p'}>{item.tenant}</Typography>
-            {item.environmentTags.map((tag) => (
-              <Tag>{tag}</Tag>
-            ))}
-          </Box>
-        ))}
-      </GridRow>
+            </GridRow>
+          ))}
+        </Stack>
+      </Box>
     </GridContainer>
   )
 }

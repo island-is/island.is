@@ -5,16 +5,56 @@ import {
   FilterInput,
   GridContainer,
   GridRow,
+  LoadingDots,
   Stack,
   Tag,
-  Typography,
+  Text,
 } from '@island.is/island-ui/core'
 import * as styles from './DomainList.css'
-import MockData from '../../lib/MockData'
-import { useState } from 'react'
+import React, { useState } from 'react'
+import { useDomainsListQuery } from './DomainsList.generated'
+import { toast } from 'react-toastify'
+import { Link, useNavigate } from 'react-router-dom'
+import { AuthAdminTenant } from '@island.is/api/schema'
+import { m } from '../../lib/messages'
+import { useLocale } from '@island.is/localization'
 
 const DomainList = () => {
+  const navigate = useNavigate()
+  const { formatMessage } = useLocale()
+
   const [inputSearchValue, setInputSearchValue] = useState('')
+  const [tenantList, setTenantList] = useState<AuthAdminTenant[]>([])
+
+  const { data, loading, error } = useDomainsListQuery({
+    onCompleted: (data) => {
+      console.log(data?.authAdminTenants.data)
+      setTenantList(data?.authAdminTenants?.data as AuthAdminTenant[])
+    },
+    onError: () => {
+      toast.error(formatMessage(m.errorLoadingData))
+    },
+  })
+
+  const handleSearch = (value: string) => {
+    setInputSearchValue(value)
+
+    if (value.length > 0) {
+      const filteredList = tenantList.filter((tenant) => {
+        return (
+          tenant.mergedEnvironment.displayName[0].value
+            .toLowerCase()
+            .includes(value.toLowerCase()) ||
+          tenant.mergedEnvironment.id
+            .toLowerCase()
+            .includes(value.toLowerCase())
+        )
+      })
+      setTenantList(filteredList)
+    } else {
+      setTenantList(data?.authAdminTenants?.data as AuthAdminTenant[])
+    }
+  }
 
   return (
     <GridContainer className={styles.relative}>
@@ -24,17 +64,17 @@ const DomainList = () => {
             variant={'popover'}
             align="left"
             reverse
-            labelClear={'Hreinsa'}
-            labelClearAll={'Hreinsa allt'}
-            labelOpen={'Sía'}
-            labelClose={'Loka'}
+            labelClear={formatMessage(m.clearFilter)}
+            labelClearAll={formatMessage(m.clearAllFilters)}
+            labelOpen={formatMessage(m.openFilter)}
+            labelClose={formatMessage(m.closeFilter)}
             resultCount={0}
             filterInput={
               <FilterInput
-                placeholder={'Leita'}
+                placeholder={formatMessage(m.searchPlaceholder)}
                 name="session-nationalId-input"
                 value={inputSearchValue}
-                onChange={setInputSearchValue}
+                onChange={handleSearch}
                 backgroundColor="blue"
               />
             }
@@ -43,73 +83,92 @@ const DomainList = () => {
             }}
           />
         </GridRow>
-        <Stack space={[1, 1, 2, 2]}>
-          {MockData.map((item) => (
-            <GridRow>
-              <Box
-                onClick={() => {
-                  window.location.href = `/stjornbord/innskraningarkerfi/${item.id}/`
-                }}
-                display={'flex'}
-                borderRadius={'large'}
-                border={'standard'}
-                width={'full'}
-                paddingX={4}
-                paddingY={3}
-                justifyContent={'spaceBetween'}
-                alignItems={'center'}
-              >
-                <Box>
-                  <Stack space={1}>
-                    <Typography variant={'h3'} color={'blue400'}>
-                      {item.title}
-                    </Typography>
-                    <Typography variant={'p'}>{item.domain}</Typography>
-                    <Box
-                      display={'flex'}
-                      flexDirection={'row'}
-                      columnGap={'gutter'}
-                    >
-                      <Button
-                        onClick={() => {
-                          window.location.href = `/stjornbord/innskraningarkerfi/${item.id}/`
-                        }}
-                        size="small"
-                        variant="text"
-                      >
-                        {item.numberOfApplications + ' applications'}
-                      </Button>
-                      <Button
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          window.location.href = `/stjornbord/innskraningarkerfi/${item.id}/vefthjonustur`
-                        }}
-                        size="small"
-                        variant="text"
-                      >
-                        {item.numberOfApplications + ' APIs'}
-                      </Button>
-                    </Box>
-                  </Stack>
-                </Box>
-                <Box
-                  display="flex"
-                  flexDirection={['column', 'column', 'row', 'row', 'row']}
-                  alignItems={'flexEnd'}
-                  justifyContent={'flexEnd'}
+        {loading ? (
+          <Box display={'flex'} justifyContent={'center'}>
+            <LoadingDots large />
+          </Box>
+        ) : error ? (
+          <Box marginTop={'gutter'} display={'flex'} justifyContent={'center'}>
+            <Text>{formatMessage(m.errorLoadingData)}</Text>
+          </Box>
+        ) : (
+          <Stack space={[1, 1, 2, 2]}>
+            {tenantList.map((item) => (
+              <GridRow>
+                <Link
+                  className={styles.fill}
+                  to={`/innskraningarkerfi/${item.id}/`}
                 >
-                  {item.tags.map((tag) => (
-                    <Box margin={1}>
-                      <Tag variant="purple" outlined>
-                        {tag}
-                      </Tag>
+                  <Box
+                    className={styles.linkContainer}
+                    display={'flex'}
+                    borderRadius={'large'}
+                    border={'standard'}
+                    width={'full'}
+                    paddingX={4}
+                    paddingY={3}
+                    justifyContent={'spaceBetween'}
+                    alignItems={'center'}
+                  >
+                    <Box>
+                      <Stack space={1}>
+                        <Text variant={'h3'} color={'blue400'}>
+                          {item.mergedEnvironment.displayName[0].value}
+                        </Text>
+                        <Text variant={'default'}>
+                          {item.mergedEnvironment.name}
+                        </Text>
+                        <Box
+                          display={'flex'}
+                          flexDirection={'row'}
+                          columnGap={'gutter'}
+                        >
+                          <Button
+                            onClick={(e) => {
+                              e.preventDefault()
+                              navigate(`/innskraningarkerfi/${item.id}/`)
+                            }}
+                            size="small"
+                            variant="text"
+                          >
+                            {item.mergedEnvironment.applicationCount +
+                              ' applications'}
+                          </Button>
+                          <Button
+                            onClick={(e) => {
+                              e.preventDefault()
+                              navigate(
+                                `/innskraningarkerfi/${item.id}/vefthjonustur`,
+                              )
+                            }}
+                            size="small"
+                            variant="text"
+                          >
+                            {item.mergedEnvironment.apiCount + ' APIs'}
+                          </Button>
+                        </Box>
+                      </Stack>
                     </Box>
-                  ))}
-                </Box>
-              </Box>
-            </GridRow>
-          ))}
-        </Stack>
+                    <Box
+                      display="flex"
+                      flexDirection={['column', 'column', 'row', 'row', 'row']}
+                      alignItems={'flexEnd'}
+                      justifyContent={'flexEnd'}
+                    >
+                      {item.mergedEnvironment.environment.map((tag) => (
+                        <Box margin={'smallGutter'}>
+                          <Tag variant="purple" outlined>
+                            {tag}
+                          </Tag>
+                        </Box>
+                      ))}
+                    </Box>
+                  </Box>
+                </Link>
+              </GridRow>
+            ))}
+          </Stack>
+        )}
       </Stack>
     </GridContainer>
   )

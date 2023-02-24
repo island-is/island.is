@@ -1,0 +1,19 @@
+# Write your query or mutation here
+query DomainsList {
+  authAdminTenants {
+    data {
+      id
+      mergedEnvironment {
+        id
+        name
+        environment
+        displayName {
+          locale
+          value
+        }
+        applicationCount
+        apiCount
+      }
+    }
+  }
+}

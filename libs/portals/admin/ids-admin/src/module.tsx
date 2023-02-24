@@ -6,6 +6,7 @@ import { AdminPortalScope } from '@island.is/auth/scopes'
 import Domains from './screens/Domains'
 import Applications from './components/Applications/Applications'
 import ApplicationsScreen from './screens/ApplicationsScreen'
+import { Features } from '@island.is/react/feature-flags'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 
@@ -14,6 +15,7 @@ const allowedScopes: string[] = [AdminPortalScope.idsAdmin]
 export const idsAdminModule: PortalModule = {
   name: 'Innskráningarkerfi',
   layout: 'full',
+  featureFlag: Features.idsAdminNewPortal,
   enabled({ userInfo }) {
     return userInfo.scopes.some((scope) => allowedScopes.includes(scope))
   },
