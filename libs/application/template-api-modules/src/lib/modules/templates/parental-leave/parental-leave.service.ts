@@ -39,6 +39,7 @@ import {
   ChildInformation,
   isParentWithoutBirthParent,
   calculatePeriodLength,
+  States,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -1251,8 +1252,15 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       isSelfEmployed,
       isReceivingUnemploymentBenefits,
       applicationType,
+      previousState,
     } = getApplicationAnswers(application.answers)
-
+    if (
+      previousState === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
+      previousState === States.VINNUMALASTOFNUN_APPROVAL ||
+      previousState === States.APPROVED
+    ) {
+      return
+    }
     const nationalRegistryId = application.applicant
     const attachments = await this.getAttachments(application)
 
