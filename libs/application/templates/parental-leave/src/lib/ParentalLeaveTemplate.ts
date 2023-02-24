@@ -671,7 +671,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           CLOSED: { target: States.CLOSED },
           [DefaultEvents.EDIT]: {
             target: States.EDIT_OR_ADD_PERIODS,
-          },        },
+          },
+        },
       },
       [States.CLOSED]: {
         entry: 'clearAssignees',

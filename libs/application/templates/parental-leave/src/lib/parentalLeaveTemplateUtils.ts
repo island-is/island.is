@@ -8,7 +8,10 @@ import {
   PARENTAL_GRANT_STUDENTS,
   States,
 } from '../constants'
-import { getApplicationAnswers, requiresOtherParentApproval } from '../lib/parentalLeaveUtils'
+import {
+  getApplicationAnswers,
+  requiresOtherParentApproval,
+} from '../lib/parentalLeaveUtils'
 import { EmployerRow } from '../types'
 import { getValueViaPath } from '@island.is/application/core'
 
