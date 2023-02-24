@@ -448,7 +448,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'assignToVMST',
           'setNavId',
           'removeNullPeriod',
-          'removePreviousState',
         ],
         exit: [
           'clearAssignees',
@@ -1025,7 +1024,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.VINNUMALASTOFNUN_APPROVE_EDITS]: {
         entry: [
           'assignToVMST',
-          'removeNullPeriod', 'removePreviousState',
+          'removeNullPeriod',
           'setHasAppliedForReidenceGrant',
         ],
         exit: [
@@ -1570,7 +1569,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         unset(application.answers, 'previousState')
         return context
       }),
- 
       setPreviousState: assign((context, event) => {
         const { application } = context
         const { state } = application
@@ -1587,6 +1585,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           return context
         }
         if (e === 'APPROVE' && state === 'residenceGrantApplication') {
+          set(answers, 'previousState', state)
           return context
         }
         if (e === 'REJECT' && state === 'residenceGrantApplication') {

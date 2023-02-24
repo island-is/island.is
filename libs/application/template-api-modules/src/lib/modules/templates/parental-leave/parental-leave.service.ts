@@ -1322,14 +1322,11 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       previousState,
     } = getApplicationAnswers(application.answers)
     /* On rejecting RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE state we want to avoid calling the api */
-    if (previousState === States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE) {
-      return
-    }
-
     if (
       previousState === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
       previousState === States.VINNUMALASTOFNUN_APPROVAL ||
-      previousState === States.APPROVED
+      previousState === States.APPROVED ||
+      previousState === States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE
     ) {
       return
     }
