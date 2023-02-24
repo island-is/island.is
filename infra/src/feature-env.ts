@@ -18,7 +18,6 @@ import {
   renderHelmServices,
   renderHelmValueFileContent,
 } from './dsl/exports/helm'
-import { ServiceBuilder } from './dsl/dsl'
 
 type ChartName = 'islandis' | 'identity-server'
 
@@ -99,21 +98,9 @@ const buildIngressComment = (data: HelmService[]): string =>
     .join('\n')
 
 const buildComment = (data: Services<HelmService>): string => {
-  if (Object.values(data.ingress).length > 0) {
-    return `Feature deployment of your services will begin shortly. Your feature will be accessible here:\n\n${buildIngressComment(
-      Object.values(data),
-    )}`
-  } else {
-    return `Feature deployment of your services will begin shortly. No web endpoints defined (no ingresses were defined)`
-  }
-}
-const deployedComment = (
-  data: ServiceBuilder<any>[],
-  excluded: string[],
-): string => {
-  return `Deployed services: ${data
-    .map((d) => d.name)
-    .join(',')}. \n Excluded services: ${excluded.join(',')}`
+  return `Feature deployment successful! Access your feature here:\n\n${buildIngressComment(
+    Object.values(data),
+  )}`
 }
 
 yargs(process.argv.slice(2))
@@ -123,7 +110,7 @@ yargs(process.argv.slice(2))
     () => {},
     async (argv: Arguments) => {
       const { habitat, affectedServices, env } = parseArguments(argv)
-      const { included: featureYaml } = await getFeatureAffectedServices(
+      const featureYaml = await getFeatureAffectedServices(
         habitat,
         affectedServices.slice(),
         ExcludedFeatureDeploymentServices,
@@ -140,32 +127,23 @@ yargs(process.argv.slice(2))
       )
     },
   )
-
   .command(
     'ingress-comment',
     'get helm values file',
     () => {},
     async (argv: Arguments) => {
       const { habitat, affectedServices, env } = parseArguments(argv)
-      const {
-        included: featureYaml,
-        excluded,
-      } = await getFeatureAffectedServices(
+      const featureYaml = await getFeatureAffectedServices(
         habitat,
         affectedServices.slice(),
         ExcludedFeatureDeploymentServices,
         env,
       )
-      const affectedServicesComment = `Affected services: ${affectedServices
-        .map((s) => s.name)
-        .join(',')}`
-      const ingressComment = buildComment(
-        (await renderHelmServices(env, habitat, featureYaml, 'no-mocks'))
-          .services,
-      )
-      const includedServicesComment = deployedComment(featureYaml, excluded)
       await writeToOutput(
-        `${ingressComment}\n${affectedServicesComment}\n${includedServicesComment}`,
+        buildComment(
+          (await renderHelmServices(env, habitat, featureYaml, 'no-mocks'))
+            .services,
+        ),
         argv.output,
       )
     },
