@@ -122,5 +122,4 @@ export function goToState(
   )
   if (previousState === state) return true
   return false
-
 }

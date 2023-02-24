@@ -444,11 +444,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_APPROVAL]: {
-        entry: [
-          'assignToVMST',
-          'setNavId',
-          'removeNullPeriod',
-        ],
+        entry: ['assignToVMST', 'setNavId', 'removeNullPeriod'],
         exit: [
           'clearAssignees',
           'setNavId',
