@@ -23,7 +23,6 @@ const TenantsList = () => {
 
   const [inputSearchValue, setInputSearchValue] = useState('')
   const [tenantList, setTenantList] = useState<AuthAdminTenant[]>([])
-
   const { data, loading, error } = useTenantsListQuery({
     onCompleted: (data) => {
       setTenantList(data?.authAdminTenants?.data as AuthAdminTenant[])

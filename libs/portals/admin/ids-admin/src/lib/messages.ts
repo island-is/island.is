@@ -45,4 +45,16 @@ export const m = defineMessages({
     id: 'ap.ids-admin:apis',
     defaultMessage: 'Vefþjónustur',
   },
+  settings: {
+    id: 'ap.ids-admin:settings',
+    defaultMessage: 'Stillingar',
+  },
+  authentication: {
+    id: 'ap.ids-admin:authentication',
+    defaultMessage: 'Réttindi',
+  },
+  advancedSettings: {
+    id: 'ap.ids-admin:advanced-settings',
+    defaultMessage: 'Ítarlegar stillingar',
+  },
 })

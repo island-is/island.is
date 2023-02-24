@@ -22,7 +22,7 @@ const Applications = () => {
             <Text variant={'h2'}>Applications</Text>
           </Box>
           <Box>
-            <Button>Create Application</Button>
+            <Button size={'small'}>Create Application</Button>
           </Box>
         </Box>
       </GridRow>

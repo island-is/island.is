@@ -3,7 +3,7 @@ import { domainNav } from '../lib/navigation'
 import React from 'react'
 import Layout from '../components/Layout/Layout'
 
-const Domains = () => {
+const Tenant = () => {
   return (
     <Layout navTitle={''} navItems={domainNav}>
       <Outlet />
@@ -11,4 +11,4 @@ const Domains = () => {
   )
 }
 
-export default Domains
+export default Tenant

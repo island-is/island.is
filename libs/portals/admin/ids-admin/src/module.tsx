@@ -3,17 +3,18 @@ import { lazy } from 'react'
 import { PortalModule } from '@island.is/portals/core'
 import { IDSAdminPaths } from './lib/paths'
 import { AdminPortalScope } from '@island.is/auth/scopes'
-import Domains from './screens/Domains'
+import Tenant from './screens/Tenant'
 import Applications from './components/Applications/Applications'
 import ApplicationsScreen from './screens/ApplicationsScreen'
 import { Features } from '@island.is/react/feature-flags'
+import { m } from './lib/messages'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 
 const allowedScopes: string[] = [AdminPortalScope.idsAdmin]
 
 export const idsAdminModule: PortalModule = {
-  name: 'Innskráningarkerfi',
+  name: m.idsAdmin,
   layout: 'full',
   featureFlag: Features.idsAdminNewPortal,
   enabled({ userInfo }) {
@@ -22,44 +23,44 @@ export const idsAdminModule: PortalModule = {
   routes() {
     return [
       {
-        name: 'Innskráningarkerfi',
+        name: m.idsAdmin,
         path: IDSAdminPaths.IDSAdmin,
         element: <IDSAdmin />,
       },
       {
-        name: 'Applications',
+        name: m.applications,
         path: IDSAdminPaths.IDSAdminApplication,
         element: <ApplicationsScreen />,
         children: [
           {
-            name: 'Settings',
+            name: m.settings,
             path: IDSAdminPaths.IDSAdminApplication,
             element: <div>Settings</div>,
           },
           {
-            name: 'Authentication',
+            name: m.authentication,
             path: IDSAdminPaths.IDSAdminApplicationAuthentication,
             element: <div>Authentication</div>,
           },
           {
-            name: 'AdvancedSettings',
+            name: m.advancedSettings,
             path: IDSAdminPaths.IDSAdminApplicationAdvancedSettings,
             element: <div>AdvancedSettings</div>,
           },
         ],
       },
       {
-        name: 'Domains',
+        name: m.tenants,
         path: IDSAdminPaths.IDSAdminDomains,
-        element: <Domains />,
+        element: <Tenant />,
         children: [
           {
-            name: 'Applications',
+            name: m.applications,
             path: IDSAdminPaths.IDSAdminDomains,
             element: <Applications />,
           },
           {
-            name: 'APIs',
+            name: m.apis,
             path: IDSAdminPaths.IDSAdminDomainsAPIS,
             element: <div>APIs</div>,
           },
