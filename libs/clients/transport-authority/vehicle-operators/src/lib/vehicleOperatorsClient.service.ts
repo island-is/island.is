@@ -74,9 +74,9 @@ export class VehicleOperatorsClient {
       // we get 4xx error (instead of 200 with error messages) with the errorList in this field
       // ("body.Errors" for input validation, and "body" for data validation (in database)),
       // that is of the same class as 200 result schema
-      if (e?.body?.Errors) {
+      if (e?.body?.Errors && Array.isArray(e.body.Errors)) {
         errorList = e.body.Errors as ReturnTypeMessage[]
-      } else if (e?.body) {
+      } else if (e?.body && Array.isArray(e.body)) {
         errorList = e.body as ReturnTypeMessage[]
       } else {
         throw e

@@ -35,10 +35,7 @@ export const DelegationsDomainSelect = ({
           onDomainChange(opt)
         }
       }}
-      placeholder={formatMessage({
-        id: 'sp.access-control-delegations:choose-domain',
-        defaultMessage: 'Veldu kerfi',
-      })}
+      placeholder={formatMessage(m.chooseDomain)}
     />
   )
 }

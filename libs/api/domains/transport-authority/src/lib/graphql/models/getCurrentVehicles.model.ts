@@ -19,7 +19,13 @@ export class VehicleOwnerchangeChecksByPermno {
 }
 
 @ObjectType()
-export class VehicleOperatorChangeChecksByPermno extends VehicleOwnerchangeChecksByPermno {}
+export class VehicleOperatorChangeChecksByPermno {
+  @Field(() => Boolean, { nullable: true })
+  isDebtLess?: boolean
+
+  @Field(() => [VehicleValidationErrorMessage], { nullable: true })
+  validationErrorMessages?: VehicleValidationErrorMessage[] | null
+}
 
 @ObjectType()
 export class VehiclePlateOrderChecksByPermno {
