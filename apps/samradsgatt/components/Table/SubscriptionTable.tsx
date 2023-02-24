@@ -8,6 +8,15 @@ import {
 import * as styles from './SubscriptionTable.css'
 import { mapIsToEn } from '../../utils/helpers'
 import SubscriptionTableItem from './SubscriptionTableItem'
+import { ArrOfIdAndName, Case } from '../../types/interfaces'
+import { Area } from '../../types/enums'
+
+export interface SubscriptionTableProps {
+  data: Array<Case> | Array<ArrOfIdAndName>
+  currentTab: Area
+  subscriptionArray: Object
+  setSubscriptionArray: (obj: Object) => void
+}
 
 const Headers = {
   Mál: ['Málsnr.', 'Heiti máls'],
@@ -20,7 +29,7 @@ const SubscriptionTable = ({
   currentTab,
   subscriptionArray,
   setSubscriptionArray,
-}) => {
+}: SubscriptionTableProps) => {
   let headerKey = 0
 
   const onCheckboxChange = (id: number, action: boolean) => {
@@ -68,7 +77,7 @@ const SubscriptionTable = ({
           ))}
         </T.Head>
         <T.Body>
-          {data.map((item, idx) => (
+          {data.map((item, idx: number) => (
             <SubscriptionTableItem
               key={item.id}
               item={item}

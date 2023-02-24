@@ -1,5 +1,6 @@
 import {
   AsyncSearch,
+  AsyncSearchOption,
   Box,
   Button,
   GridColumn,
@@ -10,10 +11,27 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { Area } from '../../types/enums'
+import { ArrOfIdAndName, Case } from '../../types/interfaces'
 import DropdownSort from '../DropdownSort/DropdownSort'
 import SubscriptionTable from '../Table/SubscriptionTable'
 
-const TabContent = ({
+export interface TabContentProps {
+  data: Array<Case> | Array<ArrOfIdAndName>
+  setData: (arr: Array<any>) => void
+  currentTab: Area
+  subscriptionArray: Object
+  setSubscriptionArray: (obj: Object) => void
+  searchOptions: AsyncSearchOption[]
+  searchValue: string
+  setSearchValue: (str: string) => void
+  searchPlaceholder: string
+  label?: string
+  sortTitle: Object
+  setSortTitle: (obj: Object) => void
+}
+
+export const TabContent = ({
   data,
   setData,
   currentTab,
@@ -26,7 +44,7 @@ const TabContent = ({
   label = 'Leit',
   sortTitle,
   setSortTitle,
-}) => {
+}: TabContentProps) => {
   const onLoadMore = () => {
     console.log('clicked on load more')
   }

@@ -1,5 +1,6 @@
 import {
   AsyncSearch,
+  AsyncSearchOption,
   Box,
   GridColumn,
   GridContainer,
@@ -10,17 +11,29 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useState } from 'react'
+import { ArrOfValueAndLabel, Case } from '../../types/interfaces'
+
+export interface SearchAndFilterProps {
+  data: Array<Case>
+  setData: (arr: Array<any>) => void
+  cases: Array<Case>
+  searchValue: string
+  setSearchValue: (val: string) => void
+  PolicyAreas: Array<ArrOfValueAndLabel>
+  Institutions: Array<ArrOfValueAndLabel>
+  options?: Array<AsyncSearchOption>
+}
 
 const SearchAndFilter = ({
   data,
   setData,
-  dummycontent,
+  cases,
   searchValue,
   setSearchValue,
   PolicyAreas,
   Institutions,
   options,
-}) => {
+}: SearchAndFilterProps) => {
   const [institutionValue, setInstitutionValue] = useState('')
   const [policyAreaValue, setPolicyAreaValue] = useState('')
 
@@ -40,23 +53,23 @@ const SearchAndFilter = ({
       // check which one should be cleared
       if (isInstitutions) {
         if (policyAreaValue !== '') {
-          const filtered = dummycontent.filter(
-            (item) => item.policyArea === policyAreaValue,
+          const filtered = cases.filter(
+            (item) => item.policyAreaName === policyAreaValue,
           )
           setData(filtered)
           setInstitutionValue('')
         } else {
-          setData(dummycontent)
+          setData(cases)
         }
       } else {
         if (institutionValue !== '') {
-          const filtered = dummycontent.filter(
-            (item) => item.institution === institutionValue,
+          const filtered = cases.filter(
+            (item) => item.institutionName === institutionValue,
           )
           setData(filtered)
           setPolicyAreaValue('')
         } else {
-          setData(dummycontent)
+          setData(cases)
         }
       }
     }

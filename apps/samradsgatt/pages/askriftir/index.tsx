@@ -11,25 +11,27 @@ import {
 import TabContent from '../../components/Tab/TabContent'
 import { useEffect, useState } from 'react'
 import { Layout } from '../../components/Layout/Layout'
-import Cases from '../../utils/dummydata/api/Cases'
-import SubscriptionArray from '../../utils/dummydata/api/User/Subscriptions'
-import Types from '../../utils/dummydata/api/Types'
-import SubscriptionActionCard from '../../components/Card/SubscriptionActionCard'
-import ChosenSubscriptionCard from '../../components/Card/ChosenSubscriptionCard'
+import { Cases, SubscriptionsArray, Types } from '../../utils/dummydata'
+import {
+  SubscriptionActionCard,
+  ChosenSubscriptionCard,
+} from '../../components/Card'
+import { Area } from '../../types/enums'
+import { ArrOfIdAndName, Case } from '../../types/interfaces'
 
 const Subscriptions = () => {
   // user logged in logic needed
   const [loggedIn, setLoggedIn] = useState(false)
   // const [subscriptionEmail, setSubscriptionEmail] = useState('')
 
-  const [currentTab, setCurrentTab] = useState('Mál')
+  const [currentTab, setCurrentTab] = useState<string>('Mál')
 
   const [searchOptions, setSearchOptions] = useState<AsyncSearchOption[]>([])
-  const [searchValue, setSearchValue] = useState('')
-  const settingSearchValue = (val) => setSearchValue(val)
-  const [prevSearchValue, setPrevSearchValue] = useState('')
+  const [searchValue, setSearchValue] = useState<string>('')
+  const settingSearchValue = (val: string) => setSearchValue(val)
+  const [prevSearchValue, setPrevSearchValue] = useState<string>('')
 
-  const [casesData, setCasesData] = useState(Cases)
+  const [casesData, setCasesData] = useState<Array<Case>>(Cases)
   const Institutions = Object.entries(Types.institutions).map(([id, name]) => ({
     id,
     name,
@@ -50,7 +52,7 @@ const Subscriptions = () => {
       name,
     })),
   )
-  const [subscriptionArray, setSubscriptionArray] = useState(SubscriptionArray)
+  const [subscriptionArray, setSubscriptionArray] = useState(SubscriptionsArray)
   const settingSubscriptionArray = (newSubscriptionArray) =>
     setSubscriptionArray(newSubscriptionArray)
 
@@ -101,13 +103,13 @@ const Subscriptions = () => {
 
   const tabs = [
     {
-      id: 'Mál',
-      label: 'Mál',
+      id: Area.case,
+      label: Area.case,
       content: (
         <TabContent
           data={casesData}
-          setData={(newData) => setCasesData(newData)}
-          currentTab={'Mál'}
+          setData={(newData: Array<Case>) => setCasesData(newData)}
+          currentTab={Area.case}
           subscriptionArray={subscriptionArray}
           setSubscriptionArray={settingSubscriptionArray}
           searchOptions={searchOptions}
@@ -121,13 +123,13 @@ const Subscriptions = () => {
       disabled: false,
     },
     {
-      id: 'Stofnanir',
-      label: 'Stofnanir',
+      id: Area.institution,
+      label: Area.institution,
       content: (
         <TabContent
           data={institutionsData}
-          setData={(newData) => setInstitutionsData(newData)}
-          currentTab={'Stofnanir'}
+          setData={(newData: Array<ArrOfIdAndName>) => setInstitutionsData(newData)}
+          currentTab={Area.institution}
           subscriptionArray={subscriptionArray}
           setSubscriptionArray={settingSubscriptionArray}
           searchOptions={searchOptions}
@@ -141,13 +143,13 @@ const Subscriptions = () => {
       disabled: false,
     },
     {
-      id: 'Málefnasvið',
-      label: 'Málefnasvið',
+      id: Area.policyArea,
+      label: Area.policyArea,
       content: (
         <TabContent
           data={policyAreasData}
-          setData={(newData) => setPolicyAreasData(newData)}
-          currentTab={'Málefnasvið'}
+          setData={(newData: Array<ArrOfIdAndName>) => setPolicyAreasData(newData)}
+          currentTab={Area.policyArea}
           subscriptionArray={subscriptionArray}
           setSubscriptionArray={settingSubscriptionArray}
           searchOptions={searchOptions}
@@ -248,7 +250,7 @@ const Subscriptions = () => {
                           name: filteredItem.name,
                           caseNumber: filteredItem.caseNumber,
                           id: filteredItem.id,
-                          area: 'Mál',
+                          area: Area.case,
                         }}
                         subscriptionArray={subscriptionArray}
                         setSubscriptionArray={settingSubscriptionArray}
@@ -266,7 +268,7 @@ const Subscriptions = () => {
                         data={{
                           name: filteredItem.name,
                           id: filteredItem.id,
-                          area: 'Stofnanir',
+                          area: Area.institution,
                         }}
                         subscriptionArray={subscriptionArray}
                         setSubscriptionArray={settingSubscriptionArray}
@@ -284,7 +286,7 @@ const Subscriptions = () => {
                         data={{
                           name: filteredItem.name,
                           id: filteredItem.id,
-                          area: 'Málefnasvið',
+                          area: Area.policyArea,
                         }}
                         subscriptionArray={subscriptionArray}
                         setSubscriptionArray={settingSubscriptionArray}

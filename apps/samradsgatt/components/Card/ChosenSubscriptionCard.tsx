@@ -2,12 +2,24 @@ import { Box, Checkbox, Icon, Text } from '@island.is/island-ui/core'
 import { mapIsToEn } from '../../utils/helpers'
 import { useState } from 'react'
 import SubscriptionChoices from '../SubscriptionChoices/SubscriptionChoices'
+import { Area } from '../../types/enums'
 
-const ChosenSubscriptionCard = ({
+export interface ChosenSubscriptionCardProps {
+  data: {
+    name: string
+    caseNumber?: string
+    id: any,
+    area: Area
+  },
+  subscriptionArray: Object,
+  setSubscriptionArray: (arr: Object) => void
+}
+
+export const ChosenSubscriptionCard = ({
   data,
   subscriptionArray,
   setSubscriptionArray,
-}) => {
+}: ChosenSubscriptionCardProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const onClick = () => {
     setIsOpen(!isOpen)
