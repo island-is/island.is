@@ -28,7 +28,6 @@ const DomainList = () => {
 
   const { data, loading, error } = useDomainsListQuery({
     onCompleted: (data) => {
-      console.log(data?.authAdminTenants.data)
       setTenantList(data?.authAdminTenants?.data as AuthAdminTenant[])
     },
     onError: () => {

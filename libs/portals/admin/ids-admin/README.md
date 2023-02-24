@@ -1,4 +1,4 @@
-# portals-admin-ids-admin
+# Portals Admin Ids Admin
 
 This library was generated with [Nx](https://nx.dev).
 
