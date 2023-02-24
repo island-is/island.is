@@ -357,9 +357,9 @@ export const parentalLeaveFormMessages: MessageDir = {
     noChildrenFoundLabel: {
       id: 'pl.application:no.children.found.label',
       defaultMessage:
-        'Viltu búa til umsókn vegna varanlegst fóstur eða föður án móður?',
+        'Viltu búa til umsókn vegna varanlegst fóstur, ættleiðingu eða föður án móður?',
       description:
-        'Do you want to apply for parmanent foster care or Father without mother application?',
+        'Do you want to apply for parmanent foster care, adoption or Father without mother application?',
     },
     rightsSection: {
       id: 'pl.application:rights.section',
@@ -869,6 +869,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Vegna töku barns í varanlegt fóstur',
       description: 'Due to receipt of a child in permanent foster care',
     },
+    noChildrenFoundAdoption: {
+      id: 'pl.application:no.children.found.adoption',
+      defaultMessage: 'Vegna frumættleiðingar barns',
+      description: 'Due to primary adoption',
+    },
     noChildrenFoundOther: {
       id: 'pl.application:no.children.found.other',
       defaultMessage: 'Annað',
@@ -890,6 +895,11 @@ export const parentalLeaveFormMessages: MessageDir = {
     fosterCare: {
       id: 'pl.application:selectChild.foster.care',
       defaultMessage: 'Barn tekið í varanlegt fóstur {dateOfBirth}',
+      description: 'Child copy radio button',
+    },
+    adoption: {
+      id: 'pl.application:selectChild.adoption',
+      defaultMessage: 'Barn frumættleitt {dateOfBirth}',
       description: 'Child copy radio button',
     },
     choose: {
@@ -1181,9 +1191,21 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Þú getur valið um að byrja fæðingarstyrk á áætluðum fæðingardegi, frá raunverulegum fæðingardegi eða ákveðinni dagsetningu. Athugaðu að ekki er hægt að nýta réttindi til fæðingarstyrks 24 mánuðum eftir fæðingu barnsins.',
       description: 'Add translation',
     },
+    adoptionDescription: {
+      id: 'pl.application:periods.first.period.adoption.description',
+      defaultMessage:
+        'Þú getur valið um að byrja fæðingarorlof á þeim degi sem barn kemur inn á heimili eða ákveðinni dagsetningu. Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 24 mánuðum eftir að barnið kom inná heimilið.',
+      description: 'Add translation',
+    },
+    grantAdoptionDescription: {
+      id: 'pl.application:periods.first.period.grant.adoption.description',
+      defaultMessage:
+        'Þú getur valið um að byrja fæðingarstyrk á þeim degi sem barn kemur inn á heimili eða ákveðinni dagsetningu. Athugaðu að ekki er hægt að nýta réttindi til fæðingarstyrks 24 mánuðum eftir að barnið kom inná heimilið.',
+      description: 'Add translation',
+    },
     adoptionDateOption: {
       id: 'pl.application:periods.first.period.adoption.date',
-      defaultMessage: 'Ég vil byrja á degi sem forsjárskipting á sér stað',
+      defaultMessage: 'Ég vil byrja á degi sem barn kemur inn á heimili',
       description:
         'I want to start on the day the division of custody takes place',
     },
@@ -2004,6 +2026,17 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage:
         'Vegna varanlegs fósturs þarf að skila inn staðfestingu frá sveitarfélagi. Athugaðu að skjalið þarf að vera á .pdf formi',
       description: 'Permanent forstcare description',
+    },
+    adoptionTitle: {
+      id: 'pl.application:attachmentscreen.adoption.title',
+      defaultMessage: 'Staðfesting vegna frumættleiðingu',
+      description: 'Confirmation for primary adoption',
+    },
+    adoptionDescription: {
+      id: 'pl.application:attachmentscreen.adoptionDescription',
+      defaultMessage:
+        'Vegna frumættleiðingu þarf að skila inn forsamþykki frá sýslumanni og staðfestingu frá Ættleiðingu. Athugaðu að skjalið þarf að vera á .pdf formi',
+      description: 'Permanent adoption description',
     },
     additionalDocumentRequired: {
       id: 'pl.application:attachmentscreen.additionalDocumentRequired',

@@ -33,6 +33,7 @@ import {
   PARENTAL_GRANT,
   SINGLE,
   PERMANENT_FOSTER_CARE,
+  ADOPTION,
 } from '../constants'
 import { SchemaFormValues } from '../lib/dataSchema'
 
@@ -1554,7 +1555,7 @@ export const isParentalGrant = (application: Application) => {
   )
 }
 
-export const isPermanentFosterCare = (application: Application) => {
+export const isFosterCareAndAdoption = (application: Application) => {
   const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
     application.answers,
   )
@@ -1569,6 +1570,6 @@ export const isPermanentFosterCare = (application: Application) => {
   }
 
   return  selectedChild.parentalRelation === ParentalRelations.primary
-  ? noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE
-  : selectedChild.primaryParentTypeOfApplication === PERMANENT_FOSTER_CARE
+  ? noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE || noChildrenFoundTypeOfApplication === ADOPTION
+  : selectedChild.primaryParentTypeOfApplication === PERMANENT_FOSTER_CARE || selectedChild.primaryParentTypeOfApplication === ADOPTION
 }

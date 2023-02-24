@@ -24,6 +24,7 @@ export const apiConstants = {
     artificialInsemination: 'ArtificialInsemination',
     parentWithoutBirthParent: 'ParentWithoutBirthParent',
     permanentFosterCare: 'PermanentFosterCare',
+    adoption: 'Adoption',
   },
 }
 

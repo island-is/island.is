@@ -35,6 +35,7 @@ import {
   ParentalRelations,
   PERMANENT_FOSTER_CARE,
   OTHER_NO_CHILDREN_FOUND,
+  ADOPTION,
 } from '../constants'
 import { defaultMultipleBirthsMonths } from '../config'
 
@@ -403,6 +404,11 @@ export const PrerequisitesForm: Form = buildForm({
                     parentalLeaveFormMessages.shared.noChildrenFoundFosterCare,
                 },
                 {
+                  value: ADOPTION,
+                  label:
+                    parentalLeaveFormMessages.shared.noChildrenFoundAdoption,
+                },
+                {
                   value: OTHER_NO_CHILDREN_FOUND,
                   label: parentalLeaveFormMessages.shared.noChildrenFoundOther,
                 },
@@ -418,7 +424,7 @@ export const PrerequisitesForm: Form = buildForm({
               answers,
             )
 
-            return noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE
+            return noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE || noChildrenFoundTypeOfApplication === ADOPTION
           },
           children: [
             buildMultiField({

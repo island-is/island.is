@@ -28,6 +28,7 @@ import {
   formatBankInfo,
   PERMANENT_FOSTER_CARE,
   ChildInformation,
+  ADOPTION,
 } from '@island.is/application/templates/parental-leave'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
@@ -259,6 +260,7 @@ export const parentPrefix = (
   selectedChild: ChildInformation,
 ) => {
   const isFosterCare = isPermanentFosterCare(selectedChild, application)
+  const isAdoption = isPrimaryAdoption(selectedChild, application)
 
   if (isFosterCare) {
     if (selectedChild.parentalRelation === ParentalRelations.primary) {
@@ -270,6 +272,16 @@ export const parentPrefix = (
         return applicantIsMale(application) ? 'F-FÓ' : 'FO-FÓ'
       }
     }
+  } else if (isAdoption) {
+    if (selectedChild.parentalRelation === ParentalRelations.primary) {
+      return applicantIsMale(application) ? 'F-Æ' : 'M-Æ'
+    } else {
+      if (selectedChild.primaryParentGenderCode === '1') {
+        return applicantIsMale(application) ? 'FO-Æ' : 'M-Æ'
+      } else {
+        return applicantIsMale(application) ? 'F-Æ' : 'FO-Æ'
+      }
+    }
   } else {
     return selectedChild.parentalRelation === ParentalRelations.primary
       ? 'M'
@@ -279,7 +291,10 @@ export const parentPrefix = (
   }
 }
 
-export const isPermanentFosterCare = (selectedChild: ChildInformation, application: Application) => {
+export const isPermanentFosterCare = (
+  selectedChild: ChildInformation,
+  application: Application,
+) => {
   const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
     application.answers,
   )
@@ -287,6 +302,19 @@ export const isPermanentFosterCare = (selectedChild: ChildInformation, applicati
   return selectedChild.parentalRelation === ParentalRelations.primary
     ? noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE
     : selectedChild.primaryParentTypeOfApplication === PERMANENT_FOSTER_CARE
+}
+
+export const isPrimaryAdoption = (
+  selectedChild: ChildInformation,
+  application: Application,
+) => {
+  const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
+    application.answers,
+  )
+
+  return selectedChild.parentalRelation === ParentalRelations.primary
+    ? noChildrenFoundTypeOfApplication === ADOPTION
+    : selectedChild.primaryParentTypeOfApplication === ADOPTION
 }
 
 export const answerToPeriodsDTO = (answers: AnswerPeriod[]) => {
@@ -329,7 +357,6 @@ export const transformApplicationToParentalLeaveDTO = (
     multipleBirths,
     isSelfEmployed,
     isReceivingUnemploymentBenefits,
-    noChildrenFoundTypeOfApplication,
   } = getApplicationAnswers(application.answers)
 
   const { applicationFundId } = getApplicationExternalData(
@@ -340,18 +367,22 @@ export const transformApplicationToParentalLeaveDTO = (
   const selfEmployed = isSelfEmployed === YES
   const receivingUnemploymentBenefits = isReceivingUnemploymentBenefits === YES
   const testData: string = onlyValidate!.toString()
-  const isFosterCare = isPermanentFosterCare(selectedChild, application)
+  const isFosterCareOrAdoption =
+    isPermanentFosterCare(selectedChild, application) ||
+    isPrimaryAdoption(selectedChild, application)
 
   return {
     applicationId: application.id,
     applicationFundId: applicationFundId,
     applicant: application.applicant,
     otherParentId: getOtherParentId(application),
-    expectedDateOfBirth: isFosterCare ? '' : selectedChild.expectedDateOfBirth,
+    expectedDateOfBirth: isFosterCareOrAdoption
+      ? ''
+      : selectedChild.expectedDateOfBirth,
     // TODO: get true date of birth, not expected
     // will get it from a new Þjóðskrá API (returns children in custody of a national registry id)
-    dateOfBirth: isFosterCare ? selectedChild.dateOfBirth! : '',
-    adoptionDate: isFosterCare ? selectedChild.adoptionDate : '',
+    dateOfBirth: isFosterCareOrAdoption ? selectedChild.dateOfBirth! : '',
+    adoptionDate: isFosterCareOrAdoption ? selectedChild.adoptionDate : '',
     email,
     phoneNumber,
     paymentInfo: {

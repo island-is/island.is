@@ -1,5 +1,6 @@
 import { Answer, Application } from '@island.is/application/types'
 import {
+  ADOPTION,
   AnswerValidationConstants,
   PARENTAL_GRANT_STUDENTS,
   PERMANENT_FOSTER_CARE,
@@ -106,6 +107,16 @@ export const fileUploadValidationSection = (
       return buildError(
         errorMessages.requiredAttachment,
         'permanentFosterCare',
+        FILEUPLOAD,
+      )
+    return undefined
+  }
+
+  if (noChildrenFoundTypeOfApplication === ADOPTION && obj.adoption) {
+    if (isEmpty((obj as { adoption: unknown[] }).adoption))
+      return buildError(
+        errorMessages.requiredAttachment,
+        'adoption',
         FILEUPLOAD,
       )
     return undefined

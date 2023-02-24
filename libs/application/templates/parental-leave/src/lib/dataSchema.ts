@@ -14,6 +14,7 @@ import {
   SINGLE,
   PERMANENT_FOSTER_CARE,
   OTHER_NO_CHILDREN_FOUND,
+  ADOPTION,
 } from '../constants'
 import { errorMessages } from './messages'
 import { formatBankInfo } from './parentalLeaveUtils'
@@ -49,7 +50,7 @@ export const dataSchema = z.object({
     option: z.enum([PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, PARENTAL_LEAVE]),
   }),
   noChildrenFound: z.object({
-    typeOfApplication: z.enum([PERMANENT_FOSTER_CARE, OTHER_NO_CHILDREN_FOUND])
+    typeOfApplication: z.enum([PERMANENT_FOSTER_CARE, ADOPTION, OTHER_NO_CHILDREN_FOUND])
   }),
   fosterCare: z.object({
     birthDate: z

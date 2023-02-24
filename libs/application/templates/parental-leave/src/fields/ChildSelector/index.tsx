@@ -17,7 +17,11 @@ import { dateFormat } from '@island.is/shared/constants'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
-import { ParentalRelations, PERMANENT_FOSTER_CARE } from '../../constants'
+import {
+  ADOPTION,
+  ParentalRelations,
+  PERMANENT_FOSTER_CARE,
+} from '../../constants'
 
 const ChildSelector: FC<FieldBaseProps> = ({
   application,
@@ -102,6 +106,15 @@ const ChildSelector: FC<FieldBaseProps> = ({
                     PERMANENT_FOSTER_CARE
                       ? formatMessage(
                           parentalLeaveFormMessages.selectChild.fosterCare,
+                          {
+                            dateOfBirth: formatDateOfBirth(
+                              child.expectedDateOfBirth,
+                            ),
+                          },
+                        )
+                      : child.primaryParentTypeOfApplication === ADOPTION
+                      ? formatMessage(
+                          parentalLeaveFormMessages.selectChild.adoption,
                           {
                             dateOfBirth: formatDateOfBirth(
                               child.expectedDateOfBirth,

@@ -42,6 +42,7 @@ import {
   PERMANENT_FOSTER_CARE,
   OTHER_NO_CHILDREN_FOUND,
   States,
+  ADOPTION,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -203,7 +204,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         children: children,
         existingApplications
       }
-    } else if (noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE) {
+    } else if (noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE || noChildrenFoundTypeOfApplication === ADOPTION) {
       const child: ChildInformation = {
         hasRights: true,
         remainingDays: 180,
@@ -556,6 +557,28 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
           attachments.push({
             attachmentType: apiConstants.attachments.permanentFosterCare,
+            attachmentBytes: pdf,
+          })
+        }
+      }
+    }
+
+    if (noChildrenFoundTypeOfApplication === ADOPTION) {
+      const adoptionPdfs = (await getValueViaPath(
+        application.answers,
+        'fileUpload.adoption',
+      )) as unknown[]
+
+      if (adoptionPdfs?.length) {
+        for (let i = 0; i <= adoptionPdfs.length - 1; i++) {
+          const pdf = await this.getPdf(
+            application,
+            i,
+            'fileUpload.adoption',
+          )
+
+          attachments.push({
+            attachmentType: apiConstants.attachments.adoption,
             attachmentBytes: pdf,
           })
         }
