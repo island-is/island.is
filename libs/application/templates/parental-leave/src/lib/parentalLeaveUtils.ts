@@ -904,6 +904,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
     | 'documentPeriod'
     | undefined
 
+  const previousState = getValueViaPath(answers, 'previousState') as string
+
   return {
     applicationType,
     noChildrenFoundTypeOfApplication,
@@ -958,6 +960,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     benefitsFiles,
     commonFiles,
     actionName,
+    previousState,
   }
 }
 

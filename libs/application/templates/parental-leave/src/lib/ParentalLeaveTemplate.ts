@@ -39,6 +39,7 @@ import { parentalLeaveFormMessages, statesMessages } from './messages'
 import {
   allEmployersHaveApproved,
   findActionName,
+  goToState,
   hasEmployer,
   needsOtherParentApproval,
 } from './parentalLeaveTemplateUtils'
@@ -439,8 +440,18 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_APPROVAL]: {
-        entry: ['assignToVMST', 'setNavId', 'removeNullPeriod'],
-        exit: ['clearAssignees', 'setNavId', 'resetAdditionalDocumentsArray'],
+        entry: [
+          'assignToVMST',
+          'setNavId',
+          'removeNullPeriod',
+          'removePreviousState',
+        ],
+        exit: [
+          'clearAssignees',
+          'setNavId',
+          'resetAdditionalDocumentsArray',
+          'setPreviousState',
+        ],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVAL,
           status: 'inprogress',
@@ -626,7 +637,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       //   },
       // },
       [States.APPROVED]: {
-        entry: 'assignToVMST',
+        entry: ['assignToVMST', 'removePreviousState'],
+        exit: 'setPreviousState',
         meta: {
           name: States.APPROVED,
           status: 'inprogress',
@@ -657,7 +669,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           CLOSED: { target: States.CLOSED },
-          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+          [DefaultEvents.EDIT]: {
+            target: States.EDIT_OR_ADD_PERIODS,
+          },
         },
       },
       [States.CLOSED]: {
@@ -728,13 +742,25 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
           [DefaultEvents.ABORT]: [
             {
+              cond: (application) => goToState(application, States.APPROVED),
               target: States.APPROVED,
+            },
+            {
+              cond: (application) =>
+                goToState(application, States.VINNUMALASTOFNUN_APPROVAL),
+              target: States.VINNUMALASTOFNUN_APPROVAL,
+            },
+            {
+              target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
             },
           ],
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS]: {
-        exit: 'setEmployerReviewerNationalRegistryId',
+        exit: [
+          'setEmployerReviewerNationalRegistryId',
+          'restorePeriodsFromTemp',
+        ],
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
           status: 'inprogress',
@@ -768,7 +794,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.EMPLOYER_APPROVE_EDITS]: {
         entry: ['assignToVMST', 'removeNullPeriod'],
-        exit: ['clearAssignees', 'setIsApprovedOnEmployer'],
+        exit: [
+          'clearAssignees',
+          'setIsApprovedOnEmployer',
+          'restorePeriodsFromTemp',
+        ],
         meta: {
           name: States.EMPLOYER_APPROVE_EDITS,
           status: 'inprogress',
@@ -874,8 +904,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_APPROVE_EDITS]: {
-        entry: ['assignToVMST', 'removeNullPeriod'],
-        exit: ['clearTemp', 'resetAdditionalDocumentsArray', 'clearAssignees'],
+        entry: ['assignToVMST', 'removeNullPeriod', 'removePreviousState'],
+        exit: [
+          'clearTemp',
+          'resetAdditionalDocumentsArray',
+          'clearAssignees',
+          'setPreviousState',
+        ],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVE_EDITS,
           status: 'inprogress',
@@ -982,7 +1017,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
        * Restore the periods to their original state from temp.
        */
       restorePeriodsFromTemp: assign((context, event) => {
-        if (event.type !== DefaultEvents.ABORT) {
+        if (
+          !(
+            event.type === DefaultEvents.ABORT ||
+            event.type === DefaultEvents.EDIT
+          )
+        ) {
           return context
         }
 
@@ -1388,6 +1428,19 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           assignees: [],
         },
       })),
+      removePreviousState: assign((context) => {
+        const { application } = context
+
+        unset(application.answers, 'previousState')
+        return context
+      }),
+      setPreviousState: assign((context) => {
+        const { application } = context
+        const { state, answers } = application
+
+        set(answers, 'previousState', state)
+        return context
+      }),
       setActionName: assign((context) => {
         const { application } = context
         const { answers } = application

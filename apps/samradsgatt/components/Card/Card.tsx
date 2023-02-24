@@ -6,7 +6,6 @@ import {
   ArrowLink,
   Columns,
   Column,
-  Icon,
 } from '@island.is/island-ui/core'
 import { ReactNode } from 'react'
 import getTagVariants from '../../utils/helpers/getTagVariants'
