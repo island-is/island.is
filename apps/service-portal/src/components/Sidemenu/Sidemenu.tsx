@@ -9,6 +9,11 @@ import { sharedMessages } from '@island.is/shared/translations'
 import { useLocale } from '@island.is/localization'
 import { Link } from 'react-router-dom'
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
+import { iconTypeToSVG } from '../../utils/Icons/idMapper'
+import { theme } from '@island.is/island-ui/theme'
+import { useWindowSize } from 'react-use'
+import cn from 'classnames'
+import { useListDocuments } from '@island.is/service-portal/graphql'
 
 interface Props {
   position: number
@@ -23,6 +28,13 @@ const Sidemenu = ({
   const ref = useRef(null)
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const { formatMessage } = useLocale()
+  const { width } = useWindowSize()
+  const { unreadCounter } = useListDocuments()
+
+  const isMobile = width < theme.breakpoints.md
+
+  const badgeActive: keyof typeof styles.badge =
+    unreadCounter > 0 ? 'active' : 'inactive'
 
   if (!sideMenuOpen) return null
 
@@ -77,9 +89,36 @@ const Sidemenu = ({
                         key={`sidemenu-key-item-${index}`}
                         onClick={() => setSideMenuOpen(false)}
                       >
-                        <Text variant="h3" color="blue600">
-                          {formatMessage(navRoot.name)}
-                        </Text>
+                        <Box
+                          display="flex"
+                          flexDirection="row"
+                          alignItems="center"
+                          justifyContent="flexStart"
+                          position={
+                            navRoot.subscribesTo === 'documents'
+                              ? 'relative'
+                              : undefined
+                          }
+                        >
+                          {navRoot.icon && (
+                            <Box className={styles.icon}>
+                              <Icon
+                                icon={navRoot.icon.icon}
+                                type="outline"
+                                color="blue400"
+                              />
+                            </Box>
+                          )}
+                          {navRoot.subscribesTo === 'documents' && (
+                            <Box
+                              borderRadius="circle"
+                              className={cn(styles.badge[badgeActive])}
+                            />
+                          )}
+                          <Text variant="h3" color="blue400">
+                            {formatMessage(navRoot.name)}
+                          </Text>
+                        </Box>
                       </Link>
                     ),
                 )}

@@ -42,7 +42,6 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
     educationNavigation,
     licenseNavigation,
     educationLicenseNavigation,
-    assetsNavigation,
     {
       ...delegationsNavigation,
       children: [...delegationsNavigationChildren, sessionsNavigation],

@@ -1,9 +1,9 @@
-import { spacing, theme } from '@island.is/island-ui/theme'
+import { spacing, theme, themeUtils } from '@island.is/island-ui/theme'
 import {
   SERVICE_PORTAL_HEADER_HEIGHT_SM,
   zIndex,
 } from '@island.is/service-portal/constants'
-import { keyframes, style } from '@vanilla-extract/css'
+import { keyframes, style, styleVariants } from '@vanilla-extract/css'
 
 const wrapperAnimation = keyframes({
   '0%': {
@@ -63,4 +63,32 @@ export const keyItems = style({
 
 export const categories = style({
   flexGrow: 2,
+})
+
+export const icon = style({
+  width: 30,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'flex-start',
+  marginRight: theme.spacing[1],
+})
+
+export const badge = styleVariants({
+  active: {
+    position: 'absolute',
+    top: 6,
+    left: -2,
+    height: theme.spacing[1],
+    width: theme.spacing[1],
+    borderRadius: '50%',
+    backgroundColor: theme.color.red400,
+    ...themeUtils.responsiveStyle({
+      md: {
+        left: -2,
+      },
+    }),
+  },
+  inactive: {
+    display: 'none',
+  },
 })
