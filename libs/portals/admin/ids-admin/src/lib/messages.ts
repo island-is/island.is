@@ -5,6 +5,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:ids-admin',
     defaultMessage: 'Innskraningarkerfi',
   },
+  idsAdminDescription: {
+    id: 'ap.ids-admin:ids-admin-description',
+    defaultMessage: 'Veldu það domain sem þú villt skoða frekar',
+  },
   tenants: {
     id: 'ap.ids-admin:tenants',
     defaultMessage: 'Tenants',
