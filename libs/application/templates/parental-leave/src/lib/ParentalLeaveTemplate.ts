@@ -444,7 +444,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.VINNUMALASTOFNUN_APPROVAL]: {
         entry: ['assignToVMST', 'setNavId', 'removeNullPeriod'],
-        exit: ['clearAssignees', 'setNavId', 'resetAdditionalDocumentsArray'],
+        exit: [
+          'clearAssignees',
+          'setNavId',
+          'resetAdditionalDocumentsArray',
+          'setPreviousState',
+        ],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVAL,
           status: 'inprogress',
@@ -664,14 +669,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           status: 'inprogress',
           name: States.RESIDENCE_GRAND_APPLICATION,
           lifecycle: pruneAfterDays(1),
-          onExit: [
-            defineTemplateApi({
-              action: ApiModuleActions.validateApplication,
-              params: FileType.DOCUMENTPERIOD,
-              throwOnError: true,
-            }),
-          ],
           progress: 1,
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.validateApplication,
+            params: FileType.DOCUMENTPERIOD,
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -1003,7 +1006,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'removeNullPeriod',
           'setHasAppliedForReidenceGrant',
         ],
-        exit: ['clearTemp', 'resetAdditionalDocumentsArray', 'clearAssignees'],
+        exit: [
+          'clearTemp',
+          'resetAdditionalDocumentsArray',
+          'clearAssignees',
+          'setPreviousState',
+        ],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVE_EDITS,
           status: 'inprogress',
@@ -1544,7 +1552,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         ) {
           return context
         }
+        if (e === 'APPROVE' && state === 'residenceGrantApplication') {
+          return context
+        }
         if (e === 'REJECT' && state === 'residenceGrantApplication') {
+          set(answers, 'previousState', 'residenceGrantApplicationNoBirthDate')
           return context
         }
 
