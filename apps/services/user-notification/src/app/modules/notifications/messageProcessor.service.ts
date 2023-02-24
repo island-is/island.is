@@ -4,7 +4,6 @@ import { UserProfile } from '@island.is/clients/user-profile'
 import { NotificationsService } from './notifications.service'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 
-
 export const APP_PROTOCOL = Symbol('APP_PROTOCOL')
 export interface MessageProcessorServiceConfig {
   appProtocol: string
@@ -12,9 +11,7 @@ export interface MessageProcessorServiceConfig {
 
 @Injectable()
 export class MessageProcessorService {
-  constructor(
-    private readonly notificationsService: NotificationsService,
-  ) {}
+  constructor(private readonly notificationsService: NotificationsService) {}
 
   async convertToNotification(
     message: CreateHnippNotificationDto,
@@ -24,13 +21,9 @@ export class MessageProcessorService {
       message.templateId,
       profile.locale,
     )
-    const notification = this.notificationsService.formatArguments(
-      message,
-      {...template},
-    )
-
-
-
+    const notification = this.notificationsService.formatArguments(message, {
+      ...template,
+    })
 
     return {
       title: '🌶️🌶️🌶️' + notification.notificationTitle,
