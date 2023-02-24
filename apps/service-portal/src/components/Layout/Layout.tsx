@@ -143,7 +143,7 @@ export const Layout: FC = ({ children }) => {
               <Sticky>
                 <Box style={{ marginTop: height }}>
                   <GoBack />
-                  <Box marginBottom={3}>
+                  {/* <Box marginBottom={3}>
                     {currentOrganization && (
                       <InstitutionPanel
                         loading={loading}
@@ -156,7 +156,7 @@ export const Layout: FC = ({ children }) => {
                         size="small"
                       />
                     )}
-                  </Box>
+                  </Box> */}
                   {subNavItems && subNavItems.length > 0 && (
                     <Box background="blue100">
                       <Navigation
@@ -173,6 +173,7 @@ export const Layout: FC = ({ children }) => {
                         )}
                         items={subNavItems ?? []}
                         expand
+                        titleIcon={activeParent.icon}
                       />
                     </Box>
                   )}

@@ -18,6 +18,7 @@ import { Icon } from '../IconRC/Icon'
 
 import * as styles from './Navigation.css'
 import { useMeasure } from 'react-use'
+import { IconProps } from '../IconRC/types'
 
 type NavigationContextProps = {
   baseId: string
@@ -94,6 +95,7 @@ interface NavigationTreeProps {
 }
 export interface NavigationProps {
   title: string
+  titleIcon?: Pick<IconProps, 'icon' | 'type'>
   label?: string
   activeItemTitle?: string
   colorScheme?: keyof typeof styles.colorScheme
@@ -136,6 +138,7 @@ const toggleId = (arr: Array<string> = [], id: string, single = false) =>
 export const Navigation: FC<NavigationProps> = ({
   title = 'Efnisyfirlit',
   titleLink,
+  titleIcon,
   activeItemTitle,
   label,
   colorScheme = 'blue',
@@ -210,9 +213,21 @@ export const Navigation: FC<NavigationProps> = ({
     )
   ) : (
     <Box {...basePadding}>
-      <Text as="span" variant="h4" color={color}>
-        {title}
-      </Text>
+      <Box display="flex" flexDirection="row" alignItems="center">
+        {titleIcon && (
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            marginRight={1}
+          >
+            <Icon icon={titleIcon.icon} type="outline" color={color} />
+          </Box>
+        )}
+        <Text as="span" variant="h4" color={color}>
+          {title}
+        </Text>
+      </Box>
     </Box>
   )
 
