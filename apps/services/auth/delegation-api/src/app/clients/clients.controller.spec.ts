@@ -26,7 +26,7 @@ interface TestCase {
     clientName: string
   }[]
   filters?: {
-    clientIds?: string[]
+    clientId?: string[]
   }
   expected: {
     clientId: string
@@ -96,7 +96,7 @@ const getTestCases: Record<string, TestCase> = {
       },
     ],
     filters: {
-      clientIds: ['test-domain-1/test-client-1', 'test-domain-2/test-client-2'],
+      clientId: ['test-domain-1/test-client-1', 'test-domain-2/test-client-2'],
     },
     expected: [
       {
@@ -188,7 +188,7 @@ describe('ClientsController', () => {
         server = request(app.getHttpServer())
 
         const factory = new FixtureFactory(app)
-        const domain = await factory.createDomain({ name: domainName })
+        await factory.createDomain({ name: domainName })
         const client = await factory.createClient({
           clientId: `${domainName}/c1`,
         })

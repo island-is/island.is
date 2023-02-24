@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Get,
-  Param,
-  ParseArrayPipe,
-  Query,
-  UseGuards,
-} from '@nestjs/common'
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
@@ -81,7 +74,7 @@ export class DomainsController {
           description: 'A list of domain names to filter by.',
           required: false,
           isArray: true,
-          type: String,
+          type: 'string',
         },
         supportsDelegations: {
           description: `A boolean to filter by delegation support.

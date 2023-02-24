@@ -18,7 +18,7 @@ export class DomainService {
     return this.domainsApiWithAuth(user).domainsControllerFindAll({
       lang: input.lang,
       direction: input.direction,
-      domainNames: input.domainNames,
+      domainName: input.domainNames,
     })
   }
 }
