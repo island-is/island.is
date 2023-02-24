@@ -71,7 +71,7 @@ export const Review: FC<ReviewScreenProps> = ({
 
   return (
     <>
-      <Box className={styles.printButton} position="absolute">
+      <Box className={styles.printButton}>
         <Button
           variant="utility"
           icon="print"
