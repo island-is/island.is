@@ -27,7 +27,6 @@ import {
 } from '../../constants'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 import { useRemainingRights } from '../../hooks/useRemainingRights'
-import { showResidenceGrant } from '../../lib/answerValidationSections/utils'
 
 type StateMapEntry = { [key: string]: ReviewSectionState }
 
@@ -168,10 +167,9 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
     })
   }
   if (
-    (application.state === States.APPROVED ||
-      application.state === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
-      application.state === States.VINNUMALASTOFNUN_APPROVAL) &&
-    showResidenceGrant(application)
+    application.state === States.APPROVED ||
+    application.state === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
+    application.state === States.VINNUMALASTOFNUN_APPROVAL
   ) {
     if (hasAppliedForReidenceGrant === YES) {
       steps.push({

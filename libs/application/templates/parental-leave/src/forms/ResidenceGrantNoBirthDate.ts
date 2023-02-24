@@ -77,7 +77,7 @@ export const ResidenceGrantNoBirthDate: Form = buildForm({
             buildCustomField({
               id: 'residenceGrantApplicationNoBirthDate.image',
               title: '',
-              defaultValue: 0,
+              defaultValue: 1,
               component: 'ImageField',
             }),
           ],
