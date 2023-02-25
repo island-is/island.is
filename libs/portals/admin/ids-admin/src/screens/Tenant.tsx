@@ -4,9 +4,10 @@ import React from 'react'
 import Layout from '../components/Layout/Layout'
 
 const Tenant = () => {
+  const [navTitle, setNavTitle] = React.useState('')
   return (
-    <Layout navTitle={''} navItems={domainNav}>
-      <Outlet />
+    <Layout navTitle={navTitle} navItems={domainNav}>
+      <Outlet context={{ setNavTitle }} />
     </Layout>
   )
 }

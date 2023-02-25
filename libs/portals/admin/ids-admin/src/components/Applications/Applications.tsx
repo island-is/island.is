@@ -7,19 +7,31 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useOutletContext, useParams } from 'react-router-dom'
 import MockApplications from '../../lib/MockApplications'
 import * as styles from '../TenantsList/TenantsList.css'
 import React from 'react'
+import { useLocale } from '@island.is/localization'
+import { m } from '../../lib/messages'
 
 const Applications = () => {
   const { tenant } = useParams()
+  const { formatMessage } = useLocale()
+  const { setNavTitle } = useOutletContext<{
+    setNavTitle: (value: string) => void
+  }>()
+
+  React.useEffect(() => {
+    // TODO: Get application by id from backend
+    setNavTitle(tenant ? tenant : formatMessage(m.tenants))
+  })
+
   return (
     <GridContainer>
       <GridRow rowGap={3}>
         <Box display={'flex'} justifyContent={'spaceBetween'} columnGap={4}>
           <Box>
-            <Text variant={'h2'}>Applications</Text>
+            <Text variant={'h2'}>{formatMessage(m.applications)}</Text>
           </Box>
           <Box>
             <Button size={'small'}>Create Application</Button>
