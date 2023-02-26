@@ -5,7 +5,6 @@ import {
   Box,
   ResponsiveSpace,
   Hidden,
-  useBoxStyles,
 } from '@island.is/island-ui/core'
 import * as styles from './SubscriptionTable.css'
 import { mapIsToEn } from '../../utils/helpers'
@@ -77,30 +76,25 @@ const SubscriptionTable = ({
             </T.HeadData>
           ) : (
             <>
-                <T.HeadData
-                  text={{ variant: 'h4' }}
-                  box={{
-                    background: 'transparent',
-                    borderColor: 'transparent',
-                  }}
-                >
-                  <Hidden below="lg">
-                    {Headers[currentTab][0]}
-                  </Hidden>
-                  <Hidden above="md">
-                    {Headers[currentTab][2]}
-                  </Hidden>
-                </T.HeadData>
-                <T.HeadData
-                  text={{ variant: 'h4' }}
-                  box={{
-                    background: 'transparent',
-                    borderColor: 'transparent',
-                  }}
-                >
-                  <Hidden below="lg">
-                  {Headers[currentTab][1]}</Hidden>
-                </T.HeadData>
+              <T.HeadData
+                text={{ variant: 'h4' }}
+                box={{
+                  background: 'transparent',
+                  borderColor: 'transparent',
+                }}
+              >
+                <Hidden below="lg">{Headers[currentTab][0]}</Hidden>
+                <Hidden above="md">{Headers[currentTab][2]}</Hidden>
+              </T.HeadData>
+              <T.HeadData
+                text={{ variant: 'h4' }}
+                box={{
+                  background: 'transparent',
+                  borderColor: 'transparent',
+                }}
+              >
+                <Hidden below="lg">{Headers[currentTab][1]}</Hidden>
+              </T.HeadData>
             </>
           )}
         </T.Head>

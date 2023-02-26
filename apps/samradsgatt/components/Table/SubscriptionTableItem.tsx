@@ -3,7 +3,6 @@ import {
   Table as T,
   Text,
   Icon,
-  FocusableBox,
   Hidden,
   Stack,
 } from '@island.is/island-ui/core'

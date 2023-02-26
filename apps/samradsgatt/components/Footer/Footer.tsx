@@ -57,8 +57,13 @@ const Footer = () => {
                       frjálst að senda inn umsögn eða ábendingu.
                     </Text>
                   </Box>
-                  <Inline alignY="center" justifyContent="spaceBetween" collapseBelow="lg" space={2}>
-                  <ArrowLink href="#">Lesa meira</ArrowLink>
+                  <Inline
+                    alignY="center"
+                    justifyContent="spaceBetween"
+                    collapseBelow="lg"
+                    space={2}
+                  >
+                    <ArrowLink href="#">Lesa meira</ArrowLink>
                     <ArrowLink href="#">Hafa samband við ritstjórn</ArrowLink>
                   </Inline>
                 </Box>

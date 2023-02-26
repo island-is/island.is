@@ -28,7 +28,7 @@ export const HeroTiles = ({
         display="flex"
         flexWrap="wrap"
         justifyContent="flexEnd"
-        style={{ flexFlow: 'wrap-reverse', alignItems: 'end'}}
+        style={{ flexFlow: 'wrap-reverse', alignItems: 'end' }}
         // style={{ flexFlow: 'wrap-reverse', alignItems: 'end' }}
       >
         {Children.map(flattenChildren(children), (child, i) => (

@@ -1,5 +1,5 @@
 import React, { ForwardedRef, forwardRef } from 'react'
-import LoadingBar from 'react-top-loading-bar'
+import LoadingBar, { LoadingBarRef } from 'react-top-loading-bar'
 import { theme } from '@island.is/island-ui/theme'
 
 const colorGradiant = `linear-gradient(90deg,
@@ -11,7 +11,7 @@ const colorGradiant = `linear-gradient(90deg,
   )`
 
 export const PageLoader = forwardRef(
-  (_props, ref: ForwardedRef<any>) => {
+  (_props, ref: ForwardedRef<LoadingBarRef>) => {
     return <LoadingBar color={colorGradiant} ref={ref} />
   },
 )

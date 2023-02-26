@@ -4,7 +4,6 @@ import {
   Box,
   Button,
   GridColumn,
-  GridContainer,
   GridRow,
   Hidden,
   ResponsiveSpace,

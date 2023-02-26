@@ -123,8 +123,7 @@ const SearchAndFilter = ({
               </GridColumn>
               <GridColumn span={['2/12', '2/12', '3/12', '3/12', '3/12']}>
                 <Select
-                isSearchable
-
+                  isSearchable
                   size="xs"
                   label="Stofnun"
                   name="institutions"
