@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { Environment } from '../../models/environment'
 
 import { TenantEnvironment } from './tenant-environment.model'
 
@@ -9,6 +10,9 @@ export class Tenant {
 
   @Field(() => [TenantEnvironment])
   environments!: TenantEnvironment[]
+
+  @Field(() => [Environment])
+  availableEnvironments!: Environment[]
 
   @Field(() => TenantEnvironment)
   defaultEnvironment!: TenantEnvironment
