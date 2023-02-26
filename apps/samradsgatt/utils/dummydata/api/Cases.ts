@@ -274,9 +274,9 @@ export const Cases = [
   {
     id: 3000,
     caseNumber: '131/2021',
-    name: 'dómsmálið',
+    name: 'Frumvarp til laga um breytingu á lögum um fjarskipti nr. 70/2022, o.fl. fleiri lögum (ríkisstyrktir fjarskiptainnviðir, EES-reglur, eftirlit með lénaskráningum og þagnaskylda)',
     adviceCount: 2,
-    shortDescription: null,
+    shortDescription: 'Áætluð lögfesting vegna heildsöluaðgangs ríkisstyrktra fjarskiptainnviða, EES-reglugerðar um vöktun á barnaníðsefni, bætt eftirlits með lénaskráningum og þagnaskyldu vegna fjarskiptaöryggis. Áætluð lögfesting vegna heildsöluaðgangs ríkisstyrktra fjarskiptainnviða, EES-reglugerðar um vöktun á barnaníðsefni, bætt eftirlits með lénaskráningum og þagnaskyldu vegna fjarskiptaöryggis. Áætluð lögfesting vegna heildsöluaðgangs ríkisstyrktra fjarskiptainnviða, EES-reglugerðar um vöktun á barnaníðsefni, bætt eftirlits með lénaskráningum og þagnaskyldu vegna fjarskiptaöryggis.',
     statusName: 'Niðurstöður í vinnslu',
     institutionName: 'Dómsmálaráðuneytið',
     typeName: 'Áform um lagasetningu',

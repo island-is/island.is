@@ -28,6 +28,7 @@ export const HeroBanner = () => {
       flexDirection={'column'}
     >
       <GridContainer>
+        <Box paddingX={[0, 0, 0, 0, 15]}>
         <GridRow className={styles.rowAlign}>
           <Hidden above="md">
             <GridColumn span="12/12" order={[1, 1]}>
@@ -69,7 +70,7 @@ export const HeroBanner = () => {
               <HeroTiles space={2} columns={[1, 1, 1, 2, 2]}>
                 <StatisticBox label="Mál til umsagnar" statistic="32 mál" />
                 <StatisticBox
-                  label="Fjöldi mála frá upphafi"
+                  label="Fjöldi umsagna frá upphafi"
                   statistic="12.843 umsagnir"
                 />
                 <StatisticBox
@@ -80,6 +81,7 @@ export const HeroBanner = () => {
             </Box>
           </GridColumn>
         </GridRow>
+        </Box>
       </GridContainer>
     </Box>
   )

@@ -5,6 +5,7 @@ import {
   Columns,
   Divider,
   GridContainer,
+  Inline,
   LinkV2,
   Logo,
   Stack,
@@ -49,22 +50,17 @@ const Footer = () => {
               </Column>
               <Column width="4/12">
                 <Box display="flex" flexDirection="column">
-                  <Box>
+                  <Box paddingBottom={1}>
                     <Text variant="small">
                       Hér er á einum stað hægt að finna öll mál ráðuneyta sem
                       birt hafa verið til samráðs við almenning. Öllum er
                       frjálst að senda inn umsögn eða ábendingu.
                     </Text>
                   </Box>
-                  <Box
-                    paddingTop={1}
-                    display="flex"
-                    flexDirection="row"
-                    justifyContent="spaceBetween"
-                  >
-                    <ArrowLink href="#">Lesa meira</ArrowLink>
+                  <Inline alignY="center" justifyContent="spaceBetween" collapseBelow="lg" space={2}>
+                  <ArrowLink href="#">Lesa meira</ArrowLink>
                     <ArrowLink href="#">Hafa samband við ritstjórn</ArrowLink>
-                  </Box>
+                  </Inline>
                 </Box>
               </Column>
             </Columns>

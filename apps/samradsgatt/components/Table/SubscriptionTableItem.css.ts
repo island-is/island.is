@@ -9,3 +9,7 @@ export const tableRowRight = style({
   borderTopRightRadius: '8px',
   borderBottomRightRadius: '8px',
 })
+
+export const chevronButton = style({
+
+})

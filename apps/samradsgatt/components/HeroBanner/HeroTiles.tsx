@@ -28,14 +28,13 @@ export const HeroTiles = ({
         display="flex"
         flexWrap="wrap"
         justifyContent="flexEnd"
-        style={{ flexFlow: 'wrap-reverse', alignItems: 'end' }}
+        style={{ flexFlow: 'wrap-reverse', alignItems: 'end'}}
+        // style={{ flexFlow: 'wrap-reverse', alignItems: 'end' }}
       >
         {Children.map(flattenChildren(children), (child, i) => (
           <Box
             key={i}
             minWidth={0}
-            // paddingRight={i === 0 ? 2 : 0}
-            // paddingTop={i !== 2 ? 2 : 0}
             className={resolveResponsiveProp(
               columns,
               styles.columnsXs,
