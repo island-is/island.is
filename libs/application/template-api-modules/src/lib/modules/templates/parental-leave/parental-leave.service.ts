@@ -39,6 +39,7 @@ import {
   ChildInformation,
   isParentWithoutBirthParent,
   calculatePeriodLength,
+  States,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -618,7 +619,9 @@ export class ParentalLeaveService extends BaseTemplateApiService {
            * Sometime applicant uses other right than basic right ( grunnréttindi)
            * Here we make sure we only use/sync amd use basic right ( grunnréttindi ) from VMST
            */
-          const getVMSTRightCodePeriod = VMSTperiods.periods[0].rightsCodePeriod
+          const getVMSTRightCodePeriod = VMSTperiods.periods[0].rightsCodePeriod.split(
+            ',',
+          )[0]
           const periodCodeStartCharacters = ['M', 'F']
           if (
             periodCodeStartCharacters.some((c) =>
@@ -1249,8 +1252,15 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       isSelfEmployed,
       isReceivingUnemploymentBenefits,
       applicationType,
+      previousState,
     } = getApplicationAnswers(application.answers)
-
+    if (
+      previousState === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
+      previousState === States.VINNUMALASTOFNUN_APPROVAL ||
+      previousState === States.APPROVED
+    ) {
+      return
+    }
     const nationalRegistryId = application.applicant
     const attachments = await this.getAttachments(application)
 
