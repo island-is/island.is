@@ -1,8 +1,8 @@
 import { ForbiddenException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { isCompany } from 'kennitala'
-import { and, Op, or } from 'sequelize'
 import type { Attributes, WhereOptions } from 'sequelize'
+import { and, Op, or } from 'sequelize'
 import { Includeable } from 'sequelize/types/model'
 
 import { User } from '@island.is/auth-nest-tools'
@@ -44,20 +44,43 @@ export class DelegationResourcesService {
 
   async findAllDomains(
     user: User,
-    language?: string,
-    direction?: DelegationDirection,
+    {
+      language,
+      direction,
+      domainNames,
+      supportsDelegations,
+    }: {
+      language?: string
+      direction?: DelegationDirection
+      domainNames?: string[]
+      supportsDelegations?: boolean
+    },
   ): Promise<Domain[]> {
+    const onlyDelegations =
+      supportsDelegations || direction === DelegationDirection.OUTGOING
+
+    const domainNameFilter: WhereOptions<Domain> = domainNames
+      ? { name: domainNames }
+      : {}
+
     const domains = await this.domainModel.findAll({
-      where: and(...this.apiScopeFilter({ user, prefix: 'scopes', direction })),
-      include: [
-        {
-          model: ApiScope,
-          attributes: [],
-          required: true,
-          duplicating: false,
-          include: [...this.apiScopeInclude(user, direction)],
-        },
-      ],
+      where: onlyDelegations
+        ? and(
+            ...this.apiScopeFilter({ user, prefix: 'scopes', direction }),
+            domainNameFilter,
+          )
+        : domainNameFilter,
+      include: onlyDelegations
+        ? [
+            {
+              model: ApiScope,
+              attributes: [],
+              required: true,
+              duplicating: false,
+              include: [...this.apiScopeInclude(user, direction)],
+            },
+          ]
+        : [],
     })
 
     if (language) {
