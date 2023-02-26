@@ -1,4 +1,4 @@
-const Cases = [
+export const Cases = [
   {
     id: 3027,
     caseNumber: '3/2023',
