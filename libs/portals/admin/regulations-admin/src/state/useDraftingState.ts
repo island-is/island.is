@@ -286,7 +286,7 @@ const useMakeDraftingState = (inputs: StateInputs) => {
         navigate(getHomeUrl())
       },
 
-      saveStatus: async (silent?: boolean) => {
+      saveStatus: async (silent?: boolean, andClose?: boolean) => {
         if (isDraftLocked(draft)) {
           return false
         }
@@ -300,6 +300,9 @@ const useMakeDraftingState = (inputs: StateInputs) => {
             error: error && { message: buttonsMsgs.saveFailure, error },
           })
         })
+        if (andClose) {
+          navigate(getHomeUrl())
+        }
         return true
       },
 
