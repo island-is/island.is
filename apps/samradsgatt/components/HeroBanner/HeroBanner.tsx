@@ -8,13 +8,14 @@ import {
   Text,
   ArrowLink,
   Hidden,
-  Tiles,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import * as styles from './HeroBanner.css'
 
-import { HeroLogo, SchoolIllustration } from '../svg'
+import { HeroLogo } from '../svg'
 import { StatisticBox } from '..'
+import HeroTiles from './HeroTiles'
+import SplashSmall from '../svg/SplashSmall'
 
 export const HeroBanner = () => {
   return (
@@ -61,13 +62,11 @@ export const HeroBanner = () => {
             span={['12/12', '12/12', '12/12', '6/12']}
             order={[1, 1, 1, 2, 2]}
           >
-            <Hidden below="lg">
-              <Box style={{ width: 432, height: 445 }}>
-                <SchoolIllustration width="238" height="188" />
-              </Box>
-            </Hidden>
+            <Box className={styles.bg}>
+              <SplashSmall />
+            </Box>
             <Box className={styles.alignTiles}>
-              <Tiles columns={[1, 1, 1, 2, 2]} space={2}>
+              <HeroTiles space={2} columns={[1, 1, 1, 2, 2]}>
                 <StatisticBox label="Mál til umsagnar" statistic="32 mál" />
                 <StatisticBox
                   label="Fjöldi mála frá upphafi"
@@ -77,7 +76,7 @@ export const HeroBanner = () => {
                   label="Fjöldi mála frá upphafi"
                   statistic="48.942 mál"
                 />
-              </Tiles>
+              </HeroTiles>
             </Box>
           </GridColumn>
         </GridRow>
