@@ -22,7 +22,7 @@ import PetitionsTable from '../PetitionsTable'
 import { CloseList, OpenList, UnendorseList } from '../queries'
 
 import Skeleton from '../Skeletons/Skeleton'
-import { Modal } from '@island.is/service-portal/core'
+import { IntroHeader, Modal } from '@island.is/service-portal/core'
 import {
   useGetSingleEndorsement,
   useGetSinglePetition,
@@ -135,220 +135,211 @@ const ViewPetitionList = () => {
   return (
     <Box>
       {Object.entries(petition).length !== 0 ? (
-        <Box>
-          <Stack space={3}>
-            <Box>
-              <Text variant="h2" marginBottom={2}>
-                {petition?.title}
-              </Text>
-              <Text>{petition?.description?.toString()}</Text>
-            </Box>
-            <Box
-              display={['block', 'flex']}
-              justifyContent="spaceBetween"
-              width={viewTypeEdit ? 'half' : 'full'}
-            >
-              {!viewTypeEdit && petition?.closedDate && (
-                <Box>
-                  <Text variant="h4">{formatMessage(m.listOpenTil)}</Text>
-                  <Text variant="default" marginBottom={3}>
-                    {format(new Date(petition?.closedDate), 'dd.MM.yyyy')}
-                  </Text>
-                </Box>
-              )}
+        <Stack space={2}>
+          <Text variant="h2">{petition?.title}</Text>
+          <Text>{petition?.description as string}</Text>
+          <Box
+            display={['block', 'flex']}
+            justifyContent="spaceBetween"
+            width={viewTypeEdit ? 'half' : 'full'}
+          >
+            {!viewTypeEdit && petition?.closedDate && (
               <Box>
-                <Text variant="h4">{formatMessage(m.listHowManySigned)}</Text>
+                <Text variant="h4">{formatMessage(m.listOpenTil)}</Text>
                 <Text variant="default">
-                  {
-                    (petitionEndorsements as PaginatedEndorsementResponse)
-                      .totalCount
-                  }
+                  {format(new Date(petition?.closedDate), 'dd.MM.yyyy')}
                 </Text>
               </Box>
-              <Box>
-                <Text variant="h4">{formatMessage(m.listOwner)}</Text>
-                <Text variant="default">{petition?.ownerName}</Text>
-              </Box>
+            )}
+            <Box>
+              <Text variant="h4">{formatMessage(m.listHowManySigned)}</Text>
+              <Text variant="default">
+                {
+                  (petitionEndorsements as PaginatedEndorsementResponse)
+                    .totalCount
+                }
+              </Text>
             </Box>
             <Box>
-              {!viewTypeEdit && isListOpen && (
-                <Box>
-                  {hasSigned ? (
-                    <Box marginBottom={5} width="half">
-                      <DialogPrompt
-                        baseId="dialog"
-                        title={'Lorem ipsum'}
-                        ariaLabel={'Lorem ipsum'}
-                        disclosureElement={
-                          <Button
-                            loading={isLoading}
-                            variant="primary"
-                            icon="close"
-                          >
-                            {formatMessage(m.unsignList)}
-                          </Button>
-                        }
-                        onConfirm={() => onUnendorse()}
-                        buttonTextConfirm={formatMessage(m.modalButtonYes)}
-                        buttonTextCancel={formatMessage(m.modalButtonNo)}
-                      />
-                    </Box>
-                  ) : (
-                    <Box marginBottom={5} width="half">
+              <Text variant="h4">{formatMessage(m.listOwner)}</Text>
+              <Text variant="default">{petition?.ownerName}</Text>
+            </Box>
+          </Box>
+          {!viewTypeEdit && isListOpen && (
+            <Box marginTop={3} marginBottom={5}>
+              {hasSigned ? (
+                <Box width="half">
+                  <DialogPrompt
+                    baseId="dialog"
+                    title={'Lorem ipsum'}
+                    ariaLabel={'Lorem ipsum'}
+                    disclosureElement={
                       <Button
+                        loading={isLoading}
                         variant="primary"
-                        icon="arrowForward"
-                        onClick={() =>
-                          window.open(
-                            `${document.location.origin}/umsoknir/undirskriftalisti/${petition?.meta.applicationId}`,
-                          )
-                        }
+                        icon="close"
                       >
-                        {formatMessage(m.signList)}
+                        {formatMessage(m.unsignList)}
                       </Button>
-                    </Box>
-                  )}
+                    }
+                    onConfirm={() => onUnendorse()}
+                    buttonTextConfirm={formatMessage(m.modalButtonYes)}
+                    buttonTextCancel={formatMessage(m.modalButtonNo)}
+                  />
+                </Box>
+              ) : (
+                <Box width="half">
+                  <Button
+                    variant="primary"
+                    icon="arrowForward"
+                    onClick={() =>
+                      window.open(
+                        `${document.location.origin}/umsoknir/undirskriftalisti/${petition?.meta.applicationId}`,
+                      )
+                    }
+                  >
+                    {formatMessage(m.signList)}
+                  </Button>
                 </Box>
               )}
             </Box>
-            {viewTypeEdit && (
-              <Box>
-                {petition?.closedDate && isListOpen && (
-                  <Stack space={3}>
-                    <Box>
-                      <Text variant="h3">{formatMessage(m.listChanges)}</Text>
-                      <Text variant="default">
-                        {formatMessage(m.listChangesDescription)}
-                      </Text>
-                    </Box>
+          )}
+          {viewTypeEdit && (
+            <Box>
+              {petition?.closedDate && isListOpen && (
+                <Stack space={3}>
+                  <Box>
+                    <Text variant="h3">{formatMessage(m.listChanges)}</Text>
+                    <Text variant="default">
+                      {formatMessage(m.listChangesDescription)}
+                    </Text>
+                  </Box>
 
-                    <Box display="flex" marginBottom={8} alignItems="center">
-                      <DatePicker
-                        label={formatMessage(m.changeCloseDate)}
-                        locale="is"
-                        placeholderText={formatMessage(m.selectDate)}
-                        selected={selectedDateToOpenList}
-                        handleChange={(date) => setSelectedDateToOpenList(date)}
-                      />
-                      <Box display={'flex'}>
-                        <Box marginX={3}>
+                  <Box display="flex" marginBottom={8} alignItems="center">
+                    <DatePicker
+                      label={formatMessage(m.changeCloseDate)}
+                      locale="is"
+                      placeholderText={formatMessage(m.selectDate)}
+                      selected={selectedDateToOpenList}
+                      handleChange={(date) => setSelectedDateToOpenList(date)}
+                    />
+                    <Box display={'flex'}>
+                      <Box marginX={3}>
+                        <Button
+                          iconType="outline"
+                          onClick={() => {
+                            onOpenList()
+                          }}
+                        >
+                          {formatMessage(m.updateList)}
+                        </Button>
+                      </Box>
+                      <Modal
+                        id="setDate"
+                        isVisible={modalIsOpen}
+                        toggleClose={false}
+                        initialVisibility={false}
+                        disclosure={
                           <Button
+                            icon="lockClosed"
+                            colorScheme="destructive"
+                            variant="ghost"
                             iconType="outline"
-                            onClick={() => {
-                              onOpenList()
-                            }}
                           >
-                            {formatMessage(m.updateList)}
+                            {formatMessage(m.stopSignatureCollection)}
+                          </Button>
+                        }
+                      >
+                        <Text variant="h1" paddingBottom={3}>
+                          {formatMessage(m.modalStopCollection)}
+                        </Text>
+                        <Box
+                          marginTop={10}
+                          display="flex"
+                          justifyContent="spaceBetween"
+                        >
+                          <Button variant="ghost">
+                            {formatMessage(m.modalButtonNo)}
+                          </Button>
+                          <Button
+                            onClick={() => onCloseList()}
+                            disabled={!selectedDateToOpenList}
+                            loading={closeLoading}
+                          >
+                            {formatMessage(m.modalButtonYes)}
                           </Button>
                         </Box>
-                        <Modal
-                          id="setDate"
-                          isVisible={modalIsOpen}
-                          toggleClose={false}
-                          initialVisibility={false}
-                          disclosure={
-                            <Button
-                              icon="lockClosed"
-                              colorScheme="destructive"
-                              variant="ghost"
-                              iconType="outline"
-                            >
-                              {formatMessage(m.stopSignatureCollection)}
-                            </Button>
-                          }
-                        >
+                      </Modal>
+                    </Box>
+                  </Box>
+                </Stack>
+              )}
+
+              {petition?.closedDate && !isListOpen && (
+                <>
+                  <Text variant="h3">
+                    {formatMessage(m.startSignatureCollection)}
+                  </Text>
+                  <Text variant="default">
+                    {formatMessage(m.startSignatureCollectionDescription)}
+                  </Text>
+                  <Box>
+                    <Box marginTop={3} marginBottom={8}>
+                      <Modal
+                        id="setDate"
+                        isVisible={modalIsOpen}
+                        toggleClose={false}
+                        initialVisibility={false}
+                        disclosure={
+                          <Button icon="reload">
+                            {formatMessage(m.restartList)}
+                          </Button>
+                        }
+                      >
+                        <Box>
                           <Text variant="h1" paddingBottom={3}>
-                            {formatMessage(m.modalStopCollection)}
+                            {formatMessage(m.modalStartCollection)}
                           </Text>
-                          <Box
-                            marginTop={10}
-                            display="flex"
-                            justifyContent="spaceBetween"
-                          >
-                            <Button variant="ghost">
-                              {formatMessage(m.modalButtonNo)}
-                            </Button>
-                            <Button
-                              onClick={() => onCloseList()}
-                              disabled={!selectedDateToOpenList}
-                              loading={closeLoading}
-                            >
-                              {formatMessage(m.modalButtonYes)}
-                            </Button>
-                          </Box>
-                        </Modal>
-                      </Box>
-                    </Box>
-                  </Stack>
-                )}
-
-                {petition?.closedDate && !isListOpen && (
-                  <>
-                    <Text variant="h3">
-                      {formatMessage(m.startSignatureCollection)}
-                    </Text>
-                    <Text variant="default">
-                      {formatMessage(m.startSignatureCollectionDescription)}
-                    </Text>
-                    <Box>
-                      <Box marginTop={3} marginBottom={8}>
-                        <Modal
-                          id="setDate"
-                          isVisible={modalIsOpen}
-                          toggleClose={false}
-                          initialVisibility={false}
-                          disclosure={
-                            <Button icon="reload">
-                              {formatMessage(m.restartList)}
-                            </Button>
-                          }
+                          <Text paddingBottom={3}>
+                            {formatMessage(m.modalStartCollectionDescription)}
+                          </Text>
+                          <DatePicker
+                            label={formatMessage(m.date)}
+                            placeholderText={formatMessage(m.selectDate)}
+                            handleChange={(date) =>
+                              setSelectedDateToOpenList(date)
+                            }
+                          ></DatePicker>
+                        </Box>
+                        <Box
+                          marginTop={10}
+                          display="flex"
+                          justifyContent="spaceBetween"
                         >
-                          <Box>
-                            <Text variant="h1" paddingBottom={3}>
-                              {formatMessage(m.modalStartCollection)}
-                            </Text>
-                            <Text paddingBottom={3}>
-                              {formatMessage(m.modalStartCollectionDescription)}
-                            </Text>
-                            <DatePicker
-                              label={formatMessage(m.date)}
-                              placeholderText={formatMessage(m.selectDate)}
-                              handleChange={(date) =>
-                                setSelectedDateToOpenList(date)
-                              }
-                            ></DatePicker>
-                          </Box>
-                          <Box
-                            marginTop={10}
-                            display="flex"
-                            justifyContent="spaceBetween"
+                          <Button variant="ghost">
+                            {formatMessage(m.modalButtonNo)}
+                          </Button>
+                          <Button
+                            onClick={() => onOpenList()}
+                            disabled={!selectedDateToOpenList}
+                            loading={openLoading}
                           >
-                            <Button variant="ghost">
-                              {formatMessage(m.modalButtonNo)}
-                            </Button>
-                            <Button
-                              onClick={() => onOpenList()}
-                              disabled={!selectedDateToOpenList}
-                              loading={openLoading}
-                            >
-                              {formatMessage(m.modalButtonYes)}
-                            </Button>
-                          </Box>
-                        </Modal>
-                      </Box>
+                            {formatMessage(m.modalButtonYes)}
+                          </Button>
+                        </Box>
+                      </Modal>
                     </Box>
-                  </>
-                )}
-              </Box>
-            )}
-          </Stack>
-
+                  </Box>
+                </>
+              )}
+            </Box>
+          )}
           <PetitionsTable
             petitions={petitionEndorsements}
             listId={location.state?.listId}
             isViewTypeEdit={viewTypeEdit}
           />
-        </Box>
+        </Stack>
       ) : (
         <Skeleton />
       )}
