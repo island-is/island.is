@@ -67,7 +67,6 @@ export const EuropeanHealthInsuranceCardCompleted: Form = buildForm({
         buildMultiField({
           id: 'completedStep',
           title: e.confirmation.sectionTitle,
-          description: e.confirmation.sectionInfoBulletFirst,
           children: [
             buildCustomField({
               id: 'completedScreen',

@@ -199,17 +199,29 @@ export const europeanHealthInsuranceCardApplicationMessages = {
       defaultMessage: 'Umsóknin er formlega móttekin.',
       description: 'First information sentence, in bullet list',
     },
-    sectionInfoBulletSecond: {
+    sectionInfoBulletSecondOne: {
       id: 'ehic.application:confirmation.section.infoBullet.second',
       defaultMessage:
-        'Kortið verður sent á Grundarstíg 12 umsækjanda og tekur 10-14 virka daga fyrir kortið að berast.',
-      description: 'Second information sentence, in bullet list',
+        'Kortið verður sent á',
+      description: 'Second part one information sentence, in bullet list',
+    },
+    sectionInfoBulletSecondTwo: {
+      id: 'ehic.application:confirmation.section.infoBullet.second',
+      defaultMessage:
+        'og tekur 10-14 virka daga fyrir kortið að berast.',
+      description: 'Second part two information sentence, in bullet list',
     },
     sectionInfoBulletThird: {
       id: 'ia.application:confirmation.section.infoBullet.third',
       defaultMessage:
-        'Ef ES kort berst ekki fyrir upphaf ferðar, þá er hægt að niðurhala bráðabirgðaskírteinið hér',
+        'Bráðabirgðakortið hefur verið sent í stafræna pósthólfið þitt á island.is',
       description: 'Third information sentence, in bullet list',
+    },
+    sectionInfoBulletFour: {
+      id: 'ia.application:confirmation.section.infoBullet.four',
+      defaultMessage:
+        'Þú getur niðurhalað bráðabirgðakortinu hér að neðan. Við mælum með að prenta út skjalið.',
+      description: 'Fourth information sentence, in bullet list',
     },
   }),
 
