@@ -8,14 +8,21 @@ import { ReviewScreenProps } from '../../../shared'
 import { ReviewGroup } from '../../ReviewGroup'
 import kennitala from 'kennitala'
 import { formatPhoneNumber } from '../../../utils'
+import { getValueViaPath } from '@island.is/application/core'
 
 export const OperatorSection: FC<FieldBaseProps & ReviewScreenProps> = ({
+  application,
   coOwnersAndOperators = [],
   reviewerNationalId = '',
 }) => {
   const { formatMessage } = useLocale()
-
+  console.log(coOwnersAndOperators)
   const operators = coOwnersAndOperators.filter((x) => x.type === 'operator')
+  const mainOperator = getValueViaPath(
+    application.answers,
+    'buyerMainOperator.nationalId',
+    '',
+  ) as string
 
   return operators.length > 0 ? (
     <ReviewGroup isLast>
@@ -32,7 +39,7 @@ export const OperatorSection: FC<FieldBaseProps & ReviewScreenProps> = ({
                 <Text variant="h4">
                   {formatMessage(information.labels.operator.title)}{' '}
                   {operators.length > 1 ? index + 1 : ''}{' '}
-                  {operators.length > 1 && index === 0
+                  {operators.length > 1 && mainOperator === nationalId
                     ? `(${formatMessage(information.labels.operator.main)})`
                     : ''}{' '}
                   {isOperator && `(${formatMessage(review.status.youLabel)})`}

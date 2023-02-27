@@ -63,6 +63,7 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
         nationalId,
         name,
         type: userMessageId as 'operator' | 'coOwner',
+        wasRemoved: repeaterField.wasRemoved,
       }
       temp[index] = itemValue
       setCoOwnersAndOperators(temp)
@@ -123,6 +124,7 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
           id={phoneField}
           name={phoneField}
           type="tel"
+          format="###-####"
           label={formatMessage(information.labels[userMessageId].phone)}
           error={errorMessage && phone.length === 0 ? errorMessage : undefined}
           backgroundColor="blue"

@@ -8,6 +8,7 @@ import { ReviewCoOwnerAndOperatorRepeaterItem } from './ReviewCoOwnerAndOperator
 import { repeaterButtons } from './ReviewCoOwnerAndOperatorRepeater.css'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
+import { getValueViaPath } from '@island.is/application/core'
 
 export const ReviewCoOwnerAndOperatorRepeater: FC<
   FieldBaseProps & ReviewScreenProps
@@ -71,6 +72,27 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
     setStep && setStep('overview')
   }
 
+  const updateMainOperator = () => {
+    const mainOperator = getValueViaPath(
+      application.answers,
+      'buyerMainOperator.nationalId',
+      '',
+    ) as string
+    const availableOperators = tempCoOwnersAndOperators.filter(
+      ({ type, wasRemoved }) => {
+        return type === 'operator' && wasRemoved !== 'true'
+      },
+    )
+    if (availableOperators.length === 0) return ''
+    if (availableOperators.length === 1) return availableOperators[0].nationalId
+    if (mainOperator.length > 0) {
+      const currentOperator = availableOperators.find(({ nationalId }) => {
+        return nationalId === mainOperator
+      })
+      return currentOperator ?? availableOperators[0].nationalId
+    }
+  }
+
   const onForwardButtonClick = async () => {
     if (tempCoOwnersAndOperators && setCoOwnersAndOperators) {
       const notValid = filteredCoOwnersAndOperators.find((field) => {
@@ -94,6 +116,9 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
               id: application.id,
               answers: {
                 buyerCoOwnerAndOperator: tempCoOwnersAndOperators,
+                buyerMainOperator: {
+                  nationalId: updateMainOperator(),
+                },
               },
             },
             locale,

@@ -214,6 +214,7 @@ const template: ApplicationTemplate<
                   'insurance',
                   'buyer',
                   'rejecter',
+                  'buyerMainOperator',
                 ],
               },
               read: 'all',
