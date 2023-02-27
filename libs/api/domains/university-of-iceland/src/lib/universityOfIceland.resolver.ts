@@ -2,6 +2,8 @@ import { Args, Query, Resolver } from '@nestjs/graphql'
 
 import { Inject, UseGuards } from '@nestjs/common'
 import { Locale } from '@island.is/shared/types'
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
 
 import {
   CurrentUser,
@@ -51,14 +53,20 @@ export class UniversityOfIcelandResolver {
   async getStudentInfoDetail(
     @Args('input') input: GetStudentInfoDetailInput,
     @CurrentUser() user: User,
-  ): Promise<object> {
-    const data = await this.universityOfIcelandApi.studentCareer(
+  ): Promise<StudentInfoDetailModel> {
+    const data = (await this.universityOfIcelandApi.studentCareer(
       user,
       input.trackNumber,
       input.locale as NemandiFerillFerillGetLocaleEnum,
-    )
+    )) as StudentInfoDetailModel
+    let date = data.transcript.graduationDate
+    date = format(new Date(date), 'dd.MM.yy', { locale: is })
+    const transcriptData = { ...data.transcript, graduationDate: date }
+
     return {
-      ...data,
+      transcript: transcriptData,
+      files: data.files,
+      body: data.body,
       //downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/education/graduation/`,
       downloadServiceURL: `https://service-portaleducation-university-api.dev01.devland.is/download/v1/education/graduation/`,
     }
