@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common'
 import { FirearmLicenseApiProvider } from './firearmApiProvider'
-import { OpenFirearmLicenseApiProvider } from './openFirearmApiProvider'
 
 @Module({
-  providers: [FirearmLicenseApiProvider, OpenFirearmLicenseApiProvider],
-  exports: [FirearmLicenseApiProvider, OpenFirearmLicenseApiProvider],
+  providers: [FirearmLicenseApiProvider],
+  exports: [FirearmLicenseApiProvider],
 })
 export class FirearmLicenseClientModule {}

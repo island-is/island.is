@@ -15,6 +15,7 @@ import {
   PARENTAL_LEAVE,
   SPOUSE,
   States as ApplicationStates,
+  States,
   YES,
 } from '../constants'
 
@@ -495,7 +496,7 @@ describe('Parental Leave Application Template', () => {
       expect(newApplication.answers.tempPeriods).toEqual(periods)
     })
 
-    it('should remove the temp copy of periods when canceling out of the Edit flow', () => {
+    it('should remove the temp copy of periods when canceling out of the Edit flow and go to APPROVED state', () => {
       const periods = [
         {
           ratio: '100',
@@ -513,6 +514,7 @@ describe('Parental Leave Application Template', () => {
           answers: {
             periods,
             tempPeriods: periods,
+            previousState: States.APPROVED,
           },
           state: ApplicationStates.EDIT_OR_ADD_PERIODS,
         }),
@@ -523,6 +525,70 @@ describe('Parental Leave Application Template', () => {
       })
       expect(hasChanged).toBe(true)
       expect(newState).toBe(ApplicationStates.APPROVED)
+      expect(newApplication.answers.tempPeriods).toEqual(undefined)
+    })
+
+    it('should remove the temp copy of periods when canceling out of the Edit flow and go to VINNUMALASTOFNUN_APPROVE_EDITS state', () => {
+      const periods = [
+        {
+          ratio: '100',
+          endDate: '2021-05-15T00:00:00Z',
+          startDate: '2021-01-15',
+        },
+        {
+          ratio: '100',
+          endDate: '2021-06-16',
+          startDate: '2021-06-01',
+        },
+      ]
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            periods,
+            tempPeriods: periods,
+            previousState: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+          },
+          state: ApplicationStates.EDIT_OR_ADD_PERIODS,
+        }),
+        ParentalLeaveTemplate,
+      )
+      const [hasChanged, newState, newApplication] = helper.changeState({
+        type: DefaultEvents.ABORT,
+      })
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS)
+      expect(newApplication.answers.tempPeriods).toEqual(undefined)
+    })
+
+    it('should remove the temp copy of periods when canceling out of the Edit flow and go to VINNUMALASTOFNUN_APPROVAL state', () => {
+      const periods = [
+        {
+          ratio: '100',
+          endDate: '2021-05-15T00:00:00Z',
+          startDate: '2021-01-15',
+        },
+        {
+          ratio: '100',
+          endDate: '2021-06-16',
+          startDate: '2021-06-01',
+        },
+      ]
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            periods,
+            tempPeriods: periods,
+            previousState: States.VINNUMALASTOFNUN_APPROVAL,
+          },
+          state: ApplicationStates.EDIT_OR_ADD_PERIODS,
+        }),
+        ParentalLeaveTemplate,
+      )
+      const [hasChanged, newState, newApplication] = helper.changeState({
+        type: DefaultEvents.ABORT,
+      })
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(ApplicationStates.VINNUMALASTOFNUN_APPROVAL)
       expect(newApplication.answers.tempPeriods).toEqual(undefined)
     })
 
@@ -541,8 +607,7 @@ describe('Parental Leave Application Template', () => {
         ParentalLeaveTemplate,
       )
 
-      const VMST_ID = process.env.VMST_ID
-      const [hasChanged, newState, newApplication] = helper.changeState({
+      const [hasChanged, newState] = helper.changeState({
         type: DefaultEvents.SUBMIT,
       })
       expect(hasChanged).toBe(true)

@@ -71,6 +71,7 @@
 - [Monorepo](handbook/technical-overview/monorepo.md)
 - [Personas](handbook/technical-overview/personas.md)
 - [Pósthólfið](handbook/technical-overview/postholf/README.md)
+  - [Gátlisti](handbook/technical-overview/postholf/postholf-00-security-checklist.md)
   - [Introduction](handbook/technical-overview/postholf/postholf-01-intro-and-overview.md)
   - [Skjalatilkynning API](handbook/technical-overview/postholf/postholf-02-interface-skjalatilkynning.md)
   - [Skjalaveita API](handbook/technical-overview/postholf/postholf-03-interface-skjalaveita.md)
