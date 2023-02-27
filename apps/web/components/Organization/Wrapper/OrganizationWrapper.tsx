@@ -249,7 +249,11 @@ export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
             }
 
             return (
-              <Link href={link.url} key={'organization-external-link-' + index}>
+              <Link
+                href={link.url}
+                key={'organization-external-link-' + index}
+                pureChildren={true}
+              >
                 <Button
                   variant={variant}
                   icon={isSjukratryggingar ? 'lockClosed' : 'open'}
