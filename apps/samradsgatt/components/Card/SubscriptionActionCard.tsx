@@ -27,7 +27,7 @@ export interface SubscriptionActionCardProps {
   }
 }
 
-const SubscriptionActionCard = ({
+export const SubscriptionActionCard = ({
   userIsLoggedIn,
   heading,
   text,
