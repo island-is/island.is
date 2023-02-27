@@ -245,6 +245,7 @@
 - [React Libraries](libs/react/README.md)
   - [React Components](libs/react/components/README.md)
   - [Feature Flags](libs/react/feature-flags/README.md)
+  - [React Spa Shared](libs/react-spa/shared/README.md)
 - [Regulations](libs/regulations/README.md)
 - [Residence History](libs/residence-history/README.md)
 - [Shared](libs/shared/README.md)

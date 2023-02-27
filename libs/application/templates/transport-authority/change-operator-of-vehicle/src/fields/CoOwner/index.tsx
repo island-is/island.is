@@ -88,18 +88,6 @@ export const CoOwner: FC<FieldBaseProps> = ({
             <GridRow>
               <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
                 <InputController
-                  id={`${id}[${index}].name`}
-                  name={`${id}[${index}].name`}
-                  defaultValue={coOwner.owner || ''}
-                  label={formatMessage(information.labels.coOwner.name)}
-                  error={
-                    errors && getErrorViaPath(errors, `${id}[${index}].name`)
-                  }
-                  readOnly
-                />
-              </GridColumn>
-              <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
-                <InputController
                   id={`${id}[${index}].nationalId`}
                   name={`${id}[${index}].nationalId`}
                   defaultValue={coOwner.nationalId || ''}
@@ -107,6 +95,19 @@ export const CoOwner: FC<FieldBaseProps> = ({
                   error={
                     errors &&
                     getErrorViaPath(errors, `${id}[${index}].nationalId`)
+                  }
+                  format="######-####"
+                  readOnly
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+                <InputController
+                  id={`${id}[${index}].name`}
+                  name={`${id}[${index}].name`}
+                  defaultValue={coOwner.owner || ''}
+                  label={formatMessage(information.labels.coOwner.name)}
+                  error={
+                    errors && getErrorViaPath(errors, `${id}[${index}].name`)
                   }
                   readOnly
                 />
@@ -144,6 +145,7 @@ export const CoOwner: FC<FieldBaseProps> = ({
                     ) as string
                   }
                   type="tel"
+                  format="###-####"
                   backgroundColor="blue"
                   error={
                     errors && getErrorViaPath(errors, `${id}[${index}].phone`)
