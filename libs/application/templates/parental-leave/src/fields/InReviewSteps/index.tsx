@@ -5,7 +5,7 @@ import { MessageDescriptor } from '@formatjs/intl'
 
 import { useLocale } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
-import { Application, FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { handleServerError } from '@island.is/application/ui-components'

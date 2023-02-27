@@ -1,4 +1,4 @@
-import { ApplicationContext, DefaultEvents } from '@island.is/application/types'
+import { ApplicationContext } from '@island.is/application/types'
 
 import {
   YES,

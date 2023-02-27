@@ -668,6 +668,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           status: 'inprogress',
           name: States.RESIDENCE_GRAND_APPLICATION,
+          actionCard: {
+            description: statesMessages.residenceGrantInProgress,
+          },
           lifecycle: pruneAfterDays(1),
           progress: 1,
           onExit: defineTemplateApi({

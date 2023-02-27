@@ -1,5 +1,3 @@
-import { DefaultEvents } from '@island.is/application/types'
-
 export const YES = 'yes'
 export const NO = 'no'
 export const MANUAL = 'manual'

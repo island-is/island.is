@@ -197,7 +197,17 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     if (dateOfBirth?.data?.dateOfBirth) {
       return dateOfBirth?.data?.dateOfBirth
     }
-
+    /*
+    If you want to MOCK getting dateOfBirth from API use this.
+    const fakeDateOfBirth = '2023-02-10'
+    const promise = new Promise(function (resolve) {
+      setTimeout(() => {
+        resolve(fakeDateOfBirth)}, 5000)})
+        const newValue = await promise
+        return {
+          dateOfBirth: newValue,
+        }
+    */
     try {
       const applicationInformation = await this.applicationInformationAPI.applicationGetApplicationInformation(
         {
@@ -1373,13 +1383,13 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       // There has been case when island.is got Access Denied from AWS when sending out emails
       // This try/catch keeps application in correct state
       try {
-        if (
-          application.state === States.RESIDENCE_GRAND_APPLICATION ||
-          application.state ===
-            States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE ||
-          previousState === States.RESIDENCE_GRAND_APPLICATION
-        )
-          return
+        //if (
+        //  application.state === States.RESIDENCE_GRAND_APPLICATION ||
+        //  application.state ===
+        //    States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE ||
+        //  previousState === States.RESIDENCE_GRAND_APPLICATION
+        //)
+        //  return
         const selfEmployed =
           applicationType === PARENTAL_LEAVE ? isSelfEmployed === YES : true
         const recivingUnemploymentBenefits =

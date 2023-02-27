@@ -14,7 +14,6 @@ import {
 } from '@island.is/application/types'
 import { StartDateOptions, YES, NO } from '../../constants'
 import {
-  convertBirthDay,
   getApplicationExternalData,
   getExpectedDateOfBirth,
   residentGrantIsOpenForApplication,

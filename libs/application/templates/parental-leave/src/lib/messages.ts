@@ -2752,4 +2752,9 @@ export const statesMessages = defineMessages({
     defaultMessage: 'Vinnumálastofnun hafnaði tímabreytingum þínum.',
     description: 'Description of the state - vinnumalastofnunEditsAction',
   },
+  residenceGrantInProgress: {
+    id: 'pl.application:residence.grant.in.progress',
+    defaultMessage: 'Þú ert að sækja um dvalarstyrk.',
+    description: 'You are applying for a residence grant',
+  },
 })
