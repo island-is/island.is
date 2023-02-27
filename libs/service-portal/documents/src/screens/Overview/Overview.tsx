@@ -362,7 +362,6 @@ export const ServicePortalDocuments = () => {
                       )}
                       documentLine={doc}
                       documentCategories={categoriesAvailable}
-                      userInfo={userInfo}
                     />
                   </Box>
                 ))}
