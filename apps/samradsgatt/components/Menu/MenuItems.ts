@@ -8,10 +8,10 @@ export const menuItems = [
     href: '/askriftir',
   },
 
-  {
-    label: 'Tölfræði',
-    href: '/tolfraedi',
-  },
+  // {
+  //   label: 'Tölfræði',
+  //   href: '/tolfraedi',
+  // },
   {
     label: 'Mínar umsagnir',
     href: '/umsagnir',
