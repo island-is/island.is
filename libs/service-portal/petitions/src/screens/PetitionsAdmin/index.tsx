@@ -8,7 +8,7 @@ import { ActionCard } from '@island.is/service-portal/core'
 
 import { m } from '../../lib/messages'
 import { PaginatedEndorsementListResponse } from '../../types/schema'
-import { useGetAllPetitionLists } from '../queries'
+import { useGetAllPetitionLists } from '../hooks'
 
 const formatDate = (date: string) => {
   try {

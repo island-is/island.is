@@ -19,16 +19,15 @@ import {
   PaginatedEndorsementResponse,
 } from '../../types/schema'
 import PetitionsTable from '../PetitionsTable'
+import { CloseList, OpenList, UnendorseList } from '../queries'
+
+import Skeleton from '../Skeletons/Skeleton'
+import { Modal } from '@island.is/service-portal/core'
 import {
-  CloseList,
-  OpenList,
-  UnendorseList,
   useGetSingleEndorsement,
   useGetSinglePetition,
   useGetSinglePetitionEndorsements,
-} from '../queries'
-import Skeleton from '../Skeletons/Skeleton'
-import { Modal } from '@island.is/service-portal/core'
+} from '../hooks'
 
 const ViewPetitionList = () => {
   const { formatMessage } = useLocale()
@@ -186,12 +185,12 @@ const ViewPetitionList = () => {
                             variant="primary"
                             icon="close"
                           >
-                            {'Taka nafn mitt af þessum lista'}
+                            {formatMessage(m.unsignList)}
                           </Button>
                         }
                         onConfirm={() => onUnendorse()}
-                        buttonTextConfirm={'Já'}
-                        buttonTextCancel={'Hætta við'}
+                        buttonTextConfirm={formatMessage(m.modalButtonYes)}
+                        buttonTextCancel={formatMessage(m.modalButtonNo)}
                       />
                     </Box>
                   ) : (
@@ -205,7 +204,7 @@ const ViewPetitionList = () => {
                           )
                         }
                       >
-                        {''}
+                        {formatMessage(m.signList)}
                       </Button>
                     </Box>
                   )}
@@ -217,19 +216,17 @@ const ViewPetitionList = () => {
                 {petition?.closedDate && isListOpen && (
                   <Stack space={3}>
                     <Box>
-                      <Text variant="h3">{'Breytingar á lista'}</Text>
+                      <Text variant="h3">{formatMessage(m.listChanges)}</Text>
                       <Text variant="default">
-                        {
-                          'Hér getur þú breytt lokadagsetningu lista og þannig lengt, stytt eða lokið tímabili hans'
-                        }
+                        {formatMessage(m.listChangesDescription)}
                       </Text>
                     </Box>
 
                     <Box display="flex" marginBottom={8} alignItems="center">
                       <DatePicker
-                        label="Breyta loka dagsetningu"
+                        label={formatMessage(m.changeCloseDate)}
                         locale="is"
-                        placeholderText="Veldu dagsetningu"
+                        placeholderText={formatMessage(m.selectDate)}
                         selected={selectedDateToOpenList}
                         handleChange={(date) => setSelectedDateToOpenList(date)}
                       />
@@ -241,7 +238,7 @@ const ViewPetitionList = () => {
                               onOpenList()
                             }}
                           >
-                            {'Uppfæra lista'}
+                            {formatMessage(m.updateList)}
                           </Button>
                         </Box>
                         <Modal
@@ -256,27 +253,27 @@ const ViewPetitionList = () => {
                               variant="ghost"
                               iconType="outline"
                             >
-                              {'Ljúka lista'}
+                              {formatMessage(m.stopSignatureCollection)}
                             </Button>
                           }
                         >
                           <Text variant="h1" paddingBottom={3}>
-                            {
-                              'Ertu viss um að þú viljir ljúka söfnun undirskrifta?'
-                            }
+                            {formatMessage(m.modalStopCollection)}
                           </Text>
                           <Box
                             marginTop={10}
                             display="flex"
                             justifyContent="spaceBetween"
                           >
-                            <Button variant="ghost">Hætta við</Button>
+                            <Button variant="ghost">
+                              {formatMessage(m.modalButtonNo)}
+                            </Button>
                             <Button
                               onClick={() => onCloseList()}
                               disabled={!selectedDateToOpenList}
                               loading={closeLoading}
                             >
-                              Ljúka lista
+                              {formatMessage(m.modalButtonYes)}
                             </Button>
                           </Box>
                         </Modal>
@@ -287,11 +284,11 @@ const ViewPetitionList = () => {
 
                 {petition?.closedDate && !isListOpen && (
                   <>
-                    <Text variant="h3">{'Opna fyrir söfnun undirskrifta'}</Text>
+                    <Text variant="h3">
+                      {formatMessage(m.startSignatureCollection)}
+                    </Text>
                     <Text variant="default">
-                      {
-                        'Til að opna fyrir söfnun undirskrifta á ný þarf að velja hnappinn “enduropna lista” hér að neðan.'
-                      }
+                      {formatMessage(m.startSignatureCollectionDescription)}
                     </Text>
                     <Box>
                       <Box marginTop={3} marginBottom={8}>
@@ -301,21 +298,21 @@ const ViewPetitionList = () => {
                           toggleClose={false}
                           initialVisibility={false}
                           disclosure={
-                            <Button icon="reload">{'Enduropna lista'}</Button>
+                            <Button icon="reload">
+                              {formatMessage(m.restartList)}
+                            </Button>
                           }
                         >
                           <Box>
                             <Text variant="h1" paddingBottom={3}>
-                              {'Þú ert að fara opna fyrir söfnun undirskrifta'}
+                              {formatMessage(m.modalStartCollection)}
                             </Text>
                             <Text paddingBottom={3}>
-                              {
-                                'Vinsamlegast veldu lokadagsetningu lista, svo hægt sé að opna fyrir söfnun undirskrifta á ný.'
-                              }
+                              {formatMessage(m.modalStartCollectionDescription)}
                             </Text>
                             <DatePicker
-                              label={'Dagsetning'}
-                              placeholderText={'Veldu dagsetningu'}
+                              label={formatMessage(m.date)}
+                              placeholderText={formatMessage(m.selectDate)}
                               handleChange={(date) =>
                                 setSelectedDateToOpenList(date)
                               }
@@ -326,13 +323,15 @@ const ViewPetitionList = () => {
                             display="flex"
                             justifyContent="spaceBetween"
                           >
-                            <Button variant="ghost">Hætta við</Button>
+                            <Button variant="ghost">
+                              {formatMessage(m.modalButtonNo)}
+                            </Button>
                             <Button
                               onClick={() => onOpenList()}
                               disabled={!selectedDateToOpenList}
                               loading={openLoading}
                             >
-                              Opna lista
+                              {formatMessage(m.modalButtonYes)}
                             </Button>
                           </Box>
                         </Modal>

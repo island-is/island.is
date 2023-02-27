@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-
 import {
   Box,
   Button,
@@ -9,23 +8,11 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-
-import { m } from '../../lib/messages'
-import { ExportAsCSV } from '@island.is/shared/components'
 import { formatDate, pages, PAGE_SIZE, paginate } from '../../lib/utils'
+import { m } from '../../lib/messages'
 
 const PetitionsTable = (data: any) => {
   const { formatMessage } = useLocale()
-
-  const mapToCSVFile = (petitions: any) => {
-    return petitions.map((pet: any) => {
-      return {
-        Dagsetning: formatDate(pet.created),
-        Nafn: pet.meta.fullName ? pet.meta.fullName : 'Nafn ekki skráð',
-      }
-    })
-  }
-
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
   const [listOfPetitions, setPetitions] = useState(data.petitions?.data ?? [])
@@ -44,10 +31,10 @@ const PetitionsTable = (data: any) => {
   return (
     <Box>
       <Box display="flex" justifyContent="spaceBetween" marginBottom={2}>
-        <Text variant="h3">{'Yfirlit meðmæla'}</Text>
+        <Text variant="h3">{formatMessage(m.petitionsOverview)}</Text>
         {data.isViewTypeEdit && (
           <Button variant="utility" icon="download" size="small">
-            Sækja lista
+            {formatMessage(m.downloadPetitions)}
           </Button>
         )}
       </Box>
@@ -55,8 +42,8 @@ const PetitionsTable = (data: any) => {
         <T.Table>
           <T.Head>
             <T.Row>
-              <T.HeadData>{'Dagsetning'}</T.HeadData>
-              <T.HeadData colSpan={4}>{'Nafn'}</T.HeadData>
+              <T.HeadData>{formatMessage(m.date)}</T.HeadData>
+              <T.HeadData colSpan={4}>{formatMessage(m.name)}</T.HeadData>
               <T.HeadData></T.HeadData>
               <T.HeadData></T.HeadData>
               <T.HeadData></T.HeadData>
@@ -70,7 +57,7 @@ const PetitionsTable = (data: any) => {
                   <T.Data colSpan={4}>
                     {petition.meta.fullName
                       ? petition.meta.fullName
-                      : 'Nafn ekki skráð'}
+                      : formatMessage(m.noName)}
                   </T.Data>
                   <T.Data></T.Data>
                   <T.Data></T.Data>
@@ -96,7 +83,7 @@ const PetitionsTable = (data: any) => {
             )}
           />
         ) : (
-          <Text>{'no petitions'}</Text>
+          <Text>{formatMessage(m.noSignatures)}</Text>
         )}
       </Stack>
     </Box>

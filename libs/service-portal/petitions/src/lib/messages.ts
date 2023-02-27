@@ -8,7 +8,7 @@ export const m = defineMessages({
   },
   intro: {
     id: 'sp.petitions:intro',
-    defaultMessage: 'Yfirlit yfir undirskriftalista og lista í þinni umsjá',
+    defaultMessage: 'Yfirlit yfir undirskriftalista og lista í þinni umsjá.',
     description: '',
   },
   openLists: {
@@ -81,6 +81,123 @@ export const m = defineMessages({
   listOwner: {
     id: 'sp.petitions:listOwner',
     defaultMessage: 'Ábyrgðarmaður',
+    description: '',
+  },
+
+  // Petitions table
+  petitionsOverview: {
+    id: 'sp.petitions:petitionsOverview',
+    defaultMessage: 'Yfirlit undirskrifta',
+    description: '',
+  },
+  downloadPetitions: {
+    id: 'sp.petitions:downloadPetitions',
+    defaultMessage: 'Sækja lista',
+    description: '',
+  },
+  date: {
+    id: 'sp.petitions:date',
+    defaultMessage: 'Dagsetning',
+    description: '',
+  },
+  name: {
+    id: 'sp.petitions:name',
+    defaultMessage: 'Nafn',
+    description: '',
+  },
+  noName: {
+    id: 'sp.petitions:noName',
+    defaultMessage: 'Nafn ekki skráð',
+    description: '',
+  },
+  noSignatures: {
+    id: 'sp.petitions:noSignatures',
+    defaultMessage: 'Engar undirskriftir',
+    description: '',
+  },
+
+  // View Petition List
+  unsignList: {
+    id: 'sp.petitions:unsignList',
+    defaultMessage: 'Taka nafn mitt af þessum lista',
+    description: '',
+  },
+  signList: {
+    id: 'sp.petitions:signList',
+    defaultMessage: 'Setja nafn mitt á þennan lista',
+    description: '',
+  },
+  modalButtonYes: {
+    id: 'sp.petitions:modalButtonYes',
+    defaultMessage: 'Já',
+    description: '',
+  },
+  modalButtonNo: {
+    id: 'sp.petitions:modalButtonNo',
+    defaultMessage: 'Hætta við',
+    description: '',
+  },
+  listChanges: {
+    id: 'sp.petitions:listChanges',
+    defaultMessage: 'Breytingar á lista',
+    description: '',
+  },
+  listChangesDescription: {
+    id: 'sp.petitions:listChangesDescription',
+    defaultMessage:
+      'Hér getur þú breytt lokadagsetningu lista og þannig lengt, stytt eða lokið tímabili hans.',
+    description: '',
+  },
+  changeCloseDate: {
+    id: 'sp.petitions:changeCloseDate',
+    defaultMessage: 'Breyta lokadagsetningu',
+    description: '',
+  },
+  selectDate: {
+    id: 'sp.petitions:selectDate',
+    defaultMessage: 'Veldu dagsetningu',
+    description: '',
+  },
+  updateList: {
+    id: 'sp.petitions:updateList',
+    defaultMessage: 'Uppfæra lista',
+    description: '',
+  },
+  stopSignatureCollection: {
+    id: 'sp.petitions:stopSignatureCollection',
+    defaultMessage: 'Ljúka lista',
+    description: '',
+  },
+  startSignatureCollection: {
+    id: 'sp.petitions:startSignatureCollection',
+    defaultMessage: 'Opna fyrir söfnun undirskrifta',
+    description: '',
+  },
+  startSignatureCollectionDescription: {
+    id: 'sp.petitions:startSignatureCollectionDescription',
+    defaultMessage:
+      'Til að opna fyrir söfnun undirskrifta á ný þarf að velja hnappinn “enduropna lista” hér að neðan.',
+    description: '',
+  },
+  restartList: {
+    id: 'sp.petitions:restartList',
+    defaultMessage: 'Enduropna lista',
+    description: '',
+  },
+  modalStartCollection: {
+    id: 'sp.petitions:modalStartCollection',
+    defaultMessage: 'Þú ert að fara opna fyrir söfnun undirskrifta',
+    description: '',
+  },
+  modalStartCollectionDescription: {
+    id: 'sp.petitions:modalStartCollectionDescription',
+    defaultMessage:
+      'Vinsamlegast veldu lokadagsetningu lista, svo hægt sé að opna fyrir söfnun undirskrifta á ný.',
+    description: '',
+  },
+  modalStopCollection: {
+    id: 'sp.petitions:modalStopCollection',
+    defaultMessage: 'Ertu viss um að þú viljir ljúka þessum lista?',
     description: '',
   },
 })

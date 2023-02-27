@@ -4,69 +4,66 @@ import { useLocale } from '@island.is/localization'
 import { IntroHeader, ServicePortalPath } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
 import {
-  PaginatedEndorsementListResponse,
-  PaginatedEndorsementResponse,
+  PaginatedEndorsementListResponse as OwnedLists,
+  PaginatedEndorsementResponse as SignedLists,
 } from '../../types/schema'
-import { useGetListsUserSigned, useListsUserOwns } from '../queries'
+import { useGetListsUserSigned, useListsUserOwns } from '../hooks'
 import { ActionCard } from '@island.is/service-portal/core'
 import { formatDate } from '../../lib/utils'
 
 const Petitions = () => {
   const { formatMessage } = useLocale()
 
-  const getPetitionListsUserOwns = useListsUserOwns()
-  const getPetitionListsUserSigned = useGetListsUserSigned()
-
-  const ownedLists = (getPetitionListsUserOwns as PaginatedEndorsementListResponse)
-    .data
-  const signedLists = (getPetitionListsUserSigned as PaginatedEndorsementResponse)
-    .data
-
-  //Closed lists
-  const closedSignedLists = signedLists?.filter((list) => {
-    return new Date() >= new Date(list.endorsementList?.closedDate)
-  })
-  const closedOwnedLists = ownedLists?.filter((list) => {
-    return new Date() >= new Date(list?.closedDate)
-  })
+  const ownedLists = useListsUserOwns()
+  const signedLists = useGetListsUserSigned()
 
   //Open lists
-  const openSignedLists = signedLists?.filter((list) => {
+  const openSignedLists = (signedLists as SignedLists)?.data?.filter((list) => {
     return (
       new Date(list.endorsementList?.openedDate) <= new Date() &&
       new Date() <= new Date(list.endorsementList?.closedDate)
     )
   })
-  const openOwnedLists = ownedLists?.filter((list) => {
+  const openOwnedLists = (ownedLists as OwnedLists)?.data?.filter((list) => {
     return (
       new Date(list.openedDate) <= new Date() &&
       new Date() <= new Date(list?.closedDate)
     )
   })
 
+  //Closed lists
+  const closedSignedLists = (signedLists as SignedLists)?.data?.filter(
+    (list) => {
+      return new Date() >= new Date(list.endorsementList?.closedDate)
+    },
+  )
+  const closedOwnedLists = (ownedLists as OwnedLists)?.data?.filter((list) => {
+    return new Date() >= new Date(list?.closedDate)
+  })
+
   return (
-    <Box marginBottom={[6, 6, 10]}>
+    <Box>
       <IntroHeader
         title={formatMessage(m.title)}
         intro={formatMessage(m.intro)}
       />
 
-      <Box marginTop={5}>
+      <Box>
         <Tabs
           contentBackground="white"
-          label={'Tabs'}
-          selected={'openLists'}
+          label="petitionListsTabs"
+          selected="openLists"
           tabs={[
             {
               id: 'openLists',
               label: formatMessage(m.openLists),
               content: (
                 <Box>
-                  <Box marginTop={8}>
-                    <Text variant="h4" marginBottom={2}>
-                      {formatMessage(m.myLists)}
-                    </Text>
-                    {openOwnedLists && openOwnedLists.length > 0 && (
+                  {openOwnedLists && openOwnedLists.length > 0 && (
+                    <Box marginTop={6}>
+                      <Text variant="h4" marginBottom={2}>
+                        {formatMessage(m.myLists)}
+                      </Text>
                       <Stack space={3}>
                         {openOwnedLists.map((list: any) => {
                           return (
@@ -99,13 +96,14 @@ const Petitions = () => {
                           )
                         })}
                       </Stack>
-                    )}
-                  </Box>
-                  <Box marginTop={8}>
-                    <Text variant="h4" marginBottom={2}>
-                      {formatMessage(m.signedLists)}
-                    </Text>
-                    {openSignedLists && openSignedLists.length > 0 && (
+                    </Box>
+                  )}
+
+                  {openSignedLists && openSignedLists.length > 0 && (
+                    <Box marginTop={6}>
+                      <Text variant="h4" marginBottom={2}>
+                        {formatMessage(m.signedLists)}
+                      </Text>
                       <Stack space={4}>
                         {openSignedLists.map((list: any) => {
                           return (
@@ -140,8 +138,8 @@ const Petitions = () => {
                           )
                         })}
                       </Stack>
-                    )}
-                  </Box>
+                    </Box>
+                  )}
                 </Box>
               ),
             },
@@ -150,11 +148,11 @@ const Petitions = () => {
               label: formatMessage(m.outdatedLists),
               content: (
                 <Box>
-                  <Box marginTop={8}>
-                    <Text variant="h4" marginBottom={2}>
-                      {formatMessage(m.myLists)}
-                    </Text>
-                    {closedOwnedLists && closedOwnedLists.length > 0 && (
+                  {closedOwnedLists && closedOwnedLists.length > 0 && (
+                    <Box marginTop={6}>
+                      <Text variant="h4" marginBottom={2}>
+                        {formatMessage(m.myLists)}
+                      </Text>
                       <Stack space={3}>
                         {closedOwnedLists.map((list: any) => {
                           return (
@@ -187,13 +185,14 @@ const Petitions = () => {
                           )
                         })}
                       </Stack>
-                    )}
-                  </Box>
-                  <Box marginTop={8}>
-                    <Text variant="h4" marginBottom={2}>
-                      {formatMessage(m.signedLists)}
-                    </Text>
-                    {closedSignedLists && closedSignedLists.length > 0 && (
+                    </Box>
+                  )}
+
+                  {closedSignedLists && closedSignedLists.length > 0 && (
+                    <Box marginTop={6}>
+                      <Text variant="h4" marginBottom={2}>
+                        {formatMessage(m.signedLists)}
+                      </Text>
                       <Stack space={4}>
                         {closedSignedLists.map((list: any) => {
                           return (
@@ -228,8 +227,8 @@ const Petitions = () => {
                           )
                         })}
                       </Stack>
-                    )}
-                  </Box>
+                    </Box>
+                  )}
                 </Box>
               ),
             },

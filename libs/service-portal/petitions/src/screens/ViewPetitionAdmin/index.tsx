@@ -10,19 +10,18 @@ import {
   DatePicker,
 } from '@island.is/island-ui/core'
 import { useLocation } from 'react-router-dom'
-import {
-  useGetSinglePetition,
-  LockList,
-  UnlockList,
-  UpdateList,
-  useGetSinglePetitionEndorsements,
-} from '../queries'
+import { LockList, UnlockList, UpdateList } from '../queries'
+
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import PetitionsTable from '../PetitionsTable'
 import { EndorsementList } from '../../types/schema'
 import { useMutation } from '@apollo/client'
 import Skeleton from '../Skeletons/SkeletonAdmin'
+import {
+  useGetSinglePetition,
+  useGetSinglePetitionEndorsements,
+} from '../hooks'
 
 const ViewPetitionAdmin = () => {
   const { formatMessage } = useLocale()
