@@ -61,7 +61,7 @@ export class ApplicationSerializer<
         if (isArray) {
           const applications = res as Application[]
           const showHistory = await this.featureFlagService.getValue(Features.applicationSystemHistory, false, user)
-          console.log({ showHistory })
+
           let histories: History[] = []
           if(showHistory) {
             histories = await this.historyService.getStateHistory(
