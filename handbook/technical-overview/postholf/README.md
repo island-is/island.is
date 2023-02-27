@@ -2,7 +2,7 @@
 
 ## Getting started
 
-- Sækja um aðgang að pósthólfinu. Sótt er um aðgang að pósthólfinu á umsóknavef island.is https://island.is/postholf/stofnanir. <br/>Í umsókninni þarf að skrá upplýsingar um stofnunina sem sækir um ásamt ábyrgðaraðila og tæknilegan tengilið.
+- Sækja um aðgang að pósthólfinu. Sótt er um aðgang að pósthólfinu á umsóknavef island.is https://island.is/s/stafraent-island/thjonustur/stafraent-postholf <br/>Í umsókninni þarf að skrá upplýsingar um stofnunina sem sækir um ásamt ábyrgðaraðila og tæknilegan tengilið.
 
 - Sé umsókn samþykkt fær tæknilegur tengiliður eftirfarandi aðgangsupplýsingar:
   - ClientId / ClientSecret - Til þess að kalla á Skjalatilkynning
@@ -15,6 +15,7 @@
 
 ## Content
 
+- [Security Checklist](postholf-00-security-checklist.md)
 - [Introduction](postholf-01-intro-and-overview.md)
 - [Skjalatilkynning API](postholf-02-interface-skjalatilkynning.md)
 - [Skjalaveita API](postholf-03-interface-skjalaveita.md)
