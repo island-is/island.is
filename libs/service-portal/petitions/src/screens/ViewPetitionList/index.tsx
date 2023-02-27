@@ -22,7 +22,7 @@ import PetitionsTable from '../PetitionsTable'
 import { CloseList, OpenList, UnendorseList } from '../queries'
 
 import Skeleton from '../Skeletons/Skeleton'
-import { IntroHeader, Modal } from '@island.is/service-portal/core'
+import { Modal } from '@island.is/service-portal/core'
 import {
   useGetSingleEndorsement,
   useGetSinglePetition,
