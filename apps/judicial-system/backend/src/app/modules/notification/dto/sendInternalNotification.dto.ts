@@ -20,9 +20,4 @@ export class SendInternalNotificationDto {
   @IsEnum(NotificationType)
   @ApiProperty({ enum: NotificationType })
   readonly type!: NotificationType
-
-  @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional()
-  readonly eventOnly?: boolean
 }
