@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useMutation } from '@apollo/client'
 import {
-  AlertMessage,
   Box,
   Button,
   DatePicker,
@@ -29,6 +28,7 @@ import {
   useGetSinglePetitionEndorsements,
 } from '../queries'
 import Skeleton from '../Skeletons/Skeleton'
+import { Modal } from '@island.is/service-portal/core'
 
 const ViewPetitionList = () => {
   const { formatMessage } = useLocale()
@@ -39,12 +39,12 @@ const ViewPetitionList = () => {
   )
   const petition = petitionData as EndorsementList
 
-  const [closeList] = useMutation(CloseList, {
+  const [closeList, { loading: closeLoading }] = useMutation(CloseList, {
     onCompleted: () => {
       refetchSinglePetition()
     },
   })
-  const [openList] = useMutation(OpenList, {
+  const [openList, { loading: openLoading }] = useMutation(OpenList, {
     onCompleted: () => {
       refetchSinglePetition()
     },
@@ -63,6 +63,7 @@ const ViewPetitionList = () => {
   )
 
   const [hasSigned, setHasSigned] = useState(userHasSigned ? true : false)
+  const [modalIsOpen] = useState(false)
   const [selectedDateToOpenList, setSelectedDateToOpenList] = useState(
     isListOpen ? new Date(petition?.closedDate) : undefined,
   )
@@ -172,7 +173,7 @@ const ViewPetitionList = () => {
             </Box>
             <Box>
               {!viewTypeEdit && isListOpen && (
-                <Box marginTop={3}>
+                <Box>
                   {hasSigned ? (
                     <Box marginBottom={5} width="half">
                       <DialogPrompt
@@ -185,7 +186,7 @@ const ViewPetitionList = () => {
                             variant="primary"
                             icon="close"
                           >
-                            {'Lorem ipsum'}
+                            {'Taka nafn mitt af þessum lista'}
                           </Button>
                         }
                         onConfirm={() => onUnendorse()}
@@ -216,11 +217,15 @@ const ViewPetitionList = () => {
                 {petition?.closedDate && isListOpen && (
                   <Stack space={3}>
                     <Box>
-                      <Text variant="h3">{'Lorem ipsum'}</Text>
-                      <Text variant="default">{'Lorem ipsum'}</Text>
+                      <Text variant="h3">{'Breytingar á lista'}</Text>
+                      <Text variant="default">
+                        {
+                          'Hér getur þú breytt lokadagsetningu lista og þannig lengt, stytt eða lokið tímabili hans'
+                        }
+                      </Text>
                     </Box>
 
-                    <Box display="flex" marginBottom={8}>
+                    <Box display="flex" marginBottom={8} alignItems="center">
                       <DatePicker
                         label="Breyta loka dagsetningu"
                         locale="is"
@@ -228,34 +233,53 @@ const ViewPetitionList = () => {
                         selected={selectedDateToOpenList}
                         handleChange={(date) => setSelectedDateToOpenList(date)}
                       />
-                      <Box display="flex" alignItems={'center'} width="half">
-                        <Box marginX={5}>
+                      <Box display={'flex'}>
+                        <Box marginX={3}>
                           <Button
                             iconType="outline"
                             onClick={() => {
                               onOpenList()
                             }}
                           >
-                            {'Lorem ipsum'}
+                            {'Uppfæra lista'}
                           </Button>
                         </Box>
-                        <DialogPrompt
-                          baseId="demo_dialog"
-                          title={''}
-                          ariaLabel={''}
-                          disclosureElement={
+                        <Modal
+                          id="setDate"
+                          isVisible={modalIsOpen}
+                          toggleClose={false}
+                          initialVisibility={false}
+                          disclosure={
                             <Button
                               icon="lockClosed"
-                              iconType="outline"
                               colorScheme="destructive"
+                              variant="ghost"
+                              iconType="outline"
                             >
                               {'Ljúka lista'}
                             </Button>
                           }
-                          onConfirm={() => onCloseList()}
-                          buttonTextConfirm={'Já'}
-                          buttonTextCancel={'Hætta við'}
-                        />
+                        >
+                          <Text variant="h1" paddingBottom={3}>
+                            {
+                              'Ertu viss um að þú viljir ljúka söfnun undirskrifta?'
+                            }
+                          </Text>
+                          <Box
+                            marginTop={10}
+                            display="flex"
+                            justifyContent="spaceBetween"
+                          >
+                            <Button variant="ghost">Hætta við</Button>
+                            <Button
+                              onClick={() => onCloseList()}
+                              disabled={!selectedDateToOpenList}
+                              loading={closeLoading}
+                            >
+                              Ljúka lista
+                            </Button>
+                          </Box>
+                        </Modal>
                       </Box>
                     </Box>
                   </Stack>
@@ -263,49 +287,57 @@ const ViewPetitionList = () => {
 
                 {petition?.closedDate && !isListOpen && (
                   <>
-                    <Text variant="h3">{'Lorem ipsum'}</Text>
-                    <Text variant="default">{'Lorem ipsum'}</Text>
-                    <Box display={['block', 'flex']} marginY={3}>
-                      <Box>
-                        <DatePicker
-                          label="Velja dagsetningu"
-                          locale="is"
-                          placeholderText="Veldu dagsetningu"
-                          selected={selectedDateToOpenList}
-                          required
-                          handleChange={(date) =>
-                            setSelectedDateToOpenList(date)
+                    <Text variant="h3">{'Opna fyrir söfnun undirskrifta'}</Text>
+                    <Text variant="default">
+                      {
+                        'Til að opna fyrir söfnun undirskrifta á ný þarf að velja hnappinn “enduropna lista” hér að neðan.'
+                      }
+                    </Text>
+                    <Box>
+                      <Box marginTop={3} marginBottom={8}>
+                        <Modal
+                          id="setDate"
+                          isVisible={modalIsOpen}
+                          toggleClose={false}
+                          initialVisibility={false}
+                          disclosure={
+                            <Button icon="reload">{'Enduropna lista'}</Button>
                           }
-                          size="xs"
-                        />
-                      </Box>
-                      <Box
-                        display="flex"
-                        alignItems="center"
-                        marginLeft={[0, 5]}
-                        marginTop={[3, 0]}
-                        justifyContent={['flexEnd', 'center']}
-                      >
-                        <DialogPrompt
-                          baseId="demo_dialog"
-                          title={'Lorem ipsum'}
-                          ariaLabel={'Lorem ipsum'}
-                          disclosureElement={
+                        >
+                          <Box>
+                            <Text variant="h1" paddingBottom={3}>
+                              {'Þú ert að fara opna fyrir söfnun undirskrifta'}
+                            </Text>
+                            <Text paddingBottom={3}>
+                              {
+                                'Vinsamlegast veldu lokadagsetningu lista, svo hægt sé að opna fyrir söfnun undirskrifta á ný.'
+                              }
+                            </Text>
+                            <DatePicker
+                              label={'Dagsetning'}
+                              placeholderText={'Veldu dagsetningu'}
+                              handleChange={(date) =>
+                                setSelectedDateToOpenList(date)
+                              }
+                            ></DatePicker>
+                          </Box>
+                          <Box
+                            marginTop={10}
+                            display="flex"
+                            justifyContent="spaceBetween"
+                          >
+                            <Button variant="ghost">Hætta við</Button>
                             <Button
-                              icon="reload"
-                              iconType="outline"
+                              onClick={() => onOpenList()}
                               disabled={!selectedDateToOpenList}
+                              loading={openLoading}
                             >
-                              {'Lorem ipsum'}
+                              Opna lista
                             </Button>
-                          }
-                          onConfirm={() => onOpenList()}
-                          buttonTextConfirm={'Já'}
-                          buttonTextCancel={'Hætta við'}
-                        />
+                          </Box>
+                        </Modal>
                       </Box>
                     </Box>
-                    <AlertMessage type="warning" title={''} message="" />
                   </>
                 )}
               </Box>

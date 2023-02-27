@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 
 import {
   Box,
+  Button,
   Pagination,
   Stack,
   Table as T,
@@ -42,37 +43,38 @@ const PetitionsTable = (data: any) => {
 
   return (
     <Box>
-      <Box display="flex" justifyContent="spaceBetween">
-        <Text variant="h3" marginBottom={2}>
-          {'Yfirlit meðmæla'}
-        </Text>
+      <Box display="flex" justifyContent="spaceBetween" marginBottom={2}>
+        <Text variant="h3">{'Yfirlit meðmæla'}</Text>
         {data.isViewTypeEdit && (
-          <ExportAsCSV
-            data={mapToCSVFile(data.petitions?.data) as object[]}
-            filename="Meðmælalisti"
-            title="Sækja lista"
-            variant="text"
-          />
+          <Button variant="utility" icon="download" size="small">
+            Sækja lista
+          </Button>
         )}
       </Box>
       <Stack space={3}>
         <T.Table>
           <T.Head>
             <T.Row>
-              <T.HeadData cols={4}>{'Dagsetning'}</T.HeadData>
-              <T.HeadData>{'Nafn'}</T.HeadData>
+              <T.HeadData>{'Dagsetning'}</T.HeadData>
+              <T.HeadData colSpan={4}>{'Nafn'}</T.HeadData>
+              <T.HeadData></T.HeadData>
+              <T.HeadData></T.HeadData>
+              <T.HeadData></T.HeadData>
             </T.Row>
           </T.Head>
           <T.Body>
             {listOfPetitions?.map((petition: any) => {
               return (
                 <T.Row key={petition.id}>
-                  <T.Data cols={4}>{formatDate(petition.created)}</T.Data>
-                  <T.Data>
+                  <T.Data>{formatDate(petition.created)}</T.Data>
+                  <T.Data colSpan={4}>
                     {petition.meta.fullName
                       ? petition.meta.fullName
                       : 'Nafn ekki skráð'}
                   </T.Data>
+                  <T.Data></T.Data>
+                  <T.Data></T.Data>
+                  <T.Data></T.Data>
                 </T.Row>
               )
             })}

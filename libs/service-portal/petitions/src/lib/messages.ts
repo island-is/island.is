@@ -43,7 +43,7 @@ export const m = defineMessages({
   },
   listPeriod: {
     id: 'sp.petitions:listPeriod',
-    defaultMessage: 'Tímabil lista',
+    defaultMessage: 'Tímabil lista: ',
     description: '',
   },
   toastErrorOnCloseList: {
