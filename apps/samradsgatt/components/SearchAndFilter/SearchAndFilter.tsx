@@ -83,10 +83,16 @@ const SearchAndFilter = ({
             <GridRow>
               <GridColumn span={['8/12', '8/12', '6/12', '6/12', '6/12']}>
                 <Stack space="none">
-                  <Text variant="eyebrow" color="blue400" paddingBottom="none">
+                  <Text
+                    lineHeight="sm"
+                    variant="eyebrow"
+                    color="blue400"
+                    paddingBottom="none"
+                    fontWeight="light"
+                  >
                     Leit
                   </Text>
-                  <div style={{ marginBottom: '2px' }} />
+                  <div style={{ marginBottom: '6px' }} />
                   <AsyncSearch
                     label="Leit"
                     size="medium"
@@ -102,6 +108,7 @@ const SearchAndFilter = ({
               </GridColumn>
               <GridColumn span={['2/12', '2/12', '3/12', '3/12', '3/12']}>
                 <Select
+                  isSearchable
                   size="xs"
                   label="Málefnasvið"
                   name="policyAreas"
@@ -116,6 +123,7 @@ const SearchAndFilter = ({
               </GridColumn>
               <GridColumn span={['2/12', '2/12', '3/12', '3/12', '3/12']}>
                 <Select
+                  isSearchable
                   size="xs"
                   label="Stofnun"
                   name="institutions"

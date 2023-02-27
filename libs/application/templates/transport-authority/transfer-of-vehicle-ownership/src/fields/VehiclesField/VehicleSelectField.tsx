@@ -1,6 +1,6 @@
 import { FieldBaseProps, Option } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
-import { FC, useCallback, useState } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 import {
   AlertMessage,
   Box,
@@ -27,7 +27,7 @@ interface VehicleSearchFieldProps {
 
 export const VehicleSelectField: FC<
   VehicleSearchFieldProps & FieldBaseProps
-> = ({ currentVehicleList, application, errors }) => {
+> = ({ currentVehicleList, application, errors, setFieldLoadingState }) => {
   const { formatMessage } = useLocale()
   const { register, setValue } = useFormContext()
 
@@ -113,6 +113,10 @@ export const VehicleSelectField: FC<
     selectedVehicle &&
     (!selectedVehicle.isDebtLess ||
       !!selectedVehicle.validationErrorMessages?.length)
+
+  useEffect(() => {
+    setFieldLoadingState?.(isLoading)
+  }, [isLoading])
 
   return (
     <Box>
