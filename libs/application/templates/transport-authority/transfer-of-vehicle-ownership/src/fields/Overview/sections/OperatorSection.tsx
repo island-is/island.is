@@ -16,7 +16,6 @@ export const OperatorSection: FC<FieldBaseProps & ReviewScreenProps> = ({
   reviewerNationalId = '',
 }) => {
   const { formatMessage } = useLocale()
-  console.log(coOwnersAndOperators)
   const operators = coOwnersAndOperators.filter((x) => x.type === 'operator')
   const mainOperator = getValueViaPath(
     application.answers,
