@@ -97,6 +97,7 @@ import {
   MachineDigitalLicenseClientConfig,
   DrivingDigitalLicenseClientConfig,
 } from '@island.is/clients/license-client'
+import { AuthAdminModule } from '@island.is/api/domains/auth-admin'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -261,6 +262,7 @@ const autoSchemaFile = environment.production
     MortgageCertificateModule,
     TransportAuthorityApiModule,
     SessionsModule,
+    AuthAdminModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [

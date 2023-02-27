@@ -1,5 +1,5 @@
-const SubscriptionsArray = {
-  caseIds: [3027],
+export const SubscriptionsArray = {
+  caseIds: [],
   institutionIds: [],
   policyAreaIds: [],
 }
