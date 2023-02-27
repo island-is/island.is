@@ -1,8 +1,8 @@
 import React, { FC, ReactElement } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
-import ManWithStrollerIllustration from './ManWithStrollerIllustration'
+import ManWithStrollerIllustration from './Images/ManWithStrollerIllustration'
 import { Box, ResponsiveProp } from '@island.is/island-ui/core'
-import BackgroundImage from '../../assets/BackgroundImage'
+import BackgroundImage from './BackgroundImage'
 
 type ResponsivePropType =
   | ResponsiveProp<
@@ -71,7 +71,7 @@ interface PeriodsSectionImageProp extends FieldBaseProps {
 }
 
 // TODO later move the illustrations from the web project and into a reusable library
-const PeriodsSectionImage: FC<PeriodsSectionImageProp> = ({
+const DottetBackgroundImage: FC<PeriodsSectionImageProp> = ({
   children,
   height,
   display,
@@ -88,8 +88,8 @@ const PeriodsSectionImage: FC<PeriodsSectionImageProp> = ({
       justifyContent={justifyContent || 'flexEnd'}
       alignItems={alignItems || 'flexEnd'}
       height={height || 'full'}
-      marginRight={marginRight || 0}
-      marginTop={marginTop || 0}
+      marginRight={marginRight || 8}
+      marginTop={marginTop || 8}
     >
       <BackgroundImage>
         {children || <ManWithStrollerIllustration />}
@@ -98,4 +98,4 @@ const PeriodsSectionImage: FC<PeriodsSectionImageProp> = ({
   )
 }
 
-export default PeriodsSectionImage
+export default DottetBackgroundImage
