@@ -3,8 +3,10 @@ schema:
 documents: apps/consultation-portal/**/*.{ts,tsx}
 generates:
   apps/consultation-portal/graphql/schema.ts:
+    preset: 'near-operation-file'
+    presetConfig:
+      baseTypesPath: '~@island.is/api/schema'
     plugins:
-      - typescript
       - typescript-operations
       - typescript-react-apollo
     config:
