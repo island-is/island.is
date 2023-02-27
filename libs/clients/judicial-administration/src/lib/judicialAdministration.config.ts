@@ -25,7 +25,7 @@ export const JudicialAdministrationClientConfig = defineConfig<
       timeout: 30000,
       scope: ['@island.is/internal'],
     },
-    username: env.required('DOMSYSLA_USERNAME'),
-    password: env.required('DOMSYSLA_PASSWORD'),
+    username: env.required('DOMSYSLA_USERNAME', 'syslumennprofun'),
+    password: env.required('DOMSYSLA_PASSWORD', 'GottFramvegis_824'),
   }),
 })
