@@ -8,23 +8,21 @@ import {
 import MainColumn from '../../components/About/MainColumn'
 import React from 'react'
 import RightSideColmn from '../../components/About/RightSideColumn'
-import { useLocation } from 'react-use'
 
 interface AboutProps {
   information: string
 }
 
 const AboutPage: React.FC<AboutProps> = () => {
-  const location = useLocation()
   return (
     <GridContainer>
       <GridRow>
         <GridColumn span={'3/12'} paddingBottom={3}>
-          <Box paddingY={3}>
+          <Box paddingY={[3, 3, 3, 5, 5]}>
             <Breadcrumbs
               items={[
                 { title: 'Samráðsgátt', href: '/samradsgatt' },
-                { title: 'Um samráðsgátt', href: location.href },
+                { title: 'Um samráðsgátt' },
               ]}
             />
           </Box>

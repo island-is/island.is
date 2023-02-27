@@ -8,7 +8,6 @@ import {
   Column,
   Icon,
 } from '@island.is/island-ui/core'
-import { style } from '@vanilla-extract/css'
 
 import format from 'date-fns/format'
 
