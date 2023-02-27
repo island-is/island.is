@@ -57,4 +57,8 @@ export const m = defineMessages({
     id: 'ap.ids-admin:advanced-settings',
     defaultMessage: 'Ítarlegar stillingar',
   },
+  back: {
+    id: 'ap.ids-admin:back',
+    defaultMessage: 'Til baka',
+  },
 })

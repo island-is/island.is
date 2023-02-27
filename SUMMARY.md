@@ -240,7 +240,6 @@
 - [Portals](libs/portals/README.md)
   - [Admin](libs/portals/admin/README.md)
     - [Core](libs/portals/admin/core/README.md)
-    - [Portals Admin Ids Admin](libs/portals/admin/ids-admin/README.md)
   - [Core](libs/portals/core/README.md)
 - [React Libraries](libs/react/README.md)
   - [React Components](libs/react/components/README.md)

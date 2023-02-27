@@ -7,6 +7,7 @@ import Tenant from './screens/Tenant'
 import Applications from './components/Applications/Applications'
 import ApplicationsScreen from './screens/ApplicationsScreen'
 import { m } from './lib/messages'
+import TenantsList from './components/TenantsList/TenantsList'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 
@@ -24,43 +25,51 @@ export const idsAdminModule: PortalModule = {
         name: m.idsAdmin,
         path: IDSAdminPaths.IDSAdmin,
         element: <IDSAdmin />,
-      },
-      {
-        name: m.applications,
-        path: IDSAdminPaths.IDSAdminApplication,
-        element: <ApplicationsScreen />,
         children: [
           {
-            name: m.settings,
-            path: IDSAdminPaths.IDSAdminApplication,
-            element: <div>Settings</div>,
+            name: m.idsAdmin,
+            path: IDSAdminPaths.IDSAdmin,
+            element: <TenantsList />,
+            navHide: true,
           },
-          {
-            name: m.authentication,
-            path: IDSAdminPaths.IDSAdminApplicationAuthentication,
-            element: <div>Authentication</div>,
-          },
-          {
-            name: m.advancedSettings,
-            path: IDSAdminPaths.IDSAdminApplicationAdvancedSettings,
-            element: <div>AdvancedSettings</div>,
-          },
-        ],
-      },
-      {
-        name: m.tenants,
-        path: IDSAdminPaths.IDSAdminDomains,
-        element: <Tenant />,
-        children: [
           {
             name: m.applications,
-            path: IDSAdminPaths.IDSAdminDomains,
-            element: <Applications />,
+            path: IDSAdminPaths.IDSAdminApplication,
+            element: <ApplicationsScreen />,
+            children: [
+              {
+                name: m.settings,
+                path: IDSAdminPaths.IDSAdminApplication,
+                element: <div>Settings</div>,
+              },
+              {
+                name: m.authentication,
+                path: IDSAdminPaths.IDSAdminApplicationAuthentication,
+                element: <div>Authentication</div>,
+              },
+              {
+                name: m.advancedSettings,
+                path: IDSAdminPaths.IDSAdminApplicationAdvancedSettings,
+                element: <div>AdvancedSettings</div>,
+              },
+            ],
           },
           {
-            name: m.apis,
-            path: IDSAdminPaths.IDSAdminDomainsAPIS,
-            element: <div>APIs</div>,
+            name: m.tenants,
+            path: IDSAdminPaths.IDSAdminDomains,
+            element: <Tenant />,
+            children: [
+              {
+                name: m.applications,
+                path: IDSAdminPaths.IDSAdminDomains,
+                element: <Applications />,
+              },
+              {
+                name: m.apis,
+                path: IDSAdminPaths.IDSAdminDomainsAPIS,
+                element: <div>APIs</div>,
+              },
+            ],
           },
         ],
       },
