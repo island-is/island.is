@@ -32,6 +32,7 @@ export const fileUploadValidationSection = (
     otherParent,
     additionalDocuments,
     noChildrenFoundTypeOfApplication,
+    isResidenceGrant,
   } = getApplicationAnswers(application.answers)
 
   if (isSelfEmployed === YES && obj.selfEmployedFile) {
@@ -132,6 +133,17 @@ export const fileUploadValidationSection = (
         message: errorMessages.requiredAttachment,
       }
     }
+
+    return undefined
+  }
+
+  if (isResidenceGrant === YES && obj.residenceGrant) {
+    if (isEmpty((obj as { residenceGrant: unknown[] }).residenceGrant))
+      return buildError(
+        errorMessages.requiredAttachment,
+        'residenceGrant',
+        FILEUPLOAD,
+      )
 
     return undefined
   }

@@ -43,6 +43,7 @@ import {
   OTHER_NO_CHILDREN_FOUND,
   States,
   ADOPTION,
+  FileType,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -182,7 +183,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       fosterCareOrAdoptionDate,
       fosterCareOrAdoptionBirthDate,
     } = getApplicationAnswers(application.answers)
-    console.log('adoption date ', fosterCareOrAdoptionDate)
+
     const { applicantGenderCode, children, existingApplications } = getApplicationExternalData(
       application.externalData,
     )
@@ -226,6 +227,40 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         children: children,
         existingApplications
       }
+    }
+  }
+
+  async setBirthDate({ application }: TemplateApiModuleActionProps) {
+    const { dateOfBirth } = getApplicationExternalData(application.externalData)
+    if (dateOfBirth?.data?.dateOfBirth) {
+      return dateOfBirth?.data?.dateOfBirth
+    }
+    /*
+    If you want to MOCK getting dateOfBirth from API use this.
+    const fakeDateOfBirth = '2023-02-10'
+    const promise = new Promise(function (resolve) {
+      setTimeout(() => {
+        resolve(fakeDateOfBirth)}, 5000)})
+        const newValue = await promise
+        return {
+          dateOfBirth: newValue,
+        }
+    */
+    try {
+      const applicationInformation = await this.applicationInformationAPI.applicationGetApplicationInformation(
+        {
+          applicationId: application.id,
+        },
+      )
+      return {
+        dateOfBirth: applicationInformation.dateOfBirth,
+      }
+    } catch (e) {
+      this.logger.warning('Failed to fetch application information', e)
+    }
+
+    return {
+      dateOfBirth: '',
     }
   }
 
@@ -404,7 +439,27 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     const { applicationFundId } = getApplicationExternalData(
       application.externalData,
     )
+    const { residenceGrantFiles } = getApplicationAnswers(application.answers)
+    const { state } = application
 
+    if (
+      state === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
+      state === States.RESIDENCE_GRAND_APPLICATION
+    ) {
+      if (residenceGrantFiles) {
+        residenceGrantFiles.forEach(async (item, index) => {
+          const pdf = await this.getPdf(
+            application,
+            index,
+            'fileUpload.residenceGrant',
+          )
+          attachments.push({
+            attachmentType: apiConstants.attachments.residenceGrant,
+            attachmentBytes: pdf,
+          })
+        })
+      }
+    }
     // We don't want to send old files to VMST again
     if (applicationFundId && applicationFundId !== '') {
       if (additionalDocuments) {
@@ -675,6 +730,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       firstPeriodStart,
       applicationType,
       otherParent,
+      hasMultipleBirths,
     } = getApplicationAnswers(application.answers)
 
     const { applicationFundId } = getApplicationExternalData(
@@ -1318,8 +1374,17 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     return periods
   }
 
-  checkActionName = (application: ApplicationWithAttachments) => {
+  checkActionName = (
+    application: ApplicationWithAttachments,
+    params: FileType | undefined = undefined,
+  ) => {
     const { actionName } = getApplicationAnswers(application.answers)
+    if (params) {
+      params === 'document' ||
+        params === 'documentPeriod' ||
+        params === 'period'
+      return params
+    }
     if (
       actionName === 'document' ||
       actionName === 'documentPeriod' ||
@@ -1330,24 +1395,42 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     return undefined
   }
 
-  async sendApplication({ application }: TemplateApiModuleActionProps) {
+  isParamsActionName = (params: any) => {
+    typeof params === 'string' &&
+    (params === 'period' ||
+      params === 'document' ||
+      params === 'documentPeriod')
+      ? (params as FileType)
+      : undefined
+    return params
+  }
+
+  async sendApplication({
+    application,
+    params = undefined,
+  }: TemplateApiModuleActionProps) {
     const {
       isSelfEmployed,
       isReceivingUnemploymentBenefits,
       applicationType,
       previousState,
     } = getApplicationAnswers(application.answers)
-    if (
-      previousState === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
-      previousState === States.VINNUMALASTOFNUN_APPROVAL ||
-      previousState === States.APPROVED
-    ) {
-      return
-    }
+    // if (
+    //   previousState === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
+    //   previousState === States.VINNUMALASTOFNUN_APPROVAL ||
+    //   previousState === States.APPROVED
+    // ) {
+    //   return
+    // }
     const nationalRegistryId = application.applicant
     const attachments = await this.getAttachments(application)
 
     try {
+      const actionNameFromParams =
+        previousState === States.RESIDENCE_GRAND_APPLICATION
+          ? this.isParamsActionName(params)
+          : undefined
+
       const periods = await this.createPeriodsDTO(
         application,
         nationalRegistryId,
@@ -1358,7 +1441,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         periods,
         attachments,
         false, // put false in testData as this is not dummy request
-        this.checkActionName(application),
+        this.checkActionName(application, actionNameFromParams),
       )
 
       const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
@@ -1383,6 +1466,13 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       // There has been case when island.is got Access Denied from AWS when sending out emails
       // This try/catch keeps application in correct state
       try {
+        //if (
+        //  application.state === States.RESIDENCE_GRAND_APPLICATION ||
+        //  application.state ===
+        //    States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE ||
+        //  previousState === States.RESIDENCE_GRAND_APPLICATION
+        //)
+        //  return
         const selfEmployed =
           applicationType === PARENTAL_LEAVE ? isSelfEmployed === YES : true
         const recivingUnemploymentBenefits =
@@ -1416,10 +1506,21 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
   }
 
-  async validateApplication({ application }: TemplateApiModuleActionProps) {
+  async validateApplication({
+    application,
+    params = undefined,
+  }: TemplateApiModuleActionProps) {
     const nationalRegistryId = application.applicant
+    const { previousState } = getApplicationAnswers(application.answers)
+    /* This is to avoid calling the api every time the user leaves the residenceGrantApplicationNoBirthDate state or residenceGrantApplication state */
+    // Reject from
+    if (previousState === States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE) {
+      return
+    }
     const attachments = await this.getAttachments(application)
     try {
+      const actionNameFromParams = this.isParamsActionName(params)
+
       const periods = await this.createPeriodsDTO(
         application,
         nationalRegistryId,
@@ -1430,7 +1531,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         periods,
         attachments,
         true,
-        this.checkActionName(application),
+        this.checkActionName(application, actionNameFromParams),
       )
 
       // call SetParentalLeave API with testData: TRUE as this is a dummy request

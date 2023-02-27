@@ -51,6 +51,8 @@ import {
   isParentWithoutBirthParent,
   isNotEligibleForParentWithoutBirthParent,
   isFosterCareAndAdoption,
+  residentGrantIsOpenForApplication,
+  setTestBirthAndExpectedDate,
 } from './parentalLeaveUtils'
 import { PersonInformation } from '../types'
 
@@ -1526,5 +1528,18 @@ test.each([
     expect(allowOtherParentToUsePersonalAllowance(application.answers)).toBe(
       expected,
     )
+  },
+)
+test.each([
+  { date: setTestBirthAndExpectedDate(6, 0, false, true), expected: true },
+  { date: setTestBirthAndExpectedDate(7, 0, false, true), expected: false },
+  { date: setTestBirthAndExpectedDate(1, 0, true, false), expected: false },
+  { date: setTestBirthAndExpectedDate(0, 0, true, false), expected: true },
+  { date: setTestBirthAndExpectedDate(0, 0, false, true), expected: true },
+  { date: setTestBirthAndExpectedDate(10), expected: true },
+])(
+  'should return true if today is after the date and within 6 months of the date',
+  ({ date, expected }) => {
+    expect(residentGrantIsOpenForApplication(date.birthDate)).toBe(expected)
   },
 )
