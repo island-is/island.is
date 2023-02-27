@@ -1,0 +1,13 @@
+query GetUserProfile {
+  getUserProfile {
+    nationalId
+    mobilePhoneNumber
+    locale
+    email
+    canNudge
+    bankInfo
+    emailStatus
+    mobileStatus
+    modified
+  }
+}

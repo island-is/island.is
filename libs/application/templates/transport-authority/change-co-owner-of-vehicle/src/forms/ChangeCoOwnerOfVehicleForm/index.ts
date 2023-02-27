@@ -12,10 +12,12 @@ import { payment, conclusion } from '../../lib/messages'
 import { getChargeItemCodes } from '../../utils'
 import { externalDataSection } from './externalDataSection'
 import { informationSection } from './InformationSection'
+import { Logo } from '../../assets/Logo'
 
 export const ChangeCoOwnerOfVehicleForm: Form = buildForm({
   id: 'ChangeCoOwnerOfVehicleFormDraft',
   title: '',
+  logo: Logo,
   mode: FormModes.DRAFT,
   children: [
     externalDataSection,

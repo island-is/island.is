@@ -95,25 +95,15 @@ export const m = defineMessages({
     defaultMessage: 'Greiðsla',
     description: 'payment',
   },
-  paymentCapital: {
-    id: 'mc.application:awaitingPayment',
-    defaultMessage: 'Staðfesting á greiðslu',
-    description: 'Payment',
-  },
-  forwardingToPayment: {
-    id: 'mc.application:forwardingToPayment',
-    defaultMessage: 'Sendi þig áfram á greiðsluveitu...',
-    description: 'Forwarding you to payment handler...',
-  },
   confirmation: {
     id: 'mc.application:confirmation',
     defaultMessage: 'Staðfesting',
-    description: 'payment',
+    description: 'confirmation',
   },
   confirm: {
     id: 'mc.application:confirm',
     defaultMessage: 'Staðfesta',
-    description: 'payment',
+    description: 'confirm',
   },
   institutionName: {
     id: 'mc.application:institution',
@@ -127,8 +117,13 @@ export const m = defineMessages({
   },
   overviewPaymentCharge: {
     id: 'mc.application:overview.paymentcharge',
-    defaultMessage: 'Til greiðslu',
+    defaultMessage: 'Til greiðslu vegna fasteignar',
     description: 'Cost',
+  },
+  overviewPaymentTotal: {
+    id: 'mc.application:overview.paymentTotal',
+    defaultMessage: 'Samtals',
+    description: 'Total',
   },
   draftDescription: {
     id: 'mc.application:draft.description',
@@ -160,26 +155,6 @@ export const m = defineMessages({
     id: 'mc.application:mortgageCertificate.subTitle',
     defaultMessage: 'Skjal sem inniheldur veðbókarvottorðið þitt.',
     description: 'Document that contains your mortgage certificate.',
-  },
-  examplePaymentPendingFieldError: {
-    id: 'mc.application:example.waitingForPaymentError',
-    defaultMessage: 'Villa kom upp við að sækja upplýsingar um greiðslu',
-    description: 'An error came up while getting payment information',
-  },
-  examplePaymentPendingDescription: {
-    id: 'mc.application:example.waitingDescription',
-    defaultMessage: 'Texti um hvað er að gerast',
-    description: 'Text about current payment proceedures.',
-  },
-  paymentPendingDescription: {
-    id: 'mc.application:paymentPendingDescription',
-    defaultMessage: 'Augnablik meðan beðið er eftir staðfestingu',
-    description: 'Please wait until the payment is confirmed',
-  },
-  paymentImage: {
-    id: 'dl.application:paymentImage',
-    defaultMessage: 'Skrautmynd',
-    description: 'Company Image',
   },
   submitErrorButtonCaption: {
     id: 'mc.application:submitErrorButtonCaption',

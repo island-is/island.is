@@ -31,7 +31,6 @@ import {
   calculatePeriodLengthInMonths,
   applicantIsMale,
   getOtherParentName,
-  removeCountryCode,
   getSpouse,
   isEligibleForParentalLeave,
   getPeriodIndex,
@@ -50,6 +49,8 @@ import {
   getAvailablePersonalRightsSingleParentInMonths,
   isParentWithoutBirthParent,
   isNotEligibleForParentWithoutBirthParent,
+  residentGrantIsOpenForApplication,
+  setTestBirthAndExpectedDate,
 } from './parentalLeaveUtils'
 import { PersonInformation } from '../types'
 
@@ -1478,32 +1479,6 @@ describe('applicantIsMale', () => {
   })
 })
 
-describe('removeCountryCode', () => {
-  it('should return the last 7 digits of the phone number', () => {
-    const application = buildApplication()
-    set(
-      application.externalData,
-      'userProfile.data.mobilePhoneNumber',
-      '+3541234567',
-    )
-    expect(removeCountryCode(application)).toEqual('1234567')
-  })
-  it('should return the last 7 digits of the phone number', () => {
-    const application = buildApplication()
-    set(
-      application.externalData,
-      'userProfile.data.mobilePhoneNumber',
-      '003541234567',
-    )
-    expect(removeCountryCode(application)).toEqual('1234567')
-  })
-  it("should return null if phone number wouldn't exist", () => {
-    const application = buildApplication()
-    set(application.externalData, 'userProfile', null)
-    expect(removeCountryCode(application)).toEqual(undefined)
-  })
-})
-
 test.each([
   { parentRelation: '', expected: false },
   { parentRelation: SPOUSE, expected: true },
@@ -1522,5 +1497,18 @@ test.each([
     expect(allowOtherParentToUsePersonalAllowance(application.answers)).toBe(
       expected,
     )
+  },
+)
+test.each([
+  { date: setTestBirthAndExpectedDate(6, 0, false, true), expected: true },
+  { date: setTestBirthAndExpectedDate(7, 0, false, true), expected: false },
+  { date: setTestBirthAndExpectedDate(1, 0, true, false), expected: false },
+  { date: setTestBirthAndExpectedDate(0, 0, true, false), expected: true },
+  { date: setTestBirthAndExpectedDate(0, 0, false, true), expected: true },
+  { date: setTestBirthAndExpectedDate(10), expected: true },
+])(
+  'should return true if today is after the date and within 6 months of the date',
+  ({ date, expected }) => {
+    expect(residentGrantIsOpenForApplication(date.birthDate)).toBe(expected)
   },
 )

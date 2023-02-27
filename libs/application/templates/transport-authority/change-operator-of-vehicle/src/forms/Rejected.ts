@@ -5,7 +5,6 @@ import {
   buildMultiField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import Logo from '../assets/Logo'
 import {
   information,
   externalData,
@@ -13,6 +12,7 @@ import {
   conclusion,
   review,
 } from '../lib/messages'
+import { Logo } from '../assets/Logo'
 
 export const Rejected: Form = buildForm({
   id: 'RejectedApplicationForm',

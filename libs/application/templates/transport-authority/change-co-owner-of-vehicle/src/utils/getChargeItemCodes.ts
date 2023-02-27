@@ -4,7 +4,9 @@ import { ChargeItemCode } from '@island.is/shared/constants'
 export const getChargeItemCodes = (
   answers: ChangeCoOwnerOfVehicle,
 ): Array<string> => {
-  const coOwnerWasAdded = answers.coOwners?.length > 0
+  const coOwnerWasAdded =
+    answers.coOwners?.filter(({ wasRemoved }) => wasRemoved !== 'true').length >
+    0
   const coOwnerWasRemoved = !!answers.ownerCoOwners?.find((x) => x.wasRemoved)
 
   const result = []

@@ -22,8 +22,7 @@ import { info } from 'kennitala'
 
 export const PickDeliveryMethod: FC<FieldBaseProps> = (props) => {
   const { formatMessage } = useLocale()
-  const { register } = useFormContext()
-  const { application, errors } = props
+  const { application, errors, setFieldLoadingState } = props
   const { setValue } = useFormContext()
 
   const [deliveryMethodIsSend, setDeliveryMethodIsSend] = useState<string>(
@@ -115,6 +114,10 @@ export const PickDeliveryMethod: FC<FieldBaseProps> = (props) => {
     }
   }, [cardTypeAllowYes])
 
+  useEffect(() => {
+    setFieldLoadingState?.(loading || !!error)
+  }, [loading, error])
+
   return (
     <Box paddingTop={2}>
       {!loading && !error ? (
@@ -165,7 +168,7 @@ export const PickDeliveryMethod: FC<FieldBaseProps> = (props) => {
                 {formatMessage(
                   applicant.labels.cardDelivery.chooseDeliveryNoteTitle,
                 )}
-              </b>
+              </b>{' '}
               {formatMessage(
                 applicant.labels.cardDelivery.chooseDeliveryNoteText,
               )}
@@ -196,12 +199,6 @@ export const PickDeliveryMethod: FC<FieldBaseProps> = (props) => {
           borderRadius="large"
         />
       )}
-      <input
-        type="hidden"
-        value={!loading && !error ? 'forward' : ''}
-        ref={register({ required: true })}
-        name="cardDelivery.canGoForward"
-      />
     </Box>
   )
 }

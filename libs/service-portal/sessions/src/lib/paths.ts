@@ -1,3 +1,3 @@
 export enum SessionsPaths {
-  Sessions = '/adgangsstyring/innskraningar',
+  Sessions = 'adgangsstyring/notkun',
 }

@@ -10,16 +10,16 @@ import {
   SkeletonLoader,
   InputError,
 } from '@island.is/island-ui/core'
-import {
-  GetVehicleDetailInput,
-  VehiclesCurrentVehicleWithOwnerchangeChecks,
-} from '@island.is/api/schema'
+import { GetVehicleDetailInput } from '@island.is/api/schema'
 import { information, applicationCheck, error } from '../../lib/messages'
 import { SelectController } from '@island.is/shared/form-fields'
 import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
-import { VehiclesCurrentVehicle } from '../../types'
+import {
+  VehiclesCurrentVehicle,
+  VehiclesCurrentVehicleWithOwnerchangeChecks,
+} from '../../shared'
 
 interface VehicleSearchFieldProps {
   currentVehicleList: VehiclesCurrentVehicle[]

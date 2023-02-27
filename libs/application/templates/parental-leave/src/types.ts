@@ -38,7 +38,6 @@ export type YesOrNo = typeof NO | typeof YES
 export interface Files {
   name: string
   key: string
-  isSend?: boolean
 }
 
 export interface VMSTPeriod {
@@ -150,4 +149,13 @@ export interface PregnancyStatusAndRightsResults {
   remainingDays: number
   hasRights: boolean
   hasActivePregnancy: boolean
+}
+
+export interface EmployerRow {
+  email: string
+  phoneNumber?: string
+  ratio: string
+  isApproved?: boolean
+  reviewerNationalRegistryId?: string
+  companyNationalRegistryId?: string
 }

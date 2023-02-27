@@ -50,7 +50,7 @@ export class LimitedAccessCaseController {
   ) {}
 
   @UseGuards(
-    new JwtAuthGuard(true),
+    JwtAuthGuard,
     RolesGuard,
     LimitedAccessCaseExistsGuard,
     CaseScheduledGuard,
@@ -88,7 +88,7 @@ export class LimitedAccessCaseController {
   }
 
   @UseGuards(
-    new JwtAuthGuard(true),
+    JwtAuthGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -117,7 +117,7 @@ export class LimitedAccessCaseController {
   }
 
   @UseGuards(
-    new JwtAuthGuard(true),
+    JwtAuthGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -147,7 +147,7 @@ export class LimitedAccessCaseController {
   }
 
   @UseGuards(
-    new JwtAuthGuard(true),
+    JwtAuthGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),

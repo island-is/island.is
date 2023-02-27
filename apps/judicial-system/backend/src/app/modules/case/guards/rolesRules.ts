@@ -42,6 +42,8 @@ const prosecutorFields: (keyof UpdateCase)[] = [
   'isolationToDate',
   'caseResentExplanation',
   'crimeScenes',
+  'indictmentIntroduction',
+  'requestDriversLicenseSuspension',
 ]
 
 const courtFields: (keyof UpdateCase)[] = [
