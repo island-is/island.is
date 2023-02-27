@@ -1,0 +1,56 @@
+import { FC, ReactElement } from 'react'
+import { Box, DropdownMenu } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import * as styles from './styles.css'
+import { m } from '../../../lib/messages'
+
+import { downloadCSV } from './downloadFile'
+
+export const headers = ['Dagsetning', 'Nafn']
+
+interface Props {
+  onGetCSV: () => void
+  //onGetExcel: () => void
+  dropdownItems?: {
+    href?: string
+    onClick?: () => void
+    title: string
+    render?: (
+      element: ReactElement,
+      index: number,
+      className: string,
+    ) => ReactElement
+  }[]
+}
+
+export const getCSV = async (data: any[], fileName: string, type: 'csv') => {
+  const name = `${fileName}`
+  const dataArray = data.map((item: any) => [
+    item.created ?? '',
+    item.meta.fullName ?? '',
+  ])
+
+  await downloadCSV(name, headers, dataArray, type)
+}
+
+const DropdownExport: FC<Props> = ({ onGetCSV, dropdownItems = [] }) => {
+  const { formatMessage } = useLocale()
+  return (
+    <Box className={styles.buttonWrapper}>
+      <DropdownMenu
+        icon="download"
+        menuLabel={formatMessage(m.downloadPetitions)}
+        items={[
+          {
+            onClick: () => onGetCSV(),
+            title: 'Sem CSV',
+          },
+          ...dropdownItems,
+        ]}
+        title={formatMessage(m.downloadPetitions)}
+      />
+    </Box>
+  )
+}
+
+export default DropdownExport

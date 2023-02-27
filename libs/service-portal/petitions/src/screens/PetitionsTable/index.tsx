@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import {
   Box,
-  Button,
   Pagination,
   Stack,
   Table as T,
@@ -10,6 +9,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { formatDate, pages, PAGE_SIZE, paginate } from '../../lib/utils'
 import { m } from '../../lib/messages'
+import DropdownExport, { getCSV } from './ExportPetition'
 
 const PetitionsTable = (data: any) => {
   const { formatMessage } = useLocale()
@@ -28,14 +28,16 @@ const PetitionsTable = (data: any) => {
     handlePagination(1, data.petitions?.data ?? [])
   }, [data])
 
+  console.log(listOfPetitions)
+
   return (
     <Box>
       <Box display="flex" justifyContent="spaceBetween" marginBottom={2}>
         <Text variant="h3">{formatMessage(m.petitionsOverview)}</Text>
         {data.isViewTypeEdit && (
-          <Button variant="utility" icon="download" size="small">
-            {formatMessage(m.downloadPetitions)}
-          </Button>
+          <DropdownExport
+            onGetCSV={() => getCSV(listOfPetitions, 'Undirskriftalisti', 'csv')}
+          />
         )}
       </Box>
       <Stack space={3}>
