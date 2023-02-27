@@ -67,7 +67,7 @@ export class DocumentController {
     res.header('Content-length', buffer.length.toString())
     res.header(
       'Content-Disposition',
-      `inline; filename=${rawDocumentDTO.fileName}.pdf`,
+      `inline; filename=postholf-${user.nationalId}.pdf`,
     )
     res.header('Pragma: no-cache')
     res.header('Cache-Control: no-cache')
