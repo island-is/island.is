@@ -109,19 +109,20 @@ const OrganizationPage: Screen<OrganizationProps> = ({
     return items
   }, [organizations, selectedTitleSortOption])
 
-  const { items: tagsItems } = tags
+  const tagsItems = useMemo(
+    () => tags.items.filter((x) => x.title).sort(sortAlpha('title')),
+    [tags],
+  )
 
   const categories: CategoriesProps[] = [
     {
       id: 'raduneyti',
       label: n('ministries', 'Ráðuneyti'),
       selected: filter.raduneyti,
-      filters: tagsItems
-        .filter((x) => x.title)
-        .map((f) => ({
-          value: f.title,
-          label: f.title,
-        })),
+      filters: tagsItems.map((f) => ({
+        value: f.title,
+        label: f.title,
+      })),
     },
   ]
 
