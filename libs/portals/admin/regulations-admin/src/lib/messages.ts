@@ -528,6 +528,10 @@ export const errorMsgs = defineMessages({
     defaultMessage:
       'Hvergi er minnst á þessa reglugerð í texta nýju reglugerðarinnar.',
   },
+  titleTooLong: {
+    id: 'ap.regulations-admin:title-is-too-long',
+    defaultMessage: 'Titill reglugerðar er of langur.',
+  },
 })
 
 export const homeMessages = defineMessages({
@@ -630,6 +634,10 @@ export const buttonsMsgs = defineMessages({
   save: {
     id: 'ap.regulations-admin:btn-savestatus',
     defaultMessage: 'Vista stöðu',
+  },
+  saveAndClose: {
+    id: 'ap.regulations-admin:btn-savestatus-and-close',
+    defaultMessage: 'Vista og loka',
   },
   close: {
     id: 'ap.regulations-admin:btn-close',

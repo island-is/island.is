@@ -23,4 +23,5 @@ export interface TestCase {
   accessTo?: string[]
   domains: CreateDomain[]
   expected: DomainAssertion[]
+  query?: Record<string, string | string[]>
 }

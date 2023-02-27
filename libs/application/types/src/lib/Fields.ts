@@ -4,6 +4,7 @@ import type {
   InputBackgroundColor,
   BoxProps,
   SpanType,
+  IconProps,
 } from '@island.is/island-ui/core/types'
 
 import { ApolloClient } from '@apollo/client'
@@ -304,6 +305,7 @@ export interface LinkField extends BaseField {
   component: FieldComponents.LINK
   s3key?: FormText
   link?: string
+  iconProps?: Pick<IconProps, 'icon' | 'type'>
 }
 
 export type Field =

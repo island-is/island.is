@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 import { diffStyling } from '@island.is/regulations/styling'
 import { theme } from '@island.is/island-ui/theme'
 
@@ -131,3 +131,12 @@ export const line = style({
 export const history = style({
   gap: theme.spacing[4],
 })
+
+export const amendingSelectionOption = style({})
+
+globalStyle(
+  `${amendingSelectionOption} #asyncsearch-id-menu li:not([disabled])`,
+  {
+    cursor: 'pointer',
+  },
+)

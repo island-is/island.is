@@ -13,6 +13,7 @@ import {
 } from '@island.is/island-ui/core'
 import { isDefined } from '@island.is/shared/utils'
 import { useLocale } from '@island.is/localization'
+import { m } from '../../../lib/messages'
 import { DelegationsFormFooter } from '../../delegations/DelegationsFormFooter'
 import { servicePortalSaveAccessControl } from '@island.is/plausible'
 import { AccessFormScope, MappedScope } from '../access.types'
@@ -27,7 +28,7 @@ import { AuthScopeTreeQuery } from '../AccessList/AccessListContainer/AccessList
 import { useUpdateAuthDelegationMutation } from './AccessForm.generated'
 import { AuthCustomDelegationOutgoing } from '../../../types/customDelegation'
 import {
-  m,
+  m as portalMessages,
   formatPlausiblePathToParams,
   usePortalMeta,
   useRoutes,
@@ -60,7 +61,7 @@ export const AccessForm = ({
   const [updateError, setUpdateError] = useState(false)
 
   const onError = () => {
-    toast.error(formatMessage(m.somethingWrong))
+    toast.error(formatMessage(portalMessages.somethingWrong))
   }
 
   const [
@@ -134,11 +135,7 @@ export const AccessForm = ({
       {formError && (
         <Box paddingBottom={3}>
           <AlertBanner
-            description={formatMessage({
-              id: 'sp.settings-access-control:date-error',
-              defaultMessage:
-                'Nauðsynlegt er að velja dagsetningu fyrir hvert umboð',
-            })}
+            description={formatMessage(m.dateError)}
             variant="error"
           />
         </Box>
@@ -179,10 +176,7 @@ export const AccessForm = ({
                 setOpenDeleteModal(true)
               }
             }}
-            confirmLabel={formatMessage({
-              id: 'sp.settings-access-control:empty-new-access',
-              defaultMessage: 'Veita aðgang',
-            })}
+            confirmLabel={formatMessage(m.saveAccess)}
             confirmIcon="arrowForward"
             disabled={
               delegation.scopes.length === 0 && (!scopes || scopes.length === 0)

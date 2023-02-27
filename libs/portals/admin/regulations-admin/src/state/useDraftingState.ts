@@ -193,6 +193,11 @@ const useMakeDraftingState = (inputs: StateInputs) => {
               return // Prevent the user going forward
             }
 
+            const isTitleTooLong = draft.title.value.length > 1024
+            if (isTitleTooLong) {
+              return // Prevent the user going forward
+            }
+
             actions.goToStep(nextStep)
           }
         : undefined,
@@ -281,7 +286,7 @@ const useMakeDraftingState = (inputs: StateInputs) => {
         navigate(getHomeUrl())
       },
 
-      saveStatus: async (silent?: boolean) => {
+      saveStatus: async (silent?: boolean, andClose?: boolean) => {
         if (isDraftLocked(draft)) {
           return false
         }
@@ -295,6 +300,9 @@ const useMakeDraftingState = (inputs: StateInputs) => {
             error: error && { message: buttonsMsgs.saveFailure, error },
           })
         })
+        if (andClose) {
+          navigate(getHomeUrl())
+        }
         return true
       },
 

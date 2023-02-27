@@ -68,6 +68,14 @@ export const EditBasics = () => {
       return
     }
 
+    const isTitleTooLong = draft.title.value.length > 1024
+    if (isTitleTooLong) {
+      setTitleError(
+        `${t(errorMsgs.titleTooLong)} (${draft.title.value.length} / 1024)`,
+      )
+      return
+    }
+
     if (draft.title.value) {
       setTitleError(undefined)
     }

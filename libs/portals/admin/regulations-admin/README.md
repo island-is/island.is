@@ -11,7 +11,7 @@ Get fresh AWS credentials, and then open six (6) terminal windows.
 1. `sh scripts/run-es-proxy.sh`
 2. `kubectl port-forward svc/socat-soffia 8443:443 -n socat`
 3. `docker-compose -f apps/services/regulations-admin-backend/docker-compose.yml up`  
-   (for setup see [the README.md](../../services/../../apps/services/regulations-admin-backend/Readme.md))
+   (for setup see [the README.md](../../../services/../../apps/services/regulations-admin-backend/Readme.md))
 4. `yarn start regulations-admin-backend`
 5. `yarn start api`
 6. `yarn start portals-admin`

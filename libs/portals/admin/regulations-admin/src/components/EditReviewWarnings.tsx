@@ -173,7 +173,7 @@ export const JumpToStep = (props: { step: Step; label: string }) => {
     <Button
       variant="text"
       size="small"
-      onClick={() => navigate(getEditUrl(props.step))}
+      onClick={() => navigate(`./../${getEditUrl(props.step)}`)}
       aria-label={jumpLabel + ': ' + props.label}
     >
       {jumpLabel}

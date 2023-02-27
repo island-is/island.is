@@ -47,7 +47,7 @@ export class VehicleOwnerChangeClient {
   ): Promise<OwnerChangeValidation> {
     const useGroup = '000'
 
-    let errorList: ReturnTypeMessage[] = []
+    let errorList: ReturnTypeMessage[] | undefined
 
     try {
       // Note: If insurance company has not been supplied (we have not required the user to fill in at this point),
@@ -85,11 +85,14 @@ export class VehicleOwnerChangeClient {
         },
       })
     } catch (e) {
-      // Note: We need to wrap in try-catch to get the error messages, because if ownerchange results in error,
-      // we get 400 error (instead of 200 with error messages) with the errorList in this field (problem.Errors),
+      // Note: We need to wrap in try-catch to get the error messages, because if this action results in error,
+      // we get 4xx error (instead of 200 with error messages) with the errorList in this field
+      // ("body.Errors" for input validation, and "body" for data validation (in database)),
       // that is of the same class as 200 result schema
-      if (e?.problem?.Errors) {
-        errorList = e.problem.Errors as ReturnTypeMessage[]
+      if (e?.body?.Errors && Array.isArray(e.body.Errors)) {
+        errorList = e.body.Errors as ReturnTypeMessage[]
+      } else if (e?.body && Array.isArray(e.body)) {
+        errorList = e.body as ReturnTypeMessage[]
       } else {
         throw e
       }
@@ -97,14 +100,15 @@ export class VehicleOwnerChangeClient {
 
     const warnSeverityError = 'E'
     const warnSeverityLock = 'L'
-    errorList = errorList.filter(
+    errorList = errorList?.filter(
       (x) =>
-        x.warnSever === warnSeverityError || x.warnSever === warnSeverityLock,
+        x.errorMess &&
+        (x.warnSever === warnSeverityError || x.warnSever === warnSeverityLock),
     )
 
     return {
-      hasError: errorList.length > 0,
-      errorMessages: errorList.map((item) => {
+      hasError: !!errorList?.length,
+      errorMessages: errorList?.map((item) => {
         let errorNo = item.warningSerialNumber?.toString()
 
         // Note: For vehicle locks, we need to do some special parsing since

@@ -17,6 +17,7 @@ interface Props {
     | 'ruling/limitedAccess'
     | 'courtRecord/limitedAccess'
     | 'request/limitedAccess'
+    | 'indictment'
   disabled?: boolean
   useSigned?: boolean
   renderAs?: 'button' | 'row'
@@ -32,14 +33,16 @@ const PdfButton: React.FC<Props> = ({
   useSigned = true,
   renderAs = 'button',
   children,
-  // Overwrites the default onClick handler
-  handleClick,
+  handleClick, // Overwrites the default onClick handler
   policeCaseNumber,
 }) => {
   const handlePdfClick = async () => {
     const newPdfType =
       pdfType === 'caseFiles' ? `${pdfType}/${policeCaseNumber}` : pdfType
-    const url = `${api.apiUrl}/api/case/${caseId}/${newPdfType}?useSigned=${useSigned}`
+    const url =
+      pdfType === 'ruling'
+        ? `${api.apiUrl}/api/case/${caseId}/${newPdfType}?useSigned=${useSigned}`
+        : `${api.apiUrl}/api/case/${caseId}/${newPdfType}`
 
     window.open(url, '_blank')
   }

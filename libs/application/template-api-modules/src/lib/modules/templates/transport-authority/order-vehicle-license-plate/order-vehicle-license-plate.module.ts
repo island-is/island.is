@@ -11,6 +11,10 @@ import {
   VehicleCodetablesClientModule,
   VehicleCodetablesClientConfig,
 } from '@island.is/clients/transport-authority/vehicle-codetables'
+import {
+  VehiclesClientModule,
+  VehiclesClientConfig,
+} from '@island.is/clients/vehicles'
 
 export class OrderVehicleLicensePlateModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -20,11 +24,13 @@ export class OrderVehicleLicensePlateModule {
         SharedTemplateAPIModule.register(baseConfig),
         VehiclePlateOrderingClientModule,
         VehicleCodetablesClientModule,
+        VehiclesClientModule,
         ConfigModule.forRoot({
           isGlobal: true,
           load: [
             VehiclePlateOrderingClientConfig,
             VehicleCodetablesClientConfig,
+            VehiclesClientConfig,
           ],
         }),
       ],

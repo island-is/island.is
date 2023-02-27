@@ -4,6 +4,7 @@ import { impactMsgs } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import {
   ensureRegName,
+  HTMLText,
   RegulationOptionList,
   RegulationType,
 } from '@island.is/regulations'
@@ -15,6 +16,8 @@ import { formatSelRegOptions } from '../../utils/formatSelRegOptions'
 import { useLazyQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { useDebounce } from 'react-use'
+import * as s from './Impacts.css'
+import { findAffectedRegulationsInText } from '../../utils/guessers'
 
 export type SelRegOption = Option & {
   value?: DraftImpactName | ''
@@ -24,6 +27,13 @@ export type SelRegOption = Option & {
 
 type ImpactAmendingSelectionProps = {
   setImpactRegOption: (option: SelRegOption) => void
+}
+
+const findRegNames = (text: string) => {
+  if (ensureRegName(text)) {
+    return [text]
+  }
+  return findAffectedRegulationsInText('', text as HTMLText)
 }
 
 // ---------------------------------------------------------------------------
@@ -51,9 +61,10 @@ export const ImpactAmendingSelection = ({
 
   useDebounce(
     () => {
-      if (ensureRegName(value)) {
+      const valueRegulation = findRegNames(value || '')
+      if (valueRegulation.length > 0) {
         getRegulationList({
-          variables: { input: { names: [value] } },
+          variables: { input: { names: valueRegulation } },
         })
       }
       setIsLoading(false)
@@ -63,8 +74,10 @@ export const ImpactAmendingSelection = ({
   )
 
   useEffect(() => {
+    const valueRegulation = findRegNames(value || '')
+
     const regulationListRes =
-      (ensureRegName(value) &&
+      (valueRegulation.length > 0 &&
         (regulationList?.getRegulationOptionList as RegulationOptionList)) ||
       []
 
@@ -87,9 +100,10 @@ export const ImpactAmendingSelection = ({
           type: '',
           disabled: true,
           value: '',
-          label: ensureRegName(value)
-            ? t(impactMsgs.regSelect_baseNotFound) + ' ' + value
-            : 'Nafn reglugerðar ekki rétt slegið inn',
+          label:
+            valueRegulation.length > 0
+              ? t(impactMsgs.regSelect_baseNotFound) + ' ' + value
+              : 'Nafn reglugerðar ekki rétt slegið inn',
         },
       ]
     }
@@ -104,20 +118,24 @@ export const ImpactAmendingSelection = ({
   }
 
   return (
-    <AsyncSearch
-      placeholder={t(impactMsgs.regSelectAmmending_placeholder)}
-      onInputValueChange={(newValue) => updateValue(newValue)}
-      loading={loading || isLoading}
-      onSubmit={(newValue) => updateValue(newValue)}
-      options={selRegOptions || []}
-      inputValue={value}
-      initialInputValue={undefined}
-      label={t(impactMsgs.regSelect)}
-      onChange={(option) => {
-        return option?.disabled
-          ? false
-          : handleOptionSelect(option as SelRegOption)
-      }}
-    />
+    <div className={s.amendingSelectionOption}>
+      <AsyncSearch
+        placeholder={t(impactMsgs.regSelectAmmending_placeholder)}
+        onInputValueChange={(newValue) => updateValue(newValue)}
+        loading={loading || isLoading}
+        onSubmit={(newValue) => {
+          updateValue(newValue)
+        }}
+        options={selRegOptions || []}
+        inputValue={value}
+        initialInputValue={undefined}
+        label={t(impactMsgs.regSelect)}
+        onChange={(option) => {
+          return option?.disabled
+            ? false
+            : handleOptionSelect(option as SelRegOption)
+        }}
+      />
+    </div>
   )
 }
