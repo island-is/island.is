@@ -65,7 +65,7 @@ export const Checkbox = ({
   const background =
     backgroundColor && backgroundColor === 'blue' ? 'blue100' : undefined
 
-  // If a defaultValue or defaultCheck is specified, we will use it as our initial state.
+  // If defaultCheck is specified, we will use it as our initial state.
   const [internalChecked, setInternalChecked] = useState(
     defaultChecked !== undefined ? defaultChecked : false,
   )
