@@ -38,13 +38,13 @@ export const ValidationErrorMessages: FC<FieldBaseProps> = (props) => {
             email: answers?.buyer?.email,
             nationalId: answers?.buyer?.nationalId,
           },
-          buyerCoOwnerAndOperator: answers?.buyerCoOwnerAndOperator?.map(
-            (x) => ({
+          buyerCoOwnerAndOperator: answers?.buyerCoOwnerAndOperator
+            ?.filter(({ wasRemoved }) => wasRemoved !== 'true')
+            .map((x) => ({
               email: x.email,
               nationalId: x.nationalId,
               type: x.type,
-            }),
-          ),
+            })),
           buyerMainOperator: answers?.buyerMainOperator
             ? {
                 nationalId: answers.buyerMainOperator.nationalId,
