@@ -59,7 +59,8 @@ export class UniversityOfIcelandResolver {
     )
     return {
       ...data,
-      downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/education/graduation/`,
+      //downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/education/graduation/`,
+      downloadServiceURL: `https://service-portaleducation-university-api.dev01.devland.is/download/v1/education/graduation/`,
     }
   }
 }
