@@ -245,6 +245,7 @@
     "portals-admin-core": "libs/portals/admin/core",
     "portals-admin-document-provider": "libs/portals/admin/document-provider",
     "portals-admin-icelandic-names-registry": "libs/portals/admin/icelandic-names-registry",
+    "portals-admin-ids-admin": "libs/portals/admin/ids-admin",
     "portals-core": "libs/portals/core",
     "portals-shared-modules-delegations": "libs/portals/shared-modules/delegations",
     "react-components": "libs/react/components",
