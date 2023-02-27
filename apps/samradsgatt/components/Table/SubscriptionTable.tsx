@@ -4,6 +4,7 @@ import {
   Table as T,
   Box,
   ResponsiveSpace,
+  Hidden,
 } from '@island.is/island-ui/core'
 import * as styles from './SubscriptionTable.css'
 import { mapIsToEn } from '../../utils/helpers'
@@ -19,7 +20,7 @@ export interface SubscriptionTableProps {
 }
 
 const Headers = {
-  Mál: ['Málsnr.', 'Heiti máls'],
+  Mál: ['Málsnr.', 'Heiti máls', 'Málsnúmer og heiti máls'],
   Stofnanir: ['Stofnun'],
   Málefnasvið: ['Málefnasvið'],
 }
@@ -49,7 +50,7 @@ const SubscriptionTable = ({
     return subscriptionArray[mapIsToEn[currentTab]].includes(id)
   }
 
-  const paddingTop = [3, 3, 3, 9] as ResponsiveSpace
+  const paddingTop = [3, 3, 3, 5, 5] as ResponsiveSpace
 
   return (
     <Box paddingTop={paddingTop}>
@@ -66,15 +67,36 @@ const SubscriptionTable = ({
               className={styles.checkmarkIcon}
             />
           </T.HeadData>
-          {Headers[currentTab].map((header) => (
+          {currentTab !== Area.case ? (
             <T.HeadData
               text={{ variant: 'h4' }}
               box={{ background: 'transparent', borderColor: 'transparent' }}
-              key={headerKey++}
             >
-              {header}
+              {Headers[currentTab][0]}
             </T.HeadData>
-          ))}
+          ) : (
+            <>
+              <T.HeadData
+                text={{ variant: 'h4' }}
+                box={{
+                  background: 'transparent',
+                  borderColor: 'transparent',
+                }}
+              >
+                <Hidden below="lg">{Headers[currentTab][0]}</Hidden>
+                <Hidden above="md">{Headers[currentTab][2]}</Hidden>
+              </T.HeadData>
+              <T.HeadData
+                text={{ variant: 'h4' }}
+                box={{
+                  background: 'transparent',
+                  borderColor: 'transparent',
+                }}
+              >
+                <Hidden below="lg">{Headers[currentTab][1]}</Hidden>
+              </T.HeadData>
+            </>
+          )}
         </T.Head>
         <T.Body>
           {data.map((item, idx: number) => (
