@@ -40,12 +40,13 @@ export function PortalNavigation({
       isMenuDialog={!lg}
       activeItemTitle={activeNav ? formatMessage(activeNav.name) : undefined}
       renderLink={(link, item) => {
-        Object.keys(params).forEach((key) => {
-          if (item?.href) {
-            item.href = item.href.replace(`:${key}`, params[key] as string)
-          }
-        })
-        return item?.href ? <Link to={item.href}>{link}</Link> : link
+        let href = item?.href ?? ''
+        // Replace :bla in the route URL with userParams().bla
+        href = href.replace(
+          /\/:(\w+)/g,
+          (_, paramName) => ('/' + params[paramName]) as string,
+        )
+        return href ? <Link to={href}>{link}</Link> : link
       }}
       items={
         nav.children?.map((child) => ({

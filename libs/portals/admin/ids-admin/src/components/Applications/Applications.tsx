@@ -10,7 +10,7 @@ import {
 import { Link, useOutletContext, useParams } from 'react-router-dom'
 import MockApplications from '../../lib/MockApplications'
 import * as styles from '../TenantsList/TenantsList.css'
-import React from 'react'
+import { useEffect } from 'react'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 
@@ -21,7 +21,7 @@ const Applications = () => {
     setNavTitle: (value: string) => void
   }>()
 
-  React.useEffect(() => {
+  useEffect(() => {
     // TODO: Get application by id from backend
     setNavTitle(tenant ? tenant : formatMessage(m.tenants))
   })

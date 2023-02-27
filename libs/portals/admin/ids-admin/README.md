@@ -1,3 +1,4 @@
+<!-- gitbook-ignore -->
 # Portals Admin Ids Admin
 
 This library was generated with [Nx](https://nx.dev).

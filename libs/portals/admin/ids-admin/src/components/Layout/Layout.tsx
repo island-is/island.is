@@ -16,7 +16,6 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, navTitle, navItems }) => {
-  console.log('navTitle', navTitle)
   return (
     <GridContainer>
       <Hidden above="md">

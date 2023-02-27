@@ -47,7 +47,6 @@ export enum Features {
   transportAuthorityOrderVehicleLicensePlateDelegations = 'applicationTransportAuthorityOrderVehicleLicensePlateDelegations',
   transportAuthorityOrderVehicleRegistrationCertificateDelegations = 'applicationTransportAuthorityOrderVehicleRegistrationCertificateDelegations',
   mortgageCertificateDelegations = 'applicationMortgageCertificateDelegations',
-  idsAdminNewPortal = 'idsAdminNewPortal',
 }
 
 export enum ServerSideFeature {
