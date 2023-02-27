@@ -6,11 +6,7 @@ import { AuditModule } from '@island.is/nest/audit'
 import { environment } from '../environments'
 import { LicenseModule } from './modules/license/license.module'
 import { LoggingModule } from '@island.is/logging'
-import {
-  ConfigModule,
-  IdsClientConfig,
-  XRoadConfig,
-} from '@island.is/nest/config'
+import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import {
   DisabilityLicenseApiClientConfig,
   FirearmLicenseApiClientConfig,
@@ -21,7 +17,6 @@ import { ProblemModule } from '@island.is/nest/problem'
 
 @Module({
   imports: [
-    AuthModule.register(environment.auth),
     AuditModule.forRoot(environment.audit),
     ProblemModule,
     LoggingModule,
@@ -29,7 +24,6 @@ import { ProblemModule } from '@island.is/nest/problem'
       isGlobal: true,
       load: [
         XRoadConfig,
-        IdsClientConfig,
         FirearmLicenseClientConfig,
         FirearmLicenseApiClientConfig,
         DisabilityLicenseClientConfig,

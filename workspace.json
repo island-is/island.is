@@ -249,6 +249,7 @@
     "portals-shared-modules-delegations": "libs/portals/shared-modules/delegations",
     "react-components": "libs/react/components",
     "react-feature-flags": "libs/react/feature-flags",
+    "react-spa-shared": "libs/react-spa/shared",
     "reference-backend": "apps/reference-backend",
     "reference-next-app": "apps/reference-next-app",
     "regulations": "libs/regulations",
