@@ -9,6 +9,7 @@ export enum ApplicationTypes {
   CHILDREN_RESIDENCE_CHANGE = 'ChildrenResidenceChange',
   DATA_PROTECTION_AUTHORITY_COMPLAINT = 'DataProtectionAuthorityComplaint',
   LOGIN_SERVICE = 'LoginService',
+  INHERITANCE_REPORT = 'InheritanceReport',
   INSTITUTION_COLLABORATION = 'InstitutionCollaboration',
   FUNDING_GOVERNMENT_PROJECTS = 'FundingGovernmentProjects',
   PUBLIC_DEBT_PAYMENT_PLAN = 'PublicDebtPaymentPlan',
@@ -85,13 +86,13 @@ export const ApplicationConfigurations = {
     slug: 'innskraningarthjonusta',
     translation: 'ls.application',
   },
+  [ApplicationTypes.INHERITANCE_REPORT]: {
+    slug: 'erfdafjarskyrsla',
+    translation: 'ir.application',
+  },
   [ApplicationTypes.INSTITUTION_COLLABORATION]: {
     slug: 'samstarf',
     translation: 'ia.application',
-  },
-  [ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD]: {
-    slug: 'sjukrakort',
-    translation: 'ehic.application',
   },
   [ApplicationTypes.FUNDING_GOVERNMENT_PROJECTS]: {
     slug: 'fjarmognun-rikisverkefni',
@@ -110,8 +111,8 @@ export const ApplicationConfigurations = {
     translation: 'an.application',
   },
   [ApplicationTypes.GENERAL_PETITION]: {
-    slug: 'medmaelendalisti',
-    translation: 'gpt.application',
+    slug: 'undirskriftalisti',
+    translation: 'gpl.application',
   },
   [ApplicationTypes.GENERAL_FISHING_LICENSE]: {
     slug: 'veidileyfi',
@@ -140,6 +141,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.EXAMPLE_PAYMENT]: {
     slug: 'greida',
     translation: 'ep.application',
+  },
+  [ApplicationTypes.ESTATE]: {
+    slug: 'danarbu',
+    translation: 'es.application',
   },
   [ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION]: {
     slug: 'okuskoli',
@@ -212,5 +217,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.ALCOHOL_TAX_REDEMPTION]: {
     slug: 'afengisgjold',
     translation: 'atr.application',
+  },
+  [ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD]: {
+    slug: 'sjukrakort',
+    translation: 'ehic.application',
   },
 }
