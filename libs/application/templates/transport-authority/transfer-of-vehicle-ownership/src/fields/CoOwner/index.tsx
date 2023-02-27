@@ -54,19 +54,20 @@ export const CoOwner: FC<FieldBaseProps> = (props) => {
               </Text>
               <Box marginTop={2}>
                 <InputController
-                  id={`${id}[${index}].name`}
-                  name={`${id}[${index}].name`}
-                  defaultValue={coOwner.owner || ''}
-                  label={formatMessage(information.labels.coOwner.name)}
+                  id={`${id}[${index}].nationalId`}
+                  name={`${id}[${index}].nationalId`}
+                  defaultValue={coOwner.nationalId || ''}
+                  label={formatMessage(information.labels.coOwner.nationalId)}
+                  format="######-####"
                   readOnly
                 />
               </Box>
               <Box marginTop={2}>
                 <InputController
-                  id={`${id}[${index}].nationalId`}
-                  name={`${id}[${index}].nationalId`}
-                  defaultValue={coOwner.nationalId || ''}
-                  label={formatMessage(information.labels.coOwner.nationalId)}
+                  id={`${id}[${index}].name`}
+                  name={`${id}[${index}].name`}
+                  defaultValue={coOwner.owner || ''}
+                  label={formatMessage(information.labels.coOwner.name)}
                   readOnly
                 />
               </Box>
@@ -100,6 +101,7 @@ export const CoOwner: FC<FieldBaseProps> = (props) => {
                     ) as string
                   }
                   type="tel"
+                  format="###-####"
                   backgroundColor="blue"
                   required
                 />
