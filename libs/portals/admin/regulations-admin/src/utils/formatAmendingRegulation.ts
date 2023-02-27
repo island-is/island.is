@@ -215,7 +215,7 @@ export const formatAmendingRegBody = (
     const hasInsert = !!item.querySelector('ins')
     const isGildistokuGrein =
       isMalsgrein &&
-      /öðlast.*gildi|sett.*með.*(?:heimild|stoð)/.test(
+      /(öðlast|tekur).*gildi|sett.*með.*(?:heimild|stoð)/.test(
         (item.textContent || '').toLowerCase(),
       )
 
