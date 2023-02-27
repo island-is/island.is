@@ -3,7 +3,7 @@ import { PortalModule } from '@island.is/portals/core'
 import { lazy } from 'react'
 import { m } from './lib/messages'
 import { AirDiscountSchemePaths } from './lib/paths'
-import { overviewLoader } from './lib/loaders'
+import { overviewLoader } from './screens/Overview/Overview.loader'
 
 const OverviewScreen = lazy(() => import('./screens/Overview/Overview'))
 const CreateDiscount = lazy(() =>
