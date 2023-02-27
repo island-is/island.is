@@ -7,7 +7,6 @@ import { downloadCSV } from './downloadCSV'
 
 interface Props {
   onGetCSV: () => void
-  //onGetExcel: () => void
   dropdownItems?: {
     href?: string
     onClick?: () => void
