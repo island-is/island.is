@@ -24,7 +24,7 @@ import {
 
 import { CardResponse, NationalRegistry } from '../lib/types'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
-import { getFromRegistry } from '../lib/helpers/applicantHelper'
+import { getFromRegistry, hasInsurance } from '../lib/helpers/applicantHelper'
 
 /* eslint-disable-next-line */
 export interface EuropeanHealthInsuranceCardProps {}
@@ -90,6 +90,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
           id: 'plastic',
           title: e.applicants.sectionTitle,
           description: e.applicants.sectionDescription,
+          condition: (_, externalData) => hasInsurance(externalData),
           children: [
             buildCheckboxField({
               id: 'applyForPlastic',
@@ -128,6 +129,12 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               },
             }),
           ],
+        }),
+        buildDescriptionField({
+          condition: (_, externalData) => !hasInsurance(externalData),
+          id: 'noInsurance',
+          title: 'No Insurance',
+          description: 'Not insured',
         }),
 
         // Has to be here so that the submit button appears (does not appear if no screen is left).

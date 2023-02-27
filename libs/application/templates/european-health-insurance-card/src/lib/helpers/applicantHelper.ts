@@ -1,5 +1,9 @@
-import { FormValue, Application } from '@island.is/application/types'
-import { NationalRegistry, NridName } from '../types'
+import {
+  FormValue,
+  Application,
+  ExternalData,
+} from '@island.is/application/types'
+import { CardResponse, NationalRegistry, NridName } from '../types'
 
 function getObjectKey(obj: any, value: any) {
   return Object.keys(obj).filter((key) => obj[key] === value)
@@ -98,4 +102,18 @@ export function base64ToArrayBuffer(base64Pdf: string) {
     bytes[i] = ascii
   }
   return bytes
+}
+
+export function hasInsurance(externalData: ExternalData): boolean {
+  console.log(externalData)
+  if (externalData?.cardResponse?.data) {
+    const cardResponse = externalData?.cardResponse?.data as CardResponse[]
+
+    for (let i = 0; i < cardResponse.length; i++) {
+      if (cardResponse[i].isInsured) {
+        return true
+      }
+    }
+  }
+  return false
 }
