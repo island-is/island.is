@@ -189,9 +189,7 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
     lastEndDate.getTime() > new Date().getTime()
   return (
     <Box marginBottom={10}>
-      {screenState === 'viewApplication' && (
-        <PrintButton />
-      )}
+      {screenState === 'viewApplication' && <PrintButton />}
       <Box marginBottom={2}>
         <Text variant="h2">
           {formatMessage(

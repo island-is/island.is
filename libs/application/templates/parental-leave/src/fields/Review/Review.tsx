@@ -23,7 +23,6 @@ import { useStatefulAnswers } from '../../hooks/useStatefulAnswers'
 import { BaseInformation } from './review-groups/BaseInformation'
 import { OtherParent } from './review-groups/OtherParent'
 
-import * as styles from './Review.css'
 import { Payments } from './review-groups/Payments'
 import { PersonalAllowance } from './review-groups/PersonalAllowance'
 import { SpousePersonalAllowance } from './review-groups/SpousePersonalAllowance'
