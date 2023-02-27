@@ -28,6 +28,7 @@ import { ApplicationOverViewStatus, FilterValues } from '../shared/types'
 import { ApplicationGroup } from '../components/ApplicationGroup'
 import { Application } from '@island.is/application/types'
 import { ErrorScreen } from '@island.is/service-portal/core'
+import { APPLICATION_SERVICE_PROVIDER_ID } from '../utils/constants'
 
 const defaultInstitution = { label: 'Allar stofnanir', value: '' }
 
@@ -142,6 +143,7 @@ const Overview = () => {
       <IntroHeader
         title={GetIntroductionHeadingOrIntro(statusToShow, true)}
         intro={GetIntroductionHeadingOrIntro(statusToShow)}
+        serviceProviderID={APPLICATION_SERVICE_PROVIDER_ID}
       />
 
       {(loading || loadingOrg || !orgData) && <ActionCardLoader repeat={3} />}

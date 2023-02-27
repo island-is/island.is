@@ -16,7 +16,10 @@ import {
 
 import { AssetCardLoader } from '../../components/AssetCardLoader'
 import AssetListCards from '../../components/AssetListCards'
-import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
+import {
+  ASSETS_SERVICE_PROVIDER_ID,
+  DEFAULT_PAGING_ITEMS,
+} from '../../utils/const'
 
 const GetRealEstateQuery = gql`
   query GetRealEstateQuery($input: GetMultiPropertyInput!) {
@@ -103,6 +106,7 @@ export const AssetsOverview = () => {
           defaultMessage:
             'Hér birtast upplýsingar úr fasteignaskrá um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
         }}
+        serviceProviderID={ASSETS_SERVICE_PROVIDER_ID}
       />
 
       {loading && <AssetCardLoader />}

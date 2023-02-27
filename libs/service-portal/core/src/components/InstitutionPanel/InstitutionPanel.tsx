@@ -1,34 +1,28 @@
 import {
   Box,
-  Text,
-  Hyphen,
-  HyphenProps,
   BoxProps,
   SkeletonLoader,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import * as styles from './InstitutionPanel.css'
 import React from 'react'
 
 interface InstitutionPanelProps {
   img?: string
-  institutionTitle: string
-  institution: string
-  locale: HyphenProps['locale']
   linkHref: string
   imgContainerDisplay?: BoxProps['display']
   loading?: boolean
   backgroundColor?: 'purple100' | 'blue100' | 'white'
+  tooltipText?: string
 }
 
 export const InstitutionPanel = ({
   img,
-  institutionTitle,
-  institution,
-  locale,
   linkHref,
   imgContainerDisplay,
   loading = false,
   backgroundColor = 'purple100',
+  tooltipText,
 }: InstitutionPanelProps) => {
   return (
     <a
@@ -41,7 +35,6 @@ export const InstitutionPanel = ({
         background={backgroundColor}
         borderRadius="large"
         padding={2}
-        paddingLeft={1}
         display="flex"
         alignItems="center"
       >
@@ -58,13 +51,18 @@ export const InstitutionPanel = ({
               background="purple200"
             />
           ) : (
-            <Box
-              component="img"
-              alt=""
-              src={img ? img : './assets/images/skjaldarmerki.svg'}
-              width="full"
-              height="full"
-            />
+            <>
+              <Box
+                component="img"
+                alt=""
+                src={img ? img : './assets/images/skjaldarmerki.svg'}
+                width="full"
+                height="full"
+              />
+              <div className={styles.tooltip}>
+                <Tooltip text={tooltipText} />
+              </div>
+            </>
           )}
         </Box>
       </Box>

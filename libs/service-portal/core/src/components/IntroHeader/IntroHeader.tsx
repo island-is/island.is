@@ -1,4 +1,10 @@
-import { GridColumn } from '@island.is/island-ui/core'
+import {
+  GridColumn,
+  GridRow,
+  Text,
+  Hidden,
+  Box,
+} from '@island.is/island-ui/core'
 import { ModuleAlertBannerSection } from '../AlertMessage/ModuleAlertMessageSection'
 import {
   IntroHeader as IntroHeaderBase,
@@ -45,26 +51,37 @@ export const IntroHeader = (
     }
   }, [loading, pathname])
 
+  // marginBottom={marginBottom ? marginBottom : [0, 0, 2]}
   return (
-    <IntroHeaderBase
-      {...props}
-      marginBottom={marginBottom ? marginBottom : [0, 0, 2]}
-    >
-      {currentOrganization && (
-        <InstitutionPanel
-          loading={loading}
-          institution={currentOrganization?.title ?? ''}
-          institutionTitle={formatMessage(m.serviceProvider)}
-          locale="is"
-          linkHref={currentOrganization?.link ?? ''}
-          img={currentOrganization?.logo?.url ?? ''}
-          imgContainerDisplay="block"
-        />
-      )}
-      <GridColumn span={['12/12', '12/12', '6/8']} order={3} paddingTop={4}>
-        <ModuleAlertBannerSection />
-      </GridColumn>
-    </IntroHeaderBase>
+    <>
+      <GridRow marginBottom={marginBottom}>
+        <GridColumn span={['8/8', '5/8']}>
+          <Text variant="h3" as="h1">
+            {formatMessage(props.title)}
+          </Text>
+          {props.intro && (
+            <Text variant="default" paddingTop={2}>
+              {formatMessage(props.intro)}
+            </Text>
+          )}
+        </GridColumn>
+        {currentOrganization && (
+          <GridColumn span={'1/8'} offset={'2/8'}>
+            <InstitutionPanel
+              loading={loading}
+              linkHref={currentOrganization?.link ?? ''}
+              img={currentOrganization?.logo?.url ?? ''}
+              imgContainerDisplay="block"
+            />
+          </GridColumn>
+        )}
+      </GridRow>
+      <GridRow>
+        <GridColumn span={['12/12', '12/12', '6/8']} order={3} paddingTop={4}>
+          <ModuleAlertBannerSection />
+        </GridColumn>
+      </GridRow>
+    </>
   )
 }
 
