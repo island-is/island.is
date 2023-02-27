@@ -1,4 +1,11 @@
-import { Checkbox, Table as T, Text, Icon } from '@island.is/island-ui/core'
+import {
+  Checkbox,
+  Table as T,
+  Text,
+  Icon,
+  Hidden,
+  Stack,
+} from '@island.is/island-ui/core'
 import { Fragment, useState } from 'react'
 import { tableRowBackgroundColor } from '../../utils/helpers'
 import SubscriptionChoices from '../SubscriptionChoices/SubscriptionChoices'
@@ -43,26 +50,43 @@ const SubscriptionTableItem = ({
             onChange={(e) => onCheckboxChange(item.id, e.target.checked)}
           />
         </T.Data>
-        {currentTab === 'Mál' && (
+        {currentTab !== Area.case ? (
           <T.Data
             borderColor={borderColor}
-            box={{
-              background: tableRowBackgroundColor(idx),
-            }}
+            box={{ background: tableRowBackgroundColor(idx) }}
           >
-            <Text variant="h5">{item.caseNumber}</Text>
+            <Text variant="h5">{item.name}</Text>
           </T.Data>
+        ) : (
+          <>
+            <T.Data
+              borderColor={borderColor}
+              box={{ background: tableRowBackgroundColor(idx) }}
+            >
+              <Hidden below="lg">
+                <Text variant="h5">{item.caseNumber}</Text>
+              </Hidden>
+              <Hidden above="md">
+                <Stack space={1}>
+                  <Text variant="h5">{item.caseNumber}</Text>
+                  <Text variant="medium" fontWeight="light">
+                    {item.name}
+                  </Text>
+                </Stack>
+              </Hidden>
+            </T.Data>
+            <T.Data
+              borderColor={borderColor}
+              box={{ background: tableRowBackgroundColor(idx) }}
+            >
+              <Hidden below="lg">
+                <Text variant="medium" fontWeight="light">
+                  {item.name}
+                </Text>
+              </Hidden>
+            </T.Data>
+          </>
         )}
-        <T.Data
-          borderColor={borderColor}
-          box={{
-            background: tableRowBackgroundColor(idx),
-          }}
-        >
-          <Text variant={currentTab === 'Mál' ? 'medium' : 'h5'}>
-            {item.name}
-          </Text>
-        </T.Data>
         <T.Data
           borderColor={borderColor}
           box={{

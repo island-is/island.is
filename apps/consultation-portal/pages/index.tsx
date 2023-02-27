@@ -6,6 +6,7 @@ import {
   GridRow,
   Tiles,
   Text,
+  Stack,
 } from '@island.is/island-ui/core'
 import React, { useEffect, useState } from 'react'
 import { HeroBanner } from '../components'
@@ -85,21 +86,19 @@ export const Index = () => {
                   }
                   return (
                     <Card key={index} card={card}>
-                      <Box
-                        display="flex"
-                        flexDirection="row"
-                        alignItems="center"
-                        justifyContent="spaceBetween"
-                      >
+                      <Stack space={2}>
                         <Text variant="eyebrow" color="purple400">
                           {`Fjöldi umsagna: ${item.adviceCount}`}
                         </Text>
-                      </Box>
-                      <Box style={{ minHeight: 132, lineBreak: 'anywhere' }}>
-                        <Text variant="small" color="dark400">
-                          {item.shortDescription}
-                        </Text>
-                      </Box>
+                        <Box
+                          style={{ wordBreak: 'break-word', height: '105px' }}
+                          overflow="hidden"
+                        >
+                          <Text variant="small" color="dark400">
+                            {item.shortDescription}
+                          </Text>
+                        </Box>
+                      </Stack>
                     </Card>
                   )
                 })}
