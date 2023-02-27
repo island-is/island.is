@@ -1,9 +1,9 @@
 import { ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
 
-export const serviceSetup = (): ServiceBuilder<'samradsgatt'> =>
-  service('samradsgatt')
-    .image('samradsgatt')
-    .namespace('samradsgatt')
+export const serviceSetup = (): ServiceBuilder<'consultation-portal'> =>
+  service('consultation-portal')
+    .image('consultation-portal')
+    .namespace('consultation-portal')
     .liveness('/liveness')
     .readiness('/liveness')
     .replicaCount({

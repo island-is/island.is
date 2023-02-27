@@ -194,7 +194,7 @@
 
 /libs/island-ui/                                                                                         @island-is/island-ui
 
-/apps/samradsgatt/                                                                                       @island-is/advania
+/apps/consultation-portal/                                                                               @island-is/advania
 /libs/clients/consultation-portal/                                                                       @island-is/advania
 /libs/api/domains/consultation-portal/                                                                   @island-is/advania
 /apps/skilavottord/                                                                                      @island-is/deloitte

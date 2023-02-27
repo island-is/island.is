@@ -249,7 +249,6 @@ const autoSchemaFile = environment.production
     AssetsModule,
     PassportModule,
     AirDiscountSchemeModule,
-    ConsultationPortalModule,
     NationalRegistryXRoadModule,
     ApiDomainsPaymentModule,
     PaymentScheduleModule,

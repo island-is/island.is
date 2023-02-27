@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'samradsgatt',
+  displayName: 'consultation-portal',
   preset: './jest.preset.js',
   rootDir: '../..',
   roots: [__dirname],
@@ -15,5 +15,5 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '<rootDir>/coverage/apps/samradsgatt',
+  coverageDirectory: '<rootDir>/coverage/apps/consultation-portal',
 }

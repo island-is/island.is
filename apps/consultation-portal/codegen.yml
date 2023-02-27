@@ -1,8 +1,8 @@
 schema:
   - apps/api/src/api.graphql
-documents: apps/samradsgatt/**/*.{ts,tsx}
+documents: apps/consultation-portal/**/*.{ts,tsx}
 generates:
-  apps/samradsgatt/graphql/schema.ts:
+  apps/consultation-portal/graphql/schema.ts:
     plugins:
       - typescript
       - typescript-operations

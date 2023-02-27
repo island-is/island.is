@@ -1,6 +1,6 @@
 import { Checkbox, Table as T, Text, Icon } from '@island.is/island-ui/core'
 import { Fragment, useState } from 'react'
-import { tableRowBackgroundColor } from '../../utils/helpers/'
+import { tableRowBackgroundColor } from '../../utils/helpers'
 import SubscriptionChoices from '../SubscriptionChoices/SubscriptionChoices'
 import * as styles from './SubscriptionTableItem.css'
 import { Area } from '../../types/enums'

@@ -16,7 +16,7 @@ const {
 const apiPath = '/api'
 const graphqlPath = '/api/graphql'
 const withVanillaExtract = createVanillaExtractPlugin()
-const path = process.env.NODE_ENV === 'production' ? '/samradsgatt' : ''
+const path = process.env.NODE_ENV === 'production' ? '/consultation-portal' : ''
 module.exports = withNx(
   withVanillaExtract({
     webpack: (config, options) => {

@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType()
+@ObjectType('ConsultationPortalDocumentInfoResult')
 export class DocumentInfoResult {
   @Field(() => String, { nullable: true })
   id?: string

@@ -19,7 +19,7 @@ TODO
 You can serve this service locally by running:
 
 ```bash
-npx nx serve samradsgatt
+npx nx serve consultation-portal
 ```
 
 ## Code owners and maintainers

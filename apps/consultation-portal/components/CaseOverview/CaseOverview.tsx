@@ -1,5 +1,5 @@
 import { Box, GridRow, Text } from '@island.is/island-ui/core'
-import { CaseStatusCard } from '../../components'
+import { CaseStatusCard } from '..'
 import { Advice, Case } from '../../types/viewModels'
 import format from 'date-fns/format'
 

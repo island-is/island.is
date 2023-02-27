@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { DocumentInfoResult } from './'
+import { DocumentInfoResult } from './documentInfoResult.model'
 
-@ObjectType()
+@ObjectType('ConsultationPortalUserAdviceResult')
 export class UserAdviceResult {
   @Field({ nullable: true })
   id?: string
