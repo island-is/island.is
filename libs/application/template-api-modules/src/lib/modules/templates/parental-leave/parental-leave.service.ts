@@ -179,10 +179,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     const {
       noPrimaryParentBirthDate,
       noChildrenFoundTypeOfApplication,
-      fosterCareAdoptionDate,
-      fosterCareBirthDate,
+      fosterCareOrAdoptionDate,
+      fosterCareOrAdoptionBirthDate,
     } = getApplicationAnswers(application.answers)
-
+    console.log('adoption date ', fosterCareOrAdoptionDate)
     const { applicantGenderCode, children, existingApplications } = getApplicationExternalData(
       application.externalData,
     )
@@ -208,9 +208,9 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       const child: ChildInformation = {
         hasRights: true,
         remainingDays: 180,
-        expectedDateOfBirth: fosterCareAdoptionDate, // sleppa að setja þetta, eða er þetta ok?
-        adoptionDate: fosterCareAdoptionDate,
-        dateOfBirth: fosterCareBirthDate,
+        expectedDateOfBirth: fosterCareOrAdoptionDate, // sleppa að setja þetta, eða er þetta ok?
+        adoptionDate: fosterCareOrAdoptionDate,
+        dateOfBirth: fosterCareOrAdoptionBirthDate,
         parentalRelation: ParentalRelations.primary,
       }
 

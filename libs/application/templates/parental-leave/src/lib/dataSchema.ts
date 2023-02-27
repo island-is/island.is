@@ -19,7 +19,7 @@ import {
 import { errorMessages } from './messages'
 import { formatBankInfo } from './parentalLeaveUtils'
 import { addMonths, parseISO } from 'date-fns'
-import { yearFosterCare, yearInMonths } from '../config'
+import { yearFosterCareOrAdoption, yearInMonths } from '../config'
 
 const PersonalAllowance = z
   .object({
@@ -59,7 +59,7 @@ export const dataSchema = z.object({
       (p) => {
         const birthDateDob = parseISO(p)
         const today = new Date()
-        const minimumStartDate = addMonths(today, -yearFosterCare * yearInMonths)
+        const minimumStartDate = addMonths(today, -yearFosterCareOrAdoption * yearInMonths)
        
         return birthDateDob >= minimumStartDate
       },

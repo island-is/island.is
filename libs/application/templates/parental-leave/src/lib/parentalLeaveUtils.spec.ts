@@ -18,6 +18,7 @@ import {
   SINGLE,
   SPOUSE,
   ParentalRelations,
+  ADOPTION,
 } from '../constants'
 import { ChildInformation } from '../dataProviders/Children/types'
 import {
@@ -49,6 +50,7 @@ import {
   getAvailablePersonalRightsSingleParentInMonths,
   isParentWithoutBirthParent,
   isNotEligibleForParentWithoutBirthParent,
+  isFosterCareAndAdoption,
 } from './parentalLeaveUtils'
 import { PersonInformation } from '../types'
 
@@ -121,6 +123,70 @@ describe('getExpectedDateOfBirth', () => {
     const res = getExpectedDateOfBirth(application)
 
     expect(res).toEqual('2021-05-17')
+  })
+})
+
+describe('isFosterCareAndAdoption', () => {
+  it('should return true if application is due to adoption for primary parent', () => {
+    const application = buildApplication({
+      answers: {
+        noChildrenFound: {
+          typeOfApplication: ADOPTION,
+        },
+        selectedChild: 0,
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: undefined,
+                parentalRelation: 'primary',
+                expectedDateOfBirth: '2022-12-20',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date('2022-11-07T20:05:46.422Z'),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(isFosterCareAndAdoption(application)).toBe(true)
+  })
+
+  it('should return true if application is due to adoption for secondary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: 0,
+                parentalRelation: 'secondary',
+                expectedDateOfBirth: '2022-12-20',
+                primaryParentNationalRegistryId: '1111111119',
+                primaryParentGenderCode: '1',
+                primaryParentTypeOfApplication: ADOPTION,
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date('2022-11-07T20:05:46.422Z'),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(isFosterCareAndAdoption(application)).toBe(true)
   })
 })
 

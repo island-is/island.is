@@ -417,7 +417,7 @@ export const PrerequisitesForm: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'fosterCareApplication',
+          id: 'fosterCareOrAdoptionApplication',
           title: parentalLeaveFormMessages.selectChild.screenTitle,
           condition: (answers) => {
             const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
@@ -428,20 +428,20 @@ export const PrerequisitesForm: Form = buildForm({
           },
           children: [
             buildMultiField({
-              id: 'fosterCare',
+              id: 'fosterCareOrAdoption',
               title: parentalLeaveFormMessages.selectChild.screenTitle,
               description:
                 parentalLeaveFormMessages.selectChild.fosterCareDescription,
               children: [
                 buildDateField({
-                  id: 'fosterCare.birthDate',
+                  id: 'fosterCareOrAdoption.birthDate',
                   title:
                     parentalLeaveFormMessages.selectChild.fosterCareBirthDate,
                   description: '',
                   placeholder: parentalLeaveFormMessages.startDate.placeholder,
                 }),
                 buildDateField({
-                  id: 'fosterCare.adoptionDate',
+                  id: 'fosterCareOrAdoption.adoptionDate',
                   title:
                     parentalLeaveFormMessages.selectChild
                       .fosterCareAdoptionDate,

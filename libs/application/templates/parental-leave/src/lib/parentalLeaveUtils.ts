@@ -610,14 +610,14 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'noChildrenFound.typeOfApplication',
   ) as string
 
-  const fosterCareBirthDate = getValueViaPath(
+  const fosterCareOrAdoptionBirthDate = getValueViaPath(
     answers,
-    'fosterCare.birthDate',
+    'fosterCareOrAdoption.birthDate',
   ) as string
 
-  const fosterCareAdoptionDate = getValueViaPath(
+  const fosterCareOrAdoptionDate = getValueViaPath(
     answers,
-    'fosterCare.adoptionDate',
+    'fosterCareOrAdoption.adoptionDate',
   ) as string
 
   const noPrimaryParentBirthDate = getValueViaPath(
@@ -910,8 +910,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
   return {
     applicationType,
     noChildrenFoundTypeOfApplication,
-    fosterCareBirthDate,
-    fosterCareAdoptionDate,
+    fosterCareOrAdoptionBirthDate,
+    fosterCareOrAdoptionDate,
     noPrimaryParentBirthDate,
     hasMultipleBirths,
     multipleBirths,
