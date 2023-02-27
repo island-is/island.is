@@ -32,6 +32,7 @@ import {
   HistoryBuilder,
 } from '@island.is/application/api/history'
 import { EventObject } from 'xstate'
+import {FeatureFlagService, Features} from '@island.is/nest/feature-flags'
 
 @Injectable()
 export class ApplicationSerializer<
@@ -43,6 +44,7 @@ export class ApplicationSerializer<
     private intlService: IntlService,
     private historyService: HistoryService,
     private historyBuilder: HistoryBuilder,
+    private featureFlagService: FeatureFlagService,
   ) {}
 
   intercept(
@@ -58,10 +60,14 @@ export class ApplicationSerializer<
 
         if (isArray) {
           const applications = res as Application[]
-
-          const histories = await this.historyService.getStateHistory(
-            applications.map((item) => item.id),
-          )
+          const showHistory = await this.featureFlagService.getValue(Features.applicationSystemHistory, false, user)
+          console.log({ showHistory })
+          let histories: History[] = []
+          if(showHistory) {
+            histories = await this.historyService.getStateHistory(
+              applications.map((item) => item.id),
+            )
+          }
 
           return Promise.all(
             applications.map((item) =>
@@ -70,6 +76,7 @@ export class ApplicationSerializer<
                 user.nationalId,
                 locale,
                 histories.filter((x) => x.application_id === item.id),
+                showHistory,
               ),
             ),
           )
@@ -84,7 +91,8 @@ export class ApplicationSerializer<
     model: Application,
     nationalId: string,
     locale: Locale,
-    history: History[] = [],
+    historyModel: History[] = [],
+    showHistory = true,
   ) {
     const application = model.toJSON() as BaseApplication
     const template = await getApplicationTemplateByTypeId(
@@ -118,6 +126,22 @@ export class ApplicationSerializer<
       return intl.formatMessage(template.name)
     }
 
+    const pendingAction = showHistory ? helper.getCurrentStatePendingAction(
+      application,
+      userRole,
+      intl.formatMessage,
+    ) : undefined
+
+    const history = showHistory ? await this.historyBuilder.buildApplicationHistory(
+        historyModel,
+        intl.formatMessage,
+        helper
+    ) : undefined
+
+    const s = helper.getReadableAnswersAndExternalData(userRole)
+
+
+
     const dto = plainToInstance(ApplicationResponseDto, {
       ...application,
       ...helper.getReadableAnswersAndExternalData(userRole),
@@ -135,17 +159,9 @@ export class ApplicationSerializer<
             ? intl.formatMessage(actionCardMeta.tag.label)
             : null,
         },
-        pendingAction: helper.getCurrentStatePendingAction(
-          application,
-          userRole,
-          intl.formatMessage,
-        ),
         deleteButton: roleInState?.delete,
-        history: await this.historyBuilder.buildApplicationHistory(
-          history,
-          intl.formatMessage,
-          helper
-        ),
+        pendingAction,
+        history
       },
       name: getApplicationName(),
       institution: template.institution
