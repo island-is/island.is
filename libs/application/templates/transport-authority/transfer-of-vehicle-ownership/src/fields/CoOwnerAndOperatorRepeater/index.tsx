@@ -1,6 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, Button } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useState, useCallback, useEffect } from 'react'
 import { information } from '../../lib/messages'
@@ -10,6 +10,8 @@ import { repeaterButtons } from './CoOwnerAndOperatorRepeater.css'
 import { CoOwnerAndOperatorRepeaterItem } from './CoOwnerAndOperatorRepeaterItem'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
+
+const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 
 export const CoOwnerAndOperatorRepeater: FC<FieldBaseProps> = (props) => {
   const { locale, formatMessage } = useLocale()
@@ -32,6 +34,17 @@ export const CoOwnerAndOperatorRepeater: FC<FieldBaseProps> = (props) => {
       [],
     ) as CoOwnerAndOperator[],
   )
+  const [identicalError, setIdenticalError] = useState<boolean>(false)
+
+  const filteredCoOwnersAndOperators = buyerCoOwnerAndOperator.filter(
+    ({ wasRemoved }) => wasRemoved !== 'true',
+  )
+  const allOperators = filteredCoOwnersAndOperators.filter(
+    (field) => field.type === 'operator',
+  )
+  const allCoOwners = filteredCoOwnersAndOperators.filter(
+    (field) => field.type === 'coOwner',
+  )
 
   const updateBuyer = useCallback(async (buyer: UserInformation) => {
     await updateApplication({
@@ -46,6 +59,35 @@ export const CoOwnerAndOperatorRepeater: FC<FieldBaseProps> = (props) => {
       },
     })
   }, [])
+
+  const addNationalIdToCoOwners = (nationalId: string, newIndex: number) => {
+    setBuyerCoOwnerAndOperator(
+      buyerCoOwnerAndOperator.map((coOwnerOroperator, index) => {
+        if (newIndex === index) {
+          return {
+            ...coOwnerOroperator,
+            nationalId,
+          }
+        }
+        return coOwnerOroperator
+      }),
+    )
+  }
+
+  const checkDuplicate = () => {
+    const existingCoOwnersAndOperators = filteredCoOwnersAndOperators.map(
+      ({ nationalId }) => {
+        return nationalId
+      },
+    )
+
+    const jointOperators = [...existingCoOwnersAndOperators, buyer.nationalId]
+    return !!jointOperators.some((nationalId, index) => {
+      return (
+        jointOperators.indexOf(nationalId) !== index && nationalId.length > 0
+      )
+    })
+  }
 
   const handleAdd = (type: 'operator' | 'coOwner') =>
     setBuyerCoOwnerAndOperator([
@@ -62,31 +104,22 @@ export const CoOwnerAndOperatorRepeater: FC<FieldBaseProps> = (props) => {
   const handleRemove = (position: number) => {
     if (position > -1) {
       setBuyerCoOwnerAndOperator(
-        buyerCoOwnerAndOperator.map((coOwnerAndOperator, index) => {
+        buyerCoOwnerAndOperator.map((coOwnerOroperator, index) => {
           if (index === position) {
-            return { ...coOwnerAndOperator, wasRemoved: 'true' }
+            return { ...coOwnerOroperator, wasRemoved: 'true' }
           }
-          return coOwnerAndOperator
+          return coOwnerOroperator
         }),
       )
     }
   }
-  const filteredCoOwnersAndOperators = buyerCoOwnerAndOperator.filter(
-    ({ wasRemoved }) => wasRemoved !== 'true',
-  )
-  const allOperators = filteredCoOwnersAndOperators.filter(
-    (field) => field.type === 'operator',
-  )
-  const allCoOwners = filteredCoOwnersAndOperators.filter(
-    (field) => field.type === 'coOwner',
-  )
 
   useEffect(() => {
     if (
       buyer.name.length > 0 &&
       buyer.nationalId.length === 10 &&
-      buyer.phone.length === 7 &&
-      buyer.email.length > 0
+      buyer.phone.length >= 7 &&
+      emailRegex.test(buyer.email)
     ) {
       updateBuyer(buyer)
     }
@@ -94,7 +127,10 @@ export const CoOwnerAndOperatorRepeater: FC<FieldBaseProps> = (props) => {
 
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
-      console.log('hello here')
+      setIdenticalError(checkDuplicate())
+      if (checkDuplicate()) {
+        return [false, 'Identical nationalIds']
+      }
       return [true, null]
     })
 
@@ -114,6 +150,7 @@ export const CoOwnerAndOperatorRepeater: FC<FieldBaseProps> = (props) => {
             rowLocation={rowLocation + 1}
             key={`buyerCoOwnerAndOperator-${index}`}
             handleRemove={handleRemove}
+            addNationalIdToCoOwners={addNationalIdToCoOwners}
             {...props}
           />
         )
@@ -142,6 +179,14 @@ export const CoOwnerAndOperatorRepeater: FC<FieldBaseProps> = (props) => {
           {formatMessage(information.labels.operator.add)}
         </Button>
       </Box>
+      {identicalError && (
+        <Box marginTop={4}>
+          <AlertMessage
+            type="error"
+            title={formatMessage(information.labels.operator.identicalError)}
+          />
+        </Box>
+      )}
     </Box>
   )
 }

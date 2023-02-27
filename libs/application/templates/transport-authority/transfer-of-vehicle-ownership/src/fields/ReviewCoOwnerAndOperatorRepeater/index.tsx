@@ -1,5 +1,11 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, Button, Divider, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Divider,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
 import { error, information, review } from '../../lib/messages'
@@ -27,9 +33,40 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
   const [genericErrorMessage, setGenericErrorMessage] = useState<
     string | undefined
   >(undefined)
+  const [identicalError, setIdenticalError] = useState<boolean>(false)
   const [tempCoOwnersAndOperators, setTempCoOwnersAndOperators] = useState<
     CoOwnerAndOperator[]
   >(coOwnersAndOperators)
+
+  const filteredCoOwnersAndOperators = tempCoOwnersAndOperators.filter(
+    ({ wasRemoved }) => wasRemoved !== 'true',
+  )
+  const allOperators = filteredCoOwnersAndOperators.filter(
+    (field) => field.type === 'operator',
+  )
+  const allCoOwners = filteredCoOwnersAndOperators.filter(
+    (field) => field.type === 'coOwner',
+  )
+
+  const checkDuplicate = () => {
+    const existingCoOwnersAndOperators = filteredCoOwnersAndOperators.map(
+      ({ nationalId }) => {
+        return nationalId
+      },
+    )
+
+    const buyerNationalId = getValueViaPath(
+      application.answers,
+      'buyer.nationalId',
+    ) as string
+
+    const jointOperators = [...existingCoOwnersAndOperators, buyerNationalId]
+    return !!jointOperators.some((nationalId, index) => {
+      return (
+        jointOperators.indexOf(nationalId) !== index && nationalId.length > 0
+      )
+    })
+  }
 
   const handleAdd = (type: 'operator' | 'coOwner') =>
     setTempCoOwnersAndOperators([
@@ -55,16 +92,6 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
       )
     }
   }
-
-  const filteredCoOwnersAndOperators = tempCoOwnersAndOperators.filter(
-    ({ wasRemoved }) => wasRemoved !== 'true',
-  )
-  const allOperators = filteredCoOwnersAndOperators.filter(
-    (field) => field.type === 'operator',
-  )
-  const allCoOwners = filteredCoOwnersAndOperators.filter(
-    (field) => field.type === 'coOwner',
-  )
 
   const onBackButtonClick = () => {
     setErrorMessage(undefined)
@@ -94,43 +121,49 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
   }
 
   const onForwardButtonClick = async () => {
-    if (tempCoOwnersAndOperators && setCoOwnersAndOperators) {
-      const notValid = filteredCoOwnersAndOperators.find((field) => {
-        if (
-          field.email.length === 0 ||
-          field.name.length === 0 ||
-          field.nationalId.length === 0 ||
-          field.phone.length === 0
-        ) {
-          return true
-        }
-        return false
-      })
-      if (notValid) {
-        setGenericErrorMessage(undefined)
-        setErrorMessage(formatMessage(error.fillInValidInput))
-      } else {
-        const res = await updateApplication({
-          variables: {
-            input: {
-              id: application.id,
-              answers: {
-                buyerCoOwnerAndOperator: tempCoOwnersAndOperators,
-                buyerMainOperator: {
-                  nationalId: updateMainOperator(),
+    setIdenticalError(checkDuplicate())
+    if (!checkDuplicate()) {
+      setIdenticalError(false)
+      if (tempCoOwnersAndOperators && setCoOwnersAndOperators) {
+        const notValid = filteredCoOwnersAndOperators.find((field) => {
+          if (
+            field.email.length === 0 ||
+            field.name.length === 0 ||
+            field.nationalId.length === 0 ||
+            field.phone.length === 0
+          ) {
+            return true
+          }
+          return false
+        })
+        if (notValid) {
+          setGenericErrorMessage(undefined)
+          setErrorMessage(formatMessage(error.fillInValidInput))
+        } else {
+          const res = await updateApplication({
+            variables: {
+              input: {
+                id: application.id,
+                answers: {
+                  buyerCoOwnerAndOperator: tempCoOwnersAndOperators,
+                  buyerMainOperator: {
+                    nationalId: updateMainOperator(),
+                  },
                 },
               },
+              locale,
             },
-            locale,
-          },
-        })
-        if (!res.data) {
-          setGenericErrorMessage(formatMessage(error.couldNotUpdateApplication))
-        } else {
-          setCoOwnersAndOperators(tempCoOwnersAndOperators)
-          setGenericErrorMessage(undefined)
-          setErrorMessage(undefined)
-          setStep && setStep('overview')
+          })
+          if (!res.data) {
+            setGenericErrorMessage(
+              formatMessage(error.couldNotUpdateApplication),
+            )
+          } else {
+            setCoOwnersAndOperators(tempCoOwnersAndOperators)
+            setGenericErrorMessage(undefined)
+            setErrorMessage(undefined)
+            setStep && setStep('overview')
+          }
         }
       }
     }
@@ -194,6 +227,14 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
         <Text variant="eyebrow" color="red600">
           {genericErrorMessage}
         </Text>
+      )}
+      {identicalError && (
+        <Box marginTop={4}>
+          <AlertMessage
+            type="error"
+            title={formatMessage(information.labels.operator.identicalError)}
+          />
+        </Box>
       )}
       <Box style={{ marginTop: '40vh' }}>
         <Divider />

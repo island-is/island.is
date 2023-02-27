@@ -3,7 +3,7 @@ import { z } from 'zod'
 export const UserInformationSchema = z.object({
   nationalId: z.string().min(1),
   name: z.string().min(1),
-  email: z.string().min(1),
+  email: z.string().email(),
   phone: z.string().min(7),
   approved: z.boolean().optional(),
 })
@@ -11,7 +11,7 @@ export const UserInformationSchema = z.object({
 export const CoOwnerAndOperatorSchema = z.object({
   nationalId: z.string().min(1),
   name: z.string().min(1),
-  email: z.string().min(1),
+  email: z.string().email(),
   phone: z.string().min(7),
   approved: z.boolean().optional(),
   wasRemoved: z.string().optional(),
