@@ -18,6 +18,16 @@ export const alignTiles = style({
     lg: {
       position: 'absolute',
       bottom: 0,
+      paddingRight: '12px',
     },
   }),
+})
+
+export const bg = style({
+  display: 'block',
+  position: 'relative',
+  maxHeight: '317px',
+  maxWidth: '317px',
+  // top: 16,
+  width: '100%',
 })
