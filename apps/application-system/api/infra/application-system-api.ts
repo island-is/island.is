@@ -27,11 +27,15 @@ import {
   json,
 } from '../../../../infra/src/dsl/dsl'
 import { PostgresInfo } from '../../../../infra/src/dsl/types/input-types'
+import { RedisInfo } from '../../../../infra/src/dsl/types/input-types'
 
 const postgresInfo: PostgresInfo = {
   passwordSecret: '/k8s/application-system/api/DB_PASSWORD',
   name: 'application_system_api',
   username: 'application_system_api',
+}
+const redisInfo: RedisInfo = {
+  host: { dev: 'something', staging: 'something', prod: 'something' },
 }
 export const GRAPHQL_API_URL_ENV_VAR_NAME = 'GRAPHQL_API_URL' // This property is a part of a circular dependency that is treated specially in certain deployment types
 
@@ -43,23 +47,13 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
     .image('application-system-api')
     .postgres(postgresInfo)
     .serviceAccount('application-system-api-worker')
+    .redis(redisInfo)
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system',
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
-      },
-      REDIS_URL_NODE_01: {
-        dev: json([
-          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
-        ]),
-        staging: json([
-          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
-        ]),
-        prod: json([
-          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
-        ]),
       },
       XROAD_CHARGE_FJS_V2_PATH: {
         dev: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
@@ -121,6 +115,7 @@ export const serviceSetup = (services: {
     .namespace(namespace)
     .serviceAccount(serviceAccount)
     .command('node')
+    .redis(redisInfo)
     .args('main.js')
     .env({
       EMAIL_REGION: 'eu-west-1',
@@ -130,17 +125,6 @@ export const serviceSetup = (services: {
         prod: 'https://innskra.island.is',
       },
       XROAD_CHARGE_FJS_V2_TIMEOUT: '20000',
-      REDIS_URL_NODE_01: {
-        dev: json([
-          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
-        ]),
-        staging: json([
-          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
-        ]),
-        prod: json([
-          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
-        ]),
-      },
       CONTENTFUL_HOST: {
         dev: 'preview.contentful.com',
         staging: 'cdn.contentful.com',

@@ -239,6 +239,12 @@ const serializeService: SerializeMethod<HelmService> = async (
     addToErrors(errors)
     result.pvcs = volumes
   }
+  // Redis
+  if (serviceDef.redis) {
+    const env: { [name: string]: string } = {}
+    env['REDIS_URL_NODE_01'] = serviceDef.redis.host ?? env1.redisHost
+    mergeObjects(result.env, env)
+  }
 
   const allErrors = getErrors()
   return allErrors.length === 0

@@ -9,6 +9,7 @@ import {
   MountedFile,
   PersistentVolumeClaim,
   PostgresInfo,
+  RedisInfo,
   ReplicaCount,
   Resources,
   Secrets,
@@ -211,6 +212,11 @@ export class ServiceBuilder<ServiceType> {
     return this
   }
 
+  redis(redis: string) {
+    this.serviceDef.redis = redis
+    return this
+  }
+
   resources(res: Resources) {
     this.serviceDef.resources = res
     return this
@@ -225,11 +231,6 @@ export class ServiceBuilder<ServiceType> {
     this.serviceDef.postgres = this.withDefaults(postgres ?? {})
     return this
   }
-
-  redis(host?: string) {
-    return this
-  }
-
   /**
    * You can allow ingress traffic (traffic from the internet) to your service by creating an ingress controller. Mapped to an [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/#what-is-ingress)
    * @param ingress Ingress parameters
