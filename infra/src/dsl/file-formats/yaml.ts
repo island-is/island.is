@@ -13,6 +13,7 @@ const HEADER =
   '# Run "yarn charts" instead.\n' +
   '#\n' +
   '#####################################################################\n'
+const kubeSeperator = '---'
 
 export const dumpOpts = {
   // Temporary overrides on sortKeys and skipInvalid
@@ -26,10 +27,15 @@ export const reformatYaml = (content: string): string => {
   return dump(obj, dumpOpts)
 }
 export const dumpJobYaml = (job: FeatureKubeJob) => dump(job, dumpOpts)
+
 export const dumpKubeYaml = (valueFile: KubeValueFile) => {
   const { services } = valueFile
-  return HEADER + dump({ ...services }, dumpOpts)
+  const serviceYamls = Object.values(services).map((serviceData) => {
+    return dump(serviceData, dumpOpts) + kubeSeperator
+  })
+  return HEADER + serviceYamls.join('\n')
 }
+
 export const dumpServiceHelm = (
   env: EnvironmentConfig,
   valueFile: HelmValueFile,

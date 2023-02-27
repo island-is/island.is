@@ -4,248 +4,408 @@
 # Run "yarn charts" instead.
 #
 #####################################################################
-auth-admin-web:
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
-  labels:
-    tags.datadoghq.com/env: 'prod'
-    tags.datadoghq.com/service: 'auth-admin-web'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/auth-admin-web'
-  metadata:
-    name: 'auth-admin-web'
-    namespace: 'identity-server-admin'
+apiVersion: 'apps/v1'
+kind: 'Deployment'
+labels:
+  tags.datadoghq.com/env: 'prod'
+  tags.datadoghq.com/service: 'identity-server'
+  tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/identity-server'
+metadata:
+  name: 'identity-server'
+  namespace: 'identity-server'
+spec:
   spec:
-    spec:
-      containers:
-        env:
-          - name: 'NEXT_PUBLIC_BACKEND_URL'
-            value: '/backend'
-          - name: 'IDENTITYSERVER_DOMAIN'
-            value: 'innskra.island.is'
-          - name: 'BASE_URL'
-            value: 'https://innskra.island.is/admin'
-          - name: 'NEXTAUTH_URL'
-            value: 'https://innskra.island.is/admin/api/auth'
-          - name: 'CONFIGCAT_SDK_KEY'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-                name: 'CONFIGCAT_SDK_KEY'
-          - name: 'IDENTITYSERVER_SECRET'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/auth-admin-web/IDENTITYSERVER_SECRET'
-                name: 'IDENTITYSERVER_SECRET'
-        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/auth-admin-web'
-        imagePullPolicy: 'IfNotPresent'
-        livenessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        name: 'auth-admin-web'
-        readinessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        resources:
-          limits:
-            cpu: '400m'
-            memory: '256Mi'
-          requests:
-            cpu: '200m'
-            memory: '128Mi'
-        securityContext:
-          allowPrivilegeEscalation: false
-          privileged: false
-      replicas: 2
-    strategy:
-      rollingUpdate:
-        maxSurge: '25%'
-        maxUnavailable: '25%'
-      type: 'RollingUpdate'
-    template:
-      metadata:
-        annotations:
-          ad.datadoghq.com/auth-admin-web.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
-        labels:
-          tags.datadoghq.com/env: 'prod'
-          tags.datadoghq.com/service: 'auth-admin-web'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/auth-admin-web'
-identity-server:
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
-  labels:
-    tags.datadoghq.com/env: 'prod'
-    tags.datadoghq.com/service: 'identity-server'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/identity-server'
-  metadata:
-    name: 'identity-server'
-    namespace: 'identity-server'
+    containers:
+      env:
+        - name: 'AWS__CloudWatch__AuditLogGroup'
+          value: '/identity-server/audit-log'
+        - name: 'ASPNETCORE_URLS'
+          value: 'http://*:5000'
+        - name: 'CORECLR_ENABLE_PROFILING'
+          value: '1'
+        - name: 'CORECLR_PROFILER'
+          value: '{846F5F1C-F9AE-4B07-969E-05C26BC060D8}'
+        - name: 'CORECLR_PROFILER_PATH'
+          value: '/opt/datadog/Datadog.Trace.ClrProfiler.Native.so'
+        - name: 'DD_INTEGRATIONS'
+          value: '/opt/datadog/integrations.json'
+        - name: 'DD_DOTNET_TRACER_HOME'
+          value: '/opt/datadog'
+        - name: 'Datadog__Metrics__Port'
+          value: '5003'
+        - name: 'AudkenniSettings__Retries'
+          value: '24'
+        - name: 'AWS__SystemsManager__ParameterStore__DataProtectionPrefix'
+          value: '/k8s/identity-server/DataProtectionSecret'
+        - name: 'CacheSettings__Enabled'
+          value: 'true'
+        - name: 'CacheSettings__Memcached__Address'
+          value: 'identity-server.dnugi2.cfg.euw1.cache.amazonaws.com'
+        - name: 'CacheSettings__Memcached__Port'
+          value: '11211'
+        - name: 'CacheSettings__Redis__Address'
+          value: 'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com'
+        - name: 'CacheSettings__Redis__Port'
+          value: '6379'
+        - name: 'IdentityServer__EnableFakeLogin'
+          value: 'true'
+        - name: 'IdentityServer__EnableFeatureDeploymentWildcards'
+          value: 'false'
+        - name: 'IdentityServer__KeyManagement__Enabled'
+          value: 'true'
+        - name: 'PersistenceSettings__BaseAddress'
+          value: 'http://web-services-auth-ids-api'
+        - name: 'PersistenceSettings__UserProfileBaseAddress'
+          value: 'http://web-service-portal-api.service-portal.svc.cluster.local'
+        - name: 'Application__MinCompletionPortThreads'
+          value: '10'
+        - name: 'NO_UPDATE_NOTIFIER'
+          value: 'true'
+        - name: 'CONFIGCAT_SDK_KEY'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+              name: 'CONFIGCAT_SDK_KEY'
+        - name: 'IdentityServer__LicenseKey'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/identity-server/LicenseKey'
+              name: 'IdentityServer__LicenseKey'
+        - name: 'AudkenniSettings__ClientId'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/identity-server/AudkenniClientId'
+              name: 'AudkenniSettings__ClientId'
+        - name: 'AudkenniSettings__ClientSecret'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/identity-server/AudkenniClientSecret'
+              name: 'AudkenniSettings__ClientSecret'
+        - name: 'IdentityServer__FakePersons'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/identity-server/FakePersons'
+              name: 'IdentityServer__FakePersons'
+        - name: 'IdentityServer__SigningCertificate__Passphrase'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/identity-server/SigningCertificatePassphrase'
+              name: 'IdentityServer__SigningCertificate__Passphrase'
+        - name: 'PersistenceSettings__AccessTokenManagementSettings__ClientSecret'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/identity-server/ClientSecret'
+              name: 'PersistenceSettings__AccessTokenManagementSettings__ClientSecret'
+        - name: 'Scopes__Admin__RootAccessList'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/identity-server/AdminRootAccessList'
+              name: 'Scopes__Admin__RootAccessList'
+        - name: 'FeatureFlags__ConfigCatSdkKey'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+              name: 'FeatureFlags__ConfigCatSdkKey'
+      image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/identity-server'
+      imagePullPolicy: 'IfNotPresent'
+      livenessProbe:
+        httpGet:
+          path: '/liveness'
+          port: 5010
+        initialDelaySeconds: 3
+        timeoutSeconds: 3
+      name: 'identity-server'
+      readinessProbe:
+        httpGet:
+          path: '/readiness'
+          port: 5010
+        initialDelaySeconds: 3
+        timeoutSeconds: 3
+      resources:
+        limits:
+          cpu: '4000m'
+          memory: '2048Mi'
+        requests:
+          cpu: '1000m'
+          memory: '1024Mi'
+      securityContext:
+        allowPrivilegeEscalation: false
+        fsGroup: 65534
+        privileged: false
+      volumeMounts:
+        - mountPath: '/etc/config/ids-signing.pfx'
+          name: 'ids-signing.pfx'
+        - mountPath: '/keys'
+          name: 'identity-server'
+    serviceAccountName: 'identity-server'
+  strategy:
+    rollingUpdate:
+      maxSurge: '25%'
+      maxUnavailable: '25%'
+    type: 'RollingUpdate'
+  template:
+    metadata:
+      annotations:
+        ad.datadoghq.com/identity-server.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+      labels:
+        tags.datadoghq.com/env: 'prod'
+        tags.datadoghq.com/service: 'identity-server'
+        tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/identity-server'
+  volumes:
+    - name: 'identity-server'
+      persistentVolumeClaim:
+        claimName: 'identity-server'
+---
+apiVersion: 'apps/v1'
+kind: 'Deployment'
+labels:
+  tags.datadoghq.com/env: 'prod'
+  tags.datadoghq.com/service: 'auth-admin-web'
+  tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/auth-admin-web'
+metadata:
+  name: 'auth-admin-web'
+  namespace: 'identity-server-admin'
+spec:
   spec:
-    spec:
-      containers:
-        env:
-          - name: 'AWS__CloudWatch__AuditLogGroup'
-            value: '/identity-server/audit-log'
-          - name: 'ASPNETCORE_URLS'
-            value: 'http://*:5000'
-          - name: 'CORECLR_ENABLE_PROFILING'
-            value: '1'
-          - name: 'CORECLR_PROFILER'
-            value: '{846F5F1C-F9AE-4B07-969E-05C26BC060D8}'
-          - name: 'CORECLR_PROFILER_PATH'
-            value: '/opt/datadog/Datadog.Trace.ClrProfiler.Native.so'
-          - name: 'DD_INTEGRATIONS'
-            value: '/opt/datadog/integrations.json'
-          - name: 'DD_DOTNET_TRACER_HOME'
-            value: '/opt/datadog'
-          - name: 'Datadog__Metrics__Port'
-            value: '5003'
-          - name: 'AudkenniSettings__Retries'
-            value: '24'
-          - name: 'AWS__SystemsManager__ParameterStore__DataProtectionPrefix'
-            value: '/k8s/identity-server/DataProtectionSecret'
-          - name: 'CacheSettings__Enabled'
-            value: 'true'
-          - name: 'CacheSettings__Memcached__Address'
-            value: 'identity-server.dnugi2.cfg.euw1.cache.amazonaws.com'
-          - name: 'CacheSettings__Memcached__Port'
-            value: '11211'
-          - name: 'CacheSettings__Redis__Address'
-            value: 'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com'
-          - name: 'CacheSettings__Redis__Port'
-            value: '6379'
-          - name: 'IdentityServer__EnableFakeLogin'
-            value: 'true'
-          - name: 'IdentityServer__EnableFeatureDeploymentWildcards'
-            value: 'false'
-          - name: 'IdentityServer__KeyManagement__Enabled'
-            value: 'true'
-          - name: 'PersistenceSettings__BaseAddress'
-            value: 'http://web-services-auth-ids-api'
-          - name: 'PersistenceSettings__UserProfileBaseAddress'
-            value: 'http://web-service-portal-api.service-portal.svc.cluster.local'
-          - name: 'Application__MinCompletionPortThreads'
-            value: '10'
-          - name: 'NO_UPDATE_NOTIFIER'
-            value: 'true'
-          - name: 'CONFIGCAT_SDK_KEY'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-                name: 'CONFIGCAT_SDK_KEY'
-          - name: 'IdentityServer__LicenseKey'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/identity-server/LicenseKey'
-                name: 'IdentityServer__LicenseKey'
-          - name: 'AudkenniSettings__ClientId'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/identity-server/AudkenniClientId'
-                name: 'AudkenniSettings__ClientId'
-          - name: 'AudkenniSettings__ClientSecret'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/identity-server/AudkenniClientSecret'
-                name: 'AudkenniSettings__ClientSecret'
-          - name: 'IdentityServer__FakePersons'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/identity-server/FakePersons'
-                name: 'IdentityServer__FakePersons'
-          - name: 'IdentityServer__SigningCertificate__Passphrase'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/identity-server/SigningCertificatePassphrase'
-                name: 'IdentityServer__SigningCertificate__Passphrase'
-          - name: 'PersistenceSettings__AccessTokenManagementSettings__ClientSecret'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/identity-server/ClientSecret'
-                name: 'PersistenceSettings__AccessTokenManagementSettings__ClientSecret'
-          - name: 'Scopes__Admin__RootAccessList'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/identity-server/AdminRootAccessList'
-                name: 'Scopes__Admin__RootAccessList'
-          - name: 'FeatureFlags__ConfigCatSdkKey'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-                name: 'FeatureFlags__ConfigCatSdkKey'
-        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/identity-server'
-        imagePullPolicy: 'IfNotPresent'
-        livenessProbe:
-          httpGet:
-            path: '/liveness'
-            port: 5010
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        name: 'identity-server'
-        readinessProbe:
-          httpGet:
-            path: '/readiness'
-            port: 5010
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        resources:
-          limits:
-            cpu: '4000m'
-            memory: '2048Mi'
-          requests:
-            cpu: '1000m'
-            memory: '1024Mi'
-        securityContext:
-          allowPrivilegeEscalation: false
-          fsGroup: 65534
-          privileged: false
-        volumeMounts:
-          - mountPath: '/etc/config/ids-signing.pfx'
-            name: 'ids-signing.pfx'
-          - mountPath: '/keys'
-            name: 'identity-server'
-      serviceAccountName: 'identity-server'
-    strategy:
-      rollingUpdate:
-        maxSurge: '25%'
-        maxUnavailable: '25%'
-      type: 'RollingUpdate'
-    template:
-      metadata:
-        annotations:
-          ad.datadoghq.com/identity-server.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
-        labels:
-          tags.datadoghq.com/env: 'prod'
-          tags.datadoghq.com/service: 'identity-server'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/identity-server'
-    volumes:
-      - name: 'identity-server'
-        persistentVolumeClaim:
-          claimName: 'identity-server'
-services-auth-admin-api:
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
-  labels:
-    tags.datadoghq.com/env: 'prod'
-    tags.datadoghq.com/service: 'services-auth-admin-api'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-admin-api'
-  metadata:
-    name: 'services-auth-admin-api'
-    namespace: 'identity-server-admin'
+    containers:
+      env:
+        - name: 'NEXT_PUBLIC_BACKEND_URL'
+          value: '/backend'
+        - name: 'IDENTITYSERVER_DOMAIN'
+          value: 'innskra.island.is'
+        - name: 'BASE_URL'
+          value: 'https://innskra.island.is/admin'
+        - name: 'NEXTAUTH_URL'
+          value: 'https://innskra.island.is/admin/api/auth'
+        - name: 'CONFIGCAT_SDK_KEY'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+              name: 'CONFIGCAT_SDK_KEY'
+        - name: 'IDENTITYSERVER_SECRET'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/auth-admin-web/IDENTITYSERVER_SECRET'
+              name: 'IDENTITYSERVER_SECRET'
+      image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/auth-admin-web'
+      imagePullPolicy: 'IfNotPresent'
+      livenessProbe:
+        httpGet:
+          path: '/liveness'
+        initialDelaySeconds: 3
+        timeoutSeconds: 3
+      name: 'auth-admin-web'
+      readinessProbe:
+        httpGet:
+          path: '/liveness'
+        initialDelaySeconds: 3
+        timeoutSeconds: 3
+      resources:
+        limits:
+          cpu: '400m'
+          memory: '256Mi'
+        requests:
+          cpu: '200m'
+          memory: '128Mi'
+      securityContext:
+        allowPrivilegeEscalation: false
+        privileged: false
+    replicas: 2
+  strategy:
+    rollingUpdate:
+      maxSurge: '25%'
+      maxUnavailable: '25%'
+    type: 'RollingUpdate'
+  template:
+    metadata:
+      annotations:
+        ad.datadoghq.com/auth-admin-web.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+      labels:
+        tags.datadoghq.com/env: 'prod'
+        tags.datadoghq.com/service: 'auth-admin-web'
+        tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/auth-admin-web'
+---
+apiVersion: 'apps/v1'
+kind: 'Deployment'
+labels:
+  tags.datadoghq.com/env: 'prod'
+  tags.datadoghq.com/service: 'services-auth-admin-api'
+  tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-admin-api'
+metadata:
+  name: 'services-auth-admin-api'
+  namespace: 'identity-server-admin'
+spec:
   spec:
-    spec:
-      containers:
+    containers:
+      env:
+        - name: 'IDENTITY_SERVER_ISSUER_URL'
+          value: 'https://innskra.island.is'
+        - name: 'CONFIGCAT_SDK_KEY'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+              name: 'CONFIGCAT_SDK_KEY'
+        - name: 'DB_USER'
+          value: 'servicesauth'
+        - name: 'DB_NAME'
+          value: 'servicesauth'
+        - name: 'DB_HOST'
+          value: 'postgres-ids.internal'
+        - name: 'DB_REPLICAS_HOST'
+          value: 'postgres-ids.internal'
+        - name: 'DB_PASS'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/services-auth/api/DB_PASSWORD'
+              name: 'DB_PASS'
+      image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-admin-api'
+      imagePullPolicy: 'IfNotPresent'
+      livenessProbe:
+        httpGet:
+          path: '/liveness'
+        initialDelaySeconds: 3
+        timeoutSeconds: 3
+      name: 'services-auth-admin-api'
+      readinessProbe:
+        httpGet:
+          path: '/liveness'
+        initialDelaySeconds: 3
+        timeoutSeconds: 3
+      resources:
+        limits:
+          cpu: '400m'
+          memory: '256Mi'
+        requests:
+          cpu: '100m'
+          memory: '128Mi'
+      securityContext:
+        allowPrivilegeEscalation: false
+        privileged: false
+    replicas: 2
+  strategy:
+    rollingUpdate:
+      maxSurge: '25%'
+      maxUnavailable: '25%'
+    type: 'RollingUpdate'
+  template:
+    metadata:
+      annotations:
+        ad.datadoghq.com/services-auth-admin-api.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+      labels:
+        tags.datadoghq.com/env: 'prod'
+        tags.datadoghq.com/service: 'services-auth-admin-api'
+        tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-admin-api'
+---
+apiVersion: 'apps/v1'
+kind: 'Deployment'
+labels:
+  tags.datadoghq.com/env: 'prod'
+  tags.datadoghq.com/service: 'services-auth-ids-api'
+  tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-ids-api'
+metadata:
+  name: 'services-auth-ids-api'
+  namespace: 'identity-server'
+spec:
+  spec:
+    containers:
+      env:
+        - name: 'IDENTITY_SERVER_CLIENT_ID'
+          value: '@island.is/clients/auth-api'
+        - name: 'IDENTITY_SERVER_ISSUER_URL'
+          value: 'https://innskra.island.is'
+        - name: 'PUBLIC_URL'
+          value: 'https://innskra.island.is/api'
+        - name: 'USER_PROFILE_CLIENT_URL'
+          value: 'https://service-portal-api.internal.island.is'
+        - name: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH'
+          value: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
+        - name: 'XROAD_NATIONAL_REGISTRY_REDIS_NODES'
+          value: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
+        - name: 'COMPANY_REGISTRY_REDIS_NODES'
+          value: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
+        - name: 'COMPANY_REGISTRY_XROAD_PROVIDER_ID'
+          value: 'IS/GOV/5402696029/Skatturinn/ft-v1'
+        - name: 'XROAD_TJODSKRA_API_PATH'
+          value: '/SKRA-Protected/Einstaklingar-v1'
+        - name: 'XROAD_TJODSKRA_MEMBER_CODE'
+          value: '6503760649'
+        - name: 'XROAD_BASE_PATH'
+          value: 'http://securityserver.island.is'
+        - name: 'XROAD_BASE_PATH_WITH_ENV'
+          value: 'http://securityserver.island.is/r1/IS'
+        - name: 'XROAD_TLS_BASE_PATH'
+          value: 'https://securityserver.island.is'
+        - name: 'XROAD_TLS_BASE_PATH_WITH_ENV'
+          value: 'https://securityserver.island.is/r1/IS'
+        - name: 'XROAD_CLIENT_ID'
+          value: 'IS/GOV/5501692829/island-is-client'
+        - name: 'XROAD_RSK_PROCURING_REDIS_NODES'
+          value: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
+        - name: 'XROAD_RSK_PROCURING_PATH'
+          value: 'IS/GOV/5402696029/Skatturinn/prokura-v1'
+        - name: 'CONFIGCAT_SDK_KEY'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+              name: 'CONFIGCAT_SDK_KEY'
+        - name: 'IDENTITY_SERVER_CLIENT_SECRET'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
+              name: 'IDENTITY_SERVER_CLIENT_SECRET'
+        - name: 'RSK_USERNAME'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/xroad/client/RSK/USERNAME'
+              name: 'RSK_USERNAME'
+        - name: 'RSK_PASSWORD'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/xroad/client/RSK/PASSWORD'
+              name: 'RSK_PASSWORD'
+        - name: 'DB_USER'
+          value: 'servicesauth'
+        - name: 'DB_NAME'
+          value: 'servicesauth'
+        - name: 'DB_HOST'
+          value: 'postgres-ids.internal'
+        - name: 'DB_REPLICAS_HOST'
+          value: 'postgres-ids.internal'
+        - name: 'DB_PASS'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/services-auth/api/DB_PASSWORD'
+              name: 'DB_PASS'
+      image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-ids-api'
+      imagePullPolicy: 'IfNotPresent'
+      livenessProbe:
+        httpGet:
+          path: '/liveness'
+        initialDelaySeconds: 3
+        timeoutSeconds: 3
+      name: 'services-auth-ids-api'
+      readinessProbe:
+        httpGet:
+          path: '/liveness'
+        initialDelaySeconds: 3
+        timeoutSeconds: 3
+      resources:
+        limits:
+          cpu: '800m'
+          memory: '512Mi'
+        requests:
+          cpu: '100m'
+          memory: '256Mi'
+      securityContext:
+        allowPrivilegeEscalation: false
+        privileged: false
+    initContainers:
+      - args:
+          - 'sequelize-cli'
+          - 'db:migrate'
+        command:
+          - 'npx'
         env:
-          - name: 'IDENTITY_SERVER_ISSUER_URL'
-            value: 'https://innskra.island.is'
-          - name: 'CONFIGCAT_SDK_KEY'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-                name: 'CONFIGCAT_SDK_KEY'
           - name: 'DB_USER'
             value: 'servicesauth'
           - name: 'DB_NAME'
@@ -259,106 +419,14 @@ services-auth-admin-api:
               secretKeyRef:
                 key: '/k8s/services-auth/api/DB_PASSWORD'
                 name: 'DB_PASS'
-        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-admin-api'
-        imagePullPolicy: 'IfNotPresent'
-        livenessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        name: 'services-auth-admin-api'
-        readinessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        resources:
-          limits:
-            cpu: '400m'
-            memory: '256Mi'
-          requests:
-            cpu: '100m'
-            memory: '128Mi'
-        securityContext:
-          allowPrivilegeEscalation: false
-          privileged: false
-      replicas: 2
-    strategy:
-      rollingUpdate:
-        maxSurge: '25%'
-        maxUnavailable: '25%'
-      type: 'RollingUpdate'
-    template:
-      metadata:
-        annotations:
-          ad.datadoghq.com/services-auth-admin-api.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
-        labels:
-          tags.datadoghq.com/env: 'prod'
-          tags.datadoghq.com/service: 'services-auth-admin-api'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-admin-api'
-services-auth-delegation-api:
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
-  labels:
-    tags.datadoghq.com/env: 'prod'
-    tags.datadoghq.com/service: 'services-auth-delegation-api'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-delegation-api'
-  metadata:
-    name: 'services-auth-delegation-api'
-    namespace: 'identity-server-delegation'
-  spec:
-    spec:
-      containers:
+        image: ''
+        name: 'migrations'
+      - args:
+          - 'sequelize-cli'
+          - 'db:seed:all'
+        command:
+          - 'npx'
         env:
-          - name: 'IDENTITY_SERVER_CLIENT_ID'
-            value: '@island.is/clients/auth-api'
-          - name: 'IDENTITY_SERVER_ISSUER_URL'
-            value: 'https://innskra.island.is'
-          - name: 'XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN'
-            value: 'true'
-          - name: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH'
-            value: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
-          - name: 'XROAD_NATIONAL_REGISTRY_REDIS_NODES'
-            value: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
-          - name: 'XROAD_BASE_PATH'
-            value: 'http://securityserver.island.is'
-          - name: 'XROAD_BASE_PATH_WITH_ENV'
-            value: 'http://securityserver.island.is/r1/IS'
-          - name: 'XROAD_TLS_BASE_PATH'
-            value: 'https://securityserver.island.is'
-          - name: 'XROAD_TLS_BASE_PATH_WITH_ENV'
-            value: 'https://securityserver.island.is/r1/IS'
-          - name: 'XROAD_CLIENT_ID'
-            value: 'IS/GOV/5501692829/island-is-client'
-          - name: 'XROAD_RSK_PROCURING_REDIS_NODES'
-            value: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
-          - name: 'XROAD_RSK_PROCURING_PATH'
-            value: 'IS/GOV/5402696029/Skatturinn/prokura-v1'
-          - name: 'CONFIGCAT_SDK_KEY'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-                name: 'CONFIGCAT_SDK_KEY'
-          - name: 'IDENTITY_SERVER_CLIENT_SECRET'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
-                name: 'IDENTITY_SERVER_CLIENT_SECRET'
-          - name: 'NATIONAL_REGISTRY_IDS_CLIENT_SECRET'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
-                name: 'NATIONAL_REGISTRY_IDS_CLIENT_SECRET'
-          - name: 'RSK_USERNAME'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/xroad/client/RSK/USERNAME'
-                name: 'RSK_USERNAME'
-          - name: 'RSK_PASSWORD'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/xroad/client/RSK/PASSWORD'
-                name: 'RSK_PASSWORD'
           - name: 'DB_USER'
             value: 'servicesauth'
           - name: 'DB_NAME'
@@ -372,462 +440,394 @@ services-auth-delegation-api:
               secretKeyRef:
                 key: '/k8s/services-auth/api/DB_PASSWORD'
                 name: 'DB_PASS'
-        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-delegation-api'
-        imagePullPolicy: 'IfNotPresent'
-        livenessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        name: 'services-auth-delegation-api'
-        readinessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        resources:
-          limits:
-            cpu: '400m'
-            memory: '256Mi'
-          requests:
-            cpu: '100m'
-            memory: '128Mi'
-        securityContext:
-          allowPrivilegeEscalation: false
-          privileged: false
-      replicas: 2
-    strategy:
-      rollingUpdate:
-        maxSurge: '25%'
-        maxUnavailable: '25%'
-      type: 'RollingUpdate'
-    template:
-      metadata:
-        annotations:
-          ad.datadoghq.com/services-auth-delegation-api.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
-        labels:
-          tags.datadoghq.com/env: 'prod'
-          tags.datadoghq.com/service: 'services-auth-delegation-api'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-delegation-api'
-services-auth-ids-api:
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
-  labels:
-    tags.datadoghq.com/env: 'prod'
-    tags.datadoghq.com/service: 'services-auth-ids-api'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-ids-api'
-  metadata:
-    name: 'services-auth-ids-api'
-    namespace: 'identity-server'
+        image: ''
+        name: 'seed'
+    replicas: 2
+  strategy:
+    rollingUpdate:
+      maxSurge: '25%'
+      maxUnavailable: '25%'
+    type: 'RollingUpdate'
+  template:
+    metadata:
+      annotations:
+        ad.datadoghq.com/services-auth-ids-api.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+      labels:
+        tags.datadoghq.com/env: 'prod'
+        tags.datadoghq.com/service: 'services-auth-ids-api'
+        tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-ids-api'
+---
+apiVersion: 'apps/v1'
+kind: 'Deployment'
+labels:
+  tags.datadoghq.com/env: 'prod'
+  tags.datadoghq.com/service: 'services-auth-public-api'
+  tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-public-api'
+metadata:
+  name: 'services-auth-public-api'
+  namespace: 'identity-server-admin'
+spec:
   spec:
-    spec:
-      containers:
-        env:
-          - name: 'IDENTITY_SERVER_CLIENT_ID'
-            value: '@island.is/clients/auth-api'
-          - name: 'IDENTITY_SERVER_ISSUER_URL'
-            value: 'https://innskra.island.is'
-          - name: 'PUBLIC_URL'
-            value: 'https://innskra.island.is/api'
-          - name: 'USER_PROFILE_CLIENT_URL'
-            value: 'https://service-portal-api.internal.island.is'
-          - name: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH'
-            value: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
-          - name: 'XROAD_NATIONAL_REGISTRY_REDIS_NODES'
-            value: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
-          - name: 'COMPANY_REGISTRY_REDIS_NODES'
-            value: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
-          - name: 'COMPANY_REGISTRY_XROAD_PROVIDER_ID'
-            value: 'IS/GOV/5402696029/Skatturinn/ft-v1'
-          - name: 'XROAD_TJODSKRA_API_PATH'
-            value: '/SKRA-Protected/Einstaklingar-v1'
-          - name: 'XROAD_TJODSKRA_MEMBER_CODE'
-            value: '6503760649'
-          - name: 'XROAD_BASE_PATH'
-            value: 'http://securityserver.island.is'
-          - name: 'XROAD_BASE_PATH_WITH_ENV'
-            value: 'http://securityserver.island.is/r1/IS'
-          - name: 'XROAD_TLS_BASE_PATH'
-            value: 'https://securityserver.island.is'
-          - name: 'XROAD_TLS_BASE_PATH_WITH_ENV'
-            value: 'https://securityserver.island.is/r1/IS'
-          - name: 'XROAD_CLIENT_ID'
-            value: 'IS/GOV/5501692829/island-is-client'
-          - name: 'XROAD_RSK_PROCURING_REDIS_NODES'
-            value: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
-          - name: 'XROAD_RSK_PROCURING_PATH'
-            value: 'IS/GOV/5402696029/Skatturinn/prokura-v1'
-          - name: 'CONFIGCAT_SDK_KEY'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-                name: 'CONFIGCAT_SDK_KEY'
-          - name: 'IDENTITY_SERVER_CLIENT_SECRET'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
-                name: 'IDENTITY_SERVER_CLIENT_SECRET'
-          - name: 'RSK_USERNAME'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/xroad/client/RSK/USERNAME'
-                name: 'RSK_USERNAME'
-          - name: 'RSK_PASSWORD'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/xroad/client/RSK/PASSWORD'
-                name: 'RSK_PASSWORD'
-          - name: 'DB_USER'
-            value: 'servicesauth'
-          - name: 'DB_NAME'
-            value: 'servicesauth'
-          - name: 'DB_HOST'
-            value: 'postgres-ids.internal'
-          - name: 'DB_REPLICAS_HOST'
-            value: 'postgres-ids.internal'
-          - name: 'DB_PASS'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/services-auth/api/DB_PASSWORD'
-                name: 'DB_PASS'
-        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-ids-api'
-        imagePullPolicy: 'IfNotPresent'
-        livenessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        name: 'services-auth-ids-api'
-        readinessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        resources:
-          limits:
-            cpu: '800m'
-            memory: '512Mi'
-          requests:
-            cpu: '100m'
-            memory: '256Mi'
-        securityContext:
-          allowPrivilegeEscalation: false
-          privileged: false
-      initContainers:
-        - args:
-            - 'sequelize-cli'
-            - 'db:migrate'
-          command:
-            - 'npx'
-          env:
-            - name: 'DB_USER'
-              value: 'servicesauth'
-            - name: 'DB_NAME'
-              value: 'servicesauth'
-            - name: 'DB_HOST'
-              value: 'postgres-ids.internal'
-            - name: 'DB_REPLICAS_HOST'
-              value: 'postgres-ids.internal'
-            - name: 'DB_PASS'
-              valueFrom:
-                secretKeyRef:
-                  key: '/k8s/services-auth/api/DB_PASSWORD'
-                  name: 'DB_PASS'
-          image: ''
-          name: 'migrations'
-        - args:
-            - 'sequelize-cli'
-            - 'db:seed:all'
-          command:
-            - 'npx'
-          env:
-            - name: 'DB_USER'
-              value: 'servicesauth'
-            - name: 'DB_NAME'
-              value: 'servicesauth'
-            - name: 'DB_HOST'
-              value: 'postgres-ids.internal'
-            - name: 'DB_REPLICAS_HOST'
-              value: 'postgres-ids.internal'
-            - name: 'DB_PASS'
-              valueFrom:
-                secretKeyRef:
-                  key: '/k8s/services-auth/api/DB_PASSWORD'
-                  name: 'DB_PASS'
-          image: ''
-          name: 'seed'
-      replicas: 2
-    strategy:
-      rollingUpdate:
-        maxSurge: '25%'
-        maxUnavailable: '25%'
-      type: 'RollingUpdate'
-    template:
-      metadata:
-        annotations:
-          ad.datadoghq.com/services-auth-ids-api.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
-        labels:
-          tags.datadoghq.com/env: 'prod'
-          tags.datadoghq.com/service: 'services-auth-ids-api'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-ids-api'
-services-auth-personal-representative:
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
-  labels:
-    tags.datadoghq.com/env: 'prod'
-    tags.datadoghq.com/service: 'services-auth-personal-representative'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative'
-  metadata:
-    name: 'services-auth-personal-representative'
-    namespace: 'personal-representative'
+    containers:
+      env:
+        - name: 'IDENTITY_SERVER_CLIENT_ID'
+          value: '@island.is/clients/auth-api'
+        - name: 'IDENTITY_SERVER_ISSUER_URL'
+          value: 'https://innskra.island.is'
+        - name: 'PUBLIC_URL'
+          value: 'https://innskra.island.is/api'
+        - name: 'XROAD_TJODSKRA_API_PATH'
+          value: '/SKRA-Protected/Einstaklingar-v1'
+        - name: 'XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN'
+          value: 'true'
+        - name: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH'
+          value: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
+        - name: 'XROAD_NATIONAL_REGISTRY_REDIS_NODES'
+          value: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
+        - name: 'XROAD_TJODSKRA_MEMBER_CODE'
+          value: '6503760649'
+        - name: 'XROAD_BASE_PATH'
+          value: 'http://securityserver.island.is'
+        - name: 'XROAD_BASE_PATH_WITH_ENV'
+          value: 'http://securityserver.island.is/r1/IS'
+        - name: 'XROAD_TLS_BASE_PATH'
+          value: 'https://securityserver.island.is'
+        - name: 'XROAD_TLS_BASE_PATH_WITH_ENV'
+          value: 'https://securityserver.island.is/r1/IS'
+        - name: 'XROAD_CLIENT_ID'
+          value: 'IS/GOV/5501692829/island-is-client'
+        - name: 'XROAD_RSK_PROCURING_REDIS_NODES'
+          value: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
+        - name: 'XROAD_RSK_PROCURING_PATH'
+          value: 'IS/GOV/5402696029/Skatturinn/prokura-v1'
+        - name: 'CONFIGCAT_SDK_KEY'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+              name: 'CONFIGCAT_SDK_KEY'
+        - name: 'IDENTITY_SERVER_CLIENT_SECRET'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
+              name: 'IDENTITY_SERVER_CLIENT_SECRET'
+        - name: 'NATIONAL_REGISTRY_IDS_CLIENT_SECRET'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
+              name: 'NATIONAL_REGISTRY_IDS_CLIENT_SECRET'
+        - name: 'RSK_USERNAME'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/xroad/client/RSK/USERNAME'
+              name: 'RSK_USERNAME'
+        - name: 'RSK_PASSWORD'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/xroad/client/RSK/PASSWORD'
+              name: 'RSK_PASSWORD'
+        - name: 'DB_USER'
+          value: 'servicesauth'
+        - name: 'DB_NAME'
+          value: 'servicesauth'
+        - name: 'DB_HOST'
+          value: 'postgres-ids.internal'
+        - name: 'DB_REPLICAS_HOST'
+          value: 'postgres-ids.internal'
+        - name: 'DB_PASS'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/services-auth/api/DB_PASSWORD'
+              name: 'DB_PASS'
+      image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-public-api'
+      imagePullPolicy: 'IfNotPresent'
+      livenessProbe:
+        httpGet:
+          path: '/liveness'
+        initialDelaySeconds: 3
+        timeoutSeconds: 3
+      name: 'services-auth-public-api'
+      readinessProbe:
+        httpGet:
+          path: '/liveness'
+        initialDelaySeconds: 3
+        timeoutSeconds: 3
+      resources:
+        limits:
+          cpu: '400m'
+          memory: '256Mi'
+        requests:
+          cpu: '100m'
+          memory: '128Mi'
+      securityContext:
+        allowPrivilegeEscalation: false
+        privileged: false
+    replicas: 2
+  strategy:
+    rollingUpdate:
+      maxSurge: '25%'
+      maxUnavailable: '25%'
+    type: 'RollingUpdate'
+  template:
+    metadata:
+      annotations:
+        ad.datadoghq.com/services-auth-public-api.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+      labels:
+        tags.datadoghq.com/env: 'prod'
+        tags.datadoghq.com/service: 'services-auth-public-api'
+        tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-public-api'
+---
+apiVersion: 'apps/v1'
+kind: 'Deployment'
+labels:
+  tags.datadoghq.com/env: 'prod'
+  tags.datadoghq.com/service: 'services-auth-delegation-api'
+  tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-delegation-api'
+metadata:
+  name: 'services-auth-delegation-api'
+  namespace: 'identity-server-delegation'
+spec:
   spec:
-    spec:
-      containers:
-        env:
-          - name: 'IDENTITY_SERVER_ISSUER_URL'
-            value: 'https://innskra.island.is'
-          - name: 'CONFIGCAT_SDK_KEY'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-                name: 'CONFIGCAT_SDK_KEY'
-          - name: 'DB_USER'
-            value: 'servicesauth'
-          - name: 'DB_NAME'
-            value: 'servicesauth'
-          - name: 'DB_HOST'
-            value: 'postgres-ids.internal'
-          - name: 'DB_REPLICAS_HOST'
-            value: 'postgres-ids.internal'
-          - name: 'DB_PASS'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/services-auth/api/DB_PASSWORD'
-                name: 'DB_PASS'
-        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative'
-        imagePullPolicy: 'IfNotPresent'
-        livenessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        name: 'services-auth-personal-representative'
-        readinessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        resources:
-          limits:
-            cpu: '400m'
-            memory: '256Mi'
-          requests:
-            cpu: '100m'
-            memory: '128Mi'
-        securityContext:
-          allowPrivilegeEscalation: false
-          privileged: false
-      replicas: 2
-    strategy:
-      rollingUpdate:
-        maxSurge: '25%'
-        maxUnavailable: '25%'
-      type: 'RollingUpdate'
-    template:
-      metadata:
-        annotations:
-          ad.datadoghq.com/services-auth-personal-representative.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
-        labels:
-          tags.datadoghq.com/env: 'prod'
-          tags.datadoghq.com/service: 'services-auth-personal-representative'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative'
-services-auth-personal-representative-public:
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
-  labels:
-    tags.datadoghq.com/env: 'prod'
-    tags.datadoghq.com/service: 'services-auth-personal-representative-public'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative-public'
-  metadata:
-    name: 'services-auth-personal-representative-public'
-    namespace: 'personal-representative'
+    containers:
+      env:
+        - name: 'IDENTITY_SERVER_CLIENT_ID'
+          value: '@island.is/clients/auth-api'
+        - name: 'IDENTITY_SERVER_ISSUER_URL'
+          value: 'https://innskra.island.is'
+        - name: 'XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN'
+          value: 'true'
+        - name: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH'
+          value: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
+        - name: 'XROAD_NATIONAL_REGISTRY_REDIS_NODES'
+          value: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
+        - name: 'XROAD_BASE_PATH'
+          value: 'http://securityserver.island.is'
+        - name: 'XROAD_BASE_PATH_WITH_ENV'
+          value: 'http://securityserver.island.is/r1/IS'
+        - name: 'XROAD_TLS_BASE_PATH'
+          value: 'https://securityserver.island.is'
+        - name: 'XROAD_TLS_BASE_PATH_WITH_ENV'
+          value: 'https://securityserver.island.is/r1/IS'
+        - name: 'XROAD_CLIENT_ID'
+          value: 'IS/GOV/5501692829/island-is-client'
+        - name: 'XROAD_RSK_PROCURING_REDIS_NODES'
+          value: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
+        - name: 'XROAD_RSK_PROCURING_PATH'
+          value: 'IS/GOV/5402696029/Skatturinn/prokura-v1'
+        - name: 'CONFIGCAT_SDK_KEY'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+              name: 'CONFIGCAT_SDK_KEY'
+        - name: 'IDENTITY_SERVER_CLIENT_SECRET'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
+              name: 'IDENTITY_SERVER_CLIENT_SECRET'
+        - name: 'NATIONAL_REGISTRY_IDS_CLIENT_SECRET'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
+              name: 'NATIONAL_REGISTRY_IDS_CLIENT_SECRET'
+        - name: 'RSK_USERNAME'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/xroad/client/RSK/USERNAME'
+              name: 'RSK_USERNAME'
+        - name: 'RSK_PASSWORD'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/xroad/client/RSK/PASSWORD'
+              name: 'RSK_PASSWORD'
+        - name: 'DB_USER'
+          value: 'servicesauth'
+        - name: 'DB_NAME'
+          value: 'servicesauth'
+        - name: 'DB_HOST'
+          value: 'postgres-ids.internal'
+        - name: 'DB_REPLICAS_HOST'
+          value: 'postgres-ids.internal'
+        - name: 'DB_PASS'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/services-auth/api/DB_PASSWORD'
+              name: 'DB_PASS'
+      image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-delegation-api'
+      imagePullPolicy: 'IfNotPresent'
+      livenessProbe:
+        httpGet:
+          path: '/liveness'
+        initialDelaySeconds: 3
+        timeoutSeconds: 3
+      name: 'services-auth-delegation-api'
+      readinessProbe:
+        httpGet:
+          path: '/liveness'
+        initialDelaySeconds: 3
+        timeoutSeconds: 3
+      resources:
+        limits:
+          cpu: '400m'
+          memory: '256Mi'
+        requests:
+          cpu: '100m'
+          memory: '128Mi'
+      securityContext:
+        allowPrivilegeEscalation: false
+        privileged: false
+    replicas: 2
+  strategy:
+    rollingUpdate:
+      maxSurge: '25%'
+      maxUnavailable: '25%'
+    type: 'RollingUpdate'
+  template:
+    metadata:
+      annotations:
+        ad.datadoghq.com/services-auth-delegation-api.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+      labels:
+        tags.datadoghq.com/env: 'prod'
+        tags.datadoghq.com/service: 'services-auth-delegation-api'
+        tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-delegation-api'
+---
+apiVersion: 'apps/v1'
+kind: 'Deployment'
+labels:
+  tags.datadoghq.com/env: 'prod'
+  tags.datadoghq.com/service: 'services-auth-personal-representative'
+  tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative'
+metadata:
+  name: 'services-auth-personal-representative'
+  namespace: 'personal-representative'
+spec:
   spec:
-    spec:
-      containers:
-        env:
-          - name: 'IDENTITY_SERVER_ISSUER_URL'
-            value: 'https://innskra.island.is'
-          - name: 'CONFIGCAT_SDK_KEY'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-                name: 'CONFIGCAT_SDK_KEY'
-          - name: 'DB_USER'
-            value: 'servicesauth'
-          - name: 'DB_NAME'
-            value: 'servicesauth'
-          - name: 'DB_HOST'
-            value: 'postgres-ids.internal'
-          - name: 'DB_REPLICAS_HOST'
-            value: 'postgres-ids.internal'
-          - name: 'DB_PASS'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/services-auth/api/DB_PASSWORD'
-                name: 'DB_PASS'
-        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative-public'
-        imagePullPolicy: 'IfNotPresent'
-        livenessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        name: 'services-auth-personal-representative-public'
-        readinessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        resources:
-          limits:
-            cpu: '400m'
-            memory: '256Mi'
-          requests:
-            cpu: '100m'
-            memory: '128Mi'
-        securityContext:
-          allowPrivilegeEscalation: false
-          privileged: false
-      replicas: 2
-    strategy:
-      rollingUpdate:
-        maxSurge: '25%'
-        maxUnavailable: '25%'
-      type: 'RollingUpdate'
-    template:
-      metadata:
-        annotations:
-          ad.datadoghq.com/services-auth-personal-representative-public.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
-        labels:
-          tags.datadoghq.com/env: 'prod'
-          tags.datadoghq.com/service: 'services-auth-personal-representative-public'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative-public'
-services-auth-public-api:
-  apiVersion: 'apps/v1'
-  kind: 'Deployment'
-  labels:
-    tags.datadoghq.com/env: 'prod'
-    tags.datadoghq.com/service: 'services-auth-public-api'
-    tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-public-api'
-  metadata:
-    name: 'services-auth-public-api'
-    namespace: 'identity-server-admin'
+    containers:
+      env:
+        - name: 'IDENTITY_SERVER_ISSUER_URL'
+          value: 'https://innskra.island.is'
+        - name: 'CONFIGCAT_SDK_KEY'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+              name: 'CONFIGCAT_SDK_KEY'
+        - name: 'DB_USER'
+          value: 'servicesauth'
+        - name: 'DB_NAME'
+          value: 'servicesauth'
+        - name: 'DB_HOST'
+          value: 'postgres-ids.internal'
+        - name: 'DB_REPLICAS_HOST'
+          value: 'postgres-ids.internal'
+        - name: 'DB_PASS'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/services-auth/api/DB_PASSWORD'
+              name: 'DB_PASS'
+      image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative'
+      imagePullPolicy: 'IfNotPresent'
+      livenessProbe:
+        httpGet:
+          path: '/liveness'
+        initialDelaySeconds: 3
+        timeoutSeconds: 3
+      name: 'services-auth-personal-representative'
+      readinessProbe:
+        httpGet:
+          path: '/liveness'
+        initialDelaySeconds: 3
+        timeoutSeconds: 3
+      resources:
+        limits:
+          cpu: '400m'
+          memory: '256Mi'
+        requests:
+          cpu: '100m'
+          memory: '128Mi'
+      securityContext:
+        allowPrivilegeEscalation: false
+        privileged: false
+    replicas: 2
+  strategy:
+    rollingUpdate:
+      maxSurge: '25%'
+      maxUnavailable: '25%'
+    type: 'RollingUpdate'
+  template:
+    metadata:
+      annotations:
+        ad.datadoghq.com/services-auth-personal-representative.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+      labels:
+        tags.datadoghq.com/env: 'prod'
+        tags.datadoghq.com/service: 'services-auth-personal-representative'
+        tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative'
+---
+apiVersion: 'apps/v1'
+kind: 'Deployment'
+labels:
+  tags.datadoghq.com/env: 'prod'
+  tags.datadoghq.com/service: 'services-auth-personal-representative-public'
+  tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative-public'
+metadata:
+  name: 'services-auth-personal-representative-public'
+  namespace: 'personal-representative'
+spec:
   spec:
-    spec:
-      containers:
-        env:
-          - name: 'IDENTITY_SERVER_CLIENT_ID'
-            value: '@island.is/clients/auth-api'
-          - name: 'IDENTITY_SERVER_ISSUER_URL'
-            value: 'https://innskra.island.is'
-          - name: 'PUBLIC_URL'
-            value: 'https://innskra.island.is/api'
-          - name: 'XROAD_TJODSKRA_API_PATH'
-            value: '/SKRA-Protected/Einstaklingar-v1'
-          - name: 'XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN'
-            value: 'true'
-          - name: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH'
-            value: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
-          - name: 'XROAD_NATIONAL_REGISTRY_REDIS_NODES'
-            value: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
-          - name: 'XROAD_TJODSKRA_MEMBER_CODE'
-            value: '6503760649'
-          - name: 'XROAD_BASE_PATH'
-            value: 'http://securityserver.island.is'
-          - name: 'XROAD_BASE_PATH_WITH_ENV'
-            value: 'http://securityserver.island.is/r1/IS'
-          - name: 'XROAD_TLS_BASE_PATH'
-            value: 'https://securityserver.island.is'
-          - name: 'XROAD_TLS_BASE_PATH_WITH_ENV'
-            value: 'https://securityserver.island.is/r1/IS'
-          - name: 'XROAD_CLIENT_ID'
-            value: 'IS/GOV/5501692829/island-is-client'
-          - name: 'XROAD_RSK_PROCURING_REDIS_NODES'
-            value: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
-          - name: 'XROAD_RSK_PROCURING_PATH'
-            value: 'IS/GOV/5402696029/Skatturinn/prokura-v1'
-          - name: 'CONFIGCAT_SDK_KEY'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-                name: 'CONFIGCAT_SDK_KEY'
-          - name: 'IDENTITY_SERVER_CLIENT_SECRET'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
-                name: 'IDENTITY_SERVER_CLIENT_SECRET'
-          - name: 'NATIONAL_REGISTRY_IDS_CLIENT_SECRET'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
-                name: 'NATIONAL_REGISTRY_IDS_CLIENT_SECRET'
-          - name: 'RSK_USERNAME'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/xroad/client/RSK/USERNAME'
-                name: 'RSK_USERNAME'
-          - name: 'RSK_PASSWORD'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/xroad/client/RSK/PASSWORD'
-                name: 'RSK_PASSWORD'
-          - name: 'DB_USER'
-            value: 'servicesauth'
-          - name: 'DB_NAME'
-            value: 'servicesauth'
-          - name: 'DB_HOST'
-            value: 'postgres-ids.internal'
-          - name: 'DB_REPLICAS_HOST'
-            value: 'postgres-ids.internal'
-          - name: 'DB_PASS'
-            valueFrom:
-              secretKeyRef:
-                key: '/k8s/services-auth/api/DB_PASSWORD'
-                name: 'DB_PASS'
-        image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-public-api'
-        imagePullPolicy: 'IfNotPresent'
-        livenessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        name: 'services-auth-public-api'
-        readinessProbe:
-          httpGet:
-            path: '/liveness'
-          initialDelaySeconds: 3
-          timeoutSeconds: 3
-        resources:
-          limits:
-            cpu: '400m'
-            memory: '256Mi'
-          requests:
-            cpu: '100m'
-            memory: '128Mi'
-        securityContext:
-          allowPrivilegeEscalation: false
-          privileged: false
-      replicas: 2
-    strategy:
-      rollingUpdate:
-        maxSurge: '25%'
-        maxUnavailable: '25%'
-      type: 'RollingUpdate'
-    template:
-      metadata:
-        annotations:
-          ad.datadoghq.com/services-auth-public-api.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
-        labels:
-          tags.datadoghq.com/env: 'prod'
-          tags.datadoghq.com/service: 'services-auth-public-api'
-          tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-public-api'
+    containers:
+      env:
+        - name: 'IDENTITY_SERVER_ISSUER_URL'
+          value: 'https://innskra.island.is'
+        - name: 'CONFIGCAT_SDK_KEY'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+              name: 'CONFIGCAT_SDK_KEY'
+        - name: 'DB_USER'
+          value: 'servicesauth'
+        - name: 'DB_NAME'
+          value: 'servicesauth'
+        - name: 'DB_HOST'
+          value: 'postgres-ids.internal'
+        - name: 'DB_REPLICAS_HOST'
+          value: 'postgres-ids.internal'
+        - name: 'DB_PASS'
+          valueFrom:
+            secretKeyRef:
+              key: '/k8s/services-auth/api/DB_PASSWORD'
+              name: 'DB_PASS'
+      image: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative-public'
+      imagePullPolicy: 'IfNotPresent'
+      livenessProbe:
+        httpGet:
+          path: '/liveness'
+        initialDelaySeconds: 3
+        timeoutSeconds: 3
+      name: 'services-auth-personal-representative-public'
+      readinessProbe:
+        httpGet:
+          path: '/liveness'
+        initialDelaySeconds: 3
+        timeoutSeconds: 3
+      resources:
+        limits:
+          cpu: '400m'
+          memory: '256Mi'
+        requests:
+          cpu: '100m'
+          memory: '128Mi'
+      securityContext:
+        allowPrivilegeEscalation: false
+        privileged: false
+    replicas: 2
+  strategy:
+    rollingUpdate:
+      maxSurge: '25%'
+      maxUnavailable: '25%'
+    type: 'RollingUpdate'
+  template:
+    metadata:
+      annotations:
+        ad.datadoghq.com/services-auth-personal-representative-public.logs: "[{\n              \"log_processing_rules\": [{\n                \"type\": \"mask_sequences\", \n                \"name\": \"mask_national_ids\", \n                \"replace_placeholder\": \"--MASKED--\", \n                \"pattern\" : \"\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b\"\n              }]\n            }]"
+      labels:
+        tags.datadoghq.com/env: 'prod'
+        tags.datadoghq.com/service: 'services-auth-personal-representative-public'
+        tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative-public'
+---

@@ -79,6 +79,7 @@ export type SecurityContext = {
   privileged: boolean
   fsGroup?: number
 }
+
 export interface KubeDeployment {
   apiVersion: 'apps/v1'
   kind: 'Deployment'
@@ -157,7 +158,42 @@ export interface KubeDeployment {
     volumes?: OutputVolumeNative[]
   }
 }
-
+export interface KubeIngress {
+  apiVersion: 'networking.k8s.io/v1'
+  kind: 'Ingress'
+  metadata: {
+    name: string
+    namespace: string
+    labels: {
+      [name: string]: string
+    }
+    annotations: {
+      [name: string]: string
+    }
+  }
+  spec: {
+    tls?: {
+      hosts?: { [name: string]: string; secretName: string }
+    }
+  }
+  rules: {
+    host: string[]
+    http: {
+      paths: {
+        pathType: 'Prefix'
+        backend: {
+          service: {
+            name: string
+            port: {
+              number: number
+            }
+          }
+        }
+        path: string
+      }
+    }
+  }
+}
 export interface HelmService {
   replicaCount?: {
     min: number
