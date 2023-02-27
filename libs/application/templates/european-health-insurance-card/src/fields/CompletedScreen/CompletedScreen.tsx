@@ -76,7 +76,7 @@ const CompletedScreen: FC<FieldBaseProps> = ({ application }) => {
               formatMessage,
             )}
           </Bullet>
-          {tempData.length > 0 && (
+          {tempData.length > 0  && (
             <>
               <Bullet>
                 {formatText(
