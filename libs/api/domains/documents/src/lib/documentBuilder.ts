@@ -53,6 +53,7 @@ export class DocumentBuilder {
   }
 
   private formatDownloadServiceUrl(document: DocumentInfoDTO): string {
-    return `${this.downloadServiceConfig.baseUrl}/download/v1/electronic-documents/${document.id}`
+    //return `${this.downloadServiceConfig.baseUrl}/download/v1/electronic-documents/${document.id}`
+    return `https://service-portalfirefox-mobile-mail-bug-api.dev01.devland.is/download/v1/electronic-documents/${document.id}`
   }
 }
