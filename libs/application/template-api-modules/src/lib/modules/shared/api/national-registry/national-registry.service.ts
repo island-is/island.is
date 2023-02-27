@@ -44,6 +44,20 @@ export class NationalRegistryService extends BaseTemplateApiService {
       }
     }
 
+    if (
+      params?.ageToValidate &&
+      result?.age &&
+      result?.age < params.ageToValidate
+    ) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalRegistryAgeLimitNotMetTitle,
+          summary: coreErrorMessages.nationalRegistryAgeLimitNotMetSummary,
+        },
+        400,
+      )
+    }
+
     if (!result) {
       throw new TemplateApiError(
         {

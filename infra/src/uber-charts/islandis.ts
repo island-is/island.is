@@ -16,6 +16,8 @@ import { serviceSetup as adminPortalSetup } from '../../../apps/portals/admin/in
 import { serviceSetup as samradsgattSetup } from '../../../apps/samradsgatt/infra/samradsgatt'
 import { serviceSetup as xroadCollectorSetup } from '../../../apps/services/xroad-collector/infra/xroad-collector'
 
+import { serviceSetup as licenseApiSetup } from '../../../apps/services/license-api/infra/license-api'
+
 import { serviceSetup as skilavottordWsSetup } from '../../../apps/skilavottord/ws/infra/ws'
 import { serviceSetup as skilavottordWebSetup } from '../../../apps/skilavottord/web/infra/web'
 
@@ -66,6 +68,9 @@ const adsBackend = adsBackendSetup()
 const adsApi = adsApiSetup({ adsBackend })
 const adsWeb = adsWebSetup({ adsApi })
 
+const sessionsService = sessionsServiceSetup()
+const sessionsWorker = sessionsWorkerSetup()
+
 const api = apiSetup({
   appSystemApi,
   servicePortalApi,
@@ -73,6 +78,7 @@ const api = apiSetup({
   icelandicNameRegistryBackend: nameRegistryBackend,
   servicesEndorsementApi: endorsement,
   airDiscountSchemeBackend: adsBackend,
+  sessionsApi: sessionsService,
 })
 const servicePortal = servicePortalSetup({ graphql: api })
 const appSystemForm = appSystemFormSetup({ api: api })
@@ -81,6 +87,8 @@ const searchIndexer = searchIndexerSetup()
 const contentfulEntryTagger = contentfulEntryTaggerSetup()
 
 const xroadCollector = xroadCollectorSetup()
+
+const licenseApi = licenseApiSetup()
 
 const skilavottordWs = skilavottordWsSetup()
 const skilavottordWeb = skilavottordWebSetup({ api: skilavottordWs })
@@ -98,9 +106,6 @@ const userNotificationWorkerService = userNotificationWorkerSetup({
 const githubActionsCache = githubActionsCacheSetup()
 
 const externalContractsTests = externalContractsTestsSetup()
-
-const sessionsService = sessionsServiceSetup()
-const sessionsWorker = sessionsWorkerSetup()
 
 export const Services: EnvironmentServices = {
   prod: [
@@ -127,6 +132,7 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
+    licenseApi,
     sessionsService,
     sessionsWorker,
   ],
@@ -154,6 +160,7 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
+    licenseApi,
     sessionsService,
     sessionsWorker,
   ],
@@ -185,6 +192,7 @@ export const Services: EnvironmentServices = {
     externalContractsTests,
     appSystemApiWorker,
     contentfulEntryTagger,
+    licenseApi,
     sessionsService,
     sessionsWorker,
   ],

@@ -6,10 +6,12 @@ type LogoProps = {
 }
 
 function Logo({ width, height }: LogoProps) {
+  const defaultHeight = 47
+  const defaultWidth = 217
   return (
     <svg
-      width={width ?? 217}
-      height={height ?? 47}
+      width={width ? parseFloat(width) * defaultWidth : defaultWidth}
+      height={height ? parseFloat(height) * defaultHeight : defaultHeight}
       viewBox="0 0 217 47"
       aria-label="samradsgatt logo"
       fill="none"

@@ -10,7 +10,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { FC } from 'react'
-import { ArrayField } from 'react-hook-form'
+import { useFormContext } from 'react-hook-form'
 import { NationalIdWithName } from '../NationalIdWithName'
 import { information } from '../../lib/messages'
 import { UserInformation } from '../../shared'
@@ -19,8 +19,9 @@ interface Props {
   id: string
   index: number
   rowLocation: number
-  repeaterField: Partial<ArrayField<UserInformation, 'id'>>
+  repeaterField: UserInformation
   handleRemove: (index: number) => void
+  addNationalIdToCoOwners: (nationalId: string, index: number) => void
 }
 
 export const CoOwnerRepeaterItem: FC<Props & FieldBaseProps> = ({
@@ -29,16 +30,27 @@ export const CoOwnerRepeaterItem: FC<Props & FieldBaseProps> = ({
   rowLocation,
   handleRemove,
   repeaterField,
+  addNationalIdToCoOwners,
   ...props
 }) => {
+  const { register } = useFormContext()
   const { formatMessage } = useLocale()
   const { application, errors } = props
   const fieldIndex = `${id}[${index}]`
   const emailField = `${fieldIndex}.email`
   const phoneField = `${fieldIndex}.phone`
+  const wasRemovedField = `${fieldIndex}.wasRemoved`
+
+  const onNationalIdChange = (nationalId: string) => {
+    addNationalIdToCoOwners(nationalId, index)
+  }
 
   return (
-    <Box position="relative" key={repeaterField.id} marginBottom={4}>
+    <Box
+      position="relative"
+      marginBottom={4}
+      hidden={repeaterField.wasRemoved === 'true'}
+    >
       <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
         <Text variant="h5">
           {formatMessage(information.labels.coOwner.coOwnerTempTitle)}{' '}
@@ -57,6 +69,7 @@ export const CoOwnerRepeaterItem: FC<Props & FieldBaseProps> = ({
         customNationalIdLabel={formatMessage(
           information.labels.coOwner.nationalId,
         )}
+        onNationalIdChange={onNationalIdChange}
       />
       <GridRow>
         <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
@@ -88,6 +101,12 @@ export const CoOwnerRepeaterItem: FC<Props & FieldBaseProps> = ({
             }
           />
         </GridColumn>
+        <input
+          type="hidden"
+          value={repeaterField.wasRemoved}
+          ref={register({ required: true })}
+          name={wasRemovedField}
+        />
       </GridRow>
     </Box>
   )

@@ -10,7 +10,6 @@ import {
   formatNationalId,
   IntroHeader,
   m,
-  ServicePortalModuleComponent,
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import {
@@ -18,6 +17,7 @@ import {
   useCompanyRegistry,
 } from '@island.is/service-portal/graphql'
 import { dateFormat } from '@island.is/shared/constants'
+import { useUserInfo } from '@island.is/auth/react'
 
 import { mCompany } from '../../lib/messages'
 
@@ -40,8 +40,9 @@ const dataNotFoundMessage = defineMessage({
   defaultMessage: 'Gögn fundust ekki',
 })
 
-const CompanyInfo: ServicePortalModuleComponent = ({ userInfo }) => {
+const CompanyInfo = () => {
   useNamespaces('sp.company')
+  const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
 
   const { data, loading, error } = useCompanyRegistry({

@@ -542,6 +542,17 @@ export const institutionApplicationMessages = {
       defaultMessage: 'Takk fyrir umsóknina!',
       description: 'Section title',
     },
+    sectionInfoHeader: {
+      id: 'ia.application:confirmation.section.infoHeader',
+      defaultMessage: 'Hvað gerist næst?',
+      description: 'Information header',
+    },
+    sectionInfoBulletPoints: {
+      id: 'ia.application:confirmation.section.infoBulletPoints#markdown',
+      defaultMessage:
+        '* Við munum nú fara yfir verkefnið og við sendum á þig svör innan tíðar.\n* Við verðum í sambandi ef okkur vantar frekari upplýsingar.\n* Ef þú þarft frekari upplýsingar þá getur þú sent okkur tölvupóst á netfangið [island@island.is](mailto:island@island.is)',
+      description: 'Information bullet points',
+    },
     sectionInfoBulletFirst: {
       id: 'ia.application:confirmation.section.infoBullet.first',
       defaultMessage:
