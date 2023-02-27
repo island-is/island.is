@@ -28,8 +28,6 @@ const PetitionsTable = (data: any) => {
     handlePagination(1, data.petitions?.data ?? [])
   }, [data])
 
-  console.log(listOfPetitions)
-
   return (
     <Box>
       <Box display="flex" justifyContent="spaceBetween" marginBottom={2}>
