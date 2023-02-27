@@ -46,11 +46,13 @@ export const ValidationErrorMessages: FC<FieldBaseProps> = (props) => {
                 }))
               : []),
             ...(answers?.coOwners
-              ? answers.coOwners.map((x) => ({
-                  email: x.email,
-                  nationalId: x.nationalId,
-                  type: 'coowner',
-                }))
+              ? answers.coOwners
+                  .filter(({ wasRemoved }) => wasRemoved !== 'true')
+                  .map((x) => ({
+                    email: x.email,
+                    nationalId: x.nationalId,
+                    type: 'coowner',
+                  }))
               : []),
           ],
           buyerMainOperator: null,

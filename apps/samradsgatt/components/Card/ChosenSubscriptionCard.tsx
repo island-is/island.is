@@ -1,12 +1,26 @@
 import { Box, Checkbox, Icon, Text } from '@island.is/island-ui/core'
 import { mapIsToEn } from '../../utils/helpers'
 import { useState } from 'react'
+import SubscriptionChoices from '../SubscriptionChoices/SubscriptionChoices'
+import { Area } from '../../types/enums'
+import { SubscriptionArray } from '../../types/interfaces'
 
-const ChosenSubscriptionCard = ({
+export interface ChosenSubscriptionCardProps {
+  data: {
+    name: string
+    caseNumber?: string
+    id: string
+    area: Area
+  }
+  subscriptionArray: SubscriptionArray
+  setSubscriptionArray: (arr: SubscriptionArray) => void
+}
+
+export const ChosenSubscriptionCard = ({
   data,
   subscriptionArray,
   setSubscriptionArray,
-}) => {
+}: ChosenSubscriptionCardProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const onClick = () => {
     setIsOpen(!isOpen)
@@ -33,7 +47,10 @@ const ChosenSubscriptionCard = ({
     >
       <Box display="flex" flexDirection="row" justifyContent={'spaceBetween'}>
         <Box display="flex" flexDirection="row" columnGap={3}>
-          <Checkbox checked={true} onChange={() => onCheckboxChange(data.id)} />
+          <Checkbox
+            checked={true}
+            onChange={() => onCheckboxChange(parseInt(data?.id))}
+          />
           <Text
             lineHeight="sm"
             variant="h5"
@@ -47,7 +64,11 @@ const ChosenSubscriptionCard = ({
           <Icon icon={isOpen ? 'chevronUp' : 'chevronDown'} color="blue400" />
         </div>
       </Box>
-      {isOpen && <Box paddingTop={3}>Items</Box>}
+      {isOpen && (
+        <Box paddingTop={3}>
+          <SubscriptionChoices />
+        </Box>
+      )}
     </Box>
   )
 }

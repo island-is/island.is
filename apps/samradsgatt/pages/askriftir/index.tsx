@@ -4,6 +4,7 @@ import {
   Breadcrumbs,
   Divider,
   GridContainer,
+  Hidden,
   ResponsiveSpace,
   Tabs,
   Text,
@@ -11,25 +12,32 @@ import {
 import TabContent from '../../components/Tab/TabContent'
 import { useEffect, useState } from 'react'
 import { Layout } from '../../components/Layout/Layout'
-import Cases from '../../utils/dummydata/api/Cases'
-import SubscriptionArray from '../../utils/dummydata/api/User/Subscriptions'
-import Types from '../../utils/dummydata/api/Types'
-import SubscriptionActionCard from '../../components/Card/SubscriptionActionCard'
-import ChosenSubscriptionCard from '../../components/Card/ChosenSubscriptionCard'
+import { Cases, SubscriptionsArray, Types } from '../../utils/dummydata'
+import {
+  SubscriptionActionCard,
+  ChosenSubscriptionCard,
+} from '../../components/Card'
+import { Area } from '../../types/enums'
+import {
+  ArrOfIdAndName,
+  Case,
+  SortTitle,
+  SubscriptionArray,
+} from '../../types/interfaces'
 
 const Subscriptions = () => {
   // user logged in logic needed
   const [loggedIn, setLoggedIn] = useState(false)
   // const [subscriptionEmail, setSubscriptionEmail] = useState('')
 
-  const [currentTab, setCurrentTab] = useState('Mál')
+  const [currentTab, setCurrentTab] = useState<string>('Mál')
 
   const [searchOptions, setSearchOptions] = useState<AsyncSearchOption[]>([])
-  const [searchValue, setSearchValue] = useState('')
-  const settingSearchValue = (val) => setSearchValue(val)
-  const [prevSearchValue, setPrevSearchValue] = useState('')
+  const [searchValue, setSearchValue] = useState<string>('')
+  const settingSearchValue = (val: string) => setSearchValue(val)
+  const [prevSearchValue, setPrevSearchValue] = useState<string>('')
 
-  const [casesData, setCasesData] = useState(Cases)
+  const [casesData, setCasesData] = useState<Array<Case>>(Cases)
   const Institutions = Object.entries(Types.institutions).map(([id, name]) => ({
     id,
     name,
@@ -50,13 +58,21 @@ const Subscriptions = () => {
       name,
     })),
   )
-  const [subscriptionArray, setSubscriptionArray] = useState(SubscriptionArray)
-  const settingSubscriptionArray = (newSubscriptionArray) =>
+  const [subscriptionArray, setSubscriptionArray] = useState<SubscriptionArray>(
+    SubscriptionsArray,
+  )
+  const settingSubscriptionArray = (newSubscriptionArray: SubscriptionArray) =>
     setSubscriptionArray(newSubscriptionArray)
 
-  const paddingYBreadCrumbs = [3, 3, 3, 5] as ResponsiveSpace
-  const paddingXContent = [0, 0, 0, 15] as ResponsiveSpace
-  const paddingXTable = [0, 0, 0, 15] as ResponsiveSpace
+  const [sortTitle, setSortTitle] = useState<SortTitle>({
+    Mál: 'Nýjast efst',
+    Stofnanir: 'Nýjast efst',
+    Málefnasvið: 'Nýjast efst',
+  })
+  const settingSortTitle = (obj: SortTitle) => setSortTitle(obj)
+
+  const paddingXContent = [0, 0, 0, 8, 15] as ResponsiveSpace
+  const paddingXTable = [0, 0, 0, 8, 15] as ResponsiveSpace
 
   const clearAll = () => {
     setSearchOptions([])
@@ -94,52 +110,65 @@ const Subscriptions = () => {
 
   const tabs = [
     {
-      id: 'Mál',
-      label: 'Mál',
+      id: Area.case,
+      label: Area.case,
       content: (
         <TabContent
           data={casesData}
-          currentTab={'Mál'}
+          setData={(newData: Array<Case>) => setCasesData(newData)}
+          currentTab={Area.case}
           subscriptionArray={subscriptionArray}
           setSubscriptionArray={settingSubscriptionArray}
           searchOptions={searchOptions}
           searchValue={searchValue}
           setSearchValue={settingSearchValue}
           searchPlaceholder={'Leitaðu að máli, stofnun eða málefnasviði'}
+          sortTitle={sortTitle}
+          setSortTitle={settingSortTitle}
         />
       ),
       disabled: false,
     },
     {
-      id: 'Stofnanir',
-      label: 'Stofnanir',
+      id: Area.institution,
+      label: Area.institution,
       content: (
         <TabContent
           data={institutionsData}
-          currentTab={'Stofnanir'}
+          setData={(newData: Array<ArrOfIdAndName>) =>
+            setInstitutionsData(newData)
+          }
+          currentTab={Area.institution}
           subscriptionArray={subscriptionArray}
           setSubscriptionArray={settingSubscriptionArray}
           searchOptions={searchOptions}
           searchValue={searchValue}
           setSearchValue={settingSearchValue}
           searchPlaceholder={'Leitaðu að máli, stofnun eða málefnasviði'}
+          sortTitle={sortTitle}
+          setSortTitle={settingSortTitle}
         />
       ),
       disabled: false,
     },
     {
-      id: 'Málefnasvið',
-      label: 'Málefnasvið',
+      id: Area.policyArea,
+      label: Area.policyArea,
       content: (
         <TabContent
           data={policyAreasData}
-          currentTab={'Málefnasvið'}
+          setData={(newData: Array<ArrOfIdAndName>) =>
+            setPolicyAreasData(newData)
+          }
+          currentTab={Area.policyArea}
           subscriptionArray={subscriptionArray}
           setSubscriptionArray={settingSubscriptionArray}
           searchOptions={searchOptions}
           searchValue={searchValue}
           setSearchValue={settingSearchValue}
           searchPlaceholder={'Leitaðu að máli, stofnun eða málefnasviði'}
+          sortTitle={sortTitle}
+          setSortTitle={settingSortTitle}
         />
       ),
       disabled: false,
@@ -162,7 +191,7 @@ const Subscriptions = () => {
       <Divider />
       <Box background="blue100">
         <GridContainer>
-          <Box paddingY={paddingYBreadCrumbs}>
+          <Box paddingY={[3, 3, 3, 5, 5]}>
             <Breadcrumbs
               items={[
                 { title: 'Samráðsgátt', href: '/samradsgatt' },
@@ -171,12 +200,17 @@ const Subscriptions = () => {
               ]}
             />
           </Box>
+          <Box paddingBottom={[3, 3, 3, 5, 5]}>
+            <Hidden above="xs">
+              <Divider />
+            </Hidden>
+          </Box>
           <Box paddingX={paddingXContent} paddingBottom={3}>
             <Text variant="h1" color="dark400">
               {'Áskriftir'}
             </Text>
           </Box>
-          <Box paddingX={paddingXContent} paddingBottom={5}>
+          <Box paddingX={paddingXContent} paddingBottom={[3, 3, 3, 5, 5]}>
             <Text variant="default">
               {
                 'Hér er hægt að skrá sig í áskrift að málum. Þú skráir þig inn á Ísland.is, \
@@ -189,7 +223,7 @@ const Subscriptions = () => {
               {'Kerfið er uppfært einu sinni á sólarhring.'}
             </Text>
           </Box>
-          <Box paddingX={paddingXTable} paddingBottom={2}>
+          <Box paddingX={paddingXTable} paddingBottom={[3, 3, 3, 5, 5]}>
             {loggedIn ? (
               <SubscriptionActionCard
                 userIsLoggedIn={true}
@@ -218,7 +252,7 @@ const Subscriptions = () => {
             )}
           </Box>
           {!subscriptionArrayIsEmpty() && (
-            <Box paddingX={paddingXTable} paddingBottom={3}>
+            <Box paddingX={paddingXTable} paddingBottom={[3, 3, 3, 5, 5]}>
               <Text paddingBottom={1} variant="eyebrow">
                 Valin mál
               </Text>
@@ -231,8 +265,8 @@ const Subscriptions = () => {
                         data={{
                           name: filteredItem.name,
                           caseNumber: filteredItem.caseNumber,
-                          id: filteredItem.id,
-                          area: 'Mál',
+                          id: filteredItem.id.toString(),
+                          area: Area.case,
                         }}
                         subscriptionArray={subscriptionArray}
                         setSubscriptionArray={settingSubscriptionArray}
@@ -244,13 +278,13 @@ const Subscriptions = () => {
               {subscriptionArray.institutionIds.length !== 0 &&
                 subscriptionArray.institutionIds.map((institutionId) => {
                   const chosen = institutionsData
-                    .filter((item) => institutionId === item.id)
+                    .filter((item) => institutionId.toString() === item.id)
                     .map((filteredItem) => (
                       <ChosenSubscriptionCard
                         data={{
                           name: filteredItem.name,
                           id: filteredItem.id,
-                          area: 'Stofnanir',
+                          area: Area.institution,
                         }}
                         subscriptionArray={subscriptionArray}
                         setSubscriptionArray={settingSubscriptionArray}
@@ -262,13 +296,13 @@ const Subscriptions = () => {
               {subscriptionArray.policyAreaIds.length !== 0 &&
                 subscriptionArray.policyAreaIds.map((policyAreaId) => {
                   const chosen = policyAreasData
-                    .filter((item) => policyAreaId === item.id)
+                    .filter((item) => policyAreaId.toString() === item.id)
                     .map((filteredItem) => (
                       <ChosenSubscriptionCard
                         data={{
                           name: filteredItem.name,
                           id: filteredItem.id,
-                          area: 'Málefnasvið',
+                          area: Area.policyArea,
                         }}
                         subscriptionArray={subscriptionArray}
                         setSubscriptionArray={settingSubscriptionArray}
@@ -281,8 +315,9 @@ const Subscriptions = () => {
           )}
         </GridContainer>
       </Box>
+      <Divider />
       <GridContainer>
-        <Box paddingX={paddingXTable} paddingTop={3}>
+        <Box paddingX={paddingXTable} paddingTop={[3, 3, 3, 5, 5]}>
           <Tabs
             selected={currentTab}
             onlyRenderSelectedTab={true}

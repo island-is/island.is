@@ -17,8 +17,16 @@ import {
   ChangeOperatorOfVehicleAnswers,
   getChargeItemCodes,
 } from '@island.is/application/templates/transport-authority/change-operator-of-vehicle'
-import { VehicleOperatorsClient } from '@island.is/clients/transport-authority/vehicle-operators'
+import {
+  OperatorChangeValidation,
+  VehicleOperatorsClient,
+} from '@island.is/clients/transport-authority/vehicle-operators'
 import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
+import {
+  VehicleDebtStatus,
+  VehicleServiceFjsV1Client,
+} from '@island.is/clients/vehicle-service-fjs-v1'
+import { VehicleSearchApi } from '@island.is/clients/vehicles'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { applicationCheck } from '@island.is/application/templates/transport-authority/change-operator-of-vehicle'
 import {
@@ -33,6 +41,7 @@ import {
 } from './smsGenerators'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
@@ -42,8 +51,58 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     private readonly vehicleOperatorsClient: VehicleOperatorsClient,
     private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
+    private readonly vehicleServiceFjsV1Client: VehicleServiceFjsV1Client,
+    private readonly vehiclesApi: VehicleSearchApi,
   ) {
     super(ApplicationTypes.CHANGE_OPERATOR_OF_VEHICLE)
+  }
+
+  private vehiclesApiWithAuth(auth: Auth) {
+    return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  async getCurrentVehiclesWithOperatorChangeChecks({
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const result = await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
+      persidNo: auth.nationalId,
+      showOwned: true,
+      showCoowned: false,
+      showOperated: false,
+    })
+
+    return await Promise.all(
+      result?.map(async (vehicle) => {
+        let validation: OperatorChangeValidation | undefined
+        let debtStatus: VehicleDebtStatus | undefined
+
+        // Only validate if fewer than 5 items
+        if (result.length <= 5) {
+          // Get debt status
+          debtStatus = await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
+            auth,
+            vehicle.permno || '',
+          )
+
+          // Get validation
+          validation = await this.vehicleOperatorsClient.validateVehicleForOperatorChange(
+            auth,
+            vehicle.permno || '',
+          )
+        }
+
+        return {
+          permno: vehicle.permno || undefined,
+          make: vehicle.make || undefined,
+          color: vehicle.color || undefined,
+          role: vehicle.role || undefined,
+          isDebtLess: debtStatus?.isDebtLess,
+          validationErrorMessages: validation?.hasError
+            ? validation.errorMessages
+            : null,
+        }
+      }),
+    )
   }
 
   async validateApplication({
@@ -54,13 +113,16 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
 
     const permno = answers?.pickVehicle?.plate
 
-    const operators = answers?.operators.map((operator) => ({
-      ssn: operator.nationalId,
-      isMainOperator:
-        answers.operators.length > 1
-          ? operator.nationalId === answers?.mainOperator?.nationalId
-          : true,
-    }))
+    const operators = answers?.operators
+      .filter(({ wasRemoved }) => wasRemoved !== 'true')
+      .map((operator) => ({
+        ssn: operator.nationalId,
+        isMainOperator:
+          answers.operators.filter(({ wasRemoved }) => wasRemoved !== 'true')
+            .length > 1
+            ? operator.nationalId === answers?.mainOperator?.nationalId
+            : true,
+      }))
 
     const result = await this.vehicleOperatorsClient.validateAllForOperatorChange(
       auth,
@@ -294,13 +356,16 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
       )
     }
 
-    const operators = answers?.operators.map((operator) => ({
-      ssn: operator.nationalId,
-      isMainOperator:
-        answers.operators.length > 1
-          ? operator.nationalId === answers?.mainOperator?.nationalId
-          : true,
-    }))
+    const operators = answers?.operators
+      .filter(({ wasRemoved }) => wasRemoved !== 'true')
+      .map((operator) => ({
+        ssn: operator.nationalId,
+        isMainOperator:
+          answers.operators.filter(({ wasRemoved }) => wasRemoved !== 'true')
+            .length > 1
+            ? operator.nationalId === answers?.mainOperator?.nationalId
+            : true,
+      }))
 
     await this.vehicleOperatorsClient.saveOperators(auth, permno, operators)
 

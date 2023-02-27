@@ -22,34 +22,42 @@ export const OperatorSection: FC<FieldBaseProps & ReviewScreenProps> = ({
     [],
   ) as OperatorInformation[]
 
-  return operators.length > 0 ? (
+  const filteredOperators = operators.filter(
+    ({ wasRemoved }) => wasRemoved !== 'true',
+  )
+
+  return filteredOperators.length > 0 ? (
     <ReviewGroup isLast>
       <GridRow>
-        {operators?.map(({ name, nationalId, email, phone }, index: number) => {
-          if (name.length === 0) return null
-          const isOperator = nationalId === reviewerNationalId
-          return (
-            <GridColumn
-              span={['12/12', '12/12', '12/12', '6/12']}
-              key={`operator-${index}`}
-            >
-              <Box marginBottom={operators.length === index + 1 ? 0 : 2}>
-                <Text variant="h4">
-                  {formatMessage(information.labels.operator.sectionTitle)}{' '}
-                  {operators.length > 1 ? index + 1 : ''}{' '}
-                  {operators.length > 1 && index === 0
-                    ? `(${formatMessage(information.labels.operator.main)})`
-                    : ''}{' '}
-                  {isOperator && `(${formatMessage(review.status.youLabel)})`}
-                </Text>
-                <Text>{name}</Text>
-                <Text>{kennitala.format(nationalId, '-')}</Text>
-                <Text>{email}</Text>
-                <Text>{formatPhoneNumber(phone)}</Text>
-              </Box>
-            </GridColumn>
-          )
-        })}
+        {filteredOperators?.map(
+          ({ name, nationalId, email, phone }, index: number) => {
+            if (name.length === 0) return null
+            const isOperator = nationalId === reviewerNationalId
+            return (
+              <GridColumn
+                span={['12/12', '12/12', '12/12', '6/12']}
+                key={`operator-${index}`}
+              >
+                <Box
+                  marginBottom={filteredOperators.length === index + 1 ? 0 : 2}
+                >
+                  <Text variant="h4">
+                    {formatMessage(information.labels.operator.sectionTitle)}{' '}
+                    {filteredOperators.length > 1 ? index + 1 : ''}{' '}
+                    {filteredOperators.length > 1 && index === 0
+                      ? `(${formatMessage(information.labels.operator.main)})`
+                      : ''}{' '}
+                    {isOperator && `(${formatMessage(review.status.youLabel)})`}
+                  </Text>
+                  <Text>{name}</Text>
+                  <Text>{kennitala.format(nationalId, '-')}</Text>
+                  <Text>{email}</Text>
+                  <Text>{formatPhoneNumber(phone)}</Text>
+                </Box>
+              </GridColumn>
+            )
+          },
+        )}
       </GridRow>
     </ReviewGroup>
   ) : null
