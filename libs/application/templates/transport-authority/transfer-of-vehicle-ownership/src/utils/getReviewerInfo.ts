@@ -20,9 +20,12 @@ export const getReviewerInfo = (
     'buyerCoOwnerAndOperator',
     [],
   ) as CoOwnerAndOperator[]
-  const buyerCoOwnerAndOperator = buyerCoOwnersAndOperators.find(
-    (coOwnerOrOperator) => coOwnerOrOperator.nationalId === reviewerNationalId,
-  )
+  const buyerCoOwnerAndOperator = buyerCoOwnersAndOperators
+    .filter(({ wasRemoved }) => wasRemoved !== 'true')
+    .find(
+      (coOwnerOrOperator) =>
+        coOwnerOrOperator.nationalId === reviewerNationalId,
+    )
   if (buyerCoOwnerAndOperator) {
     return buyerCoOwnerAndOperator
   }
