@@ -30,8 +30,12 @@ export const applicationsToChildInformation = (
   const result: ChildInformationWithoutRights[] = []
 
   for (const application of applications) {
-    const { applicantGenderCode } = getApplicationExternalData(application.externalData)
-    const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(application.answers)
+    const { applicantGenderCode } = getApplicationExternalData(
+      application.externalData,
+    )
+    const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
+      application.answers,
+    )
 
     const selectedChild = getSelectedChild(
       application.answers,
@@ -108,8 +112,12 @@ export const applicationsToExistingChildApplication = (
 export const getChildrenFromMockData = (
   application: Application,
 ): ChildInformation => {
-  const { applicantGenderCode } = getApplicationExternalData(application.externalData)
-  const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(application.answers)
+  const { applicantGenderCode } = getApplicationExternalData(
+    application.externalData,
+  )
+  const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
+    application.answers,
+  )
 
   const parentalRelation = getValueViaPath(
     application.answers,

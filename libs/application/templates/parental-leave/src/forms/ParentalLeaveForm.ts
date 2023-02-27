@@ -806,9 +806,13 @@ export const ParentalLeaveForm: Form = buildForm({
                 parentalLeaveFormMessages.attachmentScreen
                   .permanentFostercareDescription,
               condition: (answers) => {
-                const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(answers)
+                const {
+                  noChildrenFoundTypeOfApplication,
+                } = getApplicationAnswers(answers)
 
-                return noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE
+                return (
+                  noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE
+                )
               },
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
@@ -821,14 +825,13 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
             buildFileUploadField({
               id: 'fileUpload.adoption',
-              title:
-                parentalLeaveFormMessages.attachmentScreen
-                  .adoptionTitle,
+              title: parentalLeaveFormMessages.attachmentScreen.adoptionTitle,
               introduction:
-                parentalLeaveFormMessages.attachmentScreen
-                  .adoptionDescription,
+                parentalLeaveFormMessages.attachmentScreen.adoptionDescription,
               condition: (answers) => {
-                const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(answers)
+                const {
+                  noChildrenFoundTypeOfApplication,
+                } = getApplicationAnswers(answers)
 
                 return noChildrenFoundTypeOfApplication === ADOPTION
               },

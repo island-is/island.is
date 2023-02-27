@@ -46,7 +46,7 @@ export enum StartDateOptions {
   ESTIMATED_DATE_OF_BIRTH = 'estimatedDateOfBirth',
   ACTUAL_DATE_OF_BIRTH = 'actualDateOfBirth',
   SPECIFIC_DATE = 'specificDate',
-  ADOPTION_DATE = 'adoptionDate'
+  ADOPTION_DATE = 'adoptionDate',
 }
 
 export enum TransferRightsOption {

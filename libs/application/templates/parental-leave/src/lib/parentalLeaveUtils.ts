@@ -1604,9 +1604,11 @@ export const isFosterCareAndAdoption = (application: Application) => {
     throw new Error('Missing selected child')
   }
 
-  return  selectedChild.parentalRelation === ParentalRelations.primary
-  ? noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE || noChildrenFoundTypeOfApplication === ADOPTION
-  : selectedChild.primaryParentTypeOfApplication === PERMANENT_FOSTER_CARE || selectedChild.primaryParentTypeOfApplication === ADOPTION
+  return selectedChild.parentalRelation === ParentalRelations.primary
+    ? noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE ||
+        noChildrenFoundTypeOfApplication === ADOPTION
+    : selectedChild.primaryParentTypeOfApplication === PERMANENT_FOSTER_CARE ||
+        selectedChild.primaryParentTypeOfApplication === ADOPTION
 }
 
 export const convertBirthDay = (birthDay: string) => {

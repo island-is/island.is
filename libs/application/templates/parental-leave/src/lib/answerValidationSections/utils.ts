@@ -105,7 +105,7 @@ const validFirstPeriodStartValues = [
   StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
   StartDateOptions.ACTUAL_DATE_OF_BIRTH,
   StartDateOptions.SPECIFIC_DATE,
-  StartDateOptions.ADOPTION_DATE
+  StartDateOptions.ADOPTION_DATE,
 ]
 
 export const validatePeriod = (
@@ -162,7 +162,7 @@ export const validatePeriod = (
     if (isFirstPeriod && parseISO(startDate) > today) {
       startDateValue =
         firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH ||
-        firstPeriodStart === StartDateOptions.ESTIMATED_DATE_OF_BIRTH || 
+        firstPeriodStart === StartDateOptions.ESTIMATED_DATE_OF_BIRTH ||
         firstPeriodStart === StartDateOptions.ADOPTION_DATE
           ? dob
           : parseISO(startDate)

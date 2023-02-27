@@ -18,7 +18,6 @@ import {
 } from '../constants'
 import { errorMessages } from './messages'
 import { formatBankInfo } from './parentalLeaveUtils'
-import { addMonths, parseISO } from 'date-fns'
 import { yearFosterCareOrAdoption, yearInMonths } from '../config'
 
 const PersonalAllowance = z
@@ -50,17 +49,23 @@ export const dataSchema = z.object({
     option: z.enum([PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, PARENTAL_LEAVE]),
   }),
   noChildrenFound: z.object({
-    typeOfApplication: z.enum([PERMANENT_FOSTER_CARE, ADOPTION, OTHER_NO_CHILDREN_FOUND])
+    typeOfApplication: z.enum([
+      PERMANENT_FOSTER_CARE,
+      ADOPTION,
+      OTHER_NO_CHILDREN_FOUND,
+    ]),
   }),
-  fosterCare: z.object({
-    birthDate: z
-    .string()
-    .refine(
+  fosterCareOrAdoption: z.object({
+    birthDate: z.string().refine(
       (p) => {
-        const birthDateDob = parseISO(p)
+        const birthDateDob = new Date(p)
         const today = new Date()
-        const minimumStartDate = addMonths(today, -yearFosterCareOrAdoption * yearInMonths)
-       
+        const minimumStartDate = new Date(
+          today.setMonth(
+            today.getMonth() - yearFosterCareOrAdoption * yearInMonths,
+          ),
+        )
+
         return birthDateDob >= minimumStartDate
       },
       { params: errorMessages.fosterCare },

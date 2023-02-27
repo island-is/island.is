@@ -407,8 +407,16 @@ describe('getRightsCode', () => {
         primaryParentNationalRegistryId,
       ),
     ])
-    set(base, 'externalData.children.data.children[0].primaryParentGenderCode', '1')
-    set(base, 'externalData.children.data.children[0].primaryParentTypeOfApplication', PERMANENT_FOSTER_CARE)
+    set(
+      base,
+      'externalData.children.data.children[0].primaryParentGenderCode',
+      '1',
+    )
+    set(
+      base,
+      'externalData.children.data.children[0].primaryParentTypeOfApplication',
+      PERMANENT_FOSTER_CARE,
+    )
     set(base, 'externalData.person.data', {
       spouse: {
         fullName: 'Spouse Spousson',
@@ -446,7 +454,11 @@ describe('getRightsCode', () => {
     ])
     set(base, 'answers.selectedChild', '0')
     set(base, 'answers.applicationType.option', PARENTAL_GRANT_STUDENTS)
-    set(base, 'answers.noChildrenFound.typeOfApplication', PERMANENT_FOSTER_CARE)
+    set(
+      base,
+      'answers.noChildrenFound.typeOfApplication',
+      PERMANENT_FOSTER_CARE,
+    )
 
     const expected = 'M-FÓ-FSN'
     const result = getRightsCode(base)
@@ -648,8 +660,16 @@ describe('getRightsCode', () => {
         primaryParentNationalRegistryId,
       ),
     ])
-    set(base, 'externalData.children.data.children[0].primaryParentGenderCode', '2')
-    set(base, 'externalData.children.data.children[0].primaryParentTypeOfApplication', ADOPTION)
+    set(
+      base,
+      'externalData.children.data.children[0].primaryParentGenderCode',
+      '2',
+    )
+    set(
+      base,
+      'externalData.children.data.children[0].primaryParentTypeOfApplication',
+      ADOPTION,
+    )
     set(base, 'externalData.person.data', {
       spouse: {
         fullName: 'Spouse Spousson',

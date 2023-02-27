@@ -174,9 +174,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
   // If no children information from Heilsuvera
   // and the application is adoption | foster care | without primary parent
   // we make a children data
-  async setChildrenInformation({
-    application,
-  }: TemplateApiModuleActionProps) {
+  async setChildrenInformation({ application }: TemplateApiModuleActionProps) {
     const {
       noPrimaryParentBirthDate,
       noChildrenFoundTypeOfApplication,
@@ -184,9 +182,11 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       fosterCareOrAdoptionBirthDate,
     } = getApplicationAnswers(application.answers)
 
-    const { applicantGenderCode, children, existingApplications } = getApplicationExternalData(
-      application.externalData,
-    )
+    const {
+      applicantGenderCode,
+      children,
+      existingApplications,
+    } = getApplicationExternalData(application.externalData)
 
     if (noChildrenFoundTypeOfApplication === OTHER_NO_CHILDREN_FOUND) {
       const child: ChildInformation = {
@@ -203,9 +203,12 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
       return {
         children: children,
-        existingApplications
+        existingApplications,
       }
-    } else if (noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE || noChildrenFoundTypeOfApplication === ADOPTION) {
+    } else if (
+      noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE ||
+      noChildrenFoundTypeOfApplication === ADOPTION
+    ) {
       const child: ChildInformation = {
         hasRights: true,
         remainingDays: 180,
@@ -219,13 +222,13 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
       return {
         children: children,
-        existingApplications
+        existingApplications,
       }
     } else {
       // "normal application" - children found just return them
       return {
         children: children,
-        existingApplications
+        existingApplications,
       }
     }
   }
@@ -626,11 +629,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
       if (adoptionPdfs?.length) {
         for (let i = 0; i <= adoptionPdfs.length - 1; i++) {
-          const pdf = await this.getPdf(
-            application,
-            i,
-            'fileUpload.adoption',
-          )
+          const pdf = await this.getPdf(application, i, 'fileUpload.adoption')
 
           attachments.push({
             attachmentType: apiConstants.attachments.adoption,
@@ -730,7 +729,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       firstPeriodStart,
       applicationType,
       otherParent,
-      hasMultipleBirths,
     } = getApplicationAnswers(application.answers)
 
     const { applicationFundId } = getApplicationExternalData(

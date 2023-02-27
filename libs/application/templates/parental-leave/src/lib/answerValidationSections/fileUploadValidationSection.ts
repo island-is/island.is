@@ -103,8 +103,13 @@ export const fileUploadValidationSection = (
     return undefined
   }
 
-  if (noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE && obj.permanentFosterCare) {
-    if (isEmpty((obj as { permanentFosterCare: unknown[] }).permanentFosterCare))
+  if (
+    noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE &&
+    obj.permanentFosterCare
+  ) {
+    if (
+      isEmpty((obj as { permanentFosterCare: unknown[] }).permanentFosterCare)
+    )
       return buildError(
         errorMessages.requiredAttachment,
         'permanentFosterCare',

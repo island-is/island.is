@@ -424,7 +424,10 @@ export const PrerequisitesForm: Form = buildForm({
               answers,
             )
 
-            return noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE || noChildrenFoundTypeOfApplication === ADOPTION
+            return (
+              noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE ||
+              noChildrenFoundTypeOfApplication === ADOPTION
+            )
           },
           children: [
             buildMultiField({
