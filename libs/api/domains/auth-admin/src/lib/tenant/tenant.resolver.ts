@@ -5,8 +5,9 @@ import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
 import { TenantsPayload } from './dto/tenants.payload'
 import { Tenant } from './models/tenant.model'
-import { TenantEnvironment } from './models/tenant-environment.model'
 import { TenantsService } from './tenants.service'
+import { TenantEnvironment } from './models/tenant-environment.model'
+import { Environment } from '../models/environment'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Tenant)
@@ -24,13 +25,12 @@ export class TenantResolver {
       throw new Error(`Tenant ${tenant.id} has no environments`)
     }
 
-    return {
-      ...tenant.environments[0],
-      id: `${tenant.environments[0].name}-merged`,
-      applicationCount: Math.max(
-        ...tenant.environments.map((t) => t.applicationCount),
-      ),
-      apiCount: Math.max(...tenant.environments.map((t) => t.apiCount)),
-    }
+    // Depends on the priority order being decided by the backend
+    return tenant.environments[0]
+  }
+
+  @ResolveField('availableEnvironments', () => [Environment])
+  resolveAvailableEnvironments(@Parent() tenant: Tenant): Environment[] {
+    return tenant.environments.map((env) => env.environment)
   }
 }

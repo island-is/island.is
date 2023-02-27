@@ -69,7 +69,8 @@
         "commands": ["yarn start license-api"],
         "parallel": true
       }
-    }
+    },
+    "docker-express": {}
   },
   "tags": ["scope:nest"]
 }
