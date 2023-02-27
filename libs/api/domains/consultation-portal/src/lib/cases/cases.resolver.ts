@@ -39,7 +39,7 @@ export class CaseResultResolver {
     return advices.map((advice) => advice.content as string)
   }
 
-  @Mutation(() => CaseResult, { name: 'consultationPortalPostAdvice' })
+  @Mutation(() => CaseResult, { name: 'postConsultationPortalAdvice' })
   async postAdvice(
     @Args('caseId') caseId: number,
     @Args('content') content: string,
