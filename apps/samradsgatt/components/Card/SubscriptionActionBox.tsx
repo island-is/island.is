@@ -1,7 +1,7 @@
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import * as styles from './SubscriptionActionBox.css'
 
-export interface SubscriptionActionCardProps {
+export interface SubscriptionActionBoxProps {
   heading: string
   text: string
   cta: {
@@ -11,11 +11,11 @@ export interface SubscriptionActionCardProps {
   }
 }
 
-const SubscriptionActionBox = ({
+export const SubscriptionActionBox = ({
   heading,
   text,
   cta,
-}: SubscriptionActionCardProps) => {
+}: SubscriptionActionBoxProps) => {
   return (
     <Box
       display="flex"

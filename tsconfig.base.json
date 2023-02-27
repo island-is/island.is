@@ -115,6 +115,9 @@
       "@island.is/api/domains/mailchimp": [
         "libs/api/domains/mailchimp/src/index.ts"
       ],
+      "@island.is/api/domains/mailchimp": [
+        "libs/api/domains/mailchimp/src/index.ts"
+      ],
       "@island.is/api/domains/mortgage-certificate": [
         "libs/api/domains/mortgage-certificate/src/index.ts"
       ],
@@ -167,6 +170,9 @@
       "@island.is/application/data-providers": [
         "libs/application/data-providers/src/index.ts"
       ],
+      "@island.is/application/data-providers": [
+        "libs/application/data-providers/src/index.ts"
+      ],
       "@island.is/application/graphql": [
         "libs/application/graphql/src/index.ts"
       ],
@@ -178,9 +184,6 @@
       ],
       "@island.is/application/templates/accident-notification": [
         "libs/application/templates/accident-notification/src/index.ts"
-      ],
-      "@island.is/application/templates/alcohol-tax-redemption": [
-        "libs/application/templates/alcohol-tax-redemption/src/index.ts"
       ],
       "@island.is/application/templates/announcement-of-death": [
         "libs/application/templates/announcement-of-death/src/index.ts"
@@ -301,6 +304,9 @@
       "@island.is/auth-api-lib/personal-representative": [
         "libs/auth-api-lib/src/lib/personal-representative/index.ts"
       ],
+      "@island.is/auth-api-lib/personal-representative": [
+        "libs/auth-api-lib/src/lib/personal-representative/index.ts"
+      ],
       "@island.is/auth-nest-tools": ["libs/auth-nest-tools/src/index.ts"],
       "@island.is/auth/react": ["libs/auth/react/src/index.ts"],
       "@island.is/auth/scopes": ["libs/auth/scopes/src/index.ts"],
@@ -359,6 +365,7 @@
         "libs/clients/national-registry/v2/src/index.ts"
       ],
       "@island.is/clients/passports": ["libs/clients/passports/src/index.ts"],
+      "@island.is/clients/payment": ["libs/clients/payment/src/index.ts"],
       "@island.is/clients/payment": ["libs/clients/payment/src/index.ts"],
       "@island.is/clients/payment-schedule": [
         "libs/clients/payment-schedule/src/index.ts"
@@ -419,6 +426,7 @@
       "@island.is/financial-aid/shared/lib": [
         "libs/financial-aid/shared/src/lib/index.ts"
       ],
+      "@island.is/health-insurance": ["libs/health-insurance/src/index.ts"],
       "@island.is/health-insurance": ["libs/health-insurance/src/index.ts"],
       "@island.is/icelandic-names-registry-types": [
         "libs/icelandic-names-registry/types/src/index.ts"
@@ -499,6 +507,9 @@
       "@island.is/service-portal/document-provider": [
         "libs/service-portal/document-provider/src/index.ts"
       ],
+      "@island.is/service-portal/document-provider": [
+        "libs/service-portal/document-provider/src/index.ts"
+      ],
       "@island.is/service-portal/documents": [
         "libs/service-portal/documents/src/index.ts"
       ],
@@ -529,11 +540,17 @@
       "@island.is/service-portal/finance-schedule": [
         "libs/service-portal/finance-schedule/src/index.ts"
       ],
+      "@island.is/service-portal/finance-schedule": [
+        "libs/service-portal/finance-schedule/src/index.ts"
+      ],
       "@island.is/service-portal/graphql": [
         "libs/service-portal/graphql/src/index.ts"
       ],
       "@island.is/service-portal/health": [
         "libs/service-portal/health/src/index.ts"
+      ],
+      "@island.is/service-portal/icelandic-names-registry": [
+        "libs/service-portal/icelandic-names-registry/src/index.ts"
       ],
       "@island.is/service-portal/icelandic-names-registry": [
         "libs/service-portal/icelandic-names-registry/src/index.ts"

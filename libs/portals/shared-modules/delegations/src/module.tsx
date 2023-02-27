@@ -1,8 +1,7 @@
 import { delegationScopes } from '@island.is/auth/scopes'
 import { lazy } from 'react'
-import { PortalModule, PortalRoute } from '@island.is/portals/core'
+import { m, PortalModule, PortalRoute } from '@island.is/portals/core'
 import { DelegationPaths } from './lib/paths'
-import { m } from './lib/messages'
 
 const AccessControl = lazy(() => import('./screens/AccessControl'))
 const GrantAccess = lazy(() => import('./screens/GrantAccess/GrantAccess'))
