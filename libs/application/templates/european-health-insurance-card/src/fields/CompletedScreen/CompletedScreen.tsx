@@ -76,20 +76,24 @@ const CompletedScreen: FC<FieldBaseProps> = ({ application }) => {
               formatMessage,
             )}
           </Bullet>
-          <Bullet>
-            {formatText(
-              e.confirmation.sectionInfoBulletThird,
-              application,
-              formatMessage,
-            )}
-          </Bullet>
-          <Bullet>
-            {formatText(
-              e.confirmation.sectionInfoBulletFour,
-              application,
-              formatMessage,
-            )}
-          </Bullet>
+          {tempData.length > 0 && (
+            <>
+              <Bullet>
+                {formatText(
+                  e.confirmation.sectionInfoBulletThird,
+                  application,
+                  formatMessage,
+                )}
+              </Bullet>
+              <Bullet>
+                {formatText(
+                  e.confirmation.sectionInfoBulletFour,
+                  application,
+                  formatMessage,
+                )}
+              </Bullet>
+            </>
+          )}
         </BulletList>
         <Inline>
           {links}
