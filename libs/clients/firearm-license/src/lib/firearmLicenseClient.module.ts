@@ -3,7 +3,7 @@ import { FirearmLicenseApiProvider } from './firearmApiProvider'
 import { FirearmApi } from './firearmApi.services'
 
 @Module({
-  providers: [FirearmLicenseApiProvider],
+  providers: [FirearmApi, FirearmLicenseApiProvider],
   exports: [FirearmApi],
 })
 export class FirearmLicenseClientModule {}

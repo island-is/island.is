@@ -1,4 +1,7 @@
-import { FirearmLicenseClientModule } from '@island.is/clients/firearm-license'
+import {
+  FirearmLicenseClientModule,
+  OpenFirearmLicenseClientModule,
+} from '@island.is/clients/firearm-license'
 import {
   SmartSolutionsApiClientModule,
   SmartSolutionsConfig,
@@ -11,6 +14,7 @@ import { FirearmDigitalLicenseClientConfig } from './firearmLicenseClient.config
 @Module({
   imports: [
     FirearmLicenseClientModule,
+    OpenFirearmLicenseClientModule,
     SmartSolutionsApiClientModule.registerAsync({
       useFactory: (
         config: ConfigType<typeof FirearmDigitalLicenseClientConfig>,
