@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import addDays from 'date-fns/addDays'
 import { lookup } from 'geoip-lite'
 import { Op, WhereOptions } from 'sequelize'
 import uaParser from 'ua-parser-js'
@@ -50,8 +51,26 @@ export class SessionsService {
 
     whereOptions = {
       ...whereOptions,
-      ...(query.from && { timestamp: { [Op.gte]: query.from } }),
-      ...(query.to && { timestamp: { [Op.lte]: query.to } }),
+      ...(query.to && query.from
+        ? {
+            [Op.and]: [
+              { timestamp: { [Op.gte]: query.from } },
+              {
+                timestamp: {
+                  [Op.lt]: addDays(new Date(query.to), 1),
+                },
+              },
+            ],
+          }
+        : query.from
+        ? { timestamp: { [Op.gte]: query.from } }
+        : query.to
+        ? {
+            timestamp: {
+              [Op.lte]: query.to,
+            },
+          }
+        : {}),
     }
 
     return paginate({
@@ -77,20 +96,18 @@ export class SessionsService {
     const ua = uaParser(userAgent)
     const browser = ua.browser.name || ''
     const os = ua.os.name || ''
-    const device =
-      browser || os ? `${browser}${browser && os ? ` (${os})` : os}` : undefined
 
-    return device
+    return browser || os
+      ? `${browser}${browser && os ? ` (${os})` : os}`
+      : undefined
   }
 
   private formatIp(ip: string): string | undefined {
     const geoLocation = lookup(ip)
-    const ipLocation = geoLocation
+    return geoLocation
       ? geoLocation.city
         ? `${geoLocation.city}, ${geoLocation.country}`
         : geoLocation.country
       : undefined
-
-    return ipLocation
   }
 }
