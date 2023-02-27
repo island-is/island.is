@@ -85,6 +85,7 @@ export type {
   UploadPoliceCaseFileResponse,
 } from './lib/policeFile'
 
-export { IndictmentCountOffense } from './lib/indictmentCount'
+export { IndictmentCountOffense, Substance } from './lib/indictmentCount'
+export type { SubstanceMap } from './lib/indictmentCount'
 
 export type { CourtDocument } from './lib/courtDocument'
