@@ -19,7 +19,7 @@ import { z } from 'zod'
  * }
  */
 export const createSearchParamsObj = (searchParams: URLSearchParams) => {
-  const obj: Record<string, unknown> = {}
+  const obj: Record<string, string | string[]> = {}
 
   for (const [objPath, value] of searchParams.entries()) {
     if (!value) continue
@@ -70,7 +70,9 @@ export const createSearchParamsObj = (searchParams: URLSearchParams) => {
  *   isExplicit: true,
  * }
  */
-export const dotNotationToNestedObject = (obj: Record<string, unknown>) => {
+export const dotNotationToNestedObject = (
+  obj: Record<string, string | string[]>,
+) => {
   return Object.entries(obj).reduce((parentAcc, [key, value]) => {
     key
       .split('.')
@@ -98,6 +100,31 @@ export const validateSearchParams = <T extends z.ZodTypeAny>({
   return schema.parse(nestedObject) as z.infer<typeof schema>
 }
 
+/**
+ * Gets the values from a FormData object and returns one level deep object with dot notation
+ */
+export const getValuesFromFormData = (formData: FormData) => {
+  const obj: Record<string, string[] | string> = {}
+
+  for (const [key, value] of formData.entries()) {
+    const val = value as string
+
+    // If the key already exists, we need to make sure we don't overwrite it
+    if (obj[key]) {
+      const prevValues: string[] | string = obj[key]
+
+      // If the previous value was an array, we need to add the new value to it
+      obj[key] = Array.isArray(prevValues)
+        ? [...prevValues, val]
+        : [prevValues, val]
+    } else {
+      obj[key] = val || ''
+    }
+  }
+
+  return obj
+}
+
 export const validateFormData = async <T extends z.ZodTypeAny>({
   request,
   schema,
@@ -106,7 +133,7 @@ export const validateFormData = async <T extends z.ZodTypeAny>({
   schema: T
 }) => {
   const formData = await request.formData()
-  const values = Object.fromEntries(formData)
+  const values = getValuesFromFormData(formData)
   const nestedObject = dotNotationToNestedObject(values)
 
   return schema.parse(nestedObject) as z.infer<typeof schema>

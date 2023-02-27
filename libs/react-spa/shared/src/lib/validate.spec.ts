@@ -4,7 +4,20 @@ import {
   dotNotationToNestedObject,
   createSearchParamsObj,
   validateSearchParams,
+  getValuesFromFormData,
 } from './validate'
+
+class FormDataMock {
+  append: jest.Mock
+  entries: jest.Mock
+
+  constructor(entries: FormData['entries']) {
+    this.append = jest.fn()
+    this.entries = jest.fn(() => entries)
+  }
+}
+
+global.FormData = FormDataMock
 
 class MockedRequest {
   url: string
@@ -161,6 +174,33 @@ describe('loaders utility methods', () => {
         name: 'John',
         age: 10,
         repeated: ['1', '2'],
+      })
+    })
+  })
+
+  describe('getValuesFromFormData', () => {
+    it('should get correct values from FormData ', () => {
+      // Arrange
+      const searchParams = new URLSearchParams(
+        '?age.from=1&age.to=2&flightLeg.from=KEF&flightLeg.to=AER&period.from=2021-01-01&period.to=2021-01-02&state=active&state=inactive&isExplicit=true&airline=W6&deeply.nested.key=value',
+      )
+      const formData = new FormData(searchParams)
+
+      // Act
+      const result = getValuesFromFormData(formData)
+
+      // Assert
+      expect(result).toEqual({
+        'age.from': '1',
+        'age.to': '2',
+        'deeply.nested.key': 'value',
+        'flightLeg.from': 'KEF',
+        'flightLeg.to': 'AER',
+        'period.from': '2021-01-01',
+        'period.to': '2021-01-02',
+        state: ['active', 'inactive'],
+        isExplicit: 'true',
+        airline: 'W6',
       })
     })
   })
