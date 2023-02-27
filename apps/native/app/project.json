@@ -1,0 +1,8 @@
+{
+  "root": "apps/native",
+  "sourceRoot": "apps/native/app/src/index.ts",
+  "projectType": "application",
+  "prefix": "app",
+  "generators": {},
+  "targets": {}
+}
