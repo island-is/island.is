@@ -3,10 +3,7 @@ import { Box, DropdownMenu } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import * as styles from './styles.css'
 import { m } from '../../../lib/messages'
-
-import { downloadCSV } from './downloadFile'
-
-export const headers = ['Dagsetning', 'Nafn']
+import { downloadCSV } from './downloadCSV'
 
 interface Props {
   onGetCSV: () => void
@@ -30,7 +27,7 @@ export const getCSV = async (data: any[], fileName: string, type: 'csv') => {
     item.meta.fullName ?? '',
   ])
 
-  await downloadCSV(name, headers, dataArray, type)
+  await downloadCSV(name, ['Dagsetning', 'Nafn'], dataArray, type)
 }
 
 const DropdownExport: FC<Props> = ({ onGetCSV, dropdownItems = [] }) => {
