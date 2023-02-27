@@ -500,6 +500,19 @@ export const IndictmentCount: React.FC<Props> = (props) => {
         </Box>
       )}
       <Box marginBottom={2}>
+        <Input
+          label="Label"
+          name="testinput"
+          size="xs"
+          icon={{
+            name: 'close',
+            onClick: () => {
+              console.log('clicked')
+            },
+          }}
+        ></Input>
+      </Box>
+      <Box marginBottom={2}>
         <Select
           name="lawsBroken"
           options={lawsBrokenOptions}
