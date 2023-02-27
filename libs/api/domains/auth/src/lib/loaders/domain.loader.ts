@@ -28,7 +28,10 @@ export class DomainLoader
 
     // Only support one language at a time.
     const lang = inputs[0].lang
-    const domains = await this.domainService.getDomains(user, { lang })
+    const domains = await this.domainService.getDomains(user, {
+      lang,
+      domainNames: inputs.map((input) => input.domain),
+    })
     return inputs.map(
       (input) => domains.find((domain) => domain.name === input.domain) ?? null,
     )
