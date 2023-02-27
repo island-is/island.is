@@ -255,6 +255,7 @@ export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
                 pureChildren={true}
               >
                 <Button
+                  as="a"
                   variant={variant}
                   icon={isSjukratryggingar ? 'lockClosed' : 'open'}
                   iconType="outline"
