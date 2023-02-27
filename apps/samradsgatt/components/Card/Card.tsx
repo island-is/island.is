@@ -4,12 +4,12 @@ import {
   Divider,
   Text,
   ArrowLink,
-  Columns,
-  Column,
-  Icon,
+  Inline,
 } from '@island.is/island-ui/core'
 import { ReactNode } from 'react'
 import getTagVariants from '../../utils/helpers/getTagVariants'
+
+import * as styles from './Card.css'
 
 type CardInfo = {
   tag?: string
@@ -36,80 +36,65 @@ export const Card = ({
 }: CardProps) => {
   return (
     <Box
-      style={{
-        width: width ? width : '328px',
-        minWidth: '287px',
-        height: height ? height : '460px',
-        flexWrap: 'wrap',
-      }}
+      className={styles.cardBox}
       padding={3}
       borderRadius="standard"
       borderWidth="standard"
-      borderColor="purple300"
+      borderColor="blue200"
+      display="flex"
+      flexDirection="column"
+      justifyContent="spaceBetween"
     >
-      <Box
-        display="flex"
-        flexDirection="row"
-        alignItems="center"
-        justifyContent="spaceBetween"
-      >
-        <Tag variant={getTagVariants(card.tag)}>{card.tag}</Tag>
-        <Text as="p" variant="eyebrow" color="purple400">
-          Nr. S-{card.id}
-        </Text>
+      <Box>
+        <Box
+          display="flex"
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="spaceBetween"
+          paddingBottom={2}
+        >
+          <Tag variant={getTagVariants(card.tag)}>{card.tag}</Tag>
+          <Text as="p" variant="eyebrow" color="purple400">
+            Nr. S-{card.id}
+          </Text>
+        </Box>
+        <Inline space={1} alignY="center" flexWrap="nowrap">
+          <Text as="p" variant="eyebrow" color="blue600" truncate>
+            {card.eyebrows[0]}
+          </Text>
+          <div className={styles.seperator} />
+          <Text as="p" variant="eyebrow" color="blue600" truncate>
+            {card.eyebrows[1]}
+          </Text>
+        </Inline>
+        <Box
+          style={{ height: showAttachment ? '100px' : '100px' }}
+          className={styles.title}
+          paddingY={2}
+        >
+          <Text as="h4" fontWeight="semiBold">
+            {card.title}
+          </Text>
+        </Box>
+        <Inline space={1} alignY={'center'}>
+          <Text variant="eyebrow" color="dark400">
+            Umsagnartímabil:
+          </Text>
+          <Text variant="eyebrow" color="blue600">
+            01.09.22 – 01.12.22
+          </Text>
+        </Inline>
+        <Box paddingY={1}>
+          <Divider />
+        </Box>
+        {children}
       </Box>
-      <Box display="flex" flexDirection="row" alignItems="center" paddingY={1}>
-        <Text as="p" variant="eyebrow" color="blue600">
-          {card.eyebrows[0]}
-        </Text>
-        <div
-          style={{
-            marginLeft: 8,
-            marginRight: 8,
-            height: 16,
-            border: '1px solid #ccdfff',
-          }}
-        />
-        <Text as="p" variant="eyebrow" color="blue600">
-          {card.eyebrows[1]}
-        </Text>
-      </Box>
-      <Box
-        style={{ height: showAttachment ? '25px' : '90px', overflow: 'hidden' }}
-        paddingBottom={2}
-      >
-        <Text as="h4" fontWeight="semiBold">
-          {card.title}
-        </Text>
-      </Box>
-
-      <Box display="flex" flexDirection="row" alignItems="center">
-        <Text variant="eyebrow" color="dark400">
-          Umsagnartímabil:
-        </Text>
-        <Text variant="eyebrow" color="blue600" marginY={1}>
-          01.09.22 – 01.12.22
-        </Text>
-      </Box>
-      <Box paddingY={1}>
-        <Divider />
-      </Box>
-      {children}
-      <Columns>
-        {showAttachment && (
-          <Column width="content">
-            <Box marginBottom={10}>{dropdown}</Box>
-          </Column>
-        )}
-        <Column width="content">
-          <Box
-            marginLeft={showAttachment ? 20 : 0}
-            marginTop={showAttachment ? 1 : 0}
-          >
-            <ArrowLink href={`/mal/${card.id}`}>Skoða mál</ArrowLink>
-          </Box>
-        </Column>
-      </Columns>
+      <Inline space={1} justifyContent="spaceBetween" alignY="center">
+        {showAttachment && <Box>{dropdown}</Box>}
+        <Box>
+          <ArrowLink href={`/mal/${card.id}`}>Skoða mál</ArrowLink>
+        </Box>
+      </Inline>
     </Box>
   )
 }

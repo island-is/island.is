@@ -182,10 +182,12 @@ const CaseQuery = gql`
         modified
         vehicleRegistrationNumber
         offenses
+        substances
         lawsBroken
         incidentDescription
         legalArguments
       }
+      requestDriversLicenseSuspension
     }
   }
 `
