@@ -9,7 +9,6 @@ export enum ApplicationTypes {
   CHILDREN_RESIDENCE_CHANGE = 'ChildrenResidenceChange',
   DATA_PROTECTION_AUTHORITY_COMPLAINT = 'DataProtectionAuthorityComplaint',
   LOGIN_SERVICE = 'LoginService',
-  INHERITANCE_REPORT = 'InheritanceReport',
   INSTITUTION_COLLABORATION = 'InstitutionCollaboration',
   FUNDING_GOVERNMENT_PROJECTS = 'FundingGovernmentProjects',
   PUBLIC_DEBT_PAYMENT_PLAN = 'PublicDebtPaymentPlan',
@@ -42,6 +41,7 @@ export enum ApplicationTypes {
   TRANSFER_OF_VEHICLE_OWNERSHIP = 'TransferOfVehicleOwnership',
   DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR = 'DrivingLicenseBookUpdateInstructor',
   ALCOHOL_TAX_REDEMPTION = 'AlcoholTaxRedemption',
+  EUROPEAN_HEALTH_INSURANCE_CARD = 'EuropeanHealthInsuranceCard',
 }
 
 export const ApplicationConfigurations = {
@@ -85,13 +85,13 @@ export const ApplicationConfigurations = {
     slug: 'innskraningarthjonusta',
     translation: 'ls.application',
   },
-  [ApplicationTypes.INHERITANCE_REPORT]: {
-    slug: 'erfdafjarskyrsla',
-    translation: 'ir.application',
-  },
   [ApplicationTypes.INSTITUTION_COLLABORATION]: {
     slug: 'samstarf',
     translation: 'ia.application',
+  },
+  [ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD]: {
+    slug: 'sjukrakort',
+    translation: 'ehic.application',
   },
   [ApplicationTypes.FUNDING_GOVERNMENT_PROJECTS]: {
     slug: 'fjarmognun-rikisverkefni',
@@ -110,8 +110,8 @@ export const ApplicationConfigurations = {
     translation: 'an.application',
   },
   [ApplicationTypes.GENERAL_PETITION]: {
-    slug: 'undirskriftalisti',
-    translation: 'gpl.application',
+    slug: 'medmaelendalisti',
+    translation: 'gpt.application',
   },
   [ApplicationTypes.GENERAL_FISHING_LICENSE]: {
     slug: 'veidileyfi',
@@ -140,10 +140,6 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.EXAMPLE_PAYMENT]: {
     slug: 'greida',
     translation: 'ep.application',
-  },
-  [ApplicationTypes.ESTATE]: {
-    slug: 'danarbu',
-    translation: 'es.application',
   },
   [ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION]: {
     slug: 'okuskoli',

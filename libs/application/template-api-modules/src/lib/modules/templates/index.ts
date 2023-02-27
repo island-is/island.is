@@ -74,6 +74,10 @@ import { OrderVehicleRegistrationCertificateModule } from './transport-authority
 import { OrderVehicleRegistrationCertificateService } from './transport-authority/order-vehicle-registration-certificate/order-vehicle-registration-certificate.service'
 import { TransferOfVehicleOwnershipModule } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.module'
 import { TransferOfVehicleOwnershipService } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.service'
+import {
+  EuropeanHealthInsuranceCardModule,
+  EuropeanHealthInsuranceCardService,
+} from './european-health-insurance-card'
 import { DrivingLicenseBookUpdateInstructorModule } from './driving-license-book-update-instructor/driving-license-book-update-instructor.module'
 import { DrivingLicenseBookUpdateInstructorService } from './driving-license-book-update-instructor/driving-license-book-update-instructor.service'
 
@@ -121,6 +125,8 @@ export const modules = [
   OrderVehicleLicensePlateModule,
   OrderVehicleRegistrationCertificateModule,
   TransferOfVehicleOwnershipModule,
+  EstateTemplateModule,
+  EuropeanHealthInsuranceCardModule,
   DrivingLicenseBookUpdateInstructorModule,
 ]
 
@@ -165,5 +171,7 @@ export const services = [
   OrderVehicleLicensePlateService,
   OrderVehicleRegistrationCertificateService,
   TransferOfVehicleOwnershipService,
+  EstateTemplateService,
+  EuropeanHealthInsuranceCardService,
   DrivingLicenseBookUpdateInstructorService,
 ]
