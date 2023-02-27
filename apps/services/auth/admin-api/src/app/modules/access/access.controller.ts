@@ -16,6 +16,7 @@ import {
   Put,
   Query,
   UseGuards,
+  VERSION_NEUTRAL,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
@@ -39,7 +40,7 @@ const namespace = `${environment.audit.defaultNamespace}/access`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('api-access')
-@Controller('backend/api-access')
+@Controller({ path: 'backend/api-access', version: [VERSION_NEUTRAL, '1'] })
 @Audit({ namespace })
 export class AccessController {
   constructor(

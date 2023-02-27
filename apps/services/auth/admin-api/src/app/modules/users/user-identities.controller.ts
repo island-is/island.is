@@ -12,6 +12,7 @@ import {
   Param,
   Patch,
   UseGuards,
+  VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
@@ -23,7 +24,10 @@ const namespace = `${environment.audit.defaultNamespace}/user-identities`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('user-identities')
-@Controller('backend/user-identities')
+@Controller({
+  path: 'backend/user-identities',
+  version: [VERSION_NEUTRAL, '1'],
+})
 @Audit({ namespace })
 export class UserIdentitiesController {
   constructor(private readonly userIdentityService: UserIdentitiesService) {}

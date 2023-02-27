@@ -19,6 +19,7 @@ import {
   Inject,
   Query,
   forwardRef,
+  VERSION_NEUTRAL,
 } from '@nestjs/common'
 import {
   ApiOperation,
@@ -42,7 +43,10 @@ const namespace = `${environment.audit.defaultNamespace}/personal-representative
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('personal-representative')
-@Controller('backend/personal-representative')
+@Controller({
+  path: 'backend/personal-representative',
+  version: [VERSION_NEUTRAL, '1'],
+})
 @Audit({ namespace })
 export class PersonalRepresentativeController {
   constructor(

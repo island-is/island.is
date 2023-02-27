@@ -11,6 +11,7 @@ import {
   Param,
   Post,
   UseGuards,
+  VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 import type { User } from '@island.is/auth-nest-tools'
@@ -28,7 +29,10 @@ const namespace = `${environment.audit.defaultNamespace}/client-post-logout-redi
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('client-post-logout-redirect-uri')
-@Controller('backend/client-post-logout-redirect-uri')
+@Controller({
+  path: 'backend/client-post-logout-redirect-uri',
+  version: [VERSION_NEUTRAL, '1'],
+})
 @Audit({ namespace })
 export class ClientPostLogoutRedirectUriController {
   constructor(

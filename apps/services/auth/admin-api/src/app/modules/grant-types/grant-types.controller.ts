@@ -10,6 +10,7 @@ import {
   UseGuards,
   Delete,
   Body,
+  VERSION_NEUTRAL,
 } from '@nestjs/common'
 import {
   ApiOkResponse,
@@ -38,7 +39,7 @@ const namespace = `${environment.audit.defaultNamespace}/grant-type`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('grants')
-@Controller('backend/grants')
+@Controller({ path: 'backend/grants', version: [VERSION_NEUTRAL, '1'] })
 @Audit({ namespace })
 export class GrantTypeController {
   constructor(

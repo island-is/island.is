@@ -14,6 +14,7 @@ import {
   Param,
   Post,
   UseGuards,
+  VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import type { User } from '@island.is/auth-nest-tools'
@@ -31,7 +32,10 @@ const namespace = `${environment.audit.defaultNamespace}/idp-restriction`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('idp-restriction')
-@Controller('backend/idp-restriction')
+@Controller({
+  path: 'backend/idp-restriction',
+  version: [VERSION_NEUTRAL, '1'],
+})
 @Audit({ namespace })
 export class IdpRestrictionController {
   constructor(

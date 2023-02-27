@@ -31,6 +31,7 @@ import {
   Put,
   Query,
   UseGuards,
+  VERSION_NEUTRAL,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
@@ -54,7 +55,7 @@ const namespace = `${environment.audit.defaultNamespace}/resources`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('resources')
-@Controller('backend')
+@Controller({ path: 'backend', version: [VERSION_NEUTRAL, '1'] })
 @Audit({ namespace })
 export class ResourcesController {
   constructor(

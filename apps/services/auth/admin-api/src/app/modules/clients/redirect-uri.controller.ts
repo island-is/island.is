@@ -11,6 +11,7 @@ import {
   Param,
   Post,
   UseGuards,
+  VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 import type { User } from '@island.is/auth-nest-tools'
@@ -28,7 +29,7 @@ const namespace = `${environment.audit.defaultNamespace}/redirect-uri`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('redirect-uri')
-@Controller('backend/redirect-uri')
+@Controller({ path: 'backend/redirect-uri', version: [VERSION_NEUTRAL, '1'] })
 @Audit({ namespace })
 export class RedirectUriController {
   constructor(

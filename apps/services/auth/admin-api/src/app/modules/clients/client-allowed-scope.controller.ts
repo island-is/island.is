@@ -14,6 +14,7 @@ import {
   Param,
   Post,
   UseGuards,
+  VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 import type { User } from '@island.is/auth-nest-tools'
@@ -31,7 +32,10 @@ const namespace = `${environment.audit.defaultNamespace}/client-allowed-scope`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('client-allowed-scope')
-@Controller('backend/client-allowed-scope')
+@Controller({
+  path: 'backend/client-allowed-scope',
+  version: [VERSION_NEUTRAL, '1'],
+})
 @Audit({ namespace })
 export class ClientAllowedScopeController {
   constructor(

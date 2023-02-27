@@ -11,6 +11,7 @@ import {
   Param,
   Post,
   UseGuards,
+  VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 import type { User } from '@island.is/auth-nest-tools'
@@ -28,7 +29,10 @@ const namespace = `${environment.audit.defaultNamespace}/client-grant-type`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('client-grant-type')
-@Controller('backend/client-grant-type')
+@Controller({
+  path: 'backend/client-grant-type',
+  version: [VERSION_NEUTRAL, '1'],
+})
 @Audit({ namespace })
 export class ClientGrantTypeController {
   constructor(
