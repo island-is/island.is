@@ -145,7 +145,6 @@ export class DrivingLicenseService {
   ): Promise<ApplicationEligibility> {
     const license = await this.getDrivingLicense(nationalId)
     const residenceHistory = await this.nationalRegistryXRoadService.getNationalRegistryResidenceHistory(
-      user,
       nationalId,
     )
 
