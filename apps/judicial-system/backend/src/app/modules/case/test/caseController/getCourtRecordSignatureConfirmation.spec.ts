@@ -1,4 +1,5 @@
 import { uuid } from 'uuidv4'
+import { Transaction } from 'sequelize/types'
 import each from 'jest-each'
 
 import { ForbiddenException } from '@nestjs/common'
@@ -24,18 +25,26 @@ type GivenWhenThen = (
 
 describe('CaseController - Get court record signature confirmation', () => {
   let mockAwsS3Service: AwsS3Service
+  let transaction: Transaction
   let mockCaseModel: typeof Case
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
       awsS3Service,
+      sequelize,
       caseModel,
       caseController,
     } = await createTestingCaseModule()
 
     mockAwsS3Service = awsS3Service
     mockCaseModel = caseModel
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     givenWhenThen = async (
       caseId: string,
@@ -75,22 +84,8 @@ describe('CaseController - Get court record signature confirmation', () => {
     beforeEach(() => {
       const mockPutObject = mockAwsS3Service.putObject as jest.Mock
       mockPutObject.mockResolvedValueOnce(Promise.resolve())
-    })
-
-    describe('database update', () => {
-      beforeEach(async () => {
-        await givenWhenThen(caseId, user, theCase, documentToken)
-      })
-
-      it('should set the court record signatory and signature date', () => {
-        expect(mockCaseModel.update).toHaveBeenCalledWith(
-          {
-            courtRecordSignatoryId: userId,
-            courtRecordSignatureDate: expect.any(Date),
-          },
-          { where: { id: caseId } },
-        )
-      })
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(theCase)
     })
 
     describe('successful completion', () => {
@@ -101,6 +96,16 @@ describe('CaseController - Get court record signature confirmation', () => {
         mockUpdate.mockResolvedValueOnce([1, [theCase]])
 
         then = await givenWhenThen(caseId, user, theCase, documentToken)
+      })
+
+      it('should set the court record signatory and signature date', () => {
+        expect(mockCaseModel.update).toHaveBeenCalledWith(
+          {
+            courtRecordSignatoryId: userId,
+            courtRecordSignatureDate: expect.any(Date),
+          },
+          { where: { id: caseId }, transaction },
+        )
       })
 
       it('should return success', () => {

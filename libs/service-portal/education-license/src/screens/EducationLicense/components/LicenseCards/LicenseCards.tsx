@@ -4,16 +4,9 @@ import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 
 import { Query, Mutation, EducationLicense } from '@island.is/api/schema'
-import {
-  Box,
-  Button,
-  SkeletonLoader,
-  ModalBase,
-  Stack,
-  Text,
-  ActionCard,
-} from '@island.is/island-ui/core'
-import { EmptyState, m } from '@island.is/service-portal/core'
+import { Box, Button, ModalBase, Stack, Text } from '@island.is/island-ui/core'
+import { CardLoader, EmptyState, m } from '@island.is/service-portal/core'
+import { ActionCard } from '@island.is/service-portal/core'
 
 import * as styles from './LicenseCards.css'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -71,7 +64,7 @@ const LicenseCards = () => {
   }
 
   if (queryLoading) {
-    return <SkeletonLoader width="100%" height={158} />
+    return <CardLoader />
   }
 
   return (

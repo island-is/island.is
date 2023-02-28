@@ -1,6 +1,14 @@
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
 
+export const draftProgressMeter = style({
+  ...themeUtils.responsiveStyle({
+    md: {
+      maxWidth: '60%',
+    },
+  }),
+})
+
 export const progressMeter = style({
   ...themeUtils.responsiveStyle({
     md: {

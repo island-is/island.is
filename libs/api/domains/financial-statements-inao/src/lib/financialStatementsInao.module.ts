@@ -1,21 +1,26 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@island.is/nest/config'
+import {
+  FinancialStatementsInaoClientConfig,
+  FinancialStatementsInaoClientModule,
+  FinancialStatementsInaoClientService,
+} from '@island.is/clients/financial-statements-inao'
 
-import { DataverseClient } from './client/dataverseClient'
-import { dataverseClientConfig } from './client/dataverseClient.config'
 import { FinancialStatementsInaoResolver } from './financialStatementsInao.resolver'
 import { FinancialStatementsInaoService } from './financialStatementsInao.service'
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [dataverseClientConfig],
+      load: [FinancialStatementsInaoClientConfig],
     }),
+    FinancialStatementsInaoClientModule,
   ],
   providers: [
     FinancialStatementsInaoResolver,
     FinancialStatementsInaoService,
-    DataverseClient,
+    FinancialStatementsInaoClientService,
   ],
+  exports: [FinancialStatementsInaoService],
 })
 export class FinancialStatementsInaoModule {}

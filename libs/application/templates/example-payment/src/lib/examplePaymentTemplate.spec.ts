@@ -1,6 +1,6 @@
 import { ApplicationTemplateHelper } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
-import { createApplication } from '@island.is/testing/fixtures'
+import { createApplication } from '@island.is/application/testing'
 import { States } from './constants'
 import ExamplePaymentTemplate from './examplePaymentTemplate'
 

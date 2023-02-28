@@ -2,12 +2,15 @@ import React, { FC } from 'react'
 import cn from 'classnames'
 import { useLocale } from '@island.is/localization'
 import { formatText, coreMessages } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
-import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
+import { Application, YES } from '@island.is/application/types'
+import { Box, Button, Icon, Tag, Text } from '@island.is/island-ui/core'
+import { parentalLeaveFormMessages } from '../../../lib/messages'
 
 import * as styles from './ReviewSection.css'
+import { getApplicationAnswers } from '../../../lib/parentalLeaveUtils'
 
 export enum ReviewSectionState {
+  prerequisites = 'Prerequisites',
   inProgress = 'In progress',
   requiresAction = 'Requires action',
   complete = 'Complete',
@@ -19,6 +22,7 @@ type ReviewSectionProps = {
   title: string
   description: string
   state?: ReviewSectionState
+  notifyParentOnClickEvent?: () => void
 }
 
 const ReviewSection: FC<ReviewSectionProps> = ({
@@ -27,8 +31,12 @@ const ReviewSection: FC<ReviewSectionProps> = ({
   title,
   description,
   state,
+  notifyParentOnClickEvent,
 }) => {
   const { formatMessage } = useLocale()
+  const { hasAppliedForReidenceGrant } = getApplicationAnswers(
+    application.answers,
+  )
 
   return (
     <Box
@@ -51,6 +59,8 @@ const ReviewSection: FC<ReviewSectionProps> = ({
           [styles.sectionNumberRequiresAction]:
             state === ReviewSectionState.requiresAction,
           [styles.sectionNumberComplete]: state === ReviewSectionState.complete,
+          [styles.sectionNumberPrerequisites]:
+            state === ReviewSectionState.prerequisites,
         })}
       >
         {(state === ReviewSectionState.complete && (
@@ -65,16 +75,35 @@ const ReviewSection: FC<ReviewSectionProps> = ({
         flexDirection={['columnReverse', 'row']}
         justifyContent="spaceBetween"
       >
-        <Box marginTop={[1, 0, 0]} paddingRight={[0, 1, 1]}>
+        <Box marginTop={[1, 0, 0]} paddingRight={[0, 1, 1]} width="full">
           <Text variant="h3">{title}</Text>
           <Text marginTop={1} variant="default">
             {description}
           </Text>
+          {notifyParentOnClickEvent &&
+            title.toLowerCase() === 'dvalarstyrkur' &&
+            hasAppliedForReidenceGrant !== YES && (
+              <Box display={'flex'} justifyContent={'flexEnd'} marginTop={1}>
+                <Box>
+                  <Button
+                    variant="text"
+                    size="small"
+                    icon="arrowForward"
+                    onClick={() => notifyParentOnClickEvent()}
+                  >
+                    {formatMessage(
+                      parentalLeaveFormMessages.residenceGrantMessage
+                        .residenceGrantApplyTitle,
+                    )}
+                  </Button>
+                </Box>
+              </Box>
+            )}
         </Box>
 
         {state === ReviewSectionState.inProgress && (
           <Box pointerEvents="none">
-            <Tag variant="blue">
+            <Tag variant="blue" truncate>
               {formatText(
                 coreMessages.tagsInProgress,
                 application,
@@ -85,7 +114,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
         )}
         {state === ReviewSectionState.requiresAction && (
           <Box pointerEvents="none">
-            <Tag variant="red">
+            <Tag variant="red" truncate>
               {formatText(
                 coreMessages.tagsRequiresAction,
                 application,

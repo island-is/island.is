@@ -13,6 +13,7 @@ import {
   CREATE_PK_PASS_QR_CODE,
   CREATE_PK_PASS,
   useUserProfile,
+  GenericLicenseType,
 } from '@island.is/service-portal/graphql'
 import { m } from '../../lib/messages'
 import QRCodeModal from './QRCodeModal'
@@ -20,10 +21,15 @@ import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
 
 type PkPassProps = {
-  expireDate: string
+  licenseType: string
+  expireDate?: string
   textButton?: boolean
 }
-export const PkPass = ({ expireDate, textButton = false }: PkPassProps) => {
+export const PkPass = ({
+  licenseType,
+  expireDate,
+  textButton = false,
+}: PkPassProps) => {
   const [pkpassQRCode, setPkpassQRCode] = useState<string | null>(null)
   const [pkpassUrl, setPkpassUrl] = useState<string | null>(null)
   const [generatePkPass] = useMutation(CREATE_PK_PASS)
@@ -40,11 +46,11 @@ export const PkPass = ({ expireDate, textButton = false }: PkPassProps) => {
   const { width } = useWindowSize()
   const timeFetched = new Date() // Used to compare if license is expired
 
+  const isDriversLicense = licenseType === GenericLicenseType.DriversLicense
+
   const toggleModal = () => {
     setModalOpen(!modalOpen)
   }
-
-  const licenseType = 'DriversLicense'
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
@@ -92,7 +98,7 @@ export const PkPass = ({ expireDate, textButton = false }: PkPassProps) => {
 
   return (
     <>
-      {!isMobile && (
+      {!isMobile && isDriversLicense && (
         <>
           <Button
             colorScheme="default"
@@ -131,7 +137,7 @@ export const PkPass = ({ expireDate, textButton = false }: PkPassProps) => {
         </>
       )}
 
-      {isMobile && (
+      {(isMobile || !isDriversLicense) && (
         <Box>
           <Button
             variant="utility"

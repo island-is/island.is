@@ -2,18 +2,10 @@ import * as kennitala from 'kennitala'
 import some from 'lodash/some'
 import { Injectable, ForbiddenException } from '@nestjs/common'
 
-import {
-  FamilyMember,
-  FamilyChild,
-  User,
-  Gender,
-  MaritalStatus,
-  FamilyRelation,
-} from './types'
-import {
-  NationalRegistryApi,
-  ISLFjolskyldan,
-} from '@island.is/clients/national-registry-v1'
+import { FamilyMember, FamilyChild, User, Gender, MaritalStatus } from './types'
+import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
+import { FamilyCorrectionInput } from './dto/FamilyCorrectionInput.input'
+import { FamilyCorrectionResponse } from './graphql/models/familyCorrection.model'
 
 @Injectable()
 export class NationalRegistryService {
@@ -38,8 +30,8 @@ export class NationalRegistryService {
         startDate: user.BannmerkingBreytt,
       },
       citizenship: {
-        code: user.Rikisfang,
-        name: user.RikisfangLand,
+        code: user.Rikisfang ?? '',
+        name: user.RikisfangLand ?? '',
       },
       address: {
         code: user.LoghHusk,
@@ -77,8 +69,6 @@ export class NationalRegistryService {
             fullName: familyMember.Nafn,
             nationalId: familyMember.Kennitala,
             gender: this.formatGender(familyMember.Kyn),
-
-            familyRelation: this.getFamilyRelation(familyMember),
           } as FamilyMember),
       )
       .sort((a, b) => {
@@ -181,6 +171,37 @@ export class NationalRegistryService {
     return members
   }
 
+  async postUserCorrection(
+    input: FamilyCorrectionInput,
+    nationalId: User['nationalId'],
+  ): Promise<FamilyCorrectionResponse> {
+    const userChildren = await this.nationalRegistryApi.getMyChildren(
+      nationalId,
+    )
+    const isAllowed = some(userChildren, ['Barn', input.nationalIdChild])
+
+    /**
+     * Only show data if child SSN is part of user's family.
+     */
+    if (!isAllowed) {
+      throw new ForbiddenException('Child not found')
+    }
+
+    const user = await this.getUser(nationalId)
+
+    const correctionInput = {
+      ...input,
+      name: user.fullName,
+      nationalId: nationalId,
+    }
+
+    const userCorrectionResponse = await this.nationalRegistryApi.postUserCorrection(
+      correctionInput,
+    )
+
+    return userCorrectionResponse
+  }
+
   private formatGender(genderIndex: string): Gender {
     switch (genderIndex) {
       case '1':
@@ -225,25 +246,5 @@ export class NationalRegistryService {
       default:
         return MaritalStatus.UNMARRIED
     }
-  }
-
-  private getFamilyRelation(person: ISLFjolskyldan): FamilyRelation {
-    if (this.isChild(person)) {
-      return FamilyRelation.CHILD
-    }
-    return FamilyRelation.SPOUSE
-  }
-
-  private isParent(person: ISLFjolskyldan): boolean {
-    return ['1', '2'].includes(person.Kyn)
-  }
-
-  private isChild(person: ISLFjolskyldan): boolean {
-    const ADULT_AGE_LIMIT = 18
-
-    return (
-      !this.isParent(person) &&
-      kennitala.info(person.Kennitala).age < ADULT_AGE_LIMIT
-    )
   }
 }

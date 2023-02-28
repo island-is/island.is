@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   PieChart,
   Pie,
@@ -8,13 +7,16 @@ import {
   TooltipProps,
   Legend,
 } from 'recharts'
-import * as styles from './SimplePieChart.css'
 import cn from 'classnames'
 import {
   COLORS,
   RenderLegend,
   renderCustomizedLabel,
 } from '../sharedChartComponents'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import { theme } from '@island.is/island-ui/theme'
+
+import * as styles from './SimplePieChart.css'
 
 interface CustomTooltipProps extends TooltipProps<string, number> {
   sum: number
@@ -37,6 +39,15 @@ const CustomTooltip = (props: CustomTooltipProps) => {
   return null
 }
 
+const getOuterRadius = (width: number) => {
+  if (width < theme.breakpoints.sm) {
+    return 60
+  } else if (width < theme.breakpoints.lg) {
+    return 100
+  }
+  return 120
+}
+
 interface GraphDataProps {
   data: string
   datakeys: string
@@ -49,6 +60,8 @@ export const SimplePieChart = ({ graphData }: GraphProps) => {
   const { data, datakeys } = graphData
   const parsedData = JSON.parse(data)
   const { datakey, legendOn } = JSON.parse(datakeys)
+
+  const { width } = useWindowSize()
 
   const sum = parsedData.reduce((sum, item) => sum + item[datakey], 0)
   return (
@@ -63,7 +76,7 @@ export const SimplePieChart = ({ graphData }: GraphProps) => {
           label={renderCustomizedLabel}
           cx="50%"
           cy="50%"
-          outerRadius={136}
+          outerRadius={getOuterRadius(width)}
           startAngle={90}
           endAngle={-270}
         >

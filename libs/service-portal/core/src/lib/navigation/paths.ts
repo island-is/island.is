@@ -7,6 +7,9 @@ export enum ServicePortalPath {
 
   // Applications
   ApplicationRoot = '/umsoknir',
+  ApplicationIncompleteApplications = '/umsoknir/oklaradar-umsoknir',
+  ApplicationCompleteApplications = '/umsoknir/klaradar-umsoknir',
+  ApplicationInProgressApplications = '/umsoknir/i-vinnslu',
   ApplicationNewApplication = '/umsoknir/ny-umsokn',
   ApplicationOpenApplications = '/umsoknir/opnar-umsoknir',
   ApplicationPrescription = '/umsoknir/lyfsedlar',
@@ -14,10 +17,18 @@ export enum ServicePortalPath {
 
   // Settings
   SettingsRoot = '/stillingar',
-
   SettingsAccessControl = '/stillingar/adgangsstyring',
   SettingsAccessControlGrant = '/stillingar/adgangsstyring/veita',
   SettingsAccessControlAccess = '/stillingar/adgangsstyring/:delegationId',
+
+  // Access Control
+  AccessControlDelegationsGrant = '/adgangsstyring/umbod/veita',
+  // Access Control - Outgoing delegations, i.e. from me
+  AccessControlDelegations = '/adgangsstyring/umbod',
+  AccessControlDelegationAccess = '/adgangsstyring/umbod/:delegationId',
+  // Access Control - Incoming delegations, i.e. to me
+  AccessControlDelegationsIncoming = '/adgangsstyring/umbod-til-min',
+
   SettingsPersonalInformation = '/stillingar/minar-stillingar',
   SettingsPersonalInformationEditPhoneNumber = '/stillingar/minar-stillingar/breyta-simanumeri',
   SettingsPersonalInformationEditEmail = '/stillingar/minar-stillingar/breyta-netfangi',
@@ -29,20 +40,19 @@ export enum ServicePortalPath {
   SettingsIslykill = '/stillingar/islykill',
 
   // Family
-  FamilyRoot = '/min-gogn/fjolskyldan',
-  Child = '/min-gogn/fjolskyldan/barn/:nationalId',
-  FamilyMember = '/min-gogn/fjolskyldan/:nationalId',
-  Spouse = '/min-gogn/fjolskyldan/maki/:nationalId',
+  Child = '/min-gogn/barn/:nationalId',
+  FamilyMember = '/min-gogn/:nationalId',
+  Spouse = '/min-gogn/maki/:nationalId',
   MyInfoRoot = '/min-gogn',
   UserInfo = '/min-gogn/minar-upplysingar',
   Endorsements = '/min-gogn/medmaeli',
   Company = '/fyrirtaeki',
 
   // General Petitions
-  Petitions = '/min-gogn/medmaeli',
-  PetitionsAdminView = '/min-gogn/medmaeli-admin',
-  PetitionList = '/min-gogn/medmaeli/:listId',
-  PetitionListAdmin = '/min-gogn/medmaeli-admin/:listId',
+  Petitions = '/medmaeli',
+  PetitionsAdminView = '/medmaeli-admin',
+  PetitionList = '/medmaeli/:listId',
+  PetitionListAdmin = '/medmaeli-admin/:listId',
 
   RealEstateExternal = 'https://minarsidur.island.is/minar-sidur/min-gogn/fasteignir',
 
@@ -82,6 +92,7 @@ export enum ServicePortalPath {
   AssetsVehiclesDetail = '/okutaeki/min-okutaeki/:id',
   AssetsVehiclesLookup = '/okutaeki/leit',
   AssetsVehiclesHistory = '/okutaeki/okutaekjaferill',
+  AssetsVehiclesDrivingLessons = '/okutaeki/okunam',
 
   // Messages
   MessagesRoot = '/skilabod',
@@ -95,22 +106,9 @@ export enum ServicePortalPath {
 
   // Licenses service
   LicensesRoot = '/skirteini',
-  LicensesDriving = '/skirteini/okuskirteini',
-  LicensesDrivingDetail = '/skirteini/okuskirteini/:id',
-  // DocumentProvider
-  // Temporary change to the value of DocumentProviderRoot; skjalaveita -> skjalaveitur. In the first
-  // release there will only be a limited number of features and this change creates a better UX in
-  // that scenario.
-  DocumentProviderRoot = '/skjalaveitur', // Breytt path
-  DocumentProviderDocumentProvidersSingle = '/skjalaveitur/:nationalId',
-  // DocumentProviderDocumentProviders = '/skjalaveita/skjalaveitendur',
-  // DocumentProviderMyCategories = '/skjalaveita/minir-flokkar',
-  // DocumentProviderSettingsRoot = '/skjalaveita/skjalaveita-stillingar',
-  // DocumentProviderSettingsEditInstituion = '/skjalaveita/skjalaveita-stillingar/breyta-stofnun',
-  // DocumentProviderSettingsEditResponsibleContact = '/skjalaveita/skjalaveita-stillingar/breyta-abyrgdarmanni',
-  // DocumentProviderSettingsEditTechnicalContact = '/skjalaveita/skjalaveita-stillingar/breyta-taeknilegum-tengilid',
-  // DocumentProviderSettingsEditUserHelpContact = '/skjalaveita/skjalaveita-stillingar/breyta-notendaadstod',
-  // DocumentProviderSettingsEditEndpoints = '/skjalaveita/skjalaveita-stillingar/breyta-endapunkt',
-  // DocumentProviderTechnicalInfo = '/skjalaveita/taeknilegar-upplysingar',
-  // DocumentProviderStatistics = '/skjalaveita/tolfraedi',
+  LicensesPassportDetail = '/skirteini/tjodskra/vegabref/:id',
+  LicensesDetail = '/skirteini/:provider/:type',
+
+  // Air Discount
+  AirDiscountRoot = '/loftbru',
 }

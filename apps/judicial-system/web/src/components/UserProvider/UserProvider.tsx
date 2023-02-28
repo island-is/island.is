@@ -1,8 +1,9 @@
-import type { User } from '@island.is/judicial-system/types'
 import { gql, useQuery } from '@apollo/client'
-import React, { createContext, useEffect, useState } from 'react'
-import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import Cookies from 'js-cookie'
+import React, { createContext, useEffect, useState } from 'react'
+
+import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
+import { User } from '@island.is/judicial-system-web/src/graphql/schema'
 
 interface UserProvider {
   isAuthenticated?: boolean
@@ -37,7 +38,10 @@ interface Props {
   authenticated?: boolean
 }
 
-const UserProvider: React.FC<Props> = ({ children, authenticated = false }) => {
+export const UserProvider: React.FC<Props> = ({
+  children,
+  authenticated = false,
+}) => {
   const [user, setUser] = useState<User>()
 
   const isAuthenticated =
@@ -62,5 +66,3 @@ const UserProvider: React.FC<Props> = ({ children, authenticated = false }) => {
     </UserContext.Provider>
   )
 }
-
-export default UserProvider

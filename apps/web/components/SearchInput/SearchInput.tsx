@@ -11,10 +11,7 @@ import Downshift from 'downshift'
 import { useMeasure } from 'react-use'
 import { useRouter } from 'next/router'
 import { useApolloClient } from '@apollo/client/react'
-import {
-  GET_SEARCH_RESULTS_QUERY,
-  GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
-} from '@island.is/web/screens/queries'
+import { GET_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
 import {
   AsyncSearchInput,
   AsyncSearchSizes,
@@ -28,8 +25,6 @@ import {
   GetSearchResultsQuery,
   QuerySearchResultsArgs,
   ContentLanguage,
-  QueryWebSearchAutocompleteArgs,
-  AutocompleteTermResultsQuery,
   Article,
   SubArticle,
   SearchableContentTypes,
@@ -40,6 +35,7 @@ import {
 import * as styles from './SearchInput.css'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { TestSupport } from '@island.is/island-ui/utils'
+import { trackSearchQuery } from '@island.is/plausible'
 
 const DEBOUNCE_TIMER = 150
 const STACK_WIDTH = 400
@@ -106,7 +102,6 @@ const useSearch = (
     }
 
     dispatch({ type: 'startLoading' })
-
     const thisTimerId = (timer.current = setTimeout(async () => {
       client
         .query<GetSearchResultsQuery, QuerySearchResultsArgs>({
@@ -120,6 +115,8 @@ const useSearch = (
                 SearchableContentTypes['WebSubArticle'],
                 SearchableContentTypes['WebProjectPage'],
               ],
+              highlightResults: true,
+              useQuery: 'suggestions',
             },
           },
         })
@@ -135,30 +132,6 @@ const useSearch = (
       const hasSpace = indexOfLastSpace !== -1
       const prefix = hasSpace ? term.slice(0, indexOfLastSpace) : ''
       const queryString = hasSpace ? term.slice(indexOfLastSpace) : term
-
-      client
-        .query<AutocompleteTermResultsQuery, QueryWebSearchAutocompleteArgs>({
-          query: GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
-          variables: {
-            input: {
-              singleTerm: queryString.trim(),
-              language: locale as ContentLanguage,
-              size: 10, // only show top X completions to prevent long list
-            },
-          },
-        })
-        .then(
-          ({
-            data: {
-              webSearchAutocomplete: { completions: suggestions },
-            },
-          }) => {
-            dispatch({
-              type: 'suggestions',
-              suggestions,
-            })
-          },
-        )
 
       dispatch({
         type: 'searchString',
@@ -378,6 +351,7 @@ export const SearchInput = forwardRef<
                     onRouting()
                   }
                 }}
+                highlightedResults={true}
               />
             )}
           </AsyncSearchInput>
@@ -395,6 +369,7 @@ type ResultsProps = {
   autosuggest: boolean
   onRouting?: () => void
   quickContentLabel?: string
+  highlightedResults?: boolean | false
 }
 
 const Results = ({
@@ -404,6 +379,7 @@ const Results = ({
   autosuggest,
   onRouting,
   quickContentLabel = 'Beint að efninu',
+  highlightedResults,
 }: ResultsProps) => {
   const { linkResolver } = useLinkResolver()
 
@@ -427,89 +403,59 @@ const Results = ({
       paddingY={2}
       paddingX={3}
     >
-      <div className={styles.menuRow}>
-        <Stack space={1}>
-          {search.suggestions &&
-            search.suggestions.map((suggestion, i) => {
-              const suggestionHasTerm = suggestion.startsWith(search.term)
-              const startOfString = suggestionHasTerm ? search.term : suggestion
-              const endOfString = suggestionHasTerm
-                ? suggestion.replace(search.term, '')
-                : ''
-              const { onClick, ...itemProps } = getItemProps({
-                item: {
-                  type: 'query',
-                  string: suggestion,
-                },
-              })
-              return (
-                <div
-                  key={suggestion}
-                  {...itemProps}
-                  className={styles.suggestion}
-                  onClick={(e) => {
-                    onClick(e)
-                    onRouting()
-                  }}
-                >
-                  <Text color={i === highlightedIndex ? 'blue400' : 'dark400'}>
-                    {`${search.prefix} ${startOfString}`}
-                    <strong>{endOfString}</strong>
-                  </Text>
-                </div>
-              )
-            })}
-        </Stack>
-      </div>{' '}
       {autosuggest && search.results && search.results.items.length > 0 && (
-        <>
-          <div className={styles.separatorHorizontal} />
-          <div className={styles.menuRow}>
-            <Stack space={2}>
-              <Text variant="eyebrow" color="purple400">
-                {quickContentLabel}
-              </Text>
-              {(search.results.items as Article[] &
-                LifeEventPage[] &
-                News[] &
-                SubArticle[])
-                .slice(0, 5)
-                .map((item, i) => {
-                  const { onClick, ...itemProps } = getItemProps({
-                    item: {
-                      type: 'link',
-                      string: linkResolver(
-                        item.__typename as LinkType,
-                        item.slug.split('/'),
-                      ).href,
-                    },
-                  })
-                  return (
-                    <Link
-                      key={item.id}
-                      {...itemProps}
-                      onClick={(e) => {
-                        onClick(e)
-                        onRouting()
-                      }}
-                      color="blue400"
-                      underline="normal"
-                      dataTestId="search-result"
-                      pureChildren
-                      underlineVisibility={
-                        search.suggestions.length + i === highlightedIndex
-                          ? 'always'
-                          : 'hover'
-                      }
-                      skipTab
-                    >
-                      {item.title}
-                    </Link>
-                  )
-                })}
-            </Stack>
-          </div>
-        </>
+        <div className={styles.menuRow}>
+          <Stack space={2}>
+            <Text variant="eyebrow" color="purple400">
+              {quickContentLabel}
+            </Text>
+            {(search.results.items as Article[] &
+              LifeEventPage[] &
+              News[] &
+              SubArticle[])
+              .slice(0, 5)
+              .map((item, i) => {
+                const { onClick, ...itemProps } = getItemProps({
+                  item: {
+                    type: 'link',
+                    string: linkResolver(
+                      item.__typename as LinkType,
+                      item.slug?.split('/'),
+                    )?.href,
+                  },
+                })
+                return (
+                  <Link
+                    key={item.id}
+                    {...itemProps}
+                    onClick={(e) => {
+                      trackSearchQuery(search.term, 'Web Suggestion')
+                      onClick(e)
+                      onRouting()
+                    }}
+                    color="blue400"
+                    underline="normal"
+                    dataTestId="search-result"
+                    pureChildren
+                    underlineVisibility={
+                      search.suggestions.length + i === highlightedIndex
+                        ? 'always'
+                        : 'hover'
+                    }
+                    skipTab
+                  >
+                    {highlightedResults ? (
+                      <span
+                        dangerouslySetInnerHTML={{ __html: item.title }}
+                      ></span>
+                    ) : (
+                      item.title
+                    )}
+                  </Link>
+                )
+              })}
+          </Stack>
+        </div>
       )}
     </Box>
   )

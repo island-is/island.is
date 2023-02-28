@@ -10,6 +10,7 @@ export enum ApplicationTypes {
   CHILDREN_RESIDENCE_CHANGE = 'ChildrenResidenceChange',
   DATA_PROTECTION_AUTHORITY_COMPLAINT = 'DataProtectionAuthorityComplaint',
   LOGIN_SERVICE = 'LoginService',
+  INHERITANCE_REPORT = 'InheritanceReport',
   INSTITUTION_COLLABORATION = 'InstitutionCollaboration',
   FUNDING_GOVERNMENT_PROJECTS = 'FundingGovernmentProjects',
   PUBLIC_DEBT_PAYMENT_PLAN = 'PublicDebtPaymentPlan',
@@ -25,8 +26,23 @@ export enum ApplicationTypes {
   EXAMPLE_PAYMENT = 'ExamplePayment',
   DRIVING_SCHOOL_CONFIRMATION = 'DrivingSchoolConfirmation',
   MORTGAGE_CERTIFICATE = 'MortgageCertificate',
+  MARRIAGE_CONDITIONS = 'MarriageConditions',
   NO_DEBT_CERTIFICATE = 'NoDebtCertificate',
   FINANCIAL_STATEMENTS_INAO = 'FinancialStatementsInao',
+  OPERATING_LCENSE = 'OperatingLicense',
+  ESTATE = 'Estate',
+  DRIVING_LICENSE_DUPLICATE = 'DrivingLicenseDuplicate',
+  ANONYMITY_IN_VEHICLE_REGISTRY = 'AnonymityInVehicleRegistry',
+  CHANGE_CO_OWNER_OF_VEHICLE = 'ChangeCoOwnerOfVehicle',
+  CHANGE_OPERATOR_OF_VEHICLE = 'ChangeOperatorOfVehicle',
+  DIGITAL_TACHOGRAPH_COMPANY_CARD = 'DigitalTachographCompanyCard',
+  DIGITAL_TACHOGRAPH_DRIVERS_CARD = 'DigitalTachographDriversCard',
+  DIGITAL_TACHOGRAPH_WORKSHOP_CARD = 'DigitalTachographWorkshopCard',
+  ORDER_VEHICLE_LICENSE_PLATE = 'OrderVehicleLicensePlate',
+  ORDER_VEHICLE_REGISTRATION_CERTIFICATE = 'OrderVehicleRegistrationCertificate',
+  TRANSFER_OF_VEHICLE_OWNERSHIP = 'TransferOfVehicleOwnership',
+  DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR = 'DrivingLicenseBookUpdateInstructor',
+  ALCOHOL_TAX_REDEMPTION = 'AlcoholTaxRedemption',
 }
 
 export const ApplicationConfigurations = {
@@ -74,6 +90,10 @@ export const ApplicationConfigurations = {
     slug: 'innskraningarthjonusta',
     translation: 'ls.application',
   },
+  [ApplicationTypes.INHERITANCE_REPORT]: {
+    slug: 'erfdafjarskyrsla',
+    translation: 'ir.application',
+  },
   [ApplicationTypes.INSTITUTION_COLLABORATION]: {
     slug: 'samstarf',
     translation: 'ia.application',
@@ -95,8 +115,8 @@ export const ApplicationConfigurations = {
     translation: 'an.application',
   },
   [ApplicationTypes.GENERAL_PETITION]: {
-    slug: 'medmaelendalisti',
-    translation: 'gpt.application',
+    slug: 'undirskriftalisti',
+    translation: 'gpl.application',
   },
   [ApplicationTypes.GENERAL_FISHING_LICENSE]: {
     slug: 'veidileyfi',
@@ -126,6 +146,10 @@ export const ApplicationConfigurations = {
     slug: 'greida',
     translation: 'ep.application',
   },
+  [ApplicationTypes.ESTATE]: {
+    slug: 'danarbu',
+    translation: 'es.application',
+  },
   [ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION]: {
     slug: 'okuskoli',
     translation: 'dsc.application',
@@ -134,6 +158,10 @@ export const ApplicationConfigurations = {
     slug: 'vedbokarvottord',
     translation: 'mc.application',
   },
+  [ApplicationTypes.MARRIAGE_CONDITIONS]: {
+    slug: 'hjonavigsla',
+    translation: 'mac.application',
+  },
   [ApplicationTypes.NO_DEBT_CERTIFICATE]: {
     slug: 'skuldleysisvottord',
     translation: 'ndc.application',
@@ -141,5 +169,57 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: {
     slug: 'skilarsreikninga',
     translation: 'fsn.application',
+  },
+  [ApplicationTypes.OPERATING_LCENSE]: {
+    slug: 'rekstrarleyfi',
+    translation: 'ol.application',
+  },
+  [ApplicationTypes.DRIVING_LICENSE_DUPLICATE]: {
+    slug: 'samrit',
+    translation: 'dld.application',
+  },
+  [ApplicationTypes.ANONYMITY_IN_VEHICLE_REGISTRY]: {
+    slug: 'nafnleynd-i-okutaekjaskra',
+    translation: 'ta.avr.application',
+  },
+  [ApplicationTypes.CHANGE_CO_OWNER_OF_VEHICLE]: {
+    slug: 'medeigandi-okutaekis',
+    translation: 'ta.ccov.application',
+  },
+  [ApplicationTypes.CHANGE_OPERATOR_OF_VEHICLE]: {
+    slug: 'umradamadur-okutaekis',
+    translation: 'ta.cov.application',
+  },
+  [ApplicationTypes.DIGITAL_TACHOGRAPH_COMPANY_CARD]: {
+    slug: 'okuritakort-fyrirtaekjakort',
+    translation: 'ta.dtcc.application',
+  },
+  [ApplicationTypes.DIGITAL_TACHOGRAPH_DRIVERS_CARD]: {
+    slug: 'okuritakort-okumannskort',
+    translation: 'ta.dtdc.application',
+  },
+  [ApplicationTypes.DIGITAL_TACHOGRAPH_WORKSHOP_CARD]: {
+    slug: 'okuritakort-verkstaediskort',
+    translation: 'ta.dtwc.application',
+  },
+  [ApplicationTypes.ORDER_VEHICLE_LICENSE_PLATE]: {
+    slug: 'panta-skraningarmerki',
+    translation: 'ta.ovlp.application',
+  },
+  [ApplicationTypes.ORDER_VEHICLE_REGISTRATION_CERTIFICATE]: {
+    slug: 'panta-skraningarskirteini',
+    translation: 'ta.ovrc.application',
+  },
+  [ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP]: {
+    slug: 'eigendaskipti-okutaekis',
+    translation: 'ta.tvo.application',
+  },
+  [ApplicationTypes.DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR]: {
+    slug: 'okunam-okukennari',
+    translation: 'dlbui.application',
+  },
+  [ApplicationTypes.ALCOHOL_TAX_REDEMPTION]: {
+    slug: 'afengisgjold',
+    translation: 'atr.application',
   },
 }

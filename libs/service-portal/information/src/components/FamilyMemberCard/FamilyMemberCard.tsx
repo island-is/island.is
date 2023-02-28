@@ -1,4 +1,3 @@
-import { ActionCard } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   formatNationalId,
@@ -6,7 +5,7 @@ import {
   m,
 } from '@island.is/service-portal/core'
 import React, { FC, useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { ActionCard } from '@island.is/service-portal/core'
 
 interface Props {
   title: string
@@ -23,7 +22,6 @@ export const FamilyMemberCard: FC<Props> = ({
 }) => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
-  const history = useHistory()
   const [familyRelationData, setFamilyRelationData] = useState<{
     label: string
     path: string
@@ -77,19 +75,17 @@ export const FamilyMemberCard: FC<Props> = ({
     }
   }
 
-  const handleClick = () =>
-    history.push({
-      pathname: currentUser
-        ? ServicePortalPath.UserInfo
-        : nationalId
-        ? familyRelationData?.path
-        : ServicePortalPath.UserInfo,
-    })
+  const getUrl = () => {
+    return currentUser
+      ? ServicePortalPath.UserInfo
+      : nationalId
+      ? familyRelationData?.path
+      : ServicePortalPath.UserInfo
+  }
   return (
     <ActionCard
-      avatar
+      image={{ type: 'avatar' }}
       heading={title}
-      headingVariant="h4"
       text={
         nationalId &&
         `${formatMessage(m.natreg)}: ${formatNationalId(nationalId)}`
@@ -108,7 +104,7 @@ export const FamilyMemberCard: FC<Props> = ({
           defaultMessage: 'Skoða nánar',
         }),
         variant: 'text',
-        onClick: () => handleClick(),
+        url: getUrl(),
       }}
     />
   )

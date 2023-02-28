@@ -17,5 +17,5 @@ npx sequelize db:migrate
 ## 3. Run local seed data
 
 ```
-yarn nx run services-auth-api:seed
+yarn nx run services-auth-ids-api:seed
 ```

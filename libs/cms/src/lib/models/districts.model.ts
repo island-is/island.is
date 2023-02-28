@@ -21,6 +21,9 @@ export class Districts {
 
   @Field(() => [Link])
   links?: Array<Link>
+
+  @Field(() => Boolean, { nullable: true })
+  hasBorderAbove?: boolean
 }
 
 export const mapDistricts = ({
@@ -33,4 +36,5 @@ export const mapDistricts = ({
   description: fields.description ?? '',
   image: fields.image ? mapImage(fields.image) : null,
   links: (fields.links ?? []).map(mapLink),
+  hasBorderAbove: fields.hasBorderAbove ?? true,
 })

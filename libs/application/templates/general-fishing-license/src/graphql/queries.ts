@@ -22,18 +22,6 @@ export const queryShips = `
         name
         chargeType
       }
-      doesNotFulfillFishingLicenses
-      unfulfilledLicenses {
-        fishingLicense {
-          code
-          name
-          chargeType
-        }
-        reasons {
-          description
-          directions
-        }
-      }
     }
   }
 `
@@ -50,6 +38,21 @@ export const queryFishingLicense = gql`
       reasons {
         description
         directions
+      }
+      attachmentInfo
+      dateRestriction {
+        dateFrom
+        dateTo
+      }
+      areas {
+        key
+        description
+        disabled
+        dateRestriction {
+          dateFrom
+          dateTo
+        }
+        invalidOption
       }
     }
   }

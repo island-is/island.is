@@ -1,5 +1,6 @@
 import React, { FC, useCallback, useEffect, useState } from 'react'
-import { useParams, useHistory, useLocation } from 'react-router-dom'
+
+import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import { useMutation } from '@apollo/client'
 import isEmpty from 'lodash/isEmpty'
 import {
@@ -27,10 +28,22 @@ import {
   findProblemInApolloError,
   ProblemType,
 } from '@island.is/shared/problem'
+import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
+import {
+  Application,
+  ApplicationContext,
+  ApplicationStateSchema,
+  ApplicationTemplate,
+} from '@island.is/application/types'
+import { EventObject } from 'xstate'
+
+type UseParams = {
+  slug: string
+}
 
 export const Applications: FC = () => {
-  const { slug } = useParams<{ slug: string }>()
-  const history = useHistory()
+  const { slug } = useParams() as UseParams
+  const navigate = useNavigate()
   const { formatMessage } = useLocale()
   const type = getTypeFromSlug(slug)
 
@@ -41,6 +54,14 @@ export const Applications: FC = () => {
   const [delegationsChecked, setDelegationsChecked] = useState(
     !!query.get('delegationChecked'),
   )
+  const [template, setTemplate] = useState<
+    | ApplicationTemplate<
+        ApplicationContext,
+        ApplicationStateSchema<EventObject>,
+        EventObject
+      >
+    | undefined
+  >(undefined)
   const checkDelegation = useCallback(() => {
     setDelegationsChecked((d) => !d)
   }, [])
@@ -63,7 +84,9 @@ export const Applications: FC = () => {
     CREATE_APPLICATION,
     {
       onCompleted({ createApplication }) {
-        history.push(`../${slug}/${createApplication.id}`)
+        if (slug) {
+          navigate(`../${slug}/${createApplication.id}`)
+        }
       },
     },
   )
@@ -77,6 +100,18 @@ export const Applications: FC = () => {
       },
     })
   }
+
+  useEffect(() => {
+    const getTemplate = async () => {
+      if (type && !template) {
+        const appliTemplate = await getApplicationTemplateByTypeId(type)
+        if (appliTemplate) {
+          setTemplate(appliTemplate)
+        }
+      }
+    }
+    getTemplate().catch(console.error)
+  }, [type, template])
 
   useEffect(() => {
     if (
@@ -93,11 +128,17 @@ export const Applications: FC = () => {
     return <ApplicationLoading />
   }
 
+  if (!template) {
+    return <ErrorShell errorType="notExist" />
+  }
+
   if (!type || applicationsError) {
     const foundError = findProblemInApolloError(applicationsError as any, [
       ProblemType.BAD_SUBJECT,
     ])
+
     if (
+      slug &&
       foundError?.type === ProblemType.BAD_SUBJECT &&
       type &&
       !delegationsChecked
@@ -110,14 +151,7 @@ export const Applications: FC = () => {
         />
       )
     }
-    return (
-      <ErrorShell
-        title={formatMessage(coreMessages.notFoundApplicationType)}
-        subTitle={formatMessage(coreMessages.notFoundApplicationTypeMessage, {
-          type,
-        })}
-      />
-    )
+    return <ErrorShell errorType="notExist" />
   }
 
   if (createError) {
@@ -127,13 +161,24 @@ export const Applications: FC = () => {
         subTitle={formatMessage(coreMessages.createErrorApplicationMessage, {
           type,
         })}
+        description=""
       />
     )
   }
 
-  if (!delegationsChecked && type) {
+  if (!delegationsChecked && type && slug) {
     return <DelegationsScreen checkDelegation={checkDelegation} slug={slug} />
   }
+
+  const numberOfApplicationsInDraft = data?.applicationApplications.filter(
+    (x: Application) => x.state === 'draft',
+  ).length
+
+  const shouldRenderNewApplicationButton =
+    template.allowMultipleApplicationsInDraft === undefined
+      ? true
+      : template.allowMultipleApplicationsInDraft ||
+        numberOfApplicationsInDraft < 1
 
   return (
     <Page>
@@ -150,20 +195,22 @@ export const Applications: FC = () => {
               <Text variant="h1">
                 {formatMessage(coreMessages.applications)}
               </Text>
-
-              <Box marginTop={[2, 0]}>
-                <Button onClick={createApplication}>
-                  {formatMessage(coreMessages.newApplication)}
-                </Button>
-              </Box>
+              {shouldRenderNewApplicationButton ? (
+                <Box marginTop={[2, 0]}>
+                  <Button
+                    onClick={createApplication}
+                    data-testid="create-new-application"
+                  >
+                    {formatMessage(coreMessages.newApplication)}
+                  </Button>
+                </Box>
+              ) : null}
             </Box>
 
             {data?.applicationApplications && (
               <ApplicationList
                 applications={data.applicationApplications}
-                onClick={(applicationUrl) =>
-                  history.push(`../${applicationUrl}`)
-                }
+                onClick={(applicationUrl) => navigate(`../${applicationUrl}`)}
                 refetch={refetch}
               />
             )}

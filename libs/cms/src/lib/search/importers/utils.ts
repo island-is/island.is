@@ -99,7 +99,14 @@ export const numberOfProcessEntries = (contentList: any[]) =>
 const pruneEntryHyperlink = (node: any) => {
   if (node?.data?.target?.fields) {
     for (const field of Object.keys(node.data.target.fields)) {
-      if (field !== 'slug' && field !== 'url') {
+      if (field === 'organizationPage') {
+        // Just in case there's an entry-hyperlink that needs an organization page in order to make the url
+        node.data.target.fields[field] = {
+          fields: {
+            slug: node.data.target.fields[field]?.fields?.slug,
+          },
+        }
+      } else if (field !== 'slug' && field !== 'url') {
         delete node.data.target.fields[field]
       }
     }

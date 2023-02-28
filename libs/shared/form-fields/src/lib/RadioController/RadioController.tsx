@@ -9,11 +9,12 @@ import {
   InputBackgroundColor,
   TagVariant,
 } from '@island.is/island-ui/core'
+import { TestSupport } from '@island.is/island-ui/utils'
 
-interface Option {
+interface Option extends TestSupport {
   value: string
   label: React.ReactNode
-  subLabel?: string
+  subLabel?: React.ReactNode
   tooltip?: React.ReactNode
   tag?: {
     label: string
@@ -78,6 +79,7 @@ export const RadioController: FC<Props> = ({
                   setValue(id, target.value)
                 }}
                 checked={option.value === value}
+                dataTestId={option.dataTestId}
                 id={`${id}-${index}`}
                 name={`${id}`}
                 label={option.label}

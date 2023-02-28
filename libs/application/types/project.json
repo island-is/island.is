@@ -1,0 +1,22 @@
+{
+  "root": "libs/application/types",
+  "sourceRoot": "libs/application/types/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/application/types/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/application/types"],
+      "options": {
+        "jestConfig": "libs/application/types/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": ["lib:js", "scope:application-system", "TODO:splitUp"]
+}

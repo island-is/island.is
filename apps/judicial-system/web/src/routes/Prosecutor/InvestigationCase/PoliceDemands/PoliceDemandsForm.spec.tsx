@@ -1,4 +1,5 @@
-import { formatInstitutionName } from './PoliceDemandsForm'
+import { formatInstitutionName } from './PoliceDemands'
+
 describe('formatInstitutionName', () => {
   test('should change institution name for police insitituion', () => {
     const institutionName = 'Lögreglustjórinn á höfuðborgarsvæðinu'

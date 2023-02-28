@@ -1,0 +1,8 @@
+{
+  "data": {
+    "sendNotification": {
+      "notificationSent": true,
+      "__typename": "SendNotificationResponse"
+    }
+  }
+}

@@ -11,4 +11,5 @@ export interface SearchInput {
   countTag?: string[]
   countTypes?: boolean
   countProcessEntry?: boolean
+  useQuery?: string
 }

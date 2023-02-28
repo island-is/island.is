@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react'
 import { MARKS } from '@contentful/rich-text-types'
 import { RenderMark } from '@contentful/rich-text-react-renderer'
 
-export const defaultRenderMark: Readonly<RenderMark> = {
+export const defaultRenderMarkObject: Readonly<RenderMark> = {
   [MARKS.BOLD]: (text: ReactNode) => <strong>{text}</strong>,
   [MARKS.ITALIC]: (text: ReactNode) => <em>{text}</em>,
   // should text be underlinable inside contentful rich text? it is at the moment

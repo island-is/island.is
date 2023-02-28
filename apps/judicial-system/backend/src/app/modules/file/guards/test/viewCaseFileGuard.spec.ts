@@ -6,7 +6,12 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import { CaseState, User, UserRole } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  prosecutionRoles,
+  User,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { Case } from '../../../case'
 import { ViewCaseFileGuard } from '../viewCaseFile.guard'
@@ -39,8 +44,8 @@ describe('View Case File Guard', () => {
     }
   })
 
-  describe('prosecutors can view case files', () => {
-    const user = { role: UserRole.PROSECUTOR } as User
+  describe.each(prosecutionRoles)('%s can view case files', (role) => {
+    const user = { role } as User
     const theCase = {} as Case
     let then: Then
 
@@ -67,6 +72,11 @@ describe('View Case File Guard', () => {
     ${UserRole.JUDGE} | ${CaseState.ACCEPTED}
     ${UserRole.JUDGE} | ${CaseState.REJECTED}
     ${UserRole.JUDGE} | ${CaseState.DISMISSED}
+    ${UserRole.ASSISTANT} | ${CaseState.SUBMITTED}
+    ${UserRole.ASSISTANT} | ${CaseState.RECEIVED}
+    ${UserRole.ASSISTANT} | ${CaseState.ACCEPTED}
+    ${UserRole.ASSISTANT} | ${CaseState.REJECTED}
+    ${UserRole.ASSISTANT} | ${CaseState.DISMISSED}
   `.describe(
     'registrars and judges can view case files of completed cases',
     ({ role, state }) => {
@@ -92,6 +102,8 @@ describe('View Case File Guard', () => {
     ${UserRole.REGISTRAR} | ${CaseState.DRAFT}
     ${UserRole.JUDGE} | ${CaseState.NEW}
     ${UserRole.JUDGE} | ${CaseState.DRAFT}
+    ${UserRole.ASSISTANT} | ${CaseState.NEW}
+    ${UserRole.ASSISTANT} | ${CaseState.DRAFT}
   `.describe(
     'registrars and judges can not view case files of unreceived cases',
     ({ role, state }) => {

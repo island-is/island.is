@@ -18,6 +18,7 @@ import {
   FormValue,
   Schema,
   BeforeSubmitCallback,
+  Section,
 } from '@island.is/application/types'
 import {
   Box,
@@ -52,6 +53,7 @@ import RefetchContext from '../context/RefetchContext'
 
 type ScreenProps = {
   activeScreenIndex: number
+  sections: Section[]
   addExternalData(data: ExternalData): void
   application: Application
   answerAndGoToNextScreen(answers: FormValue): void
@@ -60,11 +62,14 @@ type ScreenProps = {
   expandRepeater(): void
   mode?: FormModes
   numberOfScreens: number
+  totalDraftScreens?: number
+  currentDraftScreen?: number
   prevScreen(): void
   screen: FormScreen
   renderLastScreenButton?: boolean
   renderLastScreenBackButton?: boolean
   goToScreen: (id: string) => void
+  setUpdateForbidden: (value: boolean) => void
 }
 
 const getServerValidationErrors = (error: ApolloError | undefined) => {
@@ -78,6 +83,7 @@ const getServerValidationErrors = (error: ApolloError | undefined) => {
 }
 
 const Screen: FC<ScreenProps> = ({
+  setUpdateForbidden,
   activeScreenIndex,
   addExternalData,
   answerQuestions,
@@ -89,9 +95,12 @@ const Screen: FC<ScreenProps> = ({
   mode,
   numberOfScreens,
   prevScreen,
+  totalDraftScreens,
+  currentDraftScreen,
   renderLastScreenButton,
   renderLastScreenBackButton,
   screen,
+  sections,
 }) => {
   const { answers: formValue, externalData, id: applicationId } = application
   const { lang: locale, formatMessage } = useLocale()
@@ -115,6 +124,9 @@ const Screen: FC<ScreenProps> = ({
     onError: (e) => {
       // We handle validation problems separately.
       const problem = findProblemInApolloError(e)
+      if (problem?.type === ProblemType.HTTP_NOT_FOUND) {
+        setUpdateForbidden(true)
+      }
       if (problem?.type === ProblemType.VALIDATION_FAILED) {
         return
       }
@@ -222,6 +234,10 @@ const Screen: FC<ScreenProps> = ({
           input: {
             id: applicationId,
             answers: extractedAnswers,
+            draftProgress: {
+              stepsFinished: currentDraftScreen ?? screen.sectionIndex,
+              totalSteps: totalDraftScreens ?? sections.length - 1,
+            },
           },
           locale,
         },
@@ -290,7 +306,10 @@ const Screen: FC<ScreenProps> = ({
 
   const isLoadingOrPending =
     fieldLoadingState || loading || loadingSubmit || isSubmitting
-
+  const shouldCreateTopLevelRegion = !(
+    screen.type === FormItemTypes.REPEATER ||
+    screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER
+  )
   return (
     <FormProvider {...hookFormData}>
       <Box
@@ -306,7 +325,12 @@ const Screen: FC<ScreenProps> = ({
           span={['12/12', '12/12', '10/12', '7/9']}
           offset={['0', '0', '1/12', '1/9']}
         >
-          <Text variant="h2" as="h2" marginBottom={1}>
+          <Text
+            variant="h2"
+            as="h2"
+            marginBottom={1}
+            {...(shouldCreateTopLevelRegion ? { id: screen.id } : {})}
+          >
             {formatText(screen.title, application, formatMessage)}
           </Text>
           <Box>
@@ -333,6 +357,7 @@ const Screen: FC<ScreenProps> = ({
               />
             ) : screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER ? (
               <FormExternalDataProvider
+                application={application}
                 addExternalData={addExternalData}
                 setBeforeSubmitCallback={setBeforeSubmitCallback}
                 applicationId={applicationId}
@@ -342,16 +367,18 @@ const Screen: FC<ScreenProps> = ({
                 errors={dataSchemaOrApiErrors}
               />
             ) : (
-              <FormField
-                autoFocus
-                setBeforeSubmitCallback={setBeforeSubmitCallback}
-                setFieldLoadingState={setFieldLoadingState}
-                errors={dataSchemaOrApiErrors}
-                field={screen}
-                application={application}
-                goToScreen={goToScreen}
-                refetch={refetch}
-              />
+              <Box component="section" aria-labelledby={screen.id}>
+                <FormField
+                  autoFocus
+                  setBeforeSubmitCallback={setBeforeSubmitCallback}
+                  setFieldLoadingState={setFieldLoadingState}
+                  errors={dataSchemaOrApiErrors}
+                  field={screen}
+                  application={application}
+                  goToScreen={goToScreen}
+                  refetch={refetch}
+                />
+              </Box>
             )}
           </Box>
         </GridColumn>

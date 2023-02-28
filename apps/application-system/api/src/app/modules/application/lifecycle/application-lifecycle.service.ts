@@ -3,27 +3,18 @@ import {
   ApplicationService,
   Application,
 } from '@island.is/application/api/core'
-import { AwsService } from '@island.is/nest/aws'
-import AmazonS3URI from 'amazon-s3-uri'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { ApplicationChargeService } from '../charge/application-charge.service'
-
-export interface AttachmentMetaData {
-  s3key: string
-  key: string
-  bucket: string
-  value: string
-}
+import { FileService } from '@island.is/application/api/files'
 
 export interface ApplicationPruning {
   pruned: boolean
   application: Pick<
     Application,
-    'id' | 'attachments' | 'answers' | 'externalData'
+    'id' | 'attachments' | 'answers' | 'externalData' | 'typeId' | 'state'
   >
   failedAttachments: object
-  failedExternalData: object
 }
 
 @Injectable()
@@ -34,7 +25,7 @@ export class ApplicationLifeCycleService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private applicationService: ApplicationService,
-    private awsService: AwsService,
+    private fileService: FileService,
     private applicationChargeService: ApplicationChargeService,
   ) {
     this.logger = logger.child({ context: 'ApplicationLifeCycleService' })
@@ -57,7 +48,7 @@ export class ApplicationLifeCycleService {
   private async fetchApplicationsToBePruned() {
     const applications = (await this.applicationService.findAllDueToBePruned()) as Pick<
       Application,
-      'id' | 'attachments' | 'answers' | 'externalData'
+      'id' | 'attachments' | 'answers' | 'externalData' | 'typeId' | 'state'
     >[]
 
     this.logger.info(`Found ${applications.length} applications to be pruned.`)
@@ -67,41 +58,20 @@ export class ApplicationLifeCycleService {
         pruned: true,
         application,
         failedAttachments: {},
-        failedExternalData: {},
       }
     })
   }
 
   private async pruneAttachments() {
     for (const prune of this.processingApplications) {
-      const applicationAttachments = prune.application.attachments as {
-        key: string
-        name: string
-      }
-
-      const attachments = this.attachmentsToMetaDataArray(
-        applicationAttachments,
+      const result = await this.fileService.deleteAttachmentsForApplication(
+        prune.application,
       )
-
-      if (attachments) {
-        for (const attachment of attachments) {
-          const { key, s3key, bucket, value } = attachment
-          try {
-            this.logger.info(
-              `Deleting attachment ${s3key} from bucket ${bucket}`,
-            )
-            await this.awsService.deleteObject(bucket, s3key)
-          } catch (error) {
-            prune.pruned = false
-            prune.failedAttachments = {
-              ...prune.failedAttachments,
-              [key]: value,
-            }
-            this.logger.error(
-              `S3 object delete failed for application Id: ${prune.application.id} and attachment key: ${key}`,
-              error,
-            )
-          }
+      if (!result.success) {
+        prune.pruned = false
+        prune.failedAttachments = {
+          ...prune.failedAttachments,
+          ...result.failed,
         }
       }
     }
@@ -112,19 +82,6 @@ export class ApplicationLifeCycleService {
       try {
         await this.applicationChargeService.deleteCharge(prune.application)
       } catch (error) {
-        const chargeId = this.applicationChargeService.getChargeId(
-          prune.application,
-        )
-        if (chargeId) {
-          prune.failedExternalData = {
-            createCharge: {
-              data: {
-                id: chargeId,
-              },
-            },
-          }
-        }
-
         prune.pruned = false
         this.logger.error(
           `Application charge prune error on id ${prune.application.id}`,
@@ -141,7 +98,7 @@ export class ApplicationLifeCycleService {
           prune.application.id,
           {
             attachments: prune.failedAttachments,
-            externalData: prune.failedExternalData,
+            externalData: {},
             answers: {},
             pruned: prune.pruned,
           },
@@ -168,17 +125,5 @@ export class ApplicationLifeCycleService {
     )
 
     this.logger.info(`Successful: ${success.length}, Failed: ${failed.length}`)
-  }
-
-  private attachmentsToMetaDataArray(
-    attachments: object,
-  ): AttachmentMetaData[] {
-    const keys: AttachmentMetaData[] = []
-    for (const [key, value] of Object.entries(attachments)) {
-      const { key: sourceKey, bucket } = AmazonS3URI(value)
-      keys.push({ key, s3key: sourceKey, bucket, value })
-    }
-
-    return keys
   }
 }

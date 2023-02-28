@@ -1,6 +1,6 @@
 import { ServicePortalPath } from '@island.is/service-portal/core'
 
-export const getMobileMenuFigure = (path: ServicePortalPath | undefined) => {
+export const getMobileMenuFigure = (path?: string) => {
   const basePath = '/minarsidur/assets/images/'
   let imgName
 
@@ -12,10 +12,6 @@ export const getMobileMenuFigure = (path: ServicePortalPath | undefined) => {
 
     case ServicePortalPath.MyInfoRoot:
       imgName = 'myInfo.svg'
-      break
-
-    case ServicePortalPath.FamilyRoot:
-      imgName = 'familyGrid.svg'
       break
 
     case ServicePortalPath.HealthRoot:

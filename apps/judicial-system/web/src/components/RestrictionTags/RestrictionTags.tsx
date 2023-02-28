@@ -2,13 +2,13 @@ import React from 'react'
 
 import { Box, Tag } from '@island.is/island-ui/core'
 import {
-  Case,
   CaseCustodyRestrictions,
-  CaseType,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { getShortRestrictionByValue } from '@island.is/judicial-system/formatters'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 interface Props {
   workingCase: Case
@@ -19,23 +19,24 @@ const RestrictionTags: React.FC<Props> = (props) => {
 
   return (
     <>
-      {workingCase.isCustodyIsolation && (
-        <Box marginBottom={1}>
-          <Tag
-            variant={getRestrictionTagVariant(
-              CaseCustodyRestrictions.ISOLATION,
-            )}
-            outlined
-            disabled
-          >
-            {getShortRestrictionByValue(CaseCustodyRestrictions.ISOLATION)}
-          </Tag>
-        </Box>
-      )}
+      {isAcceptingCaseDecision(workingCase.decision) &&
+        workingCase.isCustodyIsolation && (
+          <Box marginBottom={1}>
+            <Tag
+              variant={getRestrictionTagVariant(
+                CaseCustodyRestrictions.ISOLATION,
+              )}
+              outlined
+              disabled
+            >
+              {getShortRestrictionByValue(CaseCustodyRestrictions.ISOLATION)}
+            </Tag>
+          </Box>
+        )}
       {
         // Custody restrictions
-        (workingCase.type === CaseType.CUSTODY ||
-          workingCase.type === CaseType.ADMISSION_TO_FACILITY) &&
+        (workingCase.type === CaseType.Custody ||
+          workingCase.type === CaseType.AdmissionToFacility) &&
           isAcceptingCaseDecision(workingCase.decision) &&
           workingCase.requestedCustodyRestrictions
             ?.filter((restriction) =>
@@ -61,7 +62,7 @@ const RestrictionTags: React.FC<Props> = (props) => {
       }
       {
         // Travel ban restrictions
-        workingCase.type === CaseType.TRAVEL_BAN &&
+        workingCase.type === CaseType.TravelBan &&
           isAcceptingCaseDecision(workingCase.decision) &&
           workingCase.requestedCustodyRestrictions
             ?.filter(

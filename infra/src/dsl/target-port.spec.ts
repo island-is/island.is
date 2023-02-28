@@ -1,8 +1,9 @@
 import { service } from './dsl'
-import { UberChart } from './uber-chart'
-import { serializeService } from './map-to-values'
-import { SerializeSuccess } from './types/output-types'
+import { Kubernetes } from './kubernetes-runtime'
+import { SerializeSuccess, HelmService } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
+import { renderers } from './upstream-dependencies'
+import { generateOutputOne } from './processing/rendering-pipeline'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -18,13 +19,15 @@ const Staging: EnvironmentConfig = {
 }
 
 describe('Basic serialization', () => {
-  it('service account', () => {
+  it('service account', async () => {
     const sut = service('api').targetPort(4200)
-    const result = serializeService(
-      sut,
-      new UberChart(Staging),
-    ) as SerializeSuccess
-    expect(result.serviceDef.service).toEqual({
+    const result = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<HelmService>
+    expect(result.serviceDef[0].service).toEqual({
       targetPort: 4200,
     })
   })

@@ -15,4 +15,5 @@ export interface Institution {
   active: boolean
   defaultCourtId?: string
   policeCaseNumberPrefix?: string
+  nationalId?: string
 }

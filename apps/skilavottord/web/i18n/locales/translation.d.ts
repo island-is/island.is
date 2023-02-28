@@ -549,6 +549,7 @@ export interface RoutesDeregisterVehicle {
 
 export interface RoutesHome {
   citizen: string
+  recyclingCompanyAdmin?: string
   recyclingCompany: string
   recyclingFund: string
 }

@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
+import { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
 import { BLOCKS } from '@contentful/rich-text-types'
@@ -6,7 +6,6 @@ import slugify from '@sindresorhus/slugify'
 import {
   Slice as SliceType,
   ProcessEntry,
-  richText,
 } from '@island.is/island-ui/contentful'
 import {
   Box,
@@ -32,6 +31,7 @@ import {
   footerEnabled,
   Stepper,
   stepperUtils,
+  Form,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
@@ -56,11 +56,12 @@ import {
   LinkType,
   useLinkResolver,
 } from '../../hooks/useLinkResolver'
+import { ArticleChatPanel } from './components/ArticleChatPanel'
+import { webRichText } from '@island.is/web/utils/richText'
 import { Locale } from '@island.is/shared/types'
 import { useScrollPosition } from '../../hooks/useScrollPosition'
 import { scrollTo } from '../../hooks/useScrollSpy'
-
-import { ArticleChatPanel } from './components/ArticleChatPanel'
+import { getOrganizationLink } from '@island.is/web/utils/organization'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
@@ -279,7 +280,9 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
           institutionTitle={n('organization')}
           institution={article.organization[0].title}
           locale={activeLocale}
-          linkProps={{ href: article.organization[0].link }}
+          linkProps={{
+            href: getOrganizationLink(article.organization[0], activeLocale),
+          }}
           imgContainerDisplay={['block', 'block', 'none', 'block']}
         />
       )}
@@ -531,7 +534,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
               isMenuDialog
             />
           </Box>
-          {!!processEntry && (
+          {processEntry?.processLink && (
             <Box
               marginTop={3}
               display={['none', 'none', 'block']}
@@ -539,19 +542,6 @@ const ArticleScreen: Screen<ArticleProps> = ({
               className="rs_read"
             >
               <ProcessEntry {...processEntry} />
-            </Box>
-          )}
-          {article.stepper?.title && !inStepperView && (
-            <Box marginTop={3} printHidden className="rs_read">
-              <ProcessEntry
-                buttonText={n(
-                  article.processEntryButtonText || 'application',
-                  '',
-                )}
-                processLink={asPath.split('?')[0].concat('?stepper=true')}
-                processTitle={article.stepper.title}
-                newTab={false}
-              />
             </Box>
           )}
           {(subArticle
@@ -577,9 +567,28 @@ const ArticleScreen: Screen<ArticleProps> = ({
         <Box paddingTop={subArticle ? 2 : 4}>
           {!inStepperView && (
             <Box className="rs_read">
-              {richText(
+              {webRichText(
                 (subArticle ?? article).body as SliceType[],
-                undefined,
+                {
+                  renderComponent: {
+                    Stepper: () => (
+                      <Box marginY={3} printHidden className="rs_read">
+                        <ProcessEntry
+                          buttonText={n(
+                            article.processEntryButtonText || 'application',
+                            '',
+                          )}
+                          processLink={asPath
+                            .split('?')[0]
+                            .concat('?stepper=true')}
+                          processTitle={article.stepper.title}
+                          newTab={false}
+                        />
+                      </Box>
+                    ),
+                    Form: (form) => <Form form={form} namespace={namespace} />,
+                  },
+                },
                 activeLocale,
               )}
               <AppendedArticleComponents article={article} />
@@ -592,7 +601,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
             marginTop={7}
             printHidden
           >
-            {!!processEntry && <ProcessEntry {...processEntry} />}
+            {processEntry?.processLink && <ProcessEntry {...processEntry} />}
           </Box>
           {article.organization.length > 0 && (
             <Box
@@ -605,7 +614,10 @@ const ArticleScreen: Screen<ArticleProps> = ({
                 institution={{
                   title: article.organization[0].title,
                   label: n('organization'),
-                  href: article.organization[0].link,
+                  href: getOrganizationLink(
+                    article.organization[0],
+                    activeLocale,
+                  ),
                 }}
                 responsibleParty={article.responsibleParty.map(
                   (responsibleParty) => ({
@@ -618,7 +630,10 @@ const ArticleScreen: Screen<ArticleProps> = ({
                   (relatedOrganization) => ({
                     title: relatedOrganization.title,
                     label: n('relatedOrganization'),
-                    href: relatedOrganization.link,
+                    href: getOrganizationLink(
+                      relatedOrganization,
+                      activeLocale,
+                    ),
                   }),
                 )}
                 locale={activeLocale}
@@ -636,7 +651,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
             )}
           </Box>
         </Box>
-        {!!processEntry &&
+        {processEntry?.processLink &&
           mounted &&
           isVisible &&
           createPortal(

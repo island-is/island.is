@@ -17,7 +17,7 @@ export const pathToAsset = (file: string) => {
     )
   }
 
-  return join(__dirname, `./parental-leave-assets/${file}`)
+  return join(__dirname, `./passport-assets/${file}`)
 }
 
 export const generateAssignParentBApplicationEmail: EmailTemplateGenerator = (
@@ -62,6 +62,7 @@ export const generateAssignParentBApplicationEmail: EmailTemplateGenerator = (
     template: {
       title: subject,
       body: [
+        { component: 'Heading', context: { copy: subject } },
         {
           component: 'Image',
           context: {
@@ -69,7 +70,6 @@ export const generateAssignParentBApplicationEmail: EmailTemplateGenerator = (
             alt: 'myndskreyting',
           },
         },
-        { component: 'Heading', context: { copy: subject } },
         { component: 'Copy', context: { copy: 'Góðan dag.' } },
         {
           component: 'Copy',
@@ -88,6 +88,13 @@ export const generateAssignParentBApplicationEmail: EmailTemplateGenerator = (
           context: {
             copy: 'Skoða umsókn',
             href: link,
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy: `Þú hefur viku til að bregðast við umsókninni.`,
+            small: true,
           },
         },
         {

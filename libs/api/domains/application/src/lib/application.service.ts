@@ -57,18 +57,6 @@ export class ApplicationService {
     })
   }
 
-  async createCharge(
-    applicationId: string,
-    auth: Auth,
-    chargeItemCode: string,
-  ) {
-    return this.paymentApiWithAuth(auth).paymentControllerCreateCharge({
-      applicationId: applicationId,
-      body: { chargeItemCode: chargeItemCode },
-      authorization: auth.authorization,
-    })
-  }
-
   async findAll(
     user: User,
     locale: Locale,

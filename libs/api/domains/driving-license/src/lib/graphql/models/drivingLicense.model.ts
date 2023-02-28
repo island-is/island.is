@@ -11,11 +11,11 @@ export class DrivingLicense {
   @Field()
   name!: string
 
-  @Field()
-  issued!: string
+  @Field(() => Date)
+  issued!: Date
 
-  @Field()
-  expires!: string
+  @Field(() => Date)
+  expires!: Date
 
   @Field(() => [Eligibility])
   categories!: Eligibility[]
@@ -25,4 +25,7 @@ export class DrivingLicense {
 
   @Field(() => Disqualification, { nullable: true })
   disqualification?: Disqualification
+
+  @Field({ nullable: true })
+  birthCountry?: string
 }

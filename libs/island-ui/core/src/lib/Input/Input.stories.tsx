@@ -124,3 +124,12 @@ ReadOnly.args = {
   readOnly: true,
   value: 'Read only have a transparent background',
 }
+
+export const RightAligned = Template.bind({})
+RightAligned.args = {
+  label: 'Input Text is right aligned',
+  placeholder: 'This is the placeholder',
+  name: 'Test14',
+  backgroundColor: 'blue',
+  rightAlign: true,
+}

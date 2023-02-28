@@ -14,7 +14,6 @@ import {
   formatDate,
 } from '@island.is/judicial-system/formatters'
 
-import { environment } from '../../environments'
 import { Case } from '../modules/case'
 import { request as m, core } from '../messages'
 import { formatLegalProvisions } from './formatters'
@@ -33,7 +32,6 @@ import {
   addCoatOfArms,
   addPoliceStar,
 } from './pdfHelpers'
-import { writeFile } from './writeFile'
 
 function constructRestrictionRequestPdf(
   theCase: Case,
@@ -89,18 +87,18 @@ function constructRestrictionRequestPdf(
   setLineGap(doc, 24)
   addLargeHeading(doc, title, 'Times-Roman')
   setLineGap(doc, 8)
-  addMediumPlusHeading(
-    doc,
-    `${formatDate(theCase.created, 'PPP')} - Mál nr. ${
-      theCase.policeCaseNumber
-    }`,
-  )
+  addMediumPlusHeading(doc, formatDate(theCase.created, 'PPP') ?? '')
   setLineGap(doc, 40)
   addMediumPlusHeading(
     doc,
     `${formatMessage(m.baseInfo.court)} ${theCase.court?.name}`,
   )
   setLineGap(doc, 4)
+  addMediumText(doc, formatMessage(m.policeCaseNumbers), 'Times-Bold')
+  theCase.policeCaseNumbers.forEach((policeCaseNumber) => {
+    addNormalText(doc, policeCaseNumber, 'Times-Roman')
+  })
+  addEmptyLines(doc)
   addMediumText(
     doc,
     capitalize(
@@ -256,18 +254,18 @@ function constructInvestigationRequestPdf(
   setLineGap(doc, 24)
   addHugeHeading(doc, title, 'Times-Roman')
   setLineGap(doc, 8)
-  addMediumPlusHeading(
-    doc,
-    `${formatDate(theCase.created, 'PPP')} - Mál nr. ${
-      theCase.policeCaseNumber
-    }`,
-  )
+  addMediumPlusHeading(doc, formatDate(theCase.created, 'PPP') ?? '')
   setLineGap(doc, 40)
   addMediumPlusHeading(
     doc,
     `${formatMessage(m.baseInfo.court)} ${theCase.court?.name}`,
   )
   setLineGap(doc, 4)
+  addMediumText(doc, formatMessage(m.policeCaseNumbers), 'Times-Bold')
+  theCase.policeCaseNumbers.forEach((policeCaseNumber) => {
+    addNormalText(doc, policeCaseNumber, 'Times-Roman')
+  })
+  addEmptyLines(doc)
   addMediumText(
     doc,
     capitalize(
@@ -419,42 +417,30 @@ function constructRequestPdf(
     : constructInvestigationRequestPdf(theCase, formatMessage)
 }
 
-export async function getRequestPdfAsString(
+export function getRequestPdfAsString(
   theCase: Case,
   formatMessage: FormatMessage,
 ): Promise<string> {
   const stream = constructRequestPdf(theCase, formatMessage)
 
   // wait for the writing to finish
-  const pdf = await new Promise<string>(function (resolve) {
+  return new Promise<string>(function (resolve) {
     stream.on('finish', () => {
       resolve(stream.getContentsAsString('binary') as string)
     })
   })
-
-  if (!environment.production) {
-    writeFile(`${theCase.id}-request.pdf`, pdf)
-  }
-
-  return pdf
 }
 
-export async function getRequestPdfAsBuffer(
+export function getRequestPdfAsBuffer(
   theCase: Case,
   formatMessage: FormatMessage,
 ): Promise<Buffer> {
   const stream = constructRequestPdf(theCase, formatMessage)
 
   // wait for the writing to finish
-  const pdf = await new Promise<Buffer>(function (resolve) {
+  return new Promise<Buffer>(function (resolve) {
     stream.on('finish', () => {
       resolve(stream.getContents() as Buffer)
     })
   })
-
-  if (!environment.production) {
-    writeFile(`${theCase.id}-request.pdf`, pdf)
-  }
-
-  return pdf
 }

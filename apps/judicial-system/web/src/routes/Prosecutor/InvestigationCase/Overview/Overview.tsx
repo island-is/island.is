@@ -18,7 +18,7 @@ import {
 import {
   AccordionListItem,
   CaseFileList,
-  CaseInfo,
+  ProsecutorCaseInfo,
   CommentsAccordionItem,
   FormContentContainer,
   FormFooter,
@@ -26,13 +26,15 @@ import {
   Modal,
   PageLayout,
   PdfButton,
+  CaseResubmitModal,
+  FormContext,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  ProsecutorSubsections,
+  RestrictionCaseProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   core,
   icOverview as m,
@@ -46,13 +48,11 @@ import {
   caseTypes,
   capitalize,
 } from '@island.is/judicial-system/formatters'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import CaseResubmitModal from '@island.is/judicial-system-web/src/components/CaseResubmitModal/CaseResubmitModal'
 
 import * as styles from './Overview.css'
-import CopyLinkForDefenderButton from '../../SharedComponents/CopyLinkForDefenderButton/CopyLinkForDefenderButton'
+import { CopyLinkForDefenderButton } from '../../components'
 
 export const Overview: React.FC = () => {
   const router = useRouter()
@@ -84,7 +84,11 @@ export const Overview: React.FC = () => {
     const shouldSubmitCase = workingCase.state === CaseState.DRAFT
 
     const caseSubmitted = shouldSubmitCase
-      ? await transitionCase(workingCase, CaseTransition.SUBMIT, setWorkingCase)
+      ? await transitionCase(
+          workingCase.id,
+          CaseTransition.SUBMIT,
+          setWorkingCase,
+        )
       : workingCase.state !== CaseState.NEW
 
     const notificationSent = caseSubmitted
@@ -116,7 +120,9 @@ export const Overview: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={ProsecutorSubsections.PROSECUTOR_OVERVIEW}
+      activeSubSection={
+        RestrictionCaseProsecutorSubsections.PROSECUTOR_OVERVIEW
+      }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -153,19 +159,15 @@ export const Overview: React.FC = () => {
             {formatMessage(m.heading)}
           </Text>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <CaseInfo
-            workingCase={workingCase}
-            userRole={user?.role}
-            showAdditionalInfo
-          />
-        </Box>
+        <ProsecutorCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <InfoCard
             data={[
               {
                 title: formatMessage(core.policeCaseNumber),
-                value: workingCase.policeCaseNumber,
+                value: workingCase.policeCaseNumbers.map((n) => (
+                  <Text key={n}>{n}</Text>
+                )),
               },
               ...(workingCase.courtCaseNumber
                 ? [
@@ -231,14 +233,27 @@ export const Overview: React.FC = () => {
                   ]
                 : []),
             ]}
-            defendants={workingCase.defendants ?? []}
-            defender={{
-              name: workingCase.defenderName ?? '',
-              defenderNationalId: workingCase.defenderNationalId,
-              email: workingCase.defenderEmail,
-              phoneNumber: workingCase.defenderPhoneNumber,
-            }}
-            sessionArrangement={workingCase.sessionArrangements}
+            defendants={
+              workingCase.defendants
+                ? {
+                    title: capitalize(
+                      formatMessage(core.defendant, {
+                        suffix: workingCase.defendants.length > 1 ? 'ar' : 'i',
+                      }),
+                    ),
+                    items: workingCase.defendants,
+                  }
+                : undefined
+            }
+            defenders={[
+              {
+                name: workingCase.defenderName ?? '',
+                defenderNationalId: workingCase.defenderNationalId,
+                sessionArrangement: workingCase.sessionArrangements,
+                email: workingCase.defenderEmail,
+                phoneNumber: workingCase.defenderPhoneNumber,
+              },
+            ]}
           />
         </Box>
         {workingCase.description && (
@@ -335,16 +350,25 @@ export const Overview: React.FC = () => {
             title={formatMessage(core.pdfButtonRequest)}
             pdfType="request"
           />
-          <Box marginTop={3}>
-            <CopyLinkForDefenderButton caseId={workingCase.id}>
-              {formatMessage(m.sections.copyLinkForDefenderButton)}
-            </CopyLinkForDefenderButton>
-          </Box>
+          {workingCase.defenderNationalId && (
+            <Box marginTop={3}>
+              <CopyLinkForDefenderButton
+                caseId={workingCase.id}
+                type={workingCase.type}
+                disabled={
+                  workingCase.state !== CaseState.RECEIVED ||
+                  !workingCase.courtDate
+                }
+              >
+                {formatMessage(m.sections.copyLinkForDefenderButton)}
+              </CopyLinkForDefenderButton>
+            </Box>
+          )}
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.IC_CASE_FILES_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.INVESTIGATION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextButtonText={
             workingCase.state === CaseState.NEW ||
             workingCase.state === CaseState.DRAFT
@@ -379,16 +403,11 @@ export const Overview: React.FC = () => {
           <Modal
             title={formatMessage(m.sections.modal.heading)}
             text={modalText}
-            handleClose={() => router.push(constants.CASE_LIST_ROUTE)}
-            handlePrimaryButtonClick={() => {
-              window.open(constants.FEEDBACK_FORM_URL, '_blank')
-              router.push(constants.CASE_LIST_ROUTE)
+            onClose={() => router.push(constants.CASES_ROUTE)}
+            onSecondaryButtonClick={() => {
+              router.push(constants.CASES_ROUTE)
             }}
-            handleSecondaryButtonClick={() => {
-              router.push(constants.CASE_LIST_ROUTE)
-            }}
-            primaryButtonText="Senda ábendingu"
-            secondaryButtonText="Loka glugga"
+            secondaryButtonText={formatMessage(core.closeModal)}
           />
         )}
       </AnimatePresence>

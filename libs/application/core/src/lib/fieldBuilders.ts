@@ -28,6 +28,10 @@ import {
   Field,
   CompanySearchField,
   RedirectToServicePortalField,
+  MessageWithLinkButtonField,
+  ExpandableDescriptionField,
+  AlertMessageField,
+  LinkField,
 } from '@island.is/application/types'
 import { SpanType } from '@island.is/island-ui/core/types'
 
@@ -42,6 +46,7 @@ const extractCommonFields = (
     doesNotRequireAnswer = false,
     id,
     title,
+    dataTestId,
     width = 'full',
   } = data
 
@@ -51,6 +56,7 @@ const extractCommonFields = (
     defaultValue,
     description,
     disabled,
+    dataTestId,
     doesNotRequireAnswer,
     title,
     width,
@@ -64,6 +70,7 @@ export function buildCheckboxField(
     options,
     strong = false,
     large = true,
+    required,
     backgroundColor = 'blue',
   } = data
   return {
@@ -73,6 +80,7 @@ export function buildCheckboxField(
     strong,
     backgroundColor,
     options,
+    required,
     type: FieldTypes.CHECKBOX,
     component: FieldComponents.CHECKBOX,
   }
@@ -132,7 +140,13 @@ export function buildDescriptionField(
 export function buildRadioField(
   data: Omit<RadioField, 'type' | 'component' | 'children'>,
 ): RadioField {
-  const { options, largeButtons = true, backgroundColor, space } = data
+  const {
+    options,
+    largeButtons = true,
+    backgroundColor,
+    space,
+    required,
+  } = data
 
   return {
     ...extractCommonFields(data),
@@ -141,6 +155,7 @@ export function buildRadioField(
     options,
     backgroundColor,
     space,
+    required,
     type: FieldTypes.RADIO,
     component: FieldComponents.RADIO,
   }
@@ -149,12 +164,19 @@ export function buildRadioField(
 export function buildSelectField(
   data: Omit<SelectField, 'type' | 'component' | 'children'>,
 ): SelectField {
-  const { options, placeholder, onSelect, backgroundColor = 'blue' } = data
+  const {
+    options,
+    placeholder,
+    onSelect,
+    backgroundColor = 'blue',
+    required,
+  } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
     placeholder,
     options,
+    required,
     type: FieldTypes.SELECT,
     component: FieldComponents.SELECT,
     onSelect,
@@ -191,13 +213,18 @@ export function buildAsyncSelectField(
 export function buildCompanySearchField(
   data: Omit<CompanySearchField, 'type' | 'component' | 'children'>,
 ): CompanySearchField {
-  const { placeholder, shouldIncludeIsatNumber } = data
+  const {
+    placeholder,
+    shouldIncludeIsatNumber,
+    checkIfEmployerIsOnForbiddenList,
+  } = data
 
   return {
     ...extractCommonFields(data),
     children: undefined,
     placeholder,
     shouldIncludeIsatNumber,
+    checkIfEmployerIsOnForbiddenList,
     type: FieldTypes.COMPANY_SEARCH,
     component: FieldComponents.COMPANY_SEARCH,
   }
@@ -216,6 +243,7 @@ export function buildTextField(
     required,
     maxLength,
     readOnly,
+    rightAlign,
   } = data
   return {
     ...extractCommonFields(data),
@@ -229,6 +257,7 @@ export function buildTextField(
     required,
     maxLength,
     readOnly,
+    rightAlign,
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,
   }
@@ -271,8 +300,9 @@ export function buildFileUploadField(
     uploadDescription,
     uploadButtonLabel,
     uploadMultiple,
-    uploadAccept,
-    maxSize,
+    uploadAccept:
+      uploadAccept ?? '.pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic',
+    maxSize: maxSize ?? 10000000,
     maxSizeErrorText,
     forImageUpload,
     type: FieldTypes.FILEUPLOAD,
@@ -304,8 +334,16 @@ export function buildKeyValueField(data: {
   width?: FieldWidth
   colSpan?: SpanType
   condition?: Condition
+  display?: 'block' | 'flex'
 }): KeyValueField {
-  const { label, value, condition, width = 'full', colSpan } = data
+  const {
+    label,
+    value,
+    condition,
+    width = 'full',
+    colSpan,
+    display = 'block',
+  } = data
 
   return {
     id: '',
@@ -319,6 +357,7 @@ export function buildKeyValueField(data: {
     value,
     type: FieldTypes.KEY_VALUE,
     component: FieldComponents.KEY_VALUE,
+    display,
   }
 }
 
@@ -375,5 +414,66 @@ export function buildRedirectToServicePortalField(data: {
     title,
     type: FieldTypes.REDIRECT_TO_SERVICE_PORTAL,
     component: FieldComponents.REDIRECT_TO_SERVICE_PORTAL,
+  }
+}
+
+export function buildMessageWithLinkButtonField(
+  data: Omit<MessageWithLinkButtonField, 'type' | 'component' | 'children'>,
+): MessageWithLinkButtonField {
+  const { id, title, url, message, buttonTitle } = data
+  return {
+    children: undefined,
+    id,
+    title,
+    url,
+    message,
+    buttonTitle,
+    type: FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD,
+    component: FieldComponents.MESSAGE_WITH_LINK_BUTTON_FIELD,
+  }
+}
+
+export function buildExpandableDescriptionField(
+  data: Omit<ExpandableDescriptionField, 'type' | 'component' | 'children'>,
+): ExpandableDescriptionField {
+  const { id, title, description, introText, startExpanded } = data
+  return {
+    children: undefined,
+    id,
+    title,
+    description,
+    introText,
+    startExpanded,
+    type: FieldTypes.EXPANDABLE_DESCRIPTION,
+    component: FieldComponents.EXPANDABLE_DESCRIPTION,
+  }
+}
+export function buildAlertMessageField(
+  data: Omit<AlertMessageField, 'type' | 'component' | 'children'>,
+): AlertMessageField {
+  const { id, title, message, alertType } = data
+  return {
+    children: undefined,
+    id,
+    title,
+    message,
+    alertType,
+    type: FieldTypes.ALERT_MESSAGE,
+    component: FieldComponents.ALERT_MESSAGE,
+  }
+}
+
+export function buildLinkField(
+  data: Omit<LinkField, 'type' | 'component' | 'children'>,
+): LinkField {
+  const { s3key, link, iconProps } = data
+  return {
+    ...extractCommonFields(data),
+    s3key,
+    link,
+    iconProps,
+    children: undefined,
+    type: FieldTypes.LINK,
+    component: FieldComponents.LINK,
   }
 }

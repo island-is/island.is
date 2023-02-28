@@ -12,6 +12,7 @@ interface BaseChildInformation {
    * Will be undefined if transferal was not requested
    */
   transferredDays?: number
+  multipleBirthsDays?: number
 }
 
 export type ChildInformation =

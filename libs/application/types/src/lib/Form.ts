@@ -5,9 +5,10 @@ import { MessageDescriptor } from 'react-intl'
 
 import type { BoxProps } from '@island.is/island-ui/core/types'
 
-import { Field, RecordObject } from './Fields'
+import { Field, RecordObject, SubmitField } from './Fields'
 import { Condition } from './Condition'
 import { Application, FormValue } from './Application'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 export type BeforeSubmitCallback = () => Promise<[true, null] | [false, string]>
 
@@ -44,11 +45,11 @@ export enum FormItemTypes {
 export type Schema = ZodObject<any>
 
 export enum FormModes {
-  APPLYING = 'applying',
-  EDITING = 'editing',
+  NOT_STARTED = 'notstarted',
+  DRAFT = 'draft',
+  IN_PROGRESS = 'inprogress',
+  COMPLETED = 'completed',
   APPROVED = 'approved',
-  PENDING = 'pending',
-  REVIEW = 'review',
   REJECTED = 'rejected',
 }
 
@@ -75,7 +76,7 @@ export type FormNode = Form | Section | SubSection | FormLeaf
 export type FormChildren = Section | FormLeaf
 export type SectionChildren = SubSection | FormLeaf
 
-export interface FormItem {
+export interface FormItem extends TestSupport {
   readonly id?: string
   condition?: Condition
   readonly type: string
@@ -85,6 +86,7 @@ export interface FormItem {
 export interface Section extends FormItem {
   type: FormItemTypes.SECTION
   children: SectionChildren[]
+  draftPageNumber?: number
 }
 
 export interface SubSection extends FormItem {
@@ -118,15 +120,31 @@ export interface ExternalDataProvider extends FormItem {
   checkboxLabel?: StaticText
   subTitle?: StaticText
   description?: StaticText
+  submitField?: SubmitField
 }
 
 export interface DataProviderItem {
   readonly id: string
-  readonly type: string | undefined
-  readonly title: StaticText
-  readonly subTitle?: StaticText
-  readonly source?: string
-  readonly parameters?: any
+  readonly action?: string
+  readonly order?: number
+  readonly title: FormText
+  readonly subTitle?: FormText
+  readonly source?: string //TODO see if we can remove this
+}
+
+export interface DataProviderBuilderItem {
+  id?: string
+  type?: string //TODO REMOVE THIS
+  title: FormText
+  subTitle?: FormText
+  source?: string
+  provider?: Provider
+}
+export interface Provider {
+  externalDataId?: string
+  actionId: string
+  action: string
+  order?: number
 }
 
 export type DataProviderPermissionItem = Omit<

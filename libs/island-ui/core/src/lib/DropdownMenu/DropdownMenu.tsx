@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react'
+import React, { ReactElement, MouseEvent } from 'react'
 import {
   useMenuState,
   Menu,
@@ -20,7 +20,7 @@ export interface DropdownMenuProps {
   menuLabel?: string
   items: {
     href?: string
-    onClick?: (menu: MenuStateReturn) => void
+    onClick?: (event: MouseEvent<HTMLElement>, menu: MenuStateReturn) => void
     title: string
     noStyle?: boolean
     render?: (
@@ -38,6 +38,7 @@ export interface DropdownMenuProps {
    */
   icon?: ButtonProps['icon']
   disclosure?: ReactElement
+  menuClassName?: string
 }
 
 export const DropdownMenu = ({
@@ -46,6 +47,7 @@ export const DropdownMenu = ({
   title,
   icon,
   disclosure,
+  menuClassName,
 }: DropdownMenuProps) => {
   const menu = useMenuState({ placement: 'bottom', gutter: 8 })
   const menuBoxStyle = useBoxStyles({
@@ -82,7 +84,7 @@ export const DropdownMenu = ({
       <Menu
         {...menu}
         aria-label={menuLabel}
-        className={cn(styles.menu, menuBoxStyle)}
+        className={cn(styles.menu, menuBoxStyle, menuClassName)}
       >
         {items.map((item, index) => {
           let anchorProps = {}
@@ -103,9 +105,9 @@ export const DropdownMenu = ({
               {...menu}
               {...anchorProps}
               key={index}
-              onClick={() => {
+              onClick={(event) => {
                 if (item.onClick) {
-                  item.onClick(menu)
+                  item.onClick(event, menu)
                 }
               }}
               className={cn({ [classNames]: !item.noStyle })}

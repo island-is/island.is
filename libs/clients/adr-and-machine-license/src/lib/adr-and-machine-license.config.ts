@@ -1,5 +1,5 @@
 import { defineConfig } from '@island.is/nest/config'
-import * as z from 'zod'
+import { z } from 'zod'
 
 const schema = z.object({
   xRoadServicePath: z.string(),
@@ -20,7 +20,7 @@ export const AdrAndMachineLicenseClientConfig = defineConfig<
       'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/rettindi-token-v1',
     ),
     fetch: {
-      timeout: 10000,
+      timeout: 30000,
       scope: ['@ver.is/rettindaskra'],
     },
   }),

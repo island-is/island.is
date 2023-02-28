@@ -12,6 +12,11 @@ export const paymentPlan = {
       defaultMessage: `Hér er yfirlit yfir þær skuldir sem hægt er að setja í greiðsluáætlun.`,
       description: 'Description on overview for debts',
     },
+    companyPageDescription: {
+      id: `pdpp.application:section.paymentPlan.companyPageDescription`,
+      defaultMessage: `Hér er yfirlit yfir þær skuldir sem hægt er að setja í greiðsluáætlun. Ef um fleiri en eina skuld er að ræða, þá birtast þær hver af annari í næstu skrefum þar sem ein skuld er geiðsludreifð í einu.`,
+      description: 'Description on overview for debts',
+    },
     paymentPlanDescription: {
       id: `pdpp.application:section.paymentPlan.paymentPlanDescription`,
       defaultMessage: 'Vinsamlegast veldu greiðsludreifingu',

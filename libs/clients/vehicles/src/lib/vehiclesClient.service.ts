@@ -21,6 +21,7 @@ export const VehiclesApiProvider: Provider<VehicleSearchApi> = {
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-vehicles',
+          timeout: config.fetch.timeout,
           autoAuth: idsClientConfig.isConfigured
             ? {
                 mode: 'tokenExchange',
@@ -40,5 +41,6 @@ export const VehiclesApiProvider: Provider<VehicleSearchApi> = {
         },
       }),
     ),
+
   inject: [XRoadConfig.KEY, VehiclesClientConfig.KEY, IdsClientConfig.KEY],
 }

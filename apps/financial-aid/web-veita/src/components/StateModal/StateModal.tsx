@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Text, Box } from '@island.is/island-ui/core'
-import { AnimateSharedLayout } from 'framer-motion'
 
 import {
   OptionsModal,
@@ -142,76 +141,73 @@ const StateModal = ({
       </Box>
 
       <Box padding={4}>
-        <AnimateSharedLayout type="crossfade">
-          <OptionsModal
-            isModalVisable={selected === undefined}
-            activeState={currentState}
-            onClick={(e, stateOption) => {
-              e.stopPropagation()
+        <OptionsModal
+          isModalVisable={selected === undefined}
+          activeState={currentState}
+          onClick={(e, stateOption) => {
+            e.stopPropagation()
 
-              saveOrNextWindow(stateOption)
-            }}
-          />
+            saveOrNextWindow(stateOption)
+          }}
+        />
 
-          <EmailFormatInputModal
-            onCancel={onClickCancel}
-            isModalVisable={selected === ApplicationState.DATANEEDED}
-            state={ApplicationState.DATANEEDED}
-            onSaveApplication={(comment?: string) => {
-              if (!selected) {
-                return
-              }
-              saveStateApplication(applicationId, selected, undefined, comment)
-            }}
-            headline="Skrifaðu hvaða gögn vantar"
-            submitButtonText="Senda á umsækjanda"
-            errorMessage="Þú þarft að gera grein fyrir hvaða gögn vanti í umsóknina"
-            prefixText="Til þess að hægt sé að meta umsóknina þarft þú að senda okkur"
-            postfixText="Þú getur kynnt þér nánar reglur um fjárhagsaðstoð."
-            municipalityEmail={applicationMunicipality?.email}
-          />
-          <AcceptModal
-            isModalVisable={selected === ApplicationState.APPROVED}
-            onCancel={onClickCancel}
-            onSaveApplication={(amount: Amount, comment: string) => {
-              if (!selected) {
-                return
-              }
-              saveStateApplication(
-                applicationId,
-                selected,
-                undefined,
-                `Samþykkt upphæð: kr. ${amount?.finalAmount.toLocaleString(
-                  'de-DE',
-                )}.-${comment ? '\n' + comment : comment}`,
-                amount,
-              )
-            }}
-            homeCircumstances={homeCircumstances}
-            familyStatus={familyStatus}
-            applicationMunicipality={applicationMunicipality}
-          />
-
-          <EmailFormatInputModal
-            onCancel={onClickCancel}
-            isModalVisable={selected === ApplicationState.REJECTED}
-            state={ApplicationState.REJECTED}
-            onSaveApplication={(reasonForRejection?: string) => {
-              if (!selected) {
-                return
-              }
-              saveStateApplication(applicationId, selected, reasonForRejection)
-            }}
-            headline="Skrifaðu ástæðu synjunar"
-            submitButtonText="Synja og senda á umsækjanda"
-            errorMessage="Þú þarft að greina frá ástæðu synjunar"
-            prefixText={`Umsókn þinni um fjárhagsaðstoð í ${getMonth(
-              new Date(applicationCreated).getMonth(),
-            )} hefur verið synjað`}
-            postfixText="Þú getur kynnt þér nánar reglur um fjárhagsaðstoð."
-            municipalityEmail={applicationMunicipality?.email}
-          />
-        </AnimateSharedLayout>
+        <EmailFormatInputModal
+          onCancel={onClickCancel}
+          isModalVisable={selected === ApplicationState.DATANEEDED}
+          state={ApplicationState.DATANEEDED}
+          onSaveApplication={(comment?: string) => {
+            if (!selected) {
+              return
+            }
+            saveStateApplication(applicationId, selected, undefined, comment)
+          }}
+          headline="Skrifaðu hvaða gögn vantar"
+          submitButtonText="Senda á umsækjanda"
+          errorMessage="Þú þarft að gera grein fyrir hvaða gögn vanti í umsóknina"
+          prefixText="Til þess að hægt sé að meta umsóknina þarft þú að senda okkur"
+          postfixText="Þú getur kynnt þér nánar reglur um fjárhagsaðstoð."
+          municipalityEmail={applicationMunicipality?.email}
+        />
+        <AcceptModal
+          isModalVisable={selected === ApplicationState.APPROVED}
+          onCancel={onClickCancel}
+          onSaveApplication={(amount: Amount, comment: string) => {
+            if (!selected) {
+              return
+            }
+            saveStateApplication(
+              applicationId,
+              selected,
+              undefined,
+              `Samþykkt upphæð: kr. ${amount?.finalAmount.toLocaleString(
+                'de-DE',
+              )}.-${comment ? '\n' + comment : comment}`,
+              amount,
+            )
+          }}
+          homeCircumstances={homeCircumstances}
+          familyStatus={familyStatus}
+          applicationMunicipality={applicationMunicipality}
+        />
+        <EmailFormatInputModal
+          onCancel={onClickCancel}
+          isModalVisable={selected === ApplicationState.REJECTED}
+          state={ApplicationState.REJECTED}
+          onSaveApplication={(reasonForRejection?: string) => {
+            if (!selected) {
+              return
+            }
+            saveStateApplication(applicationId, selected, reasonForRejection)
+          }}
+          headline="Skrifaðu ástæðu synjunar"
+          submitButtonText="Synja og senda á umsækjanda"
+          errorMessage="Þú þarft að greina frá ástæðu synjunar"
+          prefixText={`Umsókn þinni um fjárhagsaðstoð í ${getMonth(
+            new Date(applicationCreated).getMonth(),
+          )} hefur verið synjað`}
+          postfixText="Þú getur kynnt þér nánar reglur um fjárhagsaðstoð."
+          municipalityEmail={applicationMunicipality?.email}
+        />
       </Box>
     </StateModalContainer>
   )

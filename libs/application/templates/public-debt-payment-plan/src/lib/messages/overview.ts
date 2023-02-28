@@ -17,6 +17,16 @@ export const overview = defineMessages({
     defaultMessage: 'Nafn',
     description: 'Overview name',
   },
+  companyName: {
+    id: `pdpp.application:application.overview.companyName`,
+    defaultMessage: 'Heiti fyrirtækis',
+    description: 'Overview company name',
+  },
+  companyNationalId: {
+    id: `pdpp.application:application.overview.companyNationalId`,
+    defaultMessage: 'Kennitala fyrirtækis',
+    description: 'Overview company national id',
+  },
   phoneNumber: {
     id: `pdpp.application:application.overview.phoneNumber`,
     defaultMessage: 'Sími',

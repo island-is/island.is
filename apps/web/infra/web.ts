@@ -23,7 +23,6 @@ export const serviceSetup = (services: {
       ENVIRONMENT: ref((h) => h.env.type),
     })
     .secrets({
-      SENTRY_DSN: '/k8s/web/SENTRY_DSN',
       DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID',
       DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN',
     })

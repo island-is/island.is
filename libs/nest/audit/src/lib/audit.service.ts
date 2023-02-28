@@ -8,24 +8,14 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Auth } from '@island.is/auth-nest-tools'
 import type { AuditOptions } from './audit.options'
 import { AUDIT_OPTIONS } from './audit.options'
-
-export interface AuditMessage {
-  auth: Auth
-  action: string
-  namespace?: string
-  resources?: string | string[]
-  meta?: Record<string, unknown>
-}
-
-export type AuditTemplate<ResultType> = {
-  auth: Auth
-  action: string
-  namespace?: string
-  resources?: string | string[] | ((result: ResultType) => string | string[])
-  meta?:
-    | Record<string, unknown>
-    | ((result: ResultType) => Record<string, unknown>)
-}
+import isString from 'lodash/isString'
+import isFunction from 'lodash/isFunction'
+import {
+  AuditMessage,
+  isDefaultAuditMessage,
+  AuditTemplate,
+  isDefaultAuditTemplate,
+} from './audit.types'
 
 @Injectable()
 export class AuditService {
@@ -91,55 +81,76 @@ export class AuditService {
     return clients
   }
 
-  private formatMessage({
-    auth,
-    namespace = this.defaultNamespace,
-    action,
-    resources,
-    meta,
-  }: AuditMessage) {
+  private formatMessage(message: AuditMessage) {
+    const {
+      namespace = this.defaultNamespace,
+      action,
+      resources,
+      meta,
+    } = message
+
     if (!namespace) {
       throw new Error(
         'Audit namespace is required. Did you configure a defaultNamespace?',
       )
     }
-    const message = {
-      subject: auth.nationalId,
-      actor: auth.actor ? auth.actor.nationalId : auth.nationalId,
-      client: this.getClients(auth),
+
+    const commonFields = {
       action: `${namespace}#${action}`,
-      resources:
-        resources && (typeof resources === 'string' ? [resources] : resources),
+      resources: isString(resources) ? [resources] : resources,
       meta,
-      ip: auth.ip,
-      userAgent: auth.userAgent,
       appVersion: process.env.APP_VERSION,
+      ...(this.useDevLogger && { message: 'Audit record' }),
     }
 
-    return this.useDevLogger ? { message: 'Audit record', ...message } : message
+    if (isDefaultAuditMessage(message)) {
+      const { auth } = message
+
+      return {
+        ...commonFields,
+        subject: auth.nationalId,
+        actor: auth.actor ? auth.actor.nationalId : auth.nationalId,
+        client: this.getClients(auth),
+        ip: auth.ip,
+        userAgent: auth.userAgent,
+      }
+    }
+
+    return {
+      ...commonFields,
+      system: message.system,
+    }
   }
 
   private unwrap<PropType, ResultType>(prop: PropType, result: ResultType) {
-    return typeof prop === 'function' ? prop(result) : prop
+    return isFunction(prop) ? prop(result) : prop
   }
 
   audit(message: AuditMessage) {
     this.auditLog?.info(this.formatMessage(message))
   }
 
-  auditPromise<ResultType>(
-    template: AuditTemplate<ResultType>,
-    promise: Promise<ResultType>,
-  ): Promise<ResultType> {
+  auditPromise<T>(template: AuditTemplate<T>, promise: Promise<T>): Promise<T> {
     return promise.then((result) => {
-      const message: AuditMessage = {
-        auth: template.auth,
+      const commonFields = {
         action: template.action,
         namespace: template.namespace,
         resources: this.unwrap(template.resources, result),
         meta: this.unwrap(template.meta, result),
       }
-      this.auditLog?.info(this.formatMessage(message))
+
+      if (isDefaultAuditTemplate(template)) {
+        this.audit({
+          ...commonFields,
+          auth: template.auth,
+        })
+      } else {
+        this.audit({
+          ...commonFields,
+          system: template.system,
+        })
+      }
+
       return result
     })
   }

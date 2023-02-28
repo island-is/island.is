@@ -16,6 +16,7 @@ import {
   LinkContext,
   Button,
 } from '@island.is/island-ui/core'
+import { sortAlpha } from '@island.is/shared/utils'
 import { Card, Sticky } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
@@ -122,6 +123,14 @@ const Category: Screen<CategoryProps> = ({
         content.otherArticles.push(article)
         return content
       }
+      // Check if article belongs to multiple groups in this category
+      else if (
+        article?.otherCategories
+          .map((category) => category.title)
+          .includes(getCurrentCategory().title)
+      ) {
+        content.otherArticles.push(article)
+      }
 
       if (article?.group?.slug && !content.groups[article?.group?.slug]) {
         // group does not exist create the collection
@@ -175,16 +184,21 @@ const Category: Screen<CategoryProps> = ({
     }
   }, [])
 
-  const sidebarCategoryLinks = categories.map(
-    ({ __typename: typename, title, slug }) => {
+  const sidebarCategoryLinks = categories
+    .filter(
+      (item) =>
+        category.id === item.id ||
+        (item?.slug !== 'thjonusta-island-is' &&
+          item?.slug !== 'services-on-island-is'),
+    )
+    .map(({ __typename: typename, title, slug }) => {
       return {
         title,
         typename,
         active: slug === Router.query.slug,
         slug: [slug],
       }
-    },
-  )
+    })
 
   const groupArticlesBySubgroup = (articles: Articles, groupSlug?: string) => {
     const bySubgroup = articles.reduce((result, item) => {
@@ -227,10 +241,8 @@ const Category: Screen<CategoryProps> = ({
   const handleAccordionClick = (groupSlug: string) => {
     const updatedArr = updateHashArray(hashArray, groupSlug)
     setHashArray(updatedArr)
-    Router.replace({
-      pathname: linkResolver(category.__typename as LinkType, [slug]).href,
-      hash: getHashString(updatedArr),
-    })
+    // eslint-disable-next-line no-restricted-globals
+    history?.replaceState({}, '', `#${getHashString(updatedArr)}`)
   }
 
   const sortArticles = (articles: Articles) => {
@@ -240,16 +252,14 @@ const Category: Screen<CategoryProps> = ({
       a.importance > b.importance
         ? -1
         : a.importance === b.importance
-        ? a.title.localeCompare(b.title)
+        ? sortAlpha('title')(a, b)
         : 1,
     )
 
     // If it's sorted alphabetically we need to be able to communicate that.
     const isSortedAlphabetically =
       JSON.stringify(sortedArticles) ===
-      JSON.stringify(
-        [...articles].sort((a, b) => a.title.localeCompare(b.title)),
-      )
+      JSON.stringify([...articles].sort(sortAlpha('title')))
 
     return { sortedArticles, isSortedAlphabetically }
   }
@@ -272,10 +282,9 @@ const Category: Screen<CategoryProps> = ({
         return foundA.importance > foundB.importance
           ? -1
           : foundA.importance === foundB.importance
-          ? foundA.title.localeCompare(foundB.title)
+          ? sortAlpha('title')(foundA, foundB)
           : 1
       }
-
       // Fall back to alphabet
       return a.localeCompare(b)
     })
@@ -285,7 +294,7 @@ const Category: Screen<CategoryProps> = ({
   ).sort((a: ArticleGroup, b: ArticleGroup) =>
     a.importance > b.importance
       ? -1
-      : a.importance === b.importance && a.title.localeCompare(b.title, 'is'),
+      : a.importance === b.importance && sortAlpha('title')(a, b),
   )
 
   const ArticleGroupComponent = ({
@@ -571,7 +580,7 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
         input: {
           lang: locale as ContentLanguage,
           category: slug,
-          size: 150,
+          size: 1000,
         },
       },
     }),

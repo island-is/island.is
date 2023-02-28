@@ -1,11 +1,23 @@
 import { defineMessage } from 'react-intl'
 
 export const courtDocuments = {
+  header: defineMessage({
+    id: 'judicial.system.core:court_documents.header',
+    defaultMessage: 'Dómskjöl',
+    description:
+      'Notað sem fyrirsögn í "Dómskjöl" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
+  }),
   tag: defineMessage({
-    id: 'judicial.system.core:courtDocuments.tag',
+    id: 'judicial.system.core:court_documents.tag',
     defaultMessage: 'Þingmerkt nr. {index}',
     description:
       'Notaður sem text í Þingmerkt nr. # taggi í "Lagt er fram" svæði á þingbókarskjám',
+  }),
+  text: defineMessage({
+    id: 'judicial.system.core:court_documents.text',
+    defaultMessage: 'Rannsóknargögn málsins liggja frammi.',
+    description:
+      'Notað sem útskýringar texti í "Dómskjöl" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
   }),
   add: {
     label: defineMessage({

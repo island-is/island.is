@@ -1,19 +1,35 @@
-import { Controller, Get, Inject, Param, Post, UseGuards } from '@nestjs/common'
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+  Body,
+  Controller,
+  Inject,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common'
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { TokenGuard } from '@island.is/judicial-system/auth'
+import { indictmentCases } from '@island.is/judicial-system/types'
 
-import { Case, CurrentCase, CaseExistsGuard, CaseReceivedGuard } from '../case'
+import { User, CurrentUser, UserExistsGuard } from '../user'
+import {
+  Case,
+  CaseExistsGuard,
+  CaseHasExistedGuard,
+  CaseTypeGuard,
+  CurrentCase,
+} from '../case'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
+import { DeliverResponse } from './models/deliver.response'
 import { CaseFile } from './models/file.model'
-import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { FileService } from './file.service'
+import { DeliverDto } from './dto/deliver.dto'
 
 @UseGuards(TokenGuard)
-@Controller('api/internal/case/:caseId')
+@Controller('api/internal/case/:caseId/file/:fileId')
 @ApiTags('internal files')
 export class InternalFileController {
   constructor(
@@ -21,38 +37,50 @@ export class InternalFileController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(CaseExistsGuard)
-  @Get('files')
-  @ApiOkResponse({
-    type: CaseFile,
-    isArray: true,
-    description: 'Gets all existing case file',
+  @UseGuards(CaseExistsGuard, CaseFileExistsGuard, UserExistsGuard)
+  @Post('deliverToCourt')
+  @ApiCreatedResponse({
+    type: DeliverResponse,
+    description: 'Delivers a case file to court',
   })
-  getAllCaseFiles(@Param('caseId') caseId: string): Promise<CaseFile[]> {
-    this.logger.debug(`Getting all files for case ${caseId}`)
-
-    return this.fileService.getAllCaseFiles(caseId)
-  }
-
-  @UseGuards(CaseExistsGuard, CaseReceivedGuard, CaseFileExistsGuard)
-  @Post('file/:fileId/court')
-  @ApiOkResponse({
-    type: UploadFileToCourtResponse,
-    description: 'Uploads a case file to court',
-  })
-  uploadCaseFileToCourt(
+  async deliverCaseFileToCourt(
     @Param('caseId') caseId: string,
     @Param('fileId') fileId: string,
+    @CurrentUser() user: User,
     @CurrentCase() theCase: Case,
     @CurrentCaseFile() caseFile: CaseFile,
-  ): Promise<UploadFileToCourtResponse> {
-    this.logger.debug(`Uploading file ${fileId} of case ${caseId} to court`)
+    @Body() _: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(`Delivering file ${fileId} of case ${caseId} to court`)
 
-    return this.fileService.uploadCaseFileToCourt(
+    const { success } = await this.fileService.uploadCaseFileToCourt(
       caseFile,
-      caseId,
-      theCase.courtId,
-      theCase.courtCaseNumber,
+      theCase,
+      user,
     )
+
+    return { delivered: success }
+  }
+
+  @UseGuards(
+    CaseHasExistedGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseFileExistsGuard,
+  )
+  @Post('archive')
+  @ApiCreatedResponse({
+    type: DeliverResponse,
+    description: 'Archives a case file',
+  })
+  async archiveCaseFile(
+    @Param('caseId') caseId: string,
+    @Param('fileId') fileId: string,
+    @CurrentCaseFile() caseFile: CaseFile,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(`Archiving file ${fileId} of case ${caseId}`)
+
+    const success = await this.fileService.archive(caseFile)
+
+    return { delivered: success }
   }
 }

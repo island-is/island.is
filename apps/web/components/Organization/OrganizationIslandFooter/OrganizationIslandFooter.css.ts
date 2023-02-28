@@ -30,18 +30,25 @@ export const languageToggleContainer = style({
 export const leftContent = style({
   display: 'flex',
   flexFlow: 'row nowrap',
-  alignItems: 'center',
   gap: '20px',
+  ...themeUtils.responsiveStyle({
+    xs: {
+      alignItems: 'flex-start',
+    },
+    sm: {
+      alignItems: 'center',
+    },
+  }),
 })
 
 export const rightContent = style({
   display: 'flex',
-  flexFlow: 'row nowrap',
+  flexFlow: 'row wrap',
   alignItems: 'center',
   gap: '20px',
   ...themeUtils.responsiveStyle({
     xs: {
-      paddingTop: '12px',
+      paddingTop: '20px',
       alignSelf: 'flex-end',
     },
     lg: {

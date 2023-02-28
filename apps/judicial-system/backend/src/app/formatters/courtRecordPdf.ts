@@ -1,5 +1,6 @@
 import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
+import isSameDay from 'date-fns/isSameDay'
 
 import { FormatMessage } from '@island.is/cms-translations'
 import {
@@ -9,14 +10,13 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 import {
-  capitalize,
   formatDate,
   lowercase,
-  formatAppeal,
   formatRequestCaseType,
+  formatAppeal,
+  capitalize,
 } from '@island.is/judicial-system/formatters'
 
-import { environment } from '../../environments'
 import { Case } from '../modules/case'
 import { nowFactory } from '../factories'
 import { courtRecord } from '../messages'
@@ -32,7 +32,22 @@ import {
   addNormalJustifiedText,
   addNormalCenteredText,
 } from './pdfHelpers'
-import { writeFile } from './writeFile'
+
+export function formatCourtEndDate(
+  formatMessage: FormatMessage,
+  courtStartDate?: Date,
+  courtEndTime?: Date,
+): string {
+  return courtEndTime
+    ? formatMessage(courtRecord.signOff, {
+        endDate:
+          courtStartDate && isSameDay(courtStartDate, courtEndTime)
+            ? 'NONE'
+            : formatDate(courtEndTime, 'd. MMMM'),
+        endTime: formatDate(courtEndTime, 'p'),
+      })
+    : formatMessage(courtRecord.inSession)
+}
 
 function constructRestrictionCourtRecordPdf(
   theCase: Case,
@@ -254,18 +269,18 @@ function constructRestrictionCourtRecordPdf(
   addEmptyLines(doc)
   addNormalText(
     doc,
-    theCase.courtEndTime
-      ? formatMessage(courtRecord.signOff, {
-          endTime: formatDate(theCase.courtEndTime, 'p'),
-        })
-      : formatMessage(courtRecord.inSession),
+    formatCourtEndDate(
+      formatMessage,
+      theCase.courtStartDate,
+      theCase.courtEndTime,
+    ),
   )
   addFooter(
     doc,
     completedCaseStates.includes(theCase.state) && user
       ? formatMessage(courtRecord.smallPrint, {
           actorName: user.name,
-          actorInstitution: user.institution?.name ?? 'NONE',
+          actorInstitution: user.institution?.name || 'NONE',
           date: formatDate(nowFactory(), 'PPPp'),
         })
       : undefined,
@@ -458,12 +473,14 @@ function constructInvestigationCourtRecordPdf(
     addNormalJustifiedText(doc, prosecutorAppeal)
   }
 
+  const multipleDefendants =
+    (theCase.defendants && theCase.defendants.length > 1) || false
+
   let accusedAppeal = formatAppeal(
     theCase.accusedAppealDecision,
     capitalize(
       formatMessage(courtRecord.defendant, {
-        suffix:
-          theCase.defendants && theCase.defendants?.length > 1 ? 'ar' : 'i',
+        suffix: multipleDefendants ? 'ar' : 'i',
       }),
     ),
   )
@@ -499,18 +516,18 @@ function constructInvestigationCourtRecordPdf(
   addEmptyLines(doc)
   addNormalText(
     doc,
-    theCase.courtEndTime
-      ? formatMessage(courtRecord.signOff, {
-          endTime: formatDate(theCase.courtEndTime, 'p'),
-        })
-      : formatMessage(courtRecord.inSession),
+    formatCourtEndDate(
+      formatMessage,
+      theCase.courtStartDate,
+      theCase.courtEndTime,
+    ),
   )
   addFooter(
     doc,
     completedCaseStates.includes(theCase.state) && user
       ? formatMessage(courtRecord.smallPrint, {
           actorName: user.name,
-          actorInstitution: user.institution?.name,
+          actorInstitution: user.institution?.name || 'NONE',
           date: formatDate(nowFactory(), 'PPPp'),
         })
       : undefined,
@@ -531,43 +548,31 @@ function constructCourtRecordPdf(
     : constructInvestigationCourtRecordPdf(theCase, formatMessage, user)
 }
 
-export async function getCourtRecordPdfAsString(
+export function getCourtRecordPdfAsString(
   theCase: Case,
   formatMessage: FormatMessage,
 ): Promise<string> {
   const stream = constructCourtRecordPdf(theCase, formatMessage)
 
   // wait for the writing to finish
-  const pdf = await new Promise<string>(function (resolve) {
+  return new Promise<string>(function (resolve) {
     stream.on('finish', () => {
       resolve(stream.getContentsAsString('binary') as string)
     })
   })
-
-  if (!environment.production) {
-    writeFile(`${theCase.id}-ruling.pdf`, pdf)
-  }
-
-  return pdf
 }
 
-export async function getCourtRecordPdfAsBuffer(
+export function getCourtRecordPdfAsBuffer(
   theCase: Case,
-  user: User,
   formatMessage: FormatMessage,
+  user?: User,
 ): Promise<Buffer> {
   const stream = constructCourtRecordPdf(theCase, formatMessage, user)
 
   // wait for the writing to finish
-  const pdf = await new Promise<Buffer>(function (resolve) {
+  return new Promise<Buffer>(function (resolve) {
     stream.on('finish', () => {
       resolve(stream.getContents() as Buffer)
     })
   })
-
-  if (!environment.production) {
-    writeFile(`${theCase.id}-ruling.pdf`, pdf)
-  }
-
-  return pdf
 }

@@ -41,10 +41,12 @@ export const PersonalUseAsMuchAsPossible: FC<FieldBaseProps> = ({
           options: [
             {
               label: parentalLeaveFormMessages.shared.yesOptionLabel,
+              dataTestId: 'use-as-much-as-possible',
               value: YES,
             },
             {
               label: parentalLeaveFormMessages.shared.noOptionLabel,
+              dataTestId: 'dont-use-as-much-as-possible',
               value: NO,
             },
           ],
@@ -53,7 +55,7 @@ export const PersonalUseAsMuchAsPossible: FC<FieldBaseProps> = ({
               setValue('personalAllowance.usage', '100')
             }
             if (s === NO) {
-              setValue('personalAllowance.usage', '0')
+              setValue('personalAllowance.usage', '1')
             }
           },
         }}

@@ -10,6 +10,8 @@ import { AnyEventObject, MachineOptions, StateMachine } from 'xstate/lib/types'
 import { FormLoader, FormText, StaticText } from './Form'
 import { Application, ActionCardTag } from './Application'
 import { Condition } from './Condition'
+import { TestSupport } from '@island.is/island-ui/utils'
+import { TemplateApi } from './template-api/TemplateApi'
 
 export type ApplicationRole = 'applicant' | 'assignee' | string
 
@@ -29,14 +31,18 @@ export type ReadWriteValues =
       answers?: string[]
       externalData?: string[]
     }
-
-export interface RoleInState<T extends EventObject = AnyEventObject> {
+export interface RoleInState<
+  T extends EventObject = AnyEventObject,
+  R = unknown
+> {
   id: ApplicationRole
   read?: ReadWriteValues
   write?: ReadWriteValues
   delete?: boolean
   formLoader?: FormLoader
   actions?: CallToAction<T>[]
+  shouldBeListedForRole?: boolean
+  api?: TemplateApi<R>[]
 }
 
 export interface ApplicationContext {
@@ -48,36 +54,27 @@ export type CallToAction<T extends EventObject = AnyEventObject> = {
   name: FormText
   type: 'primary' | 'subtle' | 'reject' | 'sign'
   condition?: Condition
-}
-
-export interface ApplicationTemplateAPIAction {
-  // Name of the action that will be run on the API
-  // these actions are exported are found in:
-  // /libs/application/template-api-modules
-  apiModuleAction: string
-  // If response/error should be written to application.externalData, defaults to true
-  shouldPersistToExternalData?: boolean
-  // Id inside application.externalData, value of apiModuleAction is used by default
-  externalDataId?: string
-  // Should the state transition be blocked if this action errors out
-  // defaults to true
-  throwOnError?: boolean
-}
+} & TestSupport
 
 export type StateLifeCycle =
   | {
       // Controls visibility from my pages + /umsoknir/:type when in current state
       shouldBeListed: boolean
       shouldBePruned: false
+      shouldDeleteChargeIfPaymentFulfilled?: boolean | null
     }
   | {
       shouldBeListed: boolean
       shouldBePruned: true
       // If set to a number prune date will equal current timestamp + whenToPrune (ms)
       whenToPrune: number | ((application: Application) => Date)
+      shouldDeleteChargeIfPaymentFulfilled?: boolean | null
     }
 
-export interface ApplicationStateMeta<T extends EventObject = AnyEventObject> {
+export interface ApplicationStateMeta<
+  T extends EventObject = AnyEventObject,
+  R = unknown
+> {
   name: string
   lifecycle: StateLifeCycle
   actionCard?: {
@@ -86,9 +83,13 @@ export interface ApplicationStateMeta<T extends EventObject = AnyEventObject> {
     tag?: { label?: StaticText; variant?: ActionCardTag }
   }
   progress?: number
+  /**
+   * Represents the current status of the application in the state, defaults to draft
+   */
+  status: 'approved' | 'rejected' | 'draft' | 'completed' | 'inprogress'
   roles?: RoleInState<T>[]
-  onExit?: ApplicationTemplateAPIAction
-  onEntry?: ApplicationTemplateAPIAction
+  onExit?: TemplateApi<R>[] | TemplateApi<R>
+  onEntry?: TemplateApi<R>[] | TemplateApi<R>
 }
 
 export interface ApplicationStateSchema<T extends EventObject = AnyEventObject>

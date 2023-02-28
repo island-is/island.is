@@ -13,16 +13,22 @@ import {
   CaseOrigin,
   CaseFile,
   CaseFileState,
+  CaseFileCategory,
+  IndictmentSubtype,
 } from '@island.is/judicial-system/types'
 
 export enum Operation {
   CaseQuery = 'CaseQuery',
+  CaseListQuery = 'CaseListQuery',
+  CurrentUserQuery = 'CurrentUserQuery',
   UploadFileToCourtMutation = 'UploadFileToCourtMutation',
   UpdateCaseMutation = 'UpdateCaseMutation',
   SendNotificationMutation = 'SendNotificationMutation',
   CreatePresignedPostMutation = 'CreatePresignedPostMutation',
   CreateFileMutation = 'CreateFileMutation',
-  LimitedAccessCaseQuery = 'LimitedAccessCaseQuery',
+  UpdateDefendantMutation = 'UpdateDefendantMutation',
+  LimitedAccessCaseQuery = 'LimitedAccessCase',
+  ProsecutorSelectionUsersQuery = 'ProsecutorSelectionUsersQuery',
 }
 
 export const intercept = (res: Case, forceFail?: Operation) => {
@@ -77,6 +83,16 @@ export const intercept = (res: Case, forceFail?: Operation) => {
       req.reply({
         fixture: 'createFileMutationResponse',
       })
+    } else if (hasOperationName(req, Operation.UpdateDefendantMutation)) {
+      req.alias = 'UpdateDefendantMutation'
+      req.reply({
+        fixture: 'updateDefendantMutationResponse',
+      })
+    } else if (hasOperationName(req, Operation.ProsecutorSelectionUsersQuery)) {
+      req.alias = 'gqlProsecutorSelectionUsersQuery'
+      req.reply({
+        fixture: 'prosecutorUsers',
+      })
     }
   })
 }
@@ -111,72 +127,63 @@ export const aliasMutation = (
   }
 }
 
-export const investigationCaseAccusedName = `${faker.name.firstName()} ${faker.name.lastName()}`
-export const investigationCaseAccusedAddress = faker.address.streetAddress()
+export const mockName = `${faker.name.firstName()} ${faker.name.lastName()}`
+export const mockAddress = faker.address.streetAddress()
 
-export const makeRestrictionCase = (): Case => {
-  return {
-    id: 'test_id',
-    created: '2020-09-16T19:50:08.033Z',
-    modified: '2020-09-16T19:51:39.466Z',
-    state: CaseState.DRAFT,
-    origin: CaseOrigin.RVG,
-    type: CaseType.CUSTODY,
-    policeCaseNumber: '007-2021-202000',
-    defendants: [
-      {
-        id: 'test_defendant_id',
-        created: '2020-09-16T19:50:08.033Z',
-        modified: '2020-09-16T19:51:39.466Z',
-        caseId: 'test_id',
-        nationalId: '000000-0000',
-        name: 'Donald Duck',
-        gender: Gender.MALE,
-        address: 'Batcave 1337',
-      },
-    ],
-  }
-}
-
-export const makeInvestigationCase = (): Case => {
+export const mockCase = (
+  type: CaseType,
+  indictmentSubtype?: IndictmentSubtype,
+): Case => {
   const caseId = faker.datatype.uuid()
+
+  const policeCaseNumber = '007-2021-202000'
   return {
     id: caseId,
     created: '2020-09-16T19:50:08.033Z',
     modified: '2020-09-16T19:50:08.033Z',
     state: CaseState.DRAFT,
     origin: CaseOrigin.RVG,
-    type: CaseType.INTERNET_USAGE,
-    court: {
-      id: 'd1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf',
-      created: '2020-09-16T19:50:08.033Z',
-      modified: '2020-09-16T19:50:08.033Z',
-      type: InstitutionType.COURT,
-      name: 'Héraðsdómur Reykjavíkur',
-      active: true,
-    },
-    policeCaseNumber: '007-2021-202000',
-    defendants: [
-      {
-        id: 'test_defendant_id',
-        created: '2020-09-16T19:50:08.033Z',
-        modified: '2020-09-16T19:51:39.466Z',
-        caseId,
-        nationalId: '000000-0000',
-        name: investigationCaseAccusedName,
-        gender: Gender.MALE,
-        address: investigationCaseAccusedAddress,
-      },
-    ],
+    type,
+    indictmentSubtypes: indictmentSubtype
+      ? { [policeCaseNumber]: [indictmentSubtype] }
+      : undefined,
+    court: makeCourt(),
+    policeCaseNumbers: [policeCaseNumber],
+    defendants: [makeDefendant(caseId)],
+    defendantWaivesRightToCounsel: false,
   }
 }
 
-export const makeProsecutor = (): User => {
+export const makeJudge = (): User => {
   return {
     id: '9c0b4106-4213-43be-a6b2-ff324f4ba0c2',
     created: '2020-09-16T19:50:08.033Z',
     modified: '2020-09-16T19:50:08.033Z',
-    name: 'Áki Ákærandi',
+    name: faker.name.firstName(),
+    // eslint-disable-next-line local-rules/disallow-kennitalas
+    nationalId: '111111-1111',
+    mobileNumber: '111-1111',
+    email: faker.internet.email(),
+    role: UserRole.JUDGE,
+    active: true,
+    title: 'Dómari',
+    institution: {
+      id: '53581d7b-0591-45e5-9cbe-c96b2f82da85',
+      created: '',
+      modified: '',
+      type: InstitutionType.COURT,
+      name: 'Dómstóll Testlands',
+      active: true,
+    },
+  }
+}
+
+export const makeProsecutor = (name?: string): User => {
+  return {
+    id: '9c0b4106-4213-43be-a6b2-ff324f4ba0c2',
+    created: '2020-09-16T19:50:08.033Z',
+    modified: '2020-09-16T19:50:08.033Z',
+    name: name ?? 'Áki Ákærandi',
     nationalId: '000000-0000',
     mobileNumber: '000-0000',
     email: 'prosecutor@law.is',
@@ -194,6 +201,20 @@ export const makeProsecutor = (): User => {
   }
 }
 
+export const makeDefendant = (caseId: string) => {
+  return {
+    id: faker.datatype.uuid(),
+    created: '2020-09-16T19:50:08.033Z',
+    modified: '2020-09-16T19:51:39.466Z',
+    caseId,
+    nationalId: '000000-0000',
+    name: mockName,
+    gender: Gender.MALE,
+    address: mockAddress,
+    defendantWaivesRightToCounsel: false,
+  }
+}
+
 export const makeCourt = (): Institution => {
   return {
     id: 'd1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf',
@@ -205,16 +226,20 @@ export const makeCourt = (): Institution => {
   }
 }
 
-export const makeCaseFile = (
+export const makeCaseFile = ({
   caseId = 'test_id',
   name = 'test_file_name',
   type = 'pdf',
   state = CaseFileState.STORED_IN_RVG,
   key = 'test_id',
   size = 100,
-): CaseFile => {
+  category = CaseFileCategory.CASE_FILE,
+  policeCaseNumber = undefined as string | undefined,
+  chapter = undefined as number | undefined,
+  orderWithinChapter = undefined as number | undefined,
+} = {}): CaseFile => {
   return {
-    id: 'test_case_file_id',
+    id: faker.datatype.uuid(),
     created: '2020-09-16T19:50:08.033Z',
     modified: '2020-09-16T19:50:08.033Z',
     caseId,
@@ -223,5 +248,9 @@ export const makeCaseFile = (
     state,
     key,
     size,
+    category,
+    policeCaseNumber,
+    chapter,
+    orderWithinChapter,
   }
 }

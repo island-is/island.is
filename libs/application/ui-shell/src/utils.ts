@@ -23,23 +23,7 @@ export function verifyExternalData(
       return false
     }
   }
-  return true
-}
 
-export function hideSubmitErrorExternalData(
-  externalData: ExternalData,
-  dataProviders: DataProviderItem[],
-): boolean {
-  for (let i = 0; i < dataProviders.length; i++) {
-    const { id } = dataProviders[i]
-    const dataProviderResult = externalData[id]
-    if (
-      (!dataProviderResult || dataProviderResult.status === 'failure') &&
-      !dataProviderResult.hideSubmitError
-    ) {
-      return false
-    }
-  }
   return true
 }
 
@@ -87,6 +71,11 @@ export function findSubmitField(screen: FormScreen): SubmitField | undefined {
     )
     if (reviewScreen !== undefined) {
       return reviewScreen as SubmitField
+    }
+  }
+  if (screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER) {
+    if (screen.submitField !== undefined) {
+      return screen.submitField
     }
   }
   return undefined

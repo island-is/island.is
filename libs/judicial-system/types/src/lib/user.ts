@@ -2,8 +2,10 @@ import type { Institution } from './institution'
 
 export enum UserRole {
   PROSECUTOR = 'PROSECUTOR',
+  REPRESENTATIVE = 'REPRESENTATIVE',
   REGISTRAR = 'REGISTRAR',
   JUDGE = 'JUDGE',
+  ASSISTANT = 'ASSISTANT',
   ADMIN = 'ADMIN', // Does not exist in the database
   STAFF = 'STAFF',
   DEFENDER = 'DEFENDER', // Does not exist in the database
@@ -43,9 +45,27 @@ export interface UpdateUser {
   institutionId?: string
   active?: boolean
 }
+const extendedCourtRoles: string[] = [
+  UserRole.JUDGE,
+  UserRole.REGISTRAR,
+  UserRole.ASSISTANT,
+]
 
-export const courtRoles = [UserRole.JUDGE, UserRole.REGISTRAR]
+export function isExtendedCourtRole(role: string): boolean {
+  return Object.values(extendedCourtRoles).includes(role)
+}
 
-export function isCourtRole(role: UserRole): boolean {
+export const prosecutionRoles: string[] = [
+  UserRole.PROSECUTOR,
+  UserRole.REPRESENTATIVE,
+]
+
+export function isProsecutionRole(role: string): boolean {
+  return prosecutionRoles.includes(role)
+}
+
+export const courtRoles: string[] = [UserRole.JUDGE, UserRole.REGISTRAR]
+
+export function isCourtRole(role: string): boolean {
   return courtRoles.includes(role)
 }

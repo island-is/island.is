@@ -5,10 +5,10 @@ import get from 'lodash/get'
 import {
   ParentalLeave,
   Period,
-  Employer,
   Union,
   PensionFund,
   Attachment,
+  Employer,
 } from '@island.is/clients/vmst'
 import { Application } from '@island.is/application/types'
 import {
@@ -21,10 +21,21 @@ import {
   getApplicationExternalData,
   getOtherParentId,
   applicantIsMale,
+  PARENTAL_LEAVE,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  NO,
+  formatBankInfo,
 } from '@island.is/application/templates/parental-leave'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { apiConstants } from './constants'
+
+// Check whether phoneNumber is GSM
+export const checkIfPhoneNumberIsGSM = (phoneNumber: string): boolean => {
+  const phoneNumberStartStr = ['6', '7', '8']
+  return phoneNumberStartStr.some((substr) => phoneNumber.startsWith(substr))
+}
 
 export const getPersonalAllowance = (
   application: Application,
@@ -37,6 +48,7 @@ export const getPersonalAllowance = (
     personalUseAsMuchAsPossible,
     personalUsage,
     spouseUsage,
+    otherParent,
   } = getApplicationAnswers(application.answers)
 
   const usePersonalAllowanceGetter = fromSpouse
@@ -53,6 +65,10 @@ export const getPersonalAllowance = (
     return 0
   }
 
+  if (fromSpouse && otherParent === NO) {
+    return 0
+  }
+
   const willUseMax = useMaxGetter === YES
 
   if (willUseMax) {
@@ -65,19 +81,27 @@ export const getPersonalAllowance = (
 export const getEmployer = (
   application: Application,
   isSelfEmployed = false,
-): Employer => {
+): Employer[] => {
   const {
     applicantEmail,
-    employerEmail,
+    employers,
     employerNationalRegistryId,
   } = getApplicationAnswers(application.answers)
 
-  return {
-    email: isSelfEmployed ? applicantEmail : employerEmail,
-    nationalRegistryId: isSelfEmployed
-      ? application.applicant
-      : employerNationalRegistryId,
+  if (isSelfEmployed) {
+    return [
+      {
+        email: applicantEmail,
+        nationalRegistryId: application.applicant,
+      },
+    ]
   }
+
+  return employers.map((e) => ({
+    email: e.email,
+    nationalRegistryId:
+      e.companyNationalRegistryId ?? employerNationalRegistryId ?? '',
+  }))
 }
 
 export const getPensionFund = (
@@ -88,13 +112,20 @@ export const getPensionFund = (
     ? 'payments.privatePensionFund'
     : 'payments.pensionFund'
 
-  const value = get(application.answers, getter, isPrivate ? null : undefined)
+  const { applicationType } = getApplicationAnswers(application.answers)
+
+  const value =
+    applicationType === PARENTAL_LEAVE
+      ? get(application.answers, getter, isPrivate ? null : undefined)
+      : apiConstants.pensionFunds.noPensionFundId
 
   if (isPrivate) {
     return {
       id:
-        typeof value === 'string'
-          ? value
+        applicationType === PARENTAL_LEAVE
+          ? typeof value === 'string'
+            ? value
+            : apiConstants.pensionFunds.noPrivatePensionFundId
           : apiConstants.pensionFunds.noPrivatePensionFundId,
       name: '',
     }
@@ -113,11 +144,14 @@ export const getPensionFund = (
 }
 
 export const getPrivatePensionFundRatio = (application: Application) => {
-  const { privatePensionFundPercentage } = getApplicationAnswers(
-    application.answers,
-  )
+  const {
+    privatePensionFundPercentage,
+    applicationType,
+  } = getApplicationAnswers(application.answers)
   const privatePensionFundRatio: number =
-    Number(privatePensionFundPercentage) || 0
+    applicationType === PARENTAL_LEAVE
+      ? Number(privatePensionFundPercentage) || 0
+      : 0
 
   return privatePensionFundRatio
 }
@@ -157,10 +191,28 @@ export const getRightsCode = (application: Application): string => {
   }
 
   const answers = getApplicationAnswers(application.answers)
+
+  /*
+   ** If we got RightCodePeriod from VMST then use it ( only basic/grunnrétt )
+   */
+  const rightCodePeriod = answers.periods[0]?.rightCodePeriod
+  if (rightCodePeriod) {
+    const periodCodeStartCharacters = ['M', 'F']
+    if (periodCodeStartCharacters.some((c) => rightCodePeriod.startsWith(c))) {
+      return rightCodePeriod
+    }
+  }
+
   const isSelfEmployed = answers.isSelfEmployed === YES
+  const isUnemployed = answers.applicationType === PARENTAL_GRANT
+  const isStudent = answers.applicationType === PARENTAL_GRANT_STUDENTS
 
   if (selectedChild.parentalRelation === ParentalRelations.primary) {
-    if (isSelfEmployed) {
+    if (isUnemployed) {
+      return 'M-FS'
+    } else if (isStudent) {
+      return 'M-FSN'
+    } else if (isSelfEmployed) {
       return 'M-S-GR'
     } else {
       return 'M-L-GR'
@@ -176,14 +228,22 @@ export const getRightsCode = (application: Application): string => {
   if (parentsAreInRegisteredCohabitation) {
     // If this secondary parent is in registered cohabitation with primary parent
     // then they will automatically be granted custody
-    if (isSelfEmployed) {
+    if (isUnemployed) {
+      return `${parentPrefix}-FS`
+    } else if (isStudent) {
+      return `${parentPrefix}-FSN`
+    } else if (isSelfEmployed) {
       return `${parentPrefix}-S-GR`
     } else {
       return `${parentPrefix}-L-GR`
     }
   }
 
-  if (isSelfEmployed) {
+  if (isUnemployed) {
+    return `${parentPrefix}-FL-FS`
+  } else if (isStudent) {
+    return `${parentPrefix}-FL-FSN`
+  } else if (isSelfEmployed) {
     return `${parentPrefix}-FL-S-GR`
   } else {
     return `${parentPrefix}-FL-L-GR`
@@ -211,6 +271,8 @@ export const transformApplicationToParentalLeaveDTO = (
   application: Application,
   periods: Period[],
   attachments?: Attachment[],
+  onlyValidate?: boolean,
+  type?: 'period' | 'documentPeriod' | 'document' | undefined,
 ): ParentalLeave => {
   const selectedChild = getSelectedChild(
     application.answers,
@@ -221,14 +283,28 @@ export const transformApplicationToParentalLeaveDTO = (
     throw new Error('Missing selected child')
   }
 
-  const { isSelfEmployed, union, bank } = getApplicationAnswers(
-    application.answers,
+  const {
+    union,
+    bank,
+    applicationType,
+    multipleBirths,
+    isSelfEmployed,
+    isReceivingUnemploymentBenefits,
+  } = getApplicationAnswers(application.answers)
+
+  const { applicationFundId } = getApplicationExternalData(
+    application.externalData,
   )
+
   const { email, phoneNumber } = getApplicantContactInfo(application)
   const selfEmployed = isSelfEmployed === YES
+  const receivingUnemploymentBenefits = isReceivingUnemploymentBenefits === YES
+
+  const testData: string = onlyValidate!.toString()
 
   return {
     applicationId: application.id,
+    applicationFundId: applicationFundId,
     applicant: application.applicant,
     otherParentId: getOtherParentId(application),
     expectedDateOfBirth: selectedChild.expectedDateOfBirth,
@@ -238,12 +314,15 @@ export const transformApplicationToParentalLeaveDTO = (
     email,
     phoneNumber,
     paymentInfo: {
-      bankAccount: bank,
+      bankAccount: formatBankInfo(bank),
       personalAllowance: getPersonalAllowance(application),
       personalAllowanceFromSpouse: getPersonalAllowance(application, true),
       union: {
         // If a union is not selected then use the default 'no union' value
-        id: union ?? apiConstants.unions.noUnion,
+        id:
+          applicationType === PARENTAL_LEAVE
+            ? union ?? apiConstants.unions.noUnion
+            : apiConstants.unions.noUnion,
         name: '',
       } as Union,
       pensionFund: getPensionFund(application),
@@ -251,10 +330,19 @@ export const transformApplicationToParentalLeaveDTO = (
       privatePensionFundRatio: getPrivatePensionFundRatio(application),
     },
     periods,
-    employers: [getEmployer(application, selfEmployed)],
+    employers:
+      applicationType === PARENTAL_LEAVE && !receivingUnemploymentBenefits
+        ? getEmployer(application, selfEmployed)
+        : [],
     status: 'In Progress',
     rightsCode: getRightsCode(application),
     attachments,
+    testData,
+    noOfChildren:
+      multipleBirths && multipleBirths > 1
+        ? multipleBirths.toString()
+        : undefined,
+    type,
   }
 }
 

@@ -66,11 +66,17 @@ type RunServerOptions = {
   globalPrefix?: string
 
   stripNonClassValidatorInputs?: boolean
+
+  /**
+   * Enables NestJS versioning.
+   */
+  enableVersioning?: boolean
 }
 
 export const createApp = async ({
   stripNonClassValidatorInputs = true,
   appModule,
+  enableVersioning,
   ...options
 }: RunServerOptions) => {
   monkeyPatchServerLogging()
@@ -84,6 +90,10 @@ export const createApp = async ({
     },
   )
 
+  if (enableVersioning) {
+    app.enableVersioning()
+  }
+
   // Configure "X-Requested-For" handling.
   // Internal services should trust the X-Forwarded-For header (EXPRESS_TRUST_PROXY=1)
   // Public services (eg API Gateway) should trust our own reverse proxies
@@ -96,6 +106,7 @@ export const createApp = async ({
     new ValidationPipe({
       whitelist: stripNonClassValidatorInputs,
       forbidNonWhitelisted: true,
+      forbidUnknownValues: false,
     }),
   )
 

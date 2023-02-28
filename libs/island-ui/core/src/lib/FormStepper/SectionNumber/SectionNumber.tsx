@@ -1,4 +1,6 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
+import cn from 'classnames'
+
 import { Colors } from '@island.is/island-ui/theme'
 
 import { Box } from '../../Box/Box'
@@ -53,7 +55,7 @@ export const SectionNumber: FC<SectionNumberProps> = ({
       <Box
         position="absolute"
         background={currentLineColor}
-        className={styles.progressLine}
+        className={cn(styles.progressLine, 'pl')}
         style={{ height: `${lineHeight}px` }}
       />
       {(currentState === 'next' && (

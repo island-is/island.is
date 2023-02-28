@@ -26,11 +26,10 @@ describe('LimitedAccessCaseController - Get by id guards', () => {
     let guard: CanActivate
 
     beforeEach(() => {
-      guard = guards[0]
+      guard = new guards[0]()
     })
 
     it('should have JwtAuthGuard as quard 1', () => {
-      // TODO: Verify that true is passed to the constructor
       expect(guard).toBeInstanceOf(JwtAuthGuard)
     })
   })

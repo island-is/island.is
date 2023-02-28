@@ -7,6 +7,7 @@ import {
   Box,
   Text,
   Link,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { useNamespaceStrict } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
@@ -34,7 +35,9 @@ export const OrganizationIslandFooter = () => {
       <Box background="blue100" width="full" padding={5}>
         <GridContainer className={styles.contentContainer}>
           <Box className={styles.leftContent}>
-            <Logo iconOnly={true} />
+            <Hidden below="sm">
+              <Logo iconOnly={true} />
+            </Hidden>
             <Text color="blue600">
               <Link href={n('digitalIcelandLink', '/s/stafraent-island')}>
                 {n('digitalIceland', 'Stafrænt Ísland')}

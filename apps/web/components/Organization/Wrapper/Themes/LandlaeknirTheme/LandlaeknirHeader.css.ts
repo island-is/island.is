@@ -1,29 +1,10 @@
 import { style } from '@vanilla-extract/css'
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { themeUtils } from '@island.is/island-ui/theme'
 
 export const headerBg = style({
   height: 385,
   marginTop: -130,
   paddingTop: 130,
-  backgroundRepeat: 'no-repeat',
-  backgroundPositionX: '80%',
-  backgroundPositionY: '500%',
-  borderBottom: `8px solid ${theme.color.blue600}`,
-  ...themeUtils.responsiveStyle({
-    md: {
-      backgroundPositionX: '95%',
-      backgroundImage:
-        "url('https://images.ctfassets.net/8k0h54kbe6bj/2bVBDkDpsHFiOKCM1NgyJD/15c75aeb1c1ac8348e76a24aa2de3e3f/Folk_Saman.png')",
-    },
-    lg: {
-      backgroundImage:
-        "url('https://images.ctfassets.net/8k0h54kbe6bj/2bVBDkDpsHFiOKCM1NgyJD/15c75aeb1c1ac8348e76a24aa2de3e3f/Folk_Saman.png')",
-    },
-    xl: {
-      backgroundImage:
-        "url('https://images.ctfassets.net/8k0h54kbe6bj/2bVBDkDpsHFiOKCM1NgyJD/15c75aeb1c1ac8348e76a24aa2de3e3f/Folk_Saman.png')",
-    },
-  }),
 })
 
 export const iconCircle = style({

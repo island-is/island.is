@@ -1,40 +1,33 @@
+import { Op, literal } from 'sequelize'
 import { Transaction } from 'sequelize/types'
-
 import {
   Inject,
   Injectable,
   InternalServerErrorException,
-  NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { CaseState, CaseType } from '@island.is/judicial-system/types'
+import { MessageService } from '@island.is/judicial-system/message'
 
+import { User } from '../user'
+import { CourtService } from '../court'
+import { Case } from '../case/models/case.model'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
+import { DeliverResponse } from './models/deliver.response'
 import { Defendant } from './models/defendant.model'
 
 @Injectable()
 export class DefendantService {
   constructor(
     @InjectModel(Defendant) private readonly defendantModel: typeof Defendant,
+    private readonly courtService: CourtService,
+    private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
-
-  async findById(defendantId: string, caseId: string): Promise<Defendant> {
-    const defendant = await this.defendantModel.findOne({
-      where: { id: defendantId, caseId },
-    })
-
-    if (!defendant) {
-      throw new NotFoundException(
-        `Defendant ${defendantId} of case ${caseId} does not exist`,
-      )
-    }
-
-    return defendant
-  }
 
   async create(
     caseId: string,
@@ -99,5 +92,70 @@ export class DefendantService {
     }
 
     return true
+  }
+
+  async isDefendantInActiveCustody(defendants?: Defendant[]): Promise<boolean> {
+    if (
+      !defendants ||
+      !defendants[0]?.nationalId ||
+      defendants[0]?.noNationalId
+    ) {
+      return false
+    }
+
+    const defendantsInCustody = await this.defendantModel.findAll({
+      include: [
+        {
+          model: Case,
+          as: 'case',
+          where: {
+            state: CaseState.ACCEPTED,
+            type: CaseType.CUSTODY,
+            valid_to_date: { [Op.gte]: literal('current_date') },
+          },
+        },
+      ],
+      where: { nationalId: defendants[0].nationalId },
+    })
+
+    return defendantsInCustody.some((d) => d.case)
+  }
+
+  async deliverDefendantToCourt(
+    theCase: Case,
+    defendant: Defendant,
+    user: User,
+  ): Promise<DeliverResponse> {
+    if (
+      defendant.noNationalId ||
+      !defendant.nationalId ||
+      defendant.nationalId.replace('-', '').length !== 10
+    ) {
+      // TODO: Uncomment when we are ready to send notifications
+      // await this.messageService.sendMessagesToQueue([{
+      //   type: MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
+      //   caseId: theCase.id,
+      // }])
+
+      return { delivered: true }
+    }
+
+    return this.courtService
+      .updateCaseWithDefendant(
+        user,
+        theCase.id,
+        theCase.courtId ?? '',
+        theCase.courtCaseNumber ?? '',
+        defendant.nationalId.replace('-', ''),
+        theCase.defenderEmail,
+      )
+      .then(() => {
+        return { delivered: true }
+      })
+      .catch((reason) => {
+        this.logger.error('Failed to update case with defendant', { reason })
+
+        return { delivered: false }
+      })
   }
 }

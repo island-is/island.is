@@ -12,6 +12,9 @@ export class QuestionAndAnswer {
 
   @Field(() => [SliceUnion])
   answer: Array<typeof SliceUnion> = []
+
+  @Field({ nullable: true })
+  publishDate?: string
 }
 
 export const mapQuestionAndAnswer = ({
@@ -21,4 +24,5 @@ export const mapQuestionAndAnswer = ({
   id: sys.id,
   question: fields.question ?? '',
   answer: fields.answer ? mapDocument(fields.answer, sys.id + ':answer') : [],
+  publishDate: fields.publishDate ?? '',
 })

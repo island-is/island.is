@@ -2,7 +2,7 @@ import React, { FC, useState, useEffect } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import { GridRow, GridColumn, GridContainer } from '@island.is/island-ui/core'
-import { parseNumber } from '../../../utils/phoneHelper'
+import { parseNumber, LoadModal } from '@island.is/service-portal/core'
 import {
   useUserProfile,
   useUpdateOrCreateUserProfile,
@@ -13,13 +13,12 @@ import { InputSection } from './components/InputSection'
 import { InputEmail } from './components/Inputs/Email'
 import { InputPhone } from './components/Inputs/Phone'
 import { DropModal } from './components/DropModal'
-import { LoadModal } from './components/LoadModal'
 import { BankInfoForm } from './components/Inputs/BankInfoForm'
 import { Nudge } from './components/Inputs/Nudge'
 import { msg } from '../../../lib/messages'
 import { DropModalType, DataStatus } from './types/form'
 import { bankInfoObject } from '../../../utils/bankInfoHelper'
-import { diffModifiedOverMaxDate } from '../../../utils/showModal'
+import { diffModifiedOverMaxDate } from '../../../utils/showUserOnboardingModal'
 
 interface Props {
   onCloseOverlay?: () => void

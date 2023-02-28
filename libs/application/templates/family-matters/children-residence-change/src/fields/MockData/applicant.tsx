@@ -6,7 +6,7 @@ import { CRCFieldBaseProps } from '../../types'
 const applicantDefault = {
   fullName: 'Applicant Mockname',
   address: {
-    streetName: 'Borgartún 26',
+    streetAddress: 'Borgartún 26',
     postalCode: '105',
     city: 'Reykjavík',
   },
@@ -39,10 +39,10 @@ const MockApplicant = ({ application, field }: CRCFieldBaseProps) => {
         </Box>
         <Box marginTop={2}>
           <InputController
-            id={`${id}.address.streetName`}
-            name={`${id}.address.streetName`}
+            id={`${id}.address.streetAddress`}
+            name={`${id}.address.streetAddress`}
             label="Heimilisfang"
-            defaultValue={applicant.address.streetName}
+            defaultValue={applicant.address?.streetAddress || ''}
           />
         </Box>
         <Box marginTop={2}>
@@ -50,7 +50,7 @@ const MockApplicant = ({ application, field }: CRCFieldBaseProps) => {
             id={`${id}.address.postalCode`}
             name={`${id}.address.postalCode`}
             label="Póstnúmer"
-            defaultValue={applicant.address.postalCode}
+            defaultValue={applicant.address?.postalCode || ''}
           />
         </Box>
         <Box marginTop={2}>
@@ -58,7 +58,7 @@ const MockApplicant = ({ application, field }: CRCFieldBaseProps) => {
             id={`${id}.address.city`}
             name={`${id}.address.city`}
             label="Borg"
-            defaultValue={applicant.address.city}
+            defaultValue={applicant.address?.locality || ''}
           />
         </Box>
       </Box>

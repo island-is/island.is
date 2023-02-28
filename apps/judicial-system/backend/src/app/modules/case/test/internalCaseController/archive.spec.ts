@@ -9,9 +9,11 @@ import { CaseState, UserRole } from '@island.is/judicial-system/types'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { uuidFactory } from '../../../../factories'
 import { Defendant, DefendantService } from '../../../defendant'
+import {
+  IndictmentCount,
+  IndictmentCountService,
+} from '../../../indictment-count'
 import { CaseFile, FileService } from '../../../file'
-import { User } from '../../../user'
-import { Institution } from '../../../institution'
 import { ArchiveResponse } from '../../models/archive.response'
 import { Case } from '../../models/case.model'
 import { CaseArchive } from '../../models/caseArchive.model'
@@ -20,6 +22,7 @@ import { oldFilter } from '../../filters/case.filters'
 
 jest.mock('crypto-js')
 jest.mock('../../../../factories')
+
 interface Then {
   result: ArchiveResponse
   error: Error
@@ -30,6 +33,7 @@ type GivenWhenThen = () => Promise<Then>
 describe('InternalCaseController - Archive', () => {
   let mockFileService: FileService
   let mockDefendantService: DefendantService
+  let mockIndictmentCountService: IndictmentCountService
   let mockCaseModel: typeof Case
   let mockCaseArchiveModel: typeof CaseArchive
   let mockCaseConfig: ConfigType<typeof caseModuleConfig>
@@ -40,6 +44,7 @@ describe('InternalCaseController - Archive', () => {
     const {
       fileService,
       defendantService,
+      indictmentCountService,
       sequelize,
       caseModel,
       caseArchiveModel,
@@ -49,6 +54,7 @@ describe('InternalCaseController - Archive', () => {
 
     mockFileService = fileService
     mockDefendantService = defendantService
+    mockIndictmentCountService = indictmentCountService
     mockCaseModel = caseModel
     mockCaseArchiveModel = caseArchiveModel
     mockCaseConfig = caseConfig
@@ -80,39 +86,16 @@ describe('InternalCaseController - Archive', () => {
       expect(mockCaseModel.findOne).toHaveBeenCalledWith({
         include: [
           { model: Defendant, as: 'defendants' },
-          { model: Institution, as: 'court' },
-          {
-            model: User,
-            as: 'creatingProsecutor',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          {
-            model: User,
-            as: 'prosecutor',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          { model: Institution, as: 'sharedWithProsecutorsOffice' },
-          {
-            model: User,
-            as: 'judge',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          {
-            model: User,
-            as: 'registrar',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          {
-            model: User,
-            as: 'courtRecordSignatory',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          { model: Case, as: 'parentCase' },
-          { model: Case, as: 'childCase' },
+          { model: IndictmentCount, as: 'indictmentCounts' },
           { model: CaseFile, as: 'caseFiles' },
         ],
         order: [
           [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
+          [
+            { model: IndictmentCount, as: 'indictmentCounts' },
+            'created',
+            'ASC',
+          ],
           [{ model: CaseFile, as: 'caseFiles' }, 'created', 'ASC'],
         ],
         where: {
@@ -129,6 +112,8 @@ describe('InternalCaseController - Archive', () => {
     const defendantId2 = uuid()
     const caseFileId1 = uuid()
     const caseFileId2 = uuid()
+    const indictmentCountId1 = uuid()
+    const indictmentCountId2 = uuid()
     const theCase = {
       id: caseId,
       description: 'original_description',
@@ -158,6 +143,7 @@ describe('InternalCaseController - Archive', () => {
       prosecutorAppealAnnouncement: 'original_prosecutorAppealAnnouncement',
       caseModifiedExplanation: 'original_caseModifiedExplanation',
       caseResentExplanation: 'original_caseResentExplanation',
+      indictmentIntroduction: 'original_indictment_introduction',
       defendants: [
         {
           id: defendantId1,
@@ -173,8 +159,32 @@ describe('InternalCaseController - Archive', () => {
         },
       ],
       caseFiles: [
-        { id: caseFileId1, name: 'original_name1', key: 'original_key1' },
-        { id: caseFileId2, name: 'original_name2', key: 'original_key2' },
+        {
+          id: caseFileId1,
+          name: 'original_name1',
+          key: 'original_key1',
+          userGeneratedFilename: 'original_user_generated_filename1',
+        },
+        {
+          id: caseFileId2,
+          name: 'original_name2',
+          key: 'original_key2',
+          userGeneratedFilename: 'original_user_generated_filename2',
+        },
+      ],
+      indictmentCounts: [
+        {
+          id: indictmentCountId1,
+          vehicleRegistrationNumber: 'original_vehicle_registration_number1',
+          incidentDescription: 'original_indictment_description1',
+          legalArguments: 'original_legal_arguments1',
+        },
+        {
+          id: indictmentCountId2,
+          vehicleRegistrationNumber: 'original_vehicle_registration_number2',
+          incidentDescription: 'original_indictment_description2',
+          legalArguments: 'original_legal_arguments2',
+        },
       ],
       isArchived: false,
     }
@@ -209,6 +219,7 @@ describe('InternalCaseController - Archive', () => {
       prosecutorAppealAnnouncement: 'original_prosecutorAppealAnnouncement',
       caseModifiedExplanation: 'original_caseModifiedExplanation',
       caseResentExplanation: 'original_caseResentExplanation',
+      indictmentIntroduction: 'original_indictment_introduction',
       defendants: [
         {
           nationalId: 'original_nationalId1',
@@ -222,8 +233,28 @@ describe('InternalCaseController - Archive', () => {
         },
       ],
       caseFiles: [
-        { name: 'original_name1', key: 'original_key1' },
-        { name: 'original_name2', key: 'original_key2' },
+        {
+          name: 'original_name1',
+          key: 'original_key1',
+          userGeneratedFilename: 'original_user_generated_filename1',
+        },
+        {
+          name: 'original_name2',
+          key: 'original_key2',
+          userGeneratedFilename: 'original_user_generated_filename2',
+        },
+      ],
+      indictmentCounts: [
+        {
+          vehicleRegistrationNumber: 'original_vehicle_registration_number1',
+          incidentDescription: 'original_indictment_description1',
+          legalArguments: 'original_legal_arguments1',
+        },
+        {
+          vehicleRegistrationNumber: 'original_vehicle_registration_number2',
+          incidentDescription: 'original_indictment_description2',
+          legalArguments: 'original_legal_arguments2',
+        },
       ],
     })
     const iv = uuid()
@@ -268,7 +299,7 @@ describe('InternalCaseController - Archive', () => {
       expect(mockFileService.updateCaseFile).toHaveBeenCalledWith(
         caseId,
         caseFileId1,
-        { name: '', key: '' },
+        { name: '', key: '', userGeneratedFilename: '' },
         transaction,
       )
     })
@@ -277,7 +308,33 @@ describe('InternalCaseController - Archive', () => {
       expect(mockFileService.updateCaseFile).toHaveBeenCalledWith(
         caseId,
         caseFileId2,
-        { name: '', key: '' },
+        { name: '', key: '', userGeneratedFilename: '' },
+        transaction,
+      )
+    })
+
+    it('should clear encrypted indictment count one properties', () => {
+      expect(mockIndictmentCountService.update).toHaveBeenCalledWith(
+        caseId,
+        indictmentCountId1,
+        {
+          vehicleRegistrationNumber: '',
+          incidentDescription: '',
+          legalArguments: '',
+        },
+        transaction,
+      )
+    })
+
+    it('should clear encrypted indictment count two properties', () => {
+      expect(mockIndictmentCountService.update).toHaveBeenCalledWith(
+        caseId,
+        indictmentCountId2,
+        {
+          vehicleRegistrationNumber: '',
+          incidentDescription: '',
+          legalArguments: '',
+        },
         transaction,
       )
     })
@@ -331,6 +388,8 @@ describe('InternalCaseController - Archive', () => {
           prosecutorAppealAnnouncement: '',
           caseModifiedExplanation: '',
           caseResentExplanation: '',
+          crimeScenes: null,
+          indictmentIntroduction: '',
           isArchived: true,
         },
         { where: { id: caseId }, transaction },

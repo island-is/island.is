@@ -2,6 +2,7 @@ import {
   SyslumennAuction,
   Homestay,
   PaginatedOperatingLicenses,
+  OperatingLicensesCSV,
   CertificateInfoResponse,
   DistrictCommissionerAgencies,
   DataUploadResponse,
@@ -13,17 +14,26 @@ import {
   AssetName,
   EstateRegistrant,
   EstateRelations,
+  EstateInfo,
+  RealEstateAgent,
+  Lawyer,
+  PropertyDetail,
 } from './syslumennClient.types'
 import {
   mapSyslumennAuction,
   mapHomestay,
   mapPaginatedOperatingLicenses,
+  mapOperatingLicensesCSV,
   mapCertificateInfo,
   mapDistrictCommissionersAgenciesResponse,
   mapDataUploadResponse,
   constructUploadDataObject,
   mapAssetName,
   mapEstateRegistrant,
+  mapEstateInfo,
+  mapRealEstateAgent,
+  mapLawyer,
+  cleanPropertyNumber,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
 import {
@@ -38,7 +48,6 @@ import { SyslumennClientConfig } from './syslumennClient.config'
 import type { ConfigType } from '@island.is/nest/config'
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { PropertyDetail } from '@island.is/api/domains/assets'
 
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -108,6 +117,22 @@ export class SyslumennService {
     return (syslumennAuctions ?? []).map(mapSyslumennAuction)
   }
 
+  async getRealEstateAgents(): Promise<RealEstateAgent[]> {
+    const { id, api } = await this.createApi()
+    const agents = await api.fasteignasalarGet({
+      audkenni: id,
+    })
+    return (agents ?? []).map(mapRealEstateAgent)
+  }
+
+  async getLawyers(): Promise<Lawyer[]> {
+    const { id, api } = await this.createApi()
+    const lawyers = await api.logmannalistiGet({
+      audkenni: id,
+    })
+    return (lawyers ?? []).map(mapLawyer)
+  }
+
   async getOperatingLicenses(
     searchQuery?: string,
     pageNumber?: number,
@@ -153,6 +178,23 @@ export class SyslumennService {
     )
   }
 
+  async getOperatingLicensesCSV(): Promise<OperatingLicensesCSV> {
+    const { id, api } = await this.createApi()
+    const csv = await api
+      .withMiddleware({
+        pre: async (context) => {
+          context.init.headers = Object.assign({}, context.init.headers, {
+            Accept: 'text/plain',
+            'Content-Type': 'text/plain',
+          })
+        },
+      })
+      .virkLeyfiCsvGet({
+        audkenni: id,
+      })
+    return mapOperatingLicensesCSV(csv)
+  }
+
   async sealDocument(document: string): Promise<SvarSkeyti> {
     const { id, api } = await this.createApi()
     const explination = 'Rafrænt undirritað vottorð'
@@ -167,7 +209,7 @@ export class SyslumennService {
 
   async uploadData(
     persons: Person[],
-    attachment: Attachment | undefined,
+    attachments: Attachment[] | undefined,
     extraData: { [key: string]: string },
     uploadDataName: string,
     uploadDataId?: string,
@@ -177,12 +219,15 @@ export class SyslumennService {
     const payload = constructUploadDataObject(
       id,
       persons,
-      attachment,
+      attachments,
       extraData,
       uploadDataName,
       uploadDataId,
     )
-    const response = await api.syslMottakaGognPost(payload)
+    const response = await api.syslMottakaGognPost(payload).catch((e) => {
+      throw new Error(`Syslumenn-client: uploadData failed ${e.type}`)
+    })
+
     const success = response.skilabod === UPLOAD_DATA_SUCCESS
     if (!success) {
       throw new Error(`POST uploadData was not successful`)
@@ -232,7 +277,7 @@ export class SyslumennService {
       .vedbokavottordRegluverkiPost({
         skilabod: {
           audkenni: id,
-          fastanumer: assetId,
+          fastanumer: cleanPropertyNumber(assetId),
           tegundAndlags: assetType as number,
         },
       })
@@ -262,10 +307,7 @@ export class SyslumennService {
     const res = await api.vedbokarvottordPost({
       skilabod: {
         audkenni: id,
-        fastanumer:
-          propertyNumber[0] == 'F'
-            ? propertyNumber.substring(1, propertyNumber.length)
-            : propertyNumber,
+        fastanumer: cleanPropertyNumber(propertyNumber),
         tegundAndlags: TegundAndlags.NUMBER_0, // 0 = Real estate
       },
     })
@@ -315,14 +357,10 @@ export class SyslumennService {
     const res = await api.vedbokavottordRegluverkiPost({
       skilabod: {
         audkenni: id,
-        fastanumer:
-          propertyNumber[0] == 'F'
-            ? propertyNumber.substring(1, propertyNumber.length)
-            : propertyNumber,
+        fastanumer: cleanPropertyNumber(propertyNumber),
         tegundAndlags: TegundAndlags.NUMBER_0, // 0 = Real estate
       },
     })
-
     if (res.length > 0) {
       return {
         propertyNumber: propertyNumber,
@@ -363,35 +401,10 @@ export class SyslumennService {
     const res = await api.danarbuAlgengTengslGet({
       audkenni: id,
     })
-    //return res TODO: change when generated api is fixed
     return {
-      relations: [
-        'Systir',
-        'Bróðir',
-        'Móðir',
-        'Faðir',
-        'Dóttir',
-        'Sonur',
-        'Dótturdóttir',
-        'Dóttursonur',
-        'Sonardóttir',
-        'Sonarsonur',
-        'Maki',
-        'Bréferfingi',
-        'Systkinabarn',
-        'Systkinabarnabarn',
-        'Afi',
-        'Amma',
-        'Stjúpdóttir',
-        'Stjúpsonur',
-        'Fósturdóttir',
-        'Fóstursonur',
-        'Útfararþjónusta',
-        'Skv. erfðaskrá',
-        'Annað',
-        'Dóttir látins maka',
-        'Sonur látins maka',
-      ],
+      relations: res
+        .map((relation) => relation?.heiti)
+        .filter((heiti): heiti is string => Boolean(heiti)),
     }
   }
 
@@ -410,5 +423,16 @@ export class SyslumennService {
       },
     })
     return res
+  }
+
+  async getEstateInfo(nationalId: string): Promise<EstateInfo[]> {
+    const { id, api } = await this.createApi()
+    const res = await api.upplysingarUrDanarbuiPost({
+      fyrirspurn: {
+        audkenni: id,
+        kennitala: nationalId,
+      },
+    })
+    return res.yfirlit?.map(mapEstateInfo) ?? []
   }
 }

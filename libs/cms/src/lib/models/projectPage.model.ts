@@ -11,6 +11,9 @@ import { mapProjectSubpage, ProjectSubpage } from './projectSubpage.model'
 import { mapStepper, Stepper } from './stepper.model'
 import { mapImage, Image } from './image.model'
 import { LinkGroup, mapLinkGroup } from './linkGroup.model'
+import { FooterItem, mapFooterItem } from './footerItem.model'
+import { Link, mapLink } from './link.model'
+import { mapNamespace, Namespace } from './namespace.model'
 
 @ObjectType()
 export class ProjectPage {
@@ -47,6 +50,9 @@ export class ProjectPage {
   @Field(() => [SliceUnion])
   slices!: Array<typeof SliceUnion | null>
 
+  @Field(() => [SliceUnion])
+  bottomSlices!: Array<typeof SliceUnion | null>
+
   @Field(() => GenericTag, { nullable: true })
   newsTag!: GenericTag | null
 
@@ -64,6 +70,18 @@ export class ProjectPage {
 
   @Field()
   featuredDescription!: string
+
+  @Field(() => [FooterItem], { nullable: true })
+  footerItems?: FooterItem[]
+
+  @Field(() => Link, { nullable: true })
+  backLink?: Link | null
+
+  @Field(() => Boolean, { nullable: true })
+  contentIsFullWidth?: boolean
+
+  @Field(() => Namespace, { nullable: true })
+  namespace?: Namespace | null
 }
 
 export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
@@ -72,14 +90,19 @@ export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
   slug: fields.slug ?? '',
   theme: fields.theme ?? 'default',
   sidebar: fields.sidebar ?? false,
-  sidebarLinks: (fields.sidebarLinks ?? []).map(mapLinkGroup),
+  sidebarLinks: (fields.sidebarLinks ?? [])
+    .map(mapLinkGroup)
+    .filter((link) => Boolean(link.primaryLink)),
   subtitle: fields.subtitle ?? '',
   intro: fields.intro ?? '',
   content: fields.content
     ? mapDocument(fields.content, sys.id + ':content')
     : [],
   stepper: fields.stepper ? mapStepper(fields.stepper) : null,
-  slices: (fields.slices ?? []).map(safelyMapSliceUnion),
+  slices: (fields.slices ?? []).map(safelyMapSliceUnion).filter(Boolean),
+  bottomSlices: (fields.bottomSlices ?? [])
+    .map(safelyMapSliceUnion)
+    .filter(Boolean),
   newsTag: fields.newsTag ? mapGenericTag(fields.newsTag) : null,
   projectSubpages: (fields.projectSubpages ?? [])
     .filter((p) => p.fields?.title)
@@ -90,4 +113,8 @@ export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
     : null,
   defaultHeaderBackgroundColor: fields.defaultHeaderBackgroundColor ?? '',
   featuredDescription: fields.featuredDescription ?? '',
+  footerItems: fields.footerItems ? fields.footerItems.map(mapFooterItem) : [],
+  backLink: fields.backLink ? mapLink(fields.backLink) : null,
+  contentIsFullWidth: fields.contentIsFullWidth ?? false,
+  namespace: fields.namespace ? mapNamespace(fields.namespace) : null,
 })

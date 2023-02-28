@@ -24,6 +24,7 @@ const api_scope = {
   also_for_delegated_user: false,
   automatic_delegation_grant: false,
   is_access_controlled: false,
+  domain_name: '@island.is',
 }
 
 const api_scopes = [api_scope]
@@ -74,8 +75,7 @@ const client = {
   client_claims_prefix: '@island.is/auth-admin-web_',
   protocol_type: 'oidc',
   consent_lifetime: 3600,
-
-  supports_delegation: true,
+  supports_custom_delegation: true,
   supports_legal_guardians: true,
   supports_procuring_holders: true,
   prompt_delegations: true,

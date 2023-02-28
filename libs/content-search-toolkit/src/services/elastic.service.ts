@@ -21,7 +21,6 @@ import {
   TypeAggregationResponse,
   RankEvaluationInput,
   GroupedRankEvaluationResponse,
-  rankEvaluationMetrics,
   ProcessEntryAggregationResponse,
 } from '../types'
 import {
@@ -36,6 +35,7 @@ import { dateAggregationQuery } from '../queries/dateAggregation'
 import { tagAggregationQuery } from '../queries/tagAggregation'
 import { typeAggregationQuery } from '../queries/typeAggregation'
 import { rankEvaluationQuery } from '../queries/rankEvaluation'
+import { filterDoc, getValidBulkRequestChunk } from './utils'
 
 type RankResultMap<T extends string> = Record<string, RankEvaluationResponse<T>>
 
@@ -108,9 +108,10 @@ export class ElasticService {
   async bulkRequest(index: string, requests: Record<string, unknown>[]) {
     try {
       // elasticsearch does not like big requests (above 5mb) so we limit the size to X entries just in case
-      const chunkSize = 20 // this has to be an even number
       const client = await this.getClient()
-      let requestChunk = requests.splice(-chunkSize, chunkSize)
+
+      let requestChunk = getValidBulkRequestChunk(requests)
+
       while (requestChunk.length) {
         // wait for request b4 continuing
         const response = await client.bulk({
@@ -120,15 +121,19 @@ export class ElasticService {
 
         // not all errors are thrown log if the response has any errors
         if (response.body.errors) {
+          // Filter HUGE request object
+          filterDoc(response)
           logger.error('Failed to import some documents in bulk import', {
             response,
           })
         }
-        requestChunk = requests.splice(-chunkSize, chunkSize)
+        requestChunk = getValidBulkRequestChunk(requests)
       }
 
       return true
     } catch (error) {
+      // Filter HUGE request object
+      filterDoc(error)
       logger.error('Elasticsearch request failed on bulk import', error)
       throw error
     }
@@ -177,23 +182,23 @@ export class ElasticService {
     })
   }
 
-  async getRankEvaluation<searchTermUnion extends string>(
+  async getRankEvaluation<SearchTermUnion extends string>(
     index: string,
     termRatings: RankEvaluationInput['termRatings'],
     metrics: RankEvaluationInput['metric'][],
-  ): Promise<GroupedRankEvaluationResponse<searchTermUnion>> {
+  ): Promise<GroupedRankEvaluationResponse<SearchTermUnion>> {
     // elasticsearch does not support multiple metric request per rank_eval call so we make multiple calls
     const requests = metrics.map(async (metric) => {
       const requestBody = rankEvaluationQuery({ termRatings, metric })
       const data = await this.rankEvaluation<
-        RankEvaluationResponse<searchTermUnion>,
+        RankEvaluationResponse<SearchTermUnion>,
         typeof requestBody
       >(index, requestBody)
       return data.body
     })
 
     const results = await Promise.all(requests)
-    return results.reduce<RankResultMap<searchTermUnion>>(
+    return results.reduce<RankResultMap<SearchTermUnion>>(
       (groupedResults, result, index) => {
         groupedResults[metrics[index]] = result
         return groupedResults
@@ -283,7 +288,7 @@ export class ElasticService {
   }
 
   async search(index: string, query: SearchInput) {
-    const requestBody = searchQuery(query)
+    const requestBody = searchQuery(query, true, true)
 
     return this.findByQuery<
       SearchResponse<
@@ -302,7 +307,6 @@ export class ElasticService {
   ): Promise<AutocompleteTermResponse> {
     const { singleTerm, size } = input
     const requestBody = autocompleteTermQuery({ singleTerm, size })
-
     const data = await this.findByQuery<
       AutocompleteTermResponse,
       typeof requestBody

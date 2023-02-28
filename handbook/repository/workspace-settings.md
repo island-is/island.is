@@ -1,7 +1,7 @@
 # Workspace Settings
 
-Various project settings can be controlled from the `workspace.json`
-file, located in the root of the repository.
+Various project settings can be controlled from the `project.json`
+file, located in each project folder.
 
 ## E2E Testing Configuration
 
@@ -68,7 +68,7 @@ See the following example for the `web` project:
 
 ```json
 "e2e": {
-  "builder": "@nrwl/cypress:cypress",
+  "executor": "@nrwl/cypress:cypress",
   "options": {
     "cypressConfig": "apps/web-e2e/cypress.config.ts",
     "tsConfig": "apps/web-e2e/tsconfig.e2e.json",
@@ -92,7 +92,7 @@ of the corrensponding `e2e` project.
 
 ```json
 "e2e-ci": {
-  "builder": "@nrwl/workspace:run-commands",
+  "executor": "@nrwl/workspace:run-commands",
   "options": {
     "command": "yarn e2e-ci -n web-e2e -d dist/apps/web"
   }
@@ -103,7 +103,7 @@ of the corrensponding `e2e` project.
 
 ```json
 "e2e-ci": {
-  "builder": "@nrwl/workspace:run-commands",
+  "executor": "@nrwl/workspace:run-commands",
   "options": {
     "command": "yarn e2e-ci -n service-portal-e2e -t react -f dist/apps/service-portal -b /minarsidur"
   }

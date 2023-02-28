@@ -1,22 +1,21 @@
 import React from 'react'
-import { defineMessage } from 'react-intl'
-import { useNamespaces, useLocale } from '@island.is/localization'
 import { gql, useQuery } from '@apollo/client'
+import {
+  pagingFragment,
+  addressFragment,
+} from '@island.is/service-portal/graphql'
 import { Query } from '@island.is/api/schema'
+import { Box, Button, GridColumn, GridRow } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  Box,
-  Text,
-  Button,
-  GridColumn,
-  GridRow,
-} from '@island.is/island-ui/core'
-import {
-  ServicePortalModuleComponent,
-  m,
   EmptyState,
+  ErrorScreen,
+  IntroHeader,
+  m,
 } from '@island.is/service-portal/core'
-import AssetListCards from '../../components/AssetListCards'
+
 import { AssetCardLoader } from '../../components/AssetCardLoader'
+import AssetListCards from '../../components/AssetListCards'
 import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
 
 const GetRealEstateQuery = gql`
@@ -25,28 +24,19 @@ const GetRealEstateQuery = gql`
       properties {
         propertyNumber
         defaultAddress {
-          locationNumber
-          postNumber
-          municipality
-          propertyNumber
-          display
-          displayShort
+          ...Address
         }
       }
       paging {
-        page
-        pageSize
-        totalPages
-        offset
-        total
-        hasPreviousPage
-        hasNextPage
+        ...Paging
       }
     }
   }
+  ${pagingFragment}
+  ${addressFragment}
 `
 
-export const AssetsOverview: ServicePortalModuleComponent = () => {
+export const AssetsOverview = () => {
   useNamespaces('sp.assets')
   const { formatMessage } = useLocale()
 
@@ -87,25 +77,33 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
     }
   }
 
+  if (error && !loading) {
+    return (
+      <ErrorScreen
+        figure="./assets/images/hourglass.svg"
+        tagVariant="red"
+        tag={formatMessage(m.errorTitle)}
+        title={formatMessage(m.somethingWrong)}
+        children={formatMessage(m.errorFetchModule, {
+          module: formatMessage(m.realEstate).toLowerCase(),
+        })}
+      />
+    )
+  }
+
   return (
     <>
-      <Text variant="h3" as="h1">
-        {formatMessage({
+      <IntroHeader
+        title={{
           id: 'sp.assets:title',
           defaultMessage: 'Fasteignir',
-        })}
-      </Text>
-      <GridRow marginBottom={6}>
-        <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-          <Text variant="default" paddingTop={2}>
-            {formatMessage({
-              id: 'sp.assets:intro',
-              defaultMessage:
-                'Hér birtast upplýsingar úr fasteignaskrá Þjóðskrár um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
-            })}
-          </Text>
-        </GridColumn>
-      </GridRow>
+        }}
+        intro={{
+          id: 'sp.assets:intro',
+          defaultMessage:
+            'Hér birtast upplýsingar úr fasteignaskrá um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
+        }}
+      />
 
       {loading && <AssetCardLoader />}
       {assetData?.properties && assetData?.properties?.length > 0 && (
@@ -150,18 +148,6 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
             <EmptyState />
           </Box>
         )}
-
-      {error && (
-        <Box>
-          <EmptyState
-            description={defineMessage({
-              id: 'sp.assets:error-message',
-              defaultMessage:
-                'Ekki tókst að sækja upplýsingar úr fasteignaskrá.',
-            })}
-          />
-        </Box>
-      )}
     </>
   )
 }

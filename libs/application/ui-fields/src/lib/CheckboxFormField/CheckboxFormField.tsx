@@ -36,6 +36,7 @@ export const CheckboxFormField: FC<Props> = ({
     strong,
     backgroundColor,
     width,
+    required,
     onSelect,
   } = field
   const { formatMessage } = useLocale()
@@ -69,14 +70,18 @@ export const CheckboxFormField: FC<Props> = ({
           split={width === 'half' ? '1/2' : '1/1'}
           backgroundColor={backgroundColor}
           defaultValue={
-            (getValueViaPath(application.answers, id) as string[]) ??
-            getDefaultValue(field, application)
+            ((getValueViaPath(application.answers, id) as string[]) ??
+              getDefaultValue(field, application)) ||
+            (required ? [] : undefined)
           }
           strong={strong}
           error={error}
-          options={finalOptions?.map(({ label, tooltip, ...o }) => ({
+          options={finalOptions?.map(({ label, subLabel, tooltip, ...o }) => ({
             ...o,
             label: HtmlParser(formatText(label, application, formatMessage)),
+            subLabel:
+              subLabel &&
+              HtmlParser(formatText(subLabel, application, formatMessage)),
             ...(tooltip && {
               tooltip: HtmlParser(
                 formatText(tooltip, application, formatMessage) as string,

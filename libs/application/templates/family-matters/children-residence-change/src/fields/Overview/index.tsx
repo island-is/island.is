@@ -55,7 +55,7 @@ const Overview = ({
   )
   const applicant = externalData.nationalRegistry.data
   const children = getSelectedChildrenFromExternalData(
-    applicant.children,
+    externalData.childrenCustodyInformation.data,
     answers.selectedChildren,
   )
   const parentB = children[0].otherParent
@@ -92,7 +92,7 @@ const Overview = ({
           dispatchFileSignature({
             type: FileSignatureActionTypes.ERROR,
             status: FileSignatureStatus.REQUEST_ERROR,
-            error: error.graphQLErrors[0].extensions?.code ?? 500,
+            error: (error.graphQLErrors[0].extensions?.code as number) ?? 500,
           })
         })
       if (documentToken) {
@@ -113,7 +113,7 @@ const Overview = ({
             dispatchFileSignature({
               type: FileSignatureActionTypes.ERROR,
               status: FileSignatureStatus.UPLOAD_ERROR,
-              error: error.graphQLErrors[0].extensions?.code ?? 500,
+              error: (error.graphQLErrors[0].extensions?.code as number) ?? 500,
             })
           })
 
@@ -144,7 +144,7 @@ const Overview = ({
           <DescriptionText
             text={m.contract.general.description}
             format={{
-              otherParent: parentB.fullName,
+              otherParent: parentB?.fullName ?? '',
             }}
           />
         ) : (

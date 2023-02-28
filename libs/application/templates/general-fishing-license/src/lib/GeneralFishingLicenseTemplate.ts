@@ -7,11 +7,20 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  defineTemplateApi,
+  NationalRegistryUserApi,
 } from '@island.is/application/types'
 import { Events, States, Roles } from '../constants'
 import { GeneralFishingLicenseSchema } from './dataSchema'
 import { application } from './messages'
 import { ApiActions } from '../shared'
+import { AuthDelegationType } from '@island.is/shared/types'
+import {
+  DepartmentOfFisheriesPaymentCatalogApi,
+  ShipRegistryApi,
+  IdentityApi,
+} from '../dataProviders'
+import { DefaultStateLifeCycle } from '@island.is/application/core'
 
 const pruneAtMidnight = () => {
   const date = new Date()
@@ -39,12 +48,14 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
     ApplicationConfigurations.GeneralFishingLicense.translation,
   ],
   dataSchema: GeneralFishingLicenseSchema,
+  allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
       [States.PREREQUISITES]: {
         meta: {
           name: application.general.name.defaultMessage,
+          status: 'draft',
           progress: 0.1,
           lifecycle: {
             shouldBeListed: false,
@@ -67,7 +78,14 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
+              api: [
+                NationalRegistryUserApi,
+                DepartmentOfFisheriesPaymentCatalogApi,
+                ShipRegistryApi,
+                IdentityApi,
+              ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -78,6 +96,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: application.general.name.defaultMessage,
+          status: 'draft',
           progress: 0.3,
           lifecycle: pruneAtMidnight(),
           roles: [
@@ -110,6 +129,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
       [States.PAYMENT]: {
         meta: {
           name: 'Payment state',
+          status: 'inprogress',
           actionCard: {
             description: application.labels.actionCardPayment,
           },
@@ -120,9 +140,9 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
             // Applications that stay in this state for 24 hours will be pruned automatically
             whenToPrune: 24 * 3600 * 1000,
           },
-          onEntry: {
-            apiModuleAction: ApiActions.createCharge,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.createCharge,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -139,6 +159,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -150,14 +171,12 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
       [States.SUBMITTED]: {
         meta: {
           name: application.general.name.defaultMessage,
+          status: 'completed',
           progress: 1,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: false,
-          },
-          onEntry: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
+          lifecycle: DefaultStateLifeCycle,
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -170,16 +189,13 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
       [States.DECLINED]: {
         meta: {
           name: 'Declined',
+          status: 'rejected',
           progress: 1,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: false,
-          },
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -190,7 +206,6 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

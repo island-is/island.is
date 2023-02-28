@@ -40,6 +40,7 @@ export class ContentfulRepository {
       accessToken,
       environment: process.env.CONTENTFUL_ENVIRONMENT || 'master',
       host: process.env.CONTENTFUL_HOST || 'preview.contentful.com',
+      removeUnresolved: true,
     })
   }
 
@@ -55,6 +56,7 @@ export class ContentfulRepository {
   async getLocalizedEntries<Fields>(
     languageCode: undefined | null | string,
     query: ContentfulQuery,
+    include = 4,
   ): Result<Fields> {
     let code = languageCode ?? 'is-IS'
 
@@ -64,7 +66,7 @@ export class ContentfulRepository {
 
     return this.getClient().getEntries({
       locale: validLocales.includes(code) ? code : 'is-IS',
-      include: 4,
+      include,
       ...query,
     })
   }

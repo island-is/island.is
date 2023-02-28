@@ -1,3 +1,7 @@
+import React, { FC } from 'react'
+import { MessageDescriptor } from 'react-intl'
+import { Link } from 'react-router-dom'
+
 import {
   ArrowLink,
   Box,
@@ -5,10 +9,9 @@ import {
   GridRow,
   Text,
 } from '@island.is/island-ui/core'
-import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
-import { MessageDescriptor } from 'react-intl'
-import { Link } from 'react-router-dom'
+
+import { IntroHeader } from '../..'
 import * as styles from './NavigationOverviewScreen.css'
 
 interface Props {
@@ -33,16 +36,8 @@ export const NavigationOverviewScreen: FC<Props> = ({
   const { formatMessage } = useLocale()
   return (
     <Box marginBottom={[4, 6, 9]}>
-      <GridRow>
-        <GridColumn span={['8/8', '8/8', '6/8']}>
-          <Text variant="h3" as="h1" marginBottom={[2, 3]}>
-            {formatMessage(title)}
-          </Text>
-          <Text variant="default" marginBottom={[3, 4, 8]}>
-            {formatMessage(intro)}
-          </Text>
-        </GridColumn>
-      </GridRow>
+      <IntroHeader title={title} intro={intro} />
+
       {navigation.map((nav, index) => (
         <GridRow key={index} alignItems="center" marginBottom={[6, 6, 15]}>
           <GridColumn span={['8/8', '5/8']} order={[2, index % 2 ? 2 : 1]}>

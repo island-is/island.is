@@ -8,6 +8,7 @@ import {
   fakeAuthResponse,
   setupTestEnv,
 } from '../../test/setup'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const testUrl = 'http://localhost/test'
 const issuerUrl = 'http://localhost/issuer'
@@ -88,7 +89,7 @@ describe('EnhancedFetch#withAutoAuth', () => {
 
   it('should not cache token forever', async () => {
     // Arrange
-    jest.useFakeTimers('modern')
+    jest.useFakeTimers()
     env = setupTestEnv({
       autoAuth: { ...autoAuth, mode: 'token' },
     })
@@ -167,7 +168,7 @@ describe('EnhancedFetch#withAutoAuth', () => {
 
   it('should not cache token exchange forever', async () => {
     // Arrange
-    jest.useFakeTimers('modern')
+    jest.useFakeTimers()
     const cacheManager = caching({ store: 'memory', ttl: 0 })
     env = setupTestEnv({
       autoAuth: {
@@ -321,7 +322,7 @@ describe('EnhancedFetch#withAutoAuth', () => {
     it('should request token exchange if requestActorToken and delegation', async () => {
       // Arrange
       const auth = createCurrentUser({ scope })
-      auth.delegationType = ['Custom']
+      auth.delegationType = [AuthDelegationType.Custom]
       auth.actor = {
         nationalId: auth.nationalId,
         scope: [],

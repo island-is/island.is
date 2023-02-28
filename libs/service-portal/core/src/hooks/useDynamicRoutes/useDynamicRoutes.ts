@@ -4,17 +4,9 @@ import { useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { ServicePortalPath } from '../../lib/navigation/paths'
 import uniq from 'lodash/uniq'
-
-const GET_DEBT_STATUS = gql`
-  query FinanceGetDebtStatus {
-    getDebtStatus {
-      myDebtStatus {
-        approvedSchedule
-        possibleToSchedule
-      }
-    }
-  }
-`
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { FeatureFlagClient, Features } from '@island.is/feature-flags'
+import { PortalNavigationItem, useNavigation } from '@island.is/portals/core'
 
 export const GET_TAPS_QUERY = gql`
   query GetTapsQuery {
@@ -22,6 +14,17 @@ export const GET_TAPS_QUERY = gql`
       RecordsTap
       employeeClaimsTap
       localTaxTap
+      schedulesTap
+    }
+  }
+`
+
+export const GET_DRIVING_LICENSE_BOOK_QUERY = gql`
+  query GetDrivingLicenseBook {
+    drivingLicenseBookUserBook {
+      book {
+        id
+      }
     }
   }
 `
@@ -30,22 +33,38 @@ export const GET_TAPS_QUERY = gql`
  * Returns an active navigation that matches all defined module routes
  */
 export const useDynamicRoutes = () => {
-  const [activeDynamicRoutes, setActiveDynamicRoutes] = useState<
-    ServicePortalPath[]
-  >([])
+  const [activeDynamicRoutes, setActiveDynamicRoutes] = useState<string[]>([])
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+  const [
+    drivingLessonsFlagEnabled,
+    setDrivingLessonsFlagEnabled,
+  ] = useState<boolean>(false)
+
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        Features.servicePortalDrivingLessonsBookModule,
+        false,
+      )
+      setDrivingLessonsFlagEnabled(ffEnabled as boolean)
+    }
+    isFlagEnabled()
+  }, [])
 
   const { data, loading } = useQuery<Query>(GET_TAPS_QUERY)
-  const { data: debtData, loading: debtLoading } = useQuery<Query>(
-    GET_DEBT_STATUS,
+
+  const { data: licenseBook, loading: licenseBookLoading } = useQuery<Query>(
+    GET_DRIVING_LICENSE_BOOK_QUERY,
   )
 
   useEffect(() => {
+    const dynamicPathArray = []
+
     /**
      * service-portal/finance
-     * Tabs control for finance routes. Transactions, claims, tax.
+     * Tabs control for finance routes. Transactions, claims, tax, finance schedule.
      */
     const tabData = data?.getCustomerTapControl
-    const dynamicPathArray = []
 
     if (tabData?.RecordsTap) {
       dynamicPathArray.push(ServicePortalPath.FinanceTransactions)
@@ -56,26 +75,28 @@ export const useDynamicRoutes = () => {
     if (tabData?.localTaxTap) {
       dynamicPathArray.push(ServicePortalPath.FinanceLocalTax)
     }
-
-    /**
-     * service-portal/finance
-     * Finance schedule route
-     */
-    const debtStatus = debtData?.getDebtStatus?.myDebtStatus || []
-
-    if (
-      debtStatus &&
-      debtStatus.length > 0 &&
-      (debtStatus[0].approvedSchedule > 0 ||
-        debtStatus[0].possibleToSchedule > 0)
-    ) {
+    if (tabData?.schedulesTap) {
       dynamicPathArray.push(ServicePortalPath.FinanceSchedule)
     }
 
-    setActiveDynamicRoutes(uniq([...activeDynamicRoutes, ...dynamicPathArray]))
-  }, [data, debtData])
+    /**
+     * service-portal/vehicles
+     * Tabs control for driving lessons.
+     */
+    const licenseBookData = licenseBook?.drivingLicenseBookUserBook
+    if (drivingLessonsFlagEnabled && licenseBookData?.book?.id) {
+      dynamicPathArray.push(ServicePortalPath.AssetsVehiclesDrivingLessons)
+    }
 
-  return { activeDynamicRoutes, loading: loading || debtLoading }
+    // Combine routes, no duplicates.
+    setActiveDynamicRoutes(uniq([...activeDynamicRoutes, ...dynamicPathArray]))
+  }, [data, licenseBook])
+
+  return { activeDynamicRoutes, loading: loading && licenseBookLoading }
 }
 
-export default useDynamicRoutes
+export const useDynamicRoutesWithNavigation = (nav: PortalNavigationItem) => {
+  const { activeDynamicRoutes } = useDynamicRoutes()
+  const navigation = useNavigation(nav, activeDynamicRoutes)
+  return navigation
+}

@@ -10,8 +10,7 @@ const withLogo = (Component: React.ComponentType<FAFieldBaseProps>) => (
   props: FAFieldBaseProps,
 ) => {
   const [logo, setLogo] = useState<string>()
-  const municipality =
-    props.application.externalData.nationalRegistry?.data?.municipality
+  const municipality = props.application.externalData.municipality.data
 
   useEffect(() => {
     const getLogo = async () => {

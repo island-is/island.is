@@ -1,8 +1,11 @@
-import { Box, RadioButton } from '@island.is/island-ui/core'
-import { CaseDecision, CaseType } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
 import React from 'react'
+import { Box, RadioButton } from '@island.is/island-ui/core'
+import { CaseDecision } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+
 import { BlueBox } from '..'
+
 interface Props {
   workingCase: Case
   acceptedLabelText: string
@@ -40,7 +43,7 @@ const Decision: React.FC<Props> = ({
           disabled={disabled}
         />
       </Box>
-      {workingCase.type !== CaseType.TRAVEL_BAN && (
+      {workingCase.type !== CaseType.TravelBan && (
         <Box marginTop={2}>
           <RadioButton
             name="case-decision"
@@ -70,8 +73,8 @@ const Decision: React.FC<Props> = ({
           disabled={disabled}
         />
       </Box>
-      {(workingCase.type === CaseType.CUSTODY ||
-        workingCase.type === CaseType.ADMISSION_TO_FACILITY) && (
+      {(workingCase.type === CaseType.Custody ||
+        workingCase.type === CaseType.AdmissionToFacility) && (
         <Box marginTop={2}>
           <RadioButton
             name="case-decision"

@@ -70,7 +70,7 @@ interface StepConfig {
 interface StepOption {
   label: string
   transition: string
-  slug: string
+  value: string
 }
 
 interface StateMeta {
@@ -332,7 +332,7 @@ const getStepOptions = (
       return {
         label: label,
         transition: stepTransition,
-        slug: o[optionSlugField],
+        value: o[optionSlugField],
       }
     })
 
@@ -354,7 +354,7 @@ const getStepOptions = (
     return {
       label: label,
       transition: o.transition,
-      slug: o.optionSlug,
+      value: o.optionSlug,
     }
   })
 }

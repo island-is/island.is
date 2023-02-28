@@ -11,18 +11,22 @@ import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { UserRole, NotificationType } from '@island.is/judicial-system/types'
+import { NotificationType } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
   JwtAuthGuard,
   RolesGuard,
-  RolesRule,
   RolesRules,
-  RulesType,
 } from '@island.is/judicial-system/auth'
 
-import { judgeRule, prosecutorRule, registrarRule } from '../../guards'
+import {
+  judgeRule,
+  prosecutorRule,
+  registrarRule,
+  representativeRule,
+  assistantRule,
+} from '../../guards'
 import {
   Case,
   CaseExistsGuard,
@@ -30,48 +34,16 @@ import {
   CaseWriteGuard,
   CurrentCase,
 } from '../case'
+import {
+  judgeNotificationRule,
+  prosecutorNotificationRule,
+  registrarNotificationRule,
+  assistantNotificationRule,
+} from './guards/rolesRules'
 import { SendNotificationDto } from './dto/sendNotification.dto'
 import { Notification } from './models/notification.model'
-import { SendNotificationResponse } from './models/sendNotification.resopnse'
+import { SendNotificationResponse } from './models/sendNotification.response'
 import { NotificationService } from './notification.service'
-
-// Allows prosecutors to send heads-up and ready-for-court notifications
-const prosecutorNotificationRule = {
-  role: UserRole.PROSECUTOR,
-  type: RulesType.FIELD_VALUES,
-  dtoField: 'type',
-  dtoFieldValues: [
-    NotificationType.HEADS_UP,
-    NotificationType.READY_FOR_COURT,
-    NotificationType.MODIFIED,
-    NotificationType.REVOKED,
-  ],
-} as RolesRule
-
-// Allows judges to send court-date and ruling notifiications
-const judgeNotificationRule = {
-  role: UserRole.JUDGE,
-  type: RulesType.FIELD_VALUES,
-  dtoField: 'type',
-  dtoFieldValues: [
-    NotificationType.RECEIVED_BY_COURT,
-    NotificationType.COURT_DATE,
-    NotificationType.RULING,
-    NotificationType.MODIFIED,
-  ],
-} as RolesRule
-
-// Allows registrars to send court-date
-const registrarNotificationRule = {
-  role: UserRole.REGISTRAR,
-  type: RulesType.FIELD_VALUES,
-  dtoField: 'type',
-  dtoFieldValues: [
-    NotificationType.RECEIVED_BY_COURT,
-    NotificationType.COURT_DATE,
-    NotificationType.MODIFIED,
-  ],
-} as RolesRule
 
 @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard)
 @Controller('api/case/:caseId')
@@ -87,6 +59,7 @@ export class NotificationController {
     prosecutorNotificationRule,
     judgeNotificationRule,
     registrarNotificationRule,
+    assistantNotificationRule,
   )
   @Post('notification')
   @ApiCreatedResponse({
@@ -103,6 +76,22 @@ export class NotificationController {
       `Sending ${notification.type} notification for case ${caseId}`,
     )
 
+    if (
+      [
+        NotificationType.HEADS_UP,
+        NotificationType.READY_FOR_COURT,
+        NotificationType.RECEIVED_BY_COURT,
+        NotificationType.COURT_DATE,
+      ].includes(notification.type)
+    ) {
+      // Notifications put on queue will call the internal notification controller
+      return this.notificationService.addMessagesForNotificationToQueue(
+        notification,
+        theCase,
+        user,
+      )
+    }
+
     return this.notificationService.sendCaseNotification(
       notification,
       theCase,
@@ -111,7 +100,13 @@ export class NotificationController {
   }
 
   @UseGuards(CaseReadGuard)
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @RolesRules(
+    prosecutorRule,
+    representativeRule,
+    judgeRule,
+    registrarRule,
+    assistantRule,
+  )
   @Get('notifications')
   @ApiOkResponse({
     type: Notification,

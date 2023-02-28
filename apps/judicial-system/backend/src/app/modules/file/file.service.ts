@@ -1,5 +1,5 @@
 import { uuid } from 'uuidv4'
-import { Op } from 'sequelize'
+import { Op, Sequelize } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 
 import {
@@ -9,48 +9,84 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
+import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { CaseFileState } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
+import { FormatMessage, IntlService } from '@island.is/cms-translations'
+import {
+  CaseFileCategory,
+  CaseFileState,
+  isIndictmentCase,
+} from '@island.is/judicial-system/types'
+import type { User as TUser } from '@island.is/judicial-system/types'
 
-import { environment } from '../../../environments'
-import { writeFile } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
-import { CourtService } from '../court'
+import { CourtDocumentFolder, CourtService } from '../court'
+import { User } from '../user'
+import { Case } from '../case'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
+import { UpdateFileDto } from './dto/updateFile.dto'
 import { PresignedPost } from './models/presignedPost.model'
-import { CaseFile } from './models/file.model'
 import { DeleteFileResponse } from './models/deleteFile.response'
-import { SignedUrl } from './models/signedUrl.model'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
+import { SignedUrl } from './models/signedUrl.model'
+import { CaseFile } from './models/file.model'
 
-// Files are stored in AWS S3 under a key which has the following format:
-// uploads/<uuid>/<uuid>/<filename>
+// Files are stored in AWS S3 under a key which has the following formats:
+// uploads/<uuid>/<uuid>/<filename> for restriction and investigation cases
 // As uuid-s have length 36, the filename starts at position 82 in the key.
 const NAME_BEGINS_INDEX = 82
+// indictments/<uuid>/<uuid>/<filename> for indictment cases
+// As uuid-s have length 36, the filename starts at position 82 in the key.
+const INDICTMENT_NAME_BEGINS_INDEX = 86
 
 @Injectable()
 export class FileService {
   private throttle = Promise.resolve('')
 
   constructor(
+    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(CaseFile) private readonly fileModel: typeof CaseFile,
     private readonly courtService: CourtService,
     private readonly awsS3Service: AwsS3Service,
+    private readonly intlService: IntlService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private async deleteFileFromDatabase(fileId: string): Promise<boolean> {
+  private formatMessage: FormatMessage = () => {
+    throw new InternalServerErrorException('Format message not initialized')
+  }
+
+  private async refreshFormatMessage(): Promise<void> {
+    return this.intlService
+      .useIntl(['judicial.system.backend'], 'is')
+      .then((res) => {
+        this.formatMessage = res.formatMessage
+      })
+      .catch((reason) => {
+        this.logger.error('Unable to refresh format messages', { reason })
+      })
+  }
+
+  private async deleteFileFromDatabase(
+    fileId: string,
+    transaction?: Transaction,
+  ): Promise<boolean> {
     this.logger.debug(`Deleting file ${fileId} from the database`)
 
-    const [numberOfAffectedRows] = await this.fileModel.update(
-      { state: CaseFileState.DELETED, key: null },
-      { where: { id: fileId } },
-    )
+    const promisedUpdate = transaction
+      ? this.fileModel.update(
+          { state: CaseFileState.DELETED, key: null },
+          { where: { id: fileId }, transaction },
+        )
+      : this.fileModel.update(
+          { state: CaseFileState.DELETED, key: null },
+          { where: { id: fileId } },
+        )
+
+    const [numberOfAffectedRows] = await promisedUpdate
 
     if (numberOfAffectedRows !== 1) {
       // Tolerate failure, but log error
@@ -62,21 +98,60 @@ export class FileService {
     return numberOfAffectedRows > 0
   }
 
-  private tryDeleteFileFromS3(key: string) {
-    this.logger.debug(`Attempting to delete file ${key} from AWS S3`)
+  private async tryDeleteFileFromS3(file: CaseFile): Promise<boolean> {
+    this.logger.debug(`Attempting to delete file ${file.key} from AWS S3`)
 
-    this.awsS3Service.deleteObject(key).catch((reason) => {
+    if (!file.key) {
+      return true
+    }
+
+    return this.awsS3Service.deleteObject(file.key).catch((reason) => {
       // Tolerate failure, but log what happened
-      this.logger.info(`Could not delete file ${key} from AWS S3`, { reason })
+      this.logger.error(
+        `Could not delete file ${file.id} of case ${file.caseId} from AWS S3`,
+        { reason },
+      )
+
+      return false
     })
   }
 
-  private async throttleUploadStream(
+  private getCourtDocumentFolder(file: CaseFile) {
+    let courtDocumentFolder: CourtDocumentFolder
+
+    switch (file.category) {
+      case CaseFileCategory.COVER_LETTER:
+        courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
+        break
+      case CaseFileCategory.INDICTMENT:
+        courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
+        break
+      case CaseFileCategory.CRIMINAL_RECORD:
+        courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
+        break
+      case CaseFileCategory.COST_BREAKDOWN:
+        courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
+        break
+      case CaseFileCategory.COURT_RECORD:
+        courtDocumentFolder = CourtDocumentFolder.COURT_DOCUMENTS
+        break
+      case CaseFileCategory.RULING:
+        courtDocumentFolder = CourtDocumentFolder.COURT_DOCUMENTS
+        break
+      case CaseFileCategory.CASE_FILE:
+        courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS
+        break
+      default:
+        courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS
+    }
+
+    return courtDocumentFolder
+  }
+
+  private async throttleUpload(
     file: CaseFile,
-    caseId: string,
-    courtId?: string,
-    courtCaseNumber?: string,
-    user?: User,
+    theCase: Case,
+    user: TUser | User,
   ): Promise<string> {
     await this.throttle.catch((reason) => {
       this.logger.info('Previous upload failed', { reason })
@@ -84,19 +159,18 @@ export class FileService {
 
     const content = await this.awsS3Service.getObject(file.key ?? '')
 
-    if (!environment.production) {
-      writeFile(`${file.name}`, content)
-    }
+    const courtDocumentFolder = this.getCourtDocumentFolder(file)
 
     return this.courtService.createDocument(
-      caseId,
-      courtId ?? '',
-      courtCaseNumber ?? '',
+      user,
+      theCase.id,
+      theCase.courtId,
+      theCase.courtCaseNumber,
+      courtDocumentFolder,
       file.name,
       file.name,
       file.type,
       content,
-      user,
     )
   }
 
@@ -115,43 +189,46 @@ export class FileService {
   }
 
   createPresignedPost(
-    caseId: string,
+    theCase: Case,
     createPresignedPost: CreatePresignedPostDto,
   ): Promise<PresignedPost> {
     const { fileName, type } = createPresignedPost
 
     return this.awsS3Service.createPresignedPost(
-      `uploads/${caseId}/${uuid()}/${fileName}`,
+      `${isIndictmentCase(theCase.type) ? 'indictments' : 'uploads'}/${
+        theCase.id
+      }/${uuid()}/${fileName}`,
       type,
     )
   }
 
   async createCaseFile(
-    caseId: string,
+    theCase: Case,
     createFile: CreateFileDto,
   ): Promise<CaseFile> {
     const { key } = createFile
 
-    const regExp = new RegExp(`^uploads/${caseId}/.{36}/(.*)$`)
+    const regExp = new RegExp(
+      `^${isIndictmentCase(theCase.type) ? 'indictments' : 'uploads'}/${
+        theCase.id
+      }/.{36}/(.*)$`,
+    )
 
     if (!regExp.test(key)) {
       throw new BadRequestException(
-        `${key} is not a valid key for case ${caseId}`,
+        `${key} is not a valid key for case ${theCase.id}`,
       )
     }
 
     return this.fileModel.create({
       ...createFile,
       state: CaseFileState.STORED_IN_RVG,
-      caseId,
-      name: createFile.key.slice(NAME_BEGINS_INDEX),
-    })
-  }
-
-  async getAllCaseFiles(caseId: string): Promise<CaseFile[]> {
-    return this.fileModel.findAll({
-      where: { caseId, state: { [Op.not]: CaseFileState.DELETED } },
-      order: [['created', 'DESC']],
+      caseId: theCase.id,
+      name: createFile.key.slice(
+        isIndictmentCase(theCase.type)
+          ? INDICTMENT_NAME_BEGINS_INDEX
+          : NAME_BEGINS_INDEX,
+      ),
     })
   }
 
@@ -172,12 +249,15 @@ export class FileService {
     return this.awsS3Service.getSignedUrl(file.key)
   }
 
-  async deleteCaseFile(file: CaseFile): Promise<DeleteFileResponse> {
-    const success = await this.deleteFileFromDatabase(file.id)
+  async deleteCaseFile(
+    file: CaseFile,
+    transaction?: Transaction,
+  ): Promise<DeleteFileResponse> {
+    const success = await this.deleteFileFromDatabase(file.id, transaction)
 
-    if (success && file.key) {
+    if (success) {
       // Fire and forget, no need to wait for the result
-      this.tryDeleteFileFromS3(file.key)
+      this.tryDeleteFileFromS3(file)
     }
 
     return { success }
@@ -185,15 +265,13 @@ export class FileService {
 
   async uploadCaseFileToCourt(
     file: CaseFile,
-    caseId: string,
-    courtId?: string,
-    courtCaseNumber?: string,
-    user?: User,
+    theCase: Case,
+    user: TUser | User,
   ): Promise<UploadFileToCourtResponse> {
+    await this.refreshFormatMessage()
+
     if (file.state === CaseFileState.STORED_IN_COURT) {
-      throw new BadRequestException(
-        `File ${file.id} has already been uploaded to court`,
-      )
+      return { success: true }
     }
 
     if (!file.key) {
@@ -209,13 +287,7 @@ export class FileService {
       throw new NotFoundException(`File ${file.id} does not exists in AWS S3`)
     }
 
-    this.throttle = this.throttleUploadStream(
-      file,
-      caseId,
-      courtId,
-      courtCaseNumber,
-      user,
-    )
+    this.throttle = this.throttleUpload(file, theCase, user)
 
     await this.throttle
 
@@ -267,5 +339,68 @@ export class FileService {
     }
 
     return updatedCaseFiles[0]
+  }
+
+  async updateFiles(
+    caseId: string,
+    caseFileUpdates: UpdateFileDto[],
+  ): Promise<CaseFile[]> {
+    return this.sequelize.transaction((transaction) => {
+      const updates = caseFileUpdates.map(async (update) => {
+        const [affectedNumber, file] = await this.fileModel.update(update, {
+          where: { caseId, id: update.id },
+          returning: true,
+          transaction,
+        })
+        if (affectedNumber !== 1 || !file[0]) {
+          throw new InternalServerErrorException(
+            `Could not update file ${update.id} of case ${caseId}`,
+          )
+        }
+        return file[0]
+      })
+
+      return Promise.all(updates)
+    })
+  }
+
+  async archive(file: CaseFile): Promise<boolean> {
+    if (
+      !file.key ||
+      !file.key.startsWith('indictments/') ||
+      file.key.startsWith('indictments/completed/')
+    ) {
+      return true
+    }
+
+    return this.awsS3Service
+      .copyObject(
+        file.key,
+        file.key.replace('indictments/', 'indictments/completed/'),
+      )
+      .then((newKey) =>
+        this.fileModel.update({ key: newKey }, { where: { id: file.id } }),
+      )
+      .then(() => {
+        // Fire and forget, no need to wait for the result
+        this.tryDeleteFileFromS3(file)
+
+        return true
+      })
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to archive file ${file.id} of case ${file.caseId}`,
+          { reason },
+        )
+
+        return false
+      })
+  }
+
+  async resetCaseFileStates(caseId: string, transaction: Transaction) {
+    await this.fileModel.update(
+      { state: CaseFileState.STORED_IN_RVG },
+      { where: { caseId, state: CaseFileState.STORED_IN_COURT }, transaction },
+    )
   }
 }

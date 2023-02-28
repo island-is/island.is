@@ -1,6 +1,6 @@
 import React from 'react'
 import { NextComponentType } from 'next'
-import { BaseContext, NextPageContext } from 'next/dist/next-server/lib/utils'
+import { BaseContext, NextPageContext } from 'next/dist/shared/lib/utils'
 import ApolloClient from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 import gql from 'graphql-tag'

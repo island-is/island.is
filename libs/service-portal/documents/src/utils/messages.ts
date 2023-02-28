@@ -36,7 +36,7 @@ export const messages = defineMessages({
   },
   clearFilters: {
     id: 'sp.documents:clear-filters',
-    defaultMessage: 'Hreinsa filter',
+    defaultMessage: 'Hreinsa síu',
   },
   tableHeaderDate: {
     id: 'sp.documents:table-header-date',
@@ -61,5 +61,10 @@ export const messages = defineMessages({
   error: {
     id: 'sp.documents:error',
     defaultMessage: 'Tókst ekki að sækja rafræn skjöl, eitthvað fór úrskeiðis.',
+  },
+  documentFetchError: {
+    id: 'sp,documents:fetch-error',
+    defaultMessage:
+      'Ekki tókst að sækja umbeðið skjal, við bendum þér á að beina fyrirspurn til sendanda þess, {senderName}',
   },
 })

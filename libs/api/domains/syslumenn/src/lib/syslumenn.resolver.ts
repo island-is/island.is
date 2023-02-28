@@ -2,7 +2,10 @@ import { Args, Directive, Query, Resolver } from '@nestjs/graphql'
 import { GetHomestaysInput } from './dto/getHomestays.input'
 import { GetOperatingLicensesInput } from './dto/getOperatingLicenses.input'
 import { Homestay } from './models/homestay'
+import { OperatingLicensesCSV } from './models/operatingLicensesCSV'
 import { SyslumennAuction } from './models/syslumennAuction'
+import { RealEstateAgent } from './models/realEstateAgent'
+import { Lawyer } from './models/lawyer'
 import { SyslumennService } from '@island.is/clients/syslumenn'
 import { PaginatedOperatingLicenses } from './models/paginatedOperatingLicenses'
 import { CertificateInfoResponse } from './models/certificateInfo'
@@ -10,6 +13,7 @@ import { DistrictCommissionerAgencies } from './models/districtCommissionerAgenc
 import { AssetName } from './models/assetName'
 import { UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
+import { PropertyDetail } from '@island.is/api/domains/assets'
 import {
   BypassAuth,
   CurrentUser,
@@ -18,7 +22,6 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
-import { PropertyDetail } from '@island.is/api/domains/assets'
 import { SearchForPropertyInput } from './dto/searchForProperty.input'
 import { EstateRelations } from './models/relations'
 
@@ -45,6 +48,20 @@ export class SyslumennResolver {
   }
 
   @Directive(cacheControlDirective())
+  @Query(() => [RealEstateAgent])
+  @BypassAuth()
+  getRealEstateAgents(): Promise<RealEstateAgent[]> {
+    return this.syslumennService.getRealEstateAgents()
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [Lawyer])
+  @BypassAuth()
+  getLawyers(): Promise<Lawyer[]> {
+    return this.syslumennService.getLawyers()
+  }
+
+  @Directive(cacheControlDirective())
   @Query(() => PaginatedOperatingLicenses)
   @BypassAuth()
   getOperatingLicenses(
@@ -55,6 +72,13 @@ export class SyslumennResolver {
       input.pageNumber,
       input.pageSize,
     )
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => OperatingLicensesCSV)
+  @BypassAuth()
+  getOperatingLicensesCSV(): Promise<OperatingLicensesCSV> {
+    return this.syslumennService.getOperatingLicensesCSV()
   }
 
   @Query(() => CertificateInfoResponse)

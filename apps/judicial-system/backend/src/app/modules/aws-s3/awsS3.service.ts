@@ -105,4 +105,15 @@ export class AwsS3Service {
       .promise()
       .then(() => key)
   }
+
+  async copyObject(key: string, newKey: string): Promise<string> {
+    return this.s3
+      .copyObject({
+        Bucket: environment.files.bucket,
+        Key: newKey,
+        CopySource: `${environment.files.bucket}/${key}`,
+      })
+      .promise()
+      .then(() => newKey)
+  }
 }

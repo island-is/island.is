@@ -10,11 +10,12 @@ import { m } from '../lib/messages'
 export const delegated: Form = buildForm({
   id: 'delegated',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.IN_PROGRESS,
   logo: CoatOfArms,
+  renderLastScreenButton: true,
   children: [
     buildMultiField({
-      id: 'delegataed',
+      id: 'delegated',
       title: m.delegatedTitle,
       description: m.delegatedDescription,
       space: 1,
@@ -22,12 +23,7 @@ export const delegated: Form = buildForm({
         buildCustomField({
           id: 'completeStepImage',
           title: '',
-          component: 'AnnouncementCompleteImage',
-        }),
-        buildCustomField({
-          id: 'myPagesButton',
-          title: '',
-          component: 'Delegated',
+          component: 'Done',
         }),
       ],
     }),

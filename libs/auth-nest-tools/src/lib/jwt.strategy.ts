@@ -49,6 +49,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       payload.nationalId = payload.client_nationalId
     }
     return {
+      sub: payload.sub,
       nationalId: payload.nationalId,
       scope: this.parseScopes(payload.scope),
       client: payload.client_id,

@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 import { MessageDescriptor } from '@formatjs/intl'
 import format from 'date-fns/format'
 
-import { ActionCard, Stack } from '@island.is/island-ui/core'
+import { ActionCard, Box, Pagination, Stack } from '@island.is/island-ui/core'
 import { coreMessages, getSlugFromType } from '@island.is/application/core'
 import {
   Application,
@@ -16,7 +16,9 @@ import { dateFormat } from '@island.is/shared/constants'
 import { useDeleteApplication } from './hooks/useDeleteApplication'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import { Organization } from '@island.is/shared/types'
+import { useFeatureFlag } from '@island.is/react/feature-flags'
 
+const pageSize = 5
 interface DefaultStateData {
   tag: {
     variant: ActionCardTag
@@ -40,12 +42,12 @@ const DefaultData: Record<ApplicationStatus, DefaultStateData> = {
       variant: 'red',
     },
     cta: {
-      label: coreMessages.cardButtonInProgress,
+      label: coreMessages.cardButtonRejected,
     },
   },
   [ApplicationStatus.COMPLETED]: {
     tag: {
-      variant: 'blueberry',
+      variant: 'mint',
       label: coreMessages.tagsDone,
     },
     progress: {
@@ -57,7 +59,7 @@ const DefaultData: Record<ApplicationStatus, DefaultStateData> = {
   },
   [ApplicationStatus.IN_PROGRESS]: {
     tag: {
-      variant: 'blue',
+      variant: 'blueberry',
       label: coreMessages.tagsInProgress,
     },
     progress: {
@@ -65,6 +67,30 @@ const DefaultData: Record<ApplicationStatus, DefaultStateData> = {
     },
     cta: {
       label: coreMessages.cardButtonInProgress,
+    },
+  },
+  [ApplicationStatus.DRAFT]: {
+    tag: {
+      variant: 'blue',
+      label: coreMessages.tagsDraft,
+    },
+    progress: {
+      variant: 'blue',
+    },
+    cta: {
+      label: coreMessages.cardButtonDraft,
+    },
+  },
+  [ApplicationStatus.APPROVED]: {
+    tag: {
+      variant: 'mint',
+      label: coreMessages.tagsApproved,
+    },
+    progress: {
+      variant: 'mint',
+    },
+    cta: {
+      label: coreMessages.cardButtonApproved,
     },
   },
   [ApplicationStatus.NOT_STARTED]: {
@@ -89,6 +115,7 @@ interface Props {
   >[]
   onClick: (id: string) => void
   refetch?: (() => void) | undefined
+  focus?: boolean
 }
 
 const ApplicationList = ({
@@ -96,9 +123,22 @@ const ApplicationList = ({
   applications,
   onClick,
   refetch,
+  focus = false,
 }: Props) => {
   const { lang: locale, formatMessage } = useLocale()
   const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
+  const [page, setPage] = useState<number>(1)
+  const handlePageChange = useCallback((page: number) => setPage(page), [])
+
+  const { value: isDraftProgressBarEnabledForApplication } = useFeatureFlag(
+    'isDraftProgressBarEnabledForApplication',
+    false,
+  )
+  const pagedDocuments = {
+    from: (page - 1) * pageSize,
+    to: pageSize * page,
+    totalPages: Math.ceil(applications.length / pageSize),
+  }
 
   const { deleteApplication } = useDeleteApplication(refetch)
 
@@ -119,62 +159,93 @@ const ApplicationList = ({
   }
 
   return (
-    <Stack space={2}>
-      {applications.map((application, index: number) => {
-        const actionCard = application.actionCard
-        const stateDefaultData =
-          DefaultData[application.status] ||
-          DefaultData[ApplicationStatus.IN_PROGRESS]
-        const slug = getSlugFromType(application.typeId)
+    <>
+      <Stack space={2}>
+        {applications
+          .slice(pagedDocuments.from, pagedDocuments.to)
+          .map((application, index: number) => {
+            const actionCard = application.actionCard
+            const stateDefaultData =
+              DefaultData[application.status] ||
+              DefaultData[ApplicationStatus.IN_PROGRESS]
+            const slug = getSlugFromType(application.typeId)
 
-        if (!slug) {
-          return null
-        }
+            if (!slug) {
+              return null
+            }
 
-        return (
-          <ActionCard
-            logo={getLogo(application.typeId)}
-            key={`${application.id}-${index}`}
-            date={format(new Date(application.modified), formattedDate)}
-            tag={{
-              label: actionCard?.tag?.label
-                ? formatMessage(actionCard.tag.label)
-                : formatMessage(stateDefaultData.tag.label),
-              variant: actionCard?.tag?.variant || stateDefaultData.tag.variant,
-              outlined: false,
-            }}
-            heading={actionCard?.title ?? application.name}
-            text={actionCard?.description}
-            cta={{
-              label: formatMessage(stateDefaultData.cta.label),
-              variant: 'ghost',
-              size: 'small',
-              icon: undefined,
-              onClick: () => onClick(`${slug}/${application.id}`),
-            }}
-            progressMeter={{
-              active: Boolean(application.progress),
-              progress: application.progress,
-              variant: stateDefaultData.progress.variant,
-            }}
-            deleteButton={{
-              visible: actionCard?.deleteButton,
-              onClick: handleDeleteApplication.bind(null, application.id),
-              disabled: false,
-              icon: 'trash',
-              dialogTitle:
-                coreMessages.deleteApplicationDialogTitle.defaultMessage,
-              dialogDescription:
-                coreMessages.deleteApplicationDialogDescription.defaultMessage,
-              dialogConfirmLabel:
-                coreMessages.deleteApplicationDialogConfirmLabel.defaultMessage,
-              dialogCancelLabel:
-                coreMessages.deleteApplicationDialogCancelLabel.defaultMessage,
-            }}
+            return (
+              <ActionCard
+                renderDraftStatusBar={isDraftProgressBarEnabledForApplication}
+                logo={getLogo(application.typeId)}
+                key={`${application.id}-${index}`}
+                date={format(new Date(application.modified), formattedDate)}
+                tag={{
+                  label: actionCard?.tag?.label
+                    ? formatMessage(actionCard.tag.label)
+                    : formatMessage(stateDefaultData.tag.label),
+                  variant:
+                    actionCard?.tag?.variant || stateDefaultData.tag.variant,
+                  outlined: false,
+                }}
+                backgroundColor={focus ? 'blue' : 'white'}
+                heading={actionCard?.title ?? application.name}
+                text={actionCard?.description}
+                cta={{
+                  label: formatMessage(stateDefaultData.cta.label),
+                  variant: 'ghost',
+                  size: 'small',
+                  icon: undefined,
+                  onClick: () => onClick(`${slug}/${application.id}`),
+                }}
+                progressMeter={{
+                  active: application.progress !== undefined,
+                  progress: application.progress,
+                  variant: stateDefaultData.progress.variant,
+                  draftFinishedSteps: actionCard?.draftFinishedSteps,
+                  draftTotalSteps: actionCard?.draftTotalSteps,
+                }}
+                deleteButton={{
+                  visible: actionCard?.deleteButton,
+                  onClick: handleDeleteApplication.bind(null, application.id),
+                  disabled: false,
+                  icon: 'trash',
+                  dialogTitle:
+                    coreMessages.deleteApplicationDialogTitle.defaultMessage,
+                  dialogDescription:
+                    coreMessages.deleteApplicationDialogDescription
+                      .defaultMessage,
+                  dialogConfirmLabel:
+                    coreMessages.deleteApplicationDialogConfirmLabel
+                      .defaultMessage,
+                  dialogCancelLabel:
+                    coreMessages.deleteApplicationDialogCancelLabel
+                      .defaultMessage,
+                }}
+                status={application.status}
+              />
+            )
+          })}
+      </Stack>
+      {applications.length > pageSize ? (
+        <Box marginTop={4}>
+          <Pagination
+            page={page}
+            totalPages={pagedDocuments.totalPages}
+            renderLink={(page, className, children) => (
+              <button
+                className={className}
+                onClick={() => {
+                  handlePageChange(page)
+                }}
+              >
+                {children}
+              </button>
+            )}
           />
-        )
-      })}
-    </Stack>
+        </Box>
+      ) : null}
+    </>
   )
 }
 

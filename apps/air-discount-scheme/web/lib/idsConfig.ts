@@ -1,10 +1,11 @@
+import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
+
 export const identityServerId = 'identity-server'
 
 export const identityServerConfig = {
   id: identityServerId,
   name: 'Loftbru',
-  scope:
-    'openid profile @vegagerdin.is/air-discount-scheme-scope offline_access @skra.is/individuals',
+  scope: `openid profile ${AirDiscountSchemeScope.default} ${AirDiscountSchemeScope.admin} offline_access @skra.is/individuals`,
   clientId: '@vegagerdin.is/air-discount-scheme',
 }
 

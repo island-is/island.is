@@ -1,6 +1,5 @@
 import { Box, Icon } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
-import { useStore } from '../../../store/stateProvider'
 import * as styles from './NavItem.css'
 
 interface ChevronProps {
@@ -17,10 +16,7 @@ const Chevron: FC<ChevronProps> = ({
   onChevronClick,
 }) => {
   const chevronIcon = expanded ? 'chevronUp' : 'chevronDown'
-  const [{ sidebarState }] = useStore()
-  const showChevron = enabled && sidebarState === 'open'
-
-  return showChevron ? (
+  return enabled ? (
     <Box
       onClick={() => {
         onChevronClick && onChevronClick()

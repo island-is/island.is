@@ -35,6 +35,9 @@ export const GET_ARTICLES_QUERY = gql`
         title
         importance
       }
+      otherCategories {
+        title
+      }
       otherSubgroups {
         title
         slug

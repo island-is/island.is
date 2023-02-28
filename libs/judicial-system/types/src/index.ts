@@ -10,15 +10,15 @@ export type {
 
 export { InstitutionType } from './lib/institution'
 export type { Institution } from './lib/institution'
-
 export { NotificationType } from './lib/notification'
 export type {
+  Recipient,
   Notification,
   SendNotification,
   SendNotificationResponse,
 } from './lib/notification'
 
-export { CaseFileState } from './lib/file'
+export { CaseFileState, CaseFileCategory } from './lib/file'
 
 export type {
   PresignedPost,
@@ -30,15 +30,24 @@ export type {
   UploadFileToCourt,
   UploadFileToCourtResponse,
   CaseFile,
+  UpdateFile,
   CreateFile,
 } from './lib/file'
 
-export { UserRole, courtRoles, isCourtRole } from './lib/user'
+export {
+  UserRole,
+  isExtendedCourtRole,
+  isCourtRole,
+  courtRoles,
+  isProsecutionRole,
+  prosecutionRoles,
+} from './lib/user'
 export type { User, CreateUser, UpdateUser } from './lib/user'
 
 export {
   CaseOrigin,
   CaseType,
+  IndictmentSubtype,
   CaseState,
   CaseTransition,
   CaseLegalProvisions,
@@ -48,14 +57,21 @@ export {
   SessionArrangements,
   restrictionCases,
   investigationCases,
+  indictmentCases,
+  isIndictmentCase,
   isRestrictionCase,
   isInvestigationCase,
   isAcceptingCaseDecision,
   completedCaseStates,
   hasCaseBeenAppealed,
+  SubpoenaType,
 } from './lib/case'
 export type {
   Case,
+  CaseListEntry,
+  CrimeScene,
+  CrimeSceneMap,
+  IndictmentSubtypeMap,
   CreateCase,
   UpdateCase,
   TransitionCase,
@@ -68,5 +84,12 @@ export type {
   UploadPoliceCaseFile,
   UploadPoliceCaseFileResponse,
 } from './lib/policeFile'
+
+export {
+  IndictmentCountOffense,
+  Substance,
+  offenseSubstances,
+} from './lib/indictmentCount'
+export type { SubstanceMap } from './lib/indictmentCount'
 
 export type { CourtDocument } from './lib/courtDocument'

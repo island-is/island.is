@@ -6,13 +6,18 @@ import { Colors } from '@island.is/island-ui/theme'
 import { Box } from '../Box/Box'
 import { Stack } from '../Stack/Stack'
 
-export type AlertMessageType = 'error' | 'info' | 'success' | 'warning'
+export type AlertMessageType =
+  | 'error'
+  | 'info'
+  | 'success'
+  | 'warning'
+  | 'default'
 
 type VariantStyle = {
   background: Colors
   borderColor: Colors
-  iconColor: Colors
-  icon: IconType
+  iconColor?: Colors
+  icon?: IconType
 }
 
 type VariantStyles = {
@@ -43,6 +48,10 @@ const variantStyles: VariantStyles = {
     borderColor: 'yellow400',
     iconColor: 'yellow600',
     icon: 'warning',
+  },
+  default: {
+    background: 'purple100',
+    borderColor: 'purple200',
   },
 }
 
@@ -83,9 +92,11 @@ export const AlertMessage: React.FC<AlertMessageProps & TitleAndOrMessage> = ({
       data-testid={testid ?? 'alertMessage'}
     >
       <Box display="flex">
-        <Box display="flex" marginRight={[1, 1, 2]}>
-          <Icon type="filled" color={variant.iconColor} icon={variant.icon} />
-        </Box>
+        {variant.icon && (
+          <Box display="flex" marginRight={[1, 1, 2]}>
+            <Icon type="filled" color={variant.iconColor} icon={variant.icon} />
+          </Box>
+        )}
         <Box display="flex" width="full" flexDirection="column">
           <Stack space={1}>
             {title && (

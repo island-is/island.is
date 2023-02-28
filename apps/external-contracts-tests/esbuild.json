@@ -28,7 +28,8 @@
     "pg-native",
     "form-data",
     "bull",
-    "pseudomap"
+    "pseudomap",
+    "ioredis"
   ],
   "keepNames": true
 }

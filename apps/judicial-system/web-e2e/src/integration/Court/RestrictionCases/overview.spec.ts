@@ -6,15 +6,17 @@ import {
   CaseCustodyRestrictions,
   CaseState,
   SessionArrangements,
+  CaseType,
 } from '@island.is/judicial-system/types'
 import {
-  HEARING_ARRANGEMENTS_ROUTE,
-  OVERVIEW_ROUTE,
+  RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+  RESTRICTION_CASE_COURT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { makeRestrictionCase, makeProsecutor, intercept } from '../../../utils'
+import { makeProsecutor, intercept, mockCase } from '../../../utils'
 
-describe(`${OVERVIEW_ROUTE}/:id`, () => {
+describe(`${RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/:id`, () => {
+  const caseData = mockCase(CaseType.CUSTODY)
   const demands = faker.lorem.paragraph()
   const lawsBroken = faker.lorem.words(5)
   const legalBasis = faker.lorem.words(5)
@@ -23,7 +25,6 @@ describe(`${OVERVIEW_ROUTE}/:id`, () => {
   const defenderPhoneNumber = faker.phone.phoneNumber()
 
   beforeEach(() => {
-    const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
       ...caseData,
       creatingProsecutor: makeProsecutor(),
@@ -48,7 +49,7 @@ describe(`${OVERVIEW_ROUTE}/:id`, () => {
 
     cy.stubAPIResponses()
     intercept(caseDataAddition)
-    cy.visit(`${OVERVIEW_ROUTE}/test_id_stadfest`)
+    cy.visit(`${RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/test_id_stadfest`)
   })
 
   it('should let the user know if the assigned defender has viewed the case', () => {
@@ -57,7 +58,7 @@ describe(`${OVERVIEW_ROUTE}/:id`, () => {
 
   it('should have an overview of the current case', () => {
     cy.getByTestid('infoCard').contains(
-      'Donald Duck, kt. 000000-0000, Batcave 1337',
+      `${caseData.defendants[0].name}, kt. ${caseData.defendants[0].nationalId}, ${caseData.defendants[0].address}`,
     )
 
     cy.getByTestid('infoCard').contains('Talsmaður')
@@ -98,6 +99,9 @@ describe(`${OVERVIEW_ROUTE}/:id`, () => {
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', HEARING_ARRANGEMENTS_ROUTE)
+    cy.url().should(
+      'include',
+      RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+    )
   })
 })

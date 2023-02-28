@@ -3,9 +3,9 @@ import React, { FC } from 'react'
 import { Icon } from '../../Icon/Icon'
 import { Text } from '../../Text/Text'
 import { Box } from '../../Box/Box'
+import { Link } from '../../Link/Link'
 import { SectionNumberColumn } from '../SectionNumberColumn/SectionNumberColumn'
 import * as styles from './SubSectionItem.css'
-import { Link } from '../../Link/Link'
 
 interface SubSectionItemProps {
   currentState: 'active' | 'previous' | 'next'
@@ -49,7 +49,7 @@ export const SubSectionItem: FC<SubSectionItemProps> = ({
         )}
       </SectionNumberColumn>
       {href && currentState !== 'active' ? (
-        <Link href={href} underline="small" underlineVisibility="hover">
+        <Link href={href} underline="small">
           {renderChildren()}
         </Link>
       ) : (

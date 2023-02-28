@@ -42,10 +42,10 @@ export interface Vehicle {
   color?: string | null
   /**
    *
-   * @type {string}
+   * @type {Date}
    * @memberof Vehicle
    */
-  firstRegDate?: string | null
+  firstRegDate?: Date | null
   /**
    *
    * @type {string}
@@ -72,16 +72,16 @@ export interface Vehicle {
   role?: string | null
   /**
    *
-   * @type {string}
+   * @type {Date}
    * @memberof Vehicle
    */
-  operatorStartDate?: string | null
+  operatorStartDate?: Date | null
   /**
    *
-   * @type {string}
+   * @type {Date}
    * @memberof Vehicle
    */
-  operatorEndDate?: string | null
+  operatorEndDate?: Date | null
   /**
    *
    * @type {boolean}

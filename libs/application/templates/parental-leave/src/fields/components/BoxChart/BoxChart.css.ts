@@ -32,6 +32,10 @@ export const gray = style({
   backgroundColor: theme.color.dark200,
 })
 
+export const purple = style({
+  backgroundColor: theme.color.purple400,
+})
+
 export const dashedLines = style({
   background: `repeating-linear-gradient(-45deg, #fff, #fff 5%, rgba(255, 255, 255, 0.25) 5%, rgba(255, 255, 255, 0.5) 50%, #fff 50%) top left fixed`,
   backgroundSize: '10px 10px',

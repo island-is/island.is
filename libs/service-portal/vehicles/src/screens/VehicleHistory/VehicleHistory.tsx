@@ -1,28 +1,63 @@
+import isAfter from 'date-fns/isAfter'
+import isEqual from 'lodash/isEqual'
 import React, { useState } from 'react'
-import {
-  ServicePortalModuleComponent,
-  m,
-  EmptyState,
-} from '@island.is/service-portal/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { useQuery } from '@apollo/client'
+import { useQuery, gql } from '@apollo/client'
 import { Query, VehiclesVehicle } from '@island.is/api/schema'
 import {
   Box,
-  Stack,
-  Text,
+  Checkbox,
+  DatePicker,
   GridColumn,
   GridRow,
-  LoadingDots,
-  DatePicker,
-  Checkbox,
+  SkeletonLoader,
+  Stack,
   Tabs,
+  Text,
 } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  EmptyState,
+  ErrorScreen,
+  IntroHeader,
+  m,
+} from '@island.is/service-portal/core'
+
 import { messages } from '../../lib/messages'
-import { GET_USERS_VEHICLES_HISTORY } from '../../queries/getUsersVehicleHistory'
 import TabContent from './TabContent'
-import isAfter from 'date-fns/isAfter'
-import isEqual from 'lodash/isEqual'
+import {
+  VEHICLE_OPERATOR,
+  VEHICLE_OWNER,
+  VEHICLE_COOWNER,
+} from '../../utils/constants'
+
+export const GET_USERS_VEHICLES_HISTORY = gql`
+  query GetUsersVehicles {
+    vehiclesHistoryList {
+      vehicleList {
+        permno
+        regno
+        type
+        color
+        firstRegDate
+        modelYear
+        productYear
+        role
+        operatorStartDate
+        operatorEndDate
+        outOfUse
+        otherOwners
+        termination
+        vehicleStatus
+        plateStatus
+        nextInspection {
+          nextInspectionDate
+          nextInspectionDateIfPassedInspectionToday
+        }
+        deregistrationDate
+      }
+    }
+  }
+`
 
 const getFilteredVehicles = (
   vehicles: VehiclesVehicle[],
@@ -62,7 +97,7 @@ const getFilteredVehicles = (
   return filteredVehicles
 }
 
-export const VehiclesHistory: ServicePortalModuleComponent = () => {
+const VehiclesHistory = () => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
 
@@ -79,15 +114,15 @@ export const VehiclesHistory: ServicePortalModuleComponent = () => {
     toDate,
   )
   const filteredOwnersVehicles = filteredVehicles.filter(
-    (x: VehiclesVehicle) => x.role?.toLowerCase() === 'eigandi',
-  )
-
-  const filteredOperatorVehicles = filteredVehicles.filter(
-    (x: VehiclesVehicle) => x.role?.toLowerCase() === 'umráðamaður',
+    (x: VehiclesVehicle) => x.role?.toLowerCase() === VEHICLE_OWNER,
   )
 
   const filteredCoOwnerVehicles = filteredVehicles.filter(
-    (x: VehiclesVehicle) => x.role?.toLowerCase() === 'meðeigandi',
+    (x: VehiclesVehicle) => x.role?.toLowerCase() === VEHICLE_COOWNER,
+  )
+
+  const filteredOperatorVehicles = filteredVehicles.filter(
+    (x: VehiclesVehicle) => x.role?.toLowerCase() === VEHICLE_OPERATOR,
   )
 
   const tabs = [
@@ -104,29 +139,27 @@ export const VehiclesHistory: ServicePortalModuleComponent = () => {
       content: <TabContent data={filteredOperatorVehicles} />,
     },
   ]
+  if (error && !loading) {
+    return (
+      <ErrorScreen
+        figure="./assets/images/hourglass.svg"
+        tagVariant="red"
+        tag={formatMessage(m.errorTitle)}
+        title={formatMessage(m.somethingWrong)}
+        children={formatMessage(m.errorFetchModule, {
+          module: formatMessage(m.vehicles).toLowerCase(),
+        })}
+      />
+    )
+  }
 
   return (
     <>
-      <Box marginBottom={[2, 3, 5]}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
-            <Stack space={2}>
-              <Text variant="h3" as="h1">
-                {formatMessage(messages.historyTitle)}
-              </Text>
-              <Text as="p" variant="default">
-                {formatMessage(messages.historyIntro)}
-              </Text>
-            </Stack>
-          </GridColumn>
-        </GridRow>
-      </Box>
+      <IntroHeader
+        title={messages.historyTitle}
+        intro={messages.historyIntro}
+      />
 
-      {error && (
-        <Box>
-          <EmptyState description={m.errorFetch} />
-        </Box>
-      )}
       {!loading && !error && vehicles.length === 0 && (
         <Box marginTop={8}>
           <EmptyState />
@@ -134,7 +167,7 @@ export const VehiclesHistory: ServicePortalModuleComponent = () => {
       )}
       <Stack space={2}>
         {!loading && !error && vehicles.length > 0 && (
-          <GridRow marginTop={4}>
+          <GridRow>
             <GridColumn span={['1/1', '8/12', '8/12', '3/12']}>
               <DatePicker
                 backgroundColor="blue"
@@ -201,14 +234,8 @@ export const VehiclesHistory: ServicePortalModuleComponent = () => {
           )}
 
         {loading && (
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            width="full"
-            marginTop={6}
-          >
-            <LoadingDots large />
+          <Box padding={3}>
+            <SkeletonLoader space={1} height={40} repeat={5} />
           </Box>
         )}
         {!loading && !error && filteredVehicles.length > 0 && (

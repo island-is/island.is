@@ -17,6 +17,15 @@ export class AccordionSlice {
 
   @Field(() => [OneColumnText], { nullable: true })
   accordionItems?: Array<OneColumnText>
+
+  @Field(() => Boolean, { nullable: true })
+  hasBorderAbove?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  showTitle?: boolean
+
+  @Field({ nullable: true })
+  titleHeadingLevel?: string
 }
 
 export const mapAccordionSlice = ({
@@ -28,4 +37,7 @@ export const mapAccordionSlice = ({
   title: fields.title ?? '',
   type: fields.type ?? '',
   accordionItems: (fields.accordionItems ?? []).map(mapOneColumnText),
+  hasBorderAbove: fields.hasBorderAbove ?? true,
+  showTitle: fields.showTitle ?? true,
+  titleHeadingLevel: fields.titleHeadingLevel ?? 'h2',
 })

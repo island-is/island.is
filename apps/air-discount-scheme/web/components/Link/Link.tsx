@@ -45,7 +45,7 @@ export const Link: FC<LinkProps> = ({
         >
           {children}
           <span className={styles.icon}>
-            <Icon type="external" width={14} />
+            <Icon aria-hidden="true" type="external" width={14} />
           </span>
         </a>
       ) : (

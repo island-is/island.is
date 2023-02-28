@@ -12,7 +12,7 @@ describe('InternalFileController - guards', () => {
     guards = Reflect.getMetadata('__guards__', InternalFileController)
   })
 
-  it('should have one guard', () => {
+  it('should have one guards', () => {
     expect(guards).toHaveLength(1)
   })
 

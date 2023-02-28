@@ -620,6 +620,26 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     />
                   </div>
 
+                  <div className="client__container__checkbox__field">
+                    <label className="client__label" htmlFor="requireApiScopes">
+                      {localization.fields['requireApiScopes'].label}
+                    </label>
+                    <input
+                      id="requireApiScopes"
+                      type="checkbox"
+                      defaultChecked={client.requireApiScopes}
+                      className="client__input"
+                      name="client.requireApiScopes"
+                      ref={register}
+                      title={localization.fields['requireApiScopes'].helpText}
+                    />
+                    <HelpBox
+                      helpText={
+                        localization.fields['requireApiScopes'].helpText
+                      }
+                    />
+                  </div>
+
                   <div className="client__container__button" id="advanced">
                     <button
                       type="button"
@@ -643,24 +663,29 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       <div className="client__container__checkbox__field">
                         <label
                           className="client__label"
-                          htmlFor="supportsDelegation"
+                          htmlFor="supportsCustomDelegation"
                         >
-                          {localization.fields['supportsDelegation'].label}
+                          {
+                            localization.fields['supportsCustomDelegation']
+                              .label
+                          }
                         </label>
                         <input
-                          id="supportsDelegation"
+                          id="supportsCustomDelegation"
                           type="checkbox"
-                          name="client.supportsDelegation"
-                          defaultChecked={client.supportsDelegation}
+                          name="client.supportsCustomDelegation"
+                          defaultChecked={client.supportsCustomDelegation}
                           className="client__input"
                           ref={register}
                           title={
-                            localization.fields['supportsDelegation'].helpText
+                            localization.fields['supportsCustomDelegation']
+                              .helpText
                           }
                         />
                         <HelpBox
                           helpText={
-                            localization.fields['supportsDelegation'].helpText
+                            localization.fields['supportsCustomDelegation']
+                              .helpText
                           }
                         />
                       </div>

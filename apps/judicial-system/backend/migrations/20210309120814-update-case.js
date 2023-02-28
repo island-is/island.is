@@ -15,7 +15,7 @@ module.exports = {
     )
   },
 
-  down: (queryInterface, Sequelize) => {
+  down: (queryInterface) => {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.removeColumn('case', 'send_request_to_defender', {
         transaction: t,

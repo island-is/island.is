@@ -17,7 +17,7 @@ import { ExternalData, FAApplication, waitingForSpouse } from '../../..'
 interface Props {
   application: FAApplication
   veitaApplication?: Application
-  nationalRegistry: ExternalData['nationalRegistry']
+  municipality: ExternalData['municipality']
   state?: ApplicationState
   amount?: Amount
 }
@@ -25,7 +25,7 @@ interface Props {
 const AidAmount = ({
   application,
   state,
-  nationalRegistry,
+  municipality,
   amount,
   veitaApplication,
 }: Props) => {
@@ -45,14 +45,11 @@ const AidAmount = ({
           <Breakdown calculations={acceptedAmountBreakDown(amount)} />
         </>
       ) : waitingForSpouse(application.state) ? (
-        <Estimation
-          application={application}
-          nationalRegistry={nationalRegistry}
-        />
+        <Estimation application={application} municipality={municipality} />
       ) : veitaApplication ? (
         <VeitaEstimation
           application={veitaApplication}
-          nationalRegistry={nationalRegistry}
+          municipality={municipality}
         />
       ) : null}
     </Box>

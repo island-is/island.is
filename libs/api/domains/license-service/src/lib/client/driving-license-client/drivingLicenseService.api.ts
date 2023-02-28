@@ -12,17 +12,19 @@ import { User } from '@island.is/auth-nest-tools'
 import { GenericDrivingLicenseResponse } from './genericDrivingLicense.type'
 import { parseDrivingLicensePayload } from './drivingLicenseMappers'
 import {
-  CONFIG_PROVIDER,
   GenericLicenseClient,
+  GenericLicenseLabels,
   GenericLicenseUserdataExternal,
   GenericUserLicensePkPassStatus,
   GenericUserLicenseStatus,
   PkPassVerification,
   PkPassVerificationError,
 } from '../../licenceService.type'
-import { Config } from '../../licenseService.module'
 import { PkPassClient } from './pkpass.client'
 import { PkPassPayload } from './pkpass.type'
+import { Locale } from '@island.is/shared/types'
+import { GenericDrivingLicenseConfig } from './genericDrivingLicense.config'
+import { ConfigType, XRoadConfig } from '@island.is/nest/config'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'drivinglicense-service'
@@ -54,13 +56,15 @@ export class GenericDrivingLicenseApi
   private pkpassClient: PkPassClient
 
   constructor(
-    @Inject(CONFIG_PROVIDER) private config: Config,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
+    @Inject(XRoadConfig.KEY)
+    private xroadConfig: ConfigType<typeof XRoadConfig>,
+    private config: ConfigType<typeof GenericDrivingLicenseConfig>,
     private cacheManager?: CacheManager | null,
   ) {
     // TODO inject the actual RLS x-road client
-    this.xroadApiUrl = config.xroad.baseUrl
-    this.xroadClientId = config.xroad.clientId
+    this.xroadApiUrl = xroadConfig.xRoadBasePath
+    this.xroadClientId = xroadConfig.xRoadClient
     this.xroadPath = config.xroad.path
     this.xroadSecret = config.xroad.secret
 
@@ -88,9 +92,12 @@ export class GenericDrivingLicenseApi
       })
 
       if (!res.ok) {
-        throw new Error(
-          `Expected 200 status for Drivers license query, got ${res.status}`,
-        )
+        if (res.status !== 400 && res.status !== 404) {
+          throw new Error(
+            `Expected 200 status for Drivers license query, got ${res.status}`,
+          )
+        }
+        return null
       }
     } catch (e) {
       this.logger.error('Unable to query for drivers licence', {
@@ -222,23 +229,36 @@ export class GenericDrivingLicenseApi
     return GenericUserLicensePkPassStatus.Available
   }
 
+  /**
+   * Notify RLS about the creation of a pkpass.
+   * @param nationalId National id of the user that created the pkpass.
+   */
+  private async notifyPkPassCreated(nationalId: string) {
+    try {
+      await fetch(`${this.xroadApiUrl}/api/Okuskirteini/${nationalId}`, {
+        method: 'POST',
+        headers: this.headers(),
+      })
+    } catch (e) {
+      this.logger.info('Unable to notify RLS of pkpass creation', {
+        exception: e,
+        exceptionMessage: e.message,
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
+  }
+
   async getPkPassUrlByNationalId(nationalId: string): Promise<string | null> {
     const licenses = await this.requestFromXroadApi(nationalId)
 
     if (!licenses) {
-      this.logger.warn('Missing licenses, null from x-road', {
-        category: LOG_CATEGORY,
-      })
       return null
     }
 
     const license = licenses[0]
 
     if (!license) {
-      this.logger.warn(
-        'Missing license, unable to generate pkpass for drivers license',
-        { category: LOG_CATEGORY },
-      )
       return null
     }
 
@@ -251,7 +271,13 @@ export class GenericDrivingLicenseApi
 
     const payload = this.drivingLicenseToPkpassPayload(license)
 
-    return this.pkpassClient.getPkPassUrl(payload)
+    const pkPassUrl = await this.pkpassClient.getPkPassUrl(payload)
+
+    if (pkPassUrl) {
+      this.notifyPkPassCreated(nationalId)
+    }
+
+    return pkPassUrl
   }
 
   async getPkPassUrl(user: User): Promise<string | null> {
@@ -264,19 +290,12 @@ export class GenericDrivingLicenseApi
     const licenses = await this.requestFromXroadApi(nationalId)
 
     if (!licenses) {
-      this.logger.warn('Missing licenses, null from x-road', {
-        category: LOG_CATEGORY,
-      })
       return null
     }
 
     const license = licenses[0]
 
     if (!license) {
-      this.logger.warn(
-        'Missing license, unable to generate pkpass for drivers license',
-        { category: LOG_CATEGORY },
-      )
       return null
     }
 
@@ -289,7 +308,13 @@ export class GenericDrivingLicenseApi
 
     const payload = this.drivingLicenseToPkpassPayload(license)
 
-    return this.pkpassClient.getPkPassQRCode(payload)
+    const qrCode = await this.pkpassClient.getPkPassQRCode(payload)
+
+    if (qrCode) {
+      this.notifyPkPassCreated(nationalId)
+    }
+
+    return qrCode
   }
 
   async getPkPassQRCode(user: User): Promise<string | null> {
@@ -302,17 +327,18 @@ export class GenericDrivingLicenseApi
    * @param nationalId NationalId to fetch drivers licence for.
    * @return {Promise<GenericLicenseUserdataExternal | null>} Latest driving license or null if an error occured.
    */
-  async getLicense(user: User): Promise<GenericLicenseUserdataExternal | null> {
+  async getLicense(
+    user: User,
+    locale: Locale,
+    labels: GenericLicenseLabels,
+  ): Promise<GenericLicenseUserdataExternal | null> {
     const licenses = await this.requestFromXroadApi(user.nationalId)
 
     if (!licenses) {
-      this.logger.warn('Missing licenses, null from x-road', {
-        category: LOG_CATEGORY,
-      })
       return null
     }
 
-    const payload = parseDrivingLicensePayload(licenses)
+    const payload = parseDrivingLicensePayload(licenses, locale, labels)
 
     let pkpassStatus: GenericUserLicensePkPassStatus =
       GenericUserLicensePkPassStatus.Unknown
@@ -332,8 +358,10 @@ export class GenericDrivingLicenseApi
 
   async getLicenseDetail(
     user: User,
+    locale: Locale,
+    labels: GenericLicenseLabels,
   ): Promise<GenericLicenseUserdataExternal | null> {
-    return this.getLicense(user)
+    return this.getLicense(user, locale, labels)
   }
 
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {
@@ -385,10 +413,6 @@ export class GenericDrivingLicenseApi
       const licenses = await this.requestFromXroadApi(nationalId)
 
       if (!licenses) {
-        this.logger.warn(
-          'Missing licenses from x-road, unable to return license info for pkpass verify',
-          { category: LOG_CATEGORY },
-        )
         error = {
           status: '0',
           message: 'missing licenses',

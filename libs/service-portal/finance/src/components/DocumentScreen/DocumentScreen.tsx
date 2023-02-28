@@ -1,8 +1,10 @@
-import { gql, useLazyQuery } from '@apollo/client'
 import format from 'date-fns/format'
 import sub from 'date-fns/sub'
+import sortBy from 'lodash/sortBy'
 import React, { FC, useEffect, useState } from 'react'
+import cn from 'classnames'
 
+import { gql, useLazyQuery } from '@apollo/client'
 import {
   Accordion,
   AccordionItem,
@@ -24,18 +26,23 @@ import {
 import { useLocale } from '@island.is/localization'
 import {
   amountFormat,
+  ErrorScreen,
   formSubmit,
+  IntroHeader,
   m,
   tableStyles,
 } from '@island.is/service-portal/core'
 import { dateFormat } from '@island.is/shared/constants'
 
+import * as styles from '../../screens/Finance.css'
 import { billsFilter } from '../../utils/simpleFilter'
 import { DocumentsListItemTypes } from './DocumentScreen.types'
-import * as styles from '../../screens/Finance.css'
-import sortBy from 'lodash/sortBy'
+import DropdownExport from '../DropdownExport/DropdownExport'
+import { exportGeneralDocuments } from '../../utils/filesGeneral'
 
 const ITEMS_ON_PAGE = 20
+
+const defaultCalState = { top: false, lower: false }
 
 interface Props {
   title: string
@@ -72,6 +79,9 @@ const DocumentScreen: FC<Props> = ({
   const [page, setPage] = useState(1)
   const [fromDate, setFromDate] = useState<Date>()
   const [toDate, setToDate] = useState<Date>()
+  const [openCal, setOpenCal] = useState<{ top: boolean; lower: boolean }>(
+    defaultCalState,
+  )
   const [q, setQ] = useState<string>('')
   const backInTheDay = sub(new Date(), {
     months: defaultDateRangeMonths,
@@ -116,34 +126,51 @@ const DocumentScreen: FC<Props> = ({
     setToDate(new Date())
   }, [])
 
+  if (error && !loading) {
+    return (
+      <ErrorScreen
+        figure="./assets/images/hourglass.svg"
+        tagVariant="red"
+        tag={formatMessage(m.errorTitle)}
+        title={formatMessage(m.somethingWrong)}
+        children={formatMessage(m.errorFetchModule, {
+          module: title.toLowerCase(),
+        })}
+      />
+    )
+  }
+
   return (
     <Box marginBottom={[6, 6, 10]}>
+      <IntroHeader title={title} intro={intro} />
       <Stack space={2}>
-        <Text variant="h3" as="h1">
-          {title}
-        </Text>
-        <GridRow marginBottom={4}>
-          <GridColumn span={['12/12', '8/12']}>
-            <Text variant="default">{intro}</Text>
-          </GridColumn>
-        </GridRow>
         <GridRow>
-          <Box display="flex" printHidden padding={0}>
-            <GridColumn>
-              <Button
-                colorScheme="default"
-                icon="print"
-                iconType="filled"
-                onClick={() => window.print()}
-                preTextIconType="filled"
-                size="default"
-                type="button"
-                variant="utility"
-              >
-                {formatMessage(m.print)}
-              </Button>
-            </GridColumn>
-          </Box>
+          <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+            <Box display="flex" printHidden>
+              <Box paddingRight={2}>
+                <Button
+                  colorScheme="default"
+                  icon="print"
+                  iconType="filled"
+                  onClick={() => window.print()}
+                  preTextIconType="filled"
+                  size="default"
+                  type="button"
+                  variant="utility"
+                >
+                  {formatMessage(m.print)}
+                </Button>
+              </Box>
+              <DropdownExport
+                onGetCSV={() =>
+                  exportGeneralDocuments(billsDataArray, title, 'csv')
+                }
+                onGetExcel={() =>
+                  exportGeneralDocuments(billsDataArray, title, 'xlsx')
+                }
+              />
+            </Box>
+          </GridColumn>
         </GridRow>
         <Hidden print={true}>
           <Box marginTop={[1, 1, 2, 2, 5]}>
@@ -156,10 +183,11 @@ const DocumentScreen: FC<Props> = ({
               labelClearAll={formatMessage(m.clearAllFilters)}
               labelOpen={formatMessage(m.openFilter)}
               labelClose={formatMessage(m.closeFilter)}
+              popoverFlip={false}
               filterInput={
                 <FilterInput
                   placeholder={formatMessage(m.searchPlaceholder)}
-                  name="rafraen-skjol-input"
+                  name="finance-document-input"
                   value={q}
                   onChange={(e) => setQ(e)}
                   backgroundColor="blue"
@@ -185,7 +213,10 @@ const DocumentScreen: FC<Props> = ({
                       iconVariant="small"
                     >
                       <Box
-                        className={styles.accordionBoxSingle}
+                        className={cn(styles.accordionBoxSingle, {
+                          [styles.openCal]: openCal?.top,
+                          [styles.openLowerCal]: openCal?.lower,
+                        })}
                         display="flex"
                         flexDirection="column"
                       >
@@ -196,6 +227,12 @@ const DocumentScreen: FC<Props> = ({
                           backgroundColor="blue"
                           size="xs"
                           handleChange={(d) => setFromDate(d)}
+                          handleOpenCalendar={() =>
+                            setOpenCal({ top: true, lower: false })
+                          }
+                          handleCloseCalendar={() =>
+                            setOpenCal(defaultCalState)
+                          }
                           selected={fromDate}
                         />
                         <Box marginTop={3}>
@@ -206,6 +243,12 @@ const DocumentScreen: FC<Props> = ({
                             backgroundColor="blue"
                             size="xs"
                             handleChange={(d) => setToDate(d)}
+                            handleOpenCalendar={() =>
+                              setOpenCal({ top: false, lower: true })
+                            }
+                            handleCloseCalendar={() =>
+                              setOpenCal(defaultCalState)
+                            }
                             selected={toDate}
                           />
                         </Box>
@@ -218,12 +261,6 @@ const DocumentScreen: FC<Props> = ({
           </Box>
         </Hidden>
         <Box marginTop={2}>
-          {error && (
-            <AlertBanner
-              description={formatMessage(m.errorFetch)}
-              variant="error"
-            />
-          )}
           {!called && !loading && (
             <AlertBanner
               description={formatMessage(m.datesForResults)}

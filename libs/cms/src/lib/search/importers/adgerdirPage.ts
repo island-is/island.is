@@ -59,6 +59,7 @@ export class AdgerdirPageSyncService
         } catch (error) {
           logger.warn('Failed to import adgerdir page', {
             error: error.message,
+            id: entry?.sys?.id,
           })
           return false
         }

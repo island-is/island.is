@@ -60,7 +60,7 @@ const prodConfig = () => ({
   },
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
-    audience: '@island.is',
+    audience: ['@island.is', '@admin.island.is'],
   },
   documentService: {
     basePath: process.env.POSTHOLF_BASE_PATH,
@@ -108,25 +108,10 @@ const prodConfig = () => ({
     callbackAdditionUrl: process.env.XROAD_PAYMENT_ADDITION_CALLBACK_URL,
     arkBaseUrl: process.env.ARK_BASE_URL,
   },
-  pkpass: {
-    apiKey: process.env.PKPASS_API_KEY,
-    apiUrl: process.env.PKPASS_API_URL,
-    secretKey: process.env.PKPASS_SECRET_KEY,
-    cacheKey: process.env.PKPASS_CACHE_KEY,
-    cacheTokenExpiryDelta: process.env.PKPASS_CACHE_TOKEN_EXPIRY_DELTA,
-    authRetries: process.env.PKPASS_AUTH_RETRIES,
-  },
   audit: {
     defaultNamespace: '@island.is/api',
     groupName: process.env.AUDIT_GROUP_NAME,
     serviceName: 'api',
-  },
-  paymentSchedule: {
-    xRoadBaseUrl: process.env.XROAD_BASE_PATH,
-    xRoadProviderId: process.env.PAYMENT_SCHEDULE_XROAD_PROVIDER_ID,
-    xRoadClientId: process.env.XROAD_CLIENT_ID,
-    username: process.env.PAYMENT_SCHEDULE_USER,
-    password: process.env.PAYMENT_SCHEDULE_PASSWORD,
   },
   islykill: {
     cert: process.env.ISLYKILL_CERT,
@@ -200,7 +185,7 @@ const devConfig = () => ({
   },
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
-    audience: '@island.is',
+    audience: ['@island.is', '@admin.island.is'],
   },
   documentService: {
     basePath: process.env.POSTHOLF_BASE_PATH,
@@ -264,27 +249,8 @@ const devConfig = () => ({
     callbackAdditionUrl: process.env.XROAD_PAYMENT_ADDITION_CALLBACK_URL,
     arkBaseUrl: process.env.ARK_BASE_URL,
   },
-  pkpass: {
-    apiKey: process.env.PKPASS_API_KEY,
-    apiUrl: process.env.PKPASS_API_URL,
-    secretKey: process.env.PKPASS_SECRET_KEY,
-    cacheKey: process.env.PKPASS_CACHE_KEY ?? 'smartsolution:apitoken',
-    cacheTokenExpiryDelta:
-      process.env.PKPASS_CACHE_TOKEN_EXPIRY_DELTA ?? '2000',
-    authRetries: process.env.PKPASS_AUTH_RETRIES ?? '1',
-  },
   audit: {
     defaultNamespace: '@island.is/api',
-  },
-  paymentSchedule: {
-    xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
-    xRoadProviderId:
-      process.env.PAYMENT_SCHEDULE_XROAD_PROVIDER_ID ??
-      'IS-DEV/GOV/10021/FJS-Public',
-    xRoadClientId:
-      process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
-    username: process.env.PAYMENT_SCHEDULE_USER,
-    password: process.env.PAYMENT_SCHEDULE_PASSWORD,
   },
   islykill: {
     cert: process.env.ISLYKILL_CERT,
@@ -293,4 +259,6 @@ const devConfig = () => ({
   },
 })
 export const getConfig =
-  process.env.NODE_ENV === 'production' ? prodConfig() : devConfig()
+  process.env.PROD_MODE === 'true' || process.env.NODE_ENV === 'production'
+    ? prodConfig()
+    : devConfig()

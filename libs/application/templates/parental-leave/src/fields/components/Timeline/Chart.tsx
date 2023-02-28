@@ -1,5 +1,4 @@
 import React, { FC, useRef } from 'react'
-import format from 'date-fns/format'
 import subMonths from 'date-fns/subMonths'
 import eachDayOfInterval from 'date-fns/eachDayOfInterval'
 import toDate from 'date-fns/toDate'
@@ -8,13 +7,13 @@ import isSameDay from 'date-fns/isSameDay'
 import addMonths from 'date-fns/addMonths'
 import endOfMonth from 'date-fns/endOfMonth'
 import parseISO from 'date-fns/parseISO'
-
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 
 import { useDrag } from '../utils'
 import * as styles from './Chart.css'
 import { TimelinePeriod } from './Timeline'
+import { useLocale } from '@island.is/localization'
 
 const ChartMonths: FC<{
   initDate: Date
@@ -23,6 +22,7 @@ const ChartMonths: FC<{
   totalDays: Date[]
   lastDayInTimespan: Date
 }> = ({ initDate, rowWidth, chartColumns, totalDays, lastDayInTimespan }) => {
+  const { formatDateFns } = useLocale()
   return (
     <Box
       className={styles.row}
@@ -43,6 +43,7 @@ const ChartMonths: FC<{
           const isFirstDayOfMonth = totalDays[index].getDate() === 1
           const height = isFirstDayOfMonth || index === 0 ? 14 : 0
           const color = isInitDay ? theme.color.yellow200 : theme.color.dark200
+
           return (
             <Box
               key={index}
@@ -53,7 +54,7 @@ const ChartMonths: FC<{
               <Box className={styles.chartMonth}>
                 <Text variant="small">
                   {(isFirstDayOfMonth || index === 0) &&
-                    format(day, 'MMM yyyy')}
+                    formatDateFns(day, 'MMM yyyy')}
                   &nbsp;
                 </Text>
                 {isInitDay && <Box className={styles.highlightDay} />}

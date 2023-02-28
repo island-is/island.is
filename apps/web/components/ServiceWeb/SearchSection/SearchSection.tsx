@@ -1,6 +1,7 @@
-import React from 'react'
 import { Box, Text, Hidden } from '@island.is/island-ui/core'
+import { Colors } from '@island.is/island-ui/theme'
 import { ServiceWebSearchInput } from '@island.is/web/components'
+import { useNamespace } from '@island.is/web/hooks'
 import { TextModes } from '../types'
 
 import * as styles from './SearchSection.css'
@@ -11,6 +12,7 @@ interface SearchSectionProps {
   logoUrl?: string
   textMode?: TextModes
   searchPlaceholder?: string
+  namespace: Record<string, string>
 }
 
 export const SearchSection = ({
@@ -19,13 +21,19 @@ export const SearchSection = ({
   logoUrl,
   textMode,
   searchPlaceholder,
+  namespace,
 }: SearchSectionProps) => {
-  const dark = textMode === 'dark'
+  const n = useNamespace(namespace)
+
+  const textProps: { color?: Colors } =
+    textMode === 'dark'
+      ? {}
+      : { color: textMode === 'light' ? 'white' : 'blueberry600' }
 
   return (
     <Box
       paddingX={[3, 3, 6]}
-      paddingTop={[0, 0, 0, 10]}
+      paddingTop={[3, 3, 3, 10]}
       paddingBottom={[15, 15, 3]}
       className={styles.container}
     >
@@ -43,24 +51,23 @@ export const SearchSection = ({
           {logoTitle && (
             <Hidden above="md">
               <Box marginBottom={3}>
-                <Text
-                  as="span"
-                  variant="eyebrow"
-                  {...(dark ? {} : { color: 'white' })}
-                >
+                <Text as="span" variant="eyebrow" {...textProps}>
                   {logoTitle}
                 </Text>
               </Box>
             </Hidden>
           )}
           <Box marginBottom={[4, 4, 4, 6]}>
-            <Text variant="h1" as="h1" {...(dark ? {} : { color: 'white' })}>
+            <Text variant="h1" as="h1" {...textProps}>
               {title}
             </Text>
           </Box>
         </>
       )}
-      <ServiceWebSearchInput placeholder={searchPlaceholder} />
+      <ServiceWebSearchInput
+        placeholder={searchPlaceholder}
+        nothingFoundText={n('nothingFoundText', 'Ekkert fannst')}
+      />
     </Box>
   )
 }

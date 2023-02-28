@@ -25,7 +25,7 @@ export const FaqList: FC<FaqListProps> = ({
 }) => {
   return (
     <Stack space={6}>
-      {showTitle !== false && (
+      {title && showTitle !== false && (
         <Text variant="h2" as="h2">
           <span data-sidebar-link={slugify(title)}>{title}</span>
         </Text>

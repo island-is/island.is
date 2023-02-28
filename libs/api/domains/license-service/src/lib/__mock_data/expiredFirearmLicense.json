@@ -1,0 +1,10 @@
+{
+  "ssn": "1234567890",
+  "name": "Testi manni",
+  "expirationDate": "01/11/2020",
+  "issueDate": "01/01/2015",
+  "licenseNumber": "000-1111-222",
+  "qualifications": "ABDES",
+  "collectorLicenseExpirationDate": "01/01/2100",
+  "address": "Hvergigata"
+}

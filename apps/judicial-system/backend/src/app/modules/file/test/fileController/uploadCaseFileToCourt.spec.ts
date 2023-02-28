@@ -1,15 +1,20 @@
+import each from 'jest-each'
 import { uuid } from 'uuidv4'
 
-import { BadRequestException, NotFoundException } from '@nestjs/common'
+import { NotFoundException } from '@nestjs/common'
 
-import { CaseFileState, User } from '@island.is/judicial-system/types'
+import {
+  CaseFileCategory,
+  CaseFileState,
+  User,
+} from '@island.is/judicial-system/types'
 
-import { CourtService } from '../../../court'
-import { Case } from '../../../case'
+import { createTestingFileModule } from '../createTestingFileModule'
 import { AwsS3Service } from '../../../aws-s3'
+import { CourtDocumentFolder, CourtService } from '../../../court'
+import { Case } from '../../../case'
 import { CaseFile } from '../../models/file.model'
 import { UploadFileToCourtResponse } from '../../models/uploadFileToCourt.response'
-import { createTestingFileModule } from '../createTestingFileModule'
 
 interface Then {
   result: UploadFileToCourtResponse
@@ -107,9 +112,13 @@ describe('FileController - Upload case file to court', () => {
     const caseId = uuid()
     const courtId = uuid()
     const courtCaseNumber = 'R-999/2021'
-    const theCase = { id: caseId, courtId, courtCaseNumber } as Case
+    const theCase = {
+      id: caseId,
+      courtId,
+      courtCaseNumber,
+    } as Case
     const fileId = uuid()
-    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const key = `indictments/${caseId}/${uuid()}/test.txt`
     const fileName = 'test.txt'
     const fileType = 'text/plain'
     const caseFile = {
@@ -133,17 +142,79 @@ describe('FileController - Upload case file to court', () => {
 
     it('should upload the file to court', () => {
       expect(mockCreateDocument).toHaveBeenCalledWith(
+        user,
         caseId,
         courtId,
         courtCaseNumber,
+        CourtDocumentFolder.CASE_DOCUMENTS,
         fileName,
         fileName,
         fileType,
         content,
-        user,
       )
     })
   })
+
+  each`
+    caseFileCategory                       | courtDocumentFolder
+    ${CaseFileCategory.COURT_RECORD}       | ${CourtDocumentFolder.COURT_DOCUMENTS}
+    ${CaseFileCategory.RULING}             | ${CourtDocumentFolder.COURT_DOCUMENTS}
+    ${CaseFileCategory.COVER_LETTER}       | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
+    ${CaseFileCategory.INDICTMENT}         | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
+    ${CaseFileCategory.CRIMINAL_RECORD}    | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
+    ${CaseFileCategory.COST_BREAKDOWN}     | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
+    ${CaseFileCategory.CASE_FILE}          | ${CourtDocumentFolder.CASE_DOCUMENTS}
+    `.describe(
+    'indictment file upload to court',
+    ({ caseFileCategory, courtDocumentFolder }) => {
+      const user = { id: uuid() } as User
+      const caseId = uuid()
+      const courtId = uuid()
+      const courtCaseNumber = 'R-999/2021'
+      const theCase = {
+        id: caseId,
+        courtId,
+        courtCaseNumber,
+      } as Case
+      const fileId = uuid()
+      const key = `uploads/${caseId}/${uuid()}/test.txt`
+      const fileName = 'test.txt'
+      const fileType = 'text/plain'
+      const caseFile = {
+        id: fileId,
+        key,
+        name: fileName,
+        type: fileType,
+        category: caseFileCategory,
+      } as CaseFile
+      const content = Buffer.from('Test content')
+      let mockCreateDocument: jest.Mock
+
+      beforeEach(async () => {
+        mockCreateDocument = mockCourtService.createDocument as jest.Mock
+        const mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
+        mockObjectExists.mockResolvedValueOnce(true)
+        const mockGetObject = mockAwsS3Service.getObject as jest.Mock
+        mockGetObject.mockResolvedValueOnce(content)
+
+        await givenWhenThen(caseId, fileId, user, theCase, caseFile)
+      })
+
+      it('should upload the file to court', () => {
+        expect(mockCreateDocument).toHaveBeenCalledWith(
+          user,
+          caseId,
+          courtId,
+          courtCaseNumber,
+          courtDocumentFolder,
+          fileName,
+          fileName,
+          fileType,
+          content,
+        )
+      })
+    },
+  )
 
   describe('case file state update', () => {
     const user = {} as User
@@ -245,11 +316,8 @@ describe('FileController - Upload case file to court', () => {
       then = await givenWhenThen(caseId, fileId, user, theCase, caseFile)
     })
 
-    it('should throw bad request exception', () => {
-      expect(then.error).toBeInstanceOf(BadRequestException)
-      expect(then.error.message).toBe(
-        `File ${fileId} has already been uploaded to court`,
-      )
+    it('should return success', () => {
+      expect(then.result).toEqual({ success: true })
     })
   })
 

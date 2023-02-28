@@ -13,7 +13,6 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { Loading } from '@island.is/judicial-system-web/src/components'
-import { Institution, UserRole } from '@island.is/judicial-system/types'
 import {
   InstitutionsQuery,
   UsersQuery,
@@ -22,7 +21,11 @@ import { formatNationalId } from '@island.is/judicial-system/formatters'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import type { User } from '@island.is/judicial-system/types'
+import {
+  Institution,
+  User,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './Users.css'
@@ -58,18 +61,22 @@ export const Users: React.FC = () => {
   })
 
   const handleClick = (user: User): void => {
-    router.push(`${constants.USER_CHANGE_ROUTE}/${user.id}`)
+    router.push(`${constants.CHANGE_USER_ROUTE}/${user.id}`)
   }
 
   const userRoleToString = (userRole: UserRole) => {
     switch (userRole) {
-      case UserRole.JUDGE:
-        return 'Dómari'
-      case UserRole.PROSECUTOR:
+      case UserRole.Prosecutor:
         return 'Saksóknari'
-      case UserRole.REGISTRAR:
+      case UserRole.Representative:
+        return 'Fulltrúi'
+      case UserRole.Judge:
+        return 'Dómari'
+      case UserRole.Registrar:
         return 'Dómritari'
-      case UserRole.STAFF:
+      case UserRole.Assistant:
+        return 'Aðstoðarmaður dómara'
+      case UserRole.Staff:
         return 'Starfsmaður'
     }
   }
@@ -81,7 +88,7 @@ export const Users: React.FC = () => {
         <Button
           icon="add"
           onClick={() => {
-            router.push(constants.USER_NEW_ROUTE)
+            router.push(constants.CREATE_USER_ROUTE)
           }}
         >
           Nýr notandi

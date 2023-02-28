@@ -2,14 +2,7 @@ import { globalStyle, style } from '@vanilla-extract/css'
 
 import { theme } from '@island.is/island-ui/theme'
 
-export const addCourtDocumentContainer = style({
-  display: 'grid',
-  gridTemplateColumns: '1fr 240px',
-  columnGap: theme.spacing[2],
-  marginBottom: theme.spacing[3],
-})
-
-export const additionalCourtDocumentContainer = style({
+export const valueWrapper = style({
   display: 'flex',
   justifyContent: 'space-between',
   borderTop: `1px solid ${theme.color.blue200}`,
@@ -53,7 +46,7 @@ export const menu = style({
   boxSizing: 'border-box',
 })
 
-export const menuIsOpen = style({
+export const submittedByMenuIsOpen = style({
   boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
   borderTopLeftRadius: 8,
   borderTopRightRadius: 8,

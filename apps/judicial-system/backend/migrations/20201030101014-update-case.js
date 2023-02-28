@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = {
-  up: (queryInterface, Sequelize) => {
+  up: (queryInterface) => {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.sequelize.query(
         'CREATE TYPE "enum_case_gender" AS ENUM (\'MALE\', \'FEMALE\', \'OTHER\');\
@@ -11,7 +11,7 @@ module.exports = {
     )
   },
 
-  down: (queryInterface, Sequelize) => {
+  down: (queryInterface) => {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface
         .removeColumn('case', 'accused_gender', {

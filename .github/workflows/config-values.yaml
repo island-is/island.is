@@ -58,7 +58,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: '14'
+          node-version: '18'
 
       - name: Setup yarn
         run: npm install -g yarn
@@ -77,7 +77,7 @@ jobs:
       - name: Building NodeJS dependencies
         if: steps.node-modules.outputs.cache-hit != 'true'
         working-directory: infra
-        run: yarn install --frozen-lock
+        run: yarn install --immutable
 
       - name: Run unit tests
         run: ./infra/scripts/ci/test-unit.sh
@@ -99,7 +99,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: '14'
+          node-version: '18'
 
       - name: Cache for NodeJS dependencies
         id: node-modules
@@ -115,7 +115,7 @@ jobs:
       - name: Building NodeJS dependencies
         if: steps.node-modules.outputs.cache-hit != 'true'
         working-directory: infra
-        run: yarn install --frozen-lock
+        run: yarn install --immutable
 
       - name: Select role
         env:

@@ -7,3 +7,8 @@ export type HasQualityPhotoData = {
 }
 
 export type ConditionFn = (answer: FormValue) => boolean
+
+export type DrivingLicense = {
+  currentLicense: string | null
+  healthRemarks?: string[]
+}

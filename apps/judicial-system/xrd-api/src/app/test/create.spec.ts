@@ -3,7 +3,7 @@ import { uuid } from 'uuidv4'
 
 import { BadGatewayException, BadRequestException } from '@nestjs/common'
 
-import { Case as TCase } from '@island.is/judicial-system/types'
+import { Case as TCase, CaseType } from '@island.is/judicial-system/types'
 
 import { CreateCaseDto } from '../app.dto'
 import { Case } from '../app.model'
@@ -39,7 +39,11 @@ describe('AppController - Greate', () => {
   })
 
   describe('remote call', () => {
-    const caseToCreate = {} as CreateCaseDto
+    const caseToCreate: CreateCaseDto = {
+      policeCaseNumber: '007-2022-1',
+      type: CaseType.CUSTODY,
+      accusedNationalId: '00000000000',
+    }
 
     beforeEach(async () => {
       await givenWhenThen(caseToCreate)
@@ -54,7 +58,11 @@ describe('AppController - Greate', () => {
             'Content-Type': 'application/json',
             authorization: `Bearer ${config.backend.accessToken}`,
           },
-          body: JSON.stringify(caseToCreate),
+          body: JSON.stringify({
+            ...caseToCreate,
+            policeCaseNumber: undefined,
+            policeCaseNumbers: ['007-2022-1'],
+          }),
         },
       )
     })

@@ -30,6 +30,9 @@ export class AlertBanner {
 
   @Field(() => Int)
   dismissedForDays!: number
+
+  @Field(() => [String], { nullable: true })
+  servicePortalPaths?: string[]
 }
 
 export const mapAlertBanner = ({ fields, sys }: IAlertBanner): AlertBanner => ({
@@ -42,4 +45,5 @@ export const mapAlertBanner = ({ fields, sys }: IAlertBanner): AlertBanner => ({
   link: fields.link ? mapReferenceLink(fields.link) : null,
   isDismissable: fields.isDismissable ?? true,
   dismissedForDays: fields.dismissedForDays ?? 7,
+  servicePortalPaths: fields.servicePortalPaths ?? [],
 })

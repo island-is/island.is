@@ -1,6 +1,7 @@
+import * as kennitala from 'kennitala'
 import { Inject } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
-import { Features } from '@island.is/feature-flags'
+import { FeatureFlagUser, Features } from '@island.is/feature-flags'
 import type { FeatureFlagClient } from '@island.is/feature-flags'
 
 import { FEATURE_FLAG_CLIENT } from './feature-flag.client'
@@ -16,11 +17,21 @@ export class FeatureFlagService {
     defaultValue: T,
     user?: User,
   ): Promise<T> {
-    const featureFlagUser = user && { id: user.nationalId }
     return this.client.getValue(
       feature,
       defaultValue,
-      featureFlagUser,
+      user && this.getFeatureFlagUser(user),
     ) as Promise<T>
+  }
+
+  private getFeatureFlagUser(user: User): FeatureFlagUser {
+    const attributes: Record<string, string> = {}
+    if (user.nationalId) {
+      attributes.subjectType = kennitala.isCompany(user.nationalId)
+        ? 'legalEntity'
+        : 'person'
+    }
+
+    return { id: user.nationalId, attributes }
   }
 }

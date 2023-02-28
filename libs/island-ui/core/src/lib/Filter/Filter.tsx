@@ -44,6 +44,9 @@ export interface FilterProps {
 
   /** Swap input and filter button locations */
   reverse?: boolean
+
+  /** Allow popover to flip upwards */
+  popoverFlip?: boolean
 }
 
 /**
@@ -73,11 +76,12 @@ export const Filter: FC<FilterProps> = ({
   onFilterClear,
   reverse,
   children,
+  popoverFlip = true,
 }) => {
   const dialog = useDialogState()
   const popover = usePopoverState({
     placement: 'bottom-start',
-    unstable_flip: true,
+    unstable_flip: popoverFlip,
     gutter: 8,
   })
 
@@ -92,7 +96,7 @@ export const Filter: FC<FilterProps> = ({
             width="full"
             justifyContent={align === 'right' ? 'flexEnd' : 'flexStart'}
           >
-            <Inline space={2} reverse={reverse}>
+            <Inline space={2} reverse={reverse} alignY="bottom">
               <Box
                 component={PopoverDisclosure}
                 background="white"

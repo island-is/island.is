@@ -40,7 +40,9 @@
     "lru-cache",
     "pseudomap",
     "jsonwebtoken",
-    "buffer-equal-constant-time"
+    "buffer-equal-constant-time",
+    "safer-buffer",
+    "jwa"
   ],
   "keepNames": true
 }

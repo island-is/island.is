@@ -23,6 +23,7 @@ import { getCurrentUser } from '@island.is/auth-nest-tools'
 import { Application } from '@island.is/application/api/core'
 import { ApplicationResponseDto } from '../dto/application.response.dto'
 import { getCurrentLocale } from '../utils/currentLocale'
+import isObject from 'lodash/isObject'
 
 @Injectable()
 export class ApplicationSerializer
@@ -69,6 +70,23 @@ export class ApplicationSerializer
     const actors =
       application.applicant === nationalId ? application.applicantActors : []
 
+    const getApplicationName = () => {
+      if (typeof template.name === 'function') {
+        const returnValue = template.name(application)
+        if (
+          isObject(returnValue) &&
+          'value' in returnValue &&
+          'name' in returnValue
+        ) {
+          return intl.formatMessage(returnValue.name, {
+            value: returnValue.value,
+          })
+        }
+        return intl.formatMessage(returnValue)
+      }
+      return intl.formatMessage(template.name)
+    }
+
     const dto = plainToInstance(ApplicationResponseDto, {
       ...application,
       ...helper.getReadableAnswersAndExternalData(userRole),
@@ -87,8 +105,10 @@ export class ApplicationSerializer
             : null,
         },
         deleteButton: roleInState?.delete,
+        draftFinishedSteps: application.draftFinishedSteps,
+        draftTotalSteps: application.draftTotalSteps,
       },
-      name: intl.formatMessage(template.name),
+      name: getApplicationName(),
       institution: template.institution
         ? intl.formatMessage(template.institution)
         : null,

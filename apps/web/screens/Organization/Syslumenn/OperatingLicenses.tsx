@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useEffect, useState, useRef, useReducer } from 'react'
+import { useEffect, useState, useRef, useReducer } from 'react'
 import { useApolloClient } from '@apollo/client/react'
 import {
   AlertMessage,
@@ -26,16 +26,23 @@ import {
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_SUBPAGE_QUERY,
   GET_OPERATING_LICENSES_QUERY,
+  GET_OPERATING_LICENSES_CSV_QUERY,
 } from '../../queries'
 import { Screen } from '../../../types'
-import { useNamespace } from '@island.is/web/hooks'
+import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { OrganizationWrapper } from '@island.is/web/components'
+import {
+  OrganizationWrapper,
+  SyslumennListCsvExport,
+  Webreader,
+} from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useRouter } from 'next/router'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { SliceType } from '@island.is/island-ui/contentful'
+import { webRichText } from '@island.is/web/utils/richText'
+import { ApolloClient } from '@apollo/client'
 
 const DEBOUNCE_TIMER = 400
 const PAGE_SIZE = 10
@@ -134,7 +141,11 @@ const searchReducer = (state: SearchState, action): SearchState => {
   }
 }
 
-const useSearch = (term: string, currentPageNumber: number): SearchState => {
+const useSearch = (
+  term: string,
+  currentPageNumber: number,
+  client: ApolloClient<object>,
+): SearchState => {
   const [state, dispatch] = useReducer(searchReducer, {
     currentTerm: term,
     results: [],
@@ -145,7 +156,6 @@ const useSearch = (term: string, currentPageNumber: number): SearchState => {
     isLoadingNextPage: false,
     hasError: false,
   })
-  const client = useApolloClient()
   const timer = useRef(null)
 
   useEffect(() => {
@@ -230,6 +240,10 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   subpage,
   namespace,
 }) => {
+  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
+    'isWebReaderEnabledForOrganizationPages',
+    false,
+  )
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const Router = useRouter()
@@ -242,9 +256,9 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink.text,
-      href: primaryLink.url,
-      active: pageUrl === primaryLink.url,
+      title: primaryLink?.text,
+      href: primaryLink?.url,
+      active: pageUrl === primaryLink?.url,
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
@@ -254,7 +268,8 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
 
   const [query, setQuery] = useState(' ')
   const [currentPageNumber, setCurrentPageNumber] = useState(1)
-  const search = useSearch(query, currentPageNumber)
+  const client = useApolloClient()
+  const search = useSearch(query, currentPageNumber, client)
 
   useEffect(() => {
     // Note: This is a workaround to fix an issue where the search input looses focus after the first keypress.
@@ -316,11 +331,27 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
     return address
   }
 
+  const csvStringProvider = () => {
+    return new Promise<string>((resolve, reject) => {
+      client
+        .query<Query>({
+          query: GET_OPERATING_LICENSES_CSV_QUERY,
+        })
+        .then(({ data: { getOperatingLicensesCSV } }) => {
+          return resolve(getOperatingLicensesCSV.value)
+        })
+        .catch(() => {
+          reject('Unable to fetch CSV data.')
+        })
+    })
+  }
+
   return (
     <OrganizationWrapper
       pageTitle={subpage.title}
       organizationPage={organizationPage}
       pageFeaturedImage={subpage.featuredImage}
+      showReadSpeaker={false}
       breadcrumbItems={[
         {
           title: 'Ísland.is',
@@ -336,12 +367,15 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
         items: navList,
       }}
     >
-      <Box paddingBottom={2}>
+      <Box paddingBottom={isWebReaderEnabledForOrganizationPages ? 0 : 2}>
         <Text variant="h1" as="h2">
           {subpage.title}
         </Text>
+        {isWebReaderEnabledForOrganizationPages && (
+          <Webreader readId={null} readClass="rs_read" />
+        )}
       </Box>
-      {richText(subpage.description as SliceType[])}
+      {webRichText(subpage.description as SliceType[])}
       <Box marginBottom={3}>
         <Input
           name="operatingLicenseSearchInput"
@@ -352,6 +386,27 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
           iconType="outline"
           onChange={(event) => onSearch(event.target.value)}
         />
+        <Box textAlign="right" marginRight={1} marginTop={1}>
+          <SyslumennListCsvExport
+            defaultLabel={n(
+              'operatingLicensesCSVButtonLabelDefault',
+              'Sækja öll rekstrarleyfi (CSV)',
+            )}
+            loadingLabel={n(
+              'operatingLicensesCSVButtonLabelLoading',
+              'Sæki öll rekstrarleyfi...',
+            )}
+            errorLabel={n(
+              'operatingLicensesCSVButtonLabelError',
+              'Ekki tókst að sækja rekstrarleyfi, reyndu aftur',
+            )}
+            csvFilenamePrefix={n(
+              'operatingLicensesCSVFileTitlePrefix',
+              'Rekstrarleyfi',
+            )}
+            csvStringProvider={csvStringProvider}
+          />
+        </Box>
         <Box
           paddingTop={1}
           textAlign="center"
@@ -480,8 +535,8 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
               {operatingLicense.maximumNumberOfGuests > 0 && (
                 <Text paddingBottom={0}>
                   {n(
-                    'operatingLicensesAlcoholMaximumNumberOfGuests',
-                    'Hámarksfjöldi gesta',
+                    'operatingLicensesMaximumNumberOfAccommodationGuests',
+                    'Hámarksfjöldi gesta í gistingu',
                   )}
                   : {operatingLicense.maximumNumberOfGuests}
                 </Text>
@@ -489,8 +544,8 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
               {operatingLicense.numberOfDiningGuests > 0 && (
                 <Text paddingBottom={0}>
                   {n(
-                    'operatingLicensesNumberOfDiningGuests',
-                    'Fjöldi gesta í veitingum',
+                    'operatingLicensesMaximumNumberOfDiningGuests',
+                    'Hámarksfjöldi gesta í veitingum',
                   )}
                   : {operatingLicense.numberOfDiningGuests}
                 </Text>

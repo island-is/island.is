@@ -1,9 +1,14 @@
-import { service, json } from './dsl'
-import { UberChart } from './uber-chart'
+import { json, service } from './dsl'
+import { Kubernetes } from './kubernetes-runtime'
 import { MissingSetting } from './types/input-types'
-import { serializeService } from './map-to-values'
-import { SerializeErrors, SerializeSuccess } from './types/output-types'
+import {
+  SerializeErrors,
+  SerializeSuccess,
+  HelmService,
+} from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
+import { renderers } from './upstream-dependencies'
+import { generateOutputOne } from './processing/rendering-pipeline'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -23,18 +28,22 @@ describe('Env variable', () => {
     A: 'B',
     B: { dev: 'C', staging: MissingSetting, prod: 'D' },
   })
-  const serviceDef = serializeService(
-    sut,
-    new UberChart(Staging),
-  ) as SerializeErrors
-
+  let serviceDef: SerializeErrors
+  beforeEach(async () => {
+    serviceDef = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeErrors
+  })
   it('missing variables cause errors', () => {
     expect(serviceDef.errors).toEqual([
       'Missing settings for service api in env staging. Keys of missing settings: B',
     ])
   })
 
-  it('Should not allow to collision of secrets and env variables', () => {
+  it('Should not allow to collision of secrets and env variables', async () => {
     const sut = service('api')
       .env({
         A: 'B',
@@ -42,17 +51,19 @@ describe('Env variable', () => {
       .secrets({
         A: 'somesecret',
       })
-    const serviceDef = serializeService(
-      sut,
-      new UberChart(Staging),
-    ) as SerializeErrors
+    const serviceDef = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeErrors
 
     expect(serviceDef.errors).toStrictEqual([
       'Collisions in api for environment or secrets for key A',
     ])
   })
 
-  it('Should not allow collision of secrets and env variables in init containers', () => {
+  it('Should not allow collision of secrets and env variables in init containers', async () => {
     const sut = service('api').initContainer({
       envs: {
         A: 'B',
@@ -62,10 +73,12 @@ describe('Env variable', () => {
       },
       containers: [{ command: 'go' }],
     })
-    const serviceDef = serializeService(
-      sut,
-      new UberChart(Staging),
-    ) as SerializeErrors
+    const serviceDef = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeErrors
 
     expect(serviceDef.errors).toStrictEqual([
       'Collisions in api for environment or secrets for key A',
@@ -88,16 +101,18 @@ describe('Env variable', () => {
     )
   })
 
-  it('Should support json encoded variables', () => {
+  it('Should support json encoded variables', async () => {
     const value = [{ value: 5 }]
     const sut = service('api').env({
       A: json(value),
     })
-    const serviceDef = serializeService(
-      sut,
-      new UberChart(Staging),
-    ) as SerializeSuccess
+    const serviceDef = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<HelmService>
 
-    expect(serviceDef.serviceDef.env.A).toEqual(JSON.stringify(value))
+    expect(serviceDef.serviceDef[0].env.A).toEqual(JSON.stringify(value))
   })
 })

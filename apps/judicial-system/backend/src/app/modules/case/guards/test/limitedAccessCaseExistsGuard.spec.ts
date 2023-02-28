@@ -10,10 +10,8 @@ import {
 import { CaseState } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
-import { Defendant } from '../../../defendant'
-import { Institution } from '../../../institution'
-import { User } from '../../../user'
 import { Case } from '../../models/case.model'
+import { attributes, include, order } from '../../limitedAccessCase.service'
 import { LimitedAccessCaseExistsGuard } from '../limitedAccessCaseExists.guard'
 
 interface Then {
@@ -52,100 +50,14 @@ describe('Restricted Case Exists Guard', () => {
     }
   })
 
-  describe('database lookup', () => {
-    const caseId = uuid()
-    const attributes: (keyof Case)[] = [
-      'id',
-      'created',
-      'modified',
-      'origin',
-      'type',
-      'state',
-      'policeCaseNumber',
-      'defenderName',
-      'defenderNationalId',
-      'defenderEmail',
-      'defenderPhoneNumber',
-      'courtId',
-      'leadInvestigator',
-      'requestedCustodyRestrictions',
-      'creatingProsecutorId',
-      'prosecutorId',
-      'courtCaseNumber',
-      'courtDate',
-      'courtEndTime',
-      'decision',
-      'validToDate',
-      'isCustodyIsolation',
-      'isolationToDate',
-      'conclusion',
-      'rulingDate',
-      'registrarId',
-      'judgeId',
-      'courtRecordSignatoryId',
-      'courtRecordSignatureDate',
-      'parentCaseId',
-      'caseModifiedExplanation',
-      'seenByDefender',
-    ]
-
-    beforeEach(async () => {
-      mockRequest.mockImplementationOnce(() => ({ params: { caseId } }))
-
-      await givenWhenThen()
-    })
-
-    it('should query the database', () => {
-      expect(mockCaseModel.findOne).toHaveBeenCalledWith({
-        attributes,
-        include: [
-          { model: Defendant, as: 'defendants' },
-          { model: Institution, as: 'court' },
-          {
-            model: User,
-            as: 'creatingProsecutor',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          {
-            model: User,
-            as: 'prosecutor',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          {
-            model: User,
-            as: 'judge',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          {
-            model: User,
-            as: 'registrar',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          {
-            model: User,
-            as: 'courtRecordSignatory',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          { model: Case, as: 'parentCase', attributes },
-          { model: Case, as: 'childCase', attributes },
-        ],
-        order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
-        where: {
-          id: caseId,
-          state: { [Op.not]: CaseState.DELETED },
-          isArchived: false,
-        },
-      })
-    })
-  })
-
   describe('case exists', () => {
     const caseId = uuid()
     const theCase = { id: caseId }
+    const request = { params: { caseId }, case: undefined }
     let then: Then
 
     beforeEach(async () => {
-      mockRequest.mockImplementationOnce(() => ({ params: { caseId } }))
+      mockRequest.mockReturnValueOnce(request)
       const mockFindOne = mockCaseModel.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(theCase)
 
@@ -153,7 +65,18 @@ describe('Restricted Case Exists Guard', () => {
     })
 
     it('should activate', () => {
+      expect(mockCaseModel.findOne).toHaveBeenCalledWith({
+        attributes,
+        include,
+        order,
+        where: {
+          id: caseId,
+          state: { [Op.not]: CaseState.DELETED },
+          isArchived: false,
+        },
+      })
       expect(then.result).toBe(true)
+      expect(request.case).toBe(theCase)
     })
   })
 
@@ -162,7 +85,7 @@ describe('Restricted Case Exists Guard', () => {
     let then: Then
 
     beforeEach(async () => {
-      mockRequest.mockImplementationOnce(() => ({ params: { caseId } }))
+      mockRequest.mockReturnValueOnce({ params: { caseId } })
 
       then = await givenWhenThen()
     })
@@ -177,7 +100,7 @@ describe('Restricted Case Exists Guard', () => {
     let then: Then
 
     beforeEach(async () => {
-      mockRequest.mockImplementationOnce(() => ({ params: {} }))
+      mockRequest.mockReturnValueOnce({ params: {} })
 
       then = await givenWhenThen()
     })

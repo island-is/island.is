@@ -1,9 +1,9 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import type { Entry } from './types'
 import { AppRepository } from './app.repository'
 import slugify from '@sindresorhus/slugify'
+import type { Entry } from 'contentful-management'
 
 const TAGGABLE_ENTRY_PREFIX = 'owner-'
 
@@ -16,7 +16,7 @@ export class AppService {
 
   async tagEntry(entry: Entry) {
     const roles = await this.appRepository.getUserSpaceRoles(
-      entry.sys.createdBy.sys.id,
+      entry.sys.createdBy?.sys.id as string,
     )
 
     const tags = roles

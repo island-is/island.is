@@ -16,11 +16,9 @@ const ServiceCenter = ({ application }: FAFieldBaseProps) => {
   const applicantsCenter = serviceCenters.find(
     (serviceCenter) =>
       serviceCenter.number ===
-      Number(
-        externalData.nationalRegistry?.data?.applicant?.address
-          ?.municipalityCode,
-      ),
+      Number(externalData.nationalRegistry.data.address?.municipalityCode),
   )
+
   return (
     <>
       <Box marginBottom={[1, 1, 2]} marginTop={2}>

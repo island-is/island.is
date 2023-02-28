@@ -1,18 +1,23 @@
 import faker from 'faker'
 
-import { Case, CaseState, UserRole } from '@island.is/judicial-system/types'
 import {
-  IC_COURT_HEARING_ARRANGEMENTS_ROUTE,
-  IC_RULING_ROUTE,
+  Case,
+  CaseState,
+  CaseType,
+  UserRole,
+} from '@island.is/judicial-system/types'
+import {
+  INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+  INVESTIGATION_CASE_RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { makeInvestigationCase, makeCourt, intercept } from '../../../utils'
+import { mockCase, makeCourt, intercept } from '../../../utils'
 
-describe(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
+describe(`${INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   const comment = faker.lorem.sentence(1)
 
   beforeEach(() => {
-    const caseData = makeInvestigationCase()
+    const caseData = mockCase(CaseType.INTERNET_USAGE)
     const caseDataAddition: Case = {
       ...caseData,
       comments: comment,
@@ -20,12 +25,15 @@ describe(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
       requestedCourtDate: '2020-09-16T19:50:08.033Z',
       state: CaseState.RECEIVED,
       defenderName: 'Test Testesen',
+      courtDate: '2020-09-16T19:50:08.033Z',
     }
 
     cy.login(UserRole.JUDGE)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
-    cy.visit(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/test_id_stadfest`)
+    cy.visit(
+      `${INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/test_id_stadfest`,
+    )
   })
 
   it('should display case comments', () => {
@@ -34,24 +42,25 @@ describe(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
 
   it('should ask for defender info depending on selected session arrangement and warn users if defender is not found in the lawyer registry', () => {
     cy.get('[name="session-arrangements-all-present"]').click()
-    cy.get('[name="defenderName"]').should('exist')
-    cy.get('[name="defenderEmail"]').should('exist')
-    cy.get('[name="defenderPhoneNumber"]').should('exist')
+    cy.get('[name*="defenderName"]').should('exist')
+    cy.get('[name*="defenderEmail"]').should('exist')
+    cy.get('[name*="defenderPhoneNumber"]').should('exist')
 
     cy.get('#react-select-defenderName-input')
       .type('click', { force: true })
       .type('{enter}')
+
     cy.getByTestid('defenderNotFound').should('exist')
 
     cy.get('[name="session-arrangements-all-present_spokesperson"]').click()
-    cy.get('[name="defenderName"]').should('exist')
-    cy.get('[name="defenderEmail"]').should('exist')
-    cy.get('[name="defenderPhoneNumber"]').should('exist')
+    cy.get('[name*="defenderName"]').should('exist')
+    cy.get('[name*="defenderEmail"]').should('exist')
+    cy.get('[name*="defenderPhoneNumber"]').should('exist')
 
     cy.get('[name="session-arrangements-prosecutor-present"]').click()
-    cy.get('[name="defenderName"]').should('not.exist')
-    cy.get('[name="defenderEmail"]').should('not.exist')
-    cy.get('[name="defenderPhoneNumber"]').should('not.exist')
+    cy.get('[name*="defenderName"]').should('not.exist')
+    cy.get('[name*="defenderEmail"]').should('not.exist')
+    cy.get('[name*="defenderPhoneNumber"]').should('not.exist')
   })
 
   it('should autofill form correctly and allow court to confirm court date and send notification', () => {
@@ -69,7 +78,7 @@ describe(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
       .should('have.any.key', 'courtDate')
 
     cy.getByTestid('modal').should('be.visible')
-    cy.getByTestid('modalSecondaryButton').click()
+    cy.getByTestid('modalPrimaryButton').click()
     cy.wait('@SendNotificationMutation')
       .its('request.body.variables.input.type')
       .should('equal', 'COURT_DATE')
@@ -81,6 +90,6 @@ describe(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
     cy.getByTestid('continueButton').should('not.be.disabled')
     cy.getByTestid('continueButton').click()
     cy.getByTestid('modalSecondaryButton').click()
-    cy.url().should('include', IC_RULING_ROUTE)
+    cy.url().should('include', INVESTIGATION_CASE_RULING_ROUTE)
   })
 })

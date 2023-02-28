@@ -1,11 +1,13 @@
-import { setup } from '../../../../../../test/setup'
 import request from 'supertest'
-import { INestApplication, CACHE_MANAGER } from '@nestjs/common'
+import { CACHE_MANAGER, INestApplication } from '@nestjs/common'
 import {
   NationalRegistryService,
   NationalRegistryUser,
 } from '../../../nationalRegistry'
 import { Flight } from '../../flight.model'
+import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
+import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
+import { setup } from '../../../../../../test/setup'
 
 let app: INestApplication
 let cacheManager: CacheManager
@@ -22,8 +24,16 @@ const user: NationalRegistryUser = {
   city: 'Vestmannaeyjar',
 }
 
+const mockAuthGuard = new MockAuthGuard({
+  nationalId: '1326487905',
+  scope: [AirDiscountSchemeScope.default, AirDiscountSchemeScope.admin],
+})
+
 beforeAll(async () => {
-  app = await setup()
+  app = await setup({
+    override: (builder) =>
+      builder.overrideGuard(IdsUserGuard).useValue(mockAuthGuard),
+  })
   cacheManager = app.get<CacheManager>(CACHE_MANAGER)
   cacheManager.ttl = () => Promise.resolve('')
   nationalRegistryService = app.get<NationalRegistryService>(
@@ -39,11 +49,14 @@ beforeAll(async () => {
 
 describe('Create Flight', () => {
   it(`POST /api/public/discounts/:discountCode/flights should create a flight`, async () => {
-    const spy = jest
-      .spyOn(cacheManager, 'get')
-      .mockImplementation(() =>
-        Promise.resolve({ nationalId: user.nationalId }),
-      )
+    const spy = jest.spyOn(cacheManager, 'get').mockImplementation(() =>
+      Promise.resolve({
+        user,
+        nationalId: user.nationalId,
+        connectionDiscountCodes: [],
+        discountCode: '12345678',
+      }),
+    )
     const response = await request(app.getHttpServer())
       .post('/api/public/discounts/12345678/flights')
       .set('Authorization', 'Bearer ernir')
@@ -157,6 +170,7 @@ describe('Reykjavik -> Akureyri connecting flight validations', () => {
   beforeEach(async () => {
     cacheSpy = jest.spyOn(cacheManager, 'get').mockImplementation(() =>
       Promise.resolve({
+        user,
         nationalId: user.nationalId,
         connectionDiscountCodes: [
           {
@@ -345,6 +359,7 @@ describe('Reykjavik -> Akureyri -> Akureyri -> Reykjavík connecting flight vali
   beforeEach(async () => {
     cacheSpy = jest.spyOn(cacheManager, 'get').mockImplementation(() =>
       Promise.resolve({
+        user,
         nationalId: user.nationalId,
         connectionDiscountCodes: [
           {
@@ -465,7 +480,7 @@ describe('Delete Flight', () => {
     const spy = jest
       .spyOn(cacheManager, 'get')
       .mockImplementation(() =>
-        Promise.resolve({ nationalId: user.nationalId }),
+        Promise.resolve({ user: user, nationalId: user.nationalId }),
       )
     const createRes = await request(app.getHttpServer())
       .post('/api/public/discounts/12345678/flights')
@@ -523,7 +538,7 @@ describe('Delete Flight', () => {
     const spy = jest
       .spyOn(cacheManager, 'get')
       .mockImplementation(() =>
-        Promise.resolve({ nationalId: user.nationalId }),
+        Promise.resolve({ user, nationalId: user.nationalId }),
       )
     const createRes = await request(app.getHttpServer())
       .post('/api/public/discounts/12345678/flights')

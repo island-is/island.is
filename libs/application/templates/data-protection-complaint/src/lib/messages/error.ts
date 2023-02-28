@@ -63,6 +63,11 @@ export const error = defineMessages({
     defaultMessage: 'Kennitala er ekki á réttu sniðmáti',
     description: 'Error message when a nationalId is incorrect',
   },
+  phoneNumber: {
+    id: 'dpac.application:error.phoneNumber',
+    defaultMessage: 'Símanúmer er ekki á réttu sniðmáti',
+    description: 'Error message when a phoneNumber is incorrect',
+  },
 })
 
 export const errorCards = defineMessages({

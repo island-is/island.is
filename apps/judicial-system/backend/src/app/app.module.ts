@@ -5,11 +5,13 @@ import { ProblemModule } from '@island.is/nest/problem'
 import { ConfigModule } from '@island.is/nest/config'
 import { signingModuleConfig } from '@island.is/dokobit-signing'
 import { courtClientModuleConfig } from '@island.is/judicial-system/court-client'
+import { messageModuleConfig } from '@island.is/judicial-system/message'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../environments'
 import {
   caseModuleConfig,
+  notificationModuleConfig,
   CaseModule,
   DefendantModule,
   UserModule,
@@ -17,9 +19,8 @@ import {
   FileModule,
   NotificationModule,
   PoliceModule,
-  CourtModule,
-  AwsS3Module,
-  EventModule,
+  policeModuleConfig,
+  IndictmentCountModule,
 } from './modules'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 
@@ -34,18 +35,23 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     }),
     CaseModule,
     DefendantModule,
+    IndictmentCountModule,
     UserModule,
     InstitutionModule,
     FileModule,
     NotificationModule,
     PoliceModule,
-    CourtModule,
-    AwsS3Module,
-    EventModule,
     ProblemModule.forRoot({ logAllErrors: true }),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [signingModuleConfig, courtClientModuleConfig, caseModuleConfig],
+      load: [
+        signingModuleConfig,
+        courtClientModuleConfig,
+        messageModuleConfig,
+        caseModuleConfig,
+        notificationModuleConfig,
+        policeModuleConfig,
+      ],
     }),
   ],
 })

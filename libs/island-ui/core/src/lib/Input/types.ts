@@ -19,6 +19,7 @@ export interface InputComponentProps {
   className?: string
   disabled?: boolean
   required?: boolean
+  rightAlign?: boolean
   readOnly?: boolean
   placeholder?: string
   autoFocus?: boolean

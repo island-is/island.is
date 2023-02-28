@@ -49,8 +49,8 @@ export interface EnhancedFetchOptions {
   // Either way they will be logged and thrown.
   treat400ResponsesAsErrors?: boolean
 
-  // If true, will log error response body. Defaults to false.
-  // Should only be used if error objects do not have sensitive information or PII.
+  // If true (default), Enhanced Fetch will log error response bodies.
+  // Should be set to false if error objects may have sensitive information or PII.
   logErrorResponseBody?: boolean
 
   // Override logger.
@@ -115,7 +115,7 @@ export const createEnhancedFetch = (
     logger = defaultLogger,
     fetch = nodeFetch,
     timeout = DEFAULT_TIMEOUT,
-    logErrorResponseBody = false,
+    logErrorResponseBody = true,
     autoAuth,
     forwardAuthUserAgent = true,
     clientCertificate,

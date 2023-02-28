@@ -15,7 +15,9 @@ export const useFeatureFlag = (flag: string, defaultValue: boolean) => {
     }
     fetchFlag()
 
-    return () => (isMounted = false)
+    return () => {
+      isMounted = false
+    }
   }, [defaultValue, flag])
 
   return state

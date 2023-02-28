@@ -32,7 +32,7 @@ export class VehiclesVehicle {
   color?: string
 
   @Field({ nullable: true })
-  firstRegDate?: string
+  firstRegDate?: Date
 
   @Field({ nullable: true })
   modelYear?: string
@@ -47,10 +47,10 @@ export class VehiclesVehicle {
   role?: string
 
   @Field({ nullable: true })
-  operatorStartDate?: string
+  operatorStartDate?: Date
 
   @Field({ nullable: true })
-  operatorEndDate?: string
+  operatorEndDate?: Date
 
   @Field({ nullable: true })
   outOfUse?: boolean
@@ -83,7 +83,52 @@ export class VehiclesVehicle {
   nextInspection?: NextInspection
 
   @Field({ nullable: true })
-  deregistrationDate?: string
+  deregistrationDate?: Date
+
+  @Field({ nullable: true, defaultValue: null })
+  operatorNumber?: number
+
+  @Field({ nullable: true, defaultValue: null })
+  primaryOperator?: boolean
+
+  @Field({ nullable: true, defaultValue: null })
+  ownerSsid?: string
+
+  @Field({ nullable: true, defaultValue: null })
+  ownerName?: string
+
+  @Field({ nullable: true, defaultValue: null })
+  lastInspectionResult?: string
+
+  @Field({ nullable: true, defaultValue: null })
+  lastInspectionDate?: Date
+
+  @Field({ nullable: true, defaultValue: null })
+  lastInspectionType?: string
+
+  @Field({ nullable: true, defaultValue: null })
+  nextInspectionDate?: Date
+}
+
+@ObjectType()
+export class VehiclesHistory {
+  @Field({ nullable: true })
+  persidno?: string
+
+  @Field({ nullable: true })
+  name?: string
+
+  @Field({ nullable: true })
+  address?: string
+
+  @Field({ nullable: true })
+  postStation?: string
+
+  @Field(() => [VehiclesVehicle], { nullable: true })
+  vehicleList?: VehiclesVehicle[]
+
+  @Field({ nullable: true })
+  createdTimestamp?: string
 }
 
 @ObjectType()
@@ -105,4 +150,7 @@ export class VehiclesList {
 
   @Field({ nullable: true })
   createdTimestamp?: string
+
+  @Field(() => String, { nullable: true })
+  downloadServiceURL?: string
 }

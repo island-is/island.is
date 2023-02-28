@@ -1,14 +1,25 @@
 import get from 'lodash/get'
 
 import { Message } from '@island.is/email-service'
-
-import { AssignmentEmailTemplateGenerator } from '../../../../types'
+import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
+import {
+  getApplicationExternalData,
+  getUnApprovedEmployers,
+} from '@island.is/application/templates/parental-leave'
+import { getValueViaPath } from '@island.is/application/core'
 
 export let assignLinkEmployerSMS = ''
 
+export type AssignEmployerEmail = (
+  props: EmailTemplateGeneratorProps,
+  assignLink: string,
+  senderName?: string,
+  senderEmail?: string,
+) => Message
+
 // TODO handle translations
-export const generateAssignEmployerApplicationEmail: AssignmentEmailTemplateGenerator = (
+export const generateAssignEmployerApplicationEmail: AssignEmployerEmail = (
   props,
   assignLink,
 ): Message => {
@@ -19,8 +30,15 @@ export const generateAssignEmployerApplicationEmail: AssignmentEmailTemplateGene
 
   assignLinkEmployerSMS = assignLink
 
-  const employerEmail = get(application.answers, 'employer.email')
-  const applicantName = get(application.externalData, 'person.data.fullName')
+  const employers = getUnApprovedEmployers(application.answers)
+  const employerEmailOld = getValueViaPath(
+    application.answers,
+    'employer.email',
+  ) as string
+
+  const employerEmail =
+    employers.length > 0 ? employers[0].email : employerEmailOld ?? ''
+  const { applicantName } = getApplicationExternalData(application.externalData)
   const subject = 'Yfirferð á umsókn um fæðingarorlof'
 
   return {

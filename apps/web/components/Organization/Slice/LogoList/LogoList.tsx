@@ -9,7 +9,11 @@ interface SliceProps {
 
 export const LogoListSlice: React.FC<SliceProps> = ({ slice }) => {
   return (
-    <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
+    <section
+      key={slice.id}
+      id={slice.id}
+      aria-labelledby={'sliceTitle-' + slice.id}
+    >
       <GridContainer>
         <Box paddingTop={[8, 8, 12]} paddingBottom={4}>
           <LogoList

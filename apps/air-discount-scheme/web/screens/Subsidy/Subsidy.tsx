@@ -20,6 +20,9 @@ import {
 } from '@island.is/air-discount-scheme-web/components'
 import { Screen } from '../../types'
 import { Benefits, Usage } from './components'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { useSession } from 'next-auth/client'
+import { Auth } from '../Auth'
 
 interface PropTypes {
   page?: GenericPage
@@ -28,6 +31,10 @@ interface PropTypes {
 const Subsidy: Screen<PropTypes> = ({
   page: { title, intro, mainContent, sidebar, misc },
 }) => {
+  const [session, loading] = useSession()
+  if (loading || !session?.user) {
+    return <Auth />
+  }
   return (
     <Layout
       main={
@@ -76,8 +83,12 @@ const GetGenericPageQuery = gql`
     }
   }
 `
+interface InitialProps {
+  apolloClient: ApolloClient<NormalizedCacheObject>
+  locale: string
+}
 
-Subsidy.getInitialProps = async ({ apolloClient, locale }) => {
+Subsidy.getInitialProps = async ({ apolloClient, locale }: InitialProps) => {
   const {
     data: { getGenericPage: page },
   } = await apolloClient.query<Query, QueryGetGenericPageArgs>({

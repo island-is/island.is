@@ -8,6 +8,7 @@ export enum States {
 }
 export enum Roles {
   APPLICANT = 'applicant',
+  ACTOR = 'actor',
 }
 
 export const YES = 'yes'

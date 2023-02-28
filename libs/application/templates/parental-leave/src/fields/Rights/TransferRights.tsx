@@ -11,7 +11,12 @@ import {
 import { useLocale } from '@island.is/localization'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
+import {
+  allowOtherParent,
+  getApplicationAnswers,
+  getMaxMultipleBirthsDays,
+  getMultipleBirthRequestDays,
+} from '../../lib/parentalLeaveUtils'
 import { maxDaysToGiveOrReceive } from '../../config'
 import { YES, NO, TransferRightsOption } from '../../constants'
 import { YesOrNo } from '../../types'
@@ -90,7 +95,15 @@ export const TransferRights: FC<FieldBaseProps & CustomField> = ({
     requestDays,
     isGivingRights,
     giveDays,
+    hasMultipleBirths,
   } = getApplicationAnswers(application.answers)
+
+  const canTransferRights = allowOtherParent(application.answers)
+
+  const multipleBirthsRequestDays = getMultipleBirthRequestDays(
+    application.answers,
+  )
+  const maxMultipleBirthsDays = getMaxMultipleBirthsDays(application.answers)
 
   const defaultValue =
     transferRights !== undefined
@@ -132,12 +145,18 @@ export const TransferRights: FC<FieldBaseProps & CustomField> = ({
                 parentalLeaveFormMessages.shared.transferRightsRequest,
               ),
               value: TransferRightsOption.REQUEST,
+              disabled:
+                hasMultipleBirths === YES && multipleBirthsRequestDays === 0,
             },
             {
               label: formatMessage(
                 parentalLeaveFormMessages.shared.transferRightsGive,
               ),
               value: TransferRightsOption.GIVE,
+              disabled:
+                (hasMultipleBirths === YES &&
+                  multipleBirthsRequestDays === maxMultipleBirthsDays) ||
+                !canTransferRights,
             },
           ],
           backgroundColor: 'blue',

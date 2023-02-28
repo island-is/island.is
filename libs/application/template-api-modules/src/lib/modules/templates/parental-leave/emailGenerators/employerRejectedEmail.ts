@@ -1,12 +1,20 @@
 import get from 'lodash/get'
 
+import { Message } from '@island.is/email-service'
+
 import { ApplicationConfigurations } from '@island.is/application/types'
 
-import { EmailTemplateGenerator } from '../../../../types'
+import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
 
+export type EmployerRejectedEmail = (
+  props: EmailTemplateGeneratorProps,
+  senderName?: string,
+  senderEmail?: string,
+) => Message
+
 // TODO handle translations
-export const generateEmployerRejected: EmailTemplateGenerator = (props) => {
+export const generateEmployerRejected: EmployerRejectedEmail = (props) => {
   const {
     application,
     options: { email, clientLocationOrigin },

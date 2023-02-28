@@ -9,7 +9,7 @@ import {
   ApplicationStatus,
   ApplicationTypes,
 } from '@island.is/application/types'
-import * as z from 'zod'
+import { z } from 'zod'
 import { getApplicationTitle } from './useApplicationTitle'
 import { MessageDescriptor } from 'react-intl'
 import { initializeReducer } from '../reducer/ApplicationFormReducer'

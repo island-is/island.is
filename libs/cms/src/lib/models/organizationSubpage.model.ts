@@ -36,6 +36,9 @@ export class OrganizationSubpage {
   @Field(() => [SliceUnion], { nullable: true })
   slices?: Array<typeof SliceUnion | null>
 
+  @Field(() => Boolean)
+  showTableOfContents?: boolean
+
   @Field({ nullable: true })
   sliceCustomRenderer?: string
 
@@ -62,7 +65,8 @@ export const mapOrganizationSubpage = ({
     ? mapDocument(fields.description, sys.id + ':content')
     : [],
   links: (fields.links ?? []).map(mapLink),
-  slices: (fields.slices ?? []).map(safelyMapSliceUnion),
+  slices: (fields.slices ?? []).map(safelyMapSliceUnion).filter(Boolean),
+  showTableOfContents: fields.showTableOfContents ?? false,
   sliceCustomRenderer: fields.sliceCustomRenderer ?? '',
   sliceExtraText: fields.sliceExtraText ?? '',
   organizationPage: fields.organizationPage

@@ -16,18 +16,15 @@ import { findFamilyStatus } from '../../..'
 
 interface EstimationProps {
   application: FAApplication
-  nationalRegistry: ExternalData['nationalRegistry']
+  municipality: ExternalData['municipality']
 }
 
 interface VeitaEstiamtionProps {
   application: Application
-  nationalRegistry: ExternalData['nationalRegistry']
+  municipality: ExternalData['municipality']
 }
 
-export const Estimation = ({
-  application,
-  nationalRegistry,
-}: EstimationProps) => {
+export const Estimation = ({ application, municipality }: EstimationProps) => {
   const { formatMessage } = useIntl()
 
   const getAidType = () => {
@@ -37,18 +34,15 @@ export const Estimation = ({
   }
 
   const aidAmount = useMemo(() => {
-    if (
-      application.answers.homeCircumstances.type &&
-      nationalRegistry?.data?.municipality
-    ) {
+    if (application.answers.homeCircumstances.type && municipality.data) {
       return aidCalculator(
         application.answers.homeCircumstances.type,
         getAidType()
-          ? nationalRegistry.data.municipality.individualAid
-          : nationalRegistry.data.municipality.cohabitationAid,
+          ? municipality.data.individualAid
+          : municipality.data.cohabitationAid,
       )
     }
-  }, [nationalRegistry?.data?.municipality])
+  }, [municipality.data])
 
   return (
     <>
@@ -77,7 +71,7 @@ export const Estimation = ({
 
 export const VeitaEstimation = ({
   application,
-  nationalRegistry,
+  municipality,
 }: VeitaEstiamtionProps) => {
   const { formatMessage } = useIntl()
 
@@ -91,15 +85,15 @@ export const VeitaEstimation = ({
   }
 
   const aidAmount = useMemo(() => {
-    if (nationalRegistry?.data?.municipality && application.homeCircumstances) {
+    if (municipality.data && application.homeCircumstances) {
       return aidCalculator(
         application.homeCircumstances,
         getAidType()
-          ? nationalRegistry.data.municipality.individualAid
-          : nationalRegistry.data.municipality.cohabitationAid,
+          ? municipality.data.individualAid
+          : municipality.data.cohabitationAid,
       )
     }
-  }, [nationalRegistry?.data?.municipality])
+  }, [municipality.data])
 
   return (
     <>

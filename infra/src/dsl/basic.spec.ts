@@ -1,8 +1,9 @@
 import { service } from './dsl'
-import { UberChart } from './uber-chart'
-import { serializeService } from './map-to-values'
-import { SerializeSuccess } from './types/output-types'
+import { Kubernetes } from './kubernetes-runtime'
+import { SerializeSuccess, HelmService } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
+import { renderers } from './upstream-dependencies'
+import { generateOutputOne } from './processing/rendering-pipeline'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -44,33 +45,38 @@ describe('Basic serialization', () => {
       },
     })
     .postgres()
-  const result = serializeService(
-    sut,
-    new UberChart(Staging),
-  ) as SerializeSuccess
+  let result: SerializeSuccess<HelmService>
+  beforeEach(async () => {
+    result = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<HelmService>
+  })
 
   it('basic props', () => {
-    expect(result.serviceDef.enabled).toBe(true)
-    expect(result.serviceDef.namespace).toBe('islandis')
+    expect(result.serviceDef[0].enabled).toBe(true)
+    expect(result.serviceDef[0].namespace).toBe('islandis')
   })
 
   it('image and repo', () => {
-    expect(result.serviceDef.image.repository).toBe(
+    expect(result.serviceDef[0].image.repository).toBe(
       '821090935708.dkr.ecr.eu-west-1.amazonaws.com/test',
     )
   })
 
   it('command and args', () => {
-    expect(result.serviceDef.command).toStrictEqual(['node'])
-    expect(result.serviceDef.args).toStrictEqual(['main.js'])
+    expect(result.serviceDef[0].command).toStrictEqual(['node'])
+    expect(result.serviceDef[0].args).toStrictEqual(['main.js'])
   })
   it('network policies', () => {
-    expect(result.serviceDef.grantNamespaces).toStrictEqual([])
-    expect(result.serviceDef.grantNamespacesEnabled).toBe(false)
+    expect(result.serviceDef[0].grantNamespaces).toStrictEqual([])
+    expect(result.serviceDef[0].grantNamespacesEnabled).toBe(false)
   })
 
   it('resources', () => {
-    expect(result.serviceDef.resources).toStrictEqual({
+    expect(result.serviceDef[0].resources).toStrictEqual({
       requests: {
         cpu: '100m',
         memory: '1MB',
@@ -82,7 +88,7 @@ describe('Basic serialization', () => {
     })
   })
   it('replica count', () => {
-    expect(result.serviceDef.replicaCount).toStrictEqual({
+    expect(result.serviceDef[0].replicaCount).toStrictEqual({
       min: 1,
       max: 1,
       default: 1,
@@ -90,7 +96,7 @@ describe('Basic serialization', () => {
   })
 
   it('environment variables', () => {
-    expect(result.serviceDef.env).toEqual({
+    expect(result.serviceDef[0].env).toEqual({
       A: 'B',
       DB_USER: 'api',
       DB_NAME: 'api',
@@ -102,7 +108,7 @@ describe('Basic serialization', () => {
   })
 
   it('secretes', () => {
-    expect(result.serviceDef.secrets).toEqual({
+    expect(result.serviceDef[0].secrets).toEqual({
       SECRET: '/path',
       DB_PASS: '/k8s/api/DB_PASSWORD',
       CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY',
@@ -110,10 +116,10 @@ describe('Basic serialization', () => {
   })
 
   it('service account', () => {
-    expect(result.serviceDef.podSecurityContext).toEqual({
+    expect(result.serviceDef[0].podSecurityContext).toEqual({
       fsGroup: 65534,
     })
-    expect(result.serviceDef.serviceAccount).toEqual({
+    expect(result.serviceDef[0].serviceAccount).toEqual({
       annotations: {
         'eks.amazonaws.com/role-arn': 'arn:aws:iam::111111:role/api',
       },
@@ -123,7 +129,7 @@ describe('Basic serialization', () => {
   })
 
   it('ingress', () => {
-    expect(result.serviceDef.ingress).toEqual({
+    expect(result.serviceDef[0].ingress).toEqual({
       'primary-alb': {
         annotations: {
           'kubernetes.io/ingress.class': 'nginx-external-alb',
@@ -141,13 +147,17 @@ describe('Basic serialization', () => {
 
 describe('Env definition defaults', () => {
   const sut = service('api').namespace('islandis').image('test')
-  const result = serializeService(
-    sut,
-    new UberChart(Staging),
-  ) as SerializeSuccess
-
+  let result: SerializeSuccess<HelmService>
+  beforeEach(async () => {
+    result = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<HelmService>
+  })
   it('replica max count', () => {
-    expect(result.serviceDef.replicaCount).toStrictEqual({
+    expect(result.serviceDef[0].replicaCount).toStrictEqual({
       min: 2,
       max: 3,
       default: 2,

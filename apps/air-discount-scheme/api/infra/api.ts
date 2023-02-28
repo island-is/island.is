@@ -8,7 +8,12 @@ export const serviceSetup = (services: {
     .serviceAccount()
     .env({
       AUTH_AUDIENCE: {
-        dev: 'loftbru.dev01.devland.is',
+        dev: ref(
+          (ctx) =>
+            `${
+              ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
+            }loftbru.dev01.devland.is`,
+        ),
         staging: 'loftbru.staging01.devland.is',
         prod: 'loftbru.island.is',
       },
@@ -31,6 +36,7 @@ export const serviceSetup = (services: {
         staging: 'cdn.contentful.com',
         prod: 'cdn.contentful.com',
       },
+      NO_UPDATE_NOTIFIER: 'true',
     })
     .secrets({
       AUTH_JWT_SECRET: '/k8s/air-discount-scheme/api/AUTH_JWT_SECRET',

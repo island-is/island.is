@@ -19,6 +19,7 @@ export interface DriversLicense {
   categories: DriversLicenseCategory[]
   healthRemarks?: string[]
   disqualification?: Disqualification | null
+  birthCountry?: string | null
 }
 
 export interface Teacher {
@@ -39,6 +40,10 @@ export interface DrivingAssessment {
 }
 
 export interface QualityPhoto {
+  data: string
+}
+
+export interface QualitySignature {
   data: string
 }
 

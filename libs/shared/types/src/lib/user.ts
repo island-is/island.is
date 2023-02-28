@@ -1,5 +1,5 @@
 import { IdTokenClaims, User as OidcUser } from 'oidc-client-ts'
-import { AuthDelegationType } from '@island.is/auth-nest-tools'
+import { AuthDelegationType } from './delegation'
 
 interface IdsAuthClaims {
   nationalId: string
@@ -9,6 +9,7 @@ interface IdsAuthClaims {
     nationalId: string
     name: string
   }
+  subjectType: 'person' | 'legalEntity'
   delegationType?: AuthDelegationType[]
   dateOfBirth?: Date
 }

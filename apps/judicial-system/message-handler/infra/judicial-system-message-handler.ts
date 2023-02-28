@@ -19,4 +19,4 @@ export const serviceSetup = (services: {
     .readiness('/liveness')
     .liveness('/liveness')
     .command('node')
-    .args('main.js')
+    .args('--no-experimental-fetch', 'main.js')

@@ -1,16 +1,42 @@
 import React from 'react'
-import { Box, ContentBlock, AlertMessage } from '@island.is/island-ui/core'
+import {
+  Box,
+  ContentBlock,
+  ActionCard,
+  AlertMessage,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { formatText } from '@island.is/application/core'
 import { CustomField, FieldBaseProps } from '@island.is/application/types'
+import format from 'date-fns/format'
 import { m } from '../../lib/messages'
+import { getCurrentUserType } from '../../lib/utils/helpers'
+import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
+import { FSIUSERTYPE } from '../../types'
 
 interface PropTypes extends FieldBaseProps {
   field: CustomField
 }
 
 export const Success = ({ application }: PropTypes): JSX.Element => {
+  const { answers, externalData } = application
+  const applicationAnswers = application.answers as FinancialStatementsInao
+  const userType = getCurrentUserType(answers, externalData)
   const { formatMessage } = useLocale()
+
+  const getDescriptionText = () => {
+    const currentDate = format(new Date(), "dd.MM.yyyy 'kl.' kk:mm")
+    if (userType === FSIUSERTYPE.INDIVIDUAL) {
+      return `${formatMessage(m.individualReceivedMsgFirst)} ${
+        applicationAnswers.election.genitiveName
+      }
+      ${formatMessage(m.individualReceivedMsgSecond)} ${currentDate}`
+    } else {
+      return `${formatMessage(m.operatingYearMsgFirst)} ${
+        applicationAnswers.conditionalAbout.operatingYear
+      }
+      ${formatMessage(m.individualReceivedMsgSecond)} ${currentDate}`
+    }
+  }
 
   return (
     <Box paddingTop={2}>
@@ -18,9 +44,21 @@ export const Success = ({ application }: PropTypes): JSX.Element => {
         <ContentBlock>
           <AlertMessage
             type="success"
-            title={`${formatText(m.success, application, formatMessage)} `}
+            title={formatMessage(m.returned)}
+            message={getDescriptionText()}
           />
         </ContentBlock>
+        <Box paddingTop={2}>
+          <ActionCard
+            heading=""
+            text={formatMessage(m.myPagesLinkText)}
+            cta={{
+              label: formatMessage(m.continue),
+              onClick: () => window.open('/minarsidur/postholf', '_blank'),
+            }}
+            backgroundColor="blue"
+          />
+        </Box>
       </Box>
     </Box>
   )

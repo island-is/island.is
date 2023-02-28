@@ -180,7 +180,7 @@ const ApplicationProfile = ({
               type="warning"
               message={
                 <Text variant="medium">
-                  Sjálfvirk yfirfærsla í Navision tóskt ekki.
+                  Sjálfvirk yfirfærsla í Navision tókst ekki.
                 </Text>
               }
             />

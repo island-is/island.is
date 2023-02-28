@@ -1,22 +1,17 @@
-import React from 'react'
-import {
-  Box,
-  Text,
-  ActionCard,
-  Stack,
-  BulletList,
-  Bullet,
-} from '@island.is/island-ui/core'
-import { useGetListsUserSigned, useListsUserOwns } from '../queries'
-import { Link } from 'react-router-dom'
-import { ServicePortalPath } from '@island.is/service-portal/core'
-import { useLocale } from '@island.is/localization'
-import { m } from '../../lib/messages'
 import format from 'date-fns/format'
+import { Link } from 'react-router-dom'
+
+import { Box, Bullet, BulletList, Stack, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { IntroHeader, ServicePortalPath } from '@island.is/service-portal/core'
+
+import { m } from '../../lib/messages'
 import {
-  PaginatedEndorsementResponse,
   PaginatedEndorsementListResponse,
+  PaginatedEndorsementResponse,
 } from '../../types/schema'
+import { useGetListsUserSigned, useListsUserOwns } from '../queries'
+import { ActionCard } from '@island.is/service-portal/core'
 
 const formatDate = (date: string) => {
   try {
@@ -50,14 +45,8 @@ const Petitions = () => {
 
   return (
     <Box marginBottom={[6, 6, 10]}>
-      <Stack space={2}>
-        <Text variant="h3" as="h1">
-          {formatMessage(m.petition.introTitle)}
-        </Text>
-        <Text as="p" variant="default">
-          {formatMessage(m.petition.intro)}
-        </Text>
-      </Stack>
+      <IntroHeader title={m.petition.introTitle} intro={m.petition.intro} />
+
       <Box padding="gutter">
         <BulletList type="ul">
           <Bullet>{formatMessage(m.petition.bullet1)}</Bullet>
@@ -78,13 +67,11 @@ const Petitions = () => {
                   <Link
                     style={{ textDecoration: 'none' }}
                     key={list.id}
-                    to={{
-                      pathname: ServicePortalPath.PetitionList.replace(
-                        ':listId',
-                        list.id,
-                      ),
-                      state: { type: 'edit', listId: list.id },
-                    }}
+                    state={{ type: 'edit', listId: list.id }}
+                    to={ServicePortalPath.PetitionList.replace(
+                      ':listId',
+                      list.id,
+                    )}
                   >
                     <ActionCard
                       backgroundColor="blue"
@@ -122,15 +109,13 @@ const Petitions = () => {
                   <Link
                     style={{ textDecoration: 'none' }}
                     key={list.id}
-                    to={{
-                      pathname: ServicePortalPath.PetitionList.replace(
-                        ':listId',
-                        list.id,
-                      ),
-                      state: {
-                        listId: list.endorsementList?.id,
-                      },
+                    state={{
+                      listId: list.endorsementList?.id,
                     }}
+                    to={ServicePortalPath.PetitionList.replace(
+                      ':listId',
+                      list.id,
+                    )}
                   >
                     <ActionCard
                       backgroundColor="white"
@@ -168,15 +153,13 @@ const Petitions = () => {
                   <Link
                     style={{ textDecoration: 'none' }}
                     key={list.id}
-                    to={{
-                      pathname: ServicePortalPath.PetitionList.replace(
-                        ':listId',
-                        list.id,
-                      ),
-                      state: {
-                        listId: list.endorsementList?.id,
-                      },
+                    state={{
+                      listId: list.endorsementList?.id,
                     }}
+                    to={ServicePortalPath.PetitionList.replace(
+                      ':listId',
+                      list.id,
+                    )}
                   >
                     <ActionCard
                       backgroundColor="red"

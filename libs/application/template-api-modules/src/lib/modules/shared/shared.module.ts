@@ -8,6 +8,8 @@ import {
   BaseTemplateApiApplicationService,
 } from '../../types'
 import { SharedTemplateApiService } from './shared.service'
+import { SmsModule } from '@island.is/nova-sms'
+import { PaymentModule } from '@island.is/application/api/payment'
 
 export class SharedTemplateAPIModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -20,8 +22,10 @@ export class SharedTemplateAPIModule {
           load: [configuration],
         }),
         EmailModule.register(config.emailOptions),
+        SmsModule.register(config.smsOptions),
         ApplicationApiCoreModule,
         AwsModule,
+        PaymentModule,
       ],
       providers: [
         SharedTemplateApiService,
