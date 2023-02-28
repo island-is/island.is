@@ -32,38 +32,38 @@ async function getEmployerEmailAndApprove(employer: EmailAccount, page: Page) {
   const email = await employer.getLastEmail(6)
 
   // Require email
-  if (!email || typeof email.html !== 'string') { throw new Error('Email not found, test incomplete') }
-    const employerUrlMatch = email.html.match(/>(http?:.*)<\/p>/)
-    if (employerUrlMatch?.length != 2)
-      throw new Error(
-        'Email does not contain the url to approve the parental leave application',
-      )
-    const employerUrl = employerUrlMatch[1]
-    if (!employerUrl)
-      throw new Error(`Could not find url for employer in email: ${email.html}`)
-    await page.goto(employerUrl)
-
-    await page
-      .getByRole('region', {
-        name: label(employerFormMessages.employerNationalRegistryIdSection),
-      })
-      .getByRole('textbox')
-      // eslint-disable-next-line local-rules/disallow-kennitalas
-      .type('5402696029')
-    await proceed()
-
-    await page
-      .getByRole('button', {
-        name: label(coreMessages.buttonApprove),
-      })
-      .click()
-
-    await expect(
-      page.getByRole('heading', { name: label(coreMessages.thanks) }),
-    ).toBeVisible()
-  } else {
+  if (!email || typeof email.html !== 'string') {
     throw new Error('Email not found, test incomplete')
   }
+  const employerUrlMatch = email.html.match(/>(http?:.*)<\/p>/)
+  if (employerUrlMatch?.length != 2)
+    throw new Error(
+      'Email does not contain the url to approve the parental leave application',
+    )
+  const employerUrl = employerUrlMatch[1]
+  if (!employerUrl)
+    throw new Error(`Could not find url for employer in email: ${email.html}`)
+  await page.goto(employerUrl, { waitUntil: 'networkidle' })
+  await expect(page).toBeApplication()
+
+  await page
+    .getByRole('region', {
+      name: label(employerFormMessages.employerNationalRegistryIdSection),
+    })
+    .getByRole('textbox')
+    // eslint-disable-next-line local-rules/disallow-kennitalas
+    .type('5402696029')
+  await proceed()
+
+  await page
+    .getByRole('button', {
+      name: label(coreMessages.buttonApprove),
+    })
+    .click()
+
+  await expect(
+    page.getByRole('heading', { name: label(coreMessages.thanks) }),
+  ).toBeVisible()
 }
 
 const applicationSystemApi: { [env in TestEnvironment]: string } = {
@@ -410,19 +410,13 @@ test.describe('Parental leave', () => {
       })
       .click()
 
-    await page.waitForResponse(`${apiUrl}/api/graphql?op=SubmitApplication`)
-    const applicationSubmitSuccess = page.getByRole('heading', {
-      name: label(parentalLeaveFormMessages.finalScreen.title),
-    })
-    if (await applicationSubmitSuccess.isVisible()) {
-      submitApplicationSuccess = true
-      await getEmployerEmailAndApprove(employer, page)
-    } else {
-      submitApplicationSuccess = false
-      throw new Error(
-        'Unable to submit primary parent application, test incomplete',
-      )
-    }
+    await expect(
+      page.getByRole('heading', {
+        name: label(parentalLeaveFormMessages.finalScreen.title),
+      }),
+    ).toBeVisible()
+    submitApplicationSuccess = true
+    await getEmployerEmailAndApprove(employer, page)
   })
 
   test('Other parent should be able to create application', async () => {
@@ -699,16 +693,11 @@ test.describe('Parental leave', () => {
       })
       .click()
 
-    await page.waitForResponse(`${apiUrl}/api/graphql?op=SubmitApplication`)
-    const applicationSubmitSuccess = page.getByRole('heading', {
-      name: label(parentalLeaveFormMessages.finalScreen.title),
-    })
-    if (await applicationSubmitSuccess.isVisible()) {
-      await getEmployerEmailAndApprove(employer, page)
-    } else {
-      throw new Error(
-        'Unable to submit other parent application, test incomplete',
-      )
-    }
+    await expect(
+      page.getByRole('heading', {
+        name: label(parentalLeaveFormMessages.finalScreen.title),
+      }),
+    ).toBeVisible()
+    await getEmployerEmailAndApprove(employer, page)
   })
 })
