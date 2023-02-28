@@ -122,11 +122,13 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     if (auth.nationalId !== sellerSsn && auth.nationalId !== buyerSsn) {
       return
     }
-
-    const buyerCoOwners = answers?.buyerCoOwnerAndOperator?.filter(
+    const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'coOwner',
     )
-    const buyerOperators = answers?.buyerCoOwnerAndOperator?.filter(
+    const buyerOperators = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'operator',
     )
 
@@ -303,9 +305,11 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
       []) as Array<EmailRecipient>
 
     const newlyAddedRecipientList: Array<EmailRecipient> = []
-
+    const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
     // Buyer's co-owners
-    const buyerCoOwners = answers.buyerCoOwnerAndOperator?.filter(
+    const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'coOwner',
     )
     if (buyerCoOwners) {
@@ -333,7 +337,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     }
 
     // Buyer's operators
-    const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
+    const buyerOperators = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'operator',
     )
     if (buyerOperators) {
@@ -502,11 +506,13 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         400,
       )
     }
-
-    const buyerCoOwners = answers.buyerCoOwnerAndOperator?.filter(
+    const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'coOwner',
     )
-    const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
+    const buyerOperators = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'operator',
     )
 

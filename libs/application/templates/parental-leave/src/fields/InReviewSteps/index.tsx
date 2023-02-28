@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useCallback, useState } from 'react'
 import format from 'date-fns/format'
 import { useMutation } from '@apollo/client'
 import { MessageDescriptor } from '@formatjs/intl'
@@ -14,7 +14,6 @@ import ReviewSection, { ReviewSectionState } from './ReviewSection'
 import { Review } from '../Review/Review'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
-  getApplicationAnswers,
   getExpectedDateOfBirth,
   otherParentApprovalDescription,
   requiresOtherParentApproval,
@@ -28,6 +27,7 @@ import {
 } from '../../constants'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 import { useRemainingRights } from '../../hooks/useRemainingRights'
+import { showResidenceGrant } from '../../lib/answerValidationSections/utils'
 import { PrintButton } from '../PrintButton'
 
 type StateMapEntry = { [key: string]: ReviewSectionState }
@@ -102,7 +102,10 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
     isSelfEmployed,
     applicationType,
     isReceivingUnemploymentBenefits,
+    hasAppliedForReidenceGrant,
+    periods,
   } = useApplicationAnswers(application)
+  const showResidenceGrantCard = showResidenceGrant(application)
   const oldApplication = applicationType === undefined // Added this check for applications that is in the db already
   const isBeneficiaries = !oldApplication
     ? applicationType === PARENTAL_LEAVE
@@ -115,7 +118,6 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
       onError: (e) => handleServerError(e, formatMessage),
     },
   )
-
   const { formatMessage } = useLocale()
   const [screenState, setScreenState] = useState<'steps' | 'viewApplication'>(
     'steps',
@@ -167,6 +169,36 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
       ),
     })
   }
+  if (
+    (application.state === States.APPROVED ||
+      application.state === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
+      application.state === States.VINNUMALASTOFNUN_APPROVAL) &&
+    showResidenceGrantCard
+  ) {
+    if (hasAppliedForReidenceGrant === YES) {
+      steps.push({
+        state: ReviewSectionState.complete,
+        title: formatMessage(
+          parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle,
+        ),
+        description: formatMessage(
+          parentalLeaveFormMessages.residenceGrantMessage
+            .residenceGrantApplicationSendInformation,
+        ),
+      })
+    } else {
+      steps.push({
+        state: ReviewSectionState.prerequisites,
+        title: formatMessage(
+          parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle,
+        ),
+        description: formatMessage(
+          parentalLeaveFormMessages.residenceGrantMessage
+            .residenceGrantClosedDescription,
+        ),
+      })
+    }
+  }
 
   const dob = getExpectedDateOfBirth(application)
   const dobDate = dob ? new Date(dob) : null
@@ -182,11 +214,26 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
     application.state === ApplicationStates.EMPLOYER_APPROVE_EDITS ||
     application.state === ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS
 
-  const { periods } = getApplicationAnswers(application.answers)
   const lastEndDate = new Date(periods[periods.length - 1].endDate)
+
   const isUsedAllRights =
     useRemainingRights(application) > 0 ||
     lastEndDate.getTime() > new Date().getTime()
+  const handleSubmit = useCallback(async (event: string) => {
+    const res = await submitApplication({
+      variables: {
+        input: {
+          id: application.id,
+          event,
+          answers: application.answers,
+        },
+      },
+    })
+    if (res?.data) {
+      // Takes them to the next state (which loads the relevant form)
+      refetch?.()
+    }
+  }, [])
   return (
     <Box marginBottom={10}>
       {screenState === 'viewApplication' && <PrintButton />}
@@ -243,6 +290,7 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
                 )}
             </Button>
           </Box>
+
           {canBeEdited && isUsedAllRights && (
             <Box display="inlineBlock">
               <Button
@@ -254,22 +302,7 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
                 icon="pencil"
                 loading={loadingSubmit}
                 disabled={loadingSubmit}
-                onClick={async () => {
-                  const res = await submitApplication({
-                    variables: {
-                      input: {
-                        id: application.id,
-                        event: 'EDIT',
-                        answers: application.answers,
-                      },
-                    },
-                  })
-
-                  if (res?.data) {
-                    // Takes them to the next state (which loads the relevant form)
-                    refetch?.()
-                  }
-                }}
+                onClick={() => handleSubmit('EDIT')}
               >
                 {formatMessage(
                   parentalLeaveFormMessages.reviewScreen.buttonsEdit,
@@ -279,11 +312,16 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
           )}
         </Box>
       </Box>
-
       {screenState === 'steps' ? (
         <Box marginTop={7} marginBottom={8}>
           {steps.map((step, index) => (
-            <ReviewSection key={index} index={index + 1} {...props} {...step} />
+            <ReviewSection
+              key={index}
+              application={application}
+              index={index + 1}
+              {...step}
+              notifyParentOnClickEvent={() => handleSubmit('SUBMIT')}
+            />
           ))}
         </Box>
       ) : (

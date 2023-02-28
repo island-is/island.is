@@ -1,46 +1,42 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
-import { useMutation } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { formatText, coreMessages } from '@island.is/application/core'
-import { FieldBaseProps } from '@island.is/application/types'
-import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
-import { handleServerError } from '@island.is/application/ui-components'
-import { Box, Icon, Tag, Text, Button } from '@island.is/island-ui/core'
+import { Application, YES } from '@island.is/application/types'
+import { Box, Button, Icon, Tag, Text } from '@island.is/island-ui/core'
 import { parentalLeaveFormMessages } from '../../../lib/messages'
 
 import * as styles from './ReviewSection.css'
+import { getApplicationAnswers } from '../../../lib/parentalLeaveUtils'
 
 export enum ReviewSectionState {
+  prerequisites = 'Prerequisites',
   inProgress = 'In progress',
   requiresAction = 'Requires action',
   complete = 'Complete',
 }
 
 type ReviewSectionProps = {
+  application: Application
   index: number
   title: string
   description: string
   state?: ReviewSectionState
+  notifyParentOnClickEvent?: () => void
 }
 
-const ReviewSection: FC<ReviewSectionProps & FieldBaseProps> = ({
+const ReviewSection: FC<ReviewSectionProps> = ({
   application,
   index,
   title,
   description,
   state,
-  refetch,
+  notifyParentOnClickEvent,
 }) => {
   const { formatMessage } = useLocale()
-  const [submitApplication, { loading: loadingSubmit }] = useMutation(
-    SUBMIT_APPLICATION,
-    {
-      onError: (e) => handleServerError(e, formatMessage),
-    },
+  const { hasAppliedForReidenceGrant } = getApplicationAnswers(
+    application.answers,
   )
-
-  const isRequiredAction = state === ReviewSectionState.requiresAction
 
   return (
     <Box
@@ -60,8 +56,11 @@ const ReviewSection: FC<ReviewSectionProps & FieldBaseProps> = ({
           [styles.sectionNumberNotStarted]: state === undefined,
           [styles.sectionNumberInProgress]:
             state === ReviewSectionState.inProgress,
-          [styles.sectionNumberRequiresAction]: isRequiredAction,
+          [styles.sectionNumberRequiresAction]:
+            state === ReviewSectionState.requiresAction,
           [styles.sectionNumberComplete]: state === ReviewSectionState.complete,
+          [styles.sectionNumberPrerequisites]:
+            state === ReviewSectionState.prerequisites,
         })}
       >
         {(state === ReviewSectionState.complete && (
@@ -76,16 +75,35 @@ const ReviewSection: FC<ReviewSectionProps & FieldBaseProps> = ({
         flexDirection={['columnReverse', 'row']}
         justifyContent="spaceBetween"
       >
-        <Box marginTop={[1, 0, 0]} paddingRight={[0, 1, 1]}>
+        <Box marginTop={[1, 0, 0]} paddingRight={[0, 1, 1]} width="full">
           <Text variant="h3">{title}</Text>
           <Text marginTop={1} variant="default">
             {description}
           </Text>
+          {notifyParentOnClickEvent &&
+            title.toLowerCase() === 'dvalarstyrkur' &&
+            hasAppliedForReidenceGrant !== YES && (
+              <Box display={'flex'} justifyContent={'flexEnd'} marginTop={1}>
+                <Box>
+                  <Button
+                    variant="text"
+                    size="small"
+                    icon="arrowForward"
+                    onClick={() => notifyParentOnClickEvent()}
+                  >
+                    {formatMessage(
+                      parentalLeaveFormMessages.residenceGrantMessage
+                        .residenceGrantApplyTitle,
+                    )}
+                  </Button>
+                </Box>
+              </Box>
+            )}
         </Box>
 
         {state === ReviewSectionState.inProgress && (
           <Box pointerEvents="none">
-            <Tag variant="blue">
+            <Tag variant="blue" truncate>
               {formatText(
                 coreMessages.tagsInProgress,
                 application,
@@ -94,47 +112,15 @@ const ReviewSection: FC<ReviewSectionProps & FieldBaseProps> = ({
             </Tag>
           </Box>
         )}
-        {isRequiredAction && (
-          <Box>
-            <Box pointerEvents="none" marginBottom={1}>
-              <Tag variant="red">
-                {formatText(
-                  coreMessages.tagsRequiresAction,
-                  application,
-                  formatMessage,
-                )}
-              </Tag>
-            </Box>
-            <Box display="flex" justifyContent="flexEnd" marginTop={1}>
-              <Button
-                icon="arrowForward"
-                variant="text"
-                size="small"
-                loading={loadingSubmit}
-                disabled={loadingSubmit}
-                onClick={async () => {
-                  const res = await submitApplication({
-                    variables: {
-                      input: {
-                        id: application.id,
-                        event: 'EDIT',
-                        answers: application.answers,
-                      },
-                    },
-                  })
-
-                  if (res?.data) {
-                    // Takes them to the next state (which loads the relevant form)
-                    refetch?.()
-                  }
-                }}
-              >
-                {formatMessage(
-                  parentalLeaveFormMessages.reviewScreen
-                    .additionalDocumentRequiredButton,
-                )}
-              </Button>
-            </Box>
+        {state === ReviewSectionState.requiresAction && (
+          <Box pointerEvents="none">
+            <Tag variant="red" truncate>
+              {formatText(
+                coreMessages.tagsRequiresAction,
+                application,
+                formatMessage,
+              )}
+            </Tag>
           </Box>
         )}
       </Box>

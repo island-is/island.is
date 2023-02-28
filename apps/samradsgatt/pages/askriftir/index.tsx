@@ -4,6 +4,7 @@ import {
   Breadcrumbs,
   Divider,
   GridContainer,
+  Hidden,
   ResponsiveSpace,
   Tabs,
   Text,
@@ -70,9 +71,8 @@ const Subscriptions = () => {
   })
   const settingSortTitle = (obj: SortTitle) => setSortTitle(obj)
 
-  const paddingYBreadCrumbs = [3, 3, 3, 5] as ResponsiveSpace
-  const paddingXContent = [0, 0, 0, 15] as ResponsiveSpace
-  const paddingXTable = [0, 0, 0, 15] as ResponsiveSpace
+  const paddingXContent = [0, 0, 0, 8, 15] as ResponsiveSpace
+  const paddingXTable = [0, 0, 0, 8, 15] as ResponsiveSpace
 
   const clearAll = () => {
     setSearchOptions([])
@@ -191,7 +191,7 @@ const Subscriptions = () => {
       <Divider />
       <Box background="blue100">
         <GridContainer>
-          <Box paddingY={paddingYBreadCrumbs}>
+          <Box paddingY={[3, 3, 3, 5, 5]}>
             <Breadcrumbs
               items={[
                 { title: 'Samráðsgátt', href: '/samradsgatt' },
@@ -200,12 +200,17 @@ const Subscriptions = () => {
               ]}
             />
           </Box>
+          <Box paddingBottom={[3, 3, 3, 5, 5]}>
+            <Hidden above="xs">
+              <Divider />
+            </Hidden>
+          </Box>
           <Box paddingX={paddingXContent} paddingBottom={3}>
             <Text variant="h1" color="dark400">
               {'Áskriftir'}
             </Text>
           </Box>
-          <Box paddingX={paddingXContent} paddingBottom={5}>
+          <Box paddingX={paddingXContent} paddingBottom={[3, 3, 3, 5, 5]}>
             <Text variant="default">
               {
                 'Hér er hægt að skrá sig í áskrift að málum. Þú skráir þig inn á Ísland.is, \
@@ -218,7 +223,7 @@ const Subscriptions = () => {
               {'Kerfið er uppfært einu sinni á sólarhring.'}
             </Text>
           </Box>
-          <Box paddingX={paddingXTable} paddingBottom={2}>
+          <Box paddingX={paddingXTable} paddingBottom={[3, 3, 3, 5, 5]}>
             {loggedIn ? (
               <SubscriptionActionCard
                 userIsLoggedIn={true}
@@ -247,7 +252,7 @@ const Subscriptions = () => {
             )}
           </Box>
           {!subscriptionArrayIsEmpty() && (
-            <Box paddingX={paddingXTable} paddingBottom={3}>
+            <Box paddingX={paddingXTable} paddingBottom={[3, 3, 3, 5, 5]}>
               <Text paddingBottom={1} variant="eyebrow">
                 Valin mál
               </Text>
@@ -310,8 +315,9 @@ const Subscriptions = () => {
           )}
         </GridContainer>
       </Box>
+      <Divider />
       <GridContainer>
-        <Box paddingX={paddingXTable} paddingTop={3}>
+        <Box paddingX={paddingXTable} paddingTop={[3, 3, 3, 5, 5]}>
           <Tabs
             selected={currentTab}
             onlyRenderSelectedTab={true}
