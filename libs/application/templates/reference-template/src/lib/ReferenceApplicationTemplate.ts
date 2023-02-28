@@ -285,7 +285,6 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 answers: ['careerHistoryDetails', 'approvedByReviewer'],
               },
               read: 'all',
-              delete: true,
               shouldBeListedForRole: true,
             },
             {

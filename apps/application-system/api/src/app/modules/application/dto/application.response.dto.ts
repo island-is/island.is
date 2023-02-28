@@ -76,16 +76,6 @@ class ActionCardMetaData {
   @IsBoolean()
   deleteButton?: boolean
 
-  @ApiProperty()
-  @Expose()
-  @IsNumber()
-  draftFinishedSteps?: number
-
-  @ApiProperty()
-  @Expose()
-  @IsNumber()
-  draftTotalSteps?: number
-
   @ApiPropertyOptional()
   @Expose()
   @IsObject()
@@ -96,6 +86,16 @@ class ActionCardMetaData {
   @Type(() => History)
   @ApiPropertyOptional({ type: [History], default: [] })
   history?: History[]
+
+  @ApiProperty()
+  @Expose()
+  @IsNumber()
+  draftFinishedSteps?: number
+
+  @ApiProperty()
+  @Expose()
+  @IsNumber()
+  draftTotalSteps?: number
 }
 
 export class ApplicationResponseDto {
