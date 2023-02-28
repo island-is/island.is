@@ -51,19 +51,19 @@ const HeilbrigdisstofnunSudurlandsHeader: React.FC<HeaderProps> = ({
   const screenWidth = getScreenWidthString(width)
 
   return (
-    <Box
+    <div
       style={n(`hsuHeader-${screenWidth}`, getDefaultStyle())}
       className={styles.headerBg}
     >
       <Hidden below="md">
-        <Box
+        <div
           style={n(
             `hsuHeaderImage-${screenWidth}`,
             getDefaultHeaderImageStyle(),
           )}
         />
       </Hidden>
-      <Box className={styles.headerWrapper}>
+      <div className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
             !!organizationPage.organization.logo && (
@@ -110,8 +110,8 @@ const HeilbrigdisstofnunSudurlandsHeader: React.FC<HeaderProps> = ({
             </Link>
           </Box>
         </SidebarLayout>
-      </Box>
-    </Box>
+      </div>
+    </div>
   )
 }
 

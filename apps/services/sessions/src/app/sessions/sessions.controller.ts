@@ -47,6 +47,18 @@ export class SessionsController {
   @Documentation({
     description: 'Get all sessions for the authenticated user.',
     response: { status: 200, type: SessionsResultDto },
+    request: {
+      header: {
+        'X-Query-OtherUser': {
+          description: 'The identifier of a user associated with a session.',
+          required: false,
+          schema: {
+            type: 'string',
+            pattern: '^\\d{10}$',
+          },
+        },
+      },
+    },
   })
   @Scopes(ApiScope.internal, ApiScope.internalProcuring)
   @Audit<SessionsResultDto>({

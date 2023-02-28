@@ -45,11 +45,11 @@ const SyslumennHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   const screenWidth = getScreenWidthString(width)
 
   return (
-    <Box
+    <div
       style={n(`syslumennHeader-${screenWidth}`, getDefaultStyle(width))}
       className={cn(styles.headerBg)}
     >
-      <Box className={styles.headerWrapper}>
+      <div className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
             !!organizationPage.organization.logo && (
@@ -96,8 +96,8 @@ const SyslumennHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
             </Link>
           </Box>
         </SidebarLayout>
-      </Box>
-    </Box>
+      </div>
+    </div>
   )
 }
 

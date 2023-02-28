@@ -21,8 +21,8 @@ import { GlobalAlertBannerSection } from '../AlertBanners/GlobalAlertBannerSecti
 import { useAlertBanners } from '@island.is/service-portal/graphql'
 import { useMeasure } from 'react-use'
 
-const Layout: FC = ({ children }) => {
-  useNamespaces(['service.portal', 'global'])
+export const Layout: FC = ({ children }) => {
+  useNamespaces(['service.portal', 'global', 'portals'])
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { pathname } = useLocation()
   useScrollTopOnUpdate([pathname])
@@ -70,7 +70,7 @@ const Layout: FC = ({ children }) => {
                 <Hidden print>
                   <ContentBreadcrumbs />
                 </Hidden>
-                <div>{children}</div>
+                {children}
               </GridColumn>
             </GridRow>
           </GridContainer>
@@ -79,4 +79,3 @@ const Layout: FC = ({ children }) => {
     </>
   )
 }
-export default Layout

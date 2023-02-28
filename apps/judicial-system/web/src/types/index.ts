@@ -9,6 +9,7 @@ import {
   Case,
   CaseListEntry,
   CreateCase,
+  SubstanceMap,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 
@@ -246,6 +247,12 @@ export interface Lawyer {
  * We use this type so that we don't have to migrate all the code
  * at once and this type will be removed when we are done.
  */
+
+export interface TempIndictmentCount
+  extends Omit<IndictmentCount, 'substances'> {
+  substances?: SubstanceMap
+}
+
 export interface TempCase
   extends Omit<
     Case,
@@ -263,22 +270,12 @@ export interface TempCase
   parentCase?: TempCase
   childCase?: TempCase
   type: CaseType
-  indictmentCounts?: IndictmentCount[]
+  indictmentCounts?: TempIndictmentCount[]
 }
 
 export interface TempUpdateCase
-  extends Omit<
-    UpdateCase,
-    | 'sharedWithProsecutorsOffice'
-    | 'court'
-    | 'courtDocuments'
-    | 'parentCase'
-    | 'type'
-  > {
-  sharedWithProsecutorsOffice?: Institution
-  court?: Institution
+  extends Omit<UpdateCase, 'courtDocuments' | 'type'> {
   courtDocuments?: CourtDocument[]
-  parentCase?: TempCase
   type?: CaseType
 }
 

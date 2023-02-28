@@ -19,9 +19,14 @@ import Layout from '../../components/Layout/Layout'
 interface DetailsProps {
   chosenCase: Case
   advices?: Array<Advice>
+  isLoggedIn: boolean
 }
 
-const Details: React.FC<DetailsProps> = ({ chosenCase, advices }) => {
+const Details: React.FC<DetailsProps> = ({
+  chosenCase,
+  advices,
+  isLoggedIn,
+}) => {
   const location = useLocation()
   const dummyCase = {
     id: 3027,
@@ -72,6 +77,14 @@ const Details: React.FC<DetailsProps> = ({ chosenCase, advices }) => {
   // Remove following lines after connecting to API
   chosenCase = dummyCase
   advices = dummyAdvices
+
+  const card = {
+    caseNumber: '76/2022',
+    nameOfReviewer: 'Jon Jonsson',
+    reviewPeriod: '01.08.2022 – 01.12.2022',
+  }
+
+  isLoggedIn = true // remove when functionality for logged in has been implemented
 
   return (
     <Layout>
@@ -124,7 +137,7 @@ const Details: React.FC<DetailsProps> = ({ chosenCase, advices }) => {
                   return <ReviewCard advice={advice} key={advice.number} />
                 })}
               </Box>
-              <WriteReviewCard />
+              <WriteReviewCard card={card} isLoggedIn={isLoggedIn} />
             </Box>
           </GridColumn>
 

@@ -131,7 +131,7 @@ const template: ApplicationTemplate<
               variant: 'red',
             },
           },
-          progress: 0.8,
+          progress: 0.5,
           lifecycle: pruneAfterDays(1 / 24),
           onEntry: defineTemplateApi({
             action: ApiActions.createCharge,
@@ -169,7 +169,7 @@ const template: ApplicationTemplate<
               variant: 'blue',
             },
           },
-          progress: 0.65,
+          progress: 0.6,
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,
@@ -322,7 +322,7 @@ const getNationalIdListOfReviewers = (application: Application) => {
       'ownerCoOwners',
       [],
     ) as UserInformation[]
-    const operators = getValueViaPath(
+    const coOwners = getValueViaPath(
       application.answers,
       'coOwners',
       [],
@@ -331,10 +331,12 @@ const getNationalIdListOfReviewers = (application: Application) => {
       reviewerNationalIdList.push(nationalId)
       return nationalId
     })
-    operators?.map(({ nationalId }) => {
-      reviewerNationalIdList.push(nationalId)
-      return nationalId
-    })
+    coOwners
+      ?.filter(({ wasRemoved }) => wasRemoved !== 'true')
+      .map(({ nationalId }) => {
+        reviewerNationalIdList.push(nationalId)
+        return nationalId
+      })
     return reviewerNationalIdList
   } catch (error) {
     console.error(error)

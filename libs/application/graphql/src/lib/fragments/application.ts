@@ -26,6 +26,8 @@ export const ApplicationFragment = gql`
         date
       }
       deleteButton
+      draftTotalSteps
+      draftFinishedSteps
     }
     typeId
     answers

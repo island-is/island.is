@@ -11,8 +11,6 @@ import { ApplicationTemplateHelper } from '@island.is/application/core'
 import {
   ApplicationTypes,
   Application as BaseApplication,
-  ApplicationContext,
-  ApplicationStateSchema,
 } from '@island.is/application/types'
 import {
   getApplicationTemplateByTypeId,
@@ -31,15 +29,11 @@ import {
   History,
   HistoryBuilder,
 } from '@island.is/application/api/history'
-import { EventObject } from 'xstate'
-import {FeatureFlagService, Features} from '@island.is/nest/feature-flags'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
 @Injectable()
-export class ApplicationSerializer<
-  TContext extends ApplicationContext,
-  TStateSchema extends ApplicationStateSchema<TEvents>,
-  TEvents extends EventObject
-> implements NestInterceptor<Application, Promise<unknown>> {
+export class ApplicationSerializer
+  implements NestInterceptor<Application, Promise<unknown>> {
   constructor(
     private intlService: IntlService,
     private historyService: HistoryService,
@@ -60,10 +54,14 @@ export class ApplicationSerializer<
 
         if (isArray) {
           const applications = res as Application[]
-          const showHistory = await this.featureFlagService.getValue(Features.applicationSystemHistory, false, user)
+          const showHistory = await this.featureFlagService.getValue(
+            Features.applicationSystemHistory,
+            false,
+            user,
+          )
 
           let histories: History[] = []
-          if(showHistory) {
+          if (showHistory) {
             histories = await this.historyService.getStateHistory(
               applications.map((item) => item.id),
             )
@@ -126,21 +124,21 @@ export class ApplicationSerializer<
       return intl.formatMessage(template.name)
     }
 
-    const pendingAction = showHistory ? helper.getCurrentStatePendingAction(
-      application,
-      userRole,
-      intl.formatMessage,
-    ) : undefined
+    const pendingAction = showHistory
+      ? helper.getCurrentStatePendingAction(
+          application,
+          userRole,
+          intl.formatMessage,
+        )
+      : undefined
 
-    const history = showHistory ? await this.historyBuilder.buildApplicationHistory(
-        historyModel,
-        intl.formatMessage,
-        helper
-    ) : undefined
-
-    const s = helper.getReadableAnswersAndExternalData(userRole)
-
-
+    const history = showHistory
+      ? await this.historyBuilder.buildApplicationHistory(
+          historyModel,
+          intl.formatMessage,
+          helper,
+        )
+      : undefined
 
     const dto = plainToInstance(ApplicationResponseDto, {
       ...application,
@@ -161,7 +159,9 @@ export class ApplicationSerializer<
         },
         deleteButton: roleInState?.delete,
         pendingAction,
-        history
+        history,
+        draftFinishedSteps: application.draftFinishedSteps,
+        draftTotalSteps: application.draftTotalSteps,
       },
       name: getApplicationName(),
       institution: template.institution

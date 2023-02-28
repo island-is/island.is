@@ -481,6 +481,10 @@ export const m = defineMessages({
     id: 'service.portal:search-placeholder',
     defaultMessage: 'Sláðu inn leitarorð',
   },
+  searchByNationalId: {
+    id: 'service.portal:search-by-national-id',
+    defaultMessage: 'Leita eftir kennitölu',
+  },
   actions: {
     id: 'service.portal:actions',
     defaultMessage: 'Aðgerðir',
@@ -832,5 +836,34 @@ export const m = defineMessages({
   errorTitle: {
     id: 'service.portal:error-screen-title',
     defaultMessage: 'Villa',
+  },
+  buttonCancel: {
+    id: 'service.portal:button.cancel',
+    defaultMessage: 'Hætta við',
+    description: 'Cancel',
+  },
+  buttonEdit: {
+    id: 'service.portal:button.edit',
+    defaultMessage: 'Breyta',
+    description: 'Edit',
+  },
+  buttonDestroy: {
+    id: 'service.portal:button.delete',
+    defaultMessage: 'Eyða',
+    description: 'Delete',
+  },
+  buttonRenew: {
+    id: 'service.portal:button.renew',
+    defaultMessage: 'Endurnýja',
+    description: 'Renew',
+  },
+  airDiscount: {
+    id: 'service.portal:air-discount',
+    defaultMessage: 'Loftbrú',
+    description: 'Airfare discount',
+  },
+  sessions: {
+    id: 'service.portal:sessions',
+    defaultMessage: 'Notkun',
   },
 })

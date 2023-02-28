@@ -76,6 +76,16 @@ class ActionCardMetaData {
   @IsBoolean()
   deleteButton?: boolean
 
+  @ApiProperty()
+  @Expose()
+  @IsNumber()
+  draftFinishedSteps?: number
+
+  @ApiProperty()
+  @Expose()
+  @IsNumber()
+  draftTotalSteps?: number
+
   @ApiPropertyOptional()
   @Expose()
   @IsObject()

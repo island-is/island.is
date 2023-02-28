@@ -505,6 +505,7 @@ export class ApplicationController {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
       user,
+      { shouldThrowIfPruned: true },
     )
     const namespaces = await getApplicationTranslationNamespaces(
       existingApplication as BaseApplication,
@@ -538,6 +539,8 @@ export class ApplicationController {
       {
         answers: mergedAnswers,
         applicantActors: applicantActors,
+        draftFinishedSteps: application.draftProgress?.stepsFinished ?? 0,
+        draftTotalSteps: application.draftProgress?.totalSteps ?? 0,
       },
     )
 
@@ -660,6 +663,7 @@ export class ApplicationController {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
       user,
+      { shouldThrowIfPruned: true },
     )
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)

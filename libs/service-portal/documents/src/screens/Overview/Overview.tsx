@@ -11,7 +11,6 @@ import {
 import { useListDocuments } from '@island.is/service-portal/graphql'
 import {
   useScrollToRefOnUpdate,
-  ServicePortalModuleComponent,
   IntroHeader,
   EmptyState,
   ServicePortalPath,
@@ -41,6 +40,7 @@ import {
 import TableHeading from '../../components/TableHeading/TableHeading'
 import * as styles from './Overview.css'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { useUserInfo } from '@island.is/auth/react'
 
 const GET_DOCUMENT_CATEGORIES = gql`
   query documentCategories {
@@ -71,12 +71,9 @@ const GET_DOCUMENT_SENDERS = gql`
 
 const pageSize = 15
 
-export const ServicePortalDocuments: ServicePortalModuleComponent = ({
-  userInfo,
-  client,
-}) => {
+export const ServicePortalDocuments = () => {
   useNamespaces('sp.documents')
-
+  const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
   const [isEmpty, setEmpty] = useState(false)

@@ -70,7 +70,7 @@ const ApplicationLoader: FC<{
 
   const currentTypeId: ApplicationTypes = application.typeId
   if (ApplicationConfigurations[currentTypeId]?.slug !== slug) {
-    return <ErrorShell />
+    return <ErrorShell errorType="notExist" />
   }
 
   if (!applicationId || error) {

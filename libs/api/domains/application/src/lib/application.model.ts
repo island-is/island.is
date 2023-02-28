@@ -63,6 +63,11 @@ class ActionCardMetaData {
 
   @Field(() => [ApplicationHistory], { nullable: true })
   history?: ApplicationHistory[]
+  @Field(() => Number, { nullable: true })
+  draftFinishedSteps?: number
+
+  @Field(() => Number, { nullable: true })
+  draftTotalSteps?: number
 }
 
 @ObjectType()

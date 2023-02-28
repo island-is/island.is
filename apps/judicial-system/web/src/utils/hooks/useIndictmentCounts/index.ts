@@ -1,18 +1,20 @@
-import { useCallback } from 'react'
+import React, { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 import { useMutation } from '@apollo/client'
 
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+
 import {
   IndictmentCount,
   UpdateIndictmentCountInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { UpdateIndictmentCountMutation } from './updateIndictmentCountGql'
-import { CreateIndictmentCountMutation } from './createIndictmentCountGql'
-import { DeleteIndictmentCountMutation } from './deleteIndictmentCountGql'
-
+import { UpdateIndictmentCountMutation } from './updateIndictmentCount.graphql'
+import { CreateIndictmentCountMutation } from './createIndictmentCount.graphql'
+import { DeleteIndictmentCountMutation } from './deleteIndictmentCount.graphql'
+import { SubstanceMap } from '@island.is/judicial-system/types'
 interface CreateIndictmentCountMutationResponse {
   createIndictmentCount: IndictmentCount
 }
@@ -27,10 +29,13 @@ interface DeleteIndictmentCountMutationResponse {
   }
 }
 
-export type UpdateIndictmentCount = Omit<
-  UpdateIndictmentCountInput,
-  'caseId' | 'indictmentCountId'
->
+export interface UpdateIndictmentCount
+  extends Omit<
+    UpdateIndictmentCountInput,
+    'caseId' | 'indictmentCountId' | 'substances'
+  > {
+  substances?: SubstanceMap
+}
 
 const useIndictmentCounts = () => {
   const { formatMessage } = useIntl()
@@ -123,10 +128,39 @@ const useIndictmentCounts = () => {
     [updateIndictmentCountMutation, formatMessage],
   )
 
+  const updateIndictmentCountState = useCallback(
+    (
+      indictmentCountId: string,
+      update: UpdateIndictmentCount,
+      setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
+    ) => {
+      setWorkingCase((theCase) => {
+        if (!theCase.indictmentCounts) {
+          return theCase
+        }
+
+        const indictmentCountIndexToUpdate = theCase.indictmentCounts.findIndex(
+          (indictmentCount) => indictmentCount.id === indictmentCountId,
+        )
+
+        const newIndictmentCounts = [...theCase.indictmentCounts]
+
+        newIndictmentCounts[indictmentCountIndexToUpdate] = {
+          ...newIndictmentCounts[indictmentCountIndexToUpdate],
+          ...update,
+        }
+
+        return { ...theCase, indictmentCounts: newIndictmentCounts }
+      })
+    },
+    [],
+  )
+
   return {
     updateIndictmentCount,
     createIndictmentCount,
     deleteIndictmentCount,
+    updateIndictmentCountState,
   }
 }
 

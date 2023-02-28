@@ -1,5 +1,5 @@
 import {
-  ReviewCoOwnerAndOperatorField,
+  CoOwnerAndOperator,
   ReviewSectionProps,
   UserInformation,
 } from '../shared'
@@ -10,7 +10,7 @@ import { States } from '../lib/constants'
 
 export const getReviewSteps = (
   application: Application,
-  coOwnersAndOperators: ReviewCoOwnerAndOperatorField[],
+  coOwnersAndOperators: CoOwnerAndOperator[],
 ) => {
   const vehiclePlate = getValueViaPath(
     application.answers,
@@ -23,6 +23,8 @@ export const getReviewSteps = (
     'sellerCoOwner',
     [],
   ) as UserInformation[]
+
+  const buyer = getValueViaPath(application.answers, 'buyer') as UserInformation
 
   const buyerApproved = getValueViaPath(
     application.answers,
@@ -92,6 +94,13 @@ export const getReviewSteps = (
       tagVariant: buyerApproved || isComplete ? 'mint' : 'purple',
       title: review.step.title.buyer,
       description: review.step.description.buyer,
+      reviewer: [
+        {
+          nationalId: buyer.nationalId || '',
+          name: buyer.name || '',
+          approved: buyerApproved || isComplete,
+        },
+      ],
     },
     // Buyers coowner
     {

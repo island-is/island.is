@@ -1,9 +1,11 @@
 module.exports = {
   displayName: 'clients-transport-authority-digital-tachograph-drivers-card',
-  preset: '../../../../jest.preset.js',
+  preset: './jest.preset.js',
+  rootDir: '../../../..',
+  roots: [__dirname],
   globals: {
     'ts-jest': {
-      tsconfig: '<rootDir>/tsconfig.spec.json',
+      tsconfig: `${__dirname}/tsconfig.spec.json`,
     },
   },
   testEnvironment: 'node',
@@ -12,5 +14,5 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-    '../../../../coverage/libs/clients/transport-authority/digital-tachograph-drivers-card',
+    '<rootDir>/coverage/libs/clients/transport-authority/digital-tachograph-drivers-card',
 }

@@ -6,7 +6,4 @@ export const menu = style({
   height: 96,
   width: '100%',
   margin: 0,
-
-  paddingLeft: theme.spacing[4],
-  paddingRight: theme.spacing[4],
 })

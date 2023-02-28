@@ -8,12 +8,15 @@ import {
   getChargeItemCodes,
 } from '@island.is/application/templates/transport-authority/order-vehicle-license-plate'
 import {
+  PlateOrderValidation,
   SGS_DELIVERY_STATION_CODE,
   SGS_DELIVERY_STATION_TYPE,
   VehiclePlateOrderingClient,
 } from '@island.is/clients/transport-authority/vehicle-plate-ordering'
 import { VehicleCodetablesClient } from '@island.is/clients/transport-authority/vehicle-codetables'
+import { VehicleSearchApi } from '@island.is/clients/vehicles'
 import { YES } from '@island.is/application/core'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
@@ -21,8 +24,13 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly vehiclePlateOrderingClient: VehiclePlateOrderingClient,
     private readonly vehicleCodetablesClient: VehicleCodetablesClient,
+    private readonly vehiclesApi: VehicleSearchApi,
   ) {
     super(ApplicationTypes.ORDER_VEHICLE_LICENSE_PLATE)
+  }
+
+  private vehiclesApiWithAuth(auth: Auth) {
+    return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async getDeliveryStationList({ auth }: TemplateApiModuleActionProps) {
@@ -43,6 +51,54 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
           // Since the result is only unique per type+code, we will just merge them together here
           value: item.type + '_' + item.code,
         }))
+    )
+  }
+
+  async getCurrentVehiclesWithPlateOrderChecks({
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const result = await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
+      persidNo: auth.nationalId,
+      showOwned: true,
+      showCoowned: false,
+      showOperated: false,
+    })
+
+    return await Promise.all(
+      result?.map(async (vehicle) => {
+        let validation: PlateOrderValidation | undefined
+
+        // Only validate if fewer than 5 items
+        if (result.length <= 5) {
+          // Get basic information about vehicle
+          const vehicleInfo = await this.vehiclesApiWithAuth(
+            auth,
+          ).basicVehicleInformationGet({
+            clientPersidno: auth.nationalId,
+            permno: vehicle.permno || '',
+            regno: undefined,
+            vin: undefined,
+          })
+
+          // Get validation
+          validation = await this.vehiclePlateOrderingClient.validatePlateOrder(
+            auth,
+            vehicle.permno || '',
+            vehicleInfo?.platetypefront || '',
+            vehicleInfo?.platetyperear || '',
+          )
+        }
+
+        return {
+          permno: vehicle.permno || undefined,
+          make: vehicle.make || undefined,
+          color: vehicle.color || undefined,
+          role: vehicle.role || undefined,
+          validationErrorMessages: validation?.hasError
+            ? validation.errorMessages
+            : null,
+        }
+      }),
     )
   }
 
