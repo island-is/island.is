@@ -52,15 +52,11 @@ export class DocumentClient {
     }
   }
 
-  private async getRequest<T>(
-    requestRoute: string,
-    auth?: string,
-  ): Promise<T | null> {
-    !auth && (await this.rehydrateToken())
-
+  private async getRequest<T>(requestRoute: string): Promise<T | null> {
+    await this.rehydrateToken()
     const config: AxiosRequestConfig = {
       headers: {
-        Authorization: `Bearer ${auth ?? this.accessToken}`,
+        Authorization: `Bearer ${this.accessToken}`,
       },
     }
 
@@ -79,8 +75,11 @@ export class DocumentClient {
       const errMsg = 'Failed to get from Postholf'
       const error = e.toJSON()
       const description = error.message
-      const message = [errMsg, error, description].filter(Boolean).join(' - ')
-      throw new Error(message)
+      this.logger.error(errMsg, {
+        message: description,
+      })
+
+      return null
     }
   }
 
@@ -127,11 +126,10 @@ export class DocumentClient {
 
   async customersDocument(
     requestParameters: CustomersDocumentRequest,
-    auth?: string,
   ): Promise<DocumentDTO | null> {
     const { kennitala, messageId, authenticationType } = requestParameters
     const requestRoute = `/api/mail/v1/customers/${kennitala}/messages/${messageId}?authenticationType=${authenticationType}`
-    return await this.getRequest<DocumentDTO>(requestRoute, auth)
+    return await this.getRequest<DocumentDTO>(requestRoute)
   }
 
   async customersCategories(
