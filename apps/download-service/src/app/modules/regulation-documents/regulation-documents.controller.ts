@@ -68,12 +68,10 @@ export class RegulationDocumentsController {
 
     const input: RegulationPdfInput = {
       title: draftRegulation.title,
-      // FIXME: When downloading PDF for publication, we must also append `draftRegulation.signatureText`
       text: draftRegulation.text,
       appendixes: draftRegulation.appendixes,
       comments: draftRegulation.comments,
       name: draftRegulation.name,
-      // FIXME: Don't include `idealPublishDate` when downloading PDF for signature
       publishedDate: draftRegulation.idealPublishDate,
     }
 

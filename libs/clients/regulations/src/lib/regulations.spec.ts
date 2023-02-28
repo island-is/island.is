@@ -7,7 +7,7 @@ import { RegulationViewTypes } from '@island.is/regulations/web'
 import { demoRegulation } from './regulations.mocks'
 
 // MOCK START
-enum expectedResult {
+enum ExpectedResult {
   SUCCESS = 'success',
   NOT_FOUND = 'notFound',
   EMPTY = 'empty',
@@ -20,27 +20,27 @@ type RegulationRestResponse = {
 
 // we use ssn param to define success or error case here
 const createRegulationResponse = (
-  condition: expectedResult,
+  condition: ExpectedResult,
 ): RegulationRestResponse => {
   switch (condition) {
-    case expectedResult.SUCCESS: {
+    case ExpectedResult.SUCCESS: {
       return {
         status: 200,
         body: { demoRegulation },
       }
     }
-    case expectedResult.EMPTY: {
+    case ExpectedResult.EMPTY: {
       return {
         status: 200,
         body: {},
       }
     }
-    case expectedResult.SERVER_ERROR: {
+    case ExpectedResult.SERVER_ERROR: {
       return {
         status: 500,
       }
     }
-    case expectedResult.NOT_FOUND:
+    case ExpectedResult.NOT_FOUND:
     default: {
       return {
         status: 404,
@@ -67,7 +67,7 @@ const handlers = [
 startMocking(handlers)
 // MOCK END
 
-const getNestModule = async (condition: expectedResult) => {
+const getNestModule = async (condition: ExpectedResult) => {
   const moduleRef = await Test.createTestingModule({
     providers: [
       RegulationsService,
@@ -87,7 +87,7 @@ describe('getRegulation', () => {
   let regulationsService: RegulationsService
 
   beforeEach(async () => {
-    regulationsService = await getNestModule(expectedResult.SUCCESS)
+    regulationsService = await getNestModule(ExpectedResult.SUCCESS)
   })
 
   it('should throw on error', async () => {
@@ -96,7 +96,7 @@ describe('getRegulation', () => {
     // @ts-expect-error  (testing bad input)
     const badName: RegQueryName = 'NNNN-NNNN'
     // @ts-expect-error  (testing bad input)
-    const watName: RegQueryName = expectedResult.SERVER_ERROR
+    const watName: RegQueryName = ExpectedResult.SERVER_ERROR
 
     await expect(
       regulationsService.getRegulation(RegulationViewTypes.original, emptyName),

@@ -129,11 +129,6 @@ export class RegulationsService extends RESTDataSource {
     name: RegQueryName,
     date?: ISODate,
   ): Promise<Regulation | RegulationDiff | RegulationRedirect | null> {
-    const url = buildRegulationApiPath({
-      name,
-      viewType,
-      date,
-    })
     const response = await this.get<
       Regulation | RegulationDiff | RegulationRedirect | null
     >(

@@ -169,7 +169,6 @@ export class RegulationsAdminResolver {
       return null
     }
 
-    // FIXME: Find out a more lightweight way of checking if a `draftId` is valid.
     const draftRegulation = await this.regulationsAdminClientService.getDraftRegulation(
       input.draftId,
       authorization,
