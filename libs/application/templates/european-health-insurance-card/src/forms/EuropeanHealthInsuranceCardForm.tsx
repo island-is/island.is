@@ -35,6 +35,7 @@ import {
   someHavePlasticButNotPdf,
   someHavePDF,
   someCanApplyForPlasticOrPdf,
+  someAreNotInsured,
 } from '../lib/helpers/applicantHelper'
 
 /* eslint-disable-next-line */
@@ -145,7 +146,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               },
             }),
             buildCheckboxField({
-              id: 'notApplicable',
+              id: 'havePdf',
               backgroundColor: 'white',
               title: 'Eiga pdf',
               condition: (_, externalData) => someHavePDF(externalData),
@@ -168,7 +169,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               id: 'notApplicable',
               backgroundColor: 'white',
               title: 'Eru ekki sjúkratryggðir',
-              condition: (_, externalData) => someHavePDF(externalData),
+              condition: (_, externalData) => someAreNotInsured(externalData),
               options: (application: Application) => {
                 console.log(application, 'notApplicable')
                 const applying: Array<any> = []

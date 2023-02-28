@@ -195,6 +195,17 @@ export function someHavePlasticButNotPdf(externalData: ExternalData): boolean {
   return false
 }
 
+export function someAreNotInsured(externalData: ExternalData): boolean {
+  if (externalData?.cardResponse?.data) {
+    const cardResponse = externalData?.cardResponse?.data as CardResponse[]
+    const ret = cardResponse.find((x) => !x.isInsured)
+    if (ret) {
+      return true
+    }
+  }
+  return false
+}
+
 export function getEhicResponse(
   application: Application<FormValue>,
 ): CardResponse[] {
