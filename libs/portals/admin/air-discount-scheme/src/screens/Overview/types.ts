@@ -1,10 +1,3 @@
-import {
-  AirDiscountSchemeFlightLegGender,
-  AirDiscountSchemeFlightLegState,
-  AirDiscountSchemePeriodInput,
-  AirDiscountSchemeRangeInput,
-  AirDiscountSchemeTravelInput,
-} from '@island.is/api/schema'
 import { FlightLegsQuery } from './Overview.generated'
 
 export type TItem = {
@@ -19,18 +12,6 @@ export type TSummary = {
   sentDebit: TItem
   sentCredit: TItem
   cancelled: TItem
-}
-
-export type FlightLegsFilters = {
-  airline?: { value: string }
-  flightLeg?: AirDiscountSchemeTravelInput
-  period: AirDiscountSchemePeriodInput
-  state?: AirDiscountSchemeFlightLegState[]
-  age?: AirDiscountSchemeRangeInput
-  gender?: { value: AirDiscountSchemeFlightLegGender | '' }
-  postalCode?: number
-  nationalId?: string
-  isExplicit?: string
 }
 
 export type FlightLeg = FlightLegsQuery['airDiscountSchemeFlightLegs'] extends Array<
