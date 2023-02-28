@@ -487,12 +487,11 @@ export const getSelectedChild = (
   externalData: ExternalData,
 ): ChildInformation | null => {
   const { selectedChild: selectedChildIndex } = getApplicationAnswers(answers)
-  const selectedChild =
-    getValueViaPath(
-      externalData,
-      `children.data.children[${selectedChildIndex}]`,
-      null,
-    ) as ChildInformation | null
+  const selectedChild = getValueViaPath(
+    externalData,
+    `children.data.children[${selectedChildIndex}]`,
+    null,
+  ) as ChildInformation | null
 
   return selectedChild
 }

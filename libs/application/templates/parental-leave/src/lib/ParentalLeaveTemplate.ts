@@ -361,11 +361,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'payments',
                   'firstPeriodStart',
                 ],
-                externalData: [
-                  'children',
-                  'navId',
-                  'sendApplication',
-                ],
+                externalData: ['children', 'navId', 'sendApplication'],
               },
               write: {
                 answers: [
@@ -937,11 +933,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'payments',
                   'firstPeriodStart',
                 ],
-                externalData: [
-                  'children',
-                  'navId',
-                  'sendApplication',
-                ],
+                externalData: ['children', 'navId', 'sendApplication'],
               },
               write: {
                 answers: [
