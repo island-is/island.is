@@ -59,10 +59,8 @@ export const ValidationErrorMessages: FC<FieldBaseProps> = (props) => {
   )
 
   useEffect(() => {
-    setFieldLoadingState?.(
-      loading || data?.vehicleOwnerChangeValidation?.hasError,
-    )
-  }, [loading, data?.vehicleOwnerChangeValidation?.hasError])
+    setFieldLoadingState?.(loading)
+  }, [loading])
 
   return data?.vehicleOwnerChangeValidation?.hasError &&
     data.vehicleOwnerChangeValidation.errorMessages.length > 0 ? (
