@@ -3,6 +3,10 @@ import { AdminPortalScope } from '@island.is/auth/scopes'
 import { PortalModule } from '@island.is/portals/core'
 import { RegulationsAdminPaths } from './lib/paths'
 
+const Home = lazy(() => import('./screens/Home'))
+const Edit = lazy(() => import('./screens/Edit'))
+const Ministries = lazy(() => import('./screens/Ministries'))
+
 const creationScopes = {
   [AdminPortalScope.regulationAdmin]: true,
   [AdminPortalScope.regulationAdminManage]: true,
@@ -21,25 +25,25 @@ export const regulationAdminModule: PortalModule = {
         name: 'Reglugerðir — vinnslusvæði',
         path: RegulationsAdminPaths.RegulationsAdminRoot,
         enabled: mayCreate,
-        render: () => lazy(() => import('./screens/Home')),
+        element: <Home />,
       },
       {
         name: 'Skrá nýja reglugerð',
         path: RegulationsAdminPaths.RegulationsAdminEdit,
         enabled: mayCreate,
-        render: () => lazy(() => import('./screens/Edit')),
+        element: <Edit userInfo={userInfo} />,
       },
       {
         name: 'Skrá nýja reglugerð',
         path: RegulationsAdminPaths.RegulationsAdminEditStep,
         enabled: mayCreate,
-        render: () => lazy(() => import('./screens/Edit')),
+        element: <Edit userInfo={userInfo} />,
       },
       {
         name: 'Ráðuneyti',
         path: RegulationsAdminPaths.RegulationsAdminMinistries,
         enabled: mayManage,
-        render: () => lazy(() => import('./screens/Ministries')),
+        element: <Ministries />,
       },
     ]
   },
