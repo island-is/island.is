@@ -120,7 +120,12 @@ export const DialogPrompt = ({
               )}
               {hasButtons && (
                 <GridColumn span="8/8">
-                  <Box marginTop={4} display="flex" flexDirection="row" justifyContent={'spaceBetween'}>
+                  <Box
+                    marginTop={4}
+                    display="flex"
+                    flexDirection="row"
+                    justifyContent={'spaceBetween'}
+                  >
                     <Box paddingRight={2}>
                       {buttonTextCancel && (
                         <Button
