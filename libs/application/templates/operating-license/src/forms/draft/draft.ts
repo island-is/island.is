@@ -24,6 +24,7 @@ import { subSectionOpeningHours } from './subSectionOpeningHours'
 import { subSectionOtherInfo } from './subSectionOtherInfo'
 import { sectionOverview } from './sectionOverview'
 import {
+  JudicialAdministrationApi,
   CriminalRecordApi,
   NoDebtCertificateApi,
   SyslumadurPaymentCatalogApi,
@@ -60,8 +61,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                 subTitle: m.dataCollectionDebtStatusSubtitle,
               }),
               buildDataProviderItem({
-                id: 'courtBankruptcyCertificate',
-                type: '',
+                provider: JudicialAdministrationApi,
                 title: m.dataCollectionNonBankruptcyDisclosureTitle,
                 subTitle: m.dataCollectionNonBankruptcyDisclosureSubtitle,
               }),
@@ -160,7 +160,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
               }),
               buildDescriptionField({
                 id: 'overview.attachments.five',
-                title: attachmentNames.four,
+                title: attachmentNames.five,
                 titleVariant: 'h3',
                 space: 'gutter',
               }),

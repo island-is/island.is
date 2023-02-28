@@ -13,7 +13,11 @@ import {
   StaticTextObject,
 } from '@island.is/application/types'
 import { StartDateOptions, YES, NO } from '../../constants'
-import { getExpectedDateOfBirth } from '../parentalLeaveUtils'
+import {
+  getApplicationExternalData,
+  getExpectedDateOfBirth,
+  residentGrantIsOpenForApplication,
+} from '../parentalLeaveUtils'
 import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
   minimumRatio,
@@ -24,7 +28,7 @@ import {
 import { errorMessages } from '../messages'
 import { calculatePeriodLength } from '../directorateOfLabour.utils'
 
-import { Period } from '../../types'
+import { ChildInformation, Period } from '../../types'
 import { MessageDescriptor } from 'react-intl'
 
 const hasBeenAnswered = (answer: unknown) => answer !== undefined
@@ -270,4 +274,20 @@ export const validatePeriod = (
       return buildError('ratio', errorMessages.periodsRatioAboveMaximum)
     }
   }
+}
+
+export const showResidenceGrant = (application: Application) => {
+  const { children } = getApplicationExternalData(application.externalData)
+  const childrenData = (children as unknown) as ChildInformation[]
+  if (
+    childrenData?.length &&
+    childrenData[0]?.parentalRelation?.match('primary')
+  )
+    return true
+  return false
+}
+
+export const disableResidenceGrantApplication = (dateOfBirth: string) => {
+  if (!residentGrantIsOpenForApplication(dateOfBirth)) return false
+  return true
 }
