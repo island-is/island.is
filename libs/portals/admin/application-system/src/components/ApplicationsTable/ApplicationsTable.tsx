@@ -1,5 +1,6 @@
 import {
   Box,
+  Drawer,
   Icon,
   Pagination,
   Table as T,
@@ -13,6 +14,7 @@ import { useCallback, useState } from 'react'
 import { m } from '../../lib/messages'
 import { statusMapper } from '../../shared/utils'
 import { AdminApplication } from '../../types/applications'
+import { ApplicationDetails } from '../ApplicationDetails/ApplicationDetails'
 
 interface Props {
   applications: AdminApplication[]
@@ -87,9 +89,23 @@ export const ApplicationsTable = ({ applications }: Props) => {
                       justifyContent="flexEnd"
                     >
                       <Tooltip text={formatMessage(m.openApplication)}>
-                        <button aria-label={formatMessage(m.openApplication)}>
-                          <Icon type="outline" color="blue400" icon="copy" />
-                        </button>
+                        <Drawer
+                          ariaLabel={`test-${index}`}
+                          baseId={`application-drawer-${index}`}
+                          disclosure={
+                            <button
+                              aria-label={formatMessage(m.openApplication)}
+                            >
+                              <Icon
+                                type="outline"
+                                color="blue400"
+                                icon="copy"
+                              />
+                            </button>
+                          }
+                        >
+                          <ApplicationDetails application={application} />
+                        </Drawer>
                       </Tooltip>
                     </Box>
                   </T.Data>
