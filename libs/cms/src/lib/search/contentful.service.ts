@@ -253,7 +253,7 @@ export class ContentfulService {
     })
 
     // get all sync entries from Contentful endpoints for this locale, we could parse the sync response into locales but we are opting for this for simplicity
-    const items = await this.getPopulatedContentulEntries(
+    const indexableEntries = await this.getPopulatedContentulEntries(
       entries.filter((entry) =>
         // Only populate the indexable entries
         environment.indexableTypes.includes(entry.sys.id),
@@ -266,9 +266,7 @@ export class ContentfulService {
     const deletedEntryIds = deletedEntries.map((entry) => entry.sys.id)
 
     return {
-      indexableEntryMap: new Map<string, Entry<unknown>>(
-        items.map((item) => [item.sys.id, item]),
-      ),
+      indexableEntries,
       nestedEntryIds,
       deletedEntryIds,
       newNextSyncToken,
@@ -297,7 +295,7 @@ export class ContentfulService {
     )
 
     const {
-      indexableEntryMap,
+      indexableEntries,
       newNextSyncToken,
       deletedEntryIds,
     } = populatedSyncEntriesResult
@@ -337,7 +335,11 @@ export class ContentfulService {
           for (const linkedEntry of linkedEntries) {
             counter += 1
             if (environment.indexableTypes.includes(linkedEntry.sys.id)) {
-              indexableEntryMap.set(linkedEntry.sys.id, linkedEntry)
+              const entryAlreadyListed =
+                indexableEntries.findIndex(
+                  (entry) => entry.sys.id === linkedEntry.sys.id,
+                ) >= 0
+              if (!entryAlreadyListed) indexableEntries.push(linkedEntry)
             }
             if (environment.nestedContentTypes.includes(linkedEntry.sys.id)) {
               nextLevelOfNestedEntryIds.add(linkedEntry.sys.id)
@@ -345,7 +347,7 @@ export class ContentfulService {
           }
         }
 
-        // Next round of the loop will only find linked entries to the non indexable entries
+        // Next round of the loop will only find linked entries to nested entries
         nestedEntryIds = Array.from(nextLevelOfNestedEntryIds)
         logger.info(`Found ${counter} nested entries at depth ${i + 1}`)
       }
@@ -353,7 +355,7 @@ export class ContentfulService {
 
     return {
       token: newNextSyncToken,
-      items: Array.from(indexableEntryMap.values()),
+      items: indexableEntries,
       deletedEntryIds,
       elasticIndex,
     }
