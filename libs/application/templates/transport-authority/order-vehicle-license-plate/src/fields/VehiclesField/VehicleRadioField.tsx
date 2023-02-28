@@ -4,20 +4,16 @@ import {
   Bullet,
   BulletList,
   InputError,
-  SkeletonLoader,
   Text,
 } from '@island.is/island-ui/core'
 import { FC, useState } from 'react'
-import { VehiclesCurrentVehicle } from '../../shared'
 import { RadioController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { gql, useQuery } from '@apollo/client'
-import { GET_CURRENT_VEHICLES_WITH_PLATE_ORDER_CHECKS } from '../../graphql/queries'
-import { VehiclesCurrentVehicleWithPlateOrderChecks } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { error, information } from '../../lib/messages'
+import { VehiclesCurrentVehicleWithPlateOrderChecks } from '../../shared'
 
 interface Option {
   value: string
@@ -26,7 +22,7 @@ interface Option {
 }
 
 interface VehicleSearchFieldProps {
-  currentVehicleList: VehiclesCurrentVehicle[]
+  currentVehicleList: VehiclesCurrentVehicleWithPlateOrderChecks[]
 }
 
 export const VehicleRadioField: FC<
@@ -44,28 +40,13 @@ export const VehicleRadioField: FC<
     setPlate(currentVehicle.permno || '')
   }
 
-  const { data, loading } = useQuery(
-    gql`
-      ${GET_CURRENT_VEHICLES_WITH_PLATE_ORDER_CHECKS}
-    `,
-    {
-      variables: {
-        input: {
-          showOwned: true,
-          showCoOwned: false,
-          showOperated: false,
-        },
-      },
-    },
-  )
-
   const vehicleOptions = (
     vehicles: VehiclesCurrentVehicleWithPlateOrderChecks[],
   ) => {
     const options = [] as Option[]
 
     for (const [index, vehicle] of vehicles.entries()) {
-      const disabled = !!vehicle.duplicateOrderExists
+      const disabled = !!vehicle.validationErrorMessages?.length
       options.push({
         value: `${index}`,
         label: (
@@ -88,14 +69,22 @@ export const VehicleRadioField: FC<
                   message={
                     <Box>
                       <BulletList>
-                        {vehicle.duplicateOrderExists && (
-                          <Bullet>
-                            {formatMessage(
-                              information.labels.pickVehicle
-                                .duplicateOrderExistsTag,
-                            )}
-                          </Bullet>
-                        )}
+                        {!!vehicle.validationErrorMessages?.length &&
+                          vehicle.validationErrorMessages?.map((err) => {
+                            const defaultMessage = err.defaultMessage
+                            const fallbackMessage =
+                              formatMessage(
+                                error.validationFallbackErrorMessage,
+                              ) +
+                              ' - ' +
+                              err.errorNo
+
+                            return (
+                              <Bullet>
+                                {defaultMessage || fallbackMessage}
+                              </Bullet>
+                            )
+                          })}
                       </BulletList>
                     </Box>
                   }
@@ -112,24 +101,15 @@ export const VehicleRadioField: FC<
 
   return (
     <div>
-      {loading ? (
-        <SkeletonLoader
-          height={100}
-          space={2}
-          repeat={currentVehicleList.length}
-          borderRadius="large"
-        />
-      ) : (
-        <RadioController
-          id="pickVehicle.vehicle"
-          largeButtons
-          backgroundColor="blue"
-          onSelect={onRadioControllerSelect}
-          options={vehicleOptions(
-            data.currentVehiclesWithPlateOrderChecks as VehiclesCurrentVehicleWithPlateOrderChecks[],
-          )}
-        />
-      )}
+      <RadioController
+        id="pickVehicle.vehicle"
+        largeButtons
+        backgroundColor="blue"
+        onSelect={onRadioControllerSelect}
+        options={vehicleOptions(
+          currentVehicleList as VehiclesCurrentVehicleWithPlateOrderChecks[],
+        )}
+      />
       <input
         type="hidden"
         value={plate}

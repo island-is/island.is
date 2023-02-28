@@ -93,10 +93,12 @@ import { AirDiscountSchemeClientConfig } from '@island.is/clients/air-discount-s
 import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financial-statements-inao'
 import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
 import { PaymentScheduleClientConfig } from '@island.is/clients/payment-schedule'
+import { JudicialAdministrationClientConfig } from '@island.is/clients/judicial-administration'
 import { DataLoaderInterceptor } from '@island.is/nest/dataloader'
 import { SessionsModule } from '@island.is/api/domains/sessions'
 import { CommunicationsConfig } from '@island.is/api/domains/communications'
 import { SessionsApiClientConfig } from '@island.is/clients/sessions'
+import { AuthAdminModule } from '@island.is/api/domains/auth-admin'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -261,6 +263,7 @@ const autoSchemaFile = environment.production
     MortgageCertificateModule,
     TransportAuthorityApiModule,
     SessionsModule,
+    AuthAdminModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -300,6 +303,7 @@ const autoSchemaFile = environment.production
         DisabilityLicenseClientConfig,
         ZenterSignupConfig,
         PaymentScheduleClientConfig,
+        JudicialAdministrationClientConfig,
         CommunicationsConfig,
         SessionsApiClientConfig,
       ],

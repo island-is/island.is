@@ -1,4 +1,4 @@
-const Types = {
+export const Types = {
   policyAreas: {
     '84': 'Almanna- og réttaröryggi',
     '85': 'Almennur varasjóður og sértækar fjárráðstafanir',

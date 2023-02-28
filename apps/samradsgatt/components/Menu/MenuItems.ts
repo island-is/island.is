@@ -7,7 +7,6 @@ export const menuItems = [
     label: 'Áskriftir',
     href: '/askriftir',
   },
-
   {
     label: 'Tölfræði',
     href: '/tolfraedi',

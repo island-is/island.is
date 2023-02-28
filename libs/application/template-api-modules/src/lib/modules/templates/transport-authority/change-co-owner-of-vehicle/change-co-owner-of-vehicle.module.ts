@@ -15,6 +15,14 @@ import {
   ChargeFjsV2ClientConfig,
   ChargeFjsV2ClientModule,
 } from '@island.is/clients/charge-fjs-v2'
+import {
+  VehicleServiceFjsV1ClientModule,
+  VehicleServiceFjsV1ClientConfig,
+} from '@island.is/clients/vehicle-service-fjs-v1'
+import {
+  VehiclesClientModule,
+  VehiclesClientConfig,
+} from '@island.is/clients/vehicles'
 
 export class ChangeCoOwnerOfVehicleModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -25,12 +33,16 @@ export class ChangeCoOwnerOfVehicleModule {
         VehicleOwnerChangeClientModule,
         VehicleOperatorsClientModule,
         ChargeFjsV2ClientModule,
+        VehicleServiceFjsV1ClientModule,
+        VehiclesClientModule,
         ConfigModule.forRoot({
           isGlobal: true,
           load: [
             VehicleOwnerChangeClientConfig,
             VehicleOperatorsClientConfig,
             ChargeFjsV2ClientConfig,
+            VehicleServiceFjsV1ClientConfig,
+            VehiclesClientConfig,
           ],
         }),
       ],
