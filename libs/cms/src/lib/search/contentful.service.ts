@@ -256,7 +256,7 @@ export class ContentfulService {
     const indexableEntries = await this.getPopulatedContentulEntries(
       entries.filter((entry) =>
         // Only populate the indexable entries
-        environment.indexableTypes.includes(entry.sys.id),
+        environment.indexableTypes.includes(entry.sys.contentType.sys.id),
       ),
       locale,
       chunkSize,
@@ -301,7 +301,7 @@ export class ContentfulService {
     } = populatedSyncEntriesResult
     let { nestedEntryIds } = populatedSyncEntriesResult
 
-    const isDeltaUpdate = syncType !== 'full' && nestedEntryIds.length > 0
+    const isDeltaUpdate = syncType !== 'full'
 
     // In case of delta updates, we need to resolve embedded entries to their root model
     if (isDeltaUpdate) {
@@ -310,6 +310,8 @@ export class ContentfulService {
       const visitedEntryIds = new Set<string>()
 
       for (let i = 0; i < this.defaultIncludeDepth; i += 1) {
+        if (nestedEntryIds.length <= 0) break
+
         const nextLevelOfNestedEntryIds = new Set<string>()
 
         const promises: Promise<Entry<unknown>[]>[] = []
@@ -334,14 +336,22 @@ export class ContentfulService {
         for (const linkedEntries of responses) {
           for (const linkedEntry of linkedEntries) {
             counter += 1
-            if (environment.indexableTypes.includes(linkedEntry.sys.id)) {
+            if (
+              environment.indexableTypes.includes(
+                linkedEntry.sys.contentType.sys.id,
+              )
+            ) {
               const entryAlreadyListed =
                 indexableEntries.findIndex(
                   (entry) => entry.sys.id === linkedEntry.sys.id,
                 ) >= 0
               if (!entryAlreadyListed) indexableEntries.push(linkedEntry)
             }
-            if (environment.nestedContentTypes.includes(linkedEntry.sys.id)) {
+            if (
+              environment.nestedContentTypes.includes(
+                linkedEntry.sys.contentType.sys.id,
+              )
+            ) {
               nextLevelOfNestedEntryIds.add(linkedEntry.sys.id)
             }
           }
