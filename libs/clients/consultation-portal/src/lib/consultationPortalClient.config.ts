@@ -11,7 +11,10 @@ export const ConsultationPortalClientConfig = defineConfig({
   schema,
   load(env) {
     return {
-      basePath: env.required('CONSULTATION_PORTAL_CLIENT_BASE_PATH'),
+      basePath: env.required(
+        'CONSULTATION_PORTAL_CLIENT_BASE_PATH',
+        'https://samradapi-test.island.is',
+      ),
 
       cacheControl:
         env.optional('CONSULTATION_PORTAL_CLIENT_CACHE_CONTROL') ??
