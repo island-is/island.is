@@ -30,9 +30,9 @@ export const GET_VEHICLE_OWNERCHANGE_CHECKS_BY_PERMNO = `
   } 
 `
 
-export const VALIDATE_VEHICLE_OWNER_CHANGE = `
-  query GetVehicleOwnerChangeValidation($answers: OwnerChangeAnswers!) {
-    vehicleOwnerChangeValidation(answers: $answers) {
+export const VALIDATE_VEHICLE_CO_OWNER_CHANGE = `
+  query GetVehicleCoOwnerChangeValidation($answers: CoOwnerChangeAnswers!) {
+    vehicleCoOwnerChangeValidation(answers: $answers) {
       hasError
       errorMessages {
         errorNo

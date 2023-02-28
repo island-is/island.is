@@ -87,6 +87,11 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
         prod: 'https://island.is/umsoknir',
         local: 'http://localhost:4200/umsoknir',
       },
+      XROAD_COURT_BANKRUPTCY_CERT_PATH: {
+        dev: 'IS-DEV/GOV/10019/Domstolasyslan-DEV/Domstolasyslan',
+        staging: 'IS-DEV/GOV/10019/Domstolasyslan-DEV/Domstolasyslan',
+        prod: 'IS/GOV/4707171140/Domstolasyslan-PROD-1/Domstolasyslan',
+      },
     })
     .xroad(Base, Client, Payment)
     .secrets({
