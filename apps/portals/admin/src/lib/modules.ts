@@ -4,6 +4,7 @@ import { regulationAdminModule } from '@island.is/portals/admin/regulations-admi
 import { PortalModule } from '@island.is/portals/core'
 import { icelandicNamesRegistryModule } from '@island.is/portals/admin/icelandic-names-registry'
 import { documentProviderModule } from '@island.is/portals/admin/document-provider'
+import { idsAdminModule } from '@island.is/portals/admin/ids-admin'
 
 /**
  * NOTE:
@@ -18,4 +19,5 @@ export const modules: PortalModule[] = [
   regulationAdminModule,
   icelandicNamesRegistryModule,
   documentProviderModule,
+  idsAdminModule,
 ]
