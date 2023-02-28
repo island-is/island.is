@@ -118,6 +118,7 @@ export interface IdentityDocumentData {
 
 export const twoDays = 24 * 3600 * 1000 * 2
 export const sixtyDays = 24 * 3600 * 1000 * 60
+export const sevenDays = 24 * 3600 * 1000 * 7
 
 export const IdentityDocumentProviderMock = {
   productionRequestID: '3fa85f64-5717-4562-b3fc-2c963f66afa6',

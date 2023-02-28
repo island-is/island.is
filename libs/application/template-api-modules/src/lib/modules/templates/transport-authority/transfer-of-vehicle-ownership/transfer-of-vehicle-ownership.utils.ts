@@ -96,9 +96,11 @@ export const getRecipients = (
       approved: answers.buyer.approved,
     })
   }
-
+  const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
+    ({ wasRemoved }) => wasRemoved !== 'true',
+  )
   // Buyer's co-owners
-  const buyerCoOwners = answers.buyerCoOwnerAndOperator?.filter(
+  const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(
     (x) => x.type === 'coOwner',
   )
   if (roles.includes(EmailRole.buyerCoOwner) && buyerCoOwners) {
@@ -115,7 +117,7 @@ export const getRecipients = (
   }
 
   // Buyer's operators
-  const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
+  const buyerOperators = filteredBuyerCoOwnerAndOperator?.filter(
     (x) => x.type === 'operator',
   )
   if (roles.includes(EmailRole.buyerOperator) && buyerOperators) {
@@ -178,9 +180,11 @@ export const getRecipientBySsn = (
       approved: answers.buyer.approved,
     }
   }
-
+  const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
+    ({ wasRemoved }) => wasRemoved !== 'true',
+  )
   // Buyer's co-owners
-  const buyerCoOwners = answers.buyerCoOwnerAndOperator?.filter(
+  const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(
     (x) => x.type === 'coOwner',
   )
   if (buyerCoOwners) {
@@ -199,7 +203,7 @@ export const getRecipientBySsn = (
   }
 
   // Buyer's operators
-  const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
+  const buyerOperators = filteredBuyerCoOwnerAndOperator?.filter(
     (x) => x.type === 'operator',
   )
   if (buyerOperators) {

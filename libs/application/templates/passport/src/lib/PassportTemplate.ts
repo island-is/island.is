@@ -23,6 +23,7 @@ import {
   ApiActions,
   Events,
   Roles,
+  sevenDays,
   sixtyDays,
   States,
   twoDays,
@@ -133,7 +134,7 @@ const PassportTemplate: ApplicationTemplate<
           name: 'ParentB',
           status: 'inprogress',
           progress: 0.9,
-          lifecycle: pruneAfter(sixtyDays),
+          lifecycle: pruneAfter(sevenDays),
           onEntry: defineTemplateApi({
             action: ApiActions.assignParentB,
           }),

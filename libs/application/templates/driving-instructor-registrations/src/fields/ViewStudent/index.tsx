@@ -231,6 +231,8 @@ const ViewStudent = ({
 
     if (res && res.data.drivingLicenseBookAllowPracticeDriving.success) {
       resetFields('allow')
+    } else {
+      toast.error(formatMessage(m.errorOnAllowPracticeDriving))
     }
   }
 
@@ -279,7 +281,9 @@ const ViewStudent = ({
                 {formatMessage(m.viewStudentCompleteHours)}
               </Text>
               <Text variant="default">
-                {student.book?.totalLessonCount ?? 0}
+                {student.book?.totalLessonCount % 2 === 0
+                  ? student.book?.totalLessonCount
+                  : student.book?.totalLessonCount.toFixed(2) ?? 0}
               </Text>
             </GridColumn>
             {/* Practice driving */}

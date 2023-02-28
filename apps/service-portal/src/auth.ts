@@ -31,6 +31,7 @@ if (userMocked) {
     baseUrl: `${window.location.origin}/minarsidur`,
     redirectPath: '/signin-oidc',
     redirectPathSilent: '/silent/signin-oidc',
+    initiateLoginPath: '/login',
     switchUserRedirectUrl: '/',
     authority: environment.identityServer.authority,
     client_id: '@island.is/web',

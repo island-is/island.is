@@ -230,6 +230,18 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Hætta við',
     description: 'Delete application dialog cancel',
   },
+  openServicePortalMessageText: {
+    id: 'application.system:openServicePortal.messageText',
+    defaultMessage:
+      'Upplýsingar í mínum síðum og í appi hefur þú aðgang að margvíslegum upplýsingum s.s stafrænt pósthólf, þínar upplýsingar, fjármál, umsóknir, menntun, fasteignir, ökutæki, skírteini, starfsleyfi ofl.',
+    description:
+      'Text for form builder component left side of button to go to the service portal',
+  },
+  openServicePortalButtonTitle: {
+    id: 'application.system:openServicePortal.buttonTitle',
+    defaultMessage: 'Áfram',
+    description: 'Button text for form builder component, go to service portal',
+  },
 })
 
 export const coreErrorMessages = defineMessages({
@@ -246,6 +258,12 @@ export const coreErrorMessages = defineMessages({
   errorDataProvider: {
     id: 'application.system:core.error.dataProvider',
     defaultMessage: 'Úps! Eitthvað fór úrskeiðis við að sækja gögnin þín',
+    description: 'Oops! Something went wrong when fetching your data',
+  },
+  errorDataProviderMaritalStatus: {
+    id: 'application.system:core.error.dataProviderMaritalStatus',
+    defaultMessage:
+      'Núverandi hjúskaparstaða þín leyfir þér ekki að halda áfram með þessa umsókn. Vinsamlega hafðu samband við Sýslumanninn í Vestmannaeyjum fyrir nánari upplýsingar.',
     description: 'Oops! Something went wrong when fetching your data',
   },
   fileUpload: {
@@ -403,27 +421,6 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Ekki fundust nein ökutæki',
     description: 'Did not find any vehicles',
   },
-  dataCollectionCriminalRecordErrorTitle: {
-    id: 'ol.application:missingCriominalRecordTitle',
-    defaultMessage: 'Skilyrði um hreina sakaskrá er ekki uppfyllt',
-    description: '',
-  },
-  dataCollectionCriminalRecordTitle: {
-    id: 'ol.application:dataCollection.criminalRecordTitle',
-    defaultMessage: 'Sakaskrá ríkisins',
-    description: 'Some description',
-  },
-  missingCertificateTitle: {
-    id: 'ndc.application:missingCertificateTitle',
-    defaultMessage: 'Ekki tókst að staðfesta skuldleysi',
-    description: '',
-  },
-  missingCertificateSummary: {
-    id: 'ndc.application:missingCertificateSummary',
-    defaultMessage:
-      'Staðfesting á skuldleysi fékkst ekki úr gagnagrunni Fjársýslu ríkisins',
-    description: '',
-  },
   drivingLicenseMissingValidCategory: {
     id: 'application.system:core.fetch.data.drivingLicenseMissingValidCategory',
     defaultMessage:
@@ -437,10 +434,27 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Þú ert ekki með lögheimili á Íslandi',
     description: 'You do not have a domicile in Iceland',
   },
+  nationalRegistryAgeNotValid: {
+    id: 'application.system:core.fetch.data.nationalRegistryAgeNotValid',
+    defaultMessage: 'Þú hefur ekki náð tilskyldum aldri fyrir þessa umsókn',
+    description: 'You are not old enough to apply for this application',
+  },
+  nationalRegistryAgeNotValidDescription: {
+    id:
+      'application.system:core.fetch.data.nationalRegistryAgeNotValidDescription',
+    defaultMessage: 'Þú hefur ekki náð tilskyldum aldri fyrir þessa umsókn',
+    description: 'You are not old enough to apply for this application',
+  },
   nationalRegistryBirthplaceMissing: {
     id: 'application.system:core.fetch.data.nationalRegistryBirthplaceMissing',
     defaultMessage: 'Náði ekki að sækja fæðingarstað',
     description: 'Not able to fetch birthplace',
+  },
+
+  applicationIsPrunedAndReadOnly: {
+    id: 'application.system:core.fetch.data.applicationIsPrunedAndReadOnly',
+    defaultMessage: 'Umsókn hefur runnið út á tíma og hefur verið gerð óvirk.',
+    description: 'Application has been pruned and is not editable',
   },
   nationalIdNotFoundInNationalRegistryTitle: {
     id:
@@ -514,5 +528,86 @@ export const coreDelegationsMessages = defineMessages({
     id: 'application.system:core.delegations.delegationErrorButton',
     defaultMessage: 'Skipta um notanda',
     description: 'Delegations Screen Card Button/Link',
+  },
+})
+
+export const coreErrorScreenMessages = defineMessages({
+  notFoundTitle: {
+    id: 'application.system:core.errorScreen.notFoundTitle',
+    defaultMessage: 'Umsókn fannst ekki',
+    description: 'Error screen title',
+  },
+  notFoundSubTitle: {
+    id: 'application.system:core.errorScreen.notFoundSubTitle',
+    defaultMessage:
+      'Eftirfarandi ástæður geta verið fyrir því að umsóknin fannst ekki',
+    description: 'Error screen subtitle',
+  },
+  notFoundDescription: {
+    id: 'application.system:core.errorScreen.notFoundDescription#markdown',
+    defaultMessage: `* Þú ert á rangri slóð\n`,
+    description: 'Error screen description',
+  },
+  forbiddenTitle: {
+    id: 'application.system:core.errorScreen.forbiddenTitle',
+    defaultMessage: 'Þú hefur ekki aðgang að viðkomandi umsókn',
+    description: 'Error screen title',
+  },
+  forbiddenSubTitle: {
+    id: 'application.system:core.errorScreen.forbiddenSubTitle',
+    defaultMessage:
+      'Eftirfarandi ástæður geta verið fyrir því að umsóknin fannst ekki',
+    description: 'Error screen subtitle',
+  },
+  forbiddenDescription: {
+    id: 'application.system:core.errorScreen.forbiddenDescription#markdown',
+    defaultMessage: `* Þú ert ekki með aðgang að umsókninni\n* Umsóknin er full kláruð`,
+    description: 'Error screen description',
+  },
+  notExistTitle: {
+    id: 'application.system:core.errorScreen.notExistTitle',
+    defaultMessage: 'Umsóknartegund ekki til',
+    description: 'Error screen title',
+  },
+  notExistSubTitle: {
+    id: 'application.system:core.errorScreen.notExistSubTitle',
+    defaultMessage:
+      'Eftirfarandi ástæður geta verið fyrir því að umsóknin fannst ekki',
+    description: 'Error screen subtitle',
+  },
+  notExistDescription: {
+    id: 'application.system:core.errorScreen.notExistDescription#markdown',
+    defaultMessage: `* Þú ert á rangri slóð\n`,
+  },
+  lostTitle: {
+    id: 'application.system:core.errorScreen.lostTitle',
+    defaultMessage: 'Umsókn týnd - Ekki til',
+    description: 'Error screen title',
+  },
+  lostSubTitle: {
+    id: 'application.system:core.errorScreen.lostSubTitle',
+    defaultMessage:
+      'Eftirfarandi ástæður geta verið fyrir því að umsóknin fannst ekki',
+    description: 'Error screen subtitle',
+  },
+  lostDescription: {
+    id: 'application.system:core.errorScreen.lostDescription#markdown',
+    defaultMessage: `* Umsókn hefur verið fjarlægð\n* Umsókn rann út á tíma\n`,
+    description: 'Error screen description',
+  },
+  buttonNewApplication: {
+    id: 'application.system:core.errorScreen.buttonNew',
+    defaultMessage: 'Byrja nýja umsókn',
+    description: 'Error screen button',
+  },
+  buttonMyApplications: {
+    id: 'application.system:core.errorScreen.buttonMyApplications',
+    defaultMessage: 'Fara í þínar umsóknir',
+    description: 'Error screen button',
+  },
+  application: {
+    id: 'application.system:core.errorScreen.application',
+    defaultMessage: 'Umsókn',
+    description: 'Error screen application',
   },
 })
