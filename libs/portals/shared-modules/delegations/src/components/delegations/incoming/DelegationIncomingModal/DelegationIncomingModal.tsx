@@ -69,10 +69,7 @@ export const DelegationIncomingModal = ({
         >
           {fromName && fromNationalId && (
             <IdentityCard
-              label={formatMessage({
-                id: 'sp.access-control-delegations:delegation-to',
-                defaultMessage: 'Aðgangsveitandi',
-              })}
+              label={formatMessage(m.accessOwner)}
               title={fromName}
               description={formatNationalId(fromNationalId)}
               color="blue"
@@ -80,10 +77,7 @@ export const DelegationIncomingModal = ({
           )}
           {toName && toNationalId && (
             <IdentityCard
-              label={formatMessage({
-                id: 'sp.access-control-delegations:access-holder',
-                defaultMessage: 'Aðgangshafi',
-              })}
+              label={formatMessage(m.accessHolder)}
               title={toName}
               description={formatNationalId(toNationalId)}
               color="purple"
@@ -92,10 +86,7 @@ export const DelegationIncomingModal = ({
         </Box>
         {delegation?.domain && (
           <IdentityCard
-            label={formatMessage({
-              id: 'sp.access-control-delegations:domain',
-              defaultMessage: 'Kerfi',
-            })}
+            label={formatMessage(m.domain)}
             title={delegation.domain.displayName}
             imgSrc={delegation.domain.organisationLogoUrl}
           />

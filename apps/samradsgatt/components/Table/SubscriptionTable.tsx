@@ -4,13 +4,23 @@ import {
   Table as T,
   Box,
   ResponsiveSpace,
+  Hidden,
 } from '@island.is/island-ui/core'
 import * as styles from './SubscriptionTable.css'
 import { mapIsToEn } from '../../utils/helpers'
 import SubscriptionTableItem from './SubscriptionTableItem'
+import { ArrOfIdAndName, Case, SubscriptionArray } from '../../types/interfaces'
+import { Area } from '../../types/enums'
+
+export interface SubscriptionTableProps {
+  data: Array<Case> | Array<ArrOfIdAndName>
+  currentTab: Area
+  subscriptionArray: SubscriptionArray
+  setSubscriptionArray: (obj: SubscriptionArray) => void
+}
 
 const Headers = {
-  Mál: ['Málsnr.', 'Heiti máls'],
+  Mál: ['Málsnr.', 'Heiti máls', 'Málsnúmer og heiti máls'],
   Stofnanir: ['Stofnun'],
   Málefnasvið: ['Málefnasvið'],
 }
@@ -20,7 +30,7 @@ const SubscriptionTable = ({
   currentTab,
   subscriptionArray,
   setSubscriptionArray,
-}) => {
+}: SubscriptionTableProps) => {
   let headerKey = 0
 
   const onCheckboxChange = (id: number, action: boolean) => {
@@ -40,7 +50,7 @@ const SubscriptionTable = ({
     return subscriptionArray[mapIsToEn[currentTab]].includes(id)
   }
 
-  const paddingTop = [3, 3, 3, 9] as ResponsiveSpace
+  const paddingTop = [3, 3, 3, 5, 5] as ResponsiveSpace
 
   return (
     <Box paddingTop={paddingTop}>
@@ -57,18 +67,39 @@ const SubscriptionTable = ({
               className={styles.checkmarkIcon}
             />
           </T.HeadData>
-          {Headers[currentTab].map((header) => (
+          {currentTab !== Area.case ? (
             <T.HeadData
               text={{ variant: 'h4' }}
               box={{ background: 'transparent', borderColor: 'transparent' }}
-              key={headerKey++}
             >
-              {header}
+              {Headers[currentTab][0]}
             </T.HeadData>
-          ))}
+          ) : (
+            <>
+              <T.HeadData
+                text={{ variant: 'h4' }}
+                box={{
+                  background: 'transparent',
+                  borderColor: 'transparent',
+                }}
+              >
+                <Hidden below="lg">{Headers[currentTab][0]}</Hidden>
+                <Hidden above="md">{Headers[currentTab][2]}</Hidden>
+              </T.HeadData>
+              <T.HeadData
+                text={{ variant: 'h4' }}
+                box={{
+                  background: 'transparent',
+                  borderColor: 'transparent',
+                }}
+              >
+                <Hidden below="lg">{Headers[currentTab][1]}</Hidden>
+              </T.HeadData>
+            </>
+          )}
         </T.Head>
         <T.Body>
-          {data.map((item, idx) => (
+          {data.map((item, idx: number) => (
             <SubscriptionTableItem
               key={item.id}
               item={item}

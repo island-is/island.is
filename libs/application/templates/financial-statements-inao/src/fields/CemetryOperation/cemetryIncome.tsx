@@ -45,19 +45,25 @@ export const CemetryIncome = ({
       if (!careIncome) {
         setValue(
           CEMETRYOPERATIONIDS.careIncome,
-          data.financialStatementsInaoTaxInfo?.[0]?.value?.toString() ?? '',
+          data.financialStatementsInaoTaxInfo
+            ?.find((x) => x.key === 300)
+            ?.value?.toString() ?? '',
         )
       }
       if (!burialRevenue) {
         setValue(
           CEMETRYOPERATIONIDS.burialRevenue,
-          data.financialStatementsInaoTaxInfo?.[1]?.value?.toString() ?? '',
+          data.financialStatementsInaoTaxInfo
+            ?.find((x) => x.key === 301)
+            ?.value?.toString() ?? '',
         )
       }
       if (!grantFromTheCemeteryFund) {
         setValue(
           CEMETRYOPERATIONIDS.grantFromTheCemeteryFund,
-          data.financialStatementsInaoTaxInfo?.[2]?.value?.toString() ?? '',
+          data.financialStatementsInaoTaxInfo
+            ?.find((x) => x.key === 302)
+            ?.value?.toString() ?? '',
         )
       }
       getSum()
