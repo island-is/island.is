@@ -8,6 +8,7 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  CurrentLicenseApi,
 } from '@island.is/application/types'
 import { FeatureFlagClient, Features } from '@island.is/feature-flags'
 import { ApiActions, FakeDataFeature } from '../shared'
@@ -44,14 +45,16 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
   type: ApplicationTypes.EXAMPLE,
   name: m.name,
   institution: m.institutionName,
-  translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
+  translationNamespaces: [ApplicationConfigurations.DrivingLearnersPermit.translation],
   dataSchema: dataSchema,
   featureFlag: Features.drivingLearnersPermit,
+  readyForProduction: true,
   stateMachineConfig: {
     initial: States.prerequisites,
     states: {
       [States.prerequisites]: {
         meta: {
+          status: 'draft',
           name: 'Prerequisities',
           progress: 0,
           lifecycle: EphemeralStateLifeCycle,
@@ -72,6 +75,9 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
                   allowFakeData,
                 })
               },
+              api: [
+                CurrentLicenseApi
+              ],
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
@@ -88,6 +94,7 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
       },
       [States.approved]: {
         meta: {
+          status: 'approved',
           name: 'Approved',
           progress: 1,
           lifecycle: {

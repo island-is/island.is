@@ -13,10 +13,10 @@ import {
   DrivingLicenseBookStudentForTeacher,
   DrivingLicenseBookStudent,
   PracticalDrivingLesson,
-  DrivingLicenseBookStudentOverview,
   Organization,
   SchoolType,
   StudentMentorability,
+  DrivingLicenseBookStudentOverview,
 } from './drivinLicenceBook.type'
 import { CreateDrivingSchoolTestResultInput } from './dto/createDrivingSchoolTestResult.input'
 import { StudentMentorabilityInput } from './dto/studentMentorability.input'
@@ -70,10 +70,9 @@ export class DrivingLicenseBookService {
     input: StudentMentorabilityInput,
   ): Promise<StudentMentorability> {
     const student = await this.getStudent(input)
-    const minimumRequiredLessonTime = 540
 
     return {
-      eligible: student.book.totalLessonTime >= minimumRequiredLessonTime,
+      eligible: student.book.practiceDriving ?? false
     }
   }
 

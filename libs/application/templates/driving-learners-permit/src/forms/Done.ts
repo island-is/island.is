@@ -9,7 +9,7 @@ import { Form, FormModes } from '@island.is/application/types'
 export const Draft: Form = buildForm({
   id: 'Done',
   title: m.doneTitle.defaultMessage,
-  mode: FormModes.EDITING,
+  mode: FormModes.DRAFT,
   children: [
     buildMultiField({
       title: '',

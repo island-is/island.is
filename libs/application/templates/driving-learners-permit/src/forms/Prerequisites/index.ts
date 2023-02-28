@@ -18,7 +18,7 @@ export const getForm = ({ allowFakeData = false }): Form => {
   return buildForm({
     id: 'PrerequisitesDraft',
     title: 'Skilyrði',
-    mode: FormModes.APPLYING,
+    mode: FormModes.IN_PROGRESS,
     renderLastScreenButton: true,
     children: [
       buildSection({

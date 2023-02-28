@@ -75,6 +75,7 @@ export interface DrivingLicenseBook {
   teachersAndLessons: DrivingBookLesson[]
   drivingSchoolExams: DrivingSchoolExam[]
   testResults: DrivingLicenceTestResult[]
+  practiceDriving?: boolean
 }
 
 export interface DrivingLicenseBookStudentOverview
