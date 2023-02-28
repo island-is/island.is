@@ -263,6 +263,7 @@ api:
     AUTH_PUBLIC_API_URL: 'https://innskra.island.is/api'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
+    CONSULTATION_PORTAL_CLIENT_BASE_PATH: 'https://samradapi-test.island.is'
     CONTACT_US_EMAIL: 'island@island.is'
     CONTENTFUL_HOST: 'cdn.contentful.com'
     DOWNLOAD_SERVICE_BASE_PATH: 'https://api.island.is'
