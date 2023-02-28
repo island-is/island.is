@@ -109,64 +109,7 @@ export class ApplicationSerializer
       return intl.formatMessage(template.name)
     }
 
-    // Special case for admin list
-    if (handlerName === ApplicationController.prototype.findAllAdmin.name) {
-      const payment = await this.paymentService.findPaymentByApplicationId(
-        application.id,
-      )
-
-      const getApplicantName = () => {
-        console.log('the external data', application.externalData)
-        if (application.externalData.nationalRegistry) {
-          return getValueViaPath(
-            application.externalData,
-            'nationalRegistry.data.fullName',
-          )
-        }
-        if (application.externalData.identity) {
-          return getValueViaPath(
-            application.externalData,
-            'identity.data.fullName',
-          )
-        }
-        return null
-      }
-
-      const dto = plainToInstance(ApplicationListAdminResponseDto, {
-        ...application,
-        ...helper.getReadableAnswersAndExternalData(userRole),
-        answers: [],
-        externalData: [],
-        applicationActors: actors,
-        actionCard: {
-          title: actionCardMeta.title
-            ? intl.formatMessage(actionCardMeta.title)
-            : null,
-          description: actionCardMeta.description
-            ? intl.formatMessage(actionCardMeta.description)
-            : null,
-          tag: {
-            variant: actionCardMeta.tag.variant || null,
-            label: actionCardMeta.tag.label
-              ? intl.formatMessage(actionCardMeta.tag.label)
-              : null,
-          },
-          deleteButton: roleInState?.delete,
-          draftFinishedSteps: application.draftFinishedSteps,
-          draftTotalSteps: application.draftTotalSteps,
-        },
-        name: getApplicationName(),
-        institution: template.institution
-          ? intl.formatMessage(template.institution)
-          : null,
-        progress: helper.getApplicationProgress(),
-        paymentStatus: payment?.fulfilled ? 'paid' : 'unpaid',
-        applicantName: getApplicantName(),
-      })
-      return instanceToPlain(dto)
-    }
-
-    const dto = plainToInstance(ApplicationResponseDto, {
+    const commonPropsDto = {
       ...application,
       ...helper.getReadableAnswersAndExternalData(userRole),
       applicationActors: actors,
@@ -192,7 +135,50 @@ export class ApplicationSerializer
         ? intl.formatMessage(template.institution)
         : null,
       progress: helper.getApplicationProgress(),
-    })
-    return instanceToPlain(dto)
+    }
+
+    // Special case for admin list
+    if (handlerName === ApplicationController.prototype.findAllAdmin.name) {
+      const payment = await this.paymentService.findPaymentByApplicationId(
+        application.id,
+      )
+
+      const getApplicantName = () => {
+        if (application.externalData.nationalRegistry) {
+          return getValueViaPath(
+            application.externalData,
+            'nationalRegistry.data.fullName',
+          )
+        }
+        if (application.externalData.identity) {
+          return getValueViaPath(
+            application.externalData,
+            'identity.data.fullName',
+          )
+        }
+        return null
+      }
+
+      const getPaymentStatus = () => {
+        if (payment?.fulfilled) {
+          return 'paid'
+        }
+        if (payment?.created) {
+          return 'unpaid'
+        }
+        return null
+      }
+      const dtoAdmin = plainToInstance(ApplicationListAdminResponseDto, {
+        ...commonPropsDto,
+        answers: [],
+        externalData: [],
+        paymentStatus: getPaymentStatus(),
+        applicantName: getApplicantName(),
+      })
+      return instanceToPlain(dtoAdmin)
+    } else {
+      const dto = plainToInstance(ApplicationResponseDto, commonPropsDto)
+      return instanceToPlain(dto)
+    }
   }
 }
