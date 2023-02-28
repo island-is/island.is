@@ -15,6 +15,13 @@ const creationScopes = {
 export const regulationAdminModule: PortalModule = {
   name: 'Reglugerðir',
   layout: 'full',
+  enabled: ({ userInfo }) => {
+    const mayCreate = !!userInfo.scopes.find((scope) => scope in creationScopes)
+    const mayManage = userInfo.scopes.includes(
+      AdminPortalScope.regulationAdminManage,
+    )
+    return mayCreate || mayManage
+  },
   routes: ({ userInfo }) => {
     const mayCreate = !!userInfo.scopes.find((scope) => scope in creationScopes)
     const mayManage = userInfo.scopes.includes(
