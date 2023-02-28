@@ -31,7 +31,10 @@ import {
   getFromRegistry,
   getFullName,
   hasAPDF,
-  hasInsurance,
+  someCanApplyForPlastic,
+  someHavePlasticButNotPdf,
+  someHavePDF,
+  someCanApplyForPlasticOrPdf,
 } from '../lib/helpers/applicantHelper'
 
 /* eslint-disable-next-line */
@@ -98,12 +101,15 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
           id: 'plastic',
           title: e.applicants.sectionTitle,
           description: e.applicants.sectionDescription,
-          condition: (_, externalData) => hasInsurance(externalData),
+          condition: (_, externalData) =>
+            someCanApplyForPlasticOrPdf(externalData),
           children: [
             buildCheckboxField({
               id: 'applyForPlastic',
               backgroundColor: 'white',
               title: '',
+              condition: (_, externalData) =>
+                someCanApplyForPlastic(externalData),
               options: (application: Application) => {
                 const applying: Array<any> = []
                 getEhicResponse(application).forEach((x) => {
@@ -121,6 +127,8 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               id: 'addForPDF',
               backgroundColor: 'white',
               title: 'Bráðabirgðakort',
+              condition: (_, externalData) =>
+                someHavePlasticButNotPdf(externalData),
               options: (application: Application) => {
                 const applying: Array<any> = []
 
@@ -140,6 +148,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               id: 'notApplicable',
               backgroundColor: 'white',
               title: 'Eiga pdf',
+              condition: (_, externalData) => someHavePDF(externalData),
               options: (application: Application) => {
                 console.log(application, 'notApplicable')
                 const applying: Array<any> = []
@@ -159,6 +168,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               id: 'notApplicable',
               backgroundColor: 'white',
               title: 'Eru ekki sjúkratryggðir',
+              condition: (_, externalData) => someHavePDF(externalData),
               options: (application: Application) => {
                 console.log(application, 'notApplicable')
                 const applying: Array<any> = []
@@ -177,7 +187,8 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
           ],
         }),
         buildDescriptionField({
-          condition: (_, externalData) => !hasInsurance(externalData),
+          condition: (_, externalData) =>
+            !someCanApplyForPlasticOrPdf(externalData),
           id: 'noInsurance',
           title: 'No Insurance',
           description: 'Not insured',

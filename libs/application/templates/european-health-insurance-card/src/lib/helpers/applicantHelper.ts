@@ -116,15 +116,79 @@ export function base64ToArrayBuffer(base64Pdf: string) {
   return bytes
 }
 
-/** Checks if one of all persons from national registry for this user has an health insurance */
-export function hasInsurance(externalData: ExternalData): boolean {
+export function someCanApplyForPlasticOrPdf(
+  externalData: ExternalData,
+): boolean {
   console.log(externalData)
   if (externalData?.cardResponse?.data) {
     const cardResponse = externalData?.cardResponse?.data as CardResponse[]
 
     for (let i = 0; i < cardResponse.length; i++) {
-      if (cardResponse[i].isInsured) {
+      if (cardResponse[i].isInsured && cardResponse[i].canApply) {
         return true
+      }
+
+      if (cardResponse[i].isInsured && !cardResponse[i].canApply) {
+        const tempCard = cardResponse[i].cards?.find((x) => x.isTemp)
+        if (tempCard) {
+          continue
+        }
+        const plasticCard = cardResponse[i].cards?.find((x) => x.isPlastic)
+        if (plasticCard) {
+          return true
+        }
+      }
+    }
+  }
+  return false
+}
+
+/** Checks if one of all persons from national registry for this user has an health insurance and can apply*/
+export function someCanApplyForPlastic(externalData: ExternalData): boolean {
+  console.log(externalData)
+  if (externalData?.cardResponse?.data) {
+    const cardResponse = externalData?.cardResponse?.data as CardResponse[]
+
+    for (let i = 0; i < cardResponse.length; i++) {
+      if (cardResponse[i].isInsured && cardResponse[i].canApply) {
+        return true
+      }
+    }
+  }
+  return false
+}
+
+export function someHavePDF(externalData: ExternalData): boolean {
+  console.log(externalData)
+  if (externalData?.cardResponse?.data) {
+    const cardResponse = externalData?.cardResponse?.data as CardResponse[]
+
+    for (let i = 0; i < cardResponse.length; i++) {
+      if (cardResponse[i].isInsured && !cardResponse[i].canApply) {
+        const card = cardResponse[i].cards?.find((x) => x.isTemp === true)
+        if (card) {
+          return true
+        }
+      }
+    }
+  }
+  return false
+}
+
+export function someHavePlasticButNotPdf(externalData: ExternalData): boolean {
+  console.log(externalData)
+  if (externalData?.cardResponse?.data) {
+    const cardResponse = externalData?.cardResponse?.data as CardResponse[]
+
+    for (let i = 0; i < cardResponse.length; i++) {
+      if (cardResponse[i].isInsured && !cardResponse[i].canApply) {
+        const card = cardResponse[i].cards?.find((x) => x.isPlastic === true)
+        if (card) {
+          const pdf = cardResponse[i].cards?.find((x) => x.isTemp === true)
+          if (!pdf) {
+            return true
+          }
+        }
       }
     }
   }

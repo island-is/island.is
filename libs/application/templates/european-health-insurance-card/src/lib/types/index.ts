@@ -41,6 +41,8 @@ export interface CardInfo {
   cardType?: string | null
   sentStatus?: string | null
   comment?: string | null
+  isPlastic: boolean
+  isTemp: boolean
 }
 
 export interface CardResponse {
