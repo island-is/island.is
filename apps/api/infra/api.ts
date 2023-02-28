@@ -19,6 +19,7 @@ import {
   MunicipalitiesFinancialAid,
   Vehicles,
   AdrAndMachine,
+  JudicialAdministration,
   Firearm,
   Disability,
   VehicleServiceFjsV1,
@@ -259,6 +260,7 @@ export const serviceSetup = (services: {
     })
     .xroad(
       AdrAndMachine,
+      JudicialAdministration,
       Firearm,
       Disability,
       Base,
