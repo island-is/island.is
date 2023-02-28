@@ -1,8 +1,7 @@
 import { style } from '@vanilla-extract/css'
 
 export const printButton = style({
-  position: 'relative',
-  display: 'inline-block',
-  left: 'calc(100% - 32px)',
+  display: 'flex',
+  justifyContent: 'flex-end',
   top: -30,
 })
