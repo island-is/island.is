@@ -117,17 +117,39 @@ export class NotificationsService {
   validateArgCounts(
     body: CreateHnippNotificationDto,
     template: HnippTemplate,
-  ): boolean {
-    return template.args.length == body.args.length
+  ): void {
+    // check counts
+    if (template.args.length !== body.args.length)
+      throw new BadRequestException(
+        "Number of arguments doesn't match - template requires " +
+          template.args?.length +
+          ' arguments but ' +
+          body.args?.length +
+          ' were provided',
+      )
+    // check keys/args/properties
+    for (const arg of body.args) {
+      if (!template.args.includes(arg.key)) {
+        throw new BadRequestException(
+          arg.key +
+            ' is not a valid argument for template: ' +
+            template.templateId,
+        )
+      }
+    }
   }
 
   formatArguments(
     body: CreateHnippNotificationDto,
     template: HnippTemplate,
   ): HnippTemplate {
-    if (template.args.length != body.args.length) {
-      throw new BadRequestException('Argument count mismatch')
-    }
+    
+    // // flatten key value object to object with key and value properties
+    // var variables = {}
+    // body.args.forEach((arg) => {
+    //   variables[arg.key] = arg.value
+    // })
+    
     if (template.args.length > 0) {
       const allowedReplaceProperties = [
         'notificationTitle',
@@ -135,22 +157,27 @@ export class NotificationsService {
         'notificationDataCopy',
         'clickAction',
       ]
-      const regex = /{{[^{}]*}}/ // "finds {{placholder}} in string"
+      const regex = /{{[^{}]*}}/ // finds {{placholder}} in string
       Object.keys(template).forEach((key) => {
         if (allowedReplaceProperties.includes(key)) {
           if (template[key as keyof HnippTemplate]) {
             if (regex.test(template[key as keyof HnippTemplate] as string)) {
-              const element = body.args.shift()
-              if (element) {
-                template[key as keyof Omit<HnippTemplate, 'args'>] = (template[
-                  key as keyof Omit<HnippTemplate, 'args'>
-                ] as string).replace(regex, element)
-              }
+              console.log("**",regex.test(template[key as keyof HnippTemplate] as string))
+              // const element = body.args.shift()
+
+              // if (element) {
+              //   template[key as keyof Omit<HnippTemplate, 'args'>] = (template[
+              //     key as keyof Omit<HnippTemplate, 'args'>
+              //   ] as string).replace(regex, element)
+              // }
             }
           }
         }
       })
     }
+
+  
+
     return template
   }
 }

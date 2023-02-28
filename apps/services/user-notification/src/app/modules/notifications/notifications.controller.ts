@@ -58,7 +58,16 @@ export class NotificationsController {
     return this.createHnippNotification({
       recipient: body.recipient,
       templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
-      args: [body.organization, body.documentId],
+      args: [{
+        key: 'organization',
+        value: body.organization,
+      },
+      {
+        key: 'documentId',
+        value: body.documentId,
+      }
+    ],
+
     })
   }
 
@@ -121,21 +130,15 @@ export class NotificationsController {
   @Version('1')
   async createHnippNotification(
     @Body() body: CreateHnippNotificationDto,
-  ): Promise<CreateNotificationResponse> {
+  ): Promise<CreateNotificationResponse | any> {
     const template = await this.notificationsService.getTemplate(
       body.templateId,
     )
-    // validate
+    // validate or fail
     this.notificationsService.validateArgCounts(body, template)
-    if (template.args.length != body.args.length) {
-      throw new BadRequestException(
-        "Number of arguments doesn't match - template requires " +
-          template.args?.length +
-          ' arguments but ' +
-          body.args?.length +
-          ' were provided',
-      )
-    }
+
+    return this.notificationsService.formatArguments(body, template)
+
     // add to queue
     const id = await this.queue.add(body)
     this.logger.info('Message queued ... ...', { messageId: id, ...body })
