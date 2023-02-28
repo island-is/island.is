@@ -23,7 +23,7 @@ export const attachmentNames = defineMessages({
   },
   five: {
     id: 'ol.application:attachemnt.five',
-    defaultMessage: 'Önnur gögn',
+    defaultMessage: 'Önnur gögn (ef við á)',
     description: 'Some description',
   },
 })
