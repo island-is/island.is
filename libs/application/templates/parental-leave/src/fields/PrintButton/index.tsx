@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, Button } from '@island.is/island-ui/core'
-import * as styles from './PrintButton.css'
+import * as styles from './Printbutton.css'
 
 export const PrintButton = () => {
   return (
