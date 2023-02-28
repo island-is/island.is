@@ -116,7 +116,6 @@ export class ApplicationSerializer
       )
 
       const getApplicantName = () => {
-        console.log('the external data', application.externalData)
         if (application.externalData.nationalRegistry) {
           return getValueViaPath(
             application.externalData,
@@ -128,6 +127,16 @@ export class ApplicationSerializer
             application.externalData,
             'identity.data.fullName',
           )
+        }
+        return null
+      }
+
+      const getPaymentStatus = () => {
+        if (payment?.fulfilled) {
+          return 'paid'
+        }
+        if (payment?.created) {
+          return 'unpaid'
         }
         return null
       }
@@ -160,7 +169,7 @@ export class ApplicationSerializer
           ? intl.formatMessage(template.institution)
           : null,
         progress: helper.getApplicationProgress(),
-        paymentStatus: payment?.fulfilled ? 'paid' : 'unpaid',
+        paymentStatus: getPaymentStatus(),
         applicantName: getApplicantName(),
       })
       return instanceToPlain(dto)
