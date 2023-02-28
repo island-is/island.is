@@ -1,0 +1,31 @@
+{
+  "root": "libs/clients/health-insurance-v2/rights-portal",
+  "sourceRoot": "libs/clients/health-insurance-v2/rights-portal/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/clients/health-insurance-v2/rights-portal/**/*.ts"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/clients/health-insurance-v2/rights-portal"],
+      "options": {
+        "jestConfig": "libs/clients/health-insurance-v2/rights-portal/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/health-insurance-v2/rights-portal/gen/fetch -i libs/clients/health-insurance-v2/rights-portal/src/clientConfig.yaml"
+      }
+    }
+  },
+  "tags": []
+}

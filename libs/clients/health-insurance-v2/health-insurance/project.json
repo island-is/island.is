@@ -1,0 +1,30 @@
+{
+  "root": "libs/clients/health-insurance-v2/health-insurance",
+  "sourceRoot": "libs/clients/health-insurance-v2/health-insurance/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/clients/health-insurance-v2/health-insurance/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/clients/health-insurance-v2/health-insurance"],
+      "options": {
+        "jestConfig": "libs/clients/health-insurance-v2/health-insurance/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/health-insurance-v2/health-insurance/gen/fetch -i libs/clients/health-insurance-v2/health-insurance/src/openapi.yml"
+      }
+    }
+  },
+  "tags": ["lib:client", "scope:client"]
+}

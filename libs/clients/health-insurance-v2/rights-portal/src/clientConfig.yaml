@@ -1,0 +1,100 @@
+openapi: 3.0.1
+info:
+  title: Minarsidur.api
+  version: '1.0'
+servers:
+  - url: /minarsidur
+paths:
+  /therapies:
+    get:
+      tags:
+        - Minarsidur.api
+      operationId: therapies
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TherapyDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TherapyDTO'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TherapyDTO'
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TherapyDTO'
+components:
+  schemas:
+    TherapyDTO:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+        id:
+          type: string
+          nullable: true
+        state:
+          $ref: '#/components/schemas/TherapyStateDTO'
+        periods:
+          type: array
+          items:
+            $ref: '#/components/schemas/TherapyPeriodDTO'
+          nullable: true
+      additionalProperties: false
+    TherapyPeriodDTO:
+      type: object
+      properties:
+        from:
+          type: string
+          format: date
+          nullable: true
+        to:
+          type: string
+          format: date
+          nullable: true
+        sessions:
+          $ref: '#/components/schemas/TherapySessionsDTO'
+      additionalProperties: false
+    TherapySessionsDTO:
+      type: object
+      properties:
+        available:
+          type: integer
+          format: int32
+          nullable: true
+        used:
+          type: integer
+          format: int32
+          nullable: true
+      additionalProperties: false
+    TherapyStateDTO:
+      type: object
+      properties:
+        display:
+          type: string
+          nullable: true
+        code:
+          type: string
+          nullable: true
+      additionalProperties: false
