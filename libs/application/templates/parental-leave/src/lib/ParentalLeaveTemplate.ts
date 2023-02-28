@@ -363,7 +363,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 ],
                 externalData: [
                   'children',
-                  'noPrimaryChildren',
                   'navId',
                   'sendApplication',
                 ],
@@ -940,7 +939,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 ],
                 externalData: [
                   'children',
-                  'noPrimaryChildren',
                   'navId',
                   'sendApplication',
                 ],

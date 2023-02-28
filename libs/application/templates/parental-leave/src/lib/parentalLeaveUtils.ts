@@ -492,12 +492,7 @@ export const getSelectedChild = (
       externalData,
       `children.data.children[${selectedChildIndex}]`,
       null,
-    ) ??
-    (getValueViaPath(
-      externalData,
-      'noPrimaryChildren.data.children',
-      null,
-    ) as ChildInformation | null)
+    ) as ChildInformation | null
 
   return selectedChild
 }
