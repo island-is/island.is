@@ -2,6 +2,7 @@ import {
   Application,
   ChildrenCustodyInformationApi,
   DefaultEvents,
+  MaybeWithApplicationAndField,
   NationalRegistrySpouseApi,
   NationalRegistryUserApi,
 } from '@island.is/application/types'
@@ -24,7 +25,14 @@ import {
 
 import { CardResponse, NationalRegistry } from '../lib/types'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
-import { getFromRegistry, hasInsurance } from '../lib/helpers/applicantHelper'
+import {
+  getDefaultValuesForPDFApplicants,
+  getEhicResponse,
+  getFromRegistry,
+  getFullName,
+  hasAPDF,
+  hasInsurance,
+} from '../lib/helpers/applicantHelper'
 
 /* eslint-disable-next-line */
 export interface EuropeanHealthInsuranceCardProps {}
@@ -97,34 +105,72 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               backgroundColor: 'white',
               title: '',
               options: (application: Application) => {
-                console.log(application, ' here')
-                const fromNationaRegistry = getFromRegistry(application)
-                console.log(fromNationaRegistry, 'fromNationaRegistry')
-                const applying: Array<{ value: any; label: string }> = []
-
-                const cardResponse = application.externalData.cardResponse
-                  .data as CardResponse[]
-
-                console.log(cardResponse, 'CardResponse')
-
-                cardResponse.forEach((x) => {
-                  const name = fromNationaRegistry.find(
-                    (y) => y.nrid === x.applicantNationalId,
-                  )?.name!
-                  // const value = x.applicantNationalId + ',' + name
-                  //  TODO: if x.canApply
-                  if (x.isInsured) {
+                const applying: Array<any> = []
+                getEhicResponse(application).forEach((x) => {
+                  if (x.canApply) {
                     applying.push({
-                      value: [x.applicantNationalId, name],
-                      label: name,
+                      value: x.applicantNationalId,
+                      label: getFullName(application, x.applicantNationalId),
+                    })
+                  }
+                })
+                return applying as Array<{ value: any; label: string }>
+              },
+            }),
+            buildCheckboxField({
+              id: 'addForPDF',
+              backgroundColor: 'white',
+              title: 'Bráðabirgðakort',
+              options: (application: Application) => {
+                const applying: Array<any> = []
+
+                getEhicResponse(application).forEach((x) => {
+                  if (x.isInsured && !x.canApply && !hasAPDF(x)) {
+                    applying.push({
+                      value: x.applicantNationalId,
+                      label: getFullName(application, x.applicantNationalId),
                     })
                   }
                 })
 
-                console.log(applying, 'Applying')
-
-                // TODO: if apply is empty. Nobody is insured.
-
+                return applying as Array<{ value: any; label: string }>
+              },
+            }),
+            buildCheckboxField({
+              id: 'notApplicable',
+              backgroundColor: 'white',
+              title: 'Eiga pdf',
+              options: (application: Application) => {
+                console.log(application, 'notApplicable')
+                const applying: Array<any> = []
+                getEhicResponse(application).forEach((x) => {
+                  if (x.isInsured && hasAPDF(x)) {
+                    applying.push({
+                      value: x.applicantNationalId,
+                      label: getFullName(application, x.applicantNationalId),
+                      disabled: true,
+                    })
+                  }
+                })
+                return applying as Array<{ value: any; label: string }>
+              },
+            }),
+            buildCheckboxField({
+              id: 'notApplicable',
+              backgroundColor: 'white',
+              title: 'Eru ekki sjúkratryggðir',
+              options: (application: Application) => {
+                console.log(application, 'notApplicable')
+                const applying: Array<any> = []
+                getEhicResponse(application).forEach((x) => {
+                  if (!x.isInsured && !x.canApply) {
+                    applying.push({
+                      value: x.applicantNationalId,
+                      label: getFullName(application, x.applicantNationalId),
+                      disabled: true,
+                    })
+                  }
+                })
                 return applying as Array<{ value: any; label: string }>
               },
             }),
@@ -160,21 +206,36 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               id: 'applyForPDF',
               backgroundColor: 'white',
               title: '',
+
               options: (application: Application) => {
                 const applying = []
-                console.log(application)
+                // Are applying for a new plastic card
                 const ans = application.answers.applyForPlastic as Array<any>
-                console.log('answers')
-                console.log(ans)
+
                 for (const i in ans) {
-                  console.log([ans[i][0], ans[i][1]])
                   applying.push({
-                    value: [ans[i][0], ans[i][1]],
-                    label: ans[i][1],
+                    value: ans[i],
+                    label: getFullName(application, ans[i]),
                   })
                 }
+
+                // Find those who have been issued plastic cards
+                const cardResponse = application.externalData.cardResponse
+                  .data as CardResponse[]
+
+                cardResponse.forEach((x) => {
+                  if (x.isInsured && !x.canApply) {
+                    applying.push({
+                      value: x.applicantNationalId,
+                      label: getFullName(application, x.applicantNationalId),
+                    })
+                  }
+                })
+
                 return applying as Array<{ value: any; label: string }>
               },
+              defaultValue: (application: Application) =>
+                getDefaultValuesForPDFApplicants(application),
             }),
             buildSubmitField({
               id: 'submit-pdf',

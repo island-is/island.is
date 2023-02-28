@@ -1,22 +1,23 @@
 export interface CardResponse {
-  isInsured: boolean
+  isInsured?: boolean | null
   // national registry id
-  nrid: string
+  applicantNationalId?: string | null
   // valid cards
-  cards: CardInfo[]
+  canApply?: boolean | null
+  cards?: CardInfo[] | null
 }
 
 export interface CardInfo {
-  id: number | string
-  nrid: string
-  expires: Date
-  issued: Date
-  // When resent
-  reSent: Date
-  // When was is it sent
-  sent: Date
-  type: CardType
-  sentStatus: SentStatus
+  cardNumber?: string | null
+
+  cardType?: string | null
+
+  sentStatus?: string | null
+
+  comment?: string | null
+
+  isPlastic?: boolean
+  isTemp?: boolean
 }
 
 export enum SentStatus {
@@ -31,4 +32,9 @@ export enum SentStatus {
 export enum CardType {
   PHYSICAL,
   TEMPORARY,
+}
+
+export interface ApplicantCard {
+  nrid: string | null
+  cardNumber: string | null
 }

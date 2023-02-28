@@ -6,12 +6,14 @@ export const EhicCardResponseApi = defineTemplateApi({
   order: 2,
 })
 
+// TODO: Remove?
 export const EhicApplyForPhysicalCardApi = defineTemplateApi({
   action: 'applyForPhysicalCard',
   externalDataId: 'applyForPhysicalCardResponse',
   order: 0,
 })
 
+// TODO: Remove?
 export const EhicApplyForTemporaryCardApi = defineTemplateApi({
   action: 'applyForTemporaryCard',
   externalDataId: 'applyForTemporaryCardResponse',
@@ -23,6 +25,7 @@ export const EhicGetTemporaryCardApi = defineTemplateApi({
   externalDataId: 'getTemporaryCardResponse',
 })
 
+// TODO: Remove?
 export const EhicResendPhysicalCardApi = defineTemplateApi({
   action: 'resendPhysicalCard',
   externalDataId: 'resendPhysicalCardResponse',
@@ -30,5 +33,5 @@ export const EhicResendPhysicalCardApi = defineTemplateApi({
 
 export const EhicApplyForPhysicalAndTemporary = defineTemplateApi({
   action: 'applyForPhysicalAndTemporary',
-  externalDataId: 'applyForPhysicalAndTemporaryResponse',
+  externalDataId: 'applyForCardsResponse',
 })

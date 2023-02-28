@@ -6,6 +6,6 @@ export const contactSchema = z.object({
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  applyForPlastic: z.array(z.array(z.string())).refine((v) => v.length > 0, {}),
+  // applyForPlastic: z.array(z.string()).refine((v) => v.length > 0, {}),
   contact: contactSchema,
 })
