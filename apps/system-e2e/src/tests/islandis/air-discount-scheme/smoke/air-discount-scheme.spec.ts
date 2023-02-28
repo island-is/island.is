@@ -44,7 +44,7 @@ test.describe('Air discount scheme', () => {
       .toHaveLength('X211T12F'.length)
   })
 
-  test('should have ${fakeUser.name} in the api response', async () => {
+  test("should have user's name in the api response", async () => {
     const page = await context.newPage()
     const { extractor } = await graphqlSpy(
       page,
@@ -64,7 +64,7 @@ test.describe('Air discount scheme', () => {
       .toBe('Gervimaður Afríka')
   })
 
-  test('should have user ${fakeUser.name} with valid discount code', async () => {
+  test('should have user with valid discount code', async () => {
     const page = await context.newPage()
     const { data } = await graphqlSpy(page, '/api/graphql**', 'DiscountsQuery')
     await page.goto('/min-rettindi')
@@ -86,7 +86,7 @@ test.describe('Air discount scheme', () => {
       data((op) => op.response.data.discounts[0].discountCode),
     )
 
-    await myRightsRegion.locator('role=button').click()
+    await myRightsRegion.locator('role=button').first().click()
 
     await expect(
       page.locator('role=alert', { hasText: 'Afritun tókst' }),

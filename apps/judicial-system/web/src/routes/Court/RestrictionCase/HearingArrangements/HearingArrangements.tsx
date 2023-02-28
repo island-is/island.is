@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useCallback } from 'react'
+import React, { useContext, useState, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 import compareAsc from 'date-fns/compareAsc'
@@ -19,17 +19,20 @@ import {
 import { isCourtHearingArrangemenstStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   CaseCustodyRestrictions,
-  CaseType,
   NotificationType,
 } from '@island.is/judicial-system/types'
 import {
   RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -46,7 +49,6 @@ export const HearingArrangements: React.FC = () => {
 
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
 
-  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
   const {
     setAndSendCaseToServer,
     sendNotification,
@@ -60,49 +62,40 @@ export const HearingArrangements: React.FC = () => {
     handleCourtDateChange,
   } = useCourtArrangements(workingCase)
 
-  useEffect(() => {
-    if (isCaseUpToDate && !initialAutoFillDone) {
-      if (!workingCase.courtDate) {
-        setCourtDate(workingCase.requestedCourtDate)
-
-        setInitialAutoFillDone(true)
-      }
-
-      setAndSendCaseToServer(
-        [
-          // validToDate, isolationToDate and isCustodyIsolation are autofilled here
-          // so they are ready for conclusion autofill later
-          {
-            validToDate: workingCase.requestedValidToDate,
-            isolationToDate:
-              workingCase.type === CaseType.CUSTODY ||
-              workingCase.type === CaseType.ADMISSION_TO_FACILITY
-                ? workingCase.requestedValidToDate
-                : undefined,
-            isCustodyIsolation:
-              workingCase.type === CaseType.CUSTODY ||
-              workingCase.type === CaseType.ADMISSION_TO_FACILITY
-                ? workingCase.requestedCustodyRestrictions &&
-                  workingCase.requestedCustodyRestrictions.includes(
-                    CaseCustodyRestrictions.ISOLATION,
-                  )
-                  ? true
-                  : false
-                : undefined,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
+  const initialize = useCallback(() => {
+    if (!workingCase.courtDate) {
+      setCourtDate(workingCase.requestedCourtDate)
     }
-  }, [
-    setAndSendCaseToServer,
-    initialAutoFillDone,
-    isCaseUpToDate,
-    setCourtDate,
-    setWorkingCase,
-    workingCase,
-  ])
+
+    setAndSendCaseToServer(
+      [
+        // validToDate, isolationToDate and isCustodyIsolation are autofilled here
+        // so they are ready for conclusion autofill later
+        {
+          validToDate: workingCase.requestedValidToDate,
+          isolationToDate:
+            workingCase.type === CaseType.Custody ||
+            workingCase.type === CaseType.AdmissionToFacility
+              ? workingCase.requestedValidToDate
+              : undefined,
+          isCustodyIsolation:
+            workingCase.type === CaseType.Custody ||
+            workingCase.type === CaseType.AdmissionToFacility
+              ? workingCase.requestedCustodyRestrictions &&
+                workingCase.requestedCustodyRestrictions.includes(
+                  CaseCustodyRestrictions.ISOLATION,
+                )
+                ? true
+                : false
+              : undefined,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }, [setAndSendCaseToServer, setCourtDate, setWorkingCase, workingCase])
+
+  useOnceOn(isCaseUpToDate, initialize)
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
@@ -217,14 +210,14 @@ export const HearingArrangements: React.FC = () => {
       {navigateTo !== undefined && (
         <Modal
           title={formatMessage(
-            workingCase.type === CaseType.CUSTODY ||
-              workingCase.type === CaseType.ADMISSION_TO_FACILITY
+            workingCase.type === CaseType.Custody ||
+              workingCase.type === CaseType.AdmissionToFacility
               ? m.modal.custodyCases.heading
               : m.modal.travelBanCases.heading,
           )}
           text={formatMessage(
-            workingCase.type === CaseType.CUSTODY ||
-              workingCase.type === CaseType.ADMISSION_TO_FACILITY
+            workingCase.type === CaseType.Custody ||
+              workingCase.type === CaseType.AdmissionToFacility
               ? m.modal.custodyCases.text
               : m.modal.travelBanCases.text,
             {

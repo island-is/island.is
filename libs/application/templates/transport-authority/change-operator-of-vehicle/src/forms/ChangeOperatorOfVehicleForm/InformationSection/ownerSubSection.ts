@@ -6,7 +6,7 @@ import {
   buildCustomField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
-import { Application } from '../../../types/schema'
+import { Application } from '@island.is/api/schema'
 
 export const ownerSubSection = buildSubSection({
   id: 'owner',
@@ -30,7 +30,7 @@ export const ownerSubSection = buildSubSection({
           readOnly: true,
           format: '######-####',
           defaultValue: (application: Application) =>
-            application.externalData?.nationalRegistry?.data?.nationalId,
+            application.externalData?.identity?.data?.nationalId,
         }),
         buildTextField({
           id: 'owner.name',
@@ -39,7 +39,7 @@ export const ownerSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) =>
-            application.externalData?.nationalRegistry?.data?.fullName,
+            application.externalData?.identity?.data?.name,
         }),
         buildTextField({
           id: 'owner.email',

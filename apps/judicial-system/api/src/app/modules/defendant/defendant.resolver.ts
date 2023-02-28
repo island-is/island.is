@@ -44,7 +44,7 @@ export class DefendantResolver {
       user.id,
       AuditedAction.CREATE_DEFENDANT,
       backendApi.createDefendant(caseId, createDefendant),
-      (theDefendant) => theDefendant.id,
+      (defendant) => defendant.id,
     )
   }
 

@@ -1,4 +1,5 @@
 import {
+  buildDescriptionField,
   buildCustomField,
   buildMultiField,
   buildSection,
@@ -28,9 +29,13 @@ export const clientInfoSection = buildSection({
           : m.reviewContact
       },
       children: [
+        buildDescriptionField({
+          id: ABOUTIDS.operatingYear,
+          title: '',
+        }),
         buildCustomField({
           id: 'OperatingYear',
-          childInputIds: Object.values(ABOUTIDS),
+          childInputIds: [ABOUTIDS.operatingYear],
           title: '',
           condition: (answers, externalData) => {
             const userType = getCurrentUserType(answers, externalData)
@@ -72,6 +77,10 @@ export const clientInfoSection = buildSection({
               .data as Identity
             return nationalRegistry.name
           },
+        }),
+        buildDescriptionField({
+          id: ABOUTIDS.powerOfAttorneyName,
+          title: '',
         }),
         buildCustomField({
           id: 'powerOfAttorney',

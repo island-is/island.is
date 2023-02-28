@@ -20,7 +20,7 @@ export const subSectionInheritance = buildSubSection({
           id: 'membersOfEstateTitle',
           title: m.inheritanceMembersOfEstateTitle,
           space: 2,
-          titleVariant: 'h4',
+          titleVariant: 'h3',
         }),
         buildCustomField({
           title: '',

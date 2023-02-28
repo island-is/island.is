@@ -7,9 +7,9 @@ import {
   CaseAppealDecision,
   CaseOrigin,
   CaseState,
-  CaseType,
   Defendant,
 } from '@island.is/judicial-system/types'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import AppealSection from './AppealSection'
 
@@ -18,7 +18,7 @@ describe('Appeal section component', () => {
     id: 'test',
     created: new Date().toString(),
     modified: new Date().toString(),
-    type: CaseType.CUSTODY,
+    type: CaseType.Custody,
     state: CaseState.ACCEPTED,
     policeCaseNumbers: ['000'],
     defendants: [{ nationalId: '000000-0000' }] as Defendant[],
