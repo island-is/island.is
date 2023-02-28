@@ -34,6 +34,8 @@ import { indictmentCount as strings } from './IndictmentCount.strings'
 import { indictmentCountEnum as enumStrings } from './IndictmentCountEnum.strings'
 import { indictmentCountSubstanceEnum as substanceStrings } from './IndictmentCountSubstanceEnum.strings'
 
+import { Substances as SubstanceChoices } from '@island.is/judicial-system-web/src/components'
+
 interface Props {
   indictmentCount: TIndictmentCount
   workingCase: Case
@@ -138,6 +140,18 @@ interface LawsBrokenOption {
   disabled: boolean
 }
 
+function getRelevantSubstances(
+  offenses: IndictmentCountOffense[],
+  substances: SubstanceMap,
+) {
+  const allowedSubstances: string[] = offenses
+    .map((offense) => offenseSubstances[offense])
+    .flat()
+  return Object.entries(substances).filter((substance) =>
+    allowedSubstances.includes(substance[0]),
+  )
+}
+
 function getIndictmentDescriptionReason(
   offenses: IndictmentCountOffense[],
   substances: SubstanceMap,
@@ -188,12 +202,7 @@ function getIndictmentDescriptionReason(
     return acc
   }, '')
 
-  const allowedSubstances: string[] = offenses
-    .map((offense) => offenseSubstances[offense])
-    .flat()
-  const relevantSubstances = Object.entries(substances).filter((substance) =>
-    allowedSubstances.includes(substance[0]),
-  )
+  const relevantSubstances = getRelevantSubstances(offenses, substances)
 
   reason += relevantSubstances.reduce((acc, substance, index) => {
     if (index === 0) {
@@ -303,13 +312,8 @@ export const IndictmentCount: React.FC<Props> = (props) => {
   )
 
   const incidentDescription = useCallback(
-    (
-      policeCaseNumber: string,
-      vehicleRegistrationNumber: string,
-      offenses: IndictmentCountOffense[],
-      substances: SubstanceMap,
-    ) => {
-      if (offenses.length === 0) {
+    (indictmentCount: TIndictmentCount) => {
+      if (indictmentCount.offenses?.length === 0) {
         return ''
       }
 
@@ -317,18 +321,19 @@ export const IndictmentCount: React.FC<Props> = (props) => {
       let incidentDate = ''
       let incidentDescription = ''
 
-      if (workingCase.crimeScenes && policeCaseNumber) {
+      if (workingCase.crimeScenes && indictmentCount.policeCaseNumber) {
         const crimeScenes = workingCase.crimeScenes
-        const crimeDate = crimeScenes[policeCaseNumber].date
+        const crimeDate = crimeScenes[indictmentCount.policeCaseNumber].date
 
-        incidentLocation = crimeScenes[policeCaseNumber].place ?? ''
+        incidentLocation =
+          crimeScenes[indictmentCount.policeCaseNumber].place ?? ''
         incidentDate =
           formatDate(crimeDate, 'PPPP')?.replace('dagur,', 'daginn') ?? ''
       }
 
       const reason = getIndictmentDescriptionReason(
-        offenses,
-        substances,
+        indictmentCount.offenses ? indictmentCount.offenses : [],
+        indictmentCount.substances ?? {},
         formatMessage,
       )
 
@@ -336,8 +341,8 @@ export const IndictmentCount: React.FC<Props> = (props) => {
         strings.trafficViolationIncidentDescriptionAutofill,
         {
           incidentDate: incidentDate ? incidentDate : '[Dagsetning]',
-          vehicleRegistrationNumber: vehicleRegistrationNumber
-            ? vehicleRegistrationNumber
+          vehicleRegistrationNumber: indictmentCount.vehicleRegistrationNumber
+            ? indictmentCount.vehicleRegistrationNumber
             : '[Skráningarnúmer ökutækis]',
           reason: reason,
           incidentLocation: incidentLocation
@@ -347,6 +352,8 @@ export const IndictmentCount: React.FC<Props> = (props) => {
       )
 
       setIncidentDescriptionErrorMessage('')
+
+      console.log(indictmentCount.substances)
 
       return incidentDescription
     },
@@ -381,12 +388,10 @@ export const IndictmentCount: React.FC<Props> = (props) => {
 
             onChange(indictmentCount.id, {
               policeCaseNumber: policeCaseNumber,
-              incidentDescription: incidentDescription(
+              incidentDescription: incidentDescription({
+                ...indictmentCount,
                 policeCaseNumber,
-                indictmentCount.vehicleRegistrationNumber ?? '',
-                indictmentCount.offenses ?? [],
-                indictmentCount.substances ?? {},
-              ),
+              }),
             })
           }}
           value={
@@ -439,12 +444,10 @@ export const IndictmentCount: React.FC<Props> = (props) => {
 
             onChange(indictmentCount.id, {
               vehicleRegistrationNumber: event.target.value,
-              incidentDescription: incidentDescription(
-                indictmentCount.policeCaseNumber ?? '',
-                event.target.value,
-                indictmentCount.offenses ?? [],
-                indictmentCount.substances ?? {},
-              ),
+              incidentDescription: incidentDescription({
+                ...indictmentCount,
+                vehicleRegistrationNumber: event.target.value,
+              }),
             })
           }}
         >
@@ -474,6 +477,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
               ...(indictmentCount.offenses ?? []),
               selectedOffense,
             ].sort(offensesCompare)
+
             const lawsBroken = getLawsBroken(
               offenses,
               indictmentCount.substances?.ALCOHOL,
@@ -482,12 +486,10 @@ export const IndictmentCount: React.FC<Props> = (props) => {
             onChange(indictmentCount.id, {
               offenses,
               lawsBroken,
-              incidentDescription: incidentDescription(
-                indictmentCount.policeCaseNumber ?? '',
-                indictmentCount.vehicleRegistrationNumber ?? '',
+              incidentDescription: incidentDescription({
+                ...indictmentCount,
                 offenses,
-                indictmentCount.substances ?? {},
-              ),
+              }),
               legalArguments: legalArguments(lawsBroken),
             })
           }}
@@ -511,6 +513,13 @@ export const IndictmentCount: React.FC<Props> = (props) => {
                   const offenses = (indictmentCount.offenses ?? []).filter(
                     (o) => o !== offense,
                   )
+
+                  offenseSubstances[offense].forEach((e) =>
+                    indictmentCount.substances
+                      ? delete indictmentCount.substances[e]
+                      : {},
+                  )
+
                   const lawsBroken = getLawsBroken(
                     offenses,
                     indictmentCount.substances?.ALCOHOL,
@@ -519,13 +528,12 @@ export const IndictmentCount: React.FC<Props> = (props) => {
                   onChange(indictmentCount.id, {
                     offenses,
                     lawsBroken,
-                    incidentDescription: incidentDescription(
-                      indictmentCount.policeCaseNumber ?? '',
-                      indictmentCount.vehicleRegistrationNumber ?? '',
+                    incidentDescription: incidentDescription({
+                      ...indictmentCount,
                       offenses,
-                      indictmentCount.substances ?? {},
-                    ),
+                    }),
                     legalArguments: legalArguments(lawsBroken),
+                    substances: indictmentCount.substances,
                   })
                 }}
               >
@@ -591,12 +599,10 @@ export const IndictmentCount: React.FC<Props> = (props) => {
               onChange(indictmentCount.id, {
                 substances,
                 lawsBroken,
-                incidentDescription: incidentDescription(
-                  indictmentCount.policeCaseNumber ?? '',
-                  indictmentCount.vehicleRegistrationNumber ?? '',
-                  indictmentCount.offenses ?? [],
+                incidentDescription: incidentDescription({
+                  ...indictmentCount,
                   substances,
-                ),
+                }),
                 legalArguments: legalArguments(lawsBroken),
               })
             }}
@@ -613,6 +619,42 @@ export const IndictmentCount: React.FC<Props> = (props) => {
               required
             />
           </InputMask>
+        </Box>
+      )}
+      {indictmentCount.offenses?.includes(
+        IndictmentCountOffense.IllegalDrugsDriving,
+      ) && (
+        <Box>
+          <SubstanceChoices
+            indictmentCount={indictmentCount}
+            indictmentCountOffenseType={
+              IndictmentCountOffense.IllegalDrugsDriving
+            }
+            onChange={onChange}
+            updateIndictmentCountState={updateIndictmentCountState}
+            setWorkingCase={setWorkingCase}
+            getLawsBroken={getLawsBroken}
+            incidentDescription={incidentDescription}
+            legalArguments={legalArguments}
+          ></SubstanceChoices>
+        </Box>
+      )}
+      {indictmentCount.offenses?.includes(
+        IndictmentCountOffense.PrescriptionDrugsDriving,
+      ) && (
+        <Box>
+          <SubstanceChoices
+            indictmentCount={indictmentCount}
+            indictmentCountOffenseType={
+              IndictmentCountOffense.PrescriptionDrugsDriving
+            }
+            onChange={onChange}
+            updateIndictmentCountState={updateIndictmentCountState}
+            setWorkingCase={setWorkingCase}
+            getLawsBroken={getLawsBroken}
+            incidentDescription={incidentDescription}
+            legalArguments={legalArguments}
+          ></SubstanceChoices>
         </Box>
       )}
       <Box marginBottom={2}>
