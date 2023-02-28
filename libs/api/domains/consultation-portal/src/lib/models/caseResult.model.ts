@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import { DocumentInfoResult } from './documentInfoResult.model'
 import { CaseStakeholderResult } from './caseStakeholderResult.model'
 
-@ObjectType()
+@ObjectType('ConsultationPortalCaseResult')
 export class CaseResult {
   @Field(() => Number, { nullable: true })
   id?: number

@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType()
+@ObjectType('ConsultationPortalUserSubscriptionsCommand')
 export class UserSubscriptionsCommand {
   @Field(() => [Number], { nullable: true })
   caseIds?: number[]
