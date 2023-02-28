@@ -62,14 +62,14 @@ export class ApplicationService {
     locale: Locale,
     input?: ApplicationApplicationsInput,
   ) {
-    return await this.applicationApiWithAuth(
-      user,
-    ).applicationControllerFindAll({
-      nationalId: user.nationalId,
-      locale,
-      typeId: input?.typeId?.join(','),
-      status: input?.status?.join(','),
-    })
+    return await this.applicationApiWithAuth(user).applicationControllerFindAll(
+      {
+        nationalId: user.nationalId,
+        locale,
+        typeId: input?.typeId?.join(','),
+        status: input?.status?.join(','),
+      },
+    )
   }
 
   async create(input: CreateApplicationInput, auth: Auth) {

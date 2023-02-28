@@ -12,7 +12,8 @@ import {
   ApplicationRole,
   ApplicationStateSchema,
   TemplateApi,
-  defineTemplateApi, PendingAction,
+  defineTemplateApi,
+  PendingAction,
 } from '@island.is/application/types'
 import { buildForm } from './formBuilders'
 import { DefaultStateLifeCycle } from './constants'

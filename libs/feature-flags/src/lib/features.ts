@@ -48,9 +48,8 @@ export enum Features {
   transportAuthorityOrderVehicleRegistrationCertificateDelegations = 'applicationTransportAuthorityOrderVehicleRegistrationCertificateDelegations',
   mortgageCertificateDelegations = 'applicationMortgageCertificateDelegations',
 
-
   //Application system
-  applicationSystemHistory = 'applicationSystemHistory'
+  applicationSystemHistory = 'applicationSystemHistory',
 }
 
 export enum ServerSideFeature {
