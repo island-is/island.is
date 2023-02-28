@@ -141,6 +141,7 @@
     "clients-fishing-license": "libs/clients/fishing-license",
     "clients-fiskistofa": "libs/clients/fiskistofa",
     "clients-health-insurance-v2": "libs/clients/health-insurance-v2",
+    "clients-icelandic-health-insurance": "libs/clients/icelandic-health-insurance",
     "clients-identity": "libs/clients/identity",
     "clients-islykill": "libs/clients/islykill",
     "clients-middlewares": "libs/clients/middlewares",
