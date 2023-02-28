@@ -109,6 +109,34 @@ export class ApplicationSerializer
       return intl.formatMessage(template.name)
     }
 
+    const commonPropsDto = {
+      ...application,
+      ...helper.getReadableAnswersAndExternalData(userRole),
+      applicationActors: actors,
+      actionCard: {
+        title: actionCardMeta.title
+          ? intl.formatMessage(actionCardMeta.title)
+          : null,
+        description: actionCardMeta.description
+          ? intl.formatMessage(actionCardMeta.description)
+          : null,
+        tag: {
+          variant: actionCardMeta.tag.variant || null,
+          label: actionCardMeta.tag.label
+            ? intl.formatMessage(actionCardMeta.tag.label)
+            : null,
+        },
+        deleteButton: roleInState?.delete,
+        draftFinishedSteps: application.draftFinishedSteps,
+        draftTotalSteps: application.draftTotalSteps,
+      },
+      name: getApplicationName(),
+      institution: template.institution
+        ? intl.formatMessage(template.institution)
+        : null,
+      progress: helper.getApplicationProgress(),
+    }
+
     // Special case for admin list
     if (handlerName === ApplicationController.prototype.findAllAdmin.name) {
       const payment = await this.paymentService.findPaymentByApplicationId(
@@ -140,68 +168,17 @@ export class ApplicationSerializer
         }
         return null
       }
-
-      const dto = plainToInstance(ApplicationListAdminResponseDto, {
-        ...application,
-        ...helper.getReadableAnswersAndExternalData(userRole),
+      const dtoAdmin = plainToInstance(ApplicationListAdminResponseDto, {
+        ...commonPropsDto,
         answers: [],
         externalData: [],
-        applicationActors: actors,
-        actionCard: {
-          title: actionCardMeta.title
-            ? intl.formatMessage(actionCardMeta.title)
-            : null,
-          description: actionCardMeta.description
-            ? intl.formatMessage(actionCardMeta.description)
-            : null,
-          tag: {
-            variant: actionCardMeta.tag.variant || null,
-            label: actionCardMeta.tag.label
-              ? intl.formatMessage(actionCardMeta.tag.label)
-              : null,
-          },
-          deleteButton: roleInState?.delete,
-          draftFinishedSteps: application.draftFinishedSteps,
-          draftTotalSteps: application.draftTotalSteps,
-        },
-        name: getApplicationName(),
-        institution: template.institution
-          ? intl.formatMessage(template.institution)
-          : null,
-        progress: helper.getApplicationProgress(),
         paymentStatus: getPaymentStatus(),
         applicantName: getApplicantName(),
       })
+      return instanceToPlain(dtoAdmin)
+    } else {
+      const dto = plainToInstance(ApplicationResponseDto, commonPropsDto)
       return instanceToPlain(dto)
     }
-
-    const dto = plainToInstance(ApplicationResponseDto, {
-      ...application,
-      ...helper.getReadableAnswersAndExternalData(userRole),
-      applicationActors: actors,
-      actionCard: {
-        title: actionCardMeta.title
-          ? intl.formatMessage(actionCardMeta.title)
-          : null,
-        description: actionCardMeta.description
-          ? intl.formatMessage(actionCardMeta.description)
-          : null,
-        tag: {
-          variant: actionCardMeta.tag.variant || null,
-          label: actionCardMeta.tag.label
-            ? intl.formatMessage(actionCardMeta.tag.label)
-            : null,
-        },
-        deleteButton: roleInState?.delete,
-        draftFinishedSteps: application.draftFinishedSteps,
-        draftTotalSteps: application.draftTotalSteps,
-      },
-      name: getApplicationName(),
-      institution: template.institution
-        ? intl.formatMessage(template.institution)
-        : null,
-      progress: helper.getApplicationProgress(),
-    })
-    return instanceToPlain(dto)
   }
 }
