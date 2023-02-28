@@ -1,9 +1,9 @@
 import { Application } from '@island.is/application/types'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { CopyLink } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
-import School from '../../assets/School'
+import Illustration from '../../assets/Illustration'
 
 const ListCreated = ({ application }: { application: Application }) => {
   const { formatMessage } = useLocale()
@@ -13,23 +13,23 @@ const ListCreated = ({ application }: { application: Application }) => {
     document.location.origin === 'http://localhost:4242'
       ? 'http://localhost:4200'
       : document.location.origin
-  const baseUrlForm = `${baseUrl}/undirskriftalistar/`
+  const baseUrlForm = `${baseUrl}/undirskriftalisti/`
 
   return (
-    <Box>
-      <Text marginBottom={2} variant="h3">
-        {formatMessage(m.linkToList)}
-      </Text>
-      <Box marginBottom={2}>
+    <Stack space={3}>
+      <Box>
+        <Text marginBottom={2} variant="h3">
+          {formatMessage(m.linkToList)}
+        </Text>
         <CopyLink
           linkUrl={baseUrlForm + createdList?.id}
           buttonTitle={formatMessage(m.copyLinkButton)}
         />
       </Box>
       <Box marginY={8} display="flex" justifyContent="center">
-        <School />
+        <Illustration />
       </Box>
-    </Box>
+    </Stack>
   )
 }
 

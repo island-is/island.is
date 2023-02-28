@@ -181,6 +181,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
         courtCaseNumber: '007-2022-07',
         rulingDate: new Date('2021-07-01'),
         defendants: [{ noNationalId: true }] as Defendant[],
+        court: { name: 'Héraðsdómur Reykjavíkur' },
       } as Case
 
       beforeEach(async () => {
@@ -188,6 +189,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
       })
 
       it('should send email to prison', () => {
+        const expectedLink = `<a href="${mockConfig.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${caseId}">`
         expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(3)
         expect(mockEmailService.sendEmail).toHaveBeenNthCalledWith(
           3,
@@ -198,20 +200,8 @@ describe('InternalNotificationController - Send ruling notifications', () => {
                 address: mockConfig.email.prisonEmail,
               },
             ],
-            attachments: [
-              {
-                filename: 'Vistunarseðill 007-2022-07.pdf',
-                content: expect.any(String),
-                encoding: 'binary',
-              },
-              {
-                filename: 'Þingbók 007-2022-07.pdf',
-                content: expect.any(String),
-                encoding: 'binary',
-              },
-            ],
             subject: 'Úrskurður um gæsluvarðhald',
-            html: `Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í gæsluvarðhald í héraðsdómi 1. júlí 2021, auk þingbókar þar sem úrskurðarorðin koma fram.`,
+            html: `Héraðsdómur Reykjavíkur hefur úrskurðað aðila í gæsluvarðhald í þinghaldi sem lauk rétt í þessu. Hægt er að nálgast þingbók og vistunarseðil í ${expectedLink}Réttarvörslugátt</a>.`,
           }),
         )
       })
@@ -279,6 +269,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
       courtCaseNumber: '007-2022-07',
       rulingDate: new Date('2021-07-01'),
       defendants: [{ nationalId: '0000000000' }],
+      court: { name: 'Héraðsdómur Reykjavíkur' },
     } as Case
 
     beforeEach(async () => {
@@ -290,6 +281,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     })
 
     it('should send email to prison', () => {
+      const expectedLink = `<a href="${mockConfig.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${caseId}">`
       expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(3)
       expect(mockEmailService.sendEmail).toHaveBeenNthCalledWith(
         3,
@@ -300,20 +292,8 @@ describe('InternalNotificationController - Send ruling notifications', () => {
               address: mockConfig.email.prisonEmail,
             },
           ],
-          attachments: [
-            {
-              filename: 'Vistunarseðill 007-2022-07.pdf',
-              content: expect.any(String),
-              encoding: 'binary',
-            },
-            {
-              filename: 'Þingbók 007-2022-07.pdf',
-              content: expect.any(String),
-              encoding: 'binary',
-            },
-          ],
           subject: 'Úrskurður um vistun á viðeigandi stofnun',
-          html: `Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í vistun á viðeigandi stofnun í héraðsdómi 1. júlí 2021, auk þingbókar þar sem úrskurðarorðin koma fram.`,
+          html: `Héraðsdómur Reykjavíkur hefur úrskurðað aðila í vistun á viðeigandi stofnun í þinghaldi sem lauk rétt í þessu. Hægt er að nálgast þingbók og vistunarseðil í ${expectedLink}Réttarvörslugátt</a>.`,
         }),
       )
     })
@@ -328,6 +308,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
       courtCaseNumber: '007-2022-07',
       rulingDate: new Date('2021-07-01'),
       defendants: [{ noNationalId: true }] as Defendant[],
+      court: { name: 'Héraðsdómur Reykjavíkur' },
     } as Case
 
     beforeEach(async () => {
@@ -339,6 +320,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     })
 
     it('should send email to prison', () => {
+      const expectedLink = `<a href="${mockConfig.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${caseId}">`
       expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(3)
       expect(mockEmailService.sendEmail).toHaveBeenNthCalledWith(
         3,
@@ -349,20 +331,8 @@ describe('InternalNotificationController - Send ruling notifications', () => {
               address: mockConfig.email.prisonEmail,
             },
           ],
-          attachments: [
-            {
-              filename: 'Vistunarseðill 007-2022-07.pdf',
-              content: expect.any(String),
-              encoding: 'binary',
-            },
-            {
-              filename: 'Þingbók 007-2022-07.pdf',
-              content: expect.any(String),
-              encoding: 'binary',
-            },
-          ],
           subject: 'Úrskurður um vistun á viðeigandi stofnun',
-          html: `Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í vistun á viðeigandi stofnun í héraðsdómi 1. júlí 2021, auk þingbókar þar sem úrskurðarorðin koma fram.`,
+          html: `Héraðsdómur Reykjavíkur hefur úrskurðað aðila í vistun á viðeigandi stofnun í þinghaldi sem lauk rétt í þessu. Hægt er að nálgast þingbók og vistunarseðil í ${expectedLink}Réttarvörslugátt</a>.`,
         }),
       )
     })

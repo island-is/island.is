@@ -12,30 +12,30 @@ import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { useMutation, useQuery } from '@apollo/client'
-import { useHasEndorsed } from '../../hooks/useHasEndorsed'
-import { useGetSinglePetitionList } from '../../hooks/useGetSinglePetitionList'
-import { GetFullName } from '../../graphql/queries'
-import { EndorseList } from '../../graphql/mutations'
+import { useHasSigned, useGetSinglePetitionList } from '../../hooks'
+import { GetFullName, EndorseList } from '../../graphql'
 import format from 'date-fns/format'
 import { EndorsementList } from '../../types/schema'
 import Skeleton from './Skeleton'
-import School from '../../assets/School'
+import Illustration from '../../assets/Illustration'
+import { useNavigate } from 'react-router-dom'
 
 const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
+  const navigate = useNavigate()
 
-  const endorsementListId = (application.externalData?.createEndorsementList
-    .data as any).id
+  const listId = (application.externalData?.createEndorsementList.data as any)
+    .id
   const [acceptTerms, setAcceptTerms] = useState(false)
   const [showName, setShowName] = useState(true)
 
-  const checkForSigned = useHasEndorsed(endorsementListId)
+  const checkForSigned = useHasSigned(listId)
   const [hasSigned, setHasSigned] = useState(checkForSigned)
 
-  const { petitionData } = useGetSinglePetitionList(endorsementListId)
+  const { petitionData } = useGetSinglePetitionList(listId)
   const petitionList = petitionData as EndorsementList
   const listClosed = new Date() >= new Date(petitionList.closedDate)
-  const [createEndorsement, { loading: submitLoad }] = useMutation(EndorseList)
+  const [createEndorsement, { loading }] = useMutation(EndorseList)
   const { data: userData } = useQuery(GetFullName)
 
   useEffect(() => setHasSigned(checkForSigned), [checkForSigned])
@@ -44,7 +44,7 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
     const success = await createEndorsement({
       variables: {
         input: {
-          listId: endorsementListId,
+          listId: listId,
           endorsementDto: {
             showName: showName,
           },
@@ -67,8 +67,16 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
             {formatMessage(m.petitionSigned)}
           </Text>
 
-          <Box marginY={8} display="flex" justifyContent="center">
-            <School />
+          <Box marginY={5} display="flex" justifyContent="center">
+            <Illustration />
+          </Box>
+          <Box position="absolute" bottom={0} right={0}>
+            <Button
+              icon="arrowForward"
+              onClick={() => navigate('/../minarsidur/umsoknir')}
+            >
+              {formatMessage(m.backtoSP)}
+            </Button>
           </Box>
         </Box>
       ) : (
@@ -97,7 +105,7 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
                 </Box>
               </Box>
 
-              <Box marginTop={5}>
+              <Box marginTop={4}>
                 <Box width="half" marginBottom={2}>
                   <Input
                     label={formatMessage(m.name)}
@@ -112,7 +120,7 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
                   onSelect={() => setShowName(!showName)}
                   options={[
                     {
-                      value: 'allow',
+                      value: YES,
                       label: formatMessage(m.hideNameLabel),
                     },
                   ]}
@@ -143,14 +151,9 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
               {formatMessage(m.listClosedMessage)}
             </Text>
           )}
-          <Box
-            marginTop={8}
-            marginBottom={5}
-            display="flex"
-            justifyContent="flexEnd"
-          >
+          <Box marginY={8} display="flex" justifyContent="flexEnd">
             <Button
-              loading={submitLoad}
+              loading={loading}
               disabled={!acceptTerms}
               icon="checkmark"
               onClick={() => signPetition()}

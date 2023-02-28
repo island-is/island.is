@@ -22,6 +22,7 @@ export type DatePickerBackgroundColor = 'white' | 'blue'
 export type DatePickerSize = 'xs' | 'sm' | 'md'
 
 export interface DatePickerProps {
+  name?: string
   label: string
   placeholderText: ReactDatePickerProps['placeholderText']
   locale?: LocaleKeys
