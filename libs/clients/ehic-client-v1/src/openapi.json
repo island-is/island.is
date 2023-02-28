@@ -125,7 +125,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardStatusResponseDTO"
+                }
+              }
+            }
           },
           "404": {
             "description": "Not Found"
@@ -249,6 +256,14 @@
           "comment": {
             "type": "string",
             "nullable": true
+          },
+          "isPlastic": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "isTemp": {
+            "type": "boolean",
+            "readOnly": true
           }
         },
         "additionalProperties": false
@@ -261,6 +276,10 @@
             "nullable": true
           },
           "isInsured": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "canApply": {
             "type": "boolean",
             "nullable": true
           },

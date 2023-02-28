@@ -6,6 +6,7 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../../lib/messages'
 import { formatText } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
+import { getFullName } from '../../lib/helpers/applicantHelper'
 
 const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
   const { answers } = application
@@ -44,7 +45,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
                 </Text>
 
                 {plastic?.map((item, index) => (
-                  <Text>{item[1]}</Text>
+                  <Text>{getFullName(application, item)}</Text>
                 ))}
               </Box>
               <Divider />
@@ -62,7 +63,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
                 </Text>
 
                 {pdf?.map((item, index) => (
-                  <Text>{item[1]}</Text>
+                  <Text>{getFullName(application, item)}</Text>
                 ))}
               </Box>
               <Divider />

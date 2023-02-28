@@ -45,6 +45,18 @@ export function getFromRegistry(formValues: Application<FormValue>) {
   return nridArr
 }
 
+/** Returns name of person by national registry id by external data from National Registry */
+export function getFullName(
+  formValues: Application<FormValue>,
+  nrid: string | null | undefined,
+) {
+  if (nrid) {
+    const persons = getFromRegistry(formValues)
+    return persons.find((x) => x.nrid === nrid)?.name
+  }
+  return null
+}
+
 export function getEhicApplicants(
   formValues: Application<FormValue>,
   cardType: string | null,
@@ -104,6 +116,7 @@ export function base64ToArrayBuffer(base64Pdf: string) {
   return bytes
 }
 
+/** Checks if one of all persons from national registry for this user has an health insurance */
 export function hasInsurance(externalData: ExternalData): boolean {
   console.log(externalData)
   if (externalData?.cardResponse?.data) {
@@ -113,6 +126,35 @@ export function hasInsurance(externalData: ExternalData): boolean {
       if (cardResponse[i].isInsured) {
         return true
       }
+    }
+  }
+  return false
+}
+
+export function getEhicResponse(
+  application: Application<FormValue>,
+): CardResponse[] {
+  return application.externalData.cardResponse.data as CardResponse[]
+}
+
+/** Get's a array of nationalRegistries for applicants that want to apply for PDF in the first step */
+export function getDefaultValuesForPDFApplicants(
+  formValues: Application<FormValue>,
+) {
+  const defaultValues: string[] = []
+
+  const ans = formValues.answers.addForPDF as Array<any>
+  if (ans) {
+    ans.forEach((item) => defaultValues.push(item))
+  }
+  return defaultValues
+}
+
+export function hasAPDF(cardInfo: CardResponse) {
+  if (cardInfo && cardInfo.cards && cardInfo.cards.length > 0) {
+    const card = cardInfo.cards.find((x) => x.cardType === 'pdf')
+    if (card) {
+      return true
     }
   }
   return false
