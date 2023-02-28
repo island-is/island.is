@@ -142,10 +142,12 @@ export class PassportService extends BaseTemplateApiService {
           deliveryName: service.dropLocation,
           approvalA: {
             personId: childsPersonalInfo.guardian1.nationalId.replace('-', ''),
+            name: childsPersonalInfo.guardian1.name,
             approved: application.created,
           },
           approvalB: {
             personId: childsPersonalInfo.guardian2.nationalId.replace('-', ''),
+            name: childsPersonalInfo.guardian2.name,
             approved: new Date(),
           },
           contactInfo: {

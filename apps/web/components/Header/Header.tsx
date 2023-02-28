@@ -20,6 +20,7 @@ import { LayoutProps } from '@island.is/web/layouts/main'
 import React, { FC, useContext } from 'react'
 import { LanguageToggler } from '../LanguageToggler'
 import { Menu } from '../Menu/Menu'
+import { webMenuButtonClicked } from '@island.is/plausible'
 
 interface HeaderProps {
   showSearchInHeader?: boolean
@@ -110,6 +111,7 @@ export const Header: FC<HeaderProps> = ({
                       <Menu
                         {...megaMenuData}
                         buttonColorScheme={buttonColorScheme}
+                        onMenuOpen={webMenuButtonClicked}
                       />
                     </Box>
                   </Box>
