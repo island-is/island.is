@@ -155,7 +155,12 @@ const OperatingLicenseTemplate: ApplicationTemplate<
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (nationalId === application.applicant) {
+    console.log('NATIONAL ID', nationalId)
+    console.log("APPLICATION", application)
+    if (
+      nationalId === application.applicant ||
+      application.applicantActors.includes(nationalId)
+    ) {
       return Roles.APPLICANT
     }
     return undefined
