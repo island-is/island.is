@@ -10,6 +10,8 @@ query getApplications($input: ApplicationApplicationsAdminInput!) {
       institution
       progress
       status
+      applicantName
+      paymentStatus
     }
   }
 

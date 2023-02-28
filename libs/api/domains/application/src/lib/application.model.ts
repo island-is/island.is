@@ -143,6 +143,12 @@ export class ApplicationAdmin {
 
   @Field(() => ApplicationListAdminResponseDtoStatusEnum)
   status!: ApplicationListAdminResponseDtoStatusEnum
+
+  @Field(() => String, { nullable: true })
+  applicantName?: string
+
+  @Field(() => String, { nullable: true })
+  paymentStatus?: string
 }
 
 @ObjectType()

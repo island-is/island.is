@@ -209,6 +209,16 @@ export class ApplicationListAdminResponseDto {
   @IsEnum(ApplicationStatus)
   status!: ApplicationStatus
 
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
+  applicantName?: string
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
+  paymentStatus?: string
+
   constructor(partial: Partial<ApplicationListAdminResponseDto>) {
     Object.assign(this, partial)
   }

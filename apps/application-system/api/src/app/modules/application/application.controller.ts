@@ -335,22 +335,16 @@ export class ApplicationController {
       'answers' | 'externalData'
     >[] = []
     for (const application of applications) {
-      // We've already checked an application with this type and it is ready
+      // We've already checked an application with this type, and it is ready
       if (
         templateTypeToIsReady[application.typeId] &&
         templates[application.typeId] !== undefined
       ) {
-        // getting payment status for the applciation if it is a payment application
-        const payment = await this.paymentService.findPaymentByApplicationId(
-          application.id,
-        )
-        console.log(`the payment fulfillment? ${payment?.fulfilled}`)
-
         filteredApplications.push(application)
         continue
       } else if (templateTypeToIsReady[application.typeId] === false) {
-        // We've already checked an application with this type
-        // and it is NOT ready so we will skip it
+        // We've already checked an application with this type,
+        // and it is NOT ready, so we will skip it.
         continue
       }
 
@@ -359,12 +353,7 @@ export class ApplicationController {
           application.typeId,
         )
         templates[application.typeId] = applicationTemplate
-        const payment = await this.paymentService.findPaymentByApplicationId(
-          application.id,
-        )
-        console.log(`the payment fulfillment? ${payment?.fulfilled}`)
 
-        filteredApplications.push(application)
         // Add template to avoid fetching it again for the same types
         if (await this.validationService.isTemplateReady(applicationTemplate)) {
           templateTypeToIsReady[application.typeId] = true
