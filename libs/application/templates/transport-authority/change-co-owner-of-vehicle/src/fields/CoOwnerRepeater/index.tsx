@@ -147,14 +147,19 @@ export const CoOwnerRepeater: FC<FieldBaseProps> = (props) => {
 
   return (
     <Box>
-      {filteredOwnerCoOwners.length > 0 &&
-        filteredOwnerCoOwners.map((coOwner, index) => (
+      {ownerCoOwners.length > 0 &&
+        ownerCoOwners.map((coOwner, index) => (
           <OwnerCoOwners
             id="ownerCoOwners"
             index={index}
-            rowLocation={index + 1}
+            rowLocation={
+              filteredOwnerCoOwners.indexOf(coOwner) > -1
+                ? filteredOwnerCoOwners.indexOf(coOwner) + 1
+                : index + 1
+            }
             key={`ownerCoOwners-${index}`}
             handleRemove={handleRemoveOld}
+            wasRemoved={coOwner.wasRemoved === 'true'}
             {...props}
           />
         ))}
