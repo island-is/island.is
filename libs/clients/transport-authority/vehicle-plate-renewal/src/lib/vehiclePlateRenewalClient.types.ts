@@ -1,7 +1,10 @@
 export interface PlateOwnership {
   regno: string
-  startDate?: Date | null
-  endDate?: Date | null
+  startDate: Date
+  endDate: Date
+  nationalId: string
+  name: string
+  permno: string
 }
 
 export interface PlateOwnershipValidation {

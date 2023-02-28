@@ -23,12 +23,18 @@ export class VehiclePlateRenewalClient {
       {
         regno: 'STINNA',
         startDate: new Date(),
-        endDate: null,
+        endDate: new Date(2023, 4, 25),
+        nationalId: auth.nationalId,
+        name: 'Gervimaður',
+        permno: 'ABB12',
       },
       {
         regno: 'JAMJAM',
         startDate: new Date(),
-        endDate: null,
+        endDate: new Date(2025, 2, 20),
+        nationalId: auth.nationalId,
+        name: 'Gervimaður',
+        permno: '',
       },
     ]
 
@@ -43,8 +49,11 @@ export class VehiclePlateRenewalClient {
 
     return result.map((item) => ({
       regno: item.regno || '',
-      startDate: item.startDate,
-      endDate: item.endDate,
+      startDate: item.startDate || new Date(),
+      endDate: item.endDate || new Date(),
+      nationalId: item.persidNo || '',
+      name: item.personName || '',
+      permno: item.permno || '',
     }))
   }
 

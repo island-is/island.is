@@ -470,6 +470,18 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
+          },
+          "persidNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "personName": {
+            "type": "string",
+            "nullable": true
+          },
+          "permno": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
