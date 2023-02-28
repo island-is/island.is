@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'consultation-portal',
+  displayName: 'clients-consultation-portal',
   preset: './jest.preset.js',
   rootDir: '../../..',
   roots: [__dirname],
