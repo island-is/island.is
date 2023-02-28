@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { Domain } from '@island.is/auth-api-lib'
 import { User } from '@island.is/auth-nest-tools'
 
 import { TenantDto } from './dto/tenant.dto'
+import { Domain } from './models/domain.model'
 
 /**
  * This is a service that is used to access the tenants resource.
