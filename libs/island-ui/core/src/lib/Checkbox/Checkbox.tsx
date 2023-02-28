@@ -19,7 +19,6 @@ export interface CheckboxProps {
   hasError?: boolean
   errorMessage?: string
   value?: string
-  defaultValue?: string
   defaultChecked?: boolean
   strong?: boolean
   filled?: boolean
@@ -46,8 +45,7 @@ export const Checkbox = ({
   tooltip,
   hasError,
   errorMessage,
-  value: valueFromProps,
-  defaultValue,
+  value,
   checked: checkedFromProps,
   defaultChecked,
   large,
@@ -67,33 +65,19 @@ export const Checkbox = ({
   const background =
     backgroundColor && backgroundColor === 'blue' ? 'blue100' : undefined
 
-  // If a defaultValue or defaultCheck is specified, we will use it as our initial state.
-  const [internalState, setInternalState] = useState({
-    value: defaultValue !== undefined ? defaultValue : '',
-    checked: defaultChecked !== undefined ? defaultChecked : false,
-  })
+  // If defaultCheck is specified, we will use it as our initial state.
+  const [internalChecked, setInternalChecked] = useState(
+    defaultChecked !== undefined ? defaultChecked : false,
+  )
 
   // We need to know whether the component is controlled or not.
-  const isValueControlled = valueFromProps !== undefined
   const isCheckedControlled = checkedFromProps !== undefined
-  // Internally, we need to deal with some value. Depending on whether
-  // the component is controlled or not, that value comes from its
-  // props or from its internal state.
-  const value = isValueControlled ? valueFromProps : internalState.value
-  const checked = isCheckedControlled ? checkedFromProps : internalState.checked
+  const checked = isCheckedControlled ? checkedFromProps : internalChecked
 
   const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!isValueControlled || !isCheckedControlled) {
+    if (!isCheckedControlled) {
       // If the component is not controlled, we need to update its internal state.
-      setInternalState({
-        value:
-          // If the value is empty, we need to convert checked to a boolean representation of a string.
-          // This is to make sure that input value can be extracted from the query string
-          event.target.value === ''
-            ? event.target.checked.toString()
-            : event.target.value,
-        checked: event.target.checked,
-      })
+      setInternalChecked(event.target.checked)
     }
 
     onChange?.(event)
