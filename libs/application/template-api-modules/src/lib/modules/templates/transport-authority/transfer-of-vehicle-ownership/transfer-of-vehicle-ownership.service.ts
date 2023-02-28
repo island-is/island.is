@@ -27,12 +27,21 @@ import {
   ChargeFjsV2ClientService,
   getChargeId,
 } from '@island.is/clients/charge-fjs-v2'
-import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
+import {
+  OwnerChangeValidation,
+  VehicleOwnerChangeClient,
+} from '@island.is/clients/transport-authority/vehicle-owner-change'
 import { VehicleCodetablesClient } from '@island.is/clients/transport-authority/vehicle-codetables'
+import {
+  VehicleDebtStatus,
+  VehicleServiceFjsV1Client,
+} from '@island.is/clients/vehicle-service-fjs-v1'
+import { VehicleSearchApi } from '@island.is/clients/vehicles'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { applicationCheck } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
@@ -42,12 +51,62 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
     private readonly vehicleCodetablesClient: VehicleCodetablesClient,
+    private readonly vehicleServiceFjsV1Client: VehicleServiceFjsV1Client,
+    private readonly vehiclesApi: VehicleSearchApi,
   ) {
     super(ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP)
   }
 
+  private vehiclesApiWithAuth(auth: Auth) {
+    return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
   async getInsuranceCompanyList() {
     return await this.vehicleCodetablesClient.getInsuranceCompanies()
+  }
+
+  async getCurrentVehiclesWithOwnerchangeChecks({
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const result = await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
+      persidNo: auth.nationalId,
+      showOwned: true,
+      showCoowned: false,
+      showOperated: false,
+    })
+
+    return await Promise.all(
+      result?.map(async (vehicle) => {
+        let validation: OwnerChangeValidation | undefined
+        let debtStatus: VehicleDebtStatus | undefined
+
+        // Only validate if fewer than 5 items
+        if (result.length <= 5) {
+          // Get debt status
+          debtStatus = await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
+            auth,
+            vehicle.permno || '',
+          )
+
+          // Get validation
+          validation = await this.vehicleOwnerChangeClient.validateVehicleForOwnerChange(
+            auth,
+            vehicle.permno || '',
+          )
+        }
+
+        return {
+          permno: vehicle.permno || undefined,
+          make: vehicle.make || undefined,
+          color: vehicle.color || undefined,
+          role: vehicle.role || undefined,
+          isDebtLess: debtStatus?.isDebtLess,
+          validationErrorMessages: validation?.hasError
+            ? validation.errorMessages
+            : null,
+        }
+      }),
+    )
   }
 
   async validateApplication({
@@ -63,11 +122,13 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     if (auth.nationalId !== sellerSsn && auth.nationalId !== buyerSsn) {
       return
     }
-
-    const buyerCoOwners = answers?.buyerCoOwnerAndOperator?.filter(
+    const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'coOwner',
     )
-    const buyerOperators = answers?.buyerCoOwnerAndOperator?.filter(
+    const buyerOperators = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'operator',
     )
 
@@ -244,9 +305,11 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
       []) as Array<EmailRecipient>
 
     const newlyAddedRecipientList: Array<EmailRecipient> = []
-
+    const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
     // Buyer's co-owners
-    const buyerCoOwners = answers.buyerCoOwnerAndOperator?.filter(
+    const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'coOwner',
     )
     if (buyerCoOwners) {
@@ -274,7 +337,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     }
 
     // Buyer's operators
-    const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
+    const buyerOperators = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'operator',
     )
     if (buyerOperators) {
@@ -443,11 +506,13 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         400,
       )
     }
-
-    const buyerCoOwners = answers.buyerCoOwnerAndOperator?.filter(
+    const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'coOwner',
     )
-    const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
+    const buyerOperators = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'operator',
     )
 
