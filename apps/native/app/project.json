@@ -1,0 +1,15 @@
+{
+  "root": "apps/native/app",
+  "sourceRoot": "apps/native/app/src",
+  "projectType": "application",
+  "generators": {},
+  "targets": {
+    "script": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "cwd": "apps/native/app",
+        "command": "yarn {args.name}"
+      }
+    }
+  }
+}
