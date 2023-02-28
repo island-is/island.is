@@ -6,6 +6,7 @@ import {
   GridRow,
   Tiles,
   Text,
+  Pagination,
 } from '@island.is/island-ui/core'
 import React, { useEffect, useState } from 'react'
 import { HeroBanner } from '../components'
@@ -15,6 +16,8 @@ import SearchAndFilter from '../components/SearchAndFilter/SearchAndFilter'
 import Types from '../utils/dummydata/api/Types'
 import { Cases } from '../utils/dummydata'
 import { Case } from '../types/interfaces'
+
+const CARDS_PER_PAGE = 12
 
 export const Index = () => {
   const Institutions = Object.entries(Types.institutions).map(
@@ -35,6 +38,15 @@ export const Index = () => {
   const [data, setData] = useState<Array<Case>>(Cases)
   const [options, setOptions] = useState<AsyncSearchOption[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [page, setPage] = useState<number>(1)
+
+  const goToPage = (page = 1, scrollTop = true) => {
+    setPage(page)
+
+    if (scrollTop) {
+      window.scrollTo(0, 0)
+    }
+  }
 
   const clearAll = () => {
     setIsLoading(false)
@@ -56,6 +68,11 @@ export const Index = () => {
     }
   }, [searchValue])
 
+  const count = data.length
+  const totalPages = Math.ceil(count / CARDS_PER_PAGE)
+  const base = page === 1 ? 0 : (page - 1) * CARDS_PER_PAGE
+  const visibleItems = data.slice(base, page * CARDS_PER_PAGE)
+
   return (
     <Layout showIcon={false}>
       <HeroBanner />
@@ -75,9 +92,9 @@ export const Index = () => {
         <GridRow>
           <GridColumn span={['0', '0', '3/12', '3/12', '3/12']}></GridColumn>
           <GridColumn span={['12/12', '12/12', '9/12', '9/12', '9/12']}>
-            {data && (
+            {visibleItems && (
               <Tiles space={3} columns={[1, 1, 1, 2, 3]}>
-                {data.map((item, index) => {
+                {visibleItems.map((item, index) => {
                   const card = {
                     id: item.id,
                     title: item.name,
@@ -105,6 +122,38 @@ export const Index = () => {
                   )
                 })}
               </Tiles>
+            )}
+            {totalPages > 1 && (
+              <Box paddingTop={8}>
+                <Pagination
+                  page={page}
+                  totalPages={totalPages}
+                  variant="blue"
+                  renderLink={(page, className, children) => (
+                    <button
+                      onClick={() => {
+                        goToPage(page)
+                      }}
+                    >
+                      <span
+                        style={{
+                          position: 'absolute',
+                          width: '1px',
+                          height: '1px',
+                          padding: '0',
+                          margin: '-1px',
+                          overflow: 'hidden',
+                          clip: 'rect(0,0,0,0)',
+                          border: '0',
+                        }}
+                      >
+                        Síða
+                      </span>
+                      <span className={className}>{children}</span>
+                    </button>
+                  )}
+                />
+              </Box>
             )}
           </GridColumn>
         </GridRow>
