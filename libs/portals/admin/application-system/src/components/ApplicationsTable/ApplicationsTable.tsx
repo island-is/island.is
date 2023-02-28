@@ -61,7 +61,7 @@ export const ApplicationsTable = ({ applications }: Props) => {
                     {format(new Date(application.created), 'dd.MM.yyyy')}
                   </T.Data>
                   <T.Data>{application.name}</T.Data>
-                  <T.Data>Guðmundur Rúnar Jónsson</T.Data> {/* TODO */}
+                  <T.Data>{application.applicantName ?? ''}</T.Data>
                   <T.Data>{application.applicant}</T.Data>
                   <T.Data>
                     <Box display="flex" alignItems="center">

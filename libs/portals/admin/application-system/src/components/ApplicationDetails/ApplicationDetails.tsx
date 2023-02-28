@@ -52,7 +52,9 @@ export const ApplicationDetails = ({ application }: Props) => {
       <Box padding={4} background="blue100" borderRadius="large">
         <GridRow rowGap={3}>
           <GridColumn span={['2/2', '2/2', '1/2']}>
-            <ValueLine title="Nafn">Guðmundur Rúnar Jónsson</ValueLine>
+            <ValueLine title="Nafn">
+              {application.applicantName ?? 'Vantar nafn'}
+            </ValueLine>
           </GridColumn>
           <GridColumn span={['2/2', '2/2', '1/2']}>
             <ValueLine title="Kennitala">{application.applicant}</ValueLine>

@@ -11,4 +11,6 @@ export interface AdminApplication {
   institution?: string | null
   progress?: number | null
   status: Types.ApplicationListAdminResponseDtoStatusEnum
+  applicantName?: string | null
+  paymentStatus?: string | null
 }
