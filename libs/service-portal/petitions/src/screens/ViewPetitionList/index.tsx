@@ -5,6 +5,8 @@ import { useMutation } from '@apollo/client'
 import {
   Box,
   Button,
+  Column,
+  Columns,
   DatePicker,
   DialogPrompt,
   Stack,
@@ -135,77 +137,83 @@ const ViewPetitionList = () => {
   return (
     <Box>
       {Object.entries(petition).length !== 0 ? (
-        <Stack space={2}>
-          <Text variant="h2">{petition?.title}</Text>
-          <Text>{petition?.description as string}</Text>
-          <Box
-            display={['block', 'flex']}
-            justifyContent="spaceBetween"
-            width={viewTypeEdit ? 'half' : 'full'}
-          >
-            {!viewTypeEdit && petition?.closedDate && (
-              <Box>
-                <Text variant="h4">{formatMessage(m.listOpenTil)}</Text>
-                <Text variant="default">
-                  {format(new Date(petition?.closedDate), 'dd.MM.yyyy')}
-                </Text>
-              </Box>
-            )}
-            <Box>
-              <Text variant="h4">{formatMessage(m.listHowManySigned)}</Text>
-              <Text variant="default">
-                {
-                  (petitionEndorsements as PaginatedEndorsementResponse)
-                    .totalCount
-                }
-              </Text>
-            </Box>
-            <Box>
-              <Text variant="h4">{formatMessage(m.listOwner)}</Text>
-              <Text variant="default">{petition?.ownerName}</Text>
-            </Box>
-          </Box>
-          {!viewTypeEdit && isListOpen && (
-            <Box marginTop={3} marginBottom={5}>
-              {hasSigned ? (
+        <Box>
+          <Columns>
+            <Column width="11/12">
+              <Stack space={2}>
+                <Text variant="h2">{petition?.title}</Text>
+                <Text>{petition?.description as string}</Text>
+                <Box
+                  display={['block', 'flex']}
+                  justifyContent="spaceBetween"
+                  width={viewTypeEdit ? 'half' : 'full'}
+                >
+                  {!viewTypeEdit && petition?.closedDate && (
+                    <Box>
+                      <Text variant="h4">{formatMessage(m.listOpenTil)}</Text>
+                      <Text variant="default">
+                        {format(new Date(petition?.closedDate), 'dd.MM.yyyy')}
+                      </Text>
+                    </Box>
+                  )}
+                  <Box>
+                    <Text variant="h4">{formatMessage(m.listOwner)}</Text>
+                    <Text variant="default">{petition?.ownerName}</Text>
+                  </Box>
+                  <Box>
+                    <Text variant="h4">
+                      {formatMessage(m.listHowManySigned)}
+                    </Text>
+                    <Text variant="default">
+                      {
+                        (petitionEndorsements as PaginatedEndorsementResponse)
+                          .totalCount
+                      }
+                    </Text>
+                  </Box>
+                </Box>
+              </Stack>
+            </Column>
+          </Columns>
+          {!viewTypeEdit && (
+            <Box marginTop={5} marginBottom={10}>
+              {hasSigned && isListOpen ? (
                 <Box width="half">
                   <DialogPrompt
                     baseId="dialog"
-                    title={'Lorem ipsum'}
-                    ariaLabel={'Lorem ipsum'}
+                    title={'Ert þú viss um að þú viljir taka nafn þitt af þessum lista?'}
+                    ariaLabel={''}
                     disclosureElement={
-                      <Button
-                        loading={isLoading}
-                        variant="primary"
-                        icon="close"
-                      >
+                      <Button loading={isLoading} variant="ghost">
                         {formatMessage(m.unsignList)}
                       </Button>
                     }
                     onConfirm={() => onUnendorse()}
-                    buttonTextConfirm={formatMessage(m.modalButtonYes)}
+                    buttonTextConfirm={'Halda áfram'}
                     buttonTextCancel={formatMessage(m.modalButtonNo)}
                   />
                 </Box>
               ) : (
-                <Box width="half">
-                  <Button
-                    variant="primary"
-                    icon="arrowForward"
-                    onClick={() =>
-                      window.open(
-                        `${document.location.origin}/umsoknir/undirskriftalisti/${petition?.meta.applicationId}`,
-                      )
-                    }
-                  >
-                    {formatMessage(m.signList)}
-                  </Button>
-                </Box>
+                isListOpen ?? (
+                  <Box width="half">
+                    <Button
+                      variant="primary"
+                      icon="arrowForward"
+                      onClick={() =>
+                        window.open(
+                          `${document.location.origin}/umsoknir/undirskriftalisti/${petition?.meta.applicationId}`,
+                        )
+                      }
+                    >
+                      {formatMessage(m.signList)}
+                    </Button>
+                  </Box>
+                )
               )}
             </Box>
           )}
           {viewTypeEdit && (
-            <Box>
+            <Box marginTop={5} marginBottom={10}>
               {petition?.closedDate && isListOpen && (
                 <Stack space={3}>
                   <Box>
@@ -276,7 +284,7 @@ const ViewPetitionList = () => {
               )}
 
               {petition?.closedDate && !isListOpen && (
-                <>
+                <Box>
                   <Text variant="h3">
                     {formatMessage(m.startSignatureCollection)}
                   </Text>
@@ -291,7 +299,7 @@ const ViewPetitionList = () => {
                         toggleClose={false}
                         initialVisibility={false}
                         disclosure={
-                          <Button icon="reload">
+                          <Button icon="reload" variant="ghost">
                             {formatMessage(m.restartList)}
                           </Button>
                         }
@@ -330,7 +338,7 @@ const ViewPetitionList = () => {
                       </Modal>
                     </Box>
                   </Box>
-                </>
+                </Box>
               )}
             </Box>
           )}
@@ -339,7 +347,7 @@ const ViewPetitionList = () => {
             listId={location.state?.listId}
             isViewTypeEdit={viewTypeEdit}
           />
-        </Stack>
+        </Box>
       ) : (
         <Skeleton />
       )}

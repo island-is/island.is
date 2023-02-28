@@ -70,17 +70,17 @@ export const m = defineMessages({
   // Info about the list
   listOpenTil: {
     id: 'sp.petitions:listOpenTil',
-    defaultMessage: 'Opinn til',
+    defaultMessage: 'Tímabil lista:',
     description: '',
   },
   listHowManySigned: {
     id: 'sp.petitions:listHowManySigned',
-    defaultMessage: 'Fjöldi undirskrifta',
+    defaultMessage: 'Fjöldi skráðir:',
     description: '',
   },
   listOwner: {
     id: 'sp.petitions:listOwner',
-    defaultMessage: 'Ábyrgðarmaður',
+    defaultMessage: 'Ábyrgðarmaður:',
     description: '',
   },
 

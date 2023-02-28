@@ -13,7 +13,6 @@ import { formatDate } from '../../lib/utils'
 
 const Petitions = () => {
   const { formatMessage } = useLocale()
-
   const ownedLists = useListsUserOwns()
   const signedLists = useGetListsUserSigned()
 
@@ -52,10 +51,9 @@ const Petitions = () => {
         <Tabs
           contentBackground="white"
           label="petitionListsTabs"
-          selected="openLists"
+          selected='0'
           tabs={[
             {
-              id: 'openLists',
               label: formatMessage(m.openLists),
               content: (
                 <Box>
@@ -144,7 +142,6 @@ const Petitions = () => {
               ),
             },
             {
-              id: 'outdatedLists',
               label: formatMessage(m.outdatedLists),
               content: (
                 <Box>
