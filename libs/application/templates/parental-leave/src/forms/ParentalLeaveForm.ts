@@ -1213,8 +1213,8 @@ export const ParentalLeaveForm: Form = buildForm({
           children: [
             buildMultiField({
               id: 'confirmation',
-              title: parentalLeaveFormMessages.confirmation.title,
-              description: parentalLeaveFormMessages.confirmation.description,
+              title: '',
+              description: '',
               children: [
                 buildCustomField(
                   {
