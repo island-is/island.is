@@ -43,14 +43,11 @@ export class DocumentController {
     @Body() resource: GetDocumentDto,
     @Res() res: Response,
   ) {
-    const rawDocumentDTO = await this.documentClient.customersDocument(
-      {
-        kennitala: user.nationalId,
-        messageId: pdfId,
-        authenticationType: 'HIGH',
-      },
-      resource.__accessToken,
-    )
+    const rawDocumentDTO = await this.documentClient.customersDocument({
+      kennitala: user.nationalId,
+      messageId: pdfId,
+      authenticationType: 'HIGH',
+    })
 
     if (!rawDocumentDTO || !rawDocumentDTO.content) {
       return res.end()
