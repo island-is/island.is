@@ -19,21 +19,11 @@ export const InReview: Form = buildForm({
   children: [
     buildSection({
       id: 'review',
-      title: (application) =>
-        application.state === States.VINNUMALASTOFNUN_APPROVAL
-          ? parentalLeaveFormMessages.reviewScreen.titleReceived
-          : application.state === States.APPROVED
-          ? parentalLeaveFormMessages.reviewScreen.titleApproved
-          : parentalLeaveFormMessages.reviewScreen.titleInReview,
+      title: '',
       children: [
         buildCustomField({
           id: 'InReviewSteps',
-          title: (application) =>
-            application.state === States.VINNUMALASTOFNUN_APPROVAL
-              ? parentalLeaveFormMessages.reviewScreen.titleReceived
-              : application.state === States.APPROVED
-              ? parentalLeaveFormMessages.reviewScreen.titleApproved
-              : parentalLeaveFormMessages.reviewScreen.titleInReview,
+          title: '',
           component: 'InReviewSteps',
         }),
       ],
