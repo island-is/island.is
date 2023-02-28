@@ -13,16 +13,17 @@ import { dataSchema } from './dataSchema'
 import { Roles, States, Events, ApiActions } from './constants'
 import { m } from './messages'
 import { FeatureFlagClient, Features } from '@island.is/feature-flags'
-import { AuthDelegationType } from '../types/schema'
 import {
   getApplicationFeatureFlags,
   OperatingLicenseFeatureFlags,
 } from './getApplicationFeatureFlags'
 import {
+  JudicialAdministrationApi,
   CriminalRecordApi,
   NoDebtCertificateApi,
   SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const oneDay = 24 * 3600 * 1000
 const thirtyDays = 24 * 3600 * 1000 * 30
@@ -85,6 +86,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
                 UserProfileApi,
                 CriminalRecordApi,
                 NoDebtCertificateApi,
+                JudicialAdministrationApi,
               ],
             },
           ],
