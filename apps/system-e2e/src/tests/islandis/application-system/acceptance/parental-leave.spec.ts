@@ -31,7 +31,8 @@ async function getEmployerEmailAndApprove(employer: EmailAccount, page: Page) {
 
   const email = await employer.getLastEmail(6)
 
-  if (email && typeof email.html === 'string') {
+  // Require email
+  if (!email || typeof email.html !== 'string') { throw new Error('Email not found, test incomplete') }
     const employerUrlMatch = email.html.match(/>(http?:.*)<\/p>/)
     if (employerUrlMatch?.length != 2)
       throw new Error(
