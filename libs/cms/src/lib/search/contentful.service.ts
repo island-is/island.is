@@ -303,8 +303,10 @@ export class ContentfulService {
     } = populatedSyncEntriesResult
     let { nestedEntryIds } = populatedSyncEntriesResult
 
+    const isDeltaUpdate = syncType !== 'full' && nestedEntryIds.length > 0
+
     // In case of delta updates, we need to resolve embedded entries to their root model
-    if (syncType !== 'full' && nestedEntryIds) {
+    if (isDeltaUpdate) {
       logger.info('Finding root entries from nestedEntries')
 
       const visitedEntryIds = new Set<string>()
@@ -334,12 +336,10 @@ export class ContentfulService {
         for (const linkedEntries of responses) {
           for (const linkedEntry of linkedEntries) {
             counter += 1
-            if (
-              environment.indexableTypes.includes(linkedEntry.sys.id) &&
-              !environment.nestedContentTypes.includes(linkedEntry.sys.id)
-            ) {
+            if (environment.indexableTypes.includes(linkedEntry.sys.id)) {
               indexableEntryMap.set(linkedEntry.sys.id, linkedEntry)
-            } else {
+            }
+            if (environment.nestedContentTypes.includes(linkedEntry.sys.id)) {
               nextLevelOfNestedEntryIds.add(linkedEntry.sys.id)
             }
           }
