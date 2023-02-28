@@ -19,6 +19,13 @@ import {
 } from '@island.is/content-search-index-manager'
 import { Locale } from 'locale'
 
+interface SyncerResult {
+  token: string
+  items: Entry<unknown>[]
+  deletedEntryIds: string[]
+  elasticIndex: string
+}
+
 interface UpdateNextSyncTokenOptions {
   token: string
   elasticIndex: string
@@ -51,7 +58,10 @@ export class ContentfulService {
           typeof data === 'string' &&
           data.includes('Rate limit')
 
-        if (logContainsRateLimitWarning) return
+        if (logContainsRateLimitWarning) {
+          logger.debug(`Search indexer sync caused rate limit - ${data}`)
+          return
+        }
 
         logger[level](data)
       },
@@ -265,7 +275,7 @@ export class ContentfulService {
     }
   }
 
-  async getSyncEntries(options: SyncOptions) {
+  async getSyncEntries(options: SyncOptions): Promise<SyncerResult> {
     const {
       syncType,
       locale,
