@@ -1,6 +1,8 @@
 import {
   Box,
   Button,
+  Filter,
+  FilterInput,
   GridContainer,
   GridRow,
   Stack,
@@ -9,10 +11,11 @@ import {
 } from '@island.is/island-ui/core'
 import { Link, useOutletContext, useParams } from 'react-router-dom'
 import MockApplications from '../../lib/MockApplications'
-import * as styles from '../TenantsList/TenantsList.css'
-import { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
+import * as styles from './Applications.css'
+import { AuthAdminTenant } from '@island.is/api/schema'
 
 const Applications = () => {
   const { tenant } = useParams()
@@ -21,26 +24,103 @@ const Applications = () => {
     setNavTitle: (value: string) => void
   }>()
 
+  const [applications, setApplications] = useState(MockApplications)
+  const [inputSearchValue, setInputSearchValue] = useState<string>('')
+
   useEffect(() => {
     // TODO: Get application by id from backend
     setNavTitle(tenant ? tenant : formatMessage(m.tenants))
   })
 
-  return (
-    <GridContainer>
-      <GridRow rowGap={3}>
-        <Box display={'flex'} justifyContent={'spaceBetween'} columnGap={4}>
-          <Box>
+  const handleSearch = (value: string) => {
+    setInputSearchValue(value)
+
+    // TODO: filter applications by search value once its connected to api
+  }
+
+  const getHeader = ({ withCreateButton = true }) => {
+    return (
+      <GridRow rowGap={3} marginBottom={'containerGutter'}>
+        <Box
+          width={'full'}
+          display={'flex'}
+          justifyContent={'spaceBetween'}
+          columnGap={'gutter'}
+          alignItems={'center'}
+        >
+          <Stack space={2}>
             <Text variant={'h2'}>{formatMessage(m.applications)}</Text>
-          </Box>
-          <Box>
+            <Text variant={'default'}>
+              {formatMessage(m.applicationsDescription)}
+            </Text>
+          </Stack>
+          {withCreateButton && (
+            <Box>
+              <Button size={'small'}>Create Application</Button>
+            </Box>
+          )}
+        </Box>
+      </GridRow>
+    )
+  }
+
+  return applications.length === 0 ? (
+    <GridContainer>
+      {getHeader({ withCreateButton: false })}
+      <GridRow>
+        <Filter
+          variant={'popover'}
+          align="left"
+          reverse
+          labelClear={formatMessage(m.clearFilter)}
+          labelClearAll={formatMessage(m.clearAllFilters)}
+          labelOpen={formatMessage(m.openFilter)}
+          labelClose={formatMessage(m.closeFilter)}
+          resultCount={0}
+          filterInput={
+            <FilterInput
+              placeholder={formatMessage(m.searchPlaceholder)}
+              name="session-nationalId-input"
+              value={inputSearchValue}
+              onChange={handleSearch}
+              backgroundColor="blue"
+            />
+          }
+          onFilterClear={() => {
+            setInputSearchValue('')
+          }}
+        />
+      </GridRow>
+      <GridRow>
+        <Box
+          display={'flex'}
+          flexDirection={'column'}
+          border={'standard'}
+          borderRadius={'large'}
+          justifyContent={'center'}
+          alignItems={'center'}
+          padding={10}
+        >
+          <Text variant={'h3'}>No application created</Text>
+          <Text paddingTop={'gutter'}>
+            Lorem ipsum dolor sit amet consectetur. A non ut nulla vitae mauris
+            accumsan at tellus facilisi.
+          </Text>
+          <Box marginTop={6}>
             <Button size={'small'}>Create Application</Button>
+          </Box>
+          <Box marginTop={'gutter'}>
+            <Button variant={'text'}>Learn more</Button>
           </Box>
         </Box>
       </GridRow>
+    </GridContainer>
+  ) : (
+    <GridContainer className={styles.relative}>
+      {getHeader({})}
       <Box paddingTop={'gutter'}>
         <Stack space={[1, 1, 2, 2]}>
-          {MockApplications.map((item) => (
+          {applications.map((item) => (
             <GridRow key={item.id}>
               <Link
                 className={styles.fill}
@@ -48,37 +128,86 @@ const Applications = () => {
               >
                 <Box
                   className={styles.linkContainer}
-                  display={'flex'}
                   borderRadius={'large'}
                   border={'standard'}
                   width={'full'}
                   paddingX={4}
                   paddingY={3}
-                  justifyContent={'spaceBetween'}
-                  alignItems={'center'}
                 >
-                  <Box>
-                    <Stack space={1}>
-                      <Text variant={'h3'} color={'blue400'}>
-                        {item.name}
-                      </Text>
-                      <Text variant={'default'}>{item.tenant}</Text>
-                    </Stack>
-                  </Box>
-                  <Box
-                    display="flex"
-                    flexDirection={['column', 'column', 'row', 'row', 'row']}
-                    alignItems={'flexEnd'}
-                    justifyContent={'flexEnd'}
-                  >
-                    {item.environmentTags.map((tag) => (
-                      <Box margin={1}>
-                        <Tag variant="purple" outlined>
-                          {tag}
-                        </Tag>
+                  <GridRow className={styles.fill}>
+                    <Box
+                      display={'flex'}
+                      justifyContent={'spaceBetween'}
+                      width={'full'}
+                      marginBottom={'gutter'}
+                    >
+                      <Box
+                        display={'flex'}
+                        alignItems={'flexStart'}
+                        flexDirection={[
+                          'column',
+                          'column',
+                          'row',
+                          'row',
+                          'row',
+                        ]}
+                      >
+                        {item.tag.map((tag) => {
+                          return (
+                            <Box key={tag} marginRight={1} marginBottom={1}>
+                              <Tag variant="blue" outlined>
+                                {tag}
+                              </Tag>
+                            </Box>
+                          )
+                        })}
                       </Box>
-                    ))}
-                  </Box>
+                      <Box
+                        display={'flex'}
+                        alignItems={'flexEnd'}
+                        flexDirection={[
+                          'column',
+                          'column',
+                          'row',
+                          'row',
+                          'row',
+                        ]}
+                      >
+                        {item.environmentTags.map((tag) => (
+                          <Box key={tag} marginLeft={1} marginBottom={1}>
+                            <Tag variant="purple" outlined>
+                              {tag}
+                            </Tag>
+                          </Box>
+                        ))}
+                      </Box>
+                    </Box>
+                  </GridRow>
+                  <GridRow className={styles.fill}>
+                    <Box
+                      display={'flex'}
+                      alignItems={'center'}
+                      justifyContent={'spaceBetween'}
+                      width={'full'}
+                    >
+                      <Box>
+                        <Text variant={'h3'}>{item.name}</Text>
+                        <Text variant={'default'}>{item.tenant}</Text>
+                      </Box>
+                      <Button
+                        title={'Breyta'}
+                        icon={'pencil'}
+                        variant={'utility'}
+                        onClick={(e) => {
+                          e.preventDefault()
+                        }}
+                      >
+                        <Text variant={'eyebrow'}>
+                          {formatMessage(m.change)}
+                        </Text>
+                      </Button>
+                    </Box>
+                  </GridRow>
                 </Box>
               </Link>
             </GridRow>

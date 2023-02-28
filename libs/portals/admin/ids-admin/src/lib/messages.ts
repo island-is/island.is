@@ -61,4 +61,12 @@ export const m = defineMessages({
     id: 'ap.ids-admin:back',
     defaultMessage: 'Til baka',
   },
+  change: {
+    id: 'ap.ids-admin:change',
+    defaultMessage: 'Breyta',
+  },
+  applicationsDescription: {
+    id: 'ap.ids-admin:applications-description',
+    defaultMessage: 'Forrit sem tengjast þessum tenant',
+  },
 })

@@ -2,7 +2,7 @@ const MockApplications = [
   {
     id: '1',
     name: 'My App',
-    environmentTags: ['dev', 'staging'],
+    environmentTags: ['Dev', 'Staging'],
     tenant: '@skra.is/my-app',
     tag: ['Web Application'],
   },
