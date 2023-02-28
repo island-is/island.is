@@ -51,7 +51,7 @@ const Petitions = () => {
         <Tabs
           contentBackground="white"
           label="petitionListsTabs"
-          selected='0'
+          selected="0"
           tabs={[
             {
               label: formatMessage(m.openLists),

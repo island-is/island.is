@@ -177,11 +177,11 @@ const ViewPetitionList = () => {
           </Columns>
           {!viewTypeEdit && (
             <Box marginTop={5} marginBottom={10}>
-              {hasSigned && isListOpen ? (
+              {hasSigned && isListOpen && (
                 <Box width="half">
                   <DialogPrompt
                     baseId="dialog"
-                    title={'Ert þú viss um að þú viljir taka nafn þitt af þessum lista?'}
+                    title={formatMessage(m.modalUnsign)}
                     ariaLabel={''}
                     disclosureElement={
                       <Button loading={isLoading} variant="ghost">
@@ -189,26 +189,25 @@ const ViewPetitionList = () => {
                       </Button>
                     }
                     onConfirm={() => onUnendorse()}
-                    buttonTextConfirm={'Halda áfram'}
+                    buttonTextConfirm={formatMessage(m.modalButtonYes)}
                     buttonTextCancel={formatMessage(m.modalButtonNo)}
                   />
                 </Box>
-              ) : (
-                isListOpen ?? (
-                  <Box width="half">
-                    <Button
-                      variant="primary"
-                      icon="arrowForward"
-                      onClick={() =>
-                        window.open(
-                          `${document.location.origin}/umsoknir/undirskriftalisti/${petition?.meta.applicationId}`,
-                        )
-                      }
-                    >
-                      {formatMessage(m.signList)}
-                    </Button>
-                  </Box>
-                )
+              )}
+              {!hasSigned && isListOpen && (
+                <Box width="half">
+                  <Button
+                    variant="ghost"
+                    icon="arrowForward"
+                    onClick={() =>
+                      window.open(
+                        `${document.location.origin}/umsoknir/undirskriftalisti/${petition?.meta.applicationId}`,
+                      )
+                    }
+                  >
+                    {formatMessage(m.signList)}
+                  </Button>
+                </Box>
               )}
             </Box>
           )}

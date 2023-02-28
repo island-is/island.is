@@ -200,4 +200,9 @@ export const m = defineMessages({
     defaultMessage: 'Ertu viss um að þú viljir ljúka þessum lista?',
     description: '',
   },
+  modalUnsign: {
+    id: 'sp.petitions:modalUnsign',
+    defaultMessage: 'Ertu viss um að þú viljir taka nafn þitt af þessum lista?',
+    description: '',
+  },
 })
