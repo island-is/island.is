@@ -2093,13 +2093,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'In the case of a multiple pregnancy, it is permitted to start paying accommodation expenses 28 days before the expected date of birth and until the birth',
     },
-    residenceGrantDateDescription: {
-      id: 'pl.application:residence.grant.date.description',
-      defaultMessage:
-        'Þú hefur valið eftirfarandi tímabil: {dateFrom} - {dateTo}',
-      description:
-        'You have choosen the following period: {dateFrom} - {dateTo}',
-    },
+
     residenceGrantApplyTitle: {
       id: 'pl.application:residence.grant.apply.title',
       defaultMessage: 'Sækja um dvalarstyrk',
@@ -2109,11 +2103,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:residence.grant.apply.header',
       defaultMessage: 'Tímabil dvalarstyrks',
       description: 'Period of residency',
-    },
-    residenceGrantActionLinkTitle: {
-      id: 'pl.application:residence.grant.action.link.title',
-      defaultMessage: 'Sjá upplýsingar um dvalarstyrk',
-      description: 'See information on residence grants',
     },
     residenceGrantAttachmentTitle: {
       id: 'pl.application:residence.grant.attachment.title',
@@ -2147,52 +2136,19 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Ekki senda inn',
       description: 'Reject',
     },
-    residenceGrantGoBack: {
-      id: 'pl.application:residence.grant.go.back',
-      defaultMessage: 'Farðu í umsókn.',
-      description: 'Back to application',
-    },
-    residenceGrantSelectPeriodDescription: {
-      id: 'pl.application:residence.grant.select.period.description',
-      defaultMessage: 'Veldu tímabilið sem þú vilt sækja um dvalarstyrk',
-      description: 'Select the period you want to apply for residence grant',
-    },
+
     residenceGrantSelectPeriodSubmitDescription: {
       id: 'pl.application:residence.grant.select.period.submit.description',
       defaultMessage: 'Sendu inn umsókn til að sækja um dvalarstyrk',
       description: 'Send in you application to apply for residence grant',
     },
-    residenceGrantError: {
-      id: 'pl.application:residence.grant.error',
-      defaultMessage: 'Engin lýsing fannst',
-      description: 'No description could be found',
-    },
+
     residenceGrantApplicationSendInformation: {
       id: 'pl.application:residence.grant.application.send.information',
       defaultMessage:
         'Þú hefur sótt um dvalarstyrk og umsókn þín er í vinnslu.',
       description:
         'You have applied for a residence grant, and your application is being processed.',
-    },
-    residenceGrantStartDateError: {
-      id: 'pl.application:residence.grant.start.date.error',
-      defaultMessage: 'Upphafsdagsetning er utan leyfilegs tímabils',
-      description: 'Start date is outside of the allowed date range',
-    },
-    residenceGrantEndDateError: {
-      id: 'pl.application:residence.grant.end.date.error',
-      defaultMessage: 'Lokadagsetning er utan leyfilegs tímabils',
-      description: 'End date is outside of the allowed date range',
-    },
-    residenceGrantStartBeforeEndDateError: {
-      id: 'pl.application:residence.grant.start.before.end.date.error',
-      defaultMessage: 'Lokadagur er fyrir upphafsdag',
-      description: 'End date is before start date',
-    },
-    residenceGrantGenericErrorMessage: {
-      id: 'pl.application:residence.grant.generic.error.message',
-      defaultMessage: 'Eitthvað fór úrskeiðis',
-      description: 'Something went wrong',
     },
   }),
 }
@@ -2641,11 +2597,6 @@ export const errorMessages = defineMessages({
     defaultMessage:
       'Ekki er hægt að færa daga ef forsjárlausa foreldrið hefur ekki samþykki fyrir umgengni í þessu fæðingarorlofi. Vinsamlegast veljið annan möguleika.',
     description: 'Unable to transfer days!',
-  },
-  residenceGrantPeriodError: {
-    id: 'pl.application:errors.residence.grant.period.error',
-    defaultMessage: 'Tímabilið sem þú hefur valið er ekki gilt',
-    description: 'The period you requested is not valid',
   },
 })
 
