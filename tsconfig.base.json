@@ -614,11 +614,11 @@
       "@island.is/portals/admin/icelandic-names-registry": [
         "libs/portals/admin/icelandic-names-registry/src/index.ts"
       ],
-      "@island.is/portals/admin/regulations-admin": [
-        "libs/portals/admin/regulations-admin/src/index.ts"
-      ],
       "@island.is/portals/admin/ids-admin": [
         "libs/portals/admin/ids-admin/src/index.ts"
+      ],
+      "@island.is/portals/admin/regulations-admin": [
+        "libs/portals/admin/regulations-admin/src/index.ts"
       ],
       "@island.is/portals/core": ["libs/portals/core/src/index.ts"],
       "@island.is/portals/shared-modules/delegations": [
