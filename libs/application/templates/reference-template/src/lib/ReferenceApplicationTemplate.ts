@@ -232,7 +232,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             pendingAction: {
               title: 'Verið er að fara yfir umsóknina',
               content:
-                'Example stofnun fer núna yfir umsóknina því getur þetta tekið nokkrar daga',
+                'Example stofnun fer núna yfir umsóknina og því getur þetta tekið nokkra daga',
               displayStatus: 'info',
             },
             onEntryHistoryLog: 'Yfirferð hafin',
