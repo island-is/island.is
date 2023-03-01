@@ -31,7 +31,6 @@ import {
   formatProsecutorReadyForCourtEmailNotification,
   formatCustodyRestrictions,
   formatRulingModifiedHistory,
-  formatCourtUploadRulingTitle,
   formatPrisonAdministrationRulingNotification,
   formatDefenderCourtDateLinkEmailNotification,
   formatDefenderResubmittedToCourtEmailNotification,
@@ -1885,39 +1884,6 @@ describe('formatRulingModifiedHistory', () => {
     expect(r).toEqual(
       'Some history\n\nMiðvikudagur, 1. janúar 2020 kl. 00:00 - Test Judge Title',
     )
-  })
-})
-
-describe('formatCourtUploadRulingTitle', () => {
-  const formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-    .formatMessage
-
-  const fn = (
-    courtCaseNumber: string | undefined,
-    isModifyingRuling: boolean,
-  ) =>
-    formatCourtUploadRulingTitle(
-      formatMessage,
-      courtCaseNumber,
-      isModifyingRuling,
-    )
-
-  test('should format court upload ruling', () => {
-    const courtCaseNumber = '12345'
-    const isModifyingRuling = false
-
-    const r = fn(courtCaseNumber, isModifyingRuling)
-
-    expect(r).toEqual('Úrskurður 12345')
-  })
-
-  test('should format court upload ruling when modifying ruling', () => {
-    const courtCaseNumber = '12345'
-    const isModifyingRuling = true
-
-    const r = fn(courtCaseNumber, isModifyingRuling)
-
-    expect(r).toEqual('Úrskurður 12345 leiðrétt')
   })
 })
 

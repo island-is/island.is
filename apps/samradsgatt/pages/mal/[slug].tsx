@@ -12,7 +12,6 @@ import {
 import { Case, Advice } from '../../types/viewModels'
 import CaseTimeline from '../../../../apps/samradsgatt/components/CaseTimeline/CaseTimeline'
 import SubscriptionBox from '../../../../apps/samradsgatt/components/SubscriptionBox/SubscriptionBox'
-import { useLocation } from 'react-use'
 import { CaseOverview, ReviewCard, WriteReviewCard } from '../../components'
 import Layout from '../../components/Layout/Layout'
 
@@ -27,7 +26,6 @@ const Details: React.FC<DetailsProps> = ({
   advices,
   isLoggedIn,
 }) => {
-  const location = useLocation()
   const dummyCase = {
     id: 3027,
     caseNumber: '3/2023',
@@ -93,14 +91,11 @@ const Details: React.FC<DetailsProps> = ({
           <GridColumn span={'3/12'} paddingBottom={3}>
             <GridContainer>
               <Box>
-                <Box paddingY={3}>
+                <Box paddingY={[3, 3, 3, 5, 5]}>
                   <Breadcrumbs
                     items={[
                       { title: 'Öll mál', href: '/samradsgatt' },
-                      {
-                        title: 'Mál nr. ' + chosenCase.caseNumber,
-                        href: location.href,
-                      },
+                      { title: `Mál nr. ${chosenCase?.caseNumber}` },
                     ]}
                   />
                 </Box>
