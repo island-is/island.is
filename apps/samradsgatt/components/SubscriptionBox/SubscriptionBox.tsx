@@ -1,7 +1,4 @@
-import { Box, Text, Input, Button, Icon } from '@island.is/island-ui/core'
-
-// Form context
-// Input
+import { Box, Text, Input, Button, Stack } from '@island.is/island-ui/core'
 
 export const SubscriptionBox = () => {
   return (
@@ -14,12 +11,11 @@ export const SubscriptionBox = () => {
       borderStyle="solid"
       borderRadius="standard"
     >
-      <Text variant="h3">{'Skrá áskrift'}</Text>
-      <Text variant="default">
-        {''} Skráðu þig í áskrift af þessu máli. Þú færð e-mail til
-        staðfestingar.
-      </Text>
-      <Box paddingTop={2} paddingBottom={1}>
+      <Stack space={2}>
+        <Text variant="h3">Skrá áskrift</Text>
+        <Text variant="default">
+          Skráðu þig í áskrift af þessu máli. Þú færð e-mail til staðfestingar.
+        </Text>
         <form>
           <Input
             label="Netfang"
@@ -27,21 +23,13 @@ export const SubscriptionBox = () => {
             placeholder="Hér skal skrifa netfang"
             size="sm"
           />
-          <Box paddingTop={1}>
-            <Button fluid>
-              <Box display="flex" marginRight={1}>
-                <Text color="white" fontWeight="semiBold">
-                  {' '}
-                  Skrá áskrift
-                </Text>
-              </Box>
-              <Box paddingLeft={10}>
-                <Icon icon="open" type="outline"></Icon>
-              </Box>
+          <Box paddingTop={2}>
+            <Button fluid icon="open" iconType="outline" nowrap>
+              Skrá áskrift
             </Button>
           </Box>
         </form>
-      </Box>
+      </Stack>
     </Box>
   )
 }
