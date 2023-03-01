@@ -72,34 +72,6 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
   }
   return m.name
 }
-
-const testPendingAction = (
-  application: Application,
-  currentRole: ApplicationRole,
-): PendingAction => {
-  if (currentRole === Roles.APPLICANT) {
-    return {
-      title: 'Þetta er titill inn á þessu',
-      displayStatus: 'warning',
-      content: 'Þú átt þessa umsókn',
-    }
-  }
-
-  if (currentRole === Roles.ASSIGNEE) {
-    return {
-      title: 'Þetta er líka titill inn á þessu',
-      displayStatus: 'info',
-      content: 'Þú þarft að bíða eftir öðrum',
-    }
-  }
-
-  return {
-    title: 'Þetta er bara búið',
-    displayStatus: 'success',
-    content: 'Þú ert búinn',
-  }
-}
-
 const ReferenceApplicationTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<ReferenceTemplateEvent>,
