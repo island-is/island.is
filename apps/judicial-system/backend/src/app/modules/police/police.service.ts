@@ -156,7 +156,6 @@ export class PoliceService {
     caseId: string,
     user: TUser,
   ): Promise<PoliceCaseFile[]> {
-    console.log('!!!!!!!!!!!!!!', this.xRoadPath)
     return this.fetchPoliceDocumentApi(
       `${this.xRoadPath}/GetDocumentListById/${caseId}`,
     )

@@ -43,6 +43,7 @@ import {
   CaseOrigin,
   CrimeSceneMap,
   IndictmentSubtypeMap,
+  PoliceCaseFile,
 } from '@island.is/judicial-system/types'
 import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
 import IndictmentInfo from '@island.is/judicial-system-web/src/components/IndictmentInfo/IndictmentInfo'
@@ -55,6 +56,14 @@ import { PoliceCaseFilesData } from '../../components/CaseFiles/CaseFiles'
 import { useQuery } from '@apollo/client'
 import { GetPoliceCaseFilesQuery } from '@island.is/judicial-system-web/src/graphql/schema'
 import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
+
+const mapPoliceCaseFileToPoliceCaseFileCheck = (
+  file: PoliceCaseFile,
+): PoliceCaseFileCheck => ({
+  id: file.id,
+  name: file.name,
+  checked: false,
+})
 
 const UploadFilesToPoliceCase: React.FC<{
   caseId: string
@@ -144,6 +153,16 @@ const UploadFilesToPoliceCase: React.FC<{
     caseOrigin,
     caseFiles,
   ])
+
+  useEffect(() => {
+    setPoliceCaseFileList(
+      policeCaseFiles?.files
+        .filter((f) => !caseFiles.some((caseFile) => caseFile.name === f.name))
+        .map(mapPoliceCaseFileToPoliceCaseFileCheck) || [],
+    )
+
+    setDisplayFiles(caseFiles.map(mapCaseFileToUploadFile) || [])
+  }, [policeCaseFiles, caseFiles])
 
   const setSingleFile = useCallback(
     (displayFile: UploadFile, newId?: string) => {
