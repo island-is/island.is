@@ -34,7 +34,7 @@ export class ServiceWebFormsInput {
 
   @HideField()
   @IsString()
-  type: 'serviceWebForms' = 'serviceWebForms'
+  type = 'serviceWebForms' as const
 
   @Field()
   @IsOptional()
