@@ -143,6 +143,7 @@ function getIndictmentDescriptionReason(
   substances: SubstanceMap,
   formatMessage: IntlShape['formatMessage'],
 ) {
+  console.log(offenses)
   let reason = offenses.reduce((acc, offense, index) => {
     if (
       offenses.length > 1 &&
@@ -156,35 +157,30 @@ function getIndictmentDescriptionReason(
     switch (offense) {
       case IndictmentCountOffense.DrivingWithoutLicence:
         acc += formatMessage(
-          strings.trafficViolationIncidentDescriptionDrivingWithoutLicenceAutofill,
+          strings.incidentDescriptionDrivingWithoutLicenceAutofill,
         )
         break
       case IndictmentCountOffense.DrunkDriving:
-        acc += formatMessage(
-          strings.trafficViolationIncidentDescriptionDrunkDrivingAutofill,
-        )
+        acc += formatMessage(strings.incidentDescriptionDrunkDrivingAutofill)
         break
       case IndictmentCountOffense.IllegalDrugsDriving:
         acc +=
-          formatMessage(
-            strings.trafficViolationIncidentDescriptionDrugsDrivingPrefixAutofill,
-          ) +
-          formatMessage(
-            strings.trafficViolationIncidentDescriptionIllegalDrugsDrivingAutofill,
-          )
+          formatMessage(strings.incidentDescriptionDrugsDrivingPrefixAutofill) +
+          formatMessage(strings.incidentDescriptionIllegalDrugsDrivingAutofill)
         break
       case IndictmentCountOffense.PrescriptionDrugsDriving:
         acc +=
           (offenses.includes(IndictmentCountOffense.IllegalDrugsDriving)
             ? ''
             : formatMessage(
-                strings.trafficViolationIncidentDescriptionDrugsDrivingPrefixAutofill,
+                strings.incidentDescriptionDrugsDrivingPrefixAutofill,
               )) +
           formatMessage(
-            strings.trafficViolationIncidentDescriptionPrescriptionDrugsDrivingAutofill,
+            strings.incidentDescriptionPrescriptionDrugsDrivingAutofill,
           )
         break
     }
+    console.log(acc)
     return acc
   }, '')
 
@@ -210,7 +206,7 @@ function getIndictmentDescriptionReason(
       acc += ')'
     }
     return acc
-  }, reason)
+  }, '')
 
   return reason
 }
@@ -332,22 +328,19 @@ export const IndictmentCount: React.FC<Props> = (props) => {
         formatMessage,
       )
 
-      incidentDescription = formatMessage(
-        strings.trafficViolationIncidentDescriptionAutofill,
-        {
-          incidentDate: incidentDate ? incidentDate : '[Dagsetning]',
-          vehicleRegistrationNumber: vehicleRegistrationNumber
-            ? vehicleRegistrationNumber
-            : '[Skráningarnúmer ökutækis]',
-          reason: reason,
-          incidentLocation: incidentLocation
-            ? incidentLocation
-            : '[Vettvangur]',
-        },
-      )
+      console.log(reason)
+      incidentDescription = formatMessage(strings.incidentDescriptionAutofill, {
+        incidentDate: incidentDate ? incidentDate : '[Dagsetning]',
+        vehicleRegistrationNumber: vehicleRegistrationNumber
+          ? vehicleRegistrationNumber
+          : '[Skráningarnúmer ökutækis]',
+        reason,
+        incidentLocation: incidentLocation ? incidentLocation : '[Vettvangur]',
+      })
 
       setIncidentDescriptionErrorMessage('')
 
+      console.log(incidentDescription)
       return incidentDescription
     },
     [formatMessage, workingCase.crimeScenes],
