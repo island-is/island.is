@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="XFyOMNRHPZt_d9PDHA7L" name="Page-1">
-        <mxGraphModel dx="978" dy="1341" grid="1" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+        <mxGraphModel dx="1768" dy="1222" grid="1" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="#ffffff" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -25,18 +25,16 @@
                 <mxCell id="5" value="Employer&lt;br&gt;Approval" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="250" y="370" width="120" height="60" as="geometry"/>
                 </mxCell>
+                <mxCell id="155" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#000000;" edge="1" parent="1" target="7">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="310" y="550" as="sourcePoint"/>
+                        <Array as="points">
+                            <mxPoint x="310" y="570"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
                 <mxCell id="6" value="VMST&lt;br&gt;Approval" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="250" y="490" width="120" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="153" value="" style="edgeStyle=none;html=1;strokeColor=#FFFFFF;fontColor=#FFFFFF;" parent="1" source="7" edge="1">
-                    <mxGeometry relative="1" as="geometry">
-                        <mxPoint x="310" y="530" as="targetPoint"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="155" value="" style="edgeStyle=none;html=1;strokeColor=#000000;fontColor=#000000;" edge="1" parent="1" source="7">
-                    <mxGeometry relative="1" as="geometry">
-                        <mxPoint x="310" y="530" as="targetPoint"/>
-                    </mxGeometry>
                 </mxCell>
                 <mxCell id="7" value="Approve" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="250" y="610" width="120" height="60" as="geometry"/>
@@ -87,12 +85,6 @@
                     <mxGeometry width="50" height="50" relative="1" as="geometry">
                         <mxPoint x="310" y="430" as="sourcePoint"/>
                         <mxPoint x="310" y="490" as="targetPoint"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="22" value="" style="endArrow=classic;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;fontColor=#FFFFFF;strokeColor=#000000;" parent="1" edge="1">
-                    <mxGeometry width="50" height="50" relative="1" as="geometry">
-                        <mxPoint x="310" y="550" as="sourcePoint"/>
-                        <mxPoint x="310" y="610" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="23" value="" style="endArrow=classic;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;fontColor=#FFFFFF;strokeColor=#000000;" parent="1" target="8" edge="1">
@@ -354,8 +346,8 @@
                         <mxPoint x="230" y="640" as="targetPoint"/>
                         <Array as="points">
                             <mxPoint x="600" y="-40"/>
-                            <mxPoint y="-40"/>
-                            <mxPoint y="760"/>
+                            <mxPoint x="20" y="-40"/>
+                            <mxPoint x="20" y="760"/>
                             <mxPoint x="200" y="760"/>
                             <mxPoint x="200" y="640"/>
                         </Array>
@@ -406,7 +398,7 @@
                     <mxGeometry x="460" y="490" width="50" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="149" value="Apply" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;fillColor=none;fontColor=#000000;" parent="1" vertex="1">
-                    <mxGeometry x="290" y="-70" width="50" height="30" as="geometry"/>
+                    <mxGeometry x="-30" y="340" width="50" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="151" value="Multiple&lt;br&gt;employers" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#000000;" parent="1" vertex="1">
                     <mxGeometry x="380" y="315" width="80" height="40" as="geometry"/>
