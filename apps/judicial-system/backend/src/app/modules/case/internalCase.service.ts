@@ -29,7 +29,6 @@ import { uuidFactory, nowFactory } from '../../factories'
 import {
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
-  formatCourtUploadRulingTitle,
   getRequestPdfAsBuffer,
   createCaseFilesRecord,
 } from '../../formatters'
@@ -167,11 +166,11 @@ export class InternalCaseService {
     buffer: Buffer,
     user: User,
   ): Promise<boolean> {
-    const fileName = formatCourtUploadRulingTitle(
-      this.formatMessage,
-      theCase.courtCaseNumber,
-      Boolean(theCase.rulingModifiedHistory),
-    )
+    const fileName = this.formatMessage(courtUpload.ruling, {
+      courtCaseNumber: theCase.courtCaseNumber,
+      isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
+      date: format(nowFactory(), 'yyyy-MM-dd HH:mm'),
+    })
 
     try {
       await this.courtService.createDocument(
@@ -206,6 +205,7 @@ export class InternalCaseService {
 
       const fileName = this.formatMessage(courtUpload.courtRecord, {
         courtCaseNumber: theCase.courtCaseNumber,
+        date: format(nowFactory(), 'yyyy-MM-dd HH:mm'),
       })
 
       await this.courtService.createCourtRecord(
@@ -239,7 +239,7 @@ export class InternalCaseService {
       .then((pdf) => {
         const fileName = this.formatMessage(courtUpload.request, {
           caseType: caseTypes[theCase.type],
-          date: ` ${format(nowFactory(), 'yyyy-MM-dd HH:mm')}`,
+          date: format(nowFactory(), 'yyyy-MM-dd HH:mm'),
         })
 
         return this.courtService.createDocument(
