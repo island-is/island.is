@@ -5,7 +5,6 @@ version = 1
 [merge]
 # Always use the pull request title, which has been validated using conventional commit.
 message.title = "pull_request_title"
-
 # Allow pull requests to be prioritized. This should mainly be done when doing stuff
 # that will unblock other pull requests
 priority_merge_label = "high priority"
