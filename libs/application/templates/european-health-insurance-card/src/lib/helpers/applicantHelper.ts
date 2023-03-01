@@ -149,10 +149,10 @@ export function someCanApplyForPlastic(externalData: ExternalData): boolean {
   if (externalData?.cardResponse?.data) {
     const cardResponse = externalData?.cardResponse?.data as CardResponse[]
 
-    for (let i = 0; i < cardResponse.length; i++) {
-      if (cardResponse[i].isInsured && cardResponse[i].canApply) {
-        return true
-      }
+    const ret = cardResponse.find((x) => x.isInsured && x.canApply)
+
+    if (ret) {
+      return true
     }
   }
   return false
