@@ -95,13 +95,6 @@ const prodConfig = () => ({
   regulationsDomain: {
     url: process.env.REGULATIONS_API_URL,
   },
-  regulationsAdmin: {
-    baseApiUrl: process.env.REGULATIONS_ADMIN_URL,
-    regulationsApiUrl: process.env.REGULATIONS_API_URL,
-    publishKey: process.env.REGULATIONS_FILE_UPLOAD_KEY_PUBLISH,
-    draftKey: process.env.REGULATIONS_FILE_UPLOAD_KEY_DRAFT,
-    presignedKey: process.env.REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED,
-  },
   endorsementSystem: {
     baseApiUrl: process.env.ENDORSEMENT_SYSTEM_BASE_API_URL,
   },
@@ -239,15 +232,6 @@ const devConfig = () => ({
   },
   regulationsDomain: {
     url: process.env.REGULATIONS_API_URL ?? 'http://localhost:3000/api/v1',
-  },
-  regulationsAdmin: {
-    baseApiUrl:
-      process.env.REGULATIONS_ADMIN_URL ?? 'http://localhost:3333/api',
-    regulationsApiUrl:
-      process.env.REGULATIONS_API_URL ?? 'http://localhost:3000/api/v1',
-    publishKey: process.env.REGULATIONS_FILE_UPLOAD_KEY_PUBLISH,
-    draftKey: process.env.REGULATIONS_FILE_UPLOAD_KEY_DRAFT,
-    presignedKey: process.env.REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED,
   },
   endorsementSystem: {
     baseApiUrl: 'http://localhost:4246',

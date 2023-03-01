@@ -24,15 +24,6 @@ const devConfig = {
     issuer: 'https://identity-server.dev01.devland.is',
     audience: '',
   },
-  regulationsAdmin: {
-    baseApiUrl:
-      process.env.REGULATIONS_ADMIN_URL ?? 'http://localhost:3333/api',
-    regulationsApiUrl:
-      process.env.REGULATIONS_API_URL ?? 'http://localhost:3000/api/v1',
-    presignedKey: process.env.REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED ?? '',
-    publishKey: process.env.REGULATIONS_FILE_UPLOAD_KEY_PUBLISH ?? '',
-    draftKey: process.env.REGULATIONS_FILE_UPLOAD_KEY_DRAFT ?? '',
-  },
 }
 
 if (process.env.NODE_ENV === 'production') {
@@ -68,13 +59,6 @@ const prodConfig = {
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL!,
     audience: '',
-  },
-  regulationsAdmin: {
-    baseApiUrl: process.env.REGULATIONS_ADMIN_URL ?? '',
-    regulationsApiUrl: process.env.REGULATIONS_API_URL ?? '',
-    presignedKey: process.env.REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED ?? '',
-    publishKey: process.env.REGULATIONS_FILE_UPLOAD_KEY_PUBLISH ?? '',
-    draftKey: process.env.REGULATIONS_FILE_UPLOAD_KEY_DRAFT ?? '',
   },
 }
 
