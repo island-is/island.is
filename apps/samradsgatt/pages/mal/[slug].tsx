@@ -12,17 +12,20 @@ import {
 import { Case, Advice } from '../../types/viewModels'
 import CaseTimeline from '../../../../apps/samradsgatt/components/CaseTimeline/CaseTimeline'
 import SubscriptionBox from '../../../../apps/samradsgatt/components/SubscriptionBox/SubscriptionBox'
-import { useLocation } from 'react-use'
 import { CaseOverview, ReviewCard, WriteReviewCard } from '../../components'
 import Layout from '../../components/Layout/Layout'
 
 interface DetailsProps {
   chosenCase: Case
   advices?: Array<Advice>
+  isLoggedIn: boolean
 }
 
-const Details: React.FC<DetailsProps> = ({ chosenCase, advices }) => {
-  const location = useLocation()
+const Details: React.FC<DetailsProps> = ({
+  chosenCase,
+  advices,
+  isLoggedIn,
+}) => {
   const dummyCase = {
     id: 3027,
     caseNumber: '3/2023',
@@ -73,6 +76,14 @@ const Details: React.FC<DetailsProps> = ({ chosenCase, advices }) => {
   chosenCase = dummyCase
   advices = dummyAdvices
 
+  const card = {
+    caseNumber: '76/2022',
+    nameOfReviewer: 'Jon Jonsson',
+    reviewPeriod: '01.08.2022 – 01.12.2022',
+  }
+
+  isLoggedIn = true // remove when functionality for logged in has been implemented
+
   return (
     <Layout>
       <GridContainer>
@@ -80,14 +91,11 @@ const Details: React.FC<DetailsProps> = ({ chosenCase, advices }) => {
           <GridColumn span={'3/12'} paddingBottom={3}>
             <GridContainer>
               <Box>
-                <Box paddingY={3}>
+                <Box paddingY={[3, 3, 3, 5, 5]}>
                   <Breadcrumbs
                     items={[
                       { title: 'Öll mál', href: '/samradsgatt' },
-                      {
-                        title: 'Mál nr. ' + chosenCase.caseNumber,
-                        href: location.href,
-                      },
+                      { title: `Mál nr. ${chosenCase?.caseNumber}` },
                     ]}
                   />
                 </Box>
@@ -124,7 +132,7 @@ const Details: React.FC<DetailsProps> = ({ chosenCase, advices }) => {
                   return <ReviewCard advice={advice} key={advice.number} />
                 })}
               </Box>
-              <WriteReviewCard />
+              <WriteReviewCard card={card} isLoggedIn={isLoggedIn} />
             </Box>
           </GridColumn>
 

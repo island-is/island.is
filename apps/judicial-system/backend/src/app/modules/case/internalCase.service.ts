@@ -29,7 +29,6 @@ import { uuidFactory, nowFactory } from '../../factories'
 import {
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
-  formatCourtUploadRulingTitle,
   getRequestPdfAsBuffer,
   createCaseFilesRecord,
 } from '../../formatters'
@@ -41,7 +40,7 @@ import { PoliceService } from '../police'
 import { Institution } from '../institution'
 import { User, UserService } from '../user'
 import { Defendant, DefendantService } from '../defendant'
-import { IndictmentCount } from '../indictment-count'
+import { IndictmentCount, IndictmentCountService } from '../indictment-count'
 import { CaseFile, FileService } from '../file'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { oldFilter } from './filters/case.filters'
@@ -77,6 +76,7 @@ const caseEncryptionProperties: (keyof Case)[] = [
   'caseModifiedExplanation',
   'caseResentExplanation',
   'crimeScenes',
+  'indictmentIntroduction',
 ]
 
 const defendantEncryptionProperties: (keyof Defendant)[] = [
@@ -89,6 +89,12 @@ const caseFileEncryptionProperties: (keyof CaseFile)[] = [
   'name',
   'key',
   'userGeneratedFilename',
+]
+
+const indictmentCountEncryptionProperties: (keyof IndictmentCount)[] = [
+  'vehicleRegistrationNumber',
+  'incidentDescription',
+  'legalArguments',
 ]
 
 function collectEncryptionProperties(
@@ -131,6 +137,8 @@ export class InternalCaseService {
     private readonly policeService: PoliceService,
     @Inject(forwardRef(() => UserService))
     private readonly userService: UserService,
+    @Inject(forwardRef(() => IndictmentCountService))
+    private readonly indictmentCountService: IndictmentCountService,
     @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
     @Inject(forwardRef(() => DefendantService))
@@ -158,11 +166,11 @@ export class InternalCaseService {
     buffer: Buffer,
     user: User,
   ): Promise<boolean> {
-    const fileName = formatCourtUploadRulingTitle(
-      this.formatMessage,
-      theCase.courtCaseNumber,
-      Boolean(theCase.rulingModifiedHistory),
-    )
+    const fileName = this.formatMessage(courtUpload.ruling, {
+      courtCaseNumber: theCase.courtCaseNumber,
+      isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
+      date: format(nowFactory(), 'yyyy-MM-dd HH:mm'),
+    })
 
     try {
       await this.courtService.createDocument(
@@ -197,6 +205,7 @@ export class InternalCaseService {
 
       const fileName = this.formatMessage(courtUpload.courtRecord, {
         courtCaseNumber: theCase.courtCaseNumber,
+        date: format(nowFactory(), 'yyyy-MM-dd HH:mm'),
       })
 
       await this.courtService.createCourtRecord(
@@ -230,7 +239,7 @@ export class InternalCaseService {
       .then((pdf) => {
         const fileName = this.formatMessage(courtUpload.request, {
           caseType: caseTypes[theCase.type],
-          date: ` ${format(nowFactory(), 'yyyy-MM-dd HH:mm')}`,
+          date: format(nowFactory(), 'yyyy-MM-dd HH:mm'),
         })
 
         return this.courtService.createDocument(
@@ -486,6 +495,25 @@ export class InternalCaseService {
         )
       }
 
+      const indictmentCountsArchive = []
+      for (const count of theCase.indictmentCounts ?? []) {
+        const [
+          clearedIndictmentCountProperties,
+          indictmentCountArchive,
+        ] = collectEncryptionProperties(
+          indictmentCountEncryptionProperties,
+          count,
+        )
+        indictmentCountsArchive.push(indictmentCountArchive)
+
+        await this.indictmentCountService.update(
+          theCase.id,
+          count.id,
+          clearedIndictmentCountProperties,
+          transaction,
+        )
+      }
+
       await this.caseArchiveModel.create(
         {
           caseId: theCase.id,
@@ -494,6 +522,7 @@ export class InternalCaseService {
               ...caseArchive,
               defendants: defendantsArchive,
               caseFiles: caseFilesArchive,
+              indictmentCounts: indictmentCountsArchive,
             }),
             this.config.archiveEncryptionKey,
             { iv: CryptoJS.enc.Hex.parse(uuidFactory()) },
