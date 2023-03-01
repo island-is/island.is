@@ -2126,7 +2126,7 @@ user-notification-worker:
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_USER_PROFILE_BASEPATH: 'http://web-service-portal-api.service-portal.svc.cluster.local'
-    USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.staging'
+    USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.dev'
   grantNamespaces:
     - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
