@@ -1,8 +1,11 @@
 import {
+  Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
+  Post,
   Query,
 } from '@nestjs/common'
 import { IndexingService } from './indexing.service'
@@ -107,6 +110,26 @@ export class IndexingController {
       return this.indexingService.getDocumentById(locale, id)
     } catch (error) {
       return { error: true }
+    }
+  }
+
+  @Post('delete-document')
+  async deleteDocument(
+    @Query()
+    { locale = 'is' as ElasticsearchIndexLocale, token = '' },
+    @Body() body: { sys: { id: string } },
+  ) {
+    if (environment.syncToken !== token) {
+      logger.warn('Failed to validate sync access token', {
+        recivedToken: token,
+      })
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN)
+    }
+
+    await this.indexingService.deleteDocument(locale, body.sys.id)
+
+    return {
+      acknowledge: true,
     }
   }
 }
