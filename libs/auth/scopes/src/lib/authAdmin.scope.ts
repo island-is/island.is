@@ -7,5 +7,5 @@ export enum AuthAdminScope {
 
 export const idsAdminScopes = [
   AdminPortalScope.idsAdmin,
-  AdminPortalScope.idsAdminSuper,
+  AdminPortalScope.idsAdminSuperUser,
 ]

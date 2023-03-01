@@ -7,7 +7,7 @@ import { TenantDto } from './dto/tenant.dto'
 import { Domain } from './models/domain.model'
 
 /**
- * This is a service that is used to access the tenants resource.
+ * This is a service that is used to access the tenant resource.
  * (Previously known as domains).
  */
 @Injectable()
