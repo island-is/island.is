@@ -59,12 +59,13 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
     windowObject.watsonAssistantChatOptions = {
       showCloseAndRestartButton: true,
       pageLinkConfig: {
+        // If there is a query param of wa_lid=<linkID> then in the background a message will be sent and the chat will open
         linkIDs: {
           t10: {
             text: n('t10', 'Tala við manneskju'),
           },
           t11: {
-            text: 'linkuraask',
+            text: n('t11', 'linkuraask'),
           },
         },
       },
