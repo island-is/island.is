@@ -160,22 +160,27 @@ export class FinancialStatementsInaoClientService {
     return res
   }
 
-  async getElections(): Promise<Election[] | null> {
+  async getElections(nationalId: string): Promise<Election[] | null> {
     const url = `${this.basePath}/star_elections`
     const data = await this.getData(url)
 
     if (!data || !data.value) return null
 
-    const elections: Election[] = data.value.map((x: any) => {
-      return {
-        electionId: x.star_electionid,
-        name: x.star_name,
-        electionDate: new Date(x.star_electiondate),
-        genitiveName: x.star_genitive_name,
-      }
-    })
+    const elections: Election[] = data.value
+      .filter((x: any) => x.star_open)
+      .map((x: any) => {
+        return {
+          electionId: x.star_electionid,
+          name: x.star_name,
+          electionDate: new Date(x.star_electiondate),
+          genitiveName: x.star_genitive_name,
+          minimumAge: x.star_minimumage,
+        }
+      })
 
-    return elections
+    return elections.filter((x) =>
+      this.hasReachedAge(nationalId, x.electionDate, x.minimumAge),
+    )
   }
 
   async getElectionInfo(electionId: string): Promise<ElectionInfo | null> {
@@ -195,14 +200,16 @@ export class FinancialStatementsInaoClientService {
     clientType: string,
     year: string,
   ): Promise<number | null> {
-    const select = '$select=star_value,star_years'
+    const select = '$select=star_value,star_year'
     const filter = `$filter=star_client_type eq ${clientType}`
     const url = `${this.basePath}/star_clientfinanciallimits?${select}&${filter}`
     const data = await this.getData(url)
 
     if (!data || !data.value) return null
 
-    const found = data.value.find((x: any) => x.star_years.includes(year))
+    console.log('getClientFinancialLimit', data)
+
+    const found = data.value.find((x: any) => x.star_year == year)
 
     if (found) {
       return found.star_value
@@ -560,5 +567,18 @@ export class FinancialStatementsInaoClientService {
   async getData(url: string) {
     const response = await this.fetch(url)
     return await response.json()
+  }
+
+  private hasReachedAge(
+    nationalId: string,
+    electionDate: Date,
+    minimumAge: number,
+  ) {
+    const year =
+      (nationalId.substring(9, 10) === '0' ? 20 : 19) +
+      nationalId.substring(4, 6)
+    const electionYear = electionDate.getFullYear()
+    const age = electionYear - Number(year)
+    return age >= minimumAge
   }
 }
