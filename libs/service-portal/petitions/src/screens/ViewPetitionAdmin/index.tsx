@@ -123,7 +123,7 @@ const ViewPetitionAdmin = () => {
       {Object.entries(petition).length !== 0 ? (
         <Stack space={3}>
           {petition.adminLock && (
-            <AlertMessage type="error" title={'Lorem ipsum'} message="" />
+            <AlertMessage type="error" title={''} message="" />
           )}
           <Input
             name={title as string}
@@ -188,8 +188,10 @@ const ViewPetitionAdmin = () => {
             {!petition.adminLock ? (
               <DialogPrompt
                 baseId="demo_dialog"
-                title={'Lorem ipsum'}
-                ariaLabel={'Lorem ipsum'}
+                title={
+                  '//Todo: add texts after moving this screen to admin system'
+                }
+                ariaLabel={''}
                 disclosureElement={
                   <Button
                     icon="lockClosed"
@@ -206,8 +208,10 @@ const ViewPetitionAdmin = () => {
             ) : (
               <DialogPrompt
                 baseId="demo_dialog"
-                title={'Lorem ipsum'}
-                ariaLabel={'Lorem ipsum'}
+                title={
+                  '//Todo: add texts after moving this screen to admin system'
+                }
+                ariaLabel={''}
                 disclosureElement={
                   <Button icon="reload" iconType="outline">
                     {'Opna lista'}
@@ -220,8 +224,10 @@ const ViewPetitionAdmin = () => {
             )}
             <DialogPrompt
               baseId="demo_dialog"
-              title={'Lorem ipsum'}
-              ariaLabel={'Lorem ipsum'}
+              title={
+                '//Todo: add texts after moving this screen to admin system'
+              }
+              ariaLabel={''}
               disclosureElement={
                 <Button icon="checkmark" iconType="outline">
                   {'Uppfæra lista'}

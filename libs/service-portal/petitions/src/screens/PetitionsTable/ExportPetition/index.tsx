@@ -19,14 +19,14 @@ interface Props {
   }[]
 }
 
-export const getCSV = async (data: any[], fileName: string, type: 'csv') => {
+export const getCSV = async (data: any[], fileName: string) => {
   const name = `${fileName}`
   const dataArray = data.map((item: any) => [
     item.created ?? '',
     item.meta.fullName ?? '',
   ])
 
-  await downloadCSV(name, ['Dagsetning', 'Nafn'], dataArray, type)
+  await downloadCSV(name, ['Dagsetning', 'Nafn'], dataArray)
 }
 
 const DropdownExport: FC<Props> = ({ onGetCSV, dropdownItems = [] }) => {

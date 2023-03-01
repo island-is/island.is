@@ -63,7 +63,7 @@ export const m = defineMessages({
   },
   toastSuccess: {
     id: 'sp.petitions:toastSuccess',
-    defaultMessage: 'Lorem ipsum',
+    defaultMessage: 'Tókst að uppfæra lista',
     description: '',
   },
 

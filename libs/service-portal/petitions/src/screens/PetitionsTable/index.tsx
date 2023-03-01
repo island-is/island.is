@@ -34,7 +34,7 @@ const PetitionsTable = (data: any) => {
         <Text variant="h3">{formatMessage(m.petitionsOverview)}</Text>
         {data.isViewTypeEdit && (
           <DropdownExport
-            onGetCSV={() => getCSV(listOfPetitions, 'Undirskriftalisti', 'csv')}
+            onGetCSV={() => getCSV(listOfPetitions, 'Undirskriftalisti')}
           />
         )}
       </Box>

@@ -48,7 +48,7 @@ const PetitionsAdmin = () => {
         {openLists && openLists.length > 0 && (
           <>
             <Text as="p" variant="h4" marginBottom={2}>
-              {'Lorem ipsum'}
+              {'//Todo: add texts after moving this screen to admin system'}
             </Text>
 
             <Stack space={4}>
@@ -89,7 +89,7 @@ const PetitionsAdmin = () => {
         {closedLists && closedLists.length > 0 && (
           <>
             <Text as="p" variant="h4" marginBottom={3} marginTop={7}>
-              {'Lorem ipsum'}
+              {'//Todo: add texts after moving this screen to admin system'}
             </Text>
 
             <Stack space={4}>
@@ -130,7 +130,7 @@ const PetitionsAdmin = () => {
         {lockedLists && lockedLists.length > 0 && (
           <>
             <Text as="p" variant="h4" marginBottom={3} marginTop={7}>
-              {'Lorem ipsum'}
+              {'//Todo: add texts after moving this screen to admin system'}
             </Text>
 
             <Stack space={4}>
