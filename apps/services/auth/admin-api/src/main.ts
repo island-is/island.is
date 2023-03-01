@@ -7,4 +7,5 @@ bootstrap({
   appModule: AppModule,
   name: 'auth-admin-api',
   openApi,
+  enableVersioning: true,
 })
