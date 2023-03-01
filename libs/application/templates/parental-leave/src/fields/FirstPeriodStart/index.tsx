@@ -29,14 +29,18 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
 }) => {
   const { register, unregister, setValue } = useFormContext()
   const { formatMessage } = useLocale()
-  const epectedDateOfBirthOrAdoptionDate = getExpectedDateOfBirthOrAdoptionDate(application)
+  const epectedDateOfBirthOrAdoptionDate = getExpectedDateOfBirthOrAdoptionDate(
+    application,
+  )
   const { rawPeriods } = getApplicationAnswers(application.answers)
   const currentIndex = extractRepeaterIndexFromField(field)
   const currentPeriod = rawPeriods[currentIndex]
 
   let isDisable = true
   if (epectedDateOfBirthOrAdoptionDate) {
-    const expectedDateTime = new Date(epectedDateOfBirthOrAdoptionDate).getTime()
+    const expectedDateTime = new Date(
+      epectedDateOfBirthOrAdoptionDate,
+    ).getTime()
     const beginningOfMonth = getBeginningOfThisMonth()
     const today = new Date()
     isDisable =

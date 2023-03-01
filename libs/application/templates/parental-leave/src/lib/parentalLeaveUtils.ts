@@ -1266,14 +1266,18 @@ export const getLastValidPeriodEndDate = (
 }
 
 export const getMinimumStartDate = (application: Application): Date => {
-  const expectedDateOfBirthOrAdoptionDate = getExpectedDateOfBirthOrAdoptionDate(application)
+  const expectedDateOfBirthOrAdoptionDate = getExpectedDateOfBirthOrAdoptionDate(
+    application,
+  )
   const lastPeriodEndDate = getLastValidPeriodEndDate(application)
 
   const today = new Date()
   if (lastPeriodEndDate) {
     return lastPeriodEndDate
   } else if (expectedDateOfBirthOrAdoptionDate) {
-    const expectedDateOfBirthOrAdoptionDateDate = new Date(expectedDateOfBirthOrAdoptionDate)
+    const expectedDateOfBirthOrAdoptionDateDate = new Date(
+      expectedDateOfBirthOrAdoptionDate,
+    )
 
     if (isParentalGrant(application)) {
       const beginningOfMonthOfExpectedDateOfBirth = addDays(

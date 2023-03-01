@@ -119,7 +119,9 @@ export const validatePeriod = (
     values?: Record<string, unknown>,
   ) => AnswerValidationError,
 ) => {
-  const expectedDateOfBirthOrAdoptionDate = getExpectedDateOfBirthOrAdoptionDate(application)
+  const expectedDateOfBirthOrAdoptionDate = getExpectedDateOfBirthOrAdoptionDate(
+    application,
+  )
 
   if (!expectedDateOfBirthOrAdoptionDate) {
     return buildError(null, errorMessages.dateOfBirth)
