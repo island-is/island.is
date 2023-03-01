@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react'
+import { useIntl } from 'react-intl'
 
 import {
   ReactSelectOption,
@@ -8,18 +9,12 @@ import {
 import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
 import { Box, Input, Select } from '@island.is/island-ui/core'
 import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
+import { offenseSubstances, Substance } from '@island.is/judicial-system/types'
 
 import * as styles from './Substances.css'
 
 import { substanceEnum } from './SubstancesEnum.strings'
 import { substances as strings } from './Substances.strings'
-
-import {
-  offenseSubstances,
-  Substance as SubstanceType,
-} from '@island.is/judicial-system/types'
-
-import { useIntl } from 'react-intl'
 
 interface Props {
   indictmentCount: TIndictmentCount
@@ -71,7 +66,7 @@ const Substances: React.FC<Props> = (props) => {
     [formatMessage, indictmentCount.substances, indictmentCountOffenseType],
   )
 
-  const renderSubstance = (substance: SubstanceType) => {
+  const renderSubstanceInput = (substance: Substance) => {
     return (
       <Input
         key={`${indictmentCount.id}-${substance}`}
@@ -148,6 +143,7 @@ const Substances: React.FC<Props> = (props) => {
           })}
           onChange={(selectedOption) => {
             const substance = (selectedOption as ReactSelectOption).value
+
             const substances = {
               ...indictmentCount.substances,
               [substance]: '',
@@ -164,12 +160,12 @@ const Substances: React.FC<Props> = (props) => {
 
       {indictmentCount.substances && (
         <div className={styles.gridRow}>
-          {(Object.keys(indictmentCount.substances) as SubstanceType[])
+          {(Object.keys(indictmentCount.substances) as Substance[])
             .filter((s) =>
               offenseSubstances[indictmentCountOffenseType].includes(s),
             )
-            .map((substanceType) => (
-              <div key={substanceType}>{renderSubstance(substanceType)}</div>
+            .map((substance) => (
+              <div key={substance}>{renderSubstanceInput(substance)}</div>
             ))}
         </div>
       )}

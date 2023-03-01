@@ -306,7 +306,14 @@ export const IndictmentCount: React.FC<Props> = (props) => {
 
   const incidentDescription = useCallback(
     (indictmentCount: TIndictmentCount) => {
-      if (indictmentCount.offenses?.length === 0) {
+      const {
+        offenses,
+        substances,
+        policeCaseNumber,
+        vehicleRegistrationNumber,
+      } = indictmentCount
+
+      if (offenses?.length === 0) {
         return ''
       }
 
@@ -314,19 +321,18 @@ export const IndictmentCount: React.FC<Props> = (props) => {
       let incidentDate = ''
       let incidentDescription = ''
 
-      if (workingCase.crimeScenes && indictmentCount.policeCaseNumber) {
+      if (workingCase.crimeScenes && policeCaseNumber) {
         const crimeScenes = workingCase.crimeScenes
-        const crimeDate = crimeScenes[indictmentCount.policeCaseNumber].date
+        const crimeDate = crimeScenes[policeCaseNumber].date
 
-        incidentLocation =
-          crimeScenes[indictmentCount.policeCaseNumber].place ?? ''
+        incidentLocation = crimeScenes[policeCaseNumber].place ?? ''
         incidentDate =
           formatDate(crimeDate, 'PPPP')?.replace('dagur,', 'daginn') ?? ''
       }
 
       const reason = getIndictmentDescriptionReason(
-        indictmentCount.offenses ? indictmentCount.offenses : [],
-        indictmentCount.substances ?? {},
+        offenses ? offenses : [],
+        substances ?? {},
         formatMessage,
       )
 
@@ -334,8 +340,8 @@ export const IndictmentCount: React.FC<Props> = (props) => {
         strings.trafficViolationIncidentDescriptionAutofill,
         {
           incidentDate: incidentDate ? incidentDate : '[Dagsetning]',
-          vehicleRegistrationNumber: indictmentCount.vehicleRegistrationNumber
-            ? indictmentCount.vehicleRegistrationNumber
+          vehicleRegistrationNumber: vehicleRegistrationNumber
+            ? vehicleRegistrationNumber
             : '[Skráningarnúmer ökutækis]',
           reason: reason,
           incidentLocation: incidentLocation
@@ -345,9 +351,6 @@ export const IndictmentCount: React.FC<Props> = (props) => {
       )
 
       setIncidentDescriptionErrorMessage('')
-
-      console.log(indictmentCount.substances)
-
       return incidentDescription
     },
     [formatMessage, workingCase.crimeScenes],
