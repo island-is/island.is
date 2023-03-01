@@ -243,7 +243,7 @@ const Lookup = () => {
             alignItems={['flexStart', 'flexEnd']}
           >
             <Input
-              icon="search"
+              icon={{ name: 'search' }}
               backgroundColor="blue"
               size="xs"
               value={searchValue}
