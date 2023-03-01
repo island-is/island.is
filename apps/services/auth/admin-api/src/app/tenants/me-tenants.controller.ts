@@ -31,6 +31,6 @@ export class MeTenantsController {
     resources: (tenants) => tenants.map((tenant) => tenant.name),
   })
   findAll(@CurrentUser() user: User): Promise<TenantDto[]> {
-    return this.tenantsService.findAllByOwner(user)
+    return this.tenantsService.findAll(user)
   }
 }

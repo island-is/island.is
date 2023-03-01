@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { User } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
 import { TenantDto } from './dto/tenant.dto'
 import { Domain } from './models/domain.model'
@@ -17,10 +18,12 @@ export class TenantsService {
     private readonly domainModel: typeof Domain,
   ) {}
 
-  async findAllByOwner(user: User): Promise<TenantDto[]> {
+  async findAll(user: User): Promise<TenantDto[]> {
+    const isSuperUser = user.scope.includes(AdminPortalScope.idsAdminSuperUser)
+
     const tenants = await this.domainModel.findAll({
       where: {
-        nationalId: user.nationalId,
+        ...(isSuperUser ? {} : { nationalId: user.nationalId }),
       },
       attributes: ['name', 'displayName'],
     })
