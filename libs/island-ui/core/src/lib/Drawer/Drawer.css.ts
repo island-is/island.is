@@ -11,7 +11,7 @@ export const drawer = style({
   transition: 'transform 400ms ease-in-out',
   selectors: {
     '&[data-enter]': {
-      transform: 'translateX(0)',
+      transform: 'translate3d(0, 0, 0)',
     },
   },
   ...themeUtils.responsiveStyle({
@@ -27,11 +27,11 @@ export const drawer = style({
 export const position = styleVariants({
   left: {
     left: 0,
-    transform: 'translateX(-100%)',
+    transform: 'translate3d(-100%, 0, 0)',
   },
   right: {
     right: 0,
-    transform: 'translateX(100%)',
+    transform: 'translate3d(100%, 0, 0)',
   },
 })
 
