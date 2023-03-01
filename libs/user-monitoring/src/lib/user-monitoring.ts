@@ -1,6 +1,5 @@
-import { datadogRum } from '@datadog/browser-rum'
-
 import { maskNationalId } from '@island.is/shared/pii'
+import { datadogRum } from '@datadog/browser-rum'
 
 interface DdRumInitParams {
   applicationId: string
@@ -20,6 +19,12 @@ const initDdRum = (params: DdRumInitParams) => {
     version: params.version,
     sampleRate: 100,
     trackInteractions: true,
+    sessionSampleRate: 100,
+    sessionReplaySampleRate: 100,
+    trackResources: true,
+    trackLongTasks: true,
+    trackUserInteractions: true,
+    trackFrustrations: true,
     allowedTracingOrigins: [
       'https://island.is',
       /https:\/\/.*\.island\.is/,

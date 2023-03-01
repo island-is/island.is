@@ -2,6 +2,7 @@
   "root": "libs/user-monitoring",
   "sourceRoot": "libs/user-monitoring/src",
   "projectType": "library",
+  "generators": {},
   "targets": {
     "lint": {
       "executor": "@nrwl/linter:eslint",
@@ -11,11 +12,11 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/user-monitoring"],
       "options": {
         "jestConfig": "libs/user-monitoring/jest.config.js",
         "passWithNoTests": true
-      }
+      },
+      "outputs": ["coverage/libs/user-monitoring"]
     }
   },
   "tags": ["lib:dom", "scope:dom"]
