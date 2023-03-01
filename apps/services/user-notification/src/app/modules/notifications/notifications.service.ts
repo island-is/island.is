@@ -150,13 +150,13 @@ export class NotificationsService {
         'notificationDataCopy',
         'clickAction',
       ]
-      const regex = new RegExp(/{{[^{}]*}}/)  // finds {{any}} in string
+      const regex = new RegExp(/{{[^{}]*}}/) // finds {{any}} in string
       Object.keys(template).forEach((key) => {
         if (allowedReplaceProperties.includes(key)) {
           let value = template[key as keyof HnippTemplate] as string
           if (value) {
             if (regex.test(value)) {
-              for(const arg of body.args){
+              for (const arg of body.args) {
                 const regexTarget = new RegExp('{{' + arg.key + '}}', 'g') // finds {{key}} in string
                 value = value.replace(regexTarget, arg.value)
                 template[key as keyof Omit<HnippTemplate, 'args'>] = value
