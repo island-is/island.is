@@ -8,10 +8,7 @@ import './auth'
 
 import { environment } from './environments'
 import App from './app/App'
-import {
-  userMonitoring,
-  startSessionReplayRecording,
-} from '@island.is/user-monitoring'
+import { userMonitoring } from '@island.is/user-monitoring'
 
 if (!isRunningOnEnvironment('local')) {
   userMonitoring.initDdRum({
@@ -21,7 +18,6 @@ if (!isRunningOnEnvironment('local')) {
     env: environment.ENVIRONMENT,
     version: environment.APP_VERSION,
   })
-  startSessionReplayRecording()
 }
 
 ReactDOM.render(<App />, document.getElementById('root'))
