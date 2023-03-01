@@ -1,6 +1,7 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  // General
   applicationSystem: {
     id: 'admin-portal.application-system:name',
     defaultMessage: 'Umsóknarkerfi Ísland.is',
@@ -25,6 +26,52 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:openApplication',
     defaultMessage: 'Opna umsókn',
   },
+  date: {
+    id: 'admin-portal.application-system:date',
+    defaultMessage: 'Dagsetning',
+  },
+  application: {
+    id: 'admin-portal.application-system:application',
+    defaultMessage: 'Umsókn',
+  },
+  applicant: {
+    id: 'admin-portal.application-system:applicant',
+    defaultMessage: 'Umsækjandi',
+  },
+  procurer: {
+    id: 'admin-portal.application-system:procurer',
+    defaultMessage: 'Umboðshafi',
+  },
+  name: {
+    id: 'admin-portal.application-system:name',
+    defaultMessage: 'Nafn',
+  },
+  nationalId: {
+    id: 'admin-portal.application-system:nationalId',
+    defaultMessage: 'Kennitala',
+  },
+  email: {
+    id: 'admin-portal.application-system:email',
+    defaultMessage: 'Netfang',
+  },
+  phone: {
+    id: 'admin-portal.application-system:phone',
+    defaultMessage: 'Sími',
+  },
+  institution: {
+    id: 'admin-portal.application-system:institution',
+    defaultMessage: 'Stofnun',
+  },
+  status: {
+    id: 'admin-portal.application-system:status',
+    defaultMessage: 'Staða',
+  },
+  notFound: {
+    id: 'admin-portal.application-system:notFound',
+    defaultMessage: 'Engar umsóknir fundust',
+  },
+
+  // Tags
   tagsInProgress: {
     id: 'admin-portal.application-system:tags.inProgress',
     defaultMessage: 'Í ferli',
@@ -53,6 +100,8 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:new.application',
     defaultMessage: 'Ný umsókn',
   },
+
+  // Filters
   clearFilter: {
     id: 'admin-portal.application-system:clearFilter',
     defaultMessage: 'Hreinsa síu',
@@ -69,6 +118,14 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:closeFilter',
     defaultMessage: 'Loka síu',
   },
+  filter: {
+    id: 'admin-portal.application-system:filter',
+    defaultMessage: 'Sía',
+  },
+  filterResults: {
+    id: 'admin-portal.application-system:filterResults',
+    defaultMessage: 'Sjá niðurstöður',
+  },
   clearSelected: {
     id: 'admin-portal.application-system:clearSelected',
     defaultMessage: 'Hreinsa val',
@@ -84,30 +141,6 @@ export const m = defineMessages({
   filterTo: {
     id: 'admin-portal.application-system:filterTo',
     defaultMessage: 'Til',
-  },
-  date: {
-    id: 'admin-portal.application-system:date',
-    defaultMessage: 'Dagsetning',
-  },
-  application: {
-    id: 'admin-portal.application-system:application',
-    defaultMessage: 'Umsókn',
-  },
-  applicant: {
-    id: 'admin-portal.application-system:applicant',
-    defaultMessage: 'Umsækjandi',
-  },
-  nationalId: {
-    id: 'admin-portal.application-system:nationalId',
-    defaultMessage: 'Kennitala',
-  },
-  institution: {
-    id: 'admin-portal.application-system:institution',
-    defaultMessage: 'Stofnun',
-  },
-  status: {
-    id: 'admin-portal.application-system:status',
-    defaultMessage: 'Staða',
   },
   resultCount: {
     id: 'admin-portal.application-system:resultCount',

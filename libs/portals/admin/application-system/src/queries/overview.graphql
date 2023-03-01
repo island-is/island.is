@@ -1,17 +1,31 @@
 query getApplications($input: ApplicationApplicationsAdminInput!) {
-    applicationApplicationsAdmin(input: $input) {
+  applicationApplicationsAdmin(input: $input) {
+    id
+    typeId
+    applicant
+    state
+    created
+    modified
+    name
+    institution
+    progress
+    status
+    applicantName
+    paymentStatus
+  }
+}
+
+query getOrganizations($input: GetOrganizationsInput) {
+  getOrganizations(input: $input) {
+    items {
       id
-      typeId
-      applicant
-      state
-      created
-      modified
-      name
-      institution
-      progress
-      status
-      applicantName
-      paymentStatus
+      title
+      slug
+      logo {
+        id
+        url
+        title
+      }
     }
   }
-
+}

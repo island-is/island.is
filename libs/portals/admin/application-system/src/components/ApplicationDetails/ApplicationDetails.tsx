@@ -7,11 +7,12 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import format from 'date-fns/format'
 import { PropsWithChildren } from 'react'
-import { statusMapper } from '../../shared/utils'
+import { getLogo, statusMapper } from '../../shared/utils'
+import { m } from '../../lib/messages'
 import { AdminApplication } from '../../types/adminApplication'
+import { Organization } from '@island.is/shared/types'
 
 interface ValueLineProps {
   title?: string
@@ -32,38 +33,38 @@ const ValueLine = ({ title, children }: PropsWithChildren<ValueLineProps>) => {
 
 interface Props {
   application: AdminApplication
+  organizations: Organization[]
 }
 
-export const ApplicationDetails = ({ application }: Props) => {
+export const ApplicationDetails = ({ application, organizations }: Props) => {
   const { formatMessage } = useLocale()
   const tag = statusMapper[application.status]
-  const logo = getOrganizationLogoUrl(
-    application.institution ?? 'stafraent-island',
-    [],
-  )
+  const logo = getLogo(application.typeId, organizations)
 
   return (
     <Box>
       <Box display="flex" alignItems="center" marginBottom={[2, 2, 3]}>
         <Icon icon="person" color="blue400" type="outline" />
         <Box paddingLeft={2} />
-        <Text variant="h3">Umsækjandi</Text>
+        <Text variant="h3">{formatMessage(m.applicant)}</Text>
       </Box>
       <Box padding={4} background="blue100" borderRadius="large">
         <GridRow rowGap={3}>
           <GridColumn span={['2/2', '2/2', '1/2']}>
-            <ValueLine title="Nafn">
-              {application.applicantName ?? 'Vantar nafn'}
+            <ValueLine title={formatMessage(m.name)}>
+              {application.applicantName}
             </ValueLine>
           </GridColumn>
           <GridColumn span={['2/2', '2/2', '1/2']}>
-            <ValueLine title="Kennitala">{application.applicant}</ValueLine>
+            <ValueLine title={formatMessage(m.nationalId)}>
+              {application.applicant}
+            </ValueLine>
           </GridColumn>
           <GridColumn span={['2/2', '2/2', '1/2']}>
-            <ValueLine title="Netfang">nafn@simnet.is</ValueLine>
+            <ValueLine title={formatMessage(m.email)}>nafn@simnet.is</ValueLine>
           </GridColumn>
           <GridColumn span={['2/2', '2/2', '1/2']}>
-            <ValueLine title="Sími">8486525</ValueLine>
+            <ValueLine title={formatMessage(m.phone)}>8486525</ValueLine>
           </GridColumn>
         </GridRow>
       </Box>
@@ -76,26 +77,32 @@ export const ApplicationDetails = ({ application }: Props) => {
       >
         <Icon icon="person" color="purple600" type="outline" />
         <Box paddingLeft={2} />
-        <Text variant="h3">Umboðshafi</Text>
+        <Text variant="h3">{formatMessage(m.procurer)}</Text>
       </Box>
       <Box padding={4} background="purple100" borderRadius="large">
         <GridRow rowGap={3}>
           <GridColumn span={['2/2', '2/2', '1/2']}>
-            <ValueLine title="Nafn">Sigríður Jónsdóttir</ValueLine>
+            <ValueLine title={formatMessage(m.name)}>
+              Sigríður Jónsdóttir
+            </ValueLine>
           </GridColumn>
           <GridColumn span={['2/2', '2/2', '1/2']}>
-            <ValueLine title="Kennitala">2204774474</ValueLine>
+            <ValueLine title={formatMessage(m.nationalId)}>
+              2204774474
+            </ValueLine>
           </GridColumn>
           <GridColumn span={['2/2', '2/2', '1/2']}>
-            <ValueLine title="Netfang">sigridur@simnet.is</ValueLine>
+            <ValueLine title={formatMessage(m.email)}>
+              sigridur@simnet.is
+            </ValueLine>
           </GridColumn>
           <GridColumn span={['2/2', '2/2', '1/2']}>
-            <ValueLine title="Sími">8486525</ValueLine>
+            <ValueLine title={formatMessage(m.phone)}>8486525</ValueLine>
           </GridColumn>
         </GridRow>
       </Box>
       <Text variant="h3" marginBottom={[2, 2, 3]} marginTop={[5, 5, 6]}>
-        Umsókn
+        {formatMessage(m.application)}
       </Text>
       <ActionCard
         cta={{ label: '' }}

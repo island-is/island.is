@@ -4,7 +4,7 @@ import { lazy } from 'react'
 import { m } from './lib/messages'
 import { ApplicationSystemPaths } from './lib/paths'
 
-const ExampleScreens = lazy(() => import('./screens/ExampleScreen/example'))
+const Overview = lazy(() => import('./screens/Overview/Overview'))
 
 export const applicationSystemAdminModule: PortalModule = {
   name: m.applicationSystem,
@@ -15,7 +15,7 @@ export const applicationSystemAdminModule: PortalModule = {
     {
       name: m.overview,
       path: ApplicationSystemPaths.Root,
-      element: <ExampleScreens />,
+      element: <Overview />,
     },
   ],
 }
