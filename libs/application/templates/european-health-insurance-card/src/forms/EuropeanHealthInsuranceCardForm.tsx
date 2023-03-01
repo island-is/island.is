@@ -98,6 +98,18 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
             }),
           ],
         }),
+        buildDescriptionField({
+          id: 'data-ok',
+          title: e.data.dataCollectionCompletedTitle,
+          description: e.data.dataCollectionCompletedDescription,
+        }),
+      ],
+    }),
+
+    buildSection({
+      id: 'plastic',
+      title: e.applicants.sectionLabel,
+      children: [
         buildMultiField({
           id: 'plastic',
           title: e.applicants.sectionTitle,
@@ -194,14 +206,6 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
           title: 'No Insurance',
           description: 'Not insured',
         }),
-
-        // Has to be here so that the submit button appears (does not appear if no screen is left).
-        // Tackle that as AS task.
-        // buildDescriptionField({
-        //   id: 'unused',
-        //   title: '',
-        //   description: '',
-        // }),
       ],
     }),
 

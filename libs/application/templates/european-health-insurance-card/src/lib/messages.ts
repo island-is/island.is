@@ -77,7 +77,17 @@ export const europeanHealthInsuranceCardApplicationMessages = {
     dataCollectionCheckboxLabel: {
       id: 'ehic.application:data.dataCollectionCheckboxLabel',
       defaultMessage: 'Ég skil að ofangreindra upplýsinga verður aflað.',
-      description: 'Section description',
+      description: 'Data collection checkbox label',
+    },
+    dataCollectionCompletedTitle: {
+      id: 'ehic.application:data.dataCollectionCompletedTitle',
+      defaultMessage: 'Gagnaöflun lokið',
+      description: 'Data collection completed title',
+    },
+    dataCollectionCompletedDescription: {
+      id: 'ehic.application:data.dataCollectionCompletedDescription',
+      defaultMessage: 'Gagnaöflun tókst.',
+      description: 'Data collection completed description',
     },
   }),
 
@@ -201,14 +211,12 @@ export const europeanHealthInsuranceCardApplicationMessages = {
     },
     sectionInfoBulletSecondOne: {
       id: 'ehic.application:confirmation.section.infoBullet.second',
-      defaultMessage:
-        'Kortið verður sent á',
+      defaultMessage: 'Kortið verður sent á',
       description: 'Second part one information sentence, in bullet list',
     },
     sectionInfoBulletSecondTwo: {
       id: 'ehic.application:confirmation.section.infoBullet.second',
-      defaultMessage:
-        'og tekur 10-14 virka daga fyrir kortið að berast.',
+      defaultMessage: 'og tekur 10-14 virka daga fyrir kortið að berast.',
       description: 'Second part two information sentence, in bullet list',
     },
     sectionInfoBulletThird: {
