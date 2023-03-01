@@ -16,15 +16,19 @@ import {
   TempCase as Case,
   TempIndictmentCount as TIndictmentCount,
 } from '@island.is/judicial-system-web/src/types'
-import { BlueBox } from '@island.is/judicial-system-web/src/components'
-import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
-import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   offenseSubstances,
   Substance,
   SubstanceMap,
 } from '@island.is/judicial-system/types'
+import {
+  BlueBox,
+  Substances as SubstanceChoices,
+} from '@island.is/judicial-system-web/src/components'
+import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
+import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
+import { formatDate } from '@island.is/judicial-system/formatters'
+
 import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
@@ -33,8 +37,6 @@ import {
 import { indictmentCount as strings } from './IndictmentCount.strings'
 import { indictmentCountEnum as enumStrings } from './IndictmentCountEnum.strings'
 import { indictmentCountSubstanceEnum as substanceStrings } from './IndictmentCountSubstanceEnum.strings'
-
-import { Substances as SubstanceChoices } from '@island.is/judicial-system-web/src/components'
 
 interface Props {
   indictmentCount: TIndictmentCount
@@ -616,42 +618,26 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           </InputMask>
         </Box>
       )}
-      {indictmentCount.offenses?.includes(
-        IndictmentCountOffense.IllegalDrugsDriving,
-      ) && (
-        <Box>
-          <SubstanceChoices
-            indictmentCount={indictmentCount}
-            indictmentCountOffenseType={
-              IndictmentCountOffense.IllegalDrugsDriving
-            }
-            onChange={onChange}
-            updateIndictmentCountState={updateIndictmentCountState}
-            setWorkingCase={setWorkingCase}
-            getLawsBroken={getLawsBroken}
-            incidentDescription={incidentDescription}
-            legalArguments={legalArguments}
-          ></SubstanceChoices>
-        </Box>
-      )}
-      {indictmentCount.offenses?.includes(
-        IndictmentCountOffense.PrescriptionDrugsDriving,
-      ) && (
-        <Box>
-          <SubstanceChoices
-            indictmentCount={indictmentCount}
-            indictmentCountOffenseType={
-              IndictmentCountOffense.PrescriptionDrugsDriving
-            }
-            onChange={onChange}
-            updateIndictmentCountState={updateIndictmentCountState}
-            setWorkingCase={setWorkingCase}
-            getLawsBroken={getLawsBroken}
-            incidentDescription={incidentDescription}
-            legalArguments={legalArguments}
-          ></SubstanceChoices>
-        </Box>
-      )}
+      {indictmentCount.offenses
+        ?.filter(
+          (offenseType) =>
+            offenseType === IndictmentCountOffense.IllegalDrugsDriving ||
+            offenseType === IndictmentCountOffense.PrescriptionDrugsDriving,
+        )
+        .map((offenseType) => (
+          <Box key={`${indictmentCount.id}-${offenseType}-substances`}>
+            <SubstanceChoices
+              indictmentCount={indictmentCount}
+              indictmentCountOffenseType={offenseType}
+              onChange={onChange}
+              updateIndictmentCountState={updateIndictmentCountState}
+              setWorkingCase={setWorkingCase}
+              getLawsBroken={getLawsBroken}
+              incidentDescription={incidentDescription}
+              legalArguments={legalArguments}
+            ></SubstanceChoices>
+          </Box>
+        ))}
       <Box marginBottom={2}>
         <Select
           name="lawsBroken"

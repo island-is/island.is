@@ -11,10 +11,10 @@ import { Box, Input, Select } from '@island.is/island-ui/core'
 import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
 import { offenseSubstances, Substance } from '@island.is/judicial-system/types'
 
-import * as styles from './Substances.css'
-
 import { substanceEnum } from './SubstancesEnum.strings'
 import { substances as strings } from './Substances.strings'
+
+import * as styles from './Substances.css'
 
 interface Props {
   indictmentCount: TIndictmentCount
