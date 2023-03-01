@@ -24,7 +24,7 @@ import { ChildInformation } from '../dataProviders/Children/types'
 import {
   formatIsk,
   getAvailableRightsInMonths,
-  getExpectedDateOfBirth,
+  getExpectedDateOfBirthOrAdoptionDate,
   getSelectedChild,
   getTransferredDays,
   getOtherParentId,
@@ -89,10 +89,10 @@ function buildField(): Field {
   }
 }
 
-describe('getExpectedDateOfBirth', () => {
+describe('getExpectedDateOfBirthOrAdoptionDate', () => {
   it('should return undefined when no child is found', () => {
     const application = buildApplication()
-    const res = getExpectedDateOfBirth(application)
+    const res = getExpectedDateOfBirthOrAdoptionDate(application)
 
     expect(res).toBeUndefined()
   })
@@ -122,7 +122,7 @@ describe('getExpectedDateOfBirth', () => {
       },
     })
 
-    const res = getExpectedDateOfBirth(application)
+    const res = getExpectedDateOfBirthOrAdoptionDate(application)
 
     expect(res).toEqual('2021-05-17')
   })

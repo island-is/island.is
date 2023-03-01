@@ -14,7 +14,7 @@ import ReviewSection, { ReviewSectionState } from './ReviewSection'
 import { Review } from '../Review/Review'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
-  getExpectedDateOfBirth,
+  getExpectedDateOfBirthOrAdoptionDate,
   otherParentApprovalDescription,
   requiresOtherParentApproval,
 } from '../../lib/parentalLeaveUtils'
@@ -200,7 +200,7 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
     }
   }
 
-  const dob = getExpectedDateOfBirth(application)
+  const dob = getExpectedDateOfBirthOrAdoptionDate(application)
   const dobDate = dob ? new Date(dob) : null
 
   const canBeEdited =

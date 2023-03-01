@@ -11,7 +11,7 @@ import {
 import { useLocale } from '@island.is/localization'
 
 import {
-  getExpectedDateOfBirth,
+  getExpectedDateOfBirthOrAdoptionDate,
   getApplicationAnswers,
   getBeginningOfThisMonth,
   isParentalGrant,
@@ -29,14 +29,14 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
 }) => {
   const { register, unregister, setValue } = useFormContext()
   const { formatMessage } = useLocale()
-  const expectedDateOfBirth = getExpectedDateOfBirth(application)
+  const epectedDateOfBirthOrAdoptionDate = getExpectedDateOfBirthOrAdoptionDate(application)
   const { rawPeriods } = getApplicationAnswers(application.answers)
   const currentIndex = extractRepeaterIndexFromField(field)
   const currentPeriod = rawPeriods[currentIndex]
 
   let isDisable = true
-  if (expectedDateOfBirth) {
-    const expectedDateTime = new Date(expectedDateOfBirth).getTime()
+  if (epectedDateOfBirthOrAdoptionDate) {
+    const expectedDateTime = new Date(epectedDateOfBirthOrAdoptionDate).getTime()
     const beginningOfMonth = getBeginningOfThisMonth()
     const today = new Date()
     isDisable =
@@ -163,8 +163,8 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
             value={
               statefulAnswer === StartDateOptions.ESTIMATED_DATE_OF_BIRTH ||
               statefulAnswer === StartDateOptions.ACTUAL_DATE_OF_BIRTH ||
-              statefulAnswer === StartDateOptions.ADOPTION_DATE
-                ? expectedDateOfBirth
+              statefulAnswer === StartDateOptions.ADOPTION_DATE // laga her
+                ? epectedDateOfBirthOrAdoptionDate
                 : undefined
             }
             name={startDateFieldId}

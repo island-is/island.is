@@ -15,7 +15,7 @@ import {
 import { StartDateOptions, YES, NO } from '../../constants'
 import {
   getApplicationExternalData,
-  getExpectedDateOfBirth,
+  getExpectedDateOfBirthOrAdoptionDate,
   residentGrantIsOpenForApplication,
 } from '../parentalLeaveUtils'
 import {
@@ -119,13 +119,13 @@ export const validatePeriod = (
     values?: Record<string, unknown>,
   ) => AnswerValidationError,
 ) => {
-  const expectedDateOfBirth = getExpectedDateOfBirth(application)
+  const expectedDateOfBirthOrAdoptionDate = getExpectedDateOfBirthOrAdoptionDate(application)
 
-  if (!expectedDateOfBirth) {
+  if (!expectedDateOfBirthOrAdoptionDate) {
     return buildError(null, errorMessages.dateOfBirth)
   }
 
-  const dob = parseISO(expectedDateOfBirth)
+  const dob = parseISO(expectedDateOfBirthOrAdoptionDate)
   const today = new Date()
   const minimumStartDate = addMonths(
     dob,

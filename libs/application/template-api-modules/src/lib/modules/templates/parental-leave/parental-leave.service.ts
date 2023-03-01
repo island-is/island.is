@@ -212,7 +212,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       const child: ChildInformation = {
         hasRights: true,
         remainingDays: 180,
-        expectedDateOfBirth: fosterCareOrAdoptionDate, // sleppa að setja þetta, eða er þetta ok?
+        expectedDateOfBirth: '',
         adoptionDate: fosterCareOrAdoptionDate,
         dateOfBirth: fosterCareOrAdoptionBirthDate,
         parentalRelation: ParentalRelations.primary,

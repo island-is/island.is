@@ -69,7 +69,7 @@ import isBefore from 'date-fns/isBefore'
 import isEqual from 'date-fns/isEqual'
 import isAfter from 'date-fns/isAfter'
 
-export function getExpectedDateOfBirth(
+export function getExpectedDateOfBirthOrAdoptionDate(
   application: Application,
 ): string | undefined {
   const selectedChild = getSelectedChild(
@@ -80,6 +80,9 @@ export function getExpectedDateOfBirth(
   if (!selectedChild) {
     return undefined
   }
+
+  if (selectedChild.expectedDateOfBirth === '')
+    return selectedChild.adoptionDate
 
   return selectedChild.expectedDateOfBirth
 }
@@ -1263,26 +1266,26 @@ export const getLastValidPeriodEndDate = (
 }
 
 export const getMinimumStartDate = (application: Application): Date => {
-  const expectedDateOfBirth = getExpectedDateOfBirth(application)
+  const expectedDateOfBirthOrAdoptionDate = getExpectedDateOfBirthOrAdoptionDate(application)
   const lastPeriodEndDate = getLastValidPeriodEndDate(application)
 
   const today = new Date()
   if (lastPeriodEndDate) {
     return lastPeriodEndDate
-  } else if (expectedDateOfBirth) {
-    const expectedDateOfBirthDate = new Date(expectedDateOfBirth)
+  } else if (expectedDateOfBirthOrAdoptionDate) {
+    const expectedDateOfBirthOrAdoptionDateDate = new Date(expectedDateOfBirthOrAdoptionDate)
 
     if (isParentalGrant(application)) {
       const beginningOfMonthOfExpectedDateOfBirth = addDays(
-        expectedDateOfBirthDate,
-        expectedDateOfBirthDate.getDate() * -1 + 1,
+        expectedDateOfBirthOrAdoptionDateDate,
+        expectedDateOfBirthOrAdoptionDateDate.getDate() * -1 + 1,
       )
       return beginningOfMonthOfExpectedDateOfBirth
     }
 
     const beginningOfMonth = getBeginningOfThisMonth()
     const leastStartDate = addMonths(
-      expectedDateOfBirthDate,
+      expectedDateOfBirthOrAdoptionDateDate,
       -minimumPeriodStartBeforeExpectedDateOfBirth,
     )
     if (leastStartDate.getTime() >= beginningOfMonth.getTime()) {

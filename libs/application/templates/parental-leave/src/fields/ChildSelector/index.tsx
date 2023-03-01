@@ -38,6 +38,7 @@ const ChildSelector: FC<FieldBaseProps> = ({
   ) as {
     children: {
       expectedDateOfBirth: string
+      adoptionDate?: string 
       primaryParentNationalRegistryId?: string
       primaryParentTypeOfApplication?: string
       parentalRelation: ParentalRelations
@@ -117,7 +118,7 @@ const ChildSelector: FC<FieldBaseProps> = ({
                           parentalLeaveFormMessages.selectChild.adoption,
                           {
                             dateOfBirth: formatDateOfBirth(
-                              child.expectedDateOfBirth,
+                              child.adoptionDate!,
                             ),
                           },
                         )
@@ -125,7 +126,7 @@ const ChildSelector: FC<FieldBaseProps> = ({
                           parentalLeaveFormMessages.selectChild.baby,
                           {
                             dateOfBirth: formatDateOfBirth(
-                              child.expectedDateOfBirth,
+                              child.adoptionDate!,
                             ),
                           },
                         ),
