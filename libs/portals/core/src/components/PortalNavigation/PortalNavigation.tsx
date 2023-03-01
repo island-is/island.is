@@ -45,7 +45,6 @@ export function PortalNavigation({
         href = replaceParams({
           href,
           params,
-          paramsPrefix: '/',
         })
 
         return href ? <Link to={href}>{link}</Link> : link

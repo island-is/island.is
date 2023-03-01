@@ -14,7 +14,7 @@ type ReplaceParams = {
 export const replaceParams = ({
   href,
   params,
-  paramsPrefix = '',
+  paramsPrefix = '/',
 }: ReplaceParams) => {
   return href.replace(
     /\/:(\w+)/g,
