@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   HttpException,
   HttpStatus,
@@ -117,7 +116,10 @@ export class IndexingController {
   async deleteDocument(
     @Query()
     { locale = 'is' as ElasticsearchIndexLocale, token = '' },
-    @Body() body: { sys: { id: string } },
+    @Body()
+    document: {
+      sys: { id: string; contentType: { sys: { id: string } } }
+    },
   ) {
     if (environment.syncToken !== token) {
       logger.warn('Failed to validate sync access token', {
@@ -126,7 +128,8 @@ export class IndexingController {
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN)
     }
 
-    await this.indexingService.deleteDocument(locale, body.sys.id)
+    // TODO: Add removal service that takes care of cleaning up linked entries to the ones that'll be removed
+    await this.indexingService.deleteDocument(locale, document.sys.id)
 
     return {
       acknowledge: true,

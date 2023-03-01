@@ -162,4 +162,9 @@ export class IndexingService {
       return { error: true }
     }
   }
+
+  async deleteDocument(locale: ElasticsearchIndexLocale, id: string) {
+    const elasticIndex = getElasticsearchIndex(locale)
+    this.elasticService.deleteByIds(elasticIndex, [id])
+  }
 }

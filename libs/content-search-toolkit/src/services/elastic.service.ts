@@ -326,7 +326,7 @@ export class ElasticService {
       body: {
         query: {
           bool: {
-            must: ids.map((id) => ({ match: { _id: id } })),
+            should: ids.map((id) => ({ match: { _id: id } })),
           },
         },
       },
