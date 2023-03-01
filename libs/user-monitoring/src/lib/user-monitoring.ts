@@ -37,4 +37,9 @@ const initDdRum = (params: DdRumInitParams) => {
   })
 }
 
+export const {
+  startSessionReplayRecording,
+  stopSessionReplayRecording,
+} = datadogRum
+
 export const userMonitoring = { initDdRum }
