@@ -1,0 +1,5 @@
+export { IndictmentCount } from './models/indictmentCount.model'
+export { CreateIndictmentCountInput } from './dto/createIndictmentCount.input'
+export { UpdateIndictmentCountInput } from './dto/updateIndictmentCount.input'
+export { DeleteIndictmentCountInput } from './dto/deleteIndictmentCount.input'
+export { DeleteIndictmentCountResponse } from './models/delete.response'

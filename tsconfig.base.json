@@ -12,7 +12,7 @@
     "target": "es2015",
     "module": "esnext",
     "typeRoots": ["node_modules/@types"],
-    "lib": ["es2019", "dom"],
+    "lib": ["es2019", "dom", "dom.iterable"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "allowSyntheticDefaultImports": true,
@@ -53,6 +53,9 @@
       ],
       "@island.is/api/domains/assets": ["libs/api/domains/assets/src/index.ts"],
       "@island.is/api/domains/auth": ["libs/api/domains/auth/src/index.ts"],
+      "@island.is/api/domains/auth-admin": [
+        "libs/api/domains/auth-admin/src/index.ts"
+      ],
       "@island.is/api/domains/communications": [
         "libs/api/domains/communications/src/index.ts"
       ],
@@ -155,6 +158,9 @@
       "@island.is/api/domains/regulations": [
         "libs/api/domains/regulations/src/index.ts"
       ],
+      "@island.is/api/domains/sessions": [
+        "libs/api/domains/sessions/src/index.ts"
+      ],
       "@island.is/api/domains/syslumenn": [
         "libs/api/domains/syslumenn/src/index.ts"
       ],
@@ -201,6 +207,9 @@
       "@island.is/application/templates/accident-notification": [
         "libs/application/templates/accident-notification/src/index.ts"
       ],
+      "@island.is/application/templates/alcohol-tax-redemption": [
+        "libs/application/templates/alcohol-tax-redemption/src/index.ts"
+      ],
       "@island.is/application/templates/announcement-of-death": [
         "libs/application/templates/announcement-of-death/src/index.ts"
       ],
@@ -230,6 +239,9 @@
       ],
       "@island.is/application/templates/driving-license": [
         "libs/application/templates/driving-license/src/index.ts"
+      ],
+      "@island.is/application/templates/driving-license-book-update-instructor": [
+        "libs/application/templates/driving-license-book-update-instructor/src/index.ts"
       ],
       "@island.is/application/templates/driving-license-duplicate": [
         "libs/application/templates/driving-license-duplicate/src/index.ts"
@@ -423,6 +435,9 @@
       ],
       "@island.is/clients/identity": ["libs/clients/identity/src/index.ts"],
       "@island.is/clients/islykill": ["libs/clients/islykill/src/index.ts"],
+      "@island.is/clients/judicial-administration": [
+        "libs/clients/judicial-administration/src/index.ts"
+      ],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
       ],
@@ -452,6 +467,7 @@
       "@island.is/clients/rsk/procuring": [
         "libs/clients/rsk/procuring/src/index.ts"
       ],
+      "@island.is/clients/sessions": ["libs/clients/sessions/src/index.ts"],
       "@island.is/clients/smartsolutions": [
         "libs/clients/smartsolutions/src/index.ts"
       ],
@@ -586,19 +602,30 @@
         "libs/portals/admin/air-discount-scheme/src/index.ts"
       ],
       "@island.is/portals/admin/core": ["libs/portals/admin/core/src/index.ts"],
+      "@island.is/portals/admin/document-provider": [
+        "libs/portals/admin/document-provider/src/index.ts"
+      ],
       "@island.is/portals/admin/icelandic-names-registry": [
         "libs/portals/admin/icelandic-names-registry/src/index.ts"
+      ],
+      "@island.is/portals/admin/ids-admin": [
+        "libs/portals/admin/ids-admin/src/index.ts"
       ],
       "@island.is/portals/core": ["libs/portals/core/src/index.ts"],
       "@island.is/portals/shared-modules/delegations": [
         "libs/portals/shared-modules/delegations/src/index.ts"
       ],
+      "@island.is/react-spa/shared": ["libs/react-spa/shared/src/index.ts"],
+      "@island.is/react/components": ["libs/react/components/src/index.ts"],
       "@island.is/react/feature-flags": [
         "libs/react/feature-flags/src/index.ts"
       ],
       "@island.is/regulations": ["libs/regulations/src/index.ts"],
       "@island.is/regulations/*": ["libs/regulations/src/sub/*"],
       "@island.is/residence-history": ["libs/residence-history/src/index.ts"],
+      "@island.is/service-portal/air-discount": [
+        "libs/service-portal/air-discount/src/index.ts"
+      ],
       "@island.is/service-portal/applications": [
         "libs/service-portal/applications/src/index.ts"
       ],
@@ -610,9 +637,6 @@
       ],
       "@island.is/service-portal/core": [
         "libs/service-portal/core/src/index.ts"
-      ],
-      "@island.is/service-portal/document-provider": [
-        "libs/service-portal/document-provider/src/index.ts"
       ],
       "@island.is/service-portal/documents": [
         "libs/service-portal/documents/src/index.ts"

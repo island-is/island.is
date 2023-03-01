@@ -1,11 +1,15 @@
+import axios from 'axios'
 import { Inject, Injectable } from '@nestjs/common'
+import { ConfigType } from '@nestjs/config'
 import { ValidationFailed } from '@island.is/nest/problem'
 import { EmailService } from '@island.is/email-service'
 import { ZendeskService } from '@island.is/clients/zendesk'
+import { FileStorageService } from '@island.is/file-storage'
 import {
   ContentfulRepository,
   CmsContentfulService,
   localeMap,
+  Form,
 } from '@island.is/cms'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -20,7 +24,7 @@ import { getTemplate as getTellUsAStoryTemplate } from './emailTemplates/tellUsA
 import { getTemplate as getServiceWebFormsTemplate } from './emailTemplates/serviceWebForms'
 import { GenericFormInput } from './dto/genericForm.input'
 import { environment } from './environments/environment'
-import { FileStorageService } from '@island.is/file-storage'
+import { CommunicationsConfig } from './communications.config'
 
 type SendEmailInput =
   | ContactUsInput
@@ -36,6 +40,8 @@ export class CommunicationsService {
     private readonly fileStorageService: FileStorageService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
+    @Inject(CommunicationsConfig.KEY)
+    private readonly config: ConfigType<typeof CommunicationsConfig>,
   ) {}
   emailTypeTemplateMap = {
     contactUs: getContactUsTemplate,
@@ -131,7 +137,7 @@ export class CommunicationsService {
     return true
   }
 
-  async sendFormResponseEmail(input: GenericFormInput): Promise<boolean> {
+  async sendFormResponse(input: GenericFormInput): Promise<boolean> {
     const form = await this.cmsContentfulService.getForm({
       id: input.id,
       lang: 'is-IS',
@@ -140,7 +146,40 @@ export class CommunicationsService {
       return false
     }
 
-    let recipient = form.recipient
+    if (form.id === this.config.hsnWebFormId) {
+      try {
+        const response = await axios.post(
+          this.config.hsnWebFormResponseUrl,
+          {
+            Nafn: input.name,
+            Netfang: input.email,
+            Titill: `Island.is form: ${form.title}`,
+            Lysing: input.message,
+            Starfsstod: input.recipientFormFieldDeciderValue,
+          },
+          {
+            headers: {
+              lykill: this.config.hsnWebFormResponseSecret,
+            },
+          },
+        )
+        return response.status === 200
+      } catch (error) {
+        this.logger.error('Failed to send form response to HSN', {
+          message: error.message,
+        })
+        return false
+      }
+    }
+
+    return this.sendFormResponseEmail(input, form)
+  }
+
+  private async sendFormResponseEmail(
+    input: GenericFormInput,
+    form: Form,
+  ): Promise<boolean> {
+    let recipient: string | string[] = form.recipientList ?? []
 
     const emailConfig = form.recipientFormFieldDecider?.emailConfig
     const key: string | undefined = input.recipientFormFieldDeciderValue

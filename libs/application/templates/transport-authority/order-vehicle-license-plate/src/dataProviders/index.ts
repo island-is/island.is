@@ -3,8 +3,6 @@ import {
   PaymentCatalogApi,
 } from '@island.is/application/types'
 
-export { NationalRegistryUserApi } from '@island.is/application/types'
-
 const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
 
 export const SamgongustofaPaymentCatalogApi = PaymentCatalogApi.configure({
@@ -14,18 +12,9 @@ export const SamgongustofaPaymentCatalogApi = PaymentCatalogApi.configure({
   externalDataId: 'payment',
 })
 
-interface CurrentVehiclesParameters {
-  showOwned?: boolean
-  showCoOwned?: boolean
-  showOperated?: boolean
-}
-export const CurrentVehiclesApi = defineTemplateApi<CurrentVehiclesParameters>({
-  action: 'currentVehicles',
+export const CurrentVehiclesApi = defineTemplateApi({
+  action: 'getCurrentVehiclesWithPlateOrderChecks',
   externalDataId: 'currentVehicleList',
-  namespace: 'VehiclesShared',
-  params: {
-    showOwned: true,
-  },
 })
 
 export const DeliveryStationsApi = defineTemplateApi({

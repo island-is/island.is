@@ -35,6 +35,8 @@ export interface ActionCardMetaData {
     variant?: ActionCardTag
   }
   deleteButton?: boolean
+  draftTotalSteps?: number
+  draftFinishedSteps?: number
 }
 
 export interface Application<TAnswers = FormValue> {
@@ -53,6 +55,8 @@ export interface Application<TAnswers = FormValue> {
   institution?: string
   progress?: number
   status: ApplicationStatus
+  draftTotalSteps?: number
+  draftFinishedSteps?: number
 }
 
 export interface ApplicationWithAttachments extends Application {

@@ -3,18 +3,14 @@ import {
   Box,
   Bullet,
   BulletList,
-  SkeletonLoader,
   Text,
   InputError,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
-import { VehiclesCurrentVehicleWithOwnerchangeChecks } from '@island.is/api/schema'
-import { VehiclesCurrentVehicle } from '../../types'
+import { VehiclesCurrentVehicleWithOwnerchangeChecks } from '../../shared'
 import { information, applicationCheck, error } from '../../lib/messages'
 import { RadioController } from '@island.is/shared/form-fields'
-import { gql, useQuery } from '@apollo/client'
-import { GET_CURRENT_VEHICLES_WITH_OWNERCHANGE_CHECKS } from '../../graphql/queries'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
@@ -26,7 +22,7 @@ interface Option {
 }
 
 interface VehicleSearchFieldProps {
-  currentVehicleList: VehiclesCurrentVehicle[]
+  currentVehicleList: VehiclesCurrentVehicleWithOwnerchangeChecks[]
 }
 
 export const VehicleRadioField: FC<
@@ -42,21 +38,6 @@ export const VehicleRadioField: FC<
     getValueViaPath(application.answers, 'pickVehicle.color', undefined) as
       | string
       | undefined,
-  )
-
-  const { data, loading } = useQuery(
-    gql`
-      ${GET_CURRENT_VEHICLES_WITH_OWNERCHANGE_CHECKS}
-    `,
-    {
-      variables: {
-        input: {
-          showOwned: true,
-          showCoOwned: false,
-          showOperated: false,
-        },
-      },
-    },
   )
 
   const onRadioControllerSelect = (s: string) => {
@@ -75,7 +56,7 @@ export const VehicleRadioField: FC<
 
     for (const [index, vehicle] of vehicles.entries()) {
       const disabled =
-        !vehicle.isDebtLess || !!vehicle.ownerChangeErrorMessages?.length
+        !vehicle.isDebtLess || !!vehicle.validationErrorMessages?.length
       options.push({
         value: `${index}`,
         label: (
@@ -105,8 +86,8 @@ export const VehicleRadioField: FC<
                             )}
                           </Bullet>
                         )}
-                        {!!vehicle.ownerChangeErrorMessages?.length &&
-                          vehicle.ownerChangeErrorMessages?.map((error) => {
+                        {!!vehicle.validationErrorMessages?.length &&
+                          vehicle.validationErrorMessages?.map((error) => {
                             const message = formatMessage(
                               getValueViaPath(
                                 applicationCheck.validation,
@@ -144,24 +125,15 @@ export const VehicleRadioField: FC<
 
   return (
     <div>
-      {loading ? (
-        <SkeletonLoader
-          height={100}
-          space={2}
-          repeat={currentVehicleList.length}
-          borderRadius="large"
-        />
-      ) : (
-        <RadioController
-          id="pickVehicle.vehicle"
-          largeButtons
-          backgroundColor="blue"
-          onSelect={onRadioControllerSelect}
-          options={vehicleOptions(
-            data.currentVehiclesWithOwnerchangeChecks as VehiclesCurrentVehicleWithOwnerchangeChecks[],
-          )}
-        />
-      )}
+      <RadioController
+        id="pickVehicle.vehicle"
+        largeButtons
+        backgroundColor="blue"
+        onSelect={onRadioControllerSelect}
+        options={vehicleOptions(
+          currentVehicleList as VehiclesCurrentVehicleWithOwnerchangeChecks[],
+        )}
+      />
       <input
         type="hidden"
         value={plate}

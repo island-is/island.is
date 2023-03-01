@@ -58,7 +58,6 @@ export const UnEmploymentBenefits: FC<FieldBaseProps> = ({
             }
             if (s === YES) {
               setValue('unemploymentBenefits', '')
-              setValue('employer.email', '')
             }
           },
         }}

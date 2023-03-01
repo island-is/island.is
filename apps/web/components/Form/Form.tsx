@@ -354,6 +354,7 @@ export const Form = ({ form, namespace }: FormProps) => {
   const formatBody = (data) => {
     return `Sendandi: ${data['name']} <${data['email']}>\n\n`.concat(
       form.fields
+        .filter((field) => field.type !== FormFieldType.INFORMATION)
         .map((field) => {
           const value = data[slugify(field.title)]
           if (field.type === FormFieldType.ACCEPT_TERMS) {
@@ -533,7 +534,12 @@ export const Form = ({ form, namespace }: FormProps) => {
   const failure = result?.genericForm?.sent === false || !!error || submitError
 
   return (
-    <Box background="blue100" paddingY={8} paddingX={12} borderRadius="large">
+    <Box
+      background="blue100"
+      paddingY={[3, 3, 5]}
+      paddingX={[3, 3, 3, 3, 12]}
+      borderRadius="large"
+    >
       {success && (
         <>
           <Text variant="h3" marginBottom={2} color="blue600">

@@ -20,7 +20,6 @@ import {
   ErrorScreen,
   IntroHeader,
   m,
-  ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
 
 import { messages } from '../../lib/messages'
@@ -98,7 +97,7 @@ const getFilteredVehicles = (
   return filteredVehicles
 }
 
-export const VehiclesHistory: ServicePortalModuleComponent = () => {
+const VehiclesHistory = () => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
 
@@ -173,8 +172,7 @@ export const VehiclesHistory: ServicePortalModuleComponent = () => {
               <DatePicker
                 backgroundColor="blue"
                 handleChange={(d: Date) => setFromDate(d)}
-                icon="calendar"
-                iconType="outline"
+                icon={{ name: 'calendar', type: 'outline' }}
                 size="xs"
                 label={formatMessage(messages.dateOfPurchase)}
                 selected={fromDate}
@@ -190,8 +188,7 @@ export const VehiclesHistory: ServicePortalModuleComponent = () => {
               <DatePicker
                 backgroundColor="blue"
                 handleChange={(d: Date) => setToDate(d)}
-                icon="calendar"
-                iconType="outline"
+                icon={{ name: 'calendar', type: 'outline' }}
                 size="xs"
                 label={formatMessage(messages.dateOfSale)}
                 selected={toDate}

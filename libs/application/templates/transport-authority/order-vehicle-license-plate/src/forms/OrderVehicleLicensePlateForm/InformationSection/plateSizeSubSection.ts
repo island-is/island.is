@@ -1,17 +1,14 @@
 import { Application } from '@island.is/api/schema'
-import { VehiclesCurrentVehicle, PlateType } from '../../../types'
+import { VehiclesCurrentVehicle } from '../../../shared'
 import {
   buildMultiField,
   buildTextField,
   buildSubSection,
   buildDescriptionField,
-  buildRadioField,
-  getValueViaPath,
   buildCustomField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { getSelectedVehicle } from '../../../utils'
-import { useLocale } from '@island.is/localization'
 
 export const plateSizeSubSection = buildSubSection({
   id: 'plateSize',

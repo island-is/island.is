@@ -3,12 +3,12 @@ import { IntlFormatters } from 'react-intl'
 import {
   CaseDecision,
   CaseState,
-  CaseType,
   isIndictmentCase,
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
 import { sections as m } from '@island.is/judicial-system-web/messages'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export const caseResult = (
   formatMessage: IntlFormatters['formatMessage'],
@@ -43,7 +43,7 @@ export const caseResult = (
       const isAlternativeTravelBan =
         workingCase.state === CaseState.ACCEPTED &&
         workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-      caseType = isAlternativeTravelBan ? CaseType.TRAVEL_BAN : caseType
+      caseType = isAlternativeTravelBan ? CaseType.TravelBan : caseType
       return workingCase?.isValidToDateInThePast
         ? formatMessage(m.caseResults.restrictionOver, { caseType })
         : formatMessage(m.caseResults.restrictionActive, { caseType })

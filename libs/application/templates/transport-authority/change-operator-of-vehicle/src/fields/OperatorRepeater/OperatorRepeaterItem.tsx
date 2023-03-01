@@ -12,14 +12,16 @@ import { InputController } from '@island.is/shared/form-fields'
 import { FC } from 'react'
 import { NationalIdWithName } from '../NationalIdWithName'
 import { information } from '../../lib/messages'
-import { OperatorFormField } from '../../shared'
+import { OperatorInformation } from '../../shared'
+import { useFormContext } from 'react-hook-form'
 
 interface Props {
   id: string
   index: number
   rowLocation: number
-  repeaterField: OperatorFormField
+  repeaterField: OperatorInformation
   handleRemove: (index: number) => void
+  addNationalIdToCoOwners: (nationalId: string, index: number) => void
 }
 
 export const OperatorRepeaterItem: FC<Props & FieldBaseProps> = ({
@@ -28,16 +30,27 @@ export const OperatorRepeaterItem: FC<Props & FieldBaseProps> = ({
   rowLocation,
   handleRemove,
   repeaterField,
+  addNationalIdToCoOwners,
   ...props
 }) => {
+  const { register } = useFormContext()
   const { formatMessage } = useLocale()
   const { application, errors } = props
   const fieldIndex = `${id}[${index}]`
   const emailField = `${fieldIndex}.email`
   const phoneField = `${fieldIndex}.phone`
+  const wasRemovedField = `${fieldIndex}.wasRemoved`
+
+  const onNationalIdChange = (nationalId: string) => {
+    addNationalIdToCoOwners(nationalId, index)
+  }
 
   return (
-    <Box position="relative" key={repeaterField.id} marginBottom={4}>
+    <Box
+      position="relative"
+      marginBottom={4}
+      hidden={repeaterField.wasRemoved === 'true'}
+    >
       <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
         <Text variant="h5">
           {formatMessage(information.labels.operator.operatorTempTitle)}{' '}
@@ -56,6 +69,7 @@ export const OperatorRepeaterItem: FC<Props & FieldBaseProps> = ({
         customNationalIdLabel={formatMessage(
           information.labels.operator.nationalId,
         )}
+        onNationalIdChange={onNationalIdChange}
       />
       <GridRow>
         <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
@@ -87,6 +101,12 @@ export const OperatorRepeaterItem: FC<Props & FieldBaseProps> = ({
             }
           />
         </GridColumn>
+        <input
+          type="hidden"
+          value={repeaterField.wasRemoved}
+          ref={register({ required: true })}
+          name={wasRemovedField}
+        />
       </GridRow>
     </Box>
   )

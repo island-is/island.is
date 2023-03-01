@@ -1,11 +1,11 @@
 import {
   assistantRule,
-  defenderRule,
   judgeRule,
   prosecutorRule,
   registrarRule,
   representativeRule,
 } from '../../../../guards'
+import { defenderFileRule } from '../../guards/rolesRules'
 import { FileController } from '../../file.controller'
 
 describe('FileController - Get case file signed url rules', () => {
@@ -29,6 +29,6 @@ describe('FileController - Get case file signed url rules', () => {
     expect(rules).toContain(judgeRule)
     expect(rules).toContain(registrarRule)
     expect(rules).toContain(assistantRule)
-    expect(rules).toContain(defenderRule)
+    expect(rules).toContain(defenderFileRule)
   })
 })

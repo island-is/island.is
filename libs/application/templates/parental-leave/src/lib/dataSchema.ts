@@ -14,13 +14,14 @@ import {
   SINGLE,
 } from '../constants'
 import { errorMessages } from './messages'
+import { formatBankInfo } from './parentalLeaveUtils'
 
 const PersonalAllowance = z
   .object({
     usePersonalAllowance: z.enum([YES, NO]),
     usage: z
       .string()
-      .refine((x) => parseFloat(x) > 0 && parseFloat(x) <= 100)
+      .refine((x) => parseFloat(x) >= 1 && parseFloat(x) <= 100)
       .optional(),
     useAsMuchAsPossible: z.enum([YES, NO]).optional(),
   })
@@ -33,7 +34,7 @@ const PersonalAllowance = z
   )
 
 /**
- * Both periods and employer objects had been removed from here, and the logic has
+ * Both periods and employers objects had been removed from here, and the logic has
  * been moved to the answerValidators because it needs to be more advanced than
  * what zod can handle.
  */
@@ -71,8 +72,7 @@ export const dataSchema = z.object({
   payments: z.object({
     bank: z.string().refine(
       (b) => {
-        const bankAccount = b.toString()
-
+        const bankAccount = formatBankInfo(b)
         return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
       },
       { params: errorMessages.bank },
@@ -85,6 +85,7 @@ export const dataSchema = z.object({
   shareInformationWithOtherParent: z.enum([YES, NO]),
   useUnion: z.enum([YES, NO]),
   usePrivatePensionFund: z.enum([YES, NO]),
+  isReceivingUnemploymentBenefits: z.enum([YES, NO]),
   employerNationalRegistryId: z.string().refine((n) => kennitala.isCompany(n), {
     params: errorMessages.employerNationalRegistryId,
   }),

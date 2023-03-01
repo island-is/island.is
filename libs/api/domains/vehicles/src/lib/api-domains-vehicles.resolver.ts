@@ -14,12 +14,7 @@ import {
 import { GetVehicleDetailInput } from '../dto/getVehicleDetailInput'
 import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
-import {
-  VehicleOwnerchangeChecksByPermno,
-  VehiclesCurrentVehicleWithOwnerchangeChecks,
-} from '../models/getCurrentVehicles.model'
 import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
-import { GetCurrentVehiclesInput } from '../dto/getCurrentVehiclesInput'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
 
@@ -56,7 +51,7 @@ export class VehiclesResolver {
     return await this.vehiclesService.getVehiclesForUser(user, true, true)
   }
 
-  @Scopes(ApiScope.vehicles, ApiScope.internal)
+  @Scopes(ApiScope.vehicles, ApiScope.internal, ApiScope.internalProcuring)
   @Query(() => VehiclesDetail, { name: 'vehiclesDetail', nullable: true })
   @Audit()
   async getVehicleDetail(
@@ -94,39 +89,5 @@ export class VehiclesResolver {
     @CurrentUser() user: User,
   ) {
     return await this.vehiclesService.getVehiclesSearch(user, input.search)
-  }
-
-  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
-  @Query(() => [VehiclesCurrentVehicleWithOwnerchangeChecks], {
-    name: 'currentVehiclesWithOwnerchangeChecks',
-    nullable: true,
-  })
-  @Audit()
-  async getCurrentVehiclesWithOwnerchangeChecks(
-    @Args('input') input: GetCurrentVehiclesInput,
-    @CurrentUser() user: User,
-  ) {
-    return await this.vehiclesService.getCurrentVehiclesWithOwnerchangeChecks(
-      user,
-      input.showOwned,
-      input.showCoOwned,
-      input.showOperated,
-    )
-  }
-
-  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
-  @Query(() => VehicleOwnerchangeChecksByPermno, {
-    name: 'vehicleOwnerchangeChecksByPermno',
-    nullable: true,
-  })
-  @Audit()
-  async getVehicleOwnerchangeChecksByPermno(
-    @Args('permno', { type: () => String }) permno: string,
-    @CurrentUser() user: User,
-  ) {
-    return await this.vehiclesService.getVehicleOwnerchangeChecksByPermno(
-      user,
-      permno,
-    )
   }
 }

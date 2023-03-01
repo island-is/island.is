@@ -13,7 +13,6 @@ export const DigitalTachographDriversCardSchema = z.object({
   cardDelivery: z.object({
     deliveryMethodIsSend: z.enum([YES, NO]),
     cardExistsInTachoNet: z.boolean().optional(),
-    canGoForward: z.string(),
   }),
 })
 

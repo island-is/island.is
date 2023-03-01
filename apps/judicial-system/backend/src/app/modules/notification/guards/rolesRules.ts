@@ -2,7 +2,7 @@ import { RolesRule, RulesType } from '@island.is/judicial-system/auth'
 import { NotificationType, UserRole } from '@island.is/judicial-system/types'
 
 // Allows prosecutors to send notifications
-export const prosecutorNotificationRule = {
+export const prosecutorNotificationRule: RolesRule = {
   role: UserRole.PROSECUTOR,
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
@@ -10,7 +10,7 @@ export const prosecutorNotificationRule = {
 } as RolesRule
 
 // Allows judges to send notifiications
-export const judgeNotificationRule = {
+export const judgeNotificationRule: RolesRule = {
   role: UserRole.JUDGE,
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
@@ -18,10 +18,10 @@ export const judgeNotificationRule = {
     NotificationType.COURT_DATE,
     NotificationType.DEFENDER_ASSIGNED,
   ],
-} as RolesRule
+}
 
 // Allows registrars to send notifications
-export const registrarNotificationRule = {
+export const registrarNotificationRule: RolesRule = {
   role: UserRole.REGISTRAR,
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
@@ -29,10 +29,10 @@ export const registrarNotificationRule = {
     NotificationType.COURT_DATE,
     NotificationType.DEFENDER_ASSIGNED,
   ],
-} as RolesRule
+}
 
 // Allows assistants to send notifications
-export const assistantNotificationRule = {
+export const assistantNotificationRule: RolesRule = {
   role: UserRole.ASSISTANT,
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
@@ -40,4 +40,4 @@ export const assistantNotificationRule = {
     NotificationType.COURT_DATE,
     NotificationType.DEFENDER_ASSIGNED,
   ],
-} as RolesRule
+}
