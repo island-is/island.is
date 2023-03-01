@@ -41,7 +41,7 @@ export const Drawer = ({
     <ModalBase
       disclosure={disclosure}
       baseId={baseId}
-      aria-label={ariaLabel}
+      modalLabel={ariaLabel}
       initialVisibility={initialVisibility}
       className={cn(styles.drawer, styles.position[position])}
     >
@@ -59,7 +59,7 @@ export const Drawer = ({
                 circle
                 colorScheme="negative"
                 icon="close"
-                aria-label="Hætta við"
+                aria-label="Close drawer"
                 onClick={closeModal}
                 size="large"
               />

@@ -4,7 +4,7 @@ import { theme, themeUtils } from '@island.is/island-ui/theme'
 export const drawer = style({
   position: 'fixed',
   top: 0,
-  maxWidth: `calc(100% - ${theme.spacing['6']}px)`,
+  width: '100%',
   height: '100vh',
   boxShadow: '0px 4px 70px rgba(0, 97, 255, 0.1)',
   opacity: 1,
