@@ -26,7 +26,10 @@ export class MeTenantsController {
   constructor(private readonly tenantsService: TenantsService) {}
 
   @Get()
-  @Documentation({})
+  @Documentation({
+    description: 'Get all tenants for the current user.',
+    response: { status: 200, type: [TenantDto] },
+  })
   @Audit<TenantDto[]>({
     resources: (tenants) => tenants.map((tenant) => tenant.name),
   })
