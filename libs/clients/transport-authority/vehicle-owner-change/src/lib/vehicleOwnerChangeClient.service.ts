@@ -7,7 +7,7 @@ import {
   OwnerChange,
   OwnerChangeValidation,
 } from './vehicleOwnerChangeClient.types'
-import { getDateAtNoon } from './vehicleOwnerChangeClient.utils'
+import { getDateAtTimestamp } from './vehicleOwnerChangeClient.utils'
 
 @Injectable()
 export class VehicleOwnerChangeClient {
@@ -23,6 +23,7 @@ export class VehicleOwnerChangeClient {
   ): Promise<OwnerChangeValidation> {
     // Note: since the vehiclecheck endpoint is funky, we will instead just use the personcheck endpoint
     // and send in dummy data where needed
+    const todayStr = new Date().toISOString()
     return await this.validateAllForOwnerChange(auth, {
       permno: permno,
       seller: {
@@ -34,6 +35,7 @@ export class VehicleOwnerChangeClient {
         email: 'mockEmail@island.is',
       },
       dateOfPurchase: new Date(),
+      dateOfPurchaseTimestamp: todayStr.substring(11, todayStr.length),
       saleAmount: 0,
       insuranceCompanyCode: null,
       operators: null,
@@ -58,8 +60,12 @@ export class VehicleOwnerChangeClient {
         insuranceCompanyCode = dummyInsuranceCompanyCode
       }
 
-      // Note: API throws error if timestamp is 00:00:00, so we will use noon
-      const purchaseDate = getDateAtNoon(ownerChange.dateOfPurchase)
+      // Note: API throws error if timestamp is 00:00:00, so we will use
+      // timestamp when application was created
+      const purchaseDate = getDateAtTimestamp(
+        ownerChange.dateOfPurchase,
+        ownerChange.dateOfPurchaseTimestamp,
+      )
 
       // Note: we have manually changed this endpoint to void, since the messages we want only
       // come with error code 400. If this function returns an array of ReturnTypeMessage, then
@@ -156,8 +162,12 @@ export class VehicleOwnerChangeClient {
   ): Promise<void> {
     const useGroup = '000'
 
-    // Note: API throws error if timestamp is 00:00:00, so we will use noon
-    const purchaseDate = getDateAtNoon(ownerChange.dateOfPurchase)
+    // Note: API throws error if timestamp is 00:00:00, so we will use
+    // timestamp when application was created
+    const purchaseDate = getDateAtTimestamp(
+      ownerChange.dateOfPurchase,
+      ownerChange.dateOfPurchaseTimestamp,
+    )
 
     await this.ownerchangeApiWithAuth(auth).rootPost({
       apiVersion: '2.0',

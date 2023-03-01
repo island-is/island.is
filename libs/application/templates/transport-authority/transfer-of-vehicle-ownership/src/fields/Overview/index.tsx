@@ -55,6 +55,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
     false,
   )
   const [noInsuranceError, setNoInsuranceError] = useState<boolean>(false)
+
   const [submitApplication, { error }] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => {
       console.error(e, e.message)
@@ -106,6 +107,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
   const onBackButtonClick = () => {
     setStep && setStep('states')
   }
+
   const onRejectButtonClick = () => {
     setRejectModalVisibility(true)
   }
@@ -209,11 +211,13 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
           reviewerNationalId={reviewerNationalId}
           noInsuranceError={noInsuranceError}
         />
+
         {error && (
           <InputError
             errorMessage={errorMsg.submitApplicationError.defaultMessage}
           />
         )}
+
         {data?.vehicleOwnerChangeValidation?.hasError &&
         data.vehicleOwnerChangeValidation.errorMessages.length > 0 ? (
           <Box>
@@ -254,6 +258,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
             />
           </Box>
         ) : null}
+
         <Box marginTop={14}>
           <Divider />
           <Box display="flex" justifyContent="spaceBetween" paddingY={5}>
