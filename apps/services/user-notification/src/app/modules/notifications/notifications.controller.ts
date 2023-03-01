@@ -134,8 +134,6 @@ export class NotificationsController {
     const template = await this.notificationsService.getTemplate(
       body.templateId,
     )
-    // validate or fail
-
     // check counts
     if (!this.notificationsService.validateArgCounts(body, template)) {
       throw new BadRequestException(
