@@ -16,7 +16,7 @@ import { Documentation } from '@island.is/nest/swagger'
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(...idsAdminScopes)
 @ApiSecurity('ias', idsAdminScopes)
-@ApiTags('admin-api')
+@ApiTags('admin')
 @Controller({
   path: 'me/tenants',
   version: ['2'],
