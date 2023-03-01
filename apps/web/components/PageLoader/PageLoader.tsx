@@ -12,7 +12,7 @@ export const PageLoader = () => {
       ref.current.continuousStart()
     }
     const done = () => {
-      ref.current.complete()
+      ref.current?.complete()
     }
     router.events.on('routeChangeStart', start)
     router.events.on('routeChangeComplete', done)
