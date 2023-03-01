@@ -108,7 +108,7 @@ const Screen: FC<ScreenProps> = ({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
     defaultValues: formValue,
-    shouldUnregister: true,
+    shouldUnregister: false,
     resolver: (formValue, context) =>
       resolver({ formValue, context, formatMessage }),
     context: { dataSchema, formNode: screen },
