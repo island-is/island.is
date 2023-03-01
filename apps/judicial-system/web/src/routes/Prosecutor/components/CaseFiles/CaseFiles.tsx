@@ -70,6 +70,7 @@ const mapPoliceCaseFileToPoliceCaseFileCheck = (
 ): PoliceCaseFileCheck => ({
   id: file.id,
   name: file.name,
+  policeCaseNumber: file.policeCaseNumber,
   checked: false,
 })
 

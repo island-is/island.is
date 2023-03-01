@@ -164,11 +164,16 @@ export class PoliceService {
           const response = await res.json()
 
           return response.map(
-            (file: { rvMalSkjolMals_ID: string; heitiSkjals: string }) => ({
+            (file: {
+              rvMalSkjolMals_ID: string
+              heitiSkjals: string
+              malsnumer: string
+            }) => ({
               id: file.rvMalSkjolMals_ID,
               name: file.heitiSkjals.endsWith('.pdf')
                 ? file.heitiSkjals
                 : `${file.heitiSkjals}.pdf`,
+              policeCaseNumber: file.malsnumer,
             }),
           )
         }
