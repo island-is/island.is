@@ -370,7 +370,7 @@
     "@types/lodash": "4.14.160",
     "@types/mailparser": "3.4.0",
     "@types/memoizee": "0.4.5",
-    "@types/node": "18.7.18",
+    "@types/node": "18.14.2",
     "@types/opossum": "4.1.1",
     "@types/passport-local": "1.0.33",
     "@types/pg": "8.6.4",

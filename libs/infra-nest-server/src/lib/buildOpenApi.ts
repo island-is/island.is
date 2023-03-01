@@ -39,6 +39,6 @@ export const buildOpenApi = async ({
     // TODO: Remove this when it's been fixed.
     process.exit(0)
   } catch (e: any) {
-    logger.error('Error while creating openapi.yaml', { message: e.message })
+    logger.error('Error while creating openapi.yaml', e)
   }
 }
