@@ -11,16 +11,7 @@ import { environment } from '../../../environments'
 
 @Module({
   imports: [SequelizeModule.forFeature([DraftRegulationCancelModel])],
-  providers: [
-    DraftRegulationCancelService,
-    {
-      provide: RegulationsService,
-      // See method doc for disable reason.
-      // eslint-disable-next-line local-rules/no-async-module-init
-      useFactory: async () =>
-        new RegulationsService({ url: environment.regulationsApiUrl }),
-    },
-  ],
+  providers: [DraftRegulationCancelService, RegulationsService],
   controllers: [DraftRegulationCancelController],
   exports: [DraftRegulationCancelService],
 })

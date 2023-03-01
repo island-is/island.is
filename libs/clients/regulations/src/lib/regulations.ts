@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
+import { ConfigType } from '@nestjs/config'
 import {
   buildRegulationApiPath,
   ISODate,
@@ -33,21 +34,13 @@ import {
 } from '@island.is/regulations/admin'
 import pickBy from 'lodash/pickBy'
 import identity from 'lodash/identity'
-
-export const REGULATIONS_OPTIONS = 'REGULATIONS_OPTIONS'
-
-export interface RegulationsServiceOptions {
-  url: string
-  publishKey?: string
-  draftKey?: string
-  presignedKey?: string
-}
+import { RegulationsClientConfig } from './regulations.config'
 
 @Injectable()
 export class RegulationsService extends RESTDataSource {
   constructor(
-    @Inject(REGULATIONS_OPTIONS)
-    private readonly options: RegulationsServiceOptions,
+    @Inject(RegulationsClientConfig.KEY)
+    private readonly options: ConfigType<typeof RegulationsClientConfig>,
   ) {
     super()
     this.baseURL = `${this.options.url}`

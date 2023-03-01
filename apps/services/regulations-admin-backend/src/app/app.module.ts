@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common'
+import { ConfigModule } from '@island.is/nest/config'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { AuditModule } from '@island.is/nest/audit'
 
 import { environment } from '../environments'
+import { RegulationsClientConfig } from '@island.is/clients/regulations'
 import { DraftRegulationModule } from './modules/draft_regulation'
 import { DraftRegulationChangeModule } from './modules/draft_regulation_change'
 import { DraftRegulationCancelModule } from './modules/draft_regulation_cancel'
@@ -20,6 +22,10 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     DraftRegulationModule,
     DraftRegulationChangeModule,
     DraftRegulationCancelModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [RegulationsClientConfig],
+    }),
   ],
 })
 export class AppModule {}

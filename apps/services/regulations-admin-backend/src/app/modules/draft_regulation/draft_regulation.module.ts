@@ -20,13 +20,7 @@ import { DraftAuthorModule } from '../draft_author'
   ],
   providers: [
     DraftRegulationService,
-    {
-      provide: RegulationsService,
-      // See method doc for disable reason.
-      // eslint-disable-next-line local-rules/no-async-module-init
-      useFactory: async () =>
-        new RegulationsService({ url: environment.regulationsApiUrl }),
-    },
+    RegulationsService,
     {
       provide: NationalRegistryApi,
       // See method doc for disable reason.

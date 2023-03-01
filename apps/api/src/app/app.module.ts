@@ -40,6 +40,7 @@ import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-reg
 import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { RegulationsAdminModule } from '@island.is/api/domains/regulations-admin'
 import { RegulationsAdminClientConfig } from '@island.is/clients/regulations-admin'
+import { RegulationsClientConfig } from '@island.is/clients/regulations'
 import { FinanceModule } from '@island.is/api/domains/finance'
 import { VehiclesModule } from '@island.is/api/domains/vehicles'
 import { AssetsModule } from '@island.is/api/domains/assets'
@@ -240,19 +241,8 @@ const autoSchemaFile = environment.production
     EndorsementSystemModule.register({
       baseApiUrl: environment.endorsementSystem.baseApiUrl!,
     }),
-    RegulationsModule.register({
-      url: environment.regulationsDomain.url!,
-      publishKey: environment.regulationsAdmin.publishKey!,
-      draftKey: environment.regulationsAdmin.draftKey!,
-      presignedKey: environment.regulationsAdmin.presignedKey!,
-    }),
-    RegulationsAdminModule.register({
-      baseApiUrl: environment.regulationsAdmin.baseApiUrl!,
-      regulationsApiUrl: environment.regulationsAdmin.regulationsApiUrl!,
-      publishKey: environment.regulationsAdmin.publishKey!,
-      draftKey: environment.regulationsAdmin.draftKey!,
-      presignedKey: environment.regulationsAdmin.presignedKey!,
-    }),
+    RegulationsModule,
+    RegulationsAdminModule,
     FinanceModule,
     FinancialStatementsInaoModule,
     VehiclesModule,
@@ -296,6 +286,7 @@ const autoSchemaFile = environment.production
         FeatureFlagConfig,
         FinanceClientConfig,
         RegulationsAdminClientConfig,
+        RegulationsClientConfig,
         IdsClientConfig,
         NationalRegistryClientConfig,
         SyslumennClientConfig,

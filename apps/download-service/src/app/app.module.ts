@@ -24,7 +24,10 @@ import {
   VehiclesClientConfig,
   VehiclesClientModule,
 } from '@island.is/clients/vehicles'
-import { RegulationsService } from '@island.is/clients/regulations'
+import {
+  RegulationsService,
+  RegulationsClientConfig,
+} from '@island.is/clients/regulations'
 import {
   RegulationsAdminClientConfig,
   RegulationsAdminClientService,
@@ -58,23 +61,10 @@ import {
         VehiclesClientConfig,
         DownloadServiceConfig,
         RegulationsAdminClientConfig,
+        RegulationsClientConfig,
       ],
     }),
   ],
-  providers: [
-    RegulationsAdminClientService,
-    {
-      provide: RegulationsService,
-      // See method doc for disable reason.
-      // eslint-disable-next-line local-rules/no-async-module-init
-      useFactory: async () =>
-        new RegulationsService({
-          url: environment.regulationsAdmin.regulationsApiUrl,
-          presignedKey: environment.regulationsAdmin.presignedKey,
-          publishKey: environment.regulationsAdmin.publishKey,
-          draftKey: environment.regulationsAdmin.draftKey,
-        }),
-    },
-  ],
+  providers: [RegulationsAdminClientService, RegulationsService],
 })
 export class AppModule {}
