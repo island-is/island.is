@@ -50,54 +50,19 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
       id: 'intro',
       title: e.introScreen.sectionLabel,
 
-      children: [
-        buildCustomField(
-          {
-            id: 'introScreen',
-            title: e.introScreen.sectionTitle,
-            component: 'IntroScreen',
-          },
-          {
-            subTitle: e.introScreen.sectionDescription,
-          },
-        ),
-      ],
+      children: [],
     }),
 
     buildSection({
       id: 'data',
-      title: e.data.sectionLabel,
+      title: e.data.sectionTitle,
+      children: [],
+    }),
+
+    buildSection({
+      id: 'plastic',
+      title: e.applicants.sectionTitle,
       children: [
-        buildExternalDataProvider({
-          title: e.data.sectionTitle,
-          checkboxLabel: e.data.dataCollectionCheckboxLabel,
-          id: 'approveExternalData',
-          description: '',
-          dataProviders: [
-            buildDataProviderItem({
-              provider: NationalRegistryUserApi,
-              title: 'Þjóðskrá Íslands',
-              subTitle:
-                'Við þurfum að sækja þessi gögn úr þjóðskrá. Lögheimili, hjúskaparstaða, maki og afkvæmi.',
-            }),
-            buildDataProviderItem({
-              provider: NationalRegistrySpouseApi,
-              title: '',
-              subTitle: '',
-            }),
-            buildDataProviderItem({
-              provider: ChildrenCustodyInformationApi,
-              title: '',
-              subTitle: '',
-            }),
-            buildDataProviderItem({
-              provider: EhicCardResponseApi,
-              title: 'Sjúkratryggingar',
-              subTitle:
-                'Upplýsingar um stöðu heimildar á evrópska sjúktryggingakortinu',
-            }),
-          ],
-        }),
         buildMultiField({
           id: 'plastic',
           title: e.applicants.sectionTitle,

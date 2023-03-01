@@ -47,20 +47,24 @@ const template: ApplicationTemplate<
   readyForProduction: false,
   dataSchema,
   stateMachineConfig: {
-    initial: States.DRAFT,
+    initial: States.PREREQUISITES,
     states: {
-      [States.DRAFT]: {
+      [States.PREREQUISITES]: {
         meta: {
           name: 'EHIC-FORM',
           status: 'draft',
-          progress: 0.1,
+          progress: 0.25,
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/EuropeanHealthInsuranceCardForm').then((val) =>
-                  Promise.resolve(val.EuropeanHealthInsuranceCardForm),
+                import(
+                  '../forms/EuropeanHealthInsuranceCardPrerequisities'
+                ).then((val) =>
+                  Promise.resolve(
+                    val.EuropeanHealthInsuranceCardPrerequisities,
+                  ),
                 ),
               actions: [
                 {
@@ -83,6 +87,35 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
+            target: States.DRAFT,
+          },
+        },
+      },
+      [States.DRAFT]: {
+        meta: {
+          name: 'EHIC-FORM',
+          status: 'draft',
+          progress: 0.5,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/EuropeanHealthInsuranceCardForm').then((val) =>
+                  Promise.resolve(val.EuropeanHealthInsuranceCardForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'EHIC-Plastic-submit',
+                  type: 'primary',
+                },
+              ],
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: {
             target: States.REVIEW,
           },
         },
@@ -92,7 +125,7 @@ const template: ApplicationTemplate<
         meta: {
           name: 'EHIC-Review',
           status: 'draft',
-          progress: 0.8,
+          progress: 0.75,
           onExit: defineTemplateApi({
             action: ApiActions.applyForPhysicalAndTemporary,
           }),
