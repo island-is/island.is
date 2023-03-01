@@ -1,3 +1,4 @@
+import { NoContentException } from '@island.is/nest/problem'
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { IdpProviderDTO } from './dto/idp-provider.dto'
@@ -21,7 +22,7 @@ export class IdpProviderService {
   async findAndCountAll(
     page: number,
     count: number,
-  ): Promise<{ rows: IdpProvider[]; count: number } | null> {
+  ): Promise<{ rows: IdpProvider[]; count: number }> {
     page--
     const offset = page * count
     this.logger.debug('Getting all idp providers')
@@ -38,7 +39,7 @@ export class IdpProviderService {
     searchString: string,
     page: number,
     count: number,
-  ): Promise<{ rows: IdpProvider[]; count: number } | null> {
+  ): Promise<{ rows: IdpProvider[]; count: number }> {
     page--
     const offset = page * count
     this.logger.debug(
@@ -54,14 +55,14 @@ export class IdpProviderService {
   }
 
   /** Gets all Idp Providers Types */
-  async findAll(): Promise<IdpProvider[] | null> {
+  async findAll(): Promise<IdpProvider[]> {
     this.logger.debug('Getting all idp providers')
     return this.idpProvider.findAll()
   }
 
   /** Gets Idp Provider by name */
   async findByPk(name: string): Promise<IdpProvider | null> {
-    this.logger.debug('Getting all idp providers')
+    this.logger.debug('Getting idp provider by pk')
     return this.idpProvider.findByPk(name)
   }
 
@@ -73,14 +74,15 @@ export class IdpProviderService {
 
   /** Updates an Idp Provider */
   async update(
-    idpProvider: IdpProviderDTO,
+    idpProviderData: IdpProviderDTO,
     name: string,
-  ): Promise<[number, IdpProvider[]] | null> {
-    this.logger.debug('Updating a idp provider: ' + idpProvider)
-    return this.idpProvider.update(
-      { ...idpProvider },
-      { where: { name: name }, returning: true },
-    )
+  ): Promise<IdpProvider> {
+    this.logger.debug('Updating a idp provider: ' + idpProviderData)
+    const idpProvider = await this.findByPk(name)
+    if (!idpProvider) {
+      throw new NoContentException()
+    }
+    return idpProvider.update({ ...idpProviderData })
   }
 
   /** Deletes an Idp Provider */
