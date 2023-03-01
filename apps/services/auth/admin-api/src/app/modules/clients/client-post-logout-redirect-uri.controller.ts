@@ -13,7 +13,7 @@ import {
   UseGuards,
   VERSION_NEUTRAL,
 } from '@nestjs/common'
-import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiExcludeController } from '@nestjs/swagger'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
@@ -28,7 +28,7 @@ import { environment } from '../../../environments/'
 const namespace = `${environment.audit.defaultNamespace}/client-post-logout-redirect-uri`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@ApiTags('client-post-logout-redirect-uri')
+@ApiExcludeController()
 @Controller({
   path: 'backend/client-post-logout-redirect-uri',
   version: [VERSION_NEUTRAL, '1'],

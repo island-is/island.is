@@ -13,7 +13,7 @@ import {
   UseGuards,
   VERSION_NEUTRAL,
 } from '@nestjs/common'
-import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiExcludeController } from '@nestjs/swagger'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
@@ -28,7 +28,7 @@ import { environment } from '../../../environments/'
 const namespace = `${environment.audit.defaultNamespace}/client-grant-type`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@ApiTags('client-grant-type')
+@ApiExcludeController()
 @Controller({
   path: 'backend/client-grant-type',
   version: [VERSION_NEUTRAL, '1'],

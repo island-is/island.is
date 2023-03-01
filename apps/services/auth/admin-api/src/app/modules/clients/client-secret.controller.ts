@@ -12,7 +12,7 @@ import {
   UseGuards,
   VERSION_NEUTRAL,
 } from '@nestjs/common'
-import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiExcludeController } from '@nestjs/swagger'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
@@ -27,7 +27,7 @@ import { environment } from '../../../environments'
 const namespace = `${environment.audit.defaultNamespace}/client-secret`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@ApiTags('client-secret')
+@ApiExcludeController()
 @Controller({ path: 'backend/client-secret', version: [VERSION_NEUTRAL, '1'] })
 @Audit({ namespace })
 export class ClientSecretController {

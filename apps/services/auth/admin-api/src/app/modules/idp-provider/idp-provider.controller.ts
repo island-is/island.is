@@ -19,9 +19,9 @@ import {
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
+  ApiExcludeController,
   ApiOkResponse,
   ApiQuery,
-  ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger'
 import type { User } from '@island.is/auth-nest-tools'
@@ -38,7 +38,7 @@ import { environment } from '../../../environments/'
 const namespace = `${environment.audit.defaultNamespace}/idp-provider`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@ApiTags('idp-provider')
+@ApiExcludeController()
 @Controller({ path: 'backend/idp-provider', version: [VERSION_NEUTRAL, '1'] })
 @Audit({ namespace })
 export class IdpProviderController {

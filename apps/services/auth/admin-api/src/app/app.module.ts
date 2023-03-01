@@ -8,6 +8,7 @@ import {
 } from '@island.is/auth-api-lib'
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { AuditModule } from '@island.is/nest/audit'
+import { ProblemModule } from '@island.is/nest/problem'
 
 import { environment } from '../environments'
 import { UsersModule } from './modules/users/users.module'
@@ -36,6 +37,7 @@ import { TenantsModule } from './tenants/tenants.module'
     TranslationModule,
     PersonalRepresentativeModule,
     TenantsModule,
+    ProblemModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [DelegationConfig],

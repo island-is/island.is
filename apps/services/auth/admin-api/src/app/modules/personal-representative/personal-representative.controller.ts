@@ -25,8 +25,8 @@ import {
   ApiOperation,
   ApiCreatedResponse,
   ApiOkResponse,
-  ApiTags,
   ApiQuery,
+  ApiExcludeController,
 } from '@nestjs/swagger'
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -42,7 +42,7 @@ import { AuthAdminScope } from '@island.is/auth/scopes'
 const namespace = `${environment.audit.defaultNamespace}/personal-representative`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@ApiTags('personal-representative')
+@ApiExcludeController()
 @Controller({
   path: 'backend/personal-representative',
   version: [VERSION_NEUTRAL, '1'],
