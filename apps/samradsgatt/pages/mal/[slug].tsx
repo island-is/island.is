@@ -1,15 +1,11 @@
 import {
   Box,
   Breadcrumbs,
-  CategoryCard,
-  Column,
-  Columns,
   Divider,
   GridColumn,
   GridContainer,
   GridRow,
   Hidden,
-  LinkV2,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -96,13 +92,6 @@ const CaseDetails = ({ chosenCase, advices, isLoggedIn }) => {
 
   isLoggedIn = true // remove when functionality for logged in has been implemented
 
-  const caseTimeline = (
-    <CaseTimeline
-      status="Niðurstöður birtar"
-      updatedDate="2023-01-13T15:47:07.703"
-    />
-  )
-
   return (
     <Layout>
       <GridContainer>
@@ -115,27 +104,29 @@ const CaseDetails = ({ chosenCase, advices, isLoggedIn }) => {
           />
         </Box>
       </GridContainer>
-      <Hidden above={'xs'}>
+      <Hidden above={'md'}>
         <Box paddingBottom={3}>
           <Divider />
         </Box>
       </Hidden>
       <GridContainer>
-        {/* <Columns space={6} collapseBelow="md"> */}
-        <GridRow rowGap={8}>
+        <GridRow rowGap={3}>
           <GridColumn
             span={['12/12', '12/12', '12/12', '3/12', '3/12']}
-            order={[2, 2, 2, 1, 1]}
+            order={[3, 3, 3, 1, 1]}
           >
             <Stack space={2}>
-              <Hidden below="md">
-                <Divider />
-                {caseTimeline}
-              </Hidden>
               <Divider />
-              <Text variant="h3" color="purple400">
-                Fjöldi umsagna: 2
-              </Text>
+              <CaseTimeline
+                status="Til umsagnar"
+                updatedDate="2023-01-13T15:47:07.703"
+              />
+              <Divider />
+              <Box paddingLeft={1}>
+                <Text variant="h3" color="purple400">
+                  Fjöldi umsagna: 2
+                </Text>
+              </Box>
               <Divider />
               <Box paddingTop={1}>
                 <SubscriptionBox />
@@ -146,8 +137,7 @@ const CaseDetails = ({ chosenCase, advices, isLoggedIn }) => {
             span={['12/12', '12/12', '12/12', '6/12', '6/12']}
             order={[1, 1, 1, 2, 2]}
           >
-            <Hidden above="sm">{caseTimeline}</Hidden>
-            <Stack space={9}>
+            <Stack space={[3, 3, 3, 9, 9]}>
               <CaseOverview chosenCase={chosenCase} />
               <Box>
                 <Stack space={3}>
@@ -164,7 +154,7 @@ const CaseDetails = ({ chosenCase, advices, isLoggedIn }) => {
           </GridColumn>
           <GridColumn
             span={['12/12', '12/12', '12/12', '3/12', '3/12']}
-            order={[3, 3, 3, 3, 3]}
+            order={[2, 2, 2, 3, 3]}
           >
             <Stack space={3}>
               <SimpleCardSkeleton>
@@ -197,7 +187,6 @@ const CaseDetails = ({ chosenCase, advices, isLoggedIn }) => {
             </Stack>
           </GridColumn>
         </GridRow>
-        {/* </Columns> */}
       </GridContainer>
     </Layout>
   )

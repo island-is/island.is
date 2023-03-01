@@ -1,5 +1,4 @@
 import {
-  Box,
   FormStepperV2,
   Text,
   Section,
