@@ -64,6 +64,12 @@ export const indictment = defineMessages({
     description:
       'Notaður sem titill á Refsikrafa svæði á ákæra skrefi í ákærum.',
   },
+  demandsRequestSuspension: {
+    id: 'judicial.system.core:indictments_indictment.demands_request_suspesion',
+    defaultMessage: 'Krefjast sviptingar',
+    description:
+      'Notaður sem titill á krejast sviptingar haki á ákæra skrefi í ákærum.',
+  },
   demandsLabel: {
     id: 'judicial.system.core:indictments_indictment.demands_label',
     defaultMessage: 'Refsikrafa',
@@ -81,6 +87,14 @@ export const indictment = defineMessages({
     defaultMessage:
       'Þess er krafist að ákærði verði dæmdur til refsingar og til greiðslu alls sakarkostnaðar.',
     description: 'Notaður sem sjálfvirkur texti í Refsikrafa textasvæði.',
+  },
+  demandsAutofillWithSuspension: {
+    id:
+      'judicial.system.core:indictments_indictment.demands_autofill_with_suspension',
+    defaultMessage:
+      'Þess er krafist að ákærði verði dæmdur til refsingar, til greiðslu alls sakarkostnaðar og til að sæta sviptingu ökuréttar skv. 99. gr. og 101. gr. laga nr. 77/2019.',
+    description:
+      'Notaður sem sjálfvirkur texti í Refsikrafa textasvæði þegar krafist er sviptingar ökuréttinda.',
   },
   pdfButtonIndictment: {
     id: 'judicial.system.core:indictments_indictment.pdf_button_indictment',

@@ -137,6 +137,7 @@ export const CoOwner: FC<FieldBaseProps> = (props) => {
                       '',
                     ) as string
                   }
+                  format="###-####"
                   type="tel"
                   backgroundColor="blue"
                   error={

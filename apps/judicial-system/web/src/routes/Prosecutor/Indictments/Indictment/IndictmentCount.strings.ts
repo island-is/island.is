@@ -62,13 +62,60 @@ export const indictmentCount = defineMessages({
     description:
       'Notaður sem skýritexti á "atvikalýsing" svæði á ákæruliða skrefi í ákærum.',
   },
+  bloodAlcoholContentLabel: {
+    id:
+      'judicial.system.core:indictments_indictment.indictment_count.blood_alcohol_content_label',
+    defaultMessage: 'Vínandamagn (‰)',
+    description:
+      'Notaður sem titill á "vínandamagn" svæði á ákæruliða skrefi í ákærum.',
+  },
+  bloodAlcoholContentPlaceholder: {
+    id:
+      'judicial.system.core:indictments_indictment.indictment_count.blood_alcohol_content_placeholder',
+    defaultMessage: '0,00',
+    description:
+      'Notaður sem skýritexti á "vínandamagn" svæði á ákæruliða skrefi í ákærum.',
+  },
   trafficViolationIncidentDescriptionAutofill: {
     id:
-      'judicial.system.core:indictments_indictment.indictment_count.traffic_violation_incident_description_auto_fill',
+      'judicial.system.core:indictments_indictment.indictment_count.traffic_violation_incident_description_auto_fill_v2',
     defaultMessage:
-      'fyrir umferðalagabrot með því að hafa, {incidentDate}, ekið bifreiðinni {vehicleRegistrationNumber} {offense, select, DRIVING_WITHOUT_LICENCE {án leyfis} DRUNK_DRIVING {undir áhrifum áfengis} other {[Brot]}} um {incidentLocation}, þar sem lögregla stöðvaði aksturinn.',
+      'fyrir umferðalagabrot með því að hafa, {incidentDate}, ekið bifreiðinni {vehicleRegistrationNumber} {reason} um {incidentLocation}, þar sem lögregla stöðvaði aksturinn.',
     description:
       'Notaður sem skýritexti á "atvikalýsing" svæði á ákæruliða skrefi í umferðalagabrots ákærum.',
+  },
+  trafficViolationIncidentDescriptionDrivingWithoutLicenceAutofill: {
+    id:
+      'judicial.system.core:indictments_indictment.indictment_count.traffic_violation_incident_description_driving_without_licence_auto_fill',
+    defaultMessage: 'sviptur ökurétti',
+    description:
+      'Notaður sem ástæða í atvikalýsingu fyrir "sviptingarakstur" brot.',
+  },
+  trafficViolationIncidentDescriptionDrunkDrivingAutofill: {
+    id:
+      'judicial.system.core:indictments_indictment.indictment_count.traffic_violation_incident_description_drunk_driving_auto_fill',
+    defaultMessage: 'undir áhrifum áfengis',
+    description:
+      'Notaður sem ástæða í atvikalýsingu fyrir "ölvunarakstur" brot.',
+  },
+  trafficViolationIncidentDescriptionIllegalDrugsDrivingAutofill: {
+    id:
+      'judicial.system.core:indictments_indictment.indictment_count.traffic_violation_incident_description_illegal_drugs_driving_auto_fill',
+    defaultMessage: 'ávana- og fíkniefna',
+    description:
+      'Notaður sem ástæða í atvikalýsingu fyrir "fíkniefnaakstur" brot.',
+  },
+  trafficViolationIncidentDescriptionPrescriptionDrugsDrivingAutofill: {
+    id:
+      'judicial.system.core:indictments_indictment.indictment_count.traffic_violation_incident_description_prescription_drugs_driving_auto_fill',
+    defaultMessage: 'slævandi lyfja',
+    description: 'Notaður sem ástæða í atvikalýsingu fyrir "lyfjaakstur" brot.',
+  },
+  trafficViolationIncidentDescriptionDrugsDrivingPrefixAutofill: {
+    id:
+      'judicial.system.core:indictments_indictment.indictment_count.traffic_violation_incident_description_prescription_drugs_driving_auto_fill',
+    defaultMessage: 'óhæfur til að stjórna henni örugglega vegna áhrifa ',
+    description: 'Notaður sem ástæða í atvikalýsingu fyrir "lyfjaakstur" brot.',
   },
   lawsBrokenLabel: {
     id:

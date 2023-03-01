@@ -25,7 +25,7 @@ export class FirearmApi {
     user: User,
   ): Promise<FirearmPropertyList | null> {
     const propertyInfo = await this.firearmApiWithAuth(user)
-      .apiFirearmApplicationPropertyInfoGet({ pageNumber: 1, pageSize: 50 })
+      .apiFirearmApplicationPropertyInfoGet()
       .catch(handle404)
     return propertyInfo
   }

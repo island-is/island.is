@@ -6,7 +6,7 @@ type info = {
   checked: boolean
 }
 
-const cases: dummyCases = [
+export const cases: dummyCases = [
   {
     id: 0,
     caseNumber: 'Öll mál',
