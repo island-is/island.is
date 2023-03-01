@@ -110,7 +110,7 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
                 value={workingCase.courtCaseNumber ?? ''}
                 icon={
                   workingCase.courtCaseNumber && createCourtCaseSuccess
-                    ? 'checkmark'
+                    ? { name: 'checkmark' }
                     : undefined
                 }
                 errorMessage={courtCaseNumberEM}
