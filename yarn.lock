@@ -4895,14 +4895,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hookform/error-message@npm:0.0.5":
-  version: 0.0.5
-  resolution: "@hookform/error-message@npm:0.0.5"
+"@hookform/error-message@npm:2.0.1":
+  version: 2.0.1
+  resolution: "@hookform/error-message@npm:2.0.1"
   peerDependencies:
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-    react-hook-form: ">=6.6.0"
-  checksum: 40dbe4b386150d1d09feb3fa6096e5015b48345fff6f795af804d05bb612a649a00073add6f370ea25c7ac462ea8feaf48654b705a5a3c7b9a68459e41983669
+    react-hook-form: ^7.0.0
+  checksum: eb3c33ab3fd2fe02b9bb1686f3d1ef2504ee2bb4e8e848797e2c68d957e53b1150f5f13946c65e386ed3b6e95e3b3fba29480bab1e0f60c4972e225248c8c68e
   languageName: node
   linkType: hard
 
@@ -25375,7 +25375,7 @@ __metadata:
     "@graphql-codegen/typescript-operations": 2.5.3
     "@graphql-codegen/typescript-react-apollo": 3.3.3
     "@graphql-codegen/typescript-resolvers": 2.7.3
-    "@hookform/error-message": 0.0.5
+    "@hookform/error-message": 2.0.1
     "@island.is/login": 1.2.1
     "@island.is/regulations-tools": 0.7.8
     "@jeremybarbet/contentful-extension-scripts": 0.22.7
@@ -25647,7 +25647,7 @@ __metadata:
     react-dom: 17.0.2
     react-dropzone: 11.7.1
     react-focus-lock: 2.9.4
-    react-hook-form: 6.4.1
+    react-hook-form: 7.43.3
     react-html-parser: 2.0.2
     react-infinite-scroller: ^1.2.6
     react-input-mask: 3.0.0-alpha.2
@@ -34964,12 +34964,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-hook-form@npm:6.4.1":
-  version: 6.4.1
-  resolution: "react-hook-form@npm:6.4.1"
+"react-hook-form@npm:7.43.3":
+  version: 7.43.3
+  resolution: "react-hook-form@npm:7.43.3"
   peerDependencies:
-    react: ^16.8.0
-  checksum: 20ca61960b4345adbd0ee40d2a39b674668183c7fcc2520eba5d3072cfcd373b23e134c720a8498d9baa28a65c121ef94577dc901ed65b9bcb07ad057e267405
+    react: ^16.8.0 || ^17 || ^18
+  checksum: 16e03e42d07f696e36d67c0d60671df6d0bc73b9e48876ea99b85cf3aaa4cf40acb0c0e2870169d4a22504c7111c0f658b0b17a4f3fd191ef69c7eea70785a9d
   languageName: node
   linkType: hard
 
