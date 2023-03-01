@@ -175,7 +175,6 @@ describe('Application system API', () => {
       .get(`/users/${nationalId}/applications`)
       .expect(200)
 
-    console.log('list.body', list.body[0].actionCard)
     const historyLog = list?.body[0]?.actionCard?.history[0]?.log
 
     await server
