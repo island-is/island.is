@@ -10,7 +10,7 @@ import {
   ActionCardTag,
   ApplicationTypes,
 } from '@island.is/application/types'
-import { institutionMapper } from '@island.is/application/core'
+import { institutionMapper } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
 import { useDeleteApplication } from './hooks/useDeleteApplication'
