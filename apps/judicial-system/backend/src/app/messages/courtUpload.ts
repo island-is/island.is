@@ -2,8 +2,8 @@ import { defineMessages } from 'react-intl'
 
 export const courtUpload = defineMessages({
   request: {
-    id: 'judicial.system.backend:court_upload.request',
-    defaultMessage: 'Krafa um {caseType}{date}',
+    id: 'judicial.system.backend:court_upload.request_v2',
+    defaultMessage: 'Krafa um {caseType} {date}',
     description: 'Notaður sem nafn á kröfuskjali í Auði.',
   },
   caseFilesRecord: {
@@ -12,14 +12,14 @@ export const courtUpload = defineMessages({
     description: 'Notaður sem nafn á skjalaskrá í Auði.',
   },
   courtRecord: {
-    id: 'judicial.system.backend:court_upload.court_record',
-    defaultMessage: 'Þingbók {courtCaseNumber}',
+    id: 'judicial.system.backend:court_upload.court_record_v2',
+    defaultMessage: 'Þingbók {courtCaseNumber} {date}',
     description: 'Notaður sem nafn á þingbók í Auði.',
   },
   ruling: {
-    id: 'judicial.system.backend:court_upload.ruling',
+    id: 'judicial.system.backend:court_upload.ruling_v2',
     defaultMessage:
-      'Úrskurður {courtCaseNumber}{isModifyingRuling, select, true { leiðrétt} other {}}',
+      'Úrskurður {courtCaseNumber}{isModifyingRuling, select, true { leiðrétt} other {}} {date}',
     description: 'Notaður sem nafn á úrskurði í Auði.',
   },
 })
