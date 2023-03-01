@@ -179,6 +179,7 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
         }
         if (i === 1) {
           resp[i].applicantNationalId = '0107721419'
+          resp[i].canApply = false
         }
 
         if (i === 2) {
