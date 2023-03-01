@@ -1,15 +1,44 @@
-import {
-  ClientsApi,
-  Configuration,
-  DomainsApi,
-  MeDelegationsApi,
-} from '../../gen/fetch'
-import { ApiConfiguration } from './api-configuration'
+import { ConfigType } from '@island.is/nest/config'
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { Environment } from '@island.is/shared/types'
 
-export const exportedApis = [MeDelegationsApi, DomainsApi, ClientsApi].map(
-  (Api) => ({
-    provide: Api,
-    useFactory: (configuration: Configuration) => new Api(configuration),
-    inject: [ApiConfiguration.provide],
-  }),
+import { AdminApi, Configuration } from '../../gen/fetch'
+import { AuthAdminApiClientConfig } from './auth-admin-api-client.config'
+
+interface AdminApiEnv {
+  env: Environment
+  key: string
+}
+
+export const AdminDevApi: AdminApiEnv = {
+  env: Environment.Dev,
+  key: 'AdminDevApi',
+}
+export const AdminStagingApi: AdminApiEnv = {
+  env: Environment.Staging,
+  key: 'AdminStagingApi',
+}
+export const AdminProdApi: AdminApiEnv = {
+  env: Environment.Prod,
+  key: 'AdminProdApi',
+}
+
+export const exportedApis = [AdminDevApi, AdminStagingApi, AdminProdApi].map(
+  (adminApi) => {
+    return {
+      provide: adminApi.key,
+      useFactory: (config: ConfigType<typeof AuthAdminApiClientConfig>) =>
+        config.basePaths[adminApi.env]
+          ? new AdminApi(
+              new Configuration({
+                fetchApi: createEnhancedFetch({
+                  name: `clients-auth-admin-${adminApi.env}-api`,
+                }),
+                basePath: config.basePaths[adminApi.env],
+              }),
+            )
+          : undefined,
+      inject: [AuthAdminApiClientConfig.KEY],
+    }
+  },
 )

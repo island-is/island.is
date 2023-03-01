@@ -3,18 +3,23 @@ import * as z from 'zod'
 import { defineConfig } from '@island.is/nest/config'
 
 const schema = z.object({
-  basePath: z.string(),
+  basePaths: z.object({
+    dev: z.string().optional(),
+    staging: z.string().optional(),
+    prod: z.string().optional(),
+  }),
 })
 
 export const AuthAdminApiClientConfig = defineConfig({
-  name: 'AuthDelegationClient',
+  name: 'AuthAdminApiClientConfig',
   schema,
   load(env) {
     return {
-      basePath: env.required(
-        'AUTH_DELEGATION_API_URL',
-        'http://localhost:5333',
-      ),
+      basePaths: {
+        dev: env.optional('AUTH_ADMIN_API_URL_DEV'),
+        staging: env.optional('AUTH_ADMIN_API_URL_STAGING'),
+        prod: env.optional('AUTH_ADMIN_API_URL_PROD'),
+      },
     }
   },
 })

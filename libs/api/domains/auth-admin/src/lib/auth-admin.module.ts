@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common'
 
+import { AuthAdminApiClientModule } from '@island.is/clients/auth/admin-api'
+
 import { TenantResolver } from './tenant/tenant.resolver'
 import { TenantEnvironmentResolver } from './tenant/tenant-environment.resolver'
 import { TenantsService } from './tenant/tenants.service'
 
 @Module({
-  controllers: [],
+  imports: [AuthAdminApiClientModule],
   providers: [TenantResolver, TenantEnvironmentResolver, TenantsService],
   exports: [TenantResolver, TenantEnvironmentResolver],
 })

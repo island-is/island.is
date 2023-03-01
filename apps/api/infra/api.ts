@@ -176,6 +176,18 @@ export const serviceSetup = (services: {
       },
       HSN_WEB_FORM_ID: '1dimJFHLFYtnhoYEA3JxRK',
       SESSIONS_API_URL: ref((h) => `http://${h.svc(services.sessionsApi)}`),
+      AUTH_ADMIN_API_URL_DEV:
+        'http://identity-server-admin.services-auth-admin-api.svc.cluster.local',
+      AUTH_ADMIN_API_URL_STAGING: {
+        dev: '',
+        staging: 'https://identity-server-admin.staging01.devland.is',
+        prod: 'https://identity-server-admin.staging01.devland.is',
+      },
+      AUTH_ADMIN_API_URL_PROD: {
+        dev: '',
+        staging: '',
+        prod: 'https://identity-server-admin.innskra.island.is',
+      },
     })
 
     .secrets({

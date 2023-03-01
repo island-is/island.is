@@ -1,112 +1,86 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable, Optional } from '@nestjs/common'
 
-import { Environment } from '../models/environment'
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import {
+  AdminApi,
+  AdminDevApi,
+  AdminProdApi,
+  AdminStagingApi,
+} from '@island.is/clients/auth/admin-api'
+import { Environment } from '@island.is/shared/types'
+
+import { TenantEnvironment } from './models/tenant-environment.model'
+import { TenantsPayload } from './dto/tenants.payload'
+import { Tenant } from './models/tenant.model'
 
 @Injectable()
 export class TenantsService {
-  getTenants() {
+  constructor(
+    @Inject(AdminDevApi.key)
+    @Optional()
+    private readonly adminDevApi?: AdminApi,
+    @Inject(AdminStagingApi.key)
+    @Optional()
+    private readonly adminStagingApi?: AdminApi,
+    @Inject(AdminProdApi.key)
+    @Optional()
+    private readonly adminProdApi?: AdminApi, // private readonly adminApiFactory: AdminApiFactory,
+  ) {
+    if (!this.adminDevApi && !this.adminStagingApi && !this.adminProdApi) {
+      throw new Error('No admin api configured')
+    }
+  }
+
+  private adminDevApiWithAuth(auth: Auth) {
+    return this.adminDevApi?.withMiddleware(new AuthMiddleware(auth))
+  }
+  private adminStagingApiWithAuth(auth: Auth) {
+    return this.adminStagingApi?.withMiddleware(new AuthMiddleware(auth))
+  }
+  private adminProdApiWithAuth(auth: Auth) {
+    return this.adminProdApi?.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  async getTenants(user: User): Promise<TenantsPayload> {
+    const tenants = await Promise.all([
+      this.adminDevApiWithAuth(user)?.meTenantsControllerFindAll(),
+      this.adminStagingApiWithAuth(user)?.meTenantsControllerFindAll(),
+      this.adminProdApiWithAuth(user)?.meTenantsControllerFindAll(),
+    ])
+
+    const tenantMap = new Map<string, TenantEnvironment[]>()
+
+    for (const [index, env] of [
+      Environment.Dev,
+      Environment.Staging,
+      Environment.Prod,
+    ].entries()) {
+      for (const tenant of tenants[index] ?? []) {
+        if (!tenantMap.has(tenant.name)) {
+          tenantMap.set(tenant.name, [])
+        }
+
+        // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+        tenantMap.get(tenant.name)!.push({
+          name: tenant.name,
+          environment: env,
+          displayName: tenant.displayName,
+        })
+      }
+    }
+
+    const tenantArray: Tenant[] = []
+    for (const [id, environments] of tenantMap.entries()) {
+      tenantArray.push({
+        id,
+        environments,
+      })
+    }
+
     return {
-      data: [
-        {
-          id: '@admin.island.is',
-          environments: [
-            {
-              name: '@admin.island.is',
-              environment: Environment.Production,
-              displayName: [
-                {
-                  locale: 'is',
-                  value: 'Ísland.is stjórnborð',
-                },
-              ],
-            },
-            {
-              name: '@admin.island.is',
-              environment: Environment.Staging,
-              displayName: [
-                {
-                  locale: 'is',
-                  value: 'Ísland.is stjórnborð',
-                },
-              ],
-            },
-            {
-              name: '@admin.island.is',
-              environment: Environment.Dev,
-              displayName: [
-                {
-                  locale: 'is',
-                  value: 'Ísland.is stjórnborð',
-                },
-              ],
-            },
-          ],
-        },
-        {
-          id: '@island.is',
-          environments: [
-            {
-              name: '@island.is',
-              environment: Environment.Production,
-              displayName: [
-                {
-                  locale: 'is',
-                  value: 'Ísland.is mínar síður',
-                },
-              ],
-            },
-            {
-              name: '@island.is',
-              environment: Environment.Staging,
-              displayName: [
-                {
-                  locale: 'is',
-                  value: 'Ísland.is mínar síður',
-                },
-              ],
-            },
-            {
-              name: '@island.is',
-              environment: Environment.Dev,
-              displayName: [
-                {
-                  locale: 'is',
-                  value: 'Ísland.is mínar síður',
-                },
-              ],
-            },
-          ],
-        },
-        {
-          id: '@reykjavik.is',
-          environments: [
-            {
-              name: '@reykjavik.is',
-              environment: Environment.Production,
-              displayName: [
-                {
-                  locale: 'is',
-                  value: 'Reykjavík mínar síður',
-                },
-              ],
-            },
-            {
-              name: '@reykjavik.is',
-              environment: Environment.Staging,
-              displayName: [
-                {
-                  locale: 'is',
-                  value: 'Reykjavík mínar síður',
-                },
-              ],
-            },
-          ],
-        },
-      ],
-      totalCount: 3,
-      pageInfo: {
-        hasNextPage: false,
-      },
+      data: tenantArray,
+      totalCount: tenantArray.length,
+      pageInfo: { hasNextPage: false },
     }
   }
 }
