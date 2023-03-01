@@ -117,26 +117,8 @@ export class NotificationsService {
   validateArgCounts(
     body: CreateHnippNotificationDto,
     template: HnippTemplate,
-  ): void {
-    // check counts
-    if (template.args.length !== body.args.length)
-      throw new BadRequestException(
-        "Number of arguments doesn't match - template requires " +
-          template.args?.length +
-          ' arguments but ' +
-          body.args?.length +
-          ' were provided',
-      )
-    // check keys/args/properties
-    for (const arg of body.args) {
-      if (!template.args.includes(arg.key)) {
-        throw new BadRequestException(
-          arg.key +
-            ' is not a valid argument for template: ' +
-            template.templateId,
-        )
-      }
-    }
+  ): boolean {
+    return body.args.length == template.args.length
   }
 
   formatArguments(

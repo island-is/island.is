@@ -135,9 +135,29 @@ export class NotificationsController {
       body.templateId,
     )
     // validate or fail
-    this.notificationsService.validateArgCounts(body, template)
 
-    return this.notificationsService.formatArguments(body, template)
+    // check counts
+    if (!this.notificationsService.validateArgCounts(body, template)) {
+      throw new BadRequestException(
+        "Number of arguments doesn't match - template requires " +
+          template.args?.length +
+          ' arguments but ' +
+          body.args?.length +
+          ' were provided',
+      )
+    }
+    // check keys/args/properties
+    for (const arg of body.args) {
+      if (!template.args.includes(arg.key)) {
+        throw new BadRequestException(
+          arg.key +
+            ' is not a valid argument for template: ' +
+            template.templateId,
+        )
+      }
+    }
+
+    // return this.notificationsService.formatArguments(body, template)
 
     // add to queue
     const id = await this.queue.add(body)

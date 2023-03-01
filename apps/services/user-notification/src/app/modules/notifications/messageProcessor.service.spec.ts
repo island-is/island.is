@@ -25,7 +25,10 @@ const mockTemplates = [mockHnippTemplate, mockHnippTemplate, mockHnippTemplate]
 const mockCreateHnippNotificationDto: CreateHnippNotificationDto = {
   recipient: '1234567890',
   templateId: 'HNIPP.DEMO.ID',
-  args: ['hello', 'world'],
+  args: [
+    { key: 'arg1', value: 'hello' },
+    { key: 'arg2', value: 'world' },
+  ],
 }
 
 const mockProfile: UserProfile = {
