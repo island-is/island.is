@@ -89,7 +89,7 @@ test.describe('Parental leave', () => {
     context = await session({
       browser: browser,
       homeUrl: `${urls.islandisBaseUrl}/umsoknir/faedingarorlof`,
-      phoneNumber: submitApplicationSuccess ? '0102989' : '0103019',
+      phoneNumber: submitApplicationSuccess ? '0102989' : '0102399',
       idsLoginOn: true,
     })
   })
