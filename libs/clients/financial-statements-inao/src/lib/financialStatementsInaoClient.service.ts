@@ -181,8 +181,6 @@ export class FinancialStatementsInaoClientService {
     return elections.filter((x) =>
       this.hasReachedAge(nationalId, x.electionDate, x.minimumAge),
     )
-
-    // return elections
   }
 
   async getElectionInfo(electionId: string): Promise<ElectionInfo | null> {
