@@ -55,7 +55,7 @@ import { Institution } from '../institution'
 import { User } from '../user'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
-import { EventService } from '../event'
+import { CaseEvent, EventService } from '../event'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { getCasesQueryFilter } from './filters/case.filters'
@@ -650,9 +650,12 @@ export class CaseService {
     user: TUser,
     returnUpdatedCase = true,
   ): Promise<Case | undefined> {
+    const receivingCase =
+      update.courtCaseNumber && theCase.state === CaseState.SUBMITTED
+
     return this.sequelize
       .transaction(async (transaction) => {
-        if (update.courtCaseNumber && theCase.state === CaseState.SUBMITTED) {
+        if (receivingCase) {
           const state = transitionCase(CaseTransition.RECEIVE, theCase.state)
 
           update = { ...update, state } as UpdateCaseDto
@@ -694,6 +697,10 @@ export class CaseService {
         const updatedCase = await this.findById(theCase.id, true)
 
         await this.addMessagesForUpdatedCaseToQueue(theCase, updatedCase, user)
+
+        if (receivingCase) {
+          this.eventService.postEvent(CaseEvent.RECEIVE, updatedCase)
+        }
 
         if (returnUpdatedCase) {
           return updatedCase
