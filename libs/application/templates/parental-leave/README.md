@@ -49,7 +49,7 @@ If the applicant is employed by an employer(s) (not self employed, getting benef
 
 Here the employer will have a chance to review the periods selected by the applicant as well as pension fund and union.
 
-The employer(s) can then approve or request changes, one employer at a time since just one assignee can be at one state at a time. 
+The employer(s) can then approve or request changes, one employer at a time since just one assignee can be at one state at a time.
 
 #### VMST approval
 
@@ -169,6 +169,6 @@ Emails are currently hardcoded, need to pass in localisation functions to be abl
 
 Other parent should be able to ask the primary parent for personal allowance. Now only primary parent can ask the other parent for personal allowance.
 
-### Non-custodial parent 
+### Non-custodial parent
 
-If primary parent doesn't give non-custodial parent consent that they is allowed right of access during the parental leave (grant) they should not be able to apply for parental leave (grant). 
+If primary parent doesn't give non-custodial parent consent that they is allowed right of access during the parental leave (grant) they should not be able to apply for parental leave (grant).
