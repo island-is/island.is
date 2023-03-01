@@ -12,6 +12,7 @@ import {
   getElasticsearchIndex,
 } from '@island.is/content-search-index-manager'
 import { environment } from '../environments/environment'
+import { Entry } from 'contentful'
 
 type SyncStatus = {
   running?: boolean
@@ -163,8 +164,11 @@ export class IndexingService {
     }
   }
 
-  async deleteDocument(locale: ElasticsearchIndexLocale, id: string) {
+  async deleteDocument(
+    locale: ElasticsearchIndexLocale,
+    document: Pick<Entry<unknown>, 'sys'>,
+  ) {
     const elasticIndex = getElasticsearchIndex(locale)
-    this.elasticService.deleteByIds(elasticIndex, [id])
+    return this.cmsSyncService.handleDocumentDeletion(elasticIndex, document)
   }
 }

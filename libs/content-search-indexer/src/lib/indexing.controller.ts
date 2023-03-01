@@ -12,6 +12,7 @@ import { logger } from '@island.is/logging'
 import { environment } from '../environments/environment'
 import { SyncInput } from './dto/syncInput.input'
 import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
+import { Entry } from 'contentful'
 
 @Controller('')
 export class IndexingController {
@@ -117,9 +118,7 @@ export class IndexingController {
     @Query()
     { locale = 'is' as ElasticsearchIndexLocale, token = '' },
     @Body()
-    document: {
-      sys: { id: string; contentType: { sys: { id: string } } }
-    },
+    document: Pick<Entry<unknown>, 'sys'>,
   ) {
     if (environment.syncToken !== token) {
       logger.warn('Failed to validate sync access token', {
@@ -128,8 +127,7 @@ export class IndexingController {
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN)
     }
 
-    // TODO: Add removal service that takes care of cleaning up linked entries to the ones that'll be removed
-    await this.indexingService.deleteDocument(locale, document.sys.id)
+    await this.indexingService.deleteDocument(locale, document)
 
     return {
       acknowledge: true,

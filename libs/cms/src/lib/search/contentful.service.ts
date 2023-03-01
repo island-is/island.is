@@ -99,7 +99,7 @@ export class ContentfulService {
     }, [])
   }
 
-  private async getContentfulData(
+  async getContentfulData(
     chunkSize: number,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     query?: any,
