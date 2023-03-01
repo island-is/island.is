@@ -21,7 +21,7 @@ import {
 } from '@island.is/judicial-system/types'
 import type { Gender } from '@island.is/judicial-system/types'
 
-import { core, notifications, custodyNotice, courtUpload } from '../messages'
+import { core, notifications, custodyNotice } from '../messages'
 import { Case } from '../modules/case'
 
 type SubjectAndBody = {
@@ -619,17 +619,6 @@ export function formatRulingModifiedHistory(
   const history = rulingModifiedHistory ? `${rulingModifiedHistory}\n\n` : ''
   const dateFormated = capitalize(formatDate(newRulingDate, 'PPPPp') || '')
   return `${history}${dateFormated} - ${judgeName} ${judgeTitle}`
-}
-
-export function formatCourtUploadRulingTitle(
-  formatMessage: FormatMessage,
-  courtCaseNumber: string | undefined,
-  isModifyingRuling: boolean,
-) {
-  return formatMessage(courtUpload.ruling, {
-    courtCaseNumber: courtCaseNumber ?? '',
-    isModifyingRuling,
-  })
 }
 
 export function formatDefenderAssignedEmailNotification(

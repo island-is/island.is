@@ -42,8 +42,8 @@ export interface DatePickerProps {
   inputName?: string
   size?: DatePickerSize
   backgroundColor?: DatePickerBackgroundColor
-  icon?: IconType
-  iconType?: Type
+  icon?: { name: IconType; type?: Type }
+
   /**
    * Minimum selectable year inside datepicker
    */
