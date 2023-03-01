@@ -7,7 +7,7 @@ import * as styles from './Drawer.css'
 
 interface DrawerProps {
   /**
-   * Explain what this modal is for
+   * Explain what this drawer is for
    */
   ariaLabel: string
   /**
@@ -15,7 +15,7 @@ interface DrawerProps {
    */
   baseId: string
   /**
-   * Element that opens the dialog.
+   * Element that opens the drawer.
    * It will be forwarded neccessery props for a11y and event handling.
    */
   disclosure: React.ReactElement

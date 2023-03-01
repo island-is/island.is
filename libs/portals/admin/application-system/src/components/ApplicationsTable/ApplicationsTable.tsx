@@ -13,7 +13,7 @@ import format from 'date-fns/format'
 import { useCallback, useState } from 'react'
 import { m } from '../../lib/messages'
 import { statusMapper } from '../../shared/utils'
-import { AdminApplication } from '../../types/applications'
+import { AdminApplication } from '../../types/adminApplication'
 import { ApplicationDetails } from '../ApplicationDetails/ApplicationDetails'
 
 interface Props {

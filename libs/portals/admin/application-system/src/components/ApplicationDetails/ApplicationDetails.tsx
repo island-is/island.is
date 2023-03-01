@@ -11,7 +11,7 @@ import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import format from 'date-fns/format'
 import { PropsWithChildren } from 'react'
 import { statusMapper } from '../../shared/utils'
-import { AdminApplication } from '../../types/applications'
+import { AdminApplication } from '../../types/adminApplication'
 
 interface ValueLineProps {
   title?: string
