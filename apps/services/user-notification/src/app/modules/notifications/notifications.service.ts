@@ -143,13 +143,6 @@ export class NotificationsService {
     body: CreateHnippNotificationDto,
     template: HnippTemplate,
   ): HnippTemplate {
-    
-    // // flatten key value object to object with key and value properties
-    // var variables = {}
-    // body.args.forEach((arg) => {
-    //   variables[arg.key] = arg.value
-    // })
-    
     if (template.args.length > 0) {
       const allowedReplaceProperties = [
         'notificationTitle',
@@ -157,27 +150,22 @@ export class NotificationsService {
         'notificationDataCopy',
         'clickAction',
       ]
-      const regex = /{{[^{}]*}}/ // finds {{placholder}} in string
+      const regex = new RegExp(/{{[^{}]*}}/)  // finds {{any}} in string
       Object.keys(template).forEach((key) => {
         if (allowedReplaceProperties.includes(key)) {
-          if (template[key as keyof HnippTemplate]) {
-            if (regex.test(template[key as keyof HnippTemplate] as string)) {
-              console.log("**",regex.test(template[key as keyof HnippTemplate] as string))
-              // const element = body.args.shift()
-
-              // if (element) {
-              //   template[key as keyof Omit<HnippTemplate, 'args'>] = (template[
-              //     key as keyof Omit<HnippTemplate, 'args'>
-              //   ] as string).replace(regex, element)
-              // }
+          let value = template[key as keyof HnippTemplate] as string
+          if (value) {
+            if (regex.test(value)) {
+              for(const arg of body.args){
+                const regexTarget = new RegExp('{{' + arg.key + '}}', 'g') // finds {{key}} in string
+                value = value.replace(regexTarget, arg.value)
+                template[key as keyof Omit<HnippTemplate, 'args'>] = value
+              }
             }
           }
         }
       })
     }
-
-  
-
     return template
   }
 }
