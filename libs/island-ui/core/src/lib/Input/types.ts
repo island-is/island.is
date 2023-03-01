@@ -43,6 +43,7 @@ export interface InputComponentProps {
   rows?: number
   type?: 'text' | 'number' | 'email' | 'tel'
   icon?: { name: IconType; type?: Type; onClick?: () => void }
+
   /**
    * While true hover state will not show and focus state will be always on
    */
