@@ -1,4 +1,5 @@
 import {
+  ClientLogLevel,
   ContentfulClientApi,
   createClient,
   CreateClientParams,
@@ -18,6 +19,18 @@ import {
   getElasticsearchIndex,
 } from '@island.is/content-search-index-manager'
 import { Locale } from 'locale'
+
+// Taken from here: https://github.com/contentful/contentful-sdk-core/blob/054328ba2d0df364a5f1ce6d164c5018efb63572/lib/create-http-client.js#L34-L42
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const defaultContentfulClientLogging = (level: ClientLogLevel, data: any) => {
+  if (level === 'error' && data) {
+    const title = [data.name, data.message].filter((a) => a).join(' - ')
+    console.error(`[error] ${title}`)
+    console.error(data)
+    return
+  }
+  console.log(`[${level}] ${data}`)
+}
 
 interface SyncerResult {
   token: string
@@ -63,7 +76,7 @@ export class ContentfulService {
           return
         }
 
-        logger[level](data)
+        defaultContentfulClientLogging(level, data)
       },
     }
     logger.debug('Syncer created', params)
