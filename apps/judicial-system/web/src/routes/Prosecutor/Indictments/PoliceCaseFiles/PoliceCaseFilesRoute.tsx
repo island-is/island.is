@@ -39,6 +39,8 @@ import {
 import {
   CaseFile,
   CaseFileCategory,
+  CaseFileState,
+  CaseOrigin,
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
@@ -48,19 +50,40 @@ import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/util
 import * as constants from '@island.is/judicial-system/consts'
 
 import { policeCaseFiles as m } from './PoliceCaseFilesRoute.strings'
+import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
+import { PoliceCaseFilesData } from '../../components/CaseFiles/CaseFiles'
+import { useQuery } from '@apollo/client'
+import { GetPoliceCaseFilesQuery } from '@island.is/judicial-system-web/src/graphql/schema'
+import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
 
 const UploadFilesToPoliceCase: React.FC<{
   caseId: string
   policeCaseNumber: string
   setAllUploaded: (allUploaded: boolean) => void
   caseFiles: CaseFile[]
-}> = ({ caseId, policeCaseNumber, setAllUploaded, caseFiles }) => {
+  caseOrigin: CaseOrigin
+}> = ({ caseId, policeCaseNumber, setAllUploaded, caseFiles, caseOrigin }) => {
   const { formatMessage } = useIntl()
-  const { upload, remove } = useS3Upload(caseId)
+  const { upload, remove, uploadPoliceCaseFile } = useS3Upload(caseId)
+  const {
+    data: policeData,
+    loading: policeDataLoading,
+    error: policeDataError,
+  } = useQuery<GetPoliceCaseFilesQuery>(PoliceCaseFilesQuery, {
+    variables: { input: { caseId } },
+    fetchPolicy: 'no-cache',
+    skip: caseOrigin !== CaseOrigin.LOKE,
+  })
 
   const [displayFiles, setDisplayFiles] = useState<UploadFile[]>(
     caseFiles.map(mapCaseFileToUploadFile),
   )
+
+  const [policeCaseFileList, setPoliceCaseFileList] = useState<
+    PoliceCaseFileCheck[]
+  >([])
+
+  const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
 
   const errorMessage = useMemo(() => {
     if (displayFiles.some((file) => file.status === 'error')) {
@@ -78,6 +101,49 @@ const UploadFilesToPoliceCase: React.FC<{
     const isUploading = displayFiles.some((file) => file.status === 'uploading')
     setAllUploaded(!isUploading)
   }, [setAllUploaded, displayFiles])
+
+  useEffect(() => {
+    if (caseOrigin !== CaseOrigin.LOKE) {
+      setPoliceCaseFiles({
+        files: [],
+        isLoading: false,
+        hasError: false,
+      })
+    } else if (policeData && policeData.policeCaseFiles) {
+      setPoliceCaseFiles({
+        files: policeData.policeCaseFiles,
+        isLoading: false,
+        hasError: false,
+      })
+    } else if (policeDataLoading) {
+      setPoliceCaseFiles({
+        files:
+          policeData && policeData.policeCaseFiles
+            ? policeData.policeCaseFiles
+            : [],
+        isLoading: true,
+        hasError: false,
+      })
+    } else {
+      setPoliceCaseFiles({
+        files:
+          policeData && policeData.policeCaseFiles
+            ? policeData.policeCaseFiles
+            : [],
+        isLoading: false,
+        hasError: true,
+        errorCode: policeDataError?.graphQLErrors[0]?.extensions
+          ?.code as string,
+      })
+    }
+  }, [
+    policeData,
+    policeDataError,
+    policeDataLoading,
+    setPoliceCaseFiles,
+    caseOrigin,
+    caseFiles,
+  ])
 
   const setSingleFile = useCallback(
     (displayFile: UploadFile, newId?: string) => {
@@ -125,6 +191,31 @@ const UploadFilesToPoliceCase: React.FC<{
     [upload, setSingleFile, policeCaseNumber],
   )
 
+  const onPoliceCaseFileUpload = useCallback(async () => {
+    const filesToUpload = policeCaseFileList.filter((p) => p.checked)
+
+    // setIsUploading(true)
+
+    filesToUpload.forEach(async (f, index) => {
+      const fileToUpload = {
+        id: f.id,
+        type: 'application/pdf',
+        name: f.name,
+        status: 'done',
+        state: CaseFileState.STORED_IN_RVG,
+      } as UploadFile
+
+      await uploadPoliceCaseFile(fileToUpload)
+
+      setDisplayFiles([fileToUpload, ...displayFiles])
+      setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
+
+      if (index === filesToUpload.length - 1) {
+        // setIsUploading(false)
+      }
+    })
+  }, [displayFiles, policeCaseFileList, uploadPoliceCaseFile])
+
   const onRetry = useCallback(
     (file: UploadFile) => {
       setSingleFile({
@@ -170,19 +261,28 @@ const UploadFilesToPoliceCase: React.FC<{
   )
 
   return (
-    <InputFileUpload
-      name="fileUpload"
-      fileList={displayFiles}
-      accept="application/pdf"
-      header={formatMessage(m.inputFileUpload.header)}
-      description={formatMessage(m.inputFileUpload.description)}
-      buttonLabel={formatMessage(m.inputFileUpload.buttonLabel)}
-      onChange={onChange}
-      onRemove={onRemove}
-      onRetry={onRetry}
-      errorMessage={errorMessage}
-      showFileSize
-    />
+    <>
+      <PoliceCaseFiles
+        onUpload={onPoliceCaseFileUpload}
+        isUploading={false}
+        policeCaseFileList={policeCaseFileList}
+        setPoliceCaseFileList={setPoliceCaseFileList}
+        policeCaseFiles={policeCaseFiles}
+      />
+      <InputFileUpload
+        name="fileUpload"
+        fileList={displayFiles}
+        accept="application/pdf"
+        header={formatMessage(m.inputFileUpload.header)}
+        description={formatMessage(m.inputFileUpload.description)}
+        buttonLabel={formatMessage(m.inputFileUpload.buttonLabel)}
+        onChange={onChange}
+        onRemove={onRemove}
+        onRetry={onRetry}
+        errorMessage={errorMessage}
+        showFileSize
+      />
+    </>
   )
 }
 
@@ -201,6 +301,7 @@ const PoliceUploadListMemo: React.FC<{
   crimeScenes?: CrimeSceneMap
   caseFiles?: CaseFile[]
   setAllUploaded: (policeCaseNumber: string) => (value: boolean) => void
+  caseOrigin: CaseOrigin
 }> = memo(
   ({
     caseId,
@@ -209,6 +310,7 @@ const PoliceUploadListMemo: React.FC<{
     crimeScenes,
     caseFiles,
     setAllUploaded,
+    caseOrigin,
   }) => {
     const { formatMessage } = useIntl()
     return (
@@ -237,6 +339,7 @@ const PoliceUploadListMemo: React.FC<{
               }
               policeCaseNumber={policeCaseNumber}
               setAllUploaded={setAllUploaded(policeCaseNumber)}
+              caseOrigin={caseOrigin}
             />
           </Box>
         ))}
@@ -314,6 +417,7 @@ const PoliceCaseFilesRoute = () => {
           crimeScenes={workingCase.crimeScenes}
           setAllUploaded={setAllUploadedForPoliceCaseNumber}
           policeCaseNumbers={workingCase.policeCaseNumbers}
+          caseOrigin={workingCase.origin}
         />
       </FormContentContainer>
       <FormContentContainer isFooter>
