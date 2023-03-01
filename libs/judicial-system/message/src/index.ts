@@ -4,7 +4,6 @@ export type {
   DefendantMessage,
   CaseFileMessage,
   PoliceCaseMessage,
-  NotificationMessage,
 } from './lib/message'
 export { MessageModule } from './lib/message.module'
 export { MessageService } from './lib/message.service'

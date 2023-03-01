@@ -87,7 +87,7 @@ const StudentsOverview: FC<FieldBaseProps> = ({ application }) => {
                 name="searchbar"
                 label={formatMessage(m.studentsOverviewSearchLabel)}
                 placeholder={formatMessage(m.studentsOverviewSearchPlaceholder)}
-                icon="search"
+                icon={{ name: 'search' }}
                 backgroundColor="blue"
                 size="sm"
                 value={searchTerm}

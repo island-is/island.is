@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  FocusableBox,
   GridColumn,
   GridContainer,
   GridRow,
@@ -9,11 +10,12 @@ import {
   useBoxStyles,
 } from '@island.is/island-ui/core'
 import { useState } from 'react'
+import { menuItems } from '../Menu/MenuItems'
 import { MenuLogo } from '../svg'
 
 import * as styles from './MenuModal.css'
 
-const MenuModal = ({ baseId, modalLabel }) => {
+const MenuModal = ({ baseId, modalLabel, isLoggedIn, logIn, logOut }) => {
   const [isVisible, setIsVisible] = useState(false)
   const gridContainerStyles = useBoxStyles({
     component: 'div',
@@ -48,7 +50,7 @@ const MenuModal = ({ baseId, modalLabel }) => {
                   paddingBottom={3}
                   paddingRight={1}
                   display="flex"
-                  justifyContent="flexEnd"
+                  justifyContent="center"
                   position="relative"
                 >
                   <div className={styles.mainContainer}>
@@ -76,33 +78,24 @@ const MenuModal = ({ baseId, modalLabel }) => {
                     </Box>
                     <Box paddingTop={6}>
                       <Stack space={2}>
-                        <Button
-                          size="small"
-                          fluid
-                          variant="utility"
-                          onClick={() => console.log}
-                        >
-                          Öll mál
-                        </Button>
-                        <Button
-                          size="small"
-                          fluid
-                          variant="utility"
-                          onClick={() => console.log}
-                        >
-                          Áskriftir
-                        </Button>
-                        <Button
-                          size="small"
-                          fluid
-                          variant="utility"
-                          onClick={() => console.log}
-                        >
-                          Mínar umsagnir
-                        </Button>
-                        <Button size="small" fluid onClick={() => console.log}>
-                          Innskráning
-                        </Button>
+                        {menuItems.map((item, index) => {
+                          return (
+                            <FocusableBox key={index} href={item.href}>
+                              <Button variant="utility" fluid size="small">
+                                {item.label}
+                              </Button>
+                            </FocusableBox>
+                          )
+                        })}
+                        {isLoggedIn ? (
+                          <Button size="small" fluid onClick={logOut}>
+                            Útskrá
+                          </Button>
+                        ) : (
+                          <Button size="small" fluid onClick={logIn}>
+                            Innskráning
+                          </Button>
+                        )}
                       </Stack>
                     </Box>
                   </div>
