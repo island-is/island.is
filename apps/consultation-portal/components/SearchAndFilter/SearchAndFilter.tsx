@@ -88,7 +88,6 @@ const SearchAndFilter = ({
                     variant="eyebrow"
                     color="blue400"
                     paddingBottom="none"
-                    fontWeight="light"
                   >
                     Leit
                   </Text>
