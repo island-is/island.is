@@ -2,6 +2,8 @@ import { Inject, Injectable } from '@nestjs/common'
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
 import { ConfigType } from '@nestjs/config'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   buildRegulationApiPath,
   ISODate,
@@ -35,12 +37,15 @@ import {
 import pickBy from 'lodash/pickBy'
 import identity from 'lodash/identity'
 import { RegulationsClientConfig } from './regulations.config'
+const LOG_CATEGORY = 'clients-regulation'
 
 @Injectable()
 export class RegulationsService extends RESTDataSource {
   constructor(
     @Inject(RegulationsClientConfig.KEY)
     private readonly options: ConfigType<typeof RegulationsClientConfig>,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
   ) {
     super()
     this.baseURL = `${this.options.url}`
@@ -74,9 +79,14 @@ export class RegulationsService extends RESTDataSource {
       )
     } catch (e) {
       const error = e as Error
-      console.error(error.message)
+      const errorMessage = 'Presigned Post creation failed'
+      this.logger.error(errorMessage, {
+        ...e,
+        category: LOG_CATEGORY,
+      })
+
       return {
-        error: 'Presigned Post creation failed',
+        error: errorMessage,
       }
     }
 
@@ -212,14 +222,23 @@ export class RegulationsService extends RESTDataSource {
         JSON.stringify(regulationBody),
       )
     } catch (e) {
+      const errorMessage = 'unable to download pdf'
+      this.logger.error(errorMessage, {
+        ...e,
+        category: LOG_CATEGORY,
+      })
       return {
-        error: 'unable to download pdf',
+        error: errorMessage,
       }
     }
 
     if (!response || !response.data) {
+      const warningMessage = 'response does not include data'
+      this.logger.warn(warningMessage, {
+        category: LOG_CATEGORY,
+      })
       return {
-        error: 'response does not include data',
+        error: warningMessage,
       }
     }
 

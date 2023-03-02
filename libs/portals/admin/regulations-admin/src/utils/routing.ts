@@ -33,15 +33,6 @@ export const getHomeUrl = () => RegulationsAdminPaths.RegulationsAdminRoot
 
 // ---------------------------------------------------------------------------
 
-/* // TODO: implement urls to impacts?
-export const getImpactUrl = (
-  impactId: DraftImpactId,
-  draftId?: RegulationDraftId,
-) =>
-  (draftId ? generatePath(RegulationsAdminEdit, { draftId }) : '') +
-  `impacts?impact=${encodeURI(impactId)}`
-*/
-
 /** Converts a Regulation `name` into a URL path segment
  *
  *  Example: '0123/2020' --> '2020/0123'
