@@ -289,7 +289,6 @@ export const EditChange = (props: EditChangeProp) => {
     closeModal(true)
   }
 
-  // TODO: This could be better placed in the state reducer
   const localActions = {
     moveAppendixUp: (idx: number) => {
       const appendixes = activeChange.appendixes

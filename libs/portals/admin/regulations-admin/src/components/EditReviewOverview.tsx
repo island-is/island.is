@@ -248,11 +248,6 @@ export const EditReviewOverview = (props: EditReviewOverviewProps) => {
               }}
             />
 
-            {/*
-              TODO: Add MicroAction button (if needed) that downloads a ZIP
-              containing all linked images and resources/attachments.
-            */}
-
             <MicroAction
               text={t(reviewMessages.copySignatureDate)}
               clicked={clicked.signatureDate}

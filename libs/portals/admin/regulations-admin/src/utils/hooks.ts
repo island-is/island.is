@@ -78,10 +78,10 @@ export const useAffectedRegulations = (
   selfAffectingText: string,
   repealedText: string,
 ) => {
-  const { data, loading /* , error */ } = useRegulationListQuery(mentioned)
+  const { data, loading, error } = useRegulationListQuery(mentioned)
 
   const mentionedOptions = useMemo(() => {
-    if (!data) {
+    if (!data || error) {
       return []
     }
     const options = formatSelRegOptions(

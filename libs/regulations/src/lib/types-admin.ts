@@ -60,8 +60,6 @@ export type EmailAddress = string & { [_EmailAddress__Brand]: true }
 export type Author = {
   authorId: Kennitala
   name: string
-  // email: EmailAddress
-  // TODO: Add to this minimal list of fields... "org??"
 }
 
 // ---------------------------------------------------------------------------

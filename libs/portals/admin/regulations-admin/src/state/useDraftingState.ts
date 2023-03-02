@@ -209,7 +209,6 @@ const useMakeDraftingState = (inputs: StateInputs) => {
         navigate(getEditUrl(draft.id, stepName))
       },
 
-      // FIXME: rename to updateProp??
       updateState: <Prop extends RegDraftFormSimpleProps>(
         name: Prop,
         value: RegDraftForm[Prop]['value'],

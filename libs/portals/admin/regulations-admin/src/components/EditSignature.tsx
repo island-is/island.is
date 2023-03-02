@@ -26,31 +26,6 @@ import { useS3Upload } from '../utils/dataHooks'
 
 // ---------------------------------------------------------------------------
 
-// // DECIDE: Will this ever be ised?
-// import { useMinistriesQuery } from '../utils/dataHooks'
-//
-// const useMinistryOptions = (ministry: string | undefined) => {
-//   const ministries = useMinistriesQuery().data
-//   return useMemo(() => {
-//     const ministryOptions = (ministries || []).map((m) => ({
-//       label: m.name,
-//       value: m.name,
-//     }))
-//     const selectedMinistryOption = ministryOptions.find(
-//       (m) => m.value === ministry,
-//     )
-//     const ministryName = selectedMinistryOption?.label
-//
-//     return {
-//       ministryOptions,
-//       selectedMinistryOption,
-//       ministryName,
-//     }
-//   }, [ministry, ministries])
-// }
-
-// ---------------------------------------------------------------------------
-
 const defaultSignatureText = `
   <p class="Dags" align="center"><em>{ministry}nu, {dags}.</em></p>
   <p class="FHUndirskr" align="center">f.h.r.</p>

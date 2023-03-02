@@ -102,16 +102,16 @@ const stepData: Record<
 
 const EditScreen = () => {
   const t = useLocale().formatMessage
-  const { draft, error: errorSate, step: stepState } = useDraftingState()
+  const { draft, error: errorState, step: stepState } = useDraftingState()
   const step = stepData[stepState.name]
 
   useEffect(() => {
-    if (errorSate) {
-      const { message, error } = errorSate
+    if (errorState) {
+      const { message, error } = errorState
       console.error(error || message)
       toast.error(t(message))
     }
-  }, [errorSate, t])
+  }, [errorState, t])
 
   return (
     <>

@@ -8,7 +8,7 @@ describe('findAffectedRegulationsInText', () => {
   it('accepts empty titles and/or text', () => {
     expect(find(``)).toEqual([])
   })
-  it('detects things that look something like regulatiuon names', () => {
+  it('detects things that look something like regulation names', () => {
     expect(
       find(
         `<p>Something 112/2012 blah</p><p>Something 0113/2012, eða  114 / 2012, sem og 1 /2012</p>`,
