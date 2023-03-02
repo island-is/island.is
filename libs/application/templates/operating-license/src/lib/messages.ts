@@ -3,12 +3,12 @@ import { defineMessages } from 'react-intl'
 export const attachmentNames = defineMessages({
   one: {
     id: 'ol.application:attachemnt.one',
-    defaultMessage: 'Starfsleyfi heilbrigðisnefndar (valkvætt)',
+    defaultMessage: 'Starfsleyfi heilbrigðisnefndar (ef við á)',
     description: 'Some description',
   },
   two: {
     id: 'ol.application:attachemnt.two',
-    defaultMessage: 'Staðsetning fyrri leyfishafa (valkvætt)',
+    defaultMessage: 'Staðsetning fyrri leyfishafa (ef við á)',
     description: 'Some description',
   },
   three: {
@@ -18,7 +18,7 @@ export const attachmentNames = defineMessages({
   },
   four: {
     id: 'ol.application:attachemnt.four',
-    defaultMessage: 'Teikning af útisvæði (valkvætt)',
+    defaultMessage: 'Teikning af útisvæði (ef við á)',
     description: 'Some description',
   },
   five: {
@@ -445,7 +445,7 @@ export const m = defineMessages({
   },
   attachmentsBulletFour: {
     id: 'ol.application:attachments.bulletFour',
-    defaultMessage: 'Teikning af útisvæði (valkvætt)',
+    defaultMessage: 'Teikning af útisvæði (ef við á)',
     description: 'Some description',
   },
   uploadHeader: {

@@ -79,10 +79,9 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             navHide: true,
             path: ServicePortalPath.Child,
           },
-
           {
             // Petitions
-            name: m.endorsements,
+            name: m.petitions,
             path: ServicePortalPath.Petitions,
           },
           {
