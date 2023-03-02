@@ -137,6 +137,11 @@ export const indictmentCount = defineMessages({
     defaultMessage: 'óhæfur til að stjórna henni örugglega vegna áhrifa ',
     description: 'Notaður sem ástæða í atvikalýsingu fyrir "lyfjaakstur" brot.',
   },
+  incidentDescriptionSubstancesPrefixAutofill: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count.incident_description_substances_prefix_auto_fill',
+    defaultMessage: 'í blóðsýni mældist ',
+    description: 'Notaður sem upphafstexti fyrir efni í blóði í atvikalýsingu.',
+  },
   legalArgumentsLabel: {
     id:
       'judicial.system.core:indictments_indictment.indictment_count.legal_arguments_label',

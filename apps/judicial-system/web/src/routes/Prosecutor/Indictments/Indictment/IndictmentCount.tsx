@@ -191,7 +191,9 @@ function getIndictmentDescriptionReason(
 
   reason += relevantSubstances.reduce((acc, substance, index) => {
     if (index === 0) {
-      acc += ' ('
+      acc += ` (${formatMessage(
+        strings.incidentDescriptionSubstancesPrefixAutofill,
+      )}`
     } else if (index === relevantSubstances.length - 1) {
       acc += ' og '
     } else {
