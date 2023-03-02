@@ -13,6 +13,6 @@ export class HnippTemplate {
   clickAction?: string
   @ApiProperty({ example: 'NEW_DOCUMENT' })
   category?: string
-  @ApiProperty({ example: ['arg1', 'arg2'] }) // TODO update me
+  @ApiProperty({ example: ['arg1', 'arg2'] })
   args!: string[]
 }
