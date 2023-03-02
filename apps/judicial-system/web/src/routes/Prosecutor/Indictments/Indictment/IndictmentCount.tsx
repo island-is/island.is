@@ -143,7 +143,6 @@ function getIndictmentDescriptionReason(
   substances: SubstanceMap,
   formatMessage: IntlShape['formatMessage'],
 ) {
-  console.log(offenses)
   let reason = offenses.reduce((acc, offense, index) => {
     if (
       offenses.length > 1 &&
@@ -180,7 +179,6 @@ function getIndictmentDescriptionReason(
           )
         break
     }
-    console.log(acc)
     return acc
   }, '')
 
@@ -328,7 +326,6 @@ export const IndictmentCount: React.FC<Props> = (props) => {
         formatMessage,
       )
 
-      console.log(reason)
       incidentDescription = formatMessage(strings.incidentDescriptionAutofill, {
         incidentDate: incidentDate ? incidentDate : '[Dagsetning]',
         vehicleRegistrationNumber: vehicleRegistrationNumber
@@ -340,7 +337,6 @@ export const IndictmentCount: React.FC<Props> = (props) => {
 
       setIncidentDescriptionErrorMessage('')
 
-      console.log(incidentDescription)
       return incidentDescription
     },
     [formatMessage, workingCase.crimeScenes],
