@@ -189,6 +189,7 @@ export const useS3Upload = (caseId: string) => {
               type: 'application/pdf',
               key: uploadPoliceCaseFileData.uploadPoliceCaseFile.key,
               size: uploadPoliceCaseFileData.uploadPoliceCaseFile.size,
+              policeCaseNumber: file.policeCaseNumber,
             },
           },
         })

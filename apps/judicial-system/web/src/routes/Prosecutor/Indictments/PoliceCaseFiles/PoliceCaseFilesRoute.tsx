@@ -158,12 +158,16 @@ const UploadFilesToPoliceCase: React.FC<{
   useEffect(() => {
     setPoliceCaseFileList(
       policeCaseFiles?.files
-        .filter((f) => !caseFiles.some((caseFile) => caseFile.name === f.name))
+        .filter(
+          (f) =>
+            !caseFiles.some((caseFile) => caseFile.name === f.name) &&
+            f.policeCaseNumber === policeCaseNumber,
+        )
         .map(mapPoliceCaseFileToPoliceCaseFileCheck) || [],
     )
 
     setDisplayFiles(caseFiles.map(mapCaseFileToUploadFile) || [])
-  }, [policeCaseFiles, caseFiles])
+  }, [policeCaseFiles, caseFiles, policeCaseNumber])
 
   const setSingleFile = useCallback(
     (displayFile: UploadFile, newId?: string) => {
@@ -223,6 +227,7 @@ const UploadFilesToPoliceCase: React.FC<{
         name: f.name,
         status: 'done',
         state: CaseFileState.STORED_IN_RVG,
+        policeCaseNumber: f.policeCaseNumber,
       } as UploadFile
 
       await uploadPoliceCaseFile(fileToUpload)
