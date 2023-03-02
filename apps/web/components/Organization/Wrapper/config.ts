@@ -8,13 +8,13 @@ export const liveChatIncConfig: Record<string, LiveChatIncChatPanelProps> = {
   // HSN - Organization
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/EM4Y0gF4OoGhH9ZY0Dxl6
   EM4Y0gF4OoGhH9ZY0Dxl6: {
-    license: 8996030,
+    license: 15092154,
     version: '2.0',
   },
   // HSU - Organization
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/1UDhUhE8pzwnl0UxuzRUMk
   '1UDhUhE8pzwnl0UxuzRUMk': {
-    license: 8996030,
+    license: 15092154,
     version: '2.0',
   },
   // Útlendingastofnun - Organization

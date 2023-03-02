@@ -14,7 +14,6 @@ import {
 } from '@island.is/island-ui/core'
 import { Card } from '../../components'
 import { useEffect, useState } from 'react'
-import { useLocation } from 'react-use'
 import Layout from '../../components/Layout/Layout'
 
 type arrayDummy = Array<info>
@@ -40,7 +39,6 @@ type info = {
 }
 
 export const MyReviewPage = () => {
-  const location = useLocation()
   const dummycontent: arrayDummy = [
     {
       id: 3027,
@@ -169,20 +167,16 @@ export const MyReviewPage = () => {
   return (
     <Layout showIcon={false}>
       <GridContainer>
+        <Box paddingY={[3, 3, 3, 5, 5]}>
+          <Breadcrumbs
+            items={[
+              { title: 'Samráðsgátt', href: '/samradsgatt' },
+              { title: 'Mínar umsagnir ' },
+            ]}
+          />
+        </Box>
         <GridRow>
           <GridColumn span="12/12" paddingBottom={4} paddingTop={4}>
-            <Box paddingY={3}>
-              <Breadcrumbs
-                items={[
-                  { title: 'Samráðsgátt', href: '/samradsgatt' },
-                  { title: 'Mínar áskriftir', href: '/samradsgatt' },
-                  {
-                    title: 'Mál',
-                    href: location.href,
-                  },
-                ]}
-              />
-            </Box>
             <Text variant="h1" marginTop={2}>
               Mínar umsagnir
             </Text>

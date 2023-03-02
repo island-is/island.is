@@ -10,9 +10,8 @@ import {
   CategoryCard,
 } from '@island.is/island-ui/core'
 import { Case, Advice } from '../../types/viewModels'
-import CaseTimeline from '../../components/CaseTimeline/CaseTimeline'
-import SubscriptionBox from '../../components/SubscriptionBox/SubscriptionBox'
-import { useLocation } from 'react-use'
+import CaseTimeline from '../../../../apps/consultation-portal/components/CaseTimeline/CaseTimeline'
+import SubscriptionBox from '../../../../apps/consultation-portal/components/SubscriptionBox/SubscriptionBox'
 import { CaseOverview, ReviewCard, WriteReviewCard } from '../../components'
 import Layout from '../../components/Layout/Layout'
 
@@ -27,7 +26,6 @@ const Details: React.FC<DetailsProps> = ({
   advices,
   isLoggedIn,
 }) => {
-  const location = useLocation()
   const dummyCase = {
     id: 3027,
     caseNumber: '3/2023',
@@ -93,14 +91,11 @@ const Details: React.FC<DetailsProps> = ({
           <GridColumn span={'3/12'} paddingBottom={3}>
             <GridContainer>
               <Box>
-                <Box paddingY={3}>
+                <Box paddingY={[3, 3, 3, 5, 5]}>
                   <Breadcrumbs
                     items={[
                       { title: 'Öll mál', href: '/samradsgatt' },
-                      {
-                        title: 'Mál nr. ' + chosenCase.caseNumber,
-                        href: location.href,
-                      },
+                      { title: `Mál nr. ${chosenCase?.caseNumber}` },
                     ]}
                   />
                 </Box>
