@@ -8,6 +8,9 @@ import {
   Text,
   Stack,
   Pagination,
+  Hidden,
+  DatePicker,
+  Button,
 } from '@island.is/island-ui/core'
 import React, { useEffect, useState } from 'react'
 import { HeroBanner } from '../components'
@@ -17,6 +20,7 @@ import SearchAndFilter from '../components/SearchAndFilter/SearchAndFilter'
 import Types from '../utils/dummydata/api/Types'
 import { Cases } from '../utils/dummydata'
 import { Case } from '../types/interfaces'
+import FilterBox from '../components/Filterbox/Filterbox'
 
 const CARDS_PER_PAGE = 12
 
@@ -117,10 +121,29 @@ export const Index = () => {
 
       <GridContainer>
         <GridRow>
-          <GridColumn span={['0', '0', '3/12', '3/12', '3/12']}>
-            
-          </GridColumn>
-          <GridColumn span={['12/12', '12/12', '9/12', '9/12', '9/12']}>
+            <GridColumn span={['0', '0', '0', '3/12', '3/12']}>
+              
+          <Hidden below="lg">
+              <Stack space={2}>
+                <FilterBox>Röðun</FilterBox>
+                <FilterBox>Staða máls</FilterBox>
+                <FilterBox>Tegund máls</FilterBox>
+                <DatePicker
+                  size="sm"
+                  locale="is"
+                  label="Veldu tímabil"
+                  placeholderText="Veldu hér"
+                />
+                <Box textAlign="right">
+                  <Button size="small" icon="reload" variant="text">
+                    Hreinsa allar síur
+                  </Button>
+                </Box>
+              </Stack>
+          </Hidden>
+            </GridColumn>
+
+          <GridColumn span={['12/12', '12/12', '12/12', '9/12', '9/12']}>
             {visibleItems && (
               <Tiles space={3} columns={[1, 1, 1, 2, 3]}>
                 {visibleItems.map((item, index) => {
@@ -131,7 +154,7 @@ export const Index = () => {
                     eyebrows: [item.typeName, item.institutionName],
                   }
                   return (
-                    <Card key={index} card={card}>
+                    <Card key={index} card={card} frontPage>
                       <Stack space={2}>
                         <Text variant="eyebrow" color="purple400">
                           {`Fjöldi umsagna: ${item.adviceCount}`}
