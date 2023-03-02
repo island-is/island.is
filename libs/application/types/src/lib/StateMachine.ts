@@ -86,13 +86,16 @@ export interface ApplicationStateMeta<
   name: string
   lifecycle: StateLifeCycle
   actionCard?: {
+    /** @deprecated use pendingAction field instead */
     title?: StaticText
+    /** @deprecated use pendingAction field instead */
     description?: StaticText
     onExitHistoryLog?: StaticText
     onEntryHistoryLog?: StaticText
     pendingAction?:
       | PendingAction
       | ((application: Application, role: ApplicationRole) => PendingAction)
+    /** @deprecated is generated from status of current state */
     tag?: { label?: StaticText; variant?: ActionCardTag }
   }
 

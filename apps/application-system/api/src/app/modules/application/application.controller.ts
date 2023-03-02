@@ -857,8 +857,6 @@ export class ApplicationController {
       }
     }
 
-    await this.historyService.saveStateTransition(application.id, newState)
-
     const onEnterStateAction = new ApplicationTemplateHelper(
       updatedApplication,
       template,
@@ -904,7 +902,9 @@ export class ApplicationController {
       )
 
       updatedApplication = update.updatedApplication as BaseApplication
+      await this.historyService.saveStateTransition(application.id, newState)
     } catch (e) {
+      this.logger.error(e)
       return {
         hasChanged: false,
         hasError: true,
