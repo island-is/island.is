@@ -341,6 +341,7 @@
     "@storybook/addons": "6.5.8",
     "@storybook/core": "6.5.8",
     "@storybook/react": "6.5.8",
+    "@storybook/react-native": "6.5.0-rc.3",
     "@storybook/source-loader": "6.5.8",
     "@storybook/theming": "6.5.8",
     "@testing-library/cypress": "8.0.3",
