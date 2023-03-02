@@ -12,7 +12,7 @@ import Layout from '../../components/Layout/Layout'
 import SearchAndSort from '../../components/SearchAndSort/SearchAndSort'
 import { SortOptions } from '../../types/enums'
 import BreadcrumbsWithMobileDivider from '../../components/BreadcrumbsWithMobileDivider/BreadcrumbsWithMobileDivider'
-import { useSort } from '../../hooks'
+import { sorting } from '../../utils/helpers'
 
 type arrayDummy = Array<info>
 type doc = {
@@ -140,7 +140,7 @@ export const MyReviewPage = () => {
   const [searchValue, setSearchValue] = useState('')
 
   useEffect(() => {
-    const sortedContent = useSort(dummycontent, sortTitle)
+    const sortedContent = sorting(dummycontent, sortTitle)
     searchValue
       ? setData(
           sortedContent.filter(
@@ -191,6 +191,7 @@ export const MyReviewPage = () => {
                 }
                 return (
                   <Card
+                    frontPage={false}
                     key={index}
                     showAttachment
                     card={review}

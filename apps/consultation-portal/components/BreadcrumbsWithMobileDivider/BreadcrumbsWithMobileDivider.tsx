@@ -6,9 +6,7 @@ import {
   Hidden,
 } from '@island.is/island-ui/core'
 
-export const BreadcrumbsWithMobileDivider = ({
-  items,
-}) => {
+export const BreadcrumbsWithMobileDivider = ({ items }) => {
   return (
     <>
       <GridContainer>

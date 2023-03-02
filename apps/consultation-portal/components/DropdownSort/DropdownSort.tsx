@@ -7,12 +7,7 @@ import {
 import { SortOptions } from '../../types/enums'
 import cn from 'classnames'
 import { ReactElement } from 'react'
-import {
-  useMenuState,
-  Menu,
-  MenuItem,
-  MenuButton,
-} from 'reakit/Menu'
+import { useMenuState, Menu, MenuItem, MenuButton } from 'reakit/Menu'
 
 import * as styles from './DropdownSort.css'
 
@@ -36,7 +31,7 @@ const DropdownSort = ({
   items,
   title,
   icon,
-  setTitle
+  setTitle,
 }: DropdownMenuProps) => {
   const menu = useMenuState({ placement: 'bottom', gutter: 8 })
   const menuBoxStyle = useBoxStyles({

@@ -1,7 +1,7 @@
-import { SortOptions } from '../types/enums'
+import { SortOptions } from '../../types/enums'
 
-export const useSort = (data, sortTitle) => {
-    const dataCopy = [...data]
+export const sorting = (data, sortTitle) => {
+  const dataCopy = [...data]
   if (sortTitle === SortOptions.aToZ) {
     dataCopy.sort((a, b) => a.name.localeCompare(b.name))
   } else if (sortTitle === SortOptions.latest) {
@@ -12,4 +12,4 @@ export const useSort = (data, sortTitle) => {
   return dataCopy
 }
 
-export default useSort
+export default sorting

@@ -26,15 +26,15 @@ const SearchAndFilter = ({
   PolicyAreas,
   Institutions,
   setInstitutionValue,
-  setPolicyAreaValue
+  setPolicyAreaValue,
 }: SearchAndFilterProps) => {
   const options = []
 
   const onChange = (e, isInstitutions: boolean) => {
     if (isInstitutions) {
-      setInstitutionValue(e ? e.label : "")
+      setInstitutionValue(e ? e.label : '')
     } else {
-      setPolicyAreaValue(e ? e.label : "")
+      setPolicyAreaValue(e ? e.label : '')
     }
   }
 

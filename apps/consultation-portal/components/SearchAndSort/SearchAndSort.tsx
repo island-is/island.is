@@ -1,3 +1,4 @@
+import { sorting } from '../../utils/helpers'
 import {
   AsyncSearch,
   Box,
@@ -7,7 +8,6 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { useSort } from '../../hooks'
 import { useEffect } from 'react'
 import { SortOptions } from '../../types/enums'
 import DropdownSort from '../DropdownSort/DropdownSort'
@@ -25,7 +25,7 @@ const SearchAndSort = ({
   const searchOptions = []
 
   useEffect(() => {
-    const sortedData = useSort(data, sortTitle)
+    const sortedData = sorting(data, sortTitle)
     setData(sortedData)
   }, [sortTitle])
 

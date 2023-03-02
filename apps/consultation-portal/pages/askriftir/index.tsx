@@ -23,7 +23,7 @@ import {
   SubscriptionArray,
 } from '../../types/interfaces'
 import BreadcrumbsWithMobileDivider from '../../components/BreadcrumbsWithMobileDivider/BreadcrumbsWithMobileDivider'
-import { useSort } from '../../hooks'
+import { sorting } from '../../utils/helpers'
 
 const Subscriptions = () => {
   // user logged in logic needed
@@ -57,12 +57,12 @@ const Subscriptions = () => {
   const paddingX = [0, 0, 0, 8, 15] as ResponsiveSpace
 
   useEffect(() => {
-    const sortedCases = useSort(Cases, sortTitle[Area.case])
-    const sortedInstitutions = useSort(
+    const sortedCases = sorting(Cases, sortTitle[Area.case])
+    const sortedInstitutions = sorting(
       Institutions,
       sortTitle[Area.institution],
     )
-    const sortedPolicyAreas = useSort(PolicyAreas, sortTitle[Area.policyArea])
+    const sortedPolicyAreas = sorting(PolicyAreas, sortTitle[Area.policyArea])
 
     if (searchValue) {
       setCasesData(

@@ -1,5 +1,4 @@
 import {
-  AsyncSearchOption,
   Box,
   GridColumn,
   GridContainer,
@@ -120,9 +119,8 @@ export const Index = () => {
 
       <GridContainer>
         <GridRow>
-            <GridColumn span={['0', '0', '0', '3/12', '3/12']}>
-              
-          <Hidden below="lg">
+          <GridColumn span={['0', '0', '0', '3/12', '3/12']}>
+            <Hidden below="lg">
               <Stack space={2}>
                 <FilterBox>Röðun</FilterBox>
                 <FilterBox>Staða máls</FilterBox>
@@ -139,8 +137,8 @@ export const Index = () => {
                   </Button>
                 </Box>
               </Stack>
-          </Hidden>
-            </GridColumn>
+            </Hidden>
+          </GridColumn>
 
           <GridColumn span={['12/12', '12/12', '12/12', '9/12', '9/12']}>
             {visibleItems && (
