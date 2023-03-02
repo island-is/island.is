@@ -27,7 +27,14 @@ const fieldNames = {
 
 export const ElectPerson: FC<ElectPersonFieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
-  const { setValue, watch, errors, clearErrors, setError } = useFormContext()
+  const {
+    setValue,
+    watch,
+    clearErrors,
+    setError,
+
+    formState: { errors },
+  } = useFormContext()
   const [getIdentity, { loading: queryLoading }] = useLazyQuery<
     Query,
     { input: IdentityInput }
