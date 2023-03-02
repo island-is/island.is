@@ -66,7 +66,7 @@ export interface PoliceCaseFilesData {
   errorCode?: string
 }
 
-const mapPoliceCaseFileToPoliceCaseFileCheck = (
+export const mapPoliceCaseFileToPoliceCaseFileCheck = (
   file: PoliceCaseFile,
 ): PoliceCaseFileCheck => ({
   id: file.id,

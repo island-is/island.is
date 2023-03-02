@@ -10,6 +10,7 @@ import router from 'next/router'
 import { useIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
 import _isEqual from 'lodash/isEqual'
+import { useQuery } from '@apollo/client'
 
 import {
   FormContentContainer,
@@ -43,28 +44,20 @@ import {
   CaseOrigin,
   CrimeSceneMap,
   IndictmentSubtypeMap,
-  PoliceCaseFile,
 } from '@island.is/judicial-system/types'
 import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
 import IndictmentInfo from '@island.is/judicial-system-web/src/components/IndictmentInfo/IndictmentInfo'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { GetPoliceCaseFilesQuery } from '@island.is/judicial-system-web/src/graphql/schema'
+import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { policeCaseFiles as m } from './PoliceCaseFilesRoute.strings'
 import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
-import { PoliceCaseFilesData } from '../../components/CaseFiles/CaseFiles'
-import { useQuery } from '@apollo/client'
-import { GetPoliceCaseFilesQuery } from '@island.is/judicial-system-web/src/graphql/schema'
-import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
-
-const mapPoliceCaseFileToPoliceCaseFileCheck = (
-  file: PoliceCaseFile,
-): PoliceCaseFileCheck => ({
-  id: file.id,
-  name: file.name,
-  policeCaseNumber: file.policeCaseNumber,
-  checked: false,
-})
+import {
+  mapPoliceCaseFileToPoliceCaseFileCheck,
+  PoliceCaseFilesData,
+} from '../../components/CaseFiles/CaseFiles'
 
 const UploadFilesToPoliceCase: React.FC<{
   caseId: string
@@ -95,8 +88,6 @@ const UploadFilesToPoliceCase: React.FC<{
 
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
 
-  const [isUploading, setIsUploading] = useState<boolean>(false)
-
   const errorMessage = useMemo(() => {
     if (displayFiles.some((file) => file.status === 'error')) {
       return formatMessage(errorMessages.general)
@@ -104,6 +95,10 @@ const UploadFilesToPoliceCase: React.FC<{
       return undefined
     }
   }, [displayFiles, formatMessage])
+
+  const isUploading = useMemo(() => {
+    return displayFiles.some((file) => file.status === 'uploading')
+  }, [displayFiles])
 
   useEffect(() => {
     setDisplayFiles(caseFiles.map(mapCaseFileToUploadFile))
@@ -220,9 +215,7 @@ const UploadFilesToPoliceCase: React.FC<{
   const onPoliceCaseFileUpload = useCallback(async () => {
     const filesToUpload = policeCaseFileList.filter((p) => p.checked)
 
-    setIsUploading(true)
-
-    filesToUpload.forEach(async (f, index) => {
+    filesToUpload.forEach(async (f) => {
       const fileToUpload = {
         id: f.id,
         type: 'application/pdf',
@@ -236,10 +229,6 @@ const UploadFilesToPoliceCase: React.FC<{
 
       setDisplayFiles([fileToUpload, ...displayFiles])
       setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
-
-      if (index === filesToUpload.length - 1) {
-        setIsUploading(false)
-      }
     })
   }, [displayFiles, policeCaseFileList, uploadPoliceCaseFile])
 
@@ -325,7 +314,7 @@ const UploadFilesToPoliceCase: React.FC<{
   )
 }
 
-type allUploadedState = {
+type AllUploadedState = {
   [policeCaseNumber: string]: boolean
 }
 
@@ -393,7 +382,7 @@ const PoliceCaseFilesRoute = () => {
     FormContext,
   )
 
-  const [allUploaded, setAllUploaded] = useState<allUploadedState>(
+  const [allUploaded, setAllUploaded] = useState<AllUploadedState>(
     workingCase.policeCaseNumbers.reduce(
       (acc, policeCaseNumber) => ({ ...acc, [policeCaseNumber]: true }),
       {},
