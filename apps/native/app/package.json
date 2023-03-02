@@ -8,7 +8,8 @@
     "start": "react-native start",
     "test": "jest",
     "storybook": "start-storybook -p 7007",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "config": "react-native config"
   },
   "dependencies": {
     "@apollo/client": "3.7.7",
