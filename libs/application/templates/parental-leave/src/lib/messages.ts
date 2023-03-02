@@ -1293,6 +1293,13 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'Each registered employer is required to approve your parental leave arrangement. Once you have submitted your application, an email and sms will be sent to all registered employers. The recipients will get access to  the application, but will only be able to see the timing arrangements. If any registered employers reject the timing arrangement, you will need to change your application.',
     },
+    grantsDescription: {
+      id: 'pl.application:employer.grants.description',
+      defaultMessage:
+        'Hver og einn skráður vinnuveitandi þarf að samþykkja tilhögun fæðingarstyrks. Þegar þú hefur sent umsóknina verður sendur tölvupóstur og sms til vinnuveitenda. Viðtakendur fá aðgang að umsókninni, en getur einungis séð upplýsingar sem varða tilhögun fæðingarstyrks. Ef einhver skráðra vinnuveitenda hafna tilhögun fæðingarstyrks þarft þú að gera viðeigandi breytingar á henni.',
+      description:
+        'Each registered employer is required to approve your parental grant arrangement. Once you have submitted your application, an email and sms will be sent to all registered employers. The recipients will get access to  the application, but will only be able to see the timing arrangements. If any registered employers reject the timing arrangement, you will need to change your application.',
+    },
     registration: {
       id: 'pl.application:employer.registration',
       defaultMessage: 'Skráning vinnuveitanda',
@@ -1374,6 +1381,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:employer.add.error',
       defaultMessage: 'Nauðsynlegt er að bæta við amk einum vinnuveitanda',
       description: 'It is required to add at least one employer',
+    },
+    employerLastSixMonths: {
+      id: 'pl.application:employer.employerLastSixMonths',
+      defaultMessage: 'Hefur þú verið með vinnuveitanda á síðustu 6 mánuðum?',
+      description: 'Have you had an employer in the last 6 month?',
     },
   }),
 

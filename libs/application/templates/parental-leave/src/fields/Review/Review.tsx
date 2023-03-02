@@ -17,6 +17,8 @@ import {
   SINGLE,
   MANUAL,
   States,
+  PARENTAL_GRANT,
+  YES,
 } from '../../constants'
 import { SummaryRights } from '../Rights/SummaryRights'
 import { useStatefulAnswers } from '../../hooks/useStatefulAnswers'
@@ -47,7 +49,9 @@ export const Review: FC<ReviewScreenProps> = ({
   errors,
 }) => {
   const editable = field.props?.editable ?? false
-  const [{ applicationType, otherParent }] = useStatefulAnswers(application)
+  const [
+    { applicationType, otherParent, employerLastSixMonths },
+  ] = useStatefulAnswers(application)
   const selectedChild = getSelectedChild(
     application.answers,
     application.externalData,
@@ -99,7 +103,9 @@ export const Review: FC<ReviewScreenProps> = ({
       {isPrimaryParent && hasSelectedOtherParent && (
         <SpousePersonalAllowance {...childProps} />
       )}
-      {applicationType === PARENTAL_LEAVE && <Employment {...childProps} />}
+      {(applicationType === PARENTAL_LEAVE ||
+        (applicationType === PARENTAL_GRANT &&
+          employerLastSixMonths === YES)) && <Employment {...childProps} />}
       <ReviewGroup>
         <SummaryRights application={application} />
       </ReviewGroup>

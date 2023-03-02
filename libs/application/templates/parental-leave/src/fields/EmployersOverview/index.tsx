@@ -14,7 +14,7 @@ import { useDeepCompareEffect } from 'react-use'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useMutation } from '@apollo/client'
 import { EmployersTable } from '../components/EmployersTable'
-import { States } from '../../constants'
+import { States, YES } from '../../constants'
 import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
 
 const EmployersOverview: FC<RepeaterProps> = ({
@@ -82,7 +82,9 @@ const EmployersOverview: FC<RepeaterProps> = ({
   return (
     <Box>
       <Text variant="default">
-        {parentalLeaveFormMessages.employer.description.defaultMessage}
+        {answers.employerLastSixMonths === YES
+          ? parentalLeaveFormMessages.employer.grantsDescription.defaultMessage
+          : parentalLeaveFormMessages.employer.description.defaultMessage}
       </Text>
       <Box paddingTop={5} paddingBottom={5}>
         <EmployersTable

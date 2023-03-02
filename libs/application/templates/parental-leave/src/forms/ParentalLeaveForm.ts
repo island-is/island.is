@@ -57,6 +57,7 @@ import {
   ParentalRelations,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
+  PARENTAL_GRANT,
   SINGLE,
   StartDateOptions,
   UnEmployedBenefitTypes,
@@ -559,15 +560,50 @@ export const ParentalLeaveForm: Form = buildForm({
           condition: (answers) => {
             const {
               applicationType,
+            } = getApplicationAnswers(answers)
+
+            return (
+              applicationType === PARENTAL_GRANT
+            )
+          },
+          id: 'parentalGrantEmployment',
+          title: parentalLeaveFormMessages.employer.subSection,
+          children: [
+            buildRadioField({
+              id: 'employerLastSixMonths',
+              title: parentalLeaveFormMessages.employer.employerLastSixMonths,
+              width: 'half',
+              options: [
+                {
+                  value: YES,
+                  label:
+                    parentalLeaveFormMessages.shared.yesOptionLabel,
+                },
+                {
+                  value: NO,
+                  label:
+                    parentalLeaveFormMessages.shared.noOptionLabel,
+                },
+              ]
+            }),
+          ],
+        }),
+        buildSubSection({
+          condition: (answers) => {
+            const {
+              applicationType,
               isReceivingUnemploymentBenefits,
               isSelfEmployed,
+              employerLastSixMonths,
             } = getApplicationAnswers(answers)
             const isNotSelfEmployed = isSelfEmployed !== YES
 
             return (
-              applicationType === PARENTAL_LEAVE &&
-              isReceivingUnemploymentBenefits === NO &&
-              isNotSelfEmployed
+              (applicationType === PARENTAL_LEAVE &&
+                isReceivingUnemploymentBenefits === NO &&
+                isNotSelfEmployed) ||
+              (applicationType === PARENTAL_GRANT &&
+                employerLastSixMonths === YES)
             )
           },
           id: 'employment',

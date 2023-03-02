@@ -795,6 +795,10 @@ export function getApplicationAnswers(answers: Application['answers']) {
       } as EmployerRow)
     }
   }
+  const employerLastSixMonths = getValueViaPath(
+    answers,
+    'employerLastSixMonths',
+  ) as YesOrNo
 
   const shareInformationWithOtherParent = getValueViaPath(
     answers,
@@ -944,6 +948,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     spouseUseAsMuchAsPossible,
     spouseUsage,
     employers,
+    employerLastSixMonths,
     employerNationalRegistryId,
     employerReviewerNationalRegistryId,
     shareInformationWithOtherParent,
