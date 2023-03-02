@@ -6,27 +6,34 @@ import { EndorsementsScope } from '@island.is/auth/scopes'
 import { PetitionPaths } from './lib/paths'
 
 const Petitions = lazy(() => import('./screens/Petitions'))
-const ViewPetition = lazy(() => import('./screens/ViewPetition'))
+const ViewSignedPetition = lazy(() => import('./screens/ViewSignedList'))
+const ViewOwnedPetition = lazy(() => import('./screens/ViewOwnedList'))
 const PetitionsAdmin = lazy(() => import('./screens/PetitionsAdmin'))
 const ViewPetitionAdmin = lazy(() => import('./screens/ViewPetitionAdmin'))
 
 export const petitionsModule: PortalModule = {
-  name: 'Almennir undirskriftalistar',
+  name: 'Undirskriftalistar',
   featureFlag: Features.servicePortalPetitionsModule,
   enabled: ({ isCompany }) => !isCompany,
   routes: ({ userInfo }) => {
     const applicationRoutes: PortalRoute[] = [
       {
-        name: m.endorsements,
+        name: m.petitions,
         path: PetitionPaths.Petitions,
         enabled: userInfo.scopes.includes(EndorsementsScope.main),
         element: <Petitions />,
       },
       {
-        name: m.endorsements,
+        name: m.petitions,
         path: PetitionPaths.PetitionList,
         enabled: userInfo.scopes.includes(EndorsementsScope.main),
-        element: <ViewPetition />,
+        element: <ViewSignedPetition />,
+      },
+      {
+        name: m.petitions,
+        path: PetitionPaths.PetitionListOwned,
+        enabled: userInfo.scopes.includes(EndorsementsScope.main),
+        element: <ViewOwnedPetition />,
       },
     ]
 

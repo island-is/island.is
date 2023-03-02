@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'service-portal-endorsements',
+  displayName: 'service-portal-petitions',
   preset: './jest.preset.js',
   rootDir: '../../..',
   roots: [__dirname],
@@ -10,5 +10,5 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '<rootDir>/coverage/libs/service-portal/endorsements',
+  coverageDirectory: '<rootDir>/coverage/libs/service-portal/petitions',
 }
