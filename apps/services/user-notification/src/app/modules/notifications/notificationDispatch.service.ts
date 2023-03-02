@@ -95,6 +95,11 @@ export class NotificationDispatchService {
       },
     }
 
+    this.logger.info('Notification content for message', {
+      messageId,
+      ...notification,
+    })
+
     const {
       responses,
       successCount,

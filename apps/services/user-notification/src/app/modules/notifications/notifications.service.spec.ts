@@ -117,7 +117,7 @@ describe('NotificationsService', () => {
       mockCreateHnippNotificationDto,
       mockHnippTemplate,
     )
-    expect(template.notificationBody).toEqual('Demo body hello') // replaced "Demo body {{arg1}}"
-    expect(template.clickAction).toEqual('Demo click action world') // replaced "Demo click action {{arg2}}"
+    expect(template.notificationBody).toEqual('Demo body hello')
+    expect(template.clickAction).toEqual('Demo click action world')
   })
 })
