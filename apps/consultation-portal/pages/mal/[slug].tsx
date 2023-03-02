@@ -38,7 +38,7 @@ const CaseDetails = ({ chosenCase, advices, isLoggedIn }) => {
     type: 'Drög að frumvarpi til laga',
     policyArea: 'Húsnæðis- og skipulagsmál',
     processBegins: '2023-01-13T00:00:00',
-    processEnds: '2023-01-27T23:59:59',
+    processEnds: '2023-01-21T23:59:59',
     announcementText:
       'Innviðaráðuneytið birtir til umsagnar drög að frumvarpi til laga um breytingu á ýmsum lagaákvæðum vegna tilfærslu fasteignaskrár frá Þjóðskrá Íslands til Húsnæðis-og mannvirkjastofnunar.',
     summaryDate: null,
