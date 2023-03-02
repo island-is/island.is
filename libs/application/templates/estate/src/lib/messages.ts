@@ -478,6 +478,17 @@ export const m = defineMessages({
     defaultMessage: 'Bæta við skuldum',
     description: '',
   },
+  // Representative
+  representativeTitle: {
+    id: 'es.application:representativeTitle',
+    defaultMessage: 'Umboðsmenn',
+    description: '',
+  },
+  representativeDescription: {
+    id: 'es.application:representativeDescription',
+    defaultMessage: 'Vanalega er valinn umboðsmaður...',
+    description: '',
+  },
 
   // Overview
   overviewTitle: {
