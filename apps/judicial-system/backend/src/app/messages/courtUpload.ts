@@ -17,9 +17,8 @@ export const courtUpload = defineMessages({
     description: 'Notaður sem nafn á þingbók í Auði.',
   },
   ruling: {
-    id: 'judicial.system.backend:court_upload.ruling_v2',
-    defaultMessage:
-      'Úrskurður {courtCaseNumber}{isModifyingRuling, select, true { leiðrétt} other {}} {date}',
+    id: 'judicial.system.backend:court_upload.ruling_v3',
+    defaultMessage: 'Úrskurður {courtCaseNumber} {date}',
     description: 'Notaður sem nafn á úrskurði í Auði.',
   },
 })
