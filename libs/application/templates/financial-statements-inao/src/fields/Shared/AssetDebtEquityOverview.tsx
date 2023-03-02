@@ -56,7 +56,7 @@ export const AssetDebtEquityOverview = ({
           value={formatCurrency(answers.liability?.total)}
           isTotal
         />
-        <Box paddingTop={2}>
+        <Box paddingTop={3}>
           <ValueLine
             label={m.equity}
             value={formatCurrency(answers.equity?.totalEquity)}

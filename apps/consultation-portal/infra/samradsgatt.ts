@@ -16,7 +16,7 @@ export const serviceSetup = (): ServiceBuilder<'consultation-portal'> =>
       requests: { cpu: '200m', memory: '256Mi' },
     })
     .env({
-      BASEPATH: '/samradsgatt',
+      BASEPATH: '/consultation-portal',
       ENVIRONMENT: ref((h) => h.env.type),
     })
     .secrets({
@@ -45,6 +45,6 @@ export const serviceSetup = (): ServiceBuilder<'consultation-portal'> =>
             'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
           },
         },
-        paths: ['/samradsgatt'],
+        paths: ['/consultation-portal'],
       },
     })

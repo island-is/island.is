@@ -28,6 +28,7 @@ module.exports = withNx(
       graphqlEndpoint: graphqlPath,
       appVersion: APP_VERSION,
       environment: ENVIRONMENT,
+      configCatSdkKey: CONFIGCAT_SDK_KEY,
     },
     serverRuntimeConfig: {
       // Will only be available on the server side

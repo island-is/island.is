@@ -48,7 +48,7 @@ describe('InternalNotificationController - Send court date notification', () => 
             court: { name: courtName },
             courtCaseNumber,
           } as Case,
-          { userId, type: NotificationType.COURT_DATE, eventOnly },
+          { userId, type: NotificationType.COURT_DATE },
         )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
@@ -74,18 +74,6 @@ describe('InternalNotificationController - Send court date notification', () => 
         }),
       )
       expect(then.result).toEqual({ delivered: true })
-    })
-  })
-
-  describe('event only', () => {
-    let then: Then
-
-    beforeEach(async () => {
-      then = await givenWhenThen(true)
-    })
-
-    it('should send notification', () => {
-      expect(then.result).toEqual({ delivered: false })
     })
   })
 })
