@@ -46,7 +46,6 @@ export const Index = () => {
 
   const goToPage = (page = 1, scrollTop = true) => {
     setPage(page)
-
     if (scrollTop) {
       window.scrollTo(0, 0)
     }
@@ -174,7 +173,7 @@ export const Index = () => {
               </Tiles>
             )}
             {totalPages > 1 && (
-              <Box paddingTop={8}>
+              <Box paddingTop={[5, 5, 5, 8, 8]}>
                 <Pagination
                   page={page}
                   totalPages={totalPages}
