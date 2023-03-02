@@ -13,8 +13,7 @@ export const caseFiles = defineMessages({
   },
   policeCaseFilesHeading: {
     id: 'judicial.system.core:police_case_files.police_case_files_heading',
-    defaultMessage:
-      'Gögn úr LÖKE{policeCaseNumber, select, NONE {} other {-máli {policeCaseNumber}}}',
+    defaultMessage: 'Gögn úr LÖKE',
     description:
       'Notaður sem titill fyrir "LOKE" gagnapakkann á síðunni Rannsóknargögn.',
   },
