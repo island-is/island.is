@@ -1,18 +1,16 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { User } from '@island.is/auth-nest-tools'
 import { createPkPassDataInput } from './disabilityLicenseMapper'
 import {
-  DefaultApi,
+  DisabilityLicenseService,
   OrorkuSkirteini,
 } from '@island.is/clients/disability-license'
 import {
   Pass,
   PassDataInput,
-  RevokePassData,
   SmartSolutionsApi,
-  VerifyPassData,
 } from '@island.is/clients/smartsolutions'
 import { FetchError } from '@island.is/clients/middlewares'
 import compareAsc from 'date-fns/compareAsc'
@@ -31,7 +29,7 @@ const LOG_CATEGORY = 'disability-license-service'
 export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private disabilityLicenseApi: DefaultApi,
+    private disabilityLicenseApi: DisabilityLicenseService,
     private smartApi: SmartSolutionsApi,
   ) {}
 
@@ -56,9 +54,9 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
     user: User,
   ): Promise<Result<OrorkuSkirteini | null>> {
     try {
-      const licenseInfo = await this.disabilityLicenseApi
-        .withMiddleware(new AuthMiddleware(user as Auth))
-        .faskirteiniGet()
+      const licenseInfo = await this.disabilityLicenseApi.getDisabilityLicense(
+        user,
+      )
       return { ok: true, data: licenseInfo }
     } catch (e) {
       let error
@@ -223,36 +221,5 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
       ok: true,
       data: result.data,
     }
-  }
-
-  async pushUpdatePass(
-    inputData: PassDataInput,
-    nationalId: string,
-  ): Promise<Result<Pass>> {
-    return await this.smartApi.updatePkPass(inputData, nationalId)
-  }
-
-  async pullUpdatePass(nationalId: string): Promise<Result<Pass>> {
-    return {
-      ok: false,
-      error: {
-        code: 99,
-        message: 'not implemented yet',
-      },
-    }
-  }
-
-  async revokePass(nationalId: string): Promise<Result<RevokePassData>> {
-    return await this.smartApi.revokePkPass(nationalId)
-  }
-
-  async verifyPass(inputData: string): Promise<Result<VerifyPassData>> {
-    const { code, date } = JSON.parse(inputData)
-
-    return await this.smartApi.verifyPkPass({ code, date })
-
-    //TODO: Verify license when endpoints are ready
-    //const verifyLicenseResult = await this.service.verify(nationalId?)
-    //return JSON.stringify(templates)
   }
 }

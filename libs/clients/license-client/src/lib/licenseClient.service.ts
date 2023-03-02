@@ -4,6 +4,7 @@ import {
   LICENSE_CLIENT_FACTORY,
   LicenseClient,
   LicenseType,
+  LicenseUpdateClient,
 } from './licenseClient.type'
 import { Cache as CacheManager } from 'cache-manager'
 import type { PassTemplateIds, LicenseTypeType } from './licenseClient.type'
@@ -19,11 +20,9 @@ export class LicenseClientService {
       cacheManager: CacheManager,
     ) => Promise<LicenseClient<unknown | null>>,
     @Inject(LICENSE_CLIENT_FACTORY)
-    private licenseFactory: (
+    private licenseClientFactory: (
       type: LicenseType,
     ) => Promise<LicenseClient<unknown | null>>,
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
     @Inject(CONFIG_PROVIDER) private config: PassTemplateIds,
     @Inject(CACHE_MANAGER) private cacheManager: CacheManager,
   ) {}
@@ -32,7 +31,7 @@ export class LicenseClientService {
     const client =
       type === LicenseType.DriversLicense
         ? this.drivingLicenseFactory(this.cacheManager)
-        : this.licenseFactory(type)
+        : this.licenseClientFactory(type)
     return await client
   }
 
@@ -55,18 +54,13 @@ export class LicenseClientService {
     return null
   }
 
-  async getClientByLicenseType(type: LicenseType) {
-    const client = await this.getClient(type)
-    return client
+  getClientByLicenseType(type: LicenseType) {
+    return this.getClient(type)
   }
 
-  async getClientByPassTemplateId(passTemplateId: string) {
+  getClientByPassTemplateId(passTemplateId: string) {
     const type = this.getTypeByPassTemplateId(passTemplateId)
-    if (type) {
-      const client = await this.getClient(type)
-      return client
-    }
 
-    return null
+    return type ? this.getClient(type) : null
   }
 }

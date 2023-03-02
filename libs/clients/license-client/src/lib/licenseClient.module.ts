@@ -1,35 +1,26 @@
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
 import { CacheModule, Module } from '@nestjs/common'
-import { ConfigType } from '@nestjs/config'
 import {
-  CONFIG_PROVIDER,
   LICENSE_CLIENT_FACTORY,
   LicenseType,
   LicenseClient,
 } from './licenseClient.type'
-import type { PassTemplateIds } from './licenseClient.type'
 import { LicenseClientService } from './licenseClient.service'
 import {
   FirearmClientModule,
   FirearmLicenseClient,
-  FirearmDigitalLicenseClientConfig,
 } from './clients/firearm-license-client'
-import {
-  AdrClientModule,
-  AdrLicenseClient,
-  AdrDigitalLicenseClientConfig,
-} from './clients/adr-license-client'
+import { AdrClientModule, AdrLicenseClient } from './clients/adr-license-client'
 import {
   MachineClientModule,
   MachineLicenseClient,
-  MachineDigitalLicenseClientConfig,
 } from './clients/machine-license-client'
 import {
   DisabilityClientModule,
   DisabilityLicenseClient,
-  DisabilityDigitalLicenseClientConfig,
 } from './clients/disability-license-client'
 import { DrivingClientModule } from './clients/driving-license-client/drivingLicenseClient.module'
+import { PassTemplateIdsProvider } from './factories/passTemplateIdsFactory'
 
 @Module({
   imports: [
@@ -42,34 +33,10 @@ import { DrivingClientModule } from './clients/driving-license-client/drivingLic
   ],
   providers: [
     LicenseClientService,
+    PassTemplateIdsProvider,
     {
       provide: LOGGER_PROVIDER,
       useValue: logger,
-    },
-    {
-      provide: CONFIG_PROVIDER,
-      useFactory: (
-        firearmConfig: ConfigType<typeof FirearmDigitalLicenseClientConfig>,
-        adrConfig: ConfigType<typeof AdrDigitalLicenseClientConfig>,
-        machineConfig: ConfigType<typeof MachineDigitalLicenseClientConfig>,
-        disabilityConfig: ConfigType<
-          typeof DisabilityDigitalLicenseClientConfig
-        >,
-      ) => {
-        const ids: PassTemplateIds = {
-          firearmLicense: firearmConfig.passTemplateId,
-          adrLicense: adrConfig.passTemplateId,
-          machineLicense: machineConfig.passTemplateId,
-          disabilityLicense: disabilityConfig.passTemplateId,
-        }
-        return ids
-      },
-      inject: [
-        FirearmDigitalLicenseClientConfig.KEY,
-        AdrDigitalLicenseClientConfig.KEY,
-        MachineDigitalLicenseClientConfig.KEY,
-        DisabilityDigitalLicenseClientConfig.KEY,
-      ],
     },
     {
       provide: LICENSE_CLIENT_FACTORY,

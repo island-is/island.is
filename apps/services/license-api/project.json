@@ -56,6 +56,12 @@
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/license-api/tsconfig.app.json apps/services/license-api/src/buildOpenApi.ts"
       }
     },
+    "schemas/build-graphql-schema": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn ts-node -P apps/services/license-api/tsconfig.json scripts/build-graphql-schema.ts apps/services/license-api/src/app/app.module"
+      }
+    },
     "dev-init": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
