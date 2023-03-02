@@ -230,9 +230,9 @@ export class PassportsService {
         documentLossAnnouncementRequest: {
           ...input,
           announcedByPersonId: user.nationalId,
+          incidentDate: new Date().toISOString(),
         },
       })
-
     return { success: !!res }
   }
 

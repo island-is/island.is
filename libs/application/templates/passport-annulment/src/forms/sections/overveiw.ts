@@ -6,9 +6,7 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { Application, DefaultEvents } from '@island.is/application/types'
-import {
-  STATUS,
-} from '../../lib/constants'
+import { STATUS } from '../../lib/constants'
 import { m } from '../../lib/messages'
 
 export const overview = buildMultiField({

@@ -79,7 +79,7 @@ export interface PreregistrationInput {
 export interface DocumentLossnInput {
   status: string
   comment: string
-  productionRequestID: string
+  productionRequestId: string
 }
 
 export interface Passport {

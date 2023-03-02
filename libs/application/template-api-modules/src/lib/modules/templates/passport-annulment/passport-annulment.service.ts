@@ -25,7 +25,7 @@ export class PassportAnnulmentService extends BaseTemplateApiService {
     const result = await this.passportApi.annulPassport(auth, {
       status,
       comment,
-      productionRequestID,
+      productionRequestId: productionRequestID,
     })
     return result
   }
