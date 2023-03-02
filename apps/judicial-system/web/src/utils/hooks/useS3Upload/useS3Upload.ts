@@ -15,6 +15,7 @@ import {
   DeleteFileMutationMutation,
   DeleteFileMutationMutationVariables,
   PresignedPost,
+  UploadPoliceCaseFileMutationMutation,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { UploadPoliceCaseFileMutation } from '@island.is/judicial-system-web/graphql'
 import { errors } from '@island.is/judicial-system-web/messages'
@@ -80,7 +81,9 @@ export const useS3Upload = (caseId: string) => {
     CreateFileMutationMutation,
     CreateFileMutationMutationVariables
   >(CreateFileMutationDocument)
-  const [uploadPoliceCaseFileMutation] = useMutation(
+  const [
+    uploadPoliceCaseFileMutation,
+  ] = useMutation<UploadPoliceCaseFileMutationMutation>(
     UploadPoliceCaseFileMutation,
   )
   const [deleteFileMutation] = useMutation<
@@ -178,7 +181,10 @@ export const useS3Upload = (caseId: string) => {
           },
         })
 
-        if (!uploadPoliceCaseFileData.uploadPoliceCaseFile) {
+        if (
+          !uploadPoliceCaseFileData ||
+          !uploadPoliceCaseFileData.uploadPoliceCaseFile
+        ) {
           throw Error('failed to upload police case file')
         }
 

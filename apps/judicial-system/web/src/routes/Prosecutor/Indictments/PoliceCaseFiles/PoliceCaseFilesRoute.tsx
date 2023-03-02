@@ -95,6 +95,8 @@ const UploadFilesToPoliceCase: React.FC<{
 
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
 
+  const [isUploading, setIsUploading] = useState<boolean>(false)
+
   const errorMessage = useMemo(() => {
     if (displayFiles.some((file) => file.status === 'error')) {
       return formatMessage(errorMessages.general)
@@ -218,7 +220,7 @@ const UploadFilesToPoliceCase: React.FC<{
   const onPoliceCaseFileUpload = useCallback(async () => {
     const filesToUpload = policeCaseFileList.filter((p) => p.checked)
 
-    // setIsUploading(true)
+    setIsUploading(true)
 
     filesToUpload.forEach(async (f, index) => {
       const fileToUpload = {
@@ -236,7 +238,7 @@ const UploadFilesToPoliceCase: React.FC<{
       setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
 
       if (index === filesToUpload.length - 1) {
-        // setIsUploading(false)
+        setIsUploading(false)
       }
     })
   }, [displayFiles, policeCaseFileList, uploadPoliceCaseFile])
@@ -289,7 +291,7 @@ const UploadFilesToPoliceCase: React.FC<{
     <>
       <PoliceCaseFiles
         onUpload={onPoliceCaseFileUpload}
-        isUploading={false}
+        isUploading={isUploading}
         policeCaseFileList={policeCaseFileList}
         setPoliceCaseFileList={setPoliceCaseFileList}
         policeCaseFiles={policeCaseFiles}
@@ -305,6 +307,7 @@ const UploadFilesToPoliceCase: React.FC<{
         onRemove={onRemove}
         onRetry={onRetry}
         errorMessage={errorMessage}
+        disabled={isUploading}
         showFileSize
       />
     </>

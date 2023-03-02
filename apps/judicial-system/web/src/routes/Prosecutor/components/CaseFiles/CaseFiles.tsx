@@ -18,6 +18,7 @@ import {
   ParentCaseFiles,
   FormContext,
   MarkdownWrapper,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseProsecutorSubsections,
@@ -329,6 +330,10 @@ export const CaseFiles: React.FC = () => {
             textProps={{ marginBottom: 0 }}
           />
         </Box>
+        <SectionHeading
+          title={formatMessage(strings.policeCaseFilesHeading)}
+          description={formatMessage(strings.policeCaseFilesIntroduction)}
+        />
         <PoliceCaseFiles
           onUpload={handlePoliceCaseFileUpload}
           isUploading={isUploading}
