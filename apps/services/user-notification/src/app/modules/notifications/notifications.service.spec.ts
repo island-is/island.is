@@ -120,6 +120,4 @@ describe('NotificationsService', () => {
     expect(template.notificationBody).toEqual('Demo body hello')
     expect(template.clickAction).toEqual('Demo click action world')
   })
-
-  
 })
