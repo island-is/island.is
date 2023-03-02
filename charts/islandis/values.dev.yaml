@@ -846,7 +846,7 @@ application-system-form:
 consultation-portal:
   enabled: true
   env:
-    BASEPATH: '/samradsgatt'
+    BASEPATH: '/consultation-portal'
     ENVIRONMENT: 'dev'
     NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: ''
@@ -880,7 +880,7 @@ consultation-portal:
       hosts:
         - host: 'beta.dev01.devland.is'
           paths:
-            - '/samradsgatt'
+            - '/consultation-portal'
   namespace: 'consultation-portal'
   pvcs: []
   replicaCount:
