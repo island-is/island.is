@@ -6,6 +6,7 @@ import {
   Table as T,
   Tag,
   Text,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
@@ -87,26 +88,34 @@ export const ApplicationsTable = ({
                     </Tag>
                   </T.Data>
                   <T.Data>
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="flexEnd"
-                    >
-                      <Drawer
-                        ariaLabel={`application-drawer-${index}`}
-                        baseId={`application-drawer-${index}`}
-                        disclosure={
-                          <button aria-label={formatMessage(m.openApplication)}>
-                            <Icon type="outline" color="blue400" icon="copy" />
-                          </button>
-                        }
+                    <Tooltip text={formatMessage(m.openApplication)}>
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="flexEnd"
                       >
-                        <ApplicationDetails
-                          application={application}
-                          organizations={organizations}
-                        />
-                      </Drawer>
-                    </Box>
+                        <Drawer
+                          ariaLabel={`application-drawer-${index}`}
+                          baseId={`application-drawer-${index}`}
+                          disclosure={
+                            <button
+                              aria-label={formatMessage(m.openApplication)}
+                            >
+                              <Icon
+                                type="outline"
+                                color="blue400"
+                                icon="copy"
+                              />
+                            </button>
+                          }
+                        >
+                          <ApplicationDetails
+                            application={application}
+                            organizations={organizations}
+                          />
+                        </Drawer>
+                      </Box>
+                    </Tooltip>
                   </T.Data>
                 </T.Row>
               )

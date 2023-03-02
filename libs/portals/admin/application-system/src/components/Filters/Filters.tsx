@@ -1,4 +1,7 @@
-import { InstitutionTypes } from '@island.is/application/types'
+import {
+  institutionMapper,
+  InstitutionTypes,
+} from '@island.is/application/types'
 import {
   Box,
   Text,
@@ -24,6 +27,7 @@ interface Props {
   onFilterChange: FilterMultiChoiceProps['onChange']
   onFilterClear: () => void
   filters: Record<MultiChoiceFilter, string[] | undefined>
+  applications: string[]
   organizations: Organization[]
   numberOfDocuments?: number
 }
@@ -33,6 +37,7 @@ export const Filters = ({
   onFilterChange,
   onFilterClear,
   filters,
+  applications,
   organizations,
   numberOfDocuments,
 }: Props) => {
@@ -123,7 +128,7 @@ export const Filters = ({
               inline: false,
               singleOption: false,
               filters: availableOrganizations.map((x) => ({
-                value: x.id,
+                value: x.slug,
                 label: x.title,
               })),
             },
@@ -131,7 +136,9 @@ export const Filters = ({
               id: MultiChoiceFilter.APPLICATION,
               label: formatMessage(m.application),
               selected: filters[MultiChoiceFilter.APPLICATION] ?? [],
-              filters: [{ label: 'TODO', value: 'todo' }], // TODO: What should be here?
+              filters: applications.map((x) => ({ value: x, label: x })),
+              inline: false,
+              singleOption: false,
             },
             {
               id: MultiChoiceFilter.STATUS,
