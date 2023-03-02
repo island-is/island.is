@@ -138,7 +138,8 @@ export const indictmentCount = defineMessages({
     description: 'Notaður sem ástæða í atvikalýsingu fyrir "lyfjaakstur" brot.',
   },
   incidentDescriptionSubstancesPrefixAutofill: {
-    id: 'judicial.system.core:indictments_indictment.indictment_count.incident_description_substances_prefix_auto_fill',
+    id:
+      'judicial.system.core:indictments_indictment.indictment_count.incident_description_substances_prefix_auto_fill',
     defaultMessage: 'í blóðsýni mældist ',
     description: 'Notaður sem upphafstexti fyrir efni í blóði í atvikalýsingu.',
   },
