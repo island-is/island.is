@@ -1,7 +1,7 @@
 schema:
   - apps/api/src/api.graphql
 generates:
-  libs/service-portal/endorsements/src/types/schema.ts:
+  libs/service-portal/petitions/src/types/schema.ts:
     plugins:
       - typescript
       - typescript-operations

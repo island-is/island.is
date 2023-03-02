@@ -1,6 +1,6 @@
 {
-  "root": "libs/service-portal/endorsements",
-  "sourceRoot": "libs/service-portal/endorsements/src",
+  "root": "libs/service-portal/petitions",
+  "sourceRoot": "libs/service-portal/petitions/src",
   "projectType": "library",
   "generators": {},
   "targets": {
@@ -8,7 +8,7 @@
       "executor": "@nrwl/linter:eslint",
       "options": {
         "lintFilePatterns": [
-          "libs/service-portal/endorsements/**/*.{ts,tsx,js,jsx}"
+          "libs/service-portal/petitions/**/*.{ts,tsx,js,jsx}"
         ]
       }
     },
@@ -23,7 +23,7 @@
     "schemas/codegen": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "command": "graphql-codegen --config libs/service-portal/endorsements/codegen.yml"
+        "command": "graphql-codegen --config libs/service-portal/petitions/codegen.yml"
       }
     }
   },
