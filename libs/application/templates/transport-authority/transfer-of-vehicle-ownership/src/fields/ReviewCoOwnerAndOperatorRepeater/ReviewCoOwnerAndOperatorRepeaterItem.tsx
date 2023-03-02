@@ -139,14 +139,12 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
       <input
         type="hidden"
         value={userMessageId}
-        ref={register({ required: true })}
-        name={typeField}
+        {...register(typeField, { required: true })}
       />
       <input
         type="hidden"
         value={repeaterField.wasRemoved}
-        ref={register({ required: true })}
-        name={wasRemovedField}
+        {...register(wasRemovedField, { required: true })}
       />
     </Box>
   )
