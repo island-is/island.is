@@ -333,7 +333,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
       }
 
       const reason = getIndictmentDescriptionReason(
-        offenses ? offenses : [],
+        offenses ?? [],
         substances ?? {},
         formatMessage,
       )
@@ -353,6 +353,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
       )
 
       setIncidentDescriptionErrorMessage('')
+
       return incidentDescription
     },
     [formatMessage, workingCase.crimeScenes],
@@ -511,11 +512,11 @@ export const IndictmentCount: React.FC<Props> = (props) => {
                     (o) => o !== offense,
                   )
 
-                  offenseSubstances[offense].forEach((e) =>
-                    indictmentCount.substances
-                      ? delete indictmentCount.substances[e]
-                      : {},
-                  )
+                  offenseSubstances[offense].forEach((e) => {
+                    if (indictmentCount.substances) {
+                      delete indictmentCount.substances[e]
+                    }
+                  })
 
                   const lawsBroken = getLawsBroken(
                     offenses,

@@ -158,17 +158,4 @@ export const indictmentCount = defineMessages({
       'Telst háttsemi þessi varða við {articles} umferðarlaga nr. 77/2019.',
     description: 'Notaður sem sjálfgefinn texti í heimfærslu svæði.',
   },
-  illegalDrugSubstancesLabel: {
-    id:
-      'judicial.system.core:indictments_indictment.indictment_count.illegal_drug_substances_label',
-    defaultMessage: 'Fíkniefni',
-    description:
-      'Notaður sem titill á "fíkniefni" svæði á ákæruliða skrefi í ákærum.',
-  },
-  illegalDrugSubstancesPlaceholder: {
-    id:
-      'judicial.system.core:indictments_indictment.indictment_count.illegal_drug_substances_placeholder',
-    defaultMessage: 'Veldu fíkniefni',
-    description: 'Notaður sem skýritexti á "fíkniefni" svæði.',
-  },
 })
