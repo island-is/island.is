@@ -104,6 +104,8 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
       DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN',
       DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL',
       ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL',
+      DOMSYSLA_PASSWORD: '/k8s/application-system-api/DOMSYSLA_PASSWORD',
+      DOMSYSLA_USERNAME: '/k8s/application-system-api/DOMSYSLA_USERNAME',
     })
     .args('main.js', '--job', 'worker')
     .command('node')
@@ -226,6 +228,11 @@ export const serviceSetup = (services: {
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
       ),
       NO_UPDATE_NOTIFIER: 'true',
+      XROAD_COURT_BANKRUPTCY_CERT_PATH: {
+        dev: 'IS-DEV/GOV/10019/Domstolasyslan-DEV/Domstolasyslan',
+        staging: 'IS-DEV/GOV/10019/Domstolasyslan-DEV/Domstolasyslan',
+        prod: 'IS/GOV/4707171140/Domstolasyslan-PROD-1/Domstolasyslan',
+      },
     })
     .xroad(
       Base,
@@ -281,6 +288,8 @@ export const serviceSetup = (services: {
       ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
       ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
       VMST_ID: '/k8s/application-system/VMST_ID',
+      DOMSYSLA_PASSWORD: '/k8s/application-system-api/DOMSYSLA_PASSWORD',
+      DOMSYSLA_USERNAME: '/k8s/application-system-api/DOMSYSLA_USERNAME',
     })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],

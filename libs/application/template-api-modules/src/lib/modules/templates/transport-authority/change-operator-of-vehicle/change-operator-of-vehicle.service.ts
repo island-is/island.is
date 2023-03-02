@@ -339,6 +339,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     // 2. Submit the application
 
     const answers = application.answers as ChangeOperatorOfVehicleAnswers
+
     const permno = answers?.pickVehicle?.plate
 
     // Note: Need to be sure that the user that created the application is the seller when submitting application to SGS
