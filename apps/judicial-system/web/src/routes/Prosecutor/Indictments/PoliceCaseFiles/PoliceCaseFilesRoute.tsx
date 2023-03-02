@@ -276,6 +276,17 @@ const UploadFilesToPoliceCase: React.FC<{
             throw new Error(`Failed to delete file: ${file.id}`)
           }
 
+          const policeCaseFile = policeCaseFiles?.files.find(
+            (f) => f.name === file.name,
+          )
+
+          if (policeCaseFile) {
+            setPoliceCaseFileList((previous) => [
+              mapPoliceCaseFileToPoliceCaseFileCheck(policeCaseFile),
+              ...previous,
+            ])
+          }
+
           setDisplayFiles((previous) => {
             return previous.filter((f) => f.id !== file.id)
           })
@@ -284,7 +295,7 @@ const UploadFilesToPoliceCase: React.FC<{
         toast.error(formatMessage(errorMessages.failedDeleteFile))
       }
     },
-    [remove, setDisplayFiles, formatMessage],
+    [remove, policeCaseFiles?.files, formatMessage],
   )
 
   return (
