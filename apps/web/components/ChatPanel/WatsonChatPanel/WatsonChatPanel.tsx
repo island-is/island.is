@@ -65,7 +65,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
             text: n('t10', 'Tala við manneskju'),
           },
           t11: {
-            text: n('t11', 'linkuraask'),
+            text: n('t11', 'Hæ Askur'),
           },
         },
       },
