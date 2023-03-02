@@ -405,6 +405,10 @@ export const m = defineMessages({
     id: 'service.portal:petitions',
     defaultMessage: 'Listar',
   },
+  viewPetition: {
+    id: 'service.portal:viewPetition',
+    defaultMessage: 'Nánar um lista',
+  },
   endorsementsAdmin: {
     id: 'service.portal:endorsements-admin',
     defaultMessage: 'Meðmæli - Admin',

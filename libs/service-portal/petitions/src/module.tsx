@@ -6,7 +6,8 @@ import { EndorsementsScope } from '@island.is/auth/scopes'
 import { PetitionPaths } from './lib/paths'
 
 const Petitions = lazy(() => import('./screens/Petitions'))
-const ViewPetition = lazy(() => import('./screens/ViewPetitionList'))
+const ViewSignedPetition = lazy(() => import('./screens/ViewSignedList'))
+const ViewOwnedPetition = lazy(() => import('./screens/ViewOwnedList'))
 const PetitionsAdmin = lazy(() => import('./screens/PetitionsAdmin'))
 const ViewPetitionAdmin = lazy(() => import('./screens/ViewPetitionAdmin'))
 
@@ -26,7 +27,13 @@ export const petitionsModule: PortalModule = {
         name: m.petitions,
         path: PetitionPaths.PetitionList,
         enabled: userInfo.scopes.includes(EndorsementsScope.main),
-        element: <ViewPetition />,
+        element: <ViewSignedPetition />,
+      },
+      {
+        name: m.petitions,
+        path: PetitionPaths.PetitionListOwned,
+        enabled: userInfo.scopes.includes(EndorsementsScope.main),
+        element: <ViewOwnedPetition />,
       },
     ]
 

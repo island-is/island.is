@@ -32,7 +32,7 @@ const PetitionsTable = (data: any) => {
     <Box>
       <Box display="flex" justifyContent="spaceBetween" marginBottom={2}>
         <Text variant="h3">{formatMessage(m.petitionsOverview)}</Text>
-        {data.isViewTypeEdit && (
+        {data.canEdit && (
           <DropdownExport
             onGetCSV={() => getCSV(listOfPetitions, 'Undirskriftalisti')}
           />

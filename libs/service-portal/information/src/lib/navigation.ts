@@ -25,16 +25,21 @@ export const informationNavigation: PortalNavigationItem = {
       navHide: true,
       path: InformationPaths.Child,
     },
-
     {
-      // Petitions
       name: m.petitions,
       path: PetitionPaths.Petitions,
-    },
-    {
-      // Petitions Admin
-      name: m.endorsementsAdmin,
-      path: PetitionPaths.PetitionsAdminView,
+      children: [
+        {
+          name: m.viewPetition,
+          navHide: true,
+          path: PetitionPaths.PetitionList,
+        },
+        {
+          name: m.viewPetition,
+          navHide: true,
+          path: PetitionPaths.PetitionListOwned,
+        },
+      ],
     },
   ],
   description: m.userInfoDescription,

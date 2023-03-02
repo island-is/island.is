@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import { Box, Stack, Tabs, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroHeader, ServicePortalPath } from '@island.is/service-portal/core'
@@ -41,7 +40,7 @@ const Petitions = () => {
   })
 
   return (
-    <Box>
+    <>
       <IntroHeader
         title={formatMessage(m.title)}
         intro={formatMessage(m.intro)}
@@ -50,7 +49,7 @@ const Petitions = () => {
       <Box>
         <Tabs
           contentBackground="white"
-          label="petitionListsTabs"
+          label={formatMessage(m.title)}
           selected="0"
           tabs={[
             {
@@ -65,32 +64,27 @@ const Petitions = () => {
                       <Stack space={3}>
                         {openOwnedLists.map((list: any) => {
                           return (
-                            <Link
-                              style={{ textDecoration: 'none' }}
+                            <ActionCard
                               key={list.id}
-                              state={{ type: 'edit', listId: list.id }}
-                              to={ServicePortalPath.PetitionList.replace(
-                                ':listId',
-                                list.id,
-                              )}
-                            >
-                              <ActionCard
-                                backgroundColor="blue"
-                                heading={list.title}
-                                text={
-                                  formatMessage(m.listPeriod) +
-                                  ' ' +
-                                  formatDate(list.openedDate) +
-                                  ' - ' +
-                                  formatDate(list.closedDate)
-                                }
-                                cta={{
-                                  label: formatMessage(m.editList),
-                                  variant: 'text',
-                                  icon: 'arrowForward',
-                                }}
-                              />
-                            </Link>
+                              backgroundColor="blue"
+                              heading={list.title}
+                              text={
+                                formatMessage(m.listPeriod) +
+                                ' ' +
+                                formatDate(list.openedDate) +
+                                ' - ' +
+                                formatDate(list.closedDate)
+                              }
+                              cta={{
+                                label: formatMessage(m.editList),
+                                variant: 'text',
+                                icon: 'arrowForward',
+                                url: ServicePortalPath.PetitionListOwned.replace(
+                                  ':listId',
+                                  list.id,
+                                ),
+                              }}
+                            />
                           )
                         })}
                       </Stack>
@@ -105,34 +99,27 @@ const Petitions = () => {
                       <Stack space={4}>
                         {openSignedLists.map((list: any) => {
                           return (
-                            <Link
-                              style={{ textDecoration: 'none' }}
+                            <ActionCard
                               key={list.id}
-                              state={{
-                                listId: list.endorsementList?.id,
+                              backgroundColor="white"
+                              heading={list.endorsementList?.title}
+                              text={
+                                formatMessage(m.listPeriod) +
+                                ' ' +
+                                formatDate(list.endorsementList.openedDate) +
+                                ' - ' +
+                                formatDate(list.endorsementList.closedDate)
+                              }
+                              cta={{
+                                label: formatMessage(m.viewList),
+                                variant: 'text',
+                                icon: 'arrowForward',
+                                url: ServicePortalPath.PetitionList.replace(
+                                  ':listId',
+                                  list.endorsementList?.id,
+                                ),
                               }}
-                              to={ServicePortalPath.PetitionList.replace(
-                                ':listId',
-                                list.id,
-                              )}
-                            >
-                              <ActionCard
-                                backgroundColor="white"
-                                heading={list.endorsementList?.title}
-                                text={
-                                  formatMessage(m.listPeriod) +
-                                  ' ' +
-                                  formatDate(list.endorsementList.openedDate) +
-                                  ' - ' +
-                                  formatDate(list.endorsementList.closedDate)
-                                }
-                                cta={{
-                                  label: formatMessage(m.viewList),
-                                  variant: 'text',
-                                  icon: 'arrowForward',
-                                }}
-                              />
-                            </Link>
+                            />
                           )
                         })}
                       </Stack>
@@ -153,32 +140,27 @@ const Petitions = () => {
                       <Stack space={3}>
                         {closedOwnedLists.map((list: any) => {
                           return (
-                            <Link
-                              style={{ textDecoration: 'none' }}
+                            <ActionCard
                               key={list.id}
-                              state={{ type: 'edit', listId: list.id }}
-                              to={ServicePortalPath.PetitionList.replace(
-                                ':listId',
-                                list.id,
-                              )}
-                            >
-                              <ActionCard
-                                backgroundColor="blue"
-                                heading={list.title}
-                                text={
-                                  formatMessage(m.listPeriod) +
-                                  ' ' +
-                                  formatDate(list.openedDate) +
-                                  ' - ' +
-                                  formatDate(list.closedDate)
-                                }
-                                cta={{
-                                  label: formatMessage(m.editList),
-                                  variant: 'text',
-                                  icon: 'arrowForward',
-                                }}
-                              />
-                            </Link>
+                              backgroundColor="blue"
+                              heading={list.title}
+                              text={
+                                formatMessage(m.listPeriod) +
+                                ' ' +
+                                formatDate(list.openedDate) +
+                                ' - ' +
+                                formatDate(list.closedDate)
+                              }
+                              cta={{
+                                label: formatMessage(m.editList),
+                                variant: 'text',
+                                icon: 'arrowForward',
+                                url: ServicePortalPath.PetitionListOwned.replace(
+                                  ':listId',
+                                  list.id,
+                                ),
+                              }}
+                            />
                           )
                         })}
                       </Stack>
@@ -193,34 +175,27 @@ const Petitions = () => {
                       <Stack space={4}>
                         {closedSignedLists.map((list: any) => {
                           return (
-                            <Link
-                              style={{ textDecoration: 'none' }}
+                            <ActionCard
                               key={list.id}
-                              state={{
-                                listId: list.endorsementList?.id,
+                              backgroundColor="white"
+                              heading={list.endorsementList?.title}
+                              text={
+                                formatMessage(m.listPeriod) +
+                                ' ' +
+                                formatDate(list.endorsementList.openedDate) +
+                                ' - ' +
+                                formatDate(list.endorsementList.closedDate)
+                              }
+                              cta={{
+                                label: formatMessage(m.viewList),
+                                variant: 'text',
+                                icon: 'arrowForward',
+                                url: ServicePortalPath.PetitionList.replace(
+                                  ':listId',
+                                  list.endorsementList?.id,
+                                ),
                               }}
-                              to={ServicePortalPath.PetitionList.replace(
-                                ':listId',
-                                list.id,
-                              )}
-                            >
-                              <ActionCard
-                                backgroundColor="white"
-                                heading={list.endorsementList?.title}
-                                text={
-                                  formatMessage(m.listPeriod) +
-                                  ' ' +
-                                  formatDate(list.endorsementList.openedDate) +
-                                  ' - ' +
-                                  formatDate(list.endorsementList.closedDate)
-                                }
-                                cta={{
-                                  label: formatMessage(m.viewList),
-                                  variant: 'text',
-                                  icon: 'arrowForward',
-                                }}
-                              />
-                            </Link>
+                            />
                           )
                         })}
                       </Stack>
@@ -232,7 +207,7 @@ const Petitions = () => {
           ]}
         />
       </Box>
-    </Box>
+    </>
   )
 }
 
