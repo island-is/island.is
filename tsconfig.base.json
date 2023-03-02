@@ -438,6 +438,9 @@
       ],
       "@island.is/clients/identity": ["libs/clients/identity/src/index.ts"],
       "@island.is/clients/islykill": ["libs/clients/islykill/src/index.ts"],
+      "@island.is/clients/judicial-administration": [
+        "libs/clients/judicial-administration/src/index.ts"
+      ],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
       ],
@@ -608,6 +611,9 @@
       "@island.is/portals/admin/icelandic-names-registry": [
         "libs/portals/admin/icelandic-names-registry/src/index.ts"
       ],
+      "@island.is/portals/admin/ids-admin": [
+        "libs/portals/admin/ids-admin/src/index.ts"
+      ],
       "@island.is/portals/core": ["libs/portals/core/src/index.ts"],
       "@island.is/portals/shared-modules/delegations": [
         "libs/portals/shared-modules/delegations/src/index.ts"
@@ -656,9 +662,6 @@
       "@island.is/service-portal/eligibility": [
         "libs/service-portal/eligibility/src/index.ts"
       ],
-      "@island.is/service-portal/endorsements": [
-        "libs/service-portal/endorsements/src/index.ts"
-      ],
       "@island.is/service-portal/finance": [
         "libs/service-portal/finance/src/index.ts"
       ],
@@ -676,6 +679,9 @@
       ],
       "@island.is/service-portal/modules": [
         "libs/service-portal/modules/src/index.ts"
+      ],
+      "@island.is/service-portal/petitions": [
+        "libs/service-portal/petitions/src/index.ts"
       ],
       "@island.is/service-portal/sessions": [
         "libs/service-portal/sessions/src/index.ts"

@@ -60,8 +60,9 @@ export interface Country {
 }
 
 export interface Approval {
-  personId?: string
-  approved?: Date
+  personId: string
+  approved: Date
+  name: string
 }
 export interface PreregistrationInput {
   guId?: string

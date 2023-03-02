@@ -449,6 +449,9 @@ components:
         content:
           type: string
           nullable: true
+        dataSpecification:
+          type: string
+          nullable: true
   securitySchemes:
     auth:
       type: apiKey

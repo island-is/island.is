@@ -25,6 +25,7 @@ import { ApolloError } from 'apollo-server-express'
 import isBefore from 'date-fns/isBefore'
 import differenceInMonths from 'date-fns/differenceInMonths'
 import { ExpiryStatus } from './passportsApi.types'
+import { format as formatNationalId } from 'kennitala'
 
 const LOG_CATEGORY = 'passport-service'
 
@@ -184,7 +185,6 @@ export class PassportsService {
         approvalB,
       })
       const pdfDoc = Buffer.from(pdfBuffer).toString('base64')
-
       const res = await this.preregistrationApi
         .withMiddleware(new AuthMiddleware(user))
         .preregistrationPreregistration({
@@ -194,8 +194,9 @@ export class PassportsService {
             documents: [
               {
                 name: 'samþykki',
-                documentType: 'pdf',
-                contentType: 'base64',
+                documentType: 'PDF',
+                contentType: 'CUSTODIAN_APPROVAL',
+                dataSpecification: 'CUST_APPROV_IS',
                 content: pdfDoc,
               },
             ],
@@ -254,7 +255,7 @@ export class PassportsService {
     doc
       .fontSize(big)
       .text('Umsókn um vegabréf með samþykki forsjáraðila fyrir hönd: ')
-      .text(appliedForPersonId ?? '')
+      .text(appliedForPersonId ? formatNationalId(appliedForPersonId) : '')
       .moveDown()
 
       .fontSize(regular)
@@ -267,13 +268,21 @@ export class PassportsService {
       .font(fontBold)
       .text('Forsjáraðila A: ')
       .font(fontRegular)
-      .text(`${approvalA?.personId}, ${approvalA?.approved}`)
+      .text(`Nafn: ${approvalA?.name}`)
+      .text(
+        `Kenntiala: ${approvalA ? formatNationalId(approvalA?.personId) : ''}`,
+      )
+      .text(`Dagsetning: ${approvalA?.approved}`)
       .moveDown()
 
       .font(fontBold)
       .text('Forsjáraðila B: ')
       .font(fontRegular)
-      .text(`${approvalB?.personId}, ${approvalB?.approved}`)
+      .text(`Nafn: ${approvalB?.name}`)
+      .text(
+        `Kenntiala: ${approvalB ? formatNationalId(approvalB?.personId) : ''}`,
+      )
+      .text(`Dagsetning: ${approvalB?.approved}`)
       .moveDown()
 
       .font(fontRegular)

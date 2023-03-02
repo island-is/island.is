@@ -16,12 +16,13 @@ import {
   Put,
   Query,
   UseGuards,
+  VERSION_NEUTRAL,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
+  ApiExcludeController,
   ApiOkResponse,
   ApiQuery,
-  ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger'
 import type { User } from '@island.is/auth-nest-tools'
@@ -38,8 +39,8 @@ import { environment } from '../../../environments/'
 const namespace = `${environment.audit.defaultNamespace}/clients`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@ApiTags('clients')
-@Controller('backend/clients')
+@ApiExcludeController()
+@Controller({ path: 'backend/clients', version: [VERSION_NEUTRAL, '1'] })
 @Audit({ namespace })
 export class ClientsController {
   constructor(
