@@ -149,7 +149,15 @@ components:
           type: string
           description: TODO
           example: 'transcript'
+        locale:
+          type: string
+          description: Tungumál fyrir file
+          example: 'is'
         displayName:
+          type: string
+          description: TODO
+          example: 'Námsferilsyfirlit með brautskráningu'
+        fileName:
           type: string
           description: TODO
           example: 'utskriftaryfirlit-0101302209.pdf'
@@ -168,3 +176,10 @@ components:
         type: integer
       required: true
       description: Ferilsnúmer nemenda
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []

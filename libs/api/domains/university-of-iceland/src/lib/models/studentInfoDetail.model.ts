@@ -37,6 +37,9 @@ export class StudentFiles {
   type!: string
 
   @Field(() => String)
+  locale!: string
+
+  @Field(() => String)
   displayName!: string
 
   @Field(() => String)

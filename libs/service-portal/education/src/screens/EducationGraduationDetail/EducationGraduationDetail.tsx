@@ -46,6 +46,7 @@ const GetStudentInfoDetailQuery = gql`
       }
       files {
         type
+        locale
         displayName
         fileName
       }
@@ -110,7 +111,7 @@ export const EducationGraduationDetail = () => {
                       iconType="outline"
                       onClick={() =>
                         formSubmit(
-                          `${downloadServiceURL}${lang}/${studentInfo?.trackNumber}`,
+                          `${downloadServiceURL}${item.locale}/${studentInfo?.trackNumber}`,
                         )
                       }
                     >
