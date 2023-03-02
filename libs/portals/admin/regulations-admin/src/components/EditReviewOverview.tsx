@@ -183,11 +183,6 @@ export const EditReviewOverview = (props: EditReviewOverviewProps) => {
                         ? 'Textabreyting'
                         : 'Fellur úr gildi',
                     )}
-                    {/* FIXME:
-                        List secondary effects (i.e. existing impacts that will be updated,
-                        or that simply won't apply anymore)
-                        At least mention if there are any.
-                      */}
                   </div>
                 ))}
               </OverviewItem>

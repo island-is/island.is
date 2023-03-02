@@ -16,18 +16,6 @@ export const ShippedRegulations = (props: ShippedRegulationsProps) => {
   const t = formatMessage
   const navigate = useNavigate()
 
-  // DECIDE:
-  // We are currently loading both shipped (i.e. locked) drafts
-  // and published regulaions.
-  // Published regulations might never appear if they're Garbage-collected
-  // instantly.
-  //
-  // But if not, then showing them here (without an "edit" button)
-  // might be nice for UX — as feedback about recent results of your
-  // completed tasks.
-  //
-  // Food for thought.
-
   return (
     <Box marginTop={6}>
       <Stack space={2}>

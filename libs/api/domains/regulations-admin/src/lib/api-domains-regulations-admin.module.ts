@@ -7,13 +7,6 @@ import {
   RegulationsAdminClientService,
 } from '@island.is/clients/regulations-admin'
 
-export interface RegulationsAdminOptions {
-  baseApiUrl?: string
-  regulationsApiUrl: string
-  presignedKey: string
-  publishKey: string
-  draftKey: string
-}
 @Module({
   imports: [RegulationsAdminClientModule],
   providers: [

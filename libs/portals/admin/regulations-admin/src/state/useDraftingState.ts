@@ -213,7 +213,7 @@ const useMakeDraftingState = (inputs: StateInputs) => {
         name: Prop,
         value: RegDraftForm[Prop]['value'],
       ) => {
-        // @ts-expect-error  (FML! FIXME: make this nicer)
+        // @ts-expect-error  (For some reason typescript is not detecting the correct types here)
         dispatch({ type: 'UPDATE_PROP', name, value })
       },
 
@@ -222,7 +222,7 @@ const useMakeDraftingState = (inputs: StateInputs) => {
         name: Prop,
         value: AppendixDraftForm[Prop]['value'],
       ) => {
-        // @ts-expect-error  (FML! FIXME: make this nicer)
+        // @ts-expect-error  (For some reason typescript is not detecting the correct types here)
         dispatch({ type: 'APPENDIX_SET_PROP', idx, name, value })
       },
 

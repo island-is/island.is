@@ -378,7 +378,6 @@ export const EditChange = (props: EditChangeProp) => {
       })
     },
 
-    // TODO: implement appendix revoke?
     revokeAppendix: (idx: number, revoked: boolean) => undefined,
   }
 

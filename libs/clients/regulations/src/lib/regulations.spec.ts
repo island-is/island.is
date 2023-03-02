@@ -1,6 +1,7 @@
 import { rest } from 'msw'
 import { Test } from '@nestjs/testing'
 import { ConfigModule } from '@nestjs/config'
+import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { startMocking } from '@island.is/shared/mocking'
 import { RegulationsService } from './regulations'
 import { Regulation } from '@island.is/regulations'
@@ -71,7 +72,13 @@ startMocking(handlers)
 
 const getNestModule = async (condition: ExpectedResult) => {
   const moduleRef = await Test.createTestingModule({
-    providers: [RegulationsService],
+    providers: [
+      RegulationsService,
+      {
+        provide: LOGGER_PROVIDER,
+        useValue: logger,
+      },
+    ],
     imports: [
       ConfigModule.forRoot({
         isGlobal: true,

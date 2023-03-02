@@ -494,7 +494,6 @@ export const useGetRegulationFromApiQuery = (
   const regulationFromApi = (data.getRegulationFromApi ?? undefined) as
     | Regulation
     | undefined
-  // TODO: handle RegulationRedirect?
   if (regulationFromApi && 'redirectUrl' in regulationFromApi) {
     return {
       error: new Error(`redirect`),
