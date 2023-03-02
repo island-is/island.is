@@ -661,7 +661,10 @@ const ArticleScreen: Screen<ArticleProps> = ({
             portalRef.current,
           )}
       </SidebarLayout>
-      <ArticleChatPanel article={article} pushUp={isVisible} />
+      <ArticleChatPanel
+        article={article}
+        pushUp={isVisible && processEntry?.processLink && mounted}
+      />
       <OrganizationFooter
         organizations={article.organization as Organization[]}
       />

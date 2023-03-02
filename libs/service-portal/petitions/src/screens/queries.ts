@@ -1,33 +1,6 @@
 import gql from 'graphql-tag'
-import {
-  EndorsementList,
-  ExistsEndorsementResponse,
-  PaginatedEndorsementResponse,
-  PaginatedEndorsementListResponse,
-} from '../types/schema'
 
-import { useQuery } from '@apollo/client'
-
-interface UserSignedLists {
-  endorsementSystemUserEndorsements: PaginatedEndorsementResponse
-}
-interface UserOwnsLists {
-  endorsementSystemUserEndorsementLists: PaginatedEndorsementListResponse
-}
-interface PetitionLists {
-  endorsementSystemFindEndorsementLists: PaginatedEndorsementListResponse
-}
-interface SinglePetition {
-  endorsementSystemGetSingleEndorsementList?: EndorsementList
-}
-interface SinglePetitionEndorsements {
-  endorsementSystemGetEndorsements?: PaginatedEndorsementResponse
-}
-interface SingleEndorsement {
-  endorsementSystemGetSingleEndorsement?: ExistsEndorsementResponse
-}
-
-const GetSingleEndorsement = gql`
+export const GetSingleEndorsement = gql`
   query endorsementSystemGetSingleEndorsement(
     $input: FindEndorsementListInput!
   ) {
@@ -37,7 +10,7 @@ const GetSingleEndorsement = gql`
   }
 `
 
-const GetListsUserSigned = gql`
+export const GetListsUserSigned = gql`
   query endorsementSystemUserEndorsements($input: EndorsementPaginationInput!) {
     endorsementSystemUserEndorsements(input: $input) {
       totalCount
@@ -68,7 +41,7 @@ const GetListsUserSigned = gql`
   }
 `
 
-const GetAllEndorsementsLists = gql`
+export const GetAllEndorsementsLists = gql`
   query endorsementSystemFindEndorsementLists(
     $input: PaginatedEndorsementListInput!
   ) {
@@ -108,7 +81,7 @@ export const GetSinglePetitionList = gql`
   }
 `
 
-const GetEndorsements = gql`
+export const GetEndorsements = gql`
   query endorsementSystemGetEndorsements($input: PaginatedEndorsementInput!) {
     endorsementSystemGetEndorsements(input: $input) {
       totalCount
@@ -141,14 +114,6 @@ export const EndorseList = gql`
       }
       created
       modified
-    }
-  }
-`
-
-export const SendEmailPdf = gql`
-  mutation Mutants($input: sendPdfEmailInput!) {
-    endorsementSystemsendPdfEmail(input: $input) {
-      success
     }
   }
 `
@@ -219,101 +184,3 @@ export const UpdateList = gql`
     }
   }
 `
-
-export const useGetAllPetitionLists = () => {
-  const { data: endorsementListsResponse } = useQuery<PetitionLists>(
-    GetAllEndorsementsLists,
-    {
-      variables: {
-        input: {
-          tags: 'generalPetition',
-          limit: 1000,
-        },
-      },
-      pollInterval: 20000,
-    },
-  )
-
-  return endorsementListsResponse?.endorsementSystemFindEndorsementLists ?? []
-}
-
-export const useGetListsUserSigned = () => {
-  const { data: endorsementResponse } = useQuery<UserSignedLists>(
-    GetListsUserSigned,
-    {
-      variables: {
-        input: {
-          limit: 1000,
-        },
-      },
-      pollInterval: 20000,
-    },
-  )
-  return endorsementResponse?.endorsementSystemUserEndorsements ?? []
-}
-
-export const useListsUserOwns = () => {
-  const { data: endorsementResponse } = useQuery<UserOwnsLists>(
-    EndorsementListsUserOwns,
-    {
-      variables: {
-        input: {
-          tags: 'generalPetition',
-          limit: 1000,
-        },
-      },
-      pollInterval: 20000,
-    },
-  )
-  return endorsementResponse?.endorsementSystemUserEndorsementLists ?? []
-}
-
-export const useGetSinglePetition = (listId: string) => {
-  const {
-    data: petition,
-    refetch: refetchSinglePetition,
-  } = useQuery<SinglePetition>(GetSinglePetitionList, {
-    variables: {
-      input: {
-        listId: listId,
-      },
-    },
-  })
-
-  const petitionData = petition?.endorsementSystemGetSingleEndorsementList ?? {}
-  return { petitionData, refetchSinglePetition }
-}
-
-export const useGetSingleEndorsement = (listId: string) => {
-  const { data: endorsement } = useQuery<SingleEndorsement>(
-    GetSingleEndorsement,
-    {
-      variables: {
-        input: {
-          listId: listId,
-        },
-      },
-      pollInterval: 20000,
-    },
-  )
-  return endorsement?.endorsementSystemGetSingleEndorsement?.hasEndorsed
-}
-
-export const useGetSinglePetitionEndorsements = (listId: string) => {
-  const {
-    data: endorsements,
-    refetch: refetchSinglePetitionEndorsements,
-  } = useQuery<SinglePetitionEndorsements>(GetEndorsements, {
-    variables: {
-      input: {
-        listId: listId,
-        limit: 1000,
-      },
-    },
-    pollInterval: 20000,
-  })
-
-  const petitionEndorsements =
-    endorsements?.endorsementSystemGetEndorsements ?? []
-  return { petitionEndorsements, refetchSinglePetitionEndorsements }
-}
