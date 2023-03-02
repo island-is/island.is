@@ -22,16 +22,17 @@ import {
 import { ApiHeader, ApiTags } from '@nestjs/swagger'
 import { LicenseId } from './license.types'
 import { NationalId } from '../../decorators/nationalId'
-import { IdsUserGuard, Scopes } from '@island.is/auth-nest-tools'
-import { LicenseApiScope } from '@island.is/auth/scopes'
-import { LicenseTypeScopeGuard } from './guards/licenseTypeScope.guard'
+import { IdsAuthGuard, Scopes } from '@island.is/auth-nest-tools'
+import { LicenseApiScope, getLicenseTypeScopes } from '@island.is/auth/scopes'
+import { LicenseTypeScopesGuard } from './guards/licenseTypeScope.guard'
 
 @ApiHeader({
   name: 'X-Param-NationalId',
   description: "The user's national id",
 })
 @Controller({ version: ['1'], path: 'users/.nationalId/licenses/' })
-//@Scopes(LicenseApiScope.licensesDisability, LicenseApiScope.licensesFirearm)
+@UseGuards(IdsAuthGuard, LicenseTypeScopesGuard)
+@Scopes(...getLicenseTypeScopes())
 @ApiTags('users-licenses')
 @Audit()
 export class UserLicensesController {
@@ -113,8 +114,8 @@ export class UserLicensesController {
 }
 
 @Controller({ version: ['1'], path: 'licenses/' })
-//@UseGuards(IdsUserGuard, LicenseTypeScopeGuard)
-//@Scopes(LicenseApiScope.licensesVerify)
+@UseGuards(IdsAuthGuard, LicenseTypeScopesGuard)
+@Scopes(LicenseApiScope.licensesVerify)
 @ApiTags('licenses')
 @Audit()
 export class LicensesController {
