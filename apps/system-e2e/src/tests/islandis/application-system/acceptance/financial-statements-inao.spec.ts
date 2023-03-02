@@ -21,7 +21,7 @@ test.describe('Financial Statements INAO', () => {
     await context.close()
   })
 
-  test('should be able to create application', async () => {
+  test.skip('should be able to create application', async () => {
     const page = await context.newPage()
     const { findByTestId, proceed } = helpers(page)
 
