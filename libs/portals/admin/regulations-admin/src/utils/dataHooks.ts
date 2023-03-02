@@ -297,30 +297,7 @@ export const useShippedRegulationsQuery = (): QueryResult<
 }
 
 // ---------------------------------------------------------------------------
-/*
-// FIXME: Return error: "GraphQLError: Expected Iterable, but did not find one for field \"Query.getDraftRegulations\".
-const RegulationTaskListQuery = gql`
-  query RegulationTaskListQuery($input: GetDraftRegulationsInput!) {
-    getDraftRegulations(input: $input) {
-      drafts {
-        id
-        draftingStatus
-        authors {
-          authorId
-          name
-        }
-        title
-        idealPublishDate
-        fastTrack
-      }
-      paging {
-        page
-        pages
-      }
-    }
-  }
-`
-*/
+
 const RegulationTaskListQuery = gql`
   query RegulationTaskListQuery($input: GetDraftRegulationsInput!) {
     getDraftRegulations(input: $input)

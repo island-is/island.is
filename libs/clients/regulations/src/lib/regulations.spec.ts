@@ -1,10 +1,12 @@
 import { rest } from 'msw'
 import { Test } from '@nestjs/testing'
+import { ConfigModule } from '@nestjs/config'
 import { startMocking } from '@island.is/shared/mocking'
 import { RegulationsService } from './regulations'
 import { Regulation } from '@island.is/regulations'
 import { RegulationViewTypes } from '@island.is/regulations/web'
 import { demoRegulation } from './regulations.mocks'
+import { RegulationsClientConfig } from './regulations.config'
 
 // MOCK START
 enum ExpectedResult {
@@ -70,6 +72,12 @@ startMocking(handlers)
 const getNestModule = async (condition: ExpectedResult) => {
   const moduleRef = await Test.createTestingModule({
     providers: [RegulationsService],
+    imports: [
+      ConfigModule.forRoot({
+        isGlobal: true,
+        load: [RegulationsClientConfig],
+      }),
+    ],
   }).compile()
 
   return moduleRef.get<RegulationsService>(RegulationsService)

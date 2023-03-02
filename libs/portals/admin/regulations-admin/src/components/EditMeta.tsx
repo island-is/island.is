@@ -35,11 +35,6 @@ export const EditMeta = () => {
               hasError={type.showError && !!type.error}
               errorMessage={type.error && t(type.error)}
             />
-            {/*
-              NOTE: Maybe we'll need to add a `DraftForm.manualRegulationType` boolean (checkbox)
-              to allow "editor"-level users to manually override the auto-detected type.
-              But as soon as the editor unticks that checkbox, then the auto-detection should kick back in.
-            */}
           </Box>
         </Column>
 

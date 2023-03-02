@@ -131,7 +131,7 @@ const useMakeDraftingState = (inputs: StateInputs) => {
                 title: apx.title.value,
                 text: apx.text.value,
               })),
-              comments: '', // TODO: remove this field from the database. It's never used!
+              comments: '',
               ministry: draft.ministry.value,
               draftingNotes: draft.draftingNotes.value,
               idealPublishDate: toISODate(draft.idealPublishDate?.value),
