@@ -20,8 +20,6 @@ import { DocumentType } from './models/documentType.model'
 
 import { GetDocumentListInput } from './dto/getDocumentListInput'
 import { DocumentSender } from './models/documentSender.model'
-import { GetDocumentPDFByIdInput } from './dto/getDocumentPdfByIdInput'
-import { DocumentPdf } from './models/documentPdf.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -82,14 +80,5 @@ export class DocumentResolver {
   @Query(() => [DocumentSender], { nullable: true })
   getDocumentSenders(@CurrentUser() user: User): Promise<DocumentSender[]> {
     return this.documentService.getSenders(user.nationalId)
-  }
-
-  @Scopes(DocumentsScope.main)
-  @Query(() => DocumentPdf, { nullable: true })
-  getDocumentPDFById(
-    @Args('input') input: GetDocumentPDFByIdInput,
-    @CurrentUser() user: User,
-  ): Promise<DocumentPdf> {
-    return this.documentService.getDocumentPDF(user.nationalId, input.pdfId)
   }
 }

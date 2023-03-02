@@ -2,7 +2,6 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common'
 import { Document, DocumentListResponse } from './models/document.model'
 import {
   CategoryDTO,
-  DocumentDTO,
   DocumentInfoDTO,
   SenderDTO,
   TypeDTO,
@@ -15,7 +14,6 @@ import { DocumentBuilder } from './documentBuilder'
 import { GetDocumentListInput } from './dto/getDocumentListInput'
 import { DocumentType } from './models/documentType.model'
 import { DocumentSender } from './models/documentSender.model'
-import { DocumentPdf } from './models/documentPdf.model'
 
 @Injectable()
 export class DocumentService {
@@ -154,23 +152,6 @@ export class DocumentService {
     } catch (exception) {
       logger.error(exception)
       return []
-    }
-  }
-
-  async getDocumentPDF(
-    nationalId: string,
-    pdfId: string,
-  ): Promise<DocumentPdf> {
-    try {
-      const rawDocumentDTO = await this.documentClient.customersDocument({
-        kennitala: nationalId,
-        messageId: pdfId,
-        authenticationType: 'HIGH',
-      })
-      return { file: rawDocumentDTO?.content }
-    } catch (exception) {
-      logger.error(exception)
-      return { file: undefined }
     }
   }
 }

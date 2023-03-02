@@ -20,6 +20,7 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { AuditService } from '@island.is/nest/audit'
+import slugify from '@sindresorhus/slugify'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(DocumentsScope.main)
@@ -60,12 +61,11 @@ export class DocumentController {
     })
 
     const buffer = Buffer.from(rawDocumentDTO.content, 'base64')
-
-    res.header('Content-length', buffer.length.toString())
-    res.header(
-      'Content-Disposition',
-      `inline; filename=postholf-${user.nationalId}.pdf`,
+    const filename = slugify(
+      rawDocumentDTO.fileName ?? `postholf-${user.nationalId}`,
     )
+    res.header('Content-length', buffer.length.toString())
+    res.header('Content-Disposition', `inline; filename=${filename}.pdf`)
     res.header('Pragma: no-cache')
     res.header('Cache-Control: no-cache')
     res.header('Cache-Control: nmax-age=0')

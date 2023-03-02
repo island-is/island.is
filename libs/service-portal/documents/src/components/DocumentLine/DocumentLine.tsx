@@ -12,29 +12,40 @@ import {
   Link,
   Text,
   Icon,
+  AlertBanner,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { dateFormat } from '@island.is/shared/constants'
 
 import * as styles from './DocumentLine.css'
+import { User } from '@island.is/shared/types'
+import { useLocale } from '@island.is/localization'
+import { messages as m } from '../../utils/messages'
 
 interface Props {
   documentLine: Document
   img?: string
   documentCategories?: DocumentCategory[]
+  userInfo?: User
 }
 
-const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
+const DocumentLine: FC<Props> = ({
+  documentLine,
+  img,
+  documentCategories,
+  userInfo,
+}) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.sm
+  const { formatMessage } = useLocale()
 
   const onClickHandler = async () => {
     // Create form elements
     const form = document.createElement('form')
     const documentIdInput = document.createElement('input')
     const tokenInput = document.createElement('input')
+    const token = userInfo?.access_token
 
-    const token = await getAccessToken()
     if (!token) return
 
     form.appendChild(documentIdInput)
@@ -104,6 +115,7 @@ const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
       {documentLine.senderName}
     </Text>
   )
+
   return (
     <Box
       position="relative"
