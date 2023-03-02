@@ -20,6 +20,7 @@ import {
   VehiclePlateOrderChecksByPermno,
 } from './graphql/models'
 import { ApolloError } from 'apollo-server-express'
+import { CoOwnerChangeAnswers } from './graphql/dto/coOwnerChangeAnswers.input'
 
 @Injectable()
 export class TransportAuthorityApi {
@@ -93,10 +94,14 @@ export class TransportAuthorityApi {
     user: User,
     answers: OwnerChangeAnswers,
   ): Promise<OwnerChangeValidation | null> {
+    const sellerSsn = answers?.seller?.nationalId
+    const sellerEmail = answers?.seller?.email
+    const buyerSsn = answers?.buyer?.nationalId
+    const buyerEmail = answers?.buyer?.email
+    const todayStr = new Date().toISOString()
+
     // No need to continue with this validation in user is neither seller nor buyer
     // (only time application data changes is on state change from these roles)
-    const sellerSsn = answers?.seller?.nationalId
-    const buyerSsn = answers?.buyer?.nationalId
     if (user.nationalId !== sellerSsn && user.nationalId !== buyerSsn) {
       return null
     }
@@ -114,13 +119,14 @@ export class TransportAuthorityApi {
         permno: answers?.pickVehicle?.plate,
         seller: {
           ssn: sellerSsn,
-          email: answers?.seller?.email,
+          email: sellerEmail,
         },
         buyer: {
           ssn: buyerSsn,
-          email: answers?.buyer?.email,
+          email: buyerEmail,
         },
         dateOfPurchase: new Date(answers?.vehicle?.date),
+        dateOfPurchaseTimestamp: todayStr.substring(11, todayStr.length),
         saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
         insuranceCompanyCode: answers?.insurance?.value || '',
         coOwners: buyerCoOwners?.map((coOwner) => ({
@@ -134,6 +140,63 @@ export class TransportAuthorityApi {
             buyerOperators.length > 1
               ? operator.nationalId === answers?.buyerMainOperator?.nationalId
               : true,
+        })),
+      },
+    )
+
+    return result
+  }
+
+  async validateApplicationForCoOwnerChange(
+    user: User,
+    answers: CoOwnerChangeAnswers,
+  ): Promise<OwnerChangeValidation | null> {
+    const permno = answers?.pickVehicle?.plate
+    const ownerSsn = answers?.owner?.nationalId
+    const ownerEmail = answers?.owner?.email
+    const todayStr = new Date().toISOString()
+
+    const newCoOwners = answers?.buyerCoOwnerAndOperator?.filter(
+      (x) => x.type === 'coOwner',
+    )
+
+    const currentOwnerChange = await this.vehicleOwnerChangeClient.getNewestOwnerChange(
+      user,
+      permno,
+    )
+
+    const currentOperators = await this.vehicleOperatorsClient.getOperators(
+      user,
+      permno,
+    )
+
+    const result = await this.vehicleOwnerChangeClient.validateAllForOwnerChange(
+      user,
+      {
+        permno: permno,
+        seller: {
+          ssn: ownerSsn,
+          email: ownerEmail,
+        },
+        buyer: {
+          ssn: ownerSsn,
+          email: ownerEmail,
+        },
+        dateOfPurchase: new Date(),
+        dateOfPurchaseTimestamp: todayStr.substring(11, todayStr.length),
+        saleAmount: currentOwnerChange?.saleAmount,
+        insuranceCompanyCode: currentOwnerChange?.insuranceCompanyCode,
+        operators: currentOperators?.map((operator) => ({
+          ssn: operator.ssn || '',
+          // Note: It should be ok that the email we send in is empty, since we dont get
+          // the email when fetching current operators, and according to them (SGS), they
+          // are not using the operator email in their API (not being saved in their DB)
+          email: null,
+          isMainOperator: operator.isMainOperator || false,
+        })),
+        coOwners: newCoOwners?.map((coOwner) => ({
+          ssn: coOwner.nationalId,
+          email: coOwner.email,
         })),
       },
     )

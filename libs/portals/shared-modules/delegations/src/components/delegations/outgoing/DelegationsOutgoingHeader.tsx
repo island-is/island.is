@@ -33,7 +33,7 @@ export const DelegationsOutgoingHeader = ({
           backgroundColor="blue"
           name="search"
           onChange={(e) => onSearchChange(e.target.value)}
-          icon="search"
+          icon={{ name: 'search' }}
         />
       </GridColumn>
     </GridRow>

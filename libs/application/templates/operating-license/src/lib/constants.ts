@@ -212,6 +212,10 @@ export const AttachmentProps: Attachment[] = [
     id: 'attachments.outsideBlueprints.file',
     label: attachmentNames.four.defaultMessage,
   },
+  {
+    id: 'attachments.otherFiles.file',
+    label: attachmentNames.five.defaultMessage,
+  },
 ]
 
 export const SYSLUMADUR_NATIONAL_ID = '6509142520'

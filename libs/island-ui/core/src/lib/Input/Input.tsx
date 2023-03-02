@@ -76,7 +76,6 @@ export const Input = forwardRef(
       textarea,
       type,
       icon,
-      iconType = 'filled',
       size = 'md',
       fixedFocusState,
       autoExpand,
@@ -93,6 +92,24 @@ export const Input = forwardRef(
         }
       : {}
     const mergedRefs = useMergeRefs(inputRef, ref || null)
+
+    const renderIcon = () => {
+      if (!icon) {
+        return null
+      }
+      return (
+        <Icon
+          icon={icon.name}
+          type={icon.type || 'filled'}
+          skipPlaceholderSize
+          className={cn(styles.icon, {
+            [styles.iconError]: hasError,
+            [styles.iconExtraSmall]: size === 'xs',
+          })}
+          ariaHidden
+        />
+      )
+    }
 
     const InputComponent = textarea ? TextareaHOC : InputHOC
     const mapBlue = (color: InputBackgroundColor) =>
@@ -260,18 +277,13 @@ export const Input = forwardRef(
               ariaHidden
             />
           )}
-          {!loading && icon && (
-            <Icon
-              icon={icon}
-              type={iconType}
-              skipPlaceholderSize
-              className={cn(styles.icon, {
-                [styles.iconError]: hasError,
-                [styles.iconExtraSmall]: size === 'xs',
-              })}
-              ariaHidden
-            />
-          )}
+          {!loading && icon ? (
+            icon?.onClick ? (
+              <button onClick={icon.onClick}> {renderIcon()} </button>
+            ) : (
+              renderIcon()
+            )
+          ) : null}
         </Box>
         {hasError && errorMessage && (
           <div

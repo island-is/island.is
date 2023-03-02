@@ -110,29 +110,46 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps) {
     const answers = application.answers as ChangeCoOwnerOfVehicleAnswers
+    const createdStr = application.created.toISOString()
 
-    // No need to continue with this validation in user is neither seller nor buyer
-    // (only time application data changes is on state change from these roles)
     const ownerSsn = answers?.owner?.nationalId
-    if (auth.nationalId !== ownerSsn) {
-      return
-    }
+    const ownerEmail = answers?.owner?.email
+    const permno = answers?.pickVehicle?.plate
+
+    const currentOperators = await this.vehicleOperatorsClient.getOperators(
+      auth,
+      permno,
+    )
+
+    const currentOwnerChange = await this.vehicleOwnerChangeClient.getNewestOwnerChange(
+      auth,
+      permno,
+    )
 
     const result = await this.vehicleOwnerChangeClient.validateAllForOwnerChange(
       auth,
       {
-        permno: answers?.pickVehicle?.plate,
+        permno: permno,
         seller: {
           ssn: ownerSsn,
-          email: answers?.owner?.email,
+          email: ownerEmail,
         },
         buyer: {
           ssn: ownerSsn,
-          email: answers?.owner?.email,
+          email: ownerEmail,
         },
-        dateOfPurchase: new Date(),
-        saleAmount: 0,
-        insuranceCompanyCode: null,
+        dateOfPurchase: new Date(application.created),
+        dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
+        saleAmount: currentOwnerChange?.saleAmount,
+        insuranceCompanyCode: currentOwnerChange?.insuranceCompanyCode,
+        operators: currentOperators?.map((operator) => ({
+          ssn: operator.ssn || '',
+          // Note: It should be ok that the email we send in is empty, since we dont get
+          // the email when fetching current operators, and according to them (SGS), they
+          // are not using the operator email in their API (not being saved in their DB)
+          email: null,
+          isMainOperator: operator.isMainOperator || false,
+        })),
         coOwners: [
           ...(answers?.ownerCoOwners
             ? answers.ownerCoOwners.map((x) => ({
@@ -149,7 +166,6 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
                 }))
             : []),
         ],
-        operators: null,
       },
     )
 
@@ -362,6 +378,8 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     // 2. Submit the application
 
     const answers = application.answers as ChangeCoOwnerOfVehicleAnswers
+    const createdStr = application.created.toISOString()
+
     // Note: Need to be sure that the user that created the application is the seller when submitting application to SGS
     if (answers?.owner?.nationalId !== application.applicant) {
       throw new TemplateApiError(
@@ -376,6 +394,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     const permno = answers?.pickVehicle?.plate
     const ownerSsn = answers?.owner?.nationalId
     const ownerEmail = answers?.owner?.email
+
     const newCoOwners = answers?.coOwners
       ?.filter(({ wasRemoved }) => wasRemoved !== 'true')
       .map((coOwner) => ({
@@ -411,7 +430,8 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
         ssn: ownerSsn,
         email: ownerEmail,
       },
-      dateOfPurchase: currentOwnerChange?.dateOfPurchase,
+      dateOfPurchase: new Date(application.created),
+      dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
       saleAmount: currentOwnerChange?.saleAmount,
       insuranceCompanyCode: currentOwnerChange?.insuranceCompanyCode,
       operators: currentOperators?.map((operator) => ({
@@ -419,7 +439,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
         // Note: It should be ok that the email we send in is empty, since we dont get
         // the email when fetching current operators, and according to them (SGS), they
         // are not using the operator email in their API (not being saved in their DB)
-        email: '',
+        email: null,
         isMainOperator: operator.isMainOperator || false,
       })),
       coOwners: [...newCoOwners, ...oldCoOwners],

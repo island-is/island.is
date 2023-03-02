@@ -18,7 +18,7 @@ const FooterLink = ({ href = '#', children }) => {
   return (
     <Column>
       <LinkV2 href={href} color="blue600" underline="small">
-        {children}
+        <div style={{ fontWeight: '300' }}>{children}</div>
       </LinkV2>
     </Column>
   )
@@ -62,8 +62,10 @@ const Footer = () => {
                     flexDirection="row"
                     justifyContent="spaceBetween"
                   >
-                    <ArrowLink href="#">Lesa meira</ArrowLink>
-                    <ArrowLink href="#">Hafa samband við ritstjórn</ArrowLink>
+                    <ArrowLink href="/um">Lesa meira</ArrowLink>
+                    <ArrowLink href="mailto:samradsgatt@stjornarradid.is">
+                      Hafa samband við ritstjórn
+                    </ArrowLink>
                   </Box>
                 </Box>
               </Column>
@@ -83,16 +85,30 @@ const Footer = () => {
                 </Column>
               </Columns>
               <Columns space={2} collapseBelow={'lg'} alignY="center">
-                <FooterLink>Heilsuvera</FooterLink>
-                <FooterLink>Mannanöfn</FooterLink>
-                <FooterLink>Opinber nýsköpun</FooterLink>
-                <FooterLink>Opnir reikningar ríkisins</FooterLink>
+                <FooterLink href="https://www.heilsuvera.is/">
+                  Heilsuvera
+                </FooterLink>
+                <FooterLink href="https://island.is/mannanofn">
+                  Mannanöfn
+                </FooterLink>
+                <FooterLink href="https://www.stjornarradid.is/verkefni/rekstur-og-eignir-rikisins/opinber-nyskopun/">
+                  Opinber nýsköpun
+                </FooterLink>
+                <FooterLink href="http://www.opnirreikningar.is/">
+                  Opnir reikningar ríkisins
+                </FooterLink>
               </Columns>
               <Columns space={2} collapseBelow={'lg'} alignY="center">
-                <FooterLink>Samráðsgátt</FooterLink>
-                <FooterLink>Undirskriftarlistar</FooterLink>
-                <FooterLink>Opin gögn</FooterLink>
-                <FooterLink>Tekjusagan</FooterLink>
+                <FooterLink href="https://samradsgatt.island.is/">
+                  Samráðsgátt
+                </FooterLink>
+                <FooterLink href="https://island.is/undirskriftalistar-stofna-nyjan-lista/">
+                  Undirskriftarlistar
+                </FooterLink>
+                <FooterLink href="https://opingogn.is/">Opin gögn</FooterLink>
+                <FooterLink href="https://tekjusagan.is/">
+                  Tekjusagan
+                </FooterLink>
               </Columns>
             </Stack>
           </Box>
