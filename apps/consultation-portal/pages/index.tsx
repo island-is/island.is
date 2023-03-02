@@ -35,10 +35,9 @@ export const Index = () => {
   )
 
   const [searchValue, setSearchValue] = useState<string>('')
-  const [prevSearchValue, setPrevSearchValue] = useState<string>('')
+  const [institutionValue, setInstitutionValue] = useState<string>('')
+  const [policyAreaValue, setPolicyAreaValue] = useState<string>('')
   const [data, setData] = useState<Array<Case>>(Cases)
-  const [options, setOptions] = useState<AsyncSearchOption[]>([])
-  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [page, setPage] = useState<number>(1)
 
   const goToPage = (page = 1, scrollTop = true) => {
@@ -49,25 +48,54 @@ export const Index = () => {
     }
   }
 
-  const clearAll = () => {
-    setIsLoading(false)
-    setOptions([])
-    setData(Cases)
-  }
   useEffect(() => {
-    if (!searchValue) {
-      clearAll()
-    } else if (searchValue != prevSearchValue) {
-      const filtered = Cases.filter(
-        (item) =>
-          item.name.includes(searchValue) ||
-          item.caseNumber.includes(searchValue) ||
-          item.institutionName.includes(searchValue),
-      )
-      setData(filtered)
-      setPrevSearchValue(searchValue)
-    }
+    searchValue
+      ? setData(
+          Cases.filter((item) => item.policyAreaName.includes(policyAreaValue))
+            .filter((item) => item.institutionName.includes(institutionValue))
+            .filter(
+              (item) =>
+                item.name.includes(searchValue) ||
+                item.caseNumber.includes(searchValue) ||
+                item.institutionName.includes(searchValue),
+            ),
+        )
+      : setData(
+          Cases.filter((item) =>
+            item.policyAreaName.includes(policyAreaValue),
+          ).filter((item) => item.institutionName.includes(institutionValue)),
+        )
   }, [searchValue])
+
+  useEffect(() => {
+    institutionValue
+      ? setData(
+          data.filter((item) => item.institutionName === institutionValue),
+        )
+      : setData(
+          Cases.filter(
+            (item) =>
+              item.name.includes(searchValue) ||
+              item.caseNumber.includes(searchValue) ||
+              item.institutionName.includes(searchValue) ||
+              item.policyAreaName.includes(searchValue),
+          ).filter((item) => item.policyAreaName.includes(policyAreaValue)),
+        )
+  }, [institutionValue])
+
+  useEffect(() => {
+    policyAreaValue
+      ? setData(data.filter((item) => item.policyAreaName === policyAreaValue))
+      : setData(
+          Cases.filter(
+            (item) =>
+              item.name.includes(searchValue) ||
+              item.caseNumber.includes(searchValue) ||
+              item.institutionName.includes(searchValue) ||
+              item.policyAreaName.includes(searchValue),
+          ).filter((item) => item.institutionName.includes(institutionValue)),
+        )
+  }, [policyAreaValue])
 
   const count = data.length
   const totalPages = Math.ceil(count / CARDS_PER_PAGE)
@@ -79,19 +107,19 @@ export const Index = () => {
       <HeroBanner />
 
       <SearchAndFilter
-        data={data}
-        setData={(newData) => setData(newData)}
-        cases={Cases}
         searchValue={searchValue}
         setSearchValue={(newValue) => setSearchValue(newValue)}
         PolicyAreas={PolicyAreas}
         Institutions={Institutions}
-        options={options}
+        setInstitutionValue={(value) => setInstitutionValue(value)}
+        setPolicyAreaValue={(value) => setPolicyAreaValue(value)}
       />
 
       <GridContainer>
         <GridRow>
-          <GridColumn span={['0', '0', '3/12', '3/12', '3/12']}></GridColumn>
+          <GridColumn span={['0', '0', '3/12', '3/12', '3/12']}>
+            
+          </GridColumn>
           <GridColumn span={['12/12', '12/12', '9/12', '9/12', '9/12']}>
             {visibleItems && (
               <Tiles space={3} columns={[1, 1, 1, 2, 3]}>
