@@ -94,7 +94,7 @@ describe('Application system API', () => {
     expect(response.body.id).toBeTruthy()
   })
 
-  it('should fail when PUT-ing answers on an application where it is in a state where it is not permitted', async () => {
+  it('should set and return a pending action for an application', async () => {
     const creationResponse = await server
       .post('/applications')
       .send({
@@ -136,7 +136,7 @@ describe('Application system API', () => {
       'Verið er að fara yfir umsóknina',
     )
     expect(newStateResponse.body.actionCard.pendingAction.content).toBe(
-      'Example stofnun fer núna yfir umsóknina því getur þetta tekið nokkrar daga',
+      'Example stofnun fer núna yfir umsóknina og því getur þetta tekið nokkra daga',
     )
   })
 
@@ -190,7 +190,6 @@ describe('Application system API', () => {
     expect(listAgain.body[0].actionCard.history).toHaveLength(3)
   })
 
-  /*
   // This template does not have readyForProduction: false
   it.skip('should fail when POST-ing an application whose template is not ready for production, on production environment', async () => {
     const envBefore = environment.environment
@@ -1125,7 +1124,7 @@ describe('Application system API', () => {
       })
       .expect(200)
   })
-*/
+
   // TODO: Validate that an application that is in a state that should be pruned
   // is not listed when (mocked) Date.now > application.pruneAt
 })
