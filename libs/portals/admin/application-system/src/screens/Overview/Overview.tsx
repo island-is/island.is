@@ -23,7 +23,6 @@ import { institutionMapper } from '@island.is/application/types'
 
 const defaultFilters: ApplicationFilters = {
   nationalId: '',
-  institution: '',
   period: {},
 }
 
@@ -31,9 +30,9 @@ const defaultMultiChoiceFilters: Record<
   MultiChoiceFilter,
   string[] | undefined
 > = {
-  [MultiChoiceFilter.STATUS]: undefined,
-  [MultiChoiceFilter.INSTITUTION]: undefined,
-  [MultiChoiceFilter.APPLICATION]: undefined,
+  [MultiChoiceFilter.STATUS]: undefined, // Server side
+  [MultiChoiceFilter.INSTITUTION]: undefined, // Server side
+  [MultiChoiceFilter.APPLICATION]: undefined, // Client side
 }
 
 const pageSize = 12
