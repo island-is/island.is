@@ -126,6 +126,12 @@ export class NotificationsController {
     return await this.notificationsService.getTemplate(templateId, locale)
   }
 
+  @Documentation({
+    description: 'Creates a new notification and adds to queue',
+    summary: 'Creates a new notification and adds to queue',
+    includeNoContentResponse: true,
+    response: { status: 201, type: CreateNotificationResponse },
+  })
   @Post('/')
   @Version('1')
   async createHnippNotification(
@@ -154,8 +160,6 @@ export class NotificationsController {
         )
       }
     }
-
-    // return this.notificationsService.formatArguments(body, template)
 
     // add to queue
     const id = await this.queue.add(body)

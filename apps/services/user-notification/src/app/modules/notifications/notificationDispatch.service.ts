@@ -95,7 +95,7 @@ export class NotificationDispatchService {
       },
     }
 
-    this.logger.info('Notification content for message', {
+    this.logger.info(`Notification content for message (${messageId})`, {
       messageId,
       ...notification,
     })
