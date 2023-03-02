@@ -136,7 +136,8 @@ export const icHearingArrangements = {
     secondaryButtonText: {
       id:
         'judicial.system.core:investigation_cases_hearing_arrangements.modal.secondary_button_text',
-      defaultMessage: 'Nei',
+      defaultMessage:
+        'Nei{courtDateHasChanged, select, true {} other {, senda seinna}}',
       description:
         'Notaður sem texti í "Nei" takkann í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum.',
     },

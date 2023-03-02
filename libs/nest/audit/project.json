@@ -18,5 +18,5 @@
       }
     }
   },
-  "tags": []
+  "tags": ["lib:nest", "scope:nest"]
 }

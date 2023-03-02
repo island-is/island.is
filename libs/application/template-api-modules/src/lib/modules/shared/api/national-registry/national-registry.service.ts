@@ -44,6 +44,31 @@ export class NationalRegistryService extends BaseTemplateApiService {
       }
     }
 
+    if (
+      params?.ageToValidate &&
+      result?.age &&
+      result?.age < params.ageToValidate
+    ) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalRegistryAgeLimitNotMetTitle,
+          summary: coreErrorMessages.nationalRegistryAgeLimitNotMetSummary,
+        },
+        400,
+      )
+    }
+
+    if (!result) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalIdNotFoundInNationalRegistryTitle,
+          summary:
+            coreErrorMessages.nationalIdNotFoundInNationalRegistrySummary,
+        },
+        400,
+      )
+    }
+
     return result
   }
 
@@ -67,6 +92,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
           streetAddress: person.legalDomicile.streetAddress,
           postalCode: person.legalDomicile.postalCode,
           locality: person.legalDomicile.locality,
+          city: person.legalDomicile.locality,
           municipalityCode: person.legalDomicile.municipalityNumber,
         },
         genderCode: person.genderCode,

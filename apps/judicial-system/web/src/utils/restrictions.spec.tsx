@@ -4,11 +4,9 @@ import { IntlFormatters, useIntl, createIntl } from 'react-intl'
 import { MockedProvider } from '@apollo/client/testing'
 import { render, screen, getDefaultNormalizer } from '@testing-library/react'
 
-import {
-  CaseCustodyRestrictions,
-  CaseType,
-} from '@island.is/judicial-system/types'
+import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
 import { LocaleProvider } from '@island.is/localization'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { formatRequestedCustodyRestrictions } from './restrictions'
 
@@ -40,7 +38,7 @@ describe('formatRequestedCustodyRestrictions', () => {
 
   test('should return a comma separated list of restrictions', async () => {
     // Arrange
-    const type = CaseType.CUSTODY
+    const type = CaseType.Custody
     const requestedCustodyRestrictions: CaseCustodyRestrictions[] = [
       CaseCustodyRestrictions.ISOLATION,
       CaseCustodyRestrictions.COMMUNICATION,
@@ -65,7 +63,7 @@ describe('formatRequestedCustodyRestrictions', () => {
 
   test('should return "Ekki er farið fram á takmarkanir á gæslu" if no custody restriction is supplied', async () => {
     // Arrange
-    const type = CaseType.CUSTODY
+    const type = CaseType.Custody
     const requestedCustodyRestrictions: CaseCustodyRestrictions[] = []
 
     // Act
@@ -85,7 +83,7 @@ describe('formatRequestedCustodyRestrictions', () => {
 
   test('should return "Ekki er farið fram á takmarkanir á farbanni" if no custody restriction is supplied', async () => {
     // Arrange
-    const type = CaseType.TRAVEL_BAN
+    const type = CaseType.TravelBan
     const requestedCustodyRestrictions: CaseCustodyRestrictions[] = []
 
     // Act
@@ -105,7 +103,7 @@ describe('formatRequestedCustodyRestrictions', () => {
 
   test('should return "Ekki er farið fram á takmarkanir á vistun" if no custody restriction is supplied', async () => {
     // Arrange
-    const type = CaseType.ADMISSION_TO_FACILITY
+    const type = CaseType.AdmissionToFacility
     const requestedCustodyRestrictions: CaseCustodyRestrictions[] = []
 
     // Act
@@ -125,7 +123,7 @@ describe('formatRequestedCustodyRestrictions', () => {
 
   test('should return additional other restrictions', async () => {
     // Arrange
-    const type = CaseType.CUSTODY
+    const type = CaseType.Custody
     const requestedCustodyRestrictions: CaseCustodyRestrictions[] = [
       CaseCustodyRestrictions.ISOLATION,
       CaseCustodyRestrictions.COMMUNICATION,
@@ -153,7 +151,7 @@ describe('formatRequestedCustodyRestrictions', () => {
 
   test('should return additional other restrictions only', async () => {
     // Arrange
-    const type = CaseType.CUSTODY
+    const type = CaseType.Custody
     const requestedOtherRestrictions = 'The accused should stay home.'
 
     // Act
@@ -178,7 +176,7 @@ describe('formatCustodyRestrictions', () => {
     .formatMessage
 
   it('should return empty string if no custody restrictions', () => {
-    const caseType = CaseType.CUSTODY
+    const caseType = CaseType.Custody
     const restrictions = [] as CaseCustodyRestrictions[]
 
     const res = formatCustodyRestrictions(formatMessage, caseType, restrictions)
@@ -187,7 +185,7 @@ describe('formatCustodyRestrictions', () => {
   })
 
   it('should return empty string if undefined custody restrictions', () => {
-    const caseType = CaseType.CUSTODY
+    const caseType = CaseType.Custody
     const restrictions = undefined
 
     const res = formatCustodyRestrictions(formatMessage, caseType, restrictions)
@@ -196,7 +194,7 @@ describe('formatCustodyRestrictions', () => {
   })
 
   it('should return formatted string for custody case with one restrictions', () => {
-    const caseType = CaseType.CUSTODY
+    const caseType = CaseType.Custody
     const restrictions = [CaseCustodyRestrictions.VISITAION]
 
     const res = formatCustodyRestrictions(formatMessage, caseType, restrictions)
@@ -207,7 +205,7 @@ describe('formatCustodyRestrictions', () => {
   })
 
   it('should return formatted string for admission to facility case with two restrictions', () => {
-    const caseType = CaseType.ADMISSION_TO_FACILITY
+    const caseType = CaseType.AdmissionToFacility
     const restrictions = [
       CaseCustodyRestrictions.VISITAION,
       CaseCustodyRestrictions.NECESSITIES,
@@ -221,7 +219,7 @@ describe('formatCustodyRestrictions', () => {
   })
 
   it('should return formatted string for admission to facility case with tree restrictions', () => {
-    const caseType = CaseType.ADMISSION_TO_FACILITY
+    const caseType = CaseType.AdmissionToFacility
     const restrictions = [
       CaseCustodyRestrictions.VISITAION,
       CaseCustodyRestrictions.NECESSITIES,
@@ -236,7 +234,7 @@ describe('formatCustodyRestrictions', () => {
   })
 
   it('should filter out non supported restrictions', () => {
-    const caseType = CaseType.ADMISSION_TO_FACILITY
+    const caseType = CaseType.AdmissionToFacility
     const restrictions = [
       CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
       CaseCustodyRestrictions.ISOLATION,

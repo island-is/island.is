@@ -38,6 +38,7 @@ export const TextFormField: FC<Props> = ({
     readOnly,
     maxLength,
     dataTestId,
+    rightAlign,
     onChange = () => undefined,
   } = field
   const { clearErrors } = useFormContext()
@@ -87,6 +88,7 @@ export const TextFormField: FC<Props> = ({
           backgroundColor={backgroundColor}
           rows={rows}
           required={required}
+          rightAlign={rightAlign}
         />
       </Box>
     </div>

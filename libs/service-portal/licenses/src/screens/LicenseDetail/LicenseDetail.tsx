@@ -15,7 +15,6 @@ import {
   Pagination,
 } from '@island.is/island-ui/core'
 import {
-  ServicePortalModuleComponent,
   UserInfoLine,
   CardLoader,
   ErrorScreen,
@@ -313,15 +312,19 @@ const DataFields = ({
   )
 }
 
-const LicenseDetail: ServicePortalModuleComponent = () => {
+type UseParams = {
+  type: string | undefined
+  provider: string
+}
+
+const LicenseDetail = () => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const { data: userProfile } = useUserProfile()
   const locale = userProfile?.locale ?? 'is'
-  const {
-    type,
-  }: { type: string | undefined; provider: string | undefined } = useParams()
+  const { type } = useParams() as UseParams
   const licenseType = type ? getTypeFromPath(type) : undefined
+
   const { data, loading: queryLoading, error } = useQuery<Query>(
     GenericLicenseQuery,
     {

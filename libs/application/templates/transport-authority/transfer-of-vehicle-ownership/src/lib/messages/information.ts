@@ -187,6 +187,11 @@ export const information = {
         defaultMessage: 'Bæta við meðeiganda',
         description: 'Co-owner add label',
       },
+      error: {
+        id: 'ta.tvo.application:information.labels.coOwner.error',
+        defaultMessage: 'Það kom upp villa við að sækja upplýsingar um bifreið',
+        description: 'Co-owner error message',
+      },
     }),
     operator: defineMessages({
       title: {
@@ -234,6 +239,11 @@ export const information = {
         id: 'ta.tvo.application:information.labels.operator.main',
         defaultMessage: 'aðal',
         description: 'Main label - for main operator',
+      },
+      identicalError: {
+        id: 'ta.cov.application:information.labels.operator.identicalError',
+        defaultMessage: 'Það má ekki nota sömu kennitölu tvisvar',
+        description: 'operator identical error',
       },
     }),
     buyer: defineMessages({

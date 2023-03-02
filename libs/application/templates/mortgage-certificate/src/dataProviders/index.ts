@@ -1,10 +1,7 @@
-import {
-  defineTemplateApi,
-  PaymentCatalogApi,
-} from '@island.is/application/types'
+import { PaymentCatalogApi } from '@island.is/application/types'
 
 export {
-  NationalRegistryUserApi,
+  IdentityApi,
   UserProfileApi,
   NationalRegistryRealEstateApi,
 } from '@island.is/application/types'

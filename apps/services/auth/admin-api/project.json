@@ -45,7 +45,14 @@
       },
       "outputs": ["coverage/apps/services/auth/admin-api"]
     },
+    "schemas/build-openapi": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "outputPath": "apps/services/auth/admin-api/src/openapi.yaml",
+        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/auth/admin-api/tsconfig.app.json apps/services/auth/admin-api/src/buildOpenApi.ts"
+      }
+    },
     "docker-express": {}
   },
-  "tags": []
+  "tags": ["scope:auth-api"]
 }

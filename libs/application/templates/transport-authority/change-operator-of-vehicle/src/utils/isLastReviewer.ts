@@ -26,10 +26,12 @@ export const isLastReviewer = (
     'operators',
     [],
   ) as OperatorInformation[]
-  const approvedOperator = operators.find(
-    (operator) =>
-      operator.nationalId !== reviewerNationalId && !operator.approved,
-  )
+  const approvedOperator = operators
+    .filter(({ wasRemoved }) => wasRemoved !== 'true')
+    .find(
+      (operator) =>
+        operator.nationalId !== reviewerNationalId && !operator.approved,
+    )
   if (approvedOperator) {
     return false
   }

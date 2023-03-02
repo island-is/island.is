@@ -1,5 +1,4 @@
 import { FC, useEffect } from 'react'
-import { Markdown } from '@island.is/application/ui-components'
 import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -8,6 +7,7 @@ import { useFormContext } from 'react-hook-form'
 import { gql, useQuery } from '@apollo/client'
 import { LoadingDots } from '@island.is/island-ui/core'
 import { hasDisabilityLicense } from '../../lib/queries'
+import { Markdown } from '@island.is/shared/components'
 
 export const NoDisabilityRecordInfo: FC<FieldBaseProps> = () => {
   const { data, loading, error, refetch } = useQuery(

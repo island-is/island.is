@@ -1,13 +1,9 @@
 import React from 'react'
-import {
-  InfoScreen,
-  ServicePortalModuleComponent,
-  m,
-} from '@island.is/service-portal/core'
+import { InfoScreen, m } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import { useNamespaces } from '@island.is/localization'
 
-export const HealthOverview: ServicePortalModuleComponent = () => {
+export const HealthOverview = () => {
   useNamespaces('sp.health')
 
   return (

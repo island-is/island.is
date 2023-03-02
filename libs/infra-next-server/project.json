@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/infra-next-server"]
     }
   },
-  "tags": []
+  "tags": ["lib:node", "scope:node"]
 }

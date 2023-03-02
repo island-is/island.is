@@ -6,10 +6,17 @@ import {
   ApiResponse,
   FetchResponse,
   ServiceError,
-  ListPassesResponseData,
   VerifyPassResponseData,
   VerifyPassData,
-  ParsedApiResponse,
+  LOG_CATEGORY,
+  ListPassesResponseData,
+  VoidPassResponseData,
+  ListTemplatesResponseData,
+  GetPassResponseData,
+  UpsertPassResponseData,
+  DeletePassResponseData,
+  RevokePassData,
+  UnvoidPassResponseData,
 } from './smartSolutions.types'
 import {
   DynamicBarcodeDataInput,
@@ -20,9 +27,21 @@ import {
 } from '../../gen/schema'
 import { Inject } from '@nestjs/common'
 import { SMART_SOLUTIONS_API_CONFIG } from './smartSolutions.config'
-import { MapErrorMessageToActionStatusCode } from './utils'
-/** Category to attach each log message to */
-const LOG_CATEGORY = 'smartsolutions'
+import {
+  mapErrorMessageToActionStatusCode,
+  mapPassToPassDataInput,
+  mergeInputFields,
+} from './typeMapper'
+import {
+  DELETE_PASS,
+  GET_PASS,
+  LIST_PASS_STATUSES,
+  LIST_TEMPLATES,
+  UNVOID_PASS,
+  UPSERT_PASS,
+  VERIFY_PKPASS,
+  VOID_PASS,
+} from './graphql/queries'
 
 export interface SmartSolutionsConfig {
   apiKey: string
@@ -38,21 +57,17 @@ export class SmartSolutionsApi {
     private config: SmartSolutionsConfig,
   ) {}
 
-  private fetchUrl(payload: string): Promise<Response> {
-    return fetch(this.config.apiUrl, {
-      method: 'POST',
-      headers: {
-        'X-API-KEY': this.config.apiKey,
-        'Content-Type': 'application/json',
-      },
-      body: payload,
-    })
-  }
-
-  private async fetchData(query: string): Promise<FetchResponse> {
+  private async fetch(query: string): Promise<FetchResponse> {
     let res: Response | null = null
     try {
-      res = await this.fetchUrl(query)
+      res = await fetch(this.config.apiUrl, {
+        method: 'POST',
+        headers: {
+          'X-API-KEY': this.config.apiKey,
+          'Content-Type': 'application/json',
+        },
+        body: query,
+      })
     } catch (e) {
       this.logger.warn('Unable to fetch data', {
         exception: e,
@@ -96,7 +111,6 @@ export class SmartSolutionsApi {
         },
       }
     }
-
     let json: unknown
     try {
       json = await res.json()
@@ -116,105 +130,39 @@ export class SmartSolutionsApi {
     return { apiResponse: json as ApiResponse }
   }
 
-  private parseApiResponse<T>(apiRes: ApiResponse): ParsedApiResponse<T> {
-    if (apiRes.errors) {
-      const resError = apiRes.errors[0]
-      const code = MapErrorMessageToActionStatusCode(resError.message)
-      const error = {
-        code,
-        message: resError.message,
-        data: JSON.stringify(resError),
-      } as ServiceError
+  private async query<T>(graphql: string): Promise<Result<T>> {
+    const response = await this.fetch(graphql)
 
-      return { error }
-    }
-    const data = apiRes.data as T
+    const apiRes = response.apiResponse
+    if (apiRes) {
+      if (apiRes.errors) {
+        const resError = apiRes.errors[0]
+        const code = mapErrorMessageToActionStatusCode(resError.message)
+        const error = {
+          code,
+          message: resError.message,
+          data: JSON.stringify(resError),
+        } as ServiceError
 
-    //shouldn't happen
-    if (!data) {
-      const error = {
-        code: 13,
-        data: JSON.stringify(apiRes),
-        message: 'Service error',
+        return { ok: false, error }
       }
-      return { error }
-    }
+      const data = apiRes.data as T
 
-    return { data }
-  }
-
-  async listPkPasses(queryId: string): Promise<Result<Pass[]>> {
-    if (!this.config.passTemplateId) {
-      return {
-        ok: false,
-        error: {
-          code: 10,
+      //shouldn't happen
+      if (!data) {
+        const error = {
+          code: 13,
+          data: JSON.stringify(apiRes),
           message: 'Service error',
-        },
-      }
-    }
-
-    const listPassesQuery = `
-      query ListPasses {
-        passes(
-          search: { query: "${queryId}" },
-          passTemplateId: "${this.config.passTemplateId}",
-          order: { column: WHEN_MODIFIED, dir: DESC }
-          ) {
-          data {
-            whenCreated
-            whenModified
-            passTemplate {
-                id
-            }
-            distributionUrl
-            distributionQRCode
-            id
-            status
-            inputFieldValues {
-              passInputField {
-                identifier
-              }
-              value
-            }
-          }
         }
-      }
-    `
-
-    const graphql = JSON.stringify({
-      query: listPassesQuery,
-      variables: {},
-    })
-
-    const response = await this.fetchData(graphql)
-
-    if (response.apiResponse) {
-      const apiRes = this.parseApiResponse<ListPassesResponseData>(
-        response.apiResponse,
-      )
-
-      if (apiRes.error) {
-        return {
-          ok: false,
-          error: apiRes.error,
-        }
+        return { ok: false, error }
       }
 
-      /** No error, so return the data. *
-       * If pass = undefined, it means the user currently has no passes */
-
-      return {
-        ok: true,
-        data: apiRes.data.passes?.data ?? [],
-      }
+      return { ok: true, data }
     }
 
     if (response.error) {
-      return {
-        ok: false,
-        error: response.error,
-      }
+      return { ok: false, error: response.error }
     }
 
     return {
@@ -223,99 +171,74 @@ export class SmartSolutionsApi {
         code: 99,
         message: 'Unknown error',
       },
+    }
+  }
+
+  /**
+   *
+   * @param nationalId the user's national id
+   * @returns A pass if one was found, or undefined
+   */
+  private async findPass(
+    nationalId: string,
+  ): Promise<Result<Pass | undefined>> {
+    const listPassesQuery = JSON.stringify({
+      query: LIST_PASS_STATUSES,
+      variables: {
+        queryId: nationalId,
+        passTemplateId: this.config.passTemplateId,
+      },
+    })
+    const listRes = await this.query<ListPassesResponseData>(listPassesQuery)
+
+    if (!listRes.ok) {
+      //if failure, return the response
+      return listRes
+    }
+
+    for (const pass of listRes.data.passes?.data ?? []) {
+      if (pass.status !== PassStatus.DeleteInProgress) {
+        return {
+          ok: true,
+          data: pass,
+        }
+      }
+    }
+
+    return {
+      ok: true,
+      data: undefined,
     }
   }
 
   async verifyPkPass(
     payload: DynamicBarcodeDataInput,
   ): Promise<Result<VerifyPassData>> {
-    const verifyPkPassMutation = `
-      mutation UpdateStatusOnPassWithDynamicBarcode($dynamicBarcodeData: DynamicBarcodeDataInput!) {
-        updateStatusOnPassWithDynamicBarcode(dynamicBarcodeData: $dynamicBarcodeData) {
-          status
-          inputFieldValues {
-            passInputField {
-              identifier
-            }
-            value
-          }
-        }
-      }
-    `
-
     const graphql = JSON.stringify({
-      query: verifyPkPassMutation,
+      query: VERIFY_PKPASS,
       variables: {
         dynamicBarcodeData: payload,
       },
     })
 
-    const response = await this.fetchData(graphql)
+    const res = await this.query<VerifyPassResponseData>(graphql)
 
-    //If the fetch returned a response from the service
-    if (response.apiResponse) {
-      const parsedApiRes = this.parseApiResponse<VerifyPassResponseData>(
-        response.apiResponse,
-      )
-
-      if (parsedApiRes.error) {
-        return {
-          ok: false,
-          error: parsedApiRes.error,
-        }
-      }
-
-      //sweet success
+    if (res.ok) {
       return {
         ok: true,
         data: {
           valid: true,
-          pass: parsedApiRes.data.updateStatusOnPassWithDynamicBarcode,
+          pass: res.data.updateStatusOnPassWithDynamicBarcode,
         },
       }
     }
 
-    //if the fetch returned a service error, return it
-    if (response.error) {
-      return {
-        ok: false,
-        error: response.error,
-      }
-    }
-
-    //catchall
-    return {
-      ok: false,
-      error: {
-        code: 99,
-        message: 'Unknown error',
-      },
-    }
+    return res
   }
 
   async upsertPkPass(payload: PassDataInput): Promise<Result<Pass>> {
-    if (!this.config.passTemplateId) {
-      return {
-        ok: false,
-        error: {
-          code: 10,
-          message: 'Service error',
-        },
-      }
-    }
-
-    const createPkPassMutation = `
-      mutation UpsertPass($inputData: PassDataInput!) {
-        upsertPass(data: $inputData) {
-          distributionUrl
-          deliveryPageUrl
-          distributionQRCode
-        }
-      }
-    `
-
     const graphql = JSON.stringify({
-      query: createPkPassMutation,
+      query: UPSERT_PASS,
       variables: {
         inputData: {
           passTemplateId: this.config.passTemplateId,
@@ -324,169 +247,278 @@ export class SmartSolutionsApi {
       },
     })
 
-    const response = await this.fetchData(graphql)
+    const res = await this.query<UpsertPassResponseData>(graphql)
 
-    if (response.apiResponse) {
-      const parsedApiRes = this.parseApiResponse<{ upsertPass: Pass }>(
-        response.apiResponse,
-      )
-
-      if (parsedApiRes.error) {
-        return {
-          ok: false,
-          error: parsedApiRes.error,
-        }
-      }
-
-      //sweet success
+    if (res.ok) {
       return {
         ok: true,
-        data: parsedApiRes.data.upsertPass,
+        data: res.data.upsertPass,
       }
     }
 
-    if (response.error) {
-      return {
-        ok: false,
-        error: response.error,
-      }
-    }
-
-    return {
-      ok: false,
-      error: {
-        code: 99,
-        message: 'Unknown error',
-      },
-    }
+    return res
   }
 
+  /**
+   *
+   * @param payload License properties to update
+   * @param nationalId The NationalID of the user
+   * @returns The updated pass, if the update succeeded. If not, an error object
+   */
+  async updatePkPass(
+    payload: PassDataInput,
+    nationalId: string,
+  ): Promise<Result<Pass>> {
+    const findPassRes = await this.findPass(nationalId)
+
+    if (!findPassRes.ok) {
+      return findPassRes
+    }
+
+    //check if existing pass was found
+    if (!findPassRes.data) {
+      return {
+        ok: false,
+        error: {
+          code: 3,
+          message: 'No pass found for user',
+        },
+      }
+    }
+
+    const pass = findPassRes.data
+
+    //get the pass data
+    const getPassQuery = JSON.stringify({
+      query: GET_PASS,
+      variables: {
+        id: pass.id,
+      },
+    })
+
+    const getPassRes = await this.query<GetPassResponseData>(getPassQuery)
+
+    if (!getPassRes.ok) {
+      //if failure, return the response
+      return getPassRes
+    }
+    const passInputData = mapPassToPassDataInput(getPassRes.data.pass)
+
+    const inputFieldValues = mergeInputFields(
+      passInputData.inputFieldValues ?? undefined,
+      payload.inputFieldValues ?? undefined,
+    )
+    //now we finally have the updated pass data!
+    const updatedPassData = {
+      ...passInputData,
+      ...payload,
+      inputFieldValues,
+    }
+
+    //Now we can just call upsert with the correct data
+    return await this.upsertPkPass(updatedPassData)
+  }
+
+  /**
+   *
+   * @param payload The new pass data
+   * @param nationalId the user's national id
+   * @returns the newly created pass, or an old one if a pass was previously created,
+   */
   async generatePkPass(
     payload: PassDataInput,
     nationalId: string,
   ): Promise<Result<Pass>> {
-    const existingPasses = await this.listPkPasses(nationalId)
+    const findPassRes = await this.findPass(nationalId)
 
-    if (
-      existingPasses?.ok &&
-      existingPasses?.data.some(
-        (p) =>
-          p.status === PassStatus.Active || p.status === PassStatus.Unclaimed,
-      )
-    ) {
-      const activePasses = existingPasses?.data.filter(
-        (p) => p.status === PassStatus.Active,
-      )
-      if (activePasses?.length) {
-        return {
-          ok: existingPasses.ok,
-          //return the most recent active pass
-          data: activePasses[0],
-        }
-      }
-
-      const unclaimedPasses = existingPasses?.data?.filter(
-        (p) => p.status === PassStatus.Unclaimed,
-      )
-
-      if (unclaimedPasses?.length) {
-        return {
-          ok: existingPasses.ok,
-          //return the most recent unclaimed pass
-          data: unclaimedPasses[0],
-        }
-      }
+    if (!findPassRes.ok) {
+      return findPassRes
     }
 
+    const pass = findPassRes.data
+
+    if (pass) {
+      if (pass.status === PassStatus.Voided) {
+        //pass is voided, which is an invalid state
+        return {
+          ok: false,
+          error: {
+            code: 5,
+            message: 'Pass is void',
+          },
+        }
+      }
+
+      //pass is good
+      return {
+        ok: true,
+        data: pass,
+      }
+    }
     this.logger.debug('No active pkpass found for user, creating a new one')
 
-    const pass = await this.upsertPkPass(payload)
-    //const pass = await this.upsertPkPass({})
-    return pass
+    //Create the pass
+    return await this.upsertPkPass(payload)
   }
 
-  async generatePkPassQrCode(
-    payload: PassDataInput,
-    nationalId: string,
-  ): Promise<Result<string>> {
-    const response = await this.generatePkPass(payload, nationalId)
-    if (response.ok) {
+  async revokePkPass(nationalId: string): Promise<Result<RevokePassData>> {
+    const findPassRes = await this.findPass(nationalId)
+
+    if (!findPassRes.ok) {
+      return findPassRes
+    }
+
+    //check if existing pass was found
+    if (!findPassRes.data) {
       return {
-        ok: true,
-        data: response.data.distributionQRCode,
+        ok: false,
+        error: {
+          code: 3,
+          message: 'No pass found for user',
+        },
       }
     }
 
-    return response
-  }
+    const pass = findPassRes.data
 
-  async generatePkPassUrl(
-    payload: PassDataInput,
-    nationalId: string,
-  ): Promise<Result<string>> {
-    const response = await this.generatePkPass(payload, nationalId)
-    if (response.ok) {
-      return {
-        ok: true,
-        data: response.data.distributionUrl,
+    //find the proper pass and void it, if it isn't voided already
+    if (pass.status !== PassStatus.Voided) {
+      const voidResponse = await this.voidPkPass(pass.id)
+
+      if (!voidResponse.ok) {
+        return voidResponse
       }
     }
-    return response
+
+    //pass is void, time to delete
+    const deleteResponse = await this.deletePkPass(pass.id)
+
+    if (!deleteResponse.ok) {
+      return deleteResponse
+    }
+
+    //deletion success
+    return {
+      ok: true,
+      data: { success: deleteResponse.data.deletePass },
+    }
   }
 
-  async listTemplates(): Promise<Result<Array<PassTemplate>>> {
-    const listTemplatesQuery = {
-      query: `
-        query passTemplateQuery {
-          passTemplates {
-            data {
-              id
-              name
-            }
-          }
+  private async deletePkPass(
+    passId: string,
+  ): Promise<Result<DeletePassResponseData>> {
+    const deletePassMutation = JSON.stringify({
+      query: DELETE_PASS,
+      variables: {
+        id: passId,
+      },
+    })
+
+    const response = await this.query<DeletePassResponseData>(
+      deletePassMutation,
+    )
+
+    if (response.ok) {
+      if (response.data.deletePass) {
+        return {
+          ok: true,
+          data: { deletePass: response.data.deletePass },
         }
-      `,
+      }
+      //if the deletion failed for some reason
+      return {
+        ok: false,
+        error: {
+          code: 13,
+          message: 'Service error, delete pass failed',
+        },
+      }
     }
 
+    return response
+  }
+
+  private async voidPkPass(
+    passId: string,
+  ): Promise<Result<VoidPassResponseData>> {
+    const voidPassMutation = JSON.stringify({
+      query: VOID_PASS,
+      variables: {
+        id: passId,
+      },
+    })
+
+    const response = await this.query<VoidPassResponseData>(voidPassMutation)
+
+    if (response.ok) {
+      if (response.data.voidPass) {
+        return {
+          ok: true,
+          data: { voidPass: response.data.voidPass },
+        }
+      }
+      //if the voiding failed for some reason
+      return {
+        ok: false,
+        error: {
+          code: 13,
+          message: 'Service error, void pass failed',
+        },
+      }
+    }
+
+    return response
+  }
+
+  private async unvoidPkPass(
+    passId: string,
+  ): Promise<Result<UnvoidPassResponseData>> {
+    const unvoidPassMutation = JSON.stringify({
+      query: UNVOID_PASS,
+      variables: {
+        id: passId,
+      },
+    })
+
+    const response = await this.query<UnvoidPassResponseData>(
+      unvoidPassMutation,
+    )
+
+    if (response.ok) {
+      if (response.data.unvoidPass) {
+        return {
+          ok: true,
+          data: { unvoidPass: response.data.unvoidPass },
+        }
+      }
+      //if the voiding failed for some reason
+      return {
+        ok: false,
+        error: {
+          code: 13,
+          message: 'Service error, void pass failed',
+        },
+      }
+    }
+
+    return response
+  }
+
+  async listTemplates(): Promise<Result<Array<PassTemplate> | undefined>> {
     const graphql = JSON.stringify({
-      query: listTemplatesQuery,
+      query: LIST_TEMPLATES,
       variables: {},
     })
 
-    const response = await this.fetchData(graphql)
+    const response = await this.query<ListTemplatesResponseData>(graphql)
 
-    if (response.apiResponse) {
-      const parsedApiRes = this.parseApiResponse<{ data: Array<PassTemplate> }>(
-        response.apiResponse,
-      )
-
-      if (parsedApiRes.error) {
-        return {
-          ok: false,
-          error: parsedApiRes.error,
-        }
-      }
-
-      //sweet success
+    if (response.ok) {
       return {
         ok: true,
-        data: parsedApiRes.data.data,
+        data: response.data.passes?.data,
       }
     }
 
-    if (response.error) {
-      return {
-        ok: false,
-        error: response.error,
-      }
-    }
-
-    return {
-      ok: false,
-      error: {
-        code: 99,
-        message: 'Unknown error',
-      },
-    }
+    return response
   }
 }

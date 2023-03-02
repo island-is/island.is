@@ -20,12 +20,12 @@ import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { OrderVehicleLicensePlateSchema } from './dataSchema'
 import {
-  NationalRegistryUserApi,
   SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
   DeliveryStationsApi,
   PlateTypesApi,
 } from '../dataProviders'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const plate = getValueViaPath(
@@ -51,6 +51,13 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.OrderVehicleLicensePlate.translation,
   ],
   dataSchema: OrderVehicleLicensePlateSchema,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+      featureFlag:
+        Features.transportAuthorityOrderVehicleLicensePlateDelegations,
+    },
+  ],
   featureFlag: Features.transportAuthorityOrderVehicleLicensePlate,
   stateMachineConfig: {
     initial: States.DRAFT,
@@ -86,7 +93,6 @@ const template: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi,
                 SamgongustofaPaymentCatalogApi,
                 CurrentVehiclesApi,
                 DeliveryStationsApi,

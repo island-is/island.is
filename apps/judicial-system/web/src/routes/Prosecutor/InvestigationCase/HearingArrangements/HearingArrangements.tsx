@@ -18,7 +18,6 @@ import {
 import {
   CaseState,
   CaseTransition,
-  Institution,
   NotificationType,
 } from '@island.is/judicial-system/types'
 import {
@@ -39,6 +38,7 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import { Box, Input, Text, toast } from '@island.is/island-ui/core'
 import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import {

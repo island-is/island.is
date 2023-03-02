@@ -1,15 +1,14 @@
-import {
-  CaseCustodyRestrictions,
-  CaseType,
-} from '@island.is/judicial-system/types'
-import { restrictionsV2 as m } from '@island.is/judicial-system-web/messages'
-
-import type { CheckboxInfo } from '../components/CheckboxList/CheckboxList'
 import { IntlFormatters, IntlShape } from 'react-intl'
+
+import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
+import { restrictionsV2 as m } from '@island.is/judicial-system-web/messages'
 import {
   enumerate,
   getSupportedCaseCustodyRestrictions,
 } from '@island.is/judicial-system/formatters'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+
+import type { CheckboxInfo } from '../components/CheckboxList/CheckboxList'
 
 const makeCheckboxInfo = (
   restriction: CaseCustodyRestrictions,

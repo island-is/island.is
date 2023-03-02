@@ -99,7 +99,7 @@ export const applicant = {
       },
       qualitySignatureAltText: {
         id:
-          'ta.dtdc.application:applicant.labels.userInformation.qualityPhotoAltText',
+          'ta.dtdc.application:applicant.labels.userInformation.qualitySignatureAltText',
         defaultMessage:
           'Þín undirskrift skv. ökuskírteinaskrá (annars fyrri ökuritakort)',
         description: 'User information quality photo alt text',

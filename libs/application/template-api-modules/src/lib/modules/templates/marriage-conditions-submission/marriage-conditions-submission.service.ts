@@ -59,6 +59,10 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
     return ALLOWED_MARITAL_STATUSES.includes(maritalCode)
   }
 
+  async religionCodes() {
+    return await this.nationalRegistryService.getReligions()
+  }
+
   private handleReturn(maritalStatus: string) {
     if (this.allowedCodes(maritalStatus)) {
       return Promise.resolve({
@@ -68,7 +72,7 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
       throw new TemplateApiError(
         {
           title: coreErrorMessages.failedDataProvider,
-          summary: coreErrorMessages.errorDataProvider,
+          summary: coreErrorMessages.errorDataProviderMaritalStatus,
         },
         400,
       )

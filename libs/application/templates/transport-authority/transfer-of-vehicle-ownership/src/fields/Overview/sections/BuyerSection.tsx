@@ -4,10 +4,11 @@ import { FC } from 'react'
 import { Text, GridRow, GridColumn } from '@island.is/island-ui/core'
 import { getValueViaPath } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
-import { information, overview } from '../../../lib/messages'
+import { information, overview, review } from '../../../lib/messages'
+import { States } from '../../../lib/constants'
 import { ReviewGroup } from '../../ReviewGroup'
-import { ReviewScreenProps } from '../../../types'
-import { hasReviewerApproved } from '../../../utils'
+import { ReviewScreenProps } from '../../../shared'
+import { formatPhoneNumber, hasReviewerApproved } from '../../../utils'
 import kennitala from 'kennitala'
 
 export const BuyerSection: FC<FieldBaseProps & ReviewScreenProps> = ({
@@ -25,11 +26,14 @@ export const BuyerSection: FC<FieldBaseProps & ReviewScreenProps> = ({
   const isBuyer =
     (getValueViaPath(answers, 'buyer.nationalId', '') as string) ===
     reviewerNationalId
+  const phone = getValueViaPath(answers, 'buyer.phone', '') as string
 
   return (
     <ReviewGroup
       editMessage={
-        isBuyer && !hasReviewerApproved(reviewerNationalId, answers)
+        isBuyer &&
+        !hasReviewerApproved(reviewerNationalId, answers) &&
+        application.state !== States.COMPLETED
           ? formatMessage(overview.labels.addCoOwnerAndOperatorButton)
           : undefined
       }
@@ -39,7 +43,8 @@ export const BuyerSection: FC<FieldBaseProps & ReviewScreenProps> = ({
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Text variant="h4">
-            {formatMessage(information.labels.buyer.title)}
+            {formatMessage(information.labels.buyer.title)}{' '}
+            {isBuyer && `(${formatMessage(review.status.youLabel)})`}
           </Text>
           <Text>{getValueViaPath(answers, 'buyer.name', '') as string}</Text>
           <Text>
@@ -49,7 +54,7 @@ export const BuyerSection: FC<FieldBaseProps & ReviewScreenProps> = ({
             )}
           </Text>
           <Text>{getValueViaPath(answers, 'buyer.email', '') as string}</Text>
-          <Text>{getValueViaPath(answers, 'buyer.phone', '') as string}</Text>
+          <Text>{formatPhoneNumber(phone)}</Text>
         </GridColumn>
       </GridRow>
     </ReviewGroup>

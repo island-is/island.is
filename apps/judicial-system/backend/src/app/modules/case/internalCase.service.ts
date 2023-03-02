@@ -24,13 +24,11 @@ import {
   isIndictmentCase,
   UserRole,
 } from '@island.is/judicial-system/types'
-import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { uuidFactory, nowFactory } from '../../factories'
 import {
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
-  formatCourtUploadRulingTitle,
   getRequestPdfAsBuffer,
   createCaseFilesRecord,
 } from '../../formatters'
@@ -42,6 +40,7 @@ import { PoliceService } from '../police'
 import { Institution } from '../institution'
 import { User, UserService } from '../user'
 import { Defendant, DefendantService } from '../defendant'
+import { IndictmentCount, IndictmentCountService } from '../indictment-count'
 import { CaseFile, FileService } from '../file'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { oldFilter } from './filters/case.filters'
@@ -77,6 +76,7 @@ const caseEncryptionProperties: (keyof Case)[] = [
   'caseModifiedExplanation',
   'caseResentExplanation',
   'crimeScenes',
+  'indictmentIntroduction',
 ]
 
 const defendantEncryptionProperties: (keyof Defendant)[] = [
@@ -89,6 +89,12 @@ const caseFileEncryptionProperties: (keyof CaseFile)[] = [
   'name',
   'key',
   'userGeneratedFilename',
+]
+
+const indictmentCountEncryptionProperties: (keyof IndictmentCount)[] = [
+  'vehicleRegistrationNumber',
+  'incidentDescription',
+  'legalArguments',
 ]
 
 function collectEncryptionProperties(
@@ -131,6 +137,8 @@ export class InternalCaseService {
     private readonly policeService: PoliceService,
     @Inject(forwardRef(() => UserService))
     private readonly userService: UserService,
+    @Inject(forwardRef(() => IndictmentCountService))
+    private readonly indictmentCountService: IndictmentCountService,
     @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
     @Inject(forwardRef(() => DefendantService))
@@ -156,16 +164,16 @@ export class InternalCaseService {
   private async uploadSignedRulingPdfToCourt(
     theCase: Case,
     buffer: Buffer,
-    user?: TUser,
+    user: User,
   ): Promise<boolean> {
-    const fileName = formatCourtUploadRulingTitle(
-      this.formatMessage,
-      theCase.courtCaseNumber,
-      Boolean(theCase.rulingModifiedHistory),
-    )
+    const fileName = this.formatMessage(courtUpload.ruling, {
+      courtCaseNumber: theCase.courtCaseNumber,
+      date: format(nowFactory(), 'yyyy-MM-dd HH:mm'),
+    })
 
     try {
       await this.courtService.createDocument(
+        user,
         theCase.id,
         theCase.courtId,
         theCase.courtCaseNumber,
@@ -174,7 +182,6 @@ export class InternalCaseService {
         `${fileName}.pdf`,
         'application/pdf',
         buffer,
-        user,
       )
 
       return true
@@ -188,15 +195,20 @@ export class InternalCaseService {
     }
   }
 
-  private async uploadCourtRecordPdfToCourt(theCase: Case): Promise<boolean> {
+  private async uploadCourtRecordPdfToCourt(
+    theCase: Case,
+    user: User,
+  ): Promise<boolean> {
     try {
       const pdf = await getCourtRecordPdfAsBuffer(theCase, this.formatMessage)
 
       const fileName = this.formatMessage(courtUpload.courtRecord, {
         courtCaseNumber: theCase.courtCaseNumber,
+        date: format(nowFactory(), 'yyyy-MM-dd HH:mm'),
       })
 
       await this.courtService.createCourtRecord(
+        user,
         theCase.id,
         theCase.courtId,
         theCase.courtCaseNumber,
@@ -218,15 +230,19 @@ export class InternalCaseService {
     }
   }
 
-  private async upploadRequestPdfToCourt(theCase: Case): Promise<boolean> {
+  private async upploadRequestPdfToCourt(
+    theCase: Case,
+    user: User,
+  ): Promise<boolean> {
     return getRequestPdfAsBuffer(theCase, this.formatMessage)
       .then((pdf) => {
         const fileName = this.formatMessage(courtUpload.request, {
           caseType: caseTypes[theCase.type],
-          date: ` ${format(nowFactory(), 'yyyy-MM-dd HH:mm')}`,
+          date: format(nowFactory(), 'yyyy-MM-dd HH:mm'),
         })
 
         return this.courtService.createDocument(
+          user,
           theCase.id,
           theCase.courtId,
           theCase.courtCaseNumber,
@@ -254,6 +270,7 @@ export class InternalCaseService {
   private async uploadCaseFilesRecordPdfToCourt(
     theCase: Case,
     policeCaseNumber: string,
+    user: User,
   ): Promise<boolean> {
     const caseFiles = theCase.caseFiles
       ?.filter(
@@ -302,6 +319,7 @@ export class InternalCaseService {
         })
 
         return this.courtService.createDocument(
+          user,
           theCase.id,
           theCase.courtId,
           theCase.courtCaseNumber,
@@ -326,10 +344,13 @@ export class InternalCaseService {
       })
   }
 
-  private async deliverSignedRulingPdfToCourt(theCase: Case): Promise<boolean> {
+  private async deliverSignedRulingPdfToCourt(
+    theCase: Case,
+    user: User,
+  ): Promise<boolean> {
     return this.awsS3Service
       .getObject(`generated/${theCase.id}/ruling.pdf`)
-      .then((pdf) => this.uploadSignedRulingPdfToCourt(theCase, pdf))
+      .then((pdf) => this.uploadSignedRulingPdfToCourt(theCase, pdf, user))
       .catch((reason) => {
         this.logger.error(
           `Faild to deliver the ruling for case ${theCase.id} to court`,
@@ -414,10 +435,12 @@ export class InternalCaseService {
     const theCase = await this.caseModel.findOne({
       include: [
         { model: Defendant, as: 'defendants' },
+        { model: IndictmentCount, as: 'indictmentCounts' },
         { model: CaseFile, as: 'caseFiles' },
       ],
       order: [
         [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
+        [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
         [{ model: CaseFile, as: 'caseFiles' }, 'created', 'ASC'],
       ],
       where: {
@@ -471,6 +494,25 @@ export class InternalCaseService {
         )
       }
 
+      const indictmentCountsArchive = []
+      for (const count of theCase.indictmentCounts ?? []) {
+        const [
+          clearedIndictmentCountProperties,
+          indictmentCountArchive,
+        ] = collectEncryptionProperties(
+          indictmentCountEncryptionProperties,
+          count,
+        )
+        indictmentCountsArchive.push(indictmentCountArchive)
+
+        await this.indictmentCountService.update(
+          theCase.id,
+          count.id,
+          clearedIndictmentCountProperties,
+          transaction,
+        )
+      }
+
       await this.caseArchiveModel.create(
         {
           caseId: theCase.id,
@@ -479,6 +521,7 @@ export class InternalCaseService {
               ...caseArchive,
               defendants: defendantsArchive,
               caseFiles: caseFilesArchive,
+              indictmentCounts: indictmentCountsArchive,
             }),
             this.config.archiveEncryptionKey,
             { iv: CryptoJS.enc.Hex.parse(uuidFactory()) },
@@ -513,7 +556,7 @@ export class InternalCaseService {
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {
-        this.logger.error('failed to update case with defendant', { reason })
+        this.logger.error('Failed to update case with defendant', { reason })
 
         return { delivered: false }
       })
@@ -522,42 +565,56 @@ export class InternalCaseService {
   async deliverCaseFilesRecordToCourt(
     theCase: Case,
     policeCaseNumber: string,
+    user: User,
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
     const delivered = await this.uploadCaseFilesRecordPdfToCourt(
       theCase,
       policeCaseNumber,
+      user,
     )
 
     return { delivered }
   }
 
-  async deliverRequestToCourt(theCase: Case): Promise<DeliverResponse> {
+  async deliverRequestToCourt(
+    theCase: Case,
+    user: User,
+  ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
-    const delivered = await this.upploadRequestPdfToCourt(theCase)
+    const delivered = await this.upploadRequestPdfToCourt(theCase, user)
 
     return { delivered }
   }
 
-  async deliverCourtRecordToCourt(theCase: Case): Promise<DeliverResponse> {
+  async deliverCourtRecordToCourt(
+    theCase: Case,
+    user: User,
+  ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
-    const delivered = await this.uploadCourtRecordPdfToCourt(theCase)
+    const delivered = await this.uploadCourtRecordPdfToCourt(theCase, user)
 
     return { delivered }
   }
 
-  async deliverSignedRulingToCourt(theCase: Case): Promise<DeliverResponse> {
+  async deliverSignedRulingToCourt(
+    theCase: Case,
+    user: User,
+  ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
-    const delivered = await this.deliverSignedRulingPdfToCourt(theCase)
+    const delivered = await this.deliverSignedRulingPdfToCourt(theCase, user)
 
     return { delivered }
   }
 
-  async deliverCaseToPolice(theCase: Case): Promise<DeliverResponse> {
+  async deliverCaseToPolice(
+    theCase: Case,
+    user: User,
+  ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
     return getCourtRecordPdfAsString(theCase, this.formatMessage)
@@ -571,6 +628,7 @@ export class InternalCaseService {
         )
 
         const delivered = await this.policeService.updatePoliceCase(
+          user,
           theCase.id,
           theCase.type,
           theCase.state,

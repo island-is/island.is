@@ -224,6 +224,20 @@ export const AdrAndMachine = new XroadConf({
   },
 })
 
+export const JudicialAdministration = new XroadConf({
+  env: {
+    XROAD_COURT_BANKRUPTCY_CERT_PATH: {
+      dev: 'IS-DEV/GOV/10019/Domstolasyslan-DEV/Domstolasyslan',
+      staging: 'IS-DEV/GOV/10019/Domstolasyslan-DEV/Domstolasyslan',
+      prod: 'IS/GOV/4707171140/Domstolasyslan-PROD-1/Domstolasyslan',
+    },
+  },
+  secrets: {
+    DOMSYSLA_PASSWORD: '/k8s/api/DOMSYSLA_PASSWORD',
+    DOMSYSLA_USERNAME: '/k8s/api/DOMSYSLA_USERNAME',
+  },
+})
+
 export const Firearm = new XroadConf({
   env: {
     XROAD_FIREARM_LICENSE_PATH: {
@@ -234,9 +248,9 @@ export const Firearm = new XroadConf({
   },
 })
 
-export const DisabilityLicense = new XroadConf({
+export const Disability = new XroadConf({
   env: {
-    XROAD_DISABILTITY_LICENSE_PATH: {
+    XROAD_DISABILITY_LICENSE_PATH: {
       dev: 'IS-DEV/GOV/10008/TR-Protected/oryrki-v1',
       staging: 'IS-TEST/GOV/5012130120/TR-Protected/oryrki-v1',
       prod: 'IS/GOV/5012130120/TR-Protected/oryrki-v1',
@@ -445,9 +459,9 @@ export const TransportAuthority = new XroadConf({
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Infolocks-V1',
     },
     XROAD_VEHICLE_OPERATORS_PATH: {
-      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V2',
-      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V2',
-      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Operators-V2',
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V3',
+      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V3',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Operators-V3',
     },
     XROAD_VEHICLE_OWNER_CHANGE_PATH: {
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Ownerchange-V2',

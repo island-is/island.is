@@ -131,7 +131,7 @@ export const m = defineMessages({
   /* View Single Student Section */
   viewStudentTitle: {
     id: 'dir.application:viewStudentTitle',
-    defaultMessage: 'Skrá ökutíma',
+    defaultMessage: 'Ökunámsbók',
     description: 'Registration page title',
   },
   viewStudentName: {
@@ -149,6 +149,26 @@ export const m = defineMessages({
     defaultMessage: 'Kennslustundum lokið',
     description: 'Student complete hours',
   },
+  viewStudentPracticeDrivingTitle: {
+    id: 'dir.application:viewStudentPracticeDrivingTitle',
+    defaultMessage: 'Æfingarakstursleyfi',
+    description: 'Student complete hours',
+  },
+  viewStudentPracticeDrivingButton: {
+    id: 'dir.application:viewStudentPracticeDrivingButton',
+    defaultMessage: 'Veita æfingarakstursleyfi',
+    description: 'Student complete hours',
+  },
+  viewStudentYes: {
+    id: 'dir.application:viewStudentYes',
+    defaultMessage: 'Já',
+    description: 'Student complete hours',
+  },
+  viewStudentNo: {
+    id: 'dir.application:viewStudentNo',
+    defaultMessage: 'nei',
+    description: 'Student complete hours',
+  },
   viewStudentCompleteSchools: {
     id: 'dir.application:viewStudentCompleteSchools',
     defaultMessage: 'Ökuskólum lokið',
@@ -158,6 +178,21 @@ export const m = defineMessages({
     id: 'dir.application:viewStudentExamsComplete',
     defaultMessage: 'Skriflegum prófum lokið',
     description: 'Student complete exams',
+  },
+  viewStudentNoCompleteSchools: {
+    id: 'dir.application:viewStudentNoCompleteSchools',
+    defaultMessage: 'Engum ökuskóla lokið',
+    description: 'Student complete schools',
+  },
+  viewStudentNoExamsComplete: {
+    id: 'dir.application:viewStudentNoExamsComplete',
+    defaultMessage: 'Engu skriflegu prófi lokið',
+    description: 'Student complete exams',
+  },
+  viewStudentRegisterDrivingLesson: {
+    id: 'dir.application:viewStudentRegisterDrivingLesson',
+    defaultMessage: 'Skrá ökutíma',
+    description: 'Register mintutes',
   },
   viewStudentRegisterMinutes: {
     id: 'dir.application:viewStudentRegisterMinutes',
@@ -264,6 +299,12 @@ export const m = defineMessages({
     defaultMessage: 'Ekki tókst að eyða skráningu. Vínsamlegast reyndu aftur.',
     description: 'Error on delete lesson',
   },
+  errorOnAllowPracticeDriving: {
+    id: 'dir.application:errorOnAllowPracticeDriving',
+    defaultMessage:
+      'Ekki tókst að leyfa æfingarakstur. Vínsamlegast reyndu aftur.',
+    description: 'Error on edit lesson',
+  },
   successOnRegisterLesson: {
     id: 'dir.application:successOnRegisterLesson',
     defaultMessage: 'Skráning tókst!',
@@ -277,6 +318,11 @@ export const m = defineMessages({
   successOnDeleteLesson: {
     id: 'dir.application:successOnDeleteLesson',
     defaultMessage: 'Tókst að eyða út skráningu!',
+    description: 'Success message on delete lesson',
+  },
+  successOnAllowPracticeDriving: {
+    id: 'dir.application:successOnAllowPracticeDriving',
+    defaultMessage: 'Tókst að veita æfingarakstursleyfi!',
     description: 'Success message on delete lesson',
   },
 })

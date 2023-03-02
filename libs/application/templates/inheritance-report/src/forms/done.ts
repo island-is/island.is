@@ -15,7 +15,7 @@ export const done: Form = buildForm({
     buildMultiField({
       id: 'done',
       title: m.doneTitle,
-      description: '',
+      description: m.doneDescription,
       children: [
         buildCustomField({
           id: 'doneImage',

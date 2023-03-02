@@ -7,25 +7,23 @@ import {
   DefaultEvents,
   ApplicationRole,
   defineTemplateApi,
-  PaymentCatalogApi,
   UserProfileApi,
 } from '@island.is/application/types'
 import { dataSchema } from './dataSchema'
-import {
-  Roles,
-  States,
-  Events,
-  ApiActions,
-  SYSLUMADUR_NATIONAL_ID,
-} from './constants'
+import { Roles, States, Events, ApiActions } from './constants'
 import { m } from './messages'
 import { FeatureFlagClient, Features } from '@island.is/feature-flags'
-import { AuthDelegationType } from '../types/schema'
 import {
   getApplicationFeatureFlags,
   OperatingLicenseFeatureFlags,
 } from './getApplicationFeatureFlags'
-import { CriminalRecordApi, NoDebtCertificateApi } from '../dataProviders'
+import {
+  JudicialAdministrationApi,
+  CriminalRecordApi,
+  NoDebtCertificateApi,
+  SyslumadurPaymentCatalogApi,
+} from '../dataProviders'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const oneDay = 24 * 3600 * 1000
 const thirtyDays = 24 * 3600 * 1000 * 30
@@ -84,13 +82,11 @@ const OperatingLicenseTemplate: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                PaymentCatalogApi.configure({
-                  params: { organizationId: SYSLUMADUR_NATIONAL_ID },
-                  externalDataId: 'payment',
-                }),
+                SyslumadurPaymentCatalogApi,
                 UserProfileApi,
                 CriminalRecordApi,
                 NoDebtCertificateApi,
+                JudicialAdministrationApi,
               ],
             },
           ],
@@ -159,7 +155,10 @@ const OperatingLicenseTemplate: ApplicationTemplate<
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (nationalId === application.applicant) {
+    if (
+      nationalId === application.applicant ||
+      application.applicantActors.includes(nationalId)
+    ) {
       return Roles.APPLICANT
     }
     return undefined

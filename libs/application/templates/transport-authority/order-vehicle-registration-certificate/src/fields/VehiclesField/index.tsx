@@ -1,7 +1,7 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, InputError } from '@island.is/island-ui/core'
 import { FC } from 'react'
-import { VehiclesCurrentVehicle } from '../../types'
+import { VehiclesCurrentVehicle } from '../../shared'
 import { VehicleSelectField } from './VehicleSelectField'
 import { VehicleRadioField } from './VehicleRadioField'
 import { useLocale } from '@island.is/localization'

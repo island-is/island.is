@@ -50,5 +50,5 @@
     },
     "docker-express": {}
   },
-  "tags": []
+  "tags": ["scope:auth-api"]
 }

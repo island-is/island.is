@@ -41,7 +41,6 @@ export const EditOrAddPeriods: Form = buildForm({
           id: 'periodsImageScreen',
           title: getPeriodImageTitle,
           component: 'PeriodsSectionImage',
-          doesNotRequireAnswer: true,
         }),
         buildSubSection({
           id: 'addPeriods',
@@ -79,8 +78,7 @@ export const EditOrAddPeriods: Form = buildForm({
 
                     return (
                       firstPeriodRequestingSpecificStartDate ||
-                      periods.length !== 0 ||
-                      !!currentPeriod?.firstPeriodStart
+                      periods.length !== 0
                     )
                   },
                   minDate: (application: Application) =>

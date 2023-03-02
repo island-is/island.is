@@ -1,4 +1,17 @@
-import type { Case, User } from '@island.is/judicial-system/types'
+import {
+  CaseType,
+  Institution,
+  User,
+  UserRole,
+  IndictmentCount,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  Case,
+  CaseListEntry,
+  CreateCase,
+  SubstanceMap,
+  UpdateCase,
+} from '@island.is/judicial-system/types'
 
 export enum AppealDecisionRole {
   PROSECUTOR = 'PROSECUTOR',
@@ -36,6 +49,7 @@ export enum IndictmentsProsecutorSubsections {
   POLICE_CASE_FILES = 1,
   CASE_FILE = 2,
   PROCESSING = 3,
+  INDICTMENT = 4,
   CASE_FILES = 4,
   OVERVIEW = 5,
 }
@@ -69,7 +83,7 @@ export interface SortConfig {
 }
 
 export interface CaseData {
-  case?: Case
+  case?: TempCase
 }
 
 export interface LimitedAccessCaseData {
@@ -225,4 +239,55 @@ export interface Lawyer {
   email: string
   phoneNr: string
   nationalId: string
+}
+
+/**
+ * We are in the process of stopping using the Case type and
+ * using the generated Case type from /graphql/schema.tsx instead.
+ * We use this type so that we don't have to migrate all the code
+ * at once and this type will be removed when we are done.
+ */
+
+export interface TempIndictmentCount
+  extends Omit<IndictmentCount, 'substances'> {
+  substances?: SubstanceMap
+}
+
+export interface TempCase
+  extends Omit<
+    Case,
+    | 'sharedWithProsecutorsOffice'
+    | 'court'
+    | 'courtDocuments'
+    | 'parentCase'
+    | 'childCase'
+    | 'type'
+    | 'indictmentCounts'
+  > {
+  sharedWithProsecutorsOffice?: Institution
+  court?: Institution
+  courtDocuments?: CourtDocument[]
+  parentCase?: TempCase
+  childCase?: TempCase
+  type: CaseType
+  indictmentCounts?: TempIndictmentCount[]
+}
+
+export interface TempUpdateCase
+  extends Omit<UpdateCase, 'courtDocuments' | 'type'> {
+  courtDocuments?: CourtDocument[]
+  type?: CaseType
+}
+
+export interface TempCreateCase extends Omit<CreateCase, 'type'> {
+  type: CaseType
+}
+
+export interface TempCaseListEntry extends Omit<CaseListEntry, 'type'> {
+  type: CaseType
+}
+
+export interface CourtDocument {
+  name: string
+  submittedBy: UserRole
 }

@@ -1,11 +1,8 @@
-import { useHistory } from 'react-router-dom'
-
-import { Box, Button, Input } from '@island.is/island-ui/core'
+import { GridColumn, GridRow, Input } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { DomainOption } from '../../../hooks/useDomains/useDomains'
 import { DelegationsDomainSelect } from '../DelegationsDomainSelect'
-import * as styles from './DelegationsOutgoingHeader.css'
-import { DelegationPaths } from '../../../lib/paths'
+import { m } from '../../../lib/messages'
 
 interface DelegationsOutgoingHeaderProps {
   domainName?: string | null
@@ -18,39 +15,27 @@ export const DelegationsOutgoingHeader = ({
   onSearchChange,
 }: DelegationsOutgoingHeaderProps) => {
   const { formatMessage } = useLocale()
-  const history = useHistory()
 
   return (
-    <Box className={styles.container}>
-      <Box className={styles.selectContainer}>
+    <GridRow alignItems={'flexEnd'}>
+      <GridColumn span={['8/8', '4/8', '4/8', '4/8', '3/8']}>
         <DelegationsDomainSelect onDomainChange={onDomainChange} />
-      </Box>
-      <Box className={styles.searchContainer}>
+      </GridColumn>
+      <GridColumn
+        span={['8/8', '4/8', '4/8', '4/8', '3/8']}
+        offset={['0', '0', '0', '0', '2/8']}
+        paddingTop={[2, 0]}
+      >
         <Input
           size="xs"
           type="text"
-          placeholder={formatMessage({
-            id: 'sp.access-control-delegations:search-placeholder',
-            defaultMessage: 'Leita eftir nafni eða kt.',
-          })}
+          placeholder={formatMessage(m.searchPlaceholder)}
           backgroundColor="blue"
           name="search"
           onChange={(e) => onSearchChange(e.target.value)}
-          icon="search"
+          icon={{ name: 'search' }}
         />
-      </Box>
-      <Box className={styles.buttonContainer}>
-        <Button
-          onClick={() => history.push(DelegationPaths.DelegationsGrant)}
-          size="small"
-          fluid
-        >
-          {formatMessage({
-            id: 'sp.access-control-delegations:new-delegation',
-            defaultMessage: 'Nýtt umboð',
-          })}
-        </Button>
-      </Box>
-    </Box>
+      </GridColumn>
+    </GridRow>
   )
 }

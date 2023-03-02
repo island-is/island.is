@@ -13,6 +13,7 @@ import { DistrictCommissionerAgencies } from './models/districtCommissionerAgenc
 import { AssetName } from './models/assetName'
 import { UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
+import { PropertyDetail } from '@island.is/api/domains/assets'
 import {
   BypassAuth,
   CurrentUser,
@@ -21,7 +22,6 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
-import { PropertyDetail } from '@island.is/api/domains/assets'
 import { SearchForPropertyInput } from './dto/searchForProperty.input'
 import { EstateRelations } from './models/relations'
 

@@ -6,6 +6,7 @@ import {
   ArticleResolver,
   LatestNewsSliceResolver,
   FeaturedArticlesResolver,
+  FeaturedSupportQNAsResolver,
 } from './cms.resolver'
 import { CmsContentfulService } from './cms.contentful.service'
 import { ContentfulRepository } from './contentful.repository'
@@ -25,6 +26,7 @@ import { OrganizationLogoLoader } from './loaders/organizationLogo.loader'
     CmsHealthIndicator,
     LatestNewsSliceResolver,
     FeaturedArticlesResolver,
+    FeaturedSupportQNAsResolver,
     OrganizationLogoLoader,
   ],
   exports: [

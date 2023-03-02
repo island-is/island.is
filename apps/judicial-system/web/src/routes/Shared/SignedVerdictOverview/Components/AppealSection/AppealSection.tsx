@@ -5,10 +5,7 @@ import { useEffectOnce } from 'react-use'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import {
-  CaseAppealDecision,
-  InstitutionType,
-} from '@island.is/judicial-system/types'
+import { CaseAppealDecision } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   UserContext,
@@ -16,7 +13,8 @@ import {
 import InfoBox from '@island.is/judicial-system-web/src/components/InfoBox/InfoBox'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { signedVerdictOverview } from '@island.is/judicial-system-web/messages'
-import type { Case } from '@island.is/judicial-system/types'
+import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import AccusedAppealInfo from '../Accused/AccusedAppealInfo'
 import ProsecutorAppealInfo from '../Prosecutor/ProsecutorAppealInfo'
@@ -42,7 +40,7 @@ const AppealSection: React.FC<Props> = (props) => {
   } = props
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
-  const isHighCourt = user?.institution?.type === InstitutionType.HIGH_COURT
+  const isHighCourt = user?.institution?.type === InstitutionType.HighCourt
 
   const [isInitialMount, setIsInitialMount] = useState<boolean>(true)
 

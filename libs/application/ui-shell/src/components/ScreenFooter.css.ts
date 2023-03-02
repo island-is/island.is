@@ -17,3 +17,9 @@ export const buttonContainer = style({
     },
   },
 })
+
+export const linkNoStyle = style({
+  ':hover': {
+    textDecoration: 'none',
+  },
+})

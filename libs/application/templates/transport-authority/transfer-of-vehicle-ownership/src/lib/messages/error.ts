@@ -43,4 +43,9 @@ export const error = defineMessages({
     defaultMessage: 'Ekki tókst að sækja gögn',
     description: 'Failed to fetch data error',
   },
+  submitApplicationError: {
+    id: 'ta.tvo.application:error.submitApplicationError',
+    defaultMessage: 'Villa kom upp við að skila inn umsókn',
+    description: 'Failed to submit application',
+  },
 })

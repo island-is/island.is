@@ -216,7 +216,7 @@ test.describe('Parental leave', () => {
       findByRole('heading', {
         name: label(
           parentalLeaveFormMessages.employer
-            .isRecivingUnemploymentBenefitsTitle,
+            .isReceivingUnemploymentBenefitsTitle,
         ),
       }),
     ).toBeVisible()
@@ -239,7 +239,7 @@ test.describe('Parental leave', () => {
 
     await expect(
       findByRole('heading', {
-        name: label(parentalLeaveFormMessages.attachmentScreen.genericTitle),
+        name: label(parentalLeaveFormMessages.attachmentScreen.title),
       }),
     ).toBeVisible()
     await proceed()

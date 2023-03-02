@@ -1,0 +1,464 @@
+{
+  "@odata.context": "https://dev-re.crm4.dynamics.com/api/data/v9.1/$metadata#star_financialtypes(star_name,star_code,star_numeric,star_istaxinformation,star_supertype)",
+  "value": [
+    {
+      "@odata.etag": "W/\"1511495\"",
+      "star_name": "Eigin framlög frambjóðanda",
+      "star_code": "T_Eigin_framlog_frambjodenda",
+      "star_numeric": 102,
+      "star_istaxinformation": false,
+      "star_supertype": 150000001,
+      "star_financialtypeid": "d88dbfd7-22e3-ec11-bb3c-000d3ada8e59"
+    },
+    {
+      "@odata.etag": "W/\"1511497\"",
+      "star_name": "Aðrar tekjur",
+      "star_code": "T_Adrar_tekjur",
+      "star_numeric": 129,
+      "star_istaxinformation": false,
+      "star_supertype": 150000001,
+      "star_financialtypeid": "d98dbfd7-22e3-ec11-bb3c-000d3ada8e59"
+    },
+    {
+      "@odata.etag": "W/\"1511499\"",
+      "star_name": "Fjármagnsgjöld",
+      "star_code": "G_Fjarmagnsgjold",
+      "star_numeric": 148,
+      "star_istaxinformation": false,
+      "star_supertype": 150000002,
+      "star_financialtypeid": "da8dbfd7-22e3-ec11-bb3c-000d3ada8e59"
+    },
+    {
+      "@odata.etag": "W/\"1511500\"",
+      "star_name": "Auglýsingar og kynningar",
+      "star_code": "G_Auglysingar_og_kynningar",
+      "star_numeric": 131,
+      "star_istaxinformation": false,
+      "star_supertype": 150000002,
+      "star_financialtypeid": "db8dbfd7-22e3-ec11-bb3c-000d3ada8e59"
+    },
+    {
+      "@odata.etag": "W/\"1511501\"",
+      "star_name": "Veltufjármunir samtals",
+      "star_code": "E_Veltufjarmunir_samtals",
+      "star_numeric": 160,
+      "star_istaxinformation": false,
+      "star_supertype": 150000003,
+      "star_financialtypeid": "dc8dbfd7-22e3-ec11-bb3c-000d3ada8e59"
+    },
+    {
+      "@odata.etag": "W/\"1511520\"",
+      "star_name": "Þingflokksstyrkur",
+      "star_code": "T_Thingflokkssturkur",
+      "star_numeric": 201,
+      "star_istaxinformation": true,
+      "star_supertype": 150000001,
+      "star_financialtypeid": "8567e604-26e3-ec11-bb3c-000d3ada8e59"
+    },
+    {
+      "@odata.etag": "W/\"1511521\"",
+      "star_name": "Framlög úr ríkissjóði",
+      "star_code": "T_Framlog_ur_rikissjodi",
+      "star_numeric": 200,
+      "star_istaxinformation": true,
+      "star_supertype": 150000001,
+      "star_financialtypeid": "8667e604-26e3-ec11-bb3c-000d3ada8e59"
+    },
+    {
+      "@odata.etag": "W/\"1511523\"",
+      "star_name": "Framlög lögaðila",
+      "star_code": "T_Framlog_logadila",
+      "star_numeric": 203,
+      "star_istaxinformation": false,
+      "star_supertype": 150000001,
+      "star_financialtypeid": "8767e604-26e3-ec11-bb3c-000d3ada8e59"
+    },
+    {
+      "@odata.etag": "W/\"1511524\"",
+      "star_name": "Framlög sveitarfélaga",
+      "star_code": "T_Framlog_sveitarfelaga",
+      "star_numeric": 202,
+      "star_istaxinformation": true,
+      "star_supertype": 150000001,
+      "star_financialtypeid": "8867e604-26e3-ec11-bb3c-000d3ada8e59"
+    },
+    {
+      "@odata.etag": "W/\"1511525\"",
+      "star_name": "Almenn félagsgjöld",
+      "star_code": "T_Almenn_felagsgjold",
+      "star_numeric": 205,
+      "star_istaxinformation": false,
+      "star_supertype": 150000001,
+      "star_financialtypeid": "8967e604-26e3-ec11-bb3c-000d3ada8e59"
+    },
+    {
+      "@odata.etag": "W/\"1511527\"",
+      "star_name": "Fjármagnstekjur",
+      "star_code": "T_Fjarmagnstekjur",
+      "star_numeric": 228,
+      "star_istaxinformation": false,
+      "star_supertype": 150000001,
+      "star_financialtypeid": "8a67e604-26e3-ec11-bb3c-000d3ada8e59"
+    },
+    {
+      "@odata.etag": "W/\"1511529\"",
+      "star_name": "Annar rekstrarkostnaður",
+      "star_code": "G_Annar_rekstrarkostnadur",
+      "star_numeric": 239,
+      "star_istaxinformation": false,
+      "star_supertype": 150000002,
+      "star_financialtypeid": "8b67e604-26e3-ec11-bb3c-000d3ada8e59"
+    },
+    {
+      "@odata.etag": "W/\"1511530\"",
+      "star_name": "Fastafjármunir samtals",
+      "star_code": "E_Fastafjarmunir_samtals",
+      "star_numeric": 250,
+      "star_istaxinformation": false,
+      "star_supertype": 150000003,
+      "star_financialtypeid": "8c67e604-26e3-ec11-bb3c-000d3ada8e59"
+    },
+    {
+      "@odata.etag": "W/\"1511531\"",
+      "star_name": "Fjármagnsgjöld",
+      "star_code": "G_Fjarmagnsgjold",
+      "star_numeric": 248,
+      "star_istaxinformation": false,
+      "star_supertype": 150000002,
+      "star_financialtypeid": "8d67e604-26e3-ec11-bb3c-000d3ada8e59"
+    },
+    {
+      "@odata.etag": "W/\"3518155\"",
+      "star_name": "Eigið fé alls",
+      "star_code": "S_Eigid_fe_alls",
+      "star_numeric": 290,
+      "star_istaxinformation": false,
+      "star_supertype": 150000005,
+      "star_financialtypeid": "8e67e604-26e3-ec11-bb3c-000d3ada8e59"
+    },
+    {
+      "@odata.etag": "W/\"1511534\"",
+      "star_name": "Skammtímaskuldir samtals",
+      "star_code": "S_Skammtimaskuldir_samtals",
+      "star_numeric": 280,
+      "star_istaxinformation": false,
+      "star_supertype": 150000004,
+      "star_financialtypeid": "8f67e604-26e3-ec11-bb3c-000d3ada8e59"
+    },
+    {
+      "@odata.etag": "W/\"1511493\"",
+      "star_name": "Styrkur frá kirkjugarðasjóði",
+      "star_code": null,
+      "star_numeric": 302,
+      "star_istaxinformation": true,
+      "star_supertype": 150000001,
+      "star_financialtypeid": "a5d02cae-27e3-ec11-bb3c-000d3ada8e59"
+    },
+    {
+      "@odata.etag": "W/\"1511492\"",
+      "star_name": "Laun og launatengd gjöld",
+      "star_code": null,
+      "star_numeric": 330,
+      "star_istaxinformation": false,
+      "star_supertype": 150000002,
+      "star_financialtypeid": "a6d02cae-27e3-ec11-bb3c-000d3ada8e59"
+    },
+    {
+      "@odata.etag": "W/\"1511490\"",
+      "star_name": "Rekstur útfararkapellu",
+      "star_code": null,
+      "star_numeric": 332,
+      "star_istaxinformation": false,
+      "star_supertype": 150000002,
+      "star_financialtypeid": "a7d02cae-27e3-ec11-bb3c-000d3ada8e59"
+    },
+    {
+      "@odata.etag": "W/\"1511489\"",
+      "star_name": "Framlög og styrkir til annarra",
+      "star_code": null,
+      "star_numeric": 335,
+      "star_istaxinformation": false,
+      "star_supertype": 150000002,
+      "star_financialtypeid": "a8d02cae-27e3-ec11-bb3c-000d3ada8e59"
+    },
+    {
+      "@odata.etag": "W/\"1511487\"",
+      "star_name": "Fjármagnsgjöld",
+      "star_code": null,
+      "star_numeric": 348,
+      "star_istaxinformation": false,
+      "star_supertype": 150000002,
+      "star_financialtypeid": "a9d02cae-27e3-ec11-bb3c-000d3ada8e59"
+    },
+    {
+      "@odata.etag": "W/\"1511486\"",
+      "star_name": "Fastafjármunir samtals",
+      "star_code": null,
+      "star_numeric": 350,
+      "star_istaxinformation": false,
+      "star_supertype": 150000003,
+      "star_financialtypeid": "aad02cae-27e3-ec11-bb3c-000d3ada8e59"
+    },
+    {
+      "@odata.etag": "W/\"1511485\"",
+      "star_name": "Afskriftir",
+      "star_code": null,
+      "star_numeric": 349,
+      "star_istaxinformation": false,
+      "star_supertype": 150000002,
+      "star_financialtypeid": "abd02cae-27e3-ec11-bb3c-000d3ada8e59"
+    },
+    {
+      "@odata.etag": "W/\"1511483\"",
+      "star_name": "Veltufjármunir samtals",
+      "star_code": null,
+      "star_numeric": 360,
+      "star_istaxinformation": false,
+      "star_supertype": 150000003,
+      "star_financialtypeid": "acd02cae-27e3-ec11-bb3c-000d3ada8e59"
+    },
+    {
+      "@odata.etag": "W/\"1511503\"",
+      "star_name": "Framlög lögaðila",
+      "star_code": "T_Framlog_logadila",
+      "star_numeric": 100,
+      "star_istaxinformation": false,
+      "star_supertype": 150000001,
+      "star_financialtypeid": "5cc920d8-22e3-ec11-bb3c-000d3adb5c4f"
+    },
+    {
+      "@odata.etag": "W/\"1511505\"",
+      "star_name": "Framlög einstaklinga",
+      "star_code": "T_Framlog_einstaklinga",
+      "star_numeric": 101,
+      "star_istaxinformation": false,
+      "star_supertype": 150000001,
+      "star_financialtypeid": "5dc920d8-22e3-ec11-bb3c-000d3adb5c4f"
+    },
+    {
+      "@odata.etag": "W/\"1511506\"",
+      "star_name": "Fjármagnstekjur",
+      "star_code": "T_Fjarmagnstekjur",
+      "star_numeric": 128,
+      "star_istaxinformation": false,
+      "star_supertype": 150000001,
+      "star_financialtypeid": "5ec920d8-22e3-ec11-bb3c-000d3adb5c4f"
+    },
+    {
+      "@odata.etag": "W/\"1511507\"",
+      "star_name": "Kosningaskrifstofa",
+      "star_code": "G_Kosningaskrifstofa",
+      "star_numeric": 130,
+      "star_istaxinformation": false,
+      "star_supertype": 150000002,
+      "star_financialtypeid": "5fc920d8-22e3-ec11-bb3c-000d3adb5c4f"
+    },
+    {
+      "@odata.etag": "W/\"1511508\"",
+      "star_name": "Fundir og ferðakostnaður",
+      "star_code": "G_Fundir_og_ferdakostnadur",
+      "star_numeric": 132,
+      "star_istaxinformation": false,
+      "star_supertype": 150000002,
+      "star_financialtypeid": "60c920d8-22e3-ec11-bb3c-000d3adb5c4f"
+    },
+    {
+      "@odata.etag": "W/\"1511510\"",
+      "star_name": "Annar kostnaður",
+      "star_code": "G_Annar_kostnadur",
+      "star_numeric": 139,
+      "star_istaxinformation": false,
+      "star_supertype": 150000002,
+      "star_financialtypeid": "61c920d8-22e3-ec11-bb3c-000d3adb5c4f"
+    },
+    {
+      "@odata.etag": "W/\"1511511\"",
+      "star_name": "Skammtímaskuldir samtals",
+      "star_code": "S_Skammtimaskuldir_samtals",
+      "star_numeric": 180,
+      "star_istaxinformation": false,
+      "star_supertype": 150000004,
+      "star_financialtypeid": "62c920d8-22e3-ec11-bb3c-000d3adb5c4f"
+    },
+    {
+      "@odata.etag": "W/\"1511515\"",
+      "star_name": "Fastafjármunir samtals",
+      "star_code": "E_Fastafjarmunir_samtals",
+      "star_numeric": 150,
+      "star_istaxinformation": false,
+      "star_supertype": 150000003,
+      "star_financialtypeid": "63c920d8-22e3-ec11-bb3c-000d3adb5c4f"
+    },
+    {
+      "@odata.etag": "W/\"1511516\"",
+      "star_name": "Langtímaskuldir samtals",
+      "star_code": "S_Langtimaskuldir_samtals",
+      "star_numeric": 170,
+      "star_istaxinformation": false,
+      "star_supertype": 150000004,
+      "star_financialtypeid": "64c920d8-22e3-ec11-bb3c-000d3adb5c4f"
+    },
+    {
+      "@odata.etag": "W/\"3518157\"",
+      "star_name": "Eigið fé alls",
+      "star_code": "S_Eigid_fe_alls",
+      "star_numeric": 190,
+      "star_istaxinformation": false,
+      "star_supertype": 150000005,
+      "star_financialtypeid": "65c920d8-22e3-ec11-bb3c-000d3adb5c4f"
+    },
+    {
+      "@odata.etag": "W/\"1511536\"",
+      "star_name": "Framlög einstaklinga",
+      "star_code": "T_Framlog_einstaklinga",
+      "star_numeric": 204,
+      "star_istaxinformation": false,
+      "star_supertype": 150000001,
+      "star_financialtypeid": "85b60108-26e3-ec11-bb3c-000d3adb5c4f"
+    },
+    {
+      "@odata.etag": "W/\"1511537\"",
+      "star_name": "Aðrar tekjur",
+      "star_code": "T_Adrar_tekjur",
+      "star_numeric": 229,
+      "star_istaxinformation": false,
+      "star_supertype": 150000001,
+      "star_financialtypeid": "86b60108-26e3-ec11-bb3c-000d3adb5c4f"
+    },
+    {
+      "@odata.etag": "W/\"1511539\"",
+      "star_name": "Rekstur skrifstofu",
+      "star_code": "G_Rekstur_skrifstofu",
+      "star_numeric": 230,
+      "star_istaxinformation": false,
+      "star_supertype": 150000002,
+      "star_financialtypeid": "87b60108-26e3-ec11-bb3c-000d3adb5c4f"
+    },
+    {
+      "@odata.etag": "W/\"1511541\"",
+      "star_name": "Langtímaskuldir samtals",
+      "star_code": "S_Langtimaskuldir_samtals",
+      "star_numeric": 270,
+      "star_istaxinformation": false,
+      "star_supertype": 150000004,
+      "star_financialtypeid": "88b60108-26e3-ec11-bb3c-000d3adb5c4f"
+    },
+    {
+      "@odata.etag": "W/\"1511542\"",
+      "star_name": "Veltufjármunir samtals",
+      "star_code": "E_Veltufjarmunir_samtals",
+      "star_numeric": 260,
+      "star_istaxinformation": false,
+      "star_supertype": 150000003,
+      "star_financialtypeid": "89b60108-26e3-ec11-bb3c-000d3adb5c4f"
+    },
+    {
+      "@odata.etag": "W/\"1511482\"",
+      "star_name": "Umhirðutekjur",
+      "star_code": null,
+      "star_numeric": 300,
+      "star_istaxinformation": true,
+      "star_supertype": 150000001,
+      "star_financialtypeid": "536e94b3-27e3-ec11-bb3c-000d3adb5c4f"
+    },
+    {
+      "@odata.etag": "W/\"1511480\"",
+      "star_name": "Grafartekjur",
+      "star_code": null,
+      "star_numeric": 301,
+      "star_istaxinformation": true,
+      "star_supertype": 150000001,
+      "star_financialtypeid": "546e94b3-27e3-ec11-bb3c-000d3adb5c4f"
+    },
+    {
+      "@odata.etag": "W/\"1511479\"",
+      "star_name": "Fjármagnstekjur",
+      "star_code": null,
+      "star_numeric": 328,
+      "star_istaxinformation": false,
+      "star_supertype": 150000001,
+      "star_financialtypeid": "556e94b3-27e3-ec11-bb3c-000d3adb5c4f"
+    },
+    {
+      "@odata.etag": "W/\"1511478\"",
+      "star_name": "Aðrar tekjur",
+      "star_code": null,
+      "star_numeric": 329,
+      "star_istaxinformation": false,
+      "star_supertype": 150000001,
+      "star_financialtypeid": "566e94b3-27e3-ec11-bb3c-000d3adb5c4f"
+    },
+    {
+      "@odata.etag": "W/\"1511476\"",
+      "star_name": "Útfararkostnaður",
+      "star_code": null,
+      "star_numeric": 331,
+      "star_istaxinformation": false,
+      "star_supertype": 150000002,
+      "star_financialtypeid": "576e94b3-27e3-ec11-bb3c-000d3adb5c4f"
+    },
+    {
+      "@odata.etag": "W/\"1511474\"",
+      "star_name": "Framlög til kirkjugarðasjóðs",
+      "star_code": null,
+      "star_numeric": 334,
+      "star_istaxinformation": true,
+      "star_supertype": 150000002,
+      "star_financialtypeid": "586e94b3-27e3-ec11-bb3c-000d3adb5c4f"
+    },
+    {
+      "@odata.etag": "W/\"1511473\"",
+      "star_name": "Annar rekstrarkostnaður",
+      "star_code": null,
+      "star_numeric": 339,
+      "star_istaxinformation": false,
+      "star_supertype": 150000002,
+      "star_financialtypeid": "596e94b3-27e3-ec11-bb3c-000d3adb5c4f"
+    },
+    {
+      "@odata.etag": "W/\"1511471\"",
+      "star_name": "Langtímaskuldir samtals",
+      "star_code": null,
+      "star_numeric": 370,
+      "star_istaxinformation": false,
+      "star_supertype": 150000004,
+      "star_financialtypeid": "5a6e94b3-27e3-ec11-bb3c-000d3adb5c4f"
+    },
+    {
+      "@odata.etag": "W/\"3518147\"",
+      "star_name": "Eigið fé 1. janúar",
+      "star_code": null,
+      "star_numeric": 391,
+      "star_istaxinformation": false,
+      "star_supertype": 150000005,
+      "star_financialtypeid": "5b6e94b3-27e3-ec11-bb3c-000d3adb5c4f"
+    },
+    {
+      "@odata.etag": "W/\"1511468\"",
+      "star_name": "Skammtímaskuldir samtals",
+      "star_code": null,
+      "star_numeric": 380,
+      "star_istaxinformation": false,
+      "star_supertype": 150000004,
+      "star_financialtypeid": "5c6e94b3-27e3-ec11-bb3c-000d3adb5c4f"
+    },
+    {
+      "@odata.etag": "W/\"3518152\"",
+      "star_name": "Endurmat, annað",
+      "star_code": null,
+      "star_numeric": 393,
+      "star_istaxinformation": false,
+      "star_supertype": 150000005,
+      "star_financialtypeid": "5d6e94b3-27e3-ec11-bb3c-000d3adb5c4f"
+    },
+    {
+      "@odata.etag": "W/\"3518150\"",
+      "star_name": "Endurmat vegna verðbreytinga",
+      "star_code": null,
+      "star_numeric": 392,
+      "star_istaxinformation": false,
+      "star_supertype": 150000005,
+      "star_financialtypeid": "5e6e94b3-27e3-ec11-bb3c-000d3adb5c4f"
+    }
+  ]
+}

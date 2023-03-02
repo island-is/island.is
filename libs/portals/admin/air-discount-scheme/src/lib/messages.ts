@@ -6,7 +6,7 @@ export const m = defineMessages({
     defaultMessage: 'Loftbrú',
   },
   airDiscountSchemeDescription: {
-    id: 'admin-portal.air-discount-scheme:name',
+    id: 'admin-portal.air-discount-scheme:description',
     defaultMessage: 'Tölfræðigögn og umsjá Loftbrúar',
   },
   overview: {

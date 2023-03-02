@@ -4,12 +4,12 @@ import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
 
 import {
-  Case,
   Defendant,
   Gender,
   isIndictmentCase,
   UpdateDefendant,
 } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import {
   Box,
@@ -23,7 +23,6 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
-import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
@@ -262,7 +261,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
           hasError={accusedNameErrorMessage !== ''}
           onChange={(evt) => {
             removeErrorMessageIfValid(
-              ['empty'] as Validation[],
+              ['empty'],
               evt.target.value,
               accusedNameErrorMessage,
               setAccusedNameErrorMessage,
@@ -278,7 +277,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
           }}
           onBlur={(evt) => {
             validateAndSetErrorMessage(
-              ['empty'] as Validation[],
+              ['empty'],
               evt.target.value,
               setAccusedNameErrorMessage,
             )
@@ -305,7 +304,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
           }
           onChange={(evt) => {
             removeErrorMessageIfValid(
-              ['empty'] as Validation[],
+              ['empty'],
               evt.target.value,
               accusedAddressErrorMessage,
               setAccusedAddressErrorMessage,
@@ -321,7 +320,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
           }}
           onBlur={(evt) => {
             validateAndSetErrorMessage(
-              ['empty'] as Validation[],
+              ['empty'],
               evt.target.value,
               setAccusedAddressErrorMessage,
             )
