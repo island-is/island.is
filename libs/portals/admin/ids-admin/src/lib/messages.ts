@@ -61,4 +61,20 @@ export const m = defineMessages({
     id: 'ap.ids-admin:back',
     defaultMessage: 'Til baka',
   },
+  cancel: {
+    id: 'ap.ids-admin:cancel',
+    defaultMessage: 'Hætta við',
+  },
+  create: {
+    id: 'ap.ids-admin:create',
+    defaultMessage: 'Skrá nýtt forrit',
+  },
+  displayName: {
+    id: 'ap.ids-admin:display-name',
+    defaultMessage: 'Nafn',
+  },
+  clientId: {
+    id: 'ap.ids-admin:clientId',
+    defaultMessage: 'Client ID',
+  },
 })

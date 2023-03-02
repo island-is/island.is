@@ -10,12 +10,15 @@ import {
 import { Link, useOutletContext, useParams } from 'react-router-dom'
 import MockApplications from '../../lib/MockApplications'
 import * as styles from '../TenantsList/TenantsList.css'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
+import { Modal } from '../Modal/Modal'
+import { CreateApplicationForm } from '../forms/CreateApplicationForm'
 
 const Applications = () => {
-  const { tenant } = useParams()
+  const { tenant } = useParams<{ tenant: string }>()
+  const [createApplicationModal, setCreateApplicationModal] = useState(false)
   const { formatMessage } = useLocale()
   const { setNavTitle } = useOutletContext<{
     setNavTitle: (value: string) => void
@@ -34,7 +37,12 @@ const Applications = () => {
             <Text variant={'h2'}>{formatMessage(m.applications)}</Text>
           </Box>
           <Box>
-            <Button size={'small'}>Create Application</Button>
+            <Button
+              size={'small'}
+              onClick={() => setCreateApplicationModal(true)}
+            >
+              Create Application
+            </Button>
           </Box>
         </Box>
       </GridRow>
@@ -85,6 +93,17 @@ const Applications = () => {
           ))}
         </Stack>
       </Box>
+      <Modal
+        id="create-application"
+        isVisible={createApplicationModal}
+        onClose={() => setCreateApplicationModal(false)}
+        title="Create Application"
+      >
+        <CreateApplicationForm
+          tenant={tenant as string}
+          onCancel={() => setCreateApplicationModal(false)}
+        />
+      </Modal>
     </GridContainer>
   )
 }
