@@ -175,7 +175,7 @@ const DateTime: React.FC<Props> = (props) => {
           locale="is"
           errorMessage={datepickerErrorMessage}
           hasError={datepickerErrorMessage !== undefined}
-          icon={locked ? 'lockClosed' : undefined}
+          icon={locked ? { name: 'lockClosed', type: 'outline' } : undefined}
           minDate={minDate}
           maxDate={maxDate}
           selected={selectedDate ? new Date(selectedDate) : undefined}
@@ -199,8 +199,9 @@ const DateTime: React.FC<Props> = (props) => {
               placeholder="Veldu tíma"
               errorMessage={timeErrorMessage}
               hasError={timeErrorMessage !== undefined}
-              icon={locked ? 'lockClosed' : undefined}
-              iconType="outline"
+              icon={
+                locked ? { name: 'lockClosed', type: 'outline' } : undefined
+              }
               required={required}
               backgroundColor={backgroundColor}
               size={size}

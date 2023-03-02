@@ -47,7 +47,7 @@ export const DocumentProvidersSearch = ({ organisationsPreview }: Props) => {
         placeholder={formatMessage(m.documentProvidersSearchPlaceholder)}
         name="searchProviders"
         backgroundColor="blue"
-        icon="search"
+        icon={{ name: 'search' }}
         value={searchTerm}
         onChange={(e) => {
           handleChange(e.target.value)
