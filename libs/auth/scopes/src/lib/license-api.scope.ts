@@ -3,3 +3,8 @@ export enum LicenseApiScope {
   licensesFirearm = '@island.is/licenses:firearm',
   licensesDisability = '@island.is/licenses:disability',
 }
+
+export const getLicenseTypeScopes = (): Array<LicenseApiScope> => [
+  LicenseApiScope.licensesFirearm,
+  LicenseApiScope.licensesDisability,
+]

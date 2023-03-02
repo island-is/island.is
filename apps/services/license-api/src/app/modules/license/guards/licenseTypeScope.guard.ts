@@ -1,10 +1,10 @@
-import { SCOPES_KEY, getRequest } from '@island.is/auth-nest-tools'
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
 import { Observable } from 'rxjs'
 import { Reflector } from '@nestjs/core'
+import { SCOPES_KEY, getRequest } from '@island.is/auth-nest-tools'
 
 @Injectable()
-export class LicenseTypeScopeGuard implements CanActivate {
+export class LicenseTypeScopesGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
 
   canActivate(
@@ -15,14 +15,14 @@ export class LicenseTypeScopeGuard implements CanActivate {
       context.getClass(),
     ])
 
-    const req = getRequest(context)
+    const request = getRequest(context)
 
-    if (scopes && !this.hasScope(scopes, req.auth?.scope)) {
+    if (scopes && !this.hasScope(scopes, request.auth?.scope)) {
       return false
     }
 
-    const licenseType = this.getLicenseTypeFromUrl(req.url)
-    const scopeActions = this.getScopeActions(req.auth?.scope ?? [])
+    const licenseType = this.getLicenseTypeFromUrl(request.url)
+    const scopeActions = this.getScopeActions(request.auth?.scope ?? [])
 
     return scopeActions.includes(licenseType)
   }
