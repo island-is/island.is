@@ -12,7 +12,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common'
-import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiExcludeController } from '@nestjs/swagger'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
@@ -26,7 +26,7 @@ import { environment } from '../../../environments/'
 
 const namespace = `${environment.audit.defaultNamespace}/client-claim`
 @UseGuards(IdsUserGuard, ScopesGuard)
-@ApiTags('client-claim')
+@ApiExcludeController()
 @Controller('backend/client-claim')
 @Audit({ namespace })
 export class ClientClaimController {
