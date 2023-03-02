@@ -1,11 +1,9 @@
-import React from 'react'
 import {
-  Box,
   FormStepperV2,
   Text,
   Section,
-  // FormStepper,
   FormStepperThemes,
+  Stack,
 } from '@island.is/island-ui/core'
 import format from 'date-fns/format'
 
@@ -14,84 +12,39 @@ interface CaseTimelineProps {
   updatedDate: string
 }
 
-export const CaseTimeline: React.FC<CaseTimelineProps> = ({
-  status,
-  updatedDate,
-}) => {
-  const sections = [
-    {
-      section: 'Samráð fyrirhugað',
-      index: 0,
-    },
-    {
-      section: 'Til umsagnar',
-      index: 1,
-    },
-    {
-      section: 'Niðurstöður í vinnslu',
-      index: 2,
-    },
-    {
-      section: 'Niðurstöður birtar',
-      index: 3,
-    },
-  ]
-  const getSections = (sections) => {
-    console.log('in getSection')
-    console.log('status:', status)
+const Sections = [
+  'Samráð fyrirhugað',
+  'Til umsagnar',
+  'Niðurstöður í vinnslu',
+  'Niðurstöður birtar',
+]
 
-    const finalSections = []
-
-    let activeSection
-
-    sections.map(({ section, index }) => {
-      if (section === status) {
-        finalSections.push(
-          <Section
-            key={index}
-            isActive
-            section={section}
-            theme={FormStepperThemes.PURPLE}
-            sectionIndex={index}
-            subSections={[
-              <Text variant="medium" key="sub1">
-                frá {format(new Date(updatedDate), 'dd.MM.yyyy')}
-              </Text>,
-            ]}
-          />,
-        )
-        activeSection = index
-      } else if (section !== status && index > activeSection) {
-        finalSections.push(
-          <Section
-            key={index}
-            section={section}
-            theme={FormStepperThemes.PURPLE}
-            sectionIndex={index}
-          />,
-        )
-      } else {
-        finalSections.push(
-          <Section
-            key={index}
-            section={section}
-            theme={FormStepperThemes.PURPLE}
-            sectionIndex={index}
-            isComplete
-          />,
-        )
+export const CaseTimeline = ({ status, updatedDate }: CaseTimelineProps) => {
+  const sectionItems = Sections.map((item, index) => (
+    <Section
+      key={index}
+      isActive={item === status}
+      section={item}
+      theme={FormStepperThemes.PURPLE}
+      sectionIndex={index}
+      subSections={
+        item === status && [
+          <Text variant="medium" key="sub1">
+            {`frá ${format(new Date(updatedDate), 'dd.MM.yyyy')}`}
+          </Text>,
+        ]
       }
-    })
+      isComplete={Sections.indexOf(status) > Sections.indexOf(item)}
+    />
+  ))
 
-    return finalSections
-  }
   return (
-    <Box paddingY={3}>
+    <Stack space={[2, 2, 2, 1, 1]}>
       <Text variant="h3" color="blue400">
-        {'Tímalína máls'}
+        Tímalína máls
       </Text>
-      <FormStepperV2 sections={getSections(sections)} />
-    </Box>
+      <FormStepperV2 sections={sectionItems} />
+    </Stack>
   )
 }
 export default CaseTimeline

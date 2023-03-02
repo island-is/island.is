@@ -1,31 +1,27 @@
-import React from 'react'
 import {
-  GridColumn,
-  GridRow,
-  GridContainer,
   Box,
-  Text,
   Breadcrumbs,
   Divider,
-  CategoryCard,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Hidden,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
-import { Case, Advice } from '../../types/viewModels'
-import CaseTimeline from '../../../../apps/consultation-portal/components/CaseTimeline/CaseTimeline'
-import SubscriptionBox from '../../../../apps/consultation-portal/components/SubscriptionBox/SubscriptionBox'
-import { CaseOverview, ReviewCard, WriteReviewCard } from '../../components'
+import SubscriptionBox from '../../components/SubscriptionBox/SubscriptionBox'
+import {
+  CaseOverview,
+  CaseTimeline,
+  ReviewCard,
+  WriteReviewCard,
+} from '../../components'
 import Layout from '../../components/Layout/Layout'
+import { Advice } from '../../types/viewModels'
+import { SimpleCardSkeleton } from '../../components/Card'
+import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
 
-interface DetailsProps {
-  chosenCase: Case
-  advices?: Array<Advice>
-  isLoggedIn: boolean
-}
-
-const Details: React.FC<DetailsProps> = ({
-  chosenCase,
-  advices,
-  isLoggedIn,
-}) => {
+const CaseDetails = ({ chosenCase, advices, isLoggedIn }) => {
   const dummyCase = {
     id: 3027,
     caseNumber: '3/2023',
@@ -61,14 +57,26 @@ const Details: React.FC<DetailsProps> = ({
       participantEmail: 'sthh@test.is',
       content: 'Ég styð þetta.',
       created: '2023-01-10T14:01:51.040Z',
+      attachments: false,
     },
     {
-      id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+      id: '3fa85f64-5717-4562-b3fc-2c963f66afa7',
       number: 2,
       participantName: 'Þór Jónsson ',
       participantEmail: 'sthh@test.is',
-      content: 'Ég er mótfallinn þessu.',
+      content: 'Ég er mótfallinn þessu. ',
       created: '2023-01-09T14:01:51.040Z',
+      attachments: true,
+    },
+    {
+      id: '3fa85f64-5717-4562-b3fc-2c963f66afa9',
+      number: 3,
+      participantName: 'Anna Mjöll Guðmundsdóttir',
+      participantEmail: 'test@example.com',
+      content:
+        'Það er gríðarlega mikilvægt að lögð sé áhersla á frjálsan leik barna í leikskóla eins og verið er að gera með þessum breytingum og því ber að fagna. Það mætti þó bæta við, í liðnum, aðstæður barna í leikskóla að hljóðvist og rými fyrir hvert barn sé viðunandi og samkvæmt svokölluðu best practice.',
+      created: '2023-01-07T14:01:51.040Z',
+      attachments: true,
     },
   ]
 
@@ -87,85 +95,101 @@ const Details: React.FC<DetailsProps> = ({
   return (
     <Layout>
       <GridContainer>
-        <GridRow>
-          <GridColumn span={'3/12'} paddingBottom={3}>
-            <GridContainer>
-              <Box>
-                <Box paddingY={[3, 3, 3, 5, 5]}>
-                  <Breadcrumbs
-                    items={[
-                      { title: 'Öll mál', href: '/samradsgatt' },
-                      { title: `Mál nr. ${chosenCase?.caseNumber}` },
-                    ]}
-                  />
-                </Box>
-                <Divider />
-                <CaseTimeline
-                  status="Niðurstöður í vinnslu"
-                  updatedDate={chosenCase.changed}
-                />
-              </Box>
-              <Box
-                marginBottom={6}
-                borderBottomWidth={'standard'}
-                borderTopWidth={'standard'}
-                borderColor={'blue200'}
-                paddingY={2}
-                paddingLeft={1}
-              >
+        <Box paddingY={[3, 3, 3, 5, 5]}>
+          <Breadcrumbs
+            items={[
+              { title: 'Öll mál', href: '/' },
+              { title: `Mál nr. ${chosenCase?.caseNumber}` },
+            ]}
+          />
+        </Box>
+      </GridContainer>
+      <Hidden above={'md'}>
+        <Box paddingBottom={3}>
+          <Divider />
+        </Box>
+      </Hidden>
+      <GridContainer>
+        <GridRow rowGap={3}>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '3/12', '3/12']}
+            order={[3, 3, 3, 1, 1]}
+          >
+            <Stack space={2}>
+              <Divider />
+              <CaseTimeline
+                status="Til umsagnar"
+                updatedDate="2023-01-13T15:47:07.703"
+              />
+              <Divider />
+              <Box paddingLeft={1}>
                 <Text variant="h3" color="purple400">
-                  Fjöldi umsagna: {chosenCase.adviceCount}
+                  Fjöldi umsagna: 2
                 </Text>
               </Box>
-              <SubscriptionBox />
-            </GridContainer>
+              <Divider />
+              <Box paddingTop={1}>
+                <SubscriptionBox />
+              </Box>
+            </Stack>
           </GridColumn>
-
-          <GridColumn span={'6/12'} paddingBottom={3} paddingTop={10}>
-            <Box paddingLeft={4}>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '6/12', '6/12']}
+            order={[1, 1, 1, 2, 2]}
+          >
+            <Stack space={[3, 3, 3, 9, 9]}>
               <CaseOverview chosenCase={chosenCase} />
-              <Box marginBottom={6}>
-                <Text variant="h1" color="blue400" paddingY={2}>
-                  {'Innsendar umsagnir'}
-                </Text>
-                {advices.map((advice) => {
-                  return <ReviewCard advice={advice} key={advice.number} />
-                })}
+              <Box>
+                <Stack space={3}>
+                  <Text variant="h1" color="blue400">
+                    Innsendar umsagnir
+                  </Text>
+                  {advices?.map((advice: Advice) => {
+                    return <ReviewCard advice={advice} key={advice.number} />
+                  })}
+                  <WriteReviewCard card={card} isLoggedIn={isLoggedIn} />
+                </Stack>
               </Box>
-              <WriteReviewCard card={card} isLoggedIn={isLoggedIn} />
-            </Box>
+            </Stack>
           </GridColumn>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '3/12', '3/12']}
+            order={[2, 2, 2, 3, 3]}
+          >
+            <Stack space={3}>
+              <SimpleCardSkeleton>
+                <StackedTitleAndDescription
+                  headingColor="blue400"
+                  title="Skjöl til samráðs"
+                >
+                  {chosenCase.shortDescription}
+                </StackedTitleAndDescription>
+              </SimpleCardSkeleton>
 
-          <GridColumn span={'3/12'}>
-            <Box paddingY={8}>
-              <Box padding={3}>
-                <CategoryCard
-                  heading="Skjöl til samráðs"
-                  text={chosenCase.shortDescription}
-                  // TODO change size from 18 to 16
-                />
-              </Box>
-              <Box padding={3}>
-                <CategoryCard
-                  heading="Aðillar sem hafa fengið boð um samráð á máli."
-                  text="Þetta mál er opið öllum til umsagnar. Skráðu þig inn hér til að skrifa umsögn um málið"
-                />
-              </Box>
-              <Box padding={3}>
-                <CategoryCard
-                  heading="Ábyrgðaraðili"
-                  text={
-                    `${chosenCase.contactName}` +
-                    ` ` +
-                    `${chosenCase.contactEmail}`
-                  }
-                />
-              </Box>
-            </Box>
+              <SimpleCardSkeleton>
+                <StackedTitleAndDescription
+                  headingColor="blue400"
+                  title="Aðilar sem hafa fengið boð um samráð á máli."
+                >
+                  Þetta mál er opið öllum til umsagnar. Skráðu þig inn hér til
+                  að skrifa umsögn um málið
+                </StackedTitleAndDescription>
+              </SimpleCardSkeleton>
+
+              <SimpleCardSkeleton>
+                <StackedTitleAndDescription
+                  headingColor="blue400"
+                  title="Ábyrgðaraðili"
+                >
+                  {`${chosenCase.contactName} ${chosenCase.contactEmail}`}
+                </StackedTitleAndDescription>
+              </SimpleCardSkeleton>
+            </Stack>
           </GridColumn>
         </GridRow>
       </GridContainer>
     </Layout>
   )
 }
-export default Details
+
+export default CaseDetails
