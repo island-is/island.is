@@ -8,12 +8,30 @@ import {
 } from './getAllCases.generated'
 
 interface HomeProps {
-  data: any
+  cases: ConsultationPortalAllCasesQuery['consultationPortalAllCases']
 }
 
-const Home: Screen<HomeProps> = ({ data }) => {
-  console.log('ello', data)
+const Home: Screen<HomeProps> = ({ cases }) => {
+  console.log('ello', cases)
   return <div>Test</div>
+}
+Home.getInitialProps = async ({ apolloClient, locale }) => {
+  const [
+    {
+      data: { consultationPortalAllCases },
+    },
+  ] = await Promise.all([
+    apolloClient.query<
+      ConsultationPortalAllCasesQuery,
+      ConsultationPortalAllCasesQueryVariables
+    >({
+      query: ConsultationPortalAllCasesDocument,
+    }),
+  ])
+
+  return {
+    cases: consultationPortalAllCases,
+  }
 }
 
 export default Home
