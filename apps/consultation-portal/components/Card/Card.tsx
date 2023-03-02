@@ -9,7 +9,6 @@ import {
 } from '@island.is/island-ui/core'
 import { ReactNode } from 'react'
 import getTagVariants from '../../utils/helpers/getTagVariants'
-import EyebrowsWithSeperator from '../EyebrowsWithSeperator/EyebrowsWithSeperator'
 
 import * as styles from './Card.css'
 
@@ -21,8 +20,6 @@ type CardInfo = {
 }
 type CardProps = {
   card: CardInfo
-  height?: string
-  width?: string
   dropdown?: ReactNode
   showAttachment?: boolean
   children: any
@@ -31,20 +28,9 @@ type CardProps = {
 export const Card = ({
   card,
   showAttachment,
-  width,
-  height,
   dropdown,
   children,
 }: CardProps) => {
-  const eyebrowInstances = [
-    {
-      text: `${card.eyebrows[0]}`,
-    },
-    {
-      text: `${card.eyebrows[1]}`,
-    },
-  ]
-
   return (
     <FocusableBox href={`/mal/${card.id}`}>
       <Box
@@ -70,15 +56,17 @@ export const Card = ({
               Nr. S-{card.id}
             </Text>
           </Box>
-          <EyebrowsWithSeperator
-            instances={eyebrowInstances}
-            color="blue600"
-            style={styles.seperator}
-            wrap={false}
-            truncate={true}
-          />
+          <Inline space={1} alignY="center" flexWrap="nowrap">
+            <Text as="p" variant="eyebrow" color="blue600" truncate>
+              {card.eyebrows[0]}
+            </Text>
+            <div className={styles.seperator} />
+            <Text as="p" variant="eyebrow" color="blue600" truncate>
+              {card.eyebrows[1]}
+            </Text>
+          </Inline>
           <Box
-            style={{ height: '100px' }}
+            style={{ height: showAttachment ? '100px' : '100px' }}
             className={styles.title}
             paddingY={2}
           >
