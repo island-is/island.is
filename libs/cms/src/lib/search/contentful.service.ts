@@ -25,11 +25,11 @@ import { Locale } from 'locale'
 const defaultContentfulClientLogging = (level: ClientLogLevel, data: any) => {
   if (level === 'error' && data) {
     const title = [data.name, data.message].filter((a) => a).join(' - ')
-    console.error(`[error] ${title}`)
-    console.error(data)
+    logger.error(`[error] ${title}`)
+    logger.error(data)
     return
   }
-  console.log(`[${level}] ${data}`)
+  logger.info(`[${level}] ${data}`)
 }
 
 interface SyncerResult {
