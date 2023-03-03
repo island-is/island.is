@@ -5,7 +5,7 @@ import {
   ConsultationPortalAllCasesQueryVariables,
   ConsultationPortalAllCasesDocument,
 } from '../screens/Home/getAllCases.generated'
-import Home from '../screens/Home/Home'
+import Home from '../screens/Test/Home'
 
 interface HomeProps {
   cases: ConsultationPortalAllCasesQuery['consultationPortalAllCases']
