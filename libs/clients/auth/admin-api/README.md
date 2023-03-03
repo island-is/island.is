@@ -1,7 +1,39 @@
-# clients-auth-admin-api
+<!-- gitbook-navigation: "Admin API" -->
+# Auth Admin API Client
 
-This library was generated with [Nx](https://nx.dev).
+This library provides a client for the [Auth Admin API](../../../../apps/services/auth/admin-api/README.md).
 
-## Running unit tests
+It is used by our [Auth Admin GraphQL Domain](../../../../libs/api/domains/auth-admin/README.md) to communicate with the Auth Admin API cross our dev, staging and prod environments.
 
-Run `nx test clients-auth-admin-api` to execute the unit tests via [Jest](https://jestjs.io).
+It reads the following environment variables:
+
+```
+AUTH_ADMIN_API_URL_DEV
+AUTH_ADMIN_API_URL_STAGING
+AUTH_ADMIN_API_URL_PROD
+```
+
+to configure and export corresponding `AdminDevApi`, `AdminStagingApi` and `AdminProdApi` api clients.
+
+Which can be used in a service like:
+
+```typescript
+import { AdminDevApi } from '@island.is/auth-admin-api'
+
+@Injectable()
+export class MyService {
+  constructor(
+    @Inject(AdminDevApi.key)
+    @Optional()
+    private readonly adminDevApi?: AdminApi,
+    @Inject(AdminStagingApi.key)
+    @Optional()
+    private readonly adminStagingApi?: AdminApi,
+    @Inject(AdminProdApi.key)
+    @Optional()
+    private readonly adminProdApi?: AdminApi,
+  ) {}
+
+  // Functions using the apis...
+}
+```

@@ -18,6 +18,7 @@ import { TestApp, testServer, useAuth } from '@island.is/testing/nest'
 import { AuthAdminModule } from '../auth-admin.module'
 import { TenantsPayload } from './dto/tenants.payload'
 import { TenantsService } from './tenants.service'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 const mockTenants = {
   tenant1: {
@@ -235,15 +236,24 @@ describe('TenantsService', () => {
   })
 
   describe('with no environment', () => {
-    it('throws error', async () => {
+    it('logs error', async () => {
+      // Assert
+      const mockLogger = {
+        error: jest.fn(),
+      }
+
       // Act
-      const act = async () =>
-        await testServer({
-          appModule: TestModule,
-        })
+      await testServer({
+        appModule: TestModule,
+        override: (builder) =>
+          builder.overrideProvider(LOGGER_PROVIDER).useValue(mockLogger),
+      })
 
       // Assert
-      await expect(act).rejects.toThrow('No admin api configured')
+      expect(mockLogger.error).toBeCalledTimes(1)
+      expect(mockLogger.error).toBeCalledWith(
+        'No admin api clients configured, at least one configured api is required.',
+      )
     })
   })
 })

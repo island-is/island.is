@@ -7,6 +7,8 @@ import {
   AdminProdApi,
   AdminStagingApi,
 } from '@island.is/clients/auth/admin-api'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Environment } from '@island.is/shared/types'
 
 import { TenantEnvironment } from './models/tenant-environment.model'
@@ -16,6 +18,8 @@ import { Tenant } from './models/tenant.model'
 @Injectable()
 export class TenantsService {
   constructor(
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
     @Inject(AdminDevApi.key)
     @Optional()
     private readonly adminDevApi?: AdminApi,
@@ -24,10 +28,12 @@ export class TenantsService {
     private readonly adminStagingApi?: AdminApi,
     @Inject(AdminProdApi.key)
     @Optional()
-    private readonly adminProdApi?: AdminApi, // private readonly adminApiFactory: AdminApiFactory,
+    private readonly adminProdApi?: AdminApi,
   ) {
     if (!this.adminDevApi && !this.adminStagingApi && !this.adminProdApi) {
-      throw new Error('No admin api configured')
+      logger.error(
+        'No admin api clients configured, at least one configured api is required.',
+      )
     }
   }
 
