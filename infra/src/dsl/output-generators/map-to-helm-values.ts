@@ -240,9 +240,10 @@ const serializeService: SerializeMethod<HelmService> = async (
     result.pvcs = volumes
   }
   // Redis
-  if (serviceDef.redis) {
+  if (typeof serviceDef.redis !== 'undefined') {
     const env: { [name: string]: string } = {}
     env['REDIS_URL_NODE_01'] = serviceDef.redis.host ?? env1.redisHost
+
     mergeObjects(result.env, env)
   }
 

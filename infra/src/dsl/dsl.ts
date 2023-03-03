@@ -17,7 +17,6 @@ import {
   ValueType,
   XroadConfig,
 } from './types/input-types'
-
 type Optional<T, L extends keyof T> = Omit<T, L> & Partial<Pick<T, L>>
 
 export class ServiceBuilder<ServiceType> {
@@ -212,8 +211,9 @@ export class ServiceBuilder<ServiceType> {
     return this
   }
 
-  redis(redis: string) {
-    this.serviceDef.redis = redis
+  redis(redis?: RedisInfo) {
+    this.serviceDef.redis = redis ?? { host: 'default' }
+    //console.log(this)
     return this
   }
 

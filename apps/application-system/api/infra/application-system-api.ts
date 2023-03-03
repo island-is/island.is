@@ -34,9 +34,6 @@ const postgresInfo: PostgresInfo = {
   name: 'application_system_api',
   username: 'application_system_api',
 }
-const redisInfo: RedisInfo = {
-  host: { dev: 'something', staging: 'something', prod: 'something' },
-}
 export const GRAPHQL_API_URL_ENV_VAR_NAME = 'GRAPHQL_API_URL' // This property is a part of a circular dependency that is treated specially in certain deployment types
 
 const namespace = 'application-system'
@@ -47,7 +44,7 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
     .image('application-system-api')
     .postgres(postgresInfo)
     .serviceAccount('application-system-api-worker')
-    .redis(redisInfo)
+    .redis()
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system',
       IDENTITY_SERVER_ISSUER_URL: {
@@ -115,7 +112,7 @@ export const serviceSetup = (services: {
     .namespace(namespace)
     .serviceAccount(serviceAccount)
     .command('node')
-    .redis(redisInfo)
+    .redis()
     .args('main.js')
     .env({
       EMAIL_REGION: 'eu-west-1',
