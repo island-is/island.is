@@ -13,7 +13,7 @@ import { serviceSetup as servicePortalApiSetup } from '../../../apps/services/us
 import { serviceSetup as servicePortalSetup } from '../../../apps/service-portal/infra/service-portal'
 
 import { serviceSetup as adminPortalSetup } from '../../../apps/portals/admin/infra/portals-admin'
-import { serviceSetup as samradsgattSetup } from '../../../apps/samradsgatt/infra/samradsgatt'
+import { serviceSetup as consultationPortalSetup } from '../../../apps/consultation-portal/infra/samradsgatt'
 import { serviceSetup as xroadCollectorSetup } from '../../../apps/services/xroad-collector/infra/xroad-collector'
 
 import { serviceSetup as licenseApiSetup } from '../../../apps/services/license-api/infra/license-api'
@@ -63,7 +63,7 @@ const appSystemApiWorker = appSystemApiWorkerSetup()
 
 const servicePortalApi = servicePortalApiSetup()
 const adminPortal = adminPortalSetup()
-const samradsgatt = samradsgattSetup()
+const consultationPortal = consultationPortalSetup()
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
 
 const adsBackend = adsBackendSetup()
@@ -178,7 +178,7 @@ export const Services: EnvironmentServices = {
     servicePortal,
     servicePortalApi,
     adminPortal,
-    samradsgatt,
+    consultationPortal,
     api,
     web,
     searchIndexer,
