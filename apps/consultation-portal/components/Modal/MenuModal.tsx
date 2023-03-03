@@ -12,7 +12,6 @@ import {
 } from '@island.is/island-ui/core'
 import { useState } from 'react'
 import { menuItems } from '../Menu/MenuItems'
-import { MenuLogo } from '../svg'
 import { checkActiveHeaderLink } from '../../utils/helpers'
 
 import * as styles from './MenuModal.css'

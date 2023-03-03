@@ -1,6 +1,4 @@
 import {
-  Box,
-  Breadcrumbs,
   GridColumn,
   GridContainer,
   GridRow,
