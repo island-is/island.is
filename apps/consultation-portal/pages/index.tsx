@@ -1,11 +1,11 @@
-import initApollo from '@island.is/consultation-portal/graphql/client'
+import initApollo from '../graphql/client'
 import {
   ConsultationPortalAllCasesQuery,
   ConsultationPortalAllCasesQueryVariables,
   ConsultationPortalAllCasesDocument,
-} from '@island.is/consultation-portal/screens/Home/getAllCases.generated'
-import Home from '@island.is/consultation-portal/screens/Home/Home'
-import { Case } from '@island.is/consultation-portal/types/interfaces'
+} from '../screens/Home/getAllCases.generated'
+import Home from '../screens/Home/Home'
+import { Case } from '../types/interfaces'
 
 interface HomeProps {
   cases: Case[]

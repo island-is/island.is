@@ -2,13 +2,13 @@ import {
   ConsultationPortalCaseItemResult,
   QueryConsultationPortalCaseByIdArgs,
 } from '@island.is/api/schema'
-import initApollo from '@island.is/consultation-portal/graphql/client'
-import CaseScreen from '@island.is/consultation-portal/screens/Case/Case'
+import initApollo from '../../graphql/client'
+import CaseScreen from '../../screens/Case/Case'
 import {
   ConsultationPortalCaseByIdQuery,
   ConsultationPortalCaseByIdDocument,
-} from '@island.is/consultation-portal/screens/Case/getCase.generated'
-import { GET_CASE_BY_ID } from '@island.is/consultation-portal/screens/Case/getCase'
+} from '../../screens/Case/getCase.generated'
+import { GET_CASE_BY_ID } from '../../screens/Case/getCase'
 import { Advice, Case } from '../../types/viewModels'
 interface CaseProps {
   case: Case

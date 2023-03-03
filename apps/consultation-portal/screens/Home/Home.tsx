@@ -12,13 +12,13 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import React, { useEffect, useState } from 'react'
-import { HeroBanner } from '@island.is/consultation-portal/components'
-import Card from '@island.is/consultation-portal/components/Card/Card'
-import Layout from '@island.is/consultation-portal/components/Layout/Layout'
-import SearchAndFilter from '@island.is/consultation-portal/components/SearchAndFilter/SearchAndFilter'
-import Types from '@island.is/consultation-portal/utils/dummydata/api/Types'
-import { Case } from '@island.is/consultation-portal/types/interfaces'
-import FilterBox from '@island.is/consultation-portal/components/Filterbox/Filterbox'
+import { HeroBanner } from '../../components'
+import Card from '../../components/Card/Card'
+import Layout from '../../components/Layout/Layout'
+import SearchAndFilter from '../../components/SearchAndFilter/SearchAndFilter'
+import Types from '../../utils/dummydata/api/Types'
+import { Case } from '../../types/interfaces'
+import FilterBox from '../../components/Filterbox/Filterbox'
 
 const CARDS_PER_PAGE = 12
 interface HomeProps {
