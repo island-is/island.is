@@ -21,6 +21,7 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 
+import { Sjukra } from '../assets'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 
 /* eslint-disable-next-line */
@@ -29,6 +30,7 @@ export interface EuropeanHealthInsuranceCardProps {}
 export const EuropeanHealthInsuranceCardReview: Form = buildForm({
   id: 'EuropeanHealthInsuranceCardApplicationForm',
   title: '',
+  logo: Sjukra,
   mode: FormModes.DRAFT,
   children: [
     buildSection({

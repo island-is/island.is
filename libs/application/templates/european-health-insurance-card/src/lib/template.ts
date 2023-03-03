@@ -7,14 +7,14 @@ import {
   ApplicationTypes,
   ChildrenCustodyInformationApi,
   DefaultEvents,
-  defineTemplateApi,
   NationalRegistrySpouseApi,
   NationalRegistryUserApi,
+  defineTemplateApi,
 } from '@island.is/application/types'
-
-import { DefaultStateLifeCycle } from '@island.is/application/core'
-import { dataSchema } from './dataSchema'
-import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
+import {
+  DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
+} from '@island.is/application/core'
 import {
   EhicApplyForPhysicalAndTemporary,
   EhicApplyForPhysicalCardApi,
@@ -22,8 +22,11 @@ import {
   EhicCardResponseApi,
   EhicGetTemporaryCardApi,
 } from '../dataProviders'
+
 import { ApiActions } from '../dataProviders/apiActions.enum'
 import { States } from './types'
+import { dataSchema } from './dataSchema'
+import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.ABORT }
 
@@ -36,6 +39,10 @@ enum TEMPLATE_API_ACTIONS {
   // (will be refactored when state machine is a part of API module)
   sendApplication = 'sendApplication',
 }
+
+console.log()
+
+
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -47,14 +54,58 @@ const template: ApplicationTemplate<
   readyForProduction: false,
   dataSchema,
   stateMachineConfig: {
-    initial: States.DRAFT,
+    initial: States.PREREQUISITES,
     states: {
-      [States.DRAFT]: {
+      [States.PREREQUISITES]: {
+        meta: {
+          name: 'EHIC-Prerequisites',
+          status: 'draft',
+          progress: 0.2,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/EuropeanHealthInsuranceCardPre').then((val) =>
+                  Promise.resolve(val.EuropeanHealthInsuranceCardPre),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'EHIC-Prerequisites-submit',
+                  type: 'primary',
+                },
+              ],
+              api: [
+                NationalRegistryUserApi,
+                NationalRegistrySpouseApi,
+                ChildrenCustodyInformationApi,
+                EhicCardResponseApi,
+              ],
+              write: 'all',
+              read: 'all',
+              delete: true,
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.DECLINED,
+          },
+        },
+      },
+
+      [States.PLASTIC]: {
         meta: {
           name: 'EHIC-FORM',
           status: 'draft',
-          progress: 0.1,
+          progress: 0.4,
           lifecycle: DefaultStateLifeCycle,
+          onExit: defineTemplateApi({
+            action: ApiActions.applyForPhysicalAndTemporary,
+            shouldPersistToExternalData: true,
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -68,12 +119,6 @@ const template: ApplicationTemplate<
                   name: 'EHIC-Plastic-submit',
                   type: 'primary',
                 },
-              ],
-              api: [
-                NationalRegistryUserApi,
-                NationalRegistrySpouseApi,
-                ChildrenCustodyInformationApi,
-                EhicCardResponseApi,
               ],
               write: 'all',
               read: 'all',
@@ -158,6 +203,23 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
+            },
+          ],
+        },
+      },
+
+      [States.DECLINED]: {
+        meta: {
+          name: 'Declined',
+          status: 'rejected',
+          progress: 1,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Declined').then((val) => val.Declined),
+              read: 'all',
             },
           ],
         },

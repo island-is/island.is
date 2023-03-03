@@ -6,6 +6,7 @@ import {
   NationalRegistrySpouseApi,
   NationalRegistryUserApi,
 } from '@island.is/application/types'
+import { CardResponse, NationalRegistry } from '../lib/types'
 import {
   EhicApplyForPhysicalCardApi,
   EhicCardResponseApi,
@@ -22,90 +23,42 @@ import {
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
-
-import { CardResponse, NationalRegistry } from '../lib/types'
-import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 import {
   getDefaultValuesForPDFApplicants,
   getEhicResponse,
   getFromRegistry,
   getFullName,
   hasAPDF,
-  someCanApplyForPlastic,
-  someHavePlasticButNotPdf,
-  someHavePDF,
-  someCanApplyForPlasticOrPdf,
   someAreNotInsured,
+  someCanApplyForPlastic,
+  someCanApplyForPlasticOrPdf,
+  someHavePDF,
+  someHavePlasticButNotPdf,
 } from '../lib/helpers/applicantHelper'
 
+import { Sjukra } from '../assets'
+import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
+
 /* eslint-disable-next-line */
-export interface EuropeanHealthInsuranceCardProps {}
+export interface EuropeanHealthInsuranceCardProps { }
 
 export const EuropeanHealthInsuranceCardForm: Form = buildForm({
   id: 'EuropeanHealthInsuranceCardForm',
   title: '',
+  logo: Sjukra,
   mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'intro',
       title: e.introScreen.sectionLabel,
-
-      children: [
-        buildCustomField(
-          {
-            id: 'introScreen',
-            title: e.introScreen.sectionTitle,
-            component: 'IntroScreen',
-          },
-          {
-            subTitle: e.introScreen.sectionDescription,
-          },
-        ),
-      ],
+      children: [],
     }),
 
     buildSection({
       id: 'data',
       title: e.data.sectionLabel,
-      children: [
-        buildExternalDataProvider({
-          title: e.data.sectionTitle,
-          checkboxLabel: e.data.dataCollectionCheckboxLabel,
-          id: 'approveExternalData',
-          description: '',
-          dataProviders: [
-            buildDataProviderItem({
-              provider: NationalRegistryUserApi,
-              title: 'Þjóðskrá Íslands',
-              subTitle:
-                'Við þurfum að sækja þessi gögn úr þjóðskrá. Lögheimili, hjúskaparstaða, maki og afkvæmi.',
-            }),
-            buildDataProviderItem({
-              provider: NationalRegistrySpouseApi,
-              title: '',
-              subTitle: '',
-            }),
-            buildDataProviderItem({
-              provider: ChildrenCustodyInformationApi,
-              title: '',
-              subTitle: '',
-            }),
-            buildDataProviderItem({
-              provider: EhicCardResponseApi,
-              title: 'Sjúkratryggingar',
-              subTitle:
-                'Upplýsingar um stöðu heimildar á evrópska sjúktryggingakortinu',
-            }),
-          ],
-        }),
-        buildDescriptionField({
-          id: 'data-ok',
-          title: e.data.dataCollectionCompletedTitle,
-          description: e.data.dataCollectionCompletedDescription,
-        }),
-      ],
+      children: [],
     }),
-
     buildSection({
       id: 'plastic',
       title: e.applicants.sectionLabel,
@@ -139,7 +92,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
             buildCheckboxField({
               id: 'addForPDF',
               backgroundColor: 'white',
-              title: 'Bráðabirgðakort',
+              title: e.temp.sectionCanTitle,
               condition: (_, externalData) =>
                 someHavePlasticButNotPdf(externalData),
               options: (application: Application) => {
@@ -150,6 +103,8 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                     applying.push({
                       value: x.applicantNationalId,
                       label: getFullName(application, x.applicantNationalId),
+                      subLabel:
+                        e.temp.sectionHasPlasticLabel,
                     })
                   }
                 })
@@ -170,6 +125,8 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                     applying.push({
                       value: x.applicantNationalId,
                       label: getFullName(application, x.applicantNationalId),
+                      subLabel:
+                        "m.noDeprivedDrivingLicenseInOtherCountryDescription.defaultMessage",
                       disabled: true,
                     })
                   }
@@ -180,7 +137,8 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
             buildCheckboxField({
               id: 'notApplicable',
               backgroundColor: 'white',
-              title: 'Eru ekki sjúkratryggðir',
+              title: "",
+              description: e.no.sectionDescription,
               condition: (_, externalData) => someAreNotInsured(externalData),
               options: (application: Application) => {
                 console.log(application, 'notApplicable')
@@ -190,6 +148,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                     applying.push({
                       value: x.applicantNationalId,
                       label: getFullName(application, x.applicantNationalId),
+                      subLabel: e.no.sectionSubDescription,
                       disabled: true,
                     })
                   }
@@ -199,12 +158,13 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
             }),
           ],
         }),
+        
         buildDescriptionField({
           condition: (_, externalData) =>
             !someCanApplyForPlasticOrPdf(externalData),
           id: 'noInsurance',
-          title: 'No Insurance',
-          description: 'Not insured',
+          title: e.no.sectionLabel,
+          description: e.no.sectionDescription,
         }),
       ],
     }),
