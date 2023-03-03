@@ -88,6 +88,8 @@ const UploadFilesToPoliceCase: React.FC<{
 
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
 
+  const [isUploading, setIsUploading] = useState<boolean>(false)
+
   const errorMessage = useMemo(() => {
     if (displayFiles.some((file) => file.status === 'error')) {
       return formatMessage(errorMessages.general)
@@ -95,10 +97,6 @@ const UploadFilesToPoliceCase: React.FC<{
       return undefined
     }
   }, [displayFiles, formatMessage])
-
-  const isUploading = useMemo(() => {
-    return displayFiles.some((file) => file.status === 'uploading')
-  }, [displayFiles])
 
   useEffect(() => {
     setDisplayFiles(caseFiles.map(mapCaseFileToUploadFile))
@@ -168,15 +166,10 @@ const UploadFilesToPoliceCase: React.FC<{
 
   const setSingleFile = useCallback(
     (displayFile: UploadFile, newId?: string) => {
-      setDisplayFiles((previous) => {
-        const index = previous.findIndex((f) => f.id === displayFile.id)
-        if (index === -1) {
-          return previous
-        }
-        const next = [...previous]
-        next[index] = { ...displayFile, id: newId ?? displayFile.id }
-        return next
-      })
+      setDisplayFiles((previous) => [
+        ...previous,
+        { ...displayFile, id: newId ?? displayFile.id },
+      ])
     },
     [setDisplayFiles],
   )
@@ -215,7 +208,9 @@ const UploadFilesToPoliceCase: React.FC<{
   const onPoliceCaseFileUpload = useCallback(async () => {
     const filesToUpload = policeCaseFileList.filter((p) => p.checked)
 
-    filesToUpload.forEach(async (f) => {
+    setIsUploading(true)
+
+    filesToUpload.forEach(async (f, index) => {
       const fileToUpload = {
         id: f.id,
         type: 'application/pdf',
@@ -225,12 +220,15 @@ const UploadFilesToPoliceCase: React.FC<{
         policeCaseNumber: f.policeCaseNumber,
       } as UploadFile
 
-      await uploadPoliceCaseFile(fileToUpload)
+      await uploadPoliceCaseFile(fileToUpload, setSingleFile)
 
-      setDisplayFiles([fileToUpload, ...displayFiles])
       setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
+
+      if (index === filesToUpload.length - 1) {
+        setIsUploading(false)
+      }
     })
-  }, [displayFiles, policeCaseFileList, uploadPoliceCaseFile])
+  }, [policeCaseFileList, setSingleFile, uploadPoliceCaseFile])
 
   const onRetry = useCallback(
     (file: UploadFile) => {

@@ -167,7 +167,10 @@ export const useS3Upload = (caseId: string) => {
   )
 
   const uploadPoliceCaseFile = useCallback(
-    async (file: TUploadFile) => {
+    async (
+      file: TUploadFile,
+      updateFile: (file: TUploadFile, newId?: string) => void,
+    ) => {
       try {
         const {
           data: uploadPoliceCaseFileData,
@@ -203,6 +206,17 @@ export const useS3Upload = (caseId: string) => {
         if (!data2.data?.createFile.id) {
           throw Error('failed to add file to case')
         }
+
+        updateFile(
+          {
+            id: file.id,
+            name: file.name,
+            percent: 100,
+            status: 'done',
+          },
+          // We need to set the id so we are able to delete the file later
+          data2.data.createFile.id,
+        )
 
         return uploadPoliceCaseFileData?.uploadPoliceCaseFile
       } catch (e) {

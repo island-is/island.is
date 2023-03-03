@@ -179,17 +179,12 @@ export const CaseFiles: React.FC = () => {
 
   const setSingleFile = useCallback(
     (displayFile: UploadFile, newId?: string) => {
-      setFilesInRVG((previous) => {
-        const index = previous.findIndex((f) => f.id === displayFile.id)
-        if (index === -1) {
-          return previous
-        }
-        const next = [...previous]
-        next[index] = { ...displayFile, id: newId ?? displayFile.id }
-        return next
-      })
+      setFilesInRVG((previous) => [
+        ...previous,
+        { ...displayFile, id: newId ?? displayFile.id },
+      ])
     },
-    [],
+    [setFilesInRVG],
   )
 
   const handleUpload = useCallback(
@@ -235,16 +230,15 @@ export const CaseFiles: React.FC = () => {
         state: CaseFileState.STORED_IN_RVG,
       } as UploadFile
 
-      await uploadPoliceCaseFile(fileToUpload)
+      await uploadPoliceCaseFile(fileToUpload, setSingleFile)
 
-      setFilesInRVG([fileToUpload, ...filesInRVG])
       setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
 
       if (index === filesToUpload.length - 1) {
         setIsUploading(false)
       }
     })
-  }, [filesInRVG, policeCaseFileList, uploadPoliceCaseFile])
+  }, [policeCaseFileList, setSingleFile, uploadPoliceCaseFile])
 
   const handleRemove = useCallback(
     async (file: UploadFile) => {
