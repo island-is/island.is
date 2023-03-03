@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import router from 'next/router'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -76,28 +76,21 @@ const Indictment: React.FC = () => {
 
   const setDriversLicenseSuspensionRequest = useCallback(
     (indictmentCounts?: TIndictmentCount[]) => {
-      // If the case has no counts with the offence "Driving without a licence" and
+      // If the case has:
       // at least one count with the offence "Driving under the influence of alcohol" and the alcohol level is 1,20 or higher or
       // at least one count with the offence "Driving under the influence of illegal drugs" or "Driving under the influence of prescription drugs"
       // then by default the prosecutor requests a suspension of the driver's licence.
-      const requestDriversLicenseSuspension =
-        !indictmentCounts?.some((count) =>
-          count.offenses?.some(
-            (offence) =>
-              offence === IndictmentCountOffense.DrivingWithoutLicence,
-          ),
-        ) &&
-        indictmentCounts?.some((count) =>
-          count.offenses?.some(
-            (offense) =>
-              (offense === IndictmentCountOffense.DrunkDriving &&
-                (count.substances?.ALCOHOL ?? '') >= '1,20') ||
-              [
-                IndictmentCountOffense.IllegalDrugsDriving,
-                IndictmentCountOffense.PrescriptionDrugsDriving,
-              ].includes(offense),
-          ),
-        )
+      const requestDriversLicenseSuspension = indictmentCounts?.some((count) =>
+        count.offenses?.some(
+          (offense) =>
+            (offense === IndictmentCountOffense.DrunkDriving &&
+              (count.substances?.ALCOHOL ?? '') >= '1,20') ||
+            [
+              IndictmentCountOffense.IllegalDrugsDriving,
+              IndictmentCountOffense.PrescriptionDrugsDriving,
+            ].includes(offense),
+        ),
+      )
 
       if (
         requestDriversLicenseSuspension !==
@@ -264,14 +257,6 @@ const Indictment: React.FC = () => {
 
   useOnceOn(isCaseUpToDate, initialize)
 
-  const enableDriversLicenseSuspension = useMemo(
-    () =>
-      !workingCase.indictmentCounts?.some((count) =>
-        count.offenses?.includes(IndictmentCountOffense.DrivingWithoutLicence),
-      ),
-    [workingCase.indictmentCounts],
-  )
-
   return (
     <PageLayout
       workingCase={workingCase}
@@ -372,29 +357,27 @@ const Indictment: React.FC = () => {
         <Box component="section" marginBottom={6}>
           <SectionHeading title={formatMessage(strings.demandsTitle)} />
           <BlueBox>
-            {enableDriversLicenseSuspension && (
-              <Box marginBottom={3}>
-                <Checkbox
-                  name="requestDriversLicenseSuspension"
-                  label={formatMessage(strings.demandsRequestSuspension)}
-                  checked={workingCase.requestDriversLicenseSuspension}
-                  onChange={() => {
-                    setAndSendCaseToServer(
-                      [
-                        {
-                          requestDriversLicenseSuspension: !workingCase.requestDriversLicenseSuspension,
-                          force: true,
-                        },
-                      ],
-                      workingCase,
-                      setWorkingCase,
-                    )
-                  }}
-                  filled
-                  large
-                />
-              </Box>
-            )}
+            <Box marginBottom={3}>
+              <Checkbox
+                name="requestDriversLicenseSuspension"
+                label={formatMessage(strings.demandsRequestSuspension)}
+                checked={workingCase.requestDriversLicenseSuspension}
+                onChange={() => {
+                  setAndSendCaseToServer(
+                    [
+                      {
+                        requestDriversLicenseSuspension: !workingCase.requestDriversLicenseSuspension,
+                        force: true,
+                      },
+                    ],
+                    workingCase,
+                    setWorkingCase,
+                  )
+                }}
+                filled
+                large
+              />
+            </Box>
             <Input
               name="demands"
               label={formatMessage(strings.demandsLabel)}

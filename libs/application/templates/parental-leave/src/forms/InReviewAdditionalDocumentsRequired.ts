@@ -22,7 +22,7 @@ export const InReviewAdditionalDocumentsRequired: Form = buildForm({
       children: [
         buildCustomField({
           id: 'additionalDocumentsRequired',
-          title: parentalLeaveFormMessages.attachmentScreen.title,
+          title: '',
           component: 'InReviewSteps',
         }),
       ],

@@ -4,13 +4,13 @@ import { IDSAdminPaths } from './paths'
 
 export const domainNav: PortalNavigationItem = {
   name: m.tenants,
-  path: IDSAdminPaths.IDSAdminDomains,
+  path: IDSAdminPaths.IDSAdminTenants,
   description: m.idsAdmin,
   activeIfExact: true,
   children: [
     {
       name: m.applications,
-      path: IDSAdminPaths.IDSAdminDomains,
+      path: IDSAdminPaths.IDSAdminTenants,
       description: m.idsAdmin,
       activeIfExact: true,
     },
