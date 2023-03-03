@@ -15,7 +15,7 @@ import {
 export class CaseResultResolver {
   constructor(private caseResultService: CaseResultService) {}
 
-  // @FeatureFlag(Features.consultationPortalApplication)
+  @FeatureFlag(Features.consultationPortalApplication)
   @Query(() => [CaseItemResult], { name: 'consultationPortalAllCases' })
   async getAllCases(): Promise<CaseItemResult[]> {
     return await this.caseResultService.getAllCases()
