@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { editorMsgs, reviewMessages } from '../lib/messages'
 import { DraftingState } from '../state/types'
 import { isDraftErrorFree } from '../state/validations'
-import { Step } from '../types'
+import { Step, StepNames } from '../types'
 import { useLocale } from '@island.is/localization'
 import { getEditUrl } from '../utils/routing'
 import { MessageDescriptor } from '@formatjs/intl'
@@ -52,7 +52,7 @@ export const useCollectMessages = (
 
     const titleError = title.error || type.error // …because "type" field errors are caused by weirdly shaped titles
 
-    let step: Step = 'basics'
+    let step: Step = StepNames.basics
 
     if (titleError) {
       messages.push({
@@ -86,7 +86,7 @@ export const useCollectMessages = (
       }
     })
 
-    step = 'meta'
+    step = StepNames.meta
 
     if (effectiveDate.error) {
       messages.push({
@@ -103,7 +103,7 @@ export const useCollectMessages = (
       })
     }
 
-    step = 'signature'
+    step = StepNames.signature
 
     if (signedDocumentUrl.error) {
       messages.push({

@@ -1,5 +1,5 @@
 import { Reducer, useReducer } from 'react'
-import { Step } from '../types'
+import { RegulationDraftTypes, Step } from '../types'
 import { LawChapter, MinistryList } from '@island.is/regulations'
 import { Action, DraftingState, RegDraftFormSimpleProps } from './types'
 import { produce, setAutoFreeze } from 'immer'
@@ -49,7 +49,7 @@ export const useEditDraftReducer = (inputs: StateInputs) => {
     const state: DraftingState = {
       draft,
       step:
-        draft.type.value === 'amending'
+        draft.type.value === RegulationDraftTypes.amending
           ? stepsAmending[stepName]
           : stepsBase[stepName],
       ministries,

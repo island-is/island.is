@@ -9,7 +9,7 @@ import {
 import { useMutation, gql } from '@apollo/client'
 import { LawChapterSlug, toISODate } from '@island.is/regulations'
 import { useNavigate } from 'react-router-dom'
-import { Step } from '../types'
+import { RegulationDraftTypes, Step, StepNames } from '../types'
 import { useLocale } from '@island.is/localization'
 import { DraftingStatus } from '@island.is/regulations/admin'
 import {
@@ -83,10 +83,10 @@ const useMakeDraftingState = (inputs: StateInputs) => {
   useEffect(() => {
     if (
       draftIsLocked &&
-      inputs.stepName !== 'review' &&
-      inputs.stepName !== 'publish'
+      inputs.stepName !== StepNames.review &&
+      inputs.stepName !== StepNames.publish
     ) {
-      navigate(getEditUrl('review'), {
+      navigate(getEditUrl(StepNames.review), {
         replace: true,
       })
     } else {
@@ -168,7 +168,7 @@ const useMakeDraftingState = (inputs: StateInputs) => {
         ? () => {
             // BASICS – It's pointless (albeit harmless) to go forward if title and text are empty
             if (
-              step.name === 'basics' &&
+              step.name === StepNames.basics &&
               (draft.title.error || draft.text.error)
             ) {
               // trigger dirty=true on both title and text
@@ -179,15 +179,17 @@ const useMakeDraftingState = (inputs: StateInputs) => {
             }
 
             const isTitleAmending =
-              findRegulationType(draft.title.value) === 'amending'
+              findRegulationType(draft.title.value) ===
+              RegulationDraftTypes.amending
 
             const amendingTitleAndBaseType =
-              isTitleAmending && draft.type.value === 'base'
+              isTitleAmending && draft.type.value === RegulationDraftTypes.base
 
             const baseTitleAndAmendingType =
-              !isTitleAmending && draft.type.value === 'amending'
+              !isTitleAmending &&
+              draft.type.value === RegulationDraftTypes.amending
             if (
-              step.name === 'basics' &&
+              step.name === StepNames.basics &&
               (amendingTitleAndBaseType || baseTitleAndAmendingType)
             ) {
               return // Prevent the user going forward
@@ -328,7 +330,7 @@ const useMakeDraftingState = (inputs: StateInputs) => {
       ship:
         state.isEditor &&
         // only offer shipping from "review" step
-        state.step.name === 'review'
+        state.step.name === StepNames.review
           ? async () => {
               if (!isDraftErrorFree(state)) {
                 return false
@@ -351,7 +353,7 @@ const useMakeDraftingState = (inputs: StateInputs) => {
       publish:
         state.isEditor &&
         // only offer publish from "publish" step
-        state.step.name === 'publish'
+        state.step.name === StepNames.publish
           ? async () => {
               if (!isDraftPublishable(state)) {
                 return false

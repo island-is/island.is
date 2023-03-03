@@ -21,6 +21,7 @@ import {
 } from '../utils/formatAmendingRegulation'
 import { HTMLText } from '@island.is/regulations'
 import { findRegulationType } from '../utils/guessers'
+import { RegulationDraftTypes } from '../types'
 
 export const EditBasics = () => {
   const t = useLocale().formatMessage
@@ -36,14 +37,18 @@ export const EditBasics = () => {
 
   const regType =
     draft.type.value &&
-    t(draft.type.value === 'amending' ? msg.type_amending : msg.type_base)
+    t(
+      draft.type.value === RegulationDraftTypes.amending
+        ? msg.type_amending
+        : msg.type_base,
+    )
 
   useEffect(() => {
     if (!draft.title.value) {
-      if (draft.type.value === 'base') {
+      if (draft.type.value === RegulationDraftTypes.base) {
         updateState('title', 'Reglugerð um ')
       }
-      if (draft.type.value === 'amending') {
+      if (draft.type.value === RegulationDraftTypes.amending) {
         updateState('title', formatAmendingRegTitle(draft))
       }
     }
@@ -57,13 +62,17 @@ export const EditBasics = () => {
       return
     }
 
-    const isTitleAmending = findRegulationType(draft.title.value) === 'amending'
-    if (isTitleAmending && draft.type.value === 'base') {
+    const isTitleAmending =
+      findRegulationType(draft.title.value) === RegulationDraftTypes.amending
+    if (isTitleAmending && draft.type.value === RegulationDraftTypes.base) {
       setTitleError(t(errorMsgs.amendingTitleBaseType))
       return
     }
 
-    if (!isTitleAmending && draft.type.value === 'amending') {
+    if (
+      !isTitleAmending &&
+      draft.type.value === RegulationDraftTypes.amending
+    ) {
       setTitleError(t(errorMsgs.baseTitleAmendingType))
       return
     }
@@ -83,7 +92,7 @@ export const EditBasics = () => {
   }, [draft.title.value])
 
   useEffect(() => {
-    if (!text.value && draft.type.value === 'amending') {
+    if (!text.value && draft.type.value === RegulationDraftTypes.amending) {
       updateEditorText()
       setEditorKey('newKey')
     }
@@ -124,7 +133,7 @@ export const EditBasics = () => {
           <Text variant="small" color="dark200">
             {regType ? `(${regType})` : ' '}
           </Text>
-          {draft.type.value === 'amending' ? (
+          {draft.type.value === RegulationDraftTypes.amending ? (
             <Button
               icon="reload"
               onClick={updateEditorText}

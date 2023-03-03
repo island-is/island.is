@@ -4,7 +4,7 @@ import {
   DraftRegulationChange,
   RegulationDraft,
 } from '@island.is/regulations/admin'
-import { Step } from '../types'
+import { Step, StepNames } from '../types'
 import {
   AppendixDraftForm,
   DateDraftField,
@@ -25,59 +25,59 @@ const emptyHtml = '' as HTMLText
 
 export const stepsBase: Record<Step, StepNav> = {
   basics: {
-    name: 'basics',
-    next: 'signature',
+    name: StepNames.basics,
+    next: StepNames.signature,
   },
   signature: {
-    name: 'signature',
-    prev: 'basics',
-    next: 'meta',
+    name: StepNames.signature,
+    prev: StepNames.basics,
+    next: StepNames.meta,
   },
   meta: {
-    name: 'meta',
-    prev: 'signature',
-    next: 'impacts',
+    name: StepNames.meta,
+    prev: StepNames.signature,
+    next: StepNames.impacts,
   },
   impacts: {
-    name: 'impacts',
-    prev: 'meta',
-    next: 'review',
+    name: StepNames.impacts,
+    prev: StepNames.meta,
+    next: StepNames.review,
   },
   review: {
-    name: 'review',
-    prev: 'impacts',
+    name: StepNames.review,
+    prev: StepNames.impacts,
   },
   publish: {
-    name: 'publish',
+    name: StepNames.publish,
   },
 }
 
 export const stepsAmending: Record<Step, StepNav> = {
   impacts: {
-    name: 'impacts',
-    next: 'basics',
+    name: StepNames.impacts,
+    next: StepNames.basics,
   },
   basics: {
-    name: 'basics',
-    prev: 'impacts',
-    next: 'signature',
+    name: StepNames.basics,
+    prev: StepNames.impacts,
+    next: StepNames.signature,
   },
   signature: {
-    name: 'signature',
-    prev: 'basics',
-    next: 'meta',
+    name: StepNames.signature,
+    prev: StepNames.basics,
+    next: StepNames.meta,
   },
   meta: {
-    name: 'meta',
-    prev: 'signature',
-    next: 'review',
+    name: StepNames.meta,
+    prev: StepNames.signature,
+    next: StepNames.review,
   },
   review: {
-    name: 'review',
-    prev: 'meta',
+    name: StepNames.review,
+    prev: StepNames.meta,
   },
   publish: {
-    name: 'publish',
+    name: StepNames.publish,
   },
 }
 

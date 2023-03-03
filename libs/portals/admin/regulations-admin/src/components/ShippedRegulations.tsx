@@ -5,6 +5,7 @@ import { useLocale } from '@island.is/localization'
 import { getEditUrl } from '../utils/routing'
 import { useNavigate } from 'react-router-dom'
 import { ShippedSummary } from '@island.is/regulations/admin'
+import { StepNames } from '../types'
 
 export type ShippedRegulationsProps = {
   shippedRegs: ShippedSummary[]
@@ -49,7 +50,7 @@ export const ShippedRegulations = (props: ShippedRegulationsProps) => {
                       variant: 'text',
                       size: 'small',
                       onClick: () => {
-                        navigate(getEditUrl(shipped.id, 'publish'))
+                        navigate(getEditUrl(shipped.id, StepNames.publish))
                       },
                     }
                   : // eslint-disable-next-line @typescript-eslint/no-explicit-any

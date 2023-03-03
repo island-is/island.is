@@ -18,6 +18,7 @@ import { Query } from '@island.is/api/schema'
 import { useDebounce } from 'react-use'
 import * as s from './Impacts.css'
 import { findAffectedRegulationsInText } from '../../utils/guessers'
+import { RegulationDraftTypes } from '../../types'
 
 export type SelRegOption = Option & {
   value?: DraftImpactName | ''
@@ -82,7 +83,7 @@ export const ImpactAmendingSelection = ({
       []
 
     const optionNames = regulationListRes
-      .filter((reg) => reg.type === 'base')
+      .filter((reg) => reg.type === RegulationDraftTypes.base)
       .map((reg) => reg.name)
 
     let selRegOptionsArray: SelRegOption[] = []

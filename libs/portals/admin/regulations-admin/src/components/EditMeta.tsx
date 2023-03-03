@@ -10,6 +10,7 @@ import { editorMsgs as msg } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { LawChaptersSelect } from './LawChaptersSelect'
 import { useDraftingState } from '../state/useDraftingState'
+import { RegulationDraftTypes } from '../types'
 
 export const EditMeta = () => {
   const { formatMessage: t } = useLocale()
@@ -18,7 +19,11 @@ export const EditMeta = () => {
   const type = draft.type
   const typeName =
     type.value &&
-    t(type.value === 'amending' ? msg.type_amending : msg.type_base)
+    t(
+      type.value === RegulationDraftTypes.amending
+        ? msg.type_amending
+        : msg.type_base,
+    )
 
   return (
     <>

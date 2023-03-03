@@ -22,6 +22,7 @@ import {
 import { ShippedSummary } from '@island.is/regulations/admin'
 import { getEditUrl } from './routing'
 import { createHash } from 'crypto'
+import { RegulationDraftTypes, StepNames } from '../types'
 
 type QueryResult<T> =
   | {
@@ -424,7 +425,9 @@ export const useCreateRegulationDraft = () => {
           navigate(
             getEditUrl(
               newDraft.id,
-              regulationType === 'amending' ? 'impacts' : undefined,
+              regulationType === RegulationDraftTypes.amending
+                ? StepNames.impacts
+                : undefined,
             ),
           )
         })

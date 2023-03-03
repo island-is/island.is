@@ -7,6 +7,7 @@ import {
   isDraftLocked,
 } from './validations'
 import { Draft } from 'immer'
+import { RegulationDraftTypes, StepNames } from '../types'
 
 /* eslint-disable @typescript-eslint/naming-convention */
 export const actionHandlers: {
@@ -17,11 +18,13 @@ export const actionHandlers: {
 } = {
   CHANGE_STEP: (state, { stepName }) => {
     const stepsSet =
-      state.draft.type.value === 'amending' ? stepsAmending : stepsBase
+      state.draft.type.value === RegulationDraftTypes.amending
+        ? stepsAmending
+        : stepsBase
     if (
       isDraftLocked(state.draft) &&
-      stepName !== 'review' &&
-      stepName !== 'publish'
+      stepName !== StepNames.review &&
+      stepName !== StepNames.publish
     ) {
       state.step = stepsSet.review
     }

@@ -32,6 +32,7 @@ import { EditChange } from './impacts/EditChange'
 import lastItem from 'lodash/last'
 import { ImpactBaseSelection } from './impacts/ImpactBaseSelection'
 import { ImpactAmendingSelection } from './impacts/ImpactAmendingSelection'
+import { RegulationDraftTypes, StepNames } from '../types'
 
 export type SelRegOption = Option & {
   value?: DraftImpactName | ''
@@ -80,7 +81,7 @@ export const EditImpacts = () => {
 
   return (
     <>
-      {draft.type.value === 'base' && (
+      {draft.type.value === RegulationDraftTypes.amending && (
         <Box marginBottom={3} className={s.explainerText}>
           <AlertMessage
             type="info"
@@ -89,7 +90,7 @@ export const EditImpacts = () => {
                 {t(impactMsgs.regExplainer)}
                 {'    '}
                 <Button
-                  onClick={() => goToStep('basics')}
+                  onClick={() => goToStep(StepNames.basics)}
                   variant="text"
                   size="small"
                 >
@@ -102,7 +103,7 @@ export const EditImpacts = () => {
       )}
 
       <Box marginBottom={4}>
-        {draft.type.value === 'base' ? (
+        {draft.type.value === RegulationDraftTypes.base ? (
           <ImpactBaseSelection
             setImpactRegOption={(option) => setSelRegOption(option)}
           />
@@ -149,7 +150,7 @@ export const EditImpacts = () => {
             </Inline>
           ) : (
             <Inline space={[2, 2, 3, 4]} align="center" alignY="center">
-              {selRegOption.type === 'base' && (
+              {selRegOption.type === RegulationDraftTypes.base && (
                 <>
                   <Button
                     variant="ghost"

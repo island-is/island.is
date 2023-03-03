@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { DraftImpactId, RegulationDraftId } from '@island.is/regulations/admin'
 import { isUuid } from 'uuidv4'
-import { Step } from '../types'
+import { RegulationDraftTypes, Step, StepNames } from '../types'
 
 import {
   RegDraftingProvider,
@@ -39,7 +39,7 @@ import { ButtonBar } from '../components/ButtonBar'
 // ---------------------------------------------------------------------------
 
 const assertStep = (maybeStep: string | undefined): Step => {
-  const stepName = ensureStepName(maybeStep || 'basics')
+  const stepName = ensureStepName(maybeStep || StepNames.basics)
   if (stepName) {
     return stepName
   }
@@ -119,7 +119,7 @@ const EditScreen = () => {
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Box marginBottom={[4, 4, 5]}>
             <Text as="p" marginBottom={[2, 2]}>
-              {draft.type.value === 'base'
+              {draft.type.value === RegulationDraftTypes.base
                 ? t(editorMsgs.type_base)
                 : t(editorMsgs.type_amending)}
             </Text>
@@ -131,7 +131,7 @@ const EditScreen = () => {
         </GridColumn>
       </GridRow>
 
-      {stepState.name !== 'publish' && <SaveDeleteButtons wrap />}
+      {stepState.name !== StepNames.publish && <SaveDeleteButtons wrap />}
       <step.Component />
       <DraftingNotes />
       <ButtonBar />
@@ -148,7 +148,7 @@ const EditApp: PortalModuleComponent = ({ userInfo }) => {
   const draftId = assertDraftId(params['draftId'])
   const stepName = assertStep(params['stepName'])
   const impactId =
-    stepName === 'impacts' && params['impact']
+    stepName === StepNames.impacts && params['impact']
       ? assertImpactId(params['impact'])
       : undefined
 

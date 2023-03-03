@@ -4,7 +4,7 @@ import { editorMsgs, impactMsgs, reviewMessages } from '../lib/messages'
 import { useDraftingState } from '../state/useDraftingState'
 import { useLocale } from '@island.is/localization'
 import { downloadUrl } from '../utils/files'
-import { Step } from '../types'
+import { RegulationDraftTypes, Step } from '../types'
 import { JumpToStep } from './EditReviewWarnings'
 import {
   combineTextAppendixesComments,
@@ -109,7 +109,7 @@ export const EditReviewOverview = (props: EditReviewOverviewProps) => {
   }
 
   const typeName = t(
-    draft.type.value === 'amending'
+    draft.type.value === RegulationDraftTypes.amending
       ? editorMsgs.type_amending
       : editorMsgs.type_base,
   )

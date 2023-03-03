@@ -3,6 +3,7 @@ import { Box, Button } from '@island.is/island-ui/core'
 import { buttonsMsgs as msg } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useDraftingState } from '../state/useDraftingState'
+import { RegulationDraftTypes, StepNames } from '../types'
 
 export const ButtonBar = () => {
   const { draft, step, actions } = useDraftingState()
@@ -10,8 +11,8 @@ export const ButtonBar = () => {
 
   // Disable forward button when creating amending regulation with 0 impacts
   const emptyAmmendingImpacts =
-    draft.type.value === 'amending' &&
-    step.name === 'impacts' &&
+    draft.type.value === RegulationDraftTypes.amending &&
+    step.name === StepNames.impacts &&
     Object.keys(draft.impacts).length === 0
 
   return (
@@ -24,12 +25,14 @@ export const ButtonBar = () => {
             iconType="outline"
             disabled={emptyAmmendingImpacts}
           >
-            {t(step.next === 'review' ? msg.prepShipping : msg.continue)}
+            {t(
+              step.next === StepNames.review ? msg.prepShipping : msg.continue,
+            )}
           </Button>
         </Box>
       )}
 
-      {step.name === 'review' && actions.propose && (
+      {step.name === StepNames.review && actions.propose && (
         <Box className={s.propose}>
           <Button
             onClick={actions.propose}

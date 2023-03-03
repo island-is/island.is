@@ -23,6 +23,7 @@ import {
 } from './impactQueries'
 import { useGetRegulationHistory } from '../../utils/hooks'
 import { fDate } from '../../state/makeFields'
+import { RegulationDraftTypes } from '../../types'
 
 type EditCancellationProp = {
   draft: RegDraftForm
@@ -148,7 +149,7 @@ export const EditCancellation = (props: EditCancellationProp) => {
                 regulation?.type && {
                   first: 'Brottfelling reglugerðar',
                   second:
-                    regulation?.type === 'base'
+                    regulation?.type === RegulationDraftTypes.base
                       ? 'Stofnreglugerð'
                       : 'Breytingareglugerð',
                 }

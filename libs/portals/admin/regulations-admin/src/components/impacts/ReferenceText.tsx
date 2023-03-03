@@ -12,6 +12,7 @@ import {
 } from '@island.is/regulations-tools/utils'
 import * as s from './Impacts.css'
 import * as ed from '../Editor.css'
+import { RegulationDraftTypes } from '../../types'
 
 type ReferenceTextProps = {
   baseName: RegName
@@ -67,7 +68,7 @@ export const ReferenceText = (props: ReferenceTextProps) => {
               </strong>
             ),
           })}{' '}
-          {type === 'base' && (
+          {type === RegulationDraftTypes.base && (
             <>&nbsp; ({mapRegulationTypeToDisplayString(type)})</>
           )}
         </div>

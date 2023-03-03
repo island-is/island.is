@@ -1,6 +1,7 @@
 import { HTMLText, PlainText } from '@island.is/regulations'
 import { makeHighAngstWarnings } from '@island.is/regulations-tools/useTextWarnings'
 import { errorMsgs } from '../lib/messages'
+import { RegulationDraftTypes } from '../types'
 import {
   findAffectedRegulationsInText,
   findSignatureInText,
@@ -199,7 +200,7 @@ const updateImpacts = (
   // Title should only be considered for "breytingareglugerðir" (type: `amending`)
   // because we assume that Stofnreglugerð *title* will never mention another
   // regulation that its changing. Prove us wrong!
-  const isAmending = type.value === 'amending'
+  const isAmending = type.value === RegulationDraftTypes.amending
   const checkedTitle = isAmending ? title : ''
   const newMentions = findAffectedRegulationsInText(checkedTitle, text)
 

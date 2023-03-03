@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom'
 import { getEditUrl } from '../utils/routing'
 import { useRegulationTaskListQuery } from '../utils/dataHooks'
 import { useLocale } from '@island.is/localization'
+import { RegulationDraftTypes, StepNames } from '../types'
 
 export const TaskList = () => {
   const { formatMessage, formatDateFns } = useLocale()
@@ -95,7 +96,9 @@ export const TaskList = () => {
                     navigate(
                       getEditUrl(
                         id,
-                        type === 'amending' ? 'impacts' : undefined,
+                        type === RegulationDraftTypes.amending
+                          ? StepNames.impacts
+                          : undefined,
                       ),
                     )
                   },
