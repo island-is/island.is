@@ -20,6 +20,7 @@ import {
   Domain,
   DomainDTO,
 } from '@island.is/auth-api-lib'
+import { NoContentException } from '@island.is/nest/problem'
 import {
   BadRequestException,
   Body,
@@ -225,7 +226,7 @@ export class ResourcesController {
     @Query('scopeNames') scopeNames: string,
   ): Promise<IdentityResource[]> {
     return this.resourcesService.findIdentityResourcesByScopeName(
-      scopeNames ? scopeNames.split(',') : null,
+      scopeNames ? scopeNames.split(',') : [],
     ) // TODO: Check if we can use ParseArrayPipe from v7
   }
 
@@ -241,7 +242,7 @@ export class ResourcesController {
     @Query('scopeNames') scopeNames: string,
   ): Promise<ApiScope[]> {
     return this.resourcesService.findApiScopesByNameAsync(
-      scopeNames ? scopeNames.split(',') : null,
+      scopeNames ? scopeNames.split(',') : [],
     ) // TODO: Check if we can use ParseArrayPipe from v7
   }
 
@@ -271,7 +272,7 @@ export class ResourcesController {
     }
 
     return this.resourcesService.findApiResourcesByScopeNameAsync(
-      apiScopeNames ? apiScopeNames.split(',') : null,
+      apiScopeNames ? apiScopeNames.split(',') : [],
     ) // TODO: Check if we can use ParseArrayPipe from v7
   }
 
@@ -283,7 +284,13 @@ export class ResourcesController {
   async getIdentityResourceByName(
     @Param('id') name: string,
   ): Promise<IdentityResource> {
-    return this.resourcesService.getIdentityResourceByName(name)
+    const identityResource = await this.resourcesService.getIdentityResourceByName(
+      name,
+    )
+    if (!identityResource) {
+      throw new NoContentException()
+    }
+    return identityResource
   }
 
   /** Creates a new Identity Resource */
@@ -614,7 +621,11 @@ export class ResourcesController {
     resources: (scope) => scope?.name,
   })
   async getApiScopeByName(@Param('name') name: string): Promise<ApiScope> {
-    return this.resourcesService.getApiScopeByName(name)
+    const apiScope = await this.resourcesService.getApiScopeByName(name)
+    if (!apiScope) {
+      throw new NoContentException()
+    }
+    return apiScope
   }
 
   @Scopes(AuthAdminScope.root, AuthAdminScope.full)
@@ -632,7 +643,11 @@ export class ResourcesController {
   async getApiResourceByName(
     @Param('name') name: string,
   ): Promise<ApiResource> {
-    return this.resourcesService.getApiResourceByName(name)
+    const apiResource = await this.resourcesService.getApiResourceByName(name)
+    if (!apiResource) {
+      throw new NoContentException()
+    }
+    return apiResource
   }
 
   @Scopes(AuthAdminScope.root, AuthAdminScope.full)
@@ -784,7 +799,13 @@ export class ResourcesController {
       throw new BadRequestException('scopeName must be provided')
     }
 
-    return this.resourcesService.findApiResourceScopeByScopeName(scopeName)
+    const apiResourceScope = await this.resourcesService.findApiResourceScopeByScopeName(
+      scopeName,
+    )
+    if (!apiResourceScope) {
+      throw new NoContentException()
+    }
+    return apiResourceScope
   }
 
   /** Removes api scope from Api Resource Scope */
