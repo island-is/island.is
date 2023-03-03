@@ -15,3 +15,11 @@ nx run native-app:script --name=<some-script-from-package.json>
 ```bash
 nx run native-app:schemas/codegen
 ```
+
+## NOTES
+
+- ci jobs
+  - codegen
+  - lint
+  - build
+  - test
