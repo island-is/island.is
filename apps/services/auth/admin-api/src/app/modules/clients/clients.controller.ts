@@ -5,6 +5,7 @@ import {
   ClientUpdateDTO,
   PagedRowsDto,
 } from '@island.is/auth-api-lib'
+import { NoContentException } from '@island.is/nest/problem'
 import {
   BadRequestException,
   Body,
@@ -106,7 +107,11 @@ export class ClientsController {
       throw new BadRequestException('Id must be provided')
     }
 
-    return this.clientsService.findClientById(id)
+    const client = await this.clientsService.findClientById(id)
+    if (!client) {
+      throw new NoContentException()
+    }
+    return client
   }
 
   /** Creates a new client */
