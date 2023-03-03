@@ -7,6 +7,7 @@ import {
 import { documentProviderNavigation } from '@island.is/portals/admin/document-provider'
 import { delegationsNavigation } from '@island.is/portals/shared-modules/delegations'
 import { AdminPortalPaths } from './paths'
+import { idsAdminNavigation } from '@island.is/portals/admin/ids-admin'
 
 export const rootNavigationItem: PortalNavigationItem = {
   name: coreMessages.overview,
@@ -26,6 +27,8 @@ export const TOP_NAVIGATION: PortalNavigationItem = {
     icelandicNamesRegistryNavigation,
     // Skjalaveita
     documentProviderNavigation,
+    // IDS Admin
+    idsAdminNavigation,
   ],
 }
 export const BOTTOM_NAVIGATION: PortalNavigationItem = {

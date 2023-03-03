@@ -10,10 +10,12 @@ import {
 } from '../constants'
 import {
   getApplicationAnswers,
+  getApplicationExternalData,
   requiresOtherParentApproval,
 } from '../lib/parentalLeaveUtils'
 import { EmployerRow } from '../types'
 import { getValueViaPath } from '@island.is/application/core'
+import { disableResidenceGrantApplication } from './answerValidationSections/utils'
 
 export function allEmployersHaveApproved(context: ApplicationContext) {
   const employers = getValueViaPath<EmployerRow[]>(
@@ -82,10 +84,21 @@ export function currentDateStartTime() {
 export function findActionName(context: ApplicationContext) {
   const { application } = context
   const { state } = application
+  if (
+    state === States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE ||
+    state === States.RESIDENCE_GRAND_APPLICATION
+  )
+    return 'documentPeriod'
   if (state === States.ADDITIONAL_DOCUMENTS_REQUIRED) return 'document'
   if (state === States.EDIT_OR_ADD_PERIODS) return 'period'
 
   return 'period' // Have default on period so we always reset actionName
+}
+
+export function hasDateOfBirth(context: ApplicationContext) {
+  const { application } = context
+  const { dateOfBirth } = getApplicationExternalData(application.externalData)
+  return disableResidenceGrantApplication(dateOfBirth?.data?.dateOfBirth || '')
 }
 
 export function goToState(

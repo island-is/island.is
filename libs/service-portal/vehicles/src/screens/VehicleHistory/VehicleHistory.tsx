@@ -172,8 +172,7 @@ const VehiclesHistory = () => {
               <DatePicker
                 backgroundColor="blue"
                 handleChange={(d: Date) => setFromDate(d)}
-                icon="calendar"
-                iconType="outline"
+                icon={{ name: 'calendar', type: 'outline' }}
                 size="xs"
                 label={formatMessage(messages.dateOfPurchase)}
                 selected={fromDate}
@@ -189,8 +188,7 @@ const VehiclesHistory = () => {
               <DatePicker
                 backgroundColor="blue"
                 handleChange={(d: Date) => setToDate(d)}
-                icon="calendar"
-                iconType="outline"
+                icon={{ name: 'calendar', type: 'outline' }}
                 size="xs"
                 label={formatMessage(messages.dateOfSale)}
                 selected={toDate}
