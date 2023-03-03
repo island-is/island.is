@@ -155,7 +155,7 @@ export const MyReviewPage = () => {
   }, [searchValue])
 
   return (
-    <Layout showIcon={false}>
+    <Layout>
       <BreadcrumbsWithMobileDivider
         items={[
           { title: 'Samráðsgátt', href: '/' },
