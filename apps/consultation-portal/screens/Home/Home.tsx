@@ -17,13 +17,14 @@ import Card from '@island.is/consultation-portal/components/Card/Card'
 import Layout from '@island.is/consultation-portal/components/Layout/Layout'
 import SearchAndFilter from '@island.is/consultation-portal/components/SearchAndFilter/SearchAndFilter'
 import Types from '@island.is/consultation-portal/utils/dummydata/api/Types'
-import { Cases } from '@island.is/consultation-portal/utils/dummydata'
 import { Case } from '@island.is/consultation-portal/types/interfaces'
 import FilterBox from '@island.is/consultation-portal/components/Filterbox/Filterbox'
 
 const CARDS_PER_PAGE = 12
-
-export const Home = ({ cases }) => {
+interface HomeProps {
+  cases: Case[]
+}
+export const Home = ({ cases }: HomeProps) => {
   const Institutions = Object.entries(Types.institutions).map(
     ([value, label]) => ({
       value,
@@ -40,7 +41,7 @@ export const Home = ({ cases }) => {
   const [searchValue, setSearchValue] = useState<string>('')
   const [institutionValue, setInstitutionValue] = useState<string>('')
   const [policyAreaValue, setPolicyAreaValue] = useState<string>('')
-  const [data, setData] = useState<Array<Case>>(Cases)
+  const [data, setData] = useState<Array<Case>>(cases)
   const [page, setPage] = useState<number>(1)
 
   const goToPage = (page = 1, scrollTop = true) => {
@@ -53,7 +54,8 @@ export const Home = ({ cases }) => {
   useEffect(() => {
     searchValue
       ? setData(
-          Cases.filter((item) => item.policyAreaName.includes(policyAreaValue))
+          cases
+            .filter((item) => item.policyAreaName.includes(policyAreaValue))
             .filter((item) => item.institutionName.includes(institutionValue))
             .filter(
               (item) =>
@@ -63,9 +65,9 @@ export const Home = ({ cases }) => {
             ),
         )
       : setData(
-          Cases.filter((item) =>
-            item.policyAreaName.includes(policyAreaValue),
-          ).filter((item) => item.institutionName.includes(institutionValue)),
+          cases
+            .filter((item) => item.policyAreaName.includes(policyAreaValue))
+            .filter((item) => item.institutionName.includes(institutionValue)),
         )
   }, [searchValue])
 
@@ -75,13 +77,15 @@ export const Home = ({ cases }) => {
           data.filter((item) => item.institutionName === institutionValue),
         )
       : setData(
-          Cases.filter(
-            (item) =>
-              item.name.includes(searchValue) ||
-              item.caseNumber.includes(searchValue) ||
-              item.institutionName.includes(searchValue) ||
-              item.policyAreaName.includes(searchValue),
-          ).filter((item) => item.policyAreaName.includes(policyAreaValue)),
+          cases
+            .filter(
+              (item) =>
+                item.name.includes(searchValue) ||
+                item.caseNumber.includes(searchValue) ||
+                item.institutionName.includes(searchValue) ||
+                item.policyAreaName.includes(searchValue),
+            )
+            .filter((item) => item.policyAreaName.includes(policyAreaValue)),
         )
   }, [institutionValue])
 
@@ -89,13 +93,15 @@ export const Home = ({ cases }) => {
     policyAreaValue
       ? setData(data.filter((item) => item.policyAreaName === policyAreaValue))
       : setData(
-          Cases.filter(
-            (item) =>
-              item.name.includes(searchValue) ||
-              item.caseNumber.includes(searchValue) ||
-              item.institutionName.includes(searchValue) ||
-              item.policyAreaName.includes(searchValue),
-          ).filter((item) => item.institutionName.includes(institutionValue)),
+          cases
+            .filter(
+              (item) =>
+                item.name.includes(searchValue) ||
+                item.caseNumber.includes(searchValue) ||
+                item.institutionName.includes(searchValue) ||
+                item.policyAreaName.includes(searchValue),
+            )
+            .filter((item) => item.institutionName.includes(institutionValue)),
         )
   }, [policyAreaValue])
 
@@ -107,104 +113,110 @@ export const Home = ({ cases }) => {
   return (
     <Layout showIcon={false}>
       <HeroBanner />
+      {cases && (
+        <>
+          <SearchAndFilter
+            searchValue={searchValue}
+            setSearchValue={(newValue) => setSearchValue(newValue)}
+            PolicyAreas={PolicyAreas}
+            Institutions={Institutions}
+            setInstitutionValue={(value) => setInstitutionValue(value)}
+            setPolicyAreaValue={(value) => setPolicyAreaValue(value)}
+          />
 
-      <SearchAndFilter
-        searchValue={searchValue}
-        setSearchValue={(newValue) => setSearchValue(newValue)}
-        PolicyAreas={PolicyAreas}
-        Institutions={Institutions}
-        // setInstitutionValue={(value) => setInstitutionValue(value)}
-        // setPolicyAreaValue={(value) => setPolicyAreaValue(value)}
-      />
+          <GridContainer>
+            <GridRow>
+              <GridColumn span={['0', '0', '0', '3/12', '3/12']}>
+                <Hidden below="lg">
+                  <Stack space={2}>
+                    <FilterBox>Röðun</FilterBox>
+                    <FilterBox>Staða máls</FilterBox>
+                    <FilterBox>Tegund máls</FilterBox>
+                    <DatePicker
+                      size="sm"
+                      locale="is"
+                      label="Veldu tímabil"
+                      placeholderText="Veldu hér"
+                    />
+                    <Box textAlign="right">
+                      <Button size="small" icon="reload" variant="text">
+                        Hreinsa allar síur
+                      </Button>
+                    </Box>
+                  </Stack>
+                </Hidden>
+              </GridColumn>
 
-      <GridContainer>
-        <GridRow>
-          <GridColumn span={['0', '0', '0', '3/12', '3/12']}>
-            <Hidden below="lg">
-              <Stack space={2}>
-                <FilterBox>Röðun</FilterBox>
-                <FilterBox>Staða máls</FilterBox>
-                <FilterBox>Tegund máls</FilterBox>
-                <DatePicker
-                  size="sm"
-                  locale="is"
-                  label="Veldu tímabil"
-                  placeholderText="Veldu hér"
-                />
-                <Box textAlign="right">
-                  <Button size="small" icon="reload" variant="text">
-                    Hreinsa allar síur
-                  </Button>
-                </Box>
-              </Stack>
-            </Hidden>
-          </GridColumn>
-
-          <GridColumn span={['12/12', '12/12', '12/12', '9/12', '9/12']}>
-            {visibleItems && (
-              <Tiles space={3} columns={[1, 1, 1, 2, 3]}>
-                {visibleItems.map((item, index) => {
-                  const card = {
-                    id: item.id,
-                    title: item.name,
-                    tag: item.statusName,
-                    eyebrows: [item.typeName, item.institutionName],
-                  }
-                  return (
-                    <Card key={index} card={card} frontPage>
-                      <Stack space={2}>
-                        <Text variant="eyebrow" color="purple400">
-                          {`Fjöldi umsagna: ${item.adviceCount}`}
-                        </Text>
-                        <Box
-                          style={{ wordBreak: 'break-word', height: '105px' }}
-                          overflow="hidden"
+              <GridColumn span={['12/12', '12/12', '12/12', '9/12', '9/12']}>
+                {visibleItems && (
+                  <Tiles space={3} columns={[1, 1, 1, 2, 3]}>
+                    {visibleItems.map((item, index) => {
+                      const card = {
+                        id: item.id,
+                        title: item.name,
+                        tag: item.statusName,
+                        eyebrows: [item.typeName, item.institutionName],
+                      }
+                      return (
+                        <Card key={index} card={card} frontPage>
+                          <Stack space={2}>
+                            <Text variant="eyebrow" color="purple400">
+                              {`Fjöldi umsagna: ${item.adviceCount}`}
+                            </Text>
+                            <Box
+                              style={{
+                                wordBreak: 'break-word',
+                                height: '105px',
+                              }}
+                              overflow="hidden"
+                            >
+                              <Text variant="small" color="dark400">
+                                {item.shortDescription}
+                              </Text>
+                            </Box>
+                          </Stack>
+                        </Card>
+                      )
+                    })}
+                  </Tiles>
+                )}
+                {totalPages > 1 && (
+                  <Box paddingTop={[5, 5, 5, 8, 8]}>
+                    <Pagination
+                      page={page}
+                      totalPages={totalPages}
+                      variant="blue"
+                      renderLink={(page, className, children) => (
+                        <button
+                          onClick={() => {
+                            goToPage(page)
+                          }}
                         >
-                          <Text variant="small" color="dark400">
-                            {item.shortDescription}
-                          </Text>
-                        </Box>
-                      </Stack>
-                    </Card>
-                  )
-                })}
-              </Tiles>
-            )}
-            {totalPages > 1 && (
-              <Box paddingTop={[5, 5, 5, 8, 8]}>
-                <Pagination
-                  page={page}
-                  totalPages={totalPages}
-                  variant="blue"
-                  renderLink={(page, className, children) => (
-                    <button
-                      onClick={() => {
-                        goToPage(page)
-                      }}
-                    >
-                      <span
-                        style={{
-                          position: 'absolute',
-                          width: '1px',
-                          height: '1px',
-                          padding: '0',
-                          margin: '-1px',
-                          overflow: 'hidden',
-                          clip: 'rect(0,0,0,0)',
-                          border: '0',
-                        }}
-                      >
-                        Síða
-                      </span>
-                      <span className={className}>{children}</span>
-                    </button>
-                  )}
-                />
-              </Box>
-            )}
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
+                          <span
+                            style={{
+                              position: 'absolute',
+                              width: '1px',
+                              height: '1px',
+                              padding: '0',
+                              margin: '-1px',
+                              overflow: 'hidden',
+                              clip: 'rect(0,0,0,0)',
+                              border: '0',
+                            }}
+                          >
+                            Síða
+                          </span>
+                          <span className={className}>{children}</span>
+                        </button>
+                      )}
+                    />
+                  </Box>
+                )}
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
+        </>
+      )}
     </Layout>
   )
 }
