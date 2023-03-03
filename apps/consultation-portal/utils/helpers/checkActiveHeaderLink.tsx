@@ -1,7 +1,4 @@
-import { useRouter } from 'next/router'
-
-const checkActiveHeaderLink = (link: string) => {
-  const router = useRouter()
+export const checkActiveHeaderLink = (router, link) => {
   return router.pathname == link ? true : false
 }
 

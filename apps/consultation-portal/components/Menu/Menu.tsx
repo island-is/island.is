@@ -15,15 +15,16 @@ import {
 } from '@island.is/island-ui/core'
 import * as styles from './Menu.css'
 import React, { useState } from 'react'
-import { MenuLogo } from '../svg'
+import { MenuLogo, MenuLogoMobile } from '../svg'
 import { menuItems } from './MenuItems'
 import MenuModal from '../Modal/MenuModal'
-import checkActiveHeaderLink from '@island.is/consultation-portal/utils/helpers/checkActiveHeaderLink'
+import { checkActiveHeaderLink } from '../../utils/helpers'
+import { useRouter } from 'next/router'
 type MenuProps = {
-  showIcon: boolean
+  isFrontPage: boolean
 }
 
-export const Menu = ({ showIcon = true }: MenuProps) => {
+export const Menu = ({ isFrontPage = false }: MenuProps) => {
   const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
   const biggerMarginLeft = [3, 3, 3, 4] as ResponsiveSpace
 
@@ -33,12 +34,14 @@ export const Menu = ({ showIcon = true }: MenuProps) => {
 
   const onLogout = () => setIsLoggedIn(false)
 
+  const router = useRouter()
+
   const user = {
     name: 'Halldór Andri Jónsson',
     authenticated: true,
     language: 'is',
   }
-
+  //{!isFrontPage && (
   return (
     <>
       <header className={styles.menu}>
@@ -47,33 +50,51 @@ export const Menu = ({ showIcon = true }: MenuProps) => {
             <GridRow>
               <GridColumn span="12/12" paddingTop={3} paddingBottom={3}>
                 <Columns alignY="center" space={2}>
-                  <Hidden below="xl">
+                  {isFrontPage && (
                     <Column width="content">
-                      <FocusableBox href="/">
+                      <FocusableBox href="https://island.is/">
                         <Logo iconOnly width={26} />
                       </FocusableBox>
                     </Column>
-                  </Hidden>
-                  <Hidden below="xl">
-                    <Column width="content">
-                      <Box>
-                        <Box
-                          style={{
-                            transform: 'rotate(90deg)',
-                            width: 56,
-                          }}
-                          marginX={1}
-                        >
-                          <Divider />
-                        </Box>
-                      </Box>
-                    </Column>
-                  </Hidden>
-                  <Column width="content">
-                    <FocusableBox href="/">
-                      <MenuLogo />
-                    </FocusableBox>
-                  </Column>
+                  )}
+                  {!isFrontPage && (
+                    <Hidden below="xl">
+                      <Column width="content">
+                        <FocusableBox href="https://island.is/">
+                          <Logo iconOnly width={26} />
+                        </FocusableBox>
+                      </Column>
+                    </Hidden>
+                  )}
+                  {!isFrontPage && (
+                    <>
+                      <Hidden below="xl">
+                        <Column width="content">
+                          <Box>
+                            <Box
+                              style={{
+                                transform: 'rotate(90deg)',
+                                width: 56,
+                              }}
+                              marginX={1}
+                            >
+                              <Divider />
+                            </Box>
+                          </Box>
+                        </Column>
+                      </Hidden>
+                      <Column width="content">
+                        <Hidden below="md">
+                          <MenuLogo />
+                        </Hidden>
+                        <Hidden above="sm">
+                          <FocusableBox href="/" alignItems="center">
+                            <MenuLogoMobile />
+                          </FocusableBox>
+                        </Hidden>
+                      </Column>
+                    </>
+                  )}
 
                   <Column>
                     <Hidden below="xl">
@@ -93,6 +114,7 @@ export const Menu = ({ showIcon = true }: MenuProps) => {
                               <div
                                 style={{
                                   backgroundColor: checkActiveHeaderLink(
+                                    router,
                                     item.href,
                                   )
                                     ? '#00E4CA'
@@ -140,6 +162,8 @@ export const Menu = ({ showIcon = true }: MenuProps) => {
                           isLoggedIn={isLoggedIn}
                           logIn={LogIn}
                           logOut={LogOut}
+                          router={router}
+                          isFrontPage={isFrontPage}
                         />
                       </Box>
                     </Hidden>
