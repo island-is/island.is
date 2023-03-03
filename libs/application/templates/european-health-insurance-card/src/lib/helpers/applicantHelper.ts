@@ -1,7 +1,7 @@
 import {
-  FormValue,
   Application,
   ExternalData,
+  FormValue,
 } from '@island.is/application/types'
 import { CardResponse, NationalRegistry, NridName } from '../types'
 

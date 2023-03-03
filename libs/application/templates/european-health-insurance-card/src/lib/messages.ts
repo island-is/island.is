@@ -32,9 +32,9 @@ export const europeanHealthInsuranceCardApplicationMessages = {
     },
 
     sectionDescription: {
-      id: 'ehic.application:applicant.section.description',
+      id: 'ehic.application:applicant.section.description#markdown',
       defaultMessage:
-        'Evrópska sjúkratryggingakortið veitir korthafa rétt til heilbrigðisþjónustu í öðrum EES löndum, og Sviss. Korthafi greiðir þá sama gjald fyrir heilbrigðisþjónustuna og þeir sem eru tryggðir í almannatryggingakerfi viðkomandi lands. Kortið gildir aðeins hjá opinberum heilbrigðisþjónustuveitendum, ekki á einkastofum. Kortið gildir almennt í þrjú ár í senn en fimm ár fyrir elli- og örorkulífeyrisþega. Sækja má um nýtt kort þegar 6 mánuðir eru eftir af gildistíma núgildandi korts.',
+        'Evrópska sjúkratryggingakortið veitir korthafa rétt til heilbrigðisþjónustu í öðrum EES löndum, og Sviss. Korthafi greiðir þá sama gjald fyrir heilbrigðisþjónustuna og þeir sem eru tryggðir í almannatryggingakerfi viðkomandi lands. Kortið gildir aðeins hjá opinberum heilbrigðisþjónustuveitendum, ekki á einkastofum.\n\nKortið gildir almennt í þrjú ár í senn en fimm ár fyrir elli- og örorkulífeyrisþega. Sækja má um nýtt kort þegar 6 mánuðir eru eftir af gildistíma núgildandi korts.',
       description: 'Section description',
     },
   }),
@@ -91,6 +91,28 @@ export const europeanHealthInsuranceCardApplicationMessages = {
     },
   }),
 
+  // No
+  no: defineMessages({
+    sectionLabel: {
+      id: 'ehic.application:no.label',
+      defaultMessage:
+      'Því miður hefur þú ekki rétt á Evrópska Sjúkratrygginakortinu',
+      description: 'Section description',
+    },
+    sectionDescription: {
+      id: 'ehic.application:no.description#markdown',
+      defaultMessage:
+      'Því miður er ekki heimild til að sækja um ES kort fyrir eftirfarandi einstaklinga. Ástæður fyrir því gætu verið eftirfarandi.\n* Einstaklingur er ekki sjúkratryggð/ur á Íslandi. \n* Einstaklingur er ekki með lögheimili á Íslandi. \n* Einstaklingur er ekki með ríkisborgararétt frá EES landi.\n\nEf þú telur þessi atriði ekki eiga við, vinsamlegast hafið samband við [ehic@sjukra.is](mailto:ehic@sjukra.is)',
+      description: 'Section description',
+    },
+    sectionSubDescription: {
+      id: 'ehic.application:no.sectionSubDescription',
+      defaultMessage:
+      ' Ekki heimild til að sækja um ES kort',
+      description: 'Section description',
+    },
+  }), 
+
   // Plastic
   applicants: defineMessages({
     sectionLabel: {
@@ -139,7 +161,18 @@ export const europeanHealthInsuranceCardApplicationMessages = {
       defaultMessage: 'Halda áfram',
       description: 'Button label for PDF step',
     },
+    sectionCanTitle: {
+      id: 'ehic.application:temp.sectionCanTitle',
+      defaultMessage: 'Einstaklingar sem eiga ES kort í gildi',
+      description: 'Button label for PDF step',
+    },
+    sectionHasPlasticLabel: {
+      id: 'ehic.application:temp.sectionSubLabel',
+      defaultMessage: 'Heimild til að sækja um bráðabirgðakort',
+      description: 'Button label for PDF step',
+    },
   }),
+
 
   // Review Screen
   review: defineMessages({
