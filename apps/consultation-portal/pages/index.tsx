@@ -20,6 +20,7 @@ import Types from '../utils/dummydata/api/Types'
 import { Cases } from '../utils/dummydata'
 import { Case } from '../types/interfaces'
 import FilterBox from '../components/Filterbox/Filterbox'
+import EmptyState from '../components/EmptyState/EmptyState'
 
 const CARDS_PER_PAGE = 12
 
@@ -141,67 +142,75 @@ export const Index = () => {
           </GridColumn>
 
           <GridColumn span={['12/12', '12/12', '12/12', '9/12', '9/12']}>
-            {visibleItems && (
-              <Tiles space={3} columns={[1, 1, 1, 2, 3]}>
-                {visibleItems.map((item, index) => {
-                  const card = {
-                    id: item.id,
-                    title: item.name,
-                    tag: item.statusName,
-                    eyebrows: [item.typeName, item.institutionName],
-                  }
-                  return (
-                    <Card key={index} card={card} frontPage>
-                      <Stack space={2}>
-                        <Text variant="eyebrow" color="purple400">
-                          {`Fjöldi umsagna: ${item.adviceCount}`}
-                        </Text>
-                        <Box
-                          style={{ wordBreak: 'break-word', height: '105px' }}
-                          overflow="hidden"
+            {data && (
+              <>
+                {visibleItems && (
+                  <Tiles space={3} columns={[1, 1, 1, 2, 3]}>
+                    {visibleItems.map((item, index) => {
+                      const card = {
+                        id: item.id,
+                        title: item.name,
+                        tag: item.statusName,
+                        eyebrows: [item.typeName, item.institutionName],
+                      }
+                      return (
+                        <Card key={index} card={card} frontPage>
+                          <Stack space={2}>
+                            <Text variant="eyebrow" color="purple400">
+                              {`Fjöldi umsagna: ${item.adviceCount}`}
+                            </Text>
+                            <Box
+                              style={{
+                                wordBreak: 'break-word',
+                                height: '105px',
+                              }}
+                              overflow="hidden"
+                            >
+                              <Text variant="small" color="dark400">
+                                {item.shortDescription}
+                              </Text>
+                            </Box>
+                          </Stack>
+                        </Card>
+                      )
+                    })}
+                  </Tiles>
+                )}
+                {totalPages > 1 && (
+                  <Box paddingTop={[5, 5, 5, 8, 8]}>
+                    <Pagination
+                      page={page}
+                      totalPages={totalPages}
+                      variant="blue"
+                      renderLink={(page, className, children) => (
+                        <button
+                          onClick={() => {
+                            goToPage(page)
+                          }}
                         >
-                          <Text variant="small" color="dark400">
-                            {item.shortDescription}
-                          </Text>
-                        </Box>
-                      </Stack>
-                    </Card>
-                  )
-                })}
-              </Tiles>
+                          <span
+                            style={{
+                              position: 'absolute',
+                              width: '1px',
+                              height: '1px',
+                              padding: '0',
+                              margin: '-1px',
+                              overflow: 'hidden',
+                              clip: 'rect(0,0,0,0)',
+                              border: '0',
+                            }}
+                          >
+                            Síða
+                          </span>
+                          <span className={className}>{children}</span>
+                        </button>
+                      )}
+                    />
+                  </Box>
+                )}
+              </>
             )}
-            {totalPages > 1 && (
-              <Box paddingTop={[5, 5, 5, 8, 8]}>
-                <Pagination
-                  page={page}
-                  totalPages={totalPages}
-                  variant="blue"
-                  renderLink={(page, className, children) => (
-                    <button
-                      onClick={() => {
-                        goToPage(page)
-                      }}
-                    >
-                      <span
-                        style={{
-                          position: 'absolute',
-                          width: '1px',
-                          height: '1px',
-                          padding: '0',
-                          margin: '-1px',
-                          overflow: 'hidden',
-                          clip: 'rect(0,0,0,0)',
-                          border: '0',
-                        }}
-                      >
-                        Síða
-                      </span>
-                      <span className={className}>{children}</span>
-                    </button>
-                  )}
-                />
-              </Box>
-            )}
+            {data.length === 0 && <EmptyState />}
           </GridColumn>
         </GridRow>
       </GridContainer>

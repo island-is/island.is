@@ -13,6 +13,7 @@ import SearchAndSort from '../../components/SearchAndSort/SearchAndSort'
 import { SortOptions } from '../../types/enums'
 import BreadcrumbsWithMobileDivider from '../../components/BreadcrumbsWithMobileDivider/BreadcrumbsWithMobileDivider'
 import { sorting } from '../../utils/helpers'
+import EmptyState from '../../components/EmptyState/EmptyState'
 
 type arrayDummy = Array<info>
 type doc = {
@@ -233,6 +234,7 @@ export const MyReviewPage = () => {
               })}
             </Tiles>
           )}
+          {data.length === 0 && <EmptyState />}
         </Stack>
       </GridContainer>
     </Layout>
