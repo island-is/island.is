@@ -104,7 +104,7 @@ export const generateApplicationApprovedByEmployerToEmployerEmail: EmployerRejec
                     new Date(period.startDate),
                     dateFormat.is,
                   )} til ${format(new Date(period.endDate), dateFormat.is)}<br/>
-                  ( Raunfæðingardagur til ${format(
+                  ( Fæðingadagur til ${format(
                     new Date(period.endDate),
                     dateFormat.is,
                   )} )`
