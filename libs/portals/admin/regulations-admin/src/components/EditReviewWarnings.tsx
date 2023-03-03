@@ -147,9 +147,17 @@ export const useCollectMessages = (
       })
     }
 
-    // impacts.forEach((impact) => {
-    // TODO: Return errors for impacts
-    // })
+    if (Array.isArray(impacts)) {
+      impacts.forEach((impact) => {
+        if (impact.error) {
+          messages.push({
+            label: t(editorMsgs.stepImpactHeadline),
+            error: t(impact.error),
+            step,
+          })
+        }
+      })
+    }
 
     if (name.error) {
       messages.push({

@@ -320,11 +320,6 @@ export const serviceSetup = (services: {
       max: 50,
       min: 10,
     })
-    .replicaCount({
-      default: 10,
-      max: 50,
-      min: 10,
-    })
     .grantNamespaces(
       'nginx-ingress-external',
       'api-catalogue',
