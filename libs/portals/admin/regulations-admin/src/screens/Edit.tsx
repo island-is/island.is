@@ -157,7 +157,7 @@ const EditApp: PortalModuleComponent = ({ userInfo }) => {
   const lawChapters = useLawChaptersQuery()
 
   if (regulationDraft.loading || ministries.loading || lawChapters.loading) {
-    return <p>Loading...</p>
+    return <p>Hleð viðmóti...</p>
   }
 
   if (regulationDraft.error) {

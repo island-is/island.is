@@ -236,7 +236,6 @@ export const EditReviewOverview = (props: EditReviewOverviewProps) => {
                     // editors, etc.)
                     // This is a known issue: https://github.com/sudodoki/copy-to-clipboard/issues/112
                     format: 'text/html',
-                    // format: 'text/plain',
                     onCopy: () => flagAsClick('html'),
                   },
                 )

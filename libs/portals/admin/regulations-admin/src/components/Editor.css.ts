@@ -102,17 +102,6 @@ export const classes: EditorClasses = {
       [`.${readOnly} &`]: {
         display: 'none',
       },
-      // /* Alternative take: */
-      // [`${readOnly} &::before`]: {
-      //   content: '""',
-      //   background: '#f4f4f4cc',
-      //   position: 'absolute',
-      //   top: 0,
-      //   bottom: 0,
-      //   left: '1px',
-      //   right: '1px',
-      //   zIndex: 2,
-      // },
 
       [`${containerDisabled} &`]: {
         display: 'none',
@@ -157,7 +146,6 @@ export const classes: EditorClasses = {
     transitionProperty: 'transform',
     boxShadow: '0 0 5rem transparent',
     opacity: 0,
-    // visibility: 'hidden',
 
     selectors: {
       '&:hover': {
@@ -166,11 +154,9 @@ export const classes: EditorClasses = {
       },
       [`${wrapper}:hover &`]: {
         opacity: 1,
-        // visibility: 'visible',
       },
       [`${hasFocus} &`]: {
         opacity: 1,
-        // visibility: 'visible',
       },
     },
   }),

@@ -78,7 +78,6 @@ export class RegulationsService extends RESTDataSource {
         },
       )
     } catch (e) {
-      const error = e as Error
       const errorMessage = 'Presigned Post creation failed'
       this.logger.error(errorMessage, {
         ...e,

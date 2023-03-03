@@ -4,7 +4,6 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { environment } from '../../../environments'
 import { CreateDraftAuthorDto } from './dto'
 import { DraftAuthorModel } from './draft_author.model'
 import { Kennitala } from '@island.is/regulations'

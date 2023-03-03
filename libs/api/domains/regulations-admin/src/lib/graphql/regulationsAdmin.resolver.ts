@@ -50,7 +50,6 @@ export class RegulationsAdminResolver {
     private downloadServiceConfig: ConfigType<typeof DownloadServiceConfig>,
   ) {}
 
-  // @Query(() => DraftRegulationModel, { nullable: true })
   @Query(() => graphqlTypeJson)
   async getDraftRegulation(
     @Args('input') input: GetDraftRegulationInput,
@@ -82,7 +81,6 @@ export class RegulationsAdminResolver {
     )
   }
 
-  // @Query(() => [DraftRegulationSummaryModel])
   @Query(() => graphqlTypeJson)
   async getDraftRegulations(
     @Args('input') input: GetDraftRegulationsInput,

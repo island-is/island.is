@@ -190,7 +190,6 @@ export const ImpactList = (props: ImpactListProps) => {
                           <AlertMessage type="error" title={errorMessage} />
                         ) as unknown) as string)
                       }
-                      // backgroundColor={error ? 'red' : undefined}
                     />
                   )
                 })}

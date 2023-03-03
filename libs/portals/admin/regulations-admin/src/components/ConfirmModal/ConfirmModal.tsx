@@ -17,7 +17,7 @@ const ConfirmModal: FC<ConfirmModalProps> = ({
 }) => {
   return (
     <ModalBase
-      baseId={`deleteImpactModal`}
+      baseId="deleteImpactModal"
       className={styles.modal}
       isVisible={isVisible}
       hideOnClickOutside={false}

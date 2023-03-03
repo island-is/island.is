@@ -1,3 +1,3 @@
 import { style } from '@vanilla-extract/css'
 
-export const datePecker = style({})
+export const datePicker = style({})

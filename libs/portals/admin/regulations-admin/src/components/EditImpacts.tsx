@@ -130,8 +130,8 @@ export const EditImpacts = () => {
                   href={`https://island.is/reglugerdir/nr/${nameToSlug(
                     selRegOption.value as RegName,
                   )}`}
-                  color={'blue400'}
-                  underlineVisibility={'hover'}
+                  color="blue400"
+                  underlineVisibility="hover"
                   newTab
                 >
                   Reglugerð {selRegOption.value}
