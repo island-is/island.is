@@ -2,7 +2,7 @@ import { compose, createClient, createScope } from './helpers'
 
 export const up = compose(
   createClient({
-    clientId: '@island.is/clients/licenses-rls',
+    clientId: '@rls.is/clients/licenses',
     clientType: 'machine',
     displayName: 'RLS digital license machine client',
     description: 'Enables acccess to the license-api',
