@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsDate, IsString } from 'class-validator'
-import { IsNationalId } from '@island.is/nest/validators'
+import { IsNationalId } from '@island.is/nest/core'
 import { Type } from 'class-transformer'
 
 const EXAMPLE_TOKEN =
