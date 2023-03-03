@@ -106,7 +106,7 @@ export const Index = () => {
   const visibleItems = data.slice(base, page * CARDS_PER_PAGE)
 
   return (
-    <Layout showIcon={false}>
+    <Layout isFrontPage>
       <HeroBanner />
 
       <SearchAndFilter

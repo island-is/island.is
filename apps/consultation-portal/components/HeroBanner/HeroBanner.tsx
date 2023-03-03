@@ -55,7 +55,7 @@ export const HeroBanner = () => {
                   <ArrowLink href="/um">Lesa meira</ArrowLink>
                 </Column>
                 <Column width="content">
-                  <ArrowLink href="/um">Skoða þingmannaskrá</ArrowLink>
+                  <ArrowLink href="/um">Skoða þingmálaskrá</ArrowLink>
                 </Column>
               </Columns>
             </GridColumn>
