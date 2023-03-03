@@ -81,7 +81,7 @@ export const EditImpacts = () => {
 
   return (
     <>
-      {draft.type.value === RegulationDraftTypes.amending && (
+      {draft.type.value === RegulationDraftTypes.base && (
         <Box marginBottom={3} className={s.explainerText}>
           <AlertMessage
             type="info"

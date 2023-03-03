@@ -30,7 +30,7 @@ export const ShippedRegulations = (props: ShippedRegulationsProps) => {
                 ' ' +
                 (publishedDate
                   ? formatDateFns(publishedDate, 'd. MMM yyyy')
-                  : '??dags??')
+                  : 'Dagsetning ekki skilgreind')
               : t(statusMsgs.shipped)
 
           return (

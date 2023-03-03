@@ -41,7 +41,6 @@ export const validateImpact = (
   impact: DraftImpactForm,
   state?: DraftingState,
 ) => {
-  // TODO: perform more validations, such as date boundry checks, etc.
   validateFieldValue(impact.date, true)
   if (impact.type === 'repeal') {
     return
