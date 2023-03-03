@@ -54,8 +54,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   inputName = '',
   backgroundColor = 'white',
   size = 'md',
-  icon = 'calendar',
-  iconType = 'outline',
+  icon = { name: 'calendar', type: 'outline' },
   minYear,
   maxYear,
 }) => {
@@ -145,7 +144,6 @@ export const DatePicker: React.FC<DatePickerProps> = ({
               onInputClick={onInputClick}
               backgroundColor={backgroundColor}
               icon={icon}
-              iconType={iconType}
               size={size}
             />
           }
@@ -177,7 +175,6 @@ const CustomInput = forwardRef<
       onInputClick,
       fixedFocusState,
       icon,
-      iconType,
       ...props
     },
     ref,
@@ -185,7 +182,6 @@ const CustomInput = forwardRef<
     <Input
       {...props}
       icon={icon}
-      iconType={iconType}
       ref={ref}
       fixedFocusState={fixedFocusState}
       placeholder={placeholderText}

@@ -1,10 +1,12 @@
+const audience = ['@island.is/auth/admin', '@admin.island.is']
+
 const devConfig = {
   production: false,
   audit: {
     defaultNamespace: '@island.is/auth-admin-api',
   },
   auth: {
-    audience: '@island.is/auth/admin',
+    audience,
     issuer: 'https://identity-server.dev01.devland.is',
   },
 }
@@ -17,8 +19,9 @@ const prodConfig = {
     serviceName: 'services-auth-admin-api',
   },
   auth: {
-    audience: '@island.is/auth/admin',
-    issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
+    audience,
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    issuer: process.env.IDENTITY_SERVER_ISSUER_URL!,
   },
 }
 

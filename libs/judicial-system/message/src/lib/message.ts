@@ -31,5 +31,3 @@ export type DefendantMessage = CaseMessage & { defendantId: string }
 export type CaseFileMessage = CaseMessage & { caseFileId: string }
 
 export type PoliceCaseMessage = CaseMessage & { policeCaseNumber: string }
-
-export type NotificationMessage = CaseMessage & { eventOnly?: boolean }
