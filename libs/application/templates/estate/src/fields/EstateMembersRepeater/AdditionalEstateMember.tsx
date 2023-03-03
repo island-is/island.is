@@ -96,7 +96,6 @@ export const AdditionalEstateMember = ({
     { loading: advocateQueryLoading, error: advocateQueryError },
   ] = useLazyQuery<Query, { input: IdentityInput }>(IDENTITY_QUERY, {
     onCompleted: (data) => {
-      console.log('hæ')
       setValue(advocateNameField, data.identity?.name ?? '')
     },
     fetchPolicy: 'network-only',
@@ -118,7 +117,7 @@ export const AdditionalEstateMember = ({
     ) {
       setValue(nameField, '')
     }
-  }, [getIdentity, name, nameField, nationalIdInput, setValue])
+  }, [getIdentity, name, nameField, nationalIdInput, setValue, foreignCitizenship])
 
   // Advocate
   useEffect(() => {
