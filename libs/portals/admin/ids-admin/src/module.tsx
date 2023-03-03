@@ -8,6 +8,7 @@ import Applications from './components/Applications/Applications'
 import ApplicationsScreen from './screens/ApplicationsScreen'
 import { m } from './lib/messages'
 import TenantsList from './components/TenantsList/TenantsList'
+import { createApplicationFormAction } from './components/forms/CreateApplicationForm/CreateApplicationForm.action'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 
@@ -19,7 +20,7 @@ export const idsAdminModule: PortalModule = {
   enabled({ userInfo }) {
     return userInfo.scopes.some((scope) => allowedScopes.includes(scope))
   },
-  routes() {
+  routes(props) {
     return [
       {
         name: m.idsAdmin,
@@ -63,6 +64,7 @@ export const idsAdminModule: PortalModule = {
                 name: m.applications,
                 path: IDSAdminPaths.IDSAdminDomains,
                 element: <Applications />,
+                action: createApplicationFormAction(props),
               },
               {
                 name: m.apis,

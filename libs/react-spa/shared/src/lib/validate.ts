@@ -125,16 +125,40 @@ export const getValuesFromFormData = (formData: FormData) => {
   return obj
 }
 
-export const validateFormData = async <T extends z.ZodTypeAny>({
+type ActionErrors<T> = Partial<Record<keyof T, string>>
+
+export const validateFormData = async <Schema extends z.ZodTypeAny>({
   request,
   schema,
 }: {
   request: Request
-  schema: T
+  schema: Schema
 }) => {
   const formData = await request.formData()
   const values = getValuesFromFormData(formData)
   const nestedObject = dotNotationToNestedObject(values)
 
-  return schema.parse(nestedObject) as z.infer<typeof schema>
+  try {
+    const parsedFormData = schema.parse(nestedObject) as z.infer<typeof schema>
+
+    return { data: parsedFormData, errors: null }
+  } catch (e) {
+    const errors = e as z.ZodError<z.infer<typeof schema>>
+
+    return {
+      data: null,
+      errors: errors.issues.reduce(
+        (acc: ActionErrors<z.infer<typeof schema>>, curr) => {
+          const key = curr.path[0] as keyof z.infer<typeof schema>
+
+          if (key) {
+            acc[key] = curr.message
+          }
+
+          return acc
+        },
+        {},
+      ),
+    }
+  }
 }

@@ -14,7 +14,7 @@ import { useEffect, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { Modal } from '../Modal/Modal'
-import { CreateApplicationForm } from '../forms/CreateApplicationForm'
+import { CreateApplicationForm } from '../forms/CreateApplicationForm/CreateApplicationForm'
 
 const Applications = () => {
   const { tenant } = useParams<{ tenant: string }>()

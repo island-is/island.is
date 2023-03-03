@@ -1,18 +1,12 @@
 import React, { useRef } from 'react'
 import { Box, Button, Input } from '@island.is/island-ui/core'
-import { Form } from 'react-router-dom'
+import { Form, useActionData } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../lib/messages'
+import { m } from '../../../lib/messages'
 import { useState } from 'react'
 
-const formatClientId = ({ prefix, name }: { prefix: string; name: string }) => {
-  const formattedName = name.trim().toLowerCase().replace(/\s+/g, '-')
-
-  if (formattedName.includes(prefix)) {
-    return formattedName
-  }
-
-  return `${prefix}${formattedName}`
+const formatClientId = (name: string) => {
+  return name.trim().toLowerCase().replace(/\s+/g, '-')
 }
 
 type InputState = {
@@ -29,16 +23,12 @@ export const CreateApplicationForm = ({
   onCancel,
   tenant,
 }: CreateApplicationFormProps) => {
+  const actionData = useActionData()
   const { formatMessage } = useLocale()
   const formRef = useRef<HTMLFormElement>(null)
   const CLIENT_ID_PREFIX = `${tenant}/`
 
   const initialClientIdState: InputState = {
-    value: CLIENT_ID_PREFIX,
-    dirty: false,
-  }
-
-  const initialDisplayNameState: InputState = {
     value: '',
     dirty: false,
   }
@@ -47,28 +37,14 @@ export const CreateApplicationForm = ({
     initialClientIdState,
   )
 
-  const [displayNameState, setDisplayNameState] = useState<InputState>(
-    initialDisplayNameState,
-  )
-
   const onNameChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    const val = e.target.value
-
-    setDisplayNameState({
-      value: val,
-      dirty: true,
-    })
-
     if (clientIdState.dirty) return
 
     setClientIdState({
       ...clientIdState,
-      value: formatClientId({
-        prefix: CLIENT_ID_PREFIX,
-        name: val,
-      }),
+      value: formatClientId(e.target.value),
     })
   }
 
@@ -77,15 +53,10 @@ export const CreateApplicationForm = ({
   ) => {
     const val = e.target.value
 
-    if (val.includes(CLIENT_ID_PREFIX)) {
-      setClientIdState({
-        value: formatClientId({
-          prefix: CLIENT_ID_PREFIX,
-          name: e.target.value,
-        }),
-        dirty: true,
-      })
-    }
+    setClientIdState({
+      value: formatClientId(val),
+      dirty: true,
+    })
   }
 
   const resetForm = () => {
@@ -93,7 +64,6 @@ export const CreateApplicationForm = ({
     formRef.current?.reset()
     // Reset state
     setClientIdState(initialClientIdState)
-    setDisplayNameState(initialDisplayNameState)
   }
 
   const onCancelHandler = () => {
@@ -110,16 +80,17 @@ export const CreateApplicationForm = ({
             name="displayName"
             label={formatMessage(m.displayName)}
             size="sm"
-            value={displayNameState.value}
             onChange={onNameChange}
           />
         </Box>
         <Box width="full">
+          <input type="text" hidden name="tenant" value={tenant} />
           <Input
             type="text"
             name="clientId"
             label={formatMessage(m.clientId)}
             size="sm"
+            prefix={CLIENT_ID_PREFIX}
             value={clientIdState.value}
             onChange={onClientIdChange}
           />
@@ -129,7 +100,7 @@ export const CreateApplicationForm = ({
         <Button onClick={onCancelHandler} variant="ghost">
           {formatMessage(m.cancel)}
         </Button>
-        <Button onClick={onCancel}>{formatMessage(m.create)}</Button>
+        <Button type="submit">{formatMessage(m.create)}</Button>
       </Box>
     </Form>
   )
