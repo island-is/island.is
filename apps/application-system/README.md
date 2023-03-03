@@ -140,4 +140,4 @@ yarn nx test application-system-form
 
 ## Code owners and maintainers
 
-- [Sendiráðið](https://github.com/orgs/island-is/teams/sendiradid-applications/members)
+- [Norda](https://github.com/orgs/island-is/teams/norda-applications/members)

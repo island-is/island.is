@@ -525,4 +525,4 @@ The reason default behavior does not work for all applications is because it cou
 
 ## Code owners and maintainers
 
-- [Sendiradid](https://github.com/orgs/island-is/teams/sendiradid-applications/members)
+- [Norda](https://github.com/orgs/island-is/teams/norda-applications/members)

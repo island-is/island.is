@@ -13,8 +13,10 @@ import { serviceSetup as servicePortalApiSetup } from '../../../apps/services/us
 import { serviceSetup as servicePortalSetup } from '../../../apps/service-portal/infra/service-portal'
 
 import { serviceSetup as adminPortalSetup } from '../../../apps/portals/admin/infra/portals-admin'
-import { serviceSetup as samradsgattSetup } from '../../../apps/samradsgatt/infra/samradsgatt'
+import { serviceSetup as consultationPortalSetup } from '../../../apps/consultation-portal/infra/samradsgatt'
 import { serviceSetup as xroadCollectorSetup } from '../../../apps/services/xroad-collector/infra/xroad-collector'
+
+import { serviceSetup as licenseApiSetup } from '../../../apps/services/license-api/infra/license-api'
 
 import { serviceSetup as skilavottordWsSetup } from '../../../apps/skilavottord/ws/infra/ws'
 import { serviceSetup as skilavottordWebSetup } from '../../../apps/skilavottord/web/infra/web'
@@ -59,7 +61,7 @@ const appSystemApiWorker = appSystemApiWorkerSetup()
 
 const servicePortalApi = servicePortalApiSetup()
 const adminPortal = adminPortalSetup()
-const samradsgatt = samradsgattSetup()
+const consultationPortal = consultationPortalSetup()
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
 
 const adsBackend = adsBackendSetup()
@@ -85,6 +87,8 @@ const searchIndexer = searchIndexerSetup()
 const contentfulEntryTagger = contentfulEntryTaggerSetup()
 
 const xroadCollector = xroadCollectorSetup()
+
+const licenseApi = licenseApiSetup()
 
 const skilavottordWs = skilavottordWsSetup()
 const skilavottordWeb = skilavottordWebSetup({ api: skilavottordWs })
@@ -128,6 +132,7 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
+    licenseApi,
     sessionsService,
     sessionsWorker,
   ],
@@ -155,6 +160,7 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
+    licenseApi,
     sessionsService,
     sessionsWorker,
   ],
@@ -164,7 +170,7 @@ export const Services: EnvironmentServices = {
     servicePortal,
     servicePortalApi,
     adminPortal,
-    samradsgatt,
+    consultationPortal,
     api,
     web,
     searchIndexer,
@@ -186,6 +192,7 @@ export const Services: EnvironmentServices = {
     externalContractsTests,
     appSystemApiWorker,
     contentfulEntryTagger,
+    licenseApi,
     sessionsService,
     sessionsWorker,
   ],

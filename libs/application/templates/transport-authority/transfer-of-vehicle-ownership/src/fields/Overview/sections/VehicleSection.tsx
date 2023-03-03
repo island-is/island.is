@@ -35,11 +35,13 @@ export const VehicleSection: FC<FieldBaseProps & ReviewScreenProps> = ({
     'buyerCoOwnerAndOperator',
     [],
   ) as CoOwnerAndOperator[]
-  const isOperator = buyerCoOwnerAndOperator.find(
-    (reviewerItems) =>
-      reviewerItems.nationalId === reviewerNationalId &&
-      reviewerItems.type === 'operator',
-  )
+  const isOperator = buyerCoOwnerAndOperator
+    .filter(({ wasRemoved }) => wasRemoved !== 'true')
+    .find(
+      (reviewerItems) =>
+        reviewerItems.nationalId === reviewerNationalId &&
+        reviewerItems.type === 'operator',
+    )
 
   return (
     <ReviewGroup isLast>

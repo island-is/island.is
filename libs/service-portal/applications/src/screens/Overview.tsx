@@ -160,7 +160,7 @@ const Overview = () => {
                 <GridColumn span={['1/1', '1/2']}>
                   <Box height="full">
                     <Input
-                      icon="search"
+                      icon={{ name: 'search' }}
                       backgroundColor="blue"
                       size="xs"
                       value={filterValue.searchQuery}

@@ -289,4 +289,7 @@ export class Case implements TCase {
 
   @Field(() => [IndictmentCount], { nullable: true })
   readonly indictmentCounts?: IndictmentCount[]
+
+  @Field(() => Boolean, { nullable: true })
+  readonly requestDriversLicenseSuspension?: boolean
 }

@@ -240,7 +240,7 @@ const VehiclesOverview = () => {
             <GridColumn span={['9/9', '9/9', '5/9', '4/9', '3/9']}>
               <Box marginBottom={1}>
                 <Input
-                  icon="search"
+                  icon={{ name: 'search' }}
                   backgroundColor="blue"
                   size="xs"
                   value={filterValue.searchQuery}

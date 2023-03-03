@@ -39,7 +39,7 @@ import { PortalNavigationItem } from '@island.is/portals/core'
 import { theme } from '@island.is/island-ui/theme'
 
 export const Layout: FC = ({ children }) => {
-  useNamespaces(['service.portal', 'global'])
+  useNamespaces(['service.portal', 'global', 'portals'])
   const { formatMessage } = useLocale()
   const { pathname } = useLocation()
   const [isDashboard, setIsDashboard] = useState(true)

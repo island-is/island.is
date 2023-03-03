@@ -1,6 +1,5 @@
-import { PortalNavigationItem } from '@island.is/portals/core'
+import { PortalNavigationItem, m } from '@island.is/portals/core'
 import { DelegationPaths } from './paths'
-import { m } from './messages'
 
 export const delegationsNavigationChildren: PortalNavigationItem[] = [
   {
@@ -8,6 +7,7 @@ export const delegationsNavigationChildren: PortalNavigationItem[] = [
     path: DelegationPaths.Delegations,
     navHide: false,
     serviceProvider: '1JHJe1NDwbBjEr7OVdjuFD',
+    breadcrumbHide: true,
     children: [
       {
         name: m.accessControlGrant,

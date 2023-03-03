@@ -409,9 +409,13 @@ export const m = defineMessages({
     id: 'service.portal:family-child',
     defaultMessage: 'Barn',
   },
-  endorsements: {
-    id: 'service.portal:endorsements',
-    defaultMessage: 'Meðmæli',
+  petitions: {
+    id: 'service.portal:petitions',
+    defaultMessage: 'Listar',
+  },
+  viewPetition: {
+    id: 'service.portal:viewPetition',
+    defaultMessage: 'Nánar um lista',
   },
   endorsementsAdmin: {
     id: 'service.portal:endorsements-admin',
@@ -496,6 +500,10 @@ export const m = defineMessages({
   searchPlaceholder: {
     id: 'service.portal:search-placeholder',
     defaultMessage: 'Sláðu inn leitarorð',
+  },
+  searchByNationalId: {
+    id: 'service.portal:search-by-national-id',
+    defaultMessage: 'Leita eftir kennitölu',
   },
   actions: {
     id: 'service.portal:actions',
@@ -926,5 +934,9 @@ export const m = defineMessages({
     id: 'service.portal:air-discount',
     defaultMessage: 'Loftbrú',
     description: 'Airfare discount',
+  },
+  sessions: {
+    id: 'service.portal:sessions',
+    defaultMessage: 'Notkun',
   },
 })

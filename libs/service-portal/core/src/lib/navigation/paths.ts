@@ -58,10 +58,12 @@ export enum ServicePortalPath {
   Company = '/fyrirtaeki',
 
   // General Petitions
-  Petitions = '/min-gogn/medmaeli',
-  PetitionsAdminView = '/min-gogn/medmaeli-admin',
-  PetitionList = '/min-gogn/medmaeli/:listId',
-  PetitionListAdmin = '/min-gogn/medmaeli-admin/:listId',
+  Petitions = '/min-gogn/listar',
+  PetitionList = '/min-gogn/listar/:listId',
+  PetitionListOwned = '/min-gogn/listar/minn-listi/:listId',
+
+  PetitionsAdminView = '/min-gogn/listar-admin',
+  PetitionListAdmin = '/min-gogn/listar-admin/:listId',
 
   RealEstateExternal = 'https://minarsidur.island.is/minar-sidur/min-gogn/fasteignir',
 

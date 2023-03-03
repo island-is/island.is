@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { SubmitHandler } from 'react-hook-form'
+import React, { useState } from 'react'
+import { useLoaderData } from 'react-router-dom'
 import {
   Box,
   Stack,
@@ -14,71 +14,16 @@ import {
 import { PortalNavigation } from '@island.is/portals/core'
 import { Filters, Panel, Summary } from './components'
 import { downloadCSV } from './utils'
-import {
-  FlightLegsQuery,
-  FlightLegsQueryVariables,
-  useConfirmInvoiceMutation,
-  useFlightLegsLazyQuery,
-} from './Overview.generated'
-import { FlightLegsFilters } from './types'
+import { useConfirmInvoiceMutation } from './Overview.generated'
+
 import { airDiscountSchemeNavigation } from '../../lib/navigation'
 import Modal from '../../components/Modal/Modal'
-import { prepareFlightLegsQuery } from '../../lib/loaders'
-import { useLoaderData } from 'react-router-dom'
+import { OverviewLoaderReturnType } from './Overview.loader'
 
 const Overview = () => {
-  const loaderData = useLoaderData() as FlightLegsQuery
-  const { airDiscountSchemeFlightLegs = [] } = loaderData ?? {}
-  const [flightLegs, setFlightLegs] = useState(airDiscountSchemeFlightLegs)
+  const { flightLegs, filters } = useLoaderData() as OverviewLoaderReturnType
   const [showModal, setModal] = useState(false)
-  const queryData = prepareFlightLegsQuery()
-  const [filters, setFilters] = useState<FlightLegsFilters>(queryData.filters)
-
-  const input: FlightLegsQueryVariables['input'] = {
-    ...queryData.input,
-    airline: filters.airline?.value,
-    gender: filters.gender?.value || undefined,
-    age: {
-      from:
-        parseInt(Number(filters.age?.from).toString()) ||
-        queryData.input.age.from,
-      to:
-        parseInt(Number(filters.age?.to).toString()) || queryData.input.age.to,
-    },
-    postalCode: filters.postalCode
-      ? parseInt(filters.postalCode.toString())
-      : undefined,
-    isExplicit: Boolean(filters.isExplicit),
-  }
-
-  const [
-    confirmInvoice,
-    { loading: confirmInvoiceLoading },
-  ] = useConfirmInvoiceMutation()
-
-  const [
-    getFlightLegs,
-    { loading: flightLegsLoading, data },
-  ] = useFlightLegsLazyQuery({
-    ssr: false,
-    variables: {
-      input,
-    },
-  })
-
-  useEffect(() => {
-    if (data?.airDiscountSchemeFlightLegs) {
-      setFlightLegs(data.airDiscountSchemeFlightLegs)
-    }
-  }, [data?.airDiscountSchemeFlightLegs])
-
-  const loading = flightLegsLoading || confirmInvoiceLoading
-  const applyFilters: SubmitHandler<FlightLegsFilters> = (
-    data: FlightLegsFilters,
-  ) => {
-    setFilters(data)
-    getFlightLegs()
-  }
+  const [confirmInvoice, { loading }] = useConfirmInvoiceMutation()
 
   return (
     <GridContainer>
@@ -102,7 +47,7 @@ const Overview = () => {
               </Box>
               <Divider weight="purple200" />
               <Box padding={4}>
-                <Filters onSubmit={applyFilters} defaultValues={filters} />
+                <Filters defaultValues={filters} />
               </Box>
             </Box>
           </Stack>
@@ -118,7 +63,7 @@ const Overview = () => {
             <>
               <Summary
                 flightLegs={flightLegs}
-                airline={filters.airline?.value}
+                airline={filters.airline}
                 onClickDownload={() => downloadCSV(flightLegs, filters)}
                 onClickRefund={() => setModal(true)}
               />
@@ -141,7 +86,7 @@ const Overview = () => {
         show={showModal}
         onCancel={() => setModal(false)}
         onContinue={() => {
-          confirmInvoice({ variables: { input } })
+          confirmInvoice({ variables: { input: filters } })
           setModal(false)
         }}
         t={{
