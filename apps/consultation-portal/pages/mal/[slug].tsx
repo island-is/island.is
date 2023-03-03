@@ -19,7 +19,7 @@ import {
 import Layout from '../../components/Layout/Layout'
 import { Advice } from '../../types/viewModels'
 import { SimpleCardSkeleton } from '../../components/Card'
-// import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
+import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
 
 const CaseDetails = ({ chosenCase, advices, isLoggedIn }) => {
   const dummyCase = {
@@ -157,7 +157,7 @@ const CaseDetails = ({ chosenCase, advices, isLoggedIn }) => {
             order={[2, 2, 2, 3, 3]}
           >
             <Stack space={3}>
-              {/* <SimpleCardSkeleton>
+              <SimpleCardSkeleton>
                 <StackedTitleAndDescription
                   headingColor="blue400"
                   title="Skjöl til samráðs"
@@ -183,7 +183,7 @@ const CaseDetails = ({ chosenCase, advices, isLoggedIn }) => {
                 >
                   {`${chosenCase.contactName} ${chosenCase.contactEmail}`}
                 </StackedTitleAndDescription>
-              </SimpleCardSkeleton> */}
+              </SimpleCardSkeleton>
             </Stack>
           </GridColumn>
         </GridRow>

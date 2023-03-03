@@ -31,7 +31,6 @@ export const getServerSideProps = async (ctx) => {
 }
 
 export const Test = ({ cases }: HomeProps) => {
-  console.log('test', cases)
   return <Home cases={cases} />
 }
 export default Test

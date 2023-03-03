@@ -1,7 +1,7 @@
 import { Advice, Case } from '../../types/viewModels'
 import format from 'date-fns/format'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
-// import EyebrowsWithSeperator from '../EybrowsWithSeperator/EybrowsWithSeperator'
+import EyebrowsWithSeperator from '../EybrowsWithSeperator/EybrowsWithSeperator'
 import * as styles from './CaseOverview.css'
 import CaseStatusCard from '../CaseStatusCard/CaseStatusCard'
 
@@ -35,7 +35,7 @@ export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
   return (
     <Stack space={[4, 4, 4, 6, 6]}>
       <Stack space={3}>
-        {/* <EyebrowsWithSeperator
+        <EyebrowsWithSeperator
           instances={upperInstances}
           color="purple400"
           style={styles.upperSeperator}
@@ -48,7 +48,7 @@ export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
           style={styles.lowerSeperator}
           wrap={false}
           truncate={true}
-        /> */}
+        />
         <Text variant="h1" color="blue400">
           {chosenCase?.name}
         </Text>
