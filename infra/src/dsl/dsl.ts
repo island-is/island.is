@@ -212,8 +212,7 @@ export class ServiceBuilder<ServiceType> {
   }
 
   redis(redis?: RedisInfo) {
-    this.serviceDef.redis = redis ?? { host: 'default' }
-    //console.log(this)
+    this.serviceDef.redis = redis ?? {}
     return this
   }
 

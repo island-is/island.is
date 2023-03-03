@@ -32,11 +32,11 @@ export type PostgresInfoForEnv = {
 }
 
 export type RedisInfo = {
-  host: { [idx in OpsEnv]: string }
+  host?: { [idx in OpsEnv]: string }
 }
 
 export type RedisInfoForEnv = {
-  host: string
+  host?: string
 }
 
 export type HealthProbe = {
