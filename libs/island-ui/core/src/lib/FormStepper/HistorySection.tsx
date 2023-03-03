@@ -48,7 +48,9 @@ export const HistorySection: FC<{
         {date && (
           <Hidden below="xl">
             <Box paddingTop={2} paddingRight={2} className={styles.historyDate}>
-              <Text variant="small">{date}</Text>
+              <Text lineHeight="lg" variant="small">
+                {date}
+              </Text>
             </Box>
           </Hidden>
         )}
@@ -65,7 +67,9 @@ export const HistorySection: FC<{
           {date && (
             <Hidden above="lg">
               <Box paddingRight={2}>
-                <Text variant="small">{date}</Text>
+                <Text lineHeight="lg" variant="small">
+                  {date}
+                </Text>
               </Box>
             </Hidden>
           )}

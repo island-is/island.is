@@ -327,27 +327,32 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   const renderDraftProgressMeter = () => {
     const { variant, draftFinishedSteps, draftTotalSteps } = progressMeter
     return (
-      <Box flexGrow={1} className={styles.draftProgressMeter}>
-        <DraftProgressMeter
-          variant={variant}
-          draftTotalSteps={draftTotalSteps ?? 1}
-          draftFinishedSteps={draftFinishedSteps ?? 1}
-        />
-      </Box>
-    )
-  }
-
-  const renderProgressMeterButton = () => {
-    return (
-      <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
-        <Button
-          variant={cta.variant}
-          onClick={cta.onClick}
-          icon={cta.icon}
-          size={cta.size}
-        >
-          {cta.label}
-        </Button>
+      <Box
+        width="full"
+        paddingTop={[2, 2, 2, 3]}
+        display="flex"
+        flexGrow={1}
+        flexShrink={0}
+        alignItems={['stretch', 'stretch', alignWithDate]}
+        flexDirection={['column', 'column', 'row']}
+      >
+        <Box flexGrow={1} className={styles.draftProgressMeter}>
+          <DraftProgressMeter
+            variant={variant}
+            draftTotalSteps={draftTotalSteps ?? 1}
+            draftFinishedSteps={draftFinishedSteps ?? 1}
+          />
+        </Box>
+        <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
+          <Button
+            variant={cta.variant}
+            onClick={cta.onClick}
+            icon={cta.icon}
+            size={cta.size}
+          >
+            {cta.label}
+          </Button>
+        </Box>
       </Box>
     )
   }
@@ -393,6 +398,18 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         className={styles.logo}
         style={{ backgroundImage: `url(${logo})` }}
       ></Box>
+    )
+  }
+
+  const renderHistory = () => {
+    return (
+      history?.items &&
+      history.items.length > 0 && (
+        <ActionCardHistory
+          history={history}
+          size={history.items.some((x) => !!x.content) ? 'lg' : 'sm'}
+        />
+      )
     )
   }
 
@@ -464,27 +481,14 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           {unavailable.active ? renderDisabled() : renderDefault()}
         </Box>
       </Box>
-      {progressMeter.active && !renderDraftStatusBar && renderProgressMeter()}
-      {progressMeter.active && renderDraftStatusBar && (
-        <Box
-          width="full"
-          paddingTop={[2, 2, 2, 3]}
-          display="flex"
-          flexGrow={1}
-          flexShrink={0}
-          alignItems={['stretch', 'stretch', alignWithDate]}
-          flexDirection={['column', 'column', 'row']}
-        >
-          {status === 'draft' && renderDraftProgressMeter()}
-          {renderProgressMeterButton()}
-        </Box>
-      )}
-      {history?.items && history.items.length > 0 && (
-        <ActionCardHistory
-          history={history}
-          size={history.items.some((x) => !!x.content) ? 'lg' : 'sm'}
-        />
-      )}
+
+      {status === 'draft'
+        ? renderDraftStatusBar
+          ? renderDraftProgressMeter()
+          : renderProgressMeter()
+        : history?.items && history.items.length > 0
+        ? renderHistory()
+        : renderProgressMeter()}
     </Box>
   )
 }
