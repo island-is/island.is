@@ -18,7 +18,6 @@ const Dev: EnvironmentConfig = {
   awsAccountRegion: 'eu-west-1',
   global: {},
 }
-
 describe('Redis', () => {
   describe('Default redis setting', () => {
     const sut = service('services-sessions').redis()
