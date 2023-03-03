@@ -1,16 +1,21 @@
-import { withApollo } from '../graphql/withApollo'
-import initApollo from '../graphql/client'
+import initApollo from '@island.is/consultation-portal/graphql/client'
+import { Screen } from '@island.is/consultation-portal/types'
+import { GetServerSidePropsContext } from 'next'
 import {
+  ConsultationPortalAllCasesDocument,
   ConsultationPortalAllCasesQuery,
   ConsultationPortalAllCasesQueryVariables,
-  ConsultationPortalAllCasesDocument,
-} from '../screens/Home/getAllCases.generated'
-import Home from '../screens/Home/Home'
+} from './getAllCases.generated'
 
 interface HomeProps {
   cases: ConsultationPortalAllCasesQuery['consultationPortalAllCases']
 }
-export const getServerSideProps = async (ctx) => {
+
+const Home: Screen<HomeProps> = ({ cases }) => {
+  console.log('ello', cases)
+  return <div>Test</div>
+}
+Home.getInitialProps = async ({ apolloClient }) => {
   const client = initApollo()
   const [
     {
@@ -26,12 +31,8 @@ export const getServerSideProps = async (ctx) => {
   ])
   console.log(consultationPortalAllCases)
   return {
-    props: { cases: consultationPortalAllCases },
+    cases: consultationPortalAllCases,
   }
 }
 
-export const Test = ({ cases }: HomeProps) => {
-  console.log('test', cases)
-  return <Home cases={cases} />
-}
-export default Test
+export default Home
