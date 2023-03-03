@@ -117,7 +117,14 @@ export const AdditionalEstateMember = ({
     ) {
       setValue(nameField, '')
     }
-  }, [getIdentity, name, nameField, nationalIdInput, setValue, foreignCitizenship])
+  }, [
+    getIdentity,
+    name,
+    nameField,
+    nationalIdInput,
+    setValue,
+    foreignCitizenship,
+  ])
 
   // Advocate
   useEffect(() => {
