@@ -198,7 +198,6 @@
   - [Passports](libs/clients/passports/README.md)
   - [Payment Schedule](libs/clients/payment-schedule/README.md)
   - [Regulations](libs/clients/regulations/README.md)
-  - [Clients Regulations Admin](libs/clients/regulations-admin/README.md)
   - [RSK](libs/clients/rsk/README.md)
     - [Clients Company Registry](libs/clients/rsk/company-registry/README.md)
     - [Clients RSK Personal Tax Return](libs/clients/rsk/personal-tax-return/README.md)
