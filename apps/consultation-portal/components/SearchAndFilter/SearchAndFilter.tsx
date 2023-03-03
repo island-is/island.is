@@ -1,6 +1,5 @@
 import {
   AsyncSearch,
-  AsyncSearchOption,
   Box,
   GridColumn,
   GridContainer,
@@ -10,68 +9,32 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { useState } from 'react'
-import { ArrOfValueAndLabel, Case } from '../../types/interfaces'
+import { ArrOfValueAndLabel } from '../../types/interfaces'
 
 export interface SearchAndFilterProps {
-  data: Array<Case>
-  setData: (arr: Array<Case>) => void
-  cases: Array<Case>
   searchValue: string
   setSearchValue: (val: string) => void
   PolicyAreas: Array<ArrOfValueAndLabel>
   Institutions: Array<ArrOfValueAndLabel>
-  options?: Array<AsyncSearchOption>
+  setInstitutionValue: (val: string) => void
+  setPolicyAreaValue: (val: string) => void
 }
 
 const SearchAndFilter = ({
-  data,
-  setData,
-  cases,
   searchValue,
   setSearchValue,
   PolicyAreas,
   Institutions,
-  options,
+  setInstitutionValue,
+  setPolicyAreaValue,
 }: SearchAndFilterProps) => {
-  const [institutionValue, setInstitutionValue] = useState('')
-  const [policyAreaValue, setPolicyAreaValue] = useState('')
+  const options = []
 
   const onChange = (e, isInstitutions: boolean) => {
-    // e is not null so we know it has a selection
-    if (e) {
-      let label = 'policyArea'
-      if (isInstitutions) {
-        label = 'institution'
-        setInstitutionValue(e.label)
-      } else {
-        setPolicyAreaValue(e.label)
-      }
-      const filtered = data.filter((item) => item[label] === e.label)
-      setData(filtered)
+    if (isInstitutions) {
+      setInstitutionValue(e ? e.label : '')
     } else {
-      // check which one should be cleared
-      if (isInstitutions) {
-        if (policyAreaValue !== '') {
-          const filtered = cases.filter(
-            (item) => item.policyAreaName === policyAreaValue,
-          )
-          setData(filtered)
-          setInstitutionValue('')
-        } else {
-          setData(cases)
-        }
-      } else {
-        if (institutionValue !== '') {
-          const filtered = cases.filter(
-            (item) => item.institutionName === institutionValue,
-          )
-          setData(filtered)
-          setPolicyAreaValue('')
-        } else {
-          setData(cases)
-        }
-      }
+      setPolicyAreaValue(e ? e.label : '')
     }
   }
 
@@ -88,7 +51,6 @@ const SearchAndFilter = ({
                     variant="eyebrow"
                     color="blue400"
                     paddingBottom="none"
-                    fontWeight="light"
                   >
                     Leit
                   </Text>

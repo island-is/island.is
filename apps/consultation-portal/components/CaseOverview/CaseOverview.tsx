@@ -1,7 +1,7 @@
 import { Advice, Case } from '../../types/viewModels'
 import format from 'date-fns/format'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
-import EyebrowsWithSeperator from '../EybrowsWithSeperator/EybrowsWithSeperator'
+import EyebrowsWithSeperator from '../EyebrowsWithSeperator/EyebrowsWithSeperator'
 import * as styles from './CaseOverview.css'
 import CaseStatusCard from '../CaseStatusCard/CaseStatusCard'
 
