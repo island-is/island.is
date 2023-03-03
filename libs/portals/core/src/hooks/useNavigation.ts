@@ -7,7 +7,7 @@ import { filterNavigationTree } from '../utils/filterNavigationTree/filterNaviga
 
 export const useNavigation = (
   navigation: PortalNavigationItem,
-  dynamicRouteArray: string[] = [],
+  dynamicRouteArray?: string[],
 ) => {
   const { userInfo } = useAuth()
   const routes = useRoutes()
@@ -21,7 +21,7 @@ export const useNavigation = (
           filterNavigationTree({
             item: navItem,
             routes,
-            dynamicRouteArray,
+            dynamicRouteArray: dynamicRouteArray ?? [],
             currentLocationPath: pathname,
           }),
         ),
