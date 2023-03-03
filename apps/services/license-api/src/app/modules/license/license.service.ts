@@ -14,12 +14,13 @@ import {
   RevokeLicenseResponse,
 } from './dto'
 import { Pass, PassDataInput, Result } from '@island.is/clients/smartsolutions'
-import { GenericLicenseClient, LicenseId } from './license.types'
+import { LicenseId } from './license.types'
 import {
   LicenseType,
   LicenseUpdateClient,
   LicenseUpdateClientService,
 } from '@island.is/clients/license-client'
+import { mapLicenseIdToLicenseType } from './utils/mapLicenseId'
 
 @Injectable()
 export class LicenseService {
@@ -31,11 +32,10 @@ export class LicenseService {
   private async getClientByLicenseId(
     licenseId: LicenseId,
   ): Promise<LicenseUpdateClient> {
+    const type = mapLicenseIdToLicenseType(licenseId)
     const service = await this.clientService.getLicenseUpdateClientByType(
-      (licenseId as unknown) as LicenseType,
+      type as LicenseType,
     )
-
-    this.logger.debug(licenseId)
 
     if (!service) {
       this.logger.warn(`Invalid license type`)
@@ -87,7 +87,7 @@ export class LicenseService {
   }
 
   private async pullUpdateLicense(
-    service: GenericLicenseClient,
+    service: LicenseUpdateClient,
     nationalId: string,
   ): Promise<Result<Pass | undefined>> {
     /** PULL - Update electronic license with pulled data from service
