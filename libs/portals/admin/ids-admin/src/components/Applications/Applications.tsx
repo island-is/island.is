@@ -14,6 +14,8 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { useTenant } from '../../screens/Tenant'
 import { useEffect } from 'react'
+import { replaceParams } from '@island.is/react-spa/shared'
+import { IDSAdminPaths } from '../../lib/paths'
 
 const Applications = () => {
   const { tenant } = useParams()
@@ -43,7 +45,13 @@ const Applications = () => {
             <GridRow key={item.id}>
               <Link
                 className={styles.fill}
-                to={`/innskraningarkerfi/${tenant}/forrit/${item.id}`}
+                to={replaceParams({
+                  href: IDSAdminPaths.IDSAdminApplication,
+                  params: {
+                    tenant: tenant,
+                    application: item.id,
+                  },
+                })}
               >
                 <Box
                   className={styles.linkContainer}

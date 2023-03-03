@@ -3,21 +3,14 @@ import { Params } from 'react-router-dom'
 type ReplaceParams = {
   href: string
   params: Params<string>
-  paramsPrefix?: string
 }
 
 /**
  * Replace params in path
+ *
  * @example
- * replaceParams('/users/:id', { id: 1 }) // '/users/1'
+ * replaceParams('/users/:id/:friend', { id: 1, friend: 'john' }) -> '/users/1/john'
  */
-export const replaceParams = ({
-  href,
-  params,
-  paramsPrefix = '/',
-}: ReplaceParams) => {
-  return href.replace(
-    /\/:(\w+)/g,
-    (_, paramName) => (paramsPrefix + params[paramName]) as string,
-  )
+export function replaceParams({ href, params }: ReplaceParams) {
+  return href.replace(/\/:(\w+)/g, (_, paramName) => `/${params[paramName]}`)
 }

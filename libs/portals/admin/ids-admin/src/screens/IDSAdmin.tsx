@@ -24,6 +24,11 @@ const IDSAdmin = () => {
    * since it is not possible to determine sibling route with navigate() method.
    */
   const navigateBack = () => {
+    if (location.pathname === IDSAdminPaths.IDSAdmin) {
+      navigate('/')
+      return
+    }
+
     const backRouteMatch = matches.find(
       (match) =>
         Boolean((match.handle as IDSAdminRouteHandle)?.backPath) &&
@@ -49,7 +54,7 @@ const IDSAdmin = () => {
       return
     }
 
-    // Default to IDSAdmin root
+    // Fallback to root ids-admin route
     navigate(IDSAdminPaths.IDSAdmin)
   }
 
