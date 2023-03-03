@@ -10,6 +10,13 @@
         "cwd": "apps/native/app",
         "command": "yarn {args.name}"
       }
+    },
+    "schemas/codegen": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "parallel": false,
+        "command": "graphql-codegen --config apps/native/app/codegen.yml"
+      }
     }
   }
 }
