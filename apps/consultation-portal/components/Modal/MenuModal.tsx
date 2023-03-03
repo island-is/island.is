@@ -1,6 +1,8 @@
+import checkActiveHeaderLink from '@island.is/consultation-portal/utils/helpers/checkActiveHeaderLink'
 import {
   Box,
   Button,
+  Divider,
   FocusableBox,
   GridColumn,
   GridContainer,
@@ -80,22 +82,38 @@ const MenuModal = ({ baseId, modalLabel, isLoggedIn, logIn, logOut }) => {
                       <Stack space={2}>
                         {menuItems.map((item, index) => {
                           return (
-                            <FocusableBox key={index} href={item.href}>
-                              <Button variant="utility" fluid size="small">
-                                {item.label}
-                              </Button>
-                            </FocusableBox>
+                            <div
+                              style={{
+                                backgroundColor: checkActiveHeaderLink(
+                                  item.href,
+                                )
+                                  ? '#00E4CA'
+                                  : 'transparent',
+                                borderRadius: '8px',
+                              }}
+                            >
+                              <FocusableBox key={index} href={item.href}>
+                                <Button variant="utility" fluid size="small">
+                                  {item.label}
+                                </Button>
+                              </FocusableBox>
+                            </div>
                           )
                         })}
+                        <Box paddingY={2}>
                         {isLoggedIn ? (
-                          <Button size="small" fluid onClick={logOut}>
+                          <Button
+                            size="small"
+                            fluid
+                            onClick={logOut}
+                          >
                             Útskrá
                           </Button>
                         ) : (
                           <Button size="small" fluid onClick={logIn}>
                             Innskráning
                           </Button>
-                        )}
+                        )}</Box>
                       </Stack>
                     </Box>
                   </div>

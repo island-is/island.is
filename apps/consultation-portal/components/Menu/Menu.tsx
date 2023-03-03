@@ -18,6 +18,7 @@ import React, { useState } from 'react'
 import { MenuLogo } from '../svg'
 import { menuItems } from './MenuItems'
 import MenuModal from '../Modal/MenuModal'
+import checkActiveHeaderLink from '@island.is/consultation-portal/utils/helpers/checkActiveHeaderLink'
 type MenuProps = {
   showIcon: boolean
 }
@@ -89,9 +90,20 @@ export const Menu = ({ showIcon = true }: MenuProps) => {
                               key={index}
                               href={item.href}
                             >
-                              <Button variant="utility" size="small">
-                                {item.label}
-                              </Button>
+                              <div
+                                style={{
+                                  backgroundColor: checkActiveHeaderLink(
+                                    item.href,
+                                  )
+                                    ? '#00E4CA'
+                                    : 'transparent',
+                                  borderRadius: '8px',
+                                }}
+                              >
+                                <Button variant="utility" size="small">
+                                  {item.label}
+                                </Button>
+                              </div>
                             </FocusableBox>
                           )
                         })}
