@@ -41,7 +41,7 @@ export const Menu = ({ isFrontPage = false }: MenuProps) => {
     authenticated: true,
     language: 'is',
   }
-  //{!isFrontPage && (
+
   return (
     <>
       <header className={styles.menu}>
@@ -85,7 +85,9 @@ export const Menu = ({ isFrontPage = false }: MenuProps) => {
                       </Hidden>
                       <Column width="content">
                         <Hidden below="md">
-                          <MenuLogo />
+                          <FocusableBox href="/" alignItems="center">
+                            <MenuLogo />
+                          </FocusableBox>
                         </Hidden>
                         <Hidden above="sm">
                           <FocusableBox href="/" alignItems="center">
