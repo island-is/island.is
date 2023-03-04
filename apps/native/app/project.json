@@ -4,11 +4,18 @@
   "projectType": "application",
   "generators": {},
   "targets": {
-    "script": {
+    "serve": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "cwd": "apps/native/app",
-        "command": "yarn {args.name}"
+        "command": "yarn start"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "cwd": "apps/native/app",
+        "command": "yarn lint"
       }
     },
     "schemas/codegen": {
