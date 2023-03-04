@@ -163,6 +163,9 @@ const fromDir = async (startPath, res = [], readmeAsRoot = false) => {
   ]
 
   for (const file in orderedFiles) {
+    if (orderedFiles[file] === 'node_modules') {
+      return
+    }
     const filename = path.join(startPath, orderedFiles[file])
     const stat = fs.lstatSync(filename)
 
