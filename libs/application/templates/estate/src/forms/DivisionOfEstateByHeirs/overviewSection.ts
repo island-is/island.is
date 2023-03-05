@@ -4,10 +4,9 @@ import {
   buildDividerField,
   buildMultiField,
   buildSection,
-  buildSubmitField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Application, DefaultEvents } from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 import { EstateInfo } from '@island.is/clients/syslumenn'
 import { m } from '../../lib/messages'
 import { deceasedInfoFields } from '../sharedSections/deceasedInfoFields'

@@ -39,6 +39,7 @@ import {
   formatDate,
 } from '@island.is/judicial-system/formatters'
 
+import CaseResentExplanation from '../../components/CaseResentExplanation/CaseResentExplanation'
 import { defenderCaseOverview as m } from './CaseOverview.strings'
 
 export const CaseOverview: React.FC = () => {
@@ -101,6 +102,14 @@ export const CaseOverview: React.FC = () => {
     >
       <PageHeader title={formatMessage(titles.defender.caseOverview)} />
       <FormContentContainer>
+        {!completedCaseStates.includes(workingCase.state) &&
+          workingCase.caseResentExplanation && (
+            <Box marginBottom={5}>
+              <CaseResentExplanation
+                explanation={workingCase.caseResentExplanation}
+              />
+            </Box>
+          )}
         <Box marginBottom={5}>
           <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
             <Box>
