@@ -2069,6 +2069,20 @@ export const parentalLeaveFormMessages: MessageDir = {
         'You have applied for a residence grant, and your application is being processed.',
     },
   }),
+  noConsentToSeeInfromationMessages: defineMessages({
+    noConsentToSeeInfromationTitle: {
+      id: 'pl.application:no.consent.to.see.information.title',
+      defaultMessage: 'Engar upplýsingar fundust',
+      description: 'No information was found',
+    },
+    noConsentToSeeInfromationDescription: {
+      id: 'pl.application:no.consent.to.see.information.description',
+      defaultMessage:
+        'Aðalforeldri hefur ekki gefið samþykki sitt fyrir því að þú sjáir þessar upplýsingar.',
+      description:
+        'The primary parent has not given their consent for you to see this information.',
+    },
+  }),
 }
 
 export const employerFormMessages = defineMessages({

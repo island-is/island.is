@@ -469,6 +469,18 @@ export const PrerequisitesForm: Form = buildForm({
         buildSubSection({
           id: 'selectChild',
           title: parentalLeaveFormMessages.selectChild.screenTitle,
+          condition: (_, externalData) => {
+            const { children } = getApplicationExternalData(externalData)
+            const secondaryParentWithoutConsent = children.filter((child) => {
+              if (
+                child?.parentalRelation === ParentalRelations.secondary &&
+                child.expectedDateOfBirth === 'N/A'
+              ) {
+                return child
+              }
+            })
+            return !secondaryParentWithoutConsent.length
+          },
           children: [
             buildMultiField({
               id: 'selectedChildScreen',
@@ -534,6 +546,31 @@ export const PrerequisitesForm: Form = buildForm({
               id: 'unused',
               title: '',
               description: '',
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'secondaryParentWithoutConsent',
+          title:
+            parentalLeaveFormMessages.noConsentToSeeInfromationMessages
+              .noConsentToSeeInfromationTitle,
+          children: [
+            buildMultiField({
+              id: 'secondaryParentWithoutConsent.multi',
+              title:
+                parentalLeaveFormMessages.noConsentToSeeInfromationMessages
+                  .noConsentToSeeInfromationTitle,
+              description:
+                parentalLeaveFormMessages.noConsentToSeeInfromationMessages
+                  .noConsentToSeeInfromationDescription,
+              children: [
+                buildCustomField({
+                  id: 'secondaryParentWithoutConsent.image',
+                  title: '',
+                  defaultValue: 2,
+                  component: 'ImageField',
+                }),
+              ],
             }),
           ],
         }),
