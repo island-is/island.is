@@ -93,5 +93,8 @@
   },
   "jest": {
     "preset": "react-native"
+  },
+  "resolutions": {
+    "eslint": "8.12.0"
   }
 }
