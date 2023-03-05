@@ -42,6 +42,9 @@ export type WatsonIntegration =
   // Askur - english
   | '2e32cba8-7379-44e9-b03e-af1ccdbe5982'
 
+  // Útlendingastofnun
+  | '89a03e83-5c73-4642-b5ba-cd3771ceca54'
+
 export type WatsonServiceInstance =
   // Askur
   'bc3d8312-d862-4750-b8bf-529db282050a'
