@@ -1,6 +1,5 @@
 import { gql, useQuery } from '@apollo/client'
-import { VehiclesCurrentVehicle } from '../types'
-import { getValueViaPath } from '@island.is/application/core'
+import { VehiclesCurrentVehicle } from '../shared'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
   AlertMessage,
@@ -15,20 +14,17 @@ import { InputController } from '@island.is/shared/form-fields'
 import { FC, useEffect } from 'react'
 import { GET_VEHICLE_INFORMATION } from '../graphql/queries'
 import { information } from '../lib/messages'
+import { getSelectedVehicle } from '../utils'
 
 export const MainOwner: FC<FieldBaseProps> = (props) => {
   const { application, setFieldLoadingState } = props
 
   const { formatMessage } = useLocale()
 
-  const currentVehicleList = application.externalData?.currentVehicleList
-    ?.data as VehiclesCurrentVehicle[]
-  const vehicleValue = getValueViaPath(
+  const vehicle = getSelectedVehicle(
+    application.externalData,
     application.answers,
-    'pickVehicle.vehicle',
-    '',
-  ) as string
-  const vehicle = currentVehicleList[parseInt(vehicleValue, 10)]
+  ) as VehiclesCurrentVehicle
 
   const { data, loading, error } = useQuery(
     gql`

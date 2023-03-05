@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -12,7 +12,6 @@ import {
   AccordionListItem,
   InfoCard,
   FormContext,
-  MarkdownWrapper,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -37,7 +36,10 @@ import {
   CaseLegalProvisions,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   Text,
   Accordion,
@@ -48,6 +50,7 @@ import {
 } from '@island.is/island-ui/core'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
+import CaseResentExplanation from '@island.is/judicial-system-web/src/components/CaseResentExplanation/CaseResentExplanation'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { DraftConclusionModal } from '../../components'
@@ -70,31 +73,25 @@ export const JudgeOverview: React.FC = () => {
 
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
 
-  useEffect(() => {
-    if (isCaseUpToDate) {
-      setAndSendCaseToServer(
-        [
-          {
-            ruling: !workingCase.parentCase
-              ? `\n${formatMessage(ruling.autofill, {
-                  judgeName: workingCase.judge?.name,
-                })}`
-              : isAcceptingCaseDecision(workingCase.decision)
-              ? workingCase.parentCase.ruling
-              : undefined,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
-    }
-  }, [
-    setAndSendCaseToServer,
-    formatMessage,
-    isCaseUpToDate,
-    setWorkingCase,
-    workingCase,
-  ])
+  const initialize = useCallback(() => {
+    setAndSendCaseToServer(
+      [
+        {
+          ruling: !workingCase.parentCase
+            ? `\n${formatMessage(ruling.autofill, {
+                judgeName: workingCase.judge?.name,
+              })}`
+            : isAcceptingCaseDecision(workingCase.decision)
+            ? workingCase.parentCase.ruling
+            : undefined,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }, [setAndSendCaseToServer, formatMessage, setWorkingCase, workingCase])
+
+  useOnceOn(isCaseUpToDate, initialize)
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -119,17 +116,8 @@ export const JudgeOverview: React.FC = () => {
       <FormContentContainer>
         {workingCase.caseResentExplanation && (
           <Box marginBottom={workingCase.seenByDefender ? 3 : 5}>
-            <AlertMessage
-              title={formatMessage(
-                rcCourtOverview.sections.caseResentExplanation.title,
-              )}
-              message={
-                <MarkdownWrapper
-                  markdown={workingCase.caseResentExplanation}
-                  textProps={{ variant: 'small' }}
-                />
-              }
-              type="warning"
+            <CaseResentExplanation
+              explanation={workingCase.caseResentExplanation}
             />
           </Box>
         )}

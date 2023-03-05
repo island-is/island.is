@@ -391,10 +391,15 @@ export const m = defineMessages({
       'Þú færð staðfestingapóst með skjalanúmerinu þínu sendann á netfangið þitt',
     description: 'A confirmation e-mail with your case number will be sent',
   },
+  successfulExpendableHeader: {
+    id: 'hi.application:successfulExpendable.header',
+    defaultMessage: 'Hvað gerist næst?',
+    description: 'What happens next title in expandable field',
+  },
   nextStepReviewTime: {
-    id: 'hi.application:nextStep.duration',
+    id: 'hi.application:nextStep.duration#markdown',
     defaultMessage:
-      'Tekið getur allt að 2-6 vikur að fara yfir umsókn. Lengd svartíma fer eftir því hversu fljótt fyrra tryggingarland þitt svarar fyrirspurn okkar og getur það tekið lengri tíma.',
+      '* Tekið getur allt að 2-6 vikur að fara yfir umsókn. Lengd svartíma fer eftir því hversu fljótt fyrra tryggingarland þitt svarar fyrirspurn okkar og getur það tekið lengri tíma.',
     description:
       'An application may take up to 2–6 weeks to process. Depending on how fast your former country of insurance responds to our request, it may take longer.',
   },

@@ -1,27 +1,26 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, useContext } from 'react'
 import {
-  Logo,
-  Columns,
-  Column,
   Box,
-  Button,
-  Hidden,
-  ResponsiveSpace,
-  GridContainer,
-  GridColumn,
-  GridRow,
-  ColorSchemeContext,
-  FocusableBox,
   ButtonTypes,
-  Link,
+  ColorSchemeContext,
+  Column,
+  Columns,
+  FocusableBox,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Hidden,
+  Logo,
+  ResponsiveSpace,
 } from '@island.is/island-ui/core'
-import { useI18n } from '@island.is/web/i18n'
 import { FixedNav, SearchInput } from '@island.is/web/components'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { LoginButton } from './LoginButton'
+import { useI18n } from '@island.is/web/i18n'
+import { LayoutProps } from '@island.is/web/layouts/main'
+import React, { FC, useContext } from 'react'
 import { LanguageToggler } from '../LanguageToggler'
 import { Menu } from '../Menu/Menu'
-import { LayoutProps } from '@island.is/web/layouts/main'
+import { webMenuButtonClicked } from '@island.is/plausible'
 
 interface HeaderProps {
   showSearchInHeader?: boolean
@@ -31,7 +30,6 @@ interface HeaderProps {
 }
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
-const minarsidurLink = '/minarsidur/'
 
 export const Header: FC<HeaderProps> = ({
   showSearchInHeader = true,
@@ -42,7 +40,6 @@ export const Header: FC<HeaderProps> = ({
 }) => {
   const { activeLocale, t } = useI18n()
   const { colorScheme } = useContext(ColorSchemeContext)
-  const { linkResolver } = useLinkResolver()
 
   const locale = activeLocale
   const english = activeLocale === 'en'
@@ -97,33 +94,9 @@ export const Header: FC<HeaderProps> = ({
                       </Box>
                     )}
 
-                    <Hidden below="lg">
-                      <Box marginLeft={marginLeft}>
-                        <a tabIndex={-1} href={minarsidurLink}>
-                          <Button
-                            colorScheme={buttonColorScheme}
-                            variant="utility"
-                            icon="person"
-                            as="span"
-                          >
-                            {t.login}
-                          </Button>
-                        </a>
-                      </Box>
-                    </Hidden>
-
-                    <Hidden above="md">
-                      <Box marginLeft={marginLeft}>
-                        <a tabIndex={-1} href={minarsidurLink}>
-                          <Button
-                            colorScheme={buttonColorScheme}
-                            variant="utility"
-                            icon="person"
-                            as="span"
-                          />
-                        </a>
-                      </Box>
-                    </Hidden>
+                    <Box marginLeft={marginLeft}>
+                      <LoginButton colorScheme={buttonColorScheme} />
+                    </Box>
 
                     <Box
                       marginLeft={marginLeft}
@@ -138,6 +111,7 @@ export const Header: FC<HeaderProps> = ({
                       <Menu
                         {...megaMenuData}
                         buttonColorScheme={buttonColorScheme}
+                        onMenuOpen={webMenuButtonClicked}
                       />
                     </Box>
                   </Box>

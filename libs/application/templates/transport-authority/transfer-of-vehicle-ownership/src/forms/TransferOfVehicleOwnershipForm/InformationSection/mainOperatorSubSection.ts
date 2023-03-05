@@ -5,7 +5,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
-import { ReviewCoOwnerAndOperatorField } from '../../../types'
+import { CoOwnerAndOperator } from '../../../shared'
 
 export const mainOperatorSubSection = buildSubSection({
   id: 'buyerMainOperator',
@@ -15,9 +15,11 @@ export const mainOperatorSubSection = buildSubSection({
       formValue,
       'buyerCoOwnerAndOperator',
       [],
-    ) as ReviewCoOwnerAndOperatorField[]
+    ) as CoOwnerAndOperator[]
     return (
-      coOwnerAndOperator.filter((field) => field.type === 'operator').length > 1
+      coOwnerAndOperator
+        .filter(({ wasRemoved }) => wasRemoved !== 'true')
+        .filter((field) => field.type === 'operator').length > 1
     )
   },
   children: [
@@ -34,10 +36,10 @@ export const mainOperatorSubSection = buildSubSection({
               application.answers,
               'buyerCoOwnerAndOperator',
               [],
-            ) as ReviewCoOwnerAndOperatorField[]
-            const operators = coOwnerAndOperator.filter(
-              (field) => field.type === 'operator',
-            )
+            ) as CoOwnerAndOperator[]
+            const operators = coOwnerAndOperator
+              .filter(({ wasRemoved }) => wasRemoved !== 'true')
+              .filter((field) => field.type === 'operator')
             return operators.map((operator) => {
               return {
                 value: operator.nationalId,

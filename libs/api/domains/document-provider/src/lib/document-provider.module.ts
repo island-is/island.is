@@ -1,8 +1,8 @@
 import { DynamicModule } from '@nestjs/common'
 import { HttpModule } from '@nestjs/axios'
 import { Configuration, OrganisationsApi, ProvidersApi } from '../../gen/fetch'
-import { DocumentProviderResolver } from './document-provider.resolver'
-import { DocumentProviderService } from './document-provider.service'
+import { DocumentProviderResolver } from './document-provider/document-provider.resolver'
+import { DocumentProviderService } from './document-provider/document-provider.service'
 import { DocumentProviderClientProd } from './client/documentProviderClientProd'
 import {
   DocumentProviderConfig,
@@ -10,6 +10,8 @@ import {
   DOCUMENT_PROVIDER_CLIENT_CONFIG_TEST,
 } from './client/documentProviderClientConfig'
 import { DocumentProviderClientTest } from './client/documentProviderClientTest'
+import { AdminDocumentProviderService } from './admin/admin-document-provider.service'
+import { AdminDocumentProviderResolver } from './admin/admin-document.provider.resolver'
 
 export interface Config extends DocumentProviderConfig {
   documentsServiceBasePath: string
@@ -26,6 +28,8 @@ export class DocumentProviderModule {
         }),
       ],
       providers: [
+        AdminDocumentProviderService,
+        AdminDocumentProviderResolver,
         DocumentProviderResolver,
         DocumentProviderService,
         DocumentProviderClientTest,

@@ -32,7 +32,8 @@ const statesMap: StatesMap = {
   },
 }
 
-const EditInReviewSteps: FC<FieldBaseProps> = ({ application }) => {
+const EditInReviewSteps: FC<FieldBaseProps> = (props) => {
+  const { application } = props
   const dob = getExpectedDateOfBirth(application)
   const dobDate = dob ? new Date(dob) : null
 
@@ -77,12 +78,7 @@ const EditInReviewSteps: FC<FieldBaseProps> = ({ application }) => {
       <Box marginTop={7} marginBottom={8}>
         {steps.map((step, index) => {
           return (
-            <ReviewSection
-              key={index}
-              application={application}
-              index={index + 1}
-              {...step}
-            />
+            <ReviewSection key={index} index={index + 1} {...props} {...step} />
           )
         })}
       </Box>

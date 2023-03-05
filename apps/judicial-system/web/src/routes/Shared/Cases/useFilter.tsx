@@ -2,11 +2,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 
 import {
-  CaseListEntry,
   isIndictmentCase,
   isInvestigationCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
+import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 import {
   User,
   UserRole,
@@ -80,7 +80,7 @@ export function filterOptionsForUser(
 ) {
   return options.filter((option) => {
     if (
-      user?.role === UserRole.Registrar ||
+      user?.role === UserRole.Representative ||
       user?.role === UserRole.Assistant
     ) {
       return option.value !== 'INVESTIGATION'

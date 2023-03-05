@@ -23,6 +23,7 @@ export interface EnvironmentConfig {
   awsAccountRegion: 'eu-west-1' | 'us-east-1'
   awsAccountId: string
   feature?: string
+  redisHost: string
   global: any
 }
 

@@ -6,12 +6,10 @@ import {
   buildMultiField,
   buildSection,
   buildSubSection,
-  buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { m } from '../lib/messages'
-import { Application } from '@island.is/api/schema'
 
 export const debts = buildSection({
   id: 'debts',
@@ -33,13 +31,13 @@ export const debts = buildSection({
               titleVariant: 'h3',
             }),
             buildDescriptionField({
-              id: 'domesticAndForeignDebts.total',
+              id: 'debts.domesticAndForeignDebts.total',
               title: '',
             }),
             buildCustomField(
               {
                 title: '',
-                id: 'domesticAndForeignDebts.data',
+                id: 'debts.domesticAndForeignDebts.data',
                 component: 'ReportFieldsRepeater',
               },
               {
@@ -56,6 +54,7 @@ export const debts = buildSection({
                   {
                     title: m.debtsBalance.defaultMessage,
                     id: 'balance',
+                    required: true,
                     currency: true,
                   },
                 ],
@@ -84,13 +83,13 @@ export const debts = buildSection({
               titleVariant: 'h3',
             }),
             buildDescriptionField({
-              id: 'publicCharges.total',
+              id: 'debts.publicCharges.total',
               title: '',
             }),
             buildCustomField(
               {
                 title: '',
-                id: 'publicCharges.data',
+                id: 'debts.publicCharges.data',
                 component: 'ReportFieldsRepeater',
               },
               {
@@ -99,6 +98,7 @@ export const debts = buildSection({
                     title: m.amount.defaultMessage,
                     id: 'publicChargesAmount',
                     width: 'full',
+                    required: true,
                     currency: true,
                   },
                 ],
@@ -135,7 +135,10 @@ export const debts = buildSection({
               value: ({ answers }) =>
                 formatCurrency(
                   String(
-                    getValueViaPath(answers, 'domesticAndForeignDebts.total'),
+                    getValueViaPath(
+                      answers,
+                      'debts.domesticAndForeignDebts.total',
+                    ),
                   ),
                 ),
             }),
@@ -152,29 +155,15 @@ export const debts = buildSection({
               display: 'flex',
               value: ({ answers }) =>
                 formatCurrency(
-                  String(getValueViaPath(answers, 'publicCharges.total')),
+                  String(getValueViaPath(answers, 'debts.publicCharges.total')),
                 ),
             }),
             buildDividerField({}),
-            buildKeyValueField({
-              label: '',
-              colSpan: '6/12',
-              value: '',
-            }),
-            buildTextField({
-              id: 'debtsTotal',
-              title: m.overviewTotal,
-              readOnly: true,
-              width: 'half',
-              variant: 'currency',
-              rightAlign: true,
-              backgroundColor: 'white',
-              defaultValue: ({ answers }: Application) =>
-                (getValueViaPath(
-                  answers,
-                  'domesticAndForeignDebts.total',
-                ) as number) +
-                (getValueViaPath(answers, 'publicCharges.total') as number),
+            buildCustomField({
+              title: '',
+              id: 'debts.debtsTotal',
+              doesNotRequireAnswer: true,
+              component: 'CalculateTotalDebts',
             }),
           ],
         }),

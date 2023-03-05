@@ -79,6 +79,11 @@ module.exports = {
           '../../../shared/components/src',
         ),
         '@island.is/localization': rootDir('../../../localization/src'),
+        '@island.is/react/components': rootDir('../../../react/components/src'),
+        '@island.is/react/feature-flags': rootDir(
+          '../../../react/feature-flags/src',
+        ),
+        '@island.is/feature-flags': rootDir('../../../feature-flags/src'),
       },
     }
 

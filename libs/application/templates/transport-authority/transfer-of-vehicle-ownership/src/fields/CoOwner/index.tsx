@@ -8,7 +8,8 @@ import { InputController } from '@island.is/shared/form-fields'
 import { FC, useEffect } from 'react'
 import { GET_VEHICLE_INFORMATION } from '../../graphql/queries'
 import { information } from '../../lib/messages'
-import { VehiclesCurrentVehicle } from '../../types'
+import { VehiclesCurrentVehicle } from '../../shared'
+import { getSelectedVehicle } from '../../utils'
 
 export const CoOwner: FC<FieldBaseProps> = (props) => {
   const { application, field, setFieldLoadingState } = props
@@ -16,14 +17,10 @@ export const CoOwner: FC<FieldBaseProps> = (props) => {
   const { formatMessage } = useLocale()
   const { id } = field
 
-  const currentVehicleList = application.externalData?.currentVehicleList
-    ?.data as VehiclesCurrentVehicle[]
-  const vehicleValue = getValueViaPath(
+  const vehicle = getSelectedVehicle(
+    application.externalData,
     application.answers,
-    'pickVehicle.vehicle',
-    '',
-  ) as string
-  const vehicle = currentVehicleList[parseInt(vehicleValue, 10)]
+  ) as VehiclesCurrentVehicle
 
   const { data, loading, error } = useQuery(
     gql`
@@ -57,19 +54,20 @@ export const CoOwner: FC<FieldBaseProps> = (props) => {
               </Text>
               <Box marginTop={2}>
                 <InputController
-                  id={`${id}[${index}].name`}
-                  name={`${id}[${index}].name`}
-                  defaultValue={coOwner.owner || ''}
-                  label={formatMessage(information.labels.coOwner.name)}
+                  id={`${id}[${index}].nationalId`}
+                  name={`${id}[${index}].nationalId`}
+                  defaultValue={coOwner.nationalId || ''}
+                  label={formatMessage(information.labels.coOwner.nationalId)}
+                  format="######-####"
                   readOnly
                 />
               </Box>
               <Box marginTop={2}>
                 <InputController
-                  id={`${id}[${index}].nationalId`}
-                  name={`${id}[${index}].nationalId`}
-                  defaultValue={coOwner.nationalId || ''}
-                  label={formatMessage(information.labels.coOwner.nationalId)}
+                  id={`${id}[${index}].name`}
+                  name={`${id}[${index}].name`}
+                  defaultValue={coOwner.owner || ''}
+                  label={formatMessage(information.labels.coOwner.name)}
                   readOnly
                 />
               </Box>
@@ -103,6 +101,7 @@ export const CoOwner: FC<FieldBaseProps> = (props) => {
                     ) as string
                   }
                   type="tel"
+                  format="###-####"
                   backgroundColor="blue"
                   required
                 />

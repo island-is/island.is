@@ -1,9 +1,11 @@
 module.exports = {
   displayName: 'services-auth-delegation-api',
-  preset: '../../../../jest.preset.js',
+  preset: './jest.preset.js',
+  rootDir: '../../../..',
+  roots: [__dirname],
   globals: {
     'ts-jest': {
-      tsconfig: '<rootDir>/tsconfig.spec.json',
+      tsconfig: `${__dirname}/tsconfig.spec.json`,
     },
   },
   testEnvironment: 'node',
@@ -11,5 +13,5 @@ module.exports = {
     '^.+\\.[tj]s$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../../../coverage/apps/services/auth/delegation-api',
+  coverageDirectory: '<rootDir>/coverage/apps/services/auth/delegation-api',
 }

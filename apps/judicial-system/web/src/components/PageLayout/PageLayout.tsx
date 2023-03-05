@@ -145,7 +145,7 @@ const SidePanel: React.FC<SidePanelProps> = ({
           <Box marginBottom={6}>
             <Text variant="h3" as="h3">
               {formatMessage(
-                isIndictmentCase(workingCase?.type)
+                workingCase && isIndictmentCase(workingCase.type)
                   ? formStepperSections.indictmentTitle
                   : formStepperSections.title,
                 { caseType: workingCase?.type },
