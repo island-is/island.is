@@ -5,17 +5,27 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Logo,
   ModalBase,
   Stack,
   useBoxStyles,
 } from '@island.is/island-ui/core'
 import { useState } from 'react'
 import { menuItems } from '../Menu/MenuItems'
-import { MenuLogo } from '../svg'
+import { checkActiveHeaderLink } from '../../utils/helpers'
 
 import * as styles from './MenuModal.css'
+import LogoMobile from '../svg/LogoMobile'
 
-const MenuModal = ({ baseId, modalLabel, isLoggedIn, logIn, logOut }) => {
+const MenuModal = ({
+  baseId,
+  modalLabel,
+  isLoggedIn,
+  logIn,
+  logOut,
+  router,
+  isFrontPage,
+}) => {
   const [isVisible, setIsVisible] = useState(false)
   const gridContainerStyles = useBoxStyles({
     component: 'div',
@@ -59,9 +69,18 @@ const MenuModal = ({ baseId, modalLabel, isLoggedIn, logIn, logOut }) => {
                       justifyContent="spaceBetween"
                       alignItems="center"
                     >
-                      <Box>
-                        <MenuLogo />
-                      </Box>
+                      {isFrontPage ? (
+                        <FocusableBox
+                          href="https://island.is/"
+                          alignItems="center"
+                        >
+                          <Logo iconOnly width={26} />
+                        </FocusableBox>
+                      ) : (
+                        <FocusableBox href="/" alignItems="center">
+                          <LogoMobile />
+                        </FocusableBox>
+                      )}
                       <Box
                         display="flex"
                         justifyContent="flexEnd"
@@ -76,26 +95,41 @@ const MenuModal = ({ baseId, modalLabel, isLoggedIn, logIn, logOut }) => {
                         </Button>
                       </Box>
                     </Box>
-                    <Box paddingTop={6}>
+                    <Box paddingTop={4}>
                       <Stack space={2}>
                         {menuItems.map((item, index) => {
                           return (
-                            <FocusableBox key={index} href={item.href}>
-                              <Button variant="utility" fluid size="small">
-                                {item.label}
-                              </Button>
-                            </FocusableBox>
+                            <div
+                              key={index}
+                              style={{
+                                backgroundColor: checkActiveHeaderLink(
+                                  router,
+                                  item.href,
+                                )
+                                  ? '#00E4CA'
+                                  : 'transparent',
+                                borderRadius: '8px',
+                              }}
+                            >
+                              <FocusableBox key={index} href={item.href}>
+                                <Button variant="utility" fluid size="small">
+                                  {item.label}
+                                </Button>
+                              </FocusableBox>
+                            </div>
                           )
                         })}
-                        {isLoggedIn ? (
-                          <Button size="small" fluid onClick={logOut}>
-                            Útskrá
-                          </Button>
-                        ) : (
-                          <Button size="small" fluid onClick={logIn}>
-                            Innskráning
-                          </Button>
-                        )}
+                        <Box paddingY={2}>
+                          {isLoggedIn ? (
+                            <Button size="small" fluid onClick={logOut}>
+                              Útskrá
+                            </Button>
+                          ) : (
+                            <Button size="small" fluid onClick={logIn}>
+                              Innskráning
+                            </Button>
+                          )}
+                        </Box>
                       </Stack>
                     </Box>
                   </div>

@@ -13,7 +13,7 @@ export class PersonalRepresentativeScopePermissionService {
 
   async getScopePermissionsAsync(
     apiScopeName: string,
-  ): Promise<PersonalRepresentativeScopePermission[] | null> {
+  ): Promise<PersonalRepresentativeScopePermission[]> {
     return this.prScopePermissionModel.findAll({
       where: { apiScopeName },
       include: [
@@ -27,7 +27,7 @@ export class PersonalRepresentativeScopePermissionService {
 
   async createScopePermissionAsync(
     scopePermission: PersonalRepresentativeScopePermissionDTO,
-  ): Promise<PersonalRepresentativeScopePermission | null> {
+  ): Promise<PersonalRepresentativeScopePermission> {
     return await this.prScopePermissionModel.create({
       rightTypeCode: scopePermission.permission,
       apiScopeName: scopePermission.apiScopeName,
