@@ -6,7 +6,6 @@ import {
 } from '../screens/Home/getAllCases.generated'
 import Home from '../screens/Home/Home'
 import { Case } from '../types/interfaces'
-import FilterBox from '../components/Filterbox/Filterbox'
 
 interface HomeProps {
   cases: Case[]
