@@ -217,15 +217,6 @@ export class GenericDrivingLicenseApi
       return GenericUserLicensePkPassStatus.NotAvailable
     }
 
-    const cutoffDate = new Date(IMAGE_CUTOFF_DATE)
-    const imageDate = new Date(license.mynd?.skrad)
-
-    const comparison = compareAsc(imageDate, cutoffDate)
-
-    if (isNaN(comparison) || comparison < 0) {
-      return GenericUserLicensePkPassStatus.NotAvailable
-    }
-
     return GenericUserLicensePkPassStatus.Available
   }
 

@@ -1,3 +1,4 @@
+import { PendingActionDisplayType } from './StateMachine'
 import { ApplicationTypes } from './ApplicationTypes'
 import { DataProviderResult } from './DataProviderResult'
 
@@ -22,9 +23,20 @@ export interface FormValue {
 
 export type ActionCardTag = 'red' | 'blueberry' | 'blue' | 'purple' | 'mint'
 
+export type ApplicationHistoryItem = {
+  date: Date
+  log: string
+}
+
 export interface ActionCardMetaData {
   title?: string
   description?: string
+  pendingAction?: {
+    displayStatus: PendingActionDisplayType
+    title?: string
+    content?: string
+  }
+  history?: ApplicationHistoryItem[]
   tag?: {
     label?: string
     variant?: ActionCardTag
