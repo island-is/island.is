@@ -18,12 +18,24 @@ component_management:
         branches:
           - '!main'
   individual_components:
-    - component_id: api-graphql # this is an identifier that should not be changed
-      name: Portal GraphQL
+    - component_id: api-graphql
+      name: Portal GraphQL (Not Prioritised)
       paths:
         - apps/api/**
         - libs/api/domains/**
-    - component_id: application-system-api-graphql # this is an identifier that should not be changed
+    - component_id: microservices
+      name: All REST APIs except Application System API.
+      paths:
+        - apps/services/**
+        - apps/air-discount-scheme/backend/**
+        - apps/download-service/**
+        - libs/auth-api-lib/**
+    - component_id: auth-services
+      name: Authentication related REST APIs
+      paths:
+        - apps/services/auth/**
+        - libs/auth-api-lib/**
+    - component_id: application-system-api
       name: Application System API
       paths:
         - apps/application-system/api/**
@@ -33,3 +45,21 @@ component_management:
         - libs/application/template-api-modules/**
         - libs/application/template-loader/**
         - libs/application/templates/**
+    - component_id: react-libs
+      name: React shared libraries
+      paths:
+        - libs/react/**
+        - libs/react-spa/**
+        - libs/shared/**
+        - libs/auth/react/**
+        - libs/next-ids-auth/**
+    - component_id: nest-libs
+      name: NestJS shared libraries
+      paths:
+        - libs/nest/**
+        - libs/clients/middleware/**
+        - libs/auth-nest-tools/**
+    - component_id: island-ui
+      name: Island UI
+      paths:
+        - libs/island-ui/**
