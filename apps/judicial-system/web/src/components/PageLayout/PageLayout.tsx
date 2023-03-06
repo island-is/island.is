@@ -170,7 +170,7 @@ const SidePanel: React.FC<SidePanelProps> = ({
 }
 interface PageProps {
   children: ReactNode
-  workingCase?: Case
+  workingCase: Case
   activeSection?: number
   isLoading: boolean
   notFound: boolean
