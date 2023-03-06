@@ -23,7 +23,7 @@ export const watsonConfig: Record<string, WatsonChatPanelProps> = {
     serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
     showLauncher: true,
     carbonTheme: 'g10',
-    namespaceKey: 'default',
+    namespaceKey: 'ukrainian-citizens',
   },
 }
 
