@@ -15,7 +15,7 @@ describe('times', () => {
 
   it('passes arguments to handler', () => {
     // Arrange
-    const timesFn = times((name: string) => name)
+    const timesFn = times(([name]: string[]) => name)
 
     // Act
     const result = timesFn(2, 'Hi')

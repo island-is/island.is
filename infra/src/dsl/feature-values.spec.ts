@@ -9,6 +9,7 @@ import { generateOutput } from './processing/rendering-pipeline'
 
 const Dev: EnvironmentConfig = {
   auroraHost: 'a',
+  redisHost: 'b',
   domain: 'staging01.devland.is',
   type: 'dev',
   featuresOn: [],
