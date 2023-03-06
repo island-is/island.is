@@ -37,6 +37,7 @@ export const serviceSetup = (services: {
   servicesEndorsementApi: ServiceBuilder<'services-endorsement-api'>
   airDiscountSchemeBackend: ServiceBuilder<'air-discount-scheme-backend'>
   sessionsApi: ServiceBuilder<'services-sessions'>
+  authAdminApi: ServiceBuilder<'services-auth-admin-api'>
 }): ServiceBuilder<'api'> => {
   return service('api')
     .namespace('islandis')
@@ -182,14 +183,17 @@ export const serviceSetup = (services: {
       HSN_WEB_FORM_ID: '1dimJFHLFYtnhoYEA3JxRK',
       SESSIONS_API_URL: ref((h) => `http://${h.svc(services.sessionsApi)}`),
       AUTH_ADMIN_API_PATHS: {
-        dev: json({
-          dev: 'https://services-auth-admin-api.internal.dev01.devland.is',
-        }),
-        staging: json({
-          dev: 'https://services-auth-admin-api.internal.dev01.devland.is',
-          staging:
-            'https://services-auth-admin-api.internal.staging01.devland.is',
-        }),
+        dev: ref((h) =>
+          json({
+            dev: `http://${h.svc(services.authAdminApi)}`,
+          }),
+        ),
+        staging: ref((h) =>
+          json({
+            dev: 'https://services-auth-admin-api.internal.dev01.devland.is',
+            staging: `http://${h.svc(services.authAdminApi)}`,
+          }),
+        ),
         prod: json({
           dev: 'https://services-auth-admin-api.internal.dev01.devland.is',
           staging:
