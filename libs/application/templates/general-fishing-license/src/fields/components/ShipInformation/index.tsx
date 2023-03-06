@@ -31,16 +31,15 @@ export const ShipInformation: FC<ShipInformationProps> = ({
 
   // If seaworhtiness date is before today it will get "expired" label and appear red
   // If today or later it will get "valid until" label and appear green
-  const seaworthinessDate = format(
-    parseISO(seaworthiness.validTo),
-    'dd.MM.yy',
-    {
-      locale: is,
-    },
-  )
+  const seaworthinessDate = seaworthiness.validTo
+    ? format(parseISO(seaworthiness.validTo), 'dd.MM.yy', {
+        locale: is,
+      })
+    : null
 
-  const isExpired =
-    new Date(seaworthiness.validTo).getTime() <= new Date().getTime()
+  const isExpired = seaworthiness.validTo
+    ? new Date(seaworthiness.validTo).getTime() <= new Date().getTime()
+    : null
 
   const seaworthinessColor = seaworthinessHasColor
     ? isExpired
@@ -94,7 +93,7 @@ export const ShipInformation: FC<ShipInformationProps> = ({
           color={isDisabled ? 'grey' : 'black'}
         />
       )}
-      {!!seaworthiness && (
+      {!!seaworthiness && seaworthiness.validTo && (
         <ValueLine
           label={formatMessage(shipSelection.labels.seaworthiness)}
           value={formatMessage(seaworthinessLabelValue, {
