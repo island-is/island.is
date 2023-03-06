@@ -18,6 +18,7 @@ export const replaceParams = ({
 }: ReplaceParams) => {
   return href.replace(
     /\/:(\w+)/g,
-    (_, paramName) => (paramsPrefix + params[paramName]) as string,
+    (_, paramName) =>
+      paramsPrefix + encodeURIComponent(params[paramName] as string),
   )
 }

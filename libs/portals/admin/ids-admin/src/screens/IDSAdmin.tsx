@@ -54,7 +54,7 @@ const IDSAdmin = () => {
   }
 
   return (
-    <Stack space={'containerGutter'}>
+    <Stack space={'gutter'}>
       <Button
         colorScheme="default"
         iconType="filled"

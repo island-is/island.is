@@ -6,7 +6,9 @@ import { Environment } from '../models/environment'
 export class ApplicationsService {
   getApplications(input: { tenantId: string }) {
     const resp = getMockData()
-    resp.data.filter((x) => x.tenantId === input.tenantId)
+    resp.data = resp.data.filter((x) => {
+      return x.tenantId === input.tenantId
+    })
     return resp
   }
 }
@@ -17,7 +19,7 @@ const getMockData = () => {
       {
         applicationId: '@island.is/web',
         applicationType: 'Web Application',
-        tenantId: '@admin.island.is',
+        tenantId: '@island.is',
         environments: [
           {
             name: '@island.is/web',
@@ -86,6 +88,7 @@ const getMockData = () => {
       {
         applicationId: '@island.is/auth',
         applicationType: 'Web Application',
+        tenantId: '@admin.island.is',
         environments: [
           {
             name: '@island.is/auth',

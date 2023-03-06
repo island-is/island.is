@@ -1,0 +1,19 @@
+# Get Applications by ID
+query GetApplicationsById($input: ApplicationsInput!) {
+  authAdminApplications(input: $input) {
+    data {
+      applicationId
+      applicationType
+      availableEnvironments
+      defaultEnvironment {
+        id
+        environment
+        name
+        displayName {
+          locale
+          value
+        }
+      }
+    }
+  }
+}
