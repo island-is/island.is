@@ -95,7 +95,7 @@ const Overview = () => {
     }))
   }
 
-  const handleFilterChange: FilterMultiChoiceProps['onChange'] = ({
+  const handleMultiChoiceFilterChange: FilterMultiChoiceProps['onChange'] = ({
     categoryId,
     selected,
   }) => {
@@ -111,11 +111,11 @@ const Overview = () => {
     }))
   }
 
-  const onDateChange = (period: ApplicationFilters['period']) => {
-    // TODO: Filter this in frontend?
+  const handleDateChange = (period: ApplicationFilters['period']) => {
+    const update = { ...filters.period, ...period }
     setFilters((prev) => ({
       ...prev,
-      period,
+      period: update,
     }))
   }
 
@@ -151,7 +151,8 @@ const Overview = () => {
       </Text>
       <Filters
         onSearchChange={handleSearchChange}
-        onFilterChange={handleFilterChange}
+        onFilterChange={handleMultiChoiceFilterChange}
+        onDateChange={handleDateChange}
         onFilterClear={clearFilters}
         filters={multiChoiceFilters}
         applications={availableApplications ?? []}

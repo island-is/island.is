@@ -19,11 +19,12 @@ import { useEffect, useState } from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
 import { m } from '../../lib/messages'
 import { statusMapper } from '../../shared/utils'
-import { MultiChoiceFilter } from '../../types/filters'
+import { ApplicationFilters, MultiChoiceFilter } from '../../types/filters'
 import { Organization } from '@island.is/shared/types'
 
 interface Props {
   onSearchChange: (query: string) => void
+  onDateChange: (period: ApplicationFilters['period']) => void
   onFilterChange: FilterMultiChoiceProps['onChange']
   onFilterClear: () => void
   filters: Record<MultiChoiceFilter, string[] | undefined>
@@ -36,6 +37,7 @@ export const Filters = ({
   onSearchChange,
   onFilterChange,
   onFilterClear,
+  onDateChange,
   filters,
   applications,
   organizations,
@@ -99,6 +101,7 @@ export const Filters = ({
                 label=""
                 backgroundColor="blue"
                 placeholderText={formatMessage(m.filterFrom)}
+                handleChange={(from) => onDateChange({ from })}
                 size="xs"
                 locale="is"
               />
@@ -108,6 +111,7 @@ export const Filters = ({
               label=""
               backgroundColor="blue"
               placeholderText={formatMessage(m.filterTo)}
+              handleChange={(to) => onDateChange({ to })}
               size="xs"
               locale="is"
             />
@@ -136,9 +140,9 @@ export const Filters = ({
               id: MultiChoiceFilter.APPLICATION,
               label: formatMessage(m.application),
               selected: filters[MultiChoiceFilter.APPLICATION] ?? [],
-              filters: applications.map((x) => ({ value: x, label: x })),
               inline: false,
               singleOption: false,
+              filters: applications.map((x) => ({ value: x, label: x })),
             },
             {
               id: MultiChoiceFilter.STATUS,
