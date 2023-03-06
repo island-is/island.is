@@ -1,8 +1,7 @@
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
-// !!!! TODO !!!! revert to original values before merge
-const MAIN_QUEUE_NAME = 'user-notification-args'
-const DEAD_LETTER_QUEUE_NAME = 'user-notification-failure-args'
+const MAIN_QUEUE_NAME = 'user-notification'
+const DEAD_LETTER_QUEUE_NAME = 'user-notification-failure'
 
 export const userNotificationServiceSetup = (): ServiceBuilder<'user-notification'> =>
   service('user-notification')
