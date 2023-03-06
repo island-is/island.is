@@ -19,6 +19,7 @@ import SearchAndFilter from '../../components/SearchAndFilter/SearchAndFilter'
 import Types from '../../utils/dummydata/api/Types'
 import { Case } from '../../types/interfaces'
 import FilterBox from '../../components/Filterbox/Filterbox'
+import EmptyState from '../../components/EmptyState/EmptyState'
 
 const CARDS_PER_PAGE = 12
 interface HomeProps {
@@ -111,43 +112,44 @@ export const Home = ({ cases }: HomeProps) => {
   const visibleItems = data.slice(base, page * CARDS_PER_PAGE)
 
   return (
-    <Layout showIcon={false}>
+    <Layout isFrontPage>
       <HeroBanner />
-      {cases && (
-        <>
-          <SearchAndFilter
-            searchValue={searchValue}
-            setSearchValue={(newValue) => setSearchValue(newValue)}
-            PolicyAreas={PolicyAreas}
-            Institutions={Institutions}
-            setInstitutionValue={(value) => setInstitutionValue(value)}
-            setPolicyAreaValue={(value) => setPolicyAreaValue(value)}
-          />
 
-          <GridContainer>
-            <GridRow>
-              <GridColumn span={['0', '0', '0', '3/12', '3/12']}>
-                <Hidden below="lg">
-                  <Stack space={2}>
-                    <FilterBox>Röðun</FilterBox>
-                    <FilterBox>Staða máls</FilterBox>
-                    <FilterBox>Tegund máls</FilterBox>
-                    <DatePicker
-                      size="sm"
-                      locale="is"
-                      label="Veldu tímabil"
-                      placeholderText="Veldu hér"
-                    />
-                    <Box textAlign="right">
-                      <Button size="small" icon="reload" variant="text">
-                        Hreinsa allar síur
-                      </Button>
-                    </Box>
-                  </Stack>
-                </Hidden>
-              </GridColumn>
+      <SearchAndFilter
+        searchValue={searchValue}
+        setSearchValue={(newValue) => setSearchValue(newValue)}
+        PolicyAreas={PolicyAreas}
+        Institutions={Institutions}
+        setInstitutionValue={(value) => setInstitutionValue(value)}
+        setPolicyAreaValue={(value) => setPolicyAreaValue(value)}
+      />
 
-              <GridColumn span={['12/12', '12/12', '12/12', '9/12', '9/12']}>
+      <GridContainer>
+        <GridRow>
+          <GridColumn span={['0', '0', '0', '3/12', '3/12']}>
+            <Hidden below="lg">
+              <Stack space={2}>
+                <FilterBox>Röðun</FilterBox>
+                <FilterBox>Staða máls</FilterBox>
+                <FilterBox>Tegund máls</FilterBox>
+                <DatePicker
+                  size="sm"
+                  locale="is"
+                  label="Veldu tímabil"
+                  placeholderText="Veldu hér"
+                />
+                <Box textAlign="right">
+                  <Button size="small" icon="reload" variant="text">
+                    Hreinsa allar síur
+                  </Button>
+                </Box>
+              </Stack>
+            </Hidden>
+          </GridColumn>
+
+          <GridColumn span={['12/12', '12/12', '12/12', '9/12', '9/12']}>
+            {data && (
+              <>
                 {visibleItems && (
                   <Tiles space={3} columns={[1, 1, 1, 2, 3]}>
                     {visibleItems.map((item, index) => {
@@ -212,11 +214,12 @@ export const Home = ({ cases }: HomeProps) => {
                     />
                   </Box>
                 )}
-              </GridColumn>
-            </GridRow>
-          </GridContainer>
-        </>
-      )}
+              </>
+            )}
+            {data.length === 0 && <EmptyState />}
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
     </Layout>
   )
 }
