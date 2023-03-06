@@ -49,8 +49,8 @@ export const Card = ({
             Nr. S-{card.id}
           </Text>
         </Box>
-        <Inline space={1} alignY="center" flexWrap="nowrap">
-          <Text as="p" variant="eyebrow" color="blue600" truncate>
+        <Inline space={1} alignY="center">
+          <Text as="p" variant="eyebrow" color="blue600">
             {card.eyebrows[0]}
           </Text>
           <div className={styles.seperator} />
