@@ -10,7 +10,6 @@ import {
   FormContext,
   FormFooter,
   InfoCard,
-  MarkdownWrapper,
   PageLayout,
   PdfButton,
   UserContext,
@@ -49,6 +48,7 @@ import {
   caseTypes,
   capitalize,
 } from '@island.is/judicial-system/formatters'
+import CaseResentExplanation from '@island.is/judicial-system-web/src/components/CaseResentExplanation/CaseResentExplanation'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { DraftConclusionModal } from '../../components'
@@ -110,17 +110,8 @@ const Overview = () => {
       <FormContentContainer>
         {workingCase.caseResentExplanation && (
           <Box marginBottom={workingCase.seenByDefender ? 3 : 5}>
-            <AlertMessage
-              title={formatMessage(
-                icCourtOverview.sections.caseResentExplanation.title,
-              )}
-              message={
-                <MarkdownWrapper
-                  markdown={workingCase.caseResentExplanation}
-                  textProps={{ variant: 'small' }}
-                />
-              }
-              type="warning"
+            <CaseResentExplanation
+              explanation={workingCase.caseResentExplanation}
             />
           </Box>
         )}

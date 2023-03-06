@@ -9,6 +9,7 @@ export const rcCourtOverview = {
       description:
         'Notaður sem titill á yfirlitssíðu í gæsluvarðhalds-, vistunar- og farbannsmálum.',
     },
+    // TODO: REMOVE caseResentExplanation
     caseResentExplanation: defineMessages({
       title: {
         id:

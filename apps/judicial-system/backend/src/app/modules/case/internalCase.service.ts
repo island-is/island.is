@@ -168,7 +168,6 @@ export class InternalCaseService {
   ): Promise<boolean> {
     const fileName = this.formatMessage(courtUpload.ruling, {
       courtCaseNumber: theCase.courtCaseNumber,
-      isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
       date: format(nowFactory(), 'yyyy-MM-dd HH:mm'),
     })
 
