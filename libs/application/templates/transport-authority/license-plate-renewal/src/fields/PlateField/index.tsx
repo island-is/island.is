@@ -9,7 +9,6 @@ export const PlateField: FC<FieldBaseProps> = (props) => {
   const { application } = props
   const myPlateOwnershipList = application.externalData['myPlateOwnershipList']
     .data as PlateOwnership[]
-  console.log(application, myPlateOwnershipList)
   return (
     <Box paddingTop={2}>
       {myPlateOwnershipList.length > 1 ? (
