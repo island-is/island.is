@@ -1,6 +1,6 @@
 module.exports = {
-  displayName: 'clients-icelandic-health-insurance',
-  preset: '../../../jest.preset.js',
+  displayName: 'api-domains-rights-portal',
+  preset: '../../../../jest.preset.js',
   globals: {
     'ts-jest': {
       tsconfig: '<rootDir>/tsconfig.spec.json',
@@ -11,6 +11,5 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory:
-    '../../../coverage/libs/clients/icelandic-health-insurance',
+  coverageDirectory: '../../../../coverage/libs/api/domains/rights-portal',
 }

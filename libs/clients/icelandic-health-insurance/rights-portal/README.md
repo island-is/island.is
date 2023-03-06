@@ -1,6 +1,6 @@
 <!-- gitbook-ignore -->
 
-# clients-icelandic-health-insurance
+# clients-rights-portal
 
 This library was generated with [Nx](https://nx.dev).
 

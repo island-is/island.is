@@ -7,10 +7,8 @@ const schema = z.object({
   }),
 })
 
-export const IcelandicHealthInsuranceClientConfig = defineConfig<
-  z.infer<typeof schema>
->({
-  name: 'IcelandicHealthInsurance',
+export const RigthsPortalClientConfig = defineConfig<z.infer<typeof schema>>({
+  name: 'RightsPortal',
   schema,
   load(env) {
     return {

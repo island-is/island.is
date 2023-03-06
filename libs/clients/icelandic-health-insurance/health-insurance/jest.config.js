@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'clients-health-insurance-v2',
+  displayName: 'clients-health-insurance',
   preset: './jest.preset.js',
   rootDir: '../../..',
   roots: [__dirname],
@@ -10,5 +10,6 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '<rootDir>/coverage/libs/clients/health-insurance-v2',
+  coverageDirectory:
+    '<rootDir>/coverage/libs/clients/icelandic-health-insurance/health-insurance',
 }

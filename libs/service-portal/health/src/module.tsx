@@ -6,23 +6,29 @@ import {
   ServicePortalPath,
   ServicePortalRoute,
 } from '@island.is/service-portal/core'
+import { HealthPaths } from './lib/paths'
+import { PortalModule } from '@island.is/portals/core'
 
 const HealthOverview = lazy(() =>
   import('./screens/HealthOverview/HealthOverview'),
 )
 
-export const healthModule: ServicePortalModule = {
-  name: 'Heilsa',
-  routes: ({ userInfo }) => {
-    const routes: ServicePortalRoute[] = [
-      {
-        name: 'Heilsa',
-        path: ServicePortalPath.HealthRoot,
-        enabled: userInfo.scopes.includes(ApiScope.internal),
-        element: <HealthOverview />,
-      },
-    ]
+const Therapies = lazy(() => import('./screens/Therapies/Therapies'))
 
-    return routes
-  },
+export const healthModule: PortalModule = {
+  name: 'Heilsa',
+  routes: ({ userInfo }) => [
+    {
+      name: 'Heilsa',
+      path: HealthPaths.HealthRoot,
+      enabled: userInfo.scopes.includes(ApiScope.internal),
+      element: <HealthOverview />,
+    },
+    {
+      name: 'Þjálfun',
+      path: HealthPaths.HealthTherapies,
+      enabled: userInfo.scopes.includes(ApiScope.internal),
+      element: <Therapies />,
+    },
+  ],
 }

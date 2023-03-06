@@ -40,6 +40,7 @@ import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-reg
 import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { FinanceModule } from '@island.is/api/domains/finance'
 import { VehiclesModule } from '@island.is/api/domains/vehicles'
+import { RightsPortalModule } from '@island.is/api/domains/rights-portal'
 import { AssetsModule } from '@island.is/api/domains/assets'
 import { PassportModule } from '@island.is/api/domains/passport'
 import { AirDiscountSchemeModule } from '@island.is/api/domains/air-discount-scheme'
@@ -81,6 +82,7 @@ import { FishingLicenseModule } from '@island.is/api/domains/fishing-license'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
+import { RigthsPortalClientConfig } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
 import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
@@ -243,6 +245,7 @@ const autoSchemaFile = environment.production
     FinanceModule,
     FinancialStatementsInaoModule,
     VehiclesModule,
+    RightsPortalModule,
     AssetsModule,
     PassportModule,
     AirDiscountSchemeModule,
@@ -277,6 +280,7 @@ const autoSchemaFile = environment.production
         GenericDrivingLicenseConfig,
         GenericDisabilityLicenseConfig,
         VehiclesClientConfig,
+        RigthsPortalClientConfig,
         AuthPublicApiClientConfig,
         AuthDelegationApiClientConfig,
         DownloadServiceConfig,

@@ -866,4 +866,12 @@ export const m = defineMessages({
     id: 'service.portal:sessions',
     defaultMessage: 'Notkun',
   },
+  health: {
+    id: 'service.portal:health',
+    defaultMessage: 'Heilsa',
+  },
+  therapies: {
+    id: 'service.portal:therapies',
+    defaultMessage: 'Þjálfun',
+  },
 })

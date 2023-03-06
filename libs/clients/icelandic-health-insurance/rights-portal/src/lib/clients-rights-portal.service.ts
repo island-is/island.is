@@ -1,23 +1,21 @@
-import { Configuration, BaseAPI } from '../../gen/fetch'
+import { Configuration, MinarsidurApiApi } from '../../gen/fetch'
 import { Provider } from '@nestjs/common'
 import {
   ConfigType,
   LazyDuringDevScope,
   IdsClientConfig,
 } from '@island.is/nest/config'
-import { IcelandicHealthInsuranceClientConfig } from './clients-icelandic-health-insurance.config'
+import { RigthsPortalClientConfig } from './clients-rights-portal.config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 
-export const IcelandicHealthInsuranceApiProvider: Provider<BaseAPI> = {
-  provide: BaseAPI,
+export const RightsPortalApiProvider: Provider<MinarsidurApiApi> = {
+  provide: MinarsidurApiApi,
   scope: LazyDuringDevScope,
-  useFactory: (
-    config: ConfigType<typeof IcelandicHealthInsuranceClientConfig>,
-  ) =>
-    new BaseAPI(
+  useFactory: (config: ConfigType<typeof RigthsPortalClientConfig>) =>
+    new MinarsidurApiApi(
       new Configuration({
         fetchApi: createEnhancedFetch({
-          name: 'clients-icelandic-health-insurance',
+          name: 'clients-rights-portal',
           timeout: config.fetch.timeout,
           autoAuth: undefined,
           //idsClientConfig.isConfigured
@@ -30,7 +28,7 @@ export const IcelandicHealthInsuranceApiProvider: Provider<BaseAPI> = {
           //     }
           //   : undefined,
         }),
-
+        basePath: 'https://midgardur-test.sjukra.is/minarsidur',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
@@ -38,5 +36,5 @@ export const IcelandicHealthInsuranceApiProvider: Provider<BaseAPI> = {
       }),
     ),
 
-  inject: [IcelandicHealthInsuranceClientConfig.KEY, IdsClientConfig.KEY],
+  inject: [RigthsPortalClientConfig.KEY, IdsClientConfig.KEY],
 }
