@@ -59,7 +59,7 @@ test.describe('Service portal, in session history', () => {
     await expect(sessionsRows).toHaveCountGreaterThan(0)
   })
 
-  test.only('can view list of sessions as company', async () => {
+  test('can view list of sessions as company', async () => {
     // Arrange
     const testCompanyName =
       env === 'staging' ? 'Prófunarfélag GG og HEB' : 'ARTIC ehf.'
