@@ -167,7 +167,7 @@ export class ChildrenService {
 
       if (!children.hasRights) {
         throw new TemplateApiError(
-          parentalLeaveFormMessages.shared.childrenError,
+          parentalLeaveFormMessages.shared.noConsentToSeeInfromationError,
           500,
         )
       }
@@ -195,16 +195,7 @@ export class ChildrenService {
     const children: ChildInformation[] = []
 
     for (const child of childrenWhereOtherParent) {
-      if (
-        child.parentalRelation === ParentalRelations.secondary &&
-        child.expectedDateOfBirth === 'N/A' &&
-        child.primaryParentNationalRegistryId === 'N/A'
-      ) {
-        throw new TemplateApiError(
-          parentalLeaveFormMessages.shares.noConsentToSeeInfromationError,
-          500,
-        )
-      }
+
       const parentalLeavesEntitlements: ParentalLeaveEntitlement = {
         independentMonths: 6,
         transferableMonths: 0,

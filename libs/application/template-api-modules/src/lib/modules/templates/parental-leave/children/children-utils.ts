@@ -13,7 +13,9 @@ import {
   PregnancyStatus,
   ChildrenWithoutRightsAndExistingApplications,
   getApplicationAnswers,
+  parentalLeaveFormMessages,
 } from '@island.is/application/templates/parental-leave'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 // We do not require hasRights or remainingDays in this step
 // as it will be calculated later in the process
@@ -42,6 +44,13 @@ export const applicationsToChildInformation = (
       application.answers,
     )
 
+    if (otherParentRightOfAccess !== YES) {
+      throw new TemplateApiError(
+        parentalLeaveFormMessages.shared.noConsentToSeeInfromationError,
+        500,
+      )
+    }
+
     if (asOtherParent) {
       let transferredDays = getTransferredDays(application, selectedChild)
       const multipleBirthsRequestDays = getMultipleBirthRequestDays(
@@ -56,13 +65,7 @@ export const applicationsToChildInformation = (
         transferredDays *= -1
       }
 
-      if (otherParentRightOfAccess !== YES) {
-        result.push({
-          parentalRelation: ParentalRelations.secondary,
-          expectedDateOfBirth: 'N/A',
-          primaryParentNationalRegistryId: 'N/A',
-        })
-      } else if (selectedChild.parentalRelation === ParentalRelations.primary) {
+      if (selectedChild.parentalRelation === ParentalRelations.primary) {
         result.push({
           parentalRelation: ParentalRelations.secondary,
           expectedDateOfBirth: selectedChild.expectedDateOfBirth,
