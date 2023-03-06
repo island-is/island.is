@@ -57,7 +57,7 @@ export class RegulationsAdminResolver {
   ) {
     return await this.regulationsAdminClientService.getDraftRegulation(
       input.draftId,
-      user.authorization,
+      user,
     )
   }
 
@@ -75,10 +75,8 @@ export class RegulationsAdminResolver {
   }
 
   @Query(() => [DraftRegulationShippedModel])
-  async getShippedRegulations(@CurrentUser() { authorization }: User) {
-    return await this.regulationsAdminClientService.getShippedRegulations(
-      authorization,
-    )
+  async getShippedRegulations(@CurrentUser() user: User) {
+    return await this.regulationsAdminClientService.getShippedRegulations(user)
   }
 
   @Query(() => graphqlTypeJson)
@@ -87,7 +85,7 @@ export class RegulationsAdminResolver {
     @CurrentUser() user: User,
   ) {
     return await this.regulationsAdminClientService.getDraftRegulations(
-      user.authorization,
+      user,
       input.page,
     )
   }
@@ -158,7 +156,7 @@ export class RegulationsAdminResolver {
   @Query(() => DraftRegulationPdfDownloadModel)
   async getDraftRegulationPdfDownload(
     @Args('input') input: GetDraftRegulationPdfDownloadInput,
-    @CurrentUser() { authorization }: User,
+    @CurrentUser() user: User,
   ): Promise<DraftRegulationPdfDownloadModel | null> {
     // This is open to be extended with downloading published regulations as well
 
@@ -169,7 +167,7 @@ export class RegulationsAdminResolver {
 
     const draftRegulation = await this.regulationsAdminClientService.getDraftRegulation(
       input.draftId,
-      authorization,
+      user,
     )
 
     if (!draftRegulation) {
