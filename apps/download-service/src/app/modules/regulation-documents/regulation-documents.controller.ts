@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Header,
-  Inject,
   Post,
   Res,
   Param,
@@ -34,9 +33,7 @@ import {
 @Controller('regulation')
 export class RegulationDocumentsController {
   constructor(
-    @Inject(RegulationsService)
-    private readonly regulationService: RegulationsService,
-    @Inject(RegulationsAdminClientService)
+    private regulationService: RegulationsService,
     private regulationsAdminClientService: RegulationsAdminClientService,
   ) {}
 

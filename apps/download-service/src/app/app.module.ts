@@ -9,7 +9,6 @@ import {
 import { AuditModule } from '@island.is/nest/audit'
 import {
   ConfigModule,
-  DownloadServiceConfig,
   IdsClientConfig,
   XRoadConfig,
 } from '@island.is/nest/config'
@@ -25,12 +24,12 @@ import {
   VehiclesClientModule,
 } from '@island.is/clients/vehicles'
 import {
-  RegulationsService,
   RegulationsClientConfig,
+  RegulationsClientModule,
 } from '@island.is/clients/regulations'
 import {
   RegulationsAdminClientConfig,
-  RegulationsAdminClientService,
+  RegulationsAdminClientModule,
 } from '@island.is/clients/regulations-admin'
 
 @Module({
@@ -52,6 +51,8 @@ import {
     }),
     FinanceClientModule,
     VehiclesClientModule,
+    RegulationsAdminClientModule,
+    RegulationsClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -64,6 +65,5 @@ import {
       ],
     }),
   ],
-  providers: [RegulationsAdminClientService, RegulationsService],
 })
 export class AppModule {}
