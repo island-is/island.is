@@ -1,5 +1,5 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { Application, YES } from '@island.is/application/types'
+import { Application, NO } from '@island.is/application/types'
 import type { DistributiveOmit } from '@island.is/shared/types'
 
 import {
@@ -13,9 +13,7 @@ import {
   PregnancyStatus,
   ChildrenWithoutRightsAndExistingApplications,
   getApplicationAnswers,
-  parentalLeaveFormMessages,
 } from '@island.is/application/templates/parental-leave'
-import { TemplateApiError } from '@island.is/nest/problem'
 
 // We do not require hasRights or remainingDays in this step
 // as it will be calculated later in the process
@@ -57,7 +55,7 @@ export const applicationsToChildInformation = (
         // then this parent needs to lose 45 days
         transferredDays *= -1
       }
-      if (otherParentRightOfAccess !== YES) {
+      if (otherParentRightOfAccess === NO) {
         result.push({
           parentalRelation: ParentalRelations.secondary,
           expectedDateOfBirth: 'N/A',
