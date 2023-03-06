@@ -31,7 +31,7 @@ export class DisabilityLicensePayloadMapper
       {
         type: GenericLicenseDataFieldType.Value,
         label: label ? label['publisher'] : i18n.publisher[locale],
-        value: 'Tryggingastofnun ríkisins',
+        value: 'Tryggingastofnun',
       },
       {
         type: GenericLicenseDataFieldType.Value,
