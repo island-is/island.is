@@ -401,9 +401,13 @@ export const m = defineMessages({
     id: 'service.portal:family-child',
     defaultMessage: 'Barn',
   },
-  endorsements: {
-    id: 'service.portal:endorsements',
-    defaultMessage: 'Meðmæli',
+  petitions: {
+    id: 'service.portal:petitions',
+    defaultMessage: 'Listar',
+  },
+  viewPetition: {
+    id: 'service.portal:viewPetition',
+    defaultMessage: 'Nánar um lista',
   },
   endorsementsAdmin: {
     id: 'service.portal:endorsements-admin',

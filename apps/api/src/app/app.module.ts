@@ -7,6 +7,7 @@ import { TerminusModule } from '@nestjs/terminus'
 import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/cms'
+import { ConsultationPortalModule } from '@island.is/api/domains/consultation-portal'
 import { DisabilityLicenseModule } from '@island.is/api/domains/disability-license'
 import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
@@ -99,6 +100,7 @@ import { DataLoaderInterceptor } from '@island.is/nest/dataloader'
 import { SessionsModule } from '@island.is/api/domains/sessions'
 import { CommunicationsConfig } from '@island.is/api/domains/communications'
 import { UniversityOfIcelandClientConfig } from '@island.is/clients/university-of-iceland'
+import { ConsultationPortalClientConfig } from '@island.is/clients/consultation-portal'
 import { SessionsApiClientConfig } from '@island.is/clients/sessions'
 import { AuthAdminModule } from '@island.is/api/domains/auth-admin'
 
@@ -142,6 +144,7 @@ const autoSchemaFile = environment.production
     AuthDomainModule,
     AuditModule.forRoot(environment.audit),
     ContentSearchModule,
+    ConsultationPortalModule,
     CmsModule,
     DrivingLicenseModule,
     DrivingLicenseBookModule,
@@ -272,6 +275,7 @@ const autoSchemaFile = environment.production
       load: [
         AdrAndMachineLicenseClientConfig,
         AirDiscountSchemeClientConfig,
+        ConsultationPortalClientConfig,
         AssetsClientConfig,
         FirearmLicenseClientConfig,
         DisabilityLicenseClientConfig,
