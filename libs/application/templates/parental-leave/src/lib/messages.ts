@@ -2069,20 +2069,6 @@ export const parentalLeaveFormMessages: MessageDir = {
         'You have applied for a residence grant, and your application is being processed.',
     },
   }),
-  noConsentToSeeInfromationMessages: defineMessages({
-    noConsentToSeeInfromationTitle: {
-      id: 'pl.application:no.consent.to.see.information.title',
-      defaultMessage: 'Engar upplýsingar fundust',
-      description: 'No information was found',
-    },
-    noConsentToSeeInfromationDescription: {
-      id: 'pl.application:no.consent.to.see.information.description',
-      defaultMessage:
-        'Aðalforeldri hefur ekki gefið samþykki sitt fyrir því að þú sjáir þessar upplýsingar.',
-      description:
-        'The primary parent has not given their consent for you to see this information.',
-    },
-  }),
 }
 
 export const employerFormMessages = defineMessages({
@@ -2524,6 +2510,13 @@ export const errorMessages = defineMessages({
     defaultMessage:
       'Ekki er hægt að færa daga ef forsjárlausa foreldrið hefur ekki samþykki fyrir umgengni í þessu fæðingarorlofi. Vinsamlegast veljið annan möguleika.',
     description: 'Unable to transfer days!',
+  },
+  noConsentToSeeInfromationError: {
+    id: 'pl.application:no.consent.to.see.information.description',
+    defaultMessage:
+      'Aðalforeldri hefur ekki gefið þér samþykki sitt fyrir umgengi í fæðingarorlofinu.',
+    description:
+      'Primary parent has not given you their consent for right of access during the parental leave.',
   },
 })
 
