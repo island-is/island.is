@@ -106,7 +106,6 @@
 - [Samráðsgáttin](apps/consultation-portal/README.md)
 - [Financial Aid System for Samband Sveitarfélaga](apps/financial-aid/README.md)
 - [Judicial System](apps/judicial-system/README.md)
-- [License API](apps/license-api/README.md)
 - [User Portals](apps/portals/README.md)
   - [Admin Portal](apps/portals/admin/README.md)
 - [Reference Backend](apps/reference-backend/README.md)
