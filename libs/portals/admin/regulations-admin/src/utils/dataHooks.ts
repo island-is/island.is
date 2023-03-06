@@ -167,29 +167,6 @@ export const useS3Upload = () => {
     onChange([file], regId)
   }
 
-  // TODO: implement delete
-  //const deleteFromS3 = async (presignedPost: PresignedPost) => {}
-
-  /* TODO: implement delete
-  const onRemove = async (file?: UploadFile, regId?: string) => {
-    setUploadErrorMessage(undefined)
-
-    if (!file || !regId) {
-      return
-    }
-
-    const hash = await getHash(file)
-    const file = newFiles[0] as UploadFile
-    const presignedPost = await createPresignedPost(file.name, regId, hash)
-
-    if (!presignedPost) {
-      return
-    }
-
-    deleteFromS3(presignedPost)
-  }
-  */
-
   return {
     uploadLocation,
     uploadStatus,
