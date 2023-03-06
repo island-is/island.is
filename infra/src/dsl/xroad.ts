@@ -227,9 +227,9 @@ export const AdrAndMachine = new XroadConf({
 export const JudicialAdministration = new XroadConf({
   env: {
     XROAD_COURT_BANKRUPTCY_CERT_PATH: {
-      dev: 'IS-DEV/GOV/10019/Domstolasyslan-DEV/Domstolasyslan',
-      staging: 'IS-DEV/GOV/10019/Domstolasyslan-DEV/Domstolasyslan',
-      prod: 'IS/GOV/4707171140/Domstolasyslan-PROD-1/Domstolasyslan',
+      dev: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1',
+      staging: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1',
+      prod: 'IS/GOV/4707171140/Domstolasyslan/JusticePortal-v1',
     },
   },
   secrets: {
