@@ -18,7 +18,7 @@ const getMockData = () => {
         applicationId: '@island.is/web',
         applicationType: 'Web Application',
         tenantId: '@admin.island.is',
-        environments: [**
+        environments: [
           {
             name: '@island.is/web',
             environment: Environment.Dev,
