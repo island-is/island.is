@@ -35,3 +35,10 @@ export const th = style({
 export const td = style({
   padding: `${theme.spacing[2]}px ${theme.spacing[3]}px`,
 })
+
+export const userManagementContainer = style({
+  display: 'grid',
+  gridTemplateColumns: '.6fr auto',
+  justifyContent: 'center',
+  padding: '48px 0',
+})

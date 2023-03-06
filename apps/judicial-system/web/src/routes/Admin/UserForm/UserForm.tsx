@@ -125,7 +125,7 @@ export const UserForm: React.FC<Props> = (props) => {
   }
 
   return (
-    <div>
+    <div className={styles.userFormContainer}>
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">

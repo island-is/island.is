@@ -14,3 +14,8 @@ export const roleColumn = style({
     },
   },
 })
+
+export const userFormContainer = style({
+  padding: '80px 0 48px 0',
+  background: theme.color.white,
+})
