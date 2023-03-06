@@ -42,7 +42,9 @@
     "@protobufjs/path",
     "@protobufjs/pool",
     "@protobufjs/utf8",
-    "safer-buffer"
+    "safer-buffer",
+    "object-keys",
+    "deep-equal"
   ],
   "keepNames": true
 }
