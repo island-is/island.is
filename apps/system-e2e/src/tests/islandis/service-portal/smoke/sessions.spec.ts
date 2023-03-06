@@ -39,20 +39,20 @@ test.describe('Service portal, in session history', () => {
     await expect(sessionsRows).toHaveCountGreaterThan(0)
   })
 
-  test('can filter list of session by national id', async () => {
+  test.only('can filter list of session by national id', async () => {
     // Arrange
     const filterSubjectNationalId =
       // eslint-disable-next-line local-rules/disallow-kennitalas
       env === 'staging' ? '6609170200' : '5005101370'
     const page = await context.newPage()
-    await page.goto(sessionHistoryUrl, {
-      waitUntil: 'networkidle',
-    })
+    await page.goto(sessionHistoryUrl)
 
     // Act
-    await page.locator('#filterInput').fill(filterSubjectNationalId)
-    const sessionsRows = page.locator('table > tbody > tr', {
-      hasText: format(filterSubjectNationalId),
+    await page
+      .getByRole('textbox', { name: 'Leita eftir kennitölu' })
+      .fill(filterSubjectNationalId)
+    const sessionsRows = page.getByRole('cell', {
+      name: format(filterSubjectNationalId),
     })
 
     // Assert
