@@ -20,12 +20,7 @@ sequenceDiagram
 
 ## About
 
-This service manages queueing up messages to send push notifications
-Message templates come from Contentful API
-User settings come from User Profile Service
-The User Notification Service uses AWS SQS to queue up messages
-The User Notification Worker polls the queue and sends notifications to the user
-Messages are sent to the user via Firebase Cloud Messaging
+This service manages queueing up messages to send push notifications / sms / emails.
 
 ## running the project:
 
