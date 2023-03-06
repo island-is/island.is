@@ -1,11 +1,9 @@
 import {
-  AsyncSearchOption,
   Box,
-  Breadcrumbs,
   Divider,
   GridContainer,
-  Hidden,
   ResponsiveSpace,
+  Stack,
   Tabs,
   Text,
 } from '@island.is/island-ui/core'
@@ -17,96 +15,77 @@ import {
   SubscriptionActionCard,
   ChosenSubscriptionCard,
 } from '../../components/Card'
-import { Area } from '../../types/enums'
+import { Area, SortOptions } from '../../types/enums'
 import {
   ArrOfIdAndName,
   Case,
   SortTitle,
   SubscriptionArray,
 } from '../../types/interfaces'
+import BreadcrumbsWithMobileDivider from '../../components/BreadcrumbsWithMobileDivider/BreadcrumbsWithMobileDivider'
+import { sorting } from '../../utils/helpers'
 
 const Subscriptions = () => {
   // user logged in logic needed
   const [loggedIn, setLoggedIn] = useState(false)
-  // const [subscriptionEmail, setSubscriptionEmail] = useState('')
+  const [currentTab, setCurrentTab] = useState<Area>(Area.case)
 
-  const [currentTab, setCurrentTab] = useState<string>('Mál')
-
-  const [searchOptions, setSearchOptions] = useState<AsyncSearchOption[]>([])
-  const [searchValue, setSearchValue] = useState<string>('')
-  const settingSearchValue = (val: string) => setSearchValue(val)
-  const [prevSearchValue, setPrevSearchValue] = useState<string>('')
+  const [searchValue, setSearchValue] = useState('')
 
   const [casesData, setCasesData] = useState<Array<Case>>(Cases)
   const Institutions = Object.entries(Types.institutions).map(([id, name]) => ({
     id,
     name,
   }))
-  const [institutionsData, setInstitutionsData] = useState(
-    Object.entries(Types.institutions).map(([id, name]) => ({
-      id,
-      name,
-    })),
-  )
+  const [institutionsData, setInstitutionsData] = useState(Institutions)
   const PolicyAreas = Object.entries(Types.policyAreas).map(([id, name]) => ({
     id,
     name,
   }))
-  const [policyAreasData, setPolicyAreasData] = useState(
-    Object.entries(Types.policyAreas).map(([id, name]) => ({
-      id,
-      name,
-    })),
-  )
+  const [policyAreasData, setPolicyAreasData] = useState(PolicyAreas)
+
   const [subscriptionArray, setSubscriptionArray] = useState<SubscriptionArray>(
     SubscriptionsArray,
   )
-  const settingSubscriptionArray = (newSubscriptionArray: SubscriptionArray) =>
-    setSubscriptionArray(newSubscriptionArray)
 
   const [sortTitle, setSortTitle] = useState<SortTitle>({
-    Mál: 'Nýjast efst',
-    Stofnanir: 'Nýjast efst',
-    Málefnasvið: 'Nýjast efst',
+    Mál: SortOptions.latest,
+    Stofnanir: SortOptions.latest,
+    Málefnasvið: SortOptions.latest,
   })
-  const settingSortTitle = (obj: SortTitle) => setSortTitle(obj)
 
-  const paddingXContent = [0, 0, 0, 8, 15] as ResponsiveSpace
-  const paddingXTable = [0, 0, 0, 8, 15] as ResponsiveSpace
-
-  const clearAll = () => {
-    setSearchOptions([])
-    setCasesData(Cases)
-    setInstitutionsData(Institutions)
-    setPolicyAreasData(PolicyAreas)
-  }
+  const paddingX = [0, 0, 0, 8, 15] as ResponsiveSpace
 
   useEffect(() => {
-    if (searchValue == prevSearchValue) {
-      return
-    }
-    if (!searchValue) {
-      clearAll()
+    const sortedCases = sorting(Cases, sortTitle[Area.case])
+    const sortedInstitutions = sorting(
+      Institutions,
+      sortTitle[Area.institution],
+    )
+    const sortedPolicyAreas = sorting(PolicyAreas, sortTitle[Area.policyArea])
+
+    if (searchValue) {
+      setCasesData(
+        sortedCases.filter(
+          (item) =>
+            item.name.includes(searchValue) ||
+            item.caseNumber.includes(searchValue) ||
+            item.institutionName.includes(searchValue) ||
+            item.policyAreaName.includes(searchValue),
+        ),
+      )
+      setInstitutionsData(
+        sortedInstitutions.filter((item) => item.name.includes(searchValue)),
+      )
+      setPolicyAreasData(
+        sortedPolicyAreas.filter((item) => item.name.includes(searchValue)),
+      )
     } else {
-      const filteredCases = Cases.filter(
-        (item) =>
-          item.name.includes(searchValue) ||
-          item.caseNumber.includes(searchValue) ||
-          item.institutionName.includes(searchValue) ||
-          item.policyAreaName.includes(searchValue),
-      )
-      setCasesData(filteredCases)
-      const filteredInstitutions = Institutions.filter((item) =>
-        item.name.includes(searchValue),
-      )
-      setInstitutionsData(filteredInstitutions)
-      const filteredPolicyAreas = PolicyAreas.filter((item) =>
-        item.name.includes(searchValue),
-      )
-      setPolicyAreasData(filteredPolicyAreas)
-      setPrevSearchValue(searchValue)
+      setCasesData(sortedCases)
+      setInstitutionsData(sortedInstitutions)
+      setPolicyAreasData(sortedPolicyAreas)
     }
-  }, [searchValue, Institutions, PolicyAreas, prevSearchValue])
+  }, [searchValue])
 
   const tabs = [
     {
@@ -118,13 +97,17 @@ const Subscriptions = () => {
           setData={(newData: Array<Case>) => setCasesData(newData)}
           currentTab={Area.case}
           subscriptionArray={subscriptionArray}
-          setSubscriptionArray={settingSubscriptionArray}
-          searchOptions={searchOptions}
+          setSubscriptionArray={(newSubscriptionArray: SubscriptionArray) =>
+            setSubscriptionArray(newSubscriptionArray)
+          }
           searchValue={searchValue}
-          setSearchValue={settingSearchValue}
-          searchPlaceholder={'Leitaðu að máli, stofnun eða málefnasviði'}
-          sortTitle={sortTitle}
-          setSortTitle={settingSortTitle}
+          setSearchValue={(newValue: string) => setSearchValue(newValue)}
+          sortTitle={sortTitle[Area.case]}
+          setSortTitle={(val) => {
+            const _sortTitle = { ...sortTitle }
+            _sortTitle[Area.case] = val
+            setSortTitle(_sortTitle)
+          }}
         />
       ),
       disabled: false,
@@ -140,13 +123,17 @@ const Subscriptions = () => {
           }
           currentTab={Area.institution}
           subscriptionArray={subscriptionArray}
-          setSubscriptionArray={settingSubscriptionArray}
-          searchOptions={searchOptions}
+          setSubscriptionArray={(newSubscriptionArray: SubscriptionArray) =>
+            setSubscriptionArray(newSubscriptionArray)
+          }
           searchValue={searchValue}
-          setSearchValue={settingSearchValue}
-          searchPlaceholder={'Leitaðu að máli, stofnun eða málefnasviði'}
-          sortTitle={sortTitle}
-          setSortTitle={settingSortTitle}
+          setSearchValue={(newValue: string) => setSearchValue(newValue)}
+          sortTitle={sortTitle[Area.institution]}
+          setSortTitle={(val) => {
+            const _sortTitle = { ...sortTitle }
+            _sortTitle[Area.institution] = val
+            setSortTitle(_sortTitle)
+          }}
         />
       ),
       disabled: false,
@@ -162,169 +149,166 @@ const Subscriptions = () => {
           }
           currentTab={Area.policyArea}
           subscriptionArray={subscriptionArray}
-          setSubscriptionArray={settingSubscriptionArray}
-          searchOptions={searchOptions}
+          setSubscriptionArray={(newSubscriptionArray: SubscriptionArray) =>
+            setSubscriptionArray(newSubscriptionArray)
+          }
           searchValue={searchValue}
-          setSearchValue={settingSearchValue}
-          searchPlaceholder={'Leitaðu að máli, stofnun eða málefnasviði'}
-          sortTitle={sortTitle}
-          setSortTitle={settingSortTitle}
+          setSearchValue={(newValue: string) => setSearchValue(newValue)}
+          sortTitle={sortTitle[Area.policyArea]}
+          setSortTitle={(val) => {
+            const _sortTitle = { ...sortTitle }
+            _sortTitle[Area.policyArea] = val
+            setSortTitle(_sortTitle)
+          }}
         />
       ),
       disabled: false,
     },
   ]
 
-  const subscriptionArrayIsEmpty = () => {
-    if (
-      subscriptionArray.caseIds.length === 0 &&
-      subscriptionArray.institutionIds.length === 0 &&
-      subscriptionArray.policyAreaIds.length === 0
-    ) {
-      return true
-    }
-    return false
-  }
-
   return (
     <Layout>
       <Divider />
       <Box background="blue100">
+        <BreadcrumbsWithMobileDivider
+          items={[
+            { title: 'Samráðsgátt', href: '/samradsgatt' },
+            { title: 'Mínar áskriftir ', href: '/samradsgatt/askriftir' },
+            { title: currentTab },
+          ]}
+        />
+
         <GridContainer>
-          <Box paddingY={[3, 3, 3, 5, 5]}>
-            <Breadcrumbs
-              items={[
-                { title: 'Samráðsgátt', href: '/samradsgatt' },
-                { title: 'Mínar áskriftir ', href: '/samradsgatt/askriftir' },
-                { title: currentTab },
-              ]}
-            />
+          <Box paddingX={paddingX} paddingBottom={3}>
+            <Stack space={[3, 3, 3, 5, 5]}>
+              <Stack space={3}>
+                <Text variant="h1" color="dark400">
+                  Áskriftir
+                </Text>
+                <Stack space={1}>
+                  <Text variant="default">
+                    Hér er hægt að skrá sig í áskrift að málum. Þú skráir þig
+                    inn á Ísland.is, hakar við einn eða fleiri flokka, velur
+                    hvort þú vilt tilkynningar um ný mál eða fleiri atriði og
+                    smellir á „Staðfesta“. ferð svo og staðfestir áskriftina í
+                    gegnum tölvupóstfangið sem þú varst að skrá.
+                  </Text>
+                  <Text variant="default">
+                    Kerfið er uppfært einu sinni á sólarhring.
+                  </Text>
+                </Stack>
+              </Stack>
+              {loggedIn ? (
+                <SubscriptionActionCard
+                  userIsLoggedIn={true}
+                  heading="Skrá áskrift"
+                  text="Skráðu netfang hérna og svo hefst staðfestingaferlið. Þú færð tölvupóst sem þú þarft að staðfesta til að áskriftin taki gildi."
+                  button={{
+                    label: 'Skrá áskrift',
+                    onClick: () => setLoggedIn(false),
+                  }}
+                  input={{
+                    name: 'subscriptionEmail',
+                    label: 'Netfang',
+                    placeholder: 'Hér skal skrifa netfang',
+                  }}
+                />
+              ) : (
+                <SubscriptionActionCard
+                  userIsLoggedIn={false}
+                  heading="Skrá áskrift"
+                  text="Þú verður að vera skráð(ur) inn til þess að geta skráð þig í áskrift."
+                  button={{
+                    label: 'Skrá mig inn',
+                    onClick: () => setLoggedIn(true),
+                  }}
+                />
+              )}
+            </Stack>
+            <Stack space={0}>
+              {!(
+                subscriptionArray.caseIds.length === 0 &&
+                subscriptionArray.institutionIds.length === 0 &&
+                subscriptionArray.policyAreaIds.length === 0
+              ) && (
+                <>
+                  <Text paddingBottom={1} variant="eyebrow" paddingTop={2}>
+                    Valin mál
+                  </Text>
+                  {subscriptionArray.caseIds.length !== 0 &&
+                    subscriptionArray.caseIds.map((caseId) => {
+                      return casesData
+                        .filter((item) => caseId === item.id)
+                        .map((filteredItem) => (
+                          <ChosenSubscriptionCard
+                            data={{
+                              name: filteredItem.name,
+                              caseNumber: filteredItem.caseNumber,
+                              id: filteredItem.id.toString(),
+                              area: Area.case,
+                            }}
+                            subscriptionArray={subscriptionArray}
+                            setSubscriptionArray={(
+                              newSubscriptionArray: SubscriptionArray,
+                            ) => setSubscriptionArray(newSubscriptionArray)}
+                            key={`case-${caseId}`}
+                          />
+                        ))
+                    })}
+                  {subscriptionArray.institutionIds.length !== 0 &&
+                    subscriptionArray.institutionIds.map((institutionId) => {
+                      return institutionsData
+                        .filter((item) => institutionId.toString() === item.id)
+                        .map((filteredItem) => (
+                          <ChosenSubscriptionCard
+                            data={{
+                              name: filteredItem.name.toString(),
+                              id: filteredItem.id,
+                              area: Area.institution,
+                            }}
+                            subscriptionArray={subscriptionArray}
+                            setSubscriptionArray={(
+                              newSubscriptionArray: SubscriptionArray,
+                            ) => setSubscriptionArray(newSubscriptionArray)}
+                            key={`institution-${institutionId}`}
+                          />
+                        ))
+                    })}
+                  {subscriptionArray.policyAreaIds.length !== 0 &&
+                    subscriptionArray.policyAreaIds.map((policyAreaId) => {
+                      return policyAreasData
+                        .filter((item) => policyAreaId.toString() === item.id)
+                        .map((filteredItem) => (
+                          <ChosenSubscriptionCard
+                            data={{
+                              name: filteredItem.name.toString(),
+                              id: filteredItem.id,
+                              area: Area.policyArea,
+                            }}
+                            subscriptionArray={subscriptionArray}
+                            setSubscriptionArray={(
+                              newSubscriptionArray: SubscriptionArray,
+                            ) => setSubscriptionArray(newSubscriptionArray)}
+                            key={`policyArea-${policyAreaId}`}
+                          />
+                        ))
+                    })}
+                </>
+              )}
+            </Stack>
           </Box>
-          <Box paddingBottom={[3, 3, 3, 5, 5]}>
-            <Hidden above="xs">
-              <Divider />
-            </Hidden>
-          </Box>
-          <Box paddingX={paddingXContent} paddingBottom={3}>
-            <Text variant="h1" color="dark400">
-              {'Áskriftir'}
-            </Text>
-          </Box>
-          <Box paddingX={paddingXContent} paddingBottom={[3, 3, 3, 5, 5]}>
-            <Text variant="default">
-              {
-                'Hér er hægt að skrá sig í áskrift að málum. Þú skráir þig inn á Ísland.is, \
-                        hakar við einn eða fleiri flokka, velur hvort þú vilt tilkynningar um ný mál \
-                        eða fleiri atriði og smellir á „Staðfesta“. ferð svo og staðfestir áskriftina \
-                        í gegnum tölvupóstfangið sem þú varst að skrá.'
-              }
-            </Text>
-            <Text variant="default" paddingTop={2}>
-              {'Kerfið er uppfært einu sinni á sólarhring.'}
-            </Text>
-          </Box>
-          <Box paddingX={paddingXTable} paddingBottom={[3, 3, 3, 5, 5]}>
-            {loggedIn ? (
-              <SubscriptionActionCard
-                userIsLoggedIn={true}
-                heading="Skrá áskrift"
-                text="Skráðu netfang hérna og svo hefst staðfestingaferlið. Þú færð tölvupóst sem þú þarft að staðfesta til að áskriftin taki gildi."
-                button={{
-                  label: 'Skrá áskrift',
-                  onClick: () => setLoggedIn(false),
-                }}
-                input={{
-                  name: 'subscriptionEmail',
-                  label: 'Netfang',
-                  placeholder: 'Hér skal skrifa netfang',
-                }}
-              />
-            ) : (
-              <SubscriptionActionCard
-                userIsLoggedIn={false}
-                heading="Skrá áskrift"
-                text="Þú verður að vera skráð(ur) inn til þess að geta skráð þig í áskrift."
-                button={{
-                  label: 'Skrá mig inn',
-                  onClick: () => setLoggedIn(true),
-                }}
-              />
-            )}
-          </Box>
-          {!subscriptionArrayIsEmpty() && (
-            <Box paddingX={paddingXTable} paddingBottom={[3, 3, 3, 5, 5]}>
-              <Text paddingBottom={1} variant="eyebrow">
-                Valin mál
-              </Text>
-              {subscriptionArray.caseIds.length !== 0 &&
-                subscriptionArray.caseIds.map((caseId) => {
-                  const chosen = casesData
-                    .filter((item) => caseId === item.id)
-                    .map((filteredItem) => (
-                      <ChosenSubscriptionCard
-                        data={{
-                          name: filteredItem.name,
-                          caseNumber: filteredItem.caseNumber,
-                          id: filteredItem.id.toString(),
-                          area: Area.case,
-                        }}
-                        subscriptionArray={subscriptionArray}
-                        setSubscriptionArray={settingSubscriptionArray}
-                        key={`case-${caseId}`}
-                      />
-                    ))
-                  return chosen
-                })}
-              {subscriptionArray.institutionIds.length !== 0 &&
-                subscriptionArray.institutionIds.map((institutionId) => {
-                  const chosen = institutionsData
-                    .filter((item) => institutionId.toString() === item.id)
-                    .map((filteredItem) => (
-                      <ChosenSubscriptionCard
-                        data={{
-                          name: filteredItem.name,
-                          id: filteredItem.id,
-                          area: Area.institution,
-                        }}
-                        subscriptionArray={subscriptionArray}
-                        setSubscriptionArray={settingSubscriptionArray}
-                        key={`institution-${institutionId}`}
-                      />
-                    ))
-                  return chosen
-                })}
-              {subscriptionArray.policyAreaIds.length !== 0 &&
-                subscriptionArray.policyAreaIds.map((policyAreaId) => {
-                  const chosen = policyAreasData
-                    .filter((item) => policyAreaId.toString() === item.id)
-                    .map((filteredItem) => (
-                      <ChosenSubscriptionCard
-                        data={{
-                          name: filteredItem.name,
-                          id: filteredItem.id,
-                          area: Area.policyArea,
-                        }}
-                        subscriptionArray={subscriptionArray}
-                        setSubscriptionArray={settingSubscriptionArray}
-                        key={`policyArea-${policyAreaId}`}
-                      />
-                    ))
-                  return chosen
-                })}
-            </Box>
-          )}
         </GridContainer>
       </Box>
       <Divider />
       <GridContainer>
-        <Box paddingX={paddingXTable} paddingTop={[3, 3, 3, 5, 5]}>
+        <Box paddingX={paddingX} paddingTop={[3, 3, 3, 5, 5]}>
           <Tabs
             selected={currentTab}
             onlyRenderSelectedTab={true}
             label="Veldu tegund áskrifta"
             tabs={tabs}
             contentBackground="transparent"
-            onChange={(e) => setCurrentTab(e)}
+            onChange={(e: Area) => setCurrentTab(e)}
           />
         </Box>
       </GridContainer>
