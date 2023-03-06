@@ -44,13 +44,6 @@ export const applicationsToChildInformation = (
       application.answers,
     )
 
-    if (otherParentRightOfAccess !== YES) {
-      throw new TemplateApiError(
-        parentalLeaveFormMessages.shared.noConsentToSeeInfromationError,
-        500,
-      )
-    }
-
     if (asOtherParent) {
       let transferredDays = getTransferredDays(application, selectedChild)
       const multipleBirthsRequestDays = getMultipleBirthRequestDays(
@@ -64,8 +57,13 @@ export const applicationsToChildInformation = (
         // then this parent needs to lose 45 days
         transferredDays *= -1
       }
-
-      if (selectedChild.parentalRelation === ParentalRelations.primary) {
+      if (otherParentRightOfAccess !== YES) {
+        result.push({
+          parentalRelation: ParentalRelations.secondary,
+          expectedDateOfBirth: 'N/A',
+          primaryParentNationalRegistryId: 'N/A',
+        })
+      } else if (selectedChild.parentalRelation === ParentalRelations.primary) {
         result.push({
           parentalRelation: ParentalRelations.secondary,
           expectedDateOfBirth: selectedChild.expectedDateOfBirth,
