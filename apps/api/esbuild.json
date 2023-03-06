@@ -59,7 +59,8 @@
     "lowercase-keys",
     "mimic-response",
     "pdfkit",
-    "is-arguments"
+    "is-arguments",
+    "object-is"
   ],
   "keepNames": true
 }
