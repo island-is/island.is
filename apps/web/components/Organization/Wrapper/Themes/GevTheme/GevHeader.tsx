@@ -6,14 +6,23 @@ import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useNamespace } from '@island.is/web/hooks'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { getScreenWidthString } from '@island.is/web/utils/screenWidth'
+import { theme } from '@island.is/island-ui/theme'
 import * as styles from './GevHeader.css'
 
-const getDefaultStyle = () => {
+const getDefaultStyle = (width: number) => {
+  if (width >= theme.breakpoints.xl)
+    return {
+      backgroundPosition: '97% bottom',
+      backgroundRepeat: 'no-repeat',
+      backgroundSize: '170px, cover',
+      backgroundImage:
+        "url('https://images.ctfassets.net/8k0h54kbe6bj/13E4vIA69gDNF87pkHwJgc/c2175b5ce58e50c93ddef5ea26854740/figura.png'), url('https://images.ctfassets.net/8k0h54kbe6bj/2xPh2pJri9rHRpvSANZ1RQ/d051deadef4c1ef0a0d1378eb75d110b/gevhaus1440x385header_litur.png')",
+    }
   return {
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
     backgroundImage:
-      "url('https://images.ctfassets.net/8k0h54kbe6bj/2xPh2pJri9rHRpvSANZ1RQ/666822a69cae492c650683f2f66bb248/gevhaus1440x385.png')",
+      "url('https://images.ctfassets.net/8k0h54kbe6bj/2xPh2pJri9rHRpvSANZ1RQ/d051deadef4c1ef0a0d1378eb75d110b/gevhaus1440x385header_litur.png')",
   }
 }
 
@@ -34,7 +43,7 @@ const GevHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
 
   return (
     <div
-      style={n(`gevHeader-${screenWidth}`, getDefaultStyle())}
+      style={n(`gevHeader-${screenWidth}`, getDefaultStyle(width))}
       className={styles.headerBg}
     >
       <div className={styles.headerWrapper}>
