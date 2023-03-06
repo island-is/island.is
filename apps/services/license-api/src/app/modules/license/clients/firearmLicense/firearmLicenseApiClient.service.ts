@@ -127,7 +127,7 @@ export class FirearmLicenseApiClientService implements GenericLicenseClient {
       }
     }
 
-    const verifyRes = await this.smartApi.verifyPkPass(parsedInput)
+    const verifyRes = await this.smartApi.verifyPkPass({ code, date })
 
     if (!verifyRes.ok) {
       return verifyRes

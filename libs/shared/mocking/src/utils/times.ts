@@ -1,5 +1,6 @@
 type FactoryFn<T, FactoryArgs extends Array<unknown>> = (
-  ...args: FactoryArgs
+  args: FactoryArgs,
+  index: number,
 ) => T
 
 type TimesFn<T, FactoryArgs extends Array<unknown>> = (
@@ -14,7 +15,7 @@ type Times = <T, FactoryArgs extends Array<unknown>>(
 export const times: Times = (factory) => (times, ...args) => {
   const result = []
   for (let i = 0; i < times; i++) {
-    result.push(factory(...args))
+    result.push(factory(args, i))
   }
   return result
 }
