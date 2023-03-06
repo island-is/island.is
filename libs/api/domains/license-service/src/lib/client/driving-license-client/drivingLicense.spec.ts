@@ -19,6 +19,7 @@ describe('license-service/client/driving-license', () => {
       const license: GenericDrivingLicenseResponse = {
         mynd: {
           mynd: 'not-empty',
+          skrad: '1997-08-14T00:00:00',
         },
       }
 
