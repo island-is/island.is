@@ -9,9 +9,9 @@ export const up = compose(
     addToClients: ['@admin.island.is/web'],
     accessControlled: true,
     delegation: {
-      custom: false,
+      custom: true,
+      procuringHolders: true,
       legalGuardians: false,
-      procuringHolders: false,
     },
   }),
   createScope({
@@ -23,8 +23,8 @@ export const up = compose(
     accessControlled: true,
     delegation: {
       custom: false,
-      legalGuardians: false,
       procuringHolders: false,
+      legalGuardians: false,
     },
   }),
 )
