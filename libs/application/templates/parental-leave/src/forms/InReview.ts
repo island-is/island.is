@@ -6,11 +6,7 @@ import {
 import { Form } from '@island.is/application/types'
 
 import Logo from '../assets/Logo'
-import { States } from '../constants'
-import {
-  inReviewFormMessages,
-  parentalLeaveFormMessages,
-} from '../lib/messages'
+import { inReviewFormMessages } from '../lib/messages'
 
 export const InReview: Form = buildForm({
   id: 'ParentalLeaveInReview',
