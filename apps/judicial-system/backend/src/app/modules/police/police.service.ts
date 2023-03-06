@@ -22,6 +22,7 @@ import {
   CaseState,
   CaseType,
   IndictmentSubtype,
+  isIndictmentCase,
   User as TUser,
 } from '@island.is/judicial-system/types'
 
@@ -88,6 +89,7 @@ export class PoliceService {
 
   private async throttleUploadPoliceCaseFile(
     caseId: string,
+    caseType: CaseType,
     uploadPoliceCaseFile: UploadPoliceCaseFileDto,
     user: TUser,
   ): Promise<UploadPoliceCaseFileResponse> {
@@ -145,7 +147,9 @@ export class PoliceService {
         })
       })
 
-    const key = `uploads/${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
+    const key = `${
+      isIndictmentCase(caseType) ? 'indictments' : 'uploads'
+    }/${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
 
     await this.awsS3Service.putObject(key, pdf)
 
@@ -221,11 +225,13 @@ export class PoliceService {
 
   async uploadPoliceCaseFile(
     caseId: string,
+    caseType: CaseType,
     uploadPoliceCaseFile: UploadPoliceCaseFileDto,
     user: TUser,
   ): Promise<UploadPoliceCaseFileResponse> {
     this.throttle = this.throttleUploadPoliceCaseFile(
       caseId,
+      caseType,
       uploadPoliceCaseFile,
       user,
     )

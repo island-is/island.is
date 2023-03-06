@@ -10,8 +10,4 @@ export class UploadPoliceCaseFileDto {
   @IsString()
   @ApiProperty()
   readonly name!: string
-
-  @IsString()
-  @ApiProperty()
-  readonly policeCaseNumber!: string
 }

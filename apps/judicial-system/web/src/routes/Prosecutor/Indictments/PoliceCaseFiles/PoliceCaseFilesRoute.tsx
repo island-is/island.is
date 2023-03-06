@@ -10,6 +10,7 @@ import router from 'next/router'
 import { useIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
 import _isEqual from 'lodash/isEqual'
+import { useQuery } from '@apollo/client'
 
 import {
   FormContentContainer,
@@ -43,28 +44,20 @@ import {
   CaseOrigin,
   CrimeSceneMap,
   IndictmentSubtypeMap,
-  PoliceCaseFile,
 } from '@island.is/judicial-system/types'
 import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
 import IndictmentInfo from '@island.is/judicial-system-web/src/components/IndictmentInfo/IndictmentInfo'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { GetPoliceCaseFilesQuery } from '@island.is/judicial-system-web/src/graphql/schema'
+import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { policeCaseFiles as m } from './PoliceCaseFilesRoute.strings'
 import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
-import { PoliceCaseFilesData } from '../../components/CaseFiles/CaseFiles'
-import { useQuery } from '@apollo/client'
-import { GetPoliceCaseFilesQuery } from '@island.is/judicial-system-web/src/graphql/schema'
-import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
-
-const mapPoliceCaseFileToPoliceCaseFileCheck = (
-  file: PoliceCaseFile,
-): PoliceCaseFileCheck => ({
-  id: file.id,
-  name: file.name,
-  policeCaseNumber: file.policeCaseNumber,
-  checked: false,
-})
+import {
+  mapPoliceCaseFileToPoliceCaseFileCheck,
+  PoliceCaseFilesData,
+} from '../../components/CaseFiles/CaseFiles'
 
 const UploadFilesToPoliceCase: React.FC<{
   caseId: string
@@ -94,6 +87,8 @@ const UploadFilesToPoliceCase: React.FC<{
   >([])
 
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
+
+  const [isUploading, setIsUploading] = useState<boolean>(false)
 
   const errorMessage = useMemo(() => {
     if (displayFiles.some((file) => file.status === 'error')) {
@@ -158,24 +153,23 @@ const UploadFilesToPoliceCase: React.FC<{
   useEffect(() => {
     setPoliceCaseFileList(
       policeCaseFiles?.files
-        .filter((f) => !caseFiles.some((caseFile) => caseFile.name === f.name))
+        .filter(
+          (f) =>
+            !caseFiles.some((caseFile) => caseFile.name === f.name) &&
+            f.policeCaseNumber === policeCaseNumber,
+        )
         .map(mapPoliceCaseFileToPoliceCaseFileCheck) || [],
     )
 
     setDisplayFiles(caseFiles.map(mapCaseFileToUploadFile) || [])
-  }, [policeCaseFiles, caseFiles])
+  }, [policeCaseFiles, caseFiles, policeCaseNumber])
 
   const setSingleFile = useCallback(
     (displayFile: UploadFile, newId?: string) => {
-      setDisplayFiles((previous) => {
-        const index = previous.findIndex((f) => f.id === displayFile.id)
-        if (index === -1) {
-          return previous
-        }
-        const next = [...previous]
-        next[index] = { ...displayFile, id: newId ?? displayFile.id }
-        return next
-      })
+      setDisplayFiles((previous) => [
+        ...previous,
+        { ...displayFile, id: newId ?? displayFile.id },
+      ])
     },
     [setDisplayFiles],
   )
@@ -214,7 +208,7 @@ const UploadFilesToPoliceCase: React.FC<{
   const onPoliceCaseFileUpload = useCallback(async () => {
     const filesToUpload = policeCaseFileList.filter((p) => p.checked)
 
-    // setIsUploading(true)
+    setIsUploading(true)
 
     filesToUpload.forEach(async (f, index) => {
       const fileToUpload = {
@@ -223,18 +217,18 @@ const UploadFilesToPoliceCase: React.FC<{
         name: f.name,
         status: 'done',
         state: CaseFileState.STORED_IN_RVG,
+        policeCaseNumber: f.policeCaseNumber,
       } as UploadFile
 
-      await uploadPoliceCaseFile(fileToUpload)
+      await uploadPoliceCaseFile(fileToUpload, setSingleFile)
 
-      setDisplayFiles([fileToUpload, ...displayFiles])
       setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
 
       if (index === filesToUpload.length - 1) {
-        // setIsUploading(false)
+        setIsUploading(false)
       }
     })
-  }, [displayFiles, policeCaseFileList, uploadPoliceCaseFile])
+  }, [policeCaseFileList, setSingleFile, uploadPoliceCaseFile])
 
   const onRetry = useCallback(
     (file: UploadFile) => {
@@ -269,6 +263,17 @@ const UploadFilesToPoliceCase: React.FC<{
             throw new Error(`Failed to delete file: ${file.id}`)
           }
 
+          const policeCaseFile = policeCaseFiles?.files.find(
+            (f) => f.name === file.name,
+          )
+
+          if (policeCaseFile) {
+            setPoliceCaseFileList((previous) => [
+              mapPoliceCaseFileToPoliceCaseFileCheck(policeCaseFile),
+              ...previous,
+            ])
+          }
+
           setDisplayFiles((previous) => {
             return previous.filter((f) => f.id !== file.id)
           })
@@ -277,14 +282,14 @@ const UploadFilesToPoliceCase: React.FC<{
         toast.error(formatMessage(errorMessages.failedDeleteFile))
       }
     },
-    [remove, setDisplayFiles, formatMessage],
+    [remove, policeCaseFiles?.files, formatMessage],
   )
 
   return (
     <>
       <PoliceCaseFiles
         onUpload={onPoliceCaseFileUpload}
-        isUploading={false}
+        isUploading={isUploading}
         policeCaseFileList={policeCaseFileList}
         setPoliceCaseFileList={setPoliceCaseFileList}
         policeCaseFiles={policeCaseFiles}
@@ -300,13 +305,14 @@ const UploadFilesToPoliceCase: React.FC<{
         onRemove={onRemove}
         onRetry={onRetry}
         errorMessage={errorMessage}
+        disabled={isUploading}
         showFileSize
       />
     </>
   )
 }
 
-type allUploadedState = {
+type AllUploadedState = {
   [policeCaseNumber: string]: boolean
 }
 
@@ -374,7 +380,7 @@ const PoliceCaseFilesRoute = () => {
     FormContext,
   )
 
-  const [allUploaded, setAllUploaded] = useState<allUploadedState>(
+  const [allUploaded, setAllUploaded] = useState<AllUploadedState>(
     workingCase.policeCaseNumbers.reduce(
       (acc, policeCaseNumber) => ({ ...acc, [policeCaseNumber]: true }),
       {},

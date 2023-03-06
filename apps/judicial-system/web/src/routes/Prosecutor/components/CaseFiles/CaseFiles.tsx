@@ -18,6 +18,7 @@ import {
   ParentCaseFiles,
   FormContext,
   MarkdownWrapper,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseProsecutorSubsections,
@@ -65,7 +66,7 @@ export interface PoliceCaseFilesData {
   errorCode?: string
 }
 
-const mapPoliceCaseFileToPoliceCaseFileCheck = (
+export const mapPoliceCaseFileToPoliceCaseFileCheck = (
   file: PoliceCaseFile,
 ): PoliceCaseFileCheck => ({
   id: file.id,
@@ -178,17 +179,12 @@ export const CaseFiles: React.FC = () => {
 
   const setSingleFile = useCallback(
     (displayFile: UploadFile, newId?: string) => {
-      setFilesInRVG((previous) => {
-        const index = previous.findIndex((f) => f.id === displayFile.id)
-        if (index === -1) {
-          return previous
-        }
-        const next = [...previous]
-        next[index] = { ...displayFile, id: newId ?? displayFile.id }
-        return next
-      })
+      setFilesInRVG((previous) => [
+        ...previous,
+        { ...displayFile, id: newId ?? displayFile.id },
+      ])
     },
-    [],
+    [setFilesInRVG],
   )
 
   const handleUpload = useCallback(
@@ -234,16 +230,15 @@ export const CaseFiles: React.FC = () => {
         state: CaseFileState.STORED_IN_RVG,
       } as UploadFile
 
-      await uploadPoliceCaseFile(fileToUpload)
+      await uploadPoliceCaseFile(fileToUpload, setSingleFile)
 
-      setFilesInRVG([fileToUpload, ...filesInRVG])
       setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
 
       if (index === filesToUpload.length - 1) {
         setIsUploading(false)
       }
     })
-  }, [filesInRVG, policeCaseFileList, uploadPoliceCaseFile])
+  }, [policeCaseFileList, setSingleFile, uploadPoliceCaseFile])
 
   const handleRemove = useCallback(
     async (file: UploadFile) => {
@@ -329,6 +324,10 @@ export const CaseFiles: React.FC = () => {
             textProps={{ marginBottom: 0 }}
           />
         </Box>
+        <SectionHeading
+          title={formatMessage(strings.policeCaseFilesHeading)}
+          description={formatMessage(strings.policeCaseFilesIntroduction)}
+        />
         <PoliceCaseFiles
           onUpload={handlePoliceCaseFileUpload}
           isUploading={isUploading}
