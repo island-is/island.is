@@ -167,6 +167,7 @@
 /libs/api/domains/application/                                                                           @island-is/norda-applications
 /libs/api/domains/payment/                                                                               @island-is/norda-applications
 
+/apps/contentful-apps/                                                                                   @island-is/stefna
 /apps/services/search-indexer/                                                                           @island-is/stefna @island-is/juni
 /apps/services/contentful-entry-tagger/                                                                  @island-is/stefna
 /apps/tools/contentful-role-permissions/                                                                 @island-is/stefna
@@ -195,7 +196,9 @@
 
 /libs/island-ui/                                                                                         @island-is/island-ui
 
-/apps/samradsgatt/                                                                                       @island-is/advania
+/apps/consultation-portal/                                                                               @island-is/advania
+/libs/clients/consultation-portal/                                                                       @island-is/advania
+/libs/api/domains/consultation-portal/                                                                   @island-is/advania
 /apps/skilavottord/                                                                                      @island-is/deloitte
 /libs/skilavottord/                                                                                      @island-is/deloitte
 /libs/application/templates/parental-leave/                                                              @island-is/deloitte

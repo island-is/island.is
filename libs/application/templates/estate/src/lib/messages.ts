@@ -194,6 +194,17 @@ export const m = defineMessages({
     defaultMessage: 'Erfingi',
     description: '',
   },
+  estateMemberAdvocateWarningTitle: {
+    id: 'es.application:estateMemberAdvocateWarningTitle',
+    defaultMessage: 'Vinsamlegast athugið',
+    description: '',
+  },
+  estateMemberAdvocateWarningDescription: {
+    id: 'es.application:estateMemberAdvocateWarningDescription',
+    defaultMessage:
+      'Þegar viðkomandi aðili nær ekki 18 ára aldri, þarf að skrá málsvara fyrir hans hönd.',
+    description: '',
+  },
   estateMembersHeaderDescription: {
     id: 'es.application:estateMembersHeaderDescription',
     defaultMessage: 'Vantar uppl hér',
@@ -476,6 +487,17 @@ export const m = defineMessages({
   debtsRepeaterButton: {
     id: 'es.application:debtsRepeaterButton',
     defaultMessage: 'Bæta við skuldum',
+    description: '',
+  },
+  // Representative
+  representativeTitle: {
+    id: 'es.application:representativeTitle',
+    defaultMessage: 'Umboðsmenn',
+    description: '',
+  },
+  representativeDescription: {
+    id: 'es.application:representativeDescription',
+    defaultMessage: 'Vanalega er valinn umboðsmaður...',
     description: '',
   },
 
