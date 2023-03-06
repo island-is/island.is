@@ -52,6 +52,7 @@ export const attributes: (keyof Case)[] = [
   'parentCaseId',
   'caseModifiedExplanation',
   'seenByDefender',
+  'caseResentExplanation',
 ]
 
 export const include: Includeable[] = [

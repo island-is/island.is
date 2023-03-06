@@ -62,6 +62,9 @@
       "@island.is/api/domains/company-registry": [
         "libs/api/domains/company-registry/src/index.ts"
       ],
+      "@island.is/api/domains/consultation-portal": [
+        "libs/api/domains/consultation-portal/src/index.ts"
+      ],
       "@island.is/api/domains/content-search": [
         "libs/api/domains/content-search/src/index.ts"
       ],
@@ -397,6 +400,9 @@
       "@island.is/clients/charge-fjs-v2": [
         "libs/clients/charge-fjs-v2/src/index.ts"
       ],
+      "@island.is/clients/consultation-portal": [
+        "libs/clients/consultation-portal/src/index.ts"
+      ],
       "@island.is/clients/criminal-record": [
         "libs/clients/criminal-record/src/index.ts"
       ],
@@ -507,6 +513,7 @@
       "@island.is/cms-translations/test": [
         "libs/cms-translations/src/test/index.ts"
       ],
+      "@island.is/consultation-portal/*": ["apps/consultation-portal/*"],
       "@island.is/content-search-index-manager": [
         "libs/content-search-index-manager/src/index.ts"
       ],
