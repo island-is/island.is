@@ -59,7 +59,6 @@ import {
         IdsClientConfig,
         XRoadConfig,
         VehiclesClientConfig,
-        DownloadServiceConfig,
         RegulationsAdminClientConfig,
         RegulationsClientConfig,
       ],
