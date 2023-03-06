@@ -1,4 +1,4 @@
-import { ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
+import { json, ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
 import {
   Base,
   Client,
@@ -192,6 +192,22 @@ export const serviceSetup = (services: {
         dev: '',
         staging: '',
         prod: 'https://identity-server-admin.innskra.island.is',
+      },
+      AUTH_ADMIN_API_PATHS: {
+        dev: json({
+          dev: 'https://services-auth-admin-api.internal.dev01.devland.is',
+        }),
+        staging: json({
+          dev: 'https://services-auth-admin-api.internal.dev01.devland.is',
+          staging:
+            'https://services-auth-admin-api.internal.staging01.devland.is',
+        }),
+        prod: json({
+          dev: 'https://services-auth-admin-api.internal.dev01.devland.is',
+          staging:
+            'https://services-auth-admin-api.internal.staging01.devland.is',
+          prod: 'https://services-auth-admin-api.internal.innskra.island.is',
+        }),
       },
     })
 

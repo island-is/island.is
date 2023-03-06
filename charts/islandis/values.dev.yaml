@@ -269,6 +269,7 @@ api:
     AIR_DISCOUNT_SCHEME_CLIENT_TIMEOUT: '20000'
     AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: 'loftbru.dev01.devland.is'
     APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
+    AUTH_ADMIN_API_PATHS: '{"dev":"https://services-auth-admin-api.internal.dev01.devland.is"}'
     AUTH_ADMIN_API_URL_DEV: 'http://identity-server-admin.services-auth-admin-api.svc.cluster.local'
     AUTH_ADMIN_API_URL_PROD: ''
     AUTH_ADMIN_API_URL_STAGING: ''

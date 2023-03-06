@@ -21,13 +21,10 @@ export class TenantsService {
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
     @Inject(AdminDevApi.key)
-    @Optional()
     private readonly adminDevApi?: AdminApi,
     @Inject(AdminStagingApi.key)
-    @Optional()
     private readonly adminStagingApi?: AdminApi,
     @Inject(AdminProdApi.key)
-    @Optional()
     private readonly adminProdApi?: AdminApi,
   ) {
     if (!this.adminDevApi && !this.adminStagingApi && !this.adminProdApi) {
@@ -82,6 +79,9 @@ export class TenantsService {
         environments,
       })
     }
+
+    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+    tenantArray.sort((a, b) => a.id!.localeCompare(b.id!))
 
     return {
       data: tenantArray,

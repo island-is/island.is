@@ -19,6 +19,7 @@ import { AuthAdminModule } from '../auth-admin.module'
 import { TenantsPayload } from './dto/tenants.payload'
 import { TenantsService } from './tenants.service'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { ConfigType } from '@island.is/nest/config'
 
 const mockTenants = {
   tenant1: {
@@ -241,12 +242,22 @@ describe('TenantsService', () => {
       const mockLogger = {
         error: jest.fn(),
       }
+      const authAdminClientConfig: ConfigType<
+        typeof AuthAdminApiClientConfig
+      > = {
+        basePaths: {},
+        isConfigured: true,
+      }
 
       // Act
       await testServer({
         appModule: TestModule,
         override: (builder) =>
-          builder.overrideProvider(LOGGER_PROVIDER).useValue(mockLogger),
+          builder
+            .overrideProvider(LOGGER_PROVIDER)
+            .useValue(mockLogger)
+            .overrideProvider(AuthAdminApiClientConfig.KEY)
+            .useValue(authAdminClientConfig),
       })
 
       // Assert

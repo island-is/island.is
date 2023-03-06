@@ -10,16 +10,16 @@ const schema = z.object({
   }),
 })
 
+type BasePaths = z.infer<typeof schema>['basePaths']
+
 export const AuthAdminApiClientConfig = defineConfig({
   name: 'AuthAdminApiClientConfig',
   schema,
   load(env) {
     return {
-      basePaths: {
-        dev: env.optional('AUTH_ADMIN_API_URL_DEV'),
-        staging: env.optional('AUTH_ADMIN_API_URL_STAGING'),
-        prod: env.optional('AUTH_ADMIN_API_URL_PROD'),
-      },
+      basePaths: env.requiredJSON<BasePaths>('AUTH_ADMIN_API_PATHS', {
+        dev: 'http://localhost:6333',
+      }),
     }
   },
 })
