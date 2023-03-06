@@ -1,6 +1,3 @@
-import { createClientConfigFactory } from '../../factories/clientConfigFactory'
+import { clientConfigFactory } from '../../factories/clientConfigFactory'
 
-export const AdrDigitalLicenseClientConfig = createClientConfigFactory(
-  'Adr',
-  'VE',
-)
+export const AdrDigitalLicenseClientConfig = clientConfigFactory('Adr', 'VE')

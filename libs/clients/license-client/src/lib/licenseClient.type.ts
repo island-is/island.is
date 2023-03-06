@@ -7,6 +7,10 @@ import {
 } from '@island.is/clients/smartsolutions'
 import { Locale } from '@island.is/shared/types'
 
+export type LicenseLabelsObject = {
+  [x: string]: string
+}
+
 export enum LicenseType {
   FirearmLicense = 'FirearmLicense',
   AdrLicense = 'AdrLicense',

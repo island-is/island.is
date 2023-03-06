@@ -1,7 +1,6 @@
 {
   "root": "libs/clients/license-client",
   "sourceRoot": "libs/clients/license-client/src",
-  "projectType": "library",
   "targets": {
     "lint": {
       "executor": "@nrwl/linter:eslint",
@@ -19,5 +18,5 @@
       }
     }
   },
-  "tags": ["lib:client", "scope:client"]
+  "tags": []
 }

@@ -2,10 +2,7 @@ import { defineConfig } from '@island.is/nest/config'
 import { SmartSolutionsApiConfigSchema as schema } from '@island.is/clients/smartsolutions'
 import * as z from 'zod'
 
-export const createClientConfigFactory = (
-  licenseId: string,
-  organisation: string,
-) =>
+export const clientConfigFactory = (licenseId: string, organisation: string) =>
   defineConfig<z.infer<typeof schema>>({
     name: `${licenseId}DigitalLicenseClientConfig`,
     schema,

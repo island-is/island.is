@@ -20,7 +20,7 @@ import {
   DisabilityLicenseClient,
 } from './clients/disability-license-client'
 import { DrivingClientModule } from './clients/driving-license-client/drivingLicenseClient.module'
-import { PassTemplateIdsProvider } from './factories/passTemplateIdsFactory'
+import { PassTemplateIdsProvider } from './providers/passTemplateIdsProvider'
 
 @Module({
   imports: [

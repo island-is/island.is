@@ -157,6 +157,7 @@ export type GenericLicenseCached = {
 export type LicenseLabelsObject = {
   [x: string]: string
 }
+
 export type GenericLicenseLabels = {
   labels?: LicenseLabelsObject
 }

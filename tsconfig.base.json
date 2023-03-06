@@ -415,6 +415,9 @@
       "@island.is/clients/document-provider": [
         "libs/clients/document-provider/src/index.ts"
       ],
+      "@island.is/clients/license-client": [
+        "libs/clients/license-client/src/index.ts"
+      ],
       "@island.is/clients/documents": ["libs/clients/documents/src/index.ts"],
       "@island.is/clients/driving-license": [
         "libs/clients/driving-license/src/index.ts"
@@ -443,9 +446,6 @@
       "@island.is/clients/islykill": ["libs/clients/islykill/src/index.ts"],
       "@island.is/clients/judicial-administration": [
         "libs/clients/judicial-administration/src/index.ts"
-      ],
-      "@island.is/clients/license-client": [
-        "libs/clients/license-client/src/index.ts"
       ],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"

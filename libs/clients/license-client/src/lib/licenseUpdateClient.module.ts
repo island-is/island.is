@@ -21,7 +21,7 @@ import {
   DisabilityUpdateClientModule,
 } from './clients/disability-license-client'
 import { FirearmUpdateClientModule } from './clients/firearm-license-client/firearmLicenseUpdateClient.module'
-import { PassTemplateIdsProvider } from './factories/passTemplateIdsFactory'
+import { PassTemplateIdsProvider } from './providers/passTemplateIdsProvider'
 
 @Module({
   imports: [FirearmUpdateClientModule, DisabilityUpdateClientModule],

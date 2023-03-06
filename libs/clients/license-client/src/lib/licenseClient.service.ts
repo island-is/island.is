@@ -4,12 +4,9 @@ import {
   LICENSE_CLIENT_FACTORY,
   LicenseClient,
   LicenseType,
-  LicenseUpdateClient,
 } from './licenseClient.type'
 import { Cache as CacheManager } from 'cache-manager'
 import type { PassTemplateIds, LicenseTypeType } from './licenseClient.type'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import { DRIVING_LICENSE_CLIENT_FACTORY } from './clients/driving-license-client'
 
 @Injectable()

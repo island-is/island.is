@@ -1,6 +1,6 @@
-import { createClientConfigFactory } from '../../factories/clientConfigFactory'
+import { clientConfigFactory } from '../../factories/clientConfigFactory'
 
-export const DisabilityDigitalLicenseClientConfig = createClientConfigFactory(
+export const DisabilityDigitalLicenseClientConfig = clientConfigFactory(
   'Disability',
   'TR',
 )
