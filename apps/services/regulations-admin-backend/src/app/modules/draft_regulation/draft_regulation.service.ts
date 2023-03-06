@@ -30,7 +30,7 @@ import {
 } from '@island.is/regulations/admin'
 import { Kennitala, RegQueryName } from '@island.is/regulations'
 import * as kennitala from 'kennitala'
-import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import type { User } from '@island.is/auth-nest-tools'
 
 const sortImpacts = (
@@ -54,7 +54,7 @@ export class DraftRegulationService {
     private readonly regulationsService: RegulationsService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
-    private readonly nationalRegistryApi: NationalRegistryApi,
+    private readonly nationalRegistryApi: NationalRegistryClientService,
   ) {}
 
   async getAll(user?: User, page = 1): Promise<TaskListType> {
@@ -337,10 +337,12 @@ export class DraftRegulationService {
 
       if (!author) {
         try {
-          const person = await this.nationalRegistryApi.getUser(nationalId)
-          if (person) {
+          const person = await this.nationalRegistryApi.getIndividual(
+            nationalId,
+          )
+          if (person?.fullName) {
             author = {
-              name: person.Fulltnafn,
+              name: person.fullName,
               authorId: nationalId,
             }
             await this.draftAuthorService.create(author)

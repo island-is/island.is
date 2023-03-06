@@ -13,10 +13,6 @@ export const serviceSetup = (): ServiceBuilder<'regulations-admin-backend'> =>
     })
     .secrets({
       REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL',
-      SOFFIA_SOAP_URL: '/k8s/api/SOFFIA_SOAP_URL',
-      SOFFIA_HOST_URL: '/k8s/api/SOFFIA_HOST_URL',
-      SOFFIA_USER: settings.SOFFIA_USER,
-      SOFFIA_PASS: settings.SOFFIA_PASS,
     })
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },
