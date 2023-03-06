@@ -1,6 +1,6 @@
 import { IsArray, IsString } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
-import { IsNationalId } from '@island.is/nest/validators'
+import { IsNationalId } from '@island.is/nest/core'
 
 export class CreateHnippNotificationDto {
   @IsNationalId()

@@ -229,6 +229,7 @@
   - [Audit](libs/nest/audit/README.md)
   - [Aws](libs/nest/aws/README.md)
   - [Config](libs/nest/config/README.md)
+  - [Nest Core](libs/nest/core/README.md)
   - [Dataloader](libs/nest/dataloader/README.md)
   - [Feature Flags](libs/nest/feature-flags/README.md)
   - [Pagination](libs/nest/pagination/README.md)
