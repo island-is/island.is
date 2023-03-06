@@ -1,6 +1,8 @@
+<!-- gitbook-navigation: "Core" -->
+
 # Nest Core
 
-This library was generated with [Nx](https://nx.dev).
+This library contains reusable NestJS code to be used in other Nest apps.
 
 ## Running unit tests
 
