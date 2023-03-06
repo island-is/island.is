@@ -4,13 +4,13 @@ import {
   LazyDuringDevScope,
   XRoadConfig,
 } from '@island.is/nest/config'
-import { FirearmLicenseClientConfig } from './firearmLicenseClient.config'
-import { Configuration, FirearmApplicationApi } from '../../gen/fetch'
+import { FirearmLicenseClientConfig } from '../firearmLicenseClient.config'
+import { Configuration, FirearmApplicationApi } from '../../../gen/fetch'
 import { Provider } from '@nestjs/common'
-import { OPEN_FIREARM_API } from './firearmApi.types'
+import { OPEN_FIREARM_APPLICATION_API } from '../firearmApi.types'
 
-export const OpenFirearmLicenseApiProvider: Provider<FirearmApplicationApi> = {
-  provide: OPEN_FIREARM_API,
+export const OpenFirearmApiProvider: Provider<FirearmApplicationApi> = {
+  provide: OPEN_FIREARM_APPLICATION_API,
   scope: LazyDuringDevScope,
   useFactory: (
     xroadConfig: ConfigType<typeof XRoadConfig>,
@@ -19,7 +19,8 @@ export const OpenFirearmLicenseApiProvider: Provider<FirearmApplicationApi> = {
     new FirearmApplicationApi(
       new Configuration({
         fetchApi: createEnhancedFetch({
-          name: 'clients-open-firearm-license',
+          name: 'clients-firearm-license',
+          logErrorResponseBody: true,
         }),
         basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
         headers: {

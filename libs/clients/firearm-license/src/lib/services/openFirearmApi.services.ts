@@ -1,12 +1,12 @@
 import { handle404 } from '@island.is/clients/middlewares'
 import { Inject, Injectable } from '@nestjs/common'
-import { FirearmApplicationApi, LicenseInfo } from '../../gen/fetch'
-import { OPEN_FIREARM_API } from './firearmApi.types'
+import { FirearmApplicationApi, LicenseInfo } from '../../../gen/fetch'
+import { OPEN_FIREARM_APPLICATION_API } from '../firearmApi.types'
 
 @Injectable()
 export class OpenFirearmApi {
   constructor(
-    @Inject(OPEN_FIREARM_API)
+    @Inject(OPEN_FIREARM_APPLICATION_API)
     private readonly api: FirearmApplicationApi,
   ) {}
 

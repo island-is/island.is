@@ -5,13 +5,13 @@ import {
   LazyDuringDevScope,
   XRoadConfig,
 } from '@island.is/nest/config'
-import { FirearmLicenseClientConfig } from './firearmLicenseClient.config'
-import { Configuration, FirearmApplicationApi } from '../../gen/fetch'
+import { FirearmLicenseClientConfig } from '../firearmLicenseClient.config'
+import { Configuration, FirearmApplicationApi } from '../../../gen/fetch'
 import { Provider } from '@nestjs/common'
-import { FIREARM_API } from './firearmApi.types'
+import { FIREARM_APPLICATION_API } from '../firearmApi.types'
 
-export const FirearmLicenseApiProvider: Provider<FirearmApplicationApi> = {
-  provide: FIREARM_API,
+export const FirearmApiProvider: Provider<FirearmApplicationApi> = {
+  provide: FIREARM_APPLICATION_API,
   scope: LazyDuringDevScope,
   useFactory: (
     xroadConfig: ConfigType<typeof XRoadConfig>,

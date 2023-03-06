@@ -1,5 +1,5 @@
-export const FIREARM_API = 'firearm-api'
-export const OPEN_FIREARM_API = 'open-firearm-api'
+export const FIREARM_APPLICATION_API = 'firearm-api'
+export const OPEN_FIREARM_APPLICATION_API = 'open-firearm-api'
 
 export type FirearmCategories = { [key: string]: string }
 

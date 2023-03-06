@@ -1,9 +1,18 @@
-import { Module } from '@nestjs/common'
-import { FirearmLicenseApiProvider } from './firearmApiProvider'
-import { FirearmApi } from './firearmApi.services'
+import { DynamicModule, Module } from '@nestjs/common'
+import { FirearmApi } from './services/firearmApi.services'
+import { OpenFirearmApi } from './services/openFirearmApi.services'
+import { FirearmApiProvider } from './providers/firearmApiProvider'
+import { OpenFirearmApiProvider } from './providers/openFirearmApiProvider'
 
-@Module({
-  providers: [FirearmApi, FirearmLicenseApiProvider],
-  exports: [FirearmApi],
-})
-export class FirearmLicenseClientModule {}
+@Module({})
+export class FirearmLicenseClientModule {
+  static register(useApiKeyAuth = false): DynamicModule {
+    return {
+      module: FirearmLicenseClientModule,
+      providers: useApiKeyAuth
+        ? [OpenFirearmApi, OpenFirearmApiProvider]
+        : [FirearmApi, FirearmApiProvider],
+      exports: useApiKeyAuth ? [OpenFirearmApi] : [FirearmApi],
+    }
+  }
+}

@@ -5,13 +5,17 @@ import {
   FirearmApplicationApi,
   FirearmPropertyList,
   LicenseInfo,
-} from '../../gen/fetch'
-import { FIREARM_API, FirearmCategories, Result } from './firearmApi.types'
+} from '../../../gen/fetch'
+import {
+  FIREARM_APPLICATION_API,
+  FirearmCategories,
+  Result,
+} from '../firearmApi.types'
 
 @Injectable()
 export class FirearmApi {
   constructor(
-    @Inject(FIREARM_API)
+    @Inject(FIREARM_APPLICATION_API)
     private readonly api: FirearmApplicationApi,
   ) {}
 
