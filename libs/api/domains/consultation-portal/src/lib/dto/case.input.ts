@@ -5,5 +5,5 @@ import { InputType, Field, Float } from '@nestjs/graphql'
 @FeatureFlag(Features.consultationPortalApplication)
 export class GetCaseInput {
   @Field(() => Float)
-  caseId: number = 0
+  caseId = 0
 }
