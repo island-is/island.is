@@ -784,7 +784,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
       employers.push({
         email: employerEmailObj,
         ratio: '100',
-        phoneNumber: getValueViaPath(answers, 'employerPhoneNumber') as string,
         reviewerNationalRegistryId: employerReviewerNationalRegistryId,
         companyNationalRegistryId: employerNationalRegistryId,
       } as EmployerRow)
