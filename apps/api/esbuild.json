@@ -58,7 +58,8 @@
     "decompress-response",
     "lowercase-keys",
     "mimic-response",
-    "pdfkit"
+    "pdfkit",
+    "is-arguments"
   ],
   "keepNames": true
 }
