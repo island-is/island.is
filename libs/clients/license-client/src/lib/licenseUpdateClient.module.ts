@@ -20,11 +20,11 @@ import {
   DisabilityLicenseUpdateClient,
   DisabilityUpdateClientModule,
 } from './clients/disability-license-client'
-import { FirearmUpdateClientModule } from './clients/firearm-license-client/firearmLicenseUpdateClient.module'
 import { PassTemplateIdsProvider } from './providers/passTemplateIdsProvider'
+import { FirearmLicenseUpdateClientModule } from '@island.is/clients/firearm-license'
 
 @Module({
-  imports: [FirearmUpdateClientModule, DisabilityUpdateClientModule],
+  imports: [FirearmLicenseUpdateClientModule, DisabilityUpdateClientModule],
   providers: [
     LicenseUpdateClientService,
     PassTemplateIdsProvider,

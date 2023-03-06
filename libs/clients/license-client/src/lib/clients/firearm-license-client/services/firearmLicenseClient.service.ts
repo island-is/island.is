@@ -2,24 +2,23 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
 import { Inject, Injectable } from '@nestjs/common'
-import { createPkPassDataInput } from './firearmLicenseMapper'
 import { FirearmApi } from '@island.is/clients/firearm-license'
 import { format as formatNationalId } from 'kennitala'
 import {
   Pass,
   PassDataInput,
+  Result,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
 import compareAsc from 'date-fns/compareAsc'
 import {
   LicenseClient,
+  LicensePkPassAvailability,
   PkPassVerification,
   PkPassVerificationInputData,
-  LicensePkPassAvailability,
-  Result,
-} from '../../licenseClient.type'
-import { FirearmLicenseDto } from './firearmLicenseClient.type'
-
+} from '../../../licenseClient.type'
+import { FirearmLicenseDto } from '../firearmLicenseClient.type'
+import { createPkPassDataInput } from '../firearmLicenseMapper'
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'firearmlicense-service'
 @Injectable()
