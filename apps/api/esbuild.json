@@ -60,7 +60,8 @@
     "mimic-response",
     "pdfkit",
     "is-arguments",
-    "object-is"
+    "object-is",
+    "regexp.prototype.flags"
   ],
   "keepNames": true
 }
