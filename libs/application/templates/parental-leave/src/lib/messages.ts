@@ -853,6 +853,13 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'I want to customize my leave into multiple periods and/or to stretch it out over time at less than 100% time off.',
     },
+    noConsentToSeeInfromationError: {
+      id: 'pl.application:no.consent.to.see.information.error',
+      defaultMessage:
+        'Aðalforeldri hefur ekki gefið þér samþykki sitt fyrir umgengi í fæðingarorlofinu.',
+      description:
+        'Primary parent has not given you their consent for right of access during the parental leave.',
+    },
   }),
 
   selectChild: defineMessages({
@@ -2510,13 +2517,6 @@ export const errorMessages = defineMessages({
     defaultMessage:
       'Ekki er hægt að færa daga ef forsjárlausa foreldrið hefur ekki samþykki fyrir umgengni í þessu fæðingarorlofi. Vinsamlegast veljið annan möguleika.',
     description: 'Unable to transfer days!',
-  },
-  noConsentToSeeInfromationError: {
-    id: 'pl.application:no.consent.to.see.information.description',
-    defaultMessage:
-      'Aðalforeldri hefur ekki gefið þér samþykki sitt fyrir umgengi í fæðingarorlofinu.',
-    description:
-      'Primary parent has not given you their consent for right of access during the parental leave.',
   },
 })
 
