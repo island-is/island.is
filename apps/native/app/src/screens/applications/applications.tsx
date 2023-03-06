@@ -8,7 +8,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
   Animated, FlatList,
-  Image, RefreshControl,
+  Image, ListRenderItemInfo, RefreshControl,
   View
 } from 'react-native'
 import {
@@ -21,16 +21,18 @@ import { IArticleSearchResults } from '../../graphql/fragments/search.fragment'
 import { ListApplicationsResponse, LIST_APPLICATIONS_QUERY } from '../../graphql/queries/list-applications.query'
 import { LIST_SEARCH_QUERY } from '../../graphql/queries/list-search.query'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
-import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { openBrowser } from '../../lib/rn-island'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 import { ApplicationsModule } from '../home/applications-module'
 
+type ListItem =  { id: string, type: 'skeleton' | 'empty' } | (IArticleSearchResults & { type: undefined })
+
 const {
   useNavigationOptions,
   getNavigationOptions,
-} = useThemedNavigationOptions(
+} = createNavigationOptionHooks(
   (theme, intl, initialized) => ({
     topBar: {
       title: {
@@ -110,7 +112,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
     }
   }, [res.data, res.loading])
 
-  const renderItem = useCallback(({ item }) => {
+  const renderItem = useCallback(({ item }: ListRenderItemInfo<ListItem>) => {
     if (item.type === 'skeleton') {
       return (
         <ListButton title="skeleton" isLoading />
@@ -131,12 +133,14 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
       )
     }
 
+    const searchResult = item as IArticleSearchResults
+
     return (
       <ListButton
-        key={item.id}
-        title={item.title}
+        key={searchResult.id}
+        title={searchResult.title}
         onPress={() =>
-          openBrowser(`http://island.is/${item.slug}`, componentId)
+          openBrowser(`http://island.is/${searchResult.slug}`, componentId)
         }
       />
     )
@@ -149,7 +153,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
     })
   })
 
-  const keyExtractor = useCallback((item: IArticleSearchResults) => item.id, [])
+  const keyExtractor = useCallback((item: ListItem) => item.id, [])
 
   const isFirstLoad = !res.data
   const isError = !!res.error
@@ -158,11 +162,11 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   const isSkeltonView = isLoading && isFirstLoad && !isError
   const isEmptyView = !loading && isEmpty
 
-  const emptyItem = [{ id: '0', type: 'empty' }]
+  const emptyItem = [{ id: '0', type: 'empty' }] as ListItem[]
   const skeletonItems = Array.from({ length: 8 }).map((_, id) => ({
-    id,
+    id: id.toString(),
     type: 'skeleton',
-  }))
+  })) as ListItem[]
 
   return (
     <>
@@ -208,7 +212,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
                   ?.then(() => {
                     setLoading(false)
                   })
-                  .catch((err) => {
+                  .catch(() => {
                     setLoading(false)
                   })
               } catch (err) {

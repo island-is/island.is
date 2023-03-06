@@ -60,8 +60,8 @@ export function getThemeWithPreferences(
     : appearanceMode) as ThemeMode
 
   // find correct shades key
-  let themeKey =
-    typeof colorScheme === 'string' && themes.hasOwnProperty(colorScheme)
+  const themeKey =
+    typeof colorScheme === 'string' && themes[colorScheme]
       ? colorScheme
       : defaultTheme
 

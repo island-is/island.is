@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import {
   Platform,
   Pressable,
@@ -10,6 +10,7 @@ import { useTheme } from 'styled-components/native'
 
 interface PressableHighlightProps extends PressableProps {
   highlightColor?: string
+  children: ReactNode
 }
 
 export function PressableHighlight({

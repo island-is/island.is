@@ -11,7 +11,7 @@ import {
   NavigationFunctionComponent,
 } from 'react-native-navigation'
 import styled from 'styled-components/native'
-import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useIntl } from 'react-intl'
 import {
   actionsForNotification,
@@ -50,7 +50,7 @@ const Action = styled.Button`
 const {
   useNavigationOptions,
   getNavigationOptions,
-} = useThemedNavigationOptions(() => ({
+} = createNavigationOptionHooks(() => ({
   topBar: {
     visible: false,
   },

@@ -174,7 +174,7 @@ storiesOf('Cards', module)
         description={description}
         badge={<Badge title={badgeTitle} />}
         progress={progress}
-        actions={[{ text: actionTitle, onPress() {} }]}
+        actions={[{ text: actionTitle, onPress() { /* intentionally empty */ } }]}
       />
     )
   })

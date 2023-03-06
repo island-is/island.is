@@ -165,7 +165,7 @@ export function TabSettings() {
       })
       .catch((err) => {
         console.log(JSON.stringify(err))
-        alert(err.message)
+        RNAlert.alert('Villa', err.message)
       })
   }
 

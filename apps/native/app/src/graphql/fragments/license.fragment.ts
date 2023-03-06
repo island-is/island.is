@@ -92,6 +92,7 @@ export enum GenericUserLicenseFetchStatus {
 
 
 export interface IGenericUserLicense {
+  __typename: 'GenericUserLicense';
   nationalId: string;
   license: {
     type: string;

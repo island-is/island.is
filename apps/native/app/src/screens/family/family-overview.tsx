@@ -10,14 +10,14 @@ import { testIDs } from '../../utils/test-ids'
 import illustrationSrc from '../../assets/illustrations/hero_spring.png'
 import { BottomTabsIndicator } from "../../components/bottom-tabs-indicator/bottom-tabs-indicator";
 import { navigateTo } from "../../lib/deep-linking";
-import { useThemedNavigationOptions } from "../../hooks/use-themed-navigation-options";
+import { createNavigationOptionHooks } from "../../hooks/create-navigation-option-hooks";
 import { FAMILY_QUERY } from "../../graphql/queries/list-family-query";
 import { formatNationalId } from "../profile/tab-personal-info";
 
 const {
   useNavigationOptions,
   getNavigationOptions,
-} = useThemedNavigationOptions(
+} = createNavigationOptionHooks(
   (theme, intl) => ({
     topBar: {
       title: {

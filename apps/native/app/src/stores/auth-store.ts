@@ -58,7 +58,7 @@ export const authStore = create<AuthStore>((set, get) => ({
   cognitoDismissCount: 0,
   cognitoAuthUrl: undefined,
   cookies: '',
-  async fetchUserInfo(_refresh: boolean = false) {
+  async fetchUserInfo(_refresh = false) {
     return fetch(
       `${appAuthConfig.issuer.replace(/\/$/, '')}/connect/userinfo`,
       {
@@ -88,7 +88,8 @@ export const authStore = create<AuthStore>((set, get) => ({
     const authorizeResult = {
       ...get().authorizeResult,
       ...(await refresh(appAuthConfig, {
-        refreshToken: get().authorizeResult?.refreshToken!,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        refreshToken: get().authorizeResult!.refreshToken!,
       })),
     }
     if (authorizeResult) {
@@ -124,7 +125,8 @@ export const authStore = create<AuthStore>((set, get) => ({
     return false
   },
   async logout() {
-    const tokenToRevoke = get().authorizeResult?.accessToken!
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const tokenToRevoke = get().authorizeResult!.accessToken!
     try {
     await revoke(appAuthConfig, {
       tokenToRevoke,

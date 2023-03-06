@@ -93,7 +93,9 @@ const obj2cookie = (obj: any = {}) =>
 
 const getAndRefreshToken = () => {
   const { authorizeResult, refresh } = authStore.getState();
-  const isTokenAboutToExpire = new Date(authorizeResult?.accessTokenExpirationDate!).getTime() < Date.now() - (60 * 5 * 1000);
+
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const isTokenAboutToExpire = new Date(authorizeResult!.accessTokenExpirationDate!).getTime() < Date.now() - (60 * 5 * 1000);
   if (isTokenAboutToExpire) {
     // expires in less than 5 minutes, so refresh
     refresh();

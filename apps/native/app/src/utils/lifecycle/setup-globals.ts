@@ -53,7 +53,7 @@ export function applyDynamicColorSupport() {
     for (const key in props) {
       const value = (props as Record<string, unknown>)[key];
       if (typeof value === "string") {
-        const matches = value.match(/color\(DynamicColor\, \'(.*)\'\)/);
+        const matches = value.match(/color\(DynamicColor, '(.*)'\)/);
         if (matches && matches[1]) {
           try {
             const tuple = JSON.parse(matches[1]);

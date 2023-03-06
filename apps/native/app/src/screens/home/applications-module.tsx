@@ -69,6 +69,12 @@ export const ApplicationsModule = React.memo(
       />
     ))
 
+    // The RN types are not up-to-date with these props which seem to have been added in RN 71.
+    const imageProps = {
+      height: 90,
+      width: 42,
+    }
+
     return (
       <SafeAreaView style={{ marginHorizontal: 16 }}>
         <TouchableOpacity onPress={() => navigateTo(`/applications`)}>
@@ -88,9 +94,8 @@ export const ApplicationsModule = React.memo(
                 image={
                   <Image
                     source={leJobss4}
-                    height={90}
-                    width={42}
                     resizeMode="contain"
+                    {...imageProps}
                   />
                 }
                 link={

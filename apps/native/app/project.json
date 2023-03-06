@@ -11,11 +11,17 @@
         "command": "yarn start"
       }
     },
-    "lint": {
+    "build": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "cwd": "apps/native/app",
-        "command": "yarn lint"
+        "command": "yarn typecheck"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/native/app/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "schemas/codegen": {

@@ -12,12 +12,12 @@ import illustrationSrc from '../../assets/illustrations/moving.png'
 import { BottomTabsIndicator } from "../../components/bottom-tabs-indicator/bottom-tabs-indicator";
 import { navigateTo } from "../../lib/deep-linking";
 import { translateType } from "./vehicles-mapper";
-import { useThemedNavigationOptions } from "../../hooks/use-themed-navigation-options";
+import { createNavigationOptionHooks } from "../../hooks/create-navigation-option-hooks";
 
 const {
   useNavigationOptions,
   getNavigationOptions,
-} = useThemedNavigationOptions(
+} = createNavigationOptionHooks(
   (theme, intl) => ({
     topBar: {
       title: {

@@ -38,7 +38,9 @@ export const performanceLink = new ApolloLink((operation, forward) => {
       trace = perfObj.newTrace(`graphql:${traceName.substr(0, 24)}`)
       trace.start()
     }
-  } catch (e) {}
+  } catch (e) {
+    // Swallow?
+  }
 
   return forward(operation).map((result: any) => {
     if (trace !== undefined) {

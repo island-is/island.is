@@ -8,7 +8,7 @@ export default function Button({ onPress, children }) {
 
 Button.defaultProps = {
   children: null,
-  onPress: () => {},
+  onPress: undefined,
 };
 
 Button.propTypes = {

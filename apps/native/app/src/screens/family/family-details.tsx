@@ -6,14 +6,14 @@ import { SafeAreaView, ScrollView, View } from "react-native";
 import { Navigation, NavigationFunctionComponent } from "react-native-navigation";
 import { client } from '../../graphql/client';
 import { FAMILY_QUERY } from '../../graphql/queries/list-family-query';
-import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options';
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks';
 import { testIDs } from '../../utils/test-ids';
 import { formatNationalId } from '../profile/tab-personal-info';
 
 const {
   getNavigationOptions,
   useNavigationOptions,
-} = useThemedNavigationOptions(() => ({
+} = createNavigationOptionHooks(() => ({
   topBar: {
     visible: false,
   },

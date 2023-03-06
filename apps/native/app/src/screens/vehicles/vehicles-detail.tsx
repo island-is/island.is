@@ -4,7 +4,7 @@ import { ScrollView, View, Text } from "react-native";
 import { testIDs } from '../../utils/test-ids'
 import { Navigation, NavigationFunctionComponent } from "react-native-navigation";
 import { Input, InputRow, NavigationBarSheet } from '@ui';
-import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options';
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks';
 import { GET_USERS_VEHICLE_DETAIL } from '../../graphql/queries/get-users-vehicles-detail';
 import { useQuery } from '@apollo/client';
 import { client } from '../../graphql/client'
@@ -12,7 +12,7 @@ import { client } from '../../graphql/client'
 const {
   getNavigationOptions,
   useNavigationOptions,
-} = useThemedNavigationOptions(() => ({
+} = createNavigationOptionHooks(() => ({
   topBar: {
     visible: false,
   },
