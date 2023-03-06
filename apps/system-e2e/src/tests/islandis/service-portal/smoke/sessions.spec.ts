@@ -39,7 +39,7 @@ test.describe('Service portal, in session history', () => {
     await expect(sessionsRows).toHaveCountGreaterThan(0)
   })
 
-  test.only('can filter list of session by national id', async () => {
+  test('can filter list of session by national id', async () => {
     // Arrange
     const filterSubjectNationalId =
       // eslint-disable-next-line local-rules/disallow-kennitalas
@@ -59,23 +59,21 @@ test.describe('Service portal, in session history', () => {
     await expect(sessionsRows).toHaveCountGreaterThan(0)
   })
 
-  test('can view list of sessions as company', async () => {
+  test.only('can view list of sessions as company', async () => {
     // Arrange
     const testCompanyName =
       env === 'staging' ? 'Prófunarfélag GG og HEB' : 'ARTIC ehf.'
     const page = await context.newPage()
-    await page.goto(homeUrl, {
-      waitUntil: 'domcontentloaded',
-    })
-    await page.locator('data-testid=user-menu >> visible=true').click()
+    await page.goto(homeUrl)
+    await page
+      .getByRole('button', { name: 'Útskráning og aðgangsstillingar' })
+      .click()
     await page.getByRole('button', { name: 'Skipta um notanda' }).click()
     await page.getByRole('button', { name: testCompanyName }).click()
 
     // Act
-    await page.goto(sessionHistoryUrl, {
-      waitUntil: 'networkidle',
-    })
-    const sessionsRows = page.locator('table > tbody > tr')
+    await page.goto(sessionHistoryUrl, { waitUntil: 'networkidle' })
+    const sessionsRows = page.getByRole('row')
 
     // Assert
     await expect(sessionsRows).toHaveCountGreaterThan(0)
