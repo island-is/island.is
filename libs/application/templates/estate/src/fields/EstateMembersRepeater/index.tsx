@@ -12,9 +12,23 @@ import {
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
 import { EstateRegistrant } from '@island.is/clients/syslumenn'
-import { Answers, EstateMember } from '../../types'
+import { Answers, RelationEnum } from '../../types'
 import { AdditionalEstateMember } from './AdditionalEstateMember'
 import { getValueViaPath } from '@island.is/application/core'
+
+export interface EstateMemberWithAdvocate {
+  name: string
+  nationalId: string
+  relation: RelationEnum | string
+  initial?: boolean
+  dateOfBirth?: string
+  custodian?: string
+  foreignCitizenship?: ('yes' | 'no')[]
+  dummy: boolean
+  enabled?: boolean
+  advocateNationalId?: string
+  advocateName?: string
+}
 
 export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
   application,
@@ -23,7 +37,7 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
 }) => {
   const { id } = field
   const { formatMessage } = useLocale()
-  const { fields, append, remove } = useFieldArray<EstateMember>({
+  const { fields, append, remove } = useFieldArray<EstateMemberWithAdvocate>({
     name: id,
   })
   const { setValue } = useFormContext()
@@ -45,6 +59,8 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
       initial: false,
       enabled: true,
       name: '',
+      advocateNationalId: '',
+      advocateName: '',
     })
 
   useEffect(() => {

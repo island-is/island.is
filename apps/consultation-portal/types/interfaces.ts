@@ -1,3 +1,5 @@
+import { SortOptions } from './enums'
+
 export interface Case {
   id: number
   caseNumber: string
@@ -30,7 +32,7 @@ export interface SubscriptionArray {
 }
 
 export interface SortTitle {
-  Mál: string
-  Stofnanir: string
-  Málefnasvið: string
+  Mál: SortOptions
+  Stofnanir: SortOptions
+  Málefnasvið: SortOptions
 }
