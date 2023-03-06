@@ -33,6 +33,7 @@ import { DraftRegulationCancel } from '@island.is/regulations/admin'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(AdminPortalScope.regulationAdmin)
 @Controller('api')
 @ApiTags('draft_regulation_cancel')
 @Audit({ namespace })
@@ -42,7 +43,6 @@ export class DraftRegulationCancelController {
     private readonly auditService: AuditService,
   ) {}
 
-  @Scopes(AdminPortalScope.regulationAdmin)
   @Post('draft_regulation_cancel')
   @ApiCreatedResponse({
     type: DraftRegulationCancelModel,
@@ -60,7 +60,6 @@ export class DraftRegulationCancelController {
     )
   }
 
-  @Scopes(AdminPortalScope.regulationAdmin)
   @Put('draft_regulation_cancel/:id')
   @ApiOkResponse({
     type: DraftRegulationCancelModel,
@@ -94,7 +93,6 @@ export class DraftRegulationCancelController {
     return draftRegulationCancel
   }
 
-  @Scopes(AdminPortalScope.regulationAdmin)
   @Delete('draft_regulation_cancel/:id')
   @ApiCreatedResponse()
   async delete(
@@ -116,7 +114,6 @@ export class DraftRegulationCancelController {
     )
   }
 
-  @Scopes(AdminPortalScope.regulationAdmin)
   @Delete('draft_regulation_cancel/:draftId')
   @ApiCreatedResponse()
   async deleteRegulationDraftCancels(

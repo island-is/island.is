@@ -53,6 +53,7 @@ export class RegulationDocumentsController {
     @Res() res: Response,
   ) {
     let draftRegulation: RegulationDraft | null = null
+
     try {
       draftRegulation = await this.regulationsAdminClientService.getDraftRegulation(
         regulationId,

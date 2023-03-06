@@ -32,6 +32,7 @@ import { RegQueryName } from '@island.is/regulations'
 const namespace = `${environment.audit.defaultNamespace}/draft_regulations`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(AdminPortalScope.regulationAdmin)
 @Controller('api')
 @ApiTags('draft_regulations')
 @Audit({ namespace })
@@ -41,7 +42,6 @@ export class DraftRegulationController {
     private readonly auditService: AuditService,
   ) {}
 
-  @Scopes(AdminPortalScope.regulationAdmin)
   @Post('draft_regulation')
   @ApiCreatedResponse({
     type: DraftRegulationModel,
@@ -60,7 +60,6 @@ export class DraftRegulationController {
     )
   }
 
-  @Scopes(AdminPortalScope.regulationAdmin)
   @Put('draft_regulation/:id')
   @Audit<DraftRegulationModel>({
     resources: (DraftRegulation) => DraftRegulation.id,
@@ -90,7 +89,6 @@ export class DraftRegulationController {
     return updatedDraftRegulation
   }
 
-  @Scopes(AdminPortalScope.regulationAdmin)
   @Delete('draft_regulation/:id')
   @ApiCreatedResponse()
   async delete(
@@ -112,7 +110,6 @@ export class DraftRegulationController {
     )
   }
 
-  @Scopes(AdminPortalScope.regulationAdmin)
   @Get('draft_regulations')
   @ApiOkResponse({
     type: DraftRegulationModel,
@@ -134,7 +131,6 @@ export class DraftRegulationController {
     )
   }
 
-  @Scopes(AdminPortalScope.regulationAdmin)
   @Get('draft_regulations_shipped')
   @ApiOkResponse({
     type: DraftRegulationModel,
@@ -151,7 +147,6 @@ export class DraftRegulationController {
     return await this.draftRegulationService.getAllShipped()
   }
 
-  @Scopes(AdminPortalScope.regulationAdmin)
   @Get('draft_regulation/:id')
   @ApiOkResponse({
     type: DraftRegulationModel,
@@ -167,7 +162,6 @@ export class DraftRegulationController {
     return draftRegulation
   }
 
-  @Scopes(AdminPortalScope.regulationAdmin)
   @Get('draft_regulation_impacts/:name')
   @ApiOkResponse({
     description: 'Gets all DraftRegulationImpacts by RegName',
