@@ -7,19 +7,20 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { Link, useOutletContext, useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import MockApplications from '../../lib/MockApplications'
 import * as styles from '../TenantsList/TenantsList.css'
-import { useEffect } from 'react'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
+import { useTenant } from '../../screens/Tenant'
+import { useEffect } from 'react'
+import { replaceParams } from '@island.is/react-spa/shared'
+import { IDSAdminPaths } from '../../lib/paths'
 
 const Applications = () => {
   const { tenant } = useParams()
   const { formatMessage } = useLocale()
-  const { setNavTitle } = useOutletContext<{
-    setNavTitle: (value: string) => void
-  }>()
+  const { setNavTitle } = useTenant()
 
   useEffect(() => {
     // TODO: Get application by id from backend
@@ -44,7 +45,13 @@ const Applications = () => {
             <GridRow key={item.id}>
               <Link
                 className={styles.fill}
-                to={`/innskraningarkerfi/${tenant}/forrit/${item.id}/`}
+                to={replaceParams({
+                  href: IDSAdminPaths.IDSAdminApplication,
+                  params: {
+                    tenant: tenant,
+                    application: item.id,
+                  },
+                })}
               >
                 <Box
                   className={styles.linkContainer}
@@ -71,8 +78,8 @@ const Applications = () => {
                     alignItems={'flexEnd'}
                     justifyContent={'flexEnd'}
                   >
-                    {item.environmentTags.map((tag) => (
-                      <Box margin={1}>
+                    {item.environmentTags.map((tag, index) => (
+                      <Box margin={1} key={index}>
                         <Tag variant="purple" outlined>
                           {tag}
                         </Tag>
