@@ -167,7 +167,7 @@ export class ChildrenService {
 
       if (!children.hasRights) {
         throw new TemplateApiError(
-          parentalLeaveFormMessages.shared.noConsentToSeeInfromationError,
+          parentalLeaveFormMessages.shared.childrenError,
           500,
         )
       }
