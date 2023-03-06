@@ -23,9 +23,11 @@ export class TenantsService {
     const isSuperUser = user.scope.includes(AdminPortalScope.idsAdminSuperUser)
 
     const tenants = await this.domainModel.findAll({
-      where: {
-        ...(isSuperUser ? {} : { nationalId: user.nationalId }),
-      },
+      ...(!isSuperUser && {
+        where: {
+          nationalId: user.nationalId,
+        },
+      }),
       attributes: ['name', 'displayName'],
     })
 

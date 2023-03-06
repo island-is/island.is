@@ -26,3 +26,11 @@ export const progressLine = style({
     },
   },
 })
+
+export const historyProgressLine = style({
+  display: 'flex',
+  width: 2,
+  left: '50%',
+  marginLeft: '-1px',
+  top: '50%',
+})
