@@ -41,13 +41,3 @@ yarn start services-user-notification
 ```sh
 yarn nx run services-user-notification:worker
 ```
-
-### Testing
-
-```sh
-yarn test services-user-notification
-```
-
-### E2E Testing
-
-furthermore it is recommended to run e2e tests for the service using the service and testing app together - see these instructions for more details

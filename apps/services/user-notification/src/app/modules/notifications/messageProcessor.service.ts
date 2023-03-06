@@ -26,9 +26,8 @@ export class MessageProcessorService {
     })
 
     return {
-      // TODO REMEMBER TO REMOVE EMOJIS
-      title: '🇮🇸🇮🇸🇮🇸' + notification.notificationTitle,
-      body: '🌶️🌶️🌶️' + notification.notificationBody,
+      title: notification.notificationTitle,
+      body: notification.notificationBody,
       dataCopy: notification.notificationDataCopy,
       category: notification.category,
       appURI: notification.clickAction,
