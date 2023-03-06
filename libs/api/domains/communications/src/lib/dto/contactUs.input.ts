@@ -27,5 +27,5 @@ export class ContactUsInput {
 
   @HideField()
   @IsString()
-  type: 'contactUs' = 'contactUs'
+  type = 'contactUs' as const
 }

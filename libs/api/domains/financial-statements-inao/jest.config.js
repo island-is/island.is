@@ -1,9 +1,11 @@
 module.exports = {
   displayName: 'api-domains-financial-statements-inao',
-  preset: '../../../../jest.preset.js',
+  preset: './jest.preset.js',
+  rootDir: '../../../..',
+  roots: [__dirname],
   globals: {
     'ts-jest': {
-      tsConfig: '<rootDir>/tsconfig.spec.json',
+      tsconfig: `${__dirname}/tsconfig.spec.json`,
     },
   },
   testEnvironment: 'node',
@@ -12,5 +14,5 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-    '../../../../coverage/libs/api/domains/financial-statements-inao',
+    '<rootDir>/coverage/libs/api/domains/financial-statements-inao',
 }

@@ -397,7 +397,7 @@ export const m = defineMessages({
   },
   applicationCompleteNextStepsDescriptionParentA: {
     id: 'pa.application:complete.nextSteps.descriptionParentA#markdown',
-    defaultMessage: `* Þegar forsjáraðili hefur samþykkt umsóknina mun berast staðfesting í pósthólf ykkar á Ísland.is.\\n\\n * Forsjáraðili skal mæta með einstaklingi í myndatöku á næsta afgreiðslustað sýslumanns og hafa meðferðis núgildandi vegabréf eða löggild skilríki með mynd sé vegabréfið glatað.\\n\\n * Tilkynning mun berast á Mínar síður á Ísland.is þegar vegabréfið er tilbúið auk upplýsinga um hvenær hægt verður að sækja það á þann afhendingarstað sem tilgreindur var í umsóknarferlinu.`,
+    defaultMessage: `* Þegar forsjáraðili hefur samþykkt umsóknina mun berast staðfesting í pósthólf ykkar á Ísland.is.\\n\\n * Forsjáraðili hefur viku til að bregðast við umsóknin.\\n\\n * Forsjáraðili skal mæta með einstaklingi í myndatöku á næsta afgreiðslustað sýslumanns og hafa meðferðis núgildandi vegabréf eða löggild skilríki með mynd sé vegabréfið glatað.\\n\\n * Tilkynning mun berast á Mínar síður á Ísland.is þegar vegabréfið er tilbúið auk upplýsinga um hvenær hægt verður að sækja það á þann afhendingarstað sem tilgreindur var í umsóknarferlinu.`,
     description: 'Some description',
   },
   applicationCompleteNextStepsDescriptionPersonalApplication: {

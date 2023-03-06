@@ -14,8 +14,7 @@ export const information = {
     },
     description: {
       id: 'ta.ovlp.application:information.general.description',
-      defaultMessage:
-        'Skráningarskírteini er aðeins sent á lögheimili eigendEt sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
+      defaultMessage: 'Skráningarskírteini er aðeins sent á lögheimili eigenda',
       description: 'Description of information page',
     },
   }),
@@ -45,13 +44,6 @@ export const information = {
         id: 'ta.ovlp.application:information.labels.pickVehicle.hasErrorTitle',
         defaultMessage: 'Ekki er hægt að velja þessa bifreið vegna:',
         description: 'Pick vehicle has an error title',
-      },
-      duplicateOrderExistsTag: {
-        id:
-          'ta.ovlp.application:information.labels.pickVehicle.duplicateOrderExistsTag',
-        defaultMessage:
-          'Það er nú þegar til pöntun um skráningarmerki fyrir þessa bifreið',
-        description: 'Pick vehicle duplicate plate order exists tag',
       },
     }),
     plateSize: defineMessages({

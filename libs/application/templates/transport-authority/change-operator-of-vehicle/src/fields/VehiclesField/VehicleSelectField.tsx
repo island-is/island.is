@@ -10,15 +10,15 @@ import {
   BulletList,
   InputError,
 } from '@island.is/island-ui/core'
-import { VehiclesCurrentVehicle } from '../../types'
+import {
+  VehiclesCurrentVehicle,
+  VehiclesCurrentVehicleWithOperatorChangeChecks,
+} from '../../shared'
 import { information, applicationCheck, error } from '../../lib/messages'
 import { SelectController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
-import {
-  GetVehicleDetailInput,
-  VehiclesCurrentVehicleWithOperatorChangeChecks,
-} from '@island.is/api/schema'
+import { GetVehicleDetailInput } from '@island.is/api/schema'
 import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
 
 interface VehicleSearchFieldProps {

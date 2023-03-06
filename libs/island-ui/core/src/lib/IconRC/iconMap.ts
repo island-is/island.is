@@ -2,6 +2,7 @@ export type Type = 'filled' | 'outline'
 export type Icon =
   | 'accessibility'
   | 'add'
+  | 'airplane'
   | 'arrowForward'
   | 'arrowBack'
   | 'arrowUp'
@@ -32,6 +33,7 @@ export type Icon =
   | 'ellipsisVertical'
   | 'eye'
   | 'eyeOff'
+  | 'facebook'
   | 'fileTrayFull'
   | 'filter'
   | 'heart'
@@ -68,6 +70,7 @@ export default {
   filled: {
     accessibility: 'Accessibility',
     add: 'Add',
+    airplane: 'Airplane',
     arrowForward: 'ArrowForward',
     arrowBack: 'ArrowBack',
     arrowDown: 'ArrowDown',
@@ -98,6 +101,7 @@ export default {
     ellipsisVertical: 'EllipsisVertical',
     eye: 'Eye',
     eyeOff: 'EyeOff',
+    facebook: 'Facebook',
     fileTrayFull: 'FileTrayFull',
     filter: 'Filter',
     heart: 'Heart',
@@ -133,6 +137,7 @@ export default {
   outline: {
     accessibility: 'AccessibilityOutline',
     add: 'AddOutline',
+    airplane: 'Airplane',
     arrowForward: 'ArrowForward',
     arrowBack: 'ArrowBack',
     arrowDown: 'ArrowDown',
@@ -163,6 +168,7 @@ export default {
     ellipsisVertical: 'EllipsisVerticalOutline',
     eye: 'EyeOutline',
     eyeOff: 'EyeOffOutline',
+    facebook: 'Facebook',
     fileTrayFull: 'FileTrayFullOutline',
     filter: 'FilterOutline',
     heart: 'HeartOutline',

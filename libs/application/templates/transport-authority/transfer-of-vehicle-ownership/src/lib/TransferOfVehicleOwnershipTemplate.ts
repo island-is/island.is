@@ -20,11 +20,11 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { Features } from '@island.is/feature-flags'
 import { TransferOfVehicleOwnershipSchema } from './dataSchema'
 import { application as applicationMessage } from './messages'
-import { CoOwnerAndOperator, UserInformation } from '../types'
+import { CoOwnerAndOperator, UserInformation } from '../shared'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import {
-  NationalRegistryUserApi,
+  IdentityApi,
   UserProfileApi,
   SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
@@ -108,7 +108,7 @@ const template: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi,
+                IdentityApi,
                 UserProfileApi,
                 SamgongustofaPaymentCatalogApi,
                 CurrentVehiclesApi,
@@ -214,6 +214,7 @@ const template: ApplicationTemplate<
                   'insurance',
                   'buyer',
                   'rejecter',
+                  'buyerMainOperator',
                 ],
               },
               read: 'all',
@@ -366,10 +367,12 @@ const template: ApplicationTemplate<
       reviewerNationalIdList.push(nationalId)
       return nationalId
     })
-    buyerCoOwnerAndOperator?.map(({ nationalId }) => {
-      reviewerNationalIdList.push(nationalId)
-      return nationalId
-    })
+    buyerCoOwnerAndOperator
+      ?.filter(({ wasRemoved }) => wasRemoved !== 'true')
+      .map(({ nationalId }) => {
+        reviewerNationalIdList.push(nationalId)
+        return nationalId
+      })
     if (id === application.applicant) {
       return Roles.APPLICANT
     }
@@ -411,10 +414,12 @@ const getNationalIdListOfReviewers = (application: Application) => {
       reviewerNationalIdList.push(nationalId)
       return nationalId
     })
-    buyerCoOwnerAndOperator?.map(({ nationalId }) => {
-      reviewerNationalIdList.push(nationalId)
-      return nationalId
-    })
+    buyerCoOwnerAndOperator
+      ?.filter(({ wasRemoved }) => wasRemoved !== 'true')
+      .map(({ nationalId }) => {
+        reviewerNationalIdList.push(nationalId)
+        return nationalId
+      })
     return reviewerNationalIdList
   } catch (error) {
     console.error(error)

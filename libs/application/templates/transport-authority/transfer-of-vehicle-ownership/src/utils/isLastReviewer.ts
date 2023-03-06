@@ -1,6 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { CoOwnerAndOperator, UserInformation } from '../types'
+import { CoOwnerAndOperator, UserInformation } from '../shared'
 
 export const isLastReviewer = (
   reviewerNationalId: string,
@@ -18,7 +18,10 @@ export const isLastReviewer = (
     'buyerCoOwnerAndOperator',
     [],
   ) as CoOwnerAndOperator[]
-  const approvedBuyerCoOwnerAndOperator = buyerCoOwnersAndOperators.find(
+  const filteredBuyerCoOwnerAndOperator = buyerCoOwnersAndOperators.filter(
+    ({ wasRemoved }) => wasRemoved !== 'true',
+  )
+  const approvedBuyerCoOwnerAndOperator = filteredBuyerCoOwnerAndOperator.find(
     (coOwnerOrOperator) => {
       return (
         coOwnerOrOperator.nationalId !== reviewerNationalId &&
@@ -44,15 +47,15 @@ export const isLastReviewer = (
 
   // Then check if user which is the last reviewer is a buyer and is adding more reviewers
   if (buyer.nationalId === reviewerNationalId) {
-    if (coOwnersAndOperators === buyerCoOwnersAndOperators) {
+    if (coOwnersAndOperators === filteredBuyerCoOwnerAndOperator) {
       return true
     }
-    if (coOwnersAndOperators.length > buyerCoOwnersAndOperators.length) {
+    if (coOwnersAndOperators.length > filteredBuyerCoOwnerAndOperator.length) {
       return false
     }
     if (
       coOwnersAndOperators.find((reviewer) => {
-        const sameReviewer = buyerCoOwnersAndOperators.find(
+        const sameReviewer = filteredBuyerCoOwnerAndOperator.find(
           (oldReviewer) => oldReviewer === reviewer,
         )
         return !sameReviewer

@@ -436,6 +436,7 @@ export const slices = gql`
   fragment OverviewLinksField on OverviewLinks {
     __typename
     id
+    hasBorderAbove
     overviewLinks {
       title
       intro {
@@ -484,7 +485,6 @@ export const slices = gql`
     id
     title
     intro
-    recipient
     fields {
       title
       name

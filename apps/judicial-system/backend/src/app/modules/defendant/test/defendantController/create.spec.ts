@@ -7,7 +7,7 @@ import { Defendant } from '../../models/defendant.model'
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
 interface Then {
-  result: Defendant | null
+  result: Defendant
   error: Error
 }
 

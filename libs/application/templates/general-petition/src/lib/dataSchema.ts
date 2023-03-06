@@ -9,22 +9,19 @@ const FileSchema = z.object({
 export const GeneralPetitionSchema = z.object({
   approveTermsAndConditions: z
     .boolean()
-    .refine(
-      (v) => v,
-      m.validationMessages.approveTerms.defaultMessage as string,
-    ),
+    .refine((v) => v, m.validationApproveTerms.defaultMessage as string),
   documents: z.array(FileSchema).optional(),
   listName: z
     .string()
     .refine(
       (p) => p.trim().length > 0,
-      m.validationMessages.listName.defaultMessage as string,
+      m.validationListName.defaultMessage as string,
     ),
   aboutList: z
     .string()
     .refine(
       (p) => p.trim().length > 0,
-      m.validationMessages.aboutList.defaultMessage as string,
+      m.validationAboutList.defaultMessage as string,
     ),
   dates: z
     .object({
@@ -32,20 +29,20 @@ export const GeneralPetitionSchema = z.object({
         .string()
         .refine(
           (p) => p.trim().length > 0,
-          m.validationMessages.selectDate.defaultMessage as string,
+          m.validationSelectDate.defaultMessage as string,
         ),
       dateTil: z
         .string()
         .refine(
           (p) => p.trim().length > 0,
-          m.validationMessages.selectDate.defaultMessage as string,
+          m.validationSelectDate.defaultMessage as string,
         ),
     })
     .refine(
       ({ dateFrom, dateTil }) =>
         !dateFrom || !dateTil || new Date(dateFrom) <= new Date(dateTil),
       {
-        message: m.validationMessages.tilBeforeFrom.defaultMessage as string,
+        message: m.validationTilBeforeFrom.defaultMessage as string,
         path: ['dateTil'],
       },
     ),

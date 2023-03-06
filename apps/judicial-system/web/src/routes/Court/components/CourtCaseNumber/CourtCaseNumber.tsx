@@ -43,7 +43,7 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
 
-  const updateAndReceiveCase = async (id: string, update: UpdateCase) => {
+  const updateCourtCaseNumber = async (id: string, update: UpdateCase) => {
     const isValid = validate([
       [
         update.courtCaseNumber,
@@ -110,7 +110,7 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
                 value={workingCase.courtCaseNumber ?? ''}
                 icon={
                   workingCase.courtCaseNumber && createCourtCaseSuccess
-                    ? 'checkmark'
+                    ? { name: 'checkmark' }
                     : undefined
                 }
                 errorMessage={courtCaseNumberEM}
@@ -143,7 +143,7 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
                         : 'R-case-number',
                     ],
                     workingCase,
-                    updateAndReceiveCase,
+                    updateCourtCaseNumber,
                     setCourtCaseNumberEM,
                   )
                 }}

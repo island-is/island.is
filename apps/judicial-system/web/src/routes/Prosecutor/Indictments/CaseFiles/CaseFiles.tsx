@@ -16,6 +16,7 @@ import {
   PageLayout,
   FormContext,
   SectionHeading,
+  PdfButton,
 } from '@island.is/judicial-system-web/src/components'
 import {
   IndictmentsProsecutorSubsections,
@@ -34,9 +35,11 @@ import {
   TUploadFile,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { CaseFileCategory } from '@island.is/judicial-system/types'
+import { CaseFileCategory, Feature } from '@island.is/judicial-system/types'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
+import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './CaseFiles.strings'
@@ -48,6 +51,10 @@ const CaseFiles: React.FC = () => {
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
   const { formatMessage } = useIntl()
   const { upload, remove } = useS3Upload(workingCase.id)
+  const { features } = useContext(FeatureContext)
+  const isTrafficViolationCaseCheck =
+    features.includes(Feature.INDICTMENT_ROUTE) &&
+    isTrafficViolationCase(workingCase.indictmentSubtypes)
 
   useEffect(() => {
     if (workingCase.caseFiles) {
@@ -153,7 +160,10 @@ const CaseFiles: React.FC = () => {
     <PageLayout
       workingCase={workingCase}
       activeSection={Sections.PROSECUTOR}
-      activeSubSection={IndictmentsProsecutorSubsections.CASE_FILES}
+      activeSubSection={
+        IndictmentsProsecutorSubsections.CASE_FILES +
+        (isTrafficViolationCaseCheck ? 1 : 0)
+      }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
@@ -171,15 +181,15 @@ const CaseFiles: React.FC = () => {
         <ProsecutorCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <SectionHeading
-            title={formatMessage(strings.caseFiles.sections.coverLetter)}
+            title={formatMessage(strings.caseFiles.coverLetterSection)}
           />
           <InputFileUpload
             fileList={displayFiles.filter(
               (file) => file.category === CaseFileCategory.COVER_LETTER,
             )}
             accept={Object.values(fileExtensionWhitelist)}
-            header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
-            buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
+            header={formatMessage(strings.caseFiles.inputFieldLabel)}
+            buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             multiple={false}
             onChange={(files) =>
               handleChange(files, CaseFileCategory.COVER_LETTER)
@@ -188,36 +198,38 @@ const CaseFiles: React.FC = () => {
             onRetry={handleRetry}
           />
         </Box>
+        {!isTrafficViolationCaseCheck && (
+          <Box component="section" marginBottom={5}>
+            <SectionHeading
+              title={formatMessage(strings.caseFiles.indictmentSection)}
+            />
+            <InputFileUpload
+              fileList={displayFiles.filter(
+                (file) => file.category === CaseFileCategory.INDICTMENT,
+              )}
+              accept={Object.values(fileExtensionWhitelist)}
+              header={formatMessage(strings.caseFiles.inputFieldLabel)}
+              buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
+              multiple={false}
+              onChange={(files) =>
+                handleChange(files, CaseFileCategory.INDICTMENT)
+              }
+              onRemove={handleRemove}
+              onRetry={handleRetry}
+            />
+          </Box>
+        )}
         <Box component="section" marginBottom={5}>
           <SectionHeading
-            title={formatMessage(strings.caseFiles.sections.indictment)}
-          />
-          <InputFileUpload
-            fileList={displayFiles.filter(
-              (file) => file.category === CaseFileCategory.INDICTMENT,
-            )}
-            accept={Object.values(fileExtensionWhitelist)}
-            header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
-            buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
-            multiple={false}
-            onChange={(files) =>
-              handleChange(files, CaseFileCategory.INDICTMENT)
-            }
-            onRemove={handleRemove}
-            onRetry={handleRetry}
-          />
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <SectionHeading
-            title={formatMessage(strings.caseFiles.sections.criminalRecord)}
+            title={formatMessage(strings.caseFiles.criminalRecordSection)}
           />
           <InputFileUpload
             fileList={displayFiles.filter(
               (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
             )}
             accept={Object.values(fileExtensionWhitelist)}
-            header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
-            buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
+            header={formatMessage(strings.caseFiles.inputFieldLabel)}
+            buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
               handleChange(files, CaseFileCategory.CRIMINAL_RECORD)
             }
@@ -227,15 +239,15 @@ const CaseFiles: React.FC = () => {
         </Box>
         <Box component="section" marginBottom={5}>
           <SectionHeading
-            title={formatMessage(strings.caseFiles.sections.costBreakdown)}
+            title={formatMessage(strings.caseFiles.costBreakdownSection)}
           />
           <InputFileUpload
             fileList={displayFiles.filter(
               (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
             )}
             accept={Object.values(fileExtensionWhitelist)}
-            header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
-            buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
+            header={formatMessage(strings.caseFiles.inputFieldLabel)}
+            buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
               handleChange(files, CaseFileCategory.COST_BREAKDOWN)
             }
@@ -245,7 +257,7 @@ const CaseFiles: React.FC = () => {
         </Box>
         <Box component="section" marginBottom={10}>
           <SectionHeading
-            title={formatMessage(strings.caseFiles.sections.otherDocuments)}
+            title={formatMessage(strings.caseFiles.otherDocumentsSection)}
           />
           <InputFileUpload
             fileList={displayFiles.filter(
@@ -254,8 +266,8 @@ const CaseFiles: React.FC = () => {
                 !file.policeCaseNumber,
             )}
             accept={Object.values(fileExtensionWhitelist)}
-            header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
-            buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
+            header={formatMessage(strings.caseFiles.inputFieldLabel)}
+            buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
               handleChange(files, CaseFileCategory.CASE_FILE)
             }
@@ -263,10 +275,23 @@ const CaseFiles: React.FC = () => {
             onRetry={handleRetry}
           />
         </Box>
+        {isTrafficViolationCaseCheck && (
+          <Box marginBottom={10}>
+            <PdfButton
+              caseId={workingCase.id}
+              title={formatMessage(strings.caseFiles.pdfButtonIndictment)}
+              pdfType="indictment"
+            />
+          </Box>
+        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.INDICTMENTS_PROCESSING_ROUTE}/${workingCase.id}`}
+          previousUrl={`${
+            isTrafficViolationCaseCheck
+              ? constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE
+              : constants.INDICTMENTS_PROCESSING_ROUTE
+          }/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(constants.INDICTMENTS_OVERVIEW_ROUTE)
           }

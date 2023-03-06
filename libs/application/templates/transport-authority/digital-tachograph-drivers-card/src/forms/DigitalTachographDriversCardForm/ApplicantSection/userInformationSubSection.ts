@@ -6,7 +6,7 @@ import {
   buildCustomField,
 } from '@island.is/application/core'
 import { applicant } from '../../../lib/messages'
-import { Application } from '../../../types/schema'
+import { Application } from '@island.is/api/schema'
 
 export const userInformationSubSection = buildSubSection({
   id: 'userInformation',
@@ -104,6 +104,7 @@ export const userInformationSubSection = buildSubSection({
           title: applicant.labels.userInformation.phone,
           width: 'half',
           variant: 'tel',
+          format: '###-####',
           required: true,
           defaultValue: (application: Application) =>
             application.externalData?.userProfile?.data?.phone,

@@ -295,8 +295,7 @@ export const Menu = ({
                           backgroundColor="blue"
                           size="sm"
                           name="search"
-                          icon="search"
-                          iconType="outline"
+                          icon={{ name: 'search', type: 'outline' }}
                         />,
                         closeModal,
                       )}
