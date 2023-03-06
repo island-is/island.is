@@ -100,11 +100,36 @@
         "cwd": "apps/services/regulations-admin-backend"
       }
     },
+    "seed/undo": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "../../../node_modules/.bin/sequelize-cli db:seed:undo:all",
+        "cwd": "apps/services/regulations-admin-backend"
+      }
+    },
     "docker-express": {},
     "extract-strings": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/services/regulations-admin-backend/src/app/messages/**/*.ts'"
+      }
+    },
+    "dev-init": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn nx run regulations-admin-backend:migrate",
+          "yarn nx run regulations-admin-backend:seed/undo",
+          "yarn nx run regulations-admin-backend:seed"
+        ],
+        "parallel": false
+      }
+    },
+    "dev": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["yarn start regulations-admin-backend"],
+        "parallel": true
       }
     }
   },

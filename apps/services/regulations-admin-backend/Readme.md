@@ -2,10 +2,12 @@
 
 ## Development
 
-1. Start the resources with docker-compose:
+### Initial setup
+
+1. Make sure you have Docker, then run:
 
 ```bash
-docker-compose -f apps/services/regulations-admin-backend/docker-compose.yml up
+yarn dev-services regulations-admin-backend
 ```
 
 2. Clean the database (skip this step on first install)
@@ -15,22 +17,13 @@ cd apps/services/regulations-admin-backend
 npx sequelize db:migrate:undo:all
 ```
 
-3. Migrate table definitions
+3. Then run the migrate and seeding:
 
 ```bash
-cd apps/services/regulations-admin-backend
-npx sequelize db:migrate
+yarn dev-init regulations-admin-backend
 ```
 
-4. Run local seed data
-
-```bash
-cd apps/services/regulations-admin-backend
-npx sequelize db:seed:undo:all
-npx sequelize db:seed:all
-```
-
-5. Start the backend service:
+4. Start the backend service:
 
 ```bash
 yarn start regulations-admin-backend
