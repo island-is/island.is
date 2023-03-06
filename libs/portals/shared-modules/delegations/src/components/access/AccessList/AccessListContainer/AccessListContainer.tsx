@@ -13,6 +13,7 @@ import { AccessList } from '../AccessList'
 import { AccessListLoading } from '../AccessListLoading'
 import { AuthScopeTree } from '../../access.types'
 import { AuthCustomDelegation } from '../../../../types/customDelegation'
+import { m } from '../../../../lib/messages'
 
 type AccessListContainerProps = {
   delegation?: AuthCustomDelegation
@@ -38,10 +39,7 @@ export const AccessListContainer = ({
     <Box display="flex" flexDirection="column" rowGap={3} marginTop={6}>
       <Box display="flex" alignItems="center" justifyContent="spaceBetween">
         <Text variant="h4" as="h4">
-          {formatMessage({
-            id: 'sp.access-control-delegations:access-title',
-            defaultMessage: 'Réttindi',
-          })}
+          {formatMessage(m.accessScopes)}
         </Text>
         <Hidden above="md">
           {delegation?.validTo && <AccessDate validTo={delegation.validTo} />}

@@ -1,17 +1,18 @@
-import { Airlines, States } from '@island.is/air-discount-scheme/consts'
+import { AirDiscountSchemeFlightLegState as States } from '@island.is/api/schema'
+import { Airlines } from '@island.is/air-discount-scheme/consts'
 
 export const financialStateOptions = [
   {
-    value: States.awaitingDebit,
+    value: States.AWAITING_DEBIT,
     label: 'Á eftir að gjaldfæra',
   },
-  { value: States.sentDebit, label: 'Gjaldfært' },
+  { value: States.SENT_DEBIT, label: 'Gjaldfært' },
   {
-    value: States.awaitingCredit,
+    value: States.AWAITING_CREDIT,
     label: 'Á eftir að endurgreiða',
   },
-  { value: States.sentCredit, label: 'Endurgreitt' },
-  { value: States.cancelled, label: 'Afturkallað' },
+  { value: States.SENT_CREDIT, label: 'Endurgreitt' },
+  { value: States.CANCELLED, label: 'Afturkallað' },
 ]
 
 export const airlineOptions = [

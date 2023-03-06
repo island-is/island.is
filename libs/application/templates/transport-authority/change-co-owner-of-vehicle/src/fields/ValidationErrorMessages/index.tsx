@@ -6,7 +6,7 @@ import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useEffect } from 'react'
 import { ChangeCoOwnerOfVehicleAnswers } from '../..'
-import { VALIDATE_VEHICLE_OWNER_CHANGE } from '../../graphql/queries'
+import { VALIDATE_VEHICLE_CO_OWNER_CHANGE } from '../../graphql/queries'
 import { applicationCheck } from '../../lib/messages'
 
 export const ValidationErrorMessages: FC<FieldBaseProps> = (props) => {
@@ -18,7 +18,7 @@ export const ValidationErrorMessages: FC<FieldBaseProps> = (props) => {
 
   const { data, loading } = useQuery(
     gql`
-      ${VALIDATE_VEHICLE_OWNER_CHANGE}
+      ${VALIDATE_VEHICLE_CO_OWNER_CHANGE}
     `,
     {
       variables: {
@@ -26,14 +26,7 @@ export const ValidationErrorMessages: FC<FieldBaseProps> = (props) => {
           pickVehicle: {
             plate: answers?.pickVehicle?.plate,
           },
-          vehicle: {
-            date: new Date(new Date().toISOString().substring(0, 10)),
-          },
-          seller: {
-            email: answers?.owner?.email,
-            nationalId: answers?.owner?.nationalId,
-          },
-          buyer: {
+          owner: {
             email: answers?.owner?.email,
             nationalId: answers?.owner?.nationalId,
           },
@@ -46,28 +39,26 @@ export const ValidationErrorMessages: FC<FieldBaseProps> = (props) => {
                 }))
               : []),
             ...(answers?.coOwners
-              ? answers.coOwners.map((x) => ({
-                  email: x.email,
-                  nationalId: x.nationalId,
-                  type: 'coowner',
-                }))
+              ? answers.coOwners
+                  .filter(({ wasRemoved }) => wasRemoved !== 'true')
+                  .map((x) => ({
+                    email: x.email,
+                    nationalId: x.nationalId,
+                    type: 'coowner',
+                  }))
               : []),
           ],
-          buyerMainOperator: null,
-          insurance: null,
         },
       },
     },
   )
 
   useEffect(() => {
-    setFieldLoadingState?.(
-      loading || data?.vehicleOwnerChangeValidation?.hasError,
-    )
-  }, [loading, data?.vehicleOwnerChangeValidation?.hasError])
+    setFieldLoadingState?.(loading)
+  }, [loading])
 
-  return data?.vehicleOwnerChangeValidation?.hasError &&
-    data.vehicleOwnerChangeValidation.errorMessages.length > 0 ? (
+  return data?.vehicleCoOwnerChangeValidation?.hasError &&
+    data.vehicleCoOwnerChangeValidation.errorMessages.length > 0 ? (
     <Box>
       <AlertMessage
         type="error"
@@ -75,7 +66,7 @@ export const ValidationErrorMessages: FC<FieldBaseProps> = (props) => {
         message={
           <Box component="span" display="block">
             <ul>
-              {data.vehicleOwnerChangeValidation.errorMessages.map(
+              {data.vehicleCoOwnerChangeValidation.errorMessages.map(
                 (error: OwnerChangeValidationMessage) => {
                   const message = formatMessage(
                     getValueViaPath(

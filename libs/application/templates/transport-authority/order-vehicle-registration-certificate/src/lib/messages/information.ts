@@ -97,7 +97,7 @@ export const information = {
       alertAddress: {
         id: 'ta.ovrc.application:information.labels.owner.alertAddress',
         defaultMessage:
-          'ATH. Skráningarskírteinið verður sent á heimilisfang eiganda: {address}',
+          'ATH. Skráningarskírteinið verður sent á lögheimili eiganda: {address}',
         description: 'Owner alert address label',
       },
       error: {

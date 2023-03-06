@@ -25,10 +25,11 @@ export const fileUploadValidationSection = (
   const {
     isSelfEmployed,
     applicationType,
-    isRecivingUnemploymentBenefits,
+    isReceivingUnemploymentBenefits,
     unemploymentBenefits,
     otherParent,
     additionalDocuments,
+    isResidenceGrant,
   } = getApplicationAnswers(application.answers)
   if (isSelfEmployed === YES && obj.selfEmployedFile) {
     if (isEmpty((obj as { selfEmployedFile: unknown[] }).selfEmployedFile))
@@ -62,7 +63,7 @@ export const fileUploadValidationSection = (
     return undefined
   }
 
-  if (isRecivingUnemploymentBenefits) {
+  if (isReceivingUnemploymentBenefits) {
     if (
       (unemploymentBenefits === UnEmployedBenefitTypes.union ||
         unemploymentBenefits === UnEmployedBenefitTypes.healthInsurance) &&
@@ -108,6 +109,17 @@ export const fileUploadValidationSection = (
         message: errorMessages.requiredAttachment,
       }
     }
+
+    return undefined
+  }
+
+  if (isResidenceGrant === YES && obj.residenceGrant) {
+    if (isEmpty((obj as { residenceGrant: unknown[] }).residenceGrant))
+      return buildError(
+        errorMessages.requiredAttachment,
+        'residenceGrant',
+        FILEUPLOAD,
+      )
 
     return undefined
   }

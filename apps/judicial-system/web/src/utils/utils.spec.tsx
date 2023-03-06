@@ -2,11 +2,7 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import {
-  Gender,
-  IndictmentSubtype,
-  IndictmentSubtypeMap,
-} from '@island.is/judicial-system/types'
+import { Gender } from '@island.is/judicial-system/types'
 import { getShortGender, isDirty } from './stepHelper'
 
 import * as formatters from './formatters'

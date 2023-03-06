@@ -73,6 +73,11 @@ export function findSubmitField(screen: FormScreen): SubmitField | undefined {
       return reviewScreen as SubmitField
     }
   }
+  if (screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER) {
+    if (screen.submitField !== undefined) {
+      return screen.submitField
+    }
+  }
   return undefined
 }
 

@@ -43,7 +43,7 @@ export const simpleFactory = <T, FactoryArgs extends Array<unknown>>(
   initializer: InitializerFn<T, FactoryArgs>,
 ) => {
   const factoryFn = (...args: FactoryArgs) => initializer(...args)
-  factoryFn.list = times(factoryFn)
+  factoryFn.list = times((args: FactoryArgs) => initializer(...args))
 
   return factoryFn
 }

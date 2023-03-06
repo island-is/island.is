@@ -23,7 +23,6 @@ import {
   formatPrisonCourtDateEmailNotification,
   stripHtmlTags,
   formatDefenderCourtDateEmailNotification,
-  formatPrisonRulingEmailNotification,
   formatCourtRevokedSmsNotification,
   formatPrisonRevokedEmailNotification,
   formatDefenderRevokedEmailNotification,
@@ -32,7 +31,6 @@ import {
   formatProsecutorReadyForCourtEmailNotification,
   formatCustodyRestrictions,
   formatRulingModifiedHistory,
-  formatCourtUploadRulingTitle,
   formatPrisonAdministrationRulingNotification,
   formatDefenderCourtDateLinkEmailNotification,
   formatDefenderResubmittedToCourtEmailNotification,
@@ -1381,68 +1379,6 @@ describe('formatDefenderCourtDateLinkEmailNotification', () => {
   })
 })
 
-describe('formatPrisonRulingEmailNotification', () => {
-  let formatMessage: FormatMessage
-  beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
-  })
-
-  test('should format prison ruling notification for custody', () => {
-    // Arrange
-    const courtEndTime = new Date('2020-12-20T13:32')
-    const caseType = CaseType.CUSTODY
-
-    // Act
-    const res = formatPrisonRulingEmailNotification(
-      formatMessage,
-      caseType,
-      courtEndTime,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í gæsluvarðhald í héraðsdómi 20. desember 2020, auk þingbókar þar sem úrskurðarorðin koma fram.',
-    )
-  })
-
-  test('should format prison ruling notification when date is missing', () => {
-    // Arrange
-    const courtEndTime = undefined
-    const caseType = CaseType.ADMISSION_TO_FACILITY
-
-    // Act
-    const res = formatPrisonRulingEmailNotification(
-      formatMessage,
-      caseType,
-      courtEndTime,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í vistun á viðeigandi stofnun í héraðsdómi á ótilgreindum tíma, auk þingbókar þar sem úrskurðarorðin koma fram.',
-    )
-  })
-
-  test('should format prison ruling notification for admission to facility', () => {
-    // Arrange
-    const courtEndTime = new Date('2020-12-20T13:32')
-    const caseType = CaseType.ADMISSION_TO_FACILITY
-
-    // Act
-    const res = formatPrisonRulingEmailNotification(
-      formatMessage,
-      caseType,
-      courtEndTime,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í vistun á viðeigandi stofnun í héraðsdómi 20. desember 2020, auk þingbókar þar sem úrskurðarorðin koma fram.',
-    )
-  })
-})
-
 describe('formatCourtRevokedSmsNotification', () => {
   let formatMessage: FormatMessage
   beforeAll(() => {
@@ -1568,9 +1504,9 @@ describe('formatPrisonRevokedEmailNotification', () => {
     const prosecutorOffice = 'Aðalsaksóknari'
     const court = 'Héraðsdómur Þingvalla'
     const courtDate = new Date('2021-01-24T08:15')
-    const accusedName = 'Gaui Glæpon'
     const defenderName = 'Dóri'
     const isExtension = false
+    const courtCaseNumber = 'R-2023-11'
 
     // Act
     const res = formatPrisonRevokedEmailNotification(
@@ -1579,14 +1515,14 @@ describe('formatPrisonRevokedEmailNotification', () => {
       prosecutorOffice,
       court,
       courtDate,
-      accusedName,
       defenderName,
       isExtension,
+      courtCaseNumber,
     )
 
     // Assert
     expect(res).toBe(
-      'Aðalsaksóknari hefur afturkallað kröfu um gæsluvarðhald sem send var til Héraðsdóms Þingvalla og taka átti fyrir sunnudaginn 24. janúar 2021, kl. 08:15.<br /><br />Nafn sakbornings: Gaui Glæpon.<br /><br />Verjandi sakbornings: Dóri.',
+      'Aðalsaksóknari hefur afturkallað kröfu um gæsluvarðhald sem send var til Héraðsdóms Þingvalla og taka átti fyrir sunnudaginn 24. janúar 2021, kl. 08:15.<br /><br />Verjandi sakbornings: Dóri.<br /><br />Málsnúmer héraðsdóms er R-2023-11.',
     )
   })
 
@@ -1596,9 +1532,9 @@ describe('formatPrisonRevokedEmailNotification', () => {
     const prosecutorOffice = 'Aðalsaksóknari'
     const court = 'Héraðsdómur Þingvalla'
     const courtDate = new Date('2021-01-24T08:15')
-    const accusedName = 'Gaui Glæpon'
     const defenderName = 'Dóri'
     const isExtension = true
+    const courtCaseNumber = 'R-2023-13'
 
     // Act
     const res = formatPrisonRevokedEmailNotification(
@@ -1607,14 +1543,14 @@ describe('formatPrisonRevokedEmailNotification', () => {
       prosecutorOffice,
       court,
       courtDate,
-      accusedName,
       defenderName,
       isExtension,
+      courtCaseNumber,
     )
 
     // Assert
     expect(res).toBe(
-      'Aðalsaksóknari hefur afturkallað kröfu um áframhaldandi vistun sem send var til Héraðsdóms Þingvalla og taka átti fyrir sunnudaginn 24. janúar 2021, kl. 08:15.<br /><br />Nafn sakbornings: Gaui Glæpon.<br /><br />Verjandi sakbornings: Dóri.',
+      'Aðalsaksóknari hefur afturkallað kröfu um áframhaldandi vistun sem send var til Héraðsdóms Þingvalla og taka átti fyrir sunnudaginn 24. janúar 2021, kl. 08:15.<br /><br />Verjandi sakbornings: Dóri.<br /><br />Málsnúmer héraðsdóms er R-2023-13.',
     )
   })
 })
@@ -1948,39 +1884,6 @@ describe('formatRulingModifiedHistory', () => {
     expect(r).toEqual(
       'Some history\n\nMiðvikudagur, 1. janúar 2020 kl. 00:00 - Test Judge Title',
     )
-  })
-})
-
-describe('formatCourtUploadRulingTitle', () => {
-  const formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-    .formatMessage
-
-  const fn = (
-    courtCaseNumber: string | undefined,
-    isModifyingRuling: boolean,
-  ) =>
-    formatCourtUploadRulingTitle(
-      formatMessage,
-      courtCaseNumber,
-      isModifyingRuling,
-    )
-
-  test('should format court upload ruling', () => {
-    const courtCaseNumber = '12345'
-    const isModifyingRuling = false
-
-    const r = fn(courtCaseNumber, isModifyingRuling)
-
-    expect(r).toEqual('Úrskurður 12345')
-  })
-
-  test('should format court upload ruling when modifying ruling', () => {
-    const courtCaseNumber = '12345'
-    const isModifyingRuling = true
-
-    const r = fn(courtCaseNumber, isModifyingRuling)
-
-    expect(r).toEqual('Úrskurður 12345 leiðrétt')
   })
 })
 

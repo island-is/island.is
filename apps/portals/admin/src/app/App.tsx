@@ -1,49 +1,32 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { ApolloProvider } from '@apollo/client'
-
-import { client } from '../graphql'
+import { AuthProvider } from '@island.is/auth/react'
 import { LocaleProvider } from '@island.is/localization'
 import { defaultLanguage } from '@island.is/shared/constants'
-import { Authenticator } from '@island.is/auth/react'
 import { FeatureFlagProvider } from '@island.is/react/feature-flags'
-import { Modules, PortalProvider } from '@island.is/portals/core'
+import { ApplicationErrorBoundary, PortalRouter } from '@island.is/portals/core'
 import { modules } from '../lib/modules'
+import { client } from '../graphql'
 import environment from '../environments/environment'
-import { Layout } from '../components/Layout/Layout'
-import { ApplicationErrorBoundary } from '@island.is/portals/core'
 import { AdminPortalPaths } from '../lib/paths'
-import { Dashboard } from '../screens/Dashboard/Dashboard'
+import { createRoutes } from '../lib/routes'
 
-export const App = () => {
-  return (
-    <ApolloProvider client={client}>
-      <LocaleProvider locale={defaultLanguage} messages={{}}>
-        <ApplicationErrorBoundary>
-          <BrowserRouter basename={AdminPortalPaths.Base}>
-            <Authenticator>
-              <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
-                <PortalProvider
-                  modules={modules}
-                  meta={{
-                    basePath: AdminPortalPaths.Base,
-                    portalType: 'admin',
-                  }}
-                >
-                  <Layout>
-                    <Routes>
-                      <Route
-                        path={AdminPortalPaths.Root}
-                        element={<Dashboard />}
-                      />
-                      <Route path="*" element={<Modules />} />
-                    </Routes>
-                  </Layout>
-                </PortalProvider>
-              </FeatureFlagProvider>
-            </Authenticator>
-          </BrowserRouter>
-        </ApplicationErrorBoundary>
-      </LocaleProvider>
-    </ApolloProvider>
-  )
-}
+export const App = () => (
+  <ApolloProvider client={client}>
+    <LocaleProvider locale={defaultLanguage} messages={{}}>
+      <AuthProvider basePath={AdminPortalPaths.Base}>
+        <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
+          <ApplicationErrorBoundary>
+            <PortalRouter
+              modules={modules}
+              createRoutes={createRoutes}
+              portalMeta={{
+                portalType: 'admin',
+                basePath: AdminPortalPaths.Base,
+              }}
+            />
+          </ApplicationErrorBoundary>
+        </FeatureFlagProvider>
+      </AuthProvider>
+    </LocaleProvider>
+  </ApolloProvider>
+)

@@ -1283,41 +1283,78 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     title: {
       id: 'pl.application:employer.title',
-      defaultMessage: 'Hver er vinnuveitandi þinn?',
-      description: 'Who is your employer?',
+      defaultMessage: 'Vinnuveitendur',
+      description: 'Employers',
     },
     description: {
       id: 'pl.application:employer.description',
       defaultMessage:
-        'Vinnuveitandi þarf að samþykkja tilhögun fæðingarorlofsins (ef þú hefur marga vinnuveitendur skal velja hæsta starfshlutfall). ' +
-        'Þegar þú hefur sent umsóknina verður sendur tölvupóstur og sms til vinnuveitanda. ' +
-        ' Viðtakandi fær aðgang að umsókninni, en getur einungis séð upplýsingar sem varða tilhögun fæðingarorlofs.' +
-        'Ef vinnuveitandi hafnar tilhögun fæðingarorlofs þarft þú að gera viðeigandi breytingar á henni.',
+        'Hver og einn skráður vinnuveitandi þarf að samþykkja tilhögun fæðingarorlofs. Þegar þú hefur sent umsóknina verður sendur tölvupóstur og sms til vinnuveitenda. Viðtakendur fá aðgang að umsókninni, en getur einungis séð upplýsingar sem varða tilhögun fæðingarorlofs. Ef einhver skráðra vinnuveitenda hafna tilhögun fæðingarorlofs þarft þú að gera viðeigandi breytingar á henni.',
       description:
-        'Your employer is required to approve your parental leave arrangement. Once you have submitted your application, an email and sms will be sent to your employer. The recipient will get access to the application, but will only be able to see the timing arrangement. If your employer rejects the timing arrangement, you will need to change your application.',
+        'Each registered employer is required to approve your parental leave arrangement. Once you have submitted your application, an email and sms will be sent to all registered employers. The recipients will get access to  the application, but will only be able to see the timing arrangements. If any registered employers reject the timing arrangement, you will need to change your application.',
+    },
+    registration: {
+      id: 'pl.application:employer.registration',
+      defaultMessage: 'Skráning vinnuveitanda',
+      description: 'Register an employer',
+    },
+    name: {
+      id: 'pl.application:employer.name',
+      defaultMessage: 'Nafn vinnuveitanda',
+      description: 'Employer name',
+    },
+    nameSearchPlaceholder: {
+      id: 'pl.application:employer.nameSearchPlaceholder',
+      defaultMessage: 'Leitaðu eftir vinnuveitanda',
+      description: 'Search for an employer',
     },
     email: {
       id: 'pl.application:employer.email',
       defaultMessage: 'Netfang vinnuveitanda',
       description: 'Employer email',
     },
+    emailHeader: {
+      id: 'pl.application:employer.email.header',
+      defaultMessage: 'Netfang',
+      description: 'Email',
+    },
     phoneNumber: {
       id: 'pl.application:employer.phone.number',
-      defaultMessage: 'Farsími vinnuveitanda (mælum með skráningu)',
-      description: 'Employer’s mobile phone (we recommend registration)',
+      defaultMessage: 'Símanúmer vinnuveitanda ( valfrjálst )',
+      description: "Employer's phone number ( optional )",
     },
-    emailConfirm: {
-      id: 'pl.application:employer.email.confirm',
-      defaultMessage: 'Staðfestu netfang vinnuveitanda',
-      description: 'Confirm employer email',
+    phoneNumberHeader: {
+      id: 'pl.application:employer.phone.number.header',
+      defaultMessage: 'Símanúmer',
+      description: 'Phone number',
     },
-    isRecivingUnemploymentBenefitsTitle: {
-      id: 'pl.application:employer.isRecivingUnemploymentBenefits',
+    ratio: {
+      id: 'pl.application:employer.ratio',
+      defaultMessage: 'Starfshlutfall',
+      description: 'Employment ratio',
+    },
+    ratioHeader: {
+      id: 'pl.application:employer.ratio.header',
+      defaultMessage: 'Starfshlutfall',
+      description: 'Ratio',
+    },
+    ratioPlaceholder: {
+      id: 'pl.application:employer.ratioPlaceholder',
+      defaultMessage: 'Veldu starfshlutfall',
+      description: 'Select an employment ratio',
+    },
+    approvedHeader: {
+      id: 'pl.application:employer.approved.header',
+      defaultMessage: 'Samþykkt',
+      description: 'Approved',
+    },
+    isReceivingUnemploymentBenefitsTitle: {
+      id: 'pl.application:employer.isReceivingUnemploymentBenefits',
       defaultMessage: 'Ertu að þiggja bætur?',
       description: 'Are you receiving benefits?',
     },
-    isRecivingUnemploymentBenefitsDescription: {
-      id: 'pl.application:employer.isRecivingUnemploymentBenefitsDesc',
+    isReceivingUnemploymentBenefitsDescription: {
+      id: 'pl.application:employer.isReceivingUnemploymentBenefitsDesc',
       defaultMessage:
         'Bótaþegar sem þiggja bætur frá stéttarfélagi eða sjúkradagpeninga þurfa að skila inn staðfestingu ef við á.',
       description:
@@ -1327,6 +1364,16 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:employer.unemploymentBenefits',
       defaultMessage: `Hvaðan ertu að þiggja bætur?`,
       description: 'Where are you receiving benefits from?',
+    },
+    addEmployer: {
+      id: 'pl.application:employer.add',
+      defaultMessage: 'Bæta við vinnuveitanda',
+      description: 'Add an employer',
+    },
+    addEmployerError: {
+      id: 'pl.application:employer.add.error',
+      defaultMessage: 'Nauðsynlegt er að bæta við amk einum vinnuveitanda',
+      description: 'It is required to add at least one employer',
     },
   }),
 
@@ -1927,6 +1974,101 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'Submit',
     },
   }),
+  residenceGrantMessage: defineMessages({
+    residenceGrantTitle: {
+      id: 'pl.application:residence.grant.title',
+      defaultMessage: 'Dvalarstyrkur',
+      description: 'Residence grant',
+    },
+    residenceGrantOpenDescription: {
+      id: 'pl.application:residence.grant.open.description',
+      defaultMessage: 'Hér getur þú sótt um dvalarstyrk',
+      description: 'Here you can apply for residence grant',
+    },
+    residenceGrantClosedDescription: {
+      id: 'pl.application:residence.grant.closed.description',
+      defaultMessage:
+        'Ekki er hægt að sækja um dvalarstyrk fyrr en eftir að barn er fætt. Sækja skal um innan sex mánaða frá fæðingardegi barns.',
+      description:
+        'The residence grant cannot be applied for until after the child is born. Applications shall be applied for within six months from the date of delivery.',
+    },
+    residenceGrantClosedTitle: {
+      id: 'pl.application:residence.grant.closed.title',
+      defaultMessage: 'Þú getur ekki sótt um ennþá.',
+      description: 'You can not apply yet.',
+    },
+    residenceGrantPeriodDescriptionLineOne: {
+      id: 'pl.application:residence.grant.period.description.line.one',
+      defaultMessage:
+        'Heimilt er að greiða dvalarkostnað barnshafandi foreldris fjarri heimili 14 dögum fyrir áætlaðan fæðingardag og fram að fæðingu',
+      description:
+        'It is permitted to pay the expenses of a pregnant parent´s stay away from home 14 days before the expected date of birth and until the birth',
+    },
+    residenceGrantPeriodDescriptionLineTwo: {
+      id: 'pl.application:residence.grant.period.description.line.two',
+      defaultMessage:
+        'Ef um fjölburameðgöngu er að ræða er heimilt að byrja að greiða dvalarkostnað 28 dögum fyrir áætlaðan fæðingardag og fram að fæðingu',
+      description:
+        'In the case of a multiple pregnancy, it is permitted to start paying accommodation expenses 28 days before the expected date of birth and until the birth',
+    },
+
+    residenceGrantApplyTitle: {
+      id: 'pl.application:residence.grant.apply.title',
+      defaultMessage: 'Sækja um dvalarstyrk',
+      description: 'Apply for residence grant',
+    },
+    residenceGrantApplyHeader: {
+      id: 'pl.application:residence.grant.apply.header',
+      defaultMessage: 'Tímabil dvalarstyrks',
+      description: 'Period of residency',
+    },
+    residenceGrantAttachmentTitle: {
+      id: 'pl.application:residence.grant.attachment.title',
+      defaultMessage: 'Vottorð um dvalarstyrk',
+      description: 'A residence grant certificate',
+    },
+    residenceGrantAttachmentDescription: {
+      id: 'pl.application:residence.grant.attachment.description',
+      defaultMessage:
+        'Til að sækja um dvalarstyrk þarf að senda inn vottorð þess sérfræðilæknis sem annast hefur foreldrið. Vottorð um dvalarstyrk skal berast á því formi sem aðgengilegt er í Sögukerfi heilbrigðisstofnana. Á vottorðinu þarf að koma fram rökstuðningur sérfræðilæknis fyrir því að viðkomandi foreldri sé nauðsynlegt að hans mati að dvelja fjarri heimili sínu í tiltekinn tíma fyrir áætlaðan fæðingardag barns. Einnig þarf að koma fram á vottorðinu hvort að foreldrið hafi dvalið á sjúkrahúsi eða heilbrigðisstofnun á því tímabili. Vinnumálastofnun þarf að berast frumrit af vottorðinu með undirskrift læknis. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        'When applying for a residence grant, a certificate from the parent’s specialist doctor needs to be submitted with the application. A residence grant certificate shall be submitted using the form available in the health care history system. The certificate must stipulate the specialist doctor’s reasoning for the necessity of the relevant parent to live far from her home for a certain amount of time before the expected date of delivery. The certificate must also stipulate information about whether the parent has stayed in a hospital or a health institute during that period. The original certificate must be submitted with a doctor’s signature. Note that the document needs to be on .pdf format.',
+    },
+    residenceGrantOpen: {
+      id: 'pl.application:residence.grant.open',
+      defaultMessage: 'Hér getur þú sent inn umsókn þína.',
+      description: 'Here you can submit your application',
+    },
+    residenceGrantOpenTitle: {
+      id: 'pl.application:residence.grant.open.title',
+      defaultMessage: 'Sendu inn umsókn þína',
+      description: 'Submit your application',
+    },
+    residenceGrantSubmit: {
+      id: 'pl.application:residence.grant.submit',
+      defaultMessage: 'Sendu inn',
+      description: 'Submit',
+    },
+    residenceGrantReject: {
+      id: 'pl.application:residence.grant.reject',
+      defaultMessage: 'Ekki senda inn',
+      description: 'Reject',
+    },
+
+    residenceGrantSelectPeriodSubmitDescription: {
+      id: 'pl.application:residence.grant.select.period.submit.description',
+      defaultMessage: 'Sendu inn umsókn til að sækja um dvalarstyrk',
+      description: 'Send in you application to apply for residence grant',
+    },
+
+    residenceGrantApplicationSendInformation: {
+      id: 'pl.application:residence.grant.application.send.information',
+      defaultMessage:
+        'Þú hefur sótt um dvalarstyrk og umsókn þín er í vinnslu.',
+      description:
+        'You have applied for a residence grant, and your application is being processed.',
+    },
+  }),
 }
 
 export const employerFormMessages = defineMessages({
@@ -2072,6 +2214,11 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Símanúmerið þarf að vera gilt.',
     description: 'Error message when phone number is invalid.',
   },
+  GSMPhoneNumber: {
+    id: 'pl.application:dataSchema.GSMPhoneNumber',
+    defaultMessage: 'Símanúmerið þarf að vera GSM númer.',
+    description: 'Invalid phoneNumber. Has to be a GSM number.',
+  },
   otherParentId: {
     id: 'pl.application:dataSchema.otherParent.id',
     defaultMessage: 'Kennitala þarf að vera gild.',
@@ -2097,6 +2244,16 @@ export const errorMessages = defineMessages({
     id: 'pl.application:answerValidators.employerEmail',
     defaultMessage: 'Þú þarft að skilgreina netfang vinnuveitanda.',
     description: 'Invalid employer copy',
+  },
+  employersRatioMissing: {
+    id: 'pl.application:answerValidators.employersRatioMissing',
+    defaultMessage: 'Ekkert hlutfall hefur verið valið',
+    description: 'Copy when days to be used by period is missing',
+  },
+  employersNotAList: {
+    id: 'pl.application:answerValidators.employersNotAList',
+    defaultMessage: 'Svar þarf að vera listi af vinnuveitanda',
+    description: 'Copy when employers is not a list',
   },
   employerNationalRegistryId: {
     id: 'pl.application:dataSchema.invalidEmployerNationalRegistryId',
@@ -2545,5 +2702,10 @@ export const statesMessages = defineMessages({
     id: 'pl.application:vinnumalastofnunEditsAction.description',
     defaultMessage: 'Vinnumálastofnun hafnaði tímabreytingum þínum.',
     description: 'Description of the state - vinnumalastofnunEditsAction',
+  },
+  residenceGrantInProgress: {
+    id: 'pl.application:residence.grant.in.progress',
+    defaultMessage: 'Þú ert að sækja um dvalarstyrk.',
+    description: 'You are applying for a residence grant',
   },
 })
