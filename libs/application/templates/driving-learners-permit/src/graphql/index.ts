@@ -11,7 +11,7 @@ export const IDENTITY_QUERY = gql`
 export const STUDENT_MENTORABILITY_QUERY = gql`
   query StudentMentorability($input: StudentMentorabilityInput!) {
     studentMentorability(input: $input) {
-      isMentorable
+      eligible
     }
   }
 `

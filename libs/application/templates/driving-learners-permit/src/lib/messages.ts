@@ -115,6 +115,16 @@ export const m = defineMessages({
       'Nemandi uppfyllir ekki þær kröfur sem gerðar eru til þess að mega byrja æfingaakstur',
     description: 'Description text for a student who is not mentorable',
   },
+  studentIsMentorableLoadingHeader: {
+    id: 'dlp.application:studentIsMentorableLoadingHeader',
+    defaultMessage: 'Sæki upplýsingar',
+    description: 'Informing user that we are loading data',
+  },
+  studentIsMentorableLoadingDescription: {
+    id: 'dlp.application:studentIsMentorableLoadingDescription',
+    defaultMessage: 'Vinsamlegast bíðið á meðan upplýsingar eru sóttar...',
+    description: 'Informing user that we are loading data',
+  },
 
   /* ------------ */
   /* DONE SECTION */

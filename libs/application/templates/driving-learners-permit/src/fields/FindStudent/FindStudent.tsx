@@ -8,6 +8,7 @@ import {
   ContentBlock,
   GridColumn,
   GridRow,
+  LoadingDots,
   Text,
 } from '@island.is/island-ui/core'
 import { formatText, getValueViaPath } from '@island.is/application/core'
@@ -92,11 +93,12 @@ const FindStudent: FC<FindStudentFieldBaseProps> = ({ application }) => {
         console.log('getStudentMentorabilityError:', error)
       },
       onCompleted: (data) => {
+        console.log("WE HAVE DATA", data)
         if (data.studentMentorability) {
           clearErrors(fieldNames.studentMentorabilityError)
           setValue(
             fieldNames.studentIsMentorable,
-            data.studentMentorability.isMentorable
+            data.studentMentorability.eligible
               ? 'isMentorable'
               : 'isNotMentorable',
           )
@@ -140,6 +142,7 @@ const FindStudent: FC<FindStudentFieldBaseProps> = ({ application }) => {
           }
           getIdentity(nationalIdInput)
           getStudentMentorability(nationalIdInput)
+          setValue(fieldNames.studentIsMentorable, 'loading')
         }
       } else if (studentName !== '') {
         setValue(fieldNames.studentName, '')
@@ -196,6 +199,16 @@ const FindStudent: FC<FindStudentFieldBaseProps> = ({ application }) => {
         <GridColumn span="12/12">
           {getValues(fieldNames.studentIsMentorable) !== 'default' && (
             <ContentBlock>
+              {getValues(fieldNames.studentIsMentorable) === 'loading' && (
+                <>
+                <LoadingDots />
+                <AlertMessage
+                  type="info"
+                  title={formatMessage(m.studentIsMentorableLoadingHeader)}
+                  message={formatMessage(m.studentIsMentorableLoadingDescription)}
+                />
+                </>
+              )}
               {getValues(fieldNames.studentIsMentorable) === 'isMentorable' && (
                 <AlertMessage
                   type="success"
