@@ -36,3 +36,10 @@ export interface SortTitle {
   Stofnanir: SortOptions
   Málefnasvið: SortOptions
 }
+
+export interface ArrOfTypes {
+  policyAreas: { [key: string]: string }
+  institutions: { [key: string]: string }
+  caseStatuses: { [key: string]: string }
+  caseTypes: { [key: string]: string }
+}
