@@ -1689,10 +1689,6 @@ regulations-admin-backend:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/regulations-admin-backend/DB_PASSWORD'
     REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL'
-    SOFFIA_HOST_URL: '/k8s/api/SOFFIA_HOST_URL'
-    SOFFIA_PASS: '/k8s/service-portal/SOFFIA_PASS'
-    SOFFIA_SOAP_URL: '/k8s/api/SOFFIA_SOAP_URL'
-    SOFFIA_USER: '/k8s/service-portal/SOFFIA_USER'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
