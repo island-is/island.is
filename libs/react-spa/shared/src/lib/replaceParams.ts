@@ -8,17 +8,10 @@ type ReplaceParams = {
 
 /**
  * Replace params in path
+ *
  * @example
- * replaceParams('/users/:id', { id: 1 }) // '/users/1'
+ * replaceParams('/users/:id/:friend', { id: 1, friend: 'john' }) -> '/users/1/john'
  */
-export const replaceParams = ({
-  href,
-  params,
-  paramsPrefix = '/',
-}: ReplaceParams) => {
-  return href.replace(
-    /\/:(\w+)/g,
-    (_, paramName) =>
-      paramsPrefix + encodeURIComponent(params[paramName] as string),
-  )
+export function replaceParams({ href, params }: ReplaceParams) {
+  return href.replace(/\/:(\w+)/g, (_, paramName) => encodeURIComponent(`/${params[paramName]}`))
 }

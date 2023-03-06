@@ -20,7 +20,8 @@ const prodConfig = {
   },
   auth: {
     audience,
-    issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    issuer: process.env.IDENTITY_SERVER_ISSUER_URL!,
   },
 }
 
