@@ -77,4 +77,8 @@ export const m = defineMessages({
     id: 'ap.ids-admin:clientId',
     defaultMessage: 'Client ID',
   },
+  chooseEnvironment: {
+    id: 'ap.ids-admin:choose-environment',
+    defaultMessage: 'Veldu umhverfi',
+  },
 })

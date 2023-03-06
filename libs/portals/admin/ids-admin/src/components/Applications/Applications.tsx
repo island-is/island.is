@@ -7,27 +7,27 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { Link, useOutletContext, useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import MockApplications from '../../lib/MockApplications'
 import { useEffect, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { Modal } from '../Modal/Modal'
-import { CreateApplicationForm } from '../forms/CreateApplicationForm/CreateApplicationForm'
-import { useTenant } from '../../screens/Tenant'
+import { CreateApplication } from '../forms/CreateApplication/CreateApplication'
+import { useTenant } from '../../screens/Tenant/Tenant'
 import { replaceParams } from '@island.is/react-spa/shared'
 import { IDSAdminPaths } from '../../lib/paths'
 import * as styles from '../TenantsList/TenantsList.css'
 
 const Applications = () => {
-  const { tenant } = useParams<{ tenant: string }>()
+  const { tenant: tenantId } = useParams<{ tenant: string }>()
   const [createApplicationModal, setCreateApplicationModal] = useState(false)
   const { formatMessage } = useLocale()
   const { setNavTitle } = useTenant()
 
   useEffect(() => {
     // TODO: Get application by id from backend
-    setNavTitle(tenant ? tenant : formatMessage(m.tenants))
+    setNavTitle(tenantId ? tenantId : formatMessage(m.tenants))
   })
 
   return (
@@ -56,7 +56,7 @@ const Applications = () => {
                 to={replaceParams({
                   href: IDSAdminPaths.IDSAdminApplication,
                   params: {
-                    tenant: tenant,
+                    tenant: tenantId,
                     application: item.id,
                   },
                 })}
@@ -106,10 +106,7 @@ const Applications = () => {
         onClose={() => setCreateApplicationModal(false)}
         title="Create Application"
       >
-        <CreateApplicationForm
-          tenant={tenant as string}
-          onCancel={() => setCreateApplicationModal(false)}
-        />
+        <CreateApplication onCancel={() => setCreateApplicationModal(false)} />
       </Modal>
     </GridContainer>
   )

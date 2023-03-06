@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common'
-import { Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
@@ -8,11 +8,17 @@ import { Tenant } from './models/tenant.model'
 import { TenantsService } from './tenants.service'
 import { TenantEnvironment } from './models/tenant-environment.model'
 import { Environment } from '../models/environment'
+import { ActorDelegationInput } from '../../../../auth/src/lib/dto/actorDelegation.input'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Tenant)
 export class TenantResolver {
   constructor(private readonly tenantsService: TenantsService) {}
+
+  @Query(() => Tenant, { name: 'authAdminTenant' })
+  getTenant(@Args('id') id: string) {
+    return this.tenantsService.getTenant(id)
+  }
 
   @Query(() => TenantsPayload, { name: 'authAdminTenants' })
   getTenants() {

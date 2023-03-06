@@ -3,15 +3,18 @@ import { lazy } from 'react'
 import { PortalModule } from '@island.is/portals/core'
 import { IDSAdminPaths } from './lib/paths'
 import { AdminPortalScope } from '@island.is/auth/scopes'
-import Tenant from './screens/Tenant'
-import Applications from './components/Applications/Applications'
-import ApplicationsScreen from './screens/ApplicationsScreen'
 import { m } from './lib/messages'
-import TenantsList from './components/TenantsList/TenantsList'
-import { createApplicationFormAction } from './components/forms/CreateApplicationForm/CreateApplicationForm.action'
+import { createApplicationAction } from './components/forms/CreateApplication/CreateApplication.action'
 import { tenantsListLoader } from './components/TenantsList/TenantsList.loader'
+import { tenantLoader, tenantLoaderId } from './screens/Tenant/Tenant.loader'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
+const Tenant = lazy(() => import('./screens/Tenant/Tenant'))
+const TenantsList = lazy(() => import('./components/TenantsList/TenantsList'))
+const Applications = lazy(() =>
+  import('./components/Applications/Applications'),
+)
+const ApplicationsScreen = lazy(() => import('./screens/ApplicationsScreen'))
 
 const allowedScopes: string[] = [AdminPortalScope.idsAdmin]
 
@@ -80,6 +83,8 @@ export const idsAdminModule: PortalModule = {
             name: m.tenants,
             path: '',
             element: <Tenant />,
+            loader: tenantLoader(props),
+            id: tenantLoaderId,
             handle: {
               backPath: IDSAdminPaths.IDSAdmin,
             },
@@ -88,10 +93,10 @@ export const idsAdminModule: PortalModule = {
                 name: m.applications,
                 path: IDSAdminPaths.IDSAdminTenants,
                 element: <Applications />,
+                action: createApplicationAction(props),
                 handle: {
                   backPath: IDSAdminPaths.IDSAdmin,
                 },
-                action: createApplicationFormAction(props),
               },
               {
                 name: m.apis,

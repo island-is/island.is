@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { isObject } from '@island.is/shared/utils'
 
 /**
  * Creates one level deep object from a URLSearchParams
@@ -125,40 +126,63 @@ export const getValuesFromFormData = (formData: FormData) => {
   return obj
 }
 
-type ActionErrors<T> = Partial<Record<keyof T, string>>
+const formatErrors = (errors: Record<string, { _errors?: string[] }>) => {
+  const formattedError: Record<string, unknown> = {}
 
-export const validateFormData = async <Schema extends z.ZodTypeAny>({
-  request,
-  schema,
-}: {
+  Object.keys(errors).forEach((key) => {
+    if (isObject(errors[key])) {
+      formattedError[key] = formatErrors(
+        errors[key] as Record<string, { _errors?: string[] }>,
+      )
+    }
+
+    if (errors[key]?._errors?.[0] && key !== '_errors') {
+      formattedError[key] = errors[key]?._errors?.[0]
+    }
+  })
+
+  return formattedError
+}
+
+type ValidateFormDataArgs<Schema> = {
   request: Request
   schema: Schema
-}) => {
+}
+
+type ValidateFormDataReturnType<Schema extends z.ZodTypeAny> = {
+  errors: Partial<z.infer<Schema>> | null
+  data: z.infer<Schema> | null
+}
+
+export async function validateFormData<Schema extends z.ZodTypeAny>({
+  request,
+  schema,
+}: ValidateFormDataArgs<Schema>): Promise<ValidateFormDataReturnType<Schema>> {
   const formData = await request.formData()
   const values = getValuesFromFormData(formData)
-  const nestedObject = dotNotationToNestedObject(values)
+  const nestedObject = dotNotationToNestedObject(values) as z.infer<
+    typeof schema
+  >
+  const result = schema.safeParse(nestedObject) as z.infer<typeof schema>
 
-  try {
-    const parsedFormData = schema.parse(nestedObject) as z.infer<typeof schema>
-
-    return { data: parsedFormData, errors: null }
-  } catch (e) {
-    const errors = e as z.ZodError<z.infer<typeof schema>>
-
+  if (result.error) {
     return {
+      errors: formatErrors(result.error.format()) as Partial<
+        z.infer<typeof schema>
+      >,
       data: null,
-      errors: errors.issues.reduce(
-        (acc: ActionErrors<z.infer<typeof schema>>, curr) => {
-          const key = curr.path[0] as keyof z.infer<typeof schema>
-
-          if (key) {
-            acc[key] = curr.message
-          }
-
-          return acc
-        },
-        {},
-      ),
     }
   }
+
+  return {
+    data: result,
+    errors: null,
+  }
 }
+
+/**
+ * Get the return type of validateFormData for a given schema
+ */
+export type ValidateFormDataResult<
+  Schema extends z.ZodTypeAny
+> = ValidateFormDataReturnType<Schema>

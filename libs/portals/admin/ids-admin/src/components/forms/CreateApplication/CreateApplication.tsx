@@ -1,9 +1,17 @@
 import React, { useRef } from 'react'
-import { Box, Button, Input } from '@island.is/island-ui/core'
-import { Form, useActionData } from 'react-router-dom'
+import { Box, Button, Checkbox, Input, Text } from '@island.is/island-ui/core'
+import { Form, useActionData, useRouteLoaderData } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
 import { useState } from 'react'
+import { CreateApplicationResult } from './CreateApplication.action'
+import {
+  tenantLoaderId,
+  TenantLoaderResult,
+} from '../../../screens/Tenant/Tenant.loader'
+import { AuthAdminEnvironment } from '@island.is/api/schema'
+
+const environments = Object.values(AuthAdminEnvironment)
 
 const formatClientId = (name: string) => {
   return name.trim().toLowerCase().replace(/\s+/g, '-')
@@ -16,17 +24,14 @@ type InputState = {
 
 type CreateApplicationFormProps = {
   onCancel(): void
-  tenant: string
 }
 
-export const CreateApplicationForm = ({
-  onCancel,
-  tenant,
-}: CreateApplicationFormProps) => {
-  const actionData = useActionData()
+export const CreateApplication = ({ onCancel }: CreateApplicationFormProps) => {
+  const tenant = useRouteLoaderData(tenantLoaderId) as TenantLoaderResult
+  const actionData = useActionData() as CreateApplicationResult
   const { formatMessage } = useLocale()
   const formRef = useRef<HTMLFormElement>(null)
-  const CLIENT_ID_PREFIX = `${tenant}/`
+  const CLIENT_ID_PREFIX = `${tenant.id}/`
 
   const initialClientIdState: InputState = {
     value: '',
@@ -81,10 +86,11 @@ export const CreateApplicationForm = ({
             label={formatMessage(m.displayName)}
             size="sm"
             onChange={onNameChange}
+            errorMessage={actionData?.errors?.displayName}
           />
         </Box>
         <Box width="full">
-          <input type="text" hidden name="tenant" value={tenant} />
+          <input type="text" hidden name="tenant" defaultValue={tenant.id} />
           <Input
             type="text"
             name="clientId"
@@ -93,7 +99,31 @@ export const CreateApplicationForm = ({
             prefix={CLIENT_ID_PREFIX}
             value={clientIdState.value}
             onChange={onClientIdChange}
+            errorMessage={actionData?.errors?.clientId}
           />
+        </Box>
+      </Box>
+      <Box marginTop={3}>
+        <Text variant="h4">{formatMessage(m.chooseEnvironment)}</Text>
+        <Box display="flex" columnGap={3}>
+          {environments.map((env) => {
+            const envName = tenant.availableEnvironments.find(
+              (environment) => env === environment,
+            )
+            return (
+              <Box width="full">
+                <Checkbox
+                  key={env}
+                  label={env}
+                  name={envName}
+                  id={envName}
+                  value="true"
+                  disabled={!tenant.availableEnvironments.includes(env)}
+                  large
+                />
+              </Box>
+            )
+          })}
         </Box>
       </Box>
       <Box display="flex" justifyContent="spaceBetween" marginTop={7}>
