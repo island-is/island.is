@@ -95,6 +95,7 @@ const LimitedAccessCaseQuery = gql`
         id
       }
       caseModifiedExplanation
+      caseResentExplanation
     }
   }
 `
