@@ -207,6 +207,7 @@ const Item = ({
         name={shareField}
         control={control}
         defaultValue={field.share || 0}
+        render={() => <input type="hidden" />}
       />
 
       <Box position="absolute" className={styles.removeFieldButton}>

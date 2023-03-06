@@ -1,5 +1,5 @@
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
 import { Box, Text, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
@@ -7,13 +7,13 @@ import { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { NationalIdWithName } from '../NationalIdWithName'
 import { information } from '../../lib/messages'
-import { ReviewCoOwnerAndOperatorFormField } from '../../types'
+import { CoOwnerAndOperator } from '../../shared'
 
 interface Props {
   id: string
   index: number
   rowLocation: number
-  repeaterField: ReviewCoOwnerAndOperatorFormField
+  repeaterField: GenericFormField<CoOwnerAndOperator>
   handleRemove: (index: number) => void
   addNationalIdToCoOwners: (nationalId: string, index: number) => void
 }
