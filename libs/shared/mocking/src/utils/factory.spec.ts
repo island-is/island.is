@@ -157,4 +157,21 @@ describe('factory', () => {
       { title: 'Hello', age: 1 },
     ])
   })
+
+  it('passes an incrementing index to initializers when creating a list of objects', () => {
+    // Arrange
+    const createObj = factory<Obj>({
+      title: 'Hello',
+      age: (_, index) => index,
+    })
+
+    // Act
+    const objects = createObj.list(2)
+
+    // Assert
+    expect(objects).toEqual([
+      { title: 'Hello', age: 0 },
+      { title: 'Hello', age: 1 },
+    ])
+  })
 })

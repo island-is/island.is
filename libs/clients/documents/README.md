@@ -47,4 +47,4 @@ export class SomeService {
 
 ## Code owners and maintainers
 
-- [Sendiráðið](https://github.com/orgs/island-is/teams/sendiradid/members)
+- [Norda](https://github.com/orgs/island-is/teams/norda/members)

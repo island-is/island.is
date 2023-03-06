@@ -54,7 +54,7 @@ export const StatisticForm: FC<Props> = ({ onSubmit }) => {
                   onChange={onChange}
                   placeholder={formatMessage(m.DashBoardStatisticsFileName)}
                   backgroundColor="blue"
-                  icon="search"
+                  icon={{ name: 'search' }}
                 />
               )}
             />

@@ -30,6 +30,7 @@ export enum Features {
   transportAuthorityLicensePlateRenewal = 'isTransportAuthorityLicensePlateRenewalEnabled',
   drivingLicenseBookUpdateInstructor = 'isDrivingLicenseBookUpdateInstructorEnabled',
   alcoholTaxRedemption = 'isAlcoholTaxRedemptionEnabled',
+  consultationPortalApplication = 'isConsultationPortalEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',

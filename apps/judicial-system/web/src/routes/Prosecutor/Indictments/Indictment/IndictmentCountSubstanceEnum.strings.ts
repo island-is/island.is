@@ -11,79 +11,79 @@ export const indictmentCountSubstanceEnum = defineMessages({
     id:
       'judicial.system.core:indictments_indictment.indictment_offense_count_enum.amphetamine',
     defaultMessage: 'amfetamín {amount} ng/ml',
-    description: 'Nota[ur fyrir amfetamín í blóði.',
+    description: 'Notaður fyrir amfetamín í blóði.',
   },
   ETIZOLAM: {
     id:
       'judicial.system.core:indictments_indictment.indictment_offense_count_enum.etizolam',
     defaultMessage: 'etízólam {amount} ng/ml',
-    description: 'Nota[ur fyrir etízólam í blóði.',
+    description: 'Notaður fyrir etízólam í blóði.',
   },
   PHENAZEPAM: {
     id:
       'judicial.system.core:indictments_indictment.indictment_offense_count_enum.phenazepam',
     defaultMessage: 'fenazepam {amount} ng/ml',
-    description: 'Nota[ur fyrir fenazepam í blóði.',
+    description: 'Notaður fyrir fenazepam í blóði.',
   },
   KETAMINE: {
     id:
       'judicial.system.core:indictments_indictment.indictment_offense_count_enum.ketamine',
     defaultMessage: 'ketamín {amount} ng/ml',
-    description: 'Nota[ur fyrir ketamín í blóði.',
+    description: 'Notaður fyrir ketamín í blóði.',
   },
   KETOBEMIDONE: {
     id:
       'judicial.system.core:indictments_indictment.indictment_offense_count_enum.ketobemidone',
     defaultMessage: 'ketobemidone {amount} ng/ml',
-    description: 'Nota[ur fyrir ketobemidone í blóði.',
+    description: 'Notaður fyrir ketobemidone í blóði.',
   },
   COCAINE: {
     id:
       'judicial.system.core:indictments_indictment.indictment_offense_count_enum.cocaine',
     defaultMessage: 'kókaín {amount} ng/ml',
-    description: 'Nota[ur fyrir kókaín í blóði.',
+    description: 'Notaður fyrir kókaín í blóði.',
   },
   MDMA: {
     id:
       'judicial.system.core:indictments_indictment.indictment_offense_count_enum.mdma',
     defaultMessage: 'mDMA {amount} ng/ml',
-    description: 'Nota[ur fyrir mDMA í blóði.',
+    description: 'Notaður fyrir mDMA í blóði.',
   },
   METHAMPHETAMINE: {
     id:
       'judicial.system.core:indictments_indictment.indictment_offense_count_enum.methamphetamine',
     defaultMessage: 'metamfetamín {amount} ng/ml',
-    description: 'Nota[ur fyrir metamfetamín í blóði.',
+    description: 'Notaður fyrir metamfetamín í blóði.',
   },
   METHYLPHENIDATE: {
     id:
       'judicial.system.core:indictments_indictment.indictment_offense_count_enum.methylphenidate',
     defaultMessage: 'metýlfenídat {amount} ng/ml',
-    description: 'Nota[ur fyrir metýlfenídat í blóði.',
+    description: 'Notaður fyrir metýlfenídat í blóði.',
   },
   O_DESMETHYLTRAMADOL: {
     id:
       'judicial.system.core:indictments_indictment.indictment_offense_count_enum.o_desmethyltramadol',
     defaultMessage: 'o-Desmetýltramadól {amount} ng/ml',
-    description: 'Nota[ur fyrir O-desmetýltramadól í blóði.',
+    description: 'Notaður fyrir O-desmetýltramadól í blóði.',
   },
   TETRAHYDROCANNABINOL: {
     id:
       'judicial.system.core:indictments_indictment.indictment_offense_count_enum.tetrahydrocannabinol',
     defaultMessage: 'tetrahýdrókannabínól {amount} ng/ml',
-    description: 'Nota[ur fyrir tetrahýdrókannabínól í blóði.',
+    description: 'Notaður fyrir tetrahýdrókannabínól í blóði.',
   },
   TRAMADOL: {
     id:
       'judicial.system.core:indictments_indictment.indictment_offense_count_enum.tramadol',
     defaultMessage: 'tramadól {amount} ng/ml',
-    description: 'Nota[ur fyrir tramadól í blóði.',
+    description: 'Notaður fyrir tramadól í blóði.',
   },
   ZOPICLONE: {
     id:
       'judicial.system.core:indictments_indictment.indictment_offense_count_enum.zopiclone',
     defaultMessage: 'zópíklón {amount} ng/ml',
-    description: 'Nota[ur fyrir zópíklón í blóði.',
+    description: 'Notaður fyrir zópíklón í blóði.',
   },
   ALPRAZOLAM: {
     id:

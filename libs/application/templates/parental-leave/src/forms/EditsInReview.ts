@@ -23,7 +23,7 @@ export const EditsInReview: Form = buildForm({
       children: [
         buildCustomField({
           id: 'EditsInReviewSteps',
-          title: parentalLeaveFormMessages.reviewScreen.titleInReview,
+          title: '',
           component: 'InReviewSteps',
         }),
       ],
