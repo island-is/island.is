@@ -6,7 +6,7 @@ import {
 import { information } from '../../../lib/messages'
 
 export const pickPlateSubSection = buildSubSection({
-  id: 'pickPlate',
+  id: 'pickPlateSubSection',
   title: information.labels.pickPlate.sectionTitle,
   children: [
     buildMultiField({

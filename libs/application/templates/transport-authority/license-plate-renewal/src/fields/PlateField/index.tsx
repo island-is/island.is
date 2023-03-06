@@ -7,7 +7,7 @@ import { PlateRadioField } from './PlateRadioField'
 
 export const PlateField: FC<FieldBaseProps> = (props) => {
   const { application } = props
-  const myPlateOwnershipList = application.externalData.myPlateOwnershipList
+  const myPlateOwnershipList = application.externalData['myPlateOwnershipList']
     .data as PlateOwnership[]
   console.log(application, myPlateOwnershipList)
   return (

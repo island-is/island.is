@@ -13,6 +13,7 @@ import { PlateOwnership } from '../../shared'
 import { information } from '../../lib/messages'
 import { SelectController } from '@island.is/shared/form-fields'
 import { getValueViaPath } from '@island.is/application/core'
+import { useFormContext } from 'react-hook-form'
 
 interface PlateSearchFieldProps {
   myPlateOwnershipList: PlateOwnership[]
@@ -22,11 +23,12 @@ export const PlateSelectField: FC<PlateSearchFieldProps & FieldBaseProps> = ({
   myPlateOwnershipList,
   application,
 }) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, formatDateFns } = useLocale()
+  const { register } = useFormContext()
 
   const plateValue = getValueViaPath(
     application.answers,
-    'pickPlate.plate',
+    'pickPlate.value',
     '',
   ) as string
   const currentPlate = myPlateOwnershipList[parseInt(plateValue, 10)]
@@ -36,6 +38,11 @@ export const PlateSelectField: FC<PlateSearchFieldProps & FieldBaseProps> = ({
     currentPlate && currentPlate.regno
       ? {
           regno: currentPlate.regno,
+          startDate: currentPlate.startDate,
+          endDate: currentPlate.endDate,
+          permno: currentPlate.permno,
+          nationalId: currentPlate.nationalId,
+          name: currentPlate.name,
           validationErrorMessages: currentPlate.validationErrorMessages,
         }
       : null,
@@ -47,20 +54,28 @@ export const PlateSelectField: FC<PlateSearchFieldProps & FieldBaseProps> = ({
     if (currentPlate.regno) {
       setSelectedPlate({
         regno: currentPlate.regno,
+        startDate: currentPlate.startDate,
+        endDate: currentPlate.endDate,
+        permno: currentPlate.permno,
+        nationalId: currentPlate.nationalId,
+        name: currentPlate.name,
         validationErrorMessages: currentPlate.validationErrorMessages,
       })
       setIsLoading(false)
     }
   }
-
+  const inThreeMonths = new Date().setMonth(new Date().getMonth() + 3)
+  const canRenew =
+    selectedPlate && +new Date(selectedPlate.endDate) <= +inThreeMonths
   const disabled =
-    selectedPlate && !!selectedPlate.validationErrorMessages?.length
+    (selectedPlate && !!selectedPlate.validationErrorMessages?.length) ||
+    !canRenew
   return (
     <Box>
       <SelectController
         label={formatMessage(information.labels.pickPlate.plate)}
-        id="pickPlate.plate"
-        name="pickPlate.plate"
+        id="pickPlate.value"
+        name="pickPlate.value"
         onSelect={(option) => onChange(option as Option)}
         options={myPlateOwnershipList.map((plate, index) => {
           return {
@@ -81,6 +96,20 @@ export const PlateSelectField: FC<PlateSearchFieldProps & FieldBaseProps> = ({
                 colorScheme={disabled ? 'red' : 'blue'}
                 heading={selectedPlate.regno || ''}
                 text=""
+                tags={[
+                  {
+                    label: formatMessage(
+                      information.labels.pickPlate.expiresTag,
+                      {
+                        date: formatDateFns(
+                          new Date(selectedPlate.endDate),
+                          'do MMM yyyy',
+                        ),
+                      },
+                    ),
+                    disabled: true,
+                  },
+                ]}
               />
             )}
             {selectedPlate && disabled && (
@@ -108,6 +137,12 @@ export const PlateSelectField: FC<PlateSearchFieldProps & FieldBaseProps> = ({
           </Box>
         )}
       </Box>
+      <input
+        type="hidden"
+        value={disabled ? '' : selectedPlate.regno}
+        ref={register({ required: true })}
+        name="pickPlate.regno"
+      />
     </Box>
   )
 }
