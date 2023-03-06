@@ -1,4 +1,5 @@
 import {
+  ClientLogLevel,
   ContentfulClientApi,
   createClient,
   CreateClientParams,
@@ -19,10 +20,22 @@ import {
 } from '@island.is/content-search-index-manager'
 import { Locale } from 'locale'
 
+// Taken from here: https://github.com/contentful/contentful-sdk-core/blob/054328ba2d0df364a5f1ce6d164c5018efb63572/lib/create-http-client.js#L34-L42
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const defaultContentfulClientLogging = (level: ClientLogLevel, data: any) => {
+  if (level === 'error' && data) {
+    const title = [data.name, data.message].filter((a) => a).join(' - ')
+    logger.error(`[error] ${title}`)
+    logger.error(data)
+    return
+  }
+  logger.info(`[${level}] ${data}`)
+}
+
 interface SyncerResult {
-  items: Entry<unknown>[]
-  deletedItems: string[]
   token: string
+  items: Entry<unknown>[]
+  deletedEntryIds: string[]
   elasticIndex: string
 }
 
@@ -52,6 +65,19 @@ export class ContentfulService {
       environment: environment.contentful.environment,
       host: environment.contentful.host,
       removeUnresolved: true,
+      logHandler(level, data) {
+        const logContainsRateLimitWarning =
+          level === 'warning' &&
+          typeof data === 'string' &&
+          data.includes('Rate limit')
+
+        if (logContainsRateLimitWarning) {
+          logger.debug(`Search indexer sync caused rate limit - ${data}`)
+          return
+        }
+
+        defaultContentfulClientLogging(level, data)
+      },
     }
     logger.debug('Syncer created', params)
     this.contentfulClient = createClient(params)
@@ -73,7 +99,7 @@ export class ContentfulService {
     }, [])
   }
 
-  private async getContentfulData(
+  async getContentfulData(
     chunkSize: number,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     query?: any,
@@ -185,7 +211,7 @@ export class ContentfulService {
     })
   }
 
-  private async getAllEntriesFromContentful(
+  private async getPopulatedContentulEntries(
     entries: Entry<unknown>[],
     locale: ElasticsearchIndexLocale,
     chunkSize: number,
@@ -227,7 +253,7 @@ export class ContentfulService {
       deletedEntries,
     } = await this.getSyncData(typeOfSync)
 
-    const nestedEntries = entries
+    const nestedEntryIds = entries
       .filter((entry) =>
         environment.nestedContentTypes.includes(entry.sys.contentType.sys.id),
       )
@@ -236,24 +262,27 @@ export class ContentfulService {
     logger.info('Sync found entries', {
       entries: entries.length,
       deletedEntries: deletedEntries.length,
-      nestedEntries: nestedEntries.length,
+      nestedEntries: nestedEntryIds.length,
     })
 
     // get all sync entries from Contentful endpoints for this locale, we could parse the sync response into locales but we are opting for this for simplicity
-    const items = await this.getAllEntriesFromContentful(
-      entries,
+    const indexableEntries = await this.getPopulatedContentulEntries(
+      entries.filter((entry) =>
+        // Only populate the indexable entries
+        environment.indexableTypes.includes(entry.sys.contentType.sys.id),
+      ),
       locale,
       chunkSize,
     )
 
     // extract ids from deletedEntries
-    const deletedItems = deletedEntries.map((entry) => entry.sys.id)
+    const deletedEntryIds = deletedEntries.map((entry) => entry.sys.id)
 
     return {
-      items,
-      nestedEntries,
+      indexableEntries,
+      nestedEntryIds,
+      deletedEntryIds,
       newNextSyncToken,
-      deletedItems,
     }
   }
 
@@ -278,46 +307,79 @@ export class ContentfulService {
       chunkSize,
     )
 
-    const { items, newNextSyncToken, deletedItems } = populatedSyncEntriesResult
-    let { nestedEntries } = populatedSyncEntriesResult
+    const {
+      indexableEntries,
+      newNextSyncToken,
+      deletedEntryIds,
+    } = populatedSyncEntriesResult
+    let { nestedEntryIds } = populatedSyncEntriesResult
+
+    const isDeltaUpdate = syncType !== 'full'
 
     // In case of delta updates, we need to resolve embedded entries to their root model
-    if (syncType !== 'full' && nestedEntries) {
+    if (isDeltaUpdate) {
       logger.info('Finding root entries from nestedEntries')
 
+      const visitedEntryIds = new Set<string>()
+
       for (let i = 0; i < this.defaultIncludeDepth; i += 1) {
-        const linkedEntries = []
-        for (const entryId of nestedEntries) {
-          // We fetch the entries that are linking to our nested entries
-          linkedEntries.push(
-            ...(
-              await this.getContentfulData(chunkSize, {
-                include: this.defaultIncludeDepth,
-                links_to_entry: entryId,
-                locale: this.contentfulLocaleMap[locale],
-              })
-            ).filter(
-              (entry) => !items.some((item) => item.sys.id === entry.sys.id),
-            ),
+        if (nestedEntryIds.length <= 0) break
+
+        const nextLevelOfNestedEntryIds = new Set<string>()
+
+        const promises: Promise<Entry<unknown>[]>[] = []
+        for (const entryId of nestedEntryIds) {
+          if (visitedEntryIds.has(entryId)) {
+            continue
+          }
+          visitedEntryIds.add(entryId)
+
+          promises.push(
+            this.getContentfulData(chunkSize, {
+              include: this.defaultIncludeDepth,
+              links_to_entry: entryId,
+              locale: this.contentfulLocaleMap[locale],
+            }),
           )
         }
-        items.push(
-          ...linkedEntries.filter((entry) =>
-            environment.indexableTypes.includes(entry.sys.contentType.sys.id),
-          ),
-        )
-        // Next round of the loop will only find linked entries to these entries
-        nestedEntries = linkedEntries.map((entry) => entry.sys.id)
-        logger.info(
-          `Found ${linkedEntries.length} nested entries at depth ${i + 1}`,
-        )
+
+        const responses = await Promise.all(promises)
+
+        let counter = 0
+        for (const linkedEntries of responses) {
+          for (const linkedEntry of linkedEntries) {
+            counter += 1
+            if (
+              environment.indexableTypes.includes(
+                linkedEntry.sys.contentType.sys.id,
+              )
+            ) {
+              const entryAlreadyListed =
+                indexableEntries.findIndex(
+                  (entry) => entry.sys.id === linkedEntry.sys.id,
+                ) >= 0
+              if (!entryAlreadyListed) indexableEntries.push(linkedEntry)
+            }
+            if (
+              environment.nestedContentTypes.includes(
+                linkedEntry.sys.contentType.sys.id,
+              )
+            ) {
+              nextLevelOfNestedEntryIds.add(linkedEntry.sys.id)
+            }
+          }
+        }
+
+        // Next round of the loop will only find linked entries to nested entries
+        nestedEntryIds = Array.from(nextLevelOfNestedEntryIds)
+        logger.info(`Found ${counter} nested entries at depth ${i + 1}`)
       }
     }
 
     return {
       token: newNextSyncToken,
-      items,
-      deletedItems,
+      items: indexableEntries,
+      deletedEntryIds,
       elasticIndex,
     }
   }
