@@ -195,7 +195,6 @@ export class ChildrenService {
     const children: ChildInformation[] = []
 
     for (const child of childrenWhereOtherParent) {
-
       const parentalLeavesEntitlements: ParentalLeaveEntitlement = {
         independentMonths: 6,
         transferableMonths: 0,
