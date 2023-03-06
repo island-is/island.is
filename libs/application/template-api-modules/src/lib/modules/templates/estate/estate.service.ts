@@ -193,29 +193,26 @@ export class EstateTemplateService extends BaseTemplateApiService {
       vehicles: processedVehicles,
     }
 
-    console.log('WAWAWAWAWAWAWAWAWAWAWAWWAWAWWAWAW')
-    console.log(this.stringifyObject(uploadData))
-    return { success: true }
-    //const result: DataUploadResponse = await this.syslumennService
-    //  .uploadData(
-    //    [person],
-    //    undefined,
-    //    this.stringifyObject(uploadData),
-    //    uploadDataName,
-    //    uploadDataId,
-    //  )
-    //  .catch((e) => {
-    //    return {
-    //      success: false,
-    //      errorMessage: e.message
-    //    }
-    //  })
+    const result: DataUploadResponse = await this.syslumennService
+      .uploadData(
+        [person],
+        undefined,
+        this.stringifyObject(uploadData),
+        uploadDataName,
+        uploadDataId,
+      )
+      .catch((e) => {
+        return {
+          success: false,
+          errorMessage: e.message
+        }
+      })
 
-    //if (!result.success) {
-    //  throw new Error(
-    //    'Application submission failed on syslumadur upload data'
-    //  )
-    //}
-    //return { sucess: result.success, id: result.caseNumber }
+    if (!result.success) {
+      throw new Error(
+        'Application submission failed on syslumadur upload data'
+      )
+    }
+    return { sucess: result.success, id: result.caseNumber }
   }
 }
