@@ -8,6 +8,7 @@ export const UpdateIndictmentCountMutation = gql`
       policeCaseNumber
       vehicleRegistrationNumber
       offenses
+      substances
       lawsBroken
       incidentDescription
       legalArguments

@@ -35,7 +35,6 @@ export const m = defineMessages({
     id: 'sp.license:your-adr-license',
     defaultMessage: 'ADR réttindin þín',
   },
-
   adrLicenseDescription: {
     id: 'sp.license:adr-license-description',
     defaultMessage:

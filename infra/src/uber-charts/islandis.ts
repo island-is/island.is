@@ -2,6 +2,7 @@ import { serviceSetup as apiSetup } from '../../../apps/api/infra/api'
 import { serviceSetup as webSetup } from '../../../apps/web/infra/web'
 import { serviceSetup as searchIndexerSetup } from '../../../apps/services/search-indexer/infra/search-indexer-service'
 import { serviceSetup as contentfulEntryTaggerSetup } from '../../../apps/services/contentful-entry-tagger/infra/contentful-entry-tagger-service'
+import { serviceSetup as contentfulAppsSetup } from '../../../apps/contentful-apps/infra/contentful-apps'
 
 import {
   serviceSetup as appSystemApiSetup,
@@ -13,8 +14,10 @@ import { serviceSetup as servicePortalApiSetup } from '../../../apps/services/us
 import { serviceSetup as servicePortalSetup } from '../../../apps/service-portal/infra/service-portal'
 
 import { serviceSetup as adminPortalSetup } from '../../../apps/portals/admin/infra/portals-admin'
-import { serviceSetup as samradsgattSetup } from '../../../apps/samradsgatt/infra/samradsgatt'
+import { serviceSetup as consultationPortalSetup } from '../../../apps/consultation-portal/infra/samradsgatt'
 import { serviceSetup as xroadCollectorSetup } from '../../../apps/services/xroad-collector/infra/xroad-collector'
+
+import { serviceSetup as licenseApiSetup } from '../../../apps/services/license-api/infra/license-api'
 
 import { serviceSetup as skilavottordWsSetup } from '../../../apps/skilavottord/ws/infra/ws'
 import { serviceSetup as skilavottordWebSetup } from '../../../apps/skilavottord/web/infra/web'
@@ -59,7 +62,7 @@ const appSystemApiWorker = appSystemApiWorkerSetup()
 
 const servicePortalApi = servicePortalApiSetup()
 const adminPortal = adminPortalSetup()
-const samradsgatt = samradsgattSetup()
+const consultationPortal = consultationPortalSetup()
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
 
 const adsBackend = adsBackendSetup()
@@ -83,8 +86,11 @@ const appSystemForm = appSystemFormSetup({ api: api })
 const web = webSetup({ api: api })
 const searchIndexer = searchIndexerSetup()
 const contentfulEntryTagger = contentfulEntryTaggerSetup()
+const contentfulApps = contentfulAppsSetup()
 
 const xroadCollector = xroadCollectorSetup()
+
+const licenseApi = licenseApiSetup()
 
 const skilavottordWs = skilavottordWsSetup()
 const skilavottordWeb = skilavottordWebSetup({ api: skilavottordWs })
@@ -128,6 +134,7 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
+    licenseApi,
     sessionsService,
     sessionsWorker,
   ],
@@ -155,6 +162,7 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
+    licenseApi,
     sessionsService,
     sessionsWorker,
   ],
@@ -164,7 +172,7 @@ export const Services: EnvironmentServices = {
     servicePortal,
     servicePortalApi,
     adminPortal,
-    samradsgatt,
+    consultationPortal,
     api,
     web,
     searchIndexer,
@@ -186,8 +194,10 @@ export const Services: EnvironmentServices = {
     externalContractsTests,
     appSystemApiWorker,
     contentfulEntryTagger,
+    licenseApi,
     sessionsService,
     sessionsWorker,
+    contentfulApps,
   ],
 }
 
@@ -200,4 +210,5 @@ export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   userNotificationWorkerService,
   contentfulEntryTagger,
   searchIndexer,
+  contentfulApps,
 ]

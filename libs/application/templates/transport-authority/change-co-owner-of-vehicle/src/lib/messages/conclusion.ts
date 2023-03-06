@@ -108,10 +108,5 @@ export const conclusion = {
       defaultMessage: `Hefja nýja umsókn`,
       description: 'Start new application label',
     },
-    myPages: {
-      id: 'ta.ccov.application:conclusion.rejected.myPages',
-      defaultMessage: `Mínar síður`,
-      description: 'My pages label',
-    },
   }),
 }

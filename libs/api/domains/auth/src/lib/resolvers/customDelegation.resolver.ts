@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common'
+import { NotFoundException, UseGuards } from '@nestjs/common'
 import { Args, Parent, ResolveField, Resolver } from '@nestjs/graphql'
 
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
@@ -19,9 +19,16 @@ export class CustomDelegationResolver {
     @Args('lang', { type: () => String, nullable: true, defaultValue: 'is' })
     lang: string,
   ): Promise<Domain> {
-    return domainLoader.load({
+    const domainName = delegation.domainName ?? ISLAND_DOMAIN
+    const domain = await domainLoader.load({
       lang,
-      domain: delegation.domainName ?? ISLAND_DOMAIN,
+      domain: domainName,
     })
+
+    if (!domain) {
+      throw new NotFoundException(`Could not find domain: ${domainName}`)
+    }
+
+    return domain
   }
 }

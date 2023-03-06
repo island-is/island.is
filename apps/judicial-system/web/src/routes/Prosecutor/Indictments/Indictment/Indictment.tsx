@@ -2,9 +2,9 @@ import React, { useCallback, useContext, useState } from 'react'
 import router from 'next/router'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'framer-motion'
-
-import { Box, Input, Button } from '@island.is/island-ui/core'
 import { applyCase } from 'beygla'
+
+import { Box, Input, Button, Checkbox } from '@island.is/island-ui/core'
 
 import {
   BlueBox,
@@ -14,11 +14,13 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  PdfButton,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
   IndictmentsProsecutorSubsections,
   Sections,
+  TempIndictmentCount as TIndictmentCount,
 } from '@island.is/judicial-system-web/src/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -36,6 +38,7 @@ import { isTrafficViolationStepValidIndictments } from '@island.is/judicial-syst
 import useIndictmentCounts, {
   UpdateIndictmentCount,
 } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
+import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { IndictmentCount } from './IndictmentCount'
 import { indictment as strings } from './Indictment.strings'
@@ -56,6 +59,11 @@ const Indictment: React.FC = () => {
     deleteIndictmentCount,
     updateIndictmentCountState,
   } = useIndictmentCounts()
+  const [
+    indictmentIntroductionErrorMessage,
+    setIndictmentIntroductionErrorMessage,
+  ] = useState<string>('')
+  const [demandsErrorMessage, setDemandsErrorMessage] = useState<string>('')
 
   const stepIsValid = isTrafficViolationStepValidIndictments(workingCase)
 
@@ -63,9 +71,48 @@ const Indictment: React.FC = () => {
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
   )
-  const [demandsErrorMessage, setDemandsErrorMessage] = useState<string>('')
 
   useDeb(workingCase, ['indictmentIntroduction', 'demands'])
+
+  const setDriversLicenseSuspensionRequest = useCallback(
+    (indictmentCounts?: TIndictmentCount[]) => {
+      // If the case has:
+      // at least one count with the offence "Driving under the influence of alcohol" and the alcohol level is 1,20 or higher or
+      // at least one count with the offence "Driving under the influence of illegal drugs" or "Driving under the influence of prescription drugs"
+      // then by default the prosecutor requests a suspension of the driver's licence.
+      const requestDriversLicenseSuspension = indictmentCounts?.some((count) =>
+        count.offenses?.some(
+          (offense) =>
+            (offense === IndictmentCountOffense.DrunkDriving &&
+              (count.substances?.ALCOHOL ?? '') >= '1,20') ||
+            [
+              IndictmentCountOffense.IllegalDrugsDriving,
+              IndictmentCountOffense.PrescriptionDrugsDriving,
+            ].includes(offense),
+        ),
+      )
+
+      if (
+        requestDriversLicenseSuspension !==
+        workingCase.requestDriversLicenseSuspension
+      ) {
+        setAndSendCaseToServer(
+          [
+            {
+              requestDriversLicenseSuspension,
+              demands: requestDriversLicenseSuspension
+                ? formatMessage(strings.demandsAutofillWithSuspension)
+                : formatMessage(strings.demandsAutofill),
+              force: true,
+            },
+          ],
+          workingCase,
+          setWorkingCase,
+        )
+      }
+    },
+    [formatMessage, setAndSendCaseToServer, setWorkingCase, workingCase],
+  )
 
   const handleCreateIndictmentCount = useCallback(async () => {
     const indictmentCount = await createIndictmentCount(workingCase.id)
@@ -74,13 +121,24 @@ const Indictment: React.FC = () => {
       return
     }
 
+    const indictmentCounts = [
+      ...(workingCase.indictmentCounts ?? []),
+      indictmentCount,
+    ]
+
+    setDriversLicenseSuspensionRequest(indictmentCounts)
+
     setWorkingCase((theCase) => ({
       ...theCase,
-      indictmentCounts: theCase.indictmentCounts
-        ? [...theCase.indictmentCounts, indictmentCount]
-        : [indictmentCount],
+      indictmentCounts,
     }))
-  }, [createIndictmentCount, setWorkingCase, workingCase.id])
+  }, [
+    createIndictmentCount,
+    setDriversLicenseSuspensionRequest,
+    setWorkingCase,
+    workingCase.id,
+    workingCase.indictmentCounts,
+  ])
 
   const handleUpdateIndictmentCount = useCallback(
     async (
@@ -96,6 +154,13 @@ const Indictment: React.FC = () => {
       if (!returnedIndictmentCount) {
         return
       }
+
+      setDriversLicenseSuspensionRequest(
+        workingCase.indictmentCounts?.map((count) =>
+          count.id === indictmentCountId ? returnedIndictmentCount : count,
+        ),
+      )
+
       updateIndictmentCountState(
         indictmentCountId,
         returnedIndictmentCount,
@@ -103,28 +168,43 @@ const Indictment: React.FC = () => {
       )
     },
     [
+      setDriversLicenseSuspensionRequest,
       setWorkingCase,
       updateIndictmentCount,
       updateIndictmentCountState,
       workingCase.id,
+      workingCase.indictmentCounts,
     ],
   )
 
-  const handleDeleteIndictmentCount = async (indictmentCountId: string) => {
-    if (
-      workingCase.indictmentCounts &&
-      workingCase.indictmentCounts.length > 1
-    ) {
-      await deleteIndictmentCount(workingCase.id, indictmentCountId)
+  const handleDeleteIndictmentCount = useCallback(
+    async (indictmentCountId: string) => {
+      if (
+        workingCase.indictmentCounts &&
+        workingCase.indictmentCounts.length > 1
+      ) {
+        await deleteIndictmentCount(workingCase.id, indictmentCountId)
 
-      setWorkingCase((theCase) => ({
-        ...theCase,
-        indictmentCounts: theCase.indictmentCounts?.filter(
+        const indictmentCounts = workingCase.indictmentCounts?.filter(
           (count) => count.id !== indictmentCountId,
-        ),
-      }))
-    }
-  }
+        )
+
+        setDriversLicenseSuspensionRequest(indictmentCounts)
+
+        setWorkingCase((theCase) => ({
+          ...theCase,
+          indictmentCounts,
+        }))
+      }
+    },
+    [
+      deleteIndictmentCount,
+      setDriversLicenseSuspensionRequest,
+      setWorkingCase,
+      workingCase.id,
+      workingCase.indictmentCounts,
+    ],
+  )
 
   const initialize = useCallback(() => {
     let indictmentIntroductionAutofill = undefined
@@ -140,15 +220,18 @@ const Indictment: React.FC = () => {
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillCourt, {
           court: workingCase.court?.name?.replace('dómur', 'dómi'),
         })}`,
-        `\n\n${formatMessage(strings.indictmentIntroductionAutofillDefendant, {
-          defendantName: workingCase.defendants[0].name
-            ? applyCase('þgf', workingCase.defendants[0].name)
-            : 'Ekki skráð',
-          defendantNationalId: workingCase.defendants[0].nationalId
-            ? formatNationalId(workingCase.defendants[0].nationalId)
-            : 'Ekki skráð',
-        })}`,
-        `\n\n${workingCase.defendants[0].address}`,
+        `\n\n\n          ${formatMessage(
+          strings.indictmentIntroductionAutofillDefendant,
+          {
+            defendantName: workingCase.defendants[0].name
+              ? applyCase('þgf', workingCase.defendants[0].name)
+              : 'Ekki skráð',
+            defendantNationalId: workingCase.defendants[0].nationalId
+              ? formatNationalId(workingCase.defendants[0].nationalId)
+              : 'Ekki skráð',
+          },
+        )}`,
+        `\n          ${workingCase.defendants[0].address}`,
       ]
     }
 
@@ -156,7 +239,9 @@ const Indictment: React.FC = () => {
       [
         {
           indictmentIntroduction: indictmentIntroductionAutofill?.join(''),
-          demands: formatMessage(strings.demandsAutofill),
+          demands: workingCase.requestDriversLicenseSuspension
+            ? formatMessage(strings.demandsAutofillWithSuspension)
+            : formatMessage(strings.demandsAutofill),
         },
       ],
       workingCase,
@@ -198,22 +283,27 @@ const Indictment: React.FC = () => {
               strings.indictmentIntroductionPlaceholder,
             )}
             value={workingCase.indictmentIntroduction || ''}
+            errorMessage={indictmentIntroductionErrorMessage}
+            hasError={indictmentIntroductionErrorMessage !== ''}
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'indictmentIntroduction',
                 event.target.value,
-                [],
+                ['empty'],
                 workingCase,
                 setWorkingCase,
+                indictmentIntroductionErrorMessage,
+                setIndictmentIntroductionErrorMessage,
               )
             }
             onBlur={(event) =>
               validateAndSendToServer(
                 'indictmentIntroduction',
                 event.target.value,
-                [],
+                ['empty'],
                 workingCase,
                 updateCase,
+                setIndictmentIntroductionErrorMessage,
               )
             }
             textarea
@@ -264,9 +354,30 @@ const Indictment: React.FC = () => {
             {formatMessage(strings.addIndictmentCount)}
           </Button>
         </Box>
-        <Box component="section" marginBottom={10}>
+        <Box component="section" marginBottom={6}>
           <SectionHeading title={formatMessage(strings.demandsTitle)} />
           <BlueBox>
+            <Box marginBottom={3}>
+              <Checkbox
+                name="requestDriversLicenseSuspension"
+                label={formatMessage(strings.demandsRequestSuspension)}
+                checked={workingCase.requestDriversLicenseSuspension}
+                onChange={() => {
+                  setAndSendCaseToServer(
+                    [
+                      {
+                        requestDriversLicenseSuspension: !workingCase.requestDriversLicenseSuspension,
+                        force: true,
+                      },
+                    ],
+                    workingCase,
+                    setWorkingCase,
+                  )
+                }}
+                filled
+                large
+              />
+            </Box>
             <Input
               name="demands"
               label={formatMessage(strings.demandsLabel)}
@@ -302,6 +413,13 @@ const Indictment: React.FC = () => {
               autoExpand={{ on: true, maxHeight: 300 }}
             />
           </BlueBox>
+        </Box>
+        <Box marginBottom={10}>
+          <PdfButton
+            caseId={workingCase.id}
+            title={formatMessage(strings.pdfButtonIndictment)}
+            pdfType="indictment"
+          />
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>

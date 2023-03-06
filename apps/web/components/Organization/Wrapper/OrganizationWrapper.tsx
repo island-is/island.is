@@ -31,6 +31,7 @@ import {
   Sticky,
   SidebarShipSearchInput,
   Webreader,
+  SearchBox,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useFeatureFlag } from '@island.is/web/hooks'
@@ -68,6 +69,7 @@ import {
 import { HeilbrigdisstofnunSudurlandsFooter } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
 import { HeilbrigdisstofnunSudurlandsHeader } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
 import { TryggingastofnunHeader } from './Themes/TryggingastofnunTheme'
+import { SAkFooter, SAkHeader } from './Themes/SAkTheme'
 
 import * as styles from './OrganizationWrapper.css'
 
@@ -133,6 +135,8 @@ export const footerEnabled = [
 
   'fjarsyslan',
   'the-financial-management-authority',
+
+  'sak',
 ]
 
 export const getThemeConfig = (
@@ -208,6 +212,8 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
       return <FjarsyslaRikisinsHeader organizationPage={organizationPage} />
     case 'tryggingastofnun':
       return <TryggingastofnunHeader organizationPage={organizationPage} />
+    case 'sak':
+      return <SAkHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
@@ -243,8 +249,13 @@ export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
             }
 
             return (
-              <Link href={link.url} key={'organization-external-link-' + index}>
+              <Link
+                href={link.url}
+                key={'organization-external-link-' + index}
+                pureChildren={true}
+              >
                 <Button
+                  as="a"
                   variant={variant}
                   icon={isSjukratryggingar ? 'lockClosed' : 'open'}
                   iconType="outline"
@@ -376,6 +387,17 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         />
       )
       break
+    case 'sak':
+    case 'sjukrahusid-akureyri':
+    case 'akureyri-hospital':
+      OrganizationFooterComponent = (
+        <SAkFooter
+          title={organization.title}
+          footerItems={organization.footerItems}
+          logo={organization.logo?.url}
+        />
+      )
+      break
     case 'fjarsysla-rikisins':
     case 'the-financial-management-authority':
       OrganizationFooterComponent = (
@@ -385,6 +407,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
           namespace={namespace}
         />
       )
+      break
   }
 
   return OrganizationFooterComponent
@@ -485,6 +508,8 @@ const renderConnectedComponent = (slice) => {
       return (
         <SidebarShipSearchInput key={slice?.id} namespace={slice?.json ?? {}} />
       )
+    case 'OrganizationSearchBox':
+      return <SearchBox key={slice?.id} {...slice?.json} />
     default:
       return null
   }

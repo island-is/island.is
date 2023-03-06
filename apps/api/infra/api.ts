@@ -19,8 +19,9 @@ import {
   MunicipalitiesFinancialAid,
   Vehicles,
   AdrAndMachine,
+  JudicialAdministration,
   Firearm,
-  DisabilityLicense,
+  Disability,
   VehicleServiceFjsV1,
   TransportAuthority,
   ChargeFjsV2,
@@ -35,7 +36,7 @@ export const serviceSetup = (services: {
   documentsService: ServiceBuilder<'services-documents'>
   servicesEndorsementApi: ServiceBuilder<'services-endorsement-api'>
   airDiscountSchemeBackend: ServiceBuilder<'air-discount-scheme-backend'>
-  sessionsApi: ServiceBuilder<'services-sessions-api'>
+  sessionsApi: ServiceBuilder<'services-sessions'>
 }): ServiceBuilder<'api'> => {
   return service('api')
     .namespace('islandis')
@@ -165,6 +166,11 @@ export const serviceSetup = (services: {
         staging: 'https://api-staging.thinglysing.is/business/tolfraedi',
         prod: 'https://api.thinglysing.is/business/tolfraedi',
       },
+      CONSULTATION_PORTAL_CLIENT_BASE_PATH: {
+        dev: 'https://samradapi-test.island.is',
+        staging: 'https://samradapi-test.island.is',
+        prod: 'https://samradapi-test.island.is',
+      },
       NO_UPDATE_NOTIFIER: 'true',
       FISKISTOFA_ZENTER_CLIENT_ID: '1114',
       SOFFIA_SOAP_URL: {
@@ -206,8 +212,6 @@ export const serviceSetup = (services: {
         '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENT_SECRET_TEST',
       SYSLUMENN_USERNAME: '/k8s/api/SYSLUMENN_USERNAME',
       SYSLUMENN_PASSWORD: '/k8s/api/SYSLUMENN_PASSWORD',
-      DOCUMENT_PROVIDER_ADMINS:
-        '/k8s/documentprovider/DOCUMENT_PROVIDER_ADMINS',
       PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY',
       PKPASS_API_URL: '/k8s/api/PKPASS_API_URL',
       PKPASS_AUTH_RETRIES: '/k8s/api/PKPASS_AUTH_RETRIES',
@@ -217,6 +221,7 @@ export const serviceSetup = (services: {
       PKPASS_SECRET_KEY: '/k8s/api/PKPASS_SECRET_KEY',
       VE_PKPASS_API_KEY: '/k8s/api/VE_PKPASS_API_KEY',
       RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY',
+      RLS_OPEN_LOOKUP_API_KEY: '/k8s/api/RLS_OPEN_LOOKUP_API_KEY',
       TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY',
       SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL',
       FIREARM_LICENSE_PASS_TEMPLATE_ID:
@@ -255,8 +260,9 @@ export const serviceSetup = (services: {
     })
     .xroad(
       AdrAndMachine,
+      JudicialAdministration,
       Firearm,
-      DisabilityLicense,
+      Disability,
       Base,
       Client,
       HealthInsurance,

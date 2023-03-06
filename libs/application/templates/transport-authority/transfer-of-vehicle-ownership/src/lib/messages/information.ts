@@ -240,6 +240,11 @@ export const information = {
         defaultMessage: 'aðal',
         description: 'Main label - for main operator',
       },
+      identicalError: {
+        id: 'ta.cov.application:information.labels.operator.identicalError',
+        defaultMessage: 'Það má ekki nota sömu kennitölu tvisvar',
+        description: 'operator identical error',
+      },
     }),
     buyer: defineMessages({
       sectionTitle: {

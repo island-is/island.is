@@ -1,4 +1,5 @@
-import { Outlet, RouteObject } from 'react-router-dom'
+import { Outlet, RouteObject, ScrollRestoration } from 'react-router-dom'
+
 import { Dashboard } from '../screens/Dashboard/Dashboard'
 import { Layout } from '../components/Layout/Layout'
 
@@ -9,9 +10,12 @@ import { Layout } from '../components/Layout/Layout'
 export const createRoutes = (moduleRoutes: RouteObject[]): RouteObject[] => [
   {
     element: (
-      <Layout>
-        <Outlet />
-      </Layout>
+      <>
+        <Layout>
+          <Outlet />
+        </Layout>
+        <ScrollRestoration />
+      </>
     ),
     children: [
       {

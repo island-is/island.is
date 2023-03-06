@@ -55,6 +55,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
     false,
   )
   const [noInsuranceError, setNoInsuranceError] = useState<boolean>(false)
+
   const [submitApplication, { error }] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => {
       console.error(e, e.message)
@@ -106,6 +107,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
   const onBackButtonClick = () => {
     setStep && setStep('states')
   }
+
   const onRejectButtonClick = () => {
     setRejectModalVisibility(true)
   }
@@ -134,13 +136,13 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
                 email: answers?.buyer?.email,
                 nationalId: answers?.buyer?.nationalId,
               },
-              buyerCoOwnerAndOperator: answers?.buyerCoOwnerAndOperator?.map(
-                (x) => ({
+              buyerCoOwnerAndOperator: answers?.buyerCoOwnerAndOperator
+                ?.filter(({ wasRemoved }) => wasRemoved !== 'true')
+                .map((x) => ({
                   email: x.email,
                   nationalId: x.nationalId,
                   type: x.type,
-                }),
-              ),
+                })),
               buyerMainOperator: answers?.buyerMainOperator
                 ? {
                     nationalId: answers.buyerMainOperator.nationalId,
@@ -187,17 +189,19 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
           {formatMessage(overview.general.description)}
         </Text>
         <VehicleSection {...props} reviewerNationalId={reviewerNationalId} />
-        <SellerSection {...props} />
+        <SellerSection {...props} reviewerNationalId={reviewerNationalId} />
         <BuyerSection
           setStep={setStep}
           {...props}
           reviewerNationalId={reviewerNationalId}
         />
         <CoOwnersSection
+          reviewerNationalId={reviewerNationalId}
           coOwnersAndOperators={coOwnersAndOperators}
           {...props}
         />
         <OperatorSection
+          reviewerNationalId={reviewerNationalId}
           coOwnersAndOperators={coOwnersAndOperators}
           {...props}
         />
@@ -207,11 +211,13 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
           reviewerNationalId={reviewerNationalId}
           noInsuranceError={noInsuranceError}
         />
+
         {error && (
           <InputError
             errorMessage={errorMsg.submitApplicationError.defaultMessage}
           />
         )}
+
         {data?.vehicleOwnerChangeValidation?.hasError &&
         data.vehicleOwnerChangeValidation.errorMessages.length > 0 ? (
           <Box>
@@ -252,6 +258,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
             />
           </Box>
         ) : null}
+
         <Box marginTop={14}>
           <Divider />
           <Box display="flex" justifyContent="spaceBetween" paddingY={5}>

@@ -8,6 +8,7 @@ export interface CreateSessionDtoOptions {
   subjectType?: NationalIdType
   actorNationalId?: string
   subjectNationalId?: string
+  timestamp?: Date
 }
 
 export const createSessionDto = (
@@ -19,7 +20,7 @@ export const createSessionDto = (
     options?.subjectNationalId ??
     createNationalId(options?.subjectType ?? 'person'),
   clientId: faker.random.word(),
-  timestamp: faker.datatype.datetime(),
+  timestamp: options?.timestamp ?? faker.datatype.datetime(),
   userAgent: faker.internet.userAgent(),
   ip: faker.internet.ip(),
 })

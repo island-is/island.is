@@ -27,6 +27,7 @@ import {
   json,
 } from '../../../../infra/src/dsl/dsl'
 import { PostgresInfo } from '../../../../infra/src/dsl/types/input-types'
+import { RedisInfo } from '../../../../infra/src/dsl/types/input-types'
 
 const postgresInfo: PostgresInfo = {
   passwordSecret: '/k8s/application-system/api/DB_PASSWORD',
@@ -43,23 +44,13 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
     .image('application-system-api')
     .postgres(postgresInfo)
     .serviceAccount('application-system-api-worker')
+    .redis()
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system',
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
-      },
-      REDIS_URL_NODE_01: {
-        dev: json([
-          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
-        ]),
-        staging: json([
-          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
-        ]),
-        prod: json([
-          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
-        ]),
       },
       XROAD_CHARGE_FJS_V2_PATH: {
         dev: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
@@ -104,6 +95,8 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
       DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN',
       DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL',
       ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL',
+      DOMSYSLA_PASSWORD: '/k8s/application-system-api/DOMSYSLA_PASSWORD',
+      DOMSYSLA_USERNAME: '/k8s/application-system-api/DOMSYSLA_USERNAME',
     })
     .args('main.js', '--job', 'worker')
     .command('node')
@@ -121,6 +114,7 @@ export const serviceSetup = (services: {
     .namespace(namespace)
     .serviceAccount(serviceAccount)
     .command('node')
+    .redis()
     .args('main.js')
     .env({
       EMAIL_REGION: 'eu-west-1',
@@ -130,17 +124,6 @@ export const serviceSetup = (services: {
         prod: 'https://innskra.island.is',
       },
       XROAD_CHARGE_FJS_V2_TIMEOUT: '20000',
-      REDIS_URL_NODE_01: {
-        dev: json([
-          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
-        ]),
-        staging: json([
-          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
-        ]),
-        prod: json([
-          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
-        ]),
-      },
       CONTENTFUL_HOST: {
         dev: 'preview.contentful.com',
         staging: 'cdn.contentful.com',
@@ -226,6 +209,11 @@ export const serviceSetup = (services: {
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
       ),
       NO_UPDATE_NOTIFIER: 'true',
+      XROAD_COURT_BANKRUPTCY_CERT_PATH: {
+        dev: 'IS-DEV/GOV/10019/Domstolasyslan-DEV/Domstolasyslan',
+        staging: 'IS-DEV/GOV/10019/Domstolasyslan-DEV/Domstolasyslan',
+        prod: 'IS/GOV/4707171140/Domstolasyslan-PROD-1/Domstolasyslan',
+      },
     })
     .xroad(
       Base,
@@ -281,6 +269,8 @@ export const serviceSetup = (services: {
       ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
       ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
       VMST_ID: '/k8s/application-system/VMST_ID',
+      DOMSYSLA_PASSWORD: '/k8s/application-system-api/DOMSYSLA_PASSWORD',
+      DOMSYSLA_USERNAME: '/k8s/application-system-api/DOMSYSLA_USERNAME',
     })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
@@ -305,9 +295,15 @@ export const serviceSetup = (services: {
     .ingress({
       primary: {
         host: {
-          dev: 'application-payment-callback-xrd',
-          staging: 'application-payment-callback-xrd',
-          prod: 'application-payment-callback-xrd',
+          dev: ['application-payment-callback-xrd', 'application-callback-xrd'],
+          staging: [
+            'application-payment-callback-xrd',
+            'application-callback-xrd',
+          ],
+          prod: [
+            'application-payment-callback-xrd',
+            'application-callback-xrd',
+          ],
         },
         paths: ['/application-payment', '/applications'],
         public: false,
