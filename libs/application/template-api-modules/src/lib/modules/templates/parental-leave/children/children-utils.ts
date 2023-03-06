@@ -1,5 +1,5 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
+import { Application, NO } from '@island.is/application/types'
 import type { DistributiveOmit } from '@island.is/shared/types'
 
 import {
@@ -12,6 +12,7 @@ import {
   ExistingChildApplication,
   PregnancyStatus,
   ChildrenWithoutRightsAndExistingApplications,
+  getApplicationAnswers,
 } from '@island.is/application/templates/parental-leave'
 
 // We do not require hasRights or remainingDays in this step
@@ -37,6 +38,10 @@ export const applicationsToChildInformation = (
       continue
     }
 
+    const { otherParentRightOfAccess } = getApplicationAnswers(
+      application.answers,
+    )
+
     if (asOtherParent) {
       let transferredDays = getTransferredDays(application, selectedChild)
       const multipleBirthsRequestDays = getMultipleBirthRequestDays(
@@ -50,8 +55,13 @@ export const applicationsToChildInformation = (
         // then this parent needs to lose 45 days
         transferredDays *= -1
       }
-
-      if (selectedChild.parentalRelation === ParentalRelations.primary) {
+      if (otherParentRightOfAccess === NO) {
+        result.push({
+          parentalRelation: ParentalRelations.secondary,
+          expectedDateOfBirth: 'N/A',
+          primaryParentNationalRegistryId: 'N/A',
+        })
+      } else if (selectedChild.parentalRelation === ParentalRelations.primary) {
         result.push({
           parentalRelation: ParentalRelations.secondary,
           expectedDateOfBirth: selectedChild.expectedDateOfBirth,

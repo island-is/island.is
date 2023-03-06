@@ -2,6 +2,7 @@ import { serviceSetup as apiSetup } from '../../../apps/api/infra/api'
 import { serviceSetup as webSetup } from '../../../apps/web/infra/web'
 import { serviceSetup as searchIndexerSetup } from '../../../apps/services/search-indexer/infra/search-indexer-service'
 import { serviceSetup as contentfulEntryTaggerSetup } from '../../../apps/services/contentful-entry-tagger/infra/contentful-entry-tagger-service'
+import { serviceSetup as contentfulAppsSetup } from '../../../apps/contentful-apps/infra/contentful-apps'
 
 import {
   serviceSetup as appSystemApiSetup,
@@ -85,6 +86,7 @@ const appSystemForm = appSystemFormSetup({ api: api })
 const web = webSetup({ api: api })
 const searchIndexer = searchIndexerSetup()
 const contentfulEntryTagger = contentfulEntryTaggerSetup()
+const contentfulApps = contentfulAppsSetup()
 
 const xroadCollector = xroadCollectorSetup()
 
@@ -195,6 +197,7 @@ export const Services: EnvironmentServices = {
     licenseApi,
     sessionsService,
     sessionsWorker,
+    contentfulApps,
   ],
 }
 
@@ -207,4 +210,5 @@ export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   userNotificationWorkerService,
   contentfulEntryTagger,
   searchIndexer,
+  contentfulApps,
 ]

@@ -34,7 +34,7 @@ const DocumentsFilterTags = ({
   const { formatMessage } = useLocale()
 
   const getCategoryTitle = (id: string) => {
-    if (categories === []) {
+    if (categories.length === 0) {
       return ''
     }
     const category = categories?.find((item) => item.value === id)

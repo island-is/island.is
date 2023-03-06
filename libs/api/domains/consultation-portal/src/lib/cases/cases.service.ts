@@ -5,7 +5,7 @@ import {
   ApiCasesCaseIdAdvicesPostRequest,
   ApiCasesCaseIdGetRequest,
 } from '@island.is/clients/consultation-portal'
-
+import { GetCaseInput } from '../dto/case.input'
 import { CaseResult } from '../models/caseResult.model'
 import { CaseItemResult } from '../models/caseItemResult.model'
 @Injectable()
@@ -17,9 +17,9 @@ export class CaseResultService {
     return cases
   }
 
-  async getCase(caseId: number): Promise<CaseResult> {
+  async getCase(input: GetCaseInput): Promise<CaseResult> {
     const request: ApiCasesCaseIdGetRequest = {
-      caseId: caseId,
+      caseId: input.caseId,
     }
 
     const response = await this.casesApi.apiCasesCaseIdGet(request)

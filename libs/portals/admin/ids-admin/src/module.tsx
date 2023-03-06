@@ -8,10 +8,15 @@ import Applications from './components/Applications/Applications'
 import ApplicationsScreen from './screens/ApplicationsScreen'
 import { m } from './lib/messages'
 import TenantsList from './components/TenantsList/TenantsList'
+import { tenantsListLoader } from './components/TenantsList/TenantsList.loader'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 
 const allowedScopes: string[] = [AdminPortalScope.idsAdmin]
+
+export type IDSAdminRouteHandle = {
+  backPath?: string
+}
 
 export const idsAdminModule: PortalModule = {
   name: m.idsAdmin,
@@ -19,7 +24,7 @@ export const idsAdminModule: PortalModule = {
   enabled({ userInfo }) {
     return userInfo.scopes.some((scope) => allowedScopes.includes(scope))
   },
-  routes() {
+  routes(props) {
     return [
       {
         name: m.idsAdmin,
@@ -30,44 +35,69 @@ export const idsAdminModule: PortalModule = {
             name: m.idsAdmin,
             path: IDSAdminPaths.IDSAdmin,
             element: <TenantsList />,
+            loader: tenantsListLoader(props),
             navHide: true,
+            handle: {
+              backPath: IDSAdminPaths.IDSAdmin,
+            },
           },
           {
             name: m.applications,
-            path: IDSAdminPaths.IDSAdminApplication,
+            path: '',
             element: <ApplicationsScreen />,
+            handle: {
+              backPath: IDSAdminPaths.IDSAdmin,
+            },
             children: [
               {
                 name: m.settings,
                 path: IDSAdminPaths.IDSAdminApplication,
                 element: <div>Settings</div>,
+                handle: {
+                  backPath: IDSAdminPaths.IDSAdminTenants,
+                },
               },
               {
                 name: m.authentication,
                 path: IDSAdminPaths.IDSAdminApplicationAuthentication,
                 element: <div>Authentication</div>,
+                handle: {
+                  backPath: IDSAdminPaths.IDSAdminTenants,
+                },
               },
               {
                 name: m.advancedSettings,
                 path: IDSAdminPaths.IDSAdminApplicationAdvancedSettings,
                 element: <div>AdvancedSettings</div>,
+                handle: {
+                  backPath: IDSAdminPaths.IDSAdminTenants,
+                },
               },
             ],
           },
           {
             name: m.tenants,
-            path: IDSAdminPaths.IDSAdminDomains,
+            path: '',
             element: <Tenant />,
+            handle: {
+              backPath: IDSAdminPaths.IDSAdmin,
+            },
             children: [
               {
                 name: m.applications,
-                path: IDSAdminPaths.IDSAdminDomains,
+                path: IDSAdminPaths.IDSAdminTenants,
                 element: <Applications />,
+                handle: {
+                  backPath: IDSAdminPaths.IDSAdmin,
+                },
               },
               {
                 name: m.apis,
                 path: IDSAdminPaths.IDSAdminDomainsAPIS,
                 element: <div>APIs</div>,
+                handle: {
+                  backPath: IDSAdminPaths.IDSAdmin,
+                },
               },
             ],
           },

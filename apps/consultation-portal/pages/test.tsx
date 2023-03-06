@@ -1,30 +1,36 @@
 import { withApollo } from '../graphql/withApollo'
-import { GET_ALL_CASES } from '../graphql/getAllCases'
 import initApollo from '../graphql/client'
 import {
   ConsultationPortalAllCasesQuery,
   ConsultationPortalAllCasesQueryVariables,
   ConsultationPortalAllCasesDocument,
-} from '../graphql/getAllCases.generated'
+} from '../screens/Home/getAllCases.generated'
+import Home from '../screens/Test/Home'
 
-export const Test = (props) => {
-  return <div>Test</div>
+interface HomeProps {
+  cases: ConsultationPortalAllCasesQuery['consultationPortalAllCases']
 }
-export default withApollo(Test)
-
 export const getServerSideProps = async (ctx) => {
-  const apolloClient = initApollo()
-  try {
-    const test2 = await apolloClient.query<
+  const client = initApollo()
+  const [
+    {
+      data: { consultationPortalAllCases },
+    },
+  ] = await Promise.all([
+    client.query<
       ConsultationPortalAllCasesQuery,
       ConsultationPortalAllCasesQueryVariables
-    >({ query: ConsultationPortalAllCasesDocument })
-    const test = await apolloClient.query({ query: GET_ALL_CASES })
-  } catch (error) {
-    console.error(error)
-  }
-
+    >({
+      query: ConsultationPortalAllCasesDocument,
+    }),
+  ])
+  console.log(consultationPortalAllCases)
   return {
-    props: {},
+    props: { cases: consultationPortalAllCases },
   }
 }
+
+export const Test = ({ cases }: HomeProps) => {
+  return <Home cases={cases} />
+}
+export default Test

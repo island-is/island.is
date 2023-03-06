@@ -1,30 +1,47 @@
-import { Box, Text } from '@island.is/island-ui/core'
+import {
+  Button,
+  FocusableBox,
+  Icon,
+  Inline,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
+import { SimpleCardSkeleton } from '../Card'
 import format from 'date-fns/format'
-import { Advice } from '../../types/viewModels'
+import { useState } from 'react'
 
-interface Props {
-  key: number
-  advice: Advice
-}
+export const ReviewCard = ({ advice }) => {
+  const [open, setOpen] = useState(false)
 
-export const ReviewCard: React.FC<Props> = ({ advice }) => {
   return (
-    <Box
-      marginBottom={6}
-      borderColor="blue300"
-      borderWidth="standard"
-      padding={3}
-      borderStyle="solid"
-      borderRadius="standard"
-    >
-      <Text variant="eyebrow" color="purple400">
-        {format(new Date(advice.created), 'dd.MM.yyyy')}
-      </Text>
-      <Text variant="h3">
-        {advice.number} - {advice.participantName}
-      </Text>
-      <Text variant="default">{advice.content}</Text>
-    </Box>
+    <SimpleCardSkeleton>
+      <Stack space={1}>
+        <Inline justifyContent="spaceBetween" flexWrap="nowrap" alignY="center">
+          <Text variant="eyebrow" color="purple400">
+            {format(new Date(advice.created), 'dd.MM.yyyy')}
+          </Text>
+          <FocusableBox onClick={() => setOpen(!open)}>
+            <Icon
+              icon={open ? 'close' : 'open'}
+              type="outline"
+              size="small"
+              color="blue400"
+            />
+          </FocusableBox>
+        </Inline>
+        <Text variant="h3">
+          {advice?.number} - {advice?.participantName}
+        </Text>
+        <Text variant="default" truncate={!open}>
+          {advice.content}
+        </Text>
+        {advice?.attachments && (
+          <Button variant="text" icon="document" iconType="outline">
+            Viðhengi
+          </Button>
+        )}
+      </Stack>
+    </SimpleCardSkeleton>
   )
 }
 
