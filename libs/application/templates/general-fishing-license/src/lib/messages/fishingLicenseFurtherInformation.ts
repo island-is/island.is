@@ -133,5 +133,17 @@ export const fishingLicenseFurtherInformation = {
       defaultMessage: 'Vinsamlegast fylltu út alla reiti',
       description: 'Please fill out all required fields',
     },
+    attachmentMaxSizeError: {
+      id:
+        'gfl.application:fishingLicenseFurtherInformation.errorMessages.attachmentMaxSizeError',
+      defaultMessage: 'Hámark 5 MB á skrá',
+      description: 'Max 5 MB per file',
+    },
+    attachmentLimitError: {
+      id:
+        'gfl.application:fishingLicenseFurtherInformation.errorMessages.attachmentLimitError',
+      defaultMessage: 'Hlaða má upp að hámarki tveim skrám',
+      description: 'Max two file',
+    },
   }),
 }

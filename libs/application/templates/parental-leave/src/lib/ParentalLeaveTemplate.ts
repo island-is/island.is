@@ -1178,6 +1178,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             if (val.phoneNumber) {
               set(answers, `employers[${i}].phoneNumber`, val.phoneNumber)
             }
+            if (val.phoneNumber === '') {
+              unset(answers, `employers[${i}].phoneNumber`)
+            }
             set(answers, `employers[${i}].ratio`, val.ratio)
             set(answers, `employers[${i}].email`, val.email)
             set(answers, `employers[${i}].reviewerNationalRegistryId`, '')
