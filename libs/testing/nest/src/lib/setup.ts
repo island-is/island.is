@@ -3,12 +3,9 @@ import { SequelizeOptionsFactory } from '@nestjs/sequelize'
 
 import { User } from '@island.is/auth-nest-tools'
 import { createCurrentUser } from '@island.is/testing/fixtures'
-import {
-  testServer,
-  useDatabase,
-  useAuth,
-  TestApp,
-} from '@island.is/testing/nest'
+
+import { TestApp, testServer } from './testServer'
+import { useAuth, useDatabase } from './hooks'
 
 interface SetupOptions {
   AppModule: Type<any>
