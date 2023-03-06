@@ -61,7 +61,7 @@ storiesOf('Field', module)
   .add('Card', () => {
     return (
       <View style={{ paddingHorizontal: 16, width: '100%' }}>
-        <FieldCard code="B" title="Fólksbíll">
+        <FieldCard code="B" title="Fólksbíll" type="DriversLicense">
           <FieldRow>
             <Field label="Útgáfudagur" value="12.03.1990" />
             <Field label="Gildir til" value="01.01.2041" />
@@ -101,13 +101,13 @@ storiesOf('Field', module)
           </FieldGroup>
           <View style={{ marginTop: 24, paddingBottom: 4 }}>
             <FieldLabel>9. Réttindaflokkar</FieldLabel>
-            <FieldCard code="B" title="Fólksbíll">
+            <FieldCard code="B" title="Fólksbíll" type="DriversLicense">
               <FieldRow>
                 <Field label="Útgáfudagur" value="12.03.1990" />
                 <Field label="Gildir til" value="01.01.2041" />
               </FieldRow>
             </FieldCard>
-            <FieldCard code="BE" title="Kerra">
+            <FieldCard code="BE" title="Kerra" type="DriversLicense">
               <FieldRow>
                 <Field label="Útgáfudagur" value="12.03.1990" />
                 <Field label="Gildir til" value="01.01.2041" />

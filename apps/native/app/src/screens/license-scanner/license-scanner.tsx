@@ -1,6 +1,6 @@
 import { Bubble } from '@ui'
 import { BarCodeEvent, Constants } from 'expo-barcode-scanner'
-import { Camera } from 'expo-camera'
+import { Camera, FlashMode } from 'expo-camera'
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -18,7 +18,7 @@ import {
 } from 'react-native-navigation'
 import styled from 'styled-components/native'
 import flashligth from '../../assets/icons/flashlight.png'
-import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { ComponentRegistry } from '../../utils/component-registry'
 
 const BottomRight = styled.View`
@@ -45,7 +45,7 @@ const FlashImg = styled.Image`
 const {
   useNavigationOptions,
   getNavigationOptions,
-} = useThemedNavigationOptions(
+} = createNavigationOptionHooks(
   (theme, intl, initialized) => ({
     topBar: {
       title: {
@@ -193,8 +193,8 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
           }}
           flashMode={
             torch
-              ? Camera.Constants.FlashMode.torch
-              : Camera.Constants.FlashMode.off
+              ? FlashMode.torch
+              : FlashMode.off
           }
           ref={(ref) => {
             if (ref) {

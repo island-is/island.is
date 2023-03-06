@@ -48,9 +48,10 @@ export function Field({
   size = 'small',
   style,
 }: FieldProps) {
+  const intl = useIntl()
+
   if (value === '') return <></>;
 
-  const intl = useIntl()
   const val = String(value ?? '')
     .split(' ')
     .map((part) => (isJSONDate(part) ? intl.formatDate(Date.parse(part)) : part))

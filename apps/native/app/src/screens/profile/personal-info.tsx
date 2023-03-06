@@ -5,7 +5,7 @@ import {
   Navigation,
   NavigationFunctionComponent,
 } from 'react-native-navigation'
-import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useIntl } from 'react-intl'
 import { testIDs } from '../../utils/test-ids'
 import { TabPersonalInfo } from './tab-personal-info'
@@ -13,7 +13,7 @@ import { TabPersonalInfo } from './tab-personal-info'
 const {
   getNavigationOptions,
   useNavigationOptions,
-} = useThemedNavigationOptions(() => ({
+} = createNavigationOptionHooks(() => ({
   topBar: {
     visible: false,
   },

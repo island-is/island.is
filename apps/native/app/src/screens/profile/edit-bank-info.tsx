@@ -11,7 +11,7 @@ import {
   Navigation,
   NavigationFunctionComponent
 } from 'react-native-navigation'
-import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { bankInfoObject, stringifyBankData } from '../../lib/bank-info-helper'
 import { testIDs } from '../../utils/test-ids'
 import { useUpdateUserProfile, useUserProfile } from './profile-queries'
@@ -19,7 +19,7 @@ import { useUpdateUserProfile, useUserProfile } from './profile-queries'
 const {
   getNavigationOptions,
   useNavigationOptions,
-} = useThemedNavigationOptions(() => ({
+} = createNavigationOptionHooks(() => ({
   topBar: {
     visible: false,
   },

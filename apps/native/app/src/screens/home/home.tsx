@@ -1,8 +1,10 @@
 import { useQuery } from '@apollo/client'
 import { TopLine } from '@ui'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react'
 import {
-  Animated, FlatList,
+  Animated,
+  FlatList,
+  ListRenderItemInfo,
   Platform,
   RefreshControl
 } from 'react-native'
@@ -15,7 +17,7 @@ import {
   LIST_APPLICATIONS_QUERY
 } from '../../graphql/queries/list-applications.query'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
-import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { notificationsStore } from '../../stores/notifications-store'
 import { useUiStore } from '../../stores/ui-store'
 import { getRightButtons } from '../../utils/get-main-root'
@@ -23,6 +25,11 @@ import { testIDs } from '../../utils/test-ids'
 import { ApplicationsModule } from './applications-module'
 import { NotificationsModule } from './notifications-module'
 import { OnboardingModule } from './onboarding-module'
+
+interface ListItem {
+  id: string
+  component: ReactElement
+}
 
 const iconInsets = {
   top: Platform.OS === 'ios' && Platform.isPad ? 8 : 16,
@@ -32,7 +39,7 @@ const iconInsets = {
 const {
   useNavigationOptions,
   getNavigationOptions,
-} = useThemedNavigationOptions(
+} = createNavigationOptionHooks(
   (theme, intl, initialized) => ({
     topBar: {
       title: {
@@ -99,8 +106,8 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
 
   const [loading, setLoading] = useState(false)
 
-  const renderItem = useCallback(({ item }: any) => item.component, [])
-  const keyExtractor = useCallback((item) => item.id, [])
+  const renderItem = useCallback(({ item }: ListRenderItemInfo<ListItem>) => item.component, [])
+  const keyExtractor = useCallback((item: ListItem) => item.id, [])
   const scrollY = useRef(new Animated.Value(0)).current
 
   useEffect(() => {

@@ -17,7 +17,7 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled from 'styled-components/native'
 import { client } from '../../graphql/client'
 import { GET_IDENTITY_DOCUMENT_QUERY } from '../../graphql/queries/get-identity-document.query'
-import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { LicenseStatus, LicenseType } from '../../types/license-type'
 
 const Information = styled.ScrollView`
@@ -39,7 +39,7 @@ const Spacer = styled.View`
 const {
   useNavigationOptions,
   getNavigationOptions,
-} = useThemedNavigationOptions(
+} = createNavigationOptionHooks(
   (theme, intl) => ({
     topBar: {
       title: {

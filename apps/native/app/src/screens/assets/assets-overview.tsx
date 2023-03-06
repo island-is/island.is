@@ -11,12 +11,12 @@ import illustrationSrc from '../../assets/illustrations/le-moving-s1.png'
 import { BottomTabsIndicator } from "../../components/bottom-tabs-indicator/bottom-tabs-indicator";
 import { navigateTo } from "../../lib/deep-linking";
 import { GET_REAL_ESTATE_QUREY } from "../../graphql/queries/get-real-estate-query";
-import { useThemedNavigationOptions } from "../../hooks/use-themed-navigation-options";
+import { createNavigationOptionHooks } from "../../hooks/create-navigation-option-hooks";
 
 const {
   useNavigationOptions,
   getNavigationOptions,
-} = useThemedNavigationOptions(
+} = createNavigationOptionHooks(
   (theme, intl) => ({
     topBar: {
       title: {

@@ -42,7 +42,7 @@ const client = new ApolloClient({
   link,
 });
 
-const useAsyncStorageState = <T extends unknown>(
+const useAsyncStorageState = <T,>(
   key: string,
   defaultValue: T,
 ): [T, (value: T) => void] => {

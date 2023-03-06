@@ -17,6 +17,7 @@ import {
   View,
   ActivityIndicator,
   NativeModules,
+  Alert,
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import PassKit, { AddPassButton } from 'react-native-passkit-wallet'
@@ -36,7 +37,7 @@ import {
   GetLicenseResponse,
   GET_GENERIC_LICENSE_QUERY,
 } from '../../graphql/queries/get-license.query'
-import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { LicenseStatus } from '../../types/license-type'
 import { useState } from 'react'
 
@@ -76,7 +77,7 @@ const Spacer = styled.View`
 const {
   useNavigationOptions,
   getNavigationOptions,
-} = useThemedNavigationOptions(
+} = createNavigationOptionHooks(
   (theme, intl) => ({
     topBar: {
       title: {
@@ -216,11 +217,12 @@ export const WalletPassScreen: NavigationFunctionComponent<{
 
           addPass(pkPassContentUri, 'com.snjallveskid').catch(() => {
             if (!canAddPass) {
-              alert(
+              Alert.alert(
+                'Villa',
                 'You cannot add passes. Please make sure you have Smartwallet installed on your device.',
               )
             } else {
-              alert('Failed to fetch or add pass')
+              Alert.alert('Villa', 'Failed to fetch or add pass')
             }
           })
           setAddingToWallet(false)
@@ -242,17 +244,17 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         }
       } catch (err) {
         if (!canAddPass) {
-          alert(
+          Alert.alert(
             'You cannot add passes. Please make sure you have Smartwallet installed on your device.',
           )
         } else {
-          alert('Failed to fetch or add pass')
+          Alert.alert('Failed to fetch or add pass')
         }
         setAddingToWallet(false)
         console.error(err)
       }
     } else {
-      alert('You cannot add passes on this device')
+      Alert.alert('You cannot add passes on this device')
     }
   }
 

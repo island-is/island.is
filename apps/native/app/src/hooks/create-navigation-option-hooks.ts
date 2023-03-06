@@ -1,10 +1,10 @@
-import { defaultsDeep } from 'lodash'
+import defaultsDeep from 'lodash/defaultsDeep'
 import { useEffect } from 'react'
-import { DynamicColorIOS, Platform } from 'react-native'
+import { Platform } from 'react-native'
 import { Options } from 'react-native-navigation'
 import { useNavigation } from 'react-native-navigation-hooks/dist'
 import { DefaultTheme, useTheme } from 'styled-components'
-import { createIntl, TypedIntlShape, useIntl } from 'react-intl'
+import { createIntl, IntlShape, useIntl } from 'react-intl'
 import { en } from '../messages/en'
 import { is } from '../messages/is'
 import { preferencesStore } from '../stores/preferences-store'
@@ -13,7 +13,7 @@ import { getThemeWithPreferences } from '../utils/get-theme-with-preferences'
 
 type ApplyNavigationOptionsCallback = (
   theme: DefaultTheme,
-  intl: TypedIntlShape,
+  intl: IntlShape,
   initialized: boolean,
 ) => Options
 
@@ -83,7 +83,7 @@ const defaultOptions = (
   return options
 }
 
-export const useThemedNavigationOptions = (
+export const createNavigationOptionHooks = (
   callback?: ApplyNavigationOptionsCallback,
   staticOptions: Options = {},
 ) => {

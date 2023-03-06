@@ -4,7 +4,7 @@ import {Image, SafeAreaView, ScrollView} from 'react-native';
 import {NavigationFunctionComponent} from 'react-native-navigation';
 import styled from 'styled-components/native';
 import {BottomTabsIndicator} from '../../components/bottom-tabs-indicator/bottom-tabs-indicator';
-import {useThemedNavigationOptions} from '../../hooks/use-themed-navigation-options';
+import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {navigateTo} from '../../lib/deep-linking';
 import {useAuthStore} from '../../stores/auth-store';
 import {testIDs} from '../../utils/test-ids';
@@ -19,7 +19,7 @@ const Row = styled.View`
   flex-direction: row;
 `;
 
-const {useNavigationOptions, getNavigationOptions} = useThemedNavigationOptions(
+const {useNavigationOptions, getNavigationOptions} = createNavigationOptionHooks(
   (theme, intl, initialized) => ({
     topBar: {
       title: {

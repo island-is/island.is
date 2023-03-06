@@ -9,7 +9,7 @@ import { usePreferencesStore } from '../../stores/preferences-store'
 import { testIDs } from '../../utils/test-ids'
 import { navigateTo } from '../../lib/deep-linking'
 
-export function formatNationalId(str: string = '') {
+export function formatNationalId(str = '') {
   return [str.substr(0, 6), str.substr(6, 4)].join('-')
 }
 

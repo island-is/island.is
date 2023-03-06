@@ -9,7 +9,7 @@ import {
   useNavigationComponentDidAppear,
   useNavigationComponentDidDisappear
 } from 'react-native-navigation-hooks/dist'
-import Pdf from 'react-native-pdf'
+import Pdf, { Source } from 'react-native-pdf'
 import Share from 'react-native-share'
 import WebView from 'react-native-webview'
 import styled from 'styled-components/native'
@@ -22,7 +22,7 @@ import {
   ListDocumentsResponse,
   LIST_DOCUMENTS_QUERY
 } from '../../graphql/queries/list-documents.query'
-import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { authStore } from '../../stores/auth-store'
 import { inboxStore } from '../../stores/inbox-store'
 import { useOrganizationsStore } from '../../stores/organizations-store'
@@ -49,7 +49,7 @@ const PdfWrapper = styled.View`
 const {
   useNavigationOptions,
   getNavigationOptions,
-} = useThemedNavigationOptions(
+} = createNavigationOptionHooks(
   (theme, intl) => ({
     topBar: {
       title: {
@@ -75,7 +75,19 @@ const {
   },
 )
 
-const PdfViewer = React.memo(({ url, body, onLoaded }: { url: string, body: string, onLoaded: () => void}) => {
+interface PdfViewerProps {
+  url: string
+  body: string
+  onLoaded: (numberOfPages: number, path: string) => void
+}
+
+const PdfViewer = React.memo(({ url, body, onLoaded }: PdfViewerProps) => {
+    const extraProps = {
+      activityIndicatorProps: {
+        color: '#0061ff',
+        progressTintColor: '#ccdfff',
+      },
+    }
     return (
       <Pdf
         source={{
@@ -85,16 +97,13 @@ const PdfViewer = React.memo(({ url, body, onLoaded }: { url: string, body: stri
           },
           body,
           method: 'POST',
-        }}
+        } as Source}
         onLoadComplete={onLoaded}
         style={{
           flex: 1,
           backgroundColor: 'transparent',
         }}
-        activityIndicatorProps={{
-          color: '#0061ff',
-          progressTintColor: '#ccdfff',
-        }}
+        {...extraProps}
       />
   )}, (prevProps, nextProps) => {
     if (prevProps.url === nextProps.url && prevProps.body === nextProps.body) {
@@ -168,7 +177,8 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   useEffect(() => {
     const { authorizeResult, refresh } = authStore.getState()
     const isExpired =
-      new Date(authorizeResult?.accessTokenExpirationDate!).getTime() <
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      new Date(authorizeResult!.accessTokenExpirationDate!).getTime() <
       Date.now()
     if (isExpired) {
       refresh().then(() => {

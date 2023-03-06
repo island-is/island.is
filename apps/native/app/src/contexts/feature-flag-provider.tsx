@@ -1,4 +1,4 @@
-import React, { FC, createContext, useContext, useMemo, useState, useEffect } from 'react'
+import React, { FC, createContext, useContext, useMemo, useState, useEffect, ReactNode } from 'react'
 import { useAuthStore } from '../stores/auth-store'
 import { config } from '../utils/config'
 import * as configcat from "configcat-js";
@@ -26,6 +26,7 @@ const FeatureFlagContext = createContext<FeatureFlagClient>({
 })
 
 export interface FeatureFlagContextProviderProps {
+  children: ReactNode
   defaultUser?: FeatureFlagUser
 }
 

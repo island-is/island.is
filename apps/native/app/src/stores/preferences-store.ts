@@ -64,7 +64,7 @@ export const preferencesStore = create<PreferencesStore>(
       setUseBiometrics(useBiometrics: boolean) {
         set({ useBiometrics })
       },
-      dismiss(key: string, value: boolean = true) {
+      dismiss(key: string, value = true) {
         const now = get().dismissed
         if (value) {
           set({ dismissed: [...now, key] })

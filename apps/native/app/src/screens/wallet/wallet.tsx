@@ -12,7 +12,9 @@ import { useIntl } from 'react-intl'
 import {
   Animated,
   FlatList,
-  Image, Platform,
+  Image,
+  ListRenderItemInfo,
+  Platform,
   RefreshControl,
   SafeAreaView,
   TouchableHighlight, View
@@ -24,9 +26,8 @@ import illustrationSrc from '../../assets/illustrations/le-moving-s6.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 // import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import { client } from '../../graphql/client'
-import {
-  IGenericUserLicense
-} from '../../graphql/fragments/license.fragment'
+import { IGenericUserLicense } from '../../graphql/fragments/license.fragment'
+import { IIdentityDocumentModel } from "../../graphql/fragments/passport.fragment";
 import { GET_IDENTITY_DOCUMENT_QUERY } from '../../graphql/queries/get-identity-document.query'
 import { GenericLicenseType } from '../../graphql/queries/get-license.query'
 import {
@@ -34,7 +35,7 @@ import {
   LIST_GENERIC_LICENSES_QUERY
 } from '../../graphql/queries/list-licenses.query'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
-import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { navigateTo } from '../../lib/deep-linking'
 import { usePreferencesStore } from '../../stores/preferences-store'
 import { LicenseStatus, LicenseType } from '../../types/license-type'
@@ -42,11 +43,12 @@ import { ButtonRegistry } from '../../utils/component-registry'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 
+type WalletItem = (IGenericUserLicense & { type: undefined }) | IIdentityDocumentModel | { id: string, type: 'empty' | 'skeleton' | 'error' }
 
 const {
   useNavigationOptions,
   getNavigationOptions,
-} = useThemedNavigationOptions(
+} = createNavigationOptionHooks(
   (theme, intl, initialized) => ({
     topBar: {
       title: {
@@ -90,7 +92,7 @@ const {
   },
 )
 
-const WalletItem = React.memo(({ item }: { item: IGenericUserLicense | any }) => {
+const WalletItem = React.memo(({ item }: { item: IGenericUserLicense | IIdentityDocumentModel }) => {
   let cardHeight = 140
 
   // Passport card
@@ -215,7 +217,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       if (!res.error) {
         const license = res.data?.genericLicenses || []
         let items = license.filter((item) => item.license.status !== 'Unknown');
-        if(!showDisability) {
+        if (!showDisability) {
           items = items.filter((item) => item.license.type !== GenericLicenseType.DisabilityLicense);
         }
         setLicenseItems(items)
@@ -260,7 +262,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   }, [])
 
   const renderItem = useCallback(
-    ({ item }) => {
+    ({ item }: ListRenderItemInfo<WalletItem>) => {
       if (item.type === 'skeleton') {
         return (
           <View style={{ paddingHorizontal: 16 }}>
@@ -308,7 +310,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
         ) : null
       }
 
-      return <WalletItem item={item} />
+      return <WalletItem item={item as IGenericUserLicense | IIdentityDocumentModel} />
     },
     [dismissed],
   )

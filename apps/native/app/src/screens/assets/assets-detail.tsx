@@ -4,7 +4,7 @@ import { ScrollView, View } from "react-native";
 import { testIDs } from '../../utils/test-ids'
 import { Navigation, NavigationFunctionComponent } from "react-native-navigation";
 import { Divider, Input, InputRow, NavigationBarSheet } from '@ui';
-import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options';
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks';
 import { useQuery } from '@apollo/client';
 import { client } from '../../graphql/client'
 import { GET_SINGLE_PROPERTY_QUERY } from '../../graphql/queries/get-single-property-query';
@@ -12,7 +12,7 @@ import { GET_SINGLE_PROPERTY_QUERY } from '../../graphql/queries/get-single-prop
 const {
   getNavigationOptions,
   useNavigationOptions,
-} = useThemedNavigationOptions(() => ({
+} = createNavigationOptionHooks(() => ({
   topBar: {
     visible: false,
   },

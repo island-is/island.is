@@ -7,7 +7,6 @@ import {
   TopLine,
 } from '@ui'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { GET_ORGANIZATIONS_QUERY } from '../../graphql/queries/get-organizations.query'
 import { useIntl } from 'react-intl'
 import {
   Animated,
@@ -15,6 +14,7 @@ import {
   AppStateStatus,
   FlatList,
   Image,
+  ListRenderItemInfo,
   Platform,
   RefreshControl,
   View,
@@ -39,7 +39,7 @@ import {
   LIST_DOCUMENTS_QUERY,
 } from '../../graphql/queries/list-documents.query'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
-import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { navigateTo } from '../../lib/deep-linking'
 import { lowerCase } from '../../lib/lowercase'
 import { inboxStore, useInboxStore } from '../../stores/inbox-store'
@@ -49,6 +49,8 @@ import { ComponentRegistry } from '../../utils/component-registry'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 
+type ListItem = { id: string; type: 'skeleton' | 'empty' } | (IDocument & { type: undefined })
+
 interface IndexedDocument extends IDocument {
   fulltext: string
 }
@@ -56,7 +58,7 @@ interface IndexedDocument extends IDocument {
 const {
   useNavigationOptions,
   getNavigationOptions,
-} = useThemedNavigationOptions(
+} = createNavigationOptionHooks(
   (theme, intl, initialized) => ({
     topBar: {
       title: {
@@ -181,7 +183,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   const emptyItems = [{ id: '0', type: 'empty' }]
   const skeletonItems = Array.from({ length: 11 }).map((_, id) => ({
-    id,
+    id: id.toString(),
     type: 'skeleton',
   }))
 
@@ -303,19 +305,19 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   useEffect(() => {
     if (Platform.OS === 'ios') {
-      AppState.addEventListener('change', onAppStateBlur)
+      const listener = AppState.addEventListener('change', onAppStateBlur)
       return () => {
-        AppState.removeEventListener('change', onAppStateBlur)
+        listener.remove()
       }
     }
   }, [])
 
-  const keyExtractor = useCallback((item: any) => {
+  const keyExtractor = useCallback((item: ListItem) => {
     return item.id
   }, [])
 
   const renderItem = useCallback(
-    ({ item }) => {
+    ({ item }: ListRenderItemInfo<ListItem>) => {
       if (item.type === 'skeleton') {
         return <ListItemSkeleton />
       }
@@ -335,7 +337,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
         )
       }
       return (
-        <PressableListItem item={item} unread={!readItems.includes(item.id)} />
+        <PressableListItem item={item as IDocument} unread={!readItems.includes(item.id)} />
       )
     },
     [readItems],
@@ -355,7 +357,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
         )}
         style={{ marginHorizontal: 0, flex: 1 }}
         data={
-          isSkeltonView ? skeletonItems : isEmptyView ? emptyItems : inboxItems
+          (isSkeltonView ? skeletonItems : isEmptyView ? emptyItems : inboxItems) as ListItem[]
         }
         keyExtractor={keyExtractor}
         renderItem={renderItem}
@@ -390,7 +392,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
                     ?.then(() => {
                       setLoading(false)
                     })
-                    .catch((err) => {
+                    .catch(() => {
                       setLoading(false)
                     })
                 } catch (err) {

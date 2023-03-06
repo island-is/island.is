@@ -23,19 +23,19 @@ const processString = (
   input: string | DynamicShade,
   props: StyledProps<any>,
 ) => {
-  if (props.theme.shade.hasOwnProperty(input)) {
-    return props.theme.shade[input as DynamicShade]
+  if (props.theme.shade[input]) {
+    return props.theme.shade[input]
   }
   return input
 }
 
 const processShape = (shape: SimpleColorShape, props: StyledProps<any>) => {
   const result = shape
-  if (props.theme.shades.dark.hasOwnProperty(shape.dark)) {
-    result.dark = props.theme.shades.dark[shape.dark as DynamicShade]
+  if (props.theme.shades.dark[shape.dark]) {
+    result.dark = props.theme.shades.dark[shape.dark]
   }
-  if (props.theme.shades.light.hasOwnProperty(shape.light)) {
-    result.light = props.theme.shades.light[shape.light as DynamicShade]
+  if (props.theme.shades.light[shape.light]) {
+    result.light = props.theme.shades.light[shape.light]
   }
   return result
 }
