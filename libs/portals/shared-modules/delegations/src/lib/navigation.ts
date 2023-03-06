@@ -40,5 +40,4 @@ export const delegationsNavigation: PortalNavigationItem = {
   description: m.accessControlDescription,
   children: delegationsNavigationChildren,
   serviceProvider: '1JHJe1NDwbBjEr7OVdjuFD',
-  isKeyitem: true,
 }

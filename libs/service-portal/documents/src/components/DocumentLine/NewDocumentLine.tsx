@@ -25,7 +25,7 @@ import {
   CardLoader,
   LoadModal,
 } from '@island.is/service-portal/core'
-import * as styles from './DocumentLine.css'
+import * as styles from './NewDocumentLine.css'
 import { gql, useLazyQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { messages as m } from '../../utils/messages'

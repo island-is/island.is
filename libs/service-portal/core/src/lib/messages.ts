@@ -662,6 +662,10 @@ export const m = defineMessages({
     id: 'service.portal:go-back',
     defaultMessage: 'Til baka',
   },
+  goBackToDashboard: {
+    id: 'service.portal:go-back-to-dashboard',
+    defaultMessage: 'Til baka í yfirlit',
+  },
   viewDetail: {
     id: 'service.portal:view-detail',
     defaultMessage: 'Skoða nánar',
@@ -913,10 +917,6 @@ export const m = defineMessages({
     id: 'service.portal:transports',
     defaultMessage: 'Samgöngur',
     description: 'Transports',
-  },
-  goBackToDashboard: {
-    id: 'service.portal:go-back-to-dashboard',
-    defaultMessage: 'Til baka í yfirlit',
   },
   download: {
     id: 'service.portal:download',

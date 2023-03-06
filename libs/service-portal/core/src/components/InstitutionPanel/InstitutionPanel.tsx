@@ -38,11 +38,7 @@ export const InstitutionPanel = ({
         display="flex"
         alignItems="center"
       >
-        <Box
-          display={imgContainerDisplay}
-          style={{ flex: '0 0 64px' }}
-          marginRight={3}
-        >
+        <Box display={imgContainerDisplay}>
           {loading ? (
             <SkeletonLoader
               display="block"

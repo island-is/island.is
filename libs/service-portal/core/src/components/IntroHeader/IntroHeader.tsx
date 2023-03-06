@@ -1,28 +1,15 @@
-import {
-  GridColumn,
-  GridRow,
-  Text,
-  Hidden,
-  Box,
-} from '@island.is/island-ui/core'
+import { GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { ModuleAlertBannerSection } from '../AlertMessage/ModuleAlertMessageSection'
-import {
-  IntroHeader as IntroHeaderBase,
-  IntroHeaderProps,
-  PortalNavigationItem,
-} from '@island.is/portals/core'
+import { IntroHeaderProps } from '@island.is/portals/core'
 import InstitutionPanel from '../InstitutionPanel/InstitutionPanel'
 import { useEffect, useState } from 'react'
 import {
   GET_ORGANIZATIONS_QUERY,
   Organization,
-  useAlertBanners,
 } from '@island.is/service-portal/graphql'
-import { useDynamicRoutesWithNavigation } from '../..'
 import { useLocation } from 'react-router-dom'
 import { useQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../lib/messages'
 
 interface Props {
   serviceProviderID?: string
@@ -51,11 +38,10 @@ export const IntroHeader = (
     }
   }, [loading, pathname])
 
-  // marginBottom={marginBottom ? marginBottom : [0, 0, 2]}
   return (
     <>
       <GridRow marginBottom={marginBottom}>
-        <GridColumn span={['8/8', '5/8']}>
+        <GridColumn span={'5/8'}>
           <Text variant="h3" as="h1">
             {formatMessage(props.title)}
           </Text>
@@ -66,7 +52,7 @@ export const IntroHeader = (
           )}
         </GridColumn>
         {currentOrganization && (
-          <GridColumn span={'1/8'} offset={'2/8'}>
+          <GridColumn span={'2/8'} offset={'1/8'}>
             <InstitutionPanel
               loading={loading}
               linkHref={currentOrganization?.link ?? ''}
@@ -77,7 +63,12 @@ export const IntroHeader = (
         )}
       </GridRow>
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '6/8']} order={3} paddingTop={4}>
+        <GridColumn
+          span={['12/12', '12/12', '6/8']}
+          order={3}
+          paddingTop={4}
+          paddingBottom={[2, 2, 2, 0]}
+        >
           <ModuleAlertBannerSection />
         </GridColumn>
       </GridRow>

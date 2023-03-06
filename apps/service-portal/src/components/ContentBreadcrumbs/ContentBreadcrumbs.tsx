@@ -5,10 +5,7 @@ import { Link, useLocation, PathMatch, matchPath } from 'react-router-dom'
 import {
   Box,
   BreadcrumbsDeprecated as Breadcrumbs,
-  Hidden,
   Icon,
-  Tag,
-  TagProps,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
@@ -46,9 +43,7 @@ const parseNavItemName = (
  * and select the deepest path with an exact path
  * match as the Breadcrumbs to render.
  */
-const ContentBreadcrumbs: FC<{
-  tag?: TagProps
-}> = ({ tag }) => {
+const ContentBreadcrumbs: FC<{}> = () => {
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const location = useLocation()
   const { formatMessage } = useLocale()
@@ -106,6 +101,7 @@ const ContentBreadcrumbs: FC<{
       alignItems="center"
       paddingBottom={[2, 3]}
       paddingTop={[1, 1, 0]}
+      paddingLeft="p2"
     >
       <Box paddingTop={0} position="relative">
         <Breadcrumbs color="blue400" separatorColor="blue400">
@@ -124,20 +120,6 @@ const ContentBreadcrumbs: FC<{
           )}
         </Breadcrumbs>
       </Box>
-      {tag && (
-        <Hidden above="sm">
-          <Box paddingLeft={[1, 1, 2]}>
-            <Tag
-              variant={tag.variant}
-              active={tag.active}
-              disabled={!tag.active}
-              href={tag.href}
-            >
-              {tag.children}
-            </Tag>
-          </Box>
-        </Hidden>
-      )}
     </Box>
   )
 }

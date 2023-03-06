@@ -20,7 +20,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
         subscribesTo: 'documents',
         description: m.documentsDescription,
-        isKeyitem: true,
       },
 
       // Umsoknir
@@ -30,7 +29,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'fileTrayFull',
         },
-        isKeyitem: true,
         children: [
           {
             name: m.inProgressApplications,
@@ -348,7 +346,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       {
         name: m.accessControl,
         path: ServicePortalPath.AccessControlDelegations,
-        isKeyitem: true,
         icon: {
           icon: 'people',
         },

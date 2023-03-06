@@ -1,12 +1,11 @@
-import { Box, HyphenProps, Button } from '@island.is/island-ui/core'
-import { ServicePortalPath } from '@island.is/service-portal/core'
-import React from 'react'
+import { Box, Button } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { useNavigate } from 'react-router-dom'
+import { m } from '@island.is/service-portal/core'
 
-// Á þetta að fara bara tilbaka eða alltaf á dashboard skjá
 export const GoBack = () => {
   const navigate = useNavigate()
-
+  const { formatMessage } = useLocale()
   return (
     <Box display={['none', 'none', 'block']} printHidden marginBottom={3}>
       <Button
@@ -18,7 +17,7 @@ export const GoBack = () => {
         truncate
         onClick={() => navigate('/')}
       >
-        Til baka í yfirlit
+        {formatMessage(m.goBackToDashboard)}
       </Button>
     </Box>
   )

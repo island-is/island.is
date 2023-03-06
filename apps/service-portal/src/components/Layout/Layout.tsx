@@ -182,22 +182,11 @@ export const Layout: FC = ({ children }) => {
             }
           >
             <Box as="main" component="main" style={{ marginTop: height }}>
-              <ContentBreadcrumbs
-                tag={
-                  currentOrganization && {
-                    variant: 'purple',
-                    href: currentOrganization?.link ?? '',
-                    children: currentOrganization?.title ?? '',
-                    active: currentOrganization?.link ? true : false,
-                  }
-                }
-              />
-
+              <ContentBreadcrumbs />
               {children}
             </Box>
           </SidebarLayout>
         )}
-
         {(isDashboard || isMailbox || !activeParent) && (
           <Box as="main" component="main" style={{ marginTop: height }}>
             {!isMailbox && !activeParent && <ContentBreadcrumbs />}

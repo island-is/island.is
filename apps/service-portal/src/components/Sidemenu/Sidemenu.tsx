@@ -44,7 +44,7 @@ const Sidemenu = ({
       className={styles.wrapper}
       ref={ref}
       style={{ top: position }}
-      background="blue200"
+      background="blue100"
     >
       <Box
         display="flex"
@@ -52,7 +52,6 @@ const Sidemenu = ({
         paddingY={6}
         paddingLeft={10}
         paddingRight={6}
-        background="blue100"
       >
         <button
           className={styles.closeButton}
@@ -63,98 +62,58 @@ const Sidemenu = ({
         </button>
       </Box>
       <Box display="flex" flexDirection="column">
-        <Box
-          className={styles.keyItems}
-          justifyContent="flexEnd"
-          background="blue100"
-        >
+        <Box justifyContent="flexEnd" background="blue100">
           <Box
             paddingLeft={10}
             paddingBottom={6}
-            className={styles.navItems}
             height="full"
             display="flex"
             flexDirection="column"
             justifyContent="flexEnd"
           >
             <Stack space={2}>
-              {navigation?.children
-                ?.filter((item) => item.isKeyitem)
-                .map(
-                  (navRoot, index) =>
-                    navRoot.path !== ServicePortalPath.MinarSidurRoot &&
-                    !navRoot.navHide && (
-                      <Link
-                        to={navRoot.path ?? '/'}
-                        key={`sidemenu-key-item-${index}`}
-                        onClick={() => setSideMenuOpen(false)}
+              {navigation?.children?.map(
+                (navRoot, index) =>
+                  navRoot.path !== ServicePortalPath.MinarSidurRoot &&
+                  !navRoot.navHide && (
+                    <Link
+                      to={navRoot.path ?? '/'}
+                      key={`sidemenu-key-item-${index}`}
+                      onClick={() => setSideMenuOpen(false)}
+                    >
+                      <Box
+                        display="flex"
+                        flexDirection="row"
+                        alignItems="center"
+                        justifyContent="flexStart"
+                        position={
+                          navRoot.subscribesTo === 'documents'
+                            ? 'relative'
+                            : undefined
+                        }
                       >
-                        <Box
-                          display="flex"
-                          flexDirection="row"
-                          alignItems="center"
-                          justifyContent="flexStart"
-                          position={
-                            navRoot.subscribesTo === 'documents'
-                              ? 'relative'
-                              : undefined
-                          }
-                        >
-                          {navRoot.icon && (
-                            <Box className={styles.icon}>
-                              <Icon
-                                icon={navRoot.icon.icon}
-                                type="outline"
-                                color="blue400"
-                              />
-                            </Box>
-                          )}
-                          {navRoot.subscribesTo === 'documents' && (
-                            <Box
-                              borderRadius="circle"
-                              className={cn(styles.badge[badgeActive])}
+                        {navRoot.icon && (
+                          <Box className={styles.icon}>
+                            <Icon
+                              icon={navRoot.icon.icon}
+                              type="outline"
+                              color="blue400"
                             />
-                          )}
-                          <Text variant="h3" color="blue400">
-                            {formatMessage(navRoot.name)}
-                          </Text>
-                        </Box>
-                      </Link>
-                    ),
-                )}
-            </Stack>
-          </Box>
-        </Box>
-        <Box paddingLeft={10} paddingRight={6}>
-          <Text
-            color="blue600"
-            fontWeight="semiBold"
-            variant="small"
-            marginTop={4}
-            marginBottom={2}
-          >
-            {formatMessage(sharedMessages.myCategories)}
-          </Text>
-          <Divider weight="blue300" />
-          <Box marginTop={4}>
-            <Stack space={2}>
-              {navigation?.children
-                ?.filter((item) => !item.isKeyitem && !item.navHide)
-                .map(
-                  (navRoot, index) =>
-                    navRoot.path !== ServicePortalPath.MinarSidurRoot &&
-                    !navRoot.navHide && (
-                      <Link
-                        to={navRoot.path ?? '/'}
-                        key={`sidemenu-item-${index}`}
-                        onClick={() => setSideMenuOpen(false)}
-                      >
-                        <Text color="blue600">
+                          </Box>
+                        )}
+                        {navRoot.subscribesTo === 'documents' && (
+                          <Box
+                            borderRadius="circle"
+                            className={cn(styles.badge[badgeActive])}
+                          />
+                        )}
+                        <Text variant="h3" color="blue400">
                           {formatMessage(navRoot.name)}
                         </Text>
-                      </Link>
-                    ),
-                )}
+                      </Box>
+                    </Link>
+                  ),
+              )}
             </Stack>
           </Box>
         </Box>

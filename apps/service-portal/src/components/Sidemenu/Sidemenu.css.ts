@@ -25,7 +25,6 @@ export const wrapper = style({
   right: 0,
 })
 
-export const navItems = style({})
 export const link = style({
   display: 'block',
   height: '100%',
@@ -54,11 +53,6 @@ export const closeButton = style({
     outline: 'none',
     borderColor: theme.color.mint200,
   },
-})
-
-export const keyItems = style({
-  maxHeight: 219,
-  flexGrow: 1,
 })
 
 export const categories = style({

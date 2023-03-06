@@ -32,7 +32,6 @@ export type Icon =
   | 'ellipse'
   | 'ellipsisHorizontal'
   | 'ellipsisVertical'
-  | 'en'
   | 'eye'
   | 'eyeOff'
   | 'facebook'
@@ -41,7 +40,6 @@ export type Icon =
   | 'heart'
   | 'home'
   | 'informationCircle'
-  | 'is'
   | 'link'
   | 'lockClosed'
   | 'logOut'
@@ -103,7 +101,6 @@ export default {
     ellipse: 'Ellipse',
     ellipsisHorizontal: 'EllipsisHorizontal',
     ellipsisVertical: 'EllipsisVertical',
-    en: 'EN',
     eye: 'Eye',
     eyeOff: 'EyeOff',
     facebook: 'Facebook',
@@ -112,7 +109,6 @@ export default {
     heart: 'Heart',
     home: 'Home',
     informationCircle: 'InformationCircle',
-    is: 'IS',
     link: 'Link',
     lockClosed: 'LockClosed',
     logOut: 'LogOut',
@@ -173,7 +169,6 @@ export default {
     ellipse: 'EllipseOutline',
     ellipsisHorizontal: 'EllipsisHorizontalOutline',
     ellipsisVertical: 'EllipsisVerticalOutline',
-    en: 'EN',
     eye: 'EyeOutline',
     eyeOff: 'EyeOffOutline',
     facebook: 'Facebook',
@@ -182,7 +177,6 @@ export default {
     heart: 'HeartOutline',
     home: 'HomeOutline',
     informationCircle: 'InformationCircleOutline',
-    is: 'IS',
     link: 'LinkOutline',
     lockClosed: 'LockClosedOutline',
     logOut: 'LogOutOutline',

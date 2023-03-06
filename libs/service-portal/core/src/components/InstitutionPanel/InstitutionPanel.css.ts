@@ -6,6 +6,7 @@ export const link = style({
   justifyContent: 'center',
   height: 96,
   width: 96,
+  float: 'right',
   ':hover': {
     textDecoration: 'none',
   },

@@ -1,6 +1,13 @@
 import { style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
+export const active = style({
+  backgroundColor: theme.color.white,
+})
+
+export const unread = style({
+  backgroundColor: theme.color.blue100,
+})
 export const unopenedWrapper = style({
   backgroundColor: 'unset',
   ...themeUtils.responsiveStyle({
@@ -15,19 +22,7 @@ export const line = style({
   borderBottom: `1px solid ${theme.color.blue100}`,
 })
 
-export const button = style({
-  color: theme.color.blue400,
-  fontSize: 16,
-  fontWeight: theme.typography.regular,
-  lineHeight: 1.5,
-  textAlign: 'left',
-  ':hover': {
-    textDecoration: 'underline',
-  },
-  ':focus': {
-    outline: 'none',
-  },
-})
+export const button = style({})
 
 export const unopened = style({
   fontWeight: theme.typography.semiBold,
@@ -45,9 +40,9 @@ export const sender = style({
 })
 
 export const image = style({
-  width: 30,
-  height: 30,
-  marginRight: theme.spacing[2],
+  width: 34,
+  height: 34,
+  // margin: theme.spacing[2],
 })
 
 export const icon = style({
@@ -55,8 +50,10 @@ export const icon = style({
 })
 
 export const imageContainer = style({
-  minWidth: 30,
-  minHeight: 30,
+  minWidth: 66,
+  minHeight: 66,
+  maxHeight: 66,
+  maxWidth: 66,
 })
 
 export const linkWrapper = style({
@@ -66,4 +63,16 @@ export const linkWrapper = style({
       backgroundColor: theme.color.blueberry100,
     },
   }),
+})
+
+export const badge = style({
+  position: 'absolute',
+  top: -12,
+  bottom: 0,
+  right: 'auto',
+  left: -107,
+  height: theme.spacing[1],
+  width: theme.spacing[1],
+  borderRadius: '50%',
+  backgroundColor: theme.color.red400,
 })

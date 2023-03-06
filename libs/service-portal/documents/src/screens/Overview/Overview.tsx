@@ -276,7 +276,11 @@ export const ServicePortalDocuments = () => {
     )
   }
   return (
-    <Box marginBottom={[4, 4, 6, 10]}>
+    <Box
+      marginBottom={[4, 4, 6, 10]}
+      paddingX={[3, 3, 6]}
+      paddingTop={[2, 2, 4]}
+    >
       <IntroHeader title={messages.title} intro={messages.intro} />
 
       {loading && filterValue === defaultFilterValues ? (

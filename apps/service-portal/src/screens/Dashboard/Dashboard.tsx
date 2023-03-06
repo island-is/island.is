@@ -48,8 +48,7 @@ export const Dashboard: FC<{}> = () => {
     // eslint-disable-next-line no-lone-blocks
     {
       return navigation?.children
-        ?.filter((item) => (keyItem ? item.isKeyitem : !item.isKeyitem))
-        .filter((item) => !item.navHide)
+        ?.filter((item) => !item.navHide)
         .map(
           (navRoot, index) =>
             navRoot.path !== ServicePortalPath.MinarSidurRoot && (
@@ -113,7 +112,7 @@ export const Dashboard: FC<{}> = () => {
           <GridRow>{displayCards(true)}</GridRow>
         </GridContainer>
       </Box>
-      <Box paddingTop={[0, 0, 0, 6]}>
+      {/* <Box paddingTop={[0, 0, 0, 6]}>
         <GridContainer>
           <GridRow>
             <GridColumn offset={['0', '0', '0', '1/12']}>
@@ -126,7 +125,7 @@ export const Dashboard: FC<{}> = () => {
             {displayCards(false)}
           </GridRow>
         </GridContainer>
-      </Box>
+      </Box> */}
     </Box>
   )
 }
