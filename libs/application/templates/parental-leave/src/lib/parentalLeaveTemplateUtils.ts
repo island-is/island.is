@@ -38,6 +38,11 @@ export function hasEmployer(context: ApplicationContext) {
         | typeof PARENTAL_GRANT_STUDENTS
     }
     isSelfEmployed: typeof YES | typeof NO
+    employers: [
+      {
+        stillEmployed: typeof YES | typeof NO
+      },
+    ]
   }
   const oldApplicationAnswers = context.application.answers as {
     isRecivingUnemploymentBenefits: typeof YES | typeof NO
@@ -63,10 +68,20 @@ export function hasEmployer(context: ApplicationContext) {
     }
 
     return selfEmployed
-  } else
-    return currentApplicationAnswers.applicationType.option === PARENTAL_LEAVE
-      ? selfEmployed && receivingUnemploymentBenefits
-      : false
+  } else {
+    if (currentApplicationAnswers.applicationType.option === PARENTAL_LEAVE) {
+      return selfEmployed && receivingUnemploymentBenefits
+    } else if (
+      currentApplicationAnswers.applicationType.option === PARENTAL_GRANT &&
+      currentApplicationAnswers.employers !== undefined
+    ) {
+      return currentApplicationAnswers.employers.some(
+        (employer) => employer.stillEmployed === YES,
+      )
+    } else {
+      return false
+    }
+  }
 }
 
 export function needsOtherParentApproval(context: ApplicationContext) {

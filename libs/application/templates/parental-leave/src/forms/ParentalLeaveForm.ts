@@ -558,13 +558,9 @@ export const ParentalLeaveForm: Form = buildForm({
         }),
         buildSubSection({
           condition: (answers) => {
-            const {
-              applicationType,
-            } = getApplicationAnswers(answers)
+            const { applicationType } = getApplicationAnswers(answers)
 
-            return (
-              applicationType === PARENTAL_GRANT
-            )
+            return applicationType === PARENTAL_GRANT
           },
           id: 'parentalGrantEmployment',
           title: parentalLeaveFormMessages.employer.subSection,
@@ -576,15 +572,13 @@ export const ParentalLeaveForm: Form = buildForm({
               options: [
                 {
                   value: YES,
-                  label:
-                    parentalLeaveFormMessages.shared.yesOptionLabel,
+                  label: parentalLeaveFormMessages.shared.yesOptionLabel,
                 },
                 {
                   value: NO,
-                  label:
-                    parentalLeaveFormMessages.shared.noOptionLabel,
+                  label: parentalLeaveFormMessages.shared.noOptionLabel,
                 },
-              ]
+              ],
             }),
           ],
         }),
@@ -649,6 +643,34 @@ export const ParentalLeaveForm: Form = buildForm({
                           value: `${array.length - idx}`,
                           label: `${array.length - idx}%`,
                         })),
+                    }),
+                    buildRadioField({
+                      id: 'stillEmployed',
+                      condition: (answers) => {
+                        const {
+                          applicationType,
+                          employerLastSixMonths,
+                        } = getApplicationAnswers(answers)
+
+                        return (
+                          applicationType === PARENTAL_GRANT &&
+                          employerLastSixMonths === YES
+                        )
+                      },
+                      title: parentalLeaveFormMessages.employer.stillEmployed,
+                      width: 'half',
+                      space: 3,
+                      options: [
+                        {
+                          value: YES,
+                          label:
+                            parentalLeaveFormMessages.shared.yesOptionLabel,
+                        },
+                        {
+                          value: NO,
+                          label: parentalLeaveFormMessages.shared.noOptionLabel,
+                        },
+                      ],
                     }),
                   ],
                 }),
@@ -837,6 +859,47 @@ export const ParentalLeaveForm: Form = buildForm({
               introduction:
                 parentalLeaveFormMessages.attachmentScreen.description,
               maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader: '',
+              uploadDescription: '',
+              uploadButtonLabel:
+                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+            }),
+            buildFileUploadField({
+              id: 'fileUpload.employmentTerminationCertificateFile',
+              title:
+                parentalLeaveFormMessages.attachmentScreen
+                  .employmentTerminationCertificateTitle,
+              introduction:
+                parentalLeaveFormMessages.attachmentScreen
+                  .employmentTerminationCertificateDescription,
+              condition: (answers) => {
+                const isParentalGrant =
+                  (answers as {
+                    applicationType: {
+                      option: string
+                    }
+                  })?.applicationType?.option === PARENTAL_GRANT
+                const hadEmployerLastSixMonths =
+                  (answers as {
+                    employerLastSixMonths: YesOrNo
+                  })?.employerLastSixMonths === YES
+                const isNotStillEmployed = (answers as {
+                  employers: [
+                    {
+                      stillEmployed: YesOrNo
+                    },
+                  ]
+                })?.employers?.some((employer) => employer.stillEmployed === NO)
+
+                return (
+                  isParentalGrant &&
+                  hadEmployerLastSixMonths &&
+                  isNotStillEmployed
+                )
+              },
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
               uploadAccept: '.pdf',

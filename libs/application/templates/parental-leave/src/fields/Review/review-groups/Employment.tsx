@@ -31,7 +31,13 @@ export const Employment = ({
   return (
     <ReviewGroup
       isEditable={editable}
-      editAction={() => goToScreen?.(applicationType === PARENTAL_LEAVE ? 'isSelfEmployed.benefits' : 'employerLastSixMonths')}
+      editAction={() =>
+        goToScreen?.(
+          applicationType === PARENTAL_LEAVE
+            ? 'isSelfEmployed.benefits'
+            : 'employerLastSixMonths',
+        )
+      }
     >
       {applicationType === PARENTAL_LEAVE && (
         <>
@@ -77,11 +83,11 @@ export const Employment = ({
       )}
       {employerLastSixMonths === YES && (
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+          <GridColumn span={['7/12', '7/12', '7/12', '12/12']}>
             <Box paddingBottom={2}>
               <RadioValue
                 label={formatMessage(
-                  parentalLeaveFormMessages.employer.employerLastSixMonths,
+                  parentalLeaveFormMessages.reviewScreen.employerLastSixMonths,
                 )}
                 value={employerLastSixMonths}
               />
