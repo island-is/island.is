@@ -74,6 +74,7 @@ type ActionCardProps = {
   status?: string
   renderDraftStatusBar?: boolean
   history?: ActionCardHistoryConfig
+  renderApplicationData?: boolean
 }
 
 const defaultCta = {
@@ -129,6 +130,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   status,
   renderDraftStatusBar = false,
   focused = false,
+  renderApplicationData,
 }) => {
   const cta = { ...defaultCta, ..._cta }
   const progressMeter = { ...defaultProgressMeter, ..._progressMeter }
@@ -482,11 +484,11 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         </Box>
       </Box>
 
-      {status === 'draft'
+      {renderApplicationData && status === 'draft'
         ? renderDraftStatusBar
           ? renderDraftProgressMeter()
           : renderProgressMeter()
-        : history?.items && history.items.length > 0
+        : renderApplicationData && history?.items && history.items.length > 0
         ? renderHistory()
         : renderProgressMeter()}
     </Box>
