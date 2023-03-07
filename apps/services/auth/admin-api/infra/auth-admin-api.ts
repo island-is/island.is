@@ -70,5 +70,9 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
       min: 2,
       max: 10,
     })
-    .grantNamespaces('nginx-ingress-internal', 'islandis')
+    .grantNamespaces(
+      'nginx-ingress-external',
+      'nginx-ingress-internal',
+      'islandis',
+    )
 }
