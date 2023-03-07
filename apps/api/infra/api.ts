@@ -183,24 +183,18 @@ export const serviceSetup = (services: {
       HSN_WEB_FORM_ID: '1dimJFHLFYtnhoYEA3JxRK',
       SESSIONS_API_URL: ref((h) => `http://${h.svc(services.sessionsApi)}`),
       AUTH_ADMIN_API_PATHS: {
-        dev: ref((h) =>
-          json({
-            dev: `http://${h.svc(services.authAdminApi)}`,
-          }),
-        ),
-        staging: ref((h) =>
-          json({
-            dev: 'https://identity-server.dev01.devland.is/backend',
-            staging: `http://${h.svc(services.authAdminApi)}`,
-          }),
-        ),
-        prod: ref((h) =>
-          json({
-            dev: 'https://identity-server.dev01.devland.is/backend',
-            staging: 'https://identity-server.staging01.devland.is/backend',
-            prod: `http://${h.svc(services.authAdminApi)}`,
-          }),
-        ),
+        dev: json({
+          development: 'https://identity-server.dev01.devland.is/backend',
+        }),
+        staging: json({
+          development: 'https://identity-server.dev01.devland.is/backend',
+          staging: 'https://identity-server.staging01.devland.is/backend',
+        }),
+        prod: json({
+          development: 'https://identity-server.dev01.devland.is/backend',
+          staging: 'https://identity-server.staging01.devland.is/backend',
+          production: 'https://innskra.island.is/backend',
+        }),
       },
     })
 
