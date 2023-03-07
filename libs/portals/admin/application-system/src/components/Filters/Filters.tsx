@@ -1,7 +1,4 @@
-import {
-  institutionMapper,
-  InstitutionTypes,
-} from '@island.is/application/types'
+import { InstitutionTypes } from '@island.is/application/types'
 import {
   Box,
   Text,
@@ -26,8 +23,9 @@ interface Props {
   onSearchChange: (query: string) => void
   onDateChange: (period: ApplicationFilters['period']) => void
   onFilterChange: FilterMultiChoiceProps['onChange']
-  onFilterClear: () => void
-  filters: Record<MultiChoiceFilter, string[] | undefined>
+  onFilterClear: (categoryId?: string) => void
+  multiChoiceFilters: Record<MultiChoiceFilter, string[] | undefined>
+  filters: ApplicationFilters
   applications: string[]
   organizations: Organization[]
   numberOfDocuments?: number
@@ -38,6 +36,7 @@ export const Filters = ({
   onFilterChange,
   onFilterClear,
   onDateChange,
+  multiChoiceFilters,
   filters,
   applications,
   organizations,
@@ -86,6 +85,7 @@ export const Filters = ({
         labelClose={formatMessage(m.closeFilter)}
         labelResult={formatMessage(m.filterResults)}
         labelTitle={formatMessage(m.filter)}
+        onFilterClear={onFilterClear}
         filterInput={
           <Box display="flex" flexDirection={['column', 'column', 'row']}>
             <FilterInput
@@ -100,6 +100,7 @@ export const Filters = ({
                 id="periodFrom"
                 label=""
                 backgroundColor="blue"
+                maxDate={filters.period.to}
                 placeholderText={formatMessage(m.filterFrom)}
                 handleChange={(from) => onDateChange({ from })}
                 size="xs"
@@ -110,6 +111,7 @@ export const Filters = ({
               id="periodTo"
               label=""
               backgroundColor="blue"
+              minDate={filters.period.from}
               placeholderText={formatMessage(m.filterTo)}
               handleChange={(to) => onDateChange({ to })}
               size="xs"
@@ -117,7 +119,6 @@ export const Filters = ({
             />
           </Box>
         }
-        onFilterClear={onFilterClear}
       >
         <FilterMultiChoice
           labelClear={formatMessage(m.clearSelected)}
@@ -128,7 +129,7 @@ export const Filters = ({
             {
               id: MultiChoiceFilter.INSTITUTION,
               label: formatMessage(m.institution),
-              selected: filters[MultiChoiceFilter.INSTITUTION] ?? [],
+              selected: multiChoiceFilters[MultiChoiceFilter.INSTITUTION] ?? [],
               inline: false,
               singleOption: false,
               filters: availableOrganizations.map((x) => ({
@@ -139,7 +140,7 @@ export const Filters = ({
             {
               id: MultiChoiceFilter.APPLICATION,
               label: formatMessage(m.application),
-              selected: filters[MultiChoiceFilter.APPLICATION] ?? [],
+              selected: multiChoiceFilters[MultiChoiceFilter.APPLICATION] ?? [],
               inline: false,
               singleOption: false,
               filters: applications.map((x) => ({ value: x, label: x })),
@@ -147,7 +148,7 @@ export const Filters = ({
             {
               id: MultiChoiceFilter.STATUS,
               label: formatMessage(m.status),
-              selected: filters[MultiChoiceFilter.STATUS] ?? [],
+              selected: multiChoiceFilters[MultiChoiceFilter.STATUS] ?? [],
               inline: false,
               singleOption: false,
               filters: Object.entries(statusMapper).map(([value, tag]) => ({

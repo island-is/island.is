@@ -20,6 +20,7 @@ import { ApplicationsTable } from '../../components/ApplicationsTable/Applicatio
 import { ApplicationFilters, MultiChoiceFilter } from '../../types/filters'
 import { Organization } from '@island.is/shared/types'
 import { institutionMapper } from '@island.is/application/types'
+import { getFilteredApplications } from '../../shared/utils'
 
 const defaultFilters: ApplicationFilters = {
   nationalId: '',
@@ -30,9 +31,9 @@ const defaultMultiChoiceFilters: Record<
   MultiChoiceFilter,
   string[] | undefined
 > = {
-  [MultiChoiceFilter.STATUS]: undefined, // Server side
-  [MultiChoiceFilter.INSTITUTION]: undefined, // Server side
-  [MultiChoiceFilter.APPLICATION]: undefined, // Client side
+  [MultiChoiceFilter.STATUS]: undefined,
+  [MultiChoiceFilter.INSTITUTION]: undefined,
+  [MultiChoiceFilter.APPLICATION]: undefined,
 }
 
 const pageSize = 12
@@ -52,16 +53,11 @@ const Overview = () => {
     ssr: false,
   })
 
-  const { data, loading: queryLoading, refetch } = useGetApplicationsQuery({
+  const { data, loading: queryLoading } = useGetApplicationsQuery({
     ssr: false,
-    // Set fetch policy to standby and manually refetch when filters change
-    // This is because Apollo is not detecting changes in the cache when arrays are updated
-    fetchPolicy: 'standby',
     variables: {
       input: {
         nationalId: filters.nationalId ?? '',
-        status: multiChoiceFilters[MultiChoiceFilter.STATUS],
-        typeId: institutionFilters,
       },
     },
     onCompleted: (q) => {
@@ -82,11 +78,6 @@ const Overview = () => {
   const { applicationApplicationsAdmin: applicationAdminList = [] } = data ?? {}
   const organizations = (orgData?.getOrganizations?.items ??
     []) as Organization[]
-
-  const refetchData = () => {
-    setPage(1)
-    refetch()
-  }
 
   const handleSearchChange = (nationalId: string) => {
     setFilters((prev) => ({
@@ -119,24 +110,32 @@ const Overview = () => {
     }))
   }
 
-  const clearFilters = () => {
-    setFilters(defaultFilters)
-    setMultiChoiceFilters(defaultMultiChoiceFilters)
-    setInstitutionFilters(undefined)
+  const clearFilters = (categoryId?: string) => {
+    if (!categoryId) {
+      // Clear all filters
+      setFilters(defaultFilters)
+      setMultiChoiceFilters(defaultMultiChoiceFilters)
+      setInstitutionFilters(undefined)
+      return
+    }
+
+    if (categoryId === MultiChoiceFilter.INSTITUTION) {
+      setInstitutionFilters(undefined)
+    }
+
+    setMultiChoiceFilters((prev) => ({
+      ...prev,
+      [categoryId]: undefined,
+    }))
   }
 
-  // Listen to filter changes and refetch data
-  useEffect(refetchData, [filters, multiChoiceFilters, refetch])
+  // Reset the page on filter change
+  useEffect(() => setPage(1), [filters, multiChoiceFilters])
 
-  const filteredApplicationList = multiChoiceFilters[
-    MultiChoiceFilter.APPLICATION
-  ]
-    ? applicationAdminList?.filter(
-        (x) =>
-          !!x.name &&
-          multiChoiceFilters[MultiChoiceFilter.APPLICATION]?.includes(x.name),
-      )
-    : applicationAdminList
+  const filteredApplicationList = getFilteredApplications(
+    applicationAdminList ?? [],
+    { multiChoiceFilters, institutionFilters, period: filters.period },
+  )
 
   return (
     <Box>
@@ -154,7 +153,8 @@ const Overview = () => {
         onFilterChange={handleMultiChoiceFilterChange}
         onDateChange={handleDateChange}
         onFilterClear={clearFilters}
-        filters={multiChoiceFilters}
+        multiChoiceFilters={multiChoiceFilters}
+        filters={filters}
         applications={availableApplications ?? []}
         organizations={organizations}
         numberOfDocuments={applicationAdminList?.length}
