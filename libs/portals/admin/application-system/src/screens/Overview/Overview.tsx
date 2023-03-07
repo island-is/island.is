@@ -79,6 +79,13 @@ const Overview = () => {
   const organizations = (orgData?.getOrganizations?.items ??
     []) as Organization[]
 
+  // Get organizations of all applications currently fetched
+  const typeIds = applicationAdminList?.map((x) => x.typeId) as string[]
+  const availableOrganizations = organizations?.filter((x) => {
+    const allApplications = institutionApplications[x.slug]
+    return allApplications?.some((x) => typeIds?.includes(x))
+  })
+
   const handleSearchChange = (nationalId: string) => {
     setFilters((prev) => ({
       ...prev,
@@ -145,7 +152,7 @@ const Overview = () => {
           { title: formatMessage(m.applicationSystem) },
         ]}
       />
-      <Text variant="h3" marginBottom={[3, 3, 6]} marginTop={3}>
+      <Text variant="h3" as="h1" marginBottom={[3, 3, 6]} marginTop={3}>
         {formatMessage(m.applicationSystemApplications)}
       </Text>
       <Filters
@@ -156,7 +163,7 @@ const Overview = () => {
         multiChoiceFilters={multiChoiceFilters}
         filters={filters}
         applications={availableApplications ?? []}
-        organizations={organizations}
+        organizations={availableOrganizations ?? []}
         numberOfDocuments={applicationAdminList?.length}
       />
       {isLoading ? (
