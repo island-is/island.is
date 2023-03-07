@@ -16,7 +16,7 @@ import {
   ConsultationPortalAdviceByCaseIdQuery,
   ConsultationPortalAdviceByCaseIdQueryVariables,
 } from '../../screens/Case/getAdvices.graphql.generated'
-import { GET_ADVICES } from '@island.is/consultation-portal/screens/Case/getAdvices.graphql'
+import { GET_ADVICES } from '../../screens/Case/getAdvices.graphql'
 interface CaseProps {
   case: Case
   advices: Advice[]

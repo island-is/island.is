@@ -23,7 +23,6 @@ import StackedTitleAndDescription from '../../components/StackedTitleAndDescript
 
 const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
   // Remove following lines after connecting to API
-  advices = advices
 
   const card = {
     caseNumber: '76/2022',
