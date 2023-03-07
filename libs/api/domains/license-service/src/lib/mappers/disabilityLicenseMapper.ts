@@ -12,21 +12,22 @@ import { i18n } from '../utils/translations'
 import { Injectable } from '@nestjs/common'
 
 @Injectable()
-export class DisabilityLicensePayloadMapper
-  implements GenericLicenseMapper<OrorkuSkirteini> {
+export class DisabilityLicensePayloadMapper implements GenericLicenseMapper {
   parsePayload(
-    payload?: OrorkuSkirteini,
+    payload?: unknown,
     locale: Locale = 'is',
     labels?: GenericLicenseLabels,
   ): GenericUserLicensePayload | null {
     if (!payload) return null
+    const typedPayload = payload as OrorkuSkirteini
+
     const label = labels?.labels
     const data: Array<GenericLicenseDataField> = [
       {
         type: GenericLicenseDataFieldType.Value,
         name: 'Grunnupplýsingar örorkuskírteinis',
         label: label ? label['fullName'] : i18n.fullName[locale],
-        value: payload.nafn ?? '',
+        value: typedPayload.nafn ?? '',
       },
       {
         type: GenericLicenseDataFieldType.Value,
@@ -36,17 +37,17 @@ export class DisabilityLicensePayloadMapper
       {
         type: GenericLicenseDataFieldType.Value,
         label: label ? label['validTo'] : i18n.validTo[locale],
-        value: payload.gildirtil?.toISOString() ?? '',
+        value: typedPayload.gildirtil?.toISOString() ?? '',
       },
     ]
 
     return {
       data,
-      rawData: JSON.stringify(payload),
+      rawData: JSON.stringify(typedPayload),
       metadata: {
-        licenseNumber: payload.kennitala?.toString() ?? '',
-        expired: payload.gildirtil
-          ? !isAfter(new Date(payload.gildirtil), new Date())
+        licenseNumber: typedPayload.kennitala?.toString() ?? '',
+        expired: typedPayload.gildirtil
+          ? !isAfter(new Date(typedPayload.gildirtil), new Date())
           : null,
       },
     }

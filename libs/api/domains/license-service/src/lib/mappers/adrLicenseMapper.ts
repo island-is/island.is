@@ -15,14 +15,15 @@ import { getLabel } from '../utils/translations'
 import { Injectable } from '@nestjs/common'
 
 @Injectable()
-export class AdrLicensePayloadMapper
-  implements GenericLicenseMapper<FlattenedAdrDto> {
+export class AdrLicensePayloadMapper implements GenericLicenseMapper {
   parsePayload(
-    payload?: FlattenedAdrDto,
+    payload: unknown,
     locale: Locale = 'is',
     labels?: GenericLicenseLabels,
   ): GenericUserLicensePayload | null {
     if (!payload) return null
+
+    const typedPayload = payload as FlattenedAdrDto
 
     const label = labels?.labels
 
@@ -31,12 +32,12 @@ export class AdrLicensePayloadMapper
         name: getLabel('basicInfoLicense', locale, label),
         type: GenericLicenseDataFieldType.Value,
         label: getLabel('licenseNumber', locale, label),
-        value: payload.skirteinisNumer?.toString(),
+        value: typedPayload.skirteinisNumer?.toString(),
       },
       {
         type: GenericLicenseDataFieldType.Value,
         label: getLabel('fullName', locale, label),
-        value: payload.fulltNafn ?? '',
+        value: typedPayload.fulltNafn ?? '',
       },
       {
         type: GenericLicenseDataFieldType.Value,
@@ -46,11 +47,13 @@ export class AdrLicensePayloadMapper
       {
         type: GenericLicenseDataFieldType.Value,
         label: getLabel('validTo', locale, label),
-        value: payload.gildirTil ?? '',
+        value: typedPayload.gildirTil ?? '',
       },
     ]
 
-    const adrRights = (payload.adrRettindi ?? []).filter((field) => field.grunn)
+    const adrRights = (typedPayload.adrRettindi ?? []).filter(
+      (field) => field.grunn,
+    )
     const tankar = this.parseRights(
       getLabel('tanks', locale, label) ?? '',
       adrRights.filter((field) => field.tankar),
@@ -66,13 +69,13 @@ export class AdrLicensePayloadMapper
 
     return {
       data,
-      rawData: JSON.stringify(payload),
+      rawData: JSON.stringify(typedPayload),
       metadata: {
-        licenseNumber: payload.skirteinisNumer?.toString() ?? '',
-        expired: payload.gildirTil
-          ? !isAfter(new Date(payload.gildirTil), new Date())
+        licenseNumber: typedPayload.skirteinisNumer?.toString() ?? '',
+        expired: typedPayload.gildirTil
+          ? !isAfter(new Date(typedPayload.gildirTil), new Date())
           : null,
-        expireDate: payload.gildirTil ?? undefined,
+        expireDate: typedPayload.gildirTil ?? undefined,
       },
     }
   }

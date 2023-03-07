@@ -96,7 +96,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
         driving: DrivingLicensePayloadMapper,
       ) => async (
         type: GenericLicenseType,
-      ): Promise<GenericLicenseMapper<any> | null> => {
+      ): Promise<GenericLicenseMapper | null> => {
         switch (type) {
           case GenericLicenseType.AdrLicense:
             return adr

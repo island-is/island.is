@@ -262,9 +262,9 @@ export interface GenericLicenseClient<LicenseType> {
   ) => Promise<PkPassVerification | null>
 }
 
-export interface GenericLicenseMapper<T> {
+export interface GenericLicenseMapper {
   parsePayload: (
-    payload?: T,
+    payload?: unknown,
     locale?: Locale,
     labels?: GenericLicenseLabels,
   ) => GenericUserLicensePayload | null

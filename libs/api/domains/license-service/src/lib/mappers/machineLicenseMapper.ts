@@ -15,8 +15,7 @@ import {
 import { getLabel } from '../utils/translations'
 import { Injectable } from '@nestjs/common'
 @Injectable()
-export class MachineLicensePayloadMapper
-  implements GenericLicenseMapper<VinnuvelaDto> {
+export class MachineLicensePayloadMapper implements GenericLicenseMapper {
   private checkLicenseExpirationDate(license: VinnuvelaDto) {
     return license.vinnuvelaRettindi
       ? license.vinnuvelaRettindi
@@ -32,11 +31,13 @@ export class MachineLicensePayloadMapper
   }
 
   parsePayload(
-    payload?: VinnuvelaDto,
+    payload?: unknown,
     locale: Locale = 'is',
     labels?: GenericLicenseLabels,
   ): GenericUserLicensePayload | null {
     if (!payload) return null
+
+    const typedPayload = payload as VinnuvelaDto
 
     const expired: boolean | null = this.checkLicenseExpirationDate(payload)
 
@@ -46,22 +47,22 @@ export class MachineLicensePayloadMapper
         name: getLabel('basicInfoLicense', locale, label),
         type: GenericLicenseDataFieldType.Value,
         label: getLabel('licenseNumber', locale, label),
-        value: payload.skirteinisNumer?.toString(),
+        value: typedPayload.skirteinisNumer?.toString(),
       },
       {
         type: GenericLicenseDataFieldType.Value,
         label: getLabel('fullName', locale, label),
-        value: payload?.fulltNafn ?? '',
+        value: typedPayload?.fulltNafn ?? '',
       },
       {
         type: GenericLicenseDataFieldType.Value,
         label: getLabel('placeOfIssue', locale, label),
-        value: payload.utgafuStadur ?? '',
+        value: typedPayload.utgafuStadur ?? '',
       },
       {
         type: GenericLicenseDataFieldType.Value,
         label: getLabel('firstPublishedDate', locale, label),
-        value: payload.fyrstiUtgafuDagur?.toString(),
+        value: typedPayload.fyrstiUtgafuDagur?.toString(),
       },
       {
         type: GenericLicenseDataFieldType.Value,
@@ -71,12 +72,12 @@ export class MachineLicensePayloadMapper
       {
         type: GenericLicenseDataFieldType.Value,
         label: getLabel('drivingLicenseNumber', locale, label),
-        value: payload.okuskirteinisNumer ?? '',
+        value: typedPayload.okuskirteinisNumer ?? '',
       },
       {
         type: GenericLicenseDataFieldType.Group,
         label: getLabel('classesOfRights', locale, label),
-        fields: (payload.vinnuvelaRettindi ?? [])
+        fields: (typedPayload.vinnuvelaRettindi ?? [])
           .filter((field) => field.kenna || field.stjorna)
           .map((field) => ({
             type: GenericLicenseDataFieldType.Category,
@@ -90,9 +91,9 @@ export class MachineLicensePayloadMapper
 
     return {
       data,
-      rawData: JSON.stringify(payload),
+      rawData: JSON.stringify(typedPayload),
       metadata: {
-        licenseNumber: payload.skirteinisNumer?.toString() ?? '',
+        licenseNumber: typedPayload.skirteinisNumer?.toString() ?? '',
         expired: expired,
       },
     }

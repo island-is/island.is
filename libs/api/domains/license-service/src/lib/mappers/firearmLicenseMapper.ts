@@ -13,16 +13,16 @@ import { getLabel } from '../utils/translations'
 import { FirearmLicenseDto } from '@island.is/clients/license-client'
 import { Injectable } from '@nestjs/common'
 @Injectable()
-export class FirearmLicensePayloadMapper
-  implements GenericLicenseMapper<FirearmLicenseDto> {
+export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
   public parsePayload = (
-    payload?: FirearmLicenseDto,
+    payload?: unknown,
     locale: Locale = 'is',
     labels?: GenericLicenseLabels,
   ): GenericUserLicensePayload | null => {
     if (!payload) return null
 
-    const { licenseInfo, properties, categories } = payload
+    const typedPayload = payload as FirearmLicenseDto
+    const { licenseInfo, properties, categories } = typedPayload
 
     const expired = licenseInfo?.expirationDate
       ? !isAfter(new Date(licenseInfo.expirationDate), new Date())
@@ -99,11 +99,12 @@ export class FirearmLicensePayloadMapper
 
     return {
       data,
-      rawData: JSON.stringify(payload),
+      rawData: JSON.stringify(typedPayload),
       metadata: {
-        licenseNumber: payload.licenseInfo?.licenseNumber?.toString() ?? '',
+        licenseNumber:
+          typedPayload.licenseInfo?.licenseNumber?.toString() ?? '',
         expired,
-        expireDate: payload.licenseInfo?.expirationDate ?? undefined,
+        expireDate: typedPayload.licenseInfo?.expirationDate ?? undefined,
         links: [
           {
             label: getLabel('renewFirearmLicense', locale, label),
