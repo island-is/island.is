@@ -58,17 +58,17 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: {
-            target: States.IN_REVIEW,
+            target: States.Completed,
           },
         },
       },
-      [States.IN_REVIEW]: {
+      [States.Completed]: {
         meta: {
-          name: 'In Review',
+          name: 'Completed',
           status: 'completed',
           progress: 1,
           actionCard: {
-            tag: { label: application.submittedTag, variant: 'blueberry' },
+            onEntryHistoryLog: application.applicationSubmitted,
           },
           lifecycle: {
             shouldBeListed: true,
