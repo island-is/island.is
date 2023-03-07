@@ -2,7 +2,7 @@
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "module": "commonjs",
-    "resolveJsonModule": true,
+    "resolveJsonModule": true
   },
   "files": [],
   "include": [],
