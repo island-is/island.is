@@ -1,4 +1,4 @@
-import { service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
+import { json, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
   return service('services-auth-admin-api')
@@ -15,6 +15,18 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      IDENTITY_SERVER_ISSUER_URL_LIST: {
+        dev: json([
+          'https://identity-server.dev01.devland.is',
+          'https://identity-server.staging01.devland.is',
+          'https://innskra.island.is',
+        ]),
+        staging: json([
+          'https://identity-server.staging01.devland.is',
+          'https://innskra.island.is',
+        ]),
+        prod: json(['https://innskra.island.is']),
+      },
     })
     .ingress({
       primary: {
@@ -23,8 +35,22 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
           staging: 'identity-server.staging01.devland.is',
           prod: 'innskra.island.is',
         },
-        paths: ['/backend'],
+        paths: ['/backend(/|$)(.*)'],
         public: true,
+        extraAnnotations: {
+          dev: {
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+            'nginx.ingress.kubernetes.io/rewrite-target': '/$2',
+          },
+          staging: {
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+            'nginx.ingress.kubernetes.io/rewrite-target': '/$2',
+          },
+          prod: {
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+            'nginx.ingress.kubernetes.io/rewrite-target': '/$2',
+          },
+        },
       },
     })
     .readiness('/liveness')
@@ -44,4 +70,5 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
       min: 2,
       max: 10,
     })
+    .grantNamespaces('nginx-ingress-internal', 'islandis')
 }
