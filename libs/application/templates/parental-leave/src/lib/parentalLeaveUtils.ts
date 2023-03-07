@@ -1457,6 +1457,17 @@ export const getStartDateDesc = (application: Application) => {
   return parentalLeaveFormMessages.startDate.description
 }
 
+export const getFosterCareOrAdoptionDesc = (application: Application) => {
+  const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
+    application.answers,
+  )
+
+  if(noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE) 
+    return parentalLeaveFormMessages.selectChild.fosterCareDescription
+  else 
+    return parentalLeaveFormMessages.selectChild.adoptionDescription
+}
+
 const setLoadingStateAndRepeaterItems = async (
   VMSTPeriods: Period[],
   setRepeaterItems: RepeaterProps['setRepeaterItems'],

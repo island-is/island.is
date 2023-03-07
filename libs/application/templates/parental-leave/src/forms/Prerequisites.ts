@@ -28,6 +28,7 @@ import {
   getApplicationExternalData,
   isNotEligibleForParentWithoutBirthParent,
   isParentWithoutBirthParent,
+  getFosterCareOrAdoptionDesc,
 } from '../lib/parentalLeaveUtils'
 import {
   NO,
@@ -433,8 +434,7 @@ export const PrerequisitesForm: Form = buildForm({
             buildMultiField({
               id: 'fosterCareOrAdoption',
               title: parentalLeaveFormMessages.selectChild.screenTitle,
-              description:
-                parentalLeaveFormMessages.selectChild.fosterCareDescription,
+              description: getFosterCareOrAdoptionDesc,
               children: [
                 buildDateField({
                   id: 'fosterCareOrAdoption.birthDate',
@@ -459,7 +459,7 @@ export const PrerequisitesForm: Form = buildForm({
                     {
                       event: 'SUBMIT',
                       name: parentalLeaveFormMessages.selectChild.choose,
-                      type: ParentalRelations.primary, // er þetta rétt týpa?
+                      type: ParentalRelations.primary,
                     },
                   ],
                 }),
