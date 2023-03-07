@@ -136,44 +136,6 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: States.DECLINED,
-          },
-        },
-      },
-
-      [States.PLASTIC]: {
-        meta: {
-          name: 'EHIC-FORM',
-          status: 'draft',
-          progress: 0.4,
-          lifecycle: DefaultStateLifeCycle,
-          onExit: defineTemplateApi({
-            action: ApiActions.applyForPhysicalAndTemporary,
-            shouldPersistToExternalData: true,
-            throwOnError: true,
-          }),
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/EuropeanHealthInsuranceCardForm').then((val) =>
-                  Promise.resolve(val.EuropeanHealthInsuranceCardForm),
-                ),
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'EHIC-Plastic-submit',
-                  type: 'primary',
-                },
-              ],
-              write: 'all',
-              read: 'all',
-              delete: true,
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: {
             target: States.REVIEW,
           },
         },
