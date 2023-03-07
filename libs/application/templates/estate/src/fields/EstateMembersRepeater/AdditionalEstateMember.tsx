@@ -70,16 +70,9 @@ export const AdditionalEstateMember = ({
     defaultValue: hasYes(field.foreignCitizenship) ? [YES] : '',
   })
 
-  // If hair is under 18, we need to ask for advocate
-  const [heirUnder18, setHeirUnder18] = useState(false)
-  const advocateNameField = `${fieldIndex}.advocateName`
-  const advocateNationalIdField = `${fieldIndex}.advocateNationalId`
-  const advocateNationalIdInput = useWatch({
-    name: advocateNationalIdField,
-    defaultValue: '',
-  })
-  const advocateName = useWatch({ name: advocateNameField, defaultValue: '' })
-
+  const [heirUnder18, setHeirUnder18] = useState(
+    field.nationalId ? kennitala.info(field.nationalId).age < 95 : false,
+  )
   const { control, setValue } = useFormContext()
 
   const [
@@ -91,19 +84,10 @@ export const AdditionalEstateMember = ({
     },
     fetchPolicy: 'network-only',
   })
-  const [
-    getAdvocateIdentity,
-    { loading: advocateQueryLoading, error: advocateQueryError },
-  ] = useLazyQuery<Query, { input: IdentityInput }>(IDENTITY_QUERY, {
-    onCompleted: (data) => {
-      setValue(advocateNameField, data.identity?.name ?? '')
-    },
-    fetchPolicy: 'network-only',
-  })
 
   useEffect(() => {
     if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
-      setHeirUnder18(kennitala.info(nationalIdInput).age < 18)
+      setHeirUnder18(kennitala.info(nationalIdInput).age < 95)
       getIdentity({
         variables: {
           input: {
@@ -124,26 +108,6 @@ export const AdditionalEstateMember = ({
     nationalIdInput,
     setValue,
     foreignCitizenship,
-  ])
-
-  // Advocate
-  useEffect(() => {
-    if (advocateNationalIdInput.length === 10) {
-      console.log(advocateNationalIdInput, 'hæ')
-      getAdvocateIdentity({
-        variables: {
-          input: {
-            nationalId: advocateNationalIdInput,
-          },
-        },
-      })
-    }
-  }, [
-    getAdvocateIdentity,
-    advocateName,
-    advocateNameField,
-    advocateNationalIdInput,
-    setValue,
   ])
 
   return (
@@ -284,48 +248,13 @@ export const AdditionalEstateMember = ({
           />
         </GridColumn>
         {heirUnder18 && (
-          <>
-            <GridColumn span="1/1" paddingBottom={2}>
-              <AlertMessage
-                title={formatMessage(m.estateMemberAdvocateWarningTitle)}
-                message={formatMessage(
-                  m.estateMemberAdvocateWarningDescription,
-                )}
-                type="warning"
-              />
-            </GridColumn>
-            <GridColumn span={['1/1', '1/2']} paddingBottom={2} paddingTop={2}>
-              <InputController
-                key={advocateNationalIdField}
-                id={advocateNationalIdField}
-                name={advocateNationalIdField}
-                label={formatMessage(m.inheritanceKtLabel)}
-                defaultValue={(field as any).advocateNationalId || ''}
-                format="######-####"
-                required
-                backgroundColor="blue"
-                loading={advocateQueryLoading}
-                error={advocateQueryError ? formatMessage('error') : undefined}
-              />
-            </GridColumn>
-            <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-              <TextFormField
-                application={application}
-                error={error?.name ?? undefined}
-                showFieldName={true}
-                field={{
-                  ...field,
-                  id: advocateNameField,
-                  title: formatMessage(m.inheritanceNameLabel),
-                  defaultValue: (field as any).advocateName || '',
-                  type: FieldTypes.TEXT,
-                  component: FieldComponents.TEXT,
-                  children: undefined,
-                  readOnly: true,
-                }}
-              />
-            </GridColumn>
-          </>
+          <GridColumn span="1/1" paddingBottom={2}>
+            <AlertMessage
+              title={formatMessage(m.estateMemberAdvocateWarningTitle)}
+              message={formatMessage(m.estateMemberAdvocateWarningDescription)}
+              type="warning"
+            />
+          </GridColumn>
         )}
       </GridRow>
     </Box>
