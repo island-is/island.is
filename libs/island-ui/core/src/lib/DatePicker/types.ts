@@ -22,6 +22,7 @@ export type DatePickerBackgroundColor = 'white' | 'blue'
 export type DatePickerSize = 'xs' | 'sm' | 'md'
 
 export interface DatePickerProps {
+  name?: string
   label: string
   placeholderText: ReactDatePickerProps['placeholderText']
   locale?: LocaleKeys
@@ -41,8 +42,8 @@ export interface DatePickerProps {
   inputName?: string
   size?: DatePickerSize
   backgroundColor?: DatePickerBackgroundColor
-  icon?: IconType
-  iconType?: Type
+  icon?: { name: IconType; type?: Type }
+
   /**
    * Minimum selectable year inside datepicker
    */

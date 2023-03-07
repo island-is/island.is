@@ -12,7 +12,7 @@
     "target": "es2015",
     "module": "esnext",
     "typeRoots": ["node_modules/@types"],
-    "lib": ["es2019", "dom"],
+    "lib": ["es2019", "dom", "dom.iterable"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "allowSyntheticDefaultImports": true,
@@ -53,11 +53,17 @@
       ],
       "@island.is/api/domains/assets": ["libs/api/domains/assets/src/index.ts"],
       "@island.is/api/domains/auth": ["libs/api/domains/auth/src/index.ts"],
+      "@island.is/api/domains/auth-admin": [
+        "libs/api/domains/auth-admin/src/index.ts"
+      ],
       "@island.is/api/domains/communications": [
         "libs/api/domains/communications/src/index.ts"
       ],
       "@island.is/api/domains/company-registry": [
         "libs/api/domains/company-registry/src/index.ts"
+      ],
+      "@island.is/api/domains/consultation-portal": [
+        "libs/api/domains/consultation-portal/src/index.ts"
       ],
       "@island.is/api/domains/content-search": [
         "libs/api/domains/content-search/src/index.ts"
@@ -181,6 +187,9 @@
       ],
       "@island.is/application/api/files": [
         "libs/application/api/files/src/index.ts"
+      ],
+      "@island.is/application/api/history": [
+        "libs/application/api/history/src/index.ts"
       ],
       "@island.is/application/api/payment": [
         "libs/application/api/payment/src/index.ts"
@@ -385,6 +394,9 @@
         "libs/clients/air-discount-scheme/src/index.ts"
       ],
       "@island.is/clients/assets": ["libs/clients/assets/src/index.ts"],
+      "@island.is/clients/auth/admin-api": [
+        "libs/clients/auth/admin-api/src/index.ts"
+      ],
       "@island.is/clients/auth/delegation-api": [
         "libs/clients/auth/delegation-api/src/index.ts"
       ],
@@ -393,6 +405,9 @@
       ],
       "@island.is/clients/charge-fjs-v2": [
         "libs/clients/charge-fjs-v2/src/index.ts"
+      ],
+      "@island.is/clients/consultation-portal": [
+        "libs/clients/consultation-portal/src/index.ts"
       ],
       "@island.is/clients/criminal-record": [
         "libs/clients/criminal-record/src/index.ts"
@@ -432,6 +447,9 @@
       ],
       "@island.is/clients/identity": ["libs/clients/identity/src/index.ts"],
       "@island.is/clients/islykill": ["libs/clients/islykill/src/index.ts"],
+      "@island.is/clients/judicial-administration": [
+        "libs/clients/judicial-administration/src/index.ts"
+      ],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
       ],
@@ -501,6 +519,7 @@
       "@island.is/cms-translations/test": [
         "libs/cms-translations/src/test/index.ts"
       ],
+      "@island.is/consultation-portal/*": ["apps/consultation-portal/*"],
       "@island.is/content-search-index-manager": [
         "libs/content-search-index-manager/src/index.ts"
       ],
@@ -605,10 +624,14 @@
       "@island.is/portals/admin/icelandic-names-registry": [
         "libs/portals/admin/icelandic-names-registry/src/index.ts"
       ],
+      "@island.is/portals/admin/ids-admin": [
+        "libs/portals/admin/ids-admin/src/index.ts"
+      ],
       "@island.is/portals/core": ["libs/portals/core/src/index.ts"],
       "@island.is/portals/shared-modules/delegations": [
         "libs/portals/shared-modules/delegations/src/index.ts"
       ],
+      "@island.is/react-spa/shared": ["libs/react-spa/shared/src/index.ts"],
       "@island.is/react/components": ["libs/react/components/src/index.ts"],
       "@island.is/react/feature-flags": [
         "libs/react/feature-flags/src/index.ts"
@@ -652,9 +675,6 @@
       "@island.is/service-portal/eligibility": [
         "libs/service-portal/eligibility/src/index.ts"
       ],
-      "@island.is/service-portal/endorsements": [
-        "libs/service-portal/endorsements/src/index.ts"
-      ],
       "@island.is/service-portal/finance": [
         "libs/service-portal/finance/src/index.ts"
       ],
@@ -672,6 +692,9 @@
       ],
       "@island.is/service-portal/modules": [
         "libs/service-portal/modules/src/index.ts"
+      ],
+      "@island.is/service-portal/petitions": [
+        "libs/service-portal/petitions/src/index.ts"
       ],
       "@island.is/service-portal/sessions": [
         "libs/service-portal/sessions/src/index.ts"

@@ -8,8 +8,16 @@ import {
   ChangeCoOwnerOfVehicleAnswers,
   getChargeItemCodes,
 } from '@island.is/application/templates/transport-authority/change-co-owner-of-vehicle'
-import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
+import {
+  OwnerChangeValidation,
+  VehicleOwnerChangeClient,
+} from '@island.is/clients/transport-authority/vehicle-owner-change'
 import { VehicleOperatorsClient } from '@island.is/clients/transport-authority/vehicle-operators'
+import {
+  VehicleDebtStatus,
+  VehicleServiceFjsV1Client,
+} from '@island.is/clients/vehicle-service-fjs-v1'
+import { VehicleSearchApi } from '@island.is/clients/vehicles'
 import { EmailRecipient, EmailRole } from './types'
 import {
   getAllRoles,
@@ -33,6 +41,7 @@ import {
 } from './smsGenerators'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
@@ -42,8 +51,58 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
     private readonly vehicleOperatorsClient: VehicleOperatorsClient,
     private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
+    private readonly vehicleServiceFjsV1Client: VehicleServiceFjsV1Client,
+    private readonly vehiclesApi: VehicleSearchApi,
   ) {
     super(ApplicationTypes.CHANGE_CO_OWNER_OF_VEHICLE)
+  }
+
+  private vehiclesApiWithAuth(auth: Auth) {
+    return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  async getCurrentVehiclesWithOwnerchangeChecks({
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const result = await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
+      persidNo: auth.nationalId,
+      showOwned: true,
+      showCoowned: false,
+      showOperated: false,
+    })
+
+    return await Promise.all(
+      result?.map(async (vehicle) => {
+        let validation: OwnerChangeValidation | undefined
+        let debtStatus: VehicleDebtStatus | undefined
+
+        // Only validate if fewer than 5 items
+        if (result.length <= 5) {
+          // Get debt status
+          debtStatus = await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
+            auth,
+            vehicle.permno || '',
+          )
+
+          // Get validation
+          validation = await this.vehicleOwnerChangeClient.validateVehicleForOwnerChange(
+            auth,
+            vehicle.permno || '',
+          )
+        }
+
+        return {
+          permno: vehicle.permno || undefined,
+          make: vehicle.make || undefined,
+          color: vehicle.color || undefined,
+          role: vehicle.role || undefined,
+          isDebtLess: debtStatus?.isDebtLess,
+          validationErrorMessages: validation?.hasError
+            ? validation.errorMessages
+            : null,
+        }
+      }),
+    )
   }
 
   async validateApplication({
@@ -51,29 +110,46 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps) {
     const answers = application.answers as ChangeCoOwnerOfVehicleAnswers
+    const createdStr = application.created.toISOString()
 
-    // No need to continue with this validation in user is neither seller nor buyer
-    // (only time application data changes is on state change from these roles)
     const ownerSsn = answers?.owner?.nationalId
-    if (auth.nationalId !== ownerSsn) {
-      return
-    }
+    const ownerEmail = answers?.owner?.email
+    const permno = answers?.pickVehicle?.plate
+
+    const currentOperators = await this.vehicleOperatorsClient.getOperators(
+      auth,
+      permno,
+    )
+
+    const currentOwnerChange = await this.vehicleOwnerChangeClient.getNewestOwnerChange(
+      auth,
+      permno,
+    )
 
     const result = await this.vehicleOwnerChangeClient.validateAllForOwnerChange(
       auth,
       {
-        permno: answers?.pickVehicle?.plate,
+        permno: permno,
         seller: {
           ssn: ownerSsn,
-          email: answers?.owner?.email,
+          email: ownerEmail,
         },
         buyer: {
           ssn: ownerSsn,
-          email: answers?.owner?.email,
+          email: ownerEmail,
         },
-        dateOfPurchase: new Date(),
-        saleAmount: 0,
-        insuranceCompanyCode: null,
+        dateOfPurchase: new Date(application.created),
+        dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
+        saleAmount: currentOwnerChange?.saleAmount,
+        insuranceCompanyCode: currentOwnerChange?.insuranceCompanyCode,
+        operators: currentOperators?.map((operator) => ({
+          ssn: operator.ssn || '',
+          // Note: It should be ok that the email we send in is empty, since we dont get
+          // the email when fetching current operators, and according to them (SGS), they
+          // are not using the operator email in their API (not being saved in their DB)
+          email: null,
+          isMainOperator: operator.isMainOperator || false,
+        })),
         coOwners: [
           ...(answers?.ownerCoOwners
             ? answers.ownerCoOwners.map((x) => ({
@@ -90,7 +166,6 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
                 }))
             : []),
         ],
-        operators: null,
       },
     )
 
@@ -303,6 +378,8 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     // 2. Submit the application
 
     const answers = application.answers as ChangeCoOwnerOfVehicleAnswers
+    const createdStr = application.created.toISOString()
+
     // Note: Need to be sure that the user that created the application is the seller when submitting application to SGS
     if (answers?.owner?.nationalId !== application.applicant) {
       throw new TemplateApiError(
@@ -317,6 +394,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     const permno = answers?.pickVehicle?.plate
     const ownerSsn = answers?.owner?.nationalId
     const ownerEmail = answers?.owner?.email
+
     const newCoOwners = answers?.coOwners
       ?.filter(({ wasRemoved }) => wasRemoved !== 'true')
       .map((coOwner) => ({
@@ -352,7 +430,8 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
         ssn: ownerSsn,
         email: ownerEmail,
       },
-      dateOfPurchase: currentOwnerChange?.dateOfPurchase,
+      dateOfPurchase: new Date(application.created),
+      dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
       saleAmount: currentOwnerChange?.saleAmount,
       insuranceCompanyCode: currentOwnerChange?.insuranceCompanyCode,
       operators: currentOperators?.map((operator) => ({
@@ -360,7 +439,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
         // Note: It should be ok that the email we send in is empty, since we dont get
         // the email when fetching current operators, and according to them (SGS), they
         // are not using the operator email in their API (not being saved in their DB)
-        email: '',
+        email: null,
         isMainOperator: operator.isMainOperator || false,
       })),
       coOwners: [...newCoOwners, ...oldCoOwners],

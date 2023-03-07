@@ -1,8 +1,15 @@
-import React, { useCallback, useState } from 'react'
+import React, { ReactNode, useCallback, useState } from 'react'
 import { MessageDescriptor } from '@formatjs/intl'
 import format from 'date-fns/format'
 
-import { ActionCard, Box, Pagination, Stack } from '@island.is/island-ui/core'
+import {
+  ActionCard,
+  AlertMessage,
+  Box,
+  Button,
+  Pagination,
+  Stack,
+} from '@island.is/island-ui/core'
 import { coreMessages, getSlugFromType } from '@island.is/application/core'
 import {
   Application,
@@ -107,12 +114,14 @@ const DefaultData: Record<ApplicationStatus, DefaultStateData> = {
   },
 }
 
+type ApplicationFields = Pick<
+  Application,
+  'actionCard' | 'id' | 'typeId' | 'status' | 'modified' | 'name' | 'progress'
+>
+
 interface Props {
   organizations?: Organization[]
-  applications: Pick<
-    Application,
-    'actionCard' | 'id' | 'typeId' | 'status' | 'modified' | 'name' | 'progress'
-  >[]
+  applications: ApplicationFields[]
   onClick: (id: string) => void
   refetch?: (() => void) | undefined
   focus?: boolean
@@ -158,6 +167,61 @@ const ApplicationList = ({
     )
   }
 
+  const buildHistoryItems = (application: ApplicationFields) => {
+    if (application.status === ApplicationStatus.DRAFT) return
+
+    let history: {
+      title: string
+      date?: string
+      content?: ReactNode
+    }[] = []
+
+    if (application.actionCard?.pendingAction?.title) {
+      history.push({
+        date: format(new Date(), formattedDate),
+        title: formatMessage(application.actionCard.pendingAction.title ?? ''),
+        content: application.actionCard.pendingAction.content ? (
+          <AlertMessage
+            type={application.actionCard?.pendingAction?.displayStatus}
+            message={formatMessage(
+              application.actionCard.pendingAction.content ?? '',
+            )}
+            action={
+              <Box>
+                <Button
+                  variant="text"
+                  size="small"
+                  nowrap
+                  onClick={() =>
+                    onClick(
+                      `${getSlugFromType(application.typeId)}/${
+                        application.id
+                      }`,
+                    )
+                  }
+                  icon="pencil"
+                >
+                  {formatMessage(coreMessages.cardButtonDraft)}
+                </Button>
+              </Box>
+            }
+          />
+        ) : undefined,
+      })
+    }
+
+    if (application.actionCard?.history) {
+      history = history.concat(
+        application.actionCard?.history.map((x) => ({
+          date: format(new Date(x.date), formattedDate),
+          title: formatMessage(x.log),
+        })),
+      )
+    }
+
+    return history
+  }
+
   return (
     <>
       <Stack space={2}>
@@ -169,6 +233,11 @@ const ApplicationList = ({
               DefaultData[application.status] ||
               DefaultData[ApplicationStatus.IN_PROGRESS]
             const slug = getSlugFromType(application.typeId)
+            const historyItems = buildHistoryItems(application)
+            const showHistory =
+              application.status !== ApplicationStatus.DRAFT &&
+              historyItems &&
+              historyItems.length > 0
 
             if (!slug) {
               return null
@@ -188,22 +257,39 @@ const ApplicationList = ({
                     actionCard?.tag?.variant || stateDefaultData.tag.variant,
                   outlined: false,
                 }}
-                backgroundColor={focus ? 'blue' : 'white'}
+                backgroundColor="white"
+                focused={focus}
                 heading={actionCard?.title ?? application.name}
                 text={actionCard?.description}
                 cta={{
-                  label: formatMessage(stateDefaultData.cta.label),
+                  label: showHistory
+                    ? ''
+                    : formatMessage(stateDefaultData.cta.label),
                   variant: 'ghost',
                   size: 'small',
                   icon: undefined,
                   onClick: () => onClick(`${slug}/${application.id}`),
                 }}
-                progressMeter={{
-                  active: application.progress !== undefined,
-                  progress: application.progress,
-                  variant: stateDefaultData.progress.variant,
-                  draftFinishedSteps: actionCard?.draftFinishedSteps,
-                  draftTotalSteps: actionCard?.draftTotalSteps,
+                renderApplicationData={true}
+                progressMeter={
+                  showHistory
+                    ? undefined
+                    : {
+                        active: application.progress !== undefined,
+                        progress: application.progress,
+                        variant: stateDefaultData.progress.variant,
+                        draftFinishedSteps: actionCard?.draftFinishedSteps,
+                        draftTotalSteps: actionCard?.draftTotalSteps,
+                      }
+                }
+                history={{
+                  openButtonLabel: formatMessage(
+                    coreMessages.openApplicationHistoryLabel,
+                  ),
+                  closeButtonLabel: formatMessage(
+                    coreMessages.closeApplicationHistoryLabel,
+                  ),
+                  items: historyItems,
                 }}
                 deleteButton={{
                   visible: actionCard?.deleteButton,

@@ -4,4 +4,6 @@ export enum AdminPortalScope {
   icelandicNamesRegistry = '@admin.island.is/icelandic-names-registry',
   documentProvider = '@admin.island.is/document-provider',
   applicationSystem = '@admin.island.is/application-system',
+  idsAdmin = '@admin.island.is/auth',
+  idsAdminSuperUser = '@admin.island.is/auth:admin',
 }

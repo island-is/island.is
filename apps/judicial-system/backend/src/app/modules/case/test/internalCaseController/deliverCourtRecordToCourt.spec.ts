@@ -1,4 +1,5 @@
 import { uuid } from 'uuidv4'
+import format from 'date-fns/format'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { getCourtRecordPdfAsBuffer } from '../../../../formatters'
@@ -6,8 +7,11 @@ import { CourtService } from '../../../court'
 import { User } from '../../../user'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
+import { randomDate } from '../../../../test'
+import { nowFactory } from '../../../../factories'
 
 jest.mock('../../../../formatters/courtRecordPdf')
+jest.mock('../../../../factories/date.factory')
 
 interface Then {
   result: DeliverResponse
@@ -54,9 +58,13 @@ describe('InternalCaseController - Deliver court record to court', () => {
     const courtCaseNumber = uuid()
     const theCase = { id: caseId, courtId, courtCaseNumber } as Case
     const pdf = Buffer.from('test court record')
+    const now = randomDate()
+
     let then: Then
 
     beforeEach(async () => {
+      const mockNowFactory = nowFactory as jest.Mock
+      mockNowFactory.mockReturnValue(now)
       const mockGet = getCourtRecordPdfAsBuffer as jest.Mock
       mockGet.mockResolvedValueOnce(pdf)
       const mockCreateCourtRecord = mockCourtService.createCourtRecord as jest.Mock
@@ -78,8 +86,8 @@ describe('InternalCaseController - Deliver court record to court', () => {
         caseId,
         courtId,
         courtCaseNumber,
-        `Þingbók ${courtCaseNumber}`,
-        `Þingbók ${courtCaseNumber}.pdf`,
+        `Þingbók ${courtCaseNumber} ${format(now, 'yyyy-MM-dd HH:mm')}`,
+        `Þingbók ${courtCaseNumber} ${format(now, 'yyyy-MM-dd HH:mm')}.pdf`,
         'application/pdf',
         pdf,
       )

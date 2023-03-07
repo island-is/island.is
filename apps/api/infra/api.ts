@@ -1,4 +1,4 @@
-import { ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
+import { json, ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
 import {
   Base,
   Client,
@@ -19,8 +19,9 @@ import {
   MunicipalitiesFinancialAid,
   Vehicles,
   AdrAndMachine,
+  JudicialAdministration,
   Firearm,
-  DisabilityLicense,
+  Disability,
   VehicleServiceFjsV1,
   TransportAuthority,
   ChargeFjsV2,
@@ -36,6 +37,7 @@ export const serviceSetup = (services: {
   servicesEndorsementApi: ServiceBuilder<'services-endorsement-api'>
   airDiscountSchemeBackend: ServiceBuilder<'air-discount-scheme-backend'>
   sessionsApi: ServiceBuilder<'services-sessions'>
+  authAdminApi: ServiceBuilder<'services-auth-admin-api'>
 }): ServiceBuilder<'api'> => {
   return service('api')
     .namespace('islandis')
@@ -165,6 +167,11 @@ export const serviceSetup = (services: {
         staging: 'https://api-staging.thinglysing.is/business/tolfraedi',
         prod: 'https://api.thinglysing.is/business/tolfraedi',
       },
+      CONSULTATION_PORTAL_CLIENT_BASE_PATH: {
+        dev: 'https://samradapi-test.island.is',
+        staging: 'https://samradapi-test.island.is',
+        prod: 'https://samradapi-test.island.is',
+      },
       NO_UPDATE_NOTIFIER: 'true',
       FISKISTOFA_ZENTER_CLIENT_ID: '1114',
       SOFFIA_SOAP_URL: {
@@ -175,6 +182,20 @@ export const serviceSetup = (services: {
       },
       HSN_WEB_FORM_ID: '1dimJFHLFYtnhoYEA3JxRK',
       SESSIONS_API_URL: ref((h) => `http://${h.svc(services.sessionsApi)}`),
+      AUTH_ADMIN_API_PATHS: {
+        dev: json({
+          development: 'https://identity-server.dev01.devland.is/backend',
+        }),
+        staging: json({
+          development: 'https://identity-server.dev01.devland.is/backend',
+          staging: 'https://identity-server.staging01.devland.is/backend',
+        }),
+        prod: json({
+          development: 'https://identity-server.dev01.devland.is/backend',
+          staging: 'https://identity-server.staging01.devland.is/backend',
+          production: 'https://innskra.island.is/backend',
+        }),
+      },
     })
 
     .secrets({
@@ -215,6 +236,7 @@ export const serviceSetup = (services: {
       PKPASS_SECRET_KEY: '/k8s/api/PKPASS_SECRET_KEY',
       VE_PKPASS_API_KEY: '/k8s/api/VE_PKPASS_API_KEY',
       RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY',
+      RLS_OPEN_LOOKUP_API_KEY: '/k8s/api/RLS_OPEN_LOOKUP_API_KEY',
       TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY',
       SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL',
       FIREARM_LICENSE_PASS_TEMPLATE_ID:
@@ -253,8 +275,9 @@ export const serviceSetup = (services: {
     })
     .xroad(
       AdrAndMachine,
+      JudicialAdministration,
       Firearm,
-      DisabilityLicense,
+      Disability,
       Base,
       Client,
       HealthInsurance,

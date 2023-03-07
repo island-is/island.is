@@ -1,24 +1,26 @@
 import assert from 'assert'
+import faker from 'faker'
 import differenceWith from 'lodash/differenceWith'
+import shuffle from 'lodash/shuffle'
 import request from 'supertest'
 
-import { getRequestMethod, TestApp } from '@island.is/testing/nest'
+import { AuthScope } from '@island.is/auth/scopes'
+import { FixtureFactory } from '@island.is/services/auth/testing'
+import { createCurrentUser } from '@island.is/testing/fixtures'
+import {
+  buildQueryString,
+  getRequestMethod,
+  TestApp,
+  TestEndpointOptions,
+} from '@island.is/testing/nest'
 
 import {
   setupWithAuth,
   setupWithoutAuth,
   setupWithoutPermission,
 } from '../../../../test/setup'
-import { TestEndpointOptions } from '../../../../test/types'
 import { accessOutgoingTestCases } from '../../../../test/access-outgoing-test-cases'
-import {
-  createCurrentUser,
-  createNationalId,
-} from '@island.is/testing/fixtures'
-import { AuthScope } from '@island.is/auth/scopes'
-import shuffle from 'lodash/shuffle'
-import { FixtureFactory } from '@island.is/services/auth/testing'
-import faker from 'faker'
+import { domainFiltersTestCases } from '../../../../test/domain-filters-test-cases'
 
 describe('DomainsController', () => {
   describe('withAuth', () => {
@@ -217,7 +219,9 @@ describe('DomainsController', () => {
 
       it('GET /domains?lang=en should return translated domains', async () => {
         // Act
-        const res = await server.get('/v1/domains?lang=en')
+        const res = await server.get(
+          '/v1/domains?lang=en&supportsDelegations=true',
+        )
 
         // Assert
         expect(res.status).toEqual(200)
@@ -255,6 +259,59 @@ describe('DomainsController', () => {
         expect(res.body).toMatchObject([
           { ...groupTranslations, children: [{ ...scopeTranslations }] },
         ])
+      })
+    })
+
+    describe('with query filters', () => {
+      describe.each(Object.keys(domainFiltersTestCases))('%s', (caseName) => {
+        const testCase = domainFiltersTestCases[caseName]
+        let app: TestApp
+        let server: request.SuperTest<request.Test>
+
+        beforeAll(async () => {
+          // Arrange
+          app = await setupWithAuth({
+            user: testCase.user,
+            customScopeRules: testCase.customScopeRules,
+          })
+          server = request(app.getHttpServer())
+
+          const factory = new FixtureFactory(app)
+          await Promise.all(
+            testCase.domains.map((domain) => factory.createDomain(domain)),
+          )
+          await Promise.all(
+            (testCase.accessTo ?? []).map((scope) =>
+              factory.createApiScopeUserAccess({
+                nationalId: testCase.user.nationalId,
+                scope,
+              }),
+            ),
+          )
+          await Promise.all(
+            (testCase.delegations ?? []).map((delegation) =>
+              factory.createCustomDelegation({
+                fromNationalId: testCase.user.nationalId,
+                toNationalId: testCase.user.actor?.nationalId,
+                ...delegation,
+              }),
+            ),
+          )
+        })
+
+        it('should pass', async () => {
+          // Act
+          const res = await server.get(
+            `/v1/domains${buildQueryString(testCase.query)}`,
+          )
+
+          // Assert
+          expect(res.status).toEqual(200)
+          expect(res.body).toHaveLength(testCase.expected.length)
+          expect(res.body).toMatchObject(
+            testCase.expected.map((d) => ({ name: d.name })),
+          )
+        })
       })
     })
 
@@ -311,48 +368,6 @@ describe('DomainsController', () => {
       // Assert
       expect(res.status).toEqual(200)
       expect(res.body).toMatchObject(expected)
-    })
-
-    it('GET /domains returns list of all domains when no direction', async () => {
-      // Arrange
-      const domains = [
-        {
-          name: 'd1',
-          apiScopes: [{ name: 's1', allowExplicitDelegationGrant: true }],
-        },
-        {
-          name: 'd2',
-          apiScopes: [{ name: 's2', allowExplicitDelegationGrant: true }],
-        },
-        {
-          name: 'd3',
-          apiScopes: [{ name: 's3', allowExplicitDelegationGrant: true }],
-        },
-      ]
-      const expectedDomains = domains.map((domain) => ({ name: domain.name }))
-      const currentUser = createCurrentUser({ scope: [AuthScope.delegations] })
-      const app = await setupWithAuth({
-        user: currentUser,
-        customScopeRules: [
-          { scopeName: 's2', onlyForDelegationType: ['ProcurationHolder'] },
-        ],
-      })
-      const factory = new FixtureFactory(app)
-      await Promise.all(domains.map((domain) => factory.createDomain(domain)))
-      await factory.createCustomDelegation({
-        domainName: 'd3',
-        fromNationalId: createNationalId('person'),
-        toNationalId: currentUser.nationalId,
-        scopes: [{ scopeName: 's3' }],
-      })
-
-      // Act
-      const res = await request(app.getHttpServer()).get(`/v1/domains`)
-
-      // Assert
-      expect(res.status).toEqual(200)
-      expect(res.body).toHaveLength(3)
-      expect(res.body).toMatchObject(expectedDomains)
     })
 
     it('GET /domains/:domainName returns no content response for invalid domain', async () => {

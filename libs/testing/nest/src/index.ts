@@ -1,3 +1,6 @@
 export { testServer, TestApp, TestServerOptions } from './lib/testServer'
 export * from './lib/hooks'
 export { getRequestMethod, TestEndpointOptions } from './lib/requestMethod'
+export * from './lib/setup'
+export * from './lib/utils'
+export * from './lib/types'

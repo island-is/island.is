@@ -61,6 +61,11 @@ import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
   multipleBirthsDefaultDays,
 } from '../config'
+import subDays from 'date-fns/subDays'
+import subMonths from 'date-fns/subMonths'
+import isBefore from 'date-fns/isBefore'
+import isEqual from 'date-fns/isEqual'
+import isAfter from 'date-fns/isAfter'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -113,22 +118,17 @@ export function formatPeriods(
     const startDateDateTime = new Date(period.startDate)
     let canDelete = startDateDateTime.getTime() > currentDateStartTime()
     const today = new Date()
+    const isTodaySameMonthAsStartDate =
+      startDateDateTime.getMonth() === today.getMonth() &&
+      startDateDateTime.getFullYear() === today.getFullYear()
 
     if (!applicationFundId || applicationFundId === '') {
       canDelete = true
-    } else if (canDelete && today.getDate() >= 20) {
-      const startDateBeginOfMonth = addDays(
-        startDateDateTime,
-        startDateDateTime.getDate() * -1 + 1,
-      )
-      const currentDateBeginOfMonth = getBeginningOfThisMonth()
-      if (
-        startDateBeginOfMonth.getMonth() ===
-          currentDateBeginOfMonth.getMonth() &&
-        startDateBeginOfMonth.getFullYear() ===
-          currentDateBeginOfMonth.getFullYear()
-      ) {
+    } else if (isTodaySameMonthAsStartDate) {
+      if (canDelete && today.getDate() >= 20) {
         canDelete = false
+      } else if (!canDelete && today.getDate() < 20) {
+        canDelete = true
       }
     }
 
@@ -575,6 +575,10 @@ export function getApplicationExternalData(
 
   const navId = getValueViaPath(externalData, 'navId', '') as string
 
+  const dateOfBirth = getValueViaPath(externalData, 'dateOfBirth') as {
+    data: { dateOfBirth: string }
+  }
+
   let applicationFundId = navId
   if (!applicationFundId || applicationFundId === '') {
     applicationFundId = getValueViaPath(
@@ -594,6 +598,7 @@ export function getApplicationExternalData(
     navId,
     userEmail,
     userPhoneNumber,
+    dateOfBirth,
   }
 }
 
@@ -687,6 +692,18 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'unemploymentBenefits',
   ) as string
 
+  const isResidenceGrant = getValueViaPath(
+    answers,
+    'isResidenceGrant',
+    NO,
+  ) as YesOrNo
+
+  const hasAppliedForReidenceGrant = getValueViaPath(
+    answers,
+    'hasAppliedForReidenceGrant',
+    NO,
+  ) as YesOrNo
+
   const otherParentName = (getValueViaPath(
     answers,
     'otherParentObj.otherParentName',
@@ -767,7 +784,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
       employers.push({
         email: employerEmailObj,
         ratio: '100',
-        phoneNumber: getValueViaPath(answers, 'employerPhoneNumber') as string,
         reviewerNationalRegistryId: employerReviewerNationalRegistryId,
         companyNationalRegistryId: employerNationalRegistryId,
       } as EmployerRow)
@@ -878,6 +894,13 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'fileUpload.benefitsFile',
   ) as Files[]
 
+  const residenceGrantFiles = getValueViaPath(
+    answers,
+    'fileUpload.residenceGrant',
+  ) as Files[]
+
+  const dateOfBirth = getValueViaPath(answers, 'dateOfBirth') as string
+
   const commonFiles = getValueViaPath(answers, 'fileUpload.file') as Files[]
 
   const actionName = getValueViaPath(answers, 'actionName') as
@@ -885,6 +908,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
     | 'document'
     | 'documentPeriod'
     | undefined
+
+  const previousState = getValueViaPath(answers, 'previousState') as string
 
   return {
     applicationType,
@@ -937,6 +962,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
     benefitsFiles,
     commonFiles,
     actionName,
+    isResidenceGrant,
+    dateOfBirth,
+    residenceGrantFiles,
+    hasAppliedForReidenceGrant,
+    previousState,
   }
 }
 
@@ -1432,24 +1462,26 @@ export const synchronizeVMSTPeriods = (
       firstPeriodStart = 'specificDate'
     }
 
-    // API returns multiple rightsCodePeriod in string ('M-L-GR, M-FS')
-    const rightsCodePeriod = period.rightsCodePeriod.split(',')[0]
-    const obj = {
-      startDate: period.from,
-      endDate: period.to,
-      ratio: period.ratio.split(',')[0],
-      rawIndex: index,
-      firstPeriodStart: firstPeriodStart,
-      useLength: NO as YesOrNo,
-      rightCodePeriod: rightsCodePeriod,
+    if (!period.rightsCodePeriod.includes('DVAL')) {
+      // API returns multiple rightsCodePeriod in string ('M-L-GR, M-FS')
+      const rightsCodePeriod = period.rightsCodePeriod.split(',')[0]
+      const obj = {
+        startDate: period.from,
+        endDate: period.to,
+        ratio: period.ratio.split(',')[0],
+        rawIndex: index,
+        firstPeriodStart: firstPeriodStart,
+        useLength: NO as YesOrNo,
+        rightCodePeriod: rightsCodePeriod,
+      }
+      if (
+        period.paid ||
+        new Date(period.from).getTime() <= new Date().getTime()
+      ) {
+        newPeriods.push(obj)
+      }
+      temptVMSTPeriods.push(obj)
     }
-    if (
-      period.paid ||
-      new Date(period.from).getTime() <= new Date().getTime()
-    ) {
-      newPeriods.push(obj)
-    }
-    temptVMSTPeriods.push(obj)
   })
 
   let index = newPeriods.length
@@ -1528,4 +1560,96 @@ export const isParentalGrant = (application: Application) => {
     applicationType === PARENTAL_GRANT ||
     applicationType === PARENTAL_GRANT_STUDENTS
   )
+}
+
+export const convertBirthDay = (birthDay: string) => {
+  // Regex check if only decimals are used in the string
+  const reg = new RegExp(/^\d+$/)
+  // If the birthDay comes in format yyyy-mm-dd we remove the -
+  const regex = new RegExp(/-/g)
+  // Default
+  const convertedBirthDay = { year: 0, month: 0, date: 0 }
+  // Checks on length and only contain decimal or we return default
+  const newBirthDay = birthDay.replace(regex, '')
+  const birthDaySliced =
+    newBirthDay?.length > 8 ? newBirthDay.slice(0, 8) : newBirthDay
+
+  if (birthDaySliced.length !== 8) return convertedBirthDay
+  if (!birthDaySliced.match(reg)) return convertedBirthDay
+  // The string is expected to be yyyymmdd
+  const year = Number(birthDaySliced.slice(0, 4))
+  // Substract one month to take care of js zero index on dates
+  const month = Number(birthDaySliced.slice(4, 6)) - 1
+  const date = Number(birthDaySliced.slice(6, 8))
+  return { year, month, date }
+}
+export const residentGrantIsOpenForApplication = (childBirthDay: string) => {
+  // We expect the childBirthDay to be yyyymmdd
+  const convertedBirthDay = convertBirthDay(childBirthDay)
+  // Guard that the method used above did not return 0 0 0
+  if (
+    convertedBirthDay.date === 0 &&
+    convertedBirthDay.month === 0 &&
+    convertedBirthDay.year === 0
+  )
+    return false
+  const birthDay = new Date(
+    convertedBirthDay?.year,
+    convertedBirthDay.month,
+    convertedBirthDay.date,
+  )
+  const dateToday = new Date().setHours(0, 0, 0, 0)
+  if (isEqual(dateToday, birthDay)) return true
+  if (!isAfter(dateToday, birthDay)) return false
+  // Adds 6 months to the birthday
+  const fullPeriod = addMonths(birthDay, 6)
+  if (isEqual(dateToday, fullPeriod)) return true
+  if (!isBefore(dateToday, fullPeriod)) return false
+  return true
+}
+
+export const setTestBirthAndExpectedDate = (
+  months = 0,
+  days = 0,
+  addMonth = false,
+  subMonth = false,
+  daysAdd = false,
+  daysSub = false,
+) => {
+  // Set a date that is today we can either add or substract months
+  const date = subMonth
+    ? subMonths(new Date(), months)
+    : addMonth
+    ? addMonths(new Date(), months)
+    : new Date()
+
+  const year = `${date.getFullYear()}`
+  const month =
+    `${date.getMonth() + 1}`.length > 1
+      ? `${date.getMonth() + 1}`
+      : `0${date.getMonth() + 1}`
+
+  const day =
+    `${date.getDate()}`.length > 1 ? `${date.getDate()}` : `0${date.getDate()}`
+  // returns a  string in yyyymmdd
+  const birthDate = new Date(
+    date.getFullYear(),
+    date.getMonth() + 1,
+    date.getDate(),
+  )
+  const newDate = daysSub
+    ? subDays(birthDate, days)
+    : daysAdd
+    ? addDays(birthDate, days)
+    : birthDate
+
+  const expBirthDate = addDays(newDate, days)
+  const expBirthDateYear = `${expBirthDate.getFullYear()}`
+  const expBirthDateMonth = `${expBirthDate.getMonth()}`
+  const expBirthDateDate = `${expBirthDate.getDate()}`
+
+  return {
+    birthDate: `${year}${month}${day}`,
+    expBirthDate: `${expBirthDateYear}-${expBirthDateMonth}-${expBirthDateDate}`,
+  }
 }
