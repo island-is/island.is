@@ -106,6 +106,58 @@ Response:
 | success    | Boolean | Successful                                                         |
 | errors[]   | String  | Error messages (only if success=false).                            |
 
+## Notification
+
+Creates a 'hnipp' notification that gets pushed to the recipients Ísland.is App. Notifications use templates to manage the content being sent, templates are created to fit each provider's requirements.
+
+> POST /api/v1/notification
+
+Request Body:
+
+```json
+[
+  {
+    "kennitala": "string",
+    "senderName": "string",
+    "templateId": "string",
+    "templateArguments": {
+      "argKey": "argValue"
+    },
+    "publicationDate": "datetime"
+  }
+]
+```
+
+Array of notifications. It‘s possible to submit 1-200 references at a time
+
+| Variable                  | Optional | Type       | Description                                                                                                                                                                                                                                                                  |
+| ------------------------- | -------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| kennitala                 | N        | String(10) | Kennitala of the document owner/recipient, that is the one who should see the document. Has to be a valid kennitala.         |
+| senderName                | N        | String(50) | Name of the sender                                                                                                           |
+| templateId                | N        | String     | An ID referencing a template, the template contains the textual information for the notification in all supported languages. |
+| templateArguments         | -        | Object     | Arguments that fill in the dynamic portions of a template. Should contain key-value pairs the template requires. Required if the template requires arguments.                                                                                                                                                   |
+| publicationDate           | Y        | DateTime   | Indicates when the notification should be pushed to the user. If nothing is set, the notification is queued immediately.     |
+
+
+
+Response:
+
+```json
+[
+  {
+    "kennitala": "string",
+    "success": true,
+    "errors": ["string"]
+  }
+]
+```
+
+| Property   | Type    | Description                                                        |
+| ---------- | ------- | ------------------------------------------------------------------ |
+| kennitala  | String  | Kennitala of the recipient.                                        |
+| success    | Boolean | Successful                                                         |
+| errors[]   | String  | Error messages (only if success=false).                            |
+
 ## Withdrawn
 
 Operation to withdraw a document that is no longer available for publication. For example if an error occurred in the document and the document provider wants to disable the document. The reference to the document will not be removed from the user's list, but will be marked as withdrawn. The user sees that it is no longer available for display.
