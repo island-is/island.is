@@ -26,9 +26,9 @@ export class CaseResultService {
     return response
   }
 
-  async getAdvices(caseId: number) {
+  async getAdvices(input: GetCaseInput) {
     const request: ApiCasesCaseIdAdvicesGetRequest = {
-      caseId: caseId,
+      caseId: input.caseId,
     }
 
     const response = await this.casesApi.apiCasesCaseIdAdvicesGet(request)

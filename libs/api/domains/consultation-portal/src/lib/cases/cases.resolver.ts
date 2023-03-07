@@ -32,8 +32,10 @@ export class CaseResultResolver {
 
   @Query(() => [AdviceResult], { name: 'consultationPortalAdviceByCaseId' })
   @FeatureFlag(Features.consultationPortalApplication)
-  async getAdvices(@Args('caseId') caseId: number): Promise<string[]> {
-    const advices = await this.caseResultService.getAdvices(caseId)
+  async getAdvices(
+    @Args('input', { type: () => GetCaseInput }) input: GetCaseInput,
+  ): Promise<string[]> {
+    const advices = await this.caseResultService.getAdvices(input)
     return advices.map((advice) => advice.content as string)
   }
 
