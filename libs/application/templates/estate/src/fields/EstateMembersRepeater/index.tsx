@@ -1,7 +1,7 @@
 import { FC, useEffect } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
 import {
   Box,
   GridColumn,
@@ -72,66 +72,71 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
   return (
     <Box marginTop={2} marginBottom={5}>
       <GridRow>
-        {fields.reduce((acc, member, index) => {
-          if (member.nationalId === application.applicant) {
-            const relation = getValueViaPath<string>(
-              application.answers,
-              'applicantRelation',
-            )
-            if (relation && relation !== member.relation) {
-              member.relation = relation
+        {fields.reduce(
+          (acc, member: GenericFormField<EstateMemberWithAdvocate>, index) => {
+            if (member.nationalId === application.applicant) {
+              const relation = getValueViaPath<string>(
+                application.answers,
+                'applicantRelation',
+              )
+              if (relation && relation !== member.relation) {
+                member.relation = relation
+              }
             }
-          }
-          if (!member.initial) {
-            return acc
-          }
-          return [
-            ...acc,
-            <GridColumn
-              key={index}
-              span={['12/12', '12/12', '6/12']}
-              paddingBottom={3}
-            >
-              <ProfileCard
-                title={member.name}
-                disabled={!member.enabled}
-                description={[
-                  formatNationalId(member.nationalId || ''),
-                  member.relation || '',
-                  <Box marginTop={1} as="span">
-                    <Button
-                      variant="text"
-                      icon={member.enabled ? 'remove' : 'add'}
-                      size="small"
-                      iconType="outline"
-                      onClick={() => {
-                        setValue(`${id}[${index}].enabled`, !member.enabled)
-                      }}
-                    >
-                      {member.enabled
-                        ? formatMessage(m.inheritanceDisableMember)
-                        : formatMessage(m.inheritanceEnableMember)}
-                    </Button>
-                  </Box>,
-                ]}
-              />
-            </GridColumn>,
-          ]
-        }, [] as JSX.Element[])}
+            if (!member.initial) {
+              return acc
+            }
+            return [
+              ...acc,
+              <GridColumn
+                key={index}
+                span={['12/12', '12/12', '6/12']}
+                paddingBottom={3}
+              >
+                <ProfileCard
+                  title={member.name}
+                  disabled={!member.enabled}
+                  description={[
+                    formatNationalId(member.nationalId || ''),
+                    member.relation || '',
+                    <Box marginTop={1} as="span">
+                      <Button
+                        variant="text"
+                        icon={member.enabled ? 'remove' : 'add'}
+                        size="small"
+                        iconType="outline"
+                        onClick={() => {
+                          setValue(`${id}[${index}].enabled`, !member.enabled)
+                        }}
+                      >
+                        {member.enabled
+                          ? formatMessage(m.inheritanceDisableMember)
+                          : formatMessage(m.inheritanceEnableMember)}
+                      </Button>
+                    </Box>,
+                  ]}
+                />
+              </GridColumn>,
+            ]
+          },
+          [] as JSX.Element[],
+        )}
       </GridRow>
-      {fields.map((member, index) => (
-        <Box key={member.id} hidden={member.initial || member?.dummy}>
-          <AdditionalEstateMember
-            application={application}
-            field={member}
-            fieldName={id}
-            index={index}
-            relationOptions={relations}
-            remove={remove}
-            error={error && error[index] ? error[index] : null}
-          />
-        </Box>
-      ))}
+      {fields.map(
+        (member: GenericFormField<EstateMemberWithAdvocate>, index) => (
+          <Box key={member.id} hidden={member.initial || member?.dummy}>
+            <AdditionalEstateMember
+              application={application}
+              field={member}
+              fieldName={id}
+              index={index}
+              relationOptions={relations}
+              remove={remove}
+              error={error && error[index] ? error[index] : null}
+            />
+          </Box>
+        ),
+      )}
       <Box marginTop={1}>
         <Button
           variant="text"

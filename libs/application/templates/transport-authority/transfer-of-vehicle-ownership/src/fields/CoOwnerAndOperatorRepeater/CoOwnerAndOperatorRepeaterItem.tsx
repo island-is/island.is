@@ -1,5 +1,5 @@
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
 import {
   Box,
   Text,
@@ -7,8 +7,6 @@ import {
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
-import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
-import { Box, Text, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { FC } from 'react'
