@@ -9,7 +9,9 @@ import {
 import { GetCaseInput } from '../dto/case.input'
 import { CaseResult } from '../models/caseResult.model'
 import { CaseItemResult } from '../models/caseItemResult.model'
+import { AdviceResult } from '../models/adviceResult.model'
 import { GetCasesInput } from '../dto/cases.input'
+
 @Injectable()
 export class CaseResultService {
   constructor(private casesApi: CasesApi) {}
@@ -46,11 +48,10 @@ export class CaseResultService {
     return response
   }
 
-  async getAdvices(caseId: number) {
+  async getAdvices(input: GetCaseInput): Promise<AdviceResult[]> {
     const request: ApiCasesCaseIdAdvicesGetRequest = {
-      caseId: caseId,
+      caseId: input.caseId,
     }
-
     const response = await this.casesApi.apiCasesCaseIdAdvicesGet(request)
     return response
   }
