@@ -94,13 +94,6 @@ export const idsAdminModule: PortalModule = {
             },
             children: [
               {
-                name: m.applicationCreate,
-                navHide: true,
-                path: IDSAdminPaths.IDSAdminApplicationCreate,
-                element: <CreateApplication />,
-                action: createApplicationAction(props),
-              },
-              {
                 name: m.applications,
                 path: IDSAdminPaths.IDSAdminTenants,
                 loader: applicationsLoader(props),
@@ -108,6 +101,15 @@ export const idsAdminModule: PortalModule = {
                 handle: {
                   backPath: IDSAdminPaths.IDSAdmin,
                 },
+                children: [
+                  {
+                    name: m.applicationCreate,
+                    navHide: true,
+                    path: IDSAdminPaths.IDSAdminApplicationCreate,
+                    element: <CreateApplication />,
+                    action: createApplicationAction(props),
+                  },
+                ],
               },
               {
                 name: m.apis,

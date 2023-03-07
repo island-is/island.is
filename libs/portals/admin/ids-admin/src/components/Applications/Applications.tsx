@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useNavigate, useParams, useLoaderData } from 'react-router-dom'
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useLoaderData,
+  Outlet,
+} from 'react-router-dom'
 import {
   Box,
   Button,
@@ -119,6 +125,7 @@ const Applications = () => {
           </Box>
         </Box>
       </GridRow>
+      <Outlet />
     </GridContainer>
   ) : (
     <GridContainer className={styles.relative}>
@@ -247,6 +254,7 @@ const Applications = () => {
           ))}
         </Stack>
       </Box>
+      <Outlet />
     </GridContainer>
   )
 }
