@@ -158,24 +158,22 @@ export async function validateFormData<Schema extends z.ZodTypeAny>({
   request,
   schema,
 }: ValidateFormDataArgs<Schema>): Promise<ValidateFormDataReturnType<Schema>> {
+  type InferredSchema = z.infer<typeof schema>
+
   const formData = await request.formData()
   const values = getValuesFromFormData(formData)
-  const nestedObject = dotNotationToNestedObject(values) as z.infer<
-    typeof schema
-  >
-  const result = schema.safeParse(nestedObject) as z.infer<typeof schema>
+  const nestedObject = dotNotationToNestedObject(values) as InferredSchema
+  const result = schema.safeParse(nestedObject) as InferredSchema
 
-  if (result.error) {
+  if (!result.success) {
     return {
-      errors: formatErrors(result.error.format()) as Partial<
-        z.infer<typeof schema>
-      >,
       data: null,
+      errors: formatErrors(result.error.format()) as Partial<InferredSchema>,
     }
   }
 
   return {
-    data: result,
+    data: result.data,
     errors: null,
   }
 }

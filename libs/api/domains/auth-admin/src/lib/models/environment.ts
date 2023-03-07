@@ -1,7 +1,7 @@
 import { registerEnumType } from '@nestjs/graphql'
 
 export enum Environment {
-  Dev = 'development',
+  Development = 'development',
   Staging = 'staging',
   Production = 'production',
 }

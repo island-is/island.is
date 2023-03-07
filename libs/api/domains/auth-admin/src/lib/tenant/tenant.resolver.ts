@@ -8,7 +8,6 @@ import { Tenant } from './models/tenant.model'
 import { TenantsService } from './tenants.service'
 import { TenantEnvironment } from './models/tenant-environment.model'
 import { Environment } from '../models/environment'
-import { ActorDelegationInput } from '../../../../auth/src/lib/dto/actorDelegation.input'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Tenant)

@@ -41,6 +41,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:applications',
     defaultMessage: 'Forrit',
   },
+  applicationCreate: {
+    id: 'ap.ids-admin:application-create',
+    defaultMessage: 'Stofna forrit',
+  },
   apis: {
     id: 'ap.ids-admin:apis',
     defaultMessage: 'Vefþjónustur',
@@ -73,12 +77,63 @@ export const m = defineMessages({
     id: 'ap.ids-admin:display-name',
     defaultMessage: 'Nafn',
   },
-  clientId: {
+  applicationId: {
     id: 'ap.ids-admin:clientId',
-    defaultMessage: 'Client ID',
+    defaultMessage: 'Application ID',
   },
   chooseEnvironment: {
     id: 'ap.ids-admin:choose-environment',
     defaultMessage: 'Veldu umhverfi',
+  },
+  chooseApplicationType: {
+    id: 'ap.ids-admin:choose-application-type',
+    defaultMessage: 'Veldu tegund forrits',
+  },
+  errorDisplayName: {
+    id: 'ap.ids-admin:error-display-name',
+    defaultMessage: 'Nafn má ekki vera tómt',
+  },
+  errorApplicationId: {
+    id: 'ap.ids-admin:error-application-id',
+    defaultMessage: 'Application ID má ekki vera tómt',
+  },
+  errorEnvironment: {
+    id: 'ap.ids-admin:error-environment',
+    defaultMessage: 'Veldu a.m.k. eitt umhverfi',
+  },
+  errorApplicationType: {
+    id: 'ap.ids-admin:error-application-type',
+    defaultMessage: 'Veldu tegund forrits',
+  },
+  webApplicationsTitle: {
+    id: 'ap.ids-admin:web-applications-title',
+    defaultMessage: 'Vefforrit',
+  },
+  webApplicationsDescription: {
+    id: 'ap.ids-admin:web-applications-description',
+    defaultMessage:
+      'Hefðbundin vefforrit sem nota tilvísanir. T.d. Node.js, Express, ASP.net, Java, PHP',
+  },
+  nativeApplicationsTitle: {
+    id: 'ap.ids-admin:native-applications-title',
+    defaultMessage: 'Smáforrið forrit',
+  },
+  nativeApplicationsDescription: {
+    id: 'ap.ids-admin:native-applications-description',
+    defaultMessage:
+      'Farsíma-, skjáborðs-, CLI- og snjalltækjaforrit sem keyra innbyggt. T.d. iOS, Electron, Apple TV öppum',
+  },
+  machineApplicationsTitle: {
+    id: 'ap.ids-admin:machine-applications-title',
+    defaultMessage: 'Kerfi í kerfi',
+  },
+  machineApplicationsDescription: {
+    id: 'ap.ids-admin:machine-applications-description',
+    defaultMessage:
+      'CLI, púkar eða þjónustur sem keyra á bakendanum þínum. T.d. Skeljahandrit',
+  },
+  createApplication: {
+    id: 'ap.ids-admin:create-application',
+    defaultMessage: 'Stofna forrit',
   },
 })

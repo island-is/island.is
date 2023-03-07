@@ -28,7 +28,7 @@ const MOCKED_TENANTS = [
       },
       {
         name: '@admin.island.is',
-        environment: Environment.Dev,
+        environment: Environment.Development,
         displayName: [
           {
             locale: 'is',
@@ -63,7 +63,7 @@ const MOCKED_TENANTS = [
       },
       {
         name: '@island.is',
-        environment: Environment.Dev,
+        environment: Environment.Development,
         displayName: [
           {
             locale: 'is',

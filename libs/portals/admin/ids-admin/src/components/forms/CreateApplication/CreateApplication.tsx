@@ -1,19 +1,49 @@
-import React, { useRef } from 'react'
-import { Box, Button, Checkbox, Input, Text } from '@island.is/island-ui/core'
-import { Form, useActionData, useRouteLoaderData } from 'react-router-dom'
+import React, { useState } from 'react'
+import {
+  Box,
+  Button,
+  Checkbox,
+  Input,
+  InputError,
+  RadioButton,
+  Text,
+} from '@island.is/island-ui/core'
+import {
+  Form,
+  useActionData,
+  useNavigate,
+  useRouteLoaderData,
+} from 'react-router-dom'
+import {
+  AuthAdminApplicationType,
+  AuthAdminEnvironment,
+} from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
-import { useState } from 'react'
 import { CreateApplicationResult } from './CreateApplication.action'
 import {
   tenantLoaderId,
   TenantLoaderResult,
 } from '../../../screens/Tenant/Tenant.loader'
-import { AuthAdminEnvironment } from '@island.is/api/schema'
+import { Modal } from '../../Modal/Modal'
+import { IDSAdminPaths } from '../../../lib/paths'
+import { replaceParams } from '@island.is/react-spa/shared'
 
-const environments = Object.values(AuthAdminEnvironment)
+const environments = [
+  AuthAdminEnvironment.Development,
+  AuthAdminEnvironment.Staging,
+  AuthAdminEnvironment.Production,
+]
+const applicationTypes = [
+  AuthAdminApplicationType.Web,
+  AuthAdminApplicationType.Native,
+  AuthAdminApplicationType.Machine,
+]
 
-const formatClientId = (name: string) => {
+/**
+ * Formats the application id to be lowercase and replace spaces with dashes
+ */
+const formatApplicationId = (name: string) => {
   return name.trim().toLowerCase().replace(/\s+/g, '-')
 }
 
@@ -22,116 +52,202 @@ type InputState = {
   dirty: boolean
 }
 
-type CreateApplicationFormProps = {
-  onCancel(): void
-}
-
-export const CreateApplication = ({ onCancel }: CreateApplicationFormProps) => {
+/**
+ * Create application form within a modal
+ */
+export default function CreateApplication() {
+  const navigate = useNavigate()
   const tenant = useRouteLoaderData(tenantLoaderId) as TenantLoaderResult
   const actionData = useActionData() as CreateApplicationResult
   const { formatMessage } = useLocale()
-  const formRef = useRef<HTMLFormElement>(null)
-  const CLIENT_ID_PREFIX = `${tenant.id}/`
+  const APPLICATION_ID_PREFIX = `${tenant.id}/`
 
-  const initialClientIdState: InputState = {
+  const initialApplicationIdState: InputState = {
     value: '',
     dirty: false,
   }
 
-  const [clientIdState, setClientIdState] = useState<InputState>(
-    initialClientIdState,
+  const [
+    applicationType,
+    setApplicationState,
+  ] = useState<AuthAdminApplicationType>(AuthAdminApplicationType.Web)
+  const [applicationIdState, setApplicationIdState] = useState<InputState>(
+    initialApplicationIdState,
   )
 
   const onNameChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    if (clientIdState.dirty) return
+    if (applicationIdState.dirty) return
 
-    setClientIdState({
-      ...clientIdState,
-      value: formatClientId(e.target.value),
+    setApplicationIdState({
+      ...applicationIdState,
+      value: formatApplicationId(e.target.value),
     })
   }
 
-  const onClientIdChange = (
+  const onApplicationIdChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const val = e.target.value
 
-    setClientIdState({
-      value: formatClientId(val),
+    setApplicationIdState({
+      value: formatApplicationId(val),
       dirty: true,
     })
   }
 
-  const resetForm = () => {
-    // Reset form fields that are not controlled by state
-    formRef.current?.reset()
-    // Reset state
-    setClientIdState(initialClientIdState)
+  const formatErrorMessage = (messageKey?: string) => {
+    const message = m[messageKey as keyof typeof m]
+
+    return message ? formatMessage(message) : undefined
   }
 
-  const onCancelHandler = () => {
-    resetForm()
-    onCancel()
+  const getRadioLabels = (applicationType: AuthAdminApplicationType) => {
+    switch (applicationType) {
+      case AuthAdminApplicationType.Web:
+        return {
+          label: formatMessage(m.webApplicationsTitle),
+          subLabel: formatMessage(m.webApplicationsDescription),
+        }
+      case AuthAdminApplicationType.Native:
+        return {
+          label: formatMessage(m.nativeApplicationsTitle),
+          subLabel: formatMessage(m.nativeApplicationsDescription),
+        }
+      case AuthAdminApplicationType.Machine:
+        return {
+          label: formatMessage(m.machineApplicationsTitle),
+          subLabel: formatMessage(m.machineApplicationsDescription),
+        }
+    }
+  }
+
+  const onCancel = () => {
+    navigate(
+      replaceParams({
+        href: IDSAdminPaths.IDSAdminTenants,
+        params: { tenant: tenant.id },
+      }),
+    )
   }
 
   return (
-    <Form method="post" ref={formRef}>
-      <Box display="flex" columnGap={3} marginTop={4}>
-        <Box width="full">
-          <Input
-            type="text"
-            name="displayName"
-            label={formatMessage(m.displayName)}
-            size="sm"
-            onChange={onNameChange}
-            errorMessage={actionData?.errors?.displayName}
-          />
+    <Modal
+      id="create-application"
+      isVisible
+      title={formatMessage(m.createApplication)}
+      onClose={onCancel}
+    >
+      <Form method="post">
+        <Box
+          display="flex"
+          flexDirection={['column', 'row']}
+          columnGap={3}
+          rowGap={2}
+          marginTop={4}
+        >
+          <Box width="full">
+            <Input
+              type="text"
+              name="displayName"
+              label={formatMessage(m.displayName)}
+              size="sm"
+              onChange={onNameChange}
+              errorMessage={formatErrorMessage(actionData?.errors?.displayName)}
+            />
+          </Box>
+          <Box width="full">
+            <input type="text" hidden name="tenant" defaultValue={tenant.id} />
+            <Input
+              type="text"
+              name="applicationId"
+              label={formatMessage(m.applicationId)}
+              size="sm"
+              prefix={APPLICATION_ID_PREFIX}
+              value={applicationIdState.value}
+              onChange={onApplicationIdChange}
+              errorMessage={formatErrorMessage(
+                actionData?.errors?.applicationId,
+              )}
+            />
+          </Box>
         </Box>
-        <Box width="full">
-          <input type="text" hidden name="tenant" defaultValue={tenant.id} />
-          <Input
-            type="text"
-            name="clientId"
-            label={formatMessage(m.clientId)}
-            size="sm"
-            prefix={CLIENT_ID_PREFIX}
-            value={clientIdState.value}
-            onChange={onClientIdChange}
-            errorMessage={actionData?.errors?.clientId}
-          />
+        <Box marginTop={3}>
+          <Text variant="h4">{formatMessage(m.chooseEnvironment)}</Text>
+          <Box
+            display="flex"
+            flexDirection={['column', 'row']}
+            columnGap={3}
+            rowGap={2}
+            marginTop={2}
+          >
+            {environments.map((env) => {
+              const envName = tenant.availableEnvironments.find(
+                (environment) => env === environment,
+              )
+
+              return (
+                <Box width="full" key={env}>
+                  <Checkbox
+                    label={env}
+                    name="environments"
+                    id={`environments.${envName}`}
+                    value={envName}
+                    disabled={!tenant.availableEnvironments.includes(env)}
+                    large
+                  />
+                </Box>
+              )
+            })}
+          </Box>
+          {actionData?.errors?.environments && (
+            <InputError
+              id="environments"
+              errorMessage={formatErrorMessage(
+                (actionData?.errors?.environments as unknown) as string,
+              )}
+            />
+          )}
         </Box>
-      </Box>
-      <Box marginTop={3}>
-        <Text variant="h4">{formatMessage(m.chooseEnvironment)}</Text>
-        <Box display="flex" columnGap={3}>
-          {environments.map((env) => {
-            const envName = tenant.availableEnvironments.find(
-              (environment) => env === environment,
-            )
-            return (
-              <Box width="full">
-                <Checkbox
-                  key={env}
-                  label={env}
-                  name={envName}
-                  id={envName}
-                  value="true"
-                  disabled={!tenant.availableEnvironments.includes(env)}
+        <Box marginTop={4}>
+          <Box display="flex" flexDirection="column" rowGap={2}>
+            <Text variant="h4">{formatMessage(m.chooseApplicationType)}</Text>
+            {applicationTypes.map((type) => (
+              <Box width="full" key={type}>
+                <RadioButton
+                  {...getRadioLabels(type)}
+                  backgroundColor="blue"
+                  name="applicationType"
+                  id={`applicationType.${type}`}
+                  value={type}
+                  onChange={(e) =>
+                    setApplicationState(
+                      e.target.value as AuthAdminApplicationType,
+                    )
+                  }
+                  checked={applicationType === type}
                   large
                 />
               </Box>
-            )
-          })}
+            ))}
+          </Box>
+          {actionData?.errors?.environments && (
+            <InputError
+              id="applicationType"
+              errorMessage={formatErrorMessage(
+                (actionData?.errors?.applicationType as unknown) as string,
+              )}
+            />
+          )}
         </Box>
-      </Box>
-      <Box display="flex" justifyContent="spaceBetween" marginTop={7}>
-        <Button onClick={onCancelHandler} variant="ghost">
-          {formatMessage(m.cancel)}
-        </Button>
-        <Button type="submit">{formatMessage(m.create)}</Button>
-      </Box>
-    </Form>
+        <Box display="flex" justifyContent="spaceBetween" marginTop={7}>
+          <Button onClick={onCancel} variant="ghost">
+            {formatMessage(m.cancel)}
+          </Button>
+          <Button type="submit">{formatMessage(m.create)}</Button>
+        </Box>
+      </Form>
+    </Modal>
   )
 }

@@ -7,13 +7,11 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import MockApplications from '../../lib/MockApplications'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { Modal } from '../Modal/Modal'
-import { CreateApplication } from '../forms/CreateApplication/CreateApplication'
 import { useTenant } from '../../screens/Tenant/Tenant'
 import { replaceParams } from '@island.is/react-spa/shared'
 import { IDSAdminPaths } from '../../lib/paths'
@@ -21,9 +19,9 @@ import * as styles from '../TenantsList/TenantsList.css'
 
 const Applications = () => {
   const { tenant: tenantId } = useParams<{ tenant: string }>()
-  const [createApplicationModal, setCreateApplicationModal] = useState(false)
   const { formatMessage } = useLocale()
   const { setNavTitle } = useTenant()
+  const navigate = useNavigate()
 
   useEffect(() => {
     // TODO: Get application by id from backend
@@ -40,7 +38,14 @@ const Applications = () => {
           <Box>
             <Button
               size={'small'}
-              onClick={() => setCreateApplicationModal(true)}
+              onClick={() =>
+                navigate(
+                  replaceParams({
+                    href: IDSAdminPaths.IDSAdminApplicationCreate,
+                    params: { tenant: tenantId },
+                  }),
+                )
+              }
             >
               Create Application
             </Button>
@@ -100,14 +105,6 @@ const Applications = () => {
           ))}
         </Stack>
       </Box>
-      <Modal
-        id="create-application"
-        isVisible={createApplicationModal}
-        onClose={() => setCreateApplicationModal(false)}
-        title="Create Application"
-      >
-        <CreateApplication onCancel={() => setCreateApplicationModal(false)} />
-      </Modal>
     </GridContainer>
   )
 }
