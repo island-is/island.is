@@ -1,0 +1,22 @@
+name: Merge queue demo
+on:
+  merge_group:
+    branches:
+      - test-merge-queues/*
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    name: Echo README
+    runs-on: ec2-runners
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: 'Echo README'
+        id: echo-readme
+        run: |
+          cat ./merge-queues/README.md
