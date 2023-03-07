@@ -6,12 +6,34 @@ query getApplications($input: ApplicationApplicationsAdminInput!) {
     state
     created
     modified
+    assignees
+    applicantActors
     name
     institution
     progress
     status
     applicantName
     paymentStatus
+    actionCard {
+      title
+      description
+      tag {
+        label
+        variant
+      }
+      pendingAction {
+        displayStatus
+        content
+        title
+      }
+      history {
+        log
+        date
+      }
+      deleteButton
+      draftTotalSteps
+      draftFinishedSteps
+    }
   }
 }
 
