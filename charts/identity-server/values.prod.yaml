@@ -199,6 +199,7 @@ services-auth-admin-api:
     DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-ids.internal'
     DB_USER: 'servicesauth'
+    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     IDENTITY_SERVER_ISSUER_URL_LIST: '["https://innskra.island.is"]'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
