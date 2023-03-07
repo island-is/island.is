@@ -15,7 +15,7 @@ import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { SmsService } from '@island.is/nova-sms'
 import { EmailService } from '@island.is/email-service'
 import {
-  NotificationMessage,
+  CaseMessage,
   MessageService,
   MessageType,
 } from '@island.is/judicial-system/message'
@@ -649,17 +649,8 @@ export class NotificationService {
   private async sendCourtDateNotifications(
     theCase: Case,
     user: TUser | User,
-    eventOnly?: boolean,
   ): Promise<SendNotificationResponse> {
-    this.eventService.postEvent(
-      CaseEvent.SCHEDULE_COURT_DATE,
-      theCase,
-      eventOnly,
-    )
-
-    if (eventOnly) {
-      return { notificationSent: false }
-    }
+    this.eventService.postEvent(CaseEvent.SCHEDULE_COURT_DATE, theCase)
 
     const promises: Promise<Recipient>[] = [
       this.sendCourtDateEmailNotificationToProsecutor(theCase, user),
@@ -1375,22 +1366,19 @@ export class NotificationService {
     type: MessageType,
     user: TUser,
     theCase: Case,
-    eventOnly?: boolean,
-  ): NotificationMessage {
-    return { type, userId: user.id, caseId: theCase.id, eventOnly }
+  ): CaseMessage {
+    return { type, userId: user.id, caseId: theCase.id }
   }
 
   private getReadyForCourtNotificationMessages(
     user: TUser,
     theCase: Case,
-    eventOnly?: boolean,
-  ): NotificationMessage[] {
+  ): CaseMessage[] {
     const messages = [
       this.getNotificationMessage(
         MessageType.SEND_READY_FOR_COURT_NOTIFICATION,
         user,
         theCase,
-        eventOnly,
       ),
     ]
 
@@ -1400,7 +1388,6 @@ export class NotificationService {
           MessageType.DELIVER_REQUEST_TO_COURT,
           user,
           theCase,
-          eventOnly,
         ),
       )
     }
@@ -1432,11 +1419,7 @@ export class NotificationService {
       case NotificationType.RECEIVED_BY_COURT:
         return this.sendReceivedByCourtNotifications(theCase)
       case NotificationType.COURT_DATE:
-        return this.sendCourtDateNotifications(
-          theCase,
-          user,
-          notification.eventOnly,
-        )
+        return this.sendCourtDateNotifications(theCase, user)
       case NotificationType.RULING:
         return this.sendRulingNotifications(theCase)
       case NotificationType.MODIFIED:
@@ -1455,7 +1438,7 @@ export class NotificationService {
     theCase: Case,
     user: TUser,
   ): Promise<SendNotificationResponse> {
-    let messages: NotificationMessage[]
+    let messages: CaseMessage[]
 
     try {
       switch (notification.type) {
@@ -1465,16 +1448,11 @@ export class NotificationService {
               MessageType.SEND_HEADS_UP_NOTIFICATION,
               user,
               theCase,
-              notification.eventOnly,
             ),
           ]
           break
         case NotificationType.READY_FOR_COURT:
-          messages = this.getReadyForCourtNotificationMessages(
-            user,
-            theCase,
-            notification.eventOnly,
-          )
+          messages = this.getReadyForCourtNotificationMessages(user, theCase)
           break
         case NotificationType.RECEIVED_BY_COURT:
           messages = [
@@ -1482,19 +1460,26 @@ export class NotificationService {
               MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
               user,
               theCase,
-              notification.eventOnly,
             ),
           ]
           break
         case NotificationType.COURT_DATE:
-          messages = [
-            this.getNotificationMessage(
-              MessageType.SEND_COURT_DATE_NOTIFICATION,
-              user,
+          if (notification.eventOnly) {
+            this.eventService.postEvent(
+              CaseEvent.SCHEDULE_COURT_DATE,
               theCase,
-              notification.eventOnly,
-            ),
-          ]
+              true,
+            )
+            messages = []
+          } else {
+            messages = [
+              this.getNotificationMessage(
+                MessageType.SEND_COURT_DATE_NOTIFICATION,
+                user,
+                theCase,
+              ),
+            ]
+          }
           break
         case NotificationType.REVOKED:
           messages = [
@@ -1502,7 +1487,6 @@ export class NotificationService {
               MessageType.SEND_REVOKED_NOTIFICATION,
               user,
               theCase,
-              notification.eventOnly,
             ),
           ]
           break
