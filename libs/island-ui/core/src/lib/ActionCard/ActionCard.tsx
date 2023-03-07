@@ -13,6 +13,10 @@ import { Icon } from '../IconRC/Icon'
 import DialogPrompt from '../DialogPrompt/DialogPrompt'
 import { DraftProgressMeter } from '../DraftProgressMeter/DraftProgressMeter'
 import { ProgressMeter } from '../ProgressMeter/ProgressMeter'
+import {
+  ActionCardHistory,
+  ActionCardHistoryConfig,
+} from './ActionCardHistory/ActionCardHistory'
 
 type ActionCardProps = {
   date?: string
@@ -22,6 +26,7 @@ type ActionCardProps = {
   eyebrow?: string
   logo?: string
   backgroundColor?: 'white' | 'blue' | 'red'
+  focused?: boolean
   tag?: {
     label: string
     variant?: TagVariant
@@ -68,6 +73,7 @@ type ActionCardProps = {
   }
   status?: string
   renderDraftStatusBar?: boolean
+  history?: ActionCardHistoryConfig
 }
 
 const defaultCta = {
@@ -117,10 +123,12 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   unavailable: _unavailable,
   progressMeter: _progressMeter,
   deleteButton: _delete,
+  history,
   avatar,
   logo,
   status,
   renderDraftStatusBar = false,
+  focused = false,
 }) => {
   const cta = { ...defaultCta, ..._cta }
   const progressMeter = { ...defaultProgressMeter, ..._progressMeter }
@@ -319,27 +327,32 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   const renderDraftProgressMeter = () => {
     const { variant, draftFinishedSteps, draftTotalSteps } = progressMeter
     return (
-      <Box flexGrow={1} className={styles.draftProgressMeter}>
-        <DraftProgressMeter
-          variant={variant}
-          draftTotalSteps={draftTotalSteps ?? 1}
-          draftFinishedSteps={draftFinishedSteps ?? 1}
-        />
-      </Box>
-    )
-  }
-
-  const renderProgressMeterButton = () => {
-    return (
-      <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
-        <Button
-          variant={cta.variant}
-          onClick={cta.onClick}
-          icon={cta.icon}
-          size={cta.size}
-        >
-          {cta.label}
-        </Button>
+      <Box
+        width="full"
+        paddingTop={[2, 2, 2, 3]}
+        display="flex"
+        flexGrow={1}
+        flexShrink={0}
+        alignItems={['stretch', 'stretch', alignWithDate]}
+        flexDirection={['column', 'column', 'row']}
+      >
+        <Box flexGrow={1} className={styles.draftProgressMeter}>
+          <DraftProgressMeter
+            variant={variant}
+            draftTotalSteps={draftTotalSteps ?? 1}
+            draftFinishedSteps={draftFinishedSteps ?? 1}
+          />
+        </Box>
+        <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
+          <Button
+            variant={cta.variant}
+            onClick={cta.onClick}
+            icon={cta.icon}
+            size={cta.size}
+          >
+            {cta.label}
+          </Button>
+        </Box>
       </Box>
     )
   }
@@ -388,12 +401,26 @@ export const ActionCard: React.FC<ActionCardProps> = ({
     )
   }
 
+  const renderHistory = () => {
+    return (
+      history?.items &&
+      history.items.length > 0 && (
+        <ActionCardHistory
+          history={history}
+          size={history.items.some((x) => !!x.content) ? 'lg' : 'sm'}
+        />
+      )
+    )
+  }
+
   return (
     <Box
       display="flex"
       flexDirection="column"
       borderColor={
-        backgroundColor === 'red'
+        focused
+          ? 'mint400'
+          : backgroundColor === 'red'
           ? 'red200'
           : backgroundColor === 'blue'
           ? 'blue100'
@@ -454,21 +481,14 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           {unavailable.active ? renderDisabled() : renderDefault()}
         </Box>
       </Box>
-      {progressMeter.active && !renderDraftStatusBar && renderProgressMeter()}
-      {progressMeter.active && renderDraftStatusBar && (
-        <Box
-          width="full"
-          paddingTop={[2, 2, 2, 3]}
-          display="flex"
-          flexGrow={1}
-          flexShrink={0}
-          alignItems={['stretch', 'stretch', alignWithDate]}
-          flexDirection={['column', 'column', 'row']}
-        >
-          {status === 'draft' && renderDraftProgressMeter()}
-          {renderProgressMeterButton()}
-        </Box>
-      )}
+
+      {status === 'draft'
+        ? renderDraftStatusBar
+          ? renderDraftProgressMeter()
+          : renderProgressMeter()
+        : history?.items && history.items.length > 0
+        ? renderHistory()
+        : renderProgressMeter()}
     </Box>
   )
 }

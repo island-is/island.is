@@ -22,7 +22,7 @@ import { TemplateApiActionRunner } from './tools/templateApiActionRunner.service
 import { ApplicationChargeModule } from './charge/application-charge.module'
 import { ApplicationFilesModule } from '@island.is/application/api/files'
 import { PaymentModule } from '@island.is/application/api/payment'
-
+import { HistoryModule } from '@island.is/application/api/history'
 @Module({
   imports: [
     PaymentModule,
@@ -39,6 +39,7 @@ import { PaymentModule } from '@island.is/application/api/payment'
     SigningModule,
     CmsTranslationsModule,
     FeatureFlagModule,
+    HistoryModule,
     LoggingModule,
     ApplicationChargeModule,
   ],

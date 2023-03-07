@@ -47,6 +47,9 @@ export const PickPlateSize: FC<FieldBaseProps> = (props) => {
   const currentPlateTypeRear =
     data?.vehiclesDetail?.registrationInfo?.plateTypeRear
 
+  // Plate type front should always be defined (rear type can be empty in some cases)
+  const plateTypeFrontError = !currentPlateTypeFront
+
   useEffect(() => {
     setFieldLoadingState?.(loading || !!error)
   }, [loading, error])
@@ -60,7 +63,7 @@ export const PickPlateSize: FC<FieldBaseProps> = (props) => {
           repeat={2}
           borderRadius="large"
         />
-      ) : !error ? (
+      ) : !error && !plateTypeFrontError ? (
         <>
           <Text variant="h5" marginTop={2} marginBottom={1}>
             {formatMessage(information.labels.plateSize.frontPlateSubtitle)}
@@ -87,35 +90,45 @@ export const PickPlateSize: FC<FieldBaseProps> = (props) => {
                   ) || '',
               }))}
           />
-          <Text variant="h5" marginTop={2} marginBottom={1}>
-            {formatMessage(information.labels.plateSize.rearPlateSubtitle)}
-          </Text>
-          <RadioController
-            id={`${props.field.id}.rearPlateSize`}
-            largeButtons
-            backgroundColor="blue"
-            error={errors && getErrorViaPath(errors, 'plateSize.rearPlateSize')}
-            options={plateTypeList
-              ?.filter((x) => x.code === currentPlateTypeRear)
-              ?.map((x) => ({
-                value: x.code || '',
-                label:
-                  formatMessage(
-                    information.labels.plateSize.plateSizeOptionTitle,
-                    {
-                      name: x.name,
-                      height: x.plateHeight,
-                      width: x.plateWidth,
-                    },
-                  ) || '',
-              }))}
-          />
+          {currentPlateTypeRear && (
+            <>
+              <Text variant="h5" marginTop={2} marginBottom={1}>
+                {formatMessage(information.labels.plateSize.rearPlateSubtitle)}
+              </Text>
+              <RadioController
+                id={`${props.field.id}.rearPlateSize`}
+                largeButtons
+                backgroundColor="blue"
+                error={
+                  errors && getErrorViaPath(errors, 'plateSize.rearPlateSize')
+                }
+                options={plateTypeList
+                  ?.filter((x) => x.code === currentPlateTypeRear)
+                  ?.map((x) => ({
+                    value: x.code || '',
+                    label:
+                      formatMessage(
+                        information.labels.plateSize.plateSizeOptionTitle,
+                        {
+                          name: x.name,
+                          height: x.plateHeight,
+                          width: x.plateWidth,
+                        },
+                      ) || '',
+                  }))}
+              />
+            </>
+          )}
         </>
       ) : (
         <Box marginTop={3}>
           <AlertMessage
             type="error"
-            title={formatMessage(information.labels.plateSize.error)}
+            title={formatMessage(
+              error
+                ? information.labels.plateSize.error
+                : information.labels.plateSize.errorPlateTypeFront,
+            )}
           />
         </Box>
       )}

@@ -9,6 +9,7 @@ import {
   MountedFile,
   PersistentVolumeClaim,
   PostgresInfo,
+  RedisInfo,
   ReplicaCount,
   Resources,
   Secrets,
@@ -16,7 +17,6 @@ import {
   ValueType,
   XroadConfig,
 } from './types/input-types'
-
 type Optional<T, L extends keyof T> = Omit<T, L> & Partial<Pick<T, L>>
 
 export class ServiceBuilder<ServiceType> {
@@ -211,6 +211,11 @@ export class ServiceBuilder<ServiceType> {
     return this
   }
 
+  redis(redis?: RedisInfo) {
+    this.serviceDef.redis = redis ?? {}
+    return this
+  }
+
   resources(res: Resources) {
     this.serviceDef.resources = res
     return this
@@ -225,11 +230,6 @@ export class ServiceBuilder<ServiceType> {
     this.serviceDef.postgres = this.withDefaults(postgres ?? {})
     return this
   }
-
-  redis(host?: string) {
-    return this
-  }
-
   /**
    * You can allow ingress traffic (traffic from the internet) to your service by creating an ingress controller. Mapped to an [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/#what-is-ingress)
    * @param ingress Ingress parameters
@@ -252,7 +252,7 @@ export class ServiceBuilder<ServiceType> {
     return this
   }
 
-  private assertUnset<T>(current: T, envs: T) {
+  private assertUnset<T extends {}>(current: T, envs: T) {
     const intersection = Object.keys({
       ...current,
     }).filter({}.hasOwnProperty.bind(envs))
@@ -286,4 +286,4 @@ export const service = <Service extends string>(
   return new ServiceBuilder(name)
 }
 
-export const json = (value: unknown): ValueType => JSON.stringify(value)
+export const json = (value: unknown): string => JSON.stringify(value)

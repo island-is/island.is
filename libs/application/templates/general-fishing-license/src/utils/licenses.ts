@@ -2,6 +2,8 @@ import { FishingLicenseEnum } from '../types'
 
 export const FILE_UPLOAD_ACCEPT = '.pdf, .jpg, .jpeg, .png'
 
+export const FILE_SIZE_LIMIT = 5000000 // 5MB
+
 // Determines whether fishing license has a file upload field
 export const licenseHasFileUploadField = (
   license: FishingLicenseEnum | string,
