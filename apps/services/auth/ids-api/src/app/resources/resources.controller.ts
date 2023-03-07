@@ -1,11 +1,4 @@
 import {
-  ApiResource,
-  ApiScope,
-  IdentityResource,
-  ResourcesService,
-} from '@island.is/auth-api-lib'
-import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
-import {
   BadRequestException,
   Controller,
   Get,
@@ -15,6 +8,14 @@ import {
   VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger'
+
+import {
+  ApiResource,
+  ApiScope,
+  IdentityResource,
+  ResourcesService,
+} from '@island.is/auth-api-lib'
+import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('resources')
@@ -34,18 +35,14 @@ export class ResourcesController {
     allowEmptyValue: true,
   })
   @ApiOkResponse({ type: IdentityResource, isArray: true })
-  async findIdentityResourcesByScopeName(
+  findIdentityResourcesByScopeName(
     @Query(
       'scopeNames',
       new ParseArrayPipe({ optional: true, items: String, separator: ',' }),
     )
     scopeNames: string[],
   ): Promise<IdentityResource[]> {
-    const identityResources = await this.resourcesService.findIdentityResourcesByScopeName(
-      scopeNames,
-    )
-
-    return identityResources
+    return this.resourcesService.findIdentityResourcesByScopeName(scopeNames)
   }
 
   /** Gets API scopes by scope names */
@@ -58,18 +55,14 @@ export class ResourcesController {
     allowEmptyValue: true,
   })
   @ApiOkResponse({ type: ApiScope, isArray: true })
-  async findApiScopesByNameAsync(
+  findApiScopesByNameAsync(
     @Query(
       'scopeNames',
       new ParseArrayPipe({ optional: true, items: String, separator: ',' }),
     )
     scopeNames: string[],
   ): Promise<ApiScope[]> {
-    const apiScopes = await this.resourcesService.findApiScopesByNameAsync(
-      scopeNames,
-    )
-
-    return apiScopes
+    return this.resourcesService.findApiScopesByNameAsync(scopeNames)
   }
 
   /** Gets api resources by resources names or scope names */
@@ -88,7 +81,7 @@ export class ResourcesController {
     allowEmptyValue: true,
   })
   @ApiOkResponse({ type: ApiResource, isArray: true })
-  async findApiResourcesByNameAsync(
+  findApiResourcesByNameAsync(
     @Query(
       'apiResourceNames',
       new ParseArrayPipe({ optional: true, items: String, separator: ',' }),
@@ -107,11 +100,9 @@ export class ResourcesController {
     }
 
     if (apiResourceNames) {
-      return await this.resourcesService.findApiResourcesByNameAsync(
-        apiResourceNames,
-      )
+      return this.resourcesService.findApiResourcesByNameAsync(apiResourceNames)
     } else {
-      return await this.resourcesService.findApiResourcesByScopeNameAsync(
+      return this.resourcesService.findApiResourcesByScopeNameAsync(
         apiScopeNames,
       )
     }
@@ -127,13 +118,13 @@ export class ResourcesController {
     allowEmptyValue: true,
   })
   @ApiOkResponse({ type: String, isArray: true })
-  async findActorApiScopes(
+  findActorApiScopes(
     @Query(
       'requestedScopes',
       new ParseArrayPipe({ optional: false, items: String, separator: ',' }),
     )
     requestedScopes: string[],
   ): Promise<string[]> {
-    return await this.resourcesService.findActorApiScopes(requestedScopes)
+    return this.resourcesService.findActorApiScopes(requestedScopes)
   }
 }

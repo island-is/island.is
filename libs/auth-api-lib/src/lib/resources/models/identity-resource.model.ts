@@ -1,17 +1,19 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
   DataType,
+  HasMany,
   Model,
+  PrimaryKey,
   Table,
   UpdatedAt,
-  HasMany,
-  PrimaryKey,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
-import { IdentityResourceUserClaim } from './identity-resource-user-claim.model'
+
 import { DelegationScope } from '../../delegations/models/delegation-scope.model'
 import { IdentityResourcesDTO } from '../dto/identity-resources.dto'
+import { Domain } from './domain.model'
+import { IdentityResourceUserClaim } from './identity-resource-user-claim.model'
 
 @Table({
   tableName: 'identity_resource',
@@ -154,6 +156,9 @@ export class IdentityResource extends Model {
   @UpdatedAt
   @ApiProperty()
   readonly modified?: Date
+
+  @ApiProperty()
+  domain!: Domain
 
   toDTO(): IdentityResourcesDTO {
     return {
