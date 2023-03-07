@@ -140,7 +140,7 @@ export const popper = style({
   right: '0',
   width: '100%',
   top: '65px !important',
-  margin: '0 !important',
+  padding: '0 !important',
   ...themeUtils.responsiveStyle({
     md: {
       top: '70px !important',

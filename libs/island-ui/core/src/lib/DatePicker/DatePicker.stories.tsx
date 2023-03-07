@@ -143,6 +143,7 @@ export const WithErrors = () => (
   <>
     <Wrap>
       <DatePicker
+        id="TestError"
         label="Date"
         placeholderText="Pick a date"
         selected={new Date()}
