@@ -53,7 +53,6 @@ const DocumentLine: FC<Props> = ({
 
     // Form values
     form.method = 'post'
-    // TODO: Use correct url
     form.action = documentLine.url
     form.target = '_blank'
 
