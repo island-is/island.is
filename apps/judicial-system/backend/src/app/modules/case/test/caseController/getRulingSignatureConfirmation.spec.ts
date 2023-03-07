@@ -11,11 +11,14 @@ import {
 } from '@island.is/judicial-system/types'
 import { MessageType, MessageService } from '@island.is/judicial-system/message'
 
+import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
 import { AwsS3Service } from '../../../aws-s3'
 import { Case } from '../../models/case.model'
 import { SignatureConfirmationResponse } from '../../models/signatureConfirmation.response'
 import { createTestingCaseModule } from '../createTestingCaseModule'
+
+jest.mock('../../../factories')
 
 interface Then {
   result: SignatureConfirmationResponse
@@ -30,6 +33,7 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('CaseController - Get ruling signature confirmation', () => {
+  const date = randomDate()
   const userId = uuid()
   const user = { id: userId } as User
 
@@ -58,6 +62,8 @@ describe('CaseController - Get ruling signature confirmation', () => {
       (fn: (transaction: Transaction) => unknown) => fn(transaction),
     )
 
+    const mockToday = nowFactory as jest.Mock
+    mockToday.mockReturnValueOnce(date)
     const mockPutObject = mockAwsS3Service.putObject as jest.Mock
     mockPutObject.mockResolvedValue(uuid())
     const mockUpdate = mockCaseModel.update as jest.Mock
@@ -121,7 +127,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
 
     it('should set the ruling date', () => {
       expect(mockCaseModel.update).toHaveBeenCalledWith(
-        { rulingDate: expect.any(Date) },
+        { rulingDate: date },
         { where: { id: caseId }, transaction },
       )
     })

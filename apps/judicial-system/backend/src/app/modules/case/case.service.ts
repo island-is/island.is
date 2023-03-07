@@ -29,6 +29,7 @@ import {
   CaseOrigin,
   CaseState,
   CaseTransition,
+  CaseType,
   completedCaseStates,
   isIndictmentCase,
   isRestrictionCase,
@@ -57,11 +58,90 @@ import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
 import { CaseEvent, EventService } from '../event'
 import { CreateCaseDto } from './dto/createCase.dto'
-import { UpdateCaseDto } from './dto/updateCase.dto'
 import { getCasesQueryFilter } from './filters/case.filters'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { Case } from './models/case.model'
 import { transitionCase } from './state/case.state'
+
+export interface UpdateCase
+  extends Pick<
+    Case,
+    | 'indictmentSubtypes'
+    | 'description'
+    | 'defenderName'
+    | 'defenderNationalId'
+    | 'defenderEmail'
+    | 'defenderPhoneNumber'
+    | 'sendRequestToDefender'
+    | 'isHeightenedSecurityLevel'
+    | 'courtId'
+    | 'leadInvestigator'
+    | 'arrestDate'
+    | 'requestedCourtDate'
+    | 'translator'
+    | 'requestedValidToDate'
+    | 'demands'
+    | 'lawsBroken'
+    | 'legalBasis'
+    | 'legalProvisions'
+    | 'requestedCustodyRestrictions'
+    | 'requestedOtherRestrictions'
+    | 'caseFacts'
+    | 'legalArguments'
+    | 'requestProsecutorOnlySession'
+    | 'prosecutorOnlySessionRequest'
+    | 'comments'
+    | 'caseFilesComments'
+    | 'prosecutorId'
+    | 'sharedWithProsecutorsOfficeId'
+    | 'courtCaseNumber'
+    | 'sessionArrangements'
+    | 'courtDate'
+    | 'courtLocation'
+    | 'courtRoom'
+    | 'courtStartDate'
+    | 'courtEndTime'
+    | 'isClosedCourtHidden'
+    | 'courtAttendees'
+    | 'prosecutorDemands'
+    | 'courtDocuments'
+    | 'sessionBookings'
+    | 'courtCaseFacts'
+    | 'introduction'
+    | 'courtLegalArguments'
+    | 'ruling'
+    | 'decision'
+    | 'validToDate'
+    | 'isCustodyIsolation'
+    | 'isolationToDate'
+    | 'conclusion'
+    | 'endOfSessionBookings'
+    | 'accusedAppealDecision'
+    | 'accusedAppealAnnouncement'
+    | 'prosecutorAppealDecision'
+    | 'prosecutorAppealAnnouncement'
+    | 'accusedPostponedAppealDate'
+    | 'prosecutorPostponedAppealDate'
+    | 'judgeId'
+    | 'registrarId'
+    | 'caseModifiedExplanation'
+    | 'caseResentExplanation'
+    | 'subpoenaType'
+    | 'crimeScenes'
+    | 'indictmentIntroduction'
+    | 'requestDriversLicenseSuspension'
+    | 'creatingProsecutorId'
+  > {
+  type?: CaseType
+  state?: CaseState
+  policeCaseNumbers?: string[]
+  defendantWaivesRightToCounsel?: boolean
+  rulingDate?: Date | null
+  rulingModifiedHistory?: string
+  courtRecordSignatoryId?: string | null
+  courtRecordSignatureDate?: Date | null
+  parentCaseId?: string | null
+}
 
 export const include: Includeable[] = [
   { model: Defendant, as: 'defendants' },
@@ -207,7 +287,7 @@ export class CaseService {
 
   private async syncPoliceCaseNumbersAndCaseFiles(
     theCase: Case,
-    update: UpdateCaseDto,
+    update: UpdateCase,
     transaction: Transaction,
   ): Promise<void> {
     if (update.policeCaseNumbers && theCase.caseFiles) {
@@ -646,7 +726,7 @@ export class CaseService {
 
   async update(
     theCase: Case,
-    update: UpdateCaseDto,
+    update: UpdateCase,
     user: TUser,
     returnUpdatedCase = true,
   ): Promise<Case | undefined> {
@@ -656,9 +736,7 @@ export class CaseService {
     return this.sequelize
       .transaction(async (transaction) => {
         if (receivingCase) {
-          const state = transitionCase(CaseTransition.RECEIVE, theCase.state)
-
-          update = { ...update, state } as UpdateCaseDto
+          update.state = transitionCase(CaseTransition.RECEIVE, theCase.state)
         }
 
         const [numberOfAffectedRows] = await this.caseModel.update(update, {
@@ -891,13 +969,12 @@ export class CaseService {
       throw error
     }
 
-    // TODO: UpdateCaseDto does not contain courtRecordSignatoryId and courtRecordSignatureDate - create a new type for CaseService.update
     await this.update(
       theCase,
       {
         courtRecordSignatoryId: user.id,
         courtRecordSignatureDate: nowFactory(),
-      } as UpdateCaseDto,
+      },
       user,
       false,
     )
@@ -956,26 +1033,21 @@ export class CaseService {
         return { documentSigned: false, message: 'Failed to upload to S3' }
       }
 
-      // TODO: UpdateCaseDto does not contain rulingDate - create a new type for CaseService.update
       const newRulingDate = nowFactory()
-      await this.update(
-        theCase,
-        {
-          rulingDate: newRulingDate,
-          ...(!theCase.rulingDate
-            ? {}
-            : {
-                rulingModifiedHistory: formatRulingModifiedHistory(
-                  theCase.rulingModifiedHistory,
-                  newRulingDate,
-                  theCase.judge?.name,
-                  theCase.judge?.title,
-                ),
-              }),
-        } as UpdateCaseDto,
-        user,
-        false,
-      )
+      const update: UpdateCase = {
+        rulingDate: newRulingDate,
+      }
+
+      if (theCase.rulingDate) {
+        update.rulingModifiedHistory = formatRulingModifiedHistory(
+          theCase.rulingModifiedHistory,
+          newRulingDate,
+          theCase.judge?.name,
+          theCase.judge?.title,
+        )
+      }
+
+      await this.update(theCase, update, user, false)
 
       await this.addMessagesForCompletedCaseToQueue(theCase, user)
 

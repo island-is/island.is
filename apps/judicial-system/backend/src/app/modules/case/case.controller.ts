@@ -28,6 +28,7 @@ import {
 } from '@island.is/dokobit-signing'
 import {
   CaseState,
+  CaseTransition,
   CaseType,
   completedCaseStates,
   indictmentCases,
@@ -80,7 +81,7 @@ import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { transitionCase } from './state/case.state'
-import { CaseService } from './case.service'
+import { CaseService, UpdateCase } from './case.service'
 
 @Controller('api')
 @ApiTags('cases')
@@ -90,7 +91,7 @@ export class CaseController {
     private readonly userService: UserService,
     private readonly eventService: EventService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-  ) {}
+  ) { }
 
   private async validateAssignedUser(
     assignedUserId: string,
@@ -144,44 +145,43 @@ export class CaseController {
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
-    @Body() caseToUpdate: UpdateCaseDto,
+    @Body() updateDto: UpdateCaseDto,
   ): Promise<Case> {
     this.logger.debug(`Updating case ${caseId}`)
 
+    const update: UpdateCase = updateDto
+
     // Make sure valid users are assigned to the case's roles
-    if (caseToUpdate.prosecutorId) {
+    if (update.prosecutorId) {
       await this.validateAssignedUser(
-        caseToUpdate.prosecutorId,
+        update.prosecutorId,
         [UserRole.PROSECUTOR],
         theCase.creatingProsecutor?.institutionId,
       )
 
       // If the case was created via xRoad, then there may not have been a creating prosecutor
       if (!theCase.creatingProsecutor) {
-        caseToUpdate = {
-          ...caseToUpdate,
-          creatingProsecutorId: caseToUpdate.prosecutorId,
-        } as UpdateCaseDto
+        update.creatingProsecutorId = update.prosecutorId
       }
     }
 
-    if (caseToUpdate.judgeId) {
+    if (update.judgeId) {
       await this.validateAssignedUser(
-        caseToUpdate.judgeId,
+        update.judgeId,
         [UserRole.JUDGE, UserRole.ASSISTANT],
         theCase.courtId,
       )
     }
 
-    if (caseToUpdate.registrarId) {
+    if (update.registrarId) {
       await this.validateAssignedUser(
-        caseToUpdate.registrarId,
+        update.registrarId,
         [UserRole.REGISTRAR],
         theCase.courtId,
       )
     }
 
-    return this.caseService.update(theCase, caseToUpdate, user) as Promise<Case> // Never returns undefined
+    return this.caseService.update(theCase, update, user) as Promise<Case> // Never returns undefined
   }
 
   @UseGuards(JwtAuthGuard, CaseExistsGuard, RolesGuard, CaseWriteGuard)
@@ -207,24 +207,28 @@ export class CaseController {
 
     const state = transitionCase(transition.transition, theCase.state)
 
-    // TODO: UpdateCaseDto does not contain state - create a new type for CaseService.update
-    const update: {
-      state: CaseState
-      parentCaseId?: null
-      rulingDate?: Date
-    } = { state }
+    const update: UpdateCase = { state }
 
-    if (state === CaseState.DELETED) {
+    if (transition.transition === CaseTransition.DELETE) {
       update.parentCaseId = null
     }
 
-    if (isIndictmentCase(theCase.type) && completedCaseStates.includes(state)) {
+    if (
+      isIndictmentCase(theCase.type) &&
+      completedCaseStates.includes(state)
+    ) {
       update.rulingDate = nowFactory()
+    }
+
+    if (transition.transition === CaseTransition.REOPEN) {
+      // update.rulingDate = null
+      update.courtRecordSignatoryId = null
+      update.courtRecordSignatureDate = null
     }
 
     const updatedCase = await this.caseService.update(
       theCase,
-      update as UpdateCaseDto,
+      update,
       user,
       state !== CaseState.DELETED,
     )
