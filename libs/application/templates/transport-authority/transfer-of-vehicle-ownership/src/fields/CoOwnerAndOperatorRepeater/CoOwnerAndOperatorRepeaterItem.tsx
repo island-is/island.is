@@ -1,6 +1,12 @@
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, Text, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  Button,
+  GridRow,
+  GridColumn,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { FC } from 'react'
@@ -66,35 +72,37 @@ export const CoOwnerAndOperatorRepeaterItem: FC<Props & FieldBaseProps> = ({
         )}
         onNationalIdChange={onNationalIdChange}
       />
-      <Box marginTop={2}>
-        <InputController
-          id={emailField}
-          name={emailField}
-          type="email"
-          label={formatMessage(information.labels[userMessageId].email)}
-          error={errors && getErrorViaPath(errors, emailField)}
-          backgroundColor="blue"
-          required
-          defaultValue={
-            getValueViaPath(application.answers, emailField, '') as string
-          }
-        />
-      </Box>
-      <Box marginTop={2}>
-        <InputController
-          id={phoneField}
-          name={phoneField}
-          type="tel"
-          format="###-####"
-          label={formatMessage(information.labels[userMessageId].phone)}
-          error={errors && getErrorViaPath(errors, phoneField)}
-          backgroundColor="blue"
-          required
-          defaultValue={
-            getValueViaPath(application.answers, phoneField, '') as string
-          }
-        />
-      </Box>
+      <GridRow>
+        <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+          <InputController
+            id={emailField}
+            name={emailField}
+            type="email"
+            label={formatMessage(information.labels[userMessageId].email)}
+            error={errors && getErrorViaPath(errors, emailField)}
+            backgroundColor="blue"
+            required
+            defaultValue={
+              getValueViaPath(application.answers, emailField, '') as string
+            }
+          />
+        </GridColumn>
+        <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+          <InputController
+            id={phoneField}
+            name={phoneField}
+            type="tel"
+            format="###-####"
+            label={formatMessage(information.labels[userMessageId].phone)}
+            error={errors && getErrorViaPath(errors, phoneField)}
+            backgroundColor="blue"
+            required
+            defaultValue={
+              getValueViaPath(application.answers, phoneField, '') as string
+            }
+          />
+        </GridColumn>
+      </GridRow>
       <input
         type="hidden"
         value={repeaterField.wasRemoved}

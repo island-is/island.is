@@ -141,7 +141,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        entry: ['clearAssignees', 'clearEmployers'],
+        entry: 'clearAssignees',
         exit: [
           'clearOtherParentDataIfSelectedNo',
           'setOtherParentIdIfSelectedSpouse',
@@ -304,6 +304,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN]: {
+        entry: 'clearEmployers',
         exit: 'setEmployerReviewerNationalRegistryId',
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN,
@@ -820,7 +821,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'restorePeriodsFromTemp',
           'removeNullPeriod',
           'setNavId',
-          'clearEmployers',
           'setActionName',
         ],
         meta: {
@@ -874,6 +874,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS]: {
+        entry: 'clearEmployers',
         exit: [
           'setEmployerReviewerNationalRegistryId',
           'restorePeriodsFromTemp',
