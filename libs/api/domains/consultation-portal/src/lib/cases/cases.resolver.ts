@@ -34,9 +34,9 @@ export class CaseResultResolver {
   @FeatureFlag(Features.consultationPortalApplication)
   async getAdvices(
     @Args('input', { type: () => GetCaseInput }) input: GetCaseInput,
-  ): Promise<string[]> {
+  ): Promise<AdviceResult[]> {
     const advices = await this.caseResultService.getAdvices(input)
-    return advices.map((advice) => advice.content as string)
+    return advices
   }
 
   @Mutation(() => CaseResult, { name: 'postConsultationPortalAdvice' })

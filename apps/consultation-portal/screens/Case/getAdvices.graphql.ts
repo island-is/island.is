@@ -5,6 +5,10 @@ export const GET_ADVICES = gql`
     consultationPortalAdviceByCaseId(input: $input) {
       id
       number
+      participantName
+      participantEmail
+      content
+      created
     }
   }
 `

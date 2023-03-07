@@ -14,6 +14,7 @@ import { Advice, Case } from '../../types/viewModels'
 import {
   ConsultationPortalAdviceByCaseIdDocument,
   ConsultationPortalAdviceByCaseIdQuery,
+  ConsultationPortalAdviceByCaseIdQueryVariables,
 } from '../../screens/Case/getAdvices.graphql.generated'
 import { GET_ADVICES } from '@island.is/consultation-portal/screens/Case/getAdvices.graphql'
 interface CaseProps {
@@ -50,7 +51,7 @@ export const getServerSideProps = async (ctx) => {
     }),
     client.query<
       ConsultationPortalAdviceByCaseIdQuery,
-      ConsultationPortalCaseByIdQueryVariables
+      ConsultationPortalAdviceByCaseIdQueryVariables
     >({
       query: GET_ADVICES,
       variables: {
@@ -60,6 +61,7 @@ export const getServerSideProps = async (ctx) => {
       },
     }),
   ])
+  console.log(consultationPortalAdviceByCaseId)
   return {
     props: {
       case: consultationPortalCaseById,
