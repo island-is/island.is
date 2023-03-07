@@ -10,9 +10,6 @@ export const policeModuleConfig = defineConfig({
     clientPem: env.required('XROAD_CLIENT_PEM', ''),
     policeApiPath: env.required('XROAD_POLICE_API_PATH', ''),
     policeMemberCode: env.required('XROAD_POLICE_MEMBER_CODE', ''),
-    policeDocumentApiAvailable: !(env.optional('BLOCKED_API_INTEGRATION') ?? '')
-      .split(',')
-      .includes('POLICE_DOCUMENT'),
     policeCaseApiAvailable: !(env.optional('BLOCKED_API_INTEGRATION') ?? '')
       .split(',')
       .includes('POLICE_CASE'),

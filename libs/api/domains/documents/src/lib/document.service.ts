@@ -62,8 +62,31 @@ export class DocumentService {
     nationalId: string,
     input: GetDocumentListInput,
   ): Promise<DocumentListResponse> {
+    const healthId = '3' // The
+    let newInput: GetDocumentListInput = input
     try {
-      const body = await this.documentClient.getDocumentList(nationalId, input)
+      if (
+        (input.categoryId === '' ||
+          input.categoryId?.indexOf(healthId) !== -1) &&
+        input.isLegalGuardian
+      ) {
+        const allCategories = await this.getCategories(nationalId)
+        if (allCategories.find((x) => x.id === healthId)) {
+          newInput = {
+            ...input,
+            categoryId: allCategories
+              .filter((item) => item.id !== healthId)
+              .map((item) => item.id)
+              .toString(),
+          }
+        }
+      }
+
+      const body = await this.documentClient.getDocumentList(
+        nationalId,
+        newInput,
+      )
+
       return {
         data: (body?.messages || []).reduce(
           (result: Document[], documentMessage: DocumentInfoDTO) => {

@@ -106,6 +106,7 @@ export const createApp = async ({
     new ValidationPipe({
       whitelist: stripNonClassValidatorInputs,
       forbidNonWhitelisted: true,
+      forbidUnknownValues: false,
     }),
   )
 

@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/api/domains/syslumenn"]
     }
   },
-  "tags": []
+  "tags": ["lib:api", "scope:api"]
 }

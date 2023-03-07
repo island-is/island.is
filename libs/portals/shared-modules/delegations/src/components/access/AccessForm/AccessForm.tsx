@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { useParams, useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useForm, FormProvider } from 'react-hook-form'
 import classNames from 'classnames'
 
@@ -12,6 +13,7 @@ import {
 } from '@island.is/island-ui/core'
 import { isDefined } from '@island.is/shared/utils'
 import { useLocale } from '@island.is/localization'
+import { m } from '../../../lib/messages'
 import { DelegationsFormFooter } from '../../delegations/DelegationsFormFooter'
 import { servicePortalSaveAccessControl } from '@island.is/plausible'
 import { AccessFormScope, MappedScope } from '../access.types'
@@ -26,16 +28,20 @@ import { AuthScopeTreeQuery } from '../AccessList/AccessListContainer/AccessList
 import { useUpdateAuthDelegationMutation } from './AccessForm.generated'
 import { AuthCustomDelegationOutgoing } from '../../../types/customDelegation'
 import {
-  m,
-  useModules,
+  m as portalMessages,
   formatPlausiblePathToParams,
   usePortalMeta,
+  useRoutes,
 } from '@island.is/portals/core'
 
 type AccessFormProps = {
   delegation: AuthCustomDelegationOutgoing
   scopeTree: AuthScopeTreeQuery['authScopeTree']
   validityPeriod: Date | null
+}
+
+type UseParams = {
+  delegationId: string
 }
 
 export const AccessForm = ({
@@ -45,11 +51,9 @@ export const AccessForm = ({
 }: AccessFormProps) => {
   const { formatMessage } = useLocale()
   const { basePath } = usePortalMeta()
-  const { routes } = useModules()
-  const { delegationId } = useParams<{
-    delegationId: string
-  }>()
-  const history = useHistory()
+  const routes = useRoutes()
+  const { delegationId } = useParams() as UseParams
+  const navigate = useNavigate()
   const { lg } = useBreakpoint()
   const [openConfirmModal, setOpenConfirmModal] = useState(false)
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
@@ -57,7 +61,7 @@ export const AccessForm = ({
   const [updateError, setUpdateError] = useState(false)
 
   const onError = () => {
-    toast.error(formatMessage(m.somethingWrong))
+    toast.error(formatMessage(portalMessages.somethingWrong))
   }
 
   const [
@@ -98,18 +102,18 @@ export const AccessForm = ({
       const { data, errors } = await updateDelegation({
         variables: {
           input: {
-            delegationId,
+            delegationId: delegationId as string,
             scopes,
           },
         },
       })
 
       if (data && !errors && !err) {
-        history.push(DelegationPaths.Delegations)
+        navigate(DelegationPaths.Delegations)
         servicePortalSaveAccessControl(
           formatPlausiblePathToParams({
             path: DelegationPaths.DelegationsGrant,
-            routes: routes.map(({ path }) => path).flat(),
+            routes: routes.map(({ path }) => path),
             basePath,
           }),
         )
@@ -131,11 +135,7 @@ export const AccessForm = ({
       {formError && (
         <Box paddingBottom={3}>
           <AlertBanner
-            description={formatMessage({
-              id: 'sp.settings-access-control:date-error',
-              defaultMessage:
-                'Nauðsynlegt er að velja dagsetningu fyrir hvert umboð',
-            })}
+            description={formatMessage(m.dateError)}
             variant="error"
           />
         </Box>
@@ -166,7 +166,7 @@ export const AccessForm = ({
         </form>
         <Box position="sticky" bottom={0} marginTop={20}>
           <DelegationsFormFooter
-            onCancel={() => history.push(DelegationPaths.Delegations)}
+            onCancel={() => navigate(DelegationPaths.Delegations)}
             onConfirm={() => {
               // Only open confirm modal if there are scopes
               // else open delete modal
@@ -176,10 +176,7 @@ export const AccessForm = ({
                 setOpenDeleteModal(true)
               }
             }}
-            confirmLabel={formatMessage({
-              id: 'sp.settings-access-control:empty-new-access',
-              defaultMessage: 'Veita aðgang',
-            })}
+            confirmLabel={formatMessage(m.saveAccess)}
             confirmIcon="arrowForward"
             disabled={
               delegation.scopes.length === 0 && (!scopes || scopes.length === 0)
@@ -202,7 +199,7 @@ export const AccessForm = ({
         error={updateError}
       />
       <AccessDeleteModal
-        onDelete={() => history.push(DelegationPaths.Delegations)}
+        onDelete={() => navigate(DelegationPaths.Delegations)}
         onClose={() => setOpenDeleteModal(false)}
         isVisible={openDeleteModal}
         delegation={delegation}

@@ -1,0 +1,18 @@
+# Write your query or mutation here
+query TenantsList {
+  authAdminTenants {
+    data {
+      id
+      availableEnvironments
+      defaultEnvironment {
+        id
+        name
+        environment
+        displayName {
+          locale
+          value
+        }
+      }
+    }
+  }
+}

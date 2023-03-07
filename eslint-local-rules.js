@@ -1,5 +1,6 @@
 'use strict'
 const kennitala = require('kennitala')
+const fakeNationalIdPrefixes = ['010130', /(\d+)\1{6,}/]
 
 module.exports = {
   'disallow-kennitalas': {
@@ -13,7 +14,12 @@ module.exports = {
     },
     create: function (context) {
       function checkKennitala(value, node) {
-        if (kennitala.isValid(value)) {
+        if (
+          kennitala.isValid(value) &&
+          !fakeNationalIdPrefixes.some(
+            (nID) => new String(value).search(nID) >= 0,
+          )
+        ) {
           context.report({
             node: node,
             message: `Found valid SSN: ${value}`,

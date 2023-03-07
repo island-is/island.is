@@ -48,6 +48,6 @@
     },
     "docker-static": {}
   },
-  "tags": [],
+  "tags": ["lib:react", "scope:react"],
   "implicitDependencies": ["island-ui-core", "application-ui-fields"]
 }

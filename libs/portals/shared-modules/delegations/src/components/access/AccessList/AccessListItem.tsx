@@ -4,6 +4,7 @@ import { AccessDate } from '../AccessDate/AccessDate'
 import { useLocale } from '@island.is/localization'
 import * as commonAccessStyles from '../access.css'
 import * as styles from './AccessListItem.css'
+import { m } from '../../../lib/messages'
 
 interface AccessListItemProps {
   name: string
@@ -50,10 +51,7 @@ export const AccessListItem = ({
           className={classNames(commonAccessStyles.gridItem)}
         >
           <Text variant="small" fontWeight="semiBold">
-            {formatMessage({
-              id: 'sp.access-control-delegations:grant',
-              defaultMessage: 'Heimild',
-            })}
+            {formatMessage(m.permission)}
           </Text>
           <Text>{description}</Text>
         </Box>

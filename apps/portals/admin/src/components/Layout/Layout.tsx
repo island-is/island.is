@@ -12,9 +12,10 @@ import { useNamespaces } from '@island.is/localization'
 import Header from '../Header/Header'
 import * as styles from './Layout.css'
 import {
-  useModules,
-  useModuleProps,
+  AccessDenied,
   PortalModule,
+  useActiveModule,
+  useModules,
 } from '@island.is/portals/core'
 
 const boxProps = {
@@ -39,35 +40,39 @@ const getGridColumnSize = (layout: PortalModule['layout']) => {
   }
 }
 
-const LayoutModuleContainer: FC<{ layout: PortalModule['layout'] }> = ({
-  children,
-  layout,
-}) => {
-  const hasNoneLayout = layout === 'none'
-
-  if (hasNoneLayout) {
-    return <Box {...boxProps}>{children}</Box>
-  }
-
-  const { offset, span } = getGridColumnSize(layout)
-
-  return (
-    <Box {...boxProps} paddingY={[3, 3, 3, 5]}>
-      <GridContainer>
-        <Box className={styles.contentBox}>
-          <GridRow>
-            <GridColumn
-              offset={['0', '0', '0', offset]}
-              span={['12/12', '12/12', '12/12', span]}
-            >
-              {children}
-            </GridColumn>
-          </GridRow>
-        </Box>
-      </GridContainer>
-    </Box>
-  )
+type LayoutModuleContainerProps = {
+  layout: PortalModule['layout']
 }
+
+const LayoutModuleContainer: FC<LayoutModuleContainerProps> = React.memo(
+  ({ children, layout }) => {
+    const hasNoneLayout = layout === 'none'
+
+    if (hasNoneLayout) {
+      return <Box {...boxProps}>{children}</Box>
+    }
+
+    const { offset, span } = getGridColumnSize(layout)
+
+    return (
+      <Box {...boxProps} paddingY={[3, 3, 3, 5]}>
+        <GridContainer>
+          <Box className={styles.contentBox}>
+            <GridRow>
+              <GridColumn
+                offset={['0', '0', '0', offset]}
+                span={['12/12', '12/12', '12/12', span]}
+              >
+                {children}
+              </GridColumn>
+            </GridRow>
+          </Box>
+        </GridContainer>
+      </Box>
+    )
+  },
+  (prevProps, nextProps) => prevProps.layout === nextProps.layout,
+)
 
 const LayoutOuterContainer: FC = ({ children }) => (
   <>
@@ -78,28 +83,26 @@ const LayoutOuterContainer: FC = ({ children }) => (
 )
 
 export const Layout: FC = ({ children }) => {
-  useNamespaces(['admin.portal', 'global'])
+  useNamespaces(['admin.portal', 'global', 'portals'])
+  const activeModule = useActiveModule()
+  const modules = useModules()
+  const { layout = 'default' } = activeModule || {}
 
-  const { activeModule } = useModules()
-  const moduleProps = useModuleProps()
-  const { layout = 'default', moduleLayoutWrapper: ModuleLayoutWrapper } =
-    activeModule || {}
-
-  if (ModuleLayoutWrapper) {
+  if (modules.length === 0) {
     return (
       <LayoutOuterContainer>
-        <ModuleLayoutWrapper {...moduleProps}>
-          <LayoutModuleContainer layout={layout}>
-            {children}
-          </LayoutModuleContainer>
-        </ModuleLayoutWrapper>
+        <LayoutModuleContainer layout={layout}>
+          <AccessDenied />
+        </LayoutModuleContainer>
       </LayoutOuterContainer>
     )
   }
 
   return (
     <LayoutOuterContainer>
-      <LayoutModuleContainer layout={layout}>{children}</LayoutModuleContainer>
+      <LayoutModuleContainer layout={!activeModule ? 'none' : layout}>
+        {children}
+      </LayoutModuleContainer>
     </LayoutOuterContainer>
   )
 }

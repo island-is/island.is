@@ -36,9 +36,10 @@ export const estateSchema = z.object({
   }),
 
   selectedEstate: z.enum([
-    EstateTypes.officialEstate,
-    EstateTypes.noPropertyEstate,
-    EstateTypes.residencePermit,
+    EstateTypes.divisionOfEstate,
+    EstateTypes.estateWithoutAssets,
+    EstateTypes.permitToPostponeEstateDivision,
+    EstateTypes.divisionOfEstateByHeirs,
   ]),
 
   // Eignir
@@ -121,11 +122,13 @@ export const estateSchema = z.object({
     })
     .array()
     .optional(),
-  acceptDebts: z.array(z.enum([YES, NO])).optional(),
+  acceptDebts: z.array(z.enum([YES, NO])).nonempty(),
 
   // is: Heimild til setu í óskiptu búi skv. erfðaskrá
   undividedEstateResidencePermission: z.enum([YES, NO]),
 
   // is: Hefur umsækjandi forræði á búi?
   applicantHasLegalCustodyOverEstate: z.enum([YES, NO]),
+
+  readTerms: z.array(z.enum([YES])).length(1),
 })

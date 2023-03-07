@@ -28,6 +28,7 @@ import {
   Text,
   TopicCard,
 } from '@island.is/island-ui/core'
+import { sortAlpha } from '@island.is/shared/utils'
 
 import { CustomNextError } from '@island.is/web/units/errors'
 import {
@@ -43,10 +44,10 @@ import {
 } from '@island.is/web/hooks'
 import ContactBanner from '../ContactBanner/ContactBanner'
 import { getSlugPart } from '../utils'
-import sortAlpha from '@island.is/web/utils/sortAlpha'
 import { Locale } from 'locale'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { Colors } from '@island.is/island-ui/theme'
 
 import * as styles from './Home.css'
 
@@ -126,140 +127,143 @@ const Home: Screen<HomeProps> = ({
     >
       {hasContent && (
         <ServiceWebContext.Consumer>
-          {({ textMode }) => (
-            <>
-              <Box className={styles.categories}>
-                <GridContainer>
-                  <GridRow
-                    {...(!institutionSlugBelongsToMannaudstorg
-                      ? {}
-                      : { direction: 'column', alignItems: 'center' })}
+          {({ textMode }) => {
+            const textProps: { color?: Colors } =
+              textMode === 'dark'
+                ? {}
+                : { color: textMode === 'blueberry' ? 'blueberry600' : 'white' }
+            return (
+              <>
+                <Box className={styles.categories}>
+                  <GridContainer>
+                    <GridRow
+                      {...(!institutionSlugBelongsToMannaudstorg
+                        ? {}
+                        : { direction: 'column', alignItems: 'center' })}
+                    >
+                      <GridColumn span="12/12" paddingBottom={[2, 2, 3]}>
+                        <Text variant="h3" {...textProps}>
+                          {o(
+                            'serviceWebCategoryTitle',
+                            n('answersByCategory', 'Svör eftir flokkum'),
+                          )}
+                        </Text>
+                      </GridColumn>
+                    </GridRow>
+                  </GridContainer>
+                  <SimpleStackedSlider
+                    itemWidth={280}
+                    span={['12/12', '6/12', '6/12', '4/12']}
                   >
-                    <GridColumn span="12/12" paddingBottom={[2, 2, 3]}>
-                      <Text
-                        variant="h3"
-                        {...(textMode === 'dark' ? {} : { color: 'white' })}
-                      >
-                        {o(
-                          'serviceWebCategoryTitle',
-                          n('answersByCategory', 'Svör eftir flokkum'),
-                        )}
-                      </Text>
-                    </GridColumn>
-                  </GridRow>
-                </GridContainer>
-                <SimpleStackedSlider
-                  itemWidth={280}
-                  span={['12/12', '6/12', '6/12', '4/12']}
-                >
-                  {sortedSupportCategories.map(
-                    ({ title, slug, description, organization }, index) => {
-                      return (
-                        <Card
-                          key={index}
-                          title={title}
-                          description={description}
-                          link={
-                            {
-                              href: linkResolver('supportcategory', [
-                                organization.slug,
-                                slug,
-                              ]).href,
-                            } as LinkResolverResponse
-                          }
-                        />
-                      )
-                    },
-                  )}
-                </SimpleStackedSlider>
-              </Box>
-              {featuredQNAs.length > 0 && (
-                <Box marginY={[4, 4, 8]}>
+                    {sortedSupportCategories.map(
+                      ({ title, slug, description, organization }, index) => {
+                        return (
+                          <Card
+                            key={index}
+                            title={title}
+                            description={description}
+                            link={
+                              {
+                                href: linkResolver('supportcategory', [
+                                  organization.slug,
+                                  slug,
+                                ]).href,
+                              } as LinkResolverResponse
+                            }
+                          />
+                        )
+                      },
+                    )}
+                  </SimpleStackedSlider>
+                </Box>
+                {featuredQNAs.length > 0 && (
+                  <Box marginY={[4, 4, 8]}>
+                    <GridContainer>
+                      <GridRow>
+                        <GridColumn
+                          offset={[null, null, null, '1/12']}
+                          span={['12/12', '12/12', '12/12', '10/12']}
+                        >
+                          <Box
+                            borderRadius="large"
+                            border="standard"
+                            borderColor="blue200"
+                            paddingX={[4, 4, 14]}
+                            paddingY={[4, 4, 8]}
+                          >
+                            <Text variant="h3" as="h3" marginBottom={[4, 4, 8]}>
+                              {n('popularQuestions', 'Algengar spurningar')}
+                            </Text>
+                            <Stack space={2}>
+                              {featuredQNAs
+                                .filter(
+                                  (item) =>
+                                    !!item.title &&
+                                    !!item.slug &&
+                                    !!item.category,
+                                )
+                                .map(({ title, slug, category }, index) => {
+                                  return (
+                                    <Box key={index}>
+                                      <TopicCard
+                                        href={
+                                          linkResolver('supportqna', [
+                                            organization.slug,
+                                            category.slug,
+                                            slug,
+                                          ]).href
+                                        }
+                                      >
+                                        {title}
+                                      </TopicCard>
+                                    </Box>
+                                  )
+                                })}
+                            </Stack>
+                          </Box>
+                        </GridColumn>
+                      </GridRow>
+                    </GridContainer>
+                  </Box>
+                )}
+
+                <Box marginY={[7, 10, 10]}>
                   <GridContainer>
                     <GridRow>
                       <GridColumn
                         offset={[null, null, null, '1/12']}
                         span={['12/12', '12/12', '12/12', '10/12']}
                       >
-                        <Box
-                          borderRadius="large"
-                          border="standard"
-                          borderColor="blue200"
-                          paddingX={[4, 4, 14]}
-                          paddingY={[4, 4, 8]}
-                        >
-                          <Text variant="h3" as="h3" marginBottom={[4, 4, 8]}>
-                            {n('popularQuestions', 'Algengar spurningar')}
-                          </Text>
-                          <Stack space={2}>
-                            {featuredQNAs
-                              .filter(
-                                (item) =>
-                                  !!item.title &&
-                                  !!item.slug &&
-                                  !!item.category,
-                              )
-                              .map(({ title, slug, category }, index) => {
-                                return (
-                                  <Box key={index}>
-                                    <TopicCard
-                                      href={
-                                        linkResolver('supportqna', [
-                                          organization.slug,
-                                          category.slug,
-                                          slug,
-                                        ]).href
-                                      }
-                                    >
-                                      {title}
-                                    </TopicCard>
-                                  </Box>
-                                )
-                              })}
-                          </Stack>
+                        <Box marginY={[2, 2, 4]}>
+                          <ContactBanner
+                            slug={institutionSlug}
+                            cantFindWhatYouAreLookingForText={o(
+                              'cantFindWhatYouAreLookingForText',
+                              n(
+                                'cantFindWhatYouAreLookingForText',
+                                'Finnurðu ekki það sem þig vantar?',
+                              ),
+                            )}
+                            contactUsText={o(
+                              'contactUsText',
+                              n('contactUsText', 'Hafa samband'),
+                            )}
+                            howCanWeHelpText={o(
+                              'howCanWeHelpText',
+                              n(
+                                'howCanWeHelpText',
+                                'Hvernig getum við aðstoðað?',
+                              ),
+                            )}
+                          />
                         </Box>
                       </GridColumn>
                     </GridRow>
                   </GridContainer>
                 </Box>
-              )}
-
-              <Box marginY={[7, 10, 10]}>
-                <GridContainer>
-                  <GridRow>
-                    <GridColumn
-                      offset={[null, null, null, '1/12']}
-                      span={['12/12', '12/12', '12/12', '10/12']}
-                    >
-                      <Box marginY={[2, 2, 4]}>
-                        <ContactBanner
-                          slug={institutionSlug}
-                          cantFindWhatYouAreLookingForText={o(
-                            'cantFindWhatYouAreLookingForText',
-                            n(
-                              'cantFindWhatYouAreLookingForText',
-                              'Finnurðu ekki það sem þig vantar?',
-                            ),
-                          )}
-                          contactUsText={o(
-                            'contactUsText',
-                            n('contactUsText', 'Hafa samband'),
-                          )}
-                          howCanWeHelpText={o(
-                            'howCanWeHelpText',
-                            n(
-                              'howCanWeHelpText',
-                              'Hvernig getum við aðstoðað?',
-                            ),
-                          )}
-                        />
-                      </Box>
-                    </GridColumn>
-                  </GridRow>
-                </GridContainer>
-              </Box>
-            </>
-          )}
+              </>
+            )
+          }}
         </ServiceWebContext.Consumer>
       )}
     </ServiceWebWrapper>

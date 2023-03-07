@@ -1,7 +1,7 @@
 import { defineTemplateApi } from '../../TemplateApi'
 
 export interface PaymentCatalogParameters {
-  orginizationId: string
+  organizationId: string
 }
 
 export const PaymentCatalogApi = defineTemplateApi<PaymentCatalogParameters>({

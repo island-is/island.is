@@ -9,16 +9,17 @@ import {
   Text,
   useBreakpoint,
 } from '@island.is/island-ui/core'
-import { m, NotFound } from '@island.is/portals/core'
+import { m as portalMessages, NotFound } from '@island.is/portals/core'
 import { AuthDomainDirection } from '@island.is/api/schema'
 
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { AccessForm } from '../../components/access/AccessForm/AccessForm'
 import { useDelegation } from '../../hooks/useDelegation'
 import { AccessHeader } from '../../components/access/AccessHeader/AccessHeader'
+import { m } from '../../lib/messages'
 
 const AccessOutgoing = () => {
-  useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
+  useNamespaces(['sp.access-control-delegations'])
   const { md } = useBreakpoint()
   const { formatMessage, lang } = useLocale()
   const { delegation, scopeTree, delegationLoading } = useDelegation(
@@ -57,7 +58,7 @@ const AccessOutgoing = () => {
         setEnableValidityPeriod(!!delegation.validTo)
         setValidityPeriod(new Date(delegation.validTo))
       } else if (scopesCnt === 0) {
-        // We do not wan't to set validity period to default date if there are scopes already set
+        // We do not want to set validity period to default date if there are scopes already set
         setEnableValidityPeriod(true)
         setValidityPeriod(defaultDate)
       }
@@ -78,23 +79,13 @@ const AccessOutgoing = () => {
     >
       <AccessHeader delegation={delegation}>
         <Box display="flex" flexDirection="column" rowGap={3}>
-          {!md && (
-            <Text variant="h3">
-              {formatMessage({
-                id: 'sp.access-control-delegations:validity-period',
-                defaultMessage: 'Gildistími',
-              })}
-            </Text>
-          )}
+          {!md && <Text variant="h3">{formatMessage(m.validityPeriod)}</Text>}
           {delegation ? (
             <>
               <Checkbox
                 name="validityPeriodCheck"
                 id="validityPeriodCheck"
-                label={formatMessage({
-                  id: 'sp.access-control-delegations:same-validity-period',
-                  defaultMessage: 'Sami gildistími fyrir öll réttindi',
-                })}
+                label={formatMessage(m.sameValidityPeriod)}
                 large={!validityPeriod || !md ? true : false}
                 checked={enableValidityPeriod}
                 onChange={onValidityPeriodCheck}
@@ -103,13 +94,13 @@ const AccessOutgoing = () => {
                 <DatePicker
                   id="validityPeriod"
                   size="sm"
-                  label={formatMessage(m.date)}
+                  label={formatMessage(portalMessages.date)}
                   backgroundColor="blue"
                   minDate={new Date()}
                   selected={validityPeriod ? validityPeriod : defaultDate}
                   locale={lang}
                   handleChange={setValidityPeriod}
-                  placeholderText={formatMessage(m.chooseDate)}
+                  placeholderText={formatMessage(portalMessages.chooseDate)}
                 />
               )}
             </>

@@ -108,6 +108,7 @@ export const Wrapper: FC<WrapperProps> = ({
               ? DEFAULT_INSTITUTION_SLUG
               : institutionSlug
           }
+          namespace={namespace}
           small={smallBackground}
         />
         {!!showSearchSection && (

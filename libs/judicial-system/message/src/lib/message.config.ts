@@ -9,7 +9,7 @@ export const messageModuleConfig = defineConfig({
     region: env.optional('SQS_REGION', 'eu-west-1'),
     maxNumberOfMessages: env.optionalJSON('SQS_MAX_NUMBER_OF_MESSAGES') ?? 1,
     waitTimeSeconds: env.optionalJSON('SQS_WAIT_TIME_SECONDS') ?? 10,
-    maxNumberOfRetries: env.optionalJSON('SQS_MAX_NUMBER_OF_RETRIES', 1) ?? 12,
+    maxNumberOfRetries: env.optionalJSON('SQS_MAX_NUMBER_OF_RETRIES', 1) ?? 10,
     minRetryIntervalSeconds:
       env.optionalJSON('SQS_MIN_RETRY_INTERVAL_SECONDS', 10) ?? 60,
   }),

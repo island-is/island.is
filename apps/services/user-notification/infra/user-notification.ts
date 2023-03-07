@@ -16,6 +16,7 @@ export const userNotificationServiceSetup = (): ServiceBuilder<'user-notificatio
     })
     .secrets({
       FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials',
+      CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN',
     })
     .liveness('/liveness')
     .readiness('/liveness')
@@ -68,7 +69,7 @@ export const userNotificationWorkerSetup = (services: {
       ),
       USER_NOTIFICATION_APP_PROTOCOL: {
         dev: 'is.island.app.dev',
-        staging: 'is.island.app.staging',
+        staging: 'is.island.app.dev', // intentionally set to dev - see firebase setup
         prod: 'is.island.app',
       },
       CONTENTFUL_HOST: {

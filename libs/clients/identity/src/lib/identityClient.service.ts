@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
 import * as kennitala from 'kennitala'
 
-import { RskCompanyInfoService } from '@island.is/api/domains/company-registry'
-import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
+import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 
@@ -14,8 +14,8 @@ type FallbackIdentity = Partial<Omit<Identity, 'nationalId' | 'type'>>
 @Injectable()
 export class IdentityClientService {
   constructor(
-    private nationalRegistryXRoadService: NationalRegistryXRoadService,
-    private rskCompanyInfoService: RskCompanyInfoService,
+    private nationalRegistryXRoadService: NationalRegistryClientService,
+    private rskCompanyInfoService: CompanyRegistryClientService,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
@@ -56,9 +56,7 @@ export class IdentityClientService {
   private async getCompanyIdentity(
     nationalId: string,
   ): Promise<Identity | null> {
-    const company = await this.rskCompanyInfoService.getCompanyInformationWithExtra(
-      nationalId,
-    )
+    const company = await this.rskCompanyInfoService.getCompany(nationalId)
 
     if (!company) {
       return null
@@ -68,10 +66,10 @@ export class IdentityClientService {
       type: IdentityType.Company,
       name: company.name,
       nationalId: company.nationalId,
-      address: company.companyInfo?.address && {
-        streetAddress: company.companyInfo.address.streetAddress,
-        postalCode: company.companyInfo.address.postalCode,
-        city: company.companyInfo.address.locality,
+      address: company?.address && {
+        streetAddress: company.address.streetAddress,
+        postalCode: company.address.postalCode,
+        city: company.address.locality,
       },
     }
   }
@@ -79,7 +77,7 @@ export class IdentityClientService {
   private async getPersonIdentity(
     nationalId: string,
   ): Promise<Identity | null> {
-    const person = await this.nationalRegistryXRoadService.getNationalRegistryPerson(
+    const person = await this.nationalRegistryXRoadService.getIndividual(
       nationalId,
     )
 
@@ -89,11 +87,11 @@ export class IdentityClientService {
 
     return {
       nationalId: person.nationalId,
-      name: person.fullName,
-      address: person.address && {
-        streetAddress: person.address.streetName,
-        postalCode: person.address.postalCode,
-        city: person.address.city,
+      name: person.name,
+      address: person.legalDomicile && {
+        streetAddress: person.legalDomicile.streetAddress,
+        postalCode: person.legalDomicile.postalCode,
+        city: person.legalDomicile.locality,
       },
       type: IdentityType.Person,
     } as Identity

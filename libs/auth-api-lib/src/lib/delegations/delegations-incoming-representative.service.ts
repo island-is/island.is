@@ -5,7 +5,6 @@ import {
 } from '@island.is/clients/national-registry-v2'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { AuditService } from '@island.is/nest/audit'
-import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { Inject, Logger } from '@nestjs/common'
 import { isDefined } from '@island.is/shared/utils'
 import { PersonalRepresentativeDTO } from '../personal-representative/dto/personal-representative.dto'
@@ -13,12 +12,12 @@ import { PersonalRepresentativeService } from '../personal-representative/servic
 import { DelegationDTO, DelegationProvider } from './dto/delegation.dto'
 import { partitionWithIndex } from './utils/partitionWithIndex'
 import { DelegationType } from './types/delegationType'
+import { ApiScopeInfo } from './delegations-incoming.service'
 
 export const UNKNOWN_NAME = 'Óþekkt nafn'
 
 export class DelegationsIncomingRepresentativeService {
   constructor(
-    private featureFlagService: FeatureFlagService,
     private prService: PersonalRepresentativeService,
     private nationalRegistryClient: NationalRegistryClientService,
     @Inject(LOGGER_PROVIDER)
@@ -26,17 +25,22 @@ export class DelegationsIncomingRepresentativeService {
     private auditService: AuditService,
   ) {}
 
-  async findAllIncoming(user: User): Promise<DelegationDTO[]> {
-    try {
-      const feature = await this.featureFlagService.getValue(
-        Features.personalRepresentativeDelegations,
-        false,
-        user,
+  async findAllIncoming(
+    user: User,
+    clientAllowedApiScopes?: ApiScopeInfo[],
+    requireApiScopes?: boolean,
+  ): Promise<DelegationDTO[]> {
+    if (
+      requireApiScopes &&
+      clientAllowedApiScopes &&
+      !clientAllowedApiScopes.some(
+        (s) => s.grantToPersonalRepresentatives && !s.isAccessControlled,
       )
-      if (!feature) {
-        return []
-      }
+    ) {
+      return []
+    }
 
+    try {
       const toDelegationDTO = (
         name: string,
         representative: PersonalRepresentativeDTO,

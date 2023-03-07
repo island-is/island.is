@@ -50,6 +50,7 @@ yargs(hideBin(process.argv))
                     Envs[Deployments[chartName][p.env as OpsEnv]],
                     Charts[chartName][p.env as OpsEnv],
                     services,
+                    'no-mocks',
                   )
                 ).services,
               )

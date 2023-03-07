@@ -20,6 +20,7 @@ export const institutionMapper = {
   [ApplicationTypes.LOGIN_SERVICE]: InstitutionTypes.STAFRAENT_ISLAND,
   [ApplicationTypes.INSTITUTION_COLLABORATION]:
     InstitutionTypes.STAFRAENT_ISLAND,
+  [ApplicationTypes.INHERITANCE_REPORT]: InstitutionTypes.SYSLUMENN,
   [ApplicationTypes.FUNDING_GOVERNMENT_PROJECTS]:
     InstitutionTypes.FJARMALA_EFNAHAGSRADUNEYTID,
   [ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN]: InstitutionTypes.INNHEIMTUMADUR,
@@ -63,4 +64,7 @@ export const institutionMapper = {
     InstitutionTypes.SAMGONGUSTOFA,
   [ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP]:
     InstitutionTypes.SAMGONGUSTOFA,
+  [ApplicationTypes.DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR]:
+    InstitutionTypes.SAMGONGUSTOFA,
+  [ApplicationTypes.ALCOHOL_TAX_REDEMPTION]: InstitutionTypes.STAFRAENT_ISLAND,
 }

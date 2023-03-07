@@ -13,7 +13,10 @@ export const KeyValueFormField: FC<{
   const values = formatText(field.value, application, formatMessage)
 
   return (
-    <Box>
+    <Box
+      display={field.display === 'flex' ? 'flex' : 'block'}
+      justifyContent="spaceBetween"
+    >
       <Text variant="h4" as="h4">
         {formatText(field.label, application, formatMessage)}
       </Text>

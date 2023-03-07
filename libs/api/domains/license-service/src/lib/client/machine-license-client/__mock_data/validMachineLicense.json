@@ -1,0 +1,25 @@
+{
+  "kennitala": "0101304929",
+  "fulltNafn": "Gervimaður Bretland",
+  "skirteinisNumer": "V00005",
+  "fyrstiUtgafuDagur": "1980-05-05T00:00:00Z",
+  "utgafuStadur": "Reykjavík 11-12-2019",
+  "utgafuLand": "Ísland",
+  "okuskirteinisNumer": "34 000 005",
+  "vinnuvelaRettindi": [
+    {
+      "flokkur": "A",
+      "stjorna": "2075-01-01T00:00:00Z",
+      "kenna": "2060-01-01T00:00:00Z",
+      "fulltHeiti": "Byggingarkranar.",
+      "stuttHeiti": "Byggingarkranar."
+    },
+    {
+      "flokkur": "B",
+      "stjorna": "2080-01-01T00:00:00Z",
+      "kenna": "2079-01-01T00:00:00Z",
+      "fulltHeiti": "Grindabómukranar.",
+      "stuttHeiti": "Grindabómukranar."
+    }
+  ]
+}

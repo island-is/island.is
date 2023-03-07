@@ -181,7 +181,7 @@ export type HelmValueFile = {
 }
 export type LocalrunValueFile = {
   services: Services<LocalrunService>
-  mocks: Services<LocalrunService>
+  mocks: string
 }
 
 export interface OutputFormat<T extends ServiceOutputType> {

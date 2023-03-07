@@ -1,5 +1,7 @@
-import { DefaultStateLifeCycle } from '@island.is/application/core'
-import type { User } from '@island.is/api/domains/national-registry'
+import {
+  DefaultStateLifeCycle,
+  pruneAfterDays,
+} from '@island.is/application/core'
 
 import {
   ApplicationTemplate,
@@ -10,6 +12,7 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
+  NationalRegistryIndividual,
 } from '@island.is/application/types'
 import { m } from './messages'
 import { Events, States, Roles, ApiActions } from './constants'
@@ -38,17 +41,17 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
     const userType = getCurrentUserType(answers, externalData)
     const hasApprovedExternalData = application.answers?.approveExternalData
     const currentUser = hasApprovedExternalData
-      ? (externalData?.nationalRegistry?.data as User)
+      ? (externalData?.nationalRegistry?.data as NationalRegistryIndividual)
       : undefined
 
     if (userType === FSIUSERTYPE.INDIVIDUAL) {
       return currentUser
-        ? `${m.applicationTitleAlt.defaultMessage} - ${currentUser.name}`
+        ? `${m.applicationTitleAlt.defaultMessage} - ${currentUser.fullName}`
         : m.applicationTitleAlt
     }
 
-    return currentUser?.name
-      ? `${m.applicationTitle.defaultMessage} - ${currentUser.name}`
+    return currentUser?.fullName
+      ? `${m.applicationTitle.defaultMessage} - ${currentUser.fullName}`
       : m.applicationTitle
   },
   institution: m.institutionName,
@@ -71,7 +74,7 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
           }),
 
           progress: 0.4,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(60),
           roles: [
             {
               id: Roles.APPLICANT,

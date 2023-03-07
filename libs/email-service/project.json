@@ -25,5 +25,5 @@
       "outputs": ["coverage/libs/email-service"]
     }
   },
-  "tags": []
+  "tags": ["lib:nest", "scope:nest"]
 }

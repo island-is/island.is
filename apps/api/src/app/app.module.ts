@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { APP_INTERCEPTOR } from '@nestjs/core'
 import { ApolloDriver } from '@nestjs/apollo'
 import { GraphQLModule } from '@nestjs/graphql'
 import { TerminusModule } from '@nestjs/terminus'
@@ -6,6 +7,8 @@ import { TerminusModule } from '@nestjs/terminus'
 import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/cms'
+import { ConsultationPortalModule } from '@island.is/api/domains/consultation-portal'
+import { DisabilityLicenseModule } from '@island.is/api/domains/disability-license'
 import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 import { DrivingLicenseBookModule } from '@island.is/api/domains/driving-license-book'
@@ -49,6 +52,7 @@ import {
   GenericDrivingLicenseConfig,
   GenericFirearmLicenseConfig,
   GenericMachineLicenseConfig,
+  GenericDisabilityLicenseConfig,
   LicenseServiceModule,
 } from '@island.is/api/domains/license-service'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
@@ -82,11 +86,21 @@ import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
 import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
 import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
+import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-license'
 import { PassportsClientConfig } from '@island.is/clients/passports'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegation-api'
 import { AirDiscountSchemeClientConfig } from '@island.is/clients/air-discount-scheme'
 import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financial-statements-inao'
+import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
+import { PaymentScheduleClientConfig } from '@island.is/clients/payment-schedule'
+import { JudicialAdministrationClientConfig } from '@island.is/clients/judicial-administration'
+import { DataLoaderInterceptor } from '@island.is/nest/dataloader'
+import { SessionsModule } from '@island.is/api/domains/sessions'
+import { CommunicationsConfig } from '@island.is/api/domains/communications'
+import { ConsultationPortalClientConfig } from '@island.is/clients/consultation-portal'
+import { SessionsApiClientConfig } from '@island.is/clients/sessions'
+import { AuthAdminModule } from '@island.is/api/domains/auth-admin'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -97,6 +111,12 @@ const autoSchemaFile = environment.production
 
 @Module({
   controllers: [HealthController],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: DataLoaderInterceptor,
+    },
+  ],
   imports: [
     GraphQLModule.forRoot({
       driver: ApolloDriver,
@@ -122,6 +142,7 @@ const autoSchemaFile = environment.production
     AuthDomainModule,
     AuditModule.forRoot(environment.audit),
     ContentSearchModule,
+    ConsultationPortalModule,
     CmsModule,
     DrivingLicenseModule,
     DrivingLicenseBookModule,
@@ -209,6 +230,7 @@ const autoSchemaFile = environment.production
     IdentityModule,
     AuthModule.register(environment.auth as AuthConfig),
     SyslumennModule,
+    DisabilityLicenseModule,
     ElectronicRegistrationsModule,
     FiskistofaModule,
     PowerBiModule,
@@ -229,23 +251,8 @@ const autoSchemaFile = environment.production
     PassportModule,
     AirDiscountSchemeModule,
     NationalRegistryXRoadModule,
-    ApiDomainsPaymentModule.register({
-      xRoadProviderId: environment.paymentDomain.xRoadProviderId!,
-      xRoadBaseUrl: environment.paymentDomain.xRoadBaseUrl!,
-      xRoadClientId: environment.xroad.clientId!,
-      password: environment.paymentDomain.password!,
-      username: environment.paymentDomain.username!,
-      callbackBaseUrl: environment.paymentDomain.callbackBaseUrl!,
-      callbackAdditionUrl: environment.paymentDomain.callbackAdditionUrl!,
-      arkBaseUrl: environment.paymentDomain.arkBaseUrl!,
-    }),
-    PaymentScheduleModule.register({
-      xRoadProviderId: environment.paymentSchedule.xRoadProviderId!,
-      xRoadBaseUrl: environment.paymentSchedule.xRoadBaseUrl!,
-      xRoadClientId: environment.xroad.clientId!,
-      password: environment.paymentSchedule.password!,
-      username: environment.paymentSchedule.username!,
-    }),
+    ApiDomainsPaymentModule,
+    PaymentScheduleModule,
     ProblemModule,
     CriminalRecordModule.register({
       clientConfig: {
@@ -258,17 +265,22 @@ const autoSchemaFile = environment.production
     FishingLicenseModule,
     MortgageCertificateModule,
     TransportAuthorityApiModule,
+    SessionsModule,
+    AuthAdminModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
         AdrAndMachineLicenseClientConfig,
         AirDiscountSchemeClientConfig,
+        ConsultationPortalClientConfig,
         AssetsClientConfig,
         FirearmLicenseClientConfig,
+        DisabilityLicenseClientConfig,
         GenericFirearmLicenseConfig,
         GenericMachineLicenseConfig,
         GenericAdrLicenseConfig,
         GenericDrivingLicenseConfig,
+        GenericDisabilityLicenseConfig,
         VehiclesClientConfig,
         AuthPublicApiClientConfig,
         AuthDelegationApiClientConfig,
@@ -291,7 +303,13 @@ const autoSchemaFile = environment.production
         FileStorageConfig,
         FiskistofaClientConfig,
         PowerBiConfig,
+        ChargeFjsV2ClientConfig,
+        DisabilityLicenseClientConfig,
         ZenterSignupConfig,
+        PaymentScheduleClientConfig,
+        JudicialAdministrationClientConfig,
+        CommunicationsConfig,
+        SessionsApiClientConfig,
       ],
     }),
   ],

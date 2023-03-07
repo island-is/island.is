@@ -1,6 +1,5 @@
 import {
   DefaultStateLifeCycle,
-  EphemeralStateLifeCycle,
   getValueViaPath,
 } from '@island.is/application/core'
 import {
@@ -15,14 +14,18 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
   defineTemplateApi,
-  MockProviderApi,
+  PendingAction,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 
 import { m } from './messages'
 import { assign } from 'xstate'
 import { ApiActions } from '../shared'
-import { ReferenceDataApi, EphemiralApi } from '../dataProviders'
+import {
+  ReferenceDataApi,
+  EphemeralApi,
+  MyMockProvider,
+} from '../dataProviders'
 import { ExampleSchema } from './dataSchema'
 
 const States = {
@@ -52,12 +55,23 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
     'careerHistory',
     undefined,
   ) as string | undefined
+  const careerIndustry = getValueViaPath(
+    application.answers,
+    'careerIndustry',
+    undefined,
+  ) as string | undefined
+
   if (careerHistory === 'no') {
     return m.nameApplicationNeverWorkedBefore
   }
+  if (careerIndustry) {
+    return {
+      name: m.nameApplicationWithValue,
+      value: `- ${careerIndustry}`,
+    }
+  }
   return m.name
 }
-
 const ReferenceApplicationTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<ReferenceTemplateEvent>,
@@ -70,6 +84,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   dataSchema: ExampleSchema,
   featureFlag: Features.exampleApplication,
   allowMultipleApplicationsInDraft: true,
+
   stateMachineConfig: {
     initial: States.prerequisites,
     states: {
@@ -108,20 +123,8 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                   },
                 }),
                 UserProfileApi,
-                MockProviderApi.configure({
-                  externalDataId: 'referenceMock',
-                  params: {
-                    mocked: true,
-                    mockObject: {
-                      mockString: 'This is a mocked string',
-                      mockArray: [
-                        'Need to mock providers?',
-                        'Use this handy templateApi',
-                      ],
-                    },
-                  },
-                }),
-                EphemiralApi,
+                MyMockProvider,
+                EphemeralApi,
               ],
               delete: true,
             },
@@ -136,8 +139,10 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       [States.draft]: {
         meta: {
           name: 'Umsókn um ökunám',
+
           actionCard: {
             description: m.draftDescription,
+            onExitHistoryLog: 'Umsókn send inn',
           },
           progress: 0.25,
           status: 'draft',
@@ -170,9 +175,25 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           name: 'Waiting to assign',
           progress: 0.75,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: defineTemplateApi({
-            action: ApiActions.createApplication,
-          }),
+          actionCard: {
+            pendingAction: {
+              title: 'Skráning yfirferðaraðila',
+              content:
+                'Umsóknin bíður nú þess að yfirferðaraðili sé skráður á umsóknina. Þú getur líka skráð þig sjálfur inn og farið yfir umsóknina.',
+              displayStatus: 'warning',
+            },
+            onExitHistoryLog: 'Yfirferðaraðili skráður á umsókn og látin vita',
+          },
+          onEntry: [
+            defineTemplateApi({
+              action: ApiActions.createApplication,
+              order: 1,
+            }),
+            defineTemplateApi({
+              action: 'getAnotherReferenceData',
+              order: 2,
+            }),
+          ],
           status: 'inprogress',
           roles: [
             {
@@ -183,6 +204,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: 'all',
+              delete: true,
             },
             {
               id: Roles.ASSIGNEE,
@@ -206,9 +228,20 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           progress: 0.75,
           status: 'inprogress',
           lifecycle: DefaultStateLifeCycle,
-          onExit: defineTemplateApi({
-            action: ApiActions.completeApplication,
-          }),
+          actionCard: {
+            pendingAction: {
+              title: 'Verið er að fara yfir umsóknina',
+              content:
+                'Example stofnun fer núna yfir umsóknina og því getur þetta tekið nokkra daga',
+              displayStatus: 'info',
+            },
+            onEntryHistoryLog: 'Yfirferð hafin',
+          },
+          onExit: [
+            defineTemplateApi({
+              action: ApiActions.completeApplication,
+            }),
+          ],
           roles: [
             {
               id: Roles.ASSIGNEE,
@@ -224,7 +257,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 answers: ['careerHistoryDetails', 'approvedByReviewer'],
               },
               read: 'all',
-              shouldBeListedForRole: false,
+              shouldBeListedForRole: true,
             },
             {
               id: Roles.APPLICANT,
@@ -247,6 +280,9 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           progress: 1,
           status: 'approved',
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            onEntryHistoryLog: 'Umsókn var samþykkt af yfirferðaraðila',
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -265,6 +301,9 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           progress: 1,
           status: 'rejected',
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            onEntryHistoryLog: 'Umsókn var hafnað af yfirferðaraðila',
+          },
           roles: [
             {
               id: Roles.APPLICANT,

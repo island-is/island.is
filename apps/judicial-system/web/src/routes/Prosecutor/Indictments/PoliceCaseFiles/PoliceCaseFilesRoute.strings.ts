@@ -27,6 +27,13 @@ export const policeCaseFiles = {
       description:
         'Notaður fyrir texta í svæði sem hægt er að draga skrá á til að hlaða þeim upp.',
     },
+    description: {
+      id:
+        'judicial.system.core:police_case_files_route.input_file_upload.description',
+      defaultMessage: 'Tekið er við skjölum með endingu: .pdf',
+      description:
+        'Notaður fyrir hjálpar texta í svæði sem hægt er að draga skrá á til að hlaða þeim upp.',
+    },
     buttonLabel: {
       id:
         'judicial.system.core:police_case_files_route.input_file_upload.button_label',

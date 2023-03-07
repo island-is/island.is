@@ -50,8 +50,18 @@ export class DelegationsController {
   @Version('2')
   @Get()
   @ApiOkResponse({ isArray: true })
-  async findAllToV2(@CurrentUser() user: User): Promise<MergedDelegationDTO[]> {
-    return this.delegationsIncomingService.findAllAvailable(user)
+  async findAllToV2(
+    @CurrentUser() user: User,
+    @Query(
+      'requestedScopes',
+      new ParseArrayPipe({ optional: true, items: String, separator: ',' }),
+    )
+    requestedScopes: Array<string>,
+  ): Promise<MergedDelegationDTO[]> {
+    return this.delegationsIncomingService.findAllAvailable({
+      user,
+      requestedScopes,
+    })
   }
 
   @Scopes('@identityserver.api/authentication')

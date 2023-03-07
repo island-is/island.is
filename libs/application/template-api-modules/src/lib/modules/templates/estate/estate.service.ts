@@ -1,10 +1,8 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 
-import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { NationalRegistry, UploadData } from './types'
 import {
-  DataUploadResponse,
   EstateInfo,
   Person,
   PersonType,
@@ -14,16 +12,21 @@ import { infer as zinfer } from 'zod'
 import { estateSchema } from '@island.is/application/templates/estate'
 import cloneDeep from 'lodash/cloneDeep'
 import { estateTransformer } from './utils'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { ApplicationTypes } from '@island.is/application/types'
 
 type EstateSchema = zinfer<typeof estateSchema>
 type EstateData = EstateSchema['estate']
 
 @Injectable()
-export class EstateTemplateService {
+export class EstateTemplateService extends BaseTemplateApiService {
   constructor(
-    private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly syslumennService: SyslumennService,
-  ) {}
+  ) {
+    super(ApplicationTypes.ESTATE)
+  }
 
   stringifyObject(obj: Record<string, unknown>): Record<string, string> {
     const stringer = cloneDeep(obj)

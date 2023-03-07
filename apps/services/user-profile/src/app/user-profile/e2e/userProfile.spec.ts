@@ -138,7 +138,9 @@ describe('User profile API', () => {
       expect(response.body.error).toBe('Bad Request')
 
       expect(response.body.message).toEqual(
-        expect.arrayContaining(['locale must be a valid enum value']),
+        expect.arrayContaining([
+          'locale must be one of the following values: en, is',
+        ]),
       )
     })
 

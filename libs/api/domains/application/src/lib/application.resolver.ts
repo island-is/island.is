@@ -1,4 +1,11 @@
-import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
+import {
+  Args,
+  Query,
+  Resolver,
+  Mutation,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
@@ -9,7 +16,11 @@ import { UseGuards } from '@nestjs/common'
 import type { Locale } from '@island.is/shared/types'
 
 import { ApplicationService } from './application.service'
-import { Application, ApplicationPayment } from './application.model'
+import {
+  Application,
+  ApplicationHistory,
+  ApplicationPayment,
+} from './application.model'
 import { CreateApplicationInput } from './dto/createApplication.input'
 import { UpdateApplicationInput } from './dto/updateApplication.input'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
@@ -26,14 +37,11 @@ import { ApplicationApplicationsInput } from './dto/applicationApplications.inpu
 import { RequestFileSignatureResponse } from './dto/requestFileSignature.response'
 import { PresignedUrlResponse } from './dto/presignedUrl.response'
 import { UploadSignedFileResponse } from './dto/uploadSignedFile.response'
-import { ApplicationPaymentChargeInput } from './dto/applicationPaymentCharge.input'
-import { ApplicationPaymentChargeResponse } from './dto/applicationPaymentCharge'
-import { CreatePaymentResponseDto } from '../../gen/fetch'
 import { AttachmentPresignedUrlInput } from './dto/AttachmentPresignedUrl.input'
 import { DeleteApplicationInput } from './dto/deleteApplication.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Resolver()
+@Resolver(() => Application)
 export class ApplicationResolver {
   constructor(private applicationService: ApplicationService) {}
 
@@ -54,27 +62,18 @@ export class ApplicationResolver {
     locale: Locale = 'is',
     @Args('applicationId') applicationId: string,
   ): Promise<ApplicationPayment | null> {
-    const status = await this.applicationService.getPaymentStatus(
+    const {
+      fulfilled,
+      paymentUrl,
+    } = await this.applicationService.getPaymentStatus(
       applicationId,
       user,
       locale,
     )
     return {
-      fulfilled: status.fulfilled,
-      paymentUrl: status.paymentUrl,
+      fulfilled,
+      paymentUrl,
     }
-  }
-
-  @Mutation(() => ApplicationPaymentChargeResponse, { nullable: true })
-  async applicationPaymentCharge(
-    @Args('input') input: ApplicationPaymentChargeInput,
-    @CurrentUser() user: User,
-  ): Promise<CreatePaymentResponseDto> {
-    return this.applicationService.createCharge(
-      input.applicationId,
-      user,
-      input.chargeItemCodes,
-    )
   }
 
   @Query(() => [Application], { nullable: true })
@@ -114,12 +113,7 @@ export class ApplicationResolver {
     @Args('input') input: UpdateApplicationExternalDataInput,
     @CurrentUser() user: User,
   ): Promise<Application | void> {
-    const res = await this.applicationService.updateExternalData(
-      input,
-      user,
-      locale,
-    )
-    return res
+    return await this.applicationService.updateExternalData(input, user, locale)
   }
 
   @Mutation(() => Application, { nullable: true })

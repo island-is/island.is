@@ -2,6 +2,7 @@ import { serviceSetup as apiSetup } from '../../../apps/api/infra/api'
 import { serviceSetup as webSetup } from '../../../apps/web/infra/web'
 import { serviceSetup as searchIndexerSetup } from '../../../apps/services/search-indexer/infra/search-indexer-service'
 import { serviceSetup as contentfulEntryTaggerSetup } from '../../../apps/services/contentful-entry-tagger/infra/contentful-entry-tagger-service'
+import { serviceSetup as contentfulAppsSetup } from '../../../apps/contentful-apps/infra/contentful-apps'
 
 import {
   serviceSetup as appSystemApiSetup,
@@ -13,8 +14,10 @@ import { serviceSetup as servicePortalApiSetup } from '../../../apps/services/us
 import { serviceSetup as servicePortalSetup } from '../../../apps/service-portal/infra/service-portal'
 
 import { serviceSetup as adminPortalSetup } from '../../../apps/portals/admin/infra/portals-admin'
-
+import { serviceSetup as consultationPortalSetup } from '../../../apps/consultation-portal/infra/samradsgatt'
 import { serviceSetup as xroadCollectorSetup } from '../../../apps/services/xroad-collector/infra/xroad-collector'
+
+import { serviceSetup as licenseApiSetup } from '../../../apps/services/license-api/infra/license-api'
 
 import { serviceSetup as skilavottordWsSetup } from '../../../apps/skilavottord/ws/infra/ws'
 import { serviceSetup as skilavottordWebSetup } from '../../../apps/skilavottord/web/infra/web'
@@ -40,6 +43,11 @@ import { serviceSetup as adsBackendSetup } from '../../../apps/air-discount-sche
 
 import { serviceSetup as externalContractsTestsSetup } from '../../../apps/external-contracts-tests/infra/external-contracts-tests'
 
+import {
+  serviceSetup as sessionsServiceSetup,
+  workerSetup as sessionsWorkerSetup,
+} from '../../../apps/services/sessions/infra/sessions'
+
 import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
 
@@ -53,13 +61,16 @@ const appSystemApi = appSystemApiSetup({
 const appSystemApiWorker = appSystemApiWorkerSetup()
 
 const servicePortalApi = servicePortalApiSetup()
-const servicePortal = servicePortalSetup({})
 const adminPortal = adminPortalSetup()
+const consultationPortal = consultationPortalSetup()
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
 
 const adsBackend = adsBackendSetup()
 const adsApi = adsApiSetup({ adsBackend })
 const adsWeb = adsWebSetup({ adsApi })
+
+const sessionsService = sessionsServiceSetup()
+const sessionsWorker = sessionsWorkerSetup()
 
 const api = apiSetup({
   appSystemApi,
@@ -68,13 +79,18 @@ const api = apiSetup({
   icelandicNameRegistryBackend: nameRegistryBackend,
   servicesEndorsementApi: endorsement,
   airDiscountSchemeBackend: adsBackend,
+  sessionsApi: sessionsService,
 })
+const servicePortal = servicePortalSetup({ graphql: api })
 const appSystemForm = appSystemFormSetup({ api: api })
 const web = webSetup({ api: api })
 const searchIndexer = searchIndexerSetup()
 const contentfulEntryTagger = contentfulEntryTaggerSetup()
+const contentfulApps = contentfulAppsSetup()
 
 const xroadCollector = xroadCollectorSetup()
+
+const licenseApi = licenseApiSetup()
 
 const skilavottordWs = skilavottordWsSetup()
 const skilavottordWeb = skilavottordWebSetup({ api: skilavottordWs })
@@ -99,6 +115,7 @@ export const Services: EnvironmentServices = {
     appSystemForm,
     servicePortal,
     servicePortalApi,
+    adminPortal,
     api,
     web,
     searchIndexer,
@@ -117,12 +134,16 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
+    licenseApi,
+    sessionsService,
+    sessionsWorker,
   ],
   staging: [
     appSystemApi,
     appSystemForm,
     servicePortal,
     servicePortalApi,
+    adminPortal,
     api,
     web,
     skilavottordWeb,
@@ -141,6 +162,9 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
+    licenseApi,
+    sessionsService,
+    sessionsWorker,
   ],
   dev: [
     appSystemApi,
@@ -148,6 +172,7 @@ export const Services: EnvironmentServices = {
     servicePortal,
     servicePortalApi,
     adminPortal,
+    consultationPortal,
     api,
     web,
     searchIndexer,
@@ -169,6 +194,10 @@ export const Services: EnvironmentServices = {
     externalContractsTests,
     appSystemApiWorker,
     contentfulEntryTagger,
+    licenseApi,
+    sessionsService,
+    sessionsWorker,
+    contentfulApps,
   ],
 }
 
@@ -181,4 +210,5 @@ export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   userNotificationWorkerService,
   contentfulEntryTagger,
   searchIndexer,
+  contentfulApps,
 ]

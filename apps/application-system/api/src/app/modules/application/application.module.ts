@@ -11,7 +11,7 @@ import { ApplicationController } from './application.controller'
 import { environment } from '../../../environments'
 
 import { ApplicationAccessService } from './tools/applicationAccess.service'
-import { PaymentModule } from '../payment/payment.module'
+
 import { LoggingModule } from '@island.is/logging'
 import { TemplateApiApplicationService } from './template-api.service'
 import { AwsModule } from '@island.is/nest/aws'
@@ -21,12 +21,11 @@ import { ApplicationValidationService } from './tools/applicationTemplateValidat
 import { TemplateApiActionRunner } from './tools/templateApiActionRunner.service'
 import { ApplicationChargeModule } from './charge/application-charge.module'
 import { ApplicationFilesModule } from '@island.is/application/api/files'
-
+import { PaymentModule } from '@island.is/application/api/payment'
+import { HistoryModule } from '@island.is/application/api/history'
 @Module({
   imports: [
-    PaymentModule.register({
-      clientConfig: environment.templateApi.paymentOptions,
-    }),
+    PaymentModule,
     AuditModule.forRoot(environment.audit),
     AuthModule.register(environment.auth),
     TemplateAPIModule.register({
@@ -40,6 +39,7 @@ import { ApplicationFilesModule } from '@island.is/application/api/files'
     SigningModule,
     CmsTranslationsModule,
     FeatureFlagModule,
+    HistoryModule,
     LoggingModule,
     ApplicationChargeModule,
   ],

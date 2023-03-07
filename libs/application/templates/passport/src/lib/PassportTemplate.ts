@@ -1,3 +1,4 @@
+import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
   ApplicationContext,
@@ -7,23 +8,24 @@ import {
   ApplicationTypes,
   DefaultEvents,
   defineTemplateApi,
-  MockProviderApi,
   NationalRegistryUserApi,
-  PaymentCatalogApi,
   UserProfileApi,
   DistrictsApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
+import {
+  IdentityDocumentApi,
+  SyslumadurPaymentCatalogApi,
+} from '../dataProviders'
 import { m } from '../lib/messages'
 import {
   ApiActions,
   Events,
-  IdentityDocumentProviderMock,
   Roles,
+  sevenDays,
   sixtyDays,
   States,
-  SYSLUMADUR_NATIONAL_ID,
   twoDays,
 } from './constants'
 import { dataSchema } from './dataSchema'
@@ -81,14 +83,8 @@ const PassportTemplate: ApplicationTemplate<
               api: [
                 NationalRegistryUserApi,
                 UserProfileApi,
-                PaymentCatalogApi.configure({
-                  externalDataId: 'payment',
-                  params: { orginizationId: SYSLUMADUR_NATIONAL_ID },
-                }),
-                MockProviderApi.configure({
-                  externalDataId: 'identityDocument',
-                  params: IdentityDocumentProviderMock,
-                }),
+                SyslumadurPaymentCatalogApi,
+                IdentityDocumentApi,
                 DistrictsApi,
               ],
             },
@@ -138,7 +134,7 @@ const PassportTemplate: ApplicationTemplate<
           name: 'ParentB',
           status: 'inprogress',
           progress: 0.9,
-          lifecycle: pruneAfter(sixtyDays),
+          lifecycle: pruneAfter(sevenDays),
           onEntry: defineTemplateApi({
             action: ApiActions.assignParentB,
           }),
@@ -167,14 +163,8 @@ const PassportTemplate: ApplicationTemplate<
               api: [
                 NationalRegistryUserApi,
                 UserProfileApi,
-                PaymentCatalogApi.configure({
-                  externalDataId: 'payment',
-                  params: { orginizationId: SYSLUMADUR_NATIONAL_ID },
-                }),
-                MockProviderApi.configure({
-                  externalDataId: 'identityDocument',
-                  params: IdentityDocumentProviderMock,
-                }),
+                SyslumadurPaymentCatalogApi,
+                IdentityDocumentApi,
                 DistrictsApi,
               ],
             },
@@ -234,12 +224,16 @@ const PassportTemplate: ApplicationTemplate<
   stateMachineOptions: {
     actions: {
       assignToParentB: assign((context) => {
+        const parentB = getValueViaPath<string>(
+          context.application.answers,
+          'childsPersonalInfo.guardian2.nationalId',
+        )
+
         return {
           ...context,
           application: {
             ...context.application,
-            // Assigning Gervimaður Útlönd for testing
-            assignees: ['0101307789'],
+            assignees: parentB ? [parentB] : [],
           },
         }
       }),

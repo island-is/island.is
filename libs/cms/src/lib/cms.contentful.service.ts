@@ -71,11 +71,6 @@ import {
 import { GetSupportQNAsInCategoryInput } from './dto/getSupportQNAsInCategory.input'
 import { GetSupportCategoriesInput } from './dto/getSupportCategories.input'
 import { GetSupportCategoriesInOrganizationInput } from './dto/getSupportCategoriesInOrganization.input'
-import {
-  MailingListSignupSlice,
-  mapMailingListSignup,
-} from './models/mailingListSignupSlice.model'
-import { GetMailingListSignupSliceInput } from './dto/getMailingListSignupSlice'
 import { Form, mapForm } from './models/form.model'
 import { GetFormInput } from './dto/getForm.input'
 import { GetServicePortalAlertBannersInput } from './dto/getServicePortalAlertBanners.input'
@@ -83,6 +78,9 @@ import { mapImage } from './models/image.model'
 import { EmailSignup, mapEmailSignup } from './models/emailSignup.model'
 import { GetTabSectionInput } from './dto/getTabSection.input'
 import { mapTabSection, TabSection } from './models/tabSection.model'
+import { GetGenericTagBySlugInput } from './dto/getGenericTagBySlug.input'
+import { GenericTag, mapGenericTag } from './models/genericTag.model'
+import { GetEmailSignupInput } from './dto/getEmailSignup.input'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -830,30 +828,10 @@ export class CmsContentfulService {
     )
   }
 
-  async getMailingListSignupSlice({
-    id,
-    lang = 'is',
-  }: GetMailingListSignupSliceInput): Promise<MailingListSignupSlice | null> {
-    const params = {
-      ['content_type']: 'mailingListSignup',
-      'sys.id': id,
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IMailingListSignupFields>(lang, params)
-      .catch(errorHandler('getMailingListSignupSlice'))
-
-    return (
-      (result.items as types.IMailingListSignup[]).map(
-        mapMailingListSignup,
-      )[0] ?? null
-    )
-  }
-
   async getEmailSignup({
     id,
     lang = 'is',
-  }: GetMailingListSignupSliceInput): Promise<EmailSignup | null> {
+  }: GetEmailSignupInput): Promise<EmailSignup | null> {
     const params = {
       ['content_type']: 'emailSignup',
       'sys.id': id,
@@ -893,5 +871,21 @@ export class CmsContentfulService {
       .catch(errorHandler('getTabSection'))
 
     return (result.items as types.ITabSection[]).map(mapTabSection)[0] ?? null
+  }
+
+  async getGenericTagBySlug({
+    slug,
+    lang = 'is',
+  }: GetGenericTagBySlugInput): Promise<GenericTag | null> {
+    const params = {
+      ['content_type']: 'genericTag',
+      'fields.slug': slug,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IGenericTagFields>(lang, params)
+      .catch(errorHandler('getGenericTag'))
+
+    return (result.items as types.IGenericTag[]).map(mapGenericTag)[0] ?? null
   }
 }

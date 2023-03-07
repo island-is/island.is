@@ -24,7 +24,6 @@ import {
   formSubmit,
   IntroHeader,
   m,
-  ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
 import { checkDelegation } from '@island.is/shared/utils'
 
@@ -36,6 +35,7 @@ import {
   FinanceStatusOrganizationType,
 } from './FinanceStatusData.types'
 import * as styles from './Table.css'
+import { useUserInfo } from '@island.is/auth/react'
 
 const GetFinanceStatusQuery = gql`
   query GetFinanceStatusQuery {
@@ -54,9 +54,10 @@ const GetDebtStatusQuery = gql`
   }
 `
 
-const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
+const FinanceStatus = () => {
   useNamespaces('sp.finance-status')
   const { formatMessage } = useLocale()
+  const userInfo = useUserInfo()
 
   const isDelegation = userInfo && checkDelegation(userInfo)
 
@@ -134,9 +135,14 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
           <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>
             {financeStatusData.organizations?.length > 0 ||
             financeStatusZero ? (
-              <Box display="flex" justifyContent="flexStart" printHidden>
+              <Box
+                display="flex"
+                flexWrap="wrap"
+                justifyContent="flexStart"
+                printHidden
+              >
                 {!isDelegation && scheduleButtonVisible && (
-                  <Box paddingRight={2}>
+                  <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
                     <a
                       href="/umsoknir/greidsluaaetlun/"
                       target="_blank"
@@ -159,7 +165,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                   </Box>
                 )}
 
-                <Box paddingRight={2}>
+                <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
                   <Button
                     colorScheme="default"
                     icon="print"

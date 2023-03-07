@@ -16,32 +16,6 @@ export const accused = {
           'Notaður sem titill fyrir "upplýsingar um sakborning" hlutann á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
       }),
     },
-    defenderInfo: {
-      heading: defineMessage({
-        id: 'judicial.system.restriction_cases:accused.defender_info.heading',
-        defaultMessage: 'Verjandi sakbornings',
-        description:
-          'Notaður sem titill fyrir "upplýsingar um verjanda sakborning" hlutann á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
-      }),
-      sendRequest: defineMessages({
-        label: {
-          id:
-            'judicial.system.restriction_cases:accused.defender_info.send_request.label',
-          defaultMessage:
-            'Senda kröfu sjálfvirkt í tölvupósti til verjanda við úthlutun fyrirtökutíma',
-          description:
-            'Notaður sem texti í "senda kröfu sjálfvirkt..." gátreit á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
-        },
-        tooltipV2: {
-          id:
-            'judicial.system.restriction_cases:accused.defender_info.send_request.tooltip_v2',
-          defaultMessage:
-            'Ef hakað er hér þá fær verjandi {caseType, select, ADMISSION_TO_FACILITY {kröfuna um vistun á viðeigandi stofnun} TRAVEL_BAN {farbannskröfuna} other {gæsluvarðhaldskröfuna}} senda þegar fyrirtökutíma hefur verið úthlutað',
-          description:
-            'Notaður sem upplýsingatexti í upplýsingasvæði við "senda kröfu sjálfvirkt..." gátreit á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
-        },
-      }),
-    },
     leadInvestigator: defineMessages({
       heading: {
         id:

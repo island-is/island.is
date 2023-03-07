@@ -46,8 +46,8 @@ const InfoCardActiveIndictment: React.FC = () => {
               {readableIndictmentSubtypes(
                 workingCase.policeCaseNumbers,
                 workingCase.indictmentSubtypes,
-              ).map((subtype) => (
-                <Text>{capitalize(subtype)}</Text>
+              ).map((subtype, index) => (
+                <Text key={`${subtype}-${index}`}>{capitalize(subtype)}</Text>
               ))}
             </>
           ) : (

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -22,7 +22,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import {
   CaseState,
   CaseTransition,
-  Institution,
+  Feature,
 } from '@island.is/judicial-system/types'
 import {
   useCase,
@@ -30,6 +30,9 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'
 import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
+import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
+import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { ProsecutorSection, SelectCourt } from '../../components'
@@ -45,6 +48,10 @@ const Processing: React.FC = () => {
   const { formatMessage } = useIntl()
   const { courts } = useInstitution()
   const router = useRouter()
+  const { features } = useContext(FeatureContext)
+  const isTrafficViolationCaseCheck =
+    features.includes(Feature.INDICTMENT_ROUTE) &&
+    isTrafficViolationCase(workingCase.indictmentSubtypes)
 
   const handleCourtChange = (court: Institution) => {
     if (workingCase) {
@@ -65,13 +72,21 @@ const Processing: React.FC = () => {
     return false
   }
 
-  const handleNextButtonClick = async () => {
-    if (workingCase.state === CaseState.NEW) {
-      await transitionCase(workingCase, CaseTransition.OPEN, setWorkingCase)
-    }
+  const handleNavigationTo = useCallback(
+    async (destination: string) => {
+      if (workingCase.state === CaseState.NEW) {
+        await transitionCase(
+          workingCase.id,
+          CaseTransition.OPEN,
+          setWorkingCase,
+        )
+      }
 
-    router.push(`${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`)
-  }
+      router.push(`${destination}/${workingCase.id}`)
+    },
+    [router, setWorkingCase, transitionCase, workingCase],
+  )
+  const stepIsValid = isProcessingStepValidIndictments(workingCase)
 
   return (
     <PageLayout
@@ -80,6 +95,8 @@ const Processing: React.FC = () => {
       activeSubSection={IndictmentsProsecutorSubsections.PROCESSING}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      onNavigationTo={handleNavigationTo}
+      isValid={stepIsValid}
     >
       <PageHeader
         title={formatMessage(titles.prosecutor.indictments.processing)}
@@ -109,8 +126,14 @@ const Processing: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!isProcessingStepValidIndictments(workingCase)}
-          onNextButtonClick={handleNextButtonClick}
+          nextIsDisabled={!stepIsValid}
+          onNextButtonClick={() =>
+            handleNavigationTo(
+              isTrafficViolationCaseCheck
+                ? constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE
+                : constants.INDICTMENTS_CASE_FILES_ROUTE,
+            )
+          }
         />
       </FormContentContainer>
     </PageLayout>

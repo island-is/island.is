@@ -11,7 +11,7 @@ const Skeleton = () => {
         <SkeletonLoader height={30} width="100%" borderRadius="large" />
       </T.Data>
       <T.Data box={{ textAlign: 'center' }}>
-        <SkeletonLoader height={30} width="50%" borderRadius="large" />
+        <SkeletonLoader height={30} width="100%" borderRadius="large" />
       </T.Data>
       <T.Data></T.Data>
     </>,

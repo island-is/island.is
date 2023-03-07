@@ -15,12 +15,6 @@ import { Identity } from '@island.is/api/domains/identity'
 import { IdentityClientService } from '@island.is/clients/identity'
 
 import {
-  FeatureFlag,
-  FeatureFlagGuard,
-  Features,
-} from '@island.is/nest/feature-flags'
-
-import {
   CreateDelegationInput,
   DelegationInput,
   DelegationsInput,
@@ -35,7 +29,7 @@ import { MeDelegationsService } from '../services/meDelegations.service'
 import type { DelegationDTO, MergedDelegationDTO } from '../services/types'
 import { MergedDelegation } from '../models/delegation.model'
 
-@UseGuards(IdsUserGuard, FeatureFlagGuard)
+@UseGuards(IdsUserGuard)
 @Resolver(() => Delegation)
 export class DelegationResolver {
   constructor(
@@ -95,7 +89,6 @@ export class DelegationResolver {
     return this.meDelegationsService.updateDelegation(user, input)
   }
 
-  @FeatureFlag(Features.outgoingDelegationsV2)
   @Mutation(() => Delegation, { name: 'patchAuthDelegation' })
   patchDelegation(
     @CurrentUser() user: User,

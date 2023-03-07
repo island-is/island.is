@@ -76,7 +76,7 @@ export const Modal = ({
         {children}
         <Box position="absolute" top={4} right={4} aria-hidden>
           <button onClick={onClose}>
-            <Icon icon="close" type="outline" />
+            <Icon icon="close" type="outline" size="large" />
           </button>
         </Box>
       </Box>

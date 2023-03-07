@@ -9,7 +9,7 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
-          "esbuild --bundle $(find apps/system-e2e -name '*.ts') --outdir=dist/apps/system-e2e --tsconfig=apps/system-e2e/tsconfig.json --platform=node $(jq -r '.dependencies|keys[]|(\"--external:\"+.)' apps/system-e2e/package.json | xargs)",
+          "esbuild --bundle $(find apps/system-e2e -name '*.ts' -not -path '*/node_modules/*') --outdir=dist/apps/system-e2e --tsconfig=apps/system-e2e/tsconfig.json --platform=node $(jq -r '.dependencies|keys[]|(\"--external:\"+.)' apps/system-e2e/package.json | xargs)",
           "cp apps/system-e2e/package.json dist/apps/system-e2e/"
         ],
         "parallel": false,
@@ -39,5 +39,5 @@
     },
     "docker-playwright": {}
   },
-  "tags": []
+  "tags": ["scope:e2e"]
 }

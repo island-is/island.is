@@ -98,7 +98,7 @@ const SubPage: Screen<SubPageProps> = ({
   const categorySlug = supportQNAs[0]?.category?.slug
   const supportQNAsBySubCategory = groupBy(
     supportQNAs,
-    (supportQNA) => supportQNA.subCategory.title,
+    (supportQNA) => supportQNA.subCategory?.title ?? '',
   )
 
   const sortedSupportSubCategoryTitles = getSortedSupportSubCategoryTitles(

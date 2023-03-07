@@ -3,11 +3,9 @@ import React, { FC } from 'react'
 import { formatText } from '@island.is/application/core'
 import { FieldBaseProps, FileUploadField } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
-import {
-  FieldDescription,
-  FileUploadController,
-} from '@island.is/shared/form-fields'
+import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
+import { FileUploadController } from '@island.is/application/ui-components'
 
 interface Props extends FieldBaseProps {
   field: FileUploadField

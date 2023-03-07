@@ -3,7 +3,7 @@ export enum DataProviderTypes {
 }
 
 export interface Address {
-  streetName: string
+  streetAddress: string
   postalCode: string
   city: string
 }

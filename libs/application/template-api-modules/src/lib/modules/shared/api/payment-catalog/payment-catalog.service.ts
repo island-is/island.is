@@ -2,15 +2,14 @@ import {
   PaymentCatalogItem,
   PaymentCatalogParameters,
 } from '@island.is/application/types'
-
 import { TemplateApiModuleActionProps } from '../../../../types'
-import { PaymentAPI } from '@island.is/clients/payment'
+import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
 import { Injectable } from '@nestjs/common'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 
 @Injectable()
 export class PaymentCatalogService extends BaseTemplateApiService {
-  constructor(private paymentClientApi: PaymentAPI) {
+  constructor(private chargeFjsV2ClientService: ChargeFjsV2ClientService) {
     super('PaymentCatalog')
   }
 
@@ -19,9 +18,13 @@ export class PaymentCatalogService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps<PaymentCatalogParameters>): Promise<
     PaymentCatalogItem[]
   > {
-    const data = await (params
-      ? this.paymentClientApi.getCatalogByPerformingOrg(params.orginizationId)
-      : this.paymentClientApi.getCatalog())
+    if (!params?.organizationId) {
+      throw Error('Missing performing organization ID')
+    }
+
+    const data = await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
+      params.organizationId,
+    )
 
     return data.item
   }

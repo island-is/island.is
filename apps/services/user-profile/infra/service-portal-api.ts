@@ -10,6 +10,7 @@ export const serviceSetup = (): ServiceBuilder<'service-portal-api'> =>
         dev: 'https://beta.dev01.devland.is/minarsidur',
         staging: 'https://beta.staging01.devland.is/minarsidur',
         prod: 'https://island.is/minarsidur',
+        local: 'http://localhost:4200/minarsidur',
       },
       EMAIL_REGION: 'eu-west-1',
       IDENTITY_SERVER_ISSUER_URL: {

@@ -17,7 +17,6 @@ import {
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
-  Case,
   CaseDecision,
   CaseState,
   CaseType,
@@ -25,6 +24,7 @@ import {
   isInvestigationCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   AlertMessage,
   Box,
@@ -39,6 +39,7 @@ import {
   formatDate,
 } from '@island.is/judicial-system/formatters'
 
+import CaseResentExplanation from '../../components/CaseResentExplanation/CaseResentExplanation'
 import { defenderCaseOverview as m } from './CaseOverview.strings'
 
 export const CaseOverview: React.FC = () => {
@@ -101,6 +102,14 @@ export const CaseOverview: React.FC = () => {
     >
       <PageHeader title={formatMessage(titles.defender.caseOverview)} />
       <FormContentContainer>
+        {!completedCaseStates.includes(workingCase.state) &&
+          workingCase.caseResentExplanation && (
+            <Box marginBottom={5}>
+              <CaseResentExplanation
+                explanation={workingCase.caseResentExplanation}
+              />
+            </Box>
+          )}
         <Box marginBottom={5}>
           <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
             <Box>
@@ -213,13 +222,15 @@ export const CaseOverview: React.FC = () => {
                   }
                 : undefined
             }
-            defender={{
-              name: workingCase.defenderName ?? '',
-              defenderNationalId: workingCase.defenderNationalId,
-              sessionArrangement: workingCase.sessionArrangements,
-              email: workingCase.defenderEmail,
-              phoneNumber: workingCase.defenderPhoneNumber,
-            }}
+            defenders={[
+              {
+                name: workingCase.defenderName ?? '',
+                defenderNationalId: workingCase.defenderNationalId,
+                sessionArrangement: workingCase.sessionArrangements,
+                email: workingCase.defenderEmail,
+                phoneNumber: workingCase.defenderPhoneNumber,
+              },
+            ]}
           />
         </Box>
         {completedCaseStates.includes(workingCase.state) && (

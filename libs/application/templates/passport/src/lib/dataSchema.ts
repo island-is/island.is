@@ -36,6 +36,7 @@ export const dataSchema = z.object({
       .string()
       .refine((v) => isValidPhoneNumber(v), { params: error.invalidValue }),
     hasDisabilityDiscount: z.array(z.string()).optional(),
+    hasDisabilityDiscountChecked: z.boolean().optional(),
   }),
   childsPersonalInfo: z.object({
     name: z.string().min(1),
@@ -72,6 +73,7 @@ export const dataSchema = z.object({
     dropLocation: z.string().min(1),
   }),
   approveExternalDataParentB: z.boolean().refine((v) => v),
+  chargeItemCode: z.string(),
 })
 
 export type PassportSchema = z.TypeOf<typeof dataSchema>

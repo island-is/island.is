@@ -520,6 +520,9 @@
         "email": {
           "headerText": "Email"
         },
+        "name": {
+          "headerText": "Name"
+        },
         "scope": {
           "headerText": "Scopes"
         }
@@ -878,6 +881,12 @@
         }
       },
       "fields": {
+        "name": {
+          "label": "Name",
+          "placeholder": "Jane Doe",
+          "helpText": "The name of the admin user",
+          "errorMessage": "Name must be at least 2 characters"
+        },
         "nationalId": {
           "label": "National Id (Kennitala)",
           "placeholder": "0123456789",
@@ -1214,9 +1223,15 @@
         "selectedItem": {
           "title": "Info about this Api Resource",
           "properties": {
-            "name": { "name": "Resource Name" },
-            "description": { "name": "Description" },
-            "displayName": { "name": "Display Name" }
+            "name": {
+              "name": "Resource Name"
+            },
+            "description": {
+              "name": "Description"
+            },
+            "displayName": {
+              "name": "Display Name"
+            }
           }
         }
       },
@@ -1659,7 +1674,6 @@
           "placeholder": "",
           "helpText": "Select the appropriate Client Type",
           "errorMessage": "Client Type is required",
-
           "selectItems": {
             "": {
               "selectItemText": "Select Client Type",
@@ -1734,7 +1748,6 @@
           "placeholder": "https://localhost:4200",
           "helpText": "Base Url of the application. Used for adding Cors Origin, Redirect (callback) URI and Post Logout URI. The Redirect (callback) URI will be the specified Base Url /signin-oidc",
           "errorMessage": "Base Url is required and needs to be in the right format",
-
           "popUpTitle": "Redirect (Callback) Uri will be:",
           "popUpDescription": "This can be changed later"
         },
@@ -1859,7 +1872,6 @@
         },
         "clientClaimsPrefix": {
           "label": "Client claims prefix",
-
           "helpText": "If set, the prefix client claim types will be prefixed with. Defaults to client_. The intent is to make sure they don’t accidentally collide with user claims.",
           "errorMessage": "Client claims prefix is required",
           "placeholder": "client__"

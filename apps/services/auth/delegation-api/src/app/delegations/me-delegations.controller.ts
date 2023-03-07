@@ -32,12 +32,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { delegationScopes } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
-import {
-  FeatureFlag,
-  FeatureFlagGuard,
-  FeatureFlagService,
-  Features,
-} from '@island.is/nest/feature-flags'
+
 import { Documentation } from '@island.is/nest/swagger'
 import type { DocumentationParamOptions } from '@island.is/nest/swagger'
 import { isDefined } from '@island.is/shared/utils'
@@ -51,8 +46,7 @@ const delegationId: DocumentationParamOptions = {
   description: 'The id of the delegation.',
 }
 
-@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@FeatureFlag(Features.outgoingDelegationsV2)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(...delegationScopes)
 @ApiSecurity('ias', delegationScopes)
 @ApiTags('me/delegations')
@@ -66,7 +60,6 @@ export class MeDelegationsController {
     private readonly delegationsService: DelegationsService,
     private readonly delegationsOutgoingService: DelegationsOutgoingService,
     private readonly delegationsIncomingService: DelegationsIncomingService,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly auditService: AuditService,
   ) {}
 
@@ -125,17 +118,6 @@ export class MeDelegationsController {
   ): Promise<DelegationDTO[]> {
     switch (direction) {
       case DelegationDirection.INCOMING: {
-        const incomingDelegationsAreEnabled = await this.featureFlagService.getValue(
-          Features.incomingDelegationsV2,
-          false,
-          user,
-        )
-        if (!incomingDelegationsAreEnabled) {
-          throw new BadRequestException(
-            'direction=outgoing is currently the only supported value',
-          )
-        }
-
         if (user.actor) {
           throw new BadRequestException(
             'Only supported when the subject is the authenticated user.',

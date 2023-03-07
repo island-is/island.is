@@ -3,11 +3,9 @@ import { AuthModule } from '@island.is/auth-nest-tools'
 import { PassportsClientModule } from '@island.is/clients/passports'
 
 import { PassportResolver } from './passport.resolver'
-import { PassportService } from './passport.service'
 
 @Module({
-  providers: [PassportResolver, PassportService],
+  providers: [PassportResolver],
   imports: [AuthModule, PassportsClientModule],
-  exports: [PassportService],
 })
 export class PassportModule {}

@@ -1,6 +1,6 @@
 import formatISO from 'date-fns/formatISO'
 
-import { Injectable } from '@nestjs/common'
+import { Injectable, ServiceUnavailableException } from '@nestjs/common'
 
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 import {
@@ -9,10 +9,11 @@ import {
   IndictmentSubtypeMap,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
+import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { EventService } from '../event'
+import { User } from '../user'
 
 export enum CourtDocumentFolder {
   REQUEST_DOCUMENTS = 'Krafa og greinargerð',
@@ -158,6 +159,7 @@ export class CourtService {
   }
 
   async createDocument(
+    user: TUser | User,
     caseId: string,
     courtId = '',
     courtCaseNumber = '',
@@ -166,7 +168,6 @@ export class CourtService {
     fileName: string,
     fileType: string,
     content: Buffer,
-    user?: User,
   ): Promise<string> {
     return this.courtClientService
       .uploadStream(courtId, {
@@ -183,12 +184,17 @@ export class CourtService {
         }),
       )
       .catch((reason) => {
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the document was created successfully
+          return ''
+        }
+
         this.eventService.postErrorEvent(
           'Failed to create a document at court',
           {
             caseId,
-            actor: user?.name ?? 'RVG',
-            institution: user?.institution?.name ?? 'RVG',
+            actor: user.name,
+            institution: user.institution?.name,
             courtId,
             courtCaseNumber,
             subject: this.mask(subject),
@@ -203,8 +209,56 @@ export class CourtService {
       })
   }
 
-  async createCourtCase(
+  async createCourtRecord(
     user: User,
+    caseId: string,
+    courtId = '',
+    courtCaseNumber = '',
+    subject: string,
+    fileName: string,
+    fileType: string,
+    content: Buffer,
+  ): Promise<string> {
+    return this.courtClientService
+      .uploadStream(courtId, {
+        value: content,
+        options: { filename: fileName, contentType: fileType },
+      })
+      .then((streamId) =>
+        this.courtClientService.createThingbok(courtId, {
+          caseNumber: courtCaseNumber,
+          subject,
+          fileName,
+          streamID: streamId,
+        }),
+      )
+      .catch((reason) => {
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the document was created successfully
+          return ''
+        }
+
+        this.eventService.postErrorEvent(
+          'Failed to create a court record at court',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+            courtId,
+            courtCaseNumber,
+            subject: this.mask(subject),
+            fileName: this.mask(fileName),
+            fileType,
+          },
+          reason,
+        )
+
+        throw reason
+      })
+  }
+
+  async createCourtCase(
+    user: TUser,
     caseId: string,
     courtId = '',
     type: CaseType,
@@ -232,6 +286,11 @@ export class CourtService {
         sourceNumber: policeCaseNumbers[0] ? policeCaseNumbers[0] : '',
       })
     } catch (reason) {
+      if (reason instanceof ServiceUnavailableException) {
+        // Act as if the court case was created successfully
+        return 'R-9999/9999'
+      }
+
       this.eventService.postErrorEvent(
         'Failed to create a court case',
         {
@@ -251,7 +310,7 @@ export class CourtService {
   }
 
   async createEmail(
-    user: User,
+    user: TUser | User,
     caseId: string,
     courtId: string,
     courtCaseNumber: string,
@@ -271,6 +330,11 @@ export class CourtService {
         fromName,
       })
       .catch((reason) => {
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the email was created successfully
+          return ''
+        }
+
         this.eventService.postErrorEvent(
           'Failed to create an email',
           {
@@ -283,6 +347,87 @@ export class CourtService {
             recipients,
             fromEmail,
             fromName,
+          },
+          reason,
+        )
+
+        throw reason
+      })
+  }
+
+  async updateCaseWithProsecutor(
+    user: User,
+    caseId: string,
+    courtId: string,
+    courtCaseNumber: string,
+    prosecutorNationalId: string,
+    prosecutorsOfficeNationalId: string,
+  ): Promise<string> {
+    return this.courtClientService
+      .updateCaseWithProsecutor(courtId, {
+        userIdNumber: user.nationalId,
+        caseId: courtCaseNumber,
+        prosecutor: {
+          companyIdNumber: prosecutorsOfficeNationalId,
+          prosecutorIdNumber: prosecutorNationalId,
+        },
+      })
+      .catch((reason) => {
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the case was updated successfully
+          return ''
+        }
+
+        this.eventService.postErrorEvent(
+          'Failed to update case with prosecutor',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+            courtId,
+            courtCaseNumber,
+            prosecutorNationalId,
+            prosecutorsOfficeNationalId,
+          },
+          reason,
+        )
+
+        throw reason
+      })
+  }
+
+  async updateCaseWithDefendant(
+    user: User,
+    caseId: string,
+    courtId: string,
+    courtCaseNumber: string,
+    defendantNationalId: string,
+    defenderEmail?: string,
+  ): Promise<string> {
+    return this.courtClientService
+      .updateCaseWithDefendant(courtId, {
+        userIdNumber: user.nationalId,
+        caseId: courtCaseNumber,
+        defendant: {
+          idNumber: defendantNationalId,
+          lawyerEmail: defenderEmail,
+        },
+      })
+      .catch((reason) => {
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the case was updated successfully
+          return ''
+        }
+
+        this.eventService.postErrorEvent(
+          'Failed to update case with defendant',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+            courtId,
+            courtCaseNumber,
+            defenderEmail,
           },
           reason,
         )

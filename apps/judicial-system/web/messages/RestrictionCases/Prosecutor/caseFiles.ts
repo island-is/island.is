@@ -1,3 +1,4 @@
+// TODO: DELETE THIS FILE
 import { defineMessage, defineMessages } from 'react-intl'
 
 export const rcCaseFiles = {

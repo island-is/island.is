@@ -18,6 +18,7 @@ import {
   renderHelmServices,
   renderHelmValueFileContent,
 } from './dsl/exports/helm'
+import { ServiceBuilder } from './dsl/dsl'
 
 type ChartName = 'islandis' | 'identity-server'
 
@@ -32,6 +33,7 @@ interface Arguments {
   chart: ChartName
   output?: string
   jobImage?: string
+  withMocks?: boolean
 }
 
 const writeToOutput = async (data: string, output?: string) => {
@@ -71,7 +73,6 @@ const parseArguments = (argv: Arguments) => {
     ...Envs[Deployments[chart][envName]],
     feature: feature,
   }
-  const ch = new Kubernetes(env)
 
   const habitat = charts[chart][envName]
 
@@ -82,7 +83,7 @@ const parseArguments = (argv: Arguments) => {
         (images.length === 1 && images[0] === '*') ||
         images?.includes(h.serviceDef.image ?? h.serviceDef.name),
     )
-  return { ch, habitat, affectedServices, env }
+  return { habitat, affectedServices, env }
 }
 
 const buildIngressComment = (data: HelmService[]): string =>
@@ -98,9 +99,21 @@ const buildIngressComment = (data: HelmService[]): string =>
     .join('\n')
 
 const buildComment = (data: Services<HelmService>): string => {
-  return `Feature deployment successful! Access your feature here:\n\n${buildIngressComment(
-    Object.values(data),
-  )}`
+  if (data.ingress) {
+    return `Feature deployment of your services will begin shortly. Your feature will be accessible here:\n\n${buildIngressComment(
+      Object.values(data),
+    )}`
+  } else {
+    return `Feature deployment of your services will begin shortly. No web endpoints defined (no ingresses were defined)`
+  }
+}
+const deployedComment = (
+  data: ServiceBuilder<any>[],
+  excluded: string[],
+): string => {
+  return `Deployed services: ${data
+    .map((d) => d.name())
+    .join(',')}. \n Excluded services: ${excluded.join(',')}`
 }
 
 yargs(process.argv.slice(2))
@@ -110,34 +123,49 @@ yargs(process.argv.slice(2))
     () => {},
     async (argv: Arguments) => {
       const { habitat, affectedServices, env } = parseArguments(argv)
-      const featureYaml = await getFeatureAffectedServices(
+      const { included: featureYaml } = await getFeatureAffectedServices(
         habitat,
         affectedServices.slice(),
         ExcludedFeatureDeploymentServices,
         env,
       )
       await writeToOutput(
-        await renderHelmValueFileContent(env, habitat, featureYaml, 'no-mocks'),
+        await renderHelmValueFileContent(
+          env,
+          habitat,
+          featureYaml,
+          argv.withMocks ?? false ? 'with-mocks' : 'no-mocks',
+        ),
         argv.output,
       )
     },
   )
+
   .command(
     'ingress-comment',
     'get helm values file',
     () => {},
     async (argv: Arguments) => {
       const { habitat, affectedServices, env } = parseArguments(argv)
-      const featureYaml = await getFeatureAffectedServices(
+      const {
+        included: featureYaml,
+        excluded,
+      } = await getFeatureAffectedServices(
         habitat,
         affectedServices.slice(),
         ExcludedFeatureDeploymentServices,
         env,
       )
+      const affectedServicesComment = `Affected services: ${affectedServices
+        .map((s) => s.name())
+        .join(',')}`
+      const ingressComment = buildComment(
+        (await renderHelmServices(env, habitat, featureYaml, 'no-mocks'))
+          .services,
+      )
+      const includedServicesComment = deployedComment(featureYaml, excluded)
       await writeToOutput(
-        buildComment(
-          (await renderHelmServices(env, habitat, featureYaml)).services,
-        ),
+        `${ingressComment}\n${affectedServicesComment}\n${includedServicesComment}`,
         argv.output,
       )
     },

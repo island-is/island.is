@@ -8,19 +8,14 @@ import {
   buildExternalDataProvider,
   buildDataProviderItem,
 } from '@island.is/application/core'
-import {
-  Application,
-  Form,
-  FormModes,
-  MockProviderApi,
-} from '@island.is/application/types'
+import { Application, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 
 import {
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
-import { ReferenceDataApi } from '../dataProviders'
+import { ReferenceDataApi, MyMockProvider } from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesDraft',
@@ -51,7 +46,7 @@ export const Prerequisites: Form = buildForm({
               subTitle: 'Upplýsingar um þig í Þjóðskrá.',
             }),
             buildDataProviderItem({
-              provider: MockProviderApi,
+              provider: MyMockProvider,
               title: 'Mock Data',
               subTitle: 'Returns data for mocking',
             }),

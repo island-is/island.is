@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/shared/mocking"]
     }
   },
-  "tags": []
+  "tags": ["lib:js", "scope:js"]
 }

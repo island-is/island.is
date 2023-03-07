@@ -2,7 +2,6 @@ import { Box, IconProps, Icon } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
 import * as styles from './NavItem.css'
 import { Link } from 'react-router-dom'
-import { useStore } from '../../../store/stateProvider'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import cn from 'classnames'
@@ -34,20 +33,14 @@ const NavItemContent: FC<Props> = ({
   children,
   badge = false,
 }) => {
-  const [{ sidebarState }] = useStore()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
-  const collapsed = sidebarState === 'closed' && !isMobile
   const showLock = enabled === false
   const pathName = window.location.pathname
-  const isDashboard = pathName === '/minarsidur/'
+  const isDashboard = pathName === '/minarsidur'
 
   const navItemActive: keyof typeof styles.navItemActive = active
-    ? collapsed
-      ? 'activeCollapsed'
-      : 'active'
-    : collapsed
-    ? 'inactiveCollapsed'
+    ? 'active'
     : 'inactive'
 
   const badgeActive: keyof typeof styles.badge = badge ? 'active' : 'inactive'
@@ -61,13 +54,12 @@ const NavItemContent: FC<Props> = ({
       className={[
         styles.navItem,
         styles.navItemActive[navItemActive],
-        collapsed && 'collapsed',
         'navitem',
         isDashboard && styles.dashboard,
       ]}
       display="flex"
       alignItems="center"
-      justifyContent={collapsed ? 'center' : 'spaceBetween'}
+      justifyContent="spaceBetween"
       cursor={showLock ? undefined : 'pointer'}
       position="relative"
       onClick={() => {
@@ -77,8 +69,8 @@ const NavItemContent: FC<Props> = ({
         if (!hasArray && onClick) onClick()
       }}
       paddingY={1}
-      paddingLeft={collapsed ? 1 : 3}
-      paddingRight={collapsed ? 1 : 2}
+      paddingLeft={3}
+      paddingRight={2}
     >
       <Box
         display="flex"
@@ -91,18 +83,13 @@ const NavItemContent: FC<Props> = ({
           <Box
             display="flex"
             alignItems="center"
-            justifyContent={
-              collapsed ? 'center' : isDashboard ? 'center' : 'spaceBetween'
-            }
-            marginRight={collapsed ? 0 : 1}
+            justifyContent={isDashboard ? 'center' : 'spaceBetween'}
+            marginRight={1}
             className={animatedIcon && styles.animatedIcon}
           >
             <Box
               borderRadius="circle"
-              className={cn(
-                styles.badge[badgeActive],
-                collapsed && styles.badgeCollapsed,
-              )}
+              className={cn(styles.badge[badgeActive])}
             ></Box>
 
             {!isDashboard && !isMobile ? (
@@ -124,7 +111,7 @@ const NavItemContent: FC<Props> = ({
             )}
           </Box>
         ) : null}
-        {!collapsed ? <Box className={styles.text}>{children}</Box> : ''}
+        <Box className={styles.text}>{children}</Box>
       </Box>
       {showLock && (
         <Icon
@@ -132,7 +119,7 @@ const NavItemContent: FC<Props> = ({
           icon="lockClosed"
           size="small"
           color={active ? 'blue400' : 'blue600'}
-          className={cn(styles.lock, collapsed && styles.lockCollapsed)}
+          className={styles.lock}
         />
       )}
     </Box>

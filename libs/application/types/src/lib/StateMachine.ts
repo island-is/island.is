@@ -71,6 +71,14 @@ export type StateLifeCycle =
       shouldDeleteChargeIfPaymentFulfilled?: boolean | null
     }
 
+export type PendingActionDisplayType = 'warning' | 'success' | 'info' | 'error'
+
+export type PendingAction = {
+  displayStatus: PendingActionDisplayType
+  title?: StaticText
+  content?: StaticText
+}
+
 export interface ApplicationStateMeta<
   T extends EventObject = AnyEventObject,
   R = unknown
@@ -78,18 +86,27 @@ export interface ApplicationStateMeta<
   name: string
   lifecycle: StateLifeCycle
   actionCard?: {
+    /** @deprecated use pendingAction field instead */
     title?: StaticText
+    /** @deprecated use pendingAction field instead */
     description?: StaticText
+    onExitHistoryLog?: StaticText
+    onEntryHistoryLog?: StaticText
+    pendingAction?:
+      | PendingAction
+      | ((application: Application, role: ApplicationRole) => PendingAction)
+    /** @deprecated is generated from status of current state */
     tag?: { label?: StaticText; variant?: ActionCardTag }
   }
+
   progress?: number
   /**
    * Represents the current status of the application in the state, defaults to draft
    */
   status: 'approved' | 'rejected' | 'draft' | 'completed' | 'inprogress'
   roles?: RoleInState<T>[]
-  onExit?: TemplateApi<R>
-  onEntry?: TemplateApi<R>
+  onExit?: TemplateApi<R>[] | TemplateApi<R>
+  onEntry?: TemplateApi<R>[] | TemplateApi<R>
 }
 
 export interface ApplicationStateSchema<T extends EventObject = AnyEventObject>
@@ -131,6 +148,7 @@ export function createApplicationMachine<
   return Machine(
     { ...config, initial: initialState },
     options ?? {},
+
     context as TContext,
   )
 }

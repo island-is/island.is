@@ -48,28 +48,6 @@ export class FishingLicenseService {
               name: v.nafn ?? '',
               chargeType: v.vorunumerfjs ?? '',
             })) ?? [],
-          doesNotFulfillFishingLicenses:
-            ship.uppfyllirEkkertVeidileyfi ?? false,
-          unfulfilledLicenses:
-            ship.ouppfylltSkilyrdiVeidileyfa
-              ?.filter((o) => o.astaedur && o.astaedur?.length > 0)
-              ?.map((o) => ({
-                fishingLicense: {
-                  code:
-                    o.veidileyfi?.kodi === '1'
-                      ? FishingLicenseCodeType.catchMark
-                      : o.veidileyfi?.kodi === '32'
-                      ? FishingLicenseCodeType.hookCatchLimit
-                      : FishingLicenseCodeType.unknown,
-                  name: o.veidileyfi?.nafn || '',
-                  chargeType: o.veidileyfi?.vorunumerfjs ?? '',
-                },
-                reasons:
-                  o.astaedur?.map((x) => ({
-                    description: x.lysing ?? '',
-                    directions: x.leidbeining ?? '',
-                  })) ?? [],
-              })) ?? [],
         })) ?? []
       )
     } catch (error) {

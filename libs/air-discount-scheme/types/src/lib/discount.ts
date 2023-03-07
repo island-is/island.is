@@ -9,7 +9,7 @@ export type ConnectionDiscountCode = {
 
 export interface Discount {
   user: User
-  discountCode: string
+  discountCode: string | null
   connectionDiscountCodes: ConnectionDiscountCode[]
   nationalId: string
   expiresIn: number

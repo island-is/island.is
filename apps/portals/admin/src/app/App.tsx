@@ -1,56 +1,32 @@
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { ApolloProvider } from '@apollo/client'
-
-import { client } from '../graphql'
+import { AuthProvider } from '@island.is/auth/react'
 import { LocaleProvider } from '@island.is/localization'
 import { defaultLanguage } from '@island.is/shared/constants'
-import { Authenticator } from '@island.is/auth/react'
 import { FeatureFlagProvider } from '@island.is/react/feature-flags'
-import { UserProfileLocale } from '@island.is/shared/components'
-import {
-  PortalMetaProvider,
-  Modules,
-  ModulesProvider,
-} from '@island.is/portals/core'
+import { ApplicationErrorBoundary, PortalRouter } from '@island.is/portals/core'
 import { modules } from '../lib/modules'
+import { client } from '../graphql'
 import environment from '../environments/environment'
-import { Layout } from '../components/Layout/Layout'
-import { ApplicationErrorBoundary } from '@island.is/portals/core'
 import { AdminPortalPaths } from '../lib/paths'
-import { Dashboard } from '../screens/Dashboard'
-import { masterNavigation } from '../lib/masterNavigation'
+import { createRoutes } from '../lib/routes'
 
-export const App = () => {
-  return (
-    <ApolloProvider client={client}>
-      <PortalMetaProvider
-        basePath={AdminPortalPaths.Base}
-        masterNav={masterNavigation}
-      >
-        <LocaleProvider locale={defaultLanguage} messages={{}}>
+export const App = () => (
+  <ApolloProvider client={client}>
+    <LocaleProvider locale={defaultLanguage} messages={{}}>
+      <AuthProvider basePath={AdminPortalPaths.Base}>
+        <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
           <ApplicationErrorBoundary>
-            <Router basename={AdminPortalPaths.Base}>
-              <Authenticator>
-                <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
-                  <ModulesProvider modules={modules}>
-                    <UserProfileLocale />
-                    <Layout>
-                      <Switch>
-                        <Route exact path={AdminPortalPaths.Root}>
-                          <Dashboard />
-                        </Route>
-                        <Route>
-                          <Modules />
-                        </Route>
-                      </Switch>
-                    </Layout>
-                  </ModulesProvider>
-                </FeatureFlagProvider>
-              </Authenticator>
-            </Router>
+            <PortalRouter
+              modules={modules}
+              createRoutes={createRoutes}
+              portalMeta={{
+                portalType: 'admin',
+                basePath: AdminPortalPaths.Base,
+              }}
+            />
           </ApplicationErrorBoundary>
-        </LocaleProvider>
-      </PortalMetaProvider>
-    </ApolloProvider>
-  )
-}
+        </FeatureFlagProvider>
+      </AuthProvider>
+    </LocaleProvider>
+  </ApolloProvider>
+)

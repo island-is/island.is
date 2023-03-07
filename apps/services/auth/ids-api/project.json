@@ -125,5 +125,5 @@
       }
     }
   },
-  "tags": []
+  "tags": ["scope:auth-api"]
 }

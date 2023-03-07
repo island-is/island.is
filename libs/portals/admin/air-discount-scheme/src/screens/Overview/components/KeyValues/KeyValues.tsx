@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Text, Box } from '@island.is/island-ui/core'
+import { Text, Box, Columns, Column } from '@island.is/island-ui/core'
 import KeyValue from './KeyValue'
 
 import { TItem } from '../../types'
@@ -16,29 +16,32 @@ function KeyValues({ data, title }: PropTypes) {
       <Text variant="eyebrow" color="blue400">
         {title}
       </Text>
-      <Box
-        marginTop={1}
-        display="flex"
-        flexWrap="wrap"
-        justifyContent="spaceBetween"
-      >
-        <KeyValue label="Flugleggir" value={data.count} />
-        <KeyValue
-          color="red400"
-          label="Afsláttur (kr.)"
-          value={`${(data.originalPrice - data.discountPrice).toLocaleString(
-            'de-DE',
-          )}.-`}
-        />
-        <KeyValue
-          label="Afsláttarverð (kr.)"
-          value={`${data.discountPrice.toLocaleString('de-DE')}.-`}
-        />
-        <KeyValue
-          label="Upphafsverð (kr.)"
-          value={`${data.originalPrice.toLocaleString('de-DE')}.-`}
-        />
-      </Box>
+      <Columns space={2} collapseBelow="sm">
+        <Column>
+          <KeyValue label="Flugleggir" value={data.count} />
+        </Column>
+        <Column>
+          <KeyValue
+            color="red400"
+            label="Afsláttur (kr.)"
+            value={`${(data.originalPrice - data.discountPrice).toLocaleString(
+              'de-DE',
+            )}.-`}
+          />
+        </Column>
+        <Column>
+          <KeyValue
+            label="Afsláttarverð (kr.)"
+            value={`${data.discountPrice.toLocaleString('de-DE')}.-`}
+          />
+        </Column>
+        <Column>
+          <KeyValue
+            label="Upphafsverð (kr.)"
+            value={`${data.originalPrice.toLocaleString('de-DE')}.-`}
+          />
+        </Column>
+      </Columns>
     </Box>
   )
 }

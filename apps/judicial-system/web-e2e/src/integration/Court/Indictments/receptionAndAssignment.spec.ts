@@ -69,6 +69,6 @@ describe(`${INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
 
     cy.getByTestid('continueButton').should('be.enabled')
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', `${INDICTMENTS_SUBPOENA_ROUTE}/test`)
+    cy.url().should('include', `${INDICTMENTS_SUBPOENA_ROUTE}`)
   })
 })

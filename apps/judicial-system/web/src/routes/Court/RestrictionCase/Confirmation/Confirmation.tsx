@@ -61,7 +61,7 @@ export const Confirmation: React.FC = () => {
     const shouldSign =
       completedCaseStates.includes(workingCase.state) ||
       (await transitionCase(
-        workingCase,
+        workingCase.id,
         workingCase.decision === CaseDecision.REJECTING
           ? CaseTransition.REJECT
           : workingCase.decision === CaseDecision.DISMISSING

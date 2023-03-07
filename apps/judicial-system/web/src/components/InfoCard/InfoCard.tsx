@@ -9,20 +9,58 @@ import { formatDOB } from '@island.is/judicial-system/formatters'
 
 import * as styles from './InfoCard.css'
 
+interface Defender {
+  name: string
+  defenderNationalId?: string
+  sessionArrangement?: SessionArrangements
+  email?: string
+  phoneNumber?: string
+}
+
+interface UniqueDefendersProps {
+  defenders: Defender[]
+}
+
 interface Props {
   data: Array<{ title: string; value?: React.ReactNode }>
   defendants?: { title: string; items: Defendant[] }
-  defender?: {
-    name: string
-    defenderNationalId?: string
-    sessionArrangement: SessionArrangements | undefined
-    email?: string
-    phoneNumber?: string
-  }
+  defenders?: Defender[]
+}
+
+const UniqueDefenders: React.FC<UniqueDefendersProps> = (props) => {
+  const { defenders } = props
+  const uniqueDefenders = defenders?.filter(
+    (defender, index, self) =>
+      index === self.findIndex((d) => d.email === defender.email),
+  )
+
+  return (
+    <>
+      <Text variant="h4">
+        {defenders[0].sessionArrangement ===
+        SessionArrangements.ALL_PRESENT_SPOKESPERSON
+          ? 'Talsmaður'
+          : `Verj${uniqueDefenders.length > 1 ? 'endur' : 'andi'}`}
+      </Text>
+      {uniqueDefenders.map((defender) =>
+        defender?.name ? (
+          <Box display="flex">
+            <Text>
+              {`${defender.name}${defender.email ? `, ${defender.email}` : ''}${
+                defender.phoneNumber ? `, s. ${defender.phoneNumber}` : ''
+              }`}
+            </Text>
+          </Box>
+        ) : (
+          <Text>Hefur ekki verið skráður</Text>
+        ),
+      )}
+    </>
+  )
 }
 
 const InfoCard: React.FC<Props> = (props) => {
-  const { data, defendants, defender } = props
+  const { data, defendants, defenders } = props
 
   return (
     <Box
@@ -38,7 +76,7 @@ const InfoCard: React.FC<Props> = (props) => {
         {defendants && (
           <>
             <Text variant="h4">{defendants.title}</Text>
-            <Box marginBottom={defender ? [2, 2, 3, 3] : 0}>
+            <Box marginBottom={defenders ? [2, 2, 3, 3] : 0}>
               {defendants.items.map((defendant) => (
                 <Text key={defendant.id}>
                   <span className={styles.infoCardDefendant}>
@@ -66,29 +104,7 @@ const InfoCard: React.FC<Props> = (props) => {
             </Box>
           </>
         )}
-        {defender && (
-          <>
-            <Text variant="h4">
-              {defender.sessionArrangement ===
-              SessionArrangements.ALL_PRESENT_SPOKESPERSON
-                ? 'Talsmaður'
-                : 'Verjandi'}
-            </Text>
-            {defender?.name ? (
-              <Box display="flex">
-                <Text>
-                  {`${defender.name}${
-                    defender.email ? `, ${defender.email}` : ''
-                  }${
-                    defender.phoneNumber ? `, s. ${defender.phoneNumber}` : ''
-                  }`}
-                </Text>
-              </Box>
-            ) : (
-              <Text>Hefur ekki verið skráður</Text>
-            )}
-          </>
-        )}
+        {defenders && <UniqueDefenders defenders={defenders} />}
       </Box>
       <Box className={styles.infoCardDataContainer}>
         {data.map((dataItem, index) => {

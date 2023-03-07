@@ -311,7 +311,7 @@ const Search: Screen<CategoryProps> = ({
       return linkResolver('digitalicelandservicesdetailpage', [item.slug])
     }
 
-    return linkResolver(item.__typename, item?.url ?? item.slug.split('/'))
+    return linkResolver(item.__typename, item.url ?? item.slug?.split('/'))
   }
 
   const getItemImages = (item: SearchType) => {

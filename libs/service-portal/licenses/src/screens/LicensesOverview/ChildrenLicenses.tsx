@@ -20,7 +20,7 @@ export const ChildrenLicenses: FC<Props> = ({ data, loading }) => {
   useNamespaces('sp.license')
 
   return (
-    <Box marginTop={6}>
+    <Box marginTop={[2, 3, 6]}>
       {loading && (
         <Box marginBottom={1}>
           <CardLoader />
@@ -33,11 +33,7 @@ export const ChildrenLicenses: FC<Props> = ({ data, loading }) => {
             noPassport={
               Array.isArray(item.passports) && item.passports.length === 0
             }
-            nationalId={
-              item.childNationalId
-                ? formatNationalId(item.childNationalId)
-                : ' '
-            }
+            title={item.childName}
             name={true}
           />
         </Box>

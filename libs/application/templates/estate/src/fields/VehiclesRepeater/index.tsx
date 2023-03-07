@@ -64,6 +64,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
             >
               <ProfileCard
                 title={asset.assetNumber}
+                key={asset.assetNumber}
                 description={[
                   `${asset.description}`,
                   <Box marginTop={1} as="span">

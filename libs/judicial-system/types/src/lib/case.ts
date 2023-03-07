@@ -73,6 +73,7 @@ export enum IndictmentSubtype {
   UTILITY_THEFT = 'UTILITY_THEFT',
   WEPONS_VIOLATION = 'WEPONS_VIOLATION',
 }
+
 export interface IndictmentSubtypeMap {
   [key: string]: IndictmentSubtype[]
 }
@@ -241,6 +242,37 @@ export interface Case {
   subpoenaType?: SubpoenaType
   defendantWaivesRightToCounsel?: boolean
   crimeScenes?: CrimeSceneMap
+  indictmentIntroduction?: string
+  requestDriversLicenseSuspension?: boolean
+}
+
+export interface CaseListEntry
+  extends Pick<
+    Case,
+    | 'id'
+    | 'created'
+    | 'policeCaseNumbers'
+    | 'state'
+    | 'type'
+    | 'defendants'
+    | 'courtCaseNumber'
+    | 'decision'
+    | 'validToDate'
+    | 'isValidToDateInThePast'
+    | 'courtDate'
+    | 'initialRulingDate'
+    | 'rulingDate'
+    | 'courtEndTime'
+    | 'prosecutorAppealDecision'
+    | 'accusedAppealDecision'
+    | 'prosecutorPostponedAppealDate'
+    | 'accusedPostponedAppealDate'
+    | 'judge'
+    | 'prosecutor'
+    | 'registrar'
+    | 'creatingProsecutor'
+  > {
+  parentCaseId?: string
 }
 
 export type CreateCase = Pick<
@@ -321,6 +353,8 @@ export interface UpdateCase
     | 'subpoenaType'
     | 'defendantWaivesRightToCounsel'
     | 'crimeScenes'
+    | 'indictmentIntroduction'
+    | 'requestDriversLicenseSuspension'
   > {
   type?: CaseType
   policeCaseNumbers?: string[]
@@ -373,16 +407,19 @@ export const investigationCases = [
   CaseType.VIDEO_RECORDING_EQUIPMENT,
 ]
 
-export function isIndictmentCase(type?: CaseType): boolean {
-  return Boolean(type && indictmentCases.includes(type))
+export function isIndictmentCase(type: string): boolean {
+  const caseType = type as CaseType
+  return indictmentCases.includes(caseType)
 }
 
-export function isRestrictionCase(type?: CaseType): boolean {
-  return Boolean(type && restrictionCases.includes(type))
+export function isRestrictionCase(type: string): boolean {
+  const caseType = type as CaseType
+  return restrictionCases.includes(caseType)
 }
 
-export function isInvestigationCase(type?: CaseType): boolean {
-  return Boolean(type && investigationCases.includes(type))
+export function isInvestigationCase(type: string): boolean {
+  const caseType = type as CaseType
+  return investigationCases.includes(caseType)
 }
 
 export function isAcceptingCaseDecision(decision?: CaseDecision): boolean {

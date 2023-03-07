@@ -20,9 +20,9 @@ import { createNationalId } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
 
 import { accessOutgoingTestCases } from '../../../../test/access-outgoing-test-cases'
-import { FixtureFactory } from '../../../../test/fixtures/fixture-factory'
 import { setupWithAuth } from '../../../../test/setup'
 import { partitionDomainsByScopeAccess } from './utils'
+import { FixtureFactory } from '@island.is/services/auth/testing'
 
 describe.each(Object.keys(accessOutgoingTestCases))(
   'MeDelegationsController Outgoing Access with test case: %s',

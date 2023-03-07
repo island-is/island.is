@@ -12,15 +12,17 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  MockProviderApi,
   NationalRegistryUserApi,
-  PaymentCatalogApi,
   UserProfileApi,
   DistrictsApi,
 } from '@island.is/application/types'
 import { ChildsPersonalInfo } from '../lib/constants'
 import { m } from '../lib/messages'
 import { childsOverview } from './overviewSection/childsOverview'
+import {
+  IdentityDocumentApi,
+  SyslumadurPaymentCatalogApi,
+} from '../dataProviders'
 
 export const ParentB: Form = buildForm({
   id: 'PassportApplicationParentB',
@@ -74,12 +76,12 @@ export const ParentB: Form = buildForm({
               subTitle: m.dataCollectionUserProfileSubtitle,
             }),
             buildDataProviderItem({
-              provider: MockProviderApi,
+              provider: IdentityDocumentApi,
               title: m.dataCollectionIdentityDocumentTitle,
               subTitle: m.dataCollectionIdentityDocumentSubtitle,
             }),
             buildDataProviderItem({
-              provider: PaymentCatalogApi,
+              provider: SyslumadurPaymentCatalogApi,
               title: '',
             }),
             buildDataProviderItem({

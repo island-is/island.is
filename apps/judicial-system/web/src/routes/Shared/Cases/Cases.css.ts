@@ -16,6 +16,10 @@ export const logoContainer = style({
   },
 })
 
+export const filterContainer = style({
+  maxWidth: '432px',
+})
+
 export const table = style({
   borderSpacing: 0,
   borderCollapse: 'collapse',

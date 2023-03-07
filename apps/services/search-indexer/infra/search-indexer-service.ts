@@ -1,4 +1,4 @@
-import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 const envs = {
   APPLICATION_URL: 'http://search-indexer-service',
@@ -23,6 +23,11 @@ const envs = {
     staging: '40',
     prod: '40',
   },
+  AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: {
+    dev: ref((h) => h.svc('loftbru.dev01.devland.is')),
+    staging: ref((h) => h.svc('loftbru.staging01.devland.is')),
+    prod: ref((h) => h.svc('loftbru.island.is')),
+  },
 }
 export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
   service('search-indexer-service')
@@ -32,6 +37,7 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
     .secrets({
       CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN',
       API_CMS_SYNC_TOKEN: '/k8s/search-indexer/API_CMS_SYNC_TOKEN',
+      API_CMS_DELETION_TOKEN: '/k8s/search-indexer/API_CMS_DELETION_TOKEN',
     })
     .env(envs)
     .initContainer({

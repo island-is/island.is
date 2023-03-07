@@ -22,6 +22,8 @@ export const apiConstants = {
     unEmploymentBenefits: 'UnemploymentBenefits',
     other: 'Other',
     artificialInsemination: 'ArtificialInsemination',
+    parentWithoutBirthParent: 'ParentWithoutBirthParent',
+    residenceGrant: 'ResidenceGrant',
   },
 }
 

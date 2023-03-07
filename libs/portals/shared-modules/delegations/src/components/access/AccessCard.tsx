@@ -1,4 +1,4 @@
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import format from 'date-fns/format'
 import { VisuallyHidden } from 'reakit/VisuallyHidden'
 import * as kennitala from 'kennitala'
@@ -17,10 +17,11 @@ import {
 import { useLocale } from '@island.is/localization'
 import { useMemo } from 'react'
 import { m as coreMessages } from '@island.is/portals/core'
+import uniqBy from 'lodash/uniqBy'
 import sortBy from 'lodash/sortBy'
 import { m } from '../../lib/messages'
 import { DelegationPaths } from '../../lib/paths'
-import { AuthDelegationType } from '@island.is/api/schema'
+import { AuthApiScope, AuthDelegationType } from '@island.is/api/schema'
 import {
   AuthCustomDelegation,
   AuthCustomDelegationIncoming,
@@ -29,6 +30,21 @@ import {
 
 const isDateExpired = (date?: string | null) =>
   date ? new Date(date) < new Date() : false
+
+const getTagName = (apiScope: AuthApiScope) =>
+  apiScope?.group?.displayName ?? apiScope.displayName
+
+const getTags = (delegation: AuthCustomDelegation) =>
+  sortBy(
+    uniqBy(
+      delegation.scopes?.map((scope) => ({
+        name: scope?.apiScope ? getTagName(scope?.apiScope) : scope.displayName,
+        isExpired: isDateExpired(scope.validTo),
+      })),
+      'name',
+    ),
+    'name',
+  )
 
 interface AccessCardProps {
   delegation: AuthCustomDelegation
@@ -44,14 +60,10 @@ export const AccessCard = ({
   variant = 'outgoing',
 }: AccessCardProps) => {
   const { formatMessage } = useLocale()
-  const history = useHistory()
-  const tags = sortBy(
-    delegation.scopes?.map((scope) => ({
-      name: scope?.apiScope?.displayName || scope.displayName,
-      isExpired: isDateExpired(scope.validTo),
-    })),
-    'name',
-  )
+  const navigate = useNavigate()
+
+  const tags = useMemo(() => getTags(delegation), [delegation])
+
   const hasTags = tags.length > 0
   const isOutgoing = variant === 'outgoing'
   const href = `${DelegationPaths.Delegations}/${delegation.id}`
@@ -66,18 +78,12 @@ export const AccessCard = ({
 
   const getRightLabel = () => {
     if (isExpired) {
-      return formatMessage({
-        id: 'sp.access-control-delegations:expired',
-        defaultMessage: 'Útrunnið',
-      })
+      return formatMessage(m.expired)
     }
 
     return delegation.validTo
       ? format(new Date(delegation.validTo), 'dd.MM.yyyy')
-      : formatMessage({
-          id: 'sp.settings-access-control:home-view-varies',
-          defaultMessage: 'Breytilegur',
-        })
+      : formatMessage(m.variableValidity)
   }
 
   const renderDelegationTypeLabel = (type: AuthDelegationType) => {
@@ -172,10 +178,7 @@ export const AccessCard = ({
             {delegation.domain && (
               <Box display="flex" columnGap={1} alignItems="center">
                 <VisuallyHidden>
-                  {formatMessage({
-                    id: 'sp.access-control-delegations:delegation-in-system',
-                    defaultMessage: 'Umboð í kerfi',
-                  })}
+                  {formatMessage(m.delegationInSystem)}
                 </VisuallyHidden>
                 {delegation.domain.organisationLogoUrl && (
                   <img
@@ -191,12 +194,7 @@ export const AccessCard = ({
               </Box>
             )}
           </Box>
-          <VisuallyHidden>
-            {formatMessage({
-              id: 'sp.access-control-delegations:access-holder',
-              defaultMessage: 'Aðgangshafi',
-            })}
-          </VisuallyHidden>
+          <VisuallyHidden>{formatMessage(m.accessHolder)}</VisuallyHidden>
           <Text variant="h3" as="h2" color={isExpired ? 'dark300' : 'dark400'}>
             {isOutgoing
               ? (delegation as AuthCustomDelegationOutgoing)?.to?.name
@@ -213,10 +211,7 @@ export const AccessCard = ({
                 icon="time"
                 color={isExpired ? 'dark300' : 'blue400'}
                 type="outline"
-                title={formatMessage({
-                  id: 'sp.access-control-delegations:validity-period',
-                  defaultMessage: 'Gildistími',
-                })}
+                title={formatMessage(m.validityPeriod)}
               />
               <Text variant="small" color={isExpired ? 'dark300' : 'dark400'}>
                 {getRightLabel()}
@@ -235,12 +230,7 @@ export const AccessCard = ({
         >
           {hasTags && (
             <Box width="full">
-              <VisuallyHidden>
-                {formatMessage({
-                  id: 'sp.access-control-delegations:access-title',
-                  defaultMessage: 'Réttindi',
-                })}
-              </VisuallyHidden>
+              <VisuallyHidden>{formatMessage(m.accessScopes)}</VisuallyHidden>
               <Inline alignY="bottom" space={1}>
                 {tags.map((tag, index) => (
                   <Tag
@@ -290,7 +280,7 @@ export const AccessCard = ({
                     iconType="outline"
                     size="small"
                     variant="utility"
-                    onClick={() => history.push(href)}
+                    onClick={() => navigate(href)}
                   >
                     {formatMessage(coreMessages.buttonEdit)}
                   </Button>
@@ -300,7 +290,7 @@ export const AccessCard = ({
                     iconType="outline"
                     size="small"
                     variant="utility"
-                    onClick={() => history.push(href)}
+                    onClick={() => navigate(href)}
                   >
                     {formatMessage(coreMessages.buttonRenew)}
                   </Button>

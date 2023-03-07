@@ -404,60 +404,58 @@ const Results = ({
       paddingX={3}
     >
       {autosuggest && search.results && search.results.items.length > 0 && (
-        <>
-          <div className={styles.menuRow}>
-            <Stack space={2}>
-              <Text variant="eyebrow" color="purple400">
-                {quickContentLabel}
-              </Text>
-              {(search.results.items as Article[] &
-                LifeEventPage[] &
-                News[] &
-                SubArticle[])
-                .slice(0, 5)
-                .map((item, i) => {
-                  const { onClick, ...itemProps } = getItemProps({
-                    item: {
-                      type: 'link',
-                      string: linkResolver(
-                        item.__typename as LinkType,
-                        item.slug.split('/'),
-                      ).href,
-                    },
-                  })
-                  return (
-                    <Link
-                      key={item.id}
-                      {...itemProps}
-                      onClick={(e) => {
-                        trackSearchQuery(search.term, 'Web Suggestion')
-                        onClick(e)
-                        onRouting()
-                      }}
-                      color="blue400"
-                      underline="normal"
-                      dataTestId="search-result"
-                      pureChildren
-                      underlineVisibility={
-                        search.suggestions.length + i === highlightedIndex
-                          ? 'always'
-                          : 'hover'
-                      }
-                      skipTab
-                    >
-                      {highlightedResults ? (
-                        <span
-                          dangerouslySetInnerHTML={{ __html: item.title }}
-                        ></span>
-                      ) : (
-                        item.title
-                      )}
-                    </Link>
-                  )
-                })}
-            </Stack>
-          </div>
-        </>
+        <div className={styles.menuRow}>
+          <Stack space={2}>
+            <Text variant="eyebrow" color="purple400">
+              {quickContentLabel}
+            </Text>
+            {(search.results.items as Article[] &
+              LifeEventPage[] &
+              News[] &
+              SubArticle[])
+              .slice(0, 5)
+              .map((item, i) => {
+                const { onClick, ...itemProps } = getItemProps({
+                  item: {
+                    type: 'link',
+                    string: linkResolver(
+                      item.__typename as LinkType,
+                      item.slug?.split('/'),
+                    )?.href,
+                  },
+                })
+                return (
+                  <Link
+                    key={item.id}
+                    {...itemProps}
+                    onClick={(e) => {
+                      trackSearchQuery(search.term, 'Web Suggestion')
+                      onClick(e)
+                      onRouting()
+                    }}
+                    color="blue400"
+                    underline="normal"
+                    dataTestId="search-result"
+                    pureChildren
+                    underlineVisibility={
+                      search.suggestions.length + i === highlightedIndex
+                        ? 'always'
+                        : 'hover'
+                    }
+                    skipTab
+                  >
+                    {highlightedResults ? (
+                      <span
+                        dangerouslySetInnerHTML={{ __html: item.title }}
+                      ></span>
+                    ) : (
+                      item.title
+                    )}
+                  </Link>
+                )
+              })}
+          </Stack>
+        </div>
       )}
     </Box>
   )

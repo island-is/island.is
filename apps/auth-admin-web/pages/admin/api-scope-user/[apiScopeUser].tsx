@@ -54,7 +54,7 @@ const Index: React.FC = () => {
         apiScopeUser={apiScopeUser}
         handleCancel={handleCancel}
         handleSaveButtonClicked={handleUserSaved}
-      ></ApiScopeUserCreateForm>
+      />
     </ContentWrapper>
   )
 }

@@ -38,10 +38,3 @@ export const dumpServiceHelm = (
     )
   )
 }
-export const dumpDockerCompose = (
-  ch: Localhost,
-  valueFile: LocalrunValueFile,
-) => {
-  const { services, mocks } = valueFile
-  return dump({ ...services, ...mocks }, dumpOpts)
-}

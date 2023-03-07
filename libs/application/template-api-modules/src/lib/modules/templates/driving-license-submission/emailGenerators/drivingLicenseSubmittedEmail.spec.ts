@@ -3,11 +3,9 @@ import {
   ApplicationStatus,
   ApplicationTypes,
 } from '@island.is/application/types'
+import { createApplication } from '@island.is/application/testing'
 import { Message } from '@island.is/email-service'
-import {
-  createApplication,
-  createCurrentUser,
-} from '@island.is/testing/fixtures'
+import { createCurrentUser } from '@island.is/testing/fixtures'
 import { faker } from '@island.is/shared/mocking'
 
 import { generateDrivingLicenseSubmittedEmail } from './drivingLicenseSubmittedEmail'

@@ -15,6 +15,7 @@
 
 ## Content
 
+- [Security Checklist](postholf-00-security-checklist.md)
 - [Introduction](postholf-01-intro-and-overview.md)
 - [Skjalatilkynning API](postholf-02-interface-skjalatilkynning.md)
 - [Skjalaveita API](postholf-03-interface-skjalaveita.md)

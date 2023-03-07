@@ -1,4 +1,5 @@
 import { uuid } from 'uuidv4'
+import format from 'date-fns/format'
 
 import {
   CaseType,
@@ -8,11 +9,15 @@ import {
 import { caseTypes } from '@island.is/judicial-system/formatters'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
+import { randomDate } from '../../../../test'
+import { nowFactory } from '../../../../factories'
 import { getRequestPdfAsBuffer } from '../../../../formatters'
 import { CourtDocumentFolder, CourtService } from '../../../court'
-import { Case } from '../../models/case.model'
+import { User } from '../../../user'
 import { DeliverResponse } from '../../models/deliver.response'
+import { Case } from '../../models/case.model'
 
+jest.mock('../../../../factories/date.factory')
 jest.mock('../../../../formatters/requestPdf')
 
 interface Then {
@@ -23,10 +28,16 @@ interface Then {
 type GivenWhenThen = (caseId: string, theCase: Case) => Promise<Then>
 
 describe('InternalCaseController - Deliver requst to court', () => {
+  const now = randomDate()
+  const userId = uuid()
+  const user = { id: userId } as User
+
   let mockCourtService: CourtService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
+    const mockNowFactory = nowFactory as jest.Mock
+    mockNowFactory.mockReturnValue(now)
     const mockGet = getRequestPdfAsBuffer as jest.Mock
     mockGet.mockRejectedValue(new Error('Some error'))
 
@@ -43,7 +54,7 @@ describe('InternalCaseController - Deliver requst to court', () => {
       const then = {} as Then
 
       await internalCaseController
-        .deliverRequestToCourt(caseId, theCase)
+        .deliverRequestToCourt(caseId, user, theCase, { userId })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -52,7 +63,7 @@ describe('InternalCaseController - Deliver requst to court', () => {
   })
 
   describe.each([...restrictionCases, ...investigationCases])(
-    'deliver request for %s case to court',
+    'request for %s case delivered',
     (type: CaseType) => {
       const caseId = uuid()
       const courtId = uuid()
@@ -79,12 +90,13 @@ describe('InternalCaseController - Deliver requst to court', () => {
 
       it('should create a request at court', async () => {
         expect(mockCourtService.createDocument).toHaveBeenCalledWith(
+          user,
           caseId,
           courtId,
           courtCaseNumber,
           CourtDocumentFolder.REQUEST_DOCUMENTS,
-          `Krafa um ${caseTypes[type]}`,
-          `Krafa um ${caseTypes[type]}.pdf`,
+          `Krafa um ${caseTypes[type]} ${format(now, 'yyyy-MM-dd HH:mm')}`,
+          `Krafa um ${caseTypes[type]} ${format(now, 'yyyy-MM-dd HH:mm')}.pdf`,
           'application/pdf',
           pdf,
         )

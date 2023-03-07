@@ -1,11 +1,11 @@
 import { useLocale } from '@island.is/localization'
 import { useAuth } from '@island.is/auth/react'
 import { checkDelegation } from '@island.is/shared/utils'
+
 import { m } from '../lib/messages'
-import { PortalModuleComponent } from '../types/portalCore'
 import { ErrorScreen } from './ErrorScreen/ErrorScreen'
 
-export const AccessDenied: PortalModuleComponent = () => {
+export const AccessDenied = () => {
   const { formatMessage } = useLocale()
   const { userInfo: user } = useAuth()
   const isDelegation = user && checkDelegation(user)

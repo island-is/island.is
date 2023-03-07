@@ -4,12 +4,14 @@ import { Client } from '@island.is/auth-api-lib'
 export type CreateClient = Pick<
   Client,
   | 'clientId'
+  | 'clientName'
   | 'nationalId'
   | 'clientType'
   | 'supportsCustomDelegation'
   | 'supportsLegalGuardians'
   | 'supportsProcuringHolders'
   | 'supportsPersonalRepresentatives'
+  | 'requireApiScopes'
 >
 
 const createRandomClient = (): CreateClient => {
@@ -21,6 +23,7 @@ const createRandomClient = (): CreateClient => {
     supportsLegalGuardians: false,
     supportsProcuringHolders: false,
     supportsPersonalRepresentatives: false,
+    requireApiScopes: false,
   }
 }
 

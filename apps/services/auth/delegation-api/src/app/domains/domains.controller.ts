@@ -2,6 +2,7 @@ import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
+  ApiScopeListDTO,
   ApiScopeTreeDTO,
   DelegationDirection,
   DelegationResourcesService,
@@ -16,11 +17,6 @@ import {
 } from '@island.is/auth-nest-tools'
 import { delegationScopes } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
-import {
-  FeatureFlag,
-  FeatureFlagGuard,
-  Features,
-} from '@island.is/nest/feature-flags'
 import { Documentation } from '@island.is/nest/swagger'
 import type {
   DocumentationParamOptions,
@@ -49,8 +45,7 @@ const direction: DocumentationQueryOptions = {
   },
 }
 
-@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@FeatureFlag(Features.outgoingDelegationsV2)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(...delegationScopes)
 @ApiSecurity('ias')
 @ApiTags('domains')
@@ -64,11 +59,31 @@ export class DomainsController {
 
   @Get()
   @Documentation({
-    description: 'Get all domains supporting delegations.',
+    description: `Get all domains. Provides query parameters to filter domains
+      delegation support and/or specific delegation direction.`,
     request: {
       query: {
         lang,
-        direction,
+        direction: {
+          ...direction,
+          description: `The direction of the delegations to apply on domain filtering.
+            Setting this param implicitly filters by delegation support.
+            Default returns all domains.`,
+        },
+        domainName: {
+          description: 'A list of domain names to filter by.',
+          required: false,
+          isArray: true,
+          type: 'string',
+        },
+        supportsDelegations: {
+          description: `A boolean to filter by delegation support.
+            If set to true, only domains with delegation support are returned.
+            If set to false or not set, all domains are returned.
+            This param is implicitly set to true when direction param is used.`,
+          required: false,
+          type: 'boolean',
+        },
       },
     },
     response: { status: 200, type: [DomainDTO] },
@@ -80,8 +95,15 @@ export class DomainsController {
     @CurrentUser() user: User,
     @Query('lang') language?: string,
     @Query('direction') direction?: DelegationDirection,
+    @Query('domainName') domainNames?: string[],
+    @Query('supportsDelegations') supportsDelegations?: boolean,
   ): Promise<DomainDTO[]> {
-    return this.resourceService.findAllDomains(user, language, direction)
+    return this.resourceService.findAllDomains(user, {
+      language,
+      direction,
+      domainNames,
+      supportsDelegations,
+    })
   }
 
   @Get(':domainName')
@@ -155,14 +177,14 @@ export class DomainsController {
         direction,
       },
     },
-    response: { status: 200, type: [ApiScopeTreeDTO] },
+    response: { status: 200, type: [ApiScopeListDTO] },
   })
   async findScopes(
     @CurrentUser() user: User,
     @Param('domainName') domainName: string,
     @Query('lang') language?: string,
     @Query('direction') direction?: DelegationDirection,
-  ): Promise<ApiScopeTreeDTO[]> {
+  ): Promise<ApiScopeListDTO[]> {
     return this.resourceService.findScopes(
       user,
       domainName,

@@ -1,5 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
+import router from 'next/router'
 
 import {
   BlueBox,
@@ -13,16 +14,17 @@ import {
   CourtDocuments,
   FormContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  Case,
-  CaseType,
-  SessionArrangements,
-} from '@island.is/judicial-system/types'
+import { SessionArrangements } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  useDeb,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   closedCourt,
   core,
@@ -44,8 +46,10 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isCourtRecordStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import * as constants from '@island.is/judicial-system/consts'
+
 import AppealSections from '../../components/AppealSections/AppealSections'
 
 const getSessionBookingsAutofill = (
@@ -85,8 +89,6 @@ const getSessionBookingsAutofill = (
 }
 
 const CourtRecord = () => {
-  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-
   const { setAndSendCaseToServer, updateCase } = useCase()
   const { formatMessage } = useIntl()
   const {
@@ -103,111 +105,104 @@ const CourtRecord = () => {
     setSessionBookingsMessage,
   ] = useState<string>('')
 
-  useDeb(workingCase, 'courtAttendees')
-  useDeb(workingCase, 'sessionBookings')
-  useDeb(workingCase, 'accusedAppealAnnouncement')
-  useDeb(workingCase, 'prosecutorAppealAnnouncement')
-  useDeb(workingCase, 'endOfSessionBookings')
-
-  useEffect(() => {
-    if (isCaseUpToDate && !initialAutoFillDone) {
-      const autofillAttendees = []
-
-      if (workingCase.courtAttendees !== '') {
-        if (workingCase.prosecutor) {
-          autofillAttendees.push(
-            `${workingCase.prosecutor.name} ${workingCase.prosecutor.title}`,
-          )
-        }
-
-        if (
-          workingCase.defenderName &&
-          workingCase.sessionArrangements !==
-            SessionArrangements.PROSECUTOR_PRESENT
-        ) {
-          autofillAttendees.push(
-            `\n${workingCase.defenderName} skipaður ${
-              workingCase.sessionArrangements ===
-              SessionArrangements.ALL_PRESENT_SPOKESPERSON
-                ? 'talsmaður'
-                : 'verjandi'
-            } ${formatMessage(core.defendant, { suffix: 'a' })}`,
-          )
-        }
-
-        if (workingCase.translator) {
-          autofillAttendees.push(`\n${workingCase.translator} túlkur`)
-        }
-
-        if (workingCase.defendants && workingCase.defendants.length > 0) {
-          if (
-            workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT
-          ) {
-            workingCase.defendants.forEach((defendant) => {
-              autofillAttendees.push(
-                `\n${defendant.name} ${formatMessage(core.defendant, {
-                  suffix: 'i',
-                })}`,
-              )
-            })
-          }
-        }
-      }
-
-      setAndSendCaseToServer(
-        [
-          {
-            courtStartDate: workingCase.courtDate,
-            courtLocation: workingCase.court
-              ? `í ${
-                  workingCase.court.name.indexOf('dómur') > -1
-                    ? workingCase.court.name.replace('dómur', 'dómi')
-                    : workingCase.court.name
-                }`
-              : undefined,
-            courtAttendees:
-              autofillAttendees.length > 0
-                ? autofillAttendees.join('')
-                : undefined,
-            sessionBookings:
-              workingCase.type === CaseType.RESTRAINING_ORDER ||
-              workingCase.type ===
-                CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME
-                ? formatMessage(
-                    m.sections.sessionBookings.autofillRestrainingOrder,
-                  )
-                : workingCase.type === CaseType.EXPULSION_FROM_HOME
-                ? formatMessage(
-                    m.sections.sessionBookings.autofillExpulsionFromHome,
-                  )
-                : workingCase.type === CaseType.AUTOPSY
-                ? formatMessage(m.sections.sessionBookings.autofillAutopsy)
-                : workingCase.sessionArrangements ===
-                  SessionArrangements.ALL_PRESENT
-                ? getSessionBookingsAutofill(formatMessage, workingCase)
-                : workingCase.sessionArrangements ===
-                  SessionArrangements.ALL_PRESENT_SPOKESPERSON
-                ? formatMessage(m.sections.sessionBookings.autofillSpokeperson)
-                : workingCase.sessionArrangements ===
-                  SessionArrangements.PROSECUTOR_PRESENT
-                ? formatMessage(m.sections.sessionBookings.autofillProsecutor)
-                : undefined,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
-
-      setInitialAutoFillDone(true)
-    }
-  }, [
-    setAndSendCaseToServer,
-    formatMessage,
-    initialAutoFillDone,
-    isCaseUpToDate,
-    setWorkingCase,
-    workingCase,
+  useDeb(workingCase, [
+    'courtAttendees',
+    'sessionBookings',
+    'accusedAppealAnnouncement',
+    'prosecutorAppealAnnouncement',
+    'endOfSessionBookings',
   ])
+
+  const initialize = useCallback(() => {
+    const autofillAttendees = []
+
+    if (workingCase.prosecutor) {
+      autofillAttendees.push(
+        `${workingCase.prosecutor.name} ${workingCase.prosecutor.title}`,
+      )
+    }
+
+    if (
+      workingCase.defenderName &&
+      workingCase.sessionArrangements !== SessionArrangements.PROSECUTOR_PRESENT
+    ) {
+      autofillAttendees.push(
+        `\n${workingCase.defenderName} skipaður ${
+          workingCase.sessionArrangements ===
+          SessionArrangements.ALL_PRESENT_SPOKESPERSON
+            ? 'talsmaður'
+            : 'verjandi'
+        } ${formatMessage(core.defendant, { suffix: 'a' })}`,
+      )
+    }
+
+    if (workingCase.translator) {
+      autofillAttendees.push(`\n${workingCase.translator} túlkur`)
+    }
+
+    if (workingCase.defendants && workingCase.defendants.length > 0) {
+      if (workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+        workingCase.defendants.forEach((defendant) => {
+          autofillAttendees.push(
+            `\n${defendant.name} ${formatMessage(core.defendant, {
+              suffix: 'i',
+            })}`,
+          )
+        })
+      }
+    }
+
+    setAndSendCaseToServer(
+      [
+        {
+          courtStartDate: workingCase.courtDate,
+          courtLocation: workingCase.court
+            ? `í ${
+                workingCase.court.name.indexOf('dómur') > -1
+                  ? workingCase.court.name.replace('dómur', 'dómi')
+                  : workingCase.court.name
+              }`
+            : undefined,
+          courtAttendees:
+            autofillAttendees.length > 0
+              ? autofillAttendees.join('')
+              : undefined,
+          sessionBookings:
+            workingCase.type === CaseType.RestrainingOrder ||
+            workingCase.type === CaseType.RestrainingOrderAndExpulsionFromHome
+              ? formatMessage(
+                  m.sections.sessionBookings.autofillRestrainingOrder,
+                )
+              : workingCase.type === CaseType.ExpulsionFromHome
+              ? formatMessage(
+                  m.sections.sessionBookings.autofillExpulsionFromHome,
+                )
+              : workingCase.type === CaseType.Autopsy
+              ? formatMessage(m.sections.sessionBookings.autofillAutopsy)
+              : workingCase.sessionArrangements ===
+                SessionArrangements.ALL_PRESENT
+              ? getSessionBookingsAutofill(formatMessage, workingCase)
+              : workingCase.sessionArrangements ===
+                SessionArrangements.ALL_PRESENT_SPOKESPERSON
+              ? formatMessage(m.sections.sessionBookings.autofillSpokeperson)
+              : workingCase.sessionArrangements ===
+                SessionArrangements.PROSECUTOR_PRESENT
+              ? formatMessage(m.sections.sessionBookings.autofillProsecutor)
+              : undefined,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }, [setAndSendCaseToServer, formatMessage, setWorkingCase, workingCase])
+
+  useOnceOn(isCaseUpToDate, initialize)
+
+  const stepIsValid = isCourtRecordStepValidIC(workingCase)
+  const handleNavigationTo = useCallback(
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [workingCase.id],
+  )
 
   return (
     <PageLayout
@@ -218,6 +213,8 @@ const CourtRecord = () => {
       activeSubSection={RestrictionCaseCourtSubsections.COURT_RECORD}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={stepIsValid}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader
         title={formatMessage(titles.court.investigationCases.courtRecord)}
@@ -503,8 +500,10 @@ const CourtRecord = () => {
         <FormFooter
           previousUrl={`${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
-          nextUrl={`${constants.INVESTIGATION_CASE_CONFIRMATION_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!isCourtRecordStepValidIC(workingCase)}
+          onNextButtonClick={() =>
+            handleNavigationTo(constants.INVESTIGATION_CASE_CONFIRMATION_ROUTE)
+          }
+          nextIsDisabled={!stepIsValid}
           hideNextButton={
             !workingCase.decision ||
             !workingCase.conclusion ||

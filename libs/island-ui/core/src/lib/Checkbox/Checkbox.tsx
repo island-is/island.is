@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import cn from 'classnames'
 import { Text } from '../Text/Text'
 import { Icon } from '../IconRC/Icon'
@@ -19,13 +19,14 @@ export interface CheckboxProps {
   hasError?: boolean
   errorMessage?: string
   value?: string
+  defaultChecked?: boolean
   strong?: boolean
   filled?: boolean
   large?: boolean
   backgroundColor?: InputBackgroundColor
   labelVariant?: 'default' | 'small' | 'medium'
   /** subLabel can only be used if the 'large' prop set to true */
-  subLabel?: string
+  subLabel?: React.ReactNode
 }
 
 interface AriaError {
@@ -39,13 +40,14 @@ export const Checkbox = ({
   labelVariant = 'default',
   name,
   id = name,
-  checked,
   disabled,
   onChange,
   tooltip,
   hasError,
   errorMessage,
   value,
+  checked: checkedFromProps,
+  defaultChecked,
   large,
   strong,
   backgroundColor,
@@ -63,6 +65,24 @@ export const Checkbox = ({
   const background =
     backgroundColor && backgroundColor === 'blue' ? 'blue100' : undefined
 
+  // If defaultCheck is specified, we will use it as our initial state.
+  const [internalChecked, setInternalChecked] = useState(
+    defaultChecked !== undefined ? defaultChecked : false,
+  )
+
+  // We need to know whether the component is controlled or not.
+  const isCheckedControlled = checkedFromProps !== undefined
+  const checked = isCheckedControlled ? checkedFromProps : internalChecked
+
+  const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!isCheckedControlled) {
+      // If the component is not controlled, we need to update its internal state.
+      setInternalChecked(event.target.checked)
+    }
+
+    onChange?.(event)
+  }
+
   return (
     <Box
       className={cn(styles.container, large, {
@@ -78,7 +98,7 @@ export const Checkbox = ({
         disabled={disabled}
         id={id}
         data-testid={dataTestId}
-        onChange={onChange}
+        onChange={onChangeHandler}
         value={value}
         checked={checked}
         {...(ariaError as AriaError)}

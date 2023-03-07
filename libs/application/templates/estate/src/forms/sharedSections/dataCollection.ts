@@ -3,6 +3,10 @@ import {
   buildExternalDataProvider,
   buildSection,
 } from '@island.is/application/core'
+import {
+  NationalRegistryUserApi,
+  UserProfileApi,
+} from '@island.is/application/types'
 import { m } from '../../lib/messages'
 
 export const dataCollection = buildSection({
@@ -16,20 +20,17 @@ export const dataCollection = buildSection({
       checkboxLabel: m.dataCollectionCheckbox,
       dataProviders: [
         buildDataProviderItem({
-          id: 'estateNoticeProvider',
-          type: 'EstateNoticeProvider',
+          provider: undefined, //'EstateNoticeProvider',
           title: m.deceasedInfoProviderTitle,
           subTitle: m.deceasedInfoProviderSubtitle,
         }),
         buildDataProviderItem({
-          id: 'nationalRegistry',
-          type: 'NationalRegistryProvider',
+          provider: NationalRegistryUserApi,
           title: m.personalInfoProviderTitle,
           subTitle: m.personalInfoProviderSubtitle,
         }),
         buildDataProviderItem({
-          id: 'userProfile',
-          type: 'UserProfileProvider',
+          provider: UserProfileApi,
           title: m.settingsInfoProviderTitle,
           subTitle: m.settingsInfoProviderSubtitle,
         }),

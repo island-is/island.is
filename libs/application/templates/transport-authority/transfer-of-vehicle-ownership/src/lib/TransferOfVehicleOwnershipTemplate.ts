@@ -7,26 +7,48 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  NationalRegistryUserApi,
-  UserProfileApi,
   defineTemplateApi,
 } from '@island.is/application/types'
-import { getValueViaPath, pruneAfterDays } from '@island.is/application/core'
+import {
+  EphemeralStateLifeCycle,
+  getValueViaPath,
+  pruneAfterDays,
+} from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { ApiActions } from '../shared'
+import { AuthDelegationType } from '@island.is/shared/types'
 import { Features } from '@island.is/feature-flags'
 import { TransferOfVehicleOwnershipSchema } from './dataSchema'
-import { application } from './messages'
-import { CoOwnerAndOperator, UserInformation } from '../types'
+import { application as applicationMessage } from './messages'
+import { CoOwnerAndOperator, UserInformation } from '../shared'
 import { assign } from 'xstate'
 import set from 'lodash/set'
+import {
+  IdentityApi,
+  UserProfileApi,
+  SamgongustofaPaymentCatalogApi,
+  CurrentVehiclesApi,
+  InsuranceCompaniesApi,
+} from '../dataProviders'
 
-const pruneInDaysATen = (application: Application, days: number) => {
+const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
   date.setDate(date.getDate() + days)
   const pruneDate = new Date(date.toUTCString())
-  pruneDate.setHours(10, 0, 0)
-  return pruneDate // Time left of the day + 6 more days
+  pruneDate.setHours(23, 59, 59)
+  return pruneDate
+}
+
+const determineMessageFromApplicationAnswers = (application: Application) => {
+  const plate = getValueViaPath(
+    application.answers,
+    'pickVehicle.plate',
+    undefined,
+  ) as string | undefined
+  return {
+    name: applicationMessage.name,
+    value: plate ? `- ${plate}` : '',
+  }
 }
 
 const template: ApplicationTemplate<
@@ -35,12 +57,19 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP,
-  name: application.name,
-  institution: application.institutionName,
+  name: determineMessageFromApplicationAnswers,
+  institution: applicationMessage.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.TransferOfVehicleOwnership.translation,
   ],
   dataSchema: TransferOfVehicleOwnershipSchema,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+      featureFlag:
+        Features.transportAuthorityTransferOfVehicleOwnershipDelegations,
+    },
+  ],
   featureFlag: Features.transportAuthorityTransferOfVehicleOwnership,
   stateMachineConfig: {
     initial: States.DRAFT,
@@ -51,12 +80,15 @@ const template: ApplicationTemplate<
           status: 'draft',
           actionCard: {
             tag: {
-              label: application.actionCardDraft,
+              label: applicationMessage.actionCardDraft,
               variant: 'blue',
             },
           },
           progress: 0.25,
-          lifecycle: pruneAfterDays(1),
+          lifecycle: EphemeralStateLifeCycle,
+          onExit: defineTemplateApi({
+            action: ApiActions.validateApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -75,7 +107,13 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi],
+              api: [
+                IdentityApi,
+                UserProfileApi,
+                SamgongustofaPaymentCatalogApi,
+                CurrentVehiclesApi,
+                InsuranceCompaniesApi,
+              ],
             },
           ],
         },
@@ -89,7 +127,7 @@ const template: ApplicationTemplate<
           status: 'inprogress',
           actionCard: {
             tag: {
-              label: application.actionCardPayment,
+              label: applicationMessage.actionCardPayment,
               variant: 'red',
             },
           },
@@ -126,7 +164,7 @@ const template: ApplicationTemplate<
           status: 'inprogress',
           actionCard: {
             tag: {
-              label: application.actionCardDraft,
+              label: applicationMessage.actionCardDraft,
               variant: 'blue',
             },
           },
@@ -135,12 +173,15 @@ const template: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: (application: Application) =>
-              pruneInDaysATen(application, 8),
+              pruneInDaysAtMidnight(application, 7),
             shouldDeleteChargeIfPaymentFulfilled: true,
           },
           onEntry: defineTemplateApi({
             action: ApiActions.addReview,
             shouldPersistToExternalData: true,
+          }),
+          onExit: defineTemplateApi({
+            action: ApiActions.validateApplication,
           }),
           roles: [
             {
@@ -150,7 +191,13 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.ReviewForm),
                 ),
               write: {
-                answers: [],
+                answers: [
+                  'sellerCoOwner',
+                  'buyerCoOwnerAndOperator',
+                  'rejecter',
+                  'insurance',
+                  'buyer',
+                ],
               },
               read: 'all',
               delete: true,
@@ -167,6 +214,7 @@ const template: ApplicationTemplate<
                   'insurance',
                   'buyer',
                   'rejecter',
+                  'buyerMainOperator',
                 ],
               },
               read: 'all',
@@ -205,8 +253,8 @@ const template: ApplicationTemplate<
           }),
           actionCard: {
             tag: {
-              label: application.actionCardRejected,
-              variant: 'blueberry',
+              label: applicationMessage.actionCardRejected,
+              variant: 'red',
             },
           },
           roles: [
@@ -248,7 +296,7 @@ const template: ApplicationTemplate<
           }),
           actionCard: {
             tag: {
-              label: application.actionCardDone,
+              label: applicationMessage.actionCardDone,
               variant: 'blueberry',
             },
           },
@@ -260,7 +308,6 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.Approved),
                 ),
               read: 'all',
-              delete: true,
             },
             {
               id: Roles.BUYER,
@@ -320,10 +367,12 @@ const template: ApplicationTemplate<
       reviewerNationalIdList.push(nationalId)
       return nationalId
     })
-    buyerCoOwnerAndOperator?.map(({ nationalId }) => {
-      reviewerNationalIdList.push(nationalId)
-      return nationalId
-    })
+    buyerCoOwnerAndOperator
+      ?.filter(({ wasRemoved }) => wasRemoved !== 'true')
+      .map(({ nationalId }) => {
+        reviewerNationalIdList.push(nationalId)
+        return nationalId
+      })
     if (id === application.applicant) {
       return Roles.APPLICANT
     }
@@ -365,10 +414,12 @@ const getNationalIdListOfReviewers = (application: Application) => {
       reviewerNationalIdList.push(nationalId)
       return nationalId
     })
-    buyerCoOwnerAndOperator?.map(({ nationalId }) => {
-      reviewerNationalIdList.push(nationalId)
-      return nationalId
-    })
+    buyerCoOwnerAndOperator
+      ?.filter(({ wasRemoved }) => wasRemoved !== 'true')
+      .map(({ nationalId }) => {
+        reviewerNationalIdList.push(nationalId)
+        return nationalId
+      })
     return reviewerNationalIdList
   } catch (error) {
     console.error(error)

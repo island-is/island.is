@@ -13,22 +13,21 @@ import {
   buildSubSection,
   buildTextField,
   getValueViaPath,
+  buildDateField,
 } from '@island.is/application/core'
-import {
-  Form,
-  FormModes,
-  NationalRegistryUserApi,
-  UserProfileApi,
-} from '@island.is/application/types'
+import { Form, FormModes, UserProfileApi } from '@island.is/application/types'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
-import { parentalLeaveFormMessages } from '../lib/messages'
+import { parentalLeaveFormMessages, errorMessages } from '../lib/messages'
 import Logo from '../assets/Logo'
-import { ChildrenApi } from '../dataProviders'
+import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 import {
   isEligibleForParentalLeave,
   getSelectedChild,
   getApplicationAnswers,
+  getApplicationExternalData,
+  isNotEligibleForParentWithoutBirthParent,
+  isParentWithoutBirthParent,
 } from '../lib/parentalLeaveUtils'
 import { NO, YES, ParentalRelations } from '../constants'
 import { defaultMultipleBirthsMonths } from '../config'
@@ -129,6 +128,42 @@ export const PrerequisitesForm: Form = buildForm({
                           },
                         ],
                       }),
+                      buildRadioField({
+                        id: 'mock.noPrimaryParent',
+                        title:
+                          parentalLeaveFormMessages.shared.noPrimaryParentLabel,
+                        width: 'half',
+                        condition: (answers) => {
+                          const useMockData =
+                            getValueViaPath(answers, 'mock.useMockData') === YES
+                          const useApplication =
+                            getValueViaPath(
+                              answers,
+                              'mock.useMockedApplication',
+                            ) === NO
+                          const isSecondaryParent =
+                            getValueViaPath(
+                              answers,
+                              'mock.useMockedParentalRelation',
+                            ) === ParentalRelations.secondary
+
+                          return (
+                            useMockData && useApplication && isSecondaryParent
+                          )
+                        },
+                        options: [
+                          {
+                            value: YES,
+                            label:
+                              parentalLeaveFormMessages.shared.yesOptionLabel,
+                          },
+                          {
+                            value: NO,
+                            label:
+                              parentalLeaveFormMessages.shared.noOptionLabel,
+                          },
+                        ],
+                      }),
                       buildTextField({
                         id: 'mock.useMockedApplicationId',
                         title:
@@ -167,6 +202,9 @@ export const PrerequisitesForm: Form = buildForm({
                               answers,
                               'mock.useMockedApplication',
                             ) === NO
+                          const useNoPrimaryParent =
+                            getValueViaPath(answers, 'mock.noPrimaryParent') ===
+                            NO
                           const isPrimaryParent =
                             getValueViaPath(
                               answers,
@@ -175,7 +213,9 @@ export const PrerequisitesForm: Form = buildForm({
 
                           return (
                             useMockData &&
-                            ((!isPrimaryParent && useApplication) ||
+                            ((!isPrimaryParent &&
+                              useApplication &&
+                              useNoPrimaryParent) ||
                               isPrimaryParent)
                           )
                         },
@@ -216,6 +256,9 @@ export const PrerequisitesForm: Form = buildForm({
                               answers,
                               'mock.useMockedApplication',
                             ) === NO
+                          const useNoPrimaryParent =
+                            getValueViaPath(answers, 'mock.noPrimaryParent') ===
+                            NO
                           const isSecondaryParent =
                             getValueViaPath(
                               answers,
@@ -223,7 +266,10 @@ export const PrerequisitesForm: Form = buildForm({
                             ) === ParentalRelations.secondary
 
                           return (
-                            useMockData && useApplication && isSecondaryParent
+                            useMockData &&
+                            useApplication &&
+                            useNoPrimaryParent &&
+                            isSecondaryParent
                           )
                         },
                       }),
@@ -242,6 +288,9 @@ export const PrerequisitesForm: Form = buildForm({
                               answers,
                               'mock.useMockedApplication',
                             ) === NO
+                          const useNoPrimaryParent =
+                            getValueViaPath(answers, 'mock.noPrimaryParent') ===
+                            NO
                           const isSecondaryParent =
                             getValueViaPath(
                               answers,
@@ -249,7 +298,10 @@ export const PrerequisitesForm: Form = buildForm({
                             ) === ParentalRelations.secondary
 
                           return (
-                            useMockData && useApplication && isSecondaryParent
+                            useMockData &&
+                            useApplication &&
+                            useNoPrimaryParent &&
+                            isSecondaryParent
                           )
                         },
                       }),
@@ -298,7 +350,7 @@ export const PrerequisitesForm: Form = buildForm({
                       .userProfileInformationSubTitle,
                 }),
                 buildDataProviderItem({
-                  provider: NationalRegistryUserApi,
+                  provider: GetPersonInformation,
                   title:
                     parentalLeaveFormMessages.shared.familyInformationTitle,
                   subTitle:
@@ -322,6 +374,95 @@ export const PrerequisitesForm: Form = buildForm({
                     parentalLeaveFormMessages.shared.salaryInformationSubTitle,
                 }),
               ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'noPrimaryParent',
+          title: parentalLeaveFormMessages.shared.noPrimaryParentTitle,
+          condition: (_, externalData) => {
+            const { children } = getApplicationExternalData(externalData)
+            return children.length === 0 // if no children found we want to ask these questions
+          },
+          children: [
+            buildMultiField({
+              id: 'noPrimaryParent',
+              title: parentalLeaveFormMessages.shared.noPrimaryParentTitle,
+              children: [
+                buildRadioField({
+                  id: 'noPrimaryParent.questionOne',
+                  title:
+                    parentalLeaveFormMessages.shared.noPrimaryParentQuestionOne,
+                  options: [
+                    { value: YES, label: 'Já' },
+                    { value: NO, label: 'Nei' },
+                  ],
+                  width: 'half',
+                  largeButtons: true,
+                }),
+                buildRadioField({
+                  id: 'noPrimaryParent.questionTwo',
+                  title:
+                    parentalLeaveFormMessages.shared.noPrimaryParentQuestionTwo,
+                  options: [
+                    { value: YES, label: 'Já' },
+                    { value: NO, label: 'Nei' },
+                  ],
+                  width: 'half',
+                  largeButtons: true,
+                }),
+                buildRadioField({
+                  id: 'noPrimaryParent.questionThree',
+                  title:
+                    parentalLeaveFormMessages.shared
+                      .noPrimaryParentQuestionThree,
+                  options: [
+                    { value: YES, label: 'Já' },
+                    { value: NO, label: 'Nei' },
+                  ],
+                  width: 'half',
+                  largeButtons: true,
+                }),
+                buildDateField({
+                  id: 'noPrimaryParent.birthDate',
+                  condition: (answers) => isParentWithoutBirthParent(answers),
+                  title:
+                    parentalLeaveFormMessages.shared
+                      .noPrimaryParentDatePickerTitle,
+                  description: '',
+                  placeholder: parentalLeaveFormMessages.startDate.placeholder,
+                }),
+                buildCustomField({
+                  id: 'noPrimaryParent.alertMessage',
+                  title: errorMessages.noChildData,
+                  component: 'FieldAlertMessage',
+                  description: parentalLeaveFormMessages.shared.childrenError,
+                  doesNotRequireAnswer: true,
+                  condition: (answers) =>
+                    isNotEligibleForParentWithoutBirthParent(answers),
+                }),
+                buildSubmitField({
+                  id: 'toDraft',
+                  title: parentalLeaveFormMessages.confirmation.title,
+                  refetchApplicationAfterSubmit: true,
+                  actions: [
+                    {
+                      event: 'SUBMIT',
+                      name: parentalLeaveFormMessages.selectChild.choose,
+                      type: ParentalRelations.primary,
+                      condition: (answers) =>
+                        isParentWithoutBirthParent(answers),
+                    },
+                  ],
+                }),
+              ],
+            }),
+            // Has to be here so that the submit button appears (does not appear if no screen is left).
+            // Tackle that as AS task.
+            buildDescriptionField({
+              id: 'unused',
+              title: '',
+              description: '',
             }),
           ],
         }),

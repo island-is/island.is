@@ -12,6 +12,7 @@ import { generateOutputOne } from './processing/rendering-pipeline'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
+  redisHost: 'b',
   domain: 'staging01.devland.is',
   type: 'staging',
   featuresOn: [],
@@ -28,7 +29,7 @@ describe('Egress', () => {
   const sut = service('api').env({
     A: ref((h) => h.svc('http://visir.is')),
   })
-  const runtime = new Kubernetes(Staging)
+  const runtime = new Kubernetes(Staging, 'with-mocks')
   let serviceDef: SerializeSuccess<HelmService>
   let render: HelmValueFile
   beforeEach(async () => {

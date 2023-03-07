@@ -5,16 +5,17 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
+  completedCaseStates,
   hasCaseBeenAppealed,
   indictmentCases,
   InstitutionType,
   investigationCases,
-  isCourtRole,
-  isExtendedCourtRole,
   isIndictmentCase,
-  isProsecutionRole,
   restrictionCases,
   UserRole,
+  isExtendedCourtRole,
+  isProsecutionRole,
+  isCourtRole,
 } from '@island.is/judicial-system/types'
 import type { User, Case as TCase } from '@island.is/judicial-system/types'
 
@@ -40,7 +41,10 @@ function getAllowedStates(
   }
 
   if (institutionType === InstitutionType.COURT) {
-    if (role === UserRole.ASSISTANT || isIndictmentCase(caseType)) {
+    if (
+      role === UserRole.ASSISTANT ||
+      (caseType && isIndictmentCase(caseType))
+    ) {
       return [
         CaseState.SUBMITTED,
         CaseState.RECEIVED,
@@ -90,8 +94,8 @@ function courtMustMatchUserInstitution(role: UserRole): boolean {
 function isStateHiddenFromRole(
   state: CaseState,
   role: UserRole,
+  caseType: CaseType,
   institutionType?: InstitutionType,
-  caseType?: CaseType,
 ): boolean {
   return getBlockedStates(role, institutionType, caseType).includes(state)
 }
@@ -196,16 +200,14 @@ function isHightenedSecurityCaseHiddenFromUser(
   )
 }
 
+const lifetime = literal('current_date - 90')
+const indictmentLifetime = literal('current_date - 180')
+
 export const oldFilter = {
   [Op.or]: [
     {
       [Op.and]: [
-        { state: [CaseState.REJECTED, CaseState.DISMISSED] },
-        { ruling_date: { [Op.lt]: literal('current_date - 90') } },
-      ],
-    },
-    {
-      [Op.and]: [
+        { type: [...restrictionCases, ...investigationCases] },
         {
           state: [
             CaseState.NEW,
@@ -214,21 +216,35 @@ export const oldFilter = {
             CaseState.RECEIVED,
           ],
         },
-        { created: { [Op.lt]: literal('current_date - 90') } },
+        { created: { [Op.lt]: lifetime } },
+      ],
+    },
+    {
+      [Op.and]: [
+        { type: restrictionCases },
+        { state: [CaseState.REJECTED, CaseState.DISMISSED] },
+        { ruling_date: { [Op.lt]: lifetime } },
       ],
     },
     {
       [Op.and]: [
         { type: restrictionCases },
         { state: CaseState.ACCEPTED },
-        { valid_to_date: { [Op.lt]: literal('current_date - 90') } },
+        { valid_to_date: { [Op.lt]: lifetime } },
       ],
     },
     {
       [Op.and]: [
-        { [Op.not]: { type: restrictionCases } },
-        { state: CaseState.ACCEPTED },
-        { ruling_date: { [Op.lt]: literal('current_date - 90') } },
+        { type: investigationCases },
+        { state: completedCaseStates },
+        { ruling_date: { [Op.lt]: lifetime } },
+      ],
+    },
+    {
+      [Op.and]: [
+        { type: indictmentCases },
+        { state: completedCaseStates },
+        { ruling_date: { [Op.lt]: indictmentLifetime } },
       ],
     },
   ],
@@ -243,8 +259,8 @@ export function isCaseBlockedFromUser(
     isStateHiddenFromRole(
       theCase.state,
       user.role,
-      user.institution?.type,
       theCase.type,
+      user.institution?.type,
     ) ||
     isTypeHiddenFromRole(
       theCase.type,

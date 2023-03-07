@@ -84,22 +84,8 @@ describe('CaseController - Get court record signature confirmation', () => {
     beforeEach(() => {
       const mockPutObject = mockAwsS3Service.putObject as jest.Mock
       mockPutObject.mockResolvedValueOnce(Promise.resolve())
-    })
-
-    describe('database update', () => {
-      beforeEach(async () => {
-        await givenWhenThen(caseId, user, theCase, documentToken)
-      })
-
-      it('should set the court record signatory and signature date', () => {
-        expect(mockCaseModel.update).toHaveBeenCalledWith(
-          {
-            courtRecordSignatoryId: userId,
-            courtRecordSignatureDate: expect.any(Date),
-          },
-          { where: { id: caseId }, transaction },
-        )
-      })
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(theCase)
     })
 
     describe('successful completion', () => {
@@ -110,6 +96,16 @@ describe('CaseController - Get court record signature confirmation', () => {
         mockUpdate.mockResolvedValueOnce([1, [theCase]])
 
         then = await givenWhenThen(caseId, user, theCase, documentToken)
+      })
+
+      it('should set the court record signatory and signature date', () => {
+        expect(mockCaseModel.update).toHaveBeenCalledWith(
+          {
+            courtRecordSignatoryId: userId,
+            courtRecordSignatureDate: expect.any(Date),
+          },
+          { where: { id: caseId }, transaction },
+        )
       })
 
       it('should return success', () => {

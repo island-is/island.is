@@ -28,12 +28,29 @@ import {
 import { Screen } from '../../../types'
 import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { OrganizationWrapper, Webreader } from '@island.is/web/components'
+import {
+  OrganizationWrapper,
+  SyslumennListCsvExport,
+  Webreader,
+} from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { SliceType } from '@island.is/island-ui/contentful'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useRouter } from 'next/router'
 import { webRichText } from '@island.is/web/utils/richText'
+
+const PAGE_SIZE = 10
+const CSV_COLUMN_SEPARATOR = ','
+const CSV_ROW_SEPARATOR = '\n'
+
+const csvColumnSeparatorSafeValue = (value: string): string => {
+  /**
+   * Note:
+   *    This handles the case if the value it self contains the CSV column separator character.
+   *    E.g. in many cases, the address field contains ','.
+   */
+  return value?.includes(CSV_COLUMN_SEPARATOR) ? `"${value}"` : value
+}
 
 interface HomestayProps {
   organizationPage: Query['getOrganizationPage']
@@ -53,7 +70,6 @@ const Homestay: Screen<HomestayProps> = ({
     false,
   )
   useContentfulId(organizationPage.id, subpage.id)
-
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
@@ -76,10 +92,51 @@ const Homestay: Screen<HomestayProps> = ({
     }),
   )
 
-  const [showCount, setShowCount] = useState(10)
+  const [showCount, setShowCount] = useState(PAGE_SIZE)
   const [query, _setQuery] = useState(' ')
 
   const setQuery = (query: string) => _setQuery(query.toLowerCase())
+
+  const csvStringProvider = () => {
+    return new Promise<string>((resolve, reject) => {
+      if (homestays) {
+        // CSV Header row
+        const headerRow = [
+          'Skráningarnúmer',
+          'Heiti heimagistingar',
+          'Heimilisfang',
+          'Íbúðanúmer',
+          'Sveitarfélag',
+          'Fastanúmer',
+          'Ábyrgðarmaður',
+          'Umsóknarár',
+          'Fjöldi gesta',
+          'Fjöldi herbergja',
+        ].join(CSV_COLUMN_SEPARATOR)
+        const rows = [headerRow]
+
+        // CSV Value rows
+        for (const homestay of homestays) {
+          const columnValues = [
+            homestay.registrationNumber,
+            homestay.name,
+            homestay.address,
+            homestay.apartmentId,
+            homestay.city,
+            homestay.propertyId,
+            homestay.manager,
+            homestay.year?.toString(),
+            homestay.guests?.toString(),
+            homestay.rooms?.toString(),
+          ].map((x) => csvColumnSeparatorSafeValue(x))
+          rows.push(columnValues.join(CSV_COLUMN_SEPARATOR))
+        }
+
+        return resolve(rows.join(CSV_ROW_SEPARATOR))
+      }
+      reject('Homestay data has not been loaded.')
+    })
+  }
 
   useEffect(() => {
     setQuery('')
@@ -124,17 +181,10 @@ const Homestay: Screen<HomestayProps> = ({
         )}
       </Box>
       {webRichText(subpage.description as SliceType[])}
-      <Box
-        background="blue100"
-        borderRadius="large"
-        paddingX={4}
-        paddingY={3}
-        marginTop={4}
-        marginBottom={4}
-      >
+      <Box marginTop={4} marginBottom={6}>
         <Input
           name="homestaySearchInput"
-          placeholder={n('filterSearch', 'Leita')}
+          placeholder={n('homestayFilterSearch', 'Leita')}
           backgroundColor={['blue', 'blue', 'white']}
           size="sm"
           icon="search"
@@ -142,7 +192,35 @@ const Homestay: Screen<HomestayProps> = ({
           value={query}
           onChange={(event) => setQuery(event.target.value)}
         />
+        <Box textAlign="right" marginRight={1} marginTop={1}>
+          <SyslumennListCsvExport
+            defaultLabel={n(
+              'homestayCSVButtonLabelDefault',
+              'Sækja allar skráningar (CSV)',
+            )}
+            loadingLabel={n(
+              'homestayCSVButtonLabelLoading',
+              'Sæki allar skráningar...',
+            )}
+            errorLabel={n(
+              'homestayCSVButtonLabelError',
+              'Ekki tókst að sækja skráningar, reyndu aftur',
+            )}
+            csvFilenamePrefix={n(
+              'homestayCSVFileTitlePrefix',
+              'Heimagistingar',
+            )}
+            csvStringProvider={csvStringProvider}
+          />
+        </Box>
       </Box>
+      {filteredItems.length === 0 && (
+        <Box display="flex" marginTop={4} justifyContent="center">
+          <Text variant="h3">
+            {n('homestayNoSearchResults', 'Engar heimagistingar fundust.')}
+          </Text>
+        </Box>
+      )}
       {filteredItems.slice(0, showCount).map((homestay, index) => {
         return (
           <Box
@@ -193,7 +271,7 @@ const Homestay: Screen<HomestayProps> = ({
         textAlign="center"
       >
         {showCount < filteredItems.length && (
-          <Button onClick={() => setShowCount(showCount + 10)}>
+          <Button onClick={() => setShowCount(showCount + PAGE_SIZE)}>
             {n('seeMore', 'Sjá meira')} ({filteredItems.length - showCount})
           </Button>
         )}
