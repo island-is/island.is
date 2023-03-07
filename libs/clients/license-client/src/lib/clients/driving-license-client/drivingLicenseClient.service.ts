@@ -39,7 +39,6 @@ const dateToPkpassDate = (date: string): string => {
     return ''
   }
 }
-
 @Injectable()
 export class DrivingLicenseClient implements LicenseClient<DrivingLicenseDto> {
   private readonly xroadApiUrl: string
