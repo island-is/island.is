@@ -25,6 +25,7 @@ import {
 
 import { ApiActions } from '../dataProviders/apiActions.enum'
 import { States } from './types'
+import { canApply } from './helpers/applicantHelper'
 import { dataSchema } from './dataSchema'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 
@@ -89,9 +90,16 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.DECLINED,
-          },
+          [DefaultEvents.SUBMIT]: [
+            {
+              cond: canApply(true),
+              target: States.PLASTIC,
+            },
+            {
+              cond: canApply(false),
+              target: States.DECLINED,
+            },
+          ],
         },
       },
 

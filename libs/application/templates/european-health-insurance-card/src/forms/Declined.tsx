@@ -42,16 +42,14 @@ import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/mess
 export interface EuropeanHealthInsuranceCardProps { }
 
 export const Declined: Form = buildForm({
-  id: 'Denied',
+  id: 'Declined',
   title: '',
   mode: FormModes.REJECTED,
   children: [
     buildDescriptionField({
-      id: 'sportsClubInfo.descriptionField',
-      description: "sportsClubInfo.labels.subDescription",
-      space: 'containerGutter',
-      titleVariant: 'h5',
-      title: "sportsClubInfo.labels.descriptionField",
+      id: 'noInsurance',
+      title: e.no.sectionLabel,
+      description: e.no.sectionDescription,
     }),
 
   ],

@@ -22,6 +22,7 @@ export interface NationalRegistry {
   data: any
 }
 
+
 export enum States {
   PREREQUISITES = 'prerequisites',
   PLASTIC = 'plastic',
