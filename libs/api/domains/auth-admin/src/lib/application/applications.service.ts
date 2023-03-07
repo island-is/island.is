@@ -4,10 +4,10 @@ import { Environment } from '../models/environment'
 
 @Injectable()
 export class ApplicationsService {
-  getApplications(input: { tenantId: string }) {
+  getApplications(tenantId: string) {
     const resp = getMockData()
     resp.data = resp.data.filter((x) => {
-      return x.tenantId === input.tenantId
+      return x.tenantId === tenantId
     })
     return resp
   }

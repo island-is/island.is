@@ -46,13 +46,14 @@ const Applications = () => {
           application.applicationId.toLowerCase().includes(value.toLowerCase())
         )
       })
+
       setApplications(filteredList)
     } else {
       setApplications(originalApplications)
     }
   }
 
-  const getHeader = ({ withCreateButton = true }) => {
+  const getHeader = (withCreateButton = true) => {
     return (
       <GridRow rowGap={3} marginBottom={'containerGutter'}>
         <Box
@@ -80,39 +81,39 @@ const Applications = () => {
 
   return applications.length === 0 ? (
     <GridContainer>
-      {getHeader({ withCreateButton: false })}
+      {getHeader(false)}
       <GridRow>
         <Box
-          display={'flex'}
-          flexDirection={'column'}
-          border={'standard'}
-          borderRadius={'large'}
-          justifyContent={'center'}
-          alignItems={'center'}
+          width="full"
+          display="flex"
+          flexDirection="column"
+          border="standard"
+          borderRadius="large"
+          justifyContent="center"
+          alignItems="center"
           padding={10}
         >
-          <Text variant={'h3'}>No application created</Text>
-          <Text paddingTop={'gutter'}>
-            Lorem ipsum dolor sit amet consectetur. A non ut nulla vitae mauris
-            accumsan at tellus facilisi.
+          <Text variant="h3">{formatMessage(m.noApplications)}</Text>
+          <Text paddingTop="gutter">
+            {formatMessage(m.noApplicationsDescription)}
           </Text>
           <Box marginTop={6}>
-            <Button size={'small'}>Create Application</Button>
+            <Button size="small">{formatMessage(m.createApplication)}</Button>
           </Box>
-          <Box marginTop={'gutter'}>
-            <Button variant={'text'}>Learn more</Button>
+          <Box marginTop="gutter">
+            <Button variant={'text'}>{formatMessage(m.learnMore)}</Button>
           </Box>
         </Box>
       </GridRow>
     </GridContainer>
   ) : (
     <GridContainer className={styles.relative}>
-      {getHeader({})}
-      <Box paddingTop={'gutter'}>
+      {getHeader()}
+      <Box paddingTop="gutter">
         <Stack space={[1, 1, 2, 2]}>
           <GridRow>
             <Filter
-              variant={'popover'}
+              variant="popover"
               align="left"
               reverse
               labelClear={formatMessage(m.clearFilter)}
@@ -148,22 +149,22 @@ const Applications = () => {
               >
                 <Box
                   className={styles.linkContainer}
-                  borderRadius={'large'}
-                  border={'standard'}
-                  width={'full'}
+                  borderRadius="large"
+                  border="standard"
+                  width="full"
                   paddingX={4}
                   paddingY={3}
                 >
                   <GridRow className={styles.fill}>
                     <Box
-                      display={'flex'}
-                      justifyContent={'spaceBetween'}
-                      width={'full'}
-                      marginBottom={'gutter'}
+                      display="flex"
+                      justifyContent="spaceBetween"
+                      width="full"
+                      marginBottom="gutter"
                     >
                       <Box
-                        display={'flex'}
-                        alignItems={'flexStart'}
+                        display="flex"
+                        alignItems="flexStart"
                         flexDirection={[
                           'column',
                           'column',
@@ -179,8 +180,8 @@ const Applications = () => {
                         </Box>
                       </Box>
                       <Box
-                        display={'flex'}
-                        alignItems={'flexEnd'}
+                        display="flex"
+                        alignItems="flexEnd"
                         flexDirection={[
                           'column',
                           'column',
@@ -201,30 +202,28 @@ const Applications = () => {
                   </GridRow>
                   <GridRow className={styles.fill}>
                     <Box
-                      display={'flex'}
-                      alignItems={'center'}
-                      justifyContent={'spaceBetween'}
-                      width={'full'}
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="spaceBetween"
+                      width="full"
                     >
                       <Box>
-                        <Text variant={'h3'}>
+                        <Text variant="h3">
                           {item.defaultEnvironment.displayName[0].value}
                         </Text>
-                        <Text variant={'default'}>
+                        <Text variant="default">
                           {item.defaultEnvironment.name}
                         </Text>
                       </Box>
                       <Button
                         title={formatMessage(m.change)}
-                        icon={'pencil'}
-                        variant={'utility'}
+                        icon="pencil"
+                        variant="utility"
                         onClick={(e) => {
                           e.preventDefault()
                         }}
                       >
-                        <Text variant={'eyebrow'}>
-                          {formatMessage(m.change)}
-                        </Text>
+                        <Text variant="eyebrow">{formatMessage(m.change)}</Text>
                       </Button>
                     </Box>
                   </GridRow>

@@ -14,10 +14,8 @@ export class ApplicationResolver {
   constructor(private readonly applicationsService: ApplicationsService) {}
 
   @Query(() => ApplicationsPayload, { name: 'authAdminApplications' })
-  getApplications(@Args('input') input: ApplicationsInput) {
-    return this.applicationsService.getApplications({
-      tenantId: input.tenantId,
-    })
+  getApplications(@Args('tenantId') tenantId: string) {
+    return this.applicationsService.getApplications(tenantId)
   }
 
   @ResolveField('defaultEnvironment', () => ApplicationEnvironment)
