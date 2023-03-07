@@ -484,13 +484,14 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         </Box>
       </Box>
 
-      {renderApplicationData && status === 'draft'
-        ? renderDraftStatusBar
-          ? renderDraftProgressMeter()
-          : renderProgressMeter()
-        : renderApplicationData && history?.items && history.items.length > 0
-        ? renderHistory()
-        : renderProgressMeter()}
+      {renderApplicationData &&
+        (status === 'draft'
+          ? renderDraftStatusBar
+            ? renderDraftProgressMeter()
+            : renderProgressMeter()
+          : history?.items && history.items.length > 0
+          ? renderHistory()
+          : renderProgressMeter())}
     </Box>
   )
 }
