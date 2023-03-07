@@ -10,6 +10,11 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
       passwordSecret: '/k8s/services-auth/api/DB_PASSWORD',
     })
     .env({
+      IDENTITY_SERVER_ISSUER_URL: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
       IDENTITY_SERVER_ISSUER_URL_LIST: {
         dev: json([
           'https://identity-server.dev01.devland.is',
