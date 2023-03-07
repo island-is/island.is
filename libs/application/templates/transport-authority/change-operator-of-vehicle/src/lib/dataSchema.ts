@@ -1,7 +1,10 @@
 import { z } from 'zod'
+import * as kennitala from 'kennitala'
 
 export const UserInformationSchema = z.object({
-  nationalId: z.string().min(1),
+  nationalId: z
+    .string()
+    .refine((x) => x && x.length !== 0 && kennitala.isValid(x)),
   name: z.string().min(1),
   email: z.string().min(1),
   phone: z.string().min(1),
@@ -9,7 +12,9 @@ export const UserInformationSchema = z.object({
 })
 
 export const OperatorInformationSchema = z.object({
-  nationalId: z.string().min(1),
+  nationalId: z
+    .string()
+    .refine((x) => x && x.length !== 0 && kennitala.isValid(x)),
   name: z.string().min(1),
   email: z.string().min(1),
   phone: z.string().min(1),
@@ -18,7 +23,9 @@ export const OperatorInformationSchema = z.object({
 })
 
 export const OldOperatorInformationSchema = z.object({
-  nationalId: z.string().min(1),
+  nationalId: z
+    .string()
+    .refine((x) => x && x.length !== 0 && kennitala.isValid(x)),
   name: z.string().min(1),
   wasRemoved: z.string().optional(),
   startDate: z.string().optional(),
