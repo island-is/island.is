@@ -24,8 +24,9 @@ export const TherapiesTabContent: FC<Props> = ({ data }) => {
   }
 
   if (!data || data.length === 0) return <Box />
-  const from = data[0].periods?.find((x) => x.from !== null)?.from ?? ''
-  const to = data[0].periods?.find((x) => x.to !== null)?.to ?? ''
+  const content = data[0]
+  const from = content.periods?.find((x) => x.from !== null)?.from ?? ''
+  const to = content.periods?.find((x) => x.to !== null)?.to ?? ''
   const timePeriod = [formatDate(from), formatDate(to)]
     .filter(Boolean)
     .join(' - ')
@@ -38,13 +39,26 @@ export const TherapiesTabContent: FC<Props> = ({ data }) => {
           content={timePeriod}
         />
         <Divider />
-        <UserInfoLine label={formatMessage(messages.status)} />
+        <UserInfoLine
+          label={formatMessage(messages.status)}
+          content={content.state?.display}
+        />
         <Divider />
 
-        <UserInfoLine label={formatMessage(messages.usedTherapySessions)} />
+        <UserInfoLine
+          label={formatMessage(messages.usedTherapySessions)}
+          content={content.periods
+            ?.find((x) => x.sessions.used)
+            ?.sessions.used.toString()}
+        />
         <Divider />
 
-        <UserInfoLine label={formatMessage(messages.totalTherapySessions)} />
+        <UserInfoLine
+          label={formatMessage(messages.totalTherapySessions)}
+          content={content.periods
+            ?.find((x) => x.sessions.available)
+            ?.sessions.available.toString()}
+        />
         <Divider />
       </Stack>
     </Box>

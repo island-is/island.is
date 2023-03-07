@@ -1,7 +1,14 @@
 import React from 'react'
 import { gql, useQuery } from '@apollo/client'
 import { Query, Therapies as TherapiesType } from '@island.is/api/schema'
-import { Box, SkeletonLoader, Tabs, TabType } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  SkeletonLoader,
+  Tabs,
+  TabType,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyState,
@@ -41,6 +48,8 @@ const Therapies = () => {
   const { loading, error, data } = useQuery<Query>(GetTherapies)
 
   const therapiesData = data?.getRightsPortalTherapies ?? []
+
+  // Almenn sjúkraþjálfun, sjúkraþjálfun vegna slyss og heimaþjálfun = setja saman í eitt array, sem fer svo í dropdown í TabsContent
 
   const physicalTherapyData = therapiesData.filter(
     (x: TherapiesType) => x.id === 'physio',
@@ -120,6 +129,37 @@ const Therapies = () => {
           />
         </Box>
       )}
+
+      <Box paddingTop={4}>
+        <Text variant="small" paddingBottom={2}>
+          {formatMessage(messages.therapyDisclaimer1)}
+        </Text>
+        <Text variant="small" paddingBottom={2}>
+          {formatMessage(messages.therapyDisclaimer2, {
+            link: (str) => (
+              <a href="" target="_blank" rel="noreferrer">
+                <Button size="small" variant="text">
+                  {str}
+                </Button>
+              </a>
+            ),
+          })}
+        </Text>
+        <Text variant="small" paddingBottom={2}>
+          {formatMessage(messages.therapyDisclaimer3)}
+        </Text>
+        <Text variant="small">
+          {formatMessage(messages.therapyDisclaimer4, {
+            link: (str) => (
+              <a href="" target="_blank" rel="noreferrer">
+                <Button size="small" variant="text">
+                  {str}
+                </Button>
+              </a>
+            ),
+          })}
+        </Text>
+      </Box>
     </Box>
   )
 }
