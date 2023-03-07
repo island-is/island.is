@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 
-import { Environment } from '../models/environment'
+import { Environment } from '@island.is/shared/types'
 
 @Injectable()
 export class ApplicationsService {
@@ -23,7 +23,7 @@ const getMockData = () => {
         environments: [
           {
             name: '@island.is/web',
-            environment: Environment.Dev,
+            environment: Environment.Development,
             displayName: [
               {
                 locale: 'is',
@@ -52,7 +52,7 @@ const getMockData = () => {
         environments: [
           {
             name: '@island.is/auth-admin-web',
-            environment: Environment.Dev,
+            environment: Environment.Development,
             displayName: [
               {
                 locale: 'is',
@@ -92,7 +92,7 @@ const getMockData = () => {
         environments: [
           {
             name: '@island.is/auth',
-            environment: Environment.Dev,
+            environment: Environment.Development,
             displayName: [
               {
                 locale: 'is',

@@ -48,6 +48,8 @@ import {
   workerSetup as sessionsWorkerSetup,
 } from '../../../apps/services/sessions/infra/sessions'
 
+import { serviceSetup as authAdminApiSetup } from '../../../apps/services/auth/admin-api/infra/auth-admin-api'
+
 import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
 
@@ -72,6 +74,8 @@ const adsWeb = adsWebSetup({ adsApi })
 const sessionsService = sessionsServiceSetup()
 const sessionsWorker = sessionsWorkerSetup()
 
+const authAdminApi = authAdminApiSetup()
+
 const api = apiSetup({
   appSystemApi,
   servicePortalApi,
@@ -80,6 +84,7 @@ const api = apiSetup({
   servicesEndorsementApi: endorsement,
   airDiscountSchemeBackend: adsBackend,
   sessionsApi: sessionsService,
+  authAdminApi,
 })
 const servicePortal = servicePortalSetup({ graphql: api })
 const appSystemForm = appSystemFormSetup({ api: api })
