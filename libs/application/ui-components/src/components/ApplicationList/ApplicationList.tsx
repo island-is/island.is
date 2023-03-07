@@ -270,6 +270,7 @@ const ApplicationList = ({
                   icon: undefined,
                   onClick: () => onClick(`${slug}/${application.id}`),
                 }}
+                renderApplicationData={true}
                 progressMeter={
                   showHistory
                     ? undefined
