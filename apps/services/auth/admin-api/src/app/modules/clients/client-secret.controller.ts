@@ -28,7 +28,7 @@ const namespace = `${environment.audit.defaultNamespace}/client-secret`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiExcludeController()
-@Controller({ path: 'backend/client-secret', version: [VERSION_NEUTRAL, '1'] })
+@Controller({ path: 'client-secret', version: [VERSION_NEUTRAL, '1'] })
 @Audit({ namespace })
 export class ClientSecretController {
   constructor(

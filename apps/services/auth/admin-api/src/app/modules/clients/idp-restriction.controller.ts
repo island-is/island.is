@@ -37,7 +37,7 @@ const namespace = `${environment.audit.defaultNamespace}/idp-restriction`
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiExcludeController()
 @Controller({
-  path: 'backend/idp-restriction',
+  path: 'idp-restriction',
   version: [VERSION_NEUTRAL, '1'],
 })
 @Audit({ namespace })
