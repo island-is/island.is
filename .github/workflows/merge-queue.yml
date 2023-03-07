@@ -9,7 +9,7 @@ defaults:
     shell: bash
 
 jobs:
-  build:
+  test-merge-queues:
     name: Echo README
     runs-on: ec2-runners
     steps:
