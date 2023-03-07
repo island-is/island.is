@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
-import { Environment } from '../../models/environment'
+import { Environment } from '@island.is/shared/types'
+
 import { TranslatedValue } from '../../models/translated-value.model'
 
 @ObjectType('AuthAdminApplicationEnvironment')
