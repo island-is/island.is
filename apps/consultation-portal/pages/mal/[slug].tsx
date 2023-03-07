@@ -7,8 +7,8 @@ import CaseScreen from '../../screens/Case/Case'
 import {
   ConsultationPortalCaseByIdQuery,
   ConsultationPortalCaseByIdDocument,
-} from '../../screens/Case/getCase.generated'
-import { GET_CASE_BY_ID } from '../../screens/Case/getCase'
+} from '../../screens/Case/getCase.graphql.generated'
+import { GET_CASE_BY_ID } from '../../screens/Case/getCase.graphql'
 import { Advice, Case } from '../../types/viewModels'
 interface CaseProps {
   case: Case
