@@ -1,3 +1,9 @@
+import {
+  ArrayField,
+  Controller,
+  useFormContext,
+  useWatch,
+} from 'react-hook-form'
 import { useEffect } from 'react'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
@@ -13,6 +19,7 @@ import {
   GridRow,
   Button,
   Text,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import * as styles from '../styles.css'
 import { useLazyQuery } from '@apollo/client'
@@ -28,7 +35,7 @@ import {
   FieldComponents,
   FieldTypes,
 } from '@island.is/application/types'
-import { EstateMemberField } from '../../types'
+import { EstateMember } from '../../types'
 
 export const AdditionalEstateMember = ({
   application,
@@ -40,7 +47,7 @@ export const AdditionalEstateMember = ({
   error,
 }: {
   application: Application
-  field: EstateMemberField
+  field: Partial<ArrayField<EstateMember, 'id'>>
   index: number
   remove: (index?: number | number[] | undefined) => void
   fieldName: string
@@ -64,6 +71,16 @@ export const AdditionalEstateMember = ({
     defaultValue: hasYes(field.foreignCitizenship) ? [YES] : '',
   })
 
+  // If hair is under 18, we need to ask for advocate
+  const [heirUnder18, setHeirUnder18] = useState(false)
+  const advocateNameField = `${fieldIndex}.advocateName`
+  const advocateNationalIdField = `${fieldIndex}.advocateNationalId`
+  const advocateNationalIdInput = useWatch({
+    name: advocateNationalIdField,
+    defaultValue: '',
+  })
+  const advocateName = useWatch({ name: advocateNameField, defaultValue: '' })
+
   const { control, setValue } = useFormContext()
 
   const [
@@ -75,9 +92,19 @@ export const AdditionalEstateMember = ({
     },
     fetchPolicy: 'network-only',
   })
+  const [
+    getAdvocateIdentity,
+    { loading: advocateQueryLoading, error: advocateQueryError },
+  ] = useLazyQuery<Query, { input: IdentityInput }>(IDENTITY_QUERY, {
+    onCompleted: (data) => {
+      setValue(advocateNameField, data.identity?.name ?? '')
+    },
+    fetchPolicy: 'network-only',
+  })
 
   useEffect(() => {
     if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
+      setHeirUnder18(kennitala.info(nationalIdInput).age < 18)
       getIdentity({
         variables: {
           input: {
@@ -91,7 +118,34 @@ export const AdditionalEstateMember = ({
     ) {
       setValue(nameField, '')
     }
-  }, [getIdentity, name, nameField, nationalIdInput, setValue])
+  }, [
+    getIdentity,
+    name,
+    nameField,
+    nationalIdInput,
+    setValue,
+    foreignCitizenship,
+  ])
+
+  // Advocate
+  useEffect(() => {
+    if (advocateNationalIdInput.length === 10) {
+      console.log(advocateNationalIdInput, 'hæ')
+      getAdvocateIdentity({
+        variables: {
+          input: {
+            nationalId: advocateNationalIdInput,
+          },
+        },
+      })
+    }
+  }, [
+    getAdvocateIdentity,
+    advocateName,
+    advocateNameField,
+    advocateNationalIdInput,
+    setValue,
+  ])
 
   return (
     <Box position="relative" key={field.id} marginTop={2}>
@@ -233,6 +287,50 @@ export const AdditionalEstateMember = ({
             ]}
           />
         </GridColumn>
+        {heirUnder18 && (
+          <>
+            <GridColumn span="1/1" paddingBottom={2}>
+              <AlertMessage
+                title={formatMessage(m.estateMemberAdvocateWarningTitle)}
+                message={formatMessage(
+                  m.estateMemberAdvocateWarningDescription,
+                )}
+                type="warning"
+              />
+            </GridColumn>
+            <GridColumn span={['1/1', '1/2']} paddingBottom={2} paddingTop={2}>
+              <InputController
+                key={advocateNationalIdField}
+                id={advocateNationalIdField}
+                name={advocateNationalIdField}
+                label={formatMessage(m.inheritanceKtLabel)}
+                defaultValue={(field as any).advocateNationalId || ''}
+                format="######-####"
+                required
+                backgroundColor="blue"
+                loading={advocateQueryLoading}
+                error={advocateQueryError ? formatMessage('error') : undefined}
+              />
+            </GridColumn>
+            <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+              <TextFormField
+                application={application}
+                error={error?.name ?? undefined}
+                showFieldName={true}
+                field={{
+                  ...field,
+                  id: advocateNameField,
+                  title: formatMessage(m.inheritanceNameLabel),
+                  defaultValue: (field as any).advocateName || '',
+                  type: FieldTypes.TEXT,
+                  component: FieldComponents.TEXT,
+                  children: undefined,
+                  readOnly: true,
+                }}
+              />
+            </GridColumn>
+          </>
+        )}
       </GridRow>
     </Box>
   )

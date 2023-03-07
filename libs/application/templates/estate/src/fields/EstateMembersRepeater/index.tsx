@@ -12,9 +12,23 @@ import {
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
 import { EstateRegistrant } from '@island.is/clients/syslumenn'
-import { Answers, EstateMemberField } from '../../types'
+import { Answers, RelationEnum } from '../../types'
 import { AdditionalEstateMember } from './AdditionalEstateMember'
 import { getValueViaPath } from '@island.is/application/core'
+
+export interface EstateMemberWithAdvocate {
+  name: string
+  nationalId: string
+  relation: RelationEnum | string
+  initial?: boolean
+  dateOfBirth?: string
+  custodian?: string
+  foreignCitizenship?: ('yes' | 'no')[]
+  dummy: boolean
+  enabled?: boolean
+  advocateNationalId?: string
+  advocateName?: string
+}
 
 export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
   application,
@@ -45,6 +59,8 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
       initial: false,
       enabled: true,
       name: '',
+      advocateNationalId: '',
+      advocateName: '',
     })
 
   useEffect(() => {
@@ -56,7 +72,7 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
   return (
     <Box marginTop={2} marginBottom={5}>
       <GridRow>
-        {fields.reduce((acc, member: EstateMemberField, index) => {
+        {fields.reduce((acc, member, index) => {
           if (member.nationalId === application.applicant) {
             const relation = getValueViaPath<string>(
               application.answers,
@@ -103,7 +119,7 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
           ]
         }, [] as JSX.Element[])}
       </GridRow>
-      {fields.map((member: EstateMemberField, index) => (
+      {fields.map((member, index) => (
         <Box key={member.id} hidden={member.initial || member?.dummy}>
           <AdditionalEstateMember
             application={application}
