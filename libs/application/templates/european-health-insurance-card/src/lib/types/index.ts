@@ -31,8 +31,7 @@ export enum States {
   REVIEW = 'review',
   SUBMITTED = 'submitted',
   COMPLETED = 'completed',
-  DECLINED = "declined",
-  PAYMENT = "PAYMENT"
+  DECLINED = "declined"
 }
 
 export interface CardInfo {
