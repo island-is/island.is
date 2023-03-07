@@ -18,8 +18,8 @@ const workerPostgresInfo = {
   passwordSecret: '/k8s/services-sessions/DB_PASSWORD',
 }
 
-export const serviceSetup = (): ServiceBuilder<'services-sessions'> => {
-  return service('services-sessions')
+export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
+  service('services-sessions')
     .namespace(namespace)
     .image(imageName)
     .redis()
@@ -61,7 +61,6 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions'> => {
       },
     })
     .grantNamespaces('nginx-ingress-internal', 'islandis', 'identity-server')
-}
 
 export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
   service('services-sessions-worker')
