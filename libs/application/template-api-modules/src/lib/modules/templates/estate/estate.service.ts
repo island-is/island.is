@@ -11,7 +11,6 @@ import {
 } from '@island.is/clients/syslumenn'
 import { infer as zinfer } from 'zod'
 import { estateSchema } from '@island.is/application/templates/estate'
-import cloneDeep from 'lodash/cloneDeep'
 import { estateTransformer, filterAndRemoveRepeaterMetadata } from './utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -29,18 +28,16 @@ export class EstateTemplateService extends BaseTemplateApiService {
   }
 
   stringifyObject(obj: Record<string, unknown>): Record<string, string> {
-    const stringer = cloneDeep(obj)
-
-    Object.keys(stringer).forEach((key) => {
-      if (typeof stringer[key] !== 'object') {
-        stringer[key] = `${stringer[key]}`
-      } else if (typeof stringer[key] === 'object') {
-        this.stringifyObject(stringer[key] as Record<string, unknown>)
+    const result: Record<string, string> = {}
+    for(const key in obj) {
+      if (typeof obj[key] === 'string') {
+        result[key] = obj[key] as string
+      } else {
+        result[key] = JSON.stringify(obj[key])
       }
-    })
+    }
 
-    // Assert from object traversal
-    return stringer as Record<string, string>
+    return result
   }
 
   async syslumennOnEntry({ application, auth }: TemplateApiModuleActionProps) {
