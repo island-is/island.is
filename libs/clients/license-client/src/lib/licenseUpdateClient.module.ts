@@ -12,6 +12,7 @@ import { LicenseUpdateClientService } from './licenseUpdateClient.service'
 import {
   FirearmDigitalLicenseClientConfig,
   FirearmLicenseUpdateClient,
+  FirearmUpdateClientModule,
 } from './clients/firearm-license-client'
 import { AdrDigitalLicenseClientConfig } from './clients/adr-license-client'
 import { MachineDigitalLicenseClientConfig } from './clients/machine-license-client'
@@ -21,10 +22,9 @@ import {
   DisabilityUpdateClientModule,
 } from './clients/disability-license-client'
 import { PassTemplateIdsProvider } from './providers/passTemplateIdsProvider'
-import { FirearmLicenseUpdateClientModule } from '@island.is/clients/firearm-license'
 
 @Module({
-  imports: [FirearmLicenseUpdateClientModule, DisabilityUpdateClientModule],
+  imports: [FirearmUpdateClientModule, DisabilityUpdateClientModule],
   providers: [
     LicenseUpdateClientService,
     PassTemplateIdsProvider,

@@ -1,7 +1,6 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
-import { createPkPassDataInput } from './firearmLicenseMapper'
 import { OpenFirearmApi } from '@island.is/clients/firearm-license'
 import {
   format as formatNationalId,
@@ -14,11 +13,8 @@ import {
   SmartSolutionsApi,
   VerifyPassData,
 } from '@island.is/clients/smartsolutions'
-import {
-  Result,
-  LicenseUpdateClient,
-  ServiceError,
-} from '../../licenseClient.type'
+import { LicenseUpdateClient, Result } from '../../../licenseClient.type'
+import { createPkPassDataInput } from '../firearmLicenseMapper'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'firearmlicense-service'

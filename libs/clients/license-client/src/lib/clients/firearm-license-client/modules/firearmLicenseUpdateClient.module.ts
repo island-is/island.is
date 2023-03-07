@@ -8,4 +8,4 @@ import { SmartSolutionsFirearmModule } from './smartSolutionsFirearm.module'
   providers: [FirearmLicenseUpdateClient],
   exports: [FirearmLicenseUpdateClient],
 })
-export class FirearmClientModule {}
+export class FirearmUpdateClientModule {}
