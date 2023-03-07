@@ -269,6 +269,7 @@ api:
     AIR_DISCOUNT_SCHEME_CLIENT_TIMEOUT: '20000'
     AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: 'loftbru.staging01.devland.is'
     APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
+    AUTH_ADMIN_API_PATHS: '{"development":"https://identity-server.dev01.devland.is/backend","staging":"https://identity-server.staging01.devland.is/backend"}'
     AUTH_DELEGATION_API_URL: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local'
     AUTH_PUBLIC_API_URL: 'https://identity-server.staging01.devland.is/api'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
@@ -2129,7 +2130,7 @@ user-notification-worker:
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_USER_PROFILE_BASEPATH: 'http://web-service-portal-api.service-portal.svc.cluster.local'
-    USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.staging'
+    USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.dev'
   grantNamespaces:
     - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
