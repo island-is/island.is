@@ -2,7 +2,13 @@ mutation CreateApplication($input: CreateAuthAdminApplicationInput!) {
   createAuthAdminApplication(input: $input) {
     applicationId
     applicationType
-    environments
-    displayName
+    environments {
+      displayName {
+        value
+      }
+      environment
+      id
+      name
+    }
   }
 }

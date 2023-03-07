@@ -58,7 +58,16 @@ export class NotificationsController {
     return this.createHnippNotification({
       recipient: body.recipient,
       templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
-      args: [body.organization, body.documentId],
+      args: [
+        {
+          key: 'organization',
+          value: body.organization,
+        },
+        {
+          key: 'documentId',
+          value: body.documentId,
+        },
+      ],
     })
   }
 
@@ -117,6 +126,12 @@ export class NotificationsController {
     return await this.notificationsService.getTemplate(templateId, locale)
   }
 
+  @Documentation({
+    description: 'Creates a new notification and adds to queue',
+    summary: 'Creates a new notification and adds to queue',
+    includeNoContentResponse: true,
+    response: { status: 201, type: CreateNotificationResponse },
+  })
   @Post('/')
   @Version('1')
   async createHnippNotification(
@@ -125,17 +140,27 @@ export class NotificationsController {
     const template = await this.notificationsService.getTemplate(
       body.templateId,
     )
-    // validate
-    this.notificationsService.validateArgCounts(body, template)
-    if (template.args.length != body.args.length) {
+    // check counts
+    if (!this.notificationsService.validateArgCounts(body, template)) {
       throw new BadRequestException(
         "Number of arguments doesn't match - template requires " +
-          template.args?.length +
+          template.args.length +
           ' arguments but ' +
-          body.args?.length +
+          body.args.length +
           ' were provided',
       )
     }
+    // check keys/args/properties
+    for (const arg of body.args) {
+      if (!template.args.includes(arg.key)) {
+        throw new BadRequestException(
+          arg.key +
+            ' is not a valid argument for template: ' +
+            template.templateId,
+        )
+      }
+    }
+
     // add to queue
     const id = await this.queue.add(body)
     this.logger.info('Message queued ... ...', { messageId: id, ...body })

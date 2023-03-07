@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Environment } from '@island.is/shared/types'
+import { ApplicationEnvironment } from './applications-environment.model'
 import { ApplicationType } from '../../models/applicationType'
-import { Environment } from '../../models/environment'
 
 @ObjectType('AuthAdminApplication')
 export class Application {
@@ -10,9 +11,12 @@ export class Application {
   @Field(() => ApplicationType)
   applicationType!: ApplicationType
 
-  @Field(() => [Environment])
-  environments!: Environment[]
+  @Field(() => [ApplicationEnvironment])
+  environments!: ApplicationEnvironment[]
 
-  @Field(() => String)
-  displayName!: string
+  @Field(() => ApplicationEnvironment)
+  defaultEnvironment!: ApplicationEnvironment
+
+  @Field(() => [Environment])
+  availableEnvironments!: Environment[]
 }

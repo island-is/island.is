@@ -44,6 +44,7 @@
 /libs/contentful-extensions/mideind-translation/                                                         @island-is/juni
 /libs/contentful-extensions/parent-slug/                                                                 @island-is/juni
 /libs/clients/driving-license/                                                                           @island-is/juni
+/libs/clients/judicial-administration/                                                                   @island-is/juni
 /libs/application/templates/announcement-of-death/                                                       @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/announcement-of-death                   @island-is/juni
 /libs/application/templates/driving-license/                                                             @island-is/juni
@@ -167,6 +168,7 @@
 /libs/api/domains/application/                                                                           @island-is/norda-applications
 /libs/api/domains/payment/                                                                               @island-is/norda-applications
 
+/apps/contentful-apps/                                                                                   @island-is/stefna
 /apps/services/search-indexer/                                                                           @island-is/stefna @island-is/juni
 /apps/services/contentful-entry-tagger/                                                                  @island-is/stefna
 /apps/tools/contentful-role-permissions/                                                                 @island-is/stefna

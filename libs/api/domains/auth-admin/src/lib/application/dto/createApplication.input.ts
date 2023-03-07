@@ -1,6 +1,6 @@
 import { Field, InputType, ID } from '@nestjs/graphql'
+import { Environment } from '@island.is/shared/types'
 import { ApplicationType } from '../../models/applicationType'
-import { Environment } from '../../models/environment'
 
 @InputType('CreateAuthAdminApplicationInput')
 export class CreateApplicationInput {
