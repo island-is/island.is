@@ -220,10 +220,5 @@ export class EstateTemplateService extends BaseTemplateApiService {
       throw new Error('Application submission failed on syslumadur upload data')
     }
     return { sucess: result.success, id: result.caseNumber }
-
-    return {
-      success: true,
-      id: '123456789',
-    }
   }
 }
