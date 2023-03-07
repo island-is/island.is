@@ -1,6 +1,6 @@
-import ExpiredMachineLicense from './__mock_data/expiredMachineLicense.json'
-import ValidMachineLicense from './__mock_data/validMachineLicense.json'
 import * as mapper from './machineLicenseMapper'
+import ExpiredMachineLicense from '../__mock_data/expiredMachineLicense.json'
+import ValidMachineLicense from '../__mock_data/validMachineLicense.json'
 
 describe('license-service/client/machine-license', () => {
   describe('check if expired', () => {
