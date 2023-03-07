@@ -15,7 +15,7 @@ export class DocumentResolver {
 
   @Query(() => [DocumentInfoResult], { name: 'consultationPortalDocument' })
   @FeatureFlag(Features.consultationPortalApplication)
-  async getDocument(@Args('documentId') documentId: string): Promise<void> {
-    return this.documentService.getDocument(documentId)
+  async getCaseDocument(@Args('documentId') documentId: string): Promise<void> {
+    return this.documentService.getCaseDocument(documentId)
   }
 }
