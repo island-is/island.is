@@ -71,7 +71,7 @@ export const AdditionalEstateMember = ({
   })
 
   const [heirUnder18, setHeirUnder18] = useState(
-    field.nationalId ? kennitala.info(field.nationalId).age < 95 : false,
+    field.nationalId ? kennitala.info(field.nationalId).age < 18 : false,
   )
   const { control, setValue } = useFormContext()
 
@@ -87,7 +87,7 @@ export const AdditionalEstateMember = ({
 
   useEffect(() => {
     if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
-      setHeirUnder18(kennitala.info(nationalIdInput).age < 95)
+      setHeirUnder18(kennitala.info(nationalIdInput).age < 18)
       getIdentity({
         variables: {
           input: {
