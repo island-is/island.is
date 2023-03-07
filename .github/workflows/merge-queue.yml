@@ -1,6 +1,7 @@
 name: Merge queue demo
 on:
   merge_group:
+    types: [checks_requested]
     branches:
       - test-merge-queues/*
 defaults:
@@ -8,7 +9,7 @@ defaults:
     shell: bash
 
 jobs:
-  build:
+  test-merge-queues:
     name: Echo README
     runs-on: ec2-runners
     steps:
