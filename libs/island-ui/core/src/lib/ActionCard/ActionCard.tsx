@@ -482,6 +482,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         </Box>
       </Box>
 
+<<<<<<< HEAD
       {status === 'draft'
         ? renderDraftStatusBar
           ? renderDraftProgressMeter()
@@ -489,6 +490,16 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         : history?.items && history.items.length > 0
         ? renderHistory()
         : renderProgressMeter()}
+=======
+      {renderApplicationData &&
+        (status === 'draft'
+          ? renderDraftStatusBar
+            ? renderDraftProgressMeter()
+            : renderProgressMeter()
+          : history?.items && history.items.length > 0
+          ? renderHistory()
+          : renderProgressMeter())}
+>>>>>>> c48c342029 (Update ActionCard.tsx)
     </Box>
   )
 }
