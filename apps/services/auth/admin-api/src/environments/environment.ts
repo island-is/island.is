@@ -1,9 +1,4 @@
 const audience = ['@island.is/auth/admin', '@admin.island.is']
-const issuer = [
-  'https://identity-server.dev01.devland.is',
-  'https://identity-server.staging01.devland.is',
-  'https://innskra.island.is',
-]
 
 const devConfig = {
   production: false,
@@ -12,7 +7,7 @@ const devConfig = {
   },
   auth: {
     audience,
-    issuer,
+    issuer: 'https://identity-server.dev01.devland.is',
   },
   port: 6333,
 }
@@ -26,7 +21,8 @@ const prodConfig = {
   },
   auth: {
     audience,
-    issuer,
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    issuer: JSON.parse(process.env.IDENTITY_SERVER_ISSUER_URL!),
   },
   port: 3333,
 }

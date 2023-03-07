@@ -259,7 +259,7 @@ api:
     AIR_DISCOUNT_SCHEME_CLIENT_TIMEOUT: '20000'
     AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: 'loftbru.island.is'
     APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
-    AUTH_ADMIN_API_PATHS: '{"dev":"https://services-auth-admin-api.internal.dev01.devland.is","staging":"https://services-auth-admin-api.internal.staging01.devland.is","prod":"https://services-auth-admin-api.internal.innskra.island.is"}'
+    AUTH_ADMIN_API_PATHS: '{"dev":"https://identity-server.dev01.devland.is/backend","staging":"https://identity-server.staging01.devland.is/backend","prod":"http://web-services-auth-admin-api.identity-server-admin.svc.cluster.local"}'
     AUTH_DELEGATION_API_URL: 'https://auth-delegation-api.internal.innskra.island.is'
     AUTH_PUBLIC_API_URL: 'https://innskra.island.is/api'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'

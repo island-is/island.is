@@ -202,6 +202,7 @@ services-auth-admin-api:
     DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
     DB_USER: 'servicesauth'
+    IDENTITY_SERVER_ISSUER_URL: '["https://identity-server.dev01.devland.is","https://identity-server.staging01.devland.is","https://innskra.island.is"]'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -231,10 +232,12 @@ services-auth-admin-api:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
+        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
+        nginx.ingress.kubernetes.io/rewrite-target: '/$2'
       hosts:
         - host: 'identity-server.dev01.devland.is'
           paths:
-            - '/backend'
+            - '/backend(/|$)(.*)'
   namespace: 'identity-server-admin'
   pvcs: []
   replicaCount:

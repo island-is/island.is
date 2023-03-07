@@ -190,16 +190,17 @@ export const serviceSetup = (services: {
         ),
         staging: ref((h) =>
           json({
-            dev: 'https://services-auth-admin-api.internal.dev01.devland.is',
+            dev: 'https://identity-server.dev01.devland.is/backend',
             staging: `http://${h.svc(services.authAdminApi)}`,
           }),
         ),
-        prod: json({
-          dev: 'https://services-auth-admin-api.internal.dev01.devland.is',
-          staging:
-            'https://services-auth-admin-api.internal.staging01.devland.is',
-          prod: 'https://services-auth-admin-api.internal.innskra.island.is',
-        }),
+        prod: ref((h) =>
+          json({
+            dev: 'https://identity-server.dev01.devland.is/backend',
+            staging: 'https://identity-server.staging01.devland.is/backend',
+            prod: `http://${h.svc(services.authAdminApi)}`,
+          }),
+        ),
       },
     })
 
