@@ -1477,6 +1477,7 @@ search-indexer-service:
       cpu: '100m'
       memory: '512Mi'
   secrets:
+    API_CMS_DELETION_TOKEN: '/k8s/search-indexer/API_CMS_DELETION_TOKEN'
     API_CMS_SYNC_TOKEN: '/k8s/search-indexer/API_CMS_SYNC_TOKEN'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
@@ -2129,7 +2130,7 @@ user-notification-worker:
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_USER_PROFILE_BASEPATH: 'http://web-service-portal-api.service-portal.svc.cluster.local'
-    USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.staging'
+    USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.dev'
   grantNamespaces:
     - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
