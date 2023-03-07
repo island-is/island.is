@@ -3,7 +3,7 @@ import {
   ConsultationPortalAllCasesQuery,
   ConsultationPortalAllCasesQueryVariables,
   ConsultationPortalAllCasesDocument,
-} from '../screens/Home/getAllCases.generated'
+} from '../screens/Home/getAllCases.graphql.generated'
 import {
   ConsultationPortalAllTypesQuery,
   ConsultationPortalAllTypesQueryVariables,

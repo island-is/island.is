@@ -39,7 +39,7 @@ const namespace = `${environment.audit.defaultNamespace}/grant-type`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiExcludeController()
-@Controller({ path: 'backend/grants', version: [VERSION_NEUTRAL, '1'] })
+@Controller({ path: 'grants', version: [VERSION_NEUTRAL, '1'] })
 @Audit({ namespace })
 export class GrantTypeController {
   constructor(

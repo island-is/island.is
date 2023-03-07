@@ -33,7 +33,7 @@ const namespace = `${environment.audit.defaultNamespace}/client-allowed-scope`
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiExcludeController()
 @Controller({
-  path: 'backend/client-allowed-scope',
+  path: 'client-allowed-scope',
   version: [VERSION_NEUTRAL, '1'],
 })
 @Audit({ namespace })
