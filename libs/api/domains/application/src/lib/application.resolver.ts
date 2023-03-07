@@ -1,4 +1,11 @@
-import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
+import {
+  Args,
+  Query,
+  Resolver,
+  Mutation,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
@@ -9,7 +16,11 @@ import { UseGuards } from '@nestjs/common'
 import type { Locale } from '@island.is/shared/types'
 
 import { ApplicationService } from './application.service'
-import { Application, ApplicationPayment } from './application.model'
+import {
+  Application,
+  ApplicationHistory,
+  ApplicationPayment,
+} from './application.model'
 import { CreateApplicationInput } from './dto/createApplication.input'
 import { UpdateApplicationInput } from './dto/updateApplication.input'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
@@ -30,7 +41,7 @@ import { AttachmentPresignedUrlInput } from './dto/AttachmentPresignedUrl.input'
 import { DeleteApplicationInput } from './dto/deleteApplication.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Resolver()
+@Resolver(() => Application)
 export class ApplicationResolver {
   constructor(private applicationService: ApplicationService) {}
 
