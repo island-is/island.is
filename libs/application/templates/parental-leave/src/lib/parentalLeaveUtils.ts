@@ -1456,10 +1456,9 @@ export const getFosterCareOrAdoptionDesc = (application: Application) => {
     application.answers,
   )
 
-  if(noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE) 
+  if (noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE)
     return parentalLeaveFormMessages.selectChild.fosterCareDescription
-  else 
-    return parentalLeaveFormMessages.selectChild.adoptionDescription
+  else return parentalLeaveFormMessages.selectChild.adoptionDescription
 }
 
 const setLoadingStateAndRepeaterItems = async (

@@ -955,10 +955,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     adoptionDescription: {
       id: 'pl.application:adoption.description',
-      defaultMessage:
-        'Settu inn upplýsingar um frumættleidd barn',
-      description:
-        'Enter information about a primary adopted child',
+      defaultMessage: 'Settu inn upplýsingar um frumættleidd barn',
+      description: 'Enter information about a primary adopted child',
     },
     fosterCareBirthDate: {
       id: 'pl.application:foster.care.birth.date',
