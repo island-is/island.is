@@ -14,6 +14,7 @@ auth-admin-web:
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
+    - 'nginx-ingress-external'
     - 'nginx-ingress-internal'
     - 'islandis'
   grantNamespacesEnabled: true
@@ -199,10 +200,12 @@ services-auth-admin-api:
     DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-ids.internal'
     DB_USER: 'servicesauth'
+    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     IDENTITY_SERVER_ISSUER_URL_LIST: '["https://innskra.island.is"]'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
+    - 'nginx-ingress-external'
     - 'nginx-ingress-internal'
     - 'islandis'
   grantNamespacesEnabled: true
@@ -582,6 +585,7 @@ services-auth-public-api:
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
+    - 'nginx-ingress-external'
     - 'nginx-ingress-internal'
     - 'islandis'
   grantNamespacesEnabled: true
