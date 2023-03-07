@@ -9,7 +9,6 @@ import {
 } from '@island.is/island-ui/core'
 import { ReactNode } from 'react'
 import getTagVariants from '../../utils/helpers/getTagVariants'
-import EyebrowsWithSeperator from '../EybrowsWithSeperator/EybrowsWithSeperator'
 
 import * as styles from './Card.css'
 
