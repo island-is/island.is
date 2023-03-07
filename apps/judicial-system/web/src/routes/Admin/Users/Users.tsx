@@ -84,7 +84,7 @@ export const Users: React.FC = () => {
   return (
     <div className={styles.userControlContainer}>
       <PageHeader title={formatMessage(titles.admin.users)} />
-      <div className={styles.logoContainer}>
+      <Box display="flex" marginBottom={9}>
         <Button
           icon="add"
           onClick={() => {
@@ -93,7 +93,7 @@ export const Users: React.FC = () => {
         >
           Nýr notandi
         </Button>
-      </div>
+      </Box>
       <Box
         marginBottom={8}
         display="flex"
@@ -129,31 +129,31 @@ export const Users: React.FC = () => {
         >
           <thead className={styles.thead}>
             <tr>
-              <th className={styles.th}>
+              <Box component="th" paddingY={2} paddingX={3}>
                 <Text as="span" fontWeight="regular">
                   Nafn
                 </Text>
-              </th>
-              <th className={styles.th}>
+              </Box>
+              <Box component="th" paddingY={2} paddingX={3}>
                 <Text as="span" fontWeight="regular">
                   Kennitala
                 </Text>
-              </th>
-              <th className={styles.th}>
+              </Box>
+              <Box component="th" paddingY={2} paddingX={3}>
                 <Text as="span" fontWeight="regular">
                   Hlutverk
                 </Text>
-              </th>
-              <th className={styles.th}>
+              </Box>
+              <Box component="th" paddingY={2} paddingX={3}>
                 <Text as="span" fontWeight="regular">
                   Stofnun
                 </Text>
-              </th>
-              <th className={styles.th}>
+              </Box>
+              <Box component="th" paddingY={2} paddingX={3}>
                 <Text as="span" fontWeight="regular">
                   Virkur
                 </Text>
-              </th>
+              </Box>
             </tr>
           </thead>
           <tbody>
