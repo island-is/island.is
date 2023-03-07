@@ -1,6 +1,7 @@
 import { defineMessages } from 'react-intl'
 
 export const policeCaseFiles = defineMessages({
+  // TODO: Remove heading
   heading: {
     id: 'judicial.system.core:police_case_files.heading_v1',
     defaultMessage:
@@ -8,6 +9,7 @@ export const policeCaseFiles = defineMessages({
     description:
       'Notaður sem titill fyrir "LOKE" gagnapakkann á rannsóknargagna skrefi.',
   },
+  // TODO: Remove introduction
   introduction: {
     id: 'judicial.system.core:police_case_files.introduction',
     defaultMessage:
