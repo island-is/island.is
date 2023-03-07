@@ -1,11 +1,11 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { Environment } from '../../models/environment'
 
 import { ApplicationEnvironment } from './applications-environment.model'
 
 @ObjectType('AuthAdminApplication')
 export class Application {
-  @Field()
+  @Field(() => ID)
   applicationId!: string
 
   @Field()

@@ -7,7 +7,7 @@ import {
 export type AuthApplicationsList = GetApplicationsByIdQuery['authAdminApplications']['data']
 export const applicationsLoader: WrappedLoaderFn = ({ client }) => {
   return async ({ params }): Promise<AuthApplicationsList> => {
-    if (!params) {
+    if (!params['tenant']) {
       throw new Error('Tenant not found')
     }
 
