@@ -31,7 +31,7 @@ export class CaseResultService {
     const request: ApiCasesCaseIdAdvicesGetRequest = {
       caseId: input.caseId,
     }
-
+    console.log('input', input)
     const response = await this.casesApi.apiCasesCaseIdAdvicesGet(request)
     return response
   }

@@ -22,50 +22,54 @@ interface CaseProps {
   advices: Advice[]
 }
 const CaseDetails: React.FC<CaseProps> = ({ case: Case, advices }) => {
-  console.log(advices)
   return <CaseScreen chosenCase={Case} advices={advices} isLoggedIn={true} />
 }
 export default CaseDetails
 
 export const getServerSideProps = async (ctx) => {
   const client = initApollo()
-  const slug = parseInt(ctx.query.slug)
-  const [
-    {
-      data: { consultationPortalCaseById },
-    },
-    {
-      data: { consultationPortalAdviceByCaseId },
-    },
-  ] = await Promise.all([
-    client.query<
-      ConsultationPortalCaseByIdQuery,
-      QueryConsultationPortalCaseByIdArgs
-    >({
-      query: GET_CASE_BY_ID,
-      variables: {
-        input: {
-          caseId: slug,
-        },
+  try {
+    const [
+      {
+        data: { consultationPortalCaseById },
       },
-    }),
-    client.query<
-      ConsultationPortalAdviceByCaseIdQuery,
-      ConsultationPortalAdviceByCaseIdQueryVariables
-    >({
-      query: GET_ADVICES,
-      variables: {
-        input: {
-          caseId: slug,
-        },
+      {
+        data: { consultationPortalAdviceByCaseId },
       },
-    }),
-  ])
-  console.log(consultationPortalAdviceByCaseId)
+    ] = await Promise.all([
+      client.query<
+        ConsultationPortalCaseByIdQuery,
+        QueryConsultationPortalCaseByIdArgs
+      >({
+        query: GET_CASE_BY_ID,
+        variables: {
+          input: {
+            caseId: parseInt(ctx.query['slug']),
+          },
+        },
+      }),
+      client.query<
+        ConsultationPortalAdviceByCaseIdQuery,
+        ConsultationPortalAdviceByCaseIdQueryVariables
+      >({
+        query: GET_ADVICES,
+        variables: {
+          input: {
+            caseId: parseInt(ctx.query['slug']),
+          },
+        },
+      }),
+    ])
+    return {
+      props: {
+        case: consultationPortalCaseById,
+        advices: consultationPortalAdviceByCaseId,
+      },
+    }
+  } catch (e) {
+    console.error(e)
+  }
   return {
-    props: {
-      case: consultationPortalCaseById,
-      advices: consultationPortalAdviceByCaseId,
-    },
+    notFound: true,
   }
 }

@@ -9,6 +9,9 @@ export const GET_ADVICES = gql`
       participantEmail
       content
       created
+      adviceDocuments {
+        id
+      }
     }
   }
 `
