@@ -90,6 +90,17 @@ export class ChildrenService {
         nationalId,
       )
 
+      if (
+        child.parentalRelation === ParentalRelations.secondary &&
+        child.expectedDateOfBirth === 'N/A' &&
+        child.primaryParentNationalRegistryId === 'N/A'
+      ) {
+        throw new TemplateApiError(
+          parentalLeaveFormMessages.shared.noConsentToSeeInfromationError,
+          500,
+        )
+      }
+
       if (!parentalLeavesEntitlements) {
         throw new TemplateApiError(
           parentalLeaveFormMessages.shared.childrenError,
@@ -172,6 +183,17 @@ export class ChildrenService {
         )
       }
 
+      if (
+        children.parentalRelation === ParentalRelations.secondary &&
+        children.expectedDateOfBirth === 'N/A' &&
+        children.primaryParentNationalRegistryId === 'N/A'
+      ) {
+        throw new TemplateApiError(
+          parentalLeaveFormMessages.shared.noConsentToSeeInfromationError,
+          500,
+        )
+      }
+
       return {
         children: [children],
         existingApplications: [],
@@ -195,6 +217,16 @@ export class ChildrenService {
     const children: ChildInformation[] = []
 
     for (const child of childrenWhereOtherParent) {
+      if (
+        child.parentalRelation === ParentalRelations.secondary &&
+        child.expectedDateOfBirth === 'N/A' &&
+        child.primaryParentNationalRegistryId === 'N/A'
+      ) {
+        throw new TemplateApiError(
+          parentalLeaveFormMessages.shared.noConsentToSeeInfromationError,
+          500,
+        )
+      }
       const parentalLeavesEntitlements: ParentalLeaveEntitlement = {
         independentMonths: 6,
         transferableMonths: 0,

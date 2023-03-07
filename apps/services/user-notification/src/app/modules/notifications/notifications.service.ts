@@ -118,16 +118,13 @@ export class NotificationsService {
     body: CreateHnippNotificationDto,
     template: HnippTemplate,
   ): boolean {
-    return template.args.length == body.args.length
+    return body.args.length == template.args.length
   }
 
   formatArguments(
     body: CreateHnippNotificationDto,
     template: HnippTemplate,
   ): HnippTemplate {
-    if (template.args.length != body.args.length) {
-      throw new BadRequestException('Argument count mismatch')
-    }
     if (template.args.length > 0) {
       const allowedReplaceProperties = [
         'notificationTitle',
@@ -135,16 +132,17 @@ export class NotificationsService {
         'notificationDataCopy',
         'clickAction',
       ]
-      const regex = /{{[^{}]*}}/ // "finds {{placholder}} in string"
+      // find {{arg.key}} in string and replace with arg.value
+      const regex = new RegExp(/{{[^{}]*}}/)
       Object.keys(template).forEach((key) => {
         if (allowedReplaceProperties.includes(key)) {
-          if (template[key as keyof HnippTemplate]) {
-            if (regex.test(template[key as keyof HnippTemplate] as string)) {
-              const element = body.args.shift()
-              if (element) {
-                template[key as keyof Omit<HnippTemplate, 'args'>] = (template[
-                  key as keyof Omit<HnippTemplate, 'args'>
-                ] as string).replace(regex, element)
+          let value = template[key as keyof HnippTemplate] as string
+          if (value) {
+            if (regex.test(value)) {
+              for (const arg of body.args) {
+                const regexTarget = new RegExp('{{' + arg.key + '}}', 'g')
+                value = value.replace(regexTarget, arg.value)
+                template[key as keyof Omit<HnippTemplate, 'args'>] = value
               }
             }
           }

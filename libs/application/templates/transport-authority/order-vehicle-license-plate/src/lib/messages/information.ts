@@ -95,6 +95,12 @@ export const information = {
         defaultMessage: 'Það kom upp villa við að sækja upplýsingar um bifreið',
         description: 'Plate size error message',
       },
+      errorPlateTypeFront: {
+        id:
+          'ta.ovlp.application:information.labels.plateSize.errorPlateTypeFront',
+        defaultMessage: 'Skráning á núverandi plötustærð bíls er í ólagi',
+        description: 'Plate type front error message',
+      },
     }),
     plateDelivery: defineMessages({
       sectionTitle: {

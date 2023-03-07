@@ -272,16 +272,16 @@ export const form: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'moneyAndDedosit',
+          id: 'moneyAndDeposit',
           title: m.moneyAndDepositTitle,
           children: [
             buildMultiField({
-              id: 'moneyAndDedosit',
+              id: 'moneyAndDeposit',
               title: m.propertiesTitle,
               description: m.propertiesDescription,
               children: [
                 buildDescriptionField({
-                  id: 'moneyAndDedositTitle',
+                  id: 'moneyAndDepositTitle',
                   title: m.moneyAndDepositTitle,
                   description: m.moneyAndDepositDescription,
                   titleVariant: 'h3',

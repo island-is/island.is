@@ -123,22 +123,17 @@ export function formatPeriods(
     const startDateDateTime = new Date(period.startDate)
     let canDelete = startDateDateTime.getTime() > currentDateStartTime()
     const today = new Date()
+    const isTodaySameMonthAsStartDate =
+      startDateDateTime.getMonth() === today.getMonth() &&
+      startDateDateTime.getFullYear() === today.getFullYear()
 
     if (!applicationFundId || applicationFundId === '') {
       canDelete = true
-    } else if (canDelete && today.getDate() >= 20) {
-      const startDateBeginOfMonth = addDays(
-        startDateDateTime,
-        startDateDateTime.getDate() * -1 + 1,
-      )
-      const currentDateBeginOfMonth = getBeginningOfThisMonth()
-      if (
-        startDateBeginOfMonth.getMonth() ===
-          currentDateBeginOfMonth.getMonth() &&
-        startDateBeginOfMonth.getFullYear() ===
-          currentDateBeginOfMonth.getFullYear()
-      ) {
+    } else if (isTodaySameMonthAsStartDate) {
+      if (canDelete && today.getDate() >= 20) {
         canDelete = false
+      } else if (!canDelete && today.getDate() < 20) {
+        canDelete = true
       }
     }
 
@@ -803,7 +798,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
       employers.push({
         email: employerEmailObj,
         ratio: '100',
-        phoneNumber: getValueViaPath(answers, 'employerPhoneNumber') as string,
         reviewerNationalRegistryId: employerReviewerNationalRegistryId,
         companyNationalRegistryId: employerNationalRegistryId,
       } as EmployerRow)

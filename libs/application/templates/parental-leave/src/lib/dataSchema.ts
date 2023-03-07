@@ -114,7 +114,8 @@ export const dataSchema = z.object({
   useUnion: z.enum([YES, NO]),
   usePrivatePensionFund: z.enum([YES, NO]),
   isReceivingUnemploymentBenefits: z.enum([YES, NO]),
-  employerNationalRegistryId: z.string().refine((n) => kennitala.isCompany(n), {
+  // We don't have away to validate companyId yet because isCompany return false on personal business ID
+  employerNationalRegistryId: z.string().refine((n) => kennitala.isValid(n), {
     params: errorMessages.employerNationalRegistryId,
   }),
   employerPhoneNumber: z

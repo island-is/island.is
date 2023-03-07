@@ -879,6 +879,13 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Annað',
       description: 'Other',
     },
+    noConsentToSeeInfromationError: {
+      id: 'pl.application:no.consent.to.see.information.error',
+      defaultMessage:
+        'Aðalforeldri hefur ekki gefið þér samþykki sitt fyrir umgengi í fæðingarorlofinu.',
+      description:
+        'Primary parent has not given you their consent for right of access during the parental leave.',
+    },
   }),
 
   selectChild: defineMessages({
