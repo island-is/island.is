@@ -10,6 +10,7 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { GetCaseInput } from '../dto/case.input'
+import { GetCasesInput } from '../dto/cases.input'
 
 @Resolver()
 @UseGuards(FeatureFlagGuard)
@@ -20,6 +21,14 @@ export class CaseResultResolver {
   @Query(() => [CaseItemResult], { name: 'consultationPortalAllCases' })
   async getAllCases(): Promise<CaseItemResult[]> {
     return await this.caseResultService.getAllCases()
+  }
+
+  @FeatureFlag(Features.consultationPortalApplication)
+  @Query(() => [CaseItemResult], { name: 'consultationPortalGetCases' })
+  async getCases(
+    @Args('input', { type: () => GetCasesInput }) input: GetCasesInput,
+  ): Promise<CaseItemResult[]> {
+    return await this.caseResultService.getCases(input)
   }
 
   @Query(() => CaseResult, { name: 'consultationPortalCaseById' })
