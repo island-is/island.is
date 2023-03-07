@@ -47,33 +47,38 @@ export const getLocalrunValueFile = async (
   runtime: Localhost,
   services: Services<LocalrunService>,
 ): Promise<LocalrunValueFile> => {
-  const dockerComposeServices: Services<LocalrunService> = await Object.entries(
-    services,
-  ).reduce(async (acc, [name, service]) => {
-    const portConfig = runtime.ports[name]
-      ? { PORT: runtime.ports[name].toString() }
-      : {}
-    const serviceNXName = await mapServiceToNXname(name)
-    return {
-      ...(await acc),
-      [name]: {
-        env: Object.assign(
-          {},
-          Object.entries(service.env)
-            .filter(([name, val]) => !EXCLUDED_ENVIRONMENT_NAMES.includes(name))
-            .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {}),
-          { PROD_MODE: 'true' },
-          portConfig,
-        ),
-        command: [
-          `(source ${join(
+  const dockerComposeServices = await Object.entries(services).reduce(
+    async (acc, [name, service]) => {
+      const portConfig = runtime.ports[name]
+        ? { PORT: runtime.ports[name].toString() }
+        : {}
+      const serviceNXName = await mapServiceToNXname(name)
+      return {
+        ...(await acc),
+        [name]: {
+          env: Object.assign(
+            {},
+            Object.entries(service.env)
+              .filter(
+                ([name, val]) => !EXCLUDED_ENVIRONMENT_NAMES.includes(name),
+              )
+              .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {}),
+            { PROD_MODE: 'true' },
+            portConfig,
+          ) as Record<string, string>,
+          command: `(source ${join(
             rootDir,
             '.env.' + serviceNXName,
           )} && yarn start ${serviceNXName})`,
-        ],
-      } as LocalrunService,
-    }
-  }, Promise.resolve({}))
+        },
+      }
+    },
+    Promise.resolve(
+      {} as {
+        [name: string]: { env: Record<string, string>; command: string }
+      },
+    ),
+  )
 
   // dump all env values to files
   await Promise.all(
@@ -150,7 +155,7 @@ export const getLocalrunValueFile = async (
 
   return {
     services: Object.entries(dockerComposeServices).reduce(
-      (acc, [name, service]) => ({ ...acc, [name]: service.command![0] }),
+      (acc, [name, service]) => ({ ...acc, [name]: service.command }),
       {},
     ),
     mocks: mocks,
