@@ -87,7 +87,9 @@ export const getLocalrunValueFile = async (
       await writeFile(
         join(rootDir, `.env.${serviceNXName}`),
         Object.entries(svc.env)
-          .map(([name, value]) => `export ${name}="${value}"`)
+          .map(
+            ([name, value]) => `export ${name}="${value.replace(/"/g, '\\"')}"`,
+          )
           .join('\n'),
         { encoding: 'utf-8' },
       )
