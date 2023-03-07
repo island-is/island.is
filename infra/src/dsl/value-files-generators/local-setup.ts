@@ -6,7 +6,8 @@ import {
 import { Localhost } from '../localhost-runtime'
 import { EXCLUDED_ENVIRONMENT_NAMES } from '../../cli/render-env-vars'
 import { readFile, writeFile } from 'fs/promises'
-import { join, resolve } from 'path'
+import { join } from 'path'
+import { rootDir } from '../consts'
 
 const mapServiceToNXname = async (serviceName: string) => {
   const projectRootPath = join(__dirname, '..', '..', '..', '..')
@@ -42,7 +43,6 @@ const mapServiceToNXname = async (serviceName: string) => {
     )
   return nxName.length === 1 ? nxName[0] : serviceName
 }
-const rootDir = resolve(__dirname, '..', '..', '..', '..')
 export const getLocalrunValueFile = async (
   runtime: Localhost,
   services: Services<LocalrunService>,
