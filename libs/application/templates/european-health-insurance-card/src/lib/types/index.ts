@@ -22,6 +22,7 @@ export interface NationalRegistry {
   data: any
 }
 
+
 export enum States {
   PREREQUISITES = 'prerequisites',
   PLASTIC = 'plastic',
@@ -30,7 +31,8 @@ export enum States {
   REVIEW = 'review',
   SUBMITTED = 'submitted',
   COMPLETED = 'completed',
-  DECLINED = "declined"
+  DECLINED = "declined",
+  PAYMENT = "PAYMENT"
 }
 
 export interface CardInfo {

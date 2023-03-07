@@ -1,9 +1,12 @@
 import {
   Application,
+  ApplicationContext,
   ExternalData,
   FormValue,
 } from '@island.is/application/types'
 import { CardResponse, NationalRegistry, NridName } from '../types'
+
+import { getValueViaPath } from '@island.is/application/core'
 
 function getObjectKey(obj: any, value: any) {
   return Object.keys(obj).filter((key) => obj[key] === value)
@@ -122,7 +125,7 @@ export function someCanApplyForPlasticOrPdf(
   console.log(externalData)
   if (externalData?.cardResponse?.data) {
     const cardResponse = externalData?.cardResponse?.data as CardResponse[]
-
+    console.log(cardResponse)
     for (let i = 0; i < cardResponse.length; i++) {
       if (cardResponse[i].isInsured && cardResponse[i].canApply) {
         return true
@@ -233,4 +236,9 @@ export function hasAPDF(cardInfo: CardResponse) {
     }
   }
   return false
+}
+
+export const canApply = (value = false) => ({ application }: ApplicationContext) => {
+  console.log(application)
+  return value === someCanApplyForPlasticOrPdf(application.externalData)
 }
