@@ -29,7 +29,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
 
   stringifyObject(obj: Record<string, unknown>): Record<string, string> {
     const result: Record<string, string> = {}
-    for(const key in obj) {
+    for (const key in obj) {
       if (typeof obj[key] === 'string') {
         result[key] = obj[key] as string
       } else {
@@ -188,6 +188,17 @@ export class EstateTemplateService extends BaseTemplateApiService {
       otherAssetsValue: answers.otherAssetsValue ?? '',
       stocks: answers.stocks ?? [],
       vehicles: processedVehicles,
+      ...(answers.representative?.representativeName
+        ? {
+            representative: {
+              email: answers.representative.representativeEmail ?? '',
+              name: answers.representative.representativeName ?? '',
+              phoneNumber:
+                answers.representative.representativePhoneNumber ?? '',
+              ssn: answers.representative.representativeNationalId ?? '',
+            },
+          }
+        : {}),
     }
 
     const result: DataUploadResponse = await this.syslumennService
@@ -201,15 +212,18 @@ export class EstateTemplateService extends BaseTemplateApiService {
       .catch((e) => {
         return {
           success: false,
-          errorMessage: e.message
+          errorMessage: e.message,
         }
       })
 
     if (!result.success) {
-      throw new Error(
-        'Application submission failed on syslumadur upload data'
-      )
+      throw new Error('Application submission failed on syslumadur upload data')
     }
     return { sucess: result.success, id: result.caseNumber }
+
+    return {
+      success: true,
+      id: '123456789',
+    }
   }
 }

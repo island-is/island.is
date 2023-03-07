@@ -26,6 +26,13 @@ type EstateMember = {
   foreignCitizenShip?: 'yes' | 'no'
 }
 
+type Representative = {
+  name: string
+  ssn: string
+  phoneNumber: string
+  email: string
+}
+
 type AssetFrame = {
   assetNumber?: string
   description?: string
@@ -60,6 +67,7 @@ export interface UploadData {
     | BankAccount[]
     | Stock[]
     | Debt[]
+    | Representative
     | 'Yes'
     | 'No'
   //caseNumber: string
