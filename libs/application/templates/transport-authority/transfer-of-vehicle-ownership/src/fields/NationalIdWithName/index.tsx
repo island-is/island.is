@@ -101,7 +101,7 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
   return (
     <Box>
       <GridRow>
-        <GridColumn span={'1/1'} paddingTop={2}>
+        <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
           <InputController
             id={nationaIdField}
             label={
@@ -122,7 +122,7 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
             error={nationalIdFieldErrors}
           />
         </GridColumn>
-        <GridColumn span={'1/1'} paddingTop={2}>
+        <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
           <InputController
             id={nameField}
             defaultValue={defaultName}

@@ -1,3 +1,11 @@
+import { FieldBaseProps } from '@island.is/application/types'
+import {
+  Box,
+  Text,
+  Button,
+  GridRow,
+  GridColumn,
+} from '@island.is/island-ui/core'
 import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
 import { Box, Text, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -102,39 +110,45 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
         nameDefaultValue={name}
         errorMessage={errorMessage}
       />
-      <Box marginTop={2}>
-        <InputController
-          id={emailField}
-          name={emailField}
-          type="email"
-          label={formatMessage(information.labels[userMessageId].email)}
-          error={errorMessage && email.length === 0 ? errorMessage : undefined}
-          backgroundColor="blue"
-          required
-          defaultValue={email}
-          onChange={debounce(
-            (event) => setEmail(event.target.value),
-            DEBOUNCE_INTERVAL,
-          )}
-        />
-      </Box>
-      <Box marginTop={2}>
-        <InputController
-          id={phoneField}
-          name={phoneField}
-          type="tel"
-          format="###-####"
-          label={formatMessage(information.labels[userMessageId].phone)}
-          error={errorMessage && phone.length === 0 ? errorMessage : undefined}
-          backgroundColor="blue"
-          required
-          defaultValue={phone}
-          onChange={debounce(
-            (event) => setPhone(event.target.value),
-            DEBOUNCE_INTERVAL,
-          )}
-        />
-      </Box>
+      <GridRow>
+        <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+          <InputController
+            id={emailField}
+            name={emailField}
+            type="email"
+            label={formatMessage(information.labels[userMessageId].email)}
+            error={
+              errorMessage && email.length === 0 ? errorMessage : undefined
+            }
+            backgroundColor="blue"
+            required
+            defaultValue={email}
+            onChange={debounce(
+              (event) => setEmail(event.target.value),
+              DEBOUNCE_INTERVAL,
+            )}
+          />
+        </GridColumn>
+        <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+          <InputController
+            id={phoneField}
+            name={phoneField}
+            type="tel"
+            format="###-####"
+            label={formatMessage(information.labels[userMessageId].phone)}
+            error={
+              errorMessage && phone.length === 0 ? errorMessage : undefined
+            }
+            backgroundColor="blue"
+            required
+            defaultValue={phone}
+            onChange={debounce(
+              (event) => setPhone(event.target.value),
+              DEBOUNCE_INTERVAL,
+            )}
+          />
+        </GridColumn>
+      </GridRow>
       <input
         type="hidden"
         value={userMessageId}

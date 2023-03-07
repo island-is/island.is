@@ -474,6 +474,7 @@
     "dicer": "0.3.0",
     "xmldom": "github:xmldom/xmldom#0.7.0",
     "tar": "6.1.9",
+    "deep-equal": "2.0.5",
     "url-parse": "1.5.2",
     "path-parse": "1.0.7"
   },
