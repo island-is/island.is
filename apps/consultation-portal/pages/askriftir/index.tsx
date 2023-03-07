@@ -3,7 +3,7 @@ import {
   ConsultationPortalAllCasesQuery,
   ConsultationPortalAllCasesQueryVariables,
   ConsultationPortalAllCasesDocument,
-} from '../../screens/Subscriptions/getAllCases.generated'
+} from '../../screens/Subscriptions/getAllCases.graphql.generated'
 import SubscriptionScreen from '../../screens/Subscriptions/Subscriptions'
 import { Case } from '../../types/interfaces'
 
