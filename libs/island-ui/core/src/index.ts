@@ -116,6 +116,7 @@ export type {
 } from './lib/DatePicker/types'
 export type { ResponsiveProp } from './utils/responsiveProp'
 export type { GridColumns } from './lib/Grid/GridColumn/GridColumn.css'
+export type { TabType } from './lib/Tabs/Tabs'
 
 // Styles
 export * as linkStyles from './lib/Link/Link.css'
