@@ -44,7 +44,7 @@ const namespace = `${environment.audit.defaultNamespace}/personal-representative
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiExcludeController()
 @Controller({
-  path: 'backend/personal-representative',
+  path: 'personal-representative',
   version: [VERSION_NEUTRAL, '1'],
 })
 @Audit({ namespace })
