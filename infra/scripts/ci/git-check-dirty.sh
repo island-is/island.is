@@ -2,6 +2,7 @@
 set -euxo pipefail
 
 DIR="$(git rev-parse --show-toplevel)"
+"$DIR"/infra/scripts/generate-chart-values.sh
 
 if [[ $(git diff --stat "$DIR"/charts) != '' ]]; then
   git config --global user.name "Chart bot"
