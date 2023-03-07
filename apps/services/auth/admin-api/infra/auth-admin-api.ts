@@ -10,7 +10,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
       passwordSecret: '/k8s/services-auth/api/DB_PASSWORD',
     })
     .env({
-      IDENTITY_SERVER_ISSUER_URL: {
+      IDENTITY_SERVER_ISSUER_URL_LIST: {
         dev: json([
           'https://identity-server.dev01.devland.is',
           'https://identity-server.staging01.devland.is',
@@ -20,7 +20,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
           'https://identity-server.staging01.devland.is',
           'https://innskra.island.is',
         ]),
-        prod: json('https://innskra.island.is'),
+        prod: json(['https://innskra.island.is']),
       },
     })
     .ingress({

@@ -1,4 +1,4 @@
-import { Inject, Injectable, Optional } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
@@ -54,9 +54,9 @@ export class TenantsService {
     const tenantMap = new Map<string, TenantEnvironment[]>()
 
     for (const [index, env] of [
-      Environment.Dev,
+      Environment.Development,
       Environment.Staging,
-      Environment.Prod,
+      Environment.Production,
     ].entries()) {
       for (const tenant of tenants[index] ?? []) {
         if (!tenantMap.has(tenant.name)) {

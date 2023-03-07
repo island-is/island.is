@@ -11,7 +11,7 @@ interface AdminApiEnv {
 }
 
 export const AdminDevApi: AdminApiEnv = {
-  env: Environment.Dev,
+  env: Environment.Development,
   key: 'AdminDevApi',
 }
 export const AdminStagingApi: AdminApiEnv = {
@@ -19,7 +19,7 @@ export const AdminStagingApi: AdminApiEnv = {
   key: 'AdminStagingApi',
 }
 export const AdminProdApi: AdminApiEnv = {
-  env: Environment.Prod,
+  env: Environment.Production,
   key: 'AdminProdApi',
 }
 

@@ -4,9 +4,9 @@ import { defineConfig } from '@island.is/nest/config'
 
 const schema = z.object({
   basePaths: z.object({
-    dev: z.string().optional(),
+    development: z.string().optional(),
     staging: z.string().optional(),
-    prod: z.string().optional(),
+    production: z.string().optional(),
   }),
 })
 
@@ -16,7 +16,7 @@ export const AuthAdminApiClientConfig = defineConfig({
   load(env) {
     return {
       basePaths: env.requiredJSON('AUTH_ADMIN_API_PATHS', {
-        dev: 'http://localhost:6333',
+        development: 'http://localhost:6333',
       }),
     }
   },

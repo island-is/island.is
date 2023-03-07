@@ -130,7 +130,7 @@ describe('TenantsService', () => {
             environments: [
               {
                 ...mockTenants.tenant1,
-                environment: Environment.Dev,
+                environment: Environment.Development,
               },
               {
                 ...mockTenants.tenant1,
@@ -138,7 +138,7 @@ describe('TenantsService', () => {
               },
               {
                 ...mockTenants.tenant1,
-                environment: Environment.Prod,
+                environment: Environment.Production,
               },
             ],
           },
@@ -147,7 +147,7 @@ describe('TenantsService', () => {
             environments: [
               {
                 ...mockTenants.tenant2,
-                environment: Environment.Dev,
+                environment: Environment.Development,
               },
               {
                 ...mockTenants.tenant2,
@@ -160,7 +160,7 @@ describe('TenantsService', () => {
             environments: [
               {
                 ...mockTenants.tenant3,
-                environment: Environment.Dev,
+                environment: Environment.Development,
               },
             ],
           },
@@ -206,7 +206,7 @@ describe('TenantsService', () => {
             environments: [
               {
                 ...mockTenants.tenant1,
-                environment: Environment.Dev,
+                environment: Environment.Development,
               },
             ],
           },
@@ -215,7 +215,7 @@ describe('TenantsService', () => {
             environments: [
               {
                 ...mockTenants.tenant2,
-                environment: Environment.Dev,
+                environment: Environment.Development,
               },
             ],
           },
@@ -224,7 +224,7 @@ describe('TenantsService', () => {
             environments: [
               {
                 ...mockTenants.tenant3,
-                environment: Environment.Dev,
+                environment: Environment.Development,
               },
             ],
           },
