@@ -1,6 +1,12 @@
 import { compose, createClient, createScope } from './helpers'
 
 export const up = compose(
+  createScope({
+    name: '@island.is/licenses:firearm',
+    displayName: 'RLS digital license update scope',
+    description:
+      'Veitir aðgang að uppfærsluvirkni á skírteinum útgefnum af RLS',
+  }),
   createClient({
     clientId: '@rls.is/clients/licenses',
     clientType: 'machine',
@@ -11,11 +17,5 @@ export const up = compose(
       '@island.is/licenses:firearm',
       '@island.is/licenses:verify',
     ],
-  }),
-  createScope({
-    name: '@island.is/licenses:firearm',
-    displayName: 'RLS digital license update scope',
-    description:
-      'Veitir aðgang að uppfærsluvirkni á skírteinum útgefnum af RLS',
   }),
 )
