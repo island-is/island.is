@@ -26,7 +26,7 @@ export class GetCasesInput {
   @Field(() => Date, { nullable: true })
   dateTo?: Date
 
-  @Field(() => String, { nullable: true})
+  @Field(() => String, { nullable: true })
   orderBy?: CasesOrderBy
 
   @Field(() => Number, { nullable: true })
