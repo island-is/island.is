@@ -30,6 +30,7 @@ export enum Features {
   transportAuthorityTransferOfVehicleOwnership = 'isTransportAuthorityTransferOfVehicleOwnershipEnabled',
   drivingLicenseBookUpdateInstructor = 'isDrivingLicenseBookUpdateInstructorEnabled',
   alcoholTaxRedemption = 'isAlcoholTaxRedemptionEnabled',
+  consultationPortalApplication = 'isConsultationPortalEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -48,6 +49,9 @@ export enum Features {
   transportAuthorityOrderVehicleLicensePlateDelegations = 'applicationTransportAuthorityOrderVehicleLicensePlateDelegations',
   transportAuthorityOrderVehicleRegistrationCertificateDelegations = 'applicationTransportAuthorityOrderVehicleRegistrationCertificateDelegations',
   mortgageCertificateDelegations = 'applicationMortgageCertificateDelegations',
+
+  //Application system
+  applicationSystemHistory = 'applicationSystemHistory',
 }
 
 export enum ServerSideFeature {

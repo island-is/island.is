@@ -100,7 +100,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
     return (
       <Box
         component={ReaButton}
-        as={as || variant === 'text' ? 'span' : 'button'}
+        as={as ? (as as string) : variant === 'text' ? 'span' : 'button'}
         ref={ref}
         type={as === 'span' ? undefined : type}
         className={cn(

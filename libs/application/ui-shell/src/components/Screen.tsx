@@ -165,6 +165,7 @@ const Screen: FC<ScreenProps> = ({
   }
 
   const goBack = useCallback(() => {
+    setSubmitButtonDisabled(false)
     // using deepmerge to prevent some weird react-hook-form read-only bugs
     reset(deepmerge({}, formValue))
     prevScreen()
@@ -185,7 +186,6 @@ const Screen: FC<ScreenProps> = ({
         if (typeof possibleError === 'string' && screen && screen.id) {
           setBeforeSubmitError({ [screen.id]: possibleError })
         }
-
         return
       }
     }
@@ -252,6 +252,7 @@ const Screen: FC<ScreenProps> = ({
   }
 
   const [isMobile, setIsMobile] = useState(false)
+  const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false)
   const { width } = useWindowSize()
   const headerHeight = 85
 
@@ -354,6 +355,7 @@ const Screen: FC<ScreenProps> = ({
                 application={application}
                 goToScreen={goToScreen}
                 refetch={refetch}
+                setSubmitButtonDisabled={setSubmitButtonDisabled}
               />
             ) : screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER ? (
               <FormExternalDataProvider
@@ -377,6 +379,7 @@ const Screen: FC<ScreenProps> = ({
                   application={application}
                   goToScreen={goToScreen}
                   refetch={refetch}
+                  setSubmitButtonDisabled={setSubmitButtonDisabled}
                 />
               </Box>
             )}
@@ -386,6 +389,7 @@ const Screen: FC<ScreenProps> = ({
         <ToastContainer hideProgressBar closeButton useKeyframeStyles={false} />
 
         <ScreenFooter
+          submitButtonDisabled={submitButtonDisabled}
           application={application}
           renderLastScreenButton={renderLastScreenButton}
           renderLastScreenBackButton={renderLastScreenBackButton}
