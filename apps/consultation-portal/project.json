@@ -19,6 +19,12 @@
         }
       }
     },
+    "schemas/codegen": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "graphql-codegen --config apps/consultation-portal/codegen.yml"
+      }
+    },
     "build-next": {
       "executor": "@nrwl/next:build",
       "options": {
@@ -68,12 +74,7 @@
         "passWithNoTests": true
       }
     },
-    "schemas/codegen": {
-      "executor": "@nrwl/workspace:run-commands",
-      "options": {
-        "command": "graphql-codegen --config apps/consultation-portal/codegen.yml"
-      }
-    },
+
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
