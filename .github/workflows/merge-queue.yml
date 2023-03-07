@@ -1,6 +1,7 @@
 name: Merge queue demo
 on:
   merge_group:
+    types: [checks_requested]
     branches:
       - test-merge-queues/*
 defaults:
