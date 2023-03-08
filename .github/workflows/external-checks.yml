@@ -76,7 +76,7 @@ jobs:
 
       - name: Run NX format:write and commit changes
         run: |
-          nx format:write
+          npx nx format:write
           ./infra/scripts/ci/git-check-dirty.sh "/" "NXBot"
         if: ${{ github.event_name == 'pull_request' }}
 
