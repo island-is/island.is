@@ -121,19 +121,6 @@ export interface LicenseClient<ResultType> {
   ) => Promise<Result<PkPassVerification>>
 }
 
-export interface LicenseUpdateClient {
-  pushUpdate: (
-    inputData: PassDataInput,
-    nationalId: string,
-  ) => Promise<Result<Pass>>
-
-  pullUpdate: (nationalId: string) => Promise<Result<Pass>>
-
-  revoke: (nationalId: string) => Promise<Result<RevokePassData>>
-
-  verify: (inputData: string) => Promise<Result<VerifyPassData>>
-}
-
 export const LICENSE_CLIENT_FACTORY = 'license-client-factory'
 export const LICENSE_UPDATE_CLIENT_FACTORY = 'license-client-factory'
 

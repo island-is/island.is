@@ -16,8 +16,8 @@ import {
 import { Pass, PassDataInput, Result } from '@island.is/clients/smartsolutions'
 import { LicenseId } from './license.types'
 import {
+  BaseLicenseUpdateClient,
   LicenseType,
-  LicenseUpdateClient,
   LicenseUpdateClientService,
 } from '@island.is/clients/license-client'
 import { mapLicenseIdToLicenseType } from './utils/mapLicenseId'
@@ -31,7 +31,7 @@ export class LicenseService {
 
   private async getClientByLicenseId(
     licenseId: LicenseId,
-  ): Promise<LicenseUpdateClient> {
+  ): Promise<BaseLicenseUpdateClient> {
     const type = mapLicenseIdToLicenseType(licenseId)
     const service = await this.clientService.getLicenseUpdateClientByType(
       type as LicenseType,
@@ -47,7 +47,7 @@ export class LicenseService {
 
   private async getClientByPassTemplateId(
     passTemplateId: string,
-  ): Promise<LicenseUpdateClient> {
+  ): Promise<BaseLicenseUpdateClient> {
     const service = await this.clientService.getLicenseUpdateClientByPassTemplateId(
       passTemplateId,
     )
@@ -61,7 +61,7 @@ export class LicenseService {
   }
 
   private async pushUpdateLicense(
-    service: LicenseUpdateClient,
+    service: BaseLicenseUpdateClient,
     expirationDate: string,
     nationalId: string,
     payload?: string,
@@ -87,7 +87,7 @@ export class LicenseService {
   }
 
   private async pullUpdateLicense(
-    service: LicenseUpdateClient,
+    service: BaseLicenseUpdateClient,
     nationalId: string,
   ): Promise<Result<Pass | undefined>> {
     /** PULL - Update electronic license with pulled data from service

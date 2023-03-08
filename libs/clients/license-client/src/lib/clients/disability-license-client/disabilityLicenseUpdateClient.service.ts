@@ -4,30 +4,32 @@ import { Inject, Injectable } from '@nestjs/common'
 import {
   Pass,
   PassDataInput,
-  RevokePassData,
   SmartSolutionsApi,
   VerifyPassData,
 } from '@island.is/clients/smartsolutions'
-import { LicenseUpdateClient, Result } from '../../licenseClient.type'
+import { Result } from '../../licenseClient.type'
+import { BaseLicenseUpdateClient } from '../baseLicenseUpdateClient'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'disability-license-service'
 
 @Injectable()
-export class DisabilityLicenseUpdateClient implements LicenseUpdateClient {
+export class DisabilityLicenseUpdateClient extends BaseLicenseUpdateClient {
   constructor(
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private smartApi: SmartSolutionsApi,
-  ) {}
+    @Inject(LOGGER_PROVIDER) protected logger: Logger,
+    protected smartApi: SmartSolutionsApi,
+  ) {
+    super(logger, smartApi)
+  }
 
-  async pushUpdate(
+  pushUpdate(
     inputData: PassDataInput,
     nationalId: string,
   ): Promise<Result<Pass>> {
-    return await this.smartApi.updatePkPass(inputData, nationalId)
+    return this.smartApi.updatePkPass(inputData, nationalId)
   }
 
-  async pullUpdate(nationalId: string): Promise<Result<Pass>> {
+  async pullUpdate(): Promise<Result<Pass>> {
     return {
       ok: false,
       error: {
@@ -37,14 +39,10 @@ export class DisabilityLicenseUpdateClient implements LicenseUpdateClient {
     }
   }
 
-  async revoke(nationalId: string): Promise<Result<RevokePassData>> {
-    return await this.smartApi.revokePkPass(nationalId)
-  }
-
-  async verify(inputData: string): Promise<Result<VerifyPassData>> {
+  verify(inputData: string): Promise<Result<VerifyPassData>> {
     const { code, date } = JSON.parse(inputData)
 
-    return await this.smartApi.verifyPkPass({ code, date })
+    return this.smartApi.verifyPkPass({ code, date })
 
     //TODO: Verify license when endpoints are ready
     //const verifyLicenseResult = await this.service.verify(nationalId?)

@@ -5,7 +5,6 @@ import {
   CONFIG_PROVIDER,
   LicenseType,
   LICENSE_UPDATE_CLIENT_FACTORY,
-  LicenseUpdateClient,
 } from './licenseClient.type'
 import type { PassTemplateIds } from './licenseClient.type'
 import { LicenseUpdateClientService } from './licenseUpdateClient.service'
@@ -22,6 +21,7 @@ import {
   DisabilityUpdateClientModule,
 } from './clients/disability-license-client'
 import { PassTemplateIdsProvider } from './providers/passTemplateIdsProvider'
+import { BaseLicenseUpdateClient } from './clients/baseLicenseUpdateClient'
 
 @Module({
   imports: [FirearmUpdateClientModule, DisabilityUpdateClientModule],
@@ -62,7 +62,9 @@ import { PassTemplateIdsProvider } from './providers/passTemplateIdsProvider'
       useFactory: (
         firearmClient: FirearmLicenseUpdateClient,
         disabilityClient: DisabilityLicenseUpdateClient,
-      ) => async (type: LicenseType): Promise<LicenseUpdateClient | null> => {
+      ) => async (
+        type: LicenseType,
+      ): Promise<BaseLicenseUpdateClient | null> => {
         switch (type) {
           case LicenseType.FirearmLicense:
             return firearmClient

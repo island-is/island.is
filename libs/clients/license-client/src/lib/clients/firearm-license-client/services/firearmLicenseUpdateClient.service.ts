@@ -13,27 +13,27 @@ import {
   SmartSolutionsApi,
   VerifyPassData,
 } from '@island.is/clients/smartsolutions'
-import { LicenseUpdateClient, Result } from '../../../licenseClient.type'
+import { Result } from '../../../licenseClient.type'
 import { createPkPassDataInput } from '../firearmLicenseMapper'
+import { BaseLicenseUpdateClient } from '../../baseLicenseUpdateClient'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'firearmlicense-service'
 @Injectable()
-export class FirearmLicenseUpdateClient implements LicenseUpdateClient {
+export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
   constructor(
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
+    @Inject(LOGGER_PROVIDER) protected logger: Logger,
     private openFirearmApi: OpenFirearmApi,
-    private smartApi: SmartSolutionsApi,
-  ) {}
+    protected smartApi: SmartSolutionsApi,
+  ) {
+    super(logger, smartApi)
+  }
 
-  async pushUpdate(
+  pushUpdate(
     inputData: PassDataInput,
     nationalId: string,
   ): Promise<Result<Pass>> {
-    return await this.smartApi.updatePkPass(
-      inputData,
-      formatNationalId(nationalId),
-    )
+    return super.pushUpdate(inputData, formatNationalId(nationalId))
   }
 
   async pullUpdate(nationalId: string): Promise<Result<Pass>> {
@@ -92,14 +92,11 @@ export class FirearmLicenseUpdateClient implements LicenseUpdateClient {
         : null,
     }
 
-    return await this.smartApi.updatePkPass(
-      payload,
-      formatNationalId(nationalId),
-    )
+    return this.smartApi.updatePkPass(payload, formatNationalId(nationalId))
   }
 
-  async revoke(queryId: string): Promise<Result<RevokePassData>> {
-    return await this.smartApi.revokePkPass(queryId)
+  async revoke(nationalId: string): Promise<Result<RevokePassData>> {
+    return super.revoke(formatNationalId(nationalId))
   }
 
   /** We need to verify the pk pass AND the license itself! */

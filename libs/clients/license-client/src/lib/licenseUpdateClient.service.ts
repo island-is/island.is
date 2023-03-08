@@ -4,10 +4,10 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   CONFIG_PROVIDER,
   LicenseType,
-  LicenseUpdateClient,
   LICENSE_UPDATE_CLIENT_FACTORY,
 } from './licenseClient.type'
 import type { PassTemplateIds, LicenseTypeType } from './licenseClient.type'
+import { BaseLicenseUpdateClient } from './clients/baseLicenseUpdateClient'
 
 @Injectable()
 export class LicenseUpdateClientService {
@@ -15,7 +15,7 @@ export class LicenseUpdateClientService {
     @Inject(LICENSE_UPDATE_CLIENT_FACTORY)
     private licenseUpdateClientFactory: (
       type: LicenseType,
-    ) => Promise<LicenseUpdateClient | null>,
+    ) => Promise<BaseLicenseUpdateClient | null>,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     @Inject(CONFIG_PROVIDER) private config: PassTemplateIds,
   ) {}
@@ -40,7 +40,6 @@ export class LicenseUpdateClientService {
   }
 
   getLicenseUpdateClientByType(type: LicenseType) {
-    this.logger.debug(type)
     return this.licenseUpdateClientFactory(type)
   }
 
