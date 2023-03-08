@@ -1,0 +1,8 @@
+#!/bin/bash
+
+echo "Calling default-hook for $0"
+
+default_hook="$$(git rev-parse --show-toplevel)/.git/hooks/$0"
+if [[ -e "$default_hook" ]]; then
+  exec "$default_hook"
+fi
