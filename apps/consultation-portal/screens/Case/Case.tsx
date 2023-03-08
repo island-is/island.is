@@ -22,39 +22,7 @@ import { SimpleCardSkeleton } from '../../components/Card'
 import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
 
 const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
-  const dummyAdvices = [
-    {
-      id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-      number: 1,
-      participantName: 'Sævar Þór Halldórsson ',
-      participantEmail: 'sthh@test.is',
-      content: 'Ég styð þetta.',
-      created: '2023-01-10T14:01:51.040Z',
-      attachments: false,
-    },
-    {
-      id: '3fa85f64-5717-4562-b3fc-2c963f66afa7',
-      number: 2,
-      participantName: 'Þór Jónsson ',
-      participantEmail: 'sthh@test.is',
-      content: 'Ég er mótfallinn þessu. ',
-      created: '2023-01-09T14:01:51.040Z',
-      attachments: true,
-    },
-    {
-      id: '3fa85f64-5717-4562-b3fc-2c963f66afa9',
-      number: 3,
-      participantName: 'Anna Mjöll Guðmundsdóttir',
-      participantEmail: 'test@example.com',
-      content:
-        'Það er gríðarlega mikilvægt að lögð sé áhersla á frjálsan leik barna í leikskóla eins og verið er að gera með þessum breytingum og því ber að fagna. Það mætti þó bæta við, í liðnum, aðstæður barna í leikskóla að hljóðvist og rými fyrir hvert barn sé viðunandi og samkvæmt svokölluðu best practice.',
-      created: '2023-01-07T14:01:51.040Z',
-      attachments: true,
-    },
-  ]
-
   // Remove following lines after connecting to API
-  advices = dummyAdvices
 
   const card = {
     caseNumber: '76/2022',

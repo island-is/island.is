@@ -18,7 +18,6 @@ export const alignTiles = style({
     lg: {
       position: 'absolute',
       bottom: 0,
-      paddingRight: '12px',
     },
   }),
 })
