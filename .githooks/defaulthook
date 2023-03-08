@@ -1,8 +1,8 @@
 #!/bin/bash
 
-echo "Calling default-hook for $0"
+set -euo pipefail
 
-default_hook="$$(git rev-parse --show-toplevel)/.git/hooks/$0"
-if [[ -e "$default_hook" ]]; then
+default_hook="${1:-}"
+if [[ -x "$default_hook" ]]; then
   exec "$default_hook"
 fi
