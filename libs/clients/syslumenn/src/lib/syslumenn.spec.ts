@@ -168,7 +168,7 @@ describe('SyslumennService', () => {
   })
 
   /**
-   * TODO: Make sure that this test runs successfully after Syslumenn API licenseResponsible field has been fixed.
+   * TODO: Make sure that this test runs successfully, after Syslumenn API licenseResponsible field has been fixed.
   describe('getTemporaryEventLicences', () => {
     it('should return temporary event licences', async () => {
       const response = await service.getTemporaryEventLicences()
