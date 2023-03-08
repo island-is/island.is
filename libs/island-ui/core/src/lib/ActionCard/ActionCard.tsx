@@ -345,17 +345,19 @@ export const ActionCard: React.FC<ActionCardProps> = ({
             draftFinishedSteps={draftFinishedSteps ?? 1}
           />
         </Box>
-        <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
-          <Button
-            variant={cta.variant}
-            onClick={cta.onClick}
-            icon={cta.icon}
-            size={cta.size}
-            disabled={cta.disabled}
-          >
-            {cta.label}
-          </Button>
-        </Box>
+        {cta.label && (
+          <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
+            <Button
+              variant={cta.variant}
+              onClick={cta.onClick}
+              icon={cta.icon}
+              size={cta.size}
+              disabled={cta.disabled}
+            >
+              {cta.label}
+            </Button>
+          </Box>
+        )}
       </Box>
     )
   }
@@ -379,17 +381,19 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           className={styles.progressMeter}
         />
 
-        <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
-          <Button
-            variant={cta.variant}
-            onClick={cta.onClick}
-            icon={cta.icon}
-            size={cta.size}
-            disabled={cta.disabled}
-          >
-            {cta.label}
-          </Button>
-        </Box>
+        {cta.label && (
+          <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
+            <Button
+              variant={cta.variant}
+              onClick={cta.onClick}
+              icon={cta.icon}
+              size={cta.size}
+              disabled={cta.disabled}
+            >
+              {cta.label}
+            </Button>
+          </Box>
+        )}
       </Box>
     )
   }

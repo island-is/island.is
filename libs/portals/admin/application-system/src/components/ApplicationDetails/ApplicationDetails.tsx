@@ -169,13 +169,7 @@ export const ApplicationDetails = ({
         </Tooltip>
       </Box>
       <ActionCard
-        cta={{
-          label: showHistory ? '' : formatMessage(m.openApplication),
-          variant: 'ghost',
-          size: 'small',
-          icon: undefined,
-          disabled: true,
-        }}
+        cta={{ label: '' }}
         heading={actionCard?.title ?? application.name ?? undefined}
         text={actionCard?.description ?? undefined}
         date={format(new Date(application.created), 'dd.MM.yyyy')}
@@ -187,7 +181,7 @@ export const ApplicationDetails = ({
           outlined: false,
         }}
         renderApplicationData
-        renderDraftStatusBar={!showHistory}
+        renderDraftStatusBar
         progressMeter={
           showHistory
             ? undefined
