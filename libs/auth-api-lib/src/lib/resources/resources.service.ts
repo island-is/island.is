@@ -1,5 +1,3 @@
-/* eslint-disable  @typescript-eslint/no-explicit-any */
-import { NoContentException } from '@island.is/nest/problem'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import Base64 from 'crypto-js/enc-base64'
@@ -9,6 +7,8 @@ import { Sequelize } from 'sequelize-typescript'
 import { uuid } from 'uuidv4'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+import { NoContentException } from '@island.is/nest/problem'
 
 import { PagedRowsDto } from '../core/types/paged-rows.dto'
 import { DelegationConfig } from '../delegations/DelegationConfig'
@@ -382,7 +382,7 @@ export class ResourcesService {
 
     return this.apiScopeModel.findAll({
       where: scopeNames ? whereOptions : undefined,
-      include: [ApiScopeUserClaim, ApiScopeGroup, Domain],
+      include: [ApiScopeUserClaim, ApiScopeGroup, Domain, ApiScopeGroup],
     })
   }
 
