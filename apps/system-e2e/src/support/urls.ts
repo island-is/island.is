@@ -39,9 +39,7 @@ const envs: {
     authUrl: AuthUrl.dev,
     islandisBaseUrl: getEnvironmentBaseUrl(BaseAuthority.dev),
     adsBaseUrl: getEnvironmentBaseUrl(BaseAuthority.ads),
-    judicialSystemBaseUrl: getEnvironmentBaseUrl(
-      BaseAuthority.judicialSystem,
-    ),
+    judicialSystemBaseUrl: getEnvironmentBaseUrl(BaseAuthority.judicialSystem),
   },
   staging: {
     authUrl: AuthUrl.staging,
