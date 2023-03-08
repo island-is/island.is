@@ -10,7 +10,7 @@ export const serviceSetup = (services: {
     .replicaCount({
       default: 5,
       max: 30,
-      min: 1,
+      min: 5,
     })
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },
