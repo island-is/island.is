@@ -7,6 +7,16 @@ import {
 import { Form, FormModes } from '@island.is/application/types'
 import CoatOfArms from '../assets/CoatOfArms'
 import { m } from '../lib/messages'
+import {
+  additionalInfo,
+  extraInfo,
+  files,
+  inheritance,
+  properties,
+  testament,
+  theAnnouncer,
+  theDeceased,
+} from './overviewSections'
 
 export const done: Form = buildForm({
   id: 'done',
@@ -21,17 +31,26 @@ export const done: Form = buildForm({
       description: m.announcementCompleteDescription,
       space: 1,
       children: [
+        buildCustomField({
+          id: 'announcementComplete',
+          title: '',
+          component: 'Done',
+        }),
         buildDescriptionField({
           id: 'nextSteps',
           title: '',
           description: m.nextStepsText,
         }),
-        buildCustomField({
-          id: 'completeStepImage',
-          title: '',
-          component: 'Done',
-        }),
+        ...theDeceased,
+        ...theAnnouncer,
+        ...testament,
+        ...inheritance,
+        ...properties,
+        ...files,
+        ...extraInfo,
+        ...additionalInfo,
       ],
+      condition: () => true,
     }),
   ],
 })
