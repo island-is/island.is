@@ -29,5 +29,4 @@ charts() {
 
 whitespaces
 charts
-exec "$GIT_ROOT/.githooks/defaulthook" pre-commit
-exit 1
+exec "$GIT_ROOT/.githooks/defaulthook"
