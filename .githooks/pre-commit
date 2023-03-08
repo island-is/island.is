@@ -22,6 +22,8 @@ charts() {
     ecode=$?
     echo "🤖 Generated charts for you 💖"
     echo "    So you don't have to 😘"
+    echo ""
+    echo "       Just remember to commit them ✅"
     return $ecode
   fi
   return 0
