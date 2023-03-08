@@ -167,21 +167,21 @@ export const Users: React.FC = () => {
                   handleClick(user)
                 }}
               >
-                <td className={styles.td}>
+                <Box component="td" paddingX={3} paddingY={2}>
                   <Text as="span">{user.name}</Text>
-                </td>
-                <td className={styles.td}>
+                </Box>
+                <Box component="td" paddingX={3} paddingY={2}>
                   <Text as="span">{formatNationalId(user.nationalId)}</Text>
-                </td>
-                <td className={styles.td}>
+                </Box>
+                <Box component="td" paddingX={3} paddingY={2}>
                   <Text as="span">{userRoleToString(user.role)}</Text>
-                </td>
-                <td className={styles.td}>
+                </Box>
+                <Box component="td" paddingX={3} paddingY={2}>
                   <Text as="span">{user.institution?.name}</Text>
-                </td>
-                <td className={styles.td}>
+                </Box>
+                <Box component="td" paddingX={3} paddingY={2}>
                   <Text as="span">{user.active ? 'Já' : 'Nei'}</Text>
-                </td>
+                </Box>
               </tr>
             ))}
           </tbody>
@@ -196,7 +196,7 @@ export const Users: React.FC = () => {
         </Box>
       )}
       {loading && (
-        <Box className={styles.userTable}>
+        <Box width="full">
           <Loading />
         </Box>
       )}

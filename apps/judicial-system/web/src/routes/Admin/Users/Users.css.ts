@@ -23,10 +23,6 @@ export const tableRowContainer = style({
   transition: 'all .5s ease-in-out',
 })
 
-export const td = style({
-  padding: `${theme.spacing[2]}px ${theme.spacing[3]}px`,
-})
-
 export const userManagementContainer = style({
   display: 'grid',
   gridTemplateColumns: '.6fr auto',
