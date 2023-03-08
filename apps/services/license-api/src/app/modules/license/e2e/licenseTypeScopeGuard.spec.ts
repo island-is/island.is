@@ -3,11 +3,12 @@ import {
   setupWithAuth,
   setupWithoutAuth,
   setupWithoutScope,
-} from '../../../test/setup'
+} from '../../../../test/setup'
 import request from 'supertest'
 import { createCurrentUser } from '@island.is/testing/fixtures'
+import { LicenseApiScope } from '@island.is/auth/scopes'
 
-describe('LicenseTypeScopeGuard - Without scopes, auth or invalid scopes', () => {
+describe('LicenseController - Without scopes, auth or invalid scopes', () => {
   it.each`
     method      | endpoint
     ${'PUT'}    | ${'/users/.nationalId/licenses/test'}
@@ -63,18 +64,13 @@ describe('LicenseTypeScopeGuard - Without scopes, auth or invalid scopes', () =>
 
   it.each`
     method      | endpoint                                    | scope
-    ${'PUT'}    | ${'/users/.nationalId/licenses/firearm'}    | ${'disability'}
-    ${'PUT'}    | ${'/users/.nationalId/licenses/firearm'}    | ${'verify'}
-    ${'PUT'}    | ${'/users/.nationalId/licenses/disability'} | ${'firearm'}
-    ${'PUT'}    | ${'/users/.nationalId/licenses/disability'} | ${'verify'}
-    ${'DELETE'} | ${'/users/.nationalId/licenses/firearm'}    | ${'disability'}
-    ${'DELETE'} | ${'/users/.nationalId/licenses/firearm'}    | ${'verify'}
-    ${'DELETE'} | ${'/users/.nationalId/licenses/disability'} | ${'firearm'}
-    ${'DELETE'} | ${'/users/.nationalId/licenses/disability'} | ${'verify'}
-    ${'POST'}   | ${'/licenses/verify'}                       | ${'firearm'}
-    ${'POST'}   | ${'/licenses/verify'}                       | ${'disability'}
+    ${'PUT'}    | ${'/users/.nationalId/licenses/firearm'}    | ${LicenseApiScope.licensesDisability}
+    ${'PUT'}    | ${'/users/.nationalId/licenses/disability'} | ${LicenseApiScope.licensesFirearm}
+    ${'DELETE'} | ${'/users/.nationalId/licenses/firearm'}    | ${LicenseApiScope.licensesDisability}
+    ${'DELETE'} | ${'/users/.nationalId/licenses/disability'} | ${LicenseApiScope.licensesFirearm}
+    ${'POST'}   | ${'/licenses/verify'}                       | ${LicenseApiScope.licensesFirearm}
   `(
-    '$method $endpoint should return 403 when scope is $scope (invalid)',
+    '$method $endpoint should return 403 when scope is $scope',
     async ({ method, endpoint, scope }) => {
       //Arrange
       const user = createCurrentUser({ nationalId: '3333333333', scope })
@@ -92,7 +88,7 @@ describe('LicenseTypeScopeGuard - Without scopes, auth or invalid scopes', () =>
         type: 'https://httpstatuses.org/403',
       })
 
-      app.cleanUp
+      app.cleanUp()
     },
   )
 })
