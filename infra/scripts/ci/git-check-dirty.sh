@@ -12,7 +12,7 @@ if [[ $(git diff --stat "$abs_path") != '' ]]; then
   git config --global user.name "$bot_name"
   git config --global user.email "username@users.noreply.github.com"
   git commit -am "chore: $bot_name update dirty files"
-  # git push
+  git push
 else
   echo 'no changes to charts, nothing to commit'
 fi
