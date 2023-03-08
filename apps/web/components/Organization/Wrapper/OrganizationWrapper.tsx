@@ -70,6 +70,7 @@ import { HeilbrigdisstofnunSudurlandsFooter } from './Themes/HeilbrigdisstofnunS
 import { HeilbrigdisstofnunSudurlandsHeader } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
 import { TryggingastofnunHeader } from './Themes/TryggingastofnunTheme'
 import { SAkFooter, SAkHeader } from './Themes/SAkTheme'
+import { GevHeader } from './Themes/GevTheme'
 
 import * as styles from './OrganizationWrapper.css'
 
@@ -214,6 +215,8 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
       return <TryggingastofnunHeader organizationPage={organizationPage} />
     case 'sak':
       return <SAkHeader organizationPage={organizationPage} />
+    case 'gev':
+      return <GevHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
@@ -249,8 +252,13 @@ export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
             }
 
             return (
-              <Link href={link.url} key={'organization-external-link-' + index}>
+              <Link
+                href={link.url}
+                key={'organization-external-link-' + index}
+                pureChildren={true}
+              >
                 <Button
+                  as="a"
                   variant={variant}
                   icon={isSjukratryggingar ? 'lockClosed' : 'open'}
                   iconType="outline"

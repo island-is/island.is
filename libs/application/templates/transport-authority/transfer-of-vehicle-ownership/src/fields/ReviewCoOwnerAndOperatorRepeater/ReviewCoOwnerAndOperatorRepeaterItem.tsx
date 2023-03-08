@@ -1,5 +1,11 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, Text, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  Button,
+  GridRow,
+  GridColumn,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { FC, useEffect, useState } from 'react'
@@ -8,7 +14,7 @@ import { useFormContext } from 'react-hook-form'
 import { NationalIdWithName } from '../NationalIdWithName'
 import { information } from '../../lib/messages'
 import debounce from 'lodash/debounce'
-import { ReviewCoOwnerAndOperatorField } from '../../shared'
+import { CoOwnerAndOperator } from '../../shared'
 
 const DEBOUNCE_INTERVAL = 300
 
@@ -16,10 +22,10 @@ interface Props {
   id: string
   index: number
   rowLocation: number
-  repeaterField: Partial<ArrayField<ReviewCoOwnerAndOperatorField, 'id'>>
+  repeaterField: Partial<ArrayField<CoOwnerAndOperator, 'id'>>
   handleRemove: (index: number) => void
-  setCoOwnersAndOperators?: (s: ReviewCoOwnerAndOperatorField[]) => void
-  coOwnersAndOperators?: ReviewCoOwnerAndOperatorField[]
+  setCoOwnersAndOperators?: (s: CoOwnerAndOperator[]) => void
+  coOwnersAndOperators?: CoOwnerAndOperator[]
   errorMessage?: string
 }
 
@@ -52,6 +58,7 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
   const nationalIdField = `${fieldIndex}.nationalId`
   const nameField = `${fieldIndex}.name`
   const typeField = `${fieldIndex}.type`
+  const wasRemovedField = `${fieldIndex}.wasRemoved`
 
   useEffect(() => {
     if (setCoOwnersAndOperators && coOwnersAndOperators && index > -1) {
@@ -61,7 +68,8 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
         phone,
         nationalId,
         name,
-        type: userMessageId,
+        type: userMessageId as 'operator' | 'coOwner',
+        wasRemoved: repeaterField.wasRemoved,
       }
       temp[index] = itemValue
       setCoOwnersAndOperators(temp)
@@ -73,7 +81,11 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
   }, [email, phone, nationalId, name, userMessageId])
 
   return (
-    <Box position="relative" key={repeaterField.id} marginTop={3}>
+    <Box
+      position="relative"
+      hidden={repeaterField.wasRemoved === 'true'}
+      marginTop={3}
+    >
       <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
         <Text variant="h5">
           {formatMessage(information.labels[userMessageId].title)} {rowLocation}
@@ -97,43 +109,56 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
         nameDefaultValue={name}
         errorMessage={errorMessage}
       />
-      <Box marginTop={2}>
-        <InputController
-          id={emailField}
-          name={emailField}
-          type="email"
-          label={formatMessage(information.labels[userMessageId].email)}
-          error={errorMessage && email.length === 0 ? errorMessage : undefined}
-          backgroundColor="blue"
-          required
-          defaultValue={email}
-          onChange={debounce(
-            (event) => setEmail(event.target.value),
-            DEBOUNCE_INTERVAL,
-          )}
-        />
-      </Box>
-      <Box marginTop={2}>
-        <InputController
-          id={phoneField}
-          name={phoneField}
-          type="tel"
-          label={formatMessage(information.labels[userMessageId].phone)}
-          error={errorMessage && phone.length === 0 ? errorMessage : undefined}
-          backgroundColor="blue"
-          required
-          defaultValue={phone}
-          onChange={debounce(
-            (event) => setPhone(event.target.value),
-            DEBOUNCE_INTERVAL,
-          )}
-        />
-      </Box>
+      <GridRow>
+        <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+          <InputController
+            id={emailField}
+            name={emailField}
+            type="email"
+            label={formatMessage(information.labels[userMessageId].email)}
+            error={
+              errorMessage && email.length === 0 ? errorMessage : undefined
+            }
+            backgroundColor="blue"
+            required
+            defaultValue={email}
+            onChange={debounce(
+              (event) => setEmail(event.target.value),
+              DEBOUNCE_INTERVAL,
+            )}
+          />
+        </GridColumn>
+        <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+          <InputController
+            id={phoneField}
+            name={phoneField}
+            type="tel"
+            format="###-####"
+            label={formatMessage(information.labels[userMessageId].phone)}
+            error={
+              errorMessage && phone.length === 0 ? errorMessage : undefined
+            }
+            backgroundColor="blue"
+            required
+            defaultValue={phone}
+            onChange={debounce(
+              (event) => setPhone(event.target.value),
+              DEBOUNCE_INTERVAL,
+            )}
+          />
+        </GridColumn>
+      </GridRow>
       <input
         type="hidden"
         value={userMessageId}
         ref={register({ required: true })}
         name={typeField}
+      />
+      <input
+        type="hidden"
+        value={repeaterField.wasRemoved}
+        ref={register({ required: true })}
+        name={wasRemovedField}
       />
     </Box>
   )

@@ -1,19 +1,25 @@
 import { z } from 'zod'
+import * as kennitala from 'kennitala'
 
 export const UserInformationSchema = z.object({
-  nationalId: z.string().min(1),
+  nationalId: z
+    .string()
+    .refine((x) => x && x.length !== 0 && kennitala.isValid(x)),
   name: z.string().min(1),
-  email: z.string().min(1),
+  email: z.string().email(),
   phone: z.string().min(7),
   approved: z.boolean().optional(),
 })
 
 export const CoOwnerAndOperatorSchema = z.object({
-  nationalId: z.string().min(1),
+  nationalId: z
+    .string()
+    .refine((x) => x && x.length !== 0 && kennitala.isValid(x)),
   name: z.string().min(1),
-  email: z.string().min(1),
+  email: z.string().email(),
   phone: z.string().min(7),
   approved: z.boolean().optional(),
+  wasRemoved: z.string().optional(),
   type: z.enum(['operator', 'coOwner']),
 })
 

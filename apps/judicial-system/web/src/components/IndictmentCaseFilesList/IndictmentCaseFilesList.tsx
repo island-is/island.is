@@ -6,12 +6,14 @@ import {
   CaseFile,
   CaseFileCategory,
   completedCaseStates,
+  Feature,
   isExtendedCourtRole,
 } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { Box, Text } from '@island.is/island-ui/core'
 import { core, errors } from '@island.is/judicial-system-web/messages'
 import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 import PdfButton from '../PdfButton/PdfButton'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
@@ -22,6 +24,7 @@ import SectionHeading from '../SectionHeading/SectionHeading'
 import * as styles from './IndictmentCaseFilesList.css'
 import { courtRecord } from '../../routes/Court/Indictments/CourtRecord/CourtRecord.strings'
 import Modal from '../Modal/Modal'
+import { FeatureContext } from '../FeatureProvider/FeatureProvider'
 
 interface Props {
   workingCase: Case
@@ -58,6 +61,12 @@ const RenderFiles: React.FC<Props & RenderFilesProps> = (props) => {
 const IndictmentCaseFilesList: React.FC<Props> = (props) => {
   const { workingCase } = props
   const { formatMessage } = useIntl()
+  const { features } = useContext(FeatureContext)
+
+  const isTrafficViolationCaseCheck =
+    features.includes(Feature.INDICTMENT_ROUTE) &&
+    isTrafficViolationCase(workingCase.indictmentSubtypes)
+
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
   })
@@ -65,28 +74,26 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
 
   const cf = workingCase.caseFiles
 
-  if (!cf || cf.length <= 0) {
-    return null
-  }
-
-  const coverLetters = cf.filter(
+  const coverLetters = cf?.filter(
     (file) => file.category === CaseFileCategory.COVER_LETTER,
   )
-  const indictments = cf.filter(
+  const indictments = cf?.filter(
     (file) => file.category === CaseFileCategory.INDICTMENT,
   )
-  const criminalRecords = cf.filter(
+  const criminalRecords = cf?.filter(
     (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
   )
-  const costBreakdowns = cf.filter(
+  const costBreakdowns = cf?.filter(
     (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
   )
-  const others = cf.filter(
+  const others = cf?.filter(
     (file) =>
       file.category === CaseFileCategory.CASE_FILE && !file.policeCaseNumber,
   )
-  const rulings = cf.filter((file) => file.category === CaseFileCategory.RULING)
-  const courtRecords = cf.filter(
+  const rulings = cf?.filter(
+    (file) => file.category === CaseFileCategory.RULING,
+  )
+  const courtRecords = cf?.filter(
     (file) => file.category === CaseFileCategory.COURT_RECORD,
   )
 
@@ -116,6 +123,25 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
               onOpenFile={onOpen}
               workingCase={workingCase}
             />
+          </Box>
+        )}
+        {isTrafficViolationCaseCheck && (
+          <Box marginBottom={5}>
+            <Text variant="h4" as="h4" marginBottom={1}>
+              {formatMessage(caseFiles.indictmentSection)}
+            </Text>
+            <Box
+              marginBottom={2}
+              key={`indictment-${workingCase.id}`}
+              className={styles.caseFileContainer}
+            >
+              <PdfButton
+                caseId={workingCase.id}
+                title={formatMessage(caseFiles.trafficViolationIndictmentTitle)}
+                pdfType="indictment"
+                renderAs="row"
+              />
+            </Box>
           </Box>
         )}
         {criminalRecords && criminalRecords.length > 0 && (

@@ -72,6 +72,10 @@ export const Tooltip: FC<TooltipProps> = ({
     ...(placement && { placement }),
   })
 
+  if (!text) {
+    return null
+  }
+
   return (
     <>
       {children ? (
