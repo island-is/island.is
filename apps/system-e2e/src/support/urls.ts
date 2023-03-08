@@ -40,7 +40,7 @@ const envs: {
     islandisBaseUrl: getEnvironmentBaseUrl(BaseAuthority.dev),
     adsBaseUrl: getEnvironmentBaseUrl(BaseAuthority.ads),
     judicialSystemBaseUrl: getEnvironmentBaseUrl(
-      'judicial-system.dev01.devland.is',
+      BaseAuthority.judicialSystem,
     ),
   },
   staging: {
