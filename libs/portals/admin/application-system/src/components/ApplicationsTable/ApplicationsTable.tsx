@@ -6,16 +6,25 @@ import {
   Table as T,
   Tag,
   Text,
+  toast,
   Tooltip,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 import { m } from '../../lib/messages'
-import { getLogo, statusMapper } from '../../shared/utils'
+import {
+  getBaseUrlForm,
+  getLogo,
+  getSlugFromType,
+  statusMapper,
+} from '../../shared/utils'
 import { AdminApplication } from '../../types/adminApplication'
 import { ApplicationDetails } from '../ApplicationDetails/ApplicationDetails'
 import { Organization } from '@island.is/shared/types'
+import copyToClipboard from 'copy-to-clipboard'
 import * as styles from './ApplicationsTable.css'
+import { MouseEvent } from 'react'
+import { ApplicationTypes } from '@island.is/application/types'
 
 interface Props {
   applications: AdminApplication[]
@@ -38,6 +47,26 @@ export const ApplicationsTable = ({
     from: (page - 1) * pageSize,
     to: pageSize * page,
     totalPages: Math.ceil(applications.length / pageSize),
+  }
+
+  const copyApplicationLink = (application: AdminApplication) => {
+    const typeId = (application.typeId as unknown) as ApplicationTypes
+    const baseUrl = getBaseUrlForm()
+    const slug = getSlugFromType(typeId)
+    const copied = copyToClipboard(`${baseUrl}/${slug}/${application.id}`)
+
+    if (copied) {
+      toast.success(formatMessage(m.copySuccessful))
+    }
+  }
+
+  const handleCopyButtonClick = (
+    e: MouseEvent<HTMLButtonElement>,
+    application: AdminApplication,
+  ) => {
+    // Stop propagation so that the copy button doesn't trigger the drawer opening
+    e.stopPropagation()
+    copyApplicationLink(application)
   }
 
   if (applications.length === 0)
@@ -69,37 +98,55 @@ export const ApplicationsTable = ({
               const logo = getLogo(application.typeId, organizations)
 
               return (
-                <T.Row key={`${application.id}-${index}`}>
-                  <T.Data>
-                    {format(new Date(application.created), 'dd.MM.yyyy')}
-                  </T.Data>
-                  <T.Data>{application.name}</T.Data>
-                  <T.Data>{application.applicantName ?? ''}</T.Data>
-                  <T.Data>{application.applicant}</T.Data>
-                  <T.Data>
-                    <Box display="flex" alignItems="center">
-                      <img src={logo} alt="" className={styles.logo} />
-                      <span>{application.institution}</span>
-                    </Box>
-                  </T.Data>
-                  <T.Data>
-                    <Tag disabled variant={tag.variant}>
-                      {formatMessage(tag.label)}
-                    </Tag>
-                  </T.Data>
-                  <T.Data>
-                    <Tooltip text={formatMessage(m.openApplication)}>
-                      <Box
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="flexEnd"
-                      >
-                        <Drawer
-                          ariaLabel={`application-drawer-${index}`}
-                          baseId={`application-drawer-${index}`}
-                          disclosure={
+                <Drawer
+                  key={`${application.id}-${index}`}
+                  ariaLabel={`application-drawer-${index}`}
+                  baseId={`application-drawer-${index}`}
+                  disclosure={
+                    <tr
+                      key={`${application.id}-${index}`}
+                      role="button"
+                      aria-label={formatMessage(m.openApplication)}
+                      className={styles.focusableTableRow}
+                    >
+                      <T.Data>
+                        {format(new Date(application.created), 'dd.MM.yyyy')}
+                      </T.Data>
+                      <T.Data>
+                        <Text variant="eyebrow" color="blue400">
+                          {application.name}
+                        </Text>
+                      </T.Data>
+                      <T.Data>{application.applicantName ?? ''}</T.Data>
+                      <T.Data>{application.applicant}</T.Data>
+                      <T.Data>
+                        <Box display="flex" alignItems="center">
+                          <img src={logo} alt="" className={styles.logo} />
+                          <span>{application.institution}</span>
+                        </Box>
+                      </T.Data>
+                      <T.Data>
+                        <Tag disabled variant={tag.variant}>
+                          {formatMessage(tag.label)}
+                        </Tag>
+                      </T.Data>
+                      <T.Data style={{ pointerEvents: 'none' }}>
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="flexEnd"
+                        >
+                          <Tooltip
+                            text={formatMessage(m.copyLinkToApplication)}
+                          >
                             <button
-                              aria-label={formatMessage(m.openApplication)}
+                              aria-label={formatMessage(
+                                m.copyLinkToApplication,
+                              )}
+                              onClick={(e) =>
+                                handleCopyButtonClick(e, application)
+                              }
+                              style={{ pointerEvents: 'all' }}
                             >
                               <Icon
                                 type="outline"
@@ -107,17 +154,18 @@ export const ApplicationsTable = ({
                                 icon="copy"
                               />
                             </button>
-                          }
-                        >
-                          <ApplicationDetails
-                            application={application}
-                            organizations={organizations}
-                          />
-                        </Drawer>
-                      </Box>
-                    </Tooltip>
-                  </T.Data>
-                </T.Row>
+                          </Tooltip>
+                        </Box>
+                      </T.Data>
+                    </tr>
+                  }
+                >
+                  <ApplicationDetails
+                    application={application}
+                    organizations={organizations}
+                    onCopyButtonClick={copyApplicationLink}
+                  />
+                </Drawer>
               )
             })}
         </T.Body>

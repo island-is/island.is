@@ -1,18 +1,23 @@
 import {
   ActionCard,
+  AlertMessage,
+  AlertMessageType,
   Box,
   GridColumn,
   GridRow,
   Icon,
   Text,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
-import { PropsWithChildren } from 'react'
+import { PropsWithChildren, ReactNode } from 'react'
 import { getLogo, statusMapper } from '../../shared/utils'
 import { m } from '../../lib/messages'
 import { AdminApplication } from '../../types/adminApplication'
 import { Organization } from '@island.is/shared/types'
+import { FormatMessage } from '@island.is/application/types'
+import { ApplicationListAdminResponseDtoStatusEnum } from '@island.is/api/schema'
 
 interface ValueLineProps {
   title?: string
@@ -31,15 +36,69 @@ const ValueLine = ({ title, children }: PropsWithChildren<ValueLineProps>) => {
   )
 }
 
+const buildHistoryItems = (
+  application: AdminApplication,
+  formatMessage: FormatMessage,
+) => {
+  if (application.status === ApplicationListAdminResponseDtoStatusEnum.draft)
+    return
+
+  const displayStatus = application.actionCard?.pendingAction
+    ?.displayStatus as AlertMessageType
+
+  let history: {
+    title: string
+    date?: string
+    content?: ReactNode
+  }[] = []
+
+  if (application.actionCard?.pendingAction?.title) {
+    history.push({
+      date: format(new Date(), 'dd.MM.yyyy'),
+      title: formatMessage(application.actionCard.pendingAction.title ?? ''),
+      content: application.actionCard.pendingAction.content ? (
+        <AlertMessage
+          type={displayStatus ?? 'default'}
+          message={formatMessage(
+            application.actionCard.pendingAction.content ?? '',
+          )}
+        />
+      ) : undefined,
+    })
+  }
+
+  if (application.actionCard?.history) {
+    history = history.concat(
+      application.actionCard?.history.map((x) => ({
+        date: format(new Date(x.date), 'dd.MM.yyyy'),
+        title: x.log ? formatMessage(x.log) : '',
+      })),
+    )
+  }
+
+  return history
+}
+
 interface Props {
   application: AdminApplication
   organizations: Organization[]
+  onCopyButtonClick: (application: AdminApplication) => void
 }
 
-export const ApplicationDetails = ({ application, organizations }: Props) => {
+export const ApplicationDetails = ({
+  application,
+  organizations,
+  onCopyButtonClick,
+}: Props) => {
   const { formatMessage } = useLocale()
   const tag = statusMapper[application.status]
   const logo = getLogo(application.typeId, organizations)
+  const actionCard = application.actionCard
+  const historyItems = buildHistoryItems(application, formatMessage)
+  const showHistory =
+    application.status !== ApplicationListAdminResponseDtoStatusEnum.draft &&
+    historyItems &&
+    historyItems.length > 0
 
   return (
     <Box>
@@ -60,59 +119,92 @@ export const ApplicationDetails = ({ application, organizations }: Props) => {
               {application.applicant}
             </ValueLine>
           </GridColumn>
-          <GridColumn span={['2/2', '2/2', '1/2']}>
-            <ValueLine title={formatMessage(m.email)}>nafn@simnet.is</ValueLine>
-          </GridColumn>
-          <GridColumn span={['2/2', '2/2', '1/2']}>
-            <ValueLine title={formatMessage(m.phone)}>8486525</ValueLine>
-          </GridColumn>
         </GridRow>
       </Box>
-      {/* TODO: Only display this if applicant has procurer */}
+      {application.applicantActors.length > 0 &&
+        application.applicantActors.map((actor) => (
+          <Box key={actor}>
+            <Box
+              display="flex"
+              alignItems="center"
+              marginBottom={[2, 2, 3]}
+              marginTop={[5, 5, 6]}
+            >
+              <Icon icon="person" color="purple600" type="outline" />
+              <Box paddingLeft={2} />
+              <Text variant="h3">{formatMessage(m.procurer)}</Text>
+            </Box>
+            <Box padding={4} background="purple100" borderRadius="large">
+              <GridRow rowGap={3}>
+                <GridColumn span={['2/2', '2/2', '1/2']}>
+                  <ValueLine title={formatMessage(m.name)}>{actor}</ValueLine>
+                </GridColumn>
+                <GridColumn span={['2/2', '2/2', '1/2']}>
+                  <ValueLine title={formatMessage(m.nationalId)}>
+                    {actor}
+                  </ValueLine>
+                </GridColumn>
+              </GridRow>
+            </Box>
+          </Box>
+        ))}
       <Box
         display="flex"
+        justifyContent="spaceBetween"
         alignItems="center"
         marginBottom={[2, 2, 3]}
         marginTop={[5, 5, 6]}
       >
-        <Icon icon="person" color="purple600" type="outline" />
-        <Box paddingLeft={2} />
-        <Text variant="h3">{formatMessage(m.procurer)}</Text>
+        <Text variant="h3">{formatMessage(m.application)}</Text>
+        <Tooltip
+          text={formatMessage(m.copyLinkToApplication)}
+          // We are already in a portal,
+          // and tooltip renders below the drawer if we render tooltip also in portal
+          renderInPortal={false}
+          placement="left"
+        >
+          <button onClick={() => onCopyButtonClick(application)}>
+            <Icon icon="copy" type="outline" color="blue400" />
+          </button>
+        </Tooltip>
       </Box>
-      <Box padding={4} background="purple100" borderRadius="large">
-        <GridRow rowGap={3}>
-          <GridColumn span={['2/2', '2/2', '1/2']}>
-            <ValueLine title={formatMessage(m.name)}>
-              Sigríður Jónsdóttir
-            </ValueLine>
-          </GridColumn>
-          <GridColumn span={['2/2', '2/2', '1/2']}>
-            <ValueLine title={formatMessage(m.nationalId)}>
-              2204774474
-            </ValueLine>
-          </GridColumn>
-          <GridColumn span={['2/2', '2/2', '1/2']}>
-            <ValueLine title={formatMessage(m.email)}>
-              sigridur@simnet.is
-            </ValueLine>
-          </GridColumn>
-          <GridColumn span={['2/2', '2/2', '1/2']}>
-            <ValueLine title={formatMessage(m.phone)}>8486525</ValueLine>
-          </GridColumn>
-        </GridRow>
-      </Box>
-      <Text variant="h3" marginBottom={[2, 2, 3]} marginTop={[5, 5, 6]}>
-        {formatMessage(m.application)}
-      </Text>
       <ActionCard
-        cta={{ label: '' }}
-        heading={application.name ?? undefined}
+        cta={{
+          label: showHistory ? '' : formatMessage(m.openApplication),
+          variant: 'ghost',
+          size: 'small',
+          icon: undefined,
+          disabled: true,
+        }}
+        heading={actionCard?.title ?? application.name ?? undefined}
+        text={actionCard?.description ?? undefined}
         date={format(new Date(application.created), 'dd.MM.yyyy')}
         logo={logo}
+        status={application.status}
         tag={{
           label: formatMessage(tag.label),
           variant: tag.variant,
           outlined: false,
+        }}
+        renderApplicationData
+        renderDraftStatusBar={!showHistory}
+        progressMeter={
+          showHistory
+            ? undefined
+            : {
+                active:
+                  application.progress !== undefined &&
+                  application.progress !== null,
+                progress: application.progress ?? undefined,
+                variant: 'blue',
+                draftFinishedSteps: actionCard?.draftFinishedSteps ?? undefined,
+                draftTotalSteps: actionCard?.draftTotalSteps ?? undefined,
+              }
+        }
+        history={{
+          openButtonLabel: formatMessage(m.openApplicationHistory),
+          closeButtonLabel: formatMessage(m.closeApplicationHistory),
+          items: historyItems,
         }}
       />
     </Box>

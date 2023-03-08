@@ -70,6 +70,22 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:notFound',
     defaultMessage: 'Engar umsóknir fundust',
   },
+  openApplicationHistory: {
+    id: 'admin-portal.application-system:openApplicationHistory',
+    defaultMessage: 'Opna umsóknarsögu',
+  },
+  closeApplicationHistory: {
+    id: 'admin-portal.application-system:closeApplicationHistory',
+    defaultMessage: 'Loka umsóknarsögu',
+  },
+  copyLinkToApplication: {
+    id: 'admin-portal.application-system:copyLinkToApplication',
+    defaultMessage: 'Afrita tengil á umsókn',
+  },
+  copySuccessful: {
+    id: 'admin-portal.application-system:copySuccessful',
+    defaultMessage: 'Tengill afritaður',
+  },
 
   // Tags
   tagsInProgress: {

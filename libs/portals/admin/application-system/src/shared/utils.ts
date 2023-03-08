@@ -1,4 +1,9 @@
-import { ActionCardTag, ApplicationStatus } from '@island.is/application/types'
+import {
+  ActionCardTag,
+  ApplicationConfigurations,
+  ApplicationStatus,
+  ApplicationTypes,
+} from '@island.is/application/types'
 import { MessageDescriptor } from 'react-intl'
 import { Organization } from '@island.is/shared/types'
 import { m } from '../lib/messages'
@@ -52,6 +57,22 @@ export const getLogo = (
     institution?.title ?? 'stafraent-island',
     organizations,
   )
+}
+
+export const getSlugFromType = (type: ApplicationTypes) => {
+  for (const [key, value] of Object.entries(ApplicationConfigurations)) {
+    if (type === key) {
+      return value.slug
+    }
+  }
+
+  return undefined
+}
+
+export const getBaseUrlForm = () => {
+  const path = window.location.origin
+  const isLocalhost = path.includes('localhost')
+  return isLocalhost ? 'http://localhost:4242/umsoknir' : `${path}/umsoknir`
 }
 
 export const getFilteredApplications = (
