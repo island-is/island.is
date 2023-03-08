@@ -10,11 +10,11 @@ export const serviceSetup = (services: {
     .replicaCount({
       default: 5,
       max: 30,
-      min: 5,
+      min: 1,
     })
     .resources({
-      limits: { cpu: '400m', memory: '512Mi' },
-      requests: { cpu: '200m', memory: '256Mi' },
+      limits: { cpu: '900m', memory: '512Mi' },
+      requests: { cpu: '10m', memory: '256Mi' },
     })
     .env({
       BASEPATH: '/minarsidur',
