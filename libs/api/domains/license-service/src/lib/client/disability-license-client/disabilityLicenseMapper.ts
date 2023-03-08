@@ -57,7 +57,7 @@ export const createPkPassDataInput = (license: OrorkuSkirteini) => {
 
   return [
     {
-      identifier: 'name',
+      identifier: 'nafn',
       value: license.nafn ?? '',
     },
     {
@@ -65,7 +65,7 @@ export const createPkPassDataInput = (license: OrorkuSkirteini) => {
       value: license.kennitala ?? '',
     },
     {
-      identifier: 'gildir',
+      identifier: 'Gildir',
       value: license.gildirtil ? formatDateString(license.gildirtil) : '',
     },
   ]
