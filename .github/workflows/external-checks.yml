@@ -75,8 +75,8 @@ jobs:
         run: npm install -g yarn
 
       - name: Run gitbook format
-        run: node ./scripts/gitbook.js
         if: ${{ github.ref == 'ref/heads/main' }}
+        run: node ./scripts/gitbook.js
 
       - name: Run gitbook format and commit changes
         if: ${{ github.event_name == 'pull_request' }}
