@@ -389,7 +389,7 @@ jobs:
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
       - name: NX format:check
         if: ${{ github.ref == 'ref/heads/main' }}
-        run: ./scripts/ci/20_check-formatting.sh
+        run: ./scripts/ci/20_check-formatting.sh "check"
       - name: NX format:write
         if: ${{ github.event_name == 'pull_request' }}
         run: ./scripts/ci/20_check-formatting.sh "write"
