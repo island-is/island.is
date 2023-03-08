@@ -2,7 +2,7 @@
 
 Hello dear developer 👋
 
-In this directory is a collection of helpful git hooks to ease your development ❤️ 
+In this directory is a collection of helpful git hooks to ease your development ❤️
 
 ## Setup
 
