@@ -3397,3 +3397,4 @@ spec:
         tags.datadoghq.com/service: 'contentful-entry-tagger-service'
         tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-contentful-entry-tagger'
 ---
+

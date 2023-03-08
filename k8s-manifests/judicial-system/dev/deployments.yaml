@@ -686,3 +686,4 @@ spec:
         tags.datadoghq.com/service: 'judicial-system-message-handler'
         tags.datadoghq.com/version: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-message-handler'
 ---
+

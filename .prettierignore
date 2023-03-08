@@ -3,6 +3,7 @@
 /dist
 /coverage
 .github/actions/dist*
+k8s-manifests/**/*.yaml
 /libs/api/domains/application/gen
 /tmp
 /cache
