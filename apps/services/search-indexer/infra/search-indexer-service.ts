@@ -134,3 +134,8 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
       max: 1,
       default: 1,
     })
+    .extraAttributes({
+      dev: { progressDeadlineSeconds: 25 * 60 },
+      staging: { progressDeadlineSeconds: 25 * 60 },
+      prod: { progressDeadlineSeconds: 25 * 60 },
+    })
