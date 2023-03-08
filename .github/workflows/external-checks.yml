@@ -79,7 +79,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         run: |
           node ./scripts/gitbook.js
-          ./infra/scripts/ci/git-check-dirty.sh "SUMMARY.md" "GitbookBot"
+          ./infra/scripts/ci/git-check-dirty.sh "SUMMARY.md" "Gitbook"
 
       - name: Check if the git repo is dirty
         id: changes
