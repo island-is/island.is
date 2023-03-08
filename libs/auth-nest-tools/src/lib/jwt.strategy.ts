@@ -22,7 +22,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       secretOrKeyProvider: Array.isArray(config.issuer)
         ? multiIssuerKeyProvider({
             ...keyProviderBaseOptions,
-            jwksUri: config.issuer.map((issuer) => `${issuer}${JWKS_URI}`),
+            jwksUri: JWKS_URI,
+            issuers: config.issuer,
           })
         : passportJwtSecret({
             ...keyProviderBaseOptions,

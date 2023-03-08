@@ -1,9 +1,16 @@
 import { SecretCallback } from 'express-jwt'
 import { decode } from 'jsonwebtoken'
 import { ExpressJwtOptions, JwksClient } from 'jwks-rsa'
+import JwksRsa = require('jwks-rsa')
+
+import { logger } from '@island.is/logging'
 
 interface MultiIssuerOptions extends Omit<ExpressJwtOptions, 'jwksUri'> {
-  jwksUri: string[]
+  // Path to the JWKS on the issuer
+  jwksUri: string
+
+  // Array of issuer URLs
+  issuers: string[]
 }
 
 // Copied from jwks-rsa/lib/integrations/passport.js
@@ -28,18 +35,20 @@ const handleSigningKeyError = (
  */
 export const multiIssuerKeyProvider = ({
   jwksUri,
+  issuers,
   ...options
 }: MultiIssuerOptions): SecretCallback => {
-  if (!jwksUri) {
-    throw new Error('jwksUri is required')
+  if (!jwksUri || !issuers || issuers.length === 0) {
+    throw new Error('jwksUri and issuers is required')
   }
 
   const clients = new Map<string, JwksClient>()
-  jwksUri.map((uri) => {
-    clients.set(uri, new JwksClient({ jwksUri: uri, ...options }))
-  })
+  for (const issuer of issuers) {
+    clients.set(issuer, JwksRsa({ jwksUri: `${issuer}${jwksUri}`, ...options }))
+  }
+
   const onError = options.handleSigningKeyError || handleSigningKeyError
-  // (req: express.Request, payload: any, done: (err: any, secret?: secretType) => void): void;
+
   return (request, rawJwtToken, callback) => {
     const decodedJwtToken = decode(rawJwtToken, { complete: true })
 
@@ -52,12 +61,13 @@ export const multiIssuerKeyProvider = ({
       return callback(null)
     }
 
-    const client = clients.get(decodedJwtToken.iss)
+    const issuer = decodedJwtToken.payload.iss
+    const client = clients.get(issuer)
 
     if (!client) {
-      return callback(
-        new Error(`Issuer ${decodedJwtToken.iss} is not configured`),
-      )
+      const message = `Issuer ${issuer} is not configured`
+      logger.error(message)
+      return callback(message)
     }
 
     client.getSigningKey(decodedJwtToken.header.kid, (error, key) => {
