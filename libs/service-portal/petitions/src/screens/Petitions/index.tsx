@@ -1,6 +1,14 @@
-import { Box, Stack, Tabs, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  GridColumn,
+  Stack,
+  Tabs,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { IntroHeader, ServicePortalPath } from '@island.is/service-portal/core'
+import { ServicePortalPath } from '@island.is/service-portal/core'
+import { IntroHeader } from '@island.is/portals/core'
 import { m } from '../../lib/messages'
 import {
   PaginatedEndorsementListResponse as OwnedLists,
@@ -44,8 +52,26 @@ const Petitions = () => {
       <IntroHeader
         title={formatMessage(m.title)}
         intro={formatMessage(m.intro)}
-      />
-
+      >
+        <GridColumn span={['8/8', '3/8']}>
+          <Box
+            display={'flex'}
+            justifyContent={['flexStart', 'flexEnd']}
+            paddingTop={[2]}
+          >
+            <Button
+              onClick={() =>
+                window.open(
+                  `${document.location.origin}/umsoknir/undirskriftalisti/`,
+                )
+              }
+              size="small"
+            >
+              {'Stofna nýjan lista'}
+            </Button>
+          </Box>
+        </GridColumn>
+      </IntroHeader>
       <Box>
         <Tabs
           contentBackground="white"
