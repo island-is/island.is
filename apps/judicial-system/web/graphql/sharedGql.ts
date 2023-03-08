@@ -53,6 +53,7 @@ export const PoliceCaseFilesQuery = gql`
     policeCaseFiles(input: $input) {
       id
       name
+      policeCaseNumber
     }
   }
 `

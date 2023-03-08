@@ -61,4 +61,29 @@ export const m = defineMessages({
     id: 'ap.ids-admin:back',
     defaultMessage: 'Til baka',
   },
+  change: {
+    id: 'ap.ids-admin:change',
+    defaultMessage: 'Breyta',
+  },
+  applicationsDescription: {
+    id: 'ap.ids-admin:applications-description',
+    defaultMessage: 'Forrit sem tengjast þessum tenant',
+  },
+  createApplication: {
+    id: 'ap.ids-admin:create-application',
+    defaultMessage: 'Búa til forrit',
+  },
+  learnMore: {
+    id: 'ap.ids-admin:learn-more',
+    defaultMessage: 'Nánari upplýsingar',
+  },
+  noApplications: {
+    id: 'ap.ids-admin:no-applications',
+    defaultMessage: 'Engin forrit til staðar',
+  },
+  noApplicationsDescription: {
+    id: 'ap.ids-admin:no-applications-description',
+    defaultMessage:
+      'Þú getur búið til forrit með því að smella á Búa til forrit',
+  },
 })
