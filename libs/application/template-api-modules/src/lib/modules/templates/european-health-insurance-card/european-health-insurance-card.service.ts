@@ -1,8 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { EhicApi } from '@island.is/clients/ehic-client-v1'
-
-import { EhicClientService } from '@island.is/clients/ehic-client-v1'
-
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import {
