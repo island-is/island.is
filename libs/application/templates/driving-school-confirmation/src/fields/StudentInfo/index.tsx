@@ -15,6 +15,7 @@ import { ViewSingleStudentQuery } from '../../graphql/queries'
 import { useFormContext } from 'react-hook-form'
 import kennitala from 'kennitala'
 import { Student } from '../../types'
+import format from 'date-fns/format'
 
 const ViewStudent: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -46,6 +47,15 @@ const ViewStudent: FC<FieldBaseProps> = ({ application }) => {
     ).values(),
   ]
 
+  const getExamString = ({
+    name,
+    examDate,
+  }: {
+    name: string
+    examDate?: string
+  }) =>
+    `${name}${examDate ? `- ${format(new Date(examDate), 'dd.MM.yyyy')}` : ''}`
+
   const studentInfo = (s: typeof student) => (
     <>
       <GridRow marginBottom={3}>
@@ -76,9 +86,13 @@ const ViewStudent: FC<FieldBaseProps> = ({ application }) => {
           </Text>
           {completeSchools.length ? (
             completeSchools.map((school: any, key: any) => {
+              const textStr = getExamString({
+                name: school.schoolTypeName,
+                examDate: school.examDate,
+              })
               return (
                 <Text key={key} variant="default">
-                  {school.schoolTypeName}
+                  {textStr}
                 </Text>
               )
             })
