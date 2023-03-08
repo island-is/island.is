@@ -6,19 +6,28 @@ import { passportJwtSecret } from 'jwks-rsa'
 import type { AuthConfig } from './auth.module'
 import { JwtPayload } from './jwt.payload'
 import { Auth } from './auth'
+import { multiIssuerKeyProvider } from './multi-issuer-key-provider'
 
 const AUTH_BODY_FIELD_NAME = '__accessToken'
 const JWKS_URI = '/.well-known/openid-configuration/jwks'
+const keyProviderBaseOptions = {
+  cache: true,
+  rateLimit: true,
+}
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private config: AuthConfig) {
     super({
-      secretOrKeyProvider: passportJwtSecret({
-        cache: true,
-        rateLimit: true,
-        jwksUri: `${config.issuer}${JWKS_URI}`,
-      }),
+      secretOrKeyProvider: Array.isArray(config.issuer)
+        ? multiIssuerKeyProvider({
+            ...keyProviderBaseOptions,
+            jwksUri: config.issuer.map((issuer) => `${issuer}${JWKS_URI}`),
+          })
+        : passportJwtSecret({
+            ...keyProviderBaseOptions,
+            jwksUri: `${config.issuer}${JWKS_URI}`,
+          }),
 
       jwtFromRequest: ExtractJwt.fromExtractors([
         ExtractJwt.fromAuthHeaderAsBearerToken(),
