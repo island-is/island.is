@@ -45,7 +45,7 @@ export class LicenseServiceService {
     @Inject(LICENSE_MAPPER_FACTORY)
     private readonly licenseMapperFactory: (
       type: GenericLicenseType,
-    ) => Promise<GenericLicenseMapper<any> | null>,
+    ) => Promise<GenericLicenseMapper | null>,
   ) {}
 
   private async getOrganization(
