@@ -8,7 +8,7 @@ import {
   ConsultationPortalAllTypesQuery,
   ConsultationPortalAllTypesQueryVariables,
   ConsultationPortalAllTypesDocument,
-} from '../screens/Home/getAllTypes.generated'
+} from '../screens/Home/getAllTypes.graphql.generated'
 import Home from '../screens/Home/Home'
 import { ArrOfTypes, Case } from '../types/interfaces'
 
