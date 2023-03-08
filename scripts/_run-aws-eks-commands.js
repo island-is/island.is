@@ -28,8 +28,9 @@ function buildDockerImage(containerImage, builder, target) {
   console.log(
     `Preparing docker image for restarting deployments - \uD83D\uDE48`,
   )
+  const dirnameSafe = `"${__dirname}"`
   execSync(
-    `${builder} build -f ${__dirname}/Dockerfile.proxy --target ${target} -t ${containerImage} ${__dirname}`,
+    `${builder} build -f ${dirnameSafe}/Dockerfile.proxy --target ${target} -t ${containerImage} ${dirnameSafe}`,
   )
 }
 

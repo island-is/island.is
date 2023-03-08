@@ -6,6 +6,8 @@ import { CaseResultResolver } from './cases/cases.resolver'
 import { CaseResultService } from './cases/cases.service'
 import { DocumentService } from './documents/documents.service'
 import { DocumentResolver } from './documents/documents.resolver'
+import { AllTypesResultService } from './types/types.service'
+import { AllTypesResultResolver } from './types/types.resolver'
 
 @Module({
   providers: [
@@ -13,6 +15,8 @@ import { DocumentResolver } from './documents/documents.resolver'
     CaseResultService,
     DocumentService,
     DocumentResolver,
+    AllTypesResultService,
+    AllTypesResultResolver,
   ],
   imports: [ConsultationPortalClientModule, AuthModule, FeatureFlagModule],
   exports: [],

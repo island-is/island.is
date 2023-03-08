@@ -6,6 +6,10 @@ export class TenantDto {
   @ApiProperty({ example: '@island.is' })
   name!: string
 
-  @ApiProperty({ example: 'Ísland.is mínar síður' })
+  @ApiProperty({
+    type: TranslatedValueDto,
+    isArray: true,
+    example: 'Ísland.is mínar síður',
+  })
   displayName!: TranslatedValueDto[]
 }

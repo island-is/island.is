@@ -16,23 +16,23 @@ import { HeroBanner } from '../../components'
 import Card from '../../components/Card/Card'
 import Layout from '../../components/Layout/Layout'
 import SearchAndFilter from '../../components/SearchAndFilter/SearchAndFilter'
-import Types from '../../utils/dummydata/api/Types'
-import { Case } from '../../types/interfaces'
+import { Case, ArrOfTypes } from '../../types/interfaces'
 import FilterBox from '../../components/Filterbox/Filterbox'
 import EmptyState from '../../components/EmptyState/EmptyState'
 
 const CARDS_PER_PAGE = 12
 interface HomeProps {
   cases: Case[]
+  types: ArrOfTypes
 }
-export const Home = ({ cases }: HomeProps) => {
-  const Institutions = Object.entries(Types.institutions).map(
+export const Home = ({ cases, types }: HomeProps) => {
+  const Institutions = Object.entries(types.institutions).map(
     ([value, label]) => ({
       value,
       label,
     }),
   )
-  const PolicyAreas = Object.entries(Types.policyAreas).map(
+  const PolicyAreas = Object.entries(types.policyAreas).map(
     ([value, label]) => ({
       value,
       label,
