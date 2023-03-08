@@ -71,25 +71,15 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Setup yarn and NX
-        run: npm install -g yarn nx
-
-      - name: Run NX format:write and commit changes
-        run: |
-          npx nx format:write
-          ./infra/scripts/ci/git-check-dirty.sh "/" "NXBot"
-        if: ${{ github.event_name == 'pull_request' }}
-
       - name: Run gitbook format
         run: node ./scripts/gitbook.js
         if: ${{ github.ref == 'ref/heads/main' }}
 
       - name: Run gitbook format and commit changes
+        if: ${{ github.event_name == 'pull_request' }}
         run: |
           node ./scripts/gitbook.js
           ./infra/scripts/ci/git-check-dirty.sh "SUMMARY.md" "GitbookBot"
-
-        if: ${{ github.event_name == 'pull_request' }}
 
       - name: Check if the git repo is dirty
         id: changes

@@ -14,5 +14,5 @@ if [[ $(git diff --stat "$abs_path") != '' ]]; then
   git commit -am "chore: $bot_name update dirty files"
   git push
 else
-  echo 'no changes to charts, nothing to commit'
+  echo "$bot_name found no unstaged files, nothing to commit"
 fi
