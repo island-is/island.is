@@ -97,7 +97,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         run: |
           "$DIR"/infra/scripts/generate-chart-values.sh
-          ./infra/scripts/ci/git-check-dirty.sh "charts/" "ChartBot"
+          "$DIR"/infra/scripts/ci/git-check-dirty.sh "charts/" "ChartBot"
 
   check-secrets:
     needs:
