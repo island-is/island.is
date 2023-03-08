@@ -85,7 +85,7 @@ export const Filters = ({
         labelClose={formatMessage(m.closeFilter)}
         labelResult={formatMessage(m.filterResults)}
         labelTitle={formatMessage(m.filter)}
-        onFilterClear={onFilterClear}
+        onFilterClear={() => onFilterClear()}
         filterInput={
           <Box display="flex" flexDirection={['column', 'column', 'row']}>
             <FilterInput
@@ -101,6 +101,7 @@ export const Filters = ({
                 label=""
                 backgroundColor="blue"
                 maxDate={filters.period.to}
+                selected={filters.period.from}
                 placeholderText={formatMessage(m.filterFrom)}
                 handleChange={(from) => onDateChange({ from })}
                 size="xs"
@@ -112,6 +113,7 @@ export const Filters = ({
               label=""
               backgroundColor="blue"
               minDate={filters.period.from}
+              selected={filters.period.to}
               placeholderText={formatMessage(m.filterTo)}
               handleChange={(to) => onDateChange({ to })}
               size="xs"
