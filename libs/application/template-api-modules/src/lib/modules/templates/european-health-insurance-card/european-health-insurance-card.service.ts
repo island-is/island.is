@@ -4,6 +4,7 @@ import { Auth, User } from '@island.is/auth-nest-tools'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 
 import { EhicApi } from '@island.is/clients/ehic-client-v1'
+import { EuropeanHealthInsuranceCardClientService } from '@island.is/clients/european-health-insurance-card'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -49,6 +50,7 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     private readonly ehicApi: EhicApi,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
+    private api: EuropeanHealthInsuranceCardClientService,
   ) {
     super(ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD)
   }
@@ -118,32 +120,34 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
 
   async getCardResponse({ auth, application }: TemplateApiModuleActionProps) {
     const nridArr = this.getApplicants(application)
+    return this.api.getCardResponse(auth, nridArr)
 
-    try {
-      const resp = await this.ehicApi.cardStatus({
-        usernationalid: auth.nationalId,
-        applicantnationalids: this.toCommaDelimitedList(nridArr),
-      })
+    // try {
 
-      // TODO: Remove. Temporary malipulation of dummy data for Emilía Íris Sveinsdóttir
-      for (let i = 0; i < resp.length; i++) {
-        if (i === 0) {
-          resp[i].applicantNationalId = '2409151460'
-        }
-        if (i === 1) {
-          resp[i].applicantNationalId = '0107721419'
-        }
+    //   const resp = await this.ehicApi.cardStatus({
+    //     usernationalid: auth.nationalId,
+    //     applicantnationalids: this.toCommaDelimitedList(nridArr),
+    //   })
 
-        if (i === 2) {
-          resp[i].applicantNationalId = '1111111119'
-        }
-      }
+    //   // TODO: Remove. Temporary malipulation of dummy data for Emilía Íris Sveinsdóttir
+    //   for (let i = 0; i < resp.length; i++) {
+    //     if (i === 0) {
+    //       resp[i].applicantNationalId = '2409151460'
+    //     }
+    //     if (i === 1) {
+    //       resp[i].applicantNationalId = '0107721419'
+    //     }
 
-      return resp
-    } catch (e) {
-      this.logger.error(e)
-    }
-    return null
+    //     if (i === 2) {
+    //       resp[i].applicantNationalId = '1111111119'
+    //     }
+    //   }
+
+    //   return resp
+    // } catch (e) {
+    //   this.logger.error(e)
+    // }
+    // return null
   }
 
   async applyForPhysicalAndTemporary(obj: TemplateApiModuleActionProps) {

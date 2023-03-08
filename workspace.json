@@ -135,6 +135,7 @@
     "clients-driving-license-book": "libs/clients/driving-license-book",
     "clients-ehic-client-v1": "libs/clients/ehic-client-v1",
     "clients-electronic-registration-statistics": "libs/clients/electronic-registration-statistics",
+    "clients-european-health-insurance-card": "libs/clients/european-health-insurance-card",
     "clients-finance": "libs/clients/finance",
     "clients-financial-statements-inao": "libs/clients/financial-statements-inao",
     "clients-firearm-license": "libs/clients/firearm-license",

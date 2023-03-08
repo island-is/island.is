@@ -1,0 +1,31 @@
+{
+  "root": "libs/clients/european-health-insurance-card",
+  "sourceRoot": "libs/clients/european-health-insurance-card/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/clients/european-health-insurance-card/**/*.ts"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/clients/european-health-insurance-card"],
+      "options": {
+        "jestConfig": "libs/clients/european-health-insurance-card/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/european-health-insurance-card/gen/fetch -i libs/clients/european-health-insurance-card/src/lib/clientConfig.json"
+      }
+    }
+  },
+  "tags": ["lib:client", "scope:client"]
+}
