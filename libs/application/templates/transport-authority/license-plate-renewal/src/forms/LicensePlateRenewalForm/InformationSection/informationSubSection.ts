@@ -6,9 +6,8 @@ import {
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { Application } from '@island.is/api/schema'
-import { getValueViaPath } from '@island.is/application/core'
-import { PlateOwnership } from '../../../shared'
 import format from 'date-fns/format'
+import { getSelectedVehicle } from '../../../utils'
 
 export const informationSubSection = buildSubSection({
   id: 'informationSubSection',
@@ -31,14 +30,10 @@ export const informationSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const plateValue = getValueViaPath(
+            return getSelectedVehicle(
+              application.externalData,
               application.answers,
-              'pickPlate.value',
-              '',
-            ) as string
-            const myPlateOwnershipList = application.externalData
-              ?.myPlateOwnershipList?.data as PlateOwnership[]
-            return myPlateOwnershipList[parseInt(plateValue, 10)].regno
+            ).regno
           },
         }),
         buildDescriptionField({
@@ -54,16 +49,12 @@ export const informationSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const plateValue = getValueViaPath(
-              application.answers,
-              'pickPlate.value',
-              '',
-            ) as string
-            const myPlateOwnershipList = application.externalData
-              ?.myPlateOwnershipList?.data as PlateOwnership[]
             return format(
               new Date(
-                myPlateOwnershipList[parseInt(plateValue, 10)].startDate,
+                getSelectedVehicle(
+                  application.externalData,
+                  application.answers,
+                ).startDate,
               ),
               'dd.MM.yyyy',
             )
@@ -76,15 +67,11 @@ export const informationSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const plateValue = getValueViaPath(
-              application.answers,
-              'pickPlate.value',
-              '',
-            ) as string
-            const myPlateOwnershipList = application.externalData
-              ?.myPlateOwnershipList?.data as PlateOwnership[]
             const dateTo = new Date(
-              myPlateOwnershipList[parseInt(plateValue, 10)].endDate,
+              getSelectedVehicle(
+                application.externalData,
+                application.answers,
+              ).endDate,
             )
             return format(
               dateTo.setFullYear(dateTo.getFullYear() + 8),
@@ -106,14 +93,10 @@ export const informationSubSection = buildSubSection({
           format: '######-####',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const plateValue = getValueViaPath(
+            return getSelectedVehicle(
+              application.externalData,
               application.answers,
-              'pickPlate.value',
-              '',
-            ) as string
-            const myPlateOwnershipList = application.externalData
-              ?.myPlateOwnershipList?.data as PlateOwnership[]
-            return myPlateOwnershipList[parseInt(plateValue, 10)].nationalId
+            ).nationalId
           },
         }),
         buildTextField({
@@ -123,14 +106,10 @@ export const informationSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const plateValue = getValueViaPath(
+            return getSelectedVehicle(
+              application.externalData,
               application.answers,
-              'pickPlate.value',
-              '',
-            ) as string
-            const myPlateOwnershipList = application.externalData
-              ?.myPlateOwnershipList?.data as PlateOwnership[]
-            return myPlateOwnershipList[parseInt(plateValue, 10)].name
+            ).name
           },
         }),
       ],

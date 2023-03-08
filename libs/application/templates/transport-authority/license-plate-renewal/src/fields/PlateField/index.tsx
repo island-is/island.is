@@ -11,7 +11,7 @@ export const PlateField: FC<FieldBaseProps> = (props) => {
     .data as PlateOwnership[]
   return (
     <Box paddingTop={2}>
-      {myPlateOwnershipList.length > 1 ? (
+      {myPlateOwnershipList.length > 5 ? (
         <PlateSelectField
           myPlateOwnershipList={myPlateOwnershipList}
           {...props}

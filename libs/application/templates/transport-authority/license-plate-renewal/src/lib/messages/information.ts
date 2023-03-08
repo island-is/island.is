@@ -23,7 +23,7 @@ export const information = {
     pickPlate: defineMessages({
       sectionTitle: {
         id: 'ta.lpr.application:information.labels.pickVehicle.sectionTitle',
-        defaultMessage: 'Veldu einkamerki',
+        defaultMessage: 'Veldu  ',
         description: 'Pick plate section title',
       },
       title: {
@@ -39,17 +39,17 @@ export const information = {
       },
       plate: {
         id: 'ta.lpr.application:information.labels.pickVehicle.plate',
-        defaultMessage: 'Einkanúmer',
+        defaultMessage: 'Einkamerki',
         description: 'Pick plate label',
       },
       placeholder: {
         id: 'ta.lpr.application:information.labels.pickVehicle.placeholder',
-        defaultMessage: 'Veldu einkanúmer',
+        defaultMessage: 'Veldu einkamerki',
         description: 'Pick plate placeholder',
       },
       hasErrorTitle: {
         id: 'ta.lpr.application:information.labels.pickVehicle.hasErrorTitle',
-        defaultMessage: 'Ekki er hægt að endurnýja einkanúmer vegna:',
+        defaultMessage: 'Ekki er hægt að endurnýja einkamerki vegna:',
         description: 'Pick plate has an error title',
       },
       isNotDebtLessTag: {
@@ -67,22 +67,22 @@ export const information = {
     information: defineMessages({
       sectionTitle: {
         id: 'ta.lpr.application:information.labels.information.sectionTitle',
-        defaultMessage: 'Einkanúmer',
+        defaultMessage: 'Einkamerki',
         description: 'Information section title',
       },
       title: {
         id: 'ta.lpr.application:information.labels.information.title',
-        defaultMessage: 'Upplýsingar um einkanúmer',
+        defaultMessage: 'Upplýsingar um einkamerki',
         description: 'Information title',
       },
       description: {
         id: 'ta.lpr.application:information.labels.information.description',
-        defaultMessage: 'Einkanúmer er aðeins sent á lögheimili eigenda',
+        defaultMessage: 'Einkamerki er aðeins sent á lögheimili eigenda',
         description: 'Information description',
       },
       plate: {
         id: 'ta.lpr.application:information.labels.information.plate',
-        defaultMessage: 'Einkanúmer',
+        defaultMessage: 'Einkamerki',
         description: 'Information plate label',
       },
       newValidPeriod: {

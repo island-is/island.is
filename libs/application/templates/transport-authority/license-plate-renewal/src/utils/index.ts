@@ -13,3 +13,5 @@ export const getChargeItemCodes = (
 
   return result
 }
+
+export { getSelectedVehicle } from './getSelectedVehicle'

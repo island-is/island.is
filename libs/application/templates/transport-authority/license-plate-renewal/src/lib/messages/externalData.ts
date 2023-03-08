@@ -9,7 +9,7 @@ export const externalData = {
     },
     pageTitle: {
       id: 'ta.lpr.application:externalData.dataProvider.pageTitle',
-      defaultMessage: 'Endurnýja einkanúmer',
+      defaultMessage: 'Endurnýja einkamerki',
       description: `Application's name`,
     },
     subTitle: {
@@ -47,7 +47,7 @@ export const externalData = {
     },
     subTitle: {
       id: 'ta.lpr.application:externalData.myPlateOwnerships.subTitle',
-      defaultMessage: 'Upplýsingar um einkanúmer sem þú átt',
+      defaultMessage: 'Upplýsingar um einkamerki sem þú átt',
       description: 'Your plate ownerships from XX',
     },
   }),

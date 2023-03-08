@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const application = defineMessages({
   name: {
     id: 'ta.lpr.application:name',
-    defaultMessage: 'Endurnýja einkanúmer {value}',
+    defaultMessage: 'Endurnýja einkamerki {value}',
     description: `Application's name`,
   },
   institutionName: {

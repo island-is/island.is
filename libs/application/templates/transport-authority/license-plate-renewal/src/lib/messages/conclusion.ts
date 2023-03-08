@@ -15,7 +15,7 @@ export const conclusion = {
     alertMessage: {
       id: 'ta.lpr.application:confirmation.general.alertMessage',
       defaultMessage:
-        'Umsókn þín um endurnýjun á einkanúmeri hefur verið móttekin',
+        'Umsókn þín um endurnýjun á einkamerkis hefur verið móttekin',
       description: 'Conclusion general alert message',
     },
     accordionTitle: {
