@@ -153,9 +153,8 @@ export const PassportSelection: FC<FieldBaseProps> = ({
               }
             },
           ),
-          onSelect: (v) => {
+          onSelect: () => {
             setValue(userPassportRadio, '')
-            console.log(v)
           },
         }}
       />
