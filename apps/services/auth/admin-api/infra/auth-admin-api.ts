@@ -25,7 +25,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
           'https://identity-server.staging01.devland.is',
           'https://innskra.island.is',
         ]),
-        prod: json(['https://innskra.island.is']),
+        prod: json('https://innskra.island.is'),
       },
     })
     .ingress({

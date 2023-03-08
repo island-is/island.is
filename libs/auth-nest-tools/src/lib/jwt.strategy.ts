@@ -28,7 +28,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
             ...keyProviderBaseOptions,
             jwksUri: `${config.issuer}${JWKS_URI}`,
           }),
-
       jwtFromRequest: ExtractJwt.fromExtractors([
         ExtractJwt.fromAuthHeaderAsBearerToken(),
         ExtractJwt.fromBodyField(AUTH_BODY_FIELD_NAME),
