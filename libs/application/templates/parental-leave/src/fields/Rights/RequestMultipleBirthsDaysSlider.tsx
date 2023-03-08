@@ -15,6 +15,7 @@ import BoxChart, { BoxChartKey } from '../components/BoxChart'
 import { defaultMonths, daysInMonth } from '../../config'
 import { formatText } from '@island.is/application/core'
 import { NO } from '../../constants'
+import { useEffectOnce } from 'react-use'
 
 const RequestMultipleBirthsDaysSlider: FC<FieldBaseProps> = ({
   field,
@@ -22,7 +23,7 @@ const RequestMultipleBirthsDaysSlider: FC<FieldBaseProps> = ({
 }) => {
   const { id, description } = field
   const { formatMessage } = useLocale()
-  const { register } = useFormContext()
+  const { setValue } = useFormContext()
   const multipleBirthsRequestDays = getMultipleBirthRequestDays(
     application.answers,
   )
@@ -33,6 +34,12 @@ const RequestMultipleBirthsDaysSlider: FC<FieldBaseProps> = ({
   const [chosenRequestDays, setChosenRequestDays] = useState<number>(
     multipleBirthsRequestDays,
   )
+  useEffectOnce(() => {
+    setValue('requestRights.isRequestingRights', NO)
+    setValue('requestRights.requestDays', 0)
+    setValue('giveRights.isGivingRights', NO)
+    setValue('giveRights.giveDays', 0)
+  })
 
   const requestedMonths = defaultMonths + chosenRequestDays / daysInMonth
 
@@ -79,6 +86,7 @@ const RequestMultipleBirthsDaysSlider: FC<FieldBaseProps> = ({
             }}
             onChange={(newValue: number) => {
               setChosenRequestDays(newValue)
+              setValue(id, newValue.toString())
             }}
           />
         </Box>
@@ -99,32 +107,6 @@ const RequestMultipleBirthsDaysSlider: FC<FieldBaseProps> = ({
           keys={boxChartKeys as BoxChartKey[]}
         />
       </Box>
-
-      <input
-        type="hidden"
-        {...register(id)}
-        value={chosenRequestDays.toString()}
-      />
-
-      <input
-        type="hidden"
-        {...register('requestRights.isRequestingRights')}
-        value={NO}
-      />
-
-      <input
-        type="hidden"
-        {...register('requestRights.requestDays')}
-        value={0}
-      />
-
-      <input
-        type="hidden"
-        {...register('giveRights.isGivingRights')}
-        value={NO}
-      />
-
-      <input type="hidden" {...register('giveRights.giveDays')} value={0} />
     </>
   )
 }
