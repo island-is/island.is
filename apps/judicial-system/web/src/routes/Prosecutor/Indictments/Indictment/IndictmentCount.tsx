@@ -111,7 +111,7 @@ const laws = Object.values(offenseLawsMap)
 
 function getLawsBroken(
   offenses: IndictmentCountOffense[],
-  bloodAlcoholContent?: string,
+  substances?: SubstanceMap,
 ) {
   if (offenses.length === 0) {
     return []
@@ -124,7 +124,7 @@ function getLawsBroken(
 
     if (offence === IndictmentCountOffense.DrunkDriving) {
       lawsBroken = lawsBroken.concat(
-        (bloodAlcoholContent ?? '') >= '1,20'
+        ((substances && substances.ALCOHOL) || '') >= '1,20'
           ? offenseLawsMap.DRUNK_DRIVING_MAJOR
           : offenseLawsMap.DRUNK_DRIVING_MINOR,
       )
@@ -242,6 +242,15 @@ export const IndictmentCount: React.FC<Props> = (props) => {
     setLegalArgumentsErrorMessage,
   ] = useState<string>('')
 
+  const lawTag = useCallback(
+    (law: number[]) =>
+      formatMessage(strings.lawsBrokenTag, {
+        paragraph: law[1],
+        article: law[0],
+      }),
+    [formatMessage],
+  )
+
   const offensesOptions = useMemo(
     () =>
       Object.values(IndictmentCountOffense).map((offense) => ({
@@ -250,15 +259,6 @@ export const IndictmentCount: React.FC<Props> = (props) => {
         disabled: indictmentCount.offenses?.includes(offense),
       })),
     [formatMessage, indictmentCount.offenses],
-  )
-
-  const lawTag = useCallback(
-    (law: number[]) =>
-      formatMessage(strings.lawsBrokenTag, {
-        paragraph: law[1],
-        article: law[0],
-      }),
-    [formatMessage],
   )
 
   const lawsBrokenOptions: LawsBrokenOption[] = useMemo(
@@ -348,6 +348,28 @@ export const IndictmentCount: React.FC<Props> = (props) => {
     },
     [formatMessage, workingCase.crimeScenes],
   )
+
+  const handleIndictmentCountChanges = (update: UpdateIndictmentCount) => {
+    if (update.substances) {
+      const lawsBroken = getLawsBroken(
+        indictmentCount.offenses || [],
+        indictmentCount.substances,
+      )
+
+      update = { legalArguments: legalArguments(lawsBroken), ...update }
+      update = {
+        incidentDescription: incidentDescription({
+          ...indictmentCount,
+          substances: update.substances,
+        }),
+        ...update,
+      }
+    }
+
+    onChange(indictmentCount.id, {
+      ...update,
+    })
+  }
 
   return (
     <BlueBox>
@@ -468,7 +490,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
             ].sort(offensesCompare)
             const lawsBroken = getLawsBroken(
               offenses,
-              indictmentCount.substances?.ALCOHOL,
+              indictmentCount.substances ?? {},
             )
 
             onChange(indictmentCount.id, {
@@ -510,7 +532,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
 
                   const lawsBroken = getLawsBroken(
                     offenses,
-                    indictmentCount.substances?.ALCOHOL,
+                    indictmentCount.substances,
                   )
 
                   onChange(indictmentCount.id, {
@@ -575,14 +597,15 @@ export const IndictmentCount: React.FC<Props> = (props) => {
                 setBloodAlcoholContentErrorMessage,
               )
 
-              const lawsBroken = getLawsBroken(
-                indictmentCount.offenses || [],
-                value,
-              )
               const substances = {
                 ...indictmentCount.substances,
                 ALCOHOL: value,
               }
+
+              const lawsBroken = getLawsBroken(
+                indictmentCount.offenses || [],
+                substances,
+              )
 
               onChange(indictmentCount.id, {
                 substances,
@@ -620,12 +643,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
             <SubstanceChoices
               indictmentCount={indictmentCount}
               indictmentCountOffenseType={offenseType}
-              onChange={onChange}
-              updateIndictmentCountState={updateIndictmentCountState}
-              setWorkingCase={setWorkingCase}
-              getLawsBroken={getLawsBroken}
-              incidentDescription={incidentDescription}
-              legalArguments={legalArguments}
+              onChange={handleIndictmentCountChanges}
             ></SubstanceChoices>
           </Box>
         ))}

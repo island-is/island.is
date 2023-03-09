@@ -3,7 +3,6 @@ import { useIntl } from 'react-intl'
 
 import {
   ReactSelectOption,
-  TempCase as Case,
   TempIndictmentCount as TIndictmentCount,
 } from '@island.is/judicial-system-web/src/types'
 import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
@@ -15,37 +14,23 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Substance } from '../Substance/Substance'
-
 import { substanceEnum } from './SubstancesEnum.strings'
 import { substances as strings } from './Substances.strings'
-
 import * as styles from './Substances.css'
 
 interface Props {
   indictmentCount: TIndictmentCount
   indictmentCountOffenseType: IndictmentCountOffense
-
-  onChange: (
-    indictmentCountId: string,
-    updatedIndictmentCount: UpdateIndictmentCount,
-  ) => void
-  updateIndictmentCountState: (
-    indictmentCountId: string,
-    update: UpdateIndictmentCount,
-    setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
-  ) => void
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
-  getLawsBroken: (
-    offenses: IndictmentCountOffense[],
-    bloodAlcoholContent?: string,
-  ) => [number, number][]
-  incidentDescription: (indictmentCount: TIndictmentCount) => string
-
-  legalArguments: (lawsBroken: number[][]) => string
+  onChange: (updatedIndictmentCount: UpdateIndictmentCount) => void
 }
 
 export const Substances: React.FC<Props> = (props) => {
-  const { indictmentCount, indictmentCountOffenseType, onChange } = props
+  const {
+    indictmentCount,
+    indictmentCountOffenseType,
+
+    onChange,
+  } = props
   const { formatMessage } = useIntl()
 
   const getSubstanceOptions = useMemo(
@@ -61,6 +46,24 @@ export const Substances: React.FC<Props> = (props) => {
       ),
     [formatMessage, indictmentCount.substances, indictmentCountOffenseType],
   )
+
+  const handleUpdateSubstanceAmount = (
+    substanceId: SubstanceEnum,
+    substanceAmount: string,
+  ) => {
+    const substances = {
+      ...indictmentCount.substances,
+      [substanceId]: substanceAmount,
+    }
+    onChange({ substances })
+  }
+
+  const handleDeleteSubstance = (substanceId: SubstanceEnum) => {
+    if (indictmentCount.substances) {
+      delete indictmentCount.substances[substanceId]
+    }
+    onChange({ substances: indictmentCount.substances })
+  }
 
   return (
     <Box marginBottom={2}>
@@ -82,9 +85,7 @@ export const Substances: React.FC<Props> = (props) => {
               [substance]: '',
             }
 
-            onChange(indictmentCount.id, {
-              substances,
-            })
+            onChange({ substances })
           }}
           value={null}
           required
@@ -99,7 +100,18 @@ export const Substances: React.FC<Props> = (props) => {
             )
             .map((substance) => (
               <div key={substance}>
-                {<Substance substance={substance} {...props}></Substance>}
+                {
+                  <Substance
+                    substance={substance}
+                    amount={
+                      (indictmentCount.substances &&
+                        indictmentCount.substances[substance]) ||
+                      ''
+                    }
+                    onUpdateAmount={handleUpdateSubstanceAmount}
+                    onDelete={handleDeleteSubstance}
+                  ></Substance>
+                }
               </div>
             ))}
         </div>
