@@ -6,7 +6,7 @@ import {
   Tabs,
   Text,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { IntroHeader } from '@island.is/portals/core'
 import { m } from '../../lib/messages'
@@ -19,6 +19,7 @@ import { ActionCard } from '@island.is/service-portal/core'
 import { formatDate } from '../../lib/utils'
 
 const Petitions = () => {
+  useNamespaces('sp.petitions')
   const { formatMessage } = useLocale()
   const ownedLists = useListsUserOwns()
   const signedLists = useGetListsUserSigned()
