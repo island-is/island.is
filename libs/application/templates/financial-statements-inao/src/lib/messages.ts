@@ -834,6 +834,19 @@ export const m = defineMessages({
     defaultMessage: 'Skilað',
     description: 'Returned',
   },
+  digitalSignatureTitle: {
+    id: 'fsn.application:digitalSignatureTitle',
+    defaultMessage: 'Rafræn undirritun',
+    description:
+      'Reminder of digital signature after the application is returned',
+  },
+  digitalSignatureMessage: {
+    id: 'fsn.application:digitalSignatureMessage',
+    defaultMessage:
+      'Það bíður þín skjal sem á eftir að undirrita með rafrænum skilríkjum. Hlekkur á skjalið hefur verið sendur í tölvupósti á netfangið þitt: {email}',
+    description:
+      'Reminder of digital signature after the application is returned',
+  },
   individualReceivedMsgFirst: {
     id: 'fsn.application:individualReceivedMsgFirst',
     defaultMessage: 'Uppgjör fyrir persónukjör vegna',
