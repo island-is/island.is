@@ -8,6 +8,7 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
+  IdentityApi,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
@@ -92,7 +93,11 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [SamgongustofaPaymentCatalogApi, MyPlateOwnershipsApi],
+              api: [
+                SamgongustofaPaymentCatalogApi,
+                MyPlateOwnershipsApi,
+                IdentityApi,
+              ],
             },
           ],
         },

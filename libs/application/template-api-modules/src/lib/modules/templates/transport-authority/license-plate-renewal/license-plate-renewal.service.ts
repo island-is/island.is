@@ -45,9 +45,6 @@ export class LicensePlateRenewalService extends BaseTemplateApiService {
           regno: item.regno,
           startDate: item.startDate,
           endDate: item.endDate,
-          permno: item.permno || '',
-          nationalId: item.nationalId,
-          name: item.name,
           validationErrorMessages: validation?.hasError
             ? validation.errorMessages
             : null,

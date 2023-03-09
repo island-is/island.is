@@ -8,10 +8,6 @@ export const getSelectedVehicle = (
 ) => {
   const currentVehicleList =
     (externalData?.['myPlateOwnershipList']?.data as PlateOwnership[]) || []
-  const vehicleValue = getValueViaPath(
-    answers,
-    'pickVehicle.vehicle',
-    '',
-  ) as string
+  const vehicleValue = getValueViaPath(answers, 'pickPlate.value', '') as string
   return currentVehicleList[parseInt(vehicleValue, 10)]
 }

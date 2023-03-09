@@ -39,6 +39,18 @@ export const externalData = {
       description: 'Continue to application',
     },
   }),
+  nationalRegistry: defineMessages({
+    title: {
+      id: 'ta.lpr.application:externalData.nationalRegistry.title',
+      defaultMessage: 'Upplýsingar úr Þjóðskrá/Fyrirtækjaskrá',
+      description: 'Information from the National Registry/Company Registry',
+    },
+    subTitle: {
+      id: 'ta.lpr.application:externalData.nationalRegistry.subTitle',
+      defaultMessage: 'Hér sækjum við nafn og kennitölu',
+      description: 'We will fetch name, national id and address',
+    },
+  }),
   myPlateOwnerships: defineMessages({
     title: {
       id: 'ta.lpr.application:externalData.myPlateOwnerships.title',

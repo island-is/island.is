@@ -40,9 +40,6 @@ export const PlateSelectField: FC<PlateSearchFieldProps & FieldBaseProps> = ({
           regno: currentPlate.regno,
           startDate: currentPlate.startDate,
           endDate: currentPlate.endDate,
-          permno: currentPlate.permno,
-          nationalId: currentPlate.nationalId,
-          name: currentPlate.name,
           validationErrorMessages: currentPlate.validationErrorMessages,
         }
       : null,
@@ -56,9 +53,6 @@ export const PlateSelectField: FC<PlateSearchFieldProps & FieldBaseProps> = ({
         regno: currentPlate.regno,
         startDate: currentPlate.startDate,
         endDate: currentPlate.endDate,
-        permno: currentPlate.permno,
-        nationalId: currentPlate.nationalId,
-        name: currentPlate.name,
         validationErrorMessages: currentPlate.validationErrorMessages,
       })
       setIsLoading(false)

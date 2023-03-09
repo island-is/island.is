@@ -92,12 +92,8 @@ export const informationSubSection = buildSubSection({
           width: 'half',
           format: '######-####',
           readOnly: true,
-          defaultValue: (application: Application) => {
-            return getSelectedVehicle(
-              application.externalData,
-              application.answers,
-            ).nationalId
-          },
+          defaultValue: (application: Application) =>
+            application.externalData?.identity?.data?.nationalId,
         }),
         buildTextField({
           id: 'information.name',
@@ -105,12 +101,8 @@ export const informationSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
-          defaultValue: (application: Application) => {
-            return getSelectedVehicle(
-              application.externalData,
-              application.answers,
-            ).name
-          },
+          defaultValue: (application: Application) =>
+            application.externalData?.identity?.data?.name,
         }),
       ],
     }),
