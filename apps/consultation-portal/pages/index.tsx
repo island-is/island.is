@@ -3,13 +3,18 @@ import {
   ConsultationPortalAllCasesQuery,
   ConsultationPortalAllCasesQueryVariables,
   ConsultationPortalAllCasesDocument,
-} from '../screens/Home/getAllCases.generated'
+} from '../screens/Home/getAllCases.graphql.generated'
+import {
+  ConsultationPortalAllTypesQuery,
+  ConsultationPortalAllTypesQueryVariables,
+  ConsultationPortalAllTypesDocument,
+} from '../screens/Home/getAllTypes.graphql.generated'
 import Home from '../screens/Home/Home'
-import { Case } from '../types/interfaces'
-import FilterBox from '../components/Filterbox/Filterbox'
+import { ArrOfTypes, Case } from '../types/interfaces'
 
 interface HomeProps {
   cases: Case[]
+  types: ArrOfTypes
 }
 export const getServerSideProps = async (ctx) => {
   const client = initApollo()
@@ -25,11 +30,26 @@ export const getServerSideProps = async (ctx) => {
       query: ConsultationPortalAllCasesDocument,
     }),
   ])
+  const [
+    {
+      data: { consultationPortalAllTypes },
+    },
+  ] = await Promise.all([
+    client.query<
+      ConsultationPortalAllTypesQuery,
+      ConsultationPortalAllTypesQueryVariables
+    >({
+      query: ConsultationPortalAllTypesDocument,
+    }),
+  ])
   return {
-    props: { cases: consultationPortalAllCases },
+    props: {
+      cases: consultationPortalAllCases,
+      types: consultationPortalAllTypes,
+    },
   }
 }
-export const Index = ({ cases }: HomeProps) => {
-  return <Home cases={cases} />
+export const Index = ({ cases, types }: HomeProps) => {
+  return <Home cases={cases} types={types} />
 }
 export default Index

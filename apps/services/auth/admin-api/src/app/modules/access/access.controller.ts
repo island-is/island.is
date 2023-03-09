@@ -41,7 +41,7 @@ const namespace = `${environment.audit.defaultNamespace}/access`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiExcludeController()
-@Controller({ path: 'backend/api-access', version: [VERSION_NEUTRAL, '1'] })
+@Controller({ path: 'api-access', version: [VERSION_NEUTRAL, '1'] })
 @Audit({ namespace })
 export class AccessController {
   constructor(

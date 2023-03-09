@@ -101,6 +101,7 @@ import {
   DrivingDigitalLicenseClientConfig,
 } from '@island.is/clients/license-client'
 import { AuthAdminModule } from '@island.is/api/domains/auth-admin'
+import { AuthAdminApiClientConfig } from '@island.is/clients/auth/admin-api'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -309,6 +310,7 @@ const autoSchemaFile = environment.production
         JudicialAdministrationClientConfig,
         CommunicationsConfig,
         SessionsApiClientConfig,
+        AuthAdminApiClientConfig,
       ],
     }),
   ],

@@ -70,11 +70,11 @@ export const HeroBanner = () => {
                 <HeroTiles space={2} columns={[1, 1, 1, 2, 2]}>
                   <StatisticBox label="Mál til umsagnar" statistic="32 mál" />
                   <StatisticBox
-                    label="Fjöldi umsagna frá upphafi"
+                    label="Umsagnir frá upphafi"
                     statistic="12.843 umsagnir"
                   />
                   <StatisticBox
-                    label="Fjöldi mála frá upphafi"
+                    label="Mál frá upphafi"
                     statistic="48.942 mál"
                   />
                 </HeroTiles>
