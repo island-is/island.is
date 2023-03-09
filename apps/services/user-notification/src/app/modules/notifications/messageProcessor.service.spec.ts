@@ -25,13 +25,16 @@ const mockTemplates = [mockHnippTemplate, mockHnippTemplate, mockHnippTemplate]
 const mockCreateHnippNotificationDto: CreateHnippNotificationDto = {
   recipient: '1234567890',
   templateId: 'HNIPP.DEMO.ID',
-  args: ['hello', 'world'],
+  args: [
+    { key: 'arg1', value: 'hello' },
+    { key: 'arg2', value: 'world' },
+  ],
 }
 
 const mockProfile: UserProfile = {
   nationalId: '1234567890',
   mobilePhoneNumber: '1234567',
-  email: 'rafnarnason@gmail.com',
+  email: 'foo@bar.com',
   locale: UserProfileLocaleEnum.Is,
   documentNotifications: true,
   created: new Date(),
