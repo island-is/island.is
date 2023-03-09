@@ -19,6 +19,7 @@ import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
 import { PortalPageLoader } from '@island.is/portals/core'
 import { useAuth } from '@island.is/auth/react'
+import Sidemenu from '../Sidemenu/Sidemenu'
 
 interface Props {
   position: number
@@ -100,29 +101,31 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
                   />
                 </Box>
 
+                {user && <UserLanguageSwitcher user={user} />}
+                <Box paddingRight={2}>
+                  <Button
+                    variant="utility"
+                    colorScheme="white"
+                    icon="dots"
+                    onClick={() => {
+                      setSideMenuOpen(true)
+                    }}
+                  >
+                    {!isMobile && formatMessage(m.overview)}
+                  </Button>
+                </Box>
+
+                <Sidemenu
+                  setSideMenuOpen={(set: boolean) => setSideMenuOpen(set)}
+                  sideMenuOpen={sideMenuOpen}
+                />
+
                 <UserMenu
                   fullscreen
                   setUserMenuOpen={setUserMenuOpen}
+                  showLanguageSwitcher={false}
                   userMenuOpen={userMenuOpen}
                 />
-
-                {!sideMenuOpen ? (
-                  <Box marginLeft={[1, 2]}>
-                    <Button
-                      variant="utility"
-                      colorScheme="white"
-                      icon="dots"
-                      onClick={() => setSideMenuOpen(true)}
-                    >
-                      {!isMobile && formatMessage(m.overview)}
-                    </Button>
-                  </Box>
-                ) : (
-                  <Box display="flex" flexDirection="row" alignItems="center">
-                    {user && <UserLanguageSwitcher user={user} />}
-                    {closeButton()}
-                  </Box>
-                )}
               </Box>
             </Hidden>
           </Box>

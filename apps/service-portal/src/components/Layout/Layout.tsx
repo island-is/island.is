@@ -195,11 +195,6 @@ export const Layout: FC = ({ children }) => {
         )}
       </div>
 
-      <Sidemenu
-        position={height}
-        setSideMenuOpen={(set: boolean) => setSideMenuOpen(set)}
-        sideMenuOpen={sideMenuOpen}
-      />
       {isMobile && subNavItems && subNavItems.length > 0 && (
         <Box paddingTop={3} position="fixed" bottom={0} width="full">
           <Navigation
