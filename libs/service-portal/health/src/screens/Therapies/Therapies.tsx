@@ -18,6 +18,14 @@ import {
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
 import TherapiesTabContent from '../../components/TherapiesTabContent/TherapiesTabContent'
+import {
+  LIGHT_THERAPY,
+  OCCUPATIONAL_THERAPY,
+  PHYSIO_ACCIDENT_THERAPY,
+  PHYSIO_HOME_THERAPY,
+  PHYSIO_THERAPY,
+  SPEECH_THERAPY,
+} from '../../utils/constants'
 
 const GetTherapies = gql`
   query GetTherapies {
@@ -49,21 +57,29 @@ const Therapies = () => {
 
   const therapiesData = data?.getRightsPortalTherapies ?? []
 
-  // Almenn sjúkraþjálfun, sjúkraþjálfun vegna slyss og heimaþjálfun = setja saman í eitt array, sem fer svo í dropdown í TabsContent
-
   const physicalTherapyData = therapiesData.filter(
-    (x: TherapiesType) => x.id === 'physio',
+    (x: TherapiesType) => x.id === PHYSIO_THERAPY,
+  )
+  const physioHomeTherapyData = therapiesData.filter(
+    (x: TherapiesType) => x.id === PHYSIO_HOME_THERAPY,
+  )
+  const physioAccidentTherapyData = therapiesData.filter(
+    (x: TherapiesType) => x.id === PHYSIO_ACCIDENT_THERAPY,
   )
   const speechTherapyData = therapiesData.filter(
-    (x: TherapiesType) => x.id === 'speech',
+    (x: TherapiesType) => x.id === SPEECH_THERAPY,
   )
-  //TODO: Fá rétt ID fyrir Ljósböð
   const lightTherapyData = therapiesData.filter(
-    (x: TherapiesType) => x.id === 'light',
+    (x: TherapiesType) => x.id === LIGHT_THERAPY,
   )
-  //TODO: Fá rétt ID fyrir Iðjuþjálfun
   const occupationalTherapyData = therapiesData.filter(
-    (x: TherapiesType) => x.id === 'occu',
+    (x: TherapiesType) => x.id === OCCUPATIONAL_THERAPY,
+  )
+
+  // Combine all types of physio therapy together, display options in select box under "physio" tab
+  const physioTherapyData = physicalTherapyData.concat(
+    physioAccidentTherapyData,
+    physioHomeTherapyData,
   )
 
   if (error && !loading) {
@@ -83,7 +99,7 @@ const Therapies = () => {
   const tabs = [
     physicalTherapyData.length > 0 && {
       label: formatMessage(messages.physicalTherapy),
-      content: <TherapiesTabContent data={physicalTherapyData} />,
+      content: <TherapiesTabContent data={physioTherapyData} />,
     },
     speechTherapyData.length > 0 && {
       label: formatMessage(messages.speechTherapy),
@@ -102,15 +118,8 @@ const Therapies = () => {
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
-        title={{
-          id: 'sp.health:therapies-title',
-          defaultMessage: 'Þjálfun',
-        }}
-        intro={{
-          id: 'sp.health:therapies-intro',
-          defaultMessage:
-            'Sjúkratryggingar greiða hluta af kostnaði við meðferð hjá sjúkraþjálfara.',
-        }}
+        title={formatMessage(messages.title)}
+        intro={formatMessage(messages.description)}
       />
       {!loading && !error && tabs.length === 0 && (
         <Box marginTop={8}>
@@ -129,37 +138,6 @@ const Therapies = () => {
           />
         </Box>
       )}
-
-      <Box paddingTop={4}>
-        <Text variant="small" paddingBottom={2}>
-          {formatMessage(messages.therapyDisclaimer1)}
-        </Text>
-        <Text variant="small" paddingBottom={2}>
-          {formatMessage(messages.therapyDisclaimer2, {
-            link: (str) => (
-              <a href="" target="_blank" rel="noreferrer">
-                <Button size="small" variant="text">
-                  {str}
-                </Button>
-              </a>
-            ),
-          })}
-        </Text>
-        <Text variant="small" paddingBottom={2}>
-          {formatMessage(messages.therapyDisclaimer3)}
-        </Text>
-        <Text variant="small">
-          {formatMessage(messages.therapyDisclaimer4, {
-            link: (str) => (
-              <a href="" target="_blank" rel="noreferrer">
-                <Button size="small" variant="text">
-                  {str}
-                </Button>
-              </a>
-            ),
-          })}
-        </Text>
-      </Box>
     </Box>
   )
 }

@@ -1,6 +1,15 @@
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
+  title: {
+    id: 'sp.health:therapies-title',
+    defaultMessage: 'Þjálfun',
+  },
+  description: {
+    id: 'sp.health:therapies-intro',
+    defaultMessage:
+      'Sjúkratryggingar greiða hluta af kostnaði við meðferð hjá sjúkraþjálfara.',
+  },
   physicalTherapy: {
     id: 'sp.health:physical-therapy',
     defaultMessage: 'Sjúkraþjálfun',

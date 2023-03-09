@@ -20,14 +20,14 @@ class Sessions {
 
 @ObjectType()
 class Periods {
-  @Field(() => Date)
-  from!: Date
+  @Field(() => Date, { nullable: true })
+  from?: Date
 
-  @Field(() => Sessions)
-  sessions!: Sessions
+  @Field(() => Sessions, { nullable: true })
+  sessions?: Sessions
 
-  @Field(() => Date)
-  to!: Date
+  @Field(() => Date, { nullable: true })
+  to?: Date
 }
 
 @ObjectType()

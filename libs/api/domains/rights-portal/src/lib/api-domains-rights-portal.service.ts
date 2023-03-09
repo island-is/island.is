@@ -2,7 +2,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import {
-  MinarsidurApiApi,
+  TherapyApi,
   TherapyDTO,
 } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { ApolloError } from 'apollo-server-express'
@@ -14,8 +14,8 @@ const LOG_CATEGORY = 'rights-portal-service'
 export class RightsPortalService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    @Inject(MinarsidurApiApi)
-    private rightsPortalApi: MinarsidurApiApi,
+    @Inject(TherapyApi)
+    private rightsPortalApi: TherapyApi,
   ) {}
 
   handleError(error: any, detail?: string): ApolloError | null {
@@ -33,9 +33,13 @@ export class RightsPortalService {
     return this.handleError(error, detail)
   }
 
-  async getTherapies(): Promise<TherapyDTO[] | null | ApolloError> {
+  async getTherapies(
+    nationalId: string,
+  ): Promise<TherapyDTO[] | null | ApolloError> {
     try {
-      const res = await this.rightsPortalApi.therapies()
+      const res = await this.rightsPortalApi.therapies({
+        usernationalid: nationalId,
+      })
 
       if (!res) return null
       return res

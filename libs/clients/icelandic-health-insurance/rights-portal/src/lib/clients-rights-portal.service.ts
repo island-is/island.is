@@ -1,4 +1,4 @@
-import { Configuration, MinarsidurApiApi } from '../../gen/fetch'
+import { Configuration, TherapyApi } from '../../gen/fetch'
 import { Provider } from '@nestjs/common'
 import {
   ConfigType,
@@ -8,11 +8,11 @@ import {
 import { RigthsPortalClientConfig } from './clients-rights-portal.config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 
-export const RightsPortalApiProvider: Provider<MinarsidurApiApi> = {
-  provide: MinarsidurApiApi,
+export const RightsPortalApiProvider: Provider<TherapyApi> = {
+  provide: TherapyApi,
   scope: LazyDuringDevScope,
   useFactory: (config: ConfigType<typeof RigthsPortalClientConfig>) =>
-    new MinarsidurApiApi(
+    new TherapyApi(
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-rights-portal',

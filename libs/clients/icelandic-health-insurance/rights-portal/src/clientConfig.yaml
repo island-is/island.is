@@ -1,15 +1,21 @@
 openapi: 3.0.1
 info:
-  title: Minarsidur.api
+  title: Minarsidur
   version: '1.0'
 servers:
   - url: /minarsidur
 paths:
-  /therapies:
+  /therapies/usernationalid:
     get:
       tags:
-        - Minarsidur.api
+        - therapy
       operationId: therapies
+      parameters:
+        - name: usernationalid
+          in: query
+          style: form
+          schema:
+            type: string
       responses:
         '200':
           description: Success
@@ -21,28 +27,10 @@ paths:
                   $ref: '#/components/schemas/TherapyDTO'
         '400':
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TherapyDTO'
         '404':
           description: Not Found
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TherapyDTO'
         '500':
           description: Server Error
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TherapyDTO'
 components:
   schemas:
     TherapyDTO:
@@ -51,6 +39,7 @@ components:
         name:
           type: string
           nullable: true
+          readOnly: true
         id:
           type: string
           nullable: true
@@ -94,6 +83,7 @@ components:
         display:
           type: string
           nullable: true
+          readOnly: true
         code:
           type: string
           nullable: true
