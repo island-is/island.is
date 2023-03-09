@@ -83,14 +83,14 @@ export class EventService {
         event === CaseEvent.ACCEPT && isIndictmentCase(theCase.type)
           ? caseEvent[CaseEvent.ACCEPT_INDICTMENT]
           : `${caseEvent[event]}${eventOnly ? ' - aðgerð ekki framkvæmd' : ''}`
-      const typeText = `${capitalize(
+      const typeText = `${capitalize(caseTypes[theCase.type])}${
         isIndictmentCase(theCase.type)
-          ? readableIndictmentSubtypes(
+          ? `:(${readableIndictmentSubtypes(
               theCase.policeCaseNumbers,
               theCase.indictmentSubtypes,
-            ).join(', ')
-          : caseTypes[theCase.type],
-      )} *${theCase.id}*`
+            ).join(', ')})`
+          : ''
+      } *${theCase.id}*`
       const prosecutionText = `${
         theCase.creatingProsecutor?.institution
           ? `${theCase.creatingProsecutor?.institution?.name} `
