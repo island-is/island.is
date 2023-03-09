@@ -92,6 +92,14 @@ export function getLastDayOfLastMonth(): Date {
   return addDays(today, today.getDate() * -1)
 }
 
+export function isDateInThisMonth(theDate: Date): boolean {
+  const today = new Date()
+  return (
+    theDate.getMonth() === today.getMonth() &&
+    theDate.getFullYear() === today.getFullYear()
+  )
+}
+
 // TODO: Once we have the data, add the otherParentPeriods here.
 export function formatPeriods(
   application: Application,
@@ -118,22 +126,15 @@ export function formatPeriods(
     const startDateDateTime = new Date(period.startDate)
     let canDelete = startDateDateTime.getTime() > currentDateStartTime()
     const today = new Date()
+    const isTodaySameMonthAsStartDate = isDateInThisMonth(startDateDateTime)
 
     if (!applicationFundId || applicationFundId === '') {
       canDelete = true
-    } else if (canDelete && today.getDate() >= 20) {
-      const startDateBeginOfMonth = addDays(
-        startDateDateTime,
-        startDateDateTime.getDate() * -1 + 1,
-      )
-      const currentDateBeginOfMonth = getBeginningOfThisMonth()
-      if (
-        startDateBeginOfMonth.getMonth() ===
-          currentDateBeginOfMonth.getMonth() &&
-        startDateBeginOfMonth.getFullYear() ===
-          currentDateBeginOfMonth.getFullYear()
-      ) {
+    } else if (isTodaySameMonthAsStartDate) {
+      if (canDelete && today.getDate() >= 20) {
         canDelete = false
+      } else if (!canDelete && today.getDate() < 20) {
+        canDelete = true
       }
     }
 
@@ -789,7 +790,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
       employers.push({
         email: employerEmailObj,
         ratio: '100',
-        phoneNumber: getValueViaPath(answers, 'employerPhoneNumber') as string,
         reviewerNationalRegistryId: employerReviewerNationalRegistryId,
         companyNationalRegistryId: employerNationalRegistryId,
       } as EmployerRow)
@@ -1218,10 +1218,7 @@ export const getLastValidPeriodEndDate = (
   const beginningOfMonth = getBeginningOfThisMonth()
 
   // LastPeriod's endDate is in current month
-  if (
-    lastEndDate.getMonth() === today.getMonth() &&
-    lastEndDate.getFullYear() === today.getFullYear()
-  ) {
+  if (isDateInThisMonth(lastEndDate)) {
     // Applicant has to start from begining of next month if today is >= 20
     if (today.getDate() >= 20) {
       return addMonths(beginningOfMonth, 1)
@@ -1464,7 +1461,7 @@ export const synchronizeVMSTPeriods = (
       period.firstPeriodStart === 'date_of_birth'
         ? 'actualDateOfBirth'
         : 'specificDate'
-    if (new Date(period.from).getTime() < new Date().getTime()) {
+    if (new Date(period.from).getDate() <= new Date().getDay()) {
       firstPeriodStart = 'specificDate'
     }
 
@@ -1480,10 +1477,15 @@ export const synchronizeVMSTPeriods = (
         useLength: NO as YesOrNo,
         rightCodePeriod: rightsCodePeriod,
       }
-      if (
-        period.paid ||
-        new Date(period.from).getTime() <= new Date().getTime()
-      ) {
+
+      const isSameMonth = isDateInThisMonth(new Date(period.from))
+      if (period.paid) {
+        newPeriods.push(obj)
+      } else if (isSameMonth) {
+        if (new Date().getDay() >= 20) {
+          newPeriods.push(obj)
+        }
+      } else if (new Date(period.from).getDay() <= new Date().getDay()) {
         newPeriods.push(obj)
       }
       temptVMSTPeriods.push(obj)

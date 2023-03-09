@@ -144,6 +144,7 @@ export const Filters = ({ defaultValues }: FiltersPropTypes) => {
                 name="isExplicit"
                 id="isExplicit"
                 label="Handvirkur kóði"
+                value="true"
                 defaultChecked={defaultValues.isExplicit}
               />
             </Stack>

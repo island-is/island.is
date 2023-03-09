@@ -909,6 +909,12 @@ export const m = defineMessages({
     description:
       'Text that shows up when an error occurs while submitting the application',
   },
+  financialLimitErrorMessage: {
+    id: 'fsn.application:financialLimitErrorMessage',
+    defaultMessage:
+      'Fjárhæðarmörk fyrir rekstrarár hafa ekki verið skilgreind. Vinsamlegast hafðu samband við Ríkisendurskoðun.',
+    description: 'Happens when financial limit has not been set in Dataverse',
+  },
 })
 
 export default m
