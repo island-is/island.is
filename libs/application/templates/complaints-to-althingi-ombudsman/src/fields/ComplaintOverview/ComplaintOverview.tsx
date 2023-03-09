@@ -1,9 +1,6 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, GridRow, GridColumn, Text } from '@island.is/island-ui/core'
-import {
-  formatPhoneNumber,
-  ReviewGroup,
-} from '@island.is/application/ui-components'
+import { ReviewGroup } from '@island.is/application/ui-components'
 import React, { FC } from 'react'
 import { ComplaintsToAlthingiOmbudsman } from '../../lib/dataSchema'
 import {
@@ -80,7 +77,7 @@ export const ComplaintOverview: FC<Props> = ({
         <GridRow>
           <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
             <ValueLine
-              value={formatPhoneNumber(phoneNumber ?? '')}
+              value={phoneNumber ?? ''}
               label={information.aboutTheComplainer.phone}
             />
           </GridColumn>

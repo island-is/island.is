@@ -4,11 +4,7 @@ import {
 } from '@island.is/api/schema'
 import { coreMessages, getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import {
-  formatPhoneNumber,
-  Label,
-  ReviewGroup,
-} from '@island.is/application/ui-components'
+import { Label, ReviewGroup } from '@island.is/application/ui-components'
 import {
   AccordionItem,
   AlertMessage,
@@ -161,7 +157,7 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
                 <Label marginTop={2}>
                   {formatMessage(overview.phoneNumber)}
                 </Label>
-                <Text>{formatPhoneNumber(applicant?.phoneNumber ?? '')}</Text>
+                <Text>{applicant?.phoneNumber}</Text>
               </Box>
             )}
           </GridColumn>
