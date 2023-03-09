@@ -29,7 +29,7 @@ const namespace = `${environment.audit.defaultNamespace}/cors`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiExcludeController()
-@Controller({ path: 'backend/cors', version: [VERSION_NEUTRAL, '1'] })
+@Controller({ path: 'cors', version: [VERSION_NEUTRAL, '1'] })
 @Audit({ namespace })
 export class CorsController {
   constructor(
