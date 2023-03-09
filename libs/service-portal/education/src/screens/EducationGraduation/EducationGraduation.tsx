@@ -16,7 +16,6 @@ import { gql, useQuery } from '@apollo/client'
 import { GET_ORGANIZATIONS_QUERY } from '@island.is/service-portal/graphql'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import { EducationPaths } from '../../lib/paths'
-import { PortalModuleComponent } from '@island.is/portals/core'
 
 const GetStudentInfoQuery = gql`
   query GetStudentInfo($input: GetStudentInfoInput!) {
@@ -51,7 +50,13 @@ export const EducationGraduation = () => {
     },
   })
 
-  const { data: orgData } = useQuery(GET_ORGANIZATIONS_QUERY)
+  const { data: orgData } = useQuery(GET_ORGANIZATIONS_QUERY, {
+    variables: {
+      input: {
+        lang: lang,
+      },
+    },
+  })
   const organizations = orgData?.getOrganizations?.items || {}
 
   const studentInfo = data?.getStudentInfo.transcripts || []
