@@ -1,4 +1,5 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
+import { NoContentException } from '@island.is/nest/problem'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import type { User } from '@island.is/auth-nest-tools'
@@ -73,7 +74,7 @@ export class ResourcesService {
   ): Promise<{
     rows: IdentityResource[]
     count: number
-  } | null> {
+  }> {
     page--
     const offset = page * count
     return this.identityResourceModel.findAndCountAll({
@@ -117,7 +118,7 @@ export class ResourcesService {
   }
 
   /** Finds all Api resources without paging */
-  async findAllApiResources(): Promise<ApiResource[] | null> {
+  async findAllApiResources(): Promise<ApiResource[]> {
     return this.apiResourceModel.findAll({ order: [['name', 'asc']] })
   }
 
@@ -177,7 +178,7 @@ export class ResourcesService {
   ): Promise<{
     rows: ApiResource[]
     count: number
-  } | null> {
+  }> {
     page--
     const offset = page * count
     return this.apiResourceModel.findAndCountAll({
@@ -198,7 +199,7 @@ export class ResourcesService {
   ): Promise<{
     rows: ApiScope[]
     count: number
-  } | null> {
+  }> {
     page--
     const offset = page * count
     return this.apiScopeModel.findAndCountAll({
@@ -484,20 +485,20 @@ export class ResourcesService {
 
   /** Updates an existing Identity resource */
   async updateIdentityResource(
-    identityResource: IdentityResourcesDTO,
+    identityResourceData: IdentityResourcesDTO,
     name: string,
-  ): Promise<IdentityResource | null> {
+  ): Promise<IdentityResource> {
     this.logger.debug('Updating identity resource with name: ', name)
     if (!name) {
       throw new BadRequestException('Name must be provided')
     }
 
-    await this.identityResourceModel.update(
-      { ...identityResource },
-      { where: { name: name } },
-    )
+    const identityResource = await this.getIdentityResourceByName(name)
+    if (!identityResource) {
+      throw new NoContentException()
+    }
 
-    return await this.getIdentityResourceByName(name)
+    return identityResource.update({ ...identityResourceData })
   }
 
   /** Soft delete on an identity resource by name */
@@ -534,39 +535,37 @@ export class ResourcesService {
 
   /** Updates an existing API scope */
   async updateApiScope(
-    apiScope: ApiScopesDTO,
+    apiScopeData: ApiScopesDTO,
     name: string,
-  ): Promise<ApiScope | null> {
+  ): Promise<ApiScope> {
     this.logger.debug('Updating api scope with name: ', name)
 
-    if (!name) {
-      throw new BadRequestException('Name must be provided')
+    const apiScope = await this.getApiScopeByName(name)
+    if (!apiScope) {
+      throw new NoContentException()
     }
 
-    await this.assertSameAsGroup(apiScope)
+    await this.assertSameAsGroup(apiScopeData)
 
-    await this.apiScopeModel.update({ ...apiScope }, { where: { name: name } })
-
-    return this.getApiScopeByName(name)
+    return apiScope.update({ ...apiScopeData })
   }
 
   /** Updates an existing API scope */
   async updateApiResource(
-    apiResource: ApiResourcesDTO,
+    apiResourceData: ApiResourcesDTO,
     name: string,
-  ): Promise<ApiResource | null> {
+  ): Promise<ApiResource> {
     this.logger.debug('Updating api resource with name: ', name)
 
     if (!name) {
       throw new BadRequestException('Name must be provided')
     }
+    const apiResource = await this.getApiResourceByName(name)
+    if (!apiResource) {
+      throw new NoContentException()
+    }
 
-    await this.apiResourceModel.update(
-      { ...apiResource },
-      { where: { name: name } },
-    )
-
-    return this.getApiResourceByName(name)
+    return apiResource.update({ ...apiResourceData })
   }
 
   /** Soft delete on an API scope */
@@ -871,7 +870,7 @@ export class ResourcesService {
 
   /** Returns all ApiScopeGroups by name if specified with Paging */
   async findAndCountAllApiScopeGroups(
-    searchString: string,
+    searchString: string | undefined,
     page: number,
     count: number,
   ): Promise<{

@@ -15,6 +15,7 @@ import {
   DeleteFileMutationMutation,
   DeleteFileMutationMutationVariables,
   PresignedPost,
+  UploadPoliceCaseFileMutationMutation,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { UploadPoliceCaseFileMutation } from '@island.is/judicial-system-web/graphql'
 import { errors } from '@island.is/judicial-system-web/messages'
@@ -80,7 +81,9 @@ export const useS3Upload = (caseId: string) => {
     CreateFileMutationMutation,
     CreateFileMutationMutationVariables
   >(CreateFileMutationDocument)
-  const [uploadPoliceCaseFileMutation] = useMutation(
+  const [
+    uploadPoliceCaseFileMutation,
+  ] = useMutation<UploadPoliceCaseFileMutationMutation>(
     UploadPoliceCaseFileMutation,
   )
   const [deleteFileMutation] = useMutation<
@@ -164,7 +167,10 @@ export const useS3Upload = (caseId: string) => {
   )
 
   const uploadPoliceCaseFile = useCallback(
-    async (file: TUploadFile) => {
+    async (
+      file: TUploadFile,
+      updateFile: (file: TUploadFile, newId?: string) => void,
+    ) => {
       try {
         const {
           data: uploadPoliceCaseFileData,
@@ -178,7 +184,10 @@ export const useS3Upload = (caseId: string) => {
           },
         })
 
-        if (!uploadPoliceCaseFileData.uploadPoliceCaseFile) {
+        if (
+          !uploadPoliceCaseFileData ||
+          !uploadPoliceCaseFileData.uploadPoliceCaseFile
+        ) {
           throw Error('failed to upload police case file')
         }
 
@@ -189,6 +198,7 @@ export const useS3Upload = (caseId: string) => {
               type: 'application/pdf',
               key: uploadPoliceCaseFileData.uploadPoliceCaseFile.key,
               size: uploadPoliceCaseFileData.uploadPoliceCaseFile.size,
+              policeCaseNumber: file.policeCaseNumber,
             },
           },
         })
@@ -196,6 +206,17 @@ export const useS3Upload = (caseId: string) => {
         if (!data2.data?.createFile.id) {
           throw Error('failed to add file to case')
         }
+
+        updateFile(
+          {
+            id: file.id,
+            name: file.name,
+            percent: 100,
+            status: 'done',
+          },
+          // We need to set the id so we are able to delete the file later
+          data2.data.createFile.id,
+        )
 
         return uploadPoliceCaseFileData?.uploadPoliceCaseFile
       } catch (e) {

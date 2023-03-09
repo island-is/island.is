@@ -41,5 +41,5 @@ export class TellUsAStoryInput {
 
   @HideField()
   @IsString()
-  type: 'tellUsAStory' = 'tellUsAStory'
+  type = 'tellUsAStory' as const
 }

@@ -224,6 +224,20 @@ export const AdrAndMachine = new XroadConf({
   },
 })
 
+export const JudicialAdministration = new XroadConf({
+  env: {
+    XROAD_COURT_BANKRUPTCY_CERT_PATH: {
+      dev: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1',
+      staging: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1',
+      prod: 'IS/GOV/4707171140/Domstolasyslan/JusticePortal-v1',
+    },
+  },
+  secrets: {
+    DOMSYSLA_PASSWORD: '/k8s/api/DOMSYSLA_PASSWORD',
+    DOMSYSLA_USERNAME: '/k8s/api/DOMSYSLA_USERNAME',
+  },
+})
+
 export const Firearm = new XroadConf({
   env: {
     XROAD_FIREARM_LICENSE_PATH: {
@@ -234,9 +248,9 @@ export const Firearm = new XroadConf({
   },
 })
 
-export const DisabilityLicense = new XroadConf({
+export const Disability = new XroadConf({
   env: {
-    XROAD_DISABILTITY_LICENSE_PATH: {
+    XROAD_DISABILITY_LICENSE_PATH: {
       dev: 'IS-DEV/GOV/10008/TR-Protected/oryrki-v1',
       staging: 'IS-TEST/GOV/5012130120/TR-Protected/oryrki-v1',
       prod: 'IS/GOV/5012130120/TR-Protected/oryrki-v1',
