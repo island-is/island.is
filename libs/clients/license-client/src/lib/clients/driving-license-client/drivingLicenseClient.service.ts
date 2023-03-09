@@ -257,18 +257,16 @@ export class DrivingLicenseClient implements LicenseClient<DrivingLicenseDto> {
     }
   }
 
-  async getLicenseDetail(
-    user: User,
-  ): Promise<Result<DrivingLicenseDto | null>> {
-    return await this.getLicense(user)
+  getLicenseDetail(user: User): Promise<Result<DrivingLicenseDto | null>> {
+    return this.getLicense(user)
   }
 
-  async getPkPassUrl(user: User): Promise<Result<string>> {
-    return await this.getPkPassUrlByNationalId(user.nationalId)
+  getPkPassUrl(user: User): Promise<Result<string>> {
+    return this.getPkPassUrlByNationalId(user.nationalId)
   }
 
-  async getPkPassQRCode(user: User): Promise<Result<string>> {
-    return await this.getPkPassQRCodeByNationalId(user.nationalId)
+  getPkPassQRCode(user: User): Promise<Result<string>> {
+    return this.getPkPassQRCodeByNationalId(user.nationalId)
   }
 
   private async getPkPassUrlByNationalId(

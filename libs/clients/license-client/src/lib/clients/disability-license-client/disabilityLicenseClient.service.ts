@@ -168,9 +168,7 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
       }
     }
 
-    const pass = await this.smartApi.generatePkPass(payload, user.nationalId)
-
-    return pass
+    return this.smartApi.generatePkPass(payload, user.nationalId)
   }
 
   async getPkPassQRCode(user: User): Promise<Result<string>> {

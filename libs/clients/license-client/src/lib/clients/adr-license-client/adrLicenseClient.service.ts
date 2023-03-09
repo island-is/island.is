@@ -187,12 +187,7 @@ export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
       }
     }
 
-    const pass = await this.smartApi.generatePkPass(
-      payload,
-      format(user.nationalId),
-    )
-
-    return pass
+    return this.smartApi.generatePkPass(payload, format(user.nationalId))
   }
 
   async getPkPassQRCode(user: User): Promise<Result<string>> {
