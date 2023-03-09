@@ -1,7 +1,10 @@
-import { SecretCallback } from 'express-jwt'
 import { decode } from 'jsonwebtoken'
-import { ExpressJwtOptions, JwksClient, passportJwtSecret } from 'jwks-rsa'
-import JwksRsa = require('jwks-rsa')
+import {
+  ExpressJwtOptions,
+  JwksClient,
+  passportJwtSecret,
+  SecretCallback,
+} from 'jwks-rsa'
 
 import { logger } from '@island.is/logging'
 
@@ -67,7 +70,10 @@ const createMultiIssuerKeyProvider = ({
 
   const clients = new Map<string, JwksClient>()
   for (const issuer of issuers) {
-    clients.set(issuer, JwksRsa({ jwksUri: `${issuer}${jwksUri}`, ...options }))
+    clients.set(
+      issuer,
+      new JwksClient({ jwksUri: `${issuer}${jwksUri}`, ...options }),
+    )
   }
 
   const onError = options.handleSigningKeyError || handleSigningKeyError
@@ -92,12 +98,13 @@ const createMultiIssuerKeyProvider = ({
       return callback(null)
     }
 
-    client.getSigningKey(decodedJwtToken.header.kid, (error, key) => {
-      if (error) {
-        return onError(error, (newError) => callback(newError))
-      }
-
-      return callback(null, key.getPublicKey())
-    })
+    client
+      .getSigningKey(decodedJwtToken.header.kid)
+      .then((key) => {
+        callback(null, key.getPublicKey())
+      })
+      .catch((error) => {
+        onError(error, (newError) => callback(newError))
+      })
   }
 }
