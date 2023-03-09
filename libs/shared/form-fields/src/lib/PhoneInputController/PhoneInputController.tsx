@@ -2,8 +2,6 @@ import React, { forwardRef } from 'react'
 import { InputBackgroundColor, PhoneInput } from '@island.is/island-ui/core'
 import { Controller, Control, ValidationRules } from 'react-hook-form'
 import { TestSupport } from '@island.is/island-ui/utils'
-import InputController from '../InputController/InputController'
-import { useFeatureFlag } from '@island.is/react/feature-flags'
 
 interface Props {
   autoFocus?: boolean
@@ -41,22 +39,6 @@ export const PhoneInputController = forwardRef(
     props: Props & TestSupport,
     ref?: React.Ref<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    const { value: isPhoneInputV2Enabled } = useFeatureFlag(
-      'isPhoneInputV2Enabled',
-      false,
-    )
-
-    if (!isPhoneInputV2Enabled) {
-      return (
-        <InputController
-          type="tel"
-          format="###-####"
-          {...props}
-          id={`${props.id}NoV2`}
-        />
-      )
-    }
-
     const {
       autoFocus,
       defaultValue,
