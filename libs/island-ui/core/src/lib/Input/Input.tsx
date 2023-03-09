@@ -42,7 +42,6 @@ const InputHOC = forwardRef(
     ref: React.Ref<HTMLInputElement>,
   ) => <input ref={ref} {...props} />,
 )
-
 const TextareaHOC = forwardRef(
   (props: InputComponentProps, ref: React.Ref<HTMLTextAreaElement>) => (
     <textarea ref={ref} {...props} />

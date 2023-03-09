@@ -3,7 +3,6 @@ import { Theme, theme, themeUtils } from '@island.is/island-ui/theme'
 import * as mixins from './Input.mixins'
 import omit from 'lodash/omit'
 import mapValues from 'lodash/mapValues'
-import { inputSizes } from './Input.mixins'
 
 export const containerDisabled = style({
   opacity: 0.5,
@@ -39,17 +38,6 @@ export const input = style({
       color: theme.color.dark400,
     },
   },
-})
-
-export const prefix = style({
-  color: theme.color.dark300,
-  paddingLeft: theme.spacing[1],
-  fontWeight: theme.typography.semiBold,
-  ...themeUtils.responsiveStyle({
-    md: {
-      paddingLeft: theme.spacing[2],
-    },
-  }),
 })
 
 export const inputSize = styleVariants(mixins.inputSizes)
