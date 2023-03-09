@@ -1457,6 +1457,7 @@ search-indexer-service:
       ELASTIC_DOMAIN: 'search'
       ELASTIC_INDEX: 'island-is'
       ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
+      NODE_OPTIONS: '--max-old-space-size=2048'
       S3_BUCKET: 'staging-es-custom-packages'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -1464,6 +1465,7 @@ search-indexer-service:
   namespace: 'search-indexer'
   podSecurityContext:
     fsGroup: 65534
+  progressDeadlineSeconds: 1500
   pvcs: []
   replicaCount:
     default: 1
