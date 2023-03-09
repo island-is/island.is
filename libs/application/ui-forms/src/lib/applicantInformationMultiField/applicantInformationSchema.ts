@@ -17,4 +17,11 @@ export const applicantInformationSchema = z.object({
   phoneNumber: z
     .string()
     .refine(isValidNumber, { params: applicantInformation.error.phoneNumber }),
+  // For feature flag testing
+  phoneNumberNoV2: z
+    .string()
+    .refine((x) => x.length === 7 || !x, {
+      params: applicantInformation.error.phoneNumber,
+    })
+    .optional(),
 })
