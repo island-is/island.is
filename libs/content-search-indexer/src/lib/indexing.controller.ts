@@ -1,11 +1,8 @@
 import {
-  Body,
   Controller,
   Get,
-  Headers,
   HttpException,
   HttpStatus,
-  Post,
   Query,
 } from '@nestjs/common'
 import { IndexingService } from './indexing.service'
@@ -13,7 +10,6 @@ import { logger } from '@island.is/logging'
 import { environment } from '../environments/environment'
 import { SyncInput } from './dto/syncInput.input'
 import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
-import { Entry } from 'contentful'
 
 @Controller('')
 export class IndexingController {
@@ -35,7 +31,7 @@ export class IndexingController {
   async sync(@Query() { locale = 'is', token = '' }: SyncInput) {
     if (environment.syncToken !== token) {
       logger.warn('Failed to validate sync access token', {
-        receivedToken: token,
+        recivedToken: token,
       })
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN)
     }
@@ -72,7 +68,7 @@ export class IndexingController {
   async resync(@Query() { locale = 'is', token = '' }: SyncInput) {
     if (environment.syncToken !== token) {
       logger.warn('Failed to validate sync access token', {
-        receivedToken: token,
+        recivedToken: token,
       })
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN)
     }
@@ -88,7 +84,7 @@ export class IndexingController {
   async status(@Query() { locale = 'is', token = '' }: SyncInput) {
     if (environment.syncToken !== token) {
       logger.warn('Failed to validate sync access token', {
-        receivedToken: token,
+        recivedToken: token,
       })
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN)
     }
@@ -102,7 +98,7 @@ export class IndexingController {
   ) {
     if (environment.syncToken !== token) {
       logger.warn('Failed to validate sync access token', {
-        receivedToken: token,
+        recivedToken: token,
       })
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN)
     }
@@ -111,38 +107,6 @@ export class IndexingController {
       return this.indexingService.getDocumentById(locale, id)
     } catch (error) {
       return { error: true }
-    }
-  }
-
-  @Post('delete-document')
-  async deleteDocument(
-    @Query()
-    { locale = 'is' as ElasticsearchIndexLocale, token = '' },
-    @Body()
-    document: Pick<Entry<unknown>, 'sys'>,
-    @Headers('deletionToken') deletionToken,
-  ) {
-    if (environment.syncToken !== token) {
-      logger.warn('Failed to validate sync access token', {
-        receivedToken: token,
-      })
-      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN)
-    }
-
-    if (
-      // Since this is a delete operation we require also require a deletion token
-      environment.deletionToken !== deletionToken
-    ) {
-      logger.warn('Failed to validate sync deletion token', {
-        receivedToken: deletionToken,
-      })
-      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN)
-    }
-
-    await this.indexingService.deleteDocument(locale, document)
-
-    return {
-      acknowledge: true,
     }
   }
 }
