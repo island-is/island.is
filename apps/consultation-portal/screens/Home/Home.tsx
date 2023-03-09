@@ -92,7 +92,7 @@ export const Home = ({ types }: HomeProps) => {
     institutions: filters.institutions,
     dateFrom: filters.period.from,
     dateTo: filters.period.to,
-    pageSize: CARDS_PER_PAGE,
+    pageSize: CARDS_PER_PAGE * 5,
   }
 
   const client = initApollo()
