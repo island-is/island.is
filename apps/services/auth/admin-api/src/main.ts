@@ -10,4 +10,5 @@ bootstrap({
   openApi,
   port: env.port,
   enableVersioning: true,
+  globalPrefix: 'backend',
 })
