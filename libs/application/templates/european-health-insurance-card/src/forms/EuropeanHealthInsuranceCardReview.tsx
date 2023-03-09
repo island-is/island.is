@@ -1,30 +1,19 @@
-import {
-  Application,
-  ChildrenCustodyInformationApi,
-  DefaultEvents,
-  NationalRegistryUserApi,
-} from '@island.is/application/types'
-import {
-  EhicApplyForPhysicalCardApi,
-  EhicCardResponseApi,
-} from '../dataProviders'
 import { Form, FormModes } from '@island.is/application/types'
 import {
   buildCustomField,
-  buildDataProviderItem,
   buildDescriptionField,
-  buildExternalDataProvider,
   buildForm,
   buildMultiField,
   buildSection,
   buildSubmitField,
-  buildTextField,
 } from '@island.is/application/core'
 
+import {
+  DefaultEvents,
+} from '@island.is/application/types'
 import { Sjukra } from '../assets'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 
-/* eslint-disable-next-line */
 export interface EuropeanHealthInsuranceCardProps {}
 
 export const EuropeanHealthInsuranceCardReview: Form = buildForm({

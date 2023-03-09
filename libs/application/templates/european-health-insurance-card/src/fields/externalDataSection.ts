@@ -4,11 +4,8 @@ import {
   NationalRegistryUserApi,
 } from '@island.is/application/types'
 import {
-  buildCustomField,
   buildDataProviderItem,
-  buildDescriptionField,
   buildExternalDataProvider,
-  buildMultiField,
   buildSection,
 } from '@island.is/application/core'
 

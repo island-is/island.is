@@ -1,23 +1,11 @@
 import {
   Application,
-  ChildrenCustodyInformationApi,
   DefaultEvents,
-  MaybeWithApplicationAndField,
-  NationalRegistrySpouseApi,
-  NationalRegistryUserApi,
 } from '@island.is/application/types'
-import { CardResponse, NationalRegistry } from '../lib/types'
-import {
-  EhicApplyForPhysicalCardApi,
-  EhicCardResponseApi,
-} from '../dataProviders'
 import { Form, FormModes } from '@island.is/application/types'
 import {
   buildCheckboxField,
-  buildCustomField,
-  buildDataProviderItem,
   buildDescriptionField,
-  buildExternalDataProvider,
   buildForm,
   buildMultiField,
   buildSection,
@@ -26,7 +14,6 @@ import {
 import {
   getDefaultValuesForPDFApplicants,
   getEhicResponse,
-  getFromRegistry,
   getFullName,
   hasAPDF,
   someAreNotInsured,
@@ -36,10 +23,10 @@ import {
   someHavePlasticButNotPdf,
 } from '../lib/helpers/applicantHelper'
 
+import { CardResponse } from '../lib/types'
 import { Sjukra } from '../assets'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 
-/* eslint-disable-next-line */
 export interface EuropeanHealthInsuranceCardProps { }
 
 export const EuropeanHealthInsuranceCardForm: Form = buildForm({
@@ -118,7 +105,6 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               title: 'Eiga pdf',
               condition: (_, externalData) => someHavePDF(externalData),
               options: (application: Application) => {
-                console.log(application, 'notApplicable')
                 const applying: Array<any> = []
                 getEhicResponse(application).forEach((x) => {
                   if (x.isInsured && hasAPDF(x)) {
@@ -141,7 +127,6 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               description: e.no.sectionDescription,
               condition: (_, externalData) => someAreNotInsured(externalData),
               options: (application: Application) => {
-                console.log(application, 'notApplicable')
                 const applying: Array<any> = []
                 getEhicResponse(application).forEach((x) => {
                   if (!x.isInsured && !x.canApply) {
