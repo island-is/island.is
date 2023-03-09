@@ -5,7 +5,7 @@ test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe.skip('Sites of institutions', () => {
   for (const { testCase } of [
-    { testCase: 'Opinberir aðilar', home: '/', },
+    { testCase: 'Opinberir aðilar', home: '/' },
     { testCase: 'Fiskistofa' },
     { testCase: 'HSN' },
     { testCase: 'Sjúkratryggingar', target: 'Efnisyfirlit' },
