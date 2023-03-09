@@ -61,7 +61,6 @@ export interface InputProps extends InputComponentProps {
   errorMessage?: string
   tooltip?: string
   backgroundColor?: ResponsiveProp<InputBackgroundColor>
-  prefix?: string
   textarea?: boolean
   maxLength?: number
   loading?: boolean

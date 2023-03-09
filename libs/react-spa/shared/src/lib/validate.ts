@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { isObject } from '@island.is/shared/utils'
+import isObject from 'lodash/isObject'
 
 /**
  * Creates one level deep object from a URLSearchParams

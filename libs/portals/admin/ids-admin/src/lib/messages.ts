@@ -118,6 +118,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:error-application-id',
     defaultMessage: 'Application ID má ekki vera tómt',
   },
+  errorApplicationIdRegex: {
+    id: 'ap.ids-admin:error-application-id-regex',
+    defaultMessage: 'Gildir stafir eru A-Z a-z 0-9 . _ - /',
+  },
   errorEnvironment: {
     id: 'ap.ids-admin:error-environment',
     defaultMessage: 'Veldu a.m.k. eitt umhverfi',
@@ -125,6 +129,11 @@ export const m = defineMessages({
   errorApplicationType: {
     id: 'ap.ids-admin:error-application-type',
     defaultMessage: 'Veldu tegund forrits',
+  },
+  errorDefault: {
+    id: 'ap.ids-admin:error-default',
+    defaultMessage: 'Úps, óvænt villa kom upp!',
+    description: 'An unknown error has occurred',
   },
   webApplicationsTitle: {
     id: 'ap.ids-admin:web-applications-title',

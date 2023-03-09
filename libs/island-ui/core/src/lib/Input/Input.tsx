@@ -81,7 +81,6 @@ export const Input = forwardRef(
       fixedFocusState,
       autoExpand,
       loading,
-      prefix,
       ...inputProps
     } = props
     const [hasFocus, setHasFocus] = useState(false)
@@ -142,63 +141,6 @@ export const Input = forwardRef(
         }
       }
     }, [autoExpand?.maxHeight, autoExpand?.on, inputRef])
-
-    const input = (
-      <InputComponent
-        className={cn(
-          styles.input,
-          prefix ? styles.inputPrefix : '',
-          resolveResponsiveProp(
-            backgroundColor,
-            styles.inputBackgroundXs,
-            styles.inputBackgroundSm,
-            styles.inputBackgroundMd,
-            styles.inputBackgroundLg,
-            styles.inputBackgroundXl,
-          ),
-          styles.inputSize[size],
-          {
-            [styles.rightAlign]: rightAlign,
-            [styles.textarea]: textarea,
-          },
-        )}
-        id={id}
-        disabled={disabled}
-        name={name}
-        ref={mergedRefs}
-        placeholder={placeholder}
-        value={value}
-        maxLength={maxLength}
-        defaultValue={defaultValue}
-        onFocus={(e) => {
-          setHasFocus(true)
-          if (onFocus) {
-            onFocus(e)
-          }
-        }}
-        onClick={(e) => {
-          if (onClick) {
-            onClick(e)
-          }
-        }}
-        onKeyDown={(e) => {
-          if (onKeyDown) {
-            onKeyDown(e)
-          }
-        }}
-        onBlur={(e) => {
-          setHasFocus(false)
-          if (onBlur) {
-            onBlur(e)
-          }
-        }}
-        readOnly={readOnly}
-        type={type}
-        {...(ariaError as AriaError)}
-        {...inputProps}
-        {...(required && { 'aria-required': true })}
-      />
-    )
 
     return (
       <div>
@@ -267,14 +209,59 @@ export const Input = forwardRef(
                 )}
               </label>
             )}
-            {prefix ? (
-              <Box display="flex" alignItems="center">
-                <span className={styles.prefix}>{prefix}</span>
-                {input}
-              </Box>
-            ) : (
-              input
-            )}
+            <InputComponent
+              className={cn(
+                styles.input,
+                resolveResponsiveProp(
+                  backgroundColor,
+                  styles.inputBackgroundXs,
+                  styles.inputBackgroundSm,
+                  styles.inputBackgroundMd,
+                  styles.inputBackgroundLg,
+                  styles.inputBackgroundXl,
+                ),
+                styles.inputSize[size],
+                {
+                  [styles.rightAlign]: rightAlign,
+                  [styles.textarea]: textarea,
+                },
+              )}
+              id={id}
+              disabled={disabled}
+              name={name}
+              ref={mergedRefs}
+              placeholder={placeholder}
+              value={value}
+              maxLength={maxLength}
+              defaultValue={defaultValue}
+              onFocus={(e) => {
+                setHasFocus(true)
+                if (onFocus) {
+                  onFocus(e)
+                }
+              }}
+              onClick={(e) => {
+                if (onClick) {
+                  onClick(e)
+                }
+              }}
+              onKeyDown={(e) => {
+                if (onKeyDown) {
+                  onKeyDown(e)
+                }
+              }}
+              onBlur={(e) => {
+                setHasFocus(false)
+                if (onBlur) {
+                  onBlur(e)
+                }
+              }}
+              readOnly={readOnly}
+              type={type}
+              {...(ariaError as AriaError)}
+              {...inputProps}
+              {...(required && { 'aria-required': true })}
+            />
           </Box>
           {loading && (
             <Box

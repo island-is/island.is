@@ -41,15 +41,6 @@ export const input = style({
   },
 })
 
-export const inputPrefix = style({
-  paddingLeft: 0,
-  ...themeUtils.responsiveStyle({
-    md: {
-      paddingLeft: 0,
-    },
-  }),
-})
-
 export const prefix = style({
   color: theme.color.dark300,
   paddingLeft: theme.spacing[1],

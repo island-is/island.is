@@ -14,10 +14,10 @@ export const tenantLoader: WrappedLoaderFn = ({ client }) => {
       },
     })
 
-    if (tenant.error) {
+    if (tenant.error || !tenant.data) {
       throw tenant.error
     }
 
-    return tenant.data?.authAdminTenant ?? ({} as TenantLoaderResult)
+    return tenant.data.authAdminTenant
   }
 }

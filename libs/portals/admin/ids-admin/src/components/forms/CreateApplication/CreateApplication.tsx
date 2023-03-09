@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import {
+  AlertMessage,
   Box,
   Button,
   Checkbox,
@@ -43,8 +44,40 @@ const applicationTypes = [
 /**
  * Formats the application id to be lowercase and replace spaces with dashes
  */
-const formatApplicationId = (name: string) => {
-  return name.trim().toLowerCase().replace(/\s+/g, '-')
+const formatApplicationId = (value: string) =>
+  value.trim().toLowerCase().replace(/\s+/g, '-')
+
+/**
+ * Parses the application id to be lowercase and replace spaces with dashes
+ * Also makes sure that the prefix is always present and cannot be erased
+ * @param prefix
+ * @param value
+ */
+const parseApplicationId = ({
+  prefix,
+  value,
+}: {
+  prefix: string
+  value: string
+}) => {
+  // If user tries to erase the prefix, we add it back
+  if (prefix.startsWith(value) && value.length < prefix.length) {
+    return prefix
+  }
+
+  if (value.includes(prefix)) {
+    value = value.replace(prefix, '')
+    return `${prefix}${formatApplicationId(value)}`
+  }
+
+  const prefixWithoutSlash = prefix.split('/')[0]
+
+  if (value.startsWith(prefixWithoutSlash)) {
+    value = value.replace(prefixWithoutSlash, '')
+  }
+
+  // If user tries to erase the prefix, we add it back
+  return `${prefix}${formatApplicationId(value).split('/').pop()}`
 }
 
 type InputState = {
@@ -60,10 +93,9 @@ export default function CreateApplication() {
   const tenant = useRouteLoaderData(tenantLoaderId) as TenantLoaderResult
   const actionData = useActionData() as CreateApplicationResult
   const { formatMessage } = useLocale()
-  const APPLICATION_ID_PREFIX = `${tenant.id}/`
-
+  const prefix = `${tenant.id}/`
   const initialApplicationIdState: InputState = {
-    value: '',
+    value: prefix,
     dirty: false,
   }
 
@@ -82,7 +114,10 @@ export default function CreateApplication() {
 
     setApplicationIdState({
       ...applicationIdState,
-      value: formatApplicationId(e.target.value),
+      value: parseApplicationId({
+        value: e.target.value,
+        prefix,
+      }),
     })
   }
 
@@ -92,7 +127,10 @@ export default function CreateApplication() {
     const val = e.target.value
 
     setApplicationIdState({
-      value: formatApplicationId(val),
+      value: parseApplicationId({
+        value: val,
+        prefix,
+      }),
       dirty: true,
     })
   }
@@ -139,6 +177,11 @@ export default function CreateApplication() {
       title={formatMessage(m.createApplication)}
       onClose={onCancel}
     >
+      {actionData?.globalError && (
+        <Box marginTop={3}>
+          <AlertMessage message={formatMessage(m.errorDefault)} type="error" />
+        </Box>
+      )}
       <Form method="post">
         <Box
           display="flex"
@@ -159,12 +202,12 @@ export default function CreateApplication() {
           </Box>
           <Box width="full">
             <input type="text" hidden name="tenant" defaultValue={tenant.id} />
+
             <Input
               type="text"
               name="applicationId"
               label={formatMessage(m.applicationId)}
               size="sm"
-              prefix={APPLICATION_ID_PREFIX}
               value={applicationIdState.value}
               onChange={onApplicationIdChange}
               errorMessage={formatErrorMessage(
