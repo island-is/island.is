@@ -29,9 +29,7 @@ test.describe('Admin portal', () => {
     { testCase: 'Vera sendur beint á Loftbrú þegar umboðshafi' },
     { testCase: 'Eyða umboði fyrir Loftbrú admin' },
     { testCase: 'Fara inn í Aðgangsstýringu með fellivali í haus' },
-    {
-      testCase: 'Sjá yfirlit með Loftbrú og Aðganggstýringu þegar prókúruhafi',
-    },
+    { testCase: 'Sjá yfirlit með Loftbrú og Aðganggstýringu þegar prókúruhafi' },
     { testCase: 'Veita umboð fyrir Loftbrú admin' },
   ]) {
     test.skip(testCase, () => {
