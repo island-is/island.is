@@ -155,8 +155,10 @@ export const PhoneInput = forwardRef(
       ? backgroundColor.map(mapBlue)
       : mapBlue(backgroundColor as InputBackgroundColor)
 
-    const handleSelectChange = (value: ValueType<OptionType>) => {
-      setSelectedCountryCode(value)
+    const handleSelectChange = (option: ValueType<OptionType>) => {
+      const newCc = (option as Option)?.value?.toString()
+      setSelectedCountryCode(option)
+      onFormatValueChange?.(value?.replace(cc, newCc))
       if (inputRef.current) {
         inputRef.current.focus()
       }
