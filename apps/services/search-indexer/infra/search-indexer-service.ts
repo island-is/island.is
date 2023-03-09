@@ -37,7 +37,6 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
     .secrets({
       CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN',
       API_CMS_SYNC_TOKEN: '/k8s/search-indexer/API_CMS_SYNC_TOKEN',
-      API_CMS_DELETION_TOKEN: '/k8s/search-indexer/API_CMS_DELETION_TOKEN',
     })
     .env(envs)
     .initContainer({
