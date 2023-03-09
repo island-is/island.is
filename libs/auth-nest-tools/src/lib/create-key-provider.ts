@@ -1,9 +1,32 @@
 import { SecretCallback } from 'express-jwt'
 import { decode } from 'jsonwebtoken'
-import { ExpressJwtOptions, JwksClient } from 'jwks-rsa'
+import { ExpressJwtOptions, JwksClient, passportJwtSecret } from 'jwks-rsa'
 import JwksRsa = require('jwks-rsa')
 
 import { logger } from '@island.is/logging'
+
+const JWKS_URI = '/.well-known/openid-configuration/jwks'
+const keyProviderBaseOptions = {
+  cache: true,
+  rateLimit: true,
+}
+
+export const createKeyProvider = (issuer: string | string[]) => {
+  if (Array.isArray(issuer)) {
+    // Creates a key provider for each given issuer
+    return createMultiIssuerKeyProvider({
+      ...keyProviderBaseOptions,
+      jwksUri: '/.well-known/openid-configuration/jwks',
+      issuers: issuer,
+    })
+  }
+
+  // Creates key provider for a single issuer with default jwks-rsa method
+  return passportJwtSecret({
+    ...keyProviderBaseOptions,
+    jwksUri: `${issuer}${JWKS_URI}`,
+  })
+}
 
 interface MultiIssuerOptions extends Omit<ExpressJwtOptions, 'jwksUri'> {
   // Path to the JWKS on the issuer
@@ -33,7 +56,7 @@ const handleSigningKeyError = (
  * This function is an extension of the passportJwtSecret function from jwks-rsa.
  * It allows you to specify multiple issuers and will return the correct key for the issuer.
  */
-export const multiIssuerKeyProvider = ({
+const createMultiIssuerKeyProvider = ({
   jwksUri,
   issuers,
   ...options
@@ -65,9 +88,8 @@ export const multiIssuerKeyProvider = ({
     const client = clients.get(issuer)
 
     if (!client) {
-      const message = `Issuer ${issuer} is not configured`
-      logger.error(message)
-      return callback(message)
+      logger.warn(new Error(`Unsupported issuer: ${issuer}`))
+      return callback(null)
     }
 
     client.getSigningKey(decodedJwtToken.header.kid, (error, key) => {

@@ -2,33 +2,18 @@ import { ExtractJwt, Strategy } from 'passport-jwt'
 import { PassportStrategy } from '@nestjs/passport'
 import { Injectable } from '@nestjs/common'
 import { Request } from 'express'
-import { passportJwtSecret } from 'jwks-rsa'
 import type { AuthConfig } from './auth.module'
 import { JwtPayload } from './jwt.payload'
 import { Auth } from './auth'
-import { multiIssuerKeyProvider } from './multi-issuer-key-provider'
+import { createKeyProvider } from './create-key-provider'
 
 const AUTH_BODY_FIELD_NAME = '__accessToken'
-const JWKS_URI = '/.well-known/openid-configuration/jwks'
-const keyProviderBaseOptions = {
-  cache: true,
-  rateLimit: true,
-}
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private config: AuthConfig) {
     super({
-      secretOrKeyProvider: Array.isArray(config.issuer)
-        ? multiIssuerKeyProvider({
-            ...keyProviderBaseOptions,
-            jwksUri: JWKS_URI,
-            issuers: config.issuer,
-          })
-        : passportJwtSecret({
-            ...keyProviderBaseOptions,
-            jwksUri: `${config.issuer}${JWKS_URI}`,
-          }),
+      secretOrKeyProvider: createKeyProvider(config.issuer),
       jwtFromRequest: ExtractJwt.fromExtractors([
         ExtractJwt.fromAuthHeaderAsBearerToken(),
         ExtractJwt.fromBodyField(AUTH_BODY_FIELD_NAME),
