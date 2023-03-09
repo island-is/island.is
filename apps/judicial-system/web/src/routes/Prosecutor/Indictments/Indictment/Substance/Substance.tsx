@@ -1,10 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-
-import {
-  TempCase as Case,
-  TempIndictmentCount as TIndictmentCount,
-} from '@island.is/judicial-system-web/src/types'
 
 import { Input } from '@island.is/island-ui/core'
 
