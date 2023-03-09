@@ -2,12 +2,12 @@ import React, { FC } from 'react'
 import Footer from '../Footer/Footer'
 import Menu from '../Menu/Menu'
 type LayoutProps = {
-  showIcon?: boolean
+  isFrontPage?: boolean
 }
-export const Layout: FC<LayoutProps> = ({ children, showIcon }) => {
+export const Layout: FC<LayoutProps> = ({ children, isFrontPage }) => {
   return (
     <div>
-      <Menu showIcon={showIcon} />
+      <Menu isFrontPage={isFrontPage} />
       {children}
       <Footer />
     </div>

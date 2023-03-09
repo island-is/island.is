@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useNavigation } from '../../hooks/useNavigation'
 import { PortalNavigationItem } from '../../types/portalCore'
+import { replaceParams } from '@island.is/react-spa/shared'
 
 interface PortalNavigationProps {
   navigation: PortalNavigationItem
@@ -35,17 +36,17 @@ export function PortalNavigation({
 
   return (
     <Navigation
-      title={title ? title : formatMessage(nav.name)}
+      title={title ?? formatMessage(nav.name)}
       baseId={'navigation'}
       isMenuDialog={!lg}
       activeItemTitle={activeNav ? formatMessage(activeNav.name) : undefined}
       renderLink={(link, item) => {
         let href = item?.href ?? ''
-        // Replace :bla in the route URL with userParams().bla
-        href = href.replace(
-          /\/:(\w+)/g,
-          (_, paramName) => ('/' + params[paramName]) as string,
-        )
+        href = replaceParams({
+          href,
+          params,
+        })
+
         return href ? <Link to={href}>{link}</Link> : link
       }}
       items={

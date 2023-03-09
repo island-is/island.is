@@ -14,6 +14,7 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
   defineTemplateApi,
+  PendingAction,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 
@@ -22,7 +23,7 @@ import { assign } from 'xstate'
 import { ApiActions } from '../shared'
 import {
   ReferenceDataApi,
-  EphemiralApi,
+  EphemeralApi,
   MyMockProvider,
 } from '../dataProviders'
 import { ExampleSchema } from './dataSchema'
@@ -71,7 +72,6 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
   }
   return m.name
 }
-
 const ReferenceApplicationTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<ReferenceTemplateEvent>,
@@ -84,6 +84,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   dataSchema: ExampleSchema,
   featureFlag: Features.exampleApplication,
   allowMultipleApplicationsInDraft: true,
+
   stateMachineConfig: {
     initial: States.prerequisites,
     states: {
@@ -123,7 +124,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 }),
                 UserProfileApi,
                 MyMockProvider,
-                EphemiralApi,
+                EphemeralApi,
               ],
               delete: true,
             },
@@ -138,8 +139,10 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       [States.draft]: {
         meta: {
           name: 'Umsókn um ökunám',
+
           actionCard: {
             description: m.draftDescription,
+            onExitHistoryLog: 'Umsókn send inn',
           },
           progress: 0.25,
           status: 'draft',
@@ -172,6 +175,15 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           name: 'Waiting to assign',
           progress: 0.75,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            pendingAction: {
+              title: 'Skráning yfirferðaraðila',
+              content:
+                'Umsóknin bíður nú þess að yfirferðaraðili sé skráður á umsóknina. Þú getur líka skráð þig sjálfur inn og farið yfir umsóknina.',
+              displayStatus: 'warning',
+            },
+            onExitHistoryLog: 'Yfirferðaraðili skráður á umsókn og látin vita',
+          },
           onEntry: [
             defineTemplateApi({
               action: ApiActions.createApplication,
@@ -192,6 +204,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: 'all',
+              delete: true,
             },
             {
               id: Roles.ASSIGNEE,
@@ -215,6 +228,15 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           progress: 0.75,
           status: 'inprogress',
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            pendingAction: {
+              title: 'Verið er að fara yfir umsóknina',
+              content:
+                'Example stofnun fer núna yfir umsóknina og því getur þetta tekið nokkra daga',
+              displayStatus: 'info',
+            },
+            onEntryHistoryLog: 'Yfirferð hafin',
+          },
           onExit: [
             defineTemplateApi({
               action: ApiActions.completeApplication,
@@ -235,7 +257,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 answers: ['careerHistoryDetails', 'approvedByReviewer'],
               },
               read: 'all',
-              shouldBeListedForRole: false,
+              shouldBeListedForRole: true,
             },
             {
               id: Roles.APPLICANT,
@@ -258,6 +280,9 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           progress: 1,
           status: 'approved',
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            onEntryHistoryLog: 'Umsókn var samþykkt af yfirferðaraðila',
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -276,6 +301,9 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           progress: 1,
           status: 'rejected',
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            onEntryHistoryLog: 'Umsókn var hafnað af yfirferðaraðila',
+          },
           roles: [
             {
               id: Roles.APPLICANT,

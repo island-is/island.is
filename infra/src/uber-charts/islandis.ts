@@ -2,6 +2,7 @@ import { serviceSetup as apiSetup } from '../../../apps/api/infra/api'
 import { serviceSetup as webSetup } from '../../../apps/web/infra/web'
 import { serviceSetup as searchIndexerSetup } from '../../../apps/services/search-indexer/infra/search-indexer-service'
 import { serviceSetup as contentfulEntryTaggerSetup } from '../../../apps/services/contentful-entry-tagger/infra/contentful-entry-tagger-service'
+import { serviceSetup as contentfulAppsSetup } from '../../../apps/contentful-apps/infra/contentful-apps'
 
 import {
   serviceSetup as appSystemApiSetup,
@@ -47,6 +48,8 @@ import {
   workerSetup as sessionsWorkerSetup,
 } from '../../../apps/services/sessions/infra/sessions'
 
+import { serviceSetup as authAdminApiSetup } from '../../../apps/services/auth/admin-api/infra/auth-admin-api'
+
 import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
 
@@ -71,6 +74,8 @@ const adsWeb = adsWebSetup({ adsApi })
 const sessionsService = sessionsServiceSetup()
 const sessionsWorker = sessionsWorkerSetup()
 
+const authAdminApi = authAdminApiSetup()
+
 const api = apiSetup({
   appSystemApi,
   servicePortalApi,
@@ -79,12 +84,14 @@ const api = apiSetup({
   servicesEndorsementApi: endorsement,
   airDiscountSchemeBackend: adsBackend,
   sessionsApi: sessionsService,
+  authAdminApi,
 })
 const servicePortal = servicePortalSetup({ graphql: api })
 const appSystemForm = appSystemFormSetup({ api: api })
 const web = webSetup({ api: api })
 const searchIndexer = searchIndexerSetup()
 const contentfulEntryTagger = contentfulEntryTaggerSetup()
+const contentfulApps = contentfulAppsSetup()
 
 const xroadCollector = xroadCollectorSetup()
 
@@ -195,6 +202,7 @@ export const Services: EnvironmentServices = {
     licenseApi,
     sessionsService,
     sessionsWorker,
+    contentfulApps,
   ],
 }
 
@@ -207,4 +215,5 @@ export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   userNotificationWorkerService,
   contentfulEntryTagger,
   searchIndexer,
+  contentfulApps,
 ]

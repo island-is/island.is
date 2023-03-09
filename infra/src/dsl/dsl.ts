@@ -252,7 +252,7 @@ export class ServiceBuilder<ServiceType> {
     return this
   }
 
-  private assertUnset<T>(current: T, envs: T) {
+  private assertUnset<T extends {}>(current: T, envs: T) {
     const intersection = Object.keys({
       ...current,
     }).filter({}.hasOwnProperty.bind(envs))
@@ -286,4 +286,4 @@ export const service = <Service extends string>(
   return new ServiceBuilder(name)
 }
 
-export const json = (value: unknown): ValueType => JSON.stringify(value)
+export const json = (value: unknown): string => JSON.stringify(value)

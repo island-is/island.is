@@ -1,3 +1,4 @@
+import { NoContentException } from '@island.is/nest/problem'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
@@ -53,7 +54,7 @@ export class ResourceAccessService {
     searchString: string,
     page: number,
     count: number,
-  ): Promise<{ rows: ApiScopeUser[]; count: number } | null> {
+  ): Promise<{ rows: ApiScopeUser[]; count: number }> {
     this.logger.debug(
       `Getting Api Scope Users list with page "${page}" and count "${count} with searchString "${searchString}""`,
     )
@@ -88,7 +89,7 @@ export class ResourceAccessService {
   async create({
     userAccess,
     ...apiScopeUser
-  }: ApiScopeUserDTO): Promise<ApiScopeUser | null> {
+  }: ApiScopeUserDTO): Promise<ApiScopeUser> {
     this.logger.debug('Creating a new admin')
 
     const newApiScopeUser = await this.apiScopeUser.create(apiScopeUser)
@@ -108,24 +109,28 @@ export class ResourceAccessService {
 
   /** Updates an existing Api Scope User */
   async update(
-    { userAccess, ...apiScopeUser }: ApiScopeUserUpdateDTO,
+    { userAccess, ...apiScopeUserData }: ApiScopeUserUpdateDTO,
     nationalId: string,
-  ): Promise<ApiScopeUser | null> {
+  ): Promise<ApiScopeUser> {
     this.logger.debug('Updating Api Scope User with nationalId: ', nationalId)
 
     if (!nationalId) {
       throw new BadRequestException('nationalId must be provided')
     }
 
-    await this.deleteUserScopes(nationalId)
-
-    await this.apiScopeUser.update(apiScopeUser, {
-      where: { nationalId: nationalId },
+    const apiScopeUser = await this.apiScopeUser.findByPk(nationalId, {
+      include: [ApiScopeUserAccess],
     })
+    if (!apiScopeUser) {
+      throw new NoContentException()
+    }
 
+    await apiScopeUser.update({ ...apiScopeUserData })
+
+    await this.deleteUserScopes(nationalId)
     await this.createUserScopes(userAccess)
 
-    return await this.findOne(nationalId)
+    return (await this.findOne(nationalId)) as ApiScopeUser
   }
 
   /** Deleting an Api Scope User by nationalId */
