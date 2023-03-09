@@ -67,7 +67,7 @@ const Petitions = () => {
               }
               size="small"
             >
-              {'Stofna nýjan lista'}
+              {formatMessage(m.createList)}
             </Button>
           </Box>
         </GridColumn>
