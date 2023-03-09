@@ -136,7 +136,7 @@ export const indictmentCountSubstanceEnum = defineMessages({
   GABAPENTIN: {
     id:
       'judicial.system.core:indictments_indictment.indictment_offense_count_enum.gabapentin',
-    defaultMessage: 'gabapentín {amount} ng/ml',
+    defaultMessage: 'gabapentín {amount} µg/ml',
     description: 'Notaður fyrir gabapentín í blóði',
   },
   CLONAZEPAM: {
@@ -214,7 +214,7 @@ export const indictmentCountSubstanceEnum = defineMessages({
   PREGABALIN: {
     id:
       'judicial.system.core:indictments_indictment.indictment_offense_count_enum.pregabalin',
-    defaultMessage: 'pregabalín {amount} ng/ml',
+    defaultMessage: 'pregabalín {amount} µg/ml',
     description: 'Notaður fyrir pregabalín í blóði',
   },
   QUETIAPINE: {
