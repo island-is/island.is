@@ -30,11 +30,13 @@ component_management:
         - apps/air-discount-scheme/backend/**
         - apps/download-service/**
         - libs/auth-api-lib/**
+        - libs/services/**
     - component_id: auth-services
       name: Authentication related REST APIs
       paths:
         - apps/services/auth/**
         - libs/auth-api-lib/**
+        - libs/services/auth/**
     - component_id: application-system-api
       name: Application System API
       paths:
