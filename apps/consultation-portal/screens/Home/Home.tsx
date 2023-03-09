@@ -6,7 +6,6 @@ import {
   Tiles,
   Text,
   Stack,
-  Pagination,
   Hidden,
   DatePicker,
   Button,
@@ -20,11 +19,14 @@ import Types from '../../utils/dummydata/api/Types'
 import { Case } from '../../types/interfaces'
 import FilterBox from '../../components/Filterbox/Filterbox'
 import EmptyState from '../../components/EmptyState/EmptyState'
+import Pagination from '../../components/Pagination/Pagination'
 
-const CARDS_PER_PAGE = 12
 interface HomeProps {
   cases: Case[]
 }
+
+const CARDS_PER_PAGE = 12
+
 export const Home = ({ cases }: HomeProps) => {
   const Institutions = Object.entries(Types.institutions).map(
     ([value, label]) => ({
@@ -45,12 +47,14 @@ export const Home = ({ cases }: HomeProps) => {
   const [data, setData] = useState<Array<Case>>(cases)
   const [page, setPage] = useState<number>(1)
 
-  const goToPage = (page = 1, scrollTop = true) => {
-    setPage(page)
-    if (scrollTop) {
-      window.scrollTo(0, 0)
-    }
+  const updatePage = (pageNumber) => {
+    setPage(pageNumber)
   }
+
+  const count = data.length
+  const totalPages = Math.ceil(count / CARDS_PER_PAGE)
+  const base = page === 1 ? 0 : (page - 1) * CARDS_PER_PAGE
+  const visibleItems = data.slice(base, page * CARDS_PER_PAGE)
 
   useEffect(() => {
     searchValue
@@ -105,11 +109,6 @@ export const Home = ({ cases }: HomeProps) => {
             .filter((item) => item.institutionName.includes(institutionValue)),
         )
   }, [policyAreaValue])
-
-  const count = data.length
-  const totalPages = Math.ceil(count / CARDS_PER_PAGE)
-  const base = page === 1 ? 0 : (page - 1) * CARDS_PER_PAGE
-  const visibleItems = data.slice(base, page * CARDS_PER_PAGE)
 
   return (
     <Layout isFrontPage>
@@ -183,36 +182,7 @@ export const Home = ({ cases }: HomeProps) => {
                   </Tiles>
                 )}
                 {totalPages > 1 && (
-                  <Box paddingTop={[5, 5, 5, 8, 8]}>
-                    <Pagination
-                      page={page}
-                      totalPages={totalPages}
-                      variant="blue"
-                      renderLink={(page, className, children) => (
-                        <button
-                          onClick={() => {
-                            goToPage(page)
-                          }}
-                        >
-                          <span
-                            style={{
-                              position: 'absolute',
-                              width: '1px',
-                              height: '1px',
-                              padding: '0',
-                              margin: '-1px',
-                              overflow: 'hidden',
-                              clip: 'rect(0,0,0,0)',
-                              border: '0',
-                            }}
-                          >
-                            Síða
-                          </span>
-                          <span className={className}>{children}</span>
-                        </button>
-                      )}
-                    />
-                  </Box>
+                  <Pagination updatePage={updatePage} totalPages={totalPages} />
                 )}
               </>
             )}
