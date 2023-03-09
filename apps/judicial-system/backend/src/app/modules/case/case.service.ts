@@ -45,7 +45,6 @@ import {
   getCustodyNoticePdfAsBuffer,
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
-  formatRulingModifiedHistory,
   createCaseFilesRecord,
   createIndictment,
 } from '../../formatters'
@@ -512,35 +511,32 @@ export class CaseService {
       },
     ]
 
-    // Not modifying the ruling
-    if (!theCase.rulingDate) {
-      const deliverCaseFileToCourtMessages =
-        theCase.caseFiles
-          ?.filter(
-            (caseFile) =>
-              caseFile.state === CaseFileState.STORED_IN_RVG && caseFile.key,
-          )
-          .map((caseFile) => ({
-            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
-            userId: user.id,
-            caseId: theCase.id,
-            caseFileId: caseFile.id,
-          })) ?? []
+    const deliverCaseFileToCourtMessages =
+      theCase.caseFiles
+        ?.filter(
+          (caseFile) =>
+            caseFile.state === CaseFileState.STORED_IN_RVG && caseFile.key,
+        )
+        .map((caseFile) => ({
+          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          userId: user.id,
+          caseId: theCase.id,
+          caseFileId: caseFile.id,
+        })) ?? []
 
-      messages.push(...deliverCaseFileToCourtMessages, {
-        type: MessageType.DELIVER_COURT_RECORD_TO_COURT,
+    messages.push(...deliverCaseFileToCourtMessages, {
+      type: MessageType.DELIVER_COURT_RECORD_TO_COURT,
+      userId: user.id,
+      caseId: theCase.id,
+    })
+
+    // Case created from LOKE
+    if (theCase.origin === CaseOrigin.LOKE && !theCase.parentCaseId) {
+      messages.push({
+        type: MessageType.DELIVER_CASE_TO_POLICE,
         userId: user.id,
         caseId: theCase.id,
       })
-
-      // Case created from LOKE
-      if (theCase.origin === CaseOrigin.LOKE && !theCase.parentCaseId) {
-        messages.push({
-          type: MessageType.DELIVER_CASE_TO_POLICE,
-          userId: user.id,
-          caseId: theCase.id,
-        })
-      }
     }
 
     return this.messageService.sendMessagesToQueue(messages)
@@ -1033,21 +1029,7 @@ export class CaseService {
         return { documentSigned: false, message: 'Failed to upload to S3' }
       }
 
-      const newRulingDate = nowFactory()
-      const update: UpdateCase = {
-        rulingDate: newRulingDate,
-      }
-
-      if (theCase.rulingDate) {
-        update.rulingModifiedHistory = formatRulingModifiedHistory(
-          theCase.rulingModifiedHistory,
-          newRulingDate,
-          theCase.judge?.name,
-          theCase.judge?.title,
-        )
-      }
-
-      await this.update(theCase, update, user, false)
+      await this.update(theCase, { rulingDate: nowFactory() }, user, false)
 
       await this.addMessagesForCompletedCaseToQueue(theCase, user)
 

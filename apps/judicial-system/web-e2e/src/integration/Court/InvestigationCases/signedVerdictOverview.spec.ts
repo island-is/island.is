@@ -1,6 +1,6 @@
 import faker from 'faker'
 import {
-  INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
+  INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
   SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
@@ -20,7 +20,7 @@ import {
 
 describe('Signed verdict overview - Court - Investigation case', () => {
   const conclusion = faker.lorem.paragraph(1)
-  const caseFile = makeCaseFile('caseId', 'caseFileName')
+  const caseFile = makeCaseFile({ caseId: 'caseId', name: 'caseFileName' })
 
   beforeEach(() => {
     const caseData = mockCase(CaseType.INTERNET_USAGE)
@@ -48,9 +48,12 @@ describe('Signed verdict overview - Court - Investigation case', () => {
     cy.contains(conclusion)
   })
 
-  it('should have a button for modifying the ruling that navigates to a modify ruling page', () => {
+  it('should have a button for modifying the ruling that reopens the case', () => {
     cy.get('[data-testid="modifyRulingButton"]').should('exist').click()
-    cy.url().should('include', INVESTIGATION_CASE_MODIFY_RULING_ROUTE)
+    cy.url().should(
+      'include',
+      INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+    )
   })
 
   it('should be able to sign the court record', () => {

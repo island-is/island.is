@@ -337,6 +337,11 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
+  readonly rulingModifiedHistory?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
   readonly caseResentExplanation?: string
 
   @IsOptional()

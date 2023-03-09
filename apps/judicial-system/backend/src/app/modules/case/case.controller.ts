@@ -91,7 +91,7 @@ export class CaseController {
     private readonly userService: UserService,
     private readonly eventService: EventService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-  ) { }
+  ) {}
 
   private async validateAssignedUser(
     assignedUserId: string,
@@ -213,15 +213,12 @@ export class CaseController {
       update.parentCaseId = null
     }
 
-    if (
-      isIndictmentCase(theCase.type) &&
-      completedCaseStates.includes(state)
-    ) {
+    if (isIndictmentCase(theCase.type) && completedCaseStates.includes(state)) {
       update.rulingDate = nowFactory()
     }
 
     if (transition.transition === CaseTransition.REOPEN) {
-      // update.rulingDate = null
+      update.rulingDate = null
       update.courtRecordSignatoryId = null
       update.courtRecordSignatureDate = null
     }

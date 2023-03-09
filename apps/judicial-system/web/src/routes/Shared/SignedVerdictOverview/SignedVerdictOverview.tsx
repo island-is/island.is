@@ -794,8 +794,8 @@ export const SignedVerdictOverview: React.FC = () => {
                             event.stopPropagation()
                             router.push(
                               isRestrictionCase(workingCase.type)
-                                ? `${constants.RESTRICTION_CASE_MODIFY_RULING_ROUTE}/${workingCase.id}`
-                                : `${constants.INVESTIGATION_CASE_MODIFY_RULING_ROUTE}/${workingCase.id}`,
+                                ? `${constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`
+                                : `${constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`,
                             )
                           }}
                         >

@@ -168,7 +168,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
 
     it('should set the ruling date', () => {
       expect(mockCaseModel.update).toHaveBeenCalledWith(
-        { rulingDate: expect.any(Date) },
+        { rulingDate: date },
         { where: { id: caseId }, transaction },
       )
     })
@@ -248,37 +248,6 @@ describe('CaseController - Get ruling signature confirmation', () => {
     it('should throw Error', () => {
       expect(then.error).toBeInstanceOf(Error)
       expect(then.error.message).toBe('Some error')
-    })
-  })
-
-  describe('database update for modified ruling', () => {
-    const caseId = uuid()
-    const userId = uuid()
-    const judge = {
-      id: userId,
-      name: 'Judge Judgesen',
-      title: 'Héraðrsdómari',
-    } as User
-    const theCase = ({
-      id: caseId,
-      judgeId: userId,
-      rulingDate: randomDate(),
-      judge: judge,
-    } as unknown) as Case
-    const documentToken = uuid()
-
-    beforeEach(async () => {
-      await givenWhenThen(caseId, judge, theCase, documentToken)
-    })
-
-    it('should set the ruling date and ruling modified history', () => {
-      expect(mockCaseModel.update).toHaveBeenCalledWith(
-        {
-          rulingDate: expect.any(Date),
-          rulingModifiedHistory: expect.any(String),
-        },
-        { where: { id: caseId }, transaction },
-      )
     })
   })
 
