@@ -356,19 +356,15 @@ export const IndictmentCount: React.FC<Props> = (props) => {
         indictmentCount.substances,
       )
 
-      update = { legalArguments: legalArguments(lawsBroken), ...update }
-      update = {
+      onChange(indictmentCount.id, {
+        legalArguments: legalArguments(lawsBroken),
         incidentDescription: incidentDescription({
           ...indictmentCount,
           substances: update.substances,
         }),
         ...update,
-      }
+      })
     }
-
-    onChange(indictmentCount.id, {
-      ...update,
-    })
   }
 
   return (
