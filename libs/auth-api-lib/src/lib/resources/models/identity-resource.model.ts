@@ -157,7 +157,7 @@ export class IdentityResource extends Model {
   @ApiProperty()
   readonly modified?: Date
 
-  @ApiProperty()
+  @ApiProperty({ type: () => Domain })
   domain!: Domain
 
   toDTO(): IdentityResourcesDTO {
