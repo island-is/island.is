@@ -524,10 +524,6 @@ export class ResourcesService {
 
     await this.assertSameAsGroup(apiScopeData)
 
-    console.log(`apiScope instanceof ApiScope ${apiScope instanceof ApiScope}`)
-    console.log('apiScope', apiScope)
-
-    //return this.apiScopeModel.update({ ...apiScopeData }, { where: { name: name } })
     return apiScope.update({ ...apiScopeData })
   }
 
