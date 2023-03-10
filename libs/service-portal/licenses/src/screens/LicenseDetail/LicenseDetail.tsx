@@ -382,15 +382,17 @@ const LicenseDetail = () => {
             alignItems={['flexStart', 'center']}
             marginBottom={2}
           >
-            {!expired &&
+            {/* TODO: replace again, just testing for feature deployment */}
+            {/* !expired &&
               genericLicense?.license.pkpass &&
               genericLicense?.license.pkpassStatus === 'Available' &&
-              licenseType && (
-                <>
-                  <PkPass licenseType={licenseType} />
-                  <Box marginX={[0, 1]} marginY={[1, 0]} />
-                </>
-              )}
+              licenseType &&  */}
+            {true && (
+              <>
+                <PkPass licenseType={licenseType ?? ''} />
+                <Box marginX={[0, 1]} marginY={[1, 0]} />
+              </>
+            )}
             {genericLicense?.payload?.metadata?.links?.map((link, index) => {
               return (
                 <a
