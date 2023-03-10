@@ -103,7 +103,9 @@ export const EducationGraduation = () => {
               <ActionCard
                 key={`education-graduation-${index}`}
                 heading={item.instutution.displayName}
-                text={item.faculty + ' - ' + item.studyProgram}
+                text={
+                  item.faculty + ' - ' + item.studyProgram + ' ' + item.degree
+                }
                 cta={{
                   label: defineMessage({
                     id: 'sp.education-graduation:details',
