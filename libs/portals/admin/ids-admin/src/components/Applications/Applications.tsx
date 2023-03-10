@@ -1,3 +1,11 @@
+import React, { useEffect, useState } from 'react'
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useLoaderData,
+  Outlet,
+} from 'react-router-dom'
 import {
   Box,
   Button,
@@ -9,21 +17,20 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { Link, useLoaderData, useParams } from 'react-router-dom'
-import React, { useEffect, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { useTenant } from '../../screens/Tenant'
 import { replaceParams } from '@island.is/react-spa/shared'
 import { IDSAdminPaths } from '../../lib/paths'
 import * as styles from './Applications.css'
 import { AuthApplicationsList } from './Applications.loader'
+import { useTenant } from '../../screens/Tenant/Tenant'
 
 const Applications = () => {
   const originalApplications = useLoaderData() as AuthApplicationsList
   const { tenant } = useParams()
   const { formatMessage } = useLocale()
   const { setNavTitle } = useTenant()
+  const navigate = useNavigate()
 
   const [applications, setApplications] = useState<AuthApplicationsList>(
     originalApplications,
@@ -53,6 +60,15 @@ const Applications = () => {
     }
   }
 
+  const openCreateApplicationModal = () => {
+    navigate(
+      replaceParams({
+        href: IDSAdminPaths.IDSAdminApplicationCreate,
+        params: { tenant },
+      }),
+    )
+  }
+
   const getHeader = (withCreateButton = true) => {
     return (
       <GridRow rowGap={3} marginBottom={'containerGutter'}>
@@ -71,7 +87,9 @@ const Applications = () => {
           </Stack>
           {withCreateButton && (
             <Box>
-              <Button size={'small'}>Create Application</Button>
+              <Button size={'small'} onClick={openCreateApplicationModal}>
+                {m.createApplication}
+              </Button>
             </Box>
           )}
         </Box>
@@ -98,13 +116,16 @@ const Applications = () => {
             {formatMessage(m.noApplicationsDescription)}
           </Text>
           <Box marginTop={6}>
-            <Button size="small">{formatMessage(m.createApplication)}</Button>
+            <Button size="small" onClick={openCreateApplicationModal}>
+              {formatMessage(m.createApplication)}
+            </Button>
           </Box>
           <Box marginTop="gutter">
             <Button variant={'text'}>{formatMessage(m.learnMore)}</Button>
           </Box>
         </Box>
       </GridRow>
+      <Outlet />
     </GridContainer>
   ) : (
     <GridContainer className={styles.relative}>
@@ -142,7 +163,7 @@ const Applications = () => {
                 to={replaceParams({
                   href: IDSAdminPaths.IDSAdminApplication,
                   params: {
-                    tenant: tenant,
+                    tenant,
                     application: item.applicationId,
                   },
                 })}
@@ -233,6 +254,7 @@ const Applications = () => {
           ))}
         </Stack>
       </Box>
+      <Outlet />
     </GridContainer>
   )
 }
