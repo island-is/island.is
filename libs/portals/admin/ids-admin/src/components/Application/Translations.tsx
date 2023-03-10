@@ -6,28 +6,26 @@ import ContentCard from './ContentCard'
 
 const BasicInfoContent = ({ translations }: any) => {
   const { formatMessage } = useLocale()
-
-  const [copyTranslations, setCopyTranslations] = useState(translations)
-
-  useEffect(() => {
-    setCopyTranslations(translations)
-  }, [translations])
+  const [activeTab, setActiveTab] = useState('0')
+  const [copyTranslations, setCopyTranslations] = useState(
+    structuredClone(translations),
+  )
+  const [changed, setChanged] = useState(false)
 
   const onChangeTranslations = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    index: number,
   ) => {
     const temp = copyTranslations
-    temp[index][event.target.name] = event.target.value
-    setCopyTranslations(temp)
+    temp[+activeTab][event.target.name] = event.target.value
+    setCopyTranslations([...temp])
   }
 
-  const [changed, setChanged] = useState(false)
   useEffect(() => {
     setChanged(
-      JSON.stringify(copyTranslations) !== JSON.stringify(translations),
+      copyTranslations[+activeTab].displayName !==
+        translations[+activeTab].displayName,
     )
-  }, [copyTranslations, translations])
+  }, [copyTranslations, translations, activeTab])
 
   return (
     <ContentCard
@@ -41,6 +39,8 @@ const BasicInfoContent = ({ translations }: any) => {
         <Tabs
           label={formatMessage(m.translations)}
           size="md"
+          selected={activeTab}
+          onChange={setActiveTab}
           contentBackground="white"
           tabs={copyTranslations.map((translation: any, index: number) => {
             return {
@@ -51,7 +51,7 @@ const BasicInfoContent = ({ translations }: any) => {
                     backgroundColor="blue"
                     type="text"
                     size="sm"
-                    onChange={(e) => onChangeTranslations(e, index)}
+                    onChange={(e) => onChangeTranslations(e)}
                     name="displayName"
                     value={copyTranslations[index].displayName}
                     label={formatMessage(m.displayName)}
