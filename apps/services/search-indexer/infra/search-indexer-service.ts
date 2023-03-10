@@ -95,6 +95,7 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
           prod: 'prod-es-custom-packages',
         },
         ELASTIC_DOMAIN: 'search',
+        NODE_OPTIONS: '--max-old-space-size=2048',
       }),
       secrets: {
         CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN',

@@ -23,7 +23,7 @@ import StackedTitleAndDescription from '../../components/StackedTitleAndDescript
 
 const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
   // Remove following lines after connecting to API
-
+  const { contactEmail, contactName } = chosenCase
   const card = {
     caseNumber: '76/2022',
     nameOfReviewer: 'Jon Jonsson',
@@ -121,7 +121,11 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
                   headingColor="blue400"
                   title="Ábyrgðaraðili"
                 >
-                  {`${chosenCase.contactName} ${chosenCase.contactEmail}`}
+                  {contactName || contactEmail
+                    ? `${contactName ? contactName : ''} ${
+                        contactEmail ? contactEmail : ''
+                      }`
+                    : 'Engin skráður'}
                 </StackedTitleAndDescription>
               </SimpleCardSkeleton>
             </Stack>
