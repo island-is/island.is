@@ -9,7 +9,6 @@ import {
   DraftRegulationCancelApi,
   DraftRegulationChangeApi,
   DraftRegulationsApi,
-  InternalApi,
 } from '../../gen/fetch/apis'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { RegulationsAdminClientConfig } from './RegulationsAdminClientConfig'
@@ -32,7 +31,6 @@ export class RegulationsAdminClientService {
     private draftRegulationCancelApi: DraftRegulationCancelApi,
     private draftRegulationChangeApi: DraftRegulationChangeApi,
     private draftRegulationsApi: DraftRegulationsApi,
-    private internalApi: InternalApi,
   ) {}
 
   draftAuthorApiWithAuth(auth: Auth) {
@@ -53,10 +51,6 @@ export class RegulationsAdminClientService {
 
   draftRegulationsApiWithAuth(auth: Auth) {
     return this.draftRegulationsApi.withMiddleware(new AuthMiddleware(auth))
-  }
-
-  internalApiWithAuth(auth: Auth) {
-    return this.internalApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async getDraftRegulations(auth: Auth, page?: number) {

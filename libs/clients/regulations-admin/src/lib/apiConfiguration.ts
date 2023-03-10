@@ -4,7 +4,6 @@ import {
   DraftRegulationCancelApi,
   DraftRegulationChangeApi,
   DraftRegulationsApi,
-  InternalApi,
 } from '../../gen/fetch'
 import { Provider } from '@nestjs/common/interfaces/modules/provider.interface'
 
@@ -42,4 +41,3 @@ export const DraftRegulationChangeApiProvider = provideApi(
   DraftRegulationChangeApi,
 )
 export const DraftRegulationsApiProvider = provideApi(DraftRegulationsApi)
-export const InternalApiProvider = provideApi(InternalApi)

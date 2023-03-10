@@ -11,7 +11,6 @@ import {
   DraftRegulationCancelApiProvider,
   DraftRegulationChangeApiProvider,
   DraftRegulationsApiProvider,
-  InternalApiProvider,
 } from './apiConfiguration'
 import { RegulationsAdminClientService } from './RegulationsAdminClientService'
 
@@ -22,7 +21,6 @@ import { RegulationsAdminClientService } from './RegulationsAdminClientService'
     DraftRegulationCancelApiProvider,
     DraftRegulationChangeApiProvider,
     DraftRegulationsApiProvider,
-    InternalApiProvider,
   ],
   exports: [
     RegulationsAdminClientService,
