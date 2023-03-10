@@ -1,6 +1,6 @@
 import React, { FC, useContext } from 'react'
 import { Box, Input, SkeletonLoader } from '@island.is/island-ui/core'
-import { Controller, Control } from 'react-hook-form'
+import { Controller, Control, FieldValues } from 'react-hook-form'
 import { IsFetchingProviderOrganisationContext } from './SingleDocumentProvider'
 import {
   Validate,
@@ -15,7 +15,7 @@ type ControllerRules = Partial<{
   maxLength: ValidationRule<number>
   minLength: ValidationRule<number>
   pattern: ValidationRule<RegExp>
-  validate: Validate<string>
+  validate: Validate<string, FieldValues>
 }>
 
 interface Props {

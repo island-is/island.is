@@ -177,7 +177,7 @@ const GrantAccess = () => {
                 )}
                 <Box display={name ? 'none' : 'block'} aria-live="assertive">
                   <InputController
-                    control={control as Control<FieldValues>}
+                    control={(control as unknown) as Control}
                     id="toNationalId"
                     icon={name || queryLoading ? undefined : 'search'}
                     ref={inputRef}
