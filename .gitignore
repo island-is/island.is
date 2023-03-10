@@ -52,7 +52,7 @@ yarn-error.log
 testem.log
 /typings
 /debug.log
-
+contentful-error.log
 # System Files
 .DS_Store
 Thumbs.db

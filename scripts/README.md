@@ -2,7 +2,13 @@
 
 A collection of bash scripts to run utilities.
 
-TODO: chapter for each script
+## Contentful
+
+Export all contentful data to json and upload to s3
+
+```bash
+./scripts/contentful-export.sh [dev]
+```
 
 ## Cypress tests
 

@@ -1,5 +1,4 @@
 {
-  "contentFile": "contentful-data.json",
   "skipRoles": true,
   "skipContentModel": false,
   "skipWebhooks": true,
@@ -22,7 +21,7 @@
     "content_type=frontpage",
     "content_type=enhancedAsset"
   ],
-  "maxAllowedLimit": 200,
+  "maxAllowedLimit": 300,
   "contentOnly": true,
   "saveFile": true,
   "includeDrafts": false,
