@@ -10,34 +10,20 @@ import { theme } from '@island.is/island-ui/theme'
 import { Text } from '@island.is/island-ui/core'
 import { Tree } from '../../assets/Tree'
 import { AnimatePresence, motion } from 'framer-motion'
-import random from 'lodash/random'
-
-const MIN_SIZE = 48,
-  MAX_SIZE = 96
-const sizes: number[] = []
-const zIndices: number[] = []
+import { treeSliderConfig } from '../../lib/constants'
 
 export const TreeSlider = ({ application, field }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
 
   const [numberOfTrees, setNumberOfTrees] = useState(0)
+  const { sizes, zIndices } = treeSliderConfig
 
   return (
     <>
-      <Box
-        display="flex"
-        alignItems="flexEnd"
-        style={{ height: `${MAX_SIZE * 2}px` }}
-      >
+      <Box display="flex" alignItems="flexEnd" style={{ minHeight: '176px' }}>
         <AnimatePresence>
           {[...Array.from({ length: numberOfTrees })].map((_, i) => {
-            if (sizes[i] === undefined) {
-              sizes.push(random(MIN_SIZE, MAX_SIZE))
-            }
-            if (zIndices[i] === undefined) {
-              zIndices.push(Math.round(random(1, 2)))
-            }
             return (
               <motion.div
                 key={`tree-${i}`}
