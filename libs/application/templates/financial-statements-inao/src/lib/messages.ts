@@ -834,6 +834,19 @@ export const m = defineMessages({
     defaultMessage: 'Skilað',
     description: 'Returned',
   },
+  digitalSignatureTitle: {
+    id: 'fsn.application:digitalSignatureTitle',
+    defaultMessage: 'Rafræn undirritun',
+    description:
+      'Reminder of digital signature after the application is returned',
+  },
+  digitalSignatureMessage: {
+    id: 'fsn.application:digitalSignatureMessage',
+    defaultMessage:
+      'Það bíður þín skjal sem á eftir að undirrita með rafrænum skilríkjum. Hlekkur á skjalið hefur verið sendur í tölvupósti á netfangið þitt: {email}',
+    description:
+      'Reminder of digital signature after the application is returned',
+  },
   individualReceivedMsgFirst: {
     id: 'fsn.application:individualReceivedMsgFirst',
     defaultMessage: 'Uppgjör fyrir persónukjör vegna',
@@ -908,6 +921,12 @@ export const m = defineMessages({
       'Eitthvað fór úrskeiðis við að senda inn ársreikning. Reyndu aftur síðar.',
     description:
       'Text that shows up when an error occurs while submitting the application',
+  },
+  financialLimitErrorMessage: {
+    id: 'fsn.application:financialLimitErrorMessage',
+    defaultMessage:
+      'Fjárhæðarmörk fyrir rekstrarár hafa ekki verið skilgreind. Vinsamlegast hafðu samband við Ríkisendurskoðun.',
+    description: 'Happens when financial limit has not been set in Dataverse',
   },
 })
 

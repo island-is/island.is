@@ -73,6 +73,7 @@ class JudicialSystemApplication extends App<Props> {
             name="viewport"
             content="initial-scale=1.0, width=device-width"
           />
+          <meta name="robots" content="noindex" />
         </Head>
         <ViewportProvider>
           <ApolloProvider client={client}>
