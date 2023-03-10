@@ -10,6 +10,7 @@ import { m } from './lib/messages'
 import TenantsList from './components/TenantsList/TenantsList'
 import { tenantsListLoader } from './components/TenantsList/TenantsList.loader'
 import { applicationsLoader } from './components/Applications/Applications.loader'
+import Application from './components/Application/Application'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 
@@ -53,7 +54,7 @@ export const idsAdminModule: PortalModule = {
               {
                 name: m.settings,
                 path: IDSAdminPaths.IDSAdminApplication,
-                element: <div>Settings</div>,
+                element: <Application />,
                 handle: {
                   backPath: IDSAdminPaths.IDSAdminTenants,
                 },
