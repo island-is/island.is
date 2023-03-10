@@ -4,7 +4,6 @@ import {
   DraftRegulationCancelApi,
   DraftRegulationChangeApi,
   DraftRegulationsApi,
-  InternalApi,
 } from '../../gen/fetch/apis'
 import {
   DraftAuthorApiProvider,
@@ -28,7 +27,6 @@ import { RegulationsAdminClientService } from './RegulationsAdminClientService'
     DraftRegulationCancelApi,
     DraftRegulationChangeApi,
     DraftRegulationsApi,
-    InternalApi,
   ],
 })
 export class RegulationsAdminClientModule {}
