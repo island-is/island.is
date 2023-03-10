@@ -24,3 +24,28 @@ export const GET_CASE_BY_ID = gql`
     }
   }
 `
+export const GET_ADVICES = gql`
+  query consultationPortalAdviceByCaseId($input: ConsultationPortalCaseInput!) {
+    consultationPortalAdviceByCaseId(input: $input) {
+      id
+      number
+      participantName
+      participantEmail
+      content
+      created
+      adviceDocuments {
+        id
+      }
+    }
+  }
+`
+
+export const POST_CASE_ADVICE = gql`
+  mutation postConsultationPortalAdvice(
+    $input: ConsultationPortalCaseAdviceInput
+  ) {
+    postConsultationPortalAdvice(input: $input) {
+      id
+    }
+  }
+`

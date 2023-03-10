@@ -8,15 +8,13 @@ import {
   ConsultationPortalCaseByIdQuery,
   ConsultationPortalCaseByIdDocument,
   ConsultationPortalCaseByIdQueryVariables,
-} from '../../screens/Case/getCase.graphql.generated'
-import { GET_CASE_BY_ID } from '../../screens/Case/getCase.graphql'
-import { Advice, Case } from '../../types/viewModels'
-import {
   ConsultationPortalAdviceByCaseIdDocument,
   ConsultationPortalAdviceByCaseIdQuery,
   ConsultationPortalAdviceByCaseIdQueryVariables,
-} from '../../screens/Case/getAdvices.graphql.generated'
-import { GET_ADVICES } from '../../screens/Case/getAdvices.graphql'
+} from '../../screens/Case/getCase.graphql.generated'
+import { GET_CASE_BY_ID, GET_ADVICES } from '../../screens/Case/getCase.graphql'
+import { Advice, Case } from '../../types/viewModels'
+
 interface CaseProps {
   case: Case
   advices: Advice[]

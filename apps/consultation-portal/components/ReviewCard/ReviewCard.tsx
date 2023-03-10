@@ -9,10 +9,10 @@ import {
 import { SimpleCardSkeleton } from '../Card'
 import format from 'date-fns/format'
 import { useState } from 'react'
+import { useMutation } from '@apollo/client'
 
 export const ReviewCard = ({ advice }) => {
   const [open, setOpen] = useState(false)
-
   return (
     <SimpleCardSkeleton>
       <Stack space={1}>

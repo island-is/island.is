@@ -14,6 +14,7 @@ import {
 
 import format from 'date-fns/format'
 import { useReducer, useState } from 'react'
+import { Controller, FormProvider, useForm } from 'react-hook-form'
 
 type CardInfo = {
   caseNumber: string
@@ -24,6 +25,8 @@ type CardInfo = {
 type CardProps = {
   card: CardInfo
   isLoggedIn: boolean
+  content: string
+  handleSubmit: (e) => void
 }
 
 enum ActionTypes {
@@ -108,7 +111,12 @@ function reducer(state: UploadFile[], action: Action) {
 
 const date = format(new Date(Date.now()), 'dd.MM.yyyy')
 
-export const WriteReviewCard = ({ card, isLoggedIn }: CardProps) => {
+export const WriteReviewCard = ({
+  card,
+  isLoggedIn,
+  handleSubmit,
+  content,
+}: CardProps) => {
   const [showUpload, setShowUpload] = useState<boolean>(false)
   const [state, dispatch] = useReducer(reducer, initialUploadFiles)
   const [error, setError] = useState<string | undefined>(undefined)
@@ -141,85 +149,104 @@ export const WriteReviewCard = ({ card, isLoggedIn }: CardProps) => {
     })
   }
 
+  const hookFormData = useForm<CardProps>({
+    mode: 'onBlur',
+    reValidateMode: 'onBlur',
+    defaultValues: { content: 'tezt' },
+    shouldUnregister: false,
+  })
   return isLoggedIn ? (
-    <Box
-      paddingY={3}
-      paddingX={[2, 2, 4, 4, 4]}
-      borderRadius="standard"
-      borderWidth="standard"
-      borderColor="blue300"
-      flexDirection="column"
-    >
-      <Inline
-        justifyContent="spaceBetween"
-        alignY={['top', 'top', 'top', 'center', 'center']}
-        flexWrap="nowrap"
+    <FormProvider {...hookFormData}>
+      <Box
+        paddingY={3}
+        paddingX={[2, 2, 4, 4, 4]}
+        borderRadius="standard"
+        borderWidth="standard"
+        borderColor="blue300"
+        flexDirection="column"
+        component="form"
+        onSubmit={hookFormData.handleSubmit(handleSubmit)}
       >
-        <Inline alignY="center" collapseBelow="lg">
-          <Text variant="eyebrow" color="purple400">
-            Mál nr. {card.caseNumber}
-          </Text>
-          <Hidden below="lg">
-            <Box style={{ transform: 'rotate(90deg)', width: 16 }}>
-              <Divider weight="purple400" />
-            </Box>
-          </Hidden>
-          <Box>
+        <Inline
+          justifyContent="spaceBetween"
+          alignY={['top', 'top', 'top', 'center', 'center']}
+          flexWrap="nowrap"
+        >
+          <Inline alignY="center" collapseBelow="lg">
             <Text variant="eyebrow" color="purple400">
-              Til umsagnar: {card.reviewPeriod}
+              Mál nr. {card.caseNumber}
             </Text>
-          </Box>
+            <Hidden below="lg">
+              <Box style={{ transform: 'rotate(90deg)', width: 16 }}>
+                <Divider weight="purple400" />
+              </Box>
+            </Hidden>
+            <Box>
+              <Text variant="eyebrow" color="purple400">
+                Til umsagnar: {card.reviewPeriod}
+              </Text>
+            </Box>
+          </Inline>
+          <Text variant="small">{date}</Text>
         </Inline>
-        <Text variant="small">{date}</Text>
-      </Inline>
-      <Text variant="h3" marginTop={1}>
-        Skrifa umsögn
-      </Text>
-      <Text marginBottom={2}>Umsagnaraðili: {card.nameOfReviewer}</Text>
-      <Input
-        textarea
-        label="Umsögn"
-        name="Test"
-        placeholder="Hér skal skrifa umsögn"
-        rows={10}
-      />
-      <Box paddingTop={3}>
-        {showUpload && (
-          <Box marginBottom={3}>
-            <InputFileUpload
-              name="fileUpload"
-              fileList={state}
-              header="Dragðu skrár hingað til að hlaða upp"
-              description="Hlaðaðu upp skrár sem þu vilt senda með þinni umsögn"
-              buttonLabel="Velja skrár til að hlaða upp"
-              showFileSize
+        <Text variant="h3" marginTop={1}>
+          Skrifa umsögn
+        </Text>
+        <Text marginBottom={2}>Umsagnaraðili: {card.nameOfReviewer}</Text>
+        <Controller
+          name="content"
+          defaultValue=""
+          render={({ onChange, value }) => (
+            <Input
+              textarea
+              label="Umsögn"
+              name="Test"
+              placeholder="Hér skal skrifa umsögn"
+              rows={10}
+              value={value}
               onChange={onChange}
-              onRemove={onRemove}
-              errorMessage={state.length > 0 ? error : undefined}
             />
-          </Box>
-        )}
-        <Inline space={2} justifyContent="spaceBetween" collapseBelow="md">
-          {!showUpload ? (
-            <Button
-              fluid
-              size="small"
-              icon="documents"
-              iconType="outline"
-              variant="ghost"
-              onClick={() => setShowUpload(true)}
-            >
-              Hlaða upp viðhengi
-            </Button>
-          ) : (
-            <div />
           )}
-          <Button fluid size="small">
-            Staðfesta umsögn
-          </Button>
-        </Inline>
+        />
+
+        <Box paddingTop={3}>
+          {showUpload && (
+            <Box marginBottom={3}>
+              <InputFileUpload
+                name="fileUpload"
+                fileList={state}
+                header="Dragðu skrár hingað til að hlaða upp"
+                description="Hlaðaðu upp skrár sem þu vilt senda með þinni umsögn"
+                buttonLabel="Velja skrár til að hlaða upp"
+                showFileSize
+                onChange={onChange}
+                onRemove={onRemove}
+                errorMessage={state.length > 0 ? error : undefined}
+              />
+            </Box>
+          )}
+          <Inline space={2} justifyContent="spaceBetween" collapseBelow="md">
+            {!showUpload ? (
+              <Button
+                fluid
+                size="small"
+                icon="documents"
+                iconType="outline"
+                variant="ghost"
+                onClick={() => setShowUpload(true)}
+              >
+                Hlaða upp viðhengi
+              </Button>
+            ) : (
+              <div />
+            )}
+            <Button fluid size="small" type="submit">
+              Staðfesta umsögn
+            </Button>
+          </Inline>
+        </Box>
       </Box>
-    </Box>
+    </FormProvider>
   ) : (
     <ActionCard
       headingVariant="h4"

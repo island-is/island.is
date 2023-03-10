@@ -6,7 +6,7 @@ import {
   ApiCasesCaseIdGetRequest,
   ApiCasesGetRequest,
 } from '@island.is/clients/consultation-portal'
-import { GetCaseInput } from '../dto/case.input'
+import { GetCaseAdviceInput, GetCaseInput } from '../dto/case.input'
 import { CaseResult } from '../models/caseResult.model'
 import { CaseItemResult } from '../models/caseItemResult.model'
 import { AdviceResult } from '../models/adviceResult.model'
@@ -56,11 +56,11 @@ export class CaseResultService {
     return response
   }
 
-  async postAdvice(caseId: number, content: string, files: Blob[]) {
+  async postAdvice(input: GetCaseAdviceInput) {
     const request: ApiCasesCaseIdAdvicesPostRequest = {
-      caseId: caseId,
-      content: content,
-      files: files,
+      caseId: input.caseId,
+      content: input.content,
+      // files: input.files,
     }
 
     const response = await this.casesApi.apiCasesCaseIdAdvicesPost(request)

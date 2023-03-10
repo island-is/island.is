@@ -20,10 +20,30 @@ import Layout from '../../components/Layout/Layout'
 import { Advice } from '../../types/viewModels'
 import { SimpleCardSkeleton } from '../../components/Card'
 import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
+import { useMutation } from '@apollo/client'
+import { POST_CASE_ADVICE } from './getCase.graphql'
+import withApollo from '@island.is/consultation-portal/graphql/withApollo'
 
 const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
+  const [postConsultationPortalAdvice] = useMutation(POST_CASE_ADVICE)
   // Remove following lines after connecting to API
-
+  const submitHandler = async (e) => {
+    console.log(e)
+    await postConsultationPortalAdvice({
+      variables: {
+        input: {
+          content: e.content,
+          caseId: chosenCase.caseNumber,
+        },
+      },
+    })
+      .then((res) => {
+        console.log('res', res)
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+  }
   const card = {
     caseNumber: '76/2022',
     nameOfReviewer: 'Jon Jonsson',
@@ -87,7 +107,12 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
                   {advices?.map((advice: Advice) => {
                     return <ReviewCard advice={advice} key={advice.number} />
                   })}
-                  <WriteReviewCard card={card} isLoggedIn={isLoggedIn} />
+                  <WriteReviewCard
+                    card={card}
+                    content=""
+                    isLoggedIn={isLoggedIn}
+                    handleSubmit={submitHandler}
+                  />
                 </Stack>
               </Box>
             </Stack>
@@ -132,4 +157,4 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
   )
 }
 
-export default CaseScreen
+export default withApollo(CaseScreen)
