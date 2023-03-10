@@ -1,13 +1,6 @@
 import { uuid } from 'uuidv4'
 
-import { ConfigType } from '@island.is/nest/config'
-import { EmailService } from '@island.is/email-service'
-import {
-  NotificationType,
-  User,
-  CaseType,
-  Defendant,
-} from '@island.is/judicial-system/types'
+import { NotificationType, User } from '@island.is/judicial-system/types'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 
