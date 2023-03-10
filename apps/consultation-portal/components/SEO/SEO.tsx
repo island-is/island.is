@@ -1,15 +1,10 @@
+import { SEOProps } from '../../types/interfaces'
 import Head from 'next/head'
-
-type SEOProps = {
-  title?: string
-  image?: string
-  url?: string
-}
 
 export const SEO = ({ title, image, url }: SEOProps) => {
   return (
     <Head>
-      <title>{`${title} | Samráðsgátt`}</title>
+      <title>{`Samráðsgátt | ${title}`}</title>
       <meta
         property="og:url"
         content={`https://samradsgatt.island.is/${url}`}
@@ -19,7 +14,7 @@ export const SEO = ({ title, image, url }: SEOProps) => {
       <meta property="og:site_name" content="Samráðsgátt" key="ogsitename" />
       <meta
         property="og:title"
-        content={`${title} | Samráðsgátt`}
+        content={`Samráðsgátt | ${title}`}
         key="ogtitle"
       />
       <meta

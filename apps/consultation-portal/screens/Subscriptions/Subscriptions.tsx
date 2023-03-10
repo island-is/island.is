@@ -24,7 +24,6 @@ import {
 } from '../../types/interfaces'
 import BreadcrumbsWithMobileDivider from '../../components/BreadcrumbsWithMobileDivider/BreadcrumbsWithMobileDivider'
 import { sorting } from '../../utils/helpers'
-import SEO from '../../components/SEO/SEO'
 
 interface SubProps {
   cases: Case[]
@@ -173,157 +172,152 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
   ]
 
   return (
-    <>
-      <SEO title="Áskriftir" url="askriftir" />
-      <Layout>
-        <Divider />
-        <Box background="blue100">
-          <BreadcrumbsWithMobileDivider
-            items={[
-              { title: 'Samráðsgátt', href: '/samradsgatt' },
-              { title: 'Mínar áskriftir ', href: '/samradsgatt/askriftir' },
-              { title: currentTab },
-            ]}
-          />
+    <Layout seo={{ title: 'Áskriftir', url: 'askriftir' }}>
+      <Divider />
+      <Box background="blue100">
+        <BreadcrumbsWithMobileDivider
+          items={[
+            { title: 'Samráðsgátt', href: '/samradsgatt' },
+            { title: 'Mínar áskriftir ', href: '/samradsgatt/askriftir' },
+            { title: currentTab },
+          ]}
+        />
 
-          <GridContainer>
-            <Box paddingX={paddingX} paddingBottom={3}>
-              <Stack space={[3, 3, 3, 5, 5]}>
-                <Stack space={3}>
-                  <Text variant="h1" color="dark400">
-                    Áskriftir
-                  </Text>
-                  <Stack space={1}>
-                    <Text variant="default">
-                      Hér er hægt að skrá sig í áskrift að málum. Þú skráir þig
-                      inn á Ísland.is, hakar við einn eða fleiri flokka, velur
-                      hvort þú vilt tilkynningar um ný mál eða fleiri atriði og
-                      smellir á „Staðfesta“. ferð svo og staðfestir áskriftina í
-                      gegnum tölvupóstfangið sem þú varst að skrá.
-                    </Text>
-                    <Text variant="default">
-                      Kerfið er uppfært einu sinni á sólarhring.
-                    </Text>
-                  </Stack>
-                </Stack>
-                {loggedIn ? (
-                  <SubscriptionActionCard
-                    userIsLoggedIn={true}
-                    heading="Skrá áskrift"
-                    text="Skráðu netfang hérna og svo hefst staðfestingaferlið. Þú færð tölvupóst sem þú þarft að staðfesta til að áskriftin taki gildi."
-                    button={{
-                      label: 'Skrá áskrift',
-                      onClick: () => setLoggedIn(false),
-                    }}
-                    input={{
-                      name: 'subscriptionEmail',
-                      label: 'Netfang',
-                      placeholder: 'Hér skal skrifa netfang',
-                    }}
-                  />
-                ) : (
-                  <SubscriptionActionCard
-                    userIsLoggedIn={false}
-                    heading="Skrá áskrift"
-                    text="Þú verður að vera skráð(ur) inn til þess að geta skráð þig í áskrift."
-                    button={{
-                      label: 'Skrá mig inn',
-                      onClick: () => setLoggedIn(true),
-                    }}
-                  />
-                )}
-              </Stack>
-              <Stack space={0}>
-                {!(
-                  subscriptionArray.caseIds.length === 0 &&
-                  subscriptionArray.institutionIds.length === 0 &&
-                  subscriptionArray.policyAreaIds.length === 0
-                ) && (
-                  <>
-                    <Text paddingBottom={1} variant="eyebrow" paddingTop={2}>
-                      Valin mál
-                    </Text>
-                    {subscriptionArray.caseIds.length !== 0 &&
-                      subscriptionArray.caseIds.map((caseId) => {
-                        return casesData
-                          .filter((item) => caseId === item.id)
-                          .map((filteredItem) => (
-                            <ChosenSubscriptionCard
-                              data={{
-                                name: filteredItem.name,
-                                caseNumber: filteredItem.caseNumber,
-                                id: filteredItem.id.toString(),
-                                area: Area.case,
-                              }}
-                              subscriptionArray={subscriptionArray}
-                              setSubscriptionArray={(
-                                newSubscriptionArray: SubscriptionArray,
-                              ) => setSubscriptionArray(newSubscriptionArray)}
-                              key={`case-${caseId}`}
-                            />
-                          ))
-                      })}
-                    {subscriptionArray.institutionIds.length !== 0 &&
-                      subscriptionArray.institutionIds.map((institutionId) => {
-                        return institutionsData
-                          .filter(
-                            (item) => institutionId.toString() === item.id,
-                          )
-                          .map((filteredItem) => (
-                            <ChosenSubscriptionCard
-                              data={{
-                                name: filteredItem.name.toString(),
-                                id: filteredItem.id,
-                                area: Area.institution,
-                              }}
-                              subscriptionArray={subscriptionArray}
-                              setSubscriptionArray={(
-                                newSubscriptionArray: SubscriptionArray,
-                              ) => setSubscriptionArray(newSubscriptionArray)}
-                              key={`institution-${institutionId}`}
-                            />
-                          ))
-                      })}
-                    {subscriptionArray.policyAreaIds.length !== 0 &&
-                      subscriptionArray.policyAreaIds.map((policyAreaId) => {
-                        return policyAreasData
-                          .filter((item) => policyAreaId.toString() === item.id)
-                          .map((filteredItem) => (
-                            <ChosenSubscriptionCard
-                              data={{
-                                name: filteredItem.name.toString(),
-                                id: filteredItem.id,
-                                area: Area.policyArea,
-                              }}
-                              subscriptionArray={subscriptionArray}
-                              setSubscriptionArray={(
-                                newSubscriptionArray: SubscriptionArray,
-                              ) => setSubscriptionArray(newSubscriptionArray)}
-                              key={`policyArea-${policyAreaId}`}
-                            />
-                          ))
-                      })}
-                  </>
-                )}
-              </Stack>
-            </Box>
-          </GridContainer>
-        </Box>
-        <Divider />
         <GridContainer>
-          <Box paddingX={paddingX} paddingTop={[3, 3, 3, 5, 5]}>
-            <Tabs
-              selected={currentTab}
-              onlyRenderSelectedTab={true}
-              label="Veldu tegund áskrifta"
-              tabs={tabs}
-              contentBackground="transparent"
-              onChange={(e: Area) => setCurrentTab(e)}
-            />
+          <Box paddingX={paddingX} paddingBottom={3}>
+            <Stack space={[3, 3, 3, 5, 5]}>
+              <Stack space={3}>
+                <Text variant="h1" color="dark400">
+                  Áskriftir
+                </Text>
+                <Stack space={1}>
+                  <Text variant="default">
+                    Hér er hægt að skrá sig í áskrift að málum. Þú skráir þig
+                    inn á Ísland.is, hakar við einn eða fleiri flokka, velur
+                    hvort þú vilt tilkynningar um ný mál eða fleiri atriði og
+                    smellir á „Staðfesta“. ferð svo og staðfestir áskriftina í
+                    gegnum tölvupóstfangið sem þú varst að skrá.
+                  </Text>
+                  <Text variant="default">
+                    Kerfið er uppfært einu sinni á sólarhring.
+                  </Text>
+                </Stack>
+              </Stack>
+              {loggedIn ? (
+                <SubscriptionActionCard
+                  userIsLoggedIn={true}
+                  heading="Skrá áskrift"
+                  text="Skráðu netfang hérna og svo hefst staðfestingaferlið. Þú færð tölvupóst sem þú þarft að staðfesta til að áskriftin taki gildi."
+                  button={{
+                    label: 'Skrá áskrift',
+                    onClick: () => setLoggedIn(false),
+                  }}
+                  input={{
+                    name: 'subscriptionEmail',
+                    label: 'Netfang',
+                    placeholder: 'Hér skal skrifa netfang',
+                  }}
+                />
+              ) : (
+                <SubscriptionActionCard
+                  userIsLoggedIn={false}
+                  heading="Skrá áskrift"
+                  text="Þú verður að vera skráð(ur) inn til þess að geta skráð þig í áskrift."
+                  button={{
+                    label: 'Skrá mig inn',
+                    onClick: () => setLoggedIn(true),
+                  }}
+                />
+              )}
+            </Stack>
+            <Stack space={0}>
+              {!(
+                subscriptionArray.caseIds.length === 0 &&
+                subscriptionArray.institutionIds.length === 0 &&
+                subscriptionArray.policyAreaIds.length === 0
+              ) && (
+                <>
+                  <Text paddingBottom={1} variant="eyebrow" paddingTop={2}>
+                    Valin mál
+                  </Text>
+                  {subscriptionArray.caseIds.length !== 0 &&
+                    subscriptionArray.caseIds.map((caseId) => {
+                      return casesData
+                        .filter((item) => caseId === item.id)
+                        .map((filteredItem) => (
+                          <ChosenSubscriptionCard
+                            data={{
+                              name: filteredItem.name,
+                              caseNumber: filteredItem.caseNumber,
+                              id: filteredItem.id.toString(),
+                              area: Area.case,
+                            }}
+                            subscriptionArray={subscriptionArray}
+                            setSubscriptionArray={(
+                              newSubscriptionArray: SubscriptionArray,
+                            ) => setSubscriptionArray(newSubscriptionArray)}
+                            key={`case-${caseId}`}
+                          />
+                        ))
+                    })}
+                  {subscriptionArray.institutionIds.length !== 0 &&
+                    subscriptionArray.institutionIds.map((institutionId) => {
+                      return institutionsData
+                        .filter((item) => institutionId.toString() === item.id)
+                        .map((filteredItem) => (
+                          <ChosenSubscriptionCard
+                            data={{
+                              name: filteredItem.name.toString(),
+                              id: filteredItem.id,
+                              area: Area.institution,
+                            }}
+                            subscriptionArray={subscriptionArray}
+                            setSubscriptionArray={(
+                              newSubscriptionArray: SubscriptionArray,
+                            ) => setSubscriptionArray(newSubscriptionArray)}
+                            key={`institution-${institutionId}`}
+                          />
+                        ))
+                    })}
+                  {subscriptionArray.policyAreaIds.length !== 0 &&
+                    subscriptionArray.policyAreaIds.map((policyAreaId) => {
+                      return policyAreasData
+                        .filter((item) => policyAreaId.toString() === item.id)
+                        .map((filteredItem) => (
+                          <ChosenSubscriptionCard
+                            data={{
+                              name: filteredItem.name.toString(),
+                              id: filteredItem.id,
+                              area: Area.policyArea,
+                            }}
+                            subscriptionArray={subscriptionArray}
+                            setSubscriptionArray={(
+                              newSubscriptionArray: SubscriptionArray,
+                            ) => setSubscriptionArray(newSubscriptionArray)}
+                            key={`policyArea-${policyAreaId}`}
+                          />
+                        ))
+                    })}
+                </>
+              )}
+            </Stack>
           </Box>
         </GridContainer>
-      </Layout>
-    </>
+      </Box>
+      <Divider />
+      <GridContainer>
+        <Box paddingX={paddingX} paddingTop={[3, 3, 3, 5, 5]}>
+          <Tabs
+            selected={currentTab}
+            onlyRenderSelectedTab={true}
+            label="Veldu tegund áskrifta"
+            tabs={tabs}
+            contentBackground="transparent"
+            onChange={(e: Area) => setCurrentTab(e)}
+          />
+        </Box>
+      </GridContainer>
+    </Layout>
   )
 }
 
