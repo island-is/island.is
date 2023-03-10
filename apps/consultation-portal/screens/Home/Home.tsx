@@ -111,9 +111,8 @@ export const Home = ({ types }: HomeProps) => {
   const visibleItems = cases.slice(base, page * CARDS_PER_PAGE)
 
   return (
-    <Layout isFrontPage>
+    <Layout isFrontPage seo={{ title: 'Öll mál' }}>
       <HeroBanner />
-
       <SearchAndFilter
         PolicyAreas={PolicyAreas}
         defaultPolicyAreas={allPolicyAreas}
