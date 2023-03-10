@@ -20,7 +20,12 @@ const AboutPage: React.FC<AboutProps> = () => {
       />
       <GridContainer>
         <GridRow>
-          <GridColumn span={'6/12'} paddingBottom={3} paddingTop={10}>
+          <GridColumn
+            span={'6/12'}
+            paddingBottom={3}
+            paddingTop={10}
+            offset={['0', '0', '0', '3/12', '3/12']}
+          >
             <MainColumn />
           </GridColumn>
           <GridColumn span={'3/12'}>
