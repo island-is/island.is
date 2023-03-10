@@ -145,8 +145,6 @@ const Indictment: React.FC = () => {
       indictmentCountId: string,
       updatedIndictmentCount: UpdateIndictmentCount,
     ) => {
-      console.log(updatedIndictmentCount)
-
       const returnedIndictmentCount = await updateIndictmentCount(
         workingCase.id,
         indictmentCountId,
