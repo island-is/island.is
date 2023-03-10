@@ -22,8 +22,8 @@ export const up = compose(
     addToClients: ['@admin.island.is/web'],
     accessControlled: true,
     delegation: {
-      custom: false,
-      procuringHolders: false,
+      custom: true,
+      procuringHolders: true,
       legalGuardians: false,
     },
   }),
