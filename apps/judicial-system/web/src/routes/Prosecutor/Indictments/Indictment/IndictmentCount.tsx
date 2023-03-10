@@ -350,21 +350,27 @@ export const IndictmentCount: React.FC<Props> = (props) => {
   )
 
   const handleIndictmentCountChanges = (update: UpdateIndictmentCount) => {
-    if (update.substances) {
-      const lawsBroken = getLawsBroken(
-        indictmentCount.offenses || [],
-        indictmentCount.substances,
-      )
+    let lawsBroken
 
-      onChange(indictmentCount.id, {
-        legalArguments: legalArguments(lawsBroken),
-        incidentDescription: incidentDescription({
-          ...indictmentCount,
-          substances: update.substances,
-        }),
-        ...update,
-      })
+    if (update.substances || update.offenses) {
+      lawsBroken = getLawsBroken(
+        update.offenses || indictmentCount.offenses || [],
+        update.substances || indictmentCount.substances,
+      )
     }
+
+    if (lawsBroken !== undefined) {
+      update.lawsBroken = lawsBroken
+      update.legalArguments = legalArguments(lawsBroken)
+    }
+
+    onChange(indictmentCount.id, {
+      incidentDescription: incidentDescription({
+        ...indictmentCount,
+        ...update,
+      }),
+      ...update,
+    })
   }
 
   return (
@@ -393,13 +399,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           onChange={async (so: ValueType<ReactSelectOption>) => {
             const policeCaseNumber = (so as ReactSelectOption).value as string
 
-            onChange(indictmentCount.id, {
-              policeCaseNumber: policeCaseNumber,
-              incidentDescription: incidentDescription({
-                ...indictmentCount,
-                policeCaseNumber,
-              }),
-            })
+            handleIndictmentCountChanges({ policeCaseNumber: policeCaseNumber })
           }}
           value={
             workingCase.policeCaseNumbers
@@ -449,12 +449,8 @@ export const IndictmentCount: React.FC<Props> = (props) => {
               setVehicleRegistrationNumberErrorMessage,
             )
 
-            onChange(indictmentCount.id, {
+            handleIndictmentCountChanges({
               vehicleRegistrationNumber: event.target.value,
-              incidentDescription: incidentDescription({
-                ...indictmentCount,
-                vehicleRegistrationNumber: event.target.value,
-              }),
             })
           }}
         >
@@ -484,19 +480,9 @@ export const IndictmentCount: React.FC<Props> = (props) => {
               ...(indictmentCount.offenses ?? []),
               selectedOffense,
             ].sort(offensesCompare)
-            const lawsBroken = getLawsBroken(
-              offenses,
-              indictmentCount.substances ?? {},
-            )
 
-            onChange(indictmentCount.id, {
+            handleIndictmentCountChanges({
               offenses,
-              lawsBroken,
-              incidentDescription: incidentDescription({
-                ...indictmentCount,
-                offenses,
-              }),
-              legalArguments: legalArguments(lawsBroken),
             })
           }}
           value={null}
@@ -526,19 +512,8 @@ export const IndictmentCount: React.FC<Props> = (props) => {
                     }
                   })
 
-                  const lawsBroken = getLawsBroken(
+                  handleIndictmentCountChanges({
                     offenses,
-                    indictmentCount.substances,
-                  )
-
-                  onChange(indictmentCount.id, {
-                    offenses,
-                    lawsBroken,
-                    incidentDescription: incidentDescription({
-                      ...indictmentCount,
-                      offenses,
-                    }),
-                    legalArguments: legalArguments(lawsBroken),
                     substances: indictmentCount.substances,
                   })
                 }}
@@ -598,19 +573,8 @@ export const IndictmentCount: React.FC<Props> = (props) => {
                 ALCOHOL: value,
               }
 
-              const lawsBroken = getLawsBroken(
-                indictmentCount.offenses || [],
+              handleIndictmentCountChanges({
                 substances,
-              )
-
-              onChange(indictmentCount.id, {
-                substances,
-                lawsBroken,
-                incidentDescription: incidentDescription({
-                  ...indictmentCount,
-                  substances,
-                }),
-                legalArguments: legalArguments(lawsBroken),
               })
             }}
           >
@@ -660,6 +624,10 @@ export const IndictmentCount: React.FC<Props> = (props) => {
             onChange(indictmentCount.id, {
               lawsBroken: lawsBroken,
               legalArguments: legalArguments(lawsBroken),
+            })
+
+            handleIndictmentCountChanges({
+              lawsBroken,
             })
           }}
           required
