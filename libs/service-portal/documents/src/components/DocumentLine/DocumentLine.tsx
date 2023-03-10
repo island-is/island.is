@@ -21,6 +21,7 @@ import * as styles from './DocumentLine.css'
 import { User } from '@island.is/shared/types'
 import { useLocale } from '@island.is/localization'
 import { messages as m } from '../../utils/messages'
+import { gql, useLazyQuery } from '@apollo/client'
 
 interface Props {
   documentLine: Document
@@ -28,6 +29,14 @@ interface Props {
   documentCategories?: DocumentCategory[]
   userInfo?: User
 }
+
+const GET_DOCUMENT_BY_ID = gql`
+  query getDocumentInboxLineQuery($input: GetDocumentInput!) {
+    getDocument(input: $input) {
+      html
+    }
+  }
+`
 
 const DocumentLine: FC<Props> = ({
   documentLine,
@@ -39,6 +48,32 @@ const DocumentLine: FC<Props> = ({
   const isMobile = width < theme.breakpoints.sm
   const { formatMessage } = useLocale()
 
+  const [getDocument, { data: getFileByIdData, loading, error }] = useLazyQuery(
+    GET_DOCUMENT_BY_ID,
+    {
+      variables: {
+        input: {
+          id: documentLine.id,
+        },
+      },
+      onCompleted: () => {
+        onClickHandler()
+      },
+    },
+  )
+
+  const displayError = () => {
+    return (
+      <Box paddingTop={2}>
+        <AlertBanner
+          variant="error"
+          description={formatMessage(m.documentFetchError, {
+            senderName: documentLine.senderName,
+          })}
+        />
+      </Box>
+    )
+  }
   const onClickHandler = async () => {
     // Create form elements
     const form = document.createElement('form')
@@ -69,6 +104,7 @@ const DocumentLine: FC<Props> = ({
     document.body.appendChild(form)
     form.submit()
     document.body.removeChild(form)
+    getDocument({ variables: { input: { id: documentLine.id } } })
   }
 
   const date = (variant: 'small' | 'medium') => (
@@ -212,6 +248,7 @@ const DocumentLine: FC<Props> = ({
           </GridColumn>
         </GridRow>
       )}
+      {error && displayError()}
     </Box>
   )
 }
