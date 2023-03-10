@@ -1,16 +1,9 @@
 import initApollo from '../graphql/client'
-import {
-  ConsultationPortalAllCasesQuery,
-  ConsultationPortalAllCasesQueryVariables,
-  ConsultationPortalAllCasesDocument,
-} from '../screens/Home/getAllCases.graphql.generated'
-import {
-  ConsultationPortalAllTypesQuery,
-  ConsultationPortalAllTypesQueryVariables,
-  ConsultationPortalAllTypesDocument,
-} from '../screens/Home/getAllTypes.graphql.generated'
-import Home from '../screens/Home/Home'
+import { GET_ALL_TYPES } from '../screens/Home/getAllTypes.graphql'
+import { ConsultationPortalAllTypesQuery } from '../screens/Home/getAllTypes.graphql.generated'
+
 import { ArrOfTypes, Case } from '../types/interfaces'
+import Home from '../screens/Home/Home'
 
 interface HomeProps {
   cases: Case[]
@@ -18,38 +11,32 @@ interface HomeProps {
 }
 export const getServerSideProps = async (ctx) => {
   const client = initApollo()
-  const [
-    {
-      data: { consultationPortalAllCases },
-    },
-  ] = await Promise.all([
-    client.query<
-      ConsultationPortalAllCasesQuery,
-      ConsultationPortalAllCasesQueryVariables
-    >({
-      query: ConsultationPortalAllCasesDocument,
-    }),
-  ])
-  const [
-    {
-      data: { consultationPortalAllTypes },
-    },
-  ] = await Promise.all([
-    client.query<
-      ConsultationPortalAllTypesQuery,
-      ConsultationPortalAllTypesQueryVariables
-    >({
-      query: ConsultationPortalAllTypesDocument,
-    }),
-  ])
+
+  try {
+    const [
+      {
+        data: { consultationPortalAllTypes },
+      },
+    ] = await Promise.all([
+      client.query<ConsultationPortalAllTypesQuery>({
+        query: GET_ALL_TYPES,
+      }),
+    ])
+    return {
+      props: {
+        types: consultationPortalAllTypes,
+      },
+    }
+  } catch (e) {
+    console.error(e)
+  }
   return {
-    props: {
-      cases: consultationPortalAllCases,
-      types: consultationPortalAllTypes,
-    },
+    notFound: true,
   }
 }
-export const Index = ({ cases, types }: HomeProps) => {
-  return <Home cases={cases} types={types} />
+
+export const Index = ({ types }: HomeProps) => {
+  return <Home types={types} />
 }
+
 export default Index

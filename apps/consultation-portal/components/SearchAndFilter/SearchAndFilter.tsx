@@ -1,3 +1,4 @@
+import { ArrOfValueAndLabel, CaseFilter } from '../../types/interfaces'
 import {
   AsyncSearch,
   Box,
@@ -9,33 +10,40 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { ArrOfValueAndLabel } from '../../types/interfaces'
 
-export interface SearchAndFilterProps {
-  searchValue: string
-  setSearchValue: (val: string) => void
+interface SearchAndFilterProps {
   PolicyAreas: Array<ArrOfValueAndLabel>
+  defaultPolicyAreas: Array<number>
   Institutions: Array<ArrOfValueAndLabel>
-  setInstitutionValue: (val: string) => void
-  setPolicyAreaValue: (val: string) => void
+  defaultInstitutions: Array<number>
+  filters: CaseFilter
+  setFilters: (arr: CaseFilter) => void
 }
 
 const SearchAndFilter = ({
-  searchValue,
-  setSearchValue,
   PolicyAreas,
+  defaultPolicyAreas,
   Institutions,
-  setInstitutionValue,
-  setPolicyAreaValue,
+  defaultInstitutions,
+  filters,
+  setFilters,
 }: SearchAndFilterProps) => {
   const options = []
 
+  const onChangeSearch = (value: string) => {
+    const filtersCopy = { ...filters }
+    filtersCopy.query = value
+    setFilters(filtersCopy)
+  }
+
   const onChange = (e, isInstitutions: boolean) => {
+    const filtersCopy = { ...filters }
     if (isInstitutions) {
-      setInstitutionValue(e ? e.label : '')
+      filtersCopy.institutions = e ? [parseInt(e.value)] : defaultInstitutions
     } else {
-      setPolicyAreaValue(e ? e.label : '')
+      filtersCopy.policyAreas = e ? [parseInt(e.value)] : defaultPolicyAreas
     }
+    setFilters(filtersCopy)
   }
 
   return (
@@ -60,11 +68,9 @@ const SearchAndFilter = ({
                     size="medium"
                     options={options}
                     placeholder="Að hverju ertu að leita?"
-                    initialInputValue=""
-                    inputValue={searchValue}
-                    onInputValueChange={(value) => {
-                      setSearchValue(value)
-                    }}
+                    initialInputValue={filters.query}
+                    inputValue={filters.query}
+                    onInputValueChange={(value) => onChangeSearch(value)}
                   />
                 </Stack>
               </GridColumn>
@@ -81,6 +87,12 @@ const SearchAndFilter = ({
                   placeholder="Veldu málefnasvið"
                   onChange={(e) => onChange(e, false)}
                   isClearable
+                  value={
+                    filters.policyAreas.length === 1 &&
+                    [...PolicyAreas].filter(
+                      (item) => parseInt(item.value) === filters.policyAreas[0],
+                    )
+                  }
                 />
               </GridColumn>
               <GridColumn span={['2/12', '2/12', '3/12', '3/12', '3/12']}>
@@ -95,6 +107,13 @@ const SearchAndFilter = ({
                   )}
                   placeholder="Veldu stofnun"
                   onChange={(e) => onChange(e, true)}
+                  value={
+                    filters.institutions.length === 1 &&
+                    [...Institutions].filter(
+                      (item) =>
+                        parseInt(item.value) === filters.institutions[0],
+                    )
+                  }
                   isClearable
                 />
               </GridColumn>
@@ -111,11 +130,9 @@ const SearchAndFilter = ({
               size="medium"
               options={options}
               placeholder="Að hverju ertu að leita?"
-              initialInputValue=""
-              inputValue={searchValue}
-              onInputValueChange={(value) => {
-                setSearchValue(value)
-              }}
+              initialInputValue={filters.query}
+              inputValue={filters.query}
+              onInputValueChange={(value) => onChangeSearch(value)}
             />
           </Box>
         </GridContainer>
