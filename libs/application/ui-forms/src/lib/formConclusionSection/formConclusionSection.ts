@@ -36,7 +36,7 @@ type props = {
  * @param  link Link that user can click on.
  * @param  buttonText The text of the button that links to a url
  */
-export const formConclusionSection = (props: props) =>
+export const buildFormConclusionSection = (props: props) =>
   buildSection({
     id: 'uiForms.conclusionSection',
     title: conclusion.information.sectionTitle,
