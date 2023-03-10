@@ -33,7 +33,12 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
   isLoggedIn = true // remove when functionality for logged in has been implemented
 
   return (
-    <Layout>
+    <Layout
+      seo={{
+        title: `Mál: ${chosenCase?.caseNumber}`,
+        url: `mal/${chosenCase?.caseNumber}`,
+      }}
+    >
       <GridContainer>
         <Box paddingY={[3, 3, 3, 5, 5]}>
           <Breadcrumbs
