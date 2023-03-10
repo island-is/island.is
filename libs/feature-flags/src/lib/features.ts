@@ -35,7 +35,7 @@ export enum Features {
   applicationSystemDelegations = 'applicationSystemDelegations',
 
   // Service portal modules
-  servicePortalPetitionsModule = 'isServicePortalPetitionsModuleEnabled',
+  servicePortalPetitionsModule = 'isServicePortalEndorsementsModuleEnabled',
   servicePortalDrivingLessonsBookModule = 'isServicePortalDrivingLessonsBookModuleEnabled',
   servicePortalAirDiscountModule = 'isServicePortalAirDiscountModuleEnabled',
   sessionHistory = 'sessionHistory',
