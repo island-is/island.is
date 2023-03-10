@@ -4,6 +4,7 @@ import {
   buildDescriptionField,
   buildSubmitField,
   buildMultiField,
+  buildCustomField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { draft } from '../lib/messages'
@@ -26,6 +27,11 @@ export const draftForm: Form = buildForm({
               id: 'description',
               title: draft.descriptionFieldTitle,
               description: draft.descriptionFieldDescription,
+            }),
+            buildCustomField({
+              id: 'soemthing',
+              title: '',
+              component: 'TreeSlider',
             }),
             buildSubmitField({
               id: 'submit',
