@@ -25,11 +25,11 @@ export const draftForm: Form = buildForm({
           children: [
             buildDescriptionField({
               id: 'description',
-              title: draft.descriptionFieldTitle,
-              description: draft.descriptionFieldDescription,
+              title: draft.treeDescriptionFieldTitle,
+              description: draft.treeDescriptionFieldDescription,
             }),
             buildCustomField({
-              id: 'soemthing',
+              id: 'TreeSlider',
               title: '',
               component: 'TreeSlider',
             }),

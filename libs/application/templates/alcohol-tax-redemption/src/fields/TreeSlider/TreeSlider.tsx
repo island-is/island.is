@@ -1,36 +1,34 @@
+import React, { useState } from 'react'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { useLocale } from '@island.is/localization'
-import React, { useState } from 'react'
 import { Box } from '@island.is/island-ui/core'
-import { useFormContext, Controller } from 'react-hook-form'
-
-import Slider from '../Components/SliderWithGraphic/Slider/Slider'
+import { Controller, useFormContext } from 'react-hook-form'
 import { theme } from '@island.is/island-ui/theme'
-import { Text } from '@island.is/island-ui/core'
+import { draft } from '../../lib/messages'
+import Slider from '../Components/SliderWithGraphic/Slider/Slider'
+import { formatMessage } from '@island.is/cms-translations'
+import { useLocale } from '@island.is/localization'
 
-export const TreeSlider = ({ application, field }: FieldBaseProps) => {
+export const TreeSlider = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
+  const treeAnswer = getValueViaPath(application.answers, 'numberOfTrees', 0)
 
   const [numberOfTrees, setNumberOfTrees] = useState(0)
 
   return (
     <Box
       marginBottom={4}
-      marginTop={1}
+      marginTop={5}
       paddingTop={6}
       paddingX={3}
       paddingBottom={3}
       background="blue100"
     >
-      <Text marginBottom={6} variant="h4">
-        'Tré veijj'
-      </Text>
       <Box marginBottom={12}>
         <Controller
-          defaultValue={numberOfTrees}
-          name={'treesomtehing'}
+          defaultValue={treeAnswer}
+          name={'numberOfTrees'}
           render={({ onChange }) => (
             <Slider
               min={0}
@@ -39,12 +37,11 @@ export const TreeSlider = ({ application, field }: FieldBaseProps) => {
               currentIndex={numberOfTrees}
               showMinMaxLabels
               showToolTip
-              trackStyle={{ gridTemplateRows: 5 }}
+              trackStyle={{ gridTemplateRows: 10 }}
               onChange={(newValue: number) => {
-                console.log(newValue)
-                console.log(numberOfTrees)
                 if (!isNaN(newValue)) {
                   onChange(newValue)
+                  setValue('numberOfTrees', newValue)
                   setNumberOfTrees(newValue)
                 }
               }}
@@ -60,6 +57,14 @@ export const TreeSlider = ({ application, field }: FieldBaseProps) => {
             />
           )}
         />
+      </Box>
+      <Box>
+        <p>
+          {formatMessage(draft.treeSliderCo2EffectDescriptor, {
+            trees: numberOfTrees,
+            co2: (numberOfTrees * 0.1).toFixed(1),
+          })}
+        </p>
       </Box>
     </Box>
   )

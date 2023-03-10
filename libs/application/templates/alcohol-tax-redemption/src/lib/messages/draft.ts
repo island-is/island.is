@@ -3,27 +3,32 @@ import { defineMessages } from 'react-intl'
 export const draft = defineMessages({
   formTitle: {
     id: 'atr.application:draft.formTitle',
-    defaultMessage: 'Í vinnslu form',
+    defaultMessage: 'Endurgreiðsla áfengisgjalda',
     description: 'Title of the application',
   },
   sectionTitle: {
     id: 'atr.application:draft.sectionTitle',
-    defaultMessage: 'Umsókn',
+    defaultMessage: 'Kolefnisjöfnun',
     description: 'Title for draftSection',
   },
-  descriptionFieldTitle: {
-    id: 'atr.application:draft.descriptionFieldTitle',
-    defaultMessage: 'Lýsing',
+  treeDescriptionFieldTitle: {
+    id: 'atr.application:draft.treeDescriptionFieldTitle',
+    defaultMessage: 'Kolefnisjöfnun',
     description: 'Title for draftSection',
   },
-  descriptionFieldDescription: {
-    id: 'atr.application:draft.descriptionFieldDescription',
-    defaultMessage: 'Hér er umsóknin komin í vinnslu hjá þér',
+  treeDescriptionFieldDescription: {
+    id: 'atr.application:draft.treeDescriptionFieldDescription#markdown',
+    defaultMessage: 'Hefur þú áhuga á að kolefnisjafna ',
     description: 'Title for draftSection',
   },
   submitButtonTitle: {
     id: 'atr.application:draft.submitButtonTitle',
-    defaultMessage: 'Senda inn umsókn',
+    defaultMessage: 'Sækja um',
     description: 'Title for draftSection submit button',
+  },
+  treeSliderCo2EffectDescriptor: {
+    id: 'atr.application:draft.treeSliderCo2EffectDescriptor',
+    defaultMessage: 'Með {trees} tré ert þú að kolefnisjafna {co2} CO2 tonn',
+    description: 'Description message for the CO2 effect slider',
   },
 })
