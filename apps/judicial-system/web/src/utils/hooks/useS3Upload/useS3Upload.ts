@@ -94,7 +94,11 @@ export const useS3Upload = (caseId: string) => {
   const upload = useCallback(
     async (
       files: Array<[File, string]>,
-      updateFile: (file: TUploadFile, newId?: string) => void,
+      updateFile: (
+        file: TUploadFile,
+        isPoliceCaseFile: boolean,
+        newId?: string,
+      ) => void,
       category?: CaseFileCategory,
       policeCaseNumber?: string,
     ) => {
@@ -117,13 +121,16 @@ export const useS3Upload = (caseId: string) => {
           const presignedPost = data.data.createPresignedPost
 
           await uploadToS3(file, presignedPost, (percent) => {
-            updateFile({
-              id,
-              name: file.name,
-              percent,
-              status: 'uploading',
-              category,
-            })
+            updateFile(
+              {
+                id,
+                name: file.name,
+                percent,
+                status: 'uploading',
+                category,
+              },
+              false,
+            )
           })
 
           const data2 = await addFileToCaseMutation({
@@ -151,15 +158,19 @@ export const useS3Upload = (caseId: string) => {
               category,
               // We need to set the id so we are able to delete the file later
             },
+            false,
             data2.data.createFile.id,
           )
         } catch (e) {
-          updateFile({
-            id: id,
-            name: file.name,
-            status: 'error',
-            category,
-          })
+          updateFile(
+            {
+              id: id,
+              name: file.name,
+              status: 'error',
+              category,
+            },
+            false,
+          )
         }
       })
     },
@@ -169,7 +180,11 @@ export const useS3Upload = (caseId: string) => {
   const uploadPoliceCaseFile = useCallback(
     async (
       file: TUploadFile,
-      updateFile: (file: TUploadFile, newId?: string) => void,
+      updateFile: (
+        file: TUploadFile,
+        isPoliceCaseFile: boolean,
+        newId?: string,
+      ) => void,
     ) => {
       try {
         const {
@@ -199,6 +214,7 @@ export const useS3Upload = (caseId: string) => {
               key: uploadPoliceCaseFileData.uploadPoliceCaseFile.key,
               size: uploadPoliceCaseFileData.uploadPoliceCaseFile.size,
               policeCaseNumber: file.policeCaseNumber,
+              category: file.category,
             },
           },
         })
@@ -213,7 +229,9 @@ export const useS3Upload = (caseId: string) => {
             name: file.name,
             percent: 100,
             status: 'done',
+            category: file.category,
           },
+          true,
           // We need to set the id so we are able to delete the file later
           data2.data.createFile.id,
         )
@@ -248,7 +266,35 @@ export const useS3Upload = (caseId: string) => {
     [deleteFileMutation, caseId],
   )
 
-  return { upload, uploadPoliceCaseFile, remove }
+  const generateSingleFileUpdate = useCallback(
+    (
+      prevFiles: UploadFile[],
+      displayFile: UploadFile,
+      isPoliceCaseFile: boolean,
+      newId?: string,
+    ) => {
+      const index = prevFiles.findIndex((f) => f.id === displayFile.id)
+      const displayFileWithId = {
+        ...displayFile,
+        id: newId ?? displayFile.id,
+      }
+
+      if (isPoliceCaseFile) {
+        return [...prevFiles, displayFileWithId]
+      }
+
+      if (index === -1) {
+        return prevFiles
+      }
+
+      const next = [...prevFiles]
+      next[index] = displayFileWithId
+      return next
+    },
+    [caseId],
+  )
+
+  return { upload, uploadPoliceCaseFile, remove, generateSingleFileUpdate }
 }
 
 export default useS3Upload

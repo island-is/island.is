@@ -102,7 +102,12 @@ export const CaseFiles: React.FC = () => {
   )
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
 
-  const { upload, uploadPoliceCaseFile, remove } = useS3Upload(workingCase.id)
+  const {
+    upload,
+    uploadPoliceCaseFile,
+    remove,
+    generateSingleFileUpdate,
+  } = useS3Upload(workingCase.id)
   const { updateCase } = useCase()
 
   useDeb(workingCase, 'caseFilesComments')
@@ -178,15 +183,18 @@ export const CaseFiles: React.FC = () => {
     router.push(`${destination}/${workingCase.id}`)
 
   const setSingleFile = useCallback(
-    (displayFile: UploadFile, newId?: string) => {
-      setFilesInRVG((previous) => [
-        ...previous,
-        { ...displayFile, id: newId ?? displayFile.id },
-      ])
+    (displayFile: UploadFile, isPoliceCaseFile: boolean, newId?: string) => {
+      setFilesInRVG((previous) =>
+        generateSingleFileUpdate(
+          previous,
+          displayFile,
+          isPoliceCaseFile,
+          newId,
+        ),
+      )
     },
-    [setFilesInRVG],
+    [],
   )
-
   const handleUpload = useCallback(
     async (files: File[]) => {
       const filesWithId: Array<[File, string]> = files.map((file) => [
@@ -272,13 +280,16 @@ export const CaseFiles: React.FC = () => {
 
   const handleRetry = useCallback(
     (file: UploadFile) => {
-      setSingleFile({
-        name: file.name,
-        id: file.id,
-        percent: 1,
-        status: 'uploading',
-        type: file.type,
-      })
+      setSingleFile(
+        {
+          name: file.name,
+          id: file.id,
+          percent: 1,
+          status: 'uploading',
+          type: file.type,
+        },
+        false,
+      )
       upload(
         [
           [

@@ -67,7 +67,12 @@ const UploadFilesToPoliceCase: React.FC<{
   caseOrigin: CaseOrigin
 }> = ({ caseId, policeCaseNumber, setAllUploaded, caseFiles, caseOrigin }) => {
   const { formatMessage } = useIntl()
-  const { upload, remove, uploadPoliceCaseFile } = useS3Upload(caseId)
+  const {
+    upload,
+    remove,
+    uploadPoliceCaseFile,
+    generateSingleFileUpdate,
+  } = useS3Upload(caseId)
   const {
     data: policeData,
     loading: policeDataLoading,
@@ -165,13 +170,21 @@ const UploadFilesToPoliceCase: React.FC<{
   }, [policeCaseFiles, caseFiles, policeCaseNumber])
 
   const setSingleFile = useCallback(
-    (displayFile: UploadFile, newId?: string) => {
-      setDisplayFiles((previous) => [
-        ...previous,
-        { ...displayFile, id: newId ?? displayFile.id },
-      ])
+    (
+      displayFile: UploadFile,
+      isPoliceCaseFile: boolean = false,
+      newId?: string,
+    ) => {
+      setDisplayFiles((previous) =>
+        generateSingleFileUpdate(
+          previous,
+          displayFile,
+          isPoliceCaseFile,
+          newId,
+        ),
+      )
     },
-    [setDisplayFiles],
+    [],
   )
 
   const onChange = useCallback(
@@ -218,6 +231,7 @@ const UploadFilesToPoliceCase: React.FC<{
         status: 'done',
         state: CaseFileState.STORED_IN_RVG,
         policeCaseNumber: f.policeCaseNumber,
+        category: CaseFileCategory.CASE_FILE,
       } as UploadFile
 
       await uploadPoliceCaseFile(fileToUpload, setSingleFile)
