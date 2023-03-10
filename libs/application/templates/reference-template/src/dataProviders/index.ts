@@ -16,7 +16,7 @@ export const runsFirst = defineTemplateApi({
   order: 1, // runs first
 })
 
-export const EphemiralApi = defineTemplateApi({
+export const EphemeralApi = defineTemplateApi({
   action: 'getAnotherReferenceData',
   shouldPersistToExternalData: false,
 })

@@ -26,7 +26,7 @@ export const generateJobsForFeature = async (
           return {
             command: ['/app/create-db.sh'],
             image,
-            name: `${info!.name!.replace(/_/g, '-').substr(0, 60)}1`,
+            name: `${info!.username!.replace(/_/g, '-').substr(0, 60)}1`,
             securityContext,
             env: [
               {

@@ -30,7 +30,7 @@ const namespace = `${environment.audit.defaultNamespace}/client-post-logout-redi
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiExcludeController()
 @Controller({
-  path: 'backend/client-post-logout-redirect-uri',
+  path: 'client-post-logout-redirect-uri',
   version: [VERSION_NEUTRAL, '1'],
 })
 @Audit({ namespace })
