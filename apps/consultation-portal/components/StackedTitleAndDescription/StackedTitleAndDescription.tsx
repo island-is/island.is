@@ -13,7 +13,7 @@ export const StackedTitleAndDescription = ({
 }: StackedTitleAndDescriptionProps) => {
   return (
     <Stack space={1}>
-      <Text variant="h3" color={headingColor}>
+      <Text variant="h4" color={headingColor}>
         {title}
       </Text>
       {children}
