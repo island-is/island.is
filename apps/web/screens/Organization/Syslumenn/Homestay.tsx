@@ -187,8 +187,7 @@ const Homestay: Screen<HomestayProps> = ({
           placeholder={n('homestayFilterSearch', 'Leita')}
           backgroundColor={['blue', 'blue', 'white']}
           size="sm"
-          icon="search"
-          iconType="outline"
+          icon={{ name: 'search', type: 'outline' }}
           value={query}
           onChange={(event) => setQuery(event.target.value)}
         />

@@ -215,11 +215,11 @@ services-auth-admin-api:
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/backend/liveness'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/backend/liveness'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -236,11 +236,10 @@ services-auth-admin-api:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
-        nginx.ingress.kubernetes.io/rewrite-target: '/$2'
       hosts:
         - host: 'identity-server.staging01.devland.is'
           paths:
-            - '/backend(/|$)(.*)'
+            - '/backend'
   namespace: 'identity-server-admin'
   pvcs: []
   replicaCount:
