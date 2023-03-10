@@ -1,7 +1,7 @@
 import React from 'react'
 import { defineMessage } from 'react-intl'
 
-import { Box } from '@island.is/island-ui/core'
+import { Box, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ActionCard,
@@ -96,34 +96,36 @@ export const EducationGraduation = () => {
           />
         </Box>
       )}
-      {studentInfo.length > 0 &&
-        studentInfo.map((item, index) => {
-          return (
-            <ActionCard
-              key={`education-graduation-${index}`}
-              heading={item.studyProgram + ' - ' + item.degree}
-              text={item.instutution.displayName + ' - ' + item.faculty}
-              cta={{
-                label: defineMessage({
-                  id: 'sp.education-graduation:details',
-                  defaultMessage: 'Skoða',
-                }).defaultMessage,
-                variant: 'text',
-                url: EducationPaths.EducationHaskoliGraduationDetail.replace(
-                  ':id',
-                  item.trackNumber.toString(),
-                ),
-              }}
-              image={{
-                type: 'image',
-                url: getOrganizationLogoUrl(
-                  item.instutution.displayName,
-                  organizations,
-                ),
-              }}
-            />
-          )
-        })}
+      <Stack space={2}>
+        {studentInfo.length > 0 &&
+          studentInfo.map((item, index) => {
+            return (
+              <ActionCard
+                key={`education-graduation-${index}`}
+                heading={item.instutution.displayName}
+                text={item.faculty + ' - ' + item.studyProgram}
+                cta={{
+                  label: defineMessage({
+                    id: 'sp.education-graduation:details',
+                    defaultMessage: 'Skoða',
+                  }).defaultMessage,
+                  variant: 'text',
+                  url: EducationPaths.EducationHaskoliGraduationDetail.replace(
+                    ':id',
+                    item.trackNumber.toString(),
+                  ),
+                }}
+                image={{
+                  type: 'image',
+                  url: getOrganizationLogoUrl(
+                    item.instutution.displayName,
+                    organizations,
+                  ),
+                }}
+              />
+            )
+          })}
+      </Stack>
     </Box>
   )
 }

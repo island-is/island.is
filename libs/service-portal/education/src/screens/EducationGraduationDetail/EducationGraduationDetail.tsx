@@ -14,6 +14,7 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyState,
+  ErrorScreen,
   formSubmit,
   IntroHeader,
   m,
@@ -21,10 +22,7 @@ import {
 } from '@island.is/service-portal/core'
 import { Query } from '@island.is/api/schema'
 import { gql, useQuery } from '@apollo/client'
-import {
-  formatNationalId,
-  PortalModuleComponent,
-} from '@island.is/portals/core'
+import { formatNationalId } from '@island.is/portals/core'
 import { useParams } from 'react-router-dom'
 
 const GetStudentInfoDetailQuery = gql`
@@ -81,6 +79,20 @@ export const EducationGraduationDetail = () => {
   const text = data?.getStudentInfoDetail.body
   const files = data?.getStudentInfoDetail.files
   const downloadServiceURL = data?.getStudentInfoDetail.downloadServiceURL
+
+  if (error && !loading) {
+    return (
+      <ErrorScreen
+        figure="./assets/images/hourglass.svg"
+        tagVariant="red"
+        tag={formatMessage(m.errorTitle)}
+        title={formatMessage(m.somethingWrong)}
+        children={formatMessage(m.errorFetchModule, {
+          module: formatMessage(m.education).toLowerCase(),
+        })}
+      />
+    )
+  }
 
   return (
     <Box marginBottom={[6, 6, 10]}>

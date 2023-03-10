@@ -62,13 +62,11 @@ export class UniversityOfIcelandResolver {
     let date = data.transcript.graduationDate
     date = format(new Date(date), 'dd.MM.yy', { locale: is })
     const transcriptData = { ...data.transcript, graduationDate: date }
-
     return {
       transcript: transcriptData,
       files: data.files,
       body: data.body,
-      //downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/education/graduation/`,
-      downloadServiceURL: `https://service-portaleducation-university-api.dev01.devland.is/download/v1/education/graduation/`,
+      downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/education/graduation/`,
     }
   }
 }
