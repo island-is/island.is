@@ -7,7 +7,6 @@ import {
   Text,
   Stack,
   Hidden,
-  Pagination,
 } from '@island.is/island-ui/core'
 import React, { useState } from 'react'
 import { HeroBanner } from '../../components'
@@ -27,21 +26,14 @@ import { CaseSortOptions } from '../../types/enums'
 import { GET_CASES } from './getCases.graphql'
 import initApollo from '../../graphql/client'
 import getInitFilterValues from './getInitFilterValues'
+import Pagination from '../../components/Pagination/Pagination'
 
+const CARDS_PER_PAGE = 12
 interface HomeProps {
   types: ArrOfTypes
 }
 export const Home = ({ types }: HomeProps) => {
   const [page, setPage] = useState<number>(1)
-
-  const updatePage = (pageNumber) => {
-    setPage(pageNumber)
-  }
-
-  const count = data.length
-  const totalPages = Math.ceil(count / CARDS_PER_PAGE)
-  const base = page === 1 ? 0 : (page - 1) * CARDS_PER_PAGE
-  const visibleItems = data.slice(base, page * CARDS_PER_PAGE)
 
   const {
     caseStatuses,
@@ -109,6 +101,10 @@ export const Home = ({ types }: HomeProps) => {
 
   const { consultationPortalGetCases: cases = [] } = data ?? {}
 
+  const updatePage = (pageNumber) => {
+    setPage(pageNumber)
+  }
+
   const count = cases.length
   const totalPages = Math.ceil(count / CARDS_PER_PAGE)
   const base = page === 1 ? 0 : (page - 1) * CARDS_PER_PAGE
@@ -174,36 +170,7 @@ export const Home = ({ types }: HomeProps) => {
                 </Tiles>
               )}
               {totalPages > 1 && (
-                <Box paddingTop={[5, 5, 5, 8, 8]}>
-                  <Pagination
-                    page={page}
-                    totalPages={totalPages}
-                    variant="blue"
-                    renderLink={(page, className, children) => (
-                      <button
-                        onClick={() => {
-                          goToPage(page)
-                        }}
-                      >
-                        <span
-                          style={{
-                            position: 'absolute',
-                            width: '1px',
-                            height: '1px',
-                            padding: '0',
-                            margin: '-1px',
-                            overflow: 'hidden',
-                            clip: 'rect(0,0,0,0)',
-                            border: '0',
-                          }}
-                        >
-                          Síða
-                        </span>
-                        <span className={className}>{children}</span>
-                      </button>
-                    )}
-                  />
-                </Box>
+                <Pagination updatePage={updatePage} totalPages={totalPages} />
               )}
             </>
             {cases.length === 0 && <EmptyState />}
