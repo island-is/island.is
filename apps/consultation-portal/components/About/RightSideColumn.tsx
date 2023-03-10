@@ -1,38 +1,17 @@
 import React from 'react'
 import { Box, TableOfContents } from '@island.is/island-ui/core'
 
-interface RightSideColumnProps {
-  aboutHeadings: Array<unknown>
-}
-
-const RightSideColumn: React.FC<RightSideColumnProps> = ({ aboutHeadings }) => {
+const RightSideColumn = () => {
   // TODO: remove after data has been obtained
-  aboutHeadings = [
-    {
-      headingId: 'Heading 1',
-      headingTitle: 'Heading 1',
-    },
-    {
-      headingId: 'Heading 2',
-      headingTitle: 'Heading 2',
-    },
-    {
-      headingId: 'Heading 3',
-      headingTitle: 'Heading 3',
-    },
-    {
-      headingId: 'Heading 4',
-      headingTitle: 'Heading 4',
-    },
-  ]
+  const aboutHeadings = ['Heading 1', 'Heading 2', 'Heading 3', 'Heading 4']
 
   return (
-    <Box paddingTop={12} paddingLeft={10}>
+    <Box>
       <TableOfContents
         tableOfContentsTitle={'Efnisyfirlit'}
-        headings={aboutHeadings.map(({ headingId, headingTitle }) => ({
-          headingTitle: headingTitle,
-          headingId: headingId,
+        headings={aboutHeadings.map((item, index) => ({
+          headingTitle: item,
+          headingId: index.toString(),
         }))}
         onClick={
           (selectedHeadingId) => console.log('Navigate to: ', selectedHeadingId)
