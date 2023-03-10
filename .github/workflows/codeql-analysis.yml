@@ -63,6 +63,6 @@ jobs:
       #   make release
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v1
+        uses: github/codeql-action/analyze@v2
 #        env:
 #          CODEQL_RAM: 6500
