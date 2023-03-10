@@ -95,7 +95,6 @@ const SessionFilter: React.FC<IProps> = ({
                   flexDirection="column"
                 >
                   <Stack space={3}>
-                    <h1>test</h1>
                     <DatePicker
                       id="date-from"
                       label={formatMessage(m.datepickerFromLabel)}

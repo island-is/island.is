@@ -72,7 +72,7 @@ type CopiedCode = {
   copied: boolean
 }
 
-export const AirDiscountOverview: ServicePortalModuleComponent = () => {
+export const AirDiscountOverview = () => {
   useNamespaces('sp.air-discount')
   const { formatMessage } = useLocale()
   const { data, loading, error } = useQuery<Query>(AirDiscountQuery)

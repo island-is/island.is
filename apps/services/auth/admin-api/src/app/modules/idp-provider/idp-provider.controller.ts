@@ -40,7 +40,7 @@ const namespace = `${environment.audit.defaultNamespace}/idp-provider`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiExcludeController()
-@Controller({ path: 'backend/idp-provider', version: [VERSION_NEUTRAL, '1'] })
+@Controller({ path: 'idp-provider', version: [VERSION_NEUTRAL, '1'] })
 @Audit({ namespace })
 export class IdpProviderController {
   constructor(

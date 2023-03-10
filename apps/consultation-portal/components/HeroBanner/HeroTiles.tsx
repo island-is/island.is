@@ -1,4 +1,9 @@
-import { Box, ResponsiveProp, ResponsiveSpace } from '@island.is/island-ui/core'
+import {
+  Box,
+  Hidden,
+  ResponsiveProp,
+  ResponsiveSpace,
+} from '@island.is/island-ui/core'
 import { ReactNode, Children } from 'react'
 import flattenChildren from 'react-keyed-flatten-children'
 import * as styleRefs from './HeroTiles.css'
@@ -43,13 +48,20 @@ export const HeroTiles = ({
               styles.columnsXl,
             )}
           >
-            <Box
-              height="full"
-              paddingTop={responsiveSpace}
-              paddingLeft={responsiveSpace}
-            >
-              {child}
-            </Box>
+            <Hidden below="lg">
+              <Box
+                height="full"
+                paddingBottom={i === 2 ? responsiveSpace : 0}
+                paddingRight={i === 0 ? responsiveSpace : 0}
+              >
+                {child}
+              </Box>
+            </Hidden>
+            <Hidden above="md">
+              <Box height="full" paddingTop={responsiveSpace}>
+                {child}
+              </Box>
+            </Hidden>
           </Box>
         ))}
       </Box>

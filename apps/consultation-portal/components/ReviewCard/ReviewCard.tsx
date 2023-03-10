@@ -20,14 +20,16 @@ export const ReviewCard = ({ advice }) => {
           <Text variant="eyebrow" color="purple400">
             {format(new Date(advice.created), 'dd.MM.yyyy')}
           </Text>
-          <FocusableBox onClick={() => setOpen(!open)}>
-            <Icon
-              icon={open ? 'close' : 'open'}
-              type="outline"
-              size="small"
-              color="blue400"
-            />
-          </FocusableBox>
+          {advice.content.length > 50 && (
+            <FocusableBox onClick={() => setOpen(!open)}>
+              <Icon
+                icon={open ? 'close' : 'open'}
+                type="outline"
+                size="small"
+                color="blue400"
+              />
+            </FocusableBox>
+          )}
         </Inline>
         <Text variant="h3">
           {advice?.number} - {advice?.participantName}

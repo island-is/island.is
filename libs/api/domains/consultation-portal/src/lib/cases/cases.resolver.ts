@@ -9,6 +9,8 @@ import {
   FeatureFlag,
   Features,
 } from '@island.is/nest/feature-flags'
+import { GetCaseInput } from '../dto/case.input'
+import { GetCasesInput } from '../dto/cases.input'
 
 @Resolver()
 @UseGuards(FeatureFlagGuard)
@@ -21,17 +23,29 @@ export class CaseResultResolver {
     return await this.caseResultService.getAllCases()
   }
 
+  @FeatureFlag(Features.consultationPortalApplication)
+  @Query(() => [CaseItemResult], { name: 'consultationPortalGetCases' })
+  async getCases(
+    @Args('input', { type: () => GetCasesInput }) input: GetCasesInput,
+  ): Promise<CaseItemResult[]> {
+    return await this.caseResultService.getCases(input)
+  }
+
   @Query(() => CaseResult, { name: 'consultationPortalCaseById' })
   @FeatureFlag(Features.consultationPortalApplication)
-  async getCase(@Args('caseId') caseId: number): Promise<CaseResult> {
-    return await this.caseResultService.getCase(caseId)
+  async getCase(
+    @Args('input', { type: () => GetCaseInput }) input: GetCaseInput,
+  ): Promise<CaseResult> {
+    return await this.caseResultService.getCase(input)
   }
 
   @Query(() => [AdviceResult], { name: 'consultationPortalAdviceByCaseId' })
   @FeatureFlag(Features.consultationPortalApplication)
-  async getAdvices(@Args('caseId') caseId: number): Promise<string[]> {
-    const advices = await this.caseResultService.getAdvices(caseId)
-    return advices.map((advice) => advice.content as string)
+  async getAdvices(
+    @Args('input', { type: () => GetCaseInput }) input: GetCaseInput,
+  ): Promise<AdviceResult[]> {
+    const advices = await this.caseResultService.getAdvices(input)
+    return advices
   }
 
   @Mutation(() => CaseResult, { name: 'postConsultationPortalAdvice' })
