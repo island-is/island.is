@@ -18,7 +18,7 @@ export const draft = defineMessages({
   },
   treeDescriptionFieldDescription: {
     id: 'atr.application:draft.treeDescriptionFieldDescription#markdown',
-    defaultMessage: 'Hefur þú áhuga á að kolefnisjafna ',
+    defaultMessage: 'Hefur þú áhuga á kolefnisjafna fyrir endugreiðsluna?',
     description: 'Title for draftSection',
   },
   submitButtonTitle: {
@@ -27,8 +27,8 @@ export const draft = defineMessages({
     description: 'Title for draftSection submit button',
   },
   treeSliderCo2EffectDescriptor: {
-    id: 'atr.application:draft.treeSliderCo2EffectDescriptor',
-    defaultMessage: 'Með {trees} tré ert þú að kolefnisjafna {co2} CO2 tonn',
+    id: 'atr.application:draft.treeSliderCo2EffectDescriptor#markdown',
+    defaultMessage: 'Með {trees} tré ert þú að kolefnisjafna {co2} CO₂ tonn',
     description: 'Description message for the CO2 effect slider',
   },
 })
