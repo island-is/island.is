@@ -1,0 +1,19 @@
+# Get Applications by ID
+query GetApplicationsById($tenantId: String!) {
+  authAdminApplications(tenantId: $tenantId) {
+    data {
+      applicationId
+      applicationType
+      availableEnvironments
+      defaultEnvironment {
+        id
+        environment
+        name
+        displayName {
+          locale
+          value
+        }
+      }
+    }
+  }
+}
