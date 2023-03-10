@@ -209,6 +209,7 @@ const HearingArrangements = () => {
                           SessionArrangements.ALL_PRESENT)
                     }
                     onChange={() => {
+                      setCheckedRadio(SessionArrangements.ALL_PRESENT)
                       setAndSendCaseToServer(
                         [
                           {
@@ -241,6 +242,9 @@ const HearingArrangements = () => {
                           SessionArrangements.ALL_PRESENT_SPOKESPERSON)
                     }
                     onChange={() => {
+                      setCheckedRadio(
+                        SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+                      )
                       setAndSendCaseToServer(
                         [
                           {
@@ -270,6 +274,7 @@ const HearingArrangements = () => {
                         SessionArrangements.PROSECUTOR_PRESENT)
                   }
                   onChange={() => {
+                    setCheckedRadio(SessionArrangements.PROSECUTOR_PRESENT)
                     setAndSendCaseToServer(
                       [
                         {
