@@ -27,6 +27,7 @@ import { CaseSortOptions } from '../../types/enums'
 import { GET_CASES } from './getCases.graphql'
 import initApollo from '../../graphql/client'
 import getInitFilterValues from './getInitFilterValues'
+import SEO from '../../components/SEO/SEO'
 
 const CARDS_PER_PAGE = 12
 interface HomeProps {
@@ -114,102 +115,105 @@ export const Home = ({ types }: HomeProps) => {
   const visibleItems = cases.slice(base, page * CARDS_PER_PAGE)
 
   return (
-    <Layout isFrontPage>
-      <HeroBanner />
+    <>
+      <SEO title="Öll mál" url="" />
+      <Layout isFrontPage>
+        <HeroBanner />
 
-      <SearchAndFilter
-        PolicyAreas={PolicyAreas}
-        defaultPolicyAreas={allPolicyAreas}
-        Institutions={Institutions}
-        defaultInstitutions={allInstitutions}
-        filters={filters}
-        setFilters={(arr: CaseFilter) => setFilters(arr)}
-      />
+        <SearchAndFilter
+          PolicyAreas={PolicyAreas}
+          defaultPolicyAreas={allPolicyAreas}
+          Institutions={Institutions}
+          defaultInstitutions={allInstitutions}
+          filters={filters}
+          setFilters={(arr: CaseFilter) => setFilters(arr)}
+        />
 
-      <GridContainer>
-        <GridRow>
-          <GridColumn span={['0', '0', '0', '3/12', '3/12']}>
-            <Hidden below="lg">
-              <Filter
-                filters={filters}
-                setFilters={(arr: CaseFilter) => setFilters(arr)}
-                defaultValues={defaultValues}
-              />
-            </Hidden>
-          </GridColumn>
+        <GridContainer>
+          <GridRow>
+            <GridColumn span={['0', '0', '0', '3/12', '3/12']}>
+              <Hidden below="lg">
+                <Filter
+                  filters={filters}
+                  setFilters={(arr: CaseFilter) => setFilters(arr)}
+                  defaultValues={defaultValues}
+                />
+              </Hidden>
+            </GridColumn>
 
-          <GridColumn span={['12/12', '12/12', '12/12', '9/12', '9/12']}>
-            <>
-              {visibleItems && (
-                <Tiles space={3} columns={[1, 1, 1, 2, 3]}>
-                  {visibleItems.map((item: Case, index: number) => {
-                    const card = {
-                      id: item.id,
-                      title: item.name,
-                      tag: item.statusName,
-                      eyebrows: [item.typeName, item.institutionName],
-                    }
-                    return (
-                      <Card key={index} card={card} frontPage>
-                        <Stack space={2}>
-                          <Text variant="eyebrow" color="purple400">
-                            {`Fjöldi umsagna: ${item.adviceCount}`}
-                          </Text>
-                          <Box
-                            style={{
-                              wordBreak: 'break-word',
-                              height: '105px',
-                            }}
-                            overflow="hidden"
-                          >
-                            <Text variant="small" color="dark400">
-                              {item.shortDescription}
+            <GridColumn span={['12/12', '12/12', '12/12', '9/12', '9/12']}>
+              <>
+                {visibleItems && (
+                  <Tiles space={3} columns={[1, 1, 1, 2, 3]}>
+                    {visibleItems.map((item: Case, index: number) => {
+                      const card = {
+                        id: item.id,
+                        title: item.name,
+                        tag: item.statusName,
+                        eyebrows: [item.typeName, item.institutionName],
+                      }
+                      return (
+                        <Card key={index} card={card} frontPage>
+                          <Stack space={2}>
+                            <Text variant="eyebrow" color="purple400">
+                              {`Fjöldi umsagna: ${item.adviceCount}`}
                             </Text>
-                          </Box>
-                        </Stack>
-                      </Card>
-                    )
-                  })}
-                </Tiles>
-              )}
-              {totalPages > 1 && (
-                <Box paddingTop={[5, 5, 5, 8, 8]}>
-                  <Pagination
-                    page={page}
-                    totalPages={totalPages}
-                    variant="blue"
-                    renderLink={(page, className, children) => (
-                      <button
-                        onClick={() => {
-                          goToPage(page)
-                        }}
-                      >
-                        <span
-                          style={{
-                            position: 'absolute',
-                            width: '1px',
-                            height: '1px',
-                            padding: '0',
-                            margin: '-1px',
-                            overflow: 'hidden',
-                            clip: 'rect(0,0,0,0)',
-                            border: '0',
+                            <Box
+                              style={{
+                                wordBreak: 'break-word',
+                                height: '105px',
+                              }}
+                              overflow="hidden"
+                            >
+                              <Text variant="small" color="dark400">
+                                {item.shortDescription}
+                              </Text>
+                            </Box>
+                          </Stack>
+                        </Card>
+                      )
+                    })}
+                  </Tiles>
+                )}
+                {totalPages > 1 && (
+                  <Box paddingTop={[5, 5, 5, 8, 8]}>
+                    <Pagination
+                      page={page}
+                      totalPages={totalPages}
+                      variant="blue"
+                      renderLink={(page, className, children) => (
+                        <button
+                          onClick={() => {
+                            goToPage(page)
                           }}
                         >
-                          Síða
-                        </span>
-                        <span className={className}>{children}</span>
-                      </button>
-                    )}
-                  />
-                </Box>
-              )}
-            </>
-            {cases.length === 0 && <EmptyState />}
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
-    </Layout>
+                          <span
+                            style={{
+                              position: 'absolute',
+                              width: '1px',
+                              height: '1px',
+                              padding: '0',
+                              margin: '-1px',
+                              overflow: 'hidden',
+                              clip: 'rect(0,0,0,0)',
+                              border: '0',
+                            }}
+                          >
+                            Síða
+                          </span>
+                          <span className={className}>{children}</span>
+                        </button>
+                      )}
+                    />
+                  </Box>
+                )}
+              </>
+              {cases.length === 0 && <EmptyState />}
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      </Layout>
+    </>
   )
 }
 

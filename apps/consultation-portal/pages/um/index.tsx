@@ -4,6 +4,7 @@ import React from 'react'
 import RightSideColmn from '../../components/About/RightSideColumn'
 import Layout from '../../components/Layout/Layout'
 import BreadcrumbsWithMobileDivider from '../../components/BreadcrumbsWithMobileDivider/BreadcrumbsWithMobileDivider'
+import SEO from '../../components/SEO/SEO'
 
 interface AboutProps {
   information: string
@@ -11,24 +12,27 @@ interface AboutProps {
 
 const AboutPage: React.FC<AboutProps> = () => {
   return (
-    <Layout>
-      <BreadcrumbsWithMobileDivider
-        items={[
-          { title: 'Samráðsgátt', href: '/' },
-          { title: 'Um samráðsgátt' },
-        ]}
-      />
-      <GridContainer>
-        <GridRow>
-          <GridColumn span={'6/12'} paddingBottom={3} paddingTop={10}>
-            <MainColumn />
-          </GridColumn>
-          <GridColumn span={'3/12'}>
-            <RightSideColmn aboutHeadings={null}></RightSideColmn>
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
-    </Layout>
+    <>
+      <SEO title="Um samráðsgátt" url="um" />
+      <Layout>
+        <BreadcrumbsWithMobileDivider
+          items={[
+            { title: 'Samráðsgátt', href: '/' },
+            { title: 'Um samráðsgátt' },
+          ]}
+        />
+        <GridContainer>
+          <GridRow>
+            <GridColumn span={'6/12'} paddingBottom={3} paddingTop={10}>
+              <MainColumn />
+            </GridColumn>
+            <GridColumn span={'3/12'}>
+              <RightSideColmn aboutHeadings={null}></RightSideColmn>
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      </Layout>
+    </>
   )
 }
 
