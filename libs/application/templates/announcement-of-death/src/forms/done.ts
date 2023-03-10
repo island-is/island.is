@@ -3,6 +3,10 @@ import {
   buildCustomField,
   buildMultiField,
   buildDescriptionField,
+  buildKeyValueField,
+  buildTextField,
+  buildSection,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import CoatOfArms from '../assets/CoatOfArms'
@@ -25,32 +29,39 @@ export const done: Form = buildForm({
   logo: CoatOfArms,
   renderLastScreenButton: true,
   children: [
-    buildMultiField({
+    buildSection({
       id: 'done',
-      title: m.announcementComplete,
-      description: m.announcementCompleteDescription,
-      space: 1,
+      title: '',
       children: [
-        buildCustomField({
-          id: 'announcementComplete',
-          title: '',
-          component: 'Done',
+        buildMultiField({
+          id: 'done',
+          title: m.announcementComplete,
+          description: m.announcementCompleteDescription,
+          space: 1,
+          children: [
+            buildCustomField({
+              id: 'viewOverview',
+              title: '',
+              component: 'Done',
+            }),
+            buildDescriptionField({
+              id: 'nextSteps',
+              title: '',
+              description: m.nextStepsText,
+              condition: (answers) => getValueViaPath(answers, 'viewOverview') === false,
+            }),
+            ...theDeceased,
+            ...theAnnouncer,
+            ...testament,
+            ...inheritance,
+            ...properties,
+            ...files,
+            ...extraInfo,
+            ...additionalInfo,
+            
+          ],
         }),
-        buildDescriptionField({
-          id: 'nextSteps',
-          title: '',
-          description: m.nextStepsText,
-        }),
-        ...theDeceased,
-        ...theAnnouncer,
-        ...testament,
-        ...inheritance,
-        ...properties,
-        ...files,
-        ...extraInfo,
-        ...additionalInfo,
-      ],
-      condition: () => true,
+      ]
     }),
   ],
 })
