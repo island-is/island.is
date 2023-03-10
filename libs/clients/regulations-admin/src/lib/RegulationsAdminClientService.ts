@@ -1,69 +1,200 @@
 import { Inject } from '@nestjs/common'
 import {
+  DraftImpact,
+  DraftRegulationChange,
   RegulationDraft,
-  ShippedSummary,
-  TaskListType,
 } from '@island.is/regulations/admin'
 import {
-  createEnhancedFetch,
-  EnhancedFetchAPI,
-} from '@island.is/clients/middlewares'
-import { Auth } from '@island.is/auth-nest-tools'
+  DraftAuthorApi,
+  DraftRegulationCancelApi,
+  DraftRegulationChangeApi,
+  DraftRegulationsApi,
+  InternalApi,
+} from '../../gen/fetch/apis'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { RegulationsAdminClientConfig } from './RegulationsAdminClientConfig'
 import { ConfigType } from '@nestjs/config'
+import {
+  CreateDraftRegulationCancelDto,
+  CreateDraftRegulationChangeDto,
+  CreateDraftRegulationDto,
+  DraftRegulationCancelModel,
+  UpdateDraftRegulationCancelDto,
+  UpdateDraftRegulationChangeDto,
+  UpdateDraftRegulationDto,
+} from '../../gen/fetch/models'
 
 export class RegulationsAdminClientService {
-  baseURL: string
-  fetch: EnhancedFetchAPI
-
   constructor(
     @Inject(RegulationsAdminClientConfig.KEY)
     private readonly config: ConfigType<typeof RegulationsAdminClientConfig>,
-  ) {
-    this.baseURL = `${this.config.baseApiUrl}`
-    this.fetch = createEnhancedFetch({
-      name: 'Regulations-AdminClientService',
-    })
+    private draftAuthorApi: DraftAuthorApi,
+    private draftRegulationCancelApi: DraftRegulationCancelApi,
+    private draftRegulationChangeApi: DraftRegulationChangeApi,
+    private draftRegulationsApi: DraftRegulationsApi,
+    private internalApi: InternalApi,
+  ) {}
+
+  draftAuthorApiWithAuth(auth: Auth) {
+    return this.draftAuthorApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async get<T>(path: string, auth: Auth, params?: Record<string, string>) {
-    const url = new URL(`${this.baseURL}${path}`)
-    if (params) {
-      url.search = new URLSearchParams(params).toString()
-    }
-    const response = await this.fetch(url.toString(), {
-      auth,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    return (await response.json()) as T
-  }
-
-  async getDraftRegulations(auth: Auth, page?: number) {
-    return await this.get<TaskListType>(
-      '/draft_regulations',
-      auth,
-      page
-        ? {
-            page: page.toString(),
-          }
-        : undefined,
+  draftRegulationCancelApiWithAuth(auth: Auth) {
+    return this.draftRegulationCancelApi.withMiddleware(
+      new AuthMiddleware(auth),
     )
   }
 
+  draftRegulationChangeApiWithAuth(auth: Auth) {
+    return this.draftRegulationChangeApi.withMiddleware(
+      new AuthMiddleware(auth),
+    )
+  }
+
+  draftRegulationsApiWithAuth(auth: Auth) {
+    return this.draftRegulationsApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  internalApiWithAuth(auth: Auth) {
+    return this.internalApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  async getDraftRegulations(auth: Auth, page?: number) {
+    const allDrafts = await this.draftRegulationsApiWithAuth(
+      auth,
+    ).draftRegulationControllerGetAll({
+      page: page ?? 0,
+    })
+    return allDrafts
+  }
+
   async getShippedRegulations(auth: Auth) {
-    return await this.get<ShippedSummary[]>(`/draft_regulations_shipped`, auth)
+    return await this.draftRegulationsApiWithAuth(
+      auth,
+    ).draftRegulationControllerGetAllShipped()
   }
 
   async getDraftRegulation(
     draftId: string,
     auth: Auth,
   ): Promise<RegulationDraft | null> {
-    const response = await this.get<RegulationDraft | null>(
-      `/draft_regulation/${draftId}`,
+    const draftRegulation = ((await this.draftRegulationsApiWithAuth(
       auth,
-    )
-    return response
+    ).draftRegulationControllerGetById({
+      id: draftId,
+    })) as unknown) as RegulationDraft
+
+    return draftRegulation
+  }
+
+  async getImpactsByName(
+    name: string,
+    auth: Auth,
+  ): Promise<DraftImpact[] | null> {
+    const res = ((await this.draftRegulationsApiWithAuth(
+      auth,
+    ).draftRegulationControllerGetImpactsByName({
+      name,
+    })) as unknown) as DraftImpact[]
+
+    return res
+  }
+
+  async create(auth: Auth, input: CreateDraftRegulationDto): Promise<any> {
+    return await this.draftRegulationsApiWithAuth(
+      auth,
+    ).draftRegulationControllerCreate({
+      createDraftRegulationDto: {
+        type: input.type || 'base',
+      },
+    })
+  }
+
+  async updateById(
+    draftId: string,
+    body: UpdateDraftRegulationDto,
+    auth: Auth,
+  ): Promise<any> {
+    return await this.draftRegulationsApiWithAuth(
+      auth,
+    ).draftRegulationControllerUpdate({
+      updateDraftRegulationDto: body,
+      id: draftId,
+    })
+  }
+
+  async deleteById(draftId: string, auth: Auth): Promise<void> {
+    return await this.draftRegulationsApiWithAuth(
+      auth,
+    ).draftRegulationControllerDelete({
+      id: draftId,
+    })
+  }
+
+  async createDraftRegulationCancel(
+    input: CreateDraftRegulationCancelDto,
+    auth: Auth,
+  ): Promise<DraftRegulationCancelModel> {
+    return await this.draftRegulationCancelApiWithAuth(
+      auth,
+    ).draftRegulationCancelControllerCreate({
+      createDraftRegulationCancelDto: input,
+    })
+  }
+
+  async updateDraftRegulationCancel(
+    update: UpdateDraftRegulationCancelDto & { id: string },
+    auth: Auth,
+  ): Promise<DraftRegulationCancelModel> {
+    const { id, ...input } = update
+    return await this.draftRegulationCancelApiWithAuth(
+      auth,
+    ).draftRegulationCancelControllerUpdate({
+      updateDraftRegulationCancelDto: input,
+      id,
+    })
+  }
+
+  async deleteDraftRegulationCancel(
+    input: { id: string },
+    auth: Auth,
+  ): Promise<void> {
+    return await this.draftRegulationCancelApiWithAuth(
+      auth,
+    ).draftRegulationCancelControllerDelete({
+      id: input.id,
+    })
+  }
+
+  async createDraftRegulationChange(
+    input: CreateDraftRegulationChangeDto,
+    auth: Auth,
+  ): Promise<DraftRegulationChange> {
+    return ((await this.draftRegulationChangeApiWithAuth(
+      auth,
+    ).draftRegulationChangeControllerCreate({
+      createDraftRegulationChangeDto: input,
+    })) as unknown) as DraftRegulationChange
+  }
+
+  async updateDraftRegulationChange(
+    update: UpdateDraftRegulationChangeDto,
+    id: string,
+    auth: Auth,
+  ): Promise<DraftRegulationChange> {
+    return ((await this.draftRegulationChangeApiWithAuth(
+      auth,
+    ).draftRegulationChangeControllerUpdate({
+      id,
+      updateDraftRegulationChangeDto: update,
+    })) as unknown) as DraftRegulationChange
+  }
+
+  async deleteDraftRegulationChange(id: string, auth: Auth): Promise<any> {
+    return await this.draftRegulationChangeApiWithAuth(
+      auth,
+    ).draftRegulationChangeControllerDelete({
+      id,
+    })
   }
 }
