@@ -9,23 +9,6 @@ export class PagingModel {
   readonly pages?: number
 }
 
-// export class DraftSummaryModel {
-//   @ApiProperty()
-//   readonly id!: string
-
-//   @ApiProperty()
-//   readonly title!: PlainText
-
-//   @ApiPropertyOptional()
-//   readonly name?: RegName
-
-//   @ApiPropertyOptional()
-//   readonly idealPublishDate?: ISODate
-
-//   @ApiPropertyOptional()
-//   readonly draftingStatus?: string
-// }
-
 export class DraftSummaryModel extends PartialType(
   DraftRegulationShippedModel,
 ) {}

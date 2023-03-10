@@ -101,7 +101,6 @@ export class RegulationsAdminResolver {
     @Args('input') input: EditDraftRegulationInput,
     @CurrentUser() auth: User,
   ) {
-    console.log(' UPDATE BY ID:')
     return this.regulationsAdminClientService.updateById(
       input.id,
       input.body,
