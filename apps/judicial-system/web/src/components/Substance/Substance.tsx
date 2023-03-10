@@ -18,7 +18,7 @@ interface Props {
   onDelete: (sub: SubstanceEnum) => void
 }
 
-export const Substance: React.FC<Props> = (props) => {
+const Substance: React.FC<Props> = (props) => {
   const { substance, onUpdateAmount, onDelete, amount } = props
   const { formatMessage } = useIntl()
 
@@ -72,3 +72,5 @@ export const Substance: React.FC<Props> = (props) => {
     ></Input>
   )
 }
+
+export default Substance

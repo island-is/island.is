@@ -13,7 +13,7 @@ import {
   Substance as SubstanceEnum,
 } from '@island.is/judicial-system/types'
 
-import { Substance } from '../Substance/Substance'
+import Substance from '../Substance/Substance'
 import { substanceEnum } from './SubstancesEnum.strings'
 import { substances as strings } from './Substances.strings'
 import * as styles from './Substances.css'
@@ -24,7 +24,7 @@ interface Props {
   onChange: (updatedIndictmentCount: UpdateIndictmentCount) => void
 }
 
-export const Substances: React.FC<Props> = (props) => {
+const Substances: React.FC<Props> = (props) => {
   const {
     indictmentCount,
     indictmentCountOffenseType,
@@ -119,3 +119,5 @@ export const Substances: React.FC<Props> = (props) => {
     </Box>
   )
 }
+
+export default Substances
