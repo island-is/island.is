@@ -784,25 +784,27 @@ export const SignedVerdictOverview: React.FC = () => {
                     ) : (
                       <Text>{formatMessage(m.unsignedDocument)}</Text>
                     )}
-                    {user && user.id === workingCase.judge?.id && (
-                      <Box marginLeft={3}>
-                        <Button
-                          variant="ghost"
-                          size="small"
-                          data-testid="modifyRulingButton"
-                          onClick={(event) => {
-                            event.stopPropagation()
-                            router.push(
-                              isRestrictionCase(workingCase.type)
-                                ? `${constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`
-                                : `${constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`,
-                            )
-                          }}
-                        >
-                          {capitalize(formatMessage(core.modify))}
-                        </Button>
-                      </Box>
-                    )}
+                    {user &&
+                      (user.id === workingCase.judge?.id ||
+                        user.id === workingCase.registrar?.id) && (
+                        <Box marginLeft={3}>
+                          <Button
+                            variant="ghost"
+                            size="small"
+                            data-testid="modifyRulingButton"
+                            onClick={(event) => {
+                              event.stopPropagation()
+                              router.push(
+                                isRestrictionCase(workingCase.type)
+                                  ? `${constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`
+                                  : `${constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`,
+                              )
+                            }}
+                          >
+                            {capitalize(formatMessage(core.modify))}
+                          </Button>
+                        </Box>
+                      )}
                   </Box>
                 </PdfButton>
               )}
