@@ -6,7 +6,7 @@ const RightSideColumn = () => {
   const aboutHeadings = ['Heading 1', 'Heading 2', 'Heading 3', 'Heading 4']
 
   return (
-    <Box>
+    <Box paddingBottom={[3, 3, 0, 0, 0]}>
       <TableOfContents
         tableOfContentsTitle={'Efnisyfirlit'}
         headings={aboutHeadings.map((item, index) => ({

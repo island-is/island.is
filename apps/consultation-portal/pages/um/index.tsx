@@ -1,10 +1,7 @@
 import {
-  Columns,
   GridColumn,
   GridContainer,
   GridRow,
-  Hidden,
-  Inline,
 } from '@island.is/island-ui/core'
 import MainColumn from '../../components/About/MainColumn'
 import React from 'react'
@@ -27,21 +24,19 @@ const AboutPage: React.FC<AboutProps> = () => {
       />
       <GridContainer>
         <GridRow>
-          <Columns space={[3, 3, 20, 20, 20]} collapseBelow="md">
-            <GridColumn
-              order={[2, 2, 1, 1, 1]}
-              span={['12/12', '9/12', '9/12', '6/12', '6/12']}
-              offset={['0', '0', '0', '3/12', '3/12']}
-            >
-              <MainColumn />
-            </GridColumn>
-            <GridColumn
-              order={[1, 1, 2, 2, 2]}
-              span={['0', '3/12', '3/12', '3/12', '3/12']}
-            >
-              <RightSideColumn />
-            </GridColumn>
-          </Columns>
+          <GridColumn
+            span={['12/12', '12/12', '9/12', '9/12', '6/12']}
+            offset={['0', '0', '0', '0', '3/12']}
+            order={[1, 1, 0]}
+          >
+            <MainColumn />
+          </GridColumn>
+          <GridColumn
+            span={['12/12', '12/12', '3/12', '3/12', '3/12']}
+            order={[0, 0, 1]}
+          >
+            <RightSideColumn />
+          </GridColumn>
         </GridRow>
       </GridContainer>
     </Layout>
