@@ -20,21 +20,15 @@ export const container = style({
 })
 
 export const shadow = style({
-  backgroundColor: 'rgba(0, 97, 255, 0.16)',
-  top: '-20px',
+  background:
+    'linear-gradient(270deg, rgba(0, 97, 255, 0) 0%, rgba(0, 97, 255, 0.16) 50%, rgba(0, 97, 255, 0) 100%);',
+  top: '-4px',
   left: 0,
   right: 0,
   position: 'absolute',
-  height: '100px',
-  borderRadius: '50%',
-  filter: 'blur(10px)',
+  height: '30px',
+  filter: 'blur(30px)',
   zIndex: -1,
-  ...themeUtils.responsiveStyle({
-    md: {
-      left: 20,
-      right: 20,
-    },
-  }),
 })
 
 export const dividerContainer = style({
