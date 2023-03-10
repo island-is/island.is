@@ -15,11 +15,16 @@ const keyProviderBaseOptions = {
 }
 
 export const createKeyProvider = (issuer: string | string[]) => {
-  if (Array.isArray(issuer)) {
+  issuer = Array.isArray(issuer) ? issuer : [issuer]
+
+  if (issuer.length === 0) {
+    throw new Error('No issuer provided')
+  }
+
+  if (issuer.length > 1) {
     // Creates a key provider for each given issuer
     return createMultiIssuerKeyProvider({
       ...keyProviderBaseOptions,
-      jwksUri: '/.well-known/openid-configuration/jwks',
       issuers: issuer,
     })
   }
@@ -27,14 +32,11 @@ export const createKeyProvider = (issuer: string | string[]) => {
   // Creates key provider for a single issuer with default jwks-rsa method
   return passportJwtSecret({
     ...keyProviderBaseOptions,
-    jwksUri: `${issuer}${JWKS_URI}`,
+    jwksUri: `${issuer[0]}${JWKS_URI}`,
   })
 }
 
 interface MultiIssuerOptions extends Omit<ExpressJwtOptions, 'jwksUri'> {
-  // Path to the JWKS on the issuer
-  jwksUri: string
-
   // Array of issuer URLs
   issuers: string[]
 }
@@ -60,19 +62,14 @@ const handleSigningKeyError = (
  * It allows you to specify multiple issuers and will return the correct key for the issuer.
  */
 const createMultiIssuerKeyProvider = ({
-  jwksUri,
   issuers,
   ...options
 }: MultiIssuerOptions): SecretCallback => {
-  if (!jwksUri || !issuers || issuers.length === 0) {
-    throw new Error('jwksUri and issuers is required')
-  }
-
   const clients = new Map<string, JwksClient>()
   for (const issuer of issuers) {
     clients.set(
       issuer,
-      new JwksClient({ jwksUri: `${issuer}${jwksUri}`, ...options }),
+      new JwksClient({ jwksUri: `${issuer}${JWKS_URI}`, ...options }),
     )
   }
 
