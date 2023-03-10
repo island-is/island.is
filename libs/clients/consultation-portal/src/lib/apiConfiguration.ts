@@ -1,4 +1,9 @@
-import { CasesApi, Configuration, DocumentsApi } from '../../gen/fetch'
+import {
+  CasesApi,
+  Configuration,
+  DocumentsApi,
+  TypesApi,
+} from '../../gen/fetch'
 import { Provider } from '@nestjs/common/interfaces/modules/provider.interface'
 
 import { ConsultationPortalClientConfig } from './consultationPortalClient.config'
@@ -27,3 +32,4 @@ const provideApi = <T>(
 
 export const CasesApiProvider = provideApi(CasesApi)
 export const DocumentsApiProvider = provideApi(DocumentsApi)
+export const TypesApiProvider = provideApi(TypesApi)
