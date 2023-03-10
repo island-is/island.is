@@ -1,14 +1,20 @@
 import { UseGuards } from '@nestjs/common'
-import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
-
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql'
 import { Environment } from '@island.is/shared/types'
 
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { ApplicationsService } from './applications.service'
 import { ApplicationsPayload } from './dto/applications-payload'
-import { ApplicationsInput } from './dto/applications.input'
 import { Application } from './models/application.model'
 import { ApplicationEnvironment } from './models/applications-environment.model'
+import { CreateApplicationInput } from './dto/createApplication.input'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Application)
@@ -18,6 +24,14 @@ export class ApplicationResolver {
   @Query(() => ApplicationsPayload, { name: 'authAdminApplications' })
   getApplications(@Args('tenantId') tenantId: string) {
     return this.applicationsService.getApplications(tenantId)
+  }
+
+  @Mutation(() => Application, { name: 'createAuthAdminApplication' })
+  createClient(
+    @Args('input', { type: () => CreateApplicationInput })
+    input: CreateApplicationInput,
+  ) {
+    return this.applicationsService.createClient(input)
   }
 
   @ResolveField('defaultEnvironment', () => ApplicationEnvironment)
