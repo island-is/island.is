@@ -4,7 +4,7 @@
 
 - Request access to the mailbox (í. Pósthólfið). You can apply for access to the mailbox at island.is' application site https://island.is/postholf/stofnanir. <br/>The application has to include information about the institution that is applying as well as information about the guarantor (í. ábyrgðaraðili) and technical point of contact.
 
-- If the application is accepted, the technical point of contact will receive the following  information:
+- If the application is accepted, the technical point of contact will receive the following information:
   - ClientId / ClientSecret - To be able to use the Skjalatilkynning API
   - Audience
   - Scope
