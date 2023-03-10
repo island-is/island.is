@@ -81,6 +81,7 @@ export class NotificationController {
         NotificationType.HEADS_UP,
         NotificationType.READY_FOR_COURT,
         NotificationType.COURT_DATE,
+        NotificationType.DEFENDER_ASSIGNED,
       ].includes(notification.type)
     ) {
       // Notifications put on queue will call the internal notification controller

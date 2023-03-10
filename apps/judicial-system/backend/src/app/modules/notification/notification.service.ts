@@ -1490,6 +1490,16 @@ export class NotificationService {
             ),
           ]
           break
+        case NotificationType.DEFENDER_ASSIGNED:
+          messages = [
+            this.getNotificationMessage(
+              MessageType.SEND_DEFENDER_ASSIGNED_NOTIFICATION,
+              user,
+              theCase,
+            ),
+          ]
+          break
+
         default:
           throw new InternalServerErrorException(
             `Invalid notification type ${notification.type}`,
