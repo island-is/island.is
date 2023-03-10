@@ -1,3 +1,5 @@
+import React from 'react'
+
 import { withFigma } from '../../utils/withFigma'
 import { Checkbox } from './Checkbox'
 
