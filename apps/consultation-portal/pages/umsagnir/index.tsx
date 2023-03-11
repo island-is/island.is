@@ -368,7 +368,7 @@ export const MyReviewPage = () => {
   const visibleItems = data.slice(base, page * CARDS_PER_PAGE)
 
   return (
-    <Layout>
+    <Layout seo={{ title: 'umsagnir', url: 'umsagnir' }}>
       <BreadcrumbsWithMobileDivider
         items={[
           { title: 'Samráðsgátt', href: '/' },

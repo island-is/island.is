@@ -11,7 +11,7 @@ interface AboutProps {
 
 const AboutPage: React.FC<AboutProps> = () => {
   return (
-    <Layout>
+    <Layout seo={{ title: 'Um samráðsgátt', url: 'um' }}>
       <BreadcrumbsWithMobileDivider
         items={[
           { title: 'Samráðsgátt', href: '/' },
