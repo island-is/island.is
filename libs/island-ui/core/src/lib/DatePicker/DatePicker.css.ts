@@ -194,6 +194,12 @@ export const popperWithoutLabel = style({
   }),
 })
 
+export const popperInline = style({
+  position: `relative !important` as never,
+  transform: 'none !important',
+  marginBottom: '-7px',
+})
+
 // Overwrite default ReactDatepicker styles
 globalStyle(`${root}.island-ui-datepicker .react-datepicker`, {
   display: 'block',

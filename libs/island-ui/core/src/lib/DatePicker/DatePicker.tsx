@@ -54,6 +54,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   required,
   inputName = '',
   backgroundColor = 'white',
+  appearInline = false,
   size = 'md',
   icon = { name: 'calendar', type: 'outline' },
   minYear,
@@ -94,6 +95,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
       >
         <ReactDatePicker
           popperClassName={cn(styles.popper, {
+            [styles.popperInline]: appearInline,
             [styles.popperXsmall]: size === 'xs',
             [styles.popperSmall]: size === 'sm',
             [styles.popperSmallWithoutLabel]: size === 'sm' && !label,
