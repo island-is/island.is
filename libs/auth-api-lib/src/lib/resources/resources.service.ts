@@ -239,17 +239,8 @@ export class ResourcesService {
     }
 
     const identityResource = await this.identityResourceModel.findByPk(name, {
-      raw: true,
+      include: [IdentityResourceUserClaim],
     })
-
-    if (identityResource) {
-      identityResource.userClaims = await this.identityResourceUserClaimModel.findAll(
-        {
-          where: { identityResourceName: identityResource.name },
-          raw: true,
-        },
-      )
-    }
 
     return identityResource
   }
@@ -263,16 +254,8 @@ export class ResourcesService {
     }
 
     const apiScope = await this.apiScopeModel.findByPk(name, {
-      raw: true,
-      include: [ApiScopeGroup],
+      include: [ApiScopeGroup, ApiScopeUserClaim],
     })
-
-    if (apiScope) {
-      apiScope.userClaims = await this.apiScopeUserClaimModel.findAll({
-        where: { apiScopeName: apiScope.name },
-        raw: true,
-      })
-    }
 
     return apiScope
   }
@@ -309,9 +292,7 @@ export class ResourcesService {
       throw new BadRequestException('Name must be provided')
     }
 
-    const apiResource = await this.apiResourceModel.findByPk(name, {
-      raw: true,
-    })
+    const apiResource = await this.apiResourceModel.findByPk(name, {})
 
     if (apiResource) {
       await this.findApiResourceAssociations(apiResource)
@@ -332,15 +313,12 @@ export class ResourcesService {
     return Promise.all([
       this.apiResourceUserClaim.findAll({
         where: { apiResourceName: apiResource.name },
-        raw: true,
       }), // 0
       this.apiResourceScope.findAll({
         where: { apiResourceName: apiResource.name },
-        raw: true,
       }), // 1
       this.apiResourceSecret.findAll({
         where: { apiResourceName: apiResource.name },
-        raw: true,
       }), // 2
     ])
   }
@@ -469,7 +447,6 @@ export class ResourcesService {
       },
     }
     const scopes = await this.apiResourceScopeModel.findAll({
-      raw: true,
       where: apiResourceScopeNames ? scopesWhereOptions : undefined,
     })
 
@@ -530,7 +507,7 @@ export class ResourcesService {
   async createApiResource(apiResource: ApiResourcesDTO): Promise<ApiResource> {
     this.logger.debug('Creating a new api resource')
 
-    return await this.apiResourceModel.create({ ...apiResource })
+    return this.apiResourceModel.create({ ...apiResource })
   }
 
   /** Creates a new Api Scope */
@@ -539,7 +516,7 @@ export class ResourcesService {
 
     await this.assertSameAsGroup(apiScope)
 
-    return await this.apiScopeModel.create({ ...apiScope })
+    return this.apiScopeModel.create({ ...apiScope })
   }
 
   /** Updates an existing API scope */

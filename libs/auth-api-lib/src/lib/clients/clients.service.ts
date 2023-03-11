@@ -115,7 +115,7 @@ export class ClientsService {
       throw new BadRequestException('Id must be provided')
     }
 
-    const client = await this.clientModel.findByPk(id, { raw: true })
+    const client = await this.clientModel.findByPk(id)
 
     if (client) {
       await this.findAssociations(client)
@@ -207,35 +207,27 @@ export class ClientsService {
     return Promise.all([
       this.clientAllowedScope.findAll({
         where: { clientId: client.clientId },
-        raw: true,
       }), // 0
       this.clientAllowedCorsOrigin.findAll({
         where: { clientId: client.clientId },
-        raw: true,
       }), // 1
       this.clientRedirectUri.findAll({
         where: { clientId: client.clientId },
-        raw: true,
       }), // 2
       this.clientIdpRestriction.findAll({
         where: { clientId: client.clientId },
-        raw: true,
       }), // 3
       this.clientSecret.findAll({
         where: { clientId: client.clientId },
-        raw: true,
       }), // 4
       this.clientPostLogoutUri.findAll({
         where: { clientId: client.clientId },
-        raw: true,
       }), // 5
       this.clientGrantType.findAll({
         where: { clientId: client.clientId },
-        raw: true,
       }), // 6
       this.clientClaim.findAll({
         where: { clientId: client.clientId },
-        raw: true,
       }), // 7
     ])
   }

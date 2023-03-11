@@ -109,7 +109,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: States.PREREQUISITES,
           status: 'draft',
-          lifecycle: EphemeralStateLifeCycle,
+          lifecycle: pruneAfterDays(9),
           progress: 0.25,
           onExit: defineTemplateApi({
             action: ApiModuleActions.setBirthDateForNoPrimaryParent,
@@ -619,7 +619,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           status: 'inprogress',
           name: States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE,
-          lifecycle: pruneAfterDays(1),
+          lifecycle: pruneAfterDays(970),
           onEntry: defineTemplateApi({
             action: ApiModuleActions.setBirthDate,
             externalDataId: 'dateOfBirth',
@@ -672,7 +672,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.residenceGrantInProgress,
           },
-          lifecycle: pruneAfterDays(1),
+          lifecycle: pruneAfterDays(970),
           progress: 1,
           onExit: defineTemplateApi({
             action: ApiModuleActions.validateApplication,

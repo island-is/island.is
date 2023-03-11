@@ -10,8 +10,6 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 
-import { DelegationScope } from '../../delegations/models/delegation-scope.model'
-import { IdentityResourcesDTO } from '../dto/identity-resources.dto'
 import { Domain } from './domain.model'
 import { IdentityResourceUserClaim } from './identity-resource-user-claim.model'
 
@@ -159,21 +157,4 @@ export class IdentityResource extends Model {
 
   @ApiProperty({ type: () => Domain })
   domain!: Domain
-
-  toDTO(): IdentityResourcesDTO {
-    return {
-      name: this.name,
-      enabled: this.enabled,
-      displayName: this.displayName,
-      description: this.description,
-      showInDiscoveryDocument: this.showInDiscoveryDocument,
-      grantToLegalGuardians: this.grantToLegalGuardians,
-      grantToProcuringHolders: this.grantToProcuringHolders,
-      allowExplicitDelegationGrant: this.allowExplicitDelegationGrant,
-      automaticDelegationGrant: this.automaticDelegationGrant,
-      alsoForDelegatedUser: this.alsoForDelegatedUser,
-      required: this.required,
-      emphasize: this.emphasize,
-    }
-  }
 }
