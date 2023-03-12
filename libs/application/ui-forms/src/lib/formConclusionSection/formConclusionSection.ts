@@ -13,11 +13,11 @@ import { StaticText } from 'static-text'
 import { conclusion } from './messages'
 
 type props = {
-  alertTitle: MessageDescriptor
+  alertTitle?: MessageDescriptor
   alertMessage?: MessageDescriptor
-  expandableHeader: MessageDescriptor
-  expandableIntro?: MessageDescriptor
-  expandableDescription: StaticText
+  expandableHeader?: MessageDescriptor
+  expandableIntro?: StaticText
+  expandableDescription?: StaticText
   s3FileKey?: FormText
   link?: string
   buttonText?: MessageDescriptor
@@ -56,15 +56,21 @@ export const buildFormConclusionSection = (props: props) =>
           }),
           buildAlertMessageField({
             id: 'uiForms.conclusionAlert',
-            title: props.alertTitle,
+            title: props.alertTitle ?? conclusion.alertMessageField.title,
             alertType: 'success',
-            message: props.alertMessage,
+            message: props.alertMessage ?? conclusion.alertMessageField.message,
           }),
           buildExpandableDescriptionField({
             id: 'uiForms.conclusionBullet',
-            title: props.expandableHeader,
-            introText: props.expandableIntro,
-            description: props.expandableDescription,
+            title:
+              props.expandableHeader ??
+              conclusion.expandableDescriptionField.title,
+            introText:
+              props.expandableIntro ??
+              conclusion.expandableDescriptionField.introText,
+            description:
+              props.expandableDescription ??
+              conclusion.expandableDescriptionField.description,
             startExpanded: true,
           }),
           buildMessageWithLinkButtonField({
