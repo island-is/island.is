@@ -205,6 +205,7 @@ const DocumentScreen: FC<Props> = ({
                       labelUse="h5"
                       labelVariant="h5"
                       iconVariant="small"
+                      startExpanded
                     >
                       <Box
                         className={styles.accordionBoxSingle}

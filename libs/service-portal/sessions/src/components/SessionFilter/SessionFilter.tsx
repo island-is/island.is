@@ -78,6 +78,7 @@ const SessionFilter: React.FC<IProps> = ({
                 labelColor="blue400"
                 labelVariant="h5"
                 iconVariant="small"
+                startExpanded
               >
                 <Box display="flex" flexDirection="column">
                   <Stack space={3}>
