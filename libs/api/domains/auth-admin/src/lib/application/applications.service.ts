@@ -1,13 +1,43 @@
 import { Injectable } from '@nestjs/common'
 
-import { Environment } from '../models/environment'
+import { Environment } from '@island.is/shared/types'
+import { CreateApplicationInput } from './dto/createApplication.input'
+import { Application } from './models/application.model'
+import { ApplicationEnvironment } from './models/applications-environment.model'
+import { TranslatedValue } from '../models/translated-value.model'
+import { ApplicationType } from '../models/applicationType'
 
 @Injectable()
 export class ApplicationsService {
-  getApplications(input: { tenantId: string }) {
+  getApplications(tenantId: string) {
     const resp = getMockData()
-    resp.data.filter((x) => x.tenantId === input.tenantId)
+    resp.data = resp.data.filter((x) => {
+      return x.tenantId === tenantId
+    })
     return resp
+  }
+
+  createClient(input: CreateApplicationInput) {
+    const displayName = new TranslatedValue()
+    displayName.locale = 'is'
+    displayName.value = input.displayName
+
+    const application = new Application()
+    application.applicationId = input.applicationId
+    application.applicationType = input.applicationType
+    application.environments = input.environments.map((env) => {
+      const applicationEnv = new ApplicationEnvironment()
+      applicationEnv.name = input.applicationId
+      applicationEnv.environment = env
+      applicationEnv.displayName = [displayName]
+      applicationEnv.callbackUrls = []
+
+      return applicationEnv
+    })
+
+    // TODO connect to REST service
+
+    return application
   }
 }
 
@@ -16,12 +46,12 @@ const getMockData = () => {
     data: [
       {
         applicationId: '@island.is/web',
-        applicationType: 'Web Application',
-        tenantId: '@admin.island.is',
+        applicationType: ApplicationType.Web,
+        tenantId: '@island.is',
         environments: [
           {
             name: '@island.is/web',
-            environment: Environment.Dev,
+            environment: Environment.Development,
             displayName: [
               {
                 locale: 'is',
@@ -45,12 +75,12 @@ const getMockData = () => {
       },
       {
         applicationId: '@island.is/auth-admin-web',
-        applicationType: 'Web Application',
+        applicationType: ApplicationType.Web,
         tenantId: '@admin.island.is',
         environments: [
           {
             name: '@island.is/auth-admin-web',
-            environment: Environment.Dev,
+            environment: Environment.Development,
             displayName: [
               {
                 locale: 'is',
@@ -85,11 +115,12 @@ const getMockData = () => {
       },
       {
         applicationId: '@island.is/auth',
-        applicationType: 'Web Application',
+        applicationType: ApplicationType.Web,
+        tenantId: '@admin.island.is',
         environments: [
           {
             name: '@island.is/auth',
-            environment: Environment.Dev,
+            environment: Environment.Development,
             displayName: [
               {
                 locale: 'is',

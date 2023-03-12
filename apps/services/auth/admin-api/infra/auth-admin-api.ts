@@ -25,10 +25,21 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
         },
         paths: ['/backend'],
         public: true,
+        extraAnnotations: {
+          dev: {
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+          },
+          staging: {
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+          },
+          prod: {
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+          },
+        },
       },
     })
-    .readiness('/liveness')
-    .liveness('/liveness')
+    .readiness('/backend/liveness')
+    .liveness('/backend/liveness')
     .resources({
       limits: {
         cpu: '400m',
@@ -44,4 +55,9 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
       min: 2,
       max: 10,
     })
+    .grantNamespaces(
+      'nginx-ingress-external',
+      'nginx-ingress-internal',
+      'islandis',
+    )
 }
