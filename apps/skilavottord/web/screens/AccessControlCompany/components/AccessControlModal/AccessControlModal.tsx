@@ -142,7 +142,7 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
             rules={{
               validate: {
                 value: (value: string) => {
-                  if (value.toString().length > 32) {
+                  if (value?.toString().length > 32) {
                     return t.modal.inputs.recyclingLocation.rules?.validate
                   }
                 },

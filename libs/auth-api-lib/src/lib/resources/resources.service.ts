@@ -6,7 +6,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
-import { literal, Op, WhereOptions } from 'sequelize'
+import { Op, WhereOptions } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import { DelegationConfig } from '../delegations/DelegationConfig'
@@ -237,17 +237,8 @@ export class ResourcesService {
     }
 
     const identityResource = await this.identityResourceModel.findByPk(name, {
-      raw: true,
+      include: [IdentityResourceUserClaim],
     })
-
-    if (identityResource) {
-      identityResource.userClaims = await this.identityResourceUserClaimModel.findAll(
-        {
-          where: { identityResourceName: identityResource.name },
-          raw: true,
-        },
-      )
-    }
 
     return identityResource
   }
@@ -261,16 +252,8 @@ export class ResourcesService {
     }
 
     const apiScope = await this.apiScopeModel.findByPk(name, {
-      raw: true,
-      include: [ApiScopeGroup],
+      include: [ApiScopeGroup, ApiScopeUserClaim],
     })
-
-    if (apiScope) {
-      apiScope.userClaims = await this.apiScopeUserClaimModel.findAll({
-        where: { apiScopeName: apiScope.name },
-        raw: true,
-      })
-    }
 
     return apiScope
   }
@@ -460,7 +443,6 @@ export class ResourcesService {
       },
     }
     const scopes = await this.apiResourceScopeModel.findAll({
-      raw: true,
       where: apiResourceScopeNames ? scopesWhereOptions : undefined,
     })
 
@@ -521,7 +503,7 @@ export class ResourcesService {
   async createApiResource(apiResource: ApiResourcesDTO): Promise<ApiResource> {
     this.logger.debug('Creating a new api resource')
 
-    return await this.apiResourceModel.create({ ...apiResource })
+    return this.apiResourceModel.create({ ...apiResource })
   }
 
   /** Creates a new Api Scope */
@@ -530,7 +512,7 @@ export class ResourcesService {
 
     await this.assertSameAsGroup(apiScope)
 
-    return await this.apiScopeModel.create({ ...apiScope })
+    return this.apiScopeModel.create({ ...apiScope })
   }
 
   /** Updates an existing API scope */
@@ -565,7 +547,12 @@ export class ResourcesService {
       throw new NoContentException()
     }
 
-    return apiResource.update({ ...apiResourceData })
+    const [_, apiResources] = await this.apiResourceModel.update(
+      { ...apiResourceData },
+      { where: { name }, returning: true },
+    )
+
+    return apiResources[0]
   }
 
   /** Soft delete on an API scope */

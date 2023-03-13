@@ -1,5 +1,6 @@
 import {
   buildDescriptionField,
+  buildKeyValueField,
   buildMultiField,
   buildSubmitField,
   buildTextField,
@@ -23,10 +24,14 @@ export const childsPersonalInfo = buildMultiField({
       width: 'half',
       readOnly: true,
       defaultValue: (application: Application) => {
-        return (
-          (application.externalData.identityDocument
-            ?.data as IdentityDocumentData).childPassports[0].childName ?? ''
-        )
+        const child = (application.externalData.identityDocument
+          ?.data as IdentityDocumentData).childPassports.find((child) => {
+          return (
+            child.childNationalId ===
+            (application.answers.passport as Passport)?.childPassport
+          )
+        })
+        return child?.childName ?? ''
       },
     }),
     buildTextField({
@@ -37,11 +42,14 @@ export const childsPersonalInfo = buildMultiField({
       readOnly: true,
       format: '######-####',
       defaultValue: (application: Application) => {
-        return (
-          (application.externalData.identityDocument
-            ?.data as IdentityDocumentData).childPassports[0].childNationalId ??
-          ''
-        )
+        const child = (application.externalData.identityDocument
+          ?.data as IdentityDocumentData).childPassports.find((child) => {
+          return (
+            child.childNationalId ===
+            (application.answers.passport as Passport)?.childPassport
+          )
+        })
+        return child?.childNationalId ?? ''
       },
     }),
     buildDescriptionField({
@@ -108,11 +116,14 @@ export const childsPersonalInfo = buildMultiField({
       backgroundColor: 'white',
       width: 'half',
       defaultValue: (application: Application) => {
-        return (
-          (application.externalData.identityDocument
-            ?.data as IdentityDocumentData).childPassports[0]
-            .secondParentName ?? ''
-        )
+        const child = (application.externalData.identityDocument
+          ?.data as IdentityDocumentData).childPassports.find((child) => {
+          return (
+            child.childNationalId ===
+            (application.answers.passport as Passport)?.childPassport
+          )
+        })
+        return child?.secondParentName ?? ''
       },
     }),
     buildTextField({
@@ -123,10 +134,14 @@ export const childsPersonalInfo = buildMultiField({
       readOnly: true,
       format: '######-####',
       defaultValue: (application: Application) => {
-        return (
-          (application.externalData.identityDocument
-            ?.data as IdentityDocumentData).childPassports[0].secondParent ?? ''
-        )
+        const child = (application.externalData.identityDocument
+          ?.data as IdentityDocumentData).childPassports.find((child) => {
+          return (
+            child.childNationalId ===
+            (application.answers.passport as Passport)?.childPassport
+          )
+        })
+        return child?.secondParent ?? ''
       },
     }),
     buildTextField({

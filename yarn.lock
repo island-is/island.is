@@ -27088,8 +27088,8 @@ __metadata:
     xml2js: 0.4.23
     xstate: 4.20.0
     yargs: 15.4.1
-    zod: 3.20.6
-    zod-form-data: ^1.3.1
+    zod: ^3.21.2
+    zod-form-data: ^2.0.0
   languageName: unknown
   linkType: soft
 
@@ -44733,19 +44733,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod-form-data@npm:^1.3.1":
-  version: 1.3.1
-  resolution: "zod-form-data@npm:1.3.1"
+"zod-form-data@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "zod-form-data@npm:2.0.0"
   peerDependencies:
     zod: ^3.11.x
-  checksum: 2391714bd05d869925690970aa924e58ac8994b84258d1df7d02a6ae88147961881e8ba48a0059d095edb5678c9a4f6102d62f1a200cbe433f147cf171680e4f
+  checksum: 7c0d56e2615d024516d9a5d1031d87db91aa15a06df9ae356dc694614dad65bb9708a7c36943e36ad3f05112287a10b55ed2a2e7fcbef188880726dd87ae09e2
   languageName: node
   linkType: hard
 
-"zod@npm:3.20.6":
-  version: 3.20.6
-  resolution: "zod@npm:3.20.6"
-  checksum: 804b1934b8b5e2fa3750bec90043e8118b201f330b9957b8b768389a971acadf812d2060cf62921086512dab4af691d10490acb03333da58fc485c0791893c89
+"zod@npm:^3.21.2":
+  version: 3.21.2
+  resolution: "zod@npm:3.21.2"
+  checksum: 6a5fa0992827b61440de7087038ec737f76074efbdc1b3594630ecdad314fd566439f7900aa05d4938222a5f739e599c61a848f794a8264f80909720b96ed764
   languageName: node
   linkType: hard
 

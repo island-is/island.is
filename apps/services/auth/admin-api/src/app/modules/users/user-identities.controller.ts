@@ -30,7 +30,7 @@ const namespace = `${environment.audit.defaultNamespace}/user-identities`
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiExcludeController()
 @Controller({
-  path: 'backend/user-identities',
+  path: 'user-identities',
   version: [VERSION_NEUTRAL, '1'],
 })
 @Audit({ namespace })

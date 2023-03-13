@@ -57,7 +57,7 @@ export const createPkPassDataInput = (license: OrorkuSkirteini) => {
 
   return [
     {
-      identifier: 'name',
+      identifier: 'nafn',
       value: license.nafn ?? '',
     },
     {
