@@ -137,6 +137,12 @@ export class GenericFirearmLicenseService
     )
 
     if (pass.ok) {
+      if (pass.data.distributionUrl) {
+        this.logger.warn('Missing pkpass distribution url in firearm license', {
+          category: LOG_CATEGORY,
+        })
+        return null
+      }
       return pass.data.distributionUrl
     }
 
@@ -179,6 +185,15 @@ export class GenericFirearmLicenseService
     )
 
     if (pass.ok) {
+      if (pass.data.distributionQRCode) {
+        this.logger.warn(
+          'Missing pkpass distribution QR Code in firearm license',
+          {
+            category: LOG_CATEGORY,
+          },
+        )
+        return null
+      }
       return pass.data.distributionQRCode
     }
 

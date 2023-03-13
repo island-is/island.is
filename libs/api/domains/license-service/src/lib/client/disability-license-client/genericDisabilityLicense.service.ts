@@ -136,6 +136,15 @@ export class GenericDisabilityLicenseService
     )
 
     if (pass.ok) {
+      if (pass.data.distributionUrl) {
+        this.logger.warn(
+          'Missing pkpass distribution url in disability license',
+          {
+            category: LOG_CATEGORY,
+          },
+        )
+        return null
+      }
       return pass.data.distributionUrl
     }
     /**
@@ -157,6 +166,15 @@ export class GenericDisabilityLicenseService
     )
 
     if (pass.ok) {
+      if (pass.data.distributionQRCode) {
+        this.logger.warn(
+          'Missing pkpass distribution QR Code in disability license',
+          {
+            category: LOG_CATEGORY,
+          },
+        )
+        return null
+      }
       return pass.data.distributionQRCode
     }
     /**
