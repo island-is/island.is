@@ -178,12 +178,18 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
                           heading={prettyName(reg.name)}
                           text={reg.title}
                           tags={
-                            reg.ministry && [
-                              {
-                                label: reg.ministry.name ?? reg.ministry,
-                                disabled: true,
-                              },
-                            ]
+                            reg.ministry
+                              ? [
+                                  {
+                                    label: reg.ministry.name
+                                      ? reg.ministry.name
+                                      : typeof reg.ministry === 'string'
+                                      ? reg.ministry
+                                      : '',
+                                    disabled: true,
+                                  },
+                                ]
+                              : undefined
                           }
                         />
                       </GridColumn>
