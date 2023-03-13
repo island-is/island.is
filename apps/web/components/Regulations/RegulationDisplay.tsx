@@ -114,7 +114,7 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
                 <HTMLBox
                   component="span"
                   className={s.titleText + ' ' + s.diffText}
-                  html={regulation.title ?? ('' as HTMLText)}
+                  html={regulation.title as HTMLText}
                 />
               ) : (
                 <span className={s.titleText}>{regulation.title}</span>
