@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
@@ -155,6 +155,6 @@ export class IdentityResource extends Model {
   @ApiProperty()
   readonly modified?: Date
 
-  @ApiProperty({ type: () => Domain })
-  domain!: Domain
+  @ApiPropertyOptional({ type: () => Domain })
+  domain?: Domain
 }

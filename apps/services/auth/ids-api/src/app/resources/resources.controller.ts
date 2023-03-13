@@ -12,10 +12,12 @@ import { ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger'
 import {
   ApiResource,
   ApiScope,
-  IdentityResource,
   ResourcesService,
 } from '@island.is/auth-api-lib'
 import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+
+import { IdentityResourceDTO } from './identity-resource.dto'
+import { IdentityResourceMapper } from './identity-resource.mapper'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('resources')
@@ -34,15 +36,19 @@ export class ResourcesController {
     required: false,
     allowEmptyValue: true,
   })
-  @ApiOkResponse({ type: IdentityResource, isArray: true })
-  findIdentityResourcesByScopeName(
+  @ApiOkResponse({ type: IdentityResourceDTO, isArray: true })
+  async findIdentityResourcesByScopeName(
     @Query(
       'scopeNames',
       new ParseArrayPipe({ optional: true, items: String, separator: ',' }),
     )
     scopeNames: string[],
-  ): Promise<IdentityResource[]> {
-    return this.resourcesService.findIdentityResourcesByScopeName(scopeNames)
+  ): Promise<IdentityResourceDTO[]> {
+    const result = await this.resourcesService.findIdentityResourcesByScopeName(
+      scopeNames,
+    )
+
+    return result.map((r) => IdentityResourceMapper.toIdentityResourceDTO(r))
   }
 
   /** Gets API scopes by scope names */

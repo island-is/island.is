@@ -255,8 +255,8 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
   apiScopeUserAccesses?: ApiScopeUserAccess[]
 
   @BelongsTo(() => Domain)
-  @ApiProperty({ type: () => Domain })
-  domain!: Domain
+  @ApiPropertyOptional({ type: () => Domain })
+  domain?: Domain
 
   toDTO(): ApiScopesDTO {
     return {

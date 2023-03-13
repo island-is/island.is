@@ -343,7 +343,7 @@ export class ResourcesService {
     const identityDomain = await this.findDomainByPk(DEFAULT_DOMAIN)
 
     return result.map((r) => {
-      r.setDataValue('domain', identityDomain)
+      r.domain = identityDomain ?? undefined
       return r
     })
   }
