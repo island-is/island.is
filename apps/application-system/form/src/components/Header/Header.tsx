@@ -10,13 +10,10 @@ import { useHeaderInfo } from '@island.is/application/ui-shell'
 import { UserMenu } from '@island.is/shared/components'
 
 import { fixSvgUrls } from '../../utils'
-import { useLocale } from '@island.is/localization'
 
 export const Header: FC = () => {
   const location = useLocation()
-  const { lang } = useLocale()
   const { info } = useHeaderInfo()
-  const homePath = lang === 'en' ? '/en' : '/'
 
   useEffect(() => {
     // Fixes the island.is logo and other SVGs not appearing on
@@ -37,7 +34,7 @@ export const Header: FC = () => {
                 }
               : undefined
           }
-          logoRender={(logo) => <a href={homePath}>{logo}</a>}
+          logoRender={(logo) => <a href="/minarsidur/umsoknir">{logo}</a>}
           headerItems={<UserMenu showDropdownLanguage small />}
         />
       </GridContainer>

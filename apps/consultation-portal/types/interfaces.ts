@@ -71,3 +71,9 @@ export interface CaseFilter {
   policyAreas?: Array<number>
   query?: string
 }
+
+export interface SEOProps {
+  title: string
+  url?: string
+  image?: string
+}
