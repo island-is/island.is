@@ -2,4 +2,4 @@ export {
   applicantInformationMultiField,
   applicantInformationSchema,
 } from './lib/applicantInformationMultiField'
-export { formConclusionSection } from './lib/formConclusionSection/formConclusionSection'
+export { buildFormConclusionSection } from './lib/formConclusionSection/formConclusionSection'

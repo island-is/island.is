@@ -290,7 +290,9 @@ export class ResourcesService {
       throw new BadRequestException('Name must be provided')
     }
 
-    const apiResource = await this.apiResourceModel.findByPk(name, {})
+    const apiResource = await this.apiResourceModel.findByPk(name, {
+      raw: true,
+    })
 
     if (apiResource) {
       await this.findApiResourceAssociations(apiResource)
@@ -311,12 +313,15 @@ export class ResourcesService {
     return Promise.all([
       this.apiResourceUserClaim.findAll({
         where: { apiResourceName: apiResource.name },
+        raw: true,
       }), // 0
       this.apiResourceScope.findAll({
         where: { apiResourceName: apiResource.name },
+        raw: true,
       }), // 1
       this.apiResourceSecret.findAll({
         where: { apiResourceName: apiResource.name },
+        raw: true,
       }), // 2
     ])
   }
@@ -542,7 +547,12 @@ export class ResourcesService {
       throw new NoContentException()
     }
 
-    return apiResource.update({ ...apiResourceData })
+    const [_, apiResources] = await this.apiResourceModel.update(
+      { ...apiResourceData },
+      { where: { name }, returning: true },
+    )
+
+    return apiResources[0]
   }
 
   /** Soft delete on an API scope */
