@@ -6,3 +6,16 @@ export const SPEECH_THERAPY = 'speech'
 export const LIGHT_THERAPY = 'light'
 // TODO: GET CORRECT ID FROM SJUKRA
 export const OCCUPATIONAL_THERAPY = 'occu'
+
+export enum TherapyStatus {
+  ALM = 'ALM',
+  BARN = 'BARN',
+  BU12 = 'BU12',
+  BA02 = 'BA02',
+  ELLI = 'ELLI',
+  UM12 = 'UM12',
+  UM18 = 'UM18',
+  LSTT = 'LSTT',
+  LOTT = 'LOTT',
+  OR = 'OR',
+}

@@ -1,20 +1,13 @@
 import React, { FC, useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  Box,
-  Text,
-  Stack,
-  Divider,
-  Select,
-  Option,
-} from '@island.is/island-ui/core'
+import { Box, Text, Stack, Divider, Select } from '@island.is/island-ui/core'
 import { messages } from '../../lib/messages'
 import { formatDate, UserInfoLine } from '@island.is/service-portal/core'
 import { Therapies } from '@island.is/api/schema'
 import { FootNote } from '../FootNote.tsx/FootNote'
-import { ValueType } from 'react-select'
-import { string } from 'zod'
-
+import * as styles from './TherapiesTabContent.css'
+import { formatNumberToString } from '../../utils/format'
+import { TherapyStatus } from '../../utils/constants'
 interface Props {
   data: Therapies[]
 }
@@ -29,7 +22,7 @@ export const TherapiesTabContent: FC<Props> = ({ data }) => {
   const [dropDownValue, setDropDownValue] = useState<OptionType>()
   let displayDropDown = false
   let dropDownOptions
-  console.log(data)
+
   if (!data || data.length === 0) {
     return (
       <Box width="full" marginTop={4} display="flex" justifyContent="center">
@@ -41,36 +34,38 @@ export const TherapiesTabContent: FC<Props> = ({ data }) => {
   }
 
   if (data.length > 1) {
-    // Sjúkraþjálfun with more therapies, display dropdown
+    // Sjúkraþjálfun with more subtherapies, display dropdown
     displayDropDown = true
     dropDownOptions = data.map((item) => {
       return { label: item.name, value: item.id }
     })
-    //setDropDownValue(dropDownOptions[0])
   }
+
+  // Display content - get content from dropdown or get first/only in array
   const content =
     displayDropDown && dropDownValue
       ? data.find((item) => item.id === dropDownValue.value) ?? data[0]
       : data[0]
+
+  // Build time periods in format dd.mm.yyyy - dd.mm.yyyy
   const from = content.periods?.find((x) => x.from !== null)?.from ?? ''
   const to = content.periods?.find((x) => x.to !== null)?.to ?? ''
   const timePeriod = [formatDate(from), formatDate(to)]
     .filter(Boolean)
     .join(' - ')
   const periods = content.periods
-  console.log(dropDownValue)
+
   return (
-    <Box width="full" marginTop={4}>
+    <Box width="full" marginTop={[1, 1, 4]}>
       {displayDropDown && dropDownOptions && (
-        <Box>
+        <Box className={styles.dropdown} marginBottom={4}>
           <Select
-            label={formatMessage(messages.therapyType)}
-            placeholder={formatMessage(messages.therapyType)}
+            label={formatMessage(messages.physiotherapyType)}
+            placeholder={formatMessage(messages.physiotherapyType)}
             size="xs"
             name="therapy-select"
             options={dropDownOptions}
             onChange={(value) => {
-              console.log('onChangeValue', value)
               setDropDownValue(value as OptionType)
             }}
             value={dropDownValue ? dropDownValue : dropDownOptions[0]}
@@ -81,28 +76,36 @@ export const TherapiesTabContent: FC<Props> = ({ data }) => {
         <UserInfoLine
           title={formatMessage(messages.informationAboutStatus)}
           label={formatMessage(messages.timePeriod)}
-          content={timePeriod}
+          content={
+            timePeriod === ''
+              ? formatMessage(messages.noTimePeriods)
+              : timePeriod
+          }
         />
         <Divider />
         <UserInfoLine
           label={formatMessage(messages.status)}
-          content={content.state?.display}
+          content={
+            formatMessage(messages[content.state?.code as TherapyStatus]) ??
+            formatMessage(messages.unknownStatus)
+          }
         />
         <Divider />
-
         <UserInfoLine
           label={formatMessage(messages.usedTherapySessions)}
-          content={periods
-            ?.find((x) => x.sessions?.used)
-            ?.sessions?.used.toString()}
+          content={formatNumberToString(
+            periods?.find((x) => x.sessions?.used === 0 || x.sessions?.used)
+              ?.sessions?.used,
+          )}
         />
         <Divider />
-
         <UserInfoLine
           label={formatMessage(messages.totalTherapySessions)}
-          content={periods
-            ?.find((x) => x.sessions?.available)
-            ?.sessions?.available.toString()}
+          content={formatNumberToString(
+            periods?.find(
+              (x) => x.sessions?.available === 0 || x.sessions?.available,
+            )?.sessions?.available,
+          )}
         />
         <Divider />
       </Stack>
