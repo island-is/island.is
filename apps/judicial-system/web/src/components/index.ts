@@ -54,8 +54,6 @@ export { default as SelectCourtOfficials } from './SelectCourtOfficials/SelectCo
 export { default as SelectSubpoenaType } from './SelectSubpoenaType/SelectSubpoenaType'
 export { default as ServiceInterruptionBanner } from './ServiceInterruptionBanner/ServiceInterruptionBanner'
 export { default as SignedDocument } from './SignedDocument/SignedDocument'
-export { default as Substance } from './Substance/Substance'
-export { default as Substances } from './Substances/Substances'
 
 export {
   SigningModal,

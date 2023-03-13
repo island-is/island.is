@@ -21,10 +21,7 @@ import {
   Substance,
   SubstanceMap,
 } from '@island.is/judicial-system/types'
-import {
-  BlueBox,
-  Substances as SubstanceChoices,
-} from '@island.is/judicial-system-web/src/components'
+import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -32,6 +29,8 @@ import {
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
+
+import { Substances as SubstanceChoices } from './Substances/Substances'
 
 import { indictmentCount as strings } from './IndictmentCount.strings'
 import { indictmentCountEnum as enumStrings } from './IndictmentCountEnum.strings'

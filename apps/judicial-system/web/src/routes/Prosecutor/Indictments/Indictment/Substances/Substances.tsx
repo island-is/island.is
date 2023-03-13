@@ -13,7 +13,7 @@ import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/
 import { Box, Select } from '@island.is/island-ui/core'
 import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import Substance from '../Substance/Substance'
+import { Substance } from '../Substance/Substance'
 import { substanceEnum } from './SubstancesEnum.strings'
 import { substances as strings } from './Substances.strings'
 import * as styles from './Substances.css'
@@ -24,7 +24,7 @@ interface Props {
   onChange: (updatedIndictmentCount: UpdateIndictmentCount) => void
 }
 
-const Substances: React.FC<Props> = (props) => {
+export const Substances: React.FC<Props> = (props) => {
   const {
     indictmentCount,
     indictmentCountOffenseType,
@@ -119,5 +119,3 @@ const Substances: React.FC<Props> = (props) => {
     </Box>
   )
 }
-
-export default Substances
