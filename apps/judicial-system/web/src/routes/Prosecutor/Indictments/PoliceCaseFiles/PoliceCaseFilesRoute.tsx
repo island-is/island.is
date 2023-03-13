@@ -170,11 +170,7 @@ const UploadFilesToPoliceCase: React.FC<{
   }, [policeCaseFiles, caseFiles, policeCaseNumber])
 
   const setSingleFile = useCallback(
-    (
-      displayFile: UploadFile,
-      isPoliceCaseFile: boolean = false,
-      newId?: string,
-    ) => {
+    (displayFile: UploadFile, isPoliceCaseFile = false, newId?: string) => {
       setDisplayFiles((previous) =>
         generateSingleFileUpdate(
           previous,
@@ -184,7 +180,7 @@ const UploadFilesToPoliceCase: React.FC<{
         ),
       )
     },
-    [],
+    [generateSingleFileUpdate],
   )
 
   const onChange = useCallback(
