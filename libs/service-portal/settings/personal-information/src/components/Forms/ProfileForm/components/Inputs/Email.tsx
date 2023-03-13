@@ -26,6 +26,11 @@ interface FormErrors {
   code: string | undefined
 }
 
+interface UseFormProps {
+  email: string
+  code: string
+}
+
 export const InputEmail: FC<Props> = ({
   buttonText,
   email,
@@ -39,7 +44,7 @@ export const InputEmail: FC<Props> = ({
     getValues,
     setValue,
     formState: { errors },
-  } = useForm()
+  } = useForm<UseFormProps>()
   const {
     updateOrCreateUserProfile,
     loading: saveLoading,
@@ -188,9 +193,7 @@ export const InputEmail: FC<Props> = ({
     <Box>
       <form
         onSubmit={handleSubmit(
-          emailInternal
-            ? handleSendEmailVerification
-            : (saveEmptyChange as any),
+          emailInternal ? handleSendEmailVerification : saveEmptyChange,
         )}
       >
         <Box display="flex" flexWrap="wrap" alignItems="center">
@@ -221,7 +224,7 @@ export const InputEmail: FC<Props> = ({
                 checkSetPristineInput()
               }}
               placeholder="nafn@island.is"
-              error={(errors.email?.message as string) || formErrors.email}
+              error={errors?.email?.message || formErrors?.email || ''}
               size="xs"
               defaultValue={email}
             />
@@ -246,7 +249,7 @@ export const InputEmail: FC<Props> = ({
                       emailInternal
                         ? () =>
                             handleSendEmailVerification({
-                              email: getValues().email,
+                              email: getValues().email ?? '',
                             })
                         : () => saveEmptyChange()
                     }
@@ -288,7 +291,7 @@ export const InputEmail: FC<Props> = ({
             })}
           </Text>
 
-          <form onSubmit={handleSubmit(handleConfirmCode as any)}>
+          <form onSubmit={handleSubmit(handleConfirmCode)}>
             <Box display="flex" flexWrap="wrap" alignItems="flexStart">
               <Box className={styles.codeInput} marginRight={3}>
                 <InputController
@@ -300,7 +303,7 @@ export const InputEmail: FC<Props> = ({
                   label={formatMessage(m.verificationCode)}
                   placeholder="000000"
                   defaultValue=""
-                  error={(errors.code?.message as string) || formErrors.code}
+                  error={errors?.code?.message || formErrors?.code || ''}
                   disabled={verificationValid || disabled}
                   icon={verificationValid ? 'checkmark' : undefined}
                   size="xs"

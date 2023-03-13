@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from 'react'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { m } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { msg } from '../../../../../lib/messages'
@@ -35,6 +35,11 @@ interface FormErrors {
   code: string | undefined
 }
 
+interface UseFormProps {
+  tel: string
+  code: string
+}
+
 export const InputPhone: FC<Props> = ({
   buttonText,
   mobile,
@@ -48,7 +53,7 @@ export const InputPhone: FC<Props> = ({
     getValues,
     setValue,
     formState: { errors },
-  } = useForm()
+  } = useForm<UseFormProps>()
   const {
     updateOrCreateUserProfile,
     loading: saveLoading,
@@ -193,7 +198,7 @@ export const InputPhone: FC<Props> = ({
     <Box>
       <form
         onSubmit={handleSubmit(
-          telInternal ? handleSendTelVerification : (saveEmptyChange as any),
+          telInternal ? handleSendTelVerification : saveEmptyChange,
         )}
       >
         <Box display="flex" flexWrap="wrap" alignItems="center">
@@ -247,7 +252,7 @@ export const InputPhone: FC<Props> = ({
                     setTelInternal(parseFullNumber(inp.target.value || ''))
                     setErrors({ ...formErrors, mobile: undefined })
                   }}
-                  error={(errors.tel?.message as string) || formErrors.mobile}
+                  error={errors.tel?.message || formErrors.mobile}
                   defaultValue={mobile}
                 />
               </Column>
@@ -314,7 +319,7 @@ export const InputPhone: FC<Props> = ({
                   hér að neðan.`,
             })}
           </Text>
-          <form onSubmit={handleSubmit(handleConfirmCode as any)}>
+          <form onSubmit={handleSubmit(handleConfirmCode)}>
             <Box display="flex" flexWrap="wrap" alignItems="flexStart">
               <Box className={styles.codeInput} marginRight={3}>
                 <InputController
@@ -326,7 +331,7 @@ export const InputPhone: FC<Props> = ({
                   label={formatMessage(m.verificationCode)}
                   placeholder="000000"
                   defaultValue=""
-                  error={(errors.code?.message as string) || formErrors.code}
+                  error={errors.code?.message || formErrors.code}
                   disabled={verificationValid || disabled}
                   icon={verificationValid ? 'checkmark' : undefined}
                   size="xs"

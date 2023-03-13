@@ -1,7 +1,6 @@
 import React, { FC, useState, useEffect } from 'react'
 import {
   Box,
-  Button,
   Columns,
   Column,
   Icon,
@@ -30,7 +29,7 @@ interface Props {
 export const Nudge: FC<Props> = ({ refuseMail }) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
-  const { control, handleSubmit, getValues } = useForm()
+  const { control, handleSubmit, getValues } = useForm<Props>()
   const [inputPristine, setInputPristine] = useState<boolean>(false)
   const [submitError, setSubmitError] = useState<string>()
 
@@ -63,7 +62,7 @@ export const Nudge: FC<Props> = ({ refuseMail }) => {
   }
 
   return (
-    <form onSubmit={handleSubmit(submitFormData as any)}>
+    <form onSubmit={handleSubmit(submitFormData)}>
       <Columns collapseBelow="sm" alignY="center">
         <Column width="content">
           <Box marginRight={3} display="flex" alignItems="center">

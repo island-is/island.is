@@ -55,7 +55,7 @@ export const ChildRegistrationModal: FC<Props> = ({ data }) => {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm()
+  } = useForm<FormDataType>()
   const { formatMessage } = useLocale()
   const { data: userProfile } = useUserProfile()
 
@@ -134,7 +134,7 @@ export const ChildRegistrationModal: FC<Props> = ({ data }) => {
             </Bullet>
           </BulletList>
         </Box>
-        <form onSubmit={handleSubmit(handleSubmitForm as any)}>
+        <form onSubmit={handleSubmit(handleSubmitForm)}>
           <Box>
             <GridRow marginBottom={3}>
               <GridColumn span={['12/12', '6/12']}>
@@ -155,7 +155,7 @@ export const ChildRegistrationModal: FC<Props> = ({ data }) => {
                     },
                   }}
                   label={formatMessage(sharedMessages.email)}
-                  error={errors.email?.message as string}
+                  error={errors.email?.message}
                   size="xs"
                 />
               </GridColumn>
@@ -180,7 +180,7 @@ export const ChildRegistrationModal: FC<Props> = ({ data }) => {
                     },
                   }}
                   label={formatMessage(sharedMessages.phoneNumber)}
-                  error={errors.tel?.message as string}
+                  error={errors.tel?.message}
                   size="xs"
                 />
               </GridColumn>
@@ -208,7 +208,7 @@ export const ChildRegistrationModal: FC<Props> = ({ data }) => {
                     id: 'sp.family:text-required-msg-label',
                     defaultMessage: 'Athugasemd',
                   })}
-                  error={errors.text?.message as string}
+                  error={errors.text?.message}
                   size="xs"
                 />
               </GridColumn>
