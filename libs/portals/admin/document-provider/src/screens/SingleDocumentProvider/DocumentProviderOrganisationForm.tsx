@@ -10,11 +10,18 @@ import {
   useUpdateOrganisation,
   OnCompletedArgumentsType,
 } from '../../shared/useUpdateOrganisation'
-import { getErrorViaPath } from '@island.is/service-portal/core'
 
 interface Props {
   organisation: Organisation
   setOrganisationName: (name: string) => void
+}
+
+interface UseFormProps {
+  name: string
+  nationalId: string
+  address: string
+  email: string
+  phoneNumber: string
 }
 
 export const DocumentProviderOrganisationForm: FC<Props> = ({
@@ -26,7 +33,7 @@ export const DocumentProviderOrganisationForm: FC<Props> = ({
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm()
+  } = useForm<UseFormProps>()
 
   const { updateOrganisation, loading } = useUpdateOrganisation(
     (data: OnCompletedArgumentsType) => {
@@ -68,8 +75,8 @@ export const DocumentProviderOrganisationForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderInstitutionNamePlaceholder,
             )}
-            hasError={getErrorViaPath(errors, 'name') !== undefined}
-            errorMessage={errors.name?.message as string}
+            hasError={errors?.name !== undefined}
+            errorMessage={errors?.name?.message ?? ''}
           />
           <DocumentProviderInput
             control={control}
@@ -93,8 +100,8 @@ export const DocumentProviderOrganisationForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderInstitutionNationalIdPlaceholder,
             )}
-            hasError={getErrorViaPath(errors, 'nationalId') !== undefined}
-            errorMessage={errors.nationalId?.message as string}
+            hasError={errors.nationalId !== undefined}
+            errorMessage={errors.nationalId?.message ?? ''}
           />
           <DocumentProviderInput
             control={control}
@@ -110,8 +117,8 @@ export const DocumentProviderOrganisationForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderInstitutionAddressPlaceholder,
             )}
-            hasError={getErrorViaPath(errors, 'address') !== undefined}
-            errorMessage={errors.address?.message as string}
+            hasError={errors.address !== undefined}
+            errorMessage={errors.address?.message ?? ''}
           />
           <DocumentProviderInput
             control={control}
@@ -133,8 +140,8 @@ export const DocumentProviderOrganisationForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderInstitutionEmailPlaceholder,
             )}
-            hasError={getErrorViaPath(errors, 'email') !== undefined}
-            errorMessage={errors.email?.message as string}
+            hasError={errors?.email !== undefined}
+            errorMessage={errors?.email?.message ?? ''}
           />
           <DocumentProviderInput
             control={control}
@@ -170,8 +177,8 @@ export const DocumentProviderOrganisationForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderInstitutionPhonenumberPlaceholder,
             )}
-            hasError={getErrorViaPath(errors, 'phoneNumber') !== undefined}
-            errorMessage={errors.phoneNumber?.message as string}
+            hasError={errors?.phoneNumber !== undefined}
+            errorMessage={errors?.phoneNumber?.message ?? ''}
           />
           <Box
             display="flex"

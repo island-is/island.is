@@ -14,7 +14,6 @@ import {
   useCreateHelpDesk,
   CreateHelpDeskInput,
 } from '../../shared/useCreateHelpDesk'
-import { getErrorViaPath } from '@island.is/service-portal/core'
 import { DocumentProviderPaths } from '../../lib/paths'
 
 interface Props {
@@ -33,7 +32,7 @@ export const DocumentProviderHelpDeskForm: FC<Props> = ({
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm()
+  } = useForm<Props>()
   const { updateHelpDesk, loading: loadingUpdate } = useUpdateHelpDesk(
     organisationId,
   )
@@ -81,8 +80,8 @@ export const DocumentProviderHelpDeskForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderUserHelpContactEmailPlaceholder,
             )}
-            hasError={getErrorViaPath(errors, 'helpdesk.email') !== undefined}
-            errorMessage={getErrorViaPath(errors, 'helpDesk.email.message')}
+            hasError={errors?.helpDesk?.email !== undefined}
+            errorMessage={errors?.helpDesk?.email?.message ?? ''}
           />
           <DocumentProviderInput
             control={control}
@@ -120,13 +119,8 @@ export const DocumentProviderHelpDeskForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderUserHelpContactPhoneNumberPlaceholder,
             )}
-            hasError={
-              getErrorViaPath(errors, 'helpDesk.phoneNumber') !== undefined
-            }
-            errorMessage={getErrorViaPath(
-              errors,
-              'helpDesk.phoneNumber.message',
-            )}
+            hasError={errors?.helpDesk?.phoneNumber !== undefined}
+            errorMessage={errors?.helpDesk?.phoneNumber?.message ?? ''}
           />
           <Box
             display="flex"

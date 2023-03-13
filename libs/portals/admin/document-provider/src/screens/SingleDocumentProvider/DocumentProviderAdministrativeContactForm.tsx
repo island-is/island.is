@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { Box, Button, Text } from '@island.is/island-ui/core'
-import { useForm, SubmitHandler } from 'react-hook-form'
+import { useForm, SubmitHandler, Control } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { DocumentProviderInput } from './DocumentProviderInput'
@@ -9,7 +9,6 @@ import { useUpdateAdministrativeContact } from '../../shared/useUpdateAdministra
 import { useCreateAdministrativeContact } from '../../shared/useCreateAdministrativeContact'
 import { ContactInput } from '../../shared/useUpdateTechnicalContact'
 import { CreateContactInput } from '../../shared/useCreateTechnicalContact'
-import { getErrorViaPath } from '@island.is/service-portal/core'
 
 interface Props {
   administrativeContact?: Contact | null
@@ -27,7 +26,7 @@ export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm()
+  } = useForm<Props>()
   const {
     updateAdministrativeContact,
     loading: loadingUpdate,
@@ -62,7 +61,7 @@ export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
             </Text>
           </Box>
           <DocumentProviderInput
-            control={control}
+            control={(control as unknown) as Control}
             name="administrativeContact.name"
             defaultValue={administrativeContact?.name ?? ''}
             rules={{
@@ -77,17 +76,11 @@ export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderResponsibleContactNamePlaceholder,
             )}
-            hasError={
-              getErrorViaPath(errors, 'administrativeContact.name') !==
-              undefined
-            }
-            errorMessage={getErrorViaPath(
-              errors,
-              'administrativeContact.name.message',
-            )}
+            hasError={errors?.administrativeContact !== undefined}
+            errorMessage={errors?.administrativeContact?.message ?? ''}
           />
           <DocumentProviderInput
-            control={control}
+            control={(control as unknown) as Control}
             name="administrativeContact.email"
             defaultValue={administrativeContact?.email ?? ''}
             rules={{
@@ -106,17 +99,11 @@ export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderResponsibleContactEmailPlaceholder,
             )}
-            hasError={
-              getErrorViaPath(errors, 'administrativeContact.email') !==
-              undefined
-            }
-            errorMessage={getErrorViaPath(
-              errors,
-              'administrativeContact.email.message',
-            )}
+            hasError={!!errors?.administrativeContact?.email?.message}
+            errorMessage={errors?.administrativeContact?.email?.message ?? ''}
           />
           <DocumentProviderInput
-            control={control}
+            control={(control as unknown) as Control}
             name="administrativeContact.phoneNumber"
             defaultValue={administrativeContact?.phoneNumber ?? ''}
             rules={{
@@ -151,14 +138,10 @@ export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderResponsibleContactPhoneNumberPlaceholder,
             )}
-            hasError={
-              getErrorViaPath(errors, 'administrativeContact.phoneNumber') !==
-              undefined
+            hasError={errors?.administrativeContact?.phoneNumber !== undefined}
+            errorMessage={
+              errors?.administrativeContact?.phoneNumber?.message ?? ''
             }
-            errorMessage={getErrorViaPath(
-              errors,
-              'administrativeContact.phoneNumber.message',
-            )}
           />
           <Box
             display="flex"

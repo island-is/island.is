@@ -13,7 +13,6 @@ import {
   useCreateTechnicalContact,
   CreateContactInput,
 } from '../../shared/useCreateTechnicalContact'
-import { getErrorViaPath } from '@island.is/service-portal/core'
 
 interface Props {
   technicalContact?: Contact | null
@@ -31,7 +30,7 @@ export const DocumentProviderTechnicalContactForm: FC<Props> = ({
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm()
+  } = useForm<Props>()
 
   const {
     updateTechnicalContact,
@@ -81,13 +80,8 @@ export const DocumentProviderTechnicalContactForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderTechnicalContactNamePlaceholder,
             )}
-            hasError={
-              getErrorViaPath(errors, 'technicalContact.name') !== undefined
-            }
-            errorMessage={getErrorViaPath(
-              errors,
-              'technicalContact.name.message',
-            )}
+            hasError={errors?.technicalContact?.name !== undefined}
+            errorMessage={errors?.technicalContact?.name?.message ?? ''}
           />
           <DocumentProviderInput
             control={control}
@@ -111,13 +105,8 @@ export const DocumentProviderTechnicalContactForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderTechnicalContactEmailPlaceholder,
             )}
-            hasError={
-              getErrorViaPath(errors, 'technicalContact.email') !== undefined
-            }
-            errorMessage={getErrorViaPath(
-              errors,
-              'technicalContact.email.message',
-            )}
+            hasError={errors?.technicalContact?.email !== undefined}
+            errorMessage={errors?.technicalContact?.email?.message ?? ''}
           />
           <DocumentProviderInput
             control={control}
@@ -155,14 +144,8 @@ export const DocumentProviderTechnicalContactForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderTechnicalContactPhoneNumberPlaceholder,
             )}
-            hasError={
-              getErrorViaPath(errors, 'technicalContact.phoneNumber') !==
-              undefined
-            }
-            errorMessage={getErrorViaPath(
-              errors,
-              'technicalContact.phoneNumber.message',
-            )}
+            hasError={errors?.technicalContact?.phoneNumber !== undefined}
+            errorMessage={errors?.technicalContact?.phoneNumber?.message ?? ''}
           />
           <Box
             display="flex"

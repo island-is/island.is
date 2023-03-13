@@ -19,7 +19,7 @@ type ControllerRules = Partial<{
 }>
 
 interface Props {
-  control: Control<Record<string, string>>
+  control: Control<any, string>
   name: string
   defaultValue: string
   hasError: boolean
