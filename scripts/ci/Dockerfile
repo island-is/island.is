@@ -112,7 +112,7 @@ USER runner
 
 CMD [ "jest", "main.spec.js" ]
 
-FROM mcr.microsoft.com/playwright:v1.25.2-focal as playwright-base
+FROM mcr.microsoft.com/playwright:v1.31.2-focal as playwright-base
 
 
 
@@ -133,7 +133,8 @@ RUN apt-get -y install libnss3 libatk-bridge2.0-0 libdrm-dev libxkbcommon-dev li
 RUN apt-get -y install awscli zip
 
 COPY --chown=pwuser:pwuser ${APP_HOME}/package.json .
-RUN yarn add playwright@1.31 --mode=update-lockfile && yarn install
+RUN yarn install
+RUN yarn playwright install
 COPY --chown=pwuser:pwuser --from=builder /build/${APP_DIST_HOME} /${APP_DIST_HOME}/
 COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
 USER pwuser
