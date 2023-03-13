@@ -11,6 +11,9 @@ import TranslationCreateFormDropdown from '../../Admin/form/TranslationCreateFor
 import LocalizationUtils from '../../../utils/localization.utils'
 import { FormControl } from '../../../entities/common/Localization'
 import HintBox from '../../common/HintBox'
+import { Domain } from '../../../entities/models/domain.model'
+import { ResourcesService } from '../../../services/ResourcesService'
+
 interface Props {
   client: ClientDTO
   onNextButtonClick?: (client: ClientDTO) => void
@@ -46,6 +49,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
     LocalizationUtils.getFormControl('ClientCreateForm'),
   )
   const [baseUrlRequired, setBaseUrlRequired] = useState<boolean>(true)
+  const [domains, setDomains] = useState<Domain[]>([])
   //#region hintbox
   const [clientIdHintVisible, setClientIdHintVisible] = useState<boolean>(false)
   const [clientIdIsValid, setClientIdIsValid] = useState<boolean | null>(null)
@@ -109,6 +113,17 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
     }
     setClient({ ...props.client })
   }, [props.client])
+
+  useEffect(() => {
+    const getDomains = async () => {
+      const response = await ResourcesService.findAllDomains()
+      if (response) {
+        setDomains(response as Domain[])
+      }
+    }
+
+    getDomains()
+  }, [])
 
   const manageBaseUrlValidation = (shouldValidate: boolean) => {
     setBaseUrlRequired(shouldValidate)
@@ -522,6 +537,47 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         </div>
                       </div>
                     </div>
+                  </div>
+
+                  <div className="client__container__field">
+                    <label htmlFor="domainName" className="client__label">
+                      {localization.fields['domainName'].label}
+                    </label>
+                    <select
+                      id="client.domainName"
+                      name="client.domainName"
+                      ref={register({
+                        required: true,
+                      })}
+                      title={localization.fields['domainName'].helpText}
+                      defaultValue={client.domainName ?? ''}
+                    >
+                      {!props.client.domainName && (
+                        <option value="" disabled hidden>
+                          {localization.fields['domainName'].placeholder}
+                        </option>
+                      )}
+                      {domains.map((domain: Domain) => {
+                        return (
+                          <option
+                            value={domain.name}
+                            key={domain.name}
+                            selected={props.client.domainName === domain.name}
+                          >
+                            {domain.name}
+                          </option>
+                        )
+                      })}
+                    </select>
+                    <HelpBox
+                      helpText={localization.fields['domainName'].helpText}
+                    />
+                    <ErrorMessage
+                      as="span"
+                      errors={errors}
+                      name="domainName"
+                      message={localization.fields['domainName'].errorMessage}
+                    />
                   </div>
 
                   <div className="client__container__field">
