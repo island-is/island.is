@@ -30,7 +30,9 @@ export const applicationLoader: WrappedLoaderFn = ({ client }) => {
     if (applicationsList.error) {
       throw applicationsList.error
     }
-
+    if (applicationsList.data?.authAdminApplications.data?.length === 0) {
+      throw new Error('Application not found')
+    }
     return applicationsList.data?.authAdminApplications.data ?? []
   }
 }

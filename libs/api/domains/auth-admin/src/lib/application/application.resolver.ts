@@ -24,7 +24,6 @@ export class ApplicationResolver {
 
   @Query(() => ApplicationsPayload, { name: 'authAdminApplications' })
   getApplications(@Args('input') input: ApplicationsInput) {
-    console.log(input.applicationId)
     return this.applicationsService.getApplications(
       input.tenantId,
       input.applicationId,

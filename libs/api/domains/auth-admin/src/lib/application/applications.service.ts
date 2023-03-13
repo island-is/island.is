@@ -17,7 +17,6 @@ export class ApplicationsService {
 
     if (applicationId) {
       resp.data = resp.data.filter((x) => {
-        console.log(x.applicationId, applicationId)
         return x.applicationId === applicationId
       })
     }

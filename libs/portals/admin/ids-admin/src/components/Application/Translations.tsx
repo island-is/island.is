@@ -60,7 +60,7 @@ const Translations = ({ translations }: TranslationsProps) => {
               return {
                 label: translation.locale === 'is' ? 'Íslenska' : 'English',
                 content: (
-                  <Form>
+                  <Form method="post">
                     <Box marginTop="gutter">
                       <Input
                         backgroundColor="blue"
