@@ -1,7 +1,7 @@
 module.exports = {
   displayName: 'clients-health-insurance',
   preset: './jest.preset.js',
-  rootDir: '../../..',
+  rootDir: '../../../..',
   roots: [__dirname],
   globals: {
     'ts-jest': { tsconfig: `${__dirname}/tsconfig.spec.json` },
