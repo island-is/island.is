@@ -19,9 +19,9 @@ describe('Transition Case', () => {
       ${CaseTransition.DELETE}  | ${CaseState.DRAFT}     | ${CaseState.DELETED}
       ${CaseTransition.DELETE}  | ${CaseState.SUBMITTED} | ${CaseState.DELETED}
       ${CaseTransition.DELETE}  | ${CaseState.RECEIVED}  | ${CaseState.DELETED}
-      ${CaseTransition.REOPEN}  | ${CaseState.ACCEPTED}  | ${CaseState.SUBMITTED}
-      ${CaseTransition.REOPEN}  | ${CaseState.REJECTED}  | ${CaseState.SUBMITTED}
-      ${CaseTransition.REOPEN}  | ${CaseState.DISMISSED}  | ${CaseState.SUBMITTED}
+      ${CaseTransition.REOPEN}  | ${CaseState.ACCEPTED}  | ${CaseState.RECEIVED}
+      ${CaseTransition.REOPEN}  | ${CaseState.REJECTED}  | ${CaseState.RECEIVED}
+      ${CaseTransition.REOPEN}  | ${CaseState.DISMISSED}  | ${CaseState.RECEIVED}
     `.it(
     'should $transition $oldState case resulting in $newState case',
     ({ transition, oldState, newState }) => {

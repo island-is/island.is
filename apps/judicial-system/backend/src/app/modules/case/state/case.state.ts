@@ -42,7 +42,7 @@ const caseStateMachine: Map<CaseTransition, Rule> = new Map([
     CaseTransition.REOPEN,
     {
       from: [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED],
-      to: CaseState.SUBMITTED,
+      to: CaseState.RECEIVED,
     },
   ],
 ])
