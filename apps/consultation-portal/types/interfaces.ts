@@ -15,6 +15,14 @@ export interface Case {
   created?: string
 }
 
+export interface CaseForSubscriptions {
+  id: number
+  caseNumber: string
+  name: string
+  institutionName: string
+  policyAreaName: string
+}
+
 export interface ArrOfIdAndName {
   id: string
   name: string
@@ -42,6 +50,11 @@ export interface ArrOfTypes {
   institutions: { [key: string]: string }
   caseStatuses: { [key: string]: string }
   caseTypes: { [key: string]: string }
+}
+
+export interface ArrOfTypesForSubscriptions {
+  policyAreas: { [key: string]: string }
+  institutions: { [key: string]: string }
 }
 
 export type FilterInputItems = {

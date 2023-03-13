@@ -392,6 +392,7 @@ export const MyReviewPage = () => {
             setSearchValue={(newValue) => setSearchValue(newValue)}
             sortTitle={sortTitle}
             setSortTitle={(title: SortOptions) => setSortTitle(title)}
+            currentTab={{}}
           />
           {data && (
             <>
