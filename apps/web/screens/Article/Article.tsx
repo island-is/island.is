@@ -46,6 +46,7 @@ import {
   GetSingleArticleQuery,
   QueryGetSingleArticleArgs,
   Organization,
+  Stepper as StepperSchema,
 } from '@island.is/web/graphql/schema'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -520,7 +521,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
             <Stepper
               namespace={stepperNamespace}
               optionsFromNamespace={stepOptionsFromNamespace}
-              stepper={article.stepper}
+              stepper={article.stepper as StepperSchema}
               showWebReader={true}
               webReaderClassName="rs_read"
             />
@@ -730,7 +731,7 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
 
   if (article.stepper)
     stepOptionsFromNamespace = await stepperUtils.getStepOptionsFromUIConfiguration(
-      article.stepper,
+      article.stepper as StepperSchema,
       apolloClient,
     )
 
