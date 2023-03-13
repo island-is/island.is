@@ -21,7 +21,7 @@ export const conclusion = {
       description: 'Title of conclusion information box',
     },
     intro: {
-      id: 'an.application:conclusion.information.intro',
+      id: 'an.application:conclusion.information.intro#markdown',
       defaultMessage: 'Umsókn þín hefur verið móttekin',
       description: 'Conclusion information box intro',
     },
