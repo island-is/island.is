@@ -33,6 +33,10 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
   children: [
     documentsNavigation,
     applicationsNavigation,
+    {
+      ...delegationsNavigation,
+      children: [...delegationsNavigationChildren, sessionsNavigation],
+    },
     companyNavigation,
     personalInformationNavigation,
     informationNavigation,
@@ -42,9 +46,5 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
     educationNavigation,
     licenseNavigation,
     educationLicenseNavigation,
-    {
-      ...delegationsNavigation,
-      children: [...delegationsNavigationChildren, sessionsNavigation],
-    },
   ],
 }

@@ -8,6 +8,7 @@ export const delegationsNavigationChildren: PortalNavigationItem[] = [
     navHide: false,
     serviceProvider: '1JHJe1NDwbBjEr7OVdjuFD',
     breadcrumbHide: true,
+    isKeyItem: true,
     children: [
       {
         name: m.accessControlGrant,
@@ -40,4 +41,5 @@ export const delegationsNavigation: PortalNavigationItem = {
   description: m.accessControlDescription,
   children: delegationsNavigationChildren,
   serviceProvider: '1JHJe1NDwbBjEr7OVdjuFD',
+  isKeyItem: true,
 }

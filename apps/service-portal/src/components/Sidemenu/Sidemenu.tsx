@@ -25,7 +25,8 @@ import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
 import cn from 'classnames'
 import { useListDocuments } from '@island.is/service-portal/graphql'
-
+import SidemenuItem from './SidemenuItem'
+import { m } from '@island.is/service-portal/core'
 interface Props {
   setSideMenuOpen: (status: boolean) => void
   sideMenuOpen: boolean
@@ -62,12 +63,7 @@ const Sidemenu = ({
   )
   return (
     <ModalBase
-      baseId={'service-portal-sidemenu'}
-      onVisibilityChange={(visibility: boolean) => {
-        if (visibility !== sideMenuOpen) {
-          onClose()
-        }
-      }}
+      baseId="service-portal-sidemenu"
       isVisible={sideMenuOpen}
       hideOnClickOutside={true}
       hideOnEsc={true}
@@ -78,13 +74,18 @@ const Sidemenu = ({
       })}
       removeOnClose={true}
       preventBodyScroll={true}
+      onVisibilityChange={(visibility: boolean) => {
+        if (visibility !== sideMenuOpen) {
+          onClose()
+        }
+      }}
     >
       <GridContainer>
         <Box display="flex" justifyContent="flexEnd">
           <Box
             position="relative"
             background="white"
-            padding={3}
+            padding={2}
             borderRadius="large"
             display="flex"
             flexDirection="column"
@@ -101,15 +102,46 @@ const Sidemenu = ({
             >
               <Box
                 display="flex"
-                flexWrap="nowrap"
+                flexDirection="row"
                 alignItems="center"
+                marginBottom={1}
+                marginTop={2}
+              >
+                <Box
+                  borderRadius="circle"
+                  background="blue100"
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  className={styles.overviewIcon}
+                  marginRight={2}
+                >
+                  <Icon icon="dots" />
+                </Box>
+                <Text variant="h4">{formatMessage(m.overview)}</Text>
+              </Box>
+              <Box
+                display="flex"
+                flexWrap="wrap"
                 paddingBottom={3}
                 paddingTop={2}
+                columnGap={1}
+                rowGap={1}
               >
-                Pósthólf
+                {navigation?.children?.map(
+                  (navRoot, index) =>
+                    navRoot.path !== ServicePortalPath.MinarSidurRoot &&
+                    !navRoot.navHide && (
+                      <SidemenuItem
+                        item={navRoot}
+                        setSidemenuOpen={setSideMenuOpen}
+                        key={`sidemenu-item-${index}`}
+                      />
+                    ),
+                )}
               </Box>
             </Box>
-            <Hidden below="md">{closeButton}</Hidden>
+            {closeButton}
           </Box>
         </Box>
       </GridContainer>

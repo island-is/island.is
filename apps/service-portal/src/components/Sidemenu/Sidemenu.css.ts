@@ -1,9 +1,10 @@
 import { spacing, theme, themeUtils } from '@island.is/island-ui/theme'
 import {
-  SERVICE_PORTAL_HEADER_HEIGHT_SM,
-  zIndex,
-} from '@island.is/service-portal/constants'
-import { keyframes, style, styleVariants } from '@vanilla-extract/css'
+  globalStyle,
+  keyframes,
+  style,
+  styleVariants,
+} from '@vanilla-extract/css'
 import { StyleWithSelectors } from '@vanilla-extract/css/dist/declarations/src/types'
 
 const wrapperAnimation = keyframes({
@@ -27,12 +28,21 @@ export const categories = style({
   flexGrow: 2,
 })
 
-export const icon = style({
+const iconBase: StyleWithSelectors = {
   width: 30,
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'flex-start',
+  justifyContent: 'center',
+}
+
+export const icon = style({
+  ...iconBase,
   marginRight: theme.spacing[1],
+})
+
+export const iconSmall = style({
+  ...iconBase,
+  marginBottom: theme.spacing[1],
 })
 
 export const badge = styleVariants({
@@ -98,6 +108,8 @@ export const dropdown = style({
 
 export const fullScreen = style({
   ...dropdownBase,
+  maxHeight: 'none',
+  top: 0,
   ...themeUtils.responsiveStyle({
     md: {
       ...dropdownBaseMD,
@@ -140,4 +152,36 @@ export const closeButton = style({
     outline: 'none',
     borderColor: theme.color.mint200,
   },
+})
+
+export const itemLink = style({
+  width: '100%',
+  ':hover': {
+    textDecoration: 'none',
+  },
+})
+export const item = style({
+  ':hover': {
+    borderColor: theme.color.blue600,
+    cursor: 'pointer',
+  },
+})
+
+export const smallItem = style({
+  height: 88,
+  width: '31.6%',
+})
+
+export const itemText = style({
+  fontSize: 14,
+  textAlign: 'center',
+})
+
+export const overviewIcon = style({
+  height: 40,
+  width: 40,
+})
+
+globalStyle(`${item}:hover a div div svg`, {
+  color: theme.color.blue600,
 })

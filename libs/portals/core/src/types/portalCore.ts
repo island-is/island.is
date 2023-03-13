@@ -66,6 +66,11 @@ export interface PortalNavigationItem {
    * Parent
    */
   parent?: PortalNavigationItem
+
+  /**
+   * Is key item? Stafrænt Íslands product
+   */
+  isKeyItem?: boolean
 }
 
 /**
