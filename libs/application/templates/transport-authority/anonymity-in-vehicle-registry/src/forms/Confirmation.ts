@@ -2,7 +2,7 @@ import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { information, externalData, confirmation } from '../lib/messages'
 import { Logo } from '../assets/Logo'
-import { formConclusionSection } from '@island.is/application/ui-forms'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
 export const Confirmation: Form = buildForm({
   id: 'ConfirmationForm',
@@ -20,7 +20,7 @@ export const Confirmation: Form = buildForm({
       title: information.general.sectionTitle,
       children: [],
     }),
-    formConclusionSection({
+    buildFormConclusionSection({
       alertTitle: confirmation.general.alertTitle,
       alertMessage: confirmation.general.alertMessage,
       expandableHeader: confirmation.general.accordionTitle,
