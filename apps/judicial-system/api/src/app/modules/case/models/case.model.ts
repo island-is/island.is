@@ -292,4 +292,7 @@ export class Case implements TCase {
 
   @Field(() => Boolean, { nullable: true })
   readonly requestDriversLicenseSuspension?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isCorrectingRuling?: boolean
 }

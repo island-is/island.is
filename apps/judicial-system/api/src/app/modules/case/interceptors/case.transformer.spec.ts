@@ -1,3 +1,8 @@
+import {
+  CaseState,
+  completedCaseStates,
+  NotificationType,
+} from '@island.is/judicial-system/types'
 import each from 'jest-each'
 
 import { Case } from '../models/case.model'
@@ -174,6 +179,52 @@ describe('transformCase', () => {
 
       // Assert
       expect(res.isAppealGracePeriodExpired).toBe(true)
+    })
+  })
+
+  describe('isCorrectingRuling', () => {
+    it.each(completedCaseStates)('should be false for %s case', (state) => {
+      // Arrange
+      const theCase = { state } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isCorrectingRuling).toBe(false)
+    })
+
+    describe.each([
+      CaseState.NEW,
+      CaseState.DRAFT,
+      CaseState.SUBMITTED,
+      CaseState.RECEIVED,
+      CaseState.DELETED,
+    ])('for %s case', (state) => {
+      it('should be false if no ruling notification has been sent', () => {
+        // Arrange
+        const theCase = { state } as Case
+
+        // Act
+        const res = transformCase(theCase)
+
+        // Assert
+        expect(res.isCorrectingRuling).toBe(false)
+      })
+
+      it('should be true if a ruling notification has been sent', () => {
+        // Arrange
+        const theCase = {
+          state,
+          notifications: [{ type: NotificationType.RULING }],
+        } as Case
+
+        // Act
+        const res = transformCase(theCase)
+
+        // Assert
+        expect(res.isCorrectingRuling).toBe(true)
+      })
     })
   })
 })

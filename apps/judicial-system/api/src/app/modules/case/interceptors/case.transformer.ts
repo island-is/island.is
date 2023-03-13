@@ -1,3 +1,8 @@
+import {
+  completedCaseStates,
+  NotificationType,
+} from '@island.is/judicial-system/types'
+
 import { Case } from '../models/case.model'
 
 const threeDays = 3 * 24 * 60 * 60 * 1000
@@ -19,5 +24,11 @@ export function transformCase(theCase: Case): Case {
     isAppealGracePeriodExpired: theCase.rulingDate
       ? Date.now() >= new Date(theCase.rulingDate).getTime() + sevenDays
       : false,
+    isCorrectingRuling:
+      !completedCaseStates.includes(theCase.state) &&
+      (theCase.notifications?.some(
+        (notification) => notification.type === NotificationType.RULING,
+      ) ??
+        false),
   }
 }
