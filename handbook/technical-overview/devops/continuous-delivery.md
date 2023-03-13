@@ -34,7 +34,7 @@ When the CI process finishes successfully and has published assets, we trigger t
 
 ## Merge queues
 
-Kodiaq (our merge bot) applies first-come-first-served policy to all PRs. To merge code to `main`, developers add the `automerge` label to their PRs and Kodiaq will take care of the rest. Developers do not have privileges to merge/push manually to the main branch to prevent accidents and maintain fairness.
+[Kodiaq](https://app.kodiakhq.com) (our merge bot) applies first-come-first-served policy to all PRs. To merge code to `main`, developers add the `automerge` label to their PRs and Kodiaq will take care of the rest. Developers do not have privileges to merge/push manually to the main branch to prevent accidents from happening and maintain fairness, since merging manually to main would bypass the Kodiak merge queue.
 
 ## Configuration
 
