@@ -23,7 +23,7 @@
     "extract-strings": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/alcohol-tax-redemption/src/lib/messages"
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/alcohol-tax-redemption/src/lib/messages/*.ts'"
       }
     }
   },
