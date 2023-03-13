@@ -1494,7 +1494,7 @@ export const synchronizeVMSTPeriods = (
       period.firstPeriodStart === 'date_of_birth'
         ? 'actualDateOfBirth'
         : 'specificDate'
-    if (new Date(period.from).getDate() <= new Date().getDay()) {
+    if (new Date(period.from).getTime() <= new Date().getTime()) {
       firstPeriodStart = 'specificDate'
     }
 
@@ -1518,7 +1518,7 @@ export const synchronizeVMSTPeriods = (
         if (new Date().getDay() >= 20) {
           newPeriods.push(obj)
         }
-      } else if (new Date(period.from).getDay() <= new Date().getDay()) {
+      } else if (new Date(period.from).getTime() <= new Date().getTime()) {
         newPeriods.push(obj)
       }
       temptVMSTPeriods.push(obj)

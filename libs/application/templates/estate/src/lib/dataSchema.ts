@@ -124,6 +124,16 @@ export const estateSchema = z.object({
     .optional(),
   acceptDebts: z.array(z.enum([YES, NO])).nonempty(),
 
+  // is: Umboðsmaður
+  representative: z.object({
+    representativeName: z.string().min(1),
+    representativeNationalId: z.string().length(10),
+    representativePhoneNumber: z.string().refine((v) => isValidPhoneNumber(v), {
+      params: m.errorPhoneNumber,
+    }),
+    representativeEmail: customZodError(z.string().email(), m.errorEmail),
+  }),
+
   // is: Heimild til setu í óskiptu búi skv. erfðaskrá
   undividedEstateResidencePermission: z.enum([YES, NO]),
 
