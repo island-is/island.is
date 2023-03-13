@@ -117,7 +117,7 @@ const PetitionView = (namespace) => {
                       icon="arrowForward"
                       onClick={() =>
                         window?.open(
-                          `${getBaseUrl()}/medmaelendalisti/${
+                          `${getBaseUrl()}/undirskriftalisti/${
                             list.meta.applicationId
                           }`,
                         )

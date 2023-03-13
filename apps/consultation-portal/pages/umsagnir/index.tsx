@@ -14,6 +14,7 @@ import { SortOptions } from '../../types/enums'
 import BreadcrumbsWithMobileDivider from '../../components/BreadcrumbsWithMobileDivider/BreadcrumbsWithMobileDivider'
 import { sorting } from '../../utils/helpers'
 import EmptyState from '../../components/EmptyState/EmptyState'
+import Pagination from '../../components/Pagination/Pagination'
 
 type arrayDummy = Array<info>
 type doc = {
@@ -36,6 +37,8 @@ type info = {
   review: string
   documents: Array<doc>
 }
+
+const CARDS_PER_PAGE = 12
 
 export const MyReviewPage = () => {
   const dummycontent: arrayDummy = [
@@ -61,6 +64,205 @@ export const MyReviewPage = () => {
       review:
         'Þetta er mín umsögn. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget vulputate massa, ac posuere erat. Sed malesuada at ipsum a efficitur. Nam pellentesque semper sem, lacinia placerat enim sodales at. Nullam commodo auctor auctor. Etiam elit lorem, maximus in suscipit vitae, luctus eget sem.',
     },
+    {
+      id: 3093,
+      caseNumber: '3/2023',
+      name: 'Númer 5 TESTE',
+      adviceCount: 22,
+      shortDescription: 'test',
+      status: 'Til umsagnar',
+      institution: 'Fjármála- og efnahagsráðuneytið',
+      type: 'Drög að stefnu',
+      policyArea: 'Fjölmiðlun',
+      processBegins: '2023-01-13T00:00:00',
+      processEnds: '2023-01-27T23:59:59',
+      created: '2023-01-15T15:46:27.82',
+      documents: [
+        {
+          id: 1,
+          name: 'jo',
+        },
+      ],
+      review:
+        'Þetta er mín umsögn. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget vulputate massa, ac posuere erat. Sed malesuada at ipsum a efficitur. Nam pellentesque semper sem, lacinia placerat enim sodales at. Nullam commodo auctor auctor. Etiam elit lorem, maximus in suscipit vitae, luctus eget sem.',
+    },
+    {
+      id: 3094,
+      caseNumber: '3/2023',
+      name: 'Númer 5 TESTE',
+      adviceCount: 22,
+      shortDescription: 'test',
+      status: 'Til umsagnar',
+      institution: 'Fjármála- og efnahagsráðuneytið',
+      type: 'Drög að stefnu',
+      policyArea: 'Fjölmiðlun',
+      processBegins: '2023-01-13T00:00:00',
+      processEnds: '2023-01-27T23:59:59',
+      created: '2023-01-15T15:46:27.82',
+      documents: [
+        {
+          id: 1,
+          name: 'jo',
+        },
+      ],
+      review:
+        'Þetta er mín umsögn. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget vulputate massa, ac posuere erat. Sed malesuada at ipsum a efficitur. Nam pellentesque semper sem, lacinia placerat enim sodales at. Nullam commodo auctor auctor. Etiam elit lorem, maximus in suscipit vitae, luctus eget sem.',
+    },
+    {
+      id: 3095,
+      caseNumber: '3/2023',
+      name: 'Númer 5 TESTE',
+      adviceCount: 22,
+      shortDescription: 'test',
+      status: 'Til umsagnar',
+      institution: 'Fjármála- og efnahagsráðuneytið',
+      type: 'Drög að stefnu',
+      policyArea: 'Fjölmiðlun',
+      processBegins: '2023-01-13T00:00:00',
+      processEnds: '2023-01-27T23:59:59',
+      created: '2023-01-15T15:46:27.82',
+      documents: [
+        {
+          id: 1,
+          name: 'jo',
+        },
+      ],
+      review:
+        'Þetta er mín umsögn. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget vulputate massa, ac posuere erat. Sed malesuada at ipsum a efficitur. Nam pellentesque semper sem, lacinia placerat enim sodales at. Nullam commodo auctor auctor. Etiam elit lorem, maximus in suscipit vitae, luctus eget sem.',
+    },
+    {
+      id: 3096,
+      caseNumber: '3/2023',
+      name: 'Númer 5 TESTE',
+      adviceCount: 22,
+      shortDescription: 'test',
+      status: 'Til umsagnar',
+      institution: 'Fjármála- og efnahagsráðuneytið',
+      type: 'Drög að stefnu',
+      policyArea: 'Fjölmiðlun',
+      processBegins: '2023-01-13T00:00:00',
+      processEnds: '2023-01-27T23:59:59',
+      created: '2023-01-15T15:46:27.82',
+      documents: [
+        {
+          id: 1,
+          name: 'jo',
+        },
+      ],
+      review:
+        'Þetta er mín umsögn. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget vulputate massa, ac posuere erat. Sed malesuada at ipsum a efficitur. Nam pellentesque semper sem, lacinia placerat enim sodales at. Nullam commodo auctor auctor. Etiam elit lorem, maximus in suscipit vitae, luctus eget sem.',
+    },
+    {
+      id: 3097,
+      caseNumber: '3/2023',
+      name: 'Númer 5 TESTE',
+      adviceCount: 22,
+      shortDescription: 'test',
+      status: 'Til umsagnar',
+      institution: 'Fjármála- og efnahagsráðuneytið',
+      type: 'Drög að stefnu',
+      policyArea: 'Fjölmiðlun',
+      processBegins: '2023-01-13T00:00:00',
+      processEnds: '2023-01-27T23:59:59',
+      created: '2023-01-15T15:46:27.82',
+      documents: [
+        {
+          id: 1,
+          name: 'jo',
+        },
+      ],
+      review:
+        'Þetta er mín umsögn. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget vulputate massa, ac posuere erat. Sed malesuada at ipsum a efficitur. Nam pellentesque semper sem, lacinia placerat enim sodales at. Nullam commodo auctor auctor. Etiam elit lorem, maximus in suscipit vitae, luctus eget sem.',
+    },
+    {
+      id: 3098,
+      caseNumber: '3/2023',
+      name: 'Númer 5 TESTE',
+      adviceCount: 22,
+      shortDescription: 'test',
+      status: 'Til umsagnar',
+      institution: 'Fjármála- og efnahagsráðuneytið',
+      type: 'Drög að stefnu',
+      policyArea: 'Fjölmiðlun',
+      processBegins: '2023-01-13T00:00:00',
+      processEnds: '2023-01-27T23:59:59',
+      created: '2023-01-15T15:46:27.82',
+      documents: [
+        {
+          id: 1,
+          name: 'jo',
+        },
+      ],
+      review:
+        'Þetta er mín umsögn. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget vulputate massa, ac posuere erat. Sed malesuada at ipsum a efficitur. Nam pellentesque semper sem, lacinia placerat enim sodales at. Nullam commodo auctor auctor. Etiam elit lorem, maximus in suscipit vitae, luctus eget sem.',
+    },
+    {
+      id: 3099,
+      caseNumber: '3/2023',
+      name: 'Númer 5 TESTE',
+      adviceCount: 22,
+      shortDescription: 'test',
+      status: 'Til umsagnar',
+      institution: 'Fjármála- og efnahagsráðuneytið',
+      type: 'Drög að stefnu',
+      policyArea: 'Fjölmiðlun',
+      processBegins: '2023-01-13T00:00:00',
+      processEnds: '2023-01-27T23:59:59',
+      created: '2023-01-15T15:46:27.82',
+      documents: [
+        {
+          id: 1,
+          name: 'jo',
+        },
+      ],
+      review:
+        'Þetta er mín umsögn. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget vulputate massa, ac posuere erat. Sed malesuada at ipsum a efficitur. Nam pellentesque semper sem, lacinia placerat enim sodales at. Nullam commodo auctor auctor. Etiam elit lorem, maximus in suscipit vitae, luctus eget sem.',
+    },
+    {
+      id: 3092,
+      caseNumber: '3/2023',
+      name: 'Númer 5 TESTE',
+      adviceCount: 22,
+      shortDescription: 'test',
+      status: 'Til umsagnar',
+      institution: 'Fjármála- og efnahagsráðuneytið',
+      type: 'Drög að stefnu',
+      policyArea: 'Fjölmiðlun',
+      processBegins: '2023-01-13T00:00:00',
+      processEnds: '2023-01-27T23:59:59',
+      created: '2023-01-15T15:46:27.82',
+      documents: [
+        {
+          id: 1,
+          name: 'jo',
+        },
+      ],
+      review:
+        'Þetta er mín umsögn. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget vulputate massa, ac posuere erat. Sed malesuada at ipsum a efficitur. Nam pellentesque semper sem, lacinia placerat enim sodales at. Nullam commodo auctor auctor. Etiam elit lorem, maximus in suscipit vitae, luctus eget sem.',
+    },
+    {
+      id: 3081,
+      caseNumber: '3/2023',
+      name: 'Númer 5 TESTE',
+      adviceCount: 22,
+      shortDescription: 'test',
+      status: 'Til umsagnar',
+      institution: 'Fjármála- og efnahagsráðuneytið',
+      type: 'Drög að stefnu',
+      policyArea: 'Fjölmiðlun',
+      processBegins: '2023-01-13T00:00:00',
+      processEnds: '2023-01-27T23:59:59',
+      created: '2023-01-15T15:46:27.82',
+      documents: [
+        {
+          id: 1,
+          name: 'jo',
+        },
+      ],
+      review:
+        'Þetta er mín umsögn. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget vulputate massa, ac posuere erat. Sed malesuada at ipsum a efficitur. Nam pellentesque semper sem, lacinia placerat enim sodales at. Nullam commodo auctor auctor. Etiam elit lorem, maximus in suscipit vitae, luctus eget sem.',
+    },
+
     {
       id: 3024,
       caseNumber: '3/2023',
@@ -139,6 +341,7 @@ export const MyReviewPage = () => {
   const [data, setData] = useState(dummycontent)
   const [sortTitle, setSortTitle] = useState(SortOptions.aToZ)
   const [searchValue, setSearchValue] = useState('')
+  const [page, setPage] = useState<number>(1)
 
   useEffect(() => {
     const sortedContent = sorting(dummycontent, sortTitle)
@@ -155,8 +358,17 @@ export const MyReviewPage = () => {
       : setData(sortedContent)
   }, [searchValue])
 
+  const updatePage = (pageNumber) => {
+    setPage(pageNumber)
+  }
+
+  const count = data.length
+  const totalPages = Math.ceil(count / CARDS_PER_PAGE)
+  const base = page === 1 ? 0 : (page - 1) * CARDS_PER_PAGE
+  const visibleItems = data.slice(base, page * CARDS_PER_PAGE)
+
   return (
-    <Layout>
+    <Layout seo={{ title: 'umsagnir', url: 'umsagnir' }}>
       <BreadcrumbsWithMobileDivider
         items={[
           { title: 'Samráðsgátt', href: '/' },
@@ -182,57 +394,64 @@ export const MyReviewPage = () => {
             setSortTitle={(title: SortOptions) => setSortTitle(title)}
           />
           {data && (
-            <Tiles space={3} columns={[1, 1, 1, 2, 3]}>
-              {data.map((item, index) => {
-                const review = {
-                  tag: item.status,
-                  id: item.id,
-                  title: item.name,
-                  eyebrows: [item.type, item.institution],
-                }
-                return (
-                  <Card
-                    frontPage={false}
-                    key={index}
-                    showAttachment
-                    card={review}
-                    dropdown={
-                      <DropdownMenu
-                        icon="chevronDown"
-                        title="Viðhengi"
-                        items={item.documents.map((doc) => {
-                          return {
-                            title: 'Viðhengi ' + doc.id + ' - ' + doc.name,
-                            onClick: console.log,
-                          }
-                        })}
-                      />
+            <>
+              {visibleItems && (
+                <Tiles space={3} columns={[1, 1, 1, 2, 3]}>
+                  {visibleItems.map((item, index) => {
+                    const review = {
+                      tag: item.status,
+                      id: item.id,
+                      title: item.name,
+                      eyebrows: [item.type, item.institution],
                     }
-                  >
-                    <Box
-                      display="flex"
-                      flexDirection="row"
-                      alignItems="center"
-                      justifyContent="spaceBetween"
-                    >
-                      <Text variant="eyebrow">Þín umsögn</Text>
-                    </Box>
-                    <Box
-                      style={{
-                        minHeight: 110,
-                        lineBreak: 'anywhere',
-                      }}
-                    >
-                      <Box>
-                        <Text variant="small" color="dark400" truncate>
-                          {item.review}
-                        </Text>
-                      </Box>
-                    </Box>
-                  </Card>
-                )
-              })}
-            </Tiles>
+                    return (
+                      <Card
+                        frontPage={false}
+                        key={index}
+                        showAttachment
+                        card={review}
+                        dropdown={
+                          <DropdownMenu
+                            icon="chevronDown"
+                            title="Viðhengi"
+                            items={item.documents.map((doc) => {
+                              return {
+                                title: 'Viðhengi ' + doc.id + ' - ' + doc.name,
+                                onClick: console.log,
+                              }
+                            })}
+                          />
+                        }
+                      >
+                        <Box
+                          display="flex"
+                          flexDirection="row"
+                          alignItems="center"
+                          justifyContent="spaceBetween"
+                        >
+                          <Text variant="eyebrow">Þín umsögn</Text>
+                        </Box>
+                        <Box
+                          style={{
+                            minHeight: 110,
+                            lineBreak: 'anywhere',
+                          }}
+                        >
+                          <Box>
+                            <Text variant="small" color="dark400" truncate>
+                              {item.review}
+                            </Text>
+                          </Box>
+                        </Box>
+                      </Card>
+                    )
+                  })}
+                </Tiles>
+              )}
+              {totalPages > 1 && (
+                <Pagination updatePage={updatePage} totalPages={totalPages} />
+              )}
+            </>
           )}
           {data.length === 0 && <EmptyState />}
         </Stack>
