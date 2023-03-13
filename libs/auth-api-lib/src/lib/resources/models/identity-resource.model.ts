@@ -154,21 +154,4 @@ export class IdentityResource extends Model {
   @UpdatedAt
   @ApiProperty()
   readonly modified?: Date
-
-  toDTO(): IdentityResourcesDTO {
-    return {
-      name: this.name,
-      enabled: this.enabled,
-      displayName: this.displayName,
-      description: this.description,
-      showInDiscoveryDocument: this.showInDiscoveryDocument,
-      grantToLegalGuardians: this.grantToLegalGuardians,
-      grantToProcuringHolders: this.grantToProcuringHolders,
-      allowExplicitDelegationGrant: this.allowExplicitDelegationGrant,
-      automaticDelegationGrant: this.automaticDelegationGrant,
-      alsoForDelegatedUser: this.alsoForDelegatedUser,
-      required: this.required,
-      emphasize: this.emphasize,
-    }
-  }
 }
