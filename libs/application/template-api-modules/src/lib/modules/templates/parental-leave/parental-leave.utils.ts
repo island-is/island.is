@@ -290,6 +290,7 @@ export const transformApplicationToParentalLeaveDTO = (
     multipleBirths,
     isSelfEmployed,
     isReceivingUnemploymentBenefits,
+    employerLastSixMonths,
   } = getApplicationAnswers(application.answers)
 
   const { applicationFundId } = getApplicationExternalData(
@@ -331,7 +332,8 @@ export const transformApplicationToParentalLeaveDTO = (
     },
     periods,
     employers:
-      applicationType === PARENTAL_LEAVE && !receivingUnemploymentBenefits
+      (applicationType === PARENTAL_LEAVE && !receivingUnemploymentBenefits) ||
+      (applicationType === PARENTAL_GRANT && employerLastSixMonths === YES)
         ? getEmployer(application, selfEmployed)
         : [],
     status: 'In Progress',

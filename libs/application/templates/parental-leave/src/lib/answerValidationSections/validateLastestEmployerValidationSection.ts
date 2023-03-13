@@ -4,7 +4,13 @@ import { AnswerValidationError } from '@island.is/application/core'
 import { buildError, ValidateField, validateFieldInDictionary } from './utils'
 import { isValidEmail } from '../isValidEmail'
 import isArray from 'lodash/isArray'
-import { AnswerValidationConstants, PARENTAL_LEAVE, YES } from '../../constants'
+import {
+  AnswerValidationConstants,
+  NO,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  YES,
+} from '../../constants'
 import { Application } from '@island.is/application/types'
 import { getApplicationAnswers } from '../parentalLeaveUtils'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
@@ -71,12 +77,14 @@ export const validateLatestEmployerValidationSection = (
     isSelfEmployed,
     isReceivingUnemploymentBenefits,
     applicationType,
+    employerLastSixMonths,
   } = getApplicationAnswers(application.answers)
 
   if (
     isSelfEmployed === YES ||
     isReceivingUnemploymentBenefits === YES ||
-    applicationType !== PARENTAL_LEAVE
+    (applicationType === PARENTAL_GRANT && employerLastSixMonths === NO) ||
+    applicationType === PARENTAL_GRANT_STUDENTS
   ) {
     return undefined
   }

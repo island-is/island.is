@@ -909,6 +909,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'fileUpload.residenceGrant',
   ) as Files[]
 
+  const employmentTerminationCertificateFiles = getValueViaPath(
+    answers,
+    'fileUpload.employmentTerminationCertificateFile',
+  ) as Files[]
+
   const dateOfBirth = getValueViaPath(answers, 'dateOfBirth') as string
 
   const commonFiles = getValueViaPath(answers, 'fileUpload.file') as Files[]
@@ -976,6 +981,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     isResidenceGrant,
     dateOfBirth,
     residenceGrantFiles,
+    employmentTerminationCertificateFiles,
     hasAppliedForReidenceGrant,
     previousState,
   }

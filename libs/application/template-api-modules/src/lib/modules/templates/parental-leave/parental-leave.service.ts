@@ -28,6 +28,7 @@ import {
   StartDateOptions,
   UnEmployedBenefitTypes,
   PARENTAL_LEAVE,
+  PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   getMultipleBirthsDays,
   SINGLE,
@@ -395,13 +396,19 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       selfEmployedFiles: selfEmployedPdfs,
       studentFiles: studentPdfs,
       singleParentFiles: singleParentPdfs,
+      employmentTerminationCertificateFiles: employmentTerminationCertificatePdfs,
       additionalDocuments,
+      employerLastSixMonths,
+      employers,
     } = getApplicationAnswers(application.answers)
     const { applicationFundId } = getApplicationExternalData(
       application.externalData,
     )
     const { residenceGrantFiles } = getApplicationAnswers(application.answers)
     const { state } = application
+    const isNotStillEmployed = employers?.some(
+      (employer) => employer.stillEmployed === NO,
+    )
 
     if (
       state === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
@@ -485,6 +492,30 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
           attachments.push({
             attachmentType: apiConstants.attachments.student,
+            attachmentBytes: pdf,
+          })
+        }
+      }
+    } else if (
+      applicationType === PARENTAL_GRANT &&
+      employerLastSixMonths === YES &&
+      isNotStillEmployed
+    ) {
+      if (employmentTerminationCertificatePdfs?.length) {
+        for (
+          let i = 0;
+          i <= employmentTerminationCertificatePdfs.length - 1;
+          i++
+        ) {
+          const pdf = await this.getPdf(
+            application,
+            i,
+            'fileUpload.employmentTerminationCertificateFile',
+          )
+
+          attachments.push({
+            attachmentType:
+              apiConstants.attachments.employmentTerminationCertificate,
             attachmentBytes: pdf,
           })
         }
