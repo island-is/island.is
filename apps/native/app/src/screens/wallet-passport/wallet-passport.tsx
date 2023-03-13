@@ -1,5 +1,12 @@
 import {useQuery} from '@apollo/client';
-import {Alert, dynamicColor, Input, InputRow, LicenceCard} from '@ui';
+import {
+  Alert,
+  dynamicColor,
+  Input,
+  InputRow,
+  LicenceCard,
+  Accordion,
+} from '@ui';
 import React from 'react';
 import {useIntl} from 'react-intl';
 import {Platform, SafeAreaView, View} from 'react-native';
@@ -24,6 +31,15 @@ const Information = styled.ScrollView`
 `;
 const Spacer = styled.View`
   height: 150px;
+`;
+
+const Label = styled.Text`
+  margin-bottom: ${({theme}) => theme.spacing[1]}px;
+
+  ${font({
+    fontSize: 13,
+    lineHeight: 17,
+  })}
 `;
 
 const {
@@ -75,6 +91,8 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
 
   const passportData = data?.getIdentityDocument;
   const item = passportData?.find((x: any) => x.number === id) || null;
+
+  const childrenPassport = data?.getIdentityDocumentChildren;
 
   const isInvalid = item?.status?.toLowerCase() === 'invalid';
   const expireWarning = !!item?.expiresWithinNoticeTime;
@@ -162,6 +180,7 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
                 }
                 loading={loading}
                 error={!!error}
+                noBorder
                 isCompact
               />
             ) : null}
@@ -172,9 +191,101 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
               label={intl.formatMessage({id: 'walletPassport.mrzName'})}
               value={`${item?.mrzLastName} ${item?.mrzFirstName}`}
               loading={loading}
+              noBorder
               error={!!error}
             />
           </InputRow>
+
+          {childrenPassport?.length > 0 ? (
+            <View style={{paddingHorizontal: 16}}>
+              <Label>
+                {intl.formatMessage({id: 'walletPassport.children'})}
+              </Label>
+              <Accordion>
+                {childrenPassport?.map((child: any) => {
+                  return (
+                    <AccordionItem
+                      key={child.childNationalId}
+                      title={child?.childName}
+                    >
+                      <View>
+                        {child.passports?.map((passport: any) => {
+                          return (
+                            <View key={passport.number}>
+                              <InputRow>
+                                <Input
+                                  label={intl.formatMessage({
+                                    id: 'walletPassport.number',
+                                  })}
+                                  value={passport?.numberWithType}
+                                  loading={loading}
+                                  error={!!error}
+                                  noBorder
+                                  isCompact
+                                />
+                              </InputRow>
+
+                              <InputRow>
+                                {passport?.issuingDate ? (
+                                  <Input
+                                    label={intl.formatMessage({
+                                      id: 'walletPassport.issuingDate',
+                                    })}
+                                    value={
+                                      passport?.issuingDate
+                                        ? intl.formatDate(
+                                            new Date(passport?.issuingDate),
+                                          )
+                                        : '-'
+                                    }
+                                    loading={loading}
+                                    error={!!error}
+                                    noBorder
+                                    isCompact
+                                  />
+                                ) : null}
+                                {passport?.expirationDate ? (
+                                  <Input
+                                    label={intl.formatMessage({
+                                      id: 'walletPassport.expirationDate',
+                                    })}
+                                    value={
+                                      passport?.expirationDate
+                                        ? intl.formatDate(
+                                            new Date(passport?.expirationDate),
+                                          )
+                                        : '-'
+                                    }
+                                    loading={loading}
+                                    error={!!error}
+                                    noBorder
+                                    isCompact
+                                  />
+                                ) : null}
+                              </InputRow>
+
+                              <InputRow>
+                                <Input
+                                  label={intl.formatMessage({
+                                    id: 'walletPassport.mrzName',
+                                  })}
+                                  value={`${passport?.mrzLastName} ${passport?.mrzFirstName}`}
+                                  loading={loading}
+                                  error={!!error}
+                                  noBorder
+                                  isCompact
+                                />
+                              </InputRow>
+                            </View>
+                          );
+                        })}
+                      </View>
+                    </AccordionItem>
+                  );
+                })}
+              </Accordion>
+            </View>
+          ) : null}
         </SafeAreaView>
         {Platform.OS === 'android' && <Spacer />}
       </Information>

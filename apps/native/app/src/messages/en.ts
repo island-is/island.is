@@ -187,6 +187,7 @@ export const en: TranslatedMessages = {
   'walletPassport.issuingDate': 'Date issued',
   'walletPassport.expirationDate': 'Expiration date',
   'walletPassport.mrzName': 'Machine-readable name',
+  'walletPassport.children': 'Childrens passport',
 
   // license scanner
   'licenseScanner.title': 'Scan barcode',
