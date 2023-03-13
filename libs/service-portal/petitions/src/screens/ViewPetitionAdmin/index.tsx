@@ -12,7 +12,7 @@ import {
 import { useLocation } from 'react-router-dom'
 import { LockList, UnlockList, UpdateList } from '../queries'
 
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import PetitionsTable from '../PetitionsTable'
 import { EndorsementList } from '../../types/schema'
@@ -24,6 +24,7 @@ import {
 } from '../hooks'
 
 const ViewPetitionAdmin = () => {
+  useNamespaces('sp.petitions')
   const { formatMessage } = useLocale()
   const location: any = useLocation()
   const { petitionData, refetchSinglePetition } = useGetSinglePetition(
