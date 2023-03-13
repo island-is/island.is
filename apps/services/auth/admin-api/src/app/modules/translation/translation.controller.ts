@@ -41,7 +41,7 @@ const namespace = `${environment.audit.defaultNamespace}/translation`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiExcludeController()
-@Controller({ path: 'backend/translation', version: [VERSION_NEUTRAL, '1'] })
+@Controller({ path: 'translation', version: [VERSION_NEUTRAL, '1'] })
 @Audit({ namespace })
 export class TranslationController {
   constructor(

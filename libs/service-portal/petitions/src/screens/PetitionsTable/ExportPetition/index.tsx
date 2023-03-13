@@ -1,6 +1,6 @@
 import { FC, ReactElement } from 'react'
 import { Box, DropdownMenu } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import * as styles from './styles.css'
 import { m } from '../../../lib/messages'
 import { downloadCSV } from './downloadCSV'
@@ -30,6 +30,7 @@ export const getCSV = async (data: any[], fileName: string) => {
 }
 
 const DropdownExport: FC<Props> = ({ onGetCSV, dropdownItems = [] }) => {
+  useNamespaces('sp.petitions')
   const { formatMessage } = useLocale()
   return (
     <Box className={styles.buttonWrapper}>

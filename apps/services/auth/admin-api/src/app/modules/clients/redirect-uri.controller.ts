@@ -29,7 +29,7 @@ const namespace = `${environment.audit.defaultNamespace}/redirect-uri`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiExcludeController()
-@Controller({ path: 'backend/redirect-uri', version: [VERSION_NEUTRAL, '1'] })
+@Controller({ path: 'redirect-uri', version: [VERSION_NEUTRAL, '1'] })
 @Audit({ namespace })
 export class RedirectUriController {
   constructor(
