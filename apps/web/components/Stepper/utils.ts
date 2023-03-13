@@ -391,7 +391,7 @@ const getStepQuestion = (step: Step): string => {
 }
 
 const getStepOptionsFromUIConfiguration = async (
-  stepper: GetSingleArticleQuery['getSingleArticle']['stepper'] | Stepper,
+  stepper: Stepper,
   apolloClient: ApolloClient<NormalizedCacheObject>,
 ) => {
   const stepOptions: {

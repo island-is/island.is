@@ -51,7 +51,7 @@ const STEPPER_HELPER_ENABLED =
   isRunningOnEnvironment('dev') || isRunningOnEnvironment('local')
 
 interface StepperProps {
-  stepper: StepperSchema | GetSingleArticleQuery['getSingleArticle']['stepper']
+  stepper: StepperSchema
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   optionsFromNamespace: { slug: string; data: Record<string, any>[] }[]
   scrollUpWhenNextStepAppears?: boolean
