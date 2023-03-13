@@ -13,7 +13,6 @@ import { infer as zinfer } from 'zod'
 import { estateSchema } from '@island.is/application/templates/estate'
 import { estateTransformer, filterAndRemoveRepeaterMetadata } from './utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { ApplicationTypes } from '@island.is/application/types'
 
 type EstateSchema = zinfer<typeof estateSchema>
@@ -21,7 +20,6 @@ type EstateSchema = zinfer<typeof estateSchema>
 @Injectable()
 export class EstateTemplateService extends BaseTemplateApiService {
   constructor(
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly syslumennService: SyslumennService,
   ) {
     super(ApplicationTypes.ESTATE)
