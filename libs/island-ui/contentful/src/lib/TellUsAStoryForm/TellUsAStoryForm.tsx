@@ -169,8 +169,6 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
         }))
       : []
 
-  console.log(errors)
-
   return (
     <>
       {!!showIntro && (
