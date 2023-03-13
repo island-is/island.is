@@ -1449,6 +1449,7 @@ search-indexer-service:
       ELASTIC_DOMAIN: 'search'
       ELASTIC_INDEX: 'island-is'
       ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com'
+      NODE_OPTIONS: '--max-old-space-size=2048'
       S3_BUCKET: 'prod-es-custom-packages'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
