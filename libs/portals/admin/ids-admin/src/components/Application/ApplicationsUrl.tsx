@@ -3,8 +3,12 @@ import { useLocale } from '@island.is/localization'
 import React, { useEffect, useState } from 'react'
 import { m } from '../../lib/messages'
 import ContentCard from './ContentCard'
+import { AuthApplicationApplicationUrlList } from './Application.loader'
 
-const ApplicationsUrl = ({ applicationUrls }: any) => {
+interface ApplicationsUrlProps {
+  applicationUrls: AuthApplicationApplicationUrlList
+}
+const ApplicationsUrl = ({ applicationUrls }: ApplicationsUrlProps) => {
   const { formatMessage } = useLocale()
   const [appUrls, setAppUrls] = useState(applicationUrls)
   const [changed, setChanged] = useState(false)
@@ -13,7 +17,7 @@ const ApplicationsUrl = ({ applicationUrls }: any) => {
   const onChangeURLS = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    setAppUrls((prev: any) => ({
+    setAppUrls((prev) => ({
       ...prev,
       [event.target.name]: event.target.value.split(', '),
     }))
@@ -38,7 +42,7 @@ const ApplicationsUrl = ({ applicationUrls }: any) => {
       <Stack space={3}>
         <Stack space={1}>
           <Input
-            name="callBackUrl"
+            name="callbackUrls"
             type="text"
             size="sm"
             label={formatMessage(m.callbackUrl)}
@@ -46,14 +50,14 @@ const ApplicationsUrl = ({ applicationUrls }: any) => {
             rows={4}
             onChange={onChangeURLS}
             backgroundColor="blue"
-            value={appUrls.callBackUrl.join(', ')}
+            value={appUrls.callbackUrls.join(', ')}
             placeholder={formatMessage(m.callBackUrlPlaceholder)}
           />
           <Text variant="small">{formatMessage(m.callBackUrlDescription)}</Text>
         </Stack>
         <Stack space={1}>
           <Input
-            name="logoutUrl"
+            name="logoutUrls"
             type="text"
             size="sm"
             label={formatMessage(m.logoutUrl)}
@@ -61,7 +65,7 @@ const ApplicationsUrl = ({ applicationUrls }: any) => {
             rows={4}
             onChange={onChangeURLS}
             backgroundColor="blue"
-            value={appUrls.logoutUrl.join(', ')}
+            value={appUrls.logoutUrls.join(', ')}
             placeholder={formatMessage(m.logoutUrlPlaceholder)}
           />
           <Text variant="small">{formatMessage(m.logoutUrlDescription)}</Text>

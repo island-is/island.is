@@ -1,35 +1,24 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
-
 import { Environment } from '@island.is/shared/types'
-
+import { Field, ObjectType } from '@nestjs/graphql'
+import { ApplicationBasicInfo } from './application-basic-info.model'
 import { TranslatedValue } from '../../models/translated-value.model'
 import { ApplicationUrl } from './application-applicationUrl.model'
 import { ApplicationLifeTime } from './application-lifetime.model'
-import { ApplicationBasicInfo } from './application-basic-info.model'
 
-@ObjectType('AuthAdminApplicationEnvironment')
-export class ApplicationEnvironment {
-  @Field(() => ID)
-  id!: string
-
+@ObjectType('AuthAdminApplicationDetailsEnvironment')
+export class ApplicationDetailsEnvironment {
   @Field(() => Environment)
   environment!: Environment
 
-  @Field()
-  name!: string
+  @Field(() => ApplicationBasicInfo)
+  basicInfo!: ApplicationBasicInfo
 
   @Field(() => [TranslatedValue])
-  displayName!: TranslatedValue[]
-
-  @Field(() => ApplicationUrl)
-  ApplicationUrls!: ApplicationUrl
+  translations!: TranslatedValue[]
 
   @Field(() => ApplicationUrl)
   applicationUrls!: ApplicationUrl
 
   @Field(() => ApplicationLifeTime)
   lifeTime!: ApplicationLifeTime
-
-  @Field(() => ApplicationBasicInfo)
-  basicInfo!: ApplicationBasicInfo
 }

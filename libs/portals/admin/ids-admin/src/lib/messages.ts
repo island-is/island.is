@@ -280,4 +280,28 @@ export const m = defineMessages({
     id: 'ap.ids-admin:life-time',
     defaultMessage: 'Life time',
   },
+  oAuthAuthorizationUrl: {
+    id: 'ap.ids-admin:oAuthAuthorizationUrl',
+    defaultMessage: 'oAuthAuthorizationUrl',
+  },
+  deviceAuthorizationUrl: {
+    id: 'ap.ids-admin:deviceAuthorizationUrl',
+    defaultMessage: 'deviceAuthorizationUrl',
+  },
+  oAuthTokenUrl: {
+    id: 'ap.ids-admin:oAuthTokenUrl',
+    defaultMessage: 'oAuthTokenUrl',
+  },
+  oAuthUserInfoUrl: {
+    id: 'ap.ids-admin:oAuthUserInfoUrl',
+    defaultMessage: 'oAuthUserInfoUrl',
+  },
+  openIdConfiguration: {
+    id: 'ap.ids-admin:openIdConfiguration',
+    defaultMessage: 'openIdConfiguration',
+  },
+  jsonWebKeySet: {
+    id: 'ap.ids-admin:jsonWebKeySet',
+    defaultMessage: 'jsonWebKeySet',
+  },
 })

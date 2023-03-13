@@ -8,19 +8,20 @@ interface ContentCardProps {
   title: string
   onSave?: (saveOnAllEnvironments: boolean) => void
   changed?: boolean
+  withForm?: boolean
 }
 const ContentCard: FC<ContentCardProps> = ({
   children,
   title,
   onSave,
   changed,
+  withForm = true,
 }) => {
   const { formatMessage } = useLocale()
   const [allEnvironments, setAllEnvironments] = useState<boolean>(false)
 
   return (
     <Box
-      background="white"
       borderRadius="large"
       padding={2}
       display="flex"
@@ -35,31 +36,35 @@ const ContentCard: FC<ContentCardProps> = ({
           {title}
         </Text>
       </Box>
-      <Form method="post">
-        {children}
-        {onSave && (
-          <Box
-            alignItems="center"
-            marginTop="containerGutter"
-            display="flex"
-            justifyContent="spaceBetween"
-          >
-            <Checkbox
-              label={formatMessage(m.saveForAllEnvironments)}
-              value={`${allEnvironments}`}
-              disabled={!changed}
-              onChange={() => setAllEnvironments(!allEnvironments)}
-            />
-            <Button
-              disabled={!changed}
-              type="submit"
-              onClick={() => onSave(allEnvironments)}
+      {withForm ? (
+        <Form method="post">
+          {children}
+          {onSave && (
+            <Box
+              alignItems="center"
+              marginTop="containerGutter"
+              display="flex"
+              justifyContent="spaceBetween"
             >
-              {formatMessage(m.saveSettings)}
-            </Button>
-          </Box>
-        )}
-      </Form>
+              <Checkbox
+                label={formatMessage(m.saveForAllEnvironments)}
+                value={`${allEnvironments}`}
+                disabled={!changed}
+                onChange={() => setAllEnvironments(!allEnvironments)}
+              />
+              <Button
+                disabled={!changed}
+                type="submit"
+                onClick={() => onSave(allEnvironments)}
+              >
+                {formatMessage(m.saveSettings)}
+              </Button>
+            </Box>
+          )}
+        </Form>
+      ) : (
+        children
+      )}
     </Box>
   )
 }

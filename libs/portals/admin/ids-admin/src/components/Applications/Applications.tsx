@@ -88,7 +88,7 @@ const Applications = () => {
           {withCreateButton && (
             <Box>
               <Button size={'small'} onClick={openCreateApplicationModal}>
-                {m.createApplication}
+                {formatMessage(m.createApplication)}
               </Button>
             </Box>
           )}

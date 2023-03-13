@@ -8,8 +8,13 @@ import React, { useEffect, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import ContentCard from './ContentCard'
+import { AuthApplicationLifeTimeList } from './Application.loader'
 
-const Lifetime = ({ lifetime }: any) => {
+interface LifetimeProps {
+  lifetime: AuthApplicationLifeTimeList
+}
+
+const Lifetime = ({ lifetime }: LifetimeProps) => {
   const { formatMessage } = useLocale()
   const [lifeTimeCopy, setLifeTimeCopy] = useState(lifetime)
   const [changed, setChanged] = useState(false)
@@ -17,7 +22,7 @@ const Lifetime = ({ lifetime }: any) => {
   const setLifeTimeLength = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    setLifeTimeCopy((prev: any) => ({
+    setLifeTimeCopy((prev) => ({
       ...prev,
       [event.target.name]: +event.target.value,
     }))

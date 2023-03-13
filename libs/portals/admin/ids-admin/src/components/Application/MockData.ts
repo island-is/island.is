@@ -1,4 +1,5 @@
 export const MockApplicationItem = {
+  applicationId: '@hugverk.is/web/hugverkastofa-dev',
   tag: 'Web Application',
   name: 'My App name',
   availableEnvironments: {
