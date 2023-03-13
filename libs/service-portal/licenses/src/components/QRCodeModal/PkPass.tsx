@@ -49,7 +49,7 @@ export const PkPass = ({
   const { width } = useWindowSize()
   const timeFetched = new Date() // Used to compare if license is expired
   const isDriversLicense = licenseType === GenericLicenseType.DriversLicense
-  const windowReference = window.open()
+  let windowReference: Window | null
 
   const toggleModal = () => {
     setModalOpen(!modalOpen)
@@ -128,6 +128,7 @@ export const PkPass = ({
             icon="QRCode"
             iconType="outline"
             onClick={() => {
+              windowReference = window.open()
               getCode()
               toggleModal()
             }}
@@ -183,6 +184,7 @@ export const PkPass = ({
             iconType="outline"
             onClick={() => {
               setDisplayLoader(true)
+              windowReference = window.open()
               getLink()
             }}
           >
