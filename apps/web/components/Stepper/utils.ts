@@ -7,7 +7,11 @@ import {
 } from 'xstate'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 
-import { Step, Stepper } from '@island.is/web/graphql/schema'
+import {
+  GetSingleArticleQuery,
+  Step,
+  Stepper,
+} from '@island.is/web/graphql/schema'
 import {
   GetNamespaceQuery,
   QueryGetNamespaceArgs,
@@ -387,7 +391,7 @@ const getStepQuestion = (step: Step): string => {
 }
 
 const getStepOptionsFromUIConfiguration = async (
-  stepper: Stepper,
+  stepper: GetSingleArticleQuery['getSingleArticle']['stepper'],
   apolloClient: ApolloClient<NormalizedCacheObject>,
 ) => {
   const stepOptions: {
