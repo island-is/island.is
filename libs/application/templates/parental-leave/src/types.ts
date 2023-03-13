@@ -120,7 +120,7 @@ export type ChildInformation =
 export interface ExistingChildApplication {
   expectedDateOfBirth: string
   applicationId: string
-  adoptionDate: string
+  adoptionDate?: string
 }
 
 export interface PregnancyStatus {
