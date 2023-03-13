@@ -82,6 +82,7 @@ import * as constants from '@island.is/judicial-system/consts'
 import AppealSection from './Components/AppealSection/AppealSection'
 import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
+import ReopenModal from './Components/ReopenModal/ReopenModal'
 
 interface ModalControls {
   open: boolean
@@ -221,6 +222,9 @@ export const SignedVerdictOverview: React.FC = () => {
     courtRecordSignatureConfirmationResponse,
     setCourtRecordSignatureConfirmationResponse,
   ] = useState<SignatureConfirmationResponse>()
+
+  // Reopen case state
+  const [isReopeningCase, setIsReopeningCase] = useState<boolean>(false)
 
   const {
     workingCase,
@@ -794,11 +798,7 @@ export const SignedVerdictOverview: React.FC = () => {
                             data-testid="modifyRulingButton"
                             onClick={(event) => {
                               event.stopPropagation()
-                              router.push(
-                                isRestrictionCase(workingCase.type)
-                                  ? `${constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`
-                                  : `${constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`,
-                              )
+                              setIsReopeningCase(true)
                             }}
                           >
                             {capitalize(formatMessage(core.modify))}
@@ -981,6 +981,9 @@ export const SignedVerdictOverview: React.FC = () => {
           }}
           navigateOnClose={false}
         />
+      )}
+      {isReopeningCase && (
+        <ReopenModal onClose={() => setIsReopeningCase(false)} />
       )}
     </PageLayout>
   )
