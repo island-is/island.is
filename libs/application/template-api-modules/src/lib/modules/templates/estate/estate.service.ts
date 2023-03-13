@@ -19,9 +19,7 @@ type EstateSchema = zinfer<typeof estateSchema>
 
 @Injectable()
 export class EstateTemplateService extends BaseTemplateApiService {
-  constructor(
-    private readonly syslumennService: SyslumennService,
-  ) {
+  constructor(private readonly syslumennService: SyslumennService) {
     super(ApplicationTypes.ESTATE)
   }
 
