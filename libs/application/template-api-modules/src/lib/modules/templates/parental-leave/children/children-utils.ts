@@ -100,7 +100,6 @@ export const applicationsToExistingChildApplication = (
   applications: Application[],
 ): ExistingChildApplication[] => {
   const result: ExistingChildApplication[] = []
-
   for (const application of applications) {
     const childInformation = getSelectedChild(
       application.answers,
@@ -111,6 +110,7 @@ export const applicationsToExistingChildApplication = (
       result.push({
         applicationId: application.id,
         expectedDateOfBirth: childInformation.expectedDateOfBirth,
+        adoptionDate: childInformation.adoptionDate!,
       })
     }
   }
@@ -191,23 +191,32 @@ export const getChildrenAndExistingApplications = (
   const existingApplications = applicationsToExistingChildApplication(
     applicationsWhereApplicant,
   )
+
   const childrenWhereOtherParent = applicationsToChildInformation(
     applicationsWhereOtherParent,
     true,
   )
 
+  console.log('childrenWhereOtherParent ', childrenWhereOtherParent)
+
   const children: ChildInformationWithoutRights[] = []
 
   for (const child of childrenWhereOtherParent) {
-    const isAlreadyInList = children.some(
-      ({ expectedDateOfBirth }) =>
-        expectedDateOfBirth === child.expectedDateOfBirth,
-    )
+    const isAlreadyInList =
+      children.some(
+        ({ expectedDateOfBirth }) =>
+          expectedDateOfBirth === child.expectedDateOfBirth,
+      ) ||
+      children.some(({ adoptionDate }) => adoptionDate === child.adoptionDate)
 
-    const hasAlreadyAppliedForChild = existingApplications.some(
-      ({ expectedDateOfBirth }) =>
-        expectedDateOfBirth === child.expectedDateOfBirth,
-    )
+    const hasAlreadyAppliedForChild =
+      existingApplications.some(
+        ({ expectedDateOfBirth }) =>
+          expectedDateOfBirth === child.expectedDateOfBirth,
+      ) ||
+      existingApplications.some(
+        ({ adoptionDate }) => adoptionDate === child.adoptionDate,
+      )
 
     // This supports to cover otherParent multipleBirths case
     if (!isAlreadyInList && !hasAlreadyAppliedForChild) {

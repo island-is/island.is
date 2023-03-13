@@ -909,6 +909,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Barn frumættleidd {dateOfBirth}',
       description: 'Child copy radio button',
     },
+    fosterCareOrAdoption: {
+      id: 'pl.application:selectChild.foster.care.or.adoption',
+      defaultMessage: 'Barn kemur inn á heimili {dateOfBirth}',
+      description: 'Child copy radio button',
+    },
     choose: {
       id: 'pl.application:selectChild.choose',
       defaultMessage: 'Velja',
@@ -1651,6 +1656,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:review.estimatedBirthDate',
       defaultMessage: 'Áætlaður fæðingardagur',
       description: 'Estimated date of birth',
+    },
+    adoptionDate: {
+      id: 'pl.application:review.adoption.date',
+      defaultMessage: 'Forsjárskipting á sér stað',
+      description: 'Division of custody takes place',
     },
     desc: {
       id: 'pl.application:review.desc',

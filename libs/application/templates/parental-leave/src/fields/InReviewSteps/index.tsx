@@ -15,6 +15,7 @@ import { Review } from '../Review/Review'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
   getExpectedDateOfBirthOrAdoptionDate,
+  isFosterCareAndAdoption,
   otherParentApprovalDescription,
   requiresOtherParentApproval,
 } from '../../lib/parentalLeaveUtils'
@@ -254,9 +255,13 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
       >
         {dobDate && (
           <Text variant="h4" color="blue400">
-            {formatMessage(
-              parentalLeaveFormMessages.reviewScreen.estimatedBirthDate,
-            )}
+            {isFosterCareAndAdoption(application)
+              ? formatMessage(
+                  parentalLeaveFormMessages.reviewScreen.adoptionDate,
+                )
+              : formatMessage(
+                  parentalLeaveFormMessages.reviewScreen.estimatedBirthDate,
+                )}
             <br />
             {format(dobDate, dateFormat.is)}
           </Text>

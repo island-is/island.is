@@ -38,7 +38,7 @@ const ChildSelector: FC<FieldBaseProps> = ({
   ) as {
     children: {
       expectedDateOfBirth: string
-      adoptionDate?: string
+      adoptionDate: string
       primaryParentNationalRegistryId?: string
       primaryParentTypeOfApplication?: string
       parentalRelation: ParentalRelations
@@ -46,6 +46,7 @@ const ChildSelector: FC<FieldBaseProps> = ({
     existingApplications: {
       applicationId: string
       expectedDateOfBirth: string
+      adoptionDate: string
     }[]
   }
 
@@ -108,22 +109,22 @@ const ChildSelector: FC<FieldBaseProps> = ({
                       ? formatMessage(
                           parentalLeaveFormMessages.selectChild.fosterCare,
                           {
-                            dateOfBirth: formatDateOfBirth(
-                              child.expectedDateOfBirth,
-                            ),
+                            dateOfBirth: formatDateOfBirth(child.adoptionDate),
                           },
                         )
                       : child.primaryParentTypeOfApplication === ADOPTION
                       ? formatMessage(
                           parentalLeaveFormMessages.selectChild.adoption,
                           {
-                            dateOfBirth: formatDateOfBirth(child.adoptionDate!),
+                            dateOfBirth: formatDateOfBirth(child.adoptionDate),
                           },
                         )
                       : formatMessage(
                           parentalLeaveFormMessages.selectChild.baby,
                           {
-                            dateOfBirth: formatDateOfBirth(child.adoptionDate!),
+                            dateOfBirth: formatDateOfBirth(
+                              child.expectedDateOfBirth,
+                            ),
                           },
                         ),
                   subLabel,
@@ -144,7 +145,7 @@ const ChildSelector: FC<FieldBaseProps> = ({
 
           <Stack space={2}>
             {existingApplications.map(
-              ({ applicationId, expectedDateOfBirth }) => (
+              ({ applicationId, expectedDateOfBirth, adoptionDate }) => (
                 <Box
                   border="standard"
                   borderRadius="large"
@@ -165,12 +166,21 @@ const ChildSelector: FC<FieldBaseProps> = ({
                       alignItems="flexStart"
                     >
                       <Text variant="h4" as="h2">
-                        {formatMessage(
-                          parentalLeaveFormMessages.selectChild.baby,
-                          {
-                            dateOfBirth: formatDateOfBirth(expectedDateOfBirth),
-                          },
-                        )}
+                        {adoptionDate 
+                          ? formatMessage(
+                              parentalLeaveFormMessages.selectChild.fosterCareOrAdoption,
+                              {
+                                dateOfBirth: formatDateOfBirth(
+                                  adoptionDate,
+                                ),
+                              },
+                            )
+                          : formatMessage(
+                              parentalLeaveFormMessages.selectChild.baby,
+                              {
+                                dateOfBirth: formatDateOfBirth(expectedDateOfBirth),
+                              },
+                            )}
                       </Text>
                     </Box>
                     <Box
