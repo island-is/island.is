@@ -12117,6 +12117,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/stream-chain@npm:*":
+  version: 2.0.1
+  resolution: "@types/stream-chain@npm:2.0.1"
+  dependencies:
+    "@types/node": "*"
+  checksum: 6a59da0374a74ad6aff48c669c72d3060d428d1015af94b00d290ede68706781a8419daf490af7935f0f9f2796da6965aead74ad1795f72c488630451241db55
+  languageName: node
+  linkType: hard
+
+"@types/stream-json@npm:^1.7.3":
+  version: 1.7.3
+  resolution: "@types/stream-json@npm:1.7.3"
+  dependencies:
+    "@types/node": "*"
+    "@types/stream-chain": "*"
+  checksum: cafa47c27bbd0cf446d1c90442cf53240a8a8a3828e73ba456720d6612b03d32d04067c9c0e54105b94584f37c7ed2f1a941b0600fbc6c095c25c1b401d184bb
+  languageName: node
+  linkType: hard
+
 "@types/superagent@npm:*":
   version: 4.1.10
   resolution: "@types/superagent@npm:4.1.10"
@@ -26848,6 +26867,7 @@ __metadata:
     "@types/request": 2.48.5
     "@types/smoothscroll-polyfill": 0.3.1
     "@types/stream-buffers": 3.0.3
+    "@types/stream-json": ^1.7.3
     "@types/supertest": 2.0.11
     "@types/triple-beam": 1.3.2
     "@types/ua-parser-js": 0.7.36
@@ -27062,6 +27082,8 @@ __metadata:
     storybook-addon-apollo-client: 4.0.11
     storybook-addon-designs: 6.2.1
     stream-buffers: 3.0.2
+    stream-chain: ^2.2.5
+    stream-json: ^1.7.5
     styled-components: 5.3.5
     supertest: 4.0.2
     swagger-ui-express: 4.3.0
@@ -40082,6 +40104,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"stream-chain@npm:^2.2.5":
+  version: 2.2.5
+  resolution: "stream-chain@npm:2.2.5"
+  checksum: c83cbf504bd11e2bcbe761a92801295b3decac7ffa4092ceffca2eb1b5d0763bcc511fa22cd8044e8a18c21ca66794fd10c8d9cd1292a3e6c0d83a4194c6b8ed
+  languageName: node
+  linkType: hard
+
 "stream-each@npm:^1.1.0":
   version: 1.2.3
   resolution: "stream-each@npm:1.2.3"
@@ -40120,6 +40149,15 @@ __metadata:
   dependencies:
     stream-chain: ^2.0.3
   checksum: fe44f90147b5e489b5d3008b2d6aa40f38e48773ecfc467a05a28bc125b76863271215a784ed65569f8f0c3de9313ecc4e2ab80c4c7fcd1cdc5510892c251914
+  languageName: node
+  linkType: hard
+
+"stream-json@npm:^1.7.5":
+  version: 1.7.5
+  resolution: "stream-json@npm:1.7.5"
+  dependencies:
+    stream-chain: ^2.2.5
+  checksum: d6229cd0342cbfb2f0d4be2b289cd2fe283aaa808329ec5c925b9840fc694fa91400f10bbf3275ac39c039f314fe6ab844d380341e738654ce224482f266ad2b
   languageName: node
   linkType: hard
 

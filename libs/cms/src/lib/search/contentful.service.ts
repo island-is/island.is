@@ -20,6 +20,12 @@ import {
 } from '@island.is/content-search-index-manager'
 import { Locale } from 'locale'
 
+import { chain } from 'stream-chain'
+import { parser } from 'stream-json'
+import { pick } from 'stream-json/filters/Pick'
+import { streamArray } from 'stream-json/streamers/StreamArray'
+import fs from 'fs'
+
 // Taken from here: https://github.com/contentful/contentful-sdk-core/blob/054328ba2d0df364a5f1ce6d164c5018efb63572/lib/create-http-client.js#L34-L42
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const defaultContentfulClientLogging = (level: ClientLogLevel, data: any) => {
@@ -204,7 +210,26 @@ export class ContentfulService {
     }
   }
 
-  private getSyncData(typeOfSync: typeOfSync): Promise<SyncCollection> {
+  private getSyncData(
+    typeOfSync: typeOfSync,
+    locale: Locale,
+  ): Promise<SyncCollection> {
+    if ('initial' in typeOfSync) {
+      const pipeline = chain([
+        fs.createReadStream('contentful-data.json'),
+        parser(),
+        pick({ filter: 'entries' }),
+        streamArray(),
+      ])
+
+      let counter = 0
+      pipeline.on('data', (data) => {
+        counter += 1
+        if (counter === 1) console.log(data.value)
+      })
+      pipeline.on('end', () => console.log('COUNTER', counter))
+    }
+
     return this.contentfulClient.sync({
       resolveLinks: true,
       ...typeOfSync,
@@ -251,7 +276,7 @@ export class ContentfulService {
       entries,
       nextSyncToken: newNextSyncToken,
       deletedEntries,
-    } = await this.getSyncData(typeOfSync)
+    } = await this.getSyncData(typeOfSync, locale)
 
     const nestedEntryIds = entries
       .filter((entry) =>
