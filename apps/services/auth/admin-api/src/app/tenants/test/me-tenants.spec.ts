@@ -12,6 +12,7 @@ import { setupApp, TestApp } from '@island.is/testing/nest'
 
 import { AppModule } from '../../app.module'
 import { User } from '@island.is/auth-nest-tools'
+import { NoContentException } from '@island.is/nest/problem'
 
 const currentUser = createCurrentUser({
   delegationType: AuthDelegationType.Custom,
@@ -123,6 +124,92 @@ describe('MeTenantsController', () => {
         // Assert
         expect(response.status).toEqual(200)
         expect(response.body).toMatchObject(testCase.expected)
+      })
+    })
+    describe('Test getting by id', () => {
+      let app: TestApp
+      let server: request.SuperTest<request.Test>
+
+      beforeAll(async () => {
+        app = await setupApp({
+          AppModule,
+          SequelizeConfigService,
+          user: currentUser,
+        })
+        server = request(app.getHttpServer())
+
+        const fixtureFactory = new FixtureFactory(app)
+
+        await Promise.all([
+          fixtureFactory.createDomain({
+            name: 'domain-1',
+            nationalId: currentUser.nationalId,
+          }),
+          fixtureFactory.createDomain({
+            name: 'domain-2',
+            nationalId: superUser.nationalId,
+          }),
+        ])
+      })
+
+      it('should return instance with name domain-1', async () => {
+        // Act
+        const response = await server.get('/v2/me/tenants/domain-1')
+
+        // Assert
+        expect(response.status).toEqual(200)
+        expect(response.body).toMatchObject({
+          name: 'domain-1',
+        })
+      })
+
+      it('should throw a NoContentException', async () => {
+        // Act
+        const response = await server.get('/v2/me/tenants/domain-2')
+        // Assert
+        expect(response.status).toBe(204)
+        expect(response.body).toEqual({})
+      })
+    })
+    describe('Test get by id with super user', () => {
+      let app: TestApp
+      let server: request.SuperTest<request.Test>
+
+      beforeAll(async () => {
+        app = await setupApp({
+          AppModule,
+          SequelizeConfigService,
+          user: superUser,
+        })
+        server = request(app.getHttpServer())
+
+        const fixtureFactory = new FixtureFactory(app)
+
+        await Promise.all([
+          fixtureFactory.createDomain({
+            name: 'domain-1',
+            nationalId: currentUser.nationalId,
+          }),
+          fixtureFactory.createDomain({
+            name: 'domain-2',
+            nationalId: superUser.nationalId,
+          }),
+        ])
+      })
+
+      it('Should return an instance with name domain-1', async () => {
+        // Act
+        const response = await server.get('/v2/me/tenants/domain-1')
+        // Assert
+        expect(response.status).toBe(200)
+        expect(response.body).toMatchObject({ name: 'domain-1' })
+      })
+      it('Should return an instance with name domain-2', async () => {
+        // Act
+        const response = await server.get('/v2/me/tenants/domain-2')
+        // Assert
+        expect(response.status).toBe(200)
+        expect(response.body).toMatchObject({ name: 'domain-2' })
       })
     })
   })

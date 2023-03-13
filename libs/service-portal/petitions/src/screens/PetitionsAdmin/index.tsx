@@ -2,7 +2,7 @@ import format from 'date-fns/format'
 import { Link } from 'react-router-dom'
 
 import { Box, Stack, Text } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroHeader, ServicePortalPath } from '@island.is/service-portal/core'
 import { ActionCard } from '@island.is/service-portal/core'
 
@@ -19,6 +19,7 @@ const formatDate = (date: string) => {
 }
 
 const PetitionsAdmin = () => {
+  useNamespaces('sp.petitions')
   const { formatMessage } = useLocale()
   const getAllPetitionLists = useGetAllPetitionLists()
   const allPetitionLists = (getAllPetitionLists as PaginatedEndorsementListResponse)
