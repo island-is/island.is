@@ -169,18 +169,23 @@ const UploadFilesToPoliceCase: React.FC<{
     setDisplayFiles(caseFiles.map(mapCaseFileToUploadFile) || [])
   }, [policeCaseFiles, caseFiles, policeCaseNumber])
 
-  const setSingleFile = useCallback(
-    (displayFile: UploadFile, isPoliceCaseFile = false, newId?: string) => {
+  const uploadCallback = useCallback(
+    (displayFile: UploadFile, newId?: string) => {
       setDisplayFiles((previous) =>
-        generateSingleFileUpdate(
-          previous,
-          displayFile,
-          isPoliceCaseFile,
-          newId,
-        ),
+        generateSingleFileUpdate(previous, displayFile, newId),
       )
     },
     [generateSingleFileUpdate],
+  )
+
+  const uploadPoliceCaseFileCallback = useCallback(
+    (file: UploadFile, id?: string) => {
+      setDisplayFiles((previous) => [
+        ...previous,
+        { ...file, id: id ?? file.id },
+      ])
+    },
+    [],
   )
 
   const onChange = useCallback(
@@ -206,12 +211,12 @@ const UploadFilesToPoliceCase: React.FC<{
       ])
       upload(
         filesWithId,
-        setSingleFile,
+        uploadCallback,
         CaseFileCategory.CASE_FILE,
         policeCaseNumber,
       )
     },
-    [upload, setSingleFile, policeCaseNumber],
+    [upload, uploadCallback, policeCaseNumber],
   )
 
   const onPoliceCaseFileUpload = useCallback(async () => {
@@ -230,7 +235,7 @@ const UploadFilesToPoliceCase: React.FC<{
         category: CaseFileCategory.CASE_FILE,
       } as UploadFile
 
-      await uploadPoliceCaseFile(fileToUpload, setSingleFile)
+      await uploadPoliceCaseFile(fileToUpload, uploadPoliceCaseFileCallback)
 
       setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
 
@@ -238,11 +243,11 @@ const UploadFilesToPoliceCase: React.FC<{
         setIsUploading(false)
       }
     })
-  }, [policeCaseFileList, setSingleFile, uploadPoliceCaseFile])
+  }, [policeCaseFileList, uploadPoliceCaseFile, uploadPoliceCaseFileCallback])
 
   const onRetry = useCallback(
     (file: UploadFile) => {
-      setSingleFile({
+      uploadCallback({
         name: file.name,
         id: file.id,
         percent: 1,
@@ -256,12 +261,12 @@ const UploadFilesToPoliceCase: React.FC<{
             file.id ?? file.name,
           ],
         ],
-        setSingleFile,
+        uploadCallback,
         CaseFileCategory.CASE_FILE,
         policeCaseNumber,
       )
     },
-    [setSingleFile, upload, policeCaseNumber],
+    [uploadCallback, upload, policeCaseNumber],
   )
 
   const onRemove = useCallback(
