@@ -1,4 +1,5 @@
 import { useContext } from 'react'
+import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
@@ -15,20 +16,24 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import { strings } from './ReopenModal.strings'
+
 interface Props {
   onClose: () => void
 }
 
 const ReopenModal: React.FC<Props> = ({ onClose }) => {
+  const { formatMessage } = useIntl()
   const router = useRouter()
   const { workingCase } = useContext(FormContext)
   const { transitionCase, isTransitioningCase } = useCase()
 
   return (
     <Modal
-      title="Leiðrétta úrskurð"
-      text="Ef þú gerir þetta þá #$%&"
-      primaryButtonText="Leiðrétta"
+      title={formatMessage(strings.title)}
+      text={formatMessage(strings.text)}
+      primaryButtonText={formatMessage(strings.continue)}
+      isPrimaryButtonLoading={isTransitioningCase}
       onPrimaryButtonClick={async () => {
         const caseTransitioned = await transitionCase(
           workingCase.id,
@@ -43,7 +48,7 @@ const ReopenModal: React.FC<Props> = ({ onClose }) => {
           )
         }
       }}
-      secondaryButtonText="Hætta við"
+      secondaryButtonText={formatMessage(strings.cancel)}
       onSecondaryButtonClick={onClose}
     />
   )
