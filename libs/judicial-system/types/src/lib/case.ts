@@ -245,7 +245,6 @@ export interface Case {
   crimeScenes?: CrimeSceneMap
   indictmentIntroduction?: string
   requestDriversLicenseSuspension?: boolean
-  isCorrectingRuling?: boolean
 }
 
 export interface CaseListEntry

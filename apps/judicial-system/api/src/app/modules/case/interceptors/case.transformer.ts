@@ -24,11 +24,5 @@ export function transformCase(theCase: Case): Case {
     isAppealGracePeriodExpired: theCase.rulingDate
       ? Date.now() >= new Date(theCase.rulingDate).getTime() + sevenDays
       : false,
-    isCorrectingRuling:
-      !completedCaseStates.includes(theCase.state) &&
-      (theCase.notifications?.some(
-        (notification) => notification.type === NotificationType.RULING,
-      ) ??
-        false),
   }
 }
