@@ -339,7 +339,6 @@ const dummycontent: arrayDummy = [
 const CARDS_PER_PAGE = 12
 
 export const AdvicesScreen = ({ allUserAdvices }) => {
-  console.log('allUserAdvices', allUserAdvices)
   const [sortTitle, setSortTitle] = useState(SortOptions.aToZ)
   const [searchValue, setSearchValue] = useState('')
   const [page, setPage] = useState<number>(1)
