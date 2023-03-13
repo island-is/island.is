@@ -24,8 +24,6 @@ import {
   RulingInput,
   PdfButton,
   FormContext,
-  useRequestRulingSignature,
-  SigningModal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -121,8 +119,6 @@ export function getConclusionAutofill(
       })
 }
 
-type availableModals = 'NoModal' | 'SigningModal'
-
 export const Ruling: React.FC = () => {
   const {
     workingCase,
@@ -151,8 +147,6 @@ export const Ruling: React.FC = () => {
 
   const router = useRouter()
 
-  const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
-
   const { user } = useContext(UserContext)
   const { updateCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
@@ -163,13 +157,6 @@ export const Ruling: React.FC = () => {
     'courtLegalArguments',
     'conclusion',
   ])
-
-  const {
-    requestRulingSignature,
-    requestRulingSignatureResponse,
-  } = useRequestRulingSignature(workingCase.id, () =>
-    setModalVisible('SigningModal'),
-  )
 
   const initialize = useCallback(() => {
     setAndSendCaseToServer(
@@ -817,14 +804,6 @@ export const Ruling: React.FC = () => {
           nextIsDisabled={!stepIsValid}
         />
       </FormContentContainer>
-      {modalVisible === 'SigningModal' && (
-        <SigningModal
-          workingCase={workingCase}
-          requestRulingSignature={requestRulingSignature}
-          requestRulingSignatureResponse={requestRulingSignatureResponse}
-          onClose={() => setModalVisible('NoModal')}
-        />
-      )}
     </PageLayout>
   )
 }

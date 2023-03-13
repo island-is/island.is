@@ -13,8 +13,6 @@ import {
   PdfButton,
   PoliceRequestAccordionItem,
   RulingInput,
-  SigningModal,
-  useRequestRulingSignature,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -67,17 +65,6 @@ const Ruling = () => {
   const [courtLegalArgumentsEM, setCourtLegalArgumentsEM] = useState<string>('')
   const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState<string>('')
   const [introductionEM, setIntroductionEM] = useState<string>('')
-
-  const [modalVisible, setModalVisible] = useState<'NoModal' | 'SigningModal'>(
-    'NoModal',
-  )
-
-  const {
-    requestRulingSignature,
-    requestRulingSignatureResponse,
-  } = useRequestRulingSignature(workingCase.id, () =>
-    setModalVisible('SigningModal'),
-  )
 
   useDeb(workingCase, [
     'prosecutorDemands',
@@ -460,14 +447,6 @@ const Ruling = () => {
           }
         />
       </FormContentContainer>
-      {modalVisible === 'SigningModal' && (
-        <SigningModal
-          workingCase={workingCase}
-          requestRulingSignature={requestRulingSignature}
-          requestRulingSignatureResponse={requestRulingSignatureResponse}
-          onClose={() => setModalVisible('NoModal')}
-        />
-      )}
     </PageLayout>
   )
 }
