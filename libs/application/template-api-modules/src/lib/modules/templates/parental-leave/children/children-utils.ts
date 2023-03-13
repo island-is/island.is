@@ -110,7 +110,7 @@ export const applicationsToExistingChildApplication = (
       result.push({
         applicationId: application.id,
         expectedDateOfBirth: childInformation.expectedDateOfBirth,
-        adoptionDate: childInformation.adoptionDate!,
+        adoptionDate: childInformation.adoptionDate,
       })
     }
   }
@@ -196,8 +196,6 @@ export const getChildrenAndExistingApplications = (
     applicationsWhereOtherParent,
     true,
   )
-
-  console.log('childrenWhereOtherParent ', childrenWhereOtherParent)
 
   const children: ChildInformationWithoutRights[] = []
 

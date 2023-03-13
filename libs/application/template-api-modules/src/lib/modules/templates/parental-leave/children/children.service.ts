@@ -118,7 +118,9 @@ export class ChildrenService {
       // since the primary parent makes the choice for them
       const remainingDays =
         calculateRemainingNumberOfDays(
-          child.expectedDateOfBirth === '' ? child.adoptionDate! : child.expectedDateOfBirth,
+          child.expectedDateOfBirth === ''
+            ? child.adoptionDate!
+            : child.expectedDateOfBirth,
           parentalLeavesAndPregnancyStatus.getParentalLeaves,
           parentalLeavesEntitlements,
         ) +
@@ -237,7 +239,9 @@ export class ChildrenService {
 
       const remainingDays =
         calculateRemainingNumberOfDays(
-          child.expectedDateOfBirth === '' ? child.adoptionDate! : child.expectedDateOfBirth,
+          child.expectedDateOfBirth === ''
+            ? child.adoptionDate!
+            : child.expectedDateOfBirth,
           [],
           parentalLeavesEntitlements,
         ) + transferredDays

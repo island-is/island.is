@@ -166,19 +166,20 @@ const ChildSelector: FC<FieldBaseProps> = ({
                       alignItems="flexStart"
                     >
                       <Text variant="h4" as="h2">
-                        {adoptionDate 
+                        {adoptionDate
                           ? formatMessage(
-                              parentalLeaveFormMessages.selectChild.fosterCareOrAdoption,
+                              parentalLeaveFormMessages.selectChild
+                                .fosterCareOrAdoption,
                               {
-                                dateOfBirth: formatDateOfBirth(
-                                  adoptionDate,
-                                ),
+                                dateOfBirth: formatDateOfBirth(adoptionDate),
                               },
                             )
                           : formatMessage(
                               parentalLeaveFormMessages.selectChild.baby,
                               {
-                                dateOfBirth: formatDateOfBirth(expectedDateOfBirth),
+                                dateOfBirth: formatDateOfBirth(
+                                  expectedDateOfBirth,
+                                ),
                               },
                             )}
                       </Text>
