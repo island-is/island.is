@@ -36,7 +36,7 @@ export const EditEmailScreen: NavigationFunctionComponent<{
   const [loading, setLoading] = React.useState(false)
   const [text, onChangeText] = React.useState(email ?? '')
 
-  const originalEmail = userProfile.data?.getUserProfile?.email ?? email
+  const originalEmail = userProfile.data?.getUserProfile?.email ?? email ?? ''
   const disabled = text.trim() === originalEmail.trim() || text.trim() === ''
 
   useEffect(() => {
