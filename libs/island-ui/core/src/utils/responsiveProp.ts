@@ -6,6 +6,7 @@
  * [xsValue, smValue, mdValue, lgValue]*/
 export type ResponsiveProp<AtomName> =
   | AtomName
+  | Readonly<[AtomName]>
   | Readonly<[AtomName, AtomName]>
   | Readonly<[AtomName, AtomName, AtomName]>
   | Readonly<[AtomName, AtomName, AtomName, AtomName]>
@@ -49,7 +50,7 @@ export const normaliseResponsiveProp = <Keys extends string | number>(
     }
 
     if (length === 5) {
-      return value as Readonly<[Keys, Keys, Keys, Keys, Keys]>
+      return value
     }
 
     if (length === 1) {

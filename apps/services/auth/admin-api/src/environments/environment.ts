@@ -9,6 +9,7 @@ const devConfig = {
     audience,
     issuer: 'https://identity-server.dev01.devland.is',
   },
+  port: 6333,
 }
 
 const prodConfig = {
@@ -20,8 +21,9 @@ const prodConfig = {
   },
   auth: {
     audience,
-    issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
+    issuer: JSON.parse(process.env.IDENTITY_SERVER_ISSUER_URL_LIST || '[]'),
   },
+  port: 3333,
 }
 
 export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig

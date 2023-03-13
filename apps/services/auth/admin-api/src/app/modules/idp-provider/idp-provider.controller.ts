@@ -4,6 +4,7 @@ import {
   IdpProviderDTO,
   PagedRowsDto,
 } from '@island.is/auth-api-lib'
+import { NoContentException } from '@island.is/nest/problem'
 import {
   BadRequestException,
   Body,
@@ -39,7 +40,7 @@ const namespace = `${environment.audit.defaultNamespace}/idp-provider`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiExcludeController()
-@Controller({ path: 'backend/idp-provider', version: [VERSION_NEUTRAL, '1'] })
+@Controller({ path: 'idp-provider', version: [VERSION_NEUTRAL, '1'] })
 @Audit({ namespace })
 export class IdpProviderController {
   constructor(
@@ -94,7 +95,11 @@ export class IdpProviderController {
     resources: (idp) => idp?.name,
   })
   async findByPk(@Param('name') name: string): Promise<IdpProvider> {
-    return this.idpProviderService.findByPk(name)
+    const idpProvider = await this.idpProviderService.findByPk(name)
+    if (!idpProvider) {
+      throw new NoContentException()
+    }
+    return idpProvider
   }
 
   /** Adds new IDP provider */
@@ -139,7 +144,7 @@ export class IdpProviderController {
     @Param('name') name: string,
     @Body() idpProvider: IdpProviderDTO,
     @CurrentUser() user: User,
-  ): Promise<[number, IdpProvider[]]> {
+  ): Promise<IdpProvider> {
     if (!name) {
       throw new BadRequestException('name must be provided')
     }

@@ -5,6 +5,7 @@ import {
   ApiScopeUserUpdateDTO,
   PagedRowsDto,
 } from '@island.is/auth-api-lib'
+import { NoContentException } from '@island.is/nest/problem'
 import {
   BadRequestException,
   Body,
@@ -40,7 +41,7 @@ const namespace = `${environment.audit.defaultNamespace}/access`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiExcludeController()
-@Controller({ path: 'backend/api-access', version: [VERSION_NEUTRAL, '1'] })
+@Controller({ path: 'api-access', version: [VERSION_NEUTRAL, '1'] })
 @Audit({ namespace })
 export class AccessController {
   constructor(
@@ -62,7 +63,11 @@ export class AccessController {
       throw new BadRequestException('NationalId must be provided')
     }
 
-    return this.accessService.findOne(nationalId)
+    const apiScopeUser = await this.accessService.findOne(nationalId)
+    if (!apiScopeUser) {
+      throw new NoContentException()
+    }
+    return apiScopeUser
   }
 
   /** Gets x many admins based on pagenumber and count variable */
@@ -126,7 +131,7 @@ export class AccessController {
     return this.auditService.auditPromise(
       {
         auth: user,
-        action: 'udpate',
+        action: 'update',
         namespace,
         resources: nationalId,
         meta: { fields: Object.keys(admin) },

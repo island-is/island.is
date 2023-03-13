@@ -45,4 +45,8 @@ test.describe('Search feature', () => {
     const testResults = page.locator('[data-testid="search-result"]')
     await expect(testResults).toHaveCount(0)
   })
+
+  test.skip('should search in Enlish', async () => {
+    return
+  })
 })
