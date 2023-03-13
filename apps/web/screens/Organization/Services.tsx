@@ -171,7 +171,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
               placeholder={n('filterSearch', 'Leita')}
               name="filterInput"
               value={parameters.query}
-              icon={'search'}
+              icon={{ name: 'search' }}
               size="md"
               onChange={(e) =>
                 setParameters({ ...parameters, query: e.target.value })
