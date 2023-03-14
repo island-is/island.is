@@ -194,7 +194,7 @@ export const Confirmation: React.FC = () => {
           onContinue={signRuling}
         />
       )}
-      {modalVisible && (
+      {modalVisible === 'signingModal' && (
         <SigningModal
           workingCase={workingCase}
           requestRulingSignature={requestRulingSignature}

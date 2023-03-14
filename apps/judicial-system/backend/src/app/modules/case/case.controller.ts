@@ -38,6 +38,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
+import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import {
   CurrentHttpUser,
   JwtAuthGuard,
@@ -179,6 +180,14 @@ export class CaseController {
         [UserRole.REGISTRAR],
         theCase.courtId,
       )
+    }
+
+    if (update.rulingModifiedHistory) {
+      const history = theCase.rulingModifiedHistory
+        ? `${theCase.rulingModifiedHistory}\n\n`
+        : ''
+      const today = capitalize(formatDate(nowFactory(), 'PPPPp'))
+      update.rulingModifiedHistory = `${history}${today} - ${user.name} ${user.title}\n\n${update.rulingModifiedHistory}`
     }
 
     return this.caseService.update(theCase, update, user) as Promise<Case> // Never returns undefined
