@@ -687,6 +687,10 @@ export const m = defineMessages({
     id: 'service.portal:refuse-email-title',
     defaultMessage: 'Tölvupóstur',
   },
+  requestPaperMailTitle: {
+    id: 'service.portal:req-paper-mail-title',
+    defaultMessage: 'Bréfpóstur',
+  },
   nextStep: {
     id: 'service.portal:next-step',
     defaultMessage: 'Næsta skref',

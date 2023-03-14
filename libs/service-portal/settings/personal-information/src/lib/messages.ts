@@ -28,6 +28,10 @@ export const msg = defineMessages({
     id: 'sp.settings:edit-nudge-text',
     defaultMessage: `Stofnanir munu senda þér tilkynningu þegar þín bíða mikilvæg skilaboð í pósthólfinu.`,
   },
+  editPaperMailText: {
+    id: 'sp.settings:edit-paper-mail-text',
+    defaultMessage: `Vilt þú fá póstinn þinn frekar í bréfpósti?`,
+  },
   overlayIntro: {
     id: 'sp.settings:overlay-intro-text',
     defaultMessage: `Við komum til með að senda á þig mikilvægar tilkynningar og því er gott að vera með netfang og síma rétt skráð.`,

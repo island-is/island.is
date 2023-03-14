@@ -241,9 +241,9 @@ export const ProfileForm: FC<Props> = ({
           )}
           {showDetails && (
             <InputSection
-              title={formatMessage(m.refuseEmailTitle)}
+              title={formatMessage(m.requestPaperMailTitle)}
               loading={userLoading}
-              text={formatMessage(msg.editNudgeText)}
+              text={formatMessage(msg.editPaperMailText)}
             >
               {!userLoading && <PaperMail />}
             </InputSection>
