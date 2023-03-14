@@ -1,4 +1,4 @@
-# european-health-insurance-card
+# European Health Insurance Card
 
 This library was generated with [Nx](https://nx.dev).
 

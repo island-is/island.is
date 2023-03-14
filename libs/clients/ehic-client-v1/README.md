@@ -1,4 +1,4 @@
-# clients-ehic-client-v1
+# Clients Ehic Client V1
 
 This library was generated with [Nx](https://nx.dev).
 
