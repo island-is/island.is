@@ -15,6 +15,15 @@ export interface Case {
   created?: string
 }
 
+export interface UserAdvice {
+  id: string
+  number: string
+  participantName: string
+  participantEmail: string
+  content: string
+  created: string
+}
+
 export interface ArrOfIdAndName {
   id: string
   name: string
