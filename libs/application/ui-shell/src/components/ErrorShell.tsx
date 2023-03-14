@@ -69,6 +69,8 @@ export const ErrorShell: FC<Props> = ({
         alignItems="center"
         justifyContent="center"
         paddingBottom={20}
+        paddingTop={[5, 5, 0]}
+        paddingX={[3, 3, 0]}
         marginX="auto"
       >
         <Columns collapseBelow="lg">

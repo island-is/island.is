@@ -2,7 +2,7 @@ import { Browser, BrowserContext, expect, Page } from '@playwright/test'
 import { existsSync, mkdirSync } from 'fs'
 import { join } from 'path'
 import { cognitoLogin, idsLogin } from './login'
-import { urls } from './urls'
+import { JUDICIAL_SYSTEM_HOME_URL, urls } from './urls'
 
 export const sessionsPath = join(__dirname, 'tmp-sessions')
 if (!existsSync(sessionsPath)) {
@@ -145,5 +145,18 @@ export async function session({
   await expect(sessionValidation?.url()).toMatch(homeUrl)
   await sessionValidationPage.context().storageState({ path: storageStatePath })
   await sessionValidationPage.close()
+  return context
+}
+
+export async function judicialSystemSession({ browser }: { browser: Browser }) {
+  const context = await browser.newContext()
+  const page = await context.newPage()
+  const authUrlPrefix = urls.authUrl
+  await ensureCognitoSessionIfNeeded(
+    page,
+    JUDICIAL_SYSTEM_HOME_URL,
+    authUrlPrefix,
+  )
+  await page.close()
   return context
 }
