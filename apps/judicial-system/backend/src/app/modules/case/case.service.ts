@@ -789,15 +789,17 @@ export class CaseService {
   }
 
   async getCourtRecordPdf(theCase: Case, user: TUser): Promise<Buffer> {
-    try {
-      return await this.awsS3Service.getObject(
-        `generated/${theCase.id}/courtRecord.pdf`,
-      )
-    } catch (error) {
-      this.logger.info(
-        `The court record for case ${theCase.id} was not found in AWS S3`,
-        { error },
-      )
+    if (theCase.courtRecordSignatureDate) {
+      try {
+        return await this.awsS3Service.getObject(
+          `generated/${theCase.id}/courtRecord.pdf`,
+        )
+      } catch (error) {
+        this.logger.info(
+          `The court record for case ${theCase.id} was not found in AWS S3`,
+          { error },
+        )
+      }
     }
 
     await this.refreshFormatMessage()
