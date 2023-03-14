@@ -1,4 +1,4 @@
-import { ArrOfTypesForSubscriptions } from '@island.is/consultation-portal/types/interfaces'
+import { ArrOfTypesForSubscriptions } from '../../types/interfaces'
 
 interface props {
   types: ArrOfTypesForSubscriptions

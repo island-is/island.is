@@ -1,4 +1,4 @@
-import { TabContent } from '@island.is/consultation-portal/components/Tab'
+import { TabContent } from '../../components/Tab'
 
 export const TabsList = ({
   casesData,
