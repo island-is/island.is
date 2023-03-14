@@ -12,26 +12,15 @@ interface CaseOverviewProps {
 
 export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
   const upperInstances = [
-    {
-      text: `Mál nr. ${chosenCase?.caseNumber}`,
-    },
-    {
-      text: `Birt: ${format(new Date(chosenCase?.created), 'dd.MM.yyyy')}`,
-    },
+    `Mál nr. ${chosenCase?.caseNumber}`,
+    `Birt: ${format(new Date(chosenCase?.created), 'dd.MM.yyyy')}`,
   ]
 
   const lowerInstances = [
-    {
-      text: `${chosenCase?.type}`,
-    },
-    {
-      text: `${chosenCase?.institution}`,
-    },
-    {
-      text: `${chosenCase?.policyArea}`,
-    },
+    `${chosenCase?.typeName}`,
+    `${chosenCase?.institutionName}`,
+    `${chosenCase?.policyAreaName}`,
   ]
-
   return (
     <Stack space={[4, 4, 4, 6, 6]}>
       <Stack space={3}>

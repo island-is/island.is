@@ -15,6 +15,15 @@ export interface Case {
   created?: string
 }
 
+export interface UserAdvice {
+  id: string
+  number: string
+  participantName: string
+  participantEmail: string
+  content: string
+  created: string
+}
+
 export interface ArrOfIdAndName {
   id: string
   name: string
@@ -42,4 +51,38 @@ export interface ArrOfTypes {
   institutions: { [key: string]: string }
   caseStatuses: { [key: string]: string }
   caseTypes: { [key: string]: string }
+}
+
+export type FilterInputItems = {
+  checked: boolean
+  value: string
+  label: string
+}
+
+export interface FilterInputIsOpen {
+  items: FilterInputItems
+  isOpen: boolean
+}
+
+export type PeriodInput = {
+  from?: Date
+  to?: Date
+}
+
+export interface CaseFilter {
+  caseStatuses?: any
+  caseTypes?: any
+  period?: PeriodInput
+  institutions?: Array<number>
+  sorting?: any
+  pageNumber?: number
+  pageSize?: number
+  policyAreas?: Array<number>
+  query?: string
+}
+
+export interface SEOProps {
+  title: string
+  url?: string
+  image?: string
 }

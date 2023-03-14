@@ -382,8 +382,7 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
           placeholder={n('operatingLicensesFilterSearch', 'Leita')}
           backgroundColor={['blue', 'blue', 'white']}
           size="sm"
-          icon="search"
-          iconType="outline"
+          icon={{ name: 'search', type: 'outline' }}
           onChange={(event) => onSearch(event.target.value)}
         />
         <Box textAlign="right" marginRight={1} marginTop={1}>

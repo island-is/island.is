@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common'
-import { Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
@@ -14,6 +14,11 @@ import { TenantEnvironment } from './models/tenant-environment.model'
 @Resolver(() => Tenant)
 export class TenantResolver {
   constructor(private readonly tenantsService: TenantsService) {}
+
+  @Query(() => Tenant, { name: 'authAdminTenant' })
+  getTenant(@Args('id') id: string) {
+    return this.tenantsService.getTenant(id)
+  }
 
   @Query(() => TenantsPayload, { name: 'authAdminTenants' })
   getTenants(@CurrentUser() user: User) {
