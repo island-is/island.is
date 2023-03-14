@@ -11,7 +11,7 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 
 import { m } from '../../lib/messages'
 import {
@@ -29,6 +29,7 @@ import {
 } from '../hooks'
 
 const ViewOwnedList = () => {
+  useNamespaces('sp.petitions')
   const { formatMessage } = useLocale()
   const location: any = useLocation()
   const listId = location.pathname.replace('/min-gogn/listar/minn-listi/', '')
