@@ -80,6 +80,7 @@ export function LoginButton(props: {
             </Button>
           }
           items={items}
+          openOnHover
         />
       </Hidden>
     </>

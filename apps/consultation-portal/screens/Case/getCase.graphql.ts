@@ -6,6 +6,7 @@ export const GET_CASE_BY_ID = gql`
       id
       caseNumber
       name
+      typeName
       shortDescription
       detailedDescription
       contactName

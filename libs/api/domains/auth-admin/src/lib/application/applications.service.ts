@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common'
 
 import { Environment } from '@island.is/shared/types'
+import { CreateApplicationInput } from './dto/createApplication.input'
+import { Application } from './models/application.model'
+import { ApplicationEnvironment } from './models/applications-environment.model'
+import { TranslatedValue } from '../models/translated-value.model'
+import { ApplicationType } from '../models/applicationType'
 
 @Injectable()
 export class ApplicationsService {
@@ -11,6 +16,29 @@ export class ApplicationsService {
     })
     return resp
   }
+
+  createClient(input: CreateApplicationInput) {
+    const displayName = new TranslatedValue()
+    displayName.locale = 'is'
+    displayName.value = input.displayName
+
+    const application = new Application()
+    application.applicationId = input.applicationId
+    application.applicationType = input.applicationType
+    application.environments = input.environments.map((env) => {
+      const applicationEnv = new ApplicationEnvironment()
+      applicationEnv.name = input.applicationId
+      applicationEnv.environment = env
+      applicationEnv.displayName = [displayName]
+      applicationEnv.callbackUrls = []
+
+      return applicationEnv
+    })
+
+    // TODO connect to REST service
+
+    return application
+  }
 }
 
 const getMockData = () => {
@@ -18,7 +46,7 @@ const getMockData = () => {
     data: [
       {
         applicationId: '@island.is/web',
-        applicationType: 'Web Application',
+        applicationType: ApplicationType.Web,
         tenantId: '@island.is',
         environments: [
           {
@@ -47,7 +75,7 @@ const getMockData = () => {
       },
       {
         applicationId: '@island.is/auth-admin-web',
-        applicationType: 'Web Application',
+        applicationType: ApplicationType.Web,
         tenantId: '@admin.island.is',
         environments: [
           {
@@ -87,7 +115,7 @@ const getMockData = () => {
       },
       {
         applicationId: '@island.is/auth',
-        applicationType: 'Web Application',
+        applicationType: ApplicationType.Web,
         tenantId: '@admin.island.is',
         environments: [
           {

@@ -8,7 +8,7 @@ import {
   buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
-import { formConclusionSection } from '@island.is/application/ui-forms'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
 import { YES } from '../constants'
 import { institutionApplicationMessages as m } from '../lib/messages'
@@ -177,7 +177,7 @@ export const application: Form = buildForm({
         }),
       ],
     }),
-    formConclusionSection({
+    buildFormConclusionSection({
       alertTitle: m.confirmation.sectionTitle,
       expandableHeader: m.confirmation.sectionInfoHeader,
       expandableDescription: m.confirmation.sectionInfoBulletPoints,
