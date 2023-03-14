@@ -9,6 +9,7 @@ import {
 } from '@island.is/island-ui/core'
 import { ReactNode } from 'react'
 import getTagVariants from '../../utils/helpers/getTagVariants'
+import EyebrowsWithSeperator from '../EyebrowsWithSeperator/EyebrowsWithSeperator'
 
 import * as styles from './Card.css'
 
@@ -48,15 +49,14 @@ export const Card = ({
             Nr. S-{card.id}
           </Text>
         </Box>
-        <Inline space={1} alignY="center" flexWrap="nowrap">
-          <Text as="p" variant="eyebrow" color="blue600" truncate>
-            {card.eyebrows[0]}
-          </Text>
-          <div className={styles.seperator} />
-          <Text as="p" variant="eyebrow" color="blue600" truncate>
-            {card.eyebrows[1]}
-          </Text>
-        </Inline>
+        <EyebrowsWithSeperator
+          instances={[card.eyebrows[0], card.eyebrows[1]]}
+          color="blue600"
+          style={styles.seperator}
+          wrap={true}
+          truncate={false}
+        />
+
         <Box
           style={{ height: showAttachment ? '100px' : '100px' }}
           className={styles.title}

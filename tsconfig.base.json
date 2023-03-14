@@ -188,6 +188,9 @@
       "@island.is/application/api/files": [
         "libs/application/api/files/src/index.ts"
       ],
+      "@island.is/application/api/history": [
+        "libs/application/api/history/src/index.ts"
+      ],
       "@island.is/application/api/payment": [
         "libs/application/api/payment/src/index.ts"
       ],
@@ -391,6 +394,9 @@
         "libs/clients/air-discount-scheme/src/index.ts"
       ],
       "@island.is/clients/assets": ["libs/clients/assets/src/index.ts"],
+      "@island.is/clients/auth/admin-api": [
+        "libs/clients/auth/admin-api/src/index.ts"
+      ],
       "@island.is/clients/auth/delegation-api": [
         "libs/clients/auth/delegation-api/src/index.ts"
       ],
@@ -595,13 +601,13 @@
       "@island.is/nest/audit": ["libs/nest/audit/src/index.ts"],
       "@island.is/nest/aws": ["libs/nest/aws/src/index.ts"],
       "@island.is/nest/config": ["libs/nest/config/src/index.ts"],
+      "@island.is/nest/core": ["libs/nest/core/src/index.ts"],
       "@island.is/nest/dataloader": ["libs/nest/dataloader/src/index.ts"],
       "@island.is/nest/feature-flags": ["libs/nest/feature-flags/src/index.ts"],
       "@island.is/nest/pagination": ["libs/nest/pagination/src/index.ts"],
       "@island.is/nest/problem": ["libs/nest/problem/src/index.ts"],
       "@island.is/nest/sequelize": ["libs/nest/sequelize/src/index.ts"],
       "@island.is/nest/swagger": ["libs/nest/swagger/src/index.ts"],
-      "@island.is/nest/validators": ["libs/nest/validators/src/index.ts"],
       "@island.is/next-ids-auth": ["libs/next-ids-auth/src/index.ts"],
       "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
       "@island.is/plausible": ["libs/plausible/src/index.ts"],

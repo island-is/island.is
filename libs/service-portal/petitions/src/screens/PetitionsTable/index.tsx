@@ -6,12 +6,13 @@ import {
   Table as T,
   Text,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { formatDate, pages, PAGE_SIZE, paginate } from '../../lib/utils'
 import { m } from '../../lib/messages'
 import DropdownExport, { getCSV } from './ExportPetition'
 
 const PetitionsTable = (data: any) => {
+  useNamespaces('sp.petitions')
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)

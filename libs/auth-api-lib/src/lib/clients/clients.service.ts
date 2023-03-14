@@ -1,6 +1,7 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { NoContentException } from '@island.is/nest/problem'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import sha256 from 'crypto-js/sha256'
@@ -94,7 +95,7 @@ export class ClientsService {
     page: number,
     count: number,
     includeArchived: boolean,
-  ): Promise<{ rows: Client[]; count: number } | null> {
+  ): Promise<{ rows: Client[]; count: number }> {
     page--
     const offset = page * count
     return this.clientModel.findAndCountAll({
@@ -247,21 +248,24 @@ export class ClientsService {
   }
 
   /** Updates an existing client */
-  async update(client: ClientUpdateDTO, id: string): Promise<Client | null> {
+  async update(clientData: ClientUpdateDTO, id: string): Promise<Client> {
     this.logger.debug('Updating client with id: ', id)
 
     if (!id) {
       throw new BadRequestException('id must be provided')
     }
 
-    await this.clientModel.update(
-      { ...client },
-      {
-        where: { clientId: id },
-      },
-    )
+    const client = await this.findClientById(id)
+    if (!client) {
+      throw new NoContentException()
+    }
 
-    return await this.findClientById(id)
+    const [_, clients] = await this.clientModel.update(clientData, {
+      where: { clientId: id },
+      returning: true,
+    })
+
+    return clients[0]
   }
 
   /** Soft delete on a client by id */

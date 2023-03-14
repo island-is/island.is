@@ -1,4 +1,4 @@
-import { ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
+import { json, ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
 import {
   Base,
   Client,
@@ -37,6 +37,7 @@ export const serviceSetup = (services: {
   servicesEndorsementApi: ServiceBuilder<'services-endorsement-api'>
   airDiscountSchemeBackend: ServiceBuilder<'air-discount-scheme-backend'>
   sessionsApi: ServiceBuilder<'services-sessions'>
+  authAdminApi: ServiceBuilder<'services-auth-admin-api'>
 }): ServiceBuilder<'api'> => {
   return service('api')
     .namespace('islandis')
@@ -181,6 +182,20 @@ export const serviceSetup = (services: {
       },
       HSN_WEB_FORM_ID: '1dimJFHLFYtnhoYEA3JxRK',
       SESSIONS_API_URL: ref((h) => `http://${h.svc(services.sessionsApi)}`),
+      AUTH_ADMIN_API_PATHS: {
+        dev: json({
+          development: 'https://identity-server.dev01.devland.is/backend',
+        }),
+        staging: json({
+          development: 'https://identity-server.dev01.devland.is/backend',
+          staging: 'https://identity-server.staging01.devland.is/backend',
+        }),
+        prod: json({
+          development: 'https://identity-server.dev01.devland.is/backend',
+          staging: 'https://identity-server.staging01.devland.is/backend',
+          production: 'https://innskra.island.is/backend',
+        }),
+      },
     })
 
     .secrets({

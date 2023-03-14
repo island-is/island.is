@@ -13,7 +13,7 @@ export const OrderVehicleLicensePlateSchema = z.object({
   }),
   plateSize: z.object({
     frontPlateSize: z.string(),
-    rearPlateSize: z.string(),
+    rearPlateSize: z.string().optional(),
   }),
   plateDelivery: z.object({
     deliveryMethodIsDeliveryStation: z.enum([YES, NO]),

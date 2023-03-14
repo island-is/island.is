@@ -17,19 +17,24 @@ export const liveChatIncConfig: Record<string, LiveChatIncChatPanelProps> = {
     license: 15092154,
     version: '2.0',
   },
-  // Útlendingastofnun - Organization
-  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/77rXck3sISbMsUv7BO1PG2
-  '77rXck3sISbMsUv7BO1PG2': {
-    license: 13822368,
-    version: '2.0',
-  },
 }
 
 export const watsonConfig: Record<
   Locale,
   Record<string, WatsonChatPanelProps>
 > = {
-  en: {},
+  en: {
+    // Útlendingastofnun - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/77rXck3sISbMsUv7BO1PG2
+    '77rXck3sISbMsUv7BO1PG2': {
+      integrationID: '89a03e83-5c73-4642-b5ba-cd3771ceca54',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
+  },
   is: {
     // District Commissioners (Sýslumenn) - Organization
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/kENblMMMvZ3DlyXw1dwxQ
@@ -61,6 +66,17 @@ export const watsonConfig: Record<
           sessionStorage.clear()
         }
       },
+    },
+
+    // Útlendingastofnun - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/77rXck3sISbMsUv7BO1PG2
+    '77rXck3sISbMsUv7BO1PG2': {
+      integrationID: '89a03e83-5c73-4642-b5ba-cd3771ceca54',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
     },
   },
 }
