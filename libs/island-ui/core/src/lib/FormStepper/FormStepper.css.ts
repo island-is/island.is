@@ -13,11 +13,13 @@ export const head = style({
 
 export const tag = style({
   marginLeft: theme.spacing[3],
+  display: 'none',
+
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      display: 'block',
       marginLeft: 0,
       marginTop: -theme.spacing[7],
-      marginBottom: theme.spacing[2],
     },
   },
 })
