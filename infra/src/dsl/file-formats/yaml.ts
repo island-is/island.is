@@ -1,12 +1,7 @@
 import { dump, load } from 'js-yaml'
-import {
-  FeatureKubeJob,
-  HelmValueFile,
-  LocalrunValueFile,
-} from '../types/output-types'
-import { Localhost } from '../localhost-runtime'
+import { FeatureKubeJob, HelmValueFile } from '../types/output-types'
 import { EnvironmentConfig } from '../types/charts'
-
+import { addHoursToDate } from '../utils'
 export const dumpOpts = {
   sortKeys: true,
   noRefs: true,
@@ -22,7 +17,12 @@ export const dumpServiceHelm = (
   valueFile: HelmValueFile,
 ) => {
   const { namespaces, services } = valueFile
-  const namespaceLabels = env.feature ? { namespaceType: 'feature' } : {}
+  const namespaceLabels = env.feature
+    ? {
+        namespaceType: 'feature',
+        expires: addHoursToDate(new Date(), 24).toISOString(),
+      }
+    : {}
   const HEADER =
     '#####################################################################\n' +
     '#\n' +
