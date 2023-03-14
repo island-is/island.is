@@ -10,6 +10,7 @@ import {
   formatNationalId,
   IntroHeader,
   m,
+  SKATTURINN_ID,
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import {
@@ -72,7 +73,11 @@ const CompanyInfo = () => {
   const emptyData = data === null
   return (
     <>
-      <IntroHeader title={userInfo.profile.name} intro={mCompany.subtitle} />
+      <IntroHeader
+        title={userInfo.profile.name}
+        intro={mCompany.subtitle}
+        serviceProviderID={SKATTURINN_ID}
+      />
       {emptyData && <EmptyState />}
       {!emptyData && (
         <Stack space={2}>

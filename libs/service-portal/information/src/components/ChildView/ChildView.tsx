@@ -8,6 +8,7 @@ import {
   UserInfoLine,
   m,
   IntroHeader,
+  THJODSKRA_ID,
 } from '@island.is/service-portal/core'
 import {
   Box,
@@ -114,6 +115,7 @@ const ChildView: FC<Props> = ({
               defaultMessage:
                 'Hér fyrir neðan eru gögn um fjölskyldumeðlim. Þú hefur kost á að gera breytingar á eftirfarandi upplýsingum ef þú kýst.',
             }}
+            serviceProviderID={THJODSKRA_ID}
           />
         </Box>
       )}

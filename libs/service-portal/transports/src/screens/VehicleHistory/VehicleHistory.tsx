@@ -28,6 +28,7 @@ import {
   VEHICLE_OPERATOR,
   VEHICLE_OWNER,
   VEHICLE_COOWNER,
+  SAMGONGUSTOFA_ID,
 } from '../../utils/constants'
 
 export const GET_USERS_VEHICLES_HISTORY = gql`
@@ -158,6 +159,7 @@ const VehiclesHistory = () => {
       <IntroHeader
         title={messages.historyTitle}
         intro={messages.historyIntro}
+        serviceProviderID={SAMGONGUSTOFA_ID}
       />
 
       {!loading && !error && vehicles.length === 0 && (

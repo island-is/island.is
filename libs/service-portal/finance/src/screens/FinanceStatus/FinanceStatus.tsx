@@ -21,6 +21,7 @@ import {
   ErrorScreen,
   ExpandHeader,
   ExpandRow,
+  FJARSYSLAN_ID,
   formSubmit,
   IntroHeader,
   m,
@@ -129,6 +130,7 @@ const FinanceStatus = () => {
           defaultMessage:
             'Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum.',
         }}
+        serviceProviderID={FJARSYSLAN_ID}
       />
       <Stack space={2}>
         <GridRow>

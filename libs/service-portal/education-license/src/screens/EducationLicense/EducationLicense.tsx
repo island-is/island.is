@@ -6,6 +6,7 @@ import { useNamespaces } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import { IntroHeader } from '@island.is/service-portal/core'
 import { LicenseCards } from './components/LicenseCards'
+import { MENNTAMALASTOFNUN_ID } from '@island.is/service-portal/core'
 
 function EducationLicense() {
   useNamespaces('sp.education-license')
@@ -19,6 +20,7 @@ function EducationLicense() {
           defaultMessage:
             'Hér er markmiðið að þú getir fundið yfirlit yfir leyfisbréf og vottorð til starfsréttinda. Unnið er að því að koma öllum leyfisbréfum og vottorðum um starfsréttindi á einn stað. Núna birtast leyfisbréf kennara sem hafa verið útskrifaðir frá 1988 sem sótt eru til Menntamálastofnunar.',
         })}
+        serviceProviderID={MENNTAMALASTOFNUN_ID}
       />
       <LicenseCards />
     </Box>

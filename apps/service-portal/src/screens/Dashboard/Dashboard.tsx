@@ -44,7 +44,7 @@ export const Dashboard: FC<{}> = () => {
       id && document.getElementById(iconIdMapper(id))
     a && a.dispatchEvent(new Event('click'))
   }
-  const displayCards = (keyItem: boolean) => {
+  const displayCards = () => {
     // eslint-disable-next-line no-lone-blocks
     {
       return navigation?.children
@@ -109,23 +109,9 @@ export const Dashboard: FC<{}> = () => {
       <Greeting />
       <Box paddingTop={[0, 0, 0, 6]} marginBottom={3}>
         <GridContainer>
-          <GridRow>{displayCards(true)}</GridRow>
+          <GridRow>{displayCards()}</GridRow>
         </GridContainer>
       </Box>
-      {/* <Box paddingTop={[0, 0, 0, 6]}>
-        <GridContainer>
-          <GridRow>
-            <GridColumn offset={['0', '0', '0', '1/12']}>
-              <Text variant="h3" paddingBottom={3}>
-                {formatMessage(m.myCategories)}
-              </Text>
-            </GridColumn>
-          </GridRow>
-          <GridRow data-testid={'service-portal-dashboard'}>
-            {displayCards(false)}
-          </GridRow>
-        </GridContainer>
-      </Box> */}
     </Box>
   )
 }

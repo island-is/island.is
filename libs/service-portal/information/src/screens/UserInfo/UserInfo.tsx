@@ -10,6 +10,7 @@ import {
   formatNationalId,
   IntroHeader,
   m,
+  THJODSKRA_ID,
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { useUserInfo } from '@island.is/auth/react'
@@ -50,7 +51,11 @@ const SubjectInfo = () => {
   const { nationalRegistryFamily } = famData || {}
   return (
     <>
-      <IntroHeader title={userInfo.profile.name} intro={spmm.userInfoDesc} />
+      <IntroHeader
+        title={userInfo.profile.name}
+        intro={spmm.userInfoDesc}
+        serviceProviderID={THJODSKRA_ID}
+      />
       <Stack space={2}>
         <UserInfoLine
           title={formatMessage(m.myRegistration)}

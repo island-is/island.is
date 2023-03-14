@@ -124,7 +124,7 @@ export const Layout: FC = ({ children }) => {
 
   return (
     <>
-      <div className={sideMenuOpen ? styles.overlay : undefined}>
+      <div>
         <AuthOverlay />
         <ToastContainer useKeyframeStyles={false} />
         {globalBanners.length > 0 && (
@@ -143,20 +143,6 @@ export const Layout: FC = ({ children }) => {
               <Sticky>
                 <Box style={{ marginTop: height }}>
                   <GoBack />
-                  {/* <Box marginBottom={3}>
-                    {currentOrganization && (
-                      <InstitutionPanel
-                        loading={loading}
-                        institution={currentOrganization?.title ?? ''}
-                        institutionTitle={formatMessage(m.serviceProvider)}
-                        locale="is"
-                        linkHref={currentOrganization?.link ?? ''}
-                        img={currentOrganization?.logo?.url ?? ''}
-                        imgContainerDisplay="block"
-                        size="small"
-                      />
-                    )}
-                  </Box> */}
                   {subNavItems && subNavItems.length > 0 && (
                     <Box background="blue100">
                       <Navigation

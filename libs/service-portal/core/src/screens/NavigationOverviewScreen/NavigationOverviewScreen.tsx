@@ -26,17 +26,23 @@ interface Props {
       href: string
     }
   }[]
+  serviceProviderID?: string
 }
 
 export const NavigationOverviewScreen: FC<Props> = ({
   title,
   intro,
   navigation = [],
+  serviceProviderID,
 }) => {
   const { formatMessage } = useLocale()
   return (
     <Box marginBottom={[4, 6, 9]}>
-      <IntroHeader title={title} intro={intro} />
+      <IntroHeader
+        title={title}
+        intro={intro}
+        serviceProviderID={serviceProviderID}
+      />
 
       {navigation.map((nav, index) => (
         <GridRow key={index} alignItems="center" marginBottom={[6, 6, 15]}>

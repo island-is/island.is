@@ -9,6 +9,7 @@ import {
   EmptyState,
   IntroHeader,
   m,
+  THJODSKRA_ID,
 } from '@island.is/service-portal/core'
 import { useUserInfo } from '@island.is/auth/react'
 
@@ -37,7 +38,11 @@ const UserInfoOverview = () => {
 
   return (
     <>
-      <IntroHeader title={m.myInfo} intro={spmm.userInfoDesc} />
+      <IntroHeader
+        title={m.myInfo}
+        intro={spmm.userInfoDesc}
+        serviceProviderID={THJODSKRA_ID}
+      />
 
       <Stack space={2}>
         {called && !loading && !error && !nationalRegistryUser ? (

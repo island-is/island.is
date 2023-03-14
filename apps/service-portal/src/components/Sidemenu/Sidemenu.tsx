@@ -36,18 +36,11 @@ const Sidemenu = ({
   sideMenuOpen,
 }: Props): ReactElement | null => {
   useNamespaces(['service.portal'])
-  const ref = useRef(null)
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
-  const { unreadCounter } = useListDocuments()
 
   const isMobile = width < theme.breakpoints.md
-
-  const badgeActive: keyof typeof styles.badge =
-    unreadCounter > 0 ? 'active' : 'inactive'
-
-  console.log('SIDEMENU IS OPEN ?? ', sideMenuOpen)
 
   const onClose = () => {
     setSideMenuOpen(false)
@@ -68,9 +61,9 @@ const Sidemenu = ({
       hideOnClickOutside={true}
       hideOnEsc={true}
       modalLabel={formatMessage({
-        id: 'service.portal:user-button-aria',
+        id: 'service.portal:menu-button-aria',
         description: 'Lýsing á notendavalmynd fyrir skjálesara',
-        defaultMessage: 'Útskráning og aðgangsstillingar',
+        defaultMessage: 'Valmynd fyrir yfirlit',
       })}
       removeOnClose={true}
       preventBodyScroll={true}

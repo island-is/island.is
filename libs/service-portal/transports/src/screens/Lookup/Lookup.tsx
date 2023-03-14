@@ -25,6 +25,7 @@ import {
 
 import { messages } from '../../lib/messages'
 import chunk from 'lodash/chunk'
+import { SAMGONGUSTOFA_ID } from '../../utils/constants'
 
 export const GET_USERS_VEHICLES_SEARCH_LIMIT = gql`
   query GetUsersVehiclesSearchLimit {
@@ -164,6 +165,7 @@ const Lookup = () => {
         <IntroHeader
           title={messages.vehiclesLookup}
           intro={messages.searchIntro}
+          serviceProviderID={SAMGONGUSTOFA_ID}
         />
         <GridRow>
           <GridColumn span="1/1">

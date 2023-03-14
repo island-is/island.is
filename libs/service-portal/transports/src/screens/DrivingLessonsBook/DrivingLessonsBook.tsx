@@ -22,6 +22,7 @@ import { messages } from '../../lib/messages'
 import PhysicalLessons from '../../components/DrivingLessonsTables/PhysicalLessons'
 import DrivingLessonsSchools from '../../components/DrivingLessonsTables/DrivingLessonsSchools'
 import Exams from '../../components/DrivingLessonsTables/Exams'
+import { SAMGONGUSTOFA_ID } from '../../utils/constants'
 
 export const GET_STUDENT_BOOK = gql`
   query GetUserDrivingLessonsBook {
@@ -86,6 +87,7 @@ const DrivingLessonsBook = () => {
           title={formatMessage(messages.vehicleDrivingLessonsTitle)}
           intro={formatMessage(messages.vehicleDrivingLessonsText)}
           img="./assets/images/drivingLessons.svg"
+          serviceProviderID={SAMGONGUSTOFA_ID}
         />
       </Box>
       {loading && (

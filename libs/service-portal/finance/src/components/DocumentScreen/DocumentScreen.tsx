@@ -27,6 +27,7 @@ import { useLocale } from '@island.is/localization'
 import {
   amountFormat,
   ErrorScreen,
+  FJARSYSLAN_ID,
   formSubmit,
   IntroHeader,
   m,
@@ -142,7 +143,11 @@ const DocumentScreen: FC<Props> = ({
 
   return (
     <Box marginBottom={[6, 6, 10]}>
-      <IntroHeader title={title} intro={intro} />
+      <IntroHeader
+        title={title}
+        intro={intro}
+        serviceProviderID={FJARSYSLAN_ID}
+      />
       <Stack space={2}>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>

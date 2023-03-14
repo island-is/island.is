@@ -160,6 +160,7 @@ export const itemLink = style({
     textDecoration: 'none',
   },
 })
+
 export const item = style({
   ':hover': {
     borderColor: theme.color.blue600,
@@ -169,7 +170,14 @@ export const item = style({
 
 export const smallItem = style({
   height: 88,
+  maxHeight: 88,
+  transition: 'max-height 200ms ease-out',
   width: '31.6%',
+  ':hover': {
+    height: 'auto',
+    maxHeight: 120,
+    transition: 'max-height 250ms ease-in',
+  },
 })
 
 export const itemText = style({

@@ -21,7 +21,12 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { DynamicWrapper, IntroHeader, m } from '@island.is/service-portal/core'
+import {
+  DynamicWrapper,
+  FJARSYSLAN_ID,
+  IntroHeader,
+  m,
+} from '@island.is/service-portal/core'
 import {
   GET_CUSTOMER_CHARGETYPE,
   GET_CUSTOMER_RECORDS,
@@ -134,6 +139,7 @@ const FinanceTransactions = () => {
             defaultMessage:
               'Hér er að finna hreyfingar fyrir valin skilyrði. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
           }}
+          serviceProviderID={FJARSYSLAN_ID}
         />
         <Stack space={2}>
           <GridRow>

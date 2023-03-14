@@ -18,6 +18,7 @@ import {
   IntroHeader,
   m,
   NotFound,
+  THJODSKRA_ID,
   UserInfoLine,
 } from '@island.is/service-portal/core'
 
@@ -75,6 +76,7 @@ const FamilyMember = () => {
         <IntroHeader
           title={person?.spouse?.name || ''}
           intro={dataInfoSpouse}
+          serviceProviderID={THJODSKRA_ID}
         />
       )}
 
