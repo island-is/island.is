@@ -65,11 +65,8 @@ export const AdditionalEstateMember = ({
   const enabledField = `${fieldIndex}.enabled`
   const nationalIdInput = useWatch({ name: nationalIdField, defaultValue: '' })
   const name = useWatch({ name: nameField, defaultValue: '' })
-  const foreignCitizenship = useWatch({
-    name: foreignCitizenshipField,
-    defaultValue: hasYes(field.foreignCitizenship) ? [YES] : '',
-  })
 
+  const [foreignCitizenship, setForeignCitizenship] = useState(field.foreignCitizenship)
   const [heirUnder18, setHeirUnder18] = useState(
     field.nationalId ? kennitala.info(field.nationalId).age < 18 : false,
   )
@@ -142,7 +139,37 @@ export const AdditionalEstateMember = ({
         />
       </Box>
       <GridRow>
-        {foreignCitizenship[0] !== YES ? (
+        {foreignCitizenship?.length ? (
+          <>
+            <GridColumn span={['1/1', '1/2']} paddingBottom={2} paddingTop={2}>
+              <InputController
+                key={nameField}
+                id={nameField}
+                name={nameField}
+                backgroundColor="blue"
+                defaultValue={field.name}
+                error={error?.name ?? undefined}
+                label={formatMessage(m.inheritanceNameLabel)}
+              />
+            </GridColumn>
+            <GridColumn span={['1/1', '1/2']} paddingBottom={2} paddingTop={2}>
+              <DatePickerController
+                label={formatMessage(m.inheritanceDayOfBirthLabel)}
+                placeholder={formatMessage(m.inheritanceDayOfBirthLabel)}
+                id={dateOfBirthField}
+                key={dateOfBirthField}
+                name={dateOfBirthField}
+                locale="is"
+                maxDate={new Date()}
+                backgroundColor="white"
+                onChange={(d) => {
+                  setValue(dateOfBirthField, d)
+                }}
+                error={error?.dateOfBirth ?? undefined}
+              />
+            </GridColumn>
+          </>
+        ) : (
           <>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2} paddingTop={2}>
               <InputController
@@ -177,62 +204,20 @@ export const AdditionalEstateMember = ({
                 }}
               />
             </GridColumn>
-            <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-              <SelectController
-                key={relationField}
-                id={relationField}
-                name={relationField}
-                label={formatMessage(m.inheritanceRelationLabel)}
-                defaultValue={field.relation}
-                options={relationOptions}
-                backgroundColor="blue"
-                error={error?.relation ?? undefined}
-              />
-            </GridColumn>
-          </>
-        ) : (
-          <>
-            <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-              <InputController
-                key={nameField}
-                id={nameField}
-                name={nameField}
-                backgroundColor="blue"
-                defaultValue={field.name}
-                error={error?.name ?? undefined}
-                label={formatMessage(m.inheritanceNameLabel)}
-              />
-            </GridColumn>
-            <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-              <DatePickerController
-                label={formatMessage(m.inheritanceDayOfBirthLabel)}
-                placeholder={formatMessage(m.inheritanceDayOfBirthLabel)}
-                id={dateOfBirthField}
-                key={dateOfBirthField}
-                name={dateOfBirthField}
-                locale="is"
-                maxDate={new Date()}
-                backgroundColor="white"
-                onChange={(d) => {
-                  setValue(dateOfBirthField, d)
-                }}
-                error={error?.dateOfBirth ?? undefined}
-              />
-            </GridColumn>
-            <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-              <SelectController
-                key={relationField}
-                id={relationField}
-                name={relationField}
-                label={formatMessage(m.inheritanceRelationLabel)}
-                defaultValue={field.relation}
-                options={relationOptions}
-                error={error?.relation ?? undefined}
-                backgroundColor="blue"
-              />
-            </GridColumn>
           </>
         )}
+        <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+          <SelectController
+            key={relationField}
+            id={relationField}
+            name={relationField}
+            label={formatMessage(m.inheritanceRelationLabel)}
+            defaultValue={field.relation}
+            options={relationOptions}
+            error={error?.relation ?? undefined}
+            backgroundColor="blue"
+          />
+        </GridColumn>
         <GridColumn span="1/1" paddingBottom={2}>
           <CheckboxController
             key={foreignCitizenshipField}
@@ -245,6 +230,7 @@ export const AdditionalEstateMember = ({
                 value: YES,
               },
             ]}
+            onSelect={() => {setForeignCitizenship(foreignCitizenship?.length ? [] : ['yes'])}}
           />
         </GridColumn>
         {heirUnder18 && (
