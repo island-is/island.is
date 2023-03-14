@@ -78,7 +78,7 @@ export const TherapiesTabContent: FC<Props> = ({ data }) => {
           label={formatMessage(messages.timePeriod)}
           content={
             timePeriod === ''
-              ? formatMessage(messages.noTimePeriods)
+              ? formatMessage(messages.noValidTimePeriod)
               : timePeriod
           }
         />
