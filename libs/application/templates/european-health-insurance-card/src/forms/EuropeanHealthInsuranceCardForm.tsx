@@ -91,7 +91,6 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               backgroundColor: 'white',
               title: e.temp.sectionCanTitle,
               description: "",
-
               condition: (_, externalData) =>
                 someHavePlasticButNotPdf(externalData),
               options: (application: Application) => {
@@ -168,7 +167,6 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
             }),
           ],
         }),
-
         buildDescriptionField({
           condition: (_, externalData) =>
             !someCanApplyForPlasticOrPdf(externalData),

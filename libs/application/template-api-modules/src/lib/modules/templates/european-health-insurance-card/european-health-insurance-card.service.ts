@@ -1,12 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { EhicApi } from '@island.is/clients/ehic-client-v1'
-
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import {
-  EuropeanHealtInsuranceCardConfig,
-  EUROPEAN_HEALTH_INSURANCE_CARD_CONFIG,
-} from './config/europeanHealthInsuranceCardConfig'
 import {
   ApplicationTypes,
   ApplicationWithAttachments,
@@ -14,28 +9,13 @@ import {
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
   CardResponse,
+  TempData,
+  NationalRegistry,
   ApplicantCard,
 } from './dto/european-health-insurance-card.dtos'
 import { TemplateApiModuleActionProps } from '../../../types'
 
 // TODO: move to shared location
-export interface NationalRegistry {
-  address: any
-  nationalId: string
-  fullName: string
-  name: string
-  ssn: string
-  length: number
-  data: any
-}
-
-export interface TempData {
-  data?: string | null
-
-  fileName?: string | null
-
-  contentType?: string | null
-}
 
 @Injectable()
 export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
@@ -47,24 +27,16 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     super(ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD)
   }
 
-  getObjectKey(obj: any, value: any) {
-    return Object.keys(obj).filter((key) => obj[key] === value)
-  }
-
+  /** Helper function. Get's applicants by type. If no type is provided then it returns from national registry */
   getApplicants(
     application: ApplicationWithAttachments,
     cardType: string | null = null,
   ): string[] {
-    this.logger.info('getApplicants')
     const nridArr: string[] = []
-    this.logger.info(application.externalData)
-    this.logger.info(application.externalData.nationalRegistry?.data)
     const userData = application.externalData.nationalRegistry
       ?.data as NationalRegistry
 
-    this.logger.info('userdata' + userData)
     if (userData?.nationalId) {
-      this.logger.info('adding to arr')
       nridArr.push(userData.nationalId)
     }
 
@@ -81,20 +53,15 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     }
 
     if (!cardType) {
-      this.logger.info(nridArr)
       return nridArr
     }
 
-    const applicants = application.answers[cardType] as Array<any>
+    const applicants = application.answers[cardType] as string[]
     const apply: string[] = []
 
     for (let i = 0; i < applicants?.length; i++) {
-      this.logger.info('Adding: ' + applicants[i])
-
       apply.push(applicants[i])
     }
-
-    this.logger.info(apply)
 
     return apply
   }
@@ -110,12 +77,17 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     return listString
   }
 
+  /** Get's applicants that want a temporary card (PDF) and their current physical (plastic) card number */
   getPDFApplicantsAndCardNumber(
     application: ApplicationWithAttachments,
   ): ApplicantCard[] {
     const pdfApplicantArr: ApplicantCard[] = []
 
     const applicants = this.getApplicants(application, 'applyForPDF')
+    this.logger.info('applyForPDF')
+    applicants.forEach((element) => {
+      this.logger.info(element)
+    })
     // Initial card Response
     const cardResponse = application.externalData.cardResponse
       ?.data as CardResponse[]
@@ -193,19 +165,21 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
         isInsured: true,
         cards: [],
       })
+
+      if (!resp) {
+        this.logger.error('EHIC.API response empty from getCardResponse', resp)
+      }
+
       return resp
     } catch (e) {
-      this.logger.error(e)
+      this.logger.error('EHIC.API error getCardResponse', e)
     }
     return null
   }
 
   async applyForPhysicalAndTemporary(obj: TemplateApiModuleActionProps) {
-    this.logger.info('applyForPhysicalAndTemporary')
-    this.logger.info(obj)
     const result = await this.applyForPhysicalCard(obj)
     await this.applyForTemporaryCard(obj)
-    this.logger.info('applyForPhysicalAndTemporary return')
     return result
   }
 
@@ -213,29 +187,21 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps) {
-    this.logger.info('applyForPhysicalCard')
     const applicants = this.getApplicants(application, 'applyForPlastic')
-
-    this.logger.info('applicants')
-    this.logger.info(applicants)
-
-    this.logger.info(applicants.toString())
-
     const cardResponses: CardResponse[] = []
 
     for (let i = 0; i < applicants.length; i++) {
-      this.logger.info('applyForPhysicalCard')
-      this.logger.info('kt: ' + applicants[i] + ' auth ' + auth.nationalId)
-      const res = await this.ehicApi.requestCard({
-        applicantnationalid: applicants[i],
-        cardtype: 'plastic',
-        usernationalid: auth.nationalId,
-      })
-
-      this.logger.info('res: ' + res)
-      cardResponses.push(res)
+      try {
+        const res = await this.ehicApi.requestCard({
+          applicantnationalid: applicants[i],
+          cardtype: 'plastic',
+          usernationalid: auth.nationalId,
+        })
+        cardResponses.push(res)
+      } catch (error) {
+        this.logger.error('EHIC.API error applyForPhysicalCard', error)
+      }
     }
-
     return cardResponses
   }
 
@@ -243,53 +209,41 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps) {
-    this.logger.info('applyForTemporaryCard')
-    this.logger.info('Answers')
-    this.logger.info(application.answers)
-    this.logger.info('Applicants')
-    this.logger.info(application.applicant)
-
     const applicants = this.getApplicants(application, 'applyForPDF')
-    this.logger.info('applicants tenmp')
-    this.logger.info(applicants)
-    this.logger.info(applicants.toString())
 
     for (let i = 0; i < applicants.length; i++) {
-      await this.ehicApi.requestCard({
-        applicantnationalid: applicants[i],
-        cardtype: 'pdf',
-        usernationalid: auth.nationalId,
-      })
+      try {
+        await this.ehicApi.requestCard({
+          applicantnationalid: applicants[i],
+          cardtype: 'pdf',
+          usernationalid: auth.nationalId,
+        })
+      } catch (error) {
+        this.logger.error('EHIC.API error applyForTemporaryCard', error)
+      }
     }
   }
 
   async getTemporaryCard({ auth, application }: TemplateApiModuleActionProps) {
-    this.logger.info('getTemporaryCard')
     const applicants = this.getPDFApplicantsAndCardNumber(application)
-
-    this.logger.info('applicants.length')
-    this.logger.info(applicants.length)
-    this.logger.info(applicants)
     const pdfArray: TempData[] = []
 
+    this.logger.info('PDF applicants')
+    this.logger.info(applicants.length)
+
     for (let i = 0; i < applicants.length; i++) {
-      this.logger.info('fetching' + i)
-      this.logger.info(applicants[i])
-      if (applicants[i].nrid !== null && applicants[i].cardNumber !== null) {
+      this.logger.info(applicants[i].nrid)
+      try {
         const res = await this.ehicApi.fetchTempPDFCard({
-          applicantnationalid: applicants[i].nrid!,
-          cardnumber: applicants[i].cardNumber!,
+          applicantnationalid: applicants[i].nrid ?? '',
+          cardnumber: applicants[i].cardNumber ?? '',
           usernationalid: auth.nationalId,
         })
-        this.logger.info('response')
-        this.logger.info(res)
         pdfArray.push(res)
+      } catch (error) {
+        this.logger.error('EHIC.API error getTemporaryCard', error)
       }
     }
-
-    this.logger.info('pdfArray.length')
-    this.logger.info(pdfArray.length)
-
     return pdfArray
   }
 }

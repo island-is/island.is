@@ -9,29 +9,21 @@ export interface CardResponse {
 
 export interface CardInfo {
   cardNumber?: string | null
-
   cardType?: string | null
-
   sentStatus?: string | null
-
   comment?: string | null
-
   isPlastic?: boolean
   isTemp?: boolean
 }
 
-export enum SentStatus {
-  SENT,
-  // Has been returned to sender
-  RETURNED,
-  // Is in progress, waiting to be sent
-  WAITING,
+export interface NationalRegistry {
+  nationalId: string
 }
 
-// Plastic card, Temporary card
-export enum CardType {
-  PHYSICAL,
-  TEMPORARY,
+export interface TempData {
+  data?: string | null
+  fileName?: string | null
+  contentType?: string | null
 }
 
 export interface ApplicantCard {

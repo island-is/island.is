@@ -109,6 +109,7 @@ export const europeanHealthInsuranceCardApplicationMessages = {
       id: 'ehic.application:no.description#markdown',
       defaultMessage:
       'Ástæður fyrir því gætu verið eftirfarandi.\n* Einstaklingur er ekki sjúkratryggð/ur á Íslandi. \n* Einstaklingur er ekki með lögheimili á Íslandi. \n* Einstaklingur er ekki með ríkisborgararétt frá EES landi.\n\nEf þú telur þessi atriði ekki eiga við, vinsamlegast hafið samband við [ehic@sjukra.is](mailto:ehic@sjukra.is)',
+
       description: 'Section description',
     },
     sectionSubDescription: {
