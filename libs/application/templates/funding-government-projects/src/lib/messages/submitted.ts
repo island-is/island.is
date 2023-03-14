@@ -20,7 +20,7 @@ export const submitted = {
       description: 'Title of conclusion information box',
     },
     intro: {
-      id: `affgp.application:section.submitted.intro`,
+      id: `affgp.application:section.submitted.intro#markdown`,
       defaultMessage: 'Umsókn þín hefur verið móttekin',
       description: 'Conclusion information box intro',
     },
