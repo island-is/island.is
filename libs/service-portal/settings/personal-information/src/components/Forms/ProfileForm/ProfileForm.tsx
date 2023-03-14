@@ -19,6 +19,7 @@ import { msg } from '../../../lib/messages'
 import { DropModalType, DataStatus } from './types/form'
 import { bankInfoObject } from '../../../utils/bankInfoHelper'
 import { diffModifiedOverMaxDate } from '../../../utils/showUserOnboardingModal'
+import { PaperMail } from './components/Inputs/PaperMail'
 
 interface Props {
   onCloseOverlay?: () => void
@@ -236,6 +237,15 @@ export const ProfileForm: FC<Props> = ({
                   bankInfo={bankInfoObject(userProfile?.bankInfo || '')}
                 />
               )}
+            </InputSection>
+          )}
+          {showDetails && (
+            <InputSection
+              title={formatMessage(m.refuseEmailTitle)}
+              loading={userLoading}
+              text={formatMessage(msg.editNudgeText)}
+            >
+              {!userLoading && <PaperMail />}
             </InputSection>
           )}
           {showDropModal && onCloseOverlay && !internalLoading && (
