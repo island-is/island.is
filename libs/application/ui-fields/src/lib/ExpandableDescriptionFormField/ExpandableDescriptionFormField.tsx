@@ -32,9 +32,11 @@ export const ExpandableDescriptionFormField: FC<Props> = ({
         labelVariant="h3"
       >
         {field.introText && (
-          <Text marginBottom={4}>
-            {formatText(field.introText, application, formatMessage)}
-          </Text>
+          <Box marginBottom={4}>
+            <Markdown>
+              {formatText(field.introText, application, formatMessage)}
+            </Markdown>
+          </Box>
         )}
         <BulletList space="gutter" type="ul">
           <Markdown

@@ -119,6 +119,12 @@ export class GenericMachineLicenseService
       format(user.nationalId),
     )
     if (pass.ok) {
+      if (!pass.data.distributionUrl) {
+        this.logger.warn('Missing pkpass distribution url in machine license', {
+          category: LOG_CATEGORY,
+        })
+        return null
+      }
       return pass.data.distributionUrl
     }
     /**
@@ -143,6 +149,15 @@ export class GenericMachineLicenseService
       format(user.nationalId),
     )
     if (pass.ok) {
+      if (!pass.data.distributionQRCode) {
+        this.logger.warn(
+          'Missing pkpass distribution qr code in machine license',
+          {
+            category: LOG_CATEGORY,
+          },
+        )
+        return null
+      }
       return pass.data.distributionQRCode
     }
     /**

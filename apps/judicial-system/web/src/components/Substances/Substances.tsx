@@ -72,7 +72,11 @@ const Substances: React.FC<Props> = (props) => {
         key={`${indictmentCount.id}-${substance}`}
         name={substance}
         autoComplete="off"
-        label={`${formatMessage(substanceEnum[substance])} (ng/ml)`}
+        label={`${formatMessage(substanceEnum[substance])} ${
+          [Substance.GABAPENTIN, Substance.PREGABALIN].includes(substance)
+            ? '(µg/ml)'
+            : '(ng/ml)'
+        }`}
         placeholder={'0'}
         size="xs"
         value={

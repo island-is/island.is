@@ -63,7 +63,7 @@ const AlcoholTaxRedemptionTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: States.DONE,
+            target: States.DRAFT,
           },
         },
       },

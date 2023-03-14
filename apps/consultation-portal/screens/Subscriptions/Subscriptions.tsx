@@ -7,10 +7,9 @@ import {
   Tabs,
   Text,
 } from '@island.is/island-ui/core'
-import TabContent from '../../components/Tab/TabContent'
 import { useEffect, useState } from 'react'
 import { Layout } from '../../components/Layout/Layout'
-import { SubscriptionsArray, Types } from '../../utils/dummydata'
+import { SubscriptionsArray } from '../../utils/dummydata'
 import {
   SubscriptionActionCard,
   ChosenSubscriptionCard,
@@ -18,16 +17,19 @@ import {
 import { Area, SortOptions } from '../../types/enums'
 import {
   ArrOfIdAndName,
-  Case,
+  ArrOfTypesForSubscriptions,
+  CaseForSubscriptions,
   SortTitle,
   SubscriptionArray,
 } from '../../types/interfaces'
-import BreadcrumbsWithMobileDivider from '../../components/BreadcrumbsWithMobileDivider/BreadcrumbsWithMobileDivider'
+import { BreadcrumbsWithMobileDivider } from '../../components/BreadcrumbsWithMobileDivider'
 import { sorting } from '../../utils/helpers'
+import getInitValues from './getInitValues'
+import TabsList from './tabsList'
 
 interface SubProps {
-  cases: Case[]
-  types?: any
+  cases: CaseForSubscriptions[]
+  types: ArrOfTypesForSubscriptions
 }
 
 const SubscriptionsScreen = ({ cases, types }: SubProps) => {
@@ -37,16 +39,12 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
 
   const [searchValue, setSearchValue] = useState('')
 
-  const [casesData, setCasesData] = useState<Array<Case>>(cases)
-  const Institutions = Object.entries(Types.institutions).map(([id, name]) => ({
-    id,
-    name,
-  }))
+  const [casesData, setCasesData] = useState<Array<CaseForSubscriptions>>(cases)
+
+  const { Institutions, PolicyAreas } = getInitValues({ types: types })
+
   const [institutionsData, setInstitutionsData] = useState(Institutions)
-  const PolicyAreas = Object.entries(Types.policyAreas).map(([id, name]) => ({
-    id,
-    name,
-  }))
+
   const [policyAreasData, setPolicyAreasData] = useState(PolicyAreas)
 
   const [subscriptionArray, setSubscriptionArray] = useState<SubscriptionArray>(
@@ -55,8 +53,8 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
 
   const [sortTitle, setSortTitle] = useState<SortTitle>({
     Mál: SortOptions.latest,
-    Stofnanir: SortOptions.latest,
-    Málefnasvið: SortOptions.latest,
+    Stofnanir: SortOptions.aToZ,
+    Málefnasvið: SortOptions.aToZ,
   })
 
   const paddingX = [0, 0, 0, 8, 15] as ResponsiveSpace
@@ -68,22 +66,33 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
       sortTitle[Area.institution],
     )
     const sortedPolicyAreas = sorting(PolicyAreas, sortTitle[Area.policyArea])
+    const lowerCaseSearchValue = searchValue.toLocaleLowerCase()
 
     if (searchValue) {
       setCasesData(
         sortedCases.filter(
           (item) =>
-            item.name.includes(searchValue) ||
-            item.caseNumber.includes(searchValue) ||
-            item.institutionName.includes(searchValue) ||
-            item.policyAreaName.includes(searchValue),
+            item.name.toLocaleLowerCase().includes(lowerCaseSearchValue) ||
+            item.caseNumber
+              .toLocaleLowerCase()
+              .includes(lowerCaseSearchValue) ||
+            item.institutionName
+              .toLocaleLowerCase()
+              .includes(lowerCaseSearchValue) ||
+            item.policyAreaName
+              .toLocaleLowerCase()
+              .includes(lowerCaseSearchValue),
         ),
       )
       setInstitutionsData(
-        sortedInstitutions.filter((item) => item.name.includes(searchValue)),
+        sortedInstitutions.filter((item) =>
+          item.name.toLocaleLowerCase().includes(lowerCaseSearchValue),
+        ),
       )
       setPolicyAreasData(
-        sortedPolicyAreas.filter((item) => item.name.includes(searchValue)),
+        sortedPolicyAreas.filter((item) =>
+          item.name.toLocaleLowerCase().includes(lowerCaseSearchValue),
+        ),
       )
     } else {
       setCasesData(sortedCases)
@@ -92,87 +101,29 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
     }
   }, [searchValue])
 
-  const tabs = [
-    {
-      id: Area.case,
-      label: Area.case,
-      content: (
-        <TabContent
-          data={casesData}
-          setData={(newData: Array<Case>) => setCasesData(newData)}
-          currentTab={Area.case}
-          subscriptionArray={subscriptionArray}
-          setSubscriptionArray={(newSubscriptionArray: SubscriptionArray) =>
-            setSubscriptionArray(newSubscriptionArray)
-          }
-          searchValue={searchValue}
-          setSearchValue={(newValue: string) => setSearchValue(newValue)}
-          sortTitle={sortTitle[Area.case]}
-          setSortTitle={(val) => {
-            const _sortTitle = { ...sortTitle }
-            _sortTitle[Area.case] = val
-            setSortTitle(_sortTitle)
-          }}
-        />
-      ),
-      disabled: false,
+  const tabs = TabsList({
+    casesData: casesData,
+    setCasesData: (arr: Array<CaseForSubscriptions>) => setCasesData(arr),
+    institutionsData: institutionsData,
+    setInstitutionsData: (arr: Array<ArrOfIdAndName>) =>
+      setInstitutionsData(arr),
+    policyAreasData: policyAreasData,
+    setPolicyAreasData: (arr: Array<ArrOfIdAndName>) => setPolicyAreasData(arr),
+    Area: Area,
+    subscriptionArray: subscriptionArray,
+    setSubscriptionArray: (arr: SubscriptionArray) => setSubscriptionArray(arr),
+    searchValue: searchValue,
+    setSearchValue: (value: string) => setSearchValue(value),
+    sortTitle: sortTitle,
+    setSortTitle: (value: SortOptions) => {
+      const _sortTitle = { ...sortTitle }
+      _sortTitle[Area.case] = value
+      setSortTitle(_sortTitle)
     },
-    {
-      id: Area.institution,
-      label: Area.institution,
-      content: (
-        <TabContent
-          data={institutionsData}
-          setData={(newData: Array<ArrOfIdAndName>) =>
-            setInstitutionsData(newData)
-          }
-          currentTab={Area.institution}
-          subscriptionArray={subscriptionArray}
-          setSubscriptionArray={(newSubscriptionArray: SubscriptionArray) =>
-            setSubscriptionArray(newSubscriptionArray)
-          }
-          searchValue={searchValue}
-          setSearchValue={(newValue: string) => setSearchValue(newValue)}
-          sortTitle={sortTitle[Area.institution]}
-          setSortTitle={(val) => {
-            const _sortTitle = { ...sortTitle }
-            _sortTitle[Area.institution] = val
-            setSortTitle(_sortTitle)
-          }}
-        />
-      ),
-      disabled: false,
-    },
-    {
-      id: Area.policyArea,
-      label: Area.policyArea,
-      content: (
-        <TabContent
-          data={policyAreasData}
-          setData={(newData: Array<ArrOfIdAndName>) =>
-            setPolicyAreasData(newData)
-          }
-          currentTab={Area.policyArea}
-          subscriptionArray={subscriptionArray}
-          setSubscriptionArray={(newSubscriptionArray: SubscriptionArray) =>
-            setSubscriptionArray(newSubscriptionArray)
-          }
-          searchValue={searchValue}
-          setSearchValue={(newValue: string) => setSearchValue(newValue)}
-          sortTitle={sortTitle[Area.policyArea]}
-          setSortTitle={(val) => {
-            const _sortTitle = { ...sortTitle }
-            _sortTitle[Area.policyArea] = val
-            setSortTitle(_sortTitle)
-          }}
-        />
-      ),
-      disabled: false,
-    },
-  ]
+  })
 
   return (
-    <Layout>
+    <Layout seo={{ title: 'Áskriftir', url: 'askriftir' }}>
       <Divider />
       <Box background="blue100">
         <BreadcrumbsWithMobileDivider
