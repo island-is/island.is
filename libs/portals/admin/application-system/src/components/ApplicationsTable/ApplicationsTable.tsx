@@ -105,7 +105,6 @@ export const ApplicationsTable = ({
                   baseId={`application-drawer-${index}`}
                   disclosure={
                     <tr
-                      key={`${application.id}-${index}`}
                       role="button"
                       aria-label={formatMessage(m.openApplication)}
                       className={styles.focusableTableRow}
@@ -125,8 +124,9 @@ export const ApplicationsTable = ({
                       </T.Data>
                       <T.Data>
                         <Box display="flex" alignItems="center">
-                          <img src={logo} alt="" className={styles.logo} />
-                          <span>{application.institution}</span>
+                          <Tooltip text={application.institution}>
+                            <img src={logo} alt="" className={styles.logo} />
+                          </Tooltip>
                         </Box>
                       </T.Data>
                       <T.Data>
