@@ -24,7 +24,7 @@ const SidemenuItem = ({
 
   const badgeActive: keyof typeof styles.badge =
     unreadCounter > 0 ? 'active' : 'inactive'
-  const fullWidth = item.isKeyItem
+  const fullWidth = false //item.isKeyItem
   let itemText = formatMessage(item.name)
   const itemTextLength = itemText.length
   if (itemTextLength > 11 && !fullWidth) {

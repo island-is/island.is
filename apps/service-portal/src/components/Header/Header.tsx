@@ -69,7 +69,7 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
             <Link to={ServicePortalPath.MinarSidurRoot}>
               <FocusableBox component="div">
                 <Hidden above="sm">
-                  <Logo width={24} height={22} iconOnly id="header-mobile" />
+                  <Logo width={40} height={40} iconOnly id="header-mobile" />
                 </Hidden>
                 <Hidden below="md">
                   <Logo width={136} height={22} id="header" />
@@ -83,26 +83,28 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
                 flexWrap="nowrap"
                 marginLeft={[1, 1, 2]}
               >
-                <Box marginRight={[1, 1, 2]} position="relative">
-                  <Link to={ServicePortalPath.ElectronicDocumentsRoot}>
-                    <Button
-                      variant="utility"
-                      colorScheme="white"
-                      size="small"
-                      icon="mail"
-                      iconType="outline"
-                    >
-                      {!isMobile && formatMessage(m.documents)}
-                    </Button>
-                  </Link>
-                  <Box
-                    borderRadius="circle"
-                    className={cn(styles.badge[badgeActive])}
-                  />
-                </Box>
+                <Hidden below="md">
+                  <Box marginRight={[1, 1, 2]} position="relative">
+                    <Link to={ServicePortalPath.ElectronicDocumentsRoot}>
+                      <Button
+                        variant="utility"
+                        colorScheme="white"
+                        size="small"
+                        icon="mail"
+                        iconType="outline"
+                      >
+                        {!isMobile && formatMessage(m.documents)}
+                      </Button>
+                    </Link>
+                    <Box
+                      borderRadius="circle"
+                      className={cn(styles.badge[badgeActive])}
+                    />
+                  </Box>
+                </Hidden>
 
                 {user && <UserLanguageSwitcher user={user} />}
-                <Box paddingRight={2}>
+                <Box marginRight={[1, 1, 2]}>
                   <Button
                     variant="utility"
                     colorScheme="white"
@@ -111,7 +113,7 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
                       setSideMenuOpen(true)
                     }}
                   >
-                    {!isMobile && formatMessage(m.overview)}
+                    {formatMessage(m.overview)}
                   </Button>
                 </Box>
 

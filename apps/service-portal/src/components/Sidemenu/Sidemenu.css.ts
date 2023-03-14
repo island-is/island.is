@@ -108,8 +108,6 @@ export const dropdown = style({
 
 export const fullScreen = style({
   ...dropdownBase,
-  maxHeight: 'none',
-  top: 0,
   ...themeUtils.responsiveStyle({
     md: {
       ...dropdownBaseMD,

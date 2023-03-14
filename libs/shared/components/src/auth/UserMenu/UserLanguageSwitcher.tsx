@@ -60,7 +60,7 @@ export const UserLanguageSwitcher = ({
       />
     </Box>
   ) : (
-    <Box paddingRight={2}>
+    <Box marginRight={[1, 1, 2]}>
       <Button
         variant="utility"
         colorScheme="white"

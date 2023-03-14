@@ -100,7 +100,7 @@ const ContentBreadcrumbs: FC<{}> = () => {
       justifyContent="spaceBetween"
       alignItems="center"
       paddingBottom={[2, 3]}
-      paddingTop={[1, 1, 0]}
+      paddingTop={[4, 4, 0]}
       paddingLeft="p2"
     >
       <Box paddingTop={0} position="relative">

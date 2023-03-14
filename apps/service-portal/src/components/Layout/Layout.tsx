@@ -143,6 +143,7 @@ export const Layout: FC = ({ children }) => {
               <Sticky>
                 <Box style={{ marginTop: height }}>
                   <GoBack />
+
                   {subNavItems && subNavItems.length > 0 && (
                     <Box background="blue100">
                       <Navigation
@@ -169,6 +170,28 @@ export const Layout: FC = ({ children }) => {
           >
             <Box as="main" component="main" style={{ marginTop: height }}>
               <ContentBreadcrumbs />
+              {isMobile && subNavItems && subNavItems.length > 0 && (
+                <Box paddingBottom={3} width="full">
+                  <Navigation
+                    renderLink={(link, item) => {
+                      return item?.href ? (
+                        <ReactLink to={item?.href}>{link}</ReactLink>
+                      ) : (
+                        link
+                      )
+                    }}
+                    baseId={'service-portal-mobile-navigation'}
+                    title={
+                      activeParent?.name
+                        ? formatMessage(activeParent?.name)
+                        : formatMessage(m.tableOfContents)
+                    }
+                    items={subNavItems}
+                    isMenuDialog={true}
+                    //upwards
+                  />
+                </Box>
+              )}
               {children}
             </Box>
           </SidebarLayout>
@@ -180,29 +203,6 @@ export const Layout: FC = ({ children }) => {
           </Box>
         )}
       </div>
-
-      {isMobile && subNavItems && subNavItems.length > 0 && (
-        <Box paddingTop={3} position="fixed" bottom={0} width="full">
-          <Navigation
-            renderLink={(link, item) => {
-              return item?.href ? (
-                <ReactLink to={item?.href}>{link}</ReactLink>
-              ) : (
-                link
-              )
-            }}
-            baseId={'service-portal-mobile-navigation'}
-            title={
-              activeParent?.name
-                ? formatMessage(activeParent?.name)
-                : formatMessage(m.tableOfContents)
-            }
-            items={subNavItems}
-            isMenuDialog={true}
-            upwards
-          />
-        </Box>
-      )}
     </>
   )
 }
