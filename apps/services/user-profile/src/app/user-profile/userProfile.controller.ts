@@ -1,6 +1,4 @@
 // TRIGGER LINE
-
-
 import { UserProfileScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
