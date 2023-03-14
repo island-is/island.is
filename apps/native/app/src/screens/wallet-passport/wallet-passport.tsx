@@ -16,6 +16,9 @@ import {client} from '../../graphql/client';
 import {GET_IDENTITY_DOCUMENT_QUERY} from '../../graphql/queries/get-identity-document.query';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {LicenseStatus, LicenseType} from '../../types/license-type';
+import IconStatusVerified from '../../assets/icons/valid.png';
+import IconStatusNonVerified from '../../assets/icons/danger.png';
+import {useFeatureFlag} from '../../contexts/feature-flag-provider';
 
 const Information = styled.ScrollView`
   flex: 1;
@@ -82,6 +85,11 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
   cardHeight?: number;
 }> = ({id, componentId, cardHeight = 140}) => {
   useNavigationOptions(componentId);
+
+  const showChildrenPassport = useFeatureFlag(
+    'isChildrenPassportEnabled',
+    false,
+  );
 
   const intl = useIntl();
   const {data, loading, error} = useQuery(GET_IDENTITY_DOCUMENT_QUERY, {
@@ -150,6 +158,7 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
               loading={loading}
               error={!!error}
               noBorder
+              copy
             />
           </InputRow>
 
@@ -196,17 +205,28 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
             />
           </InputRow>
 
-          {childrenPassport?.length > 0 ? (
-            <View style={{paddingHorizontal: 16}}>
+          {showChildrenPassport && childrenPassport?.length > 0 ? (
+            <View style={{paddingHorizontal: 16, marginTop: 8}}>
               <Label>
                 {intl.formatMessage({id: 'walletPassport.children'})}
               </Label>
               <Accordion>
                 {childrenPassport?.map((child: any) => {
+                  const isInvalid = child?.status?.toLowerCase() === 'invalid';
                   return (
                     <AccordionItem
                       key={child.childNationalId}
                       title={child?.childName}
+                      icon={
+                        <Image
+                          source={
+                            isInvalid
+                              ? IconStatusNonVerified
+                              : IconStatusVerified
+                          }
+                          style={{width: 24, height: 24, resizeMode: 'contain'}}
+                        />
+                      }
                     >
                       <View>
                         {child.passports?.map((passport: any) => {
@@ -222,6 +242,7 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
                                   error={!!error}
                                   noBorder
                                   isCompact
+                                  copy
                                 />
                               </InputRow>
 

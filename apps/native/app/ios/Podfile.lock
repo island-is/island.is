@@ -615,6 +615,10 @@ PODS:
     - React-RCTText
   - RNCAsyncStorage (1.12.1):
     - React-Core
+  - RNCClipboard (1.11.2):
+    - React-Core
+  - RNCClipboard (1.11.2):
+    - React-Core
   - RNDeviceInfo (10.3.0):
     - React-Core
   - RNFBAnalytics (16.7.0):
@@ -918,6 +922,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-device-info"
   RNFBAnalytics:
     :path: "../node_modules/@react-native-firebase/analytics"
+  RNCClipboard:
+    :path: "../../node_modules/@react-native-clipboard/clipboard"
   RNFBApp:
     :path: "../node_modules/@react-native-firebase/app"
   RNFBMessaging:
@@ -1031,6 +1037,7 @@ SPEC CHECKSUMS:
   ReactNativeNavigation: c1c89c03f3d1b70e4bcb1090fd9442d499c4d3c3
   RNCAsyncStorage: b03032fdbdb725bea0bd9e5ec5a7272865ae7398
   RNDeviceInfo: 4701f0bf2a06b34654745053db0ce4cb0c53ada7
+  RNCClipboard: 3f0451a8100393908bea5c5c5b16f96d45f30bfc
   RNFBAnalytics: 41a51e0e49427483d3f455c5ed0f891672c30a24
   RNFBApp: aecfcdc0964d9bc0c5f7ba05efb50be724d8e8b3
   RNFBMessaging: a647b2db61602e9981933b5fc90f1b058e61922c
