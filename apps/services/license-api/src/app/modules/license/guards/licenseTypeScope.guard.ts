@@ -4,6 +4,9 @@ import { getRequest } from '@island.is/auth-nest-tools'
 import { licenseTypeToScope } from '../scopeMapper'
 import { LicenseId } from '../license.types'
 
+/**
+ * Checks that the access token has the required scopes to be able to perform an action on a specific `LicenseId`
+ */
 @Injectable()
 export class LicenseTypeScopesGuard implements CanActivate {
   canActivate(
