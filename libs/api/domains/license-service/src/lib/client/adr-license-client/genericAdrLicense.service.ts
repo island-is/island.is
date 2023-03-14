@@ -123,6 +123,12 @@ export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
     )
 
     if (pass.ok) {
+      if (!pass.data.distributionUrl) {
+        this.logger.warn('Missing pkpass distribution url in adr license', {
+          category: LOG_CATEGORY,
+        })
+        return null
+      }
       return pass.data.distributionUrl
     }
     /**
@@ -143,7 +149,13 @@ export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
     )
 
     if (pass.ok) {
-      return pass.data.distributionQRCode
+      if (!pass.data.distributionQRCode) {
+        this.logger.warn('Missing pkpass distribution qr code in adr license', {
+          category: LOG_CATEGORY,
+        })
+        return null
+      }
+      return pass.data.distributionUrl
     }
     /**
      * TODO: Leverage the extra error data SmartApi now returns in a future branch!
