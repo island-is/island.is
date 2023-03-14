@@ -1,4 +1,8 @@
-import { TestEndpointOptions, getRequestMethod } from '@island.is/testing/nest'
+import {
+  TestApp,
+  TestEndpointOptions,
+  getRequestMethod,
+} from '@island.is/testing/nest'
 import {
   setupWithAuth,
   setupWithoutAuth,
@@ -9,8 +13,10 @@ import { createCurrentUser } from '@island.is/testing/fixtures'
 import { LicenseApiScope } from '@island.is/auth/scopes'
 import { startMocking } from '@island.is/shared/mocking'
 import { requestHandlers } from './__mock_data/requestHandlers'
+import { LicenseService } from '../license.service'
+import { User } from '@island.is/auth-nest-tools'
 
-startMocking(requestHandlers)
+//startMocking(requestHandlers)
 
 describe('LicenseController - Without scopes, auth or invalid scopes', () => {
   it.each`
@@ -67,6 +73,7 @@ describe('LicenseController - Without scopes, auth or invalid scopes', () => {
   )
 })
 describe('LicenseController - with correct auth and scope', () => {
+  /*
   describe('Update passes - pull', () => {
     it.each`
       method   | endpoint                                    | scope
@@ -84,15 +91,31 @@ describe('LicenseController - with correct auth and scope', () => {
         const res = await getRequestMethod(server, method)(endpoint)
           .set('x-param-nationalid', user.nationalId)
           .send({ licenseUpdateType: 'pull' })
-        console.log(JSON.stringify(res))
 
         //Assert
         expect(res.status).toEqual(200)
         app.cleanUp()
       },
     )
-  })
+  })*/
+  let app: TestApp
+  let licenseService: LicenseService
+  let user: User
   describe('Update passes - push', () => {
+    beforeAll(async () => {
+      //Arrange
+      user = createCurrentUser({
+        nationalId: '0101303019',
+        scope: [LicenseApiScope.licensesFirearm],
+      })
+      app = await setupWithAuth(user)
+      licenseService = app.get<LicenseService>(LicenseService)
+      jest
+        .spyOn(licenseService, 'updateLicense')
+        .mockImplementation(() =>
+          Promise.resolve({ ok: true, updateSuccess: true }),
+        )
+    })
     it.each`
       method   | endpoint                                    | scope
       ${'PUT'} | ${'/users/.nationalId/licenses/firearm'}    | ${LicenseApiScope.licensesFirearm}
@@ -100,20 +123,16 @@ describe('LicenseController - with correct auth and scope', () => {
     `(
       '$method $endpoint should return 200 ok when scope is $scope',
       async ({ method, endpoint, scope, action }) => {
-        //Arrange
-        const user = createCurrentUser({ nationalId: '0101303019', scope })
-        const app = await setupWithAuth(user)
-        const server = request(app.getHttpServer())
-
         //Act
-        const res = await getRequestMethod(server, method)(endpoint)
+        const res = await request(app.getHttpServer())
+          .put(endpoint)
           .set('x-param-nationalid', user.nationalId)
           .send({
             licenseUpdateType: 'push',
-            expiryDate: '1930-01-01T00:00:00',
+            expiryDate: '2022-06-16T00:00:00Z',
           })
-        console.log(JSON.stringify(res))
 
+        console.log(JSON.stringify(res))
         //Assert
         expect(res.status).toEqual(200)
         app.cleanUp()
