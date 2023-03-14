@@ -41,9 +41,6 @@ enum TEMPLATE_API_ACTIONS {
   sendApplication = 'sendApplication',
 }
 
-console.log()
-
-
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,

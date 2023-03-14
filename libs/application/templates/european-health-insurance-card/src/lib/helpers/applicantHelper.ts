@@ -14,11 +14,9 @@ function getObjectKey(obj: any, value: any) {
 
 export function getFromRegistry(formValues: Application<FormValue>) {
   const nridArr: NridName[] = []
-  console.log(formValues.externalData, 'formValues.externalData')
   const userData = formValues.externalData.nationalRegistry
     ?.data as NationalRegistry
 
-  console.log(userData, 'userData')
   if (userData?.nationalId) {
     nridArr.push({ nrid: userData?.nationalId, name: userData?.fullName })
   }
@@ -26,7 +24,6 @@ export function getFromRegistry(formValues: Application<FormValue>) {
     ?.data as NationalRegistry
 
   if (spouseData?.nationalId) {
-    console.log(spouseData, 'spouseData')
     nridArr.push({ nrid: spouseData?.nationalId, name: spouseData?.name })
   }
 
@@ -35,16 +32,12 @@ export function getFromRegistry(formValues: Application<FormValue>) {
 
   if (custodyData) {
     for (let i = 0; i < custodyData.length; i++) {
-      console.log(custodyData, 'custodyData')
       nridArr.push({
         nrid: custodyData[i].nationalId,
         name: custodyData[i].fullName,
       })
     }
   }
-
-  console.log(nridArr, 'nridArr')
-
   return nridArr
 }
 
@@ -122,10 +115,8 @@ export function base64ToArrayBuffer(base64Pdf: string) {
 export function someCanApplyForPlasticOrPdf(
   externalData: ExternalData,
 ): boolean {
-  console.log(externalData)
   if (externalData?.cardResponse?.data) {
     const cardResponse = externalData?.cardResponse?.data as CardResponse[]
-    console.log(cardResponse)
     for (let i = 0; i < cardResponse.length; i++) {
       if (cardResponse[i].isInsured && cardResponse[i].canApply) {
         return true
@@ -148,7 +139,6 @@ export function someCanApplyForPlasticOrPdf(
 
 /** Checks if one of all persons from national registry for this user has an health insurance and can apply*/
 export function someCanApplyForPlastic(externalData: ExternalData): boolean {
-  console.log(externalData)
   if (externalData?.cardResponse?.data) {
     const cardResponse = externalData?.cardResponse?.data as CardResponse[]
 
@@ -162,7 +152,6 @@ export function someCanApplyForPlastic(externalData: ExternalData): boolean {
 }
 
 export function someHavePDF(externalData: ExternalData): boolean {
-  console.log(externalData)
   if (externalData?.cardResponse?.data) {
     const cardResponse = externalData?.cardResponse?.data as CardResponse[]
 
@@ -179,7 +168,6 @@ export function someHavePDF(externalData: ExternalData): boolean {
 }
 
 export function someHavePlasticButNotPdf(externalData: ExternalData): boolean {
-  console.log(externalData)
   if (externalData?.cardResponse?.data) {
     const cardResponse = externalData?.cardResponse?.data as CardResponse[]
 
@@ -239,6 +227,5 @@ export function hasAPDF(cardInfo: CardResponse) {
 }
 
 export const canApply = (value = false) => ({ application }: ApplicationContext) => {
-  console.log(application)
   return value === someCanApplyForPlasticOrPdf(application.externalData)
 }

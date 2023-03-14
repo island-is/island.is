@@ -1,15 +1,14 @@
-import { Address, NationalRegistry, Person } from '../../lib/types'
+import { Address, NationalRegistry } from '../../lib/types'
 import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
 
 import { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../../lib/messages'
 import { formatText } from '@island.is/application/core'
-import { useLocale } from '@island.is/localization'
 import { getFullName } from '../../lib/helpers/applicantHelper'
+import { useLocale } from '@island.is/localization'
 
 const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
-  const { answers } = application
   const { formatMessage } = useLocale()
 
   const nationalRegistryData = application.externalData.nationalRegistry
@@ -26,8 +25,6 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
 
   const plastic = application.answers.applyForPlastic as Array<any>
   const pdf = application.answers.applyForPDF as Array<any>
-
-  console.log(application)
 
   return (
     <Box marginTop={4}>

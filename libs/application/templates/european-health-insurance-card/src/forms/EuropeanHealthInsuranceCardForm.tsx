@@ -1,23 +1,12 @@
 import {
   Application,
-  ChildrenCustodyInformationApi,
   DefaultEvents,
-  MaybeWithApplicationAndField,
-  NationalRegistrySpouseApi,
-  NationalRegistryUserApi,
 } from '@island.is/application/types'
-import { CardResponse, NationalRegistry } from '../lib/types'
-import {
-  EhicApplyForPhysicalCardApi,
-  EhicCardResponseApi,
-} from '../dataProviders'
 import { Form, FormModes } from '@island.is/application/types'
 import {
   buildCheckboxField,
-  buildCustomField,
-  buildDataProviderItem,
   buildDescriptionField,
-  buildExternalDataProvider,
+  buildDividerField,
   buildForm,
   buildMultiField,
   buildSection,
@@ -26,7 +15,6 @@ import {
 import {
   getDefaultValuesForPDFApplicants,
   getEhicResponse,
-  getFromRegistry,
   getFullName,
   hasAPDF,
   someAreNotInsured,
@@ -36,11 +24,9 @@ import {
   someHavePlasticButNotPdf,
 } from '../lib/helpers/applicantHelper'
 
+import { CardResponse } from '../lib/types'
 import { Sjukra } from '../assets'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
-
-/* eslint-disable-next-line */
-export interface EuropeanHealthInsuranceCardProps { }
 
 export const EuropeanHealthInsuranceCardForm: Form = buildForm({
   id: 'EuropeanHealthInsuranceCardForm',
@@ -83,16 +69,28 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                     applying.push({
                       value: x.applicantNationalId,
                       label: getFullName(application, x.applicantNationalId),
+                      subLabel:
+                        e.applicants.sectionHasNoPlasticLabel,
                     })
                   }
                 })
                 return applying as Array<{ value: any; label: string }>
               },
             }),
+
+            buildDescriptionField({
+              id: 'break',
+              title: "",
+              titleVariant: 'h3',
+              marginBottom: 'gutter',
+              space: 'gutter',
+            }),
+
             buildCheckboxField({
               id: 'addForPDF',
               backgroundColor: 'white',
               title: e.temp.sectionCanTitle,
+              description: "",
               condition: (_, externalData) =>
                 someHavePlasticButNotPdf(externalData),
               options: (application: Application) => {
@@ -112,13 +110,22 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                 return applying as Array<{ value: any; label: string }>
               },
             }),
+
+            buildDescriptionField({
+              id: 'break',
+              title: "",
+              titleVariant: 'h3',
+              marginBottom: 'gutter',
+              space: 'gutter',
+            }),
+
             buildCheckboxField({
               id: 'havePdf',
               backgroundColor: 'white',
               title: 'Eiga pdf',
+              description: "",
               condition: (_, externalData) => someHavePDF(externalData),
               options: (application: Application) => {
-                console.log(application, 'notApplicable')
                 const applying: Array<any> = []
                 getEhicResponse(application).forEach((x) => {
                   if (x.isInsured && hasAPDF(x)) {
@@ -134,14 +141,16 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                 return applying as Array<{ value: any; label: string }>
               },
             }),
+
+
+            
             buildCheckboxField({
               id: 'notApplicable',
               backgroundColor: 'white',
-              title: "",
+              title: e.no.sectionTitle,
               description: e.no.sectionDescription,
               condition: (_, externalData) => someAreNotInsured(externalData),
               options: (application: Application) => {
-                console.log(application, 'notApplicable')
                 const applying: Array<any> = []
                 getEhicResponse(application).forEach((x) => {
                   if (!x.isInsured && !x.canApply) {
@@ -158,7 +167,6 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
             }),
           ],
         }),
-        
         buildDescriptionField({
           condition: (_, externalData) =>
             !someCanApplyForPlasticOrPdf(externalData),
