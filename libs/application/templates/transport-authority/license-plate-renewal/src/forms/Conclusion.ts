@@ -2,7 +2,7 @@ import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { information, externalData, payment, conclusion } from '../lib/messages'
 import { Logo } from '../assets/Logo'
-import { formConclusionSection } from '@island.is/application/ui-forms'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
 export const Conclusion: Form = buildForm({
   id: 'ConclusionForm',
@@ -25,7 +25,7 @@ export const Conclusion: Form = buildForm({
       title: payment.general.sectionTitle,
       children: [],
     }),
-    formConclusionSection({
+    buildFormConclusionSection({
       alertTitle: conclusion.general.alertTitle,
       alertMessage: conclusion.general.alertMessage,
       expandableHeader: conclusion.general.accordionTitle,
