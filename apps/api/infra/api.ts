@@ -326,9 +326,9 @@ export const serviceSetup = (services: {
       requests: { cpu: '200m', memory: '1024Mi' },
     })
     .replicaCount({
-      default: 10,
+      default: 2,
       max: 50,
-      min: 10,
+      min: 2,
     })
     .grantNamespaces(
       'nginx-ingress-external',
