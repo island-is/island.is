@@ -1,11 +1,18 @@
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
-import { settings } from '../../../../infra/src/dsl/settings'
 
 const postgresInfo = {}
 export const serviceSetup = (): ServiceBuilder<'regulations-admin-backend'> =>
   service('regulations-admin-backend')
     .image('regulations-admin-backend')
     .namespace('regulations-admin')
+    .env({
+      IDENTITY_SERVER_ISSUER_URL: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
+      IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/regulations-admin-api',
+    })
     .postgres(postgresInfo)
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
@@ -13,6 +20,8 @@ export const serviceSetup = (): ServiceBuilder<'regulations-admin-backend'> =>
     })
     .secrets({
       REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL',
+      IDENTITY_SERVER_CLIENT_SECRET:
+        '/k8s/services-regulations-admin/IDENTITY_SERVER_CLIENT_SECRET',
     })
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },

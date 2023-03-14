@@ -1688,6 +1688,8 @@ regulations-admin-backend:
     DB_NAME: 'regulations_admin_backend'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
     DB_USER: 'regulations_admin_backend'
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/regulations-admin-api'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -1750,6 +1752,7 @@ regulations-admin-backend:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/regulations-admin-backend/DB_PASSWORD'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-regulations-admin/IDENTITY_SERVER_CLIENT_SECRET'
     REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL'
   securityContext:
     allowPrivilegeEscalation: false
