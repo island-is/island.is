@@ -43,8 +43,7 @@ import { GlobalContextProvider } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
 import { useI18n } from '../i18n'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
-import { environment } from '../environments'
-import { useFeatureFlag, useNamespace } from '../hooks'
+import { useNamespace } from '../hooks'
 import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
@@ -101,7 +100,6 @@ export interface LayoutProps {
   alertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   organizationAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   articleAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
-  customAlertBanners?: GetAlertBannerQuery['getAlertBanner'][]
   languageToggleQueryParams?: Record<Locale, Record<string, string>>
   footerVersion?: 'default' | 'organization'
   respOrigin
@@ -144,7 +142,6 @@ const Layout: NextComponentType<
   alertBannerContent,
   organizationAlertBannerContent,
   articleAlertBannerContent,
-  customAlertBanners,
   languageToggleQueryParams,
   footerVersion = 'default',
   respOrigin,
@@ -179,44 +176,30 @@ const Layout: NextComponentType<
   const [alertBanners, setAlertBanners] = useState([])
 
   useEffect(() => {
-    setAlertBanners(
-      [
-        {
-          bannerId: `alert-${stringHash(
-            JSON.stringify(alertBannerContent ?? {}),
-          )}`,
-          ...alertBannerContent,
-        },
-        {
-          bannerId: `organization-alert-${stringHash(
-            JSON.stringify(organizationAlertBannerContent ?? {}),
-          )}`,
-          ...organizationAlertBannerContent,
-        },
-        {
-          bannerId: `article-alert-${stringHash(
-            JSON.stringify(articleAlertBannerContent ?? {}),
-          )}`,
-          ...articleAlertBannerContent,
-        },
-      ]
-        .concat(
-          customAlertBanners?.map((banner) => ({
-            bannerId: `custom-alert-${stringHash(
-              JSON.stringify(banner ?? {}),
-            )}`,
-            ...banner,
-          })) ?? [],
-        )
-        .filter(
-          (banner) => !Cookies.get(banner.bannerId) && banner?.showAlertBanner,
-        ),
-    )
+    setAlertBanners([
+      {
+        bannerId: `alert-${stringHash(
+          JSON.stringify(alertBannerContent ?? {}),
+        )}`,
+        ...alertBannerContent,
+      },
+      {
+        bannerId: `organization-alert-${stringHash(
+          JSON.stringify(organizationAlertBannerContent ?? {}),
+        )}`,
+        ...organizationAlertBannerContent,
+      },
+      {
+        bannerId: `article-alert-${stringHash(
+          JSON.stringify(articleAlertBannerContent ?? {}),
+        )}`,
+        ...articleAlertBannerContent,
+      },
+    ])
   }, [
     alertBannerContent,
     articleAlertBannerContent,
     organizationAlertBannerContent,
-    customAlertBanners,
   ])
 
   const preloadedFonts = [
@@ -635,27 +618,28 @@ export const withMainLayout = <T,>(
       Component.getInitialProps ? Component.getInitialProps(ctx) : ({} as T),
     ])
 
+    const componentPropsObject = componentProps as object
+
     const themeConfig: Partial<LayoutProps> =
-      'themeConfig' in componentProps ? componentProps['themeConfig'] : {}
+      'themeConfig' in componentPropsObject
+        ? componentPropsObject['themeConfig']
+        : {}
 
     const organizationAlertBannerContent: GetAlertBannerQuery['getAlertBanner'] =
-      'organizationPage' in componentProps
-        ? componentProps['organizationPage']?.['alertBanner']
+      'organizationPage' in componentPropsObject
+        ? componentPropsObject['organizationPage']?.['alertBanner']
         : undefined
 
     const articleAlertBannerContent: GetAlertBannerQuery['getAlertBanner'] =
-      'article' in componentProps
-        ? componentProps['article']?.['alertBanner']
+      'article' in componentPropsObject
+        ? componentPropsObject['article']?.['alertBanner']
         : undefined
 
-    const customAlertBanners =
-      'customAlertBanners' in componentProps
-        ? componentProps['customAlertBanners']
-        : []
-
     const languageToggleQueryParams =
-      'languageToggleQueryParams' in componentProps
-        ? componentProps['languageToggleQueryParams']
+      'languageToggleQueryParams' in componentPropsObject
+        ? (componentPropsObject[
+            'languageToggleQueryParams'
+          ] as LayoutProps['languageToggleQueryParams'])
         : undefined
 
     return {
@@ -665,7 +649,6 @@ export const withMainLayout = <T,>(
         ...themeConfig,
         organizationAlertBannerContent,
         articleAlertBannerContent,
-        customAlertBanners,
         languageToggleQueryParams,
       },
       componentProps,
