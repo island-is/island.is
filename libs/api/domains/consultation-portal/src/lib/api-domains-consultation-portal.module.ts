@@ -8,6 +8,8 @@ import { DocumentService } from './documents/documents.service'
 import { DocumentResolver } from './documents/documents.resolver'
 import { AllTypesResultService } from './types/types.service'
 import { AllTypesResultResolver } from './types/types.resolver'
+import { UserAdviceResultService } from './user/userAdvice.services'
+import { UserAdviceResultResolver } from './user/userAdvice.resolver'
 
 @Module({
   providers: [
@@ -17,6 +19,8 @@ import { AllTypesResultResolver } from './types/types.resolver'
     DocumentResolver,
     AllTypesResultService,
     AllTypesResultResolver,
+    UserAdviceResultService,
+    UserAdviceResultResolver,
   ],
   imports: [ConsultationPortalClientModule, AuthModule, FeatureFlagModule],
   exports: [],
