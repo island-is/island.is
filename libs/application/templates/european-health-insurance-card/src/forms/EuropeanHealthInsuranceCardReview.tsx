@@ -11,6 +11,7 @@ import {
 import {
   DefaultEvents,
 } from '@island.is/application/types'
+
 import { Sjukra } from '../assets'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 

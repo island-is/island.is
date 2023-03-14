@@ -6,6 +6,7 @@ import {
 
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 
+
 export interface EuropeanHealthInsuranceCardProps { }
 
 export const Declined: Form = buildForm({
