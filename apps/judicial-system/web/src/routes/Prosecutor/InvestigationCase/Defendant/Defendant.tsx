@@ -28,6 +28,7 @@ import {
   errors,
 } from '@island.is/judicial-system-web/messages'
 import {
+  CaseOrigin,
   Defendant as TDefendant,
   UpdateDefendant,
 } from '@island.is/judicial-system/types'
@@ -386,12 +387,19 @@ const Defendant = () => {
                         setWorkingCase={setWorkingCase}
                         onDelete={
                           workingCase.defendants &&
-                          workingCase.defendants.length > 1
+                          workingCase.defendants.length > 1 &&
+                          !(
+                            workingCase.origin === CaseOrigin.LOKE &&
+                            index === 0
+                          )
                             ? handleDeleteDefendant
                             : undefined
                         }
                         onChange={handleUpdateDefendant}
                         updateDefendantState={updateDefendantState}
+                        nationalIdImmutable={
+                          workingCase.origin === CaseOrigin.LOKE && index === 0
+                        }
                       />
                     </Box>
                   </motion.div>
