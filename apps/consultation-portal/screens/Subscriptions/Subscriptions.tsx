@@ -172,7 +172,7 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
   ]
 
   return (
-    <Layout>
+    <Layout seo={{ title: 'Áskriftir', url: 'askriftir' }}>
       <Divider />
       <Box background="blue100">
         <BreadcrumbsWithMobileDivider
