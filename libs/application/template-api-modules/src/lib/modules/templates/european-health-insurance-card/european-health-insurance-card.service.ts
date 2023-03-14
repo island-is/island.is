@@ -187,6 +187,12 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
         }
       }
 
+      resp.push({
+        applicantNationalId: '3333333339',
+        canApply: true,
+        isInsured: true,
+        cards: [],
+      })
       return resp
     } catch (e) {
       this.logger.error(e)

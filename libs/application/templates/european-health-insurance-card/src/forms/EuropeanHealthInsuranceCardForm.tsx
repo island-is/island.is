@@ -70,6 +70,8 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                     applying.push({
                       value: x.applicantNationalId,
                       label: getFullName(application, x.applicantNationalId),
+                      subLabel:
+                      e.applicants.sectionHasnOPlasticLabel,
                     })
                   }
                 })
@@ -80,6 +82,8 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               id: 'addForPDF',
               backgroundColor: 'white',
               title: e.temp.sectionCanTitle,
+              description: "",
+
               condition: (_, externalData) =>
                 someHavePlasticButNotPdf(externalData),
               options: (application: Application) => {
@@ -103,6 +107,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               id: 'havePdf',
               backgroundColor: 'white',
               title: 'Eiga pdf',
+              description: "",
               condition: (_, externalData) => someHavePDF(externalData),
               options: (application: Application) => {
                 const applying: Array<any> = []

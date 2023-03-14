@@ -131,6 +131,11 @@ export const europeanHealthInsuranceCardApplicationMessages = {
         'Haka þarf við hvern einstakling til þess að umsókn hans verði virk.',
       description: 'Section description',
     },
+    sectionHasnOPlasticLabel: {
+      id: 'ehic.application:temp.sectionSubLabel',
+      defaultMessage: 'Heimild til að sækja um ES kort',
+      description: 'Button label for PDF step',
+    },
     submitButtonLabel: {
       id: 'ehic.application:applicant.submitButtonLabel',
       defaultMessage: 'Halda áfram',
