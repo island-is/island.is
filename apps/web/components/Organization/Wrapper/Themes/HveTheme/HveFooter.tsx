@@ -112,8 +112,6 @@ const HveFooter = ({ footerItems, namespace, logo, title }: HveFooterProps) => {
     [footerItems],
   )
 
-  console.log(footerColumns)
-
   return (
     <footer aria-labelledby="hve-footer">
       <div className={styles.container}>
