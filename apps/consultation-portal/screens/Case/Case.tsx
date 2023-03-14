@@ -23,7 +23,7 @@ import StackedTitleAndDescription from '../../components/StackedTitleAndDescript
 
 const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
   // Remove following lines after connecting to API
-
+  const { contactEmail, contactName } = chosenCase
   const card = {
     caseNumber: '76/2022',
     nameOfReviewer: 'Jon Jonsson',
@@ -33,7 +33,12 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
   isLoggedIn = true // remove when functionality for logged in has been implemented
 
   return (
-    <Layout>
+    <Layout
+      seo={{
+        title: `Mál: ${chosenCase?.caseNumber}`,
+        url: `mal/${chosenCase?.caseNumber}`,
+      }}
+    >
       <GridContainer>
         <Box paddingY={[3, 3, 3, 5, 5]}>
           <Breadcrumbs
@@ -121,7 +126,11 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
                   headingColor="blue400"
                   title="Ábyrgðaraðili"
                 >
-                  {`${chosenCase.contactName} ${chosenCase.contactEmail}`}
+                  {contactName || contactEmail
+                    ? `${contactName ? contactName : ''} ${
+                        contactEmail ? contactEmail : ''
+                      }`
+                    : 'Engin skráður'}
                 </StackedTitleAndDescription>
               </SimpleCardSkeleton>
             </Stack>

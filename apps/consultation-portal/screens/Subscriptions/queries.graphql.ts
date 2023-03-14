@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-export const GET_ALL_CASES = gql`
+export const GET_CASES = gql`
   query consultationPortalAllCases {
     consultationPortalAllCases {
       id
@@ -8,6 +8,15 @@ export const GET_ALL_CASES = gql`
       name
       institutionName
       policyAreaName
+    }
+  }
+`
+
+export const GET_TYPES = gql`
+  query consultationPortalAllTypes {
+    consultationPortalAllTypes {
+      policyAreas
+      institutions
     }
   }
 `

@@ -260,7 +260,12 @@ export class ClientsService {
       throw new NoContentException()
     }
 
-    return client.update({ ...clientData })
+    const [_, clients] = await this.clientModel.update(clientData, {
+      where: { clientId: id },
+      returning: true,
+    })
+
+    return clients[0]
   }
 
   /** Soft delete on a client by id */
