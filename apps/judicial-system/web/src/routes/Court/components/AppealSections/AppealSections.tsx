@@ -12,10 +12,10 @@ import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { appealSections as m } from './AppealSections.strings'
 import * as styles from './AppealSections.css'
-import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
 
 interface Props {
   workingCase: Case
