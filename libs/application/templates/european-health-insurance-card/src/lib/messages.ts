@@ -99,10 +99,16 @@ export const europeanHealthInsuranceCardApplicationMessages = {
       'Því miður hefur þú ekki rétt á Evrópska Sjúkratrygginakortinu',
       description: 'Section description',
     },
+    sectionTitle: {
+      id: 'ehic.application:no.description',
+      defaultMessage:
+      'Því miður er ekki heimild til að sækja um ES kort fyrir eftirfarandi einstaklinga.',
+      description: 'Section description',
+    },
     sectionDescription: {
       id: 'ehic.application:no.description#markdown',
       defaultMessage:
-      'Því miður er ekki heimild til að sækja um ES kort fyrir eftirfarandi einstaklinga. Ástæður fyrir því gætu verið eftirfarandi.\n* Einstaklingur er ekki sjúkratryggð/ur á Íslandi. \n* Einstaklingur er ekki með lögheimili á Íslandi. \n* Einstaklingur er ekki með ríkisborgararétt frá EES landi.\n\nEf þú telur þessi atriði ekki eiga við, vinsamlegast hafið samband við [ehic@sjukra.is](mailto:ehic@sjukra.is)',
+      'Ástæður fyrir því gætu verið eftirfarandi.\n* Einstaklingur er ekki sjúkratryggð/ur á Íslandi. \n* Einstaklingur er ekki með lögheimili á Íslandi. \n* Einstaklingur er ekki með ríkisborgararétt frá EES landi.\n\nEf þú telur þessi atriði ekki eiga við, vinsamlegast hafið samband við [ehic@sjukra.is](mailto:ehic@sjukra.is)',
       description: 'Section description',
     },
     sectionSubDescription: {

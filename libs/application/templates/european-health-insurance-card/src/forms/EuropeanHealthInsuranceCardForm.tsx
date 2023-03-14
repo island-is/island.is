@@ -6,6 +6,7 @@ import { Form, FormModes } from '@island.is/application/types'
 import {
   buildCheckboxField,
   buildDescriptionField,
+  buildDividerField,
   buildForm,
   buildMultiField,
   buildSection,
@@ -71,13 +72,22 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                       value: x.applicantNationalId,
                       label: getFullName(application, x.applicantNationalId),
                       subLabel:
-                      e.applicants.sectionHasnOPlasticLabel,
+                        e.applicants.sectionHasnOPlasticLabel,
                     })
                   }
                 })
                 return applying as Array<{ value: any; label: string }>
               },
             }),
+
+            buildDescriptionField({
+              id: 'break',
+              title: "",
+              titleVariant: 'h3',
+              marginBottom: 'gutter',
+              space: 'gutter',
+            }),
+
             buildCheckboxField({
               id: 'addForPDF',
               backgroundColor: 'white',
@@ -103,6 +113,15 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                 return applying as Array<{ value: any; label: string }>
               },
             }),
+
+            buildDescriptionField({
+              id: 'break',
+              title: "",
+              titleVariant: 'h3',
+              marginBottom: 'gutter',
+              space: 'gutter',
+            }),
+
             buildCheckboxField({
               id: 'havePdf',
               backgroundColor: 'white',
@@ -125,10 +144,13 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                 return applying as Array<{ value: any; label: string }>
               },
             }),
+
+
+            
             buildCheckboxField({
               id: 'notApplicable',
               backgroundColor: 'white',
-              title: "",
+              title: e.no.sectionTitle,
               description: e.no.sectionDescription,
               condition: (_, externalData) => someAreNotInsured(externalData),
               options: (application: Application) => {
@@ -148,7 +170,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
             }),
           ],
         }),
-        
+
         buildDescriptionField({
           condition: (_, externalData) =>
             !someCanApplyForPlasticOrPdf(externalData),
