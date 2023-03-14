@@ -10,7 +10,7 @@ import { Card } from '../../components'
 import { useEffect, useState } from 'react'
 import Layout from '../../components/Layout/Layout'
 import SearchAndSort from '../../components/SearchAndSort/SearchAndSort'
-import { SortOptions } from '../../types/enums'
+import { Area, SortOptions } from '../../types/enums'
 import BreadcrumbsWithMobileDivider from '../../components/BreadcrumbsWithMobileDivider/BreadcrumbsWithMobileDivider'
 import { sorting } from '../../utils/helpers'
 import EmptyState from '../../components/EmptyState/EmptyState'
@@ -394,6 +394,7 @@ export const AdvicesScreen = ({ allUserAdvices }) => {
             setSearchValue={(newValue) => setSearchValue(newValue)}
             sortTitle={sortTitle}
             setSortTitle={(title: SortOptions) => setSortTitle(title)}
+            currentTab={Area.case}
           />
           {data && (
             <>
