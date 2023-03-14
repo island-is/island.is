@@ -10,14 +10,6 @@ export const dateFilterSingle = style({
   paddingBottom: theme.spacing[2],
 })
 
-export const openCal = style({
-  paddingTop: '260px',
-})
-
-export const openLowerCal = style({
-  paddingTop: '165px',
-})
-
 export const accordionBox = style({})
 export const accordionBoxSingle = style({})
 
