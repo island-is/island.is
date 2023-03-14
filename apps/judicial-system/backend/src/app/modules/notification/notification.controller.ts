@@ -76,23 +76,7 @@ export class NotificationController {
       `Sending ${notification.type} notification for case ${caseId}`,
     )
 
-    if (
-      [
-        NotificationType.HEADS_UP,
-        NotificationType.READY_FOR_COURT,
-        NotificationType.COURT_DATE,
-        NotificationType.DEFENDER_ASSIGNED,
-      ].includes(notification.type)
-    ) {
-      // Notifications put on queue will call the internal notification controller
-      return this.notificationService.addMessagesForNotificationToQueue(
-        notification,
-        theCase,
-        user,
-      )
-    }
-
-    return this.notificationService.sendCaseNotification(
+    return this.notificationService.addMessagesForNotificationToQueue(
       notification,
       theCase,
       user,
