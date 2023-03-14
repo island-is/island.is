@@ -30,6 +30,14 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:date',
     defaultMessage: 'Dagsetning',
   },
+  dateCreated: {
+    id: 'admin-portal.application-system:dateCreated',
+    defaultMessage: 'Umsókn stofnuð',
+  },
+  dateModified: {
+    id: 'admin-portal.application-system:dateModified',
+    defaultMessage: 'Síðast breytt',
+  },
   application: {
     id: 'admin-portal.application-system:application',
     defaultMessage: 'Umsókn',

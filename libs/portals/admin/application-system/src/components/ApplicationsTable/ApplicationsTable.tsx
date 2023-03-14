@@ -81,10 +81,11 @@ export const ApplicationsTable = ({
       <T.Table>
         <T.Head>
           <T.Row>
-            <T.HeadData>{formatMessage(m.date)}</T.HeadData>
+            <T.HeadData>{formatMessage(m.dateCreated)}</T.HeadData>
             <T.HeadData>{formatMessage(m.application)}</T.HeadData>
             <T.HeadData>{formatMessage(m.applicant)}</T.HeadData>
             <T.HeadData>{formatMessage(m.nationalId)}</T.HeadData>
+            <T.HeadData>{formatMessage(m.dateModified)}</T.HeadData>
             <T.HeadData>{formatMessage(m.institution)}</T.HeadData>
             <T.HeadData>{formatMessage(m.status)}</T.HeadData>
             <T.HeadData />
@@ -120,6 +121,9 @@ export const ApplicationsTable = ({
                       <T.Data>{application.applicantName ?? ''}</T.Data>
                       <T.Data>{application.applicant}</T.Data>
                       <T.Data>
+                        {format(new Date(application.modified), 'dd.MM.yyyy')}
+                      </T.Data>
+                      <T.Data>
                         <Box display="flex" alignItems="center">
                           <img src={logo} alt="" className={styles.logo} />
                           <span>{application.institution}</span>
@@ -130,7 +134,7 @@ export const ApplicationsTable = ({
                           {formatMessage(tag.label)}
                         </Tag>
                       </T.Data>
-                      <T.Data style={{ pointerEvents: 'none' }}>
+                      <T.Data>
                         <Box
                           display="flex"
                           alignItems="center"
@@ -146,7 +150,6 @@ export const ApplicationsTable = ({
                               onClick={(e) =>
                                 handleCopyButtonClick(e, application)
                               }
-                              style={{ pointerEvents: 'all' }}
                             >
                               <Icon
                                 type="outline"
