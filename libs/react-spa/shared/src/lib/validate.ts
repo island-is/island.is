@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import isObject from 'lodash/isObject'
 
 /**
  * Creates one level deep object from a URLSearchParams
@@ -125,16 +126,61 @@ export const getValuesFromFormData = (formData: FormData) => {
   return obj
 }
 
-export const validateFormData = async <T extends z.ZodTypeAny>({
+const formatErrors = (errors: Record<string, { _errors?: string[] }>) => {
+  const formattedError: Record<string, unknown> = {}
+
+  Object.keys(errors).forEach((key) => {
+    if (isObject(errors[key])) {
+      formattedError[key] = formatErrors(
+        errors[key] as Record<string, { _errors?: string[] }>,
+      )
+    }
+
+    if (errors[key]?._errors?.[0] && key !== '_errors') {
+      formattedError[key] = errors[key]?._errors?.[0]
+    }
+  })
+
+  return formattedError
+}
+
+type ValidateFormDataArgs<Schema> = {
+  request: Request
+  schema: Schema
+}
+
+type ValidateFormDataReturnType<Schema extends z.ZodTypeAny> = {
+  errors: Partial<z.infer<Schema>> | null
+  data: z.infer<Schema> | null
+}
+
+export async function validateFormData<Schema extends z.ZodTypeAny>({
   request,
   schema,
-}: {
-  request: Request
-  schema: T
-}) => {
+}: ValidateFormDataArgs<Schema>): Promise<ValidateFormDataReturnType<Schema>> {
+  type InferredSchema = z.infer<typeof schema>
+
   const formData = await request.formData()
   const values = getValuesFromFormData(formData)
-  const nestedObject = dotNotationToNestedObject(values)
+  const nestedObject = dotNotationToNestedObject(values) as InferredSchema
+  const result = schema.safeParse(nestedObject) as InferredSchema
 
-  return schema.parse(nestedObject) as z.infer<typeof schema>
+  if (!result.success) {
+    return {
+      data: null,
+      errors: formatErrors(result.error.format()) as Partial<InferredSchema>,
+    }
+  }
+
+  return {
+    data: result.data,
+    errors: null,
+  }
 }
+
+/**
+ * Get the return type of validateFormData for a given schema
+ */
+export type ValidateFormDataResult<
+  Schema extends z.ZodTypeAny
+> = ValidateFormDataReturnType<Schema>
