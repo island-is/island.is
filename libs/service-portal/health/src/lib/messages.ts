@@ -77,9 +77,9 @@ export const messages = defineMessages({
     id: 'sp.health:therapy-disclaimer-3',
     defaultMessage: '<link>Frekari upplýsingar um sjúkraþjáflun</link>',
   },
-  noTimePeriods: {
-    id: 'sp.health:no-time-periods',
-    defaultMessage: 'Tímabil ekki hafið',
+  noValidTimePeriod: {
+    id: 'sp.health:no-valid-time-period',
+    defaultMessage: 'Ekkert tímabil í gildi fannst',
   },
   ALM: {
     id: 'sp.health:alm',

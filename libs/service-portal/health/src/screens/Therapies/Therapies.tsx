@@ -19,7 +19,6 @@ import {
 import { messages } from '../../lib/messages'
 import TherapiesTabContent from '../../components/TherapiesTabContent/TherapiesTabContent'
 import {
-  LIGHT_THERAPY,
   OCCUPATIONAL_THERAPY,
   PHYSIO_ACCIDENT_THERAPY,
   PHYSIO_HOME_THERAPY,
@@ -69,9 +68,7 @@ const Therapies = () => {
   const speechTherapyData = therapiesData.filter(
     (x: TherapiesType) => x.id === SPEECH_THERAPY,
   )
-  const lightTherapyData = therapiesData.filter(
-    (x: TherapiesType) => x.id === LIGHT_THERAPY,
-  )
+
   const occupationalTherapyData = therapiesData.filter(
     (x: TherapiesType) => x.id === OCCUPATIONAL_THERAPY,
   )
@@ -105,10 +102,6 @@ const Therapies = () => {
     speechTherapyData.length > 0 && {
       label: formatMessage(messages.speechTherapy),
       content: <TherapiesTabContent data={speechTherapyData} />,
-    },
-    lightTherapyData.length > 0 && {
-      label: formatMessage(messages.lightTherapy),
-      content: <TherapiesTabContent data={lightTherapyData} />,
     },
     occupationalTherapyData.length > 0 && {
       label: formatMessage(messages.occupationalTherapy),

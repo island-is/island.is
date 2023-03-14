@@ -2,7 +2,6 @@ import { Button } from '@island.is/island-ui/core'
 import { FormatMessage } from '@island.is/localization'
 import { messages } from '../../lib/messages'
 import {
-  LIGHT_THERAPY,
   OCCUPATIONAL_THERAPY,
   PHYSIO_ACCIDENT_THERAPY,
   PHYSIO_HOME_THERAPY,
@@ -64,20 +63,6 @@ export const getFootNoteByType = (
       }
       break
     case SPEECH_THERAPY:
-      //TODO: Get correct disclaimer for different therapies
-
-      return {
-        first: formatMessage(messages['physioDisclaimer1']),
-        second: formatMessage(messages['physioDisclaimer2'], {
-          link: (str) => button(str),
-        }),
-        third: formatMessage(messages['physioDisclaimer3']),
-        fourth: formatMessage(messages['physioDisclaimer4'], {
-          link: (str) => button(str),
-        }),
-      }
-      break
-    case LIGHT_THERAPY:
       //TODO: Get correct disclaimer for different therapies
 
       return {
