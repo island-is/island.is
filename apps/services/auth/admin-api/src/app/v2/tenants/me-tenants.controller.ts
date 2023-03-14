@@ -1,7 +1,11 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
-import { TenantDto, TenantsService } from '@island.is/auth-api-lib'
+import {
+  TenantDto,
+  TenantsService,
+  MeTenantGuard,
+} from '@island.is/auth-api-lib'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -34,10 +38,10 @@ export class MeTenantsController {
     resources: (tenants) => tenants.map((tenant) => tenant.name),
   })
   findAll(@CurrentUser() user: User): Promise<TenantDto[]> {
-    return this.tenantsService.findAll(user)
+    return this.tenantsService.findAllByUser(user)
   }
 
-  @Get(':id')
+  @Get(':tenantId')
   @Documentation({
     description: 'Get tenant by id for the current user.',
     response: { status: 200, type: TenantDto },
@@ -45,10 +49,8 @@ export class MeTenantsController {
   @Audit<TenantDto>({
     resources: (tenant) => tenant.name,
   })
-  findById(
-    @CurrentUser() user: User,
-    @Param('id') id: string,
-  ): Promise<TenantDto> {
-    return this.tenantsService.findById(user, id)
+  @UseGuards(MeTenantGuard)
+  findById(@Param('tenantId') tenantId: string): Promise<TenantDto> {
+    return this.tenantsService.findById(tenantId)
   }
 }
