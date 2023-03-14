@@ -3,12 +3,12 @@ import { defineMessages } from 'react-intl'
 export const payment = {
   general: defineMessages({
     sectionTitle: {
-      id: 'ta.ovlp.application:payment.general.sectionTitle',
+      id: 'ta.lpr.application:payment.general.sectionTitle',
       defaultMessage: 'Greiðsla',
       description: 'Title of for payment section',
     },
     pageTitle: {
-      id: 'ta.ovlp.application:payment.general.pageTitle',
+      id: 'ta.lpr.application:payment.general.pageTitle',
       defaultMessage: 'Greiðsla',
       description: 'Title of for payment page',
     },
