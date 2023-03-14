@@ -73,16 +73,26 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
         sortedCases.filter(
           (item) =>
             item.name.toLocaleLowerCase().includes(lowerCaseSearchValue) ||
-            item.caseNumber.toLocaleLowerCase().includes(lowerCaseSearchValue) ||
-            item.institutionName.toLocaleLowerCase().includes(lowerCaseSearchValue) ||
-            item.policyAreaName.toLocaleLowerCase().includes(lowerCaseSearchValue),
+            item.caseNumber
+              .toLocaleLowerCase()
+              .includes(lowerCaseSearchValue) ||
+            item.institutionName
+              .toLocaleLowerCase()
+              .includes(lowerCaseSearchValue) ||
+            item.policyAreaName
+              .toLocaleLowerCase()
+              .includes(lowerCaseSearchValue),
         ),
       )
       setInstitutionsData(
-        sortedInstitutions.filter((item) => item.name.toLocaleLowerCase().includes(lowerCaseSearchValue)),
+        sortedInstitutions.filter((item) =>
+          item.name.toLocaleLowerCase().includes(lowerCaseSearchValue),
+        ),
       )
       setPolicyAreasData(
-        sortedPolicyAreas.filter((item) => item.name.toLocaleLowerCase().includes(lowerCaseSearchValue)),
+        sortedPolicyAreas.filter((item) =>
+          item.name.toLocaleLowerCase().includes(lowerCaseSearchValue),
+        ),
       )
     } else {
       setCasesData(sortedCases)
