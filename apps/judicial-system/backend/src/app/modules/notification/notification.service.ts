@@ -488,7 +488,7 @@ export class NotificationService {
 
   private async uploadCourtDateInvitationEmailToCourt(
     theCase: Case,
-    user: TUser | User,
+    user: User,
     subject: string,
     body: string,
     recipients?: string,
@@ -516,7 +516,7 @@ export class NotificationService {
 
   private async sendCourtDateEmailNotificationToProsecutor(
     theCase: Case,
-    user: TUser | User,
+    user: User,
   ): Promise<Recipient> {
     const { subject, body } = formatProsecutorCourtDateEmailNotification(
       this.formatMessage,
@@ -591,7 +591,7 @@ export class NotificationService {
 
   private sendCourtDateEmailNotificationToDefender(
     theCase: Case,
-    user: TUser | User,
+    user: User,
   ): Promise<Recipient>[] {
     const subject = `Fyrirtaka í máli ${theCase.courtCaseNumber}`
     const linkSubject = `Gögn í máli ${theCase.courtCaseNumber}`
@@ -654,7 +654,7 @@ export class NotificationService {
 
   private async sendCourtDateNotifications(
     theCase: Case,
-    user: TUser | User,
+    user: User,
   ): Promise<SendNotificationResponse> {
     this.eventService.postEvent(CaseEvent.SCHEDULE_COURT_DATE, theCase)
 
@@ -932,7 +932,7 @@ export class NotificationService {
 
   private async sendModifiedNotifications(
     theCase: Case,
-    user: TUser | User,
+    user: User,
   ): Promise<SendNotificationResponse> {
     const subject = this.formatMessage(notifications.modified.subject, {
       courtCaseNumber: theCase.courtCaseNumber,
@@ -1413,7 +1413,7 @@ export class NotificationService {
   async sendCaseNotification(
     notification: SendNotificationDto,
     theCase: Case,
-    user: TUser | User,
+    user: User,
   ): Promise<SendNotificationResponse> {
     await this.refreshFormatMessage()
 
@@ -1496,6 +1496,16 @@ export class NotificationService {
             ),
           ]
           break
+        case NotificationType.DEFENDER_ASSIGNED:
+          messages = [
+            this.getNotificationMessage(
+              MessageType.SEND_DEFENDER_ASSIGNED_NOTIFICATION,
+              user,
+              theCase,
+            ),
+          ]
+          break
+
         default:
           throw new InternalServerErrorException(
             `Invalid notification type ${notification.type}`,
