@@ -30,7 +30,7 @@ export const environments = {
 };
 
 const bundleId = DeviceInfo.getBundleId();
-const isTestingApp = bundleId.endsWith('.staging') || bundleId.endsWith('.dev');
+const isTestingApp = true; // bundleId.endsWith('.staging') || bundleId.endsWith('.dev');
 
 export const config = {
   bundleId,

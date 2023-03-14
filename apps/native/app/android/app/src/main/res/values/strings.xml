@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">IslandApp</string>
+    <string moduleConfig="true" name="CodePushDeploymentKey">_qewvIttoK3R2JruZERhbqHUcRk6NwIL2goF_</string>
 </resources>

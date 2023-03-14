@@ -7707,7 +7707,7 @@ __metadata:
     "@react-native-community/async-storage": 1.12.1
     "@react-native-community/progress-bar-android": 1.0.5
     "@react-native-community/progress-view": 1.3.1
-    "@react-native-community/react-native-cookies": 1.1.1
+    "@react-native-cookies/cookies": 6.2.1
     "@react-native-firebase/analytics": 16.7.0
     "@react-native-firebase/app": 16.7.0
     "@react-native-firebase/messaging": 16.7.0
@@ -7743,13 +7743,13 @@ __metadata:
     react-native-app-auth: 6.4.3
     react-native-blob-util: 0.16.4
     react-native-code-push: 7.1.0
-    react-native-custom-tabs: 0.1.7
     react-native-device-info: 10.3.0
     react-native-dialogs: 1.1.1
+    react-native-inappbrowser-reborn: 3.7.0
     react-native-interactable: 2.0.1
     react-native-keyboard-manager: 6.5.4-3
     react-native-keychain: 8.1.1
-    react-native-navigation: 7.31.0
+    react-native-navigation: 7.32.1
     react-native-navigation-hooks: 6.3.0
     react-native-passkit-wallet: 0.1.6
     react-native-pdf: 6.6.2
@@ -10905,12 +10905,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-community/react-native-cookies@npm:1.1.1":
-  version: 1.1.1
-  resolution: "@react-native-community/react-native-cookies@npm:1.1.1"
+"@react-native-cookies/cookies@npm:6.2.1":
+  version: 6.2.1
+  resolution: "@react-native-cookies/cookies@npm:6.2.1"
   dependencies:
     invariant: ^2.2.4
-  checksum: 16ddc46fb635e20b4a6110f794716e33ee5a33ec3afb65a7802452073e2f8220fe71c4f8d11739cf2e03eff9a037b95fbc8084b157b9f79e7166b55689696ae0
+  peerDependencies:
+    react-native: ">= 0.60.2"
+  checksum: 65ec7485952b719191cc3d131b1befdebdb0b422baaf655fd37ad6455ac05582a81b9d7f023ffa375a8787c30d33d1195dea46f633fb6cc09ccd2ae810795ce2
   languageName: node
   linkType: hard
 
@@ -38631,7 +38633,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"opencollective-postinstall@npm:^2.0.1":
+"opencollective-postinstall@npm:^2.0.1, opencollective-postinstall@npm:^2.0.3":
   version: 2.0.3
   resolution: "opencollective-postinstall@npm:2.0.3"
   bin:
@@ -42459,16 +42461,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-custom-tabs@npm:0.1.7":
-  version: 0.1.7
-  resolution: "react-native-custom-tabs@npm:0.1.7"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: e67c9f224851e1a0344c311fc108129e4c247ebbcff9f374ca8c087ea32a2792950d331edccb0a87df19f8638dbbb1ab07e293d3838168d991d1ec3371c54aa6
-  languageName: node
-  linkType: hard
-
 "react-native-device-info@npm:10.3.0":
   version: 10.3.0
   resolution: "react-native-device-info@npm:10.3.0"
@@ -42489,6 +42481,18 @@ __metadata:
   version: 0.71.15
   resolution: "react-native-gradle-plugin@npm:0.71.15"
   checksum: e1c1714568324405fbca4ca841a0ab62cd8b90c65b3320183825161358f2bdb5226c8b22153b3007c2455dc7535d839d07d43148e6cba7952ae948636154f2b6
+  languageName: node
+  linkType: hard
+
+"react-native-inappbrowser-reborn@npm:3.7.0":
+  version: 3.7.0
+  resolution: "react-native-inappbrowser-reborn@npm:3.7.0"
+  dependencies:
+    invariant: ^2.2.4
+    opencollective-postinstall: ^2.0.3
+  peerDependencies:
+    react-native: ">=0.56"
+  checksum: b2177addf05cc02a20c5b9b8397c410ccf2fffba6baf1a49fbeb199ceaf4b9d4e959549915c5221f4345f35ec96620ecf25f650a5e268793103d95ffa7e44127
   languageName: node
   linkType: hard
 
@@ -42532,9 +42536,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-navigation@npm:7.31.0":
-  version: 7.31.0
-  resolution: "react-native-navigation@npm:7.31.0"
+"react-native-navigation@npm:7.32.1":
+  version: 7.32.1
+  resolution: "react-native-navigation@npm:7.32.1"
   dependencies:
     hoist-non-react-statics: 3.x.x
     lodash: 4.17.x
@@ -42550,7 +42554,7 @@ __metadata:
       optional: true
   bin:
     rnn-link: autolink/postlink/run.js
-  checksum: 3a54316d9a2c9627fed2561601143e43c11334df0a72b745e2518f177c96dfad65c8ea72a9fd1cf0a70ce12d041115af1e87ec6f9af8c6abcfd2ae6c9ddf57da
+  checksum: e8ef3c6743336c3fb9554e0ceeb027f42f8ba68a19c3b41867b111e174861a3e0eab59889fe635e2c5b78fc118f98bb348ac703c6c0d78acc669e5dd4a40ddd9
   languageName: node
   linkType: hard
 

@@ -77,7 +77,6 @@ export const authStore = create<AuthStore>((set, get) => ({
         throw new Error('Unauthorized')
       } else if (res.status === 200) {
         const userInfo = await res.json()
-        console.log('UI', userInfo);
         set({ userInfo })
         return userInfo
       }

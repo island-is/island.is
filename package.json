@@ -486,7 +486,8 @@
     "tar": "6.1.9",
     "url-parse": "1.5.2",
     "path-parse": "1.0.7",
-    "@types/styled-components/@types/react": "^18"
+    "@types/styled-components/@types/react": "^18",
+    "expo-modules-core@1.1.1": "patch:expo-modules-core@npm%3A1.1.1#./.yarn/patches/expo-modules-core-npm-1.1.1-c3861d47cb.patch"
   },
   "volta": {
     "node": "18.8.0"

@@ -10,4 +10,3 @@ declare module '*.jpg' {
 
 declare module 'react-native-passkit-wallet'
 declare module 'react-native-dialogs'
-declare module 'react-native-custom-tabs'

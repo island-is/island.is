@@ -62,12 +62,11 @@ export const environmentStore = create<EnvironmentStore>(
                 'X-Cognito-Token': `Bearer ${get().cognito?.accessToken}`,
               },
             }).then(r => r.json() as Promise<EnvironmentResponse>);
-            console.log('res', res);
             const ids = res.results.ids.map(n => ({
               ...((environments as any)[n.id] ?? {}),
               ...n,
             }));
-            const dev = ids.find(n_1 => n_1.id === 'dev');
+            const dev = ids.find(n => n.id === 'dev');
             return [
               ...ids,
               ...res.results.branches.map(branch => ({

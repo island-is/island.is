@@ -32,7 +32,6 @@
 		E367D448298DF24D007054A4 /* IBMPlexSans-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E367D43A298DF24D007054A4 /* IBMPlexSans-Italic.ttf */; };
 		E367D44C2991CA7C007054A4 /* PassKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E367D44B2991CA7B007054A4 /* PassKit.framework */; };
 		E367D4562991DB43007054A4 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E367D4552991DB42007054A4 /* SplashScreen.storyboard */; };
-		E367D45A2991E530007054A4 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = E367D4592991E530007054A4 /* main.jsbundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -269,7 +268,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E367D45A2991E530007054A4 /* main.jsbundle in Resources */,
 				E367D441298DF24D007054A4 /* IBMPlexSans-Light.ttf in Resources */,
 				E367D4562991DB43007054A4 /* SplashScreen.storyboard in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,

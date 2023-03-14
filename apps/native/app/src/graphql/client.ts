@@ -8,7 +8,6 @@ import {
 import { setContext } from '@apollo/client/link/context'
 import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
-// import CookieManager from '@react-native-community/react-native-cookies'
 import { authStore } from '../stores/auth-store'
 import { config } from '../config'
 import { environmentStore } from '../stores/environment-store'
@@ -84,12 +83,6 @@ const errorLink = onError(
     }
   },
 )
-
-const obj2cookie = (obj: any = {}) =>
-  Object.entries(obj).reduce((acc: string[], item) => {
-    acc.push(item.join('='))
-    return acc
-  }, [])
 
 const getAndRefreshToken = () => {
   const { authorizeResult, refresh } = authStore.getState();
