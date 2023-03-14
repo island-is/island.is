@@ -19,8 +19,6 @@ import {
 import { Sjukra } from '../assets'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 
-export interface EuropeanHealthInsuranceCardProps { }
-
 export const EuropeanHealthInsuranceCardPre: Form = buildForm({
   id: 'EuropeanHealthInsuranceCardPre',
   title: '',

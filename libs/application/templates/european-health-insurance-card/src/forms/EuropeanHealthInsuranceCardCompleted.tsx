@@ -8,8 +8,6 @@ import {
 
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 
-export interface EuropeanHealthInsuranceCardProps {}
-
 export const EuropeanHealthInsuranceCardCompleted: Form = buildForm({
   id: 'EuropeanHealthInsuranceCardApplicationForm',
   title: '',

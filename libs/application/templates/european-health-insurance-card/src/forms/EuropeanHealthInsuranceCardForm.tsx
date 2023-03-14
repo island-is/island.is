@@ -28,8 +28,6 @@ import { CardResponse } from '../lib/types'
 import { Sjukra } from '../assets'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 
-export interface EuropeanHealthInsuranceCardProps { }
-
 export const EuropeanHealthInsuranceCardForm: Form = buildForm({
   id: 'EuropeanHealthInsuranceCardForm',
   title: '',
@@ -72,7 +70,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                       value: x.applicantNationalId,
                       label: getFullName(application, x.applicantNationalId),
                       subLabel:
-                        e.applicants.sectionHasnOPlasticLabel,
+                        e.applicants.sectionHasNoPlasticLabel,
                     })
                   }
                 })
