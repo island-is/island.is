@@ -1,4 +1,10 @@
-import React, { ReactNode, useCallback, useContext, useState } from 'react'
+import React, {
+  ReactNode,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
@@ -83,6 +89,7 @@ import AppealSection from './Components/AppealSection/AppealSection'
 import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
 import ReopenModal from './Components/ReopenModal/ReopenModal'
+import { strings } from './SignedVerdictOverview.strings'
 
 interface ModalControls {
   open: boolean
@@ -148,12 +155,26 @@ export const rulingDateLabel = (
 }
 
 export const shouldHideNextButton = (workingCase: Case, user?: User) =>
-  user?.role !== UserRole.Prosecutor ||
-  workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-  workingCase.state === CaseState.REJECTED ||
-  workingCase.state === CaseState.DISMISSED ||
-  workingCase.isValidToDateInThePast ||
-  Boolean(workingCase.childCase)
+  !user ||
+  ((user.role !== UserRole.Prosecutor ||
+    workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+    workingCase.state === CaseState.REJECTED ||
+    workingCase.state === CaseState.DISMISSED ||
+    workingCase.isValidToDateInThePast ||
+    Boolean(workingCase.childCase)) &&
+    user.id !== workingCase.judge?.id &&
+    user.id !== workingCase.registrar?.id)
+
+const getNextButtonText = (
+  formatMessage: IntlShape['formatMessage'],
+  workingCase: Case,
+  user?: User,
+) =>
+  user?.role === UserRole.Prosecutor
+    ? formatMessage(m.sections.caseExtension.buttonLabel, {
+        caseType: workingCase.type,
+      })
+    : capitalize(formatMessage(strings.nextButtonReopenText))
 
 export const getExtensionInfoText = (
   formatMessage: IntlShape['formatMessage'],
@@ -327,8 +348,8 @@ export const SignedVerdictOverview: React.FC = () => {
     )
   }
 
-  const handleCaseExtension = async () => {
-    if (workingCase) {
+  const handleNextButtonClick = async () => {
+    if (user?.role === UserRole.Prosecutor) {
       if (workingCase.childCase) {
         if (isRestrictionCase(workingCase.type)) {
           router.push(
@@ -354,6 +375,8 @@ export const SignedVerdictOverview: React.FC = () => {
           }
         })
       }
+    } else {
+      setIsReopeningCase(true)
     }
   }
 
@@ -788,23 +811,6 @@ export const SignedVerdictOverview: React.FC = () => {
                     ) : (
                       <Text>{formatMessage(m.unsignedDocument)}</Text>
                     )}
-                    {user &&
-                      (user.id === workingCase.judge?.id ||
-                        user.id === workingCase.registrar?.id) && (
-                        <Box marginLeft={3}>
-                          <Button
-                            variant="ghost"
-                            size="small"
-                            data-testid="modifyRulingButton"
-                            onClick={(event) => {
-                              event.stopPropagation()
-                              setIsReopeningCase(true)
-                            }}
-                          >
-                            {capitalize(formatMessage(core.modify))}
-                          </Button>
-                        </Box>
-                      )}
                   </Box>
                 </PdfButton>
               )}
@@ -893,10 +899,8 @@ export const SignedVerdictOverview: React.FC = () => {
         <FormFooter
           previousUrl={constants.CASES_ROUTE}
           hideNextButton={shouldHideNextButton(workingCase, user)}
-          nextButtonText={formatMessage(m.sections.caseExtension.buttonLabel, {
-            caseType: workingCase.type,
-          })}
-          onNextButtonClick={() => handleCaseExtension()}
+          nextButtonText={getNextButtonText(formatMessage, workingCase, user)}
+          onNextButtonClick={() => handleNextButtonClick()}
           nextIsLoading={isExtendingCase}
           infoBoxText={getExtensionInfoText(formatMessage, workingCase, user)}
         />
