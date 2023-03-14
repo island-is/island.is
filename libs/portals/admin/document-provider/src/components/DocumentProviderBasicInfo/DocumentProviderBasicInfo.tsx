@@ -44,16 +44,15 @@ export interface FormData {
   administrativeContact: AdministrativeContact
   technicalContact: TechnicalContact
   helpDeskContact: HelpDeskContact
-  id: string
 }
 
 interface Props {
   data: FormData
-  onSubmit: SubmitHandler<any>
+  onSubmit: SubmitHandler<UseFormProps>
   isFetching: boolean
 }
 
-interface useFormProps {
+interface UseFormProps {
   applicant: Applicant
   administrativeContact: AdministrativeContact
   technicalContact: TechnicalContact
@@ -70,7 +69,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<useFormProps>()
+  } = useForm<UseFormProps>()
 
   return (
     <Box marginY={3}>

@@ -41,7 +41,7 @@ export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
     relationOptions: string[]
     estate: EstateRegistrant
   }
-  const { setValue, control } = useFormContext()
+  const { setValue } = useFormContext()
 
   const relations =
     externalData.relationOptions.map((relation) => ({

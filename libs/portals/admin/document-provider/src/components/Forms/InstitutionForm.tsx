@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { useForm, Controller, SubmitHandler } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { Box, Input, Stack, Button } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
@@ -26,11 +26,11 @@ export const InstitutionForm: FC<Props> = ({ organisation }) => {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm()
+  } = useForm<Organisation>()
   const { formatMessage } = useLocale()
   const { updateOrganisation, loading } = useUpdateOrganisation()
 
-  const onSubmit: SubmitHandler<any> = (formData: Organisation) => {
+  const onSubmit = (formData: Organisation) => {
     if (formData) {
       const input: OrganisationInput = {
         ...formData,
@@ -116,7 +116,7 @@ export const InstitutionForm: FC<Props> = ({ organisation }) => {
               size="xs"
               name={name}
               label={formatMessage(m.SettingsEditInstitutionAddress)}
-              value={value}
+              value={value || ''}
               placeholder={formatMessage(m.SettingsEditInstitutionAddress)}
               onChange={onChange}
               hasError={!!errors.address}
@@ -148,7 +148,7 @@ export const InstitutionForm: FC<Props> = ({ organisation }) => {
               name={name}
               label={formatMessage(m.SettingsEditInstitutionEmail)}
               placeholder={formatMessage(m.SettingsEditInstitutionEmail)}
-              value={value}
+              value={value || ''}
               onChange={onChange}
               hasError={!!errors.email}
               errorMessage={errors.email?.message as string}
@@ -179,7 +179,7 @@ export const InstitutionForm: FC<Props> = ({ organisation }) => {
               name={name}
               label={formatMessage(m.SettingsEditInstitutionTel)}
               placeholder={formatMessage(m.SettingsEditInstitutionTel)}
-              value={value}
+              value={value || ''}
               onChange={onChange}
               hasError={!!errors.phoneNumber}
               errorMessage={errors.phoneNumber?.message as string}

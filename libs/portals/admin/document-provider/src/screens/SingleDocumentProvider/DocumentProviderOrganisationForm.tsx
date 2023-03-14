@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { Box, Text, Button } from '@island.is/island-ui/core'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { DocumentProviderInput } from './DocumentProviderInput'
@@ -16,14 +16,6 @@ interface Props {
   setOrganisationName: (name: string) => void
 }
 
-interface UseFormProps {
-  name: string
-  nationalId: string
-  address: string
-  email: string
-  phoneNumber: string
-}
-
 export const DocumentProviderOrganisationForm: FC<Props> = ({
   organisation,
   setOrganisationName,
@@ -33,7 +25,7 @@ export const DocumentProviderOrganisationForm: FC<Props> = ({
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<UseFormProps>()
+  } = useForm<Organisation>()
 
   const { updateOrganisation, loading } = useUpdateOrganisation(
     (data: OnCompletedArgumentsType) => {
@@ -42,7 +34,7 @@ export const DocumentProviderOrganisationForm: FC<Props> = ({
     },
   )
 
-  const onSubmit: SubmitHandler<any> = (formData: OrganisationInput) => {
+  const onSubmit = (formData: OrganisationInput) => {
     if (formData) {
       const input: OrganisationInput = {
         ...formData,

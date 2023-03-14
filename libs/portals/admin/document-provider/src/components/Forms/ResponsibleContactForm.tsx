@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { useForm, Controller, SubmitHandler } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { Box, Stack, Input, Button } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
@@ -20,14 +20,14 @@ export const ResponsibleContactForm: FC<Props> = ({
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm()
+  } = useForm<Contact>()
   const { formatMessage } = useLocale()
   const {
     updateAdministrativeContact,
     loading,
   } = useUpdateAdministrativeContact(organisationId)
 
-  const onSubmit: SubmitHandler<any> = (contact: Contact) => {
+  const onSubmit = (contact: Contact) => {
     if (contact) {
       const input: ContactInput = {
         ...contact,
@@ -60,7 +60,7 @@ export const ResponsibleContactForm: FC<Props> = ({
               placeholder={formatMessage(m.SettingsEditResponsibleContactName)}
               onChange={onChange}
               hasError={!!errors.name}
-              errorMessage={errors.name?.message as string}
+              errorMessage={errors.name?.message}
             />
           )}
         />
@@ -91,7 +91,7 @@ export const ResponsibleContactForm: FC<Props> = ({
               placeholder={formatMessage(m.SettingsEditResponsibleContactEmail)}
               onChange={onChange}
               hasError={!!errors.email}
-              errorMessage={errors.email?.message as string}
+              errorMessage={errors.email?.message}
             />
           )}
         />
@@ -122,7 +122,7 @@ export const ResponsibleContactForm: FC<Props> = ({
               placeholder={formatMessage(m.SettingsEditResponsibleContactTel)}
               onChange={onChange}
               hasError={!!errors.phoneNumber}
-              errorMessage={errors.phoneNumber?.message as string}
+              errorMessage={errors.phoneNumber?.message}
             ></Input>
           )}
         />

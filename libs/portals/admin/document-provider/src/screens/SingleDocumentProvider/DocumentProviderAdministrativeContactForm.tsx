@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { Box, Button, Text } from '@island.is/island-ui/core'
-import { useForm, SubmitHandler, Control } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { DocumentProviderInput } from './DocumentProviderInput'
@@ -16,6 +16,12 @@ interface Props {
   organisationNationalId: string
 }
 
+interface UseFormProps {
+  administrativeContact: Contact
+  organisationId: string
+  organisationNationalId: string
+}
+
 export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
   administrativeContact,
   organisationId,
@@ -26,7 +32,7 @@ export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<Props>()
+  } = useForm<UseFormProps>()
   const {
     updateAdministrativeContact,
     loading: loadingUpdate,
@@ -37,9 +43,7 @@ export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
     loading: loadingCreate,
   } = useCreateAdministrativeContact(organisationId, organisationNationalId)
 
-  const onSubmit: SubmitHandler<any> = (data: {
-    administrativeContact: Contact
-  }) => {
+  const onSubmit = (data: { administrativeContact: Contact }) => {
     if (data?.administrativeContact && administrativeContact) {
       const input: ContactInput = {
         ...data.administrativeContact,
@@ -61,7 +65,7 @@ export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
             </Text>
           </Box>
           <DocumentProviderInput
-            control={(control as unknown) as Control}
+            control={control}
             name="administrativeContact.name"
             defaultValue={administrativeContact?.name ?? ''}
             rules={{
@@ -80,7 +84,7 @@ export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
             errorMessage={errors?.administrativeContact?.message ?? ''}
           />
           <DocumentProviderInput
-            control={(control as unknown) as Control}
+            control={control}
             name="administrativeContact.email"
             defaultValue={administrativeContact?.email ?? ''}
             rules={{
@@ -103,7 +107,7 @@ export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
             errorMessage={errors?.administrativeContact?.email?.message ?? ''}
           />
           <DocumentProviderInput
-            control={(control as unknown) as Control}
+            control={control}
             name="administrativeContact.phoneNumber"
             defaultValue={administrativeContact?.phoneNumber ?? ''}
             rules={{

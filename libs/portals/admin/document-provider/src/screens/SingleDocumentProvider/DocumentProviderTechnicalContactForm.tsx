@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { Box, Button, Text } from '@island.is/island-ui/core'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { DocumentProviderInput } from './DocumentProviderInput'
@@ -20,6 +20,12 @@ interface Props {
   organisationNationalId: string
 }
 
+interface UseFormProps {
+  technicalContact: Contact
+  organisationId: string
+  organisationNationalId: string
+}
+
 export const DocumentProviderTechnicalContactForm: FC<Props> = ({
   technicalContact,
   organisationId,
@@ -30,7 +36,7 @@ export const DocumentProviderTechnicalContactForm: FC<Props> = ({
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<Props>()
+  } = useForm<UseFormProps>()
 
   const {
     updateTechnicalContact,
@@ -41,9 +47,7 @@ export const DocumentProviderTechnicalContactForm: FC<Props> = ({
     loading: loadingCreate,
   } = useCreateTechnicalContact(organisationId, organisationNationalId)
 
-  const onSubmit: SubmitHandler<any> = (data: {
-    technicalContact: Contact
-  }) => {
+  const onSubmit = (data: { technicalContact: Contact }) => {
     if (data?.technicalContact && technicalContact) {
       const input: ContactInput = {
         ...data.technicalContact,

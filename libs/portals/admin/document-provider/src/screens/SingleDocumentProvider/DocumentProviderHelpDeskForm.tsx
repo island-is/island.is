@@ -1,15 +1,12 @@
 import React, { FC } from 'react'
 import { Box, Button, Text } from '@island.is/island-ui/core'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { DocumentProviderInput } from './DocumentProviderInput'
 import { Helpdesk } from '@island.is/api/schema'
 import { Link } from 'react-router-dom'
-import {
-  useUpdateHelpDesk,
-  HelpDeskInput,
-} from '../../shared/useUpdateHelpDesk'
+import { useUpdateHelpDesk, HelpDeskInput } from '../../shared'
 import {
   useCreateHelpDesk,
   CreateHelpDeskInput,
@@ -18,6 +15,12 @@ import { DocumentProviderPaths } from '../../lib/paths'
 
 interface Props {
   helpDesk?: Helpdesk | null
+  organisationId: string
+  organisationNationalId: string
+}
+
+interface UseFormProps {
+  helpDesk: Helpdesk
   organisationId: string
   organisationNationalId: string
 }
@@ -32,7 +35,7 @@ export const DocumentProviderHelpDeskForm: FC<Props> = ({
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<Props>()
+  } = useForm<UseFormProps>()
   const { updateHelpDesk, loading: loadingUpdate } = useUpdateHelpDesk(
     organisationId,
   )
@@ -41,7 +44,7 @@ export const DocumentProviderHelpDeskForm: FC<Props> = ({
     organisationNationalId,
   )
 
-  const onSubmit: SubmitHandler<any> = (data: { helpDesk: Helpdesk }) => {
+  const onSubmit = (data: { helpDesk: Helpdesk }) => {
     if (data?.helpDesk && helpDesk) {
       const input: HelpDeskInput = { ...data.helpDesk, id: helpDesk.id }
       updateHelpDesk(input)

@@ -57,8 +57,6 @@ const GiveDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
     },
   ]
 
-  console.log('chosenGiveDays', chosenGiveDays)
-
   return (
     <>
       <Box marginBottom={6} marginTop={3}>
