@@ -26,7 +26,7 @@ import Filter from '../../components/Filter/Filter'
 import { CaseSortOptions } from '../../types/enums'
 import { GET_CASES } from './getCases.graphql'
 import initApollo from '../../graphql/client'
-import getInitFilterValues from './getInitFilterValues'
+import { getInitFilterValues } from '../../utils/helpers'
 import Pagination from '../../components/Pagination/Pagination'
 
 const CARDS_PER_PAGE = 12

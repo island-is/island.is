@@ -104,7 +104,11 @@ const SubscriptionTableItem = ({
           }}
           align="right"
         >
-          <FocusableBox onClick={onClick} style={{ height: '24px' }}>
+          <FocusableBox
+            onClick={onClick}
+            style={{ height: '24px' }}
+            flexDirection="rowReverse"
+          >
             <Icon icon={isOpen ? 'chevronUp' : 'chevronDown'} color="blue400" />
           </FocusableBox>
         </T.Data>
