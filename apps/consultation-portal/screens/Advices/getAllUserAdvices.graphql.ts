@@ -1,10 +1,10 @@
 import gql from 'graphql-tag'
 
-export const GET_ADVICES = gql`
-  query consultationPortalAdviceByCaseId($input: ConsultationPortalCaseInput!) {
-    consultationPortalAdviceByCaseId(input: $input) {
+export const GET_ALL_USER_ADVICES = gql`
+  query consultationPortalAllUserAdvices {
+    consultationPortalAllUserAdvices {
       id
-      number
+      caseId
       participantName
       participantEmail
       content
@@ -12,6 +12,8 @@ export const GET_ADVICES = gql`
       adviceDocuments {
         id
         fileName
+        fileType
+        size
       }
     }
   }
