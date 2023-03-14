@@ -30,9 +30,10 @@ export const cognitoLogin = async (
   await passwordInput.selectText()
   await passwordInput.type(password)
   await cognito.locator('input[name="signInSubmitButton"]:visible').click()
-  if (home !== JUDICIAL_SYSTEM_HOME_URL) {
-    await page.waitForURL(new RegExp(`${home}|${authUrl}/delegation`))
+  if (home === JUDICIAL_SYSTEM_HOME_URL) {
+    return
   }
+  await page.waitForURL(new RegExp(`${home}|${authUrl}/delegation`))
 }
 
 export async function idsLogin(
