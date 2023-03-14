@@ -7,7 +7,7 @@ import {
   Text,
   Stack,
   Hidden,
-  Pagination,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import React, { useState } from 'react'
 import { HeroBanner } from '../../components'
@@ -26,7 +26,8 @@ import Filter from '../../components/Filter/Filter'
 import { CaseSortOptions } from '../../types/enums'
 import { GET_CASES } from './getCases.graphql'
 import initApollo from '../../graphql/client'
-import getInitFilterValues from './getInitFilterValues'
+import { getInitFilterValues } from '../../utils/helpers'
+import Pagination from '../../components/Pagination/Pagination'
 
 const CARDS_PER_PAGE = 12
 interface HomeProps {
@@ -34,13 +35,6 @@ interface HomeProps {
 }
 export const Home = ({ types }: HomeProps) => {
   const [page, setPage] = useState<number>(1)
-
-  const goToPage = (page = 1, scrollTop = true) => {
-    setPage(page)
-    if (scrollTop) {
-      window.scrollTo(0, 0)
-    }
-  }
 
   const {
     caseStatuses,
@@ -108,15 +102,78 @@ export const Home = ({ types }: HomeProps) => {
 
   const { consultationPortalGetCases: cases = [] } = data ?? {}
 
+  const updatePage = (pageNumber) => {
+    setPage(pageNumber)
+  }
+
   const count = cases.length
   const totalPages = Math.ceil(count / CARDS_PER_PAGE)
   const base = page === 1 ? 0 : (page - 1) * CARDS_PER_PAGE
   const visibleItems = cases.slice(base, page * CARDS_PER_PAGE)
 
-  return (
-    <Layout isFrontPage>
-      <HeroBanner />
+  const renderCards = () => {
+    if (loading) {
+      return (
+        <Box
+          display="flex"
+          width="full"
+          alignItems="center"
+          justifyContent="center"
+          style={{ height: 200 }}
+        >
+          <LoadingDots color="blue" large />
+        </Box>
+      )
+    }
 
+    if (cases?.length === 0) {
+      return <EmptyState />
+    }
+
+    return (
+      <>
+        {visibleItems && (
+          <Tiles space={3} columns={[1, 1, 1, 2, 3]}>
+            {visibleItems.map((item: Case, index: number) => {
+              const card = {
+                id: item.id,
+                title: item.name,
+                tag: item.statusName,
+                eyebrows: [item.typeName, item.institutionName],
+              }
+              return (
+                <Card key={index} card={card} frontPage>
+                  <Stack space={2}>
+                    <Text variant="eyebrow" color="purple400">
+                      {`Fjöldi umsagna: ${item.adviceCount}`}
+                    </Text>
+                    <Box
+                      style={{
+                        wordBreak: 'break-word',
+                        height: '105px',
+                      }}
+                      overflow="hidden"
+                    >
+                      <Text variant="small" color="dark400">
+                        {item.shortDescription}
+                      </Text>
+                    </Box>
+                  </Stack>
+                </Card>
+              )
+            })}
+          </Tiles>
+        )}
+        {totalPages > 1 && (
+          <Pagination updatePage={updatePage} totalPages={totalPages} />
+        )}
+      </>
+    )
+  }
+
+  return (
+    <Layout isFrontPage seo={{ title: 'Öll mál' }}>
+      <HeroBanner />
       <SearchAndFilter
         PolicyAreas={PolicyAreas}
         defaultPolicyAreas={allPolicyAreas}
@@ -125,7 +182,6 @@ export const Home = ({ types }: HomeProps) => {
         filters={filters}
         setFilters={(arr: CaseFilter) => setFilters(arr)}
       />
-
       <GridContainer>
         <GridRow>
           <GridColumn span={['0', '0', '0', '3/12', '3/12']}>
@@ -137,75 +193,8 @@ export const Home = ({ types }: HomeProps) => {
               />
             </Hidden>
           </GridColumn>
-
           <GridColumn span={['12/12', '12/12', '12/12', '9/12', '9/12']}>
-            <>
-              {visibleItems && (
-                <Tiles space={3} columns={[1, 1, 1, 2, 3]}>
-                  {visibleItems.map((item: Case, index: number) => {
-                    const card = {
-                      id: item.id,
-                      title: item.name,
-                      tag: item.statusName,
-                      eyebrows: [item.typeName, item.institutionName],
-                    }
-                    return (
-                      <Card key={index} card={card} frontPage>
-                        <Stack space={2}>
-                          <Text variant="eyebrow" color="purple400">
-                            {`Fjöldi umsagna: ${item.adviceCount}`}
-                          </Text>
-                          <Box
-                            style={{
-                              wordBreak: 'break-word',
-                              height: '105px',
-                            }}
-                            overflow="hidden"
-                          >
-                            <Text variant="small" color="dark400">
-                              {item.shortDescription}
-                            </Text>
-                          </Box>
-                        </Stack>
-                      </Card>
-                    )
-                  })}
-                </Tiles>
-              )}
-              {totalPages > 1 && (
-                <Box paddingTop={[5, 5, 5, 8, 8]}>
-                  <Pagination
-                    page={page}
-                    totalPages={totalPages}
-                    variant="blue"
-                    renderLink={(page, className, children) => (
-                      <button
-                        onClick={() => {
-                          goToPage(page)
-                        }}
-                      >
-                        <span
-                          style={{
-                            position: 'absolute',
-                            width: '1px',
-                            height: '1px',
-                            padding: '0',
-                            margin: '-1px',
-                            overflow: 'hidden',
-                            clip: 'rect(0,0,0,0)',
-                            border: '0',
-                          }}
-                        >
-                          Síða
-                        </span>
-                        <span className={className}>{children}</span>
-                      </button>
-                    )}
-                  />
-                </Box>
-              )}
-            </>
-            {cases.length === 0 && <EmptyState />}
+            {renderCards()}
           </GridColumn>
         </GridRow>
       </GridContainer>

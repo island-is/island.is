@@ -2,7 +2,7 @@ import Layout from '../components/Layout/Layout'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 const Statistics = () => {
   return (
-    <Layout>
+    <Layout seo={{ title: 'Tölfræði', url: 'tolfraedi' }}>
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
           <Box style={{ display: 'flex', justifyContent: 'center' }}>

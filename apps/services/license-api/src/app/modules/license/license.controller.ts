@@ -20,7 +20,7 @@ import {
 } from './dto'
 import { ApiHeader, ApiTags } from '@nestjs/swagger'
 import { LicenseId } from './license.types'
-import { NationalId } from '../../decorators/nationalId'
+import { NationalId } from '@island.is/nest/core'
 
 @ApiHeader({
   name: 'X-Param-NationalId',
