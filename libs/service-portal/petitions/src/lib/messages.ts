@@ -6,6 +6,11 @@ export const m = defineMessages({
     defaultMessage: 'Undirskriftalistar',
     description: '',
   },
+  createList: {
+    id: 'sp.petitions:createList',
+    defaultMessage: 'Stofna nýjan lista',
+    description: '',
+  },
   intro: {
     id: 'sp.petitions:intro',
     defaultMessage: 'Yfirlit yfir undirskriftalista og lista í þinni umsjá.',

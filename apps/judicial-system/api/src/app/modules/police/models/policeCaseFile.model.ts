@@ -9,4 +9,7 @@ export class PoliceCaseFile implements TPoliceCaseFile {
 
   @Field()
   readonly name!: string
+
+  @Field()
+  readonly policeCaseNumber!: string
 }
