@@ -854,8 +854,8 @@ export class CaseService {
     )
   }
 
-  async getRulingPdf(theCase: Case, useSigned = true): Promise<Buffer> {
-    if (useSigned) {
+  async getRulingPdf(theCase: Case): Promise<Buffer> {
+    if (theCase.rulingDate) {
       try {
         return await this.awsS3Service.getObject(
           `generated/${theCase.id}/ruling.pdf`,

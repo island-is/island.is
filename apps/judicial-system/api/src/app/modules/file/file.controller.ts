@@ -100,7 +100,6 @@ export class FileController {
   @Header('Content-Type', 'application/pdf')
   async getRulingPdf(
     @Param('id') id: string,
-    @Query('useSigned', ParseBoolPipe) useSigned: boolean,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
     @Res() res: Response,
@@ -114,7 +113,6 @@ export class FileController {
       'ruling',
       req,
       res,
-      useSigned,
     )
   }
 
