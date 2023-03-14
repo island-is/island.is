@@ -7,22 +7,22 @@ import { useNamespace } from '@island.is/web/hooks'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { getScreenWidthString } from '@island.is/web/utils/screenWidth'
 import { theme } from '@island.is/island-ui/theme'
-import * as styles from './GevHeader.css'
+import * as styles from './HveHeader.css'
 
 const getDefaultStyle = (width: number) => {
-  if (width >= theme.breakpoints.xl)
+  if (width >= theme.breakpoints.xl) {
     return {
-      backgroundPosition: '97% bottom',
       backgroundRepeat: 'no-repeat',
-      backgroundSize: '170px, cover',
+      backgroundPosition: `right bottom`,
+      backgroundSize: 'auto 270px',
       backgroundImage:
-        "url('https://images.ctfassets.net/8k0h54kbe6bj/13E4vIA69gDNF87pkHwJgc/c2175b5ce58e50c93ddef5ea26854740/figura.png'), url('https://images.ctfassets.net/8k0h54kbe6bj/2xPh2pJri9rHRpvSANZ1RQ/d051deadef4c1ef0a0d1378eb75d110b/gevhaus1440x385header_litur.png')",
+        "url('https://images.ctfassets.net/8k0h54kbe6bj/7ie5X2T4g8a7g5PLvu5226/4ec8b2cb69b5cb7193a61c562f9b36e0/minstur1.png')",
+      borderBottom: '8px solid #F01E28',
     }
+  }
   return {
     backgroundRepeat: 'no-repeat',
-    backgroundSize: 'cover',
-    backgroundImage:
-      "url('https://images.ctfassets.net/8k0h54kbe6bj/2xPh2pJri9rHRpvSANZ1RQ/d051deadef4c1ef0a0d1378eb75d110b/gevhaus1440x385header_litur.png')",
+    borderBottom: '8px solid #F01E28',
   }
 }
 
@@ -30,7 +30,7 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-const GevHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
+const HveHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
     () => JSON.parse(organizationPage.organization.namespace?.fields ?? '{}'),
@@ -43,7 +43,7 @@ const GevHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
 
   return (
     <div
-      style={n(`gevHeader-${screenWidth}`, getDefaultStyle(width))}
+      style={n(`hveHeader-${screenWidth}`, getDefaultStyle(width))}
       className={styles.headerBg}
     >
       <div className={styles.headerWrapper}>
@@ -59,7 +59,7 @@ const GevHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
                 <img
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
-                  alt="gev-logo"
+                  alt="hve-logo"
                 />
               </Link>
             )
@@ -81,13 +81,13 @@ const GevHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
               </Link>
             </Hidden>
           )}
-          <Box marginTop={[2, 2, 6]} textAlign={['center', 'center', 'right']}>
+          <Box marginTop={[2, 2, 6]} textAlign={['center', 'center', 'left']}>
             <Link
               href={
                 linkResolver('organizationpage', [organizationPage.slug]).href
               }
             >
-              <Text variant="h1" as="h1" fontWeight="semiBold" color="white">
+              <Text variant="h1" as="h1" fontWeight="semiBold">
                 {organizationPage.title}
               </Text>
             </Link>
@@ -98,4 +98,4 @@ const GevHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   )
 }
 
-export default GevHeader
+export default HveHeader
