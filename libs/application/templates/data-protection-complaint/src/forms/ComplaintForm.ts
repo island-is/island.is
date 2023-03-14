@@ -23,7 +23,7 @@ import {
 } from '@island.is/application/types'
 import {
   applicantInformationMultiField,
-  formConclusionSection,
+  buildFormConclusionSection,
 } from '@island.is/application/ui-forms'
 import { OnBehalf } from '../lib/dataSchema'
 import {
@@ -628,7 +628,7 @@ export const ComplaintForm: Form = buildForm({
         }),
       ],
     }),
-    formConclusionSection({
+    buildFormConclusionSection({
       alertTitle: confirmation.labels.alertTitle,
       expandableHeader: confirmation.labels.expandableHeader,
       expandableDescription: confirmation.labels.description,
