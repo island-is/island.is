@@ -15,7 +15,6 @@ import {
   BadRequestException,
   HttpException,
   Inject,
-  ParseBoolPipe,
   UseInterceptors,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'

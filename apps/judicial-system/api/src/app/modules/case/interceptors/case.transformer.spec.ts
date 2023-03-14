@@ -1,8 +1,3 @@
-import {
-  CaseState,
-  completedCaseStates,
-  NotificationType,
-} from '@island.is/judicial-system/types'
 import each from 'jest-each'
 
 import { Case } from '../models/case.model'

@@ -6,8 +6,6 @@ import {
   Header,
   Inject,
   Param,
-  ParseBoolPipe,
-  Query,
   Req,
   Res,
   UseGuards,

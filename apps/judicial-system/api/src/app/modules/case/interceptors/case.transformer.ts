@@ -1,8 +1,3 @@
-import {
-  completedCaseStates,
-  NotificationType,
-} from '@island.is/judicial-system/types'
-
 import { Case } from '../models/case.model'
 
 const threeDays = 3 * 24 * 60 * 60 * 1000
