@@ -1,10 +1,11 @@
 import { FeatureFlag, Features } from '@island.is/nest/feature-flags'
 import { InputType, Field, Float, Int } from '@nestjs/graphql'
-import { GraphQLJSONObject } from 'graphql-type-json'
-
-@InputType('ConsultationPortalCaseInput')
+@InputType('ConsultationPortalCaseAdviceInput')
 @FeatureFlag(Features.consultationPortalApplication)
-export class GetCaseInput {
+export class GetCaseAdviceInput {
   @Field(() => Int)
   caseId = 0
+
+  @Field(() => String, { nullable: true })
+  content?: string
 }

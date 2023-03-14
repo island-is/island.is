@@ -6,11 +6,12 @@ import {
   ApiCasesCaseIdGetRequest,
   ApiCasesGetRequest,
 } from '@island.is/clients/consultation-portal'
-import { GetCaseAdviceInput, GetCaseInput } from '../dto/case.input'
+import { GetCaseInput } from '../dto/case.input'
 import { CaseResult } from '../models/caseResult.model'
 import { CaseItemResult } from '../models/caseItemResult.model'
 import { AdviceResult } from '../models/adviceResult.model'
 import { GetCasesInput } from '../dto/cases.input'
+import { GetCaseAdviceInput } from '../dto/advice.input'
 
 @Injectable()
 export class CaseResultService {
@@ -62,8 +63,11 @@ export class CaseResultService {
       content: input.content,
       // files: input.files,
     }
-
-    const response = await this.casesApi.apiCasesCaseIdAdvicesPost(request)
-    return response
+    console.log(input)
+    const response = await this.casesApi
+      .apiCasesCaseIdAdvicesPost(request)
+      .then((res) => console.log('then res', res))
+      .catch((error) => console.error('Error', error))
+    //return response
   }
 }

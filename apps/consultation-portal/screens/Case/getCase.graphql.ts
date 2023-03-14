@@ -42,10 +42,8 @@ export const GET_ADVICES = gql`
 
 export const POST_CASE_ADVICE = gql`
   mutation postConsultationPortalAdvice(
-    $input: ConsultationPortalCaseAdviceInput
+    $input: ConsultationPortalCaseAdviceInput!
   ) {
-    postConsultationPortalAdvice(input: $input) {
-      id
-    }
+    postConsultationPortalAdvice(input: $input)
   }
 `

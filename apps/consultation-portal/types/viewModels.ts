@@ -1,4 +1,5 @@
 export interface Case {
+  id: number
   caseNumber: string
   name: string
   shortDescription: string

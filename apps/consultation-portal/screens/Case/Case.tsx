@@ -22,18 +22,16 @@ import { SimpleCardSkeleton } from '../../components/Card'
 import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
 import { useMutation } from '@apollo/client'
 import { POST_CASE_ADVICE } from './getCase.graphql'
-import withApollo from '@island.is/consultation-portal/graphql/withApollo'
 
 const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
   const [postConsultationPortalAdvice] = useMutation(POST_CASE_ADVICE)
   // Remove following lines after connecting to API
-  const submitHandler = async (e) => {
-    console.log(e)
+  const submitHandler = async (content) => {
     await postConsultationPortalAdvice({
       variables: {
         input: {
-          content: e.content,
-          caseId: chosenCase.caseNumber,
+          content: content.content,
+          caseId: chosenCase.id,
         },
       },
     })
@@ -157,4 +155,4 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
   )
 }
 
-export default withApollo(CaseScreen)
+export default CaseScreen

@@ -9,8 +9,9 @@ import {
   FeatureFlag,
   Features,
 } from '@island.is/nest/feature-flags'
-import { GetCaseAdviceInput, GetCaseInput } from '../dto/case.input'
+import { GetCaseInput } from '../dto/case.input'
 import { GetCasesInput } from '../dto/cases.input'
+import { GetCaseAdviceInput } from '../dto/advice.input'
 
 @Resolver()
 @UseGuards(FeatureFlagGuard)
@@ -48,17 +49,25 @@ export class CaseResultResolver {
     return advices
   }
 
-  @Mutation(() => CaseResult, { name: 'postConsultationPortalAdvice' })
+  @Mutation(() => Boolean, {
+    name: 'postConsultationPortalAdvice',
+    nullable: true,
+  })
   @FeatureFlag(Features.consultationPortalApplication)
   async postAdvice(
     @Args('input', { type: () => GetCaseAdviceInput })
     input: GetCaseAdviceInput,
   ): Promise<void> {
-    const response = await this.caseResultService.postAdvice({
-      caseId: input.caseId,
-      content: input.content,
-      // files: input.files,
-    })
-    return response
+    console.log('respon')
+
+    const response = await this.caseResultService
+      .postAdvice({
+        caseId: input.caseId,
+        content: input.content,
+        // files: input.files,
+      })
+      .then((res) => console.log('then res', res))
+      .catch((error) => console.error('Error', error))
+    // return response
   }
 }

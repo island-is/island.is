@@ -1,9 +1,8 @@
 import App, { AppContext, AppProps } from 'next/app'
 import Head from 'next/head'
 import { FC } from 'react'
-import { client } from '../graphql'
+import initApollo from '../graphql/client'
 import { ApolloProvider } from '@apollo/client'
-import withApollo from '../graphql/withApollo'
 
 const Layout: FC = ({ children }) => {
   return (
@@ -42,13 +41,14 @@ class ConsultationPortalApplication extends App<AppProps> {
   }
   render() {
     const { Component, pageProps } = this.props
+    const client = initApollo()
 
     return (
-      <>
+      <ApolloProvider client={client}>
         <Layout>
           <Component {...pageProps} />
         </Layout>
-      </>
+      </ApolloProvider>
     )
   }
 }
