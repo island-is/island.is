@@ -192,6 +192,8 @@ export const is = {
   'vehicleDetail.trailerWithoutBrakes': 'Óhemlaður eftirvagn',
   'vehicleDetail.nedc': 'Útblástursgildi (NEDC)',
   'vehicleDetail.vehicleWeight': 'Eigin þyngd',
+  'vehicleDetail.totalWeight': 'Heildarþyngd',
+  'vehicleDetail.capacityWeight': 'Þyngd vagnlestar',
 
   // assets overview
   'assetsOvervies.screenTitle': 'Fasteignir',

@@ -108,6 +108,25 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{ title?: string, 
             />
           </InputRow>
 
+          <InputRow>
+            {technicalInfo?.totalWeight ? (
+              <Input
+                loading={loading}
+                error={isError}
+                label={intl.formatMessage({ id: 'vehicleDetail.totalWeight' })}
+                value={`${technicalInfo?.totalWeight ?? '-'} kg`}
+              />
+            ) : null}
+            {technicalInfo?.capacityWeight ? (
+              <Input
+                loading={loading}
+                error={isError}
+                label={intl.formatMessage({ id: 'vehicleDetail.capacityWeight' })}
+                value={`${technicalInfo?.capacityWeight ?? '-'} kg`}
+              />
+              ) : null}
+          </InputRow>
+
            <InputRow>
             <Input
               loading={loading}

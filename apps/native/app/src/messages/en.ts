@@ -267,6 +267,8 @@ export const en: TranslatedMessages = {
   'vehicleDetail.trailerWithoutBrakes': 'Permissible maximum towable mass of trailer (unbraked)',
   'vehicleDetail.nedc': 'Exhaust emissions value (NEDC)',
   'vehicleDetail.vehicleWeight': 'Vehicle weight',
+  'vehicleDetail.totalWeight': 'Maximum weight',
+  'vehicleDetail.capacityWeight': 'Road train weight',
 
   // assets overview
   'assetsOvervies.screenTitle': 'Assets',
