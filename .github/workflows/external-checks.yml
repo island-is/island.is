@@ -71,15 +71,18 @@ jobs:
         with:
           node-version: '18'
 
+      - name: Setup yarn
+        run: npm install -g yarn
+
       - name: Run gitbook format
-        run: node ./scripts/gitbook.js
         if: ${{ github.ref == 'ref/heads/main' }}
+        run: node ./scripts/gitbook.js
 
       - name: Run gitbook format and commit changes
         if: ${{ github.event_name == 'pull_request' }}
         run: |
           node ./scripts/gitbook.js
-          ./infra/scripts/ci/git-check-dirty.sh "SUMMARY.md" "GitbookBot"
+          ./infra/scripts/ci/git-check-dirty.sh "SUMMARY.md" "Gitbook"
 
       - name: Check if the git repo is dirty
         id: changes

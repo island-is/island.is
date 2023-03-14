@@ -739,8 +739,7 @@ const Auctions: Screen<AuctionsProps> = ({
               name="homestaySearchInput"
               placeholder={n('auctionFilterSearch', 'Leita eftir uppboði')}
               size="sm"
-              icon="search"
-              iconType="outline"
+              icon={{ name: 'search', type: 'outline' }}
               value={query}
               onChange={(event) => setQuery(event.target.value)}
             />
