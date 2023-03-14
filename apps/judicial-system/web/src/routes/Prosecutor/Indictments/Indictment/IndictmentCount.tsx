@@ -186,12 +186,17 @@ function getIndictmentDescriptionReason(
     return acc
   }, '')
 
-  const allowedSubstances: string[] = offenses
-    .map((offense) => offenseSubstances[offense])
-    .flat()
-  const relevantSubstances = Object.entries(substances).filter((substance) =>
-    allowedSubstances.includes(substance[0]),
+  const allowedSubstances = offenses.map(
+    (offense) => offenseSubstances[offense],
   )
+
+  const relevantSubstances = allowedSubstances
+    .map((allowedSubstance) => {
+      return Object.entries(substances).filter((substance) => {
+        return allowedSubstance.includes(substance[0] as Substance)
+      })
+    })
+    .flat()
 
   reason += relevantSubstances.reduce((acc, substance, index) => {
     if (index === 0) {
