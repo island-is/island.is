@@ -123,7 +123,7 @@ export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
     )
 
     if (pass.ok) {
-      if (pass.data.distributionUrl) {
+      if (!pass.data.distributionUrl) {
         this.logger.warn('Missing pkpass distribution url in adr license', {
           category: LOG_CATEGORY,
         })
@@ -149,7 +149,7 @@ export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
     )
 
     if (pass.ok) {
-      if (pass.data.distributionQRCode) {
+      if (!pass.data.distributionQRCode) {
         this.logger.warn('Missing pkpass distribution qr code in adr license', {
           category: LOG_CATEGORY,
         })
