@@ -59,7 +59,7 @@ const GevHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
                 <img
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
-                  alt="tryggingastofnun-logo"
+                  alt="gev-logo"
                 />
               </Link>
             )
