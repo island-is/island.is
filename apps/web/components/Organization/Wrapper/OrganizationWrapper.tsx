@@ -108,6 +108,7 @@ export const lightThemes = [
   'fiskistofa',
   'landing_page',
   'tryggingastofnun',
+  'hve',
 ]
 export const footerEnabled = [
   'syslumenn',
