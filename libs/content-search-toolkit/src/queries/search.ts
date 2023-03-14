@@ -55,6 +55,7 @@ export const searchQuery = (
       // the search logic used for search drop down suggestions
       // term and prefix queries on content title
       case 'suggestions':
+        console.log("SUGGESTIONS")
         should.push({ prefix: { title: lastWord } })
         words.forEach((word) => {
           should.push({ term: { title: word } })
@@ -65,6 +66,7 @@ export const searchQuery = (
       // uses all analyzed fields
       case 'default':
       default:
+        console.log("DEFAULT")
         should.push({
           multi_match: {
             fields: fieldsWeights,
@@ -149,7 +151,7 @@ export const searchQuery = (
     },
   }
 
-  return {
+  const esQ = {
     query: {
       function_score: {
         query: {
@@ -162,15 +164,19 @@ export const searchQuery = (
         },
         functions: [
           // content gets a natural boost based on visits/popularity
-          {
-            field_value_factor: {
-              field: 'popularityScore',
-              factor: 1.2,
-              modifier: 'log1p',
-              missing: 1,
-            },
-          },
-          // content that is an entrance to "umsoknir" gets a boost
+          // {
+          //   field_value_factor: {
+          //     field: 'popularityScore',
+          //     factor: 1.2,
+          //     modifier: 'log1p',
+          //     missing: 1,
+          //   },
+          // },
+
+          /////////// MAX BOOST CHECKS ///////////
+
+          
+          // content that is an entrance to applications/umsoknir gets a boost
           { filter: { range: { processEntryCount: { gte: 1 } } }, weight: 2 },
           // content that is a "forsíða stofnunar" gets a boost
           { filter: { term: { type: 'webOrganizationPage' } }, weight: 3 },
@@ -184,4 +190,6 @@ export const searchQuery = (
     size,
     from: (page - 1) * size, // if we have a page number add it as offset for pagination
   }
+  console.log(esQ)
+  return esQ
 }
