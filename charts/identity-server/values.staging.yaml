@@ -31,7 +31,7 @@ auth-admin-web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 10
         min: 2
@@ -132,7 +132,7 @@ identity-server:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -224,7 +224,7 @@ services-auth-admin-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 10
         min: 2
@@ -296,7 +296,7 @@ services-auth-delegation-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 10
         min: 2
@@ -374,7 +374,7 @@ services-auth-ids-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 15
         min: 2
@@ -463,7 +463,7 @@ services-auth-personal-representative:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 10
         min: 2
@@ -521,7 +521,7 @@ services-auth-personal-representative-public:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 10
         min: 2
@@ -603,7 +603,7 @@ services-auth-public-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 10
         min: 2

@@ -32,7 +32,7 @@ air-discount-scheme-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -118,7 +118,7 @@ air-discount-scheme-backend:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -213,7 +213,7 @@ air-discount-scheme-web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -371,7 +371,7 @@ api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 50
         min: 2
@@ -579,7 +579,7 @@ application-system-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 60
         min: 2
@@ -734,7 +734,7 @@ application-system-api-worker:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -807,7 +807,7 @@ application-system-form:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -866,7 +866,7 @@ consultation-portal:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 30
         min: 2
@@ -922,7 +922,7 @@ contentful-apps:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -982,7 +982,7 @@ contentful-entry-tagger-service:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -1045,7 +1045,7 @@ contentful-translation-extension:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -1109,7 +1109,7 @@ download-service:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -1183,7 +1183,7 @@ endorsement-system-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -1271,7 +1271,7 @@ external-contracts-tests:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -1327,7 +1327,7 @@ github-actions-cache:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 8
         min: 3
@@ -1406,7 +1406,7 @@ icelandic-names-registry-backend:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -1489,7 +1489,7 @@ island-ui-storybook:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -1550,7 +1550,7 @@ license-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 10
         min: 2
@@ -1636,7 +1636,7 @@ portals-admin:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 30
         min: 2
@@ -1701,7 +1701,7 @@ search-indexer-service:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 1
         min: 1
@@ -1826,7 +1826,7 @@ service-portal:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 30
         min: 2
@@ -1895,7 +1895,7 @@ service-portal-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 30
         min: 2
@@ -1993,7 +1993,7 @@ services-documents:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -2071,7 +2071,7 @@ services-sessions:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 10
         min: 1
@@ -2139,7 +2139,7 @@ services-sessions-worker:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -2218,7 +2218,7 @@ skilavottord-web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -2285,7 +2285,7 @@ skilavottord-ws:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -2379,7 +2379,7 @@ user-notification:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -2455,7 +2455,7 @@ user-notification-worker:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -2519,7 +2519,7 @@ web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 50
         min: 2
@@ -2587,7 +2587,7 @@ xroad-collector:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
