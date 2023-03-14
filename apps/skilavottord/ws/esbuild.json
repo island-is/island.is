@@ -28,6 +28,7 @@
     "form-data",
     "@island.is/login",
     "sequelize",
+    "lru-cache",
     "swagger-ui-dist",
     "@protobufjs/aspromise",
     "@protobufjs/base64",
