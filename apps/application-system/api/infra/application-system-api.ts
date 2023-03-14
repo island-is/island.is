@@ -287,9 +287,9 @@ export const serviceSetup = (services: {
       requests: { cpu: '100m', memory: '512Mi' },
     })
     .replicaCount({
-      default: 10,
+      default: 2,
       max: 60,
-      min: 10,
+      min: 2,
     })
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
