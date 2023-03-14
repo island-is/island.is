@@ -7,7 +7,9 @@
   "paths": {
     "/api/Types": {
       "get": {
-        "tags": ["Types"],
+        "tags": [
+          "Types"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -34,10 +36,12 @@
     },
     "/api/Cases": {
       "get": {
-        "tags": ["Cases"],
+        "tags": [
+          "Cases"
+        ],
         "parameters": [
           {
-            "name": "Query",
+            "name": "SearchQuery",
             "in": "query",
             "style": "form",
             "schema": {
@@ -143,26 +147,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/CaseItemResult"
-                  }
+                  "$ref": "#/components/schemas/CasesAggregateResult"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/CaseItemResult"
-                  }
+                  "$ref": "#/components/schemas/CasesAggregateResult"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/CaseItemResult"
-                  }
+                  "$ref": "#/components/schemas/CasesAggregateResult"
                 }
               }
             }
@@ -172,7 +167,9 @@
     },
     "/api/User/Advices": {
       "get": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -208,7 +205,9 @@
     },
     "/api/Cases/{caseId}": {
       "get": {
-        "tags": ["Cases"],
+        "tags": [
+          "Cases"
+        ],
         "parameters": [
           {
             "name": "caseId",
@@ -250,7 +249,9 @@
     },
     "/api/User/Subscriptions": {
       "get": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -275,7 +276,9 @@
         }
       },
       "post": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -304,7 +307,9 @@
     },
     "/api/Documents/{documentId}": {
       "get": {
-        "tags": ["Documents"],
+        "tags": [
+          "Documents"
+        ],
         "parameters": [
           {
             "name": "documentId",
@@ -329,7 +334,9 @@
     },
     "/api/Cases/{caseId}/Advices": {
       "get": {
-        "tags": ["Cases"],
+        "tags": [
+          "Cases"
+        ],
         "parameters": [
           {
             "name": "caseId",
@@ -378,7 +385,9 @@
         }
       },
       "post": {
-        "tags": ["Cases"],
+        "tags": [
+          "Cases"
+        ],
         "parameters": [
           {
             "name": "caseId",
@@ -452,7 +461,9 @@
     },
     "/api/Cases/{caseId}/Subscribe": {
       "post": {
-        "tags": ["Cases"],
+        "tags": [
+          "Cases"
+        ],
         "parameters": [
           {
             "name": "caseId",
@@ -496,7 +507,9 @@
     },
     "/api/Cases/{caseId}/Unsubscribe": {
       "post": {
-        "tags": ["Cases"],
+        "tags": [
+          "Cases"
+        ],
         "parameters": [
           {
             "name": "caseId",
@@ -798,11 +811,46 @@
         "additionalProperties": false
       },
       "CaseSubscriptionType": {
-        "enum": ["AllChanges", "StatusChanges"],
+        "enum": [
+          "AllChanges",
+          "StatusChanges"
+        ],
         "type": "string"
       },
+      "CasesAggregateResult": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cases": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CaseItemResult"
+            },
+            "nullable": true
+          },
+          "filterGroups": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer",
+                "format": "int32"
+              }
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CasesOrderBy": {
-        "enum": ["LastUpdated", "LatestCases", "AdviceDeadline"],
+        "enum": [
+          "LastUpdated",
+          "LatestCases",
+          "AdviceDeadline"
+        ],
         "type": "string"
       },
       "DocumentInfoResult": {
@@ -854,7 +902,11 @@
         "additionalProperties": false
       },
       "SubscriptionType": {
-        "enum": ["AllChanges", "StatusChanges", "OnlyNew"],
+        "enum": [
+          "AllChanges",
+          "StatusChanges",
+          "OnlyNew"
+        ],
         "type": "string"
       },
       "UserAdviceResult": {
