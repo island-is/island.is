@@ -86,21 +86,21 @@ export const SearchInput = ({
   const mannaudstorgTag = [
     { key: 'mannaudstorg', type: SearchableTags.Organization },
   ]
-  
+
   useDebounce(
     () => {
       if (searchTerms) {
         const queryString = searchTerms
-        
+
         if (searchTerms.trim() === lastSearchTerms.trim()) {
           updateOptions()
         } else {
-          console.log("queryString searchTerms",searchTerms)
+          console.log('queryString searchTerms', searchTerms)
           fetch({
             variables: {
               query: {
                 highlightResults: true,
-                useQuery: "suggestions",
+                useQuery: 'suggestions',
                 language: activeLocale as ContentLanguage,
                 queryString,
                 types: [SearchableContentTypes['WebQna']],
@@ -169,9 +169,7 @@ export const SearchInput = ({
               }}
             >
               {/* <Text as="span">{item.title}</Text> */}
-              <span
-      dangerouslySetInnerHTML={{__html: item.title}}
-    />
+              <span dangerouslySetInnerHTML={{ __html: item.title }} />
             </Box>
           )
         },

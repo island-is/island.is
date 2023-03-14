@@ -55,7 +55,7 @@ export const searchQuery = (
       // the search logic used for search drop down suggestions
       // term and prefix queries on content title
       case 'suggestions':
-        console.log("SUGGESTIONS")
+        console.log('SUGGESTIONS')
         should.push({ prefix: { title: lastWord } })
         words.forEach((word) => {
           should.push({ term: { title: word } })
@@ -66,7 +66,7 @@ export const searchQuery = (
       // uses all analyzed fields
       case 'default':
       default:
-        console.log("DEFAULT")
+        console.log('DEFAULT')
         should.push({
           multi_match: {
             fields: fieldsWeights,
@@ -175,7 +175,6 @@ export const searchQuery = (
 
           /////////// MAX BOOST CHECKS ///////////
 
-          
           // content that is an entrance to applications/umsoknir gets a boost
           { filter: { range: { processEntryCount: { gte: 1 } } }, weight: 2 },
           // content that is a "forsíða stofnunar" gets a boost

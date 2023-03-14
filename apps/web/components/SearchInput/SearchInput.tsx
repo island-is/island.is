@@ -114,8 +114,8 @@ const useSearch = (
                 SearchableContentTypes['WebArticle'],
                 SearchableContentTypes['WebSubArticle'],
                 SearchableContentTypes['WebProjectPage'],
-                SearchableContentTypes['WebOrganizationPage'],///
-                SearchableContentTypes['WebOrganizationSubpage'],///
+                SearchableContentTypes['WebOrganizationPage'], ///
+                SearchableContentTypes['WebOrganizationSubpage'], ///
                 // SearchableContentTypes['WebQna'],///
                 // SearchableContentTypes['webLifeEventPage'],///
                 // SearchableContentTypes['webDigitalIcelandService'],///
