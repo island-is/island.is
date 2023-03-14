@@ -530,6 +530,8 @@ PODS:
     - React-Core
   - RNCAsyncStorage (1.12.1):
     - React-Core
+  - RNCClipboard (1.11.2):
+    - React-Core
   - RNFBApp (12.9.0):
     - Firebase/CoreOnly (= 8.8.0)
     - React-Core
@@ -646,6 +648,7 @@ DEPENDENCIES:
   - ReactNativeNavigation (from `../../node_modules/react-native-navigation`)
   - rn-fetch-blob (from `../../node_modules/rn-fetch-blob`)
   - "RNCAsyncStorage (from `../../node_modules/@react-native-community/async-storage`)"
+  - "RNCClipboard (from `../../node_modules/@react-native-clipboard/clipboard`)"
   - "RNFBApp (from `../../node_modules/@react-native-firebase/app`)"
   - "RNFBMessaging (from `../../node_modules/@react-native-firebase/messaging`)"
   - "RNFBPerf (from `../../node_modules/@react-native-firebase/perf`)"
@@ -810,6 +813,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/rn-fetch-blob"
   RNCAsyncStorage:
     :path: "../../node_modules/@react-native-community/async-storage"
+  RNCClipboard:
+    :path: "../../node_modules/@react-native-clipboard/clipboard"
   RNFBApp:
     :path: "../../node_modules/@react-native-firebase/app"
   RNFBMessaging:
@@ -924,6 +929,7 @@ SPEC CHECKSUMS:
   ReactNativeNavigation: b3344828dfe4a696425cbc00d61e05c4c0150f98
   rn-fetch-blob: f065bb7ab7fb48dd002629f8bdcb0336602d3cba
   RNCAsyncStorage: b03032fdbdb725bea0bd9e5ec5a7272865ae7398
+  RNCClipboard: 3f0451a8100393908bea5c5c5b16f96d45f30bfc
   RNFBApp: d11e8ae04b9b6230f3a28b70761f2edd185deaa8
   RNFBMessaging: dd0bd7d837b7b6b8e881248a2639af5dc36b28ef
   RNFBPerf: 9051a42c7fe834f29a6764a43cca3f4bd7e87cac
@@ -939,6 +945,6 @@ SPEC CHECKSUMS:
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
   ZXingObjC: fdbb269f25dd2032da343e06f10224d62f537bdb
 
-PODFILE CHECKSUM: 24f8d26930baac4dc112d7670df3ccce2362a800
+PODFILE CHECKSUM: c0444d9700a3c9c51500dd04cdff3b65bfa926f9
 
 COCOAPODS: 1.11.2

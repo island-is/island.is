@@ -1,17 +1,16 @@
 import React, { useRef, useState } from "react";
-import { Pressable, View, Animated, Text, LayoutAnimation, Image } from "react-native";
-import check from '../../assets/icons/check.png'
+import { Pressable, View, Animated, LayoutAnimation, Image } from "react-native";
 import chevron from '../../assets/icons/chevron-down.png'
 import styled from "styled-components/native";
 import { dynamicColor } from '../../utils'
 import { font } from "../../utils";
 
-const Host = styled.View`
+const Host = styled.View<{ isOpen: boolean }>`
   border-radius: ${({ theme }) => theme.border.radius.large};
-  border-width: ${({ theme }) => theme.border.width.xl}px;
-  border-color: ${dynamicColor(({ theme }) => ({
-    light: theme.color.mint400,
-    dark: theme.color.mint400,
+  border-width: ${({ theme, isOpen }) => isOpen ? theme.border.width.xl : theme.border.width.standard}px;
+  border-color: ${dynamicColor(({ theme, isOpen }) => ({
+    light: isOpen ? theme.color.mint400 : theme.color.blue200,
+    dark: isOpen ? theme.color.mint400 : theme.color.blue200,
   }))};
   background-color: ${dynamicColor('background')};
   overflow: hidden;
@@ -29,8 +28,8 @@ const Title = styled.Text`
 `;
 
 const Icon = styled(Animated.View)`
-  height: 20px;
-  width: 20px;
+  height: 24px;
+  width: 24px;
   margin-right: ${({ theme }) => theme.spacing[1]}px;
 `;
 
@@ -41,13 +40,13 @@ const Chevron = styled(Animated.View)`
 
 const Content = styled.View`
   border-top-width: ${({ theme }) => theme.border.width.standard}px;
-  border-top-color:rgba(204, 223, 255, 1);
+  border-top-color:${({ theme }) => theme.color.blue200};
 `
 
 interface AccordionItemProps {
   children: React.ReactNode;
   title: string;
-  icon?: string;
+  icon?: React.ReactNode;
 }
 
 const toggleAnimation = {
@@ -85,16 +84,18 @@ export function AccordionItem({ children, title, icon }: AccordionItemProps) {
   });
 
   return (
-    <Host>
+    <Host isOpen={isOpen}>
       <Header>
-      <Pressable onPress={() => toggleListItem()} style={{ flexDirection: 'row', justifyContent: 'space-between'}}>
+      <Pressable
+        onPress={() => toggleListItem()}
+        style={{ flexDirection: 'row', justifyContent: 'space-between', margin: isOpen ? -2 : 0 }}
+      >
         <View style={{ flexDirection: 'row', alignItems: 'center'}}>
-          <Icon>
-            <Image
-              source={check}
-              style={{ width: 20, height: 20, marginRight: 10 }}
-            />
-          </Icon>
+          {icon &&
+            <Icon>
+              {icon}
+            </Icon>
+          }
           <Title>{title}</Title>
         </View>
         <Chevron style={{ transform: [{ rotate: arrowTransform }] }}>

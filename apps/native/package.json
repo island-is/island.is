@@ -19,6 +19,7 @@
     "@formatjs/intl-getcanonicallocales": "1.7.3",
     "@formatjs/intl-locale": "2.4.38",
     "@formatjs/intl-pluralrules": "4.1.4",
+    "@react-native-clipboard/clipboard": "1.11.2",
     "@react-native-community/async-storage": "1.12.1",
     "@react-native-community/progress-bar-android": "1.0.4",
     "@react-native-community/progress-view": "1.3.1",
