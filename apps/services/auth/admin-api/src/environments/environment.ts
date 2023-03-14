@@ -21,8 +21,7 @@ const prodConfig = {
   },
   auth: {
     audience,
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    issuer: process.env.IDENTITY_SERVER_ISSUER_URL!,
+    issuer: JSON.parse(process.env.IDENTITY_SERVER_ISSUER_URL_LIST || '[]'),
   },
   port: 3333,
 }
