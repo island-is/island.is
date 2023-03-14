@@ -9,16 +9,14 @@ import {
   formatDate,
   formatRequestCaseType,
 } from '@island.is/judicial-system/formatters'
-import {
-  isRestrictionCase,
-  SessionArrangements,
-} from '@island.is/judicial-system/types'
+import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { closedCourt, core } from '@island.is/judicial-system-web/messages'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import { courtRecordAccordion as m } from './CourtRecordAccordion.strings'
+import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
 
 interface Props {
   workingCase: Case
@@ -135,7 +133,7 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           <AccordionListItem title="Ákvörðun um kæru">
             {(isRestrictionCase(workingCase.type) ||
               workingCase.sessionArrangements ===
-                SessionArrangements.ALL_PRESENT) && (
+                SessionArrangements.AllPresent) && (
               <Box marginBottom={2}>
                 <Text>
                   {formatMessage(m.sections.appealDecision.disclaimer)}

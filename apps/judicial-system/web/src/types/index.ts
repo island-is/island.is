@@ -4,6 +4,7 @@ import {
   User,
   UserRole,
   IndictmentCount,
+  SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   Case,
@@ -263,6 +264,7 @@ export interface TempCase
     | 'childCase'
     | 'type'
     | 'indictmentCounts'
+    | 'sessionArrangements'
   > {
   sharedWithProsecutorsOffice?: Institution
   court?: Institution
@@ -271,12 +273,14 @@ export interface TempCase
   childCase?: TempCase
   type: CaseType
   indictmentCounts?: TempIndictmentCount[]
+  sessionArrangements?: SessionArrangements
 }
 
 export interface TempUpdateCase
-  extends Omit<UpdateCase, 'courtDocuments' | 'type'> {
+  extends Omit<UpdateCase, 'courtDocuments' | 'type' | 'sessionArrangements'> {
   courtDocuments?: CourtDocument[]
   type?: CaseType
+  sessionArrangements?: SessionArrangements
 }
 
 export interface TempCreateCase extends Omit<CreateCase, 'type'> {

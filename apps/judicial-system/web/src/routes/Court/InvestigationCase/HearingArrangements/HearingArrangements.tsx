@@ -17,10 +17,7 @@ import {
   useCourtArrangements,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  NotificationType,
-  SessionArrangements,
-} from '@island.is/judicial-system/types'
+import { NotificationType } from '@island.is/judicial-system/types'
 import {
   RestrictionCaseCourtSubsections,
   Sections,
@@ -44,6 +41,7 @@ import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/fo
 import * as constants from '@island.is/judicial-system/consts'
 
 import { icHearingArrangements as m } from './HearingArrangements.strings'
+import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
 
 const HearingArrangements = () => {
   const {
@@ -78,7 +76,7 @@ const HearingArrangements = () => {
       [
         {
           sessionArrangements: workingCase.defenderName
-            ? SessionArrangements.ALL_PRESENT
+            ? SessionArrangements.AllPresent
             : undefined,
         },
       ],
@@ -203,14 +201,13 @@ const HearingArrangements = () => {
                     )}
                     checked={
                       workingCase.sessionArrangements ===
-                      SessionArrangements.ALL_PRESENT
+                      SessionArrangements.AllPresent
                     }
                     onChange={() => {
                       setAndSendCaseToServer(
                         [
                           {
-                            sessionArrangements:
-                              SessionArrangements.ALL_PRESENT,
+                            sessionArrangements: SessionArrangements.AllPresent,
                             force: true,
                           },
                         ],
@@ -232,14 +229,14 @@ const HearingArrangements = () => {
                     )}
                     checked={
                       workingCase.sessionArrangements ===
-                      SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                      SessionArrangements.AllPresentSpokesperson
                     }
                     onChange={() => {
                       setAndSendCaseToServer(
                         [
                           {
                             sessionArrangements:
-                              SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+                              SessionArrangements.AllPresentSpokesperson,
                             force: true,
                           },
                         ],
@@ -259,14 +256,14 @@ const HearingArrangements = () => {
                   )}
                   checked={
                     workingCase.sessionArrangements ===
-                    SessionArrangements.PROSECUTOR_PRESENT
+                    SessionArrangements.ProsecutorPresent
                   }
                   onChange={() => {
                     setAndSendCaseToServer(
                       [
                         {
                           sessionArrangements:
-                            SessionArrangements.PROSECUTOR_PRESENT,
+                            SessionArrangements.ProsecutorPresent,
                           force: true,
                         },
                       ],
@@ -295,9 +292,9 @@ const HearingArrangements = () => {
               </Box>
             </Box>
             {(workingCase.sessionArrangements ===
-              SessionArrangements.ALL_PRESENT ||
+              SessionArrangements.AllPresent ||
               workingCase.sessionArrangements ===
-                SessionArrangements.ALL_PRESENT_SPOKESPERSON) && (
+                SessionArrangements.AllPresentSpokesperson) && (
               <Box component="section" marginBottom={8}>
                 <DefenderInfo
                   workingCase={workingCase}
@@ -321,10 +318,10 @@ const HearingArrangements = () => {
               title={formatMessage(m.modal.heading)}
               text={formatMessage(
                 workingCase.sessionArrangements ===
-                  SessionArrangements.ALL_PRESENT
+                  SessionArrangements.AllPresent
                   ? m.modal.allPresentText
                   : workingCase.sessionArrangements ===
-                    SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                    SessionArrangements.AllPresentSpokesperson
                   ? m.modal.allPresentSpokespersonText
                   : m.modal.prosecutorPresentText,
                 { courtDateHasChanged },
