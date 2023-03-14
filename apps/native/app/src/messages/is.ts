@@ -181,7 +181,7 @@ export const is = {
   // vehicles detail
   'vehicleDetail.regno': 'Skráningarnúmer',
   'vehicleDetail.permno': 'Fastanúmer',
-  'vehicleDetail.firstReg': 'Árgerð',
+  'vehicleDetail.firstReg': 'Fyrsti skráningardagur',
   'vehicleDetail.nextInspectionDate': 'Næsti skoðunardagur',
   'vehicleDetail.color': 'Litur',
   'vehicleDetail.insured': 'Tryggt',
