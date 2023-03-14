@@ -167,7 +167,6 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                     readOnly: true,
                     defaultValue: (application: Application) => {
                       const info = application.answers.spouse as Individual
-                      console.log(formatNationalId(info?.person.nationalId))
                       return formatNationalId(info?.person.nationalId) ?? ''
                     },
                   }),
