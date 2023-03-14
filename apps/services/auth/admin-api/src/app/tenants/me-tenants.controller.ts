@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common'
+import { Controller, Get, Param, UseGuards } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import { TenantDto, TenantsService } from '@island.is/auth-api-lib'
@@ -35,5 +35,20 @@ export class MeTenantsController {
   })
   findAll(@CurrentUser() user: User): Promise<TenantDto[]> {
     return this.tenantsService.findAll(user)
+  }
+
+  @Get(':id')
+  @Documentation({
+    description: 'Get tenant by id for the current user.',
+    response: { status: 200, type: TenantDto },
+  })
+  @Audit<TenantDto>({
+    resources: (tenant) => tenant.name,
+  })
+  findById(
+    @CurrentUser() user: User,
+    @Param('id') id: string,
+  ): Promise<TenantDto> {
+    return this.tenantsService.findById(user, id)
   }
 }

@@ -1,0 +1,14 @@
+mutation CreateApplication($input: CreateAuthAdminApplicationInput!) {
+  createAuthAdminApplication(input: $input) {
+    applicationId
+    applicationType
+    environments {
+      displayName {
+        value
+      }
+      environment
+      id
+      name
+    }
+  }
+}

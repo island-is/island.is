@@ -1,7 +1,6 @@
 import format from 'date-fns/format'
 import sub from 'date-fns/sub'
 import React, { useEffect, useState } from 'react'
-import cn from 'classnames'
 import { useLazyQuery, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import {
@@ -42,14 +41,9 @@ import {
   CustomerRecords,
 } from './FinanceTransactionsData.types'
 
-const defaultCalState = { top: false, lower: false }
-
 const FinanceTransactions = () => {
   useNamespaces('sp.finance-transactions')
   const { formatMessage } = useLocale()
-  const [openCal, setOpenCal] = useState<{ top: boolean; lower: boolean }>(
-    defaultCalState,
-  )
   const backInTheDay = sub(new Date(), {
     months: 3,
   })
@@ -236,10 +230,7 @@ const FinanceTransactions = () => {
                         iconVariant="small"
                       >
                         <Box
-                          className={cn(styles.accordionBox, {
-                            [styles.openCal]: openCal?.top,
-                            [styles.openLowerCal]: openCal?.lower,
-                          })}
+                          className={styles.accordionBox}
                           display="flex"
                           flexDirection="column"
                         >
@@ -250,13 +241,8 @@ const FinanceTransactions = () => {
                             backgroundColor="blue"
                             size="xs"
                             handleChange={(d) => setFromDate(d)}
-                            handleOpenCalendar={() =>
-                              setOpenCal({ top: true, lower: false })
-                            }
-                            handleCloseCalendar={() =>
-                              setOpenCal(defaultCalState)
-                            }
                             selected={fromDate}
+                            appearInline
                           />
                           <Box marginTop={3}>
                             <DatePicker
@@ -266,13 +252,8 @@ const FinanceTransactions = () => {
                               backgroundColor="blue"
                               size="xs"
                               handleChange={(d) => setToDate(d)}
-                              handleOpenCalendar={() =>
-                                setOpenCal({ top: false, lower: true })
-                              }
-                              handleCloseCalendar={() =>
-                                setOpenCal(defaultCalState)
-                              }
                               selected={toDate}
+                              appearInline
                             />
                           </Box>
                         </Box>

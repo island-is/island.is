@@ -371,50 +371,28 @@ const ChildView: FC<Props> = ({
             <Box printHidden>
               <Divider />
             </Box>
-            {guardianship && !loading && (
-              <>
-                {guardianship?.legalDomicileParent &&
-                  guardianship.legalDomicileParent.length > 0 && (
-                    <>
-                      <TwoColumnUserInfoLine
-                        label={formatMessage({
-                          id: 'sp.family:legal-domicile-parent',
-                          defaultMessage: 'Lögheimilsforeldri',
-                        })}
-                        firstValue={livingArrangment(
-                          guardianship?.legalDomicileParent ?? [],
-                          person?.parent1 ?? '',
-                        )}
-                        secondValue={livingArrangment(
-                          guardianship?.legalDomicileParent ?? [],
-                          person?.parent2 ?? '',
-                        )}
-                      />
-                      <Divider />
-                    </>
-                  )}
-                {guardianship?.residenceParent &&
-                  guardianship.residenceParent.length > 0 && (
-                    <>
-                      <TwoColumnUserInfoLine
-                        label={formatMessage({
-                          id: 'sp.family:residence-parent',
-                          defaultMessage: 'Búsetuforeldri',
-                        })}
-                        firstValue={livingArrangment(
-                          guardianship?.residenceParent ?? [],
-                          person?.parent1 ?? '',
-                        )}
-                        secondValue={livingArrangment(
-                          guardianship?.residenceParent ?? [],
-                          person?.parent2 ?? '',
-                        )}
-                      />
-                      <Divider />
-                    </>
-                  )}
-              </>
-            )}
+            {guardianship &&
+              !loading &&
+              guardianship.residenceParent &&
+              guardianship.residenceParent.length > 0 && (
+                <>
+                  <TwoColumnUserInfoLine
+                    label={formatMessage({
+                      id: 'sp.family:residence-parent',
+                      defaultMessage: 'Búsetuforeldri',
+                    })}
+                    firstValue={livingArrangment(
+                      guardianship?.residenceParent ?? [],
+                      person?.parent1 ?? '',
+                    )}
+                    secondValue={livingArrangment(
+                      guardianship?.residenceParent ?? [],
+                      person?.parent2 ?? '',
+                    )}
+                  />
+                  <Divider />
+                </>
+              )}
           </Stack>
         )}
       </Stack>
