@@ -7,8 +7,8 @@ import {
   ScopesGuard,
   Scopes,
   CurrentUser,
-  User,
 } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import { RightsPortalService } from './api-domains-rights-portal.service'
 import { Therapies } from './models/getTherapies.model'
 
