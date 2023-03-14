@@ -391,7 +391,7 @@ function serializeContainerRuns(
         },
         requests: {
           memory: '128Mi',
-          cpu: '100m',
+          cpu: '50m',
         },
       },
     }
