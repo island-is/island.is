@@ -29,7 +29,7 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
 }) => {
   const { register, unregister, setValue } = useFormContext()
   const { formatMessage } = useLocale()
-  const epectedDateOfBirthOrAdoptionDate = getExpectedDateOfBirthOrAdoptionDate(
+  const expectedDateOfBirthOrAdoptionDate = getExpectedDateOfBirthOrAdoptionDate(
     application,
   )
   const { rawPeriods } = getApplicationAnswers(application.answers)
@@ -37,9 +37,9 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
   const currentPeriod = rawPeriods[currentIndex]
 
   let isDisable = true
-  if (epectedDateOfBirthOrAdoptionDate) {
+  if (expectedDateOfBirthOrAdoptionDate) {
     const expectedDateTime = new Date(
-      epectedDateOfBirthOrAdoptionDate,
+      expectedDateOfBirthOrAdoptionDate,
     ).getTime()
     const beginningOfMonth = getBeginningOfThisMonth()
     const today = new Date()
@@ -167,8 +167,8 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
             value={
               statefulAnswer === StartDateOptions.ESTIMATED_DATE_OF_BIRTH ||
               statefulAnswer === StartDateOptions.ACTUAL_DATE_OF_BIRTH ||
-              statefulAnswer === StartDateOptions.ADOPTION_DATE // laga her
-                ? epectedDateOfBirthOrAdoptionDate
+              statefulAnswer === StartDateOptions.ADOPTION_DATE
+                ? expectedDateOfBirthOrAdoptionDate
                 : undefined
             }
             name={startDateFieldId}

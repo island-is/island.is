@@ -213,15 +213,12 @@ export const getRightsCode = (application: Application): string => {
   const primaryParentPrefix = parentPrefix(application, selectedChild)
 
   if (selectedChild.parentalRelation === ParentalRelations.primary) {
-    if (isUnemployed) {
-      return `${primaryParentPrefix}-FS`
-    } else if (isStudent) {
-      return `${primaryParentPrefix}-FSN`
-    } else if (isSelfEmployed) {
-      return `${primaryParentPrefix}-S-GR`
-    } else {
-      return `${primaryParentPrefix}-L-GR`
-    }
+    return rightsCodeSuffix(
+      primaryParentPrefix,
+      isUnemployed,
+      isStudent,
+      isSelfEmployed,
+    )
   }
 
   const spouse = getSpouse(application)
@@ -233,15 +230,12 @@ export const getRightsCode = (application: Application): string => {
   if (parentsAreInRegisteredCohabitation) {
     // If this secondary parent is in registered cohabitation with primary parent
     // then they will automatically be granted custody
-    if (isUnemployed) {
-      return `${secondaryParentPrefix}-FS`
-    } else if (isStudent) {
-      return `${secondaryParentPrefix}-FSN`
-    } else if (isSelfEmployed) {
-      return `${secondaryParentPrefix}-S-GR`
-    } else {
-      return `${secondaryParentPrefix}-L-GR`
-    }
+    return rightsCodeSuffix(
+      primaryParentPrefix,
+      isUnemployed,
+      isStudent,
+      isSelfEmployed,
+    )
   }
 
   if (isUnemployed) {
@@ -288,6 +282,24 @@ export const parentPrefix = (
       : applicantIsMale(application)
       ? 'F'
       : 'FO'
+  }
+}
+
+export const rightsCodeSuffix = (
+  prefix: string,
+  isUnemployed: boolean,
+  isStudent: boolean,
+  isSelfEmployed: boolean,
+) => {
+  if (isUnemployed) {
+    return `${prefix}-FS`
+  } else if (isStudent) {
+    return `${prefix}-FSN`
+  } else if (isSelfEmployed) {
+    return `${prefix}-S-GR`
+  } else {
+    if (prefix === 'F-FÓ' || prefix === 'FO-FÓ') return `${prefix}-GR`
+    return `${prefix}-L-GR`
   }
 }
 
