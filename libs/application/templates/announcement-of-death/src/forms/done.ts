@@ -3,12 +3,12 @@ import {
   buildCustomField,
   buildMultiField,
   buildDescriptionField,
-  buildKeyValueField,
-  buildTextField,
   buildSection,
   getValueViaPath,
+  buildExpandableDescriptionField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
+import { application } from 'express'
 import CoatOfArms from '../assets/CoatOfArms'
 import { m } from '../lib/messages'
 import {
@@ -40,15 +40,23 @@ export const done: Form = buildForm({
           space: 1,
           children: [
             buildCustomField({
+              id: 'viewOverviewButton',
+              title: '',
+              component: 'ViewOverviewInDone',
+            }),
+            buildCustomField({
               id: 'viewOverview',
               title: '',
               component: 'Done',
+              condition: (answers) =>
+                getValueViaPath(answers, 'viewOverview') !== true,
             }),
             buildDescriptionField({
               id: 'nextSteps',
               title: '',
               description: m.nextStepsText,
-              condition: (answers) => getValueViaPath(answers, 'viewOverview') === false,
+              condition: (answers) =>
+                getValueViaPath(answers, 'viewOverview') !== true,
             }),
             ...theDeceased,
             ...theAnnouncer,
@@ -57,11 +65,9 @@ export const done: Form = buildForm({
             ...properties,
             ...files,
             ...extraInfo,
-            ...additionalInfo,
-            
           ],
         }),
-      ]
+      ],
     }),
   ],
 })
