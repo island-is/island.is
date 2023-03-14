@@ -7,9 +7,7 @@
   "paths": {
     "/api/Types": {
       "get": {
-        "tags": [
-          "Types"
-        ],
+        "tags": ["Types"],
         "responses": {
           "200": {
             "description": "Success",
@@ -36,9 +34,7 @@
     },
     "/api/Cases": {
       "get": {
-        "tags": [
-          "Cases"
-        ],
+        "tags": ["Cases"],
         "parameters": [
           {
             "name": "SearchQuery",
@@ -167,9 +163,7 @@
     },
     "/api/User/Advices": {
       "get": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "responses": {
           "200": {
             "description": "Success",
@@ -205,9 +199,7 @@
     },
     "/api/Cases/{caseId}": {
       "get": {
-        "tags": [
-          "Cases"
-        ],
+        "tags": ["Cases"],
         "parameters": [
           {
             "name": "caseId",
@@ -249,9 +241,7 @@
     },
     "/api/User/Subscriptions": {
       "get": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "responses": {
           "200": {
             "description": "Success",
@@ -276,9 +266,7 @@
         }
       },
       "post": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -307,9 +295,7 @@
     },
     "/api/Documents/{documentId}": {
       "get": {
-        "tags": [
-          "Documents"
-        ],
+        "tags": ["Documents"],
         "parameters": [
           {
             "name": "documentId",
@@ -334,9 +320,7 @@
     },
     "/api/Cases/{caseId}/Advices": {
       "get": {
-        "tags": [
-          "Cases"
-        ],
+        "tags": ["Cases"],
         "parameters": [
           {
             "name": "caseId",
@@ -385,9 +369,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Cases"
-        ],
+        "tags": ["Cases"],
         "parameters": [
           {
             "name": "caseId",
@@ -461,9 +443,7 @@
     },
     "/api/Cases/{caseId}/Subscribe": {
       "post": {
-        "tags": [
-          "Cases"
-        ],
+        "tags": ["Cases"],
         "parameters": [
           {
             "name": "caseId",
@@ -507,9 +487,7 @@
     },
     "/api/Cases/{caseId}/Unsubscribe": {
       "post": {
-        "tags": [
-          "Cases"
-        ],
+        "tags": ["Cases"],
         "parameters": [
           {
             "name": "caseId",
@@ -811,10 +789,7 @@
         "additionalProperties": false
       },
       "CaseSubscriptionType": {
-        "enum": [
-          "AllChanges",
-          "StatusChanges"
-        ],
+        "enum": ["AllChanges", "StatusChanges"],
         "type": "string"
       },
       "CasesAggregateResult": {
@@ -846,11 +821,7 @@
         "additionalProperties": false
       },
       "CasesOrderBy": {
-        "enum": [
-          "LastUpdated",
-          "LatestCases",
-          "AdviceDeadline"
-        ],
+        "enum": ["LastUpdated", "LatestCases", "AdviceDeadline"],
         "type": "string"
       },
       "DocumentInfoResult": {
@@ -902,11 +873,7 @@
         "additionalProperties": false
       },
       "SubscriptionType": {
-        "enum": [
-          "AllChanges",
-          "StatusChanges",
-          "OnlyNew"
-        ],
+        "enum": ["AllChanges", "StatusChanges", "OnlyNew"],
         "type": "string"
       },
       "UserAdviceResult": {
