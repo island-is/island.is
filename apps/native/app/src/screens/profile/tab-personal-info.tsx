@@ -16,7 +16,7 @@ export function formatNationalId(str: string = '') {
 export function TabPersonalInfo() {
   const intl = useIntl()
   const { dismiss, dismissed } = usePreferencesStore()
-  const natRegRes = useQuery(NATION_REGISTRY_USER_QUERY, { client, fetchPolicy: 'cache-first' })
+  const natRegRes = useQuery(NATION_REGISTRY_USER_QUERY, { client, fetchPolicy: 'cache-and-network' })
   const natRegData = natRegRes?.data?.nationalRegistryUser || {}
   const errorNatReg = !!natRegRes.error
   const loadingNatReg = natRegRes.loading
