@@ -62,7 +62,7 @@ air-discount-scheme-api:
       cpu: '400m'
       memory: '512Mi'
     requests:
-      cpu: '200m'
+      cpu: '50m'
       memory: '256Mi'
   secrets:
     ADMINS: '/k8s/air-discount-scheme/api/ADMINS'
@@ -150,7 +150,7 @@ air-discount-scheme-backend:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -172,7 +172,7 @@ air-discount-scheme-backend:
       cpu: '400m'
       memory: '512Mi'
     requests:
-      cpu: '200m'
+      cpu: '50m'
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -399,7 +399,7 @@ api:
       cpu: '800m'
       memory: '2048Mi'
     requests:
-      cpu: '200m'
+      cpu: '50m'
       memory: '1024Mi'
   secrets:
     ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
@@ -610,7 +610,7 @@ application-system-api:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -634,7 +634,7 @@ application-system-api:
       cpu: '400m'
       memory: '1024Mi'
     requests:
-      cpu: '100m'
+      cpu: '50m'
       memory: '512Mi'
   secrets:
     ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL'
@@ -1022,7 +1022,7 @@ endorsement-system-api:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -1121,7 +1121,7 @@ icelandic-names-registry-backend:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
       - args:
           - 'sequelize-cli'
@@ -1134,7 +1134,7 @@ icelandic-names-registry-backend:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -1615,7 +1615,7 @@ service-portal-api:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -1705,7 +1705,7 @@ services-documents:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -1851,7 +1851,7 @@ services-sessions-worker:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -2005,7 +2005,7 @@ skilavottord-ws:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'

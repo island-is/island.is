@@ -391,7 +391,7 @@ services-auth-ids-api:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
       - args:
           - 'sequelize-cli'
@@ -404,7 +404,7 @@ services-auth-ids-api:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-ids.internal'
