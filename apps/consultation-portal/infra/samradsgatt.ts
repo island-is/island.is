@@ -7,9 +7,9 @@ export const serviceSetup = (): ServiceBuilder<'consultation-portal'> =>
     .liveness('/liveness')
     .readiness('/liveness')
     .replicaCount({
-      default: 5,
+      default: 2,
       max: 30,
-      min: 5,
+      min: 2,
     })
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },

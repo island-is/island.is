@@ -20,7 +20,7 @@ export const AnchorNavigation = ({
   const initialScrollHasHappened = useRef(false)
   const ids = useMemo(() => navigation.map((x) => x.id), [navigation])
   const [activeId, navigate] = useScrollSpy(ids, { smooth: true })
-  const [bulletRef, setBulletRef] = useState<HTMLElement>(null)
+  const [bulletRef, setBulletRef] = useState<HTMLElement>()
 
   useEffect(() => {
     if (initialScrollHasHappened.current) return

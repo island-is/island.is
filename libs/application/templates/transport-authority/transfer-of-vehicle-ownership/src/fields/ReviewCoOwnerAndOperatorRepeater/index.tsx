@@ -99,25 +99,13 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
     setStep && setStep('overview')
   }
 
-  const updateMainOperator = () => {
-    const mainOperator = getValueViaPath(
-      application.answers,
-      'buyerMainOperator.nationalId',
-      '',
-    ) as string
+  const shouldUpdateMainOperator = () => {
     const availableOperators = tempCoOwnersAndOperators.filter(
       ({ type, wasRemoved }) => {
         return type === 'operator' && wasRemoved !== 'true'
       },
     )
-    if (availableOperators.length === 0) return ''
-    if (availableOperators.length === 1) return availableOperators[0].nationalId
-    if (mainOperator.length > 0) {
-      const currentOperator = availableOperators.find(({ nationalId }) => {
-        return nationalId === mainOperator
-      })
-      return currentOperator ?? availableOperators[0].nationalId
-    }
+    return availableOperators.length > 1
   }
 
   const onForwardButtonClick = async () => {
@@ -146,9 +134,6 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
                 id: application.id,
                 answers: {
                   buyerCoOwnerAndOperator: tempCoOwnersAndOperators,
-                  buyerMainOperator: {
-                    nationalId: updateMainOperator(),
-                  },
                 },
               },
               locale,
@@ -162,7 +147,8 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
             setCoOwnersAndOperators(tempCoOwnersAndOperators)
             setGenericErrorMessage(undefined)
             setErrorMessage(undefined)
-            setStep && setStep('overview')
+            setStep &&
+              setStep(shouldUpdateMainOperator() ? 'mainOperator' : 'overview')
           }
         }
       }
