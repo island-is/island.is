@@ -28,6 +28,10 @@ export const serviceSetup = (services: {
       REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL',
       REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED:
         '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED',
+      REGULATIONS_FILE_UPLOAD_KEY_DRAFT:
+        '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_DRAFT',
+      REGULATIONS_FILE_UPLOAD_KEY_PUBLISH:
+        '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH',
     })
     .xroad(Base, Client, Finance, Vehicles)
     .ingress({
