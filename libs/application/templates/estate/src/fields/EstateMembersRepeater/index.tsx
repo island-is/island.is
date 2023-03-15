@@ -98,6 +98,7 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                 description={[
                   formatNationalId(member.nationalId || ''),
                   member.relation || '',
+                  /* TODO: add back when react-hook-forms update is in
                   <Box marginTop={1} as="span">
                     <Button
                       variant="text"
@@ -112,7 +113,7 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                         ? formatMessage(m.inheritanceDisableMember)
                         : formatMessage(m.inheritanceEnableMember)}
                     </Button>
-                  </Box>,
+                    </Box>,*/
                 ]}
               />
             </GridColumn>,
