@@ -139,10 +139,11 @@ export const Home = ({ types }: HomeProps) => {
                 id: item.id,
                 title: item.name,
                 tag: item.statusName,
+                published: item.created,
                 eyebrows: [item.typeName, item.institutionName],
               }
               return (
-                <Card key={index} card={card} frontPage>
+                <Card key={index} card={card} frontPage showPublished>
                   <Stack space={2}>
                     <Text variant="eyebrow" color="purple400">
                       {`Fjöldi umsagna: ${item.adviceCount}`}

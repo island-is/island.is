@@ -17,6 +17,7 @@ type CardInfo = {
   tag?: string
   id: number
   title: string
+  published?: string
   eyebrows: Array<string>
 }
 type CardProps = {
@@ -25,6 +26,7 @@ type CardProps = {
   showAttachment?: boolean
   frontPage: boolean
   children: any
+  showPublished?: boolean
 }
 
 export const Card = ({
@@ -32,6 +34,7 @@ export const Card = ({
   showAttachment,
   dropdown,
   frontPage,
+  showPublished,
   children,
 }: CardProps) => {
   const child = (
@@ -68,7 +71,7 @@ export const Card = ({
         </Box>
         <Inline space={1} alignY={'center'}>
           <Text variant="eyebrow" color="dark400">
-            Umsagnartímabil:
+            Umsagnarfrestur:
           </Text>
           <Text variant="eyebrow" color="blue600">
             01.09.22 – 01.12.22
@@ -84,6 +87,12 @@ export const Card = ({
         <Box>
           <ArrowLink href={`/mal/${card.id}`}>Skoða mál</ArrowLink>
         </Box>
+        {showPublished && (
+          <Text
+            variant="eyebrow"
+            color="blueberry400"
+          >{`Birt: ${card.published}`}</Text>
+        )}
       </Inline>
     </>
   )

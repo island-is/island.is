@@ -193,10 +193,11 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
                 <Stack space={1}>
                   <Text variant="default">
                     Hér er hægt að skrá sig í áskrift að málum. Þú skráir þig
-                    inn á Ísland.is, hakar við einn eða fleiri flokka, velur
-                    hvort þú vilt tilkynningar um ný mál eða fleiri atriði og
-                    smellir á „Staðfesta“. ferð svo og staðfestir áskriftina í
-                    gegnum tölvupóstfangið sem þú varst að skrá.
+                    inn á Ísland.is, hakar við einn eða fleiri flokka
+                    (mál/stofnanir/málefnasvið), velur hvort þú vilt
+                    tilkynningar um ný mál eða fleiri atriði og smellir á
+                    „Staðfesta“. Loks þarftu að staðfesta áskriftina í gegnum
+                    tölvupóstfangið sem þú skráðir.
                   </Text>
                   <Text variant="default">
                     Kerfið er uppfært einu sinni á sólarhring.

@@ -116,15 +116,15 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
                   headingColor="blue400"
                   title="Aðilar sem hafa fengið boð um samráð á máli."
                 >
-                  Þetta mál er opið öllum til umsagnar. Skráðu þig inn hér til
-                  að skrifa umsögn um málið
+                  Viltu senda umsögn? Öllum er frjálst að taka þátt í samráðinu.
+                  Skráðu þig inn og sendu umsögn.
                 </StackedTitleAndDescription>
               </SimpleCardSkeleton>
 
               <SimpleCardSkeleton>
                 <StackedTitleAndDescription
                   headingColor="blue400"
-                  title="Ábyrgðaraðili"
+                  title="Umsjónaraðili"
                 >
                   {contactName || contactEmail
                     ? `${contactName ? contactName : ''} ${

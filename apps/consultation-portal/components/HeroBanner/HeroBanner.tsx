@@ -55,7 +55,9 @@ export const HeroBanner = () => {
                   <ArrowLink href="/um">Lesa meira</ArrowLink>
                 </Column>
                 <Column width="content">
-                  <ArrowLink href="/um">Skoða þingmálaskrá</ArrowLink>
+                  <ArrowLink href="https://www.stjornarradid.is/rikisstjorn/thingmalaskra/">
+                    Skoða þingmálaskrá ríkisstjórnar
+                  </ArrowLink>
                 </Column>
               </Columns>
             </GridColumn>
@@ -67,16 +69,16 @@ export const HeroBanner = () => {
                 <SplashSmall />
               </Box>
               <Box className={styles.alignTiles}>
-                <HeroTiles space={2} columns={[1, 1, 1, 2, 2]}>
-                  <StatisticBox label="Mál til umsagnar" statistic="32 mál" />
-                  <StatisticBox
+                <HeroTiles space={2} columns={[1, 1, 1, 1, 1]}>
+                  <StatisticBox label="Mál til umsagnar" statistic="32" />
+                  {/* <StatisticBox
                     label="Umsagnir frá upphafi"
                     statistic="12.843 umsagnir"
                   />
                   <StatisticBox
                     label="Mál frá upphafi"
                     statistic="48.942 mál"
-                  />
+                  /> */}
                 </HeroTiles>
               </Box>
             </GridColumn>
