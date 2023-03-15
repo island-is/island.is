@@ -94,18 +94,18 @@ async function ensureIDSsession(
 
 export async function session({
   browser,
-  homeUrl,
-  phoneNumber,
-  authUrl,
-  idsLoginOn,
-  delegation,
+  homeUrl = '/',
+  phoneNumber = '',
+  authUrl = urls.authUrl,
+  idsLoginOn = true,
+  delegation = '',
   storageState = `playwright-sessions-${homeUrl}-${phoneNumber}`,
 }: {
   browser: Browser
-  homeUrl: string
-  phoneNumber: string
+  homeUrl?: string
+  phoneNumber?: string
   authUrl?: string
-  idsLoginOn:
+  idsLoginOn?:
     | boolean
     | {
         nextAuth?: {
