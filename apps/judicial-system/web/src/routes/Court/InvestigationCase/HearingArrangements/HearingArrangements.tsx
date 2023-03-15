@@ -38,10 +38,10 @@ import {
 import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { icHearingArrangements as m } from './HearingArrangements.strings'
-import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
 
 const HearingArrangements = () => {
   const {
