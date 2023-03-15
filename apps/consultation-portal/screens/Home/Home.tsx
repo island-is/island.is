@@ -49,7 +49,7 @@ export const Home = ({ types, statistics }: HomeProps) => {
   } = getInitFilterValues({ types: types })
 
   const defaultValues = {
-    query: '',
+    searchQuery: '',
     sorting: { items: sorting, isOpen: true },
     caseStatuses: { items: caseStatuses, isOpen: true },
     caseTypes: { items: caseTypes, isOpen: true },
@@ -59,7 +59,7 @@ export const Home = ({ types, statistics }: HomeProps) => {
   }
 
   const [filters, setFilters] = useState<CaseFilter>({
-    query: '',
+    searchQuery: '',
     sorting: { items: sorting, isOpen: true },
     caseStatuses: { items: caseStatuses, isOpen: true },
     caseTypes: { items: caseTypes, isOpen: true },
@@ -82,7 +82,7 @@ export const Home = ({ types, statistics }: HomeProps) => {
           (item: FilterInputItems) => item.checked,
         )[0].label,
     ),
-    // query: filters.query,
+    searchQuery: filters.searchQuery,
     policyAreas: filters.policyAreas,
     institutions: filters.institutions,
     dateFrom: filters.period.from,
@@ -109,6 +109,43 @@ export const Home = ({ types, statistics }: HomeProps) => {
   const { consultationPortalGetCases: casesData = [] } = data ?? {}
 
   const { cases = [], filterGroups = {}, total = 1 } = casesData
+
+  useEffect(() => {
+    const insertFilterCount = setTimeout(() => {
+      if (filterGroups) {
+        const caseTypesList = Object.entries(filterGroups.CaseTypes).map(
+          ([value, count]) => ({
+            value,
+            count,
+          }),
+        )
+        const caseTypesMerged = filters.caseTypes.items.map((item) => ({
+          ...item,
+          ...caseTypesList.find((val) => val.value === item.value),
+        }))
+
+        const caseStatusesList = Object.entries(filterGroups.Statuses).map(
+          ([value, count]) => ({
+            value,
+            count,
+          }),
+        )
+        const caseStatusesMerged = filters.caseStatuses.items.map((item) => ({
+          ...item,
+          ...caseStatusesList.find((val) => val.value === item.value),
+        }))
+
+        const filtersCopy = { ...filters }
+        filtersCopy.caseTypes.items = caseTypesMerged
+        filtersCopy.caseStatuses.items = caseStatusesMerged
+        setFilters(filtersCopy)
+      }
+    }, 500)
+
+    return () => {
+      clearTimeout(insertFilterCount)
+    }
+  }, [filterGroups])
 
   const renderCards = () => {
     if (loading) {
