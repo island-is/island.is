@@ -183,6 +183,22 @@ export class UserProfileController {
     }
   }
 
+  @ApiExcludeEndpoint()
+  async repeat(
+    @Param('nationalId') nationalId: string,
+    @CurrentUser() user: User,
+  ): Promise<UserProfile> {
+    if (nationalId != user.nationalId) {
+      throw new ForbiddenException()
+    }
+    try {
+      return await this.findOneByNationalId(nationalId, user)
+    } catch (error) {
+      const ret = await this.create({ nationalId }, user)
+      return ret
+    }
+  }
+
   @Scopes(UserProfileScope.write)
   @ApiSecurity('oauth2', [UserProfileScope.write])
   @Patch('userProfile/:nationalId')
