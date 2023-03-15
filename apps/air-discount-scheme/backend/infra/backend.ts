@@ -49,9 +49,12 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
     })
     .redis({
       host: {
-        dev: 'redis-applications.internal:6379',
-        staging: 'redis-applications.internal:6379',
-        prod: 'redis-applications.internal:6379',
+        dev:
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        staging:
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        prod:
+          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
       },
     })
     .ingress({
@@ -79,6 +82,6 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
     .liveness('/liveness')
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },
-      requests: { cpu: '200m', memory: '256Mi' },
+      requests: { cpu: '50m', memory: '256Mi' },
     })
     .grantNamespaces('nginx-ingress-external', 'islandis')

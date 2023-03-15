@@ -60,7 +60,9 @@ const CourtRecord: React.FC = () => {
   const { formatMessage } = useIntl()
   const { transitionCase } = useCase()
 
-  const { upload, remove } = useS3Upload(workingCase.id)
+  const { upload, remove, generateSingleFileUpdate } = useS3Upload(
+    workingCase.id,
+  )
 
   useEffect(() => {
     if (workingCase.caseFiles) {
@@ -74,19 +76,13 @@ const CourtRecord: React.FC = () => {
     )
   }, [displayFiles])
 
-  const setSingleFile = useCallback(
+  const uploadCallback = useCallback(
     (displayFile: TUploadFile, newId?: string) => {
-      setDisplayFiles((previous) => {
-        const index = previous.findIndex((f) => f.id === displayFile.id)
-        if (index === -1) {
-          return previous
-        }
-        const next = [...previous]
-        next[index] = { ...displayFile, id: newId ?? displayFile.id }
-        return next
-      })
+      setDisplayFiles((previous) =>
+        generateSingleFileUpdate(previous, displayFile, newId),
+      )
     },
-    [setDisplayFiles],
+    [generateSingleFileUpdate],
   )
 
   const handleNavigationTo = useCallback(
@@ -127,9 +123,9 @@ const CourtRecord: React.FC = () => {
         ),
         ...previous,
       ])
-      upload(filesWithId, setSingleFile, category)
+      upload(filesWithId, uploadCallback, category)
     },
-    [upload, setSingleFile],
+    [upload, uploadCallback],
   )
 
   const handleRemoveFile = useCallback(
@@ -150,7 +146,7 @@ const CourtRecord: React.FC = () => {
 
   const handleRetry = useCallback(
     (file: TUploadFile) => {
-      setSingleFile({
+      uploadCallback({
         name: file.name,
         id: file.id,
         percent: 1,
@@ -165,11 +161,11 @@ const CourtRecord: React.FC = () => {
             file.id ?? file.name,
           ],
         ],
-        setSingleFile,
+        uploadCallback,
         file.category,
       )
     },
-    [setSingleFile, upload],
+    [uploadCallback, upload],
   )
 
   return (

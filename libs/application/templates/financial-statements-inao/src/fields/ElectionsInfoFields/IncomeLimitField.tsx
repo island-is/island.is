@@ -39,7 +39,19 @@ export const IncomeLimitFields = ({ clientType, year }: IncomeLimitProps) => {
   }
   const limit = data?.financialStatementsInaoClientFinancialLimit
 
-  if (error || !limit) {
+  if (!limit) {
+    return (
+      <ContentBlock>
+        <AlertMessage
+          type="error"
+          title={formatMessage(m.fetchErrorTitle)}
+          message={formatMessage(m.financialLimitErrorMessage)}
+        />
+      </ContentBlock>
+    )
+  }
+
+  if (error) {
     return (
       <ContentBlock>
         <AlertMessage

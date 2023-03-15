@@ -11,6 +11,7 @@ import {
   buildQueryString,
   getRequestMethod,
   TestApp,
+  TestEndpointOptions,
 } from '@island.is/testing/nest'
 
 import {
@@ -18,7 +19,6 @@ import {
   setupWithoutAuth,
   setupWithoutPermission,
 } from '../../../../test/setup'
-import { TestEndpointOptions } from '../../../../test/types'
 import { accessOutgoingTestCases } from '../../../../test/access-outgoing-test-cases'
 import { domainFiltersTestCases } from '../../../../test/domain-filters-test-cases'
 

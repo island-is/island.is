@@ -21,10 +21,10 @@ import {
 } from './dto'
 import { ApiHeader, ApiTags } from '@nestjs/swagger'
 import { LicenseId } from './license.types'
-import { NationalId } from '../../decorators/nationalId'
 import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { LicenseTypeScopesGuard } from './guards/licenseTypeScope.guard'
 import { LicenseApiScope } from '@island.is/auth/scopes'
+import { NationalId } from '@island.is/nest/core'
 
 @ApiHeader({
   name: 'X-Param-NationalId',

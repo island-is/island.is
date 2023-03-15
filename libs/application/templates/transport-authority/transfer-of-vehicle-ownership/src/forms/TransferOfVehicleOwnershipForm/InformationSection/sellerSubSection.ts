@@ -26,7 +26,7 @@ export const sellerSubSection = buildSubSection({
           id: 'seller.nationalId',
           title: information.labels.seller.nationalId,
           backgroundColor: 'white',
-          width: 'full',
+          width: 'half',
           readOnly: true,
           format: '######-####',
           defaultValue: (application: Application) =>
@@ -36,7 +36,7 @@ export const sellerSubSection = buildSubSection({
           id: 'seller.name',
           title: information.labels.seller.name,
           backgroundColor: 'white',
-          width: 'full',
+          width: 'half',
           readOnly: true,
           defaultValue: (application: Application) =>
             application.externalData?.identity?.data?.name,
@@ -44,7 +44,7 @@ export const sellerSubSection = buildSubSection({
         buildTextField({
           id: 'seller.email',
           title: information.labels.seller.email,
-          width: 'full',
+          width: 'half',
           variant: 'email',
           required: true,
           defaultValue: (application: Application) =>
@@ -53,7 +53,7 @@ export const sellerSubSection = buildSubSection({
         buildTextField({
           id: 'seller.phone',
           title: information.labels.seller.phone,
-          width: 'full',
+          width: 'half',
           variant: 'tel',
           format: '###-####',
           required: true,

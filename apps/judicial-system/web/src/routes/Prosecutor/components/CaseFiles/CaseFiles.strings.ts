@@ -11,6 +11,19 @@ export const caseFiles = defineMessages({
     defaultMessage: 'Rannsóknargögn',
     description: 'Notaður sem titill á síðunni Rannsóknargögn',
   },
+  policeCaseFilesHeading: {
+    id: 'judicial.system.core:police_case_files.police_case_files_heading',
+    defaultMessage: 'Gögn úr LÖKE',
+    description:
+      'Notaður sem titill fyrir "LOKE" gagnapakkann á síðunni Rannsóknargögn.',
+  },
+  policeCaseFilesIntroduction: {
+    id: 'judicial.system.core:police_case_files.police_case_files_introduction',
+    defaultMessage:
+      'Til að gögn úr þessum lista verði hluti af gagnapakka málsins þarf að velja þau og smella á Hlaða upp.',
+    description:
+      'Notaður sem skýring fyrir "LOKE" gagnapakkann á síðunni Rannsóknargögn.',
+  },
   descriptionHeading: {
     id: 'judicial.system.core:case_files.description_heading',
     defaultMessage: 'Meðferð gagna',

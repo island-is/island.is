@@ -40,6 +40,7 @@ export interface DatePickerProps {
   handleOpenCalendar?: () => void
   required?: boolean
   inputName?: string
+  appearInline?: boolean
   size?: DatePickerSize
   backgroundColor?: DatePickerBackgroundColor
   icon?: { name: IconType; type?: Type }

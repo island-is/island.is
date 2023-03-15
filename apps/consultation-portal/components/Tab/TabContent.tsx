@@ -1,4 +1,4 @@
-import { Box, Button } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { Area, SortOptions } from '../../types/enums'
 import { ArrOfIdAndName, Case, SubscriptionArray } from '../../types/interfaces'
 import SearchAndSort from '../SearchAndSort/SearchAndSort'
@@ -27,10 +27,6 @@ export const TabContent = ({
   sortTitle,
   setSortTitle,
 }: TabContentProps) => {
-  const onLoadMore = () => {
-    console.log('clicked on load more')
-  }
-
   return (
     <Box paddingTop={[3, 3, 3, 5, 5]}>
       <SearchAndSort
@@ -40,6 +36,7 @@ export const TabContent = ({
         setSearchValue={setSearchValue}
         sortTitle={sortTitle}
         setSortTitle={setSortTitle}
+        currentTab={currentTab}
       />
       <SubscriptionTable
         data={data}
@@ -47,11 +44,6 @@ export const TabContent = ({
         subscriptionArray={subscriptionArray}
         setSubscriptionArray={setSubscriptionArray}
       />
-      <Box paddingY={3}>
-        <Button icon="eye" variant="text" onClick={onLoadMore}>
-          Sýna fleiri mál
-        </Button>
-      </Box>
     </Box>
   )
 }
