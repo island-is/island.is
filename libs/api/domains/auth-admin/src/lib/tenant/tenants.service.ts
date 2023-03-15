@@ -147,4 +147,46 @@ export class TenantsService {
       pageInfo: { hasNextPage: false },
     }
   }
+
+  async getTenantById(id: string, user: User): Promise<Tenant> {
+    const tenants = await Promise.all([
+      this.adminDevApiWithAuth(user)
+        ?.meTenantsControllerFindById({ id })
+        .catch(this.handleError.bind(this)),
+      this.adminStagingApiWithAuth(user)
+        ?.meTenantsControllerFindById({ id })
+        .catch(this.handleError.bind(this)),
+      this.adminProdApiWithAuth(user)
+        ?.meTenantsControllerFindById({ id })
+        .catch(this.handleError.bind(this)),
+    ])
+
+    const tenantMap = new Map<string, TenantEnvironment[]>()
+
+    for (const [index, env] of [
+      Environment.Development,
+      Environment.Staging,
+      Environment.Production,
+    ].entries()) {
+      if (tenants[index]) {
+        const { name, displayName } = tenants[index] ?? {
+          name: '',
+          displayName: [],
+        }
+        if (!tenantMap.has(name)) {
+          tenantMap.set(name, [])
+        }
+
+        tenantMap.get(name)?.push({
+          name: name,
+          environment: env,
+          displayName: displayName,
+        })
+      }
+    }
+    return {
+      id: id,
+      environments: tenantMap.get(id) ?? [],
+    } as Tenant
+  }
 }

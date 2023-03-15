@@ -39,4 +39,9 @@ export class TenantResolver {
   resolveAvailableEnvironments(@Parent() tenant: Tenant): Environment[] {
     return tenant.environments.map((env) => env.environment)
   }
+
+  @Query(() => Tenant, { name: 'authAdminTenantById' })
+  getTenantById(@Args('id') id: string, @CurrentUser() user: User) {
+    return this.tenantsService.getTenantById(id, user)
+  }
 }
