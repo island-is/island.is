@@ -98,6 +98,8 @@ export const SearchInput = ({
           fetch({
             variables: {
               query: {
+                highlightResults: true,
+                useQuery: 'suggestions',
                 language: activeLocale as ContentLanguage,
                 queryString,
                 types: [SearchableContentTypes['WebQna']],
@@ -165,7 +167,8 @@ export const SearchInput = ({
                 onSelect(item)
               }}
             >
-              <Text as="span">{item.title}</Text>
+              {/* <Text as="span">{item.title}</Text> */}
+              <span dangerouslySetInnerHTML={{ __html: item.title }} />
             </Box>
           )
         },

@@ -8,6 +8,11 @@ import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
 @Resolver()
 export class ContentSearchResolver {
   constructor(private contentSearchService: ContentSearchService) {}
+  // trigger
+  @Query(() => Boolean)
+  trigger(): boolean {
+    return true
+  }
 
   @Query(() => SearchResult)
   searchResults(@Args('query') query: SearcherInput): Promise<SearchResult> {

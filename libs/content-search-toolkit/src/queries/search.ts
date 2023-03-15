@@ -162,14 +162,14 @@ export const searchQuery = (
         },
         functions: [
           // content gets a natural boost based on visits/popularity
-          {
-            field_value_factor: {
-              field: 'popularityScore',
-              factor: 1.2,
-              modifier: 'log1p',
-              missing: 1,
-            },
-          },
+          // {
+          //   field_value_factor: {
+          //     field: 'popularityScore',
+          //     factor: 1.2,
+          //     modifier: 'log1p',
+          //     missing: 1,
+          //   },
+          // },
           // content that is an entrance to "umsoknir" gets a boost
           { filter: { range: { processEntryCount: { gte: 1 } } }, weight: 2 },
           // content that is a "forsíða stofnunar" gets a boost
