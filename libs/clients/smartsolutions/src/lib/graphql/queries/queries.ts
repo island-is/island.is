@@ -18,6 +18,8 @@ export const LIST_PASS_STATUSES = `
       ) {
       data {
         id
+        distributionUrl
+        distributionQRCode
         status
       }
     }

@@ -2,6 +2,7 @@ import React, { FC } from 'react'
 import {
   FormStepper as CoreFormStepper,
   FormStepperThemes,
+  Hidden,
   Tag,
 } from '@island.is/island-ui/core'
 import { formatText } from '@island.is/application/core'
@@ -107,12 +108,18 @@ const FormStepper: FC<FormStepperProps> = ({
   return (
     <CoreFormStepper
       theme={progressTheme[mode]}
-      tag={showTag && <ProgressTag />}
       formName={formatMessage(form.title)}
       formIcon={form.icon}
       sections={formattedSections}
       activeSection={screen.sectionIndex}
       activeSubSection={screen.subSectionIndex}
+      tag={
+        showTag && (
+          <Hidden below="md">
+            <ProgressTag />
+          </Hidden>
+        )
+      }
     />
   )
 }
