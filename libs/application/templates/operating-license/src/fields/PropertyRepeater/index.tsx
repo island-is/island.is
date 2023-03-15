@@ -119,7 +119,10 @@ const PropertyItem = ({
     // https://www.skra.is/um-okkur/frettir/frett/2018/03/01/Nytt-fasteignanumer-og-itarlegri-skraning-stadfanga/
     // The property number is a seven digit informationless sequence.
     // Has the prefix F.
-    if (/F\d{7}$/.test(propertyNumberInput.trim().toUpperCase())) {
+    if (
+      /F\d{7}$/.test(propertyNumberInput.trim().toUpperCase()) ||
+      /\d{7}$/.test(propertyNumberInput.trim().toUpperCase())
+    ) {
       getProperty({
         variables: {
           input: propertyNumberInput,
@@ -158,6 +161,7 @@ const PropertyItem = ({
             backgroundColor="blue"
             defaultValue={field.propertyNumber}
             error={error?.assetNumber ?? undefined}
+            placeholder="F1234567"
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2}>

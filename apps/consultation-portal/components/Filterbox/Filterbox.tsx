@@ -61,6 +61,13 @@ const FilterBox = ({ title, filters, setFilters, type }: FilterBoxProps) => {
     setFilters(filtersCopy)
   }
 
+  const renderLabel = (item) => {
+    if (item.count) {
+      return `${item.label} (${item.count})`
+    }
+    return `${item.label}`
+  }
+
   return (
     <Box
       borderColor="blue200"
@@ -91,7 +98,7 @@ const FilterBox = ({ title, filters, setFilters, type }: FilterBoxProps) => {
               ) : (
                 <Checkbox
                   checked={item.checked}
-                  label={item.label}
+                  label={renderLabel(item)}
                   onChange={() => onChangeCheckbox(item.value)}
                 />
               ),
