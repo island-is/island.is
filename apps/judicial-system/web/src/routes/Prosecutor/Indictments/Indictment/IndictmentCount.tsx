@@ -167,20 +167,20 @@ function getIndictmentDescriptionReason(
         acc += formatMessage(strings.incidentDescriptionDrunkDrivingAutofill)
         break
       case IndictmentCountOffense.IllegalDrugsDriving:
-        acc +=
-          formatMessage(strings.incidentDescriptionDrugsDrivingPrefixAutofill) +
-          formatMessage(strings.incidentDescriptionIllegalDrugsDrivingAutofill)
+        acc += `${formatMessage(
+          strings.incidentDescriptionDrugsDrivingPrefixAutofill,
+        )} ${formatMessage(
+          strings.incidentDescriptionIllegalDrugsDrivingAutofill,
+        )}`
         break
       case IndictmentCountOffense.PrescriptionDrugsDriving:
-        acc +=
-          (offenses.includes(IndictmentCountOffense.IllegalDrugsDriving)
-            ? ''
-            : formatMessage(
-                strings.incidentDescriptionDrugsDrivingPrefixAutofill,
-              )) +
-          formatMessage(
-            strings.incidentDescriptionPrescriptionDrugsDrivingAutofill,
-          )
+        acc += offenses.includes(IndictmentCountOffense.IllegalDrugsDriving)
+          ? ''
+          : `${formatMessage(
+              strings.incidentDescriptionDrugsDrivingPrefixAutofill,
+            )} ${formatMessage(
+              strings.incidentDescriptionPrescriptionDrugsDrivingAutofill,
+            )}`
         break
     }
     return acc
