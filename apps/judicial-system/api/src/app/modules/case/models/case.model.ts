@@ -3,7 +3,6 @@ import { GraphQLJSONObject } from 'graphql-type-json'
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 
 import {
-  Case as TCase,
   CaseAppealDecision,
   CaseLegalProvisions,
   CaseCustodyRestrictions,
@@ -13,10 +12,13 @@ import {
   CourtDocument,
   CaseOrigin,
   SubpoenaType,
+  CaseType,
+} from '@island.is/judicial-system/types'
+import type {
+  Case as TCase,
   IndictmentSubtypeMap,
   CrimeSceneMap,
 } from '@island.is/judicial-system/types'
-import { CaseType } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
 import { IndictmentCount } from '../../indictment-count'
