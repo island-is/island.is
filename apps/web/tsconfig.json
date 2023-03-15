@@ -10,13 +10,10 @@
     "isolatedModules": true,
     "incremental": true
   },
-  "include": [],
+  "include": ["**/*.js", "**/*.ts", "**/*.tsx", "next-env.d.ts"],
   "exclude": ["node_modules"],
   "files": [],
   "references": [
-    {
-      "path": "./tsconfig.app.json"
-    },
     {
       "path": "./tsconfig.spec.json"
     }
