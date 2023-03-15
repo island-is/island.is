@@ -48,7 +48,7 @@ const useImageLoader = (url: string, shouldLoad?: boolean): boolean => {
 }
 
 export const BackgroundImage = ({
-  image = null,
+  image,
   ratio = '',
   width = 1000,
   height,

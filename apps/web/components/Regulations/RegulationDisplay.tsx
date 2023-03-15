@@ -2,6 +2,7 @@ import * as s from './RegulationDisplay.css'
 
 import React, { useState } from 'react'
 import {
+  HTMLText,
   ISODate,
   prettyName,
   RegulationMaybeDiff,
@@ -113,7 +114,7 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
                 <HTMLBox
                   component="span"
                   className={s.titleText + ' ' + s.diffText}
-                  html={regulation.title}
+                  html={regulation.title as HTMLText}
                 />
               ) : (
                 <span className={s.titleText}>{regulation.title}</span>

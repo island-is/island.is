@@ -78,8 +78,12 @@ export class VehiclePlateOrderingClient {
     }
 
     const warnSeverityError = 'E'
+    const warnSeverityWarning = 'W'
     errorList = errorList?.filter(
-      (x) => x.errorMess && x.warnSever === warnSeverityError,
+      (x) =>
+        x.errorMess &&
+        (x.warnSever === warnSeverityError ||
+          x.warnSever === warnSeverityWarning),
     )
 
     return {
