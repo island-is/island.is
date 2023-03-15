@@ -57,7 +57,7 @@ export class RegulationsAdminResolver {
   ) {
     return await this.regulationsAdminClientService.getDraftRegulation(
       input.draftId,
-      user,
+      user.authorization,
     )
   }
 
@@ -75,8 +75,10 @@ export class RegulationsAdminResolver {
   }
 
   @Query(() => [DraftRegulationShippedModel])
-  async getShippedRegulations(@CurrentUser() user: User) {
-    return await this.regulationsAdminClientService.getShippedRegulations(user)
+  async getShippedRegulations(@CurrentUser() { authorization }: User) {
+    return await this.regulationsAdminClientService.getShippedRegulations(
+      authorization,
+    )
   }
 
   @Query(() => graphqlTypeJson)
@@ -85,7 +87,7 @@ export class RegulationsAdminResolver {
     @CurrentUser() user: User,
   ) {
     return await this.regulationsAdminClientService.getDraftRegulations(
-      user,
+      user.authorization,
       input.page,
     )
   }
@@ -167,7 +169,7 @@ export class RegulationsAdminResolver {
 
     const draftRegulation = await this.regulationsAdminClientService.getDraftRegulation(
       input.draftId,
-      user,
+      user.authorization,
     )
 
     if (!draftRegulation) {

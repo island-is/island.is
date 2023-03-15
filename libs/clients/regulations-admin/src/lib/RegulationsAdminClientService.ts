@@ -1,68 +1,61 @@
 import { Inject } from '@nestjs/common'
+import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
+import { DataSourceConfig } from 'apollo-datasource'
 import {
   RegulationDraft,
   ShippedSummary,
   TaskListType,
 } from '@island.is/regulations/admin'
-import {
-  createEnhancedFetch,
-  EnhancedFetchAPI,
-} from '@island.is/clients/middlewares'
-import { Auth } from '@island.is/auth-nest-tools'
 import { RegulationsAdminClientConfig } from './RegulationsAdminClientConfig'
 import { ConfigType } from '@nestjs/config'
 
-export class RegulationsAdminClientService {
-  baseURL: string
-  fetch: EnhancedFetchAPI
-
+export class RegulationsAdminClientService extends RESTDataSource {
   constructor(
     @Inject(RegulationsAdminClientConfig.KEY)
     private readonly config: ConfigType<typeof RegulationsAdminClientConfig>,
   ) {
+    super()
     this.baseURL = `${this.config.baseApiUrl}`
-    this.fetch = createEnhancedFetch({
-      name: 'Regulations-AdminClientService',
-    })
+    this.initialize({} as DataSourceConfig<any>)
   }
 
-  async get<T>(path: string, auth: Auth, params?: Record<string, string>) {
-    const url = new URL(`${this.baseURL}${path}`)
-    if (params) {
-      url.search = new URLSearchParams(params).toString()
-    }
-    const response = await this.fetch(url.toString(), {
-      auth,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    return (await response.json()) as T
+  willSendRequest(request: RequestOptions) {
+    this.memoizedResults.clear()
+    request.headers.set('Content-Type', 'application/json')
   }
 
-  async getDraftRegulations(auth: Auth, page?: number) {
+  async getDraftRegulations(authorization: string, page?: number) {
     return await this.get<TaskListType>(
       '/draft_regulations',
-      auth,
-      page
-        ? {
-            page: page.toString(),
-          }
-        : undefined,
+      {
+        page,
+      },
+      {
+        headers: { authorization },
+      },
     )
   }
 
-  async getShippedRegulations(auth: Auth) {
-    return await this.get<ShippedSummary[]>(`/draft_regulations_shipped`, auth)
+  async getShippedRegulations(authorization: string) {
+    return await this.get<ShippedSummary[]>(
+      `/draft_regulations_shipped`,
+      {},
+      {
+        headers: { authorization },
+      },
+    )
   }
 
   async getDraftRegulation(
     draftId: string,
-    auth: Auth,
+    authorization: string,
   ): Promise<RegulationDraft | null> {
     const response = await this.get<RegulationDraft | null>(
       `/draft_regulation/${draftId}`,
-      auth,
+      {},
+      {
+        headers: { authorization },
+      },
     )
     return response
   }
