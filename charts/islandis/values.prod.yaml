@@ -32,7 +32,7 @@ air-discount-scheme-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 10
         min: 3
@@ -60,7 +60,7 @@ air-discount-scheme-api:
       cpu: '400m'
       memory: '512Mi'
     requests:
-      cpu: '200m'
+      cpu: '50m'
       memory: '256Mi'
   secrets:
     ADMINS: '/k8s/air-discount-scheme/api/ADMINS'
@@ -116,7 +116,7 @@ air-discount-scheme-backend:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 10
         min: 3
@@ -144,7 +144,7 @@ air-discount-scheme-backend:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -166,7 +166,7 @@ air-discount-scheme-backend:
       cpu: '400m'
       memory: '512Mi'
     requests:
-      cpu: '200m'
+      cpu: '50m'
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -207,7 +207,7 @@ air-discount-scheme-web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 10
         min: 3
@@ -362,10 +362,10 @@ api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 50
-        min: 10
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
   ingress:
@@ -384,15 +384,15 @@ api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 10
+    default: 2
     max: 50
-    min: 10
+    min: 2
   resources:
     limits:
       cpu: '800m'
       memory: '2048Mi'
     requests:
-      cpu: '200m'
+      cpu: '50m'
       memory: '1024Mi'
   secrets:
     ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
@@ -573,10 +573,10 @@ application-system-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 60
-        min: 10
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
   ingress:
@@ -606,7 +606,7 @@ application-system-api:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -622,15 +622,15 @@ application-system-api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 10
+    default: 2
     max: 60
-    min: 10
+    min: 2
   resources:
     limits:
       cpu: '400m'
       memory: '1024Mi'
     requests:
-      cpu: '100m'
+      cpu: '50m'
       memory: '512Mi'
   secrets:
     ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL'
@@ -728,7 +728,7 @@ application-system-api-worker:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 10
         min: 3
@@ -801,7 +801,7 @@ application-system-form:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 10
         min: 3
@@ -862,7 +862,7 @@ contentful-translation-extension:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 10
         min: 3
@@ -926,7 +926,7 @@ download-service:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 10
         min: 3
@@ -1004,7 +1004,7 @@ endorsement-system-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 10
         min: 3
@@ -1023,7 +1023,7 @@ endorsement-system-api:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -1103,7 +1103,7 @@ icelandic-names-registry-backend:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 10
         min: 3
@@ -1122,7 +1122,7 @@ icelandic-names-registry-backend:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
       - args:
           - 'sequelize-cli'
@@ -1135,7 +1135,7 @@ icelandic-names-registry-backend:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -1186,7 +1186,7 @@ island-ui-storybook:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 10
         min: 3
@@ -1246,7 +1246,7 @@ license-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 10
         min: 2
@@ -1328,10 +1328,10 @@ portals-admin:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 30
-        min: 5
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/portals-admin'
   ingress:
@@ -1350,9 +1350,9 @@ portals-admin:
   namespace: 'portals-admin'
   pvcs: []
   replicaCount:
-    default: 5
+    default: 2
     max: 30
-    min: 5
+    min: 2
   resources:
     limits:
       cpu: '400m'
@@ -1472,7 +1472,7 @@ search-indexer-service:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 1
         min: 1
@@ -1597,10 +1597,10 @@ service-portal:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 30
-        min: 5
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/service-portal'
   ingress:
@@ -1619,9 +1619,9 @@ service-portal:
   namespace: 'service-portal'
   pvcs: []
   replicaCount:
-    default: 5
+    default: 2
     max: 30
-    min: 5
+    min: 2
   resources:
     limits:
       cpu: '400m'
@@ -1669,7 +1669,7 @@ service-portal-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 30
         min: 2
@@ -1695,7 +1695,7 @@ service-portal-api:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -1767,7 +1767,7 @@ services-documents:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 10
         min: 3
@@ -1785,7 +1785,7 @@ services-documents:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -1845,7 +1845,7 @@ services-sessions:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 10
         min: 1
@@ -1913,7 +1913,7 @@ services-sessions-worker:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 10
         min: 3
@@ -1931,7 +1931,7 @@ services-sessions-worker:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -1992,7 +1992,7 @@ skilavottord-web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 10
         min: 3
@@ -2062,7 +2062,7 @@ skilavottord-ws:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 10
         min: 3
@@ -2091,7 +2091,7 @@ skilavottord-ws:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -2159,7 +2159,7 @@ user-notification:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 10
         min: 3
@@ -2235,7 +2235,7 @@ user-notification-worker:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 10
         min: 3
@@ -2299,10 +2299,10 @@ web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 50
-        min: 10
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/web'
   ingress:
@@ -2322,9 +2322,9 @@ web:
   namespace: 'islandis'
   pvcs: []
   replicaCount:
-    default: 10
+    default: 2
     max: 50
-    min: 10
+    min: 2
   resources:
     limits:
       cpu: '400m'
@@ -2371,7 +2371,7 @@ xroad-collector:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 10
         min: 3
