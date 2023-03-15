@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import { Text } from '@island.is/island-ui/core'
@@ -32,6 +32,10 @@ export const SelfEmployed: FC<FieldBaseProps> = ({
   const [defaultValue, setHiddenSelfEmployed] = useState(isSelfEmployed ?? NO)
   const hiddenReceivingUnemploymentbenefits =
     isReceivingUnemploymentBenefits ?? NO
+
+  useEffect(() => {
+    setHiddenSelfEmployed(isSelfEmployed ?? NO)
+  }, [])
 
   return (
     <>
