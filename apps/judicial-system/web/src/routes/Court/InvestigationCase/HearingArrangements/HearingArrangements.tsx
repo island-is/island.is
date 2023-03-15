@@ -66,6 +66,7 @@ const HearingArrangements = () => {
   } = useCourtArrangements(workingCase)
 
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
+  const [checkedRadio, setCheckedRadio] = useState<SessionArrangements>()
 
   const initialize = useCallback(() => {
     if (!workingCase.courtDate) {
@@ -200,10 +201,13 @@ const HearingArrangements = () => {
                       m.sections.sessionArrangements.options.allPresent,
                     )}
                     checked={
-                      workingCase.sessionArrangements ===
-                      SessionArrangements.AllPresent
+                      checkedRadio === SessionArrangements.AllPresent ||
+                      (!checkedRadio &&
+                        workingCase.sessionArrangements ===
+                          SessionArrangements.AllPresent)
                     }
                     onChange={() => {
+                      setCheckedRadio(SessionArrangements.AllPresent)
                       setAndSendCaseToServer(
                         [
                           {
@@ -228,10 +232,16 @@ const HearingArrangements = () => {
                         .allPresentSpokesperson,
                     )}
                     checked={
-                      workingCase.sessionArrangements ===
-                      SessionArrangements.AllPresentSpokesperson
+                      checkedRadio ===
+                        SessionArrangements.AllPresentSpokesperson ||
+                      (!checkedRadio &&
+                        workingCase.sessionArrangements ===
+                          SessionArrangements.AllPresentSpokesperson)
                     }
                     onChange={() => {
+                      setCheckedRadio(
+                        SessionArrangements.AllPresentSpokesperson,
+                      )
                       setAndSendCaseToServer(
                         [
                           {
@@ -255,10 +265,13 @@ const HearingArrangements = () => {
                     m.sections.sessionArrangements.options.prosecutorPresent,
                   )}
                   checked={
-                    workingCase.sessionArrangements ===
-                    SessionArrangements.ProsecutorPresent
+                    checkedRadio === SessionArrangements.ProsecutorPresent ||
+                    (!checkedRadio &&
+                      workingCase.sessionArrangements ===
+                        SessionArrangements.ProsecutorPresent)
                   }
                   onChange={() => {
+                    setCheckedRadio(SessionArrangements.ProsecutorPresent)
                     setAndSendCaseToServer(
                       [
                         {
