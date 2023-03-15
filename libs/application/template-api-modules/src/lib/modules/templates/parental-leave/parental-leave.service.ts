@@ -1363,6 +1363,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       isReceivingUnemploymentBenefits,
       applicationType,
       previousState,
+      employerLastSixMonths,
+      employers,
     } = getApplicationAnswers(application.answers)
     // if (
     //   previousState === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
@@ -1425,8 +1427,17 @@ export class ParentalLeaveService extends BaseTemplateApiService {
           applicationType === PARENTAL_LEAVE ? isSelfEmployed === YES : true
         const recivingUnemploymentBenefits =
           isReceivingUnemploymentBenefits === YES
+        const isStillEmployed = employers?.some(
+          (employer) => employer.stillEmployed === YES,
+        )
 
-        if (!selfEmployed && !recivingUnemploymentBenefits) {
+        if (
+          (!selfEmployed && !recivingUnemploymentBenefits) ||
+          ((applicationType === PARENTAL_GRANT ||
+            applicationType === PARENTAL_GRANT_STUDENTS) &&
+            employerLastSixMonths === YES &&
+            isStillEmployed)
+        ) {
           // Only needs to send an email if being approved by employer
           // Self employed applicant was aware of the approval
           await this.sharedTemplateAPIService.sendEmail(
