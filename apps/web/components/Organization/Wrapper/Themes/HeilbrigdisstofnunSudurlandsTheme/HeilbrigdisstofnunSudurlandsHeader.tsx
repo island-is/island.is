@@ -6,27 +6,27 @@ import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useNamespace } from '@island.is/web/hooks'
 import { getScreenWidthString } from '@island.is/web/utils/screenWidth'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import { theme } from '@island.is/island-ui/theme'
 import * as styles from './HeilbrigdisstofnunSudurlandsHeader.css'
 
-const getDefaultStyle = () => {
-  return {
-    backgroundColor: '#122771',
-    backgroundRepeat: 'no-repeat',
-  }
-}
+const backgroundUrl =
+  'https://images.ctfassets.net/8k0h54kbe6bj/2DIzJE5MwzegOM0t8vkHE0/61eb1814a2cd8b8f944891aa052fbae9/HSU-header6-new.png'
+const illustrationUrl =
+  'https://images.ctfassets.net/8k0h54kbe6bj/2GU73eNYiZ5As6MaNjfzky/290ab0a08986bd1ad406140c2e9a979f/hsu-mynd-header.png'
 
-const getDefaultHeaderImageStyle = () => {
+const getDefaultStyle = (width: number) => {
+  if (width >= theme.breakpoints.xl) {
+    return {
+      backgroundRepeat: 'no-repeat, no-repeat',
+      backgroundPosition: 'bottom right',
+      backgroundSize: 'contain, cover',
+      backgroundImage: `url(${illustrationUrl}), url(${backgroundUrl})`,
+    }
+  }
   return {
-    position: 'absolute',
-    width: 733,
-    top: 0,
-    left: 0,
-    height: 365,
     backgroundRepeat: 'no-repeat',
-    opacity: 0.5,
-    backgroundSize: 'contain',
-    backgroundImage:
-      'linear-gradient(270.1deg, rgba(18, 39, 113, 0.2) 0.08%, rgba(18, 39, 113, 0) 103.56%), url(https://images.ctfassets.net/8k0h54kbe6bj/5VPkYND5fDBou7G0jCPCtD/2019274c76468def75fd5f340d2b3031/Mynd_-_header.png)',
+    backgroundSize: 'cover',
+    backgroundImage: `url(${backgroundUrl})`,
   }
 }
 
@@ -52,17 +52,9 @@ const HeilbrigdisstofnunSudurlandsHeader: React.FC<HeaderProps> = ({
 
   return (
     <div
-      style={n(`hsuHeader-${screenWidth}`, getDefaultStyle())}
+      style={n(`hsuHeader-${screenWidth}`, getDefaultStyle(width))}
       className={styles.headerBg}
     >
-      <Hidden below="md">
-        <div
-          style={n(
-            `hsuHeaderImage-${screenWidth}`,
-            getDefaultHeaderImageStyle(),
-          )}
-        />
-      </Hidden>
       <div className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
@@ -98,7 +90,7 @@ const HeilbrigdisstofnunSudurlandsHeader: React.FC<HeaderProps> = ({
               </Link>
             </Hidden>
           )}
-          <Box marginTop={[2, 2, 6]} textAlign={['center', 'center', 'right']}>
+          <Box marginTop={[2, 2, 6]} textAlign={['center', 'center', 'left']}>
             <Link
               href={
                 linkResolver('organizationpage', [organizationPage.slug]).href
