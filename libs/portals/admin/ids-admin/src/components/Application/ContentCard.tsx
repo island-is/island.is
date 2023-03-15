@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useRef, useState } from 'react'
 import { Box, Button, Checkbox, Text } from '@island.is/island-ui/core'
 import { Form } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
@@ -7,18 +7,42 @@ import { m } from '../../lib/messages'
 interface ContentCardProps {
   title: string
   onSave?: (saveOnAllEnvironments: boolean) => void
-  changed?: boolean
-  withForm?: boolean
+  isDirty?: (currentValue: FormData, originalValue: FormData) => boolean
 }
+
+function defaultIsDirty(newFormData: FormData, originalFormData: FormData) {
+  let tempChanged = false
+  for (const [key, value] of newFormData.entries()) {
+    if (originalFormData?.get(key) !== value) {
+      tempChanged = true
+    }
+  }
+  return tempChanged
+}
+
 const ContentCard: FC<ContentCardProps> = ({
   children,
   title,
   onSave,
-  changed,
-  withForm = true,
+  isDirty = defaultIsDirty,
 }) => {
   const { formatMessage } = useLocale()
   const [allEnvironments, setAllEnvironments] = useState<boolean>(false)
+  const originalFormData = useRef<FormData>()
+  const [dirty, setDirty] = useState<boolean>(false)
+  const ref = useRef<HTMLFormElement>(null)
+
+  // On change, check if the form has changed, use custom validation if provided
+  const onChange = () => {
+    const newFormData = new FormData(ref.current as HTMLFormElement)
+
+    setDirty(isDirty(newFormData, originalFormData.current ?? new FormData()))
+  }
+
+  // On mount, set the original form data
+  useEffect(() => {
+    originalFormData.current = new FormData(ref.current as HTMLFormElement)
+  }, [ref])
 
   return (
     <Box
@@ -36,35 +60,32 @@ const ContentCard: FC<ContentCardProps> = ({
           {title}
         </Text>
       </Box>
-      {withForm ? (
-        <Form method="post">
-          {children}
-          {onSave && (
-            <Box
-              alignItems="center"
-              marginTop="containerGutter"
-              display="flex"
-              justifyContent="spaceBetween"
+      <Form ref={ref} onChange={onChange} method="post">
+        {children}
+        {onSave && (
+          <Box
+            alignItems="center"
+            marginTop="containerGutter"
+            display="flex"
+            justifyContent="spaceBetween"
+          >
+            <Checkbox
+              label={formatMessage(m.saveForAllEnvironments)}
+              value={`${allEnvironments}`}
+              disabled={!dirty}
+              name="allEnvironments"
+              onChange={() => setAllEnvironments(!allEnvironments)}
+            />
+            <Button
+              disabled={!dirty}
+              type="submit"
+              onClick={() => onSave(allEnvironments)}
             >
-              <Checkbox
-                label={formatMessage(m.saveForAllEnvironments)}
-                value={`${allEnvironments}`}
-                disabled={!changed}
-                onChange={() => setAllEnvironments(!allEnvironments)}
-              />
-              <Button
-                disabled={!changed}
-                type="submit"
-                onClick={() => onSave(allEnvironments)}
-              >
-                {formatMessage(m.saveSettings)}
-              </Button>
-            </Box>
-          )}
-        </Form>
-      ) : (
-        children
-      )}
+              {formatMessage(m.saveSettings)}
+            </Button>
+          </Box>
+        )}
+      </Form>
     </Box>
   )
 }

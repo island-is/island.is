@@ -11,7 +11,6 @@ interface ApplicationsUrlProps {
 const ApplicationsUrl = ({ applicationUrls }: ApplicationsUrlProps) => {
   const { formatMessage } = useLocale()
   const [appUrls, setAppUrls] = useState(applicationUrls)
-  const [changed, setChanged] = useState(false)
 
   // Generic onChange handler, name in input will need to match object name to change
   const onChangeURLS = (
@@ -27,17 +26,12 @@ const ApplicationsUrl = ({ applicationUrls }: ApplicationsUrlProps) => {
     setAppUrls(applicationUrls)
   }, [applicationUrls])
 
-  useEffect(() => {
-    setChanged(JSON.stringify(appUrls) !== JSON.stringify(applicationUrls))
-  }, [appUrls, applicationUrls])
-
   return (
     <ContentCard
       title={formatMessage(m.applicationsURLS)}
       onSave={(saveOnAllEnvironments) => {
         console.log('saveOnAllEnvironments: ', saveOnAllEnvironments, appUrls)
       }}
-      changed={changed}
     >
       <Stack space={3}>
         <Stack space={1}>

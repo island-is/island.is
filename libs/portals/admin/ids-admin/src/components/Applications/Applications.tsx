@@ -157,7 +157,7 @@ const Applications = () => {
             ></Filter>
           </GridRow>
           {applications.map((item) => (
-            <GridRow key={item.applicationId}>
+            <GridRow key={`applications-${item.applicationId}`}>
               <Link
                 className={styles.fill}
                 to={replaceParams({
@@ -212,7 +212,11 @@ const Applications = () => {
                         ]}
                       >
                         {item.availableEnvironments.map((tag) => (
-                          <Box key={tag} marginLeft={1} marginBottom={1}>
+                          <Box
+                            key={`applications-${tag}`}
+                            marginLeft={1}
+                            marginBottom={1}
+                          >
                             <Tag variant="purple" outlined>
                               {tag}
                             </Tag>

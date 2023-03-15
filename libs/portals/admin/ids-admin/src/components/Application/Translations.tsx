@@ -1,17 +1,9 @@
-import {
-  Box,
-  Button,
-  Checkbox,
-  Input,
-  Stack,
-  Tabs,
-} from '@island.is/island-ui/core'
+import { Box, Input, Stack, Tabs } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { m } from '../../lib/messages'
 import ContentCard from './ContentCard'
 import { AuthApplicationTranslationList } from './Application.loader'
-import { Form } from 'react-router-dom'
 
 interface TranslationsProps {
   translations: AuthApplicationTranslationList[]
@@ -19,10 +11,11 @@ interface TranslationsProps {
 const Translations = ({ translations }: TranslationsProps) => {
   const { formatMessage } = useLocale()
   const [activeTab, setActiveTab] = useState<string>('0')
-  const [changed, setChanged] = useState(false)
-  const [allEnvironments, setAllEnvironments] = useState<boolean>(false)
   const [copyTranslations, setCopyTranslations] = useState(
-    structuredClone(translations),
+    ['is', 'en'].map((locale) => ({
+      locale: locale,
+      value: translations.find((t) => t.locale === locale)?.value || '',
+    })),
   )
 
   const onChangeTranslations = (
@@ -33,20 +26,12 @@ const Translations = ({ translations }: TranslationsProps) => {
     setCopyTranslations([...temp])
   }
 
-  useEffect(() => {
-    setChanged(
-      copyTranslations[+activeTab].value !== translations[+activeTab].value,
-    )
-  }, [copyTranslations, translations, activeTab])
-
   return (
     <ContentCard
       title={formatMessage(m.translations)}
       onSave={(saveOnAllEnvironments) => {
         console.log('saveOnAllEnvironments: ', saveOnAllEnvironments)
       }}
-      withForm={false}
-      changed={changed}
     >
       <Stack space={3}>
         <Tabs
@@ -55,44 +40,24 @@ const Translations = ({ translations }: TranslationsProps) => {
           selected={activeTab}
           onChange={setActiveTab}
           contentBackground="white"
-          tabs={copyTranslations.map(
-            (translation: AuthApplicationTranslationList, index: number) => {
-              return {
-                label: translation.locale === 'is' ? 'Íslenska' : 'English',
-                content: (
-                  <Form method="post">
-                    <Box marginTop="gutter">
-                      <Input
-                        backgroundColor="blue"
-                        type="text"
-                        size="sm"
-                        onChange={(e) => onChangeTranslations(e)}
-                        name="displayName"
-                        value={copyTranslations[index].value}
-                        label={formatMessage(m.displayName)}
-                      />
-                    </Box>
-                    <Box
-                      alignItems="center"
-                      marginTop="containerGutter"
-                      display="flex"
-                      justifyContent="spaceBetween"
-                    >
-                      <Checkbox
-                        label={formatMessage(m.saveForAllEnvironments)}
-                        value={`${allEnvironments}`}
-                        disabled={!changed}
-                        onChange={() => setAllEnvironments(!allEnvironments)}
-                      />
-                      <Button disabled={!changed} type="submit">
-                        {formatMessage(m.saveSettings)}
-                      </Button>
-                    </Box>
-                  </Form>
-                ),
-              }
-            },
-          )}
+          tabs={copyTranslations.map((language) => {
+            return {
+              label: language.locale === 'is' ? 'Íslenska' : 'English',
+              content: (
+                <Box marginTop="gutter">
+                  <Input
+                    backgroundColor="blue"
+                    type="text"
+                    size="sm"
+                    onChange={(e) => onChangeTranslations(e)}
+                    name={language.locale + '-displayName'}
+                    value={language.value}
+                    label={formatMessage(m.displayName)}
+                  />
+                </Box>
+              ),
+            }
+          })}
         />
       </Stack>
     </ContentCard>

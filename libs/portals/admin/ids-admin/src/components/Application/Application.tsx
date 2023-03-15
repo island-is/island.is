@@ -26,17 +26,17 @@ import {
 
 const Application = () => {
   const applications = useLoaderData() as AuthApplicationList
-  const [application] = useState<AuthApplicationList>(
-    applications[0] ? [applications[0]] : [],
+  const [application] = useState<AuthApplicationList[0]>(
+    applications[0] ? applications[0] : ({} as AuthApplicationList[0]),
   )
   const { formatMessage } = useLocale()
   const [selectedEnvironment, setSelectedEnvironment] = useState<string>(
-    application[0].defaultEnvironment.environment,
+    application.defaultEnvironment.environment,
   )
 
   const getEnv = () => {
-    if (!selectedEnvironment) return application[0].defaultEnvironment
-    return application[0].environments.find(
+    if (!selectedEnvironment) return application.defaultEnvironment
+    return application.environments.find(
       (env) => env.environment === selectedEnvironment,
     )
   }
@@ -47,9 +47,9 @@ const Application = () => {
         <GridRow>
           <GridColumn span="6/12">
             <Stack space="smallGutter">
-              <Tag outlined>{application[0].applicationType}</Tag>
+              <Tag outlined>{application.applicationType}</Tag>
               <Text variant="h2">
-                {application[0].defaultEnvironment.displayName[0].value}
+                {application.defaultEnvironment.displayName[0].value}
               </Text>
             </Stack>
           </GridColumn>
@@ -66,7 +66,7 @@ const Application = () => {
                   label: selectedEnvironment,
                   value: selectedEnvironment,
                 }}
-                options={application[0].environments.map((env) => {
+                options={application.environments.map((env) => {
                   return {
                     label: env.environment,
                     value: env.environment,

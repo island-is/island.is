@@ -1,10 +1,11 @@
 import {
+  Box,
   Input,
   Stack,
   Text,
   ToggleSwitchCheckbox,
 } from '@island.is/island-ui/core'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import ContentCard from './ContentCard'
@@ -17,8 +18,6 @@ interface LifetimeProps {
 const Lifetime = ({ lifetime }: LifetimeProps) => {
   const { formatMessage } = useLocale()
   const [lifeTimeCopy, setLifeTimeCopy] = useState(lifetime)
-  const [changed, setChanged] = useState(false)
-
   const setLifeTimeLength = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
@@ -28,21 +27,38 @@ const Lifetime = ({ lifetime }: LifetimeProps) => {
     }))
   }
 
-  useEffect(() => {
-    setChanged(JSON.stringify(lifeTimeCopy) !== JSON.stringify(lifetime))
-  }, [lifeTimeCopy, lifetime])
+  const customChangedValidation = (
+    currentValue: FormData,
+    originalValue: FormData,
+  ): boolean => {
+    if (
+      currentValue.get('inactivityExpiration') !==
+      originalValue.get('inactivityExpiration')
+    ) {
+      return true
+    }
+    if (currentValue.get('inactivityExpiration')) {
+      return (
+        currentValue.get('absoluteLifeTime') !==
+          originalValue.get('absoluteLifeTime') ||
+        currentValue.get('inactivityLifeTime') !==
+          originalValue.get('inactivityLifeTime')
+      )
+    } else {
+      return (
+        currentValue.get('absoluteLifeTime') !==
+        originalValue.get('absoluteLifeTime')
+      )
+    }
+  }
 
   return (
     <ContentCard
       title={formatMessage(m.lifeTime)}
       onSave={(saveOnAllEnvironments) => {
-        console.log(
-          'saveOnAllEnvironments: ',
-          saveOnAllEnvironments,
-          lifeTimeCopy,
-        )
+        return saveOnAllEnvironments
       }}
-      changed={changed}
+      isDirty={customChangedValidation}
     >
       <Stack space={3}>
         <Stack space={1}>
@@ -63,11 +79,12 @@ const Lifetime = ({ lifetime }: LifetimeProps) => {
           <ToggleSwitchCheckbox
             label={formatMessage(m.inactivityExpiration)}
             checked={lifeTimeCopy.inactivityExpiration}
+            name="inactivityExpiration"
             value={lifeTimeCopy.inactivityExpiration.toString()}
             onChange={() =>
-              setLifeTimeCopy((prev: any) => ({
+              setLifeTimeCopy((prev) => ({
                 ...prev,
-                inactivityExpiration: !prev.inactivityExpiration,
+                inactivityExpiration: !lifeTimeCopy.inactivityExpiration,
               }))
             }
           />
@@ -75,7 +92,7 @@ const Lifetime = ({ lifetime }: LifetimeProps) => {
             {formatMessage(m.inactivityExpirationDescription)}
           </Text>
         </Stack>
-        {lifeTimeCopy.inactivityExpiration && (
+        <Box hidden={!lifeTimeCopy.inactivityExpiration}>
           <Stack space={1}>
             <Input
               size="sm"
@@ -90,7 +107,7 @@ const Lifetime = ({ lifetime }: LifetimeProps) => {
               {formatMessage(m.inactivityLifetimeDescription)}
             </Text>
           </Stack>
-        )}
+        </Box>
       </Stack>
     </ContentCard>
   )

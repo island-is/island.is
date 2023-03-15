@@ -278,26 +278,26 @@ export const m = defineMessages({
   },
   oAuthAuthorizationUrl: {
     id: 'ap.ids-admin:oAuthAuthorizationUrl',
-    defaultMessage: 'oAuthAuthorizationUrl',
+    defaultMessage: 'OAuth Authorization URL',
   },
   deviceAuthorizationUrl: {
     id: 'ap.ids-admin:deviceAuthorizationUrl',
-    defaultMessage: 'deviceAuthorizationUrl',
+    defaultMessage: 'Device Authorization URL',
   },
   oAuthTokenUrl: {
     id: 'ap.ids-admin:oAuthTokenUrl',
-    defaultMessage: 'oAuthTokenUrl',
+    defaultMessage: 'OAuth Token URL',
   },
   oAuthUserInfoUrl: {
     id: 'ap.ids-admin:oAuthUserInfoUrl',
-    defaultMessage: 'oAuthUserInfoUrl',
+    defaultMessage: 'OAuth User Info URL',
   },
   openIdConfiguration: {
     id: 'ap.ids-admin:openIdConfiguration',
-    defaultMessage: 'openIdConfiguration',
+    defaultMessage: 'OpenID Configuration',
   },
   jsonWebKeySet: {
     id: 'ap.ids-admin:jsonWebKeySet',
-    defaultMessage: 'jsonWebKeySet',
+    defaultMessage: 'JSON Web Key Set',
   },
 })
