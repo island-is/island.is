@@ -54,7 +54,11 @@ const mockTenants = {
 const createMockAdminApi = (tenants: TenantDto[]) => ({
   withMiddleware: jest.fn().mockReturnThis(),
   meTenantsControllerFindAll: jest.fn().mockResolvedValue(tenants),
-  meTenantsControllerFindById: jest.fn().mockResolvedValue(tenants[0]),
+  meTenantsControllerFindById: jest.fn().mockImplementation(({ id }) => {
+    return new Promise((resolve) => {
+      resolve(tenants.find((t) => t.name === id))
+    })
+  }),
 })
 const mockAdminDevApi = createMockAdminApi([
   mockTenants.tenant1,
@@ -118,7 +122,7 @@ describe('TenantsService', () => {
       await app.cleanUp()
     })
 
-    it('should return single merged tenant', async () => {
+    it('should return single merged tenant for all environments', async () => {
       const tenantName = 'tenant-1'
       const tenants = await tenantsService.getTenantById(
         tenantName,
@@ -142,6 +146,27 @@ describe('TenantsService', () => {
           {
             ...mockTenants.tenant1,
             environment: Environment.Production,
+          },
+        ],
+      })
+    })
+
+    it('should return single merged tenant for development environments', async () => {
+      const tenantName = 'tenant-3'
+      const tenants = await tenantsService.getTenantById(
+        tenantName,
+        currentUser,
+      )
+
+      expect(mockAdminDevApi.meTenantsControllerFindById).toBeCalledTimes(1)
+      expect(mockAdminStagingApi.meTenantsControllerFindById).toBeCalledTimes(1)
+      expect(mockAdminProdApi.meTenantsControllerFindById).toBeCalledTimes(1)
+      expect(tenants).toEqual({
+        id: mockTenants.tenant3.name,
+        environments: [
+          {
+            ...mockTenants.tenant3,
+            environment: Environment.Development,
           },
         ],
       })
