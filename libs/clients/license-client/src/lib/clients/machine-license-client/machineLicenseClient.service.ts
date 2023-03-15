@@ -185,6 +185,21 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
       return res
     }
 
+    if (!res.data.distributionQRCode) {
+      const error = {
+        code: 13,
+        message: 'Missing pkpass distribution QR code in machine license',
+      }
+
+      this.logger.warn(error.message, {
+        category: LOG_CATEGORY,
+      })
+      return {
+        ok: false,
+        error,
+      }
+    }
+
     return {
       ok: true,
       data: res.data.distributionQRCode,
@@ -196,6 +211,21 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
 
     if (!res.ok) {
       return res
+    }
+
+    if (!res.data.distributionUrl) {
+      const error = {
+        code: 13,
+        message: 'Missing pkpass distribution url in machine license',
+      }
+
+      this.logger.warn(error.message, {
+        category: LOG_CATEGORY,
+      })
+      return {
+        ok: false,
+        error,
+      }
     }
 
     return {

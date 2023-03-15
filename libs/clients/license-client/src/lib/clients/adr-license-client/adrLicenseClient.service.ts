@@ -197,6 +197,21 @@ export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
       return res
     }
 
+    if (!res.data.distributionQRCode) {
+      const error = {
+        code: 13,
+        message: 'Missing pkpass distribution qr code in adr license',
+      }
+
+      this.logger.warn(error.message, {
+        category: LOG_CATEGORY,
+      })
+      return {
+        ok: false,
+        error,
+      }
+    }
+
     return {
       ok: true,
       data: res.data.distributionQRCode,
@@ -208,6 +223,21 @@ export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
 
     if (!res.ok) {
       return res
+    }
+
+    if (!res.data.distributionUrl) {
+      const error = {
+        code: 13,
+        message: 'Missing pkpass distribution url in adr license',
+      }
+
+      this.logger.warn(error.message, {
+        category: LOG_CATEGORY,
+      })
+      return {
+        ok: false,
+        error,
+      }
     }
 
     return {

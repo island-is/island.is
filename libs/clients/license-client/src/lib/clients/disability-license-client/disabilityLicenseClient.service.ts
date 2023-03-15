@@ -178,6 +178,21 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
       return res
     }
 
+    if (!res.data.distributionQRCode) {
+      const error = {
+        code: 13,
+        message: 'Missing pkpass distribution QR code in disability license',
+      }
+
+      this.logger.warn(error.message, {
+        category: LOG_CATEGORY,
+      })
+      return {
+        ok: false,
+        error,
+      }
+    }
+
     return {
       ok: true,
       data: res.data.distributionQRCode,
@@ -189,6 +204,21 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
 
     if (!res.ok) {
       return res
+    }
+
+    if (!res.data.distributionUrl) {
+      const error = {
+        code: 13,
+        message: 'Missing pkpass distribution url in disability license',
+      }
+
+      this.logger.warn(error.message, {
+        category: LOG_CATEGORY,
+      })
+      return {
+        ok: false,
+        error,
+      }
     }
 
     return {
