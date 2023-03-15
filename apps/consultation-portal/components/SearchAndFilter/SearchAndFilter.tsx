@@ -1,8 +1,4 @@
-import {
-  ArrOfValueAndLabel,
-  CaseFilter,
-  FilterGroups,
-} from '../../types/interfaces'
+import { ArrOfValueAndLabel, CaseFilter } from '../../types/interfaces'
 import {
   AsyncSearch,
   Box,

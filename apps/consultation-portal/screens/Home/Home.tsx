@@ -111,7 +111,7 @@ export const Home = ({ types }: HomeProps) => {
 
   useEffect(() => {
     const insertFilterCount = setTimeout(() => {
-      if (!!filterGroups) {
+      if (filterGroups) {
         const caseTypesList = Object.entries(filterGroups.CaseTypes).map(
           ([value, count]) => ({
             value,
