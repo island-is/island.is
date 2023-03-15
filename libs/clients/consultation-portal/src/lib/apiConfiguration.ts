@@ -3,6 +3,7 @@ import {
   Configuration,
   DocumentsApi,
   TypesApi,
+  UserApi,
 } from '../../gen/fetch'
 import { Provider } from '@nestjs/common/interfaces/modules/provider.interface'
 
@@ -33,3 +34,4 @@ const provideApi = <T>(
 export const CasesApiProvider = provideApi(CasesApi)
 export const DocumentsApiProvider = provideApi(DocumentsApi)
 export const TypesApiProvider = provideApi(TypesApi)
+export const UserApiProvider = provideApi(UserApi)
