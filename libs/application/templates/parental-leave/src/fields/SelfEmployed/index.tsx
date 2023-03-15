@@ -1,7 +1,7 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
 import { formatText } from '@island.is/application/core'
 import {
   FieldBaseProps,
@@ -13,18 +13,28 @@ import { RadioFormField } from '@island.is/application/ui-fields'
 import { NO, YES } from '../../constants'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
+import { YesOrNo } from '../../types'
+import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
 
 export const SelfEmployed: FC<FieldBaseProps> = ({
   application,
   field,
   error,
 }) => {
-  const { setValue } = useFormContext()
+  const { setValue, register } = useFormContext()
   const { formatMessage } = useLocale()
   const { id, title, description } = field
+  const {
+    isSelfEmployed,
+    isReceivingUnemploymentBenefits,
+  } = getApplicationAnswers(application.answers)
+
+  const [defaultValue, setHiddenSelfEmployed] = useState(isSelfEmployed ?? NO)
+  const hiddenReceivingUnemploymentbenefits =
+    isReceivingUnemploymentBenefits ?? NO
 
   return (
-    <Box>
+    <>
       <Text variant="h2" as="h2">
         {formatText(title, application, formatMessage)}
       </Text>
@@ -32,6 +42,7 @@ export const SelfEmployed: FC<FieldBaseProps> = ({
         error={error}
         application={application}
         field={{
+          ...field,
           id: id,
           title: '',
           description,
@@ -50,6 +61,7 @@ export const SelfEmployed: FC<FieldBaseProps> = ({
             },
           ],
           onSelect: (s: string) => {
+            const option = s as YesOrNo
             if (s === YES) {
               setValue('isReceivingUnemploymentBenefits', NO)
             }
@@ -57,9 +69,18 @@ export const SelfEmployed: FC<FieldBaseProps> = ({
               setValue('fileUpload.selfEmployedFile', null)
               setValue('isReceivingUnemploymentBenefits', NO)
             }
+            setHiddenSelfEmployed(option)
           },
+          defaultValue,
         }}
       />
-    </Box>
+      <input type="hidden" ref={register} name={id} value={defaultValue} />
+      <input
+        type="hidden"
+        ref={register}
+        name="isReceivingUnemploymentBenefits"
+        value={hiddenReceivingUnemploymentbenefits}
+      />
+    </>
   )
 }
