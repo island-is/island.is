@@ -1369,6 +1369,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           set(application.answers, 'personalAllowance', {
             useAsMuchAsPossible: YES,
             usage: '100',
+            usePersonalAllowance: YES,
           })
         }
 
@@ -1386,6 +1387,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           set(application.answers, 'personalAllowanceFromSpouse', {
             useAsMuchAsPossible: YES,
             usage: '100',
+            usePersonalAllowance: YES,
           })
         }
 
