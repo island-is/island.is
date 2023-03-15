@@ -7,11 +7,7 @@ import {
 } from 'xstate'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 
-import {
-  GetSingleArticleQuery,
-  Step,
-  Stepper,
-} from '@island.is/web/graphql/schema'
+import { Step, Stepper } from '@island.is/web/graphql/schema'
 import {
   GetNamespaceQuery,
   QueryGetNamespaceArgs,

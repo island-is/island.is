@@ -17,10 +17,7 @@ import { Webreader } from '@island.is/web/components'
 import { SliceType } from '@island.is/island-ui/contentful'
 import { useI18n } from '@island.is/web/i18n'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import {
-  GetSingleArticleQuery,
-  Stepper as StepperSchema,
-} from '@island.is/web/graphql/schema'
+import { Stepper as StepperSchema } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { webRichText } from '@island.is/web/utils/richText'
 
