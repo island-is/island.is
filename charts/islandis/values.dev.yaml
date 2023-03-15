@@ -851,7 +851,6 @@ consultation-portal:
     ENVIRONMENT: 'dev'
     NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: ''
-    UNUSED: 'na'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
