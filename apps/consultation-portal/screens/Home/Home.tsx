@@ -48,7 +48,7 @@ export const Home = ({ types }: HomeProps) => {
   } = getInitFilterValues({ types: types })
 
   const defaultValues = {
-    query: '',
+    searchQuery: '',
     sorting: { items: sorting, isOpen: true },
     caseStatuses: { items: caseStatuses, isOpen: true },
     caseTypes: { items: caseTypes, isOpen: true },
@@ -58,7 +58,7 @@ export const Home = ({ types }: HomeProps) => {
   }
 
   const [filters, setFilters] = useState<CaseFilter>({
-    query: '',
+    searchQuery: '',
     sorting: { items: sorting, isOpen: true },
     caseStatuses: { items: caseStatuses, isOpen: true },
     caseTypes: { items: caseTypes, isOpen: true },
@@ -81,7 +81,7 @@ export const Home = ({ types }: HomeProps) => {
           (item: FilterInputItems) => item.checked,
         )[0].label,
     ),
-    // query: filters.query,
+    searchQuery: filters.searchQuery,
     policyAreas: filters.policyAreas,
     institutions: filters.institutions,
     dateFrom: filters.period.from,

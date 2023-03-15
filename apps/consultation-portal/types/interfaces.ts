@@ -91,7 +91,7 @@ export interface CaseFilter {
   pageNumber?: number
   pageSize?: number
   policyAreas?: Array<number>
-  query?: string
+  searchQuery?: string
 }
 
 export interface SEOProps {
