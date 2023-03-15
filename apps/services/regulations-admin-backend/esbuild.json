@@ -21,6 +21,7 @@
     "graphql",
     "jsdom",
     "pg",
+    "pseudomap",
     "winston",
     "util-deprecate",
     "source-map-resolve",
