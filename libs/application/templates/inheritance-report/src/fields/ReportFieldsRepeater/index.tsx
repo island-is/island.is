@@ -84,6 +84,9 @@ export const ReportFieldsRepeater: FC<
   )
 
   const handleAddRepeaterFields = () => {
+    setRateOfExchange(0)
+    setFaceValue(0)
+
     const values = props.fields.map((field: object) => {
       return Object.values(field)[1]
     })
@@ -102,9 +105,16 @@ export const ReportFieldsRepeater: FC<
     setValue(addTotal, total)
   }, [id, total, setValue])
 
-  /* ------ Set stocks value ------ */
+  /* ------ Set stocks value and total ------ */
   useEffect(() => {
     setValue(`${index}.value`, String(faceValue * rateOfExchange))
+    if (!!rateOfExchange && !!faceValue) {
+      const i = index.match(/\d+/)
+      calculateTotal(
+        currencyStringToNumber(String(Number(rateOfExchange * faceValue))),
+        Number((i as any)[0]),
+      )
+    }
   }, [faceValue, index, rateOfExchange, setValue])
 
   /* ------ Set heirs calculations ------ */
@@ -147,6 +157,7 @@ export const ReportFieldsRepeater: FC<
   }, [props, fields, append])
 
   const calculateTotal = (input: any, index: number) => {
+    console.log(input, index)
     const arr = valueArray
     if (input === '') {
       arr.splice(index, 1)
