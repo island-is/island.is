@@ -6,9 +6,9 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 echo "Current test environment: ${TEST_ENVIRONMENT}"
 echo "Playwright args: $*"
-echo "Playwright version (yarn): $(yarn playwright --version)"
-echo "Playwright version (node_modules): $(./node_modules/.bin/playwright --version)"
-echo "Playwright version (system): $(playwright --version)"
+echo "Playwright version (yarn): $(yarn playwright --version 2>/dev/null)"
+echo "Playwright version (node_modules): $(./node_modules/.bin/playwright --version 2>/dev/null)"
+echo "Playwright version (system): $(playwright --version 2>/dev/null)"
 
 yarn playwright test -c src "$@"
 TEST_EXIT_CODE=$?

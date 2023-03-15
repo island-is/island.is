@@ -11,21 +11,31 @@ APP_DIST_HOME=$(jq ".targets.build.options.outputPath" -r < "$PROJECT_ROOT"/"$AP
 DOCKERFILE=$1
 TARGET=$2
 ACTION=${3:-docker_build}
+: "${PLAYWRIGHT_VERSION:=$(yarn info --json @playwright/test | jq -r '.children.Version')}"
 
 function docker_build() {
-  # shellcheck disable=SC2086
-  docker buildx build \
+  local build_args=(
     --platform=linux/amd64 \
-    --cache-from=type=local,src="$PROJECT_ROOT"/cache \
-    --cache-from=type=local,src="$PROJECT_ROOT"/cache_output \
-    -f "${DIR}"/"$DOCKERFILE" \
+    --file="${DIR}/$DOCKERFILE" \
     --target="$TARGET" \
     "${PUBLISH_TO_REGISTRY[@]}" \
-    --build-arg APP=${APP} \
-    --build-arg APP_HOME=${APP_HOME} \
-    --build-arg APP_DIST_HOME=${APP_DIST_HOME} \
-    ${EXTRA_DOCKER_BUILD_ARGS:-} \
+    --build-arg="APP=${APP}" \
+    --build-arg="APP_HOME=${APP_HOME}" \
+    --build-arg="APP_DIST_HOME=${APP_DIST_HOME}" \
     -t "${DOCKER_REGISTRY}""${APP}":"${DOCKER_TAG}" \
+    --build-arg="PLAYWRIGHT_VERSION=${PLAYWRIGHT_VERSION}" \
+  )
+  for extra_arg in ${EXTRA_DOCKER_BUILD_ARGS:-}; do
+    build_args+=("$extra_arg")
+  done
+  if ! docker --version | grep -q podman; then
+    build_args+=(--cache-from="type=local,src=$PROJECT_ROOT/cache")
+    build_args+=(--cache-from="type=local,src=$PROJECT_ROOT/cache_output")
+  fi
+
+  for arg in "${build_args[@]}"; do echo "BUILD_ARG: $arg"; done
+  # shellcheck disable=SC2086
+  docker buildx build "${build_args[@]}" \
     "$PROJECT_ROOT"
 }
 
