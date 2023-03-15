@@ -111,10 +111,11 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
                       type={field.type}
                       onChange={(e) => {
                         setIndex(fieldIndex)
+                        const value = Math.max(0, Number(e.target.value))
                         if (field.id === 'rateOfExchange') {
-                          setRateOfExchange(Number(e.target.value))
+                          setRateOfExchange(value)
                         } else if (field.id === 'faceValue') {
-                          setFaceValue(Number(e.target.value))
+                          setFaceValue(value)
                         }
                       }}
                     />

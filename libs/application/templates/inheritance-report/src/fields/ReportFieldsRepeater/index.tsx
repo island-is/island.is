@@ -236,24 +236,23 @@ export const ReportFieldsRepeater: FC<
                           : undefined
                       }
                       onChange={(elem) => {
+                        const value = elem.target.value.replace(/\D/g, '')
+
                         // heirs
                         if (field.id === 'heirsPercentage') {
-                          setPercentage(Number(elem.target.value) / 100)
+                          setPercentage(Number(value) / 100)
                         }
 
                         // stocks
                         if (field.id === 'rateOfExchange') {
-                          setRateOfExchange(Number(elem.target.value))
+                          setRateOfExchange(Number(value))
                         } else if (field.id === 'faceValue') {
-                          setFaceValue(Number(elem.target.value))
+                          setFaceValue(Number(value))
                         }
 
                         // total
                         if (props.sumField === field.id) {
-                          calculateTotal(
-                            currencyStringToNumber(elem.target.value),
-                            index,
-                          )
+                          calculateTotal(currencyStringToNumber(value), index)
                         }
                         setIndex(fieldIndex)
                       }}

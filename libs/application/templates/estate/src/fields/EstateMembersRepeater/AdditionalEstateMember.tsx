@@ -66,7 +66,9 @@ export const AdditionalEstateMember = ({
   const nationalIdInput = useWatch({ name: nationalIdField, defaultValue: '' })
   const name = useWatch({ name: nameField, defaultValue: '' })
 
-  const [foreignCitizenship, setForeignCitizenship] = useState(field.foreignCitizenship)
+  const [foreignCitizenship, setForeignCitizenship] = useState(
+    field.foreignCitizenship,
+  )
   const [heirUnder18, setHeirUnder18] = useState(
     field.nationalId ? kennitala.info(field.nationalId).age < 18 : false,
   )
@@ -230,7 +232,9 @@ export const AdditionalEstateMember = ({
                 value: YES,
               },
             ]}
-            onSelect={() => {setForeignCitizenship(foreignCitizenship?.length ? [] : ['yes'])}}
+            onSelect={() => {
+              setForeignCitizenship(foreignCitizenship?.length ? [] : ['yes'])
+            }}
           />
         </GridColumn>
         {heirUnder18 && (
