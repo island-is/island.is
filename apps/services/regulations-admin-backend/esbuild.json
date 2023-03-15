@@ -21,6 +21,7 @@
     "graphql",
     "jsdom",
     "pg",
+    "lru-cache",
     "pseudomap",
     "winston",
     "util-deprecate",
