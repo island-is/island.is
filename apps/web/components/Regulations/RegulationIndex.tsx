@@ -71,8 +71,7 @@ export const RegulationIndex = (props: RegulationIndexProps) => {
     const scrollMarginTop = 'scrollMarginTop' as 'height'
     document.body.style[scrollMarginTop] = SCROLL_OFFSET + 'px'
     return () => {
-      // @ts-expect-error  (silly TypeScript doesn't allow resetting style properties)
-      document.body.style[scrollMarginTop] = null
+      document.body.style[scrollMarginTop] = ''
     }
   }, [asPath])
 
