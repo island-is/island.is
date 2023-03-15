@@ -26,7 +26,6 @@ export const ReviewMainOperator: FC<FieldBaseProps & ReviewScreenProps> = ({
     string | undefined
   >(undefined)
   const [tempMainOperator, setTempMainOperator] = useState<string>(mainOperator)
-  console.log(mainOperator)
 
   const filteredCoOwnersAndOperators = coOwnersAndOperators.filter(
     ({ wasRemoved }) => wasRemoved !== 'true',
