@@ -506,6 +506,10 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildCustomField({
                   component: 'SelfEmployed',
                   id: 'isSelfEmployed',
+                  childInputIds: [
+                    'isReceivingUnemploymentBenefits',
+                    'isSelfEmployed',
+                  ],
                   title: parentalLeaveFormMessages.selfEmployed.title,
                   description:
                     parentalLeaveFormMessages.selfEmployed.description,
@@ -593,17 +597,20 @@ export const ParentalLeaveForm: Form = buildForm({
                     buildTextField({
                       id: 'email',
                       variant: 'email',
+                      dataTestId: 'employer-email',
                       title: parentalLeaveFormMessages.employer.email,
                     }),
                     buildTextField({
                       id: 'phoneNumber',
                       variant: 'tel',
+                      dataTestId: 'employer-phone-number',
                       format: '###-####',
                       placeholder: '000-0000',
                       title: parentalLeaveFormMessages.employer.phoneNumber,
                     }),
                     buildSelectField({
                       id: 'ratio',
+                      dataTestId: 'employment-ratio',
                       title: parentalLeaveFormMessages.employer.ratio,
                       placeholder:
                         parentalLeaveFormMessages.employer.ratioPlaceholder,

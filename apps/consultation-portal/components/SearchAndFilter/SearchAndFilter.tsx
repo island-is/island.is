@@ -32,7 +32,7 @@ const SearchAndFilter = ({
 
   const onChangeSearch = (value: string) => {
     const filtersCopy = { ...filters }
-    filtersCopy.query = value
+    filtersCopy.searchQuery = value
     setFilters(filtersCopy)
   }
 
@@ -68,8 +68,8 @@ const SearchAndFilter = ({
                     size="medium"
                     options={options}
                     placeholder="Að hverju ertu að leita?"
-                    initialInputValue={filters.query}
-                    inputValue={filters.query}
+                    initialInputValue={filters.searchQuery}
+                    inputValue={filters.searchQuery}
                     onInputValueChange={(value) => onChangeSearch(value)}
                   />
                 </Stack>
@@ -130,8 +130,8 @@ const SearchAndFilter = ({
               size="medium"
               options={options}
               placeholder="Að hverju ertu að leita?"
-              initialInputValue={filters.query}
-              inputValue={filters.query}
+              initialInputValue={filters.searchQuery}
+              inputValue={filters.searchQuery}
               onInputValueChange={(value) => onChangeSearch(value)}
             />
           </Box>
