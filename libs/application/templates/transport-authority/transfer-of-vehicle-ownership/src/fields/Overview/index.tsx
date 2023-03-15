@@ -45,6 +45,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
   setStep,
   reviewerNationalId = '',
   coOwnersAndOperators = [],
+  mainOperator = '',
   ...props
 }) => {
   const { application, refetch, insurance = undefined } = props
@@ -203,6 +204,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
         <OperatorSection
           reviewerNationalId={reviewerNationalId}
           coOwnersAndOperators={coOwnersAndOperators}
+          mainOperator={mainOperator}
           {...props}
         />
         <InsuranceSection

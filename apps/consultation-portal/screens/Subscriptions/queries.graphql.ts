@@ -1,13 +1,16 @@
 import gql from 'graphql-tag'
 
 export const GET_CASES = gql`
-  query consultationPortalAllCases {
-    consultationPortalAllCases {
-      id
-      caseNumber
-      name
-      institutionName
-      policyAreaName
+  query consultationPortalGetCases($input: ConsultationPortalCasesInput!) {
+    consultationPortalGetCases(input: $input) {
+      total
+      cases {
+        id
+        caseNumber
+        name
+        institutionName
+        policyAreaName
+      }
     }
   }
 `
