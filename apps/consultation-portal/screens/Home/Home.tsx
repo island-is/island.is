@@ -15,6 +15,7 @@ import Card from '../../components/Card/Card'
 import Layout from '../../components/Layout/Layout'
 import SearchAndFilter from '../../components/SearchAndFilter/SearchAndFilter'
 import {
+  ArrOfStatistics,
   ArrOfTypes,
   Case,
   CaseFilter,
@@ -32,10 +33,10 @@ import Pagination from '../../components/Pagination/Pagination'
 const CARDS_PER_PAGE = 12
 interface HomeProps {
   types: ArrOfTypes
+  statistics: ArrOfStatistics
 }
-export const Home = ({ types }: HomeProps) => {
+export const Home = ({ types, statistics }: HomeProps) => {
   const [page, setPage] = useState<number>(0)
-
   const {
     caseStatuses,
     caseTypes,
@@ -173,7 +174,7 @@ export const Home = ({ types }: HomeProps) => {
 
   return (
     <Layout isFrontPage seo={{ title: 'Öll mál' }}>
-      <HeroBanner />
+      <HeroBanner statistics={statistics} />
       <SearchAndFilter
         PolicyAreas={PolicyAreas}
         defaultPolicyAreas={allPolicyAreas}

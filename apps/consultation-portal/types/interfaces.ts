@@ -61,6 +61,12 @@ export interface ArrOfTypes {
   caseTypes: { [key: string]: string }
 }
 
+export interface ArrOfStatistics {
+  casesInReview?: number
+  totalAdvices?: number
+  totalCases?: number
+}
+
 export interface ArrOfTypesForSubscriptions {
   policyAreas: { [key: string]: string }
   institutions: { [key: string]: string }
