@@ -20,7 +20,7 @@ export const dumpServiceHelm = (
   const namespaceLabels = env.feature
     ? {
         namespaceType: 'feature',
-        expires: addHoursToDate(new Date(), 24),
+        expires: addHoursToDate(new Date(), 24).toString(),
       }
     : {}
   const HEADER =
