@@ -11,7 +11,6 @@ import {
 } from '@island.is/island-ui/core'
 import { Answers } from '../../types'
 import * as styles from '../styles.css'
-import { formatCurrency } from '@island.is/application/ui-components'
 
 type Props = {
   field: {
@@ -25,11 +24,17 @@ type Props = {
 
 export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
   field,
+  errors,
 }) => {
   const { id, props } = field
   const { fields, append, remove } = useFieldArray<any>({
     name: id,
   })
+
+  console.log(
+    id,
+    errors && errors[id] ? (errors[id] as any)[0]['accountNumber'] : '',
+  )
 
   const [rateOfExchange, setRateOfExchange] = useState(0)
   const [faceValue, setFaceValue] = useState(0)
@@ -109,6 +114,11 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
                       currency={field.currency}
                       readOnly={field.readOnly}
                       type={field.type}
+                      error={
+                        errors && errors[id]
+                          ? (errors[id] as any)[0][field.id]
+                          : undefined
+                      }
                       onChange={(e) => {
                         setIndex(fieldIndex)
                         const value = Math.max(0, Number(e.target.value))
