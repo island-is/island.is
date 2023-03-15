@@ -30,12 +30,7 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
   const { fields, append, remove } = useFieldArray<any>({
     name: id,
   })
-
-  console.log(
-    id,
-    errors && errors[id] ? (errors[id] as any)[0]['accountNumber'] : '',
-  )
-
+  
   const [rateOfExchange, setRateOfExchange] = useState(0)
   const [faceValue, setFaceValue] = useState(0)
   const [index, setIndex] = useState('0')
