@@ -181,11 +181,10 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
                             reg.ministry
                               ? [
                                   {
-                                    label: reg.ministry.name
-                                      ? reg.ministry.name
-                                      : typeof reg.ministry === 'string'
-                                      ? reg.ministry
-                                      : '',
+                                    label:
+                                      typeof reg.ministry === 'string'
+                                        ? reg.ministry
+                                        : reg.ministry.name,
                                     disabled: true,
                                   },
                                 ]

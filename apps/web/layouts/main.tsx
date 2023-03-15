@@ -38,6 +38,8 @@ import {
   QueryGetArticleCategoriesArgs,
   QueryGetGroupedMenuArgs,
   Menu,
+  GetOrganizationPageQuery,
+  GetSingleArticleQuery,
 } from '../graphql/schema'
 import { GlobalContextProvider } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
@@ -592,6 +594,13 @@ type LayoutWrapper<T> = NextComponentType<
   { layoutProps: LayoutProps; componentProps: T }
 >
 
+interface LayoutComponentProps {
+  themeConfig?: Partial<LayoutProps>
+  organizationPage?: GetOrganizationPageQuery['getOrganizationPage']
+  article?: GetSingleArticleQuery['getSingleArticle']
+  languageToggleQueryParams?: LayoutProps['languageToggleQueryParams']
+}
+
 export const withMainLayout = <T,>(
   Component: Screen<T>,
   layoutConfig: Partial<LayoutProps> = {},
@@ -617,30 +626,14 @@ export const withMainLayout = <T,>(
       getLayoutInitialProps(ctx),
       Component.getInitialProps ? Component.getInitialProps(ctx) : ({} as T),
     ])
+    const layoutComponentProps = componentProps as LayoutComponentProps
 
-    const componentPropsObject = componentProps as object
-
-    const themeConfig: Partial<LayoutProps> =
-      'themeConfig' in componentPropsObject
-        ? componentPropsObject['themeConfig']
-        : {}
-
-    const organizationAlertBannerContent: GetAlertBannerQuery['getAlertBanner'] =
-      'organizationPage' in componentPropsObject
-        ? componentPropsObject['organizationPage']?.['alertBanner']
-        : undefined
-
-    const articleAlertBannerContent: GetAlertBannerQuery['getAlertBanner'] =
-      'article' in componentPropsObject
-        ? componentPropsObject['article']?.['alertBanner']
-        : undefined
-
+    const themeConfig = layoutComponentProps.themeConfig ?? {}
+    const organizationAlertBannerContent =
+      layoutComponentProps.organizationPage?.alertBanner
+    const articleAlertBannerContent = layoutComponentProps.article?.alertBanner
     const languageToggleQueryParams =
-      'languageToggleQueryParams' in componentPropsObject
-        ? (componentPropsObject[
-            'languageToggleQueryParams'
-          ] as LayoutProps['languageToggleQueryParams'])
-        : undefined
+      layoutComponentProps.languageToggleQueryParams
 
     return {
       layoutProps: {
