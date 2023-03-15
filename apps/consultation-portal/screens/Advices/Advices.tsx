@@ -10,7 +10,7 @@ import { Card } from '../../components'
 import { useEffect, useState } from 'react'
 import Layout from '../../components/Layout/Layout'
 import SearchAndSort from '../../components/SearchAndSort/SearchAndSort'
-import { SortOptions } from '../../types/enums'
+import { Area, SortOptions } from '../../types/enums'
 import BreadcrumbsWithMobileDivider from '../../components/BreadcrumbsWithMobileDivider/BreadcrumbsWithMobileDivider'
 import { sorting } from '../../utils/helpers'
 import EmptyState from '../../components/EmptyState/EmptyState'
@@ -341,7 +341,7 @@ const CARDS_PER_PAGE = 12
 export const AdvicesScreen = ({ allUserAdvices }) => {
   const [sortTitle, setSortTitle] = useState(SortOptions.aToZ)
   const [searchValue, setSearchValue] = useState('')
-  const [page, setPage] = useState<number>(1)
+  const [page, setPage] = useState<number>(0)
 
   const [data, setData] = useState(dummycontent)
 
@@ -366,8 +366,8 @@ export const AdvicesScreen = ({ allUserAdvices }) => {
 
   const count = data.length
   const totalPages = Math.ceil(count / CARDS_PER_PAGE)
-  const base = page === 1 ? 0 : (page - 1) * CARDS_PER_PAGE
-  const visibleItems = data.slice(base, page * CARDS_PER_PAGE)
+  const base = page === 1 ? 0 : page * CARDS_PER_PAGE
+  const visibleItems = data.slice(base, (page + 1) * CARDS_PER_PAGE)
 
   return (
     <Layout seo={{ title: 'umsagnir', url: 'umsagnir' }}>
@@ -394,6 +394,7 @@ export const AdvicesScreen = ({ allUserAdvices }) => {
             setSearchValue={(newValue) => setSearchValue(newValue)}
             sortTitle={sortTitle}
             setSortTitle={(title: SortOptions) => setSortTitle(title)}
+            currentTab={Area.case}
           />
           {data && (
             <>
@@ -451,7 +452,11 @@ export const AdvicesScreen = ({ allUserAdvices }) => {
                 </Tiles>
               )}
               {totalPages > 1 && (
-                <Pagination updatePage={updatePage} totalPages={totalPages} />
+                <Pagination
+                  page={page}
+                  setPage={(page: number) => setPage(page)}
+                  totalPages={totalPages}
+                />
               )}
             </>
           )}
