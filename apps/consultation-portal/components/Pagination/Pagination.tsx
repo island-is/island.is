@@ -2,21 +2,17 @@ import {
   Box,
   Pagination as PaginationComponent,
 } from '@island.is/island-ui/core'
-import { useState } from 'react'
 import * as styles from './Pagination.css'
 
 interface PaginationProps {
-  updatePage: (argo0: number) => void
+  page: number
+  setPage: (argo0: number) => void
   totalPages: number
 }
 
-const Pagination = ({ updatePage, totalPages }: PaginationProps) => {
-  const [page, setPage] = useState<number>(1)
-
-  const goToPage = (page = 1, scrollTop = true) => {
+const Pagination = ({ page, setPage, totalPages }: PaginationProps) => {
+  const goToPage = (page = 0, scrollTop = true) => {
     setPage(page)
-    updatePage(page)
-
     if (scrollTop) {
       window.scrollTo(0, 0)
     }
@@ -25,13 +21,13 @@ const Pagination = ({ updatePage, totalPages }: PaginationProps) => {
   return (
     <Box paddingTop={[5, 5, 5, 8, 8]}>
       <PaginationComponent
-        page={page}
+        page={page + 1}
         totalPages={totalPages}
         variant="blue"
         renderLink={(page, className, children) => (
           <button
             onClick={() => {
-              goToPage(page)
+              goToPage(page - 1)
             }}
           >
             <div className={styles.spanStyle}>Síða</div>
