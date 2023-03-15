@@ -22,6 +22,12 @@ export const serviceSetup = (): ServiceBuilder<'regulations-admin-backend'> =>
       REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL',
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/services-regulations-admin/IDENTITY_SERVER_CLIENT_SECRET',
+      REGULATIONS_FILE_UPLOAD_KEY_DRAFT:
+        '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_DRAFT',
+      REGULATIONS_FILE_UPLOAD_KEY_PUBLISH:
+        '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH',
+      REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED:
+        '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED',
     })
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },
