@@ -2,8 +2,6 @@ import React from 'react'
 
 const Grieving: React.FC = () => (
   <svg
-    width="595"
-    height="251"
     viewBox="0 0 595 251"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
