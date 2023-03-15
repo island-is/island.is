@@ -3,11 +3,11 @@ import { ArrOfTypes } from '../../types/interfaces'
 
 const TODAY = new Date()
 
-interface props {
+interface Props {
   types: ArrOfTypes
 }
 
-export const getInitFilterValues = ({ types }: props) => {
+export const getInitFilterValues = ({ types }: Props) => {
   const caseStatuses = Object.entries(types.caseStatuses)
     .map(([value, label]) => ({
       value,

@@ -507,6 +507,10 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildCustomField({
                   component: 'SelfEmployed',
                   id: 'isSelfEmployed',
+                  childInputIds: [
+                    'isReceivingUnemploymentBenefits',
+                    'isSelfEmployed',
+                  ],
                   title: parentalLeaveFormMessages.selfEmployed.title,
                   description:
                     parentalLeaveFormMessages.selfEmployed.description,

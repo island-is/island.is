@@ -154,6 +154,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'removeNullPeriod',
           'setNavId',
           'correctTransferRights',
+          'clearEmployers',
         ],
         meta: {
           name: States.DRAFT,
@@ -304,7 +305,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN]: {
-        entry: 'clearEmployers',
         exit: 'setEmployerReviewerNationalRegistryId',
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN,
@@ -822,6 +822,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'removeNullPeriod',
           'setNavId',
           'setActionName',
+          'clearEmployers',
         ],
         meta: {
           name: States.EDIT_OR_ADD_PERIODS,
@@ -874,7 +875,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS]: {
-        entry: 'clearEmployers',
         exit: [
           'setEmployerReviewerNationalRegistryId',
           'restorePeriodsFromTemp',
