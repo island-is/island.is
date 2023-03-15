@@ -32,7 +32,7 @@ export const searchQuery = (
   let minimumShouldMatch = 1
 
   const fieldsWeights = [
-    'title^6', // note boosting ..
+    'title^100', // note boosting ..
     'title.stemmed^2', // note boosting ..
     'content',
     'content.stemmed',
@@ -162,14 +162,15 @@ export const searchQuery = (
         },
         functions: [
           // content gets a natural boost based on visits/popularity
-          // {
-          //   field_value_factor: {
-          //     field: 'popularityScore',
-          //     factor: 1.2,
-          //     modifier: 'log1p',
-          //     missing: 1,
-          //   },
-          // },
+          {
+            field_value_factor: {
+              field: 'popularityScore',
+              factor: 1.2,
+              modifier: 'log1p',
+              missing: 1,
+              // max_boost: 1.5,
+            },
+          },
           // content that is an entrance to "umsoknir" gets a boost
           { filter: { range: { processEntryCount: { gte: 1 } } }, weight: 2 },
           // content that is a "forsíða stofnunar" gets a boost
