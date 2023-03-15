@@ -12,7 +12,9 @@ import {
   TempData,
   NationalRegistry,
   ApplicantCard,
-} from './dto/european-health-insurance-card.dtos'
+  CardType,
+  FormApplyType,
+} from './types'
 import { TemplateApiModuleActionProps } from '../../../types'
 
 // TODO: move to shared location
@@ -30,40 +32,32 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
   /** Helper function. Get's applicants by type. If no type is provided then it returns from national registry */
   getApplicants(
     application: ApplicationWithAttachments,
-    cardType: string | null = null,
+    applyType: string | null = null,
   ): string[] {
-    const nridArr: string[] = []
-    const userData = application.externalData.nationalRegistry
-      ?.data as NationalRegistry
+    // Get from national registry
+    if (!applyType) {
+      const nridArr: string[] = []
+      const userData = application.externalData.nationalRegistry
+        ?.data as NationalRegistry
 
-    if (userData?.nationalId) {
-      nridArr.push(userData.nationalId)
-    }
+      if (userData?.nationalId) {
+        nridArr.push(userData.nationalId)
+      }
 
-    const spouseData = application?.externalData?.nationalRegistrySpouse
-      ?.data as NationalRegistry
-    if (spouseData?.nationalId) {
-      nridArr.push(spouseData.nationalId)
-    }
+      const spouseData = application?.externalData?.nationalRegistrySpouse
+        ?.data as NationalRegistry
+      if (spouseData?.nationalId) {
+        nridArr.push(spouseData.nationalId)
+      }
 
-    const custodyData = (application?.externalData
-      ?.childrenCustodyInformation as unknown) as NationalRegistry[]
-    for (let i = 0; i < custodyData?.length; i++) {
-      nridArr.push(custodyData[i].nationalId)
-    }
-
-    if (!cardType) {
+      const custodyData = (application?.externalData
+        ?.childrenCustodyInformation as unknown) as NationalRegistry[]
+      for (let i = 0; i < custodyData?.length; i++) {
+        nridArr.push(custodyData[i].nationalId)
+      }
       return nridArr
     }
-
-    const applicants = application.answers[cardType] as string[]
-    const apply: string[] = []
-
-    for (let i = 0; i < applicants?.length; i++) {
-      apply.push(applicants[i])
-    }
-
-    return apply
+    return application.answers[applyType] as string[]
   }
 
   toCommaDelimitedList(arr: string[]) {
@@ -83,11 +77,11 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
   ): ApplicantCard[] {
     const pdfApplicantArr: ApplicantCard[] = []
 
-    const applicants = this.getApplicants(application, 'applyForPDF')
-    this.logger.info('applyForPDF')
-    applicants.forEach((element) => {
-      this.logger.info(element)
-    })
+    const applicants = this.getApplicants(
+      application,
+      FormApplyType.APPLYING_FOR_PDF,
+    )
+
     // Initial card Response
     const cardResponse = application.externalData.cardResponse
       ?.data as CardResponse[]
@@ -108,7 +102,7 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
             if (plasticCard) {
               pdfApplicantArr.push({
                 cardNumber: plasticCard.cardNumber ?? '',
-                nrid: applicants[i],
+                nationalId: applicants[i],
               })
               continue
             }
@@ -125,7 +119,7 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
           if (plasticCard) {
             pdfApplicantArr.push({
               cardNumber: plasticCard?.cardNumber ?? '',
-              nrid: applicants[i],
+              nationalId: applicants[i],
             })
           }
         }
@@ -142,28 +136,6 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
       const resp = await this.ehicApi.cardStatus({
         usernationalid: auth.nationalId,
         applicantnationalids: this.toCommaDelimitedList(nridArr),
-      })
-
-      // TODO: Remove. Temporary malipulation of dummy data for Emilía Íris Sveinsdóttir
-      for (let i = 0; i < resp.length; i++) {
-        if (i === 0) {
-          resp[i].applicantNationalId = '2409151460'
-        }
-        if (i === 1) {
-          resp[i].applicantNationalId = '0107721419'
-          resp[i].canApply = false
-        }
-
-        if (i === 2) {
-          resp[i].applicantNationalId = '1111111119'
-        }
-      }
-
-      resp.push({
-        applicantNationalId: '3333333339',
-        canApply: true,
-        isInsured: true,
-        cards: [],
       })
 
       if (!resp) {
@@ -187,14 +159,17 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps) {
-    const applicants = this.getApplicants(application, 'applyForPlastic')
+    const applicants = this.getApplicants(
+      application,
+      FormApplyType.APPLYING_FOR_PLASTIC,
+    )
     const cardResponses: CardResponse[] = []
 
     for (let i = 0; i < applicants.length; i++) {
       try {
         const res = await this.ehicApi.requestCard({
           applicantnationalid: applicants[i],
-          cardtype: 'plastic',
+          cardtype: CardType.PLASTIC,
           usernationalid: auth.nationalId,
         })
         cardResponses.push(res)
@@ -209,13 +184,16 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps) {
-    const applicants = this.getApplicants(application, 'applyForPDF')
+    const applicants = this.getApplicants(
+      application,
+      FormApplyType.APPLYING_FOR_PDF,
+    )
 
     for (let i = 0; i < applicants.length; i++) {
       try {
         await this.ehicApi.requestCard({
           applicantnationalid: applicants[i],
-          cardtype: 'pdf',
+          cardtype: CardType.PDF,
           usernationalid: auth.nationalId,
         })
       } catch (error) {
@@ -228,14 +206,10 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     const applicants = this.getPDFApplicantsAndCardNumber(application)
     const pdfArray: TempData[] = []
 
-    this.logger.info('PDF applicants')
-    this.logger.info(applicants.length)
-
     for (let i = 0; i < applicants.length; i++) {
-      this.logger.info(applicants[i].nrid)
       try {
         const res = await this.ehicApi.fetchTempPDFCard({
-          applicantnationalid: applicants[i].nrid ?? '',
+          applicantnationalid: applicants[i].nationalId ?? '',
           cardnumber: applicants[i].cardNumber ?? '',
           usernationalid: auth.nationalId,
         })

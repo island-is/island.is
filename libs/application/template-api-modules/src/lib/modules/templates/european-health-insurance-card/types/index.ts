@@ -27,6 +27,16 @@ export interface TempData {
 }
 
 export interface ApplicantCard {
-  nrid: string | null
+  nationalId: string | null
   cardNumber: string | null
+}
+
+export enum CardType {
+  PLASTIC = '1',
+  PDF = '2',
+}
+
+export enum FormApplyType {
+  APPLYING_FOR_PDF = 'applyForPDF',
+  APPLYING_FOR_PLASTIC = 'applyForPlastic',
 }
