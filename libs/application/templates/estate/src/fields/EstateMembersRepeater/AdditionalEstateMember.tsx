@@ -27,17 +27,10 @@ import * as kennitala from 'kennitala'
 import { m } from '../../lib/messages'
 import { YES } from '../../lib/constants'
 import { IDENTITY_QUERY } from '../../graphql'
-import { hasYes } from '@island.is/application/core'
-import { TextFormField } from '@island.is/application/ui-fields'
-import {
-  Application,
-  FieldComponents,
-  FieldTypes,
-} from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 import { EstateMember } from '../../types'
 
 export const AdditionalEstateMember = ({
-  application,
   field,
   index,
   remove,
@@ -184,26 +177,17 @@ export const AdditionalEstateMember = ({
                 required
                 backgroundColor="blue"
                 loading={queryLoading}
-                error={queryError ? formatMessage('error') : undefined}
+                error={queryError ? error?.name : undefined}
               />
             </GridColumn>
-            <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-              <TextFormField
-                application={application}
-                error={error?.name ?? undefined}
-                showFieldName={true}
-                field={{
-                  ...field,
-                  id: nameField,
-                  title: formatMessage(m.inheritanceNameLabel),
-                  placeholder: '',
-                  defaultValue: field.name || '',
-                  type: FieldTypes.TEXT,
-                  component: FieldComponents.TEXT,
-                  children: undefined,
-                  backgroundColor: 'blue',
-                  readOnly: true,
-                }}
+            <GridColumn span={['1/1', '1/2']} paddingBottom={2} paddingTop={2}>
+              <InputController
+                id={nameField}
+                name={nameField}
+                label={formatMessage(m.inheritanceNameLabel)}
+                readOnly
+                defaultValue={field.name || ''}
+                backgroundColor="white"
               />
             </GridColumn>
           </>
@@ -221,21 +205,23 @@ export const AdditionalEstateMember = ({
           />
         </GridColumn>
         <GridColumn span="1/1" paddingBottom={2}>
-          <CheckboxController
-            key={foreignCitizenshipField}
-            id={foreignCitizenshipField}
-            name={foreignCitizenshipField}
-            defaultValue={field?.foreignCitizenship || []}
-            options={[
-              {
-                label: formatMessage(m.inheritanceForeignCitizenshipLabel),
-                value: YES,
-              },
-            ]}
-            onSelect={() => {
-              setForeignCitizenship(foreignCitizenship?.length ? [] : ['yes'])
-            }}
-          />
+          <Box width="half">
+            <CheckboxController
+              key={foreignCitizenshipField}
+              id={foreignCitizenshipField}
+              name={foreignCitizenshipField}
+              defaultValue={field?.foreignCitizenship || []}
+              options={[
+                {
+                  label: formatMessage(m.inheritanceForeignCitizenshipLabel),
+                  value: YES,
+                },
+              ]}
+              onSelect={() => {
+                setForeignCitizenship(foreignCitizenship?.length ? [] : ['yes'])
+              }}
+            />
+          </Box>
         </GridColumn>
         {heirUnder18 && (
           <GridColumn span="1/1" paddingBottom={2}>
