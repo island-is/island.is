@@ -1,4 +1,5 @@
 //import PDFDocument from 'pdfkit'
+import { debuglog } from 'util'
 import fs from 'fs'
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
@@ -19,6 +20,10 @@ export function createMockPdf() {
 export function deleteMockPdf() {
   fs.unlink('./mockPdf.pdf', (err) => {
     if (err) throw err
-    console.log('Successfully deleted mockPdf file.')
+    debug('Successfully deleted mockPdf file.')
   })
+}
+
+export function debug(msg: string, ...args: unknown[]) {
+  debuglog('system-e2e')(msg, ...args)
 }
