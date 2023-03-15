@@ -11,6 +11,7 @@ export const GET_ADVICES = gql`
       created
       adviceDocuments {
         id
+        fileName
       }
     }
   }
