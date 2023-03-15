@@ -1,4 +1,8 @@
 import {
+  getDateBeginDateEnd,
+  getShortDate,
+} from '../../utils/helpers/dateFormatter'
+import {
   Tag,
   Box,
   Divider,
@@ -18,6 +22,8 @@ type CardInfo = {
   id: number
   title: string
   published?: string
+  processBegins?: string
+  processEnds?: string
   eyebrows: Array<string>
 }
 type CardProps = {
@@ -74,7 +80,7 @@ export const Card = ({
             Umsagnarfrestur:
           </Text>
           <Text variant="eyebrow" color="blue600">
-            01.09.22 – 01.12.22
+            {getDateBeginDateEnd(card.processBegins, card.processEnds)}
           </Text>
         </Inline>
         <Box paddingY={1}>
@@ -88,10 +94,9 @@ export const Card = ({
           <ArrowLink href={`/mal/${card.id}`}>Skoða mál</ArrowLink>
         </Box>
         {showPublished && (
-          <Text
-            variant="eyebrow"
-            color="blueberry400"
-          >{`Birt: ${card.published}`}</Text>
+          <Text variant="eyebrow" color="purple400">{`Birt: ${getShortDate(
+            card.published,
+          )}`}</Text>
         )}
       </Inline>
     </>

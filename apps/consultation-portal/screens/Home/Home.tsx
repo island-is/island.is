@@ -138,6 +138,8 @@ export const Home = ({ types }: HomeProps) => {
                 title: item.name,
                 tag: item.statusName,
                 published: item.created,
+                processEnds: item.processEnds,
+                processBegins: item.processBegins,
                 eyebrows: [item.typeName, item.institutionName],
               }
               return (
