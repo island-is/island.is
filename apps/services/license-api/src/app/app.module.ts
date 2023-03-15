@@ -15,6 +15,7 @@ import {
   FirearmDigitalLicenseClientConfig,
   MachineDigitalLicenseClientConfig,
 } from '@island.is/clients/license-client'
+import { AuthModule } from '@island.is/auth-nest-tools'
 
 @Module({
   imports: [
