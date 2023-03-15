@@ -72,7 +72,9 @@ export function hasEmployer(context: ApplicationContext) {
     if (currentApplicationAnswers.applicationType.option === PARENTAL_LEAVE) {
       return selfEmployed && receivingUnemploymentBenefits
     } else if (
-      currentApplicationAnswers.applicationType.option === PARENTAL_GRANT &&
+      (currentApplicationAnswers.applicationType.option === PARENTAL_GRANT ||
+        currentApplicationAnswers.applicationType.option ===
+          PARENTAL_GRANT_STUDENTS) &&
       currentApplicationAnswers.employers !== undefined
     ) {
       return currentApplicationAnswers.employers.some(

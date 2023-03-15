@@ -83,8 +83,9 @@ export const validateLatestEmployerValidationSection = (
   if (
     isSelfEmployed === YES ||
     isReceivingUnemploymentBenefits === YES ||
-    (applicationType === PARENTAL_GRANT && employerLastSixMonths === NO) ||
-    applicationType === PARENTAL_GRANT_STUDENTS
+    ((applicationType === PARENTAL_GRANT ||
+      applicationType === PARENTAL_GRANT_STUDENTS) &&
+      employerLastSixMonths === NO)
   ) {
     return undefined
   }
@@ -99,23 +100,44 @@ export const validateLatestEmployerValidationSection = (
   }
 
   /* eslint-disable-next-line @typescript-eslint/no-inferrable-types */
-  let index: number = -1
+  let ratioIndex: number = -1
   employers?.map((e, i) => {
     if (!e.ratio) {
-      index = i
+      ratioIndex = i
       return
     }
   })
-  if (index >= 0) {
+  if (ratioIndex >= 0) {
     return buildError(
       errorMessages.employersRatioMissing,
-      `employers[${index}].ratio`,
+      `employers[${ratioIndex}].ratio`,
     )
   }
 
   const validationError = validateEmployerRepeaterFields(employers)
   if (validationError) {
     return validationError
+  }
+
+  if (
+    (applicationType === PARENTAL_GRANT ||
+      applicationType === PARENTAL_GRANT_STUDENTS) &&
+    employerLastSixMonths === YES
+  ) {
+    /* eslint-disable-next-line @typescript-eslint/no-inferrable-types */
+    let stillEmployedIndex: number = -1
+    employers?.map((e, i) => {
+      if (!e.stillEmployed) {
+        stillEmployedIndex = i
+        return
+      }
+    })
+    if (stillEmployedIndex >= 0) {
+      return buildError(
+        errorMessages.employersStillEmployedMissing,
+        `employers[${stillEmployedIndex}].stillEmployed`,
+      )
+    }
   }
 
   return undefined

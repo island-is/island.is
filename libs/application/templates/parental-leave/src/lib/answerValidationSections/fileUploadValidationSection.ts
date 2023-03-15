@@ -60,7 +60,8 @@ export const fileUploadValidationSection = (
   )
 
   if (
-    applicationType === PARENTAL_GRANT &&
+    (applicationType === PARENTAL_GRANT ||
+      applicationType === PARENTAL_GRANT_STUDENTS) &&
     employerLastSixMonths === YES &&
     isNotStillEmployed &&
     obj.employmentTerminationCertificateFile

@@ -19,6 +19,7 @@ import {
   States,
   PARENTAL_GRANT,
   YES,
+  PARENTAL_GRANT_STUDENTS,
 } from '../../constants'
 import { SummaryRights } from '../Rights/SummaryRights'
 import { useStatefulAnswers } from '../../hooks/useStatefulAnswers'
@@ -104,7 +105,8 @@ export const Review: FC<ReviewScreenProps> = ({
         <SpousePersonalAllowance {...childProps} />
       )}
       {(applicationType === PARENTAL_LEAVE ||
-        (applicationType === PARENTAL_GRANT &&
+        ((applicationType === PARENTAL_GRANT ||
+          applicationType === PARENTAL_GRANT_STUDENTS) &&
           employerLastSixMonths === YES)) && <Employment {...childProps} />}
       <ReviewGroup>
         <SummaryRights application={application} />

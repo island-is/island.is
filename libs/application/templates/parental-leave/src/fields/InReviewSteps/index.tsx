@@ -21,6 +21,7 @@ import {
 import {
   NO,
   PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
   States as ApplicationStates,
   States,
@@ -162,7 +163,8 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
   }
 
   if (
-    applicationType === PARENTAL_GRANT &&
+    (applicationType === PARENTAL_GRANT ||
+      applicationType === PARENTAL_GRANT_STUDENTS) &&
     employerLastSixMonths === YES &&
     isStillEmployed
   ) {

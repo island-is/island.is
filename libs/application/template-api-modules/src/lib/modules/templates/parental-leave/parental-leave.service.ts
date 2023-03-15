@@ -496,8 +496,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
           })
         }
       }
-    } else if (
-      applicationType === PARENTAL_GRANT &&
+    }
+    if (
+      (applicationType === PARENTAL_GRANT ||
+        applicationType === PARENTAL_GRANT_STUDENTS) &&
       employerLastSixMonths === YES &&
       isNotStillEmployed
     ) {

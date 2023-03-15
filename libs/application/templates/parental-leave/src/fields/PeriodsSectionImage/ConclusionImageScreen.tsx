@@ -14,7 +14,13 @@ import {
   otherParentApprovalDescription,
   requiresOtherParentApproval,
 } from '../../lib/parentalLeaveUtils'
-import { NO, PARENTAL_GRANT, PARENTAL_LEAVE, YES } from '../../constants'
+import {
+  NO,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  PARENTAL_LEAVE,
+  YES,
+} from '../../constants'
 
 import * as styles from './ConclusionImageScreen.css'
 
@@ -48,7 +54,8 @@ const ConclusionSectionImage: FC<FieldBaseProps> = ({ application }) => {
   }
 
   if (
-    applicationType === PARENTAL_GRANT &&
+    (applicationType === PARENTAL_GRANT ||
+      applicationType === PARENTAL_GRANT_STUDENTS) &&
     employerLastSixMonths === YES &&
     isStillEmployed
   ) {

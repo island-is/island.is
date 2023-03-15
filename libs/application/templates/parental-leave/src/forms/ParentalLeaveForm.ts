@@ -564,7 +564,10 @@ export const ParentalLeaveForm: Form = buildForm({
           condition: (answers) => {
             const { applicationType } = getApplicationAnswers(answers)
 
-            return applicationType === PARENTAL_GRANT
+            return (
+              applicationType === PARENTAL_GRANT ||
+              applicationType === PARENTAL_GRANT_STUDENTS
+            )
           },
           id: 'parentalGrantEmployment',
           title: parentalLeaveFormMessages.employer.subSection,
@@ -600,7 +603,8 @@ export const ParentalLeaveForm: Form = buildForm({
               (applicationType === PARENTAL_LEAVE &&
                 isReceivingUnemploymentBenefits === NO &&
                 isNotSelfEmployed) ||
-              (applicationType === PARENTAL_GRANT &&
+              ((applicationType === PARENTAL_GRANT ||
+                applicationType === PARENTAL_GRANT_STUDENTS) &&
                 employerLastSixMonths === YES)
             )
           },
@@ -657,7 +661,8 @@ export const ParentalLeaveForm: Form = buildForm({
                         } = getApplicationAnswers(answers)
 
                         return (
-                          applicationType === PARENTAL_GRANT &&
+                          (applicationType === PARENTAL_GRANT ||
+                            applicationType === PARENTAL_GRANT_STUDENTS) &&
                           employerLastSixMonths === YES
                         )
                       },
@@ -880,27 +885,20 @@ export const ParentalLeaveForm: Form = buildForm({
                 parentalLeaveFormMessages.attachmentScreen
                   .employmentTerminationCertificateDescription,
               condition: (answers) => {
-                const isParentalGrant =
-                  (answers as {
-                    applicationType: {
-                      option: string
-                    }
-                  })?.applicationType?.option === PARENTAL_GRANT
-                const hadEmployerLastSixMonths =
-                  (answers as {
-                    employerLastSixMonths: YesOrNo
-                  })?.employerLastSixMonths === YES
-                const isNotStillEmployed = (answers as {
-                  employers: [
-                    {
-                      stillEmployed: YesOrNo
-                    },
-                  ]
-                })?.employers?.some((employer) => employer.stillEmployed === NO)
+                const {
+                  applicationType,
+                  employerLastSixMonths,
+                  employers,
+                } = getApplicationAnswers(answers)
+
+                const isNotStillEmployed = employers?.some(
+                  (employer) => employer.stillEmployed === NO,
+                )
 
                 return (
-                  isParentalGrant &&
-                  hadEmployerLastSixMonths &&
+                  (applicationType === PARENTAL_GRANT ||
+                    applicationType === PARENTAL_GRANT_STUDENTS) &&
+                  employerLastSixMonths === YES &&
                   isNotStillEmployed
                 )
               },
