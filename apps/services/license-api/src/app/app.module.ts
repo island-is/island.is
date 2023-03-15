@@ -19,6 +19,7 @@ import {
 @Module({
   imports: [
     AuditModule.forRoot(environment.audit),
+    AuthModule.register(environment.auth),
     ProblemModule,
     LoggingModule,
     ConfigModule.forRoot({
