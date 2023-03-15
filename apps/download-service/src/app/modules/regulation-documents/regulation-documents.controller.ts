@@ -50,15 +50,11 @@ export class RegulationDocumentsController {
     @Res() res: Response,
   ) {
     let draftRegulation: RegulationDraft | null = null
-    const authUser: User = {
-      ...user,
-      authorization: `Bearer ${resource.__accessToken}`,
-    }
 
     try {
       draftRegulation = await this.regulationsAdminClientService.getDraftRegulation(
         regulationId,
-        authUser,
+        `Bearer ${resource.__accessToken}`,
       )
     } catch (e) {
       console.error('unable to get draft regulation', e)
