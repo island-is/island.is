@@ -24,7 +24,6 @@ export function deleteMockPdf() {
   })
 }
 
-
 // Set NODE_DEBUG=system-e2e in your environment when testing to show debug messages
 export function debug(msg: string, ...args: unknown[]) {
   debuglog('system-e2e')(msg, ...args)
