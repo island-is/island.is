@@ -1,4 +1,5 @@
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { Base, Client } from '../../../../infra/src/dsl/xroad'
 
 const postgresInfo = {}
 export const serviceSetup = (): ServiceBuilder<'regulations-admin-backend'> =>
@@ -33,6 +34,7 @@ export const serviceSetup = (): ServiceBuilder<'regulations-admin-backend'> =>
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '100m', memory: '256Mi' },
     })
+    .xroad(Base, Client)
     .readiness('/liveness')
     .liveness('/liveness')
     .grantNamespaces('islandis')
