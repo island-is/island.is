@@ -264,13 +264,13 @@ export class OperatingLicenseService extends BaseTemplateApiService {
           uploadDataId,
         )
         .catch((e) => {
-          throw new Error(`Application submission failed`)
+          throw new Error(`Application submission failed ${e}`)
         })
       return {
         success: result.success,
       }
     } catch (e) {
-      throw new Error(`Application submission failed`)
+      throw new Error(`Application submission failed ${e}`)
     }
   }
 
