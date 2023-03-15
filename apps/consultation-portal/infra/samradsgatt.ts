@@ -18,7 +18,6 @@ export const serviceSetup = (): ServiceBuilder<'consultation-portal'> =>
     .env({
       BASEPATH: '/consultation-portal',
       ENVIRONMENT: ref((h) => h.env.type),
-      UNUSED: 'na',
     })
     .secrets({
       DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID',
