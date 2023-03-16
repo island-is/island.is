@@ -261,7 +261,6 @@ export class SmartSolutionsApi {
       passInputData.inputFieldValues ?? undefined,
       payload.inputFieldValues ?? undefined,
     )
-    //now we finally have the updated pass data!
     const updatedPassData = {
       ...passInputData,
       ...payload,
