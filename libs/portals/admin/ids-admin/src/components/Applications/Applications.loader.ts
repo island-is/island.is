@@ -15,9 +15,7 @@ export const applicationsLoader: WrappedLoaderFn = ({ client }) => {
     const applicationsList = await client.query<GetApplicationsByIdQuery>({
       query: GetApplicationsByIdDocument,
       variables: {
-        input: {
-          tenantId: params['tenant'],
-        },
+        tenantId: params['tenant'],
       },
     })
 
