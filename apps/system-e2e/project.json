@@ -22,9 +22,7 @@
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
-        "lintFilePatterns": [
-          "apps/system-e2e/**/*.{ts,tsx,js,jsx}"
-        ]
+        "lintFilePatterns": ["apps/system-e2e/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "smoke": {
@@ -41,7 +39,5 @@
     },
     "docker-playwright": {}
   },
-  "tags": [
-    "scope:e2e"
-  ]
+  "tags": ["scope:e2e"]
 }
