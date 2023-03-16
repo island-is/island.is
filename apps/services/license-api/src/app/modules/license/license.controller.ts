@@ -31,7 +31,7 @@ import { NationalId } from '@island.is/nest/core'
   description: "The user's national id",
 })
 @Controller({ version: ['1'], path: 'users/.nationalId/licenses/' })
-//@UseGuards(IdsAuthGuard, LicenseTypeScopesGuard)
+@UseGuards(IdsAuthGuard, LicenseTypeScopesGuard)
 @ApiTags('users-licenses')
 @Audit()
 export class UserLicensesController {
