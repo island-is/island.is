@@ -7,6 +7,7 @@ import { Divider, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyState,
+  FootNote,
   formatNationalId,
   IntroHeader,
   m,
@@ -151,6 +152,7 @@ const CompanyInfo = () => {
           <Divider />
         </Stack>
       )}
+      <FootNote serviceProviderID={SKATTURINN_ID} />
     </>
   )
 }

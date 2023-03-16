@@ -3,11 +3,15 @@ import {
   BoxProps,
   SkeletonLoader,
   Tooltip,
+  Text,
 } from '@island.is/island-ui/core'
 import * as styles from './InstitutionPanel.css'
 import React from 'react'
+import { theme } from '@island.is/island-ui/theme'
+import { useWindowSize } from 'react-use'
 
 interface InstitutionPanelProps {
+  title?: string
   img?: string
   linkHref: string
   imgContainerDisplay?: BoxProps['display']
@@ -23,7 +27,11 @@ export const InstitutionPanel = ({
   loading = false,
   backgroundColor = 'purple100',
   tooltipText,
+  title,
 }: InstitutionPanelProps) => {
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
+
   return (
     <a
       href={linkHref}
@@ -37,6 +45,9 @@ export const InstitutionPanel = ({
         padding={2}
         display="flex"
         alignItems="center"
+        height={isMobile ? undefined : 'full'}
+        width="full"
+        position="relative"
       >
         <Box display={imgContainerDisplay}>
           {loading ? (
@@ -47,18 +58,27 @@ export const InstitutionPanel = ({
               background="purple200"
             />
           ) : (
-            <>
+            <Box display="flex" flexDirection="row">
               <Box
                 component="img"
                 alt=""
                 src={img ? img : './assets/images/skjaldarmerki.svg'}
-                width="full"
-                height="full"
+                width={isMobile ? undefined : 'full'}
+                height={isMobile ? undefined : 'full'}
+                marginRight={isMobile ? 2 : 0}
+                className={isMobile && styles.image}
               />
-              <div className={styles.tooltip}>
-                <Tooltip text={tooltipText} />
-              </div>
-            </>
+              {title && (
+                <Text variant="h4" as="p" color="purple600" lineHeight="xl">
+                  {title}
+                </Text>
+              )}
+              {tooltipText && (
+                <div className={styles.tooltip}>
+                  <Tooltip text={tooltipText} />
+                </div>
+              )}
+            </Box>
           )}
         </Box>
       </Box>

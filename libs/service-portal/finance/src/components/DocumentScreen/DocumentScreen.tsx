@@ -27,6 +27,7 @@ import {
   amountFormat,
   ErrorScreen,
   FJARSYSLAN_ID,
+  FootNote,
   formSubmit,
   IntroHeader,
   m,
@@ -360,6 +361,7 @@ const DocumentScreen: FC<Props> = ({
           ) : null}
         </Box>
       </Stack>
+      <FootNote serviceProviderID={FJARSYSLAN_ID} />
     </Box>
   )
 }

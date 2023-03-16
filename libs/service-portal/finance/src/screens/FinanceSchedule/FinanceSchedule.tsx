@@ -18,6 +18,7 @@ import {
   NoDataScreen,
   m as coreMessage,
   FJARSYSLAN_ID,
+  FootNote,
 } from '@island.is/service-portal/core'
 import { checkDelegation } from '@island.is/shared/utils'
 
@@ -165,6 +166,7 @@ const FinanceSchedule = () => {
           ) : null}
         </Box>
       </Stack>
+      <FootNote serviceProviderID={FJARSYSLAN_ID} />
     </Box>
   )
 }

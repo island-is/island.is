@@ -8,7 +8,10 @@ import {
   Pagination,
   Text,
 } from '@island.is/island-ui/core'
-import { useListDocuments } from '@island.is/service-portal/graphql'
+import {
+  useListDocuments,
+  useOrganizations,
+} from '@island.is/service-portal/graphql'
 import {
   useScrollToRefOnUpdate,
   IntroHeader,
@@ -24,7 +27,6 @@ import {
 } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
-import { GET_ORGANIZATIONS_QUERY } from '@island.is/service-portal/graphql'
 import { messages } from '../../utils/messages'
 import DocumentLine from '../../components/DocumentLine/DocumentLine'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
@@ -178,8 +180,7 @@ export const ServicePortalDocuments = () => {
     totalPages: Math.ceil(totalCount / pageSize),
   }
 
-  const { data: orgData } = useQuery(GET_ORGANIZATIONS_QUERY)
-  const organizations = orgData?.getOrganizations?.items || {}
+  const { data: organizations } = useOrganizations()
 
   const handleDateFromInput = useCallback((value: Date | null) => {
     setPage(1)

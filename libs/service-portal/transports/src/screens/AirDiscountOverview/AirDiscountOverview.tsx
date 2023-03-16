@@ -7,6 +7,8 @@ import {
   ActionCard,
   EmptyState,
   CardLoader,
+  FootNote,
+  VEGAGERDIN_ID,
 } from '@island.is/service-portal/core'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
@@ -272,6 +274,7 @@ export const AirDiscountOverview = () => {
           <UsageTable data={flightLegs} />
         </Box>
       )}
+      <FootNote serviceProviderID={VEGAGERDIN_ID} />
     </>
   )
 }

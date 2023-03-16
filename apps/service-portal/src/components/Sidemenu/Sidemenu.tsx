@@ -20,6 +20,7 @@ import { useWindowSize } from 'react-use'
 import cn from 'classnames'
 import SidemenuItem from './SidemenuItem'
 import { m } from '@island.is/service-portal/core'
+
 interface Props {
   setSideMenuOpen: (status: boolean) => void
   sideMenuOpen: boolean

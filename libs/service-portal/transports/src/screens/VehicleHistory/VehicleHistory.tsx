@@ -20,6 +20,7 @@ import {
   ErrorScreen,
   IntroHeader,
   m,
+  SAMGONGUSTOFA_ID,
 } from '@island.is/service-portal/core'
 
 import { messages } from '../../lib/messages'
@@ -28,7 +29,6 @@ import {
   VEHICLE_OPERATOR,
   VEHICLE_OWNER,
   VEHICLE_COOWNER,
-  SAMGONGUSTOFA_ID,
 } from '../../utils/constants'
 
 export const GET_USERS_VEHICLES_HISTORY = gql`

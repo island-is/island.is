@@ -3,7 +3,7 @@ import { defineMessage } from 'react-intl'
 
 import { Box } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
-import { m } from '@island.is/service-portal/core'
+import { FootNote, m } from '@island.is/service-portal/core'
 import { IntroHeader } from '@island.is/service-portal/core'
 import { LicenseCards } from './components/LicenseCards'
 import { MENNTAMALASTOFNUN_ID } from '@island.is/service-portal/core'
@@ -23,6 +23,7 @@ function EducationLicense() {
         serviceProviderID={MENNTAMALASTOFNUN_ID}
       />
       <LicenseCards />
+      <FootNote serviceProviderID={MENNTAMALASTOFNUN_ID} />
     </Box>
   )
 }

@@ -939,4 +939,9 @@ export const m = defineMessages({
     id: 'service.portal:sessions',
     defaultMessage: 'Notkun',
   },
+  tjodskraTooltip: {
+    id: 'service.portal:tjodskra-tooltip',
+    defaultMessage:
+      'Þjóðskrá Íslands hefur umsjón með gögnum um þig og fjölskyldu þína.',
+  },
 })

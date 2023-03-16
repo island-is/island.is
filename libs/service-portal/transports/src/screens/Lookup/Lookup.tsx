@@ -21,11 +21,12 @@ import {
   formatDate,
   ErrorScreen,
   ExcludesFalse,
+  SAMGONGUSTOFA_ID,
+  FootNote,
 } from '@island.is/service-portal/core'
 
 import { messages } from '../../lib/messages'
 import chunk from 'lodash/chunk'
-import { SAMGONGUSTOFA_ID } from '../../utils/constants'
 
 export const GET_USERS_VEHICLES_SEARCH_LIMIT = gql`
   query GetUsersVehiclesSearchLimit {
@@ -363,6 +364,7 @@ const Lookup = () => {
           />
         </>
       )}
+      <FootNote serviceProviderID={SAMGONGUSTOFA_ID} />
     </>
   )
 }

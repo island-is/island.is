@@ -9,6 +9,7 @@ import {
   m,
   IntroHeader,
   THJODSKRA_ID,
+  FootNote,
 } from '@island.is/service-portal/core'
 import {
   Box,
@@ -396,6 +397,10 @@ const ChildView: FC<Props> = ({
           </Stack>
         )}
       </Stack>
+      <FootNote
+        serviceProviderID={THJODSKRA_ID}
+        serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
+      />
     </Box>
   )
 }

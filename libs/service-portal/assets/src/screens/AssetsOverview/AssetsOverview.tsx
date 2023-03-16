@@ -10,16 +10,15 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyState,
   ErrorScreen,
+  FootNote,
+  HMS_ID,
   IntroHeader,
   m,
 } from '@island.is/service-portal/core'
 
 import { AssetCardLoader } from '../../components/AssetCardLoader'
 import AssetListCards from '../../components/AssetListCards'
-import {
-  ASSETS_SERVICE_PROVIDER_ID,
-  DEFAULT_PAGING_ITEMS,
-} from '../../utils/const'
+import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
 
 const GetRealEstateQuery = gql`
   query GetRealEstateQuery($input: GetMultiPropertyInput!) {
@@ -106,7 +105,7 @@ export const AssetsOverview = () => {
           defaultMessage:
             'Hér birtast upplýsingar úr fasteignaskrá um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
         }}
-        serviceProviderID={ASSETS_SERVICE_PROVIDER_ID}
+        serviceProviderID={HMS_ID}
       />
 
       {loading && <AssetCardLoader />}
@@ -152,6 +151,7 @@ export const AssetsOverview = () => {
             <EmptyState />
           </Box>
         )}
+      <FootNote serviceProviderID={HMS_ID} />
     </>
   )
 }

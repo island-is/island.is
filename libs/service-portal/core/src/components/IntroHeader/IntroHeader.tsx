@@ -1,34 +1,35 @@
-import { GridColumn, GridRow, Text } from '@island.is/island-ui/core'
+import { GridColumn, GridRow, Hidden, Text } from '@island.is/island-ui/core'
 import { ModuleAlertBannerSection } from '../AlertMessage/ModuleAlertMessageSection'
 import { IntroHeaderProps } from '@island.is/portals/core'
 import InstitutionPanel from '../InstitutionPanel/InstitutionPanel'
 import { useEffect, useState } from 'react'
 import {
-  GET_ORGANIZATIONS_QUERY,
   Organization,
+  useOrganizations,
 } from '@island.is/service-portal/graphql'
 import { useLocation } from 'react-router-dom'
-import { useQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
 interface Props {
   serviceProviderID?: string
+  serviceProviderTooltip?: string
 }
 export const IntroHeader = (
   props: Omit<IntroHeaderProps & Props, 'children'>,
 ) => {
   const { marginBottom } = props
   const { formatMessage } = useLocale()
-
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
   const [currentOrganization, setCurrentOrganization] = useState<
     Organization | undefined
   >(undefined)
   const { pathname } = useLocation()
-  const { data: orgData, loading } = useQuery(GET_ORGANIZATIONS_QUERY)
+  const { data: organizations, loading } = useOrganizations()
 
   useEffect(() => {
-    const organizations = orgData?.getOrganizations?.items || {}
-
     if (organizations && !loading) {
       const org = organizations.find(
         (org: Organization) => org.id === props.serviceProviderID,
@@ -41,7 +42,7 @@ export const IntroHeader = (
   return (
     <>
       <GridRow marginBottom={marginBottom}>
-        <GridColumn span={'5/8'}>
+        <GridColumn span={isMobile ? '8/8' : '5/8'}>
           <Text variant="h3" as="h1">
             {formatMessage(props.title)}
           </Text>
@@ -51,13 +52,14 @@ export const IntroHeader = (
             </Text>
           )}
         </GridColumn>
-        {currentOrganization && (
+        {!isMobile && currentOrganization && (
           <GridColumn span={'2/8'} offset={'1/8'}>
             <InstitutionPanel
               loading={loading}
               linkHref={currentOrganization?.link ?? ''}
               img={currentOrganization?.logo?.url ?? ''}
               imgContainerDisplay="block"
+              tooltipText={props.serviceProviderTooltip}
             />
           </GridColumn>
         )}

@@ -5,8 +5,6 @@ import {
   ToastContainer,
   Navigation,
   NavigationItem,
-  Hidden,
-  Button,
 } from '@island.is/island-ui/core'
 import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
 import AuthOverlay from '../Loaders/AuthOverlay/AuthOverlay'
@@ -16,26 +14,17 @@ import {
   ServicePortalPath,
   useScrollTopOnUpdate,
 } from '@island.is/service-portal/core'
-import { useLocation, matchPath } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { GlobalAlertBannerSection } from '../AlertBanners/GlobalAlertBannerSection'
-import {
-  GET_ORGANIZATIONS_QUERY,
-  Organization,
-  useAlertBanners,
-} from '@island.is/service-portal/graphql'
+import { useAlertBanners } from '@island.is/service-portal/graphql'
 import { useMeasure, useWindowSize } from 'react-use'
-import InstitutionPanel from '../InstitutionPanel/InstitutionPanel'
-import { useQuery } from '@apollo/client'
 import SidebarLayout from './SidebarLayout'
 import Sticky from '../Sticky/Sticky'
 import { Link as ReactLink } from 'react-router-dom'
-import Sidemenu from '../Sidemenu/Sidemenu'
-import * as styles from './Layout.css'
 import GoBack from '../GoBack/GoBack'
 import { useDynamicRoutesWithNavigation } from '@island.is/service-portal/core'
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
-import { PortalNavigationItem } from '@island.is/portals/core'
 import { theme } from '@island.is/island-ui/theme'
 
 export const Layout: FC = ({ children }) => {
@@ -45,10 +34,7 @@ export const Layout: FC = ({ children }) => {
   const [isDashboard, setIsDashboard] = useState(true)
   const [isMailbox, setIsMailbox] = useState(false)
   const [sideMenuOpen, setSideMenuOpen] = useState(false)
-  const [currentOrganization, setCurrentOrganization] = useState<
-    Organization | undefined
-  >(undefined)
-  const { data: orgData, loading } = useQuery(GET_ORGANIZATIONS_QUERY)
+
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const activeParent = navigation?.children?.find((item) => item.active)
   useScrollTopOnUpdate([pathname])
@@ -107,102 +93,84 @@ export const Layout: FC = ({ children }) => {
     }
   }, [pathname])
 
-  useEffect(() => {
-    const organizations = orgData?.getOrganizations?.items || {}
-    const activeItem = activeParent?.children?.find(
-      (item: PortalNavigationItem) => item.active,
-    )
-
-    if (organizations && !loading) {
-      const org = organizations.find(
-        (org: Organization) => org.id === activeItem?.serviceProvider,
-      )
-      if (org) setCurrentOrganization(org)
-      else setCurrentOrganization(undefined)
-    }
-  }, [loading, pathname])
-
   return (
-    <>
-      <div>
-        <AuthOverlay />
-        <ToastContainer useKeyframeStyles={false} />
-        {globalBanners.length > 0 && (
-          <GlobalAlertBannerSection ref={ref} banners={globalBanners} />
-        )}
-        <Header
-          setSideMenuOpen={(set: boolean) => setSideMenuOpen(set)}
-          sideMenuOpen={sideMenuOpen}
-          position={height ? height : 0}
-        />
+    <div>
+      <AuthOverlay />
+      <ToastContainer useKeyframeStyles={false} />
+      {globalBanners.length > 0 && (
+        <GlobalAlertBannerSection ref={ref} banners={globalBanners} />
+      )}
+      <Header
+        setSideMenuOpen={(set: boolean) => setSideMenuOpen(set)}
+        sideMenuOpen={sideMenuOpen}
+        position={height ? height : 0}
+      />
 
-        {!isDashboard && !isMailbox && activeParent && (
-          <SidebarLayout
-            isSticky={true}
-            sidebarContent={
-              <Sticky>
-                <Box style={{ marginTop: height }}>
-                  <GoBack />
+      {!isDashboard && !isMailbox && activeParent && (
+        <SidebarLayout
+          isSticky={true}
+          sidebarContent={
+            <Sticky>
+              <Box style={{ marginTop: height }}>
+                <GoBack />
 
-                  {subNavItems && subNavItems.length > 0 && (
-                    <Box background="blue100">
-                      <Navigation
-                        renderLink={(link, item) => {
-                          return item?.href ? (
-                            <ReactLink to={item?.href}>{link}</ReactLink>
-                          ) : (
-                            link
-                          )
-                        }}
-                        baseId={'service-portal-navigation'}
-                        title={formatMessage(
-                          activeParent.name ?? m.tableOfContents,
-                        )}
-                        items={subNavItems ?? []}
-                        expand
-                        titleIcon={activeParent.icon}
-                      />
-                    </Box>
-                  )}
-                </Box>
-              </Sticky>
-            }
-          >
-            <Box as="main" component="main" style={{ marginTop: height }}>
-              <ContentBreadcrumbs />
-              {isMobile && subNavItems && subNavItems.length > 0 && (
-                <Box paddingBottom={3} width="full">
-                  <Navigation
-                    renderLink={(link, item) => {
-                      return item?.href ? (
-                        <ReactLink to={item?.href}>{link}</ReactLink>
-                      ) : (
-                        link
-                      )
-                    }}
-                    baseId={'service-portal-mobile-navigation'}
-                    title={
-                      activeParent?.name
-                        ? formatMessage(activeParent?.name)
-                        : formatMessage(m.tableOfContents)
-                    }
-                    items={subNavItems}
-                    isMenuDialog={true}
-                    //upwards
-                  />
-                </Box>
-              )}
-              {children}
-            </Box>
-          </SidebarLayout>
-        )}
-        {(isDashboard || isMailbox || !activeParent) && (
+                {subNavItems && subNavItems.length > 0 && (
+                  <Box background="blue100">
+                    <Navigation
+                      renderLink={(link, item) => {
+                        return item?.href ? (
+                          <ReactLink to={item?.href}>{link}</ReactLink>
+                        ) : (
+                          link
+                        )
+                      }}
+                      baseId={'service-portal-navigation'}
+                      title={formatMessage(
+                        activeParent.name ?? m.tableOfContents,
+                      )}
+                      items={subNavItems ?? []}
+                      expand
+                      titleIcon={activeParent.icon}
+                    />
+                  </Box>
+                )}
+              </Box>
+            </Sticky>
+          }
+        >
           <Box as="main" component="main" style={{ marginTop: height }}>
-            {!isMailbox && !activeParent && <ContentBreadcrumbs />}
+            <ContentBreadcrumbs />
+            {isMobile && subNavItems && subNavItems.length > 0 && (
+              <Box paddingBottom={3} width="full">
+                <Navigation
+                  renderLink={(link, item) => {
+                    return item?.href ? (
+                      <ReactLink to={item?.href}>{link}</ReactLink>
+                    ) : (
+                      link
+                    )
+                  }}
+                  baseId={'service-portal-mobile-navigation'}
+                  title={
+                    activeParent?.name
+                      ? formatMessage(activeParent?.name)
+                      : formatMessage(m.tableOfContents)
+                  }
+                  items={subNavItems}
+                  isMenuDialog={true}
+                />
+              </Box>
+            )}
             {children}
           </Box>
-        )}
-      </div>
-    </>
+        </SidebarLayout>
+      )}
+      {(isDashboard || isMailbox || !activeParent) && (
+        <Box as="main" component="main" style={{ marginTop: height }}>
+          {!isMailbox && !activeParent && <ContentBreadcrumbs />}
+          {children}
+        </Box>
+      )}
+    </div>
   )
 }

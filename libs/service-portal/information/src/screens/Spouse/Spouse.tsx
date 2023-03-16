@@ -14,6 +14,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
+  FootNote,
   formatNationalId,
   IntroHeader,
   m,
@@ -108,6 +109,10 @@ const FamilyMember = () => {
         />
         <Divider />
       </Stack>
+      <FootNote
+        serviceProviderID={THJODSKRA_ID}
+        serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
+      />
     </>
   )
 }

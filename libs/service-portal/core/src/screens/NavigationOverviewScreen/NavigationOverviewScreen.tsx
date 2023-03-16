@@ -11,7 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
-import { IntroHeader } from '../..'
+import { FootNote, IntroHeader } from '../..'
 import * as styles from './NavigationOverviewScreen.css'
 
 interface Props {
@@ -68,6 +68,7 @@ export const NavigationOverviewScreen: FC<Props> = ({
           </GridColumn>
         </GridRow>
       ))}
+      <FootNote serviceProviderID={serviceProviderID} />
     </Box>
   )
 }

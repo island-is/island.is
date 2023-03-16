@@ -17,9 +17,11 @@ import {
   CardLoader,
   EmptyState,
   ErrorScreen,
+  FootNote,
   formSubmit,
   IntroHeader,
   m,
+  SAMGONGUSTOFA_ID,
 } from '@island.is/service-portal/core'
 import { useUserInfo } from '@island.is/auth/react'
 
@@ -29,7 +31,7 @@ import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import { exportVehicleOwnedDocument } from '../../utils/vehicleOwnedMapper'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
-import { SAMGONGUSTOFA_ID, VEHICLE_HIDE_NAME } from '../../utils/constants'
+import { VEHICLE_HIDE_NAME } from '../../utils/constants'
 
 export const GET_USERS_VEHICLES = gql`
   query GetUsersVehicles {
@@ -287,6 +289,8 @@ const VehiclesOverview = () => {
           </Box>
         )}
       </Stack>
+
+      <FootNote serviceProviderID={SAMGONGUSTOFA_ID} />
     </>
   )
 }

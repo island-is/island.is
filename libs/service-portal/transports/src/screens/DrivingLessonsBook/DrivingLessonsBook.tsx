@@ -16,13 +16,14 @@ import {
   formatDate,
   IntroHeader,
   EmptyState,
+  SAMGONGUSTOFA_ID,
+  FootNote,
 } from '@island.is/service-portal/core'
 
 import { messages } from '../../lib/messages'
 import PhysicalLessons from '../../components/DrivingLessonsTables/PhysicalLessons'
 import DrivingLessonsSchools from '../../components/DrivingLessonsTables/DrivingLessonsSchools'
 import Exams from '../../components/DrivingLessonsTables/Exams'
-import { SAMGONGUSTOFA_ID } from '../../utils/constants'
 
 export const GET_STUDENT_BOOK = gql`
   query GetUserDrivingLessonsBook {
@@ -172,12 +173,6 @@ const DrivingLessonsBook = () => {
               data={book?.testResults}
             />
           )}
-
-          <Box paddingTop={4}>
-            <Text variant="small">
-              {formatMessage(messages.vehicleDrivingLessonsInfoNote)}
-            </Text>
-          </Box>
         </>
       )}
       {!loading && !error && !book?.createdOn && (
@@ -185,6 +180,12 @@ const DrivingLessonsBook = () => {
           <EmptyState />
         </Box>
       )}
+      <FootNote
+        serviceProviderID={SAMGONGUSTOFA_ID}
+        notes={[
+          { text: formatMessage(messages.vehicleDrivingLessonsInfoNote) },
+        ]}
+      />
     </>
   )
 }

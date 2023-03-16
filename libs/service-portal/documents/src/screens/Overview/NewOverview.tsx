@@ -14,10 +14,12 @@ import {
   Tooltip,
   Hidden,
 } from '@island.is/island-ui/core'
-import { useListDocuments } from '@island.is/service-portal/graphql'
+import {
+  useListDocuments,
+  useOrganizations,
+} from '@island.is/service-portal/graphql'
 import {
   useScrollToRefOnUpdate,
-  ServicePortalModuleComponent,
   ServicePortalPath,
   formatPlausiblePathToParams,
   NoDataScreen,
@@ -34,7 +36,6 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
 import { useNavigate } from 'react-router-dom'
-import { GET_ORGANIZATIONS_QUERY } from '@island.is/service-portal/graphql'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import isAfter from 'date-fns/isAfter'
 import differenceInYears from 'date-fns/differenceInYears'
@@ -203,8 +204,7 @@ export const ServicePortalDocuments = () => {
     totalPages: Math.ceil(totalCount / pageSize),
   }
 
-  const { data: orgData } = useQuery(GET_ORGANIZATIONS_QUERY)
-  const organizations = orgData?.getOrganizations?.items || {}
+  const { data: organizations } = useOrganizations()
 
   const handleDateFromInput = useCallback((value: Date | null) => {
     setPage(1)

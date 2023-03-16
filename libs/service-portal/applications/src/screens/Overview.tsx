@@ -2,6 +2,7 @@ import { useState } from 'react'
 import {
   ActionCardLoader,
   EmptyState,
+  FootNote,
   IntroHeader,
 } from '@island.is/service-portal/core'
 import {
@@ -17,7 +18,10 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { useLocation } from 'react-router-dom'
 import { useGetOrganizationsQuery } from '../../../graphql/src/schema'
 import { m } from '../lib/messages'
-import { m as coreMessage } from '@island.is/service-portal/core'
+import {
+  m as coreMessage,
+  APPLICATION_SERVICE_PROVIDER_ID,
+} from '@island.is/service-portal/core'
 import { ValueType } from 'react-select'
 import {
   getFilteredApplicationsByStatus,
@@ -28,7 +32,6 @@ import { ApplicationOverViewStatus, FilterValues } from '../shared/types'
 import { ApplicationGroup } from '../components/ApplicationGroup'
 import { Application } from '@island.is/application/types'
 import { ErrorScreen } from '@island.is/service-portal/core'
-import { APPLICATION_SERVICE_PROVIDER_ID } from '../utils/constants'
 
 const defaultInstitution = { label: 'Allar stofnanir', value: '' }
 
@@ -233,6 +236,7 @@ const Overview = () => {
       {!error && !loading && noApplications && (
         <EmptyState description={getNoApplicationsError(statusToShow)} />
       )}
+      <FootNote serviceProviderID={APPLICATION_SERVICE_PROVIDER_ID} />
     </>
   )
 }

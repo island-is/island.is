@@ -23,6 +23,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   DynamicWrapper,
   FJARSYSLAN_ID,
+  FootNote,
   IntroHeader,
   m,
 } from '@island.is/service-portal/core'
@@ -293,6 +294,7 @@ const FinanceTransactions = () => {
           </Box>
         </Stack>
       </Box>
+      <FootNote serviceProviderID={FJARSYSLAN_ID} />
     </DynamicWrapper>
   )
 }

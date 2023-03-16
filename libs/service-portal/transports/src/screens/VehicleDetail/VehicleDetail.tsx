@@ -27,6 +27,8 @@ import {
   TableGrid,
   UserInfoLine,
   m,
+  FootNote,
+  SAMGONGUSTOFA_ID,
 } from '@island.is/service-portal/core'
 
 import OwnersTable from '../../components/DetailTable/OwnersTable'
@@ -495,9 +497,10 @@ const VehicleDetail = () => {
         />
       )}
 
-      <Box paddingTop={4}>
-        <Text variant="small">{formatMessage(messages.infoNote)}</Text>
-      </Box>
+      <FootNote
+        serviceProviderID={SAMGONGUSTOFA_ID}
+        notes={[{ text: formatMessage(messages.infoNote) }]}
+      />
     </>
   )
 }

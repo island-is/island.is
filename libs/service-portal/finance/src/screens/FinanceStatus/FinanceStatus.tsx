@@ -22,6 +22,7 @@ import {
   ExpandHeader,
   ExpandRow,
   FJARSYSLAN_ID,
+  FootNote,
   formSubmit,
   IntroHeader,
   m,
@@ -274,6 +275,7 @@ const FinanceStatus = () => {
           ) : null}
         </Box>
       </Stack>
+      <FootNote serviceProviderID={FJARSYSLAN_ID} />
     </Box>
   )
 }
