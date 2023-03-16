@@ -1,9 +1,7 @@
 import { Module, CacheModule } from '@nestjs/common'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { CmsModule } from '@island.is/cms'
-import { LicenseClientModule } from '@island.is/clients/license-client'
 import { MainResolver } from './graphql/main.resolver'
-//import { LicenseClientModule } from '@island.is/clients/license'
 import {
   GenericLicenseMetadata,
   GenericLicenseProviderId,
@@ -19,6 +17,7 @@ import { FirearmLicensePayloadMapper } from './mappers/firearmLicenseMapper'
 import { LicenseServiceService } from './licenseService.service'
 import { LicenseMapperModule } from './mappers/licenseMapper.module'
 import { DrivingLicensePayloadMapper } from './mappers/drivingLicenseMapper'
+import { LicenseClientModule } from '@island.is/clients/license-client'
 
 export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
