@@ -43,7 +43,7 @@ builder_build() {
   $builder buildx build "${BUILD_ARGS[@]}" "$PROJECT_ROOT"
 }
 
-_docker_build() {
+docker_build() {
   mkargs local-cache=true
   builder_build docker
 }

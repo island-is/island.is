@@ -132,8 +132,8 @@ ARG APP_DIST_HOME
 WORKDIR ${APP_DIST_HOME}
 USER pwuser
 
-COPY --chown=pwuser:pwuser /build/${APP_DIST_HOME}/package.json .
-COPY --chown=pwuser:pwuser /build/${APP_DIST_HOME}/yarn.lock .
+COPY --chown=pwuser:pwuser ${APP_HOME}/package.json .
+COPY --chown=pwuser:pwuser ${APP_HOME}/yarn.lock .
 RUN yarn install --immutable
 RUN yarn playwright install
 # TODO: Avoid copying built apps
