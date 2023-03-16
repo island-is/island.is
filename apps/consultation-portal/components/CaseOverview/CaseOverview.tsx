@@ -12,7 +12,7 @@ interface CaseOverviewProps {
 
 export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
   const upperInstances = [
-    `Mál nr. ${chosenCase?.caseNumber}`,
+    `Mál nr. S-${chosenCase?.caseNumber}`,
     `Birt: ${format(new Date(chosenCase?.created), 'dd.MM.yyyy')}`,
   ]
 
@@ -49,7 +49,7 @@ export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
           <Text variant="default">{chosenCase?.announcementText}</Text>
         </Box>
         <Box>
-          <Text variant="h4">Nánar um málið</Text>
+          <Text variant="h4">Nánari upplýsingar</Text>
           <Text variant="default">{chosenCase.detailedDescription}</Text>
         </Box>
       </Stack>

@@ -63,6 +63,7 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       [styles.truncate]: truncate,
       [styles.hyphenate]: hyphenate,
       [styles.textLeft]: textLeft,
+      [styles.disabled]: disabled,
     })
 
     const isExternal = href && shouldLinkOpenInNewWindow(href)
@@ -85,10 +86,6 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
         {!truncate && hyphenate ? hyphenated : children}
       </Text>
     )
-
-    if (disabled) {
-      return <span {...sharedProps}>{content}</span>
-    }
 
     if (CustomLink) {
       return <CustomLink {...sharedProps}>{content}</CustomLink>
