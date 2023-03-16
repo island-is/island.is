@@ -78,10 +78,8 @@ export class ApplicationService {
     locale: Locale,
     input: ApplicationApplicationsAdminInput,
   ) {
-    console.log('findAllAdmin', input)
-    console.log({ user })
     return this.applicationApiWithAuth(user).applicationControllerFindAllAdmin({
-      nationalId: '0101307789',
+      nationalId: input.nationalId,
       locale,
       typeId: input.typeId?.join(','),
       status: input.status?.join(','),

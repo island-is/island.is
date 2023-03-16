@@ -318,8 +318,6 @@ export class ApplicationController {
       nationalId,
     )
 
-    console.log(applications)
-
     // keep all templates that have been fetched in order to avoid fetching them again
     const templates: Partial<
       Record<

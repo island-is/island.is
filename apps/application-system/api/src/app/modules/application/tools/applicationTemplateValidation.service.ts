@@ -25,7 +25,7 @@ import type { FormatMessage } from '@island.is/cms-translations'
 
 const isRunningOnProductionEnvironment = () => {
   return (
-    environment.production &&
+    environment.production === true &&
     environment.name !== 'local' &&
     environment.name !== 'dev' &&
     environment.name !== 'staging'
