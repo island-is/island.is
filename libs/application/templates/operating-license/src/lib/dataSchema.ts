@@ -181,6 +181,11 @@ export const dataSchema = z.object({
         file: z.array(FileSchema),
       })
       .optional(),
+    otherFiles: z
+      .object({
+        file: z.array(FileSchema),
+      })
+      .optional(),
   }),
   chargeItemCode: z.string(),
 })
