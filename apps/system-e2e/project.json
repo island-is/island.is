@@ -9,8 +9,8 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
-          "esbuild --bundle $(find apps/system-e2e -name '*.ts' -not -path '*/node_modules/*') --outdir=dist/apps/system-e2e --tsconfig=apps/system-e2e/tsconfig.json --platform=node $(jq -r '.dependencies|keys[]|(\"--external:\"+.)' apps/system-e2e/package.json | xargs)",
-          "cp apps/system-e2e/package.json dist/apps/system-e2e/"
+          "esbuild --bundle $(find apps/system-e2e -name '*.ts' -not -path '*/node_modules/*') --outdir=dist/apps/system-e2e --tsconfig=apps/system-e2e/tsconfig.json --platform=node $(jq -r '.dependencies|keys[]|(\"--external:\"+.)' package.json | xargs)",
+          "cp package.json dist/apps/system-e2e/"
         ],
         "parallel": false,
         "outputPath": "dist/apps/system-e2e"
@@ -22,7 +22,9 @@
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
-        "lintFilePatterns": ["apps/system-e2e/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": [
+          "apps/system-e2e/**/*.{ts,tsx,js,jsx}"
+        ]
       }
     },
     "smoke": {
@@ -39,5 +41,7 @@
     },
     "docker-playwright": {}
   },
-  "tags": ["scope:e2e"]
+  "tags": [
+    "scope:e2e"
+  ]
 }

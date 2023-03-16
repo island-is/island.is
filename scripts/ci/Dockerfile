@@ -132,7 +132,7 @@ ARG APP_DIST_HOME
 WORKDIR ${APP_DIST_HOME}
 USER pwuser
 
-COPY --chown=pwuser:pwuser ${APP_HOME}/package.json .
+COPY --chown=pwuser:pwuser --from=builder ${APP_DIST_HOME}/package.json .
 RUN yarn install
 ENV PLAYWRIGHT_BROWSER=webkit
 RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
