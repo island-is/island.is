@@ -14,6 +14,7 @@ type UserMenuProps = {
   iconOnlyMobile?: boolean
   showLanguageSwitcher?: boolean
   showActorButton?: boolean
+  showIfOpen?: boolean
 }
 
 export const UserMenu = ({
@@ -25,6 +26,7 @@ export const UserMenu = ({
   showLanguageSwitcher = true,
   showActorButton = true,
   iconOnlyMobile = false,
+  showIfOpen = true,
 }: UserMenuProps) => {
   const [dropdownState, setDropdownState] = useState<'closed' | 'open'>(
     'closed',
@@ -55,12 +57,14 @@ export const UserMenu = ({
           <UserLanguageSwitcher user={user} />
         </Hidden>
       )}
-      <UserButton
-        user={user}
-        onClick={handleClick}
-        small={small}
-        iconOnlyMobile={iconOnlyMobile}
-      />
+      {showIfOpen && (
+        <UserButton
+          user={user}
+          onClick={handleClick}
+          small={small}
+          iconOnlyMobile={iconOnlyMobile}
+        />
+      )}
       <UserDropdown
         user={user}
         dropdownState={dropdownState}

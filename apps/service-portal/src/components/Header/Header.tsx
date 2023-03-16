@@ -12,7 +12,7 @@ import { ServicePortalPath } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { UserLanguageSwitcher, UserMenu } from '@island.is/shared/components'
 import { m } from '@island.is/service-portal/core'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useListDocuments } from '@island.is/service-portal/graphql'
 import cn from 'classnames'
 import { theme } from '@island.is/island-ui/theme'
@@ -30,7 +30,6 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
   const { formatMessage } = useLocale()
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const { unreadCounter } = useListDocuments()
-  const navigate = useNavigate()
   const { width } = useWindowSize()
 
   const isMobile = width < theme.breakpoints.md
@@ -38,17 +37,20 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
   const badgeActive: keyof typeof styles.badge =
     unreadCounter > 0 ? 'active' : 'inactive'
 
-  const closeButton = () => {
+  const closeButton = (userMenu: boolean) => {
     return (
       <FocusableBox
         display="flex"
         alignItems="center"
         component="button"
-        onClick={() => setSideMenuOpen(false)}
+        onClick={() =>
+          userMenu ? setUserMenuOpen(false) : setSideMenuOpen(false)
+        }
         padding={1}
         borderRadius="circle"
-        background="blue100"
+        background="white"
         className={styles.closeButton}
+        marginRight={!userMenu ? 1 : 0}
       >
         <Icon icon="close" color="blue400" />
       </FocusableBox>
@@ -104,29 +106,37 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
                 </Hidden>
 
                 {user && <UserLanguageSwitcher user={user} />}
-                <Box marginRight={[1, 1, 2]}>
-                  <Button
-                    variant="utility"
-                    colorScheme="white"
-                    icon="dots"
-                    onClick={() => {
-                      setSideMenuOpen(true)
-                    }}
-                  >
-                    {formatMessage(m.overview)}
-                  </Button>
-                </Box>
+                {/* Display X button instead if open */}
+                {sideMenuOpen ? (
+                  closeButton(false)
+                ) : (
+                  <Box marginRight={[1, 1, 2]}>
+                    <Button
+                      variant="utility"
+                      colorScheme="white"
+                      icon="dots"
+                      onClick={() => {
+                        setSideMenuOpen(true)
+                      }}
+                    >
+                      {formatMessage(m.overview)}
+                    </Button>
+                  </Box>
+                )}
 
                 <Sidemenu
                   setSideMenuOpen={(set: boolean) => setSideMenuOpen(set)}
                   sideMenuOpen={sideMenuOpen}
                 />
 
+                {/* Display X button instead if open */}
+                {userMenuOpen && closeButton(true)}
                 <UserMenu
                   fullscreen
                   setUserMenuOpen={setUserMenuOpen}
                   showLanguageSwitcher={false}
                   userMenuOpen={userMenuOpen}
+                  showIfOpen={!userMenuOpen}
                 />
               </Box>
             </Hidden>

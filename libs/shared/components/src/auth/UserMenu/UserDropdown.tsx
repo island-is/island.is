@@ -151,7 +151,7 @@ export const UserDropdown = ({
             />
           </Box>
         </Box>
-        {closeButton}
+        <Hidden below="md">{closeButton}</Hidden>
       </Box>
     </Box>
   )

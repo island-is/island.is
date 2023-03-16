@@ -1,30 +1,23 @@
-import React, { ReactElement, useRef, useState } from 'react'
+import React, { ReactElement } from 'react'
 import {
   Box,
-  Button,
-  Divider,
   GridContainer,
   Hidden,
   Icon,
   ModalBase,
-  Stack,
   Text,
 } from '@island.is/island-ui/core'
 import {
-  Modal,
   ServicePortalPath,
   useDynamicRoutesWithNavigation,
 } from '@island.is/service-portal/core'
 import * as styles from './Sidemenu.css'
 import { sharedMessages } from '@island.is/shared/translations'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { Link } from 'react-router-dom'
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
-import { iconTypeToSVG } from '../../utils/Icons/idMapper'
 import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
 import cn from 'classnames'
-import { useListDocuments } from '@island.is/service-portal/graphql'
 import SidemenuItem from './SidemenuItem'
 import { m } from '@island.is/service-portal/core'
 interface Props {
@@ -54,7 +47,74 @@ const Sidemenu = ({
       <Icon icon="close" color="blue400" />
     </button>
   )
-  return (
+
+  const content = (
+    <Box display="flex" justifyContent="flexEnd">
+      <Box
+        position="relative"
+        background="white"
+        padding={2}
+        borderRadius="large"
+        display="flex"
+        flexDirection="column"
+        height={isMobile ? 'full' : undefined}
+        className={cn(
+          isMobile ? styles.fullScreen : styles.dropdown,
+          styles.container,
+        )}
+      >
+        <Box display="flex" flexDirection="column" className={styles.wrapper}>
+          <Box
+            display="flex"
+            flexDirection="row"
+            alignItems="center"
+            marginBottom={1}
+            marginTop={2}
+          >
+            <Box
+              borderRadius="circle"
+              background="blue100"
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              className={styles.overviewIcon}
+              marginRight={2}
+            >
+              <Icon icon="dots" />
+            </Box>
+            <Text variant="h4">{formatMessage(m.overview)}</Text>
+          </Box>
+          <Box
+            display="flex"
+            flexWrap="wrap"
+            paddingBottom={3}
+            paddingTop={2}
+            columnGap={1}
+            rowGap={1}
+          >
+            {navigation?.children?.map(
+              (navRoot, index) =>
+                navRoot.path !== ServicePortalPath.MinarSidurRoot &&
+                !navRoot.navHide && (
+                  <SidemenuItem
+                    item={navRoot}
+                    setSidemenuOpen={setSideMenuOpen}
+                    key={`sidemenu-item-${index}`}
+                  />
+                ),
+            )}
+          </Box>
+        </Box>
+        <Hidden below="md">{closeButton}</Hidden>
+      </Box>
+    </Box>
+  )
+
+  return isMobile ? (
+    <Box display={sideMenuOpen ? 'flex' : 'none'} height="full">
+      {content}
+    </Box>
+  ) : (
     <ModalBase
       baseId="service-portal-sidemenu"
       isVisible={sideMenuOpen}
@@ -73,71 +133,7 @@ const Sidemenu = ({
         }
       }}
     >
-      <GridContainer>
-        <Box display="flex" justifyContent="flexEnd">
-          <Box
-            position="relative"
-            background="white"
-            padding={2}
-            borderRadius="large"
-            display="flex"
-            flexDirection="column"
-            height={isMobile ? 'full' : undefined}
-            className={cn(
-              isMobile ? styles.fullScreen : styles.dropdown,
-              styles.container,
-            )}
-          >
-            <Box
-              display="flex"
-              flexDirection="column"
-              className={styles.wrapper}
-            >
-              <Box
-                display="flex"
-                flexDirection="row"
-                alignItems="center"
-                marginBottom={1}
-                marginTop={2}
-              >
-                <Box
-                  borderRadius="circle"
-                  background="blue100"
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  className={styles.overviewIcon}
-                  marginRight={2}
-                >
-                  <Icon icon="dots" />
-                </Box>
-                <Text variant="h4">{formatMessage(m.overview)}</Text>
-              </Box>
-              <Box
-                display="flex"
-                flexWrap="wrap"
-                paddingBottom={3}
-                paddingTop={2}
-                columnGap={1}
-                rowGap={1}
-              >
-                {navigation?.children?.map(
-                  (navRoot, index) =>
-                    navRoot.path !== ServicePortalPath.MinarSidurRoot &&
-                    !navRoot.navHide && (
-                      <SidemenuItem
-                        item={navRoot}
-                        setSidemenuOpen={setSideMenuOpen}
-                        key={`sidemenu-item-${index}`}
-                      />
-                    ),
-                )}
-              </Box>
-            </Box>
-            {closeButton}
-          </Box>
-        </Box>
-      </GridContainer>
+      <GridContainer>{content}</GridContainer>
     </ModalBase>
   )
 }
