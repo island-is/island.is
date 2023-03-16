@@ -7,7 +7,7 @@ import {
   setupWithAuth,
   setupWithoutAuth,
   setupWithoutScope,
-} from '../../../../test/setup'
+} from '../../../../../test/setup'
 import request from 'supertest'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { LicenseApiScope } from '@island.is/auth/scopes'

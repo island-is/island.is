@@ -1,0 +1,309 @@
+import { Test } from '@nestjs/testing'
+import { LicenseService } from '../../license.service'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import {
+  CLIENT_FACTORY,
+  GenericLicenseClient,
+  LicenseId,
+  LicenseUpdateType,
+  PASS_TEMPLATE_IDS,
+} from '../../license.types'
+import {
+  PassDataInput,
+  Result,
+  Pass,
+  RevokePassData,
+  VerifyPassData,
+} from '@island.is/clients/smartsolutions'
+import { VerifyInputData } from '../../dto/verifyLicense.input'
+import { BadRequestException } from '@nestjs/common'
+
+const licenseIds = Object.values(LicenseId)
+
+class MockLicenseClient implements GenericLicenseClient {
+  pushUpdate = (inputData: PassDataInput, nationalId: string) => {
+    if (nationalId === 'success') {
+      return Promise.resolve<Result<Pass | undefined>>({
+        ok: true,
+        data: undefined,
+      })
+    }
+
+    if (nationalId === '401') {
+      return Promise.resolve<Result<Pass | undefined>>({
+        ok: false,
+        error: {
+          code: 5,
+          message: 'some user error',
+        },
+      })
+    }
+    //some other error
+    return Promise.resolve<Result<Pass | undefined>>({
+      ok: false,
+      error: {
+        code: 99,
+        message: 'some service error',
+      },
+    })
+  }
+
+  pullUpdate = (nationalId: string) => {
+    if (nationalId === 'success') {
+      return Promise.resolve<Result<Pass | undefined>>({
+        ok: true,
+        data: undefined,
+      })
+    }
+
+    if (nationalId === '401 error') {
+      return Promise.resolve<Result<Pass | undefined>>({
+        ok: false,
+        error: {
+          code: 5,
+          message: 'some user error',
+        },
+      })
+    }
+    //some other error
+    return Promise.resolve<Result<Pass | undefined>>({
+      ok: false,
+      error: {
+        code: 99,
+        message: 'some service error',
+      },
+    })
+  }
+
+  revoke = (nationalId: string) => {
+    if (nationalId === 'success') {
+      return Promise.resolve<Result<RevokePassData>>({
+        ok: true,
+        data: {
+          success: true,
+        },
+      })
+    }
+
+    if (nationalId === 'failure') {
+      return Promise.resolve<Result<RevokePassData>>({
+        ok: true,
+        data: {
+          success: false,
+        },
+      })
+    }
+
+    if (nationalId === '') {
+      return Promise.resolve<Result<RevokePassData>>({
+        ok: false,
+        error: {
+          code: 5,
+          message: 'some user error',
+        },
+      })
+    }
+    //some other error
+    return Promise.resolve<Result<RevokePassData>>({
+      ok: false,
+      error: {
+        code: 99,
+        message: 'some service error',
+      },
+    })
+  }
+
+  verify = (inputData: string) => {
+    const { code } = (inputData as unknown) as VerifyInputData
+
+    if (!code) {
+      return Promise.resolve<Result<VerifyPassData>>({
+        ok: false,
+        error: {
+          code: 12,
+          message: 'Invalid input data',
+        },
+      })
+    }
+    if (code === 'success') {
+      return Promise.resolve<Result<VerifyPassData>>({
+        ok: true,
+        data: {
+          valid: true,
+        },
+      })
+    }
+
+    if (code === 'failure') {
+      return Promise.resolve<Result<VerifyPassData>>({
+        ok: true,
+        data: {
+          valid: false,
+        },
+      })
+    }
+
+    if (code === '401') {
+      return Promise.resolve<Result<VerifyPassData>>({
+        ok: false,
+        error: {
+          code: 5,
+          message: 'some user error',
+        },
+      })
+    }
+    //some other error
+    return Promise.resolve<Result<VerifyPassData>>({
+      ok: false,
+      error: {
+        code: 99,
+        message: 'some service error',
+      },
+    })
+  }
+}
+
+describe('LicenseService', () => {
+  let licenseService: LicenseService
+
+  beforeAll(async () => {
+    const moduleRef = await Test.createTestingModule({
+      providers: [
+        LicenseService,
+        {
+          provide: LOGGER_PROVIDER,
+          useClass: jest.fn(() => {
+            info: (s: string) => ({})
+            debug: (s: string) => ({})
+            warn: (s: string) => ({})
+            error: (s: string) => ({})
+          }),
+        },
+        {
+          provide: PASS_TEMPLATE_IDS,
+          useValue: {(id: string) => {
+            switch(id):
+              case '123':
+                return LicenseId.DISABILITY_LICENSE
+              case '234':
+                return
+          }},
+        },
+        {
+          provide: CLIENT_FACTORY,
+          useFactory: () => async (): Promise<GenericLicenseClient | null> =>
+            new MockLicenseClient(),
+        },
+      ],
+    }).compile()
+
+    licenseService = moduleRef.get<LicenseService>(LicenseService)
+  })
+
+  describe.each(licenseIds)('given %s license type id', (licenseId) => {
+    describe('verify', () => {
+      it(`should verify the ${licenseId} license`, async () => {
+        //act
+        const result = await licenseService.verifyLicense({
+          barcodeData: JSON.stringify({
+            passTemplateId: licenseId,
+            code: 'test',
+            date: '2022-06-28T15:42:11.665950Z',
+          }),
+        })
+
+        //assert
+        expect(result).toMatchObject({
+          valid: true,
+        })
+      })
+      it(`should fail to verify the ${licenseId}  license`, async () => {
+        //act
+        const result = await licenseService.verifyLicense({
+          barcodeData: JSON.stringify({
+            passTemplateId: '123',
+            code: 'test',
+            date: '2022-06-28T15:42:11.665950Z',
+          }),
+        })
+
+        //assert
+        expect(result).toMatchObject({
+          valid: false,
+        })
+      })
+      it(`should return user error on bad input when trying to verify the ${licenseId} license`, async () => {
+        //act
+        const result = licenseService.verifyLicense({
+          barcodeData: JSON.stringify({
+            passTemplateId: '123',
+            code: 'test',
+            date: '2022-06-28T15:42:11.665950Z',
+          }),
+        })
+
+        //assert
+        await expect(result).rejects.toThrowError()
+      })
+    })
+    describe('revoke', () => {
+      it(`should to revoke the ${licenseId} license`, async () => {
+        //act
+        const result = await licenseService.revokeLicense(licenseId, 'success')
+
+        //assert
+        expect(result).toMatchObject({
+          revokeSuccess: true,
+        })
+      })
+      it(`should fail to revoke the ${licenseId}  license`, async () => {
+        //act
+        const result = await licenseService.revokeLicense(licenseId, 'failure')
+
+        //assert
+        expect(result).toMatchObject({
+          revokeSuccess: false,
+        })
+      })
+      it(`should return user error on bad input when trying to revoke the ${licenseId} license`, async () => {
+        //act
+        const result = licenseService.revokeLicense(licenseId, '')
+
+        //assert
+        await expect(result).rejects.toThrowError()
+      })
+    })
+
+    describe.each(Object.values(LicenseUpdateType))('update %s',
+      (licenseUpdateType) => {
+        it(`should ${licenseUpdateType}-update the ${licenseId} license`, async () => {
+          //act
+          const result = await licenseService.updateLicense(
+            licenseId,
+            'success',
+            {
+              licenseUpdateType,
+              expiryDate: '2022-01-01T00:00:00Z',
+            },
+          )
+
+          //assert
+          expect(result).toMatchObject({
+            updateSuccess: true,
+            data: undefined,
+          })
+        })
+        it(`should return user error on bad input when trying to ${licenseUpdateType}-update the ${licenseId} `, async () => {
+          //act
+          const result = licenseService.updateLicense(licenseId, '', {
+            licenseUpdateType,
+            expiryDate: '2022-01-01T00:00:00Z',
+          })
+
+          //assert
+          await expect(result).rejects.toThrowError()
+        })
+      },
+    )
+  })
+})
