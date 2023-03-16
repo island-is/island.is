@@ -6,6 +6,7 @@ import {
   Query,
   QueryGetNamespaceArgs,
   QueryGetProjectPageArgs,
+  Stepper as StepperSchema,
 } from '@island.is/web/graphql/schema'
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { Screen } from '../../types'
@@ -314,7 +315,7 @@ ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   if (getProjectPage.stepper) {
     stepOptionsFromNamespace = await stepperUtils.getStepOptionsFromUIConfiguration(
-      getProjectPage.stepper,
+      getProjectPage.stepper as StepperSchema,
       apolloClient,
     )
   }

@@ -186,7 +186,9 @@ const BasicInput = ({
           },
         }),
       }}
-      {...register(name)}
+      // The docs tell us to spread the response of the register function even though it's return type is void
+      // https://react-hook-form.com/api/useformcontext/
+      {...((register(name) as unknown) as object)}
     />
   )
 }

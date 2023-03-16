@@ -154,6 +154,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'removeNullPeriod',
           'setNavId',
           'correctTransferRights',
+          'clearEmployers',
         ],
         meta: {
           name: States.DRAFT,
@@ -304,7 +305,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN]: {
-        entry: 'clearEmployers',
         exit: 'setEmployerReviewerNationalRegistryId',
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN,
@@ -822,6 +822,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'removeNullPeriod',
           'setNavId',
           'setActionName',
+          'clearEmployers',
         ],
         meta: {
           name: States.EDIT_OR_ADD_PERIODS,
@@ -874,7 +875,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS]: {
-        entry: 'clearEmployers',
         exit: [
           'setEmployerReviewerNationalRegistryId',
           'restorePeriodsFromTemp',
@@ -1185,7 +1185,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             set(answers, `employers[${i}].ratio`, val.ratio)
             set(answers, `employers[${i}].email`, val.email)
             set(answers, `employers[${i}].reviewerNationalRegistryId`, '')
-            set(answers, `employers[${i}].companyNationalRegistryId`, '')
+            set(
+              answers,
+              `employers[${i}].companyNationalRegistryId`,
+              val.companyNationalRegistryId,
+            )
             set(answers, `employers[${i}].isApproved`, false)
           })
         }
@@ -1369,6 +1373,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           set(application.answers, 'personalAllowance', {
             useAsMuchAsPossible: YES,
             usage: '100',
+            usePersonalAllowance: YES,
           })
         }
 
@@ -1386,6 +1391,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           set(application.answers, 'personalAllowanceFromSpouse', {
             useAsMuchAsPossible: YES,
             usage: '100',
+            usePersonalAllowance: YES,
           })
         }
 

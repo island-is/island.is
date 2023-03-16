@@ -1,6 +1,6 @@
 schema:
   - apps/api/src/api.graphql
-documents: apps/consultation-portal/**/*.{ts,tsx}
+documents: apps/consultation-portal/**/*.graphql.ts
 generates:
   apps/consultation-portal/graphql/schema.ts:
     preset: 'near-operation-file'
