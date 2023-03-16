@@ -28,6 +28,7 @@ import {
   StartDateOptions,
   UnEmployedBenefitTypes,
   PARENTAL_LEAVE,
+  PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   getMultipleBirthsDays,
   SINGLE,
@@ -395,13 +396,19 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       selfEmployedFiles: selfEmployedPdfs,
       studentFiles: studentPdfs,
       singleParentFiles: singleParentPdfs,
+      employmentTerminationCertificateFiles: employmentTerminationCertificatePdfs,
       additionalDocuments,
+      employerLastSixMonths,
+      employers,
     } = getApplicationAnswers(application.answers)
     const { applicationFundId } = getApplicationExternalData(
       application.externalData,
     )
     const { residenceGrantFiles } = getApplicationAnswers(application.answers)
     const { state } = application
+    const isNotStillEmployed = employers?.some(
+      (employer) => employer.stillEmployed === NO,
+    )
 
     if (
       state === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
@@ -485,6 +492,32 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
           attachments.push({
             attachmentType: apiConstants.attachments.student,
+            attachmentBytes: pdf,
+          })
+        }
+      }
+    }
+    if (
+      (applicationType === PARENTAL_GRANT ||
+        applicationType === PARENTAL_GRANT_STUDENTS) &&
+      employerLastSixMonths === YES &&
+      isNotStillEmployed
+    ) {
+      if (employmentTerminationCertificatePdfs?.length) {
+        for (
+          let i = 0;
+          i <= employmentTerminationCertificatePdfs.length - 1;
+          i++
+        ) {
+          const pdf = await this.getPdf(
+            application,
+            i,
+            'fileUpload.employmentTerminationCertificateFile',
+          )
+
+          attachments.push({
+            attachmentType:
+              apiConstants.attachments.employmentTerminationCertificate,
             attachmentBytes: pdf,
           })
         }
@@ -1330,6 +1363,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       isReceivingUnemploymentBenefits,
       applicationType,
       previousState,
+      employerLastSixMonths,
+      employers,
     } = getApplicationAnswers(application.answers)
     // if (
     //   previousState === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
@@ -1392,8 +1427,17 @@ export class ParentalLeaveService extends BaseTemplateApiService {
           applicationType === PARENTAL_LEAVE ? isSelfEmployed === YES : true
         const recivingUnemploymentBenefits =
           isReceivingUnemploymentBenefits === YES
+        const isStillEmployed = employers?.some(
+          (employer) => employer.stillEmployed === YES,
+        )
 
-        if (!selfEmployed && !recivingUnemploymentBenefits) {
+        if (
+          (!selfEmployed && !recivingUnemploymentBenefits) ||
+          ((applicationType === PARENTAL_GRANT ||
+            applicationType === PARENTAL_GRANT_STUDENTS) &&
+            employerLastSixMonths === YES &&
+            isStillEmployed)
+        ) {
           // Only needs to send an email if being approved by employer
           // Self employed applicant was aware of the approval
           await this.sharedTemplateAPIService.sendEmail(
