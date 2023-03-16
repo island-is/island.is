@@ -140,6 +140,24 @@ interface LawsBrokenOption {
   disabled: boolean
 }
 
+export function getRelevantSubstances(
+  offenses: IndictmentCountOffense[],
+  substances: SubstanceMap,
+) {
+  const allowedSubstances = offenses.map(
+    (offense) => offenseSubstances[offense],
+  )
+
+  const relevantSubstances = allowedSubstances
+    .map((allowedSubstance) => {
+      return Object.entries(substances).filter((substance) => {
+        return allowedSubstance.includes(substance[0] as Substance)
+      })
+    })
+    .flat()
+  return relevantSubstances
+}
+
 function getIndictmentDescriptionReason(
   offenses: IndictmentCountOffense[],
   substances: SubstanceMap,
@@ -184,12 +202,7 @@ function getIndictmentDescriptionReason(
     return acc
   }, '')
 
-  const allowedSubstances: string[] = offenses
-    .map((offense) => offenseSubstances[offense])
-    .flat()
-  const relevantSubstances = Object.entries(substances).filter((substance) =>
-    allowedSubstances.includes(substance[0]),
-  )
+  const relevantSubstances = getRelevantSubstances(offenses, substances)
 
   reason += relevantSubstances.reduce((acc, substance, index) => {
     if (index === 0) {
