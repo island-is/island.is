@@ -13,8 +13,12 @@ TARGET=$2
 ACTION=${3:-docker_build}
 : "${PLAYWRIGHT_VERSION:=$(yarn info --json @playwright/test | jq -r '.children.Version')}"
 
-function docker_build() {
-  local build_args=(
+BUILD_ARGS=()
+
+
+function mkargs() {
+  local local_cache="${1:-local-cache=yes}"
+  BUILD_ARGS=(
     --platform=linux/amd64 \
     --file="${DIR}/$DOCKERFILE" \
     --target="$TARGET" \
@@ -26,17 +30,22 @@ function docker_build() {
     --build-arg="PLAYWRIGHT_VERSION=${PLAYWRIGHT_VERSION}" \
   )
   for extra_arg in ${EXTRA_DOCKER_BUILD_ARGS:-}; do
-    build_args+=("$extra_arg")
+    BUILD_ARGS+=("$extra_arg")
   done
-  if ! docker --version | grep -q podman; then
-    build_args+=(--cache-from="type=local,src=$PROJECT_ROOT/cache")
-    build_args+=(--cache-from="type=local,src=$PROJECT_ROOT/cache_output")
+  if [[ "${local_cache}" =~ local-cache=(yes|y|true) ]] && false; then
+    BUILD_ARGS+=(--cache-from="type=local,src=$PROJECT_ROOT/cache")
+    BUILD_ARGS+=(--cache-from="type=local,src=$PROJECT_ROOT/cache_output")
   fi
+}
 
-  for arg in "${build_args[@]}"; do echo "BUILD_ARG: $arg"; done
-  # shellcheck disable=SC2086
-  docker buildx build "${build_args[@]}" \
-    "$PROJECT_ROOT"
+_build() {
+  local builder="${1:-docker}"
+  $builder buildx build "${BUILD_ARGS[@]}" "$PROJECT_ROOT"
+}
+
+function docker_build() {
+  mkargs local-cache=true
+  _build docker
 }
 
 case $PUBLISH in
