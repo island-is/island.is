@@ -3,7 +3,7 @@
   "compilerOptions": {
     "jsx": "preserve",
     "allowJs": true,
-    "strict": false,
+    "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "resolveJsonModule": true,
