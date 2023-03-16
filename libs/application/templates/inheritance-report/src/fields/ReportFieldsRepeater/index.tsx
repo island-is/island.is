@@ -84,6 +84,10 @@ export const ReportFieldsRepeater: FC<
   )
 
   const handleAddRepeaterFields = () => {
+    //reset stocks
+    setRateOfExchange(0)
+    setFaceValue(0)
+
     const values = props.fields.map((field: object) => {
       return Object.values(field)[1]
     })
@@ -102,9 +106,17 @@ export const ReportFieldsRepeater: FC<
     setValue(addTotal, total)
   }, [id, total, setValue])
 
-  /* ------ Set stocks value ------ */
+  /* ------ Set stocks value and total ------ */
   useEffect(() => {
-    setValue(`${index}.value`, String(faceValue * rateOfExchange))
+    if (rateOfExchange > 0 && faceValue > 0) {
+      setValue(`${index}.value`, String(faceValue * rateOfExchange))
+
+      const i = index.match(/\d+/)
+      calculateTotal(
+        currencyStringToNumber(String(Number(rateOfExchange * faceValue))),
+        Number((i as any)[0]),
+      )
+    }
   }, [faceValue, index, rateOfExchange, setValue])
 
   /* ------ Set heirs calculations ------ */
@@ -164,6 +176,18 @@ export const ReportFieldsRepeater: FC<
     )
   }
 
+  const getDefaults = (fieldId: string) => {
+    return fieldId === 'taxFreeInheritance'
+      ? taxFreeInheritance
+      : fieldId === 'inheritance'
+      ? inheritance
+      : fieldId === 'taxableInheritance'
+      ? taxableInheritance
+      : fieldId === 'inheritanceTax'
+      ? inheritanceTax
+      : ''
+  }
+
   return (
     <Box>
       {fields.map((repeaterField: any, index) => {
@@ -210,15 +234,7 @@ export const ReportFieldsRepeater: FC<
                       defaultValue={
                         repeaterField[field.id]
                           ? repeaterField[field.id]
-                          : field.id === 'taxFreeInheritance'
-                          ? taxFreeInheritance
-                          : field.id === 'inheritance'
-                          ? inheritance
-                          : field.id === 'taxableInheritance'
-                          ? taxableInheritance
-                          : field.id === 'inheritanceTax'
-                          ? inheritanceTax
-                          : ''
+                          : getDefaults(field.id)
                       }
                       format={field.format}
                       label={field.title}
@@ -236,25 +252,25 @@ export const ReportFieldsRepeater: FC<
                           : undefined
                       }
                       onChange={(elem) => {
+                        const value = elem.target.value.replace(/\D/g, '')
+
                         // heirs
                         if (field.id === 'heirsPercentage') {
-                          setPercentage(Number(elem.target.value) / 100)
+                          setPercentage(Number(value) / 100)
                         }
 
                         // stocks
                         if (field.id === 'rateOfExchange') {
-                          setRateOfExchange(Number(elem.target.value))
+                          setRateOfExchange(Number(value))
                         } else if (field.id === 'faceValue') {
-                          setFaceValue(Number(elem.target.value))
+                          setFaceValue(Number(value))
                         }
 
                         // total
                         if (props.sumField === field.id) {
-                          calculateTotal(
-                            currencyStringToNumber(elem.target.value),
-                            index,
-                          )
+                          calculateTotal(currencyStringToNumber(value), index)
                         }
+
                         setIndex(fieldIndex)
                       }}
                     />

@@ -26,8 +26,6 @@ export interface EstateMemberWithAdvocate {
   foreignCitizenship?: ('yes' | 'no')[]
   dummy: boolean
   enabled?: boolean
-  advocateNationalId?: string
-  advocateName?: string
 }
 
 export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
@@ -40,7 +38,6 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
   const { fields, append, remove } = useFieldArray({
     name: id,
   })
-  const { setValue } = useFormContext()
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
     relationOptions: string[]
@@ -59,8 +56,6 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
       initial: false,
       enabled: true,
       name: '',
-      advocateNationalId: '',
-      advocateName: '',
     })
 
   useEffect(() => {
@@ -72,55 +67,53 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
   return (
     <Box marginTop={2} marginBottom={5}>
       <GridRow>
-        {fields.reduce(
-          (acc, member: GenericFormField<EstateMemberWithAdvocate>, index) => {
-            if (member.nationalId === application.applicant) {
-              const relation = getValueViaPath<string>(
-                application.answers,
-                'applicantRelation',
-              )
-              if (relation && relation !== member.relation) {
-                member.relation = relation
-              }
+        {fields.reduce((acc, member: GenericFormField<EstateMemberWithAdvocate>, index) => {
+          if (member.nationalId === application.applicant) {
+            const relation = getValueViaPath<string>(
+              application.answers,
+              'applicantRelation',
+            )
+            if (relation && relation !== member.relation) {
+              member.relation = relation
             }
-            if (!member.initial) {
-              return acc
-            }
-            return [
-              ...acc,
-              <GridColumn
-                key={index}
-                span={['12/12', '12/12', '6/12']}
-                paddingBottom={3}
-              >
-                <ProfileCard
-                  title={member.name}
-                  disabled={!member.enabled}
-                  description={[
-                    formatNationalId(member.nationalId || ''),
-                    member.relation || '',
-                    <Box marginTop={1} as="span">
-                      <Button
-                        variant="text"
-                        icon={member.enabled ? 'remove' : 'add'}
-                        size="small"
-                        iconType="outline"
-                        onClick={() => {
-                          setValue(`${id}[${index}].enabled`, !member.enabled)
-                        }}
-                      >
-                        {member.enabled
-                          ? formatMessage(m.inheritanceDisableMember)
-                          : formatMessage(m.inheritanceEnableMember)}
-                      </Button>
-                    </Box>,
-                  ]}
-                />
-              </GridColumn>,
-            ]
-          },
-          [] as JSX.Element[],
-        )}
+          }
+          if (!member.initial) {
+            return acc
+          }
+          return [
+            ...acc,
+            <GridColumn
+              key={index}
+              span={['12/12', '12/12', '6/12']}
+              paddingBottom={3}
+            >
+              <ProfileCard
+                title={member.name}
+                disabled={!member.enabled}
+                description={[
+                  formatNationalId(member.nationalId || ''),
+                  member.relation || '',
+                  /* TODO: add back when react-hook-forms update is in
+                  <Box marginTop={1} as="span">
+                    <Button
+                      variant="text"
+                      icon={member.enabled ? 'remove' : 'add'}
+                      size="small"
+                      iconType="outline"
+                      onClick={() => {
+                        setValue(`${id}[${index}].enabled`, !member.enabled)
+                      }}
+                    >
+                      {member.enabled
+                        ? formatMessage(m.inheritanceDisableMember)
+                        : formatMessage(m.inheritanceEnableMember)}
+                    </Button>
+                    </Box>,*/
+                ]}
+              />
+            </GridColumn>,
+          ]
+        }, [] as JSX.Element[])}
       </GridRow>
       {fields.map(
         (member: GenericFormField<EstateMemberWithAdvocate>, index) => (

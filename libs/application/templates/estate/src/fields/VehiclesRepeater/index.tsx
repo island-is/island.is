@@ -67,7 +67,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
                 key={asset.assetNumber}
                 description={[
                   `${asset.description}`,
-                  <Box marginTop={1} as="span">
+                  /*<Box marginTop={1} as="span">
                     <Button
                       variant="text"
                       icon={asset.enabled ? 'remove' : 'add'}
@@ -81,7 +81,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
                         ? formatMessage(m.inheritanceDisableMember)
                         : formatMessage(m.inheritanceEnableMember)}
                     </Button>
-                  </Box>,
+                  </Box>,*/
                 ]}
                 heightFull
               />

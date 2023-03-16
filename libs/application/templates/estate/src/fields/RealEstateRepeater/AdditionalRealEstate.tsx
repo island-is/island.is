@@ -73,8 +73,6 @@ export const AdditionalRealEstate = ({
           },
         },
       })
-    } else if (!field.initial) {
-      setValue(addressField, '')
     }
   }, [getProperty, address, addressField, propertyNumberInput, setValue])
 
