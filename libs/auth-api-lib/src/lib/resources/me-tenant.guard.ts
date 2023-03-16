@@ -1,5 +1,11 @@
 import { getRequest } from '@island.is/auth-nest-tools'
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
+import { NoContentException } from '@island.is/nest/problem'
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common'
 
 import { TenantsService } from './tenants.service'
 
@@ -13,10 +19,17 @@ export class MeTenantGuard implements CanActivate {
     const { tenantId } = request.params
 
     if (!tenantId || !user) {
-      console.warn('Missing tenantId param or user auth')
-      return false
+      throw new InternalServerErrorException(
+        'Missing tenantId param or user auth',
+      )
     }
 
-    return this.tenantsService.hasAccessToTenant(user, tenantId)
+    const hasAccess = this.tenantsService.hasAccessToTenant(user, tenantId)
+
+    if (!hasAccess) {
+      // Should not leak information about the existence of a tenant.
+      throw new NoContentException()
+    }
+    return true
   }
 }

@@ -167,8 +167,7 @@ describe('MeTenantsController', () => {
         // Act
         const response = await server.get('/v2/me/tenants/domain-2')
         // Assert
-        // TODO: MeTenantGuard is catching this. Should it or can it return 204 instead?
-        expect(response.status).toBe(403)
+        expect(response.status).toBe(204)
         expect(response.body).toEqual({})
       })
     })
