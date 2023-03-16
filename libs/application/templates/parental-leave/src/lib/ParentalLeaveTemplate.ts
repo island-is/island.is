@@ -1185,7 +1185,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             set(answers, `employers[${i}].ratio`, val.ratio)
             set(answers, `employers[${i}].email`, val.email)
             set(answers, `employers[${i}].reviewerNationalRegistryId`, '')
-            set(answers, `employers[${i}].companyNationalRegistryId`, '')
+            set(
+              answers,
+              `employers[${i}].companyNationalRegistryId`,
+              val.companyNationalRegistryId,
+            )
             set(answers, `employers[${i}].isApproved`, false)
           })
         }
