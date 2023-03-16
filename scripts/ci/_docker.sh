@@ -8,15 +8,15 @@ source "$DIR"/_common.sh
 
 APP_HOME=$(jq ".projects[\"$APP\"]" -r < "$PROJECT_ROOT"/workspace.json)
 APP_DIST_HOME=$(jq ".targets.build.options.outputPath" -r < "$PROJECT_ROOT"/"$APP_HOME"/project.json)
-DOCKERFILE=$1
-TARGET=$2
+DOCKERFILE=${1:-DockerFile}
+TARGET=${2:-unset_target}
 ACTION=${3:-docker_build}
 : "${PLAYWRIGHT_VERSION:=$(yarn info --json @playwright/test | jq -r '.children.Version')}"
 
 BUILD_ARGS=()
 
 
-function mkargs() {
+mkargs() {
   local local_cache="${1:-local-cache=yes}"
   BUILD_ARGS=(
     --platform=linux/amd64 \
@@ -38,28 +38,36 @@ function mkargs() {
   fi
 }
 
-_build() {
+builder_build() {
   local builder="${1:-docker}"
   $builder buildx build "${BUILD_ARGS[@]}" "$PROJECT_ROOT"
 }
 
-function docker_build() {
+_docker_build() {
   mkargs local-cache=true
-  _build docker
+  builder_build docker
 }
 
-case $PUBLISH in
-    true)
-        PUBLISH_TO_REGISTRY=(--push)
-        ;;
-    local)
-        PUBLISH_TO_REGISTRY=(--load)
-        ;;
-    *)
-        # Just build the container but do not publish it to the registry
-        PUBLISH_TO_REGISTRY=()
-        ;;
-esac
+_set_publish() {
+  case $PUBLISH in
+      true)
+          PUBLISH_TO_REGISTRY=(--push)
+          ;;
+      local)
+          PUBLISH_TO_REGISTRY=(--load)
+          ;;
+      *)
+          # Just build the container but do not publish it to the registry
+          PUBLISH_TO_REGISTRY=()
+          ;;
+  esac
+}
 
-# Support overriding docker_build
-eval "${ACTION}"
+main() {
+  # Support overriding docker_build
+  eval "${ACTION}"
+}
+
+# Exit if not directly run
+return 2>/dev/null || true
+main "$@"
