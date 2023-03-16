@@ -1,6 +1,6 @@
 # Smart Solutions
 
-A library enabling interaction with of digital licenses.
+A library enabling interaction with various digital licenses.
 This library was generated with [Nx](https://nx.dev).
 
 ## Usage
