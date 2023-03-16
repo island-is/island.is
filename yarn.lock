@@ -6925,15 +6925,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/jwt@npm:7.1.0":
-  version: 7.1.0
-  resolution: "@nestjs/jwt@npm:7.1.0"
+"@nestjs/jwt@npm:8.0.1":
+  version: 8.0.1
+  resolution: "@nestjs/jwt@npm:8.0.1"
   dependencies:
-    "@types/jsonwebtoken": 8.5.0
+    "@types/jsonwebtoken": 8.5.8
     jsonwebtoken: 8.5.1
   peerDependencies:
-    "@nestjs/common": ^6.0.0 || ^7.0.0
-  checksum: 4d45d3c0745db0ea182ccac001cbd1721dd5e6f7ce9216ae4110085fa199c4a91ee44fd37d77f9047605194ebbf478b88755e6d46f66b2da0bb2eb897d834af9
+    "@nestjs/common": ^6.0.0 || ^7.0.0 || ^8.0.0
+  checksum: 0af21c609ebc023be009c1fc02c59d6d58548ba54f0648bb8b5bf4d70f334f554690cdf14df889dc424fe170c50d5fd4e6f2adf98a1d493b241899dc96f3c8be
   languageName: node
   linkType: hard
 
@@ -6971,13 +6971,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/passport@npm:7.1.0":
-  version: 7.1.0
-  resolution: "@nestjs/passport@npm:7.1.0"
+"@nestjs/passport@npm:8.2.2":
+  version: 8.2.2
+  resolution: "@nestjs/passport@npm:8.2.2"
   peerDependencies:
-    "@nestjs/common": ^6.0.0 || ^7.0.0
-    passport: ^0.4.0
-  checksum: 90237e38c130cf3dbba02a91853959430c12f0b93222605a00d0b2712dd81c8e7219cf6471a006bc11ef475da1b256972ddbab52da25dba2fe30d2a859f2f7ce
+    "@nestjs/common": ^6.0.0 || ^7.0.0 || ^8.0.0
+    passport: ^0.4.0 || ^0.5.0 || ^0.6.0
+  checksum: ec94c3a0fcdce0f4aceee69a20cbdea782629190cbd75d72731abdba27baafcea28963d9a1d29597a73ee6e73cdff04555c47641d50e6368294f09af4b48ac94
   languageName: node
   linkType: hard
 
@@ -10973,16 +10973,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/express-jwt@npm:0.0.42":
-  version: 0.0.42
-  resolution: "@types/express-jwt@npm:0.0.42"
-  dependencies:
-    "@types/express": "*"
-    "@types/express-unless": "*"
-  checksum: b69148367b40c74876e77438a7a2449d3478d222a6094bce008308cf87ea43dcce5d74ebaef5d28bb224b0f0dd695bcf25a634a69d3c186575458eb1a1a6e4f8
-  languageName: node
-  linkType: hard
-
 "@types/express-serve-static-core@npm:*, @types/express-serve-static-core@npm:^4.17.18":
   version: 4.17.19
   resolution: "@types/express-serve-static-core@npm:4.17.19"
@@ -11013,15 +11003,6 @@ __metadata:
     "@types/qs": "*"
     "@types/range-parser": "*"
   checksum: dce580d16b85f207445af9d4053d66942b27d0c72e86153089fa00feee3e96ae336b7bedb31ed4eea9e553c99d6dd356ed6e0928f135375d9f862a1a8015adf2
-  languageName: node
-  linkType: hard
-
-"@types/express-unless@npm:*":
-  version: 0.5.1
-  resolution: "@types/express-unless@npm:0.5.1"
-  dependencies:
-    "@types/express": "*"
-  checksum: 1118133e59553945b4502bc3eb96d09045432200617bd9f971e6c2b2b4eebe93f4d5b8d80e2fe1834c80802b483031813cfbcae65df23bc41db6ac86d10b0c41
   languageName: node
   linkType: hard
 
@@ -11387,12 +11368,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jsonwebtoken@npm:8.5.0":
-  version: 8.5.0
-  resolution: "@types/jsonwebtoken@npm:8.5.0"
+"@types/jsonwebtoken@npm:8.5.8":
+  version: 8.5.8
+  resolution: "@types/jsonwebtoken@npm:8.5.8"
   dependencies:
     "@types/node": "*"
-  checksum: e8f9ab96ec5cf76195c0d31cf555371824b673939064efec698ca99525ce46476af54debd1f66bd732e6079e134848b97163797009c4b47a767448a0c6ddaeda
+  checksum: 56738a918c543dba30786066959f801212e7fb5cd4ec53cf7b8d227711ed358834feb9e5141f7f88ec7c642bb39757330a5a8917e3b22e0ff9084940d35f0d70
   languageName: node
   linkType: hard
 
@@ -11635,25 +11616,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/passport-jwt@npm:3.0.3":
-  version: 3.0.3
-  resolution: "@types/passport-jwt@npm:3.0.3"
+"@types/passport-jwt@npm:3.0.8":
+  version: 3.0.8
+  resolution: "@types/passport-jwt@npm:3.0.8"
   dependencies:
     "@types/express": "*"
     "@types/jsonwebtoken": "*"
     "@types/passport-strategy": "*"
-  checksum: 36b3759838755b303ec9adadb4ec5ccc6d5cfb81dd4f6927456e972489a5d08f38d31ca118f551f969e6437ade9a1c1babeb3dfa37d8f0df4d4a93f84a74be5a
-  languageName: node
-  linkType: hard
-
-"@types/passport-local@npm:1.0.33":
-  version: 1.0.33
-  resolution: "@types/passport-local@npm:1.0.33"
-  dependencies:
-    "@types/express": "*"
-    "@types/passport": "*"
-    "@types/passport-strategy": "*"
-  checksum: c3a1834ec730261a09dbb4f4a5d70f12f3925c78f7b05ff7244c1352b038b4e555c8d93f236c6d29a23a7d92931ff397d90dfb1139193d131dee148ba71867fe
+  checksum: 321eca319eff51c87a5ddebf590937b24ed7fa6c8cc2465cecb4edf49f839b7770e57a4ed009f323c66ade6c0f1d9b6a51033d82dd392270b17976380893af2f
   languageName: node
   linkType: hard
 
@@ -26757,8 +26727,8 @@ __metadata:
     "@nestjs/config": 0.5.0
     "@nestjs/core": 8.4.4
     "@nestjs/graphql": 10.1.1
-    "@nestjs/jwt": 7.1.0
-    "@nestjs/passport": 7.1.0
+    "@nestjs/jwt": 8.0.1
+    "@nestjs/passport": 8.2.2
     "@nestjs/platform-express": 8.4.5
     "@nestjs/schematics": 8.0.10
     "@nestjs/sequelize": 8.0.0
@@ -26828,8 +26798,7 @@ __metadata:
     "@types/node": 18.14.2
     "@types/nodemailer": 6.4.1
     "@types/opossum": 4.1.1
-    "@types/passport-jwt": 3.0.3
-    "@types/passport-local": 1.0.33
+    "@types/passport-jwt": 3.0.8
     "@types/pdfkit": 0.11.2
     "@types/pg": 8.6.4
     "@types/pubsub-js": 1.8.1
@@ -26974,7 +26943,7 @@ __metadata:
     jsonp: 0.2.1
     jsonwebtoken: 9.0.0
     juice: 8.0.0
-    jwks-rsa: 1.10.1
+    jwks-rsa: 3.0.1
     kennitala: 2.0.0-beta.2
     libphonenumber-js: 1.7.53
     license-checker: 25.0.1
@@ -26997,8 +26966,8 @@ __metadata:
     oidc-client-ts: 2.0.3
     openapi3-ts: 2.0.0
     opossum: 6.1.0
-    passport: 0.4.1
-    passport-jwt: 4.0.0
+    passport: 0.6.0
+    passport-jwt: 4.0.1
     pdf-lib: 1.17.1
     pdfkit: 0.11.0
     pg: 8.1.0
@@ -29207,7 +29176,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsonwebtoken@npm:8.5.1, jsonwebtoken@npm:^8.2.0, jsonwebtoken@npm:^8.5.1":
+"jsonwebtoken@npm:8.5.1, jsonwebtoken@npm:^8.5.1":
   version: 8.5.1
   resolution: "jsonwebtoken@npm:8.5.1"
   dependencies:
@@ -29332,24 +29301,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jwks-rsa@npm:1.10.1":
-  version: 1.10.1
-  resolution: "jwks-rsa@npm:1.10.1"
-  dependencies:
-    "@types/express-jwt": 0.0.42
-    axios: ^0.19.2
-    debug: ^4.1.0
-    http-proxy-agent: ^4.0.1
-    https-proxy-agent: ^5.0.0
-    jsonwebtoken: ^8.5.1
-    limiter: ^1.1.5
-    lru-memoizer: ^2.1.2
-    ms: ^2.1.2
-  checksum: fd221e15631c969143779899ae2d2dde80eadc41ed42b60c6231ad8e3a8a64b0676d66eba456c8005132c70a3d9873d30e4b562731e8df9e1e24a60c9e72ef37
-  languageName: node
-  linkType: hard
-
-"jwks-rsa@npm:^3.0.1":
+"jwks-rsa@npm:3.0.1, jwks-rsa@npm:^3.0.1":
   version: 3.0.1
   resolution: "jwks-rsa@npm:3.0.1"
   dependencies:
@@ -30496,7 +30448,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lru-memoizer@npm:^2.1.2, lru-memoizer@npm:^2.1.4":
+"lru-memoizer@npm:^2.1.4":
   version: 2.1.4
   resolution: "lru-memoizer@npm:2.1.4"
   dependencies:
@@ -31631,7 +31583,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ms@npm:2.1.3, ms@npm:^2.0.0, ms@npm:^2.1.1, ms@npm:^2.1.2":
+"ms@npm:2.1.3, ms@npm:^2.0.0, ms@npm:^2.1.1":
   version: 2.1.3
   resolution: "ms@npm:2.1.3"
   checksum: aa92de608021b242401676e35cfa5aa42dd70cbdc082b916da7fb925c542173e36bce97ea3e804923fe92c0ad991434e4a38327e15a1b5b5f945d66df615ae6d
@@ -33752,13 +33704,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"passport-jwt@npm:4.0.0":
-  version: 4.0.0
-  resolution: "passport-jwt@npm:4.0.0"
+"passport-jwt@npm:4.0.1":
+  version: 4.0.1
+  resolution: "passport-jwt@npm:4.0.1"
   dependencies:
-    jsonwebtoken: ^8.2.0
+    jsonwebtoken: ^9.0.0
     passport-strategy: ^1.0.0
-  checksum: d0499ebb819c714d885a9c03a6c5d6dfae916c1a81ccb62357136d5bf477529327e9b8fc658f61f97c565651d2bd78eccec4543474a08e944132f0e2ec47cc3d
+  checksum: 0669d5bf8fc18ee57eb39601491c59ac084acfa6c972e0a3289e9d88a3ee6fab9e9fb279f359eee81939fedb66904c4a74423004480b60c54621af0d7b2ee0d5
   languageName: node
   linkType: hard
 
@@ -33769,13 +33721,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"passport@npm:0.4.1":
-  version: 0.4.1
-  resolution: "passport@npm:0.4.1"
+"passport@npm:0.6.0":
+  version: 0.6.0
+  resolution: "passport@npm:0.6.0"
   dependencies:
     passport-strategy: 1.x.x
     pause: 0.0.1
-  checksum: 6e0d855e281df8568f4b361d8377995295e59b08391a1b57d18d1404dbaa67af1523c987e9a071d6b0d1550f022637d62f9854bbd31ebc30372f0bfb1acb2567
+    utils-merge: ^1.0.1
+  checksum: ef932ad671d50de34765c7a53cd1e058d8331a82a6df09265a9c6c1168911aee4a7b5215803d0101110ab7f317e096b4954ca7e18fb2c33b9929f0bd17dbe159
   languageName: node
   linkType: hard
 
@@ -43034,7 +42987,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"utils-merge@npm:1.0.1":
+"utils-merge@npm:1.0.1, utils-merge@npm:^1.0.1":
   version: 1.0.1
   resolution: "utils-merge@npm:1.0.1"
   checksum: c81095493225ecfc28add49c106ca4f09cdf56bc66731aa8dabc2edbbccb1e1bfe2de6a115e5c6a380d3ea166d1636410b62ef216bb07b3feb1cfde1d95d5080

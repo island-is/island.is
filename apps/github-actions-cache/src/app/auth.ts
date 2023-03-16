@@ -19,7 +19,7 @@ export const authMiddleware = async (
     return next()
   }
   try {
-    const signingKeys = await secretClient.getSigningKeysAsync()
+    const signingKeys = await secretClient.getSigningKeys()
     const auth = req.header('Authorization')
     if (!auth) {
       logger.info(req.method, req.path)
