@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
-import { useFormContext } from 'react-hook-form'
+import { Controller, useFormContext } from 'react-hook-form'
 import { Box } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
@@ -89,27 +89,33 @@ const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
   return (
     <Box marginBottom={6} marginTop={5}>
       <Box marginBottom={12}>
-        <Slider
-          label={{
-            singular: formatMessage(parentalLeaveFormMessages.shared.day),
-            plural: formatMessage(parentalLeaveFormMessages.shared.days),
-          }}
-          min={1}
-          max={maxDays}
-          step={1}
-          currentIndex={chosenRequestDays}
-          showMinMaxLabels
-          showToolTip
-          trackStyle={{ gridTemplateRows: 8 }}
-          calculateCellStyle={() => {
-            return {
-              background: theme.color.dark200,
-            }
-          }}
-          onChange={(newValue: number) => {
-            setValue(id, newValue.toString())
-            setChosenRequestDays(newValue)
-          }}
+        <Controller
+          defaultValue={chosenRequestDays}
+          name={id}
+          render={({ field: { onChange, value } }) => (
+            <Slider
+              label={{
+                singular: formatMessage(parentalLeaveFormMessages.shared.day),
+                plural: formatMessage(parentalLeaveFormMessages.shared.days),
+              }}
+              min={1}
+              max={maxDays}
+              step={1}
+              currentIndex={value}
+              showMinMaxLabels
+              showToolTip
+              trackStyle={{ gridTemplateRows: 8 }}
+              calculateCellStyle={() => {
+                return {
+                  background: theme.color.dark200,
+                }
+              }}
+              onChange={(newValue: number) => {
+                onChange(newValue)
+                setChosenRequestDays(newValue)
+              }}
+            />
+          )}
         />
       </Box>
       <BoxChart

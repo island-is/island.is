@@ -32,7 +32,7 @@ export const Duration: FC<FieldBaseProps> = ({
   errors,
 }) => {
   const { id } = field
-  const { register, setError, clearErrors } = useFormContext()
+  const { register, setError, clearErrors, setValue } = useFormContext()
   const { formatMessage, formatDateFns } = useLocale()
   const { answers } = application
   const { rawPeriods } = getApplicationAnswers(answers)
@@ -64,7 +64,6 @@ export const Duration: FC<FieldBaseProps> = ({
         )
 
         setChosenEndDate(calculatedEndDate.toISOString())
-
         return calculatedEndDate
       } catch (e) {
         console.error((e as Error).message)
@@ -77,6 +76,12 @@ export const Duration: FC<FieldBaseProps> = ({
     },
     [currentStartDateAnswer, formatMessage, setError],
   )
+
+  useEffect(() => {
+    if (chosenEndDate) {
+      setValue(`periods[${currentIndex}].endDate`, chosenEndDate)
+    }
+  }, [chosenEndDate, setValue, currentIndex])
 
   const handleChange = async (months: number) => {
     clearErrors([id, 'component'])
@@ -103,7 +108,6 @@ export const Duration: FC<FieldBaseProps> = ({
   }, [])
 
   const isGrant = isParentalGrant(application)
-
   const rangeDates =
     currentPeriod.firstPeriodStart !== StartDateOptions.ACTUAL_DATE_OF_BIRTH
       ? {
@@ -121,7 +125,6 @@ export const Duration: FC<FieldBaseProps> = ({
           },
         }
       : undefined
-
   return (
     <Box>
       <FieldDescription

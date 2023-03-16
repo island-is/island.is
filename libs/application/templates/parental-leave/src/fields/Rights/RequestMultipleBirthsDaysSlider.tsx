@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
-import { useFormContext } from 'react-hook-form'
+import { Controller, useFormContext } from 'react-hook-form'
 import { Box } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
@@ -36,9 +36,9 @@ const RequestMultipleBirthsDaysSlider: FC<FieldBaseProps> = ({
   )
   useEffectOnce(() => {
     setValue('requestRights.isRequestingRights', NO)
-    setValue('requestRights.requestDays', 0)
+    setValue('requestRights.requestDays', '0')
     setValue('giveRights.isGivingRights', NO)
-    setValue('giveRights.giveDays', 0)
+    setValue('giveRights.giveDays', '0')
   })
 
   const requestedMonths = defaultMonths + chosenRequestDays / daysInMonth
@@ -67,27 +67,33 @@ const RequestMultipleBirthsDaysSlider: FC<FieldBaseProps> = ({
       <p>{formatText(description!, application, formatMessage)}</p>
       <Box marginBottom={6} marginTop={5}>
         <Box marginBottom={12}>
-          <Slider
-            label={{
-              singular: formatMessage(parentalLeaveFormMessages.shared.day),
-              plural: formatMessage(parentalLeaveFormMessages.shared.days),
-            }}
-            min={0}
-            max={maxDays}
-            step={1}
-            currentIndex={chosenRequestDays}
-            showMinMaxLabels
-            showToolTip
-            trackStyle={{ gridTemplateRows: 8 }}
-            calculateCellStyle={() => {
-              return {
-                background: theme.color.dark200,
-              }
-            }}
-            onChange={(newValue: number) => {
-              setChosenRequestDays(newValue)
-              setValue(id, newValue.toString())
-            }}
+          <Controller
+            defaultValue={chosenRequestDays}
+            name={id}
+            render={({ field: { onChange, value } }) => (
+              <Slider
+                label={{
+                  singular: formatMessage(parentalLeaveFormMessages.shared.day),
+                  plural: formatMessage(parentalLeaveFormMessages.shared.days),
+                }}
+                min={0}
+                max={maxDays}
+                step={1}
+                currentIndex={value}
+                showMinMaxLabels
+                showToolTip
+                trackStyle={{ gridTemplateRows: 8 }}
+                calculateCellStyle={() => {
+                  return {
+                    background: theme.color.dark200,
+                  }
+                }}
+                onChange={(newValue: number) => {
+                  onChange(newValue)
+                  setChosenRequestDays(newValue)
+                }}
+              />
+            )}
           />
         </Box>
         <BoxChart
