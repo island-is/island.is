@@ -22,7 +22,7 @@ import * as kennitala from 'kennitala'
 import { m } from '../../lib/messages'
 import { YES } from '../../lib/constants'
 import { IDENTITY_QUERY } from '../../graphql'
-import { Application } from '@island.is/application/types'
+import { Application, GenericFormField } from '@island.is/application/types'
 import { EstateMember } from '../../types'
 import { useState } from '@storybook/addons'
 
