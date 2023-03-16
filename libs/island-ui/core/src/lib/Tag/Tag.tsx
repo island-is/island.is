@@ -95,7 +95,7 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       <a href={href} {...anchorProps} {...sharedProps} {...props}>
         {content}
       </a>
-    ) : (
+    ) : onClick ? (
       <button
         type="button"
         disabled={disabled}
@@ -105,6 +105,8 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       >
         {content}
       </button>
+    ) : (
+      <span {...sharedProps}>{content}</span>
     )
   },
 )
