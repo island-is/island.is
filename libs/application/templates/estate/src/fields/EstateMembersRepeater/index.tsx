@@ -26,8 +26,6 @@ export interface EstateMemberWithAdvocate {
   foreignCitizenship?: ('yes' | 'no')[]
   dummy: boolean
   enabled?: boolean
-  advocateNationalId?: string
-  advocateName?: string
 }
 
 export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
@@ -40,7 +38,6 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
   const { fields, append, remove } = useFieldArray<EstateMemberWithAdvocate>({
     name: id,
   })
-  const { setValue } = useFormContext()
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
     relationOptions: string[]
@@ -59,8 +56,6 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
       initial: false,
       enabled: true,
       name: '',
-      advocateNationalId: '',
-      advocateName: '',
     })
 
   useEffect(() => {

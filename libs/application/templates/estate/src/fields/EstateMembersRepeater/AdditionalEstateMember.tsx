@@ -172,7 +172,7 @@ export const AdditionalEstateMember = ({
                 id={nationalIdField}
                 name={nationalIdField}
                 label={formatMessage(m.inheritanceKtLabel)}
-                defaultValue={field.nationalId || ''}
+                defaultValue={nationalIdInput || field.nationalId || ''}
                 format="######-####"
                 required
                 backgroundColor="blue"
@@ -186,7 +186,7 @@ export const AdditionalEstateMember = ({
                 name={nameField}
                 label={formatMessage(m.inheritanceNameLabel)}
                 readOnly
-                defaultValue={field.name || ''}
+                defaultValue={name || field.name || ''}
                 backgroundColor="white"
               />
             </GridColumn>
