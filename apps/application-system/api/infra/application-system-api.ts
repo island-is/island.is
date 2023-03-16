@@ -284,12 +284,12 @@ export const serviceSetup = (services: {
     .readiness('/liveness')
     .resources({
       limits: { cpu: '400m', memory: '1024Mi' },
-      requests: { cpu: '100m', memory: '512Mi' },
+      requests: { cpu: '50m', memory: '512Mi' },
     })
     .replicaCount({
-      default: 10,
+      default: 2,
       max: 60,
-      min: 10,
+      min: 2,
     })
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

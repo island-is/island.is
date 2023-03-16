@@ -9,12 +9,13 @@ import {
   Hidden,
   LoadingDots,
 } from '@island.is/island-ui/core'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { HeroBanner } from '../../components'
 import Card from '../../components/Card/Card'
 import Layout from '../../components/Layout/Layout'
 import SearchAndFilter from '../../components/SearchAndFilter/SearchAndFilter'
 import {
+  ArrOfStatistics,
   ArrOfTypes,
   Case,
   CaseFilter,
@@ -32,10 +33,10 @@ import Pagination from '../../components/Pagination/Pagination'
 const CARDS_PER_PAGE = 12
 interface HomeProps {
   types: ArrOfTypes
+  statistics: ArrOfStatistics
 }
-export const Home = ({ types }: HomeProps) => {
-  const [page, setPage] = useState<number>(1)
-
+export const Home = ({ types, statistics }: HomeProps) => {
+  const [page, setPage] = useState<number>(0)
   const {
     caseStatuses,
     caseTypes,
@@ -48,7 +49,7 @@ export const Home = ({ types }: HomeProps) => {
   } = getInitFilterValues({ types: types })
 
   const defaultValues = {
-    query: '',
+    searchQuery: '',
     sorting: { items: sorting, isOpen: true },
     caseStatuses: { items: caseStatuses, isOpen: true },
     caseTypes: { items: caseTypes, isOpen: true },
@@ -58,7 +59,7 @@ export const Home = ({ types }: HomeProps) => {
   }
 
   const [filters, setFilters] = useState<CaseFilter>({
-    query: '',
+    searchQuery: '',
     sorting: { items: sorting, isOpen: true },
     caseStatuses: { items: caseStatuses, isOpen: true },
     caseTypes: { items: caseTypes, isOpen: true },
@@ -81,13 +82,18 @@ export const Home = ({ types }: HomeProps) => {
           (item: FilterInputItems) => item.checked,
         )[0].label,
     ),
-    // query: filters.query,
+    searchQuery: filters.searchQuery,
     policyAreas: filters.policyAreas,
     institutions: filters.institutions,
     dateFrom: filters.period.from,
     dateTo: filters.period.to,
-    pageSize: CARDS_PER_PAGE * 5,
+    pageSize: CARDS_PER_PAGE,
+    pageNumber: page,
   }
+
+  useEffect(() => {
+    setPage(0)
+  }, [filters])
 
   const client = initApollo()
 
@@ -100,16 +106,46 @@ export const Home = ({ types }: HomeProps) => {
     },
   })
 
-  const { consultationPortalGetCases: cases = [] } = data ?? {}
+  const { consultationPortalGetCases: casesData = [] } = data ?? {}
 
-  const updatePage = (pageNumber) => {
-    setPage(pageNumber)
-  }
+  const { cases = [], filterGroups = {}, total = 1 } = casesData
 
-  const count = cases.length
-  const totalPages = Math.ceil(count / CARDS_PER_PAGE)
-  const base = page === 1 ? 0 : (page - 1) * CARDS_PER_PAGE
-  const visibleItems = cases.slice(base, page * CARDS_PER_PAGE)
+  useEffect(() => {
+    const insertFilterCount = setTimeout(() => {
+      if (filterGroups) {
+        const caseTypesList = Object.entries(filterGroups.CaseTypes).map(
+          ([value, count]) => ({
+            value,
+            count,
+          }),
+        )
+        const caseTypesMerged = filters.caseTypes.items.map((item) => ({
+          ...item,
+          ...caseTypesList.find((val) => val.value === item.value),
+        }))
+
+        const caseStatusesList = Object.entries(filterGroups.Statuses).map(
+          ([value, count]) => ({
+            value,
+            count,
+          }),
+        )
+        const caseStatusesMerged = filters.caseStatuses.items.map((item) => ({
+          ...item,
+          ...caseStatusesList.find((val) => val.value === item.value),
+        }))
+
+        const filtersCopy = { ...filters }
+        filtersCopy.caseTypes.items = caseTypesMerged
+        filtersCopy.caseStatuses.items = caseStatusesMerged
+        setFilters(filtersCopy)
+      }
+    }, 500)
+
+    return () => {
+      clearTimeout(insertFilterCount)
+    }
+  }, [filterGroups])
 
   const renderCards = () => {
     if (loading) {
@@ -132,9 +168,9 @@ export const Home = ({ types }: HomeProps) => {
 
     return (
       <>
-        {visibleItems && (
+        {cases && (
           <Tiles space={3} columns={[1, 1, 1, 2, 3]}>
-            {visibleItems.map((item: Case, index: number) => {
+            {cases.map((item: Case, index: number) => {
               const card = {
                 id: item.id,
                 title: item.name,
@@ -164,16 +200,18 @@ export const Home = ({ types }: HomeProps) => {
             })}
           </Tiles>
         )}
-        {totalPages > 1 && (
-          <Pagination updatePage={updatePage} totalPages={totalPages} />
-        )}
+        <Pagination
+          page={page}
+          setPage={(page: number) => setPage(page)}
+          totalPages={Math.ceil(total / CARDS_PER_PAGE)}
+        />
       </>
     )
   }
 
   return (
     <Layout isFrontPage seo={{ title: 'Öll mál' }}>
-      <HeroBanner />
+      <HeroBanner statistics={statistics} />
       <SearchAndFilter
         PolicyAreas={PolicyAreas}
         defaultPolicyAreas={allPolicyAreas}

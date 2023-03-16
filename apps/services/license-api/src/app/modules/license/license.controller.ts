@@ -7,6 +7,7 @@ import {
   ParseEnumPipe,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common'
 import { LicenseService } from './license.service'
 import { Audit } from '@island.is/nest/audit'
@@ -20,6 +21,9 @@ import {
 } from './dto'
 import { ApiHeader, ApiTags } from '@nestjs/swagger'
 import { LicenseId } from './license.types'
+import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { LicenseTypeScopesGuard } from './guards/licenseTypeScope.guard'
+import { LicenseApiScope } from '@island.is/auth/scopes'
 import { NationalId } from '@island.is/nest/core'
 
 @ApiHeader({
@@ -27,6 +31,7 @@ import { NationalId } from '@island.is/nest/core'
   description: "The user's national id",
 })
 @Controller({ version: ['1'], path: 'users/.nationalId/licenses/' })
+@UseGuards(IdsAuthGuard, LicenseTypeScopesGuard)
 @ApiTags('users-licenses')
 @Audit()
 export class UserLicensesController {
@@ -108,6 +113,8 @@ export class UserLicensesController {
 }
 
 @Controller({ version: ['1'], path: 'licenses/' })
+@UseGuards(IdsAuthGuard, ScopesGuard)
+@Scopes(LicenseApiScope.licensesVerify)
 @ApiTags('licenses')
 @Audit()
 export class LicensesController {

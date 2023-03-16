@@ -87,6 +87,9 @@ describe('InternalNotificationController - Send ready for court notifications fo
     mockNotificationConfig = notificationConfig
     mockNotificationModel = notificationModel
 
+    const mockFindAll = mockNotificationModel.findAll as jest.Mock
+    mockFindAll.mockResolvedValue([])
+
     givenWhenThen = async (caseId, theCase, notification) => {
       const then = {} as Then
 
@@ -112,7 +115,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
     })
 
     it('should lookup previous ready for court notifications', () => {
-      expect(mockNotificationModel.findOne).toHaveBeenCalledWith({
+      expect(mockNotificationModel.findAll).toHaveBeenCalledWith({
         where: { caseId, type: NotificationType.READY_FOR_COURT },
       })
     })
@@ -149,8 +152,19 @@ describe('InternalNotificationController - Send ready for court notifications fo
 
   describe('subsequent notifications', () => {
     beforeEach(async () => {
-      const mockFindOne = mockNotificationModel.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce({} as Notification)
+      const mockFindOne = mockNotificationModel.findAll as jest.Mock
+      mockFindOne.mockResolvedValueOnce([
+        {
+          caseId,
+          type: NotificationType.READY_FOR_COURT,
+          recipients: [
+            {
+              address: mockNotificationConfig.sms.courtsMobileNumbers[courtId],
+              success: true,
+            },
+          ],
+        },
+      ])
 
       await givenWhenThen(caseId, theCase, notification)
     })
@@ -197,10 +211,8 @@ describe('InternalNotificationController - Send ready for court notifications fo
 
   describe('defender notification', () => {
     beforeEach(async () => {
-      const mockFindOne = mockNotificationModel.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce({} as Notification)
       const mockFindAll = mockNotificationModel.findAll as jest.Mock
-      mockFindAll.mockResolvedValueOnce([
+      mockFindAll.mockResolvedValueOnce([]).mockResolvedValueOnce([
         {
           recipients: [
             { name: 'Saul Goodman', address: 'saul@dummy.is', success: true },
@@ -233,7 +245,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
   })
 })
 
-describe('InternalNotificationController - Send ready for court notifications for restriction and investigation cases', () => {
+describe('InternalNotificationController - Send ready for court notifications for indictment cases', () => {
   const userId = uuid()
   const notification = { userId, type: NotificationType.READY_FOR_COURT }
 
