@@ -158,4 +158,5 @@ export interface EmployerRow {
   isApproved?: boolean
   reviewerNationalRegistryId?: string
   companyNationalRegistryId?: string
+  stillEmployed?: YesOrNo
 }
