@@ -32,7 +32,7 @@ function mkargs() {
   for extra_arg in ${EXTRA_DOCKER_BUILD_ARGS:-}; do
     BUILD_ARGS+=("$extra_arg")
   done
-  if [[ "${local_cache}" =~ local-cache=(yes|y|true) ]] && false; then
+  if [[ "${local_cache}" =~ local-cache=(yes|y|true) ]]; then
     BUILD_ARGS+=(--cache-from="type=local,src=$PROJECT_ROOT/cache")
     BUILD_ARGS+=(--cache-from="type=local,src=$PROJECT_ROOT/cache_output")
   fi
