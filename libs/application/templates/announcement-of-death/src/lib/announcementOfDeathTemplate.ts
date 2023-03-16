@@ -119,8 +119,8 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/draft').then((val) =>
-                  Promise.resolve(val.draft()),
+                import('../forms/draft/draft').then((val) =>
+                  Promise.resolve(val.draft),
                 ),
               actions: [
                 {
