@@ -134,9 +134,11 @@ USER pwuser
 
 COPY --chown=pwuser:pwuser ${APP_HOME}/package.json .
 RUN yarn install
-RUN yarn playwright install
+ENV PLAYWRIGHT_BROWSER=webkit
+RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
+
 # TODO: Avoid copying built apps
-COPY --chown=pwuser:pwuser --from=builder /build/${APP_DIST_HOME} /${APP_DIST_HOME}/
+COPY --chown=pwuser:pwuser --from=builder /build/${APP_DIST_HOME} .
 COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
 ENTRYPOINT ["./entrypoint.sh"]
 
