@@ -26,3 +26,4 @@ export const serviceSetup = (): ServiceBuilder<'contentful-apps'> =>
     })
     .liveness('/liveness')
     .readiness('/readiness')
+    .grantNamespaces('nginx-ingress-external')
