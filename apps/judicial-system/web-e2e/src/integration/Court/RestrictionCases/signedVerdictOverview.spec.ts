@@ -30,11 +30,6 @@ describe('Signed verdict overview - Court - Accepted restriction cases', () => {
     cy.visit(`${SIGNED_VERDICT_OVERVIEW_ROUTE}/test_id`)
   })
 
-  it('should have a button for modifying the ruling that reopens the case', () => {
-    cy.get('[data-testid="modifyRulingButton"]').should('exist').click()
-    cy.url().should('include', RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE)
-  })
-
   it('should display appropriate components on page', () => {
     cy.get('[aria-controls="caseFilesAccordionItem"]')
   })
@@ -69,29 +64,5 @@ describe('Signed verdict overview - Court - Accepted restriction cases', () => {
 
   it('should not be able to sign the court record', () => {
     cy.get('[data-testid="signCourtRecordButton"]').should('not.exist')
-  })
-})
-
-describe('Signed verdict overview - Court - Not the assigned judge', () => {
-  beforeEach(() => {
-    const caseData = mockCase(CaseType.CUSTODY)
-    const caseDataAddition: Case = {
-      ...caseData,
-      court: makeCourt(),
-      state: CaseState.ACCEPTED,
-      isValidToDateInThePast: false,
-      validToDate: '2022-06-13T19:51:39.466Z',
-      isolationToDate: '2022-06-13T19:51:39.466Z',
-      judge: { ...makeJudge(), id: 'some_other_judge_id' },
-    }
-
-    cy.login(UserRole.JUDGE)
-    cy.stubAPIResponses()
-    intercept(caseDataAddition)
-    cy.visit(`${SIGNED_VERDICT_OVERVIEW_ROUTE}/test_id`)
-  })
-
-  it('should not have a button for modifying the ruling', () => {
-    cy.get('[data-testid="modifyRulingButton"]').should('not.exist')
   })
 })
