@@ -92,9 +92,6 @@ const prodConfig = () => ({
   icelandicNamesRegistry: {
     backendUrl: process.env.ICELANDIC_NAMES_REGISTRY_BACKEND_URL,
   },
-  regulationsDomain: {
-    url: process.env.REGULATIONS_API_URL,
-  },
   endorsementSystem: {
     baseApiUrl: process.env.ENDORSEMENT_SYSTEM_BASE_API_URL,
   },
@@ -229,11 +226,6 @@ const devConfig = () => ({
   },
   icelandicNamesRegistry: {
     backendUrl: 'http://localhost:4239',
-  },
-  regulationsDomain: {
-    url:
-      process.env.REGULATIONS_API_URL ??
-      'https://reglugerdir-api.herokuapp.com/api/v1',
   },
   endorsementSystem: {
     baseApiUrl: 'http://localhost:4246',
