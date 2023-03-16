@@ -10,7 +10,7 @@ export const serviceSetup = (): ServiceBuilder<'contentful-apps'> =>
         host: {
           dev: 'contentful-apps',
           staging: 'contentful-apps',
-          prod: 'contentful-apps.devland.is',
+          prod: 'contentful-apps',
         },
         paths: ['/'],
         extraAnnotations: {
@@ -22,6 +22,7 @@ export const serviceSetup = (): ServiceBuilder<'contentful-apps'> =>
           },
           prod: { 'nginx.ingress.kubernetes.io/enable-global-auth': 'false' },
         },
+        public: true,
       },
     })
     .liveness('/liveness')
