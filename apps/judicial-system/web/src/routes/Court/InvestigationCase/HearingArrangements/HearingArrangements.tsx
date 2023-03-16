@@ -1,8 +1,6 @@
 import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
-import compareAsc from 'date-fns/compareAsc'
-import parseISO from 'date-fns/parseISO'
 
 import {
   BlueBox,
@@ -41,6 +39,7 @@ import {
 import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
+import useNotifications from '@island.is/judicial-system-web/src/utils/hooks/useNotifications/useNotifications'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { icHearingArrangements as m } from './HearingArrangements.strings'
@@ -69,6 +68,7 @@ const HearingArrangements = () => {
 
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
   const [checkedRadio, setCheckedRadio] = useState<SessionArrangements>()
+  const { hasSentNotification } = useNotifications(workingCase.notifications)
 
   const initialize = useCallback(() => {
     if (!workingCase.courtDate) {
@@ -92,18 +92,6 @@ const HearingArrangements = () => {
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
-      const courtDateNotifications = workingCase.notifications?.filter(
-        (notification) => notification.type === NotificationType.COURT_DATE,
-      )
-
-      const latestCourtDateNotification = courtDateNotifications?.sort((a, b) =>
-        compareAsc(parseISO(b.created), parseISO(a.created)),
-      )[0]
-
-      const hasSentNotification = latestCourtDateNotification?.recipients.some(
-        (recipient) => recipient.success,
-      )
-
       await setAndSendCaseToServer(
         [
           {
@@ -117,7 +105,10 @@ const HearingArrangements = () => {
         setWorkingCase,
       )
 
-      if (hasSentNotification && !courtDateHasChanged) {
+      if (
+        hasSentNotification(NotificationType.COURT_DATE) &&
+        !courtDateHasChanged
+      ) {
         router.push(`${destination}/${workingCase.id}`)
       } else {
         setNavigateTo(destination)

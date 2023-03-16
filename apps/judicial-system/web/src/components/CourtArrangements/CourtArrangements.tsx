@@ -3,6 +3,7 @@ import compareAsc from 'date-fns/compareAsc'
 
 import { Box, Input } from '@island.is/island-ui/core'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { NotificationType } from '@island.is/judicial-system/types'
 
 import BlueBox from '../BlueBox/BlueBox'
 import DateTime from '../DateTime/DateTime'
@@ -12,6 +13,7 @@ import {
 } from '../../utils/formHelper'
 import { useCase } from '../../utils/hooks'
 import { formatDateForServer } from '../../utils/hooks/useCase'
+import useNotifications from '../../utils/hooks/useNotifications/useNotifications'
 
 interface Props {
   workingCase: Case
@@ -23,6 +25,7 @@ interface Props {
 export const useCourtArrangements = (workingCase: Case) => {
   const [courtDate, setCourtDate] = useState<string>()
   const [courtDateHasChanged, setCourtDateHasChanged] = useState(false)
+  const { hasSentNotification } = useNotifications(workingCase.notifications)
 
   useEffect(() => {
     if (workingCase.courtDate) {
@@ -34,7 +37,8 @@ export const useCourtArrangements = (workingCase: Case) => {
     if (date && valid) {
       if (
         workingCase.courtDate &&
-        compareAsc(date, new Date(workingCase.courtDate)) !== 0
+        compareAsc(date, new Date(workingCase.courtDate)) !== 0 &&
+        hasSentNotification(NotificationType.COURT_DATE)
       ) {
         setCourtDateHasChanged(true)
       }
