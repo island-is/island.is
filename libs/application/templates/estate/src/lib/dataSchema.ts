@@ -83,11 +83,25 @@ export const estateSchema = z.object({
   // is: Innistæður í bönkum
   bankAccounts: z
     .object({
-      accountNumber: z.string().refine((v) => {
-        const bankAccount = formatBankInfo(v)
-        return bankAccount.length === 14
-      }),
+      accountNumber: z
+        .string()
+        .refine((v) => {
+          if (v !== '') {
+            const bankAccount = formatBankInfo(v)
+            return bankAccount.length === 14
+          } else return true
+        })
+        .optional(),
       balance: z.string().optional(),
+    })
+    .refine(({ accountNumber, balance }) => {
+      if (accountNumber !== '' && balance !== '') {
+        return true
+      } else if (accountNumber === '' && balance === '') {
+        return true
+      } else {
+        return false
+      }
     })
     .array()
     .optional(),

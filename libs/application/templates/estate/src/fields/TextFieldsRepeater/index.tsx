@@ -61,6 +61,16 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
     setValue(`${index}.value`, String(faceValue * rateOfExchange))
   }, [fields, faceValue, rateOfExchange, setValue])
 
+  console.log(
+    'errors',
+    !!errors && errors[id] ? (errors[id] as any)[0] : 'no error',
+  )
+  console.log(
+    !!errors && errors[id] && (errors[id] as any)[0]
+      ? (errors[id] as any)[0]['bankAccounts']
+      : 'no error',
+  )
+
   return (
     <Box>
       {fields.map((repeaterField, index) => {
@@ -110,8 +120,8 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
                       readOnly={field.readOnly}
                       type={field.type}
                       error={
-                        errors && errors[id]
-                          ? (errors[id] as any)[0][field.id]
+                        !!errors && errors[id]
+                          ? (errors[id] as any)[0]
                           : undefined
                       }
                       onChange={(e) => {
