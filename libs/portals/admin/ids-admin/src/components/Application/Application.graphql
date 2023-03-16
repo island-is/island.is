@@ -1,0 +1,70 @@
+# Get Application by ApplicationId and TenantId
+query GetApplicationsByApplicationId($input: ApplicationsInput!) {
+  authAdminApplications(input: $input) {
+    data {
+      applicationId
+      applicationType
+      availableEnvironments
+      environments {
+        id
+        environment
+        name
+        displayName {
+          locale
+          value
+        }
+        basicInfo {
+          applicationId
+          applicationSecret
+          idsURL
+          oAuthAuthorizationUrl
+          deviceAuthorizationUrl
+          oAuthTokenUrl
+          oAuthUserInfoUrl
+          openIdConfiguration
+          jsonWebKeySet
+        }
+        applicationUrls {
+          callbackUrls
+          logoutUrls
+          cors
+        }
+        lifeTime {
+          absoluteLifeTime
+          inactivityLifeTime
+          inactivityExpiration
+        }
+      }
+      defaultEnvironment {
+        id
+        environment
+        name
+        displayName {
+          locale
+          value
+        }
+        basicInfo {
+          applicationId
+          applicationSecret
+          idsURL
+          oAuthAuthorizationUrl
+          deviceAuthorizationUrl
+          oAuthTokenUrl
+          oAuthUserInfoUrl
+          openIdConfiguration
+          jsonWebKeySet
+        }
+        applicationUrls {
+          callbackUrls
+          logoutUrls
+          cors
+        }
+        lifeTime {
+          absoluteLifeTime
+          inactivityLifeTime
+          inactivityExpiration
+        }
+      }
+    }
+  }
+}

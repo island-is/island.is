@@ -178,26 +178,30 @@ const Layout: NextComponentType<
   const [alertBanners, setAlertBanners] = useState([])
 
   useEffect(() => {
-    setAlertBanners([
-      {
-        bannerId: `alert-${stringHash(
-          JSON.stringify(alertBannerContent ?? {}),
-        )}`,
-        ...alertBannerContent,
-      },
-      {
-        bannerId: `organization-alert-${stringHash(
-          JSON.stringify(organizationAlertBannerContent ?? {}),
-        )}`,
-        ...organizationAlertBannerContent,
-      },
-      {
-        bannerId: `article-alert-${stringHash(
-          JSON.stringify(articleAlertBannerContent ?? {}),
-        )}`,
-        ...articleAlertBannerContent,
-      },
-    ])
+    setAlertBanners(
+      [
+        {
+          bannerId: `alert-${stringHash(
+            JSON.stringify(alertBannerContent ?? {}),
+          )}`,
+          ...alertBannerContent,
+        },
+        {
+          bannerId: `organization-alert-${stringHash(
+            JSON.stringify(organizationAlertBannerContent ?? {}),
+          )}`,
+          ...organizationAlertBannerContent,
+        },
+        {
+          bannerId: `article-alert-${stringHash(
+            JSON.stringify(articleAlertBannerContent ?? {}),
+          )}`,
+          ...articleAlertBannerContent,
+        },
+      ].filter(
+        (banner) => !Cookies.get(banner.bannerId) && banner?.showAlertBanner,
+      ),
+    )
   }, [
     alertBannerContent,
     articleAlertBannerContent,
