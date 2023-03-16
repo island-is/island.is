@@ -184,17 +184,7 @@ function getIndictmentDescriptionReason(
     return acc
   }, '')
 
-  const allowedSubstances = offenses.map(
-    (offense) => offenseSubstances[offense],
-  )
-
-  const relevantSubstances = allowedSubstances
-    .map((allowedSubstance) => {
-      return Object.entries(substances).filter((substance) => {
-        return allowedSubstance.includes(substance[0] as Substance)
-      })
-    })
-    .flat()
+  const relevantSubstances = getRelevantSubstances(offenses, substances)
 
   reason += relevantSubstances.reduce((acc, substance, index) => {
     if (index === 0) {
@@ -216,6 +206,24 @@ function getIndictmentDescriptionReason(
   }, '')
 
   return reason
+}
+
+export function getRelevantSubstances(
+  offenses: IndictmentCountOffense[],
+  substances: SubstanceMap,
+) {
+  const allowedSubstances = offenses.map(
+    (offense) => offenseSubstances[offense],
+  )
+
+  const relevantSubstances = allowedSubstances
+    .map((allowedSubstance) => {
+      return Object.entries(substances).filter((substance) => {
+        return allowedSubstance.includes(substance[0] as Substance)
+      })
+    })
+    .flat()
+  return relevantSubstances
 }
 
 export const IndictmentCount: React.FC<Props> = (props) => {
