@@ -17,10 +17,8 @@ export const serviceSetup = (): ServiceBuilder<'contentful-apps'> =>
           dev: {
             'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
           },
-          staging: {
-            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-          },
-          prod: { 'nginx.ingress.kubernetes.io/enable-global-auth': 'false' },
+          staging: {},
+          prod: {},
         },
         public: true,
       },
