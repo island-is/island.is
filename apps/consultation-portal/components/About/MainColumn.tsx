@@ -3,9 +3,9 @@ import Information from './Information'
 
 const MainColumn = () => {
   return (
-    <Box marginBottom={4} paddingTop={2}>
+    <Box>
       <Text variant="h1" color="blue400">
-        {'Um samraðsgátt'}
+        {'Um samráðsgátt'}
       </Text>
       <Information />
     </Box>

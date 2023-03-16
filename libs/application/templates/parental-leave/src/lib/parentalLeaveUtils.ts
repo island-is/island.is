@@ -92,6 +92,14 @@ export function getLastDayOfLastMonth(): Date {
   return addDays(today, today.getDate() * -1)
 }
 
+export function isDateInThisMonth(theDate: Date): boolean {
+  const today = new Date()
+  return (
+    theDate.getMonth() === today.getMonth() &&
+    theDate.getFullYear() === today.getFullYear()
+  )
+}
+
 // TODO: Once we have the data, add the otherParentPeriods here.
 export function formatPeriods(
   application: Application,
@@ -118,9 +126,7 @@ export function formatPeriods(
     const startDateDateTime = new Date(period.startDate)
     let canDelete = startDateDateTime.getTime() > currentDateStartTime()
     const today = new Date()
-    const isTodaySameMonthAsStartDate =
-      startDateDateTime.getMonth() === today.getMonth() &&
-      startDateDateTime.getFullYear() === today.getFullYear()
+    const isTodaySameMonthAsStartDate = isDateInThisMonth(startDateDateTime)
 
     if (!applicationFundId || applicationFundId === '') {
       canDelete = true
@@ -434,6 +440,7 @@ export const getApplicationTypeOptions = (formatMessage: FormatMessage) => {
   const options: Option[] = [
     {
       value: PARENTAL_LEAVE,
+      dataTestId: 'parental-leave',
       label: parentalLeaveFormMessages.shared.applicationParentalLeaveTitle,
       subLabel: formatMessage(
         parentalLeaveFormMessages.shared.applicationParentalLeaveSubTitle,
@@ -441,6 +448,7 @@ export const getApplicationTypeOptions = (formatMessage: FormatMessage) => {
     },
     {
       value: PARENTAL_GRANT,
+      dataTestId: 'parental-grant',
       label:
         parentalLeaveFormMessages.shared
           .applicationParentalGrantUnemployedTitle,
@@ -451,6 +459,7 @@ export const getApplicationTypeOptions = (formatMessage: FormatMessage) => {
     },
     {
       value: PARENTAL_GRANT_STUDENTS,
+      dataTestId: 'parental-grant-students',
       label:
         parentalLeaveFormMessages.shared.applicationParentalGrantStudentTitle,
       subLabel: formatMessage(
@@ -789,6 +798,10 @@ export function getApplicationAnswers(answers: Application['answers']) {
       } as EmployerRow)
     }
   }
+  const employerLastSixMonths = getValueViaPath(
+    answers,
+    'employerLastSixMonths',
+  ) as YesOrNo
 
   const shareInformationWithOtherParent = getValueViaPath(
     answers,
@@ -899,6 +912,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'fileUpload.residenceGrant',
   ) as Files[]
 
+  const employmentTerminationCertificateFiles = getValueViaPath(
+    answers,
+    'fileUpload.employmentTerminationCertificateFile',
+  ) as Files[]
+
   const dateOfBirth = getValueViaPath(answers, 'dateOfBirth') as string
 
   const commonFiles = getValueViaPath(answers, 'fileUpload.file') as Files[]
@@ -938,6 +956,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     spouseUseAsMuchAsPossible,
     spouseUsage,
     employers,
+    employerLastSixMonths,
     employerNationalRegistryId,
     employerReviewerNationalRegistryId,
     shareInformationWithOtherParent,
@@ -965,6 +984,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     isResidenceGrant,
     dateOfBirth,
     residenceGrantFiles,
+    employmentTerminationCertificateFiles,
     hasAppliedForReidenceGrant,
     previousState,
   }
@@ -1212,10 +1232,7 @@ export const getLastValidPeriodEndDate = (
   const beginningOfMonth = getBeginningOfThisMonth()
 
   // LastPeriod's endDate is in current month
-  if (
-    lastEndDate.getMonth() === today.getMonth() &&
-    lastEndDate.getFullYear() === today.getFullYear()
-  ) {
+  if (isDateInThisMonth(lastEndDate)) {
     // Applicant has to start from begining of next month if today is >= 20
     if (today.getDate() >= 20) {
       return addMonths(beginningOfMonth, 1)
@@ -1458,7 +1475,7 @@ export const synchronizeVMSTPeriods = (
       period.firstPeriodStart === 'date_of_birth'
         ? 'actualDateOfBirth'
         : 'specificDate'
-    if (new Date(period.from).getTime() < new Date().getTime()) {
+    if (new Date(period.from).getTime() <= new Date().getTime()) {
       firstPeriodStart = 'specificDate'
     }
 
@@ -1474,10 +1491,15 @@ export const synchronizeVMSTPeriods = (
         useLength: NO as YesOrNo,
         rightCodePeriod: rightsCodePeriod,
       }
-      if (
-        period.paid ||
-        new Date(period.from).getTime() <= new Date().getTime()
-      ) {
+
+      const isSameMonth = isDateInThisMonth(new Date(period.from))
+      if (period.paid) {
+        newPeriods.push(obj)
+      } else if (isSameMonth) {
+        if (new Date().getDay() >= 20) {
+          newPeriods.push(obj)
+        }
+      } else if (new Date(period.from).getTime() <= new Date().getTime()) {
         newPeriods.push(obj)
       }
       temptVMSTPeriods.push(obj)

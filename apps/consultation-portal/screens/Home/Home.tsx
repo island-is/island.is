@@ -6,217 +6,236 @@ import {
   Tiles,
   Text,
   Stack,
-  Pagination,
   Hidden,
-  DatePicker,
-  Button,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import React, { useEffect, useState } from 'react'
 import { HeroBanner } from '../../components'
 import Card from '../../components/Card/Card'
 import Layout from '../../components/Layout/Layout'
 import SearchAndFilter from '../../components/SearchAndFilter/SearchAndFilter'
-import { Case, ArrOfTypes } from '../../types/interfaces'
-import FilterBox from '../../components/Filterbox/Filterbox'
+import {
+  ArrOfStatistics,
+  ArrOfTypes,
+  Case,
+  CaseFilter,
+  FilterInputItems,
+} from '../../types/interfaces'
 import EmptyState from '../../components/EmptyState/EmptyState'
+import { useQuery } from '@apollo/client'
+import Filter from '../../components/Filter/Filter'
+import { CaseSortOptions } from '../../types/enums'
+import { GET_CASES } from './getCases.graphql'
+import initApollo from '../../graphql/client'
+import { getInitFilterValues } from '../../utils/helpers'
+import Pagination from '../../components/Pagination/Pagination'
 
 const CARDS_PER_PAGE = 12
 interface HomeProps {
-  cases: Case[]
   types: ArrOfTypes
+  statistics: ArrOfStatistics
 }
-export const Home = ({ cases, types }: HomeProps) => {
-  const Institutions = Object.entries(types.institutions).map(
-    ([value, label]) => ({
-      value,
-      label,
-    }),
-  )
-  const PolicyAreas = Object.entries(types.policyAreas).map(
-    ([value, label]) => ({
-      value,
-      label,
-    }),
-  )
+export const Home = ({ types, statistics }: HomeProps) => {
+  const [page, setPage] = useState<number>(0)
+  const {
+    caseStatuses,
+    caseTypes,
+    Institutions,
+    allInstitutions,
+    PolicyAreas,
+    allPolicyAreas,
+    sorting,
+    period,
+  } = getInitFilterValues({ types: types })
 
-  const [searchValue, setSearchValue] = useState<string>('')
-  const [institutionValue, setInstitutionValue] = useState<string>('')
-  const [policyAreaValue, setPolicyAreaValue] = useState<string>('')
-  const [data, setData] = useState<Array<Case>>(cases)
-  const [page, setPage] = useState<number>(1)
+  const defaultValues = {
+    searchQuery: '',
+    sorting: { items: sorting, isOpen: true },
+    caseStatuses: { items: caseStatuses, isOpen: true },
+    caseTypes: { items: caseTypes, isOpen: true },
+    policyAreas: allPolicyAreas,
+    institutions: allInstitutions,
+    period: period,
+  }
 
-  const goToPage = (page = 1, scrollTop = true) => {
-    setPage(page)
-    if (scrollTop) {
-      window.scrollTo(0, 0)
-    }
+  const [filters, setFilters] = useState<CaseFilter>({
+    searchQuery: '',
+    sorting: { items: sorting, isOpen: true },
+    caseStatuses: { items: caseStatuses, isOpen: true },
+    caseTypes: { items: caseTypes, isOpen: true },
+    policyAreas: allPolicyAreas,
+    institutions: allInstitutions,
+    period: period,
+  } as any)
+
+  const input = {
+    caseStatuses: filters.caseStatuses.items
+      .filter((item: FilterInputItems) => item.checked)
+      .map((item: FilterInputItems) => parseInt(item.value)),
+    caseTypes: filters.caseTypes.items
+      .filter((item: FilterInputItems) => item.checked)
+      .map((item: FilterInputItems) => parseInt(item.value)),
+    orderBy: Object.keys(CaseSortOptions).find(
+      (key) =>
+        CaseSortOptions[key] ===
+        filters.sorting.items.filter(
+          (item: FilterInputItems) => item.checked,
+        )[0].label,
+    ),
+    searchQuery: filters.searchQuery,
+    policyAreas: filters.policyAreas,
+    institutions: filters.institutions,
+    dateFrom: filters.period.from,
+    dateTo: filters.period.to,
+    pageSize: CARDS_PER_PAGE,
+    pageNumber: page,
   }
 
   useEffect(() => {
-    searchValue
-      ? setData(
-          cases
-            .filter((item) => item.policyAreaName.includes(policyAreaValue))
-            .filter((item) => item.institutionName.includes(institutionValue))
-            .filter(
-              (item) =>
-                item.name.includes(searchValue) ||
-                item.caseNumber.includes(searchValue) ||
-                item.institutionName.includes(searchValue),
-            ),
-        )
-      : setData(
-          cases
-            .filter((item) => item.policyAreaName.includes(policyAreaValue))
-            .filter((item) => item.institutionName.includes(institutionValue)),
-        )
-  }, [searchValue])
+    setPage(0)
+  }, [filters])
+
+  const client = initApollo()
+
+  const { data, loading, error, refetch } = useQuery(GET_CASES, {
+    client: client,
+    ssr: true,
+    fetchPolicy: 'network-only',
+    variables: {
+      input,
+    },
+  })
+
+  const { consultationPortalGetCases: casesData = [] } = data ?? {}
+
+  const { cases = [], filterGroups = {}, total = 1 } = casesData
 
   useEffect(() => {
-    institutionValue
-      ? setData(
-          data.filter((item) => item.institutionName === institutionValue),
+    const insertFilterCount = setTimeout(() => {
+      if (filterGroups) {
+        const caseTypesList = Object.entries(filterGroups.CaseTypes).map(
+          ([value, count]) => ({
+            value,
+            count,
+          }),
         )
-      : setData(
-          cases
-            .filter(
-              (item) =>
-                item.name.includes(searchValue) ||
-                item.caseNumber.includes(searchValue) ||
-                item.institutionName.includes(searchValue) ||
-                item.policyAreaName.includes(searchValue),
-            )
-            .filter((item) => item.policyAreaName.includes(policyAreaValue)),
-        )
-  }, [institutionValue])
+        const caseTypesMerged = filters.caseTypes.items.map((item) => ({
+          ...item,
+          ...caseTypesList.find((val) => val.value === item.value),
+        }))
 
-  useEffect(() => {
-    policyAreaValue
-      ? setData(data.filter((item) => item.policyAreaName === policyAreaValue))
-      : setData(
-          cases
-            .filter(
-              (item) =>
-                item.name.includes(searchValue) ||
-                item.caseNumber.includes(searchValue) ||
-                item.institutionName.includes(searchValue) ||
-                item.policyAreaName.includes(searchValue),
-            )
-            .filter((item) => item.institutionName.includes(institutionValue)),
+        const caseStatusesList = Object.entries(filterGroups.Statuses).map(
+          ([value, count]) => ({
+            value,
+            count,
+          }),
         )
-  }, [policyAreaValue])
+        const caseStatusesMerged = filters.caseStatuses.items.map((item) => ({
+          ...item,
+          ...caseStatusesList.find((val) => val.value === item.value),
+        }))
 
-  const count = data.length
-  const totalPages = Math.ceil(count / CARDS_PER_PAGE)
-  const base = page === 1 ? 0 : (page - 1) * CARDS_PER_PAGE
-  const visibleItems = data.slice(base, page * CARDS_PER_PAGE)
+        const filtersCopy = { ...filters }
+        filtersCopy.caseTypes.items = caseTypesMerged
+        filtersCopy.caseStatuses.items = caseStatusesMerged
+        setFilters(filtersCopy)
+      }
+    }, 500)
+
+    return () => {
+      clearTimeout(insertFilterCount)
+    }
+  }, [filterGroups])
+
+  const renderCards = () => {
+    if (loading) {
+      return (
+        <Box
+          display="flex"
+          width="full"
+          alignItems="center"
+          justifyContent="center"
+          style={{ height: 200 }}
+        >
+          <LoadingDots color="blue" large />
+        </Box>
+      )
+    }
+
+    if (cases?.length === 0) {
+      return <EmptyState />
+    }
+
+    return (
+      <>
+        {cases && (
+          <Tiles space={3} columns={[1, 1, 1, 2, 3]}>
+            {cases.map((item: Case, index: number) => {
+              const card = {
+                id: item.id,
+                title: item.name,
+                tag: item.statusName,
+                published: item.created,
+                processEnds: item.processEnds,
+                processBegins: item.processBegins,
+                eyebrows: [item.typeName, item.institutionName],
+              }
+              return (
+                <Card key={index} card={card} frontPage showPublished>
+                  <Stack space={2}>
+                    <Text variant="eyebrow" color="purple400">
+                      {`Fjöldi umsagna: ${item.adviceCount}`}
+                    </Text>
+                    <Box
+                      style={{
+                        wordBreak: 'break-word',
+                        height: '105px',
+                      }}
+                      overflow="hidden"
+                    >
+                      <Text variant="small" color="dark400">
+                        {item.shortDescription}
+                      </Text>
+                    </Box>
+                  </Stack>
+                </Card>
+              )
+            })}
+          </Tiles>
+        )}
+        <Pagination
+          page={page}
+          setPage={(page: number) => setPage(page)}
+          totalPages={Math.ceil(total / CARDS_PER_PAGE)}
+        />
+      </>
+    )
+  }
 
   return (
-    <Layout isFrontPage>
-      <HeroBanner />
-
+    <Layout isFrontPage seo={{ title: 'Öll mál' }}>
+      <HeroBanner statistics={statistics} />
       <SearchAndFilter
-        searchValue={searchValue}
-        setSearchValue={(newValue) => setSearchValue(newValue)}
         PolicyAreas={PolicyAreas}
+        defaultPolicyAreas={allPolicyAreas}
         Institutions={Institutions}
-        setInstitutionValue={(value) => setInstitutionValue(value)}
-        setPolicyAreaValue={(value) => setPolicyAreaValue(value)}
+        defaultInstitutions={allInstitutions}
+        filters={filters}
+        setFilters={(arr: CaseFilter) => setFilters(arr)}
       />
-
       <GridContainer>
         <GridRow>
           <GridColumn span={['0', '0', '0', '3/12', '3/12']}>
             <Hidden below="lg">
-              <Stack space={2}>
-                <FilterBox>Röðun</FilterBox>
-                <FilterBox>Staða máls</FilterBox>
-                <FilterBox>Tegund máls</FilterBox>
-                <DatePicker
-                  size="sm"
-                  locale="is"
-                  label="Veldu tímabil"
-                  placeholderText="Veldu hér"
-                />
-                <Box textAlign="right">
-                  <Button size="small" icon="reload" variant="text">
-                    Hreinsa allar síur
-                  </Button>
-                </Box>
-              </Stack>
+              <Filter
+                filters={filters}
+                setFilters={(arr: CaseFilter) => setFilters(arr)}
+                defaultValues={defaultValues}
+              />
             </Hidden>
           </GridColumn>
-
           <GridColumn span={['12/12', '12/12', '12/12', '9/12', '9/12']}>
-            {data && (
-              <>
-                {visibleItems && (
-                  <Tiles space={3} columns={[1, 1, 1, 2, 3]}>
-                    {visibleItems.map((item, index) => {
-                      const card = {
-                        id: item.id,
-                        title: item.name,
-                        tag: item.statusName,
-                        eyebrows: [item.typeName, item.institutionName],
-                      }
-                      return (
-                        <Card key={index} card={card} frontPage>
-                          <Stack space={2}>
-                            <Text variant="eyebrow" color="purple400">
-                              {`Fjöldi umsagna: ${item.adviceCount}`}
-                            </Text>
-                            <Box
-                              style={{
-                                wordBreak: 'break-word',
-                                height: '105px',
-                              }}
-                              overflow="hidden"
-                            >
-                              <Text variant="small" color="dark400">
-                                {item.shortDescription}
-                              </Text>
-                            </Box>
-                          </Stack>
-                        </Card>
-                      )
-                    })}
-                  </Tiles>
-                )}
-                {totalPages > 1 && (
-                  <Box paddingTop={[5, 5, 5, 8, 8]}>
-                    <Pagination
-                      page={page}
-                      totalPages={totalPages}
-                      variant="blue"
-                      renderLink={(page, className, children) => (
-                        <button
-                          onClick={() => {
-                            goToPage(page)
-                          }}
-                        >
-                          <span
-                            style={{
-                              position: 'absolute',
-                              width: '1px',
-                              height: '1px',
-                              padding: '0',
-                              margin: '-1px',
-                              overflow: 'hidden',
-                              clip: 'rect(0,0,0,0)',
-                              border: '0',
-                            }}
-                          >
-                            Síða
-                          </span>
-                          <span className={className}>{children}</span>
-                        </button>
-                      )}
-                    />
-                  </Box>
-                )}
-              </>
-            )}
-            {data.length === 0 && <EmptyState />}
+            {renderCards()}
           </GridColumn>
         </GridRow>
       </GridContainer>

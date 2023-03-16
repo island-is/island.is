@@ -71,7 +71,7 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
                   asset.share
                     ? `${formatMessage(m.propertyShare)}: ${asset.share * 100}%`
                     : '',
-                  <Box marginTop={1} as="span">
+                  /*<Box marginTop={1} as="span">
                     <Button
                       variant="text"
                       icon={asset.enabled ? 'remove' : 'add'}
@@ -85,7 +85,7 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
                         ? formatMessage(m.inheritanceDisableMember)
                         : formatMessage(m.inheritanceEnableMember)}
                     </Button>
-                  </Box>,
+                  </Box>,*/
                 ]}
                 heightFull
               />

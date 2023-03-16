@@ -18,10 +18,19 @@ import { DocumentsInfraController } from './modules/infra/documentsInfra.control
 import { FinanceDocumentController } from './modules/finance-documents/document.controller'
 import { environment } from '../environments'
 import { VehicleController } from './modules/vehicles-documents/vehicle-document.controller'
+import { RegulationDocumentsController } from './modules/regulation-documents/regulation-documents.controller'
 import {
   VehiclesClientConfig,
   VehiclesClientModule,
 } from '@island.is/clients/vehicles'
+import {
+  RegulationsClientConfig,
+  RegulationsClientModule,
+} from '@island.is/clients/regulations'
+import {
+  RegulationsAdminClientConfig,
+  RegulationsAdminClientModule,
+} from '@island.is/clients/regulations-admin'
 
 @Module({
   controllers: [
@@ -29,6 +38,7 @@ import {
     DocumentsInfraController,
     FinanceDocumentController,
     VehicleController,
+    RegulationDocumentsController,
   ],
   imports: [
     AuditModule.forRoot(environment.audit),
@@ -41,6 +51,8 @@ import {
     }),
     FinanceClientModule,
     VehiclesClientModule,
+    RegulationsAdminClientModule,
+    RegulationsClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -48,9 +60,10 @@ import {
         IdsClientConfig,
         XRoadConfig,
         VehiclesClientConfig,
+        RegulationsAdminClientConfig,
+        RegulationsClientConfig,
       ],
     }),
   ],
-  providers: [],
 })
 export class AppModule {}

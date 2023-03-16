@@ -102,6 +102,7 @@ const prodConfig = {
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
     audience: ['@island.is', '@admin.island.is'],
+    allowClientNationalId: true,
   },
   templateApi: {
     clientLocationOrigin: process.env.CLIENT_LOCATION_ORIGIN,

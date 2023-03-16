@@ -3,6 +3,8 @@ import { m } from './messages'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { customZodError } from './utils/customZodError'
 import { EstateTypes, YES, NO } from './constants'
+import * as kennitala from 'kennitala'
+import { formatBankInfo } from '@island.is/application/ui-components'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -48,7 +50,10 @@ export const estateSchema = z.object({
       .object({
         name: z.string().min(1),
         relation: customZodError(z.string().min(1), m.errorRelation),
-        nationalId: z.string().optional(),
+        nationalId: z
+          .string()
+          .refine((x) => kennitala.info(x).age >= 18)
+          .optional(),
         custodian: z.string().length(10).optional(),
         foreignCitizenship: z.string().array().min(0).max(1).optional(),
         dateOfBirth: z.string().min(1).optional(),
@@ -78,7 +83,10 @@ export const estateSchema = z.object({
   // is: Innistæður í bönkum
   bankAccounts: z
     .object({
-      accountNumber: z.string().optional(),
+      accountNumber: z.string().refine((v) => {
+        const bankAccount = formatBankInfo(v)
+        return bankAccount.length === 14
+      }),
       balance: z.string().optional(),
     })
     .array()
@@ -123,6 +131,16 @@ export const estateSchema = z.object({
     .array()
     .optional(),
   acceptDebts: z.array(z.enum([YES, NO])).nonempty(),
+
+  // is: Umboðsmaður
+  representative: z.object({
+    representativeName: z.string().min(1),
+    representativeNationalId: z.string().length(10),
+    representativePhoneNumber: z.string().refine((v) => isValidPhoneNumber(v), {
+      params: m.errorPhoneNumber,
+    }),
+    representativeEmail: customZodError(z.string().email(), m.errorEmail),
+  }),
 
   // is: Heimild til setu í óskiptu búi skv. erfðaskrá
   undividedEstateResidencePermission: z.enum([YES, NO]),

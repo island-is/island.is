@@ -16,8 +16,13 @@ import { HeroLogo } from '../svg'
 import { StatisticBox } from '..'
 import HeroTiles from './HeroTiles'
 import SplashSmall from '../svg/SplashSmall'
+import { ArrOfStatistics } from '../../types/interfaces'
 
-export const HeroBanner = () => {
+interface HeroBannerProps {
+  statistics: ArrOfStatistics
+}
+
+export const HeroBanner = ({ statistics }: HeroBannerProps) => {
   return (
     <Box
       style={{
@@ -55,7 +60,9 @@ export const HeroBanner = () => {
                   <ArrowLink href="/um">Lesa meira</ArrowLink>
                 </Column>
                 <Column width="content">
-                  <ArrowLink href="/um">Skoða þingmálaskrá</ArrowLink>
+                  <ArrowLink href="https://www.stjornarradid.is/rikisstjorn/thingmalaskra/">
+                    Skoða þingmálaskrá ríkisstjórnar
+                  </ArrowLink>
                 </Column>
               </Columns>
             </GridColumn>
@@ -68,14 +75,24 @@ export const HeroBanner = () => {
               </Box>
               <Box className={styles.alignTiles}>
                 <HeroTiles space={2} columns={[1, 1, 1, 2, 2]}>
-                  <StatisticBox label="Mál til umsagnar" statistic="32 mál" />
+                  <StatisticBox
+                    label="Mál til umsagnar"
+                    statistic={statistics?.casesInReview?.toLocaleString(
+                      'de-DE',
+                    )}
+                    text="mál"
+                  />
                   <StatisticBox
                     label="Umsagnir frá upphafi"
-                    statistic="12.843 umsagnir"
+                    statistic={statistics?.totalAdvices?.toLocaleString(
+                      'de-DE',
+                    )}
+                    text="umsagnir"
                   />
                   <StatisticBox
                     label="Mál frá upphafi"
-                    statistic="48.942 mál"
+                    statistic={statistics?.totalCases?.toLocaleString('de-DE')}
+                    text="mál"
                   />
                 </HeroTiles>
               </Box>
