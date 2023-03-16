@@ -140,6 +140,24 @@ interface LawsBrokenOption {
   disabled: boolean
 }
 
+export function getRelevantSubstances(
+  offenses: IndictmentCountOffense[],
+  substances: SubstanceMap,
+) {
+  const allowedSubstances = offenses.map(
+    (offense) => offenseSubstances[offense],
+  )
+
+  const relevantSubstances = allowedSubstances
+    .map((allowedSubstance) => {
+      return Object.entries(substances).filter((substance) => {
+        return allowedSubstance.includes(substance[0] as Substance)
+      })
+    })
+    .flat()
+  return relevantSubstances
+}
+
 function getIndictmentDescriptionReason(
   offenses: IndictmentCountOffense[],
   substances: SubstanceMap,
@@ -206,24 +224,6 @@ function getIndictmentDescriptionReason(
   }, '')
 
   return reason
-}
-
-export function getRelevantSubstances(
-  offenses: IndictmentCountOffense[],
-  substances: SubstanceMap,
-) {
-  const allowedSubstances = offenses.map(
-    (offense) => offenseSubstances[offense],
-  )
-
-  const relevantSubstances = allowedSubstances
-    .map((allowedSubstance) => {
-      return Object.entries(substances).filter((substance) => {
-        return allowedSubstance.includes(substance[0] as Substance)
-      })
-    })
-    .flat()
-  return relevantSubstances
 }
 
 export const IndictmentCount: React.FC<Props> = (props) => {
