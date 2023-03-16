@@ -349,15 +349,11 @@ export class SmartSolutionsApi {
   ): Promise<Result<Pass>> {
     const findPassRes = await this.findPass(nationalId)
 
-    this.logger.debug(JSON.stringify(findPassRes))
-
     if (!findPassRes.ok) {
       return findPassRes
     }
 
     const pass = findPassRes.data
-
-    this.logger.debug(JSON.stringify(pass))
 
     if (pass) {
       if (pass.status === PassStatus.Voided) {
@@ -381,7 +377,6 @@ export class SmartSolutionsApi {
         data: pass,
       }
     }
-    this.logger.debug('No active pkpass found for user, creating a new one')
 
     //Create the pass
     return await this.postPass(payload)
