@@ -1,6 +1,7 @@
-import { getRelevantSubstances } from './IndictmentCount'
 import { IndictmentCountOffense as offense } from '@island.is/judicial-system-web/src/graphql/schema'
 import { Substance, SubstanceMap } from '@island.is/judicial-system/types'
+
+import { getRelevantSubstances } from './IndictmentCount'
 
 describe('getRelevantSubstances', () => {
   test('should return relevant substances in the correct order for the indictment description', () => {
