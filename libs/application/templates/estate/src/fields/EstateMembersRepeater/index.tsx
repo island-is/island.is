@@ -26,8 +26,6 @@ export interface EstateMemberWithAdvocate {
   foreignCitizenship?: ('yes' | 'no')[]
   dummy: boolean
   enabled?: boolean
-  advocateNationalId?: string
-  advocateName?: string
 }
 
 export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
@@ -40,7 +38,6 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
   const { fields, append, remove } = useFieldArray<EstateMemberWithAdvocate>({
     name: id,
   })
-  const { setValue } = useFormContext()
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
     relationOptions: string[]
@@ -59,8 +56,6 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
       initial: false,
       enabled: true,
       name: '',
-      advocateNationalId: '',
-      advocateName: '',
     })
 
   useEffect(() => {
@@ -98,6 +93,7 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                 description={[
                   formatNationalId(member.nationalId || ''),
                   member.relation || '',
+                  /* TODO: add back when react-hook-forms update is in
                   <Box marginTop={1} as="span">
                     <Button
                       variant="text"
@@ -112,7 +108,7 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                         ? formatMessage(m.inheritanceDisableMember)
                         : formatMessage(m.inheritanceEnableMember)}
                     </Button>
-                  </Box>,
+                    </Box>,*/
                 ]}
               />
             </GridColumn>,
