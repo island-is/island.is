@@ -210,6 +210,72 @@ export class SmartSolutionsApi {
       data: undefined,
     }
   }
+  /**
+   *
+   * @param payload What the created/updated pass should contain
+   * @returns The created/updated pass
+   */
+  private async postPass(payload: PassDataInput): Promise<Result<Pass>> {
+    const graphql = JSON.stringify({
+      query: UPSERT_PASS,
+      variables: {
+        inputData: {
+          passTemplateId: this.config.passTemplateId,
+          ...payload,
+        },
+      },
+    })
+
+    const res = await this.query<UpsertPassResponseData>(graphql)
+
+    if (res.ok) {
+      return {
+        ok: true,
+        data: res.data.upsertPass,
+      }
+    }
+
+    return res
+  }
+
+  private async updateExistingPass(
+    payload: PassDataInput,
+    passId: string,
+  ): Promise<Result<Pass>> {
+    const getPassQuery = JSON.stringify({
+      query: GET_PASS,
+      variables: {
+        id: passId,
+      },
+    })
+
+    const getPassRes = await this.query<GetPassResponseData>(getPassQuery)
+
+    if (!getPassRes.ok) {
+      //if failure, return the response
+      return getPassRes
+    }
+    const passInputData = mapPassToPassDataInput(getPassRes.data.pass)
+
+    const inputFieldValues = mergeInputFields(
+      passInputData.inputFieldValues ?? undefined,
+      payload.inputFieldValues ?? undefined,
+    )
+    //now we finally have the updated pass data!
+    const updatedPassData = {
+      ...passInputData,
+      ...payload,
+      inputFieldValues,
+    }
+
+    return await this.postPass(updatedPassData)
+  }
+
+  /**
+   *
+   * @param payload The scanner data
+   * @returns An object containing a boolean that signifies if a pass is valid or not
+   */
 
   async verifyPkPass(
     payload: DynamicBarcodeDataInput,
@@ -230,29 +296,6 @@ export class SmartSolutionsApi {
           valid: true,
           pass: res.data.updateStatusOnPassWithDynamicBarcode,
         },
-      }
-    }
-
-    return res
-  }
-
-  async upsertPkPass(payload: PassDataInput): Promise<Result<Pass>> {
-    const graphql = JSON.stringify({
-      query: UPSERT_PASS,
-      variables: {
-        inputData: {
-          passTemplateId: this.config.passTemplateId,
-          ...payload,
-        },
-      },
-    })
-
-    const res = await this.query<UpsertPassResponseData>(graphql)
-
-    if (res.ok) {
-      return {
-        ok: true,
-        data: res.data.upsertPass,
       }
     }
 
@@ -289,41 +332,16 @@ export class SmartSolutionsApi {
     const pass = findPassRes.data
 
     //get the pass data
-    const getPassQuery = JSON.stringify({
-      query: GET_PASS,
-      variables: {
-        id: pass.id,
-      },
-    })
-
-    const getPassRes = await this.query<GetPassResponseData>(getPassQuery)
-
-    if (!getPassRes.ok) {
-      //if failure, return the response
-      return getPassRes
-    }
-    const passInputData = mapPassToPassDataInput(getPassRes.data.pass)
-
-    const inputFieldValues = mergeInputFields(
-      passInputData.inputFieldValues ?? undefined,
-      payload.inputFieldValues ?? undefined,
-    )
-    //now we finally have the updated pass data!
-    const updatedPassData = {
-      ...passInputData,
-      ...payload,
-      inputFieldValues,
-    }
 
     //Now we can just call upsert with the correct data
-    return await this.upsertPkPass(updatedPassData)
+    return await this.updateExistingPass(payload, pass.id)
   }
 
   /**
    *
    * @param payload The new pass data
    * @param nationalId the user's national id
-   * @returns the newly created pass, or an old one if a pass was previously created,
+   * @returns the newly created pass, or an updated old one if a pass was previously created,
    */
   async generatePkPass(
     payload: PassDataInput,
@@ -331,11 +349,15 @@ export class SmartSolutionsApi {
   ): Promise<Result<Pass>> {
     const findPassRes = await this.findPass(nationalId)
 
+    this.logger.debug(JSON.stringify(findPassRes))
+
     if (!findPassRes.ok) {
       return findPassRes
     }
 
     const pass = findPassRes.data
+
+    this.logger.debug(JSON.stringify(pass))
 
     if (pass) {
       if (pass.status === PassStatus.Voided) {
@@ -349,6 +371,10 @@ export class SmartSolutionsApi {
         }
       }
 
+      //if pass is found, update it to reflect the licenses' current status
+
+      await this.updateExistingPass(payload, pass.id)
+
       //pass is good
       return {
         ok: true,
@@ -358,7 +384,7 @@ export class SmartSolutionsApi {
     this.logger.debug('No active pkpass found for user, creating a new one')
 
     //Create the pass
-    return await this.upsertPkPass(payload)
+    return await this.postPass(payload)
   }
 
   async revokePkPass(nationalId: string): Promise<Result<RevokePassData>> {
