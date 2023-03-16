@@ -111,7 +111,7 @@ const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
                 }
               }}
               onChange={(newValue: number) => {
-                onChange(newValue)
+                onChange(newValue.toString())
                 setChosenRequestDays(newValue)
               }}
             />

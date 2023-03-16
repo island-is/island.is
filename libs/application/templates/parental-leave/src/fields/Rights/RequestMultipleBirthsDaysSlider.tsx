@@ -89,7 +89,7 @@ const RequestMultipleBirthsDaysSlider: FC<FieldBaseProps> = ({
                   }
                 }}
                 onChange={(newValue: number) => {
-                  onChange(newValue)
+                  onChange(newValue.toString())
                   setChosenRequestDays(newValue)
                 }}
               />

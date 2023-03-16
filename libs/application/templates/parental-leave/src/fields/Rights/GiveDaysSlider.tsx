@@ -87,7 +87,7 @@ const GiveDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
                 }
               }}
               onChange={(newValue: number) => {
-                onChange(newValue)
+                onChange(newValue.toString())
                 setChosenGiveDays(newValue)
               }}
             />
