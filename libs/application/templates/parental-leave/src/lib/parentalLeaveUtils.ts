@@ -440,6 +440,7 @@ export const getApplicationTypeOptions = (formatMessage: FormatMessage) => {
   const options: Option[] = [
     {
       value: PARENTAL_LEAVE,
+      dataTestId: 'parental-leave',
       label: parentalLeaveFormMessages.shared.applicationParentalLeaveTitle,
       subLabel: formatMessage(
         parentalLeaveFormMessages.shared.applicationParentalLeaveSubTitle,
@@ -447,6 +448,7 @@ export const getApplicationTypeOptions = (formatMessage: FormatMessage) => {
     },
     {
       value: PARENTAL_GRANT,
+      dataTestId: 'parental-grant',
       label:
         parentalLeaveFormMessages.shared
           .applicationParentalGrantUnemployedTitle,
@@ -457,6 +459,7 @@ export const getApplicationTypeOptions = (formatMessage: FormatMessage) => {
     },
     {
       value: PARENTAL_GRANT_STUDENTS,
+      dataTestId: 'parental-grant-students',
       label:
         parentalLeaveFormMessages.shared.applicationParentalGrantStudentTitle,
       subLabel: formatMessage(
