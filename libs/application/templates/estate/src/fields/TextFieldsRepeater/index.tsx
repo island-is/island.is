@@ -110,8 +110,8 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
                       readOnly={field.readOnly}
                       type={field.type}
                       error={
-                        errors && errors[id]
-                          ? (errors[id] as any)[0][field.id]
+                        !!errors && errors[id]
+                          ? (errors[id] as any)[0][field.id] ?? 'Ógilt gildi'
                           : undefined
                       }
                       onChange={(e) => {
