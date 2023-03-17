@@ -39,7 +39,7 @@ import {
 import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
-import useNotifications from '@island.is/judicial-system-web/src/utils/hooks/useNotifications/useNotifications'
+import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { icHearingArrangements as m } from './HearingArrangements.strings'
@@ -68,7 +68,6 @@ const HearingArrangements = () => {
 
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
   const [checkedRadio, setCheckedRadio] = useState<SessionArrangements>()
-  const { hasSentNotification } = useNotifications(workingCase.notifications)
 
   const initialize = useCallback(() => {
     if (!workingCase.courtDate) {
@@ -106,7 +105,10 @@ const HearingArrangements = () => {
       )
 
       if (
-        hasSentNotification(NotificationType.COURT_DATE) &&
+        hasSentNotification(
+          NotificationType.COURT_DATE,
+          workingCase.notifications,
+        ) &&
         !courtDateHasChanged
       ) {
         router.push(`${destination}/${workingCase.id}`)

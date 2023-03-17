@@ -1,6 +1,7 @@
 import parseISO from 'date-fns/parseISO'
 import addDays from 'date-fns/addDays'
 import flatten from 'lodash/flatten'
+import compareAsc from 'date-fns/compareAsc'
 
 import { TagVariant } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -9,6 +10,8 @@ import {
   Gender,
   IndictmentSubtype,
   IndictmentSubtypeMap,
+  Notification,
+  NotificationType,
 } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
@@ -107,4 +110,23 @@ export const isTrafficViolationCase = (
         (val) => val === IndictmentSubtype.TRAFFIC_VIOLATION,
       ),
   )
+}
+
+export const hasSentNotification = (
+  notificationType: NotificationType,
+  notifications?: Notification[],
+) => {
+  if (!notifications || notifications.length === 0) {
+    return false
+  }
+
+  const n = notifications.filter(
+    (notification) => notification.type === notificationType,
+  )
+
+  const latestN = n.sort((a, b) =>
+    compareAsc(parseISO(b.created), parseISO(a.created)),
+  )[0]
+
+  return latestN.recipients.some((recipient) => recipient.success)
 }

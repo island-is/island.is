@@ -2,10 +2,15 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { Gender } from '@island.is/judicial-system/types'
-import { getShortGender, isDirty } from './stepHelper'
+import {
+  Gender,
+  Notification,
+  NotificationType,
+} from '@island.is/judicial-system/types'
+import { getShortGender, hasSentNotification, isDirty } from './stepHelper'
 
 import * as formatters from './formatters'
+import faker from 'faker'
 
 describe('Formatters utils', () => {
   describe('Parse time', () => {
@@ -288,5 +293,98 @@ describe('Step helper', () => {
       // Assert
       expect(res).toEqual('')
     })
+  })
+
+  describe('hasSentNotification', () => {
+    test('should return false if notifications are not provided', () => {
+      // Arrange
+      const n1 = undefined
+      const n2: Notification[] = []
+      const nt = NotificationType.COURT_DATE
+
+      // Act
+      const res1 = hasSentNotification(nt, n1)
+      const res2 = hasSentNotification(nt, n2)
+
+      // Assert
+      expect(res1).toEqual(false)
+      expect(res2).toEqual(false)
+    })
+
+    test('should return false if a notification has been sent in the past but the last time it was sent it failed', () => {
+      // Arrange
+      const email = faker.internet.email()
+      const n: Notification[] = [
+        {
+          id: faker.datatype.uuid(),
+          created: faker.date.future().toISOString(),
+          caseId: faker.datatype.uuid(),
+          type: NotificationType.COURT_DATE,
+          recipients: [
+            {
+              success: false,
+              address: email,
+            },
+          ],
+        },
+        {
+          id: faker.datatype.uuid(),
+          created: faker.date.past().toISOString(),
+          caseId: faker.datatype.uuid(),
+          type: NotificationType.COURT_DATE,
+          recipients: [
+            {
+              success: true,
+              address: email,
+            },
+          ],
+        },
+      ]
+      const nt = NotificationType.COURT_DATE
+
+      // Act
+      const res = hasSentNotification(nt, n)
+
+      // Assert
+      expect(res).toEqual(false)
+    })
+  })
+
+  test('should return true if the latest notification has been sent successfully', () => {
+    // Arrange
+    const email = faker.internet.email()
+    const n: Notification[] = [
+      {
+        id: faker.datatype.uuid(),
+        created: faker.date.future().toISOString(),
+        caseId: faker.datatype.uuid(),
+        type: NotificationType.COURT_DATE,
+        recipients: [
+          {
+            success: true,
+            address: email,
+          },
+        ],
+      },
+      {
+        id: faker.datatype.uuid(),
+        created: faker.date.past().toISOString(),
+        caseId: faker.datatype.uuid(),
+        type: NotificationType.COURT_DATE,
+        recipients: [
+          {
+            success: true,
+            address: email,
+          },
+        ],
+      },
+    ]
+    const nt = NotificationType.COURT_DATE
+
+    // Act
+    const res = hasSentNotification(nt, n)
+
+    // Assert
+    expect(res).toEqual(true)
   })
 })

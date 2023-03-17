@@ -29,7 +29,7 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
-import useNotifications from '@island.is/judicial-system-web/src/utils/hooks/useNotifications/useNotifications'
+import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as constants from '@island.is/judicial-system/consts'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 
@@ -50,7 +50,6 @@ const Subpoena: React.FC = () => {
     courtDateHasChanged,
   } = useCourtArrangements(workingCase)
   const { setAndSendCaseToServer, sendNotification } = useCase()
-  const { hasSentNotification } = useNotifications(workingCase.notifications)
 
   const handleSubpoenaTypeChange = (subpoenaType: SubpoenaType) => {
     setAndSendCaseToServer(
@@ -76,7 +75,10 @@ const Subpoena: React.FC = () => {
       )
 
       if (
-        hasSentNotification(NotificationType.COURT_DATE) &&
+        hasSentNotification(
+          NotificationType.COURT_DATE,
+          workingCase.notifications,
+        ) &&
         !courtDateHasChanged
       ) {
         router.push(`${destination}/${workingCase.id}`)

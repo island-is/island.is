@@ -31,7 +31,7 @@ import { titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
-import useNotifications from '@island.is/judicial-system-web/src/utils/hooks/useNotifications/useNotifications'
+import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -60,7 +60,6 @@ export const HearingArrangements: React.FC = () => {
     courtDateHasChanged,
     handleCourtDateChange,
   } = useCourtArrangements(workingCase)
-  const { hasSentNotification } = useNotifications(workingCase.notifications)
 
   const initialize = useCallback(() => {
     if (!workingCase.courtDate) {
@@ -113,7 +112,10 @@ export const HearingArrangements: React.FC = () => {
       )
 
       if (
-        hasSentNotification(NotificationType.COURT_DATE) &&
+        hasSentNotification(
+          NotificationType.COURT_DATE,
+          workingCase.notifications,
+        ) &&
         !courtDateHasChanged
       ) {
         router.push(`${destination}/${workingCase.id}`)
