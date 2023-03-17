@@ -287,6 +287,7 @@ export const validatePeriod = (
   }
 }
 
+// applicant that cannot apply for residence grant: secondary parents, adoption and foster care
 export const showResidenceGrant = (application: Application) => {
   const { children } = getApplicationExternalData(application.externalData)
   const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
