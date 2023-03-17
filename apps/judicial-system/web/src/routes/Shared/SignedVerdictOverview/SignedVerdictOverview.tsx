@@ -16,6 +16,7 @@ import {
   CaseAppealDecision,
   isAcceptingCaseDecision,
   isCourtRole,
+  isProsecutionRole,
 } from '@island.is/judicial-system/types'
 import {
   FormFooter,
@@ -491,7 +492,7 @@ export const SignedVerdictOverview: React.FC = () => {
 
   return (
     <>
-      {workingCase.courtEndTime && (
+      {user?.role && isProsecutionRole(user.role) && workingCase.courtEndTime && (
         <AlertBanner
           title={formatMessage(strings.appealAlertBannerTitle, {
             appealDeadline: getAppealEndDate(workingCase.courtEndTime),
