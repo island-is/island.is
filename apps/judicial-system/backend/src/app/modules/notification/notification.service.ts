@@ -168,6 +168,10 @@ export class NotificationService {
     attachments?: Attachment[],
   ): Promise<Recipient> {
     try {
+      // This is to handle a comma separated list of emails
+      // We use the first one as the main recipient and the rest as CC
+      const recipients = recipientEmail ? recipientEmail.split(',') : undefined
+
       await this.emailService.sendEmail({
         from: {
           name: this.config.email.fromName,
@@ -180,9 +184,10 @@ export class NotificationService {
         to: [
           {
             name: recipientName ?? '',
-            address: recipientEmail ?? '',
+            address: recipients ? recipients[0] : '',
           },
         ],
+        cc: recipients ? recipients.slice(1) : [],
         subject: subject,
         text: stripHtmlTags(html),
         html: html,
