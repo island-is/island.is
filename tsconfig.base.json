@@ -161,6 +161,9 @@
       "@island.is/api/domains/regulations": [
         "libs/api/domains/regulations/src/index.ts"
       ],
+      "@island.is/api/domains/regulations-admin": [
+        "libs/api/domains/regulations-admin/src/index.ts"
+      ],
       "@island.is/api/domains/sessions": [
         "libs/api/domains/sessions/src/index.ts"
       ],
@@ -473,6 +476,9 @@
       "@island.is/clients/regulations": [
         "libs/clients/regulations/src/index.ts"
       ],
+      "@island.is/clients/regulations-admin": [
+        "libs/clients/regulations-admin/src/index.ts"
+      ],
       "@island.is/clients/rsk/company-registry": [
         "libs/clients/rsk/company-registry/src/index.ts"
       ],
@@ -629,6 +635,9 @@
       ],
       "@island.is/portals/admin/ids-admin": [
         "libs/portals/admin/ids-admin/src/index.ts"
+      ],
+      "@island.is/portals/admin/regulations-admin": [
+        "libs/portals/admin/regulations-admin/src/index.ts"
       ],
       "@island.is/portals/core": ["libs/portals/core/src/index.ts"],
       "@island.is/portals/shared-modules/delegations": [

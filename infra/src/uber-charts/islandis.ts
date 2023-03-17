@@ -43,6 +43,8 @@ import { serviceSetup as adsBackendSetup } from '../../../apps/air-discount-sche
 
 import { serviceSetup as externalContractsTestsSetup } from '../../../apps/external-contracts-tests/infra/external-contracts-tests'
 
+import { serviceSetup as rabBackendSetup } from '../../../apps/services/regulations-admin-backend/infra/backend'
+
 import {
   serviceSetup as sessionsServiceSetup,
   workerSetup as sessionsWorkerSetup,
@@ -70,6 +72,7 @@ const nameRegistryBackend = serviceNameRegistryBackendSetup()
 const adsBackend = adsBackendSetup()
 const adsApi = adsApiSetup({ adsBackend })
 const adsWeb = adsWebSetup({ adsApi })
+const rabBackend = rabBackendSetup()
 
 const sessionsService = sessionsServiceSetup()
 const sessionsWorker = sessionsWorkerSetup()
@@ -83,6 +86,7 @@ const api = apiSetup({
   icelandicNameRegistryBackend: nameRegistryBackend,
   servicesEndorsementApi: endorsement,
   airDiscountSchemeBackend: adsBackend,
+  regulationsAdminBackend: rabBackend,
   sessionsApi: sessionsService,
   authAdminApi,
 })
@@ -103,7 +107,9 @@ const skilavottordWeb = skilavottordWebSetup({ api: skilavottordWs })
 const storybook = storybookSetup({})
 const contentfulTranslationExtension = contentfulTranslationExtensionSetup()
 
-const downloadService = downloadServiceSetup()
+const downloadService = downloadServiceSetup({
+  regulationsAdminBackend: rabBackend,
+})
 
 const userNotificationService = userNotificationServiceSetup()
 const userNotificationWorkerService = userNotificationWorkerSetup({
@@ -136,6 +142,7 @@ export const Services: EnvironmentServices = {
     adsWeb,
     adsBackend,
     adsApi,
+    rabBackend,
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
@@ -164,6 +171,7 @@ export const Services: EnvironmentServices = {
     adsWeb,
     adsBackend,
     adsApi,
+    rabBackend,
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
@@ -193,6 +201,7 @@ export const Services: EnvironmentServices = {
     adsWeb,
     adsBackend,
     adsApi,
+    rabBackend,
     githubActionsCache,
     userNotificationService,
     userNotificationWorkerService,
