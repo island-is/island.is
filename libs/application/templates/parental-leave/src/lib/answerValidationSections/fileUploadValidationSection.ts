@@ -1,9 +1,11 @@
 import { Answer, Application } from '@island.is/application/types'
 import {
+  ADOPTION,
   AnswerValidationConstants,
   NO,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
+  PERMANENT_FOSTER_CARE,
   SINGLE,
   States,
   UnEmployedBenefitTypes,
@@ -30,10 +32,12 @@ export const fileUploadValidationSection = (
     unemploymentBenefits,
     otherParent,
     additionalDocuments,
+    noChildrenFoundTypeOfApplication,
     isResidenceGrant,
     employerLastSixMonths,
     employers,
   } = getApplicationAnswers(application.answers)
+
   if (isSelfEmployed === YES && obj.selfEmployedFile) {
     if (isEmpty((obj as { selfEmployedFile: unknown[] }).selfEmployedFile))
       return buildError(
@@ -124,6 +128,31 @@ export const fileUploadValidationSection = (
         FILEUPLOAD,
       )
 
+    return undefined
+  }
+
+  if (
+    noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE &&
+    obj.permanentFosterCare
+  ) {
+    if (
+      isEmpty((obj as { permanentFosterCare: unknown[] }).permanentFosterCare)
+    )
+      return buildError(
+        errorMessages.requiredAttachment,
+        'permanentFosterCare',
+        FILEUPLOAD,
+      )
+    return undefined
+  }
+
+  if (noChildrenFoundTypeOfApplication === ADOPTION && obj.adoption) {
+    if (isEmpty((obj as { adoption: unknown[] }).adoption))
+      return buildError(
+        errorMessages.requiredAttachment,
+        'adoption',
+        FILEUPLOAD,
+      )
     return undefined
   }
 
