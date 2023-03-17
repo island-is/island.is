@@ -1,4 +1,5 @@
 import React from 'react'
+import faker from 'faker'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
@@ -7,10 +8,9 @@ import {
   Notification,
   NotificationType,
 } from '@island.is/judicial-system/types'
-import { getShortGender, hasSentNotification, isDirty } from './stepHelper'
 
+import { getShortGender, hasSentNotification, isDirty } from './stepHelper'
 import * as formatters from './formatters'
-import faker from 'faker'
 
 describe('Formatters utils', () => {
   describe('Parse time', () => {
