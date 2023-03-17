@@ -115,10 +115,6 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
                       parentalLeaveFormMessages.firstPeriodStart
                         .specificDateOption,
                     ),
-                    tooltip: formatMessage(
-                      parentalLeaveFormMessages.firstPeriodStart
-                        .specificDateOptionTooltip,
-                    ),
                     value: StartDateOptions.SPECIFIC_DATE,
                   },
                 ]

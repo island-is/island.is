@@ -12,8 +12,15 @@ import {
   StaticText,
   StaticTextObject,
 } from '@island.is/application/types'
-import { StartDateOptions, YES, NO } from '../../constants'
 import {
+  StartDateOptions,
+  YES,
+  NO,
+  PERMANENT_FOSTER_CARE,
+  ADOPTION,
+} from '../../constants'
+import {
+  getApplicationAnswers,
   getApplicationExternalData,
   getExpectedDateOfBirthOrAdoptionDate,
   residentGrantIsOpenForApplication,
@@ -282,10 +289,15 @@ export const validatePeriod = (
 
 export const showResidenceGrant = (application: Application) => {
   const { children } = getApplicationExternalData(application.externalData)
+  const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
+    application.answers,
+  )
   const childrenData = (children as unknown) as ChildInformation[]
   if (
     childrenData?.length &&
-    childrenData[0]?.parentalRelation?.match('primary')
+    childrenData[0]?.parentalRelation?.match('primary') &&
+    noChildrenFoundTypeOfApplication !== PERMANENT_FOSTER_CARE &&
+    noChildrenFoundTypeOfApplication !== ADOPTION
   )
     return true
   return false
