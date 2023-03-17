@@ -12,7 +12,7 @@ import * as styles from './HeilbrigdisstofnunSudurlandsHeader.css'
 const backgroundUrl =
   'https://images.ctfassets.net/8k0h54kbe6bj/2DIzJE5MwzegOM0t8vkHE0/61eb1814a2cd8b8f944891aa052fbae9/HSU-header6-new.png'
 const illustrationUrl =
-  'https://images.ctfassets.net/8k0h54kbe6bj/2GU73eNYiZ5As6MaNjfzky/5716964b0b23d1fce01cad95423192f3/hsu-mynd-header.png'
+  'https://images.ctfassets.net/8k0h54kbe6bj/34nqJlLErUCqldBNTxZdoN/48e70eb37cfa6bc3608c509b9e5c0916/hsu-header-image.jpg'
 
 const getDefaultStyle = (width: number) => {
   if (width >= theme.breakpoints.xl) {
