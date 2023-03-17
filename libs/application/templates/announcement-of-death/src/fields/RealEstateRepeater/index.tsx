@@ -1,6 +1,5 @@
 import React, { FC, useEffect } from 'react'
 import {
-  ArrayField,
   Controller,
   useFieldArray,
   useFormContext,
@@ -16,7 +15,7 @@ import {
   Button,
   ProfileCard,
 } from '@island.is/island-ui/core'
-import { Answers, Asset } from '../../types'
+import { Answers, AssetFormField } from '../../types'
 
 import * as styles from './styles.css'
 import { m } from '../../lib/messages'
@@ -33,7 +32,7 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
   const error = (errors as any)?.assets?.assets
   const { id } = field
   const { formatMessage } = useLocale()
-  const { fields, append, remove } = useFieldArray<Asset>({
+  const { fields, append, remove } = useFieldArray({
     name: `${id}.assets`,
   })
 
@@ -67,7 +66,7 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
   return (
     <Box marginTop={2}>
       <GridRow>
-        {fields.reduce((acc, asset, index) => {
+        {fields.reduce((acc, asset: AssetFormField, index) => {
           if (!asset.initial) {
             return acc
           }
@@ -103,7 +102,7 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
           ]
         }, [] as JSX.Element[])}
       </GridRow>
-      {fields.map((field, index) => (
+      {fields.map((field: AssetFormField, index) => (
         <Box key={field.id} hidden={field.initial || field?.dummy}>
           <Item
             field={field}
@@ -136,7 +135,7 @@ const Item = ({
   fieldName,
   error,
 }: {
-  field: Partial<ArrayField<Asset, 'id'>>
+  field: AssetFormField
   fieldName: string
   index: number
   remove: (index: number) => void
@@ -196,16 +195,19 @@ const Item = ({
         name={initialField}
         control={control}
         defaultValue={field.initial || false}
+        render={() => <input type="hidden" />}
       />
       <Controller
         name={dummyField}
         control={control}
         defaultValue={field.dummy || false}
+        render={() => <input type="hidden" />}
       />
       <Controller
         name={shareField}
         control={control}
         defaultValue={field.share || 0}
+        render={() => <input type="hidden" />}
       />
 
       <Box position="absolute" className={styles.removeFieldButton}>

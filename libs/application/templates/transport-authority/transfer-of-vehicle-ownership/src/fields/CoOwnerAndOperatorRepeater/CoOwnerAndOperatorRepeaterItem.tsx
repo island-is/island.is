@@ -1,5 +1,5 @@
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
 import {
   Box,
   Text,
@@ -19,7 +19,7 @@ interface Props {
   id: string
   index: number
   rowLocation: number
-  repeaterField: CoOwnerAndOperator
+  repeaterField: GenericFormField<CoOwnerAndOperator>
   handleRemove: (index: number) => void
   addNationalIdToCoOwners: (nationalId: string, index: number) => void
 }
@@ -106,14 +106,12 @@ export const CoOwnerAndOperatorRepeaterItem: FC<Props & FieldBaseProps> = ({
       <input
         type="hidden"
         value={repeaterField.wasRemoved}
-        ref={register({ required: true })}
-        name={wasRemovedField}
+        {...register(typeField, { required: true })}
       />
       <input
         type="hidden"
         value={userMessageId}
-        ref={register({ required: true })}
-        name={typeField}
+        {...register(typeField, { required: true })}
       />
     </Box>
   )
