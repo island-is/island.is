@@ -3,6 +3,7 @@ import { style } from '@vanilla-extract/css'
 export const container = style({
   paddingTop: '60px',
   paddingBottom: '60px',
+  background: 'linear-gradient(178.72deg, #C6E8AC 6.76%, #F2F7EE 101.16%)',
 })
 
 export const emptyBox = style({
