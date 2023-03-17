@@ -1300,6 +1300,18 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'Each registered employer is required to approve your parental leave arrangement. Once you have submitted your application, an email and sms will be sent to all registered employers. The recipients will get access to  the application, but will only be able to see the timing arrangements. If any registered employers reject the timing arrangement, you will need to change your application.',
     },
+    grantsDescription: {
+      id: 'pl.application:employer.grants.description',
+      defaultMessage:
+        'Ef þú hefur verið í vinnu á seinustu 6 mánuðum fyrir fæðingu barns þarf vinnuveitandi þinn að staðfesta tímabil fæðingarstyrksins eða senda inn starfslokavottorð ef þú ert ekki lengur að vinna hjá viðkomandi.',
+      description:
+        'If you have been employed in the last 6 months before the birth of the child, your employer must confirm the parental grant period or submit a certificate of termination of employment if you are no longer working for that person.',
+    },
+    stillEmployed: {
+      id: 'pl.application:employer.stillEmployed',
+      defaultMessage: 'Ertu ennþá að vinna hjá viðkomandi vinnuveitanda?',
+      description: 'Are you still working for this employer?',
+    },
     registration: {
       id: 'pl.application:employer.registration',
       defaultMessage: 'Skráning vinnuveitanda',
@@ -1381,6 +1393,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:employer.add.error',
       defaultMessage: 'Nauðsynlegt er að bæta við amk einum vinnuveitanda',
       description: 'It is required to add at least one employer',
+    },
+    employerLastSixMonths: {
+      id: 'pl.application:employer.employerLastSixMonths',
+      defaultMessage: 'Hefur þú verið með vinnuveitanda á síðustu 6 mánuðum?',
+      description: 'Have you had an employer in the last 6 month?',
     },
   }),
 
@@ -1737,6 +1754,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'If parent decided to use all the other parent personal discount',
     },
+    employerLastSixMonths: {
+      id: 'pl.application:review.employer.last.six.months',
+      defaultMessage: 'Vinnuveitandi á síðustu 6 mánuðum?',
+      description: 'Employer in the last 6 months?',
+    },
   }),
 
   draftFlow: defineMessages({
@@ -1979,6 +2001,16 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:attachmentscreen.additionalDocumentsEditSubmit',
       defaultMessage: 'Senda inn',
       description: 'Submit',
+    },
+    employmentTerminationCertificateTitle: {
+      id: 'pl.application:attachmentscreen.retirementCertificateTitle',
+      defaultMessage: `Starfslokavottorð`,
+      description: `Employment termination certificate`,
+    },
+    employmentTerminationCertificateDescription: {
+      id: 'pl.application:attachmentscreen.retirementCertificateDescription',
+      defaultMessage: `Ef þú hefur verið í vinnu á seinustu 6 mánuðum fyrir fæðingu barns þarf vinnuveitandi þinn að staðfesta tímabil fæðingarstyrksins eða senda inn starfslokavottorð ef þú ert ekki lengur að vinna hjá viðkomandi. Athugaðu að skjalið þarf að vera á .pdf formi`,
+      description: `If you have been employed in the last 6 months before the birth of the child, your employer must confirm the parental grant period or submit a certificate of termination of employment if you are no longer working for that person. Note that the document needs to be on .pdf format`,
     },
   }),
   residenceGrantMessage: defineMessages({
@@ -2256,6 +2288,11 @@ export const errorMessages = defineMessages({
     id: 'pl.application:answerValidators.employersRatioMissing',
     defaultMessage: 'Ekkert hlutfall hefur verið valið',
     description: 'Copy when days to be used by period is missing',
+  },
+  employersStillEmployedMissing: {
+    id: 'pl.application:answerValidators.employersStillEmployedMissing',
+    defaultMessage: 'Vinsamlegast veldu annan hvorn möguleikann',
+    description: 'Please select either option',
   },
   employersNotAList: {
     id: 'pl.application:answerValidators.employersNotAList',
