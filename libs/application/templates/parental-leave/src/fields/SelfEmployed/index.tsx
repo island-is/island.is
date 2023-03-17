@@ -78,12 +78,11 @@ export const SelfEmployed: FC<FieldBaseProps> = ({
           defaultValue,
         }}
       />
-      <input type="hidden" ref={register} name={id} value={defaultValue} />
+      <input type="hidden" value={defaultValue} {...register(id)} />
       <input
         type="hidden"
-        ref={register}
-        name="isReceivingUnemploymentBenefits"
         value={hiddenReceivingUnemploymentbenefits}
+        {...register('isReceivingUnemploymentBenefits')}
       />
     </>
   )

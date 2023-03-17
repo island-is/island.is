@@ -83,11 +83,25 @@ export const estateSchema = z.object({
   // is: Innistæður í bönkum
   bankAccounts: z
     .object({
-      accountNumber: z.string().refine((v) => {
-        const bankAccount = formatBankInfo(v)
-        return bankAccount.length === 14
-      }),
+      accountNumber: z
+        .string()
+        .refine((v) => {
+          if (v !== '') {
+            const bankAccount = formatBankInfo(v)
+            return bankAccount.length === 14
+          } else return true
+        })
+        .optional(),
       balance: z.string().optional(),
+    })
+    .refine(({ accountNumber, balance }) => {
+      if (accountNumber !== '' && balance !== '') {
+        return true
+      } else if (accountNumber === '' && balance === '') {
+        return true
+      } else {
+        return false
+      }
     })
     .array()
     .optional(),
@@ -133,14 +147,22 @@ export const estateSchema = z.object({
   acceptDebts: z.array(z.enum([YES, NO])).nonempty(),
 
   // is: Umboðsmaður
-  representative: z.object({
-    representativeName: z.string().min(1),
-    representativeNationalId: z.string().length(10),
-    representativePhoneNumber: z.string().refine((v) => isValidPhoneNumber(v), {
-      params: m.errorPhoneNumber,
-    }),
-    representativeEmail: customZodError(z.string().email(), m.errorEmail),
-  }),
+  representative: z
+    .object({
+      representativeName: z.string().min(1).optional(),
+      representativeNationalId: z.string().length(10).optional(),
+      representativePhoneNumber: z
+        .string()
+        .refine((v) => isValidPhoneNumber(v), {
+          params: m.errorPhoneNumber,
+        })
+        .optional(),
+      representativeEmail: customZodError(
+        z.string().email(),
+        m.errorEmail,
+      ).optional(),
+    })
+    .optional(),
 
   // is: Heimild til setu í óskiptu búi skv. erfðaskrá
   undividedEstateResidencePermission: z.enum([YES, NO]),
