@@ -20,6 +20,8 @@ import {
 } from '../../lib/parentalLeaveUtils'
 import {
   NO,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
   States as ApplicationStates,
   States,
@@ -104,6 +106,8 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
     isReceivingUnemploymentBenefits,
     hasAppliedForReidenceGrant,
     periods,
+    employerLastSixMonths,
+    employers,
   } = useApplicationAnswers(application)
   const showResidenceGrantCard = showResidenceGrant(application)
   const oldApplication = applicationType === undefined // Added this check for applications that is in the db already
@@ -112,6 +116,9 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
       ? isReceivingUnemploymentBenefits === YES
       : false
     : false
+  const isStillEmployed = employers?.some(
+    (employer) => employer.stillEmployed === YES,
+  )
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
@@ -146,6 +153,21 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
   ]
 
   if (isSelfEmployed === NO && !isBeneficiaries) {
+    steps.unshift({
+      state: statesMap['employer'][application.state],
+      title: formatMessage(
+        parentalLeaveFormMessages.reviewScreen.employerTitle,
+      ),
+      description: formatMessage(descKey[application.state]),
+    })
+  }
+
+  if (
+    (applicationType === PARENTAL_GRANT ||
+      applicationType === PARENTAL_GRANT_STUDENTS) &&
+    employerLastSixMonths === YES &&
+    isStillEmployed
+  ) {
     steps.unshift({
       state: statesMap['employer'][application.state],
       title: formatMessage(

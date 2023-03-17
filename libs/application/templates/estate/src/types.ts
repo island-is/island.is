@@ -1,4 +1,4 @@
-import { FormValue } from '@island.is/application/types'
+import { FormValue, GenericFormField } from '@island.is/application/types'
 import { EstateAsset } from '@island.is/clients/syslumenn'
 
 export enum RoleConfirmationEnum {
@@ -20,6 +20,8 @@ export enum OtherPropertiesEnum {
 }
 
 export type Asset = Partial<EstateAsset & { initial: boolean; dummy?: boolean }>
+
+export type AssetFormField = Asset & { id: string }
 
 export type Answers = {
   additionalInfo: string
@@ -61,6 +63,8 @@ export interface ElectPersonType {
   electedPersonNationalId?: string
   lookupError?: boolean
 }
+
+export type EstateMemberField = GenericFormField<EstateMember>
 
 export interface EstateMember {
   name: string
