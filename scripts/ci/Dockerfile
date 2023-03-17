@@ -1,4 +1,5 @@
 # This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
+ARG PLAYWRIGHT_VERSION
 ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
 FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as deps
 
@@ -114,7 +115,6 @@ CMD [ "jest", "main.spec.js" ]
 
 
 
-ARG PLAYWRIGHT_VERSION
 FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal as playwright-base
 
 
