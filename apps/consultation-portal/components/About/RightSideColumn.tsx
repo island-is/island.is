@@ -1,9 +1,18 @@
 import React from 'react'
 import { Box, TableOfContents } from '@island.is/island-ui/core'
+import { scrollTo } from '../../utils/helpers/useScrollSpy'
 
 const RightSideColumn = () => {
-  // TODO: remove after data has been obtained
-  const aboutHeadings = ['Heading 1', 'Heading 2', 'Heading 3', 'Heading 4']
+  const aboutHeadings = [
+    'Ábyrgð og umsjón',
+    'Markmið',
+    'Efni',
+    'Ritun umsagna',
+    'Birting umsagna',
+    'Reglur',
+    'Eftirfylgni',
+    'Forsaga',
+  ]
 
   return (
     <Box paddingBottom={[3, 3, 0, 0, 0]}>
@@ -13,10 +22,7 @@ const RightSideColumn = () => {
           headingTitle: item,
           headingId: index.toString(),
         }))}
-        onClick={
-          (selectedHeadingId) => console.log('Navigate to: ', selectedHeadingId)
-          //   onClick={(id) => scrollTo(id, { smooth: true })}
-        }
+        onClick={(id) => scrollTo(id, { smooth: true })}
       />
     </Box>
   )
