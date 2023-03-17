@@ -1,10 +1,5 @@
 import { useEffect } from 'react'
-import {
-  ArrayField,
-  Controller,
-  useFormContext,
-  useWatch,
-} from 'react-hook-form'
+import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import {
@@ -14,7 +9,7 @@ import {
   Button,
   Text,
 } from '@island.is/island-ui/core'
-import { Asset } from '../../types'
+import { AssetFormField } from '../../types'
 import * as styles from '../styles.css'
 import { m } from '../../lib/messages'
 import { useLazyQuery } from '@apollo/client'
@@ -28,7 +23,7 @@ export const AdditionalRealEstate = ({
   fieldName,
   error,
 }: {
-  field: Partial<ArrayField<Asset, 'id'>>
+  field: AssetFormField
   fieldName: string
   index: number
   remove: (index: number) => void
@@ -87,21 +82,25 @@ export const AdditionalRealEstate = ({
         name={initialField}
         control={control}
         defaultValue={field.initial || false}
+        render={() => <input type="hidden" />}
       />
       <Controller
         name={enabledField}
         control={control}
         defaultValue={field.enabled || false}
+        render={() => <input type="hidden" />}
       />
       <Controller
         name={dummyField}
         control={control}
         defaultValue={field.dummy || false}
+        render={() => <input type="hidden" />}
       />
       <Controller
         name={shareField}
         control={control}
         defaultValue={field.share || ''}
+        render={() => <input type="hidden" />}
       />
       <Text variant="h4">
         {formatMessage(m.realEstateRepeaterHeader) + ' ' + (index + 1)}

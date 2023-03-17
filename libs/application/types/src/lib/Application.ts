@@ -15,7 +15,12 @@ export interface ExternalData {
   [key: string]: DataProviderResult
 }
 
-export type Answer = string | number | boolean | Answer[] | FormValue
+export type Answer =
+  | string
+  | number
+  | boolean
+  | Array<string | number | boolean | FormValue>
+  | FormValue
 
 export interface FormValue {
   [key: string]: Answer

@@ -141,6 +141,24 @@ interface LawsBrokenOption {
   disabled: boolean
 }
 
+export function getRelevantSubstances(
+  offenses: IndictmentCountOffense[],
+  substances: SubstanceMap,
+) {
+  const allowedSubstances = offenses.map(
+    (offense) => offenseSubstances[offense],
+  )
+
+  const relevantSubstances = allowedSubstances
+    .map((allowedSubstance) => {
+      return Object.entries(substances).filter((substance) => {
+        return allowedSubstance.includes(substance[0] as Substance)
+      })
+    })
+    .flat()
+  return relevantSubstances
+}
+
 function getIndictmentDescriptionReason(
   offenses: IndictmentCountOffense[],
   substances: SubstanceMap,
@@ -166,37 +184,32 @@ function getIndictmentDescriptionReason(
         acc += formatMessage(strings.incidentDescriptionDrunkDrivingAutofill)
         break
       case IndictmentCountOffense.IllegalDrugsDriving:
-        acc +=
-          formatMessage(strings.incidentDescriptionDrugsDrivingPrefixAutofill) +
-          formatMessage(strings.incidentDescriptionIllegalDrugsDrivingAutofill)
+        acc += `${formatMessage(
+          strings.incidentDescriptionDrugsDrivingPrefixAutofill,
+        )} ${formatMessage(
+          strings.incidentDescriptionIllegalDrugsDrivingAutofill,
+        )}`
         break
       case IndictmentCountOffense.PrescriptionDrugsDriving:
-        acc +=
-          (offenses.includes(IndictmentCountOffense.IllegalDrugsDriving)
-            ? ''
-            : formatMessage(
-                strings.incidentDescriptionDrugsDrivingPrefixAutofill,
-              )) +
-          formatMessage(
-            strings.incidentDescriptionPrescriptionDrugsDrivingAutofill,
-          )
+        acc += offenses.includes(IndictmentCountOffense.IllegalDrugsDriving)
+          ? ''
+          : `${formatMessage(
+              strings.incidentDescriptionDrugsDrivingPrefixAutofill,
+            )} ${formatMessage(
+              strings.incidentDescriptionPrescriptionDrugsDrivingAutofill,
+            )}`
         break
     }
     return acc
   }, '')
 
-  const allowedSubstances: string[] = offenses
-    .map((offense) => offenseSubstances[offense])
-    .flat()
-  const relevantSubstances = Object.entries(substances).filter((substance) =>
-    allowedSubstances.includes(substance[0]),
-  )
+  const relevantSubstances = getRelevantSubstances(offenses, substances)
 
   reason += relevantSubstances.reduce((acc, substance, index) => {
     if (index === 0) {
       acc += ` (${formatMessage(
         strings.incidentDescriptionSubstancesPrefixAutofill,
-      )}`
+      )} `
     } else if (index === relevantSubstances.length - 1) {
       acc += ' og '
     } else {

@@ -22,13 +22,8 @@ interface Props {
 }
 
 const ClientSecretForm: React.FC<Props> = (props: Props) => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-  } = useForm<ClientSecretDTO>()
-  const { isSubmitting } = formState
+  const { register, handleSubmit, formState } = useForm<ClientSecretDTO>()
+  const { isSubmitting, errors } = formState
   const defaultSecretLength = 25
   const [defaultSecret, setDefaultSecret] = useState<string>('')
   const [confirmModalIsOpen, setConfirmModalIsOpen] = useState(false)
@@ -164,8 +159,7 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
                     <input
                       id="secretValue"
                       type="text"
-                      name="value"
-                      ref={register({ required: true })}
+                      {...register('value', { required: true })}
                       defaultValue={defaultSecret}
                       className="client-secret__input"
                       placeholder={
@@ -196,8 +190,7 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
                     </label>
                     <input
                       type="text"
-                      name="type"
-                      ref={register({ required: true })}
+                      {...register('type', { required: true })}
                       defaultValue={'SharedSecret'}
                       className="client-secret__input"
                       placeholder={localization.fields['type'].placeholder}
@@ -222,8 +215,7 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
                     <input
                       id="description"
                       type="text"
-                      name="description"
-                      ref={register({
+                      {...register('description', {
                         required: true,
                         validate: ValidationUtils.validateDescription,
                       })}
