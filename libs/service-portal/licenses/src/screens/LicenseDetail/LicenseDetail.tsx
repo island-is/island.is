@@ -387,7 +387,7 @@ const LicenseDetail = () => {
               genericLicense?.license.pkpassStatus === 'Available' &&
               licenseType && (
                 <>
-                  <PkPass licenseType={licenseType ?? ''} />
+                  <PkPass licenseType={licenseType} />
                   <Box marginX={[0, 1]} marginY={[1, 0]} />
                 </>
               )}
