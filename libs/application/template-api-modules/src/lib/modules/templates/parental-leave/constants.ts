@@ -26,6 +26,7 @@ export const apiConstants = {
     permanentFosterCare: 'PermanentFosterCare',
     adoption: 'Adoption',
     residenceGrant: 'ResidenceGrant',
+    employmentTerminationCertificate: 'EmploymentTerminationCertificate',
   },
 }
 

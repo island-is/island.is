@@ -2,6 +2,8 @@ import { Answer, Application } from '@island.is/application/types'
 import {
   ADOPTION,
   AnswerValidationConstants,
+  NO,
+  PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   PERMANENT_FOSTER_CARE,
   SINGLE,
@@ -23,7 +25,6 @@ export const fileUploadValidationSection = (
   application: Application,
 ) => {
   const obj = newAnswer as Record<string, Answer>
-
   const {
     isSelfEmployed,
     applicationType,
@@ -33,6 +34,8 @@ export const fileUploadValidationSection = (
     additionalDocuments,
     noChildrenFoundTypeOfApplication,
     isResidenceGrant,
+    employerLastSixMonths,
+    employers,
   } = getApplicationAnswers(application.answers)
 
   if (isSelfEmployed === YES && obj.selfEmployedFile) {
@@ -51,6 +54,31 @@ export const fileUploadValidationSection = (
       return buildError(
         errorMessages.requiredAttachment,
         'studentFile',
+        FILEUPLOAD,
+      )
+    return undefined
+  }
+
+  const isNotStillEmployed = employers?.some(
+    (employer) => employer.stillEmployed === NO,
+  )
+
+  if (
+    (applicationType === PARENTAL_GRANT ||
+      applicationType === PARENTAL_GRANT_STUDENTS) &&
+    employerLastSixMonths === YES &&
+    isNotStillEmployed &&
+    obj.employmentTerminationCertificateFile
+  ) {
+    if (
+      isEmpty(
+        (obj as { employmentTerminationCertificateFile: unknown[] })
+          .employmentTerminationCertificateFile,
+      )
+    )
+      return buildError(
+        errorMessages.requiredAttachment,
+        'employmentTerminationCertificateFile',
         FILEUPLOAD,
       )
     return undefined

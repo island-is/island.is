@@ -57,6 +57,7 @@ import {
   ParentalRelations,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
+  PARENTAL_GRANT,
   SINGLE,
   StartDateOptions,
   UnEmployedBenefitTypes,
@@ -508,6 +509,10 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildCustomField({
                   component: 'SelfEmployed',
                   id: 'isSelfEmployed',
+                  childInputIds: [
+                    'isReceivingUnemploymentBenefits',
+                    'isSelfEmployed',
+                  ],
                   title: parentalLeaveFormMessages.selfEmployed.title,
                   description:
                     parentalLeaveFormMessages.selfEmployed.description,
@@ -559,17 +564,50 @@ export const ParentalLeaveForm: Form = buildForm({
         }),
         buildSubSection({
           condition: (answers) => {
+            const { applicationType } = getApplicationAnswers(answers)
+
+            return (
+              applicationType === PARENTAL_GRANT ||
+              applicationType === PARENTAL_GRANT_STUDENTS
+            )
+          },
+          id: 'parentalGrantEmployment',
+          title: parentalLeaveFormMessages.employer.subSection,
+          children: [
+            buildRadioField({
+              id: 'employerLastSixMonths',
+              title: parentalLeaveFormMessages.employer.employerLastSixMonths,
+              width: 'half',
+              options: [
+                {
+                  value: YES,
+                  label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                },
+                {
+                  value: NO,
+                  label: parentalLeaveFormMessages.shared.noOptionLabel,
+                },
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          condition: (answers) => {
             const {
               applicationType,
               isReceivingUnemploymentBenefits,
               isSelfEmployed,
+              employerLastSixMonths,
             } = getApplicationAnswers(answers)
             const isNotSelfEmployed = isSelfEmployed !== YES
 
             return (
-              applicationType === PARENTAL_LEAVE &&
-              isReceivingUnemploymentBenefits === NO &&
-              isNotSelfEmployed
+              (applicationType === PARENTAL_LEAVE &&
+                isReceivingUnemploymentBenefits === NO &&
+                isNotSelfEmployed) ||
+              ((applicationType === PARENTAL_GRANT ||
+                applicationType === PARENTAL_GRANT_STUDENTS) &&
+                employerLastSixMonths === YES)
             )
           },
           id: 'employment',
@@ -595,17 +633,20 @@ export const ParentalLeaveForm: Form = buildForm({
                     buildTextField({
                       id: 'email',
                       variant: 'email',
+                      dataTestId: 'employer-email',
                       title: parentalLeaveFormMessages.employer.email,
                     }),
                     buildTextField({
                       id: 'phoneNumber',
                       variant: 'tel',
+                      dataTestId: 'employer-phone-number',
                       format: '###-####',
                       placeholder: '000-0000',
                       title: parentalLeaveFormMessages.employer.phoneNumber,
                     }),
                     buildSelectField({
                       id: 'ratio',
+                      dataTestId: 'employment-ratio',
                       title: parentalLeaveFormMessages.employer.ratio,
                       placeholder:
                         parentalLeaveFormMessages.employer.ratioPlaceholder,
@@ -615,6 +656,35 @@ export const ParentalLeaveForm: Form = buildForm({
                           value: `${array.length - idx}`,
                           label: `${array.length - idx}%`,
                         })),
+                    }),
+                    buildRadioField({
+                      id: 'stillEmployed',
+                      condition: (answers) => {
+                        const {
+                          applicationType,
+                          employerLastSixMonths,
+                        } = getApplicationAnswers(answers)
+
+                        return (
+                          (applicationType === PARENTAL_GRANT ||
+                            applicationType === PARENTAL_GRANT_STUDENTS) &&
+                          employerLastSixMonths === YES
+                        )
+                      },
+                      title: parentalLeaveFormMessages.employer.stillEmployed,
+                      width: 'half',
+                      space: 3,
+                      options: [
+                        {
+                          value: YES,
+                          label:
+                            parentalLeaveFormMessages.shared.yesOptionLabel,
+                        },
+                        {
+                          value: NO,
+                          label: parentalLeaveFormMessages.shared.noOptionLabel,
+                        },
+                      ],
                     }),
                   ],
                 }),
@@ -850,6 +920,40 @@ export const ParentalLeaveForm: Form = buildForm({
               introduction:
                 parentalLeaveFormMessages.attachmentScreen.description,
               maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader: '',
+              uploadDescription: '',
+              uploadButtonLabel:
+                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+            }),
+            buildFileUploadField({
+              id: 'fileUpload.employmentTerminationCertificateFile',
+              title:
+                parentalLeaveFormMessages.attachmentScreen
+                  .employmentTerminationCertificateTitle,
+              introduction:
+                parentalLeaveFormMessages.attachmentScreen
+                  .employmentTerminationCertificateDescription,
+              condition: (answers) => {
+                const {
+                  applicationType,
+                  employerLastSixMonths,
+                  employers,
+                } = getApplicationAnswers(answers)
+
+                const isNotStillEmployed = employers?.some(
+                  (employer) => employer.stillEmployed === NO,
+                )
+
+                return (
+                  (applicationType === PARENTAL_GRANT ||
+                    applicationType === PARENTAL_GRANT_STUDENTS) &&
+                  employerLastSixMonths === YES &&
+                  isNotStillEmployed
+                )
+              },
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
               uploadAccept: '.pdf',

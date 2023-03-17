@@ -113,7 +113,6 @@ export const dataSchema = z.object({
   shareInformationWithOtherParent: z.enum([YES, NO]),
   useUnion: z.enum([YES, NO]),
   usePrivatePensionFund: z.enum([YES, NO]),
-  isReceivingUnemploymentBenefits: z.enum([YES, NO]),
   // We don't have away to validate companyId yet because isCompany return false on personal business ID
   employerNationalRegistryId: z.string().refine((n) => kennitala.isValid(n), {
     params: errorMessages.employerNationalRegistryId,
@@ -136,6 +135,8 @@ export const dataSchema = z.object({
       { params: errorMessages.phoneNumber },
     )
     .optional(),
+  isSelfEmployed: z.enum([YES, NO]),
+  isReceivingUnemploymentBenefits: z.enum([YES, NO]),
   isRecivingUnemploymentBenefits: z.enum([YES, NO]),
   unemploymentBenefits: z.string().min(1),
   requestRights: z.object({

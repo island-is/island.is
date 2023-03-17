@@ -445,6 +445,7 @@ export const getApplicationTypeOptions = (formatMessage: FormatMessage) => {
   const options: Option[] = [
     {
       value: PARENTAL_LEAVE,
+      dataTestId: 'parental-leave',
       label: parentalLeaveFormMessages.shared.applicationParentalLeaveTitle,
       subLabel: formatMessage(
         parentalLeaveFormMessages.shared.applicationParentalLeaveSubTitle,
@@ -452,6 +453,7 @@ export const getApplicationTypeOptions = (formatMessage: FormatMessage) => {
     },
     {
       value: PARENTAL_GRANT,
+      dataTestId: 'parental-grant',
       label:
         parentalLeaveFormMessages.shared
           .applicationParentalGrantUnemployedTitle,
@@ -462,6 +464,7 @@ export const getApplicationTypeOptions = (formatMessage: FormatMessage) => {
     },
     {
       value: PARENTAL_GRANT_STUDENTS,
+      dataTestId: 'parental-grant-students',
       label:
         parentalLeaveFormMessages.shared.applicationParentalGrantStudentTitle,
       subLabel: formatMessage(
@@ -809,6 +812,10 @@ export function getApplicationAnswers(answers: Application['answers']) {
       } as EmployerRow)
     }
   }
+  const employerLastSixMonths = getValueViaPath(
+    answers,
+    'employerLastSixMonths',
+  ) as YesOrNo
 
   const shareInformationWithOtherParent = getValueViaPath(
     answers,
@@ -921,6 +928,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'fileUpload.residenceGrant',
   ) as Files[]
 
+  const employmentTerminationCertificateFiles = getValueViaPath(
+    answers,
+    'fileUpload.employmentTerminationCertificateFile',
+  ) as Files[]
+
   const dateOfBirth = getValueViaPath(answers, 'dateOfBirth') as string
 
   const commonFiles = getValueViaPath(answers, 'fileUpload.file') as Files[]
@@ -963,6 +975,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     spouseUseAsMuchAsPossible,
     spouseUsage,
     employers,
+    employerLastSixMonths,
     employerNationalRegistryId,
     employerReviewerNationalRegistryId,
     shareInformationWithOtherParent,
@@ -990,6 +1003,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     isResidenceGrant,
     dateOfBirth,
     residenceGrantFiles,
+    employmentTerminationCertificateFiles,
     hasAppliedForReidenceGrant,
     previousState,
   }
