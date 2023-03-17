@@ -177,7 +177,13 @@ export const AdditionalEstateMember = ({
                 required
                 backgroundColor="blue"
                 loading={queryLoading}
-                error={queryError ? error?.name : undefined}
+                error={
+                  queryError
+                    ? error?.name
+                    : error?.nationalId
+                    ? error?.nationalId
+                    : undefined
+                }
               />
             </GridColumn>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2} paddingTop={2}>
