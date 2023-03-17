@@ -112,8 +112,7 @@ export const OwnerCoOwners: FC<Props & FieldBaseProps> = ({
         <input
           type="hidden"
           value={`${wasRemoved}`}
-          ref={register({ required: true })}
-          name={wasRemovedField}
+          {...register(wasRemovedField, { required: true })}
         />
       </GridRow>
     </Box>

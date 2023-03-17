@@ -1,3 +1,5 @@
+import get from 'lodash/get'
+
 export { formatNationalId } from '@island.is/portals/core'
 
 export const getNameAbbreviation = (name: string) => {
@@ -52,3 +54,9 @@ export type DrivingLicenseType = {
 export type ExcludesFalse = <T>(
   x: T | null | undefined | false | '' | 0,
 ) => x is T
+
+export type RecordObject<T = unknown> = Record<string, T>
+
+export function getErrorViaPath(obj: RecordObject, path: string): string {
+  return get(obj, path) as string
+}

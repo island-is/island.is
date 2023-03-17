@@ -13,7 +13,10 @@ export const DelegationCheck: FC<FieldBaseProps<FinancialStatementsInao>> = ({
   setBeforeSubmitCallback,
 }) => {
   const { formatMessage } = useLocale()
-  const { errors, setError } = useFormContext()
+  const {
+    formState: { errors },
+    setError,
+  } = useFormContext()
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
       const userType = application.externalData.getUserType.data
