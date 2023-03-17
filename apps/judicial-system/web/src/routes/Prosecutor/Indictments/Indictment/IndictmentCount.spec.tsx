@@ -6,6 +6,7 @@ import { Substance, SubstanceMap } from '@island.is/judicial-system/types'
 import {
   getRelevantSubstances,
   getIncidentDescriptionReason,
+  getLegalArguments,
 } from './IndictmentCount'
 
 const formatMessage = createIntl({ locale: 'is', onError: jest.fn })
@@ -36,7 +37,64 @@ describe('getRelevantSubstances', () => {
   })
 })
 
-describe('getIndictmentDescriptionReason', () => {
+describe('getLegalArguments', () => {
+  test('should format legal arguments with article 95 and one other article', () => {
+    const lawsBroken = [
+      [58, 1],
+      [95, 1],
+    ]
+
+    const result = getLegalArguments(lawsBroken, formatMessage)
+
+    expect(result).toEqual(
+      'Telst háttsemi þessi varða við 1. mgr. 58. gr., sbr. 1. mgr. 95. gr. umferðarlaga nr. 77/2019.',
+    )
+  })
+
+  test('should format legal arguments with article 95 and two other articles', () => {
+    const lawsBroken = [
+      [49, 1],
+      [49, 2],
+      [58, 1],
+      [95, 1],
+    ]
+
+    const result = getLegalArguments(lawsBroken, formatMessage)
+
+    expect(result).toEqual(
+      'Telst háttsemi þessi varða við 1., sbr. 2. mgr. 49. gr. og 1. mgr. 58. gr., sbr. 1. mgr. 95. gr. umferðarlaga nr. 77/2019.',
+    )
+  })
+
+  test('should format legal arguments without article 95 and one other article', () => {
+    const lawsBroken = [
+      [49, 1],
+      [49, 2],
+    ]
+
+    const result = getLegalArguments(lawsBroken, formatMessage)
+
+    expect(result).toEqual(
+      'Telst háttsemi þessi varða við 1., sbr. 2. mgr. 49. gr. umferðarlaga nr. 77/2019.',
+    )
+  })
+
+  test('should format legal arguments without article 95 and two other article', () => {
+    const lawsBroken = [
+      [49, 1],
+      [49, 2],
+      [58, 1],
+    ]
+
+    const result = getLegalArguments(lawsBroken, formatMessage)
+
+    expect(result).toEqual(
+      'Telst háttsemi þessi varða við 1., sbr. 2. mgr. 49. gr. og 1. mgr. 58. gr. umferðarlaga nr. 77/2019.',
+    )
+  })
+})
+
+describe('getIncidentDescriptionReason', () => {
   test('should return a description for one offense', () => {
     const offenses = [offense.DrivingWithoutLicence]
 

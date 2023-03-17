@@ -116,7 +116,9 @@ export class ChildrenService {
       // since the primary parent makes the choice for them
       const remainingDays =
         calculateRemainingNumberOfDays(
-          child.expectedDateOfBirth,
+          child.expectedDateOfBirth === ''
+            ? child.adoptionDate!
+            : child.expectedDateOfBirth,
           parentalLeavesAndPregnancyStatus.getParentalLeaves,
           parentalLeavesEntitlements,
         ) +
@@ -134,7 +136,7 @@ export class ChildrenService {
 
     if (children.length <= 0 && existingApplications.length <= 0) {
       // Instead of throwing error, ask applicant questions
-      // father without mother application
+      // foster care or father without mother
 
       return {
         children: [],
@@ -235,7 +237,9 @@ export class ChildrenService {
 
       const remainingDays =
         calculateRemainingNumberOfDays(
-          child.expectedDateOfBirth,
+          child.expectedDateOfBirth === ''
+            ? child.adoptionDate!
+            : child.expectedDateOfBirth,
           [],
           parentalLeavesEntitlements,
         ) +
