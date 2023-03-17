@@ -65,10 +65,9 @@ const ContactInfoRow = ({ email, phoneNumber }: Props) => {
           />
         </GridColumn>
         <input
-          name={`${phoneNumber.id}`}
+          {...register(`${phoneNumber.id}`)}
           type="hidden"
           value={parsedNumber as string}
-          ref={register}
         />
       </GridRow>
     </GridContainer>

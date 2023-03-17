@@ -63,7 +63,7 @@ const ExampleCountryField: FC<Props> = ({ error, field, application }) => {
         <Controller
           name={`${id}`}
           defaultValue=""
-          render={({ value, onChange }) => {
+          render={({ field: { onChange, value } }) => {
             return (
               <AsyncSearch
                 options={options}
@@ -103,19 +103,17 @@ const ExampleCountryField: FC<Props> = ({ error, field, application }) => {
       <Text> You can even access the answers to past questions: </Text>
       {Object.keys(formValue).map((k) => (
         <Text key={k}>
-          <strong>{k}:</strong> {formValue[k].toString()}
+          <strong>{k}:</strong> {formValue.k ? formValue.k.toString() : ''}
         </Text>
       ))}
       <Text>
-        {' '}
         And you can also manipulate other schema entries, this one is the first
         question you already answered:
       </Text>
       <Input
         id={'person.name'}
-        name={'person.name'}
+        {...register('person.name')}
         label={'Name again'}
-        ref={register}
       />
       <Text>
         {' '}
@@ -123,7 +121,7 @@ const ExampleCountryField: FC<Props> = ({ error, field, application }) => {
         elements
       </Text>
       <Button onClick={() => setAge(age + 1)}>+++Increment age+++ {age}</Button>
-      <input type="hidden" value={age} ref={register} name={'person.age'} />
+      <input type="hidden" value={age} {...register('person.age')} />
     </>
   )
 }
