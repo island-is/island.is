@@ -341,6 +341,7 @@ describe('Parental Leave Application Template', () => {
         )
 
         const answer = {
+          usePersonalAllowance: YES,
           useAsMuchAsPossible: YES,
           usage: '100',
         }
@@ -371,6 +372,7 @@ describe('Parental Leave Application Template', () => {
         )
 
         const answer = {
+          usePersonalAllowance: YES,
           useAsMuchAsPossible: YES,
           usage: '100',
         }
