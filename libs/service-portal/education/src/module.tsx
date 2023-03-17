@@ -50,12 +50,14 @@ export const educationModule: PortalModule = {
       name: 'Brautskráning',
       path: EducationPaths.EducationHaskoliGraduation,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      dynamic: true, // dynamic to check feature flag
       element: <EducationGraduation />,
     },
     {
       name: 'Brautskráning - nánar ',
       path: EducationPaths.EducationHaskoliGraduationDetail,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      dynamic: true, // dynamic to check feature flag
       element: <EducationGraduationDetail />,
     },
   ],
