@@ -22,7 +22,11 @@ interface Props {
 }
 
 export const InstitutionForm: FC<Props> = ({ organisation }) => {
-  const { handleSubmit, control, errors } = useForm()
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<Organisation>()
   const { formatMessage } = useLocale()
   const { updateOrganisation, loading } = useUpdateOrganisation()
 
@@ -51,7 +55,7 @@ export const InstitutionForm: FC<Props> = ({ organisation }) => {
             },
           }}
           defaultValue={organisation?.name || ''}
-          render={({ onChange, value, name }) => (
+          render={({ field: { onChange, value, name } }) => (
             <Input
               size="xs"
               name={name}
@@ -59,8 +63,8 @@ export const InstitutionForm: FC<Props> = ({ organisation }) => {
               placeholder={formatMessage(m.SettingsEditInstitutionName)}
               value={value}
               onChange={onChange}
-              hasError={errors.name}
-              errorMessage={errors.name?.message}
+              hasError={!!errors.name}
+              errorMessage={errors.name?.message as string}
             />
           )}
         />
@@ -82,7 +86,7 @@ export const InstitutionForm: FC<Props> = ({ organisation }) => {
               ),
             },
           }}
-          render={({ onChange, value, name }) => (
+          render={({ field: { onChange, value, name } }) => (
             <Input
               size="xs"
               name={name}
@@ -90,8 +94,8 @@ export const InstitutionForm: FC<Props> = ({ organisation }) => {
               value={value}
               placeholder={formatMessage(m.SettingsEditInstitutionNationalId)}
               onChange={onChange}
-              hasError={errors.nationalId}
-              errorMessage={errors.nationalId?.message}
+              hasError={!!errors.nationalId}
+              errorMessage={errors.nationalId?.message as string}
             ></Input>
           )}
         />
@@ -107,16 +111,16 @@ export const InstitutionForm: FC<Props> = ({ organisation }) => {
               ),
             },
           }}
-          render={({ onChange, value, name }) => (
+          render={({ field: { onChange, value, name } }) => (
             <Input
               size="xs"
               name={name}
               label={formatMessage(m.SettingsEditInstitutionAddress)}
-              value={value}
+              value={value || ''}
               placeholder={formatMessage(m.SettingsEditInstitutionAddress)}
               onChange={onChange}
-              hasError={errors.address}
-              errorMessage={errors.address?.message}
+              hasError={!!errors.address}
+              errorMessage={errors.address?.message as string}
             ></Input>
           )}
         />
@@ -138,16 +142,16 @@ export const InstitutionForm: FC<Props> = ({ organisation }) => {
               ),
             },
           }}
-          render={({ onChange, value, name }) => (
+          render={({ field: { onChange, value, name } }) => (
             <Input
               size="xs"
               name={name}
               label={formatMessage(m.SettingsEditInstitutionEmail)}
               placeholder={formatMessage(m.SettingsEditInstitutionEmail)}
-              value={value}
+              value={value || ''}
               onChange={onChange}
-              hasError={errors.email}
-              errorMessage={errors.email?.message}
+              hasError={!!errors.email}
+              errorMessage={errors.email?.message as string}
             ></Input>
           )}
         />
@@ -169,16 +173,16 @@ export const InstitutionForm: FC<Props> = ({ organisation }) => {
               ),
             },
           }}
-          render={({ onChange, value, name }) => (
+          render={({ field: { onChange, value, name } }) => (
             <Input
               size="xs"
               name={name}
               label={formatMessage(m.SettingsEditInstitutionTel)}
               placeholder={formatMessage(m.SettingsEditInstitutionTel)}
-              value={value}
+              value={value || ''}
               onChange={onChange}
-              hasError={errors.phoneNumber}
-              errorMessage={errors.phoneNumber?.message}
+              hasError={!!errors.phoneNumber}
+              errorMessage={errors.phoneNumber?.message as string}
             ></Input>
           )}
         />

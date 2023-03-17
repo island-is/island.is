@@ -20,7 +20,7 @@ const Reason = ({ application, field }: CRCFieldBaseProps) => {
         <Controller
           name="reason"
           defaultValue={application.answers.residenceChangeReason}
-          render={({ value, onChange }) => {
+          render={({ field: { onChange, value } }) => {
             return (
               <Input
                 id={id}

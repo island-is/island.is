@@ -261,7 +261,7 @@ const FormExternalDataProvider: FC<{
         name={`${id}`}
         defaultValue={getValueViaPath(formValue, id as string, false)}
         rules={{ required: true }}
-        render={({ value, onChange }) => {
+        render={({ field: { onChange, value } }) => {
           return (
             <Checkbox
               large={true}
