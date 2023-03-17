@@ -161,7 +161,7 @@ export function getRelevantSubstances(
   return relevantSubstances
 }
 
-function getIndictmentDescriptionReason(
+export function getIncidentDescriptionReason(
   offenses: IndictmentCountOffense[],
   substances: SubstanceMap,
   formatMessage: IntlShape['formatMessage'],
@@ -193,13 +193,15 @@ function getIndictmentDescriptionReason(
         )}`
         break
       case IndictmentCountOffense.PrescriptionDrugsDriving:
-        acc += offenses.includes(IndictmentCountOffense.IllegalDrugsDriving)
-          ? ''
-          : `${formatMessage(
-              strings.incidentDescriptionDrugsDrivingPrefixAutofill,
-            )} ${formatMessage(
-              strings.incidentDescriptionPrescriptionDrugsDrivingAutofill,
-            )}`
+        acc +=
+          (offenses.includes(IndictmentCountOffense.IllegalDrugsDriving)
+            ? ''
+            : `${formatMessage(
+                strings.incidentDescriptionDrugsDrivingPrefixAutofill,
+              )} `) +
+          formatMessage(
+            strings.incidentDescriptionPrescriptionDrugsDrivingAutofill,
+          )
         break
     }
     return acc
@@ -356,7 +358,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           formatDate(crimeDate, 'PPPP')?.replace('dagur,', 'daginn') ?? ''
       }
 
-      const reason = getIndictmentDescriptionReason(
+      const reason = getIncidentDescriptionReason(
         offenses ?? [],
         substances ?? {},
         formatMessage,

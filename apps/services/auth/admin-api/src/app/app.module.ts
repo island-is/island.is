@@ -19,7 +19,8 @@ import { AccessModule } from './modules/access/access.module'
 import { IdpProviderModule } from './modules/idp-provider/idp-provider.module'
 import { TranslationModule } from './modules/translation/translation.module'
 import { PersonalRepresentativeModule } from './modules/personal-representative/personal-representative.module'
-import { TenantsModule } from './tenants/tenants.module'
+import { TenantsModule } from './v2/tenants/tenants.module'
+import { ClientsModule as ClientsV2Module } from './v2/clients/clients.module'
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { TenantsModule } from './tenants/tenants.module'
     TranslationModule,
     PersonalRepresentativeModule,
     TenantsModule,
+    ClientsV2Module,
     ProblemModule,
     ConfigModule.forRoot({
       isGlobal: true,
