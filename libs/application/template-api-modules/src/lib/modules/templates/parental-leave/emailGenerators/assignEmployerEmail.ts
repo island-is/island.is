@@ -1,5 +1,3 @@
-import get from 'lodash/get'
-
 import { Message } from '@island.is/email-service'
 import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
