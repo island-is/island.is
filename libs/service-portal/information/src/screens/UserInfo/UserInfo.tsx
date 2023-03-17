@@ -237,10 +237,7 @@ const SubjectInfo = () => {
           </>
         )}
       </Stack>
-      <FootNote
-        serviceProviderID={THJODSKRA_ID}
-        serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
-      />
+      <FootNote serviceProviderID={THJODSKRA_ID} />
     </>
   )
 }

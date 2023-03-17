@@ -76,10 +76,7 @@ const UserInfoOverview = () => {
             familyRelation="child"
           />
         ))}
-        <FootNote
-          serviceProviderID={THJODSKRA_ID}
-          serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
-        />
+        <FootNote serviceProviderID={THJODSKRA_ID} />
       </Stack>
     </>
   )

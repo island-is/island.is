@@ -109,10 +109,7 @@ const FamilyMember = () => {
         />
         <Divider />
       </Stack>
-      <FootNote
-        serviceProviderID={THJODSKRA_ID}
-        serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
-      />
+      <FootNote serviceProviderID={THJODSKRA_ID} />
     </>
   )
 }

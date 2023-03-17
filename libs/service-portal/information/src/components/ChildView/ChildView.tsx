@@ -397,10 +397,7 @@ const ChildView: FC<Props> = ({
           </Stack>
         )}
       </Stack>
-      <FootNote
-        serviceProviderID={THJODSKRA_ID}
-        serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
-      />
+      <FootNote serviceProviderID={THJODSKRA_ID} />
     </Box>
   )
 }

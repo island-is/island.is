@@ -17,6 +17,7 @@ interface UserButtonProps {
   small: boolean
   onClick(): void
   iconOnlyMobile?: boolean
+  userMenuOpen?: boolean
 }
 
 export const UserButton = ({
@@ -24,6 +25,7 @@ export const UserButton = ({
   user,
   small,
   iconOnlyMobile = false,
+  userMenuOpen,
 }: UserButtonProps) => {
   const isDelegation = checkDelegation(user)
   const { profile } = user
@@ -47,7 +49,7 @@ export const UserButton = ({
             variant="utility"
             colorScheme={isDelegation ? 'primary' : 'white'}
             onClick={onClick}
-            icon={isDelegation ? 'people' : 'person'}
+            icon={userMenuOpen ? 'close' : isDelegation ? 'people' : 'person'}
             iconType="outline"
             aria-label={formatMessage(userMessages.userButtonAria)}
             data-testid="user-menu"

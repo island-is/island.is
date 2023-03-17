@@ -37,25 +37,11 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
   const badgeActive: keyof typeof styles.badge =
     unreadCounter > 0 ? 'active' : 'inactive'
 
-  const closeButton = (userMenu: boolean) => {
-    return (
-      <FocusableBox
-        display="flex"
-        alignItems="center"
-        component="button"
-        onClick={() =>
-          userMenu ? setUserMenuOpen(false) : setSideMenuOpen(false)
-        }
-        padding={1}
-        borderRadius="circle"
-        background="white"
-        className={styles.closeButton}
-        marginRight={!userMenu ? 1 : 0}
-      >
-        <Icon icon="close" color="blue400" />
-      </FocusableBox>
-    )
+  const closeUserMenu = (state: boolean) => {
+    setSideMenuOpen(false)
+    setUserMenuOpen(state)
   }
+
   return (
     <div className={styles.placeholder}>
       <PortalPageLoader />
@@ -106,37 +92,35 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
                 </Hidden>
 
                 {user && <UserLanguageSwitcher user={user} />}
-                {/* Display X button instead if open */}
-                {sideMenuOpen ? (
-                  closeButton(false)
-                ) : (
-                  <Box marginRight={[1, 1, 2]}>
-                    <Button
-                      variant="utility"
-                      colorScheme="white"
-                      icon="dots"
-                      onClick={() => {
-                        setSideMenuOpen(true)
-                      }}
-                    >
-                      {formatMessage(m.overview)}
-                    </Button>
-                  </Box>
-                )}
+                {/* Display X icon instead of dots if open in mobile*/}
+
+                <Box marginRight={[1, 1, 2]}>
+                  <Button
+                    variant="utility"
+                    colorScheme="white"
+                    icon={sideMenuOpen && isMobile ? 'close' : 'dots'}
+                    onClick={() => {
+                      sideMenuOpen && isMobile
+                        ? setSideMenuOpen(false)
+                        : setSideMenuOpen(true)
+                      setUserMenuOpen(false)
+                    }}
+                  >
+                    {formatMessage(m.overview)}
+                  </Button>
+                </Box>
 
                 <Sidemenu
                   setSideMenuOpen={(set: boolean) => setSideMenuOpen(set)}
                   sideMenuOpen={sideMenuOpen}
                 />
 
-                {/* Display X button instead if open */}
-                {userMenuOpen && closeButton(true)}
+                {/* Display X button instead if open in mobile*/}
                 <UserMenu
                   fullscreen
-                  setUserMenuOpen={setUserMenuOpen}
+                  setUserMenuOpen={closeUserMenu}
                   showLanguageSwitcher={false}
                   userMenuOpen={userMenuOpen}
-                  showIfOpen={!userMenuOpen}
                 />
               </Box>
             </Hidden>

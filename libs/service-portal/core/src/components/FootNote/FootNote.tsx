@@ -16,14 +16,9 @@ type Note = {
 interface Props {
   notes?: Note[]
   serviceProviderID?: string
-  serviceProviderTooltip?: string
 }
 
-export const FootNote = ({
-  notes,
-  serviceProviderID,
-  serviceProviderTooltip,
-}: Props) => {
+export const FootNote = ({ notes, serviceProviderID }: Props) => {
   const [currentOrganization, setCurrentOrganization] = useState<
     Organization | undefined
   >(undefined)
@@ -60,7 +55,6 @@ export const FootNote = ({
               img={currentOrganization?.logo?.url ?? ''}
               imgContainerDisplay="block"
               title={currentOrganization.title}
-              tooltipText={serviceProviderTooltip}
             />
           </Box>
         )}

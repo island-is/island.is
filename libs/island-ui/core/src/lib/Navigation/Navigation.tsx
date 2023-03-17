@@ -1,11 +1,4 @@
-import React, {
-  FC,
-  useState,
-  useEffect,
-  ReactNode,
-  createContext,
-  forwardRef,
-} from 'react'
+import React, { FC, useState, useEffect, ReactNode, createContext } from 'react'
 import cn from 'classnames'
 import AnimateHeight from 'react-animate-height'
 import { useMenuState, Menu, MenuButton, MenuStateReturn } from 'reakit/Menu'
@@ -17,7 +10,6 @@ import { FocusableBox } from '../FocusableBox/FocusableBox'
 import { Icon } from '../IconRC/Icon'
 
 import * as styles from './Navigation.css'
-import { useMeasure } from 'react-use'
 import { IconProps } from '../IconRC/types'
 
 type NavigationContextProps = {
@@ -71,7 +63,6 @@ export interface NavigationItem {
   typename?: string
   slug?: string[]
 }
-
 interface MobileNavigationDialogProps {
   Title: ReactNode
   colorScheme: keyof typeof styles.colorScheme
@@ -80,7 +71,6 @@ interface MobileNavigationDialogProps {
   isVisible: boolean
   onClick: () => void
   menuState: MenuStateReturn
-  upwards?: boolean
 }
 
 interface NavigationTreeProps {
@@ -97,6 +87,7 @@ interface NavigationTreeProps {
 export interface NavigationProps {
   title: string
   titleIcon?: Pick<IconProps, 'icon' | 'type'>
+
   label?: string
   activeItemTitle?: string
   colorScheme?: keyof typeof styles.colorScheme
@@ -117,14 +108,12 @@ export interface NavigationProps {
    */
   renderLink?: NavigationTreeProps['renderLink']
   titleProps?: NavigationItem
-  upwards?: boolean
 }
 
 // The sidebar nav is not designed to show more than 2 levels.
 type Level = keyof typeof styles.level
 
 const MAX_LEVELS = 2
-const MOBILE_NAV_BUTTON_HEIGHT = 56
 
 const basePadding = {
   paddingY: 1,
@@ -140,6 +129,7 @@ export const Navigation: FC<NavigationProps> = ({
   title = 'Efnisyfirlit',
   titleLink,
   titleIcon,
+
   activeItemTitle,
   label,
   colorScheme = 'blue',
@@ -150,11 +140,9 @@ export const Navigation: FC<NavigationProps> = ({
   items,
   titleProps,
   baseId,
-  upwards = false,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [activeAccordions, setActiveAccordions] = useState<Array<string>>([])
-  const [ref, { height }] = useMeasure()
 
   const color = colorSchemeColors[colorScheme]['color']
   const activeColor = colorSchemeColors[colorScheme]['activeColor']
@@ -251,17 +239,15 @@ export const Navigation: FC<NavigationProps> = ({
           >
             <MobileButton
               title={activeItemTitle ?? title}
+              titleIcon={titleIcon}
               colorScheme={colorScheme}
-              upwards={upwards}
               aria-expanded={!mobileMenuOpen}
             />
           </MenuButton>
           <Menu
             {...menu}
             style={{
-              top: upwards
-                ? (height - MOBILE_NAV_BUTTON_HEIGHT / 2) * -1
-                : '-10px',
+              top: '-10px',
               transform: 'none',
               width: '100%',
               borderRadius: '8px',
@@ -270,7 +256,6 @@ export const Navigation: FC<NavigationProps> = ({
             className={cn(styles.transition, styles.menuShadow[colorScheme])}
           >
             <MobileNavigationDialog
-              ref={ref}
               Title={Title}
               colorScheme={colorScheme}
               items={items}
@@ -280,7 +265,6 @@ export const Navigation: FC<NavigationProps> = ({
               onClick={() => {
                 menu.hide()
               }}
-              upwards={upwards}
             />
           </Menu>
         </Box>
@@ -311,125 +295,68 @@ export const Navigation: FC<NavigationProps> = ({
   )
 }
 
-const MobileNavigationDialog = forwardRef<
-  HTMLElement,
-  MobileNavigationDialogProps
->(
-  (
-    {
-      Title,
-      colorScheme,
-      items,
-      renderLink,
-      onClick,
-      menuState,
-      upwards = false,
-    },
-    ref,
-  ) => {
-    return (
-      <Box
-        component="nav"
-        background={colorSchemeColors[colorScheme]['backgroundColor']}
-        paddingY={2}
-        borderRadius={'large'}
-        ref={ref}
-      >
-        {upwards ? (
-          <>
-            <NavigationTree
-              id="mobile"
-              items={items}
-              colorScheme={colorScheme}
-              renderLink={renderLink}
-              menuState={menuState}
-              linkOnClick={onClick}
+const MobileNavigationDialog = ({
+  Title,
+  colorScheme,
+  items,
+  renderLink,
+  onClick,
+  menuState,
+}: MobileNavigationDialogProps) => {
+  return (
+    <Box
+      component="nav"
+      background={colorSchemeColors[colorScheme]['backgroundColor']}
+      paddingY={2}
+      borderRadius={'large'}
+    >
+      <Box position="relative">
+        {Title}
+        <Box
+          position="absolute"
+          right={0}
+          marginRight={2}
+          style={{ top: '50%', transform: 'translateY(-50%)' }}
+        >
+          <FocusableBox
+            component="button"
+            onClick={onClick}
+            background={colorSchemeColors[colorScheme]['dividerColor']}
+            className={styles.dropdownIcon}
+          >
+            <Icon
+              icon={'chevronUp'}
+              size="small"
+              color={colorSchemeColors[colorScheme]['color']}
             />
-            <Box display="flex" alignItems="center" paddingY={2}>
-              <Box
-                background={colorSchemeColors[colorScheme]['dividerColor']}
-                className={styles.divider}
-              />
-            </Box>
-            <Box position="relative">
-              {Title}
-              <Box
-                position="absolute"
-                right={0}
-                marginRight={2}
-                style={{ top: '50%', transform: 'translateY(-50%)' }}
-              >
-                <FocusableBox
-                  component="button"
-                  onClick={onClick}
-                  background={colorSchemeColors[colorScheme]['dividerColor']}
-                  className={styles.dropdownIcon}
-                >
-                  <Icon
-                    icon={'chevronDown'}
-                    size="small"
-                    color={colorSchemeColors[colorScheme]['color']}
-                  />
-                </FocusableBox>
-              </Box>
-            </Box>
-          </>
-        ) : (
-          <>
-            <Box position="relative">
-              {Title}
-              <Box
-                position="absolute"
-                right={0}
-                marginRight={2}
-                style={{ top: '50%', transform: 'translateY(-50%)' }}
-              >
-                <FocusableBox
-                  component="button"
-                  onClick={onClick}
-                  background={colorSchemeColors[colorScheme]['dividerColor']}
-                  className={styles.dropdownIcon}
-                >
-                  <Icon
-                    icon={'chevronUp'}
-                    size="small"
-                    color={colorSchemeColors[colorScheme]['color']}
-                  />
-                </FocusableBox>
-              </Box>
-            </Box>
-            <Box display="flex" alignItems="center" paddingY={2}>
-              <Box
-                background={colorSchemeColors[colorScheme]['dividerColor']}
-                className={styles.divider}
-              />
-            </Box>
-            <NavigationTree
-              id="mobile"
-              items={items}
-              colorScheme={colorScheme}
-              renderLink={renderLink}
-              menuState={menuState}
-              linkOnClick={onClick}
-            />
-          </>
-        )}
+          </FocusableBox>
+        </Box>
       </Box>
-    )
-  },
-)
-
+      <Box display="flex" alignItems="center" paddingY={2}>
+        <Box
+          background={colorSchemeColors[colorScheme]['dividerColor']}
+          className={styles.divider}
+        />
+      </Box>
+      <NavigationTree
+        id="mobile"
+        items={items}
+        colorScheme={colorScheme}
+        renderLink={renderLink}
+        menuState={menuState}
+        linkOnClick={onClick}
+      />
+    </Box>
+  )
+}
 interface MobileButtonProps {
   title: string
+  titleIcon?: Pick<IconProps, 'icon' | 'type'>
   colorScheme: keyof typeof styles.colorScheme
-  upwards?: boolean
 }
 
-const MobileButton = ({
-  title,
-  colorScheme,
-  upwards = false,
-}: MobileButtonProps) => {
+const MobileButton = ({ title, colorScheme, titleIcon }: MobileButtonProps) => {
+  console.log(titleIcon)
   return (
     <Box
       component="span"
@@ -439,13 +366,30 @@ const MobileButton = ({
       paddingX={2}
       paddingY={1}
     >
-      <Text
-        as="span"
-        variant="h5"
-        color={colorSchemeColors[colorScheme]['activeColor']}
-      >
-        {title}
-      </Text>
+      <Box display="flex" flexDirection="row">
+        {titleIcon && (
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            marginRight={1}
+            id="mobile-title-icon"
+          >
+            <Icon
+              icon={titleIcon.icon}
+              type="outline"
+              color={colorSchemeColors[colorScheme]['activeColor']}
+            />
+          </Box>
+        )}
+        <Text
+          as="span"
+          variant="h5"
+          color={colorSchemeColors[colorScheme]['activeColor']}
+        >
+          {title}
+        </Text>
+      </Box>
 
       <Box
         component="span"
@@ -460,7 +404,7 @@ const MobileButton = ({
           className={styles.dropdownIcon}
         >
           <Icon
-            icon={upwards ? 'chevronUp' : 'chevronDown'}
+            icon={'chevronDown'}
             size="small"
             color={colorSchemeColors[colorScheme]['color']}
           />

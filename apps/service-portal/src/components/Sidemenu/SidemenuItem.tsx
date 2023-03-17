@@ -24,52 +24,53 @@ const SidemenuItem = ({
 
   const badgeActive: keyof typeof styles.badge =
     unreadCounter > 0 ? 'active' : 'inactive'
-  const fullWidth = false //item.isKeyItem
   let itemText = formatMessage(item.name)
   const itemTextLength = itemText.length
-  if (itemTextLength > 11 && !fullWidth) {
+  const itemTextHover = itemTextLength > 11
+  if (itemTextHover) {
     itemText = itemText.slice(0, 10).padEnd(11, '.')
   }
 
   return (
-    <Box
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      border="standard"
-      borderColor="blue200"
-      borderRadius="standard"
-      flexGrow={fullWidth ? 1 : 0}
-      width={fullWidth ? 'full' : undefined}
-      className={cn(styles.item, !fullWidth && styles.smallItem)}
-      onMouseEnter={(value) => toggleIsHovered(value)}
-      onMouseLeave={(value) => toggleIsHovered(value)}
-    >
-      <Link
-        to={item.path ?? '/'}
-        onClick={() => setSidemenuOpen(false)}
-        className={styles.itemLink}
+    <Box position="relative" className={styles.itemContainer}>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        border="standard"
+        borderColor="blue200"
+        borderRadius="standard"
+        className={itemTextHover && styles.item}
+        background="white"
+        onMouseEnter={(value) => toggleIsHovered(value)}
+        onMouseLeave={(value) => toggleIsHovered(value)}
       >
-        <Box
-          display="flex"
-          flexDirection={fullWidth ? 'row' : 'column'}
-          alignItems="center"
-          justifyContent="center"
-          position={item.subscribesTo === 'documents' ? 'relative' : undefined}
-          paddingY={2}
+        <Link
+          to={item.path ?? '/'}
+          onClick={() => setSidemenuOpen(false)}
+          className={styles.itemLink}
         >
-          {item.icon && (
-            <Box className={fullWidth ? styles.icon : styles.iconSmall}>
-              <Icon icon={item.icon.icon} type="outline" color="blue400" />
-            </Box>
-          )}
-          <p className={styles.itemText}>
-            {isHovered && itemTextLength > 11
-              ? formatMessage(item.name)
-              : itemText}
-          </p>
-        </Box>
-      </Link>
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            position={
+              item.subscribesTo === 'documents' ? 'relative' : undefined
+            }
+            paddingY={2}
+          >
+            {item.icon && (
+              <Box className={styles.icon}>
+                <Icon icon={item.icon.icon} type="outline" color="blue400" />
+              </Box>
+            )}
+            <p className={styles.itemText}>
+              {isHovered && itemTextHover ? formatMessage(item.name) : itemText}
+            </p>
+          </Box>
+        </Link>
+      </Box>
     </Box>
   )
 }

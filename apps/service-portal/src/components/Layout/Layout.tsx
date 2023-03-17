@@ -157,6 +157,7 @@ export const Layout: FC = ({ children }) => {
                       : formatMessage(m.tableOfContents)
                   }
                   items={subNavItems}
+                  titleIcon={activeParent.icon}
                   isMenuDialog={true}
                 />
               </Box>

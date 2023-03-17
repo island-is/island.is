@@ -37,11 +37,6 @@ const iconBase: StyleWithSelectors = {
 
 export const icon = style({
   ...iconBase,
-  marginRight: theme.spacing[1],
-})
-
-export const iconSmall = style({
-  ...iconBase,
   marginBottom: theme.spacing[1],
 })
 
@@ -159,22 +154,24 @@ export const itemLink = style({
   },
 })
 
-export const item = style({
+export const itemContainer = style({
+  height: 88,
+  maxHeight: 88,
+  transition: 'max-height 200ms ease-out',
+  width: '31.6%',
   ':hover': {
     borderColor: theme.color.blue600,
     cursor: 'pointer',
   },
 })
 
-export const smallItem = style({
-  height: 88,
-  maxHeight: 88,
-  transition: 'max-height 200ms ease-out',
-  width: '31.6%',
+export const item = style({
   ':hover': {
+    position: 'absolute',
     height: 'auto',
     maxHeight: 120,
     transition: 'max-height 250ms ease-in',
+    zIndex: 2,
   },
 })
 
