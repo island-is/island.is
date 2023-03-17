@@ -1,10 +1,5 @@
-import { useEffect, useState } from 'react'
-import {
-  ArrayField,
-  Controller,
-  useFormContext,
-  useWatch,
-} from 'react-hook-form'
+import { Controller, useFormContext, useWatch } from 'react-hook-form'
+import { useEffect } from 'react'
 import { useLocale } from '@island.is/localization'
 import {
   CheckboxController,
@@ -27,8 +22,9 @@ import * as kennitala from 'kennitala'
 import { m } from '../../lib/messages'
 import { YES } from '../../lib/constants'
 import { IDENTITY_QUERY } from '../../graphql'
-import { Application } from '@island.is/application/types'
+import { Application, GenericFormField } from '@island.is/application/types'
 import { EstateMember } from '../../types'
+import { useState } from '@storybook/addons'
 
 export const AdditionalEstateMember = ({
   field,
@@ -39,7 +35,7 @@ export const AdditionalEstateMember = ({
   error,
 }: {
   application: Application
-  field: Partial<ArrayField<EstateMember, 'id'>>
+  field: GenericFormField<EstateMember>
   index: number
   remove: (index?: number | number[] | undefined) => void
   fieldName: string
@@ -108,16 +104,19 @@ export const AdditionalEstateMember = ({
         name={initialField}
         control={control}
         defaultValue={field.initial || false}
+        render={() => <input type="hidden" />}
       />
       <Controller
         name={dummyField}
         control={control}
         defaultValue={field.dummy || false}
+        render={() => <input type="hidden" />}
       />
       <Controller
         name={enabledField}
         control={control}
         defaultValue={field.enabled || false}
+        render={() => <input type="hidden" />}
       />
       <Text variant="h4">
         {formatMessage(m.estateMember) + ' ' + (index + 1)}
@@ -177,7 +176,13 @@ export const AdditionalEstateMember = ({
                 required
                 backgroundColor="blue"
                 loading={queryLoading}
-                error={queryError ? error?.name : undefined}
+                error={
+                  queryError
+                    ? error?.name
+                    : error?.nationalId
+                    ? error?.nationalId
+                    : undefined
+                }
               />
             </GridColumn>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2} paddingTop={2}>
