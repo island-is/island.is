@@ -16,7 +16,10 @@ import {
   VerifyPassData,
 } from '@island.is/clients/smartsolutions'
 import { VerifyInputData } from '../../dto/verifyLicense.input'
-import { BadRequestException } from '@nestjs/common'
+import {
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common'
 
 const licenseIds = Object.values(LicenseId)
 
@@ -29,7 +32,7 @@ class MockLicenseClient implements GenericLicenseClient {
       })
     }
 
-    if (nationalId === '401') {
+    if (nationalId === '') {
       return Promise.resolve<Result<Pass | undefined>>({
         ok: false,
         error: {
@@ -56,7 +59,7 @@ class MockLicenseClient implements GenericLicenseClient {
       })
     }
 
-    if (nationalId === '401 error') {
+    if (nationalId === '') {
       return Promise.resolve<Result<Pass | undefined>>({
         ok: false,
         error: {
@@ -114,7 +117,20 @@ class MockLicenseClient implements GenericLicenseClient {
   }
 
   verify = (inputData: string) => {
-    const { code } = (inputData as unknown) as VerifyInputData
+    let parsedInput
+    try {
+      parsedInput = JSON.parse(inputData) as VerifyInputData
+    } catch (ex) {
+      return Promise.resolve<Result<VerifyPassData>>({
+        ok: false,
+        error: {
+          code: 12,
+          message: 'Invalid input data',
+        },
+      })
+    }
+
+    const { code } = parsedInput
 
     if (!code) {
       return Promise.resolve<Result<VerifyPassData>>({
@@ -139,16 +155,6 @@ class MockLicenseClient implements GenericLicenseClient {
         ok: true,
         data: {
           valid: false,
-        },
-      })
-    }
-
-    if (code === '401') {
-      return Promise.resolve<Result<VerifyPassData>>({
-        ok: false,
-        error: {
-          code: 5,
-          message: 'some user error',
         },
       })
     }
@@ -181,13 +187,10 @@ describe('LicenseService', () => {
         },
         {
           provide: PASS_TEMPLATE_IDS,
-          useValue: {(id: string) => {
-            switch(id):
-              case '123':
-                return LicenseId.DISABILITY_LICENSE
-              case '234':
-                return
-          }},
+          useValue: {
+            disability: LicenseId.DISABILITY_LICENSE,
+            firearm: LicenseId.FIREARM_LICENSE,
+          },
         },
         {
           provide: CLIENT_FACTORY,
@@ -206,8 +209,9 @@ describe('LicenseService', () => {
         //act
         const result = await licenseService.verifyLicense({
           barcodeData: JSON.stringify({
-            passTemplateId: licenseId,
-            code: 'test',
+            passTemplateId: licenseId.toString(),
+            passTemplateName: licenseId.toString(),
+            code: 'success',
             date: '2022-06-28T15:42:11.665950Z',
           }),
         })
@@ -221,8 +225,9 @@ describe('LicenseService', () => {
         //act
         const result = await licenseService.verifyLicense({
           barcodeData: JSON.stringify({
-            passTemplateId: '123',
-            code: 'test',
+            passTemplateId: licenseId.toString(),
+            passTemplateName: licenseId.toString(),
+            code: 'failure',
             date: '2022-06-28T15:42:11.665950Z',
           }),
         })
@@ -236,14 +241,34 @@ describe('LicenseService', () => {
         //act
         const result = licenseService.verifyLicense({
           barcodeData: JSON.stringify({
-            passTemplateId: '123',
-            code: 'test',
+            passTemplateId: licenseId.toString(),
+            passTemplateName: licenseId.toString(),
+            code: '',
             date: '2022-06-28T15:42:11.665950Z',
           }),
         })
 
         //assert
-        await expect(result).rejects.toThrowError()
+        await expect(result).rejects.toThrow(
+          new BadRequestException('Invalid input data'),
+        )
+      })
+
+      it(`should throw 500 error when client return an error with error code > 10 when trying to verify the ${licenseId} license`, async () => {
+        //act
+        const result = licenseService.verifyLicense({
+          barcodeData: JSON.stringify({
+            passTemplateId: licenseId.toString(),
+            passTemplateName: licenseId.toString(),
+            code: 'invalid',
+            date: '2022-06-28T15:42:11.665950Z',
+          }),
+        })
+
+        //assert
+        await expect(result).rejects.toThrow(
+          new InternalServerErrorException('some service error'),
+        )
       })
     })
     describe('revoke', () => {
@@ -265,16 +290,28 @@ describe('LicenseService', () => {
           revokeSuccess: false,
         })
       })
-      it(`should return user error on bad input when trying to revoke the ${licenseId} license`, async () => {
+      it(`should throw user error on bad input when trying to revoke the ${licenseId} license`, async () => {
         //act
         const result = licenseService.revokeLicense(licenseId, '')
 
         //assert
-        await expect(result).rejects.toThrowError()
+        await expect(result).rejects.toThrow(
+          new BadRequestException('some user error'),
+        )
+      })
+      it(`should throw service error when trying to revoke the ${licenseId} license with an invalid national id`, async () => {
+        //act
+        const result = licenseService.revokeLicense(licenseId, 'invalid')
+
+        //assert
+        await expect(result).rejects.toThrow(
+          new BadRequestException('some service error'),
+        )
       })
     })
 
-    describe.each(Object.values(LicenseUpdateType))('update %s',
+    describe.each(Object.values(LicenseUpdateType))(
+      'update %s',
       (licenseUpdateType) => {
         it(`should ${licenseUpdateType}-update the ${licenseId} license`, async () => {
           //act
@@ -301,7 +338,21 @@ describe('LicenseService', () => {
           })
 
           //assert
-          await expect(result).rejects.toThrowError()
+          await expect(result).rejects.toThrowError(
+            new BadRequestException('some user error'),
+          )
+        })
+        it(`should return server error when trying to ${licenseUpdateType}-update the ${licenseId} with an invalid national id `, async () => {
+          //act
+          const result = licenseService.updateLicense(licenseId, 'invalid', {
+            licenseUpdateType,
+            expiryDate: '2022-01-01T00:00:00Z',
+          })
+
+          //assert
+          await expect(result).rejects.toThrowError(
+            new InternalServerErrorException('some service error'),
+          )
         })
       },
     )
