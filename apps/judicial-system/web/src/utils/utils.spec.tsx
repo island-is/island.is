@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { Gender } from '@island.is/judicial-system/types'
-import { getShortGender, isDirty } from './stepHelper'
+import { getAppealEndDate, getShortGender } from './stepHelper'
 
 import * as formatters from './formatters'
 
@@ -222,41 +222,16 @@ describe('Step helper', () => {
     })
   })
 
-  describe('isDirty', () => {
-    test('should return true if value is an empty string', () => {
+  describe('getAppealEndDate', () => {
+    test('should return the correct end date', () => {
       // Arrange
-      const emptyString = ''
+      const date = '2020-10-24T12:25:00Z'
 
       // Act
-      const result = isDirty(emptyString)
+      const result = getAppealEndDate(date)
 
       // Assert
-      expect(result).toEqual(true)
-    })
-
-    test('should return true if value is a non empty string', () => {
-      // Arrange
-      const str = 'test'
-
-      // Act
-      const result = isDirty(str)
-
-      // Assert
-      expect(result).toEqual(true)
-    })
-
-    test('should return false if value is undefined or null', () => {
-      // Arrange
-      const und = undefined
-      const n = null
-
-      // Act
-      const resultUnd = isDirty(und)
-      const resultN = isDirty(n)
-
-      // Assert
-      expect(resultUnd).toEqual(false)
-      expect(resultN).toEqual(false)
+      expect(result).toEqual('27. október 2020 kl. 12:25')
     })
   })
 
