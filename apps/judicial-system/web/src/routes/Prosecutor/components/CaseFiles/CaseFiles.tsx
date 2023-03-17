@@ -102,7 +102,12 @@ export const CaseFiles: React.FC = () => {
   )
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
 
-  const { upload, uploadPoliceCaseFile, remove } = useS3Upload(workingCase.id)
+  const {
+    upload,
+    uploadPoliceCaseFile,
+    remove,
+    generateSingleFileUpdate,
+  } = useS3Upload(workingCase.id)
   const { updateCase } = useCase()
 
   useDeb(workingCase, 'caseFilesComments')
@@ -177,14 +182,20 @@ export const CaseFiles: React.FC = () => {
   const handleNavigationTo = (destination: string) =>
     router.push(`${destination}/${workingCase.id}`)
 
-  const setSingleFile = useCallback(
+  const uploadCallback = useCallback(
     (displayFile: UploadFile, newId?: string) => {
-      setFilesInRVG((previous) => [
-        ...previous,
-        { ...displayFile, id: newId ?? displayFile.id },
-      ])
+      setFilesInRVG((previous) =>
+        generateSingleFileUpdate(previous, displayFile, newId),
+      )
     },
-    [setFilesInRVG],
+    [generateSingleFileUpdate],
+  )
+
+  const uploadPoliceCaseFileCallback = useCallback(
+    (file: UploadFile, id?: string) => {
+      setFilesInRVG((previous) => [...previous, { ...file, id: id ?? file.id }])
+    },
+    [],
   )
 
   const handleUpload = useCallback(
@@ -209,11 +220,11 @@ export const CaseFiles: React.FC = () => {
         ...(previous || []),
       ])
 
-      await upload(filesWithId, setSingleFile)
+      await upload(filesWithId, uploadCallback)
 
       setIsUploading(false)
     },
-    [setSingleFile, upload],
+    [uploadCallback, upload],
   )
 
   const handlePoliceCaseFileUpload = useCallback(async () => {
@@ -230,7 +241,7 @@ export const CaseFiles: React.FC = () => {
         state: CaseFileState.STORED_IN_RVG,
       } as UploadFile
 
-      await uploadPoliceCaseFile(fileToUpload, setSingleFile)
+      await uploadPoliceCaseFile(fileToUpload, uploadPoliceCaseFileCallback)
 
       setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
 
@@ -238,7 +249,7 @@ export const CaseFiles: React.FC = () => {
         setIsUploading(false)
       }
     })
-  }, [policeCaseFileList, setSingleFile, uploadPoliceCaseFile])
+  }, [policeCaseFileList, uploadPoliceCaseFile, uploadPoliceCaseFileCallback])
 
   const handleRemove = useCallback(
     async (file: UploadFile) => {
@@ -272,7 +283,7 @@ export const CaseFiles: React.FC = () => {
 
   const handleRetry = useCallback(
     (file: UploadFile) => {
-      setSingleFile({
+      uploadCallback({
         name: file.name,
         id: file.id,
         percent: 1,
@@ -286,10 +297,10 @@ export const CaseFiles: React.FC = () => {
             file.id ?? file.name,
           ],
         ],
-        setSingleFile,
+        uploadCallback,
       )
     },
-    [setSingleFile, upload],
+    [uploadCallback, upload],
   )
 
   return (

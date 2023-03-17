@@ -50,7 +50,9 @@ const CaseFiles: React.FC = () => {
   )
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
   const { formatMessage } = useIntl()
-  const { upload, remove } = useS3Upload(workingCase.id)
+  const { upload, remove, generateSingleFileUpdate } = useS3Upload(
+    workingCase.id,
+  )
   const { features } = useContext(FeatureContext)
   const isTrafficViolationCaseCheck =
     features.includes(Feature.INDICTMENT_ROUTE) &&
@@ -74,19 +76,13 @@ const CaseFiles: React.FC = () => {
     [workingCase.id],
   )
 
-  const setSingleFile = useCallback(
+  const uploadCallback = useCallback(
     (displayFile: TUploadFile, newId?: string) => {
-      setDisplayFiles((previous) => {
-        const index = previous.findIndex((f) => f.id === displayFile.id)
-        if (index === -1) {
-          return previous
-        }
-        const next = [...previous]
-        next[index] = { ...displayFile, id: newId ?? displayFile.id }
-        return next
-      })
+      setDisplayFiles((previous) =>
+        generateSingleFileUpdate(previous, displayFile, newId),
+      )
     },
-    [setDisplayFiles],
+    [generateSingleFileUpdate],
   )
 
   const handleChange = useCallback(
@@ -111,9 +107,9 @@ const CaseFiles: React.FC = () => {
         ),
         ...previous,
       ])
-      upload(filesWithId, setSingleFile, category)
+      upload(filesWithId, uploadCallback, category)
     },
-    [upload, setSingleFile],
+    [upload, uploadCallback],
   )
 
   const handleRemove = useCallback(
@@ -134,7 +130,7 @@ const CaseFiles: React.FC = () => {
 
   const handleRetry = useCallback(
     (file: TUploadFile) => {
-      setSingleFile({
+      uploadCallback({
         name: file.name,
         id: file.id,
         percent: 1,
@@ -149,11 +145,11 @@ const CaseFiles: React.FC = () => {
             file.id ?? file.name,
           ],
         ],
-        setSingleFile,
+        uploadCallback,
         file.category,
       )
     },
-    [setSingleFile, upload],
+    [uploadCallback, upload],
   )
 
   return (

@@ -1,0 +1,5 @@
+query GetTenant($id: String!) {
+  authAdminTenant(id: $id) {
+    ...TenantFragment
+  }
+}
