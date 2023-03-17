@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing'
-import { LicenseService } from '../../license.service'
+import { LicenseService } from '../license.service'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   CLIENT_FACTORY,
@@ -7,7 +7,7 @@ import {
   LicenseId,
   LicenseUpdateType,
   PASS_TEMPLATE_IDS,
-} from '../../license.types'
+} from '../license.types'
 import {
   PassDataInput,
   Result,
@@ -15,7 +15,7 @@ import {
   RevokePassData,
   VerifyPassData,
 } from '@island.is/clients/smartsolutions'
-import { VerifyInputData } from '../../dto/verifyLicense.input'
+import { VerifyInputData } from '../dto/verifyLicense.input'
 import {
   BadRequestException,
   InternalServerErrorException,
