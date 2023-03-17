@@ -62,6 +62,8 @@ import {
   StartDateOptions,
   UnEmployedBenefitTypes,
   YES,
+  PERMANENT_FOSTER_CARE,
+  ADOPTION,
 } from '../constants'
 import Logo from '../assets/Logo'
 import { minPeriodDays } from '../config'
@@ -856,6 +858,53 @@ export const ParentalLeaveForm: Form = buildForm({
                 parentalLeaveFormMessages.attachmentScreen
                   .parentWithoutBirthParentDescription,
               condition: (answers) => isParentWithoutBirthParent(answers),
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader: '',
+              uploadDescription: '',
+              uploadButtonLabel:
+                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+            }),
+            buildFileUploadField({
+              id: 'fileUpload.permanentFosterCare',
+              title:
+                parentalLeaveFormMessages.attachmentScreen
+                  .permanentFostercareTitle,
+              introduction:
+                parentalLeaveFormMessages.attachmentScreen
+                  .permanentFostercareDescription,
+              condition: (answers) => {
+                const {
+                  noChildrenFoundTypeOfApplication,
+                } = getApplicationAnswers(answers)
+
+                return (
+                  noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE
+                )
+              },
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader: '',
+              uploadDescription: '',
+              uploadButtonLabel:
+                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+            }),
+            buildFileUploadField({
+              id: 'fileUpload.adoption',
+              title: parentalLeaveFormMessages.attachmentScreen.adoptionTitle,
+              introduction:
+                parentalLeaveFormMessages.attachmentScreen.adoptionDescription,
+              condition: (answers) => {
+                const {
+                  noChildrenFoundTypeOfApplication,
+                } = getApplicationAnswers(answers)
+
+                return noChildrenFoundTypeOfApplication === ADOPTION
+              },
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
