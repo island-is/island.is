@@ -1,12 +1,12 @@
 import React, { FC, useContext } from 'react'
 import { Box, Input, SkeletonLoader } from '@island.is/island-ui/core'
-import { Controller, Control } from 'react-hook-form'
+import { Controller, Control, FieldValues } from 'react-hook-form'
 import { IsFetchingProviderOrganisationContext } from './SingleDocumentProvider'
 import {
   Validate,
   ValidationRule,
   ValidationValueMessage,
-} from 'react-hook-form/dist/types/form'
+} from 'react-hook-form/dist/types/validator'
 
 type ControllerRules = Partial<{
   required: string | boolean | ValidationValueMessage<boolean>
@@ -15,11 +15,11 @@ type ControllerRules = Partial<{
   maxLength: ValidationRule<number>
   minLength: ValidationRule<number>
   pattern: ValidationRule<RegExp>
-  validate: Validate
+  validate: Validate<string, FieldValues>
 }>
 
 interface Props {
-  control: Control<Record<string, string>>
+  control: Control<any, string>
   name: string
   defaultValue: string
   hasError: boolean
@@ -50,7 +50,7 @@ export const DocumentProviderInput: FC<Props> = ({
           name={name}
           defaultValue={defaultValue}
           rules={rules}
-          render={({ onChange, value, name }) => (
+          render={({ field: { onChange, value, name } }) => (
             <Input
               name={name}
               value={value}

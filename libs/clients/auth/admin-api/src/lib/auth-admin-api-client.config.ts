@@ -16,7 +16,7 @@ export const AuthAdminApiClientConfig = defineConfig({
   load(env) {
     return {
       basePaths: env.requiredJSON('AUTH_ADMIN_API_PATHS', {
-        development: 'http://localhost:6333',
+        development: 'http://localhost:6333/backend',
       }),
     }
   },

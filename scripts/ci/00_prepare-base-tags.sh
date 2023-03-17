@@ -28,4 +28,3 @@ else
 fi
 export BASE
 >&2 echo "Last successful docker tag '$LAST_GOOD_BUILD_DOCKER_TAG'"
-

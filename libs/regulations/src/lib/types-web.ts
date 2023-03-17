@@ -27,7 +27,7 @@ export type RegulationSearchResults = {
   /** Total number of items found for this query */
   totalItems: number
   /** ReguationListItems for this page */
-  data: RegulationListItem[]
+  data: Array<RegulationListItem>
 }
 
 // ---------------------------------------------------------------------------

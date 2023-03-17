@@ -60,7 +60,9 @@ export const HeroBanner = ({ statistics }: HeroBannerProps) => {
                   <ArrowLink href="/um">Lesa meira</ArrowLink>
                 </Column>
                 <Column width="content">
-                  <ArrowLink href="/um">Skoða þingmálaskrá</ArrowLink>
+                  <ArrowLink href="https://www.stjornarradid.is/rikisstjorn/thingmalaskra/">
+                    Skoða þingmálaskrá ríkisstjórnar
+                  </ArrowLink>
                 </Column>
               </Columns>
             </GridColumn>
