@@ -13,6 +13,7 @@ import {
   PregnancyStatus,
   ChildrenWithoutRightsAndExistingApplications,
   getApplicationAnswers,
+  getApplicationExternalData,
 } from '@island.is/application/templates/parental-leave'
 
 // We do not require hasRights or remainingDays in this step
@@ -29,6 +30,13 @@ export const applicationsToChildInformation = (
   const result: ChildInformationWithoutRights[] = []
 
   for (const application of applications) {
+    const { applicantGenderCode } = getApplicationExternalData(
+      application.externalData,
+    )
+    const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
+      application.answers,
+    )
+
     const selectedChild = getSelectedChild(
       application.answers,
       application.externalData,
@@ -68,6 +76,10 @@ export const applicationsToChildInformation = (
           primaryParentNationalRegistryId: application.applicant,
           transferredDays,
           multipleBirthsDays: maxMultipleBirthDays - multipleBirthsRequestDays,
+          primaryParentGenderCode: applicantGenderCode,
+          primaryParentTypeOfApplication: noChildrenFoundTypeOfApplication,
+          adoptionDate: selectedChild.adoptionDate,
+          dateOfBirth: selectedChild.dateOfBirth,
         })
       } else {
         result.push({
@@ -88,7 +100,6 @@ export const applicationsToExistingChildApplication = (
   applications: Application[],
 ): ExistingChildApplication[] => {
   const result: ExistingChildApplication[] = []
-
   for (const application of applications) {
     const childInformation = getSelectedChild(
       application.answers,
@@ -99,6 +110,7 @@ export const applicationsToExistingChildApplication = (
       result.push({
         applicationId: application.id,
         expectedDateOfBirth: childInformation.expectedDateOfBirth,
+        adoptionDate: childInformation.adoptionDate,
       })
     }
   }
@@ -109,6 +121,13 @@ export const applicationsToExistingChildApplication = (
 export const getChildrenFromMockData = (
   application: Application,
 ): ChildInformation => {
+  const { applicantGenderCode } = getApplicationExternalData(
+    application.externalData,
+  )
+  const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
+    application.answers,
+  )
+
   const parentalRelation = getValueViaPath(
     application.answers,
     'mock.useMockedParentalRelation',
@@ -157,6 +176,8 @@ export const getChildrenFromMockData = (
           primaryParentNationalRegistryId,
           hasRights: secondaryParentRightsDays > 0,
           remainingDays: secondaryParentRightsDays,
+          primaryParentGenderCode: applicantGenderCode,
+          primaryParentTypeOfApplication: noChildrenFoundTypeOfApplication,
         }
 
   return child
@@ -170,6 +191,7 @@ export const getChildrenAndExistingApplications = (
   const existingApplications = applicationsToExistingChildApplication(
     applicationsWhereApplicant,
   )
+
   const childrenWhereOtherParent = applicationsToChildInformation(
     applicationsWhereOtherParent,
     true,
@@ -178,15 +200,21 @@ export const getChildrenAndExistingApplications = (
   const children: ChildInformationWithoutRights[] = []
 
   for (const child of childrenWhereOtherParent) {
-    const isAlreadyInList = children.some(
-      ({ expectedDateOfBirth }) =>
-        expectedDateOfBirth === child.expectedDateOfBirth,
-    )
+    const isAlreadyInList =
+      children.some(
+        ({ expectedDateOfBirth }) =>
+          expectedDateOfBirth === child.expectedDateOfBirth,
+      ) ||
+      children.some(({ adoptionDate }) => adoptionDate === child.adoptionDate)
 
-    const hasAlreadyAppliedForChild = existingApplications.some(
-      ({ expectedDateOfBirth }) =>
-        expectedDateOfBirth === child.expectedDateOfBirth,
-    )
+    const hasAlreadyAppliedForChild =
+      existingApplications.some(
+        ({ expectedDateOfBirth }) =>
+          expectedDateOfBirth === child.expectedDateOfBirth,
+      ) ||
+      existingApplications.some(
+        ({ adoptionDate }) => adoptionDate === child.adoptionDate,
+      )
 
     // This supports to cover otherParent multipleBirths case
     if (!isAlreadyInList && !hasAlreadyAppliedForChild) {
