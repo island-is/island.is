@@ -8,9 +8,9 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
-import { ArrayField, useFormContext } from 'react-hook-form'
+import { useFormContext } from 'react-hook-form'
 import { information } from '../../lib/messages'
-import { OldOperatorInformation } from '../../shared'
+import { OldOperatorInformationFormField } from '../../shared'
 import { InputController } from '@island.is/shared/form-fields'
 import { getErrorViaPath } from '@island.is/application/core'
 
@@ -18,7 +18,7 @@ interface Props {
   id: string
   index: number
   rowLocation: number
-  repeaterField: Partial<ArrayField<OldOperatorInformation, 'id'>>
+  repeaterField: OldOperatorInformationFormField
   handleRemove: (index: number) => void
 }
 
@@ -84,14 +84,12 @@ export const OldOperatorItem: FC<Props & FieldBaseProps> = ({
       <input
         type="hidden"
         value={`${repeaterField.wasRemoved || 'false'}`}
-        ref={register({ required: true })}
-        name={wasRemovedField}
+        {...register(wasRemovedField, { required: true })}
       />
       <input
         type="hidden"
         value={`${repeaterField.startDate || new Date().toString()}`}
-        ref={register({ required: true })}
-        name={startDateField}
+        {...register(startDateField, { required: true })}
       />
     </Box>
   )

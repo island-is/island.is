@@ -159,7 +159,6 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
         {renderHiddenStartDateInput && (
           <input
             type="hidden"
-            ref={register}
             value={
               statefulAnswer === StartDateOptions.ESTIMATED_DATE_OF_BIRTH ||
               statefulAnswer === StartDateOptions.ACTUAL_DATE_OF_BIRTH ||
@@ -167,7 +166,7 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
                 ? expectedDateOfBirthOrAdoptionDate
                 : undefined
             }
-            name={startDateFieldId}
+            {...register(startDateFieldId)}
           />
         )}
       </Box>
