@@ -1,5 +1,3 @@
-import IndictmentInfo from './IndictmentInfo/IndictmentInfo'
-
 export { CourtCaseInfo, ProsecutorCaseInfo } from './CaseInfo/CaseInfo'
 export { default as AccordionListItem } from './AccordionListItem/AccordionListItem'
 export { default as BlueBox } from './BlueBox/BlueBox'
