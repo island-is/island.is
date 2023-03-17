@@ -30,4 +30,7 @@ export class ContentSlug {
 
   @Field()
   type: string = ''
+
+  @Field(() => [String], { nullable: true })
+  activeTranslations?: string[]
 }

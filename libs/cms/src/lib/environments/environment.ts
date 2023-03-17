@@ -71,6 +71,10 @@ export default {
     'organizationTag',
     'logoListSlice',
   ],
+  localizedContentTypes: ['article'],
+  translationMap: {
+    en: 'English',
+  },
   contentful: {
     space: process.env.CONTENTFUL_SPACE || '8k0h54kbe6bj',
     accessToken: process.env.CONTENTFUL_ACCESS_TOKEN || 'test',
