@@ -227,6 +227,45 @@ function getIndictmentDescriptionReason(
   return reason
 }
 
+export function getLegalArguments(
+  lawsBroken: number[][],
+  formatMessage: IntlShape['formatMessage'],
+) {
+  if (lawsBroken.length === 0) {
+    return ''
+  }
+
+  const relevantLaws =
+    lawsCompare(lawsBroken[lawsBroken.length - 1], generalLaws[0]) === 0
+      ? lawsBroken.slice(0, -1)
+      : lawsBroken
+  let andIndex = -1
+  if (relevantLaws.length > 1) {
+    for (let i = relevantLaws.length - 1; i > 0; i--) {
+      if (relevantLaws[i - 1][0] !== relevantLaws[i][0]) {
+        andIndex = i
+        break
+      }
+    }
+  }
+
+  let articles = `${lawsBroken[0][1]}.`
+
+  for (let i = 1; i < lawsBroken.length; i++) {
+    if (lawsBroken[i][0] !== lawsBroken[i - 1][0]) {
+      articles = `${articles} mgr. ${lawsBroken[i - 1][0]}. gr.`
+    }
+
+    articles = `${articles}${i === andIndex ? ' og' : ', sbr.'} ${
+      lawsBroken[i][1]
+    }.`
+  }
+
+  return formatMessage(strings.legalArgumentsAutofill, {
+    articles: `${articles} mgr. ${lawsBroken[lawsBroken.length - 1][0]}. gr.`,
+  })
+}
+
 export const IndictmentCount: React.FC<Props> = (props) => {
   const {
     indictmentCount,
@@ -289,47 +328,6 @@ export const IndictmentCount: React.FC<Props> = (props) => {
     [lawTag, indictmentCount.lawsBroken],
   )
 
-  const legalArguments = useCallback(
-    (lawsBroken: number[][]) => {
-      if (lawsBroken.length === 0) {
-        return ''
-      }
-
-      const relevantLaws =
-        lawsCompare(lawsBroken[lawsBroken.length - 1], generalLaws[0]) === 0
-          ? lawsBroken.slice(0, -1)
-          : lawsBroken
-      let andIndex = -1
-      if (relevantLaws.length > 1) {
-        for (let i = relevantLaws.length - 1; i > 0; i--) {
-          if (relevantLaws[i - 1][0] !== relevantLaws[i][0]) {
-            andIndex = i
-            break
-          }
-        }
-      }
-
-      let articles = `${lawsBroken[0][1]}.`
-
-      for (let i = 1; i < lawsBroken.length; i++) {
-        if (lawsBroken[i][0] !== lawsBroken[i - 1][0]) {
-          articles = `${articles} mgr. ${lawsBroken[i - 1][0]}. gr.`
-        }
-
-        articles = `${articles}${i === andIndex ? ' og' : ', sbr.'} ${
-          lawsBroken[i][1]
-        }.`
-      }
-
-      return formatMessage(strings.legalArgumentsAutofill, {
-        articles: `${articles} mgr. ${
-          lawsBroken[lawsBroken.length - 1][0]
-        }. gr.`,
-      })
-    },
-    [formatMessage],
-  )
-
   const incidentDescription = useCallback(
     (indictmentCount: TIndictmentCount) => {
       const {
@@ -390,7 +388,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
 
     if (lawsBroken !== undefined) {
       update.lawsBroken = lawsBroken
-      update.legalArguments = legalArguments(lawsBroken)
+      update.legalArguments = getLegalArguments(lawsBroken, formatMessage)
     }
 
     onChange(indictmentCount.id, {
@@ -652,7 +650,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
 
             onChange(indictmentCount.id, {
               lawsBroken: lawsBroken,
-              legalArguments: legalArguments(lawsBroken),
+              legalArguments: getLegalArguments(lawsBroken, formatMessage),
             })
 
             handleIndictmentCountChanges({
@@ -681,7 +679,10 @@ export const IndictmentCount: React.FC<Props> = (props) => {
 
                   onChange(indictmentCount.id, {
                     lawsBroken: lawsBroken,
-                    legalArguments: legalArguments(lawsBroken),
+                    legalArguments: getLegalArguments(
+                      lawsBroken,
+                      formatMessage,
+                    ),
                   })
                 }}
                 aria-label={lawTag(brokenLaw)}
