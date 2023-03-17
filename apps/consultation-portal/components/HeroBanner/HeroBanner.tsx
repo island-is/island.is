@@ -73,7 +73,7 @@ export const HeroBanner = ({ statistics }: HeroBannerProps) => {
               <Box className={styles.bg}>
                 <SplashSmall />
               </Box>
-              <Box>
+              <Box className={styles.alignTiles}>
                 <HeroTiles space={2} columns={[1, 1, 1, 1, 1]}>
                   <StatisticBox
                     label="Mál til umsagnar"
