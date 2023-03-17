@@ -25,4 +25,13 @@ export const serviceSetup = (): ServiceBuilder<'contentful-apps'> =>
     })
     .liveness('/liveness')
     .readiness('/readiness')
+    .resources({
+      limits: { cpu: '400m', memory: '512Mi' },
+      requests: { cpu: '50m', memory: '256Mi' },
+    })
+    .replicaCount({
+      default: 2,
+      max: 50,
+      min: 2,
+    })
     .grantNamespaces('nginx-ingress-external')
