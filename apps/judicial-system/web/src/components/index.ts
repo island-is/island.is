@@ -1,3 +1,5 @@
+import IndictmentInfo from './IndictmentInfo/IndictmentInfo'
+
 export { CourtCaseInfo, ProsecutorCaseInfo } from './CaseInfo/CaseInfo'
 export { default as AccordionListItem } from './AccordionListItem/AccordionListItem'
 export { default as BlueBox } from './BlueBox/BlueBox'
@@ -28,6 +30,7 @@ export { default as FormFooter } from './FormFooter/FormFooter'
 export { FormProvider, FormContext } from './FormProvider/FormProvider'
 export { default as Header } from './Header/Header'
 export { default as HideableText } from './HideableText/HideableText'
+export { default as IndictmentInfo } from './IndictmentInfo/IndictmentInfo'
 export { default as IndictmentsCaseFilesAccordionItem } from './AccordionItems/IndictmentsCaseFilesAccordionItem/IndictmentsCaseFilesAccordionItem'
 export { default as InfoBox } from './InfoBox/InfoBox'
 export { default as InfoCard } from './InfoCard/InfoCard'

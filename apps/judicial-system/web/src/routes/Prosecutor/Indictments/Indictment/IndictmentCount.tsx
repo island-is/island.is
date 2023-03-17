@@ -21,7 +21,10 @@ import {
   Substance,
   SubstanceMap,
 } from '@island.is/judicial-system/types'
-import { BlueBox } from '@island.is/judicial-system-web/src/components'
+import {
+  BlueBox,
+  IndictmentInfo,
+} from '@island.is/judicial-system-web/src/components'
 import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -31,7 +34,6 @@ import {
 import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { Substances as SubstanceChoices } from './Substances/Substances'
-
 import { indictmentCount as strings } from './IndictmentCount.strings'
 import { indictmentCountEnum as enumStrings } from './IndictmentCountEnum.strings'
 import { indictmentCountSubstanceEnum as substanceStrings } from './IndictmentCountSubstanceEnum.strings'
@@ -399,7 +401,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           </Button>
         </Box>
       )}
-      <Box marginBottom={2}>
+      <Box marginBottom={1}>
         <Select
           name="policeCaseNumber"
           options={workingCase.policeCaseNumbers.map((val) => ({
@@ -411,7 +413,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           onChange={async (so: ValueType<ReactSelectOption>) => {
             const policeCaseNumber = (so as ReactSelectOption).value as string
 
-            handleIndictmentCountChanges({ policeCaseNumber: policeCaseNumber })
+            handleIndictmentCountChanges({ policeCaseNumber })
           }}
           value={
             workingCase.policeCaseNumbers
@@ -425,6 +427,13 @@ export const IndictmentCount: React.FC<Props> = (props) => {
               ) ?? null
           }
           required
+        />
+      </Box>
+      <Box marginBottom={3}>
+        <IndictmentInfo
+          policeCaseNumber={indictmentCount.policeCaseNumber ?? ''}
+          subtypes={workingCase.indictmentSubtypes}
+          crimeScenes={workingCase.crimeScenes}
         />
       </Box>
       <Box marginBottom={2}>
