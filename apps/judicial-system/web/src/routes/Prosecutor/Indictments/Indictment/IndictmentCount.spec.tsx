@@ -1,7 +1,12 @@
+import { createIntl } from 'react-intl'
+
 import { IndictmentCountOffense as offense } from '@island.is/judicial-system-web/src/graphql/schema'
 import { Substance, SubstanceMap } from '@island.is/judicial-system/types'
 
-import { getRelevantSubstances } from './IndictmentCount'
+import { getLegalArguments, getRelevantSubstances } from './IndictmentCount'
+
+const formatMessage = createIntl({ locale: 'is', onError: jest.fn })
+  .formatMessage
 
 describe('getRelevantSubstances', () => {
   test('should return relevant substances in the correct order for the indictment description', () => {
@@ -25,5 +30,62 @@ describe('getRelevantSubstances', () => {
       ['ETIZOLAM', '0.5'],
       ['MORPHINE', '30'],
     ])
+  })
+})
+
+describe('getIndictmentDescriptionReason', () => {
+  test('should format legal arguments with article 95 and one other article', () => {
+    const lawsBroken = [
+      [58, 1],
+      [95, 1],
+    ]
+
+    const result = getLegalArguments(lawsBroken, formatMessage)
+
+    expect(result).toEqual(
+      'Telst háttsemi þessi varða við 1. mgr. 58. gr., sbr. 1. mgr. 95. gr. umferðarlaga nr. 77/2019.',
+    )
+  })
+
+  test('should format legal arguments with article 95 and two other articles', () => {
+    const lawsBroken = [
+      [49, 1],
+      [49, 2],
+      [58, 1],
+      [95, 1],
+    ]
+
+    const result = getLegalArguments(lawsBroken, formatMessage)
+
+    expect(result).toEqual(
+      'Telst háttsemi þessi varða við 1., sbr. 2. mgr. 49. gr. og 1. mgr. 58. gr., sbr. 1. mgr. 95. gr. umferðarlaga nr. 77/2019.',
+    )
+  })
+
+  test('should format legal arguments without article 95 and one other article', () => {
+    const lawsBroken = [
+      [49, 1],
+      [49, 2],
+    ]
+
+    const result = getLegalArguments(lawsBroken, formatMessage)
+
+    expect(result).toEqual(
+      'Telst háttsemi þessi varða við 1., sbr. 2. mgr. 49. gr. umferðarlaga nr. 77/2019.',
+    )
+  })
+
+  test('should format legal arguments without article 95 and two other article', () => {
+    const lawsBroken = [
+      [49, 1],
+      [49, 2],
+      [58, 1],
+    ]
+
+    const result = getLegalArguments(lawsBroken, formatMessage)
+
+    expect(result).toEqual(
+      'Telst háttsemi þessi varða við 1., sbr. 2. mgr. 49. gr. og 1. mgr. 58. gr. umferðarlaga nr. 77/2019.',
+    )
   })
 })

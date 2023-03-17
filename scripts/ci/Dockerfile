@@ -112,33 +112,44 @@ USER runner
 
 CMD [ "jest", "main.spec.js" ]
 
-FROM mcr.microsoft.com/playwright:v1.31.2-focal as playwright-base
+
+
+ARG PLAYWRIGHT_VERSION
+FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal as playwright-base
+
+
+
 
 
 
 FROM playwright-base as output-playwright
+# TODO: remove awscli dependency (157 MB extra)
+RUN apt-get update && apt-get install -y zip awscli && apt-get purge
 
 ARG APP_HOME
 ARG APP_DIST_HOME
 
 WORKDIR ${APP_DIST_HOME}
-ENV APP_DIST_HOME=${APP_DIST_HOME}
-
-RUN mkdir -p /${APP_DIST_HOME} \
-  && chown pwuser:pwuser /${APP_DIST_HOME}
-
-RUN chown -R pwuser:pwuser /tmp
-RUN apt-get update && apt-get install -y vim
-RUN apt-get -y install libnss3 libatk-bridge2.0-0 libdrm-dev libxkbcommon-dev libgbm-dev libasound-dev libatspi2.0-0 libxshmfence-dev
-RUN apt-get -y install awscli zip
-
-COPY --chown=pwuser:pwuser ${APP_HOME}/package.json .
-RUN yarn install
-RUN yarn playwright install
-COPY --chown=pwuser:pwuser --from=builder /build/${APP_DIST_HOME} /${APP_DIST_HOME}/
-COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
 USER pwuser
+
+COPY --chown=pwuser:pwuser --from=builder /build/${APP_DIST_HOME} .
+COPY --chown=pwuser:pwuser ${APP_HOME}/package.json .
+RUN yarn set version berry
+RUN yarn install
+
+ENV PLAYWRIGHT_BROWSER=webkit
+RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
+
+COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
+
 ENTRYPOINT ["./entrypoint.sh"]
+
+
+
+
+
+
+
 
 FROM playwright-base as output-local
 ARG APP_HOME

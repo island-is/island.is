@@ -112,8 +112,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(9),
           progress: 0.25,
           onExit: defineTemplateApi({
-            action: ApiModuleActions.setBirthDateForNoPrimaryParent,
-            externalDataId: 'noPrimaryChildren',
+            action: ApiModuleActions.setChildrenInformation,
+            externalDataId: 'children',
             throwOnError: true,
           }),
           roles: [
@@ -362,12 +362,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'payments',
                   'firstPeriodStart',
                 ],
-                externalData: [
-                  'children',
-                  'noPrimaryChildren',
-                  'navId',
-                  'sendApplication',
-                ],
+                externalData: ['children', 'navId', 'sendApplication'],
               },
               write: {
                 answers: [
@@ -939,12 +934,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'payments',
                   'firstPeriodStart',
                 ],
-                externalData: [
-                  'children',
-                  'noPrimaryChildren',
-                  'navId',
-                  'sendApplication',
-                ],
+                externalData: ['children', 'navId', 'sendApplication'],
               },
               write: {
                 answers: [
