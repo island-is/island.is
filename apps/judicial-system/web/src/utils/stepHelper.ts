@@ -120,13 +120,15 @@ export const hasSentNotification = (
     return false
   }
 
-  const n = notifications.filter(
+  const notificationsOfType = notifications.filter(
     (notification) => notification.type === notificationType,
   )
 
-  const latestN = n.sort((a, b) =>
-    compareAsc(parseISO(b.created), parseISO(a.created)),
-  )[0]
+  if (notificationsOfType.length === 0) {
+    return false
+  }
 
-  return latestN.recipients.some((recipient) => recipient.success)
+  return notificationsOfType[0].recipients.some(
+    (recipient) => recipient.success,
+  )
 }

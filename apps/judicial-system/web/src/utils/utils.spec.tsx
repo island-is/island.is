@@ -350,6 +350,32 @@ describe('Step helper', () => {
     })
   })
 
+  test('should return false if no notification is found of a spesific notification type', () => {
+    // Arrange
+    const email = faker.internet.email()
+    const n: Notification[] = [
+      {
+        id: faker.datatype.uuid(),
+        created: faker.date.future().toISOString(),
+        caseId: faker.datatype.uuid(),
+        type: NotificationType.COURT_DATE,
+        recipients: [
+          {
+            success: true,
+            address: email,
+          },
+        ],
+      },
+    ]
+    const nt = NotificationType.REVOKED
+
+    // Act
+    const res = hasSentNotification(nt, n)
+
+    // Assert
+    expect(res).toEqual(false)
+  })
+
   test('should return true if the latest notification has been sent successfully', () => {
     // Arrange
     const email = faker.internet.email()
