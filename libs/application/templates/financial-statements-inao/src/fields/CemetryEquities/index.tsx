@@ -33,7 +33,7 @@ export const CemetryEquities: FC<FieldBaseProps> = ({
   const { formatMessage } = useLocale()
   const {
     clearErrors,
-    errors,
+    formState: { errors },
     setValue,
     getValues,
     setError,
