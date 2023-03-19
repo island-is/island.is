@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { IsObject } from 'class-validator'
+import graphqlTypeJson from 'graphql-type-json'
 
 @ObjectType()
 export class TextFieldLocales {
@@ -31,6 +32,6 @@ export class ContentSlug {
   @Field()
   type: string = ''
 
-  @Field(() => [String], { nullable: true })
-  activeTranslations?: string[]
+  @Field(() => graphqlTypeJson, { nullable: true })
+  activeTranslations?: Record<string, boolean>
 }

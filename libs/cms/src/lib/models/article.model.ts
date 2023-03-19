@@ -1,4 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import graphqlTypeJson from 'graphql-type-json'
 import { IArticle } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { Link, mapLink } from './link.model'
@@ -90,8 +91,8 @@ export class Article {
   @Field(() => AlertBanner, { nullable: true })
   alertBanner?: AlertBanner | null
 
-  @Field(() => [String], { nullable: true })
-  activeTranslations?: string[]
+  @Field(() => graphqlTypeJson, { nullable: true })
+  activeTranslations?: Record<string, boolean>
 }
 
 export const mapArticle = ({
@@ -146,6 +147,6 @@ export const mapArticle = ({
     stepper: fields.stepper ? mapStepper(fields.stepper) : null,
     processEntryButtonText: fields.processEntryButtonText ?? '',
     alertBanner: fields.alertBanner ? mapAlertBanner(fields.alertBanner) : null,
-    activeTranslations: fields.activeTranslations ?? ['English'],
+    activeTranslations: fields.activeTranslations ?? { en: true },
   }
 }

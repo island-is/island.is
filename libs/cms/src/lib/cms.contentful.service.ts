@@ -452,7 +452,7 @@ export class CmsContentfulService {
         title: Record<string, string>
         url: Record<string, string>
         question?: Record<string, string>
-        activeTranslations?: string[]
+        activeTranslations?: { 'is-IS': Record<string, boolean> }
       }>(id, {
         locale: '*',
         include: 1,
@@ -491,7 +491,9 @@ export class CmsContentfulService {
       title: titles,
       url: urls,
       type: result?.sys?.contentType?.sys?.id ?? '',
-      activeTranslations: result?.fields?.activeTranslations,
+      activeTranslations: result?.fields?.activeTranslations?.['is-IS'] ?? {
+        en: true,
+      },
     }
   }
 

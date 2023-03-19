@@ -28,22 +28,15 @@ interface MetaData {
   }
 }
 
-// TODO: Once there are more entries utilizing the activeTranslations feature then this object should be placed in a shared location
-const translationMap = {
-  en: 'English',
-}
-
 @Injectable()
 export class ArticleSyncService implements CmsSyncProvider<IArticle> {
-  // only process articles that we consider not to be empty
+  // Only process articles that we consider not to be empty
   validateArticle(singleEntry: Entry<any> | IArticle): singleEntry is IArticle {
     const isDefaultLocale = singleEntry.sys.locale === 'is-IS'
 
     const otherLocaleThanDefaultLocaleIsActive =
       !isDefaultLocale &&
-      (singleEntry.fields.activeTranslations ?? []).includes(
-        translationMap[singleEntry.sys.locale as keyof typeof translationMap],
-      )
+      (singleEntry.fields.activeTranslations?.[singleEntry.sys.locale] ?? true)
 
     return (
       singleEntry.sys.contentType.sys.id === 'article' &&

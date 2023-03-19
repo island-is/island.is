@@ -211,8 +211,8 @@ export interface IArticleFields {
   /** Process Entry Button Text */
   processEntryButtonText?: 'application' | 'stepByStep' | undefined
 
-  /** Active translations */
-  activeTranslations?: 'English'[] | undefined
+  /** Active Translations */
+  activeTranslations?: Record<string, any> | undefined
 }
 
 export interface IArticle extends Entry<IArticleFields> {
