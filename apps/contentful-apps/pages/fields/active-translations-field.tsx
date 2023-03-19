@@ -1,23 +1,45 @@
+import { useEffect, useState } from 'react'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 import { useSDK } from '@contentful/react-apps-toolkit'
-import { CheckboxEditor } from '@contentful/field-editor-checkbox'
-import { useEffect } from 'react'
+import { Checkbox } from '@contentful/f36-components'
+
+const localeMap = {
+  en: 'English',
+}
 
 const ActiveTranslationsField = () => {
   const sdk = useSDK<FieldExtensionSDK>()
+  const [state, setState] = useState(sdk.field.getValue())
 
   useEffect(() => {
-    sdk.field.onValueChanged((value) => {
-      if (!value) sdk.field.setValue([])
-    })
-  }, [sdk.field])
+    setState(sdk.field.getValue())
+  }, [sdk])
 
   return (
-    <CheckboxEditor
-      field={sdk.field}
-      locales={sdk.locales}
-      isInitiallyDisabled={false}
-    />
+    <div>
+      {Object.keys(sdk.locales.names)
+        .filter((locale) => locale !== sdk.locales.default)
+        .map((locale) => {
+          const isChecked = state?.[locale] ?? true
+          return (
+            <Checkbox
+              key={locale}
+              name={locale}
+              id={locale}
+              isChecked={isChecked}
+              onChange={() => {
+                const newState = { ...state, [locale]: !isChecked }
+                setState(newState)
+                sdk.field.setValue(newState)
+              }}
+            >
+              {locale in localeMap
+                ? localeMap[locale as keyof typeof localeMap]
+                : locale}
+            </Checkbox>
+          )
+        })}
+    </div>
   )
 }
 
