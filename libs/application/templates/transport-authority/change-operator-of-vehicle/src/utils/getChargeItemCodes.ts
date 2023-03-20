@@ -11,7 +11,7 @@ export const getChargeItemCodes = (
     (x) => x.wasRemoved === 'true',
   )
 
-  const result = []
+  const result: Array<string> = []
 
   if (operatorWasAdded) {
     result.push(

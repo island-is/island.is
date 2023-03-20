@@ -34,6 +34,16 @@ export const payment = {
       defaultMessage: 'Samtals',
       description: 'Total amount label',
     },
+    frontLabel: {
+      id: 'ta.ovlp.application:payment.paymentChargeOverview.frontLabel',
+      defaultMessage: 'merki að framan',
+      description: 'Front plate label',
+    },
+    rearLabel: {
+      id: 'ta.ovlp.application:payment.paymentChargeOverview.rearLabel',
+      defaultMessage: 'merki að aftan',
+      description: 'Rear plate label',
+    },
   }),
   confirmation: defineMessages({
     confirm: {
