@@ -24,7 +24,7 @@ export const PlateSelectField: FC<PlateSearchFieldProps & FieldBaseProps> = ({
   application,
 }) => {
   const { formatMessage, formatDateFns } = useLocale()
-  const { register } = useFormContext()
+  const { setValue } = useFormContext()
 
   const plateValue = getValueViaPath(
     application.answers,
@@ -55,6 +55,7 @@ export const PlateSelectField: FC<PlateSearchFieldProps & FieldBaseProps> = ({
         endDate: currentPlate.endDate,
         validationErrorMessages: currentPlate.validationErrorMessages,
       })
+      setValue('pickPlate.regno', disabled ? '' : selectedPlate.regno)
       setIsLoading(false)
     }
   }
@@ -131,12 +132,6 @@ export const PlateSelectField: FC<PlateSearchFieldProps & FieldBaseProps> = ({
           </Box>
         )}
       </Box>
-      <input
-        type="hidden"
-        value={disabled ? '' : selectedPlate.regno}
-        ref={register({ required: true })}
-        name="pickPlate.regno"
-      />
     </Box>
   )
 }

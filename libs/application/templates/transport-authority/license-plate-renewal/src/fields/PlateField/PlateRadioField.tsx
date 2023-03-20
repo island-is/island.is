@@ -6,7 +6,7 @@ import {
   Bullet,
   Tag,
 } from '@island.is/island-ui/core'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { PlateOwnership } from '../../shared'
 import { RadioController } from '@island.is/shared/form-fields'
 import { FieldBaseProps } from '@island.is/application/types'
@@ -30,7 +30,7 @@ export const PlateRadioField: FC<PlateSearchFieldProps & FieldBaseProps> = ({
   application,
 }) => {
   const { formatMessage, formatDateFns } = useLocale()
-  const { register } = useFormContext()
+  const { setValue } = useFormContext()
   const [regno, setRegno] = useState<string>(
     getValueViaPath(application.answers, 'pickPlate.regno', '') as string,
   )
@@ -90,6 +90,10 @@ export const PlateRadioField: FC<PlateSearchFieldProps & FieldBaseProps> = ({
     return options
   }
 
+  useEffect(() => {
+    setValue('pickPlate.regno', regno)
+  }, [setValue, regno])
+
   return (
     <div>
       <RadioController
@@ -100,12 +104,6 @@ export const PlateRadioField: FC<PlateSearchFieldProps & FieldBaseProps> = ({
         onSelect={(s: string) =>
           setRegno(myPlateOwnershipList[parseInt(s, 10)].regno)
         }
-      />
-      <input
-        type="hidden"
-        value={regno}
-        ref={register({ required: true })}
-        name="pickPlate.regno"
       />
     </div>
   )
