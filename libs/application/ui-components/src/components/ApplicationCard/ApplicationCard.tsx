@@ -1,28 +1,24 @@
+import * as React from 'react'
 import {
   Box,
   Button,
   ButtonSizes,
   ButtonTypes,
-  DialogPrompt,
-  DraftProgressMeter,
   DraftProgressMeterVariant,
   Hidden,
   Icon,
   Inline,
-  ProgressMeter,
-  Tag,
   TagVariant,
   Text,
   Tooltip,
 } from '@island.is/island-ui/core'
-import * as React from 'react'
 import * as styles from './ApplicationCard.css'
 import { ApplicationCardDelete } from './components/ApplicationCardDelete'
-
 import {
   ApplicationCardHistory,
   ApplicationCardHistoryConfig,
 } from './components/ApplicationCardHistory'
+import { ApplicationCardProgress } from './components/ApplicationCardProgress'
 import { ApplicationCardTag } from './components/ApplicationCardTag'
 
 export type ApplicationCardProps = {
@@ -71,7 +67,6 @@ export type ApplicationCardProps = {
   status?: string
   renderDraftStatusBar?: boolean
   history?: ApplicationCardHistoryConfig
-  renderApplicationData?: boolean
 }
 
 const defaultCta = {
@@ -131,175 +126,82 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({
   status,
   renderDraftStatusBar = false,
   focused = false,
-  renderApplicationData,
 }) => {
   const hasCTA = cta && !!cta.label && !progressMeter.active
-  const alignWithDate = date ? 'flexEnd' : 'center'
-  const bgr =
+  const shouldRenderProgress = status === 'draft'
+  const hasHistory = history?.items && history.items.length > 0
+  const bg =
     backgroundColor === 'white'
       ? 'white'
       : backgroundColor === 'red'
       ? 'red100'
       : 'blue100'
-
-  const renderEyebrow = () => {
-    if (!eyebrow) {
-      return null
-    }
-
-    return (
-      <Box
-        alignItems="center"
-        display="flex"
-        flexDirection="row"
-        justifyContent={eyebrow ? 'spaceBetween' : 'flexEnd'}
-        marginBottom={[0, 1]}
-      >
-        <Text variant="eyebrow" color="purple400">
-          {eyebrow}
-        </Text>
-
-        <ApplicationCardTag tag={tag} />
-        <ApplicationCardDelete deleteButton={deleteButton} tag={tag} />
-      </Box>
-    )
-  }
-  const renderDate = () => {
-    if (!date) {
-      return null
-    }
-
-    return (
-      <Box
-        alignItems="center"
-        display="flex"
-        flexDirection="row"
-        justifyContent={date ? 'spaceBetween' : 'flexEnd'}
-        marginBottom={[0, 2]}
-      >
-        <Box
-          display="flex"
-          flexDirection="row"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Box display="flex" marginRight={1} justifyContent="center">
-            <Icon icon="time" size="medium" type="outline" color="blue400" />
-          </Box>
-          <Box display="flex" justifyContent="center">
-            <Text variant="small">{date}</Text>
-          </Box>
-        </Box>
-        <Inline alignY="center" space={1}>
-          {!eyebrow && <ApplicationCardTag tag={tag} />}
-          {!eyebrow && (
-            <ApplicationCardDelete deleteButton={deleteButton} tag={tag} />
-          )}
-        </Inline>
-      </Box>
-    )
-  }
-
-  const renderDraftProgressMeter = () => {
-    const { variant, draftFinishedSteps, draftTotalSteps } = progressMeter
-    return (
-      <Box
-        width="full"
-        paddingTop={[2, 2, 2, 3]}
-        display="flex"
-        flexGrow={1}
-        flexShrink={0}
-        alignItems={['stretch', 'stretch', alignWithDate]}
-        flexDirection={['column', 'column', 'row']}
-      >
-        <Box flexGrow={1} className={styles.draftProgressMeter}>
-          <DraftProgressMeter
-            variant={variant}
-            draftTotalSteps={draftTotalSteps ?? 1}
-            draftFinishedSteps={draftFinishedSteps ?? 1}
-          />
-        </Box>
-        <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
-          <Button
-            variant={cta.variant}
-            onClick={cta.onClick}
-            icon="arrowForward"
-            size={cta.size}
-          >
-            {cta.label}
-          </Button>
-        </Box>
-      </Box>
-    )
-  }
-
-  const renderProgressMeter = () => {
-    const { variant, progress } = progressMeter
-    const paddingWithDate = date ? 0 : 1
-    const alignWithDate = date ? 'flexEnd' : 'center'
-
-    return (
-      <Box
-        width="full"
-        paddingTop={[1, 1, 1, paddingWithDate]}
-        display="flex"
-        alignItems={['flexStart', 'flexStart', alignWithDate]}
-        flexDirection={['column', 'column', 'row']}
-      >
-        <ProgressMeter
-          variant={variant}
-          progress={progress ?? 0}
-          className={styles.progressMeter}
-        />
-
-        <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
-          <Button
-            variant={cta.variant}
-            onClick={cta.onClick}
-            icon="arrowForward"
-            size={cta.size}
-          >
-            {cta.label}
-          </Button>
-        </Box>
-      </Box>
-    )
-  }
-
-  const renderHistory = () => {
-    return (
-      history?.items &&
-      history.items.length > 0 && (
-        <ApplicationCardHistory
-          history={history}
-          size={history.items.some((x) => !!x.content) ? 'lg' : 'sm'}
-        />
-      )
-    )
-  }
+  const border = focused
+    ? 'mint400'
+    : backgroundColor === 'red'
+    ? 'red200'
+    : backgroundColor === 'blue'
+    ? 'blue100'
+    : 'blue200'
 
   return (
     <Box
       display="flex"
       flexDirection="column"
-      borderColor={
-        focused
-          ? 'mint400'
-          : backgroundColor === 'red'
-          ? 'red200'
-          : backgroundColor === 'blue'
-          ? 'blue100'
-          : 'blue200'
-      }
+      borderColor={border}
       borderRadius="large"
       borderWidth="standard"
       paddingX={[3, 3, 4]}
       paddingY={3}
-      background={bgr}
+      background={bg}
     >
-      {renderEyebrow()}
+      {eyebrow && (
+        <Box
+          alignItems="center"
+          display="flex"
+          flexDirection="row"
+          justifyContent={eyebrow ? 'spaceBetween' : 'flexEnd'}
+          marginBottom={[0, 1]}
+        >
+          <Text variant="eyebrow" color="purple400">
+            {eyebrow}
+          </Text>
 
-      {renderDate()}
+          <ApplicationCardTag tag={tag} />
+          <ApplicationCardDelete deleteButton={deleteButton} tag={tag} />
+        </Box>
+      )}
+
+      {date && (
+        <Box
+          alignItems="center"
+          display="flex"
+          flexDirection="row"
+          justifyContent={date ? 'spaceBetween' : 'flexEnd'}
+          marginBottom={[0, 2]}
+        >
+          <Box
+            display="flex"
+            flexDirection="row"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Box display="flex" marginRight={1} justifyContent="center">
+              <Icon icon="time" size="medium" type="outline" color="blue400" />
+            </Box>
+            <Box display="flex" justifyContent="center">
+              <Text variant="small">{date}</Text>
+            </Box>
+          </Box>
+          <Inline alignY="center" space={1}>
+            {!eyebrow && <ApplicationCardTag tag={tag} />}
+            {!eyebrow && (
+              <ApplicationCardDelete deleteButton={deleteButton} tag={tag} />
+            )}
+          </Inline>
+        </Box>
+      )}
+
       <Box
         alignItems={['flexStart', 'center']}
         display="flex"
@@ -341,6 +243,7 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({
 
           {text && <Text paddingTop={heading ? 1 : 0}>{text}</Text>}
         </Box>
+
         <Box
           display="flex"
           alignItems={['flexStart', 'flexEnd']}
@@ -382,14 +285,19 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({
         </Box>
       </Box>
 
-      {renderApplicationData &&
-        (status === 'draft'
-          ? renderDraftStatusBar
-            ? renderDraftProgressMeter()
-            : renderProgressMeter()
-          : history?.items && history.items.length > 0
-          ? renderHistory()
-          : renderProgressMeter())}
+      {shouldRenderProgress ? (
+        <ApplicationCardProgress
+          progressMeter={progressMeter}
+          cta={cta}
+          hasDate={!!date}
+          renderDraftStatusBar={renderDraftStatusBar}
+        />
+      ) : hasHistory ? (
+        <ApplicationCardHistory
+          history={history}
+          size={history.items?.some((x) => !!x.content) ? 'lg' : 'sm'}
+        />
+      ) : null}
     </Box>
   )
 }
