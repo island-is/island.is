@@ -496,8 +496,10 @@ export const SignedVerdictOverview: React.FC = () => {
   return (
     <>
       {workingCase.courtEndTime &&
-        (features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) ||
-          (user?.role && isProsecutionRole(user.role))) && (
+        !workingCase.isAppealDeadlineExpired &&
+        user?.role &&
+        isProsecutionRole(user.role) &&
+        features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) && (
           <AlertBanner
             title={formatMessage(strings.appealAlertBannerTitle, {
               appealDeadline: getAppealEndDate(workingCase.courtEndTime),
