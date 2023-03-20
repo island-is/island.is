@@ -21,6 +21,9 @@ const ChildrenQuery = gql`
     nationalRegistryChildren {
       nationalId
       fullName
+      firstName
+      middleName
+      lastName
       displayName
       genderDisplay
       birthplace

@@ -126,6 +126,18 @@ export const spmm = defineMessages({
     id: 'sp.family:child-registration-send',
     defaultMessage: 'Senda tilkynningu',
   },
+  givenName: {
+    id: 'sp.family:person-given-name',
+    defaultMessage: 'Eiginnafn',
+  },
+  middleName: {
+    id: 'sp.family:person-middle-name',
+    defaultMessage: 'Millinafn',
+  },
+  lastName: {
+    id: 'sp.family:person-last-name',
+    defaultMessage: 'Kenninafn',
+  },
 })
 
 export const mCompany = defineMessages({
