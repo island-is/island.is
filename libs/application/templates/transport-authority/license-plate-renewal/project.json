@@ -1,0 +1,27 @@
+{
+  "root": "libs/application/templates/transport-authority/license-plate-renewal",
+  "sourceRoot": "libs/application/templates/transport-authority/license-plate-renewal/src",
+  "projectType": "library",
+  "tags": ["scope:application-system", "lib:application-system"],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/transport-authority/license-plate-renewal/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/libs/application/templates/transport-authority/license-plate-renewal"
+      ],
+      "options": {
+        "jestConfig": "libs/application/templates/transport-authority/license-plate-renewal/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  }
+}
