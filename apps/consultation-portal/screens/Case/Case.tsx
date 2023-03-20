@@ -20,6 +20,7 @@ import Layout from '../../components/Layout/Layout'
 import { Advice } from '../../types/viewModels'
 import { SimpleCardSkeleton } from '../../components/Card'
 import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
+import { getTimeLineDate } from '../../utils/helpers/dateFormatter'
 
 const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
   // Remove following lines after connecting to API
@@ -64,7 +65,7 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
               <Divider />
               <CaseTimeline
                 status={chosenCase.statusName}
-                updatedDate={chosenCase.changed}
+                updatedDate={getTimeLineDate(chosenCase)}
               />
               <Divider />
               <Box paddingLeft={1}>
