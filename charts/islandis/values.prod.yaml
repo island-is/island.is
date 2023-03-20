@@ -1455,6 +1455,7 @@ regulations-admin-backend:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
     - 'islandis'
+    - 'download-service'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
