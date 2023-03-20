@@ -328,16 +328,6 @@ export const m = defineMessages({
     defaultMessage: 'Eignarhluti',
     description: 'Property share label',
   },
-  inheritanceDisableMember: {
-    id: 'ir.application:inheritanceDisableMember',
-    defaultMessage: 'Afvirkja',
-    description: 'Inheritance step disable member of estate',
-  },
-  inheritanceEnableMember: {
-    id: 'ir.application:inheritanceEnableMember',
-    defaultMessage: 'Virkja',
-    description: 'Inheritance step enable member of estate',
-  },
   addProperty: {
     id: 'ir.application:addProperty',
     defaultMessage: 'Bæta við fasteign',

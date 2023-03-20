@@ -14,6 +14,8 @@ export interface ReviewScreenProps {
   reviewerNationalId?: string
   setCoOwnersAndOperators?: (s: CoOwnerAndOperator[]) => void
   coOwnersAndOperators?: CoOwnerAndOperator[]
+  setMainOperator?: (s: string) => void
+  mainOperator?: string
 }
 
 export type ReviewState =
@@ -21,6 +23,7 @@ export type ReviewState =
   | 'overview'
   | 'conclusion'
   | 'addPeople'
+  | 'mainOperator'
   | 'insurance'
 
 export type UserInformation = z.TypeOf<typeof UserInformationSchema>

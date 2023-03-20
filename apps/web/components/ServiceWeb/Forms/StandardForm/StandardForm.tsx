@@ -3,7 +3,6 @@ import { useLazyQuery } from '@apollo/client'
 import {
   useForm,
   Controller,
-  ValidationRules,
   useFormContext,
   FormProvider,
 } from 'react-hook-form'
@@ -165,7 +164,10 @@ const BasicInput = ({
   format,
   label,
 }: BasicInputProps) => {
-  const { errors, register } = useFormContext()
+  const {
+    formState: { errors },
+    register,
+  } = useFormContext()
 
   return (
     <InputController
@@ -173,7 +175,7 @@ const BasicInput = ({
       id={name}
       name={name}
       label={label}
-      error={errors?.[name]?.message}
+      error={errors?.[name]?.message as string}
       required={!!requiredMessage}
       format={format}
       rules={{
@@ -184,7 +186,9 @@ const BasicInput = ({
           },
         }),
       }}
-      {...register(name)}
+      // The docs tell us to spread the response of the register function even though it's return type is void
+      // https://react-hook-form.com/api/useformcontext/
+      {...((register(name) as unknown) as object)}
     />
   )
 }
@@ -202,15 +206,14 @@ export const StandardForm = ({
   formNamespace,
 }: StandardFormProps) => {
   const { activeLocale } = useI18n()
-  const useFormMethods = useForm({})
+  const useFormMethods = useForm()
   const n = useNamespace(namespace)
   const fn = useFormNamespace(formNamespace)
   const {
     handleSubmit,
     getValues,
     control,
-    errors,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = useFormMethods
   const { linkResolver } = useLinkResolver()
   const [syslumadurId, setSyslumadurId] = useState<string>('')
@@ -226,6 +229,7 @@ export const StandardForm = ({
     () => supportCategories.find((c) => c.id === categoryId)?.description ?? '',
     [categoryId, supportCategories],
   )
+  console.log(errors)
 
   const stateEntityOptions = useMemo(() => {
     const options = [...stateEntities]
@@ -552,7 +556,7 @@ export const StandardForm = ({
                 id="vidfangsefni"
                 name="vidfangsefni"
                 label={fn('vidfangsefni', 'label', 'Viðfangsefni')}
-                error={errors?.vidfangsefni?.message}
+                error={errors?.vidfangsefni?.message as string}
                 onChange={(e) => {
                   if (e?.target?.value?.length > MIN_SEARCH_QUERY_LENGTH) {
                     setIsChangingSubject(true)
@@ -663,7 +667,6 @@ export const StandardForm = ({
                   >
                     <Controller
                       control={control}
-                      id="rikisadili"
                       name="rikisadili"
                       defaultValue=""
                       rules={{
@@ -676,7 +679,7 @@ export const StandardForm = ({
                           ),
                         },
                       }}
-                      render={({ onChange }) => (
+                      render={({ field: { onChange } }) => (
                         <Select
                           backgroundColor="blue"
                           icon="chevronDown"
@@ -686,8 +689,8 @@ export const StandardForm = ({
                           onChange={({ label }: Option) => {
                             onChange(label)
                           }}
-                          hasError={errors.rikisadili}
-                          errorMessage={errors.rikisadili?.message}
+                          hasError={errors?.rikisadili !== undefined}
+                          errorMessage={errors?.rikisadili?.message.toString()}
                           options={stateEntityOptions}
                           placeholder={fn(
                             'rikisadili',
@@ -711,23 +714,21 @@ export const StandardForm = ({
                     control={control}
                     name="nafn"
                     defaultValue=""
-                    rules={
-                      {
-                        required: {
-                          value: true,
-                          message: fn('nafn', 'requiredMessage', 'Nafn vantar'),
-                        },
-                      } as ValidationRules
-                    }
-                    render={({ onChange, onBlur, value, name }) => (
+                    rules={{
+                      required: {
+                        value: true,
+                        message: fn('nafn', 'requiredMessage', 'Nafn vantar'),
+                      },
+                    }}
+                    render={({ field: { onChange, onBlur, value, name } }) => (
                       <Input
                         backgroundColor="blue"
                         name={name}
                         onBlur={onBlur}
                         label={fn('nafn', 'label', 'Nafn')}
                         value={value}
-                        hasError={errors.nafn}
-                        errorMessage={errors.nafn?.message}
+                        hasError={errors?.nafn !== undefined}
+                        errorMessage={errors?.nafn?.message as string}
                         onChange={onChange}
                         required
                       />
@@ -739,7 +740,6 @@ export const StandardForm = ({
                     <GridColumn paddingBottom={3} span="12/12">
                       <Controller
                         control={useFormMethods.control}
-                        id="email"
                         name="email"
                         defaultValue=""
                         rules={{
@@ -760,15 +760,17 @@ export const StandardForm = ({
                             ),
                           },
                         }}
-                        render={({ onChange, onBlur, value, name }) => (
+                        render={({
+                          field: { onChange, onBlur, value, name },
+                        }) => (
                           <Input
                             backgroundColor="blue"
                             name={name}
                             onBlur={onBlur}
                             label={fn('email', 'label', 'Tölvupóstfang')}
                             value={value}
-                            hasError={errors.email}
-                            errorMessage={errors.email?.message}
+                            hasError={errors?.email !== undefined}
+                            errorMessage={errors?.email?.message as string}
                             onChange={onChange}
                             required
                           />
@@ -781,7 +783,6 @@ export const StandardForm = ({
                     <GridColumn span="12/12" paddingTop={5}>
                       <Controller
                         control={control}
-                        id="erindi"
                         name="erindi"
                         defaultValue=""
                         rules={{
@@ -794,15 +795,17 @@ export const StandardForm = ({
                             ),
                           },
                         }}
-                        render={({ onChange, onBlur, value, name }) => (
+                        render={({
+                          field: { onChange, onBlur, value, name },
+                        }) => (
                           <Input
                             backgroundColor="blue"
                             name={name}
                             onBlur={onBlur}
                             label={fn('erindi', 'label', 'Erindi')}
                             value={value}
-                            hasError={errors.erindi}
-                            errorMessage={errors.erindi?.message}
+                            hasError={errors?.erindi !== undefined}
+                            errorMessage={errors?.erindi?.message as string}
                             onChange={onChange}
                             rows={10}
                             textarea
@@ -819,15 +822,15 @@ export const StandardForm = ({
                         defaultValue={false}
                         control={control}
                         rules={{ required: true }}
-                        render={(props) => (
+                        render={({ field: { onChange, value } }) => (
                           <Checkbox
                             label={n(
                               'serviceWebFormStorageAllowedCheckboxText',
                               'Ég gef leyfi fyrir því að erindi mitt sé vistað í póstumsjónarkerfi',
                             )}
-                            checked={props.value}
-                            onChange={(e) => props.onChange(e.target.checked)}
-                            hasError={errors.storageAllowed}
+                            checked={value}
+                            onChange={(e) => onChange(e.target.checked)}
+                            hasError={errors?.storageAllowed !== undefined}
                           />
                         )}
                       />
@@ -841,7 +844,6 @@ export const StandardForm = ({
                       {institutionSlug === 'syslumenn' && (
                         <Controller
                           control={control}
-                          id="syslumadur"
                           name="syslumadur"
                           defaultValue=""
                           rules={{
@@ -854,7 +856,7 @@ export const StandardForm = ({
                               ),
                             },
                           }}
-                          render={({ onChange }) => (
+                          render={({ field: { onChange } }) => (
                             <Select
                               backgroundColor="blue"
                               icon="chevronDown"
@@ -869,8 +871,10 @@ export const StandardForm = ({
                                 onChange(label)
                                 setSyslumadurId(value as string)
                               }}
-                              hasError={errors.syslumadur}
-                              errorMessage={errors.syslumadur?.message}
+                              hasError={errors?.syslumadur !== undefined}
+                              errorMessage={
+                                errors?.syslumadur?.message as string
+                              }
                               options={syslumenn.map((x) => ({
                                 label: x.title,
                                 value: x.id,

@@ -41,7 +41,7 @@ export interface InputComponentProps {
     event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void
   rows?: number
-  type?: 'text' | 'number' | 'email' | 'tel'
+  type?: 'text' | 'number' | 'email' | 'tel' | 'password'
   icon?: { name: IconType; type?: Type; onClick?: () => void }
 
   /**

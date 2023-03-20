@@ -103,6 +103,20 @@ export const getApplication = ({ allowFakeData = false }): Form => {
             description: m.attachmentsDescription,
             children: [
               buildDescriptionField({
+                id: 'overview.attachments.three',
+                title: attachmentNames.three,
+                titleVariant: 'h3',
+                space: 'gutter',
+              }),
+              buildFileUploadField({
+                id: 'attachments.houseBlueprints.file',
+                title: '',
+                uploadAccept: UPLOAD_ACCEPT,
+                uploadHeader: m.uploadHeader,
+                uploadDescription: m.uploadDescription,
+                uploadButtonLabel: m.uploadButtonLabel,
+              }),
+              buildDescriptionField({
                 id: 'overview.attachments.one',
                 title: attachmentNames.one,
                 titleVariant: 'h3',
@@ -124,20 +138,6 @@ export const getApplication = ({ allowFakeData = false }): Form => {
               }),
               buildFileUploadField({
                 id: 'attachments.formerLicenseHolderConfirmation.file',
-                title: '',
-                uploadAccept: UPLOAD_ACCEPT,
-                uploadHeader: m.uploadHeader,
-                uploadDescription: m.uploadDescription,
-                uploadButtonLabel: m.uploadButtonLabel,
-              }),
-              buildDescriptionField({
-                id: 'overview.attachments.three',
-                title: attachmentNames.three,
-                titleVariant: 'h3',
-                space: 'gutter',
-              }),
-              buildFileUploadField({
-                id: 'attachments.houseBlueprints.file',
                 title: '',
                 uploadAccept: UPLOAD_ACCEPT,
                 uploadHeader: m.uploadHeader,

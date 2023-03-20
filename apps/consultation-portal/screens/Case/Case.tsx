@@ -33,7 +33,12 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
   isLoggedIn = true // remove when functionality for logged in has been implemented
 
   return (
-    <Layout>
+    <Layout
+      seo={{
+        title: `Mál: ${chosenCase?.caseNumber}`,
+        url: `mal/${chosenCase?.caseNumber}`,
+      }}
+    >
       <GridContainer>
         <Box paddingY={[3, 3, 3, 5, 5]}>
           <Breadcrumbs
@@ -58,13 +63,13 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
             <Stack space={2}>
               <Divider />
               <CaseTimeline
-                status="Til umsagnar"
-                updatedDate="2023-01-13T15:47:07.703"
+                status={chosenCase.statusName}
+                updatedDate={chosenCase.changed}
               />
               <Divider />
               <Box paddingLeft={1}>
                 <Text variant="h3" color="purple400">
-                  Fjöldi umsagna: 2
+                  {`Fjöldi umsagna: ${chosenCase.adviceCount}`}
                 </Text>
               </Box>
               <Divider />
@@ -111,21 +116,24 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
                   headingColor="blue400"
                   title="Aðilar sem hafa fengið boð um samráð á máli."
                 >
-                  Þetta mál er opið öllum til umsagnar. Skráðu þig inn hér til
-                  að skrifa umsögn um málið
+                  Viltu senda umsögn? Öllum er frjálst að taka þátt í samráðinu.
+                  Skráðu þig inn og sendu umsögn.
                 </StackedTitleAndDescription>
               </SimpleCardSkeleton>
 
               <SimpleCardSkeleton>
                 <StackedTitleAndDescription
                   headingColor="blue400"
-                  title="Ábyrgðaraðili"
+                  title="Umsjónaraðili"
                 >
-                  {contactName || contactEmail
-                    ? `${contactName ? contactName : ''} ${
-                        contactEmail ? contactEmail : ''
-                      }`
-                    : 'Engin skráður'}
+                  {contactName || contactEmail ? (
+                    <>
+                      {contactName && <Text>{contactName}</Text>}
+                      {contactEmail && <Text>{contactEmail}</Text>}
+                    </>
+                  ) : (
+                    'Engin skráður'
+                  )}
                 </StackedTitleAndDescription>
               </SimpleCardSkeleton>
             </Stack>

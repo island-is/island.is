@@ -64,7 +64,7 @@ const Footer = () => {
                   >
                     <ArrowLink href="/um">Lesa meira</ArrowLink>
                     <ArrowLink href="mailto:samradsgatt@stjornarradid.is">
-                      Hafa samband við ritstjórn
+                      Senda ábendingu til samráðsgáttar
                     </ArrowLink>
                   </Box>
                 </Box>

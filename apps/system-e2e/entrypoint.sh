@@ -6,8 +6,9 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 echo "Current test environment: ${TEST_ENVIRONMENT}"
 echo "Playwright args: $*"
-export PATH=./node_modules/.bin:$PATH
-playwright test -c src "$@"
+echo "Playwright version: $(yarn playwright --version)"
+
+yarn playwright test -c src "$@"
 TEST_EXIT_CODE=$?
 set -e
 zip -r -0 test-results playwright-report src/test-results

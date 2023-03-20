@@ -118,6 +118,7 @@ export const Tabs: FC<TabInterface> = ({
             <FocusableBox
               {...tab}
               component={Tab}
+              type="button"
               key={index}
               disabled={disabled}
               id={id ?? `${index}`}

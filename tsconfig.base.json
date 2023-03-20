@@ -161,6 +161,9 @@
       "@island.is/api/domains/regulations": [
         "libs/api/domains/regulations/src/index.ts"
       ],
+      "@island.is/api/domains/regulations-admin": [
+        "libs/api/domains/regulations-admin/src/index.ts"
+      ],
       "@island.is/api/domains/rights-portal": [
         "libs/api/domains/rights-portal/src/index.ts"
       ],
@@ -476,6 +479,9 @@
       "@island.is/clients/regulations": [
         "libs/clients/regulations/src/index.ts"
       ],
+      "@island.is/clients/regulations-admin": [
+        "libs/clients/regulations-admin/src/index.ts"
+      ],
       "@island.is/clients/rsk/company-registry": [
         "libs/clients/rsk/company-registry/src/index.ts"
       ],
@@ -607,13 +613,13 @@
       "@island.is/nest/audit": ["libs/nest/audit/src/index.ts"],
       "@island.is/nest/aws": ["libs/nest/aws/src/index.ts"],
       "@island.is/nest/config": ["libs/nest/config/src/index.ts"],
+      "@island.is/nest/core": ["libs/nest/core/src/index.ts"],
       "@island.is/nest/dataloader": ["libs/nest/dataloader/src/index.ts"],
       "@island.is/nest/feature-flags": ["libs/nest/feature-flags/src/index.ts"],
       "@island.is/nest/pagination": ["libs/nest/pagination/src/index.ts"],
       "@island.is/nest/problem": ["libs/nest/problem/src/index.ts"],
       "@island.is/nest/sequelize": ["libs/nest/sequelize/src/index.ts"],
       "@island.is/nest/swagger": ["libs/nest/swagger/src/index.ts"],
-      "@island.is/nest/validators": ["libs/nest/validators/src/index.ts"],
       "@island.is/next-ids-auth": ["libs/next-ids-auth/src/index.ts"],
       "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
       "@island.is/plausible": ["libs/plausible/src/index.ts"],
@@ -629,6 +635,9 @@
       ],
       "@island.is/portals/admin/ids-admin": [
         "libs/portals/admin/ids-admin/src/index.ts"
+      ],
+      "@island.is/portals/admin/regulations-admin": [
+        "libs/portals/admin/regulations-admin/src/index.ts"
       ],
       "@island.is/portals/core": ["libs/portals/core/src/index.ts"],
       "@island.is/portals/shared-modules/delegations": [
