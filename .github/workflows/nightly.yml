@@ -41,7 +41,7 @@ jobs:
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
         run: |
           echo "Sending webhook with branch: '$GIT_BRANCH_DEPLOY'"
-          curl $SPINNAKER_URL/webhooks/webhook/islandis-system-e2e -H "content-type: application/json" --data-binary @- <<BODY
+          curl $SPINNAKER_URL/webhooks/webhook/islandis -H "content-type: application/json" --data-binary @- <<BODY
           {
             "token": "$SPINNAKER_WEBHOOK_TOKEN",
             "branch": "$GIT_BRANCH_DEPLOY",
