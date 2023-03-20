@@ -187,7 +187,8 @@ export class NotificationService {
             address: recipients ? recipients[0] : '',
           },
         ],
-        cc: recipients ? recipients.slice(1) : [],
+        cc:
+          recipients && recipients.length > 1 ? recipients.slice(1) : undefined,
         subject: subject,
         text: stripHtmlTags(html),
         html: html,
