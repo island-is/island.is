@@ -1,9 +1,9 @@
 import { Advice, Case } from '../../types/viewModels'
-import format from 'date-fns/format'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
 import EyebrowsWithSeperator from '../EyebrowsWithSeperator/EyebrowsWithSeperator'
 import * as styles from './CaseOverview.css'
 import CaseStatusCard from '../CaseStatusCard/CaseStatusCard'
+import { getShortDate } from '@island.is/consultation-portal/utils/helpers/dateFormatter'
 
 interface CaseOverviewProps {
   chosenCase: Case
@@ -13,7 +13,7 @@ interface CaseOverviewProps {
 export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
   const upperInstances = [
     `Mál nr. S-${chosenCase?.caseNumber}`,
-    `Birt: ${format(new Date(chosenCase?.created), 'dd.MM.yyyy')}`,
+    `Birt: ${getShortDate(chosenCase.created)}`,
   ]
 
   const lowerInstances = [
