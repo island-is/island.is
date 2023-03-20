@@ -74,7 +74,7 @@ export const HeroBanner = ({ statistics }: HeroBannerProps) => {
                 <SplashSmall />
               </Box>
               <Box className={styles.alignTiles}>
-                <HeroTiles space={2} columns={[1, 1, 1, 2, 2]}>
+                <HeroTiles space={2} columns={[1, 1, 1, 1, 1]}>
                   <StatisticBox
                     label="Mál til umsagnar"
                     statistic={statistics?.casesInReview?.toLocaleString(
@@ -82,7 +82,7 @@ export const HeroBanner = ({ statistics }: HeroBannerProps) => {
                     )}
                     text="mál"
                   />
-                  <StatisticBox
+                  {/* <StatisticBox
                     label="Umsagnir frá upphafi"
                     statistic={statistics?.totalAdvices?.toLocaleString(
                       'de-DE',
@@ -93,7 +93,7 @@ export const HeroBanner = ({ statistics }: HeroBannerProps) => {
                     label="Mál frá upphafi"
                     statistic={statistics?.totalCases?.toLocaleString('de-DE')}
                     text="mál"
-                  />
+                  /> */}
                 </HeroTiles>
               </Box>
             </GridColumn>
