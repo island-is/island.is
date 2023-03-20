@@ -381,7 +381,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
 
   const metaTitle = `${article.title} | Ísland.is`
   const processEntry = article.processEntry
-  const categoryHref = article.category?.slug
+  const categoryHref = article.category.slug
     ? linkResolver('articlecategory', [article.category.slug]).href
     : ''
   const organizationTitle = article.organization[0]?.title
