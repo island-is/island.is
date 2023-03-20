@@ -148,16 +148,26 @@ export const rulingDateLabel = (
   })
 }
 
-export const shouldHideNextButton = (workingCase: Case, user?: User) =>
-  !user ||
-  ((user.role !== UserRole.Prosecutor ||
-    workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-    workingCase.state === CaseState.REJECTED ||
-    workingCase.state === CaseState.DISMISSED ||
-    workingCase.isValidToDateInThePast ||
-    Boolean(workingCase.childCase)) &&
-    user.id !== workingCase.judge?.id &&
-    user.id !== workingCase.registrar?.id)
+export const shouldHideNextButton = (workingCase: Case, user?: User) => {
+  // Hide the next button if there is no user
+  if (!user) {
+    return true
+  }
+
+  const shouldShowExtendCaseButton =
+    user.role === UserRole.Prosecutor && // the user is a prosecutor
+    workingCase.state !== CaseState.REJECTED && // the case is not rejected
+    workingCase.state !== CaseState.DISMISSED && // the case is not dismissed
+    workingCase.decision !== CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN && // the case is not a custody case accepted as alternative travel ban
+    !workingCase.isValidToDateInThePast && // the case is not a restriction case with a valid to date in the past
+    !workingCase.childCase // the case has not already been extended
+
+  const shouldShowReopenCaseButton =
+    user.id === workingCase.judge?.id || // the user is the assigned judge ||
+    user.id === workingCase.registrar?.id // the user is the assigned registrar
+
+  return !shouldShowExtendCaseButton && !shouldShowReopenCaseButton
+}
 
 const getNextButtonText = (
   formatMessage: IntlShape['formatMessage'],
