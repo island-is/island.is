@@ -178,12 +178,7 @@ describe('LicenseService', () => {
         LicenseService,
         {
           provide: LOGGER_PROVIDER,
-          useClass: jest.fn(() => {
-            info: (s: string) => ({})
-            debug: (s: string) => ({})
-            warn: (s: string) => ({})
-            error: (s: string) => ({})
-          }),
+          useClass: jest.fn(() => ({})),
         },
         {
           provide: PASS_TEMPLATE_IDS,
