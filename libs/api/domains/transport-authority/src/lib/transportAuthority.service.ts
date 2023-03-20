@@ -4,6 +4,7 @@ import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority
 import { DigitalTachographDriversCardClient } from '@island.is/clients/transport-authority/digital-tachograph-drivers-card'
 import { VehicleOperatorsClient } from '@island.is/clients/transport-authority/vehicle-operators'
 import { VehiclePlateOrderingClient } from '@island.is/clients/transport-authority/vehicle-plate-ordering'
+import { VehiclePlateRenewalClient } from '@island.is/clients/transport-authority/vehicle-plate-renewal'
 import { VehicleServiceFjsV1Client } from '@island.is/clients/vehicle-service-fjs-v1'
 import { VehicleMiniDto, VehicleSearchApi } from '@island.is/clients/vehicles'
 import {
@@ -29,6 +30,7 @@ export class TransportAuthorityApi {
     private readonly digitalTachographDriversCardClient: DigitalTachographDriversCardClient,
     private readonly vehicleOperatorsClient: VehicleOperatorsClient,
     private readonly vehiclePlateOrderingClient: VehiclePlateOrderingClient,
+    private readonly vehiclePlateRenewalClient: VehiclePlateRenewalClient,
     private readonly vehicleServiceFjsV1Client: VehicleServiceFjsV1Client,
     private readonly vehiclesApi: VehicleSearchApi,
   ) {}
@@ -295,6 +297,23 @@ export class TransportAuthorityApi {
       permno,
       vehicleInfo?.platetypefront || '',
       vehicleInfo?.platetyperear || '',
+    )
+
+    return {
+      validationErrorMessages: validation?.hasError
+        ? validation.errorMessages
+        : null,
+    }
+  }
+
+  async getMyPlateOwnershipChecksByRegno(
+    auth: User,
+    regno: string,
+  ): Promise<VehicleOperatorChangeChecksByPermno | null | ApolloError> {
+    // Get validation
+    const validation = await this.vehiclePlateRenewalClient.validatePlateOwnership(
+      auth,
+      regno,
     )
 
     return {
