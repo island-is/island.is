@@ -130,6 +130,24 @@ export class NotificationService {
     })
   }
 
+  private async shouldSendNotificationToPrison(
+    theCase: Case,
+  ): Promise<boolean> {
+    if (theCase.type === CaseType.CUSTODY) {
+      return true
+    }
+
+    if (theCase.type !== CaseType.ADMISSION_TO_FACILITY) {
+      return false
+    }
+
+    if (theCase.defendants && theCase.defendants[0]?.noNationalId) {
+      return true
+    }
+
+    return this.defendantService.isDefendantInActiveCustody(theCase.defendants)
+  }
+
   private getCourtMobileNumbers(courtId?: string) {
     return (
       (courtId && this.config.sms.courtsMobileNumbers[courtId]) ?? undefined
@@ -677,10 +695,7 @@ export class NotificationService {
       )
     }
 
-    if (
-      theCase.type === CaseType.CUSTODY ||
-      theCase.type === CaseType.ADMISSION_TO_FACILITY
-    ) {
+    if (await this.shouldSendNotificationToPrison(theCase)) {
       promises.push(this.sendCourtDateEmailNotificationToPrison(theCase))
     }
 
@@ -832,24 +847,6 @@ export class NotificationService {
     )
   }
 
-  private async shouldSendCustodyNoticeToPrison(
-    theCase: Case,
-  ): Promise<boolean> {
-    if (theCase.type === CaseType.CUSTODY) {
-      return true
-    }
-
-    if (theCase.type !== CaseType.ADMISSION_TO_FACILITY) {
-      return false
-    }
-
-    if (theCase.defendants && theCase.defendants[0]?.noNationalId) {
-      return true
-    }
-
-    return this.defendantService.isDefendantInActiveCustody(theCase.defendants)
-  }
-
   private async sendRulingNotifications(
     theCase: Case,
   ): Promise<SendNotificationResponse> {
@@ -896,7 +893,7 @@ export class NotificationService {
       theCase.decision === CaseDecision.ACCEPTING ||
       theCase.decision === CaseDecision.ACCEPTING_PARTIALLY
     ) {
-      const shouldSendCustodyNoticeToPrison = await this.shouldSendCustodyNoticeToPrison(
+      const shouldSendCustodyNoticeToPrison = await this.shouldSendNotificationToPrison(
         theCase,
       )
 
@@ -970,7 +967,7 @@ export class NotificationService {
       ),
     ]
 
-    const shouldSendCustodyNoticeToPrison = await this.shouldSendCustodyNoticeToPrison(
+    const shouldSendCustodyNoticeToPrison = await this.shouldSendNotificationToPrison(
       theCase,
     )
 
