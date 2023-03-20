@@ -16,6 +16,7 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  IndictmentInfo,
   InfoBox,
   PageHeader,
   PageLayout,
@@ -46,18 +47,17 @@ import {
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
-import IndictmentInfo from '@island.is/judicial-system-web/src/components/IndictmentInfo/IndictmentInfo'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { GetPoliceCaseFilesQuery } from '@island.is/judicial-system-web/src/graphql/schema'
 import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
 import * as constants from '@island.is/judicial-system/consts'
 
-import { policeCaseFiles as m } from './PoliceCaseFilesRoute.strings'
 import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
 import {
   mapPoliceCaseFileToPoliceCaseFileCheck,
   PoliceCaseFilesData,
 } from '../../components/CaseFiles/CaseFiles'
+import { policeCaseFiles as m } from './PoliceCaseFilesRoute.strings'
 
 const UploadFilesToPoliceCase: React.FC<{
   caseId: string
@@ -67,7 +67,12 @@ const UploadFilesToPoliceCase: React.FC<{
   caseOrigin: CaseOrigin
 }> = ({ caseId, policeCaseNumber, setAllUploaded, caseFiles, caseOrigin }) => {
   const { formatMessage } = useIntl()
-  const { upload, remove, uploadPoliceCaseFile } = useS3Upload(caseId)
+  const {
+    upload,
+    remove,
+    uploadPoliceCaseFile,
+    generateSingleFileUpdate,
+  } = useS3Upload(caseId)
   const {
     data: policeData,
     loading: policeDataLoading,
@@ -164,14 +169,23 @@ const UploadFilesToPoliceCase: React.FC<{
     setDisplayFiles(caseFiles.map(mapCaseFileToUploadFile) || [])
   }, [policeCaseFiles, caseFiles, policeCaseNumber])
 
-  const setSingleFile = useCallback(
+  const uploadCallback = useCallback(
     (displayFile: UploadFile, newId?: string) => {
+      setDisplayFiles((previous) =>
+        generateSingleFileUpdate(previous, displayFile, newId),
+      )
+    },
+    [generateSingleFileUpdate],
+  )
+
+  const uploadPoliceCaseFileCallback = useCallback(
+    (file: UploadFile, id?: string) => {
       setDisplayFiles((previous) => [
         ...previous,
-        { ...displayFile, id: newId ?? displayFile.id },
+        { ...file, id: id ?? file.id },
       ])
     },
-    [setDisplayFiles],
+    [],
   )
 
   const onChange = useCallback(
@@ -197,12 +211,12 @@ const UploadFilesToPoliceCase: React.FC<{
       ])
       upload(
         filesWithId,
-        setSingleFile,
+        uploadCallback,
         CaseFileCategory.CASE_FILE,
         policeCaseNumber,
       )
     },
-    [upload, setSingleFile, policeCaseNumber],
+    [upload, uploadCallback, policeCaseNumber],
   )
 
   const onPoliceCaseFileUpload = useCallback(async () => {
@@ -218,9 +232,10 @@ const UploadFilesToPoliceCase: React.FC<{
         status: 'done',
         state: CaseFileState.STORED_IN_RVG,
         policeCaseNumber: f.policeCaseNumber,
+        category: CaseFileCategory.CASE_FILE,
       } as UploadFile
 
-      await uploadPoliceCaseFile(fileToUpload, setSingleFile)
+      await uploadPoliceCaseFile(fileToUpload, uploadPoliceCaseFileCallback)
 
       setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
 
@@ -228,11 +243,11 @@ const UploadFilesToPoliceCase: React.FC<{
         setIsUploading(false)
       }
     })
-  }, [policeCaseFileList, setSingleFile, uploadPoliceCaseFile])
+  }, [policeCaseFileList, uploadPoliceCaseFile, uploadPoliceCaseFileCallback])
 
   const onRetry = useCallback(
     (file: UploadFile) => {
-      setSingleFile({
+      uploadCallback({
         name: file.name,
         id: file.id,
         percent: 1,
@@ -246,12 +261,12 @@ const UploadFilesToPoliceCase: React.FC<{
             file.id ?? file.name,
           ],
         ],
-        setSingleFile,
+        uploadCallback,
         CaseFileCategory.CASE_FILE,
         policeCaseNumber,
       )
     },
-    [setSingleFile, upload, policeCaseNumber],
+    [uploadCallback, upload, policeCaseNumber],
   )
 
   const onRemove = useCallback(

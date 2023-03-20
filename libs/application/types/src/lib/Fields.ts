@@ -303,7 +303,7 @@ export interface MessageWithLinkButtonField extends BaseField {
 export interface ExpandableDescriptionField extends BaseField {
   readonly type: FieldTypes.EXPANDABLE_DESCRIPTION
   component: FieldComponents.EXPANDABLE_DESCRIPTION
-  introText?: FormText
+  introText?: StaticText
   description: StaticText
   startExpanded?: boolean
 }

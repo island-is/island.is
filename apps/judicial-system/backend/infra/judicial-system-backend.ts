@@ -81,7 +81,7 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       limits: { cpu: '400m', memory: '512Mi' },
     })
     .replicaCount({
-      min: 4,
+      min: 2,
       max: 10,
-      default: 4,
+      default: 2,
     })

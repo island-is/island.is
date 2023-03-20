@@ -123,3 +123,4 @@ export * as linkStyles from './lib/Link/Link.css'
 
 // Hooks
 export * from './hooks/useBreakpoint'
+export { ErrorMessage } from './lib/Input/ErrorMessage'

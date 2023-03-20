@@ -135,6 +135,7 @@ export const heirs = buildSection({
                   {
                     title: m.heirsPhone.defaultMessage,
                     id: 'phone',
+                    format: '###-####',
                   },
                   {
                     title: m.heirsRelation.defaultMessage,

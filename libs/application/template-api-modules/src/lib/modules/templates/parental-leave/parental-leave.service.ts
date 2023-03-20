@@ -28,6 +28,7 @@ import {
   StartDateOptions,
   UnEmployedBenefitTypes,
   PARENTAL_LEAVE,
+  PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   getMultipleBirthsDays,
   SINGLE,
@@ -39,7 +40,10 @@ import {
   ChildInformation,
   isParentWithoutBirthParent,
   calculatePeriodLength,
+  PERMANENT_FOSTER_CARE,
+  OTHER_NO_CHILDREN_FOUND,
   States,
+  ADOPTION,
   FileType,
 } from '@island.is/application/templates/parental-leave'
 
@@ -168,26 +172,64 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     )
   }
 
-  async setBirthDateForNoPrimaryParent({
-    application,
-  }: TemplateApiModuleActionProps) {
-    const { noPrimaryParentBirthDate } = getApplicationAnswers(
-      application.answers,
-    )
+  // If no children information from Heilsuvera
+  // and the application is adoption | foster care | without primary parent
+  // we make a children data
+  async setChildrenInformation({ application }: TemplateApiModuleActionProps) {
+    const {
+      noPrimaryParentBirthDate,
+      noChildrenFoundTypeOfApplication,
+      fosterCareOrAdoptionDate,
+      fosterCareOrAdoptionBirthDate,
+    } = getApplicationAnswers(application.answers)
 
-    if (noPrimaryParentBirthDate) {
+    const {
+      applicantGenderCode,
+      children,
+      existingApplications,
+    } = getApplicationExternalData(application.externalData)
+
+    if (noChildrenFoundTypeOfApplication === OTHER_NO_CHILDREN_FOUND) {
       const child: ChildInformation = {
         hasRights: true,
         remainingDays: 180,
         expectedDateOfBirth: noPrimaryParentBirthDate,
         parentalRelation: ParentalRelations.secondary,
         primaryParentNationalRegistryId: '',
+        primaryParentGenderCode: applicantGenderCode,
+        primaryParentTypeOfApplication: noChildrenFoundTypeOfApplication,
       }
 
       const children: ChildInformation[] = [child]
 
       return {
-        children: children[0],
+        children: children,
+        existingApplications,
+      }
+    } else if (
+      noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE ||
+      noChildrenFoundTypeOfApplication === ADOPTION
+    ) {
+      const child: ChildInformation = {
+        hasRights: true,
+        remainingDays: 180,
+        expectedDateOfBirth: '',
+        adoptionDate: fosterCareOrAdoptionDate,
+        dateOfBirth: fosterCareOrAdoptionBirthDate,
+        parentalRelation: ParentalRelations.primary,
+      }
+
+      const children: ChildInformation[] = [child]
+
+      return {
+        children: children,
+        existingApplications,
+      }
+    } else {
+      // "normal application" - children found just return them
+      return {
+        children: children,
+        existingApplications,
       }
     }
   }
@@ -395,13 +437,20 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       selfEmployedFiles: selfEmployedPdfs,
       studentFiles: studentPdfs,
       singleParentFiles: singleParentPdfs,
+      employmentTerminationCertificateFiles: employmentTerminationCertificatePdfs,
       additionalDocuments,
+      noChildrenFoundTypeOfApplication,
+      employerLastSixMonths,
+      employers,
     } = getApplicationAnswers(application.answers)
     const { applicationFundId } = getApplicationExternalData(
       application.externalData,
     )
     const { residenceGrantFiles } = getApplicationAnswers(application.answers)
     const { state } = application
+    const isNotStillEmployed = employers?.some(
+      (employer) => employer.stillEmployed === NO,
+    )
 
     if (
       state === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
@@ -490,6 +539,32 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         }
       }
     }
+    if (
+      (applicationType === PARENTAL_GRANT ||
+        applicationType === PARENTAL_GRANT_STUDENTS) &&
+      employerLastSixMonths === YES &&
+      isNotStillEmployed
+    ) {
+      if (employmentTerminationCertificatePdfs?.length) {
+        for (
+          let i = 0;
+          i <= employmentTerminationCertificatePdfs.length - 1;
+          i++
+        ) {
+          const pdf = await this.getPdf(
+            application,
+            i,
+            'fileUpload.employmentTerminationCertificateFile',
+          )
+
+          attachments.push({
+            attachmentType:
+              apiConstants.attachments.employmentTerminationCertificate,
+            attachmentBytes: pdf,
+          })
+        }
+      }
+    }
 
     if (otherParent === SINGLE) {
       if (singleParentPdfs?.length) {
@@ -551,6 +626,46 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
           attachments.push({
             attachmentType: apiConstants.attachments.parentWithoutBirthParent,
+            attachmentBytes: pdf,
+          })
+        }
+      }
+    }
+
+    if (noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE) {
+      const permanentFosterCarePdfs = (await getValueViaPath(
+        application.answers,
+        'fileUpload.permanentFosterCare',
+      )) as unknown[]
+
+      if (permanentFosterCarePdfs?.length) {
+        for (let i = 0; i <= permanentFosterCarePdfs.length - 1; i++) {
+          const pdf = await this.getPdf(
+            application,
+            i,
+            'fileUpload.permanentFosterCare',
+          )
+
+          attachments.push({
+            attachmentType: apiConstants.attachments.permanentFosterCare,
+            attachmentBytes: pdf,
+          })
+        }
+      }
+    }
+
+    if (noChildrenFoundTypeOfApplication === ADOPTION) {
+      const adoptionPdfs = (await getValueViaPath(
+        application.answers,
+        'fileUpload.adoption',
+      )) as unknown[]
+
+      if (adoptionPdfs?.length) {
+        for (let i = 0; i <= adoptionPdfs.length - 1; i++) {
+          const pdf = await this.getPdf(application, i, 'fileUpload.adoption')
+
+          attachments.push({
+            attachmentType: apiConstants.attachments.adoption,
             attachmentBytes: pdf,
           })
         }
@@ -647,7 +762,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       firstPeriodStart,
       applicationType,
       otherParent,
-      hasMultipleBirths,
     } = getApplicationAnswers(application.answers)
 
     const { applicationFundId } = getApplicationExternalData(
@@ -1287,6 +1401,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       // Add each period to the total number of days spent when an iteration is finished
       numberOfDaysAlreadySpent += periodLength
     }
+
     return periods
   }
 
@@ -1330,6 +1445,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       isReceivingUnemploymentBenefits,
       applicationType,
       previousState,
+      employerLastSixMonths,
+      employers,
     } = getApplicationAnswers(application.answers)
     // if (
     //   previousState === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
@@ -1351,6 +1468,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         application,
         nationalRegistryId,
       )
+
       const parentalLeaveDTO = transformApplicationToParentalLeaveDTO(
         application,
         periods,
@@ -1392,8 +1510,17 @@ export class ParentalLeaveService extends BaseTemplateApiService {
           applicationType === PARENTAL_LEAVE ? isSelfEmployed === YES : true
         const recivingUnemploymentBenefits =
           isReceivingUnemploymentBenefits === YES
+        const isStillEmployed = employers?.some(
+          (employer) => employer.stillEmployed === YES,
+        )
 
-        if (!selfEmployed && !recivingUnemploymentBenefits) {
+        if (
+          (!selfEmployed && !recivingUnemploymentBenefits) ||
+          ((applicationType === PARENTAL_GRANT ||
+            applicationType === PARENTAL_GRANT_STUDENTS) &&
+            employerLastSixMonths === YES &&
+            isStillEmployed)
+        ) {
           // Only needs to send an email if being approved by employer
           // Self employed applicant was aware of the approval
           await this.sharedTemplateAPIService.sendEmail(

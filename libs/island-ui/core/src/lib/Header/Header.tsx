@@ -128,7 +128,7 @@ export const Header = ({
       alignItems="center"
       justifyContent="spaceBetween"
     >
-      <Inline alignY="center">
+      <Inline alignY="center" flexWrap="nowrap">
         {renderLogo()}
         {renderInfo()}
       </Inline>

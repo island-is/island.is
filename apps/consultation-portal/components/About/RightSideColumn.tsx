@@ -1,43 +1,28 @@
 import React from 'react'
 import { Box, TableOfContents } from '@island.is/island-ui/core'
+import { scrollTo } from '../../utils/helpers/useScrollSpy'
 
-interface RightSideColumnProps {
-  aboutHeadings: Array<unknown>
-}
-
-const RightSideColumn: React.FC<RightSideColumnProps> = ({ aboutHeadings }) => {
-  // TODO: remove after data has been obtained
-  aboutHeadings = [
-    {
-      headingId: 'Heading 1',
-      headingTitle: 'Heading 1',
-    },
-    {
-      headingId: 'Heading 2',
-      headingTitle: 'Heading 2',
-    },
-    {
-      headingId: 'Heading 3',
-      headingTitle: 'Heading 3',
-    },
-    {
-      headingId: 'Heading 4',
-      headingTitle: 'Heading 4',
-    },
+const RightSideColumn = () => {
+  const aboutHeadings = [
+    'Ábyrgð og umsjón',
+    'Markmið',
+    'Efni',
+    'Ritun umsagna',
+    'Birting umsagna',
+    'Reglur',
+    'Eftirfylgni',
+    'Forsaga',
   ]
 
   return (
-    <Box paddingTop={12} paddingLeft={10}>
+    <Box paddingBottom={[3, 3, 0, 0, 0]}>
       <TableOfContents
         tableOfContentsTitle={'Efnisyfirlit'}
-        headings={aboutHeadings.map(({ headingId, headingTitle }) => ({
-          headingTitle: headingTitle,
-          headingId: headingId,
+        headings={aboutHeadings.map((item, index) => ({
+          headingTitle: item,
+          headingId: index.toString(),
         }))}
-        onClick={
-          (selectedHeadingId) => console.log('Navigate to: ', selectedHeadingId)
-          //   onClick={(id) => scrollTo(id, { smooth: true })}
-        }
+        onClick={(id) => scrollTo(id, { smooth: true })}
       />
     </Box>
   )

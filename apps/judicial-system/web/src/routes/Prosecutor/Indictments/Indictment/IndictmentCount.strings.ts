@@ -134,13 +134,13 @@ export const indictmentCount = defineMessages({
   incidentDescriptionDrugsDrivingPrefixAutofill: {
     id:
       'judicial.system.core:indictments_indictment.indictment_count.incident_description_drugs_driving_prefix_auto_fill',
-    defaultMessage: 'óhæfur til að stjórna henni örugglega vegna áhrifa ',
+    defaultMessage: 'óhæfur til að stjórna henni örugglega vegna áhrifa',
     description: 'Notaður sem ástæða í atvikalýsingu fyrir "lyfjaakstur" brot.',
   },
   incidentDescriptionSubstancesPrefixAutofill: {
     id:
       'judicial.system.core:indictments_indictment.indictment_count.incident_description_substances_prefix_auto_fill',
-    defaultMessage: 'í blóðsýni mældist ',
+    defaultMessage: 'í blóðsýni mældist',
     description: 'Notaður sem upphafstexti fyrir efni í blóði í atvikalýsingu.',
   },
   legalArgumentsLabel: {
