@@ -13,6 +13,7 @@ import {
 } from '../../utils/formHelper'
 import { useCase } from '../../utils/hooks'
 import { formatDateForServer } from '../../utils/hooks/useCase'
+import { hasSentNotification } from '../../utils/stepHelper'
 
 interface Props {
   workingCase: Case
@@ -35,7 +36,11 @@ export const useCourtArrangements = (workingCase: Case) => {
     if (date && valid) {
       if (
         workingCase.courtDate &&
-        compareAsc(date, new Date(workingCase.courtDate)) !== 0
+        compareAsc(date, new Date(workingCase.courtDate)) !== 0 &&
+        hasSentNotification(
+          NotificationType.COURT_DATE,
+          workingCase.notifications,
+        )
       ) {
         setCourtDateHasChanged(true)
       }
