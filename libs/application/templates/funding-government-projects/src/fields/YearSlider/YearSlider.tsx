@@ -34,7 +34,7 @@ export const YearSlider = ({ field, application }: FieldBaseProps) => {
         <Controller
           defaultValue={chosenGivenYears}
           name={id}
-          render={({ onChange, value }) => (
+          render={({ field: { onChange, value } }) => (
             <Slider
               label={{
                 singular: formatMessage(shared.yearSingular),
