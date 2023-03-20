@@ -4,7 +4,6 @@ import compareAsc from 'date-fns/compareAsc'
 import { Box, Input } from '@island.is/island-ui/core'
 import { NotificationType } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { NotificationType } from '@island.is/judicial-system/types'
 
 import BlueBox from '../BlueBox/BlueBox'
 import DateTime from '../DateTime/DateTime'
