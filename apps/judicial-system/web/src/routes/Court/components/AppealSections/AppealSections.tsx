@@ -3,10 +3,7 @@ import { useIntl } from 'react-intl'
 
 import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import {
-  CaseAppealDecision,
-  SessionArrangements,
-} from '@island.is/judicial-system/types'
+import { CaseAppealDecision } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
@@ -15,6 +12,7 @@ import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { appealSections as m } from './AppealSections.strings'
 import * as styles from './AppealSections.css'
@@ -89,7 +87,7 @@ const AppealSections: React.FC<Props> = (props) => {
                       {
                         accusedAppealAnnouncement:
                           workingCase.sessionArrangements ===
-                          SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                          SessionArrangements.AllPresentSpokesperson
                             ? formatMessage(
                                 m.defendantAnnouncementAutofillSpokespersonAppealV2,
                               )

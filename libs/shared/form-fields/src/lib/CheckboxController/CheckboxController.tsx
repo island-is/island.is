@@ -73,7 +73,7 @@ export const CheckboxController: FC<CheckboxControllerProps> = ({
     <Controller
       name={name}
       defaultValue={defaultValue}
-      render={({ value, onChange }) => (
+      render={({ field: { value, onChange } }) => (
         <GridRow>
           {options.map((option, index) => (
             <GridColumn

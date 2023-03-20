@@ -11,10 +11,11 @@ import {
 import { useLocale } from '@island.is/localization'
 
 import {
-  getExpectedDateOfBirth,
+  getExpectedDateOfBirthOrAdoptionDate,
   getApplicationAnswers,
   getBeginningOfThisMonth,
   isParentalGrant,
+  isFosterCareAndAdoption,
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { StartDateOptions } from '../../constants'
@@ -28,14 +29,18 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
 }) => {
   const { register, unregister, setValue } = useFormContext()
   const { formatMessage } = useLocale()
-  const expectedDateOfBirth = getExpectedDateOfBirth(application)
+  const expectedDateOfBirthOrAdoptionDate = getExpectedDateOfBirthOrAdoptionDate(
+    application,
+  )
   const { rawPeriods } = getApplicationAnswers(application.answers)
   const currentIndex = extractRepeaterIndexFromField(field)
   const currentPeriod = rawPeriods[currentIndex]
 
   let isDisable = true
-  if (expectedDateOfBirth) {
-    const expectedDateTime = new Date(expectedDateOfBirth).getTime()
+  if (expectedDateOfBirthOrAdoptionDate) {
+    const expectedDateTime = new Date(
+      expectedDateOfBirthOrAdoptionDate,
+    ).getTime()
     const beginningOfMonth = getBeginningOfThisMonth()
     const today = new Date()
     isDisable =
@@ -59,7 +64,8 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
 
   const renderHiddenStartDateInput =
     statefulAnswer === StartDateOptions.ESTIMATED_DATE_OF_BIRTH ||
-    statefulAnswer === StartDateOptions.ACTUAL_DATE_OF_BIRTH
+    statefulAnswer === StartDateOptions.ACTUAL_DATE_OF_BIRTH ||
+    statefulAnswer === StartDateOptions.ADOPTION_DATE
 
   const startDateFieldId = `periods[${currentIndex}].startDate`
 
@@ -74,7 +80,12 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
     <Box marginY={3} key={field.id}>
       <FieldDescription
         description={formatMessage(
-          isGrant
+          isFosterCareAndAdoption(application)
+            ? isGrant
+              ? parentalLeaveFormMessages.firstPeriodStart
+                  .grantAdoptionDescription
+              : parentalLeaveFormMessages.firstPeriodStart.adoptionDescription
+            : isGrant
             ? parentalLeaveFormMessages.firstPeriodStart.grantDescription
             : parentalLeaveFormMessages.firstPeriodStart.description,
         )}
@@ -88,37 +99,59 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
               ? [statefulAnswer]
               : StartDateOptions.SPECIFIC_DATE
           }
-          options={[
-            {
-              label: formatMessage(
-                parentalLeaveFormMessages.firstPeriodStart
-                  .estimatedDateOfBirthOption,
-              ),
-              value: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
-              tooltip: formatMessage(
-                parentalLeaveFormMessages.firstPeriodStart
-                  .specificDateOptionTooltip,
-              ),
-              disabled: isDisable,
-            },
-            {
-              label: formatMessage(
-                parentalLeaveFormMessages.firstPeriodStart.dateOfBirthOption,
-              ),
-              value: StartDateOptions.ACTUAL_DATE_OF_BIRTH,
-              disabled: isDisable,
-            },
-            {
-              label: formatMessage(
-                parentalLeaveFormMessages.firstPeriodStart.specificDateOption,
-              ),
-              tooltip: formatMessage(
-                parentalLeaveFormMessages.firstPeriodStart
-                  .specificDateOptionTooltip,
-              ),
-              value: StartDateOptions.SPECIFIC_DATE,
-            },
-          ]}
+          options={
+            isFosterCareAndAdoption(application)
+              ? [
+                  {
+                    label: formatMessage(
+                      parentalLeaveFormMessages.firstPeriodStart
+                        .adoptionDateOption,
+                    ),
+                    value: StartDateOptions.ADOPTION_DATE,
+                    disabled: isDisable,
+                  },
+                  {
+                    label: formatMessage(
+                      parentalLeaveFormMessages.firstPeriodStart
+                        .specificDateOption,
+                    ),
+                    value: StartDateOptions.SPECIFIC_DATE,
+                  },
+                ]
+              : [
+                  {
+                    label: formatMessage(
+                      parentalLeaveFormMessages.firstPeriodStart
+                        .estimatedDateOfBirthOption,
+                    ),
+                    value: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
+                    tooltip: formatMessage(
+                      parentalLeaveFormMessages.firstPeriodStart
+                        .specificDateOptionTooltip,
+                    ),
+                    disabled: isDisable,
+                  },
+                  {
+                    label: formatMessage(
+                      parentalLeaveFormMessages.firstPeriodStart
+                        .dateOfBirthOption,
+                    ),
+                    value: StartDateOptions.ACTUAL_DATE_OF_BIRTH,
+                    disabled: isDisable,
+                  },
+                  {
+                    label: formatMessage(
+                      parentalLeaveFormMessages.firstPeriodStart
+                        .specificDateOption,
+                    ),
+                    tooltip: formatMessage(
+                      parentalLeaveFormMessages.firstPeriodStart
+                        .specificDateOptionTooltip,
+                    ),
+                    value: StartDateOptions.SPECIFIC_DATE,
+                  },
+                ]
+          }
           onSelect={onSelect}
           largeButtons
         />
@@ -126,14 +159,14 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
         {renderHiddenStartDateInput && (
           <input
             type="hidden"
-            ref={register}
             value={
               statefulAnswer === StartDateOptions.ESTIMATED_DATE_OF_BIRTH ||
-              statefulAnswer === StartDateOptions.ACTUAL_DATE_OF_BIRTH
-                ? expectedDateOfBirth
+              statefulAnswer === StartDateOptions.ACTUAL_DATE_OF_BIRTH ||
+              statefulAnswer === StartDateOptions.ADOPTION_DATE
+                ? expectedDateOfBirthOrAdoptionDate
                 : undefined
             }
-            name={startDateFieldId}
+            {...register(startDateFieldId)}
           />
         )}
       </Box>

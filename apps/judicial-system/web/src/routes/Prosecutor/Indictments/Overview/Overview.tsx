@@ -11,6 +11,7 @@ import {
   Modal,
   PageLayout,
   ProsecutorCaseInfo,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   IndictmentsProsecutorSubsections,
@@ -44,10 +45,13 @@ const Overview: React.FC = () => {
   )
   const { formatMessage } = useIntl()
   const { features } = useContext(FeatureContext)
+  const { user } = useContext(UserContext)
   const router = useRouter()
   const { transitionCase } = useCase()
+
   const isTrafficViolationCaseCheck =
-    features.includes(Feature.INDICTMENT_ROUTE) &&
+    (features.includes(Feature.INDICTMENT_ROUTE) ||
+      user?.name === 'Árni Bergur Sigurðsson') &&
     isTrafficViolationCase(workingCase.indictmentSubtypes)
 
   const isNewIndictment =

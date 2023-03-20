@@ -1,4 +1,4 @@
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
 import {
   Box,
   Text,
@@ -9,7 +9,6 @@ import {
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { FC, useEffect, useState } from 'react'
-import { ArrayField } from 'react-hook-form'
 import { useFormContext } from 'react-hook-form'
 import { NationalIdWithName } from '../NationalIdWithName'
 import { information } from '../../lib/messages'
@@ -22,7 +21,7 @@ interface Props {
   id: string
   index: number
   rowLocation: number
-  repeaterField: Partial<ArrayField<CoOwnerAndOperator, 'id'>>
+  repeaterField: GenericFormField<CoOwnerAndOperator>
   handleRemove: (index: number) => void
   setCoOwnersAndOperators?: (s: CoOwnerAndOperator[]) => void
   coOwnersAndOperators?: CoOwnerAndOperator[]
@@ -151,14 +150,12 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
       <input
         type="hidden"
         value={userMessageId}
-        ref={register({ required: true })}
-        name={typeField}
+        {...register(typeField, { required: true })}
       />
       <input
         type="hidden"
         value={repeaterField.wasRemoved}
-        ref={register({ required: true })}
-        name={wasRemovedField}
+        {...register(wasRemovedField, { required: true })}
       />
     </Box>
   )
