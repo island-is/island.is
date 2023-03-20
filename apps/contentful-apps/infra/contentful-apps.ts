@@ -8,30 +8,42 @@ export const serviceSetup = (): ServiceBuilder<'contentful-apps'> =>
     .ingress({
       primary: {
         host: {
-          dev: 'contentful-apps',
-          staging: 'contentful-apps',
-          prod: 'contentful-apps',
+          dev: 'contentful-apps.dev01.devland.is',
+          staging: 'contentful-apps.staging01.devland.is',
+          prod: 'contentful-apps.island.is',
         },
-        paths: ['/'],
         extraAnnotations: {
           dev: {
             'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
           },
-          staging: {},
-          prod: {},
+          staging: {
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+          },
+          prod: { 'nginx.ingress.kubernetes.io/enable-global-auth': 'false' },
         },
+        paths: ['/'],
         public: true,
       },
     })
     .liveness('/liveness')
     .readiness('/readiness')
     .resources({
-      limits: { cpu: '400m', memory: '512Mi' },
-      requests: { cpu: '50m', memory: '256Mi' },
+      requests: {
+        cpu: '50m',
+        memory: '512Mi',
+      },
+      limits: {
+        cpu: '200m',
+        memory: '1024Mi',
+      },
     })
     .replicaCount({
-      default: 2,
-      max: 50,
-      min: 2,
+      default: 1,
+      max: 1,
+      min: 1,
     })
-    .grantNamespaces('nginx-ingress-external')
+    .extraAttributes({
+      dev: { progressDeadlineSeconds: 25 * 60 },
+      staging: { progressDeadlineSeconds: 25 * 60 },
+      prod: { progressDeadlineSeconds: 25 * 60 },
+    })

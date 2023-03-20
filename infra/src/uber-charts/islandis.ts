@@ -149,6 +149,7 @@ export const Services: EnvironmentServices = {
     licenseApi,
     sessionsService,
     sessionsWorker,
+    contentfulApps,
   ],
   staging: [
     appSystemApi,
@@ -178,6 +179,7 @@ export const Services: EnvironmentServices = {
     licenseApi,
     sessionsService,
     sessionsWorker,
+    contentfulApps,
   ],
   dev: [
     appSystemApi,
