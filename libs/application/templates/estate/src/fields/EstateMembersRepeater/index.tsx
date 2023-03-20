@@ -60,7 +60,9 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
 
   useEffect(() => {
     if (fields.length === 0 && externalData.estate.estateMembers) {
-      append(externalData.estate.estateMembers)
+      //TODO: temp fix for validation as Stúfur Maack does not pass
+      const [, ...members] = externalData.estate.estateMembers
+      append(members)
     }
   }, [])
 
