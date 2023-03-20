@@ -390,22 +390,24 @@ export const form: Form = buildForm({
           description: m.representativeDescription,
           children: [
             buildTextField({
-              id: 'representativeNationalId',
+              id: 'representative.representativeNationalId',
               title: m.nationalId,
               width: 'half',
+              format: '######-####',
             }),
             buildTextField({
-              id: 'representativeName',
+              id: 'representative.representativeName',
               title: m.name,
               width: 'half',
             }),
             buildTextField({
-              id: 'representativePhoneNumber',
+              id: 'representative.representativePhoneNumber',
               title: m.phone,
               width: 'half',
+              format: '###-####',
             }),
             buildTextField({
-              id: 'representativeEmail',
+              id: 'representative.representativeEmail',
               title: m.email,
               width: 'half',
             }),

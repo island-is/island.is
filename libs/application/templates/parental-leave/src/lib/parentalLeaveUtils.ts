@@ -32,6 +32,8 @@ import {
   PARENTAL_LEAVE,
   PARENTAL_GRANT,
   SINGLE,
+  PERMANENT_FOSTER_CARE,
+  ADOPTION,
 } from '../constants'
 import { SchemaFormValues } from '../lib/dataSchema'
 
@@ -67,7 +69,7 @@ import isBefore from 'date-fns/isBefore'
 import isEqual from 'date-fns/isEqual'
 import isAfter from 'date-fns/isAfter'
 
-export function getExpectedDateOfBirth(
+export function getExpectedDateOfBirthOrAdoptionDate(
   application: Application,
 ): string | undefined {
   const selectedChild = getSelectedChild(
@@ -78,6 +80,9 @@ export function getExpectedDateOfBirth(
   if (!selectedChild) {
     return undefined
   }
+
+  if (selectedChild.expectedDateOfBirth === '')
+    return selectedChild.adoptionDate
 
   return selectedChild.expectedDateOfBirth
 }
@@ -440,6 +445,7 @@ export const getApplicationTypeOptions = (formatMessage: FormatMessage) => {
   const options: Option[] = [
     {
       value: PARENTAL_LEAVE,
+      dataTestId: 'parental-leave',
       label: parentalLeaveFormMessages.shared.applicationParentalLeaveTitle,
       subLabel: formatMessage(
         parentalLeaveFormMessages.shared.applicationParentalLeaveSubTitle,
@@ -447,6 +453,7 @@ export const getApplicationTypeOptions = (formatMessage: FormatMessage) => {
     },
     {
       value: PARENTAL_GRANT,
+      dataTestId: 'parental-grant',
       label:
         parentalLeaveFormMessages.shared
           .applicationParentalGrantUnemployedTitle,
@@ -457,6 +464,7 @@ export const getApplicationTypeOptions = (formatMessage: FormatMessage) => {
     },
     {
       value: PARENTAL_GRANT_STUDENTS,
+      dataTestId: 'parental-grant-students',
       label:
         parentalLeaveFormMessages.shared.applicationParentalGrantStudentTitle,
       subLabel: formatMessage(
@@ -486,17 +494,11 @@ export const getSelectedChild = (
   externalData: ExternalData,
 ): ChildInformation | null => {
   const { selectedChild: selectedChildIndex } = getApplicationAnswers(answers)
-  const selectedChild =
-    getValueViaPath(
-      externalData,
-      `children.data.children[${selectedChildIndex}]`,
-      null,
-    ) ??
-    (getValueViaPath(
-      externalData,
-      'noPrimaryChildren.data.children',
-      null,
-    ) as ChildInformation | null)
+  const selectedChild = getValueViaPath(
+    externalData,
+    `children.data.children[${selectedChildIndex}]`,
+    null,
+  ) as ChildInformation | null
 
   return selectedChild
 }
@@ -572,7 +574,7 @@ export function getApplicationExternalData(
   const applicantGenderCode = getValueViaPath(
     externalData,
     'person.data.genderCode',
-  )
+  ) as string
 
   const applicantName = (getValueViaPath(
     externalData,
@@ -613,6 +615,21 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   if (!applicationType) applicationType = PARENTAL_LEAVE as string
   else applicationType = applicationType as string
+
+  const noChildrenFoundTypeOfApplication = getValueViaPath(
+    answers,
+    'noChildrenFound.typeOfApplication',
+  ) as string
+
+  const fosterCareOrAdoptionBirthDate = getValueViaPath(
+    answers,
+    'fosterCareOrAdoption.birthDate',
+  ) as string
+
+  const fosterCareOrAdoptionDate = getValueViaPath(
+    answers,
+    'fosterCareOrAdoption.adoptionDate',
+  ) as string
 
   const noPrimaryParentBirthDate = getValueViaPath(
     answers,
@@ -795,13 +812,19 @@ export function getApplicationAnswers(answers: Application['answers']) {
       } as EmployerRow)
     }
   }
+  const employerLastSixMonths = getValueViaPath(
+    answers,
+    'employerLastSixMonths',
+  ) as YesOrNo
 
   const shareInformationWithOtherParent = getValueViaPath(
     answers,
     'shareInformationWithOtherParent',
   ) as YesOrNo
 
-  const selectedChild = getValueViaPath(answers, 'selectedChild') as string
+  // default value as 0 for adoption, foster care and father without mother
+  // since primary parent doesn't choose a child
+  const selectedChild = getValueViaPath(answers, 'selectedChild', '0') as string
 
   const transferRights = getValueViaPath(
     answers,
@@ -905,6 +928,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'fileUpload.residenceGrant',
   ) as Files[]
 
+  const employmentTerminationCertificateFiles = getValueViaPath(
+    answers,
+    'fileUpload.employmentTerminationCertificateFile',
+  ) as Files[]
+
   const dateOfBirth = getValueViaPath(answers, 'dateOfBirth') as string
 
   const commonFiles = getValueViaPath(answers, 'fileUpload.file') as Files[]
@@ -919,6 +947,9 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   return {
     applicationType,
+    noChildrenFoundTypeOfApplication,
+    fosterCareOrAdoptionBirthDate,
+    fosterCareOrAdoptionDate,
     noPrimaryParentBirthDate,
     hasMultipleBirths,
     multipleBirths,
@@ -944,6 +975,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     spouseUseAsMuchAsPossible,
     spouseUsage,
     employers,
+    employerLastSixMonths,
     employerNationalRegistryId,
     employerReviewerNationalRegistryId,
     shareInformationWithOtherParent,
@@ -971,6 +1003,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     isResidenceGrant,
     dateOfBirth,
     residenceGrantFiles,
+    employmentTerminationCertificateFiles,
     hasAppliedForReidenceGrant,
     previousState,
   }
@@ -1244,26 +1277,30 @@ export const getLastValidPeriodEndDate = (
 }
 
 export const getMinimumStartDate = (application: Application): Date => {
-  const expectedDateOfBirth = getExpectedDateOfBirth(application)
+  const expectedDateOfBirthOrAdoptionDate = getExpectedDateOfBirthOrAdoptionDate(
+    application,
+  )
   const lastPeriodEndDate = getLastValidPeriodEndDate(application)
 
   const today = new Date()
   if (lastPeriodEndDate) {
     return lastPeriodEndDate
-  } else if (expectedDateOfBirth) {
-    const expectedDateOfBirthDate = new Date(expectedDateOfBirth)
+  } else if (expectedDateOfBirthOrAdoptionDate) {
+    const expectedDateOfBirthOrAdoptionDateDate = new Date(
+      expectedDateOfBirthOrAdoptionDate,
+    )
 
     if (isParentalGrant(application)) {
       const beginningOfMonthOfExpectedDateOfBirth = addDays(
-        expectedDateOfBirthDate,
-        expectedDateOfBirthDate.getDate() * -1 + 1,
+        expectedDateOfBirthOrAdoptionDateDate,
+        expectedDateOfBirthOrAdoptionDateDate.getDate() * -1 + 1,
       )
       return beginningOfMonthOfExpectedDateOfBirth
     }
 
     const beginningOfMonth = getBeginningOfThisMonth()
     const leastStartDate = addMonths(
-      expectedDateOfBirthDate,
+      expectedDateOfBirthOrAdoptionDateDate,
       -minimumPeriodStartBeforeExpectedDateOfBirth,
     )
     if (leastStartDate.getTime() >= beginningOfMonth.getTime()) {
@@ -1431,6 +1468,16 @@ export const getStartDateDesc = (application: Application) => {
   return parentalLeaveFormMessages.startDate.description
 }
 
+export const getFosterCareOrAdoptionDesc = (application: Application) => {
+  const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
+    application.answers,
+  )
+
+  if (noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE)
+    return parentalLeaveFormMessages.selectChild.fosterCareDescription
+  else return parentalLeaveFormMessages.selectChild.adoptionDescription
+}
+
 const setLoadingStateAndRepeaterItems = async (
   VMSTPeriods: Period[],
   setRepeaterItems: RepeaterProps['setRepeaterItems'],
@@ -1461,7 +1508,7 @@ export const synchronizeVMSTPeriods = (
       period.firstPeriodStart === 'date_of_birth'
         ? 'actualDateOfBirth'
         : 'specificDate'
-    if (new Date(period.from).getDate() <= new Date().getDay()) {
+    if (new Date(period.from).getTime() <= new Date().getTime()) {
       firstPeriodStart = 'specificDate'
     }
 
@@ -1485,7 +1532,7 @@ export const synchronizeVMSTPeriods = (
         if (new Date().getDay() >= 20) {
           newPeriods.push(obj)
         }
-      } else if (new Date(period.from).getDay() <= new Date().getDay()) {
+      } else if (new Date(period.from).getTime() <= new Date().getTime()) {
         newPeriods.push(obj)
       }
       temptVMSTPeriods.push(obj)
@@ -1568,6 +1615,27 @@ export const isParentalGrant = (application: Application) => {
     applicationType === PARENTAL_GRANT ||
     applicationType === PARENTAL_GRANT_STUDENTS
   )
+}
+
+export const isFosterCareAndAdoption = (application: Application) => {
+  const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
+    application.answers,
+  )
+
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
+
+  if (!selectedChild) {
+    throw new Error('Missing selected child')
+  }
+
+  return selectedChild.parentalRelation === ParentalRelations.primary
+    ? noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE ||
+        noChildrenFoundTypeOfApplication === ADOPTION
+    : selectedChild.primaryParentTypeOfApplication === PERMANENT_FOSTER_CARE ||
+        selectedChild.primaryParentTypeOfApplication === ADOPTION
 }
 
 export const convertBirthDay = (birthDay: string) => {

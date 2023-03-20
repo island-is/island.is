@@ -20,13 +20,23 @@ interface Props {
   organisationNationalId: string
 }
 
+interface UseFormProps {
+  technicalContact: Contact
+  organisationId: string
+  organisationNationalId: string
+}
+
 export const DocumentProviderTechnicalContactForm: FC<Props> = ({
   technicalContact,
   organisationId,
   organisationNationalId,
 }) => {
   const { formatMessage } = useLocale()
-  const { handleSubmit, control, errors } = useForm()
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<UseFormProps>()
 
   const {
     updateTechnicalContact,
@@ -74,8 +84,8 @@ export const DocumentProviderTechnicalContactForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderTechnicalContactNamePlaceholder,
             )}
-            hasError={errors.technicalContact?.name}
-            errorMessage={errors.technicalContact?.name?.message}
+            hasError={errors?.technicalContact?.name !== undefined}
+            errorMessage={errors?.technicalContact?.name?.message ?? ''}
           />
           <DocumentProviderInput
             control={control}
@@ -99,8 +109,8 @@ export const DocumentProviderTechnicalContactForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderTechnicalContactEmailPlaceholder,
             )}
-            hasError={errors.technicalContact?.email}
-            errorMessage={errors.technicalContact?.email?.message}
+            hasError={errors?.technicalContact?.email !== undefined}
+            errorMessage={errors?.technicalContact?.email?.message ?? ''}
           />
           <DocumentProviderInput
             control={control}
@@ -138,8 +148,8 @@ export const DocumentProviderTechnicalContactForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderTechnicalContactPhoneNumberPlaceholder,
             )}
-            hasError={errors.technicalContact?.phoneNumber}
-            errorMessage={errors.technicalContact?.phoneNumber?.message}
+            hasError={errors?.technicalContact?.phoneNumber !== undefined}
+            errorMessage={errors?.technicalContact?.phoneNumber?.message ?? ''}
           />
           <Box
             display="flex"

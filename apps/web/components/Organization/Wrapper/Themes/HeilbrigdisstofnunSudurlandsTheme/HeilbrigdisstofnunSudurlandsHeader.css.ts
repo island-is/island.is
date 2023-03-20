@@ -3,9 +3,14 @@ import { themeUtils } from '@island.is/island-ui/theme'
 
 export const headerBg = style({
   zIndex: -1,
-  height: 385,
-  marginTop: -130,
-  paddingTop: 130,
+  ...themeUtils.responsiveStyle({
+    xs: {
+      height: 280,
+    },
+    md: {
+      height: 385 - 130,
+    },
+  }),
 })
 
 export const iconCircle = style({

@@ -20,7 +20,7 @@ export const confirmation = {
       description: 'Title of conclusion information box',
     },
     intro: {
-      id: 'ctao.application:conclusion.general.intro',
+      id: 'ctao.application:conclusion.general.intro#markdown',
       defaultMessage: 'Umsókn þín hefur verið móttekin',
       description: 'Conclusion information box intro',
     },

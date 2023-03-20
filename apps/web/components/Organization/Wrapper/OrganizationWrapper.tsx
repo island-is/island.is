@@ -68,9 +68,13 @@ import {
 } from './Themes/FjarsyslaRikisinsTheme'
 import { HeilbrigdisstofnunSudurlandsFooter } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
 import { HeilbrigdisstofnunSudurlandsHeader } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
-import { TryggingastofnunHeader } from './Themes/TryggingastofnunTheme'
+import {
+  TryggingastofnunFooter,
+  TryggingastofnunHeader,
+} from './Themes/TryggingastofnunTheme'
 import { SAkFooter, SAkHeader } from './Themes/SAkTheme'
 import { GevHeader } from './Themes/GevTheme'
+import { HveHeader, HveFooter } from './Themes/HveTheme'
 
 import * as styles from './OrganizationWrapper.css'
 
@@ -107,6 +111,8 @@ export const lightThemes = [
   'fiskistofa',
   'landing_page',
   'tryggingastofnun',
+  'hve',
+  'hsu',
 ]
 export const footerEnabled = [
   'syslumenn',
@@ -138,6 +144,11 @@ export const footerEnabled = [
   'the-financial-management-authority',
 
   'sak',
+
+  'hve',
+
+  'tryggingastofnun',
+  'insurance-administration',
 ]
 
 export const getThemeConfig = (
@@ -217,6 +228,8 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
       return <SAkHeader organizationPage={organizationPage} />
     case 'gev':
       return <GevHeader organizationPage={organizationPage} />
+    case 'hve':
+      return <HveHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
@@ -407,6 +420,25 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         <FjarsyslaRikisinsFooter
           footerItems={organization.footerItems}
           logo={organization.logo?.url}
+          namespace={namespace}
+        />
+      )
+      break
+    case 'hve':
+      OrganizationFooterComponent = (
+        <HveFooter
+          footerItems={organization.footerItems}
+          namespace={namespace}
+          logo={organization.logo?.url}
+          title={organization.title}
+        />
+      )
+      break
+    case 'tryggingastofnun':
+    case 'insurance-administration':
+      OrganizationFooterComponent = (
+        <TryggingastofnunFooter
+          footerItems={organization.footerItems}
           namespace={namespace}
         />
       )
