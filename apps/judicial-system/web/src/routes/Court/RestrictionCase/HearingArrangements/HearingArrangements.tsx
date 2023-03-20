@@ -99,6 +99,10 @@ export const HearingArrangements: React.FC = () => {
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
+      const isCorrectingRuling = workingCase.notifications?.some(
+        (notification) => notification.type === NotificationType.RULING,
+      )
+
       const courtDateNotifications = workingCase.notifications?.filter(
         (notification) => notification.type === NotificationType.COURT_DATE,
       )
@@ -124,7 +128,7 @@ export const HearingArrangements: React.FC = () => {
         setWorkingCase,
       )
 
-      if (hasSentNotification && !courtDateHasChanged) {
+      if (isCorrectingRuling || (hasSentNotification && !courtDateHasChanged)) {
         router.push(`${destination}/${workingCase.id}`)
       } else {
         setNavigateTo(constants.RESTRICTION_CASE_RULING_ROUTE)
