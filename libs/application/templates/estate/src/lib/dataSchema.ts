@@ -49,10 +49,7 @@ export const estateSchema = z.object({
       .object({
         name: z.string(),
         relation: customZodError(z.string().min(1), m.errorRelation),
-        nationalId: z
-          .string()
-          .refine((x) => kennitala.info(x).age >= 18)
-          .optional(),
+        nationalId: z.string().optional(),
         custodian: z.string().length(10).optional(),
         foreignCitizenship: z.string().array().min(0).max(1).optional(),
         dateOfBirth: z.string().min(1).optional(),

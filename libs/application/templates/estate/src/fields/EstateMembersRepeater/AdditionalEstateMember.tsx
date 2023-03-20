@@ -80,11 +80,6 @@ export const AdditionalEstateMember = ({
           },
         },
       })
-    } else if (
-      name !== '' &&
-      (!foreignCitizenship || foreignCitizenship.length === 0)
-    ) {
-      setValue(nameField, '')
     }
   }, [
     getIdentity,
