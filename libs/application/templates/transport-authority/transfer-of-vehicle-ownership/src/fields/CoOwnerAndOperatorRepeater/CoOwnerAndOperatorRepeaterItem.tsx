@@ -9,7 +9,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { NationalIdWithName } from '../NationalIdWithName'
 import { information } from '../../lib/messages'
@@ -33,7 +33,7 @@ export const CoOwnerAndOperatorRepeaterItem: FC<Props & FieldBaseProps> = ({
   addNationalIdToCoOwners,
   ...props
 }) => {
-  const { register } = useFormContext()
+  const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
   const { application, errors } = props
   const fieldIndex = `${id}[${index}]`
@@ -46,6 +46,11 @@ export const CoOwnerAndOperatorRepeaterItem: FC<Props & FieldBaseProps> = ({
   const onNationalIdChange = (nationalId: string) => {
     addNationalIdToCoOwners(nationalId, index)
   }
+
+  useEffect(() => {
+    setValue(wasRemovedField, repeaterField.wasRemoved)
+    setValue(typeField, userMessageId)
+  }, [repeaterField.wasRemoved, userMessageId, setValue])
 
   return (
     <Box
@@ -103,16 +108,6 @@ export const CoOwnerAndOperatorRepeaterItem: FC<Props & FieldBaseProps> = ({
           />
         </GridColumn>
       </GridRow>
-      <input
-        type="hidden"
-        value={repeaterField.wasRemoved}
-        {...register(typeField, { required: true })}
-      />
-      <input
-        type="hidden"
-        value={userMessageId}
-        {...register(typeField, { required: true })}
-      />
     </Box>
   )
 }
