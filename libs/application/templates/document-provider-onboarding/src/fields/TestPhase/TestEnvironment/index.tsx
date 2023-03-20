@@ -138,8 +138,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
         <input
           type="hidden"
           value={currentAnswer}
-          ref={register({ required: true })}
-          name={'testProviderId'}
+          {...register('testProviderId', { required: true })}
         />
         {error && (
           <Box color="red600" paddingY={2}>

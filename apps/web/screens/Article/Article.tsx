@@ -46,6 +46,7 @@ import {
   GetSingleArticleQuery,
   QueryGetSingleArticleArgs,
   Organization,
+  Stepper as StepperSchema,
 } from '@island.is/web/graphql/schema'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -255,7 +256,7 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
 
   return (
     <Stack space={3}>
-      {!!article.category && (
+      {!!article.category?.slug && (
         <Box display={['none', 'none', 'block']} printHidden>
           <Link
             {...linkResolver('articlecategory', [article.category.slug])}
@@ -380,8 +381,9 @@ const ArticleScreen: Screen<ArticleProps> = ({
 
   const metaTitle = `${article.title} | Ísland.is`
   const processEntry = article.processEntry
-  const categoryHref = linkResolver('articlecategory', [article.category.slug])
-    .href
+  const categoryHref = article.category?.slug
+    ? linkResolver('articlecategory', [article.category.slug]).href
+    : ''
   const organizationTitle = article.organization[0]?.title
   const organizationShortTitle = article.organization[0]?.shortTitle
 
@@ -400,20 +402,21 @@ const ArticleScreen: Screen<ArticleProps> = ({
               typename: 'homepage',
               href: '/',
             },
-            !!article.category && {
+            !!article.category?.slug && {
               title: article.category.title,
               typename: 'articlecategory',
               slug: [article.category.slug],
             },
-            !!article.group && {
-              isTag: true,
-              title: article.group.title,
-              typename: 'articlecategory',
-              slug: [
-                article.category.slug +
-                  (article.group?.slug ? `#${article.group.slug}` : ''),
-              ],
-            },
+            !!article.category?.slug &&
+              !!article.group && {
+                isTag: true,
+                title: article.group.title,
+                typename: 'articlecategory',
+                slug: [
+                  article.category.slug +
+                    (article.group?.slug ? `#${article.group.slug}` : ''),
+                ],
+              },
           ],
     [article.category, article.group, inStepperView],
   )
@@ -475,7 +478,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
           alignItems="center"
           printHidden
         >
-          {!!article.category && (
+          {!!article.category?.title && (
             <Box flexGrow={1} marginRight={6} overflow={'hidden'}>
               <Link href={categoryHref} skipTab>
                 <Button
@@ -520,7 +523,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
             <Stepper
               namespace={stepperNamespace}
               optionsFromNamespace={stepOptionsFromNamespace}
-              stepper={article.stepper}
+              stepper={article.stepper as StepperSchema}
               showWebReader={true}
               webReaderClassName="rs_read"
             />
@@ -730,7 +733,7 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
 
   if (article.stepper)
     stepOptionsFromNamespace = await stepperUtils.getStepOptionsFromUIConfiguration(
-      article.stepper,
+      article.stepper as StepperSchema,
       apolloClient,
     )
 

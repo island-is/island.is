@@ -38,7 +38,11 @@ export const Overview = ({
   refetch,
 }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
-  const { errors, setError, setValue } = useFormContext()
+  const {
+    formState: { errors },
+    setError,
+    setValue,
+  } = useFormContext()
   const [approveOverview, setApproveOverview] = useState(false)
 
   const answers = application.answers as FinancialStatementsInao
@@ -186,7 +190,7 @@ export const Overview = ({
           name="applicationApprove"
           defaultValue={approveOverview}
           rules={{ required: true }}
-          render={({ value, onChange }) => {
+          render={({ field: { onChange, value } }) => {
             return (
               <Checkbox
                 onChange={(e) => {

@@ -25,8 +25,8 @@ export const GET_REGULATIONS_YEARS_QUERY = gql`
 `
 
 export const GET_REGULATIONS_MINISTRIES_QUERY = gql`
-  query GetRegulationsMinistries {
-    getRegulationsMinistries
+  query GetRegulationsMinistries($input: GetRegulationsMinistriesInput!) {
+    getRegulationsMinistries(input: $input)
   }
 `
 

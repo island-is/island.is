@@ -6,10 +6,12 @@ import {
   isCourtRole,
   isInvestigationCase,
   isRestrictionCase,
-  SessionArrangements,
 } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  SessionArrangements,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { defenderInfo } from './DefenderInfo.strings'
 import { BlueBox, SectionHeading } from '..'
@@ -88,7 +90,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
         title={formatMessage(getSectionTitle(), {
           defenderType:
             workingCase.sessionArrangements ===
-            SessionArrangements.ALL_PRESENT_SPOKESPERSON
+            SessionArrangements.AllPresentSpokesperson
               ? 'Talsmaður'
               : 'Verjandi',
         })}

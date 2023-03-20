@@ -31,6 +31,7 @@
     "swagger-ui-express",
     "swagger-ui-dist",
     "sequelize",
+    "lru-cache",
     "@protobufjs/aspromise",
     "@protobufjs/base64",
     "@protobufjs/codegen",
