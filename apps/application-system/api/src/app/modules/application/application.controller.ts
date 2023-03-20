@@ -220,47 +220,56 @@ export class ApplicationController {
     const templateTypeToIsReady: Partial<Record<ApplicationTypes, boolean>> = {}
     const filteredApplications: Application[] = []
     for (const application of applications) {
+      const typeId = application.typeId
+      const isTemplateTypeReady = templateTypeToIsReady[typeId]
       // We've already checked an application with this type and it is ready
       // now we just need to check if it should be displayed for the user
       if (
-        templateTypeToIsReady[application.typeId] &&
-        templates[application.typeId] !== undefined &&
+        isTemplateTypeReady &&
+        templates[typeId] !== undefined &&
         (await this.applicationAccessService.shouldShowApplicationOnOverview(
           application as BaseApplication,
           user,
-          templates[application.typeId],
+          templates[typeId],
         ))
       ) {
         filteredApplications.push(application)
         continue
-      } else if (templateTypeToIsReady[application.typeId] === false) {
+      } else if (isTemplateTypeReady === false) {
         // We've already checked an application with this type
         // and it is NOT ready so we will skip it
         continue
       }
 
-      const applicationTemplate = await getApplicationTemplateByTypeId(
-        application.typeId,
-      )
+      try {
+        const applicationTemplate = await getApplicationTemplateByTypeId(typeId)
+        // Add template to avoid fetching it again for the same types
+        templates[typeId] = applicationTemplate
 
-      // Add template to avoid fetching it again for the same types
-      templates[application.typeId] = applicationTemplate
-
-      if (
-        await this.validationService.isTemplateReady(applicationTemplate, user)
-      ) {
-        templateTypeToIsReady[application.typeId] = true
         if (
-          await this.applicationAccessService.shouldShowApplicationOnOverview(
-            application as BaseApplication,
-            user,
+          await this.validationService.isTemplateReady(
             applicationTemplate,
+            user,
           )
         ) {
-          filteredApplications.push(application)
+          templateTypeToIsReady[typeId] = true
+          if (
+            await this.applicationAccessService.shouldShowApplicationOnOverview(
+              application as BaseApplication,
+              user,
+              applicationTemplate,
+            )
+          ) {
+            filteredApplications.push(application)
+          }
+        } else {
+          templateTypeToIsReady[typeId] = false
         }
-      } else {
-        templateTypeToIsReady[application.typeId] = false
+      } catch (e) {
+        this.logger.error(
+          `Could not get application template for type ${typeId}`,
+          e,
+        )
       }
     }
 
@@ -334,34 +343,30 @@ export class ApplicationController {
       Application,
       'answers' | 'externalData'
     >[] = []
+    // For this endpoint we don't need to check if the application should be displayed
     for (const application of applications) {
+      const typeId = application.typeId
+      const isTemplateTypeReady = templateTypeToIsReady[typeId]
       // We've already checked an application with this type, and it is ready
-      if (
-        templateTypeToIsReady[application.typeId] &&
-        templates[application.typeId] !== undefined
-      ) {
+      if (isTemplateTypeReady && templates[typeId] !== undefined) {
         filteredApplications.push(application)
         continue
-      } else if (templateTypeToIsReady[application.typeId] === false) {
+      } else if (isTemplateTypeReady === false) {
         // We've already checked an application with this type,
         // and it is NOT ready, so we will skip it.
         continue
       }
 
       try {
-        const applicationTemplate = await getApplicationTemplateByTypeId(
-          application.typeId,
-        )
-        templates[application.typeId] = applicationTemplate
+        const applicationTemplate = await getApplicationTemplateByTypeId(typeId)
+        templates[typeId] = applicationTemplate
 
         // Add template to avoid fetching it again for the same types
         if (await this.validationService.isTemplateReady(applicationTemplate)) {
-          templateTypeToIsReady[application.typeId] = true
-
+          templateTypeToIsReady[typeId] = true
           filteredApplications.push(application)
-          // }
         } else {
-          templateTypeToIsReady[application.typeId] = false
+          templateTypeToIsReady[typeId] = false
         }
       } catch (e) {
         // If template is not found, we will skip it
