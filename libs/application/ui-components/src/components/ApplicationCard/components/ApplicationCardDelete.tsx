@@ -1,7 +1,8 @@
 import { Box, DialogPrompt, Icon, Tag } from '@island.is/island-ui/core'
-import { coreMessages, useDeleteApplication } from '@island.is/application/core'
+import { coreMessages } from '@island.is/application/core'
 import { ApplicationCardFields } from '../types'
 import { useLocale } from '@island.is/localization'
+import { useDeleteApplication } from '../../../hooks/useDeleteApplication'
 
 interface Props {
   application: ApplicationCardFields
@@ -30,7 +31,7 @@ export const ApplicationCardDelete = ({
       ariaLabel={formatMessage(coreMessages.deleteApplicationDialogTitle)}
       img={
         <img
-          src="assets/images/settings.svg`"
+          src="assets/images/settings.svg"
           alt="globe"
           style={{ float: 'right' }}
           width="80%"

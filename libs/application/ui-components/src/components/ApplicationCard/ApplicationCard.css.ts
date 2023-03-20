@@ -26,24 +26,6 @@ export const tag = style({
     },
   }),
 })
-export const avatar = style({
-  display: 'none',
-  ...themeUtils.responsiveStyle({
-    sm: {
-      display: 'flex',
-      width: 66,
-      height: 66,
-    },
-  }),
-})
-
-export const button = style({
-  ...themeUtils.responsiveStyle({
-    sm: {
-      alignSelf: 'flex-end',
-    },
-  }),
-})
 
 export const logo = style({
   backgroundSize: 'contain',

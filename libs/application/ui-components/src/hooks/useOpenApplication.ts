@@ -12,10 +12,11 @@ export const useOpenApplication = (
 ) => {
   const baseUrl = getBaseUrl()
   const slug = getSlugFromType(application.typeId)
+  const url = `${baseUrl}/${slug}/${application.id}`
 
   const openApplication = () => {
-    window.open(`${baseUrl}/${slug}/${application.id}`)
+    window.open(url)
   }
 
-  return openApplication
+  return { openApplication, url, slug }
 }

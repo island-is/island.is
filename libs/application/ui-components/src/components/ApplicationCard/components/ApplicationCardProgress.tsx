@@ -1,4 +1,3 @@
-import { useOpenApplication } from '@island.is/application/core'
 import {
   Box,
   Button,
@@ -13,12 +12,17 @@ import { ApplicationCardFields, DefaultCardData } from '../types'
 interface Props {
   application: ApplicationCardFields
   defaultData: DefaultCardData
+  onOpenApplication: () => void
+  forceDefault?: boolean
 }
 
-const DraftProgressMeter = ({ application, defaultData }: Props) => {
+const DraftProgressMeter = ({
+  application,
+  defaultData,
+  onOpenApplication,
+}: Props) => {
   const { progress, actionCard } = application
   const { formatMessage } = useLocale()
-  const openApplication = useOpenApplication(application)
 
   if (progress === undefined) return null
 
@@ -43,12 +47,7 @@ const DraftProgressMeter = ({ application, defaultData }: Props) => {
         />
       </Box>
       <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
-        <Button
-          variant="ghost"
-          onClick={openApplication}
-          icon="arrowForward"
-          size="small"
-        >
+        <Button variant="ghost" onClick={onOpenApplication} size="small">
           {formatMessage(defaultData.cta.label)}
         </Button>
       </Box>
@@ -56,10 +55,13 @@ const DraftProgressMeter = ({ application, defaultData }: Props) => {
   )
 }
 
-const DefaultProgressMeter = ({ application, defaultData }: Props) => {
+const DefaultProgressMeter = ({
+  application,
+  defaultData,
+  onOpenApplication,
+}: Props) => {
   const { progress } = application
   const { formatMessage } = useLocale()
-  const openApplication = useOpenApplication(application)
 
   if (progress === undefined) return null
 
@@ -78,12 +80,7 @@ const DefaultProgressMeter = ({ application, defaultData }: Props) => {
       />
 
       <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
-        <Button
-          variant="ghost"
-          onClick={openApplication}
-          icon="arrowForward"
-          size="small"
-        >
+        <Button variant="ghost" onClick={onOpenApplication} size="small">
           {formatMessage(defaultData.cta.label)}
         </Button>
       </Box>
@@ -91,13 +88,16 @@ const DefaultProgressMeter = ({ application, defaultData }: Props) => {
   )
 }
 
-export const ApplicationCardProgress = (props: Props) => {
+export const ApplicationCardProgress = ({
+  forceDefault = false,
+  ...props
+}: Props) => {
   const { value: isDraftProgressBarEnabledForApplication } = useFeatureFlag(
     'isDraftProgressBarEnabledForApplication',
     false,
   )
 
-  return isDraftProgressBarEnabledForApplication ? (
+  return isDraftProgressBarEnabledForApplication && !forceDefault ? (
     <DraftProgressMeter {...props} />
   ) : (
     <DefaultProgressMeter {...props} />

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Box, Button, Icon, Inline, Text } from '@island.is/island-ui/core'
+import { Box, Icon, Inline, Text } from '@island.is/island-ui/core'
 import * as styles from './ApplicationCard.css'
 import { ApplicationCardDelete } from './components/ApplicationCardDelete'
 import { dateFormat } from '@island.is/shared/constants'
@@ -12,27 +12,50 @@ import { defaultCardDataByStatus } from './utils/defaultData'
 import { ApplicationCardFields } from './types'
 import { buildHistoryItems } from './utils/history'
 import { ApplicationStatus } from '@island.is/application/types'
-import { useOpenApplication } from '@island.is/application/core'
+import { useOpenApplication } from '../../hooks/useOpenApplication'
 
 export type ApplicationCardProps = {
+  /**
+   * The application to display in the card.
+   */
   application: ApplicationCardFields
-  logo?: string // TODO: This prop should not exist and rather the card component should render correct logo based on the application
+  /**
+   * The logo of the application.
+   * TODO: This prop should not exist and rather the card component should render correct logo based on the application
+   */
+  logo?: string
+  /**
+   * Should the card be focused?
+   */
   focused?: boolean
-  refetchOnDelete?: () => void
+  /**
+   * Method that is invoked when an application is deleted.
+   * Used to refetch the data to keep the list up to date
+   */
+  refetchAfterDeletion?: () => void
+  /**
+   * Method that is invoked when application card button is clicked.
+   * Defaults to opening the application in a new tab
+   */
+  onClick?: (id: string) => void
 }
 
 export const ApplicationCard = ({
   application,
-  refetchOnDelete,
+  refetchAfterDeletion,
+  onClick,
   logo,
   focused = false,
 }: ApplicationCardProps) => {
   const { status, actionCard, modified } = application
   const { lang: locale, formatMessage } = useLocale()
-  const openApplication = useOpenApplication(application)
+  const { openApplication: defaultOpen, slug } = useOpenApplication(application)
   const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
   const defaultData = defaultCardDataByStatus[status]
   const heading = actionCard?.title ?? application.name
+  const openApplication = onClick
+    ? () => onClick(`${slug}/${application.id}`)
+    : defaultOpen
   const historyItems = buildHistoryItems(
     application,
     formatMessage,
@@ -62,7 +85,7 @@ export const ApplicationCard = ({
         display="flex"
         flexDirection="row"
         justifyContent="spaceBetween"
-        marginBottom={[0, 2]}
+        marginBottom={2}
       >
         <Box display="flex" alignItems="center" justifyContent="center">
           <Box display="flex" marginRight={1} justifyContent="center">
@@ -81,85 +104,56 @@ export const ApplicationCard = ({
           />
           <ApplicationCardDelete
             application={application}
-            refetchOnDelete={refetchOnDelete}
+            refetchOnDelete={refetchAfterDeletion}
           />
         </Inline>
       </Box>
 
-      <Box
-        alignItems={['flexStart', 'center']}
-        display="flex"
-        flexDirection={['column', 'row']}
-      >
-        <Box flexDirection="row" width="full">
-          {heading && (
-            <Box
-              display="flex"
-              flexDirection="row"
-              justifyContent="spaceBetween"
-              alignItems={['flexStart', 'flexStart', 'flexEnd']}
-            >
-              <Box display="flex" flexDirection="row" alignItems="center">
-                {logo && (
-                  <Box
-                    padding={2}
-                    marginRight={2}
-                    className={styles.logo}
-                    style={{ backgroundImage: `url(${logo})` }}
-                  ></Box>
-                )}
-                <Text variant="h3" color="currentColor">
-                  {heading}
-                </Text>
-              </Box>
+      <Box flexDirection="row" width="full">
+        {heading && (
+          <Box
+            display="flex"
+            flexDirection="row"
+            justifyContent="spaceBetween"
+            alignItems={['flexStart', 'flexStart', 'flexEnd']}
+          >
+            <Box display="flex" flexDirection="row" alignItems="center">
+              {logo && (
+                <Box
+                  padding={2}
+                  marginRight={2}
+                  className={styles.logo}
+                  style={{ backgroundImage: `url(${logo})` }}
+                ></Box>
+              )}
+              <Text variant="h3" color="currentColor">
+                {heading}
+              </Text>
             </Box>
-          )}
+          </Box>
+        )}
 
-          {actionCard?.description && (
-            <Text paddingTop={heading ? 1 : 0}>{actionCard.description}</Text>
-          )}
-        </Box>
-
-        <Box
-          display="flex"
-          alignItems={['flexStart', 'flexEnd']}
-          flexDirection="column"
-          flexShrink={0}
-          marginTop={[1, 0]}
-          marginLeft={[0, 'auto']}
-          className={styles.tag}
-        >
-          {!showHistory && (
-            <Box
-              paddingTop="gutter"
-              display="flex"
-              justifyContent={['flexStart', 'flexEnd']}
-              alignItems="center"
-              flexDirection="row"
-            >
-              <Box marginLeft={[0, 3]}>
-                <Button
-                  variant="ghost"
-                  size="small"
-                  onClick={openApplication}
-                  icon="arrowForward"
-                >
-                  {formatMessage(defaultData.cta.label)}
-                </Button>
-              </Box>
-            </Box>
-          )}
-        </Box>
+        {actionCard?.description && (
+          <Text paddingTop={heading ? 1 : 0}>{actionCard.description}</Text>
+        )}
       </Box>
 
       {shouldRenderProgress ? (
         <ApplicationCardProgress
           application={application}
           defaultData={defaultData}
+          onOpenApplication={openApplication}
         />
       ) : showHistory ? (
         <ApplicationCardHistory items={historyItems} />
-      ) : null}
+      ) : (
+        <ApplicationCardProgress
+          application={application}
+          defaultData={defaultData}
+          onOpenApplication={openApplication}
+          forceDefault
+        />
+      )}
     </Box>
   )
 }
