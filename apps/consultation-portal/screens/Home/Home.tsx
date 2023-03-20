@@ -112,24 +112,25 @@ export const Home = ({ types, statistics }: HomeProps) => {
 
   useEffect(() => {
     const insertFilterCount = setTimeout(() => {
-      if (filterGroups) {
-        const caseTypesList = Object.entries(filterGroups.CaseTypes).map(
-          ([value, count]) => ({
-            value,
-            count,
-          }),
-        )
+      if (filterGroups && !loading) {
+        const caseTypesList = filterGroups?.CaseTypes
+          ? Object.entries(filterGroups.CaseTypes).map(([value, count]) => ({
+              value,
+              count,
+            }))
+          : []
+
         const caseTypesMerged = filters.caseTypes.items.map((item) => ({
           ...item,
           ...caseTypesList.find((val) => val.value === item.value),
         }))
 
-        const caseStatusesList = Object.entries(filterGroups.Statuses).map(
-          ([value, count]) => ({
-            value,
-            count,
-          }),
-        )
+        const caseStatusesList = filterGroups?.Statuses
+          ? Object.entries(filterGroups.Statuses).map(([value, count]) => ({
+              value,
+              count,
+            }))
+          : []
         const caseStatusesMerged = filters.caseStatuses.items.map((item) => ({
           ...item,
           ...caseStatusesList.find((val) => val.value === item.value),

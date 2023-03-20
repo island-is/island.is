@@ -393,6 +393,7 @@ export const form: Form = buildForm({
               id: 'representative.representativeNationalId',
               title: m.nationalId,
               width: 'half',
+              format: '######-####',
             }),
             buildTextField({
               id: 'representative.representativeName',
@@ -403,6 +404,7 @@ export const form: Form = buildForm({
               id: 'representative.representativePhoneNumber',
               title: m.phone,
               width: 'half',
+              format: '###-####',
             }),
             buildTextField({
               id: 'representative.representativeEmail',

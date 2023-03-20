@@ -14,7 +14,10 @@ import { useFormContext } from 'react-hook-form'
 
 export const OtherParent: FC<FieldBaseProps> = ({ application, field }) => {
   const { id, title } = field
-  const { errors, setValue } = useFormContext()
+  const {
+    formState: { errors },
+    setValue,
+  } = useFormContext()
   const { formatMessage } = useLocale()
 
   return (
