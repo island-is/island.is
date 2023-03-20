@@ -106,7 +106,9 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
         {content}
       </button>
     ) : (
-      <span {...sharedProps}>{content}</span>
+      <span {...sharedProps} {...props}>
+        {content}
+      </span>
     )
   },
 )
