@@ -29,7 +29,7 @@ export const VehicleSelectField: FC<
   VehicleSearchFieldProps & FieldBaseProps
 > = ({ currentVehicleList, application, errors }) => {
   const { formatMessage } = useLocale()
-  const { register } = useFormContext()
+  const { setValue } = useFormContext()
 
   const vehicleValue = getValueViaPath(
     application.answers,
@@ -56,16 +56,6 @@ export const VehicleSelectField: FC<
   )
   const [plate, setPlate] = useState<string>(
     getValueViaPath(application.answers, 'pickVehicle.plate', '') as string,
-  )
-  const [color, setColor] = useState<string | undefined>(
-    getValueViaPath(application.answers, 'pickVehicle.color', undefined) as
-      | string
-      | undefined,
-  )
-  const [type, setType] = useState<string | undefined>(
-    getValueViaPath(application.answers, 'pickVehicle.type', undefined) as
-      | string
-      | undefined,
   )
 
   const getVehicleDetails = useLazyVehicleDetails()
@@ -104,8 +94,12 @@ export const VehicleSelectField: FC<
             !!response?.vehicleOperatorChangeChecksByPermno
               ?.validationErrorMessages?.length
           setPlate(disabled ? '' : currentVehicle.permno || '')
-          setColor(currentVehicle.color || undefined)
-          setType(currentVehicle.make || undefined)
+          setValue(
+            'pickVehicle.plate',
+            disabled ? '' : currentVehicle.permno || '',
+          )
+          setValue('pickVehicle.color', currentVehicle.color || undefined)
+          setValue('pickVehicle.type', currentVehicle.make || undefined)
           setIsLoading(false)
         })
         .catch((error) => console.error(error))
@@ -196,21 +190,6 @@ export const VehicleSelectField: FC<
           </Box>
         )}
       </Box>
-      <input
-        type="hidden"
-        value={plate}
-        {...register('pickVehicle.plate', { required: true })}
-      />
-      <input
-        type="hidden"
-        value={color}
-        {...register('pickVehicle.color', { required: true })}
-      />
-      <input
-        type="hidden"
-        value={type}
-        {...register('pickVehicle.type', { required: true })}
-      />
       {!isLoading && plate.length === 0 && errors && errors.pickVehicle && (
         <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />
       )}

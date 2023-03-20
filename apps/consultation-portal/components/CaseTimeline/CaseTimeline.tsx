@@ -25,7 +25,7 @@ export const CaseTimeline = ({ status, updatedDate }: CaseTimelineProps) => {
       subSections={
         item === status && [
           <Text variant="medium" key="sub1">
-            {`frá ${format(new Date(updatedDate), 'dd.MM.yyyy')}`}
+            {updatedDate}
           </Text>,
         ]
       }
