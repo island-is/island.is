@@ -6,6 +6,9 @@ export const SINGLE = 'single'
 export const PARENTAL_LEAVE = 'parentalLeave'
 export const PARENTAL_GRANT = 'parentalGrant'
 export const PARENTAL_GRANT_STUDENTS = 'parentalGrantStudents'
+export const PERMANENT_FOSTER_CARE = 'foster_care'
+export const ADOPTION = 'primary_adoption'
+export const OTHER_NO_CHILDREN_FOUND = 'other'
 
 export const FILE_SIZE_LIMIT = 10000000 // 10MB
 
@@ -34,6 +37,7 @@ export enum ApiModuleActions {
   notifyApplicantOfRejectionFromOtherParent = 'notifyApplicantOfRejectionFromOtherParent',
   validateApplication = 'validateApplication',
   notifyApplicantOfRejectionFromEmployer = 'notifyApplicantOfRejectionFromEmployer',
+  setChildrenInformation = 'setChildrenInformation',
   setBirthDateForNoPrimaryParent = 'setBirthDateForNoPrimaryParent',
   setBirthDate = 'setBirthDate',
 }
@@ -42,6 +46,7 @@ export enum StartDateOptions {
   ESTIMATED_DATE_OF_BIRTH = 'estimatedDateOfBirth',
   ACTUAL_DATE_OF_BIRTH = 'actualDateOfBirth',
   SPECIFIC_DATE = 'specificDate',
+  ADOPTION_DATE = 'adoptionDate',
 }
 
 export enum TransferRightsOption {

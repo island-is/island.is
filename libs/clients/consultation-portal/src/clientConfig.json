@@ -37,7 +37,7 @@
         "tags": ["Cases"],
         "parameters": [
           {
-            "name": "Query",
+            "name": "SearchQuery",
             "in": "query",
             "style": "form",
             "schema": {
@@ -143,26 +143,44 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/CaseItemResult"
-                  }
+                  "$ref": "#/components/schemas/CasesAggregateResult"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/CaseItemResult"
-                  }
+                  "$ref": "#/components/schemas/CasesAggregateResult"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/CaseItemResult"
-                  }
+                  "$ref": "#/components/schemas/CasesAggregateResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Statistics": {
+      "get": {
+        "tags": ["Statistics"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatisticsResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatisticsResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatisticsResult"
                 }
               }
             }
@@ -244,6 +262,33 @@
           },
           "404": {
             "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/auth/RequestUrl": {
+      "get": {
+        "tags": ["Authentication"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -801,6 +846,34 @@
         "enum": ["AllChanges", "StatusChanges"],
         "type": "string"
       },
+      "CasesAggregateResult": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cases": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CaseItemResult"
+            },
+            "nullable": true
+          },
+          "filterGroups": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer",
+                "format": "int32"
+              }
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CasesOrderBy": {
         "enum": ["LastUpdated", "LatestCases", "AdviceDeadline"],
         "type": "string"
@@ -823,6 +896,24 @@
           "size": {
             "type": "integer",
             "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "StatisticsResult": {
+        "type": "object",
+        "properties": {
+          "totalCases": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalAdvices": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "casesInReview": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -985,6 +1076,19 @@
         },
         "additionalProperties": false
       }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "description": "JWT Authorization header using the Bearer scheme.",
+        "name": "Authorization",
+        "in": "header"
+      }
     }
-  }
+  },
+  "security": [
+    {
+      "Bearer": []
+    }
+  ]
 }

@@ -537,4 +537,34 @@ describe('MessageHandlerService - Handle message', () => {
       expect(then.result).toBe(true)
     })
   })
+
+  describe('send defender assigned notification', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.SEND_DEFENDER_ASSIGNED_NOTIFICATION,
+        userId,
+        caseId,
+      })
+    })
+
+    it('should send a defender assigned notification', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/notification`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({
+            type: NotificationType.DEFENDER_ASSIGNED,
+            userId,
+          }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
 })

@@ -108,17 +108,17 @@ export class ChildrenService {
         )
       }
 
-      const transferredDays =
-        child.transferredDays === undefined ? 0 : child.transferredDays
+      const transferredDays: number = child.transferredDays ?? 0
 
-      const multipleBirthsDays =
-        child.multipleBirthsDays === undefined ? 0 : child.multipleBirthsDays
+      const multipleBirthsDays: number = child.multipleBirthsDays ?? 0
 
       // Transferred days are only added to remaining days for secondary parents
       // since the primary parent makes the choice for them
       const remainingDays =
         calculateRemainingNumberOfDays(
-          child.expectedDateOfBirth,
+          child.expectedDateOfBirth === ''
+            ? child.adoptionDate!
+            : child.expectedDateOfBirth,
           parentalLeavesAndPregnancyStatus.getParentalLeaves,
           parentalLeavesEntitlements,
         ) +
@@ -136,7 +136,7 @@ export class ChildrenService {
 
     if (children.length <= 0 && existingApplications.length <= 0) {
       // Instead of throwing error, ask applicant questions
-      // father without mother application
+      // foster care or father without mother
 
       return {
         children: [],
@@ -232,15 +232,19 @@ export class ChildrenService {
         transferableMonths: 0,
       }
 
-      const transferredDays: number =
-        child.transferredDays === undefined ? 0 : child.transferredDays
+      const transferredDays: number = child.transferredDays ?? 0
+      const multipleBirthsDays: number = child.multipleBirthsDays ?? 0
 
       const remainingDays =
         calculateRemainingNumberOfDays(
-          child.expectedDateOfBirth,
+          child.expectedDateOfBirth === ''
+            ? child.adoptionDate!
+            : child.expectedDateOfBirth,
           [],
           parentalLeavesEntitlements,
-        ) + transferredDays
+        ) +
+        transferredDays +
+        multipleBirthsDays
 
       children.push({
         ...child,

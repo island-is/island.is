@@ -22,7 +22,7 @@ import { Timeline } from '../components/Timeline/Timeline'
 import {
   formatPeriods,
   getAvailableRightsInDays,
-  getExpectedDateOfBirth,
+  getExpectedDateOfBirthOrAdoptionDate,
   getApplicationAnswers,
   synchronizeVMSTPeriods,
 } from '../../lib/parentalLeaveUtils'
@@ -59,7 +59,7 @@ const PeriodsRepeater: FC<ScreenProps> = ({
   const shouldCall = application.state === States.EDIT_OR_ADD_PERIODS
 
   const showDescription = field?.props?.showDescription ?? true
-  const dob = getExpectedDateOfBirth(application)
+  const dob = getExpectedDateOfBirthOrAdoptionDate(application)
   const { formatMessage, locale } = useLocale()
   const rights = getAvailableRightsInDays(application)
   const daysAlreadyUsed = useDaysAlreadyUsed(application)

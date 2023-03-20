@@ -1,5 +1,4 @@
 import {
-  Button,
   FocusableBox,
   Icon,
   Inline,

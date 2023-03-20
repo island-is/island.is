@@ -1,20 +1,38 @@
 import { Module } from '@nestjs/common'
-import { CasesApi, DocumentsApi, TypesApi, UserApi } from '../../gen/fetch'
+import {
+  AuthenticationApi,
+  CasesApi,
+  DocumentsApi,
+  StatisticsApi,
+  TypesApi,
+  UserApi,
+} from '../../gen/fetch'
 
 import {
+  AuthenticationApiProvider,
   DocumentsApiProvider,
   CasesApiProvider,
+  StatisticsApiProvider,
   TypesApiProvider,
   UserApiProvider,
 } from './apiConfiguration'
 
 @Module({
   providers: [
+    AuthenticationApiProvider,
     DocumentsApiProvider,
     CasesApiProvider,
+    StatisticsApiProvider,
     TypesApiProvider,
     UserApiProvider,
   ],
-  exports: [CasesApi, DocumentsApi, TypesApi, UserApi],
+  exports: [
+    AuthenticationApi,
+    CasesApi,
+    DocumentsApi,
+    StatisticsApi,
+    TypesApi,
+    UserApi,
+  ],
 })
 export class ConsultationPortalClientModule {}

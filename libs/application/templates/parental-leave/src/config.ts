@@ -4,6 +4,8 @@ export const defaultMonths = 6
 export const usageMinMonths = 0.5
 export const usageMaxMonths = 24
 export const minPeriodDays = 14
+export const yearInMonths = 12
+export const yearFosterCareOrAdoption = 8
 export const minimumPeriodStartBeforeExpectedDateOfBirth = 1 // can start 1 month before
 export const minimumRatio = 0.01
 
