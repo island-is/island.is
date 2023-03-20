@@ -12,9 +12,13 @@ import {
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
   SINGLE,
+  PERMANENT_FOSTER_CARE,
+  OTHER_NO_CHILDREN_FOUND,
+  ADOPTION,
 } from '../constants'
 import { errorMessages } from './messages'
 import { formatBankInfo } from './parentalLeaveUtils'
+import { yearFosterCareOrAdoption, yearInMonths } from '../config'
 
 const PersonalAllowance = z
   .object({
@@ -43,6 +47,30 @@ export const dataSchema = z.object({
   selectedChild: z.string().min(1),
   applicationType: z.object({
     option: z.enum([PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, PARENTAL_LEAVE]),
+  }),
+  noChildrenFound: z.object({
+    typeOfApplication: z.enum([
+      PERMANENT_FOSTER_CARE,
+      ADOPTION,
+      OTHER_NO_CHILDREN_FOUND,
+    ]),
+  }),
+  fosterCareOrAdoption: z.object({
+    birthDate: z.string().refine(
+      (p) => {
+        const birthDateDob = new Date(p)
+        const today = new Date()
+        const minimumStartDate = new Date(
+          today.setMonth(
+            today.getMonth() - yearFosterCareOrAdoption * yearInMonths,
+          ),
+        )
+
+        return birthDateDob >= minimumStartDate
+      },
+      { params: errorMessages.fosterCare },
+    ),
+    adoptionDate: z.string(),
   }),
   noPrimaryParent: z.object({
     questionOne: z.enum([YES, NO]),
