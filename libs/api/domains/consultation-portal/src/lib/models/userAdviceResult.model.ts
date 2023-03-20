@@ -9,18 +9,18 @@ export class UserAdviceResult {
   @Field({ nullable: true })
   caseId?: number
 
-  @Field({ nullable: true })
-  participantName?: string
+  @Field(() => String, { nullable: true })
+  participantName?: string | null
 
-  @Field({ nullable: true })
-  participantEmail?: string
+  @Field(() => String, { nullable: true })
+  participantEmail?: string | null
 
-  @Field({ nullable: true })
-  content?: string
+  @Field(() => String, { nullable: true })
+  content?: string | null
 
   @Field(() => Date, { nullable: true })
   created?: Date
 
   @Field(() => [DocumentInfoResult], { nullable: true })
-  adviceDocuments?: DocumentInfoResult[]
+  adviceDocuments?: DocumentInfoResult[] | null
 }

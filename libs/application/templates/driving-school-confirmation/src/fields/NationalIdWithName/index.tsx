@@ -23,7 +23,10 @@ const IdentityQuery = gql`
 const NationalIdWithName: FC<FieldBaseProps> = ({ field, application }) => {
   const { id } = field
   const { formatMessage } = useLocale()
-  const { setValue, errors } = useFormContext()
+  const {
+    setValue,
+    formState: { errors },
+  } = useFormContext()
   const [nationalIdInput, setNationalIdInput] = useState('')
   const nameField = `${id}.name`
   const nationaIdField = `${id}.nationalId`

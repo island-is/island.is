@@ -5,6 +5,7 @@ import {
 } from './Applications.generated'
 
 export type AuthApplicationsList = GetApplicationsByIdQuery['authAdminApplications']['data']
+
 export const applicationsLoader: WrappedLoaderFn = ({ client }) => {
   return async ({ params }): Promise<AuthApplicationsList> => {
     if (!params['tenant']) {
@@ -14,7 +15,9 @@ export const applicationsLoader: WrappedLoaderFn = ({ client }) => {
     const applicationsList = await client.query<GetApplicationsByIdQuery>({
       query: GetApplicationsByIdDocument,
       variables: {
-        tenantId: params['tenant'],
+        input: {
+          tenantId: params['tenant'],
+        },
       },
     })
 
