@@ -9,6 +9,7 @@ import {
   Input,
   Text,
 } from '@island.is/island-ui/core'
+import { useEffect } from '@storybook/addons'
 
 interface Props extends FieldBaseProps {
   field: CustomField
@@ -51,6 +52,10 @@ const ExampleCountryField: FC<Props> = ({ error, field, application }) => {
         }
       })
   }
+
+  useEffect(() => {
+    setValue('person.age', age)
+  }, [age, setValue])
 
   return (
     <>
@@ -119,9 +124,7 @@ const ExampleCountryField: FC<Props> = ({ error, field, application }) => {
       <Text>
         Finally, use setValue to update form values with atypical UI elements
       </Text>
-      <Button onClick={() => setValue('person.age', age + 1)}>
-        +++Increment age+++ {age}
-      </Button>
+      <Button onClick={() => setAge(age + 1)}>+++Increment age+++ {age}</Button>
     </>
   )
 }
