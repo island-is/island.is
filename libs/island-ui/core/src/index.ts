@@ -55,6 +55,7 @@ export * from './lib/Filter/Filter'
 export * from './lib/Filter/FilterMultiChoice/FilterMultiChoice'
 export * from './lib/Filter/FilterInput/FilterInput'
 export * from './lib/PdfViewer/PdfViewer'
+export * from './lib/PageLoader'
 
 // Cards
 export * from './lib/LinkCard/LinkCard'
@@ -73,6 +74,7 @@ export * from './lib/Link/ArrowLink/ArrowLink'
 export { IconDeprecated } from './lib/Icon/Icon'
 export * from './lib/Icon/IconTypes'
 export * from './lib/IconRC/Icon'
+export * from './lib/IconRC/types'
 export * from './lib/Typography/Typography'
 export * from './lib/Text/Text'
 export * from './lib/Hyphen/Hyphen'
@@ -120,3 +122,4 @@ export * as linkStyles from './lib/Link/Link.css'
 
 // Hooks
 export * from './hooks/useBreakpoint'
+export { ErrorMessage } from './lib/Input/ErrorMessage'

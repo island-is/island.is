@@ -5,6 +5,7 @@ import {
   buildExpandableDescriptionField,
   buildMessageWithLinkButtonField,
   buildLinkField,
+  coreMessages,
 } from '@island.is/application/core'
 import { FormText } from '@island.is/application/types'
 import { MessageDescriptor } from 'react-intl'
@@ -12,11 +13,11 @@ import { StaticText } from 'static-text'
 import { conclusion } from './messages'
 
 type props = {
-  alertTitle: MessageDescriptor
+  alertTitle?: MessageDescriptor
   alertMessage?: MessageDescriptor
-  expandableHeader: MessageDescriptor
-  expandableIntro?: MessageDescriptor
-  expandableDescription: StaticText
+  expandableHeader?: MessageDescriptor
+  expandableIntro?: StaticText
+  expandableDescription?: StaticText
   s3FileKey?: FormText
   link?: string
   buttonText?: MessageDescriptor
@@ -35,7 +36,7 @@ type props = {
  * @param  link Link that user can click on.
  * @param  buttonText The text of the button that links to a url
  */
-export const formConclusionSection = (props: props) =>
+export const buildFormConclusionSection = (props: props) =>
   buildSection({
     id: 'uiForms.conclusionSection',
     title: conclusion.information.sectionTitle,
@@ -44,12 +45,6 @@ export const formConclusionSection = (props: props) =>
         id: 'uiForms.conclusionMultifield',
         title: conclusion.information.formTitle,
         children: [
-          buildAlertMessageField({
-            id: 'uiForms.conclusionAlert',
-            title: props.alertTitle,
-            alertType: 'success',
-            message: props.alertMessage,
-          }),
           buildLinkField({
             id: 'uiForms.complaintLink',
             title: props.buttonText ?? '',
@@ -59,19 +54,31 @@ export const formConclusionSection = (props: props) =>
               return props.buttonText !== undefined
             },
           }),
+          buildAlertMessageField({
+            id: 'uiForms.conclusionAlert',
+            title: props.alertTitle ?? conclusion.alertMessageField.title,
+            alertType: 'success',
+            message: props.alertMessage ?? conclusion.alertMessageField.message,
+          }),
           buildExpandableDescriptionField({
             id: 'uiForms.conclusionBullet',
-            title: props.expandableHeader,
-            introText: props.expandableIntro,
-            description: props.expandableDescription,
+            title:
+              props.expandableHeader ??
+              conclusion.expandableDescriptionField.title,
+            introText:
+              props.expandableIntro ??
+              conclusion.expandableDescriptionField.introText,
+            description:
+              props.expandableDescription ??
+              conclusion.expandableDescriptionField.description,
             startExpanded: true,
           }),
           buildMessageWithLinkButtonField({
             id: 'uiForms.conclusionGoToServicePortal',
             title: '',
             url: '/minarsidur/umsoknir',
-            buttonTitle: conclusion.information.buttonTitle,
-            message: conclusion.information.messageText,
+            buttonTitle: coreMessages.openServicePortalButtonTitle,
+            message: coreMessages.openServicePortalMessageText,
           }),
         ],
       }),

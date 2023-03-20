@@ -102,12 +102,16 @@ interface BaseChildInformation {
    */
   transferredDays?: number
   multipleBirthsDays?: number
+  adoptionDate?: string
+  dateOfBirth?: string
 }
 
 export type ChildInformation =
   | (BaseChildInformation & {
       parentalRelation: ParentalRelations.secondary
       primaryParentNationalRegistryId: string
+      primaryParentGenderCode?: string
+      primaryParentTypeOfApplication?: string
     })
   | (BaseChildInformation & {
       parentalRelation: ParentalRelations.primary
@@ -116,6 +120,7 @@ export type ChildInformation =
 export interface ExistingChildApplication {
   expectedDateOfBirth: string
   applicationId: string
+  adoptionDate?: string
 }
 
 export interface PregnancyStatus {
@@ -149,4 +154,14 @@ export interface PregnancyStatusAndRightsResults {
   remainingDays: number
   hasRights: boolean
   hasActivePregnancy: boolean
+}
+
+export interface EmployerRow {
+  email: string
+  phoneNumber?: string
+  ratio: string
+  isApproved?: boolean
+  reviewerNationalRegistryId?: string
+  companyNationalRegistryId?: string
+  stillEmployed?: YesOrNo
 }

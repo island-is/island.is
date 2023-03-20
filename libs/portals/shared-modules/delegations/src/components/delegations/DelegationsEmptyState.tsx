@@ -1,5 +1,6 @@
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { m } from '../../lib/messages'
 
 export const DelegationsEmptyState = () => {
   const { formatMessage } = useLocale()
@@ -14,19 +15,11 @@ export const DelegationsEmptyState = () => {
       rowGap={[6, 10]}
       data-testid={'delegations-empty-state'}
     >
-      <Text>
-        {formatMessage({
-          id: 'sp.access-control-delegations:empty',
-          defaultMessage: 'Umboð sem þú hefur veitt öðrum munu birtast hér.',
-        })}
-      </Text>
+      <Text>{formatMessage(m.noDelegations)}</Text>
       <div>
         <img
           src="./assets/images/educationDegree.svg"
-          alt={formatMessage({
-            id: 'sp.access-control-delegations:empty-image-alt',
-            defaultMessage: 'Mynd af handarbandi',
-          })}
+          alt={formatMessage(m.noDelegationsImageAlt)}
         />
       </div>
     </Box>

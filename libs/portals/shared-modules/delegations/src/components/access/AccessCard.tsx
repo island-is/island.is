@@ -78,18 +78,12 @@ export const AccessCard = ({
 
   const getRightLabel = () => {
     if (isExpired) {
-      return formatMessage({
-        id: 'sp.access-control-delegations:expired',
-        defaultMessage: 'Útrunnið',
-      })
+      return formatMessage(m.expired)
     }
 
     return delegation.validTo
       ? format(new Date(delegation.validTo), 'dd.MM.yyyy')
-      : formatMessage({
-          id: 'sp.settings-access-control:home-view-varies',
-          defaultMessage: 'Breytilegur',
-        })
+      : formatMessage(m.variableValidity)
   }
 
   const renderDelegationTypeLabel = (type: AuthDelegationType) => {
@@ -184,10 +178,7 @@ export const AccessCard = ({
             {delegation.domain && (
               <Box display="flex" columnGap={1} alignItems="center">
                 <VisuallyHidden>
-                  {formatMessage({
-                    id: 'sp.access-control-delegations:delegation-in-system',
-                    defaultMessage: 'Umboð í kerfi',
-                  })}
+                  {formatMessage(m.delegationInSystem)}
                 </VisuallyHidden>
                 {delegation.domain.organisationLogoUrl && (
                   <img
@@ -203,12 +194,7 @@ export const AccessCard = ({
               </Box>
             )}
           </Box>
-          <VisuallyHidden>
-            {formatMessage({
-              id: 'sp.access-control-delegations:access-holder',
-              defaultMessage: 'Aðgangshafi',
-            })}
-          </VisuallyHidden>
+          <VisuallyHidden>{formatMessage(m.accessHolder)}</VisuallyHidden>
           <Text variant="h3" as="h2" color={isExpired ? 'dark300' : 'dark400'}>
             {isOutgoing
               ? (delegation as AuthCustomDelegationOutgoing)?.to?.name
@@ -225,10 +211,7 @@ export const AccessCard = ({
                 icon="time"
                 color={isExpired ? 'dark300' : 'blue400'}
                 type="outline"
-                title={formatMessage({
-                  id: 'sp.access-control-delegations:validity-period',
-                  defaultMessage: 'Gildistími',
-                })}
+                title={formatMessage(m.validityPeriod)}
               />
               <Text variant="small" color={isExpired ? 'dark300' : 'dark400'}>
                 {getRightLabel()}
@@ -247,12 +230,7 @@ export const AccessCard = ({
         >
           {hasTags && (
             <Box width="full">
-              <VisuallyHidden>
-                {formatMessage({
-                  id: 'sp.access-control-delegations:access-title',
-                  defaultMessage: 'Réttindi',
-                })}
-              </VisuallyHidden>
+              <VisuallyHidden>{formatMessage(m.accessScopes)}</VisuallyHidden>
               <Inline alignY="bottom" space={1}>
                 {tags.map((tag, index) => (
                   <Tag

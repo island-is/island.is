@@ -1,6 +1,6 @@
 import { FieldBaseProps, Option } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
-import { FC, useCallback, useState } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 import {
   AlertMessage,
   Box,
@@ -10,16 +10,16 @@ import {
   SkeletonLoader,
   InputError,
 } from '@island.is/island-ui/core'
-import {
-  GetVehicleDetailInput,
-  VehiclesCurrentVehicleWithOwnerchangeChecks,
-} from '@island.is/api/schema'
+import { GetVehicleDetailInput } from '@island.is/api/schema'
 import { information, applicationCheck, error } from '../../lib/messages'
 import { SelectController } from '@island.is/shared/form-fields'
 import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
-import { VehiclesCurrentVehicle } from '../../shared'
+import {
+  VehiclesCurrentVehicle,
+  VehiclesCurrentVehicleWithOwnerchangeChecks,
+} from '../../shared'
 
 interface VehicleSearchFieldProps {
   currentVehicleList: VehiclesCurrentVehicle[]
@@ -27,7 +27,7 @@ interface VehicleSearchFieldProps {
 
 export const VehicleSelectField: FC<
   VehicleSearchFieldProps & FieldBaseProps
-> = ({ currentVehicleList, application, errors }) => {
+> = ({ currentVehicleList, application, errors, setFieldLoadingState }) => {
   const { formatMessage } = useLocale()
   const { register, setValue } = useFormContext()
 
@@ -114,6 +114,10 @@ export const VehicleSelectField: FC<
     (!selectedVehicle.isDebtLess ||
       !!selectedVehicle.validationErrorMessages?.length)
 
+  useEffect(() => {
+    setFieldLoadingState?.(isLoading)
+  }, [isLoading])
+
   return (
     <Box>
       <SelectController
@@ -196,14 +200,12 @@ export const VehicleSelectField: FC<
       <input
         type="hidden"
         value={plate}
-        ref={register({ required: true })}
-        name="pickVehicle.plate"
+        {...register('pickVehicle.plate', { required: true })}
       />
       <input
         type="hidden"
         value={color}
-        ref={register({ required: true })}
-        name="pickVehicle.color"
+        {...register('pickVehicle.color', { required: true })}
       />
       {!isLoading && plate.length === 0 && errors && errors.pickVehicle && (
         <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />

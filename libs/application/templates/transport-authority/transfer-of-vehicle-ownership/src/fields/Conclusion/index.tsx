@@ -1,4 +1,8 @@
-import { FieldBaseProps } from '@island.is/application/types'
+import {
+  FieldBaseProps,
+  FieldComponents,
+  FieldTypes,
+} from '@island.is/application/types'
 import {
   Box,
   AlertMessage,
@@ -10,7 +14,8 @@ import { FC } from 'react'
 import { conclusion } from '../../lib/messages'
 import { CopyLink } from '@island.is/application/ui-components'
 import { ApplicationConfigurations } from '@island.is/application/types'
-import { ConclusionMessageWithLinkButtonFormField } from '../ConclusionMessageWithLinkButtonFormField'
+import { MessageWithLinkButtonFormField } from '@island.is/application/ui-fields'
+import { coreMessages } from '@island.is/application/core'
 
 export const Conclusion: FC<FieldBaseProps> = (props) => {
   const { application } = props
@@ -44,7 +49,17 @@ export const Conclusion: FC<FieldBaseProps> = (props) => {
       </Box>
 
       <Box marginTop={3} marginBottom={5}>
-        <ConclusionMessageWithLinkButtonFormField {...props} />
+        <MessageWithLinkButtonFormField
+          application={application}
+          field={{
+            ...props.field,
+            type: FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD,
+            component: FieldComponents.MESSAGE_WITH_LINK_BUTTON_FIELD,
+            url: '/minarsidur/umsoknir',
+            buttonTitle: coreMessages.openServicePortalButtonTitle,
+            message: coreMessages.openServicePortalMessageText,
+          }}
+        />
       </Box>
     </Box>
   )

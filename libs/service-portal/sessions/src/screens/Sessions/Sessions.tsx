@@ -1,117 +1,182 @@
+import { useUserInfo } from '@island.is/auth/react'
+import * as kennitala from 'kennitala'
+import React, { useState } from 'react'
+import InfiniteScroll from 'react-infinite-scroller'
+
+import { SessionsSession } from '@island.is/api/schema'
 import {
   Box,
-  GridColumn,
-  Hidden,
   LoadingDots,
   Text,
   SkeletonLoader,
   ToastContainer,
   toast,
-  Input,
+  useBreakpoint,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
-import React, { Fragment, useRef, useState } from 'react'
+
 import LogTable from '../../components/LogTable/LogTable'
 import LogTableMobile from '../../components/LogTable/LogTableMobile'
-
 import { m } from '../../lib/messages'
 import { useGetSessionsListQuery } from './Sessions.generated'
-import { SessionsSession } from '@island.is/api/schema'
-import * as kennitala from 'kennitala'
-import useOnScreen from '../../utils/useOnScreen'
+import SessionFilter from '../../components/SessionFilter/SessionFilter'
+import addYears from 'date-fns/addYears'
 
-interface CursorState {
-  before: string
-  after: string
+const SESSION_LIMIT = 20
+const initialDates = {
+  fromDate: addYears(new Date(), -1),
+  toDate: new Date(),
 }
 
 const Sessions = () => {
-  const SESSION_LIMIT = 20
-
+  useNamespaces('portals-my-pages.session-history')
+  const user = useUserInfo()
+  const isCompany = user.profile.subjectType === 'legalEntity'
   const { formatMessage } = useLocale()
+  const { lg } = useBreakpoint()
 
   const [sessionsData, setSessionsData] = useState<SessionsSession[]>([])
   const [searchNationalId, setSearchNationalId] = useState('')
-  const [prevSearchNationalId, setPrevSearchNationalId] = useState('')
-  const [sentNationalId, setSentNationalId] = useState('')
-  const [page, setPage] = useState<CursorState>({ before: '', after: '' })
-  const [isSearchingSSN, setIsSearchingSSN] = useState(false)
-
-  const ref = useRef<HTMLDivElement>(null)
-  const isVisible = useOnScreen(ref)
-
-  const { data, loading, error } = useGetSessionsListQuery({
-    fetchPolicy: 'network-only',
-    variables: {
+  const [nextCursor, setNextCursor] = useState<string>('')
+  const [customLoading, setCustomLoading] = React.useState(true)
+  const [filterDates, setFilterDates] = useState<{
+    fromDate: Date
+    toDate: Date
+  }>(initialDates)
+  const getQueryVariables = (
+    next: string,
+    nationalId: string,
+    dateFrom: Date | null,
+    dateTo: Date | null,
+  ) => {
+    return {
       input: {
         limit: SESSION_LIMIT,
-        before: page.before,
-        after: page.after,
-        nationalId: sentNationalId ?? '',
-        toDate: '',
-        fromDate: '',
+        before: '',
+        after: next,
+        nationalId: kennitala.isValid(nationalId) ? nationalId : '',
+        toDate: dateTo ? dateTo.toDateString() : '',
+        fromDate: dateFrom ? dateFrom.toDateString() : '',
       },
-    },
+    }
+  }
+
+  const { data, error, refetch } = useGetSessionsListQuery({
+    variables: getQueryVariables(
+      '',
+      '',
+      initialDates.fromDate,
+      initialDates.toDate,
+    ),
     onCompleted: (data) => {
       setSessionsData([
         ...(sessionsData as SessionsSession[]),
         ...(data.sessionsList.data as SessionsSession[]),
       ])
-      setIsSearchingSSN(false)
+      setNextCursor(data.sessionsList.pageInfo.endCursor ?? '')
+      setCustomLoading(false)
     },
     onError: () => {
       toast.error(formatMessage(m.error))
     },
   })
 
-  const handlePageChange = (): void => {
-    if (!data || loading) return
-    if (!data.sessionsList.pageInfo.hasNextPage) return
+  const loadMore = () => {
+    if (customLoading || !data) return
 
-    setPage({
-      after: data?.sessionsList.pageInfo.endCursor ?? '',
-      before: '',
-    })
+    if (data?.sessionsList.pageInfo.hasNextPage) {
+      setCustomLoading(true)
+      refetch({
+        ...getQueryVariables(
+          nextCursor,
+          searchNationalId,
+          filterDates.fromDate,
+          filterDates.toDate,
+        ),
+      }).then((res) => {
+        setSessionsData([
+          ...(sessionsData as SessionsSession[]),
+          ...(res.data?.sessionsList.data as SessionsSession[]),
+        ])
+        setNextCursor(res.data?.sessionsList.pageInfo.endCursor ?? '')
+        setCustomLoading(false)
+      })
+    }
   }
 
-  React.useEffect(() => {
-    if (isVisible) {
-      handlePageChange()
+  const handleDateChange = (date: Date, type: 'from' | 'to' | 'clear') => {
+    setSessionsData([])
+    setCustomLoading(true)
+    refetch({
+      ...getQueryVariables(
+        '',
+        searchNationalId,
+        type === 'clear'
+          ? initialDates.fromDate
+          : type === 'from'
+          ? date
+          : filterDates.fromDate,
+        type === 'clear'
+          ? initialDates.toDate
+          : type === 'to'
+          ? date
+          : filterDates.toDate,
+      ),
+    }).then((res) => {
+      setSessionsData(res.data?.sessionsList.data as SessionsSession[])
+      setNextCursor(res.data?.sessionsList.pageInfo.endCursor ?? '')
+      setCustomLoading(false)
+    })
+    if (type === 'clear') {
+      setFilterDates(initialDates)
+    } else if (type === 'from') {
+      setFilterDates((prev) => ({ ...prev, fromDate: date }))
+    } else if (type === 'to') {
+      setFilterDates((prev) => ({ ...prev, toDate: date }))
     }
-  }, [isVisible])
+  }
 
-  // If the search value changes, to a valid National ID, refetch the data with the National ID
-  // Or if the search value changes from valid to invalid, refetch the data with empty National ID
-  React.useEffect(() => {
-    if (kennitala.isValid(searchNationalId)) {
-      setSentNationalId(searchNationalId)
-      setIsSearchingSSN(true)
+  const handleNationalIdChange = (value: string): void => {
+    setSearchNationalId(value)
+    if (kennitala.isValid(value)) {
       setSessionsData([])
-      setPage({ before: '', after: '' })
+      setCustomLoading(true)
+      refetch({
+        ...getQueryVariables(
+          '',
+          value,
+          filterDates.fromDate,
+          filterDates.toDate,
+        ),
+      }).then((res) => {
+        setSessionsData(res.data?.sessionsList.data as SessionsSession[])
+        setNextCursor(res.data?.sessionsList.pageInfo.endCursor ?? '')
+        setCustomLoading(false)
+      })
     } else if (
-      kennitala.isValid(prevSearchNationalId) &&
-      !kennitala.isValid(searchNationalId)
+      !kennitala.isValid(value) &&
+      kennitala.isValid(searchNationalId)
     ) {
-      setSentNationalId('')
-      setIsSearchingSSN(true)
       setSessionsData([])
-      setPage({ before: '', after: '' })
+      setCustomLoading(true)
+      refetch({
+        ...getQueryVariables('', '', filterDates.fromDate, filterDates.toDate),
+      }).then((res) => {
+        setSessionsData(res.data?.sessionsList.data as SessionsSession[])
+        setNextCursor(res.data?.sessionsList.pageInfo.endCursor ?? '')
+        setCustomLoading(false)
+      })
     }
-  }, [searchNationalId])
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
-  ): void => {
-    setPrevSearchNationalId(searchNationalId)
-    setSearchNationalId(e.target.value)
   }
 
   return (
     <>
       <IntroHeader
         title={formatMessage(m.sessions)}
-        intro={formatMessage(m.sessionsHeaderIntro)}
+        intro={formatMessage(
+          isCompany ? m.sessionsHeaderIntroCompany : m.sessionsHeaderIntro,
+        )}
       />
       <Box
         display="flex"
@@ -119,30 +184,39 @@ const Sessions = () => {
         alignItems="center"
         paddingBottom={[3, 3, 4, 4]}
       >
-        <GridColumn span={['12/12', '12/12', '12/12', '6/12', '4/12']}>
-          <Input
-            backgroundColor={'blue'}
-            maxLength={10}
-            type={'text'}
-            placeholder={formatMessage(m.search)}
-            name="filterInput"
-            value={searchNationalId}
-            size="sm"
-            icon={'search'}
-            iconType={'outline'}
-            onChange={handleChange}
-          />
-        </GridColumn>
+        <SessionFilter
+          fromDate={filterDates.fromDate}
+          toDate={filterDates.toDate}
+          handleDateChange={handleDateChange}
+          onNationalIdFilterChange={handleNationalIdChange}
+          nationalId={searchNationalId}
+          resultCount={
+            data?.sessionsList.totalCount ? data?.sessionsList.totalCount : 0
+          }
+        />
       </Box>
       {data ? (
-        <Fragment>
-          <Hidden below={'lg'}>
+        <InfiniteScroll
+          pageStart={0}
+          loadMore={loadMore}
+          hasMore={data?.sessionsList.pageInfo.hasNextPage}
+          loader={
+            <Box
+              key={'sessions.screens.sessions.loader'}
+              marginTop={'gutter'}
+              display={'flex'}
+              justifyContent={'center'}
+            >
+              {customLoading && <LoadingDots large />}
+            </Box>
+          }
+        >
+          {lg ? (
             <LogTable data={sessionsData} />
-          </Hidden>
-          <Hidden above={'md'}>
+          ) : (
             <LogTableMobile sessions={sessionsData} />
-          </Hidden>
-        </Fragment>
+          )}
+        </InfiniteScroll>
       ) : error ? (
         <Box display={'flex'} justifyContent={'center'}>
           <Text>{formatMessage(m.error)}</Text>
@@ -151,14 +225,6 @@ const Sessions = () => {
         <SkeletonLoader height={40} repeat={6} width={'100%'} />
       )}
       <ToastContainer />
-      <Box
-        marginTop={'gutter'}
-        display={'flex'}
-        justifyContent={'center'}
-        ref={ref}
-      >
-        {((loading && data) || isSearchingSSN) && <LoadingDots large />}
-      </Box>
     </>
   )
 }

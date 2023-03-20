@@ -117,13 +117,19 @@ export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
       return null
     }
 
-    const pass = await this.smartApi.generatePkPassUrl(
+    const pass = await this.smartApi.generatePkPass(
       payload,
       format(user.nationalId),
     )
 
     if (pass.ok) {
-      return pass.data
+      if (!pass.data.distributionUrl) {
+        this.logger.warn('Missing pkpass distribution url in adr license', {
+          category: LOG_CATEGORY,
+        })
+        return null
+      }
+      return pass.data.distributionUrl
     }
     /**
      * TODO: Leverage the extra error data SmartApi now returns in a future branch!
@@ -137,13 +143,19 @@ export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
     if (!payload) {
       return null
     }
-    const pass = await this.smartApi.generatePkPassQrCode(
+    const pass = await this.smartApi.generatePkPass(
       payload,
       format(user.nationalId),
     )
 
     if (pass.ok) {
-      return pass.data
+      if (!pass.data.distributionQRCode) {
+        this.logger.warn('Missing pkpass distribution qr code in adr license', {
+          category: LOG_CATEGORY,
+        })
+        return null
+      }
+      return pass.data.distributionUrl
     }
     /**
      * TODO: Leverage the extra error data SmartApi now returns in a future branch!

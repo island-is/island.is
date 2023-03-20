@@ -9,6 +9,7 @@ import { generateOutput } from './processing/rendering-pipeline'
 
 const Dev: EnvironmentConfig = {
   auroraHost: 'a',
+  redisHost: 'b',
   domain: 'staging01.devland.is',
   type: 'dev',
   featuresOn: [],
@@ -61,7 +62,7 @@ describe('Feature-deployment support', () => {
     const chart1 = new Kubernetes(Dev)
     const services = await generateOutput({
       runtime: chart1,
-      services: services1,
+      services: services1.included,
       outputFormat: renderers.helm,
       env: Dev,
     })

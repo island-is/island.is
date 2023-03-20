@@ -1,31 +1,28 @@
 import {
   Box,
   Text,
-  SkeletonLoader,
   AlertMessage,
   BulletList,
   Bullet,
   InputError,
 } from '@island.is/island-ui/core'
 import { FC, useState } from 'react'
-import { VehiclesCurrentVehicle } from '../../shared'
+import { VehiclesCurrentVehicleWithOwnerchangeChecks } from '../../shared'
 import { RadioController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { gql, useQuery } from '@apollo/client'
-import { GET_CURRENT_VEHICLES_WITH_OWNERCHANGE_CHECKS } from '../../graphql/queries'
-import { VehiclesCurrentVehicleWithOwnerchangeChecks } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { applicationCheck, information, error } from '../../lib/messages'
 
 interface Option {
   value: string
   label: React.ReactNode
+  disabled?: boolean
 }
 
 interface VehicleSearchFieldProps {
-  currentVehicleList: VehiclesCurrentVehicle[]
+  currentVehicleList: VehiclesCurrentVehicleWithOwnerchangeChecks[]
 }
 
 export const VehicleRadioField: FC<
@@ -46,21 +43,6 @@ export const VehicleRadioField: FC<
     getValueViaPath(application.answers, 'pickVehicle.type', undefined) as
       | string
       | undefined,
-  )
-
-  const { data, loading } = useQuery(
-    gql`
-      ${GET_CURRENT_VEHICLES_WITH_OWNERCHANGE_CHECKS}
-    `,
-    {
-      variables: {
-        input: {
-          showOwned: true,
-          showCoOwned: false,
-          showOperated: false,
-        },
-      },
-    },
   )
 
   const onRadioControllerSelect = (s: string) => {
@@ -138,6 +120,7 @@ export const VehicleRadioField: FC<
             )}
           </Box>
         ),
+        disabled: disabled,
       })
     }
     return options
@@ -145,41 +128,29 @@ export const VehicleRadioField: FC<
 
   return (
     <div>
-      {loading ? (
-        <SkeletonLoader
-          height={100}
-          space={2}
-          repeat={currentVehicleList.length}
-          borderRadius="large"
-        />
-      ) : (
-        <RadioController
-          id="pickVehicle.vehicle"
-          largeButtons
-          backgroundColor="blue"
-          onSelect={onRadioControllerSelect}
-          options={vehicleOptions(
-            data.currentVehiclesWithOwnerchangeChecks as VehiclesCurrentVehicleWithOwnerchangeChecks[],
-          )}
-        />
-      )}
+      <RadioController
+        id="pickVehicle.vehicle"
+        largeButtons
+        backgroundColor="blue"
+        onSelect={onRadioControllerSelect}
+        options={vehicleOptions(
+          currentVehicleList as VehiclesCurrentVehicleWithOwnerchangeChecks[],
+        )}
+      />
       <input
         type="hidden"
         value={plate}
-        ref={register({ required: true })}
-        name="pickVehicle.plate"
+        {...register('pickVehicle.plate', { required: true })}
       />
       <input
         type="hidden"
         value={color}
-        ref={register({ required: true })}
-        name="pickVehicle.color"
+        {...register('pickVehicle.color', { required: true })}
       />
       <input
         type="hidden"
         value={type}
-        ref={register({ required: true })}
-        name="pickVehicle.type"
+        {...register('pickVehicle.type', { required: true })}
       />
       {plate.length === 0 && errors && errors.pickVehicle && (
         <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />

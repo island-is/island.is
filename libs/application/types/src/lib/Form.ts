@@ -5,7 +5,7 @@ import { MessageDescriptor } from 'react-intl'
 
 import type { BoxProps } from '@island.is/island-ui/core/types'
 
-import { Field, RecordObject } from './Fields'
+import { Field, RecordObject, SubmitField } from './Fields'
 import { Condition } from './Condition'
 import { Application, FormValue } from './Application'
 import { TestSupport } from '@island.is/island-ui/utils'
@@ -17,10 +17,15 @@ export type SetBeforeSubmitCallback = (
 ) => void
 
 export type SetFieldLoadingState = Dispatch<SetStateAction<boolean>>
+export type SetSubmitButtonDisabled = Dispatch<SetStateAction<boolean>>
 
 export type StaticTextObject = MessageDescriptor & {
   values?: RecordObject<any>
 }
+
+export type GenericFormField<T> = Partial<
+  T & { id: string; initial: boolean; dummy?: boolean }
+>
 
 export type StaticText = StaticTextObject | string
 
@@ -120,6 +125,7 @@ export interface ExternalDataProvider extends FormItem {
   checkboxLabel?: StaticText
   subTitle?: StaticText
   description?: StaticText
+  submitField?: SubmitField
 }
 
 export interface DataProviderItem {
@@ -161,6 +167,7 @@ export interface FieldBaseProps<TAnswers = FormValue> {
   refetch?: () => void
   setBeforeSubmitCallback?: SetBeforeSubmitCallback
   setFieldLoadingState?: SetFieldLoadingState
+  setSubmitButtonDisabled?: SetSubmitButtonDisabled
 }
 
 export type RepeaterProps = {

@@ -15,6 +15,7 @@ import {
   DeleteFileMutationMutation,
   DeleteFileMutationMutationVariables,
   PresignedPost,
+  UploadPoliceCaseFileMutationMutation,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { UploadPoliceCaseFileMutation } from '@island.is/judicial-system-web/graphql'
 import { errors } from '@island.is/judicial-system-web/messages'
@@ -80,7 +81,9 @@ export const useS3Upload = (caseId: string) => {
     CreateFileMutationMutation,
     CreateFileMutationMutationVariables
   >(CreateFileMutationDocument)
-  const [uploadPoliceCaseFileMutation] = useMutation(
+  const [
+    uploadPoliceCaseFileMutation,
+  ] = useMutation<UploadPoliceCaseFileMutationMutation>(
     UploadPoliceCaseFileMutation,
   )
   const [deleteFileMutation] = useMutation<
@@ -91,7 +94,7 @@ export const useS3Upload = (caseId: string) => {
   const upload = useCallback(
     async (
       files: Array<[File, string]>,
-      updateFile: (file: TUploadFile, newId?: string) => void,
+      cb: (file: TUploadFile, newId?: string) => void,
       category?: CaseFileCategory,
       policeCaseNumber?: string,
     ) => {
@@ -114,7 +117,7 @@ export const useS3Upload = (caseId: string) => {
           const presignedPost = data.data.createPresignedPost
 
           await uploadToS3(file, presignedPost, (percent) => {
-            updateFile({
+            cb({
               id,
               name: file.name,
               percent,
@@ -139,7 +142,7 @@ export const useS3Upload = (caseId: string) => {
             throw Error('failed to add file to case')
           }
 
-          updateFile(
+          cb(
             {
               id: id,
               name: file.name,
@@ -151,7 +154,7 @@ export const useS3Upload = (caseId: string) => {
             data2.data.createFile.id,
           )
         } catch (e) {
-          updateFile({
+          cb({
             id: id,
             name: file.name,
             status: 'error',
@@ -164,7 +167,10 @@ export const useS3Upload = (caseId: string) => {
   )
 
   const uploadPoliceCaseFile = useCallback(
-    async (file: TUploadFile) => {
+    async (
+      file: TUploadFile,
+      cb: (file: TUploadFile, newId?: string) => void,
+    ) => {
       try {
         const {
           data: uploadPoliceCaseFileData,
@@ -178,7 +184,10 @@ export const useS3Upload = (caseId: string) => {
           },
         })
 
-        if (!uploadPoliceCaseFileData.uploadPoliceCaseFile) {
+        if (
+          !uploadPoliceCaseFileData ||
+          !uploadPoliceCaseFileData.uploadPoliceCaseFile
+        ) {
           throw Error('failed to upload police case file')
         }
 
@@ -189,6 +198,8 @@ export const useS3Upload = (caseId: string) => {
               type: 'application/pdf',
               key: uploadPoliceCaseFileData.uploadPoliceCaseFile.key,
               size: uploadPoliceCaseFileData.uploadPoliceCaseFile.size,
+              policeCaseNumber: file.policeCaseNumber,
+              category: file.category,
             },
           },
         })
@@ -196,6 +207,18 @@ export const useS3Upload = (caseId: string) => {
         if (!data2.data?.createFile.id) {
           throw Error('failed to add file to case')
         }
+
+        cb(
+          {
+            id: file.id,
+            name: file.name,
+            percent: 100,
+            status: 'done',
+            category: file.category,
+          },
+          // We need to set the id so we are able to delete the file later
+          data2.data.createFile.id,
+        )
 
         return uploadPoliceCaseFileData?.uploadPoliceCaseFile
       } catch (e) {
@@ -227,7 +250,26 @@ export const useS3Upload = (caseId: string) => {
     [deleteFileMutation, caseId],
   )
 
-  return { upload, uploadPoliceCaseFile, remove }
+  const generateSingleFileUpdate = useCallback(
+    (prevFiles: UploadFile[], displayFile: UploadFile, newId?: string) => {
+      const index = prevFiles.findIndex((f) => f.id === displayFile.id)
+      const displayFileWithId = {
+        ...displayFile,
+        id: newId ?? displayFile.id,
+      }
+
+      if (index === -1) {
+        return prevFiles
+      }
+
+      const next = [...prevFiles]
+      next[index] = displayFileWithId
+      return next
+    },
+    [],
+  )
+
+  return { upload, uploadPoliceCaseFile, remove, generateSingleFileUpdate }
 }
 
 export default useS3Upload

@@ -50,7 +50,6 @@ export class NotificationDispatchService {
     nationalId: string
     messageId: string
   }): Promise<void> {
-    // add user profile to readme and setup instructions
     const deviceTokensResponse = await this.userProfileApi.userTokenControllerGetDeviceTokens(
       { nationalId },
     )
@@ -95,6 +94,11 @@ export class NotificationDispatchService {
         ...(notification.dataCopy && { copy: notification.dataCopy }),
       },
     }
+
+    this.logger.info(`Notification content for message (${messageId})`, {
+      messageId,
+      ...notification,
+    })
 
     const {
       responses,

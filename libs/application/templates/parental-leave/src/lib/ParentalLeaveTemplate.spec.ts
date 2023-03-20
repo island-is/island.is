@@ -6,6 +6,7 @@ import {
   FormValue,
   DefaultEvents,
   ApplicationStatus,
+  ApplicationContext,
 } from '@island.is/application/types'
 import ParentalLeaveTemplate from './ParentalLeaveTemplate'
 import {
@@ -15,10 +16,12 @@ import {
   PARENTAL_LEAVE,
   SPOUSE,
   States as ApplicationStates,
+  States,
   YES,
 } from '../constants'
 
 import { createNationalId } from '@island.is/testing/fixtures'
+import { goToState } from './parentalLeaveTemplateUtils'
 
 function buildApplication(data: {
   answers?: FormValue
@@ -98,10 +101,8 @@ describe('Parental Leave Application Template', () => {
             otherParentObj: {
               otherParentId,
             },
-            employer: {
-              isSelfEmployed: 'no',
-            },
-            isRecivingUnemploymentBenefits: 'no',
+            isSelfEmployed: 'no',
+            isReceivingUnemploymentBenefits: 'no',
             applicationType: {
               option: PARENTAL_LEAVE,
             },
@@ -129,11 +130,9 @@ describe('Parental Leave Application Template', () => {
             otherParentObj: {
               otherParentId,
             },
-            employer: {
-              isSelfEmployed: 'no',
-            },
+            isSelfEmployed: 'no',
             selectedChild: '0',
-            isRecivingUnemploymentBenefits: 'no',
+            isReceivingUnemploymentBenefits: 'no',
             applicationType: {
               option: PARENTAL_LEAVE,
             },
@@ -176,11 +175,9 @@ describe('Parental Leave Application Template', () => {
             otherParentObj: {
               otherParentId,
             },
-            employer: {
-              isSelfEmployed: 'yes',
-            },
+            isSelfEmployed: 'yes',
             selectedChild: '0',
-            isRecivingUnemploymentBenefits: 'no',
+            isReceivingUnemploymentBenefits: 'no',
             applicationType: {
               option: PARENTAL_LEAVE,
             },
@@ -235,11 +232,13 @@ describe('Parental Leave Application Template', () => {
                 otherParentObj: {
                   chooseOtherParent: SPOUSE,
                 },
-                employer: {
-                  email: 'selfemployed@test.test',
-                  isSelfEmployed: YES,
-                },
-                isRecivingUnemploymentBenefits: 'no',
+                employers: [
+                  {
+                    email: 'selfemployed@test.test',
+                  },
+                ],
+                isSelfEmployed: YES,
+                isReceivingUnemploymentBenefits: 'no',
                 applicationType: {
                   option: PARENTAL_LEAVE,
                 },
@@ -269,10 +268,8 @@ describe('Parental Leave Application Template', () => {
                 usage: '33%',
                 useAsMuchAsPossible: NO,
               },
-              employer: {
-                isSelfEmployed: 'no',
-              },
-              isRecivingUnemploymentBenefits: 'no',
+              isSelfEmployed: 'no',
+              isReceivingUnemploymentBenefits: 'no',
               applicationType: {
                 option: PARENTAL_LEAVE,
               },
@@ -303,10 +300,8 @@ describe('Parental Leave Application Template', () => {
                 usage: '33%',
                 useAsMuchAsPossible: NO,
               },
-              employer: {
-                isSelfEmployed: 'no',
-              },
-              isRecivingUnemploymentBenefits: 'no',
+              isSelfEmployed: 'no',
+              isReceivingUnemploymentBenefits: 'no',
               applicationType: {
                 option: PARENTAL_LEAVE,
               },
@@ -335,10 +330,8 @@ describe('Parental Leave Application Template', () => {
                 usage: '0',
                 useAsMuchAsPossible: YES,
               },
-              employer: {
-                isSelfEmployed: 'no',
-              },
-              isRecivingUnemploymentBenefits: 'no',
+              isSelfEmployed: 'no',
+              isReceivingUnemploymentBenefits: 'no',
               applicationType: {
                 option: PARENTAL_LEAVE,
               },
@@ -348,6 +341,7 @@ describe('Parental Leave Application Template', () => {
         )
 
         const answer = {
+          usePersonalAllowance: YES,
           useAsMuchAsPossible: YES,
           usage: '100',
         }
@@ -378,6 +372,7 @@ describe('Parental Leave Application Template', () => {
         )
 
         const answer = {
+          usePersonalAllowance: YES,
           useAsMuchAsPossible: YES,
           usage: '100',
         }
@@ -406,10 +401,8 @@ describe('Parental Leave Application Template', () => {
                 privatePensionFundPercentage: '',
               },
               usePrivatePensionFund: NO,
-              employer: {
-                isSelfEmployed: 'no',
-              },
-              isRecivingUnemploymentBenefits: 'no',
+              isSelfEmployed: 'no',
+              isReceivingUnemploymentBenefits: 'no',
               applicationType: {
                 option: PARENTAL_LEAVE,
               },
@@ -448,10 +441,8 @@ describe('Parental Leave Application Template', () => {
                 privatePensionFundPercentage: '0',
               },
               useUnion: NO,
-              employer: {
-                isSelfEmployed: 'no',
-              },
-              isRecivingUnemploymentBenefits: 'no',
+              isSelfEmployed: 'no',
+              isReceivingUnemploymentBenefits: 'no',
               applicationType: {
                 option: PARENTAL_LEAVE,
               },
@@ -509,7 +500,7 @@ describe('Parental Leave Application Template', () => {
       expect(newApplication.answers.tempPeriods).toEqual(periods)
     })
 
-    it('should remove the temp copy of periods when canceling out of the Edit flow', () => {
+    it('should remove the temp copy of periods when canceling out of the Edit flow and go to APPROVED state', () => {
       const periods = [
         {
           ratio: '100',
@@ -527,6 +518,7 @@ describe('Parental Leave Application Template', () => {
           answers: {
             periods,
             tempPeriods: periods,
+            previousState: States.APPROVED,
           },
           state: ApplicationStates.EDIT_OR_ADD_PERIODS,
         }),
@@ -540,14 +532,76 @@ describe('Parental Leave Application Template', () => {
       expect(newApplication.answers.tempPeriods).toEqual(undefined)
     })
 
+    it('should remove the temp copy of periods when canceling out of the Edit flow and go to VINNUMALASTOFNUN_APPROVE_EDITS state', () => {
+      const periods = [
+        {
+          ratio: '100',
+          endDate: '2021-05-15T00:00:00Z',
+          startDate: '2021-01-15',
+        },
+        {
+          ratio: '100',
+          endDate: '2021-06-16',
+          startDate: '2021-06-01',
+        },
+      ]
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            periods,
+            tempPeriods: periods,
+            previousState: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+          },
+          state: ApplicationStates.EDIT_OR_ADD_PERIODS,
+        }),
+        ParentalLeaveTemplate,
+      )
+      const [hasChanged, newState, newApplication] = helper.changeState({
+        type: DefaultEvents.ABORT,
+      })
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS)
+      expect(newApplication.answers.tempPeriods).toEqual(undefined)
+    })
+
+    it('should remove the temp copy of periods when canceling out of the Edit flow and go to VINNUMALASTOFNUN_APPROVAL state', () => {
+      const periods = [
+        {
+          ratio: '100',
+          endDate: '2021-05-15T00:00:00Z',
+          startDate: '2021-01-15',
+        },
+        {
+          ratio: '100',
+          endDate: '2021-06-16',
+          startDate: '2021-06-01',
+        },
+      ]
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            periods,
+            tempPeriods: periods,
+            previousState: States.VINNUMALASTOFNUN_APPROVAL,
+          },
+          state: ApplicationStates.EDIT_OR_ADD_PERIODS,
+        }),
+        ParentalLeaveTemplate,
+      )
+      const [hasChanged, newState, newApplication] = helper.changeState({
+        type: DefaultEvents.ABORT,
+      })
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(ApplicationStates.VINNUMALASTOFNUN_APPROVAL)
+      expect(newApplication.answers.tempPeriods).toEqual(undefined)
+    })
+
     it('should assign the application to the employer when the user submits their edits', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           answers: {
-            employer: {
-              isSelfEmployed: 'no',
-            },
-            isRecivingUnemploymentBenefits: 'no',
+            isSelfEmployed: 'no',
+            isReceivingUnemploymentBenefits: 'no',
             applicationType: {
               option: PARENTAL_LEAVE,
             },
@@ -557,8 +611,7 @@ describe('Parental Leave Application Template', () => {
         ParentalLeaveTemplate,
       )
 
-      const VMST_ID = process.env.VMST_ID
-      const [hasChanged, newState, newApplication] = helper.changeState({
+      const [hasChanged, newState] = helper.changeState({
         type: DefaultEvents.SUBMIT,
       })
       expect(hasChanged).toBe(true)
@@ -722,3 +775,36 @@ describe('Parental Leave Application Template', () => {
     })
   })
 })
+
+test.each([
+  {
+    data: ({
+      application: { answers: { previousState: ApplicationStates.APPROVED } },
+    } as unknown) as ApplicationContext,
+    state: ApplicationStates.APPROVED,
+    expected: true,
+  },
+  {
+    data: ({
+      application: { answers: { previousState: ApplicationStates.APPROVED } },
+    } as unknown) as ApplicationContext,
+    state: ApplicationStates.EDIT_OR_ADD_PERIODS,
+    expected: false,
+  },
+  {
+    data: ({
+      application: {
+        answers: {
+          previousState: ApplicationStates.VINNUMALASTOFNUN_EDITS_ACTION,
+        },
+      },
+    } as unknown) as ApplicationContext,
+    state: ApplicationStates.VINNUMALASTOFNUN_EDITS_ACTION,
+    expected: true,
+  },
+])(
+  'should return true if previousState is equal to state',
+  ({ data, state, expected }) => {
+    expect(goToState(data, state)).toBe(expected)
+  },
+)

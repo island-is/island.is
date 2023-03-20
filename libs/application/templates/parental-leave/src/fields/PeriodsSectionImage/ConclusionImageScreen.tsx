@@ -14,7 +14,13 @@ import {
   otherParentApprovalDescription,
   requiresOtherParentApproval,
 } from '../../lib/parentalLeaveUtils'
-import { NO, PARENTAL_LEAVE, YES } from '../../constants'
+import {
+  NO,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  PARENTAL_LEAVE,
+  YES,
+} from '../../constants'
 
 import * as styles from './ConclusionImageScreen.css'
 
@@ -23,7 +29,9 @@ const ConclusionSectionImage: FC<FieldBaseProps> = ({ application }) => {
   const {
     isSelfEmployed,
     applicationType,
-    isRecivingUnemploymentBenefits,
+    isReceivingUnemploymentBenefits,
+    employerLastSixMonths,
+    employers,
   } = useApplicationAnswers(application)
   const navigate = useNavigate()
   const steps = [formatMessage(parentalLeaveFormMessages.finalScreen.step3)]
@@ -32,11 +40,25 @@ const ConclusionSectionImage: FC<FieldBaseProps> = ({ application }) => {
   const oldApplication = applicationType === undefined
   const isBeneficiaries = !oldApplication
     ? applicationType === PARENTAL_LEAVE
-      ? isRecivingUnemploymentBenefits === YES
+      ? isReceivingUnemploymentBenefits === YES
       : false
     : false
+  const isStillEmployed = employers?.some(
+    (employer) => employer.stillEmployed === YES,
+  )
 
   if (isSelfEmployed === NO && !isBeneficiaries) {
+    steps.unshift(
+      formatMessage(parentalLeaveFormMessages.reviewScreen.employerDesc),
+    )
+  }
+
+  if (
+    (applicationType === PARENTAL_GRANT ||
+      applicationType === PARENTAL_GRANT_STUDENTS) &&
+    employerLastSixMonths === YES &&
+    isStillEmployed
+  ) {
     steps.unshift(
       formatMessage(parentalLeaveFormMessages.reviewScreen.employerDesc),
     )

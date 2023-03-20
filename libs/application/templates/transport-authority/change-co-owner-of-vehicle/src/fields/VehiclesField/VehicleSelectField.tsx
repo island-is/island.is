@@ -10,15 +10,15 @@ import {
   BulletList,
   InputError,
 } from '@island.is/island-ui/core'
-import { VehiclesCurrentVehicle } from '../../shared'
+import {
+  VehiclesCurrentVehicle,
+  VehiclesCurrentVehicleWithOwnerchangeChecks,
+} from '../../shared'
 import { information, applicationCheck, error } from '../../lib/messages'
 import { SelectController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
-import {
-  GetVehicleDetailInput,
-  VehiclesCurrentVehicleWithOwnerchangeChecks,
-} from '@island.is/api/schema'
+import { GetVehicleDetailInput } from '@island.is/api/schema'
 import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
 
 interface VehicleSearchFieldProps {
@@ -199,20 +199,17 @@ export const VehicleSelectField: FC<
       <input
         type="hidden"
         value={plate}
-        ref={register({ required: true })}
-        name="pickVehicle.plate"
+        {...register('pickVehicle.plate', { required: true })}
       />
       <input
         type="hidden"
         value={color}
-        ref={register({ required: true })}
-        name="pickVehicle.color"
+        {...register('pickVehicle.color', { required: true })}
       />
       <input
         type="hidden"
         value={type}
-        ref={register({ required: true })}
-        name="pickVehicle.type"
+        {...register('pickVehicle.type', { required: true })}
       />
       {!isLoading && plate.length === 0 && errors && errors.pickVehicle && (
         <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />

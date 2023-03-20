@@ -12,7 +12,7 @@
     "target": "es2015",
     "module": "esnext",
     "typeRoots": ["node_modules/@types"],
-    "lib": ["es2019", "dom"],
+    "lib": ["es2019", "dom", "dom.iterable"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "allowSyntheticDefaultImports": true,
@@ -53,11 +53,17 @@
       ],
       "@island.is/api/domains/assets": ["libs/api/domains/assets/src/index.ts"],
       "@island.is/api/domains/auth": ["libs/api/domains/auth/src/index.ts"],
+      "@island.is/api/domains/auth-admin": [
+        "libs/api/domains/auth-admin/src/index.ts"
+      ],
       "@island.is/api/domains/communications": [
         "libs/api/domains/communications/src/index.ts"
       ],
       "@island.is/api/domains/company-registry": [
         "libs/api/domains/company-registry/src/index.ts"
+      ],
+      "@island.is/api/domains/consultation-portal": [
+        "libs/api/domains/consultation-portal/src/index.ts"
       ],
       "@island.is/api/domains/content-search": [
         "libs/api/domains/content-search/src/index.ts"
@@ -155,6 +161,9 @@
       "@island.is/api/domains/regulations": [
         "libs/api/domains/regulations/src/index.ts"
       ],
+      "@island.is/api/domains/regulations-admin": [
+        "libs/api/domains/regulations-admin/src/index.ts"
+      ],
       "@island.is/api/domains/sessions": [
         "libs/api/domains/sessions/src/index.ts"
       ],
@@ -182,6 +191,9 @@
       "@island.is/application/api/files": [
         "libs/application/api/files/src/index.ts"
       ],
+      "@island.is/application/api/history": [
+        "libs/application/api/history/src/index.ts"
+      ],
       "@island.is/application/api/payment": [
         "libs/application/api/payment/src/index.ts"
       ],
@@ -203,6 +215,9 @@
       ],
       "@island.is/application/templates/accident-notification": [
         "libs/application/templates/accident-notification/src/index.ts"
+      ],
+      "@island.is/application/templates/alcohol-tax-redemption": [
+        "libs/application/templates/alcohol-tax-redemption/src/index.ts"
       ],
       "@island.is/application/templates/announcement-of-death": [
         "libs/application/templates/announcement-of-death/src/index.ts"
@@ -382,6 +397,9 @@
         "libs/clients/air-discount-scheme/src/index.ts"
       ],
       "@island.is/clients/assets": ["libs/clients/assets/src/index.ts"],
+      "@island.is/clients/auth/admin-api": [
+        "libs/clients/auth/admin-api/src/index.ts"
+      ],
       "@island.is/clients/auth/delegation-api": [
         "libs/clients/auth/delegation-api/src/index.ts"
       ],
@@ -390,6 +408,9 @@
       ],
       "@island.is/clients/charge-fjs-v2": [
         "libs/clients/charge-fjs-v2/src/index.ts"
+      ],
+      "@island.is/clients/consultation-portal": [
+        "libs/clients/consultation-portal/src/index.ts"
       ],
       "@island.is/clients/criminal-record": [
         "libs/clients/criminal-record/src/index.ts"
@@ -429,6 +450,9 @@
       ],
       "@island.is/clients/identity": ["libs/clients/identity/src/index.ts"],
       "@island.is/clients/islykill": ["libs/clients/islykill/src/index.ts"],
+      "@island.is/clients/judicial-administration": [
+        "libs/clients/judicial-administration/src/index.ts"
+      ],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
       ],
@@ -448,6 +472,9 @@
       ],
       "@island.is/clients/regulations": [
         "libs/clients/regulations/src/index.ts"
+      ],
+      "@island.is/clients/regulations-admin": [
+        "libs/clients/regulations-admin/src/index.ts"
       ],
       "@island.is/clients/rsk/company-registry": [
         "libs/clients/rsk/company-registry/src/index.ts"
@@ -498,6 +525,7 @@
       "@island.is/cms-translations/test": [
         "libs/cms-translations/src/test/index.ts"
       ],
+      "@island.is/consultation-portal/*": ["apps/consultation-portal/*"],
       "@island.is/content-search-index-manager": [
         "libs/content-search-index-manager/src/index.ts"
       ],
@@ -579,13 +607,13 @@
       "@island.is/nest/audit": ["libs/nest/audit/src/index.ts"],
       "@island.is/nest/aws": ["libs/nest/aws/src/index.ts"],
       "@island.is/nest/config": ["libs/nest/config/src/index.ts"],
+      "@island.is/nest/core": ["libs/nest/core/src/index.ts"],
       "@island.is/nest/dataloader": ["libs/nest/dataloader/src/index.ts"],
       "@island.is/nest/feature-flags": ["libs/nest/feature-flags/src/index.ts"],
       "@island.is/nest/pagination": ["libs/nest/pagination/src/index.ts"],
       "@island.is/nest/problem": ["libs/nest/problem/src/index.ts"],
       "@island.is/nest/sequelize": ["libs/nest/sequelize/src/index.ts"],
       "@island.is/nest/swagger": ["libs/nest/swagger/src/index.ts"],
-      "@island.is/nest/validators": ["libs/nest/validators/src/index.ts"],
       "@island.is/next-ids-auth": ["libs/next-ids-auth/src/index.ts"],
       "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
       "@island.is/plausible": ["libs/plausible/src/index.ts"],
@@ -593,13 +621,23 @@
         "libs/portals/admin/air-discount-scheme/src/index.ts"
       ],
       "@island.is/portals/admin/core": ["libs/portals/admin/core/src/index.ts"],
+      "@island.is/portals/admin/document-provider": [
+        "libs/portals/admin/document-provider/src/index.ts"
+      ],
       "@island.is/portals/admin/icelandic-names-registry": [
         "libs/portals/admin/icelandic-names-registry/src/index.ts"
+      ],
+      "@island.is/portals/admin/ids-admin": [
+        "libs/portals/admin/ids-admin/src/index.ts"
+      ],
+      "@island.is/portals/admin/regulations-admin": [
+        "libs/portals/admin/regulations-admin/src/index.ts"
       ],
       "@island.is/portals/core": ["libs/portals/core/src/index.ts"],
       "@island.is/portals/shared-modules/delegations": [
         "libs/portals/shared-modules/delegations/src/index.ts"
       ],
+      "@island.is/react-spa/shared": ["libs/react-spa/shared/src/index.ts"],
       "@island.is/react/components": ["libs/react/components/src/index.ts"],
       "@island.is/react/feature-flags": [
         "libs/react/feature-flags/src/index.ts"
@@ -622,9 +660,6 @@
       "@island.is/service-portal/core": [
         "libs/service-portal/core/src/index.ts"
       ],
-      "@island.is/service-portal/document-provider": [
-        "libs/service-portal/document-provider/src/index.ts"
-      ],
       "@island.is/service-portal/documents": [
         "libs/service-portal/documents/src/index.ts"
       ],
@@ -646,9 +681,6 @@
       "@island.is/service-portal/eligibility": [
         "libs/service-portal/eligibility/src/index.ts"
       ],
-      "@island.is/service-portal/endorsements": [
-        "libs/service-portal/endorsements/src/index.ts"
-      ],
       "@island.is/service-portal/finance": [
         "libs/service-portal/finance/src/index.ts"
       ],
@@ -666,6 +698,9 @@
       ],
       "@island.is/service-portal/modules": [
         "libs/service-portal/modules/src/index.ts"
+      ],
+      "@island.is/service-portal/petitions": [
+        "libs/service-portal/petitions/src/index.ts"
       ],
       "@island.is/service-portal/sessions": [
         "libs/service-portal/sessions/src/index.ts"

@@ -7,12 +7,16 @@ import {
 } from '@island.is/application/types'
 import { ApplicationService as ApplicationApiService } from '@island.is/application/api/core'
 import { TemplateApiModuleActionProps } from '../../../../types'
+import { HistoryService } from '@island.is/application/api/history'
 
 type ApplicationInfo = Omit<Application, 'externalData'>
 
 @Injectable()
 export class ApplicationService extends BaseTemplateApiService {
-  constructor(private readonly applicationApiService: ApplicationApiService) {
+  constructor(
+    private readonly applicationApiService: ApplicationApiService,
+    private readonly historyService: HistoryService,
+  ) {
     super('Application')
   }
 

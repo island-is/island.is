@@ -9,37 +9,35 @@ import CoatOfArms from '../../assets/CoatOfArms'
 import { subSectionFiles } from './subSectionFiles'
 import { sectionOverview } from './sectionOverview'
 
-export const draft = (): Form => {
-  return buildForm({
-    id: 'AnnouncementOfDeathApplicationDraftForm',
-    title: '', // m.applicationTitle,
-    logo: CoatOfArms,
-    mode: FormModes.DRAFT,
-    renderLastScreenButton: true,
-    renderLastScreenBackButton: true,
-    children: [
-      buildSection({
-        id: 'roleConfirmation',
-        title: m.roleConfirmationSectionTitle,
-        children: [],
-      }),
-      buildSection({
-        id: 'externalData',
-        title: m.dataCollectionTitle,
-        children: [],
-      }),
-      buildSection({
-        id: 'info',
-        title: m.infoSectionTitle,
-        children: [
-          subSectionInfo,
-          subSectionWillAndTrade,
-          subSectionInheritance,
-          subSectionProperties,
-          subSectionFiles,
-        ],
-      }),
-      sectionOverview,
-    ],
-  })
-}
+export const draft: Form = buildForm({
+  id: 'AnnouncementOfDeathApplicationDraftForm',
+  title: m.applicationTitle,
+  logo: CoatOfArms,
+  mode: FormModes.DRAFT,
+  renderLastScreenButton: true,
+  renderLastScreenBackButton: true,
+  children: [
+    buildSection({
+      id: 'roleConfirmation',
+      title: m.roleConfirmationSectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'externalData',
+      title: m.dataCollectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'info',
+      title: m.infoSectionTitle,
+      children: [
+        subSectionInfo,
+        subSectionWillAndTrade,
+        subSectionInheritance,
+        subSectionProperties,
+        subSectionFiles,
+      ],
+    }),
+    sectionOverview,
+  ],
+})

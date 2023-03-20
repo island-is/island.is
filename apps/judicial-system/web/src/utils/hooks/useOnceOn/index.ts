@@ -5,7 +5,6 @@ const useOnceOn = (condition: boolean, callback: () => void) => {
 
   useEffect(() => {
     if (condition && !hasRun.current) {
-      console.log('running once')
       hasRun.current = true
       callback()
     }

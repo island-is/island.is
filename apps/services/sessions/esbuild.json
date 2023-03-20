@@ -22,6 +22,7 @@
     "graphql",
     "pg",
     "winston",
+    "util-deprecate",
     "source-map-resolve",
     "atob",
     "logform",
@@ -55,7 +56,8 @@
     "url-parse-lax",
     "safer-buffer",
     "ioredis",
-    "bull"
+    "bull",
+    "geoip-lite"
   ],
   "keepNames": true
 }

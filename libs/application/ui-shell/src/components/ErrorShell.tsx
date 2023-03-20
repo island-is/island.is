@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 
 import {
   Box,
@@ -21,12 +21,6 @@ import {
 import * as styles from '../lib/FormShell.css'
 import Markdown from 'markdown-to-jsx'
 import { NotebookIllustration } from '../assets/NotebookIllustration'
-
-type ApplicationErrorModel = {
-  title: StaticText
-  subTitle: StaticText
-  description: StaticText
-}
 
 const messageTypes = {
   notFound: {
@@ -75,6 +69,8 @@ export const ErrorShell: FC<Props> = ({
         alignItems="center"
         justifyContent="center"
         paddingBottom={20}
+        paddingTop={[5, 5, 0]}
+        paddingX={[3, 3, 0]}
         marginX="auto"
       >
         <Columns collapseBelow="lg">

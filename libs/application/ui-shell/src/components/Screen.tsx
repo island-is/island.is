@@ -18,6 +18,7 @@ import {
   FormValue,
   Schema,
   BeforeSubmitCallback,
+  Section,
 } from '@island.is/application/types'
 import {
   Box,
@@ -52,6 +53,7 @@ import RefetchContext from '../context/RefetchContext'
 
 type ScreenProps = {
   activeScreenIndex: number
+  sections: Section[]
   addExternalData(data: ExternalData): void
   application: Application
   answerAndGoToNextScreen(answers: FormValue): void
@@ -98,6 +100,7 @@ const Screen: FC<ScreenProps> = ({
   renderLastScreenButton,
   renderLastScreenBackButton,
   screen,
+  sections,
 }) => {
   const { answers: formValue, externalData, id: applicationId } = application
   const { lang: locale, formatMessage } = useLocale()
@@ -137,7 +140,11 @@ const Screen: FC<ScreenProps> = ({
       onError: (e) => handleServerError(e, formatMessage),
     },
   )
-  const { handleSubmit, errors: formErrors, reset } = hookFormData
+  const {
+    handleSubmit,
+    formState: { errors: formErrors },
+    reset,
+  } = hookFormData
 
   const submitField = useMemo(() => findSubmitField(screen), [screen])
 
@@ -162,6 +169,7 @@ const Screen: FC<ScreenProps> = ({
   }
 
   const goBack = useCallback(() => {
+    setSubmitButtonDisabled(false)
     // using deepmerge to prevent some weird react-hook-form read-only bugs
     reset(deepmerge({}, formValue))
     prevScreen()
@@ -182,7 +190,6 @@ const Screen: FC<ScreenProps> = ({
         if (typeof possibleError === 'string' && screen && screen.id) {
           setBeforeSubmitError({ [screen.id]: possibleError })
         }
-
         return
       }
     }
@@ -226,32 +233,14 @@ const Screen: FC<ScreenProps> = ({
         screen,
       )
 
-      let finishedSteps = 0
-      // Defaulting to 5 to show some steps for user experience if the user has not yet finished the first screen
-      let stepsTotal = 5
-
-      if (mode === FormModes.DRAFT) {
-        if (totalDraftScreens === undefined) {
-          // +1 because its index in array and starts at 0
-          finishedSteps = activeScreenIndex + 1
-          // -1 because its a length of an array and starts at 1
-          // and we dont want to count the last screen as a step
-          // because its just the conclusion screen
-          stepsTotal = numberOfScreens - 1
-        } else {
-          finishedSteps = currentDraftScreen ?? 0
-          stepsTotal = totalDraftScreens
-        }
-      }
-
       response = await updateApplication({
         variables: {
           input: {
             id: applicationId,
             answers: extractedAnswers,
             draftProgress: {
-              stepsFinished: finishedSteps,
-              totalSteps: stepsTotal,
+              stepsFinished: currentDraftScreen ?? screen.sectionIndex,
+              totalSteps: totalDraftScreens ?? sections.length - 1,
             },
           },
           locale,
@@ -267,6 +256,7 @@ const Screen: FC<ScreenProps> = ({
   }
 
   const [isMobile, setIsMobile] = useState(false)
+  const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false)
   const { width } = useWindowSize()
   const headerHeight = 85
 
@@ -308,7 +298,7 @@ const Screen: FC<ScreenProps> = ({
           {},
           {
             ...formValue,
-            [screen.id]: newRepeaterItems as Answer[],
+            [screen.id]: newRepeaterItems as FormValue[],
           },
         ),
       )
@@ -369,6 +359,7 @@ const Screen: FC<ScreenProps> = ({
                 application={application}
                 goToScreen={goToScreen}
                 refetch={refetch}
+                setSubmitButtonDisabled={setSubmitButtonDisabled}
               />
             ) : screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER ? (
               <FormExternalDataProvider
@@ -392,6 +383,7 @@ const Screen: FC<ScreenProps> = ({
                   application={application}
                   goToScreen={goToScreen}
                   refetch={refetch}
+                  setSubmitButtonDisabled={setSubmitButtonDisabled}
                 />
               </Box>
             )}
@@ -401,6 +393,7 @@ const Screen: FC<ScreenProps> = ({
         <ToastContainer hideProgressBar closeButton useKeyframeStyles={false} />
 
         <ScreenFooter
+          submitButtonDisabled={submitButtonDisabled}
           application={application}
           renderLastScreenButton={renderLastScreenButton}
           renderLastScreenBackButton={renderLastScreenBackButton}

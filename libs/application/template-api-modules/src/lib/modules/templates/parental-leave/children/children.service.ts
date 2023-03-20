@@ -90,6 +90,17 @@ export class ChildrenService {
         nationalId,
       )
 
+      if (
+        child.parentalRelation === ParentalRelations.secondary &&
+        child.expectedDateOfBirth === 'N/A' &&
+        child.primaryParentNationalRegistryId === 'N/A'
+      ) {
+        throw new TemplateApiError(
+          parentalLeaveFormMessages.shared.noConsentToSeeInfromationError,
+          500,
+        )
+      }
+
       if (!parentalLeavesEntitlements) {
         throw new TemplateApiError(
           parentalLeaveFormMessages.shared.childrenError,
@@ -97,17 +108,17 @@ export class ChildrenService {
         )
       }
 
-      const transferredDays =
-        child.transferredDays === undefined ? 0 : child.transferredDays
+      const transferredDays: number = child.transferredDays ?? 0
 
-      const multipleBirthsDays =
-        child.multipleBirthsDays === undefined ? 0 : child.multipleBirthsDays
+      const multipleBirthsDays: number = child.multipleBirthsDays ?? 0
 
       // Transferred days are only added to remaining days for secondary parents
       // since the primary parent makes the choice for them
       const remainingDays =
         calculateRemainingNumberOfDays(
-          child.expectedDateOfBirth,
+          child.expectedDateOfBirth === ''
+            ? child.adoptionDate!
+            : child.expectedDateOfBirth,
           parentalLeavesAndPregnancyStatus.getParentalLeaves,
           parentalLeavesEntitlements,
         ) +
@@ -125,7 +136,7 @@ export class ChildrenService {
 
     if (children.length <= 0 && existingApplications.length <= 0) {
       // Instead of throwing error, ask applicant questions
-      // father without mother application
+      // foster care or father without mother
 
       return {
         children: [],
@@ -172,6 +183,17 @@ export class ChildrenService {
         )
       }
 
+      if (
+        children.parentalRelation === ParentalRelations.secondary &&
+        children.expectedDateOfBirth === 'N/A' &&
+        children.primaryParentNationalRegistryId === 'N/A'
+      ) {
+        throw new TemplateApiError(
+          parentalLeaveFormMessages.shared.noConsentToSeeInfromationError,
+          500,
+        )
+      }
+
       return {
         children: [children],
         existingApplications: [],
@@ -195,20 +217,34 @@ export class ChildrenService {
     const children: ChildInformation[] = []
 
     for (const child of childrenWhereOtherParent) {
+      if (
+        child.parentalRelation === ParentalRelations.secondary &&
+        child.expectedDateOfBirth === 'N/A' &&
+        child.primaryParentNationalRegistryId === 'N/A'
+      ) {
+        throw new TemplateApiError(
+          parentalLeaveFormMessages.shared.noConsentToSeeInfromationError,
+          500,
+        )
+      }
       const parentalLeavesEntitlements: ParentalLeaveEntitlement = {
         independentMonths: 6,
         transferableMonths: 0,
       }
 
-      const transferredDays: number =
-        child.transferredDays === undefined ? 0 : child.transferredDays
+      const transferredDays: number = child.transferredDays ?? 0
+      const multipleBirthsDays: number = child.multipleBirthsDays ?? 0
 
       const remainingDays =
         calculateRemainingNumberOfDays(
-          child.expectedDateOfBirth,
+          child.expectedDateOfBirth === ''
+            ? child.adoptionDate!
+            : child.expectedDateOfBirth,
           [],
           parentalLeavesEntitlements,
-        ) + transferredDays
+        ) +
+        transferredDays +
+        multipleBirthsDays
 
       children.push({
         ...child,

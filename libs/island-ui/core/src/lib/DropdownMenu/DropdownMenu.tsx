@@ -1,17 +1,18 @@
-import React, { ReactElement } from 'react'
-import {
-  useMenuState,
-  Menu,
-  MenuItem,
-  MenuButton,
-  MenuStateReturn,
-} from 'reakit/Menu'
 import cn from 'classnames'
+import React, { MouseEvent, ReactElement } from 'react'
+import {
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuStateReturn,
+  useMenuState,
+} from 'reakit/Menu'
 import { useBoxStyles } from '../Box/useBoxStyles'
 import { Button, ButtonProps } from '../Button/Button'
 import { getTextStyles } from '../Text/Text'
 
 import * as styles from './DropdownMenu.css'
+import { useMenuHoverProps } from './useMenuHoverProps'
 
 export interface DropdownMenuProps {
   /**
@@ -20,7 +21,7 @@ export interface DropdownMenuProps {
   menuLabel?: string
   items: {
     href?: string
-    onClick?: (menu: MenuStateReturn) => void
+    onClick?: (event: MouseEvent<HTMLElement>, menu: MenuStateReturn) => void
     title: string
     noStyle?: boolean
     render?: (
@@ -39,6 +40,7 @@ export interface DropdownMenuProps {
   icon?: ButtonProps['icon']
   disclosure?: ReactElement
   menuClassName?: string
+  openOnHover?: boolean
 }
 
 export const DropdownMenu = ({
@@ -48,8 +50,10 @@ export const DropdownMenu = ({
   icon,
   disclosure,
   menuClassName,
+  openOnHover = false,
 }: DropdownMenuProps) => {
   const menu = useMenuState({ placement: 'bottom', gutter: 8 })
+  const hoverProps = useMenuHoverProps(menu, openOnHover)
   const menuBoxStyle = useBoxStyles({
     component: 'div',
     background: 'white',
@@ -73,11 +77,17 @@ export const DropdownMenu = ({
   return (
     <>
       {disclosure ? (
-        <MenuButton {...menu} {...disclosure.props}>
+        <MenuButton {...menu} {...disclosure.props} {...hoverProps}>
           {(disclosureProps) => React.cloneElement(disclosure, disclosureProps)}
         </MenuButton>
       ) : (
-        <MenuButton as={Button} variant="utility" icon={icon} {...menu}>
+        <MenuButton
+          as={Button}
+          variant="utility"
+          icon={icon}
+          {...menu}
+          {...hoverProps}
+        >
           {title}
         </MenuButton>
       )}
@@ -85,6 +95,7 @@ export const DropdownMenu = ({
         {...menu}
         aria-label={menuLabel}
         className={cn(styles.menu, menuBoxStyle, menuClassName)}
+        {...hoverProps}
       >
         {items.map((item, index) => {
           let anchorProps = {}
@@ -105,9 +116,9 @@ export const DropdownMenu = ({
               {...menu}
               {...anchorProps}
               key={index}
-              onClick={() => {
+              onClick={(event) => {
                 if (item.onClick) {
-                  item.onClick(menu)
+                  item.onClick(event, menu)
                 }
               }}
               className={cn({ [classNames]: !item.noStyle })}

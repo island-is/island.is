@@ -78,6 +78,13 @@ export class Session extends Model<
   })
   ip!: string
 
+  @ApiPropertyOptional()
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  ipLocation?: string
+
   @CreatedAt
   readonly created!: CreationOptional<Date>
 }

@@ -7,22 +7,15 @@ import { TagVariant } from '@island.is/island-ui/core'
 import { MessageDescriptor } from '@formatjs/intl'
 import { z } from 'zod'
 
-export type ReviewCoOwnerAndOperatorField = {
-  nationalId: string
-  name: string
-  email: string
-  phone: string
-  type: 'operator' | 'coOwner'
-  approved?: boolean
-}
-
 export interface ReviewScreenProps {
   setStep?: (s: ReviewState) => void
   setInsurance?: (s: string) => void
   insurance?: string
   reviewerNationalId?: string
-  setCoOwnersAndOperators?: (s: ReviewCoOwnerAndOperatorField[]) => void
-  coOwnersAndOperators?: ReviewCoOwnerAndOperatorField[]
+  setCoOwnersAndOperators?: (s: CoOwnerAndOperator[]) => void
+  coOwnersAndOperators?: CoOwnerAndOperator[]
+  setMainOperator?: (s: string) => void
+  mainOperator?: string
 }
 
 export type ReviewState =
@@ -30,6 +23,7 @@ export type ReviewState =
   | 'overview'
   | 'conclusion'
   | 'addPeople'
+  | 'mainOperator'
   | 'insurance'
 
 export type UserInformation = z.TypeOf<typeof UserInformationSchema>
@@ -64,4 +58,18 @@ export type VehiclesCurrentVehicle = {
   make?: string
   color?: string
   role?: string
+}
+
+type VehicleValidationErrorMessage = {
+  errorNo?: string | null
+  defaultMessage?: string | null
+}
+
+export type VehiclesCurrentVehicleWithOwnerchangeChecks = {
+  permno?: string
+  make?: string
+  color?: string
+  role?: string
+  isDebtLess?: boolean | null
+  validationErrorMessages?: VehicleValidationErrorMessage[] | null
 }

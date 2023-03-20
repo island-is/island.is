@@ -4,6 +4,7 @@ import type {
   InputBackgroundColor,
   BoxProps,
   SpanType,
+  IconProps,
 } from '@island.is/island-ui/core/types'
 
 import { ApolloClient } from '@apollo/client'
@@ -287,7 +288,7 @@ export interface MessageWithLinkButtonField extends BaseField {
 export interface ExpandableDescriptionField extends BaseField {
   readonly type: FieldTypes.EXPANDABLE_DESCRIPTION
   component: FieldComponents.EXPANDABLE_DESCRIPTION
-  introText?: FormText
+  introText?: StaticText
   description: StaticText
   startExpanded?: boolean
 }
@@ -304,6 +305,7 @@ export interface LinkField extends BaseField {
   component: FieldComponents.LINK
   s3key?: FormText
   link?: string
+  iconProps?: Pick<IconProps, 'icon' | 'type'>
 }
 
 export type Field =

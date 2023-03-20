@@ -8,6 +8,7 @@ import {
   FormFooter,
   PageLayout,
   ProsecutorCaseInfo,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   IndictmentsProsecutorSubsections,
@@ -19,7 +20,11 @@ import {
   processing as m,
 } from '@island.is/judicial-system-web/messages'
 import { Box, Text } from '@island.is/island-ui/core'
-import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  CaseTransition,
+  Feature,
+} from '@island.is/judicial-system/types'
 import {
   useCase,
   useInstitution,
@@ -27,6 +32,8 @@ import {
 import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'
 import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
+import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { ProsecutorSection, SelectCourt } from '../../components'
@@ -42,6 +49,13 @@ const Processing: React.FC = () => {
   const { formatMessage } = useIntl()
   const { courts } = useInstitution()
   const router = useRouter()
+  const { features } = useContext(FeatureContext)
+  const { user } = useContext(UserContext)
+
+  const isTrafficViolationCaseCheck =
+    (features.includes(Feature.INDICTMENT_ROUTE) ||
+      user?.name === 'Árni Bergur Sigurðsson') &&
+    isTrafficViolationCase(workingCase.indictmentSubtypes)
 
   const handleCourtChange = (court: Institution) => {
     if (workingCase) {
@@ -118,7 +132,11 @@ const Processing: React.FC = () => {
           previousUrl={`${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
           onNextButtonClick={() =>
-            handleNavigationTo(constants.INDICTMENTS_CASE_FILES_ROUTE)
+            handleNavigationTo(
+              isTrafficViolationCaseCheck
+                ? constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE
+                : constants.INDICTMENTS_CASE_FILES_ROUTE,
+            )
           }
         />
       </FormContentContainer>

@@ -114,12 +114,18 @@ export class GenericMachineLicenseService
       return null
     }
 
-    const pass = await this.smartApi.generatePkPassUrl(
+    const pass = await this.smartApi.generatePkPass(
       payload,
       format(user.nationalId),
     )
     if (pass.ok) {
-      return pass.data
+      if (!pass.data.distributionUrl) {
+        this.logger.warn('Missing pkpass distribution url in machine license', {
+          category: LOG_CATEGORY,
+        })
+        return null
+      }
+      return pass.data.distributionUrl
     }
     /**
      * TODO: Leverage the extra error data SmartApi now returns in a future branch!
@@ -138,12 +144,21 @@ export class GenericMachineLicenseService
       return null
     }
 
-    const pass = await this.smartApi.generatePkPassQrCode(
+    const pass = await this.smartApi.generatePkPass(
       payload,
       format(user.nationalId),
     )
     if (pass.ok) {
-      return pass.data
+      if (!pass.data.distributionQRCode) {
+        this.logger.warn(
+          'Missing pkpass distribution qr code in machine license',
+          {
+            category: LOG_CATEGORY,
+          },
+        )
+        return null
+      }
+      return pass.data.distributionQRCode
     }
     /**
      * TODO: Leverage the extra error data SmartApi now returns in a future branch!

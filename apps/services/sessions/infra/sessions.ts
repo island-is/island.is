@@ -18,10 +18,11 @@ const workerPostgresInfo = {
   passwordSecret: '/k8s/services-sessions/DB_PASSWORD',
 }
 
-export const serviceSetup = (): ServiceBuilder<'services-sessions'> => {
-  return service('services-sessions')
+export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
+  service('services-sessions')
     .namespace(namespace)
     .image(imageName)
+    .redis()
     .postgres(servicePostgresInfo)
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
@@ -29,34 +30,23 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions'> => {
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
-      REDIS_URL_NODE_01: {
-        dev: json([
-          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
-        ]),
-        staging: json([
-          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
-        ]),
-        prod: json([
-          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
-        ]),
-      },
       REDIS_USE_SSL: 'true',
     })
     .readiness('/liveness')
     .liveness('/liveness')
     .replicaCount({
-      default: 2,
-      min: 2,
+      default: 1,
+      min: 1,
       max: 10,
     })
     .resources({
       limits: {
         cpu: '400m',
-        memory: '256Mi',
+        memory: '512Mi',
       },
       requests: {
         cpu: '100m',
-        memory: '128Mi',
+        memory: '256Mi',
       },
     })
     .ingress({
@@ -70,13 +60,13 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions'> => {
         public: false,
       },
     })
-    .grantNamespaces('nginx-ingress-internal', 'identity-server')
-}
+    .grantNamespaces('nginx-ingress-internal', 'islandis', 'identity-server')
 
 export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
   service('services-sessions-worker')
     .image(imageName)
     .namespace(namespace)
+    .redis()
     .serviceAccount('sessions-worker')
     .command('node')
     .args('main.js', '--job=worker')
@@ -90,22 +80,21 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
     })
     .liveness('/liveness')
     .readiness('/liveness')
+    .resources({
+      limits: {
+        cpu: '400m',
+        memory: '512Mi',
+      },
+      requests: {
+        cpu: '100m',
+        memory: '256Mi',
+      },
+    })
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
-      },
-      REDIS_URL_NODE_01: {
-        dev: json([
-          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
-        ]),
-        staging: json([
-          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
-        ]),
-        prod: json([
-          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
-        ]),
       },
       REDIS_USE_SSL: 'true',
     })
