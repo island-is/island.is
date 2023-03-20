@@ -610,17 +610,6 @@ export function formatCustodyRestrictions(
   })
 }
 
-export function formatRulingModifiedHistory(
-  rulingModifiedHistory: string | undefined,
-  newRulingDate: Date,
-  judgeName?: string,
-  judgeTitle?: string,
-): string {
-  const history = rulingModifiedHistory ? `${rulingModifiedHistory}\n\n` : ''
-  const dateFormated = capitalize(formatDate(newRulingDate, 'PPPPp') || '')
-  return `${history}${dateFormated} - ${judgeName} ${judgeTitle}`
-}
-
 export function formatDefenderAssignedEmailNotification(
   formatMessage: FormatMessage,
   theCase: Case,

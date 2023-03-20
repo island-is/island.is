@@ -111,12 +111,17 @@ export const HearingArrangements: React.FC = () => {
         setWorkingCase,
       )
 
+      const isCorrectingRuling = workingCase.notifications?.some(
+        (notification) => notification.type === NotificationType.RULING,
+      )
+
       if (
-        hasSentNotification(
+        isCorrectingRuling ||
+        (hasSentNotification(
           NotificationType.COURT_DATE,
           workingCase.notifications,
         ) &&
-        !courtDateHasChanged
+          !courtDateHasChanged)
       ) {
         router.push(`${destination}/${workingCase.id}`)
       } else {

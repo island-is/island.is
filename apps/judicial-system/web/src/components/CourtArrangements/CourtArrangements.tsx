@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import compareAsc from 'date-fns/compareAsc'
 
 import { Box, Input } from '@island.is/island-ui/core'
+import { NotificationType } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { NotificationType } from '@island.is/judicial-system/types'
 
@@ -66,6 +67,10 @@ export const CourtArrangements: React.FC<Props> = (props) => {
   } = props
   const { updateCase } = useCase()
 
+  const isCorrectingRuling = workingCase.notifications?.some(
+    (notification) => notification.type === NotificationType.RULING,
+  )
+
   return (
     <BlueBox>
       <Box marginBottom={2}>
@@ -76,6 +81,7 @@ export const CourtArrangements: React.FC<Props> = (props) => {
           onChange={handleCourtDateChange}
           blueBox={false}
           required
+          disabled={isCorrectingRuling}
         />
       </Box>
       <Input
@@ -103,6 +109,7 @@ export const CourtArrangements: React.FC<Props> = (props) => {
             updateCase,
           )
         }
+        disabled={isCorrectingRuling}
       />
     </BlueBox>
   )
