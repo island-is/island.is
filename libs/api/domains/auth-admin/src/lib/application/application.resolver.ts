@@ -15,6 +15,7 @@ import { ApplicationsPayload } from './dto/applications-payload'
 import { Application } from './models/application.model'
 import { ApplicationEnvironment } from './models/applications-environment.model'
 import { CreateApplicationInput } from './dto/createApplication.input'
+import { ApplicationsInput } from './dto/applications.input'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Application)
@@ -22,16 +23,19 @@ export class ApplicationResolver {
   constructor(private readonly applicationsService: ApplicationsService) {}
 
   @Query(() => ApplicationsPayload, { name: 'authAdminApplications' })
-  getApplications(@Args('tenantId') tenantId: string) {
-    return this.applicationsService.getApplications(tenantId)
+  getApplications(@Args('input') input: ApplicationsInput) {
+    return this.applicationsService.getApplications(
+      input.tenantId,
+      input.applicationId,
+    )
   }
 
   @Mutation(() => Application, { name: 'createAuthAdminApplication' })
-  createClient(
+  createApplication(
     @Args('input', { type: () => CreateApplicationInput })
     input: CreateApplicationInput,
   ) {
-    return this.applicationsService.createClient(input)
+    return this.applicationsService.createApplication(input)
   }
 
   @ResolveField('defaultEnvironment', () => ApplicationEnvironment)

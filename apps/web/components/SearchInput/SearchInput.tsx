@@ -19,6 +19,7 @@ import {
   Text,
   Stack,
   Link,
+  AsyncSearchInputProps,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 import {
@@ -32,10 +33,11 @@ import {
   News,
 } from '@island.is/web/graphql/schema'
 
-import * as styles from './SearchInput.css'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { trackSearchQuery } from '@island.is/plausible'
+
+import * as styles from './SearchInput.css'
 
 const DEBOUNCE_TIMER = 150
 const STACK_WIDTH = 400
@@ -310,7 +312,7 @@ export const SearchInput = forwardRef<
               onBlur,
               'aria-label': locale === 'is' ? 'Leita' : 'Search',
             }}
-            inputProps={getInputProps({
+            inputProps={getInputProps<AsyncSearchInputProps['inputProps']>({
               inputSize: size,
               onFocus: () => {
                 onFocus()

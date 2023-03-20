@@ -104,8 +104,7 @@ export const CoOwnerRepeaterItem: FC<Props & FieldBaseProps> = ({
         <input
           type="hidden"
           value={repeaterField.wasRemoved}
-          ref={register({ required: true })}
-          name={wasRemovedField}
+          {...register(wasRemovedField, { required: true })}
         />
       </GridRow>
     </Box>
