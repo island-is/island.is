@@ -193,11 +193,6 @@ const Item = ({
           },
         },
       })
-    } else if (
-      name !== '' &&
-      (!foreignCitizenship || foreignCitizenship.length == 0)
-    ) {
-      setValue(nameField, '')
     }
   }, [getIdentity, name, nameField, nationalIdInput, setValue])
 
