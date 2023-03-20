@@ -87,7 +87,7 @@ export const spmm = defineMessages({
   },
   userFamilyMembersOnNumber: {
     id: 'sp.family:user-famly-on-nr',
-    defaultMessage: 'Einstaklingar á fjölskyldunúmerinu mínu',
+    defaultMessage: 'Einstaklingar með sömu lögheimilistengsl',
   },
   childRegisterSuccess: {
     id: 'sp.family:child-registration-generic-success',
@@ -125,6 +125,18 @@ export const spmm = defineMessages({
   childRegisterSend: {
     id: 'sp.family:child-registration-send',
     defaultMessage: 'Senda tilkynningu',
+  },
+  givenName: {
+    id: 'sp.family:person-given-name',
+    defaultMessage: 'Eiginnafn',
+  },
+  middleName: {
+    id: 'sp.family:person-middle-name',
+    defaultMessage: 'Millinafn',
+  },
+  lastName: {
+    id: 'sp.family:person-last-name',
+    defaultMessage: 'Kenninafn',
   },
 })
 
