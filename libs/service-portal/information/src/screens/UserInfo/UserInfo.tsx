@@ -1,6 +1,7 @@
 import React from 'react'
 import { defineMessage } from 'react-intl'
 import { checkDelegation } from '@island.is/shared/utils'
+import { info } from 'kennitala'
 
 import { useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
@@ -48,6 +49,7 @@ const SubjectInfo = () => {
     },
   )
   const { nationalRegistryFamily } = famData || {}
+  const isUserAdult = info(userInfo.profile.nationalId).age >= 18
   return (
     <>
       <IntroHeader title={userInfo.profile.name} intro={spmm.userInfoDesc} />
@@ -111,25 +113,29 @@ const SubjectInfo = () => {
           tooltip={formatMessage({
             id: 'sp.family:family-number-tooltip',
             defaultMessage:
-              'Fjölskyldunúmer er samtenging á milli einstaklinga á lögheimili, en veitir ekki upplýsingar um hverjir eru foreldrar barns eða forsjáraðilar.',
+              'Lögheimilistengsl er samtenging á milli einstaklinga á lögheimili, en veitir ekki upplýsingar um hverjir eru foreldrar barns eða forsjáraðilar.',
           })}
         />
-        <Divider />
-        <UserInfoLine
-          label={m.maritalStatus}
-          content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : nationalRegistryUser?.maritalStatus
-              ? formatMessage(
-                  natRegMaritalStatusMessageDescriptorRecord[
-                    nationalRegistryUser?.maritalStatus
-                  ],
-                )
-              : ''
-          }
-          loading={loading}
-        />
+        {isUserAdult ? (
+          <>
+            <Divider />
+            <UserInfoLine
+              label={m.maritalStatus}
+              content={
+                error
+                  ? formatMessage(dataNotFoundMessage)
+                  : nationalRegistryUser?.maritalStatus
+                  ? formatMessage(
+                      natRegMaritalStatusMessageDescriptorRecord[
+                        nationalRegistryUser?.maritalStatus
+                      ],
+                    )
+                  : ''
+              }
+              loading={loading}
+            />
+          </>
+        ) : null}
 
         <Divider />
         <UserInfoLine
