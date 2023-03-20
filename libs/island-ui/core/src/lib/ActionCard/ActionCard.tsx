@@ -381,8 +381,8 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           className={styles.progressMeter}
         />
 
-        {cta.label && (
-          <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
+        <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, cta.label ? 0 : 4]}>
+          {cta.label && (
             <Button
               variant={cta.variant}
               onClick={cta.onClick}
@@ -392,8 +392,8 @@ export const ActionCard: React.FC<ActionCardProps> = ({
             >
               {cta.label}
             </Button>
-          </Box>
-        )}
+          )}
+        </Box>
       </Box>
     )
   }

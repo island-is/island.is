@@ -63,13 +63,11 @@ const Overview = () => {
     onCompleted: (q) => {
       // Initialize available applications from the initial response
       // So that we can use them to filter by
-      if (!availableApplications) {
-        const names = q.applicationApplicationsAdmin
-          ?.filter((x) => !!x.name)
-          .map((x) => x.name ?? '')
-        if (names) {
-          setAvailableApplications(uniq(names))
-        }
+      const names = q.applicationApplicationsAdmin
+        ?.filter((x) => !!x.name)
+        .map((x) => x.name ?? '')
+      if (names) {
+        setAvailableApplications(uniq(names))
       }
     },
   })
