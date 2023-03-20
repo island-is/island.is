@@ -347,7 +347,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           flexShrink={0}
           marginTop={[1, 0]}
           marginLeft={[0, 'auto']}
-          className={tag ? styles.tag : styles.button}
+          className={styles.button}
         >
           <Hidden below="sm">{!date && !eyebrow && renderTag()}</Hidden>
           {unavailable.active ? renderDisabled() : renderDefault()}
