@@ -130,10 +130,12 @@ ARG APP_HOME
 ARG APP_DIST_HOME
 
 WORKDIR ${APP_DIST_HOME}
-USER pwuser
 
-COPY --chown=pwuser:pwuser --from=builder /build/${APP_DIST_HOME} .
-COPY --chown=pwuser:pwuser ${APP_HOME}/package.json .
+COPY --from=builder /build/${APP_DIST_HOME} .
+COPY ${APP_HOME}/package.json .
+RUN chown -R pwuser:pwuser .
+
+USER pwuser
 RUN yarn set version berry
 RUN yarn install
 
