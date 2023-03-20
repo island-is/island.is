@@ -56,6 +56,7 @@ export const institutionMapper = {
     InstitutionTypes.SAMGONGUSTOFA,
   [ApplicationTypes.DIGITAL_TACHOGRAPH_WORKSHOP_CARD]:
     InstitutionTypes.SAMGONGUSTOFA,
+  [ApplicationTypes.LICENSE_PLATE_RENEWAL]: InstitutionTypes.SAMGONGUSTOFA,
   [ApplicationTypes.ORDER_VEHICLE_LICENSE_PLATE]:
     InstitutionTypes.SAMGONGUSTOFA,
   [ApplicationTypes.ORDER_VEHICLE_REGISTRATION_CERTIFICATE]:
