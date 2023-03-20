@@ -262,4 +262,14 @@ export const core = defineMessages({
     defaultMessage: 'Loka glugga',
     description: 'Notaður fyrir texta í Loka glugga takka í modölum.',
   },
+  uploadBoxTitle: {
+    id: 'judicial.system.core:upload_box_title',
+    defaultMessage: 'Dragðu gögn hingað til að hlaða upp',
+    description: 'Notaður fyrir titil í Hlaða upp skrám svæði.',
+  },
+  uploadBoxButtonLabel: {
+    id: 'judicial.system.core:upload_box_button_label',
+    defaultMessage: 'Velja gögn til að hlaða upp',
+    description: 'Notaður fyrir titil í takka á Hlaða upp skrám svæði.',
+  },
 })

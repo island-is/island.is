@@ -98,6 +98,7 @@ const CaseFiles: React.FC = () => {
         file,
         `${file.name}-${uuid()}`,
       ])
+
       setDisplayFiles((previous) => [
         ...filesWithId.map(
           ([file, id]): TUploadFile => ({
