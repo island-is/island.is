@@ -12,12 +12,7 @@ interface CaseTimelineProps {
   updatedDate: string
 }
 
-const Sections = [
-  'Samráð fyrirhugað',
-  'Til umsagnar',
-  'Niðurstöður í vinnslu',
-  'Niðurstöður birtar',
-]
+const Sections = ['Til umsagnar', 'Niðurstöður í vinnslu', 'Niðurstöður birtar']
 
 export const CaseTimeline = ({ status, updatedDate }: CaseTimelineProps) => {
   const sectionItems = Sections.map((item, index) => (

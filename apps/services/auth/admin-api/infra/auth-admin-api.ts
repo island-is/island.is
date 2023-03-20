@@ -35,26 +35,23 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
           staging: 'identity-server.staging01.devland.is',
           prod: 'innskra.island.is',
         },
-        paths: ['/backend(/|$)(.*)'],
+        paths: ['/backend'],
         public: true,
         extraAnnotations: {
           dev: {
             'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-            'nginx.ingress.kubernetes.io/rewrite-target': '/$2',
           },
           staging: {
             'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-            'nginx.ingress.kubernetes.io/rewrite-target': '/$2',
           },
           prod: {
             'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-            'nginx.ingress.kubernetes.io/rewrite-target': '/$2',
           },
         },
       },
     })
-    .readiness('/liveness')
-    .liveness('/liveness')
+    .readiness('/backend/liveness')
+    .liveness('/backend/liveness')
     .resources({
       limits: {
         cpu: '400m',
@@ -70,5 +67,9 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
       min: 2,
       max: 10,
     })
-    .grantNamespaces('nginx-ingress-internal', 'islandis')
+    .grantNamespaces(
+      'nginx-ingress-external',
+      'nginx-ingress-internal',
+      'islandis',
+    )
 }

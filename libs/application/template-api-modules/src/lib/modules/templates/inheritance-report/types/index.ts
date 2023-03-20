@@ -76,6 +76,4 @@ export interface UploadData {
   otherAssets: string
   otherAssetsValue: string
   debts: Debt[]
-  undividedEstateResidencePermission: 'yes' | 'no'
-  applicantHasLegalCustodyOverEstate: 'yes' | 'no'
 }

@@ -4,7 +4,7 @@ import {
   buildCustomField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { formConclusionSection } from '@island.is/application/ui-forms'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import {
   applicantInformation,
   conclusion,
@@ -57,7 +57,7 @@ export const GeneralFishingLicensePaymentForm: Form = buildForm({
         }),
       ],
     }),
-    formConclusionSection({
+    buildFormConclusionSection({
       alertTitle: conclusion.general.title,
       expandableHeader: conclusion.information.title,
       expandableDescription: conclusion.information.bulletList,

@@ -20,7 +20,7 @@ interface TagListProps {
   data: Array<DataCategory>
   type: TypeCategory
   access: Array<AccessCategory>
-  namespace?: object
+  namespace?: Record<string, string>
 }
 
 export const TagList = ({ data, type, access, namespace }: TagListProps) => {
