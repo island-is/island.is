@@ -46,7 +46,7 @@ export const StatisticForm: FC<Props> = ({ onSubmit }) => {
               control={control}
               name="fileName"
               defaultValue=""
-              render={({ onChange, value, name }) => (
+              render={({ field: { onChange, value, name } }) => (
                 <Input
                   size="xs"
                   name={name}
@@ -67,7 +67,7 @@ export const StatisticForm: FC<Props> = ({ onSubmit }) => {
               control={control}
               name="category"
               defaultValue=""
-              render={({ onChange, value, name }) => (
+              render={({ field: { onChange, value, name } }) => (
                 <Select
                   name={name}
                   value={value}
@@ -91,7 +91,7 @@ export const StatisticForm: FC<Props> = ({ onSubmit }) => {
               control={control}
               name="type"
               defaultValue=""
-              render={({ onChange, value, name }) => (
+              render={({ field: { onChange, value, name } }) => (
                 <Select
                   name={name}
                   value={value}
@@ -118,7 +118,7 @@ export const StatisticForm: FC<Props> = ({ onSubmit }) => {
               name="dateFrom"
               defaultValue={false}
               control={control}
-              render={({ onChange, value }) => (
+              render={({ field: { onChange, value } }) => (
                 <DatePicker
                   label={formatMessage(m.DashBoardStatisticsDateFrom)}
                   placeholderText={formatMessage(
@@ -137,7 +137,7 @@ export const StatisticForm: FC<Props> = ({ onSubmit }) => {
               name="dateTo"
               defaultValue={false}
               control={control}
-              render={({ onChange, value }) => (
+              render={({ field: { onChange, value } }) => (
                 <DatePicker
                   label={formatMessage(m.DashBoardStatisticsDateTo)}
                   placeholderText={formatMessage(

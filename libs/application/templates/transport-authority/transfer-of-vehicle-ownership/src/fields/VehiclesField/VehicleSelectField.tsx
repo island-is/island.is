@@ -29,7 +29,7 @@ export const VehicleSelectField: FC<
   VehicleSearchFieldProps & FieldBaseProps
 > = ({ currentVehicleList, application, errors, setFieldLoadingState }) => {
   const { formatMessage } = useLocale()
-  const { register, setValue } = useFormContext()
+  const { setValue } = useFormContext()
 
   const vehicleValue = getValueViaPath(
     application.answers,
@@ -56,11 +56,6 @@ export const VehicleSelectField: FC<
   )
   const [plate, setPlate] = useState<string>(
     getValueViaPath(application.answers, 'pickVehicle.plate', '') as string,
-  )
-  const [color, setColor] = useState<string | undefined>(
-    getValueViaPath(application.answers, 'pickVehicle.color', undefined) as
-      | string
-      | undefined,
   )
 
   const getVehicleDetails = useLazyVehicleDetails()
@@ -89,10 +84,14 @@ export const VehicleSelectField: FC<
             !!response?.vehicleOwnerchangeChecksByPermno
               ?.validationErrorMessages?.length
           setPlate(disabled ? '' : currentVehicle.permno || '')
-          setColor(currentVehicle.color || undefined)
           setValue('vehicle.plate', currentVehicle.permno)
           setValue('vehicle.type', currentVehicle.make)
           setValue('vehicle.date', new Date().toISOString().substring(0, 10))
+          setValue(
+            'pickVehicle.plate',
+            disabled ? '' : currentVehicle.permno || '',
+          )
+          setValue('pickVehicle.color', currentVehicle.color || undefined)
           setIsLoading(false)
         })
         .catch((error) => console.error(error))
@@ -197,19 +196,7 @@ export const VehicleSelectField: FC<
           </Box>
         )}
       </Box>
-      <input
-        type="hidden"
-        value={plate}
-        ref={register({ required: true })}
-        name="pickVehicle.plate"
-      />
-      <input
-        type="hidden"
-        value={color}
-        ref={register({ required: true })}
-        name="pickVehicle.color"
-      />
-      {!isLoading && plate.length === 0 && errors && errors.pickVehicle && (
+      {!isLoading && plate.length === 0 && errors?.pickVehicle && (
         <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />
       )}
     </Box>

@@ -10,7 +10,7 @@ import {
 } from '@island.is/testing/fixtures'
 import { setupApp, TestApp } from '@island.is/testing/nest'
 
-import { AppModule } from '../../app.module'
+import { AppModule } from '../../../app.module'
 import { User } from '@island.is/auth-nest-tools'
 import { NoContentException } from '@island.is/nest/problem'
 
