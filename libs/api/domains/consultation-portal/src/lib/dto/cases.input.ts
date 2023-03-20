@@ -6,7 +6,7 @@ import { Field, InputType } from '@nestjs/graphql'
 @FeatureFlag(Features.consultationPortalApplication)
 export class GetCasesInput {
   @Field(() => String, { nullable: true })
-  query?: string
+  searchQuery?: string
 
   @Field(() => [Number], { nullable: true })
   policyAreas?: Array<number>

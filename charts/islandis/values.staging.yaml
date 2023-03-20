@@ -32,7 +32,7 @@ air-discount-scheme-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -62,7 +62,7 @@ air-discount-scheme-api:
       cpu: '400m'
       memory: '512Mi'
     requests:
-      cpu: '200m'
+      cpu: '50m'
       memory: '256Mi'
   secrets:
     ADMINS: '/k8s/air-discount-scheme/api/ADMINS'
@@ -118,7 +118,7 @@ air-discount-scheme-backend:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -150,7 +150,7 @@ air-discount-scheme-backend:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -172,7 +172,7 @@ air-discount-scheme-backend:
       cpu: '400m'
       memory: '512Mi'
     requests:
-      cpu: '200m'
+      cpu: '50m'
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -213,7 +213,7 @@ air-discount-scheme-web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -297,6 +297,7 @@ api:
     MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: 'http://web-financial-aid-backend'
     NODE_OPTIONS: '--max-old-space-size=2000'
     NO_UPDATE_NOTIFIER: 'true'
+    REGULATIONS_ADMIN_URL: 'http://web-regulations-admin-backend.regulations-admin.svc.cluster.local/api'
     SEND_FROM_EMAIL: 'development@island.is'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
@@ -371,10 +372,10 @@ api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 50
-        min: 10
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
   ingress:
@@ -391,15 +392,15 @@ api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 10
+    default: 2
     max: 50
-    min: 10
+    min: 2
   resources:
     limits:
       cpu: '800m'
       memory: '2048Mi'
     requests:
-      cpu: '200m'
+      cpu: '50m'
       memory: '1024Mi'
   secrets:
     ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
@@ -450,6 +451,9 @@ api:
     POSTHOLF_CLIENT_SECRET: '/k8s/documents/POSTHOLF_CLIENT_SECRET'
     POSTHOLF_TOKEN_URL: '/k8s/documents/POSTHOLF_TOKEN_URL'
     REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL'
+    REGULATIONS_FILE_UPLOAD_KEY_DRAFT: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_DRAFT'
+    REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED'
+    REGULATIONS_FILE_UPLOAD_KEY_PUBLISH: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH'
     RLS_OPEN_LOOKUP_API_KEY: '/k8s/api/RLS_OPEN_LOOKUP_API_KEY'
     RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY'
     SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL'
@@ -577,10 +581,10 @@ application-system-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 60
-        min: 10
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
   ingress:
@@ -610,7 +614,7 @@ application-system-api:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -626,15 +630,15 @@ application-system-api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 10
+    default: 2
     max: 60
-    min: 10
+    min: 2
   resources:
     limits:
       cpu: '400m'
       memory: '1024Mi'
     requests:
-      cpu: '100m'
+      cpu: '50m'
       memory: '512Mi'
   secrets:
     ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL'
@@ -732,7 +736,7 @@ application-system-api-worker:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -805,7 +809,7 @@ application-system-form:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -864,7 +868,7 @@ contentful-translation-extension:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -903,6 +907,7 @@ download-service:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=464'
+    REGULATIONS_ADMIN_URL: 'http://web-regulations-admin-backend.regulations-admin.svc.cluster.local/api'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
@@ -928,7 +933,7 @@ download-service:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -963,6 +968,10 @@ download-service:
     POSTHOLF_CLIENTID: '/k8s/documents/POSTHOLF_CLIENTID'
     POSTHOLF_CLIENT_SECRET: '/k8s/documents/POSTHOLF_CLIENT_SECRET'
     POSTHOLF_TOKEN_URL: '/k8s/documents/POSTHOLF_TOKEN_URL'
+    REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL'
+    REGULATIONS_FILE_UPLOAD_KEY_DRAFT: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_DRAFT'
+    REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED'
+    REGULATIONS_FILE_UPLOAD_KEY_PUBLISH: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -1003,7 +1012,7 @@ endorsement-system-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -1022,7 +1031,7 @@ endorsement-system-api:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -1102,7 +1111,7 @@ icelandic-names-registry-backend:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -1121,7 +1130,7 @@ icelandic-names-registry-backend:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
       - args:
           - 'sequelize-cli'
@@ -1134,7 +1143,7 @@ icelandic-names-registry-backend:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -1185,7 +1194,7 @@ island-ui-storybook:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -1246,7 +1255,7 @@ license-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 10
         min: 2
@@ -1302,6 +1311,7 @@ namespaces:
     - 'icelandic-names-registry'
     - 'endorsement-system'
     - 'air-discount-scheme'
+    - 'regulations-admin'
     - 'user-notification'
     - 'license-api'
     - 'services-sessions'
@@ -1328,10 +1338,10 @@ portals-admin:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 30
-        min: 5
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/portals-admin'
   ingress:
@@ -1348,9 +1358,9 @@ portals-admin:
   namespace: 'portals-admin'
   pvcs: []
   replicaCount:
-    default: 5
+    default: 2
     max: 30
-    min: 5
+    min: 2
   resources:
     limits:
       cpu: '400m'
@@ -1363,6 +1373,94 @@ portals-admin:
     SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
     SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+regulations-admin-backend:
+  enabled: true
+  env:
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'regulations_admin_backend'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_USER: 'regulations_admin_backend'
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/regulations-admin-api'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    NODE_OPTIONS: '--max-old-space-size=464'
+    SERVERSIDE_FEATURES_ON: ''
+    XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
+    XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
+    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
+    XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
+    XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
+  grantNamespaces:
+    - 'islandis'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 3
+      replicas:
+        max: 3
+        min: 2
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/regulations-admin-backend'
+  initContainer:
+    containers:
+      - args:
+          - 'sequelize-cli'
+          - 'db:migrate'
+        command:
+          - 'npx'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '50m'
+            memory: '128Mi'
+    env:
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'regulations_admin_backend'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
+      DB_USER: 'regulations_admin_backend'
+      SERVERSIDE_FEATURES_ON: ''
+    secrets:
+      DB_PASS: '/k8s/regulations-admin-backend/DB_PASSWORD'
+  namespace: 'regulations-admin'
+  pvcs: []
+  replicaCount:
+    default: 2
+    max: 3
+    min: 2
+  resources:
+    limits:
+      cpu: '400m'
+      memory: '512Mi'
+    requests:
+      cpu: '100m'
+      memory: '256Mi'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/regulations-admin-backend/DB_PASSWORD'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-regulations-admin/IDENTITY_SERVER_CLIENT_SECRET'
+    REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL'
+    REGULATIONS_FILE_UPLOAD_KEY_DRAFT: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_DRAFT'
+    REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED'
+    REGULATIONS_FILE_UPLOAD_KEY_PUBLISH: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -1394,7 +1492,7 @@ search-indexer-service:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 1
         min: 1
@@ -1457,6 +1555,7 @@ search-indexer-service:
       ELASTIC_DOMAIN: 'search'
       ELASTIC_INDEX: 'island-is'
       ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
+      NODE_OPTIONS: '--max-old-space-size=2048'
       S3_BUCKET: 'staging-es-custom-packages'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -1518,10 +1617,10 @@ service-portal:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 30
-        min: 5
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/service-portal'
   ingress:
@@ -1538,9 +1637,9 @@ service-portal:
   namespace: 'service-portal'
   pvcs: []
   replicaCount:
-    default: 5
+    default: 2
     max: 30
-    min: 5
+    min: 2
   resources:
     limits:
       cpu: '400m'
@@ -1588,7 +1687,7 @@ service-portal-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 30
         min: 2
@@ -1614,7 +1713,7 @@ service-portal-api:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -1686,7 +1785,7 @@ services-documents:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -1704,7 +1803,7 @@ services-documents:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -1764,7 +1863,7 @@ services-sessions:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 10
         min: 1
@@ -1832,7 +1931,7 @@ services-sessions-worker:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -1850,7 +1949,7 @@ services-sessions-worker:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -1911,7 +2010,7 @@ skilavottord-web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -1978,7 +2077,7 @@ skilavottord-ws:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -2004,7 +2103,7 @@ skilavottord-ws:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -2072,7 +2171,7 @@ user-notification:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -2148,7 +2247,7 @@ user-notification-worker:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2
@@ -2213,10 +2312,10 @@ web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 50
-        min: 10
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/web'
   ingress:
@@ -2232,9 +2331,9 @@ web:
   namespace: 'islandis'
   pvcs: []
   replicaCount:
-    default: 10
+    default: 2
     max: 50
-    min: 10
+    min: 2
   resources:
     limits:
       cpu: '400m'
@@ -2281,7 +2380,7 @@ xroad-collector:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 3
       replicas:
         max: 3
         min: 2

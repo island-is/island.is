@@ -314,6 +314,7 @@ const useSections = (
 
   const getIndictmentCaseProsecutorSection = (
     workingCase: Case,
+    user?: User,
   ): RouteSection => {
     const { id } = workingCase
 
@@ -397,7 +398,8 @@ const useSections = (
                       )
                   : undefined,
             },
-            ...(features.includes(Feature.INDICTMENT_ROUTE) &&
+            ...((features.includes(Feature.INDICTMENT_ROUTE) ||
+              user?.name === 'Árni Bergur Sigurðsson') &&
             workingCase.type === CaseType.Indictment &&
             isTrafficViolationCase(workingCase.indictmentSubtypes)
               ? [
@@ -986,7 +988,7 @@ const useSections = (
         ? getRestrictionCaseProsecutorSection(workingCase, user)
         : isInvestigationCase(workingCase.type)
         ? getInvestigationCaseProsecutorSection(workingCase, user)
-        : getIndictmentCaseProsecutorSection(workingCase),
+        : getIndictmentCaseProsecutorSection(workingCase, user),
       isRestrictionCase(workingCase.type)
         ? getRestrictionCaseCourtSections(workingCase, user)
         : isInvestigationCase(workingCase.type)

@@ -12,7 +12,7 @@ interface WatsonInstance {
     type: string
     handler: (event: WatsonPreSendEvent) => void
   }) => void
-  updateHomeScreenConfig: ({ is_on: boolean }) => void
+  updateHomeScreenConfig: (params: { is_on: boolean }) => void
 }
 
 interface WatsonPreSendEvent {

@@ -21,7 +21,7 @@ import {
 } from '@island.is/application/types'
 import {
   applicantInformationMultiField,
-  formConclusionSection,
+  buildFormConclusionSection,
 } from '@island.is/application/ui-forms'
 
 import Logo from '../assets/Logo'
@@ -480,7 +480,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
         }),
       ],
     }),
-    formConclusionSection({
+    buildFormConclusionSection({
       alertTitle: confirmation.general.alertTitle,
       expandableHeader: confirmation.information.title,
       expandableIntro: confirmation.information.intro,
