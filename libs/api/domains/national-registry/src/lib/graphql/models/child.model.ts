@@ -18,6 +18,9 @@ export class NationalRegistryChild {
   middleName?: string
 
   @Field(() => String, { nullable: true })
+  surname?: string
+
+  @Field(() => String, { nullable: true })
   lastName?: string
 
   @Field(() => String, { nullable: true })

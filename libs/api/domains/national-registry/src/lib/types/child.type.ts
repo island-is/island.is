@@ -4,6 +4,7 @@ export interface FamilyChild {
   displayName?: string // BirtNafn
   firstName?: string // Eiginnafn
   middleName?: string // Millinafn
+  surname?: string // Kenninafn
   lastName?: string // Kenninafn
   gender?: string // Kyn
   genderDisplay?: string // Kynheiti

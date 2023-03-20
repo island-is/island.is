@@ -82,7 +82,6 @@ const Child = () => {
   const { nationalRegistryUserV2ChildGuardianship: guardianship } =
     guardianshipData || {}
 
-  console.log('personpersonpersonpersonperson', person)
   return (
     <ChildView
       nationalId={nationalId}

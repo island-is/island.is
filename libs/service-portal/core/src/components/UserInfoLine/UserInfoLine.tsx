@@ -90,8 +90,7 @@ export const UserInfoLine: FC<Props> = ({
             overflow="hidden"
           >
             <Text variant="h5" as="span" lineHeight="lg">
-              {formatMessage(label)}{' '}
-              {tooltip && <Tooltip preserveWhiteSpace text={tooltip} />}
+              {formatMessage(label)} {tooltip && <Tooltip text={tooltip} />}
             </Text>
           </Box>
         </GridColumn>

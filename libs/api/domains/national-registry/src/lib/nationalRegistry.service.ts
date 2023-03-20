@@ -100,6 +100,7 @@ export class NationalRegistryService {
         gender: familyMember.Kyn,
         displayName: familyMember.Birtnafn,
         middleName: familyMember.Millinafn,
+        surname: familyMember.Kenninafn,
         lastName: familyMember.Kenninafn,
         genderDisplay: familyMember.Kynheiti,
         birthday: familyMember.Faedingardagur,

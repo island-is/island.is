@@ -28,6 +28,7 @@ import { TwoColumnUserInfoLine } from '../TwoColumnUserInfoLine/TwoColumnUserInf
 import ChildRegistrationModal from '../../screens/FamilyMember/ChildRegistrationModal'
 import * as styles from './ChildView.css'
 import { formatNameBreaks } from '../../helpers/formatting'
+import { spmm } from '../../lib/messages'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -160,7 +161,11 @@ const ChildView: FC<Props> = ({
             title={formatMessage(m.myRegistration)}
             label={formatMessage(m.fullName)}
             content={person?.fullName || '...'}
-            tooltip={formatNameBreaks(person ?? undefined)}
+            tooltip={formatNameBreaks(person ?? undefined, {
+              givenName: formatMessage(spmm.givenName),
+              middleName: formatMessage(spmm.middleName),
+              lastName: formatMessage(spmm.lastName),
+            })}
             loading={loading}
             editLink={
               !isChild

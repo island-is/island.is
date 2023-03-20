@@ -49,6 +49,7 @@ const SubjectInfo = () => {
     },
   )
   const { nationalRegistryFamily } = famData || {}
+
   return (
     <>
       <IntroHeader title={userInfo.profile.name} intro={spmm.userInfoDesc} />
@@ -58,7 +59,11 @@ const SubjectInfo = () => {
           label={m.fullName}
           loading={loading}
           content={nationalRegistryUser?.fullName}
-          tooltip={formatNameBreaks(nationalRegistryUser ?? undefined)}
+          tooltip={formatNameBreaks(nationalRegistryUser ?? undefined, {
+            givenName: formatMessage(spmm.givenName),
+            middleName: formatMessage(spmm.middleName),
+            lastName: formatMessage(spmm.lastName),
+          })}
           editLink={{
             external: true,
             title: changeInNationalReg,
