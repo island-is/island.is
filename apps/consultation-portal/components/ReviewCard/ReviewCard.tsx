@@ -1,5 +1,4 @@
 import {
-  Button,
   FocusableBox,
   Icon,
   Inline,
@@ -22,7 +21,7 @@ export const ReviewCard = ({ advice }) => {
           <Text variant="eyebrow" color="purple400">
             {format(new Date(advice.created), 'dd.MM.yyyy')}
           </Text>
-          {advice.content.length > 50 && (
+          {advice.content && advice.content.length > 50 && (
             <FocusableBox onClick={() => setOpen(!open)}>
               <Icon
                 icon={open ? 'close' : 'open'}

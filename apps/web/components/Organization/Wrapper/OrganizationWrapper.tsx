@@ -68,7 +68,10 @@ import {
 } from './Themes/FjarsyslaRikisinsTheme'
 import { HeilbrigdisstofnunSudurlandsFooter } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
 import { HeilbrigdisstofnunSudurlandsHeader } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
-import { TryggingastofnunHeader } from './Themes/TryggingastofnunTheme'
+import {
+  TryggingastofnunFooter,
+  TryggingastofnunHeader,
+} from './Themes/TryggingastofnunTheme'
 import { SAkFooter, SAkHeader } from './Themes/SAkTheme'
 import { GevHeader } from './Themes/GevTheme'
 import { HveHeader, HveFooter } from './Themes/HveTheme'
@@ -109,6 +112,7 @@ export const lightThemes = [
   'landing_page',
   'tryggingastofnun',
   'hve',
+  'hsu',
 ]
 export const footerEnabled = [
   'syslumenn',
@@ -142,6 +146,9 @@ export const footerEnabled = [
   'sak',
 
   'hve',
+
+  'tryggingastofnun',
+  'insurance-administration',
 ]
 
 export const getThemeConfig = (
@@ -424,6 +431,15 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
           namespace={namespace}
           logo={organization.logo?.url}
           title={organization.title}
+        />
+      )
+      break
+    case 'tryggingastofnun':
+    case 'insurance-administration':
+      OrganizationFooterComponent = (
+        <TryggingastofnunFooter
+          footerItems={organization.footerItems}
+          namespace={namespace}
         />
       )
       break

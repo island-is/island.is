@@ -2,7 +2,7 @@ import React, { FC, useEffect } from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
 import {
   Box,
   GridColumn,
@@ -25,7 +25,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
   const error = (errors as any)?.vehicles?.vehicles
   const { id } = field
   const { formatMessage } = useLocale()
-  const { fields, append, remove } = useFieldArray<Asset>({
+  const { fields, append, remove } = useFieldArray({
     name: `${id}.vehicles`,
   })
   const { control, setValue } = useFormContext()
@@ -55,7 +55,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
   return (
     <Box marginTop={2}>
       <GridRow>
-        {fields.reduce((acc, asset, index) => {
+        {fields.reduce((acc, asset: GenericFormField<Asset>, index) => {
           if (!asset.initial) {
             return acc
           }
@@ -88,7 +88,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
           ]
         }, [] as JSX.Element[])}
       </GridRow>
-      {fields.map((field, index) => {
+      {fields.map((field: GenericFormField<Asset>, index) => {
         const fieldIndex = `${id}.vehicles[${index}]`
         const vehicleNumberField = `${fieldIndex}.assetNumber`
         const vehicleTypeField = `${fieldIndex}.description`
@@ -107,11 +107,13 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
               name={initialField}
               control={control}
               defaultValue={field.initial || false}
+              render={() => <input type="hidden" />}
             />
             <Controller
               name={dummyField}
               control={control}
               defaultValue={field.dummy || false}
+              render={() => <input type="hidden" />}
             />
 
             <Box position="absolute" className={styles.removeFieldButton}>
