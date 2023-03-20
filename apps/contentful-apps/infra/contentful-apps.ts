@@ -47,3 +47,4 @@ export const serviceSetup = (): ServiceBuilder<'contentful-apps'> =>
       staging: { progressDeadlineSeconds: 25 * 60 },
       prod: { progressDeadlineSeconds: 25 * 60 },
     })
+    .grantNamespaces('nginx-ingress-external')
