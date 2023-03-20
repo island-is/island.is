@@ -154,18 +154,19 @@ const LandLaeknirFooter = ({
                     <Box className={styles.noWrap} marginRight={1}>
                       {renderParagraphs(footerItems[5].content, 0)}
                     </Box>
-                    <img
-                      src={n(
-                        'landlaeknirFacebookLogo',
-                        'https://images.ctfassets.net/8k0h54kbe6bj/1hx4HeCK1OFzPIjtKkMmrL/fa769439b9221a92bfb124b598494ba4/Facebook-Logo-Dark.svg',
-                      )}
-                      alt="facebookLogo"
-                    />
+                  </Box>
+                )}
+
+                {footerItems?.[6] && (
+                  <Box className={styles.row} marginTop={2}>
+                    <Box className={styles.noWrap} marginRight={1}>
+                      {renderParagraphs(footerItems[6].content, 0)}
+                    </Box>
                   </Box>
                 )}
 
                 <Box marginTop={2}>
-                  {footerItems?.[6] && renderParagraphs(footerItems[6].content)}
+                  {footerItems?.[7] && renderParagraphs(footerItems[7].content)}
                 </Box>
               </GridColumn>
 
@@ -187,8 +188,8 @@ const LandLaeknirFooter = ({
                       alt="jafnlaunavottunLogo"
                     />
                     <Box marginLeft={2}>
-                      {footerItems?.[7] &&
-                        renderParagraphs(footerItems[7].content, 0, true)}
+                      {footerItems?.[8] &&
+                        renderParagraphs(footerItems[8].content, 0, true)}
                     </Box>
                   </Box>
 
