@@ -166,9 +166,8 @@
 /libs/application/template-api-modules/src/lib/modules/templates/general-fishing-license/                @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/data-protection-complaint/              @island-is/norda
 /libs/shared/form-fields/                                                                                @island-is/norda @island-is/island-ui
-/libs/admin/application-system/                                                                          @island-is/norda
 
-/libs/admin/application-system/                                                                          @island-is/norda-applications
+/libs/portals/admin/application-system/                                                                          @island-is/norda-applications
 /libs/api/domains/application/                                                                           @island-is/norda-applications
 /libs/api/domains/payment/                                                                               @island-is/norda-applications
 
