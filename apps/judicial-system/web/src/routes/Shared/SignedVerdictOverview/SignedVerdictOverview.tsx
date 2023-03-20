@@ -17,6 +17,7 @@ import {
   isAcceptingCaseDecision,
   isCourtRole,
   isProsecutionRole,
+  Feature,
 } from '@island.is/judicial-system/types'
 import {
   FormFooter,
@@ -86,6 +87,7 @@ import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureCon
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
 import { signedVerdictOverview as strings } from './SignedVerdictOverview.strings'
 import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 
 interface ModalControls {
   open: boolean
@@ -233,6 +235,7 @@ export const SignedVerdictOverview: React.FC = () => {
     caseNotFound,
     refreshCase,
   } = useContext(FormContext)
+  const { features } = useContext(FeatureContext)
 
   // Ruling signature state
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
@@ -492,18 +495,20 @@ export const SignedVerdictOverview: React.FC = () => {
 
   return (
     <>
-      {user?.role && isProsecutionRole(user.role) && workingCase.courtEndTime && (
-        <AlertBanner
-          title={formatMessage(strings.appealAlertBannerTitle, {
-            appealDeadline: getAppealEndDate(workingCase.courtEndTime),
-          })}
-          variant="warning"
-          link={{
-            href: '/krofur',
-            title: formatMessage(strings.appealAlertBannerLinkText),
-          }}
-        />
-      )}
+      {workingCase.courtEndTime &&
+        (features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) ||
+          (user?.role && isProsecutionRole(user.role))) && (
+          <AlertBanner
+            title={formatMessage(strings.appealAlertBannerTitle, {
+              appealDeadline: getAppealEndDate(workingCase.courtEndTime),
+            })}
+            variant="warning"
+            link={{
+              href: '/krofur',
+              title: formatMessage(strings.appealAlertBannerLinkText),
+            }}
+          />
+        )}
       <PageLayout
         workingCase={workingCase}
         activeSection={Sections.CASE_CLOSED}
