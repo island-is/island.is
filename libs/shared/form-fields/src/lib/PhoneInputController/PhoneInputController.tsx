@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react'
 import { InputBackgroundColor, PhoneInput } from '@island.is/island-ui/core'
-import { Controller, Control, ValidationRules } from 'react-hook-form'
+import { Controller, Control, RegisterOptions } from 'react-hook-form'
 import { TestSupport } from '@island.is/island-ui/utils'
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
   defaultValue?: string
   disabled?: boolean
   control?: Control
-  rules?: ValidationRules
+  rules?: RegisterOptions
   error?: string
   id: string
   label?: string
@@ -107,7 +107,9 @@ export const PhoneInputController = forwardRef(
         {...(defaultValue !== undefined && {
           defaultValue,
         })}
-        render={renderChildInput}
+        render={({ field: { onChange, onBlur, value, name } }) =>
+          renderChildInput({ value, onBlur, onChange, name })
+        }
       />
     )
   },
