@@ -40,7 +40,7 @@ export const getServerSideProps = async (ctx) => {
       variables: {
         input: {
           caseStatuses: STATUSES_TO_FETCH,
-          pageSize: PAGE_SIZE,
+          // pageSize: PAGE_SIZE,
         },
       },
     }),
@@ -50,7 +50,7 @@ export const getServerSideProps = async (ctx) => {
   ])
   return {
     props: {
-      cases: consultationPortalGetCases,
+      cases: consultationPortalGetCases.cases,
       types: consultationPortalAllTypes,
     },
   }
