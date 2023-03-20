@@ -68,6 +68,8 @@ import { DigitalTachographDriversCardModule } from './transport-authority/digita
 import { DigitalTachographDriversCardService } from './transport-authority/digital-tachograph-drivers-card/digital-tachograph-drivers-card.service'
 import { DigitalTachographWorkshopCardModule } from './transport-authority/digital-tachograph-workshop-card/digital-tachograph-workshop-card.module'
 import { DigitalTachographWorkshopCardService } from './transport-authority/digital-tachograph-workshop-card/digital-tachograph-workshop-card.service'
+import { LicensePlateRenewalModule } from './transport-authority/license-plate-renewal/license-plate-renewal.module'
+import { LicensePlateRenewalService } from './transport-authority/license-plate-renewal/license-plate-renewal.service'
 import { OrderVehicleLicensePlateModule } from './transport-authority/order-vehicle-license-plate/order-vehicle-license-plate.module'
 import { OrderVehicleLicensePlateService } from './transport-authority/order-vehicle-license-plate/order-vehicle-license-plate.service'
 import { OrderVehicleRegistrationCertificateModule } from './transport-authority/order-vehicle-registration-certificate/order-vehicle-registration-certificate.module'
@@ -118,6 +120,7 @@ export const modules = [
   DigitalTachographCompanyCardModule,
   DigitalTachographDriversCardModule,
   DigitalTachographWorkshopCardModule,
+  LicensePlateRenewalModule,
   OrderVehicleLicensePlateModule,
   OrderVehicleRegistrationCertificateModule,
   TransferOfVehicleOwnershipModule,
@@ -162,6 +165,7 @@ export const services = [
   DigitalTachographCompanyCardService,
   DigitalTachographDriversCardService,
   DigitalTachographWorkshopCardService,
+  LicensePlateRenewalService,
   OrderVehicleLicensePlateService,
   OrderVehicleRegistrationCertificateService,
   TransferOfVehicleOwnershipService,
