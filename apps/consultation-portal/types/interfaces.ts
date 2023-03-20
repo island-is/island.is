@@ -13,6 +13,7 @@ export interface Case {
   processBegins?: string
   processEnds?: string
   created?: string
+  summaryDate?: string
 }
 
 export interface UserAdvice {
