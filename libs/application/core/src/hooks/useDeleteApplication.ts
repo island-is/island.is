@@ -1,7 +1,7 @@
 import { useMutation } from '@apollo/client'
 import { DELETE_APPLICATION } from '@island.is/application/graphql'
 
-export const useDeleteApplication = (refetch?: () => void) => {
+export const useDeleteApplication = (refetch?: (() => void) | undefined) => {
   const [deleteApplicationMutation, { error, loading }] = useMutation(
     DELETE_APPLICATION,
     {

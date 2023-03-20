@@ -1,18 +1,22 @@
 import { Tag } from '@island.is/island-ui/core'
-import { ApplicationCardProps } from '../ApplicationCard'
+import { useLocale } from '@island.is/localization'
+import { ApplicationCardFields, DefaultCardData } from '../types'
 
 interface Props {
-  tag?: ApplicationCardProps['tag']
+  actionCard: ApplicationCardFields['actionCard']
+  defaultData: DefaultCardData
 }
 
-export const ApplicationCardTag = ({ tag }: Props) => {
-  if (!tag || !tag.label) {
-    return null
-  }
+export const ApplicationCardTag = ({ actionCard, defaultData }: Props) => {
+  const { formatMessage } = useLocale()
+  const label = actionCard?.tag?.label
+    ? formatMessage(actionCard.tag.label)
+    : formatMessage(defaultData.tag.label)
+  const variant = actionCard?.tag?.variant || defaultData.tag.variant
 
   return (
-    <Tag outlined={tag.outlined} variant={tag.variant} disabled>
-      {tag.label}
+    <Tag outlined={false} variant={variant} disabled>
+      {label}
     </Tag>
   )
 }

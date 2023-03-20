@@ -1,206 +1,90 @@
 import * as React from 'react'
-import {
-  Box,
-  Button,
-  ButtonSizes,
-  ButtonTypes,
-  DraftProgressMeterVariant,
-  Hidden,
-  Icon,
-  Inline,
-  TagVariant,
-  Text,
-  Tooltip,
-} from '@island.is/island-ui/core'
+import { Box, Button, Icon, Inline, Text } from '@island.is/island-ui/core'
 import * as styles from './ApplicationCard.css'
 import { ApplicationCardDelete } from './components/ApplicationCardDelete'
-import {
-  ApplicationCardHistory,
-  ApplicationCardHistoryConfig,
-} from './components/ApplicationCardHistory'
+import { dateFormat } from '@island.is/shared/constants'
+import format from 'date-fns/format'
+import { ApplicationCardHistory } from './components/ApplicationCardHistory'
 import { ApplicationCardProgress } from './components/ApplicationCardProgress'
 import { ApplicationCardTag } from './components/ApplicationCardTag'
+import { useLocale } from '@island.is/localization'
+import { defaultCardDataByStatus } from './utils/defaultData'
+import { ApplicationCardFields } from './types'
+import { buildHistoryItems } from './utils/history'
+import { ApplicationStatus } from '@island.is/application/types'
+import { useOpenApplication } from '@island.is/application/core'
 
 export type ApplicationCardProps = {
-  date?: string
-  heading?: string
-  headingVariant?: 'h3' | 'h4'
-  text?: string
-  eyebrow?: string
-  logo?: string
-  backgroundColor?: 'white' | 'blue' | 'red'
+  application: ApplicationCardFields
+  logo?: string // TODO: This prop should not exist and rather the card component should render correct logo based on the application
   focused?: boolean
-  tag?: {
-    label: string
-    variant?: TagVariant
-    outlined?: boolean
-  }
-  cta: {
-    label: string
-    variant?: ButtonTypes['variant']
-    size?: ButtonSizes
-    onClick?: () => void
-    disabled?: boolean
-  }
-
-  progressMeter?: {
-    active?: boolean
-    progress?: number
-    variant?: DraftProgressMeterVariant
-    draftTotalSteps?: number
-    draftFinishedSteps?: number
-  }
-  unavailable?: {
-    active?: boolean
-    label?: string
-    message?: string
-  }
-  deleteButton?: {
-    visible?: boolean
-    onClick?: () => void
-    disabled?: boolean
-    dialogTitle?: string
-    dialogDescription?: string
-    dialogConfirmLabel?: string
-    dialogCancelLabel?: string
-  }
-  status?: string
-  renderDraftStatusBar?: boolean
-  history?: ApplicationCardHistoryConfig
+  refetchOnDelete?: () => void
 }
 
-const defaultCta = {
-  variant: 'primary',
-  icon: 'arrowForward',
-  size: 'default',
-  label: '',
-  disabled: false,
-  onClick: () => null,
-} as const
-
-const defaultTag = {
-  variant: 'blue',
-  outlined: true,
-  label: '',
-} as const
-
-const defaultProgressMeter = {
-  variant: 'blue',
-  active: false,
-  progress: 0,
-  draftFinishedSteps: 1,
-  draftTotalSteps: 1,
-} as const
-
-const defaultUnavailable = {
-  active: false,
-  label: '',
-  message: '',
-} as const
-
-const defaultDelete = {
-  visible: false,
-  onClick: () => null,
-  disabled: true,
-  icon: 'trash',
-  dialogTitle: '',
-  dialogDescription: '',
-  dialogConfirmLabel: '',
-  dialogCancelLabel: '',
-} as const
-
-export const ApplicationCard: React.FC<ApplicationCardProps> = ({
-  date,
-  heading,
-  headingVariant = 'h3',
-  text,
-  eyebrow,
-  backgroundColor = 'white',
-  cta = defaultCta,
-  tag = defaultTag,
-  unavailable = defaultUnavailable,
-  progressMeter = defaultProgressMeter,
-  deleteButton = defaultDelete,
-  history,
+export const ApplicationCard = ({
+  application,
+  refetchOnDelete,
   logo,
-  status,
-  renderDraftStatusBar = false,
   focused = false,
-}) => {
-  const hasCTA = cta && !!cta.label && !progressMeter.active
+}: ApplicationCardProps) => {
+  const { status, actionCard, modified } = application
+  const { lang: locale, formatMessage } = useLocale()
+  const openApplication = useOpenApplication(application)
+  const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
+  const defaultData = defaultCardDataByStatus[status]
+  const heading = actionCard?.title ?? application.name
+  const historyItems = buildHistoryItems(
+    application,
+    formatMessage,
+    formattedDate,
+    openApplication,
+  )
+
   const shouldRenderProgress = status === 'draft'
-  const hasHistory = history?.items && history.items.length > 0
-  const bg =
-    backgroundColor === 'white'
-      ? 'white'
-      : backgroundColor === 'red'
-      ? 'red100'
-      : 'blue100'
-  const border = focused
-    ? 'mint400'
-    : backgroundColor === 'red'
-    ? 'red200'
-    : backgroundColor === 'blue'
-    ? 'blue100'
-    : 'blue200'
+  const showHistory =
+    application.status !== ApplicationStatus.DRAFT &&
+    historyItems &&
+    historyItems.length > 0
 
   return (
     <Box
       display="flex"
       flexDirection="column"
-      borderColor={border}
+      borderColor={focused ? 'mint400' : 'blue200'}
       borderRadius="large"
       borderWidth="standard"
       paddingX={[3, 3, 4]}
       paddingY={3}
-      background={bg}
+      background="white"
     >
-      {eyebrow && (
-        <Box
-          alignItems="center"
-          display="flex"
-          flexDirection="row"
-          justifyContent={eyebrow ? 'spaceBetween' : 'flexEnd'}
-          marginBottom={[0, 1]}
-        >
-          <Text variant="eyebrow" color="purple400">
-            {eyebrow}
-          </Text>
-
-          <ApplicationCardTag tag={tag} />
-          <ApplicationCardDelete deleteButton={deleteButton} tag={tag} />
-        </Box>
-      )}
-
-      {date && (
-        <Box
-          alignItems="center"
-          display="flex"
-          flexDirection="row"
-          justifyContent={date ? 'spaceBetween' : 'flexEnd'}
-          marginBottom={[0, 2]}
-        >
-          <Box
-            display="flex"
-            flexDirection="row"
-            alignItems="center"
-            justifyContent="center"
-          >
-            <Box display="flex" marginRight={1} justifyContent="center">
-              <Icon icon="time" size="medium" type="outline" color="blue400" />
-            </Box>
-            <Box display="flex" justifyContent="center">
-              <Text variant="small">{date}</Text>
-            </Box>
+      <Box
+        alignItems="center"
+        display="flex"
+        flexDirection="row"
+        justifyContent="spaceBetween"
+        marginBottom={[0, 2]}
+      >
+        <Box display="flex" alignItems="center" justifyContent="center">
+          <Box display="flex" marginRight={1} justifyContent="center">
+            <Icon icon="time" size="medium" type="outline" color="blue400" />
           </Box>
-          <Inline alignY="center" space={1}>
-            {!eyebrow && <ApplicationCardTag tag={tag} />}
-            {!eyebrow && (
-              <ApplicationCardDelete deleteButton={deleteButton} tag={tag} />
-            )}
-          </Inline>
+          <Box display="flex" justifyContent="center">
+            <Text variant="small">
+              {format(new Date(modified), formattedDate)}
+            </Text>
+          </Box>
         </Box>
-      )}
+        <Inline alignY="center" space={1}>
+          <ApplicationCardTag
+            actionCard={actionCard}
+            defaultData={defaultData}
+          />
+          <ApplicationCardDelete
+            application={application}
+            refetchOnDelete={refetchOnDelete}
+          />
+        </Inline>
+      </Box>
 
       <Box
         alignItems={['flexStart', 'center']}
@@ -224,24 +108,16 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({
                     style={{ backgroundImage: `url(${logo})` }}
                   ></Box>
                 )}
-                <Text
-                  variant={headingVariant}
-                  color={
-                    backgroundColor === 'blue' ? 'blue600' : 'currentColor'
-                  }
-                >
+                <Text variant="h3" color="currentColor">
                   {heading}
                 </Text>
               </Box>
-              <Hidden above="xs">
-                <Box>
-                  {!date && !eyebrow && <ApplicationCardTag tag={tag} />}
-                </Box>
-              </Hidden>
             </Box>
           )}
 
-          {text && <Text paddingTop={heading ? 1 : 0}>{text}</Text>}
+          {actionCard?.description && (
+            <Text paddingTop={heading ? 1 : 0}>{actionCard.description}</Text>
+          )}
         </Box>
 
         <Box
@@ -251,19 +127,11 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({
           flexShrink={0}
           marginTop={[1, 0]}
           marginLeft={[0, 'auto']}
-          className={progressMeter.active && tag ? styles.tag : styles.button}
+          className={styles.tag}
         >
-          <Hidden below="sm">
-            {!date && !eyebrow && <ApplicationCardTag tag={tag} />}
-          </Hidden>
-          {unavailable.active ? (
-            <Box display="flex">
-              <Text variant="small">{unavailable.label}&nbsp;</Text>
-              <Tooltip placement="top" as="button" text={unavailable.message} />
-            </Box>
-          ) : hasCTA ? (
+          {!showHistory && (
             <Box
-              paddingTop={tag.label ? 'gutter' : 0}
+              paddingTop="gutter"
               display="flex"
               justifyContent={['flexStart', 'flexEnd']}
               alignItems="center"
@@ -271,32 +139,26 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({
             >
               <Box marginLeft={[0, 3]}>
                 <Button
-                  variant={cta.variant}
+                  variant="ghost"
                   size="small"
-                  onClick={cta.onClick}
-                  disabled={cta.disabled}
+                  onClick={openApplication}
                   icon="arrowForward"
                 >
-                  {cta.label}
+                  {formatMessage(defaultData.cta.label)}
                 </Button>
               </Box>
             </Box>
-          ) : null}
+          )}
         </Box>
       </Box>
 
       {shouldRenderProgress ? (
         <ApplicationCardProgress
-          progressMeter={progressMeter}
-          cta={cta}
-          hasDate={!!date}
-          renderDraftStatusBar={renderDraftStatusBar}
+          application={application}
+          defaultData={defaultData}
         />
-      ) : hasHistory ? (
-        <ApplicationCardHistory
-          history={history}
-          size={history.items?.some((x) => !!x.content) ? 'lg' : 'sm'}
-        />
+      ) : showHistory ? (
+        <ApplicationCardHistory items={historyItems} />
       ) : null}
     </Box>
   )

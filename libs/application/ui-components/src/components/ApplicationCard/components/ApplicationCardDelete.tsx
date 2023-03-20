@@ -1,40 +1,55 @@
 import { Box, DialogPrompt, Icon, Tag } from '@island.is/island-ui/core'
-import { ApplicationCardProps } from '../ApplicationCard'
+import { coreMessages, useDeleteApplication } from '@island.is/application/core'
+import { ApplicationCardFields } from '../types'
+import { useLocale } from '@island.is/localization'
 
 interface Props {
-  deleteButton?: ApplicationCardProps['deleteButton']
-  tag?: ApplicationCardProps['tag']
+  application: ApplicationCardFields
+  refetchOnDelete?: () => void
 }
 
-export const ApplicationCardDelete = ({ deleteButton, tag }: Props) => {
-  if (!deleteButton || !deleteButton.visible) {
+export const ApplicationCardDelete = ({
+  application,
+  refetchOnDelete,
+}: Props) => {
+  const { id, actionCard } = application
+  const { formatMessage } = useLocale()
+  const { deleteApplication } = useDeleteApplication(refetchOnDelete)
+
+  if (!actionCard || !actionCard?.deleteButton) {
     return null
   }
 
   return (
     <DialogPrompt
       baseId="delete_dialog"
-      title={deleteButton.dialogTitle ?? ''}
-      description={deleteButton.dialogDescription}
-      ariaLabel="delete"
+      title={formatMessage(coreMessages.deleteApplicationDialogTitle)}
+      description={formatMessage(
+        coreMessages.deleteApplicationDialogDescription,
+      )}
+      ariaLabel={formatMessage(coreMessages.deleteApplicationDialogTitle)}
       img={
         <img
-          src={`assets/images/settings.svg`}
-          alt={'globe'}
+          src="assets/images/settings.svg`"
+          alt="globe"
           style={{ float: 'right' }}
           width="80%"
         />
       }
       disclosureElement={
-        <Tag outlined={tag?.outlined} variant={tag?.variant}>
+        <Tag outlined={false} variant="red">
           <Box display="flex" flexDirection="row" alignItems="center">
             <Icon icon="trash" size="small" type="outline" />
           </Box>
         </Tag>
       }
-      onConfirm={deleteButton.onClick}
-      buttonTextConfirm={deleteButton.dialogConfirmLabel}
-      buttonTextCancel={deleteButton.dialogCancelLabel}
+      onConfirm={() => deleteApplication(id)}
+      buttonTextConfirm={formatMessage(
+        coreMessages.deleteApplicationDialogConfirmLabel,
+      )}
+      buttonTextCancel={formatMessage(
+        coreMessages.deleteApplicationDialogCancelLabel,
+      )}
     />
   )
 }
