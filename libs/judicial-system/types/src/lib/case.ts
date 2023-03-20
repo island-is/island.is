@@ -106,6 +106,7 @@ export enum CaseTransition {
   REJECT = 'REJECT',
   DELETE = 'DELETE',
   DISMISS = 'DISMISS',
+  REOPEN = 'REOPEN',
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
