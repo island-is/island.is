@@ -541,7 +541,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     <select
                       id="client.domainName"
                       name="client.domainName"
-                      ref={register({
+                      {...register('client.domainName', {
                         required: true,
                       })}
                       title={localization.fields['domainName'].helpText}
