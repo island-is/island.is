@@ -320,59 +320,12 @@ export class ApplicationController {
   ) {
     this.logger.debug(`Getting applications with status ${status}`)
 
-    const applications = await this.applicationService.findAllByNationalIdAndFilters(
+    return this.applicationService.findAllByNationalIdAndFilters(
       nationalId,
       typeId,
       status,
       nationalId,
     )
-
-    // keep all templates that have been fetched in order to avoid fetching them again
-    const templates: Partial<
-      Record<
-        ApplicationTypes,
-        ApplicationTemplate<
-          ApplicationContext,
-          ApplicationStateSchema<EventObject>,
-          EventObject
-        >
-      >
-    > = {}
-    const templateTypeToIsReady: Partial<Record<ApplicationTypes, boolean>> = {}
-    const filteredApplications: Omit<
-      Application,
-      'answers' | 'externalData'
-    >[] = []
-    // For this endpoint we don't need to check if the application should be displayed
-    for (const application of applications) {
-      const typeId = application.typeId
-      const isTemplateTypeReady = templateTypeToIsReady[typeId]
-      // We've already checked an application with this type, and it is ready
-      if (isTemplateTypeReady && templates[typeId] !== undefined) {
-        filteredApplications.push(application)
-        continue
-      } else if (isTemplateTypeReady === false) {
-        // We've already checked an application with this type,
-        // and it is NOT ready, so we will skip it.
-        continue
-      }
-
-      try {
-        const applicationTemplate = await getApplicationTemplateByTypeId(typeId)
-        templates[typeId] = applicationTemplate
-
-        // Add template to avoid fetching it again for the same types
-        if (await this.validationService.isTemplateReady(applicationTemplate)) {
-          templateTypeToIsReady[typeId] = true
-          filteredApplications.push(application)
-        } else {
-          templateTypeToIsReady[typeId] = false
-        }
-      } catch (e) {
-        // If template is not found, we will skip it
-      }
-    }
-    return filteredApplications
   }
 
   @Scopes(ApplicationScope.write)
