@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common'
 
 import { EmailService } from '@island.is/email-service'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
-import { ApplicationScope } from '@island.is/auth/scopes'
+import { AdminPortalScope, ApplicationScope } from '@island.is/auth/scopes'
 import {
   ApplicationStatus,
   ApplicationTypes,
@@ -60,7 +60,11 @@ let server: request.SuperTest<request.Test>
 const nationalId = '1234564321'
 const mockAuthGuard = new MockAuthGuard({
   nationalId,
-  scope: [ApplicationScope.read, ApplicationScope.write],
+  scope: [
+    ApplicationScope.read,
+    ApplicationScope.write,
+    AdminPortalScope.applicationSystem,
+  ],
 })
 
 beforeAll(async () => {
@@ -140,7 +144,7 @@ describe('Application system API', () => {
     )
   })
 
-  it('should fetch Applicaiton History for overview', async () => {
+  it('should fetch Application History for overview', async () => {
     const creationResponse = await server
       .post('/applications')
       .send({
@@ -716,6 +720,38 @@ describe('Application system API', () => {
 
     const getResponse = await server
       .get(`/users/${nationalId}/applications`)
+      .expect(200)
+
+    // Assert
+    expect(getResponse.body).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ applicant: nationalId }),
+      ]),
+    )
+  })
+
+  it('GET /admin/:nationalId/applications should return a list of applications for the queried user', async () => {
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.PARENTAL_LEAVE,
+      })
+      .expect(201)
+
+    // Advance from prerequisites state
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    await server.put(`/applications/${creationResponse.body.id}`).send({
+      answers: {
+        usage: 4,
+      },
+    })
+
+    const getResponse = await server
+      .get(`/admin/${nationalId}/applications`)
       .expect(200)
 
     // Assert

@@ -13,7 +13,6 @@ import {
 import { EventObject } from 'xstate'
 import templateLoaders from './lib/templateLoaders'
 import { FC } from 'react'
-import { NotFoundException } from '@nestjs/common'
 
 type UIFields = Record<string, FC<FieldBaseProps | RepeaterProps>>
 type TemplateLibraryModule = {
@@ -38,7 +37,7 @@ async function loadTemplateLib(
     Object.prototype.hasOwnProperty.call(templateLoaders, templateId) &&
     typeof templateLoaders[templateId] === 'function'
   if (!hasTemplateLoader) {
-    throw new NotFoundException(`No template exists with id ${templateId}`)
+    throw new Error(`No template exists with id ${templateId}`)
   }
 
   try {
@@ -47,7 +46,7 @@ async function loadTemplateLib(
     loadedTemplateLibs[templateId] = templateLib
     return templateLib
   } catch (e) {
-    throw new NotFoundException('Could not load template with id ${templateId')
+    throw new Error(`Could not load template with id ${templateId}`)
   }
 }
 
