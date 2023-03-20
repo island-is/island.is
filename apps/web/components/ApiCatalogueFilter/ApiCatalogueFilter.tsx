@@ -2,6 +2,7 @@ import {
   Filter,
   FilterInput,
   FilterMultiChoice,
+  FilterMultiChoiceProps,
   FilterProps,
 } from '@island.is/island-ui/core'
 import React from 'react'
@@ -33,10 +34,10 @@ interface ApiCatalogueFilterProps {
   onFilterClear: () => void
   inputPlaceholder: string
   inputValue: string
-  onInputChange: (any) => void
+  onInputChange: (value: string) => void
   labelCategoryClear: string
-  onCategoryChange: (any) => void
-  onCategoryClear: (any) => void
+  onCategoryChange: FilterMultiChoiceProps['onChange']
+  onCategoryClear: FilterMultiChoiceProps['onClear']
   categories: Array<FilterCategory>
 }
 

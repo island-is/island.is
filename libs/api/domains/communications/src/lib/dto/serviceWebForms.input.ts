@@ -34,7 +34,12 @@ export class ServiceWebFormsInput {
 
   @HideField()
   @IsString()
-  type: 'serviceWebForms' = 'serviceWebForms'
+  type = 'serviceWebForms' as const
+
+  @Field()
+  @IsOptional()
+  @IsString()
+  lang?: string = 'is-IS'
 }
 
 export type ServiceWebFormsInputWithInstitutionEmail = ServiceWebFormsInput & {

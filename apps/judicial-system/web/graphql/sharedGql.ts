@@ -18,6 +18,8 @@ export const CreateFileMutation = gql`
       name
       key
       size
+      category
+      policeCaseNumber
     }
   }
 `
@@ -51,6 +53,7 @@ export const PoliceCaseFilesQuery = gql`
     policeCaseFiles(input: $input) {
       id
       name
+      policeCaseNumber
     }
   }
 `

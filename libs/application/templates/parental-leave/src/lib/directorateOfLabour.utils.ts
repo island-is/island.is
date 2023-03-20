@@ -5,12 +5,12 @@ import isSameMonth from 'date-fns/isSameMonth'
 import getDaysInMonth from 'date-fns/getDaysInMonth'
 import addDays from 'date-fns/addDays'
 import isSameDay from 'date-fns/isSameDay'
+import { errorMessages } from './messages'
 import {
   ParentalLeave,
-  ParentalLeaveEntitlement,
-  ParentalLeavePeriod,
-} from '@island.is/api/domains/directorate-of-labour'
-import { errorMessages } from './messages'
+  Right as ParentalLeaveEntitlement,
+  Period as ParentalLeavePeriod,
+} from '@island.is/clients/vmst'
 
 // VMST rule for the number of days in each month of the year
 export const DAYS_IN_MONTH = 30

@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react'
-import { useRouter } from 'next/router'
 
 import {
   Box,
@@ -8,17 +7,17 @@ import {
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
-import { useI18n } from '@island.is/air-discount-scheme-web/i18n'
-import { REDIRECT_KEY } from '@island.is/air-discount-scheme-web/consts'
+import { signIn, useSession } from 'next-auth/client'
 
 function Auth() {
-  const { toRoute } = useI18n()
-  const router = useRouter()
+  const [session, loading] = useSession()
   useEffect(() => {
-    const redirectUrl =
-      localStorage.getItem(REDIRECT_KEY) ?? toRoute('myBenefits', 'is')
-    router.replace(redirectUrl)
-  }, [router, toRoute])
+    if (!session?.user && !loading && typeof window !== 'undefined') {
+      signIn('identity-server', {
+        callbackUrl: `${window.location.href}`,
+      })
+    }
+  }, [session, loading])
 
   return (
     <GridContainer>

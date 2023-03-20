@@ -12,24 +12,79 @@ export enum CaseOrigin {
 }
 
 export enum CaseType {
+  // Indictment cases
+  INDICTMENT = 'INDICTMENT',
+  // Restriction Cases
+  ADMISSION_TO_FACILITY = 'ADMISSION_TO_FACILITY',
   CUSTODY = 'CUSTODY',
   TRAVEL_BAN = 'TRAVEL_BAN',
-  ADMISSION_TO_FACILITY = 'ADMISSION_TO_FACILITY',
-  SEARCH_WARRANT = 'SEARCH_WARRANT',
+  // Investigation Cases
+  AUTOPSY = 'AUTOPSY',
   BANKING_SECRECY_WAIVER = 'BANKING_SECRECY_WAIVER',
+  BODY_SEARCH = 'BODY_SEARCH',
+  ELECTRONIC_DATA_DISCOVERY_INVESTIGATION = 'ELECTRONIC_DATA_DISCOVERY_INVESTIGATION',
+  EXPULSION_FROM_HOME = 'EXPULSION_FROM_HOME',
+  INTERNET_USAGE = 'INTERNET_USAGE',
+  OTHER = 'OTHER',
   PHONE_TAPPING = 'PHONE_TAPPING',
+  PSYCHIATRIC_EXAMINATION = 'PSYCHIATRIC_EXAMINATION',
+  RESTRAINING_ORDER = 'RESTRAINING_ORDER',
+  RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME = 'RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME',
+  SEARCH_WARRANT = 'SEARCH_WARRANT',
+  SOUND_RECORDING_EQUIPMENT = 'SOUND_RECORDING_EQUIPMENT',
   TELECOMMUNICATIONS = 'TELECOMMUNICATIONS',
   TRACKING_EQUIPMENT = 'TRACKING_EQUIPMENT',
-  PSYCHIATRIC_EXAMINATION = 'PSYCHIATRIC_EXAMINATION',
-  SOUND_RECORDING_EQUIPMENT = 'SOUND_RECORDING_EQUIPMENT',
-  AUTOPSY = 'AUTOPSY',
-  BODY_SEARCH = 'BODY_SEARCH',
-  INTERNET_USAGE = 'INTERNET_USAGE',
-  RESTRAINING_ORDER = 'RESTRAINING_ORDER',
-  EXPULSION_FROM_HOME = 'EXPULSION_FROM_HOME',
-  ELECTRONIC_DATA_DISCOVERY_INVESTIGATION = 'ELECTRONIC_DATA_DISCOVERY_INVESTIGATION',
   VIDEO_RECORDING_EQUIPMENT = 'VIDEO_RECORDING_EQUIPMENT',
-  OTHER = 'OTHER',
+}
+
+export enum IndictmentSubtype {
+  AGGRAVATED_ASSAULT = 'AGGRAVATED_ASSAULT',
+  ALCOHOL_LAWS = 'ALCOHOL_LAWS',
+  ASSAULT_LEADING_TO_DEATH = 'ASSAULT_LEADING_TO_DEATH',
+  ATTEMPTED_MURDER = 'ATTEMPTED_MURDER',
+  BREAKING_AND_ENTERING = 'BREAKING_AND_ENTERING',
+  CHILD_PROTECTION_LAWS = 'CHILD_PROTECTION_LAWS',
+  COVER_UP = 'COVER_UP',
+  CUSTOMS_VIOLATION = 'CUSTOMS_VIOLATION',
+  DOMESTIC_VIOLENCE = 'DOMESTIC_VIOLENCE',
+  EMBEZZLEMENT = 'EMBEZZLEMENT',
+  FRAUD = 'FRAUD',
+  INDECENT_EXPOSURE = 'INDECENT_EXPOSURE',
+  INTIMATE_RELATIONS = 'INTIMATE_RELATIONS',
+  LEGAL_ENFORCEMENT_LAWS = 'LEGAL_ENFORCEMENT_LAWS',
+  LOOTING = 'LOOTING',
+  MAJOR_ASSAULT = 'MAJOR_ASSAULT',
+  MINOR_ASSAULT = 'MINOR_ASSAULT',
+  MONEY_LAUNDERING = 'MONEY_LAUNDERING',
+  MURDER = 'MURDER',
+  NARCOTICS_OFFENSE = 'NARCOTICS_OFFENSE',
+  NAVAL_LAW_VIOLATION = 'NAVAL_LAW_VIOLATION',
+  OTHER_CRIMINAL_OFFENSES = 'OTHER_CRIMINAL_OFFENSES',
+  OTHER_OFFENSES = 'OTHER_OFFENSES',
+  POLICE_REGULATIONS = 'POLICE_REGULATIONS',
+  PROPERTY_DAMAGE = 'PROPERTY_DAMAGE',
+  PUBLIC_SERVICE_VIOLATION = 'PUBLIC_SERVICE_VIOLATION',
+  RAPE = 'RAPE',
+  SEXUAL_OFFENSES_OTHER_THAN_RAPE = 'SEXUAL_OFFENSES_OTHER_THAN_RAPE',
+  TAX_VIOLATION = 'TAX_VIOLATION',
+  THEFT = 'THEFT',
+  THREAT = 'THREAT',
+  TRAFFIC_VIOLATION = 'TRAFFIC_VIOLATION',
+  UTILITY_THEFT = 'UTILITY_THEFT',
+  WEPONS_VIOLATION = 'WEPONS_VIOLATION',
+}
+
+export interface IndictmentSubtypeMap {
+  [key: string]: IndictmentSubtype[]
+}
+
+export interface CrimeScene {
+  place?: string
+  date?: Date
+}
+
+export interface CrimeSceneMap {
+  [key: string]: CrimeScene
 }
 
 export enum CaseState {
@@ -96,22 +151,27 @@ export enum SessionArrangements {
   PROSECUTOR_PRESENT = 'PROSECUTOR_PRESENT',
 }
 
+export enum SubpoenaType {
+  ARREST_SUMMONS = 'ARREST_SUMMONS',
+  ABSENCE_SUMMONS = 'ABSENCE_SUMMONS',
+}
+
 export interface Case {
   id: string
   created: string
   modified: string
   origin: CaseOrigin
   type: CaseType
+  indictmentSubtypes?: IndictmentSubtypeMap
   description?: string
   state: CaseState
-  policeCaseNumber: string
+  policeCaseNumbers: string[]
   defendants?: Defendant[]
   defenderName?: string
   defenderNationalId?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
-  defenderIsSpokesperson?: boolean
   isHeightenedSecurityLevel?: boolean
   court?: Institution
   leadInvestigator?: string
@@ -179,89 +239,133 @@ export interface Case {
   rulingModifiedHistory?: string
   caseResentExplanation?: string
   seenByDefender?: string
+  subpoenaType?: SubpoenaType
+  defendantWaivesRightToCounsel?: boolean
+  crimeScenes?: CrimeSceneMap
+  indictmentIntroduction?: string
+  requestDriversLicenseSuspension?: boolean
 }
 
-export interface CreateCase {
-  type: CaseType
-  description?: string
-  policeCaseNumber: string
-  defenderName?: string
-  defenderNationalId?: string
-  defenderEmail?: string
-  defenderPhoneNumber?: string
-  sendRequestToDefender?: boolean
-  leadInvestigator?: string
+export interface CaseListEntry
+  extends Pick<
+    Case,
+    | 'id'
+    | 'created'
+    | 'policeCaseNumbers'
+    | 'state'
+    | 'type'
+    | 'defendants'
+    | 'courtCaseNumber'
+    | 'decision'
+    | 'validToDate'
+    | 'isValidToDateInThePast'
+    | 'courtDate'
+    | 'initialRulingDate'
+    | 'rulingDate'
+    | 'courtEndTime'
+    | 'prosecutorAppealDecision'
+    | 'accusedAppealDecision'
+    | 'prosecutorPostponedAppealDate'
+    | 'accusedPostponedAppealDate'
+    | 'judge'
+    | 'prosecutor'
+    | 'registrar'
+    | 'creatingProsecutor'
+  > {
+  parentCaseId?: string
 }
 
-export interface UpdateCase {
-  type?: string
-  description?: string
-  policeCaseNumber?: string
-  defenderName?: string
-  defenderNationalId?: string
-  defenderEmail?: string
-  defenderPhoneNumber?: string
-  sendRequestToDefender?: boolean
-  defenderIsSpokesperson?: boolean
-  isHeightenedSecurityLevel?: boolean
+export type CreateCase = Pick<
+  Case,
+  | 'type'
+  | 'indictmentSubtypes'
+  | 'description'
+  | 'policeCaseNumbers'
+  | 'defenderName'
+  | 'defenderNationalId'
+  | 'defenderEmail'
+  | 'defenderPhoneNumber'
+  | 'sendRequestToDefender'
+  | 'leadInvestigator'
+  | 'crimeScenes'
+>
+
+export interface UpdateCase
+  extends Pick<
+    Case,
+    | 'indictmentSubtypes'
+    | 'description'
+    | 'defenderName'
+    | 'defenderNationalId'
+    | 'defenderEmail'
+    | 'defenderPhoneNumber'
+    | 'sendRequestToDefender'
+    | 'isHeightenedSecurityLevel'
+    | 'leadInvestigator'
+    | 'arrestDate'
+    | 'requestedCourtDate'
+    | 'translator'
+    | 'requestedValidToDate'
+    | 'demands'
+    | 'lawsBroken'
+    | 'legalBasis'
+    | 'legalProvisions'
+    | 'requestedCustodyRestrictions'
+    | 'requestedOtherRestrictions'
+    | 'caseFacts'
+    | 'legalArguments'
+    | 'requestProsecutorOnlySession'
+    | 'prosecutorOnlySessionRequest'
+    | 'comments'
+    | 'caseFilesComments'
+    | 'courtCaseNumber'
+    | 'sessionArrangements'
+    | 'courtDate'
+    | 'courtLocation'
+    | 'courtRoom'
+    | 'courtStartDate'
+    | 'courtEndTime'
+    | 'isClosedCourtHidden'
+    | 'courtAttendees'
+    | 'prosecutorDemands'
+    | 'courtDocuments'
+    | 'sessionBookings'
+    | 'courtCaseFacts'
+    | 'introduction'
+    | 'courtLegalArguments'
+    | 'ruling'
+    | 'decision'
+    | 'validToDate'
+    | 'isCustodyIsolation'
+    | 'isolationToDate'
+    | 'conclusion'
+    | 'endOfSessionBookings'
+    | 'accusedAppealDecision'
+    | 'accusedAppealAnnouncement'
+    | 'prosecutorAppealDecision'
+    | 'prosecutorAppealAnnouncement'
+    | 'accusedPostponedAppealDate'
+    | 'prosecutorPostponedAppealDate'
+    | 'caseModifiedExplanation'
+    | 'rulingModifiedHistory'
+    | 'caseResentExplanation'
+    | 'seenByDefender'
+    | 'subpoenaType'
+    | 'defendantWaivesRightToCounsel'
+    | 'crimeScenes'
+    | 'indictmentIntroduction'
+    | 'requestDriversLicenseSuspension'
+  > {
+  type?: CaseType
+  policeCaseNumbers?: string[]
   courtId?: string
-  leadInvestigator?: string
-  arrestDate?: string
-  requestedCourtDate?: string
-  translator?: string
-  requestedValidToDate?: string
-  demands?: string
-  lawsBroken?: string
-  legalBasis?: string
-  legalProvisions?: CaseLegalProvisions[]
-  requestedCustodyRestrictions?: CaseCustodyRestrictions[]
-  requestedOtherRestrictions?: string
-  caseFacts?: string
-  legalArguments?: string
-  requestProsecutorOnlySession?: boolean
-  prosecutorOnlySessionRequest?: string
-  comments?: string
-  caseFilesComments?: string
   prosecutorId?: string
-  sharedWithProsecutorsOfficeId?: string
-  courtCaseNumber?: string
-  sessionArrangements?: SessionArrangements
-  courtDate?: string
-  courtLocation?: string
-  courtRoom?: string
-  courtStartDate?: string
-  courtEndTime?: string
-  isClosedCourtHidden?: boolean
-  courtAttendees?: string
-  prosecutorDemands?: string
-  courtDocuments?: CourtDocument[]
-  sessionBookings?: string
-  courtCaseFacts?: string
-  introduction?: string
-  courtLegalArguments?: string
-  ruling?: string
-  decision?: CaseDecision
-  validToDate?: string
-  isCustodyIsolation?: boolean
-  isolationToDate?: string
-  conclusion?: string
-  endOfSessionBookings?: string
-  accusedAppealDecision?: CaseAppealDecision
-  accusedAppealAnnouncement?: string
-  prosecutorAppealDecision?: CaseAppealDecision
-  prosecutorAppealAnnouncement?: string
-  accusedPostponedAppealDate?: string
-  prosecutorPostponedAppealDate?: string
-  registrarId?: string
+  sharedWithProsecutorsOfficeId?: string | null
+  registrarId?: string | null
   judgeId?: string
-  caseModifiedExplanation?: string
-  rulingModifiedHistory?: string
-  caseResentExplanation?: string
-  seenByDefender?: string
 }
 
 export interface TransitionCase {
-  modified: string
   transition: CaseTransition
 }
 
@@ -276,36 +380,46 @@ export interface SignatureConfirmationResponse {
   message?: string
 }
 
+export const indictmentCases = [CaseType.INDICTMENT]
+
 export const restrictionCases = [
+  CaseType.ADMISSION_TO_FACILITY,
   CaseType.CUSTODY,
   CaseType.TRAVEL_BAN,
-  CaseType.ADMISSION_TO_FACILITY,
 ]
 
 export const investigationCases = [
-  CaseType.SEARCH_WARRANT,
+  CaseType.AUTOPSY,
   CaseType.BANKING_SECRECY_WAIVER,
+  CaseType.BODY_SEARCH,
+  CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
+  CaseType.EXPULSION_FROM_HOME,
+  CaseType.INTERNET_USAGE,
+  CaseType.OTHER,
   CaseType.PHONE_TAPPING,
+  CaseType.PSYCHIATRIC_EXAMINATION,
+  CaseType.RESTRAINING_ORDER,
+  CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
+  CaseType.SEARCH_WARRANT,
+  CaseType.SOUND_RECORDING_EQUIPMENT,
   CaseType.TELECOMMUNICATIONS,
   CaseType.TRACKING_EQUIPMENT,
-  CaseType.PSYCHIATRIC_EXAMINATION,
-  CaseType.SOUND_RECORDING_EQUIPMENT,
-  CaseType.AUTOPSY,
-  CaseType.BODY_SEARCH,
-  CaseType.INTERNET_USAGE,
-  CaseType.RESTRAINING_ORDER,
-  CaseType.EXPULSION_FROM_HOME,
-  CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
   CaseType.VIDEO_RECORDING_EQUIPMENT,
-  CaseType.OTHER,
 ]
 
-export function isRestrictionCase(type?: CaseType): boolean {
-  return Boolean(type && restrictionCases.includes(type))
+export function isIndictmentCase(type: string): boolean {
+  const caseType = type as CaseType
+  return indictmentCases.includes(caseType)
 }
 
-export function isInvestigationCase(type?: CaseType): boolean {
-  return Boolean(type && investigationCases.includes(type))
+export function isRestrictionCase(type: string): boolean {
+  const caseType = type as CaseType
+  return restrictionCases.includes(caseType)
+}
+
+export function isInvestigationCase(type: string): boolean {
+  const caseType = type as CaseType
+  return investigationCases.includes(caseType)
 }
 
 export function isAcceptingCaseDecision(decision?: CaseDecision): boolean {

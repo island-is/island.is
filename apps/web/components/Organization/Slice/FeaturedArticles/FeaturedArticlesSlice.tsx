@@ -2,6 +2,7 @@ import React from 'react'
 import { FeaturedArticles } from '@island.is/web/graphql/schema'
 import {
   Box,
+  BoxProps,
   Button,
   FocusableBox,
   Link,
@@ -11,13 +12,10 @@ import {
 } from '@island.is/island-ui/core'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useNamespace } from '@island.is/web/hooks'
-import { Namespace } from '@island.is/api/schema'
-import { useWindowSize } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
 
 interface SliceProps {
   slice: FeaturedArticles
-  namespace?: Namespace
+  namespace?: Record<string, string>
 }
 
 export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
@@ -26,33 +24,51 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
 }) => {
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
-  const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
   const labelId = 'sliceTitle-' + slice.id
 
+  const sortedArticles =
+    slice.sortBy === 'importance'
+      ? slice.resolvedArticles
+          .slice()
+          .sort((a, b) =>
+            a.importance > b.importance
+              ? -1
+              : a.importance === b.importance
+              ? a.title.localeCompare(b.title)
+              : 1,
+          )
+      : slice.resolvedArticles
+
+  const borderProps: BoxProps = slice.hasBorderAbove
+    ? {
+        borderTopWidth: 'standard',
+        borderColor: 'standard',
+        paddingTop: [8, 6, 8],
+        paddingBottom: [8, 6, 6],
+      }
+    : {}
+
   return (
-    !!slice.articles.length && (
+    (!!slice.articles.length || !!slice.resolvedArticles.length) && (
       <section key={slice.id} id={slice.id} aria-labelledby={labelId}>
-        <Box
-          borderTopWidth="standard"
-          borderColor="standard"
-          paddingTop={[8, 6, 8]}
-          paddingBottom={[8, 6, 6]}
-        >
+        <Box {...borderProps}>
           <Text as="h2" variant="h3" paddingBottom={6} id={labelId}>
             {slice.title}
           </Text>
           <Stack space={2}>
-            {slice.articles.map(
-              ({ title, slug, processEntry, processEntryButtonText }) => {
+            {(slice.automaticallyFetchArticles
+              ? sortedArticles
+              : slice.articles
+            ).map(
+              ({
+                title,
+                slug,
+                processEntry = null,
+                processEntryButtonText = null,
+              }) => {
                 const url = linkResolver('Article' as LinkType, [slug])
                 return (
-                  <FocusableBox
-                    key={slug}
-                    borderRadius="large"
-                    href={url.href}
-                    target={isMobile ? '' : '_blank'}
-                  >
+                  <FocusableBox key={slug} borderRadius="large" href={url.href}>
                     <TopicCard
                       tag={
                         (!!processEntry || processEntryButtonText) &&

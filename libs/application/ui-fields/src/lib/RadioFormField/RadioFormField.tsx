@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react'
+import { FC, useMemo } from 'react'
 import HtmlParser from 'react-html-parser'
 
 import {
@@ -35,6 +35,7 @@ export const RadioFormField: FC<Props> = ({
     width,
     largeButtons,
     backgroundColor,
+    required,
   } = field
   const { formatMessage } = useLocale()
 
@@ -43,10 +44,18 @@ export const RadioFormField: FC<Props> = ({
     [options, application],
   )
 
+  console.debug(
+    `Radio title ${JSON.stringify(title)}, and formatted: ${formatText(
+      title,
+      application,
+      formatMessage,
+    )}`,
+  )
+
   return (
-    <Box paddingTop={field.space}>
+    <Box paddingTop={field.space} role="region" aria-labelledby={id + 'title'}>
       {showFieldName && (
-        <Text variant="h4" as="h4">
+        <Text variant="h4" as="h4" id={id + 'title'}>
           {formatText(title, application, formatMessage)}
         </Text>
       )}
@@ -67,12 +76,18 @@ export const RadioFormField: FC<Props> = ({
           split={width === 'half' ? '1/2' : '1/1'}
           name={id}
           defaultValue={
-            (getValueViaPath(application.answers, id) as string[]) ??
-            getDefaultValue(field, application)
+            ((getValueViaPath(application.answers, id) as string[]) ??
+              getDefaultValue(field, application)) ||
+            required
+              ? ''
+              : undefined
           }
-          options={finalOptions.map(({ label, tooltip, ...o }) => ({
+          options={finalOptions.map(({ label, subLabel, tooltip, ...o }) => ({
             ...o,
             label: HtmlParser(formatText(label, application, formatMessage)),
+            subLabel:
+              subLabel &&
+              HtmlParser(formatText(subLabel, application, formatMessage)),
             ...(tooltip && {
               tooltip: HtmlParser(
                 formatText(tooltip, application, formatMessage),

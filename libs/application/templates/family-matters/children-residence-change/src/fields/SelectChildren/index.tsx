@@ -9,10 +9,10 @@ const CRCSelectChildren = ({
   error,
 }: CRCFieldBaseProps) => {
   const {
-    externalData: { nationalRegistry },
+    externalData: { childrenCustodyInformation },
     answers,
   } = application
-  const { children } = nationalRegistry.data
+  const children = childrenCustodyInformation.data
   return (
     <SelectChildren
       id={field.id}

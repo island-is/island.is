@@ -3,12 +3,16 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { DrivingLicenseBookService } from '@island.is/api/domains/driving-license-book'
 import { DrivingSchool } from './types'
 import { getValueViaPath } from '@island.is/application/core'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
 
 @Injectable()
-export class DrivingSchoolConfirmationService {
+export class DrivingSchoolConfirmationService extends BaseTemplateApiService {
   constructor(
     private readonly drivingLicenseBookService: DrivingLicenseBookService,
-  ) {}
+  ) {
+    super(ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION)
+  }
 
   async submitApplication({
     application: { answers, externalData },
@@ -23,8 +27,8 @@ export class DrivingSchoolConfirmationService {
     if (!confirmation || !studentBookId) {
       throw new Error(`Missing date and school`)
     }
-    const schoolNationalId = (externalData.employee.data as DrivingSchool)
-      .nationalId
+    const schoolNationalId = (externalData.drivingSchoolForEmployee
+      .data as DrivingSchool).nationalId
 
     try {
       const result = await this.drivingLicenseBookService.createDrivingSchoolTestResult(

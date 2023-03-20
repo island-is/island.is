@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Inject,
   NotFoundException,
   Param,
   Post,
@@ -22,6 +23,7 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import { StaffGuard } from '../../guards/staff.guard'
 import { StaffRolesRules } from '../../decorators/staffRole.decorator'
 import {
@@ -31,12 +33,18 @@ import {
 } from './dto'
 import { CreateStaffDto } from '../staff/dto'
 import { MunicipalitiesFinancialAidScope } from '@island.is/auth/scopes'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Controller(`${apiBasePath}/municipality`)
 @ApiTags('municipality')
 export class MunicipalityController {
-  constructor(private readonly municipalityService: MunicipalityService) {}
+  constructor(
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
+    private readonly municipalityService: MunicipalityService,
+  ) {}
 
   @UseGuards(ScopesGuard)
   @Scopes(MunicipalitiesFinancialAidScope.read)
@@ -45,13 +53,30 @@ export class MunicipalityController {
     type: MunicipalityModel,
     description: 'Gets municipality by id',
   })
-  async getById(@Param('id') id: string): Promise<MunicipalityModel> {
-    const municipality = await this.municipalityService.findByMunicipalityId(id)
+  async getById(
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+  ): Promise<MunicipalityModel> {
+    this.logger.debug('Municipality controller: Getting municipality by id')
+
+    let municipality
+    try {
+      municipality = user.scope.includes(
+        MunicipalitiesFinancialAidScope.employee,
+      )
+        ? await this.municipalityService.findByMunicipalityIdWithNav(id)
+        : await this.municipalityService.findByMunicipalityId(id)
+    } catch (e) {
+      this.logger.error(
+        'Municipality controller: Failed getting municipality by id',
+        e,
+      )
+      throw e
+    }
 
     if (!municipality) {
       throw new NotFoundException(404, `municipality ${id} not found`)
     }
-
     return municipality
   }
 

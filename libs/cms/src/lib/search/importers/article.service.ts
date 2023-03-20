@@ -65,7 +65,7 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
             if (!fields?.parent || !fields?.title) {
               return undefined
             }
-            const { title, url, content, showTableOfContents, stepper } = fields
+            const { title, url, content, showTableOfContents } = fields
             return {
               sys,
               fields: {
@@ -73,7 +73,6 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
                 slug: url,
                 content,
                 showTableOfContents,
-                stepper,
               },
             }
           })
@@ -112,11 +111,19 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
           }
         }
 
-        if (!isCircular(processedEntry)) {
-          processedEntries.push(processedEntry)
-        } else {
-          logger.warn('Circular reference found in article', {
-            id: entry.sys.id,
+        try {
+          const mappedEntry = mapArticle(processedEntry)
+          if (!isCircular(mappedEntry)) {
+            processedEntries.push(processedEntry)
+          } else {
+            logger.warn('Circular reference found in article', {
+              id: entry?.sys?.id,
+            })
+          }
+        } catch (error) {
+          logger.warn('Failed to map article', {
+            error: error.message,
+            id: entry?.sys?.id,
           })
         }
       }
@@ -173,6 +180,11 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
                 type: 'group',
               },
               {
+                key: entry.fields?.subgroup?.fields?.slug ?? '',
+                value: entry.fields?.subgroup?.fields?.title,
+                type: 'subgroup',
+              },
+              {
                 key: entry.fields?.category?.fields?.slug ?? '',
                 value: entry.fields?.category?.fields?.title,
                 type: 'category',
@@ -186,6 +198,16 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
                 key: x.slug,
                 value: x.title,
                 type: 'category',
+              })),
+              ...(mapped.otherGroups ?? []).map((x) => ({
+                key: x.slug,
+                value: x.title,
+                type: 'group',
+              })),
+              ...(mapped.otherSubgroups ?? []).map((x) => ({
+                key: x.slug,
+                value: x.title,
+                type: 'subgroup',
               })),
               ...(entry.fields?.organization ?? []).map((x) => ({
                 key: x.fields?.slug ?? '',
@@ -207,7 +229,7 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
         } catch (error) {
           logger.warn('Failed to import article', {
             error: error.message,
-            id: entry.sys.id,
+            id: entry?.sys?.id,
           })
           return false
         }

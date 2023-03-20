@@ -76,11 +76,11 @@ const MockParents = ({ application, field }: CRCFieldBaseProps) => {
             </Box>
             <Box marginTop={2}>
               <InputController
-                id={`${id}[${index}].address.streetName`}
-                name={`${id}[${index}].address.streetName`}
+                id={`${id}[${index}].address.streetAddress`}
+                name={`${id}[${index}].address.streetAddress`}
                 label="Heimilisfang"
                 defaultValue={
-                  parents?.[index]?.address.streetName ||
+                  parents?.[index]?.address?.streetAddress ||
                   parentBDefaults.address
                 }
               />
@@ -91,7 +91,7 @@ const MockParents = ({ application, field }: CRCFieldBaseProps) => {
                 name={`${id}[${index}].address.postalCode`}
                 label="Póstnúmer"
                 defaultValue={
-                  parents?.[index]?.address.postalCode ||
+                  parents?.[index]?.address?.postalCode ||
                   parentBDefaults.postalCode
                 }
               />
@@ -102,7 +102,7 @@ const MockParents = ({ application, field }: CRCFieldBaseProps) => {
                 name={`${id}[${index}].address.city`}
                 label="Borg"
                 defaultValue={
-                  parents?.[index]?.address.city || parentBDefaults.city
+                  parents?.[index]?.address?.locality || parentBDefaults.city
                 }
               />
             </Box>

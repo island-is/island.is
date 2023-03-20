@@ -41,6 +41,11 @@ interface ScopeOptions {
    * Adds this scope as `allowedScopes` for the specified clients.
    */
   addToClients?: Array<string>
+
+  /**
+   * Configures which claims the scope requires. Defaults to `nationalId`.
+   */
+  claims?: Array<string>
 }
 
 const getScopeFields = (options: ScopeOptions): DbScope => ({
@@ -51,6 +56,9 @@ const getScopeFields = (options: ScopeOptions): DbScope => ({
   grant_to_procuring_holders: options.delegation?.procuringHolders === true,
   also_for_delegated_user: options.delegation?.custom === true,
   is_access_controlled: options.accessControlled ?? false,
+
+  // The scope name should be prefixed with the organisation domain, eg `@island.is/some-scope:name`.
+  domain_name: options.name.split('/')[0],
 
   // defaults
   enabled: true,
@@ -73,6 +81,18 @@ export const createScope = (options: ScopeOptions) => async (
     () => `creating scope ${scope.name}`,
   )
 
+  const claims = options.claims ?? ['nationalId']
+  await safeBulkInsert(
+    queryInterface,
+    'api_scope_user_claim',
+    claims.map((claim) => ({
+      api_scope_name: scope.name,
+      claim_name: claim,
+    })),
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    ({ claim_name }) => `linking scope ${scope.name} to claim ${claim_name}`,
+  )
+
   await safeBulkInsert(
     queryInterface,
     'api_resource_scope',
@@ -82,6 +102,7 @@ export const createScope = (options: ScopeOptions) => async (
         scope_name: scope.name,
       },
     ],
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     ({ api_resource_name }) =>
       `linking scope ${scope.name} to resource ${api_resource_name}`,
   )
@@ -90,10 +111,12 @@ export const createScope = (options: ScopeOptions) => async (
     await safeBulkInsert(
       queryInterface,
       'client_allowed_scope',
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       options.addToClients.map((client_id) => ({
         client_id,
         scope_name: scope.name,
       })),
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       ({ client_id }) => `linking scope ${scope.name} to client ${client_id}`,
     )
   }

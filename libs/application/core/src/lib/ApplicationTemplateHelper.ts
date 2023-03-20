@@ -16,15 +16,12 @@ import {
   ApplicationStateMachine,
   ApplicationStateMeta,
   ApplicationStateSchema,
-  ApplicationTemplateAPIAction,
   createApplicationMachine,
   ReadWriteValues,
   RoleInState,
+  TemplateApi,
+  PendingAction,
 } from '@island.is/application/types'
-
-enum FinalStates {
-  REJECTED = 'rejected',
-}
 
 export class ApplicationTemplateHelper<
   TContext extends ApplicationContext,
@@ -61,16 +58,14 @@ export class ApplicationTemplateHelper<
 
   getApplicationStatus(): ApplicationStatus {
     const { state } = this.application
-
-    if (this.template.stateMachineConfig.states[state].type === 'final') {
-      if (state === FinalStates.REJECTED) {
-        return ApplicationStatus.REJECTED
-      }
-
-      return ApplicationStatus.COMPLETED
+    const applicationTemplateState = this.template.stateMachineConfig.states[
+      state
+    ]
+    if (applicationTemplateState.meta?.status) {
+      return applicationTemplateState.meta.status as ApplicationStatus
+    } else {
+      return ApplicationStatus.DRAFT
     }
-
-    return ApplicationStatus.IN_PROGRESS
   }
 
   getApplicationActionCardMeta(
@@ -97,23 +92,18 @@ export class ApplicationTemplateHelper<
   }
 
   private getTemplateAPIAction(
-    action: ApplicationTemplateAPIAction | null,
-  ): ApplicationTemplateAPIAction | null {
+    action: TemplateApi | TemplateApi[] | null,
+  ): TemplateApi | TemplateApi[] | null {
     if (action === null) {
       return null
     }
 
-    return {
-      externalDataId: action.apiModuleAction,
-      shouldPersistToExternalData: true,
-      throwOnError: true,
-      ...action,
-    }
+    return action
   }
 
   getOnExitStateAPIAction(
     stateKey: string = this.application.state,
-  ): ApplicationTemplateAPIAction | null {
+  ): TemplateApi | TemplateApi[] | null {
     const action =
       this.template.stateMachineConfig.states[stateKey]?.meta?.onExit ?? null
 
@@ -122,7 +112,7 @@ export class ApplicationTemplateHelper<
 
   getOnEntryStateAPIAction(
     stateKey: string = this.application.state,
-  ): ApplicationTemplateAPIAction | null {
+  ): TemplateApi | TemplateApi[] | null {
     const action =
       this.template.stateMachineConfig.states[stateKey]?.meta?.onEntry ?? null
 
@@ -187,10 +177,7 @@ export class ApplicationTemplateHelper<
     }
     const { read, write } = roleInState
 
-    if (read === 'all') {
-      return { answers, externalData }
-    }
-    if (write === 'all') {
+    if (read === 'all' || write === 'all') {
       return { answers, externalData }
     }
 
@@ -266,5 +253,56 @@ export class ApplicationTemplateHelper<
     if (hasError) {
       return errorMap
     }
+  }
+
+  getApisFromRoleInState(role: ApplicationRole): TemplateApi[] {
+    const roleInState = this.getRoleInState(role)
+    return roleInState?.api ?? []
+  }
+
+  getCurrentStatePendingAction(
+    application: Application,
+    currentRole: ApplicationRole,
+    formatMessage: FormatMessage,
+    stateKey: string = this.application.state,
+  ): PendingAction {
+    const stateInfo = this.getApplicationStateInformation(stateKey)
+
+    const pendingAction = stateInfo?.actionCard?.pendingAction
+
+    if (!pendingAction) {
+      return {
+        displayStatus: 'warning',
+      }
+    }
+
+    if (typeof pendingAction === 'function') {
+      const action = pendingAction(application, currentRole)
+      return {
+        displayStatus: action.displayStatus,
+        content: action.content ? formatMessage(action.content) : undefined,
+        title: action.title ? formatMessage(action.title) : undefined,
+      }
+    }
+    return {
+      displayStatus: pendingAction.displayStatus,
+      title: pendingAction.title
+        ? formatMessage(pendingAction.title)
+        : undefined,
+      content: pendingAction.content
+        ? formatMessage(pendingAction.content)
+        : undefined,
+    }
+  }
+
+  getHistoryLog(
+    transition: 'exit' | 'entry',
+    stateKey: string = this.application.state,
+  ): StaticText | undefined {
+    const stateInfo = this.getApplicationStateInformation(stateKey)
+
+    return transition === 'entry'
+      ? stateInfo?.actionCard?.onEntryHistoryLog
+      : stateInfo?.actionCard?.onExitHistoryLog
   }
 }

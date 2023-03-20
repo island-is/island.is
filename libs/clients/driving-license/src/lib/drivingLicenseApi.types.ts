@@ -13,6 +13,7 @@ export interface DriversLicense {
   expires?: Date | null
   categories: DriversLicenseCategory[]
   healthRemarks?: string[]
+  birthCountry?: string | null
 }
 
 export interface Teacher {
@@ -33,6 +34,10 @@ export interface DrivingAssessment {
 }
 
 export interface QualityPhoto {
+  data: string
+}
+
+export interface QualitySignature {
   data: string
 }
 

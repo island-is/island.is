@@ -1,0 +1,29 @@
+{
+  "root": "libs/application/core",
+  "sourceRoot": "libs/application/core/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/application/core/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "libs/application/core/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/libs/application/core"]
+    },
+    "extract-strings": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/core/src/**/*.{js,ts,tsx}'"
+      }
+    }
+  },
+  "tags": ["lib:application-system", "scope:application-system"]
+}

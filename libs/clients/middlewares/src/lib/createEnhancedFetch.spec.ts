@@ -112,7 +112,7 @@ describe('EnhancedFetch', () => {
     )
   })
 
-  it('can optionally log json body', async () => {
+  it('can log json body', async () => {
     // Arrange
     env = setupTestEnv({ logErrorResponseBody: true })
     env.fetch.mockResolvedValue(
@@ -133,7 +133,7 @@ describe('EnhancedFetch', () => {
     )
   })
 
-  it('can optionally log text body', async () => {
+  it('can log text body', async () => {
     // Arrange
     env = setupTestEnv({ logErrorResponseBody: true })
     env.fetch.mockResolvedValue(fakeResponse('My Error', { status: 500 }))
@@ -144,6 +144,36 @@ describe('EnhancedFetch', () => {
     // Assert
     expect(error).toMatchObject({ body: 'My Error' })
     expect(env.logger.log).toHaveBeenCalledWith(
+      'error',
+      expect.objectContaining({ body: 'My Error' }),
+    )
+  })
+
+  it('can log trimmed text body', async () => {
+    // Arrange
+    const body = ''.padStart(1000, 'a')
+    env = setupTestEnv({ logErrorResponseBody: true })
+    env.fetch.mockResolvedValue(fakeResponse(body, { status: 500 }))
+
+    // Act
+    const error = await env.enhancedFetch(testUrl).catch((error) => error)
+
+    // Assert
+    expect(error).toMatchObject({ body })
+    expect(env.logger.log.mock.calls[0][1].body).toHaveLength(515)
+  })
+
+  it('can skip logging body', async () => {
+    // Arrange
+    env = setupTestEnv({ logErrorResponseBody: false })
+    env.fetch.mockResolvedValue(fakeResponse('My Error', { status: 500 }))
+
+    // Act
+    const error = await env.enhancedFetch(testUrl).catch((error) => error)
+
+    // Assert
+    expect(error).not.toMatchObject({ body: 'My Error' })
+    expect(env.logger.log).not.toHaveBeenCalledWith(
       'error',
       expect.objectContaining({ body: 'My Error' }),
     )

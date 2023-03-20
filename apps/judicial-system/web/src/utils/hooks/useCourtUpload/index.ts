@@ -1,11 +1,22 @@
+import { useCallback, useEffect, useState } from 'react'
 import { ApolloError, useMutation } from '@apollo/client'
+
 import { UploadFileToCourtMutation } from '@island.is/judicial-system-web/graphql'
 import {
-  Case,
   CaseFile as TCaseFile,
   CaseFileState,
 } from '@island.is/judicial-system/types'
-import { useCallback, useEffect, useState } from 'react'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+
+export enum UploadState {
+  ALL_UPLOADED = 'ALL_UPLOADED',
+  ALL_UPLOADED_NONE_AVAILABLE = 'ALL_UPLOADED_NONE_AVAILABLE',
+  NONE_AVAILABLE = 'NONE_AVAILABLE',
+  NONE_CAN_BE_UPLOADED = 'NONE_CAN_BE_UPLOADED',
+  SOME_NOT_UPLOADED = 'SOME_NOT_UPLOADED',
+  UPLOAD_ERROR = 'UPLOAD_ERROR',
+  UPLOADING = 'UPLOADING',
+}
 
 export type CaseFileStatus =
   | 'done'
@@ -19,16 +30,6 @@ export type CaseFileStatus =
 
 export interface CaseFile extends TCaseFile {
   status: CaseFileStatus
-}
-
-export enum UploadState {
-  ALL_UPLOADED = 'ALL_UPLOADED',
-  ALL_UPLOADED_NONE_AVAILABLE = 'ALL_UPLOADED_NONE_AVAILABLE',
-  NONE_AVAILABLE = 'NONE_AVAILABLE',
-  NONE_CAN_BE_UPLOADED = 'NONE_CAN_BE_UPLOADED',
-  SOME_NOT_UPLOADED = 'SOME_NOT_UPLOADED',
-  UPLOAD_ERROR = 'UPLOAD_ERROR',
-  UPLOADING = 'UPLOADING',
 }
 
 export const useCourtUpload = (
@@ -126,9 +127,10 @@ export const useCourtUpload = (
               error instanceof ApolloError &&
               (error as ApolloError).graphQLErrors[0].extensions?.code,
             detail:
-              error instanceof ApolloError &&
-              (error as ApolloError).graphQLErrors[0].extensions?.problem
-                ?.detail,
+              (error instanceof ApolloError &&
+                ((error as ApolloError).graphQLErrors[0].extensions
+                  ?.problem as { detail: string })?.detail) ||
+              '',
           }
 
           if (errorCode === 'https://httpstatuses.org/404') {

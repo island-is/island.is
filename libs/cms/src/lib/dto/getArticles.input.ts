@@ -17,6 +17,16 @@ export class GetArticlesInput {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
+  group?: string
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  subgroup?: string
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
   organization?: string
 
   @Field(() => Int, { nullable: true })

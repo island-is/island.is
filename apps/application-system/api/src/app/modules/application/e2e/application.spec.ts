@@ -11,7 +11,7 @@ import {
 import { ContentfulRepository } from '@island.is/cms'
 import { setup } from '../../../../../test/setup'
 import { environment } from '../../../../environments'
-import { FileService } from '../files/file.service'
+import { FileService } from '@island.is/application/api/files'
 import { AppModule } from '../../../app.module'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { MockFeatureFlagService } from './mockFeatureFlagService'
@@ -94,6 +94,102 @@ describe('Application system API', () => {
     expect(response.body.id).toBeTruthy()
   })
 
+  it('should set and return a pending action for an application', async () => {
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.EXAMPLE,
+      })
+      .expect(201)
+
+    await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
+        answers: {
+          careerHistoryDetails: {
+            careerHistoryCompanies: ['government'],
+          },
+          dreamJob: 'pilot',
+        },
+      })
+      .expect(200)
+
+    // Advance from prerequisites state
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    const newStateResponse = await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    expect(newStateResponse.body.state).toBe('inReview')
+
+    expect(newStateResponse.body.actionCard.pendingAction.title).toBe(
+      'Verið er að fara yfir umsóknina',
+    )
+    expect(newStateResponse.body.actionCard.pendingAction.content).toBe(
+      'Example stofnun fer núna yfir umsóknina og því getur þetta tekið nokkra daga',
+    )
+  })
+
+  it('should fetch Applicaiton History for overview', async () => {
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.EXAMPLE,
+      })
+      .expect(201)
+
+    await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
+        answers: {
+          careerHistoryDetails: {
+            careerHistoryCompanies: ['government'],
+          },
+          dreamJob: 'pilot',
+        },
+      })
+      .expect(200)
+
+    // Advance from prerequisites state
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    const list = await server
+      .get(`/users/${nationalId}/applications`)
+      .expect(200)
+
+    const historyLog = list?.body[0]?.actionCard?.history[0]?.log
+
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    const listAgain = await server
+      .get(`/users/${nationalId}/applications`)
+      .expect(200)
+
+    expect(historyLog).toBe('Umsókn send inn')
+    expect(listAgain.body[0].actionCard.history).toHaveLength(3)
+  })
+
   // This template does not have readyForProduction: false
   it.skip('should fail when POST-ing an application whose template is not ready for production, on production environment', async () => {
     const envBefore = environment.environment
@@ -108,10 +204,12 @@ describe('Application system API', () => {
         typeId: ApplicationTypes.EXAMPLE,
         assignees: [nationalId],
         answers: {
-          careerHistoryCompanies: ['government'],
+          careerHistoryDetails: {
+            careerHistoryCompanies: ['government'],
+          },
           dreamJob: 'pilot',
         },
-        status: ApplicationStatus.IN_PROGRESS,
+        status: ApplicationStatus.DRAFT,
       })
       .expect(400)
 
@@ -134,7 +232,9 @@ describe('Application system API', () => {
       .put(`/applications/${creationResponse.body.id}`)
       .send({
         answers: {
-          careerHistoryCompanies: ['government'],
+          careerHistoryDetails: {
+            careerHistoryCompanies: ['government'],
+          },
           dreamJob: 'pilot',
         },
       })
@@ -144,7 +244,9 @@ describe('Application system API', () => {
       .put(`/applications/${creationResponse.body.id}`)
       .send({
         answers: {
-          careerHistoryCompanies: ['this', 'is', 'not', 'allowed'],
+          careerHistoryDetails: {
+            careerHistoryCompanies: ['this', 'is', 'not', 'allowed'],
+          },
         },
       })
       .expect(400)
@@ -152,20 +254,91 @@ describe('Application system API', () => {
     // Assert
     expect(putResponse.body).toMatchInlineSnapshot(`
       Object {
-        "detail": "Found issues in these fields: careerHistoryCompanies",
+        "detail": "Found issues in these fields: careerHistoryDetails",
         "fields": Object {
-          "careerHistoryCompanies": Array [
-            "Ógilt gildi",
-            "Ógilt gildi",
-            "Ógilt gildi",
-            "Ógilt gildi",
-          ],
+          "careerHistoryDetails": Object {
+            "careerHistoryCompanies": Array [
+              "Ógilt gildi",
+              "Ógilt gildi",
+              "Ógilt gildi",
+              "Ógilt gildi",
+            ],
+          },
         },
         "status": 400,
         "title": "Validation Failed",
         "type": "https://docs.devland.is/reference/problems/validation-failed",
       }
     `)
+  })
+
+  it('should fail when PUT-ing answers in a very deep nested schema which doesnt comply', async () => {
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.EXAMPLE,
+      })
+      .expect(201)
+
+    await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
+        answers: {
+          deepNestedValues: {
+            something: {
+              very: {
+                deep: {
+                  so: {
+                    so: {
+                      very: {
+                        very: {
+                          deep: {
+                            nested: {
+                              value: 6,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          dreamJob: 'pilot',
+        },
+      })
+      .expect(400)
+
+    await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
+        answers: {
+          deepNestedValues: {
+            something: {
+              very: {
+                deep: {
+                  so: {
+                    so: {
+                      very: {
+                        very: {
+                          deep: {
+                            nested: {
+                              value: 'hello',
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          dreamJob: 'pilot',
+        },
+      })
+      .expect(200)
   })
 
   it('should fail when PUT-ing answers on an application where it is in a state where it is not permitted', async () => {
@@ -180,7 +353,9 @@ describe('Application system API', () => {
       .put(`/applications/${creationResponse.body.id}`)
       .send({
         answers: {
-          careerHistoryCompanies: ['government'],
+          careerHistoryDetails: {
+            careerHistoryCompanies: ['government'],
+          },
           dreamJob: 'pilot',
         },
       })
@@ -236,7 +411,9 @@ describe('Application system API', () => {
       .put(`/applications/${creationResponse.body.id}`)
       .send({
         answers: {
-          careerHistoryCompanies: ['government'],
+          careerHistoryDetails: {
+            careerHistoryCompanies: ['government'],
+          },
           dreamJob: 'pilot',
         },
       })
@@ -247,14 +424,18 @@ describe('Application system API', () => {
       .send({
         event: 'SUBMIT',
         answers: {
-          careerHistoryCompanies: ['advania', 'aranja'],
+          careerHistoryDetails: {
+            careerHistoryCompanies: ['advania', 'aranja'],
+          },
         },
       })
       .expect(200)
 
     expect(newStateResponse.body.state).toBe('waitingToAssign')
     expect(newStateResponse.body.answers).toEqual({
-      careerHistoryCompanies: ['advania', 'aranja'],
+      careerHistoryDetails: {
+        careerHistoryCompanies: ['advania', 'aranja'],
+      },
       dreamJob: 'pilot',
     })
   })
@@ -310,7 +491,7 @@ describe('Application system API', () => {
 
     expect(finalStateResponse.body.state).toBe('approved')
     expect(finalStateResponse.body.answers).toEqual({
-      careerHistoryCompanies: ['government', 'aranja', 'advania'],
+      careerHistoryCompanies: ['government'],
       dreamJob: 'pilot', // this answer is non-writable
     })
   })
@@ -366,7 +547,9 @@ describe('Application system API', () => {
       .put(`/applications/${creationResponse.body.id}`)
       .send({
         answers: {
-          careerHistoryCompanies: ['government'],
+          careerHistoryDetails: {
+            careerHistoryCompanies: ['government'],
+          },
         },
       })
       .expect(200)
@@ -386,12 +569,12 @@ describe('Application system API', () => {
     const failedResponse = await server
       .put(`/applications/${response.body.id}/externalData`)
       .send({
-        dataProviders: [{ id: 'test', type: 'ExampleSucceeds' }],
+        dataProviders: [{ actionId: 'test' }],
       })
       .expect(400)
 
     expect(failedResponse.body.detail).toBe(
-      'Current user is not permitted to update external data in this state: inReview',
+      `Current user is not permitted to update external data in this state with actionId: test`,
     )
   })
 
@@ -590,7 +773,7 @@ describe('Application system API', () => {
 
     const getResponse = await server
       .get(
-        `/users/${nationalId}/applications?typeId=${ApplicationTypes.PARENTAL_LEAVE}&status=${ApplicationStatus.IN_PROGRESS}`,
+        `/users/${nationalId}/applications?typeId=${ApplicationTypes.PARENTAL_LEAVE}&status=${ApplicationStatus.DRAFT}`,
       )
       .expect(200)
 
@@ -600,7 +783,7 @@ describe('Application system API', () => {
         expect.objectContaining({
           applicant: nationalId,
           typeId: ApplicationTypes.PARENTAL_LEAVE,
-          status: ApplicationStatus.IN_PROGRESS,
+          status: ApplicationStatus.DRAFT,
         }),
       ]),
     )
@@ -745,7 +928,9 @@ describe('Application system API', () => {
       dreamJob: 'Yes',
       attachments: [],
       careerHistory: 'yes',
-      careerHistoryCompanies: ['aranja'],
+      careerHistoryDetails: {
+        careerHistoryCompanies: ['aranja'],
+      },
     }
 
     const draftStateResponse = await server
@@ -783,7 +968,6 @@ describe('Application system API', () => {
       .send({
         event: 'APPROVE',
         answers: {
-          ...answers,
           approvedByReviewer: 'APPROVE',
         },
       })

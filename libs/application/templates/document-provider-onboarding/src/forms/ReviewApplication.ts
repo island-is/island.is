@@ -18,7 +18,7 @@ import { m } from './messages'
 export const ReviewApplication: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
   title: m.reviewTitle,
-  mode: FormModes.REVIEW,
+  mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({
       id: 'applicant',

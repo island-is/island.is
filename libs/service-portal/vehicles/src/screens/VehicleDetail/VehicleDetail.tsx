@@ -1,36 +1,36 @@
+import isNumber from 'lodash/isNumber'
 import React from 'react'
-
+import { useParams } from 'react-router-dom'
+import { useQuery, gql } from '@apollo/client'
 import {
+  Query,
+  VehiclesCurrentOwnerInfo,
+  VehiclesOperator,
+} from '@island.is/api/schema'
+import {
+  AlertMessage,
   Box,
+  Button,
   Divider,
   GridColumn,
   GridRow,
-  Table as T,
+  LoadingDots,
   Stack,
   Text,
-  LoadingDots,
-  AlertMessage,
 } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
+  amountFormat,
+  ErrorScreen,
+  formSubmit,
   NotFound,
-  ServicePortalModuleComponent,
   TableGrid,
   UserInfoLine,
+  m,
 } from '@island.is/service-portal/core'
-import isNumber from 'lodash/isNumber'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { amountFormat } from '@island.is/service-portal/core'
-import { useQuery } from '@apollo/client'
-import { useParams } from 'react-router-dom'
-import { GET_USERS_VEHICLE_DETAIL } from '../../queries/getUsersVehicleDetail'
-import {
-  VehiclesCurrentOwnerInfo,
-  Query,
-  VehiclesOperator,
-} from '@island.is/api/schema'
-import { messages } from '../../lib/messages'
+
 import OwnersTable from '../../components/DetailTable/OwnersTable'
-import { displayWithUnit } from '../../utils/displayWithUnit'
+import { messages } from '../../lib/messages'
 import {
   basicInfoArray,
   coOwnerInfoArray,
@@ -41,11 +41,134 @@ import {
   registrationInfoArray,
   technicalInfoArray,
 } from '../../utils/createUnits'
+import { displayWithUnit } from '../../utils/displayWithUnit'
+import AxleTable from '../../components/DetailTable/AxleTable'
+import Dropdown from '../../components/Dropdown/Dropdown'
+import { SAMGONGUSTOFA_LINK } from '../../utils/constants'
 
-const VehicleDetail: ServicePortalModuleComponent = () => {
+export const GET_USERS_VEHICLE_DETAIL = gql`
+  query GetUsersVehiclesDetail($input: GetVehicleDetailInput!) {
+    vehiclesDetail(input: $input) {
+      mainInfo {
+        model
+        subModel
+        regno
+        year
+        co2
+        weightedCo2
+        co2Wltp
+        weightedCo2Wltp
+        cubicCapacity
+        trailerWithBrakesWeight
+        trailerWithoutBrakesWeight
+      }
+      basicInfo {
+        model
+        regno
+        subModel
+        permno
+        verno
+        year
+        country
+        preregDateYear
+        formerCountry
+        importStatus
+      }
+      registrationInfo {
+        firstRegistrationDate
+        preRegistrationDate
+        newRegistrationDate
+        vehicleGroup
+        color
+        reggroup
+        reggroupName
+        passengers
+        useGroup
+        driversPassengers
+        standingPassengers
+        plateLocation
+        specialName
+        plateStatus
+      }
+      currentOwnerInfo {
+        owner
+        nationalId
+        address
+        postalcode
+        city
+        dateOfPurchase
+      }
+      inspectionInfo {
+        type
+        date
+        result
+        nextInspectionDate
+        lastInspectionDate
+        insuranceStatus
+        mortages
+        carTax
+        inspectionFine
+      }
+      technicalInfo {
+        engine
+        totalWeight
+        cubicCapacity
+        capacityWeight
+        length
+        vehicleWeight
+        width
+        trailerWithoutBrakesWeight
+        horsepower
+        trailerWithBrakesWeight
+        carryingCapacity
+        axleTotalWeight
+        axles {
+          axleMaxWeight
+          wheelAxle
+        }
+        tyres {
+          axle1
+          axle2
+          axle3
+          axle4
+          axle5
+        }
+      }
+      ownersInfo {
+        name
+        address
+        dateOfPurchase
+      }
+      coOwners {
+        nationalId
+        owner
+        address
+        postalcode
+        city
+        dateOfPurchase
+      }
+      operators {
+        nationalId
+        name
+        address
+        postalcode
+        city
+        startDate
+        endDate
+      }
+      downloadServiceURL
+    }
+  }
+`
+
+type UseParams = {
+  id: string
+}
+
+const VehicleDetail = () => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
-  const { id }: { id: string | undefined } = useParams()
+  const { id } = useParams() as UseParams
 
   const { data, loading, error } = useQuery<Query>(GET_USERS_VEHICLE_DETAIL, {
     variables: {
@@ -67,13 +190,27 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
     ownersInfo,
     operators,
     coOwners,
+    downloadServiceURL,
   } = data?.vehiclesDetail || {}
 
   const year = mainInfo?.year ? `(${mainInfo.year})` : ''
   const color = registrationInfo?.color ? `- ${registrationInfo.color}` : ''
   const noInfo = data?.vehiclesDetail === null
 
-  if ((error || noInfo) && !loading) {
+  if (error && !loading) {
+    return (
+      <ErrorScreen
+        figure="./assets/images/hourglass.svg"
+        tagVariant="red"
+        tag={formatMessage(m.errorTitle)}
+        title={formatMessage(m.somethingWrong)}
+        children={formatMessage(m.errorFetchModule, {
+          module: formatMessage(m.vehicles).toLowerCase(),
+        })}
+      />
+    )
+  }
+  if (noInfo && !loading) {
     return <NotFound title={formatMessage(messages.notFound)} />
   }
 
@@ -90,7 +227,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
 
   return (
     <>
-      <Box marginBottom={6}>
+      <Box marginBottom={[2, 2, 6]}>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
             <Stack space={2}>
@@ -116,11 +253,83 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
             ) : null}
           </GridColumn>
         </GridRow>
+        {!loading && downloadServiceURL && (
+          <GridRow marginTop={[2, 2, 6]}>
+            <GridColumn span="12/12">
+              <Box
+                display="flex"
+                flexDirection="row"
+                flexWrap="wrap"
+                justifyContent="flexStart"
+                printHidden
+              >
+                <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
+                  <Button
+                    colorScheme="default"
+                    icon="receipt"
+                    iconType="outline"
+                    size="default"
+                    type="button"
+                    variant="utility"
+                    onClick={() => formSubmit(`${downloadServiceURL}`)}
+                  >
+                    {formatMessage(messages.vehicleHistoryReport)}
+                  </Button>
+                </Box>
+                <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
+                  <a
+                    href={SAMGONGUSTOFA_LINK}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button
+                      colorScheme="default"
+                      icon="open"
+                      iconType="outline"
+                      size="default"
+                      type="button"
+                      variant="utility"
+                    >
+                      {formatMessage(messages.changeOfOwnership)}
+                    </Button>
+                  </a>
+                </Box>
+                <Box paddingRight={2}>
+                  <Dropdown
+                    dropdownItems={[
+                      {
+                        title: formatMessage(messages.orderRegistrationNumber),
+                        href: SAMGONGUSTOFA_LINK,
+                      },
+                      {
+                        title: formatMessage(messages.orderRegistrationLicense),
+                        href: SAMGONGUSTOFA_LINK,
+                      },
+                      {
+                        title: formatMessage(messages.addCoOwner),
+                        href: SAMGONGUSTOFA_LINK,
+                      },
+                      {
+                        title: formatMessage(messages.addOperator),
+                        href: SAMGONGUSTOFA_LINK,
+                      },
+                    ]}
+                  />
+                </Box>
+              </Box>
+            </GridColumn>
+          </GridRow>
+        )}
       </Box>
       <Stack space={2}>
         <UserInfoLine
           label={formatMessage(messages.numberPlate)}
           content={mainInfo?.regno ?? ''}
+          editLink={{
+            title: messages.orderRegistrationNumber,
+            url: SAMGONGUSTOFA_LINK,
+            external: true,
+          }}
           loading={loading}
         />
         <Divider />
@@ -143,7 +352,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
         />
         <Divider />
 
-        {/* <UserInfoLine
+        <UserInfoLine
           label={formatMessage(messages.insured)}
           content={
             inspectionInfo?.insuranceStatus === true
@@ -155,7 +364,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
           warning={inspectionInfo?.insuranceStatus === false}
           loading={loading}
         />
-        <Divider /> */}
+        <Divider />
 
         <UserInfoLine
           label={formatMessage(messages.unpaidVehicleFee)}
@@ -267,6 +476,9 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
           title={technicalArr.header.title}
           mt
         />
+      )}
+      {technicalInfo?.axles && technicalInfo.tyres && (
+        <AxleTable axles={technicalInfo?.axles} tyres={technicalInfo?.tyres} />
       )}
 
       {operators &&

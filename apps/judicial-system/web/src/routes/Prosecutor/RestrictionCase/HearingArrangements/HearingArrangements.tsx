@@ -1,36 +1,30 @@
-import React, { useContext, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { ValueType } from 'react-select'
-import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 
 import {
   CaseState,
   CaseTransition,
   NotificationType,
-  UserRole,
 } from '@island.is/judicial-system/types'
 import {
-  ProsecutorSubsections,
+  RestrictionCaseProsecutorSubsections,
   Sections,
-  ReactSelectOption,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  BlueBox,
-  CaseInfo,
+  ProsecutorCaseInfo,
   FormContentContainer,
   FormFooter,
   Modal,
   PageLayout,
+  FormContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   removeTabsValidateAndSet,
-  setAndSendDateToServer,
-  setAndSendToServer,
+  stepValidationsType,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
-import { Box, Input, Text, Checkbox } from '@island.is/island-ui/core'
+import { Box, Input, Text, toast } from '@island.is/island-ui/core'
 import {
   useCase,
   useInstitution,
@@ -40,17 +34,18 @@ import {
   rcRequestedHearingArrangements,
   titles,
 } from '@island.is/judicial-system-web/messages'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import type { User } from '@island.is/judicial-system/types'
+import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
-import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
 import ArrestDate from './ArrestDate'
-import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
-import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
+import {
+  RequestCourtDate,
+  SelectCourt,
+  ProsecutorSectionHeightenedSecurity,
+} from '../../components'
 
 export const HearingArrangements: React.FC = () => {
   const router = useRouter()
@@ -61,14 +56,8 @@ export const HearingArrangements: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const [modalVisible, setModalVisible] = useState<boolean>(false)
+  const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
 
-  const [substituteProsecutorId, setSubstituteProsecutorId] = useState<string>()
-  const [
-    isProsecutorAccessModalVisible,
-    setIsProsecutorAccessModalVisible,
-  ] = useState<boolean>(false)
-  const { user } = useContext(UserContext)
   const {
     sendNotification,
     isSendingNotification,
@@ -76,75 +65,22 @@ export const HearingArrangements: React.FC = () => {
     transitionCase,
     isTransitioningCase,
     updateCase,
+    setAndSendCaseToServer,
   } = useCase()
-
-  const { data: userData, loading: userLoading } = useQuery(UsersQuery, {
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
 
   const { courts, loading: institutionLoading } = useInstitution()
 
-  const prosecutors = userData?.users
-    .filter(
-      (aUser: User) =>
-        aUser.role === UserRole.PROSECUTOR &&
-        (!workingCase?.creatingProsecutor ||
-          aUser.institution?.id ===
-            workingCase?.creatingProsecutor?.institution?.id),
-    )
-    .map((prosecutor: User, _: number) => {
-      return { label: prosecutor.name, value: prosecutor.id }
-    })
-
-  const handleNextButtonClick = async () => {
-    if (!workingCase) {
-      return
-    }
-
-    const caseOpened =
-      workingCase.state === CaseState.NEW
-        ? await transitionCase(workingCase, CaseTransition.OPEN, setWorkingCase)
-        : true
-
-    if (caseOpened) {
-      if (
-        (workingCase.state !== CaseState.NEW &&
-          workingCase.state !== CaseState.DRAFT) ||
-        // TODO: Ignore failed notifications
-        workingCase.notifications?.find(
-          (notification) => notification.type === NotificationType.HEADS_UP,
-        )
-      ) {
-        router.push(`${constants.STEP_THREE_ROUTE}/${workingCase.id}`)
-      } else {
-        setModalVisible(true)
-      }
-    } else {
-      // TODO: Handle error
-    }
-  }
-
-  const setProsecutor = async (prosecutorId: string) => {
+  const handleCourtChange = (court: Institution) => {
     if (workingCase) {
-      return setAndSendToServer(
-        'prosecutorId',
-        prosecutorId,
+      setAndSendCaseToServer(
+        [
+          {
+            courtId: court.id,
+            force: true,
+          },
+        ],
         workingCase,
         setWorkingCase,
-        updateCase,
-      )
-    }
-  }
-
-  const handleCourtChange = (courtId: string) => {
-    if (workingCase) {
-      setAndSendToServer(
-        'courtId',
-        courtId,
-        workingCase,
-        setWorkingCase,
-        updateCase,
       )
 
       return true
@@ -153,26 +89,43 @@ export const HearingArrangements: React.FC = () => {
     return false
   }
 
-  const handleProsecutorChange = (
-    selectedOption: ValueType<ReactSelectOption>,
-  ) => {
-    if (!workingCase) return false
+  const handleNavigationTo = useCallback(
+    async (destination: keyof stepValidationsType) => {
+      if (!workingCase) {
+        return
+      }
 
-    const option = selectedOption as ReactSelectOption
-    const isRemovingCaseAccessFromSelf =
-      user?.id !== workingCase.creatingProsecutor?.id
+      const caseOpened =
+        workingCase.state === CaseState.NEW
+          ? await transitionCase(
+              workingCase.id,
+              CaseTransition.OPEN,
+              setWorkingCase,
+            )
+          : true
 
-    if (workingCase.isHeightenedSecurityLevel && isRemovingCaseAccessFromSelf) {
-      setSubstituteProsecutorId(option.value.toString())
-      setIsProsecutorAccessModalVisible(true)
+      if (caseOpened) {
+        if (
+          (workingCase.state !== CaseState.NEW &&
+            workingCase.state !== CaseState.DRAFT) ||
+          // TODO: Ignore failed notifications
+          workingCase.notifications?.find(
+            (notification) => notification.type === NotificationType.HEADS_UP,
+          )
+        ) {
+          router.push(`${destination}/${workingCase.id}`)
+        } else {
+          setNavigateTo(destination)
+        }
+      } else {
+        toast.error(formatMessage(errors.transitionCase))
+      }
+    },
+    [formatMessage, router, setWorkingCase, transitionCase, workingCase],
+  )
 
-      return false
-    } else {
-      setProsecutor(option.value.toString())
-
-      return true
-    }
-  }
+  const stepIsValid =
+    isHearingArrangementsStepValidRC(workingCase) || isTransitioningCase
 
   return (
     <PageLayout
@@ -180,16 +133,20 @@ export const HearingArrangements: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={ProsecutorSubsections.STEP_TWO}
-      isLoading={isLoadingWorkingCase || userLoading || institutionLoading}
+      activeSubSection={
+        RestrictionCaseProsecutorSubsections.HEARING_ARRANGEMENTS
+      }
+      isLoading={isLoadingWorkingCase || institutionLoading}
       notFound={caseNotFound}
+      isValid={stepIsValid}
+      onNavigationTo={stepIsValid ? handleNavigationTo : undefined}
     >
       <PageHeader
         title={formatMessage(
           titles.prosecutor.restrictionCases.hearingArrangements,
         )}
       />
-      {prosecutors && !institutionLoading ? (
+      {!institutionLoading ? (
         <>
           <FormContentContainer>
             <Box marginBottom={7}>
@@ -197,49 +154,8 @@ export const HearingArrangements: React.FC = () => {
                 {formatMessage(rcRequestedHearingArrangements.heading)}
               </Text>
             </Box>
-            <Box component="section" marginBottom={7}>
-              <CaseInfo workingCase={workingCase} userRole={user?.role} />
-            </Box>
-            <Box component="section" marginBottom={5}>
-              <BlueBox>
-                <Box marginBottom={2}>
-                  <SelectProsecutor
-                    workingCase={workingCase}
-                    prosecutors={prosecutors}
-                    onChange={handleProsecutorChange}
-                  />
-                </Box>
-                <Checkbox
-                  name="isHeightenedSecurityLevel"
-                  label={formatMessage(
-                    rcRequestedHearingArrangements.sections.prosecutor
-                      .heightenSecurityLevelLabel,
-                  )}
-                  tooltip={formatMessage(
-                    rcRequestedHearingArrangements.sections.prosecutor
-                      .heightenSecurityLevelInfo,
-                  )}
-                  disabled={
-                    user?.id !== workingCase.creatingProsecutor?.id &&
-                    user?.id !==
-                      (((workingCase as unknown) as { prosecutorId: string })
-                        .prosecutorId ?? workingCase.prosecutor?.id)
-                  }
-                  checked={workingCase.isHeightenedSecurityLevel}
-                  onChange={(event) =>
-                    setAndSendToServer(
-                      'isHeightenedSecurityLevel',
-                      event.target.checked,
-                      workingCase,
-                      setWorkingCase,
-                      updateCase,
-                    )
-                  }
-                  large
-                  filled
-                />
-              </BlueBox>
-            </Box>
+            <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
+            <ProsecutorSectionHeightenedSecurity />
             <Box component="section" marginBottom={5}>
               <SelectCourt
                 workingCase={workingCase}
@@ -259,16 +175,20 @@ export const HearingArrangements: React.FC = () => {
             <Box component="section" marginBottom={5}>
               <RequestCourtDate
                 workingCase={workingCase}
-                onChange={(date: Date | undefined, valid: boolean) =>
-                  setAndSendDateToServer(
-                    'requestedCourtDate',
-                    date,
-                    valid,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
-                }
+                onChange={(date: Date | undefined, valid: boolean) => {
+                  if (date && valid) {
+                    setAndSendCaseToServer(
+                      [
+                        {
+                          requestedCourtDate: formatDateForServer(date),
+                          force: true,
+                        },
+                      ],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }
+                }}
               />
             </Box>
             <Box component="section" marginBottom={10}>
@@ -303,7 +223,7 @@ export const HearingArrangements: React.FC = () => {
                 onBlur={(event) =>
                   validateAndSendToServer(
                     'translator',
-                    event.target.value,
+                    event.target.value.trim(),
                     [],
                     workingCase,
                     updateCase,
@@ -314,16 +234,17 @@ export const HearingArrangements: React.FC = () => {
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
-              previousUrl={`${constants.STEP_ONE_ROUTE}/${workingCase.id}`}
-              onNextButtonClick={async () => await handleNextButtonClick()}
-              nextIsDisabled={
-                !isHearingArrangementsStepValidRC(workingCase) ||
-                isTransitioningCase
+              previousUrl={`${constants.RESTRICTION_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
+              onNextButtonClick={async () =>
+                await handleNavigationTo(
+                  constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
+                )
               }
+              nextIsDisabled={!stepIsValid || isTransitioningCase}
               nextIsLoading={isTransitioningCase}
             />
           </FormContentContainer>
-          {modalVisible && (
+          {navigateTo !== undefined && (
             <Modal
               title={formatMessage(
                 rcRequestedHearingArrangements.modal.heading,
@@ -333,53 +254,26 @@ export const HearingArrangements: React.FC = () => {
               })}
               primaryButtonText="Senda tilkynningu"
               secondaryButtonText="Halda áfram með kröfu"
-              handleClose={() => setModalVisible(false)}
-              handleSecondaryButtonClick={() =>
-                router.push(`${constants.STEP_THREE_ROUTE}/${workingCase.id}`)
+              onClose={() => setNavigateTo(undefined)}
+              onSecondaryButtonClick={() =>
+                router.push(`${navigateTo}/${workingCase.id}`)
               }
               errorMessage={
                 sendNotificationError
                   ? formatMessage(errors.sendNotification)
                   : undefined
               }
-              handlePrimaryButtonClick={async () => {
+              onPrimaryButtonClick={async () => {
                 const notificationSent = await sendNotification(
                   workingCase.id,
                   NotificationType.HEADS_UP,
                 )
 
                 if (notificationSent) {
-                  router.push(`${constants.STEP_THREE_ROUTE}/${workingCase.id}`)
+                  router.push(`${navigateTo}/${workingCase.id}`)
                 }
               }}
               isPrimaryButtonLoading={isSendingNotification}
-            />
-          )}
-          {isProsecutorAccessModalVisible && (
-            <Modal
-              title={formatMessage(
-                rcRequestedHearingArrangements.prosecutorAccessModal.heading,
-              )}
-              text={formatMessage(
-                rcRequestedHearingArrangements.prosecutorAccessModal.text,
-              )}
-              primaryButtonText={formatMessage(
-                rcRequestedHearingArrangements.prosecutorAccessModal
-                  .primaryButtonText,
-              )}
-              secondaryButtonText={formatMessage(
-                rcRequestedHearingArrangements.prosecutorAccessModal
-                  .secondaryButtonText,
-              )}
-              handlePrimaryButtonClick={async () => {
-                if (substituteProsecutorId) {
-                  await setProsecutor(substituteProsecutorId)
-                  router.push(constants.CASE_LIST_ROUTE)
-                }
-              }}
-              handleSecondaryButtonClick={() => {
-                setIsProsecutorAccessModalVisible(false)
-              }}
             />
           )}
         </>

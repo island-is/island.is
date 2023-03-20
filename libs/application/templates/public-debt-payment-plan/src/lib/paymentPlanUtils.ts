@@ -4,10 +4,19 @@ import {
   PaymentScheduleDebts,
   PaymentScheduleDistribution,
 } from '@island.is/api/schema'
-import { ExternalData } from '@island.is/application/types'
+import {
+  Application,
+  ExternalData,
+  FormValue,
+} from '@island.is/application/types'
+import * as kennitala from 'kennitala'
 import { useCallback, useEffect, useState } from 'react'
 import { useLazyDistribution } from '../hooks/useLazyDistribution'
-import { PaymentDistribution, PaymentPlanExternalData } from '../types'
+import {
+  PaymentDistribution,
+  PaymentPlanExternalData,
+  PublicDebtPaymentPlan,
+} from '../types'
 
 export const prerequisitesFailed = (data: ExternalData) => {
   const prerequisites = (data as PaymentPlanExternalData)
@@ -32,6 +41,26 @@ export const prerequisitesFailed = (data: ExternalData) => {
     !prerequisites.doNotOwe ||
     debts?.length === 0
   )
+}
+
+export const isApplicantPerson = (
+  formValue: FormValue | Application<FormValue>,
+) => {
+  const { applicant } = formValue as any
+  if (!applicant) return false
+  return typeof applicant === 'string'
+    ? kennitala.isPerson(applicant)
+    : kennitala.isPerson(applicant.nationalId)
+}
+
+export const isApplicantCompany = (
+  formValue: FormValue | Application<FormValue>,
+) => {
+  const { applicant } = formValue as any
+  if (!applicant) return false
+  return typeof applicant === 'string'
+    ? kennitala.isCompany(applicant)
+    : kennitala.isCompany(applicant.nationalId)
 }
 
 export const formatIsk = (value: number): string =>

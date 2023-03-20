@@ -23,7 +23,6 @@ export const serviceSetup = (services: {
       ENVIRONMENT: ref((h) => h.env.type),
     })
     .secrets({
-      SENTRY_DSN: '/k8s/web/SENTRY_DSN',
       DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID',
       DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN',
     })
@@ -59,9 +58,9 @@ export const serviceSetup = (services: {
       requests: { cpu: '200m', memory: '256Mi' },
     })
     .replicaCount({
-      default: 10,
+      default: 2,
       max: 50,
-      min: 10,
+      min: 2,
     })
     .extraAttributes({
       dev: {},

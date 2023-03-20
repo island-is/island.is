@@ -7,6 +7,7 @@ import {
   RecordObject,
   SetFieldLoadingState,
   SetBeforeSubmitCallback,
+  SetSubmitButtonDisabled,
 } from '@island.is/application/types'
 
 import { useFields } from '../context/FieldContext'
@@ -16,6 +17,7 @@ const FormField: FC<{
   application: Application
   setBeforeSubmitCallback?: SetBeforeSubmitCallback
   setFieldLoadingState?: SetFieldLoadingState
+  setSubmitButtonDisabled?: SetSubmitButtonDisabled
   autoFocus?: boolean
   field: FieldDef
   showFieldName?: boolean
@@ -26,6 +28,7 @@ const FormField: FC<{
   application,
   setBeforeSubmitCallback,
   setFieldLoadingState,
+  setSubmitButtonDisabled,
   autoFocus,
   errors,
   field,
@@ -45,6 +48,7 @@ const FormField: FC<{
     application,
     setBeforeSubmitCallback,
     setFieldLoadingState,
+    setSubmitButtonDisabled,
     autoFocus,
     error,
     errors,
@@ -55,7 +59,6 @@ const FormField: FC<{
   }
 
   const Component = allFields[field.component]
-
   if (!Component) {
     return <p>We have not implemented this field yet {field.type}</p>
   }

@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { Box } from '@island.is/island-ui/core'
-import { Markdown } from '@island.is/application/ui-components'
+import { Markdown } from '@island.is/shared/components'
 interface Props {
   description: string
 }

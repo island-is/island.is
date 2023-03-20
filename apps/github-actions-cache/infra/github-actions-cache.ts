@@ -1,12 +1,11 @@
 import { service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
-import { settings } from '../../../infra/src/dsl/settings'
 
 export const serviceSetup = (): ServiceBuilder<'github-actions-cache'> => {
   return service('github-actions-cache')
     .namespace('github-actions-cache')
     .serviceAccount()
     .command('node')
-    .args('--tls-min-v1.0', 'main.js')
+    .args('--tls-min-v1.0', '--no-experimental-fetch', 'main.js')
 
     .env({
       REDIS_NODES:
@@ -30,8 +29,8 @@ export const serviceSetup = (): ServiceBuilder<'github-actions-cache'> => {
         public: true,
       },
     })
-    .readiness('/health')
     .liveness('/liveness')
+    .readiness('/health')
     .replicaCount({
       min: 3,
       max: 8,

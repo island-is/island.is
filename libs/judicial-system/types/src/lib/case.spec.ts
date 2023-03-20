@@ -34,6 +34,7 @@ describe('Case Type', () => {
     ${CaseType.BODY_SEARCH}
     ${CaseType.INTERNET_USAGE}
     ${CaseType.RESTRAINING_ORDER}
+    ${CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME}
     ${CaseType.EXPULSION_FROM_HOME}
     ${CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION}
     ${CaseType.VIDEO_RECORDING_EQUIPMENT}
@@ -41,11 +42,6 @@ describe('Case Type', () => {
   `.it('should categorize $type as an investigation case', ({ type }) => {
     expect(isRestrictionCase(type)).toBe(false)
     expect(isInvestigationCase(type)).toBe(true)
-  })
-
-  it('should not categorize undefined', () => {
-    expect(isRestrictionCase(undefined)).toBe(false)
-    expect(isInvestigationCase(undefined)).toBe(false)
   })
 })
 

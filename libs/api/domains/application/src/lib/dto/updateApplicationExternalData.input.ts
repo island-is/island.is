@@ -1,15 +1,15 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { IsString, IsArray } from 'class-validator'
+import { IsString, IsArray, IsNumber } from 'class-validator'
 
 @InputType()
 class DataProvider {
   @Field(() => String)
   @IsString()
-  id!: string
+  actionId!: string
 
-  @Field(() => String)
-  @IsString()
-  type!: string
+  @Field(() => Number)
+  @IsNumber()
+  order!: number
 }
 
 @InputType()

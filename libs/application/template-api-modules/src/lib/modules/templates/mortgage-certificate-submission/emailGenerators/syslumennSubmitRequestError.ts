@@ -1,5 +1,5 @@
 import { EmailTemplateGenerator } from '../../../../types'
-import { NationalRegistry } from '../types'
+import { Identity } from '../types'
 import { getValueViaPath } from '@island.is/application/core'
 
 export const generateSyslumennSubmitRequestErrorEmail: EmailTemplateGenerator = (
@@ -12,8 +12,7 @@ export const generateSyslumennSubmitRequestErrorEmail: EmailTemplateGenerator = 
 
   const syslumennEmail = 'vefur@syslumenn.is'
 
-  const nationalRegistryData = application.externalData.nationalRegistry
-    ?.data as NationalRegistry
+  const identityData = application.externalData.identity?.data as Identity
 
   const selectedProperty = getValueViaPath(
     application.answers,
@@ -23,7 +22,7 @@ export const generateSyslumennSubmitRequestErrorEmail: EmailTemplateGenerator = 
   const subject = 'Umsókn um veðbókarvottorð'
   const body = `
       Villa hefur komið upp í samskiptum milli island.is og sýslumanna,
-      vegna beiðni um lagfæringu á veðbókarvottorði fyrir ${nationalRegistryData.nationalId},
+      vegna beiðni um lagfæringu á veðbókarvottorði fyrir ${identityData.nationalId},
       fasteignanúmer ${selectedProperty.propertyNumber}.`
 
   return {

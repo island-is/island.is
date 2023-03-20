@@ -1,4 +1,3 @@
-import { Base, JudicialSystem } from '../../../../infra/src/dsl/xroad'
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (services: {
@@ -35,11 +34,10 @@ export const serviceSetup = (services: {
       },
       HIDDEN_FEATURES: {
         dev: '',
-        staging: '',
-        prod: '',
+        staging: 'INDICTMENTS, INDICTMENT_ROUTE',
+        prod: 'INDICTMENTS, INDICTMENT_ROUTE',
       },
     })
-    .xroad(Base, JudicialSystem)
     .secrets({
       AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET',
       BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN',

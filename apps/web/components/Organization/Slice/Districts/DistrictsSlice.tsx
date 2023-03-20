@@ -2,6 +2,7 @@ import React from 'react'
 import { Districts } from '@island.is/web/graphql/schema'
 import {
   Box,
+  BoxProps,
   Button,
   GridColumn,
   GridRow,
@@ -15,6 +16,18 @@ interface SliceProps {
 }
 
 export const DistrictsSlice: React.FC<SliceProps> = ({ slice }) => {
+  const boxProps: BoxProps = slice.hasBorderAbove
+    ? {
+        borderTopWidth: 'standard',
+        borderColor: 'standard',
+        paddingTop: [8, 6],
+        paddingBottom: [4, 5],
+      }
+    : {
+        paddingTop: 2,
+        paddingBottom: 2,
+      }
+
   return (
     !!slice.links.length && (
       <section
@@ -22,12 +35,7 @@ export const DistrictsSlice: React.FC<SliceProps> = ({ slice }) => {
         id={slice.id}
         aria-labelledby={'sliceTitle-' + slice.id}
       >
-        <Box
-          borderTopWidth="standard"
-          borderColor="standard"
-          paddingTop={[8, 6]}
-          paddingBottom={[4, 5]}
-        >
+        <Box {...boxProps}>
           <GridRow>
             <GridColumn span="12/12">
               <Text variant="h3" as="h2" id={'sliceTitle-' + slice.id}>

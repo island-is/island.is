@@ -1,31 +1,33 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
+import compareAsc from 'date-fns/compareAsc'
+import parseISO from 'date-fns/parseISO'
 
 import {
   BlueBox,
-  CaseInfo,
+  CourtArrangements,
+  CourtCaseInfo,
+  DefenderInfo,
   FormContentContainer,
+  FormContext,
   FormFooter,
   Modal,
   PageLayout,
+  useCourtArrangements,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { NotificationType } from '@island.is/judicial-system/types'
 import {
-  NotificationType,
-  SessionArrangements,
-} from '@island.is/judicial-system/types'
-import {
-  CourtSubsections,
+  RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
-  titles,
-  icHearingArrangements as m,
-} from '@island.is/judicial-system-web/messages'
+  useCase,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
   AlertMessage,
   RadioButton,
@@ -33,12 +35,13 @@ import {
   Tooltip,
   Text,
 } from '@island.is/island-ui/core'
-import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
 import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-import CourtArrangements, {
-  useCourtArrangements,
-} from '@island.is/judicial-system-web/src/components/CourtArrangements'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
+
+import { icHearingArrangements as m } from './HearingArrangements.strings'
 
 const HearingArrangements = () => {
   const {
@@ -50,7 +53,11 @@ const HearingArrangements = () => {
   } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-  const { autofill, sendNotification, isSendingNotification } = useCase()
+  const {
+    setAndSendCaseToServer,
+    sendNotification,
+    isSendingNotification,
+  } = useCase()
   const {
     courtDate,
     setCourtDate,
@@ -58,58 +65,75 @@ const HearingArrangements = () => {
     handleCourtDateChange,
   } = useCourtArrangements(workingCase)
 
-  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-  const [modalVisible, setModalVisible] = useState(false)
+  const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
+  const [checkedRadio, setCheckedRadio] = useState<SessionArrangements>()
 
-  useEffect(() => {
-    if (isCaseUpToDate && !initialAutoFillDone) {
-      if (!workingCase.courtDate) {
-        setCourtDate(workingCase.requestedCourtDate)
+  const initialize = useCallback(() => {
+    if (!workingCase.courtDate) {
+      setCourtDate(workingCase.requestedCourtDate)
+    }
 
-        setInitialAutoFillDone(true)
-      }
+    setAndSendCaseToServer(
+      [
+        {
+          sessionArrangements: workingCase.defenderName
+            ? SessionArrangements.AllPresent
+            : undefined,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }, [setAndSendCaseToServer, setCourtDate, setWorkingCase, workingCase])
 
-      autofill(
+  useOnceOn(isCaseUpToDate, initialize)
+
+  const handleNavigationTo = useCallback(
+    async (destination: keyof stepValidationsType) => {
+      const courtDateNotifications = workingCase.notifications?.filter(
+        (notification) => notification.type === NotificationType.COURT_DATE,
+      )
+
+      const latestCourtDateNotification = courtDateNotifications?.sort((a, b) =>
+        compareAsc(parseISO(b.created), parseISO(a.created)),
+      )[0]
+
+      const hasSentNotification = latestCourtDateNotification?.recipients.some(
+        (recipient) => recipient.success,
+      )
+
+      await setAndSendCaseToServer(
         [
           {
-            key: 'sessionArrangements',
-            value: workingCase.defenderName
-              ? SessionArrangements.ALL_PRESENT
+            courtDate: courtDate
+              ? formatDateForServer(new Date(courtDate))
               : undefined,
+            force: true,
           },
         ],
         workingCase,
         setWorkingCase,
       )
 
-      setInitialAutoFillDone(true)
-    }
-  }, [
-    autofill,
-    initialAutoFillDone,
-    isCaseUpToDate,
-    setCourtDate,
-    setWorkingCase,
-    workingCase,
-  ])
-
-  const handleNextButtonClick = useCallback(() => {
-    const hasSentNotification = workingCase?.notifications?.find(
-      (notification) => notification.type === NotificationType.COURT_DATE,
-    )
-
-    autofill(
-      [{ key: 'courtDate', value: courtDate, force: true }],
+      if (hasSentNotification && !courtDateHasChanged) {
+        router.push(`${destination}/${workingCase.id}`)
+      } else {
+        setNavigateTo(destination)
+      }
+    },
+    [
       workingCase,
+      setAndSendCaseToServer,
+      courtDate,
       setWorkingCase,
-    )
+      courtDateHasChanged,
+    ],
+  )
 
-    if (hasSentNotification && !courtDateHasChanged) {
-      router.push(`${constants.RULING_ROUTE}/${workingCase.id}`)
-    } else {
-      setModalVisible(true)
-    }
-  }, [workingCase, autofill, courtDate, setWorkingCase, courtDateHasChanged])
+  const stepIsValid = isCourtHearingArrangementsStepValidIC(
+    workingCase,
+    courtDate,
+  )
 
   return (
     <PageLayout
@@ -117,9 +141,11 @@ const HearingArrangements = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.HEARING_ARRANGEMENTS}
+      activeSubSection={RestrictionCaseCourtSubsections.HEARING_ARRANGEMENTS}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      onNavigationTo={handleNavigationTo}
+      isValid={stepIsValid}
     >
       <PageHeader
         title={formatMessage(
@@ -153,9 +179,7 @@ const HearingArrangements = () => {
                 {formatMessage(m.title)}
               </Text>
             </Box>
-            <Box component="section" marginBottom={7}>
-              <CaseInfo workingCase={workingCase} userRole={user.role} />
-            </Box>
+            <CourtCaseInfo workingCase={workingCase} />
             <Box component="section" marginBottom={8}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
@@ -177,15 +201,17 @@ const HearingArrangements = () => {
                       m.sections.sessionArrangements.options.allPresent,
                     )}
                     checked={
-                      workingCase.sessionArrangements ===
-                      SessionArrangements.ALL_PRESENT
+                      checkedRadio === SessionArrangements.AllPresent ||
+                      (!checkedRadio &&
+                        workingCase.sessionArrangements ===
+                          SessionArrangements.AllPresent)
                     }
                     onChange={() => {
-                      autofill(
+                      setCheckedRadio(SessionArrangements.AllPresent)
+                      setAndSendCaseToServer(
                         [
                           {
-                            key: 'sessionArrangements',
-                            value: SessionArrangements.ALL_PRESENT,
+                            sessionArrangements: SessionArrangements.AllPresent,
                             force: true,
                           },
                         ],
@@ -206,15 +232,21 @@ const HearingArrangements = () => {
                         .allPresentSpokesperson,
                     )}
                     checked={
-                      workingCase.sessionArrangements ===
-                      SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                      checkedRadio ===
+                        SessionArrangements.AllPresentSpokesperson ||
+                      (!checkedRadio &&
+                        workingCase.sessionArrangements ===
+                          SessionArrangements.AllPresentSpokesperson)
                     }
                     onChange={() => {
-                      autofill(
+                      setCheckedRadio(
+                        SessionArrangements.AllPresentSpokesperson,
+                      )
+                      setAndSendCaseToServer(
                         [
                           {
-                            key: 'sessionArrangements',
-                            value: SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+                            sessionArrangements:
+                              SessionArrangements.AllPresentSpokesperson,
                             force: true,
                           },
                         ],
@@ -233,15 +265,18 @@ const HearingArrangements = () => {
                     m.sections.sessionArrangements.options.prosecutorPresent,
                   )}
                   checked={
-                    workingCase.sessionArrangements ===
-                    SessionArrangements.PROSECUTOR_PRESENT
+                    checkedRadio === SessionArrangements.ProsecutorPresent ||
+                    (!checkedRadio &&
+                      workingCase.sessionArrangements ===
+                        SessionArrangements.ProsecutorPresent)
                   }
                   onChange={() => {
-                    autofill(
+                    setCheckedRadio(SessionArrangements.ProsecutorPresent)
+                    setAndSendCaseToServer(
                       [
                         {
-                          key: 'sessionArrangements',
-                          value: SessionArrangements.PROSECUTOR_PRESENT,
+                          sessionArrangements:
+                            SessionArrangements.ProsecutorPresent,
                           force: true,
                         },
                       ],
@@ -270,9 +305,9 @@ const HearingArrangements = () => {
               </Box>
             </Box>
             {(workingCase.sessionArrangements ===
-              SessionArrangements.ALL_PRESENT ||
+              SessionArrangements.AllPresent ||
               workingCase.sessionArrangements ===
-                SessionArrangements.ALL_PRESENT_SPOKESPERSON) && (
+                SessionArrangements.AllPresentSpokesperson) && (
               <Box component="section" marginBottom={8}>
                 <DefenderInfo
                   workingCase={workingCase}
@@ -283,48 +318,44 @@ const HearingArrangements = () => {
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
-              previousUrl={`${constants.IC_OVERVIEW_ROUTE}/${workingCase.id}`}
-              onNextButtonClick={handleNextButtonClick}
-              nextIsDisabled={
-                !isCourtHearingArrangementsStepValidIC(workingCase, courtDate)
+              previousUrl={`${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${workingCase.id}`}
+              onNextButtonClick={() =>
+                handleNavigationTo(constants.INVESTIGATION_CASE_RULING_ROUTE)
               }
+              nextIsDisabled={!stepIsValid}
               nextButtonText={formatMessage(m.continueButton.label)}
             />
           </FormContentContainer>
-          {modalVisible && (
+          {navigateTo !== undefined && (
             <Modal
               title={formatMessage(m.modal.heading)}
               text={formatMessage(
                 workingCase.sessionArrangements ===
-                  SessionArrangements.ALL_PRESENT
+                  SessionArrangements.AllPresent
                   ? m.modal.allPresentText
                   : workingCase.sessionArrangements ===
-                    SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                    SessionArrangements.AllPresentSpokesperson
                   ? m.modal.allPresentSpokespersonText
                   : m.modal.prosecutorPresentText,
                 { courtDateHasChanged },
               )}
-              handlePrimaryButtonClick={async () => {
+              onPrimaryButtonClick={async () => {
                 const notificationSent = await sendNotification(
                   workingCase.id,
                   NotificationType.COURT_DATE,
                 )
 
                 if (notificationSent) {
-                  router.push(`${constants.IC_RULING_ROUTE}/${workingCase.id}`)
+                  router.push(`${navigateTo}/${workingCase.id}`)
                 }
               }}
-              handleSecondaryButtonClick={() => {
-                sendNotification(
-                  workingCase.id,
-                  NotificationType.COURT_DATE,
-                  true,
-                )
-
-                router.push(`${constants.IC_RULING_ROUTE}/${workingCase.id}`)
+              onSecondaryButtonClick={() => {
+                router.push(`${navigateTo}/${workingCase.id}`)
               }}
               primaryButtonText={formatMessage(m.modal.primaryButtonText)}
-              secondaryButtonText={formatMessage(m.modal.secondaryButtonText)}
+              secondaryButtonText={formatMessage(m.modal.secondaryButtonText, {
+                courtDateHasChanged,
+              })}
               isPrimaryButtonLoading={isSendingNotification}
             />
           )}

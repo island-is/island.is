@@ -1,4 +1,3 @@
-import { uuid } from 'uuidv4'
 import { Sequelize } from 'sequelize-typescript'
 import { execSync } from 'child_process'
 import request from 'supertest'
@@ -9,7 +8,6 @@ import { INestApplication, Type } from '@nestjs/common'
 
 import { testServer } from '@island.is/infra-nest-server'
 import { IntlService } from '@island.is/cms-translations'
-import { getQueueServiceToken } from '@island.is/message-queue'
 import {
   CaseState,
   CaseTransition,
@@ -36,11 +34,8 @@ import { AppModule } from '../src/app/app.module'
 import { Institution } from '../src/app/modules/institution'
 import { User } from '../src/app/modules/user'
 import { Case } from '../src/app/modules/case'
-import { caseModuleConfig } from '../src/app/modules'
-import {
-  Notification,
-  SendNotificationResponse,
-} from '../src/app/modules/notification'
+import { Notification } from '../src/app/modules/notification'
+import { MessageService } from '@island.is/judicial-system/message'
 
 interface CUser extends TUser {
   institutionId: string
@@ -78,8 +73,7 @@ let admin: CUser
 let adminAuthCookie: string
 
 beforeAll(async () => {
-  // Need to use sequelize-cli becuase sequelize.sync does not keep track of completed migrations
-  // await sequelize.sync()
+  // Migrate the database
   execSync('yarn nx run judicial-system-backend:migrate')
 
   // Seed the database
@@ -101,10 +95,8 @@ beforeAll(async () => {
               },
             }),
         })
-        .overrideProvider(
-          getQueueServiceToken(caseModuleConfig().sqs.queueName),
-        )
-        .useValue({ add: () => uuid() }),
+        .overrideProvider(MessageService)
+        .useValue({ sendMessagesToQueue: () => undefined }),
   })
 
   sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
@@ -162,7 +154,7 @@ afterAll(async () => {
 
 const minimalCaseData = {
   type: CaseType.CUSTODY,
-  policeCaseNumber: 'Case Number',
+  policeCaseNumbers: ['Case Number'],
 }
 
 function remainingCreateCaseData() {
@@ -356,7 +348,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.type).toBe(caseTwo.type)
   expect(caseOne.description ?? null).toBe(caseTwo.description ?? null)
   expect(caseOne.state).toBe(caseTwo.state)
-  expect(caseOne.policeCaseNumber).toBe(caseTwo.policeCaseNumber)
+  expect(caseOne.policeCaseNumbers).toStrictEqual(caseTwo.policeCaseNumbers)
   expect(caseOne.defenderName ?? null).toBe(caseTwo.defenderName ?? null)
   expect(caseOne.defenderNationalId ?? null).toBe(
     caseTwo.defenderNationalId ?? null,
@@ -487,14 +479,10 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
 }
 
 function getCase(id: string): PromiseLike<Case> {
-  return Case.findOne({
-    where: { id },
+  return Case.findByPk(id, {
     rejectOnEmpty: true,
     include: [
-      {
-        model: Institution,
-        as: 'court',
-      },
+      { model: Institution, as: 'court' },
       {
         model: User,
         as: 'prosecutor',
@@ -523,7 +511,7 @@ describe('Institution', () => {
       .send()
       .expect(200)
       .then((response) => {
-        expect(response.body.length).toBe(16)
+        expect(response.body.length).toBe(18)
       })
   })
 })
@@ -566,14 +554,14 @@ describe('User', () => {
         })
 
         // Check the data in the database
-        return User.findOne({ where: { id: apiUser.id } })
+        return User.findByPk(apiUser.id)
       })
       .then((value) => {
         expectUsersToMatch(userToCUser(value?.toJSON() as User), apiUser)
       })
   })
 
-  it('PUT /api/user/:id should update fields of a user by id', async () => {
+  it('PATCH /api/user/:id should update fields of a user by id', async () => {
     const nationalId = '0987654321'
     const data = {
       name: 'The Modified User',
@@ -608,7 +596,7 @@ describe('User', () => {
         dbUser = userToCUser(value.toJSON() as User)
 
         return request(app.getHttpServer())
-          .put(`/api/user/${dbUser.id}`)
+          .patch(`/api/user/${dbUser.id}`)
           .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${adminAuthCookie}`)
           .send(data)
           .expect(200)
@@ -684,7 +672,7 @@ describe('User', () => {
 })
 
 describe('Case', () => {
-  it('PUT /api/case/:id should update prosecutor fields of a case by id', async () => {
+  it('PATCH /api/case/:id should update prosecutor fields of a case by id', async () => {
     const data = getCaseData(true, true)
     let dbCase: CCase
     let apiCase: CCase
@@ -694,9 +682,9 @@ describe('Case', () => {
         dbCase = caseToCCase(value)
 
         return request(app.getHttpServer())
-          .put(`/api/case/${dbCase.id}`)
+          .patch(`/api/case/${dbCase.id}`)
           .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
-          .send(data)
+          .send({ ...data, type: undefined })
           .expect(200)
       })
       .then((response) => {
@@ -724,7 +712,7 @@ describe('Case', () => {
       })
   })
 
-  it('PUT /api/case/:id should update judge fields of a case by id', async () => {
+  it('PATCH /api/case/:id should update judge fields of a case by id', async () => {
     const judgeCaseData = getJudgeCaseData()
     let dbCase: CCase
     let apiCase: CCase
@@ -738,7 +726,7 @@ describe('Case', () => {
         dbCase = caseToCCase(value)
 
         return request(app.getHttpServer())
-          .put(`/api/case/${dbCase.id}`)
+          .patch(`/api/case/${dbCase.id}`)
           .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
           .send(judgeCaseData)
           .expect(200)
@@ -764,7 +752,7 @@ describe('Case', () => {
       })
   })
 
-  it('PUT /api/case/:id/state should transition case to a new state', async () => {
+  it('PATCH /api/case/:id/state should transition case to a new state', async () => {
     let dbCase: CCase
     let apiCase: CCase
 
@@ -777,12 +765,11 @@ describe('Case', () => {
         dbCase = caseToCCase(value)
 
         const data = {
-          modified: value.modified.toISOString(),
           transition: CaseTransition.ACCEPT,
         }
 
         return request(app.getHttpServer())
-          .put(`/api/case/${value.id}/state`)
+          .patch(`/api/case/${value.id}/state`)
           .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
           .send(data)
           .expect(200)
@@ -846,56 +833,6 @@ function dbNotificationToNotification(dbNotification: Notification) {
 }
 
 describe('Notification', () => {
-  it('POST /api/case/:id/notification should send a notification', async () => {
-    let dbCase: Case
-    let apiSendNotificationResponse: SendNotificationResponse
-
-    await Case.create({
-      origin: CaseOrigin.RVG,
-      type: CaseType.CUSTODY,
-      policeCaseNumber: 'Case Number',
-    })
-      .then((value) => {
-        dbCase = value
-
-        return request(app.getHttpServer())
-          .post(`/api/case/${dbCase.id}/notification`)
-          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
-          .send({ type: NotificationType.HEADS_UP })
-          .expect(201)
-      })
-      .then((response) => {
-        apiSendNotificationResponse = response.body
-
-        // Check the response
-        expect(apiSendNotificationResponse.notificationSent).toBe(true)
-        expect(apiSendNotificationResponse.notification?.id).toBeTruthy()
-        expect(apiSendNotificationResponse.notification?.created).toBeTruthy()
-        expect(apiSendNotificationResponse.notification?.caseId).toBe(dbCase.id)
-        expect(apiSendNotificationResponse.notification?.type).toBe(
-          NotificationType.HEADS_UP,
-        )
-        expect(apiSendNotificationResponse.notification?.recipients).toBe(
-          `[{"success":true}]`,
-        )
-
-        // Check the data in the database
-        return Notification.findOne({
-          where: { id: response.body.notification.id },
-        })
-      })
-      .then((value) => {
-        expect(value?.id).toBe(apiSendNotificationResponse.notification?.id)
-        expect(value?.created.toISOString()).toBe(
-          apiSendNotificationResponse.notification?.created,
-        )
-        expect(value?.type).toBe(apiSendNotificationResponse.notification?.type)
-        expect(value?.recipients).toBe(
-          apiSendNotificationResponse.notification?.recipients,
-        )
-      })
-  })
-
   it('GET /api/case/:id/notifications should get all notifications by case id', async () => {
     let dbCase: Case
     let dbNotification: Notification
@@ -903,15 +840,14 @@ describe('Notification', () => {
     await Case.create({
       origin: CaseOrigin.RVG,
       type: CaseType.CUSTODY,
-      policeCaseNumber: 'Case Number',
+      policeCaseNumbers: ['Case Number'],
     })
       .then((value) => {
         dbCase = value
 
         return Notification.create({
           caseId: dbCase.id,
-          type: NotificationType.HEADS_UP,
-          message: 'Test Message',
+          type: NotificationType.READY_FOR_COURT,
         })
       })
       .then((value) => {

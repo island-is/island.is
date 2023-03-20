@@ -29,15 +29,10 @@ import {
 } from './index'
 
 import { DirectTaxPaymentsModal } from '..'
-import { findFamilyStatus, hasSpouse } from '../../lib/utils'
-import { useEmail } from '../../lib/hooks/useEmail'
+import { findFamilyStatus } from '../../lib/utils'
 import withLogo from '../Logo/Logo'
 
-const SummaryForm = ({
-  application,
-  goToScreen,
-  setBeforeSubmitCallback,
-}: FAFieldBaseProps) => {
+const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { lang } = useLocale()
 
@@ -47,30 +42,16 @@ const SummaryForm = ({
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const aidAmount = useMemo(() => {
-    if (
-      externalData.nationalRegistry?.data?.municipality &&
-      answers.homeCircumstances
-    ) {
+    if (externalData.municipality.data && answers.homeCircumstances) {
       return aidCalculator(
         answers.homeCircumstances.type,
         findFamilyStatus(answers, externalData) ===
           FamilyStatus.NOT_COHABITATION
-          ? externalData.nationalRegistry?.data?.municipality?.individualAid
-          : externalData.nationalRegistry?.data?.municipality?.cohabitationAid,
+          ? externalData.municipality.data.individualAid
+          : externalData.municipality.data.cohabitationAid,
       )
     }
-  }, [externalData.nationalRegistry?.data?.municipality])
-
-  const { sendSpouseEmail } = useEmail(application)
-
-  if (hasSpouse(answers, externalData)) {
-    setBeforeSubmitCallback &&
-      setBeforeSubmitCallback(async () => {
-        const response = await sendSpouseEmail()
-        application.answers.spouseEmailSuccess = response
-        return [true, null]
-      })
-  }
+  }, [externalData.municipality.data])
 
   return (
     <>
@@ -108,9 +89,9 @@ const SummaryForm = ({
       </Box>
 
       <UserInfo
-        name={externalData?.nationalRegistry?.data?.applicant?.fullName}
-        nationalId={externalData?.nationalRegistry?.data?.applicant?.nationalId}
-        address={formatAddress(externalData?.nationalRegistry?.data?.applicant)}
+        name={externalData.nationalRegistry.data.fullName}
+        nationalId={externalData.nationalRegistry.data.nationalId}
+        address={formatAddress(externalData.nationalRegistry.data)}
       />
 
       <FormInfo
@@ -121,11 +102,10 @@ const SummaryForm = ({
       <DirectTaxPaymentCell
         setIsModalOpen={setIsModalOpen}
         hasFetchedPayments={
-          externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
-            ?.success
+          externalData?.taxData?.data?.municipalitiesDirectTaxPayments?.success
         }
         directTaxPayments={
-          externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
+          externalData?.taxData?.data?.municipalitiesDirectTaxPayments
             ?.directTaxPayments
         }
       />
@@ -145,7 +125,7 @@ const SummaryForm = ({
         }
         goToScreen={goToScreen}
         personalTaxReturn={
-          externalData.taxDataFetch?.data?.municipalitiesPersonalTaxReturn
+          externalData.taxData?.data?.municipalitiesPersonalTaxReturn
             ?.personalTaxReturn
         }
         taxFiles={answers.taxReturnFiles ?? []}
@@ -160,7 +140,7 @@ const SummaryForm = ({
 
       <DirectTaxPaymentsModal
         items={
-          externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
+          externalData?.taxData?.data?.municipalitiesDirectTaxPayments
             ?.directTaxPayments
         }
         dateDataWasFetched={externalData?.nationalRegistry?.date}

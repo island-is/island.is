@@ -26,7 +26,7 @@ module.exports = {
     )
   },
 
-  down: (queryInterface, Sequelize) => {
+  down: (queryInterface) => {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.removeColumn('case', 'requested_other_restrictions', {
         transaction: t,

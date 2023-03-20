@@ -59,9 +59,16 @@ export class SubArticleSyncService implements CmsSyncProvider<ISubArticle> {
           if (processedEntry.fields?.content) {
             removeEntryHyperlinkFields(processedEntry.fields.content)
           }
-
-          if (!isCircular(processedEntry)) {
-            processedEntries.push(processedEntry)
+          try {
+            const mappedEntry = mapSubArticle(processedEntry)
+            if (!isCircular(mappedEntry)) {
+              processedEntries.push(processedEntry)
+            }
+          } catch (error) {
+            logger.warn('Failed to map subArticle', {
+              error: error.message,
+              id: entry?.sys?.id,
+            })
           }
         }
         return processedEntries
@@ -97,7 +104,10 @@ export class SubArticleSyncService implements CmsSyncProvider<ISubArticle> {
             ],
           }
         } catch (error) {
-          logger.warn('Failed to import subarticle', { error: error.message })
+          logger.warn('Failed to import subarticle', {
+            error: error.message,
+            id: entry?.sys?.id,
+          })
           return false
         }
       })

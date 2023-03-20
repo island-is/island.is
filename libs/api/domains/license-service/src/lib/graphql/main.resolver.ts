@@ -68,9 +68,6 @@ export class GeneratePkPassInput {
 @InputType()
 export class VerifyPkPassInput {
   @Field(() => String)
-  licenseType!: GenericLicenseType
-
-  @Field(() => String)
   data!: string
 }
 
@@ -165,10 +162,8 @@ export class MainResolver {
     const verification = await this.licenseServiceService.verifyPkPass(
       user,
       locale,
-      input.licenseType,
       input.data,
     )
-
     return verification
   }
 }

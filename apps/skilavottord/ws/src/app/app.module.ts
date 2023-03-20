@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { ApolloDriver } from '@nestjs/apollo'
 import { GraphQLModule } from '@nestjs/graphql'
 import { SequelizeModule } from '@nestjs/sequelize'
 
@@ -31,6 +32,7 @@ const autoSchemaFile = environment.production
       playground,
       autoSchemaFile,
       path: `${BASE_PATH}/api/graphql`,
+      driver: ApolloDriver,
     }),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,

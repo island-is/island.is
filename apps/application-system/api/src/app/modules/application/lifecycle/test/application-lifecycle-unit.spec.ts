@@ -1,15 +1,24 @@
 import { Test } from '@nestjs/testing'
-import { createApplication } from '@island.is/testing/fixtures'
 import { ApplicationLifeCycleService } from '../application-lifecycle.service'
 import { ApplicationService } from '@island.is/application/api/core'
 import { ApplicationWithAttachments as Application } from '@island.is/application/types'
 import { AwsService } from '@island.is/nest/aws'
+import {
+  ApplicationFilesConfig,
+  ApplicationFilesModule,
+  AttachmentDeleteResult,
+  FileService,
+} from '@island.is/application/api/files'
 import {
   ApplicationConfig,
   APPLICATION_CONFIG,
 } from '../../application.configuration'
 import { LoggingModule } from '@island.is/logging'
 import { ApplicationChargeService } from '../../charge/application-charge.service'
+import { ConfigModule } from '@nestjs/config'
+import { signingModuleConfig, SigningService } from '@island.is/dokobit-signing'
+import { FileStorageConfig, FileStorageService } from '@island.is/file-storage'
+import { createApplication } from '@island.is/application/testing'
 
 let lifeCycleService: ApplicationLifeCycleService
 let awsService: AwsService
@@ -74,7 +83,7 @@ class ApplicationServiceMock {
 }
 
 class ApplicationChargeServiceMock {
-  async deleteCharge(application: Pick<Application, 'id' | 'externalData'>) {
+  async deleteCharge(application: Pick<Application, 'id'>) {
     // do nothing
   }
 }
@@ -86,9 +95,19 @@ describe('ApplicationLifecycleService Unit tests', () => {
       attachmentBucket: 'bucket2',
     }
     const module = await Test.createTestingModule({
-      imports: [LoggingModule],
+      imports: [
+        LoggingModule,
+        ApplicationFilesModule,
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [
+            signingModuleConfig,
+            ApplicationFilesConfig,
+            FileStorageConfig,
+          ],
+        }),
+      ],
       providers: [
-        AwsService,
         {
           provide: ApplicationService,
           useClass: ApplicationServiceMock,
@@ -98,7 +117,6 @@ describe('ApplicationLifecycleService Unit tests', () => {
           useClass: ApplicationChargeServiceMock,
         },
         ApplicationLifeCycleService,
-        { provide: APPLICATION_CONFIG, useValue: config },
       ],
     }).compile()
 

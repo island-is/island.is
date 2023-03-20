@@ -30,11 +30,19 @@ export class SupportQNASyncService implements CmsSyncProvider<ISupportQna> {
     return entries.reduce(
       (processedEntries: ISupportQna[], entry: Entry<any>) => {
         if (this.validateArticle(entry)) {
-          if (!isCircular(entry)) {
-            processedEntries.push(entry)
-          } else {
-            logger.warn('Circular reference found in question', {
-              id: entry.sys.id,
+          try {
+            const mappedEntry = mapSupportQNA(entry)
+            if (!isCircular(mappedEntry)) {
+              processedEntries.push(entry)
+            } else {
+              logger.warn('Circular reference found in supportQNA', {
+                id: entry?.sys?.id,
+              })
+            }
+          } catch (error) {
+            logger.warn('Failed to map supportQNA', {
+              error: error.message,
+              id: entry?.sys?.id,
             })
           }
         }
@@ -56,6 +64,36 @@ export class SupportQNASyncService implements CmsSyncProvider<ISupportQna> {
           // get the searchable content of this article
           const searchableContent = extractStringsFromObject(mapped.answer)
 
+          const tags: MappedData['tags'] = []
+
+          if (entry.fields?.organization.fields?.slug) {
+            tags.push({
+              key: entry.fields.organization.fields.slug,
+              value: entry.fields.organization.fields.title,
+              type: 'organization',
+            })
+          }
+          if (entry.fields?.slug) {
+            tags.push({
+              key: entry.fields?.slug,
+              type: 'slug',
+            })
+          }
+          if (entry.fields?.category?.fields?.slug) {
+            tags.push({
+              key: entry.fields.category.fields.slug,
+              value: entry.fields.category.fields.title,
+              type: 'category',
+            })
+          }
+          if (entry.fields?.subCategory?.fields?.slug) {
+            tags.push({
+              key: entry.fields.subCategory.fields.slug,
+              value: entry.fields.subCategory.fields.title,
+              type: 'subcategory',
+            })
+          }
+
           return {
             _id: mapped.id,
             title: mapped.title,
@@ -70,27 +108,15 @@ export class SupportQNASyncService implements CmsSyncProvider<ISupportQna> {
               mapped.organization?.title ?? '',
             ]),
             response: JSON.stringify({ ...mapped, typename: 'SupportQNA' }),
-            tags: [
-              {
-                key: entry.fields?.category?.fields?.slug ?? '',
-                value: entry.fields?.category?.fields?.title,
-                type: 'category',
-              },
-              {
-                key: entry.fields?.organization.fields?.slug ?? '',
-                value: entry.fields?.organization.fields?.title,
-                type: 'organization',
-              },
-              {
-                key: entry.fields?.slug,
-                type: 'slug',
-              },
-            ],
+            tags,
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),
           }
         } catch (error) {
-          logger.warn('Failed to import SupportQNA', { error: error.message })
+          logger.warn('Failed to import SupportQNA', {
+            error: error.message,
+            id: entry?.sys?.id,
+          })
           return false
         }
       })

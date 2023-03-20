@@ -4,7 +4,6 @@ import streamBuffers from 'stream-buffers'
 import { FormatMessage } from '@island.is/cms-translations'
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
 
-import { environment } from '../../environments'
 import { Case } from '../modules/case'
 import { nowFactory } from '../factories'
 import { ruling } from '../messages'
@@ -20,7 +19,6 @@ import {
   addNormalJustifiedText,
   addNormalCenteredText,
 } from './pdfHelpers'
-import { writeFile } from './writeFile'
 
 function constructRulingPdf(
   theCase: Case,
@@ -159,42 +157,30 @@ function constructRulingPdf(
   return stream
 }
 
-export async function getRulingPdfAsString(
+export function getRulingPdfAsString(
   theCase: Case,
   formatMessage: FormatMessage,
 ): Promise<string> {
   const stream = constructRulingPdf(theCase, formatMessage)
 
   // wait for the writing to finish
-  const pdf = await new Promise<string>(function (resolve) {
+  return new Promise<string>(function (resolve) {
     stream.on('finish', () => {
       resolve(stream.getContentsAsString('binary') as string)
     })
   })
-
-  if (!environment.production) {
-    writeFile(`${theCase.id}-ruling.pdf`, pdf)
-  }
-
-  return pdf
 }
 
-export async function getRulingPdfAsBuffer(
+export function getRulingPdfAsBuffer(
   theCase: Case,
   formatMessage: FormatMessage,
 ): Promise<Buffer> {
   const stream = constructRulingPdf(theCase, formatMessage)
 
   // wait for the writing to finish
-  const pdf = await new Promise<Buffer>(function (resolve) {
+  return new Promise<Buffer>(function (resolve) {
     stream.on('finish', () => {
       resolve(stream.getContents() as Buffer)
     })
   })
-
-  if (!environment.production) {
-    writeFile(`${theCase.id}-ruling.pdf`, pdf)
-  }
-
-  return pdf
 }

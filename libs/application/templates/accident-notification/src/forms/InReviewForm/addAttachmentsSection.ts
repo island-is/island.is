@@ -7,8 +7,8 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, FormValue } from '@island.is/application/types'
-import { UPLOAD_ACCEPT } from '../../constants'
-import { addDocuments } from '../../lib/messages'
+import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../constants'
+import { addDocuments, error } from '../../lib/messages'
 import {
   hasReceivedInjuryCertificate,
   hasReceivedPoliceReport,
@@ -41,6 +41,8 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
           buildFileUploadField({
             id: 'attachments.injuryCertificateFile.file',
             title: '',
+            maxSize: FILE_SIZE_LIMIT,
+            maxSizeErrorText: error.attachmentMaxSizeError,
             uploadAccept: UPLOAD_ACCEPT,
             uploadHeader: addDocuments.injuryCertificate.uploadHeader,
             uploadDescription: addDocuments.general.uploadDescription,
@@ -71,6 +73,8 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
           buildFileUploadField({
             id: 'attachments.powerOfAttorneyFile.file',
             title: '',
+            maxSize: FILE_SIZE_LIMIT,
+            maxSizeErrorText: error.attachmentMaxSizeError,
             uploadAccept: UPLOAD_ACCEPT,
             uploadHeader: addDocuments.powerOfAttorney.uploadHeader,
             uploadDescription: addDocuments.general.uploadDescription,
@@ -94,6 +98,8 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
           buildFileUploadField({
             id: 'attachments.deathCertificateFile.file',
             title: '',
+            maxSize: FILE_SIZE_LIMIT,
+            maxSizeErrorText: error.attachmentMaxSizeError,
             uploadAccept: UPLOAD_ACCEPT,
             uploadHeader: addDocuments.deathCertificate.uploadHeader,
             uploadDescription: addDocuments.general.uploadDescription,
@@ -119,6 +125,8 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
           buildFileUploadField({
             id: 'attachments.additionalFiles.file',
             title: '',
+            maxSize: FILE_SIZE_LIMIT,
+            maxSizeErrorText: error.attachmentMaxSizeError,
             uploadAccept: UPLOAD_ACCEPT,
             uploadHeader: addDocuments.general.uploadHeader,
             uploadDescription: addDocuments.general.uploadDescription,
@@ -129,6 +137,8 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
           buildFileUploadField({
             id: 'attachments.additionalFilesFromReviewer.file',
             title: '',
+            maxSize: FILE_SIZE_LIMIT,
+            maxSizeErrorText: error.attachmentMaxSizeError,
             uploadAccept: UPLOAD_ACCEPT,
             uploadHeader: addDocuments.general.uploadHeader,
             uploadDescription: addDocuments.general.uploadDescription,

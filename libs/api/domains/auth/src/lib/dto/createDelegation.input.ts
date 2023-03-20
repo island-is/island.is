@@ -9,4 +9,7 @@ export class CreateDelegationInput {
 
   @Field(() => [DelegationScopeInput], { nullable: true })
   scopes?: DelegationScopeInput[]
+
+  @Field(() => String, { nullable: true })
+  domainName?: string
 }

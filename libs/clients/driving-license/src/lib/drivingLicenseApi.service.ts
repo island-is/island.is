@@ -11,6 +11,7 @@ import * as v2 from '../v2'
 import {
   CanApplyErrorCodeBTemporary,
   DriversLicense,
+  QualitySignature,
   Teacher,
 } from './drivingLicenseApi.types'
 import { handleCreateResponse } from './utils/handleCreateResponse'
@@ -22,39 +23,56 @@ export class DrivingLicenseApi {
   public async getCurrentLicense(input: {
     nationalId: string
   }): Promise<DriversLicense | null> {
-    const skirteini = await this.v2.getCurrentLicenseV2({
-      kennitala: input.nationalId,
-      // apiVersion header indicates that this method will return a single license, rather
-      // than an array
-      apiVersion: v2.DRIVING_LICENSE_API_VERSION_V2,
-    })
+    try {
+      const skirteini = await this.v2.getCurrentLicenseV2({
+        kennitala: input.nationalId,
+        // apiVersion header indicates that this method will return a single license, rather
+        // than an array
+        apiVersion: v2.DRIVING_LICENSE_API_VERSION_V2,
+      })
+      if (!skirteini || !skirteini.id) {
+        return null
+      }
+      const license = DrivingLicenseApi.normalizeDrivingLicenseType(skirteini)
+      if (skirteini.athugasemdir) {
+        const remarks = await this.v1.apiOkuskirteiniTegundirathugasemdaGet({
+          apiVersion: v1.DRIVING_LICENSE_API_VERSION_V1,
+        })
+        const licenseRemarks: string[] = skirteini.athugasemdir
+          .filter(
+            (remark: v1.AtsSkirteini) =>
+              remark.id === skirteini.id && !!remark.nr,
+          )
+          .map((remark: v1.AtsSkirteini) => remark.nr || '')
+        const filteredRemarks: string[] = remarks
+          .filter(
+            (remark: v1.TegundAthugasemdaDto) =>
+              !!remark.heiti &&
+              licenseRemarks.includes(remark.nr || ('' && !remark.athugasemd)),
+          )
+          .map((remark: v1.TegundAthugasemdaDto) => remark.heiti || '')
+        return { ...license, healthRemarks: filteredRemarks }
+      }
 
-    if (!skirteini || !skirteini.id) {
+      return license
+    } catch (e) {
+      if (e.body.detail === 'Ökuskírteini er ekki í gildi') {
+        const oldLicenses = await this.getAllLicenses(input)
+        // Find license that expired within 2 years
+        const licenseWithinLimit = oldLicenses.find((license) => {
+          const exists = license.categories.find(
+            (category) =>
+              category.expires &&
+              new Date().getFullYear() -
+                new Date(category.expires).getFullYear() <
+                2,
+          )
+          return !!exists
+        })
+        return licenseWithinLimit || null
+      }
       return null
     }
-    const license = DrivingLicenseApi.normalizeDrivingLicenseType(skirteini)
-
-    if (skirteini.athugasemdir) {
-      const remarks = await this.v1.apiOkuskirteiniTegundirathugasemdaGet({
-        apiVersion: v1.DRIVING_LICENSE_API_VERSION_V1,
-      })
-      const licenseRemarks: string[] = skirteini.athugasemdir
-        .filter(
-          (remark: v1.AtsSkirteini) =>
-            remark.id === skirteini.id && !!remark.nr,
-        )
-        .map((remark: v1.AtsSkirteini) => remark.nr || '')
-      const filteredRemarks: string[] = remarks
-        .filter(
-          (remark: v1.TegundAthugasemdaDto) =>
-            !!remark.heiti &&
-            licenseRemarks.includes(remark.nr || ('' && !remark.athugasemd)),
-        )
-        .map((remark: v1.TegundAthugasemdaDto) => remark.heiti || '')
-      return { ...license, healthRemarks: filteredRemarks }
-    }
-
-    return license
   }
 
   private static normalizeDrivingLicenseType(
@@ -76,6 +94,7 @@ export class DrivingLicenseApi {
           expires: rettindi.gildirTil ?? null,
           comments: rettindi.aths ?? '',
         })) ?? [],
+      birthCountry: skirteini.faedingarStadurHeiti,
     }
   }
 
@@ -309,6 +328,28 @@ export class DrivingLicenseApi {
       kennitala: params.nationalId,
     })
 
+    return {
+      data: image,
+    }
+  }
+
+  async getHasQualitySignature(params: {
+    nationalId: string
+  }): Promise<boolean> {
+    const result = await this.v1.apiOkuskirteiniKennitalaHasqualitysignatureGet(
+      {
+        kennitala: params.nationalId,
+      },
+    )
+    return result > 0
+  }
+
+  async getQualitySignature(params: {
+    nationalId: string
+  }): Promise<QualitySignature | null> {
+    const image = await this.v1.apiOkuskirteiniKennitalaGetqualitysignatureGet({
+      kennitala: params.nationalId,
+    })
     return {
       data: image,
     }

@@ -15,6 +15,7 @@ import * as uuid from 'uuidv4'
 
 import { getRequestMethod, TestEndpointOptions } from '@island.is/testing/nest'
 import { createNationalId } from '@island.is/testing/fixtures'
+import { AuthDelegationType } from 'delegation'
 
 let app: INestApplication
 
@@ -57,7 +58,7 @@ let server: request.SuperTest<request.Test>
 const nationalId = createNationalId()
 const mockAuthGuard = new MockAuthGuard({
   nationalId,
-  delegationType: ['LegalGuardian'],
+  delegationType: [AuthDelegationType.LegalGuardian],
   scope: [ApplicationScope.read, ApplicationScope.write],
   actor: {
     nationalId: createNationalId(),
@@ -114,13 +115,6 @@ describe('Application system API delegation guard', () => {
     {
       method: 'PUT',
       endpoint: `/applications/${uuid.uuid()}/externalData`,
-      send: {
-        dataProviders: [{ id: 'test', type: 'ExampleSucceeds' }],
-      },
-    },
-    {
-      method: 'GET',
-      endpoint: `/users/${nationalId}/applications`,
       send: {
         dataProviders: [{ id: 'test', type: 'ExampleSucceeds' }],
       },

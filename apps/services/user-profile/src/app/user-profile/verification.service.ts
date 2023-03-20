@@ -281,11 +281,22 @@ export class VerificationService {
             },
             {
               component: 'Heading',
-              context: { copy: 'Staðfesting á netfangi', small: true },
+              context: {
+                copy: 'Staðfesting á netfangi',
+                small: true,
+              },
+            },
+            {
+              component: 'Heading',
+              context: {
+                copy: '',
+                small: true,
+                eyebrow: 'Email confirmation',
+              },
             },
             {
               component: 'Copy',
-              context: { copy: 'Öryggiskóðinn þinn', small: true },
+              context: { copy: 'Öryggiskóði / Security code', small: true },
             },
             {
               component: 'Heading',
@@ -295,14 +306,15 @@ export class VerificationService {
               component: 'Copy',
               context: {
                 copy:
-                  'Þetta er öryggiskóðinn þinn til staðfestingar á netfangi. Hann eyðist sjálfkrafa eftir 5 mínútur, eftir þann tíma þarftu að láta senda nýjan í sama ferli og þú varst að fara gegnum.',
+                  'Þetta er öryggiskóði til staðfestingar á netfangi, hann eyðist sjálfkrafa eftir 5 mínútur. Vinsamlegst hunsaðu póstinn ef þú varst ekki að skrá netfangið þitt á Mínum síðum.',
               },
             },
             {
               component: 'Copy',
               context: {
+                small: true,
                 copy:
-                  'Vinsamlegst hunsaðu þennan póst ef þú varst ekki að skrá netfangið þitt á Mínum síðum.',
+                  'This is your security code to verify your email address, it will be deleted automatically after 5 minutes. Please ignore this email if you did not enter your email address on My pages.',
               },
             },
           ],
@@ -335,30 +347,5 @@ export class VerificationService {
     await this.emailVerificationModel.destroy({
       where: { nationalId },
     })
-  }
-
-  async isPhoneNumberVerified(
-    createUserProfileDto: CreateUserProfileDto,
-  ): Promise<boolean> {
-    const { nationalId, mobilePhoneNumber } = createUserProfileDto
-    const verification = await this.smsVerificationModel.findOne({
-      where: { nationalId },
-    })
-    if (!verification) return false
-    return (
-      verification.confirmed &&
-      verification.mobilePhoneNumber === mobilePhoneNumber
-    )
-  }
-
-  async isEmailVerified(
-    createUserProfileDto: CreateUserProfileDto,
-  ): Promise<boolean> {
-    const { nationalId, email } = createUserProfileDto
-    const verification = await this.emailVerificationModel.findOne({
-      where: { nationalId },
-    })
-    if (!verification) return false
-    return verification.confirmed && verification.email === email
   }
 }

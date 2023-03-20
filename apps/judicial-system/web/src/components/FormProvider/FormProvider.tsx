@@ -3,17 +3,16 @@ import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 
 import {
-  Case,
   CaseOrigin,
   CaseState,
-  CaseType,
   Defendant,
 } from '@island.is/judicial-system/types'
-import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
+import { DEFENDER_ROUTE, USERS_ROUTE } from '@island.is/judicial-system/consts'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { CaseData, LimitedAccessCaseData } from '../../types'
-import { CaseQuery } from './caseGql'
-import { LimitedAccessCaseQuery } from './limitedAccessCaseGql'
+import { CaseData, LimitedAccessCaseData, TempCase as Case } from '../../types'
+import LimitedAccessCaseQuery from './limitedAccessCaseGql'
+import CaseQuery from './caseGql'
 
 type ProviderState =
   | 'fetch'
@@ -41,10 +40,11 @@ const initialState: Case = {
   created: '',
   modified: '',
   origin: CaseOrigin.UNKNOWN,
-  type: CaseType.CUSTODY,
+  type: CaseType.Custody,
   state: CaseState.NEW,
-  policeCaseNumber: '',
-  defendants: [{ id: '' } as Defendant],
+  policeCaseNumbers: [],
+  defendants: [{ id: '', noNationalId: false } as Defendant],
+  defendantWaivesRightToCounsel: false,
 }
 
 export const FormContext = createContext<FormProvider>({
@@ -57,18 +57,30 @@ export const FormContext = createContext<FormProvider>({
   refreshCase: () => {},
 })
 
+const MaybeFormProvider = ({ children }: Props) => {
+  const router = useRouter()
+  return router.pathname.includes(USERS_ROUTE) ? (
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    <>{children}</>
+  ) : (
+    <FormProvider>{children}</FormProvider>
+  )
+}
+
 const FormProvider = ({ children }: Props) => {
   const router = useRouter()
   const limitedAccess = router.pathname.includes(DEFENDER_ROUTE)
   const id = router.query.id
 
   const caseType = router.pathname.includes('farbann')
-    ? CaseType.TRAVEL_BAN
+    ? CaseType.TravelBan
     : router.pathname.includes('gaesluvardhald')
-    ? CaseType.CUSTODY
-    : // This is just a random investigation case type for the default value. This
-      // is updated when the case is created.
-      CaseType.OTHER
+    ? CaseType.Custody
+    : router.pathname.includes('akaera')
+    ? CaseType.Indictment
+    : // This is a random case type for the default value.
+      // It is updated when the case is created.
+      CaseType.Other
 
   const [state, setState] = useState<ProviderState>()
   const [caseId, setCaseId] = useState<string>()
@@ -76,6 +88,7 @@ const FormProvider = ({ children }: Props) => {
   const [workingCase, setWorkingCase] = useState<Case>({
     ...initialState,
     type: caseType,
+    policeCaseNumbers: caseType === CaseType.Indictment ? [''] : [],
   })
 
   // Used in exported indicators
@@ -154,4 +167,4 @@ const FormProvider = ({ children }: Props) => {
   )
 }
 
-export default FormProvider
+export { MaybeFormProvider as FormProvider }

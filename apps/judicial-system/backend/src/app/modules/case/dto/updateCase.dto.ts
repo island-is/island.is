@@ -5,6 +5,8 @@ import {
   IsUUID,
   IsBoolean,
   IsObject,
+  ArrayMinSize,
+  IsArray,
 } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
@@ -14,9 +16,14 @@ import {
   CaseCustodyRestrictions,
   CaseAppealDecision,
   CaseDecision,
-  CaseType,
   SessionArrangements,
   CourtDocument,
+  SubpoenaType,
+  CaseType,
+} from '@island.is/judicial-system/types'
+import type {
+  IndictmentSubtypeMap,
+  CrimeSceneMap,
 } from '@island.is/judicial-system/types'
 
 export class UpdateCaseDto {
@@ -26,14 +33,21 @@ export class UpdateCaseDto {
   readonly type?: CaseType
 
   @IsOptional()
+  @IsObject()
+  @ApiPropertyOptional()
+  readonly indictmentSubtypes?: IndictmentSubtypeMap
+
+  @IsOptional()
   @IsString()
   @ApiPropertyOptional()
   readonly description?: string
 
   @IsOptional()
-  @IsString()
+  @IsArray()
+  @ArrayMinSize(1)
+  @IsString({ each: true })
   @ApiPropertyOptional()
-  readonly policeCaseNumber?: string
+  readonly policeCaseNumbers?: string[]
 
   @IsOptional()
   @IsString()
@@ -334,4 +348,29 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly seenByDefender?: Date
+
+  @IsOptional()
+  @IsEnum(SubpoenaType)
+  @ApiPropertyOptional({ enum: SubpoenaType })
+  readonly subpoenaType?: SubpoenaType
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly defendantWaivesRightToCounsel?: boolean
+
+  @IsOptional()
+  @IsObject()
+  @ApiPropertyOptional()
+  readonly crimeScenes?: CrimeSceneMap
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly indictmentIntroduction?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly requestDriversLicenseSuspension?: boolean
 }

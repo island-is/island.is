@@ -19,10 +19,17 @@ export const sidebar = style({
   display: 'flex',
   justifyContent: 'flex-start',
   flexDirection: 'column',
-})
-
-export const sidebarScroll = style({
   overflowY: 'auto',
+  scrollbarWidth: 'thin',
+  scrollbarColor: `${theme.color.blue300} ${theme.color.blue100}`,
+  '::-webkit-scrollbar': {
+    width: 6,
+    backgroundColor: theme.color.blue100,
+  },
+  '::-webkit-scrollbar-thumb': {
+    backgroundColor: theme.color.blue300,
+    borderRadius: theme.border.radius.large,
+  },
 })
 
 export const collapsed = style({
@@ -62,15 +69,6 @@ export const navIcon = style({
 
 export const itemWrapper = style({})
 
-globalStyle(`${itemWrapper}:hover svg`, {
-  color: theme.color.blue400,
-})
-
-globalStyle(`${itemWrapper}:hover .navitem`, {
-  backgroundColor: theme.color.blue100,
-  color: theme.color.blue400,
-})
-
 globalStyle(`${itemWrapper}:hover #sub-nav-model`, {
   display: 'flex',
   position: 'absolute',
@@ -79,4 +77,21 @@ globalStyle(`${itemWrapper}:hover #sub-nav-model`, {
   width: 220,
   height: 'max-content',
   zIndex: 14,
+})
+
+export const itemWrapperActive = style({})
+
+globalStyle(`${itemWrapperActive} svg path`, {
+  color: theme.color.blue400,
+  stroke: theme.color.blue400,
+})
+
+globalStyle(`${itemWrapper}:hover svg`, {
+  color: theme.color.blue400,
+  stroke: theme.color.blue400,
+})
+
+globalStyle(`${itemWrapper}:hover svg path`, {
+  color: theme.color.blue400,
+  stroke: theme.color.blue400,
 })

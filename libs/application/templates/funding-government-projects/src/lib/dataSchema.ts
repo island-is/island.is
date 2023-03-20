@@ -1,4 +1,4 @@
-import * as z from 'zod'
+import { z } from 'zod'
 import { error } from './messages'
 
 const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
@@ -26,9 +26,9 @@ export const FundingGovernmentProjectsSchema = z.object({
     }),
   ),
   project: z.object({
-    title: z.string().nonempty(),
-    description: z.string().nonempty(),
-    cost: z.string().nonempty(),
+    title: z.string().min(1),
+    description: z.string().min(1),
+    cost: z.string().min(1),
     refundableYears: z.number(),
     attachments: z.array(FileSchema).nonempty(),
   }),

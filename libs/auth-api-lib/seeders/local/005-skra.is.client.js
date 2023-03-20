@@ -24,6 +24,7 @@ const skra_is_individuals_scope = {
   also_for_delegated_user: false,
   automatic_delegation_grant: false,
   is_access_controlled: false,
+  domain_name: '@island.is',
 }
 
 const api_resource_scope_tmp = {
@@ -40,6 +41,7 @@ const api_resource_scope_tmp = {
   also_for_delegated_user: false,
   automatic_delegation_grant: false,
   is_access_controlled: false,
+  domain_name: '@island.is',
 }
 
 const api_scopes = [skra_is_individuals_scope, api_resource_scope_tmp]
@@ -94,8 +96,7 @@ const client = {
   client_claims_prefix: '@island.is/auth-admin-web_',
   protocol_type: 'oidc',
   consent_lifetime: 3600,
-
-  supports_delegation: false,
+  supports_custom_delegation: false,
   supports_legal_guardians: false,
   supports_procuring_holders: false,
   prompt_delegations: false,

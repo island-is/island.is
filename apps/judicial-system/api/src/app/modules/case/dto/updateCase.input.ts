@@ -9,9 +9,12 @@ import type {
   CaseCustodyRestrictions,
   CaseDecision,
   UpdateCase,
-  CaseType,
   SessionArrangements,
   CourtDocument,
+  SubpoenaType,
+  CaseType,
+  IndictmentSubtypeMap,
+  CrimeSceneMap,
 } from '@island.is/judicial-system/types'
 
 @InputType()
@@ -25,12 +28,16 @@ export class UpdateCaseInput implements UpdateCase {
   readonly type?: CaseType
 
   @Allow()
+  @Field(() => GraphQLJSONObject, { nullable: true })
+  readonly indictmentSubtypes?: IndictmentSubtypeMap
+
+  @Allow()
   @Field({ nullable: true })
   readonly description?: string
 
   @Allow()
-  @Field({ nullable: true })
-  readonly policeCaseNumber?: string
+  @Field(() => [String], { nullable: true })
+  readonly policeCaseNumbers?: string[]
 
   @Allow()
   @Field({ nullable: true })
@@ -242,11 +249,11 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  accusedPostponedAppealDate?: string
+  readonly accusedPostponedAppealDate?: string
 
   @Allow()
   @Field({ nullable: true })
-  prosecutorPostponedAppealDate?: string
+  readonly prosecutorPostponedAppealDate?: string
 
   @Allow()
   @Field({ nullable: true })
@@ -271,4 +278,24 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly seenByDefender?: string
+
+  @Allow()
+  @Field(() => String, { nullable: true })
+  readonly subpoenaType?: SubpoenaType
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly defendantWaivesRightToCounsel?: boolean
+
+  @Allow()
+  @Field(() => GraphQLJSONObject, { nullable: true })
+  readonly crimeScenes?: CrimeSceneMap
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly indictmentIntroduction?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly requestDriversLicenseSuspension?: boolean
 }

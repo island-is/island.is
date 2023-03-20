@@ -1,4 +1,11 @@
+import { defineTemplateApi } from '@island.is/application/types'
+
 export {
-  NationalRegistryProvider,
-  UserProfileProvider,
-} from '@island.is/application/data-providers'
+  NationalRegistryUserApi,
+  UserProfileApi,
+  IdentityApi as IndentityApiProvider,
+} from '@island.is/application/types'
+export const CurrentUserTypeProvider = defineTemplateApi({
+  action: 'getUserType',
+  externalDataId: 'currentUserType',
+})

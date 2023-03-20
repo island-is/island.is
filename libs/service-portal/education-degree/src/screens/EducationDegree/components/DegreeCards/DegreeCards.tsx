@@ -1,7 +1,8 @@
 import React from 'react'
 
-import { ActionCard, Box } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { EmptyState, m } from '@island.is/service-portal/core'
+import { ActionCard } from '@island.is/service-portal/core'
 
 const educationDegrees = [
   {
@@ -42,7 +43,7 @@ const DegreeCards = () => {
             }}
             heading={`Leyfisbréf - ${degree.programme}`}
             text={`Dags: ${degree.date}`}
-            avatar
+            image={{ type: 'avatar' }}
           />
         </Box>
       ))}

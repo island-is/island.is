@@ -12,17 +12,22 @@ import {
   DefaultEvents,
   Form,
   FormModes,
+  NationalRegistryUserApi,
+  UserProfileApi,
+  DistrictsApi,
 } from '@island.is/application/types'
-import format from 'date-fns/format'
-import localeIS from 'date-fns/locale/is'
 import { ChildsPersonalInfo } from '../lib/constants'
 import { m } from '../lib/messages'
 import { childsOverview } from './overviewSection/childsOverview'
+import {
+  IdentityDocumentApi,
+  SyslumadurPaymentCatalogApi,
+} from '../dataProviders'
 
 export const ParentB: Form = buildForm({
   id: 'PassportApplicationParentB',
   title: m.formName,
-  mode: FormModes.APPLYING,
+  mode: FormModes.IN_PROGRESS,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
@@ -32,18 +37,16 @@ export const ParentB: Form = buildForm({
       children: [
         buildMultiField({
           id: 'introParentB',
-          title: 'Umsókn um vegabréf',
-          description: (application: Application) =>
-            (application.answers.childsPersonalInfo as ChildsPersonalInfo)
-              .guardian1.name +
-            ' ' +
-            m.parentBIntro.defaultMessage +
-            ' ' +
-            format(new Date(application.created), 'dd.MMMM, yyyy', {
-              locale: localeIS,
-            }) +
-            '. ' +
-            m.parentBIntroPart2.defaultMessage,
+          title: m.formName,
+          description: (application: Application) => ({
+            ...m.parentBIntroText,
+            values: {
+              childsName: (application.answers
+                .childsPersonalInfo as ChildsPersonalInfo)?.name,
+              guardianName: (application.answers
+                .childsPersonalInfo as ChildsPersonalInfo)?.guardian1.name,
+            },
+          }),
           children: [
             buildDividerField({
               title: ' ',
@@ -63,31 +66,26 @@ export const ParentB: Form = buildForm({
           checkboxLabel: m.dataCollectionCheckboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: 'NationalRegistryProvider',
+              provider: NationalRegistryUserApi,
               title: m.dataCollectionNationalRegistryTitle,
               subTitle: m.dataCollectionNationalRegistrySubtitle,
             }),
             buildDataProviderItem({
-              id: 'userProfile',
-              type: 'UserProfileProvider',
+              provider: UserProfileApi,
               title: m.dataCollectionUserProfileTitle,
               subTitle: m.dataCollectionUserProfileSubtitle,
             }),
             buildDataProviderItem({
-              id: 'identityDocument',
-              type: 'IdentityDocumentProvider',
+              provider: IdentityDocumentApi,
               title: m.dataCollectionIdentityDocumentTitle,
               subTitle: m.dataCollectionIdentityDocumentSubtitle,
             }),
             buildDataProviderItem({
-              id: 'payment',
-              type: 'FeeInfoProvider',
+              provider: SyslumadurPaymentCatalogApi,
               title: '',
             }),
             buildDataProviderItem({
-              id: 'districtCommissioners',
-              type: 'DistrictsProvider',
+              provider: DistrictsApi,
               title: '',
             }),
           ],

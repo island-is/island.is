@@ -32,6 +32,9 @@ export class News {
 
   @Field(() => [GenericTag])
   genericTags: GenericTag[] = []
+
+  @Field(() => Boolean, { nullable: true })
+  fullWidthImageInContent?: boolean
 }
 
 export const mapNews = ({ fields, sys }: INews): News => ({
@@ -46,4 +49,5 @@ export const mapNews = ({ fields, sys }: INews): News => ({
     ? mapDocument(fields.content, sys.id + ':content')
     : [],
   genericTags: (fields.genericTags ?? []).map(mapGenericTag),
+  fullWidthImageInContent: fields.fullWidthImageInContent ?? true,
 })

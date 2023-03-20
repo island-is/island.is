@@ -70,7 +70,7 @@ interface StepConfig {
 interface StepOption {
   label: string
   transition: string
-  slug: string
+  value: string
 }
 
 interface StateMeta {
@@ -332,7 +332,7 @@ const getStepOptions = (
       return {
         label: label,
         transition: stepTransition,
-        slug: o[optionSlugField],
+        value: o[optionSlugField],
       }
     })
 
@@ -354,7 +354,7 @@ const getStepOptions = (
     return {
       label: label,
       transition: o.transition,
-      slug: o.optionSlug,
+      value: o.optionSlug,
     }
   })
 }
@@ -371,6 +371,7 @@ const stepContainsQuestion = (step: Step) => {
   return (
     step.subtitle &&
     step.subtitle.length > 0 &&
+    step.stepType !== STEP_TYPES.ANSWER &&
     step.subtitle[0].__typename === 'Html' &&
     step.subtitle[0].document.content.length > 0 &&
     step.subtitle[0].document.content[0].content &&

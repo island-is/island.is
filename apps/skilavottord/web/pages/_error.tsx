@@ -1,5 +1,4 @@
 import React from 'react'
-import * as Sentry from '@sentry/node'
 import { NextPageContext } from 'next'
 import NextError, { ErrorProps as NextErrorProps } from 'next/error'
 
@@ -17,7 +16,7 @@ type ErrorProps = {
 
 function CustomError({ isSSRReadyToRender, err }: PropTypes) {
   if (!isSSRReadyToRender && err) {
-    Sentry.captureException(err)
+    console.error(err)
   }
 
   return <NotFound />
@@ -34,17 +33,17 @@ CustomError.getInitialProps = async (
     }
 
     if (ctx.err) {
-      Sentry.captureException(ctx.err)
+      console.error(ctx.err)
       return { ...errorInitialProps, isSSRReadyToRender: true }
     }
   } else {
     if (ctx.err) {
-      Sentry.captureException(ctx.err)
+      console.error(ctx.err)
       return { ...errorInitialProps, isSSRReadyToRender: true }
     }
   }
 
-  Sentry.captureException(
+  console.error(
     new Error(`_error.js getInitialProps missing data at path: ${ctx.asPath}`),
   )
   return { ...errorInitialProps, isSSRReadyToRender: true }

@@ -6,19 +6,25 @@ import { useLocale } from '@island.is/localization'
 import { coreMessages } from '@island.is/application/core'
 import { useAuth } from '@island.is/auth/react'
 
+type UseParams = {
+  slug: string
+  id: string
+}
+
 export const Application = () => {
-  const { slug, id } = useParams<{ slug: string; id: string }>()
+  const { slug, id } = useParams() as UseParams
   const { userInfo } = useAuth()
   const { formatMessage } = useLocale()
   const nationalRegistryId = userInfo?.profile?.nationalId
 
   if (!id || !slug) {
-    return <ErrorShell />
+    return <ErrorShell errorType="notFound" />
   }
 
   if (!nationalRegistryId) {
     return (
       <ErrorShell
+        errorType="notFound"
         title={formatMessage(coreMessages.notLoggedIn)}
         subTitle={formatMessage(coreMessages.notLoggedInDescription)}
       />

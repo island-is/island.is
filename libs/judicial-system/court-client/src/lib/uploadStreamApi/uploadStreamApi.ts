@@ -51,7 +51,7 @@ export class UploadStreamApi {
           ) {
             resolve(body)
           } else {
-            reject(body)
+            reject({ status: response.statusCode, message: body })
           }
         }
       })

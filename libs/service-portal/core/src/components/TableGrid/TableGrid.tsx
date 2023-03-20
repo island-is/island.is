@@ -9,7 +9,7 @@ interface TableItem {
 }
 
 interface Props {
-  dataArray: Array<TableItem[]>
+  dataArray: Array<Array<TableItem | null | undefined | ''>>
   title?: string
   subtitle?: string
   mt?: boolean
@@ -33,27 +33,34 @@ export const TableGrid: FC<Props> = ({ dataArray, title, subtitle, mt }) => {
       <T.Body>
         {dataArray.map((row, ii) => (
           <T.Row key={`row-${ii}`}>
-            {row.map((rowitem, iii) => (
-              <T.Data key={`rowitem-${iii}`} colSpan={2} style={tableStyles}>
-                <Columns collapseBelow="md" space={2}>
-                  <Column>
-                    <Text
-                      title={rowitem.detail}
-                      variant="medium"
-                      fontWeight="semiBold"
-                      as="span"
-                    >
-                      {rowitem.title}
-                    </Text>
-                  </Column>
-                  <Column>
-                    <Text variant="medium" title={rowitem.detail}>
-                      {rowitem.value}
-                    </Text>
-                  </Column>
-                </Columns>
-              </T.Data>
-            ))}
+            {row.map(
+              (rowitem, iii) =>
+                rowitem && (
+                  <T.Data
+                    key={`rowitem-${iii}`}
+                    colSpan={2}
+                    style={tableStyles}
+                  >
+                    <Columns collapseBelow="md" space={2}>
+                      <Column>
+                        <Text
+                          title={rowitem.detail}
+                          variant="medium"
+                          fontWeight="semiBold"
+                          as="span"
+                        >
+                          {rowitem.title}
+                        </Text>
+                      </Column>
+                      <Column>
+                        <Text variant="medium" title={rowitem.detail}>
+                          {rowitem.value}
+                        </Text>
+                      </Column>
+                    </Columns>
+                  </T.Data>
+                ),
+            )}
           </T.Row>
         ))}
       </T.Body>

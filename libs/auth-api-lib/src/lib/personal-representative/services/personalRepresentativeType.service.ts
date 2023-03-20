@@ -8,9 +8,9 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Op } from 'sequelize'
-import { PersonalRepresentativeType } from '../entities/models/personal-representative-type.model'
-import { PersonalRepresentativeTypeDTO } from '../entities/dto/personal-representative-type.dto'
-import { PaginatedPersonalRepresentativeTypeDto } from '../entities/dto/paginated-personal-representative-type.dto'
+import { PersonalRepresentativeType } from '../models/personal-representative-type.model'
+import { PersonalRepresentativeTypeDTO } from '../dto/personal-representative-type.dto'
+import { PaginatedPersonalRepresentativeTypeDto } from '../dto/paginated-personal-representative-type.dto'
 
 import { paginate, PaginationDto } from '@island.is/nest/pagination'
 

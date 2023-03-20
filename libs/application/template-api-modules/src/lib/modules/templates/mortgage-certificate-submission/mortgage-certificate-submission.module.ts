@@ -1,9 +1,6 @@
 import { DynamicModule } from '@nestjs/common'
-
 import { SharedTemplateAPIModule } from '../../shared'
-
 import { BaseTemplateAPIModuleConfig } from '../../../types'
-
 import { MortgageCertificateSubmissionService } from './mortgage-certificate-submission.service'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 import { SyslumennClientModule } from '@island.is/clients/syslumenn'

@@ -24,6 +24,7 @@ import {
 } from './Components'
 import { InputBackgroundColor } from '../Input/types'
 import * as styles from './Select.css'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 interface AriaError {
   'aria-invalid': boolean
@@ -88,8 +89,9 @@ export const Select = ({
   required,
   formatGroupLabel,
   isClearable,
+  dataTestId,
   filterConfig = null,
-}: SelectProps) => {
+}: SelectProps & TestSupport) => {
   const errorId = `${id}-error`
   const ariaError = hasError
     ? {
@@ -121,6 +123,7 @@ export const Select = ({
         label={label}
         value={value}
         icon={icon}
+        dataTestId={dataTestId}
         placeholder={placeholder}
         defaultValue={defaultValue}
         isOptionDisabled={(option) => !!option.disabled}
@@ -175,6 +178,7 @@ export const Select = ({
         onChange={onChange}
         label={label}
         value={value}
+        dataTestId={dataTestId}
         icon={icon}
         placeholder={placeholder}
         defaultValue={defaultValue}

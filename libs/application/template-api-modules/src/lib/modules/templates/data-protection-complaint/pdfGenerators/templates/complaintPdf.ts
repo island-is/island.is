@@ -3,7 +3,12 @@ import { ComplaintPDF, ExternalDataMessages, Information } from '../../models'
 import { Application } from '@island.is/application/types'
 import { applicationToComplaintPDF } from '../../data-protection-utils'
 import { generatePdf } from '../pdfGenerator'
-import { messages } from '@island.is/application/templates/data-protection-complaint'
+import {
+  messages,
+  OnBehalf,
+  SubjectOfComplaint,
+  subjectOfComplaintValueLabelMapper,
+} from '@island.is/application/templates/data-protection-complaint'
 import {
   addformFieldAndValue,
   addHeader,
@@ -18,7 +23,6 @@ import { dataProtectionLogo } from '../assets/logo'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
-import { OnBehalf } from '@island.is/application/templates/data-protection-complaint'
 import { DocumentInfo } from '@island.is/clients/data-protection-complaint'
 
 export async function generateComplaintPdf(
@@ -51,6 +55,7 @@ function dpcApplicationPdf(
     'Upplýsingar um fyrirtæki, stofnun eða einstakling sem kvartað er yfir',
     doc,
   )
+
   complaint.targetsOfComplaint.map((c) => {
     addformFieldAndValue('Nafn', c.name, doc, PdfConstants.SMALL_LINE_GAP)
     if (c.nationalId) {
@@ -70,7 +75,7 @@ function dpcApplicationPdf(
     const operatesWithinEuropeAnswer =
       c.operatesWithinEurope === 'yes' ? c.countryOfOperation : 'Ekki vitað/nei'
     addformFieldAndValue(
-      'Starfsemi innan Evrópu?',
+      'Veistu hvort viðkomandi aðili er með starfsemi í öðru landi innan Evrópu?',
       operatesWithinEuropeAnswer,
       doc,
       PdfConstants.SMALL_LINE_GAP,
@@ -89,17 +94,24 @@ function dpcApplicationPdf(
 
   if (complaint.complaintCategories.length !== 0) {
     addSubheader('Efni kvörtunar', doc)
-
-    complaint.complaintCategories.map((c, index) => {
-      return addValue(
-        complaint.complaintCategories.length === index + 1
-          ? complaint.somethingElse
-            ? `• ${c}: ${complaint.somethingElse}`
-            : `• ${c}`
-          : `• ${c}`,
-        doc,
+    // Render it in the same order as shown on the application it self
+    for (const [key, value] of Object.entries(
+      subjectOfComplaintValueLabelMapper,
+    )) {
+      // Check if the option was selected by the user
+      const selection = complaint.complaintCategories.find(
+        (x) => x === value.defaultMessage,
       )
-    })
+      if (!selection) continue
+
+      if (key === SubjectOfComplaint.OTHER) {
+        // other "annað" is found, printing the message with it
+        addValue(`• ${selection}: ${complaint.somethingElse}`, doc)
+      } else {
+        addValue(`• ${selection}`, doc)
+      }
+    }
+
     doc.moveDown()
   }
 
@@ -140,9 +152,6 @@ function renderExternalDataMessages(
   doc.moveDown()
   addValue(externalData.userProfileTitle, doc, PdfConstants.BOLD_FONT)
   addValue(externalData.userProfileDescription, doc, PdfConstants.NORMAL_FONT)
-  doc.moveDown()
-  addValue(externalData.checkboxText, doc, PdfConstants.BOLD_FONT)
-  addValue('Já', doc, PdfConstants.NORMAL_FONT)
   doc.moveDown()
 }
 
@@ -203,33 +212,6 @@ function renderContactsAndComplainees(
       ? 'Kvartandi'
       : 'Kvartendur'
 
-  if (complaint.onBehalf === OnBehalf.OTHERS) {
-    addSubheader('Tengiliður', doc)
-  }
-
-  /* Contact if complaint is for the hand of company/organization, it's optional to fill out */
-  if (
-    complaint.contactInfo.contactName.length > 0 ||
-    complaint.contactInfo.contactEmail.length > 0
-  ) {
-    addSubheader('Tengiliður', doc)
-    complaint.contactInfo.contactName.length > 0 &&
-      addformFieldAndValue(
-        'Nafn',
-        complaint.contactInfo.contactName,
-        doc,
-        PdfConstants.SMALL_LINE_GAP,
-      )
-    complaint.contactInfo.contactEmail.length > 0 &&
-      addformFieldAndValue(
-        'Netfang',
-        complaint.contactInfo.contactEmail,
-        doc,
-        PdfConstants.SMALL_LINE_GAP,
-      )
-    doc.moveDown()
-  }
-
   if (
     complaint.onBehalf === OnBehalf.ORGANIZATION_OR_INSTITUTION ||
     complaint.onBehalf !== OnBehalf.OTHERS
@@ -280,6 +262,33 @@ function renderContactsAndComplainees(
   }
 
   renderAgencyComplainees(complaint, doc)
+
+  if (complaint.onBehalf === OnBehalf.OTHERS) {
+    addSubheader('Tengiliður', doc)
+  }
+
+  /* Contact if complaint is for the hand of company/organization, it's optional to fill out */
+  if (
+    complaint.contactInfo.contactName.length > 0 ||
+    complaint.contactInfo.contactEmail.length > 0
+  ) {
+    addSubheader('Tengiliður', doc)
+    complaint.contactInfo.contactName.length > 0 &&
+      addformFieldAndValue(
+        'Nafn',
+        complaint.contactInfo.contactName,
+        doc,
+        PdfConstants.SMALL_LINE_GAP,
+      )
+    complaint.contactInfo.contactEmail.length > 0 &&
+      addformFieldAndValue(
+        'Netfang',
+        complaint.contactInfo.contactEmail,
+        doc,
+        PdfConstants.SMALL_LINE_GAP,
+      )
+    doc.moveDown()
+  }
 }
 
 function renderAgencyComplainees(

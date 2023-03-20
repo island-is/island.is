@@ -12,10 +12,11 @@ import {
   LinkProps,
   Text,
 } from '@island.is/island-ui/core'
-import { LinkType, useFeatureFlag, useLinkResolver } from '@island.is/web/hooks'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { LinkType, useLinkResolver, useNamespace } from '@island.is/web/hooks'
+import { SliceType } from '@island.is/island-ui/contentful'
 import { GlobalContext } from '@island.is/web/context'
 import { BLOCKS } from '@contentful/rich-text-types'
+import { webRichText } from '@island.is/web/utils/richText'
 
 import * as styles from './SyslumennFooter.css'
 
@@ -25,21 +26,21 @@ interface FooterProps {
   footerItems: Array<FooterItem>
   questionsAndAnswersText?: string
   canWeHelpText?: string
+  namespace: Record<string, string>
 }
 
-export const SyslumennFooter: React.FC<FooterProps> = ({
+const SyslumennFooter: React.FC<FooterProps> = ({
   title,
   logo,
   footerItems,
-  questionsAndAnswersText = 'Spurningar og svör',
-  canWeHelpText = 'Getum við aðstoðað?',
+  namespace,
 }) => {
+  const n = useNamespace(namespace)
+  const questionsAndAnswersText = n('questionsAndAnswers', 'Spurningar og svör')
+  const canWeHelpText = n('canWeHelp', 'Getum við aðstoðað?')
+
   const { isServiceWeb } = useContext(GlobalContext)
   const { linkResolver } = useLinkResolver()
-  const { value: isSyslumennFooterLinkingToSupportPage } = useFeatureFlag(
-    'isSyslumennFooterLinkingToSupportPage',
-    false,
-  )
 
   const items = footerItems.map((item, index) => (
     <GridColumn
@@ -59,7 +60,7 @@ export const SyslumennFooter: React.FC<FooterProps> = ({
             </Text>
           )}
         </Box>
-        {richText(
+        {webRichText(
           (isServiceWeb ? item.serviceWebContent : item.content) as SliceType[],
           {
             renderNode: {
@@ -105,7 +106,7 @@ export const SyslumennFooter: React.FC<FooterProps> = ({
             </div>
           </Box>
           <GridRow>
-            {!isSyslumennFooterLinkingToSupportPage || isServiceWeb ? (
+            {isServiceWeb ? (
               items
             ) : (
               <>
@@ -191,3 +192,5 @@ const HeaderLink: FC<HeaderLink> = ({
     </LinkContext.Provider>
   )
 }
+
+export default SyslumennFooter

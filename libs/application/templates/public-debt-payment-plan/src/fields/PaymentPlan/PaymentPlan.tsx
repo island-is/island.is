@@ -18,7 +18,7 @@ import HtmlParser from 'react-html-parser'
 import { useLazyDistribution } from '../../hooks/useLazyDistribution'
 import { shared } from '../../lib/messages'
 import { paymentPlan } from '../../lib/messages/paymentPlan'
-import { formatIsk } from '../../lib/paymentPlanUtils'
+import { formatIsk, isApplicantPerson } from '../../lib/paymentPlanUtils'
 import { AMOUNT, MONTHS } from '../../shared/constants'
 import {
   getEmptyPaymentPlanEntryKey,
@@ -78,9 +78,10 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
 
   const entry = `paymentPlans.${answerKey}`
   const currentAnswers = paymentPlans ? paymentPlans[answerKey] : undefined
+  const isPerson = isApplicantPerson(application)
 
   const [paymentMode, setPaymentMode] = useState<PaymentModeState | undefined>(
-    currentAnswers?.paymentMode,
+    isPerson ? currentAnswers?.paymentMode : MONTHS,
   )
 
   const getDistributionCallback = useCallback(
@@ -224,48 +225,55 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
       <input
         type="hidden"
         value={payment.type}
-        ref={register({ required: true })}
-        name={`${entry}.id`}
+        {...register(`${entry}.id`, { required: true })}
       />
       <input
         type="hidden"
         value={payment.totalAmount}
-        ref={register({ required: true })}
-        name={`${entry}.totalAmount`}
+        {...register(`${entry}.totalAmount`, { required: true })}
       />
       <input
         type="hidden"
         value={JSON.stringify(distributionData?.payments || '')}
-        ref={register({ required: true })}
-        name={`${entry}.distribution`}
+        {...register(`${entry}.distribution`, { required: true })}
       />
-      <Text marginBottom={5}>
-        {formatMessage(paymentPlan.general.paymentPlanDescription)}
-      </Text>
-      <Box marginBottom={[5, 5, 8]}>
+      {isPerson && (
+        <Text marginBottom={5}>
+          {formatMessage(paymentPlan.general.paymentPlanDescription)}
+        </Text>
+      )}
+      <Box marginBottom={[5, 5, 8]} marginTop={isPerson ? 0 : 4}>
         <PaymentPlanCard payment={payment} />
       </Box>
       <Text variant="h4" marginBottom={3}>
         {formatMessage(paymentPlan.labels.paymentModeTitle)}
       </Text>
-      <RadioController
-        id={`${entry}.paymentMode`}
-        disabled={false}
-        name={`${entry}.paymentMode`}
-        largeButtons={true}
-        defaultValue={paymentMode}
-        onSelect={handleSelectPaymentMode}
-        options={[
-          {
-            value: AMOUNT,
-            label: formatMessage(paymentPlan.labels.payByAmount),
-          },
-          {
-            value: MONTHS,
-            label: formatMessage(paymentPlan.labels.payByMonths),
-          },
-        ]}
-      />
+      {isPerson ? (
+        <RadioController
+          id={`${entry}.paymentMode`}
+          disabled={false}
+          name={`${entry}.paymentMode`}
+          largeButtons={true}
+          defaultValue={paymentMode}
+          onSelect={handleSelectPaymentMode}
+          options={[
+            {
+              value: AMOUNT,
+              label: formatMessage(paymentPlan.labels.payByAmount),
+            },
+            {
+              value: MONTHS,
+              label: formatMessage(paymentPlan.labels.payByMonths),
+            },
+          ]}
+        />
+      ) : (
+        <input
+          type="hidden"
+          {...register(`${entry}.paymentMode`, { required: true })}
+          value={paymentMode}
+        />
+      )}
       {paymentMode === AMOUNT && (
         <PlanSlider
           id={`${entry}.amountPerMonth`}

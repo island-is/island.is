@@ -6,7 +6,7 @@ import { useNamespaces } from '@island.is/localization'
 import { IntroHeader } from '@island.is/service-portal/core'
 import { DegreeCards } from './components/DegreeCards'
 
-function EducationDegree(): JSX.Element {
+function EducationDegree() {
   useNamespaces('sp.education-degree')
 
   return (

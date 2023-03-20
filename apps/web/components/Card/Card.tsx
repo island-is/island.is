@@ -1,4 +1,5 @@
-import React, { useContext } from 'react'
+import { Colors } from '@island.is/island-ui/theme'
+import React, { ReactNode, useContext } from 'react'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
 import { LinkProps } from 'next/link'
@@ -39,6 +40,7 @@ export interface CardProps {
   tags?: Array<CardTagsProps>
   linkProps?: LinkProps
   link?: LinkResolverResponse
+  highlightedResults?: boolean
 }
 
 export const Card = ({
@@ -49,15 +51,16 @@ export const Card = ({
   tags = [],
   link,
   dataTestId,
+  highlightedResults = false,
 }: CardProps & TestSupport) => {
   const { colorScheme } = useContext(ColorSchemeContext)
   const [ref, { width }] = useMeasure()
 
   const shouldStack = width < 360
-  const hasImage = image?.title.length > 0
+  const hasImage = image && image.title.length > 0
 
-  let borderColor = null
-  let titleColor = null
+  let borderColor: Colors
+  let titleColor: Colors
   let tagVariant = 'purple' as TagVariant
 
   switch (colorScheme) {
@@ -111,13 +114,31 @@ export const Card = ({
           )}
           <Box display="flex" flexDirection="row" alignItems="center">
             <Box display="inlineFlex" flexGrow={1}>
-              <Text as="h3" variant="h3" color={titleColor}>
-                <Hyphen>{title}</Hyphen>
-              </Text>
+              {highlightedResults ? (
+                <Text
+                  as="h3"
+                  variant="h3"
+                  color={titleColor}
+                  fontWeight="medium"
+                >
+                  <span dangerouslySetInnerHTML={{ __html: title }}></span>
+                </Text>
+              ) : (
+                <Text as="h3" variant="h3" color={titleColor}>
+                  <Hyphen>{title}</Hyphen>
+                </Text>
+              )}
             </Box>
           </Box>
-          {description && <Text>{description}</Text>}
-          {visibleTags.length > 0 && (
+          {description && highlightedResults ? (
+            <Text>
+              <span dangerouslySetInnerHTML={{ __html: description }}></span>
+            </Text>
+          ) : (
+            <Text>{description}</Text>
+          )}
+
+          {visibleTags.length > 0 && highlightedResults && (
             <Box paddingTop={3} flexGrow={0} position="relative">
               <Inline space={1}>
                 {visibleTags.map(
@@ -179,11 +200,10 @@ export const Card = ({
       </FocusableBox>
     )
   }
-
   return <Frame>{items}</Frame>
 }
 
-export const Frame = ({ children }) => {
+export const Frame = ({ children }: { children: ReactNode }) => {
   return (
     <Box
       className={cn(styles.card)}

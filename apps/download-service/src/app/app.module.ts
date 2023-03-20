@@ -17,12 +17,28 @@ import { DocumentController } from './modules/documents/document.controller'
 import { DocumentsInfraController } from './modules/infra/documentsInfra.controller'
 import { FinanceDocumentController } from './modules/finance-documents/document.controller'
 import { environment } from '../environments'
+import { VehicleController } from './modules/vehicles-documents/vehicle-document.controller'
+import { RegulationDocumentsController } from './modules/regulation-documents/regulation-documents.controller'
+import {
+  VehiclesClientConfig,
+  VehiclesClientModule,
+} from '@island.is/clients/vehicles'
+import {
+  RegulationsClientConfig,
+  RegulationsClientModule,
+} from '@island.is/clients/regulations'
+import {
+  RegulationsAdminClientConfig,
+  RegulationsAdminClientModule,
+} from '@island.is/clients/regulations-admin'
 
 @Module({
   controllers: [
     DocumentController,
     DocumentsInfraController,
     FinanceDocumentController,
+    VehicleController,
+    RegulationDocumentsController,
   ],
   imports: [
     AuditModule.forRoot(environment.audit),
@@ -34,11 +50,20 @@ import { environment } from '../environments'
       tokenUrl: environment.documentService.tokenUrl,
     }),
     FinanceClientModule,
+    VehiclesClientModule,
+    RegulationsAdminClientModule,
+    RegulationsClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [FinanceClientConfig, IdsClientConfig, XRoadConfig],
+      load: [
+        FinanceClientConfig,
+        IdsClientConfig,
+        XRoadConfig,
+        VehiclesClientConfig,
+        RegulationsAdminClientConfig,
+        RegulationsClientConfig,
+      ],
     }),
   ],
-  providers: [],
 })
 export class AppModule {}

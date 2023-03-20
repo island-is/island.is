@@ -1,0 +1,23 @@
+{
+  "root": "libs/island-ui/theme",
+  "sourceRoot": "libs/island-ui/theme/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/island-ui/theme/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "libs/island-ui/theme/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/libs/island-ui/theme"]
+    }
+  },
+  "tags": ["lib:react", "scope:react"]
+}

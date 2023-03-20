@@ -1,4 +1,3 @@
-import React from 'react'
 import { GetSingleArticleQuery } from '@island.is/web/graphql/schema'
 import {
   BoostChatPanel,
@@ -12,6 +11,7 @@ import {
   liveChatIncConfig,
   watsonConfig,
 } from './config'
+import { useI18n } from '@island.is/web/i18n'
 
 interface ArticleChatPanelProps {
   article: GetSingleArticleQuery['getSingleArticle']
@@ -22,6 +22,8 @@ export const ArticleChatPanel = ({
   article,
   pushUp,
 }: ArticleChatPanelProps) => {
+  const { activeLocale } = useI18n()
+
   let Component = null
 
   // LiveChatInc
@@ -32,16 +34,24 @@ export const ArticleChatPanel = ({
     Component = <LiveChatIncChatPanel {...liveChatIncConfig[organizationId]} />
   }
   // Watson
-  else if (article.id in watsonConfig) {
+  else if (article.id in watsonConfig[activeLocale]) {
     Component = (
-      <WatsonChatPanel {...watsonConfig[article.id]} pushUp={pushUp} />
+      <WatsonChatPanel
+        {...watsonConfig[activeLocale][article.id]}
+        pushUp={pushUp}
+      />
     )
-  } else if (article.organization?.some((o) => o.id in watsonConfig)) {
+  } else if (
+    article.organization?.some((o) => o.id in watsonConfig[activeLocale])
+  ) {
     const organizationId = article.organization.find(
-      (o) => o.id in watsonConfig,
+      (o) => o.id in watsonConfig[activeLocale],
     ).id
     Component = (
-      <WatsonChatPanel {...watsonConfig[organizationId]} pushUp={pushUp} />
+      <WatsonChatPanel
+        {...watsonConfig[activeLocale][organizationId]}
+        pushUp={pushUp}
+      />
     )
   }
   // Boost
@@ -55,7 +65,9 @@ export const ArticleChatPanel = ({
       excludedOrganizationWatsonConfig.includes(o.id),
     )
   ) {
-    Component = <WatsonChatPanel {...defaultWatsonConfig} pushUp={pushUp} />
+    Component = (
+      <WatsonChatPanel {...defaultWatsonConfig[activeLocale]} pushUp={pushUp} />
+    )
   }
 
   return Component

@@ -16,7 +16,7 @@ export const getForm = ({
     id: 'DrivingLicenseApplicationPrerequisitesForm',
     title: m.applicationName,
     logo: LogreglanLogo,
-    mode: FormModes.APPLYING,
+    mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
     children: [

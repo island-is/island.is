@@ -1,4 +1,3 @@
-export { getCasefilesPdfAsString } from './casefilesPdf'
 export {
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
@@ -12,21 +11,22 @@ export {
   formatCourtReadyForCourtSmsNotification,
   formatCourtResubmittedToCourtSmsNotification,
   formatCourtRevokedSmsNotification,
-  formatCourtUploadRulingTitle,
   formatDefenderCourtDateEmailNotification,
   formatDefenderRevokedEmailNotification,
   formatPrisonAdministrationRulingNotification,
   formatPrisonCourtDateEmailNotification,
   formatPrisonRevokedEmailNotification,
-  formatPrisonRulingEmailNotification,
   formatProsecutorCourtDateEmailNotification,
   formatProsecutorReadyForCourtEmailNotification,
   formatProsecutorReceivedByCourtSmsNotification,
   formatRulingModifiedHistory,
   formatDefenderCourtDateLinkEmailNotification,
   formatDefenderResubmittedToCourtEmailNotification,
+  formatDefenderAssignedEmailNotification,
+  formatCourtIndictmentReadyForCourtEmailNotification,
   stripHtmlTags,
 } from './formatters'
 export { getRequestPdfAsBuffer, getRequestPdfAsString } from './requestPdf'
 export { getRulingPdfAsBuffer, getRulingPdfAsString } from './rulingPdf'
-export { writeFile } from './writeFile'
+export { createCaseFilesRecord } from './caseFilesRecordPdf'
+export { createIndictment } from './indictmentPdf'

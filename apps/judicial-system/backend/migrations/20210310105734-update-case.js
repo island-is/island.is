@@ -15,7 +15,7 @@ module.exports = {
     )
   },
 
-  down: (queryInterface, Sequelize) => {
+  down: (queryInterface) => {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.removeColumn('case', 'set_court_case_number_manually', {
         transaction: t,

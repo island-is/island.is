@@ -10,10 +10,11 @@ export const serviceSetup = (services: {
     .env({
       API_URL: ref((h) => `http://${h.svc(services.api)}`),
       ENVIRONMENT: ref((h) => h.env.type),
+      NO_UPDATE_NOTIFIER: 'true',
     })
     .secrets({
       IDENTITY_SERVER_DOMAIN: '/k8s/skilavottord/web/IDENTITY_SERVER_DOMAIN',
-      IDENTITY_SERVER_CLIENT_SECRET:
+      SKILAVOTTORD_WEB_IDS_CLIENT_SECRET:
         '/k8s/skilavottord/web/IDENTITY_SERVER_CLIENT_SECRET',
       IDENTITY_SERVER_LOGOUT_REDIRECT_URL:
         '/k8s/skilavottord/web/IDENTITY_SERVER_LOGOUT_REDIRECT_URL',

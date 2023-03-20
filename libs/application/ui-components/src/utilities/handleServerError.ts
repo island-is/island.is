@@ -1,9 +1,12 @@
 import { ApolloError } from '@apollo/client'
-import * as Sentry from '@sentry/react'
-import { coreMessages } from '@island.is/application/core'
-import { findProblemInApolloError } from '@island.is/shared/problem'
+import {
+  coreMessages,
+  getErrorReasonIfPresent,
+} from '@island.is/application/core'
+
 import { toast } from '@island.is/island-ui/core'
 import { FormatMessage } from '@island.is/localization'
+import { findProblemInApolloError } from '@island.is/shared/problem'
 
 export function handleServerError(
   error: ApolloError,
@@ -11,11 +14,18 @@ export function handleServerError(
 ): void {
   const problem = findProblemInApolloError(error)
   const message = problem ? problem.detail ?? problem.title : error.message
+
+  if (problem) {
+    if ('errorReason' in problem) {
+      const { title, summary } = getErrorReasonIfPresent(problem.errorReason)
+      const message = `${formatMessage(title)}: ${formatMessage(summary)}`
+      toast.error(message)
+    }
+    return
+  }
+
   toast.error(
     formatMessage(coreMessages.updateOrSubmitError, { error: message }),
   )
-  Sentry.captureException(error, {
-    extra: { problem },
-    level: Sentry.Severity.Warning,
-  })
+  console.error(error, problem)
 }

@@ -10,6 +10,8 @@ import {
 } from './gen/fetch/endorsements'
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 import { getValueViaPath } from '@island.is/application/core'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
 
 const CREATE_ENDORSEMENT_LIST_QUERY = `
   mutation EndorsementSystemCreateEndorsementList($input: CreateEndorsementListDto!) {
@@ -26,12 +28,14 @@ interface EndorsementListData {
 }
 
 @Injectable()
-export class GeneralPetitionService {
+export class GeneralPetitionService extends BaseTemplateApiService {
   constructor(
     private endorsementListApi: EndorsementListApi,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-  ) {}
+  ) {
+    super(ApplicationTypes.GENERAL_PETITION)
+  }
 
   endorsementListApiWithAuth(token: string) {
     return this.endorsementListApi.withMiddleware(

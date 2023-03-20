@@ -1,0 +1,24 @@
+{
+  "root": "libs/island-ui/vanilla-extract-utils",
+  "sourceRoot": "libs/island-ui/vanilla-extract-utils/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/island-ui/vanilla-extract-utils/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/island-ui/vanilla-extract-utils"],
+      "options": {
+        "jestConfig": "libs/island-ui/vanilla-extract-utils/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": ["lib:react", "scope:react"]
+}

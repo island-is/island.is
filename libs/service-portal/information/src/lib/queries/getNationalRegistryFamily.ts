@@ -5,7 +5,6 @@ export const NATIONAL_REGISTRY_FAMILY = gql`
     nationalRegistryFamily {
       fullName
       gender
-      familyRelation
       nationalId
     }
   }

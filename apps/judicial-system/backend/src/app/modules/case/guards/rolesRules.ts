@@ -3,12 +3,14 @@ import {
   CaseTransition,
   UserRole,
   UpdateCase,
+  isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
 const prosecutorFields: (keyof UpdateCase)[] = [
   'type',
+  'indictmentSubtypes',
   'description',
-  'policeCaseNumber',
+  'policeCaseNumbers',
   'defenderName',
   'defenderNationalId',
   'defenderEmail',
@@ -39,14 +41,10 @@ const prosecutorFields: (keyof UpdateCase)[] = [
   'caseModifiedExplanation',
   'isolationToDate',
   'caseResentExplanation',
+  'crimeScenes',
+  'indictmentIntroduction',
+  'requestDriversLicenseSuspension',
 ]
-
-// Allows prosecutors to update a specific set of fields
-export const prosecutorUpdateRule = {
-  role: UserRole.PROSECUTOR,
-  type: RulesType.FIELD,
-  dtoFields: prosecutorFields,
-} as RolesRule
 
 const courtFields: (keyof UpdateCase)[] = [
   'defenderName',
@@ -85,6 +83,9 @@ const courtFields: (keyof UpdateCase)[] = [
   'registrarId',
   'caseModifiedExplanation',
   'rulingModifiedHistory',
+  'subpoenaType',
+  'defendantWaivesRightToCounsel',
+  'prosecutorId',
 ]
 
 const staffFields: (keyof UpdateCase)[] = [
@@ -93,31 +94,52 @@ const staffFields: (keyof UpdateCase)[] = [
   'caseModifiedExplanation',
 ]
 
+// Allows prosecutors to update a specific set of fields
+export const prosecutorUpdateRule: RolesRule = {
+  role: UserRole.PROSECUTOR,
+  type: RulesType.FIELD,
+  dtoFields: prosecutorFields,
+}
+
+// Allows representatives to update a specific set of fields
+export const representativeUpdateRule: RolesRule = {
+  role: UserRole.REPRESENTATIVE,
+  type: RulesType.FIELD,
+  dtoFields: prosecutorFields,
+}
+
 // Allows judges to update a specific set of fields
-export const judgeUpdateRule = {
+export const judgeUpdateRule: RolesRule = {
   role: UserRole.JUDGE,
   type: RulesType.FIELD,
   dtoFields: courtFields,
-} as RolesRule
+}
 
 // Allows registrars to update a specific set of fields
-export const registrarUpdateRule = {
+export const registrarUpdateRule: RolesRule = {
   role: UserRole.REGISTRAR,
   type: RulesType.FIELD,
   dtoFields: courtFields,
-} as RolesRule
+}
+
+// Allows assistants to update a specific set of fields
+export const assistantUpdateRule: RolesRule = {
+  role: UserRole.ASSISTANT,
+  type: RulesType.FIELD,
+  dtoFields: courtFields,
+}
 
 // Allows staff to update a specific set of fields
 // In practice, only prison admins will be able to update these fields,
 // as write access is blocked for other staff roles
-export const staffUpdateRule = {
+export const staffUpdateRule: RolesRule = {
   role: UserRole.STAFF,
   type: RulesType.FIELD,
   dtoFields: staffFields,
-} as RolesRule
+}
 
 // Allows prosecutors to open, submit and delete cases
-export const prosecutorTransitionRule = {
+export const prosecutorTransitionRule: RolesRule = {
   role: UserRole.PROSECUTOR,
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
@@ -126,10 +148,22 @@ export const prosecutorTransitionRule = {
     CaseTransition.SUBMIT,
     CaseTransition.DELETE,
   ],
-} as RolesRule
+}
 
-// Allows judges to receive, accept and reject cases
-export const judgeTransitionRule = {
+// Allows representatives to open, submit and delete cases
+export const representativeTransitionRule: RolesRule = {
+  role: UserRole.REPRESENTATIVE,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'transition',
+  dtoFieldValues: [
+    CaseTransition.OPEN,
+    CaseTransition.SUBMIT,
+    CaseTransition.DELETE,
+  ],
+}
+
+// Allows judges to receive, accept, reject and dismiss cases
+export const judgeTransitionRule: RolesRule = {
   role: UserRole.JUDGE,
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
@@ -139,12 +173,39 @@ export const judgeTransitionRule = {
     CaseTransition.REJECT,
     CaseTransition.DISMISS,
   ],
-} as RolesRule
+}
 
 // Allows registrars to receive cases
-export const registrarTransitionRule = {
+export const registrarTransitionRule: RolesRule = {
   role: UserRole.REGISTRAR,
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
-  dtoFieldValues: [CaseTransition.RECEIVE],
-} as RolesRule
+  dtoFieldValues: [CaseTransition.RECEIVE, CaseTransition.ACCEPT],
+  canActivate: (request) => {
+    const theCase = request.case
+
+    // Deny if accepting a non indictment case
+    if (
+      !theCase ||
+      (!isIndictmentCase(theCase.type) &&
+        request.body.transition === CaseTransition.ACCEPT)
+    ) {
+      return false
+    }
+
+    return true
+  },
+}
+
+// Allows assistants to receive, accept, reject and dismiss cases
+export const assistantTransitionRule: RolesRule = {
+  role: UserRole.ASSISTANT,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'transition',
+  dtoFieldValues: [
+    CaseTransition.RECEIVE,
+    CaseTransition.ACCEPT,
+    CaseTransition.REJECT,
+    CaseTransition.DISMISS,
+  ],
+}

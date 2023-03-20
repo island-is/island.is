@@ -6,6 +6,7 @@ import {
   DataType,
   ForeignKey,
   HasMany,
+  HasOne,
   Model,
   Table,
   UpdatedAt,
@@ -21,8 +22,9 @@ import {
 import type {
   Flight as TFlight,
   FlightLeg as TFlightLeg,
-  UserInfo,
+  UserInfo as TUserInfo,
 } from '@island.is/air-discount-scheme/types'
+import { ExplicitCode } from '../discount/discount.model'
 
 export const financialStateMachine = createMachine({
   id: 'flight_leg_financial_state_machine',
@@ -99,7 +101,8 @@ export class FlightLeg
 
   // eslint-disable-next-line
   @BelongsTo(() => Flight)
-  flight: any
+  @ApiProperty({ type: () => Flight })
+  flight?: TFlight
 
   @Column({
     type: DataType.STRING,
@@ -188,11 +191,12 @@ export class Flight
   @ApiProperty()
   id!: string
 
+  @ApiProperty({ type: () => UserInfo })
   @Column({
     type: DataType.JSONB,
     allowNull: false,
   })
-  userInfo!: UserInfo
+  userInfo!: TUserInfo
 
   @Column({
     type: DataType.STRING,
@@ -209,8 +213,11 @@ export class Flight
   readonly bookingDate!: Date
 
   @HasMany(() => FlightLeg)
-  @ApiProperty({ type: [FlightLeg] })
-  flightLegs!: FlightLeg[]
+  @ApiProperty({ type: () => [FlightLeg], required: false })
+  flightLegs?: FlightLeg[]
+
+  @HasOne(() => ExplicitCode)
+  explicitCode?: ExplicitCode
 
   @CreatedAt
   @ApiProperty()
@@ -225,4 +232,15 @@ export class Flight
     type: DataType.BOOLEAN,
   })
   readonly connectable!: boolean
+}
+
+class UserInfo implements TUserInfo {
+  @ApiProperty()
+  age!: number
+
+  @ApiProperty()
+  gender!: 'kk' | 'kvk' | 'x' | 'manneskja'
+
+  @ApiProperty()
+  postalCode!: number
 }

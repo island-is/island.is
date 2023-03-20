@@ -68,6 +68,8 @@ export interface DrivingLicenseBook {
   schoolNationalId: string
   schoolName: string
   isDigital: boolean
+  status: number
+  statusName: string
   totalLessonTime: number
   totalLessonCount: number
   teachersAndLessons: DrivingBookLesson[]

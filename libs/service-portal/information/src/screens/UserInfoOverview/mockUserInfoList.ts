@@ -20,13 +20,7 @@ export const mockUserInfoList: UserInfoItem[] = [
     link: ServicePortalPath.UserInfo,
     image: '/assets/images/individualsGrid.svg',
   },
-  {
-    heading: m.family,
-    subtext:
-      'Hönnunarkerfi Ísland.is auðveldar okkur að setja nýja þjónustu í loftið á stuttum tíma, og einfaldar rekstur og viðhald stafrænnar þjónustu hins opinbera til.',
-    link: ServicePortalPath.FamilyRoot,
-    image: '/assets/images/familyGrid.svg',
-  },
+
   // {
   //   heading: defineMessage({
   //     id: 'service.portal:my-info-housing',

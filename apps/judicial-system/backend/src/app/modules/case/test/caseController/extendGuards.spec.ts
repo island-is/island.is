@@ -1,9 +1,14 @@
 import { CanActivate } from '@nestjs/common'
 
 import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
+import {
+  investigationCases,
+  restrictionCases,
+} from '@island.is/judicial-system/types'
 
 import { CaseExistsGuard } from '../../guards/caseExists.guard'
 import { CaseReadGuard } from '../../guards/caseRead.guard'
+import { CaseTypeGuard } from '../../guards/caseType.guard'
 import { CaseController } from '../../case.controller'
 
 describe('CaseController - Extend guards', () => {
@@ -14,8 +19,8 @@ describe('CaseController - Extend guards', () => {
     guards = Reflect.getMetadata('__guards__', CaseController.prototype.extend)
   })
 
-  it('should have four guards', () => {
-    expect(guards).toHaveLength(4)
+  it('should have five guards', () => {
+    expect(guards).toHaveLength(5)
   })
 
   describe('JwtAuthGuard', () => {
@@ -54,14 +59,29 @@ describe('CaseController - Extend guards', () => {
     })
   })
 
+  describe('CaseTypeGuerd', () => {
+    let guard: CanActivate
+
+    beforeEach(() => {
+      guard = guards[3]
+    })
+
+    it('should have CaseTypeGuard as quard 4', () => {
+      expect(guard).toBeInstanceOf(CaseTypeGuard)
+      expect(guard).toEqual({
+        allowedCaseTypes: [...restrictionCases, ...investigationCases],
+      })
+    })
+  })
+
   describe('CaseReadGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
-      guard = new guards[3]()
+      guard = new guards[4]()
     })
 
-    it('should have CaseReadGuard as quard 4', () => {
+    it('should have CaseReadGuard as quard 5', () => {
       expect(guard).toBeInstanceOf(CaseReadGuard)
     })
   })

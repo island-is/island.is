@@ -44,6 +44,18 @@ export const spacing = {
   p5: 18,
 }
 
+export const zIndex = {
+  below: -1,
+  base: 0,
+  above: 1,
+  belowHeader: 9,
+  header: 10,
+  aboveHeader: 11,
+  belowModal: 19,
+  modal: 20,
+  aboveModal: 21,
+}
+
 export const theme = {
   breakpoints: {
     xs: 0,
@@ -57,6 +69,11 @@ export const theme = {
     medium: 940,
     large: 1440,
   },
+  headerHeight: {
+    small: 80,
+    large: 112,
+  },
+  zIndex,
   touchableSize: 10,
   typography: {
     fontFamily: `"IBM Plex Sans", San Francisco, Segoe UI, sans-serif`,
@@ -103,6 +120,7 @@ export const theme = {
       '0 2px 4px 0px rgba(28,28,28,.1), 0 8px 8px -4px rgba(28,28,28,.1), 0 12px 12px -8px rgba(28,28,28,.2)',
     large:
       '0 2px 4px 0px rgba(28,28,28,.1), 0 12px 12px -4px rgba(28,28,28,.1), 0 20px 20px -12px rgba(28,28,28,.2)',
+    strong: '0px 4px 30px rgba(0, 97, 255, 0.16)',
     subtle: '0px 4px 30px #F2F7FF',
   },
   color,

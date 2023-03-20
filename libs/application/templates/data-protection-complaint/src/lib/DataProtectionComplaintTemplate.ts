@@ -6,6 +6,9 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  defineTemplateApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import { DataProtectionComplaintSchema } from './dataSchema'
 import { application } from './messages'
@@ -31,6 +34,7 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
         meta: {
           name: application.name.defaultMessage,
           progress: 0.5,
+          status: 'draft',
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,
@@ -48,30 +52,32 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
+              api: [NationalRegistryUserApi, UserProfileApi],
             },
           ],
         },
         on: {
           SUBMIT: {
-            target: States.IN_REVIEW,
+            target: States.Completed,
           },
         },
       },
-      [States.IN_REVIEW]: {
+      [States.Completed]: {
         meta: {
-          name: 'In Review',
+          name: 'Completed',
+          status: 'completed',
           progress: 1,
           actionCard: {
-            tag: { label: application.submittedTag, variant: 'blueberry' },
+            onEntryHistoryLog: application.applicationSubmitted,
           },
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: 5 * 60000, //5 minutes
           },
-          onEntry: {
-            apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: TEMPLATE_API_ACTIONS.sendApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

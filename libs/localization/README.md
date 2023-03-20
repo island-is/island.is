@@ -179,19 +179,17 @@ const message = defineMessage({
 
 ## Message Extraction
 
-Add the `extract-strings` script to `workspace.json`.
+Add the `extract-strings` script to the project's `project.json`.
 
 ```json
 {
-  "<your-project>": {
-    "architect": {
-      "lint": {...},
-      "test": {...},
-      "extract-strings": {
-        "builder": "@nrwl/workspace:run-commands",
-        "options": {
-          "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract '{pathToComponents}/*.{js,ts,tsx}'"
-        }
+  "targets": {
+    "lint": {...},
+    "test": {...},
+    "extract-strings": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract '{pathToComponents}/*.{js,ts,tsx}'"
       }
     }
   }

@@ -1,5 +1,21 @@
 # Web
 
+## Quickstart
+
+Ensure docker is running, then run the following when running for the first time:
+
+```bash
+yarn dev-init web
+```
+
+To start the app:
+
+```bash
+yarn dev web
+```
+
+These commands are just shorthands for the setup described below.
+
 ## About
 
 The web consolidates content from multiple sources and displays it in a user friendly way.
@@ -40,7 +56,7 @@ To access elasticsearch instance from dev environment:
 
 Caveats:
 
-- **You need to have docker installed and running**
+- **You need to have docker/podman installed and running**
 - **You have to refresh your AWS env variables every 8 hours**
 
 ```bash

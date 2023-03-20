@@ -1,16 +1,17 @@
-import { DefaultStateLifeCycle } from '@island.is/application/core'
 import {
-  ApplicationTemplate,
-  ApplicationTypes,
+  Application,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
+  ApplicationTemplate,
+  ApplicationTypes,
   DefaultEvents,
-  Application,
+  defineTemplateApi,
 } from '@island.is/application/types'
-import * as z from 'zod'
-import { YES, NO } from '../constants'
+import { DefaultStateLifeCycle } from '@island.is/application/core'
+
 import { institutionApplicationMessages as m } from './messages'
+import { dataSchema } from './dataSchema'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.ABORT }
 
@@ -23,48 +24,6 @@ enum Roles {
   APPLICANT = 'applicant',
 }
 
-const contactSchema = z.object({
-  name: z.string().nonempty(),
-  email: z.string().email().nonempty(),
-  phoneNumber: z.string().nonempty(),
-})
-
-const dataSchema = z.object({
-  applicant: z.object({
-    institution: z.object({
-      nationalId: z.string().nonempty(),
-      label: z.string().nonempty(),
-      isat: z.string().optional(),
-    }),
-  }),
-  contact: contactSchema,
-  hasSecondaryContact: z.enum([YES, NO]),
-  secondaryContact: contactSchema.deepPartial(),
-  project: z.object({
-    name: z.string().nonempty(),
-    background: z.string().nonempty(),
-    goals: z.string().nonempty(),
-    scope: z.string().nonempty(),
-    finance: z.string().nonempty(),
-  }),
-  stakeholders: z.string().nonempty(),
-  role: z.string().nonempty(),
-  otherRoles: z.string().nonempty(),
-  constraints: z.object({
-    hasTechnical: z.boolean().optional(),
-    technical: z.string().optional(),
-    hasFinancial: z.boolean().optional(),
-    financial: z.string().optional(),
-    hasTime: z.boolean().optional(),
-    time: z.string().optional(),
-    hasShopping: z.boolean().optional(),
-    shopping: z.string().optional(),
-    hasMoral: z.boolean().optional(),
-    moral: z.string().optional(),
-    hasOther: z.boolean().optional(),
-    other: z.string().optional(),
-  }),
-})
 enum TEMPLATE_API_ACTIONS {
   // Has to match name of action in template API module
   // (will be refactored when state machine is a part of API module)
@@ -86,6 +45,7 @@ const template: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: 'Umsókn um Umsokn',
+          status: 'draft',
           progress: 0.43,
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -103,6 +63,7 @@ const template: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -115,6 +76,7 @@ const template: ApplicationTemplate<
       [States.APPROVED]: {
         meta: {
           name: 'Approved',
+          status: 'approved',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -127,11 +89,10 @@ const template: ApplicationTemplate<
                 ),
             },
           ],
-          onEntry: {
-            apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: TEMPLATE_API_ACTIONS.sendApplication,
+          }),
         },
-        type: 'final' as const,
       },
     },
   },

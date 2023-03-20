@@ -13,4 +13,5 @@ export interface FormStepperSection {
 
 export interface FormStepperChildSection extends FormStepperSection {
   href?: string
+  onClick?: () => void
 }

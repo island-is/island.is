@@ -65,6 +65,7 @@ export const AsyncSelectFormField: FC<Props> = ({
       <Box paddingTop={2}>
         <SelectController
           required={required}
+          dataTestId={field.dataTestId}
           defaultValue={getDefaultValue(field, application)}
           label={formatText(title, application, formatMessage)}
           name={id}

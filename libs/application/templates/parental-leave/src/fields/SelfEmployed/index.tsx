@@ -1,35 +1,54 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import { Box, Text } from '@island.is/island-ui/core'
-import { getErrorViaPath, formatText } from '@island.is/application/core'
+import { Text } from '@island.is/island-ui/core'
+import { formatText } from '@island.is/application/core'
 import {
   FieldBaseProps,
   FieldComponents,
   FieldTypes,
 } from '@island.is/application/types'
 import { RadioFormField } from '@island.is/application/ui-fields'
-import { useLocale } from '@island.is/localization'
 
 import { NO, YES } from '../../constants'
 import { parentalLeaveFormMessages } from '../../lib/messages'
+import { useLocale } from '@island.is/localization'
+import { YesOrNo } from '../../types'
+import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
 
-export const SelfEmployed: FC<FieldBaseProps> = ({ application, field }) => {
-  const { errors, setValue } = useFormContext()
+export const SelfEmployed: FC<FieldBaseProps> = ({
+  application,
+  field,
+  error,
+}) => {
+  const { setValue, register } = useFormContext()
   const { formatMessage } = useLocale()
   const { id, title, description } = field
+  const {
+    isSelfEmployed,
+    isReceivingUnemploymentBenefits,
+  } = getApplicationAnswers(application.answers)
+
+  const [defaultValue, setHiddenSelfEmployed] = useState(isSelfEmployed ?? NO)
+  const hiddenReceivingUnemploymentbenefits =
+    isReceivingUnemploymentBenefits ?? NO
+
+  useEffect(() => {
+    setHiddenSelfEmployed(isSelfEmployed ?? NO)
+  }, [])
 
   return (
-    <Box>
-      <Text variant="h4" as="h4">
+    <>
+      <Text variant="h2" as="h2">
         {formatText(title, application, formatMessage)}
       </Text>
       <RadioFormField
-        error={errors && getErrorViaPath(errors, id)}
+        error={error}
         application={application}
         field={{
+          ...field,
           id: id,
-          title,
+          title: '',
           description,
           type: FieldTypes.RADIO,
           component: FieldComponents.RADIO,
@@ -46,15 +65,25 @@ export const SelfEmployed: FC<FieldBaseProps> = ({ application, field }) => {
             },
           ],
           onSelect: (s: string) => {
+            const option = s as YesOrNo
             if (s === YES) {
-              setValue('employer.email', '')
+              setValue('isReceivingUnemploymentBenefits', NO)
             }
             if (s !== YES) {
-              setValue('employer.selfEmployed.file', null)
+              setValue('fileUpload.selfEmployedFile', null)
+              setValue('isReceivingUnemploymentBenefits', NO)
             }
+            setHiddenSelfEmployed(option)
           },
+          defaultValue,
         }}
       />
-    </Box>
+      <input type="hidden" value={defaultValue} {...register(id)} />
+      <input
+        type="hidden"
+        value={hiddenReceivingUnemploymentbenefits}
+        {...register('isReceivingUnemploymentBenefits')}
+      />
+    </>
   )
 }

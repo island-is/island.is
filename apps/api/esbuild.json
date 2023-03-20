@@ -1,6 +1,7 @@
 {
   "platform": "node",
   "external": [
+    "@apollo/subgraph",
     "fsevents",
     "@nestjs/microservices",
     "class-transformer",
@@ -20,9 +21,11 @@
     "graphql",
     "pg",
     "winston",
+    "util-deprecate",
     "source-map-resolve",
     "atob",
     "logform",
+    "p-cancelable",
     "pg-native",
     "form-data",
     "bull",
@@ -39,7 +42,24 @@
     "@protobufjs/inquire",
     "@protobufjs/path",
     "@protobufjs/pool",
-    "@protobufjs/utf8"
+    "@protobufjs/utf8",
+    "safer-buffer",
+    "ts-morph",
+    "ioredis",
+    "duplexer3",
+    "normalize-url",
+    "get-stream",
+    "http-cache-semantics",
+    "clone-response",
+    "to-readable-stream",
+    "url-parse-lax",
+    "@sindresorhus/is",
+    "@szmarczak/http-timer",
+    "cacheable-request",
+    "decompress-response",
+    "lowercase-keys",
+    "mimic-response",
+    "pdfkit"
   ],
   "keepNames": true
 }

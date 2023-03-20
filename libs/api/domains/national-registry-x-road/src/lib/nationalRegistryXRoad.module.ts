@@ -4,9 +4,14 @@ import { NationalRegistryClientModule } from '@island.is/clients/national-regist
 
 import { NationalRegistryXRoadResolver } from './nationalRegistryXRoad.resolver'
 import { NationalRegistryXRoadService } from './nationalRegistryXRoad.service'
+import { NationalRegistryKeysXRoadResolver } from './nationalRegistryKeysXRoad.resolver'
 
 @Module({
-  providers: [NationalRegistryXRoadResolver, NationalRegistryXRoadService],
+  providers: [
+    NationalRegistryXRoadResolver,
+    NationalRegistryKeysXRoadResolver,
+    NationalRegistryXRoadService,
+  ],
   imports: [NationalRegistryClientModule],
   exports: [NationalRegistryXRoadService],
 })

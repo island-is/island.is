@@ -1,8 +1,9 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
+import { Link } from 'react-router-dom'
+
 import { Box } from '@island.is/island-ui/core'
 import * as styles from './LinkButton.css'
-import { Link } from 'react-router-dom'
 
 interface Props {
   onClick?: () => void

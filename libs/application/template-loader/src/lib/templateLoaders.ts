@@ -3,6 +3,8 @@ import { ApplicationTypes } from '@island.is/application/types'
 const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
   [ApplicationTypes.EXAMPLE]: () =>
     import('@island.is/application/templates/reference-template'),
+  [ApplicationTypes.ESTATE]: () =>
+    import('@island.is/application/templates/estate'),
   [ApplicationTypes.PARENTAL_LEAVE]: () =>
     import('@island.is/application/templates/parental-leave'),
   [ApplicationTypes.DRIVING_LICENSE]: () =>
@@ -21,6 +23,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/data-protection-complaint'),
   [ApplicationTypes.LOGIN_SERVICE]: () =>
     import('@island.is/application/templates/login-service'),
+  [ApplicationTypes.INHERITANCE_REPORT]: () =>
+    import('@island.is/application/templates/inheritance-report'),
   [ApplicationTypes.INSTITUTION_COLLABORATION]: () =>
     import('@island.is/application/templates/institution-collaboration'),
   [ApplicationTypes.FUNDING_GOVERNMENT_PROJECTS]: () =>
@@ -55,6 +59,54 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/no-debt-certificate'),
   [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: () =>
     import('@island.is/application/templates/financial-statements-inao'),
+  [ApplicationTypes.OPERATING_LCENSE]: () =>
+    import('@island.is/application/templates/operating-license'),
+  [ApplicationTypes.MARRIAGE_CONDITIONS]: () =>
+    import('@island.is/application/templates/marriage-conditions'),
+  [ApplicationTypes.DRIVING_LICENSE_DUPLICATE]: () =>
+    import('@island.is/application/templates/driving-license-duplicate'),
+  [ApplicationTypes.ANONYMITY_IN_VEHICLE_REGISTRY]: () =>
+    import(
+      '@island.is/application/templates/transport-authority/anonymity-in-vehicle-registry'
+    ),
+  [ApplicationTypes.CHANGE_CO_OWNER_OF_VEHICLE]: () =>
+    import(
+      '@island.is/application/templates/transport-authority/change-co-owner-of-vehicle'
+    ),
+  [ApplicationTypes.CHANGE_OPERATOR_OF_VEHICLE]: () =>
+    import(
+      '@island.is/application/templates/transport-authority/change-operator-of-vehicle'
+    ),
+  [ApplicationTypes.DIGITAL_TACHOGRAPH_COMPANY_CARD]: () =>
+    import(
+      '@island.is/application/templates/transport-authority/digital-tachograph-company-card'
+    ),
+  [ApplicationTypes.DIGITAL_TACHOGRAPH_DRIVERS_CARD]: () =>
+    import(
+      '@island.is/application/templates/transport-authority/digital-tachograph-drivers-card'
+    ),
+  [ApplicationTypes.DIGITAL_TACHOGRAPH_WORKSHOP_CARD]: () =>
+    import(
+      '@island.is/application/templates/transport-authority/digital-tachograph-workshop-card'
+    ),
+  [ApplicationTypes.ORDER_VEHICLE_LICENSE_PLATE]: () =>
+    import(
+      '@island.is/application/templates/transport-authority/order-vehicle-license-plate'
+    ),
+  [ApplicationTypes.ORDER_VEHICLE_REGISTRATION_CERTIFICATE]: () =>
+    import(
+      '@island.is/application/templates/transport-authority/order-vehicle-registration-certificate'
+    ),
+  [ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP]: () =>
+    import(
+      '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
+    ),
+  [ApplicationTypes.DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR]: () =>
+    import(
+      '@island.is/application/templates/driving-license-book-update-instructor'
+    ),
+  [ApplicationTypes.ALCOHOL_TAX_REDEMPTION]: () =>
+    import('@island.is/application/templates/alcohol-tax-redemption'),
 }
 
 export default templates

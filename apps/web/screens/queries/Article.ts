@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { slices } from './fragments'
+import { nestedFields, slices } from './fragments'
 
 export const GET_ARTICLE_QUERY = gql`
   query GetSingleArticle($input: GetSingleArticleInput!) {
@@ -27,6 +27,7 @@ export const GET_ARTICLE_QUERY = gql`
       }
       body {
         ...AllSlices
+        ${nestedFields}
       }
       stepper {
         id
@@ -37,7 +38,7 @@ export const GET_ARTICLE_QUERY = gql`
           slug
           stepType
           subtitle {
-            ...HtmlFields
+            ...AllSlices
           }
           config
         }
@@ -45,7 +46,6 @@ export const GET_ARTICLE_QUERY = gql`
       }
       processEntry {
         id
-        type
         processTitle
         processLink
         openLinkInModal
@@ -57,6 +57,7 @@ export const GET_ARTICLE_QUERY = gql`
         shortTitle
         slug
         link
+        hasALandingPage
         logo {
           url
           width
@@ -80,6 +81,7 @@ export const GET_ARTICLE_QUERY = gql`
         title
         slug
         link
+        hasALandingPage
         logo {
           url
           width
@@ -121,6 +123,7 @@ export const GET_ARTICLE_QUERY = gql`
         slug
         body {
           ...AllSlices
+          ${nestedFields}
         }
         showTableOfContents
       }

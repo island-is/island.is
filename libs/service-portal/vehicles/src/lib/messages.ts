@@ -27,7 +27,7 @@ export const messages = defineMessages({
   },
   clearFilter: {
     id: 'sp.vehicles:clear-filters',
-    defaultMessage: 'Hreinsa filter',
+    defaultMessage: 'Hreinsa síu',
   },
   notFound: {
     id: 'sp.vehicles:not-found',
@@ -106,7 +106,7 @@ export const messages = defineMessages({
     id: 'sp.vehicles:country',
     defaultMessage: 'Framleiðsluland',
   },
-  preRegYear: {
+  productYear: {
     id: 'sp.vehicles:pre-reg-year',
     defaultMessage: 'Framleiðsluár',
   },
@@ -144,7 +144,7 @@ export const messages = defineMessages({
   },
   passengers: {
     id: 'sp.vehicles:passengers',
-    defaultMessage: 'Farþegar',
+    defaultMessage: 'Farþegar án ökumanns',
   },
   specialName: {
     id: 'sp.vehicles:special-name',
@@ -477,5 +477,137 @@ export const messages = defineMessages({
   recycleCar: {
     id: 'sp.vehicles:recycle-car',
     defaultMessage: 'Skilavottorð',
+  },
+  myCarsFiles: {
+    id: 'sp.vehicles:my-cars-files',
+    defaultMessage: 'Eignastöðuvottorð',
+  },
+
+  myCarsFilesPDF: {
+    id: 'sp.vehicles:my-cars-files-pdf',
+    defaultMessage: 'Sækja PDF',
+  },
+
+  myCarsFilesCSV: {
+    id: 'sp.vehicles:my-cars-files-csv',
+    defaultMessage: 'Sækja CSV',
+  },
+
+  myCarsFilesExcel: {
+    id: 'sp.vehicles:my-cars-files-excel',
+    defaultMessage: 'Sækja Excel',
+  },
+  vehicleHistoryReport: {
+    id: 'sp.vehicles:vehicle-history-report',
+    defaultMessage: 'Ferilskýrsla',
+  },
+  vehicleNameSecret: {
+    id: 'sp.vehicles:vehicle-name-secret',
+    defaultMessage: 'Nafnleynd í ökutækjaskrá',
+  },
+  vehicleDrivingLessonsTitle: {
+    id: 'sp.vehicles:vehicle-driving-lessons-title',
+    defaultMessage: 'Ökunám',
+  },
+  vehicleDrivingLessonsText: {
+    id: 'sp.vehicles:vehicle-driving-lessons-text',
+    defaultMessage:
+      'Hér birtast upplýsingar sem hafa verið skráðar í stafræna ökunámsbók.',
+  },
+  vehicleDrivingLessonsLabel: {
+    id: 'sp.vehicles:vehicle-driving-lessons-label',
+    defaultMessage: 'Grunnupplýsingar ökunáms',
+  },
+  vehicleDrivingLessonsStartDate: {
+    id: 'sp.vehicles:vehicle-driving-lessons-start-date',
+    defaultMessage: 'Ökunám hófst',
+  },
+  vehicleDrivingLessonsClassOfRight: {
+    id: 'sp.vehicles:vehicle-driving-lessons-rights',
+    defaultMessage: 'Réttindaflokkur',
+  },
+  vehicleDrivingLessonsTeacher: {
+    id: 'sp.vehicles:vehicle-driving-lessons-teacher',
+    defaultMessage: 'Ökukennari',
+  },
+  vehicleDrivingLessonsCount: {
+    id: 'sp.vehicles:vehicle-driving-lessons-count',
+    defaultMessage: 'Fjöldi ökutíma',
+  },
+  vehicleDrivingLessonsTotalTime: {
+    id: 'sp.vehicles:vehicle-driving-lessons-total-time',
+    defaultMessage: 'Heildartími',
+  },
+  vehicleDrivingLessonsStatus: {
+    id: 'sp.vehicles:vehicle-driving-lessons-status',
+    defaultMessage: 'Staða',
+  },
+  vehicleDrivingLessonsHasPassed: {
+    id: 'sp.vehicles:vehicle-driving-lessons-has-passed',
+    defaultMessage: 'Staðið',
+  },
+  vehicleDrivingLessonsPhysical: {
+    id: 'sp.vehicles:vehicle-driving-lessons-physical',
+    defaultMessage: 'Verklegir ökutímar',
+  },
+  vehicleDrivingLessonsMinuteCount: {
+    id: 'sp.vehicles:vehicle-driving-lessons-minute-count',
+    defaultMessage: 'Fjöldi mín',
+  },
+  vehicleDrivingLessonsSchools: {
+    id: 'sp.vehicles:vehicle-driving-lessons-schools',
+    defaultMessage: 'Ökuskólar',
+  },
+  vehicleDrivingLessonsSchool: {
+    id: 'sp.vehicles:vehicle-driving-lessons-school',
+    defaultMessage: 'Ökuskóli',
+  },
+  vehicleDrivingLessonsCourseTitle: {
+    id: 'sp.vehicles:vehicle-driving-lessons-course-title',
+    defaultMessage: 'Heiti áfanga',
+  },
+  vehicleDrivingLessonsExam: {
+    id: 'sp.vehicles:vehicle-driving-lessons-exam',
+    defaultMessage: 'Próf',
+  },
+  vehicleDrivingLessonsChangeTeacher: {
+    id: 'sp.vehicles:vehicle-driving-lessons-change-teacher',
+    defaultMessage: 'Breyta um ökukennara',
+  },
+  vehicleDrivingLessonsMin: {
+    id: 'sp.vehicles:vehicle-driving-lessons-min',
+    defaultMessage: 'mín.',
+  },
+  vehicleDrivingLessonsInfoNote: {
+    id: 'sp.vehicles:vehicle-driving-lessons-info-note',
+    defaultMessage: 'Samgöngustofa hefur umsjón með ökunámsbók.',
+  },
+  vehicleDrivingLessonsComments: {
+    id: 'sp.vehicles:vehicle-driving-lessons-comments',
+    defaultMessage: 'Athugasemdir',
+  },
+  changeOfOwnership: {
+    id: 'sp.vehicles:change-of-ownership',
+    defaultMessage: 'Tilkynna eigendaskipti',
+  },
+  more: {
+    id: 'sp.vehicles:more',
+    defaultMessage: 'Meira',
+  },
+  orderRegistrationNumber: {
+    id: 'sp.vehicles:order-registration-number',
+    defaultMessage: 'Panta skráningarmerki',
+  },
+  orderRegistrationLicense: {
+    id: 'sp.vehicles:orderRegistrationLicense',
+    defaultMessage: 'Panta skráningarskírteini',
+  },
+  addCoOwner: {
+    id: 'sp.vehicles:add-co-owner',
+    defaultMessage: 'Bæta við meðeigenda',
+  },
+  addOperator: {
+    id: 'sp.vehicles:add-operator',
+    defaultMessage: 'Bæta við umráðamanni',
   },
 })

@@ -21,14 +21,20 @@ import {
   RolesRules,
   TokenGuard,
 } from '@island.is/judicial-system/auth'
+import {
+  investigationCases,
+  restrictionCases,
+} from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { defenderRule } from '../../guards'
 import { User } from '../user'
+import { CaseExistsGuard } from './guards/caseExists.guard'
 import { LimitedAccessCaseExistsGuard } from './guards/limitedAccessCaseExists.guard'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
 import { CaseScheduledGuard } from './guards/caseScheduled.guard'
 import { CaseDefenderGuard } from './guards/caseDefender.guard'
+import { CaseTypeGuard } from './guards/caseType.guard'
 import { CurrentCase } from './guards/case.decorator'
 import { Case } from './models/case.model'
 import { CaseService } from './case.service'
@@ -44,7 +50,7 @@ export class LimitedAccessCaseController {
   ) {}
 
   @UseGuards(
-    new JwtAuthGuard(true),
+    JwtAuthGuard,
     RolesGuard,
     LimitedAccessCaseExistsGuard,
     CaseScheduledGuard,
@@ -82,9 +88,10 @@ export class LimitedAccessCaseController {
   }
 
   @UseGuards(
-    new JwtAuthGuard(true),
+    JwtAuthGuard,
     RolesGuard,
-    LimitedAccessCaseExistsGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseScheduledGuard,
     CaseDefenderGuard,
   )
@@ -110,9 +117,10 @@ export class LimitedAccessCaseController {
   }
 
   @UseGuards(
-    new JwtAuthGuard(true),
+    JwtAuthGuard,
     RolesGuard,
-    LimitedAccessCaseExistsGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseCompletedGuard,
     CaseDefenderGuard,
   )
@@ -139,9 +147,10 @@ export class LimitedAccessCaseController {
   }
 
   @UseGuards(
-    new JwtAuthGuard(true),
+    JwtAuthGuard,
     RolesGuard,
-    LimitedAccessCaseExistsGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseCompletedGuard,
     CaseDefenderGuard,
   )

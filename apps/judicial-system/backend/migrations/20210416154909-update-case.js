@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = {
-  up: (queryInterface, Sequelize) => {
+  up: (queryInterface) => {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.sequelize.query(
         `ALTER TABLE "case" ALTER COLUMN "type" DROP DEFAULT;`,
@@ -10,7 +10,7 @@ module.exports = {
     )
   },
 
-  down: async (queryInterface, Sequelize) => {
+  down: async () => {
     // No need to roll back
     return
   },

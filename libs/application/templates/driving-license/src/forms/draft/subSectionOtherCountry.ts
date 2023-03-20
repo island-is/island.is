@@ -3,11 +3,12 @@ import {
   buildCheckboxField,
   buildRadioField,
   buildSubSection,
+  hasYes,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { NO, YES } from '../../lib/constants'
 import { B_TEMP } from '../../shared/constants'
-import { hasYes, isApplicationForCondition } from '../../lib/utils'
+import { isApplicationForCondition } from '../../lib/utils'
 
 export const subSectionOtherCountry = buildSubSection({
   id: 'otherCountry',

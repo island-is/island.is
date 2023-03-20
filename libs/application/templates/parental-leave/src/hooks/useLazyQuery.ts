@@ -5,7 +5,7 @@ import {
   useApolloClient,
 } from '@apollo/client'
 
-export const useLazyQuery = <TData = any, TVariables = OperationVariables>(
+export const useLazyQuery = <TData, TVariables = OperationVariables>(
   query: DocumentNode,
 ) => {
   const client = useApolloClient()
@@ -16,6 +16,6 @@ export const useLazyQuery = <TData = any, TVariables = OperationVariables>(
         query,
         variables,
       }),
-    [client],
+    [client, query],
   )
 }

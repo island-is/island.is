@@ -1,4 +1,7 @@
-import { DefaultStateLifeCycle } from '@island.is/application/core'
+import {
+  DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
+} from '@island.is/application/core'
 import {
   ApplicationConfigurations,
   ApplicationTemplate,
@@ -8,6 +11,7 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { FundingGovernmentProjectsSchema } from './dataSchema'
 import { application } from './messages'
@@ -50,12 +54,13 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
       [States.draft]: {
         meta: {
           name: States.draft,
+          status: 'draft',
           actionCard: {
             title: application.name,
             description: application.description,
           },
           progress: 0.5,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -68,6 +73,7 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
+              delete: true,
               write: 'all',
             },
           ],
@@ -80,6 +86,7 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
       },
       [States.submitted]: {
         meta: {
+          status: 'completed',
           name: States.submitted,
           actionCard: {
             title: application.name,
@@ -87,9 +94,9 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
           },
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: TEMPLATE_API_ACTIONS.sendApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

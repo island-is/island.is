@@ -6,6 +6,9 @@ import {
   ApplicationRole,
   Application,
   DefaultEvents,
+  defineTemplateApi,
+  EmployeeApi,
+  NationalRegistryUserApi,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
@@ -29,6 +32,7 @@ const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
       [States.CONFIRM]: {
         meta: {
           name: 'Confirmations',
+          status: 'draft',
           actionCard: {
             title: m.applicationTitle,
           },
@@ -38,11 +42,11 @@ const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
             shouldBePruned: true,
             whenToPrune: 24 * 3600 * 1000,
           },
-          onExit: {
-            apiModuleAction: ApiActions.submitApplication,
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.SCHOOL_EMPLOYEE,
@@ -58,6 +62,7 @@ const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              api: [EmployeeApi, NationalRegistryUserApi],
             },
           ],
         },
@@ -68,13 +73,13 @@ const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
       [States.DONE]: {
         meta: {
           name: 'Done',
+          status: 'completed',
           progress: 1,
           lifecycle: {
             shouldBeListed: false,
             shouldBePruned: true,
             whenToPrune: 24 * 3600 * 1000,
           },
-
           roles: [
             {
               id: Roles.SCHOOL_EMPLOYEE,
@@ -83,7 +88,6 @@ const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final',
       },
     },
   },

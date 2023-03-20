@@ -92,6 +92,12 @@ export const filesText = defineMessages({
     defaultMessage: 'Þú þarft að hlaða upp gögnum',
     description: 'Error message when user has to upload files',
   },
+  sizeErrorMessage: {
+    id: 'fa.application:section.filesText.sizeErrorMessage',
+    defaultMessage: 'Hámark 10 MB á skrá',
+    description:
+      'Error message when user uploads files exceeding the allowed size',
+  },
 })
 
 export const familystatus = defineMessages({

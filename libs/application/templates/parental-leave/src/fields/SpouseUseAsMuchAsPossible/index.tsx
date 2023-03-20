@@ -18,7 +18,10 @@ export const SpouseUseAsMuchAsPossible: FC<FieldBaseProps> = ({
   application,
   field,
 }) => {
-  const { errors, setValue } = useFormContext()
+  const {
+    formState: { errors },
+    setValue,
+  } = useFormContext()
   const { formatMessage } = useLocale()
   const { id, title, description } = field
 
@@ -53,7 +56,7 @@ export const SpouseUseAsMuchAsPossible: FC<FieldBaseProps> = ({
               setValue('personalAllowanceFromSpouse.usage', '100')
             }
             if (s === NO) {
-              setValue('personalAllowanceFromSpouse.usage', '0')
+              setValue('personalAllowanceFromSpouse.usage', '1')
             }
           },
         }}

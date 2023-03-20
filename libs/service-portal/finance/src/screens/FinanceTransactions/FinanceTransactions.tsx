@@ -1,46 +1,44 @@
-import React, { useState, useEffect } from 'react'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
-import { useQuery, useLazyQuery } from '@apollo/client'
+import format from 'date-fns/format'
 import sub from 'date-fns/sub'
+import React, { useEffect, useState } from 'react'
+import { useLazyQuery, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
+import {
+  Accordion,
+  AccordionItem,
+  AlertBanner,
+  Box,
+  Button,
+  DatePicker,
+  Filter,
+  FilterInput,
+  FilterMultiChoice,
+  GridColumn,
+  GridRow,
+  Hidden,
+  SkeletonLoader,
+  Stack,
+} from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { DynamicWrapper, IntroHeader, m } from '@island.is/service-portal/core'
 import {
   GET_CUSTOMER_CHARGETYPE,
   GET_CUSTOMER_RECORDS,
 } from '@island.is/service-portal/graphql'
-import format from 'date-fns/format'
+
+import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import FinanceTransactionsTable from '../../components/FinanceTransactionsTable/FinanceTransactionsTable'
+import { exportHreyfingarFile } from '../../utils/filesHreyfingar'
+import { transactionFilter } from '../../utils/simpleFilter'
+import * as styles from '../Finance.css'
 import {
   CustomerChargeType,
   CustomerRecords,
 } from './FinanceTransactionsData.types'
-import DropdownExport from '../../components/DropdownExport/DropdownExport'
-import { m, DynamicWrapper } from '@island.is/service-portal/core'
-import {
-  Box,
-  Text,
-  Stack,
-  GridRow,
-  GridColumn,
-  DatePicker,
-  SkeletonLoader,
-  AlertBanner,
-  Hidden,
-  Button,
-  Filter,
-  FilterInput,
-  FilterMultiChoice,
-  AccordionItem,
-  Accordion,
-} from '@island.is/island-ui/core'
-import { exportHreyfingarFile } from '../../utils/filesHreyfingar'
-import { transactionFilter } from '../../utils/simpleFilter'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import * as styles from '../Finance.css'
 
-const FinanceTransactions: ServicePortalModuleComponent = () => {
+const FinanceTransactions = () => {
   useNamespaces('sp.finance-transactions')
   const { formatMessage } = useLocale()
-
   const backInTheDay = sub(new Date(), {
     months: 3,
   })
@@ -57,12 +55,13 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
   } = useQuery<Query>(GET_CUSTOMER_CHARGETYPE, {
     onCompleted: () => {
       if (customerChartypeData?.getCustomerChargeType?.chargeType) {
-        setAllChargeTypes()
+        setEmptyChargeTypes()
       } else {
         setChargeTypesEmpty(true)
       }
     },
   })
+
   const chargeTypeData: CustomerChargeType =
     customerChartypeData?.getCustomerChargeType || {}
 
@@ -75,7 +74,10 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
       loadCustomerRecords({
         variables: {
           input: {
-            chargeTypeID: dropdownSelect,
+            chargeTypeID:
+              dropdownSelect.length === 0
+                ? getAllChargeTypes()
+                : dropdownSelect,
             dayFrom: format(fromDate, 'yyyy-MM-dd'),
             dayTo: format(toDate, 'yyyy-MM-dd'),
           },
@@ -94,13 +96,12 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
     return allChargeTypeValues ?? []
   }
 
-  function setAllChargeTypes() {
-    const allChargeTypes = getAllChargeTypes()
-    setDropdownSelect(allChargeTypes)
+  function setEmptyChargeTypes() {
+    setDropdownSelect([])
   }
 
   function clearAllFilters() {
-    setAllChargeTypes()
+    setEmptyChargeTypes()
     setFromDate(backInTheDay)
     setToDate(new Date())
     setQ('')
@@ -117,22 +118,20 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
   return (
     <DynamicWrapper>
       <Box marginBottom={[6, 6, 10]}>
+        <IntroHeader
+          title={{
+            id: 'sp.finance-transactions:title',
+            defaultMessage: 'Hreyfingar',
+          }}
+          intro={{
+            id: 'sp.finance-transactions:intro',
+            defaultMessage:
+              'Hér er að finna hreyfingar fyrir valin skilyrði. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
+          }}
+        />
         <Stack space={2}>
-          <Text variant="h3" as="h1">
-            {formatMessage({
-              id: 'sp.finance-transactions:title',
-              defaultMessage: 'Hreyfingar',
-            })}
-          </Text>
           <GridRow>
             <GridColumn span={['11/12', '6/12']}>
-              <Text variant="default" marginBottom={6}>
-                {formatMessage({
-                  id: 'sp.finance-transactions:intro',
-                  defaultMessage:
-                    'Hér er að finna hreyfingar fyrir valin skilyrði. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
-                })}
-              </Text>
               <Box
                 display="flex"
                 marginLeft="auto"
@@ -175,7 +174,7 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
                 filterInput={
                   <FilterInput
                     placeholder={formatMessage(m.searchPlaceholder)}
-                    name="rafraen-skjol-input"
+                    name="finance-transaction-input"
                     value={q}
                     onChange={(e) => setQ(e)}
                     backgroundColor="blue"
@@ -190,7 +189,7 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
                     setDropdownSelect(selected)
                   }}
                   onClear={() => {
-                    setAllChargeTypes()
+                    setEmptyChargeTypes()
                   }}
                   categories={[
                     {
@@ -237,6 +236,7 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
                             size="xs"
                             handleChange={(d) => setFromDate(d)}
                             selected={fromDate}
+                            appearInline
                           />
                           <Box marginTop={3}>
                             <DatePicker
@@ -247,6 +247,7 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
                               size="xs"
                               handleChange={(d) => setToDate(d)}
                               selected={toDate}
+                              appearInline
                             />
                           </Box>
                         </Box>

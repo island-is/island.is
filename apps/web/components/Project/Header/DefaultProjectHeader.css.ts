@@ -26,10 +26,14 @@ export const headerWrapper = style({
   }),
 })
 
+export const headerImageContainer = style({
+  width: '100%',
+  height: '100%',
+})
+
 export const headerImage = style({
   height: '100%',
   width: '100%',
-  objectFit: 'cover',
   order: 0,
   ...themeUtils.responsiveStyle({
     xs: {

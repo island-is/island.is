@@ -12,6 +12,7 @@ import {
   getElasticsearchIndex,
 } from '@island.is/content-search-index-manager'
 import { environment } from '../environments/environment'
+import { Entry } from 'contentful'
 
 type SyncStatus = {
   running?: boolean
@@ -50,6 +51,7 @@ export class IndexingService {
 
     let didImportAll = true
     const importPromises = this.importers.map(async (importer) => {
+      logger.debug('Starting importer', importer)
       logger.info('Starting importer', {
         importer: importer.constructor.name,
         index: elasticIndex,
@@ -82,6 +84,7 @@ export class IndexingService {
 
     // wait for all importers to finish
     await Promise.all(importPromises).catch((error) => {
+      logger.debug('Importer failure error', error)
       logger.error('Importer failed', {
         message: error.message,
         index: elasticIndex,
@@ -139,11 +142,14 @@ export class IndexingService {
     }
 
     logger.info('Writing sync status to elasticsearch index')
-    try {
-      await this.elasticService.index(elasticIndex, folderHashDocument)
-    } catch (error) {
-      logger.error('Could not update sync status', { message: error.message })
-    }
+    await this.elasticService
+      .index(elasticIndex, folderHashDocument)
+      .catch((error) => {
+        logger.debug('Sync status error', error)
+        logger.error('Could not update sync status', {
+          message: error.message,
+        })
+      })
   }
 
   async getDocumentById(locale: ElasticsearchIndexLocale, id: string) {
@@ -156,5 +162,13 @@ export class IndexingService {
     } catch {
       return { error: true }
     }
+  }
+
+  async deleteDocument(
+    locale: ElasticsearchIndexLocale,
+    document: Pick<Entry<unknown>, 'sys'>,
+  ) {
+    const elasticIndex = getElasticsearchIndex(locale)
+    return this.cmsSyncService.handleDocumentDeletion(elasticIndex, document)
   }
 }

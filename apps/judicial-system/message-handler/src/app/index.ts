@@ -1,2 +1,3 @@
+export { appModuleConfig } from './app.config'
 export { AppModule } from './app.module'
-export { AppService } from './app.service'
+export { MessageHandlerService } from './messageHandler.service'

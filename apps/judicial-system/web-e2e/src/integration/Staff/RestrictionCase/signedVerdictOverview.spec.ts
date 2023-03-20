@@ -1,25 +1,21 @@
 import faker from 'faker'
-import { SIGNED_VERDICT_OVERVIEW } from '@island.is/judicial-system/consts'
+import { SIGNED_VERDICT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import {
   Case,
   CaseDecision,
   CaseState,
+  CaseType,
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import {
-  intercept,
-  makeCourt,
-  makeRestrictionCase,
-  makeCaseFile,
-} from '../../../utils'
+import { intercept, makeCourt, makeCaseFile, mockCase } from '../../../utils'
 
 describe('Signed verdict overview - Staff - Restriction case', () => {
   const conclusion = faker.lorem.paragraph(1)
   const caseFile = makeCaseFile('caseId', 'caseFileName')
 
   beforeEach(() => {
-    const caseData = makeRestrictionCase()
+    const caseData = mockCase(CaseType.CUSTODY)
     const caseDataAddition: Case = {
       ...caseData,
       state: CaseState.ACCEPTED,
@@ -32,7 +28,7 @@ describe('Signed verdict overview - Staff - Restriction case', () => {
     cy.login(UserRole.STAFF)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
-    cy.visit(`${SIGNED_VERDICT_OVERVIEW}/test_id`)
+    cy.visit(`${SIGNED_VERDICT_OVERVIEW_ROUTE}/test_id`)
   })
 
   it('should display appropriate components on the page', () => {

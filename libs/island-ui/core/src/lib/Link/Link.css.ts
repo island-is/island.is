@@ -8,10 +8,6 @@ export const link = style({
   },
 })
 
-export const pointer = style({
-  cursor: 'pointer',
-})
-
 const mediumBoxShadow = `inset 0 -2px 0 0 currentColor`
 const smallBoxShadow = `inset 0 -1px 0 0 currentColor`
 
@@ -74,4 +70,8 @@ export const colors = styleVariants({
       color: theme.color.white,
     },
   },
+})
+
+export const pointer = style({
+  cursor: 'pointer',
 })

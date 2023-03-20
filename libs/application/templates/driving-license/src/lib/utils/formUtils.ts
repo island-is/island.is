@@ -5,15 +5,14 @@ import {
   ExternalData,
 } from '@island.is/application/types'
 import { m } from '../messages'
-import { ConditionFn } from '../types'
+import { ConditionFn, DrivingLicense } from '../types'
 import { YES } from '../constants'
 import {
   DrivingLicenseApplicationFor,
   B_FULL,
   B_TEMP,
 } from '../../shared/constants'
-import { hasYes } from './hasYes'
-import { CurrentLicenseProviderResult } from '../../dataProviders/CurrentLicenseProvider'
+import { hasYes } from '@island.is/application/core'
 
 export const allowFakeCondition = (result = YES) => (answers: FormValue) =>
   getValueViaPath(answers, 'fakeData.useFakeData') === result
@@ -76,10 +75,8 @@ export const hasCompletedPrerequisitesStep = (value = false) => ({
 export const hasHealthRemarks = (externalData: ExternalData) => {
   return (
     (
-      getValueViaPath<CurrentLicenseProviderResult>(
-        externalData,
-        'currentLicense.data',
-      )?.healthRemarks || []
+      getValueViaPath<DrivingLicense>(externalData, 'currentLicense.data')
+        ?.healthRemarks || []
     ).length > 0
   )
 }

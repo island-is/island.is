@@ -18,10 +18,9 @@ export interface WatsonChatPanelProps {
   serviceInstanceID: WatsonServiceInstance
   version?: string
   carbonTheme?: string
-  cssVariables?: Record<string, string>
 
   // What key in the 'ChatPanels' UI Configuration in Contentful stores the language pack for this chat bot
-  namespaceKey?: 'default'
+  namespaceKey?: 'default' | 'ukrainian-citizens'
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onLoad?: (instance: any) => void
@@ -39,6 +38,12 @@ export type WatsonIntegration =
 
   // Askur syslumenn
   | '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f'
+
+  // Askur - english
+  | '2e32cba8-7379-44e9-b03e-af1ccdbe5982'
+
+  // Útlendingastofnun
+  | '89a03e83-5c73-4642-b5ba-cd3771ceca54'
 
 export type WatsonServiceInstance =
   // Askur

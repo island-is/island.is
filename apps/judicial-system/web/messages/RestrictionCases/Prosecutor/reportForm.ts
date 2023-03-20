@@ -36,18 +36,10 @@ export const rcReportForm = {
         description:
           'Notaður sem skýritexti í textaboxi fyrir "dómkröfur" á greinargerðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
-      // TODO: Remove autofillV2
-      autofillV2: {
-        id: 'judicial.system.restriction_cases:report_form.demands.autofill_v2',
+      autofill: {
+        id: 'judicial.system.restriction_cases:report_form.demands.autofill_v4',
         defaultMessage:
-          'Þess er krafist að {accusedName}{accusedNationalId}sæti{isExtended, select, yes { áframhaldandi} other {}} {caseType, select, ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} TRAVEL_BAN {farbanni} other {gæsluvarðhaldi}} með úrskurði {court}, til {requestedValidToDate}{hasIsolationRequest, select, yes {, og verði gert að sæta einangrun á meðan á varðhaldi stendur} other {}}.',
-        description:
-          'Notaður sem sjálfgefinn texti í textaboxi fyrir "dómkröfur" á greinargerðar skrefi í gæsluvarðhalds-, vistunar- og farbannsmálum.',
-      },
-      autofillV3: {
-        id: 'judicial.system.restriction_cases:report_form.demands.autofill_v3',
-        defaultMessage:
-          'Þess er krafist að {accusedName}{accusedNationalId}sæti{isExtended, select, true { áframhaldandi} other {}} {caseType, select, ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} TRAVEL_BAN {farbanni} other {gæsluvarðhaldi}} með úrskurði {court}, til {requestedValidToDate}{hasIsolationRequest, select, true {, og verði gert að sæta einangrun á meðan á varðhaldi stendur} other {}}.',
+          'Þess er krafist að {defendantName}{defendantDOB}sæti{isExtended, select, true { áframhaldandi} other {}} {caseType, select, ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} TRAVEL_BAN {farbanni} other {gæsluvarðhaldi}} með úrskurði {court}, til {requestedValidToDate}{hasIsolationRequest, select, true {, og verði gert að sæta einangrun á meðan á varðhaldi stendur} other {}}.',
         description:
           'Notaður sem sjálfgefinn texti í textaboxi fyrir "dómkröfur" á greinargerðar skrefi í gæsluvarðhalds-, vistunar- og farbannsmálum.',
       },

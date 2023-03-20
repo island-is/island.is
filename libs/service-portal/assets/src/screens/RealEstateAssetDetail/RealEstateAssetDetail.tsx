@@ -1,32 +1,94 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
+import {
+  unitsOfUseFragment,
+  pagingFragment,
+  appraisalFragment,
+  addressFragment,
+} from '@island.is/service-portal/graphql'
 import { defineMessage } from 'react-intl'
-import { useQuery, useLazyQuery } from '@apollo/client'
+import { useQuery, useLazyQuery, gql } from '@apollo/client'
 import { Query, PropertyOwner } from '@island.is/api/schema'
 import { useNamespaces, useLocale } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
-import {
-  ServicePortalModuleComponent,
-  NotFound,
-  amountFormat,
-} from '@island.is/service-portal/core'
+import { NotFound, amountFormat } from '@island.is/service-portal/core'
 import AssetGrid from '../../components/AssetGrid'
 import AssetLoader from '../../components/AssetLoader'
 import AssetDisclaimer from '../../components/AssetDisclaimer'
 import { ownersArray } from '../../utils/createUnits'
 import { messages } from '../../lib/messages'
-import {
-  GET_SINGLE_PROPERTY_QUERY,
-  GET_PROPERTY_OWNERS_QUERY,
-} from '../../lib/queries'
 import DetailHeader from '../../components/DetailHeader'
 import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
 import { TableGrid, TableUnits } from '@island.is/service-portal/core'
 
-export const AssetsOverview: ServicePortalModuleComponent = () => {
+export const ownerFragment = gql`
+  fragment Owner on PropertyOwner {
+    name
+    ssn
+    ownership
+    purchaseDate
+    grantDisplay
+  }
+`
+
+export const GET_PROPERTY_OWNERS_QUERY = gql`
+  query GetAssetsPropertyOwners($input: GetPagingTypes!) {
+    assetsPropertyOwners(input: $input) {
+      registeredOwners {
+        ...Owner
+      }
+      paging {
+        ...Paging
+      }
+    }
+  }
+  ${pagingFragment}
+  ${ownerFragment}
+`
+
+export const GET_SINGLE_PROPERTY_QUERY = gql`
+  query GetSingleRealEstateQuery($input: GetRealEstateInput!) {
+    assetsDetail(input: $input) {
+      propertyNumber
+      defaultAddress {
+        ...Address
+      }
+      appraisal {
+        ...Appraisal
+      }
+      registeredOwners {
+        registeredOwners {
+          ...Owner
+        }
+      }
+      land {
+        landNumber
+        landAppraisal
+        useDisplay
+        area
+        areaUnit
+      }
+      unitsOfUse {
+        unitsOfUse {
+          ...unitsOfUse
+        }
+      }
+    }
+  }
+  ${unitsOfUseFragment}
+  ${ownerFragment}
+  ${appraisalFragment}
+  ${addressFragment}
+`
+
+type UseParams = {
+  id: string
+}
+
+export const AssetsOverview = () => {
   useNamespaces('sp.assets')
   const { formatMessage } = useLocale()
-  const { id }: { id: string | undefined } = useParams()
+  const { id } = useParams() as UseParams
 
   const { loading, error, data } = useQuery<Query>(GET_SINGLE_PROPERTY_QUERY, {
     variables: {
@@ -98,6 +160,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
     (assetData.registeredOwners?.paging?.hasNextPage &&
       !ownersQuery?.data?.assetsPropertyOwners?.paging)
 
+  const hasOwners = owners?.flat()?.length > 0
   return (
     <>
       <DetailHeader
@@ -107,37 +170,41 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
         <TableUnits
           paginateCallback={() => paginate()}
           tables={[
-            {
-              header: [
-                formatMessage(messages.legalOwners),
-                formatMessage(messages.ssn),
-                formatMessage(messages.authorization),
-                formatMessage(messages.holdings),
-                formatMessage(messages.purchaseDate),
-              ],
-              rows: owners,
-              paginate: paginateOwners,
-            },
-            {
-              header: [
-                `${formatMessage(messages.appraisal)} ${
-                  assetData.appraisal?.activeYear
-                }`,
-                `${formatMessage(messages.appraisal)} ${
-                  assetData.appraisal?.plannedYear
-                }`,
-              ],
-              rows: [
-                [
-                  assetData.appraisal?.activeAppraisal
-                    ? amountFormat(assetData.appraisal?.activeAppraisal)
-                    : '',
-                  assetData.appraisal?.plannedAppraisal
-                    ? amountFormat(assetData.appraisal?.plannedAppraisal)
-                    : '',
-                ],
-              ],
-            },
+            hasOwners
+              ? {
+                  header: [
+                    formatMessage(messages.legalOwners),
+                    formatMessage(messages.ssn),
+                    formatMessage(messages.authorization),
+                    formatMessage(messages.holdings),
+                    formatMessage(messages.purchaseDate),
+                  ],
+                  rows: owners,
+                  paginate: paginateOwners,
+                }
+              : null,
+            assetData.appraisal
+              ? {
+                  header: [
+                    `${formatMessage(messages.appraisal)} ${
+                      assetData.appraisal?.activeYear
+                    }`,
+                    `${formatMessage(messages.appraisal)} ${
+                      assetData.appraisal?.plannedYear
+                    }`,
+                  ],
+                  rows: [
+                    [
+                      assetData.appraisal?.activeAppraisal
+                        ? amountFormat(assetData.appraisal?.activeAppraisal)
+                        : '',
+                      assetData.appraisal?.plannedAppraisal
+                        ? amountFormat(assetData.appraisal?.plannedAppraisal)
+                        : '',
+                    ],
+                  ],
+                }
+              : null,
           ]}
         />
       </Box>

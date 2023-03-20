@@ -22,10 +22,10 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
   const {
     register,
     handleSubmit,
-    errors,
     formState,
     reset,
   } = useForm<ApiScopeGroupDTO>()
+  const { errors } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('ApiScopeGroupCreateForm'),
@@ -47,6 +47,7 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
   }, [props.apiScopeGroup])
 
   const save = async (group: ApiScopeGroupDTO): Promise<void> => {
+    group.order = +group.order
     const response = isEditing
       ? await ResourcesService.updateApiScopeGroup(
           group,
@@ -90,8 +91,7 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
                     {localization.fields['domainName'].label}
                   </label>
                   <select
-                    name="domainName"
-                    ref={register({
+                    {...register('domainName', {
                       required: true,
                     })}
                     defaultValue={props.apiScopeGroup.domainName}
@@ -101,7 +101,13 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
                   >
                     {domains.map((domain: Domain) => {
                       return (
-                        <option value={domain.name} key={domain.name}>
+                        <option
+                          value={domain.name}
+                          key={domain.name}
+                          selected={
+                            props.apiScopeGroup.domainName === domain.name
+                          }
+                        >
                           {domain.name}
                         </option>
                       )
@@ -127,8 +133,7 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
                   </label>
                   <input
                     type="text"
-                    name="name"
-                    ref={register({
+                    {...register('name', {
                       required: true,
                       validate: ValidationUtils.validateIdentifier,
                     })}
@@ -154,8 +159,7 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
                   </label>
                   <input
                     type="text"
-                    name="displayName"
-                    ref={register({
+                    {...register('displayName', {
                       required: true,
                       validate: ValidationUtils.validateDescription,
                     })}
@@ -189,8 +193,7 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
                   </label>
                   <input
                     type="text"
-                    name="description"
-                    ref={register({
+                    {...register('description', {
                       required: true,
                       validate: ValidationUtils.validateDescription,
                     })}
@@ -213,6 +216,26 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
                     property="description"
                     isEditing={isEditing}
                     id={props.apiScopeGroup.id}
+                  />
+                </div>
+                <div className="api-scope-form__container__field">
+                  <label htmlFor="order" className="api-scope-form__label">
+                    {localization.fields['order'].label}
+                  </label>
+                  <input
+                    id="order"
+                    {...register('order', { required: true, min: 0, max: 999 })}
+                    type="number"
+                    className="api-scope-form__input"
+                    title={localization.fields['order'].helpText}
+                    defaultValue={props.apiScopeGroup.order}
+                  />
+                  <HelpBox helpText={localization.fields['order'].helpText} />
+                  <ErrorMessage
+                    as="span"
+                    errors={errors}
+                    name="order"
+                    message={localization.fields['order'].errorMessage}
                   />
                 </div>
               </div>

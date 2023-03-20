@@ -1,11 +1,10 @@
+import { FinancialStatementsInaoClientService } from '@island.is/clients/financial-statements-inao'
 import { Injectable } from '@nestjs/common'
 import * as kennitala from 'kennitala'
 
-import { DataverseClient } from './client/dataverseClient'
-
 @Injectable()
 export class FinancialStatementsInaoService {
-  constructor(private dataverseClient: DataverseClient) {}
+  constructor(private dataverseClient: FinancialStatementsInaoClientService) {}
 
   async getClientTypes() {
     return this.dataverseClient.getClientTypes()
@@ -13,13 +12,25 @@ export class FinancialStatementsInaoService {
 
   async getUserClientType(nationalId: string) {
     if (kennitala.isPerson(nationalId)) {
-      return this.dataverseClient.getClientType('individual')
+      return this.dataverseClient.getClientType('Einstaklingur')
     } else {
       return this.dataverseClient.getUserClientType(nationalId)
     }
   }
 
-  async getElections() {
-    return this.dataverseClient.getElections()
+  async getElections(nationalId: string) {
+    return this.dataverseClient.getElections(nationalId)
+  }
+
+  async getClientFinancialLimit(clientType: string, year: string) {
+    return this.dataverseClient.getClientFinancialLimit(clientType, year)
+  }
+
+  async getConfig() {
+    return this.dataverseClient.getConfig()
+  }
+
+  async getTaxInformation(nationalId: string, year: string) {
+    return this.dataverseClient.getTaxInformationValues(nationalId, year)
   }
 }

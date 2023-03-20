@@ -1,25 +1,19 @@
-import { StaticText } from './Form'
+import { ProviderErrorReason } from '@island.is/shared/problem'
+import { StaticText } from '@island.is/shared/types'
 
 export interface DataProviderResult {
   data?: object | string | boolean | number
   date: Date
-  reason?: ProviderErrorReason | StaticText
-  hideSubmitError?: boolean
+  reason?: ProviderErrorReason[] | ProviderErrorReason | StaticText
   status: 'failure' | 'success'
   statusCode?: number
 }
 
 export interface FailedDataProviderResult extends DataProviderResult {
-  reason?: ProviderErrorReason | StaticText
+  reason?: ProviderErrorReason[] | ProviderErrorReason | StaticText
   status: 'failure'
 }
 
 export interface SuccessfulDataProviderResult extends DataProviderResult {
   status: 'success'
-}
-
-export interface ProviderErrorReason {
-  title: StaticText
-  summary: StaticText
-  hideSubmitError?: boolean
 }

@@ -15,7 +15,7 @@ export const serviceSetup = (services: {
     })
     .replicaCount({ min: 1, max: 1, default: 1 })
     .command('node')
-    .args('main.js')
+    .args('--no-experimental-fetch', 'main.js')
     .extraAttributes({
       // Schedule to run daily at two in the morning.
       dev: { schedule: '0 2 * * *' },

@@ -4,7 +4,7 @@ export const application = {
   general: defineMessages({
     name: {
       id: 'gfl.application:general.name',
-      defaultMessage: 'Almennt veiðileyfi',
+      defaultMessage: 'Veiðileyfi',
       description: 'General fishing license',
     },
     institutionName: {

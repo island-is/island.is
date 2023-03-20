@@ -8,12 +8,15 @@ import {
   DATA_UPLOAD,
   OPERATING_LICENSE_SERVICE_RES,
   OPERATING_LICENSE_PAGINATION_INFO_SERVICE_RES,
+  OPERATING_LICENSES_CSV,
   VEDBANDAYFIRLRIT_REGLUVERKI_RESPONSE,
   MORTGAGE_CERTIFICATE_CONTENT_OK,
   MORTGAGE_CERTIFICATE_CONTENT_NO_KMARKING,
   MORTGAGE_CERTIFICATE_MESSAGE_NO_KMARKING,
   REAL_ESTATE_ADDRESS_NAME,
   ESTATE_REGISTRANT_RESPONSE,
+  REAL_ESTATE_AGENTS,
+  LAWYERS,
 } from './responses'
 
 export const MOCK_PROPERTY_NUMBER_OK = 'F2003292'
@@ -55,6 +58,22 @@ export const requestHandlers = [
       return res(ctx.status(401), ctx.json(VHFAIL))
     }
   }),
+  rest.get(url('/api/Fasteignasalar/'), (req, res, ctx) => {
+    const success = req.url.searchParams.get('audkenni') ? true : false
+    if (success) {
+      return res(ctx.status(200), ctx.json(REAL_ESTATE_AGENTS))
+    } else {
+      return res(ctx.status(401), ctx.json(VHFAIL))
+    }
+  }),
+  rest.get(url('/api/Logmannalisti/'), (req, res, ctx) => {
+    const success = req.url.searchParams.get('audkenni') ? true : false
+    if (success) {
+      return res(ctx.status(200), ctx.json(LAWYERS))
+    } else {
+      return res(ctx.status(401), ctx.json(VHFAIL))
+    }
+  }),
   rest.get(url('/api/VirkLeyfi/:id'), (req, res, ctx) => {
     const success = req.params.id ? true : false
     if (success) {
@@ -66,6 +85,14 @@ export const requestHandlers = [
           JSON.stringify(OPERATING_LICENSE_PAGINATION_INFO_SERVICE_RES),
         ),
       )
+    } else {
+      return res(ctx.status(401), ctx.json(VHFAIL))
+    }
+  }),
+  rest.get(url('/api/VirkLeyfiCsv/:id'), (req, res, ctx) => {
+    const success = req.params.id ? true : false
+    if (success) {
+      return res(ctx.status(200), ctx.body(OPERATING_LICENSES_CSV))
     } else {
       return res(ctx.status(401), ctx.json(VHFAIL))
     }

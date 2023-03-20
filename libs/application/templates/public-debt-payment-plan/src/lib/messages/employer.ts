@@ -30,6 +30,11 @@ export const employer = {
         'Upplýsingar um ráðstöfunartekjur eru sóttar til Skattsins og er reiknuð með tilliti til launafjárhæðar, staðgreiðslu, lífeyrissjóðs- og meðlagsgreiðslna.',
       description: 'Disposable Income page description',
     },
+    employerIsNotValid: {
+      id: `pdpp.application:application.employer.general.employerIsNotValid`,
+      defaultMessage: 'Ekki er hægt að velja þennan launagreiðanda',
+      description: 'Invalid employer message',
+    },
   }),
   labels: defineMessages({
     taxHomePage: {

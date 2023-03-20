@@ -19,7 +19,7 @@ import {
   useUserProfile,
 } from '@island.is/service-portal/graphql'
 import { sharedMessages } from '@island.is/shared/translations'
-import { parseFullNumber } from '../../../../../utils/phoneHelper'
+import { parseFullNumber } from '@island.is/service-portal/core'
 import { FormButton } from '../FormButton'
 import * as styles from './ProfileForms.css'
 
@@ -35,6 +35,11 @@ interface FormErrors {
   code: string | undefined
 }
 
+interface UseFormProps {
+  tel: string
+  code: string
+}
+
 export const InputPhone: FC<Props> = ({
   buttonText,
   mobile,
@@ -42,7 +47,13 @@ export const InputPhone: FC<Props> = ({
   telDirty,
 }) => {
   useNamespaces('sp.settings')
-  const { handleSubmit, control, errors, getValues, setValue } = useForm()
+  const {
+    handleSubmit,
+    control,
+    getValues,
+    setValue,
+    formState: { errors },
+  } = useForm<UseFormProps>()
   const {
     updateOrCreateUserProfile,
     loading: saveLoading,

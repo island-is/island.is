@@ -9,6 +9,7 @@ interface Props {
   onGetCSV: () => void
   onGetExcel: () => void
   dropdownItems?: {
+    href?: string
     onClick?: () => void
     title: string
     render?: (

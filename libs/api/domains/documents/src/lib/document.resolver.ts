@@ -12,10 +12,14 @@ import { DocumentsScope } from '@island.is/auth/scopes'
 import { AuditService } from '@island.is/nest/audit'
 
 import { DocumentService } from './document.service'
-import { Document } from './models/document.model'
+import { Document, DocumentListResponse } from './models/document.model'
 import { GetDocumentInput } from './dto/getDocumentInput'
 import { DocumentDetails } from './models/documentDetails.model'
 import { DocumentCategory } from './models/documentCategory.model'
+import { DocumentType } from './models/documentType.model'
+
+import { GetDocumentListInput } from './dto/getDocumentListInput'
+import { DocumentSender } from './models/documentSender.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -44,8 +48,17 @@ export class DocumentResolver {
 
   @Scopes(DocumentsScope.main)
   @Query(() => [Document], { nullable: true })
-  listDocuments(@CurrentUser() user: User): Promise<Document[]> {
+  listDocuments(@CurrentUser() user: User): Promise<Array<Document>> {
     return this.documentService.listDocuments(user.nationalId)
+  }
+
+  @Scopes(DocumentsScope.main)
+  @Query(() => DocumentListResponse, { nullable: true })
+  listDocumentsV2(
+    @Args('input') input: GetDocumentListInput,
+    @CurrentUser() user: User,
+  ): Promise<DocumentListResponse> {
+    return this.documentService.listDocumentsV2(user.nationalId, input)
   }
 
   @Scopes(DocumentsScope.main)
@@ -54,5 +67,17 @@ export class DocumentResolver {
     @CurrentUser() user: User,
   ): Promise<DocumentCategory[]> {
     return this.documentService.getCategories(user.nationalId)
+  }
+
+  @Scopes(DocumentsScope.main)
+  @Query(() => [DocumentType], { nullable: true })
+  getDocumentTypes(@CurrentUser() user: User): Promise<DocumentType[]> {
+    return this.documentService.getTypes(user.nationalId)
+  }
+
+  @Scopes(DocumentsScope.main)
+  @Query(() => [DocumentSender], { nullable: true })
+  getDocumentSenders(@CurrentUser() user: User): Promise<DocumentSender[]> {
+    return this.documentService.getSenders(user.nationalId)
   }
 }

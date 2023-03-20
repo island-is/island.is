@@ -22,6 +22,9 @@ export class ConnectedComponent {
   // fetch it from the API and also to quickly change the graphql endpoint for the data.
   @Field(() => graphqlTypeJson, { nullable: true })
   json?: Record<string, any> | null
+
+  @Field(() => graphqlTypeJson, { nullable: true })
+  configJson?: Record<string, any> | null
 }
 
 const parseJson = (fields: ISliceConnectedComponentFields) => {
@@ -67,4 +70,5 @@ export const mapConnectedComponent = ({
   title: fields?.title ?? '',
   type: fields?.type ?? 'None',
   json: fields?.json ? parseJson(fields) : null,
+  configJson: fields?.config,
 })

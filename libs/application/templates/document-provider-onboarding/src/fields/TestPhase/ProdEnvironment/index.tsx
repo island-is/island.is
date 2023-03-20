@@ -124,8 +124,7 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
         <input
           type="hidden"
           value={currentAnswer}
-          ref={register({ required: true })}
-          name={'prodProviderId'}
+          {...register('prodProviderId', { required: true })}
         />
         {error && (
           <Box color="red600" paddingY={2}>

@@ -88,6 +88,13 @@ import { EnhancedAssetSearchResult } from './models/enhancedAssetSearchResult.mo
 import { GetSingleSupportQNAInput } from './dto/getSingleSupportQNA.input'
 import { GetFeaturedSupportQNAsInput } from './dto/getFeaturedSupportQNAs.input'
 import { Locale } from '@island.is/shared/types'
+import { FeaturedArticles } from './models/featuredArticles.model'
+import { GetServicePortalAlertBannersInput } from './dto/getServicePortalAlertBanners.input'
+import { GetTabSectionInput } from './dto/getTabSection.input'
+import { TabSection } from './models/tabSection.model'
+import { GenericTag } from './models/genericTag.model'
+import { GetGenericTagBySlugInput } from './dto/getGenericTagBySlug.input'
+import { FeaturedSupportQNAs } from './models/featuredSupportQNAs.model'
 
 const { cacheTime } = environment
 
@@ -127,6 +134,14 @@ export class CmsResolver {
     @Args('input') input: GetAlertBannerInput,
   ): Promise<AlertBanner | null> {
     return this.cmsContentfulService.getAlertBanner(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [AlertBanner], { nullable: true })
+  getServicePortalAlertBanners(
+    @Args('input') input: GetServicePortalAlertBannersInput,
+  ): Promise<AlertBanner[] | null> {
+    return this.cmsContentfulService.getServicePortalAlertBanners(input)
   }
 
   @Directive(cacheControlDirective())
@@ -251,9 +266,9 @@ export class CmsResolver {
   @Directive(cacheControlDirective())
   @Query(() => Organizations)
   getOrganizations(
-    @Args('input') input: GetOrganizationsInput,
+    @Args('input', { nullable: true }) input: GetOrganizationsInput,
   ): Promise<Organizations> {
-    return this.cmsContentfulService.getOrganizations(input?.lang ?? 'is-IS')
+    return this.cmsContentfulService.getOrganizations(input)
   }
 
   @Directive(cacheControlDirective())
@@ -504,6 +519,22 @@ export class CmsResolver {
       input,
     )
   }
+
+  @Directive(cacheControlDirective())
+  @Query(() => TabSection, { nullable: true })
+  getTabSection(
+    @Args('input') input: GetTabSectionInput,
+  ): Promise<TabSection | null> {
+    return this.cmsContentfulService.getTabSection(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => GenericTag, { nullable: true })
+  getGenericTagBySlug(
+    @Args('input') input: GetGenericTagBySlugInput,
+  ): Promise<GenericTag | null> {
+    return this.cmsContentfulService.getGenericTagBySlug(input)
+  }
 }
 
 @Resolver(() => LatestNewsSlice)
@@ -537,6 +568,44 @@ export class ArticleResolver {
     return this.cmsContentfulService.getRelatedArticles(
       article.slug,
       article?.lang ?? 'is',
+    )
+  }
+}
+
+@Resolver(() => FeaturedArticles)
+@Directive(cacheControlDirective())
+export class FeaturedArticlesResolver {
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+
+  @ResolveField(() => [Article])
+  async resolvedArticles(
+    @Parent() { resolvedArticles: input }: FeaturedArticles,
+  ): Promise<Article[]> {
+    if (input.size === 0) {
+      return []
+    }
+    return this.cmsElasticsearchService.getArticles(
+      getElasticsearchIndex(input.lang),
+      input,
+    )
+  }
+}
+
+@Resolver(() => FeaturedSupportQNAs)
+@Directive(cacheControlDirective())
+export class FeaturedSupportQNAsResolver {
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+
+  @ResolveField(() => [SupportQNA])
+  async resolvedSupportQNAs(
+    @Parent() { resolvedSupportQNAs: input }: FeaturedSupportQNAs,
+  ): Promise<SupportQNA[]> {
+    if (input.size === 0) {
+      return []
+    }
+    return this.cmsElasticsearchService.getFeaturedSupportQNAs(
+      getElasticsearchIndex(input.lang),
+      input,
     )
   }
 }

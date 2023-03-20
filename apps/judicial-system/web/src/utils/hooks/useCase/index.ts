@@ -1,18 +1,22 @@
 import { useMemo } from 'react'
 import { useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
+import formatISO from 'date-fns/formatISO'
+import omitBy from 'lodash/omitBy'
+import isUndefined from 'lodash/isUndefined'
+import isNil from 'lodash/isNil'
 
 import type {
   NotificationType,
   SendNotificationResponse,
-  Case,
   CaseTransition,
   RequestSignatureResponse,
-  UpdateCase,
-  SessionArrangements,
-  CreateCase,
-  CaseCustodyRestrictions,
 } from '@island.is/judicial-system/types'
+import {
+  TempCase as Case,
+  TempUpdateCase as UpdateCase,
+  TempCreateCase as CreateCase,
+} from '@island.is/judicial-system-web/src/types'
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
 
@@ -24,9 +28,16 @@ import { TransitionCaseMutation } from './transitionCaseGql'
 import { RequestCourtRecordSignatureMutation } from './requestCourtRecordSignatureGql'
 import { ExtendCaseMutation } from './extendCaseGql'
 
-export type autofillEntry = {
-  key: keyof Case
-  value?: string | boolean | SessionArrangements | CaseCustodyRestrictions[]
+type ChildKeys = Pick<
+  UpdateCase,
+  | 'courtId'
+  | 'prosecutorId'
+  | 'sharedWithProsecutorsOfficeId'
+  | 'registrarId'
+  | 'judgeId'
+>
+
+export type autofillEntry = Partial<UpdateCase> & {
   force?: boolean
 }
 
@@ -64,6 +75,78 @@ interface ExtendCaseMutationResponse {
   extendCase: Case
 }
 
+function isChildKey(key: keyof UpdateCase): key is keyof ChildKeys {
+  return [
+    'courtId',
+    'prosecutorId',
+    'sharedWithProsecutorsOfficeId',
+    'registrarId',
+    'judgeId',
+  ].includes(key)
+}
+
+const childof: { [Property in keyof ChildKeys]-?: keyof Case } = {
+  courtId: 'court',
+  prosecutorId: 'prosecutor',
+  sharedWithProsecutorsOfficeId: 'sharedWithProsecutorsOffice',
+  registrarId: 'registrar',
+  judgeId: 'judge',
+}
+
+const overwrite = (update: UpdateCase): UpdateCase => {
+  const validUpdates = omitBy<UpdateCase>(update, isUndefined)
+
+  return validUpdates
+}
+
+export const fieldHasValue = (workingCase: Case) => (
+  value: unknown,
+  key: string,
+) => {
+  const theKey = key as keyof UpdateCase // loadash types are not better than this
+
+  if (
+    isChildKey(theKey) // check if key is f.example `judgeId`
+      ? isNil(workingCase[childof[theKey]])
+      : isNil(workingCase[theKey])
+  ) {
+    return value === undefined
+  }
+
+  return true
+}
+
+export const update = (update: UpdateCase, workingCase: Case): UpdateCase => {
+  const validUpdates = omitBy<UpdateCase>(update, fieldHasValue(workingCase))
+
+  return validUpdates
+}
+
+export const formatUpdates = (
+  updates: Array<autofillEntry>,
+  workingCase: Case,
+) => {
+  const changes: UpdateCase[] = updates.map((entry) => {
+    if (entry.force) {
+      return overwrite(entry)
+    }
+    return update(entry, workingCase)
+  })
+
+  const newWorkingCase = changes.reduce<UpdateCase>(
+    (currentUpdates, nextUpdates) => {
+      return { ...currentUpdates, ...nextUpdates }
+    },
+    {} as UpdateCase,
+  )
+
+  return newWorkingCase
+}
+
+export const formatDateForServer = (date: Date) => {
+  return formatISO(date, { representation: 'complete' })
+}
+
 const useCase = () => {
   const { formatMessage } = useIntl()
   const [
@@ -77,7 +160,9 @@ const useCase = () => {
   const [
     updateCaseMutation,
     { loading: isUpdatingCase },
-  ] = useMutation<UpdateCaseMutationResponse>(UpdateCaseMutation)
+  ] = useMutation<UpdateCaseMutationResponse>(UpdateCaseMutation, {
+    fetchPolicy: 'no-cache',
+  })
   const [
     transitionCaseMutation,
     { loading: isTransitioningCase },
@@ -105,14 +190,16 @@ const useCase = () => {
             variables: {
               input: {
                 type: theCase.type,
+                indictmentSubtypes: theCase.indictmentSubtypes,
                 description: theCase.description,
-                policeCaseNumber: theCase.policeCaseNumber,
+                policeCaseNumbers: theCase.policeCaseNumbers,
                 defenderName: theCase.defenderName,
                 defenderNationalId: theCase.defenderNationalId,
                 defenderEmail: theCase.defenderEmail,
                 defenderPhoneNumber: theCase.defenderPhoneNumber,
                 sendRequestToDefender: theCase.sendRequestToDefender,
                 leadInvestigator: theCase.leadInvestigator,
+                crimeScenes: theCase.crimeScenes,
               },
             },
           })
@@ -143,10 +230,10 @@ const useCase = () => {
           })
 
           if (data?.createCourtCase?.courtCaseNumber && !errors) {
-            setWorkingCase({
-              ...workingCase,
+            setWorkingCase((theCase) => ({
+              ...theCase,
               courtCaseNumber: data.createCourtCase.courtCaseNumber,
-            })
+            }))
 
             setCourtCaseNumberErrorMessage('')
 
@@ -168,8 +255,7 @@ const useCase = () => {
   const updateCase = useMemo(
     () => async (id: string, updateCase: UpdateCase) => {
       try {
-        // Only update if id has been set
-        if (!id) {
+        if (!id || Object.keys(updateCase).length === 0) {
           return
         }
 
@@ -187,7 +273,7 @@ const useCase = () => {
 
   const transitionCase = useMemo(
     () => async (
-      workingCase: Case,
+      caseId: string,
       transition: CaseTransition,
       setWorkingCase?: React.Dispatch<React.SetStateAction<Case>>,
     ): Promise<boolean> => {
@@ -195,8 +281,7 @@ const useCase = () => {
         const { data } = await transitionCaseMutation({
           variables: {
             input: {
-              id: workingCase.id,
-              modified: workingCase.modified,
+              id: caseId,
               transition,
             },
           },
@@ -207,10 +292,10 @@ const useCase = () => {
         }
 
         if (setWorkingCase) {
-          setWorkingCase({
-            ...workingCase,
+          setWorkingCase((theCase) => ({
+            ...theCase,
             state: data.transitionCase.state,
-          })
+          }))
         }
 
         return true
@@ -277,27 +362,35 @@ const useCase = () => {
     [extendCaseMutation, formatMessage],
   )
 
-  const autofill: autofillFunc = (entries, workingCase, setWorkingCase) => {
-    const validEntries = entries.filter(
-      (item) =>
-        item.value !== undefined &&
-        item.value !== null &&
-        (item.force ||
-          workingCase[item.key] === undefined ||
-          workingCase[item.key] === null),
-    )
+  const setAndSendCaseToServer = async (
+    updates: autofillEntry[],
+    workingCase: Case,
+    setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
+  ) => {
+    try {
+      const updatesToCase: autofillEntry = formatUpdates(updates, workingCase)
+      delete updatesToCase.force
 
-    const flatEntries = Object.assign(
-      {},
-      ...validEntries.map((entry) => ({ [entry.key]: entry.value })),
-    )
+      if (Object.keys(updatesToCase).length === 0) {
+        return
+      }
 
-    if (Object.keys(flatEntries).length === 0) {
-      return
+      // The case has not been created
+      if (!workingCase.id) {
+        setWorkingCase((theCase) => ({ ...theCase, ...updatesToCase }))
+        return
+      }
+
+      const newWorkingCase = await updateCase(workingCase.id, updatesToCase)
+
+      if (!newWorkingCase) {
+        throw new Error()
+      }
+
+      setWorkingCase((theCase) => ({ ...theCase, ...newWorkingCase }))
+    } catch (error) {
+      toast.error(formatMessage(errors.updateCase))
     }
-
-    setWorkingCase({ ...workingCase, ...flatEntries })
-    updateCase(workingCase.id, flatEntries)
   }
 
   return {
@@ -316,7 +409,7 @@ const useCase = () => {
     isRequestingCourtRecordSignature,
     extendCase,
     isExtendingCase,
-    autofill,
+    setAndSendCaseToServer,
   }
 }
 

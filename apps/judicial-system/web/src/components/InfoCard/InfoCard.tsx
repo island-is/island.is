@@ -1,86 +1,47 @@
 import React from 'react'
-import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import {
-  Defendant,
-  SessionArrangements,
-} from '@island.is/judicial-system/types'
-import { capitalize, formatDOB } from '@island.is/judicial-system/formatters'
-import { core } from '@island.is/judicial-system-web/messages'
+import { Defendant } from '@island.is/judicial-system/types'
+import { formatDOB } from '@island.is/judicial-system/formatters'
 
+import { SessionArrangements } from '../../graphql/schema'
 import * as styles from './InfoCard.css'
 
-interface Props {
-  data: Array<{ title: string; value?: string }>
-  defendants?: Defendant[]
-  defender?: {
-    name: string
-    defenderNationalId?: string
-    email?: string
-    phoneNumber?: string
-  }
-  sessionArrangement: SessionArrangements | undefined
+interface Defender {
+  name: string
+  defenderNationalId?: string
+  sessionArrangement?: SessionArrangements
+  email?: string
+  phoneNumber?: string
 }
 
-const InfoCard: React.FC<Props> = (props) => {
-  const { data, defendants, defender, sessionArrangement } = props
-  const { formatMessage } = useIntl()
+interface UniqueDefendersProps {
+  defenders: Defender[]
+}
+
+interface Props {
+  data: Array<{ title: string; value?: React.ReactNode }>
+  defendants?: { title: string; items: Defendant[] }
+  defenders?: Defender[]
+}
+
+const UniqueDefenders: React.FC<UniqueDefendersProps> = (props) => {
+  const { defenders } = props
+  const uniqueDefenders = defenders?.filter(
+    (defender, index, self) =>
+      index === self.findIndex((d) => d.email === defender.email),
+  )
 
   return (
-    <Box
-      className={styles.infoCardContainer}
-      padding={[2, 2, 3, 3]}
-      data-testid="infoCard"
-    >
-      {defendants && (
-        <>
-          <Text variant="h4">
-            {capitalize(
-              formatMessage(core.defendant, {
-                suffix: defendants.length > 1 ? 'ar' : 'i',
-              }),
-            )}
-          </Text>
-          <Box marginBottom={[2, 2, 3, 3]}>
-            {defendants.map((defendant, index) => (
-              <Text key={index}>
-                <span className={styles.infoCardDefendant}>
-                  <Text
-                    as="span"
-                    fontWeight="semiBold"
-                  >{`${defendant.name}, `}</Text>
-                  <Text as="span" fontWeight="semiBold">
-                    {defendant.nationalId
-                      ? `${formatDOB(
-                          defendant.nationalId,
-                          defendant.noNationalId,
-                        )}, `
-                      : ''}
-                  </Text>
-                  <Text as="span">
-                    {defendant.citizenship && ` (${defendant.citizenship}), `}
-                  </Text>
-                  {defendant.address && (
-                    <Text as="span">{`${defendant.address}`}</Text>
-                  )}
-                </span>
-              </Text>
-            ))}
-          </Box>
-        </>
-      )}
-      <Box
-        className={styles.infoCardTitleContainer}
-        marginBottom={[2, 2, 3, 3]}
-        paddingBottom={[2, 2, 3, 3]}
-      >
-        <Text variant="h4">
-          {sessionArrangement === SessionArrangements.ALL_PRESENT_SPOKESPERSON
-            ? 'Talsmaður'
-            : 'Verjandi'}
-        </Text>
-        {defender?.name ? (
+    <>
+      <Text variant="h4">
+        {defenders[0].sessionArrangement ===
+        SessionArrangements.AllPresentSpokesperson
+          ? 'Talsmaður'
+          : `Verj${uniqueDefenders.length > 1 ? 'endur' : 'andi'}`}
+      </Text>
+      {uniqueDefenders.map((defender) =>
+        defender?.name ? (
           <Box display="flex">
             <Text>
               {`${defender.name}${defender.email ? `, ${defender.email}` : ''}${
@@ -90,27 +51,69 @@ const InfoCard: React.FC<Props> = (props) => {
           </Box>
         ) : (
           <Text>Hefur ekki verið skráður</Text>
+        ),
+      )}
+    </>
+  )
+}
+
+const InfoCard: React.FC<Props> = (props) => {
+  const { data, defendants, defenders } = props
+
+  return (
+    <Box
+      className={styles.infoCardContainer}
+      padding={[2, 2, 3, 3]}
+      data-testid="infoCard"
+    >
+      <Box
+        className={styles.infoCardTitleContainer}
+        marginBottom={[2, 2, 3, 3]}
+        paddingBottom={[2, 2, 3, 3]}
+      >
+        {defendants && (
+          <>
+            <Text variant="h4">{defendants.title}</Text>
+            <Box marginBottom={defenders ? [2, 2, 3, 3] : 0}>
+              {defendants.items.map((defendant) => (
+                <Text key={defendant.id}>
+                  <span className={styles.infoCardDefendant}>
+                    <Text
+                      as="span"
+                      fontWeight="semiBold"
+                    >{`${defendant.name}, `}</Text>
+                    <Text as="span" fontWeight="semiBold">
+                      {defendant.nationalId
+                        ? `${formatDOB(
+                            defendant.nationalId,
+                            defendant.noNationalId,
+                          )}, `
+                        : ''}
+                    </Text>
+                    <Text as="span">
+                      {defendant.citizenship && ` (${defendant.citizenship}), `}
+                    </Text>
+                    {defendant.address && (
+                      <Text as="span">{`${defendant.address}`}</Text>
+                    )}
+                  </span>
+                </Text>
+              ))}
+            </Box>
+          </>
         )}
+        {defenders && <UniqueDefenders defenders={defenders} />}
       </Box>
       <Box className={styles.infoCardDataContainer}>
         {data.map((dataItem, index) => {
-          const isLastItem = index === data.length - 1
-          const isLastTwoItems = isLastItem || index === data.length - 2
-
           return (
-            <Box
-              data-testid={`infoCardDataContainer${index}`}
-              className={styles.infoCardData}
-              marginBottom={[
-                isLastItem ? 0 : 2,
-                isLastItem ? 0 : 2,
-                isLastTwoItems ? 0 : 3,
-                isLastTwoItems ? 0 : 3,
-              ]}
-              key={index}
-            >
+            <Box data-testid={`infoCardDataContainer${index}`} key={index}>
               <Text variant="h4">{dataItem.title}</Text>
-              <Text>{dataItem.value}</Text>
+              {typeof dataItem.value === 'string' ? (
+                <Text>{dataItem.value}</Text>
+              ) : (
+                dataItem.value
+              )}
             </Box>
           )
         })}

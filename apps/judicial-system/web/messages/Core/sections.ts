@@ -7,6 +7,11 @@ export const sections = {
       '{caseType, select, CUSTODY {Gæsluvarðhald} TRAVEL_BAN {Farbann} ADMISSION_TO_FACILITY {Vistun á viðeignadi stofnun} other {Rannsóknarheimild}}',
     description: 'Notaður sem titill á hliðarstiku í öllum ferlum',
   }),
+  indictmentTitle: defineMessage({
+    id: 'judicial.system.core:sections.indictment_title',
+    defaultMessage: 'Sakamál',
+    description: 'Notaður sem titill á hliðarstiku í sakamálum',
+  }),
   restrictionCaseProsecutorSection: defineMessages({
     caseTitle: {
       id:
@@ -96,6 +101,56 @@ export const sections = {
         'Notaður sem texti fyrir Yfirlit kröfu skref í hliðarstiku í rannsóknarheimildum hjá sækjendum',
     },
   }),
+  indictmentCaseProsecutorSection: defineMessages({
+    title: {
+      id:
+        'judicial.system.core:sections.indictment_case_prosecutor_section.title',
+      defaultMessage: 'Ákærumeðferð',
+      description: 'Notaður sem titill í hliðarstiku í ákærum hjá sækjendum',
+    },
+    policeCaseFiles: {
+      id:
+        'judicial.system.core:sections.indictment_case_prosecutor_section.police_case_files',
+      defaultMessage: 'Málsgögn',
+      description:
+        'Notaður sem texti fyrir Málsgögn skref í hliðarstiku í ákærum hjá sækjendum',
+    },
+    caseFile: {
+      id:
+        'judicial.system.core:sections.indictment_case_prosecutor_section.case_file',
+      defaultMessage: 'Skjalaskrá',
+      description:
+        'Notaður sem texti fyrir Skjalaskrá skref í hliðarstiku í ákærum hjá sækjendum',
+    },
+    processing: {
+      id:
+        'judicial.system.core:sections.indictment_case_prosecutor_section.processing',
+      defaultMessage: 'Málsmeðferð',
+      description:
+        'Notaður sem texti fyrir Málsmeðferð skref í hliðarstiku í ákærum hjá sækjendum',
+    },
+    indictment: {
+      id:
+        'judicial.system.core:sections.indictment_case_prosecutor_section.indictment',
+      defaultMessage: 'Ákæra',
+      description:
+        'Notaður sem texti fyrir Ákæra skref í hliðarstiku í ákærum hjá sækjendum',
+    },
+    caseFiles: {
+      id:
+        'judicial.system.core:sections.indictment_case_prosecutor_section.case_files',
+      defaultMessage: 'Dómskjöl',
+      description:
+        'Notaður sem texti fyrir Dómskjöl skref í hliðarstiku í ákærum hjá sækjendum',
+    },
+    overview: {
+      id:
+        'judicial.system.core:sections.indictment_case_prosecutor_section.overview',
+      defaultMessage: 'Yfirlit ákæru',
+      description:
+        'Notaður sem texti fyrir Yfirlit ákæru skref í hliðarstiku í ákærum hjá sækjendum',
+    },
+  }),
   investigationCaseCourtSection: defineMessages({
     title: {
       id:
@@ -183,6 +238,46 @@ export const sections = {
       defaultMessage: 'Yfirlit úrskurðar',
       description:
         'Notaður sem texti fyrir Yfirlit úrskurðar skref í hliðarstiku í gæslu- og farbannsmálum hjá héraðsdómum',
+    },
+  }),
+  indictmentsCourtSection: defineMessages({
+    title: {
+      id: 'judicial.system.core:sections.indictments_court_section.title',
+      defaultMessage: 'Málsmeðferð Héraðsdóms',
+      description: 'Notaður sem titill í hliðarstiku í ákærum hjá héraðsdómum',
+    },
+    overview: {
+      id: 'judicial.system.core:sections.indictments_court_section.overview',
+      defaultMessage: 'Yfirlit',
+      description:
+        'Notaður sem texti fyrir Yfirlit skref í hliðarstiku í ákærum hjá héraðsdómum',
+    },
+    receptionAndAssignment: {
+      id:
+        'judicial.system.core:sections.indictments_court_section.reception_and_assignment',
+      defaultMessage: 'Móttaka',
+      description:
+        'Notaður sem texti fyrir Móttaka skref í hliðarstiku í ákærum hjá héraðsdómum',
+    },
+    subpoena: {
+      id: 'judicial.system.core:sections.indictments_court_section.subpoena',
+      defaultMessage: 'Fyrirkall',
+      description:
+        'Notaður sem texti fyrir Fyrirkall skref í hliðarstiku í ákærum hjá héraðsdómum',
+    },
+    prosecutorAndDefender: {
+      id:
+        'judicial.system.core:sections.indictments_court_section.prosecutor_and_defender',
+      defaultMessage: 'Málflytjendur',
+      description:
+        'Notaður sem texti fyrir Málflytjendur skref í hliðarstiku í ákærum hjá héraðsdómum',
+    },
+    courtRecord: {
+      id:
+        'judicial.system.core:sections.indictments_court_section.court_record',
+      defaultMessage: 'Þingbók og dómur',
+      description:
+        'Notaður sem texti fyrir Þingbók og dómur skref í hliðarstiku í ákærum hjá héraðsdómum',
     },
   }),
   extensionSection: defineMessages({
@@ -294,14 +389,6 @@ export const sections = {
       defaultMessage: 'Niðurstaða',
       description: 'Notaður sem titill í hliðarstiku í niðurstöðum',
     },
-    // TODO: Remove rejected
-    rejected: {
-      id: 'judicial.system.core:sections.case_results.rejected',
-      defaultMessage:
-        'Kröfu {isInvestigationCase, select, yes {um rannsóknarheimild } other {}}hafnað',
-      description:
-        'Notaður sem texti í skrefum á hliðarstiku þegar kröfu er hafnað',
-    },
     rejectedV2: {
       id: 'judicial.system.core:sections.case_results.rejected_v2',
       defaultMessage:
@@ -314,6 +401,12 @@ export const sections = {
       defaultMessage: 'Krafa um rannsóknarheimild samþykkt',
       description:
         'Notaður sem texti í skrefum á hliðarstiku þegar kröfu er samþykkt',
+    },
+    indictmentClosed: {
+      id: 'judicial.system.core:sections.case_results.indictment_closed',
+      defaultMessage: 'Máli lokið',
+      description:
+        'Notaður sem texti í skrefum á hliðarstiku þegar máli er lokið',
     },
   }),
 }

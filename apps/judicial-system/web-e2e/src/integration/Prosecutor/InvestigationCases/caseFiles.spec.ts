@@ -1,27 +1,22 @@
-import { Case } from '@island.is/judicial-system/types'
-import { IC_CASE_FILES_ROUTE } from '@island.is/judicial-system/consts'
+import { Case, CaseType } from '@island.is/judicial-system/types'
+import { INVESTIGATION_CASE_CASE_FILES_ROUTE } from '@island.is/judicial-system/consts'
 
-import {
-  makeRestrictionCase,
-  makeCourt,
-  intercept,
-  makeCaseFile,
-} from '../../../utils'
+import { makeCourt, intercept, makeCaseFile, mockCase } from '../../../utils'
 
-describe(`${IC_CASE_FILES_ROUTE}/:id`, () => {
+describe(`${INVESTIGATION_CASE_CASE_FILES_ROUTE}/:id`, () => {
   beforeEach(() => {
     const file1 = makeCaseFile('file1', 'file1')
     const file2 = makeCaseFile('file2', 'file2')
-    const caseData = makeRestrictionCase()
+    const caseData = mockCase(CaseType.CUSTODY)
     const caseDataAddition: Case = {
       ...caseData,
       court: makeCourt(),
-      parentCase: { ...makeRestrictionCase(), caseFiles: [file1, file2] },
+      parentCase: { ...mockCase(CaseType.CUSTODY), caseFiles: [file1, file2] },
     }
 
     cy.stubAPIResponses()
     intercept(caseDataAddition)
-    cy.visit(`${IC_CASE_FILES_ROUTE}/test_id`)
+    cy.visit(`${INVESTIGATION_CASE_CASE_FILES_ROUTE}/test_id`)
   })
 
   it('should upload files to s3', () => {

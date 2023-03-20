@@ -3,12 +3,18 @@ import differenceInMonths from 'date-fns/differenceInMonths'
 import differenceInDays from 'date-fns/differenceInDays'
 import differenceInYears from 'date-fns/differenceInYears'
 import isAfter from 'date-fns/isAfter'
+import { Locale } from '@island.is/shared/types'
 
 import { dateFormat } from '@island.is/shared/constants'
 
 export const toDate = (seconds: string) => {
   const t = new Date(+seconds)
   return format(t, dateFormat.is)
+}
+
+export const formatDate = (date: Date, locale?: Locale) => {
+  const t = new Date(date)
+  return format(t, dateFormat[locale || 'is'])
 }
 
 export const getExpiresIn = (currentDate: Date, date: Date) => {

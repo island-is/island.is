@@ -1,4 +1,4 @@
-import React, { useContext, ReactElement, useState, FC } from 'react'
+import { useContext, ReactElement, useState, FC } from 'react'
 import { useRouter } from 'next/router'
 import { useApolloClient } from '@apollo/client/react'
 import {
@@ -19,11 +19,13 @@ import {
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver, LinkType } from '@island.is/web/hooks/useLinkResolver'
+import { LayoutProps } from '@island.is/web/layouts/main'
 
 type LanguageTogglerProps = {
   dialogId?: string
   hideWhenMobile?: boolean
   buttonColorScheme?: ButtonTypes['colorScheme']
+  queryParams?: LayoutProps['languageToggleQueryParams']
 }
 
 export const LanguageToggler = ({
@@ -31,16 +33,14 @@ export const LanguageToggler = ({
   buttonColorScheme = 'default',
   dialogId = 'confirm-language-switch-dialog' +
     (!hideWhenMobile ? '-mobile' : ''),
+  queryParams,
 }: LanguageTogglerProps) => {
   const client = useApolloClient()
   const Router = useRouter()
   const [showDialog, setShowDialog] = useState<boolean>(false)
-  const {
-    pageContentfulId,
-    subpageContentfulId,
-    resolveLinkTypeLocally,
-    globalNamespace,
-  } = useContext(GlobalContext)
+  const { contentfulIds, resolveLinkTypeLocally, globalNamespace } = useContext(
+    GlobalContext,
+  )
   const { activeLocale, locale, t } = useI18n()
   const gn = useNamespace(globalNamespace)
   const otherLanguage = (activeLocale === 'en' ? 'is' : 'en') as Locale
@@ -53,7 +53,7 @@ export const LanguageToggler = ({
 
     const pathWithoutQueryParams = Router.asPath.split('?')[0]
 
-    if (!pageContentfulId) {
+    if (!contentfulIds?.length) {
       const { type } = typeResolver(pathWithoutQueryParams, true)
       const pagePath = linkResolver(type, [], otherLanguage).href
 
@@ -65,7 +65,7 @@ export const LanguageToggler = ({
     }
 
     // Create queries that fetch slug information from Contentful
-    const queries = [pageContentfulId, subpageContentfulId]
+    const queries = contentfulIds
       .filter(Boolean)
       .map((id) => getContentSlug(id))
 
@@ -88,7 +88,7 @@ export const LanguageToggler = ({
 
     const slugs = []
     let title: TextFieldLocales = { is: '', en: '' }
-    let type = ''
+    let type: LinkType | '' = ''
 
     for (const res of responses) {
       const slug = res.data?.getContentSlug?.slug
@@ -101,7 +101,10 @@ export const LanguageToggler = ({
     }
 
     if (resolveLinkTypeLocally) {
-      type = typeResolver(pathWithoutQueryParams).type
+      const localType = typeResolver(pathWithoutQueryParams)?.type
+      if (localType) {
+        type = localType
+      }
     }
 
     // Some content models are set up such that a slug is generated from the title
@@ -112,12 +115,18 @@ export const LanguageToggler = ({
       slugs.every((s) => s?.[otherLanguage]) &&
       title?.[otherLanguage]
     ) {
+      const queryParamsString = new URLSearchParams(
+        queryParams?.[otherLanguage],
+      ).toString()
+
       return goToOtherLanguagePage(
-        linkResolver(
-          type as LinkType,
-          slugs.map((s) => s[otherLanguage]),
-          otherLanguage,
-        ).href,
+        `${
+          linkResolver(
+            type as LinkType,
+            slugs.map((s) => s[otherLanguage]),
+            otherLanguage,
+          ).href
+        }${queryParamsString.length > 0 ? '?' : ''}${queryParamsString}`,
       )
     }
 

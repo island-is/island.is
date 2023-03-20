@@ -5,6 +5,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React from 'react'
 import { paymentPlan } from '../../lib/messages/paymentPlan'
+import { isApplicantCompany } from '../../lib/paymentPlanUtils'
 import { getPaymentPlanIds, getPaymentPlanKeyById } from '../../shared/utils'
 import { PaymentPlans } from '../../types'
 import { PaymentPlanCard } from './PaymentPlanCard/PaymentPlanCard'
@@ -34,7 +35,9 @@ export const PaymentPlanList = ({
   return (
     <Box>
       <Text marginBottom={4} marginTop={1}>
-        {formatMessage(paymentPlan.general.pageDescription)}
+        {isApplicantCompany(application)
+          ? formatMessage(paymentPlan.general.companyPageDescription)
+          : formatMessage(paymentPlan.general.pageDescription)}
       </Text>
       {paymentScheduleDebts?.map((payment, index) => {
         const isAnswered = getPaymentPlanIds(paymentPlans).some(

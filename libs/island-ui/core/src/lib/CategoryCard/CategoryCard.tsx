@@ -1,4 +1,4 @@
-import React, { ReactElement, ReactNode, forwardRef } from 'react'
+import React, { ReactElement, ReactNode, forwardRef, ElementType } from 'react'
 import cn from 'classnames'
 import { ObjectFitProperty } from 'csstype'
 import { useMeasure } from 'react-use'
@@ -25,6 +25,7 @@ type Tag = {
 export type CategoryCardProps = {
   ref?: UseMeasureRef<HTMLElement>
   width?: number
+  icon?: React.ReactElement
   heading: string
   headingAs?: TextProps['as']
   headingVariant?: TextProps['variant']
@@ -41,6 +42,8 @@ export type CategoryCardProps = {
   stackWidth?: number
   /** Hyphenate the heading */
   hyphenate?: boolean
+  to?: string
+  component?: ElementType
 }
 
 const colorSchemes = {
@@ -86,6 +89,7 @@ const Component = forwardRef<
       heading,
       headingAs = 'h3',
       headingVariant = 'h3',
+      icon,
       text,
       href = '/',
       tags = [],
@@ -98,6 +102,7 @@ const Component = forwardRef<
       hyphenate = false,
       tagOptions,
       autoStack,
+      ...rest
     },
     ref,
   ) => {
@@ -123,6 +128,7 @@ const Component = forwardRef<
         width="full"
         background="white"
         color={colorScheme}
+        {...rest}
       >
         <Box
           ref={ref}
@@ -135,15 +141,31 @@ const Component = forwardRef<
           width="full"
         >
           <Box display="flex" height="full" width="full" flexDirection="column">
-            <Text
-              as={headingAs}
-              variant={headingVariant}
-              color={textColor}
-              truncate={truncateHeading}
-              title={heading}
+            <Box
+              display="flex"
+              flexDirection="row"
+              alignItems={icon ? 'center' : 'flexEnd'}
             >
-              {hyphenate ? <Hyphen>{heading}</Hyphen> : heading}
-            </Text>
+              {icon && (
+                <Box
+                  paddingRight={1}
+                  display="flex"
+                  alignItems="center"
+                  className={styles.icon}
+                >
+                  {icon}
+                </Box>
+              )}
+              <Text
+                as={headingAs}
+                variant={headingVariant}
+                color={textColor}
+                truncate={truncateHeading}
+                title={heading}
+              >
+                {hyphenate ? <Hyphen>{heading}</Hyphen> : heading}
+              </Text>
+            </Box>
             <Text paddingTop={1}>{text}</Text>
             {hasTags && (
               <Box paddingTop={3}>

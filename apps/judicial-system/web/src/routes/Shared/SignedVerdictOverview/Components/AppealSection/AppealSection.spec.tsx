@@ -7,9 +7,9 @@ import {
   CaseAppealDecision,
   CaseOrigin,
   CaseState,
-  CaseType,
   Defendant,
 } from '@island.is/judicial-system/types'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import AppealSection from './AppealSection'
 
@@ -18,11 +18,12 @@ describe('Appeal section component', () => {
     id: 'test',
     created: new Date().toString(),
     modified: new Date().toString(),
-    type: CaseType.CUSTODY,
+    type: CaseType.Custody,
     state: CaseState.ACCEPTED,
-    policeCaseNumber: '000',
+    policeCaseNumbers: ['000'],
     defendants: [{ nationalId: '000000-0000' }] as Defendant[],
     origin: CaseOrigin.UNKNOWN,
+    defendantWaivesRightToCounsel: false,
   }
 
   test('should say when a case is no longer appealable if either the prosecutors or judges appeal decision is to postpone', async () => {
@@ -131,7 +132,7 @@ describe('Appeal section component', () => {
     )
 
     expect(
-      screen.queryByRole('button', { name: 'Kærði kærir úrskurðinn' }),
+      screen.queryByRole('button', { name: 'Varnaraðili kærir úrskurðinn' }),
     ).not.toBeInTheDocument()
   })
 

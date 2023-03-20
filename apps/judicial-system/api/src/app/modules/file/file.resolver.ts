@@ -19,11 +19,13 @@ import { CreatePresignedPostInput } from './dto/createPresignedPost.input'
 import { DeleteFileInput } from './dto/deleteFile.input'
 import { GetSignedUrlInput } from './dto/getSignedUrl.input'
 import { UploadFileToCourtInput } from './dto/uploadFileToCourt.input'
+import { UpdateFilesInput } from './dto/updateFiles.input'
 import { PresignedPost } from './models/presignedPost.model'
 import { CaseFile } from './models/file.model'
 import { DeleteFileResponse } from './models/deleteFile.response'
 import { SignedUrl } from './models/signedUrl.model'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
+import { UpdateFilesResponse } from './models/updateFiles.response'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver()
@@ -126,6 +128,25 @@ export class FileResolver {
       AuditedAction.UPLOAD_FILE_TO_COURT,
       backendApi.uploadCaseFileToCourt(caseId, id),
       id,
+    )
+  }
+
+  @Mutation(() => UpdateFilesResponse)
+  updateFiles(
+    @Args('input', { type: () => UpdateFilesInput })
+    input: UpdateFilesInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+  ): Promise<UpdateFilesResponse> {
+    const { caseId, files } = input
+
+    this.logger.debug(`Updating files of case ${caseId}`)
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.UPDATE_FILES,
+      backendApi.updateFiles(caseId, files),
+      (response) => response.caseFiles.map((f) => f.id),
     )
   }
 }

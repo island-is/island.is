@@ -12,11 +12,12 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { servicePortalOutboundLink } from '@island.is/plausible'
 import { sharedMessages } from '@island.is/shared/translations'
 
 import * as styles from './UserInfoLine.css'
+import { formatPlausiblePathToParams } from '../../utils/formatPlausiblePathToParams'
 
 export type EditLink = {
   external?: boolean
@@ -27,7 +28,7 @@ export type EditLink = {
 interface Props {
   label: MessageDescriptor | string
   content?: string | JSX.Element
-  renderContent?: () => JSX.Element
+  renderContent?: () => JSX.Element | undefined
   loading?: boolean
   warning?: boolean
   labelColumnSpan?: GridColumnProps['span']
@@ -39,6 +40,7 @@ interface Props {
   tooltip?: string
   paddingY?: ResponsiveSpace
   paddingBottom?: ResponsiveSpace
+  className?: string
 }
 
 export const UserInfoLine: FC<Props> = ({
@@ -56,11 +58,14 @@ export const UserInfoLine: FC<Props> = ({
   paddingY = 2,
   paddingBottom,
   warning,
+  className,
 }) => {
-  const trackExternalLinkClick = () => {
-    servicePortalOutboundLink()
-  }
+  const { pathname } = useLocation()
   const { formatMessage } = useLocale()
+
+  const trackExternalLinkClick = () => {
+    servicePortalOutboundLink(formatPlausiblePathToParams(pathname))
+  }
 
   return (
     <Box
@@ -68,6 +73,7 @@ export const UserInfoLine: FC<Props> = ({
       paddingY={paddingY}
       paddingBottom={paddingBottom}
       paddingRight={4}
+      className={className}
     >
       {title && (
         <Text variant="eyebrow" color="purple400" paddingBottom={titlePadding}>
@@ -115,6 +121,7 @@ export const UserInfoLine: FC<Props> = ({
               justifyContent={['flexStart', 'flexEnd']}
               alignItems="center"
               height="full"
+              printHidden
             >
               {editLink.external ? (
                 <a

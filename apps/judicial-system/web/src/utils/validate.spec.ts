@@ -42,6 +42,7 @@ describe('Validate time format', () => {
 describe('Validate national id format', () => {
   test('should be valid if all digits filled in', () => {
     // Arrange
+    // eslint-disable-next-line local-rules/disallow-kennitalas
     const nid = '999999-9999'
 
     // Act
@@ -184,7 +185,7 @@ describe('Validate phonenumber format', () => {
 
 describe('Validate court case number', () => {
   beforeAll(() => {
-    jest.useFakeTimers('modern').setSystemTime(new Date('2020-01-01'))
+    jest.useFakeTimers({ now: new Date('2020-01-01') })
   })
   afterAll(() => {
     jest.useRealTimers()
@@ -198,9 +199,9 @@ describe('Validate court case number', () => {
     ${'R-333/3333'}
     ${'R-12345/2014'}
   `(
-    'should pass when case as correct format $courtCaseNumber',
+    'should pass when case as correct format $R-case-number',
     ({ courtCaseNumber }) => {
-      const result = validate([[courtCaseNumber, ['court-case-number']]])
+      const result = validate([[courtCaseNumber, ['R-case-number']]])
       expect(result.isValid).toEqual(true)
     },
   )
@@ -217,11 +218,46 @@ describe('Validate court case number', () => {
     ${'R-1/201'}
     ${'R-1/201'}
   `(
-    'should fail if case number as wrong format $courtCaseNumber',
+    'should fail if case number as wrong format $R-case-number',
     ({ courtCaseNumber }) => {
-      const result = validate([[courtCaseNumber, ['court-case-number']]])
+      const result = validate([[courtCaseNumber, ['R-case-number']]])
       expect(result.isValid).toEqual(false)
       expect(result.errorMessage).toEqual('Dæmi: R-1234/2020')
+    },
+  )
+
+  test.each`
+    courtCaseNumber
+    ${'S-1/2019'}
+    ${'S-22/2022'}
+    ${'S-7536/1993'}
+    ${'S-333/3333'}
+    ${'S-12345/2014'}
+  `(
+    'should pass when case as correct format $S-case-number',
+    ({ courtCaseNumber }) => {
+      const result = validate([[courtCaseNumber, ['S-case-number']]])
+      expect(result.isValid).toEqual(true)
+    },
+  )
+
+  test.each`
+    courtCaseNumber
+    ${'2019'}
+    ${'s-1/2019'}
+    ${'S.1/2019'}
+    ${'S/1/2019'}
+    ${'S/1-2019'}
+    ${'S/1-2019'}
+    ${'S-1-2019'}
+    ${'S-1/201'}
+    ${'S-1/201'}
+  `(
+    'should fail if case number as wrong format $S-case-number',
+    ({ courtCaseNumber }) => {
+      const result = validate([[courtCaseNumber, ['S-case-number']]])
+      expect(result.isValid).toEqual(false)
+      expect(result.errorMessage).toEqual('Dæmi: S-1234/2020')
     },
   )
 })

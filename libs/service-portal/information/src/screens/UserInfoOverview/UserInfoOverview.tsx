@@ -1,26 +1,25 @@
 import React from 'react'
-import { useQuery } from '@apollo/client'
 
+import { useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
+import { Stack } from '@island.is/island-ui/core'
+import { useNamespaces } from '@island.is/localization'
 import {
-  AlertMessage,
-  Box,
-  Stack,
-  Text,
-  GridColumn,
-  GridRow,
-} from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { ServicePortalModuleComponent, m } from '@island.is/service-portal/core'
+  CardLoader,
+  EmptyState,
+  IntroHeader,
+  m,
+} from '@island.is/service-portal/core'
+import { useUserInfo } from '@island.is/auth/react'
+
 import { FamilyMemberCard } from '../../components/FamilyMemberCard/FamilyMemberCard'
-import { FamilyMemberCardLoader } from '../../components/FamilyMemberCard/FamilyMemberCardLoader'
+import { spmm } from '../../lib/messages'
 import { NATIONAL_REGISTRY_CHILDREN } from '../../lib/queries/getNationalChildren'
 import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
-import { spmm } from '../../lib/messages'
 
-const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
+const UserInfoOverview = () => {
   useNamespaces('sp.family')
-  const { formatMessage } = useLocale()
+  const userInfo = useUserInfo()
 
   // Current User
   const { data, loading, error, called } = useQuery<Query>(
@@ -35,32 +34,22 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
   const { nationalRegistryChildren } = childrenData || {}
 
   const spouseData = nationalRegistryUser?.spouse
+
   return (
     <>
-      <Box marginBottom={[2, 3, 5]}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
-            <Stack space={2}>
-              <Text variant="h3" as="h1">
-                {formatMessage(m.myInfo)}
-              </Text>
-              <Text as="p" variant="default">
-                {formatMessage(spmm.family.userInfoDesc)}
-              </Text>
-            </Stack>
-          </GridColumn>
-        </GridRow>
-      </Box>
+      <IntroHeader title={m.myInfo} intro={spmm.userInfoDesc} />
+
       <Stack space={2}>
-        {called && !loading && !error && !nationalRegistryUser && (
-          <AlertMessage type="info" title={formatMessage(m.noDataPresent)} />
+        {called && !loading && !error && !nationalRegistryUser ? (
+          <EmptyState description={m.noDataPresent} />
+        ) : (
+          <FamilyMemberCard
+            title={userInfo.profile.name || ''}
+            nationalId={userInfo.profile.nationalId}
+            currentUser
+          />
         )}
-        <FamilyMemberCard
-          title={userInfo.profile.name || ''}
-          nationalId={userInfo.profile.nationalId}
-          currentUser
-        />
-        {loading && <FamilyMemberCardLoader />}
+        {loading && <CardLoader />}
         {spouseData?.nationalId && (
           <FamilyMemberCard
             key={spouseData.nationalId}
@@ -70,9 +59,7 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
           />
         )}
         {childrenLoading &&
-          [...Array(2)].map((_key, index) => (
-            <FamilyMemberCardLoader key={index} />
-          ))}
+          [...Array(2)].map((_key, index) => <CardLoader key={index} />)}
         {nationalRegistryChildren?.map((familyMember) => (
           <FamilyMemberCard
             key={familyMember.nationalId}

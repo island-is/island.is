@@ -7,32 +7,32 @@ import {
   PoliceRequestAccordionItem,
   CourtRecordAccordionItem,
   PdfButton,
-  CaseInfo,
+  CourtCaseInfo,
   PageLayout,
   FormContentContainer,
   RulingAccordionItem,
   BlueBox,
+  FormContext,
+  useRequestRulingSignature,
+  SigningModal,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CourtSubsections,
+  RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
   CaseDecision,
+  CaseTransition,
+  completedCaseStates,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import SigningModal, {
-  useRequestRulingSignature,
-} from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import {
-  core,
-  rcConfirmation as m,
-  titles,
-} from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import * as constants from '@island.is/judicial-system/consts'
+
+import { confirmation as strings } from './Confirmation.strings'
 
 export const Confirmation: React.FC = () => {
   const {
@@ -46,11 +46,34 @@ export const Confirmation: React.FC = () => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
 
+  const { transitionCase } = useCase()
   const {
     requestRulingSignature,
     requestRulingSignatureResponse,
     isRequestingRulingSignature,
   } = useRequestRulingSignature(workingCase.id, () => setModalVisible(true))
+
+  const handleNextButtonClick = async () => {
+    if (!workingCase) {
+      return
+    }
+
+    const shouldSign =
+      completedCaseStates.includes(workingCase.state) ||
+      (await transitionCase(
+        workingCase.id,
+        workingCase.decision === CaseDecision.REJECTING
+          ? CaseTransition.REJECT
+          : workingCase.decision === CaseDecision.DISMISSING
+          ? CaseTransition.DISMISS
+          : CaseTransition.ACCEPT,
+        setWorkingCase,
+      ))
+
+    if (shouldSign) {
+      requestRulingSignature()
+    }
+  }
 
   return (
     <PageLayout
@@ -58,7 +81,7 @@ export const Confirmation: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.CONFIRMATION}
+      activeSubSection={RestrictionCaseCourtSubsections.CONFIRMATION}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -68,12 +91,10 @@ export const Confirmation: React.FC = () => {
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            Yfirlit úrskurðar
+            {formatMessage(strings.title)}
           </Text>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <CaseInfo workingCase={workingCase} userRole={user?.role} />
-        </Box>
+        <CourtCaseInfo workingCase={workingCase} />
         <Box marginBottom={9}>
           <Accordion>
             <PoliceRequestAccordionItem workingCase={workingCase} />
@@ -85,7 +106,7 @@ export const Confirmation: React.FC = () => {
           <BlueBox>
             <Box marginBottom={2} textAlign="center">
               <Text as="h3" variant="h3">
-                {formatMessage(m.sections.conclusion.title)}
+                {formatMessage(strings.conclusionTitle)}
               </Text>
             </Box>
             <Box marginBottom={3}>
@@ -115,18 +136,18 @@ export const Confirmation: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.COURT_RECORD_ROUTE}/${workingCase.id}`}
-          nextUrl={constants.CASE_LIST_ROUTE}
+          previousUrl={`${constants.RESTRICTION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`}
+          nextUrl={constants.CASES_ROUTE}
           nextButtonText={formatMessage(
             workingCase.decision === CaseDecision.ACCEPTING
-              ? m.footer.accepting.continueButtonText
+              ? strings.continueButtonTextAccepting
               : workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY
-              ? m.footer.acceptingPartially.continueButtonText
+              ? strings.continueButtonTextAcceptingPartially
               : workingCase.decision === CaseDecision.REJECTING
-              ? m.footer.rejecting.continueButtonText
+              ? strings.continueButtonTextRejecting
               : workingCase.decision === CaseDecision.DISMISSING
-              ? m.footer.dismissing.continueButtonText
-              : m.footer.acceptingAlternativeTravelBan.continueButtonText,
+              ? strings.continueButtonTextDismissing
+              : strings.continueButtonTextAcceptingAlternativeTravelBan,
           )}
           nextButtonIcon={
             isAcceptingCaseDecision(workingCase.decision) ||
@@ -142,7 +163,7 @@ export const Confirmation: React.FC = () => {
               ? 'default'
               : 'destructive'
           }
-          onNextButtonClick={requestRulingSignature}
+          onNextButtonClick={handleNextButtonClick}
           nextIsLoading={isRequestingRulingSignature}
           hideNextButton={workingCase.judge?.id !== user?.id}
           infoBoxText={
@@ -155,7 +176,7 @@ export const Confirmation: React.FC = () => {
       {modalVisible && (
         <SigningModal
           workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
+          requestRulingSignature={requestRulingSignature}
           requestRulingSignatureResponse={requestRulingSignatureResponse}
           onClose={() => setModalVisible(false)}
         />

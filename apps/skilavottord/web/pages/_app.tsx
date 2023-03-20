@@ -8,7 +8,6 @@ import getConfig from 'next/config'
 import { Provider } from 'next-auth/client'
 
 import { ApolloProvider } from '@apollo/client'
-import * as Sentry from '@sentry/node'
 import get from 'lodash/get'
 
 import { client as initApollo } from '../graphql'
@@ -18,7 +17,6 @@ import { userMonitoring } from '@island.is/user-monitoring'
 
 const {
   publicRuntimeConfig: {
-    SENTRY_DSN,
     ddRumApplicationId,
     ddRumClientToken,
     appVersion,
@@ -35,10 +33,6 @@ if (ddRumApplicationId && ddRumClientToken && typeof window !== 'undefined') {
     version: appVersion,
   })
 }
-
-Sentry.init({
-  dsn: SENTRY_DSN,
-})
 
 class Skilavottord extends App<AppProps> {
   static async getInitialProps(appContext: any) {
@@ -67,26 +61,6 @@ class Skilavottord extends App<AppProps> {
 
   render() {
     const { Component, pageProps, router } = this.props
-
-    Sentry.configureScope((scope) => {
-      scope.setExtra('lang', this.getLanguage(router.pathname))
-      scope.setContext('router', {
-        route: router.route,
-        pathname: router.pathname,
-        query: router.query,
-        asPath: router.asPath,
-      })
-    })
-
-    Sentry.addBreadcrumb({
-      category: 'pages/_app',
-      message: `Rendering app for Component "${get(
-        Component,
-        'name',
-        'unknown',
-      )}" (${process.browser ? 'browser' : 'server'})`,
-      level: Sentry.Severity.Debug,
-    })
 
     return (
       <Provider

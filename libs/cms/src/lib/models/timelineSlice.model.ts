@@ -16,6 +16,9 @@ export class TimelineSlice {
 
   @Field(() => [TimelineEvent])
   events!: TimelineEvent[]
+
+  @Field(() => Boolean, { nullable: true })
+  hasBorderAbove?: boolean
 }
 
 export const mapTimelineSlice = ({
@@ -27,4 +30,5 @@ export const mapTimelineSlice = ({
   title: fields.title ?? '',
   intro: fields.intro ?? '',
   events: (fields.events ?? []).map(mapTimelineEvent),
+  hasBorderAbove: fields.hasBorderAbove ?? true,
 })

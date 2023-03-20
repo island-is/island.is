@@ -14,6 +14,7 @@ import {
   Services,
 } from '../../lib/constants'
 import { m } from '../../lib/messages'
+import { format as formatKennitala } from 'kennitala'
 
 export const childsOverview = buildMultiField({
   id: 'overviewChildsInfo',
@@ -41,10 +42,13 @@ export const childsOverview = buildMultiField({
     buildKeyValueField({
       label: m.nationalId,
       width: 'half',
-      value: (application: Application) =>
-        (application.answers.childsPersonalInfo as {
+      value: (application: Application) => {
+        const nationalId = (application.answers.childsPersonalInfo as {
           nationalId?: string
-        })?.nationalId,
+        })?.nationalId
+
+        return formatKennitala(nationalId as string)
+      },
     }),
     buildDescriptionField({
       id: 'overviewChild.space1',
@@ -55,7 +59,7 @@ export const childsOverview = buildMultiField({
     buildDividerField({}),
     buildDescriptionField({
       id: 'overviewChild.infoTitle2',
-      title: 'Forráðamaður 1',
+      title: m.parent1,
       titleVariant: 'h3',
       description: '',
       space: 'gutter',
@@ -115,7 +119,7 @@ export const childsOverview = buildMultiField({
     buildDividerField({}),
     buildDescriptionField({
       id: 'overviewChild.infoTitle3',
-      title: 'Forráðamaður 2',
+      title: m.parent2,
       titleVariant: 'h3',
       description: '',
       space: 'gutter',
@@ -133,11 +137,14 @@ export const childsOverview = buildMultiField({
     buildKeyValueField({
       label: m.nationalId,
       width: 'half',
-      value: (application: Application) =>
-        ((application.answers.childsPersonalInfo as ChildsPersonalInfo)
-          .guardian2 as {
+      value: (application: Application) => {
+        const nationaId = ((application.answers
+          .childsPersonalInfo as ChildsPersonalInfo).guardian2 as {
           nationalId?: string
-        })?.nationalId,
+        })?.nationalId
+
+        return formatKennitala(nationaId as string)
+      },
     }),
     buildDescriptionField({
       id: 'overviewChild.space4',

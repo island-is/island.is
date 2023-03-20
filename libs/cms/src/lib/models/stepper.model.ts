@@ -23,7 +23,7 @@ export const mapStepper = ({
   sys,
   fields,
 }: IStepper): SystemMetadata<Stepper> => ({
-  typename: 'AccordionSlice',
+  typename: 'Stepper',
   id: sys.id,
   title: fields.title ?? '',
   steps: (fields.steps ?? []).map(mapStep),

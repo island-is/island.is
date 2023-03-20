@@ -36,4 +36,19 @@ export class Defendant implements TDefendant {
 
   @Field({ nullable: true })
   readonly citizenship?: string
+
+  @Field({ nullable: true })
+  readonly defenderName?: string
+
+  @Field({ nullable: true })
+  readonly defenderNationalId?: string
+
+  @Field({ nullable: true })
+  readonly defenderEmail?: string
+
+  @Field({ nullable: true })
+  readonly defenderPhoneNumber?: string
+
+  @Field(() => Boolean)
+  readonly defendantWaivesRightToCounsel!: boolean
 }

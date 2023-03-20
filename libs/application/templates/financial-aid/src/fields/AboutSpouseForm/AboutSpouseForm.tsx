@@ -13,7 +13,7 @@ import withLogo from '../Logo/Logo'
 
 const AboutSpouseForm = ({ application }: FAFieldBaseProps) => {
   const { lang } = useLocale()
-  const { nationalRegistry } = application.externalData
+  const { nationalRegistry, municipality } = application.externalData
 
   return (
     <>
@@ -21,14 +21,14 @@ const AboutSpouseForm = ({ application }: FAFieldBaseProps) => {
         textProps={{ variant: 'h3', fontWeight: 'light', marginTop: 2 }}
         text={aboutSpouseForm.general.description}
         format={{
-          spouseName: nationalRegistry?.data?.applicant?.fullName,
+          spouseName: nationalRegistry.data.fullName,
           currentMonth: currentMonth(lang),
           nextMonth: getNextPeriod(lang).month,
         }}
       />
       <Box marginTop={5}>
         <PrivacyPolicyAccordion
-          municipalityPageUrl={nationalRegistry?.data?.municipality?.homepage}
+          municipalityPageUrl={municipality.data?.homepage}
         />
       </Box>
     </>
