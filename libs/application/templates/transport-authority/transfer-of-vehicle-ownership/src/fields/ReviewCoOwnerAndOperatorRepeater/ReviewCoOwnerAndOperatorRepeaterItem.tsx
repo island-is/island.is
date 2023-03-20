@@ -48,7 +48,7 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
   )
   const [name, setName] = useState<string>(repeaterField.name || '')
 
-  const { setValue, register } = useFormContext()
+  const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
   const fieldIndex = `${id}[${index}]`
   const userMessageId = repeaterField.type ?? 'coOwner'
@@ -76,6 +76,8 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
       setValue(nameField, name)
       setValue(emailField, email)
       setValue(phoneField, phone)
+      setValue(wasRemovedField, repeaterField.wasRemoved)
+      setValue(typeField, userMessageId)
     }
   }, [email, phone, nationalId, name, userMessageId])
 
@@ -147,16 +149,6 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
           />
         </GridColumn>
       </GridRow>
-      <input
-        type="hidden"
-        value={userMessageId}
-        {...register(typeField, { required: true })}
-      />
-      <input
-        type="hidden"
-        value={repeaterField.wasRemoved}
-        {...register(wasRemovedField, { required: true })}
-      />
     </Box>
   )
 }
