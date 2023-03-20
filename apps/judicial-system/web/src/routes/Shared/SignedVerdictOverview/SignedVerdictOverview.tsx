@@ -4,6 +4,7 @@ import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 import { ValueType } from 'react-select/src/types'
 import { IntlShape, useIntl } from 'react-intl'
+import formatISO from 'date-fns/formatISO'
 
 import {
   CaseDecision,
@@ -12,6 +13,7 @@ import {
   isRestrictionCase,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
+  CaseAppealDecision,
   isAcceptingCaseDecision,
   isCourtRole,
   isProsecutionRole,
@@ -77,12 +79,13 @@ import {
   UserRole,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
+import AppealSection from './Components/AppealSection/AppealSection'
 import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
 import { signedVerdictOverview as strings } from './SignedVerdictOverview.strings'
+import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 interface ModalControls {
   open: boolean
@@ -354,6 +357,58 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
+  const setAccusedAppealDate = (date?: Date) => {
+    if (workingCase && date) {
+      setWorkingCase({
+        ...workingCase,
+        accusedPostponedAppealDate: formatISO(date),
+      })
+
+      updateCase(workingCase.id, {
+        accusedPostponedAppealDate: formatISO(date),
+      })
+    }
+  }
+
+  const setProsecutorAppealDate = (date?: Date) => {
+    if (workingCase && date) {
+      setWorkingCase({
+        ...workingCase,
+        prosecutorPostponedAppealDate: formatISO(date),
+      })
+
+      updateCase(workingCase.id, {
+        prosecutorPostponedAppealDate: formatISO(date),
+      })
+    }
+  }
+
+  const withdrawAccusedAppealDate = () => {
+    if (workingCase) {
+      setWorkingCase({
+        ...workingCase,
+        accusedPostponedAppealDate: undefined,
+      })
+
+      updateCase(workingCase.id, {
+        accusedPostponedAppealDate: (null as unknown) as string,
+      })
+    }
+  }
+
+  const withdrawProsecutorAppealDate = () => {
+    if (workingCase) {
+      setWorkingCase({
+        ...workingCase,
+        prosecutorPostponedAppealDate: undefined,
+      })
+
+      updateCase(workingCase.id, {
+        prosecutorPostponedAppealDate: (null as unknown) as string,
+      })
+    }
+  }
+
   const shareCaseWithAnotherInstitution = (
     institution?: ValueType<ReactSelectOption>,
   ) => {
@@ -607,6 +662,25 @@ export const SignedVerdictOverview: React.FC = () => {
               ]}
             />
           </Box>
+          {(workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
+            workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL ||
+            workingCase.prosecutorAppealDecision ===
+              CaseAppealDecision.POSTPONE ||
+            workingCase.prosecutorAppealDecision ===
+              CaseAppealDecision.APPEAL) &&
+            user?.role &&
+            isCourtRole(user.role) &&
+            user?.institution?.type !== InstitutionType.HighCourt && (
+              <Box marginBottom={7}>
+                <AppealSection
+                  workingCase={workingCase}
+                  setAccusedAppealDate={setAccusedAppealDate}
+                  setProsecutorAppealDate={setProsecutorAppealDate}
+                  withdrawAccusedAppealDate={withdrawAccusedAppealDate}
+                  withdrawProsecutorAppealDate={withdrawProsecutorAppealDate}
+                />
+              </Box>
+            )}
           {user?.role !== UserRole.Staff && (
             <>
               <Box marginBottom={5} data-testid="accordionItems">
