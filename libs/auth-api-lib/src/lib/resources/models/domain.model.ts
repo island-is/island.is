@@ -74,7 +74,7 @@ export class Domain extends Model {
   readonly modified?: Date
 
   @HasMany(() => ApiScopeGroup)
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: () => [ApiScopeGroup] })
   groups?: ApiScopeGroup[]
 
   @HasMany(() => ApiScope)
@@ -82,6 +82,6 @@ export class Domain extends Model {
   scopes?: ApiScope[]
 
   @HasMany(() => Client)
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: () => [Client] })
   clients?: Client[]
 }
