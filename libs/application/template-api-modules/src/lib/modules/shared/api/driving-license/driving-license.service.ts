@@ -73,8 +73,10 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
   async drivingSchoolForEmployee({
     auth,
   }: TemplateApiModuleActionProps): Promise<DrivingLicenseBookSchool> {
-    const school = await this.hasTeachingRights(auth.nationalId)
-    if (school) {
+    const isSchoolStaff = await this.drivingLicenseBookService.isSchoolStaff(
+      auth,
+    )
+    if (isSchoolStaff) {
       return this.drivingLicenseBookService.getSchoolForSchoolStaff(auth)
     } else {
       throw new TemplateApiError(
