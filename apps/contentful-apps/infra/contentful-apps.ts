@@ -8,9 +8,9 @@ export const serviceSetup = (): ServiceBuilder<'contentful-apps'> =>
     .ingress({
       primary: {
         host: {
-          dev: 'contentful-apps.dev01.devland.is',
-          staging: 'contentful-apps.staging01.devland.is',
-          prod: 'contentful-apps.island.is',
+          dev: 'contentful-apps',
+          staging: 'contentful-apps',
+          prod: 'contentful-apps',
         },
         extraAnnotations: {
           dev: {
