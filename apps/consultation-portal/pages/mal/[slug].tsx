@@ -1,18 +1,10 @@
-import {
-  ConsultationPortalCaseItemResult,
-  QueryConsultationPortalCaseByIdArgs,
-} from '@island.is/api/schema'
+import { QueryConsultationPortalCaseByIdArgs } from '@island.is/api/schema'
 import initApollo from '../../graphql/client'
 import CaseScreen from '../../screens/Case/Case'
-import {
-  ConsultationPortalCaseByIdQuery,
-  ConsultationPortalCaseByIdDocument,
-  ConsultationPortalCaseByIdQueryVariables,
-} from '../../screens/Case/getCase.graphql.generated'
+import { ConsultationPortalCaseByIdQuery } from '../../screens/Case/getCase.graphql.generated'
 import { GET_CASE_BY_ID } from '../../screens/Case/getCase.graphql'
 import { Advice, Case } from '../../types/viewModels'
 import {
-  ConsultationPortalAdviceByCaseIdDocument,
   ConsultationPortalAdviceByCaseIdQuery,
   ConsultationPortalAdviceByCaseIdQueryVariables,
 } from '../../screens/Case/getAdvices.graphql.generated'

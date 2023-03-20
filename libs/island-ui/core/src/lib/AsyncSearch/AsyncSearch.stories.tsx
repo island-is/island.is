@@ -4,7 +4,7 @@ import { withFigma } from '../../utils/withFigma'
 import { Stack } from '../Stack/Stack'
 import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
-import { AsyncSearch } from './AsyncSearch'
+import { AsyncSearch, AsyncSearchOption } from './AsyncSearch'
 
 export default {
   title: 'Components/AsyncSearch',
@@ -12,10 +12,10 @@ export default {
   parameters: withFigma('AsyncSearch'),
 }
 
-const items = [
+const items: AsyncSearchOption[] = [
   { label: 'Apple', value: 'apple' },
   { label: 'Pear', value: 'pear' },
-  { label: 'Orange', value: 'orange' },
+  { label: 'Orange', value: 'orange', disabled: true },
   { label: 'Grape', value: 'grape' },
   { label: 'Banana', value: 'banana' },
   { label: 'Fæðingarorlof', value: 'faedingarorlof' },
