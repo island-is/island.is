@@ -1,7 +1,7 @@
 import { FC, useEffect } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
 import {
   Box,
   GridColumn,
@@ -12,9 +12,21 @@ import {
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
 import { EstateRegistrant } from '@island.is/clients/syslumenn'
-import { Answers, EstateMember } from '../../types'
+import { Answers, RelationEnum } from '../../types'
 import { AdditionalEstateMember } from './AdditionalEstateMember'
 import { getValueViaPath } from '@island.is/application/core'
+
+export interface EstateMemberWithAdvocate {
+  name: string
+  nationalId: string
+  relation: RelationEnum | string
+  initial?: boolean
+  dateOfBirth?: string
+  custodian?: string
+  foreignCitizenship?: ('yes' | 'no')[]
+  dummy: boolean
+  enabled?: boolean
+}
 
 export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
   application,
@@ -23,10 +35,9 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
 }) => {
   const { id } = field
   const { formatMessage } = useLocale()
-  const { fields, append, remove } = useFieldArray<EstateMember>({
+  const { fields, append, remove } = useFieldArray({
     name: id,
   })
-  const { setValue } = useFormContext()
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
     relationOptions: string[]
@@ -56,32 +67,34 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
   return (
     <Box marginTop={2} marginBottom={5}>
       <GridRow>
-        {fields.reduce((acc, member, index) => {
-          if (member.nationalId === application.applicant) {
-            const relation = getValueViaPath<string>(
-              application.answers,
-              'applicantRelation',
-            )
-            if (relation && relation !== member.relation) {
-              member.relation = relation
+        {fields.reduce(
+          (acc, member: GenericFormField<EstateMemberWithAdvocate>, index) => {
+            if (member.nationalId === application.applicant) {
+              const relation = getValueViaPath<string>(
+                application.answers,
+                'applicantRelation',
+              )
+              if (relation && relation !== member.relation) {
+                member.relation = relation
+              }
             }
-          }
-          if (!member.initial) {
-            return acc
-          }
-          return [
-            ...acc,
-            <GridColumn
-              key={index}
-              span={['12/12', '12/12', '6/12']}
-              paddingBottom={3}
-            >
-              <ProfileCard
-                title={member.name}
-                disabled={!member.enabled}
-                description={[
-                  formatNationalId(member.nationalId || ''),
-                  member.relation || '',
+            if (!member.initial) {
+              return acc
+            }
+            return [
+              ...acc,
+              <GridColumn
+                key={index}
+                span={['12/12', '12/12', '6/12']}
+                paddingBottom={3}
+              >
+                <ProfileCard
+                  title={member.name}
+                  disabled={!member.enabled}
+                  description={[
+                    formatNationalId(member.nationalId || ''),
+                    member.relation || '',
+                    /* TODO: add back when react-hook-forms update is in
                   <Box marginTop={1} as="span">
                     <Button
                       variant="text"
@@ -96,26 +109,30 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                         ? formatMessage(m.inheritanceDisableMember)
                         : formatMessage(m.inheritanceEnableMember)}
                     </Button>
-                  </Box>,
-                ]}
-              />
-            </GridColumn>,
-          ]
-        }, [] as JSX.Element[])}
+                    </Box>,*/
+                  ]}
+                />
+              </GridColumn>,
+            ]
+          },
+          [] as JSX.Element[],
+        )}
       </GridRow>
-      {fields.map((member, index) => (
-        <Box key={member.id} hidden={member.initial || member?.dummy}>
-          <AdditionalEstateMember
-            application={application}
-            field={member}
-            fieldName={id}
-            index={index}
-            relationOptions={relations}
-            remove={remove}
-            error={error && error[index] ? error[index] : null}
-          />
-        </Box>
-      ))}
+      {fields.map(
+        (member: GenericFormField<EstateMemberWithAdvocate>, index) => (
+          <Box key={member.id} hidden={member.initial || member?.dummy}>
+            <AdditionalEstateMember
+              application={application}
+              field={member}
+              fieldName={id}
+              index={index}
+              relationOptions={relations}
+              remove={remove}
+              error={error && error[index] ? error[index] : null}
+            />
+          </Box>
+        ),
+      )}
       <Box marginTop={1}>
         <Button
           variant="text"

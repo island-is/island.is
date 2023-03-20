@@ -1,8 +1,10 @@
 import { delegationsModule } from '@island.is/portals/shared-modules/delegations'
 import { airDiscountSchemeAdminModule } from '@island.is/portals/admin/air-discount-scheme'
+import { regulationAdminModule } from '@island.is/portals/admin/regulations-admin'
 import { PortalModule } from '@island.is/portals/core'
 import { icelandicNamesRegistryModule } from '@island.is/portals/admin/icelandic-names-registry'
 import { documentProviderModule } from '@island.is/portals/admin/document-provider'
+import { idsAdminModule } from '@island.is/portals/admin/ids-admin'
 
 /**
  * NOTE:
@@ -14,6 +16,8 @@ import { documentProviderModule } from '@island.is/portals/admin/document-provid
 export const modules: PortalModule[] = [
   delegationsModule,
   airDiscountSchemeAdminModule,
+  regulationAdminModule,
   icelandicNamesRegistryModule,
   documentProviderModule,
+  idsAdminModule,
 ]

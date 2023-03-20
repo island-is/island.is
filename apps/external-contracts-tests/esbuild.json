@@ -21,6 +21,7 @@
     "http-errors",
     "graphql",
     "winston",
+    "util-deprecate",
     "pg",
     "source-map-resolve",
     "atob",

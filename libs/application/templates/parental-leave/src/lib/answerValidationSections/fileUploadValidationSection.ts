@@ -1,7 +1,11 @@
 import { Answer, Application } from '@island.is/application/types'
 import {
+  ADOPTION,
   AnswerValidationConstants,
+  NO,
+  PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
+  PERMANENT_FOSTER_CARE,
   SINGLE,
   States,
   UnEmployedBenefitTypes,
@@ -21,7 +25,6 @@ export const fileUploadValidationSection = (
   application: Application,
 ) => {
   const obj = newAnswer as Record<string, Answer>
-
   const {
     isSelfEmployed,
     applicationType,
@@ -29,7 +32,12 @@ export const fileUploadValidationSection = (
     unemploymentBenefits,
     otherParent,
     additionalDocuments,
+    noChildrenFoundTypeOfApplication,
+    isResidenceGrant,
+    employerLastSixMonths,
+    employers,
   } = getApplicationAnswers(application.answers)
+
   if (isSelfEmployed === YES && obj.selfEmployedFile) {
     if (isEmpty((obj as { selfEmployedFile: unknown[] }).selfEmployedFile))
       return buildError(
@@ -46,6 +54,31 @@ export const fileUploadValidationSection = (
       return buildError(
         errorMessages.requiredAttachment,
         'studentFile',
+        FILEUPLOAD,
+      )
+    return undefined
+  }
+
+  const isNotStillEmployed = employers?.some(
+    (employer) => employer.stillEmployed === NO,
+  )
+
+  if (
+    (applicationType === PARENTAL_GRANT ||
+      applicationType === PARENTAL_GRANT_STUDENTS) &&
+    employerLastSixMonths === YES &&
+    isNotStillEmployed &&
+    obj.employmentTerminationCertificateFile
+  ) {
+    if (
+      isEmpty(
+        (obj as { employmentTerminationCertificateFile: unknown[] })
+          .employmentTerminationCertificateFile,
+      )
+    )
+      return buildError(
+        errorMessages.requiredAttachment,
+        'employmentTerminationCertificateFile',
         FILEUPLOAD,
       )
     return undefined
@@ -98,6 +131,31 @@ export const fileUploadValidationSection = (
     return undefined
   }
 
+  if (
+    noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE &&
+    obj.permanentFosterCare
+  ) {
+    if (
+      isEmpty((obj as { permanentFosterCare: unknown[] }).permanentFosterCare)
+    )
+      return buildError(
+        errorMessages.requiredAttachment,
+        'permanentFosterCare',
+        FILEUPLOAD,
+      )
+    return undefined
+  }
+
+  if (noChildrenFoundTypeOfApplication === ADOPTION && obj.adoption) {
+    if (isEmpty((obj as { adoption: unknown[] }).adoption))
+      return buildError(
+        errorMessages.requiredAttachment,
+        'adoption',
+        FILEUPLOAD,
+      )
+    return undefined
+  }
+
   if (application.state === States.ADDITIONAL_DOCUMENTS_REQUIRED) {
     if (
       additionalDocuments ||
@@ -108,6 +166,17 @@ export const fileUploadValidationSection = (
         message: errorMessages.requiredAttachment,
       }
     }
+
+    return undefined
+  }
+
+  if (isResidenceGrant === YES && obj.residenceGrant) {
+    if (isEmpty((obj as { residenceGrant: unknown[] }).residenceGrant))
+      return buildError(
+        errorMessages.requiredAttachment,
+        'residenceGrant',
+        FILEUPLOAD,
+      )
 
     return undefined
   }

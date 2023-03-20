@@ -41,9 +41,9 @@ export interface InputComponentProps {
     event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void
   rows?: number
-  type?: 'text' | 'number' | 'email' | 'tel'
-  icon?: IconType
-  iconType?: Type
+  type?: 'text' | 'number' | 'email' | 'tel' | 'password'
+  icon?: { name: IconType; type?: Type; onClick?: () => void }
+
   /**
    * While true hover state will not show and focus state will be always on
    */

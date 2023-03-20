@@ -1,11 +1,6 @@
-import React, { FC, forwardRef } from 'react'
-import {
-  Input,
-  Icon,
-  InputBackgroundColor,
-  InputProps,
-} from '@island.is/island-ui/core'
-import { Controller, Control, ValidationRules } from 'react-hook-form'
+import React, { forwardRef } from 'react'
+import { Input, Icon, InputBackgroundColor } from '@island.is/island-ui/core'
+import { Controller, Control, RegisterOptions } from 'react-hook-form'
 import NumberFormat, { FormatInputValueFunction } from 'react-number-format'
 import { TestSupport } from '@island.is/island-ui/utils'
 
@@ -13,9 +8,9 @@ interface Props {
   autoFocus?: boolean
   defaultValue?: string
   disabled?: boolean
-  control?: Control
+  control?: Control | Control<any, string>
   icon?: React.ComponentProps<typeof Icon>['icon']
-  rules?: ValidationRules
+  rules?: RegisterOptions
   error?: string
   id: string
   label?: string
@@ -88,7 +83,7 @@ export const InputController = forwardRef(
           <NumberFormat
             customInput={Input}
             id={id}
-            icon={icon}
+            icon={icon ? { name: icon } : undefined}
             disabled={disabled}
             readOnly={readOnly}
             placeholder={placeholder}
@@ -128,7 +123,7 @@ export const InputController = forwardRef(
             size={size}
             customInput={Input}
             id={id}
-            icon={icon}
+            icon={icon ? { name: icon } : undefined}
             disabled={disabled}
             rightAlign={rightAlign}
             readOnly={readOnly}
@@ -164,7 +159,7 @@ export const InputController = forwardRef(
           <NumberFormat
             size={size}
             customInput={Input}
-            icon={icon}
+            icon={icon ? { name: icon } : undefined}
             id={id}
             disabled={disabled}
             readOnly={readOnly}
@@ -204,7 +199,7 @@ export const InputController = forwardRef(
             disabled={disabled}
             readOnly={readOnly}
             rightAlign={rightAlign}
-            icon={icon}
+            icon={icon ? { name: icon } : undefined}
             placeholder={placeholder}
             label={label}
             backgroundColor={backgroundColor}
@@ -239,7 +234,9 @@ export const InputController = forwardRef(
         control={control}
         rules={rules}
         {...(defaultValue !== undefined && { defaultValue })}
-        render={renderChildInput}
+        render={({ field: { onChange, onBlur, value, name } }) =>
+          renderChildInput({ value, onBlur, onChange, name })
+        }
       />
     )
   },

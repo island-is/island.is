@@ -38,7 +38,10 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
   const { id } = field
   const usedId = customId.length > 0 ? customId : id
   const { formatMessage } = useLocale()
-  const { setValue, errors } = useFormContext()
+  const {
+    setValue,
+    formState: { errors },
+  } = useFormContext()
   const [nationalIdInput, setNationalIdInput] = useState('')
   const nameField = `${usedId}.name`
   const nationaIdField = `${usedId}.nationalId`
@@ -98,7 +101,7 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
   return (
     <Box>
       <GridRow>
-        <GridColumn span={'1/1'} paddingTop={2}>
+        <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
           <InputController
             id={nationaIdField}
             label={
@@ -119,7 +122,7 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
             error={nationalIdFieldErrors}
           />
         </GridColumn>
-        <GridColumn span={'1/1'} paddingTop={2}>
+        <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
           <InputController
             id={nameField}
             defaultValue={defaultName}

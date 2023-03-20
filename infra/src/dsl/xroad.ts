@@ -224,6 +224,20 @@ export const AdrAndMachine = new XroadConf({
   },
 })
 
+export const JudicialAdministration = new XroadConf({
+  env: {
+    XROAD_COURT_BANKRUPTCY_CERT_PATH: {
+      dev: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1',
+      staging: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1',
+      prod: 'IS/GOV/4707171140/Domstolasyslan/JusticePortal-v1',
+    },
+  },
+  secrets: {
+    DOMSYSLA_PASSWORD: '/k8s/api/DOMSYSLA_PASSWORD',
+    DOMSYSLA_USERNAME: '/k8s/api/DOMSYSLA_USERNAME',
+  },
+})
+
 export const Firearm = new XroadConf({
   env: {
     XROAD_FIREARM_LICENSE_PATH: {

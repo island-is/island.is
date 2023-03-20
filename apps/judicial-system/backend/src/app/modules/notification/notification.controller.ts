@@ -11,7 +11,6 @@ import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { NotificationType } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
@@ -64,7 +63,7 @@ export class NotificationController {
   @Post('notification')
   @ApiCreatedResponse({
     type: SendNotificationResponse,
-    description: 'Sends a new notification for an existing case',
+    description: 'Adds a new notification for an existing case to queue',
   })
   async sendCaseNotification(
     @Param('caseId') caseId: string,
@@ -73,26 +72,10 @@ export class NotificationController {
     @Body() notification: SendNotificationDto,
   ): Promise<SendNotificationResponse> {
     this.logger.debug(
-      `Sending ${notification.type} notification for case ${caseId}`,
+      `Adding ${notification.type} notification for case ${caseId} to queue`,
     )
 
-    if (
-      [
-        NotificationType.HEADS_UP,
-        NotificationType.READY_FOR_COURT,
-        NotificationType.RECEIVED_BY_COURT,
-        NotificationType.COURT_DATE,
-      ].includes(notification.type)
-    ) {
-      // Notifications put on queue will call the internal notification controller
-      return this.notificationService.addMessagesForNotificationToQueue(
-        notification,
-        theCase,
-        user,
-      )
-    }
-
-    return this.notificationService.sendCaseNotification(
+    return this.notificationService.addMessagesForNotificationToQueue(
       notification,
       theCase,
       user,

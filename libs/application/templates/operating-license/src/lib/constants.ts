@@ -1,4 +1,8 @@
-import { DefaultEvents, Option } from '@island.is/application/types'
+import {
+  DefaultEvents,
+  GenericFormField,
+  Option,
+} from '@island.is/application/types'
 
 import { attachmentNames, m } from './messages'
 
@@ -195,6 +199,8 @@ export type Property = {
   customerCount: string
 }
 
+export type PropertyField = GenericFormField<Property>
+
 export const AttachmentProps: Attachment[] = [
   {
     id: 'attachments.healthLicense.file',
@@ -211,6 +217,10 @@ export const AttachmentProps: Attachment[] = [
   {
     id: 'attachments.outsideBlueprints.file',
     label: attachmentNames.four.defaultMessage,
+  },
+  {
+    id: 'attachments.otherFiles.file',
+    label: attachmentNames.five.defaultMessage,
   },
 ]
 

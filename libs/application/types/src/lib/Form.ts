@@ -17,10 +17,15 @@ export type SetBeforeSubmitCallback = (
 ) => void
 
 export type SetFieldLoadingState = Dispatch<SetStateAction<boolean>>
+export type SetSubmitButtonDisabled = Dispatch<SetStateAction<boolean>>
 
 export type StaticTextObject = MessageDescriptor & {
   values?: RecordObject<any>
 }
+
+export type GenericFormField<T> = Partial<
+  T & { id: string; initial: boolean; dummy?: boolean }
+>
 
 export type StaticText = StaticTextObject | string
 
@@ -162,6 +167,7 @@ export interface FieldBaseProps<TAnswers = FormValue> {
   refetch?: () => void
   setBeforeSubmitCallback?: SetBeforeSubmitCallback
   setFieldLoadingState?: SetFieldLoadingState
+  setSubmitButtonDisabled?: SetSubmitButtonDisabled
 }
 
 export type RepeaterProps = {

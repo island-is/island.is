@@ -2,12 +2,12 @@ import {
   buildCustomField,
   buildDescriptionField,
   buildDividerField,
+  buildKeyValueField,
   buildMultiField,
   buildSection,
-  buildSubmitField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Application, DefaultEvents } from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 import { EstateInfo } from '@island.is/clients/syslumenn'
 import { m } from '../../lib/messages'
 import { deceasedInfoFields } from '../sharedSections/deceasedInfoFields'
@@ -15,6 +15,7 @@ import { format as formatNationalId } from 'kennitala'
 import {
   formatBankInfo,
   formatCurrency,
+  formatPhoneNumber,
 } from '@island.is/application/ui-components'
 import { infer as zinfer } from 'zod'
 import { estateSchema } from '../../lib/dataSchema'
@@ -361,6 +362,64 @@ export const overview = buildSection({
               ),
           },
         ),
+        buildDividerField({}),
+        buildDescriptionField({
+          id: 'space3',
+          title: '',
+          space: 'gutter',
+        }),
+        buildDescriptionField({
+          id: 'overviewRepresentativeTitle',
+          title: m.representativeTitle,
+          description: m.representativeDescription,
+          titleVariant: 'h3',
+          marginBottom: 'gutter',
+        }),
+        buildKeyValueField({
+          width: 'half',
+          label: m.name,
+          value: ({ answers }) =>
+            getValueViaPath<string>(
+              answers,
+              'representative.representativeName',
+            ),
+        }),
+        buildKeyValueField({
+          width: 'half',
+          label: m.nationalId,
+          value: ({ answers }) =>
+            formatNationalId(
+              getValueViaPath<string>(
+                answers,
+                'representative.representativeNationalId',
+              ) ?? '',
+            ),
+        }),
+        buildDescriptionField({
+          id: 'space4',
+          title: '',
+          space: 'gutter',
+        }),
+        buildKeyValueField({
+          width: 'half',
+          label: m.phone,
+          value: ({ answers }) =>
+            formatPhoneNumber(
+              getValueViaPath<string>(
+                answers,
+                'representative.representativePhoneNumber',
+              ) ?? '',
+            ),
+        }),
+        buildKeyValueField({
+          width: 'half',
+          label: m.email,
+          value: ({ answers }) =>
+            getValueViaPath<string>(
+              answers,
+              'representative.representativeEmail',
+            ),
+        }),
       ],
     }),
   ],

@@ -6,6 +6,7 @@ import { Message } from '@island.is/email-service'
 import {
   getApplicationAnswers,
   Period,
+  NO,
 } from '@island.is/application/templates/parental-leave'
 import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
@@ -35,6 +36,9 @@ export const generateApplicationApprovedByEmployerToEmployerEmail: EmployerRejec
   const employersArray: EmailToType[] = []
 
   employers?.forEach((e) => {
+    if (e.stillEmployed === NO) {
+      return
+    }
     employersArray.push({
       name: '',
       address: e.email,
@@ -45,6 +49,13 @@ export const generateApplicationApprovedByEmployerToEmployerEmail: EmployerRejec
 
   const emailSubject = `Samþykkt umsókn um fæðingarorlof (kt. ${application.applicant}) - Vinsamlegast áframsendið til launadeildar`
   const subject = `Þú samþykktir umsókn um fæðingarorlof`
+
+  const periodStartFromDateOfBirth =
+    periods.length && periods[0]?.firstPeriodStart === 'actualDateOfBirth'
+
+  const actualDateOfBirthCopy = periodStartFromDateOfBirth
+    ? 'Athugið að þetta er áætlaður upphafsdagur fæðingarorlofstímabilsins. Þetta gæti breyst eftir raunverulegum fæðingardegi.'
+    : ''
 
   return {
     from: {
@@ -92,6 +103,16 @@ export const generateApplicationApprovedByEmployerToEmployerEmail: EmployerRejec
             copy: periods
               .map((period) => {
                 if (!period) return ''
+                if (period.firstPeriodStart === 'actualDateOfBirth') {
+                  return `${format(
+                    new Date(period.startDate),
+                    dateFormat.is,
+                  )} til ${format(new Date(period.endDate), dateFormat.is)}<br/>
+                  ( Fæðingadagur til ${format(
+                    new Date(period.endDate),
+                    dateFormat.is,
+                  )} )`
+                }
 
                 return `${format(
                   new Date(period.startDate),
@@ -99,6 +120,12 @@ export const generateApplicationApprovedByEmployerToEmployerEmail: EmployerRejec
                 )} til ${format(new Date(period.endDate), dateFormat.is)}`
               })
               .join('<br/>'),
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy: actualDateOfBirthCopy,
           },
         },
         {

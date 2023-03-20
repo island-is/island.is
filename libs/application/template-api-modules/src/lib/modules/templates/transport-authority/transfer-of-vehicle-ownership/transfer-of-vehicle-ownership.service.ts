@@ -114,19 +114,23 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps) {
     const answers = application.answers as TransferOfVehicleOwnershipAnswers
+    const createdStr = application.created.toISOString()
+
+    const sellerSsn = answers?.seller?.nationalId
+    const buyerSsn = answers?.buyer?.nationalId
 
     // No need to continue with this validation in user is neither seller nor buyer
     // (only time application data changes is on state change from these roles)
-    const sellerSsn = answers?.seller?.nationalId
-    const buyerSsn = answers?.buyer?.nationalId
     if (auth.nationalId !== sellerSsn && auth.nationalId !== buyerSsn) {
       return
     }
-
-    const buyerCoOwners = answers?.buyerCoOwnerAndOperator?.filter(
+    const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'coOwner',
     )
-    const buyerOperators = answers?.buyerCoOwnerAndOperator?.filter(
+    const buyerOperators = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'operator',
     )
 
@@ -143,6 +147,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
           email: answers?.buyer?.email,
         },
         dateOfPurchase: new Date(answers?.vehicle?.date),
+        dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
         saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
         insuranceCompanyCode: answers?.insurance?.value,
         coOwners: buyerCoOwners?.map((coOwner) => ({
@@ -303,9 +308,11 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
       []) as Array<EmailRecipient>
 
     const newlyAddedRecipientList: Array<EmailRecipient> = []
-
+    const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
     // Buyer's co-owners
-    const buyerCoOwners = answers.buyerCoOwnerAndOperator?.filter(
+    const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'coOwner',
     )
     if (buyerCoOwners) {
@@ -333,7 +340,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     }
 
     // Buyer's operators
-    const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
+    const buyerOperators = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'operator',
     )
     if (buyerOperators) {
@@ -492,6 +499,8 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     // 2. Submit the application
 
     const answers = application.answers as TransferOfVehicleOwnershipAnswers
+    const createdStr = application.created.toISOString()
+
     // Note: Need to be sure that the user that created the application is the seller when submitting application to SGS
     if (answers?.seller?.nationalId !== application.applicant) {
       throw new TemplateApiError(
@@ -502,11 +511,13 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         400,
       )
     }
-
-    const buyerCoOwners = answers.buyerCoOwnerAndOperator?.filter(
+    const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'coOwner',
     )
-    const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
+    const buyerOperators = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'operator',
     )
 
@@ -521,6 +532,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         email: answers?.buyer?.email,
       },
       dateOfPurchase: new Date(answers?.vehicle?.date),
+      dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
       saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
       insuranceCompanyCode: answers?.insurance?.value,
       coOwners: buyerCoOwners?.map((coOwner) => ({

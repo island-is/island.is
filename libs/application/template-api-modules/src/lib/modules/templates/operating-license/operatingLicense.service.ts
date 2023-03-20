@@ -1,6 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
@@ -32,6 +30,9 @@ import { CriminalRecordService } from '@island.is/api/domains/criminal-record'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { FinanceClientService } from '@island.is/clients/finance'
 import { OperatingLicenseFakeData } from '@island.is/application/templates/operating-license/types'
+import { JudicialAdministrationService } from '@island.is/clients/judicial-administration'
+import { BANNED_BANKRUPTCY_STATUSES } from './constants'
+import { error } from '@island.is/application/templates/operating-license'
 
 @Injectable()
 export class OperatingLicenseService extends BaseTemplateApiService {
@@ -41,6 +42,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     private readonly syslumennService: SyslumennService,
     private readonly criminalRecordService: CriminalRecordService,
     private readonly financeService: FinanceClientService,
+    private readonly judicialAdministrationService: JudicialAdministrationService,
   ) {
     super(ApplicationTypes.OPERATING_LCENSE)
     this.s3 = new S3()
@@ -60,8 +62,8 @@ export class OperatingLicenseService extends BaseTemplateApiService {
         ? Promise.resolve({ success: true })
         : Promise.reject({
             reason: {
-              title: coreErrorMessages.dataCollectionCriminalRecordTitle,
-              summary: coreErrorMessages.dataCollectionCriminalRecordErrorTitle,
+              title: error.dataCollectionCriminalRecordTitle,
+              summary: error.dataCollectionCriminalRecordErrorTitle,
               hideSubmitError: true,
             },
             statusCode: 404,
@@ -81,7 +83,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
 
       throw new TemplateApiError(
         {
-          title: coreErrorMessages.dataCollectionCriminalRecordTitle,
+          title: error.dataCollectionCriminalRecordTitle,
           summary: coreErrorMessages.errorDataProvider,
         },
         400,
@@ -89,7 +91,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     } catch (e) {
       throw new TemplateApiError(
         {
-          title: coreErrorMessages.dataCollectionCriminalRecordTitle,
+          title: error.dataCollectionCriminalRecordTitle,
           summary: coreErrorMessages.errorDataProvider,
         },
         400,
@@ -113,8 +115,8 @@ export class OperatingLicenseService extends BaseTemplateApiService {
         ? Promise.resolve({ success: true })
         : Promise.reject({
             reason: {
-              title: coreErrorMessages.missingCertificateTitle,
-              summary: coreErrorMessages.missingCertificateSummary,
+              title: error.missingCertificateTitle,
+              summary: error.missingCertificateSummary,
               hideSubmitError: true,
             },
             statusCode: 404,
@@ -147,13 +149,34 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     ) {
       throw new TemplateApiError(
         {
-          title: coreErrorMessages.missingCertificateTitle,
-          summary: coreErrorMessages.missingCertificateSummary,
+          title: error.missingCertificateTitle,
+          summary: error.missingCertificateSummary,
         },
         400,
       )
     }
 
+    return { success: true }
+  }
+
+  async courtBankruptcyCert({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
+    const cert = await this.judicialAdministrationService.searchBankruptcy(auth)
+    for (const [_, value] of Object.entries(cert)) {
+      if (
+        value.bankruptcyStatus &&
+        BANNED_BANKRUPTCY_STATUSES.includes(value.bankruptcyStatus)
+      ) {
+        throw new TemplateApiError(
+          {
+            title: error.missingJudicialAdministrationificateTitle,
+            summary: error.missingJudicialAdministrationificateSummary,
+          },
+          400,
+        )
+      }
+    }
     return { success: true }
   }
 
@@ -241,20 +264,13 @@ export class OperatingLicenseService extends BaseTemplateApiService {
           uploadDataId,
         )
         .catch((e) => {
-          return {
-            success: false,
-            errorMessage: e.message,
-          }
+          throw new Error(`Application submission failed ${e}`)
         })
       return {
         success: result.success,
-        orderId: '',
       }
     } catch (e) {
-      return {
-        success: false,
-        orderId: '',
-      }
+      throw new Error(`Application submission failed ${e}`)
     }
   }
 
@@ -287,11 +303,12 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
 
     const criminalRecord = await this.getCriminalRecord(application.applicant)
-
-    attachments.push({
-      name: `sakavottord_${application.applicant}_${dateStr}.pdf`,
-      content: criminalRecord.contentBase64,
-    })
+    if (criminalRecord.contentBase64) {
+      attachments.push({
+        name: `sakavottord_${application.applicant}_${dateStr}.pdf`,
+        content: criminalRecord.contentBase64,
+      })
+    }
 
     for (let i = 0; i < AttachmentPaths.length; i++) {
       const { path, prefix } = AttachmentPaths[i]

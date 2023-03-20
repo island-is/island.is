@@ -275,16 +275,16 @@ export const form: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'moneyAndDedosit',
+          id: 'moneyAndDeposit',
           title: m.moneyAndDepositTitle,
           children: [
             buildMultiField({
-              id: 'moneyAndDedosit',
+              id: 'moneyAndDeposit',
               title: m.propertiesTitle,
               description: m.propertiesDescription,
               children: [
                 buildDescriptionField({
-                  id: 'moneyAndDedositTitle',
+                  id: 'moneyAndDepositTitle',
                   title: m.moneyAndDepositTitle,
                   description: m.moneyAndDepositDescription,
                   titleVariant: 'h3',
@@ -376,6 +376,41 @@ export const form: Form = buildForm({
                 repeaterHeaderText: m.debtsCreditorHeader.defaultMessage,
               },
             ),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'representative',
+      title: m.representativeTitle,
+      children: [
+        buildMultiField({
+          id: 'representative',
+          title: m.representativeTitle,
+          description: m.representativeDescription,
+          children: [
+            buildTextField({
+              id: 'representative.representativeNationalId',
+              title: m.nationalId,
+              width: 'half',
+              format: '######-####',
+            }),
+            buildTextField({
+              id: 'representative.representativeName',
+              title: m.name,
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'representative.representativePhoneNumber',
+              title: m.phone,
+              width: 'half',
+              format: '###-####',
+            }),
+            buildTextField({
+              id: 'representative.representativeEmail',
+              title: m.email,
+              width: 'half',
+            }),
           ],
         }),
       ],

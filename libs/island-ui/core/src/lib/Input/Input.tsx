@@ -1,17 +1,18 @@
-import React, { useState, useRef, forwardRef, useLayoutEffect } from 'react'
 import cn from 'classnames'
+import React, { forwardRef, useLayoutEffect, useRef, useState } from 'react'
+import { resolveResponsiveProp } from '../../utils/responsiveProp'
+import { Box } from '../Box/Box'
+import { UseBoxStylesProps } from '../Box/useBoxStyles'
+import { Icon } from '../IconRC/Icon'
+import { Tooltip } from '../Tooltip/Tooltip'
+import { ErrorMessage } from './ErrorMessage'
 
 import * as styles from './Input.css'
-import { Box } from '../Box/Box'
-import { Tooltip } from '../Tooltip/Tooltip'
-import { Icon } from '../IconRC/Icon'
-import { resolveResponsiveProp } from '../../utils/responsiveProp'
-import { UseBoxStylesProps } from '../Box/useBoxStyles'
 import {
+  AriaError,
   InputBackgroundColor,
   InputComponentProps,
   InputProps,
-  AriaError,
 } from './types'
 
 function setRefs<T>(ref: React.Ref<T>, value: T) {
@@ -76,7 +77,6 @@ export const Input = forwardRef(
       textarea,
       type,
       icon,
-      iconType = 'filled',
       size = 'md',
       fixedFocusState,
       autoExpand,
@@ -93,6 +93,24 @@ export const Input = forwardRef(
         }
       : {}
     const mergedRefs = useMergeRefs(inputRef, ref || null)
+
+    const renderIcon = () => {
+      if (!icon) {
+        return null
+      }
+      return (
+        <Icon
+          icon={icon.name}
+          type={icon.type || 'filled'}
+          skipPlaceholderSize
+          className={cn(styles.icon, {
+            [styles.iconError]: hasError,
+            [styles.iconExtraSmall]: size === 'xs',
+          })}
+          ariaHidden
+        />
+      )
+    }
 
     const InputComponent = textarea ? TextareaHOC : InputHOC
     const mapBlue = (color: InputBackgroundColor) =>
@@ -260,28 +278,16 @@ export const Input = forwardRef(
               ariaHidden
             />
           )}
-          {!loading && icon && (
-            <Icon
-              icon={icon}
-              type={iconType}
-              skipPlaceholderSize
-              className={cn(styles.icon, {
-                [styles.iconError]: hasError,
-                [styles.iconExtraSmall]: size === 'xs',
-              })}
-              ariaHidden
-            />
-          )}
+          {!loading && icon ? (
+            icon?.onClick ? (
+              <button onClick={icon.onClick}> {renderIcon()} </button>
+            ) : (
+              renderIcon()
+            )
+          ) : null}
         </Box>
         {hasError && errorMessage && (
-          <div
-            id={errorId}
-            className={styles.errorMessage}
-            aria-live="assertive"
-            data-testid="inputErrorMessage"
-          >
-            {errorMessage}
-          </div>
+          <ErrorMessage id={errorId}>{errorMessage}</ErrorMessage>
         )}
       </div>
     )

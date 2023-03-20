@@ -20,9 +20,12 @@ export const getRejecter = (reviewerNationalId: string, answers: FormValue) => {
     'buyerCoOwnerAndOperator',
     [],
   ) as CoOwnerAndOperator[]
-  const buyerCoOwnerAndOperator = buyerCoOwnersAndOperators.find(
-    (coOwnerOrOperator) => coOwnerOrOperator.nationalId === reviewerNationalId,
-  )
+  const buyerCoOwnerAndOperator = buyerCoOwnersAndOperators
+    .filter(({ wasRemoved }) => wasRemoved !== 'true')
+    .find(
+      (coOwnerOrOperator) =>
+        coOwnerOrOperator.nationalId === reviewerNationalId,
+    )
   if (buyerCoOwnerAndOperator) {
     return {
       plate,

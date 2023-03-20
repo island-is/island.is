@@ -6,6 +6,7 @@ import {
   FormValue,
   DefaultEvents,
   ApplicationStatus,
+  ApplicationContext,
 } from '@island.is/application/types'
 import ParentalLeaveTemplate from './ParentalLeaveTemplate'
 import {
@@ -20,6 +21,7 @@ import {
 } from '../constants'
 
 import { createNationalId } from '@island.is/testing/fixtures'
+import { goToState } from './parentalLeaveTemplateUtils'
 
 function buildApplication(data: {
   answers?: FormValue
@@ -339,6 +341,7 @@ describe('Parental Leave Application Template', () => {
         )
 
         const answer = {
+          usePersonalAllowance: YES,
           useAsMuchAsPossible: YES,
           usage: '100',
         }
@@ -369,6 +372,7 @@ describe('Parental Leave Application Template', () => {
         )
 
         const answer = {
+          usePersonalAllowance: YES,
           useAsMuchAsPossible: YES,
           usage: '100',
         }
@@ -771,3 +775,36 @@ describe('Parental Leave Application Template', () => {
     })
   })
 })
+
+test.each([
+  {
+    data: ({
+      application: { answers: { previousState: ApplicationStates.APPROVED } },
+    } as unknown) as ApplicationContext,
+    state: ApplicationStates.APPROVED,
+    expected: true,
+  },
+  {
+    data: ({
+      application: { answers: { previousState: ApplicationStates.APPROVED } },
+    } as unknown) as ApplicationContext,
+    state: ApplicationStates.EDIT_OR_ADD_PERIODS,
+    expected: false,
+  },
+  {
+    data: ({
+      application: {
+        answers: {
+          previousState: ApplicationStates.VINNUMALASTOFNUN_EDITS_ACTION,
+        },
+      },
+    } as unknown) as ApplicationContext,
+    state: ApplicationStates.VINNUMALASTOFNUN_EDITS_ACTION,
+    expected: true,
+  },
+])(
+  'should return true if previousState is equal to state',
+  ({ data, state, expected }) => {
+    expect(goToState(data, state)).toBe(expected)
+  },
+)

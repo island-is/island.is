@@ -33,7 +33,6 @@ import {
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
-import { getCustomAlertBanners } from './utils'
 import { LandingPage, LandingPageFooter } from './LandingPage'
 
 const parseOrganizationLinkHref = (organization: Query['getOrganization']) => {
@@ -246,7 +245,6 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
       data: { getOrganization },
     },
     namespace,
-    customAlertBanners,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
@@ -281,7 +279,6 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
-    getCustomAlertBanners(query, apolloClient, locale),
   ])
 
   if (!getOrganizationPage && !getOrganization?.hasALandingPage) {
@@ -293,7 +290,6 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
     organization: getOrganization,
     namespace,
     showSearchInHeader: false,
-    customAlertBanners,
     ...getThemeConfig(
       getOrganizationPage?.theme ?? 'landing_page',
       getOrganizationPage?.slug ?? getOrganization?.slug,

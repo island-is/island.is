@@ -10,12 +10,9 @@ import {
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import * as styles from './SessionFilter.css'
-import cn from 'classnames'
-import React, { useState } from 'react'
+import React from 'react'
 import { useLocale } from '@island.is/localization'
 import addYears from 'date-fns/addYears'
-
-const defaultCalState = { top: false, lower: false }
 
 interface IProps {
   onNationalIdFilterChange: (value: string) => void
@@ -36,10 +33,6 @@ const SessionFilter: React.FC<IProps> = ({
 }) => {
   const { formatMessage } = useLocale()
   const { lg } = useBreakpoint()
-
-  const [openCal, setOpenCal] = useState<{ top: boolean; lower: boolean }>(
-    defaultCalState,
-  )
 
   return (
     <Box marginTop={'containerGutter'}>
@@ -85,17 +78,10 @@ const SessionFilter: React.FC<IProps> = ({
                 labelColor="blue400"
                 labelVariant="h5"
                 iconVariant="small"
+                startExpanded
               >
-                <Box
-                  className={cn({
-                    [styles.openCal]: openCal?.top,
-                    [styles.openLowerCal]: openCal?.lower,
-                  })}
-                  display="flex"
-                  flexDirection="column"
-                >
+                <Box display="flex" flexDirection="column">
                   <Stack space={3}>
-                    <h1>test</h1>
                     <DatePicker
                       id="date-from"
                       label={formatMessage(m.datepickerFromLabel)}
@@ -104,13 +90,10 @@ const SessionFilter: React.FC<IProps> = ({
                       backgroundColor="blue"
                       size="xs"
                       handleChange={(d) => handleDateChange(d, 'from')}
-                      handleOpenCalendar={() =>
-                        setOpenCal({ top: true, lower: false })
-                      }
                       minDate={addYears(new Date(), -1)}
                       maxDate={new Date()}
-                      handleCloseCalendar={() => setOpenCal(defaultCalState)}
                       selected={fromDate}
+                      appearInline
                     />
                     <DatePicker
                       id="date-to"
@@ -120,13 +103,10 @@ const SessionFilter: React.FC<IProps> = ({
                       backgroundColor="blue"
                       size="xs"
                       handleChange={(d) => handleDateChange(d, 'to')}
-                      handleOpenCalendar={() =>
-                        setOpenCal({ top: false, lower: true })
-                      }
                       maxDate={new Date()}
                       minDate={addYears(new Date(), -1)}
-                      handleCloseCalendar={() => setOpenCal(defaultCalState)}
                       selected={toDate}
+                      appearInline
                     />
                   </Stack>
                 </Box>
