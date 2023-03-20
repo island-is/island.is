@@ -1,4 +1,4 @@
-import { Case } from '@island.is/consultation-portal/types/interfaces'
+import { Case } from '../../types/interfaces'
 import format from 'date-fns/format'
 
 export function removeZeroInDate(date: string) {
