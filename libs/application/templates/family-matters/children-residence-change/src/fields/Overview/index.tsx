@@ -195,10 +195,9 @@ const Overview = ({
       </Box>
       {isDraft && (
         <input
-          name={confirmContractTimestamp}
+          {...register(confirmContractTimestamp)}
           type="hidden"
           value={format(addDays(new Date(), 28), 'dd.MM.yyyy')}
-          ref={register}
         />
       )}
     </Box>

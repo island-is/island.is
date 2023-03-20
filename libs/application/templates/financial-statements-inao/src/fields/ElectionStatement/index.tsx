@@ -18,7 +18,9 @@ export const ElectionStatement = ({
   refetch,
 }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
-  const { errors } = useFormContext()
+  const {
+    formState: { errors },
+  } = useFormContext()
   const answers = application.answers as FinancialStatementsInao
   const email = getValueViaPath(answers, 'about.email')
   const [submitApplication, { loading }] = useSubmitApplication({

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
-import { FormProvider, useForm } from 'react-hook-form'
+import { Control, FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { defineMessage } from 'react-intl'
 import * as kennitala from 'kennitala'
@@ -77,7 +77,13 @@ const GrantAccess = () => {
       domainName: selectedOption?.value ?? null,
     },
   })
-  const { handleSubmit, control, errors, watch, reset } = methods
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+    watch,
+    reset,
+  } = methods
 
   useEffect(() => {
     reset({ domainName: selectedOption?.value ?? null })
@@ -171,7 +177,7 @@ const GrantAccess = () => {
                 )}
                 <Box display={name ? 'none' : 'block'} aria-live="assertive">
                   <InputController
-                    control={control}
+                    control={(control as unknown) as Control}
                     id="toNationalId"
                     icon={name || queryLoading ? undefined : 'search'}
                     ref={inputRef}
