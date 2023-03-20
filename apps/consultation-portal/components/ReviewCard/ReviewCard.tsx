@@ -9,7 +9,7 @@ import {
 import { SimpleCardSkeleton } from '../Card'
 import { useState } from 'react'
 import * as styles from './ReviewCard.css'
-import { getShortDate } from '@island.is/consultation-portal/utils/helpers/dateFormatter'
+import { getShortDate } from '../../utils/helpers/dateFormatter'
 
 export const ReviewCard = ({ advice }) => {
   const [open, setOpen] = useState(false)

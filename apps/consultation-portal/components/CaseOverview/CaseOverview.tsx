@@ -3,7 +3,7 @@ import { Box, Stack, Text } from '@island.is/island-ui/core'
 import EyebrowsWithSeperator from '../EyebrowsWithSeperator/EyebrowsWithSeperator'
 import * as styles from './CaseOverview.css'
 import CaseStatusCard from '../CaseStatusCard/CaseStatusCard'
-import { getShortDate } from '@island.is/consultation-portal/utils/helpers/dateFormatter'
+import { getShortDate } from '../../utils/helpers/dateFormatter'
 
 interface CaseOverviewProps {
   chosenCase: Case
