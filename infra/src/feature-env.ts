@@ -110,7 +110,7 @@ const deployedComment = (
 ): string => {
   return `Deployed services: ${data
     .map((d) => d.name())
-    .join(',')}. \n Excluded services: \`${excluded.join(',')}\``
+    .join(',')}. \n Excluded services: ${excluded.join(',')}`
 }
 
 yargs(process.argv.slice(2))
