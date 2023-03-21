@@ -34,7 +34,6 @@ const ContactInfoRow = ({ email, phoneNumber }: Props) => {
     setValue(phoneNumber.id, parsedNumber)
   }, [parsedNumber])
 
-  console.log(phoneNumber)
   return (
     <GridContainer>
       <GridRow>
