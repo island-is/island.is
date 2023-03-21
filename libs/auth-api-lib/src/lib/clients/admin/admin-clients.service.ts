@@ -7,6 +7,7 @@ import { Client } from '../models/client.model'
 import { AdminClientType } from './dto/admin-client-type.enum'
 import { AdminClientDto } from './dto/admin-client.dto'
 import { AdminCreateClientDto } from './dto/admin-create-client.dto'
+import { User } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class AdminClientsService {
@@ -46,10 +47,15 @@ export class AdminClientsService {
     return this.formatClient(client)
   }
 
-  async create(clientDto: AdminCreateClientDto): Promise<AdminClientDto> {
+  async create(
+    clientDto: AdminCreateClientDto,
+    user: User,
+  ): Promise<AdminClientDto> {
     const client = await this.clientModel.create({
       clientId: clientDto.clientId,
       clientType: clientDto.clientType,
+      nationalId: user.nationalId,
+      clientName: clientDto.clientName,
       ...this.defaultClientAttributes(clientDto.clientType),
     })
     return this.formatClient(client)

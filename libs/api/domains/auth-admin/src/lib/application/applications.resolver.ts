@@ -9,17 +9,18 @@ import {
 } from '@nestjs/graphql'
 import { Environment } from '@island.is/shared/types'
 
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard, User } from '@island.is/auth-nest-tools'
 import { ApplicationsService } from './applications.service'
 import { ApplicationsPayload } from './dto/applications-payload'
 import { Application } from './models/application.model'
 import { ApplicationEnvironment } from './models/applications-environment.model'
-import { CreateApplicationInput } from './dto/createApplication.input'
 import { ApplicationsInput } from './dto/applications.input'
+import { CreateApplicationResponseDto } from './dto/create-application-response'
+import { CreateClientsInput } from './dto/createClientsInput'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Application)
-export class ApplicationResolver {
+export class ApplicationsResolver {
   constructor(private readonly applicationsService: ApplicationsService) {}
 
   @Query(() => ApplicationsPayload, { name: 'authAdminApplications' })
@@ -30,12 +31,15 @@ export class ApplicationResolver {
     )
   }
 
-  @Mutation(() => Application, { name: 'createAuthAdminApplication' })
-  createApplication(
-    @Args('input', { type: () => CreateApplicationInput })
-    input: CreateApplicationInput,
+  @Mutation(() => [CreateApplicationResponseDto], {
+    name: 'createAuthAdminApplication',
+  })
+  createClient(
+    @Args('input', { type: () => CreateClientsInput })
+    input: CreateClientsInput,
+    @CurrentUser() user: User,
   ) {
-    return this.applicationsService.createApplication(input)
+    return this.applicationsService.createApplication(input, user)
   }
 
   @ResolveField('defaultEnvironment', () => ApplicationEnvironment)

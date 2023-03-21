@@ -24,4 +24,11 @@ export class AdminCreateClientDto {
     example: '@domain.is',
   })
   readonly tenantId!: string
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty({
+    example: 'Client name',
+  })
+  readonly clientName!: string
 }

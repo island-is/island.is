@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common'
 
 import { Environment } from '@island.is/shared/types'
-import { CreateApplicationInput } from './dto/createApplication.input'
-import { Application } from './models/application.model'
-import { ApplicationEnvironment } from './models/applications-environment.model'
-import { TranslatedValue } from '../models/translated-value.model'
+import { CreateClientsInput } from './dto/createClientsInput'
 import { ApplicationType } from '../models/applicationType'
+import { Auth } from '@island.is/auth-nest-tools'
+import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
+import { AdminCreateClientDtoClientTypeEnum } from '@island.is/clients/auth/admin-api'
+import { CreateApplicationResponseDto } from './dto/create-application-response'
 
 @Injectable()
-export class ApplicationsService {
+export class ApplicationsService extends MultiEnvironmentService {
   getApplications(tenantId: string, applicationId?: string) {
     const resp = getMockData()
     resp.data = resp.data.filter((x) => {
@@ -23,27 +24,52 @@ export class ApplicationsService {
     return resp
   }
 
-  createApplication(input: CreateApplicationInput) {
-    const displayName = new TranslatedValue()
-    displayName.locale = 'is'
-    displayName.value = input.displayName
+  async createApplication(
+    input: CreateClientsInput,
+    user: Auth,
+  ): Promise<CreateApplicationResponseDto[]> {
+    const applicationRequest = {
+      tenantId: input.tenantId,
+      adminCreateClientDto: {
+        clientId: input.applicationId,
+        clientType: (input.applicationType as string) as AdminCreateClientDtoClientTypeEnum,
+        tenantId: input.tenantId,
+        nationalId: user.nationalId,
+        clientName: input.displayName,
+      },
+    }
 
-    const application = new Application()
-    application.applicationId = input.applicationId
-    application.applicationType = input.applicationType
-    application.environments = input.environments.map((env) => {
-      const applicationEnv = new ApplicationEnvironment()
-      applicationEnv.name = input.applicationId
-      applicationEnv.environment = env
-      applicationEnv.displayName = [displayName]
-      applicationEnv.ApplicationUrls.callbackUrls = []
+    const createApplicationResponse = [] as CreateApplicationResponseDto[]
 
-      return applicationEnv
+    const created = await Promise.all(
+      input.environments.map(async (environment) => {
+        switch (environment) {
+          case Environment.Development:
+            return this.adminDevApiWithAuth(user)?.meClientsControllerCreate(
+              applicationRequest,
+            )
+          case Environment.Staging:
+            return this.adminStagingApiWithAuth(
+              user,
+            )?.meClientsControllerCreate(applicationRequest)
+          case Environment.Production:
+            return this.adminProdApiWithAuth(user)?.meClientsControllerCreate(
+              applicationRequest,
+            )
+        }
+      }),
+    )
+
+    created.map((resp, index) => {
+      if (resp) {
+        createApplicationResponse.push({
+          applicationId: resp.clientId,
+          environment: input.environments[index],
+        })
+      }
     })
 
-    // TODO connect to REST service
-
-    return application
+    return createApplicationResponse
   }
 }
 
