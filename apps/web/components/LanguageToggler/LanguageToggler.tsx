@@ -116,7 +116,7 @@ export const LanguageToggler = ({
       type &&
       slugs.every((s) => s?.[otherLanguage]) &&
       title?.[otherLanguage] &&
-      (otherLanguage === 'is' || activeTranslations[otherLanguage])
+      (otherLanguage === 'is' || (activeTranslations?.[otherLanguage] ?? true))
     ) {
       const queryParamsString = new URLSearchParams(
         queryParams?.[otherLanguage],

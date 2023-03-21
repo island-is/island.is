@@ -98,55 +98,50 @@ export class Article {
 export const mapArticle = ({
   fields,
   sys,
-}: IArticle): SystemMetadata<Article> => {
-  return {
-    typename: 'Article',
-    id: sys.id,
-    title: fields.title ?? '',
-    shortTitle: fields.shortTitle ?? '',
-    slug: fields.slug ?? '',
-    intro: fields.intro ?? '',
-    importance: fields.importance ?? 0,
-    body: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
-    processEntry: fields.processEntry
-      ? mapProcessEntry(fields.processEntry)
-      : null,
-    category: fields.category ? mapArticleCategory(fields.category) : null,
-    otherCategories: (fields.otherCategories ?? []).map(mapArticleCategory),
-    group: fields.group ? mapArticleGroup(fields.group) : null,
-    otherGroups: (fields.otherGroups ?? []).map(mapArticleGroup),
-    subgroup: fields.subgroup ? mapArticleSubgroup(fields.subgroup) : null,
-    otherSubgroups: (fields.otherSubgroups ?? []).map(mapArticleSubgroup),
-    organization: (fields.organization ?? [])
-      .filter(
-        (organization) =>
-          organization.fields?.title && organization.fields?.slug,
-      )
-      .map(mapOrganization),
-    relatedOrganization: (fields.relatedOrganization ?? [])
-      .filter(
-        (relatedOrganization) =>
-          relatedOrganization.fields?.title && relatedOrganization.fields?.slug,
-      )
-      .map(mapOrganization),
-    responsibleParty: (fields.responsibleParty ?? [])
-      .filter(
-        (responsibleParty) =>
-          responsibleParty.fields?.title && responsibleParty.fields?.slug,
-      )
-      .map(mapOrganization),
-    subArticles: (fields.subArticles ?? [])
-      .filter(
-        (subArticle) => subArticle.fields?.title && subArticle.fields?.slug,
-      )
-      .map(mapSubArticle),
-    relatedArticles: [],
-    relatedContent: (fields.relatedContent ?? []).map(mapLink),
-    featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
-    showTableOfContents: fields.showTableOfContents ?? false,
-    stepper: fields.stepper ? mapStepper(fields.stepper) : null,
-    processEntryButtonText: fields.processEntryButtonText ?? '',
-    alertBanner: fields.alertBanner ? mapAlertBanner(fields.alertBanner) : null,
-    activeTranslations: fields.activeTranslations ?? { en: true },
-  }
-}
+}: IArticle): SystemMetadata<Article> => ({
+  typename: 'Article',
+  id: sys.id,
+  title: fields.title ?? '',
+  shortTitle: fields.shortTitle ?? '',
+  slug: fields.slug ?? '',
+  intro: fields.intro ?? '',
+  importance: fields.importance ?? 0,
+  body: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
+  processEntry: fields.processEntry
+    ? mapProcessEntry(fields.processEntry)
+    : null,
+  category: fields.category ? mapArticleCategory(fields.category) : null,
+  otherCategories: (fields.otherCategories ?? []).map(mapArticleCategory),
+  group: fields.group ? mapArticleGroup(fields.group) : null,
+  otherGroups: (fields.otherGroups ?? []).map(mapArticleGroup),
+  subgroup: fields.subgroup ? mapArticleSubgroup(fields.subgroup) : null,
+  otherSubgroups: (fields.otherSubgroups ?? []).map(mapArticleSubgroup),
+  organization: (fields.organization ?? [])
+    .filter(
+      (organization) => organization.fields?.title && organization.fields?.slug,
+    )
+    .map(mapOrganization),
+  relatedOrganization: (fields.relatedOrganization ?? [])
+    .filter(
+      (relatedOrganization) =>
+        relatedOrganization.fields?.title && relatedOrganization.fields?.slug,
+    )
+    .map(mapOrganization),
+  responsibleParty: (fields.responsibleParty ?? [])
+    .filter(
+      (responsibleParty) =>
+        responsibleParty.fields?.title && responsibleParty.fields?.slug,
+    )
+    .map(mapOrganization),
+  subArticles: (fields.subArticles ?? [])
+    .filter((subArticle) => subArticle.fields?.title && subArticle.fields?.slug)
+    .map(mapSubArticle),
+  relatedArticles: [],
+  relatedContent: (fields.relatedContent ?? []).map(mapLink),
+  featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
+  showTableOfContents: fields.showTableOfContents ?? false,
+  stepper: fields.stepper ? mapStepper(fields.stepper) : null,
+  processEntryButtonText: fields.processEntryButtonText ?? '',
+  alertBanner: fields.alertBanner ? mapAlertBanner(fields.alertBanner) : null,
+  activeTranslations: fields.activeTranslations ?? { en: true },
+})

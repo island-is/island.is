@@ -264,9 +264,10 @@ export class ContentfulService {
         ),
       )
       for (const localizedEntry of localizedEntries) {
-        const translationIsActive = (localizedEntry.fields.activeTranslations?.[
-          this.contentfulLocaleMap.is
-        ] ?? { en: true })[locale]
+        const translationIsActive =
+          localizedEntry.fields.activeTranslations?.[
+            this.contentfulLocaleMap.is
+          ]?.[locale] ?? true
 
         if (!translationIsActive) {
           entriesThatHadTheirTranslationTurnedOff.add(localizedEntry.sys.id)
