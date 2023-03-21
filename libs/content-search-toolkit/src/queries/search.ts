@@ -58,9 +58,9 @@ export const searchQuery = (
         should.push({
           multi_match: {
             query: queryString + '*',
-            fields: ['title'],
+            fields: ['title^100'],
 
-            fuzziness: 'AUTO',
+            fuzziness: 1,
             operator: 'and',
             type: 'best_fields',
           },
