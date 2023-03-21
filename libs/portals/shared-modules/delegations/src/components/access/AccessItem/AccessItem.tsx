@@ -116,8 +116,6 @@ export const AccessItem = ({
     })
   }
 
-  console.log('Rendering', apiScopes[0].name)
-
   return (
     <>
       {apiScopes.map((item, index) => {
