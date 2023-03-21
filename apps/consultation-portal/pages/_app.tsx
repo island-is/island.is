@@ -1,53 +1,35 @@
 import App, { AppContext, AppProps } from 'next/app'
-import Head from 'next/head'
-import { FC } from 'react'
+import AppLayout from '../components/AppLayout/AppLayout'
+import UserContextProvider from '../context/UserContext'
+import { parseCookie } from '../utils/helpers'
 
-const Layout: FC = ({ children }) => {
+const ConsultationPortalApplication: any = ({
+  Component,
+  pageProps,
+  token,
+}) => {
   return (
-    <div>
-      <Head>
-        <title>Samradsgatt</title>
-        <link
-          rel="apple-touch-icon"
-          sizes="180x180"
-          href="/apple-touch-icon.png"
-        ></link>
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="32x32"
-          href="/favicon-32x32.png"
-        ></link>
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="16x16"
-          href="/favicon-16x16.png"
-        ></link>
-        <link rel="manifest" href="/site.webmanifest"></link>
-        <link rel="shortcut icon" href="/favicon.ico" />
-      </Head>
-      {children}
-    </div>
+    <UserContextProvider token={token}>
+      <AppLayout>
+        <Component {...pageProps} />
+      </AppLayout>
+    </UserContextProvider>
   )
 }
 
-class ConsultationPortalApplication extends App<AppProps> {
-  static async getInitialProps(appContext: AppContext) {
-    const pageProps = await App.getInitialProps(appContext)
-    return { ...pageProps }
-  }
-  render() {
-    const { Component, pageProps } = this.props
+ConsultationPortalApplication.getInitialProps = async (
+  appContext: AppContext,
+) => {
+  const pageProps = await App.getInitialProps(appContext)
 
-    return (
-      <>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </>
-    )
+  const cookiesParsed = parseCookie(appContext.ctx.req.headers.cookie)
+  if (cookiesParsed) {
+    if ('token' in cookiesParsed) {
+      const token = cookiesParsed['token']
+      return { ...pageProps, token }
+    }
   }
+  return { ...pageProps }
 }
 
 export default ConsultationPortalApplication

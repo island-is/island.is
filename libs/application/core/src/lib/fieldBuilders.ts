@@ -28,6 +28,7 @@ import {
   Field,
   CompanySearchField,
   RedirectToServicePortalField,
+  PhoneField,
   MessageWithLinkButtonField,
   ExpandableDescriptionField,
   AlertMessageField,
@@ -260,6 +261,31 @@ export function buildTextField(
     rightAlign,
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,
+  }
+}
+
+export function buildPhoneField(
+  data: Omit<PhoneField, 'type' | 'component' | 'children'>,
+): PhoneField {
+  const {
+    backgroundColor = 'blue',
+    placeholder,
+    required,
+    readOnly,
+    rightAlign,
+    allowedCountryCodes,
+  } = data
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    placeholder,
+    backgroundColor,
+    required,
+    readOnly,
+    allowedCountryCodes,
+    rightAlign,
+    type: FieldTypes.PHONE,
+    component: FieldComponents.PHONE,
   }
 }
 
