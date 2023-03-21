@@ -12,7 +12,7 @@ const dev01: EnvironmentConfig = {
   type: 'dev',
   featuresOn: [],
   defaultMaxReplicas: 3,
-  defaultMinReplicas: 2,
+  defaultMinReplicas: 1,
   releaseName: 'web',
   awsAccountId: '013313053092',
   awsAccountRegion: 'eu-west-1',
@@ -42,7 +42,7 @@ const staging01: EnvironmentConfig = {
   type: 'staging',
   featuresOn: [],
   defaultMaxReplicas: 3,
-  defaultMinReplicas: 2,
+  defaultMinReplicas: 1,
   releaseName: 'web',
   redisHost: JSON.stringify([
     'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',

@@ -24,7 +24,10 @@ export class MeTenantGuard implements CanActivate {
       )
     }
 
-    const hasAccess = this.tenantsService.hasAccessToTenant(user, tenantId)
+    const hasAccess = await this.tenantsService.hasAccessToTenant(
+      user,
+      tenantId,
+    )
 
     if (!hasAccess) {
       // Should not leak information about the existence of a tenant.

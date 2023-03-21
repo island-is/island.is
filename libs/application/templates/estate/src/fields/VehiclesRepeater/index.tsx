@@ -11,7 +11,7 @@ import {
   ProfileCard,
   Text,
 } from '@island.is/island-ui/core'
-import { Answers, Asset } from '../../types'
+import { Answers, AssetFormField } from '../../types'
 
 import { EstateAsset } from '@island.is/clients/syslumenn'
 
@@ -26,10 +26,10 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
   const error = (errors as any)?.estate?.vehicles
   const { id } = field
   const { formatMessage } = useLocale()
-  const { fields, append, remove } = useFieldArray<Asset>({
+  const { fields, append, remove, update } = useFieldArray({
     name: id,
   })
-  const { control, setValue } = useFormContext()
+  const { control } = useFormContext()
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
     estate: { vehicles: EstateAsset[] }
@@ -51,7 +51,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
   return (
     <Box marginTop={2}>
       <GridRow>
-        {fields.reduce((acc, asset, index) => {
+        {fields.reduce((acc, asset: AssetFormField, index) => {
           if (!asset.initial) {
             return acc
           }
@@ -63,25 +63,30 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
               paddingBottom={3}
             >
               <ProfileCard
+                disabled={!asset.enabled}
                 title={asset.assetNumber}
                 key={asset.assetNumber}
                 description={[
                   `${asset.description}`,
-                  /*<Box marginTop={1} as="span">
+                  <Box marginTop={1} as="span">
                     <Button
                       variant="text"
                       icon={asset.enabled ? 'remove' : 'add'}
                       size="small"
                       iconType="outline"
-                      onClick={() =>
-                        setValue(`${id}[${index}].enabled`, !asset.enabled)
-                      }
+                      onClick={() => {
+                        const updatedAsset = {
+                          ...asset,
+                          enabled: !asset.enabled,
+                        }
+                        update(index, updatedAsset)
+                      }}
                     >
                       {asset.enabled
                         ? formatMessage(m.inheritanceDisableMember)
                         : formatMessage(m.inheritanceEnableMember)}
                     </Button>
-                  </Box>,*/
+                  </Box>,
                 ]}
                 heightFull
               />
@@ -89,7 +94,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
           ]
         }, [] as JSX.Element[])}
       </GridRow>
-      {fields.map((field, index) => {
+      {fields.map((field: AssetFormField, index) => {
         const fieldIndex = `${id}[${index}]`
         const vehicleNumberField = `${fieldIndex}.assetNumber`
         const vehicleTypeField = `${fieldIndex}.description`
@@ -109,16 +114,19 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
               name={initialField}
               control={control}
               defaultValue={field.initial || false}
+              render={() => <input type="hidden" />}
             />
             <Controller
               name={enabledField}
               control={control}
               defaultValue={field.enabled || false}
+              render={() => <input type="hidden" />}
             />
             <Controller
               name={dummyField}
               control={control}
               defaultValue={field.dummy || false}
+              render={() => <input type="hidden" />}
             />
             <Text variant="h4">
               {formatMessage(m.vehiclesTitle) + ' ' + (index + 1)}
