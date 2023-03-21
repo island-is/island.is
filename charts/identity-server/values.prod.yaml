@@ -100,6 +100,7 @@ identity-server:
     CacheSettings__Memcached__Port: '11211'
     CacheSettings__Redis__Address: 'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com'
     CacheSettings__Redis__Port: '6379'
+    ContentfulSettings__BaseAddress: 'https://cdn.contentful.com'
     DD_DOTNET_TRACER_HOME: '/opt/datadog'
     DD_INTEGRATIONS: '/opt/datadog/integrations.json'
     Datadog__Metrics__Port: '5003'

@@ -13,7 +13,6 @@ import {
   GridRow,
   Button,
   Text,
-  AlertMessage,
 } from '@island.is/island-ui/core'
 import * as styles from '../styles.css'
 import { useLazyQuery } from '@apollo/client'
@@ -24,7 +23,7 @@ import { YES } from '../../lib/constants'
 import { IDENTITY_QUERY } from '../../graphql'
 import { Application, GenericFormField } from '@island.is/application/types'
 import { EstateMember } from '../../types'
-import { useState } from '@storybook/addons'
+import { hasYes } from '@island.is/application/core'
 
 export const AdditionalEstateMember = ({
   field,
@@ -55,12 +54,11 @@ export const AdditionalEstateMember = ({
   const nationalIdInput = useWatch({ name: nationalIdField, defaultValue: '' })
   const name = useWatch({ name: nameField, defaultValue: '' })
 
-  const [foreignCitizenship, setForeignCitizenship] = useState(
-    field.foreignCitizenship,
-  )
-  const [heirUnder18, setHeirUnder18] = useState(
-    field.nationalId ? kennitala.info(field.nationalId).age < 18 : false,
-  )
+  const foreignCitizenship = useWatch({
+    name: foreignCitizenshipField,
+    defaultValue: hasYes(field.foreignCitizenship) ? [YES] : '',
+  })
+
   const { control, setValue } = useFormContext()
 
   const [
@@ -75,7 +73,6 @@ export const AdditionalEstateMember = ({
 
   useEffect(() => {
     if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
-      setHeirUnder18(kennitala.info(nationalIdInput).age < 18)
       getIdentity({
         variables: {
           input: {
@@ -83,11 +80,6 @@ export const AdditionalEstateMember = ({
           },
         },
       })
-    } else if (
-      name !== '' &&
-      (!foreignCitizenship || foreignCitizenship.length === 0)
-    ) {
-      setValue(nameField, '')
     }
   }, [
     getIdentity,
@@ -222,21 +214,9 @@ export const AdditionalEstateMember = ({
                   value: YES,
                 },
               ]}
-              onSelect={() => {
-                setForeignCitizenship(foreignCitizenship?.length ? [] : ['yes'])
-              }}
             />
           </Box>
         </GridColumn>
-        {heirUnder18 && (
-          <GridColumn span="1/1" paddingBottom={2}>
-            <AlertMessage
-              title={formatMessage(m.estateMemberAdvocateWarningTitle)}
-              message={formatMessage(m.estateMemberAdvocateWarningDescription)}
-              type="warning"
-            />
-          </GridColumn>
-        )}
       </GridRow>
     </Box>
   )

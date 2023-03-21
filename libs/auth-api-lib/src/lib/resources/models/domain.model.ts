@@ -10,6 +10,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 
+import { Client } from '../../clients/models/client.model'
 import { ApiScopeGroup } from './api-scope-group.model'
 import { ApiScope } from './api-scope.model'
 
@@ -73,10 +74,14 @@ export class Domain extends Model {
   readonly modified?: Date
 
   @HasMany(() => ApiScopeGroup)
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: () => [ApiScopeGroup] })
   groups?: ApiScopeGroup[]
 
   @HasMany(() => ApiScope)
   @ApiPropertyOptional({ type: () => [ApiScope] })
   scopes?: ApiScope[]
+
+  @HasMany(() => Client)
+  @ApiPropertyOptional({ type: () => [Client] })
+  clients?: Client[]
 }
