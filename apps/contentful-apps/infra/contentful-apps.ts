@@ -24,5 +24,25 @@ export const serviceSetup = (): ServiceBuilder<'contentful-apps'> =>
         },
       },
     })
+    .replicaCount({
+      default: 2,
+      min: 2,
+      max: 10,
+    })
+    .resources({
+      limits: {
+        cpu: '400m',
+        memory: '256Mi',
+      },
+      requests: {
+        cpu: '200m',
+        memory: '128Mi',
+      },
+    })
     .liveness('/liveness')
     .readiness('/readiness')
+    .extraAttributes({
+      dev: { progressDeadlineSeconds: 1200 },
+      staging: { progressDeadlineSeconds: 1200 },
+      prod: { progressDeadlineSeconds: 1200 },
+    })
