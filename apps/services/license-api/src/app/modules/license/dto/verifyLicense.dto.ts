@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { IsBoolean, IsJSON } from 'class-validator'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { IsBoolean, IsJSON, IsObject, IsOptional } from 'class-validator'
 
 export class VerifyLicenseRequest {
   @ApiProperty({ description: 'PDF417 barcode scanner data' })
@@ -12,4 +12,7 @@ export class VerifyLicenseResponse {
   @ApiProperty({ description: 'Is the license verified?' })
   @IsBoolean()
   readonly valid!: boolean
+  @ApiPropertyOptional({ description: 'Optional verifcation data' })
+  @IsOptional()
+  readonly data?: unknown
 }

@@ -185,6 +185,11 @@ export class FirearmLicenseApiClientService implements GenericLicenseClient {
       ok: true,
       data: {
         valid: licenseInfo.ssn === sanitizedPassNationalId,
+        data: {
+          name: licenseInfo.name,
+          nationalId: licenseInfo.ssn,
+          picture: licenseInfo.licenseImgBase64,
+        },
       },
     }
   }
