@@ -42,6 +42,7 @@ COPY \
   nx.json \
   workspace.json \
   ./scripts ./scripts \
+  .envrc \
   ./
 COPY ./apps ./apps
 COPY ./libs ./libs
