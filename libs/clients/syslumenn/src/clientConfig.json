@@ -801,7 +801,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/AdfarabeidniSimple"
+              "$ref": "#/definitions/AdfarabeidniSkeyti"
             },
             "x-nullable": false
           }
@@ -1969,6 +1969,52 @@
         ]
       }
     },
+    "/api/Verdbrefamidlarar/{audkenni}": {
+      "get": {
+        "tags": ["Syslumenn"],
+        "operationId": "Verdbrefamidlarar_Get",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "x-nullable": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Verdbrefamidlari"
+              }
+            }
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "default": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
     "/Version": {
       "get": {
         "tags": ["Syslumenn"],
@@ -2207,12 +2253,23 @@
         },
         "abyrgdarmadur": {
           "type": "string"
+        },
+        "embaetti": {
+          "type": "string"
+        },
+        "starfsstodEmbaettis": {
+          "type": "string"
         }
       }
     },
     "Taekifaerisleyfi": {
       "type": "object",
-      "required": ["gildirFra", "gildirTil"],
+      "required": [
+        "gildirFra",
+        "gildirTil",
+        "hamarksfjoldi",
+        "aaetladurFjoldi"
+      ],
       "properties": {
         "malategund": {
           "type": "string"
@@ -2243,8 +2300,16 @@
         "leyfishafi": {
           "type": "string"
         },
-        "abyrgdarmaður": {
+        "abyrgdarmadur": {
           "type": "string"
+        },
+        "hamarksfjoldi": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "aaetladurFjoldi": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -2617,7 +2682,7 @@
         }
       }
     },
-    "AdfarabeidniSimple": {
+    "AdfarabeidniSkeyti": {
       "type": "object",
       "properties": {
         "audkenni": {
@@ -2678,11 +2743,11 @@
           "type": "string"
         },
         "stadaVidskiptamanns": {
-          "$ref": "#/definitions/StadaVidskiptamanns"
+          "$ref": "#/definitions/Stadavidskiptamanns"
         }
       }
     },
-    "StadaVidskiptamanns": {
+    "Stadavidskiptamanns": {
       "type": "object",
       "required": ["keyrsluDags", "dagsetningYfirlits"],
       "properties": {
@@ -2697,28 +2762,22 @@
           "type": "string",
           "format": "date-time"
         },
-        "innlansreikningar": {
+        "innstaedurIBonkumOgSparisjodum": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/Innlansreikningur"
+            "$ref": "#/definitions/Innstaeduribonkumogsparisjodum"
           }
         },
-        "sjalfskuldarabyrgd": {
+        "verdbrefaOgSkuldabref": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/Sjalfskuldarabyrgd"
+            "$ref": "#/definitions/Verdbrefaogskuldabref"
           }
         },
-        "tryggingarbref": {
+        "hlutabref": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/Skuldabrefbref"
-          }
-        },
-        "abyrgdVegna3jaAdila": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Skuldabrefbref"
+            "$ref": "#/definitions/Hlutabref"
           }
         },
         "utlan": {
@@ -2727,29 +2786,35 @@
             "$ref": "#/definitions/Utlan"
           }
         },
+        "tryggingarbref": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Tryggingarbref"
+          }
+        },
+        "abyrgdVegna3jaAdila": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Abyrgdvegna3jaadila"
+          }
+        },
         "geymsluholf": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/Geymsluholf"
           }
         },
-        "verdbrefaStada": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/VerdbrefaStada"
-          }
-        },
         "skjol": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/Skjal"
+            "$ref": "#/definitions/Skjol"
           }
         }
       }
     },
-    "Innlansreikningur": {
+    "Innstaeduribonkumogsparisjodum": {
       "type": "object",
-      "required": ["stadaISK", "stada", "stadaMedAfollumVoxtum", "logadDags"],
+      "required": ["stadaISK", "afallnirVextir", "stadaSamtals"],
       "properties": {
         "banki": {
           "type": "string"
@@ -2757,182 +2822,126 @@
         "hofudbok": {
           "type": "string"
         },
-        "reikningur": {
+        "reikningsnumer": {
           "type": "string"
         },
         "stadaISK": {
-          "type": "number",
-          "format": "double"
+          "type": "integer",
+          "format": "int32"
         },
-        "stada": {
-          "type": "number",
-          "format": "double"
+        "afallnirVextir": {
+          "type": "integer",
+          "format": "int32"
         },
-        "stadaMedAfollumVoxtum": {
-          "type": "number",
-          "format": "double"
+        "stadaSamtals": {
+          "type": "integer",
+          "format": "int32"
         },
         "mynt": {
           "type": "string"
-        },
-        "astand": {
-          "type": "string"
-        },
-        "logadDags": {
-          "type": "string",
-          "format": "date-time"
         }
       }
     },
-    "Sjalfskuldarabyrgd": {
+    "Verdbrefaogskuldabref": {
       "type": "object",
-      "required": ["utgafudagur", "nustadaISK"],
+      "required": ["stadaIsk"],
       "properties": {
-        "numerTryggingarbrefs": {
+        "utgefandi": {
           "type": "string"
         },
-        "kennitalaGreidanda": {
+        "audkenni": {
           "type": "string"
         },
-        "tegundAbyrgdar": {
-          "type": "string"
-        },
-        "mynt": {
-          "type": "string"
-        },
-        "utgafudagur": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "nustadaISK": {
-          "type": "number",
-          "format": "double"
+        "stadaIsk": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
-    "Skuldabrefbref": {
+    "Hlutabref": {
       "type": "object",
-      "required": ["tegund", "utgafudagur", "upphafsstada", "nustadaISK"],
+      "required": ["stadaISK"],
       "properties": {
-        "tegund": {
-          "$ref": "#/definitions/TegundBrefs"
-        },
-        "numer": {
+        "heiti": {
           "type": "string"
         },
-        "utgafudagur": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "upphafsstada": {
-          "type": "number",
-          "format": "double"
-        },
-        "nustadaISK": {
-          "type": "number",
-          "format": "double"
-        },
-        "stada": {
-          "type": "string"
-        },
-        "allsherjaved": {
-          "type": "string"
-        },
-        "logfraediInnheimta": {
-          "type": "string"
-        },
-        "mynt": {
-          "type": "string"
+        "stadaISK": {
+          "type": "integer",
+          "format": "int32"
         }
       }
-    },
-    "TegundBrefs": {
-      "type": "integer",
-      "description": "0 = Tryggingarbref",
-      "x-enumNames": ["Tryggingarbref"],
-      "enum": [0]
     },
     "Utlan": {
       "type": "object",
-      "required": [
-        "tegund",
-        "utgafudagur",
-        "lokadags",
-        "stadaISK",
-        "vanskil",
-        "heimild",
-        "vextir"
-      ],
+      "required": ["tegund", "stadaISK"],
       "properties": {
         "tegund": {
-          "$ref": "#/definitions/TegundUtlans"
+          "type": "integer",
+          "format": "int32"
         },
         "lansnumer": {
           "type": "string"
         },
-        "utgafudagur": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "lokadags": {
-          "type": "string",
-          "format": "date-time"
-        },
         "stadaISK": {
-          "type": "number",
-          "format": "double"
-        },
-        "vanskil": {
-          "type": "number",
-          "format": "double"
-        },
-        "heimild": {
-          "type": "number",
-          "format": "double"
-        },
-        "vextir": {
-          "type": "number",
-          "format": "double"
+          "type": "integer",
+          "format": "int32"
         },
         "mynt": {
           "type": "string"
         }
       }
     },
-    "TegundUtlans": {
-      "type": "integer",
-      "description": "0 = Kort\n1 = OnnurSkuldabref\n2 = Yfirdrattarlan",
-      "x-enumNames": ["Kort", "OnnurSkuldabref", "Yfirdrattarlan"],
-      "enum": [0, 1, 2]
+    "Tryggingarbref": {
+      "type": "object",
+      "required": ["stadaIsk"],
+      "properties": {
+        "numer": {
+          "type": "string"
+        },
+        "stadaIsk": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "mynt": {
+          "type": "string"
+        }
+      }
+    },
+    "Abyrgdvegna3jaadila": {
+      "type": "object",
+      "required": ["tegund", "stadaISK", "erISkilum"],
+      "properties": {
+        "tegund": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "numer": {
+          "type": "string"
+        },
+        "stadaISK": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "erISkilum": {
+          "type": "boolean"
+        },
+        "mynt": {
+          "type": "string"
+        }
+      }
     },
     "Geymsluholf": {
       "type": "object",
       "properties": {
+        "stadsetning": {
+          "type": "string"
+        },
         "audkenni": {
           "type": "string"
-        },
-        "nafnKrofuhafa": {
-          "type": "string"
-        },
-        "utibu": {
-          "type": "string"
-        },
-        "stadaIDag": {
-          "type": "string"
         }
       }
     },
-    "VerdbrefaStada": {
-      "type": "object",
-      "required": ["verdbrefaeignIsk"],
-      "properties": {
-        "verdbrefaeignIsk": {
-          "type": "number",
-          "format": "double"
-        }
-      }
-    },
-    "Skjal": {
+    "Skjol": {
       "type": "object",
       "properties": {
         "nafn": {
@@ -3665,6 +3674,17 @@
           "type": "string"
         },
         "embaettiNumer": {
+          "type": "string"
+        }
+      }
+    },
+    "Verdbrefamidlari": {
+      "type": "object",
+      "properties": {
+        "nafn": {
+          "type": "string"
+        },
+        "kennitala": {
           "type": "string"
         }
       }
