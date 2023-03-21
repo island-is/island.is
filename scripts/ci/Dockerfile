@@ -43,6 +43,7 @@ COPY \
   workspace.json \
   ./
 
+COPY ./infra ./infra
 COPY ./scripts ./scripts
 COPY ./apps ./apps
 COPY ./libs ./libs
