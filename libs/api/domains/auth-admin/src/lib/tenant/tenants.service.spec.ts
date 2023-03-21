@@ -54,9 +54,9 @@ const mockTenants = {
 const createMockAdminApi = (tenants: TenantDto[]) => ({
   withMiddleware: jest.fn().mockReturnThis(),
   meTenantsControllerFindAll: jest.fn().mockResolvedValue(tenants),
-  meTenantsControllerFindById: jest.fn().mockImplementation(({ id }) => {
+  meTenantsControllerFindById: jest.fn().mockImplementation(({ tenantId }) => {
     return new Promise((resolve) => {
-      resolve(tenants.find((t) => t.name === id))
+      resolve(tenants.find((t) => t.name === tenantId))
     })
   }),
 })
