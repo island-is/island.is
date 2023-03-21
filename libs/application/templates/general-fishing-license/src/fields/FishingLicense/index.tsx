@@ -134,6 +134,7 @@ export const FishingLicense: FC<FieldBaseProps> = ({
     if (getValues(ATTACHMENTS_FIELD_ID) !== undefined) {
       setValue(ATTACHMENTS_FIELD_ID, undefined)
     }
+    setValue(`${field.id}.chargeType`, chargeType)
   }, [chargeType])
 
   return (
