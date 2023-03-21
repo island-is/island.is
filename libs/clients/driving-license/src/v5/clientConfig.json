@@ -1364,7 +1364,7 @@
         "tags": [
           "Okuskirteini"
         ],
-        "summary": "Get driving teacherse",
+        "summary": "Get driving teachers",
         "parameters": [
           {
             "name": "api-version",
@@ -2179,17 +2179,17 @@
       "InstructorDto": {
         "type": "object",
         "properties": {
-          "kennitala": {
+          "ssn": {
             "type": "string",
             "description": "Public identity number",
             "nullable": true
           },
-          "nafn": {
+          "name": {
             "type": "string",
             "description": "Name",
             "nullable": true
           },
-          "nrOkuskirteinis": {
+          "driverLicenseId": {
             "type": "integer",
             "description": "Númer ökuskírteinis ökukennara",
             "format": "int32",
