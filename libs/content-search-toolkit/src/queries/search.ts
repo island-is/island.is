@@ -32,13 +32,13 @@ export const searchQuery = (
   let minimumShouldMatch = 1
 
   const fieldsWeights = [
-    'title^100', // note boosting ..
+    'title^6', // note boosting ..
     'title.stemmed^2', // note boosting ..
     'content',
     'content.stemmed',
   ]
   const words = queryString.split(' ')
-  const lastWord = words.pop()
+  // const lastWord = words.pop()
 
   // * wildcard support for internal clients - eg. used by island.is app
   if (queryString.trim() === '*') {
@@ -55,9 +55,15 @@ export const searchQuery = (
       // the search logic used for search drop down suggestions
       // term and prefix queries on content title
       case 'suggestions':
-        should.push({ prefix: { title: lastWord } })
-        words.forEach((word) => {
-          should.push({ term: { title: word } })
+        should.push({
+          multi_match: {
+            query: queryString + '*',
+            fields: ['title'],
+
+            fuzziness: 'AUTO',
+            operator: 'and',
+            type: 'best_fields',
+          },
         })
         break
 
@@ -67,9 +73,12 @@ export const searchQuery = (
       default:
         should.push({
           multi_match: {
-            fields: fieldsWeights,
+            fields: [
+              'title^100', // note boosting ..
+              'content',
+            ],
             query: queryString,
-            fuzziness: 'AUTO',
+            fuzziness: 1,
             operator: 'and',
             type: 'best_fields',
           },
@@ -168,7 +177,6 @@ export const searchQuery = (
               factor: 1.2,
               modifier: 'log1p',
               missing: 1,
-              // max_boost: 1.5,
             },
           },
           // content that is an entrance to "umsoknir" gets a boost
