@@ -28,4 +28,10 @@ export class TemporaryEventLicence {
 
   @Field({ nullable: true })
   licenseResponsible?: string
+
+  @Field({ nullable: true })
+  maximumNumberOfGuests?: number
+
+  @Field({ nullable: true })
+  estimatedNumberOfGuests?: number
 }

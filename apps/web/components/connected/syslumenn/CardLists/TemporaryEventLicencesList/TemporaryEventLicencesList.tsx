@@ -349,6 +349,26 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
                             'Enginn skráður',
                           )}
                       </Text>
+
+                      {temporaryEventLicence.estimatedNumberOfGuests && (
+                        <Text>
+                          {t(
+                            'licenseEstimatedNumberOfGuests',
+                            'Áætlaður fjöldi gesta',
+                          )}
+                          : {temporaryEventLicence.estimatedNumberOfGuests}
+                        </Text>
+                      )}
+
+                      {temporaryEventLicence.maximumNumberOfGuests && (
+                        <Text>
+                          {t(
+                            'licenseMaximumNumberOfGuests',
+                            'Hámarksfjöldi gesta',
+                          )}
+                          : {temporaryEventLicence.maximumNumberOfGuests}
+                        </Text>
+                      )}
                     </Box>
                   </Box>
                 )

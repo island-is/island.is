@@ -221,6 +221,8 @@ export const mapTemporaryEventLicence = (
     : undefined,
   licenseHolder: temporaryEventLicence.leyfishafi?.trim() ?? '',
   licenseResponsible: temporaryEventLicence.abyrgdarmadur?.trim() ?? '',
+  maximumNumberOfGuests: temporaryEventLicence.hamarksfjoldi,
+  estimatedNumberOfGuests: temporaryEventLicence.aaetladurFjoldi,
 })
 
 export function constructUploadDataObject(

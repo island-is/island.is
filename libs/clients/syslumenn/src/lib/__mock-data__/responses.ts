@@ -148,6 +148,8 @@ export const TEMPORARY_EVENT_LICENCES = [
     gildirTil: new Date('2023-05-01'),
     leyfishafi: 'string',
     abyrgdarmadur: 'string',
+    hamarksfjoldi: 0,
+    aaetladurFjoldi: 0,
   },
 ] as Taekifaerisleyfi[]
 
