@@ -20,10 +20,12 @@ interface UserOptions {
 }
 
 export const createCurrentUser = (user: UserOptions = {}): User => {
+  // TODO: Simplify when web has strict TypeScript.
   const delegationType =
-    user.delegationType && !Array.isArray(user.delegationType)
+    user.delegationType &&
+    ((!Array.isArray(user.delegationType)
       ? [user.delegationType]
-      : user.delegationType
+      : user.delegationType) as AuthDelegationType[])
   const actor =
     delegationType || user.actor
       ? { nationalId: createNationalId('person'), scope: [], ...user.actor }

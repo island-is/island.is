@@ -12,10 +12,17 @@ import {
   StaticText,
   StaticTextObject,
 } from '@island.is/application/types'
-import { StartDateOptions, YES, NO } from '../../constants'
 import {
+  StartDateOptions,
+  YES,
+  NO,
+  PERMANENT_FOSTER_CARE,
+  ADOPTION,
+} from '../../constants'
+import {
+  getApplicationAnswers,
   getApplicationExternalData,
-  getExpectedDateOfBirth,
+  getExpectedDateOfBirthOrAdoptionDate,
   residentGrantIsOpenForApplication,
 } from '../parentalLeaveUtils'
 import {
@@ -105,6 +112,7 @@ const validFirstPeriodStartValues = [
   StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
   StartDateOptions.ACTUAL_DATE_OF_BIRTH,
   StartDateOptions.SPECIFIC_DATE,
+  StartDateOptions.ADOPTION_DATE,
 ]
 
 export const validatePeriod = (
@@ -118,13 +126,15 @@ export const validatePeriod = (
     values?: Record<string, unknown>,
   ) => AnswerValidationError,
 ) => {
-  const expectedDateOfBirth = getExpectedDateOfBirth(application)
+  const expectedDateOfBirthOrAdoptionDate = getExpectedDateOfBirthOrAdoptionDate(
+    application,
+  )
 
-  if (!expectedDateOfBirth) {
+  if (!expectedDateOfBirthOrAdoptionDate) {
     return buildError(null, errorMessages.dateOfBirth)
   }
 
-  const dob = parseISO(expectedDateOfBirth)
+  const dob = parseISO(expectedDateOfBirthOrAdoptionDate)
   const today = new Date()
   const minimumStartDate = addMonths(
     dob,
@@ -161,7 +171,8 @@ export const validatePeriod = (
     if (isFirstPeriod && parseISO(startDate) > today) {
       startDateValue =
         firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH ||
-        firstPeriodStart === StartDateOptions.ESTIMATED_DATE_OF_BIRTH
+        firstPeriodStart === StartDateOptions.ESTIMATED_DATE_OF_BIRTH ||
+        firstPeriodStart === StartDateOptions.ADOPTION_DATE
           ? dob
           : parseISO(startDate)
     } else {
@@ -276,12 +287,18 @@ export const validatePeriod = (
   }
 }
 
+// applicant that cannot apply for residence grant: secondary parents, adoption and foster care
 export const showResidenceGrant = (application: Application) => {
   const { children } = getApplicationExternalData(application.externalData)
+  const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
+    application.answers,
+  )
   const childrenData = (children as unknown) as ChildInformation[]
   if (
     childrenData?.length &&
-    childrenData[0]?.parentalRelation?.match('primary')
+    childrenData[0]?.parentalRelation?.match('primary') &&
+    noChildrenFoundTypeOfApplication !== PERMANENT_FOSTER_CARE &&
+    noChildrenFoundTypeOfApplication !== ADOPTION
   )
     return true
   return false

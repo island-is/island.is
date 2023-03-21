@@ -1,4 +1,4 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
 
 import { RegulationsService } from '@island.is/clients/regulations'
@@ -18,13 +18,27 @@ import {
 import { GetRegulationsInput } from './dto/getRegulations.input'
 import { GetRegulationInput } from './dto/getRegulation.input'
 import { GetRegulationsLawChaptersInput } from './dto/getRegulationsLawChapters.input'
+import { GetRegulationsMinistriesInput } from './dto/getRegulationsMinistriesInput.input'
 import { GetRegulationsSearchInput } from './dto/getRegulationsSearch.input'
+import { CreatePresignedPostInput } from './dto/createPresignedPost.input'
+import { PresignedPostResults } from '@island.is/regulations/admin'
 
 const validPage = (page: number | undefined) => (page && page >= 1 ? page : 1)
 
 @Resolver()
 export class RegulationsResolver {
   constructor(private regulationsService: RegulationsService) {}
+
+  @Mutation(() => graphqlTypeJson)
+  createPresignedPost(
+    @Args('input') input: CreatePresignedPostInput,
+  ): Promise<PresignedPostResults | null> {
+    return this.regulationsService.createPresignedPost(
+      input.fileName,
+      input.regId,
+      input.hash,
+    )
+  }
 
   @Query(() => graphqlTypeJson)
   getRegulation(
@@ -71,14 +85,19 @@ export class RegulationsResolver {
   }
 
   @Query(() => graphqlTypeJson)
-  getRegulationsMinistries(): Promise<MinistryList | null> {
-    return this.regulationsService.getRegulationsMinistries()
+  getRegulationsMinistries(
+    @Args('input') input: GetRegulationsMinistriesInput,
+  ): Promise<MinistryList | null> {
+    return this.regulationsService.getRegulationsMinistries(input.slugs)
   }
 
   @Query(() => graphqlTypeJson)
   getRegulationsLawChapters(
     @Args('input') input: GetRegulationsLawChaptersInput,
   ): Promise<LawChapterTree | Array<LawChapter> | null> {
-    return this.regulationsService.getRegulationsLawChapters(input.tree ?? true)
+    return this.regulationsService.getRegulationsLawChapters(
+      input.tree ?? (input.slugs ? false : true),
+      input.slugs,
+    )
   }
 }

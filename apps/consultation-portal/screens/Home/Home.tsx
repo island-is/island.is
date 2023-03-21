@@ -15,6 +15,7 @@ import Card from '../../components/Card/Card'
 import Layout from '../../components/Layout/Layout'
 import SearchAndFilter from '../../components/SearchAndFilter/SearchAndFilter'
 import {
+  ArrOfStatistics,
   ArrOfTypes,
   Case,
   CaseFilter,
@@ -32,10 +33,10 @@ import Pagination from '../../components/Pagination/Pagination'
 const CARDS_PER_PAGE = 12
 interface HomeProps {
   types: ArrOfTypes
+  statistics: ArrOfStatistics
 }
-export const Home = ({ types }: HomeProps) => {
+export const Home = ({ types, statistics }: HomeProps) => {
   const [page, setPage] = useState<number>(0)
-
   const {
     caseStatuses,
     caseTypes,
@@ -48,7 +49,7 @@ export const Home = ({ types }: HomeProps) => {
   } = getInitFilterValues({ types: types })
 
   const defaultValues = {
-    query: '',
+    searchQuery: '',
     sorting: { items: sorting, isOpen: true },
     caseStatuses: { items: caseStatuses, isOpen: true },
     caseTypes: { items: caseTypes, isOpen: true },
@@ -58,7 +59,7 @@ export const Home = ({ types }: HomeProps) => {
   }
 
   const [filters, setFilters] = useState<CaseFilter>({
-    query: '',
+    searchQuery: '',
     sorting: { items: sorting, isOpen: true },
     caseStatuses: { items: caseStatuses, isOpen: true },
     caseTypes: { items: caseTypes, isOpen: true },
@@ -81,7 +82,7 @@ export const Home = ({ types }: HomeProps) => {
           (item: FilterInputItems) => item.checked,
         )[0].label,
     ),
-    // query: filters.query,
+    searchQuery: filters.searchQuery,
     policyAreas: filters.policyAreas,
     institutions: filters.institutions,
     dateFrom: filters.period.from,
@@ -108,6 +109,44 @@ export const Home = ({ types }: HomeProps) => {
   const { consultationPortalGetCases: casesData = [] } = data ?? {}
 
   const { cases = [], filterGroups = {}, total = 1 } = casesData
+
+  useEffect(() => {
+    const insertFilterCount = setTimeout(() => {
+      if (filterGroups && !loading) {
+        const caseTypesList = filterGroups?.CaseTypes
+          ? Object.entries(filterGroups.CaseTypes).map(([value, count]) => ({
+              value,
+              count,
+            }))
+          : []
+
+        const caseTypesMerged = filters.caseTypes.items.map((item) => ({
+          ...item,
+          ...caseTypesList.find((val) => val.value === item.value),
+        }))
+
+        const caseStatusesList = filterGroups?.Statuses
+          ? Object.entries(filterGroups.Statuses).map(([value, count]) => ({
+              value,
+              count,
+            }))
+          : []
+        const caseStatusesMerged = filters.caseStatuses.items.map((item) => ({
+          ...item,
+          ...caseStatusesList.find((val) => val.value === item.value),
+        }))
+
+        const filtersCopy = { ...filters }
+        filtersCopy.caseTypes.items = caseTypesMerged
+        filtersCopy.caseStatuses.items = caseStatusesMerged
+        setFilters(filtersCopy)
+      }
+    }, 500)
+
+    return () => {
+      clearTimeout(insertFilterCount)
+    }
+  }, [filterGroups])
 
   const renderCards = () => {
     if (loading) {
@@ -137,10 +176,13 @@ export const Home = ({ types }: HomeProps) => {
                 id: item.id,
                 title: item.name,
                 tag: item.statusName,
+                published: item.created,
+                processEnds: item.processEnds,
+                processBegins: item.processBegins,
                 eyebrows: [item.typeName, item.institutionName],
               }
               return (
-                <Card key={index} card={card} frontPage>
+                <Card key={index} card={card} frontPage showPublished>
                   <Stack space={2}>
                     <Text variant="eyebrow" color="purple400">
                       {`Fjöldi umsagna: ${item.adviceCount}`}
@@ -173,7 +215,7 @@ export const Home = ({ types }: HomeProps) => {
 
   return (
     <Layout isFrontPage seo={{ title: 'Öll mál' }}>
-      <HeroBanner />
+      <HeroBanner statistics={statistics} />
       <SearchAndFilter
         PolicyAreas={PolicyAreas}
         defaultPolicyAreas={allPolicyAreas}
