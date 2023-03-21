@@ -9,6 +9,8 @@ import {
   Gender,
   IndictmentSubtype,
   IndictmentSubtypeMap,
+  Notification,
+  NotificationType,
 } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
@@ -106,5 +108,26 @@ export const isTrafficViolationCase = (
       flatIndictmentSubtypes.every(
         (val) => val === IndictmentSubtype.TRAFFIC_VIOLATION,
       ),
+  )
+}
+
+export const hasSentNotification = (
+  notificationType: NotificationType,
+  notifications?: Notification[],
+) => {
+  if (!notifications || notifications.length === 0) {
+    return false
+  }
+
+  const notificationsOfType = notifications.filter(
+    (notification) => notification.type === notificationType,
+  )
+
+  if (notificationsOfType.length === 0) {
+    return false
+  }
+
+  return notificationsOfType[0].recipients.some(
+    (recipient) => recipient.success,
   )
 }
