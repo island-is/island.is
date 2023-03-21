@@ -2,7 +2,6 @@ import { Inject, Injectable } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
-  DynamicBarcodeDataInput,
   Pass,
   PassDataInput,
   Result,
@@ -10,7 +9,6 @@ import {
   SmartSolutionsApi,
   VerifyPassData,
 } from '@island.is/clients/smartsolutions'
-import { date } from 'zod'
 import { GenericLicenseClient } from '../../license.types'
 import { VerifyInputData } from '../../dto/verifyLicense.input'
 
