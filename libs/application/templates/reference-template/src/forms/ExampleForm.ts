@@ -11,6 +11,7 @@ import {
   buildFileUploadField,
   buildRedirectToServicePortalField,
   buildSelectField,
+  buildPhoneField,
 } from '@island.is/application/core'
 import {
   Comparators,
@@ -68,7 +69,7 @@ export const ExampleForm: Form = buildForm({
               title: m.email,
               width: 'half',
             }),
-            buildTextField({
+            buildPhoneField({
               id: 'person.phoneNumber',
               title: m.phoneNumber,
               width: 'half',
