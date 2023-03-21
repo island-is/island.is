@@ -7,23 +7,6 @@ export const icRuling = {
     description: 'Notaður sem titill á úrskurðar skrefi í rannsóknarheimildum.',
   }),
   sections: {
-    alertMessage: defineMessages({
-      title: {
-        id:
-          'judicial.system.core:investigation_cases.ruling.sections.alert_message.title',
-        defaultMessage: 'Leiðrétting úrskurðar',
-        description:
-          'Notaður sem titill í viðvörunarboxi þegar verið er að leiðrétta úrskurð',
-      },
-      message: {
-        id:
-          'judicial.system.core:investigation_cases.ruling.sections.alert_message.message',
-        defaultMessage:
-          'Hægt er að leiðrétta textann í úrskurðarskjalinu og undirrita það aftur, og vistast þá ný útgáfa í málaskrá dómsins auk þess sem málflytjendur fá tilkynningu um nýtt skjal. Athugið að allar breytingar á textum verða sýnilegar í yfirliti málsins, hvort sem nýr úrskurður er undirritaður eða ekki.',
-        description:
-          'Notaður sem texti í viðvörunarboxi þegar verið er að leiðrétta úrskurð',
-      },
-    }),
     courtCaseFacts: defineMessages({
       title: {
         id:
@@ -118,7 +101,6 @@ export const icRuling = {
           'Notaður sem titill fyrir "Úrskurður" hlutann á úrskurðar skrefi í rannsóknarheimildum.',
       },
     }),
-
     introduction: defineMessages({
       title: {
         id:
@@ -179,15 +161,6 @@ export const icRuling = {
         defaultMessage: 'Niðurstaða',
         description:
           'Notaður sem titill fyrir "Niðurstaða" hlutann á úrskurðar skrefi í rannsóknarheimildum.',
-      },
-    }),
-    formFooter: defineMessages({
-      modifyRulingButtonLabel: {
-        id:
-          'judicial.system.core:investigation_cases.ruling.form_footer.modify_ruling_button_label',
-        defaultMessage: 'Undirrita nýjan úrskurð',
-        description:
-          'Notaður sem label á hnappinn "Halda áfram" í úrskurðar skrefi þegar úrskuður er leiðréttur.',
       },
     }),
   },

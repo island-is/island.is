@@ -92,4 +92,5 @@ export abstract class ClientBaseDTO {
   supportsPersonalRepresentatives!: boolean
   promptDelegations!: boolean
   requireApiScopes!: boolean
+  domainName?: string
 }

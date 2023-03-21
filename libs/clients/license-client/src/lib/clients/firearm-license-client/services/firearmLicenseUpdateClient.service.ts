@@ -13,7 +13,7 @@ import {
   SmartSolutionsApi,
   VerifyPassData,
 } from '@island.is/clients/smartsolutions'
-import { Result } from '../../../licenseClient.type'
+import { Result, VerifyInputData } from '../../../licenseClient.type'
 import { createPkPassDataInput } from '../firearmLicenseMapper'
 import { BaseLicenseUpdateClient } from '../../baseLicenseUpdateClient'
 
@@ -102,7 +102,32 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
   /** We need to verify the pk pass AND the license itself! */
   async verify(inputData: string): Promise<Result<VerifyPassData>> {
     //need to parse the scanner data
-    const { code, date } = JSON.parse(inputData)
+    let parsedInput
+    try {
+      parsedInput = JSON.parse(inputData) as VerifyInputData
+    } catch (ex) {
+      return {
+        ok: false,
+        error: {
+          code: 12,
+          message: 'Invalid input data',
+        },
+      }
+    }
+
+    const { code, date } = parsedInput
+
+    if (!code || !date) {
+      return {
+        ok: false,
+        error: {
+          code: 4,
+          message:
+            'Invalid input data,  either code or date are missing or invalid',
+        },
+      }
+    }
+
     const verifyRes = await this.smartApi.verifyPkPass({ code, date })
 
     if (!verifyRes.ok) {
