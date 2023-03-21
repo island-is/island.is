@@ -264,20 +264,13 @@ export class OperatingLicenseService extends BaseTemplateApiService {
           uploadDataId,
         )
         .catch((e) => {
-          return {
-            success: false,
-            errorMessage: e.message,
-          }
+          throw new Error(`Application submission failed ${e}`)
         })
       return {
         success: result.success,
-        orderId: '',
       }
     } catch (e) {
-      return {
-        success: false,
-        orderId: '',
-      }
+      throw new Error(`Application submission failed ${e}`)
     }
   }
 
@@ -310,11 +303,12 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
 
     const criminalRecord = await this.getCriminalRecord(application.applicant)
-
-    attachments.push({
-      name: `sakavottord_${application.applicant}_${dateStr}.pdf`,
-      content: criminalRecord.contentBase64,
-    })
+    if (criminalRecord.contentBase64) {
+      attachments.push({
+        name: `sakavottord_${application.applicant}_${dateStr}.pdf`,
+        content: criminalRecord.contentBase64,
+      })
+    }
 
     for (let i = 0; i < AttachmentPaths.length; i++) {
       const { path, prefix } = AttachmentPaths[i]

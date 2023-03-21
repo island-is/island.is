@@ -14,7 +14,8 @@ export const SubscriptionBox = () => {
       <Stack space={2}>
         <Text variant="h3">Skrá áskrift</Text>
         <Text variant="default">
-          Skráðu þig í áskrift af þessu máli. Þú færð e-mail til staðfestingar.
+          Skráðu þig í áskrift af þessu máli. Þú færð tölvupóst til
+          staðfestingar.
         </Text>
         <form>
           <Input

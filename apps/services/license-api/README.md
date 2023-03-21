@@ -4,6 +4,10 @@
 
 A RESTful API that enables the updating of digital licenses for authenticated external parties.
 
+## Guards
+
+- `LicenseTypeScopeGuard`: checks that the access token has the required scopes to be able to perform an action on a specific `LicenseId`
+
 ## Quickstart
 
 Ensure docker is running, then run the following when running for the first time:
