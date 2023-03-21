@@ -3,14 +3,17 @@ ARG PLAYWRIGHT_VERSION
 ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
 FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as deps
 
-RUN apk add -U git
-
 WORKDIR /build
 
 # Adding and installing packages
-ADD package.json yarn.lock .yarnrc.yml ./
-COPY .yarn/ ./.yarn
-RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
+RUN apk add --update --no-cache \
+  git \
+  python3 \
+  build-base \
+  gcc \
+  && ln -sf /usr/bin/python3 /usr/bin/python
+COPY package.json yarn.lock .yarnrc.yml ./
+COPY .yarn/releases ./.yarn/releases
 RUN CI=true yarn install --immutable
 
 FROM deps as src
@@ -20,7 +23,30 @@ RUN wget -O /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq-
   mv /tmp/jq-linux64 /usr/bin/jq
 
 # image with the source code
-ADD . .
+COPY \
+  .envrc \
+  .eslintrc.json \
+  .npmrc \
+  .prettierignore \
+  .prettierrc \
+  babel.config.json \
+  codecov.yml \
+  eslint-local-rules.js \
+  jest.config.js \
+  jest.preset.js \
+  jest.resolver.js \
+  package.json \
+  tsconfig.base.json \
+  yarn.lock \
+  .nxignore \
+  nx.json \
+  workspace.json \
+  ./scripts ./scripts \
+  ./
+COPY ./apps ./apps
+COPY ./libs ./libs
+COPY ./tools ./tools
+
 
 FROM src as builder
 ARG APP
@@ -96,9 +122,9 @@ RUN apk update && \
   apk upgrade && \
   apk add bash nodejs
 
-ADD scripts/dockerfile-assets/nginx/* /etc/nginx/templates
-ADD scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d
-ADD scripts/dockerfile-assets/bash/extract-environment.js /docker-entrypoint.d
+COPY scripts/dockerfile-assets/nginx/* /etc/nginx/templates
+COPY scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d
+COPY scripts/dockerfile-assets/bash/extract-environment.js /docker-entrypoint.d
 COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html
 
 FROM output-base as output-jest
