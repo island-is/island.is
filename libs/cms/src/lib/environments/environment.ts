@@ -71,6 +71,7 @@ export default {
     'organizationTag',
     'logoListSlice',
   ],
+  // Content types that have the 'activeTranslations' JSON field
   localizedContentTypes: ['article'],
   contentful: {
     space: process.env.CONTENTFUL_SPACE || '8k0h54kbe6bj',
