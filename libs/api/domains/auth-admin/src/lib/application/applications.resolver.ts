@@ -9,7 +9,8 @@ import {
 } from '@nestjs/graphql'
 import { Environment } from '@island.is/shared/types'
 
-import { CurrentUser, IdsUserGuard, User } from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import { ApplicationsService } from './applications.service'
 import { ApplicationsPayload } from './dto/applications-payload'
 import { Application } from './models/application.model'
