@@ -220,8 +220,7 @@ export const mapTemporaryEventLicence = (
     ? temporaryEventLicence.gildirTil
     : undefined,
   licenseHolder: temporaryEventLicence.leyfishafi?.trim() ?? '',
-  // TODO: Ask for this to be fixed in Syslumenn API: abyrgdarmaur -> abyrgdarmadur
-  licenseResponsible: temporaryEventLicence.abyrgdarmaur?.trim() ?? '',
+  licenseResponsible: temporaryEventLicence.abyrgdarmadur?.trim() ?? '',
 })
 
 export function constructUploadDataObject(

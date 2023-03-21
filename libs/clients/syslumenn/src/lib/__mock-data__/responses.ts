@@ -147,8 +147,7 @@ export const TEMPORARY_EVENT_LICENCES = [
     gildirFra: new Date('2022-05-01'),
     gildirTil: new Date('2023-05-01'),
     leyfishafi: 'string',
-    // TODO: Ask for this to be fixed in Syslumenn API: abyrgdarmaur -> abyrgdarmadur
-    abyrgdarmaur: 'string',
+    abyrgdarmadur: 'string',
   },
 ] as Taekifaerisleyfi[]
 
