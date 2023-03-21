@@ -44,7 +44,7 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
   const t = useLocalization(slice.json)
   const { format } = useDateUtils()
   const PAGE_SIZE = slice?.configJson?.pageSize ?? DEFAULT_PAGE_SIZE
-  const DATE_FORMAT = t('dateFormat', 'd. MMMM yyyy')
+  const DATE_FORMAT = t('dateFormat', "d. MMMM yyyy 'kl.' HH:mm")
 
   const [listState, setListState] = useState<ListState>('loading')
   const [showCount, setShowCount] = useState(PAGE_SIZE)

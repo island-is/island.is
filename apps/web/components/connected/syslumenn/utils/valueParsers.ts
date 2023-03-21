@@ -21,7 +21,7 @@ export const getValidPeriodRepresentation = (
     if (validFrom === validTo) {
       return format(new Date(validFrom), dateFormat)
     }
-    return `${format(new Date(validFrom), dateFormat)} - ${format(
+    return `${format(new Date(validFrom), dateFormat)} — ${format(
       new Date(validTo),
       dateFormat,
     )}`
