@@ -41,9 +41,9 @@ COPY \
   .nxignore \
   nx.json \
   workspace.json \
-  ./scripts ./scripts \
-  .envrc \
   ./
+
+COPY ./scripts ./scripts
 COPY ./apps ./apps
 COPY ./libs ./libs
 COPY ./tools ./tools
