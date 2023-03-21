@@ -2,7 +2,6 @@ import React, { forwardRef } from 'react'
 import { InputBackgroundColor, PhoneInput } from '@island.is/island-ui/core'
 import { Controller, Control, RegisterOptions } from 'react-hook-form'
 import { TestSupport } from '@island.is/island-ui/utils'
-import { useFeatureFlag } from '@island.is/react/feature-flags'
 
 interface Props {
   autoFocus?: boolean
@@ -26,6 +25,7 @@ interface Props {
   size?: 'xs' | 'sm' | 'md'
   autoComplete?: 'off' | 'on'
   allowedCountryCodes?: string[]
+  disableDropdown?: boolean
 }
 
 interface ChildParams {
@@ -61,12 +61,8 @@ export const PhoneInputController = forwardRef(
       dataTestId,
       autoComplete,
       allowedCountryCodes,
+      disableDropdown,
     } = props
-
-    const { value: isPhoneInputV2Enabled } = useFeatureFlag(
-      'isPhoneInputV2Enabled',
-      false,
-    )
 
     function renderChildInput(c: ChildParams & TestSupport) {
       const { value, onChange, ...props } = c
@@ -90,7 +86,7 @@ export const PhoneInputController = forwardRef(
           hasError={error !== undefined}
           errorMessage={error}
           required={required}
-          disableDropdown={!isPhoneInputV2Enabled}
+          disableDropdown={disableDropdown}
           ref={ref}
           onFormatValueChange={onChange}
           allowedCountryCodes={allowedCountryCodes}
