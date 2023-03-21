@@ -12,6 +12,8 @@ import { UserAdviceResultService } from './user/userAdvice.services'
 import { UserAdviceResultResolver } from './user/userAdvice.resolver'
 import { StatisticsResultService } from './statistics/statistics.service'
 import { StatisticsResultResolver } from './statistics/statistics.resolver'
+import { AuthenticationService } from './authentication/authentication.service'
+import { AuthenticationResolver } from './authentication/authentication.resolver'
 
 @Module({
   providers: [
@@ -25,6 +27,8 @@ import { StatisticsResultResolver } from './statistics/statistics.resolver'
     UserAdviceResultResolver,
     StatisticsResultService,
     StatisticsResultResolver,
+    AuthenticationService,
+    AuthenticationResolver,
   ],
   imports: [ConsultationPortalClientModule, AuthModule, FeatureFlagModule],
   exports: [],
