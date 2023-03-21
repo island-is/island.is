@@ -16,8 +16,8 @@ export class TenantResolver {
   constructor(private readonly tenantsService: TenantsService) {}
 
   @Query(() => Tenant, { name: 'authAdminTenant' })
-  getTenant(@Args('id') id: string) {
-    return this.tenantsService.getTenant(id)
+  getTenant(@Args('id') id: string, @CurrentUser() user: User) {
+    return this.tenantsService.getTenantById(id, user)
   }
 
   @Query(() => TenantsPayload, { name: 'authAdminTenants' })
@@ -38,10 +38,5 @@ export class TenantResolver {
   @ResolveField('availableEnvironments', () => [Environment])
   resolveAvailableEnvironments(@Parent() tenant: Tenant): Environment[] {
     return tenant.environments.map((env) => env.environment)
-  }
-
-  @Query(() => Tenant, { name: 'authAdminTenantById' })
-  getTenantById(@Args('id') id: string, @CurrentUser() user: User) {
-    return this.tenantsService.getTenantById(id, user)
   }
 }

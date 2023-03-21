@@ -161,7 +161,7 @@ export class TenantsService {
         .catch(this.handleError.bind(this)),
     ])
 
-    const tenantMap = new Map<string, TenantEnvironment[]>()
+    const tenantMap: TenantEnvironment[] = []
 
     for (const [index, env] of [
       Environment.Development,
@@ -169,24 +169,16 @@ export class TenantsService {
       Environment.Production,
     ].entries()) {
       if (tenants[index]) {
-        const { name, displayName } = tenants[index] ?? {
-          name: '',
-          displayName: [],
-        }
-        if (!tenantMap.has(name)) {
-          tenantMap.set(name, [])
-        }
-
-        tenantMap.get(name)?.push({
-          name: name,
+        tenantMap.push({
+          name: tenants[index]?.name ?? '',
           environment: env,
-          displayName: displayName,
+          displayName: tenants[index]?.displayName ?? [],
         })
       }
     }
     return {
       id: id,
-      environments: tenantMap.get(id) ?? [],
+      environments: tenantMap,
     } as Tenant
   }
 }
