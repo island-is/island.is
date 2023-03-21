@@ -1,0 +1,24 @@
+import { defineConfig } from '@island.is/nest/config'
+import { z } from 'zod'
+import { SjukraScope } from '@island.is/auth/scopes'
+
+const schema = z.object({
+  scope: z.array(z.string()),
+  xRoadServicePath: z.string(),
+})
+
+export const EhicClientConfig = defineConfig<z.infer<typeof schema>>({
+  name: 'EhicClientV1',
+  schema,
+  load(env) {
+    return {
+      scope: [SjukraScope.europeanHealthInsuranceCard],
+      // TODO: SET this to X-ROAD path
+      xRoadServicePath: 'https://midgardur-test.sjukra.is/ehic',
+      // xRoadServicePath: env.required(
+      //   'EHIC_XROAD_PROVIDER_ID',
+      //   'IS-DEV/GOV/10012/Fiskistofa-Protected/veidileyfi-v1',
+      // ),
+    }
+  },
+})
