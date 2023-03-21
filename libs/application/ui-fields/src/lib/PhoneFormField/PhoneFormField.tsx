@@ -6,7 +6,6 @@ import { Box } from '@island.is/island-ui/core'
 import {
   PhoneInputController,
   FieldDescription,
-  InputController,
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { getDefaultValue } from '../../getDefaultValue'
@@ -34,6 +33,7 @@ export const PhoneFormField: FC<Props> = ({
     readOnly,
     dataTestId,
     allowedCountryCodes,
+    disableDropdown,
     onChange = () => undefined,
   } = field
   const { control, clearErrors } = useFormContext()
@@ -52,68 +52,36 @@ export const PhoneFormField: FC<Props> = ({
       )}
 
       <Box paddingTop={2}>
-        {isPhoneInputV2Enabled ? (
-          <PhoneInputController
-            disabled={disabled}
-            readOnly={readOnly}
-            id={id}
-            dataTestId={dataTestId}
-            allowedCountryCodes={allowedCountryCodes}
-            placeholder={formatText(
-              placeholder || '',
-              application,
-              formatMessage,
-            )}
-            label={
-              showFieldName
-                ? formatText(title, application, formatMessage)
-                : undefined
+        <PhoneInputController
+          disabled={disabled}
+          readOnly={readOnly}
+          id={id}
+          dataTestId={dataTestId}
+          allowedCountryCodes={allowedCountryCodes}
+          placeholder={formatText(
+            placeholder || '',
+            application,
+            formatMessage,
+          )}
+          label={
+            showFieldName
+              ? formatText(title, application, formatMessage)
+              : undefined
+          }
+          autoFocus={autoFocus}
+          error={error}
+          control={control}
+          disableDropdown={disableDropdown || !isPhoneInputV2Enabled}
+          onChange={(e) => {
+            if (error) {
+              clearErrors(id)
             }
-            autoFocus={autoFocus}
-            error={error}
-            control={control}
-            onChange={(e) => {
-              if (error) {
-                clearErrors(id)
-              }
-              onChange(e)
-            }}
-            defaultValue={getDefaultValue(field, application)}
-            backgroundColor={backgroundColor}
-            required={required}
-          />
-        ) : (
-          <InputController
-            disabled={disabled}
-            readOnly={readOnly}
-            id={`${id}NoV2`}
-            dataTestId={dataTestId}
-            type="tel"
-            format="###-####"
-            placeholder={formatText(
-              placeholder || '',
-              application,
-              formatMessage,
-            )}
-            label={
-              showFieldName
-                ? formatText(title, application, formatMessage)
-                : undefined
-            }
-            autoFocus={autoFocus}
-            error={error}
-            control={control}
-            onChange={(e) => {
-              if (error) {
-                clearErrors(id)
-              }
-              onChange(e)
-            }}
-            defaultValue={getDefaultValue(field, application)}
-            backgroundColor={backgroundColor}
-            required={required}
-          />
-        )}
+            onChange(e)
+          }}
+          defaultValue={getDefaultValue(field, application)}
+          backgroundColor={backgroundColor}
+          required={required}
+        />
       </Box>
     </div>
   )
