@@ -24,7 +24,6 @@ import {
   ErrorScreen,
   formSubmit,
   NotFound,
-  ServicePortalModuleComponent,
   TableGrid,
   UserInfoLine,
   m,
@@ -162,10 +161,14 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
   }
 `
 
-const VehicleDetail: ServicePortalModuleComponent = () => {
+type UseParams = {
+  id: string
+}
+
+const VehicleDetail = () => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
-  const { id }: { id: string | undefined } = useParams()
+  const { id } = useParams() as UseParams
 
   const { data, loading, error } = useQuery<Query>(GET_USERS_VEHICLE_DETAIL, {
     variables: {

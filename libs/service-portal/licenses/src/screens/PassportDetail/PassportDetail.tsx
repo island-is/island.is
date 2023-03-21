@@ -13,11 +13,7 @@ import {
   AlertBanner,
   AlertMessage,
 } from '@island.is/island-ui/core'
-import {
-  LinkResolver,
-  ServicePortalModuleComponent,
-  UserInfoLine,
-} from '@island.is/service-portal/core'
+import { LinkResolver, UserInfoLine } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import { formatDate } from '../../utils/dateUtils'
 import { m } from '../../lib/messages'
@@ -61,10 +57,14 @@ const NotifyLostLink = (text: string) => (
   </LinkResolver>
 )
 
-const PassportDetail: ServicePortalModuleComponent = () => {
+type UseParams = {
+  id: string
+}
+
+const PassportDetail = () => {
   useNamespaces('sp.license')
   const { formatMessage, lang } = useLocale()
-  const { id }: { id: string | undefined } = useParams()
+  const { id } = useParams() as UseParams
 
   const { data: passportData, loading, error } = usePassport()
   const { data: childPassportData } = useChildrenPassport()

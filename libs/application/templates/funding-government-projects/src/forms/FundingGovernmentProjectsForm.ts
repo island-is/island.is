@@ -8,6 +8,7 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { Logo } from '../assets/Logo'
 import {
   section,
@@ -166,16 +167,11 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
         }),
       ],
     }),
-    buildSection({
-      id: 'submitted',
-      title: section.submitted,
-      children: [
-        buildCustomField({
-          id: 'submittedCustomField',
-          title: submitted.general.pageTitle,
-          component: 'Submitted',
-        }),
-      ],
+    buildFormConclusionSection({
+      alertTitle: submitted.general.alertTitle,
+      expandableHeader: submitted.labels.title,
+      expandableIntro: submitted.labels.intro,
+      expandableDescription: submitted.labels.bulletList,
     }),
   ],
 })

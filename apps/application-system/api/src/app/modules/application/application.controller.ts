@@ -64,6 +64,7 @@ import { Audit, AuditService } from '@island.is/nest/audit'
 
 import { ApplicationService } from '@island.is/application/api/core'
 import { FileService } from '@island.is/application/api/files'
+import { HistoryService } from '@island.is/application/api/history'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 import { AddAttachmentDto } from './dto/addAttachment.dto'
@@ -100,7 +101,6 @@ import { ApplicationChargeService } from './charge/application-charge.service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { logger as islandis_logger } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BypassDelegation } from './guards/bypass-delegation.decorator'
 
@@ -118,7 +118,6 @@ import { BypassDelegation } from './guards/bypass-delegation.decorator'
 export class ApplicationController {
   constructor(
     private readonly applicationService: ApplicationService,
-    private readonly templateAPIService: TemplateAPIService,
     private readonly fileService: FileService,
     private readonly auditService: AuditService,
     private readonly validationService: ApplicationValidationService,
@@ -128,6 +127,7 @@ export class ApplicationController {
     private intlService: IntlService,
     private paymentService: PaymentService,
     private applicationChargeService: ApplicationChargeService,
+    private readonly historyService: HistoryService,
     private readonly templateApiActionRunner: TemplateApiActionRunner,
   ) {}
 
@@ -259,6 +259,7 @@ export class ApplicationController {
         templateTypeToIsReady[application.typeId] = false
       }
     }
+
     return filteredApplications
   }
 
@@ -349,6 +350,11 @@ export class ApplicationController {
       externalData: updatedApplication.externalData as ExternalData,
       attachments: {},
     }
+
+    await this.historyService.saveStateTransition(
+      updatedApplication.id,
+      updatedApplication.state,
+    )
 
     // Trigger meta.onEntry for initial state on application creation
     const onEnterStateAction = new ApplicationTemplateHelper(
@@ -499,6 +505,7 @@ export class ApplicationController {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
       user,
+      { shouldThrowIfPruned: true },
     )
     const namespaces = await getApplicationTranslationNamespaces(
       existingApplication as BaseApplication,
@@ -532,6 +539,8 @@ export class ApplicationController {
       {
         answers: mergedAnswers,
         applicantActors: applicantActors,
+        draftFinishedSteps: application.draftProgress?.stepsFinished ?? 0,
+        draftTotalSteps: application.draftProgress?.totalSteps ?? 0,
       },
     )
 
@@ -654,6 +663,7 @@ export class ApplicationController {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
       user,
+      { shouldThrowIfPruned: true },
     )
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
@@ -722,9 +732,6 @@ export class ApplicationController {
     })
 
     if (hasError && error) {
-      this.logger.error(
-        `Application submission ended with an error: ${JSON.stringify(error)}`,
-      )
       throw new TemplateApiError(error, 500)
     }
     this.logger.info(`Application submission ended successfully`)
@@ -895,7 +902,9 @@ export class ApplicationController {
       )
 
       updatedApplication = update.updatedApplication as BaseApplication
+      await this.historyService.saveStateTransition(application.id, newState)
     } catch (e) {
+      this.logger.error(e)
       return {
         hasChanged: false,
         hasError: true,
@@ -1221,6 +1230,11 @@ export class ApplicationController {
     await this.paymentService.delete(existingApplication.id, user)
 
     await this.fileService.deleteAttachmentsForApplication(existingApplication)
+
+    // delete history for application
+    await this.historyService.deleteHistoryByApplicationId(
+      existingApplication.id,
+    )
 
     await this.applicationService.delete(existingApplication.id)
   }

@@ -1,5 +1,6 @@
 import {
   Application,
+  ApplicationAnswerFile,
   FieldBaseProps,
   NationalRegistryIndividual,
   NationalRegistrySpouse,
@@ -9,7 +10,6 @@ import {
   Municipality,
   PersonalTaxReturn,
 } from '@island.is/financial-aid/shared/lib'
-import { UploadFile } from '@island.is/island-ui/core'
 import { answersSchema } from './dataSchema'
 
 export enum ApproveOptions {
@@ -68,10 +68,10 @@ export type NestedType<T> = {
 }
 
 export interface OverrideAnswerSchema extends answersSchema {
-  incomeFiles: UploadFile[]
-  taxReturnFiles: UploadFile[]
-  spouseIncomeFiles: UploadFile[]
-  spouseTaxReturnFiles: UploadFile[]
+  incomeFiles: ApplicationAnswerFile[]
+  taxReturnFiles: ApplicationAnswerFile[]
+  spouseIncomeFiles: ApplicationAnswerFile[]
+  spouseTaxReturnFiles: ApplicationAnswerFile[]
 }
 
 export type FAApplication = Override<

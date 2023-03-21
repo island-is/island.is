@@ -13,12 +13,12 @@ import {
   CaseType,
   CaseState,
   Recipient,
-  User,
   IndictmentSubtype,
 } from '@island.is/judicial-system/types'
 
 import { randomDate } from '../../../../test'
-import { Case } from '../../../case/models/case.model'
+import { User } from '../../../user'
+import { Case } from '../../../case'
 import { Institution } from '../../../institution/institution.model'
 import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -87,11 +87,19 @@ describe('InternalNotificationController - Send ready for court notifications fo
     mockNotificationConfig = notificationConfig
     mockNotificationModel = notificationModel
 
+    const mockFindAll = mockNotificationModel.findAll as jest.Mock
+    mockFindAll.mockResolvedValue([])
+
     givenWhenThen = async (caseId, theCase, notification) => {
       const then = {} as Then
 
       await internalNotificationController
-        .sendCaseNotification(caseId, theCase, notification)
+        .sendCaseNotification(
+          caseId,
+          { id: userId } as User,
+          theCase,
+          notification,
+        )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -107,7 +115,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
     })
 
     it('should lookup previous ready for court notifications', () => {
-      expect(mockNotificationModel.findOne).toHaveBeenCalledWith({
+      expect(mockNotificationModel.findAll).toHaveBeenCalledWith({
         where: { caseId, type: NotificationType.READY_FOR_COURT },
       })
     })
@@ -144,8 +152,19 @@ describe('InternalNotificationController - Send ready for court notifications fo
 
   describe('subsequent notifications', () => {
     beforeEach(async () => {
-      const mockFindOne = mockNotificationModel.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce({} as Notification)
+      const mockFindOne = mockNotificationModel.findAll as jest.Mock
+      mockFindOne.mockResolvedValueOnce([
+        {
+          caseId,
+          type: NotificationType.READY_FOR_COURT,
+          recipients: [
+            {
+              address: mockNotificationConfig.sms.courtsMobileNumbers[courtId],
+              success: true,
+            },
+          ],
+        },
+      ])
 
       await givenWhenThen(caseId, theCase, notification)
     })
@@ -192,10 +211,8 @@ describe('InternalNotificationController - Send ready for court notifications fo
 
   describe('defender notification', () => {
     beforeEach(async () => {
-      const mockFindOne = mockNotificationModel.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce({} as Notification)
       const mockFindAll = mockNotificationModel.findAll as jest.Mock
-      mockFindAll.mockResolvedValueOnce([
+      mockFindAll.mockResolvedValueOnce([]).mockResolvedValueOnce([
         {
           recipients: [
             { name: 'Saul Goodman', address: 'saul@dummy.is', success: true },
@@ -228,7 +245,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
   })
 })
 
-describe('InternalNotificationController - Send ready for court notifications for restriction and investigation cases', () => {
+describe('InternalNotificationController - Send ready for court notifications for indictment cases', () => {
   const userId = uuid()
   const notification = { userId, type: NotificationType.READY_FOR_COURT }
 
@@ -253,7 +270,12 @@ describe('InternalNotificationController - Send ready for court notifications fo
       const then = {} as Then
 
       await internalNotificationController
-        .sendCaseNotification(caseId, theCase, notification)
+        .sendCaseNotification(
+          caseId,
+          { id: userId } as User,
+          theCase,
+          notification,
+        )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 

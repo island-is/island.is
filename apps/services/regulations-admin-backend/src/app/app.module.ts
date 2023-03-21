@@ -1,0 +1,40 @@
+import { Module } from '@nestjs/common'
+import {
+  ConfigModule,
+  XRoadConfig,
+  IdsClientConfig,
+} from '@island.is/nest/config'
+import { SequelizeModule } from '@nestjs/sequelize'
+import { AuthModule } from '@island.is/auth-nest-tools'
+import { AuditModule } from '@island.is/nest/audit'
+
+import { environment } from '../environments'
+import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
+import { RegulationsClientConfig } from '@island.is/clients/regulations'
+import { DraftRegulationModule } from './modules/draft_regulation'
+import { DraftRegulationChangeModule } from './modules/draft_regulation_change'
+import { DraftRegulationCancelModule } from './modules/draft_regulation_cancel'
+import { SequelizeConfigService } from './sequelizeConfig.service'
+
+@Module({
+  imports: [
+    AuthModule.register(environment.auth),
+    AuditModule.forRoot(environment.audit),
+    SequelizeModule.forRootAsync({
+      useClass: SequelizeConfigService,
+    }),
+    DraftRegulationModule,
+    DraftRegulationChangeModule,
+    DraftRegulationCancelModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [
+        RegulationsClientConfig,
+        XRoadConfig,
+        NationalRegistryClientConfig,
+        IdsClientConfig,
+      ],
+    }),
+  ],
+})
+export class AppModule {}

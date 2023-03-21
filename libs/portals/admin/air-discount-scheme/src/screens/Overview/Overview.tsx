@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
-import { SubmitHandler } from 'react-hook-form'
-
-import { AirDiscountSchemeFlightLegsInput } from '@island.is/api/schema'
+import { useLoaderData } from 'react-router-dom'
 import {
   Box,
   Stack,
@@ -16,68 +14,16 @@ import {
 import { PortalNavigation } from '@island.is/portals/core'
 import { Filters, Panel, Summary } from './components'
 import { downloadCSV } from './utils'
-import {
-  useConfirmInvoiceMutation,
-  useFlightLegsQuery,
-} from './Overview.generated'
-import { FlightLegsFilters } from './types'
+import { useConfirmInvoiceMutation } from './Overview.generated'
+
 import { airDiscountSchemeNavigation } from '../../lib/navigation'
 import Modal from '../../components/Modal/Modal'
-
-const TODAY = new Date()
+import { OverviewLoaderReturnType } from './Overview.loader'
 
 const Overview = () => {
+  const { flightLegs, filters } = useLoaderData() as OverviewLoaderReturnType
   const [showModal, setModal] = useState(false)
-  const [filters, setFilters] = useState<FlightLegsFilters>({
-    nationalId: '',
-    state: [],
-    period: {
-      from: new Date(TODAY.getFullYear(), TODAY.getMonth(), 1, 0, 0, 0, 0),
-      to: new Date(
-        TODAY.getFullYear(),
-        TODAY.getMonth(),
-        TODAY.getDate(),
-        23,
-        59,
-        59,
-        999,
-      ),
-    },
-  })
-  const input: AirDiscountSchemeFlightLegsInput = {
-    ...filters,
-    airline: filters.airline?.value,
-    gender: filters.gender?.value || undefined,
-    age: {
-      from: parseInt(Number(filters.age?.from).toString()) || -1,
-      to: parseInt(Number(filters.age?.to).toString()) || 1000,
-    },
-    postalCode: filters.postalCode
-      ? parseInt(filters.postalCode.toString())
-      : undefined,
-    isExplicit: Boolean(filters.isExplicit),
-  }
-  const [
-    confirmInvoice,
-    { loading: confirmInvoiceLoading },
-  ] = useConfirmInvoiceMutation()
-
-  const { data, loading: queryLoading, refetch } = useFlightLegsQuery({
-    ssr: false,
-    fetchPolicy: 'network-only',
-    variables: {
-      input,
-    },
-  })
-  const { airDiscountSchemeFlightLegs: flightLegs = [] } = data ?? {}
-
-  const loading = queryLoading || confirmInvoiceLoading
-  const applyFilters: SubmitHandler<FlightLegsFilters> = (
-    data: FlightLegsFilters,
-  ) => {
-    setFilters(data)
-    refetch()
-  }
+  const [confirmInvoice, { loading }] = useConfirmInvoiceMutation()
 
   return (
     <GridContainer>
@@ -101,7 +47,7 @@ const Overview = () => {
               </Box>
               <Divider weight="purple200" />
               <Box padding={4}>
-                <Filters onSubmit={applyFilters} defaultValues={filters} />
+                <Filters defaultValues={filters} />
               </Box>
             </Box>
           </Stack>
@@ -117,7 +63,7 @@ const Overview = () => {
             <>
               <Summary
                 flightLegs={flightLegs}
-                airline={filters.airline?.value}
+                airline={filters.airline}
                 onClickDownload={() => downloadCSV(flightLegs, filters)}
                 onClickRefund={() => setModal(true)}
               />
@@ -140,7 +86,7 @@ const Overview = () => {
         show={showModal}
         onCancel={() => setModal(false)}
         onContinue={() => {
-          confirmInvoice({ variables: { input } })
+          confirmInvoice({ variables: { input: filters } })
           setModal(false)
         }}
         t={{

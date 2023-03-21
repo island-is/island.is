@@ -1,28 +1,34 @@
 import { GraphQLJSONObject } from 'graphql-type-json'
 
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 
-import type {
-  Case as TCase,
+import {
   CaseAppealDecision,
   CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseState,
-  CaseType,
   SessionArrangements,
   CourtDocument,
   CaseOrigin,
   SubpoenaType,
+  CaseType,
+} from '@island.is/judicial-system/types'
+import type {
+  Case as TCase,
   IndictmentSubtypeMap,
   CrimeSceneMap,
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
+import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { User } from '../../user'
 import { CaseFile } from '../../file'
 import { Notification } from './notification.model'
+
+registerEnumType(CaseType, { name: 'CaseType' })
+registerEnumType(SessionArrangements, { name: 'SessionArrangements' })
 
 @ObjectType()
 export class Case implements TCase {
@@ -38,7 +44,7 @@ export class Case implements TCase {
   @Field(() => String)
   readonly origin!: CaseOrigin
 
-  @Field(() => String)
+  @Field(() => CaseType)
   readonly type!: CaseType
 
   @Field(() => GraphQLJSONObject, { nullable: true })
@@ -140,7 +146,7 @@ export class Case implements TCase {
   @Field({ nullable: true })
   readonly courtCaseNumber?: string
 
-  @Field(() => String, { nullable: true })
+  @Field(() => SessionArrangements, { nullable: true })
   readonly sessionArrangements?: SessionArrangements
 
   @Field({ nullable: true })
@@ -280,4 +286,13 @@ export class Case implements TCase {
 
   @Field(() => GraphQLJSONObject, { nullable: true })
   readonly crimeScenes?: CrimeSceneMap
+
+  @Field({ nullable: true })
+  readonly indictmentIntroduction?: string
+
+  @Field(() => [IndictmentCount], { nullable: true })
+  readonly indictmentCounts?: IndictmentCount[]
+
+  @Field(() => Boolean, { nullable: true })
+  readonly requestDriversLicenseSuspension?: boolean
 }

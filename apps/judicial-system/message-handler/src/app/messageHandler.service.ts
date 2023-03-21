@@ -35,14 +35,13 @@ export class MessageHandlerService implements OnModuleDestroy {
     let handled = false
 
     switch (message.type) {
-      case MessageType.DELIVER_PROSECUTOR_TO_COURT: {
+      case MessageType.DELIVER_PROSECUTOR_TO_COURT:
         handled = await this.internalDeliveryService.deliver(
           message.userId,
           message.caseId,
           `deliverProsecutorToCourt`,
         )
         break
-      }
       case MessageType.DELIVER_DEFENDANT_TO_COURT: {
         const defendantMessage: DefendantMessage = message as DefendantMessage
         handled = await this.internalDeliveryService.deliver(
@@ -131,6 +130,14 @@ export class MessageHandlerService implements OnModuleDestroy {
           { type: NotificationType.RECEIVED_BY_COURT },
         )
         break
+      case MessageType.SEND_COURT_DATE_NOTIFICATION:
+        handled = await this.internalDeliveryService.deliver(
+          message.userId,
+          message.caseId,
+          'notification',
+          { type: NotificationType.COURT_DATE },
+        )
+        break
       case MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION:
         handled = await this.internalDeliveryService.deliver(
           message.userId,
@@ -147,6 +154,31 @@ export class MessageHandlerService implements OnModuleDestroy {
           { type: NotificationType.RULING },
         )
         break
+      case MessageType.SEND_MODIFIED_NOTIFICATION:
+        handled = await this.internalDeliveryService.deliver(
+          message.userId,
+          message.caseId,
+          'notification',
+          { type: NotificationType.MODIFIED },
+        )
+        break
+      case MessageType.SEND_REVOKED_NOTIFICATION:
+        handled = await this.internalDeliveryService.deliver(
+          message.userId,
+          message.caseId,
+          'notification',
+          { type: NotificationType.REVOKED },
+        )
+        break
+      case MessageType.SEND_DEFENDER_ASSIGNED_NOTIFICATION:
+        handled = await this.internalDeliveryService.deliver(
+          message.userId,
+          message.caseId,
+          'notification',
+          { type: NotificationType.DEFENDER_ASSIGNED },
+        )
+        break
+
       default:
         this.logger.error('Unknown message type', { msg: message })
     }

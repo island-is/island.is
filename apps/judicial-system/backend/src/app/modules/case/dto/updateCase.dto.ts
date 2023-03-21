@@ -345,11 +345,6 @@ export class UpdateCaseDto {
   readonly caseResentExplanation?: string
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly seenByDefender?: Date
-
-  @IsOptional()
   @IsEnum(SubpoenaType)
   @ApiPropertyOptional({ enum: SubpoenaType })
   readonly subpoenaType?: SubpoenaType
@@ -363,4 +358,14 @@ export class UpdateCaseDto {
   @IsObject()
   @ApiPropertyOptional()
   readonly crimeScenes?: CrimeSceneMap
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly indictmentIntroduction?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly requestDriversLicenseSuspension?: boolean
 }

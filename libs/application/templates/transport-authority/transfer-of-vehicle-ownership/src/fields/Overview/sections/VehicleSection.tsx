@@ -8,7 +8,11 @@ import parseISO from 'date-fns/parseISO'
 import { useLocale } from '@island.is/localization'
 import { information, overview } from '../../../lib/messages'
 import { ReviewGroup } from '../../ReviewGroup'
-import { CoOwnerAndOperator, ReviewScreenProps } from '../../../types'
+import {
+  CoOwnerAndOperator,
+  ReviewScreenProps,
+  UserInformation,
+} from '../../../shared'
 import { formatIsk } from '../../../utils'
 
 export const VehicleSection: FC<FieldBaseProps & ReviewScreenProps> = ({
@@ -35,11 +39,24 @@ export const VehicleSection: FC<FieldBaseProps & ReviewScreenProps> = ({
     'buyerCoOwnerAndOperator',
     [],
   ) as CoOwnerAndOperator[]
-  const isOperator = buyerCoOwnerAndOperator.find(
-    (reviewerItems) =>
-      reviewerItems.nationalId === reviewerNationalId &&
-      reviewerItems.type === 'operator',
+  const sellerCoOwner = getValueViaPath(
+    answers,
+    'sellerCoOwner',
+    [],
+  ) as UserInformation[]
+  const isSeller =
+    (getValueViaPath(answers, 'seller.nationalId', '') as string) ===
+    reviewerNationalId
+  const isSellerCoOwner = sellerCoOwner.find(
+    (reviewerItems) => reviewerItems.nationalId === reviewerNationalId,
   )
+  const isOperator = buyerCoOwnerAndOperator
+    .filter(({ wasRemoved }) => wasRemoved !== 'true')
+    .find(
+      (reviewerItems) =>
+        reviewerItems.nationalId === reviewerNationalId &&
+        reviewerItems.type === 'operator',
+    )
 
   return (
     <ReviewGroup isLast>
@@ -57,13 +74,14 @@ export const VehicleSection: FC<FieldBaseProps & ReviewScreenProps> = ({
           </Text>
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-          {!isOperator && salePrice.length > 0 && (
-            <Text>
-              {`${formatMessage(overview.labels.salePrice)} ${formatIsk(
-                parseInt(salePrice, 10),
-              )}`}
-            </Text>
-          )}
+          {(!isOperator || isSeller || isSellerCoOwner) &&
+            salePrice.length > 0 && (
+              <Text>
+                {`${formatMessage(overview.labels.salePrice)} ${formatIsk(
+                  parseInt(salePrice, 10),
+                )}`}
+              </Text>
+            )}
           <Text>{`${formatMessage(
             overview.labels.agreementDate,
           )} ${dateOfContract}`}</Text>

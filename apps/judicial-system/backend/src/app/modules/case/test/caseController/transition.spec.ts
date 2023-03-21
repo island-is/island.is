@@ -1,6 +1,6 @@
 import each from 'jest-each'
 import { uuid } from 'uuidv4'
-import { Op, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 
 import {
   CaseFileState,
@@ -150,7 +150,13 @@ describe('CaseController - Transition', () => {
               rulingDate:
                 isIndictmentCase(type) && completedCaseStates.includes(newState)
                   ? date
+                  : transition === CaseTransition.REOPEN
+                  ? null
                   : undefined,
+              courtRecordSignatoryId:
+                transition === CaseTransition.REOPEN ? null : undefined,
+              courtRecordSignatureDate:
+                transition === CaseTransition.REOPEN ? null : undefined,
             },
             { where: { id: caseId }, transaction },
           )
@@ -179,6 +185,11 @@ describe('CaseController - Transition', () => {
           } else if (isIndictmentCase(type) && newState === CaseState.DELETED) {
             expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
               [
+                {
+                  type: MessageType.SEND_REVOKED_NOTIFICATION,
+                  userId,
+                  caseId,
+                },
                 {
                   type: MessageType.ARCHIVE_CASE_FILE,
                   userId,
@@ -216,6 +227,16 @@ describe('CaseController - Transition', () => {
                 },
               ],
             )
+          } else if (newState === CaseState.DELETED) {
+            expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
+              [
+                {
+                  type: MessageType.SEND_REVOKED_NOTIFICATION,
+                  userId,
+                  caseId,
+                },
+              ],
+            )
           } else {
             expect(
               mockMessageService.sendMessagesToQueue,
@@ -230,7 +251,6 @@ describe('CaseController - Transition', () => {
               order,
               where: {
                 id: caseId,
-                state: { [Op.not]: CaseState.DELETED },
                 isArchived: false,
               },
             })

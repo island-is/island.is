@@ -37,9 +37,12 @@ export enum ApplicationTypes {
   DIGITAL_TACHOGRAPH_COMPANY_CARD = 'DigitalTachographCompanyCard',
   DIGITAL_TACHOGRAPH_DRIVERS_CARD = 'DigitalTachographDriversCard',
   DIGITAL_TACHOGRAPH_WORKSHOP_CARD = 'DigitalTachographWorkshopCard',
+  LICENSE_PLATE_RENEWAL = 'LicensePlateRenewal',
   ORDER_VEHICLE_LICENSE_PLATE = 'OrderVehicleLicensePlate',
   ORDER_VEHICLE_REGISTRATION_CERTIFICATE = 'OrderVehicleRegistrationCertificate',
   TRANSFER_OF_VEHICLE_OWNERSHIP = 'TransferOfVehicleOwnership',
+  DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR = 'DrivingLicenseBookUpdateInstructor',
+  ALCOHOL_TAX_REDEMPTION = 'AlcoholTaxRedemption',
 }
 
 export const ApplicationConfigurations = {
@@ -108,8 +111,8 @@ export const ApplicationConfigurations = {
     translation: 'an.application',
   },
   [ApplicationTypes.GENERAL_PETITION]: {
-    slug: 'medmaelendalisti',
-    translation: 'gpt.application',
+    slug: 'undirskriftalisti',
+    translation: 'gpl.application',
   },
   [ApplicationTypes.GENERAL_FISHING_LICENSE]: {
     slug: 'veidileyfi',
@@ -176,11 +179,11 @@ export const ApplicationConfigurations = {
     translation: 'ta.avr.application',
   },
   [ApplicationTypes.CHANGE_CO_OWNER_OF_VEHICLE]: {
-    slug: 'breyta-medeigandi-okutaekis',
+    slug: 'medeigandi-okutaekis',
     translation: 'ta.ccov.application',
   },
   [ApplicationTypes.CHANGE_OPERATOR_OF_VEHICLE]: {
-    slug: 'breyta-umradamadur-okutaekis',
+    slug: 'umradamadur-okutaekis',
     translation: 'ta.cov.application',
   },
   [ApplicationTypes.DIGITAL_TACHOGRAPH_COMPANY_CARD]: {
@@ -195,6 +198,10 @@ export const ApplicationConfigurations = {
     slug: 'okuritakort-verkstaediskort',
     translation: 'ta.dtwc.application',
   },
+  [ApplicationTypes.LICENSE_PLATE_RENEWAL]: {
+    slug: 'endurnyja-einkanumer',
+    translation: 'ta.lpr.application',
+  },
   [ApplicationTypes.ORDER_VEHICLE_LICENSE_PLATE]: {
     slug: 'panta-skraningarmerki',
     translation: 'ta.ovlp.application',
@@ -206,5 +213,13 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP]: {
     slug: 'eigendaskipti-okutaekis',
     translation: 'ta.tvo.application',
+  },
+  [ApplicationTypes.DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR]: {
+    slug: 'okunam-okukennari',
+    translation: 'dlbui.application',
+  },
+  [ApplicationTypes.ALCOHOL_TAX_REDEMPTION]: {
+    slug: 'afengisgjold',
+    translation: 'atr.application',
   },
 }

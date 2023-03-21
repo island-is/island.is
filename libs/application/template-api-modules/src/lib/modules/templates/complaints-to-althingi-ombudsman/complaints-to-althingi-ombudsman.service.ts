@@ -21,23 +21,15 @@ export class ComplaintsToAlthingiOmbudsmanTemplateService extends BaseTemplateAp
   }
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {
-    try {
-      await this.sharedTemplateAPIService.sendEmail(
-        (props) =>
-          generateConfirmationEmail(
-            props,
-            this.complaintConfig.applicationSenderName,
-            this.complaintConfig.applicationSenderEmail,
-          ),
-        application,
-      )
-      return null
-    } catch (error) {
-      this.logger.error(
-        'Failed to send complaints to althingi ombudsman',
-        error,
-      )
-      throw error
-    }
+    await this.sharedTemplateAPIService.sendEmail(
+      (props) =>
+        generateConfirmationEmail(
+          props,
+          this.complaintConfig.applicationSenderName,
+          this.complaintConfig.applicationSenderEmail,
+        ),
+      application,
+    )
+    return null
   }
 }

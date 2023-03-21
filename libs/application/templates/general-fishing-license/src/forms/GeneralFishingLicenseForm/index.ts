@@ -7,6 +7,7 @@ import { fishingLicenseFurtherInfoSection } from './fishingLicenseFurtherInfoSec
 import { overviewSection } from './overviewSection'
 import { conclusion, externalData, payment } from '../../lib/messages'
 import { applicantInformationSection } from './applicantInformationSection'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
 export const GeneralFishingLicenseForm: Form = buildForm({
   id: 'GeneralFishingLicenseForm',
@@ -31,10 +32,10 @@ export const GeneralFishingLicenseForm: Form = buildForm({
       title: payment.general.sectionTitle,
       children: [],
     }),
-    buildSection({
-      id: 'conclusionSection',
-      title: conclusion.general.sectionTitle,
-      children: [],
+    buildFormConclusionSection({
+      alertTitle: conclusion.general.title,
+      expandableHeader: conclusion.information.title,
+      expandableDescription: conclusion.information.bulletList,
     }),
   ],
 })

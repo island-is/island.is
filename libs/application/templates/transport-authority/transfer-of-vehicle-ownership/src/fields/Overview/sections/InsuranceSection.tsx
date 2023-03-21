@@ -7,7 +7,7 @@ import { useLocale } from '@island.is/localization'
 import { error, overview } from '../../../lib/messages'
 import { States } from '../../../lib/constants'
 import { ReviewGroup } from '../../ReviewGroup'
-import { ReviewScreenProps, InsuranceCompany } from '../../../types'
+import { ReviewScreenProps, InsuranceCompany } from '../../../shared'
 import { getValueViaPath } from '@island.is/application/core'
 import { hasReviewerApproved } from '../../../utils'
 
@@ -61,7 +61,7 @@ export const InsuranceSection: FC<
       handleClick={onButtonClick}
     >
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+        <GridColumn span={['6/12']}>
           <Text variant="h4" color={noInsuranceError ? 'red600' : 'dark400'}>
             {formatMessage(overview.labels.insuranceTitle)}
           </Text>

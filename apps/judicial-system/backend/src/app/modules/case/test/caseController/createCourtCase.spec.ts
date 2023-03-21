@@ -1,5 +1,5 @@
 import { uuid } from 'uuidv4'
-import { Op, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 
 import {
   CaseFileCategory,
@@ -145,7 +145,6 @@ describe('CaseController - Create court case', () => {
         where: {
           id: caseId,
           isArchived: false,
-          state: { [Op.not]: CaseState.DELETED },
         },
       })
     })

@@ -18,5 +18,5 @@
       }
     }
   },
-  "tags": []
+  "tags": ["lib:auth-api", "scope:auth-api"]
 }

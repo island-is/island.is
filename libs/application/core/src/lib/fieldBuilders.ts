@@ -29,6 +29,11 @@ import {
   CompanySearchField,
   RedirectToServicePortalField,
   PaymentPendingField,
+  PhoneField,
+  MessageWithLinkButtonField,
+  ExpandableDescriptionField,
+  AlertMessageField,
+  LinkField,
 } from '@island.is/application/types'
 import { SpanType } from '@island.is/island-ui/core/types'
 
@@ -260,6 +265,31 @@ export function buildTextField(
   }
 }
 
+export function buildPhoneField(
+  data: Omit<PhoneField, 'type' | 'component' | 'children'>,
+): PhoneField {
+  const {
+    backgroundColor = 'blue',
+    placeholder,
+    required,
+    readOnly,
+    rightAlign,
+    allowedCountryCodes,
+  } = data
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    placeholder,
+    backgroundColor,
+    required,
+    readOnly,
+    allowedCountryCodes,
+    rightAlign,
+    type: FieldTypes.PHONE,
+    component: FieldComponents.PHONE,
+  }
+}
+
 export function buildCustomField(
   data: Omit<CustomField, 'props' | 'type' | 'children'>,
   props?: RecordObject,
@@ -331,8 +361,16 @@ export function buildKeyValueField(data: {
   width?: FieldWidth
   colSpan?: SpanType
   condition?: Condition
+  display?: 'block' | 'flex'
 }): KeyValueField {
-  const { label, value, condition, width = 'full', colSpan } = data
+  const {
+    label,
+    value,
+    condition,
+    width = 'full',
+    colSpan,
+    display = 'block',
+  } = data
 
   return {
     id: '',
@@ -346,6 +384,7 @@ export function buildKeyValueField(data: {
     value,
     type: FieldTypes.KEY_VALUE,
     component: FieldComponents.KEY_VALUE,
+    display,
   }
 }
 
@@ -416,5 +455,66 @@ export function buildPaymentPendingField(data: {
     title,
     type: FieldTypes.PAYMENT_PENDING,
     component: FieldComponents.PAYMENT_PENDING,
+  }
+}
+
+export function buildMessageWithLinkButtonField(
+  data: Omit<MessageWithLinkButtonField, 'type' | 'component' | 'children'>,
+): MessageWithLinkButtonField {
+  const { id, title, url, message, buttonTitle } = data
+  return {
+    children: undefined,
+    id,
+    title,
+    url,
+    message,
+    buttonTitle,
+    type: FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD,
+    component: FieldComponents.MESSAGE_WITH_LINK_BUTTON_FIELD,
+  }
+}
+
+export function buildExpandableDescriptionField(
+  data: Omit<ExpandableDescriptionField, 'type' | 'component' | 'children'>,
+): ExpandableDescriptionField {
+  const { id, title, description, introText, startExpanded } = data
+  return {
+    children: undefined,
+    id,
+    title,
+    description,
+    introText,
+    startExpanded,
+    type: FieldTypes.EXPANDABLE_DESCRIPTION,
+    component: FieldComponents.EXPANDABLE_DESCRIPTION,
+  }
+}
+export function buildAlertMessageField(
+  data: Omit<AlertMessageField, 'type' | 'component' | 'children'>,
+): AlertMessageField {
+  const { id, title, message, alertType } = data
+  return {
+    children: undefined,
+    id,
+    title,
+    message,
+    alertType,
+    type: FieldTypes.ALERT_MESSAGE,
+    component: FieldComponents.ALERT_MESSAGE,
+  }
+}
+
+export function buildLinkField(
+  data: Omit<LinkField, 'type' | 'component' | 'children'>,
+): LinkField {
+  const { s3key, link, iconProps } = data
+  return {
+    ...extractCommonFields(data),
+    s3key,
+    link,
+    iconProps,
+    children: undefined,
+    type: FieldTypes.LINK,
+    component: FieldComponents.LINK,
   }
 }

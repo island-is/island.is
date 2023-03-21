@@ -11,6 +11,7 @@ import {
   Modal,
   PageLayout,
   ProsecutorCaseInfo,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   IndictmentsProsecutorSubsections,
@@ -20,8 +21,14 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  CaseTransition,
+  Feature,
+} from '@island.is/judicial-system/types'
 import IndictmentCaseFilesList from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
+import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './Overview.strings'
@@ -37,15 +44,20 @@ const Overview: React.FC = () => {
     'noModal',
   )
   const { formatMessage } = useIntl()
+  const { features } = useContext(FeatureContext)
+  const { user } = useContext(UserContext)
   const router = useRouter()
   const { transitionCase } = useCase()
+
+  const isTrafficViolationCaseCheck =
+    (features.includes(Feature.INDICTMENT_ROUTE) ||
+      user?.name === 'Árni Bergur Sigurðsson') &&
+    isTrafficViolationCase(workingCase.indictmentSubtypes)
 
   const isNewIndictment =
     workingCase.state === CaseState.NEW || workingCase.state === CaseState.DRAFT
 
-  const caseHasBeenReceivedByCourt =
-    workingCase.courtCaseNumber !== undefined &&
-    workingCase.courtCaseNumber !== null
+  const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
   const handleNextButtonClick = async () => {
     if (isNewIndictment) {
@@ -66,7 +78,8 @@ const Overview: React.FC = () => {
       activeSubSection={
         caseHasBeenReceivedByCourt
           ? undefined
-          : IndictmentsProsecutorSubsections.OVERVIEW
+          : IndictmentsProsecutorSubsections.OVERVIEW +
+            (isTrafficViolationCaseCheck ? 1 : 0)
       }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}

@@ -20,5 +20,5 @@
       }
     }
   },
-  "tags": []
+  "tags": ["lib:judicial-system-api", "scope:judicial-system-api"]
 }

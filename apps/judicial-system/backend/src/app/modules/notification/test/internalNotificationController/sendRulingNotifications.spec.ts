@@ -13,6 +13,7 @@ import {
 } from '@island.is/judicial-system/consts'
 
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
+import { User } from '../../../user'
 import { Case } from '../../../case'
 import { Defendant, DefendantService } from '../../../defendant'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -47,7 +48,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    process.env.PRISON_EMAIL = 'prisonEmail@email.com'
+    process.env.PRISON_EMAIL = 'prisonEmail@email.com,prisonEmail2@email.com'
     const {
       emailService,
       notificationConfig,
@@ -70,6 +71,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
       try {
         then.result = await internalNotificationController.sendCaseNotification(
           caseId,
+          { id: userId } as User,
           theCase,
           notification,
         )
@@ -179,6 +181,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
         courtCaseNumber: '007-2022-07',
         rulingDate: new Date('2021-07-01'),
         defendants: [{ noNationalId: true }] as Defendant[],
+        court: { name: 'Héraðsdómur Reykjavíkur' },
       } as Case
 
       beforeEach(async () => {
@@ -186,6 +189,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
       })
 
       it('should send email to prison', () => {
+        const expectedLink = `<a href="${mockConfig.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${caseId}">`
         expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(3)
         expect(mockEmailService.sendEmail).toHaveBeenNthCalledWith(
           3,
@@ -193,23 +197,13 @@ describe('InternalNotificationController - Send ruling notifications', () => {
             to: [
               {
                 name: 'Gæsluvarðhaldsfangelsi',
-                address: mockConfig.email.prisonEmail,
+                address: mockConfig.email.prisonEmail.split(',')[0],
               },
             ],
-            attachments: [
-              {
-                filename: 'Vistunarseðill 007-2022-07.pdf',
-                content: expect.any(String),
-                encoding: 'binary',
-              },
-              {
-                filename: 'Þingbók 007-2022-07.pdf',
-                content: expect.any(String),
-                encoding: 'binary',
-              },
-            ],
+            cc: mockConfig.email.prisonEmail.split(',').slice(1),
+
             subject: 'Úrskurður um gæsluvarðhald',
-            html: `Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í gæsluvarðhald í héraðsdómi 1. júlí 2021, auk þingbókar þar sem úrskurðarorðin koma fram.`,
+            html: `Héraðsdómur Reykjavíkur hefur úrskurðað aðila í gæsluvarðhald í þinghaldi sem lauk rétt í þessu. Hægt er að nálgast þingbók og vistunarseðil í ${expectedLink}Réttarvörslugátt</a>.`,
           }),
         )
       })
@@ -277,6 +271,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
       courtCaseNumber: '007-2022-07',
       rulingDate: new Date('2021-07-01'),
       defendants: [{ nationalId: '0000000000' }],
+      court: { name: 'Héraðsdómur Reykjavíkur' },
     } as Case
 
     beforeEach(async () => {
@@ -288,6 +283,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     })
 
     it('should send email to prison', () => {
+      const expectedLink = `<a href="${mockConfig.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${caseId}">`
       expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(3)
       expect(mockEmailService.sendEmail).toHaveBeenNthCalledWith(
         3,
@@ -295,23 +291,12 @@ describe('InternalNotificationController - Send ruling notifications', () => {
           to: [
             {
               name: 'Gæsluvarðhaldsfangelsi',
-              address: mockConfig.email.prisonEmail,
+              address: mockConfig.email.prisonEmail.split(',')[0],
             },
           ],
-          attachments: [
-            {
-              filename: 'Vistunarseðill 007-2022-07.pdf',
-              content: expect.any(String),
-              encoding: 'binary',
-            },
-            {
-              filename: 'Þingbók 007-2022-07.pdf',
-              content: expect.any(String),
-              encoding: 'binary',
-            },
-          ],
+          cc: mockConfig.email.prisonEmail.split(',').slice(1),
           subject: 'Úrskurður um vistun á viðeigandi stofnun',
-          html: `Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í vistun á viðeigandi stofnun í héraðsdómi 1. júlí 2021, auk þingbókar þar sem úrskurðarorðin koma fram.`,
+          html: `Héraðsdómur Reykjavíkur hefur úrskurðað aðila í vistun á viðeigandi stofnun í þinghaldi sem lauk rétt í þessu. Hægt er að nálgast þingbók og vistunarseðil í ${expectedLink}Réttarvörslugátt</a>.`,
         }),
       )
     })
@@ -326,6 +311,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
       courtCaseNumber: '007-2022-07',
       rulingDate: new Date('2021-07-01'),
       defendants: [{ noNationalId: true }] as Defendant[],
+      court: { name: 'Héraðsdómur Reykjavíkur' },
     } as Case
 
     beforeEach(async () => {
@@ -337,6 +323,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     })
 
     it('should send email to prison', () => {
+      const expectedLink = `<a href="${mockConfig.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${caseId}">`
       expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(3)
       expect(mockEmailService.sendEmail).toHaveBeenNthCalledWith(
         3,
@@ -344,23 +331,12 @@ describe('InternalNotificationController - Send ruling notifications', () => {
           to: [
             {
               name: 'Gæsluvarðhaldsfangelsi',
-              address: mockConfig.email.prisonEmail,
+              address: mockConfig.email.prisonEmail.split(',')[0],
             },
           ],
-          attachments: [
-            {
-              filename: 'Vistunarseðill 007-2022-07.pdf',
-              content: expect.any(String),
-              encoding: 'binary',
-            },
-            {
-              filename: 'Þingbók 007-2022-07.pdf',
-              content: expect.any(String),
-              encoding: 'binary',
-            },
-          ],
+          cc: mockConfig.email.prisonEmail.split(',').slice(1),
           subject: 'Úrskurður um vistun á viðeigandi stofnun',
-          html: `Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í vistun á viðeigandi stofnun í héraðsdómi 1. júlí 2021, auk þingbókar þar sem úrskurðarorðin koma fram.`,
+          html: `Héraðsdómur Reykjavíkur hefur úrskurðað aðila í vistun á viðeigandi stofnun í þinghaldi sem lauk rétt í þessu. Hægt er að nálgast þingbók og vistunarseðil í ${expectedLink}Réttarvörslugátt</a>.`,
         }),
       )
     })

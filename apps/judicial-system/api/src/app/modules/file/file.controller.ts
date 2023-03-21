@@ -6,8 +6,6 @@ import {
   Header,
   Inject,
   Param,
-  ParseBoolPipe,
-  Query,
   Req,
   Res,
   UseGuards,
@@ -100,7 +98,6 @@ export class FileController {
   @Header('Content-Type', 'application/pdf')
   async getRulingPdf(
     @Param('id') id: string,
-    @Query('useSigned', ParseBoolPipe) useSigned: boolean,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
     @Res() res: Response,
@@ -114,7 +111,6 @@ export class FileController {
       'ruling',
       req,
       res,
-      useSigned,
     )
   }
 
@@ -126,13 +122,35 @@ export class FileController {
     @Req() req: Request,
     @Res() res: Response,
   ): Promise<Response> {
-    this.logger.debug(`Getting the ruling for case ${id} as a pdf document`)
+    this.logger.debug(
+      `Getting the custody notice for case ${id} as a pdf document`,
+    )
 
     return this.fileService.tryGetPdf(
       user.id,
       AuditedAction.GET_CUSTODY_NOTICE_PDF,
       id,
       'custodyNotice',
+      req,
+      res,
+    )
+  }
+
+  @Get('indictment')
+  @Header('Content-Type', 'application/pdf')
+  async getIndictmentPdf(
+    @Param('id') id: string,
+    @CurrentHttpUser() user: User,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<Response> {
+    this.logger.debug(`Getting the indictment for case ${id} as a pdf document`)
+
+    return this.fileService.tryGetPdf(
+      user.id,
+      AuditedAction.GET_INDICTMENT_PDF,
+      id,
+      'indictment',
       req,
       res,
     )

@@ -18,6 +18,7 @@ import { m } from '../../lib/messages'
 import * as styles from './InfoScreen.css'
 import { formatPlausiblePathToParams } from '../../utils/formatPlausiblePathToParams'
 import { useLocation } from 'react-router-dom'
+
 interface Props {
   title: MessageDescriptor
   intro: MessageDescriptor

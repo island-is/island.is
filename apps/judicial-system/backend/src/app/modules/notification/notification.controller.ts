@@ -11,7 +11,6 @@ import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { NotificationType } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
@@ -34,17 +33,16 @@ import {
   CaseWriteGuard,
   CurrentCase,
 } from '../case'
-import { SendNotificationDto } from './dto/sendNotification.dto'
-import { Notification } from './models/notification.model'
-import { SendNotificationResponse } from './models/sendNotification.response'
-import { NotificationService } from './notification.service'
 import {
   judgeNotificationRule,
   prosecutorNotificationRule,
   registrarNotificationRule,
-  representativeNotificationRule,
   assistantNotificationRule,
 } from './guards/rolesRules'
+import { SendNotificationDto } from './dto/sendNotification.dto'
+import { Notification } from './models/notification.model'
+import { SendNotificationResponse } from './models/sendNotification.response'
+import { NotificationService } from './notification.service'
 
 @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard)
 @Controller('api/case/:caseId')
@@ -58,7 +56,6 @@ export class NotificationController {
   @UseGuards(CaseWriteGuard)
   @RolesRules(
     prosecutorNotificationRule,
-    representativeNotificationRule,
     judgeNotificationRule,
     registrarNotificationRule,
     assistantNotificationRule,
@@ -66,7 +63,7 @@ export class NotificationController {
   @Post('notification')
   @ApiCreatedResponse({
     type: SendNotificationResponse,
-    description: 'Sends a new notification for an existing case',
+    description: 'Adds a new notification for an existing case to queue',
   })
   async sendCaseNotification(
     @Param('caseId') caseId: string,
@@ -75,25 +72,10 @@ export class NotificationController {
     @Body() notification: SendNotificationDto,
   ): Promise<SendNotificationResponse> {
     this.logger.debug(
-      `Sending ${notification.type} notification for case ${caseId}`,
+      `Adding ${notification.type} notification for case ${caseId} to queue`,
     )
 
-    if (
-      [
-        NotificationType.HEADS_UP,
-        NotificationType.READY_FOR_COURT,
-        NotificationType.RECEIVED_BY_COURT,
-      ].includes(notification.type)
-    ) {
-      // Notifications put on queue will call the internal notification controller
-      return this.notificationService.addMessagesForNotificationToQueue(
-        notification,
-        theCase,
-        user,
-      )
-    }
-
-    return this.notificationService.sendCaseNotification(
+    return this.notificationService.addMessagesForNotificationToQueue(
       notification,
       theCase,
       user,

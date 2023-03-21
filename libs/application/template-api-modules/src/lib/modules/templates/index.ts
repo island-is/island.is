@@ -56,9 +56,6 @@ import { InheritanceReportService } from './inheritance-report/inheritance-repor
 import { InheritanceReportModule } from './inheritance-report/inheritance-report.module'
 import { EstateTemplateModule } from './estate/estate.module'
 import { EstateTemplateService } from './estate/estate.service'
-
-//TODO: ADD These templates.
-import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
 import { AnonymityInVehicleRegistryModule } from './transport-authority/anonymity-in-vehicle-registry/anonymity-in-vehicle-registry.module'
 import { AnonymityInVehicleRegistryService } from './transport-authority/anonymity-in-vehicle-registry/anonymity-in-vehicle-registry.service'
 import { ChangeCoOwnerOfVehicleModule } from './transport-authority/change-co-owner-of-vehicle/change-co-owner-of-vehicle.module'
@@ -71,12 +68,19 @@ import { DigitalTachographDriversCardModule } from './transport-authority/digita
 import { DigitalTachographDriversCardService } from './transport-authority/digital-tachograph-drivers-card/digital-tachograph-drivers-card.service'
 import { DigitalTachographWorkshopCardModule } from './transport-authority/digital-tachograph-workshop-card/digital-tachograph-workshop-card.module'
 import { DigitalTachographWorkshopCardService } from './transport-authority/digital-tachograph-workshop-card/digital-tachograph-workshop-card.service'
+import { LicensePlateRenewalModule } from './transport-authority/license-plate-renewal/license-plate-renewal.module'
+import { LicensePlateRenewalService } from './transport-authority/license-plate-renewal/license-plate-renewal.service'
 import { OrderVehicleLicensePlateModule } from './transport-authority/order-vehicle-license-plate/order-vehicle-license-plate.module'
 import { OrderVehicleLicensePlateService } from './transport-authority/order-vehicle-license-plate/order-vehicle-license-plate.service'
 import { OrderVehicleRegistrationCertificateModule } from './transport-authority/order-vehicle-registration-certificate/order-vehicle-registration-certificate.module'
 import { OrderVehicleRegistrationCertificateService } from './transport-authority/order-vehicle-registration-certificate/order-vehicle-registration-certificate.service'
 import { TransferOfVehicleOwnershipModule } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.module'
 import { TransferOfVehicleOwnershipService } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.service'
+import { DrivingLicenseBookUpdateInstructorModule } from './driving-license-book-update-instructor/driving-license-book-update-instructor.module'
+import { DrivingLicenseBookUpdateInstructorService } from './driving-license-book-update-instructor/driving-license-book-update-instructor.service'
+
+//TODO: ADD These templates.
+import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -109,16 +113,18 @@ export const modules = [
   FinancialStatementsInaoTemplateModule,
   NoDebtCertificateModule,
   InheritanceReportModule,
+  EstateTemplateModule,
   AnonymityInVehicleRegistryModule,
   ChangeCoOwnerOfVehicleModule,
   ChangeOperatorOfVehicleModule,
   DigitalTachographCompanyCardModule,
   DigitalTachographDriversCardModule,
   DigitalTachographWorkshopCardModule,
+  LicensePlateRenewalModule,
   OrderVehicleLicensePlateModule,
   OrderVehicleRegistrationCertificateModule,
   TransferOfVehicleOwnershipModule,
-  EstateTemplateModule,
+  DrivingLicenseBookUpdateInstructorModule,
 ]
 
 export const services = [
@@ -152,14 +158,16 @@ export const services = [
   MarriageConditionsSubmissionService,
   NoDebtCertificateService,
   InheritanceReportService,
+  EstateTemplateService,
   AnonymityInVehicleRegistryService,
   ChangeCoOwnerOfVehicleService,
   ChangeOperatorOfVehicleService,
   DigitalTachographCompanyCardService,
   DigitalTachographDriversCardService,
   DigitalTachographWorkshopCardService,
+  LicensePlateRenewalService,
   OrderVehicleLicensePlateService,
   OrderVehicleRegistrationCertificateService,
   TransferOfVehicleOwnershipService,
-  EstateTemplateService,
+  DrivingLicenseBookUpdateInstructorService,
 ]

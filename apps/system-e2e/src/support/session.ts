@@ -2,7 +2,8 @@ import { Browser, BrowserContext, expect, Page } from '@playwright/test'
 import { existsSync, mkdirSync } from 'fs'
 import { join } from 'path'
 import { cognitoLogin, idsLogin } from './login'
-import { urls } from './urls'
+import { JUDICIAL_SYSTEM_HOME_URL, urls } from './urls'
+import { debug } from './utils'
 
 export const sessionsPath = join(__dirname, 'tmp-sessions')
 if (!existsSync(sessionsPath)) {
@@ -29,7 +30,7 @@ async function ensureCognitoSessionIfNeeded(
     await page.goto(homeUrl)
     await cognitoLogin(page, homeUrl, authUrlPrefix)
   } else {
-    console.log(`Cognito session exists`)
+    debug(`Cognito session exists`)
   }
 }
 
@@ -63,7 +64,7 @@ async function ensureIDSsession(
       await idsLogin(idsPage, phoneNumber, homeUrl, delegation)
       await idsPage.close()
     } else {
-      console.log(`IDS(next-auth) session exists`)
+      debug(`IDS(next-auth) session exists`)
     }
   } else {
     const idsSessionValidation = await page.request.get(
@@ -86,25 +87,25 @@ async function ensureIDSsession(
       await idsLogin(idsPage, phoneNumber, homeUrl, delegation)
       await idsPage.close()
     } else {
-      console.log(`IDS session exists`)
+      debug(`IDS session exists`)
     }
   }
 }
 
 export async function session({
   browser,
-  homeUrl,
-  phoneNumber,
-  authUrl,
-  idsLoginOn,
-  delegation,
-  storageState = `${homeUrl}-${phoneNumber}`,
+  homeUrl = '/',
+  phoneNumber = '',
+  authUrl = urls.authUrl,
+  idsLoginOn = true,
+  delegation = '',
+  storageState = `playwright-sessions-${homeUrl}-${phoneNumber}`,
 }: {
   browser: Browser
-  homeUrl: string
-  phoneNumber: string
+  homeUrl?: string
+  phoneNumber?: string
   authUrl?: string
-  idsLoginOn:
+  idsLoginOn?:
     | boolean
     | {
         nextAuth?: {
@@ -145,5 +146,18 @@ export async function session({
   await expect(sessionValidation?.url()).toMatch(homeUrl)
   await sessionValidationPage.context().storageState({ path: storageStatePath })
   await sessionValidationPage.close()
+  return context
+}
+
+export async function judicialSystemSession({ browser }: { browser: Browser }) {
+  const context = await browser.newContext()
+  const page = await context.newPage()
+  const authUrlPrefix = urls.authUrl
+  await ensureCognitoSessionIfNeeded(
+    page,
+    JUDICIAL_SYSTEM_HOME_URL,
+    authUrlPrefix,
+  )
+  await page.close()
   return context
 }

@@ -170,6 +170,36 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'Foreldri sem uppfyllir skilyrði um fullt nám öðlast rétt til fæðingarstyrks',
     },
+    noPrimaryParentTitle: {
+      id: 'pl.applications:no.primary.parent.title',
+      defaultMessage: 'Staðfesting á faðerni barns',
+      description: 'Confirmation of paternity',
+    },
+    noPrimaryParentQuestionOne: {
+      id: 'pl.applications:no.primary.parent.question.one',
+      defaultMessage: 'Er barn að fæðast erlendis?',
+      description: 'Is child being born abroad?',
+    },
+    noPrimaryParentQuestionTwo: {
+      id: 'pl.applications:no.primary.parent.question.two',
+      defaultMessage:
+        'Er barnshafandi foreldri búsett erlendis og/eða ekki með íslenska kennitölu?',
+      description:
+        'Is the pregnant parent living abroad and/or does not have an Icelandic social security number?',
+    },
+    noPrimaryParentQuestionThree: {
+      id: 'pl.applications:no.primary.parent.question.three',
+      defaultMessage:
+        'Á barnshafandi foreldri rétt á fæðingarorlofi á Íslandi?',
+      description:
+        'Is the pregnant parent entitled to parental leave in Iceland?',
+    },
+    noPrimaryParentDatePickerTitle: {
+      id: 'pl.applications:no.primary.parent.date.picker.title',
+      defaultMessage:
+        'Settu inn áætlaðan/raunverulegan fæðingardagur barnsins/barnanna?',
+      description: `Please enter the child's/children's expected/actual date of birth?`,
+    },
     otherParentSubSection: {
       id: 'pl.application:otherParent.subSection',
       defaultMessage: 'Hitt foreldrið',
@@ -323,6 +353,13 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:no.option.label',
       defaultMessage: 'Nei',
       description: 'No',
+    },
+    noChildrenFoundLabel: {
+      id: 'pl.application:no.children.found.label',
+      defaultMessage:
+        'Viltu búa til umsókn vegna varanlegst fóstur, ættleiðingu eða föður án móður?',
+      description:
+        'Do you want to apply for parmanent foster care, adoption or Father without mother application?',
     },
     rightsSection: {
       id: 'pl.application:rights.section',
@@ -817,6 +854,38 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'I want to customize my leave into multiple periods and/or to stretch it out over time at less than 100% time off.',
     },
+    noChildrenFoundSubTitle: {
+      id: 'pl.application:no.children.found.sub.title',
+      defaultMessage: 'Umsókn vegna',
+      description: 'Application due to',
+    },
+    noChildrenFoundTypeOfApplication: {
+      id: 'pl.application:no.children.found.type.of.application',
+      defaultMessage: 'Sækja um',
+      description: 'Apply for',
+    },
+    noChildrenFoundFosterCare: {
+      id: 'pl.application:no.children.found.foster.care',
+      defaultMessage: 'Vegna töku barns í varanlegt fóstur',
+      description: 'Due to receipt of a child in permanent foster care',
+    },
+    noChildrenFoundAdoption: {
+      id: 'pl.application:no.children.found.adoption',
+      defaultMessage: 'Vegna frumættleiðingar barns',
+      description: 'Due to primary adoption',
+    },
+    noChildrenFoundOther: {
+      id: 'pl.application:no.children.found.other',
+      defaultMessage: 'Annað',
+      description: 'Other',
+    },
+    noConsentToSeeInfromationError: {
+      id: 'pl.application:no.consent.to.see.information.error',
+      defaultMessage:
+        'Aðalforeldri hefur ekki gefið þér samþykki sitt fyrir umgengi í fæðingarorlofinu.',
+      description:
+        'Primary parent has not given you their consent for right of access during the parental leave.',
+    },
   }),
 
   selectChild: defineMessages({
@@ -828,6 +897,21 @@ export const parentalLeaveFormMessages: MessageDir = {
     baby: {
       id: 'pl.application:selectChild.baby',
       defaultMessage: 'Barn væntanlegt {dateOfBirth}',
+      description: 'Child copy radio button',
+    },
+    fosterCare: {
+      id: 'pl.application:selectChild.foster.care',
+      defaultMessage: 'Barn tekið í varanlegt fóstur {dateOfBirth}',
+      description: 'Child copy radio button',
+    },
+    adoption: {
+      id: 'pl.application:selectChild.adoption',
+      defaultMessage: 'Barn frumættleidd {dateOfBirth}',
+      description: 'Child copy radio button',
+    },
+    fosterCareOrAdoption: {
+      id: 'pl.application:selectChild.foster.care.or.adoption',
+      defaultMessage: 'Barn kemur inn á heimili {dateOfBirth}',
       description: 'Child copy radio button',
     },
     choose: {
@@ -866,6 +950,28 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Hér má sjá lista yfir börnin þín. Vinsamlegast veldu barn til að sækja um.',
       description:
         'Below you can see a list with your children. Please select a child to apply for.',
+    },
+    fosterCareDescription: {
+      id: 'pl.application:foster.care.description',
+      defaultMessage:
+        'Settu inn upplýsingar um barn sem tekið er í varanlegt fóstur',
+      description:
+        'Enter information about a child who is taken into permanent foster care',
+    },
+    adoptionDescription: {
+      id: 'pl.application:adoption.description',
+      defaultMessage: 'Settu inn upplýsingar um frumættleidd barn',
+      description: 'Enter information about a primary adopted child',
+    },
+    fosterCareBirthDate: {
+      id: 'pl.application:foster.care.birth.date',
+      defaultMessage: 'Fæðingardagur barns',
+      description: `Child's birth date`,
+    },
+    fosterCareAdoptionDate: {
+      id: 'pl.application:foster.care.adoption.date',
+      defaultMessage: 'Dagsetning sem forsjárskipting á sér stað',
+      description: 'Date on which the division of custody takes place',
     },
     secondaryParent: {
       id: 'pl.application:selectChild.secondaryParent',
@@ -997,10 +1103,10 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Hvað viltu nota hátt hlutfall af persónuafslættinum?',
       description: 'What percentage do you want to use?',
     },
-    zeroToHundred: {
-      id: 'pl.application:personal.allowance.zeroToHundred',
-      defaultMessage: 'Stimplaðu inn tölu á bilinu 0-100',
-      description: 'Type a number from 0 to 100',
+    oneToHundred: {
+      id: 'pl.application:personal.allowance.oneToHundred',
+      defaultMessage: 'Skráðu tölu á bilinu 1-100',
+      description: 'Type a number between 1 and 100',
     },
     allowanceUsage: {
       id: 'pl.application:allowance.allowance.usage',
@@ -1101,6 +1207,24 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage:
         'Þú getur valið um að byrja fæðingarstyrk á áætluðum fæðingardegi, frá raunverulegum fæðingardegi eða ákveðinni dagsetningu. Athugaðu að ekki er hægt að nýta réttindi til fæðingarstyrks 24 mánuðum eftir fæðingu barnsins.',
       description: 'Add translation',
+    },
+    adoptionDescription: {
+      id: 'pl.application:periods.first.period.adoption.description',
+      defaultMessage:
+        'Þú getur valið um að byrja fæðingarorlof á þeim degi sem barn kemur inn á heimili eða ákveðinni dagsetningu. Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 24 mánuðum eftir að barnið kom inná heimilið.',
+      description: 'Add translation',
+    },
+    grantAdoptionDescription: {
+      id: 'pl.application:periods.first.period.grant.adoption.description',
+      defaultMessage:
+        'Þú getur valið um að byrja fæðingarstyrk á þeim degi sem barn kemur inn á heimili eða ákveðinni dagsetningu. Athugaðu að ekki er hægt að nýta réttindi til fæðingarstyrks 24 mánuðum eftir að barnið kom inná heimilið.',
+      description: 'Add translation',
+    },
+    adoptionDateOption: {
+      id: 'pl.application:periods.first.period.adoption.date',
+      defaultMessage: 'Ég vil byrja á degi sem barn kemur inn á heimili',
+      description:
+        'I want to start on the day the division of custody takes place',
     },
     estimatedDateOfBirthOption: {
       id: 'pl.application:periods.first.period.estimatedDateOfBirth',
@@ -1247,41 +1371,90 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     title: {
       id: 'pl.application:employer.title',
-      defaultMessage: 'Hver er vinnuveitandi þinn?',
-      description: 'Who is your employer?',
+      defaultMessage: 'Vinnuveitendur',
+      description: 'Employers',
     },
     description: {
       id: 'pl.application:employer.description',
       defaultMessage:
-        'Vinnuveitandi þarf að samþykkja tilhögun fæðingarorlofsins (ef þú hefur marga vinnuveitendur skal velja hæsta starfshlutfall). ' +
-        'Þegar þú hefur sent umsóknina verður sendur tölvupóstur og sms til vinnuveitanda. ' +
-        ' Viðtakandi fær aðgang að umsókninni, en getur einungis séð upplýsingar sem varða tilhögun fæðingarorlofs.' +
-        'Ef vinnuveitandi hafnar tilhögun fæðingarorlofs þarft þú að gera viðeigandi breytingar á henni.',
+        'Hver og einn skráður vinnuveitandi þarf að samþykkja tilhögun fæðingarorlofs. Þegar þú hefur sent umsóknina verður sendur tölvupóstur og sms til vinnuveitenda. Viðtakendur fá aðgang að umsókninni, en getur einungis séð upplýsingar sem varða tilhögun fæðingarorlofs. Ef einhver skráðra vinnuveitenda hafna tilhögun fæðingarorlofs þarft þú að gera viðeigandi breytingar á henni.',
       description:
-        'Your employer is required to approve your parental leave arrangement. Once you have submitted your application, an email and sms will be sent to your employer. The recipient will get access to the application, but will only be able to see the timing arrangement. If your employer rejects the timing arrangement, you will need to change your application.',
+        'Each registered employer is required to approve your parental leave arrangement. Once you have submitted your application, an email and sms will be sent to all registered employers. The recipients will get access to  the application, but will only be able to see the timing arrangements. If any registered employers reject the timing arrangement, you will need to change your application.',
+    },
+    grantsDescription: {
+      id: 'pl.application:employer.grants.description',
+      defaultMessage:
+        'Ef þú hefur verið í vinnu á seinustu 6 mánuðum fyrir fæðingu barns þarf vinnuveitandi þinn að staðfesta tímabil fæðingarstyrksins eða senda inn starfslokavottorð ef þú ert ekki lengur að vinna hjá viðkomandi.',
+      description:
+        'If you have been employed in the last 6 months before the birth of the child, your employer must confirm the parental grant period or submit a certificate of termination of employment if you are no longer working for that person.',
+    },
+    stillEmployed: {
+      id: 'pl.application:employer.stillEmployed',
+      defaultMessage: 'Ertu ennþá að vinna hjá viðkomandi vinnuveitanda?',
+      description: 'Are you still working for this employer?',
+    },
+    registration: {
+      id: 'pl.application:employer.registration',
+      defaultMessage: 'Skráning vinnuveitanda',
+      description: 'Register an employer',
+    },
+    name: {
+      id: 'pl.application:employer.name',
+      defaultMessage: 'Nafn vinnuveitanda',
+      description: 'Employer name',
+    },
+    nameSearchPlaceholder: {
+      id: 'pl.application:employer.nameSearchPlaceholder',
+      defaultMessage: 'Leitaðu eftir vinnuveitanda',
+      description: 'Search for an employer',
     },
     email: {
       id: 'pl.application:employer.email',
       defaultMessage: 'Netfang vinnuveitanda',
       description: 'Employer email',
     },
+    emailHeader: {
+      id: 'pl.application:employer.email.header',
+      defaultMessage: 'Netfang',
+      description: 'Email',
+    },
     phoneNumber: {
       id: 'pl.application:employer.phone.number',
-      defaultMessage: 'Farsími vinnuveitanda (mælum með skráningu)',
-      description: 'Employer’s mobile phone (we recommend registration)',
+      defaultMessage: 'Símanúmer vinnuveitanda ( valfrjálst )',
+      description: "Employer's phone number ( optional )",
     },
-    emailConfirm: {
-      id: 'pl.application:employer.email.confirm',
-      defaultMessage: 'Staðfestu netfang vinnuveitanda',
-      description: 'Confirm employer email',
+    phoneNumberHeader: {
+      id: 'pl.application:employer.phone.number.header',
+      defaultMessage: 'Símanúmer',
+      description: 'Phone number',
     },
-    isRecivingUnemploymentBenefitsTitle: {
-      id: 'pl.application:employer.isRecivingUnemploymentBenefits',
+    ratio: {
+      id: 'pl.application:employer.ratio',
+      defaultMessage: 'Starfshlutfall',
+      description: 'Employment ratio',
+    },
+    ratioHeader: {
+      id: 'pl.application:employer.ratio.header',
+      defaultMessage: 'Starfshlutfall',
+      description: 'Ratio',
+    },
+    ratioPlaceholder: {
+      id: 'pl.application:employer.ratioPlaceholder',
+      defaultMessage: 'Veldu starfshlutfall',
+      description: 'Select an employment ratio',
+    },
+    approvedHeader: {
+      id: 'pl.application:employer.approved.header',
+      defaultMessage: 'Samþykkt',
+      description: 'Approved',
+    },
+    isReceivingUnemploymentBenefitsTitle: {
+      id: 'pl.application:employer.isReceivingUnemploymentBenefits',
       defaultMessage: 'Ertu að þiggja bætur?',
       description: 'Are you receiving benefits?',
     },
-    isRecivingUnemploymentBenefitsDescription: {
-      id: 'pl.application:employer.isRecivingUnemploymentBenefitsDesc',
+    isReceivingUnemploymentBenefitsDescription: {
+      id: 'pl.application:employer.isReceivingUnemploymentBenefitsDesc',
       defaultMessage:
         'Bótaþegar sem þiggja bætur frá stéttarfélagi eða sjúkradagpeninga þurfa að skila inn staðfestingu ef við á.',
       description:
@@ -1291,6 +1464,21 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:employer.unemploymentBenefits',
       defaultMessage: `Hvaðan ertu að þiggja bætur?`,
       description: 'Where are you receiving benefits from?',
+    },
+    addEmployer: {
+      id: 'pl.application:employer.add',
+      defaultMessage: 'Bæta við vinnuveitanda',
+      description: 'Add an employer',
+    },
+    addEmployerError: {
+      id: 'pl.application:employer.add.error',
+      defaultMessage: 'Nauðsynlegt er að bæta við amk einum vinnuveitanda',
+      description: 'It is required to add at least one employer',
+    },
+    employerLastSixMonths: {
+      id: 'pl.application:employer.employerLastSixMonths',
+      defaultMessage: 'Hefur þú verið með vinnuveitanda á síðustu 6 mánuðum?',
+      description: 'Have you had an employer in the last 6 month?',
     },
   }),
 
@@ -1450,6 +1638,22 @@ export const parentalLeaveFormMessages: MessageDir = {
   }),
 
   reviewScreen: defineMessages({
+    additionalDocumentRequiredDesc: {
+      id: 'pl.application:draftFlow.requiresAction.additionalDocumentDesc',
+      defaultMessage:
+        'Vinnumalastofnun vantar frekari gögn vegna umsóknarinnar',
+      description: 'Additional document required',
+    },
+    additionalDocumentRequiredButton: {
+      id: 'pl.application:draftFlow.requiresAction.additionalDocumentButton',
+      defaultMessage: 'Bæta við skjölum',
+      description: 'Add documents',
+    },
+    additionalDocumentRequiredTitle: {
+      id: 'pl.application:draftFlow.requiresAction.additionalDocumentTitle',
+      defaultMessage: 'Vinnumalastofnun vantar frekari gögn',
+      description: 'Additional document required',
+    },
     titleInReview: {
       id: 'pl.application:review.titleInReview',
       defaultMessage: 'Umsókn þín er í skoðun',
@@ -1469,6 +1673,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:review.estimatedBirthDate',
       defaultMessage: 'Áætlaður fæðingardagur',
       description: 'Estimated date of birth',
+    },
+    adoptionDate: {
+      id: 'pl.application:review.adoption.date',
+      defaultMessage: 'Forsjárskipting á sér stað',
+      description: 'Division of custody takes place',
     },
     desc: {
       id: 'pl.application:review.desc',
@@ -1630,6 +1839,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Fullnýta persónuafslátt maka',
       description:
         'If parent decided to use all the other parent personal discount',
+    },
+    employerLastSixMonths: {
+      id: 'pl.application:review.employer.last.six.months',
+      defaultMessage: 'Vinnuveitandi á síðustu 6 mánuðum?',
+      description: 'Employer in the last 6 months?',
     },
   }),
 
@@ -1794,13 +2008,13 @@ export const parentalLeaveFormMessages: MessageDir = {
   }),
 
   attachmentScreen: defineMessages({
-    genericTitle: {
-      id: 'pl.application:attachmentscreen.genericTitle',
+    title: {
+      id: 'pl.application:attachmentscreen.title',
       defaultMessage: `Viðbótargögn með umsókn`,
       description: `Additional documentation for application `,
     },
-    genericDescription: {
-      id: 'pl.application:attachmentscreen.genericDescription',
+    description: {
+      id: 'pl.application:attachmentscreen.description',
       defaultMessage: `Hér getur þú sett viðbótargögn til Fæðingarorlofssjóðs. Til dæmis ef barn tveggja mæðra var getið með tæknifrjóvgun þarf að skila staðfestingu frá Livio að um tæknifrjóvgun sé að ræða með samþykki beggja aðila. Athugaðu að skjalið þarf að vera á .pdf formi`,
       description: `Here you can upload additional documentation for the Parental Leave Fund. For example, if the child of two mothers was conceived via artificial insemination, the parents need to upload confirmation from Livio that artifical insemination was undergone with the consent of both parents. Note that the document needs to be on .pdf format`,
     },
@@ -1834,15 +2048,16 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: `Þeir sem hafa farið í tæknifrjóvgun þurfa að skila inn skjali því til staðfestingar frá Livio. Athugaðu að skjalið þarf að vera á .pdf formi`,
       description: `Those who have undergone artificial insemination must submit a document to confirm this from Livio. Note that the document needs to be on .pdf format`,
     },
-    fatherWithoutMotherTitle: {
-      id: 'pl.application:attachmentscreen.fatherWithoutMotherTitle',
-      defaultMessage: 'Vottorð frá heilsugæslu',
-      description: 'father withouy mother title',
+    parentWithoutBirthParentTitle: {
+      id: 'pl.application:attachmentscreen.parent.without.birth.parent.title',
+      defaultMessage: 'Staðfesting',
+      description: 'Confirmation',
     },
-    fatherWithoutMotherDescription: {
-      id: 'pl.application:attachmentscreen.fatherWithoutMotherDescription',
+    parentWithoutBirthParentDescription: {
+      id:
+        'pl.application:attachmentscreen.parent.without.birth.parent.description',
       defaultMessage:
-        'Faðir þarf að skila inn fæðingarvottorði frá heilsugæslu sem staðfestir faðerni barns. Athugaðu að skjalið þarf að vera á .pdf formi',
+        'Vottorð um áætlaðan fæðingardag þarf að berast frá viðkomandi landi. Eftir að barn er fætt þarf að berast fæðingarvottorð þess ásamt staðfestingu á faðerni ef foreldrar eru ekki gift eða í sambúð. Ef foreldrar eru gift eða í sambúð má senda afrit af staðfestingu þess lútandi með vottorði um áætlaðan fæðingardag. Athugaðu að skjalið þarf að vera á .pdf formi',
       description: 'father without mother description',
     },
     permanentFostercareTitle: {
@@ -1855,6 +2070,139 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage:
         'Vegna varanlegs fósturs þarf að skila inn staðfestingu frá sveitarfélagi. Athugaðu að skjalið þarf að vera á .pdf formi',
       description: 'Permanent forstcare description',
+    },
+    adoptionTitle: {
+      id: 'pl.application:attachmentscreen.adoption.title',
+      defaultMessage: 'Staðfesting vegna frumættleiðingu',
+      description: 'Confirmation for primary adoption',
+    },
+    adoptionDescription: {
+      id: 'pl.application:attachmentscreen.adoptionDescription',
+      defaultMessage:
+        'Vegna frumættleiðingu þarf að skila inn forsamþykki frá sýslumanni og staðfestingu frá Ættleiðingu. Athugaðu að skjalið þarf að vera á .pdf formi',
+      description: 'Permanent adoption description',
+    },
+    additionalDocumentRequired: {
+      id: 'pl.application:attachmentscreen.additionalDocumentRequired',
+      defaultMessage:
+        'Viðbótargögn krafist, vinsamlegast hlaðið viðbótargögn á næstu síðu',
+      description:
+        'Additional document(s) required, on the next page you will be able to upload the additional document(s), to begin please press continue.',
+    },
+    additionalDocumentRequiredTag: {
+      id: 'pl.application:attachmentscreen.additionalDocumentRequiredTag',
+      defaultMessage: 'Vantar',
+      description: 'Missing',
+    },
+    additionalDocumentsEditSubmit: {
+      id: 'pl.application:attachmentscreen.additionalDocumentsEditSubmit',
+      defaultMessage: 'Senda inn',
+      description: 'Submit',
+    },
+    employmentTerminationCertificateTitle: {
+      id: 'pl.application:attachmentscreen.retirementCertificateTitle',
+      defaultMessage: `Starfslokavottorð`,
+      description: `Employment termination certificate`,
+    },
+    employmentTerminationCertificateDescription: {
+      id: 'pl.application:attachmentscreen.retirementCertificateDescription',
+      defaultMessage: `Ef þú hefur verið í vinnu á seinustu 6 mánuðum fyrir fæðingu barns þarf vinnuveitandi þinn að staðfesta tímabil fæðingarstyrksins eða senda inn starfslokavottorð ef þú ert ekki lengur að vinna hjá viðkomandi. Athugaðu að skjalið þarf að vera á .pdf formi`,
+      description: `If you have been employed in the last 6 months before the birth of the child, your employer must confirm the parental grant period or submit a certificate of termination of employment if you are no longer working for that person. Note that the document needs to be on .pdf format`,
+    },
+  }),
+  residenceGrantMessage: defineMessages({
+    residenceGrantTitle: {
+      id: 'pl.application:residence.grant.title',
+      defaultMessage: 'Dvalarstyrkur',
+      description: 'Residence grant',
+    },
+    residenceGrantOpenDescription: {
+      id: 'pl.application:residence.grant.open.description',
+      defaultMessage: 'Hér getur þú sótt um dvalarstyrk',
+      description: 'Here you can apply for residence grant',
+    },
+    residenceGrantClosedDescription: {
+      id: 'pl.application:residence.grant.closed.description',
+      defaultMessage:
+        'Ekki er hægt að sækja um dvalarstyrk fyrr en eftir að barn er fætt. Sækja skal um innan sex mánaða frá fæðingardegi barns.',
+      description:
+        'The residence grant cannot be applied for until after the child is born. Applications shall be applied for within six months from the date of delivery.',
+    },
+    residenceGrantClosedTitle: {
+      id: 'pl.application:residence.grant.closed.title',
+      defaultMessage: 'Þú getur ekki sótt um ennþá.',
+      description: 'You can not apply yet.',
+    },
+    residenceGrantPeriodDescriptionLineOne: {
+      id: 'pl.application:residence.grant.period.description.line.one',
+      defaultMessage:
+        'Heimilt er að greiða dvalarkostnað barnshafandi foreldris fjarri heimili 14 dögum fyrir áætlaðan fæðingardag og fram að fæðingu',
+      description:
+        'It is permitted to pay the expenses of a pregnant parent´s stay away from home 14 days before the expected date of birth and until the birth',
+    },
+    residenceGrantPeriodDescriptionLineTwo: {
+      id: 'pl.application:residence.grant.period.description.line.two',
+      defaultMessage:
+        'Ef um fjölburameðgöngu er að ræða er heimilt að byrja að greiða dvalarkostnað 28 dögum fyrir áætlaðan fæðingardag og fram að fæðingu',
+      description:
+        'In the case of a multiple pregnancy, it is permitted to start paying accommodation expenses 28 days before the expected date of birth and until the birth',
+    },
+
+    residenceGrantApplyTitle: {
+      id: 'pl.application:residence.grant.apply.title',
+      defaultMessage: 'Sækja um dvalarstyrk',
+      description: 'Apply for residence grant',
+    },
+    residenceGrantApplyHeader: {
+      id: 'pl.application:residence.grant.apply.header',
+      defaultMessage: 'Tímabil dvalarstyrks',
+      description: 'Period of residency',
+    },
+    residenceGrantAttachmentTitle: {
+      id: 'pl.application:residence.grant.attachment.title',
+      defaultMessage: 'Vottorð um dvalarstyrk',
+      description: 'A residence grant certificate',
+    },
+    residenceGrantAttachmentDescription: {
+      id: 'pl.application:residence.grant.attachment.description',
+      defaultMessage:
+        'Til að sækja um dvalarstyrk þarf að senda inn vottorð þess sérfræðilæknis sem annast hefur foreldrið. Vottorð um dvalarstyrk skal berast á því formi sem aðgengilegt er í Sögukerfi heilbrigðisstofnana. Á vottorðinu þarf að koma fram rökstuðningur sérfræðilæknis fyrir því að viðkomandi foreldri sé nauðsynlegt að hans mati að dvelja fjarri heimili sínu í tiltekinn tíma fyrir áætlaðan fæðingardag barns. Einnig þarf að koma fram á vottorðinu hvort að foreldrið hafi dvalið á sjúkrahúsi eða heilbrigðisstofnun á því tímabili. Vinnumálastofnun þarf að berast frumrit af vottorðinu með undirskrift læknis. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        'When applying for a residence grant, a certificate from the parent’s specialist doctor needs to be submitted with the application. A residence grant certificate shall be submitted using the form available in the health care history system. The certificate must stipulate the specialist doctor’s reasoning for the necessity of the relevant parent to live far from her home for a certain amount of time before the expected date of delivery. The certificate must also stipulate information about whether the parent has stayed in a hospital or a health institute during that period. The original certificate must be submitted with a doctor’s signature. Note that the document needs to be on .pdf format.',
+    },
+    residenceGrantOpen: {
+      id: 'pl.application:residence.grant.open',
+      defaultMessage: 'Hér getur þú sent inn umsókn þína.',
+      description: 'Here you can submit your application',
+    },
+    residenceGrantOpenTitle: {
+      id: 'pl.application:residence.grant.open.title',
+      defaultMessage: 'Sendu inn umsókn þína',
+      description: 'Submit your application',
+    },
+    residenceGrantSubmit: {
+      id: 'pl.application:residence.grant.submit',
+      defaultMessage: 'Sendu inn',
+      description: 'Submit',
+    },
+    residenceGrantReject: {
+      id: 'pl.application:residence.grant.reject',
+      defaultMessage: 'Ekki senda inn',
+      description: 'Reject',
+    },
+
+    residenceGrantSelectPeriodSubmitDescription: {
+      id: 'pl.application:residence.grant.select.period.submit.description',
+      defaultMessage: 'Sendu inn umsókn til að sækja um dvalarstyrk',
+      description: 'Send in you application to apply for residence grant',
+    },
+
+    residenceGrantApplicationSendInformation: {
+      id: 'pl.application:residence.grant.application.send.information',
+      defaultMessage:
+        'Þú hefur sótt um dvalarstyrk og umsókn þín er í vinnslu.',
+      description:
+        'You have applied for a residence grant, and your application is being processed.',
     },
   }),
 }
@@ -2002,6 +2350,16 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Símanúmerið þarf að vera gilt.',
     description: 'Error message when phone number is invalid.',
   },
+  fosterCare: {
+    id: 'pl.application:dataSchema.foster.care.birth.date',
+    defaultMessage: 'Barn þarf að vera yngra en 8 ára',
+    description: 'Child must be under 8 years old',
+  },
+  GSMPhoneNumber: {
+    id: 'pl.application:dataSchema.GSMPhoneNumber',
+    defaultMessage: 'Símanúmerið þarf að vera GSM númer.',
+    description: 'Invalid phoneNumber. Has to be a GSM number.',
+  },
   otherParentId: {
     id: 'pl.application:dataSchema.otherParent.id',
     defaultMessage: 'Kennitala þarf að vera gild.',
@@ -2027,6 +2385,21 @@ export const errorMessages = defineMessages({
     id: 'pl.application:answerValidators.employerEmail',
     defaultMessage: 'Þú þarft að skilgreina netfang vinnuveitanda.',
     description: 'Invalid employer copy',
+  },
+  employersRatioMissing: {
+    id: 'pl.application:answerValidators.employersRatioMissing',
+    defaultMessage: 'Ekkert hlutfall hefur verið valið',
+    description: 'Copy when days to be used by period is missing',
+  },
+  employersStillEmployedMissing: {
+    id: 'pl.application:answerValidators.employersStillEmployedMissing',
+    defaultMessage: 'Vinsamlegast veldu annan hvorn möguleikann',
+    description: 'Please select either option',
+  },
+  employersNotAList: {
+    id: 'pl.application:answerValidators.employersNotAList',
+    defaultMessage: 'Svar þarf að vera listi af vinnuveitanda',
+    description: 'Copy when employers is not a list',
   },
   employerNationalRegistryId: {
     id: 'pl.application:dataSchema.invalidEmployerNationalRegistryId',
@@ -2277,6 +2650,13 @@ export const errorMessages = defineMessages({
       'Ekki er hægt að óska eftir dögum ef ekki er nýttur allur sameiginlegur réttur vegna fjölbura. Vinsamlegast veljið annan möguleika.',
     description: 'Unable to request days!',
   },
+  notAllowedToGiveRightsOtherParentNotAllowed: {
+    id:
+      'pl.application:errors.not.allowed.to.give.rights.other.parent.not.allowed',
+    defaultMessage:
+      'Ekki er hægt að færa daga ef forsjárlausa foreldrið hefur ekki samþykki fyrir umgengni í þessu fæðingarorlofi. Vinsamlegast veljið annan möguleika.',
+    description: 'Unable to transfer days!',
+  },
 })
 
 export const statesMessages = defineMessages({
@@ -2455,7 +2835,7 @@ export const statesMessages = defineMessages({
   },
   vinnumalastofnunApproveEditsDescription: {
     id: 'pl.application:vinnumalastofnunApproveEdits.description',
-    defaultMessage: 'Vinnumálastofnun er að fara yfir tímabilbreytingar þínar.',
+    defaultMessage: 'Vinnumálastofnun er að fara yfir breytingar þínar.',
     description: 'Description of the state - vinnumalastofnunApproveEdits',
   },
 
@@ -2468,5 +2848,10 @@ export const statesMessages = defineMessages({
     id: 'pl.application:vinnumalastofnunEditsAction.description',
     defaultMessage: 'Vinnumálastofnun hafnaði tímabreytingum þínum.',
     description: 'Description of the state - vinnumalastofnunEditsAction',
+  },
+  residenceGrantInProgress: {
+    id: 'pl.application:residence.grant.in.progress',
+    defaultMessage: 'Þú ert að sækja um dvalarstyrk.',
+    description: 'You are applying for a residence grant',
   },
 })

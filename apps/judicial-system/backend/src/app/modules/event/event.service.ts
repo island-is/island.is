@@ -47,6 +47,7 @@ const caseEvent = {
   SCHEDULE_COURT_DATE: ':timer_clock: Fyrirtökutíma úthlutað',
   DISMISS: ':woman-shrugging: Vísað frá',
   ARCHIVE: ':file_cabinet: Sett í geymslu',
+  REOPEN: ':construction: Opnað aftur',
 }
 
 export enum CaseEvent {
@@ -64,6 +65,7 @@ export enum CaseEvent {
   SCHEDULE_COURT_DATE = 'SCHEDULE_COURT_DATE',
   DISMISS = 'DISMISS',
   ARCHIVE = 'ARCHIVE',
+  REOPEN = 'REOPEN',
 }
 
 @Injectable()
@@ -73,7 +75,7 @@ export class EventService {
     private readonly logger: Logger,
   ) {}
 
-  postEvent(event: CaseEvent, theCase: Case) {
+  postEvent(event: CaseEvent, theCase: Case, eventOnly = false) {
     try {
       if (!environment.events.url) {
         return
@@ -82,15 +84,15 @@ export class EventService {
       const title =
         event === CaseEvent.ACCEPT && isIndictmentCase(theCase.type)
           ? caseEvent[CaseEvent.ACCEPT_INDICTMENT]
-          : caseEvent[event]
-      const typeText = `${capitalize(
+          : `${caseEvent[event]}${eventOnly ? ' - aðgerð ekki framkvæmd' : ''}`
+      const typeText = `${capitalize(caseTypes[theCase.type])}${
         isIndictmentCase(theCase.type)
-          ? readableIndictmentSubtypes(
+          ? `:(${readableIndictmentSubtypes(
               theCase.policeCaseNumbers,
               theCase.indictmentSubtypes,
-            ).join(', ')
-          : caseTypes[theCase.type],
-      )} *${theCase.id}*`
+            ).join(', ')})`
+          : ''
+      } *${theCase.id}*`
       const prosecutionText = `${
         theCase.creatingProsecutor?.institution
           ? `${theCase.creatingProsecutor?.institution?.name} `

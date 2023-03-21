@@ -6,13 +6,13 @@ The root `.eslintrc.json` file specifies our rules for each tag. We recommend re
 
 ## Our tag convention
 
-Our tags are generally split in 2 categories. Generic tags and application tags.
+Our tags are split in 2 categories. Generic tags and application tags.
 
 ### Generic tags
 
-These are the most common tags, which should be applied to most of our shared libraries.
+Generic tags are based on the frameworks we use and should be used for simple applications and shared libraries.
 
-Here are the generic tags ordered from the most generic to more focused.
+These are the generic tags ordered from the most generic to more specific.
 
 | Tag          | Description                              | Can depend on                      | Can be depended on by              |
 | ------------ | ---------------------------------------- | ---------------------------------- | ---------------------------------- |
@@ -26,32 +26,66 @@ Here are the generic tags ordered from the most generic to more focused.
 
 ### Application tags
 
-Simple applications can be tagged with the generic tags above, but applications which are split up into multiple library projects should define their own tags, extending one of the generic tags.
+Simple applications can be tagged with the generic tags above, but applications which have one or more "private" library projects should define their own NX tags, extending one of the generic tags.
 
-It can be just one tag which is applied to both the application project and all of the associated library projects. Or there can be multiple application tags with different rules to segment the library projects.
+It can be one tag which is applied to both the application project and all the associated library projects (like "api"). Or there can be multiple application tags with different rules to segment the library projects (like the "judicial-system" tags).
 
-| Tag               | Description             | Can depend on                                        | Can be depended on by          |
-| ----------------- | ----------------------- | ---------------------------------------------------- | ------------------------------ |
-| `api`             | API domain project.     | `js`, `node`, `nest`, `api`                          | Other API projects.            |
-| `portals-mypages` | Service portal project. | `js`, `dom`, `react`, `react-spa`, `portals-mypages` | Other service portal projects. |
-| `portals-admin`   | Admin portal project.   | `js`, `dom`, `react`, `react-spa`, `portals-admin`   | Other admin portal projects.   |
+| Tag                      | Description                     | Can depend on                                                                          | Can be depended on by                 |
+| ------------------------ | ------------------------------- | -------------------------------------------------------------------------------------- | ------------------------------------- |
+| `api`                    | API domain project.             | `js`, `node`, `nest`, `api`, `client`                                                  | Other API projects.                   |
+| `application-system`     | Application system projects     | `js`, `dom`, `react`, `react-spa`, `react`, `application-system`, `client`             | Other application system projects     |
+| `application-system-web` | Application system web projects | `js`, `dom`, `react`, `react-spa`, `application-system-web`, `application-system`,     | Other application system web projects |
+| `application-system-api` | Application system api projects | `js`, `node`, `nest`, `client`, `application-system`, `application-system-api`, `api`, | Other application system api projects |
+| `auth-api`               | Authentication api projects     | `js`, `node`, `nest`, `client`, `auth-api`                                             | Other auth APIs                       |
+| `client`                 | Client projects.                | `js`, `node`, `nest`, `client`                                                         | Other clients and application-system  |
+| `e2e`                    | Test projects                   | `js`, `client`, `application-system`                                                   | No one                                |
+| `judicial-system`        | Judicial system projects        | `js`, `judicial-system`                                                                | Other judicial system projects        |
+| `judicial-system-api`    | Judicial system web projects    | `js`, `node`, `nest`, `client`, `judicial-system`, `judicial-system-api`               | Other judicial system api projects    |
+| `judicial-system-web`    | Judicial system api projects    | `js`, `dom`, `react`, `react-spa`, `judicial-system`, `judicial-system-web`            | Other judicial system web projects    |
+| `portals`                | Portal project.                 | `js`, `dom`, `react`, `react-spa`, `portals`                                           | Other portal projects.                |
+| `portals-mypages`        | My pages portal project.        | `js`, `dom`, `react`, `react-spa`, `portals`, `portals-mypages`                        | Other my pages portal projects.       |
+| `portals-admin`          | Admin portal project.           | `js`, `dom`, `react`, `react-spa`, `portals`, `portals-admin`                          | Other admin portal projects.          |
+
+Here is a chart that displays how these tags are connected. Each tag can depend on other tags with a full line arrow pointing to it. Dotted lines represents connections between application tags where a project can depend on the tag but not necessarily other tags further up.
+
+```mermaid
+  flowchart BT;
+    %% Generic tags
+    node & dom --> js
+    react --> dom
+    react-spa & react-next --> react
+    nest --> node
+
+    %% App tags
+    judicial-system --> js
+    api & auth-api & client & application-system-api & judicial-system-api --> nest
+    application-system & application-system-web & portals & portals-admin & portals-mypages & judicial-system-web --> react-spa
+
+    classDef appTag fill:#f9f
+    class api,auth-api,client,application-system,application-system-web,application-system-api,portals-admin,portals-mypages,judicial-system-api,judicial-system-web,judicial-system appTag
+
+    %% Shallow dependencies
+    api & auth-api -.-> client
+    application-system -.-> client
+    application-system-api & application-system-web -.-> application-system
+    judicial-system-api & judicial-system-web -.-> judicial-system
+    portals-mypages & portals-mypages -.-> portals
+```
 
 ## Tag prefixes
 
-The above tag **must** be prefixed by one or both of the following prefixes to opt projects into "Can depend on" and "Can be depended on by" rules.
+The above tags **must** be prefixed by one or both of the following prefixes to opt projects into "Can depend on" and "Can be depended on by" rules.
 
 - `scope:` - by applying a scope tag to a project, you are saying that ESLint should enforce project boundaries for that project using the "Can depend on" rules documented above.
 - `lib:` - lib tags describe what kind of project it is to enforce the "Can be depended on by" rules documented above.
 
-This may be confusing, but basically, every project should have a lib tag, and eventually every project should also have a scope tag. You should use both prefixes in projects you maintain, and at least add tags with the lib prefix in projects you depend on.
+All projects must have a "scope" tag and most libraries should have the same tag as "lib" and "scope".
 
-This is to help us migrate to project boundaries over time. When we have added lib and scope tags to all projects, we can get rid of the lib prefix.
+Later we hope to get rid of the "lib" tags and just have "scope" tags. However, first we need to fix or refactor a few tricky projects.
 
 ### Examples
 
-Let's say you want to enforce project boundaries in project X which is an existing NextJS project you maintain. It depends on NextJS library Y which you maintain and React library Z which you don't maintain.
-
-First step: Open `apps/x/project.json` and add the following tag:
+Generic NextJS application:
 
 ```json
 {
@@ -59,38 +93,34 @@ First step: Open `apps/x/project.json` and add the following tag:
 }
 ```
 
-This marks the project as a NextJS project, and tells ESLint to verify its imports. At this point ESLint would complain that project X can't import libraries Y and Z.
-
-{% hint style="info" %}
-You should not list "lib:react-next" in projects under the "app" folder since they should never be depended on by other projects.
-{% endhint %}
-
-Next, open `libs/y/project.json` and add the following tags:
+React library which works for both NextJS and React SPA projects.
 
 ```json
 {
-  "tags": ["scope:react-next", "lib:react-next"]
+  "tags": ["lib:react", "scope:react"]
 }
 ```
 
-The `lib:react-next` tag allows the library to be imported by other projects with the "scope:react-next" tag (fixing one of the ESLint errors in project X). Again, adding `scope:react-next` configures ESLint to also verify the imports of library Y. It might find some boundary errors which you should fix.
-
-Finally, open `libs/z/project.json` and add the following tag:
+NestJS library.
 
 ```json
 {
-  "tags": ["lib:react"]
+  "tags": ["lib:nest", "scope:nest"]
 }
 ```
-
-Since this is not your project, it's enough to list "lib:react" to fix the ESLint error in project X. You can try adding "scope:react" as well, but it might trigger some tricky boundary ESLint issue which you're not in a position to deal with as part of your work.
 
 ## Fixing module boundary errors
 
-_Oh no, I got this ESLint error, what should I do!?_
-
 > A project tagged with "scope:X" can only depend on libs tagged with "lib:Y", "lib:Z", ... - @nrwl/nx/enforce-module-boundaries
 
-Check which library you are importing. If your project should be able to import that library, then it's likely just a matter of configuring the correct "lib:" tag in the library's `project.json` file.
+Check which file the code is importing and which tags are configured in the importing project and the imported library.
 
 In some cases, your project should not be importing that library, e.g. it's a library belonging to another application, or you're accidentally importing a server side library from a web project. You should look for ways to refactor your code to not depend on that library. For example, you might move the things you need to another shared library which you are allowed to depend on.
+
+If your project should be able to import that library, then there's some issue with the tags which you need to fix.
+
+Either way, feel free to reach out to the core team and ask for guidance.
+
+> External checks: Missing nx tags for project boundaries
+
+Our CI checks that all projects have correct tags. If you get this error, it's likely that you forgot to add a "scope:" tag to a new `project.json` file. You can re-run the CI check locally by running `yarn check-tags`.

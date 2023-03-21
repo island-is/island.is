@@ -6,6 +6,7 @@ import {
   Language,
   PagedRowsDto,
 } from '@island.is/auth-api-lib'
+import { NoContentException } from '@island.is/nest/problem'
 import {
   Body,
   Controller,
@@ -16,12 +17,13 @@ import {
   Put,
   Query,
   UseGuards,
+  VERSION_NEUTRAL,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
+  ApiExcludeController,
   ApiOkResponse,
   ApiQuery,
-  ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger'
 import type { User } from '@island.is/auth-nest-tools'
@@ -38,8 +40,8 @@ import { environment } from '../../../environments/'
 const namespace = `${environment.audit.defaultNamespace}/translation`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@ApiTags('translation')
-@Controller('backend/translation')
+@ApiExcludeController()
+@Controller({ path: 'translation', version: [VERSION_NEUTRAL, '1'] })
 @Audit({ namespace })
 export class TranslationController {
   constructor(
@@ -191,7 +193,11 @@ export class TranslationController {
     resources: (language) => language?.isoKey,
   })
   async findLanguage(@Param('isoKey') isoKey: string): Promise<Language> {
-    return this.translationService.findLanguage(isoKey)
+    const language = await this.translationService.findLanguage(isoKey)
+    if (!language) {
+      throw new NoContentException()
+    }
+    return language
   }
 
   /** Adds a new translation */
@@ -226,12 +232,16 @@ export class TranslationController {
     @Param('property') property: string,
     @Param('key') key: string,
   ): Promise<Translation> {
-    return this.translationService.findTranslation(
+    const translation = await this.translationService.findTranslation(
       language,
       className,
       property,
       key,
     )
+    if (!translation) {
+      throw new NoContentException()
+    }
+    return translation
   }
 
   /** Updates a translation */
@@ -245,7 +255,7 @@ export class TranslationController {
     return this.auditService.auditPromise(
       {
         auth: user,
-        action: 'udpateTranslation',
+        action: 'updateTranslation',
         namespace,
         resources: `${translation.language}/${translation.className}/${translation.property}/${translation.key}`,
       },

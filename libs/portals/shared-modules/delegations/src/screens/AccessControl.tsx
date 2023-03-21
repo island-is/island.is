@@ -1,6 +1,7 @@
-import { useHistory } from 'react-router-dom'
+import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useLocation } from 'react-use'
-import { Box, Tabs } from '@island.is/island-ui/core'
+import { Box, Button, GridColumn, Tabs } from '@island.is/island-ui/core'
 import { IntroHeader } from '@island.is/portals/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useAuth } from '@island.is/auth/react'
@@ -15,11 +16,11 @@ const TAB_DELEGATION_OUTGOING_ID = 'outgoing'
 const TAB_DELEGATION_INCOMING_ID = 'incoming'
 
 const AccessControl = () => {
-  useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
+  useNamespaces(['sp.access-control-delegations'])
 
   const { formatMessage } = useLocale()
   const { userInfo } = useAuth()
-  const history = useHistory()
+  const navigate = useNavigate()
   const location = useLocation()
   const { basePath } = usePortalMeta()
   const DELEGATIONS_INCOMING_PATH = `${basePath}${DelegationPaths.DelegationsIncoming}`
@@ -33,7 +34,7 @@ const AccessControl = () => {
 
     // Make sure not to add to history stack the same route twice in a row
     if (url !== location.pathname) {
-      history.push(url)
+      navigate(url)
     }
   }
 
@@ -58,8 +59,23 @@ const AccessControl = () => {
               },
         )}
         marginBottom={0}
-      />
-      <Box marginTop={[0, 0, 5]}>
+      >
+        <GridColumn span={['8/8', '3/8']}>
+          <Box
+            display={'flex'}
+            justifyContent={['flexStart', 'flexEnd']}
+            paddingTop={[3, 6]}
+          >
+            <Button
+              onClick={() => navigate(DelegationPaths.DelegationsGrant)}
+              size="small"
+            >
+              {formatMessage(m.newAccess)}
+            </Button>
+          </Box>
+        </GridColumn>
+      </IntroHeader>
+      <Box marginTop={[4, 4, 6]}>
         {onlyOutgoingDelegations ? (
           <DelegationsOutgoing />
         ) : (

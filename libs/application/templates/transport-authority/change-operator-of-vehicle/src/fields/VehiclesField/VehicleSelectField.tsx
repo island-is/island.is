@@ -10,15 +10,15 @@ import {
   BulletList,
   InputError,
 } from '@island.is/island-ui/core'
-import { VehiclesCurrentVehicle } from '../../types'
+import {
+  VehiclesCurrentVehicle,
+  VehiclesCurrentVehicleWithOperatorChangeChecks,
+} from '../../shared'
 import { information, applicationCheck, error } from '../../lib/messages'
 import { SelectController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
-import {
-  GetVehicleDetailInput,
-  VehiclesCurrentVehicleWithOwnerchangeChecks,
-} from '@island.is/api/schema'
+import { GetVehicleDetailInput } from '@island.is/api/schema'
 import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
 
 interface VehicleSearchFieldProps {
@@ -29,7 +29,7 @@ export const VehicleSelectField: FC<
   VehicleSearchFieldProps & FieldBaseProps
 > = ({ currentVehicleList, application, errors }) => {
   const { formatMessage } = useLocale()
-  const { register } = useFormContext()
+  const { setValue } = useFormContext()
 
   const vehicleValue = getValueViaPath(
     application.answers,
@@ -42,7 +42,7 @@ export const VehicleSelectField: FC<
   const [
     selectedVehicle,
     setSelectedVehicle,
-  ] = useState<VehiclesCurrentVehicleWithOwnerchangeChecks | null>(
+  ] = useState<VehiclesCurrentVehicleWithOperatorChangeChecks | null>(
     currentVehicle && currentVehicle.permno
       ? {
           permno: currentVehicle.permno,
@@ -50,26 +50,15 @@ export const VehicleSelectField: FC<
           color: currentVehicle?.color || '',
           role: currentVehicle?.role,
           isDebtLess: true,
-          ownerChangeErrorMessages: [],
+          validationErrorMessages: [],
         }
       : null,
   )
   const [plate, setPlate] = useState<string>(
     getValueViaPath(application.answers, 'pickVehicle.plate', '') as string,
   )
-  const [color, setColor] = useState<string | undefined>(
-    getValueViaPath(application.answers, 'pickVehicle.color', undefined) as
-      | string
-      | undefined,
-  )
-  const [type, setType] = useState<string | undefined>(
-    getValueViaPath(application.answers, 'pickVehicle.type', undefined) as
-      | string
-      | undefined,
-  )
 
   const getVehicleDetails = useLazyVehicleDetails()
-  // TODO: Add operator validation query once Samgöngustofa has finished it
   const getVehicleDetailsCallback = useCallback(
     async ({ permno }: GetVehicleDetailInput) => {
       const { data } = await getVehicleDetails({
@@ -93,30 +82,34 @@ export const VehicleSelectField: FC<
             make: currentVehicle?.make || '',
             color: currentVehicle?.color || '',
             role: currentVehicle?.role,
-            isDebtLess: response?.vehicleOwnerchangeChecksByPermno?.isDebtLess,
-            ownerChangeErrorMessages:
-              response?.vehicleOwnerchangeChecksByPermno
-                ?.ownerChangeErrorMessages,
+            isDebtLess:
+              response?.vehicleOperatorChangeChecksByPermno?.isDebtLess,
+            validationErrorMessages:
+              response?.vehicleOperatorChangeChecksByPermno
+                ?.validationErrorMessages,
           })
 
-          // const disabled =
-          //   !response?.vehicleOwnerchangeChecksByPermno?.isDebtLess ||
-          //   !!response?.vehicleOwnerchangeChecksByPermno
-          //     ?.ownerChangeErrorMessages?.length
-          // setPlate(disabled ? '' : currentVehicle.permno || '')
-          setPlate(currentVehicle.permno || '')
-          setColor(currentVehicle.color || undefined)
-          setType(currentVehicle.make || undefined)
+          const disabled =
+            !response?.vehicleOperatorChangeChecksByPermno?.isDebtLess ||
+            !!response?.vehicleOperatorChangeChecksByPermno
+              ?.validationErrorMessages?.length
+          setPlate(disabled ? '' : currentVehicle.permno || '')
+          setValue(
+            'pickVehicle.plate',
+            disabled ? '' : currentVehicle.permno || '',
+          )
+          setValue('pickVehicle.color', currentVehicle.color || undefined)
+          setValue('pickVehicle.type', currentVehicle.make || undefined)
           setIsLoading(false)
         })
         .catch((error) => console.error(error))
     }
   }
 
-  const disabled = false
-  // selectedVehicle &&
-  // (!selectedVehicle.isDebtLess ||
-  //   !!selectedVehicle.ownerChangeErrorMessages?.length)
+  const disabled =
+    selectedVehicle &&
+    (!selectedVehicle.isDebtLess ||
+      !!selectedVehicle.validationErrorMessages?.length)
 
   return (
     <Box>
@@ -163,8 +156,8 @@ export const VehicleSelectField: FC<
                             )}
                           </Bullet>
                         )}
-                        {!!selectedVehicle.ownerChangeErrorMessages?.length &&
-                          selectedVehicle.ownerChangeErrorMessages?.map(
+                        {!!selectedVehicle.validationErrorMessages?.length &&
+                          selectedVehicle.validationErrorMessages?.map(
                             (error) => {
                               const message = formatMessage(
                                 getValueViaPath(
@@ -197,24 +190,6 @@ export const VehicleSelectField: FC<
           </Box>
         )}
       </Box>
-      <input
-        type="hidden"
-        value={plate}
-        ref={register({ required: true })}
-        name="pickVehicle.plate"
-      />
-      <input
-        type="hidden"
-        value={color}
-        ref={register({ required: true })}
-        name="pickVehicle.color"
-      />
-      <input
-        type="hidden"
-        value={type}
-        ref={register({ required: true })}
-        name="pickVehicle.type"
-      />
       {!isLoading && plate.length === 0 && errors && errors.pickVehicle && (
         <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />
       )}

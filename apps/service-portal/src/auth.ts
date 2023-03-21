@@ -11,56 +11,52 @@ import {
 
 import { environment } from './environments'
 
+const SERVICE_PORTAL_SCOPES = [
+  'openid',
+  'profile',
+  'api_resource.scope',
+  ApplicationScope.read,
+  ApplicationScope.write,
+  UserProfileScope.read,
+  UserProfileScope.write,
+  AuthScope.actorDelegations,
+  AuthScope.delegations,
+  NationalRegistryScope.individuals,
+  DocumentsScope.main,
+  EndorsementsScope.main,
+  EndorsementsScope.admin,
+  ApiScope.assets,
+  ApiScope.education,
+  ApiScope.educationLicense,
+  ApiScope.financeOverview,
+  ApiScope.financeSalary,
+  ApiScope.financeSchedule,
+  ApiScope.internal,
+  ApiScope.internalProcuring,
+  ApiScope.meDetails,
+  ApiScope.licenses,
+  ApiScope.licensesVerify,
+  ApiScope.company,
+  ApiScope.vehicles,
+]
+
 const userMocked = process.env.API_MOCKS === 'true'
 
 if (userMocked) {
   configureMock({
     profile: { name: 'Mock', locale: 'is', nationalId: '0000000000' },
-    scopes: [
-      ApiScope.assets,
-      ApiScope.education,
-      ApiScope.financeOverview,
-      ApiScope.financeSalary,
-      ApiScope.internal,
-      ApiScope.licenses,
-      ApiScope.meDetails,
-    ],
+    scopes: SERVICE_PORTAL_SCOPES,
   })
 } else {
   configure({
     baseUrl: `${window.location.origin}/minarsidur`,
     redirectPath: '/signin-oidc',
     redirectPathSilent: '/silent/signin-oidc',
+    initiateLoginPath: '/login',
     switchUserRedirectUrl: '/',
     authority: environment.identityServer.authority,
     client_id: '@island.is/web',
-    scope: [
-      'openid',
-      'profile',
-      'api_resource.scope',
-      ApplicationScope.read,
-      ApplicationScope.write,
-      UserProfileScope.read,
-      UserProfileScope.write,
-      AuthScope.actorDelegations,
-      AuthScope.delegations,
-      NationalRegistryScope.individuals,
-      DocumentsScope.main,
-      EndorsementsScope.main,
-      EndorsementsScope.admin,
-      ApiScope.assets,
-      ApiScope.education,
-      ApiScope.educationLicense,
-      ApiScope.financeOverview,
-      ApiScope.financeSalary,
-      ApiScope.financeSchedule,
-      ApiScope.internal,
-      ApiScope.meDetails,
-      ApiScope.licenses,
-      ApiScope.licensesVerify,
-      ApiScope.company,
-      ApiScope.vehicles,
-    ],
+    scope: SERVICE_PORTAL_SCOPES,
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'sp.',
   })

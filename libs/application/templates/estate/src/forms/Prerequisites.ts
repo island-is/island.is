@@ -38,21 +38,25 @@ export const Prerequisites: Form = buildForm({
               width: 'full',
               options: [
                 {
-                  value: EstateTypes.noPropertyEstate,
-                  label: EstateTypes.noPropertyEstate,
+                  value: EstateTypes.estateWithoutAssets,
+                  label: EstateTypes.estateWithoutAssets,
                   tooltip: 'Sjá nánar linkur hér',
                 },
                 {
-                  value: EstateTypes.officialEstate,
-                  label: EstateTypes.officialEstate,
+                  value: EstateTypes.divisionOfEstate,
+                  label: EstateTypes.divisionOfEstate,
                   tooltip: 'Sjá nánar linkur hér',
                 },
                 {
-                  value: 'Búsetuleyfi',
-                  label: 'Búsetuleyfi',
+                  value: EstateTypes.permitToPostponeEstateDivision,
+                  label: EstateTypes.permitToPostponeEstateDivision,
                   tooltip: 'Sjá nánar linkur hér',
                 },
-                //{ value: 'Einkaskipti', label: 'Einkaskipti', tooltip: 'Sjá nánar linkur hér' },
+                {
+                  value: EstateTypes.divisionOfEstateByHeirs,
+                  label: EstateTypes.divisionOfEstateByHeirs,
+                  tooltip: 'Sjá nánar linkur hér',
+                },
               ],
             }),
             buildSubmitField({

@@ -45,5 +45,5 @@
     },
     "docker-express": {}
   },
-  "tags": []
+  "tags": ["scope:judicial-system-api"]
 }

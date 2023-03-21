@@ -85,6 +85,7 @@ export const getStudentAndBookMapper = (
             teacherName: lesson.teacherName ?? '',
             comments: lesson.comments ?? '',
           })),
+      practiceDriving: book.practiceDriving || false,
     },
   }
 }

@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import get from 'lodash/get'
 import format from 'date-fns/format'
 
@@ -17,14 +17,18 @@ import { dateFormat } from '@island.is/shared/constants'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
-import { ParentalRelations } from '../../constants'
+import {
+  ADOPTION,
+  ParentalRelations,
+  PERMANENT_FOSTER_CARE,
+} from '../../constants'
 
 const ChildSelector: FC<FieldBaseProps> = ({
   application,
   setBeforeSubmitCallback,
 }) => {
   const { formatMessage } = useLocale()
-  const history = useHistory()
+  const navigate = useNavigate()
   const { selectedChild } = useApplicationAnswers(application)
 
   const { children, existingApplications } = get(
@@ -34,12 +38,15 @@ const ChildSelector: FC<FieldBaseProps> = ({
   ) as {
     children: {
       expectedDateOfBirth: string
+      adoptionDate: string
       primaryParentNationalRegistryId?: string
+      primaryParentTypeOfApplication?: string
       parentalRelation: ParentalRelations
     }[]
     existingApplications: {
       applicationId: string
       expectedDateOfBirth: string
+      adoptionDate: string
     }[]
   }
 
@@ -56,7 +63,7 @@ const ChildSelector: FC<FieldBaseProps> = ({
   })
 
   const selectExistingApplication = (id: string) => {
-    history.push(`/${ApplicationConfigurations.ParentalLeave.slug}/${id}`)
+    navigate(`/${ApplicationConfigurations.ParentalLeave.slug}/${id}`)
   }
 
   const formatDateOfBirth = (value: string) =>
@@ -96,12 +103,30 @@ const ChildSelector: FC<FieldBaseProps> = ({
                 return {
                   value: `${index}`,
                   dataTestId: `child-${index}`,
-                  label: formatMessage(
-                    parentalLeaveFormMessages.selectChild.baby,
-                    {
-                      dateOfBirth: formatDateOfBirth(child.expectedDateOfBirth),
-                    },
-                  ),
+                  label:
+                    child.primaryParentTypeOfApplication ===
+                    PERMANENT_FOSTER_CARE
+                      ? formatMessage(
+                          parentalLeaveFormMessages.selectChild.fosterCare,
+                          {
+                            dateOfBirth: formatDateOfBirth(child.adoptionDate),
+                          },
+                        )
+                      : child.primaryParentTypeOfApplication === ADOPTION
+                      ? formatMessage(
+                          parentalLeaveFormMessages.selectChild.adoption,
+                          {
+                            dateOfBirth: formatDateOfBirth(child.adoptionDate),
+                          },
+                        )
+                      : formatMessage(
+                          parentalLeaveFormMessages.selectChild.baby,
+                          {
+                            dateOfBirth: formatDateOfBirth(
+                              child.expectedDateOfBirth,
+                            ),
+                          },
+                        ),
                   subLabel,
                 }
               })}
@@ -120,7 +145,7 @@ const ChildSelector: FC<FieldBaseProps> = ({
 
           <Stack space={2}>
             {existingApplications.map(
-              ({ applicationId, expectedDateOfBirth }) => (
+              ({ applicationId, expectedDateOfBirth, adoptionDate }) => (
                 <Box
                   border="standard"
                   borderRadius="large"
@@ -141,12 +166,22 @@ const ChildSelector: FC<FieldBaseProps> = ({
                       alignItems="flexStart"
                     >
                       <Text variant="h4" as="h2">
-                        {formatMessage(
-                          parentalLeaveFormMessages.selectChild.baby,
-                          {
-                            dateOfBirth: formatDateOfBirth(expectedDateOfBirth),
-                          },
-                        )}
+                        {adoptionDate
+                          ? formatMessage(
+                              parentalLeaveFormMessages.selectChild
+                                .fosterCareOrAdoption,
+                              {
+                                dateOfBirth: formatDateOfBirth(adoptionDate),
+                              },
+                            )
+                          : formatMessage(
+                              parentalLeaveFormMessages.selectChild.baby,
+                              {
+                                dateOfBirth: formatDateOfBirth(
+                                  expectedDateOfBirth,
+                                ),
+                              },
+                            )}
                       </Text>
                     </Box>
                     <Box

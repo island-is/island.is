@@ -1,10 +1,6 @@
-import {
-  buildCustomField,
-  buildForm,
-  buildMultiField,
-  buildSection,
-} from '@island.is/application/core'
+import { buildForm } from '@island.is/application/core'
 import { Form } from '@island.is/application/types'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { Logo } from '../assets'
 import { conclusion } from '../lib/messages'
 
@@ -13,23 +9,10 @@ export const GeneralFishingLicenseSubmittedForm: Form = buildForm({
   title: '',
   logo: Logo,
   children: [
-    buildSection({
-      id: 'conclusionSection',
-      title: conclusion.general.sectionTitle,
-      children: [
-        buildMultiField({
-          id: 'conclusion',
-          title: conclusion.general.title,
-          children: [
-            buildCustomField({
-              id: 'conclusionCustomField',
-              title: '',
-              doesNotRequireAnswer: true,
-              component: 'Conclusion',
-            }),
-          ],
-        }),
-      ],
+    buildFormConclusionSection({
+      alertTitle: conclusion.general.title,
+      expandableHeader: conclusion.information.title,
+      expandableDescription: conclusion.information.bulletList,
     }),
   ],
 })

@@ -115,7 +115,7 @@ const serializeService: SerializeMethod<HelmService> = async (
     },
   }
   result.hpa.scaling.metric.nginxRequestsIrate =
-    serviceDef.replicaCount?.scalingMagicNumber || 2
+    serviceDef.replicaCount?.scalingMagicNumber || 3
 
   if (serviceDef.extraAttributes) {
     result.extra = serviceDef.extraAttributes
@@ -238,6 +238,13 @@ const serializeService: SerializeMethod<HelmService> = async (
     const { errors, volumes } = serializeVolumes(service, serviceDef.volumes)
     addToErrors(errors)
     result.pvcs = volumes
+  }
+  // Redis
+  if (typeof serviceDef.redis !== 'undefined') {
+    const env: { [name: string]: string } = {}
+    env['REDIS_URL_NODE_01'] = serviceDef.redis.host ?? env1.redisHost
+
+    mergeObjects(result.env, env)
   }
 
   const allErrors = getErrors()
@@ -384,7 +391,7 @@ function serializeContainerRuns(
         },
         requests: {
           memory: '128Mi',
-          cpu: '100m',
+          cpu: '50m',
         },
       },
     }

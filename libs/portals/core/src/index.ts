@@ -6,26 +6,27 @@ export * from './lib/messages'
 export * from './types/portalCore'
 
 // screens
-export * from './screens/Modules'
+export * from './screens/AccessDenied'
+export * from './screens/NotFound'
+export * from './screens/ModuleRoute'
 
 // hooks
 export * from './hooks/useModuleProps'
 export * from './hooks/useNavigation'
 export * from './hooks/useQueryParam'
+export * from './hooks/useSingleNavigationItem'
 
 // utils
 export * from './utils/formatNationalId'
 export * from './utils/modules'
-export * from './hooks/useSingleNavigationItem'
 export * from './utils/plausible'
-
-// screens
-export * from './screens/AccessDenied'
-export * from './screens/NotFound'
+export * from './utils/router/prepareRouterData'
+export * from './utils/router/wrappers'
 
 // components
 export * from './components/ApplicationErrorBoundary/ApplicationErrorBoundary'
-export * from './components/LoadingScreen/LoadingScreen'
 export * from './components/PortalNavigation/PortalNavigation'
 export * from './components/PortalProvider'
 export * from './components/IntroHeader'
+export * from './components/PortalRouter'
+export * from './components/PortalPageLoader'

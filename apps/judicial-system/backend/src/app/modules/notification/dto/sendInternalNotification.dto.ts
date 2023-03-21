@@ -8,8 +8,9 @@ export class SendInternalNotificationDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  userId!: string
+  readonly userId!: string
 
+  @IsNotEmpty()
   @IsEnum(NotificationType)
   @ApiProperty({ enum: NotificationType })
   readonly type!: NotificationType

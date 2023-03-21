@@ -104,6 +104,12 @@ export const titles = {
         description:
           'Notaður sem titill fyrir Málsmeðferð skjá hjá saksóknara í ákærum',
       }),
+      indictment: defineMessage({
+        id: 'judicial.system.core:titles.prosecutor.indictments.indictment',
+        defaultMessage: 'Ákæra - Réttarvörslugátt',
+        description:
+          'Notaður sem titill fyrir Ákæra skjá hjá saksóknara í ákærum',
+      }),
       caseFiles: defineMessage({
         id: 'judicial.system.core:titles.prosecutor.indictments.case_files',
         defaultMessage: 'Dómskjöl - Réttarvörslugátt',

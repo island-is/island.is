@@ -33,6 +33,6 @@
       }
     }
   },
-  "tags": [],
+  "tags": ["scope:js"],
   "implicitDependencies": ["financial-aid-web-osk"]
 }

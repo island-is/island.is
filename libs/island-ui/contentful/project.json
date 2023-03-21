@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/island-ui/contentful"]
     }
   },
-  "tags": []
+  "tags": ["lib:react", "scope:react"]
 }

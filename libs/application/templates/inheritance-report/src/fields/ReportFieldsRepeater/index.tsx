@@ -15,7 +15,6 @@ import * as styles from '../styles.css'
 import { getValueViaPath } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { currencyStringToNumber } from '../../lib/utils/currencyStringToNumber'
-import { TaxFreeLimit } from '../../lib/constants'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 
@@ -33,15 +32,26 @@ type RepeaterProps = {
 
 export const ReportFieldsRepeater: FC<
   FieldBaseProps<Answers> & RepeaterProps
-> = ({ application, field }) => {
+> = ({ application, field, errors }) => {
   const { answers, externalData } = application
   const { id, props } = field
+  const splitId = id.split('.')
+
+  const error =
+    errors && errors[splitId[0]]
+      ? (errors[splitId[0]] as any)[splitId[1]]?.data ||
+        (errors[splitId[0]] as any)?.total
+      : undefined
+
   const { fields, append, remove } = useFieldArray<any>({
     name: id,
   })
 
   const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
+  const taxFreeLimit = Number(
+    formatMessage(m.taxFreeLimit).replace(/[^0-9]/, ''),
+  )
   const answersValues = getValueViaPath(answers, id) as Array<object>
 
   /* ------ Stocks ------ */
@@ -74,6 +84,10 @@ export const ReportFieldsRepeater: FC<
   )
 
   const handleAddRepeaterFields = () => {
+    //reset stocks
+    setRateOfExchange(0)
+    setFaceValue(0)
+
     const values = props.fields.map((field: object) => {
       return Object.values(field)[1]
     })
@@ -92,28 +106,36 @@ export const ReportFieldsRepeater: FC<
     setValue(addTotal, total)
   }, [id, total, setValue])
 
-  /* ------ Set stocks value ------ */
+  /* ------ Set stocks value and total ------ */
   useEffect(() => {
-    setValue(`${index}.value`, String(faceValue * rateOfExchange))
-  }, [faceValue, rateOfExchange, setValue])
+    if (rateOfExchange > 0 && faceValue > 0) {
+      setValue(`${index}.value`, String(faceValue * rateOfExchange))
+
+      const i = index.match(/\d+/)
+      calculateTotal(
+        currencyStringToNumber(String(Number(rateOfExchange * faceValue))),
+        Number((i as any)[0]),
+      )
+    }
+  }, [faceValue, index, rateOfExchange, setValue])
 
   /* ------ Set heirs calculations ------ */
   useEffect(() => {
-    setTaxFreeInheritance(TaxFreeLimit * percentage)
+    setTaxFreeInheritance(taxFreeLimit * percentage)
     setInheritance(
-      (Number(answers.assetsTotal) -
-        Number(answers.debtsTotal) +
-        Number(answers.businessTotal) -
-        Number(answers.totalDeduction)) *
+      (Number(getValueViaPath(answers, 'assets.assetsTotal')) -
+        Number(getValueViaPath(answers, 'debts.debtsTotal')) +
+        Number(getValueViaPath(answers, 'business.businessTotal')) -
+        Number(getValueViaPath(answers, 'totalDeduction'))) *
         percentage,
     )
     setTaxableInheritance(inheritance - taxFreeInheritance)
-    setInheritanceTax((inheritance - taxFreeInheritance) * 0.1)
+    setInheritanceTax(Math.round(taxableInheritance * 0.01))
 
     setValue(`${index}.taxFreeInheritance`, taxFreeInheritance)
     setValue(`${index}.inheritance`, inheritance)
+    setValue(`${index}.inheritanceTax`, Math.round(taxableInheritance * 0.01))
     setValue(`${index}.taxableInheritance`, taxableInheritance)
-    setValue(`${index}.inheritanceTax`, inheritanceTax)
   }, [
     index,
     percentage,
@@ -122,6 +144,7 @@ export const ReportFieldsRepeater: FC<
     taxableInheritance,
     inheritanceTax,
     setValue,
+    answers,
   ])
 
   /* ------ Set fields from external data (realEstate, vehicles) ------ */
@@ -135,7 +158,7 @@ export const ReportFieldsRepeater: FC<
     }
   }, [props, fields, append])
 
-  const calculateTotal = (input: any, index: any) => {
+  const calculateTotal = (input: any, index: number) => {
     const arr = valueArray
     if (input === '') {
       arr.splice(index, 1)
@@ -153,12 +176,24 @@ export const ReportFieldsRepeater: FC<
     )
   }
 
+  const getDefaults = (fieldId: string) => {
+    return fieldId === 'taxFreeInheritance'
+      ? taxFreeInheritance
+      : fieldId === 'inheritance'
+      ? inheritance
+      : fieldId === 'taxableInheritance'
+      ? taxableInheritance
+      : fieldId === 'inheritanceTax'
+      ? inheritanceTax
+      : ''
+  }
+
   return (
     <Box>
-      {fields.map((repeaterField, index) => {
+      {fields.map((repeaterField: any, index) => {
         const fieldIndex = `${id}[${index}]`
         return (
-          <Box position="relative" key={repeaterField.id} marginTop={3}>
+          <Box position="relative" key={repeaterField.id} marginTop={4}>
             <Box>
               <Text variant="h4" marginBottom={2}>
                 {props.repeaterHeaderText + ' ' + (index + 1)}
@@ -199,15 +234,7 @@ export const ReportFieldsRepeater: FC<
                       defaultValue={
                         repeaterField[field.id]
                           ? repeaterField[field.id]
-                          : field.id === 'taxFreeInheritance'
-                          ? formatCurrency(String(taxFreeInheritance))
-                          : field.id === 'inheritance'
-                          ? formatCurrency(String(inheritance))
-                          : field.id === 'taxableInheritance'
-                          ? formatCurrency(String(taxableInheritance))
-                          : field.id === 'inheritanceTax'
-                          ? formatCurrency(String(inheritanceTax))
-                          : ''
+                          : getDefaults(field.id)
                       }
                       format={field.format}
                       label={field.title}
@@ -218,26 +245,32 @@ export const ReportFieldsRepeater: FC<
                       type={field.type}
                       textarea={field.variant}
                       rows={field.rows}
+                      required={field.required}
+                      error={
+                        error && error[index]
+                          ? error[index][field.id]
+                          : undefined
+                      }
                       onChange={(elem) => {
+                        const value = elem.target.value.replace(/\D/g, '')
+
                         // heirs
                         if (field.id === 'heirsPercentage') {
-                          setPercentage(Number(elem.target.value) / 100)
+                          setPercentage(Number(value) / 100)
                         }
 
                         // stocks
                         if (field.id === 'rateOfExchange') {
-                          setRateOfExchange(Number(elem.target.value))
+                          setRateOfExchange(Number(value))
                         } else if (field.id === 'faceValue') {
-                          setFaceValue(Number(elem.target.value))
+                          setFaceValue(Number(value))
                         }
 
                         // total
                         if (props.sumField === field.id) {
-                          calculateTotal(
-                            currencyStringToNumber(elem.target.value),
-                            index,
-                          )
+                          calculateTotal(currencyStringToNumber(value), index)
                         }
+
                         setIndex(fieldIndex)
                       }}
                     />
@@ -278,6 +311,13 @@ export const ReportFieldsRepeater: FC<
                 }
                 backgroundColor={'white'}
                 readOnly={true}
+                hasError={
+                  (props.sumField === 'heirsPercentage' &&
+                    error &&
+                    total !== 100) ??
+                  false
+                }
+                errorMessage={formatMessage(m.totalPercentageError)}
               />
             </GridColumn>
           </GridRow>

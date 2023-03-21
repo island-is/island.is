@@ -17,13 +17,8 @@ interface Props {
 }
 
 const ApiResourceCreateForm: React.FC<Props> = (props) => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-  } = useForm<ApiResourcesDTO>()
-  const { isSubmitting } = formState
+  const { register, handleSubmit, formState } = useForm<ApiResourcesDTO>()
+  const { isSubmitting, errors } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [available, setAvailable] = useState<boolean>(false)
   const [nameLength, setNameLength] = useState(0)
@@ -102,8 +97,7 @@ const ApiResourceCreateForm: React.FC<Props> = (props) => {
                   </label>
                   <input
                     type="text"
-                    name="nationalId"
-                    ref={register({
+                    {...register('nationalId', {
                       required: true,
                       maxLength: 10,
                       minLength: 10,
@@ -135,11 +129,10 @@ const ApiResourceCreateForm: React.FC<Props> = (props) => {
                   <input
                     id="contactEmail"
                     type="text"
-                    ref={register({
+                    {...register('contactEmail', {
                       required: true,
                       validate: ValidationUtils.validateEmail,
                     })}
-                    name="contactEmail"
                     defaultValue={props.apiResource.contactEmail ?? ''}
                     className="api-resource-form__input"
                     title={localization.fields['contactEmail'].helpText}
@@ -162,24 +155,23 @@ const ApiResourceCreateForm: React.FC<Props> = (props) => {
                     {localization.fields['name'].label}
                   </label>
                   <input
-                    ref={register({
+                    id="name"
+                    {...register('name', {
                       required: true,
+                      onChange: (e) => onNameChange(e.target.value),
+                      onBlur: () => setNameHintVisible(false),
                       validate: isEditing
                         ? () => {
                             return true
                           }
                         : ValidationUtils.validateApiResourceName,
                     })}
-                    id="name"
-                    name="name"
                     type="text"
                     className="api-resource-form__input"
                     defaultValue={props.apiResource.name}
                     readOnly={isEditing}
-                    onChange={(e) => onNameChange(e.target.value)}
                     title={localization.fields['name'].helpText}
                     placeholder={localization.fields['name'].placeholder}
-                    onBlur={() => setNameHintVisible(false)}
                     onFocus={(e) => onNameChange(e.target.value)}
                   />
                   <div
@@ -215,12 +207,11 @@ const ApiResourceCreateForm: React.FC<Props> = (props) => {
                     {localization.fields['displayName'].label}
                   </label>
                   <input
-                    ref={register({
+                    id="displayName"
+                    {...register('displayName', {
                       required: true,
                       validate: ValidationUtils.validateDescription,
                     })}
-                    id="displayName"
-                    name="displayName"
                     type="text"
                     className="api-resource-form__input"
                     defaultValue={props.apiResource.displayName}
@@ -251,12 +242,11 @@ const ApiResourceCreateForm: React.FC<Props> = (props) => {
                     {localization.fields['description'].label}
                   </label>
                   <input
-                    ref={register({
+                    id="description"
+                    {...register('description', {
                       required: false,
                       validate: ValidationUtils.validateDescription,
                     })}
-                    id="description"
-                    name="description"
                     type="text"
                     defaultValue={props.apiResource.description}
                     className="api-resource-form__input"
@@ -284,9 +274,8 @@ const ApiResourceCreateForm: React.FC<Props> = (props) => {
                     {localization.fields['enabled'].label}
                   </label>
                   <input
-                    ref={register}
                     id="enabled"
-                    name="enabled"
+                    {...register('enabled')}
                     type="checkbox"
                     defaultChecked={props.apiResource.enabled}
                     className="api-resource-form__checkbox"
@@ -303,9 +292,8 @@ const ApiResourceCreateForm: React.FC<Props> = (props) => {
                     {localization.fields['showInDiscoveryDocument'].label}
                   </label>
                   <input
-                    ref={register}
                     id="showInDiscoveryDocument"
-                    name="showInDiscoveryDocument"
+                    {...register('showInDiscoveryDocument')}
                     type="checkbox"
                     defaultChecked={props.apiResource.showInDiscoveryDocument}
                     className="api-resource-form__checkbox"

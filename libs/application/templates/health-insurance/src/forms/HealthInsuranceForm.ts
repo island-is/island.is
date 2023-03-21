@@ -25,7 +25,10 @@ import {
   requireWaitingPeriod,
 } from '../healthInsuranceUtils'
 import { Countries } from '../lib/Countries'
-import { applicantInformationMultiField } from '@island.is/application/ui-forms'
+import {
+  applicantInformationMultiField,
+  buildFormConclusionSection,
+} from '@island.is/application/ui-forms'
 
 export const HealthInsuranceForm: Form = buildForm({
   id: 'HealthInsuranceDraft',
@@ -338,12 +341,13 @@ export const HealthInsuranceForm: Form = buildForm({
             }),
           ],
         }),
-        buildCustomField({
-          id: 'successfulSubmission',
-          title: '',
-          component: 'ConfirmationScreen',
-        }),
       ],
+    }),
+    buildFormConclusionSection({
+      alertTitle: m.successfulSubmissionTitle,
+      alertMessage: m.successfulSubmissionMessage,
+      expandableHeader: m.successfulExpendableHeader,
+      expandableDescription: m.nextStepReviewTime,
     }),
   ],
 })

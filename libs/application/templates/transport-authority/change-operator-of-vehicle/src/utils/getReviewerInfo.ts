@@ -25,9 +25,9 @@ export const getReviewerInfo = (
     'operators',
     [],
   ) as OperatorInformation[]
-  const operator = operators.find(
-    (operator) => operator.nationalId === reviewerNationalId,
-  )
+  const operator = operators
+    .filter(({ wasRemoved }) => wasRemoved !== 'true')
+    .find((operator) => operator.nationalId === reviewerNationalId)
   if (operator) {
     return operator
   }

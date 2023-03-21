@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/shared/form-fields"]
     }
   },
-  "tags": ["lib:react"]
+  "tags": ["lib:react-spa", "scope:react-spa", "TODO:splitUp"]
 }

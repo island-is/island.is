@@ -10,12 +10,12 @@ import {
   indictmentCases,
   InstitutionType,
   investigationCases,
-  isCourtRole,
-  isExtendedCourtRole,
   isIndictmentCase,
-  isProsecutionRole,
   restrictionCases,
   UserRole,
+  isExtendedCourtRole,
+  isProsecutionRole,
+  isCourtRole,
 } from '@island.is/judicial-system/types'
 import type { User, Case as TCase } from '@island.is/judicial-system/types'
 
@@ -41,7 +41,10 @@ function getAllowedStates(
   }
 
   if (institutionType === InstitutionType.COURT) {
-    if (role === UserRole.ASSISTANT || isIndictmentCase(caseType)) {
+    if (
+      role === UserRole.ASSISTANT ||
+      (caseType && isIndictmentCase(caseType))
+    ) {
       return [
         CaseState.SUBMITTED,
         CaseState.RECEIVED,
@@ -91,8 +94,8 @@ function courtMustMatchUserInstitution(role: UserRole): boolean {
 function isStateHiddenFromRole(
   state: CaseState,
   role: UserRole,
+  caseType: CaseType,
   institutionType?: InstitutionType,
-  caseType?: CaseType,
 ): boolean {
   return getBlockedStates(role, institutionType, caseType).includes(state)
 }
@@ -256,8 +259,8 @@ export function isCaseBlockedFromUser(
     isStateHiddenFromRole(
       theCase.state,
       user.role,
-      user.institution?.type,
       theCase.type,
+      user.institution?.type,
     ) ||
     isTypeHiddenFromRole(
       theCase.type,

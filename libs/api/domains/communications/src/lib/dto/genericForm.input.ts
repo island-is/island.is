@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { IsString } from 'class-validator'
+import { IsString, IsArray, IsOptional } from 'class-validator'
 
 @InputType()
 export class GenericFormInput {
@@ -18,6 +18,11 @@ export class GenericFormInput {
   @Field()
   @IsString()
   message!: string
+
+  @Field(() => [String], { nullable: true })
+  @IsArray()
+  @IsOptional()
+  files?: string[]
 
   @Field({ nullable: true })
   recipientFormFieldDeciderValue?: string

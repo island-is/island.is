@@ -194,7 +194,7 @@ export class CourtService {
           {
             caseId,
             actor: user.name,
-            institution: user?.institution?.name,
+            institution: user.institution?.name,
             courtId,
             courtCaseNumber,
             subject: this.mask(subject),
@@ -242,8 +242,8 @@ export class CourtService {
           'Failed to create a court record at court',
           {
             caseId,
-            actor: user?.name,
-            institution: user?.institution?.name,
+            actor: user.name,
+            institution: user.institution?.name,
             courtId,
             courtCaseNumber,
             subject: this.mask(subject),
@@ -310,7 +310,7 @@ export class CourtService {
   }
 
   async createEmail(
-    user: TUser,
+    user: User,
     caseId: string,
     courtId: string,
     courtCaseNumber: string,

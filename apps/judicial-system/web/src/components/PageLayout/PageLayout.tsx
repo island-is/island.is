@@ -14,17 +14,19 @@ import {
   Text,
   LinkV2,
 } from '@island.is/island-ui/core'
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 import {
-  UserRole,
-  Case,
-  isIndictmentCase,
-  User,
-} from '@island.is/judicial-system/types'
-import { Sections } from '@island.is/judicial-system-web/src/types'
+  Sections,
+  TempCase as Case,
+} from '@island.is/judicial-system-web/src/types'
 import {
   sections as formStepperSections,
   pageLayout,
 } from '@island.is/judicial-system-web/messages'
+import {
+  User,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { UserContext } from '../UserProvider/UserProvider'
@@ -143,7 +145,7 @@ const SidePanel: React.FC<SidePanelProps> = ({
           <Box marginBottom={6}>
             <Text variant="h3" as="h3">
               {formatMessage(
-                isIndictmentCase(workingCase?.type)
+                workingCase && isIndictmentCase(workingCase.type)
                   ? formStepperSections.indictmentTitle
                   : formStepperSections.title,
                 { caseType: workingCase?.type },
@@ -168,12 +170,11 @@ const SidePanel: React.FC<SidePanelProps> = ({
 }
 interface PageProps {
   children: ReactNode
-  workingCase?: Case
+  workingCase: Case
   activeSection?: number
   isLoading: boolean
   notFound: boolean
   isExtension?: boolean
-  showSidepanel?: boolean
   // These props are optional because not all pages need them, f.x. SignedVerdictOverview page
   activeSubSection?: number
   onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
@@ -187,7 +188,6 @@ const PageLayout: React.FC<PageProps> = ({
   activeSubSection,
   isLoading,
   notFound,
-  showSidepanel = true,
   onNavigationTo,
   isValid,
 }) => {
@@ -205,28 +205,21 @@ const PageLayout: React.FC<PageProps> = ({
   ) : notFound ? (
     <AlertBanner
       title={
-        user?.role === UserRole.ADMIN
-          ? formatMessage(pageLayout.adminRole.alertTitle)
-          : user?.role === UserRole.DEFENDER
+        user?.role === UserRole.Defender
           ? formatMessage(pageLayout.defenderRole.alertTitle)
           : formatMessage(pageLayout.otherRoles.alertTitle)
       }
       description={
-        user?.role === UserRole.ADMIN
-          ? formatMessage(pageLayout.adminRole.alertMessage)
-          : user?.role === UserRole.DEFENDER
+        user?.role === UserRole.Defender
           ? formatMessage(pageLayout.defenderRole.alertMessage)
           : formatMessage(pageLayout.otherRoles.alertMessage)
       }
       variant="error"
       link={
-        user?.role === UserRole.DEFENDER
+        user?.role === UserRole.Defender
           ? undefined
           : {
-              href:
-                user?.role === UserRole.ADMIN
-                  ? constants.USERS_ROUTE
-                  : constants.CASES_ROUTE,
+              href: constants.CASES_ROUTE,
               title: 'Fara á yfirlitssíðu',
             }
       }
@@ -250,16 +243,14 @@ const PageLayout: React.FC<PageProps> = ({
               {children}
             </Box>
           </GridColumn>
-          {showSidepanel && (
-            <SidePanel
-              user={user}
-              isValid={isValid}
-              onNavigationTo={onNavigationTo}
-              activeSection={activeSection}
-              workingCase={workingCase}
-              activeSubSection={activeSubSection}
-            />
-          )}
+          <SidePanel
+            user={user}
+            isValid={isValid}
+            onNavigationTo={onNavigationTo}
+            activeSection={activeSection}
+            workingCase={workingCase}
+            activeSubSection={activeSubSection}
+          />
         </GridRow>
       </GridContainer>
     </Box>

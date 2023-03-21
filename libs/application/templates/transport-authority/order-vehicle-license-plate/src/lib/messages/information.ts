@@ -14,8 +14,7 @@ export const information = {
     },
     description: {
       id: 'ta.ovlp.application:information.general.description',
-      defaultMessage:
-        'Skráningarskírteini er aðeins sent á lögheimili eigendEt sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
+      defaultMessage: 'Skráningarskírteini er aðeins sent á lögheimili eigenda',
       description: 'Description of information page',
     },
   }),
@@ -40,6 +39,11 @@ export const information = {
         id: 'ta.ovlp.application:information.labels.pickVehicle.placeholder',
         defaultMessage: 'Veldu ökutæki',
         description: 'Pick vehicle placeholder',
+      },
+      hasErrorTitle: {
+        id: 'ta.ovlp.application:information.labels.pickVehicle.hasErrorTitle',
+        defaultMessage: 'Ekki er hægt að velja þessa bifreið vegna:',
+        description: 'Pick vehicle has an error title',
       },
     }),
     plateSize: defineMessages({
@@ -90,6 +94,12 @@ export const information = {
         id: 'ta.ovlp.application:information.labels.plateSize.error',
         defaultMessage: 'Það kom upp villa við að sækja upplýsingar um bifreið',
         description: 'Plate size error message',
+      },
+      errorPlateTypeFront: {
+        id:
+          'ta.ovlp.application:information.labels.plateSize.errorPlateTypeFront',
+        defaultMessage: 'Skráning á núverandi plötustærð bíls er í ólagi',
+        description: 'Plate type front error message',
       },
     }),
     plateDelivery: defineMessages({

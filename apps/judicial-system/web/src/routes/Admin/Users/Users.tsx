@@ -13,7 +13,6 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { Loading } from '@island.is/judicial-system-web/src/components'
-import { Institution, UserRole } from '@island.is/judicial-system/types'
 import {
   InstitutionsQuery,
   UsersQuery,
@@ -22,7 +21,11 @@ import { formatNationalId } from '@island.is/judicial-system/formatters'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import type { User } from '@island.is/judicial-system/types'
+import {
+  Institution,
+  User,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './Users.css'
@@ -63,17 +66,17 @@ export const Users: React.FC = () => {
 
   const userRoleToString = (userRole: UserRole) => {
     switch (userRole) {
-      case UserRole.PROSECUTOR:
+      case UserRole.Prosecutor:
         return 'Saksóknari'
-      case UserRole.REPRESENTATIVE:
+      case UserRole.Representative:
         return 'Fulltrúi'
-      case UserRole.JUDGE:
+      case UserRole.Judge:
         return 'Dómari'
-      case UserRole.REGISTRAR:
+      case UserRole.Registrar:
         return 'Dómritari'
-      case UserRole.ASSISTANT:
+      case UserRole.Assistant:
         return 'Aðstoðarmaður dómara'
-      case UserRole.STAFF:
+      case UserRole.Staff:
         return 'Starfsmaður'
     }
   }
@@ -81,7 +84,7 @@ export const Users: React.FC = () => {
   return (
     <div className={styles.userControlContainer}>
       <PageHeader title={formatMessage(titles.admin.users)} />
-      <div className={styles.logoContainer}>
+      <Box display="flex" marginBottom={9}>
         <Button
           icon="add"
           onClick={() => {
@@ -90,7 +93,7 @@ export const Users: React.FC = () => {
         >
           Nýr notandi
         </Button>
-      </div>
+      </Box>
       <Box
         marginBottom={8}
         display="flex"
@@ -126,31 +129,31 @@ export const Users: React.FC = () => {
         >
           <thead className={styles.thead}>
             <tr>
-              <th className={styles.th}>
+              <Box component="th" paddingY={2} paddingX={3}>
                 <Text as="span" fontWeight="regular">
                   Nafn
                 </Text>
-              </th>
-              <th className={styles.th}>
+              </Box>
+              <Box component="th" paddingY={2} paddingX={3}>
                 <Text as="span" fontWeight="regular">
                   Kennitala
                 </Text>
-              </th>
-              <th className={styles.th}>
+              </Box>
+              <Box component="th" paddingY={2} paddingX={3}>
                 <Text as="span" fontWeight="regular">
                   Hlutverk
                 </Text>
-              </th>
-              <th className={styles.th}>
+              </Box>
+              <Box component="th" paddingY={2} paddingX={3}>
                 <Text as="span" fontWeight="regular">
                   Stofnun
                 </Text>
-              </th>
-              <th className={styles.th}>
+              </Box>
+              <Box component="th" paddingY={2} paddingX={3}>
                 <Text as="span" fontWeight="regular">
                   Virkur
                 </Text>
-              </th>
+              </Box>
             </tr>
           </thead>
           <tbody>
@@ -164,21 +167,21 @@ export const Users: React.FC = () => {
                   handleClick(user)
                 }}
               >
-                <td className={styles.td}>
+                <Box component="td" paddingX={3} paddingY={2}>
                   <Text as="span">{user.name}</Text>
-                </td>
-                <td className={styles.td}>
+                </Box>
+                <Box component="td" paddingX={3} paddingY={2}>
                   <Text as="span">{formatNationalId(user.nationalId)}</Text>
-                </td>
-                <td className={styles.td}>
+                </Box>
+                <Box component="td" paddingX={3} paddingY={2}>
                   <Text as="span">{userRoleToString(user.role)}</Text>
-                </td>
-                <td className={styles.td}>
+                </Box>
+                <Box component="td" paddingX={3} paddingY={2}>
                   <Text as="span">{user.institution?.name}</Text>
-                </td>
-                <td className={styles.td}>
+                </Box>
+                <Box component="td" paddingX={3} paddingY={2}>
                   <Text as="span">{user.active ? 'Já' : 'Nei'}</Text>
-                </td>
+                </Box>
               </tr>
             ))}
           </tbody>
@@ -193,7 +196,7 @@ export const Users: React.FC = () => {
         </Box>
       )}
       {loading && (
-        <Box className={styles.userTable}>
+        <Box width="full">
           <Loading />
         </Box>
       )}

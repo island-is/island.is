@@ -18,6 +18,7 @@ import {
   ParentCaseFiles,
   FormContext,
   MarkdownWrapper,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseProsecutorSubsections,
@@ -65,11 +66,12 @@ export interface PoliceCaseFilesData {
   errorCode?: string
 }
 
-const mapPoliceCaseFileToPoliceCaseFileCheck = (
+export const mapPoliceCaseFileToPoliceCaseFileCheck = (
   file: PoliceCaseFile,
 ): PoliceCaseFileCheck => ({
   id: file.id,
   name: file.name,
+  policeCaseNumber: file.policeCaseNumber,
   checked: false,
 })
 
@@ -100,7 +102,12 @@ export const CaseFiles: React.FC = () => {
   )
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
 
-  const { upload, uploadPoliceCaseFile, remove } = useS3Upload(workingCase.id)
+  const {
+    upload,
+    uploadPoliceCaseFile,
+    remove,
+    generateSingleFileUpdate,
+  } = useS3Upload(workingCase.id)
   const { updateCase } = useCase()
 
   useDeb(workingCase, 'caseFilesComments')
@@ -175,17 +182,18 @@ export const CaseFiles: React.FC = () => {
   const handleNavigationTo = (destination: string) =>
     router.push(`${destination}/${workingCase.id}`)
 
-  const setSingleFile = useCallback(
+  const uploadCallback = useCallback(
     (displayFile: UploadFile, newId?: string) => {
-      setFilesInRVG((previous) => {
-        const index = previous.findIndex((f) => f.id === displayFile.id)
-        if (index === -1) {
-          return previous
-        }
-        const next = [...previous]
-        next[index] = { ...displayFile, id: newId ?? displayFile.id }
-        return next
-      })
+      setFilesInRVG((previous) =>
+        generateSingleFileUpdate(previous, displayFile, newId),
+      )
+    },
+    [generateSingleFileUpdate],
+  )
+
+  const uploadPoliceCaseFileCallback = useCallback(
+    (file: UploadFile, id?: string) => {
+      setFilesInRVG((previous) => [...previous, { ...file, id: id ?? file.id }])
     },
     [],
   )
@@ -212,11 +220,11 @@ export const CaseFiles: React.FC = () => {
         ...(previous || []),
       ])
 
-      await upload(filesWithId, setSingleFile)
+      await upload(filesWithId, uploadCallback)
 
       setIsUploading(false)
     },
-    [setSingleFile, upload],
+    [uploadCallback, upload],
   )
 
   const handlePoliceCaseFileUpload = useCallback(async () => {
@@ -233,16 +241,15 @@ export const CaseFiles: React.FC = () => {
         state: CaseFileState.STORED_IN_RVG,
       } as UploadFile
 
-      await uploadPoliceCaseFile(fileToUpload)
+      await uploadPoliceCaseFile(fileToUpload, uploadPoliceCaseFileCallback)
 
-      setFilesInRVG([fileToUpload, ...filesInRVG])
       setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
 
       if (index === filesToUpload.length - 1) {
         setIsUploading(false)
       }
     })
-  }, [filesInRVG, policeCaseFileList, uploadPoliceCaseFile])
+  }, [policeCaseFileList, uploadPoliceCaseFile, uploadPoliceCaseFileCallback])
 
   const handleRemove = useCallback(
     async (file: UploadFile) => {
@@ -276,7 +283,7 @@ export const CaseFiles: React.FC = () => {
 
   const handleRetry = useCallback(
     (file: UploadFile) => {
-      setSingleFile({
+      uploadCallback({
         name: file.name,
         id: file.id,
         percent: 1,
@@ -290,10 +297,10 @@ export const CaseFiles: React.FC = () => {
             file.id ?? file.name,
           ],
         ],
-        setSingleFile,
+        uploadCallback,
       )
     },
-    [setSingleFile, upload],
+    [uploadCallback, upload],
   )
 
   return (
@@ -328,6 +335,10 @@ export const CaseFiles: React.FC = () => {
             textProps={{ marginBottom: 0 }}
           />
         </Box>
+        <SectionHeading
+          title={formatMessage(strings.policeCaseFilesHeading)}
+          description={formatMessage(strings.policeCaseFilesIntroduction)}
+        />
         <PoliceCaseFiles
           onUpload={handlePoliceCaseFileUpload}
           isUploading={isUploading}

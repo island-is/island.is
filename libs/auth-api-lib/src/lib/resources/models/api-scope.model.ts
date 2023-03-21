@@ -1,24 +1,25 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { Optional } from 'sequelize'
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
+  ForeignKey,
+  HasMany,
   Model,
+  PrimaryKey,
   Table,
   UpdatedAt,
-  HasMany,
-  PrimaryKey,
-  ForeignKey,
-  BelongsTo,
 } from 'sequelize-typescript'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { ApiScopeUserClaim } from './api-scope-user-claim.model'
-import { ApiScopeGroup } from './api-scope-group.model'
-import { ApiScopesDTO } from '../dto/api-scopes.dto'
+
 import { DelegationScope } from '../../delegations/models/delegation-scope.model'
 import { PersonalRepresentativeScopePermission } from '../../personal-representative/models/personal-representative-scope-permission.model'
-import { Optional } from 'sequelize'
-import { Domain } from './domain.model'
+import { ApiScopesDTO } from '../dto/api-scopes.dto'
+import { ApiScopeGroup } from './api-scope-group.model'
 import { ApiScopeUserAccess } from './api-scope-user-access.model'
+import { ApiScopeUserClaim } from './api-scope-user-claim.model'
+import { Domain } from './domain.model'
 
 interface ModelAttributes {
   name: string
@@ -241,7 +242,7 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
   readonly modified?: Date | null
 
   @BelongsTo(() => ApiScopeGroup)
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: () => ApiScopeGroup })
   group?: ApiScopeGroup
 
   @HasMany(() => DelegationScope)
@@ -252,6 +253,10 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
 
   @HasMany(() => ApiScopeUserAccess)
   apiScopeUserAccesses?: ApiScopeUserAccess[]
+
+  @BelongsTo(() => Domain)
+  @ApiPropertyOptional({ type: () => Domain })
+  domain?: Domain
 
   toDTO(): ApiScopesDTO {
     return {

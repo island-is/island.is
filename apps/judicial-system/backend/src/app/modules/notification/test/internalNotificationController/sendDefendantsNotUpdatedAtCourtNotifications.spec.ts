@@ -3,6 +3,7 @@ import { uuid } from 'uuidv4'
 import { EmailService } from '@island.is/email-service'
 import { NotificationType } from '@island.is/judicial-system/types'
 
+import { User } from '../../../user'
 import { Case } from '../../../case'
 import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -64,7 +65,12 @@ describe('InternalNotificationController - Send defendants not updated at court 
       const then = {} as Then
 
       await internalNotificationController
-        .sendCaseNotification(caseId, theCase, notification)
+        .sendCaseNotification(
+          caseId,
+          { id: userId } as User,
+          theCase,
+          notification,
+        )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 

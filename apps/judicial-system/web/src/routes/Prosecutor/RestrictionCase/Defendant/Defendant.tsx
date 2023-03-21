@@ -29,11 +29,10 @@ import {
   validateAndSendToServer,
   validateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
-  Case,
-  CaseType,
-  UpdateDefendant,
-} from '@island.is/judicial-system/types'
+import { CaseOrigin, UpdateDefendant } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import {
@@ -41,9 +40,8 @@ import {
   PoliceCaseNumbers,
   usePoliceCaseNumbers,
 } from '../../components'
-import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
-export const StepOne: React.FC = () => {
+export const Defendant: React.FC = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -174,6 +172,7 @@ export const StepOne: React.FC = () => {
                   setWorkingCase={setWorkingCase}
                   onChange={handleUpdateDefendant}
                   updateDefendantState={updateDefendantState}
+                  nationalIdImmutable={workingCase.origin === CaseOrigin.LOKE}
                 />
               </Box>
             )}
@@ -183,7 +182,7 @@ export const StepOne: React.FC = () => {
                 setWorkingCase={setWorkingCase}
               />
             </Box>
-            {workingCase.type !== CaseType.TRAVEL_BAN && (
+            {workingCase.type !== CaseType.TravelBan && (
               <Box component="section" marginBottom={10}>
                 <Box
                   display="flex"
@@ -258,4 +257,4 @@ export const StepOne: React.FC = () => {
   )
 }
 
-export default StepOne
+export default Defendant

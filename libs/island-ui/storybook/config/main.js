@@ -71,7 +71,19 @@ module.exports = {
         ),
         '@island.is/shared/problem': rootDir('../../../shared/problem/src'),
         '@island.is/shared/utils': rootDir('../../../shared/utils/src'),
+        '@island.is/shared/translations': rootDir(
+          '../../../shared/translations/src',
+        ),
+        '@island.is/shared/types': rootDir('../../../shared/types/src'),
+        '@island.is/shared/components': rootDir(
+          '../../../shared/components/src',
+        ),
         '@island.is/localization': rootDir('../../../localization/src'),
+        '@island.is/react/components': rootDir('../../../react/components/src'),
+        '@island.is/react/feature-flags': rootDir(
+          '../../../react/feature-flags/src',
+        ),
+        '@island.is/feature-flags': rootDir('../../../feature-flags/src'),
       },
     }
 

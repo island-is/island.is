@@ -3,6 +3,7 @@ import { m } from './messages'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { customZodError } from './utils/customZodError'
 import { EstateTypes, YES, NO } from './constants'
+import * as kennitala from 'kennitala'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -36,16 +37,17 @@ export const estateSchema = z.object({
   }),
 
   selectedEstate: z.enum([
-    EstateTypes.officialEstate,
-    EstateTypes.noPropertyEstate,
-    EstateTypes.residencePermit,
+    EstateTypes.divisionOfEstate,
+    EstateTypes.estateWithoutAssets,
+    EstateTypes.permitToPostponeEstateDivision,
+    EstateTypes.divisionOfEstateByHeirs,
   ]),
 
   // Eignir
   estate: z.object({
     estateMembers: z
       .object({
-        name: z.string().min(1),
+        name: z.string(),
         relation: customZodError(z.string().min(1), m.errorRelation),
         nationalId: z.string().optional(),
         custodian: z.string().length(10).optional(),
@@ -79,6 +81,15 @@ export const estateSchema = z.object({
     .object({
       accountNumber: z.string().optional(),
       balance: z.string().optional(),
+    })
+    .refine(({ accountNumber, balance }) => {
+      if (accountNumber !== '' && balance !== '') {
+        return true
+      } else if (accountNumber === '' && balance === '') {
+        return true
+      } else {
+        return false
+      }
     })
     .array()
     .optional(),
@@ -123,9 +134,29 @@ export const estateSchema = z.object({
     .optional(),
   acceptDebts: z.array(z.enum([YES, NO])).nonempty(),
 
+  // is: Umboðsmaður
+  representative: z
+    .object({
+      representativeName: z.string().min(1).optional(),
+      representativeNationalId: z.string().length(10).optional(),
+      representativePhoneNumber: z
+        .string()
+        .refine((v) => isValidPhoneNumber(v), {
+          params: m.errorPhoneNumber,
+        })
+        .optional(),
+      representativeEmail: customZodError(
+        z.string().email(),
+        m.errorEmail,
+      ).optional(),
+    })
+    .optional(),
+
   // is: Heimild til setu í óskiptu búi skv. erfðaskrá
   undividedEstateResidencePermission: z.enum([YES, NO]),
 
   // is: Hefur umsækjandi forræði á búi?
   applicantHasLegalCustodyOverEstate: z.enum([YES, NO]),
+
+  readTerms: z.array(z.enum([YES])).length(1),
 })

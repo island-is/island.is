@@ -38,17 +38,19 @@ import {
   QueryGetArticleCategoriesArgs,
   QueryGetGroupedMenuArgs,
   Menu,
+  GetOrganizationPageQuery,
+  GetSingleArticleQuery,
 } from '../graphql/schema'
 import { GlobalContextProvider } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
 import { useI18n } from '../i18n'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
-import { environment } from '../environments'
-import { useFeatureFlag, useNamespace } from '../hooks'
+import { useNamespace } from '../hooks'
 import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
 } from '../utils/processMenuData'
+import { stringHash } from '@island.is/shared/utils'
 import { Locale } from '@island.is/shared/types'
 import {
   LinkType,
@@ -56,7 +58,6 @@ import {
   linkResolver as LinkResolver,
   pathIsRoute,
 } from '../hooks/useLinkResolver'
-import { stringHash } from '@island.is/web/utils/stringHash'
 import { OrganizationIslandFooter } from '../components/Organization/OrganizationIslandFooter'
 import Illustration from './Illustration'
 import * as styles from './main.css'
@@ -101,7 +102,6 @@ export interface LayoutProps {
   alertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   organizationAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   articleAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
-  customAlertBanners?: GetAlertBannerQuery['getAlertBanner'][]
   languageToggleQueryParams?: Record<Locale, Record<string, string>>
   footerVersion?: 'default' | 'organization'
   respOrigin
@@ -144,7 +144,6 @@ const Layout: NextComponentType<
   alertBannerContent,
   organizationAlertBannerContent,
   articleAlertBannerContent,
-  customAlertBanners,
   languageToggleQueryParams,
   footerVersion = 'default',
   respOrigin,
@@ -199,24 +198,14 @@ const Layout: NextComponentType<
           )}`,
           ...articleAlertBannerContent,
         },
-      ]
-        .concat(
-          customAlertBanners?.map((banner) => ({
-            bannerId: `custom-alert-${stringHash(
-              JSON.stringify(banner ?? {}),
-            )}`,
-            ...banner,
-          })) ?? [],
-        )
-        .filter(
-          (banner) => !Cookies.get(banner.bannerId) && banner?.showAlertBanner,
-        ),
+      ].filter(
+        (banner) => !Cookies.get(banner.bannerId) && banner?.showAlertBanner,
+      ),
     )
   }, [
     alertBannerContent,
     articleAlertBannerContent,
     organizationAlertBannerContent,
-    customAlertBanners,
   ])
 
   const preloadedFonts = [
@@ -386,6 +375,10 @@ const Layout: NextComponentType<
                       'privacyPolicyHref',
                       '/personuverndarstefna-stafraent-islands',
                     ),
+                  }}
+                  termsLink={{
+                    title: n('termsTitle', 'Skilmálar'),
+                    href: n('termsHref', '/skilmalar-island-is'),
                   }}
                   showMiddleLinks
                 />
@@ -605,6 +598,13 @@ type LayoutWrapper<T> = NextComponentType<
   { layoutProps: LayoutProps; componentProps: T }
 >
 
+interface LayoutComponentProps {
+  themeConfig?: Partial<LayoutProps>
+  organizationPage?: GetOrganizationPageQuery['getOrganizationPage']
+  article?: GetSingleArticleQuery['getSingleArticle']
+  languageToggleQueryParams?: LayoutProps['languageToggleQueryParams']
+}
+
 export const withMainLayout = <T,>(
   Component: Screen<T>,
   layoutConfig: Partial<LayoutProps> = {},
@@ -630,29 +630,14 @@ export const withMainLayout = <T,>(
       getLayoutInitialProps(ctx),
       Component.getInitialProps ? Component.getInitialProps(ctx) : ({} as T),
     ])
+    const layoutComponentProps = componentProps as LayoutComponentProps
 
-    const themeConfig: Partial<LayoutProps> =
-      'themeConfig' in componentProps ? componentProps['themeConfig'] : {}
-
-    const organizationAlertBannerContent: GetAlertBannerQuery['getAlertBanner'] =
-      'organizationPage' in componentProps
-        ? componentProps['organizationPage']?.['alertBanner']
-        : undefined
-
-    const articleAlertBannerContent: GetAlertBannerQuery['getAlertBanner'] =
-      'article' in componentProps
-        ? componentProps['article']?.['alertBanner']
-        : undefined
-
-    const customAlertBanners =
-      'customAlertBanners' in componentProps
-        ? componentProps['customAlertBanners']
-        : []
-
+    const themeConfig = layoutComponentProps.themeConfig ?? {}
+    const organizationAlertBannerContent =
+      layoutComponentProps.organizationPage?.alertBanner
+    const articleAlertBannerContent = layoutComponentProps.article?.alertBanner
     const languageToggleQueryParams =
-      'languageToggleQueryParams' in componentProps
-        ? componentProps['languageToggleQueryParams']
-        : undefined
+      layoutComponentProps.languageToggleQueryParams
 
     return {
       layoutProps: {
@@ -661,7 +646,6 @@ export const withMainLayout = <T,>(
         ...themeConfig,
         organizationAlertBannerContent,
         articleAlertBannerContent,
-        customAlertBanners,
         languageToggleQueryParams,
       },
       componentProps,

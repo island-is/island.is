@@ -15,6 +15,7 @@ import {
   DefaultEvents,
   Application,
 } from '@island.is/application/types'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import {
   section,
   application,
@@ -266,16 +267,10 @@ export const LoginServiceForm: Form = buildForm({
         }),
       ],
     }),
-    buildSection({
-      id: 'submitted',
-      title: section.submitted,
-      children: [
-        buildCustomField({
-          id: 'submittedCustomField',
-          title: submitted.general.pageTitle,
-          component: 'Submitted',
-        }),
-      ],
+    buildFormConclusionSection({
+      alertTitle: submitted.general.pageTitle,
+      expandableHeader: submitted.general.expandableTitle,
+      expandableDescription: submitted.labels.desceriptionBulletPoints,
     }),
   ],
 })

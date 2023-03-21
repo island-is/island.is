@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/clients/regulations"]
     }
   },
-  "tags": []
+  "tags": ["lib:client", "scope:client"]
 }
