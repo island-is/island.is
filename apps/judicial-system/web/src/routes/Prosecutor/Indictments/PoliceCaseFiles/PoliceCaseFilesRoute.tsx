@@ -8,7 +8,6 @@ import React, {
 } from 'react'
 import router from 'next/router'
 import { useIntl } from 'react-intl'
-import { uuid } from 'uuidv4'
 import _isEqual from 'lodash/isEqual'
 import { useQuery } from '@apollo/client'
 
@@ -32,12 +31,7 @@ import {
   titles,
   errors as errorMessages,
 } from '@island.is/judicial-system-web/messages'
-import {
-  Box,
-  InputFileUpload,
-  toast,
-  UploadFile,
-} from '@island.is/island-ui/core'
+import { Box, InputFileUpload, UploadFile } from '@island.is/island-ui/core'
 import {
   CaseFile,
   CaseFileCategory,
@@ -68,8 +62,9 @@ const UploadFilesToPoliceCase: React.FC<{
 }> = ({ caseId, policeCaseNumber, setAllUploaded, caseFiles, caseOrigin }) => {
   const { formatMessage } = useIntl()
   const {
-    upload,
-    remove,
+    handleChange,
+    handleRemove,
+    handleRetry,
     uploadPoliceCaseFile,
     generateSingleFileUpdate,
   } = useS3Upload(caseId)
@@ -169,7 +164,7 @@ const UploadFilesToPoliceCase: React.FC<{
     setDisplayFiles(caseFiles.map(mapCaseFileToUploadFile) || [])
   }, [policeCaseFiles, caseFiles, policeCaseNumber])
 
-  const uploadCallback = useCallback(
+  const handleUIUpdate = useCallback(
     (displayFile: UploadFile, newId?: string) => {
       setDisplayFiles((previous) =>
         generateSingleFileUpdate(previous, displayFile, newId),
@@ -188,35 +183,24 @@ const UploadFilesToPoliceCase: React.FC<{
     [],
   )
 
-  const onChange = useCallback(
-    (files: File[]) => {
-      // We generate an id for each file so that we find the file again when
-      // updating the file's progress and onRetry.
-      // Also we cannot spread File since it contains read-only properties.
-      const filesWithId: Array<[File, string]> = files.map((file) => [
-        file,
-        `${file.name}-${uuid()}`,
-      ])
-      setDisplayFiles((previous) => [
-        ...filesWithId.map(
-          ([file, id]): UploadFile => ({
-            status: 'uploading',
-            percent: 1,
-            name: file.name,
-            id: id,
-            type: file.type,
-          }),
-        ),
-        ...previous,
-      ])
-      upload(
-        filesWithId,
-        uploadCallback,
-        CaseFileCategory.CASE_FILE,
-        policeCaseNumber,
+  const removeFileCB = useCallback(
+    (file: UploadFile) => {
+      const policeCaseFile = policeCaseFiles?.files.find(
+        (f) => f.name === file.name,
       )
+
+      if (policeCaseFile) {
+        setPoliceCaseFileList((previous) => [
+          mapPoliceCaseFileToPoliceCaseFileCheck(policeCaseFile),
+          ...previous,
+        ])
+      }
+
+      setDisplayFiles((previous) => {
+        return previous.filter((f) => f.id !== file.id)
+      })
     },
-    [upload, uploadCallback, policeCaseNumber],
+    [policeCaseFiles?.files],
   )
 
   const onPoliceCaseFileUpload = useCallback(async () => {
@@ -245,61 +229,6 @@ const UploadFilesToPoliceCase: React.FC<{
     })
   }, [policeCaseFileList, uploadPoliceCaseFile, uploadPoliceCaseFileCallback])
 
-  const onRetry = useCallback(
-    (file: UploadFile) => {
-      uploadCallback({
-        name: file.name,
-        id: file.id,
-        percent: 1,
-        status: 'uploading',
-        type: file.type,
-      })
-      upload(
-        [
-          [
-            { name: file.name, type: file.type ?? '' } as File,
-            file.id ?? file.name,
-          ],
-        ],
-        uploadCallback,
-        CaseFileCategory.CASE_FILE,
-        policeCaseNumber,
-      )
-    },
-    [uploadCallback, upload, policeCaseNumber],
-  )
-
-  const onRemove = useCallback(
-    async (file: UploadFile) => {
-      try {
-        if (file.id) {
-          const response = await remove(file.id)
-          if (!response.data?.deleteFile.success) {
-            throw new Error(`Failed to delete file: ${file.id}`)
-          }
-
-          const policeCaseFile = policeCaseFiles?.files.find(
-            (f) => f.name === file.name,
-          )
-
-          if (policeCaseFile) {
-            setPoliceCaseFileList((previous) => [
-              mapPoliceCaseFileToPoliceCaseFileCheck(policeCaseFile),
-              ...previous,
-            ])
-          }
-
-          setDisplayFiles((previous) => {
-            return previous.filter((f) => f.id !== file.id)
-          })
-        }
-      } catch (e) {
-        toast.error(formatMessage(errorMessages.failedDeleteFile))
-      }
-    },
-    [remove, policeCaseFiles?.files, formatMessage],
-  )
-
   return (
     <>
       <PoliceCaseFiles
@@ -316,9 +245,16 @@ const UploadFilesToPoliceCase: React.FC<{
         header={formatMessage(m.inputFileUpload.header)}
         description={formatMessage(m.inputFileUpload.description)}
         buttonLabel={formatMessage(m.inputFileUpload.buttonLabel)}
-        onChange={onChange}
-        onRemove={onRemove}
-        onRetry={onRetry}
+        onChange={(files) =>
+          handleChange(
+            files,
+            CaseFileCategory.CASE_FILE,
+            setDisplayFiles,
+            handleUIUpdate,
+          )
+        }
+        onRemove={(file) => handleRemove(file, removeFileCB)}
+        onRetry={(file) => handleRetry(file, handleUIUpdate)}
         errorMessage={errorMessage}
         disabled={isUploading}
         showFileSize

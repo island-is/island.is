@@ -264,12 +264,12 @@ export const core = defineMessages({
   },
   uploadBoxTitle: {
     id: 'judicial.system.core:upload_box_title',
-    defaultMessage: 'Dragðu gögn hingað til að hlaða upp',
+    defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
     description: 'Notaður fyrir titil í Hlaða upp skrám svæði.',
   },
   uploadBoxButtonLabel: {
     id: 'judicial.system.core:upload_box_button_label',
-    defaultMessage: 'Velja gögn til að hlaða upp',
+    defaultMessage: 'Velja skjöl til að hlaða upp',
     description: 'Notaður fyrir titil í takka á Hlaða upp skrám svæði.',
   },
 })
