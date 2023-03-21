@@ -18,7 +18,7 @@ import { createPkPassDataInput } from '../firearmLicenseMapper'
 import { BaseLicenseUpdateClient } from '../../baseLicenseUpdateClient'
 
 /** Category to attach each log message to */
-const LOG_CATEGORY = 'firearmlicense-service'
+//const LOG_CATEGORY = 'firearmlicense-service'
 @Injectable()
 export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
   constructor(

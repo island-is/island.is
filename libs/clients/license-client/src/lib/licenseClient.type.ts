@@ -1,10 +1,4 @@
 import { User } from '@island.is/auth-nest-tools'
-import {
-  Pass,
-  PassDataInput,
-  RevokePassData,
-  VerifyPassData,
-} from '@island.is/clients/smartsolutions'
 import { Locale } from '@island.is/shared/types'
 
 export type LicenseLabelsObject = {
@@ -53,6 +47,13 @@ export type PkPassVerification = {
 export type PkPassVerificationInputData = {
   code: string
   date: string
+}
+
+export type VerifyInputData = {
+  code: string
+  date: string
+  passTemplateName?: string
+  passTemplateId?: string
 }
 
 export type Result<ResultType, ErrorType = ServiceError> =

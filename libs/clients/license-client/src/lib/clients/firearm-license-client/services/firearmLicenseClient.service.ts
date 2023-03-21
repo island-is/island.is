@@ -61,7 +61,7 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
           propertyInfo: promises[2],
         }
       })
-      .catch((e) => {
+      .catch(() => {
         //unexpected error
         return null
       })

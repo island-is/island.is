@@ -11,7 +11,7 @@ import { Result } from '../../licenseClient.type'
 import { BaseLicenseUpdateClient } from '../baseLicenseUpdateClient'
 
 /** Category to attach each log message to */
-const LOG_CATEGORY = 'disability-license-service'
+//const LOG_CATEGORY = 'disability-license-service'
 
 @Injectable()
 export class DisabilityLicenseUpdateClient extends BaseLicenseUpdateClient {
