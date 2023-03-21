@@ -1,16 +1,18 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
   DataType,
+  HasMany,
   Model,
+  PrimaryKey,
   Table,
   UpdatedAt,
-  PrimaryKey,
-  HasMany,
 } from 'sequelize-typescript'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { ApiScope } from './api-scope.model'
+
+import { Client } from '../../clients/models/client.model'
 import { ApiScopeGroup } from './api-scope-group.model'
+import { ApiScope } from './api-scope.model'
 
 @Table({
   tableName: 'domain',
@@ -72,10 +74,14 @@ export class Domain extends Model {
   readonly modified?: Date
 
   @HasMany(() => ApiScopeGroup)
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: () => [ApiScopeGroup] })
   groups?: ApiScopeGroup[]
 
   @HasMany(() => ApiScope)
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: () => [ApiScope] })
   scopes?: ApiScope[]
+
+  @HasMany(() => Client)
+  @ApiPropertyOptional({ type: () => [Client] })
+  clients?: Client[]
 }

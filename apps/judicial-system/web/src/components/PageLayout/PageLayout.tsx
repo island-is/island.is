@@ -170,12 +170,11 @@ const SidePanel: React.FC<SidePanelProps> = ({
 }
 interface PageProps {
   children: ReactNode
-  workingCase?: Case
+  workingCase: Case
   activeSection?: number
   isLoading: boolean
   notFound: boolean
   isExtension?: boolean
-  showSidepanel?: boolean
   // These props are optional because not all pages need them, f.x. SignedVerdictOverview page
   activeSubSection?: number
   onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
@@ -189,7 +188,6 @@ const PageLayout: React.FC<PageProps> = ({
   activeSubSection,
   isLoading,
   notFound,
-  showSidepanel = true,
   onNavigationTo,
   isValid,
 }) => {
@@ -207,16 +205,12 @@ const PageLayout: React.FC<PageProps> = ({
   ) : notFound ? (
     <AlertBanner
       title={
-        user?.role === UserRole.Admin
-          ? formatMessage(pageLayout.adminRole.alertTitle)
-          : user?.role === UserRole.Defender
+        user?.role === UserRole.Defender
           ? formatMessage(pageLayout.defenderRole.alertTitle)
           : formatMessage(pageLayout.otherRoles.alertTitle)
       }
       description={
-        user?.role === UserRole.Admin
-          ? formatMessage(pageLayout.adminRole.alertMessage)
-          : user?.role === UserRole.Defender
+        user?.role === UserRole.Defender
           ? formatMessage(pageLayout.defenderRole.alertMessage)
           : formatMessage(pageLayout.otherRoles.alertMessage)
       }
@@ -225,10 +219,7 @@ const PageLayout: React.FC<PageProps> = ({
         user?.role === UserRole.Defender
           ? undefined
           : {
-              href:
-                user?.role === UserRole.Admin
-                  ? constants.USERS_ROUTE
-                  : constants.CASES_ROUTE,
+              href: constants.CASES_ROUTE,
               title: 'Fara á yfirlitssíðu',
             }
       }
@@ -252,16 +243,14 @@ const PageLayout: React.FC<PageProps> = ({
               {children}
             </Box>
           </GridColumn>
-          {showSidepanel && (
-            <SidePanel
-              user={user}
-              isValid={isValid}
-              onNavigationTo={onNavigationTo}
-              activeSection={activeSection}
-              workingCase={workingCase}
-              activeSubSection={activeSubSection}
-            />
-          )}
+          <SidePanel
+            user={user}
+            isValid={isValid}
+            onNavigationTo={onNavigationTo}
+            activeSection={activeSection}
+            workingCase={workingCase}
+            activeSubSection={activeSubSection}
+          />
         </GridRow>
       </GridContainer>
     </Box>

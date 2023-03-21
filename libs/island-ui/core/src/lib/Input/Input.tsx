@@ -1,40 +1,20 @@
-import React, { useState, useRef, forwardRef, useLayoutEffect } from 'react'
 import cn from 'classnames'
+import React, { forwardRef, useLayoutEffect, useRef, useState } from 'react'
+import { resolveResponsiveProp } from '../../utils/responsiveProp'
+import { Box } from '../Box/Box'
+import { UseBoxStylesProps } from '../Box/useBoxStyles'
+import { Icon } from '../IconRC/Icon'
+import { Tooltip } from '../Tooltip/Tooltip'
+import { ErrorMessage } from './ErrorMessage'
 
 import * as styles from './Input.css'
-import { Box } from '../Box/Box'
-import { Tooltip } from '../Tooltip/Tooltip'
-import { Icon } from '../IconRC/Icon'
-import { resolveResponsiveProp } from '../../utils/responsiveProp'
-import { UseBoxStylesProps } from '../Box/useBoxStyles'
 import {
+  AriaError,
   InputBackgroundColor,
   InputComponentProps,
   InputProps,
-  AriaError,
 } from './types'
-
-function setRefs<T>(ref: React.Ref<T>, value: T) {
-  if (typeof ref === 'function') {
-    ref(value)
-  } else if (ref) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(ref as any).current = value
-  }
-}
-
-function useMergeRefs<ForwardRef, LocalRef extends ForwardRef>(
-  forwardedRef: React.Ref<ForwardRef>,
-  localRef: React.Ref<LocalRef>,
-): (instance: LocalRef | null) => void {
-  return React.useCallback(
-    (value) => {
-      setRefs(forwardedRef, value)
-      setRefs(localRef, value)
-    },
-    [forwardedRef, localRef],
-  )
-}
+import { useMergeRefs } from '../../hooks/useMergeRefs'
 
 const InputHOC = forwardRef(
   (
@@ -286,14 +266,7 @@ export const Input = forwardRef(
           ) : null}
         </Box>
         {hasError && errorMessage && (
-          <div
-            id={errorId}
-            className={styles.errorMessage}
-            aria-live="assertive"
-            data-testid="inputErrorMessage"
-          >
-            {errorMessage}
-          </div>
+          <ErrorMessage id={errorId}>{errorMessage}</ErrorMessage>
         )}
       </div>
     )

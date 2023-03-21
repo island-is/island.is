@@ -7,6 +7,7 @@ import {
   AdminProdApi,
   AdminStagingApi,
 } from '@island.is/clients/auth/admin-api'
+import { FetchError } from '@island.is/clients/middlewares'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Environment } from '@island.is/shared/types'
@@ -44,11 +45,68 @@ export class TenantsService {
     return this.adminProdApi?.withMiddleware(new AuthMiddleware(auth))
   }
 
+  private handleError(error: Error) {
+    if (error instanceof FetchError && error.status === 401) {
+      // If 401 is returned we log it as info as it is intentional
+      this.logger.info('Unauthorized request to admin api', error)
+    } else {
+      // Otherwise we log it as error
+      this.logger.error('Error while fetching tenants', error)
+    }
+
+    // We swallow the errors
+    return undefined
+  }
+
+  async getTenant(id: string): Promise<Tenant> {
+    return {
+      id: id,
+      environments: [
+        {
+          name: id,
+          environment: Environment.Production,
+          displayName: [
+            {
+              locale: 'is',
+              value: 'Ísland.is stjórnborð',
+            },
+          ],
+        },
+        {
+          name: id,
+          environment: Environment.Staging,
+          displayName: [
+            {
+              locale: 'is',
+              value: 'Ísland.is stjórnborð',
+            },
+          ],
+        },
+        {
+          name: id,
+          environment: Environment.Development,
+          displayName: [
+            {
+              locale: 'is',
+              value: 'Ísland.is stjórnborð',
+            },
+          ],
+        },
+      ],
+    }
+  }
+
   async getTenants(user: User): Promise<TenantsPayload> {
     const tenants = await Promise.all([
-      this.adminDevApiWithAuth(user)?.meTenantsControllerFindAll(),
-      this.adminStagingApiWithAuth(user)?.meTenantsControllerFindAll(),
-      this.adminProdApiWithAuth(user)?.meTenantsControllerFindAll(),
+      this.adminDevApiWithAuth(user)
+        ?.meTenantsControllerFindAll()
+        .catch(this.handleError.bind(this)),
+      this.adminStagingApiWithAuth(user)
+        ?.meTenantsControllerFindAll()
+        .catch(this.handleError.bind(this)),
+      this.adminProdApiWithAuth(user)
+        ?.meTenantsControllerFindAll()
+        .catch(this.handleError.bind(this)),
     ])
 
     const tenantMap = new Map<string, TenantEnvironment[]>()

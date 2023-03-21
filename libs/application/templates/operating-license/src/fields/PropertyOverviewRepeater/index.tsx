@@ -3,8 +3,7 @@ import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { ArrayField } from 'react-hook-form'
-import { Property } from '../../lib/constants'
+import { Property, PropertyField } from '../../lib/constants'
 import { formatText, getValueViaPath } from '@island.is/application/core'
 
 interface PropTypes extends FieldBaseProps {
@@ -39,7 +38,7 @@ const PropertyItem = ({
   index,
   title,
 }: {
-  field: Partial<ArrayField<Property, 'id'>>
+  field: PropertyField
   index: number
   title: string
 }) => {

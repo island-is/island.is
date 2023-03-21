@@ -13,12 +13,12 @@ export const rowAlign = style({
 })
 
 export const alignTiles = style({
-  paddingTop: theme.spacing[2],
   ...themeUtils.responsiveStyle({
     lg: {
       position: 'absolute',
       bottom: 0,
-      paddingRight: '12px',
+      // width: '100%',
+      right: 0,
     },
   }),
 })

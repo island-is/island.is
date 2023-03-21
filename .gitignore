@@ -5,6 +5,7 @@
 /tmp
 /out-tsc
 **/tsconfig.tsbuildinfo
+infra/mountebank-imposter-config.json
 # Contentful extensions
 libs/contentful-extensions/translation/build
 libs/contentful-extensions/translation/.cache

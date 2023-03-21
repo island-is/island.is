@@ -197,6 +197,14 @@ export function addNormalJustifiedText(
   addJustifiedText(doc, baseFontSize, text, font)
 }
 
+export function addNormalPlusJustifiedText(
+  doc: PDFKit.PDFDocument,
+  text: string,
+  font?: string,
+) {
+  addJustifiedText(doc, basePlusFontSize, text, font)
+}
+
 export function addNormalCenteredText(
   doc: PDFKit.PDFDocument,
   text: string,

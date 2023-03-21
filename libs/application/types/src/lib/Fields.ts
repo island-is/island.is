@@ -102,6 +102,7 @@ export enum FieldTypes {
   PAYMENT_PENDING = 'PAYMENT_PENDING',
   COMPANY_SEARCH = 'COMPANY_SEARCH',
   REDIRECT_TO_SERVICE_PORTAL = 'REDIRECT_TO_SERVICE_PORTAL',
+  PHONE = 'PHONE',
   MESSAGE_WITH_LINK_BUTTON_FIELD = 'MESSAGE_WITH_LINK_BUTTON_FIELD',
   EXPANDABLE_DESCRIPTION = 'EXPANDABLE_DESCRIPTION',
   ALERT_MESSAGE = 'ALERT_MESSAGE',
@@ -123,6 +124,7 @@ export enum FieldComponents {
   PAYMENT_PENDING = 'PaymentPendingField',
   COMPANY_SEARCH = 'CompanySearchFormField',
   REDIRECT_TO_SERVICE_PORTAL = 'RedirectToServicePortalFormField',
+  PHONE = 'PhoneFormField',
   MESSAGE_WITH_LINK_BUTTON_FIELD = 'MessageWithLinkButtonFormField',
   EXPANDABLE_DESCRIPTION = 'ExpandableDescriptionFormField',
   ALERT_MESSAGE = 'AlertMessageFormField',
@@ -223,6 +225,19 @@ export interface TextField extends BaseField {
   onChange?: (...event: any[]) => void
 }
 
+export interface PhoneField extends BaseField {
+  readonly type: FieldTypes.PHONE
+  component: FieldComponents.PHONE
+  disabled?: boolean
+  readOnly?: boolean
+  rightAlign?: boolean
+  placeholder?: FormText
+  backgroundColor?: InputBackgroundColor
+  allowedCountryCodes?: string[]
+  required?: boolean
+  onChange?: (...event: any[]) => void
+}
+
 export interface FileUploadField extends BaseField {
   readonly type: FieldTypes.FILEUPLOAD
   component: FieldComponents.FILEUPLOAD
@@ -288,7 +303,7 @@ export interface MessageWithLinkButtonField extends BaseField {
 export interface ExpandableDescriptionField extends BaseField {
   readonly type: FieldTypes.EXPANDABLE_DESCRIPTION
   component: FieldComponents.EXPANDABLE_DESCRIPTION
-  introText?: FormText
+  introText?: StaticText
   description: StaticText
   startExpanded?: boolean
 }
@@ -323,6 +338,7 @@ export type Field =
   | AsyncSelectField
   | CompanySearchField
   | RedirectToServicePortalField
+  | PhoneField
   | MessageWithLinkButtonField
   | ExpandableDescriptionField
   | AlertMessageField

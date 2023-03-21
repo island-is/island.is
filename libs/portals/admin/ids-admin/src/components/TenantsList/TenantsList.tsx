@@ -15,6 +15,8 @@ import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
 import type { AuthTenantsList } from './TenantsList.loader'
+import { replaceParams } from '@island.is/react-spa/shared'
+import { IDSAdminPaths } from '../../lib/paths'
 
 const TenantsList = () => {
   const originalTenantsList = useLoaderData() as AuthTenantsList
@@ -78,10 +80,15 @@ const TenantsList = () => {
           </GridRow>
           <Stack space={[1, 1, 2, 2]}>
             {tenantList.map((item) => (
-              <GridRow key={item.id}>
+              <GridRow key={`tenants-${item.id}`}>
                 <Link
                   className={styles.fill}
-                  to={`/innskraningarkerfi/${item.id}`}
+                  to={replaceParams({
+                    href: IDSAdminPaths.IDSAdminTenants,
+                    params: {
+                      tenant: item.id,
+                    },
+                  })}
                 >
                   <Box
                     className={styles.linkContainer}
@@ -111,8 +118,8 @@ const TenantsList = () => {
                       justifyContent={'flexEnd'}
                     >
                       {item.availableEnvironments.map((tag, index) => (
-                        <Box margin={'smallGutter'} key={index}>
-                          <Tag variant="purple" outlined>
+                        <Box margin={'smallGutter'} key={`tenant-${index}`}>
+                          <Tag key={`tenant-${tag}`} variant="purple" outlined>
                             {tag}
                           </Tag>
                         </Box>
