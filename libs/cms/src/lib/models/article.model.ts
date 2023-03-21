@@ -136,7 +136,7 @@ export const mapArticle = ({
   subArticles: (fields.subArticles ?? [])
     .filter((subArticle) => subArticle.fields?.title && subArticle.fields?.slug)
     .map(mapSubArticle),
-  relatedArticles: [],
+  relatedArticles: [], // populated by resolver
   relatedContent: (fields.relatedContent ?? []).map(mapLink),
   featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
   showTableOfContents: fields.showTableOfContents ?? false,
