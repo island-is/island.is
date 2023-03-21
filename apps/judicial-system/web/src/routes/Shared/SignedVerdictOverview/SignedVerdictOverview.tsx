@@ -73,12 +73,14 @@ import {
   UserRole,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import * as constants from '@island.is/judicial-system/consts'
 
 import AppealSection from './Components/AppealSection/AppealSection'
 import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
-import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
+import ReopenModal from './Components/ReopenModal/ReopenModal'
+import { strings } from './SignedVerdictOverview.strings'
 
 interface ModalControls {
   open: boolean
@@ -131,13 +133,37 @@ export const titleForCase = (
       })
 }
 
-export const shouldHideNextButton = (workingCase: Case, user?: User) =>
-  user?.role !== UserRole.Prosecutor ||
-  workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-  workingCase.state === CaseState.REJECTED ||
-  workingCase.state === CaseState.DISMISSED ||
-  workingCase.isValidToDateInThePast ||
-  Boolean(workingCase.childCase)
+export const shouldHideNextButton = (workingCase: Case, user?: User) => {
+  // Hide the next button if there is no user
+  if (!user) {
+    return true
+  }
+
+  const shouldShowExtendCaseButton =
+    user.role === UserRole.Prosecutor && // the user is a prosecutor
+    workingCase.state !== CaseState.REJECTED && // the case is not rejected
+    workingCase.state !== CaseState.DISMISSED && // the case is not dismissed
+    workingCase.decision !== CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN && // the case is not a custody case accepted as alternative travel ban
+    !workingCase.isValidToDateInThePast && // the case is not a restriction case with a valid to date in the past
+    !workingCase.childCase // the case has not already been extended
+
+  const shouldShowReopenCaseButton =
+    user.id === workingCase.judge?.id || // the user is the assigned judge ||
+    user.id === workingCase.registrar?.id // the user is the assigned registrar
+
+  return !shouldShowExtendCaseButton && !shouldShowReopenCaseButton
+}
+
+const getNextButtonText = (
+  formatMessage: IntlShape['formatMessage'],
+  workingCase: Case,
+  user?: User,
+) =>
+  user?.role === UserRole.Prosecutor
+    ? formatMessage(m.sections.caseExtension.buttonLabel, {
+        caseType: workingCase.type,
+      })
+    : capitalize(formatMessage(strings.nextButtonReopenText))
 
 export const getExtensionInfoText = (
   formatMessage: IntlShape['formatMessage'],
@@ -206,6 +232,9 @@ export const SignedVerdictOverview: React.FC = () => {
     courtRecordSignatureConfirmationResponse,
     setCourtRecordSignatureConfirmationResponse,
   ] = useState<SignatureConfirmationResponse>()
+
+  // Reopen case state
+  const [isReopeningCase, setIsReopeningCase] = useState<boolean>(false)
 
   const {
     workingCase,
@@ -308,8 +337,8 @@ export const SignedVerdictOverview: React.FC = () => {
     )
   }
 
-  const handleCaseExtension = async () => {
-    if (workingCase) {
+  const handleNextButtonClick = async () => {
+    if (user?.role === UserRole.Prosecutor) {
       if (workingCase.childCase) {
         if (isRestrictionCase(workingCase.type)) {
           router.push(
@@ -335,6 +364,8 @@ export const SignedVerdictOverview: React.FC = () => {
           }
         })
       }
+    } else {
+      setIsReopeningCase(true)
     }
   }
 
@@ -769,25 +800,6 @@ export const SignedVerdictOverview: React.FC = () => {
                     ) : (
                       <Text>{formatMessage(m.unsignedDocument)}</Text>
                     )}
-                    {user && user.id === workingCase.judge?.id && (
-                      <Box marginLeft={3}>
-                        <Button
-                          variant="ghost"
-                          size="small"
-                          data-testid="modifyRulingButton"
-                          onClick={(event) => {
-                            event.stopPropagation()
-                            router.push(
-                              isRestrictionCase(workingCase.type)
-                                ? `${constants.RESTRICTION_CASE_MODIFY_RULING_ROUTE}/${workingCase.id}`
-                                : `${constants.INVESTIGATION_CASE_MODIFY_RULING_ROUTE}/${workingCase.id}`,
-                            )
-                          }}
-                        >
-                          {capitalize(formatMessage(core.modify))}
-                        </Button>
-                      </Box>
-                    )}
                   </Box>
                 </PdfButton>
               )}
@@ -876,10 +888,8 @@ export const SignedVerdictOverview: React.FC = () => {
         <FormFooter
           previousUrl={constants.CASES_ROUTE}
           hideNextButton={shouldHideNextButton(workingCase, user)}
-          nextButtonText={formatMessage(m.sections.caseExtension.buttonLabel, {
-            caseType: workingCase.type,
-          })}
-          onNextButtonClick={() => handleCaseExtension()}
+          nextButtonText={getNextButtonText(formatMessage, workingCase, user)}
+          onNextButtonClick={() => handleNextButtonClick()}
           nextIsLoading={isExtendingCase}
           infoBoxText={getExtensionInfoText(formatMessage, workingCase, user)}
         />
@@ -964,6 +974,9 @@ export const SignedVerdictOverview: React.FC = () => {
           }}
           navigateOnClose={false}
         />
+      )}
+      {isReopeningCase && (
+        <ReopenModal onClose={() => setIsReopeningCase(false)} />
       )}
     </PageLayout>
   )

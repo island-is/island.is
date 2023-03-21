@@ -150,7 +150,13 @@ describe('CaseController - Transition', () => {
               rulingDate:
                 isIndictmentCase(type) && completedCaseStates.includes(newState)
                   ? date
+                  : transition === CaseTransition.REOPEN
+                  ? null
                   : undefined,
+              courtRecordSignatoryId:
+                transition === CaseTransition.REOPEN ? null : undefined,
+              courtRecordSignatureDate:
+                transition === CaseTransition.REOPEN ? null : undefined,
             },
             { where: { id: caseId }, transaction },
           )
