@@ -97,6 +97,8 @@ export const serviceSetup = (services: {
         '/k8s/identity-server/ClientSecret',
       Scopes__Admin__RootAccessList: '/k8s/identity-server/AdminRootAccessList',
       FeatureFlags__ConfigCatSdkKey: '/k8s/configcat/CONFIGCAT_SDK_KEY',
+      ContentfulSettings__AccessToken:
+        '/k8s/identity-server/CONTENTFUL_ACCESS_TOKEN',
     })
     .ingress({
       primary: {
