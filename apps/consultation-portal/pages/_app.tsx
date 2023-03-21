@@ -1,15 +1,10 @@
 import App, { AppContext, AppProps } from 'next/app'
 import AppLayout from '../components/AppLayout/AppLayout'
 import UserContextProvider from '../context/UserContext'
-import { parseCookie } from '../utils/helpers'
 
-const ConsultationPortalApplication: any = ({
-  Component,
-  pageProps,
-  token,
-}) => {
+const ConsultationPortalApplication: any = ({ Component, pageProps }) => {
   return (
-    <UserContextProvider token={token}>
+    <UserContextProvider>
       <AppLayout>
         <Component {...pageProps} />
       </AppLayout>
@@ -22,13 +17,6 @@ ConsultationPortalApplication.getInitialProps = async (
 ) => {
   const pageProps = await App.getInitialProps(appContext)
 
-  const cookiesParsed = parseCookie(appContext.ctx.req.headers.cookie)
-  if (cookiesParsed) {
-    if ('token' in cookiesParsed) {
-      const token = cookiesParsed['token']
-      return { ...pageProps, token }
-    }
-  }
   return { ...pageProps }
 }
 
