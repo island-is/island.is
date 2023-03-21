@@ -16,7 +16,7 @@ export const VehicleSelectField: FC<
   VehicleSearchFieldProps & FieldBaseProps
 > = ({ currentVehicleList, application }) => {
   const { formatMessage } = useLocale()
-  const { register } = useFormContext()
+  const { setValue } = useFormContext()
 
   const vehicleValue = getValueViaPath(
     application.answers,
@@ -39,9 +39,6 @@ export const VehicleSelectField: FC<
         }
       : null,
   )
-  const [plate, setPlate] = useState<string>(
-    getValueViaPath(application.answers, 'pickVehicle.plate', '') as string,
-  )
 
   const onChange = (option: Option) => {
     const currentVehicle = currentVehicleList[parseInt(option.value, 10)]
@@ -53,7 +50,7 @@ export const VehicleSelectField: FC<
         color: currentVehicle?.color || '',
         role: currentVehicle?.role,
       })
-      setPlate(currentVehicle.permno || '')
+      setValue('pickVehicle.plate', currentVehicle.permno || '')
       setIsLoading(false)
     }
   }
@@ -89,12 +86,6 @@ export const VehicleSelectField: FC<
           </Box>
         )}
       </Box>
-      <input
-        type="hidden"
-        value={plate}
-        ref={register({ required: true })}
-        name="pickVehicle.plate"
-      />
     </Box>
   )
 }

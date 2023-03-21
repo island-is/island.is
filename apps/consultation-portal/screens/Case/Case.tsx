@@ -20,10 +20,11 @@ import Layout from '../../components/Layout/Layout'
 import { Advice } from '../../types/viewModels'
 import { SimpleCardSkeleton } from '../../components/Card'
 import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
+import { getTimeLineDate } from '../../utils/helpers/dateFormatter'
 
 const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
   // Remove following lines after connecting to API
-
+  const { contactEmail, contactName } = chosenCase
   const card = {
     caseNumber: '76/2022',
     nameOfReviewer: 'Jon Jonsson',
@@ -33,13 +34,18 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
   isLoggedIn = true // remove when functionality for logged in has been implemented
 
   return (
-    <Layout>
+    <Layout
+      seo={{
+        title: `Mál: S-${chosenCase?.caseNumber}`,
+        url: `mal/${chosenCase?.caseNumber}`,
+      }}
+    >
       <GridContainer>
         <Box paddingY={[3, 3, 3, 5, 5]}>
           <Breadcrumbs
             items={[
               { title: 'Öll mál', href: '/' },
-              { title: `Mál nr. ${chosenCase?.caseNumber}` },
+              { title: `Mál nr. S-${chosenCase?.caseNumber}` },
             ]}
           />
         </Box>
@@ -58,13 +64,13 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
             <Stack space={2}>
               <Divider />
               <CaseTimeline
-                status="Til umsagnar"
-                updatedDate="2023-01-13T15:47:07.703"
+                status={chosenCase.statusName}
+                updatedDate={getTimeLineDate(chosenCase)}
               />
               <Divider />
               <Box paddingLeft={1}>
                 <Text variant="h3" color="purple400">
-                  Fjöldi umsagna: 2
+                  {`Fjöldi umsagna: ${chosenCase.adviceCount}`}
                 </Text>
               </Box>
               <Divider />
@@ -87,7 +93,7 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
                   {advices?.map((advice: Advice) => {
                     return <ReviewCard advice={advice} key={advice.number} />
                   })}
-                  <WriteReviewCard card={card} isLoggedIn={isLoggedIn} />
+                  <WriteReviewCard card={chosenCase} isLoggedIn={isLoggedIn} />
                 </Stack>
               </Box>
             </Stack>
@@ -111,17 +117,24 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
                   headingColor="blue400"
                   title="Aðilar sem hafa fengið boð um samráð á máli."
                 >
-                  Þetta mál er opið öllum til umsagnar. Skráðu þig inn hér til
-                  að skrifa umsögn um málið
+                  Viltu senda umsögn? Öllum er frjálst að taka þátt í samráðinu.
+                  Skráðu þig inn og sendu umsögn.
                 </StackedTitleAndDescription>
               </SimpleCardSkeleton>
 
               <SimpleCardSkeleton>
                 <StackedTitleAndDescription
                   headingColor="blue400"
-                  title="Ábyrgðaraðili"
+                  title="Umsjónaraðili"
                 >
-                  {`${chosenCase.contactName} ${chosenCase.contactEmail}`}
+                  {contactName || contactEmail ? (
+                    <>
+                      {contactName && <Text>{contactName}</Text>}
+                      {contactEmail && <Text>{contactEmail}</Text>}
+                    </>
+                  ) : (
+                    'Engin skráður'
+                  )}
                 </StackedTitleAndDescription>
               </SimpleCardSkeleton>
             </Stack>

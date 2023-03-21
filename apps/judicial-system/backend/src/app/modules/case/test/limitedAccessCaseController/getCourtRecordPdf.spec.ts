@@ -4,6 +4,7 @@ import { Response } from 'express'
 import { Logger } from '@island.is/logging'
 import { User } from '@island.is/judicial-system/types'
 
+import { nowFactory } from '../../../../factories'
 import { getCourtRecordPdfAsBuffer } from '../../../../formatters'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { AwsS3Service } from '../../../aws-s3'
@@ -62,7 +63,10 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
   describe('AWS S3 lookup', () => {
     const user = {} as User
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
+    const theCase = {
+      id: caseId,
+      courtRecordSignatureDate: nowFactory(),
+    } as Case
     const res = {} as Response
 
     beforeEach(async () => {
@@ -79,7 +83,10 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
   describe('AWS S3 pdf returned', () => {
     const user = {} as User
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
+    const theCase = {
+      id: caseId,
+      courtRecordSignatureDate: nowFactory(),
+    } as Case
     const res = ({ end: jest.fn() } as unknown) as Response
     const pdf = {}
 
@@ -98,7 +105,10 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
   describe('AWS S3 lookup fails', () => {
     const user = {} as User
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
+    const theCase = {
+      id: caseId,
+      courtRecordSignatureDate: nowFactory(),
+    } as Case
     const res = {} as Response
     const error = new Error('Some ignored error')
 
@@ -122,7 +132,10 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
   describe('pdf generated', () => {
     const user = {} as User
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
+    const theCase = {
+      id: caseId,
+      courtRecordSignatureDate: nowFactory(),
+    } as Case
     const res = {} as Response
 
     beforeEach(async () => {
@@ -144,7 +157,10 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
   describe('generated pdf returned', () => {
     const user = {} as User
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
+    const theCase = {
+      id: caseId,
+      courtRecordSignatureDate: nowFactory(),
+    } as Case
     const res = ({ end: jest.fn() } as unknown) as Response
     const pdf = {}
 
@@ -165,7 +181,10 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
   describe('pdf generation fails', () => {
     const user = {} as User
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
+    const theCase = {
+      id: caseId,
+      courtRecordSignatureDate: nowFactory(),
+    } as Case
     let then: Then
     const res = {} as Response
 
