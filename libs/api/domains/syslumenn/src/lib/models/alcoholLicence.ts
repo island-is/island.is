@@ -28,4 +28,10 @@ export class AlcoholLicence {
 
   @Field({ nullable: true })
   licenseResponsible?: string
+
+  @Field({ nullable: true })
+  office?: string
+
+  @Field({ nullable: true })
+  location?: string
 }

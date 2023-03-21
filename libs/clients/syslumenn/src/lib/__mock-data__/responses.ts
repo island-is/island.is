@@ -132,6 +132,8 @@ export const ALCOHOL_LICENCES = [
     gildirTil: new Date('2023-05-01'),
     leyfishafi: 'string',
     abyrgdarmadur: 'string',
+    embaetti: 'string',
+    starfsstodEmbaettis: 'string',
   },
 ] as Afengisleyfi[]
 

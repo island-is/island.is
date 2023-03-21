@@ -199,6 +199,8 @@ export const mapAlcoholLicence = (
   validTo: alcoholLicence.gildirTil ? alcoholLicence.gildirTil : undefined,
   licenseHolder: alcoholLicence.leyfishafi?.trim() ?? '',
   licenseResponsible: alcoholLicence.abyrgdarmadur?.trim() ?? '',
+  office: alcoholLicence.embaetti?.trim() ?? '',
+  location: alcoholLicence.starfsstodEmbaettis?.trim() ?? '',
 })
 
 export const mapTemporaryEventLicence = (

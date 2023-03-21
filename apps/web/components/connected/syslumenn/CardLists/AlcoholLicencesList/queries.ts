@@ -11,6 +11,8 @@ export const GET_ALCOHOL_LICENCES_QUERY = gql`
       validTo
       licenseHolder
       licenseResponsible
+      office
+      location
     }
   }
 `

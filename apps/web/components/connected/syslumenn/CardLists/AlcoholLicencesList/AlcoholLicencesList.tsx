@@ -92,7 +92,8 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
           t('csvHeaderLicenseResponsible', 'Ábyrgðarmaður'),
           t('csvHeaderValidFrom', 'Gildir frá'),
           t('csvHeaderValidTo', 'Gildir til'),
-          t('csvHeaderIssuedBy', 'Útgefið af'),
+          t('csvHeaderOffice', 'Embætti'),
+          t('csvHeaderLocation', 'Starfsstöð embættis'),
         ]
         const dataRows = []
         for (const alcoholLicence of alcoholLicences) {
@@ -104,7 +105,8 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
             alcoholLicence.licenseResponsible, // Ábyrgðarmaður
             alcoholLicence.validFrom?.toString(), // Gildir frá
             alcoholLicence.validTo?.toString(), // Gildir til
-            alcoholLicence.issuedBy, // Útgefið af
+            alcoholLicence.office, // Embætti
+            alcoholLicence.location, // Starfsstöð embættis
           ])
         }
         return resolve(prepareCsvString(headerRow, dataRows))
@@ -118,7 +120,7 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
   const avaibleOfficesOptions = [
     allOfficesOption,
     ...Array.from(
-      new Set<string>(alcoholLicences.map((x) => x.issuedBy)).values(),
+      new Set<string>(alcoholLicences.map((x) => x.office)).values(),
     ),
   ]
   const [filterOffice, setFilterOffice] = useState<string>(
@@ -143,7 +145,7 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
       // Filter by Office
       (filterOffice === allOfficesOption
         ? true
-        : alcoholLicence.issuedBy === filterOffice) &&
+        : alcoholLicence.office === filterOffice) &&
       // Filter by Licence type
       (filterLicenceType === allLicenceTypeOption
         ? true
@@ -307,7 +309,7 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
                         {getLicenceTypeRepresentation(alcoholLicence)}
                       </Text>
                       <Box marginBottom={[2, 2, 2, 0]}>
-                        <Tag disabled>{alcoholLicence.issuedBy}</Tag>
+                        <Tag disabled>{alcoholLicence.office}</Tag>
                       </Box>
                     </Box>
                     <Box>
@@ -315,7 +317,10 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
 
                       <Text paddingBottom={2}>
                         {t('licenseNumber', 'Leyfisnúmer')}:{' '}
+                        {/* TODO: Find a good placement for the licence location field. */}
                         {alcoholLicence.licenseNumber}
+                        {alcoholLicence.location &&
+                          ` (${alcoholLicence.location})`}
                       </Text>
 
                       <Text>

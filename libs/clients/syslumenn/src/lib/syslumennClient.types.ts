@@ -83,6 +83,8 @@ export interface AlcoholLicence {
   validTo?: Date
   licenseHolder?: string
   licenseResponsible?: string
+  office?: string
+  location?: string
 }
 
 export interface TemporaryEventLicence {
