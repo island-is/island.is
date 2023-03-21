@@ -78,6 +78,7 @@ export const PhoneInputController = forwardRef(
           placeholder={placeholder}
           label={label}
           value={value}
+          defaultValue={defaultValue}
           autoComplete={autoComplete}
           loading={loading}
           hasError={error !== undefined}
