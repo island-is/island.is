@@ -1,5 +1,5 @@
 import { FC, useEffect } from 'react'
-import { useFieldArray, useFormContext } from 'react-hook-form'
+import { useFieldArray } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
@@ -23,11 +23,9 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
   const error = (errors as any)?.estate?.assets
   const { id } = field
   const { formatMessage } = useLocale()
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, update } = useFieldArray({
     name: id,
   })
-
-  const { setValue } = useFormContext()
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
     estate: { assets: EstateAsset[] }
@@ -71,21 +69,25 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
                   asset.share
                     ? `${formatMessage(m.propertyShare)}: ${asset.share * 100}%`
                     : '',
-                  /*<Box marginTop={1} as="span">
+                  <Box marginTop={1} as="span">
                     <Button
                       variant="text"
                       icon={asset.enabled ? 'remove' : 'add'}
                       size="small"
                       iconType="outline"
-                      onClick={() =>
-                        setValue(`${id}[${index}].enabled`, !asset.enabled)
-                      }
+                      onClick={() => {
+                        const updatedAsset = {
+                          ...asset,
+                          enabled: !asset.enabled,
+                        }
+                        update(index, updatedAsset)
+                      }}
                     >
                       {asset.enabled
                         ? formatMessage(m.inheritanceDisableMember)
                         : formatMessage(m.inheritanceEnableMember)}
                     </Button>
-                  </Box>,*/
+                  </Box>,
                 ]}
                 heightFull
               />
