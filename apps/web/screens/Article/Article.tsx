@@ -381,7 +381,9 @@ const ArticleScreen: Screen<ArticleProps> = ({
 
   const metaTitle = `${article.title} | Ísland.is`
   const processEntry = article.processEntry
-  const categoryHref = article.category?.slug
+
+  // TODO: Revert https://github.com/island-is/island.is/pull/10575 when we have properly configured english article unpublish behaviour
+  const categoryHref = article.category.slug
     ? linkResolver('articlecategory', [article.category.slug]).href
     : ''
   const organizationTitle = article.organization[0]?.title
