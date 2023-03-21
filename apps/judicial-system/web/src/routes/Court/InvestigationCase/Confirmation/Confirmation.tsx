@@ -1,6 +1,15 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
+import { Accordion, Box, Text } from '@island.is/island-ui/core'
+import {
+  CaseDecision,
+  CaseTransition,
+  completedCaseStates,
+  isAcceptingCaseDecision,
+  NotificationType,
+} from '@island.is/judicial-system/types'
+import * as constants from '@island.is/judicial-system/consts'
 import {
   BlueBox,
   CourtCaseInfo,
@@ -15,6 +24,7 @@ import {
   SigningModal,
   useRequestRulingSignature,
   UserContext,
+  PageHeader,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseCourtSubsections,
@@ -22,17 +32,11 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { core, titles } from '@island.is/judicial-system-web/messages'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { Accordion, Box, Text } from '@island.is/island-ui/core'
-import {
-  CaseDecision,
-  CaseTransition,
-  completedCaseStates,
-  isAcceptingCaseDecision,
-} from '@island.is/judicial-system/types'
-import * as constants from '@island.is/judicial-system/consts'
+import { RulingModifiedModal } from '@island.is/judicial-system-web/src/routes/Court/components'
 
 import { confirmation as strings } from './Confirmation.strings'
+
+type VisibleModal = 'none' | 'rulingModifiedModal' | 'signingModal'
 
 const Confirmation = () => {
   const {
@@ -42,22 +46,20 @@ const Confirmation = () => {
     caseNotFound,
   } = useContext(FormContext)
   const { formatMessage } = useIntl()
-  const [modalVisible, setModalVisible] = useState<boolean>(false)
+  const [modalVisible, setModalVisible] = useState<VisibleModal>('none')
 
   const { transitionCase } = useCase()
   const {
     requestRulingSignature,
     requestRulingSignatureResponse,
     isRequestingRulingSignature,
-  } = useRequestRulingSignature(workingCase.id, () => setModalVisible(true))
+  } = useRequestRulingSignature(workingCase.id, () =>
+    setModalVisible('signingModal'),
+  )
 
   const { user } = useContext(UserContext)
 
-  const handleNextButtonClick = async () => {
-    if (!workingCase) {
-      return
-    }
-
+  async function signRuling() {
     const shouldSign =
       completedCaseStates.includes(workingCase.state) ||
       (await transitionCase(
@@ -73,6 +75,19 @@ const Confirmation = () => {
     if (shouldSign) {
       requestRulingSignature()
     }
+  }
+
+  const handleNextButtonClick = async () => {
+    const isCorrectingRuling = workingCase.notifications?.some(
+      (notification) => notification.type === NotificationType.RULING,
+    )
+
+    if (isCorrectingRuling) {
+      setModalVisible('rulingModifiedModal')
+      return
+    }
+
+    await signRuling()
   }
 
   return (
@@ -169,12 +184,18 @@ const Confirmation = () => {
               }
             />
           </FormContentContainer>
-          {modalVisible && (
+          {modalVisible === 'rulingModifiedModal' && (
+            <RulingModifiedModal
+              onCancel={() => setModalVisible('none')}
+              onContinue={signRuling}
+            />
+          )}
+          {modalVisible === 'signingModal' && (
             <SigningModal
               workingCase={workingCase}
               requestRulingSignature={requestRulingSignature}
               requestRulingSignatureResponse={requestRulingSignatureResponse}
-              onClose={() => setModalVisible(false)}
+              onClose={() => setModalVisible('none')}
             />
           )}
         </>

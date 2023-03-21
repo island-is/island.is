@@ -62,7 +62,9 @@ export const overview = buildSection({
           {
             cards: ({ answers }: Application) =>
               (
-                ((answers.estate as unknown) as EstateInfo).estateMembers ?? []
+                ((answers.estate as unknown) as EstateInfo).estateMembers.filter(
+                  (member) => (member as any).enabled,
+                ) ?? []
               ).map((member) => ({
                 title: member.name,
                 description: [
@@ -96,14 +98,16 @@ export const overview = buildSection({
           },
           {
             cards: ({ answers }: Application) =>
-              (((answers.estate as unknown) as EstateInfo).assets ?? []).map(
-                (asset) => ({
-                  title: asset.description,
-                  description: [
-                    `${m.propertyNumber.defaultMessage}: ${asset.assetNumber}`,
-                  ],
-                }),
-              ),
+              (
+                ((answers.estate as unknown) as EstateInfo).assets.filter(
+                  (asset) => (asset as any).enabled,
+                ) ?? []
+              ).map((asset) => ({
+                title: asset.description,
+                description: [
+                  `${m.propertyNumber.defaultMessage}: ${asset.assetNumber}`,
+                ],
+              })),
           },
         ),
         buildDividerField({}),
@@ -152,16 +156,16 @@ export const overview = buildSection({
           },
           {
             cards: ({ answers }: Application) =>
-              (((answers.estate as unknown) as EstateInfo)?.vehicles ?? []).map(
-                (vehicle) => ({
-                  title: vehicle.description,
-                  description: [
-                    m.propertyNumber.defaultMessage +
-                      ': ' +
-                      vehicle.assetNumber,
-                  ],
-                }),
-              ),
+              (
+                ((answers.estate as unknown) as EstateInfo)?.vehicles.filter(
+                  (vehicle) => (vehicle as any).enabled,
+                ) ?? []
+              ).map((vehicle) => ({
+                title: vehicle.description,
+                description: [
+                  m.propertyNumber.defaultMessage + ': ' + vehicle.assetNumber,
+                ],
+              })),
           },
         ),
         buildDividerField({}),

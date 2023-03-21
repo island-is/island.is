@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { defineMessage } from 'react-intl'
 import { checkDelegation } from '@island.is/shared/utils'
+import { info } from 'kennitala'
 
 import { useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
@@ -21,6 +22,11 @@ import {
 import { spmm } from '../../lib/messages'
 import { NATIONAL_REGISTRY_FAMILY } from '../../lib/queries/getNationalRegistryFamily'
 import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
+import { formatNameBreaks } from '../../helpers/formatting'
+import {
+  FeatureFlagClient,
+  useFeatureFlagClient,
+} from '@island.is/react/feature-flags'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -36,7 +42,9 @@ const SubjectInfo = () => {
   useNamespaces('sp.family')
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
+  const [showTooltip, setShowTooltip] = useState(false)
   const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_USER)
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const { nationalRegistryUser } = data || {}
   const isDelegation = userInfo && checkDelegation(userInfo)
 
@@ -48,6 +56,22 @@ const SubjectInfo = () => {
     },
   )
   const { nationalRegistryFamily } = famData || {}
+  const isUserAdult = info(userInfo.profile.nationalId).age >= 18
+
+  /* Should show name breakdown tooltip? */
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        `isServicePortalNameBreakdownEnabled`,
+        false,
+      )
+      if (ffEnabled) {
+        setShowTooltip(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+  }, [])
+
   return (
     <>
       <IntroHeader title={userInfo.profile.name} intro={spmm.userInfoDesc} />
@@ -57,6 +81,15 @@ const SubjectInfo = () => {
           label={m.fullName}
           loading={loading}
           content={nationalRegistryUser?.fullName}
+          tooltip={
+            showTooltip
+              ? formatNameBreaks(nationalRegistryUser ?? undefined, {
+                  givenName: formatMessage(spmm.givenName),
+                  middleName: formatMessage(spmm.middleName),
+                  lastName: formatMessage(spmm.lastName),
+                })
+              : undefined
+          }
           editLink={{
             external: true,
             title: changeInNationalReg,
@@ -111,25 +144,29 @@ const SubjectInfo = () => {
           tooltip={formatMessage({
             id: 'sp.family:family-number-tooltip',
             defaultMessage:
-              'Fjölskyldunúmer er samtenging á milli einstaklinga á lögheimili, en veitir ekki upplýsingar um hverjir eru foreldrar barns eða forsjáraðilar.',
+              'Lögheimilistengsl er samtenging á milli einstaklinga á lögheimili, en veitir ekki upplýsingar um hverjir eru foreldrar barns eða forsjáraðilar.',
           })}
         />
-        <Divider />
-        <UserInfoLine
-          label={m.maritalStatus}
-          content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : nationalRegistryUser?.maritalStatus
-              ? formatMessage(
-                  natRegMaritalStatusMessageDescriptorRecord[
-                    nationalRegistryUser?.maritalStatus
-                  ],
-                )
-              : ''
-          }
-          loading={loading}
-        />
+        {isUserAdult ? (
+          <>
+            <Divider />
+            <UserInfoLine
+              label={m.maritalStatus}
+              content={
+                error
+                  ? formatMessage(dataNotFoundMessage)
+                  : nationalRegistryUser?.maritalStatus
+                  ? formatMessage(
+                      natRegMaritalStatusMessageDescriptorRecord[
+                        nationalRegistryUser?.maritalStatus
+                      ],
+                    )
+                  : ''
+              }
+              loading={loading}
+            />
+          </>
+        ) : null}
 
         <Divider />
         <UserInfoLine

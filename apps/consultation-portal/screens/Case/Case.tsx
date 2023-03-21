@@ -20,6 +20,7 @@ import Layout from '../../components/Layout/Layout'
 import { Advice } from '../../types/viewModels'
 import { SimpleCardSkeleton } from '../../components/Card'
 import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
+import { getTimeLineDate } from '../../utils/helpers/dateFormatter'
 
 const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
   // Remove following lines after connecting to API
@@ -35,7 +36,7 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
   return (
     <Layout
       seo={{
-        title: `Mál: ${chosenCase?.caseNumber}`,
+        title: `Mál: S-${chosenCase?.caseNumber}`,
         url: `mal/${chosenCase?.caseNumber}`,
       }}
     >
@@ -44,7 +45,7 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
           <Breadcrumbs
             items={[
               { title: 'Öll mál', href: '/' },
-              { title: `Mál nr. ${chosenCase?.caseNumber}` },
+              { title: `Mál nr. S-${chosenCase?.caseNumber}` },
             ]}
           />
         </Box>
@@ -64,7 +65,7 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
               <Divider />
               <CaseTimeline
                 status={chosenCase.statusName}
-                updatedDate={chosenCase.changed}
+                updatedDate={getTimeLineDate(chosenCase)}
               />
               <Divider />
               <Box paddingLeft={1}>
@@ -92,7 +93,7 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
                   {advices?.map((advice: Advice) => {
                     return <ReviewCard advice={advice} key={advice.number} />
                   })}
-                  <WriteReviewCard card={card} isLoggedIn={isLoggedIn} />
+                  <WriteReviewCard card={chosenCase} isLoggedIn={isLoggedIn} />
                 </Stack>
               </Box>
             </Stack>

@@ -9,6 +9,7 @@ import {
   Input,
   Text,
 } from '@island.is/island-ui/core'
+import { useEffect } from '@storybook/addons'
 
 interface Props extends FieldBaseProps {
   field: CustomField
@@ -19,7 +20,7 @@ type Country = { name: string; region: string }
 // already answered questions and other fields even
 const ExampleCountryField: FC<Props> = ({ error, field, application }) => {
   const { answers: formValue } = application
-  const { clearErrors, register } = useFormContext()
+  const { clearErrors, register, setValue } = useFormContext()
   const { id } = field
   const [options, setOptions] = useState<AsyncSearchOption[]>([])
   const [pending, setPending] = useState(false)
@@ -52,12 +53,17 @@ const ExampleCountryField: FC<Props> = ({ error, field, application }) => {
       })
   }
 
+  useEffect(() => {
+    setValue('person.age', age)
+  }, [age, setValue])
+
   return (
     <>
       <Text>
         We can easily implement custom fields that might only be used in a
         single application. You could render anything you like in these kinds of
-        fields.
+        fields. But do try to use the existing components and patterns as much
+        as you can
       </Text>
       <Box paddingTop={2}>
         <Controller
@@ -116,12 +122,9 @@ const ExampleCountryField: FC<Props> = ({ error, field, application }) => {
         label={'Name again'}
       />
       <Text>
-        {' '}
-        Finally, use hidden inputs to update form values with atypical UI
-        elements
+        Finally, use setValue to update form values with atypical UI elements
       </Text>
       <Button onClick={() => setAge(age + 1)}>+++Increment age+++ {age}</Button>
-      <input type="hidden" value={age} {...register('person.age')} />
     </>
   )
 }

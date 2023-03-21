@@ -61,7 +61,7 @@ export const InsuranceSection: FC<
       handleClick={onButtonClick}
     >
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+        <GridColumn span={['6/12']}>
           <Text variant="h4" color={noInsuranceError ? 'red600' : 'dark400'}>
             {formatMessage(overview.labels.insuranceTitle)}
           </Text>

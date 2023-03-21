@@ -3,6 +3,7 @@ import { Response } from 'express'
 
 import { Logger } from '@island.is/logging'
 
+import { nowFactory } from '../../../../factories'
 import { getRulingPdfAsBuffer } from '../../../../formatters'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { AwsS3Service } from '../../../aws-s3'
@@ -18,7 +19,6 @@ type GivenWhenThen = (
   caseId: string,
   theCase: Case,
   res: Response,
-  useSigned: boolean,
 ) => Promise<Then>
 
 describe('CaseController - Get ruling pdf', () => {
@@ -35,16 +35,11 @@ describe('CaseController - Get ruling pdf', () => {
     mockAwsS3Service = awsS3Service
     mockLogger = logger
 
-    givenWhenThen = async (
-      caseId: string,
-      theCase: Case,
-      res: Response,
-      useSigned: boolean,
-    ) => {
+    givenWhenThen = async (caseId: string, theCase: Case, res: Response) => {
       const then = {} as Then
 
       try {
-        await caseController.getRulingPdf(caseId, theCase, res, useSigned)
+        await caseController.getRulingPdf(caseId, theCase, res)
       } catch (error) {
         then.error = error as Error
       }
@@ -55,12 +50,11 @@ describe('CaseController - Get ruling pdf', () => {
 
   describe('AWS S3 lookup', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
+    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
     const res = {} as Response
-    const useSigned = true
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, theCase, res, useSigned)
+      await givenWhenThen(caseId, theCase, res)
     })
 
     it('should lookup pdf', () => {
@@ -72,16 +66,15 @@ describe('CaseController - Get ruling pdf', () => {
 
   describe('AWS S3 pdf returned', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
+    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
     const res = ({ end: jest.fn() } as unknown) as Response
     const pdf = {}
-    const useSigned = true
 
     beforeEach(async () => {
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
       mockGetObject.mockResolvedValueOnce(pdf)
 
-      await givenWhenThen(caseId, theCase, res, useSigned)
+      await givenWhenThen(caseId, theCase, res)
     })
 
     it('should return pdf', () => {
@@ -91,16 +84,15 @@ describe('CaseController - Get ruling pdf', () => {
 
   describe('AWS S3 lookup fails', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
+    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
     const res = {} as Response
     const error = new Error('Some ignored error')
-    const useSigned = true
 
     beforeEach(async () => {
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
       mockGetObject.mockRejectedValueOnce(error)
 
-      await givenWhenThen(caseId, theCase, res, useSigned)
+      await givenWhenThen(caseId, theCase, res)
     })
 
     it('should info log the failure', () => {
@@ -115,15 +107,14 @@ describe('CaseController - Get ruling pdf', () => {
 
   describe('pdf generated', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
+    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
     const res = {} as Response
-    const useSigned = true
 
     beforeEach(async () => {
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
       mockGetObject.mockRejectedValueOnce(new Error('Some ignored error'))
 
-      await givenWhenThen(caseId, theCase, res, useSigned)
+      await givenWhenThen(caseId, theCase, res)
     })
 
     it('should generate pdf', () => {
@@ -136,15 +127,14 @@ describe('CaseController - Get ruling pdf', () => {
 
   describe('pdf generated', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
+    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
     const res = {} as Response
-    const useSigned = true
 
     beforeEach(async () => {
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
       mockGetObject.mockRejectedValueOnce(new Error('Some ignored error'))
 
-      await givenWhenThen(caseId, theCase, res, useSigned)
+      await givenWhenThen(caseId, theCase, res)
     })
 
     it('should generate pdf', () => {
@@ -159,10 +149,9 @@ describe('CaseController - Get ruling pdf', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const res = {} as Response
-    const useSigned = false
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, theCase, res, useSigned)
+      await givenWhenThen(caseId, theCase, res)
     })
 
     it('should generate pdf', () => {
@@ -175,10 +164,9 @@ describe('CaseController - Get ruling pdf', () => {
 
   describe('generated pdf returned', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
+    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
     const res = ({ end: jest.fn() } as unknown) as Response
     const pdf = {}
-    const useSigned = true
 
     beforeEach(async () => {
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
@@ -186,7 +174,7 @@ describe('CaseController - Get ruling pdf', () => {
       const getMock = getRulingPdfAsBuffer as jest.Mock
       getMock.mockResolvedValueOnce(pdf)
 
-      await givenWhenThen(caseId, theCase, res, useSigned)
+      await givenWhenThen(caseId, theCase, res)
     })
 
     it('should return pdf', () => {
@@ -196,10 +184,9 @@ describe('CaseController - Get ruling pdf', () => {
 
   describe('pdf generation fails', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
+    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
     let then: Then
     const res = {} as Response
-    const useSigned = true
 
     beforeEach(async () => {
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
@@ -207,7 +194,7 @@ describe('CaseController - Get ruling pdf', () => {
       const getMock = getRulingPdfAsBuffer as jest.Mock
       getMock.mockRejectedValueOnce(new Error('Some error'))
 
-      then = await givenWhenThen(caseId, theCase, res, useSigned)
+      then = await givenWhenThen(caseId, theCase, res)
     })
 
     it('should throw Error', () => {
