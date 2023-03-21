@@ -115,7 +115,6 @@ export const CAPITALNUMBERS = {
 }
 
 export const CEMETRYCARETAKER = {
-  caretaking: 'cemetryCaretaker.caretaking',
   nationalId: 'cemetryCaretaker.nationalId',
   name: 'cemetryCaretaker.name',
   role: 'cemetryCaretaker.role',
