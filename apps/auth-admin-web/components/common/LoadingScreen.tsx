@@ -1,6 +1,6 @@
 import React from 'react'
 
-export const LoadingScreen = ({}) => (
+export const LoadingScreen = () => (
   <div className="client">
     <div className="client__wrapper">
       <div className="client__container">
