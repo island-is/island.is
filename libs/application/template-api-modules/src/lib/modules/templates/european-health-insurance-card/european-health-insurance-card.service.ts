@@ -18,8 +18,6 @@ import {
 import { TemplateApiModuleActionProps } from '../../../types'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 
-// TODO: move to shared location
-
 @Injectable()
 export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
   constructor(

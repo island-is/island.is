@@ -13,7 +13,7 @@ export const EhicClientConfig = defineConfig<z.infer<typeof schema>>({
   load(env) {
     return {
       scope: [SjukraScope.europeanHealthInsuranceCard],
-      // TODO: SET this to
+      // TODO: SET this to X-ROAD path
       xRoadServicePath: 'https://midgardur-test.sjukra.is/ehic',
       // xRoadServicePath: env.required(
       //   'EHIC_XROAD_PROVIDER_ID',
