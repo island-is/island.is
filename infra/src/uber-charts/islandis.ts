@@ -224,5 +224,4 @@ export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   userNotificationWorkerService,
   contentfulEntryTagger,
   searchIndexer,
-  contentfulApps,
 ]
