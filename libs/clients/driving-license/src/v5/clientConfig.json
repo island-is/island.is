@@ -12,9 +12,7 @@
   "paths": {
     "/api/drivinglicense/v5": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Get for person driver licence",
         "operationId": "GetCurrentLicenseV5",
         "parameters": [
@@ -93,9 +91,7 @@
     },
     "/api/drivinglicense/v5/digitallicensecreated": {
       "post": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Create record of digital licence created",
         "parameters": [
           {
@@ -156,9 +152,7 @@
     },
     "/api/drivinglicense/v5/canapplyfor/{category}/full": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Check if person can apply for full drivers license for a specific category",
         "parameters": [
           {
@@ -225,9 +219,7 @@
     },
     "/api/drivinglicense/v5/applications/new/{category}": {
       "post": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Apply for drivers license for a category",
         "parameters": [
           {
@@ -319,9 +311,7 @@
     },
     "/api/drivinglicense/v5/applications/new/collaborative": {
       "post": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Apply for new collaborative of old license (Samrit)",
         "parameters": [
           {
@@ -404,9 +394,7 @@
     },
     "/api/drivinglicense/v5/deprivation": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Get for current deprivation",
         "parameters": [
           {
@@ -464,9 +452,7 @@
     },
     "/api/drivinglicense/v5/applications/new/temporary": {
       "post": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Apply for drivers license for a category",
         "parameters": [
           {
@@ -546,9 +532,7 @@
     },
     "/api/drivinglicense/v5/applications/temporarytestfinished": {
       "post": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Endpoint to tell system that person has finished learning for temporary license and license can be ordered",
         "description": "Checks\r\n- Does person exist in national registry\r\n- Is the liecense that has not been ordered\r\n- Is person at least 17 years old\r\n- Does he have a deprivation\r\n- Does he have a quality marked picture\r\n- Does he have a quality marked signature",
         "parameters": [
@@ -629,9 +613,7 @@
     },
     "/api/drivinglicense/v5/penaltypoints": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Get traffic violation points for person",
         "parameters": [
           {
@@ -689,9 +671,7 @@
     },
     "/api/drivinglicense/v5/all": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Get for all persons driver licences",
         "parameters": [
           {
@@ -777,9 +757,7 @@
     },
     "/api/drivinglicense/v5/hasteachingrights": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Check if person has rights to be a driving instructor",
         "parameters": [
           {
@@ -840,9 +818,7 @@
     },
     "/api/drivinglicense/v5/canapplyfor/temporary": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Check if person can apply for temporary B drivers license",
         "description": "Checks :\r\n - Is in national registry\r\n - Does not have B category license already\r\n - Has a deprivation exeeding next 30 days\r\n - Is at least 16 years of age",
         "parameters": [
@@ -901,9 +877,7 @@
     },
     "/api/drivinglicense/v5/hasqualityphoto": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Check if person has quality marked photo",
         "parameters": [
           {
@@ -964,9 +938,7 @@
     },
     "/api/drivinglicense/v5/hasqualitysignature": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Check if person has quality marked photo",
         "parameters": [
           {
@@ -1027,9 +999,7 @@
     },
     "/api/drivinglicense/v5/getqualityphoto": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Get quality marked photo for person",
         "parameters": [
           {
@@ -1093,9 +1063,7 @@
     },
     "/api/drivinglicense/v5/getqualitysignature": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Get quality marked photo for person",
         "parameters": [
           {
@@ -1159,9 +1127,7 @@
     },
     "/api/drivinglicense/v5/hasfinisheddrivingschool3": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Has person finised driving school 3",
         "parameters": [
           {
@@ -1218,9 +1184,7 @@
     },
     "/api/drivinglicense/v5/drivingassessment": {
       "post": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Create a new driver assessment",
         "parameters": [
           {
@@ -1281,9 +1245,7 @@
         }
       },
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Check if person has driving assessment",
         "parameters": [
           {
@@ -1361,9 +1323,7 @@
     },
     "/api/drivinglicense/v5/drivinginstructors": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Get driving teachers",
         "parameters": [
           {
@@ -1422,9 +1382,7 @@
     },
     "/api/drivinglicense/v5/{licenseid}/status": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Check current license status",
         "operationId": "GetLicenseById",
         "parameters": [
@@ -1484,9 +1442,7 @@
     },
     "/api/drivinglicense/v5/categoryvalid/{category}/{drivinglicenseid}": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Check status of license and category",
         "parameters": [
           {
@@ -1563,9 +1519,7 @@
     },
     "/api/drivinglicense/v5/applications/unfinished/{categoryid}": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Get latest unfinished/unpublished license with requested categorie and person id",
         "parameters": [
           {
@@ -1632,9 +1586,7 @@
     },
     "/api/drivinglicense/v5/applications/practicepermit": {
       "post": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Post practice permit",
         "parameters": [
           {
@@ -1722,9 +1674,7 @@
     },
     "/api/drivinglicense/v5/applications/canapplyfor/practicepermit": {
       "post": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Post practice permit",
         "parameters": [
           {
@@ -2384,11 +2334,7 @@
         "description": "Post new collaborative\r\nCopies old license, marks old license as lost"
       },
       "PostNewDrivingAssessment": {
-        "required": [
-          "dateOfAssessment",
-          "instructorSSN",
-          "ssn"
-        ],
+        "required": ["dateOfAssessment", "instructorSSN", "ssn"],
         "type": "object",
         "properties": {
           "ssn": {
@@ -2415,10 +2361,7 @@
         "description": "Post new driving assessment"
       },
       "PostNewFinalLicense": {
-        "required": [
-          "authorityNumber",
-          "personIdNumber"
-        ],
+        "required": ["authorityNumber", "personIdNumber"],
         "type": "object",
         "properties": {
           "personIdNumber": {
@@ -2458,11 +2401,7 @@
         "description": "Model class to post new final license"
       },
       "PostPracticePermit": {
-        "required": [
-          "dateFrom",
-          "studentSSN",
-          "userId"
-        ],
+        "required": ["dateFrom", "studentSSN", "userId"],
         "type": "object",
         "properties": {
           "userId": {
@@ -2485,11 +2424,7 @@
         "description": "Post practice permit"
       },
       "PostTeachingDoneForTempLicense": {
-        "required": [
-          "dateCompleted",
-          "driverLicenseId",
-          "ssn"
-        ],
+        "required": ["dateCompleted", "driverLicenseId", "ssn"],
         "type": "object",
         "properties": {
           "ssn": {
