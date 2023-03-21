@@ -1,6 +1,6 @@
 import React, { BaseSyntheticEvent, FC } from 'react'
 import { Control, Controller, FieldError } from 'react-hook-form'
-import { FieldValues } from 'react-hook-form/dist/types/form'
+import { FieldValues } from 'react-hook-form/dist/types'
 import { DeepMap } from 'react-hook-form/dist/types/utils'
 import * as kennitala from 'kennitala'
 
@@ -253,7 +253,7 @@ const RecyclingCompanyForm: FC<RecyclingCompanyForm> = ({
               <Controller
                 name="active"
                 control={control}
-                render={({ onChange, value, name }) => {
+                render={({ field: { onChange, value, name } }) => {
                   return (
                     <Checkbox
                       large

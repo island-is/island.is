@@ -29,24 +29,20 @@ export const VehicleRadioField: FC<
   VehicleSearchFieldProps & FieldBaseProps
 > = ({ currentVehicleList, application, errors }) => {
   const { formatMessage } = useLocale()
-  const { register, setValue } = useFormContext()
+  const { setValue } = useFormContext()
 
   const [plate, setPlate] = useState<string>(
     getValueViaPath(application.answers, 'pickVehicle.plate', '') as string,
-  )
-  const [color, setColor] = useState<string | undefined>(
-    getValueViaPath(application.answers, 'pickVehicle.color', undefined) as
-      | string
-      | undefined,
   )
 
   const onRadioControllerSelect = (s: string) => {
     const currentVehicle = currentVehicleList[parseInt(s, 10)]
     setPlate(currentVehicle.permno || '')
-    setColor(currentVehicle.color || undefined)
     setValue('vehicle.plate', currentVehicle.permno)
     setValue('vehicle.type', currentVehicle.make)
     setValue('vehicle.date', new Date().toISOString().substring(0, 10))
+    setValue('pickVehicle.plate', currentVehicle.permno || '')
+    setValue('pickVehicle.color', currentVehicle.color || undefined)
   }
 
   const vehicleOptions = (
@@ -133,18 +129,6 @@ export const VehicleRadioField: FC<
         options={vehicleOptions(
           currentVehicleList as VehiclesCurrentVehicleWithOwnerchangeChecks[],
         )}
-      />
-      <input
-        type="hidden"
-        value={plate}
-        ref={register({ required: true })}
-        name="pickVehicle.plate"
-      />
-      <input
-        type="hidden"
-        value={color}
-        ref={register({ required: true })}
-        name="pickVehicle.color"
       />
       {plate.length === 0 && errors && errors.pickVehicle && (
         <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />

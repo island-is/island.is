@@ -1,12 +1,10 @@
 import React from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import {
-  Defendant,
-  SessionArrangements,
-} from '@island.is/judicial-system/types'
+import { Defendant } from '@island.is/judicial-system/types'
 import { formatDOB } from '@island.is/judicial-system/formatters'
 
+import { SessionArrangements } from '../../graphql/schema'
 import * as styles from './InfoCard.css'
 
 interface Defender {
@@ -38,7 +36,7 @@ const UniqueDefenders: React.FC<UniqueDefendersProps> = (props) => {
     <>
       <Text variant="h4">
         {defenders[0].sessionArrangement ===
-        SessionArrangements.ALL_PRESENT_SPOKESPERSON
+        SessionArrangements.AllPresentSpokesperson
           ? 'Talsmaður'
           : `Verj${uniqueDefenders.length > 1 ? 'endur' : 'andi'}`}
       </Text>

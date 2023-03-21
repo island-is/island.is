@@ -16,7 +16,10 @@ interface PropTypes {
 
 export const Income = ({ getSum }: PropTypes): JSX.Element => {
   const { formatMessage } = useLocale()
-  const { errors, clearErrors } = useFormContext()
+  const {
+    formState: { errors },
+    clearErrors,
+  } = useFormContext()
 
   const onInputChange = debounce((fieldId: string) => {
     getSum()

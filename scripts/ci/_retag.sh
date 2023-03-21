@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Image to check: $IMAGE"
+
 set -euo pipefail
 
 # This is a script to re-tag a Docker image without pulling the pushing the image but rather directly in the registry.

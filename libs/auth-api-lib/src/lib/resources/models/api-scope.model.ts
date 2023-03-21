@@ -242,7 +242,7 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
   readonly modified?: Date | null
 
   @BelongsTo(() => ApiScopeGroup)
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: () => ApiScopeGroup })
   group?: ApiScopeGroup
 
   @HasMany(() => DelegationScope)

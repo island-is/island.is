@@ -13,6 +13,7 @@ export interface Case {
   processBegins?: string
   processEnds?: string
   created?: string
+  summaryDate?: string
 }
 
 export interface UserAdvice {
@@ -59,6 +60,12 @@ export interface ArrOfTypes {
   institutions: { [key: string]: string }
   caseStatuses: { [key: string]: string }
   caseTypes: { [key: string]: string }
+}
+
+export interface ArrOfStatistics {
+  casesInReview?: number
+  totalAdvices?: number
+  totalCases?: number
 }
 
 export interface ArrOfTypesForSubscriptions {

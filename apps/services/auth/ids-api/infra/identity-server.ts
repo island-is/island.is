@@ -79,6 +79,11 @@ export const serviceSetup = (services: {
       },
       Application__MinCompletionPortThreads: '10',
       NO_UPDATE_NOTIFIER: 'true',
+      ContentfulSettings__BaseAddress: {
+        dev: 'https://preview.contentful.com',
+        staging: 'https://cdn.contentful.com',
+        prod: 'https://cdn.contentful.com',
+      },
     })
     .secrets({
       IdentityServer__LicenseKey: '/k8s/identity-server/LicenseKey',

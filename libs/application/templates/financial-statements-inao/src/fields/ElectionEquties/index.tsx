@@ -28,7 +28,12 @@ export const ElectionEquities: FC<FieldBaseProps> = ({
 }): JSX.Element => {
   const { formatMessage } = useLocale()
 
-  const { errors, clearErrors, getValues, setError } = useFormContext()
+  const {
+    formState: { errors },
+    clearErrors,
+    getValues,
+    setError,
+  } = useFormContext()
 
   const [getTotalEquity, totalEquity] = useTotals(
     EQUITIESANDLIABILITIESIDS.equityPrefix,
