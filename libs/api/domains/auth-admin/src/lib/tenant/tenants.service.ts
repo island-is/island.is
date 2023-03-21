@@ -151,13 +151,13 @@ export class TenantsService {
   async getTenantById(id: string, user: User): Promise<Tenant> {
     const tenants = await Promise.all([
       this.adminDevApiWithAuth(user)
-        ?.meTenantsControllerFindById({ id })
+        ?.meTenantsControllerFindById({ tenantId: id })
         .catch(this.handleError.bind(this)),
       this.adminStagingApiWithAuth(user)
-        ?.meTenantsControllerFindById({ id })
+        ?.meTenantsControllerFindById({ tenantId: id })
         .catch(this.handleError.bind(this)),
       this.adminProdApiWithAuth(user)
-        ?.meTenantsControllerFindById({ id })
+        ?.meTenantsControllerFindById({ tenantId: id })
         .catch(this.handleError.bind(this)),
     ])
 
