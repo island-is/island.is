@@ -26,7 +26,7 @@ const HomeCircumstancesForm = ({ application, errors }: FAFieldBaseProps) => {
 
   const { answers } = application
 
-  const { setValue, getValues, clearErrors } = useFormContext()
+  const { setValue, watch, clearErrors } = useFormContext()
 
   return (
     <>
@@ -81,7 +81,7 @@ const HomeCircumstancesForm = ({ application, errors }: FAFieldBaseProps) => {
         className={cn({
           [`${styles.inputContainer}`]: true,
           [`${styles.inputAppear}`]:
-            getValues(typeInput.id) === HomeCircumstances.OTHER,
+            watch(typeInput.id) === HomeCircumstances.OTHER,
         })}
       >
         <Controller

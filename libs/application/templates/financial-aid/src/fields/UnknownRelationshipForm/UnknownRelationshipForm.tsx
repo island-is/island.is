@@ -21,21 +21,21 @@ const errorIdForSpouse = 'relationshipStatus'
 
 const ValidationCheck = (errors: ErrorSchema, type: validationType) => {
   const { formatMessage } = useIntl()
-  const { getValues } = useFormContext()
+  const { watch } = useFormContext()
   switch (type) {
     case 'email':
       return errors.relationshipStatus !== undefined &&
-        !isValidEmail(getValues(`${errorIdForSpouse}.spouseEmail`))
+        !isValidEmail(watch(`${errorIdForSpouse}.spouseEmail`))
         ? formatMessage(error.validation.email)
         : undefined
     case 'nationalId':
       return errors.relationshipStatus !== undefined &&
-        !isValidNationalId(getValues(`${errorIdForSpouse}.spouseNationalId`))
+        !isValidNationalId(watch(`${errorIdForSpouse}.spouseNationalId`))
         ? formatMessage(error.validation.nationalId)
         : undefined
     case 'approveItems':
       return errors.relationshipStatus !== undefined &&
-        getValues(`${errorIdForSpouse}.spouseApproveTerms`)?.length !== 1
+        watch(`${errorIdForSpouse}.spouseApproveTerms`)?.length !== 1
         ? formatMessage(error.validation.approveSpouse)
         : undefined
   }
@@ -44,7 +44,7 @@ const ValidationCheck = (errors: ErrorSchema, type: validationType) => {
 const UnknownRelationshipForm = ({ errors, application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { answers } = application
-  const { clearErrors, getValues } = useFormContext()
+  const { clearErrors, getValues, watch } = useFormContext()
 
   const typeInput = {
     id: 'relationshipStatus.unregisteredCohabitation',
@@ -99,8 +99,7 @@ const UnknownRelationshipForm = ({ errors, application }: FAFieldBaseProps) => {
       <Box
         className={cn({
           [`${styles.inputContainer}`]: true,
-          [`${styles.formAppear}`]:
-            getValues(typeInput.id) === ApproveOptions.Yes,
+          [`${styles.formAppear}`]: watch(typeInput.id) === ApproveOptions.Yes,
         })}
       >
         <Box marginBottom={[2, 2, 3]}>

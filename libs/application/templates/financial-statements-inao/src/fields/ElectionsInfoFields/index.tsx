@@ -31,8 +31,8 @@ export const ElectionsInfoFields = ({
   const clientType = getCurrentUserType(answers, externalData)
 
   const [state, dispatch] = useReducer(electionReducer, electionInitialState)
-  const { getValues, setValue } = useFormContext()
-  const values = getValues()
+  const { watch, setValue } = useFormContext()
+  const selectElection = watch('election.selectElection')
   const { data, loading, error } = useQuery(getAvailableElections)
 
   const { formatMessage } = useLocale()
@@ -78,8 +78,7 @@ export const ElectionsInfoFields = ({
   )
 
   const getDefaultElection = useCallback(() => {
-    const selectedElectionId =
-      values?.election?.selectElection || defaultElections
+    const selectedElectionId = selectElection || defaultElections
 
     const currentElection = options?.find(
       (option) => option.value === selectedElectionId,
@@ -87,12 +86,7 @@ export const ElectionsInfoFields = ({
     getElectionInfo(currentElection?.value)
 
     return currentElection?.label || ''
-  }, [
-    defaultElections,
-    values?.election?.selectElection,
-    options,
-    getElectionInfo,
-  ])
+  }, [defaultElections, selectElection, options, getElectionInfo])
 
   return (
     <Fragment>

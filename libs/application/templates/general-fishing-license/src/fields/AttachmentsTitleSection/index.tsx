@@ -7,8 +7,8 @@ import { useLocale } from '@island.is/localization'
 import { fishingLicenseFurtherInformation } from '../../lib/messages'
 
 export const AttachmentsTitleSection: FC<FieldBaseProps> = () => {
-  const { getValues } = useFormContext()
-  const description = getValues(ATTACHMENT_INFO_FIELD_ID)
+  const { watch } = useFormContext()
+  const description = watch(ATTACHMENT_INFO_FIELD_ID)
   const { formatMessage } = useLocale()
   return (
     <Box marginTop={4} marginBottom={2}>

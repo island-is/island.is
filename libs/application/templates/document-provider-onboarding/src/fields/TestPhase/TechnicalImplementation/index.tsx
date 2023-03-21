@@ -22,7 +22,7 @@ const TestPhaseInfoScreen: FC<FieldBaseProps> = ({ application }) => {
   const {
     setValue,
     formState: { errors },
-    getValues,
+    watch,
   } = useFormContext()
 
   return (
@@ -76,10 +76,7 @@ const TestPhaseInfoScreen: FC<FieldBaseProps> = ({ application }) => {
                   formatMessage,
                 )}
                 large
-                hasError={
-                  errors.technicalAnswer &&
-                  getValues('technicalAnswer') === false
-                }
+                hasError={errors.technicalAnswer && value === false}
                 errorMessage={
                   errors && getErrorViaPath(errors, 'technicalAnswer')
                 }

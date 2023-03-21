@@ -26,7 +26,7 @@ const EmploymentForm = ({ application, errors }: FAFieldBaseProps) => {
 
   const { answers } = application
 
-  const { setValue, getValues, clearErrors } = useFormContext()
+  const { setValue, watch, clearErrors } = useFormContext()
 
   return (
     <>
@@ -61,8 +61,7 @@ const EmploymentForm = ({ application, errors }: FAFieldBaseProps) => {
       <Box
         className={cn({
           [`${styles.inputContainer}`]: true,
-          [`${styles.inputAppear}`]:
-            getValues(typeInput.id) === Employment.OTHER,
+          [`${styles.inputAppear}`]: watch(typeInput.id) === Employment.OTHER,
         })}
       >
         <Controller

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import {
   Box,
   GridColumn,
@@ -24,14 +24,14 @@ export const KeyNumbersCapital = () => {
     getValues,
   } = useFormContext()
 
-  const getTotalCapital = () => {
+  const getTotalCapital = useCallback(() => {
     const values = getValues()
 
     const income = getValueViaPath(values, CAPITALNUMBERS.capitalIncome) || '0'
     const expense = getValueViaPath(values, CAPITALNUMBERS.capitalCost) || '0'
     const total = Number(income) - Number(expense)
     setTotalCapital(total)
-  }
+  }, [getValues, setTotalCapital])
 
   useEffect(() => {
     getTotalCapital()

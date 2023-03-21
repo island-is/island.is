@@ -21,7 +21,7 @@ const StudentForm = ({ errors, application }: FAFieldBaseProps) => {
     id: 'student.custom',
     error: errors?.student?.custom,
   }
-  const { clearErrors, getValues } = useFormContext()
+  const { clearErrors, watch } = useFormContext()
 
   return (
     <>
@@ -47,8 +47,7 @@ const StudentForm = ({ errors, application }: FAFieldBaseProps) => {
       <Box
         className={cn({
           [`${styles.inputContainer}`]: true,
-          [`${styles.inputAppear}`]:
-            getValues(typeInput.id) === ApproveOptions.Yes,
+          [`${styles.inputAppear}`]: watch(typeInput.id) === ApproveOptions.Yes,
         })}
       >
         <InputController

@@ -36,11 +36,11 @@ const MissingFiles = ({
   const isSpouse = getValueViaPath(field as RecordObject<any>, 'props.isSpouse')
 
   const { formatMessage } = useIntl()
-  const { setValue, getValues } = useFormContext()
+  const { setValue, getValues, watch } = useFormContext()
 
   const fileType: UploadFileType = 'otherFiles'
   const commentType = 'fileUploadComment'
-  const files = getValues(fileType)
+  const files = watch(fileType)
 
   const { uploadFiles } = useFileUpload(files, application.id)
 

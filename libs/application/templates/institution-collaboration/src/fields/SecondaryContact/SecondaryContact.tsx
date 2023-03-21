@@ -10,10 +10,10 @@ import { institutionApplicationMessages as m } from '../../lib/messages'
 import { useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 const SecondaryContact: FC<FieldBaseProps> = ({ field, application }) => {
-  const { setValue, getValues } = useFormContext()
+  const { setValue, watch } = useFormContext()
   const { formatMessage } = useLocale()
   const { id, title } = field
-  const isEnabled = getValues('hasSecondaryContact') === YES
+  const isEnabled = watch('hasSecondaryContact') === YES
 
   const enableSecondaryContact = () => {
     setValue('hasSecondaryContact', YES)

@@ -170,7 +170,6 @@ export const CemetryCaretaker: FC<FieldBaseProps<FinancialStatementsInao>> = ({
   const { id } = field
 
   const { getValues, setError } = useFormContext()
-  const values = getValues()
 
   const { fields, append, remove } = useFieldArray({
     name: `${id}.caretakers`,
@@ -194,7 +193,7 @@ export const CemetryCaretaker: FC<FieldBaseProps<FinancialStatementsInao>> = ({
     setBeforeSubmitCallback(async () => {
       const actors = application.applicantActors
       const currentActor: string = actors[actors.length - 1]
-      const allMembers = values.cemetryCaretaker
+      const allMembers = getValues().cemetryCaretaker
       const { careTakers, boardMembers } = getBoardmembersAndCaretakers(
         allMembers,
       )

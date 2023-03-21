@@ -10,7 +10,7 @@ import FileList from '../FileList/FileList'
 
 const MissingFilesConfirmation = ({ application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
-  const { getValues } = useFormContext()
+  const { watch } = useFormContext()
 
   const fileType: UploadFileType = 'otherFiles'
   const commentType = 'fileUploadComment'
@@ -23,12 +23,12 @@ const MissingFilesConfirmation = ({ application }: FAFieldBaseProps) => {
 
       <Box>
         <FileList
-          files={getValues(fileType)}
+          files={watch(fileType)}
           applicationSystemId={application.id}
         />
       </Box>
 
-      {getValues(commentType) && (
+      {watch(commentType) && (
         <Box
           background="purple100"
           paddingX={4}
@@ -38,7 +38,7 @@ const MissingFilesConfirmation = ({ application }: FAFieldBaseProps) => {
           <Text variant="eyebrow" marginBottom={1}>
             {formatMessage(missingFiles.confirmation.commentTitle)}
           </Text>
-          <Text>{getValues(commentType)}</Text>
+          <Text>{watch(commentType)}</Text>
         </Box>
       )}
 

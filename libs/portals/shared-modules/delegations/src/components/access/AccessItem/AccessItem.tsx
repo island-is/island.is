@@ -38,7 +38,7 @@ export const AccessItem = ({
   validityPeriod,
 }: PropTypes) => {
   const { lang, formatMessage } = useLocale()
-  const { setValue, getValues } = useFormContext()
+  const { setValue, getValues, watch } = useFormContext()
   const { md, lg } = useBreakpoint()
   const grantTranslation = formatMessage(m.permission)
 
@@ -116,6 +116,8 @@ export const AccessItem = ({
     })
   }
 
+  console.log('Rendering', apiScopes[0].name)
+
   return (
     <>
       {apiScopes.map((item, index) => {
@@ -136,8 +138,8 @@ export const AccessItem = ({
             : undefined
           : authDelegation.scopes.find((scope) => scope.name === item.name)
 
-        const checkboxValue = getValues(`${item.model}.name`)
-        const dateValue = getValues(`${item.model}.validTo`)
+        const checkboxValue = watch(`${item.model}.name`)
+        const dateValue = watch(`${item.model}.validTo`)
 
         // Either use the existing date value or newly modified date value
         const formattedDate =
