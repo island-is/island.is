@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import { isValidNumber } from 'libphonenumber-js'
 import { m } from './messages'
 
 const careerHistoryCompaniesValidation = (data: any) => {
@@ -34,13 +34,9 @@ export const ExampleSchema = z.object({
       .refine((n) => n && !kennitala.isValid(n), {
         params: m.dataSchemeNationalId,
       }),
-    phoneNumber: z.string().refine(
-      (p) => {
-        const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-        return phoneNumber && phoneNumber.isValid()
-      },
-      { params: m.dataSchemePhoneNumber },
-    ),
+    phoneNumber: z
+      .string()
+      .refine(isValidNumber, { params: m.dataSchemePhoneNumber }),
     email: z.string().email(),
   }),
   careerHistory: z.enum(['yes', 'no']).optional(),
