@@ -90,7 +90,7 @@ export const PhoneInputController = forwardRef(
           hasError={error !== undefined}
           errorMessage={error}
           required={required}
-          disableDropdown={isPhoneInputV2Enabled}
+          disableDropdown={!isPhoneInputV2Enabled}
           ref={ref}
           onFormatValueChange={onChange}
           allowedCountryCodes={allowedCountryCodes}
