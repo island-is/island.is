@@ -1,4 +1,4 @@
-import { ReactElement } from 'react'
+import React from 'react'
 import { Button } from '../Button/Button'
 import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
@@ -28,7 +28,7 @@ interface DialogPromptProps {
    * Element that opens the dialog.
    * It will be forwarded neccessery props for a11y and event handling.
    */
-  disclosureElement: ReactElement
+  disclosureElement: React.ReactElement
   /**
    * User presses confirm callback
    */
@@ -52,7 +52,7 @@ interface DialogPromptProps {
   /**
    * Image to be displayed in the dialog
    */
-  img?: ReactElement
+  img?: React.ReactElement
 }
 
 export const DialogPrompt = ({
