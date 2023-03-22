@@ -1,5 +1,6 @@
 import { expect, Page } from '@playwright/test'
 import { JUDICIAL_SYSTEM_HOME_URL, urls } from './urls'
+import { debug } from './utils'
 
 export type CognitoCreds = {
   username: string
@@ -54,7 +55,7 @@ export async function idsLogin(
   })
 
   // Handle delegation on login
-  if (await page.url().startsWith(urls.authUrl)) {
+  if (page.url().startsWith(urls.authUrl)) {
     debug('Still on auth site')
     const delegations = page.locator('button[name="SelectedNationalId"]')
     await expect(delegations).toHaveCountGreaterThan(0)
