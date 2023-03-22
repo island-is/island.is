@@ -349,6 +349,7 @@ api:
     - 'nginx-ingress-external'
     - 'api-catalogue'
     - 'application-system'
+    - 'consultation-portal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2300,6 +2301,7 @@ web:
     - 'nginx-ingress-external'
     - 'api-catalogue'
     - 'application-system'
+    - 'consultation-portal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:

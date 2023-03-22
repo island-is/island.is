@@ -359,6 +359,7 @@ api:
     - 'nginx-ingress-external'
     - 'api-catalogue'
     - 'application-system'
+    - 'consultation-portal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -853,6 +854,7 @@ application-system-form:
 consultation-portal:
   enabled: true
   env:
+    API_URL: 'http://web-api.islandis.svc.cluster.local'
     BASEPATH: '/consultation-portal'
     ENVIRONMENT: 'dev'
     NODE_OPTIONS: '--max-old-space-size=464'
@@ -2606,6 +2608,7 @@ web:
     - 'nginx-ingress-external'
     - 'api-catalogue'
     - 'application-system'
+    - 'consultation-portal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
