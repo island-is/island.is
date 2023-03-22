@@ -2,6 +2,7 @@ import '@island.is/infra-tracing'
 import type { Server } from 'http'
 import { NestFactory } from '@nestjs/core'
 import cookieParser from 'cookie-parser'
+import bodyParser from 'body-parser'
 import {
   INestApplication,
   Type,
@@ -71,6 +72,13 @@ type RunServerOptions = {
    * Enables NestJS versioning.
    */
   enableVersioning?: boolean
+
+  /**
+   * Controls the maximum request json body size. If this is a number, then the
+   * value specifies the number of bytes; if it is a string, the value is passed
+   * to the bytes library for parsing. Defaults to '100kb'.
+   */
+  jsonBodyLimit?: number | string
 }
 
 export const createApp = async ({
@@ -116,6 +124,10 @@ export const createApp = async ({
 
   app.use(httpRequestDurationMiddleware())
   app.use(cookieParser())
+
+  if (options.jsonBodyLimit) {
+    app.use(bodyParser.json({ limit: options.jsonBodyLimit }))
+  }
 
   return app
 }
