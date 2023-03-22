@@ -41,7 +41,6 @@
 /libs/service-portal/education-degree/                                                                   @island-is/juni
 /libs/service-portal/education-license/                                                                  @island-is/juni
 /libs/service-portal/education-student-assessment/                                                       @island-is/juni @island-is/norda
-/libs/contentful-extensions/mideind-translation/                                                         @island-is/juni
 /libs/contentful-extensions/parent-slug/                                                                 @island-is/juni
 /libs/clients/driving-license/                                                                           @island-is/juni
 /libs/clients/judicial-administration/                                                                   @island-is/juni
