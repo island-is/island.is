@@ -37,4 +37,4 @@ export const serviceSetup = (): ServiceBuilder<'regulations-admin-backend'> =>
     .xroad(Base, Client, NationalRegistry)
     .readiness('/liveness')
     .liveness('/liveness')
-    .grantNamespaces('islandis')
+    .grantNamespaces('islandis', 'download-service')

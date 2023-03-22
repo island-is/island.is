@@ -48,7 +48,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    process.env.PRISON_EMAIL = 'prisonEmail@email.com'
+    process.env.PRISON_EMAIL = 'prisonEmail@email.com,prisonEmail2@email.com'
     const {
       emailService,
       notificationConfig,
@@ -197,9 +197,11 @@ describe('InternalNotificationController - Send ruling notifications', () => {
             to: [
               {
                 name: 'Gæsluvarðhaldsfangelsi',
-                address: mockConfig.email.prisonEmail,
+                address: mockConfig.email.prisonEmail.split(',')[0],
               },
             ],
+            cc: mockConfig.email.prisonEmail.split(',').slice(1),
+
             subject: 'Úrskurður um gæsluvarðhald',
             html: `Héraðsdómur Reykjavíkur hefur úrskurðað aðila í gæsluvarðhald í þinghaldi sem lauk rétt í þessu. Hægt er að nálgast þingbók og vistunarseðil í ${expectedLink}Réttarvörslugátt</a>.`,
           }),
@@ -289,9 +291,10 @@ describe('InternalNotificationController - Send ruling notifications', () => {
           to: [
             {
               name: 'Gæsluvarðhaldsfangelsi',
-              address: mockConfig.email.prisonEmail,
+              address: mockConfig.email.prisonEmail.split(',')[0],
             },
           ],
+          cc: mockConfig.email.prisonEmail.split(',').slice(1),
           subject: 'Úrskurður um vistun á viðeigandi stofnun',
           html: `Héraðsdómur Reykjavíkur hefur úrskurðað aðila í vistun á viðeigandi stofnun í þinghaldi sem lauk rétt í þessu. Hægt er að nálgast þingbók og vistunarseðil í ${expectedLink}Réttarvörslugátt</a>.`,
         }),
@@ -328,9 +331,10 @@ describe('InternalNotificationController - Send ruling notifications', () => {
           to: [
             {
               name: 'Gæsluvarðhaldsfangelsi',
-              address: mockConfig.email.prisonEmail,
+              address: mockConfig.email.prisonEmail.split(',')[0],
             },
           ],
+          cc: mockConfig.email.prisonEmail.split(',').slice(1),
           subject: 'Úrskurður um vistun á viðeigandi stofnun',
           html: `Héraðsdómur Reykjavíkur hefur úrskurðað aðila í vistun á viðeigandi stofnun í þinghaldi sem lauk rétt í þessu. Hægt er að nálgast þingbók og vistunarseðil í ${expectedLink}Réttarvörslugátt</a>.`,
         }),

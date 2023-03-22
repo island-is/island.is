@@ -29,7 +29,7 @@ export const VehicleSelectField: FC<
   VehicleSearchFieldProps & FieldBaseProps
 > = ({ currentVehicleList, application, errors }) => {
   const { formatMessage } = useLocale()
-  const { register } = useFormContext()
+  const { setValue } = useFormContext()
 
   const vehicleValue = getValueViaPath(
     application.answers,
@@ -89,6 +89,10 @@ export const VehicleSelectField: FC<
           const disabled = !!response?.vehiclePlateOrderChecksByPermno
             ?.validationErrorMessages?.length
           setPlate(disabled ? '' : currentVehicle.permno || '')
+          setValue(
+            'pickVehicle.plate',
+            disabled ? '' : currentVehicle.permno || '',
+          )
           setIsLoading(false)
         })
         .catch((error) => console.error(error))
@@ -163,11 +167,6 @@ export const VehicleSelectField: FC<
           </Box>
         )}
       </Box>
-      <input
-        type="hidden"
-        value={plate}
-        {...register('pickVehicle.plate', { required: true })}
-      />
       {!isLoading && plate.length === 0 && errors && errors.pickVehicle && (
         <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />
       )}
