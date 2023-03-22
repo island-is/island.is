@@ -25,6 +25,7 @@ interface Props {
   size?: 'xs' | 'sm' | 'md'
   autoComplete?: 'off' | 'on'
   allowedCountryCodes?: string[]
+  disableDropdown?: boolean
 }
 
 interface ChildParams {
@@ -60,6 +61,7 @@ export const PhoneInputController = forwardRef(
       dataTestId,
       autoComplete,
       allowedCountryCodes,
+      disableDropdown,
     } = props
 
     function renderChildInput(c: ChildParams & TestSupport) {
@@ -84,6 +86,7 @@ export const PhoneInputController = forwardRef(
           hasError={error !== undefined}
           errorMessage={error}
           required={required}
+          disableDropdown={disableDropdown}
           ref={ref}
           onFormatValueChange={onChange}
           allowedCountryCodes={allowedCountryCodes}
