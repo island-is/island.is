@@ -29,16 +29,22 @@ import {
   HistoryBuilder,
 } from '@island.is/application/api/history'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
-import { getApplicationNameTranslationString } from '../utils/application'
+import { PaymentService } from '@island.is/application/api/payment'
+import {
+  getApplicantName,
+  getApplicationNameTranslationString,
+  getPaymentStatusForAdmin,
+} from '../utils/application'
 
 @Injectable()
-export class ApplicationSerializer
+export class ApplicationAdminSerializer
   implements NestInterceptor<Application, Promise<unknown>> {
   constructor(
     private intlService: IntlService,
     private historyService: HistoryService,
     private historyBuilder: HistoryBuilder,
     private featureFlagService: FeatureFlagService,
+    private paymentService: PaymentService,
   ) {}
 
   intercept(
@@ -123,6 +129,10 @@ export class ApplicationSerializer
         )
       : undefined
 
+    const payment = await this.paymentService.findPaymentByApplicationId(
+      application.id,
+    )
+
     const dto = plainToInstance(ApplicationResponseDto, {
       ...application,
       ...helper.getReadableAnswersAndExternalData(userRole),
@@ -155,6 +165,10 @@ export class ApplicationSerializer
         ? intl.formatMessage(template.institution)
         : null,
       progress: helper.getApplicationProgress(),
+      answers: [],
+      externalData: [],
+      paymentStatus: getPaymentStatusForAdmin(payment),
+      applicantName: getApplicantName(application),
     })
     return instanceToPlain(dto)
   }

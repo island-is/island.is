@@ -98,7 +98,7 @@ class ActionCardMetaData {
   draftTotalSteps?: number
 }
 
-export class ApplicationResponseDto {
+export class BaseApplicationResponseDto {
   @ApiProperty()
   @Expose()
   @IsString()
@@ -179,87 +179,9 @@ export class ApplicationResponseDto {
   @IsEnum(ApplicationStatus)
   status!: ApplicationStatus
 
-  constructor(partial: Partial<ApplicationResponseDto>) {
+  constructor(partial: Partial<BaseApplicationResponseDto>) {
     Object.assign(this, partial)
   }
 }
-export class ApplicationListAdminResponseDto {
-  @ApiProperty()
-  @Expose()
-  @IsString()
-  id!: string
 
-  @ApiProperty()
-  @Expose()
-  @IsDate()
-  created!: Date
-
-  @ApiProperty()
-  @Expose()
-  @IsDate()
-  modified!: Date
-
-  @ApiProperty()
-  @Expose()
-  @IsString()
-  applicant!: string
-
-  @ApiProperty()
-  @Expose()
-  @IsArray()
-  assignees!: string[]
-
-  @ApiProperty()
-  @Expose()
-  @IsArray()
-  applicantActors!: string[]
-
-  @ApiProperty()
-  @Expose()
-  @IsString()
-  state!: string
-
-  @ApiPropertyOptional()
-  @Expose()
-  @IsObject()
-  actionCard?: ActionCardMetaData
-
-  @ApiProperty({ enum: ApplicationTypes })
-  @Expose()
-  @IsEnum(ApplicationTypes)
-  typeId!: ApplicationTypes
-
-  @ApiPropertyOptional()
-  @Expose()
-  @IsString()
-  name?: string
-
-  @ApiPropertyOptional()
-  @Expose()
-  @IsString()
-  institution?: string
-
-  @ApiPropertyOptional()
-  @Expose()
-  @IsNumber()
-  progress?: number
-
-  @ApiProperty({ enum: ApplicationStatus })
-  @Expose()
-  @IsEnum(ApplicationStatus)
-  status!: ApplicationStatus
-
-  @ApiPropertyOptional()
-  @Expose()
-  @IsString()
-  applicantName?: string
-
-  @ApiPropertyOptional()
-  @Expose()
-  @IsString()
-  paymentStatus?: string
-
-  constructor(partial: Partial<ApplicationListAdminResponseDto>) {
-    Object.assign(this, partial)
-  }
-}
+export class ApplicationResponseDto extends BaseApplicationResponseDto {}

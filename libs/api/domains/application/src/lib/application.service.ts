@@ -78,7 +78,7 @@ export class ApplicationService {
     locale: Locale,
     input: ApplicationApplicationsAdminInput,
   ) {
-    return this.applicationApiWithAuth(user).applicationControllerFindAllAdmin({
+    return this.applicationApiWithAuth(user).adminControllerFindAllAdmin({
       nationalId: input.nationalId,
       locale,
       typeId: input.typeId?.join(','),

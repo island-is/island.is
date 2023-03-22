@@ -53,12 +53,11 @@ import {
   Scopes,
   CurrentUser,
 } from '@island.is/auth-nest-tools'
-import { AdminPortalScope, ApplicationScope } from '@island.is/auth/scopes'
+import { ApplicationScope } from '@island.is/auth/scopes'
 import {
   getApplicationTemplateByTypeId,
   getApplicationTranslationNamespaces,
 } from '@island.is/application/template-loader'
-import { TemplateAPIService } from '@island.is/application/template-api-modules'
 import { IntlService } from '@island.is/cms-translations'
 import { Audit, AuditService } from '@island.is/nest/audit'
 
@@ -76,10 +75,7 @@ import { UploadSignedFileDto } from './dto/uploadSignedFile.dto'
 import { ApplicationValidationService } from './tools/applicationTemplateValidation.service'
 import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
-import {
-  ApplicationListAdminResponseDto,
-  ApplicationResponseDto,
-} from './dto/application.response.dto'
+import { ApplicationResponseDto } from './dto/application.response.dto'
 import { PresignedUrlResponseDto } from './dto/presignedUrl.response.dto'
 import { RequestFileSignatureResponseDto } from './dto/requestFileSignature.response.dto'
 import { UploadSignedFileResponseDto } from './dto/uploadSignedFile.response.dto'
@@ -274,58 +270,6 @@ export class ApplicationController {
     }
 
     return filteredApplications
-  }
-
-  @Scopes(AdminPortalScope.applicationSystem)
-  @BypassDelegation()
-  @Get('admin/:nationalId/applications')
-  @UseInterceptors(ApplicationSerializer)
-  @Audit<ApplicationListAdminResponseDto[]>({
-    resources: (apps) => apps.map((app) => app.id),
-  })
-  @Documentation({
-    description: 'Get applications for a specific user',
-    response: {
-      status: 200,
-      type: [ApplicationListAdminResponseDto],
-    },
-    request: {
-      params: {
-        nationalId: {
-          type: 'string',
-          required: true,
-          description: `To get the applications for a specific user's national id.`,
-        },
-      },
-      query: {
-        typeId: {
-          type: 'string',
-          required: false,
-          description:
-            'To filter applications by type. Comma-separated for multiple values.',
-        },
-        status: {
-          type: 'string',
-          required: false,
-          description:
-            'To filter applications by status. Comma-separated for multiple values.',
-        },
-      },
-    },
-  })
-  async findAllAdmin(
-    @Param('nationalId') nationalId: string,
-    @Query('typeId') typeId?: string,
-    @Query('status') status?: string,
-  ) {
-    this.logger.debug(`Getting applications with status ${status}`)
-
-    return this.applicationService.findAllByNationalIdAndFilters(
-      nationalId,
-      typeId,
-      status,
-      nationalId,
-    )
   }
 
   @Scopes(ApplicationScope.write)
