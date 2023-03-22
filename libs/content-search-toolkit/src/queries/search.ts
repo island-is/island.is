@@ -55,16 +55,26 @@ export const searchQuery = (
       // the search logic used for search drop down suggestions
       // term and prefix queries on content title
       case 'suggestions':
-        should.push({
-          multi_match: {
-            query: queryString + '*',
-            fields: ['title^100'],
+        if (queryString.split(' ').length > 1) {
+          should.push({
+            multi_match: {
+              query: queryString + '*',
+              fields: ['title'], //U ??? ^100
 
-            fuzziness: 1,
-            operator: 'and',
-            type: 'best_fields',
-          },
-        })
+              fuzziness: 1,
+              operator: 'and',
+              type: 'best_fields',
+            },
+          })
+        } else {
+          should.push({ prefix: { title: queryString } })
+          should.push({
+            fuzzy: {
+              title: { value: queryString, fuzziness: 1, prefix_length: 0 },
+            },
+          })
+        }
+
         break
 
       // the search logic used for general site search
