@@ -394,7 +394,7 @@ api:
       memory: '2048Mi'
     requests:
       cpu: '50m'
-      memory: '1024Mi'
+      memory: '512Mi'
   secrets:
     ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -833,7 +833,7 @@ application-system-form:
       cpu: '200m'
       memory: '256Mi'
     requests:
-      cpu: '100m'
+      cpu: '10m'
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -1213,7 +1213,7 @@ island-ui-storybook:
       cpu: '200m'
       memory: '256Mi'
     requests:
-      cpu: '100m'
+      cpu: '10m'
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -1273,7 +1273,7 @@ license-api:
       cpu: '400m'
       memory: '512Mi'
     requests:
-      cpu: '200m'
+      cpu: '10m'
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -1588,7 +1588,7 @@ service-portal:
   enabled: true
   env:
     BASEPATH: '/minarsidur'
-    NODE_OPTIONS: '--max-old-space-size=464'
+    NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SI_PUBLIC_ENVIRONMENT: 'prod'
     SI_PUBLIC_GRAPHQL_API: '/api/graphql'
@@ -1639,11 +1639,11 @@ service-portal:
     min: 2
   resources:
     limits:
-      cpu: '400m'
-      memory: '512Mi'
-    requests:
-      cpu: '200m'
+      cpu: '300m'
       memory: '256Mi'
+    requests:
+      cpu: '5m'
+      memory: '32Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -1885,8 +1885,8 @@ services-sessions:
       cpu: '400m'
       memory: '512Mi'
     requests:
-      cpu: '100m'
-      memory: '256Mi'
+      cpu: '10m'
+      memory: '300Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-sessions/readonly/DB_PASSWORD'
@@ -2037,7 +2037,7 @@ skilavottord-web:
       cpu: '200m'
       memory: '256Mi'
     requests:
-      cpu: '100m'
+      cpu: '10m'
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -2203,7 +2203,7 @@ user-notification:
       cpu: '200m'
       memory: '256Mi'
     requests:
-      cpu: '100m'
+      cpu: '10m'
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -2345,7 +2345,7 @@ web:
       cpu: '400m'
       memory: '512Mi'
     requests:
-      cpu: '200m'
+      cpu: '100m'
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
