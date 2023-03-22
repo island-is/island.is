@@ -14,32 +14,43 @@ import {
   UserMenu,
 } from '@island.is/island-ui/core'
 import * as styles from './Menu.css'
-import React, { useState } from 'react'
+import React from 'react'
 import { MenuLogo, MenuLogoMobile } from '../svg'
 import { menuItems } from './MenuItems'
 import MenuModal from '../Modal/MenuModal'
 import { checkActiveHeaderLink } from '../../utils/helpers'
 import { useRouter } from 'next/router'
+import initApollo from '../../graphql/client'
+import { useQuery } from '@apollo/client'
+import { GET_AUTH_URL } from '../../graphql/queries.graphql'
+import { useUser } from '../../context/UserContext'
 type MenuProps = {
   isFrontPage: boolean
 }
 
 export const Menu = ({ isFrontPage = false }: MenuProps) => {
+  const client = initApollo()
+
+  const { data, loading } = useQuery(GET_AUTH_URL, {
+    client: client,
+    ssr: true,
+    fetchPolicy: 'cache-first',
+  })
+
+  const { isAuthenticated, user, logoutUser } = useUser()
+
+  const router = useRouter()
   const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
   const biggerMarginLeft = [3, 3, 3, 4] as ResponsiveSpace
 
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
-  const LogIn = () => setIsLoggedIn(true)
-  const LogOut = () => setIsLoggedIn(false)
+  const LogIn = () => {
+    localStorage.setItem('pathname', router.asPath)
 
-  const onLogout = () => setIsLoggedIn(false)
+    const { consultationPortalAuthenticationUrl: authUrl = '' } = data ?? ''
 
-  const router = useRouter()
-
-  const user = {
-    name: 'Halldór Andri Jónsson',
-    authenticated: true,
-    language: 'is',
+    if (authUrl) {
+      window.location.href = authUrl.slice(1, -1)
+    }
   }
 
   return (
@@ -132,19 +143,16 @@ export const Menu = ({ isFrontPage = false }: MenuProps) => {
                           )
                         })}
                         <Box marginLeft={biggerMarginLeft}>
-                          {isLoggedIn ? (
+                          {isAuthenticated ? (
                             <UserMenu
-                              username={user.name}
-                              authenticated={user.authenticated}
-                              language={user.language}
-                              onLogout={onLogout}
+                              username={user?.name}
+                              authenticated={isAuthenticated}
+                              language={'IS'}
+                              onLogout={logoutUser}
                               dropdownItems={<Divider />}
                             />
                           ) : (
-                            <Button
-                              size="small"
-                              onClick={() => setIsLoggedIn(true)}
-                            >
+                            <Button size="small" onClick={LogIn}>
                               Innskráning
                             </Button>
                           )}
@@ -161,9 +169,9 @@ export const Menu = ({ isFrontPage = false }: MenuProps) => {
                         <MenuModal
                           baseId="menuModal"
                           modalLabel="Menu modal"
-                          isLoggedIn={isLoggedIn}
+                          isLoggedIn={isAuthenticated}
                           logIn={LogIn}
-                          logOut={LogOut}
+                          logOut={logoutUser}
                           router={router}
                           isFrontPage={isFrontPage}
                         />

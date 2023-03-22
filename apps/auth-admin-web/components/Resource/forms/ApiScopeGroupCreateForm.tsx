@@ -24,6 +24,7 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
     handleSubmit,
     formState,
     reset,
+    resetField,
   } = useForm<ApiScopeGroupDTO>()
   const { errors } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
@@ -36,6 +37,9 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
       const response = await ResourcesService.findAllDomains()
       if (response) {
         setDomains(response as Domain[])
+        resetField('domainName', {
+          defaultValue: props.apiScopeGroup.domainName,
+        })
       }
     }
 

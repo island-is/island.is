@@ -5,7 +5,6 @@ import {
   FormStepperThemes,
   Stack,
 } from '@island.is/island-ui/core'
-import format from 'date-fns/format'
 
 interface CaseTimelineProps {
   status: string

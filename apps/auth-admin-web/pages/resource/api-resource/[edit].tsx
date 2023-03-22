@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { LoadingScreen } from '../../../components/common/LoadingScreen'
 import ContentWrapper from '../../../components/Layout/ContentWrapper'
 import { useRouter } from 'next/router'
 import { ApiResource } from '../../../entities/models/api-resource.model'
@@ -19,7 +20,7 @@ const Index: React.FC = () => {
   const stepQuery = query.step
   const resourceId = query.edit
   const [step, setStep] = useState(1)
-  const [apiResource, setApiResource] = useState<ApiResource>(new ApiResource())
+  const [apiResource, setApiResource] = useState<ApiResource>()
   const router = useRouter()
 
   /** Load the api resource and set the step from query if there is one */
@@ -77,6 +78,20 @@ const Index: React.FC = () => {
   const refreshClaims = async () => {
     const decode = decodeURIComponent(resourceId as string)
     await getResource(decode)
+  }
+
+  if (!apiResource) {
+    return (
+      <ContentWrapper>
+        <ResourcesTabsNav />
+        <ApiResourceStepNav
+          activeStep={step}
+          handleStepChange={handleStepChange}
+        >
+          <LoadingScreen />
+        </ApiResourceStepNav>
+      </ContentWrapper>
+    )
   }
 
   switch (step) {

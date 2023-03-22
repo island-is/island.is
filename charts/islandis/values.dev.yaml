@@ -35,7 +35,7 @@ air-discount-scheme-api:
         nginxRequestsIrate: 3
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-api'
   ingress:
@@ -54,9 +54,9 @@ air-discount-scheme-api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '400m'
@@ -121,7 +121,7 @@ air-discount-scheme-backend:
         nginxRequestsIrate: 3
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-backend'
   ingress:
@@ -164,9 +164,9 @@ air-discount-scheme-backend:
   namespace: 'air-discount-scheme'
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '400m'
@@ -216,7 +216,7 @@ air-discount-scheme-web:
         nginxRequestsIrate: 3
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web'
   ingress:
@@ -238,9 +238,9 @@ air-discount-scheme-web:
   namespace: 'air-discount-scheme'
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'
@@ -743,7 +743,7 @@ application-system-api-worker:
         nginxRequestsIrate: 3
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
   namespace: 'application-system'
@@ -751,9 +751,9 @@ application-system-api-worker:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'
@@ -816,7 +816,7 @@ application-system-form:
         nginxRequestsIrate: 3
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-form'
   ingress:
@@ -832,9 +832,9 @@ application-system-form:
   namespace: 'application-system'
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'
@@ -930,8 +930,8 @@ contentful-apps:
         cpuAverageUtilization: 70
         nginxRequestsIrate: 3
       replicas:
-        max: 3
-        min: 2
+        max: 10
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/contentful-apps'
   ingress:
@@ -948,15 +948,15 @@ contentful-apps:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
-    max: 3
-    min: 2
+    default: 1
+    max: 10
+    min: 1
   resources:
     limits:
       cpu: '200m'
       memory: '256Mi'
     requests:
-      cpu: '100m'
+      cpu: '50m'
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -991,7 +991,7 @@ contentful-entry-tagger-service:
         nginxRequestsIrate: 3
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-contentful-entry-tagger'
   ingress:
@@ -1008,9 +1008,9 @@ contentful-entry-tagger-service:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'
@@ -1054,7 +1054,7 @@ contentful-translation-extension:
         nginxRequestsIrate: 3
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/contentful-translation-extension'
   ingress:
@@ -1069,9 +1069,9 @@ contentful-translation-extension:
   namespace: 'contentful-translation-extension'
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'
@@ -1119,7 +1119,7 @@ download-service:
         nginxRequestsIrate: 3
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/download-service'
   ingress:
@@ -1133,9 +1133,9 @@ download-service:
   namespace: 'download-service'
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '400m'
@@ -1197,7 +1197,7 @@ endorsement-system-api:
         nginxRequestsIrate: 3
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-endorsements-api'
   initContainer:
@@ -1229,9 +1229,9 @@ endorsement-system-api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'
@@ -1285,15 +1285,15 @@ external-contracts-tests:
         nginxRequestsIrate: 3
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/external-contracts-tests'
   namespace: 'external-contracts-tests'
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '1'
@@ -1420,7 +1420,7 @@ icelandic-names-registry-backend:
         nginxRequestsIrate: 3
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/icelandic-names-registry-backend'
   initContainer:
@@ -1463,9 +1463,9 @@ icelandic-names-registry-backend:
   namespace: 'icelandic-names-registry'
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'
@@ -1503,7 +1503,7 @@ island-ui-storybook:
         nginxRequestsIrate: 3
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/island-ui-storybook'
   ingress:
@@ -1518,9 +1518,9 @@ island-ui-storybook:
   namespace: 'storybook'
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'
@@ -1707,6 +1707,7 @@ regulations-admin-backend:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   grantNamespaces:
     - 'islandis'
+    - 'download-service'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1724,7 +1725,7 @@ regulations-admin-backend:
         nginxRequestsIrate: 3
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/regulations-admin-backend'
   initContainer:
@@ -1752,9 +1753,9 @@ regulations-admin-backend:
   namespace: 'regulations-admin'
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '400m'
@@ -2096,7 +2097,7 @@ services-documents:
         nginxRequestsIrate: 3
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-documents'
   initContainer:
@@ -2125,9 +2126,9 @@ services-documents:
   namespace: 'services-documents'
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'
@@ -2242,7 +2243,7 @@ services-sessions-worker:
         nginxRequestsIrate: 3
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
   initContainer:
@@ -2273,9 +2274,9 @@ services-sessions-worker:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '400m'
@@ -2321,7 +2322,7 @@ skilavottord-web:
         nginxRequestsIrate: 3
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-web'
   ingress:
@@ -2337,9 +2338,9 @@ skilavottord-web:
   namespace: 'skilavottord'
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'
@@ -2388,7 +2389,7 @@ skilavottord-ws:
         nginxRequestsIrate: 3
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-ws'
   ingress:
@@ -2425,9 +2426,9 @@ skilavottord-ws:
   namespace: 'skilavottord'
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'
@@ -2482,7 +2483,7 @@ user-notification:
         nginxRequestsIrate: 3
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
   ingress:
@@ -2500,9 +2501,9 @@ user-notification:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'
@@ -2558,7 +2559,7 @@ user-notification-worker:
         nginxRequestsIrate: 3
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
   namespace: 'user-notification'
@@ -2566,9 +2567,9 @@ user-notification-worker:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'
@@ -2690,7 +2691,7 @@ xroad-collector:
         nginxRequestsIrate: 3
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector'
   namespace: 'xroad-collector'
@@ -2698,9 +2699,9 @@ xroad-collector:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'
