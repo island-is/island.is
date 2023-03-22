@@ -2,6 +2,7 @@
   "root": "apps/consultation-portal",
   "sourceRoot": "apps/consultation-portal",
   "projectType": "application",
+  "prefix": "consultation-portal",
   "generators": {},
   "targets": {
     "build": {
