@@ -344,5 +344,6 @@ export const serviceSetup = (services: {
       'nginx-ingress-external',
       'api-catalogue',
       'application-system',
+      'consultation-portal',
     )
 }
