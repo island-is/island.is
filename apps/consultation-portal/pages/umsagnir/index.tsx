@@ -2,12 +2,10 @@ import initApollo from '../../graphql/client'
 import { GET_ALL_USER_ADVICES } from '../../screens/Advices/getAllUserAdvices.graphql'
 import {
   ConsultationPortalAllUserAdvicesQuery,
-  ConsultationPortalAllUserAdvicesQueryResult,
 } from '../../screens/Advices/getAllUserAdvices.graphql.generated'
 import { UserAdvice } from '../../types/interfaces'
 import Advices from '../../screens/Advices/Advices'
 import { parseCookie } from '../../utils/helpers'
-import { ConsultationPortalUserAdvicesInput } from '@island.is/api/schema'
 
 interface UserAdvicesProps {
   allUserAdvices: UserAdvice
@@ -24,7 +22,7 @@ export const getServerSideProps = async (ctx) => {
     oldestFirst: false,
     pageNumber: 1,
     pageSize: 20,
-    searchQuery: "",
+    searchQuery: '',
   }
 
   const client = initApollo()
@@ -34,9 +32,7 @@ export const getServerSideProps = async (ctx) => {
         data: { consultationPortalAllUserAdvices },
       },
     ] = await Promise.all([
-      client.query<
-        ConsultationPortalAllUserAdvicesQuery
-      >({
+      client.query<ConsultationPortalAllUserAdvicesQuery>({
         query: GET_ALL_USER_ADVICES,
         context: { token },
         variables: { input },
