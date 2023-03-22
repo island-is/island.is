@@ -1,10 +1,9 @@
-import { CurrentAuth, CurrentUser, User } from '@island.is/auth-nest-tools'
 import {
   FeatureFlag,
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
-import { Request, UseGuards } from '@nestjs/common'
+import { UseGuards } from '@nestjs/common'
 import { Query, Resolver } from '@nestjs/graphql'
 import { UserAdviceResult } from '../models/userAdviceResult.model'
 import { CurrentAuthorization } from '../auth-tools/current-authorization'

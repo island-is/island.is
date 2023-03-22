@@ -1,5 +1,4 @@
 // These types are copied from our OpenAPI generated api clients.
-// type FetchAPI = WindowOrWorkerGlobalScope['fetch']
 
 interface FetchParams {
   url: string

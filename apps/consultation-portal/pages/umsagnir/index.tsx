@@ -12,7 +12,9 @@ interface UserAdvicesProps {
 export const getServerSideProps = async (ctx) => {
   const cookie = ctx.req.headers.cookie
   const parsedCookie = parseCookie(cookie)
-  const token = parsedCookie.hasOwnProperty("token") ? parsedCookie["token"] : ""
+  const token = parsedCookie.hasOwnProperty('token')
+    ? parsedCookie['token']
+    : ''
 
   const client = initApollo()
   try {
