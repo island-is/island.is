@@ -149,7 +149,10 @@ export class LicenseService {
     const verifyData = await service.verify(inputData.barcodeData)
 
     if (verifyData.ok) {
-      return { valid: verifyData.data.valid, data: verifyData.data.data }
+      return {
+        valid: verifyData.data.valid,
+        identity: verifyData.data.passIdentity,
+      }
     }
 
     const code = verifyData.error.code

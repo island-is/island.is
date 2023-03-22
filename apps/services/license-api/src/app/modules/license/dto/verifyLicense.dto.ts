@@ -1,5 +1,12 @@
+import { IsNationalId } from '@island.is/nest/core'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { IsBoolean, IsJSON, IsObject, IsOptional } from 'class-validator'
+import {
+  IsBoolean,
+  IsJSON,
+  IsObject,
+  IsOptional,
+  IsString,
+} from 'class-validator'
 
 export class VerifyLicenseRequest {
   @ApiProperty({ description: 'PDF417 barcode scanner data' })
@@ -8,11 +15,25 @@ export class VerifyLicenseRequest {
   readonly barcodeData!: string
 }
 
+class PassIdentity {
+  @ApiProperty({ description: "The scanned user's name" })
+  @IsString()
+  readonly name!: string
+  @ApiProperty({ description: "The scanned user's national id" })
+  @IsNationalId()
+  readonly nationalId!: string
+  @ApiPropertyOptional({ description: 'Picture of scanned user' })
+  @IsOptional()
+  @IsString()
+  readonly picture?: string
+}
+
 export class VerifyLicenseResponse {
   @ApiProperty({ description: 'Is the license verified?' })
   @IsBoolean()
   readonly valid!: boolean
-  @ApiPropertyOptional({ description: 'Optional verifcation data' })
+  @ApiPropertyOptional({ description: 'Verification identity data' })
   @IsOptional()
-  readonly data?: unknown
+  @IsObject()
+  readonly identity?: PassIdentity
 }

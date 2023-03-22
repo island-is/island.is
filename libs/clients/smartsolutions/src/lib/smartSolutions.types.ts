@@ -71,7 +71,6 @@ export type Result<ResultType, ErrorType = ServiceError> =
 export interface VerifyPassData {
   valid: boolean
   pass?: Pass
-  data?: unknown
 }
 
 export interface RevokePassData {
