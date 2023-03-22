@@ -307,10 +307,14 @@ export const CaseOverview: React.FC = () => {
                       title={formatMessage(core.pdfButtonRuling)}
                       pdfType={'ruling/limitedAccess'}
                     >
-                      <SignedDocument
-                        signatory={workingCase.judge?.name}
-                        signingDate={workingCase.rulingDate}
-                      />
+                      {workingCase.rulingDate ? (
+                        <SignedDocument
+                          signatory={workingCase.judge?.name}
+                          signingDate={workingCase.rulingDate}
+                        />
+                      ) : (
+                        <Text>{formatMessage(m.unsignedRuling)}</Text>
+                      )}
                     </PdfButton>
                   </>
                 )}

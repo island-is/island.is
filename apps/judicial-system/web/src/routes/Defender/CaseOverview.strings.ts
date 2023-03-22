@@ -88,4 +88,10 @@ export const defenderCaseOverview = defineMessages({
     defaultMessage: 'Senda inn kæru',
     description: 'Texti í hlekk í viðvörunarglugga um kærufrest fyrir verjanda',
   },
+  unsignedRuling: {
+    id: 'judicial.system.core:defender_case_overview.unsigned_ruling',
+    defaultMessage: 'Úrskurður ekki undirritaður',
+    description:
+      'Texti sem birtist ef úrskurður er ekki undirritaður á yfirlitsskjá verjanda',
+  },
 })
