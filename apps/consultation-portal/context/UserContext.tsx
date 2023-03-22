@@ -51,7 +51,7 @@ const UserContextProvider = ({ children }: UserProps) => {
         expiry: decodedJson.exp,
       })
 
-      const setCookie = fetch('http://localhost:4200/api/auth/login', {
+      const setCookie = fetch(`${process.env.WEB_PUBLIC_URL}/api/auth/login`, {
         method: 'POST',
         body: body,
       })
@@ -69,9 +69,12 @@ const UserContextProvider = ({ children }: UserProps) => {
   }
 
   const logoutUser = async () => {
-    const setCookie = await fetch(`http://localhost:4200/api/auth/logout`, {
-      method: 'GET',
-    })
+    const setCookie = await fetch(
+      `${process.env.WEB_PUBLIC_URL}/api/auth/logout`,
+      {
+        method: 'GET',
+      },
+    )
     if (setCookie.status === 200) {
       setUserNull()
     }
