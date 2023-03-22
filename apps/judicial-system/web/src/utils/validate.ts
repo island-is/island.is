@@ -1,8 +1,13 @@
 // TODO: Add tests
-import { isIndictmentCase } from '@island.is/judicial-system/types'
+import {
+  CaseFileCategory,
+  isIndictmentCase,
+  isProsecutionRole,
+} from '@island.is/judicial-system/types'
 import {
   User,
   CaseType,
+  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { isBusiness } from './stepHelper'
@@ -424,4 +429,19 @@ export const isAdminUserFormValid = (user: User): boolean => {
       ]).isValid) ||
     false
   )
+}
+
+export const isAppealStepValid = (
+  workingCase: Case,
+  userRole?: UserRole,
+): boolean => {
+  return !userRole || !workingCase.caseFiles
+    ? false
+    : workingCase.caseFiles?.some(
+        (file) =>
+          file.category ===
+          (isProsecutionRole(userRole)
+            ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF
+            : CaseFileCategory.DEFENDANT_APPEAL_BRIEF),
+      )
 }

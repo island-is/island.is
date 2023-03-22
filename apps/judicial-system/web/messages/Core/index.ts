@@ -272,4 +272,9 @@ export const core = defineMessages({
     defaultMessage: 'Velja skjöl til að hlaða upp',
     description: 'Notaður fyrir titil í takka á Hlaða upp skrám svæði.',
   },
+  uploadBoxDescription: {
+    id: 'judicial.system.core:upload_box_description',
+    defaultMessage: 'Tekið er við skjölum með endingu: {fileEndings}',
+    description: 'Notaður fyrir texta í Hlaða upp skrám svæði.',
+  },
 })

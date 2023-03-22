@@ -6,9 +6,27 @@ export const appealToCourtOfAppeals = defineMessages({
     defaultMessage: 'Kæra til Landsréttar',
     description: 'Titill á Kæra til Landsréttar síðu',
   },
-  appealTitle: {
-    id: 'judicial.system.core:appeal_to_court_of_appeals.appeal_title',
+  appealBriefTitle: {
+    id: 'judicial.system.core:appeal_to_court_of_appeals.appeal_brief_title',
     defaultMessage: 'Kæra',
     description: 'Titill á Kæra hluta á Kæra til Landsréttar síðu',
+  },
+  appealCaseFilesTitle: {
+    id:
+      'judicial.system.core:appeal_to_court_of_appeals.appeal_case_files_title',
+    defaultMessage: 'Gögn',
+    description: 'Titill á Gögn hluta á Kæra til Landsréttar síðu',
+  },
+  appealCaseFilesSubtitle: {
+    id:
+      'judicial.system.core:appeal_to_court_of_appeals.appeal_case_files_subtitle',
+    defaultMessage:
+      'Ef ný gögn eiga að fylgja kærunni er hægt að hlaða þeim upp hér að neðan.',
+    description: 'Undirtitill á Gögn hluta á Kæra til Landsréttar síðu',
+  },
+  nextButtonText: {
+    id: 'judicial.system.core:appeal_to_court_of_appeals.next_button_text',
+    defaultMessage: 'Senda kæru',
+    description: 'Texti á Áfram takka á Kæra til Landsréttar síðu',
   },
 })
