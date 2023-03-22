@@ -45,14 +45,8 @@ export class CaseResultResolver {
 
   @Mutation(() => CaseResult, { name: 'postConsultationPortalAdvice' })
   @FeatureFlag(Features.consultationPortalApplication)
-  async postAdvice(
-    @Args('caseId') caseId: number,
-    @Args('adviceRequest') adviceRequest: AdviceRequest,
-  ): Promise<void> {
-    const response = await this.caseResultService.postAdvice(
-      caseId,
-      adviceRequest,
-    )
+  async postAdvice(@Args('caseId') caseId: number): Promise<void> {
+    const response = await this.caseResultService.postAdvice(caseId)
     return response
   }
 }

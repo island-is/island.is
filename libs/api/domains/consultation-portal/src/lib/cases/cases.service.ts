@@ -52,10 +52,9 @@ export class CaseResultService {
     return response
   }
 
-  async postAdvice(caseId: number, adviceRequest: AdviceRequest) {
+  async postAdvice(caseId: number) {
     const request: ApiCasesCaseIdAdvicesPostRequest = {
       caseId: caseId,
-      adviceRequest: adviceRequest,
     }
 
     const response = await this.casesApi.apiCasesCaseIdAdvicesPost(request)
