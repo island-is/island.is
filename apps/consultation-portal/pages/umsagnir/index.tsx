@@ -3,12 +3,16 @@ import { GET_ALL_USER_ADVICES } from '../../screens/Advices/getAllUserAdvices.gr
 import { ConsultationPortalAllUserAdvicesQuery } from '../../screens/Advices/getAllUserAdvices.graphql.generated'
 import { UserAdvice } from '../../types/interfaces'
 import Advices from '../../screens/Advices/Advices'
+import { parseAuthToken } from '../../utils/helpers'
 
 interface UserAdvicesProps {
   allUserAdvices: UserAdvice
 }
 
 export const getServerSideProps = async (ctx) => {
+  const cookie = ctx.req.headers.cookie
+  const token = parseAuthToken({ token: cookie })
+
   const client = initApollo()
   try {
     const [
@@ -18,6 +22,7 @@ export const getServerSideProps = async (ctx) => {
     ] = await Promise.all([
       client.query<ConsultationPortalAllUserAdvicesQuery>({
         query: GET_ALL_USER_ADVICES,
+        context: { token },
       }),
     ])
     return {
