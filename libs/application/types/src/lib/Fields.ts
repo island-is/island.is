@@ -121,9 +121,9 @@ export enum FieldComponents {
   KEY_VALUE = 'KeyValueFormField',
   SUBMIT = 'SubmitFormField',
   ASYNC_SELECT = 'AsyncSelectFormField',
-  PAYMENT_PENDING = 'PaymentPendingField',
   COMPANY_SEARCH = 'CompanySearchFormField',
   REDIRECT_TO_SERVICE_PORTAL = 'RedirectToServicePortalFormField',
+  PAYMENT_PENDING = 'PaymentPendingFormField',
   PHONE = 'PhoneFormField',
   MESSAGE_WITH_LINK_BUTTON_FIELD = 'MessageWithLinkButtonFormField',
   EXPANDABLE_DESCRIPTION = 'ExpandableDescriptionFormField',
@@ -293,6 +293,11 @@ export interface RedirectToServicePortalField extends BaseField {
   component: FieldComponents.REDIRECT_TO_SERVICE_PORTAL
 }
 
+export interface PaymentPendingField extends BaseField {
+  readonly type: FieldTypes.PAYMENT_PENDING
+  component: FieldComponents.PAYMENT_PENDING
+}
+
 export interface MessageWithLinkButtonField extends BaseField {
   readonly type: FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD
   component: FieldComponents.MESSAGE_WITH_LINK_BUTTON_FIELD
@@ -339,6 +344,7 @@ export type Field =
   | AsyncSelectField
   | CompanySearchField
   | RedirectToServicePortalField
+  | PaymentPendingField
   | PhoneField
   | MessageWithLinkButtonField
   | ExpandableDescriptionField
