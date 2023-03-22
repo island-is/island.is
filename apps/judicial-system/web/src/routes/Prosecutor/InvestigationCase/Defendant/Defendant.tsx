@@ -448,6 +448,7 @@ const Defendant = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.CASES_ROUTE}`}
           onNextButtonClick={() =>
             handleNavigationTo(

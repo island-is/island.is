@@ -886,6 +886,7 @@ export const SignedVerdictOverview: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={constants.CASES_ROUTE}
           hideNextButton={shouldHideNextButton(workingCase, user)}
           nextButtonText={getNextButtonText(formatMessage, workingCase, user)}

@@ -1,4 +1,10 @@
-import React, { useCallback, useContext, useState } from 'react'
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -6,6 +12,7 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  Modal,
   PageHeader,
   PageLayout,
   SectionHeading,
@@ -28,10 +35,10 @@ import {
   TUploadFile,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { appealToCourtOfAppeals as strings } from './AppealToCourtOfAppeals.strings'
-import { isAppealStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 const AppealToCourtOfAppeals = () => {
   const { workingCase } = useContext(FormContext)
@@ -39,21 +46,29 @@ const AppealToCourtOfAppeals = () => {
   const { formatMessage } = useIntl()
   const router = useRouter()
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
+  const [visibleModal, setVisibleModal] = useState<'APPEAL_SENT'>()
   const {
     handleChange,
     handleRemove,
     handleRetry,
     generateSingleFileUpdate,
   } = useS3Upload(workingCase.id)
-  const { pid } = router.query
+  const { id } = router.query
   const appealBriefType = isProsecutionRole(user?.role)
     ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF
     : CaseFileCategory.DEFENDANT_APPEAL_BRIEF
   const appealCaseFilesType = isProsecutionRole(user?.role)
     ? CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE
     : CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE
-  const previousUrl = `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${pid}`
-  const isStepValid = isAppealStepValid(workingCase, user?.role)
+  const previousUrl = `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${id}`
+  const allFilesUploaded = useMemo(() => {
+    return displayFiles.every(
+      (file) => file.status === 'done' || file.status === 'error',
+    )
+  }, [displayFiles])
+  const isStepValid =
+    displayFiles.some((file) => file.category === appealBriefType) &&
+    allFilesUploaded
 
   const removeFileCB = useCallback((file: UploadFile) => {
     setDisplayFiles((previous) =>
@@ -69,6 +84,12 @@ const AppealToCourtOfAppeals = () => {
     },
     [generateSingleFileUpdate],
   )
+
+  useEffect(() => {
+    if (workingCase.caseFiles) {
+      setDisplayFiles(workingCase.caseFiles.map(mapCaseFileToUploadFile))
+    }
+  }, [workingCase.caseFiles])
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
@@ -123,7 +144,7 @@ const AppealToCourtOfAppeals = () => {
                 onRetry={(file) => handleRetry(file, handleUIUpdate)}
               />
             </Box>
-            <Box component="section" marginBottom={5}>
+            <Box component="section" marginBottom={10}>
               <SectionHeading
                 title={formatMessage(strings.appealCaseFilesTitle)}
                 marginBottom={1}
@@ -160,16 +181,20 @@ const AppealToCourtOfAppeals = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={previousUrl}
-          // onNextButtonClick={() =>
-          //   handleNavigationTo(
-          //     constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE,
-          //   )
-          // }
+          onNextButtonClick={() => setVisibleModal('APPEAL_SENT')}
           nextButtonText={formatMessage(strings.nextButtonText)}
           nextIsDisabled={!isStepValid}
           nextButtonIcon={undefined}
         />
       </FormContentContainer>
+      {visibleModal === 'APPEAL_SENT' && (
+        <Modal
+          title={formatMessage(strings.appealSentModalTitle)}
+          text={formatMessage(strings.appealSentModalText)}
+          secondaryButtonText={formatMessage(core.closeModal)}
+          onSecondaryButtonClick={() => router.push(previousUrl)}
+        />
+      )}
     </PageLayout>
   )
 }

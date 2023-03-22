@@ -252,6 +252,7 @@ const CaseFiles: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${
             isTrafficViolationCaseCheck
               ? constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE

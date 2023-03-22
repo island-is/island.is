@@ -29,4 +29,17 @@ export const appealToCourtOfAppeals = defineMessages({
     defaultMessage: 'Senda kæru',
     description: 'Texti á Áfram takka á Kæra til Landsréttar síðu',
   },
+  appealSentModalTitle: {
+    id:
+      'judicial.system.core:appeal_to_court_of_appeals.appeal_sent_modal_title',
+    defaultMessage: 'Kæra hefur verið send viðkomandi héraðsdómstól',
+    description:
+      'Titill í Kæra hefur verið send viðkomandi héraðsdómstól modal',
+  },
+  appealSentModalText: {
+    id:
+      'judicial.system.core:appeal_to_court_of_appeals.appeal_sent_modal_text',
+    defaultMessage: 'Tilkynning um móttöku kæru verður send á verjanda.',
+    description: 'Texti í Kæra hefur verið send viðkomandi héraðsdómstól modal',
+  },
 })

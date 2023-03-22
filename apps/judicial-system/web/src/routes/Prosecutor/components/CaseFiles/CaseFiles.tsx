@@ -375,6 +375,7 @@ export const CaseFiles: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${
             isRestrictionCase(workingCase.type)
               ? constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE
