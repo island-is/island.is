@@ -333,7 +333,7 @@ export const serviceSetup = (services: {
     .liveness('/liveness')
     .resources({
       limits: { cpu: '800m', memory: '2048Mi' },
-      requests: { cpu: '50m', memory: '1024Mi' },
+      requests: { cpu: '50m', memory: '512Mi' },
     })
     .replicaCount({
       default: 2,
@@ -344,5 +344,6 @@ export const serviceSetup = (services: {
       'nginx-ingress-external',
       'api-catalogue',
       'application-system',
+      'consultation-portal',
     )
 }

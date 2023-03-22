@@ -49,12 +49,14 @@ export const IndicatorsContainer = (
   const { icon } = props.selectProps
   const size: CountryCodeSelectProps['size'] = props.selectProps.size || 'md'
   const hasLabel: boolean = props.selectProps.inputHasLabel
+  const disabled: boolean = props.selectProps.isDisabled ?? false
   return (
     <components.IndicatorsContainer
       className={cn(styles.indicatorsContainer, {
         [styles.dontRotateIconOnOpen]: icon !== 'chevronDown',
         [styles.indicatorsContainerExtraSmall]: size === 'xs',
         [styles.indicatorContainerWithLabel]: hasLabel,
+        [styles.indicatorsContainerDisabled]: disabled,
       })}
       {...props}
     />

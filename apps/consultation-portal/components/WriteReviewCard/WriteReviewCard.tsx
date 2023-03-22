@@ -148,6 +148,7 @@ export const WriteReviewCard = ({ card, isLoggedIn }: CardProps) => {
       borderWidth="standard"
       borderColor="blue300"
       flexDirection="column"
+      id="write-review"
     >
       <Inline
         justifyContent="spaceBetween"
