@@ -35,17 +35,6 @@ export const educationModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.education),
       element: <EducationCareer />,
     },
-    // {
-    //   name: 'Framhaldsskóli',
-    //   path: EducationPaths.EducationRoot,
-    //   enabled: userInfo.scopes.includes(ApiScope.education),
-    //   render: () =>
-    //     lazy(() =>
-    //       import(
-    //         '../../education-career/src/screens/EducationCareer/EducationCareer'
-    //       ),
-    //     ),
-    // },
     {
       name: 'Brautskráning',
       path: EducationPaths.EducationHaskoliGraduation,

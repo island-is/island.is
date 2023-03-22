@@ -9,7 +9,6 @@ const schema = z.object({
   }),
 })
 
-//TODO: Missing scope?
 export const UniversityOfIcelandClientConfig = defineConfig<
   z.infer<typeof schema>
 >({
