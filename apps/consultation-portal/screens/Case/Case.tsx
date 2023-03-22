@@ -7,6 +7,7 @@ import {
   GridContainer,
   GridRow,
   Hidden,
+  LinkV2,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -110,7 +111,22 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
                   headingColor="blue400"
                   title="Skjöl til samráðs"
                 >
-                  {chosenCase.shortDescription}
+                  {/* {chosenCase.documents &&
+                    chosenCase.documents.map((doc, index) => {
+                      console.log(doc)
+                      // return (
+                      //   <LinkV2
+                      //     href={`https://samradapi-test.island.is/api/Documents/${doc.id}`}
+                      //     color="blue400"
+                      //     underline="normal"
+                      //     underlineVisibility="always"
+                      //     newTab
+                      //     key={index}
+                      //   >
+                      //     {doc.fileName}
+                      //   </LinkV2>
+                      // )
+                    })} */}
                 </StackedTitleAndDescription>
               </SimpleCardSkeleton>
               <SimpleCardSkeleton>
