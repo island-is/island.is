@@ -151,7 +151,7 @@ export class LicenseService {
     if (verifyData.ok) {
       return {
         valid: verifyData.data.valid,
-        identity: verifyData.data.passIdentity,
+        passIdentity: verifyData.data.passIdentity,
       }
     }
 

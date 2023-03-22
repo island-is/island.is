@@ -35,5 +35,5 @@ export class VerifyLicenseResponse {
   @ApiPropertyOptional({ description: 'Verification identity data' })
   @IsOptional()
   @IsObject()
-  readonly identity?: PassIdentity
+  readonly passIdentity?: PassIdentity
 }
