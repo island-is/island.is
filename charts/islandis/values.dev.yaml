@@ -854,7 +854,7 @@ application-system-form:
 consultation-portal:
   enabled: true
   env:
-    API_URL: 'http://web-consultation-portal'
+    API_URL: 'http://web-api.islandis.svc.cluster.local'
     BASEPATH: '/consultation-portal'
     ENVIRONMENT: 'dev'
     NODE_OPTIONS: '--max-old-space-size=464'
