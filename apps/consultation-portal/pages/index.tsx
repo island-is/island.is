@@ -1,55 +1,51 @@
 import initApollo from '../graphql/client'
-import {
-  ConsultationPortalAllCasesQuery,
-  ConsultationPortalAllCasesQueryVariables,
-  ConsultationPortalAllCasesDocument,
-} from '../screens/Home/getAllCases.graphql.generated'
-import {
-  ConsultationPortalAllTypesQuery,
-  ConsultationPortalAllTypesQueryVariables,
-  ConsultationPortalAllTypesDocument,
-} from '../screens/Home/getAllTypes.graphql.generated'
+import { GET_ALL_TYPES } from '../screens/Home/getAllTypes.graphql'
+import { ConsultationPortalAllTypesQuery } from '../screens/Home/getAllTypes.graphql.generated'
+
+import { ArrOfStatistics, ArrOfTypes, Case } from '../types/interfaces'
 import Home from '../screens/Home/Home'
-import { ArrOfTypes, Case } from '../types/interfaces'
+import { ConsultationPortalStatisticsQuery } from '../screens/Home/getStatistics.graphql.generated'
+import { GET_STATISTICS } from '../screens/Home/getStatistics.graphql'
 
 interface HomeProps {
-  cases: Case[]
   types: ArrOfTypes
+  statistics: ArrOfStatistics
 }
 export const getServerSideProps = async (ctx) => {
   const client = initApollo()
-  const [
-    {
-      data: { consultationPortalAllCases },
-    },
-  ] = await Promise.all([
-    client.query<
-      ConsultationPortalAllCasesQuery,
-      ConsultationPortalAllCasesQueryVariables
-    >({
-      query: ConsultationPortalAllCasesDocument,
-    }),
-  ])
-  const [
-    {
-      data: { consultationPortalAllTypes },
-    },
-  ] = await Promise.all([
-    client.query<
-      ConsultationPortalAllTypesQuery,
-      ConsultationPortalAllTypesQueryVariables
-    >({
-      query: ConsultationPortalAllTypesDocument,
-    }),
-  ])
+
+  try {
+    const [
+      {
+        data: { consultationPortalAllTypes },
+      },
+      {
+        data: { consultationPortalStatistics },
+      },
+    ] = await Promise.all([
+      client.query<ConsultationPortalAllTypesQuery>({
+        query: GET_ALL_TYPES,
+      }),
+      client.query<ConsultationPortalStatisticsQuery>({
+        query: GET_STATISTICS,
+      }),
+    ])
+    return {
+      props: {
+        types: consultationPortalAllTypes,
+        statistics: consultationPortalStatistics,
+      },
+    }
+  } catch (e) {
+    console.error(e)
+  }
   return {
-    props: {
-      cases: consultationPortalAllCases,
-      types: consultationPortalAllTypes,
-    },
+    notFound: true,
   }
 }
-export const Index = ({ cases, types }: HomeProps) => {
-  return <Home cases={cases} types={types} />
+
+export const Index = ({ types, statistics }: HomeProps) => {
+  return <Home types={types} statistics={statistics} />
 }
+
 export default Index

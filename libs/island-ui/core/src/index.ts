@@ -89,6 +89,7 @@ export * from './lib/Input/Input'
 export * from './lib/InputFileUpload/InputFileUpload'
 export * from './lib/InputError/InputError'
 export * from './lib/ToggleSwitch'
+export * from './lib/PhoneInput/PhoneInput'
 
 // Navigation
 export { BreadcrumbsDeprecated } from './lib/BreadcrumbsDeprecated/Breadcrumbs'
@@ -122,3 +123,4 @@ export * as linkStyles from './lib/Link/Link.css'
 
 // Hooks
 export * from './hooks/useBreakpoint'
+export { ErrorMessage } from './lib/Input/ErrorMessage'

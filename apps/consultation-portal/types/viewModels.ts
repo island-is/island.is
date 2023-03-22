@@ -7,9 +7,9 @@ export interface Case {
   contactName: string
   contactEmail: string
   status: string
-  institution: string
-  type: string
-  policyArea: string
+  institutionName: string
+  typeName: string
+  policyAreaName: string
   processBegins: string
   processEnds: string
   announcementText: string

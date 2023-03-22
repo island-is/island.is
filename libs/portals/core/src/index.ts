@@ -21,7 +21,7 @@ export * from './utils/formatNationalId'
 export * from './utils/modules'
 export * from './utils/plausible'
 export * from './utils/router/prepareRouterData'
-export * from './utils/router/wrappedLoaderFn'
+export * from './utils/router/wrappers'
 
 // components
 export * from './components/ApplicationErrorBoundary/ApplicationErrorBoundary'

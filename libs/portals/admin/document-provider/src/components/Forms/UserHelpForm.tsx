@@ -10,7 +10,11 @@ interface Props {
   organisationId: string
 }
 export const UserHelpForm: FC<Props> = ({ helpDesk, organisationId }) => {
-  const { handleSubmit, control, errors } = useForm()
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<Helpdesk>()
   const { formatMessage } = useLocale()
 
   const { updateHelpDesk, loading } = useUpdateHelpDesk(organisationId)
@@ -42,7 +46,7 @@ export const UserHelpForm: FC<Props> = ({ helpDesk, organisationId }) => {
               ),
             },
           }}
-          render={({ onChange, name, value }) => (
+          render={({ field: { onChange, name, value } }) => (
             <Input
               size="xs"
               label={formatMessage(m.SettingsEditUserHelpContactEmail)}
@@ -50,7 +54,7 @@ export const UserHelpForm: FC<Props> = ({ helpDesk, organisationId }) => {
               name={name}
               value={value}
               onChange={onChange}
-              hasError={errors.email}
+              hasError={!!errors.email}
               errorMessage={errors.email?.message}
             ></Input>
           )}
@@ -73,7 +77,7 @@ export const UserHelpForm: FC<Props> = ({ helpDesk, organisationId }) => {
               ),
             },
           }}
-          render={({ onChange, name, value }) => (
+          render={({ field: { onChange, name, value } }) => (
             <Input
               size="xs"
               label={formatMessage(m.SettingsEditUserHelpContactTel)}
@@ -81,7 +85,7 @@ export const UserHelpForm: FC<Props> = ({ helpDesk, organisationId }) => {
               name={name}
               value={value}
               onChange={onChange}
-              hasError={errors.phoneNumber}
+              hasError={!!errors.phoneNumber}
               errorMessage={errors.phoneNumber?.message}
             ></Input>
           )}

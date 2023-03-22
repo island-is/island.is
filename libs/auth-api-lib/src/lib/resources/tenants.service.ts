@@ -6,6 +6,7 @@ import { AdminPortalScope } from '@island.is/auth/scopes'
 
 import { TenantDto } from './dto/tenant.dto'
 import { Domain } from './models/domain.model'
+import { NoContentException } from '@island.is/nest/problem'
 
 /**
  * This is a service that is used to access the tenant resource.
@@ -18,7 +19,7 @@ export class TenantsService {
     private readonly domainModel: typeof Domain,
   ) {}
 
-  async findAll(user: User): Promise<TenantDto[]> {
+  async findAllByUser(user: User): Promise<TenantDto[]> {
     const isSuperUser = user.scope.includes(AdminPortalScope.idsAdminSuperUser)
 
     const tenants = await this.domainModel.findAll({
@@ -34,5 +35,34 @@ export class TenantsService {
       name: tenant.name,
       displayName: [{ locale: 'is', value: tenant.displayName }],
     }))
+  }
+
+  async findById(id: string): Promise<TenantDto> {
+    const tenant = await this.domainModel.findOne({
+      where: { name: id },
+      attributes: ['name', 'displayName'],
+    })
+
+    if (!tenant) {
+      throw new NoContentException()
+    }
+
+    return {
+      name: tenant.name,
+      displayName: [{ locale: 'is', value: tenant.displayName }],
+    }
+  }
+
+  async hasAccessToTenant(user: User, tenantId: string) {
+    const isSuperUser = user.scope.includes(AdminPortalScope.idsAdminSuperUser)
+
+    const tenant = await this.domainModel.findOne({
+      where: {
+        name: tenantId,
+        ...(isSuperUser ? {} : { nationalId: user.nationalId }),
+      },
+      attributes: ['name'],
+    })
+    return Boolean(tenant)
   }
 }

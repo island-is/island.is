@@ -75,7 +75,7 @@ export const AccessForm = ({
     scope: AccessFormScope[]
     validityPeriod: Date | null
   }>()
-  const { handleSubmit, getValues } = methods
+  const { handleSubmit, watch } = methods
 
   const onSubmit = handleSubmit(async (values) => {
     if (formError) {
@@ -124,10 +124,8 @@ export const AccessForm = ({
   })
 
   // Map format and flatten scopes to be used in the confirm modal
-  const scopes: MappedScope[] | undefined = getValues()
-    ?.scope?.map((item) =>
-      formatScopeTreeToScope({ item, scopeTree, validityPeriod }),
-    )
+  const scopes: MappedScope[] | undefined = watch('scope')
+    ?.map((item) => formatScopeTreeToScope({ item, scopeTree, validityPeriod }))
     .filter(isDefined)
 
   return (

@@ -5,6 +5,7 @@ import {
   Icon,
   Hidden,
   Stack,
+  FocusableBox,
 } from '@island.is/island-ui/core'
 import { Fragment, useState } from 'react'
 import { tableRowBackgroundColor } from '../../utils/helpers'
@@ -55,7 +56,9 @@ const SubscriptionTableItem = ({
             borderColor={borderColor}
             box={{ background: tableRowBackgroundColor(idx) }}
           >
-            <Text variant="h5">{item.name}</Text>
+            <FocusableBox onClick={onClick}>
+              <Text variant="h5">{item.name}</Text>
+            </FocusableBox>
           </T.Data>
         ) : (
           <>
@@ -64,15 +67,19 @@ const SubscriptionTableItem = ({
               box={{ background: tableRowBackgroundColor(idx) }}
             >
               <Hidden below="lg">
-                <Text variant="h5">{item.caseNumber}</Text>
+                <FocusableBox onClick={onClick}>
+                  <Text variant="h5">{item.caseNumber}</Text>
+                </FocusableBox>
               </Hidden>
               <Hidden above="md">
-                <Stack space={1}>
-                  <Text variant="h5">{item.caseNumber}</Text>
-                  <Text variant="medium" fontWeight="light">
-                    {item.name}
-                  </Text>
-                </Stack>
+                <FocusableBox onClick={onClick}>
+                  <Stack space={1}>
+                    <Text variant="h5">{item.caseNumber}</Text>
+                    <Text variant="medium" fontWeight="light">
+                      {item.name}
+                    </Text>
+                  </Stack>
+                </FocusableBox>
               </Hidden>
             </T.Data>
             <T.Data
@@ -80,9 +87,11 @@ const SubscriptionTableItem = ({
               box={{ background: tableRowBackgroundColor(idx) }}
             >
               <Hidden below="lg">
-                <Text variant="medium" fontWeight="light">
-                  {item.name}
-                </Text>
+                <FocusableBox onClick={onClick}>
+                  <Text variant="medium" fontWeight="light">
+                    {item.name}
+                  </Text>
+                </FocusableBox>
               </Hidden>
             </T.Data>
           </>
@@ -95,9 +104,13 @@ const SubscriptionTableItem = ({
           }}
           align="right"
         >
-          <div onClick={onClick} style={{ height: '24px' }}>
+          <FocusableBox
+            onClick={onClick}
+            style={{ height: '24px' }}
+            flexDirection="rowReverse"
+          >
             <Icon icon={isOpen ? 'chevronUp' : 'chevronDown'} color="blue400" />
-          </div>
+          </FocusableBox>
         </T.Data>
       </T.Row>
       {isOpen && (

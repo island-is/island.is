@@ -1,7 +1,4 @@
-import {
-  ConsultationPortalCaseItemResult,
-  QueryConsultationPortalCaseByIdArgs,
-} from '@island.is/api/schema'
+import { QueryConsultationPortalCaseByIdArgs } from '@island.is/api/schema'
 import initApollo from '../../graphql/client'
 import CaseScreen from '../../screens/Case/Case'
 import {
