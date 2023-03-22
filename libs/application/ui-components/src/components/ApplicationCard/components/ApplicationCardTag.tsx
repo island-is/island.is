@@ -1,3 +1,4 @@
+import React from 'react'
 import { Tag } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { ApplicationCardFields, DefaultCardData } from '../types'

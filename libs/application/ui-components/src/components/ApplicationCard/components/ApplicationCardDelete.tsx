@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box, DialogPrompt, Icon, Tag } from '@island.is/island-ui/core'
 import { coreMessages } from '@island.is/application/core'
 import { ApplicationCardFields } from '../types'
