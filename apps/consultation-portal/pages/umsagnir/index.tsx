@@ -3,7 +3,7 @@ import { GET_ALL_USER_ADVICES } from '../../screens/Advices/getAllUserAdvices.gr
 import { ConsultationPortalAllUserAdvicesQuery } from '../../screens/Advices/getAllUserAdvices.graphql.generated'
 import { UserAdvice } from '../../types/interfaces'
 import Advices from '../../screens/Advices/Advices'
-import { parseAuthToken } from '../../utils/helpers'
+import { parseCookie } from '@island.is/consultation-portal/utils/helpers'
 
 interface UserAdvicesProps {
   allUserAdvices: UserAdvice
@@ -11,7 +11,8 @@ interface UserAdvicesProps {
 
 export const getServerSideProps = async (ctx) => {
   const cookie = ctx.req.headers.cookie
-  const token = parseAuthToken({ token: cookie })
+  const parsedCookie = parseCookie(cookie)
+  const token = parsedCookie.hasOwnProperty("token") ? parsedCookie["token"] : ""
 
   const client = initApollo()
   try {
