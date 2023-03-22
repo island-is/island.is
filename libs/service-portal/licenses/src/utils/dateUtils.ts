@@ -38,3 +38,10 @@ export const getExpiresIn = (currentDate: Date, date: Date) => {
 export const isExpired = (currentDate: Date, date: Date) => {
   return !isAfter(date, currentDate)
 }
+
+export const isTimeMoreThen30Minutes = (initialTime: Date) => {
+  const now = new Date()
+  const timeDiff = Math.abs(now.getTime() - initialTime.getTime())
+  const diffMinutes = Math.ceil(timeDiff / (1000 * 60))
+  return diffMinutes > 30
+}
