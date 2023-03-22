@@ -3,12 +3,7 @@ import type { Server } from 'http'
 import { NestFactory } from '@nestjs/core'
 import cookieParser from 'cookie-parser'
 import bodyParser from 'body-parser'
-import {
-  INestApplication,
-  Type,
-  ValidationPipe,
-  NestInterceptor,
-} from '@nestjs/common'
+import { INestApplication, ValidationPipe } from '@nestjs/common'
 import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger'
 import yaml from 'js-yaml'
 import * as yargs from 'yargs'
@@ -20,66 +15,15 @@ import {
   LoggingModule,
   monkeyPatchServerLogging,
 } from '@island.is/logging'
-import { startMetricServer } from '@island.is/infra-metrics'
+import { getServerPort, startMetricServer } from '@island.is/infra-metrics'
 import { httpRequestDurationMiddleware } from './httpRequestDurationMiddleware'
 import { InfraModule } from './infra/infra.module'
 import { swaggerRedirectMiddleware } from './swaggerMiddlewares'
+import { InfraNestServer, RunServerOptions } from './types'
 
 // Allow client connections to stay connected for up to 30 seconds of inactivity. For reference, the default value in
 // Node.JS is 5 seconds, Kestrel (.NET) is 120 seconds and Nginx is 75 seconds.
 const KEEP_ALIVE_TIMEOUT = 1000 * 30
-
-type RunServerOptions = {
-  /**
-   * Main nest module.
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  appModule: Type<any>
-
-  /**
-   * Server name.
-   */
-  name: string
-
-  /**
-   * The base path of the swagger documentation.
-   */
-  swaggerPath?: string
-
-  /**
-   * OpenAPI definition.
-   */
-  openApi?: Omit<OpenAPIObject, 'paths'>
-
-  /**
-   * The port to start the server on.
-   */
-  port?: number
-
-  /**
-   * Hook up global interceptors to app
-   */
-  interceptors?: NestInterceptor[]
-
-  /**
-   * Global url prefix for the app
-   */
-  globalPrefix?: string
-
-  stripNonClassValidatorInputs?: boolean
-
-  /**
-   * Enables NestJS versioning.
-   */
-  enableVersioning?: boolean
-
-  /**
-   * Controls the maximum request json body size. If this is a number, then the
-   * value specifies the number of bytes; if it is a string, the value is passed
-   * to the bytes library for parsing. Defaults to '100kb'.
-   */
-  jsonBodyLimit?: number | string
-}
 
 export const createApp = async ({
   stripNonClassValidatorInputs = true,
@@ -122,7 +66,9 @@ export const createApp = async ({
     app.setGlobalPrefix(options.globalPrefix)
   }
 
-  app.use(httpRequestDurationMiddleware())
+  if (options.collectMetrics !== false) {
+    app.use(httpRequestDurationMiddleware())
+  }
   app.use(cookieParser())
 
   if (options.jsonBodyLimit) {
@@ -132,18 +78,21 @@ export const createApp = async ({
   return app
 }
 
-const startServer = async (app: INestApplication, port = 3333) => {
-  const servicePort = parseInt(process.env.PORT || '') || port
-  const metricsPort = servicePort + 1
-  const server = (await app.listen(servicePort, () => {
-    logger.info(`Service listening at http://localhost:${servicePort}`, {
+const startServer = async (
+  app: INestApplication,
+  port: number,
+): Promise<Server> => {
+  const server: Server = await app.listen(port)
+  logger.info(
+    `Service listening at http://localhost:${getServerPort(server, port)}`,
+    {
       context: 'Bootstrap',
-    })
-  })) as Server
-  await startMetricServer(metricsPort)
+    },
+  )
 
   // Allow connections to remain idle for a bit longer than the default 5s.
   server.keepAliveTimeout = KEEP_ALIVE_TIMEOUT
+  return server
 }
 
 function setupOpenApi(
@@ -164,7 +113,9 @@ function generateSchema(filePath: string, document: OpenAPIObject) {
   fs.writeFileSync(filePath, yaml.dump(document, { noRefs: true }))
 }
 
-export const bootstrap = async (options: RunServerOptions) => {
+export const bootstrap = async (
+  options: RunServerOptions,
+): Promise<InfraNestServer> => {
   const argv = yargs.option('generateSchema', {
     description: 'Generate OpenAPI schema into the specified file',
     type: 'string',
@@ -178,7 +129,7 @@ export const bootstrap = async (options: RunServerOptions) => {
     if (argv.generateSchema) {
       generateSchema(argv.generateSchema, document)
       await app.close()
-      return
+      process.exit()
     }
   }
 
@@ -188,5 +139,25 @@ export const bootstrap = async (options: RunServerOptions) => {
     })
   }
 
-  startServer(app, options.port)
+  const serverPort = process.env.PORT
+    ? parseInt(process.env.PORT, 10)
+    : options.port ?? 3333
+  const metricServerPort = serverPort === 0 ? 0 : serverPort + 1
+  const server = await startServer(app, serverPort)
+  const metricsServer =
+    options.collectMetrics !== false
+      ? await startMetricServer(metricServerPort)
+      : undefined
+
+  return {
+    app,
+    server,
+    metricsServer,
+    close: async () => {
+      await app.close()
+      if (metricsServer) {
+        return new Promise((resolve) => metricsServer.close(() => resolve()))
+      }
+    },
+  }
 }
