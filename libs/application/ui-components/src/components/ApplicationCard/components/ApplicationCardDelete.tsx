@@ -7,16 +7,13 @@ import { useDeleteApplication } from '../../../hooks/useDeleteApplication'
 
 interface Props {
   application: ApplicationCardFields
-  refetchOnDelete?: () => void
+  onDelete?: () => void
 }
 
-export const ApplicationCardDelete = ({
-  application,
-  refetchOnDelete,
-}: Props) => {
+export const ApplicationCardDelete = ({ application, onDelete }: Props) => {
   const { id, actionCard } = application
   const { formatMessage } = useLocale()
-  const { deleteApplication } = useDeleteApplication(refetchOnDelete)
+  const { deleteApplication } = useDeleteApplication(onDelete)
 
   if (!actionCard || !actionCard?.deleteButton) {
     return null

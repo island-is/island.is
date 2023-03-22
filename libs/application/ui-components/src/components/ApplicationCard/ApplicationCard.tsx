@@ -32,7 +32,7 @@ export type ApplicationCardProps = {
    * Method that is invoked when an application is deleted.
    * Used to refetch the data to keep the list up to date
    */
-  refetchAfterDeletion?: () => void
+  onDelete?: () => void
   /**
    * Method that is invoked when application card button is clicked.
    * Defaults to opening the application in a new tab
@@ -42,7 +42,7 @@ export type ApplicationCardProps = {
 
 export const ApplicationCard = ({
   application,
-  refetchAfterDeletion,
+  onDelete,
   onClick,
   logo,
   focused = false,
@@ -104,7 +104,7 @@ export const ApplicationCard = ({
           />
           <ApplicationCardDelete
             application={application}
-            refetchOnDelete={refetchAfterDeletion}
+            onDelete={onDelete}
           />
         </Inline>
       </Box>

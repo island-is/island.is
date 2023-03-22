@@ -59,8 +59,8 @@ const ApplicationList = ({
               key={application.id}
               application={application}
               focused={focus}
-              refetchAfterDeletion={refetch}
               logo={getLogo(application.typeId)}
+              onDelete={refetch}
               onClick={onClick}
             />
           ))}
