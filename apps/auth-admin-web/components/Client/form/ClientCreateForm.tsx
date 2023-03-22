@@ -31,6 +31,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
     handleSubmit,
     formState,
     setValue,
+    resetField,
     clearErrors,
   } = useForm<FormOutput>()
   const { isSubmitting, errors } = formState
@@ -118,6 +119,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
       const response = await ResourcesService.findAllDomains()
       if (response) {
         setDomains(response as Domain[])
+        resetField('client.domainName', { defaultValue: client.domainName })
       }
     }
 
@@ -570,7 +572,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     <ErrorMessage
                       as="span"
                       errors={errors}
-                      name="domainName"
+                      name="client.domainName"
                       message={localization.fields['domainName'].errorMessage}
                     />
                   </div>

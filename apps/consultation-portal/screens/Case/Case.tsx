@@ -1,6 +1,7 @@
 import {
   Box,
   Breadcrumbs,
+  Button,
   Divider,
   GridColumn,
   GridContainer,
@@ -21,6 +22,7 @@ import { Advice } from '../../types/viewModels'
 import { SimpleCardSkeleton } from '../../components/Card'
 import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
 import { getTimeLineDate } from '../../utils/helpers/dateFormatter'
+import Link from 'next/link'
 
 const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
   // Remove following lines after connecting to API
@@ -111,7 +113,22 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
                   {chosenCase.shortDescription}
                 </StackedTitleAndDescription>
               </SimpleCardSkeleton>
-
+              <SimpleCardSkeleton>
+                <StackedTitleAndDescription
+                  headingColor="blue400"
+                  title="Viltu senda umsögn?"
+                >
+                  Öllum er frjálst að taka þátt í samráðinu. Skráðu þig inn og
+                  sendu umsögn.
+                </StackedTitleAndDescription>
+                <Box paddingTop={2}>
+                  <Link href="#write-review" shallow>
+                    <Button fluid iconType="outline" nowrap as="a">
+                      Senda umsögn
+                    </Button>
+                  </Link>
+                </Box>
+              </SimpleCardSkeleton>
               <SimpleCardSkeleton>
                 <StackedTitleAndDescription
                   headingColor="blue400"

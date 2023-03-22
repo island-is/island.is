@@ -1,6 +1,23 @@
 import Head from 'next/head'
+import { useUser } from '../../context/UserContext'
 
 const AppLayout = ({ children }) => {
+  const { isAuthenticated, persistLoginUser, setUserNull, user } = useUser()
+
+  const checkAuth = async () => {
+    const check = await fetch(`${process.env.WEB_PUBLIC_URL}/api/auth/check`)
+    const data = await check.json()
+    if (data.token) {
+      persistLoginUser({ token: data.token })
+    }
+  }
+
+  if (!isAuthenticated) {
+    checkAuth()
+  } else if (!user) {
+    setUserNull()
+  }
+
   return (
     <div>
       <Head>
