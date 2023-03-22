@@ -82,12 +82,12 @@ const GrantAccess = () => {
     control,
     formState: { errors },
     watch,
-    reset,
+    setValue,
   } = methods
 
   useEffect(() => {
-    reset({ domainName: selectedOption?.value ?? null })
-  }, [selectedOption?.value, reset])
+    setValue('domainName', selectedOption?.value ?? null)
+  }, [selectedOption?.value, setValue])
 
   const watchToNationalId = watch('toNationalId')
   const domainNameWatcher = watch('domainName')
@@ -136,9 +136,7 @@ const GrantAccess = () => {
 
   const clearPersonState = () => {
     setName('')
-    reset({
-      toNationalId: '',
-    })
+    setValue('toNationalId', '')
 
     setTimeout(() => {
       if (inputRef.current) {
