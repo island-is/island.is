@@ -26,10 +26,10 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
   const error = (errors as any)?.estate?.vehicles
   const { id } = field
   const { formatMessage } = useLocale()
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, update } = useFieldArray({
     name: id,
   })
-  const { control, setValue } = useFormContext()
+  const { control } = useFormContext()
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
     estate: { vehicles: EstateAsset[] }
@@ -63,25 +63,30 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
               paddingBottom={3}
             >
               <ProfileCard
+                disabled={!asset.enabled}
                 title={asset.assetNumber}
                 key={asset.assetNumber}
                 description={[
                   `${asset.description}`,
-                  /*<Box marginTop={1} as="span">
+                  <Box marginTop={1} as="span">
                     <Button
                       variant="text"
                       icon={asset.enabled ? 'remove' : 'add'}
                       size="small"
                       iconType="outline"
-                      onClick={() =>
-                        setValue(`${id}[${index}].enabled`, !asset.enabled)
-                      }
+                      onClick={() => {
+                        const updatedAsset = {
+                          ...asset,
+                          enabled: !asset.enabled,
+                        }
+                        update(index, updatedAsset)
+                      }}
                     >
                       {asset.enabled
                         ? formatMessage(m.inheritanceDisableMember)
                         : formatMessage(m.inheritanceEnableMember)}
                     </Button>
-                  </Box>,*/
+                  </Box>,
                 ]}
                 heightFull
               />

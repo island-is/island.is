@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import { LoadingScreen } from '../../../components/common/LoadingScreen'
 import ContentWrapper from '../../../components/Layout/ContentWrapper'
 import { IdpProvider } from '../../../entities/models/IdpProvider.model'
 import { IdpProviderService } from './../../../services/IdpProviderService'
@@ -10,7 +11,7 @@ import LocalizationUtils from '../../../utils/localization.utils'
 const Index: React.FC = () => {
   const { query } = useRouter()
   const idpProviderName = query.idp
-  const [idpProvider, setIdpProvider] = useState<IdpProvider>(new IdpProvider())
+  const [idpProvider, setIdpProvider] = useState<IdpProvider>()
   const router = useRouter()
 
   /** Load the api Scope and set the step from query if there is one */
@@ -40,6 +41,14 @@ const Index: React.FC = () => {
     if (idpSaved) {
       router.push(`/admin/?tab=${AdminTab.IdpProviders}`)
     }
+  }
+
+  if (!idpProvider) {
+    return (
+      <ContentWrapper>
+        <LoadingScreen />
+      </ContentWrapper>
+    )
   }
 
   return (
