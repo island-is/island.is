@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 
 export const GET_ALL_USER_ADVICES = gql`
   query consultationPortalAllUserAdvices(
-    $input: ConsultationPortalUserAdvicesInput
+    $input: ConsultationPortalUserAdvicesInput!
   ) {
     consultationPortalAllUserAdvices(input: $input) {
       total
