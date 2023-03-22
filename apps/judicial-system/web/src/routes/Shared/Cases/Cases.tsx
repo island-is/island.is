@@ -20,6 +20,7 @@ import {
   isInvestigationCase,
   isIndictmentCase,
   isExtendedCourtRole,
+  completedCaseStates,
 } from '@island.is/judicial-system/types'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -182,12 +183,12 @@ export const Cases: React.FC = () => {
     })
 
     return partition(casesWithoutDeleted, (c) => {
-      if (isIndictmentCase(c.type) && c.state === CaseState.ACCEPTED) {
-        return false
+      if (isIndictmentCase(c.type)) {
+        return !completedCaseStates.includes(c.state)
       } else if (isPrisonAdminUser || isPrisonUser) {
-        return !c.isValidToDateInThePast && c.rulingDate
+        return !c.isValidToDateInThePast
       } else {
-        return !c.rulingDate
+        return !(completedCaseStates.includes(c.state) && c.rulingDate)
       }
     })
   }, [resCases, isPrisonAdminUser, isPrisonUser])

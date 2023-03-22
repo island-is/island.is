@@ -10,11 +10,12 @@ import {
   GET_TYPES,
 } from '../../screens/Subscriptions/queries.graphql'
 import {
-  ConsultationPortalAllCasesQuery,
+  ConsultationPortalGetCasesQuery,
   ConsultationPortalAllTypesQuery,
 } from '../../screens/Subscriptions/queries.graphql.generated'
 
 const STATUSES_TO_FETCH = [1, 2, 3]
+const PAGE_SIZE = 2000
 
 interface SubProps {
   cases: CaseForSubscriptions[]
@@ -25,20 +26,21 @@ export const getServerSideProps = async (ctx) => {
   const client = initApollo()
   const [
     {
-      data: { consultationPortalAllCases },
+      data: { consultationPortalGetCases },
     },
     {
       data: { consultationPortalAllTypes },
     },
   ] = await Promise.all([
     client.query<
-      ConsultationPortalAllCasesQuery,
+      ConsultationPortalGetCasesQuery,
       QueryConsultationPortalGetCasesArgs
     >({
       query: GET_CASES,
       variables: {
         input: {
           caseStatuses: STATUSES_TO_FETCH,
+          // pageSize: PAGE_SIZE,
         },
       },
     }),
@@ -48,7 +50,7 @@ export const getServerSideProps = async (ctx) => {
   ])
   return {
     props: {
-      cases: consultationPortalAllCases,
+      cases: consultationPortalGetCases.cases,
       types: consultationPortalAllTypes,
     },
   }

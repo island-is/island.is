@@ -26,7 +26,7 @@ export const CommissionFieldRepeater: FC<FieldBaseProps> = ({
 }) => {
   const { id, title } = field
   const { formatMessage } = useLocale()
-  const { fields, append, remove } = useFieldArray<PersonField>({ name: id })
+  const { fields, append, remove } = useFieldArray({ name: id })
 
   useEffect(() => {
     // The repeater should include one line by default

@@ -413,7 +413,7 @@ const Search: Screen<CategoryProps> = ({
   const categories: CategoriesProps[] = [
     {
       id: 'category',
-      label: 'Þjónustuflokkar',
+      label: n('categories', 'Þjónustuflokkar'),
       selected: state.query.category,
       singleOption: true,
       filters: countResults.tagCounts
@@ -425,7 +425,7 @@ const Search: Screen<CategoryProps> = ({
     },
     {
       id: 'organization',
-      label: 'Opinberir aðilar',
+      label: n('organizations', 'Opinberir aðilar'),
       selected: state.query.organization,
       singleOption: true,
       filters: countResults.tagCounts
@@ -436,6 +436,16 @@ const Search: Screen<CategoryProps> = ({
         })),
     },
   ]
+
+  const filterLabels: FilterLabels = {
+    labelClearAll: n('labelClearAll', 'Hreinsa allar síur'),
+    labelClear: n('labelClear', 'Hreinsa síu'),
+    labelOpen: n('labelOpen', 'Sía niðurstöður'),
+    labelClose: n('labelClose', 'Loka síu'),
+    labelTitle: n('labelTitle', 'Sía mannanöfn'),
+    labelResult: n('labelResult', 'Sjá niðurstöður'),
+    inputPlaceholder: n('inputPlaceholder', 'Leita að nafni'),
+  }
 
   return (
     <>
@@ -493,7 +503,7 @@ const Search: Screen<CategoryProps> = ({
                           })
                         }}
                       >
-                        Sýna allt
+                        {n('showAllResults', 'Sýna allt')}
                       </Tag>
                     )}
                     {tagsList
@@ -541,7 +551,7 @@ const Search: Screen<CategoryProps> = ({
                           })
                         }}
                       >
-                        {n('processEntry', 'Umsókn')}
+                        {n('processEntry', 'Umsóknir')}
                       </Tag>
                     )}
                   </Inline>
@@ -877,16 +887,6 @@ const EnglishResultsLink: FC<EnglishResultsLinkProps> = ({ q }) => {
   }
 
   return null
-}
-
-const filterLabels: FilterLabels = {
-  labelClearAll: 'Hreinsa allar síur',
-  labelClear: 'Hreinsa síu',
-  labelOpen: 'Sía niðurstöður',
-  labelClose: 'Loka síu',
-  labelTitle: 'Sía mannanöfn',
-  labelResult: 'Sjá niðurstöður',
-  inputPlaceholder: 'Leita að nafni',
 }
 
 export default withMainLayout(Search, { showSearchInHeader: false })

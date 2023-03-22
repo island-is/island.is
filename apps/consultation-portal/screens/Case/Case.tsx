@@ -1,6 +1,7 @@
 import {
   Box,
   Breadcrumbs,
+  Button,
   Divider,
   GridColumn,
   GridContainer,
@@ -20,6 +21,8 @@ import Layout from '../../components/Layout/Layout'
 import { Advice } from '../../types/viewModels'
 import { SimpleCardSkeleton } from '../../components/Card'
 import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
+import { getTimeLineDate } from '../../utils/helpers/dateFormatter'
+import Link from 'next/link'
 
 const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
   // Remove following lines after connecting to API
@@ -35,7 +38,7 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
   return (
     <Layout
       seo={{
-        title: `Mál: ${chosenCase?.caseNumber}`,
+        title: `Mál: S-${chosenCase?.caseNumber}`,
         url: `mal/${chosenCase?.caseNumber}`,
       }}
     >
@@ -44,7 +47,7 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
           <Breadcrumbs
             items={[
               { title: 'Öll mál', href: '/' },
-              { title: `Mál nr. ${chosenCase?.caseNumber}` },
+              { title: `Mál nr. S-${chosenCase?.caseNumber}` },
             ]}
           />
         </Box>
@@ -63,13 +66,13 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
             <Stack space={2}>
               <Divider />
               <CaseTimeline
-                status="Til umsagnar"
-                updatedDate="2023-01-13T15:47:07.703"
+                status={chosenCase.statusName}
+                updatedDate={getTimeLineDate(chosenCase)}
               />
               <Divider />
               <Box paddingLeft={1}>
                 <Text variant="h3" color="purple400">
-                  Fjöldi umsagna: 2
+                  {`Fjöldi umsagna: ${chosenCase.adviceCount}`}
                 </Text>
               </Box>
               <Divider />
@@ -92,7 +95,7 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
                   {advices?.map((advice: Advice) => {
                     return <ReviewCard advice={advice} key={advice.number} />
                   })}
-                  <WriteReviewCard card={card} isLoggedIn={isLoggedIn} />
+                  <WriteReviewCard card={chosenCase} isLoggedIn={isLoggedIn} />
                 </Stack>
               </Box>
             </Stack>
@@ -110,27 +113,45 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
                   {chosenCase.shortDescription}
                 </StackedTitleAndDescription>
               </SimpleCardSkeleton>
-
+              <SimpleCardSkeleton>
+                <StackedTitleAndDescription
+                  headingColor="blue400"
+                  title="Viltu senda umsögn?"
+                >
+                  Öllum er frjálst að taka þátt í samráðinu. Skráðu þig inn og
+                  sendu umsögn.
+                </StackedTitleAndDescription>
+                <Box paddingTop={2}>
+                  <Link href="#write-review" shallow>
+                    <Button fluid iconType="outline" nowrap as="a">
+                      Senda umsögn
+                    </Button>
+                  </Link>
+                </Box>
+              </SimpleCardSkeleton>
               <SimpleCardSkeleton>
                 <StackedTitleAndDescription
                   headingColor="blue400"
                   title="Aðilar sem hafa fengið boð um samráð á máli."
                 >
-                  Þetta mál er opið öllum til umsagnar. Skráðu þig inn hér til
-                  að skrifa umsögn um málið
+                  Viltu senda umsögn? Öllum er frjálst að taka þátt í samráðinu.
+                  Skráðu þig inn og sendu umsögn.
                 </StackedTitleAndDescription>
               </SimpleCardSkeleton>
 
               <SimpleCardSkeleton>
                 <StackedTitleAndDescription
                   headingColor="blue400"
-                  title="Ábyrgðaraðili"
+                  title="Umsjónaraðili"
                 >
-                  {contactName || contactEmail
-                    ? `${contactName ? contactName : ''} ${
-                        contactEmail ? contactEmail : ''
-                      }`
-                    : 'Engin skráður'}
+                  {contactName || contactEmail ? (
+                    <>
+                      {contactName && <Text>{contactName}</Text>}
+                      {contactEmail && <Text>{contactEmail}</Text>}
+                    </>
+                  ) : (
+                    'Engin skráður'
+                  )}
                 </StackedTitleAndDescription>
               </SimpleCardSkeleton>
             </Stack>

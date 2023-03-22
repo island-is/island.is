@@ -1,11 +1,8 @@
 import { Page } from '@playwright/test'
 import mergeWith from 'lodash/merge'
 import camelCase from 'lodash/camelCase'
-import { debuglog } from 'util'
+import { debug } from './utils'
 
-function debug(msg: string, ...args: unknown[]) {
-  debuglog('system-e2e')(msg, ...args)
-}
 function mergeOverwrite(_: unknown, source: unknown) {
   source
 }

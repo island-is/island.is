@@ -23,6 +23,8 @@ if (userMocked) {
       'profile',
       AdminPortalScope.delegations,
       AdminPortalScope.airDiscountScheme,
+      AdminPortalScope.regulationAdmin,
+      AdminPortalScope.regulationAdminManage,
       AdminPortalScope.icelandicNamesRegistry,
       AdminPortalScope.documentProvider,
       AdminPortalScope.idsAdmin,

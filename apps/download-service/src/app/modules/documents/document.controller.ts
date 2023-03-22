@@ -20,7 +20,6 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { AuditService } from '@island.is/nest/audit'
-import slugify from '@sindresorhus/slugify'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(DocumentsScope.main)
@@ -50,49 +49,27 @@ export class DocumentController {
       authenticationType: 'HIGH',
     })
 
-    if (!rawDocumentDTO) {
-      return res
-        .status(500)
-        .end('Unable to generate pdf - No content from service')
-    }
-    if (rawDocumentDTO.content) {
-      this.auditService.audit({
-        action: 'getDocumentPdf',
-        auth: user,
-        resources: pdfId,
-      })
-      const buffer = Buffer.from(rawDocumentDTO.content, 'base64')
-      const filename = slugify(
-        rawDocumentDTO.fileName ?? `postholf-${user.nationalId}`,
-      )
-      res.header('Content-length', buffer.length.toString())
-      res.header('Content-Disposition', `inline; filename=${filename}.pdf`)
-      res.header('Pragma: no-cache')
-      res.header('Cache-Control: no-cache')
-      res.header('Cache-Control: nmax-age=0')
-
-      return res.status(200).end(buffer)
-    }
-    if (rawDocumentDTO.htmlContent) {
-      this.auditService.audit({
-        action: 'getDocumentHTML',
-        auth: user,
-        resources: pdfId,
-      })
-      const filename = slugify(
-        rawDocumentDTO.fileName ?? `postholf-${user.nationalId}`,
-      )
-      res.header('Content-length', rawDocumentDTO.htmlContent.length.toString())
-      res.header('Content-Disposition', `inline; filename=${filename}.html`)
-      res.set('Content-Type', 'text/html')
-      res.header('Pragma: no-cache')
-      res.header('Cache-Control: no-cache')
-      res.header('Cache-Control: nmax-age=0')
-
-      res.send(Buffer.from(rawDocumentDTO.htmlContent))
-      return res.status(200).end()
+    if (!rawDocumentDTO || !rawDocumentDTO.content) {
+      return res.end()
     }
 
-    return res.status(500).end('Unable to generate pdf')
+    this.auditService.audit({
+      action: 'getDocumentPdf',
+      auth: user,
+      resources: pdfId,
+    })
+
+    const buffer = Buffer.from(rawDocumentDTO.content, 'base64')
+
+    res.header('Content-length', buffer.length.toString())
+    res.header(
+      'Content-Disposition',
+      `inline; filename=${rawDocumentDTO.fileName}.pdf`,
+    )
+    res.header('Pragma: no-cache')
+    res.header('Cache-Control: no-cache')
+    res.header('Cache-Control: nmax-age=0')
+
+    return res.end(buffer)
   }
 }

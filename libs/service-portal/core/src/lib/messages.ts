@@ -391,7 +391,7 @@ export const m = defineMessages({
   },
   familyNumber: {
     id: 'service.portal:family-number',
-    defaultMessage: 'Fjölskyldunúmer',
+    defaultMessage: 'Lögheimilistengsl',
   },
   familySpouse: {
     id: 'service.portal:family-spouse',

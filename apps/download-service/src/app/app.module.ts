@@ -18,15 +18,24 @@ import { DocumentsInfraController } from './modules/infra/documentsInfra.control
 import { FinanceDocumentController } from './modules/finance-documents/document.controller'
 import { environment } from '../environments'
 import { VehicleController } from './modules/vehicles-documents/vehicle-document.controller'
+import { EducationController } from './modules/education-documents/education-document.controller'
+import { RegulationDocumentsController } from './modules/regulation-documents/regulation-documents.controller'
 import {
   VehiclesClientConfig,
   VehiclesClientModule,
 } from '@island.is/clients/vehicles'
-import { EducationController } from './modules/education-documents/education-document.controller'
 import {
   UniversityOfIcelandClientConfig,
   UniversityOfIcelandClientModule,
 } from '@island.is/clients/university-of-iceland'
+import {
+  RegulationsClientConfig,
+  RegulationsClientModule,
+} from '@island.is/clients/regulations'
+import {
+  RegulationsAdminClientConfig,
+  RegulationsAdminClientModule,
+} from '@island.is/clients/regulations-admin'
 
 @Module({
   controllers: [
@@ -35,6 +44,7 @@ import {
     FinanceDocumentController,
     VehicleController,
     EducationController,
+    RegulationDocumentsController,
   ],
   imports: [
     AuditModule.forRoot(environment.audit),
@@ -48,6 +58,8 @@ import {
     FinanceClientModule,
     VehiclesClientModule,
     UniversityOfIcelandClientModule,
+    RegulationsAdminClientModule,
+    RegulationsClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -56,9 +68,10 @@ import {
         XRoadConfig,
         VehiclesClientConfig,
         UniversityOfIcelandClientConfig,
+        RegulationsAdminClientConfig,
+        RegulationsClientConfig,
       ],
     }),
   ],
-  providers: [],
 })
 export class AppModule {}

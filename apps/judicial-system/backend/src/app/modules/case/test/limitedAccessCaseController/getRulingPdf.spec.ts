@@ -3,6 +3,7 @@ import { Response } from 'express'
 
 import { Logger } from '@island.is/logging'
 
+import { nowFactory } from '../../../../factories'
 import { getRulingPdfAsBuffer } from '../../../../formatters'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { AwsS3Service } from '../../../aws-s3'
@@ -49,7 +50,7 @@ describe('LimitedAccessCaseController - Get ruling pdf', () => {
 
   describe('AWS S3 lookup', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
+    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
     const res = {} as Response
 
     beforeEach(async () => {
@@ -65,7 +66,7 @@ describe('LimitedAccessCaseController - Get ruling pdf', () => {
 
   describe('AWS S3 pdf returned', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
+    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
     const res = ({ end: jest.fn() } as unknown) as Response
     const pdf = {}
 
@@ -83,7 +84,7 @@ describe('LimitedAccessCaseController - Get ruling pdf', () => {
 
   describe('AWS S3 lookup fails', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
+    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
     const res = {} as Response
     const error = new Error('Some ignored error')
 
@@ -106,7 +107,7 @@ describe('LimitedAccessCaseController - Get ruling pdf', () => {
 
   describe('pdf generated', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
+    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
     const res = {} as Response
 
     beforeEach(async () => {
@@ -126,7 +127,7 @@ describe('LimitedAccessCaseController - Get ruling pdf', () => {
 
   describe('generated pdf returned', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
+    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
     const res = ({ end: jest.fn() } as unknown) as Response
     const pdf = {}
 
@@ -146,7 +147,7 @@ describe('LimitedAccessCaseController - Get ruling pdf', () => {
 
   describe('pdf generation fails', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
+    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
     let then: Then
     const res = {} as Response
 
