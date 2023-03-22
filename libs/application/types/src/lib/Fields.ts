@@ -234,6 +234,7 @@ export interface PhoneField extends BaseField {
   placeholder?: FormText
   backgroundColor?: InputBackgroundColor
   allowedCountryCodes?: string[]
+  disableDropdown?: boolean
   required?: boolean
   onChange?: (...event: any[]) => void
 }
