@@ -45,8 +45,8 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
         memory: '512Mi',
       },
       requests: {
-        cpu: '100m',
-        memory: '256Mi',
+        cpu: '10m',
+        memory: '300Mi',
       },
     })
     .ingress({
