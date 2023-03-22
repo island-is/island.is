@@ -88,7 +88,10 @@ export const getLocalrunValueFile = async (
         join(rootDir, `.env.${serviceNXName}`),
         Object.entries(svc.env)
           .map(
-            ([name, value]) => `export ${name}="${value.replace(/"/g, '\\"')}"`,
+            ([name, value]) =>
+              `export ${name}='${value
+                .replace(/'/g, "'\\''")
+                .replace(/[\n\r]/g, '')}'`,
           )
           .join('\n'),
         { encoding: 'utf-8' },
