@@ -1,4 +1,3 @@
-import jestConfig from '@island.is/consultation-portal/jest.config'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import getAuthUrl from './getAuthUrl'
