@@ -477,7 +477,7 @@ export const HelmOutput: OutputFormat<HelmService> = {
     })
     s.replicaCount = {
       min: Math.min(1, s.replicaCount?.min ?? 1),
-      max: Math.min(2, s.replicaCount?.max ?? 2),
+      max: Math.min(2, s.replicaCount?.max ?? 1),
       default: Math.min(1, s.replicaCount?.default ?? 1),
     }
     s.namespace = getFeatureDeploymentNamespace(env)
