@@ -19,6 +19,8 @@ import {
 
 import Link from 'next/link'
 import { useReducer, useState } from 'react'
+import { useLogin } from '@island.is/consultation-portal/utils/helpers'
+import { SubscriptionActionBox } from '../Card'
 
 type CardProps = {
   card: Case
@@ -111,6 +113,7 @@ export const WriteReviewCard = ({ card, isLoggedIn }: CardProps) => {
   const [showUpload, setShowUpload] = useState<boolean>(false)
   const [state, dispatch] = useReducer(reducer, initialUploadFiles)
   const [error, setError] = useState<string | undefined>(undefined)
+  const { LogIn, loginLoading } = useLogin()
 
   const onChange = (newFiles: File[]) => {
     const newUploadFiles = newFiles.map((f) => fileToObject(f))
@@ -234,14 +237,11 @@ export const WriteReviewCard = ({ card, isLoggedIn }: CardProps) => {
     </Box>
   ) : (
     <Box>
-      <ActionCard
-        headingVariant="h4"
+      <SubscriptionActionBox
         heading="Skrifa umsögn"
-        text="Þú verður að vera skráð(ur) inn til þess að geta skrifað umsögn um tillögur "
-        cta={{ label: 'Skrá mig inn' }}
-      >
-        {' '}
-      </ActionCard>
+        text="Þú verður að vera skráð(ur) inn til þess að geta skrifað umsögn um tillögur."
+        cta={{ label: 'Skrá mig inn', onClick: LogIn, isLoading: loginLoading }}
+      />
       <Text marginTop={2}>
         Ef umsögnin er send fyrir hönd samtaka, fyrirtækis eða stofnunar þarf
         umboð þaðan,{' '}

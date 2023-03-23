@@ -23,17 +23,12 @@ import { SimpleCardSkeleton } from '../../components/Card'
 import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
 import { getTimeLineDate } from '../../utils/helpers/dateFormatter'
 import Link from 'next/link'
+import { useUser } from '@island.is/consultation-portal/context/UserContext'
 
-const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
+const CaseScreen = ({ chosenCase, advices }) => {
   // Remove following lines after connecting to API
   const { contactEmail, contactName } = chosenCase
-  const card = {
-    caseNumber: '76/2022',
-    nameOfReviewer: 'Jon Jonsson',
-    reviewPeriod: '01.08.2022 – 01.12.2022',
-  }
-
-  isLoggedIn = true // remove when functionality for logged in has been implemented
+  const { isAuthenticated } = useUser()
 
   return (
     <Layout
@@ -95,7 +90,7 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
                   {advices?.map((advice: Advice) => {
                     return <ReviewCard advice={advice} key={advice.number} />
                   })}
-                  <WriteReviewCard card={chosenCase} isLoggedIn={isLoggedIn} />
+                  <WriteReviewCard card={chosenCase} isLoggedIn={isAuthenticated} />
                 </Stack>
               </Box>
             </Stack>
