@@ -27,6 +27,16 @@ export const serviceSetup = (services: {
       SI_PUBLIC_DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID',
       SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN',
     })
+    .resources({
+      limits: {
+        cpu: '200m',
+        memory: '256Mi',
+      },
+      requests: {
+        cpu: '10m',
+        memory: '128Mi',
+      },
+    })
     .ingress({
       primary: {
         host: {
