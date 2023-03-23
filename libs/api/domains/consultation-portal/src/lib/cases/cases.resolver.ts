@@ -12,6 +12,7 @@ import { GetCaseInput } from '../dto/case.input'
 import { GetCasesInput } from '../dto/cases.input'
 import { CasesAggregateResult } from '../models/casesAggregateResult.model'
 import { AdviceRequest } from '../models/adviceRequest.model'
+import { CurrentAuthorization } from '../auth-tools/current-authorization'
 
 @Resolver()
 @UseGuards(FeatureFlagGuard)
@@ -45,8 +46,11 @@ export class CaseResultResolver {
 
   @Mutation(() => CaseResult, { name: 'postConsultationPortalAdvice' })
   @FeatureFlag(Features.consultationPortalApplication)
-  async postAdvice(@Args('caseId') caseId: number): Promise<void> {
-    const response = await this.caseResultService.postAdvice(caseId)
+  async postAdvice(
+    @Args('caseId') caseId: number,
+    @CurrentAuthorization() auth: string,
+  ): Promise<void> {
+    const response = await this.caseResultService.postAdvice(auth, caseId)
     return response
   }
 }
