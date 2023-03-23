@@ -22,50 +22,17 @@ env:
   TEST_ENVIRONMENT: dev
 
 jobs:
-  prerequisites:
-    name: Prerequisites
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    if: always()
-    needs:
-    env:
-      GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
-      FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
-      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
-      IMAGES: ${{ needs.prepare.outputs.IMAGES }}
-    steps:
-      uses: actions/checkout@v3
-      name: Trigger Deployment for service
-      env:
-
   acceptance-system-e2e:
     name: System-e2e Acceptance tests
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: always()
-    needs: jobs.prerequisites
-    env:
-      GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
-      FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
-      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
-      IMAGES: ${{ needs.prepare.outputs.IMAGES }}
+    needs:
     steps:
       - uses: actions/checkout@v3
-      - name: Trigger Deployment for service
+      - name: Trigger Acceptance Test deployment
         env:
+          GIT_BRANCH: "main"
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
-        run: |
-          echo "Sending webhook with branch: '$GIT_BRANCH_DEPLOY'"
-          curl $SPINNAKER_URL/webhooks/webhook/islandis -H "content-type: application/json" --data-binary @- <<BODY
-          {
-            "token": "$SPINNAKER_WEBHOOK_TOKEN",
-            "branch": "$GIT_BRANCH_DEPLOY",
-            "parameters": {
-              "docker_tag": "$DOCKER_TAG",
-              "feature_name": "system-e2e-acceptance",
-              "images": "$IMAGES",
-            }
-          }
-          BODY
+        run: yarn ts scripts/ci/spinnaker.ts
