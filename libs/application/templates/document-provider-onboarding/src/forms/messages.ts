@@ -325,13 +325,13 @@ export const m = defineMessages({
     description: '',
   },
   thankYouScreenSecondMessage: {
-    id: 'dpo.application:thankYouScreen.firstMessage',
+    id: 'dpo.application:thankYouScreen.secondMessage',
     defaultMessage:
       'Hér að neðan er að finna upplýsingar sem nauðsynlegt er að kynna sér áður en farið er af stað í það ferli.',
     description: '',
   },
   thankYouScreenThirdMessage: {
-    id: 'dpo.application:thankYouScreen.secondMessage',
+    id: 'dpo.application:thankYouScreen.thirdMessage',
     defaultMessage:
       'Til að gerast skjalaveitandi þarf að útfæra tvenn forritunarskil. Annarsvegar eru það skil til að senda skjalatilvísun í pósthólf og hinsvegar eru það skil til að hægt sé að nálgast skjal hjá skjalaveitu. Hlekkirnir hér undir innihalda upplýsingar um tæknilegar útfærslur á þessum skilum. Í þessu ferli færð þú aðgang að prófunarumhverfi til þess að útfæra þjónustuna. Þegar þjónustan er tilbúin og prófunum er lokið, er hægt að framkvæma sjálfvirkar prófanir til að staðfesta virkni.',
     description: '',
@@ -378,7 +378,7 @@ export const m = defineMessages({
 
   //Pending Review Thank You Screen
   pendingReviewthankYouScreenTitle: {
-    id: 'dpo.application:thankYouScreen.title',
+    id: 'dpo.application:pendingReviewThankYouScreen.title',
     defaultMessage: 'Í vinnslu',
     description: '',
   },
@@ -520,7 +520,7 @@ export const m = defineMessages({
     description: '',
   },
   testEnviromentErrorMessage: {
-    id: 'dpo.application:testEnviroment.subMessage',
+    id: 'dpo.application:testEnviroment.errorMessage',
     defaultMessage: 'Eitthvað fór úrskeiðis. Ekki tókst að búa til aðgang.',
     description: '',
   },
@@ -543,7 +543,7 @@ export const m = defineMessages({
     description: '',
   },
   testEndPointErrorMessage: {
-    id: 'dpo.application:testEnviroment.errorMessage',
+    id: 'dpo.application:testEnviroment.endpointErrorMessage',
     defaultMessage: 'Eitthvað fór úrskeiðis. Ekki tókst að vista endapunkt.',
     description: '',
   },
@@ -563,7 +563,7 @@ export const m = defineMessages({
     description: '',
   },
   testEndpointInputErrorMessage: {
-    id: 'dpo.application:testEnviroment.subMessage',
+    id: 'dpo.application:testEnviroment.inputErrorMessage',
     defaultMessage: 'Þú verður að skrá inn endapunkt',
     description: '',
   },
@@ -626,7 +626,7 @@ export const m = defineMessages({
     description: '',
   },
   automatedTestsMessage: {
-    id: 'dpo.application:automatedTests.subHeading',
+    id: 'dpo.application:automatedTests.message',
     defaultMessage:
       'Sendu skjal á einhverja kennitölu í pósthólfið í prófunarumhverfinu. Því næst skal slá inn kennitölu þess sem skjalið var sent á í reitinn hér að neðan og velja að keyra próf. Prófið athugar hvort skjal hafi borist þessari kennitölu á síðustu 5 mínútum. Einnig er sannreynt að hægt sé að sækja skjalið til skjalaveitu.',
     description: '',
@@ -667,7 +667,7 @@ export const m = defineMessages({
     description: '',
   },
   automatedTestsErrorMessage: {
-    id: 'dpo.application:testEnviroment.subMessage',
+    id: 'dpo.application:testEnviroment.automatedTestsErrorMessage',
     defaultMessage:
       'Eitthvað fór úrskeiðis. Ekki tókst að hefja sjálfvirk próf.',
     description: '',
@@ -702,7 +702,7 @@ export const m = defineMessages({
     description: '',
   },
   prodEnviromentErrorMessage: {
-    id: 'dpo.application:testEnviroment.subMessage',
+    id: 'dpo.application:testEnviroment.prodEnviromentErrorMessage',
     defaultMessage: 'Eitthvað fór úrskeiðis. Ekki tókst að búa til aðgang.',
     description: '',
   },
@@ -725,7 +725,7 @@ export const m = defineMessages({
     description: '',
   },
   prodEndPointErrorMessage: {
-    id: 'dpo.application:testEnviroment.subMessage',
+    id: 'dpo.application:testEnviroment.prodEndPointErrorMessage',
     defaultMessage: 'Eitthvað fór úrskeiðis. Ekki tókst að vista endapunkt.',
     description: '',
   },
@@ -740,14 +740,14 @@ export const m = defineMessages({
     description: '',
   },
   prodEndpointInputErrorMessage: {
-    id: 'dpo.application:testEnviroment.subMessage',
+    id: 'dpo.application:testEnviroment.endPointInputInputErrorMessage',
     defaultMessage: 'Þú verður að skrá inn endapunkt',
     description: '',
   },
 
   //Thank you Image screen
   thankYouImageScreenTitle: {
-    id: 'dpo.application:seconadThankYouScreen.title',
+    id: 'dpo.application:seconadThankYouImageScreen.title',
     defaultMessage: 'Umsókn lokið',
     description: '',
   },
