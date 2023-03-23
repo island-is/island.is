@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import {
   AuthenticationApi,
   CasesApi,
+  CaseSubscriptionApi,
   DocumentsApi,
   StatisticsApi,
   TypesApi,
@@ -15,13 +16,15 @@ import {
   StatisticsApiProvider,
   TypesApiProvider,
   UserApiProvider,
+  CaseSubscriptionApiProvider,
 } from './apiConfiguration'
 
 @Module({
   providers: [
     AuthenticationApiProvider,
-    DocumentsApiProvider,
     CasesApiProvider,
+    CaseSubscriptionApiProvider,
+    DocumentsApiProvider,
     StatisticsApiProvider,
     TypesApiProvider,
     UserApiProvider,
@@ -29,6 +32,7 @@ import {
   exports: [
     AuthenticationApi,
     CasesApi,
+    CaseSubscriptionApi,
     DocumentsApi,
     StatisticsApi,
     TypesApi,

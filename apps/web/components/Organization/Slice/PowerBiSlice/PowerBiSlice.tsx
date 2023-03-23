@@ -102,6 +102,63 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
     table: 'Skipaskra',
   })
 
+  const updateReportStateFromQueryParams = async (report?: Report) => {
+    if (!report) {
+      report = embeddedReport
+    }
+
+    const nr = Number(router.query.nr)
+
+    if (!report || isNaN(nr)) return
+
+    const page = await report.getActivePage()
+
+    const slicers = await page.getSlicers()
+
+    for (const visual of slicers) {
+      if (visual.type !== 'slicer') continue
+
+      const slicer = visual as VisualDescriptor
+
+      const slicerState = await slicer.getSlicerState()
+
+      if (
+        !slicerStateContainsExpectedTarget(
+          slicerState,
+          fiskistofaShipSearchTarget,
+        )
+      )
+        return
+
+      const response = await apolloClient.query({
+        query: GET_SINGLE_SHIP,
+        variables: {
+          input: {
+            shipNumber: nr,
+          },
+        },
+      })
+
+      const ship = response?.data?.fiskistofaGetSingleShip?.fiskistofaSingleShip
+
+      if (!ship?.name) return
+      slicer.setSlicerState({
+        ...slicerState,
+        filters: [
+          {
+            $schema: 'http://powerbi.com/product/schema#basic',
+            filterType: 1,
+            operator: 'In',
+            requireSingleSelection: false,
+            target: fiskistofaShipSearchTarget,
+            ...slicerState.filters?.[0],
+            values: [convertShipNameToSlicerDropdownValue(ship.name, nr)],
+          },
+        ],
+      })
+    }
+  }
+
   const eventHandlers = new Map<EventType, EventHandler>([
     [
       'loaded',
@@ -133,6 +190,8 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
         const report = event.target?.['powerBiEmbed'] as Report
         if (!report) return
         setEmbeddedReport(report)
+
+        updateReportStateFromQueryParams(report)
 
         const activePage = await report.getActivePage()
 
@@ -255,57 +314,6 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
       slice?.owner !== 'Fiskistofa'
     ) {
       return
-    }
-
-    const updateReportStateFromQueryParams = async () => {
-      const nr = Number(router.query.nr)
-      const page = await embeddedReport.getActivePage()
-
-      const slicers = await page.getSlicers()
-
-      for (const visual of slicers) {
-        if (visual.type !== 'slicer') continue
-
-        const slicer = visual as VisualDescriptor
-
-        const slicerState = await slicer.getSlicerState()
-
-        if (
-          !slicerStateContainsExpectedTarget(
-            slicerState,
-            fiskistofaShipSearchTarget,
-          )
-        )
-          return
-
-        const response = await apolloClient.query({
-          query: GET_SINGLE_SHIP,
-          variables: {
-            input: {
-              shipNumber: nr,
-            },
-          },
-        })
-
-        const ship =
-          response?.data?.fiskistofaGetSingleShip?.fiskistofaSingleShip
-
-        if (!ship?.name) return
-        slicer.setSlicerState({
-          ...slicerState,
-          filters: [
-            {
-              $schema: 'http://powerbi.com/product/schema#basic',
-              filterType: 1,
-              operator: 'In',
-              requireSingleSelection: false,
-              target: fiskistofaShipSearchTarget,
-              ...slicerState.filters?.[0],
-              values: [convertShipNameToSlicerDropdownValue(ship.name, nr)],
-            },
-          ],
-        })
-      }
     }
 
     updateReportStateFromQueryParams()
