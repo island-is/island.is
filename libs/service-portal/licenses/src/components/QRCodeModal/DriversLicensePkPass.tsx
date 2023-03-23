@@ -1,13 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import { useState } from 'react'
 import * as styles from './QRCodeModal.css'
-import {
-  AlertMessage,
-  Box,
-  Button,
-  LoadingDots,
-  SkeletonLoader,
-  toast,
-} from '@island.is/island-ui/core'
+import { Box, Button, SkeletonLoader, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { useMutation } from '@apollo/client'
@@ -17,7 +10,7 @@ import {
 } from '@island.is/service-portal/graphql'
 import { m } from '../../lib/messages'
 import QRCodeModal from './QRCodeModal'
-import { isTimeMoreThen30Minutes } from '../../utils/dateUtils'
+import { hasPassedTimeout } from '../../utils/dateUtils'
 
 type PkPassButtonProps = {
   textButton?: boolean
@@ -33,19 +26,18 @@ export const DriversLicensePkPass = ({
   )
   const { data: userProfile } = useUserProfile()
   const [modalOpen, setModalOpen] = useState(false)
-  const [disablePkpass, setDisablePkpass] = useState(false)
   const [QRCodeError, setQRCodeError] = useState(false)
+  const [linkTimestamp, setLinkTimestamp] = useState<Date>()
   const locale = (userProfile?.locale as Locale) ?? 'is'
   const { formatMessage } = useLocale()
-
-  const timeFetched = new Date() // Used to compare if license is expired
 
   const toggleModal = () => {
     setModalOpen(!modalOpen)
   }
 
   const getPkPassQRCode = async () => {
-    if (pkpassQRCode && !isTimeMoreThen30Minutes(timeFetched)) {
+    setModalOpen(true)
+    if (pkpassQRCode && !hasPassedTimeout(linkTimestamp, 10)) {
       return
     }
     await generatePkPassQrCode({
@@ -53,10 +45,13 @@ export const DriversLicensePkPass = ({
     })
       .then((response) => {
         setPkpassQRCode(response?.data?.generatePkPassQrCode?.pkpassQRCode)
+        setLinkTimestamp(new Date())
       })
       .catch(() => {
         setQRCodeError(true)
+        setModalOpen(false)
         toast.error(formatMessage(m.licenseFetchError))
+        setTimeout(() => setQRCodeError(false), 5000)
         return
       })
   }
@@ -67,16 +62,12 @@ export const DriversLicensePkPass = ({
         colorScheme="default"
         preTextIconType="filled"
         size={textButton ? 'small' : 'default'}
-        disabled={disablePkpass}
+        disabled={QRCodeError}
         type="button"
         variant={textButton ? 'text' : 'utility'}
         icon="QRCode"
         iconType="outline"
-        onClick={() => {
-          setDisablePkpass(true)
-          getPkPassQRCode()
-          toggleModal()
-        }}
+        onClick={getPkPassQRCode}
       >
         {formatMessage(m.sendToPhone)}
       </Button>

@@ -12,7 +12,7 @@ import { m } from '../../lib/messages'
 import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
 import { DriversLicensePkPass } from './DriversLicensePkPass'
-import { isTimeMoreThen30Minutes } from '../../utils/dateUtils'
+import { hasPassedTimeout } from '../../utils/dateUtils'
 
 type PkPassProps = {
   licenseType: string
@@ -31,10 +31,11 @@ export const PkPass = ({
   const [isMobile, setIsMobile] = useState(false)
   const [fetched, setFetched] = useState(false)
   const [linkError, setLinkError] = useState(false)
+  const [linkTimestamp, setLinkTimestamp] = useState<Date>()
+
   const locale = (userProfile?.locale as Locale) ?? 'is'
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
-  const timeFetched = new Date() // Used to compare if license is expired
   const isDriversLicense = licenseType === GenericLicenseType.DriversLicense
 
   useEffect(() => {
@@ -52,7 +53,7 @@ export const PkPass = ({
   }
 
   const getLink = async () => {
-    if (pkpassUrl && !isTimeMoreThen30Minutes(timeFetched)) {
+    if (pkpassUrl && !hasPassedTimeout(linkTimestamp, 10)) {
       window.open(pkpassUrl)
       setDisplayLoader(false)
       return
@@ -66,6 +67,7 @@ export const PkPass = ({
           window.open(response?.data?.generatePkPass?.pkpassUrl)
           setFetched(true)
           setDisplayLoader(false)
+          setLinkTimestamp(new Date())
         } else {
           handleError(formatMessage(m.licenseFetchError))
         }
