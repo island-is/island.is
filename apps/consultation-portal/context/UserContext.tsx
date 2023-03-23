@@ -1,5 +1,5 @@
 import { createContext, useState, ReactNode, useContext } from 'react'
-import { parseAuthToken } from '../utils/helpers'
+import { getUserFromDecodedJson, parseAuthToken } from '../utils/helpers'
 
 export interface User {
   ssn: string
@@ -9,7 +9,6 @@ export interface User {
 
 export interface UserProps {
   children: ReactNode
-  token?: string
 }
 
 const UserContext = createContext({
@@ -17,21 +16,24 @@ const UserContext = createContext({
   user: null as User,
   loginUser: (_) => undefined,
   logoutUser: () => undefined,
+  persistLoginUser: (_) => undefined,
+  setUserNull: () => undefined,
 })
 
-const UserContextProvider = ({ children, token }: UserProps) => {
+const UserContextProvider = ({ children }: UserProps) => {
   const [user, setUser] = useState<User>()
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
 
-  if (token && !isAuthenticated && !user) {
-    const decodedJson = parseAuthToken({ token: token })
-    const thisUser = {
-      token: token,
-      ssn: decodedJson.user_ssn,
-      name: decodedJson.full_name,
+  const persistLoginUser = ({ token }) => {
+    try {
+      const thisUser = getUserFromDecodedJson({ token: token })
+      if (thisUser) {
+        setUser(thisUser)
+        setIsAuthenticated(true)
+      }
+    } catch (e) {
+      console.error(e)
     }
-    setUser(thisUser)
-    setIsAuthenticated(true)
   }
 
   const loginUser = ({ token }) => {
@@ -49,7 +51,7 @@ const UserContextProvider = ({ children, token }: UserProps) => {
         expiry: decodedJson.exp,
       })
 
-      const setCookie = fetch('http://localhost:4200/api/auth/login', {
+      const setCookie = fetch(`${process.env.WEB_PUBLIC_URL}/api/auth/login`, {
         method: 'POST',
         body: body,
       })
@@ -57,18 +59,24 @@ const UserContextProvider = ({ children, token }: UserProps) => {
       setUser(thisUser)
       setIsAuthenticated(true)
     } catch (e) {
-      console.error('error logging in user')
+      console.error(e)
     }
   }
 
+  const setUserNull = () => {
+    setUser(null)
+    setIsAuthenticated(false)
+  }
+
   const logoutUser = async () => {
-    const setCookie = await fetch(`http://localhost:4200/api/auth/logout`, {
-      method: 'GET',
-    })
+    const setCookie = await fetch(
+      `${process.env.WEB_PUBLIC_URL}/api/auth/logout`,
+      {
+        method: 'GET',
+      },
+    )
     if (setCookie.status === 200) {
-      setUser(null)
-      setIsAuthenticated(false)
-      window.location.href = '/'
+      setUserNull()
     }
   }
 
@@ -79,6 +87,8 @@ const UserContextProvider = ({ children, token }: UserProps) => {
         user,
         loginUser,
         logoutUser,
+        persistLoginUser,
+        setUserNull,
       }}
     >
       {children}
