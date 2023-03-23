@@ -30,7 +30,7 @@ export const FieldAlertMessage: FC<FieldBaseProps & FieldAlertMessageProps> = ({
         type="info"
         title={formatText(title, application, formatMessage)}
         message={
-          <>
+          <Box>
             <Box component="span" display="block">
               <Text variant="small">
                 {description
@@ -61,7 +61,7 @@ export const FieldAlertMessage: FC<FieldBaseProps & FieldAlertMessageProps> = ({
                 ))}
               </Box>
             )}
-          </>
+          </Box>
         }
       />
     </Box>
