@@ -7,6 +7,7 @@ import {
   GridContainer,
   GridRow,
   Hidden,
+  LinkV2,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -27,11 +28,8 @@ import Link from 'next/link'
 const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
   // Remove following lines after connecting to API
   const { contactEmail, contactName } = chosenCase
-  const card = {
-    caseNumber: '76/2022',
-    nameOfReviewer: 'Jon Jonsson',
-    reviewPeriod: '01.08.2022 – 01.12.2022',
-  }
+
+  const api = process.env.API_URL ?? 'https://localhost:4444/'
 
   isLoggedIn = true // remove when functionality for logged in has been implemented
 
@@ -110,7 +108,22 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
                   headingColor="blue400"
                   title="Skjöl til samráðs"
                 >
-                  {chosenCase.shortDescription}
+                  {chosenCase.documents
+                    ? chosenCase.documents.map((doc, index) => {
+                        return (
+                          <LinkV2
+                            href={`https://samradapi-test.island.is/api/Documents/${doc.id}`}
+                            color="blue400"
+                            underline="normal"
+                            underlineVisibility="always"
+                            newTab
+                            key={index}
+                          >
+                            {doc.fileName}
+                          </LinkV2>
+                        )
+                      })
+                    : 'Engin skjöl'}
                 </StackedTitleAndDescription>
               </SimpleCardSkeleton>
               <SimpleCardSkeleton>
