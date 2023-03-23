@@ -114,9 +114,12 @@ export const EducationGraduationDetail = () => {
               downloadServiceURL &&
               files?.map((item, index) => {
                 return (
-                  <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
+                  <Box
+                    key={`education-graduation-button-${index}`}
+                    paddingRight={2}
+                    marginBottom={[1, 1, 1, 0]}
+                  >
                     <Button
-                      key={`education-graduation-button-${index}`}
                       variant="utility"
                       size="small"
                       icon="document"

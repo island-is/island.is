@@ -104,7 +104,7 @@ export const UserInfoLine: FC<Props> = ({
             overflow="hidden"
           >
             {loading ? (
-              <SkeletonLoader height={27} />
+              <SkeletonLoader width="70%" height={27} />
             ) : renderContent ? (
               renderContent()
             ) : (

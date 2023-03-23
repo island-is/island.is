@@ -2,9 +2,6 @@ openapi: 3.0.3
 info:
   title: Útskriftargögn nemenda
   version: 1.0.0
-  contact:
-    name: Nökkvi Þórsson
-    email: nokkvith@hi.is
 servers:
   - url: https://ugla.{skoli}.is/api/vottord/brautskraning
     variables:
@@ -14,7 +11,6 @@ servers:
           - hi
           - unak
           - lbhi
-  - url: https://nokkvith.throun.hi.is/api/vottord/brautskraning
 paths:
   /nemandi:
     get:

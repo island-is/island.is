@@ -1,7 +1,6 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
 
 import { Inject, UseGuards } from '@nestjs/common'
-import { Locale } from '@island.is/shared/types'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 
