@@ -252,11 +252,12 @@ export const Home = ({ types, statistics }: HomeProps) => {
         <GridRow>
           <GridColumn span={['0', '0', '0', '3/12', '3/12']}>
             <Hidden below="lg">
-              {/* <Filter
+              <Filter
                 filters={filters}
                 setFilters={(arr: CaseFilter) => setFilters(arr)}
                 defaultValues={defaultValues}
-              /> */}
+                loading={getCasesLoading}
+              />
             </Hidden>
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '12/12', '9/12', '9/12']}>
