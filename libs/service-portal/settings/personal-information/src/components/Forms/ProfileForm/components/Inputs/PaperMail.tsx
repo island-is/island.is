@@ -34,11 +34,14 @@ const POST_PAPER_MAIL = gql`
     }
   }
 `
+interface Props {
+  wantsPaper: boolean
+}
 
 export const PaperMail = () => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
-  const { control, handleSubmit, getValues } = useForm()
+  const { control, handleSubmit } = useForm<Props>()
   const [localValue, setLocalValue] = useState<boolean | undefined>(undefined)
   const [submitError, setSubmitError] = useState<string>()
 
@@ -87,7 +90,7 @@ export const PaperMail = () => {
               name="wantsPaper"
               control={control}
               defaultValue={initWantsPaper}
-              render={({ onChange, value }) => (
+              render={({ field: { onChange, value } }) => (
                 <Checkbox
                   name="wantsPaper"
                   onChange={(e) => {

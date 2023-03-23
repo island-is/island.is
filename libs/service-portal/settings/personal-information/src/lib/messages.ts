@@ -30,7 +30,7 @@ export const msg = defineMessages({
   },
   editPaperMailText: {
     id: 'sp.settings:edit-paper-mail-text',
-    defaultMessage: `Vilt þú fá póstinn þinn frekar í bréfpósti?`,
+    defaultMessage: `Hér getur þú óskað eftir því að erindi frá hinu opinbera sem birtast í stafræna pósthólfinu þínu verði jafnframt send til þín í bréfpósti.`,
   },
   overlayIntro: {
     id: 'sp.settings:overlay-intro-text',

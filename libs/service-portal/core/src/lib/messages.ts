@@ -689,7 +689,7 @@ export const m = defineMessages({
   },
   requestPaperMailTitle: {
     id: 'service.portal:req-paper-mail-title',
-    defaultMessage: 'Bréfpóstur',
+    defaultMessage: 'Óska eftir því að fá erindi jafnframt í bréfpósti.',
   },
   nextStep: {
     id: 'service.portal:next-step',
