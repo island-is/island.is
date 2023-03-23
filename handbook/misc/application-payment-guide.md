@@ -43,25 +43,37 @@ Best thing you can do is look at the
 [example application](/libs/application/templates/example-payment/) for figuring
 out how to implement payments. Here comes a brief overview of the main parts:
 
-### 1. FeeInfoProvider
+### 1. PaymentCatalogApi
 
-First step is to figure out what fee to charge. There's a graphql query you can use to
-retrieve the charges. In the DLA we implemented a `FeeInfoProvider`, extending a
-`PaymentCatalogProvider` that returns the exact charge item codes we want to use along with
+First step is to figure out what fee to charge. There is a shared template api you can use to
+retrieve the charges. This will populate your externalData with the exact charge item codes we want to use along with
 the prices.
 
+#### 1. Extend your payment definitions
+
 ```typescript
-export class FeeInfoProvider extends PaymentCatalogProvider {
-  type = 'FeeInfoProvider'
+import { PaymentCatalogApi } from '@island.is/application/types'
 
-  async provide(): Promise<PaymentCatalogItem[]> {
-    const items =
-      (await this.getCatalogForOrganization(SYSLUMADUR_NATIONAL_ID)) || []
+export const myPaymentCatalogApi = PaymentCatalogApi.configure({
+  params: {
+    organizationId: SYSLUMADUR_NATIONAL_ID,
+  },
+})
+```
 
-    return items.filter(({ chargeItemCode }) =>
-      CHARGE_ITEM_CODES.includes(chargeItemCode),
-    )
-  }
+#### 2. Add the provider to your dataproviders prerequisites form
+
+```typescript
+
+import { myPaymentCatalogApi } from './dataproviders'
+
+  dataProviders: [
+    buildDataProviderItem({
+        provider: myPaymentCatalogApi,
+        title: m.draft.feeInfo,
+      }),
+    ],
+  }),
 ```
 
 ### 2. Payment states
@@ -77,16 +89,36 @@ the driving license application, so for now you'd need to create similar api act
 creating the charge and handling the post-payment stage.
 
 ```typescript
+import {
+  CreateChargeApi,
+} from '@island.is/application/types'
+import { PaymentForm } from '@island.is/application/ui-forms'
+
   [States.PAYMENT]: {
     meta: {
-      ...etc,
-      onEntry: {
-        apiModuleAction: ApiActions.createCharge,
+      ...,
+      onEntry: CreateChargeApi.configure({
+        params: {
+          organizationId: SYSLUMADUR_NATIONAL_ID,
+          //Accepts a string list or a function
+          //string[] | (application: Application) : string[]
+          chargeItemCodes: CHARGE_ITEM_CODES,
+        },
+      }),
+      roles: [
+      {
+        id: Roles.APPLICANT,
+        formLoader: async () => {
+          return PaymentForm
+        },
+        actions: [
+          { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
+        ],
+        write: 'all',
+        delete: true, // Note: Should be deletable, so user is able to delete the FJS charge with the application
       },
-      onExit: {
-        apiModuleAction: ApiActions.submitApplication,
-      },
-      ...etc,
+    ],
+      ...,
   },
 ```
 
@@ -96,20 +128,30 @@ Both in terms of past-application history compatibility and in terms of absolute
 that something unpaid doesn't go, we'd recommend that you check whether the application
 payment has been fulfilled in your final application submission step.
 
+With the `verifyPaymentApi` set to `order:0` and your submitApi to `order:1`
+your submit will be blocked if the payment is not fulfilled
+
 ```typescript
-  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
-    const { answers } = application
-    const nationalId = application.applicant
-
-    const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
-      application.id,
-    )
-
-    if (isPayment.fulfilled) {
-      const result = await this.submitSomethign(nationalId, answers)
-      // etc
-    }
+import {
+  VerifyPaymentApi,
+} from '@island.is/application/types'
+...
+ [States.DONE]: {
+        meta: {
+          status: 'completed',
+          name: 'Done',
+          progress: 1,
+          lifecycle: DefaultStateLifeCycle,
+          onEntry: [
+            VerifyPaymentApi.configure({
+              order: 0,
+            }),
+            defineTemplateApi({
+              action: ApiActions.submitApplication,
+              order: 1,
+            }),
+          ],
+...
 ```
 
 ## FJS / Fjarsýsla ríkisins API

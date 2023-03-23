@@ -8,47 +8,23 @@ interface Rule {
 }
 
 const caseStateMachine: Map<CaseTransition, Rule> = new Map([
-  [
-    CaseTransition.OPEN,
-    {
-      from: [CaseState.NEW],
-      to: CaseState.DRAFT,
-    },
-  ],
-  [
-    CaseTransition.SUBMIT,
-    {
-      from: [CaseState.DRAFT],
-      to: CaseState.SUBMITTED,
-    },
-  ],
+  [CaseTransition.OPEN, { from: [CaseState.NEW], to: CaseState.DRAFT }],
+  [CaseTransition.SUBMIT, { from: [CaseState.DRAFT], to: CaseState.SUBMITTED }],
   [
     CaseTransition.RECEIVE,
-    {
-      from: [CaseState.SUBMITTED],
-      to: CaseState.RECEIVED,
-    },
-  ],
-  [
-    CaseTransition.DISMISS,
-    {
-      from: [CaseState.RECEIVED],
-      to: CaseState.DISMISSED,
-    },
+    { from: [CaseState.SUBMITTED], to: CaseState.RECEIVED },
   ],
   [
     CaseTransition.ACCEPT,
-    {
-      from: [CaseState.RECEIVED],
-      to: CaseState.ACCEPTED,
-    },
+    { from: [CaseState.RECEIVED], to: CaseState.ACCEPTED },
   ],
   [
     CaseTransition.REJECT,
-    {
-      from: [CaseState.RECEIVED],
-      to: CaseState.REJECTED,
-    },
+    { from: [CaseState.RECEIVED], to: CaseState.REJECTED },
+  ],
+  [
+    CaseTransition.DISMISS,
+    { from: [CaseState.RECEIVED], to: CaseState.DISMISSED },
   ],
   [
     CaseTransition.DELETE,
@@ -60,6 +36,13 @@ const caseStateMachine: Map<CaseTransition, Rule> = new Map([
         CaseState.RECEIVED,
       ],
       to: CaseState.DELETED,
+    },
+  ],
+  [
+    CaseTransition.REOPEN,
+    {
+      from: [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED],
+      to: CaseState.RECEIVED,
     },
   ],
 ])
