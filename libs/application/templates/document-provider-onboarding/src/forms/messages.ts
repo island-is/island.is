@@ -19,9 +19,9 @@ export const m = defineMessages({
     description: 'Some description',
   },
   termsSubTitle: {
-    id: 'dpo.application:terms.subTitle',
+    id: 'dpo.application:terms.subTitle#markdown',
     defaultMessage:
-      '<b>Skilmálar um notkun stafræns pósthólfs á Ísland.is</b> <br />Um skjalaveitingu inn á stafrænt pósthólf á Ísland.is gilda ákveðnir skilmálar sem skjalaveitendur þurfa að gangast undir. <br /> Með því að sækja um að gerast skjalaveitandi gengst umrædd stofnun við gildandi skilmálum sem má ávallt finna inni á island.is',
+      '**Skilmálar um notkun stafræns pósthólfs á Ísland.is**\n\nUm skjalaveitingu inn á stafrænt pósthólf á Ísland.is gilda ákveðnir skilmálar sem skjalaveitendur þurfa að gangast undir.\n\nMeð því að sækja um að gerast skjalaveitandi gengst umrædd stofnun við gildandi skilmálum sem má ávallt finna inni á island.is',
     description: 'Some description',
   },
   termsUserAgreementTitle: {
@@ -85,9 +85,9 @@ export const m = defineMessages({
     description: '',
   },
   applicantSubTitle: {
-    id: 'dpo.application:applicant.subtitle',
+    id: 'dpo.application:applicant.subtitle#markdown',
     defaultMessage:
-      '<b>Upplýsingar um þá stofnun sem óskar eftir því að nota stafrænt pósthólf</b> <br /> Hér þarf að skrá upplýsingar um ábyrgðaraðila skjalveitunnar. Um er að ræða kennitölu, nafn og netfang stofnunar. Mikilvægt er að gefa upp almennt netfang stofnunar sem er vaktað og tryggt að innsend erindi séu meðhöndluð og komið í viðeigandi farveg.',
+      '**Upplýsingar um þá stofnun sem óskar eftir því að nota stafrænt pósthólf**\n\nHér þarf að skrá upplýsingar um ábyrgðaraðila skjalveitunnar. Um er að ræða kennitölu, nafn og netfang stofnunar. Mikilvægt er að gefa upp almennt netfang stofnunar sem er vaktað og tryggt að innsend erindi séu meðhöndluð og komið í viðeigandi farveg.',
     description: '',
   },
   applicantNationalId: {
@@ -163,9 +163,9 @@ export const m = defineMessages({
     description: '',
   },
   administrativeContactSubTitle: {
-    id: 'dpo.application:administrativeContact.subtitle',
+    id: 'dpo.application:administrativeContact.subtitle#markdown',
     defaultMessage:
-      '<b>Stjórnandi / ábyrgðarmaður stofnunar gagnvart pósthólfi.</b> <br /> Hér þarf að skrá upplýsingar um þann sem ber ábyrgð stofnunarinnar gagnvart stafræna pósthólfinu. <br />Vinsamlega athugið að æskilegt er að skrá netfang og símanúmer sem ekki breytist, helst tengt viðkomandi hlutverki. T.d. ef til er almennt netfang sem beinir erindum til stjórnanda hverju sinni.',
+      '**Stjórnandi / ábyrgðarmaður stofnunar gagnvart pósthólfi.**\n\nHér þarf að skrá upplýsingar um þann sem ber ábyrgð stofnunarinnar gagnvart stafræna pósthólfinu.\n\nVinsamlega athugið að æskilegt er að skrá netfang og símanúmer sem ekki breytist, helst tengt viðkomandi hlutverki. T.d. ef til er almennt netfang sem beinir erindum til stjórnanda hverju sinni.',
     description: '',
   },
   administrativeContactName: {
@@ -211,9 +211,9 @@ export const m = defineMessages({
     description: '',
   },
   technicalContactSubTitle: {
-    id: 'dpo.application:technicalContact.subtitle',
+    id: 'dpo.application:technicalContact.subtitle#markdown',
     defaultMessage:
-      '<b>Starfsmaður stofnunar eða starfsmaður þjónustuaðila stofnunar sem tekur á móti tæknilegum vandamálum</b> <br /> Hér þarf að skrá upplýsingar um þann aðila sem ber ábyrgð á tæknilegum atriðum er varðar notkun skjalveitanda á stafræna pósthólfinu.<br /> Vinsamlega athugið að æskilegt er að skrá netfang og símanúmer sem ekki breytist, helst tengt viðkomandi hlutverki. T.d. ef til er almennt netfang sem beinir erindum til kerfisstjóra / tæknilegs tengiliðar hverju sinni. ',
+      '**Starfsmaður stofnunar eða starfsmaður þjónustuaðila stofnunar sem tekur á móti tæknilegum vandamálum**\n\nHér þarf að skrá upplýsingar um þann aðila sem ber ábyrgð á tæknilegum atriðum er varðar notkun skjalveitanda á stafræna pósthólfinu.\n\nVinsamlega athugið að æskilegt er að skrá netfang og símanúmer sem ekki breytist, helst tengt viðkomandi hlutverki. T.d. ef til er almennt netfang sem beinir erindum til kerfisstjóra / tæknilegs tengiliðar hverju sinni. ',
     description: '',
   },
   technicalContactName: {
@@ -259,9 +259,9 @@ export const m = defineMessages({
     description: '',
   },
   helpDeskSubTitle: {
-    id: 'dpo.application:helpDesk.subtitle',
+    id: 'dpo.application:helpDesk.subtitle#markdown',
     defaultMessage:
-      '<b>Netfang og símanúmer sem tekur við athugasemdum frá notendum pósthólfs</b> <br />Upplýsingar um hvert notandi sem lendir í vandræðum með að nálgast gögn frá skjalaveitanda í stafræna pósthólfinu getur snúið sér með vandamál sem upp hefur komið. Þetta getur til dæmis átt við ef notanda tekst ekki að opna skjal frá viðkomandi skjalaveitanda í stafræna pósthólfinu. Mikilvægt er að tryggja notanda auðvelt aðgengi að aðstoð í slíkum tilfellum og því skal hér skrá símanúmer og netfang sem tryggt er að svari erindi frá notanda fljótt og vel.',
+      '**Netfang og símanúmer sem tekur við athugasemdum frá notendum pósthólfs**\n\nUpplýsingar um hvert notandi sem lendir í vandræðum með að nálgast gögn frá skjalaveitanda í stafræna pósthólfinu getur snúið sér með vandamál sem upp hefur komið. Þetta getur til dæmis átt við ef notanda tekst ekki að opna skjal frá viðkomandi skjalaveitanda í stafræna pósthólfinu. Mikilvægt er að tryggja notanda auðvelt aðgengi að aðstoð í slíkum tilfellum og því skal hér skrá símanúmer og netfang sem tryggt er að svari erindi frá notanda fljótt og vel.',
     description: '',
   },
   helpDeskEmail: {
@@ -297,9 +297,9 @@ export const m = defineMessages({
     description: '',
   },
   confirmationSubTitle: {
-    id: 'dpo.application:confirmation.subTitle',
+    id: 'dpo.application:confirmation.subTitle#markdown',
     defaultMessage:
-      '<b>Þú ert að ljúka ferlinu. Vinsamlegast farðu vel yfir öll atriði sem skrásett hafa verið og birt eru hér fyrir neðan.</b> <br /> Það er mjög mikilvægt að skoða vel hvort allar upplýsingar sem gefnar hafa verið séu réttar og tryggja þar með að réttar upplýsingar fari inn í umsóknarferlið.',
+      '**Þú ert að ljúka ferlinu. Vinsamlegast farðu vel yfir öll atriði sem skrásett hafa verið og birt eru hér fyrir neðan.**\n\nÞað er mjög mikilvægt að skoða vel hvort allar upplýsingar sem gefnar hafa verið séu réttar og tryggja þar með að réttar upplýsingar fari inn í umsóknarferlið.',
     description: '',
   },
   confirmationSubmitButton: {
