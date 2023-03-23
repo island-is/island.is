@@ -23,7 +23,7 @@ import { SimpleCardSkeleton } from '../../components/Card'
 import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
 import { getTimeLineDate } from '../../utils/helpers/dateFormatter'
 import Link from 'next/link'
-import { useUser } from '@island.is/consultation-portal/context/UserContext'
+import { useUser } from '../../context/UserContext'
 
 const CaseScreen = ({ chosenCase, advices }) => {
   // Remove following lines after connecting to API
@@ -90,7 +90,10 @@ const CaseScreen = ({ chosenCase, advices }) => {
                   {advices?.map((advice: Advice) => {
                     return <ReviewCard advice={advice} key={advice.number} />
                   })}
-                  <WriteReviewCard card={chosenCase} isLoggedIn={isAuthenticated} />
+                  <WriteReviewCard
+                    card={chosenCase}
+                    isLoggedIn={isAuthenticated}
+                  />
                 </Stack>
               </Box>
             </Stack>

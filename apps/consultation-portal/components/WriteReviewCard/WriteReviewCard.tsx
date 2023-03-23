@@ -4,7 +4,6 @@ import {
   getShortDate,
 } from '../../utils/helpers/dateFormatter'
 import {
-  ActionCard,
   Box,
   Input,
   Text,
@@ -19,7 +18,7 @@ import {
 
 import Link from 'next/link'
 import { useReducer, useState } from 'react'
-import { useLogin } from '@island.is/consultation-portal/utils/helpers'
+import { useLogin } from '../../utils/helpers'
 import { SubscriptionActionBox } from '../Card'
 
 type CardProps = {

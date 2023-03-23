@@ -132,7 +132,11 @@ export const Menu = ({ isFrontPage = false }: MenuProps) => {
                               dropdownItems={<Divider />}
                             />
                           ) : (
-                            <Button size="small" onClick={LogIn} loading={loginLoading}>
+                            <Button
+                              size="small"
+                              onClick={LogIn}
+                              loading={loginLoading}
+                            >
                               Innskráning
                             </Button>
                           )}
