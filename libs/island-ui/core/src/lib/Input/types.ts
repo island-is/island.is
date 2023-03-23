@@ -42,7 +42,6 @@ export interface InputComponentProps {
   ) => void
   rows?: number
   type?: 'text' | 'number' | 'email' | 'tel' | 'password'
-  icon?: { name: IconType; type?: Type; onClick?: () => void }
 
   /**
    * While true hover state will not show and focus state will be always on
@@ -55,6 +54,24 @@ export interface InputComponentProps {
   }
 }
 
+export type InputIconButton = {
+  name: IconType
+  type?: Type
+  onClick: React.HTMLAttributes<HTMLButtonElement>['onClick']
+  label: string
+  disabled?: boolean
+}
+
+export type InputIconIcon = {
+  name: IconType
+  type?: Type
+  onClick?: never
+  label?: never
+  disabled?: never
+}
+
+export type InputIcon = InputIconButton | InputIconIcon
+
 export interface InputProps extends InputComponentProps {
   label?: string
   hasError?: boolean
@@ -64,4 +81,13 @@ export interface InputProps extends InputComponentProps {
   textarea?: boolean
   maxLength?: number
   loading?: boolean
+  icon?: InputIcon | InputIcon[]
+}
+
+export interface AsideProps {
+  icon: InputProps['icon']
+  size: InputProps['size']
+  loading: boolean
+  hasError: boolean
+  hasLabel: boolean
 }

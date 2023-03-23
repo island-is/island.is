@@ -123,6 +123,7 @@ ReadOnly.args = {
   backgroundColor: 'blue',
   readOnly: true,
   value: 'Read only have a transparent background',
+  icon: { name: 'copy', type: 'outline', onClick: () => console.log('Copy value') },
 }
 
 export const RightAligned = Template.bind({})
@@ -132,4 +133,95 @@ RightAligned.args = {
   name: 'Test14',
   backgroundColor: 'blue',
   rightAlign: true,
+}
+
+export const CopyPasswordButton = (args) => {
+  const [showPassword, setShowPassword] = React.useState(false)
+  const ref = React.useRef<HTMLInputElement>(null)
+  const handleCopy = (ev: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    if (!ref.current) return
+
+    ref.current.select()
+    document.execCommand('copy')
+    if (ev.target instanceof HTMLElement) {
+      ev.target.focus()
+    }
+
+    // Maybee trigger a toast here.
+    console.log('Copy value', ref.current.value)
+  }
+
+  const handleShow = () => {
+    setShowPassword(!showPassword)
+  }
+
+  return <Input ref={ref} {...args} icon={[
+    { name: 'copy', type: 'outline', onClick: handleCopy, label: 'Copy value' },
+    { name: showPassword ? 'eyeOff' : 'eye', onClick: handleShow, label: showPassword ? 'Hide password' : 'Show password' }
+  ]}
+    type={showPassword ? 'text' : 'password'}
+  />
+}
+CopyPasswordButton.args = {
+  label: 'Read only label',
+  name: 'Test15',
+  readOnly: true,
+  value: 'AStingThatShouldBeCopied',
+}
+
+export const ButtonsWithAnError = Template.bind({})
+ButtonsWithAnError.args = {
+  label: 'Label',
+  placeholder: 'This is the placeholder',
+  name: 'Test17',
+  errorMessage: 'This is the error message',
+  icon: [
+    { name: 'copy', type: 'outline', onClick: () => console.log('Copy value') },
+    { name: 'eye', onClick: () => console.log('Show'), label: 'Show password' }
+  ],
+}
+
+export const IconAndButton = Template.bind({})
+IconAndButton.args = {
+  label: 'Label',
+  placeholder: 'This is the placeholder',
+  name: 'Test16',
+  errorMessage: 'This is the error message',
+  icon: [
+    { name: 'copy', type: 'outline', onClick: () => console.log('Copy value'), label: 'Copy value' },
+    { name: 'informationCircle' }
+  ],
+}
+
+export const SmallWithIconAndButton = Template.bind({})
+SmallWithIconAndButton.args = {
+  label: 'Label',
+  placeholder: 'This is the placeholder',
+  name: 'Test18',
+  size: 'sm',
+  icon: [
+    { name: 'informationCircle' },
+    { name: 'eye', onClick: () => console.log('Show'), disabled: true },
+    { name: 'copy', type: 'outline', onClick: () => console.log('Copy value') },
+  ],
+}
+export const ExtraSmallWithIconAndButton = Template.bind({})
+ExtraSmallWithIconAndButton.args = {
+  label: 'Label',
+  placeholder: 'This is the placeholder',
+  name: 'Test19',
+  size: 'xs',
+  icon: [
+    { name: 'informationCircle' },
+    { name: 'eye', onClick: () => console.log('Show') },
+    { name: 'copy', type: 'outline', onClick: () => console.log('Copy value') },
+  ],
+}
+
+export const LabelDisabledEmpty = Template.bind({})
+LabelDisabledEmpty.args = {
+  label: 'LabelDisabledEmpty',
+  placeholder: 'This is the placeholder',
+  name: '20',
+  size: 'sm',
 }
