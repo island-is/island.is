@@ -148,6 +148,8 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
   }
 
   const onFileChange = async (newFiles: File[]) => {
+    if (!multiple && state.length > 0) return
+
     const addedUniqueFiles = newFiles.filter((newFile: File) => {
       let isUnique = true
       state.forEach((uploadedFile: UploadFile) => {
