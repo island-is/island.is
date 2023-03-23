@@ -6,7 +6,9 @@ const AppLayout = ({ children }) => {
   const { isAuthenticated, persistLoginUser, setUserNull, user } = useUser()
 
   const checkAuth = async () => {
-    const check = await fetch(`${window.location.href}/api/auth/check`)
+    const check = await fetch(
+      `${window.location.origin}/consultation-portal/api/auth/check`,
+    )
     const data = await check.json()
     if (data.token) {
       persistLoginUser({ token: data.token })
@@ -40,8 +42,8 @@ const AppLayout = ({ children }) => {
           sizes="16x16"
           href="/favicon-16x16.png"
         ></link>
-        <link rel="manifest" href="/site.webmanifest"></link>
-        <link rel="shortcut icon" href="/favicon.ico" />
+        {/* <link rel="manifest" href="/site.webmanifest"></link>
+        <link rel="shortcut icon" href="/favicon.ico" /> */}
       </Head>
       {children}
     </div>
