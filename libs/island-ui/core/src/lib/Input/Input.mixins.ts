@@ -1,4 +1,5 @@
 import { theme, themeUtils } from '@island.is/island-ui/theme'
+import type { ComplexStyleRule } from '@vanilla-extract/css'
 
 const inputPadding = `0 ${theme.spacing[2]}px`
 const mobileInputPadding = `0 ${theme.spacing[1]}px`
@@ -198,7 +199,8 @@ export const errorMessage = {
   marginTop: theme.spacing[1],
 }
 
-export const inputErrorState = {
+export const inputErrorState: ComplexStyleRule = {
+  backgroundColor: theme.color.red100,
   boxShadow: `inset 0 0 0 1px ${theme.color.red600}`,
 }
 

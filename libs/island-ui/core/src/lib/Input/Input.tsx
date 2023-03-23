@@ -1,5 +1,6 @@
 import cn from 'classnames'
-import React, { forwardRef, useLayoutEffect, useRef, useState } from 'react'
+import React, { forwardRef, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { VisuallyHidden } from 'reakit'
 import { resolveResponsiveProp } from '../../utils/responsiveProp'
 import { Box } from '../Box/Box'
 import { UseBoxStylesProps } from '../Box/useBoxStyles'
@@ -13,6 +14,8 @@ import {
   InputBackgroundColor,
   InputComponentProps,
   InputProps,
+  InputIcon,
+  AsideProps,
 } from './types'
 import { useMergeRefs } from '../../hooks/useMergeRefs'
 
@@ -67,29 +70,11 @@ export const Input = forwardRef(
     const errorId = `${id}-error`
     const ariaError = hasError
       ? {
-          'aria-invalid': true,
-          'aria-describedby': errorId,
-        }
+        'aria-invalid': true,
+        'aria-describedby': errorId,
+      }
       : {}
     const mergedRefs = useMergeRefs(inputRef, ref || null)
-
-    const renderIcon = () => {
-      if (!icon) {
-        return null
-      }
-      return (
-        <Icon
-          icon={icon.name}
-          type={icon.type || 'filled'}
-          skipPlaceholderSize
-          className={cn(styles.icon, {
-            [styles.iconError]: hasError,
-            [styles.iconExtraSmall]: size === 'xs',
-          })}
-          ariaHidden
-        />
-      )
-    }
 
     const InputComponent = textarea ? TextareaHOC : InputHOC
     const mapBlue = (color: InputBackgroundColor) =>
@@ -121,15 +106,17 @@ export const Input = forwardRef(
       }
     }, [autoExpand?.maxHeight, autoExpand?.on, inputRef])
 
+    const hasLabel = Boolean(label)
+
     return (
       <div>
         {/* If size is xs then the label is above the input box */}
         {size === 'xs' && label && (
           <label
             htmlFor={id}
-            className={cn(styles.label, styles.labelSizes[size], {
-              [styles.labelDisabledEmptyInput]:
-                disabled && !value && !defaultValue,
+            className={cn(styles.label({ hasError, readOnly, disabledEmptyInput: disabled && !value && !defaultValue }), styles.labelSizes[size], {
+              // [styles.labelDisabledEmptyInput]:
+              //   disabled && !value && !defaultValue,
             })}
           >
             {label}
@@ -146,18 +133,22 @@ export const Input = forwardRef(
             )}
           </label>
         )}
+
         <Box
-          display="flex"
-          alignItems="center"
+          // display="flex"
+          // alignItems="center"
           background={containerBackground as UseBoxStylesProps['background']}
-          className={cn(styles.container, styles.containerSizes[size], {
-            [styles.hasError]: hasError,
-            [styles.hasFocus]: hasFocus,
-            [styles.fixedFocusState]: fixedFocusState,
-            [styles.noLabel]: !label,
-            [styles.containerDisabled]: disabled,
-            [styles.readOnly]: readOnly,
-          })}
+          className={cn(styles.container({ disabled: !!disabled, readOnly, hasError, hasFocus: hasFocus || !!fixedFocusState }),
+            // styles.containerSizes[size],
+            // {
+            // [styles.hasError]: hasError,
+            // [styles.hasFocus]: hasFocus,
+            // [styles.fixedFocusState]: fixedFocusState,
+            // [styles.noLabel]: !label, // TODO: remove this?
+            // [styles.containerDisabled]: disabled,
+            // [styles.readOnly]: readOnly,
+            // }
+          )}
           onClick={(e) => {
             e.preventDefault()
             if (inputRef.current) {
@@ -165,13 +156,16 @@ export const Input = forwardRef(
             }
           }}
         >
-          <Box flexGrow={1}>
+          <Box
+            flexGrow={1}
+            className={styles.containerSizes[size]}
+          >
             {size !== 'xs' && label && (
               <label
                 htmlFor={id}
-                className={cn(styles.label, styles.labelSizes[size], {
-                  [styles.labelDisabledEmptyInput]:
-                    disabled && !value && !defaultValue,
+                className={cn(styles.label({ hasError, readOnly, disabledEmptyInput: disabled && !value && !defaultValue, }), styles.labelSizes[size], {
+                  // [styles.labelDisabledEmptyInput]:
+                  //   disabled && !value && !defaultValue,
                 })}
               >
                 {label}
@@ -190,7 +184,7 @@ export const Input = forwardRef(
             )}
             <InputComponent
               className={cn(
-                styles.input,
+                styles.input({ hasLabel, rightAlign, textarea }),
                 resolveResponsiveProp(
                   backgroundColor,
                   styles.inputBackgroundXs,
@@ -201,8 +195,8 @@ export const Input = forwardRef(
                 ),
                 styles.inputSize[size],
                 {
-                  [styles.rightAlign]: rightAlign,
-                  [styles.textarea]: textarea,
+                  // [styles.rightAlign]: rightAlign,
+                  // [styles.textarea]: textarea,
                 },
               )}
               id={id}
@@ -242,28 +236,9 @@ export const Input = forwardRef(
               {...(required && { 'aria-required': true })}
             />
           </Box>
-          {loading && (
-            <Box
-              className={styles.spinner}
-              flexShrink={0}
-              borderRadius="circle"
-            />
-          )}
-          {!loading && hasError && !icon && (
-            <Icon
-              icon="warning"
-              skipPlaceholderSize
-              className={cn(styles.icon, styles.iconError)}
-              ariaHidden
-            />
-          )}
-          {!loading && icon ? (
-            icon?.onClick ? (
-              <button onClick={icon.onClick}> {renderIcon()} </button>
-            ) : (
-              renderIcon()
-            )
-          ) : null}
+
+          <AsideIcons icon={icon} size={size} loading={!!loading} hasError={hasError} hasLabel={hasLabel} />
+
         </Box>
         {hasError && errorMessage && (
           <ErrorMessage id={errorId}>{errorMessage}</ErrorMessage>
@@ -272,3 +247,54 @@ export const Input = forwardRef(
     )
   },
 )
+
+
+function AsideIcons({ icon, size, loading, hasError, hasLabel }: AsideProps) {
+  const [icons, buttons] = useMemo(() => {
+    const iconsArray = (Array.isArray(icon) ? icon : [icon]).filter((i): i is InputIcon => Boolean(i))
+    const onlyWarning: InputIcon[] = [{ name: 'warning', onClick: undefined }]
+    const icons = loading ? [] : hasError ? onlyWarning : iconsArray.filter(i => !i?.onClick)
+    const buttons = iconsArray.filter(i => !!i?.onClick)
+    return [icons, buttons]
+  }, [hasError, icon, loading])
+
+
+  const renderIcon = (item: InputIcon) => (
+    <Icon
+      icon={item.name}
+      type={item.type}
+      skipPlaceholderSize
+      className={styles.icon({ size, hasLabel, hasError })}
+      ariaHidden
+    />
+  )
+
+  return (
+    <div className={styles.aside}>
+      {loading && (
+        <Box
+          className={styles.spinner}
+          flexShrink={0}
+          borderRadius="circle"
+        />
+      )}
+
+      {icons.map((item) => {
+        return (
+          <div className={styles.iconWrapper({ size })} key={item.name}>
+            {renderIcon(item)}
+          </div>
+        )
+      })}
+      {buttons.map((item) => {
+        const { name, type, label, ...rest } = item
+        return (
+          <button className={styles.inputButton({ size, hasError })} key={name} {...rest}>
+            <VisuallyHidden>{label}</VisuallyHidden>
+            {renderIcon(item)}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
