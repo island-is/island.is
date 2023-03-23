@@ -1,13 +1,9 @@
 
-function getLatestDockerTag() {
-  gql('getLatest')
-  return 'local'
-}
-
-const dockerTag = process.env.DOCKER_TAG ?? getLatestDockerTag()
+const dockerTag = process.env.DOCKER_TAG
 // TODO: better way to determine "current" branch?
 const gitBranch = process.env.GIT_BRANCH ?? 'main'
 const spinnakerWebhookToken = process.env.SPINNAKER_WEBHOOK_TOKEN
+if (!dockerTag) throw Error("Need latest docker tag cached ⛄")
 if (!spinnakerWebhookToken) throw Error("Need Spinnaker webhook token 😡")
 
 /*

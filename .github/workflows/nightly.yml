@@ -31,6 +31,16 @@ jobs:
     needs:
     steps:
       - uses: actions/checkout@v3
+
+      - name: Look up last good deploy
+        uses: actions/cache/restore@v3
+        with:
+          path: /shared/last_deploy
+          fail-on-cache-miss: true
+
+      - name: Export env-file
+        run: cat /shared/last_deploy >> GITHUB_ENV
+
       - name: Trigger Acceptance Test deployment
         env:
           GIT_BRANCH: "main"
