@@ -27,7 +27,7 @@ import Filter from '../../components/Filter/Filter'
 import { CaseSortOptions } from '../../types/enums'
 import { GET_CASES } from './getCases.graphql'
 import initApollo from '../../graphql/client'
-import { getInitFilterValues } from '../../utils/helpers'
+import { getInitFilterValues, useFrontPageFilters } from '../../utils/helpers'
 import Pagination from '../../components/Pagination/Pagination'
 
 const CARDS_PER_PAGE = 12
@@ -37,119 +37,142 @@ interface HomeProps {
 }
 export const Home = ({ types, statistics }: HomeProps) => {
   const [page, setPage] = useState<number>(0)
+
   const {
-    caseStatuses,
-    caseTypes,
-    Institutions,
-    allInstitutions,
+    cases,
+    filterGroups,
+    total,
+    getCasesLoading,
     PolicyAreas,
     allPolicyAreas,
-    sorting,
-    period,
-  } = getInitFilterValues({ types: types })
-
-  const defaultValues = {
-    searchQuery: '',
-    sorting: { items: sorting, isOpen: true },
-    caseStatuses: { items: caseStatuses, isOpen: true },
-    caseTypes: { items: caseTypes, isOpen: true },
-    policyAreas: allPolicyAreas,
-    institutions: allInstitutions,
-    period: period,
-  }
-
-  const [filters, setFilters] = useState<CaseFilter>({
-    searchQuery: '',
-    sorting: { items: sorting, isOpen: true },
-    caseStatuses: { items: caseStatuses, isOpen: true },
-    caseTypes: { items: caseTypes, isOpen: true },
-    policyAreas: allPolicyAreas,
-    institutions: allInstitutions,
-    period: period,
-  } as any)
-
-  const input = {
-    caseStatuses: filters.caseStatuses.items
-      .filter((item: FilterInputItems) => item.checked)
-      .map((item: FilterInputItems) => parseInt(item.value)),
-    caseTypes: filters.caseTypes.items
-      .filter((item: FilterInputItems) => item.checked)
-      .map((item: FilterInputItems) => parseInt(item.value)),
-    orderBy: Object.keys(CaseSortOptions).find(
-      (key) =>
-        CaseSortOptions[key] ===
-        filters.sorting.items.filter(
-          (item: FilterInputItems) => item.checked,
-        )[0].label,
-    ),
-    searchQuery: filters.searchQuery,
-    policyAreas: filters.policyAreas,
-    institutions: filters.institutions,
-    dateFrom: filters.period.from,
-    dateTo: filters.period.to,
-    pageSize: CARDS_PER_PAGE,
-    pageNumber: page,
-  }
-
-  useEffect(() => {
-    setPage(0)
-  }, [filters])
-
-  const client = initApollo()
-
-  const { data, loading, error, refetch } = useQuery(GET_CASES, {
-    client: client,
-    ssr: true,
-    fetchPolicy: 'network-only',
-    variables: {
-      input,
-    },
+    Institutions,
+    allInstitutions,
+    filters,
+    setFilters,
+    defaultValues,
+  } = useFrontPageFilters({
+    types: types,
+    CARDS_PER_PAGE: CARDS_PER_PAGE,
+    page: page,
   })
 
-  const { consultationPortalGetCases: casesData = [] } = data ?? {}
+  console.log('cases', cases)
+  console.log('filterGroups', filterGroups)
+  console.log('total', total)
+  console.log('getCasesLoading', getCasesLoading)
+  // const {
+  //   caseStatuses,
+  //   caseTypes,
+  //   Institutions,
+  //   allInstitutions,
+  //   PolicyAreas,
+  //   allPolicyAreas,
+  //   sorting,
+  //   period,
+  // } = getInitFilterValues({ types: types })
 
-  const { cases = [], filterGroups = {}, total = 1 } = casesData
+  // const defaultValues = {
+  //   searchQuery: '',
+  //   sorting: { items: sorting, isOpen: true },
+  //   caseStatuses: { items: caseStatuses, isOpen: true },
+  //   caseTypes: { items: caseTypes, isOpen: true },
+  //   policyAreas: allPolicyAreas,
+  //   institutions: allInstitutions,
+  //   period: period,
+  // }
 
-  useEffect(() => {
-    const insertFilterCount = setTimeout(() => {
-      if (filterGroups && !loading) {
-        const caseTypesList = filterGroups?.CaseTypes
-          ? Object.entries(filterGroups.CaseTypes).map(([value, count]) => ({
-              value,
-              count,
-            }))
-          : []
+  // const [filters, setFilters] = useState<CaseFilter>({
+  //   searchQuery: '',
+  //   sorting: { items: sorting, isOpen: true },
+  //   caseStatuses: { items: caseStatuses, isOpen: true },
+  //   caseTypes: { items: caseTypes, isOpen: true },
+  //   policyAreas: allPolicyAreas,
+  //   institutions: allInstitutions,
+  //   period: period,
+  // } as any)
 
-        const caseTypesMerged = filters.caseTypes.items.map((item) => ({
-          ...item,
-          ...caseTypesList.find((val) => val.value === item.value),
-        }))
+  // const input = {
+  //   caseStatuses: filters.caseStatuses.items
+  //     .filter((item: FilterInputItems) => item.checked)
+  //     .map((item: FilterInputItems) => parseInt(item.value)),
+  //   caseTypes: filters.caseTypes.items
+  //     .filter((item: FilterInputItems) => item.checked)
+  //     .map((item: FilterInputItems) => parseInt(item.value)),
+  //   orderBy: Object.keys(CaseSortOptions).find(
+  //     (key) =>
+  //       CaseSortOptions[key] ===
+  //       filters.sorting.items.filter(
+  //         (item: FilterInputItems) => item.checked,
+  //       )[0].label,
+  //   ),
+  //   searchQuery: filters.searchQuery,
+  //   policyAreas: filters.policyAreas,
+  //   institutions: filters.institutions,
+  //   dateFrom: filters.period.from,
+  //   dateTo: filters.period.to,
+  //   pageSize: CARDS_PER_PAGE,
+  //   pageNumber: page,
+  // }
 
-        const caseStatusesList = filterGroups?.Statuses
-          ? Object.entries(filterGroups.Statuses).map(([value, count]) => ({
-              value,
-              count,
-            }))
-          : []
-        const caseStatusesMerged = filters.caseStatuses.items.map((item) => ({
-          ...item,
-          ...caseStatusesList.find((val) => val.value === item.value),
-        }))
+  // useEffect(() => {
+  //   setPage(0)
+  // }, [filters])
 
-        const filtersCopy = { ...filters }
-        filtersCopy.caseTypes.items = caseTypesMerged
-        filtersCopy.caseStatuses.items = caseStatusesMerged
-        setFilters(filtersCopy)
-      }
-    }, 500)
+  // const client = initApollo()
 
-    return () => {
-      clearTimeout(insertFilterCount)
-    }
-  }, [filterGroups])
+  // const { data, loading, error, refetch } = useQuery(GET_CASES, {
+  //   client: client,
+  //   ssr: true,
+  //   fetchPolicy: 'network-only',
+  //   variables: {
+  //     input,
+  //   },
+  // })
+
+  // const { consultationPortalGetCases: casesData = [] } = data ?? {}
+
+  // const { cases = [], filterGroups = {}, total = 1 } = casesData
+
+  // useEffect(() => {
+  //   const insertFilterCount = setTimeout(() => {
+  //     if (filterGroups && !loading) {
+  //       const caseTypesList = filterGroups?.CaseTypes
+  //         ? Object.entries(filterGroups.CaseTypes).map(([value, count]) => ({
+  //             value,
+  //             count,
+  //           }))
+  //         : []
+
+  //       const caseTypesMerged = filters.caseTypes.items.map((item) => ({
+  //         ...item,
+  //         ...caseTypesList.find((val) => val.value === item.value),
+  //       }))
+
+  //       const caseStatusesList = filterGroups?.Statuses
+  //         ? Object.entries(filterGroups.Statuses).map(([value, count]) => ({
+  //             value,
+  //             count,
+  //           }))
+  //         : []
+  //       const caseStatusesMerged = filters.caseStatuses.items.map((item) => ({
+  //         ...item,
+  //         ...caseStatusesList.find((val) => val.value === item.value),
+  //       }))
+
+  //       const filtersCopy = { ...filters }
+  //       filtersCopy.caseTypes.items = caseTypesMerged
+  //       filtersCopy.caseStatuses.items = caseStatusesMerged
+  //       setFilters(filtersCopy)
+  //     }
+  //   }, 500)
+
+  //   return () => {
+  //     clearTimeout(insertFilterCount)
+  //   }
+  // }, [filterGroups])
 
   const renderCards = () => {
-    if (loading) {
+    if (getCasesLoading) {
       return (
         <Box
           display="flex"
@@ -223,16 +246,17 @@ export const Home = ({ types, statistics }: HomeProps) => {
         defaultInstitutions={allInstitutions}
         filters={filters}
         setFilters={(arr: CaseFilter) => setFilters(arr)}
+        loading={getCasesLoading}
       />
       <GridContainer>
         <GridRow>
           <GridColumn span={['0', '0', '0', '3/12', '3/12']}>
             <Hidden below="lg">
-              <Filter
+              {/* <Filter
                 filters={filters}
                 setFilters={(arr: CaseFilter) => setFilters(arr)}
                 defaultValues={defaultValues}
-              />
+              /> */}
             </Hidden>
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '12/12', '9/12', '9/12']}>
