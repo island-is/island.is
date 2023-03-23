@@ -29,14 +29,14 @@ export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
           color="purple400"
           style={styles.upperSeperator}
           wrap={false}
-          truncate={true}
+          truncate={false}
         />
         <EyebrowsWithSeperator
           instances={lowerInstances}
           color="blue600"
           style={styles.lowerSeperator}
-          wrap={false}
-          truncate={true}
+          wrap={true}
+          truncate={false}
         />
         <Text variant="h1" color="blue400">
           {chosenCase?.name}
