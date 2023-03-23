@@ -1,8 +1,6 @@
 import initApollo from '../../graphql/client'
 import { GET_ALL_USER_ADVICES } from '../../screens/Advices/getAllUserAdvices.graphql'
-import {
-  ConsultationPortalAllUserAdvicesQuery,
-} from '../../screens/Advices/getAllUserAdvices.graphql.generated'
+import { ConsultationPortalAllUserAdvicesQuery } from '../../screens/Advices/getAllUserAdvices.graphql.generated'
 import { UserAdvice } from '../../types/interfaces'
 import Advices from '../../screens/Advices/Advices'
 import { parseCookie } from '../../utils/helpers'
