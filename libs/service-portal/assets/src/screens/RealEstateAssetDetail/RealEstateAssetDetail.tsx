@@ -14,7 +14,6 @@ import { Box } from '@island.is/island-ui/core'
 import { NotFound, amountFormat, HMS_ID } from '@island.is/service-portal/core'
 import AssetGrid from '../../components/AssetGrid'
 import AssetLoader from '../../components/AssetLoader'
-import AssetDisclaimer from '../../components/AssetDisclaimer'
 import { ownersArray } from '../../utils/createUnits'
 import { messages } from '../../lib/messages'
 import DetailHeader from '../../components/DetailHeader'
@@ -253,15 +252,13 @@ export const AssetsDetail = () => {
         ) : null}
       </Box>
       <Box marginTop={8}>
-        <AssetDisclaimer />
-        {/* TODO: Test when working dev service */}
-        {/* <FootNote
+        <FootNote
           notes={[
             { text: formatMessage(messages.disclaimerA) },
             { text: formatMessage(messages.disclaimerB) },
           ]}
           serviceProviderID={HMS_ID}
-        /> */}
+        />
       </Box>
     </>
   )

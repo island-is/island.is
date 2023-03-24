@@ -26,7 +26,7 @@ export const FootNote = ({ notes, serviceProviderID }: Props) => {
   const { data: organizations, loading } = useOrganizations()
 
   useEffect(() => {
-    if (organizations && !loading) {
+    if (organizations && Array.isArray(organizations) && !loading) {
       const org = organizations.find(
         (org: Organization) => org.id === serviceProviderID,
       )
@@ -39,11 +39,13 @@ export const FootNote = ({ notes, serviceProviderID }: Props) => {
     <Box style={{ pageBreakBefore: 'always' }}>
       {notes?.map((item, index) => {
         return (
-          <Stack space={3}>
-            <Text variant="small" key={`footnote-item-${index}`}>
-              {item.text}
-            </Text>
-          </Stack>
+          <Text
+            paddingTop={index === 0 ? 0 : 3}
+            variant="small"
+            key={`footnote-item-${index}`}
+          >
+            {item.text}
+          </Text>
         )
       })}
       <Hidden above="sm">

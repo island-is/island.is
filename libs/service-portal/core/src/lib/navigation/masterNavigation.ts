@@ -63,7 +63,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'person',
         },
-        serviceProvider: 'i5go5A4ikV8muPfvr9o2v',
         description: m.info,
         children: [
           {
@@ -106,7 +105,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
               icon: 'school',
             },
             description: m.educationDescription,
-            serviceProvider: '6JoPZKqmUVnRAVrj0vadTy',
           },
           {
             // Petitions
@@ -190,7 +188,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'home',
         },
-        serviceProvider: '53jrbgxPKpbNtordSfEZUK',
         children: [
           {
             name: 'id',
@@ -205,7 +202,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       {
         name: m.finance,
         path: ServicePortalPath.FinanceRoot,
-        serviceProvider: '6AoSHJJRDHQFfLiwBZvZi2',
         children: [
           {
             name: m.financeStatus,
@@ -254,35 +250,29 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             icon: {
               icon: 'car',
             },
-            serviceProvider: '6IZT17s7stKJAmtPutjpD7',
             description: m.vehiclesDescription,
             children: [
               {
                 name: m.myVehicles,
                 path: ServicePortalPath.TransportMyVehicles,
-                serviceProvider: '6IZT17s7stKJAmtPutjpD7',
               },
               {
                 // Path param reference
                 name: 'id',
                 navHide: true,
                 path: ServicePortalPath.TransportVehiclesDetail,
-                serviceProvider: '6IZT17s7stKJAmtPutjpD7',
               },
               {
                 name: m.vehiclesLookup,
                 path: ServicePortalPath.TransportVehiclesLookup,
-                serviceProvider: '6IZT17s7stKJAmtPutjpD7',
               },
               {
                 name: m.vehiclesDrivingLessons,
                 path: ServicePortalPath.TransportVehiclesDrivingLessons,
-                serviceProvider: '6IZT17s7stKJAmtPutjpD7',
               },
               {
                 name: m.vehiclesHistory,
                 path: ServicePortalPath.TransportVehiclesHistory,
-                serviceProvider: '6IZT17s7stKJAmtPutjpD7',
               },
             ],
           },

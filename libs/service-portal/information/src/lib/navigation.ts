@@ -9,30 +9,25 @@ export const informationNavigation: PortalNavigationItem = {
   icon: {
     icon: 'person',
   },
-  serviceProvider: 'i5go5A4ikV8muPfvr9o2v',
   children: [
     {
       name: m.myInfo,
       path: InformationPaths.MyInfoRoot,
-      serviceProvider: 'i5go5A4ikV8muPfvr9o2v',
     },
     {
       name: m.detailInfo,
       navHide: true,
       path: InformationPaths.UserInfo,
-      serviceProvider: 'i5go5A4ikV8muPfvr9o2v',
     },
     {
       name: m.familySpouse,
       navHide: true,
       path: InformationPaths.Spouse,
-      serviceProvider: 'i5go5A4ikV8muPfvr9o2v',
     },
     {
       name: m.familyChild,
       navHide: true,
       path: InformationPaths.Child,
-      serviceProvider: 'i5go5A4ikV8muPfvr9o2v',
     },
     {
       name: m.petitions,

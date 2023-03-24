@@ -30,8 +30,8 @@ export const IntroHeader = (
   const { data: organizations, loading } = useOrganizations()
 
   useEffect(() => {
-    if (organizations && !loading) {
-      const org = organizations.find(
+    if (organizations && Array.isArray(organizations) && !loading) {
+      const org = organizations?.find(
         (org: Organization) => org.id === props.serviceProviderID,
       )
       if (org) setCurrentOrganization(org)
