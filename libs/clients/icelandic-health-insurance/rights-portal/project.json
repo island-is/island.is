@@ -25,7 +25,17 @@
     "schemas/external-openapi-generator": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/icelandic-health-insurance/rights-portal/gen/fetch -i libs/clients/icelandic-health-insurance/rights-portal/src/clientConfig.yaml"
+        "command": "yarn openapi-generator -o libs/clients/icelandic-health-insurance/rights-portal/gen/fetch -i libs/clients/icelandic-health-insurance/rights-portal/src/clientConfig.json"
+      }
+    },
+    "update-openapi-document": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "curl https://midgardur-test.sjukra.is/minarsidur/swagger/v1/swagger.json -H 'Accept: application/json' > src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/icelandic-health-insurance/rights-portal"
       }
     }
   },
