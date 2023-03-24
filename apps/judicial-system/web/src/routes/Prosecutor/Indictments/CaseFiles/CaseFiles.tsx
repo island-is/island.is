@@ -60,7 +60,8 @@ const CaseFiles: React.FC = () => {
 
   const isTrafficViolationCaseCheck =
     (features.includes(Feature.INDICTMENT_ROUTE) ||
-      user?.name === 'Árni Bergur Sigurðsson') &&
+      user?.name === 'Árni Bergur Sigurðsson' ||
+      user?.name === 'Ásmundur Jónsson') &&
     isTrafficViolationCase(workingCase.indictmentSubtypes)
 
   useEffect(() => {
