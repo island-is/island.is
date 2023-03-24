@@ -12,6 +12,10 @@ import {
   ApiScopeUserAccess,
   Client,
   ClientAllowedScope,
+  ClientClaim,
+  ClientGrantType,
+  ClientPostLogoutRedirectUri,
+  ClientRedirectUri,
   Delegation,
   DelegationScope,
   Domain,
@@ -21,6 +25,9 @@ import {
   CreateApiScope,
   CreateApiScopeUserAccess,
   CreateCustomDelegation,
+  CreateClientUri,
+  CreateClientClaim,
+  CreateClientGrantType,
 } from './types'
 import startOfDay from 'date-fns/startOfDay'
 import { CreateDomain } from './domain.fixture'
@@ -66,6 +73,48 @@ export class FixtureFactory {
     scope: Partial<ClientAllowedScope>,
   ): Promise<ClientAllowedScope> {
     return this.get(ClientAllowedScope).create(scope)
+  }
+
+  async createClientRedirectUri({
+    clientId,
+    uri,
+  }: CreateClientUri): Promise<ClientRedirectUri> {
+    return this.get(ClientRedirectUri).create({
+      clientId,
+      redirectUri: uri ?? faker.internet.url(),
+    })
+  }
+
+  async createClientPostLogoutRedirectUri({
+    clientId,
+    uri,
+  }: CreateClientUri): Promise<ClientPostLogoutRedirectUri> {
+    return this.get(ClientPostLogoutRedirectUri).create({
+      clientId,
+      redirectUri: uri ?? faker.internet.url(),
+    })
+  }
+
+  async createClientClaim({
+    clientId,
+    type,
+    value,
+  }: CreateClientClaim): Promise<ClientClaim> {
+    return this.get(ClientClaim).create({
+      clientId,
+      type: type ?? faker.random.word(),
+      value: value ?? faker.random.word(),
+    })
+  }
+
+  async createClientGrantType({
+    clientId,
+    grantType,
+  }: CreateClientGrantType): Promise<ClientGrantType> {
+    return this.get(ClientGrantType).create({
+      clientId,
+      grantType: grantType ?? faker.random.word(),
+    })
   }
 
   async createApiScope({
