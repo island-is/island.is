@@ -1,5 +1,5 @@
-import { CaseSortOptions } from '../../types/enums'
-import { ArrOfTypes } from '../../types/interfaces'
+import { CaseSortOptions } from '../../../types/enums'
+import { ArrOfTypes } from '../../../types/interfaces'
 
 const TODAY = new Date()
 
@@ -42,17 +42,17 @@ export const getInitFilterValues = ({ types }: Props) => {
 
   const sorting = [
     {
-      value: 0,
+      value: '0',
       label: CaseSortOptions.lastUpdated,
       checked: true,
     },
     {
-      value: 1,
+      value: '1',
       label: CaseSortOptions.latestCases,
       checked: false,
     },
     {
-      value: 2,
+      value: '2',
       label: CaseSortOptions.adviceDeadline,
       checked: false,
     },
@@ -63,7 +63,7 @@ export const getInitFilterValues = ({ types }: Props) => {
     to: new Date(TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate()),
   }
 
-  return {
+  const filters = {
     caseStatuses: caseStatuses,
     caseTypes: caseTypes,
     Institutions: Institutions,
@@ -73,6 +73,8 @@ export const getInitFilterValues = ({ types }: Props) => {
     sorting: sorting,
     period: period,
   }
+
+  return filters
 }
 
 export default getInitFilterValues
