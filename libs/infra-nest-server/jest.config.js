@@ -9,4 +9,5 @@ module.exports = {
   coverageDirectory: '<rootDir>/coverage/libs/infra-nest-server',
   globals: { 'ts-jest': { tsconfig: `${__dirname}/tsconfig.spec.json` } },
   displayName: 'infra-nest-server',
+  testEnvironment: 'node',
 }

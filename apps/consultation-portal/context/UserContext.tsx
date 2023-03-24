@@ -51,10 +51,12 @@ const UserContextProvider = ({ children }: UserProps) => {
         expiry: decodedJson.exp,
       })
 
-      const setCookie = fetch(`${process.env.WEB_PUBLIC_URL}/api/auth/login`, {
-        method: 'POST',
-        body: body,
-      })
+      const setCookie =
+        typeof window !== 'undefined' &&
+        fetch(`${window.location.origin}/consultation-portal/api/auth/login`, {
+          method: 'POST',
+          body: body,
+        })
 
       setUser(thisUser)
       setIsAuthenticated(true)
@@ -69,12 +71,14 @@ const UserContextProvider = ({ children }: UserProps) => {
   }
 
   const logoutUser = async () => {
-    const setCookie = await fetch(
-      `${process.env.WEB_PUBLIC_URL}/api/auth/logout`,
-      {
-        method: 'GET',
-      },
-    )
+    const setCookie =
+      typeof window !== 'undefined' &&
+      (await fetch(
+        `${window.location.origin}/consultation-portal/api/auth/logout`,
+        {
+          method: 'GET',
+        },
+      ))
     if (setCookie.status === 200) {
       setUserNull()
     }

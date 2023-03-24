@@ -9,6 +9,7 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "outputPath": "dist/apps/consultation-portal",
+        "assets": ["apps/consultation-portal/public/favicon.ico"],
         "commands": [
           "yarn nx build-next consultation-portal",
           "yarn nx build-server consultation-portal"
