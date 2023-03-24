@@ -13,8 +13,8 @@ export const serviceSetup = (services: {
       min: 2,
     })
     .resources({
-      limits: { cpu: '400m', memory: '512Mi' },
-      requests: { cpu: '200m', memory: '256Mi' },
+      limits: { cpu: '300m', memory: '256Mi' },
+      requests: { cpu: '5m', memory: '32Mi' },
     })
     .env({
       BASEPATH: '/minarsidur',

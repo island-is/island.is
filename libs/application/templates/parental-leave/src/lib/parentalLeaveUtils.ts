@@ -34,6 +34,7 @@ import {
   SINGLE,
   PERMANENT_FOSTER_CARE,
   ADOPTION,
+  OTHER_NO_CHILDREN_FOUND,
 } from '../constants'
 import { SchemaFormValues } from '../lib/dataSchema'
 
@@ -824,7 +825,12 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   // default value as 0 for adoption, foster care and father without mother
   // since primary parent doesn't choose a child
-  const selectedChild = getValueViaPath(answers, 'selectedChild', '0') as string
+  const selectedChild =
+    noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE ||
+    noChildrenFoundTypeOfApplication === ADOPTION ||
+    noChildrenFoundTypeOfApplication === OTHER_NO_CHILDREN_FOUND
+      ? '0'
+      : (getValueViaPath(answers, 'selectedChild') as string)
 
   const transferRights = getValueViaPath(
     answers,
