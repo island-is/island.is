@@ -246,11 +246,6 @@ export class CourtClientServiceImplementation implements CourtClientService {
     // Get the connection state
     const connectionState = this.getConnectionState(courtId)
 
-    // Check for known errors
-    if (reason.message === 'FileNotSupported') {
-      return new UnsupportedMediaTypeException(reason)
-    }
-
     if (
       reason.message?.startsWith('Case Not Found') ||
       reason.message ===
@@ -355,6 +350,11 @@ export class CourtClientServiceImplementation implements CourtClientService {
         courtId,
         reason,
       })
+
+      // Check for known errors
+      if (reason.message === 'FileNotSupported') {
+        throw new UnsupportedMediaTypeException(reason)
+      }
 
       throw this.handleError(courtId, reason)
     })
