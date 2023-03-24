@@ -16,14 +16,14 @@ import Lifetime from './Lifetime'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { useLoaderData } from 'react-router-dom'
-import { AuthApplicationList } from './Application.loader'
+import { AuthApplication } from './Application.loader'
 
 const Application = () => {
-  const application = useLoaderData() as AuthApplicationList
+  const application = useLoaderData() as AuthApplication
 
   const { formatMessage } = useLocale()
   const [selectedEnvironment, setSelectedEnvironment] = useState<
-    AuthApplicationList['environments'][0]
+    AuthApplication['environments'][0]
   >(application.environments[0])
 
   return (
@@ -50,7 +50,7 @@ const Application = () => {
                   setSelectedEnvironment(
                     application.environments.find(
                       (env) => env.environment === event.value,
-                    ) as AuthApplicationList['environments'][0],
+                    ) as AuthApplication['environments'][0],
                   )
                 }
                 value={{

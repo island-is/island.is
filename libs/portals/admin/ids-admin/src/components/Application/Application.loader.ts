@@ -4,13 +4,13 @@ import {
   GetApplicationsByApplicationIdDocument,
 } from './Application.generated'
 
-export type AuthApplicationList = GetApplicationsByApplicationIdQuery['authAdminApplication']
-export type AuthApplicationTranslationList = GetApplicationsByApplicationIdQuery['authAdminApplication']['environments'][0]['displayName'][0]
-export type AuthApplicationLifeTimeList = GetApplicationsByApplicationIdQuery['authAdminApplication']['environments'][0]['lifeTime']
-export type AuthApplicationLBasicInfoList = GetApplicationsByApplicationIdQuery['authAdminApplication']['environments'][0]['basicInfo']
-export type AuthApplicationApplicationUrlList = GetApplicationsByApplicationIdQuery['authAdminApplication']['environments'][0]['applicationUrls']
+export type AuthApplication = GetApplicationsByApplicationIdQuery['authAdminApplication']
+export type AuthApplicationTranslation = GetApplicationsByApplicationIdQuery['authAdminApplication']['environments'][0]['displayName'][0]
+export type AuthApplicationLifeTime = GetApplicationsByApplicationIdQuery['authAdminApplication']['environments'][0]['lifeTime']
+export type AuthApplicationLBasicInfo = GetApplicationsByApplicationIdQuery['authAdminApplication']['environments'][0]['basicInfo']
+export type AuthApplicationApplicationUrl = GetApplicationsByApplicationIdQuery['authAdminApplication']['environments'][0]['applicationUrls']
 export const applicationLoader: WrappedLoaderFn = ({ client }) => {
-  return async ({ params }): Promise<AuthApplicationList> => {
+  return async ({ params }): Promise<AuthApplication> => {
     if (!params['tenant']) {
       throw new Error('Tenant not found')
     }
@@ -36,7 +36,7 @@ export const applicationLoader: WrappedLoaderFn = ({ client }) => {
     }
 
     return (
-      applicationsList.data?.authAdminApplication ?? ({} as AuthApplicationList)
+      applicationsList.data?.authAdminApplication ?? ({} as AuthApplication)
     )
   }
 }
