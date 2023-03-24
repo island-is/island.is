@@ -8,12 +8,15 @@ import { AdminClientType } from './dto/admin-client-type.enum'
 import { AdminClientDto } from './dto/admin-client.dto'
 import { AdminCreateClientDto } from './dto/admin-create-client.dto'
 import { User } from '@island.is/auth-nest-tools'
+import { Domain } from '../../resources/models/domain.model'
 
 @Injectable()
 export class AdminClientsService {
   constructor(
     @InjectModel(Client)
     private clientModel: typeof Client,
+    @InjectModel(Domain)
+    private readonly domainModel: typeof Domain,
   ) {}
 
   async findByTenantId(tenantId: string): Promise<AdminClientDto[]> {
@@ -50,11 +53,21 @@ export class AdminClientsService {
   async create(
     clientDto: AdminCreateClientDto,
     user: User,
+    tenantId: string,
   ): Promise<AdminClientDto> {
+    const tenant = await this.domainModel.findOne({
+      where: {
+        name: tenantId,
+      },
+    })
+    if (!tenant) {
+      throw new NoContentException()
+    }
+
     const client = await this.clientModel.create({
       clientId: clientDto.clientId,
       clientType: clientDto.clientType,
-      nationalId: user.nationalId,
+      nationalId: tenant.nationalId,
       clientName: clientDto.clientName,
       ...this.defaultClientAttributes(clientDto.clientType),
     })

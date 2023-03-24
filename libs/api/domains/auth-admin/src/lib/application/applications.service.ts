@@ -5,7 +5,11 @@ import { CreateClientsInput } from './dto/createClientsInput'
 import { ApplicationType } from '../models/applicationType'
 import { Auth } from '@island.is/auth-nest-tools'
 import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
-import { AdminCreateClientDtoClientTypeEnum } from '@island.is/clients/auth/admin-api'
+import {
+  AdminCreateClientDto,
+  AdminCreateClientDtoClientTypeEnum,
+  MeClientsControllerCreateRequest,
+} from '@island.is/clients/auth/admin-api'
 import { CreateApplicationResponseDto } from './dto/create-application-response'
 
 @Injectable()
@@ -28,44 +32,37 @@ export class ApplicationsService extends MultiEnvironmentService {
     input: CreateClientsInput,
     user: Auth,
   ): Promise<CreateApplicationResponseDto[]> {
-    const applicationRequest = {
+    const applicationRequest: MeClientsControllerCreateRequest = {
       tenantId: input.tenantId,
       adminCreateClientDto: {
         clientId: input.applicationId,
         clientType: (input.applicationType as string) as AdminCreateClientDtoClientTypeEnum,
-        tenantId: input.tenantId,
-        nationalId: user.nationalId,
         clientName: input.displayName,
       },
     }
 
     const createApplicationResponse = [] as CreateApplicationResponseDto[]
 
-    const created = await Promise.all(
+    const created = await Promise.allSettled(
       input.environments.map(async (environment) => {
-        switch (environment) {
-          case Environment.Development:
-            return this.adminDevApiWithAuth(user)?.meClientsControllerCreate(
-              applicationRequest,
-            )
-          case Environment.Staging:
-            return this.adminStagingApiWithAuth(
-              user,
-            )?.meClientsControllerCreate(applicationRequest)
-          case Environment.Production:
-            return this.adminProdApiWithAuth(user)?.meClientsControllerCreate(
-              applicationRequest,
-            )
-        }
+        return this.adminApiByEnvironmentWithAuth(
+          environment,
+          user,
+        )?.meClientsControllerCreate(applicationRequest)
       }),
     )
 
     created.map((resp, index) => {
-      if (resp) {
+      if (resp.status === 'fulfilled' && resp.value) {
         createApplicationResponse.push({
-          applicationId: resp.clientId,
+          applicationId: resp.value.clientId,
           environment: input.environments[index],
         })
+      } else if (resp.status === 'rejected') {
+        this.logger.error(
+          `Failed to create application ${input.applicationId} in environment ${input.environments[index]}`,
+          resp.reason,
+        )
       }
     })
 
