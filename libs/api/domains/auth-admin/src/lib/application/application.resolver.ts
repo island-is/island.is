@@ -23,8 +23,13 @@ export class ApplicationResolver {
   constructor(private readonly applicationsService: ApplicationsService) {}
 
   @Query(() => ApplicationsPayload, { name: 'authAdminApplications' })
-  getApplications(@Args('input') input: ApplicationsInput) {
-    return this.applicationsService.getApplications(
+  getApplications(@Args('tenantId') tenantId: string) {
+    return this.applicationsService.getApplications(tenantId)
+  }
+
+  @Query(() => Application, { name: 'authAdminApplication' })
+  getApplicationById(@Args('input') input: ApplicationsInput) {
+    return this.applicationsService.getApplicationById(
       input.tenantId,
       input.applicationId,
     )
