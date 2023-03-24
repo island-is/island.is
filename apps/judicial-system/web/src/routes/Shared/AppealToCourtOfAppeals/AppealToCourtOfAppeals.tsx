@@ -58,8 +58,8 @@ const AppealToCourtOfAppeals = () => {
     ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF
     : CaseFileCategory.DEFENDANT_APPEAL_BRIEF
   const appealCaseFilesType = isProsecutionRole(user?.role)
-    ? CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE
-    : CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE
+    ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE
+    : CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE
   const previousUrl = `${
     isProsecutionRole(user?.role)
       ? constants.SIGNED_VERDICT_OVERVIEW_ROUTE
