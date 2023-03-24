@@ -188,7 +188,7 @@ IconAndButton.args = {
   name: 'Test16',
   errorMessage: 'This is the error message',
   icon: [
-    { name: 'copy', type: 'outline', onClick: () => console.log('Copy value'), label: 'Copy value' },
+    { name: 'copy', type: 'outline', onClick: () => console.log('Copy value'), label: 'Copy value', disabled: true },
     { name: 'informationCircle' }
   ],
 }
@@ -199,10 +199,11 @@ SmallWithIconAndButton.args = {
   placeholder: 'This is the placeholder',
   name: 'Test18',
   size: 'sm',
+  backgroundColor: 'blue',
   icon: [
     { name: 'informationCircle' },
-    { name: 'eye', onClick: () => console.log('Show'), disabled: true },
-    { name: 'copy', type: 'outline', onClick: () => console.log('Copy value') },
+    { name: 'eye', onClick: () => console.log('Show'), label: 'Show password', disabled: true, },
+    { name: 'copy', type: 'outline', onClick: () => console.log('Copy value'), label: 'Copy value' },
   ],
 }
 export const ExtraSmallWithIconAndButton = Template.bind({})
@@ -213,8 +214,8 @@ ExtraSmallWithIconAndButton.args = {
   size: 'xs',
   icon: [
     { name: 'informationCircle' },
-    { name: 'eye', onClick: () => console.log('Show') },
-    { name: 'copy', type: 'outline', onClick: () => console.log('Copy value') },
+    { name: 'eye', onClick: () => console.log('Show'), label: 'Show password' },
+    { name: 'copy', type: 'outline', onClick: () => console.log('Copy value'), label: 'Copy value' },
   ],
 }
 

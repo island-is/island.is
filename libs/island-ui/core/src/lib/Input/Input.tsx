@@ -87,7 +87,13 @@ export const Input = forwardRef(
       ...inputProps
     } = props
     const [hasFocus, setHasFocus] = useState(false)
+
     const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
+    const mergedRefs = useMergeRefs(inputRef, ref || null)
+
+    const hasLabel = Boolean(label)
+    const showFocus = hasFocus || !!fixedFocusState
+
     const errorId = `${id}-error`
     const ariaError = hasError
       ? {
@@ -95,7 +101,6 @@ export const Input = forwardRef(
         'aria-describedby': errorId,
       }
       : {}
-    const mergedRefs = useMergeRefs(inputRef, ref || null)
 
     const InputComponent = textarea ? TextareaHOC : InputHOC
     const mapBlue = (color: InputBackgroundColor) =>
@@ -127,7 +132,6 @@ export const Input = forwardRef(
       }
     }, [autoExpand?.maxHeight, autoExpand?.on, inputRef])
 
-    const hasLabel = Boolean(label)
 
     return (
       <div>
@@ -135,10 +139,11 @@ export const Input = forwardRef(
         {size === 'xs' && label && (
           <label
             htmlFor={id}
-            className={cn(styles.label({ hasError, readOnly, disabledEmptyInput: disabled && !value && !defaultValue }), styles.labelSizes[size], {
-              // [styles.labelDisabledEmptyInput]:
-              //   disabled && !value && !defaultValue,
-            })}
+            className={cn(styles.label({
+              hasError,
+              readOnly,
+              disabledEmptyInput: disabled && !value && !defaultValue
+            }), styles.labelSizes[size])}
           >
             {label}
             {required && (
@@ -156,20 +161,8 @@ export const Input = forwardRef(
         )}
 
         <Box
-          // display="flex"
-          // alignItems="center"
           background={containerBackground as UseBoxStylesProps['background']}
-          className={cn(styles.container({ disabled: !!disabled, readOnly, hasError, hasFocus: hasFocus || !!fixedFocusState }),
-            // styles.containerSizes[size],
-            // {
-            // [styles.hasError]: hasError,
-            // [styles.hasFocus]: hasFocus,
-            // [styles.fixedFocusState]: fixedFocusState,
-            // [styles.noLabel]: !label, // TODO: remove this?
-            // [styles.containerDisabled]: disabled,
-            // [styles.readOnly]: readOnly,
-            // }
-          )}
+          className={styles.container({ disabled: Boolean(disabled), readOnly, hasError, hasFocus: showFocus })}
           onClick={(e) => {
             e.preventDefault()
             if (inputRef.current) {
@@ -184,10 +177,7 @@ export const Input = forwardRef(
             {size !== 'xs' && label && (
               <label
                 htmlFor={id}
-                className={cn(styles.label({ hasError, readOnly, disabledEmptyInput: disabled && !value && !defaultValue, }), styles.labelSizes[size], {
-                  // [styles.labelDisabledEmptyInput]:
-                  //   disabled && !value && !defaultValue,
-                })}
+                className={cn(styles.label({ hasError, readOnly, disabledEmptyInput: disabled && !value && !defaultValue, }), styles.labelSizes[size])}
               >
                 {label}
                 {required && (
@@ -215,10 +205,6 @@ export const Input = forwardRef(
                   styles.inputBackgroundXl,
                 ),
                 styles.inputSize[size],
-                {
-                  // [styles.rightAlign]: rightAlign,
-                  // [styles.textarea]: textarea,
-                },
               )}
               id={id}
               disabled={disabled}
@@ -258,7 +244,7 @@ export const Input = forwardRef(
             />
           </Box>
 
-          <AsideIcons icon={icon} size={size} loading={!!loading} hasError={hasError} hasLabel={hasLabel} />
+          <AsideIcons icon={icon} size={size} loading={!!loading} hasError={hasError} hasLabel={hasLabel} hasFocus={showFocus} />
 
         </Box>
         {hasError && errorMessage && (
@@ -270,7 +256,7 @@ export const Input = forwardRef(
 )
 
 
-function AsideIcons({ icon, size, loading, hasError, hasLabel }: AsideProps) {
+function AsideIcons({ icon, size, loading, hasError, hasLabel, hasFocus }: AsideProps) {
   const [icons, buttons] = useMemo(() => {
     const iconsArray = (Array.isArray(icon) ? icon : [icon]).filter((i): i is InputIcon => Boolean(i))
     const onlyWarning: InputIcon[] = [{ name: 'warning', onClick: undefined }]
@@ -291,7 +277,7 @@ function AsideIcons({ icon, size, loading, hasError, hasLabel }: AsideProps) {
   )
 
   return (
-    <div className={styles.aside}>
+    <div className={styles.aside({ hasFocus })}>
       {loading && (
         <Box
           className={styles.spinner}
