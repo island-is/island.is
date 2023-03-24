@@ -397,7 +397,8 @@ const useSections = (
                   : undefined,
             },
             ...((features.includes(Feature.INDICTMENT_ROUTE) ||
-              user?.name === 'Árni Bergur Sigurðsson') &&
+              user?.name === 'Árni Bergur Sigurðsson' ||
+              user?.name === 'Ásmundur Jónsson') &&
             workingCase.type === CaseType.Indictment &&
             isTrafficViolationCase(workingCase.indictmentSubtypes)
               ? [
