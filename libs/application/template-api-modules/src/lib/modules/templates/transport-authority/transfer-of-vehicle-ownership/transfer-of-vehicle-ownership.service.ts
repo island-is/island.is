@@ -114,16 +114,20 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps) {
     const answers = application.answers as TransferOfVehicleOwnershipAnswers
-    const createdStr = application.created.toISOString()
 
     const sellerSsn = answers?.seller?.nationalId
+    const sellerEmail = answers?.seller?.email
     const buyerSsn = answers?.buyer?.nationalId
+    const buyerEmail = answers?.buyer?.email
+
+    const createdStr = application.created.toISOString()
 
     // No need to continue with this validation in user is neither seller nor buyer
     // (only time application data changes is on state change from these roles)
     if (auth.nationalId !== sellerSsn && auth.nationalId !== buyerSsn) {
       return
     }
+
     const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
       ({ wasRemoved }) => wasRemoved !== 'true',
     )
@@ -140,11 +144,11 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         permno: answers?.pickVehicle?.plate,
         seller: {
           ssn: sellerSsn,
-          email: answers?.seller?.email,
+          email: sellerEmail,
         },
         buyer: {
           ssn: buyerSsn,
-          email: answers?.buyer?.email,
+          email: buyerEmail,
         },
         dateOfPurchase: new Date(answers?.vehicle?.date),
         dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
@@ -308,9 +312,11 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
       []) as Array<EmailRecipient>
 
     const newlyAddedRecipientList: Array<EmailRecipient> = []
+
     const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
       ({ wasRemoved }) => wasRemoved !== 'true',
     )
+
     // Buyer's co-owners
     const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'coOwner',
