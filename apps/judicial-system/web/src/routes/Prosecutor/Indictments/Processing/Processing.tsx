@@ -8,6 +8,7 @@ import {
   FormFooter,
   PageLayout,
   ProsecutorCaseInfo,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   IndictmentsProsecutorSubsections,
@@ -49,8 +50,12 @@ const Processing: React.FC = () => {
   const { courts } = useInstitution()
   const router = useRouter()
   const { features } = useContext(FeatureContext)
+  const { user } = useContext(UserContext)
+
   const isTrafficViolationCaseCheck =
-    features.includes(Feature.INDICTMENT_ROUTE) &&
+    (features.includes(Feature.INDICTMENT_ROUTE) ||
+      user?.name === 'Árni Bergur Sigurðsson' ||
+      user?.name === 'Ásmundur Jónsson') &&
     isTrafficViolationCase(workingCase.indictmentSubtypes)
 
   const handleCourtChange = (court: Institution) => {

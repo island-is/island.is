@@ -53,7 +53,7 @@ export const TreeSlider = () => {
           <Controller
             defaultValue={numberOfTrees}
             name={'numberOfTrees'}
-            render={({ onChange }) => (
+            render={({ field: { onChange } }) => (
               <Slider
                 min={0}
                 max={20}

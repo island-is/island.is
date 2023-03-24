@@ -62,15 +62,16 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
   const { workingCase } = props
   const { formatMessage } = useIntl()
   const { features } = useContext(FeatureContext)
-
-  const isTrafficViolationCaseCheck =
-    features.includes(Feature.INDICTMENT_ROUTE) &&
-    isTrafficViolationCase(workingCase.indictmentSubtypes)
-
+  const { user } = useContext(UserContext)
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
   })
-  const { user } = useContext(UserContext)
+
+  const isTrafficViolationCaseCheck =
+    (features.includes(Feature.INDICTMENT_ROUTE) ||
+      user?.name === 'Árni Bergur Sigurðsson' ||
+      user?.name === 'Ásmundur Jónsson') &&
+    isTrafficViolationCase(workingCase.indictmentSubtypes)
 
   const cf = workingCase.caseFiles
 

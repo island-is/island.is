@@ -16,6 +16,7 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  IndictmentInfo,
   InfoBox,
   PageHeader,
   PageLayout,
@@ -46,18 +47,17 @@ import {
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
-import IndictmentInfo from '@island.is/judicial-system-web/src/components/IndictmentInfo/IndictmentInfo'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { GetPoliceCaseFilesQuery } from '@island.is/judicial-system-web/src/graphql/schema'
 import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
 import * as constants from '@island.is/judicial-system/consts'
 
-import { policeCaseFiles as m } from './PoliceCaseFilesRoute.strings'
 import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
 import {
   mapPoliceCaseFileToPoliceCaseFileCheck,
   PoliceCaseFilesData,
 } from '../../components/CaseFiles/CaseFiles'
+import { policeCaseFiles as m } from './PoliceCaseFilesRoute.strings'
 
 const UploadFilesToPoliceCase: React.FC<{
   caseId: string

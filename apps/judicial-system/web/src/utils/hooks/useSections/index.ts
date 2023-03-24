@@ -1,6 +1,5 @@
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
-import { useRouter } from 'next/router'
 
 import {
   CaseState,
@@ -51,7 +50,6 @@ const useSections = (
 ) => {
   const { formatMessage } = useIntl()
   const { features } = useContext(FeatureContext)
-  const router = useRouter()
 
   const getRestrictionCaseProsecutorSection = (
     workingCase: Case,
@@ -314,6 +312,7 @@ const useSections = (
 
   const getIndictmentCaseProsecutorSection = (
     workingCase: Case,
+    user?: User,
   ): RouteSection => {
     const { id } = workingCase
 
@@ -397,7 +396,9 @@ const useSections = (
                       )
                   : undefined,
             },
-            ...(features.includes(Feature.INDICTMENT_ROUTE) &&
+            ...((features.includes(Feature.INDICTMENT_ROUTE) ||
+              user?.name === 'Árni Bergur Sigurðsson' ||
+              user?.name === 'Ásmundur Jónsson') &&
             workingCase.type === CaseType.Indictment &&
             isTrafficViolationCase(workingCase.indictmentSubtypes)
               ? [
@@ -481,9 +482,6 @@ const useSections = (
     user?: User,
   ): RouteSection => {
     const { id } = workingCase
-    const isModifyingRuling = router.pathname.includes(
-      constants.RESTRICTION_CASE_MODIFY_RULING_ROUTE,
-    )
 
     return {
       name: formatMessage(sections.courtSection.title),
@@ -495,15 +493,11 @@ const useSections = (
                 name: formatMessage(
                   sections.courtSection.receptionAndAssignment,
                 ),
-                href: !isModifyingRuling
-                  ? `${constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`
-                  : undefined,
+                href: `${constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`,
               },
               {
                 name: formatMessage(sections.courtSection.overview),
-                href: !isModifyingRuling
-                  ? `${constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${id}`
-                  : undefined,
+                href: `${constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -518,9 +512,7 @@ const useSections = (
               },
               {
                 name: formatMessage(sections.courtSection.hearingArrangements),
-                href: !isModifyingRuling
-                  ? `${constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${id}`
-                  : undefined,
+                href: `${constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -538,9 +530,7 @@ const useSections = (
               },
               {
                 name: formatMessage(sections.courtSection.ruling),
-                href: !isModifyingRuling
-                  ? `${constants.RESTRICTION_CASE_RULING_ROUTE}/${id}`
-                  : undefined,
+                href: `${constants.RESTRICTION_CASE_RULING_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -559,9 +549,7 @@ const useSections = (
               },
               {
                 name: formatMessage(sections.courtSection.courtRecord),
-                href: !isModifyingRuling
-                  ? `${constants.RESTRICTION_CASE_COURT_RECORD_ROUTE}/${id}`
-                  : undefined,
+                href: `${constants.RESTRICTION_CASE_COURT_RECORD_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -581,9 +569,7 @@ const useSections = (
               },
               {
                 name: formatMessage(sections.courtSection.conclusion),
-                href: !isModifyingRuling
-                  ? `${constants.RESTRICTION_CASE_CONFIRMATION_ROUTE}/${id}`
-                  : undefined,
+                href: `${constants.RESTRICTION_CASE_CONFIRMATION_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -611,9 +597,6 @@ const useSections = (
     user?: User,
   ): RouteSection => {
     const { id } = workingCase
-    const isModifyingRuling = router.pathname.includes(
-      constants.INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
-    )
 
     return {
       name: formatMessage(sections.investigationCaseCourtSection.title),
@@ -625,17 +608,13 @@ const useSections = (
                 name: formatMessage(
                   sections.courtSection.receptionAndAssignment,
                 ),
-                href: isModifyingRuling
-                  ? undefined
-                  : `${constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`,
+                href: `${constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`,
               },
               {
                 name: formatMessage(
                   sections.investigationCaseCourtSection.overview,
                 ),
-                href: !isModifyingRuling
-                  ? `${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${id}`
-                  : undefined,
+                href: `${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -654,9 +633,7 @@ const useSections = (
                 name: formatMessage(
                   sections.investigationCaseCourtSection.hearingArrangements,
                 ),
-                href: !isModifyingRuling
-                  ? `${constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${id}`
-                  : undefined,
+                href: `${constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -676,9 +653,7 @@ const useSections = (
                 name: formatMessage(
                   sections.investigationCaseCourtSection.ruling,
                 ),
-                href: !isModifyingRuling
-                  ? `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${id}`
-                  : undefined,
+                href: `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -699,9 +674,7 @@ const useSections = (
                 name: formatMessage(
                   sections.investigationCaseCourtSection.courtRecord,
                 ),
-                href: !isModifyingRuling
-                  ? `${constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE}/${id}`
-                  : undefined,
+                href: `${constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -723,9 +696,7 @@ const useSections = (
                 name: formatMessage(
                   sections.investigationCaseCourtSection.conclusion,
                 ),
-                href: !isModifyingRuling
-                  ? `${constants.INVESTIGATION_CASE_CONFIRMATION_ROUTE}/${id}`
-                  : undefined,
+                href: `${constants.INVESTIGATION_CASE_CONFIRMATION_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -986,7 +957,7 @@ const useSections = (
         ? getRestrictionCaseProsecutorSection(workingCase, user)
         : isInvestigationCase(workingCase.type)
         ? getInvestigationCaseProsecutorSection(workingCase, user)
-        : getIndictmentCaseProsecutorSection(workingCase),
+        : getIndictmentCaseProsecutorSection(workingCase, user),
       isRestrictionCase(workingCase.type)
         ? getRestrictionCaseCourtSections(workingCase, user)
         : isInvestigationCase(workingCase.type)

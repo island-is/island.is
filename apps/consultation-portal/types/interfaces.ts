@@ -13,6 +13,7 @@ export interface Case {
   processBegins?: string
   processEnds?: string
   created?: string
+  summaryDate?: string
 }
 
 export interface UserAdvice {
@@ -111,4 +112,9 @@ export interface FilterGroups {
   Institutions?: { [key: string]: string }
   PolicyAreas?: { [key: string]: string }
   Statuses?: { [key: string]: string }
+}
+
+export interface ValueCountPair {
+  value?: string
+  count?: string
 }

@@ -81,11 +81,11 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly requestedValidToDate?: string
+  readonly translator?: string
 
   @Allow()
   @Field({ nullable: true })
-  readonly translator?: string
+  readonly requestedValidToDate?: string
 
   @Allow()
   @Field({ nullable: true })
@@ -274,10 +274,6 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly caseResentExplanation?: string
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly seenByDefender?: string
 
   @Allow()
   @Field(() => String, { nullable: true })

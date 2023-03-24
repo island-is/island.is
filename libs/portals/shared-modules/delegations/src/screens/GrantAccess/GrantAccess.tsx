@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
-import { FormProvider, useForm } from 'react-hook-form'
+import { Control, FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { defineMessage } from 'react-intl'
 import * as kennitala from 'kennitala'
@@ -77,11 +77,17 @@ const GrantAccess = () => {
       domainName: selectedOption?.value ?? null,
     },
   })
-  const { handleSubmit, control, errors, watch, reset } = methods
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+    watch,
+    setValue,
+  } = methods
 
   useEffect(() => {
-    reset({ domainName: selectedOption?.value ?? null })
-  }, [selectedOption?.value, reset])
+    setValue('domainName', selectedOption?.value ?? null)
+  }, [selectedOption?.value, setValue])
 
   const watchToNationalId = watch('toNationalId')
   const domainNameWatcher = watch('domainName')
@@ -130,9 +136,7 @@ const GrantAccess = () => {
 
   const clearPersonState = () => {
     setName('')
-    reset({
-      toNationalId: '',
-    })
+    setValue('toNationalId', '')
 
     setTimeout(() => {
       if (inputRef.current) {
@@ -171,7 +175,7 @@ const GrantAccess = () => {
                 )}
                 <Box display={name ? 'none' : 'block'} aria-live="assertive">
                   <InputController
-                    control={control}
+                    control={(control as unknown) as Control}
                     id="toNationalId"
                     icon={name || queryLoading ? undefined : 'search'}
                     ref={inputRef}
