@@ -1,0 +1,88 @@
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common'
+import { ApiSecurity, ApiTags } from '@nestjs/swagger'
+
+import { MeTenantGuard } from '@island.is/auth-api-lib'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+  User,
+} from '@island.is/auth-nest-tools'
+import { idsAdminScopes } from '@island.is/auth/scopes'
+import { Audit } from '@island.is/nest/audit'
+import { Documentation } from '@island.is/nest/swagger'
+
+import { ClientSecretsService } from './client-secrets.services'
+import { ClientSecretDto } from './dto/client-secret.dto'
+import { CreateClientSecretDto } from './dto/create-client-secret.dto'
+
+@UseGuards(IdsUserGuard, ScopesGuard, MeTenantGuard)
+@Scopes(...idsAdminScopes)
+@ApiSecurity('ias', idsAdminScopes)
+@ApiTags('admin')
+@Controller({
+  path: 'me/tenants/:tenantId/clients/:clientId/secrets',
+  version: ['2'],
+})
+@Audit({ namespace: '@island.is/auth/admin-api/v2/clients' })
+export class MeClientSecretsController {
+  constructor(private readonly clientSecretsService: ClientSecretsService) {}
+
+  @Get()
+  @Documentation({
+    description: 'Get all client secrets for the specified client and tenant.',
+    response: { status: 200, type: [ClientSecretDto] },
+  })
+  @Audit<ClientSecretDto[]>({
+    resources: (secrets) => secrets.map((secret) => secret.id),
+  })
+  find(
+    @CurrentUser() user: User,
+    @Param('tenantId') tenantId: string,
+    @Param('clientId') clientId: string,
+  ): Promise<ClientSecretDto[]> {
+    return this.clientSecretsService.find(tenantId, clientId)
+  }
+
+  @Post()
+  @Documentation({
+    description:
+      'Create a new client secret for the specified tenant and client.',
+    response: { status: 201, type: ClientSecretDto },
+  })
+  @Audit<ClientSecretDto>({
+    resources: (secret) => secret.id,
+  })
+  create(
+    @CurrentUser() user: User,
+    @Param('tenantId') tenantId: string,
+    @Param('clientId') clientId: string,
+    @Body() input: CreateClientSecretDto,
+  ): Promise<ClientSecretDto> {
+    return this.clientSecretsService.create(tenantId, clientId, input)
+  }
+
+  @Delete(':id')
+  @Documentation({
+    description: 'Delete a client secret for the specified tenant and client.',
+    response: { status: 204 },
+  })
+  @Audit()
+  delete(
+    @CurrentUser() user: User,
+    @Param('tenantId') tenantId: string,
+    @Param('clientId') clientId: string,
+    @Param('id') id: string,
+  ) {
+    this.clientSecretsService.delete(tenantId, clientId, id)
+  }
+}
