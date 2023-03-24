@@ -69,7 +69,7 @@ export interface ButtonProps {
   title?: string
   inline?: boolean
   name?: string
-  value?: string
+  value?: string | number | readonly string[]
   as?: As
   truncate?: boolean
 }
