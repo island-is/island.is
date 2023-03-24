@@ -332,7 +332,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
         createCaseData: { ...args, authenticationToken },
       }),
     ).catch((reason) => {
-      this.logger.error('Court client error', { courtId, reason })
+      this.logger.error('Court client error - createCase', { courtId, reason })
 
       throw this.handleError(courtId, reason)
     })
