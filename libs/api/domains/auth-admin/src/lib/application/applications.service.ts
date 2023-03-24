@@ -9,18 +9,21 @@ import { ApplicationType } from '../models/applicationType'
 
 @Injectable()
 export class ApplicationsService {
-  getApplications(tenantId: string, applicationId?: string) {
+  getApplications(tenantId: string) {
     const resp = getMockData()
     resp.data = resp.data.filter((x) => {
       return x.tenantId === tenantId
     })
-
-    if (applicationId) {
-      resp.data = resp.data.filter((x) => {
-        return x.applicationId === applicationId
-      })
-    }
     return resp
+  }
+
+  getApplicationById(tenantId: string, applicationId: string) {
+    const resp = getMockData()
+    resp.data = resp.data.filter((x) => {
+      return x.tenantId === tenantId && x.applicationId === applicationId
+    })
+
+    return resp.data[0]
   }
 
   createApplication(input: CreateApplicationInput) {
@@ -36,7 +39,7 @@ export class ApplicationsService {
       applicationEnv.name = input.applicationId
       applicationEnv.environment = env
       applicationEnv.displayName = [displayName]
-      applicationEnv.ApplicationUrls.callbackUrls = []
+      applicationEnv.applicationUrls.callbackUrls = []
 
       return applicationEnv
     })

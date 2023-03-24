@@ -22,9 +22,6 @@ export class ApplicationEnvironment {
   displayName!: TranslatedValue[]
 
   @Field(() => ApplicationUrl)
-  ApplicationUrls!: ApplicationUrl
-
-  @Field(() => ApplicationUrl)
   applicationUrls!: ApplicationUrl
 
   @Field(() => ApplicationLifeTime)
