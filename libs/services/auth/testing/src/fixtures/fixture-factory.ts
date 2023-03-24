@@ -71,9 +71,9 @@ export class FixtureFactory {
     return this.get(ClientAllowedScope).create(scope)
   }
 
-  async createIdentityResource({
-    ...identityResource
-  }: CreateIdentityResource = {}): Promise<IdentityResource> {
+  async createIdentityResource(
+    identityResource: CreateIdentityResource = {},
+  ): Promise<IdentityResource> {
     return this.get(IdentityResource).create({
       enabled: identityResource.enabled ?? true,
       name: identityResource.name ?? faker.random.word(),

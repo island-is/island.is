@@ -56,12 +56,16 @@ const testCases: Record<string, TestCase> = {
   '3': {
     fromNationalId: fromCustom[0].nationalId,
     delegationType: [DelegationType.Custom],
-    expected: [...customScopes1, ...identityResources],
+    expected: [...fromCustom[0].scopes, ...identityResources],
   },
   '4': {
     fromNationalId: fromCustom[0].nationalId,
     delegationType: [DelegationType.LegalGuardian, DelegationType.Custom],
-    expected: [...legalGuardianScopes, ...customScopes1, ...identityResources],
+    expected: [
+      ...legalGuardianScopes,
+      ...fromCustom[0].scopes,
+      ...identityResources,
+    ],
   },
   '5': {
     fromNationalId: fromCustom[2].nationalId,
@@ -113,19 +117,19 @@ describe('DelegationsController', () => {
         await factory.createDomain({ name: domainName })
 
         await Promise.all(
-          identityResources
-            .map((s) => ({
+          identityResources.map((s) =>
+            factory.createIdentityResource({
               name: s,
               description: s,
               displayName: s,
               automaticDelegationGrant: true,
-            }))
-            .map((scope) => factory.createIdentityResource(scope)),
+            }),
+          ),
         )
 
         await Promise.all(
-          apiScopes
-            .map((s) => ({
+          apiScopes.map((s) =>
+            factory.createApiScope({
               name: s,
               description: s,
               displayName: s,
@@ -139,21 +143,21 @@ describe('DelegationsController', () => {
               automaticDelegationGrant: false,
               grantToPersonalRepresentatives: false,
               isAccessControlled: false,
-            }))
-            .map((scope) => factory.createApiScope(scope)),
+            }),
+          ),
         )
 
         await Promise.all(
-          fromCustom
-            .map((d) => ({
+          fromCustom.map((d) =>
+            factory.createCustomDelegation({
               domainName: domainName,
               toNationalId: user.nationalId,
               fromNationalId: d.nationalId,
               scopes: d.scopes.map((s: string) => ({
                 scopeName: s,
               })),
-            }))
-            .map((delegation) => factory.createCustomDelegation(delegation)),
+            }),
+          ),
         )
       })
 
