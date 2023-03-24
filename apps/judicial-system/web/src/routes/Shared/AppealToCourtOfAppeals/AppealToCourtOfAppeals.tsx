@@ -60,7 +60,11 @@ const AppealToCourtOfAppeals = () => {
   const appealCaseFilesType = isProsecutionRole(user?.role)
     ? CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE
     : CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE
-  const previousUrl = `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${id}`
+  const previousUrl = `${
+    isProsecutionRole(user?.role)
+      ? constants.SIGNED_VERDICT_OVERVIEW_ROUTE
+      : constants.DEFENDER_ROUTE
+  }/${id}`
   const allFilesUploaded = useMemo(() => {
     return displayFiles.every(
       (file) => file.status === 'done' || file.status === 'error',
