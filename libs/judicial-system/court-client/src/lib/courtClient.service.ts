@@ -239,32 +239,6 @@ export class CourtClientServiceImplementation implements CourtClientService {
     return connectionState.loginPromise
   }
 
-  private handleError(
-    courtId: string,
-    reason: { status: string; message: string },
-  ): Error {
-    // Get the connection state
-    const connectionState = this.getConnectionState(courtId)
-
-    // Check for known errors
-    if (
-      reason.message?.startsWith('Case Not Found') ||
-      reason.message ===
-        "Incorrect 'CaseId/Number' - Search returned no results - update failed"
-    ) {
-      return new NotFoundException(reason)
-    }
-
-    // One step closer to forced relogin because of unknown errors.
-    connectionState.errorCount++
-
-    return new BadGatewayException({
-      ...reason,
-      message: 'Error while calling the court service',
-      detail: reason.message,
-    })
-  }
-
   private async authenticatedRequest(
     courtId: string,
     request: (authenticationToken: string) => Promise<string>,
@@ -318,6 +292,47 @@ export class CourtClientServiceImplementation implements CourtClientService {
     }
   }
 
+  private handleUnknownError(
+    courtId: string,
+    reason: { status: string; message: string },
+  ) {
+    // Get the connection state
+    const connectionState = this.getConnectionState(courtId)
+
+    // One step closer to forced relogin because of unknown errors.
+    connectionState.errorCount++
+
+    return new BadGatewayException({
+      ...reason,
+      message: 'Error while calling the court service',
+      detail: reason.message,
+    })
+  }
+
+  private handleCaseError(
+    courtId: string,
+    reason: { status: string; message: string },
+  ): Error {
+    // Check for known errors
+    if (reason.message?.startsWith('Case Not Found')) {
+      return new NotFoundException(reason)
+    }
+
+    return this.handleUnknownError(courtId, reason)
+  }
+
+  private handleParticipantError(
+    courtId: string,
+    reason: { status: string; message: string },
+  ): Error {
+    // Check for known errors
+    if (reason.message?.startsWith("Incorrect 'CaseId/Number'")) {
+      return new NotFoundException(reason)
+    }
+
+    return this.handleUnknownError(courtId, reason)
+  }
+
   private throwOn200Error(result: string): string {
     if (result === 'The userIdNumber is not correct') {
       throw new BadRequestException(result)
@@ -334,7 +349,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
     ).catch((reason) => {
       this.logger.error('Court client error - createCase', { courtId, reason })
 
-      throw this.handleError(courtId, reason)
+      throw this.handleUnknownError(courtId, reason)
     })
   }
 
@@ -356,7 +371,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
         throw new UnsupportedMediaTypeException(reason)
       }
 
-      throw this.handleError(courtId, reason)
+      throw this.handleCaseError(courtId, reason)
     })
   }
 
@@ -372,7 +387,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
         reason,
       })
 
-      throw this.handleError(courtId, reason)
+      throw this.handleCaseError(courtId, reason)
     })
   }
 
@@ -384,7 +399,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
     ).catch((reason) => {
       this.logger.error('Court client error - createEmail', { courtId, reason })
 
-      throw this.handleError(courtId, reason)
+      throw this.handleCaseError(courtId, reason)
     })
   }
 
@@ -410,7 +425,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
         reason,
       })
 
-      throw this.handleError(courtId, reason)
+      throw this.handleParticipantError(courtId, reason)
     })
 
     return this.throwOn200Error(result)
@@ -438,7 +453,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
         reason,
       })
 
-      throw this.handleError(courtId, reason)
+      throw this.handleParticipantError(courtId, reason)
     })
 
     return this.throwOn200Error(result)
@@ -453,7 +468,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
         reason,
       })
 
-      throw this.handleError(courtId, reason)
+      throw this.handleCaseError(courtId, reason)
     })
   }
 }
