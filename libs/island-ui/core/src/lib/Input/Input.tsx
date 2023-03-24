@@ -96,10 +96,7 @@ export const Input = forwardRef(
 
     const errorId = `${id}-error`
     const ariaError = hasError
-      ? {
-        'aria-invalid': true,
-        'aria-describedby': errorId,
-      }
+      ? { 'aria-invalid': true, 'aria-describedby': errorId }
       : {}
 
     const InputComponent = textarea ? TextareaHOC : InputHOC
@@ -244,7 +241,13 @@ export const Input = forwardRef(
             />
           </Box>
 
-          <AsideIcons icon={icon} size={size} loading={!!loading} hasError={hasError} hasLabel={hasLabel} />
+          <AsideIcons
+            icon={icon}
+            size={size}
+            loading={!!loading}
+            hasError={hasError}
+            hasLabel={hasLabel}
+          />
 
         </Box>
         {hasError && errorMessage && (
