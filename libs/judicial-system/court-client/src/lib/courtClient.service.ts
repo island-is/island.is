@@ -240,10 +240,13 @@ export class CourtClientServiceImplementation implements CourtClientService {
   }
 
   private handleError(
-    connectionState: ConnectionState,
+    courtId: string,
     reason: { status: string; message: string },
   ): Error {
-    this.logger.error('Court client error', { reason })
+    this.logger.error('Court client error', { courtId, reason })
+
+    // Get the connection state
+    const connectionState = this.getConnectionState(courtId)
 
     // Check for known errors
     if (reason.message === 'FileNotSupported') {
@@ -269,9 +272,12 @@ export class CourtClientServiceImplementation implements CourtClientService {
   }
 
   private async authenticatedRequest(
-    connectionState: ConnectionState,
+    courtId: string,
     request: (authenticationToken: string) => Promise<string>,
   ): Promise<string> {
+    // Get the connection state
+    const connectionState = this.getConnectionState(courtId)
+
     // Login if there is no authentication token for the court id
     if (!connectionState.authenticationToken) {
       await this.login(connectionState)
@@ -308,17 +314,13 @@ export class CourtClientServiceImplementation implements CourtClientService {
         })
 
         return this.login(connectionState).then(() =>
-          request(connectionState.authenticationToken)
-            .then((res) => stripResult(res))
-            .catch((reason) => {
-              // Throw an appropriate eception
-              throw this.handleError(connectionState, reason)
-            }),
+          request(connectionState.authenticationToken).then((res) =>
+            stripResult(res),
+          ),
         )
       }
 
-      // Throw an appropriate eception
-      throw this.handleError(connectionState, reason)
+      throw reason
     }
   }
 
@@ -330,42 +332,48 @@ export class CourtClientServiceImplementation implements CourtClientService {
     return result
   }
 
-  createCase(courtId: string, args: CreateCaseArgs): Promise<string> {
-    return this.authenticatedRequest(
-      this.getConnectionState(courtId),
-      (authenticationToken) =>
-        this.createCaseApi.createCase({
-          createCaseData: { ...args, authenticationToken },
-        }),
-    )
+  async createCase(courtId: string, args: CreateCaseArgs): Promise<string> {
+    return this.authenticatedRequest(courtId, (authenticationToken) =>
+      this.createCaseApi.createCase({
+        createCaseData: { ...args, authenticationToken },
+      }),
+    ).catch((reason) => {
+      throw this.handleError(courtId, reason)
+    })
   }
 
-  createDocument(courtId: string, args: CreateDocumentArgs): Promise<string> {
-    return this.authenticatedRequest(
-      this.getConnectionState(courtId),
-      (authenticationToken) =>
-        this.createDocumentApi.createDocument({
-          createDocumentData: { ...args, authenticationToken },
-        }),
-    )
+  async createDocument(
+    courtId: string,
+    args: CreateDocumentArgs,
+  ): Promise<string> {
+    return this.authenticatedRequest(courtId, (authenticationToken) =>
+      this.createDocumentApi.createDocument({
+        createDocumentData: { ...args, authenticationToken },
+      }),
+    ).catch((reason) => {
+      throw this.handleError(courtId, reason)
+    })
   }
 
-  createThingbok(courtId: string, args: CreateThingbokArgs): Promise<string> {
-    return this.authenticatedRequest(
-      this.getConnectionState(courtId),
-      (authenticationToken) =>
-        this.createThingbokApi.createThingbok({ ...args, authenticationToken }),
-    )
+  async createThingbok(
+    courtId: string,
+    args: CreateThingbokArgs,
+  ): Promise<string> {
+    return this.authenticatedRequest(courtId, (authenticationToken) =>
+      this.createThingbokApi.createThingbok({ ...args, authenticationToken }),
+    ).catch((reason) => {
+      throw this.handleError(courtId, reason)
+    })
   }
 
-  createEmail(courtId: string, args: CreateEmailArgs): Promise<string> {
-    return this.authenticatedRequest(
-      this.getConnectionState(courtId),
-      (authenticationToken) =>
-        this.createEmailApi.createEmail({
-          createEmailData: { ...args, authenticationToken },
-        }),
-    )
+  async createEmail(courtId: string, args: CreateEmailArgs): Promise<string> {
+    return this.authenticatedRequest(courtId, (authenticationToken) =>
+      this.createEmailApi.createEmail({
+        createEmailData: { ...args, authenticationToken },
+      }),
+    ).catch((reason) => {
+      throw this.handleError(courtId, reason)
+    })
   }
 
   async updateCaseWithProsecutor(
@@ -379,12 +387,14 @@ export class CourtClientServiceImplementation implements CourtClientService {
     }
 
     const result = await this.authenticatedRequest(
-      this.getConnectionState(courtId),
+      courtId,
       (authenticationToken) =>
         this.updateCaseWithProsecutorApi.updateCaseWithProsecutor({
           updateCaseWithProsecutorData: { ...args, authenticationToken },
         }),
-    )
+    ).catch((reason) => {
+      throw this.handleError(courtId, reason)
+    })
 
     return this.throwOn200Error(result)
   }
@@ -400,22 +410,24 @@ export class CourtClientServiceImplementation implements CourtClientService {
     }
 
     const result = await this.authenticatedRequest(
-      this.getConnectionState(courtId),
+      courtId,
       (authenticationToken) =>
         this.updateCaseWithDefendantApi.updateCaseWithDefendant({
           updateCaseWithDefendantData: { ...args, authenticationToken },
         }),
-    )
+    ).catch((reason) => {
+      throw this.handleError(courtId, reason)
+    })
 
     return this.throwOn200Error(result)
   }
 
-  uploadStream(courtId: string, args: UploadStreamArgs): Promise<string> {
-    return this.authenticatedRequest(
-      this.getConnectionState(courtId),
-      (authenticationToken) =>
-        this.uploadStreamApi.uploadStream(authenticationToken, args),
-    )
+  async uploadStream(courtId: string, args: UploadStreamArgs): Promise<string> {
+    return this.authenticatedRequest(courtId, (authenticationToken) =>
+      this.uploadStreamApi.uploadStream(authenticationToken, args),
+    ).catch((reason) => {
+      throw this.handleError(courtId, reason)
+    })
   }
 }
 
