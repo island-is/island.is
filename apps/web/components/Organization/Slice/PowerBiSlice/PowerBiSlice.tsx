@@ -72,6 +72,7 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
     accessToken: string
     embedUrl: string
     tokenType: models.TokenType
+    pageName?: string
   } | null>(null)
   const [shouldRender, setShouldRender] = useState(false)
   const router = useRouter()
@@ -187,26 +188,30 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
     [
       'pageChanged',
       async (event) => {
-        const report = event.target?.['powerBiEmbed'] as Report
-        if (!report) return
-        setEmbeddedReport(report)
+        const pageName = event.detail?.newPage?.name
 
-        updateReportStateFromQueryParams(report)
+        if (pageName) {
+          const params = new URLSearchParams(window.location.search)
 
-        const activePage = await report.getActivePage()
+          const query = {}
 
-        const slicers = await activePage.getSlicers()
-
-        for (const visual of slicers) {
-          if (visual.type !== 'slicer') continue
-
-          const slicer = visual as VisualDescriptor
-
-          if (slicer.name in router.query) {
-            await slicer.setSlicerState(
-              JSON.parse(router.query[slicer.name] as string),
-            )
+          for (const [key, value] of params.entries()) {
+            query[key] = value
           }
+
+          router.query = query
+
+          router.push(
+            {
+              pathname: router.asPath.split('?')[0].split('#')[0],
+              query: {
+                ...query,
+                pageName,
+              },
+            },
+            undefined,
+            { shallow: true },
+          )
         }
       },
     ],
@@ -294,6 +299,7 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
           accessToken: response.data.powerbiEmbedToken.token,
           embedUrl: response.data.powerbiEmbedToken.embedUrl,
           tokenType: models.TokenType.Embed,
+          pageName: router.query?.pageName as string,
         })
         setShouldRender(true)
         setErrorOccurred(false)

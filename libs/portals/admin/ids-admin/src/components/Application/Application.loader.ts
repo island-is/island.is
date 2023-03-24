@@ -4,13 +4,13 @@ import {
   GetApplicationsByApplicationIdDocument,
 } from './Application.generated'
 
-export type AuthApplicationList = GetApplicationsByApplicationIdQuery['authAdminApplications']['data']
-export type AuthApplicationTranslationList = GetApplicationsByApplicationIdQuery['authAdminApplications']['data'][0]['environments'][0]['displayName'][0]
-export type AuthApplicationLifeTimeList = GetApplicationsByApplicationIdQuery['authAdminApplications']['data'][0]['environments'][0]['lifeTime']
-export type AuthApplicationLBasicInfoList = GetApplicationsByApplicationIdQuery['authAdminApplications']['data'][0]['environments'][0]['basicInfo']
-export type AuthApplicationApplicationUrlList = GetApplicationsByApplicationIdQuery['authAdminApplications']['data'][0]['environments'][0]['applicationUrls']
+export type AuthApplication = GetApplicationsByApplicationIdQuery['authAdminApplication']
+export type AuthApplicationTranslation = GetApplicationsByApplicationIdQuery['authAdminApplication']['environments'][0]['displayName'][0]
+export type AuthApplicationLifeTime = GetApplicationsByApplicationIdQuery['authAdminApplication']['environments'][0]['lifeTime']
+export type AuthApplicationLBasicInfo = GetApplicationsByApplicationIdQuery['authAdminApplication']['environments'][0]['basicInfo']
+export type AuthApplicationApplicationUrl = GetApplicationsByApplicationIdQuery['authAdminApplication']['environments'][0]['applicationUrls']
 export const applicationLoader: WrappedLoaderFn = ({ client }) => {
-  return async ({ params }): Promise<AuthApplicationList> => {
+  return async ({ params }): Promise<AuthApplication> => {
     if (!params['tenant']) {
       throw new Error('Tenant not found')
     }
@@ -30,9 +30,13 @@ export const applicationLoader: WrappedLoaderFn = ({ client }) => {
     if (applicationsList.error) {
       throw applicationsList.error
     }
-    if (applicationsList.data?.authAdminApplications.data?.length === 0) {
+
+    if (!applicationsList.data?.authAdminApplication) {
       throw new Error('Application not found')
     }
-    return applicationsList.data?.authAdminApplications.data ?? []
+
+    return (
+      applicationsList.data?.authAdminApplication ?? ({} as AuthApplication)
+    )
   }
 }

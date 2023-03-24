@@ -192,9 +192,7 @@ const PageLayout: React.FC<PageProps> = ({
   isValid,
 }) => {
   const { user } = useContext(UserContext)
-
   const { formatMessage } = useIntl()
-  // Remove the extension parts of the formstepper if the user is not applying for an extension
 
   useEffect(() => {
     window.scrollTo(0, 0)
