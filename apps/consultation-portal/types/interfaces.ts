@@ -113,3 +113,8 @@ export interface FilterGroups {
   PolicyAreas?: { [key: string]: string }
   Statuses?: { [key: string]: string }
 }
+
+export interface ValueCountPair {
+  value?: string
+  count?: string
+}

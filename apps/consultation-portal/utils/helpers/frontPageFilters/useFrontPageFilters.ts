@@ -4,10 +4,13 @@ import {
   ArrOfTypes,
   CaseFilter,
   FilterInputItems,
+  ValueCountPair,
 } from '../../../types/interfaces'
 import { useEffect, useState } from 'react'
 import { CaseSortOptions } from '../../../types/enums'
 import useFetchCases from '../useFetchCases'
+import mapListToValueCountObject from './mapObjectToValueCountObject'
+import isObjectEmpty from '../isObjectEmpty'
 
 interface Props {
   types: ArrOfTypes
@@ -41,7 +44,7 @@ export const useFrontPageFilters = ({ types, CARDS_PER_PAGE, page }: Props) => {
   })
 
   const input = {
-    caseStatuses: filters.caseStatuses.items
+    caseStatuses: filters?.caseStatuses?.items
       .filter((item: FilterInputItems) => item.checked)
       .map((item: FilterInputItems) => parseInt(item.value)),
     caseTypes: filters.caseTypes.items
@@ -68,46 +71,36 @@ export const useFrontPageFilters = ({ types, CARDS_PER_PAGE, page }: Props) => {
   })
 
   useEffect(() => {
-    const insertFilterCount = setTimeout(() => {
-      if (filterGroups && !getCasesLoading) {
-        const caseTypesList = filterGroups?.CaseTypes
-          ? Object.entries(filterGroups.CaseTypes).map(([value, count]) => ({
-              value,
-              count,
-            }))
-          : []
-
-        const caseTypesMerged = filters.caseTypes.items.map((item) => ({
+    if (!isObjectEmpty(filterGroups) && !getCasesLoading) {
+      const caseTypesList = mapListToValueCountObject(filterGroups.CaseTypes)
+      const caseTypesMerged = filters.caseTypes.items.map(
+        (item: ValueCountPair) => ({
           ...item,
-          ...caseTypesList.find((val) => val.value === item.value),
-        }))
+          ...(caseTypesList.find((val) => val.value === item.value) || {
+            count: 0,
+          }),
+        }),
+      )
 
-        const caseStatusesList = filterGroups?.Statuses
-          ? Object.entries(filterGroups.Statuses).map(([value, count]) => ({
-              value,
-              count,
-            }))
-          : []
-        const caseStatusesMerged = filters.caseStatuses.items.map((item) => ({
+      const caseStatusesList = mapListToValueCountObject(filterGroups.Statuses)
+      const caseStatusesMerged = filters.caseStatuses.items.map(
+        (item: ValueCountPair) => ({
           ...item,
-          ...caseStatusesList.find((val) => val.value === item.value),
-        }))
+          ...(caseStatusesList.find((val) => val.value === item.value) || {
+            count: 0,
+          }),
+        }),
+      )
 
-        const filtersCopy = { ...filters }
-        filtersCopy.caseTypes.items = caseTypesMerged
-        filtersCopy.caseStatuses.items = caseStatusesMerged
-        setFilters(filtersCopy)
-      }
-    }, 500)
-
-    return () => {
-      clearTimeout(insertFilterCount)
+      const filtersCopy = { ...filters }
+      filtersCopy.caseTypes.items = caseTypesMerged
+      filtersCopy.caseStatuses.items = caseStatusesMerged
+      setFilters(filtersCopy)
     }
   }, [filterGroups])
 
   return {
     cases,
-    filterGroups,
     total,
     getCasesLoading,
     PolicyAreas,

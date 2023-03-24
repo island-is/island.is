@@ -69,11 +69,10 @@ const FilterBox = ({
   }
 
   const renderLabel = (item) => {
-    if (item?.count) {
-      return `${item.label} (${item.count})`
-    }
-    return `${item.label}`
+    return `${item.label} (${item.count})`
   }
+
+  console.log('thisFilters', thisFilters)
 
   return (
     <Box
