@@ -95,6 +95,10 @@ export const useFrontPageFilters = ({ types, CARDS_PER_PAGE, page }: Props) => {
       const filtersCopy = { ...filters }
       filtersCopy.caseTypes.items = caseTypesMerged
       filtersCopy.caseStatuses.items = caseStatusesMerged
+
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('filtersFrontPage', JSON.stringify(filtersCopy))
+      }
       setFilters(filtersCopy)
     }
   }, [filterGroups])
