@@ -8,6 +8,7 @@ export const parseCookie = (cookieString: string) => {
         return acc
       }, {})
   }
+  return {}
 }
 
 export default parseCookie

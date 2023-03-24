@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { GenericLicenseClient } from '../../license.types'
+import { GenericLicenseClient, VerifyLicenseResult } from '../../license.types'
 import { OpenFirearmApi } from '@island.is/clients/firearm-license'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -8,7 +8,6 @@ import {
   PassDataInput,
   Pass,
   RevokePassData,
-  VerifyPassData,
   Result,
 } from '@island.is/clients/smartsolutions'
 import { createPkPassDataInput } from './firearmLicenseMapper'
@@ -98,7 +97,7 @@ export class FirearmLicenseApiClientService implements GenericLicenseClient {
   }
 
   /** We need to verify the pk pass AND the license itself! */
-  async verify(inputData: string): Promise<Result<VerifyPassData>> {
+  async verify(inputData: string): Promise<Result<VerifyLicenseResult>> {
     //need to parse the scanner data
     let parsedInput
     try {
@@ -171,20 +170,26 @@ export class FirearmLicenseApiClientService implements GenericLicenseClient {
       }
     }
 
-    if (!licenseInfo.ssn) {
+    if (!licenseInfo.ssn || !licenseInfo.name) {
       return {
         ok: false,
         error: {
           code: 3,
-          message: 'Missing nationalId for user',
+          message: 'Missing nationalId or name for user',
         },
       }
     }
+
     //now we compare the data
     return {
       ok: true,
       data: {
         valid: licenseInfo.ssn === sanitizedPassNationalId,
+        passIdentity: {
+          name: licenseInfo.name,
+          nationalId: licenseInfo.ssn,
+          picture: licenseInfo.licenseImgBase64 ?? '',
+        },
       },
     }
   }

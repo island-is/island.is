@@ -1,4 +1,3 @@
-import { formatBankInfo } from '@island.is/application/ui-components'
 import * as z from 'zod'
 
 export const inheritanceReportSchema = z.object({
@@ -48,10 +47,7 @@ export const inheritanceReportSchema = z.object({
       .object({
         data: z
           .object({
-            accountNumber: z.string().refine((v) => {
-              const bankAccount = formatBankInfo(v)
-              return bankAccount.length === 14
-            }),
+            accountNumber: z.string(),
             balance: z.string().refine((v) => v),
           })
           .array()

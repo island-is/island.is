@@ -86,6 +86,7 @@ type PhoneInputProps = Omit<
   allowedCountryCodes?: string[]
   format?: string
   onFormatValueChange?: (...event: any[]) => void
+  disableDropdown?: boolean
 }
 
 export const PhoneInput = forwardRef(
@@ -114,6 +115,7 @@ export const PhoneInput = forwardRef(
       autoExpand,
       loading,
       allowedCountryCodes,
+      disableDropdown,
       onFormatValueChange,
       onFocus,
       onBlur,
@@ -168,7 +170,14 @@ export const PhoneInput = forwardRef(
 
     return (
       <>
-        <Box position="relative">
+        <Box
+          position="relative"
+          onClick={() => {
+            if (disableDropdown) {
+              inputRef.current?.focus()
+            }
+          }}
+        >
           {/* If size is xs then the label is above the input box */}
           {size === 'xs' && label && (
             <label
@@ -239,7 +248,7 @@ export const PhoneInput = forwardRef(
                     (x) => x.value === defaultCountryCode,
                   )}
                   options={countryCodes}
-                  disabled={disabled || readOnly}
+                  disabled={disabled || readOnly || disableDropdown}
                   backgroundColor={backgroundColor}
                   inputHasLabel={!!label}
                   size={size}

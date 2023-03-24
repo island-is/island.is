@@ -28,6 +28,7 @@ import {
   Field,
   CompanySearchField,
   RedirectToServicePortalField,
+  PaymentPendingField,
   PhoneField,
   MessageWithLinkButtonField,
   ExpandableDescriptionField,
@@ -274,6 +275,7 @@ export function buildPhoneField(
     readOnly,
     rightAlign,
     allowedCountryCodes,
+    disableDropdown,
   } = data
   return {
     ...extractCommonFields(data),
@@ -283,6 +285,7 @@ export function buildPhoneField(
     required,
     readOnly,
     allowedCountryCodes,
+    disableDropdown,
     rightAlign,
     type: FieldTypes.PHONE,
     component: FieldComponents.PHONE,
@@ -440,6 +443,20 @@ export function buildRedirectToServicePortalField(data: {
     title,
     type: FieldTypes.REDIRECT_TO_SERVICE_PORTAL,
     component: FieldComponents.REDIRECT_TO_SERVICE_PORTAL,
+  }
+}
+
+export function buildPaymentPendingField(data: {
+  id: string
+  title: FormText
+}): PaymentPendingField {
+  const { id, title } = data
+  return {
+    children: undefined,
+    id,
+    title,
+    type: FieldTypes.PAYMENT_PENDING,
+    component: FieldComponents.PAYMENT_PENDING,
   }
 }
 

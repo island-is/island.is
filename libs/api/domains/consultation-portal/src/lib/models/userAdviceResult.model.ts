@@ -1,5 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { DocumentInfoResult } from './documentInfoResult.model'
+import { UserAdviceCaseResult } from './userAdviceCaseResult.model'
 
 @ObjectType('ConsultationPortalUserAdviceResult')
 export class UserAdviceResult {
@@ -20,6 +21,9 @@ export class UserAdviceResult {
 
   @Field(() => Date, { nullable: true })
   created?: Date
+
+  @Field({ nullable: true })
+  _case?: UserAdviceCaseResult
 
   @Field(() => [DocumentInfoResult], { nullable: true })
   adviceDocuments?: DocumentInfoResult[] | null
