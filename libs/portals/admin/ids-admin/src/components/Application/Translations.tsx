@@ -2,8 +2,9 @@ import { Box, Input, Stack, Tabs } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { useState } from 'react'
 import { m } from '../../lib/messages'
-import ContentCard from './ContentCard'
+import ContentCard from '../forms/EditApplication/ContentCard'
 import { AuthApplicationTranslationList } from './Application.loader'
+import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
 
 interface TranslationsProps {
   translations: AuthApplicationTranslationList[]
@@ -32,6 +33,7 @@ const Translations = ({ translations }: TranslationsProps) => {
       onSave={(saveOnAllEnvironments) => {
         console.log('saveOnAllEnvironments: ', saveOnAllEnvironments)
       }}
+      intent={ClientFormTypes.translations}
     >
       <Stack space={3}>
         <Tabs
@@ -50,7 +52,7 @@ const Translations = ({ translations }: TranslationsProps) => {
                     type="text"
                     size="sm"
                     onChange={(e) => onChangeTranslations(e)}
-                    name={language.locale + '-displayName'}
+                    name={language.locale + '_displayName'}
                     value={language.value}
                     label={formatMessage(m.displayName)}
                   />

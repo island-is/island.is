@@ -8,8 +8,15 @@ import {
 import React, { useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import ContentCard from './ContentCard'
+import ContentCard from '../forms/EditApplication/ContentCard'
 import { AuthApplicationLifeTimeList } from './Application.loader'
+import { useActionData } from 'react-router-dom'
+import {
+  ClientFormTypes,
+  EditApplicationResult,
+  schema,
+} from '../forms/EditApplication/EditApplication.action'
+import { useErrorFormatMessage } from '../../shared/hooks/useFormatErrorMessage'
 
 interface LifetimeProps {
   lifetime: AuthApplicationLifeTimeList
@@ -17,6 +24,11 @@ interface LifetimeProps {
 
 const Lifetime = ({ lifetime }: LifetimeProps) => {
   const { formatMessage } = useLocale()
+  const { formatErrorMessage } = useErrorFormatMessage()
+  const actionData = useActionData() as EditApplicationResult<
+    typeof schema.lifeTime
+  >
+  console.log(actionData)
   const [lifeTimeCopy, setLifeTimeCopy] = useState(lifetime)
   const setLifeTimeLength = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -59,6 +71,7 @@ const Lifetime = ({ lifetime }: LifetimeProps) => {
         return saveOnAllEnvironments
       }}
       isDirty={customChangedValidation}
+      intent={ClientFormTypes.lifeTime}
     >
       <Stack space={3}>
         <Stack space={1}>
@@ -66,10 +79,13 @@ const Lifetime = ({ lifetime }: LifetimeProps) => {
             size="sm"
             type="number"
             name="absoluteLifeTime"
-            value={lifeTimeCopy.absoluteLifeTime}
+            value={+lifeTimeCopy.absoluteLifeTime}
             backgroundColor="blue"
             onChange={setLifeTimeLength}
             label={formatMessage(m.absoluteLifetime)}
+            errorMessage={formatErrorMessage(
+              (actionData?.errors?.absoluteLifeTime as unknown) as string,
+            )}
           />
           <Text variant={'small'}>
             {formatMessage(m.absoluteLifetimeDescription)}
@@ -102,6 +118,9 @@ const Lifetime = ({ lifetime }: LifetimeProps) => {
               backgroundColor="blue"
               onChange={setLifeTimeLength}
               label={formatMessage(m.inactivityLifetime)}
+              errorMessage={formatErrorMessage(
+                (actionData?.errors?.inactivityLifeTime as unknown) as string,
+              )}
             />
             <Text variant={'small'}>
               {formatMessage(m.inactivityLifetimeDescription)}

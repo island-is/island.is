@@ -10,6 +10,7 @@ import { tenantLoader, tenantLoaderId } from './screens/Tenant/Tenant.loader'
 import { applicationsLoader } from './components/Applications/Applications.loader'
 import Application from './components/Application/Application'
 import { applicationLoader } from './components/Application/Application.loader'
+import { editApplicationAction } from './components/forms/EditApplication/EditApplication.action'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 const Tenant = lazy(() => import('./screens/Tenant/Tenant'))
@@ -64,6 +65,7 @@ export const idsAdminModule: PortalModule = {
                 path: IDSAdminPaths.IDSAdminApplication,
                 element: <Application />,
                 loader: applicationLoader(props),
+                action: editApplicationAction(props),
                 handle: {
                   backPath: IDSAdminPaths.IDSAdminTenants,
                 },
