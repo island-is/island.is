@@ -315,7 +315,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
   ): Error {
     // Check for known errors
     if (reason.message?.startsWith('Case Not Found')) {
-      return new NotFoundException(reason)
+      return new NotFoundException(reason, 'Case not found')
     }
 
     return this.handleUnknownError(courtId, reason)
@@ -327,7 +327,11 @@ export class CourtClientServiceImplementation implements CourtClientService {
   ): Error {
     // Check for known errors
     if (reason.message?.startsWith("Incorrect 'CaseId/Number'")) {
-      return new NotFoundException(reason)
+      return new NotFoundException(reason, 'Case not found')
+    }
+
+    if (reason.message === 'The userIdNumber is not correct') {
+      throw new NotFoundException(reason, 'User not found')
     }
 
     return this.handleUnknownError(courtId, reason)
@@ -335,7 +339,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
 
   private throwOn200Error(result: string): string {
     if (result === 'The userIdNumber is not correct') {
-      throw new BadRequestException(result)
+      throw new NotFoundException(result, 'User not found')
     }
 
     return result
@@ -361,7 +365,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
       this.createDocumentApi.createDocument({
         createDocumentData: { ...args, authenticationToken },
       }),
-    ).catch((reason) => {
+    ).catch((reason: { status: string; message: string }) => {
       this.logger.error('Court client error - createDocument', {
         courtId,
         reason,
@@ -428,7 +432,12 @@ export class CourtClientServiceImplementation implements CourtClientService {
       throw this.handleParticipantError(courtId, reason)
     })
 
-    return this.throwOn200Error(result)
+    // Handle errors reported in 200 OK responses
+    if (result === 'The userIdNumber is not correct') {
+      throw new NotFoundException(result, 'User not found')
+    }
+
+    return result
   }
 
   async updateCaseWithDefendant(
@@ -441,12 +450,10 @@ export class CourtClientServiceImplementation implements CourtClientService {
       )
     }
 
-    const result = await this.authenticatedRequest(
-      courtId,
-      (authenticationToken) =>
-        this.updateCaseWithDefendantApi.updateCaseWithDefendant({
-          updateCaseWithDefendantData: { ...args, authenticationToken },
-        }),
+    return this.authenticatedRequest(courtId, (authenticationToken) =>
+      this.updateCaseWithDefendantApi.updateCaseWithDefendant({
+        updateCaseWithDefendantData: { ...args, authenticationToken },
+      }),
     ).catch((reason) => {
       this.logger.error('Court client error - updateCaseWithDefendant', {
         courtId,
@@ -455,8 +462,6 @@ export class CourtClientServiceImplementation implements CourtClientService {
 
       throw this.handleParticipantError(courtId, reason)
     })
-
-    return this.throwOn200Error(result)
   }
 
   async uploadStream(courtId: string, args: UploadStreamArgs): Promise<string> {
