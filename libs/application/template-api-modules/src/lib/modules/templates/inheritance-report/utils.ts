@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   EstateAsset,
   EstateInfo,
@@ -8,12 +7,6 @@ import { estateSchema } from '@island.is/application/templates/estate'
 import { infer as zinfer } from 'zod'
 type EstateSchema = zinfer<typeof estateSchema>
 type EstateData = EstateSchema['estate']
-type RepeaterType<T> = T & { initial?: boolean; enabled?: boolean }
-
-// A helper type that extracts values from an ArrayLike
-export type Extract<
-  T extends ArrayLike<any> | Record<any, any>
-> = T extends ArrayLike<any> ? T[number] : never
 
 const initialMapper = <T>(element: T) => {
   return {
@@ -40,23 +33,4 @@ export const estateTransformer = (estate: EstateInfo): EstateData => {
     ships,
     vehicles,
   }
-}
-
-export const filterAndRemoveRepeaterMetadata = <T>(
-  elements: RepeaterType<Extract<NonNullable<T>>>[],
-): Omit<Extract<NonNullable<T>>, 'initial' | 'enabled' | 'dummy'>[] => {
-  elements = elements.filter((element) => {
-    if (Object.keys(element).includes('enabled')) {
-      return element.enabled
-    }
-    return true
-  })
-
-  elements.forEach((element) => {
-    delete element.enabled
-    delete element.initial
-    delete element.dummy
-  })
-
-  return elements
 }
