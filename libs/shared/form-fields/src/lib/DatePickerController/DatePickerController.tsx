@@ -53,7 +53,7 @@ export const DatePickerController: FC<Props> = ({
     <Controller
       defaultValue={defaultValue}
       name={name}
-      render={({ onChange: onControllerChange, value }) => (
+      render={({ field: { onChange: onControllerChange, value } }) => (
         <DatePicker
           hasError={error !== undefined}
           disabled={disabled}

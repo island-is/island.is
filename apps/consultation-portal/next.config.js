@@ -35,7 +35,10 @@ module.exports = withNx(
       apiUrl: `${API_URL}${apiPath}`,
       graphqlEndpoint: `${API_URL}${graphqlPath}`,
     },
-    basePath: path,
+    basePath: '/consultation-portal',
     presets: ['next/babel'],
+    env: {
+      WEB_PUBLIC_URL: 'http://localhost:4200/consultation-portal' || '',
+    },
   }),
 )

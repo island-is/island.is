@@ -1,3 +1,8 @@
+import { Case } from '../../types/interfaces'
+import {
+  getDateBeginDateEnd,
+  getShortDate,
+} from '../../utils/helpers/dateFormatter'
 import {
   ActionCard,
   Box,
@@ -12,17 +17,11 @@ import {
   Hidden,
 } from '@island.is/island-ui/core'
 
-import format from 'date-fns/format'
+import Link from 'next/link'
 import { useReducer, useState } from 'react'
 
-type CardInfo = {
-  caseNumber: string
-  nameOfReviewer: string
-  reviewPeriod: string
-}
-
 type CardProps = {
-  card: CardInfo
+  card: Case
   isLoggedIn: boolean
 }
 
@@ -106,7 +105,7 @@ function reducer(state: UploadFile[], action: Action) {
   }
 }
 
-const date = format(new Date(Date.now()), 'dd.MM.yyyy')
+const date = getShortDate(new Date())
 
 export const WriteReviewCard = ({ card, isLoggedIn }: CardProps) => {
   const [showUpload, setShowUpload] = useState<boolean>(false)
@@ -149,6 +148,7 @@ export const WriteReviewCard = ({ card, isLoggedIn }: CardProps) => {
       borderWidth="standard"
       borderColor="blue300"
       flexDirection="column"
+      id="write-review"
     >
       <Inline
         justifyContent="spaceBetween"
@@ -157,7 +157,7 @@ export const WriteReviewCard = ({ card, isLoggedIn }: CardProps) => {
       >
         <Inline alignY="center" collapseBelow="lg">
           <Text variant="eyebrow" color="purple400">
-            Mál nr. {card.caseNumber}
+            Mál nr. S-{card.caseNumber}
           </Text>
           <Hidden below="lg">
             <Box style={{ transform: 'rotate(90deg)', width: 16 }}>
@@ -166,7 +166,8 @@ export const WriteReviewCard = ({ card, isLoggedIn }: CardProps) => {
           </Hidden>
           <Box>
             <Text variant="eyebrow" color="purple400">
-              Til umsagnar: {card.reviewPeriod}
+              Til umsagnar:{' '}
+              {getDateBeginDateEnd(card.processBegins, card.processEnds)}
             </Text>
           </Box>
         </Inline>
@@ -175,7 +176,14 @@ export const WriteReviewCard = ({ card, isLoggedIn }: CardProps) => {
       <Text variant="h3" marginTop={1}>
         Skrifa umsögn
       </Text>
-      <Text marginBottom={2}>Umsagnaraðili: {card.nameOfReviewer}</Text>
+
+      <Text marginBottom={2}>
+        Hér er hægt að senda inn umsögn. Umsagnir í þessu máli birtast jafnóðum
+        og þær berast. Upplýsingalög gilda, sjá nánar í{' '}
+        <Link href="/um">um samráðsgáttina.</Link>
+      </Text>
+
+      <Text marginBottom={2}>Umsagnaraðili: </Text>
       <Input
         textarea
         label="Umsögn"
@@ -219,16 +227,33 @@ export const WriteReviewCard = ({ card, isLoggedIn }: CardProps) => {
           </Button>
         </Inline>
       </Box>
+      <Text marginTop={2} variant="small">
+        Leyfilegar skráarendingar eru .pdf, .doc og .docx. Hámarksstærð skrár er
+        10 MB. Skráarnafn má í mesta lagi vera 100 stafbil.
+      </Text>
     </Box>
   ) : (
-    <ActionCard
-      headingVariant="h4"
-      heading="Skrifa umsögn"
-      text="Þú verður að vera skráð(ur) inn til þess að geta skrifað umsögn um tillögur"
-      cta={{ label: 'Skrá mig inn' }}
-    >
-      {' '}
-    </ActionCard>
+    <Box>
+      <ActionCard
+        headingVariant="h4"
+        heading="Skrifa umsögn"
+        text="Þú verður að vera skráð(ur) inn til þess að geta skrifað umsögn um tillögur "
+        cta={{ label: 'Skrá mig inn' }}
+      >
+        {' '}
+      </ActionCard>
+      <Text marginTop={2}>
+        Ef umsögnin er send fyrir hönd samtaka, fyrirtækis eða stofnunar þarf
+        umboð þaðan,{' '}
+        <a
+          target="_blank"
+          href="https://samradsgatt.island.is/library/Files/Umbo%C3%B0%20-%20lei%C3%B0beiningar%20fyrir%20samr%C3%A1%C3%B0sg%C3%A1tt%20r%C3%A1%C3%B0uneyta.pdf"
+          rel="noopener noreferrer"
+        >
+          sjá nánar hér.
+        </a>
+      </Text>
+    </Box>
   )
 }
 

@@ -5,7 +5,7 @@ const MainColumn = () => {
   return (
     <Box>
       <Text variant="h1" color="blue400">
-        {'Um samraðsgátt'}
+        {'Um samráðsgátt'}
       </Text>
       <Information />
     </Box>

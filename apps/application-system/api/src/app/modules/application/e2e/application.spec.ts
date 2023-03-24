@@ -923,7 +923,7 @@ describe('Application system API', () => {
         nationalId: '1234567890',
         age: '30',
         email: 'tester@island.is',
-        phoneNumber: '8234567',
+        phoneNumber: '+3548234567',
       },
       dreamJob: 'Yes',
       attachments: [],
@@ -1009,7 +1009,7 @@ describe('Application system API', () => {
         name: '123123',
         email: 'another@email.com',
         nationalId: '123',
-        phoneNumber: '5555555',
+        phoneNumber: '+3545555555',
       },
     }
 

@@ -17,6 +17,7 @@ import {
   FormContext,
   SectionHeading,
   PdfButton,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   IndictmentsProsecutorSubsections,
@@ -54,8 +55,12 @@ const CaseFiles: React.FC = () => {
     workingCase.id,
   )
   const { features } = useContext(FeatureContext)
+  const { user } = useContext(UserContext)
+
   const isTrafficViolationCaseCheck =
-    features.includes(Feature.INDICTMENT_ROUTE) &&
+    (features.includes(Feature.INDICTMENT_ROUTE) ||
+      user?.name === 'Árni Bergur Sigurðsson' ||
+      user?.name === 'Ásmundur Jónsson') &&
     isTrafficViolationCase(workingCase.indictmentSubtypes)
 
   useEffect(() => {

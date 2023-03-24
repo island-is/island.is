@@ -29,9 +29,10 @@ const Select: FC = () => {
     },
   } = useI18n()
   const router = useRouter()
-  const { handleSubmit, control, formState, errors } = useForm({
+  const { handleSubmit, control, formState } = useForm({
     mode: 'onChange',
   })
+  const { errors } = formState
 
   const handleContinue = (formData: FormData) => {
     const registrationNumber = formData.registrationNumber
@@ -82,7 +83,7 @@ const Select: FC = () => {
             },
           }}
           defaultValue=""
-          render={({ onChange, value, name }) => (
+          render={({ field: { onChange, value, name } }) => (
             <Input
               label={t.input!.label}
               placeholder={t.input!.placeholder}
