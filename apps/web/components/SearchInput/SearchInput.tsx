@@ -117,8 +117,9 @@ const useSearch = (
                 SearchableContentTypes['WebArticle'],
                 SearchableContentTypes['WebSubArticle'],
                 SearchableContentTypes['WebProjectPage'],
-                // SearchableContentTypes['WebOrganizationPage'],
-                // SearchableContentTypes['WebOrganizationSubpage'],
+                SearchableContentTypes['WebOrganizationPage'],
+                SearchableContentTypes['WebOrganizationSubpage'],
+                SearchableContentTypes['WebQna'],
               ],
               highlightResults: true,
               useQuery: 'suggestions',
@@ -401,7 +402,7 @@ const Results = ({
 
     return <CommonSearchTerms suggestions={suggestions} />
   }
-
+  console.log("search.results",search.results)
   return (
     <Box
       display="flex"

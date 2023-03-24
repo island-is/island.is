@@ -4,10 +4,10 @@ import { TagQuery, tagQuery } from './tagQuery'
 import { typeAggregationQuery } from './typeAggregation'
 import { processAggregationQuery } from './processAggregation'
 
-const getBoostForType = (type: string, defaultBoost: string | number = 1) => {
-  // normalizing all types before boosting
-  return defaultBoost
-}
+// const getBoostForType = (type: string, defaultBoost: string | number = 1) => {
+//   // normalizing all types before boosting
+//   return defaultBoost
+// }
 
 export const searchQuery = (
   {
@@ -27,25 +27,26 @@ export const searchQuery = (
   highlightSection = false,
 ) => {
   const should = []
-  const must: TagQuery[] = []
-  const mustNot: TagQuery[] = []
+  const must: any[] = [] // overriding tagquery type
+  const mustNot: any[] = [] // overriding tagquery type
   let minimumShouldMatch = 1
 
-  const fieldsWeights = [
-    'title^6', // note boosting ..
-    'title.stemmed^2', // note boosting ..
-    'content',
-    'content.stemmed',
-  ]
-  const words = queryString.split(' ')
-  // const lastWord = words.pop()
-
+  // const fieldsWeights = [
+  //   'title^6', // note boosting ..
+  //   'title.stemmed^2', // note boosting ..
+  //   'content',
+  //   'content.stemmed',
+  // ]
+  // const words = queryString.split(' ')
+  // // const lastWord = words.pop()
+  console.log("queryString: ", queryString)
+  console.log("types: ", types)
   // * wildcard support for internal clients - eg. used by island.is app
   if (queryString.trim() === '*') {
     should.push({
       simple_query_string: {
         query: queryString,
-        fields: fieldsWeights,
+        // fields: fieldsWeights,
         analyze_wildcard: true,
         default_operator: 'and',
       },
@@ -55,6 +56,8 @@ export const searchQuery = (
       // the search logic used for search drop down suggestions
       // term and prefix queries on content title
       case 'suggestions':
+        
+        must.push({"terms": { "type": types}})
         if (queryString.split(' ').length > 1) {
           should.push({
             multi_match: {
@@ -97,22 +100,22 @@ export const searchQuery = (
     }
   }
 
-  // if we have types restrict the query to those types
-  if (types?.length) {
-    minimumShouldMatch++ // now we have to match at least one type and the search query
+  // // if we have types restrict the query to those types
+  // if (types?.length) {
+  //   minimumShouldMatch++ // now we have to match at least one type and the search query
 
-    types.forEach((type) => {
-      const [value, boost = 1] = type.split('^')
-      should.push({
-        term: {
-          type: {
-            value,
-            boost: getBoostForType(value, boost),
-          },
-        },
-      })
-    })
-  }
+  //   types.forEach((type) => {
+  //     const [value, boost = 1] = type.split('^')
+  //     should.push({
+  //       term: {
+  //         type: {
+  //           value,
+  //           boost: getBoostForType(value, boost),
+  //         },
+  //       },
+  //     })
+  //   })
+  // }
 
   if (tags?.length) {
     tags.forEach((tag) => {
@@ -168,7 +171,7 @@ export const searchQuery = (
     },
   }
 
-  return {
+  const esQ = {
     query: {
       function_score: {
         query: {
@@ -203,4 +206,6 @@ export const searchQuery = (
     size,
     from: (page - 1) * size, // if we have a page number add it as offset for pagination
   }
+  // console.log(JSON.stringify(esQ, null, 2))
+  return esQ
 }
