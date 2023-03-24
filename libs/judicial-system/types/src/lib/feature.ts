@@ -2,4 +2,5 @@ export enum Feature {
   NONE = 'NONE', // must be at least one
   INDICTMENTS = 'INDICTMENTS',
   INDICTMENT_ROUTE = 'INDICTMENT_ROUTE',
+  APPEAL_TO_COURT_OF_APPEALS = 'APPEAL_TO_COURT_OF_APPEALS',
 }

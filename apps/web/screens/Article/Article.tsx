@@ -647,7 +647,8 @@ const ArticleScreen: Screen<ArticleProps> = ({
             </Box>
           )}
           <Box display={['block', 'block', 'none']} printHidden>
-            {article.relatedArticles.length > 0 && (
+            {(article.relatedArticles.length > 0 ||
+              article.relatedContent.length > 0) && (
               <RelatedContent
                 title={n('relatedMaterial')}
                 articles={article.relatedArticles}
