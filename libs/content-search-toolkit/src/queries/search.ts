@@ -39,8 +39,8 @@ export const searchQuery = (
   // ]
   // const words = queryString.split(' ')
   // // const lastWord = words.pop()
-  console.log("queryString: ", queryString)
-  console.log("types: ", types)
+  console.log('queryString: ', queryString)
+  console.log('types: ', types)
   // * wildcard support for internal clients - eg. used by island.is app
   if (queryString.trim() === '*') {
     should.push({
@@ -56,8 +56,7 @@ export const searchQuery = (
       // the search logic used for search drop down suggestions
       // term and prefix queries on content title
       case 'suggestions':
-        
-        must.push({"terms": { "type": types}})
+        must.push({ terms: { type: types } })
         if (queryString.split(' ').length > 1) {
           should.push({
             multi_match: {
