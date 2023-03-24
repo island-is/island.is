@@ -244,7 +244,7 @@ export const Input = forwardRef(
             />
           </Box>
 
-          <AsideIcons icon={icon} size={size} loading={!!loading} hasError={hasError} hasLabel={hasLabel} hasFocus={showFocus} />
+          <AsideIcons icon={icon} size={size} loading={!!loading} hasError={hasError} hasLabel={hasLabel} />
 
         </Box>
         {hasError && errorMessage && (
@@ -256,7 +256,7 @@ export const Input = forwardRef(
 )
 
 
-function AsideIcons({ icon, size, loading, hasError, hasLabel, hasFocus }: AsideProps) {
+function AsideIcons({ icon, size, loading, hasError, hasLabel }: AsideProps) {
   const [icons, buttons] = useMemo(() => {
     const iconsArray = (Array.isArray(icon) ? icon : [icon]).filter((i): i is InputIcon => Boolean(i))
     const onlyWarning: InputIcon[] = [{ name: 'warning', onClick: undefined }]
@@ -277,7 +277,7 @@ function AsideIcons({ icon, size, loading, hasError, hasLabel, hasFocus }: Aside
   )
 
   return (
-    <div className={styles.aside({ hasFocus })}>
+    <div className={styles.aside}>
       {loading && (
         <Box
           className={styles.spinner}

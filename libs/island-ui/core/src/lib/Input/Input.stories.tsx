@@ -123,7 +123,6 @@ ReadOnly.args = {
   backgroundColor: 'blue',
   readOnly: true,
   value: 'Read only have a transparent background',
-  icon: { name: 'copy', type: 'outline', onClick: () => console.log('Copy value') },
 }
 
 export const RightAligned = Template.bind({})
@@ -169,8 +168,8 @@ CopyPasswordButton.args = {
   value: 'AStingThatShouldBeCopied',
 }
 
-export const ButtonsWithAnError = Template.bind({})
-ButtonsWithAnError.args = {
+export const WithButtonsAndAnError = Template.bind({})
+WithButtonsAndAnError.args = {
   label: 'Label',
   placeholder: 'This is the placeholder',
   name: 'Test17',
@@ -181,12 +180,11 @@ ButtonsWithAnError.args = {
   ],
 }
 
-export const IconAndButton = Template.bind({})
-IconAndButton.args = {
+export const MediumWithIconAndButton = Template.bind({})
+MediumWithIconAndButton.args = {
   label: 'Label',
   placeholder: 'This is the placeholder',
   name: 'Test16',
-  errorMessage: 'This is the error message',
   icon: [
     { name: 'copy', type: 'outline', onClick: () => console.log('Copy value'), label: 'Copy value', disabled: true },
     { name: 'informationCircle' }
@@ -202,7 +200,7 @@ SmallWithIconAndButton.args = {
   backgroundColor: 'blue',
   icon: [
     { name: 'informationCircle' },
-    { name: 'eye', onClick: () => console.log('Show'), label: 'Show password', disabled: true, },
+    { name: 'eye', onClick: () => console.log('Show'), label: 'Show password' },
     { name: 'copy', type: 'outline', onClick: () => console.log('Copy value'), label: 'Copy value' },
   ],
 }
@@ -219,10 +217,12 @@ ExtraSmallWithIconAndButton.args = {
   ],
 }
 
-export const LabelDisabledEmpty = Template.bind({})
-LabelDisabledEmpty.args = {
-  label: 'LabelDisabledEmpty',
+export const WithADisabledButton = Template.bind({})
+WithADisabledButton.args = {
+  label: 'Label',
   placeholder: 'This is the placeholder',
-  name: '20',
-  size: 'sm',
+  name: 'Test20',
+  icon: [
+    { name: 'copy', type: 'outline', onClick: () => console.log('Copy value'), label: 'Copy value', disabled: true, },
+  ],
 }
