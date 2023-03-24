@@ -253,6 +253,7 @@ services-auth-admin-api:
       cpu: '100m'
       memory: '128Mi'
   secrets:
+    CLIENT_SECRET_ENCRYPTION_KEY: '/k8s/services-auth/admin-api/CLIENT_SECRET_ENCRYPTION_KEY'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
   securityContext:
