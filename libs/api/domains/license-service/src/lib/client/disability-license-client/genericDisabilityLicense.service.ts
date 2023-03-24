@@ -24,7 +24,6 @@ import {
   PassDataInput,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
-import { format } from 'kennitala'
 import { Locale } from '@island.is/shared/types'
 import compareAsc from 'date-fns/compareAsc'
 
