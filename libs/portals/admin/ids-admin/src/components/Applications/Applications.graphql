@@ -1,6 +1,6 @@
 # Get Applications by TenantId
-query GetApplicationsById($input: ApplicationsInput!) {
-  authAdminApplications(input: $input) {
+query GetApplicationsById($tenantId: String!) {
+  authAdminApplications(tenantId: $tenantId) {
     data {
       applicationId
       applicationType
