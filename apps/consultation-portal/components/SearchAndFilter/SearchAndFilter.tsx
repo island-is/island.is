@@ -10,6 +10,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { useEffect, useState } from 'react'
 
 interface SearchAndFilterProps {
   PolicyAreas: Array<ArrOfValueAndLabel>
@@ -31,11 +32,22 @@ const SearchAndFilter = ({
   loading,
 }: SearchAndFilterProps) => {
   const options = []
+  const [searchValue, setSearchValue] = useState(filters?.searchQuery)
+
+  useEffect(() => {
+    const identifier = setTimeout(() => {
+      const filtersCopy = { ...filters }
+      filtersCopy.searchQuery = searchValue
+      setFilters(filtersCopy)
+    }, 500)
+
+    return () => {
+      clearTimeout(identifier)
+    }
+  }, [searchValue, setSearchValue])
 
   const onChangeSearch = (value: string) => {
-    const filtersCopy = { ...filters }
-    filtersCopy.searchQuery = value
-    setFilters(filtersCopy)
+    setSearchValue(value)
   }
 
   const onChange = (e, isInstitutions: boolean) => {
@@ -71,8 +83,8 @@ const SearchAndFilter = ({
                     size="medium"
                     options={options}
                     placeholder="Að hverju ertu að leita?"
-                    initialInputValue={filters?.searchQuery}
-                    inputValue={filters?.searchQuery}
+                    initialInputValue={searchValue}
+                    inputValue={searchValue}
                     onInputValueChange={(value) => onChangeSearch(value)}
                   />
                 </Stack>
@@ -137,8 +149,8 @@ const SearchAndFilter = ({
               size="medium"
               options={options}
               placeholder="Að hverju ertu að leita?"
-              initialInputValue={filters?.searchQuery}
-              inputValue={filters?.searchQuery}
+              initialInputValue={searchValue}
+              inputValue={searchValue}
               onInputValueChange={(value) => onChangeSearch(value)}
             />
           </Box>
