@@ -9,6 +9,7 @@ import {
   NotImplementedException,
   UnsupportedMediaTypeException,
   ServiceUnavailableException,
+  UnprocessableEntityException,
 } from '@nestjs/common'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -315,7 +316,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
   ): Error {
     // Check for known errors
     if (reason.message?.startsWith('Case Not Found')) {
-      return new NotFoundException(reason, 'Case not found')
+      return new NotFoundException(reason)
     }
 
     return this.handleUnknownError(courtId, reason)
@@ -327,22 +328,22 @@ export class CourtClientServiceImplementation implements CourtClientService {
   ): Error {
     // Check for known errors
     if (reason.message?.startsWith("Incorrect 'CaseId/Number'")) {
-      return new NotFoundException(reason, 'Case not found')
+      return new NotFoundException({
+        ...reason,
+        message: 'Case not found',
+        detail: reason.message,
+      })
     }
 
     if (reason.message === 'The userIdNumber is not correct') {
-      throw new NotFoundException(reason, 'User not found')
+      throw new NotFoundException({
+        ...reason,
+        message: 'User not found',
+        detail: reason.message,
+      })
     }
 
     return this.handleUnknownError(courtId, reason)
-  }
-
-  private throwOn200Error(result: string): string {
-    if (result === 'The userIdNumber is not correct') {
-      throw new NotFoundException(result, 'User not found')
-    }
-
-    return result
   }
 
   async createCase(courtId: string, args: CreateCaseArgs): Promise<string> {
@@ -432,19 +433,51 @@ export class CourtClientServiceImplementation implements CourtClientService {
       throw this.handleParticipantError(courtId, reason)
     })
 
+    if (
+      result.startsWith('Participant with id') &&
+      result.includes('and company id') &&
+      result.includes('is added or updated successfully as prosecutor to case')
+    ) {
+      return result
+    }
+
     // Handle errors reported in 200 OK responses
     if (result === 'The userIdNumber is not correct') {
-      throw new NotFoundException(result, 'User not found')
+      throw new NotFoundException({
+        status: 200,
+        message: 'User not found',
+        detail: result,
+      })
     }
 
     if (
       result.startsWith('ClientContact with idNumber') &&
       result.endsWith('could not be found')
     ) {
-      throw new NotFoundException(result, 'Prosecutor not found')
+      throw new NotFoundException({
+        status: 200,
+        message: 'Prosecutor not found',
+        detail: result,
+      })
     }
 
-    return result
+    if (
+      result.startsWith('Prosecutor with IdNumber') &&
+      result.includes('and companyIdNumber') &&
+      result.endsWith('was not found')
+    ) {
+      throw new NotFoundException({
+        status: 200,
+        message: 'Prosecutor not found in prosecutors office',
+        detail: result,
+      })
+    }
+
+    throw new UnprocessableEntityException({
+      status: 200,
+      message: 'Unexpected result',
+      detail: result,
+    })
   }
 
   async updateCaseWithDefendant(
@@ -461,11 +494,36 @@ export class CourtClientServiceImplementation implements CourtClientService {
       this.updateCaseWithDefendantApi.updateCaseWithDefendant({
         updateCaseWithDefendantData: { ...args, authenticationToken },
       }),
-    ).catch((reason) => {
+    ).catch((reason: { status: string; message: string }) => {
       this.logger.error('Court client error - updateCaseWithDefendant', {
         courtId,
         reason,
       })
+
+      if (reason.message.startsWith("Can't find defendant with IdNumber")) {
+        throw new NotFoundException(reason)
+      }
+
+      if (
+        reason.message ===
+        "UpdateCaseWithDefendant: 'Defendant.IdNumber' parameter is required and should be valid and provided"
+      ) {
+        throw new BadRequestException({
+          ...reason,
+          message: 'Defendant national id is missing',
+          detail: reason.message,
+        })
+      }
+
+      if (
+        reason.message ===
+        "UpdateCaseWithDefendant: 'Defendant.IdNumber' parameter is NOT valid."
+      ) {
+        throw new BadRequestException(
+          reason,
+          'Defendant national id is not valid',
+        )
+      }
 
       throw this.handleParticipantError(courtId, reason)
     })
