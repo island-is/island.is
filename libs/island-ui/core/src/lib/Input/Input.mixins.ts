@@ -1,5 +1,5 @@
 import { theme, themeUtils } from '@island.is/island-ui/theme'
-import type { ComplexStyleRule } from '@vanilla-extract/css'
+import type { StyleRule } from '@vanilla-extract/css'
 
 const inputPadding = `0 ${theme.spacing[2]}px`
 const mobileInputPadding = `0 ${theme.spacing[1]}px`
@@ -54,13 +54,24 @@ export const labelSizes = {
   },
 }
 
-export const container = {
+export const container: StyleRule = {
   backgroundColor: theme.color.white,
   width: '100%',
-  boxShadow: `inset 0 0 0 1px ${theme.color.blue200}`,
+  // boxShadow: `inset 0 0 0 1px ${theme.color.blue200}`,
   borderRadius: inputBorderRadius,
   cursor: 'text',
-  transition: 'box-shadow 0.3s',
+
+  // This is only for displaying the border.
+  ':before': {
+    content: '""',
+    position: 'absolute',
+    inset: 0,
+    zIndex: 1,
+    borderRadius: 'inherit',
+    pointerEvents: 'none',
+    transition: 'box-shadow 0.2s',
+    boxShadow: `inset 0 0 0 1px ${theme.color.blue200}`,
+  },
 }
 
 export const containerSizes = {
@@ -199,9 +210,17 @@ export const errorMessage = {
   marginTop: theme.spacing[1],
 }
 
-export const inputErrorState: ComplexStyleRule = {
-  backgroundColor: theme.color.red100,
+export const inputErrorState = {
   boxShadow: `inset 0 0 0 1px ${theme.color.red600}`,
+}
+
+// For elements where the
+export const inputErrorStateWithBefore: StyleRule = {
+  backgroundColor: theme.color.red100,
+
+  '::before': {
+    boxShadow: `inset 0 0 0 1px ${theme.color.red600}`,
+  },
 }
 
 export const labelErrorState = {
@@ -209,9 +228,12 @@ export const labelErrorState = {
 }
 
 // Focus state
-export const containerFocus = {
+export const containerFocus: StyleRule = {
   outline: 'none',
-  boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
+
+  '::before': {
+    boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
+  },
 }
 
 export const inputFocus = {

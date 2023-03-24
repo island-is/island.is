@@ -33,6 +33,9 @@ export const container = recipe({
     boxSizing: 'border-box',
     display: 'flex',
     alignContent: 'center',
+    //overflow: 'hidden',
+    position: 'relative',
+    zIndex: 0,
     overflow: 'hidden',
   },
   variants: {
@@ -48,13 +51,19 @@ export const container = recipe({
       },
     },
     hasError: {
-      true: mixins.inputErrorState,
+      true: {
+        ...mixins.inputErrorStateWithBefore,
+      },
+      false: {},
     },
     hasFocus: {
-      true: mixins.containerFocus,
+      true: {
+        ...mixins.containerFocus,
+      },
       false: {},
     },
   },
+
   compoundVariants: [
     {
       variants: {
@@ -62,9 +71,21 @@ export const container = recipe({
         hasFocus: false,
       },
       style: {
-        ':hover': {
-          ...mixins.containerHover,
+        selectors: {
+          '&:hover::before': {
+            boxShadow: `inset 0 0 0 1px ${theme.color.blue400}`,
+          },
         },
+        // filter: 'blur(1px)',
+        // ...mixins.containerHover,
+        // '::before': {
+        //   boxShadow: `inset 0 0 0 1px ${theme.color.blue400}`,
+        // },
+        // },
+        // selectors: {
+        //   '&:hover': {
+        //   },
+        // },
       },
     },
   ],
@@ -200,12 +221,32 @@ export const isRequiredStar = style({
 //   },
 // })
 
-export const aside = style({
-  display: 'flex',
-  alignSelf: 'stretch',
-  padding: 1,
-  borderRadius: `0 11px 11px 0`,
-  overflow: 'hidden',
+export const aside = recipe({
+  base: {
+    display: 'flex',
+    alignSelf: 'stretch',
+
+    // This is a hack to make the input box-shadow display above background of the aside elements
+    // overflow: 'hidden',
+    // padding: `1px 1px 1px 0`,
+    // borderRadius: `0 11px 11px 0`,
+    // borderTop: `1px solid red`,
+  },
+
+  variants: {
+    hasFocus: {
+      true: {
+        // padding: `3px 3px 3px 0`,
+        // marginRight: -3,
+      },
+    },
+  },
+
+  // selectors: {
+  //   [`${container({ hasFocus: true })} &`]: {
+  //     padding: `3px 3px 3px 0`,
+  //   },
+  // },
 })
 
 export const inputButton = recipe({
@@ -216,9 +257,15 @@ export const inputButton = recipe({
     alignItems: 'center',
     justifyContent: 'center',
 
-    transition: 'background-color 0.1s ease',
+    transition: 'background-color .25s',
+
+    borderTop: `1px solid transparent`,
+    position: 'relative',
 
     ':hover': {
+      backgroundColor: theme.color.blue200,
+    },
+    ':active': {
       backgroundColor: theme.color.blue200,
     },
 
@@ -228,8 +275,21 @@ export const inputButton = recipe({
     },
 
     ':disabled': {
+      cursor: 'default',
       backgroundColor: theme.color.blue100,
     },
+
+    // selectors: {
+    //   '&:hover::before': {
+    //     backgroundColor: theme.color.blue200,
+    //   },
+    //   '&:focus::before': {
+    //     backgroundColor: theme.color.mint200,
+    //   },
+    //   '&:disabled::before': {
+    //     backgroundColor: theme.color.blue100,
+    //   },
+    // },
   },
   variants: {
     size: {
@@ -246,6 +306,10 @@ export const inputButton = recipe({
     hasError: {
       true: {
         borderLeftColor: theme.color.red600,
+
+        ':disabled': {
+          backgroundColor: theme.color.red100,
+        },
       },
     },
   },
@@ -295,6 +359,7 @@ export const icon = recipe({
   base: {
     flexShrink: 0,
     color: theme.color.blue400,
+    zIndex: 1,
 
     selectors: {
       [`${inputButton()}:focus &`]: {
@@ -310,6 +375,15 @@ export const icon = recipe({
     hasError: {
       true: {
         color: theme.color.red600,
+        selectors: {
+          [`${inputButton()}:disabled &`]: {
+            color: theme.color.red200,
+          },
+
+          // [`${inputButton()}:disabled:hover &`]: {
+          //   color: theme.color.red300,
+          // },
+        },
       },
     },
     size: {

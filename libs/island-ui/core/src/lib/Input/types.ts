@@ -90,4 +90,5 @@ export interface AsideProps {
   loading: boolean
   hasError: boolean
   hasLabel: boolean
+  hasFocus: boolean
 }
