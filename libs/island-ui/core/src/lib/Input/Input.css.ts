@@ -2,38 +2,14 @@ import { keyframes, style, styleVariants } from '@vanilla-extract/css'
 import { recipe } from '@vanilla-extract/recipes'
 import { Theme, theme, themeUtils } from '@island.is/island-ui/theme'
 import * as mixins from './Input.mixins'
-import omit from 'lodash/omit'
 import mapValues from 'lodash/mapValues'
 
-// export const containerDisabled = style({
-//   opacity: 0.5,
-//   backgroundColor: 'transparent',
-// })
-
-// export const rightAlign = style({
-//   textAlign: 'right',
-// })
-
-// export const readOnly = style({
-//   backgroundColor: 'transparent',
-// })
-
-// export const noLabel = style({})
-
-// export const container = style({
-//   ...omit(mixins.container, 'backgroundColor'),
-//   boxSizing: 'border-box',
-//   selectors: {
-//     [`&:hover:not(${containerDisabled})`]: mixins.containerHover,
-//   },
-// })
 export const container = recipe({
   base: {
-    ...omit(mixins.container, 'backgroundColor'),
+    ...mixins.containerWithBefore,
     boxSizing: 'border-box',
     display: 'flex',
     alignContent: 'center',
-    //overflow: 'hidden',
     position: 'relative',
     zIndex: 0,
     overflow: 'hidden',
@@ -58,7 +34,7 @@ export const container = recipe({
     },
     hasFocus: {
       true: {
-        ...mixins.containerFocus,
+        ...mixins.containerFocusWithBefore,
       },
       false: {},
     },
@@ -76,44 +52,13 @@ export const container = recipe({
             boxShadow: `inset 0 0 0 1px ${theme.color.blue400}`,
           },
         },
-        // filter: 'blur(1px)',
-        // ...mixins.containerHover,
-        // '::before': {
-        //   boxShadow: `inset 0 0 0 1px ${theme.color.blue400}`,
-        // },
-        // },
-        // selectors: {
-        //   '&:hover': {
-        //   },
-        // },
       },
     },
   ],
 })
 
-// export const hasFocus = style({
-//   selectors: {
-//     [`&${container}`]: mixins.containerFocus,
-//   },
-// })
-// export const fixedFocusState = style({
-//   selectors: {
-//     [`&${container}${container}`]: mixins.containerFocus,
-//   },
-// })
-
 export const containerSizes = styleVariants(mixins.containerSizes)
 
-// export const input = style({
-//   ...mixins.input,
-//   '::placeholder': mixins.inputPlaceholder,
-//   ':focus': mixins.inputFocus,
-//   selectors: {
-//     [`${noLabel} &::placeholder`]: {
-//       color: theme.color.dark400,
-//     },
-//   },
-// })
 export const input = recipe({
   base: {
     ...mixins.input,
@@ -139,10 +84,6 @@ export const input = recipe({
       },
     },
   },
-  // selectors: {
-  //   [`${noLabel} &::placeholder`]: {
-  //   },
-  // },
 })
 
 export const inputSize = styleVariants(mixins.inputSizes)
@@ -174,16 +115,7 @@ export const inputBackgroundMd = makeInputBackground('md')
 export const inputBackgroundLg = makeInputBackground('lg')
 export const inputBackgroundXl = makeInputBackground('xl')
 
-// export const textarea = style({
-//   ...mixins.textarea,
-//   resize: 'vertical',
-// })
-
 export const errorMessage = style(mixins.errorMessage)
-
-// export const hasError = style({
-//   ...mixins.inputErrorState,
-// })
 
 export const label = recipe({
   base: {
@@ -204,49 +136,14 @@ export const label = recipe({
 
 export const labelSizes = styleVariants(mixins.labelSizes)
 
-// export const labelDisabledEmptyInput = style(mixins.labelDisabledEmptyInput)
-
 export const isRequiredStar = style({
   color: theme.color.red600,
 })
 
-// export const hasFocus = style({
-//   selectors: {
-//     [`&${container}`]: mixins.containerFocus,
-//   },
-// })
-// export const fixedFocusState = style({
-//   selectors: {
-//     [`&${container}${container}`]: mixins.containerFocus,
-//   },
-// })
-
-export const aside = recipe({
-  base: {
-    display: 'flex',
-    alignSelf: 'stretch',
-
-    // This is a hack to make the input box-shadow display above background of the aside elements
-    // overflow: 'hidden',
-    // padding: `1px 1px 1px 0`,
-    // borderRadius: `0 11px 11px 0`,
-    // borderTop: `1px solid red`,
-  },
-
-  variants: {
-    hasFocus: {
-      true: {
-        // padding: `3px 3px 3px 0`,
-        // marginRight: -3,
-      },
-    },
-  },
-
-  // selectors: {
-  //   [`${container({ hasFocus: true })} &`]: {
-  //     padding: `3px 3px 3px 0`,
-  //   },
-  // },
+export const aside = style({
+  display: 'flex',
+  alignSelf: 'stretch',
+  justifyContent: 'flex-end',
 })
 
 export const inputButton = recipe({
@@ -256,9 +153,7 @@ export const inputButton = recipe({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-
     transition: 'background-color .25s',
-
     borderTop: `1px solid transparent`,
     position: 'relative',
 
@@ -269,7 +164,7 @@ export const inputButton = recipe({
       backgroundColor: theme.color.blue200,
     },
 
-    ':focus': {
+    ':focus-visible': {
       outline: 'none',
       backgroundColor: theme.color.mint200,
     },
@@ -278,29 +173,38 @@ export const inputButton = recipe({
       cursor: 'default',
       backgroundColor: theme.color.blue100,
     },
-
-    // selectors: {
-    //   '&:hover::before': {
-    //     backgroundColor: theme.color.blue200,
-    //   },
-    //   '&:focus::before': {
-    //     backgroundColor: theme.color.mint200,
-    //   },
-    //   '&:disabled::before': {
-    //     backgroundColor: theme.color.blue100,
-    //   },
-    // },
   },
   variants: {
     size: {
       xs: {
-        width: 48,
+        ...themeUtils.responsiveStyle({
+          xs: {
+            width: 40,
+          },
+          md: {
+            width: 48,
+          },
+        }),
       },
       sm: {
-        width: 64,
+        ...themeUtils.responsiveStyle({
+          xs: {
+            width: 60,
+          },
+          md: {
+            width: 64,
+          },
+        }),
       },
       md: {
-        width: 78,
+        ...themeUtils.responsiveStyle({
+          xs: {
+            width: 72,
+          },
+          md: {
+            width: 78,
+          },
+        }),
       },
     },
     hasError: {
@@ -330,7 +234,7 @@ export const iconWrapper = recipe({
         width: 44,
       },
       md: {
-        width: 58,
+        width: 52,
       },
     },
   },
@@ -362,7 +266,7 @@ export const icon = recipe({
     zIndex: 1,
 
     selectors: {
-      [`${inputButton()}:focus &`]: {
+      [`${inputButton()}:focus-visible &`]: {
         color: theme.color.dark400,
       },
       [`${inputButton()}:disabled &`]: {
@@ -379,10 +283,6 @@ export const icon = recipe({
           [`${inputButton()}:disabled &`]: {
             color: theme.color.red200,
           },
-
-          // [`${inputButton()}:disabled:hover &`]: {
-          //   color: theme.color.red300,
-          // },
         },
       },
     },
@@ -411,18 +311,3 @@ export const icon = recipe({
     },
   },
 })
-
-// export const iconError = style({})
-
-// export const iconExtraSmall = style({
-//   ...themeUtils.responsiveStyle({
-//     md: {
-//       selectors: {
-//         [`${container}:not(${noLabel}) &`]: {
-//           width: 21,
-//           height: 21,
-//         },
-//       },
-//     },
-//   }),
-// })
