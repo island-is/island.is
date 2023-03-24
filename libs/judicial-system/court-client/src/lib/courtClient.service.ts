@@ -437,6 +437,13 @@ export class CourtClientServiceImplementation implements CourtClientService {
       throw new NotFoundException(result, 'User not found')
     }
 
+    if (
+      result.startsWith('ClientContact with idNumber') &&
+      result.endsWith('could not be found')
+    ) {
+      throw new NotFoundException(result, 'Prosecutor not found')
+    }
+
     return result
   }
 
