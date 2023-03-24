@@ -9,7 +9,6 @@ import React, { useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import ContentCard from '../forms/EditApplication/ContentCard'
-import { AuthApplicationLifeTimeList } from './Application.loader'
 import { useActionData } from 'react-router-dom'
 import {
   ClientFormTypes,
@@ -17,9 +16,10 @@ import {
   schema,
 } from '../forms/EditApplication/EditApplication.action'
 import { useErrorFormatMessage } from '../../shared/hooks/useFormatErrorMessage'
+import { AuthApplicationLifeTime } from './Application.loader'
 
 interface LifetimeProps {
-  lifetime: AuthApplicationLifeTimeList
+  lifetime: AuthApplicationLifeTime
 }
 
 const Lifetime = ({ lifetime }: LifetimeProps) => {
@@ -33,7 +33,7 @@ const Lifetime = ({ lifetime }: LifetimeProps) => {
   const setLifeTimeLength = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    setLifeTimeCopy((prev) => ({
+    setLifeTimeCopy((prev: AuthApplicationLifeTime) => ({
       ...prev,
       [event.target.name]: +event.target.value,
     }))
@@ -98,7 +98,7 @@ const Lifetime = ({ lifetime }: LifetimeProps) => {
             name="inactivityExpiration"
             value={lifeTimeCopy.inactivityExpiration.toString()}
             onChange={() =>
-              setLifeTimeCopy((prev) => ({
+              setLifeTimeCopy((prev: AuthApplicationLifeTime) => ({
                 ...prev,
                 inactivityExpiration: !lifeTimeCopy.inactivityExpiration,
               }))

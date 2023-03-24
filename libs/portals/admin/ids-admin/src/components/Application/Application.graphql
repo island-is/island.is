@@ -1,69 +1,37 @@
 # Get Application by ApplicationId and TenantId
 query GetApplicationsByApplicationId($input: ApplicationsInput!) {
-  authAdminApplications(input: $input) {
-    data {
-      applicationId
-      applicationType
-      availableEnvironments
-      environments {
-        id
-        environment
-        name
-        displayName {
-          locale
-          value
-        }
-        basicInfo {
-          applicationId
-          applicationSecret
-          idsURL
-          oAuthAuthorizationUrl
-          deviceAuthorizationUrl
-          oAuthTokenUrl
-          oAuthUserInfoUrl
-          openIdConfiguration
-          jsonWebKeySet
-        }
-        applicationUrls {
-          callbackUrls
-          logoutUrls
-          cors
-        }
-        lifeTime {
-          absoluteLifeTime
-          inactivityLifeTime
-          inactivityExpiration
-        }
+  authAdminApplication(input: $input) {
+    applicationId
+    applicationType
+    availableEnvironments
+    environments {
+      id
+      environment
+      name
+      displayName {
+        locale
+        value
       }
-      defaultEnvironment {
-        id
-        environment
-        name
-        displayName {
-          locale
-          value
-        }
-        basicInfo {
-          applicationId
-          applicationSecret
-          idsURL
-          oAuthAuthorizationUrl
-          deviceAuthorizationUrl
-          oAuthTokenUrl
-          oAuthUserInfoUrl
-          openIdConfiguration
-          jsonWebKeySet
-        }
-        applicationUrls {
-          callbackUrls
-          logoutUrls
-          cors
-        }
-        lifeTime {
-          absoluteLifeTime
-          inactivityLifeTime
-          inactivityExpiration
-        }
+      basicInfo {
+        applicationId
+        applicationSecret
+        idsURL
+        oAuthAuthorizationUrl
+        deviceAuthorizationUrl
+        oAuthTokenUrl
+        oAuthUserInfoUrl
+        openIdConfiguration
+        jsonWebKeySet
+      }
+      applicationUrls {
+        callbackUrls
+        logoutUrls
+        cors
+      }
+      lifeTime {
+        absoluteLifeTime
+        inactivityLifeTime
+        inactivityExpiration
       }
     }
   }

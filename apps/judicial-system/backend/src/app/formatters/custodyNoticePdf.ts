@@ -180,20 +180,6 @@ function constructCustodyNoticePdf(
   return stream
 }
 
-export function getCustodyNoticePdfAsString(
-  theCase: Case,
-  formatMessage: FormatMessage,
-): Promise<string> {
-  const stream = constructCustodyNoticePdf(theCase, formatMessage)
-
-  // wait for the writing to finish
-  return new Promise<string>(function (resolve) {
-    stream.on('finish', () => {
-      resolve(stream.getContentsAsString('binary') as string)
-    })
-  })
-}
-
 export function getCustodyNoticePdfAsBuffer(
   theCase: Case,
   formatMessage: FormatMessage,

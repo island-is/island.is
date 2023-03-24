@@ -38,11 +38,11 @@ const SidebarShipSearchInput = ({ namespace }: SidebarShipSearchInputProps) => {
 
       const url = `${pathname}?${params}`
 
-      window.open(
-        url,
-        shouldLinkOpenInNewWindow(pathname) ? '_blank' : '_self',
-        'noopener,noreferrer',
-      )
+      if (shouldLinkOpenInNewWindow(pathname)) {
+        window.open(url, '_blank', 'noopener,noreferrer')
+      } else {
+        router.push(url)
+      }
     } else {
       const query = { ...router.query, name: searchValue }
       router.push({

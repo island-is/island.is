@@ -11,6 +11,7 @@ import { CaseResult } from '../models/caseResult.model'
 import { AdviceResult } from '../models/adviceResult.model'
 import { GetCasesInput } from '../dto/cases.input'
 import { CasesAggregateResult } from '../models/casesAggregateResult.model'
+import { AdviceRequest } from '../models/adviceRequest.model'
 
 @Injectable()
 export class CaseResultService {
@@ -51,11 +52,9 @@ export class CaseResultService {
     return response
   }
 
-  async postAdvice(caseId: number, content: string, files: Blob[]) {
+  async postAdvice(caseId: number) {
     const request: ApiCasesCaseIdAdvicesPostRequest = {
       caseId: caseId,
-      content: content,
-      files: files,
     }
 
     const response = await this.casesApi.apiCasesCaseIdAdvicesPost(request)

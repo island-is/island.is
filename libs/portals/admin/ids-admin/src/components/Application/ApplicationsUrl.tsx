@@ -3,7 +3,6 @@ import { useLocale } from '@island.is/localization'
 import React, { useEffect, useState } from 'react'
 import { m } from '../../lib/messages'
 import ContentCard from '../forms/EditApplication/ContentCard'
-import { AuthApplicationApplicationUrlList } from './Application.loader'
 import {
   ClientFormTypes,
   EditApplicationResult,
@@ -11,9 +10,10 @@ import {
 } from '../forms/EditApplication/EditApplication.action'
 import { useActionData } from 'react-router-dom'
 import { useErrorFormatMessage } from '../../shared/hooks/useFormatErrorMessage'
+import { AuthApplicationApplicationUrl } from './Application.loader'
 
 interface ApplicationsUrlProps {
-  applicationUrls: AuthApplicationApplicationUrlList
+  applicationUrls: AuthApplicationApplicationUrl
 }
 const ApplicationsUrl = ({ applicationUrls }: ApplicationsUrlProps) => {
   const actionData = useActionData() as EditApplicationResult<
@@ -27,7 +27,7 @@ const ApplicationsUrl = ({ applicationUrls }: ApplicationsUrlProps) => {
   const onChangeURLS = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    setAppUrls((prev) => ({
+    setAppUrls((prev: ApplicationsUrlProps['applicationUrls']) => ({
       ...prev,
       [event.target.name]: event.target.value.split(', '),
     }))

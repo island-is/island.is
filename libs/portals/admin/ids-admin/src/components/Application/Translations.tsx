@@ -3,11 +3,11 @@ import { useLocale } from '@island.is/localization'
 import React, { useState } from 'react'
 import { m } from '../../lib/messages'
 import ContentCard from '../forms/EditApplication/ContentCard'
-import { AuthApplicationTranslationList } from './Application.loader'
 import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
+import { AuthApplicationTranslation } from './Application.loader'
 
 interface TranslationsProps {
-  translations: AuthApplicationTranslationList[]
+  translations: AuthApplicationTranslation[]
 }
 const Translations = ({ translations }: TranslationsProps) => {
   const { formatMessage } = useLocale()
