@@ -2,6 +2,9 @@ openapi: 3.0.3
 info:
   title: Útskriftargögn nemenda
   version: 1.0.0
+  contact:
+    name: Nökkvi Þórsson
+    email: nokkvith@hi.is
 servers:
   - url: https://ugla.{skoli}.is/api/vottord/brautskraning
     variables:
@@ -11,6 +14,7 @@ servers:
           - hi
           - unak
           - lbhi
+  - url: https://nokkvith.throun.hi.is/api/vottord/brautskraning
 paths:
   /nemandi:
     get:
@@ -23,6 +27,8 @@ paths:
           content:
             application/json:
               schema:
+                type: object
+                title: 'StudentTrackTranscripts'
                 properties:
                   transcripts:
                     type: array
@@ -46,6 +52,8 @@ paths:
           content:
             application/json:
               schema:
+                type: object
+                title: 'StudentTrackOverview'
                 properties:
                   transcript:
                     type: object
@@ -53,7 +61,7 @@ paths:
                   files:
                     type: array
                     items:
-                      $ref: '#/components/schemas/file'
+                      $ref: '#/components/schemas/studentFile'
                   body:
                     type: object
                     properties:
@@ -138,7 +146,7 @@ components:
           type: string
           description: Námsgráða
           example: 'BA'
-    file:
+    studentFile:
       type: object
       properties:
         type:

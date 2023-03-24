@@ -5,6 +5,8 @@ import {
   NemandiFerillFerillFileTranscriptGetLocaleEnum,
   NemandiFerillFerillGetLocaleEnum,
   NemandiGetLocaleEnum,
+  StudentTrackOverview,
+  StudentTrackTranscripts,
 } from '../../gen/fetch'
 
 @Injectable()
@@ -17,7 +19,7 @@ export class UniversityOfIcelandService {
   async studentInfo(
     user: User,
     locale?: NemandiGetLocaleEnum,
-  ): Promise<object> {
+  ): Promise<StudentTrackTranscripts> {
     return await this.universityOfIcelandApiWithAuth(user).nemandiGet({
       locale: locale,
     })
@@ -26,7 +28,7 @@ export class UniversityOfIcelandService {
     user: User,
     trackNumber: number,
     locale?: NemandiFerillFerillGetLocaleEnum,
-  ): Promise<object> {
+  ): Promise<StudentTrackOverview> {
     return await this.universityOfIcelandApiWithAuth(
       user,
     ).nemandiFerillFerillGet({

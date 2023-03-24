@@ -15,6 +15,7 @@ import {
   UniversityOfIcelandService,
   NemandiGetLocaleEnum,
   NemandiFerillFerillGetLocaleEnum,
+  StudentTrackTranscripts,
 } from '@island.is/clients/university-of-iceland'
 import { ApiScope } from '@island.is/auth/scopes'
 import { StudentInfoModel } from './models/studentInfo.model'
@@ -40,7 +41,7 @@ export class UniversityOfIcelandResolver {
   async getStudentInfo(
     @CurrentUser() user: User,
     @Args('input') input: GetStudentInfoInput,
-  ): Promise<object> {
+  ): Promise<StudentTrackTranscripts> {
     const data = await this.universityOfIcelandApi.studentInfo(
       user,
       input.locale as NemandiGetLocaleEnum,
@@ -58,6 +59,7 @@ export class UniversityOfIcelandResolver {
       input.trackNumber,
       input.locale as NemandiFerillFerillGetLocaleEnum,
     )) as StudentInfoDetailModel
+
     let date = data.transcript.graduationDate
     date = format(new Date(date), 'dd.MM.yy', { locale: is })
     const transcriptData = { ...data.transcript, graduationDate: date }
