@@ -41,11 +41,11 @@ export const prerequisites: Form = buildForm({
               title: m.deceasedInfoProviderTitle,
               subTitle: m.deceasedInfoProviderSubtitle,
             }),
-            buildDataProviderItem({
-              provider: NationalRegistryUserApi,
-              title: m.personalInfoProviderTitle,
-              subTitle: m.personalInfoProviderSubtitle,
-            }),
+            //buildDataProviderItem({
+            //  provider: NationalRegistryUserApi,
+            //  title: m.personalInfoProviderTitle,
+            //  subTitle: m.personalInfoProviderSubtitle,
+            //}),
             buildDataProviderItem({
               //provider: TBD,
               title: m.financialInformationProviderTitle,
