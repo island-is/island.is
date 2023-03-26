@@ -412,12 +412,6 @@ export class CourtClientServiceImplementation implements CourtClientService {
     courtId: string,
     args: UpdateCaseWithProsecutorArgs,
   ): Promise<string> {
-    if (!this.config.courtLitigantApiAvailable) {
-      throw new ServiceUnavailableException(
-        'Court litigant API is not available',
-      )
-    }
-
     const result = await this.authenticatedRequest(
       courtId,
       (authenticationToken) =>
