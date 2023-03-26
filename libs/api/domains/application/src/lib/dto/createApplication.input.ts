@@ -6,7 +6,7 @@ registerEnumType(CreateApplicationDtoTypeIdEnum, {
   name: 'CreateApplicationDtoTypeIdEnum',
 })
 
-@InputType()
+@InputType('CreateApplicationApplicationInput')
 export class CreateApplicationInput {
   @Field(() => CreateApplicationDtoTypeIdEnum)
   @IsEnum(CreateApplicationDtoTypeIdEnum)

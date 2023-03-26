@@ -14,12 +14,15 @@ import { ClientRedirectUri } from '../models/client-redirect-uri.model'
 import { ClientPostLogoutRedirectUri } from '../models/client-post-logout-redirect-uri.model'
 import { AdminClientDto } from './dto/admin-client.dto'
 import { AdminCreateClientDto } from './dto/admin-create-client.dto'
+import { Domain } from '../../resources/models/domain.model'
 
 @Injectable()
 export class AdminClientsService {
   constructor(
     @InjectModel(Client)
     private clientModel: typeof Client,
+    @InjectModel(Domain)
+    private readonly domainModel: typeof Domain,
     private readonly translationService: TranslationService,
   ) {}
 
@@ -77,11 +80,21 @@ export class AdminClientsService {
     user: User,
     tenantId: string,
   ): Promise<AdminClientDto> {
+    const tenant = await this.domainModel.findOne({
+      where: {
+        name: tenantId,
+      },
+    })
+    if (!tenant) {
+      throw new NoContentException()
+    }
+
     const client = await this.clientModel.create({
       clientId: clientDto.clientId,
       clientType: clientDto.clientType,
-      nationalId: user.nationalId,
       domainName: tenantId,
+      nationalId: tenant.nationalId,
+      clientName: clientDto.clientName,
       ...this.defaultClientAttributes(clientDto.clientType),
     })
     return this.findByTenantIdAndClientId(tenantId, client.clientId)

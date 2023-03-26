@@ -18,4 +18,11 @@ export class AdminCreateClientDto {
     enum: ClientType,
   })
   readonly clientType!: ClientType
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty({
+    example: 'Client name',
+  })
+  readonly clientName!: string
 }
