@@ -58,44 +58,6 @@ export class TenantsService {
     return undefined
   }
 
-  async getTenant(id: string): Promise<Tenant> {
-    return {
-      id: id,
-      environments: [
-        {
-          name: id,
-          environment: Environment.Production,
-          displayName: [
-            {
-              locale: 'is',
-              value: 'Ísland.is stjórnborð',
-            },
-          ],
-        },
-        {
-          name: id,
-          environment: Environment.Staging,
-          displayName: [
-            {
-              locale: 'is',
-              value: 'Ísland.is stjórnborð',
-            },
-          ],
-        },
-        {
-          name: id,
-          environment: Environment.Development,
-          displayName: [
-            {
-              locale: 'is',
-              value: 'Ísland.is stjórnborð',
-            },
-          ],
-        },
-      ],
-    }
-  }
-
   async getTenants(user: User): Promise<TenantsPayload> {
     const tenants = await Promise.all([
       this.adminDevApiWithAuth(user)
