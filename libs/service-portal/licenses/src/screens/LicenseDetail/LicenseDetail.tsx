@@ -138,14 +138,15 @@ const DataFields = ({
                   renderContent={
                     field.value &&
                     (field.label?.toLowerCase().includes('gildir til') ||
-                      field.label?.toLowerCase().includes('gildistími')) &&
+                      field.label?.toLowerCase().includes('gildistími') ||
+                      field.label?.toLowerCase().includes('valid to')) &&
                     isValid(new Date(field.value))
                       ? () => (
                           <Box display="flex" alignItems="center">
                             <Text>
                               {field.value && isJSONDate(field.value)
                                 ? format(
-                                    +new Date(field.value).getTime(),
+                                    new Date(field.value).getTime(),
                                     dateFormat.is,
                                   )
                                 : field.value}
