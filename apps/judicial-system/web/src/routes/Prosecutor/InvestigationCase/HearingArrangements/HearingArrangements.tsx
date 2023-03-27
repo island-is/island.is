@@ -218,6 +218,7 @@ const HearingArrangements = () => {
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
+              nextButtonIcon="arrowForward"
               previousUrl={`${constants.INVESTIGATION_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
               onNextButtonClick={async () =>
                 await handleNavigationTo(

@@ -412,6 +412,7 @@ export const Overview: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.RESTRICTION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextButtonText={
             workingCase.state === CaseState.NEW ||

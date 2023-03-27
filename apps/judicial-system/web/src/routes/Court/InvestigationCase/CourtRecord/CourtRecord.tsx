@@ -500,6 +500,7 @@ const CourtRecord = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
           onNextButtonClick={() =>

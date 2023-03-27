@@ -135,6 +135,7 @@ const Subpoena: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
           onNextButtonClick={() =>

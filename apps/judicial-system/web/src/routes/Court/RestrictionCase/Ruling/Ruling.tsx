@@ -797,6 +797,7 @@ export const Ruling: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(constants.RESTRICTION_CASE_COURT_RECORD_ROUTE)
