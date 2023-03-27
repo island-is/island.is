@@ -63,11 +63,7 @@ import {
   AlertMessage,
   AlertBanner,
 } from '@island.is/island-ui/core'
-import {
-  capitalize,
-  formatDate,
-  caseTypes,
-} from '@island.is/judicial-system/formatters'
+import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   core,
@@ -82,6 +78,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import * as constants from '@island.is/judicial-system/consts'
 
 import AppealSection from './Components/AppealSection/AppealSection'
@@ -139,18 +136,6 @@ export const titleForCase = (
     : formatMessage(m.restrictionActive, {
         caseType: isTravelBan ? CaseType.TravelBan : theCase.type,
       })
-}
-
-export const rulingDateLabel = (
-  formatMessage: IntlShape['formatMessage'],
-  workingCase: Case,
-) => {
-  return formatMessage(m.rulingDateLabel, {
-    courtEndTime: `${formatDate(
-      workingCase.courtEndTime,
-      'PPP',
-    )} kl. ${formatDate(workingCase.courtEndTime, constants.TIME_FORMAT)}`,
-  })
 }
 
 export const shouldHideNextButton = (workingCase: Case, user?: User) => {
@@ -570,11 +555,11 @@ export const SignedVerdictOverview: React.FC = () => {
                     {titleForCase(formatMessage, workingCase)}
                   </Text>
                 </Box>
-                <Box>
-                  <Text variant="h5">
-                    {rulingDateLabel(formatMessage, workingCase)}
-                  </Text>
-                </Box>
+                {workingCase.courtEndTime && (
+                  <Box>
+                    <RulingDateLabel courtEndTime={workingCase.courtEndTime} />
+                  </Box>
+                )}
               </Box>
               <Box display="flex" flexDirection="column">
                 <RestrictionTags workingCase={workingCase} />

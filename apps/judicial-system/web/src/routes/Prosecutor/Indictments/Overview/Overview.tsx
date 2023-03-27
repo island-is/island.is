@@ -102,6 +102,7 @@ const Overview: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={
             caseHasBeenReceivedByCourt
               ? constants.CASES_ROUTE
