@@ -56,7 +56,7 @@ export const Draft: Form = buildForm({
               id: 'introDescription',
               title: '',
               description: '',
-            })
+            }),
           ],
         }),
       ],
