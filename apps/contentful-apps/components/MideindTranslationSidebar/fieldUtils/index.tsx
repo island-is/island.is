@@ -1,5 +1,3 @@
-import { translateTexts } from '../api/index'
-
 // Widget operations
 import richTextEditor from './widgets/richTextEditor'
 import singleLine from './widgets/singleLine'
@@ -7,7 +5,7 @@ import multipleLine from './widgets/multipleLine'
 import markdownEditor from './widgets/markdownEditor'
 
 interface WidgetActions {
-  extractText: (value: any) => string[]
+  extractText: (value: string) => string[]
   createValue: (translation: string[], scaffold?: any) => any
   ignore?: boolean
 }
@@ -40,7 +38,7 @@ function extractField(field: any, eInterface: any, locale = 'is-IS') {
     if (ignore) {
       return
     } else {
-      var fieldValue = field.getValue(locale)
+      const fieldValue = field.getValue(locale)
       if (fieldValue) {
         const texts = extractText(fieldValue)
         return texts
@@ -63,7 +61,7 @@ async function populateField(field: any, eInterface: any, texts: string[]) {
     } else {
       // We still need to get the iceValue for those
       // widgets that rely on a scaffold (see RichText)
-      var iceValue = field.getValue('is-IS')
+      const iceValue = field.getValue('is-IS')
       if (!iceValue) {
         return
       }

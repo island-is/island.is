@@ -3,7 +3,7 @@ import { Environment } from '@island.is/shared/types'
 import { ApplicationType } from '../../models/applicationType'
 
 @InputType('CreateAuthAdminApplicationInput')
-export class CreateApplicationInput {
+export class CreateClientsInput {
   @Field(() => ID, { nullable: false })
   applicationId!: string
 
@@ -15,4 +15,7 @@ export class CreateApplicationInput {
 
   @Field(() => String, { nullable: false })
   displayName!: string
+
+  @Field(() => ID, { nullable: false })
+  tenantId!: string
 }
