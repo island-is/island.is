@@ -109,18 +109,20 @@ export const Input = forwardRef(
       }
     }, [autoExpand?.maxHeight, autoExpand?.on, inputRef])
 
-
     return (
       <div>
         {/* If size is xs then the label is above the input box */}
         {size === 'xs' && label && (
           <label
             htmlFor={id}
-            className={cn(styles.label({
-              hasError,
-              readOnly,
-              disabledEmptyInput: disabled && !value && !defaultValue
-            }), styles.labelSizes[size])}
+            className={cn(
+              styles.label({
+                hasError,
+                readOnly,
+                disabledEmptyInput: disabled && !value && !defaultValue,
+              }),
+              styles.labelSizes[size],
+            )}
           >
             {label}
             {required && (
@@ -139,7 +141,12 @@ export const Input = forwardRef(
 
         <Box
           background={containerBackground as UseBoxStylesProps['background']}
-          className={styles.container({ disabled: Boolean(disabled), readOnly, hasError, hasFocus: showFocus })}
+          className={styles.container({
+            disabled: Boolean(disabled),
+            readOnly,
+            hasError,
+            hasFocus: showFocus,
+          })}
           onClick={(e) => {
             e.preventDefault()
             if (inputRef.current) {
@@ -147,14 +154,18 @@ export const Input = forwardRef(
             }
           }}
         >
-          <Box
-            flexGrow={1}
-            className={styles.containerSizes[size]}
-          >
+          <Box flexGrow={1} className={styles.containerSizes[size]}>
             {size !== 'xs' && label && (
               <label
                 htmlFor={id}
-                className={cn(styles.label({ hasError, readOnly, disabledEmptyInput: disabled && !value && !defaultValue, }), styles.labelSizes[size])}
+                className={cn(
+                  styles.label({
+                    hasError,
+                    readOnly,
+                    disabledEmptyInput: disabled && !value && !defaultValue,
+                  }),
+                  styles.labelSizes[size],
+                )}
               >
                 {label}
                 {required && (
@@ -229,7 +240,6 @@ export const Input = forwardRef(
             hasError={hasError}
             hasLabel={hasLabel}
           />
-
         </Box>
         {hasError && errorMessage && (
           <ErrorMessage id={errorId}>{errorMessage}</ErrorMessage>
@@ -239,10 +249,17 @@ export const Input = forwardRef(
   },
 )
 
-
-function AsideIcons({ icon, buttons = [], size, loading, hasError, hasLabel }: AsideProps) {
-
-  const displayedIcon: InputIcon | undefined = hasError ? { name: 'warning' } : icon
+function AsideIcons({
+  icon,
+  buttons = [],
+  size,
+  loading,
+  hasError,
+  hasLabel,
+}: AsideProps) {
+  const displayedIcon: InputIcon | undefined = hasError
+    ? { name: 'warning' }
+    : icon
 
   const renderIcon = (item: InputIcon) => (
     <Icon
@@ -256,15 +273,14 @@ function AsideIcons({ icon, buttons = [], size, loading, hasError, hasLabel }: A
 
   return (
     <div className={styles.aside}>
-
       {loading ? (
-        <Box
-          className={styles.spinner}
-          flexShrink={0}
-          borderRadius="circle"
-        />
+        <Box className={styles.spinner} flexShrink={0} borderRadius="circle" />
       ) : displayedIcon ? (
-        <div className={styles.iconWrapper({ size })} key={displayedIcon.name} aria-hidden>
+        <div
+          className={styles.iconWrapper({ size })}
+          key={displayedIcon.name}
+          aria-hidden
+        >
           {renderIcon(displayedIcon)}
         </div>
       ) : null}
@@ -272,7 +288,11 @@ function AsideIcons({ icon, buttons = [], size, loading, hasError, hasLabel }: A
       {buttons.map((item) => {
         const { name, type, label, ...rest } = item
         return (
-          <button className={styles.inputButton({ size, hasError })} key={name} {...rest}>
+          <button
+            className={styles.inputButton({ size, hasError })}
+            key={name}
+            {...rest}
+          >
             <VisuallyHidden>{label}</VisuallyHidden>
             {renderIcon(item)}
           </button>
