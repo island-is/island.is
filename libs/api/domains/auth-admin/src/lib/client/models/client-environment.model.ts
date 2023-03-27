@@ -1,23 +1,31 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ID, Int, ObjectType, registerEnumType } from '@nestjs/graphql'
+import GraphQLJSON from 'graphql-type-json'
 
+import { RefreshTokenExpiration } from '@island.is/auth-api-lib'
 import { Environment } from '@island.is/shared/types'
 
 import { ClientType } from '../../models/client-type.enum'
 import { TranslatedValue } from '../../models/translated-value.model'
-import { ApplicationUrl } from './application-applicationUrl.model'
-import { ApplicationLifeTime } from './application-lifetime.model'
-import { ApplicationBasicInfo } from './application-basic-info.model'
+
+registerEnumType(RefreshTokenExpiration, { name: 'RefreshTokenExpiration' })
+
+// type CustomClaims = {
+//   [key: string]: string
+// }
 
 @ObjectType('AuthAdminClientEnvironment')
 export class ClientEnvironment {
   @Field(() => ID)
   id!: string
 
+  @Field(() => Environment)
+  environment!: Environment
+
   @Field(() => String)
   clientId!: string
 
-  @Field(() => Environment)
-  environment!: Environment
+  @Field(() => String)
+  tenantId!: string
 
   @Field(() => ClientType)
   clientType!: ClientType
@@ -25,13 +33,54 @@ export class ClientEnvironment {
   @Field(() => [TranslatedValue])
   displayName!: TranslatedValue[]
 
-  //
-  // @Field(() => ApplicationUrl)
-  // applicationUrls!: ApplicationUrl
-  //
-  // @Field(() => ApplicationLifeTime)
-  // lifeTime!: ApplicationLifeTime
-  //
-  // @Field(() => ApplicationBasicInfo)
-  // basicInfo!: ApplicationBasicInfo
+  @Field(() => [String])
+  redirectUris!: string[]
+
+  @Field(() => [String])
+  postLogoutRedirectUris!: string[]
+
+  @Field(() => Int)
+  absoluteRefreshTokenLifetime!: number
+
+  @Field(() => Int)
+  slidingRefreshTokenLifetime!: number
+
+  @Field(() => RefreshTokenExpiration)
+  refreshTokenExpiration!: RefreshTokenExpiration
+
+  @Field(() => Boolean)
+  supportsCustomDelegation!: boolean
+
+  @Field(() => Boolean)
+  supportsLegalGuardians!: boolean
+
+  @Field(() => Boolean)
+  supportsProcuringHolders!: boolean
+
+  @Field(() => Boolean)
+  supportsPersonalRepresentatives!: boolean
+
+  @Field(() => Boolean)
+  promptDelegations!: boolean
+
+  @Field(() => Boolean)
+  requireApiScopes!: boolean
+
+  @Field(() => Boolean)
+  requireConsent!: boolean
+
+  @Field(() => Boolean)
+  allowOfflineAccess!: boolean
+
+  @Field(() => Boolean)
+  requirePkce!: boolean
+
+  @Field(() => Boolean)
+  supportTokenExchange!: boolean
+
+  @Field(() => Int)
+  accessTokenLifetime!: number
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  customClaims?: object // Record<string, string>
 }

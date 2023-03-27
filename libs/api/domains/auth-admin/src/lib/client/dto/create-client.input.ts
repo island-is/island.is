@@ -1,14 +1,16 @@
 import { Field, InputType, ID } from '@nestjs/graphql'
+
 import { Environment } from '@island.is/shared/types'
-import { ApplicationType } from '../../models/applicationType'
 
-@InputType('CreateAuthAdminApplicationInput')
-export class CreateClientsInput {
+import { ClientType } from '../../models/client-type.enum'
+
+@InputType('CreateAuthAdminClientInput')
+export class CreateClientInput {
   @Field(() => ID, { nullable: false })
-  applicationId!: string
+  clientId!: string
 
-  @Field(() => ApplicationType, { nullable: false })
-  applicationType!: ApplicationType
+  @Field(() => ClientType, { nullable: false })
+  clientType!: ClientType
 
   @Field(() => [Environment], { nullable: false })
   environments!: Environment[]

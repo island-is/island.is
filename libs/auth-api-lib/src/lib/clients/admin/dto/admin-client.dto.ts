@@ -54,6 +54,8 @@ export class AdminClientDto {
   @ApiProperty({
     description:
       'Indicates if refresh token should expire after inactivity (Sliding) described in `slidingRefreshTokenLifetime` or fixed point in time (Absolute) described in `absoluteRefreshTokenLifetime`',
+    enum: RefreshTokenExpiration,
+    enumName: 'RefreshTokenExpiration',
   })
   refreshTokenExpiration!: RefreshTokenExpiration
 

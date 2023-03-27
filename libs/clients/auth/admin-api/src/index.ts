@@ -3,6 +3,7 @@ export {
   AdminCreateClientDto,
   ClientType,
   MeClientsControllerCreateRequest,
+  RefreshTokenExpiration,
   TenantDto,
 } from '../gen/fetch'
 export * from './lib/apis'

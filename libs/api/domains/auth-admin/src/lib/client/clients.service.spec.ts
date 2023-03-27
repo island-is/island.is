@@ -8,6 +8,8 @@ import {
   AuthAdminApiClientConfig,
   AuthAdminApiClientModule,
 } from '@island.is/clients/auth/admin-api'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { ConfigType } from '@island.is/nest/config'
 import { Environment } from '@island.is/shared/types'
 import {
   createCurrentUser,
@@ -15,11 +17,10 @@ import {
 } from '@island.is/testing/fixtures'
 import { TestApp, testServer, useAuth } from '@island.is/testing/nest'
 
+import { ClientType } from '../models/client-type.enum'
 import { ClientsResolver } from './clientsResolver'
 import { ClientsService } from './clients.service'
-import { ApplicationType } from '../models/applicationType'
-import { ConfigType } from '@island.is/nest/config'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import { CreateClientInput } from './dto/create-client.input'
 
 const createMockAdminApi = () => ({
   withMiddleware: jest.fn().mockReturnThis(),
@@ -46,7 +47,7 @@ const mockAdminProdApi = createMockAdminApi()
 })
 class TestModule {}
 
-describe('ApplicationsService', () => {
+describe('ClientsService', () => {
   const currentUser = createCurrentUser({
     nationalId: createNationalId(),
   })
@@ -57,7 +58,7 @@ describe('ApplicationsService', () => {
 
   describe('with multiple environments', () => {
     let app: TestApp
-    let applicationsService: ClientsService
+    let clientsService: ClientsService
 
     beforeAll(async () => {
       app = await testServer({
@@ -74,7 +75,7 @@ describe('ApplicationsService', () => {
         hooks: [useAuth({ auth: currentUser })],
       })
 
-      applicationsService = app.get(ClientsService)
+      clientsService = app.get(ClientsService)
     })
 
     afterAll(async () => {
@@ -82,9 +83,9 @@ describe('ApplicationsService', () => {
     })
 
     it('should create application in all environments', async function () {
-      const createClientsInput = {
-        applicationId: 'test-application-id',
-        applicationType: ApplicationType.Web,
+      const createClientsInput: CreateClientInput = {
+        clientId: 'test-application-id',
+        clientType: ClientType.web,
         environments: [
           Environment.Development,
           Environment.Staging,
@@ -94,9 +95,9 @@ describe('ApplicationsService', () => {
         tenantId: 'test-tenant-id',
       }
 
-      const response = await applicationsService.createApplication(
-        createClientsInput,
+      const response = await clientsService.createClient(
         currentUser,
+        createClientsInput,
       )
 
       expect(mockAdminDevApi.meClientsControllerCreate).toBeCalledTimes(1)
@@ -116,17 +117,17 @@ describe('ApplicationsService', () => {
     })
 
     it('should only create application in development', async function () {
-      const createClientsInput = {
-        applicationId: 'test-application-id',
-        applicationType: ApplicationType.Web,
+      const createClientsInput: CreateClientInput = {
+        clientId: 'test-application-id',
+        clientType: ClientType.web,
         environments: [Environment.Development],
         displayName: 'Test Application',
         tenantId: 'test-tenant-id',
       }
 
-      const response = await applicationsService.createApplication(
-        createClientsInput,
+      const response = await clientsService.createClient(
         currentUser,
+        createClientsInput,
       )
 
       expect(mockAdminDevApi.meClientsControllerCreate).toBeCalledTimes(1)

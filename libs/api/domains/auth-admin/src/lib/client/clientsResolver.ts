@@ -13,37 +13,47 @@ import type { User } from '@island.is/auth-nest-tools'
 import { Environment } from '@island.is/shared/types'
 
 import { ClientsService } from './clients.service'
-import { ApplicationsPayload } from './dto/applications-payload'
+import { ClientsPayload } from './dto/clients.payload'
 import { Client } from './models/client.model'
 import { ClientEnvironment } from './models/client-environment.model'
-import { ClientInput } from './dto/client-input'
-import { CreateApplicationResponseDto } from './dto/create-application-response'
-import { CreateClientsInput } from './dto/createClientsInput'
+import { ClientInput } from './dto/client.input'
+import { CreateClientResponse } from './dto/create-client.response'
+import { CreateClientInput } from './dto/create-client.input'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Client)
 export class ClientsResolver {
   constructor(private readonly clientsService: ClientsService) {}
 
-  @Query(() => ApplicationsPayload, { name: 'authAdminClients' })
-  getClients(@CurrentUser() user: User, @Args('tenantId') tenantId: string) {
-    return this.clientsService.getClients(tenantId, user)
+  @Query(() => ClientsPayload, { name: 'authAdminClients' })
+  getClients(
+    @CurrentUser() user: User,
+    @Args('tenantId') tenantId: string,
+  ): Promise<ClientsPayload> {
+    return this.clientsService.getClients(user, tenantId)
   }
 
   @Query(() => Client, { name: 'authAdminClient' })
-  getClientById(@Args('input') input: ClientInput) {
-    return this.clientsService.getClientById(input.tenantId, input.clientId)
+  getClientById(
+    @CurrentUser() user: User,
+    @Args('input') input: ClientInput,
+  ): Promise<Client> {
+    return this.clientsService.getClientById(
+      user,
+      input.tenantId,
+      input.clientId,
+    )
   }
 
-  @Mutation(() => [CreateApplicationResponseDto], {
-    name: 'createAuthAdminApplication',
+  @Mutation(() => [CreateClientResponse], {
+    name: 'createAuthAdminClient',
   })
   createClient(
-    @Args('input', { type: () => CreateClientsInput })
-    input: CreateClientsInput,
     @CurrentUser() user: User,
+    @Args('input', { type: () => CreateClientInput })
+    input: CreateClientInput,
   ) {
-    return this.clientsService.createApplication(input, user)
+    return this.clientsService.createClient(user, input)
   }
 
   @ResolveField('defaultEnvironment', () => ClientEnvironment)
@@ -52,7 +62,7 @@ export class ClientsResolver {
       throw new Error(`Application ${application.clientId} has no environments`)
     }
 
-    // Depends on the priority order being decided by the backend
+    // Depends on the priority order being decided in the service
     return application.environments[0]
   }
 

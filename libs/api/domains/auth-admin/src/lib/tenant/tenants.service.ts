@@ -82,17 +82,18 @@ export class TenantsService extends MultiEnvironmentService {
       Environment.Staging,
       Environment.Production,
     ].entries()) {
-      if (tenants[index]) {
+      const tenant = tenants[index]
+      if (tenant) {
         tenantMap.push({
-          name: tenants[index]?.name ?? '',
+          name: tenant.name,
           environment: env,
-          displayName: tenants[index]?.displayName ?? [],
+          displayName: tenant.displayName,
         })
       }
     }
     return {
       id: id,
       environments: tenantMap,
-    } as Tenant
+    }
   }
 }
