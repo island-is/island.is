@@ -97,7 +97,8 @@ To execute the unit tests affected by a change:
 yarn affected:test
 ```
 
-### Running end-to-end tests
+### Running end-to-end tests (deprecated)
+**Note: We no longer encourage writing these tests, please consider writing System E2E test (see below)**
 
 To execute end-to-end tests via [Cypress](https://www.cypress.io):
 
@@ -110,6 +111,57 @@ To execute the end-to-end tests affected by a change:
 ```bash
 yarn affected:e2e
 ```
+
+### Running System E2E tests
+
+To execute end-to-end tests via [Playwright](https://playwright.dev), run one or more files. The way to specify these, is similar as described in the docs [here](https://playwright.dev/docs/running-tests). 
+
+```bash
+yarn system-e2e myfile.spec.ts
+```
+
+To see the execution of your tests in the browser:
+```bash
+yarn system-e2e myfile.spec.ts --headed
+```
+To run in debug mode:
+```bash
+yarn system-e2e myfile.spec.ts --debug
+```
+
+For a more detailed guide on writing System E2E tests, please see this [internal Notion page](https://www.notion.so/System-E2E-testing-workshop-29c089c182844933b992015c4ef24791?pvs=4).
+
+
+### Running System E2E tests with mocks
+
+Running System E2E tests which rely on mocking external dependencies is the same, except the local development environment must support wire-mocking(mountebank). To prepare such a local environment it is best to use the command that discovers the dependencies of the component(s) you will be testing and prepares configuration for running them. To get a list of the services you might need to run as well as the mountebank configuration:
+
+```bash
+yarn infra render-local-env  --service=<service-name-1> ... --service=<service-name-N> 
+```
+
+You will get output similar to this one:
+```bash
+{
+  services: {
+    'application-system-form': '(source /Users/petar/src/andes/customers/si/island.is/.env.application-system-form && yarn start application-system-form)',
+    'services-documents': '(source /Users/petar/src/andes/customers/si/island.is/.env.services-documents && yarn start services-documents)',
+    'endorsement-system-api': '(source /Users/petar/src/andes/customers/si/island.is/.env.endorsement-system-api && yarn start endorsement-system-api)',
+    'application-system-api': '(source /Users/petar/src/andes/customers/si/island.is/.env.application-system-api && yarn start application-system-api)',
+    'icelandic-names-registry-backend': '(source /Users/petar/src/andes/customers/si/island.is/.env.icelandic-names-registry-backend && yarn start icelandic-names-registry-backend)',
+    'air-discount-scheme-backend': '(source /Users/petar/src/andes/customers/si/island.is/.env.air-discount-scheme-backend && yarn start air-discount-scheme-backend)',
+    'service-portal-api': '(source /Users/petar/src/andes/customers/si/island.is/.env.services-user-profile && yarn start services-user-profile)',
+    'services-sessions': '(source /Users/petar/src/andes/customers/si/island.is/.env.services-sessions && yarn start services-sessions)',
+    api: '(source /Users/petar/src/andes/customers/si/island.is/.env.api && yarn start api)'
+  },
+  mocks: 'docker run -it --rm -p 2525:2525 -p 9388:9388 -p 9372:9372 -v /Users/petar/src/andes/customers/si/island.is/infra/mountebank-imposter-config.json:/app/default.json docker.io/bbyars/mountebank:2.8.1 start --configfile=/app/default.json'
+}
+```
+Each service will get the secrets it is configured to use, still you will need to run local DB setup for the services you are running - dev-init, etc. Additionally, any local dev proxies will also need to be run manually.
+
+It is not necessary to run all the dependencies/services, only the one that will be actually used.
+
+Make sure to have an [AWS session](handbook/repository/aws-secrets.md#using-aws-session) loaded in the shell, so the script is able to retrieve the secrets from AWS Dev environment.
 
 ### Schemas
 
