@@ -49,11 +49,11 @@ const Overview: React.FC = () => {
   const router = useRouter()
   const { transitionCase } = useCase()
 
-  const isTrafficViolationCaseCheck =
-    (features.includes(Feature.INDICTMENT_ROUTE) ||
-      user?.name === 'Árni Bergur Sigurðsson' ||
-      user?.name === 'Ásmundur Jónsson') &&
-    isTrafficViolationCase(workingCase.indictmentSubtypes)
+  const isTrafficViolationCaseCheck = isTrafficViolationCase(
+    workingCase,
+    features,
+    user,
+  )
 
   const isNewIndictment =
     workingCase.state === CaseState.NEW || workingCase.state === CaseState.DRAFT
