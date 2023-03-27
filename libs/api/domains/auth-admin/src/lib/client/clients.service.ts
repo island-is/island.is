@@ -1,31 +1,88 @@
 import { Injectable } from '@nestjs/common'
 
-import { Environment } from '@island.is/shared/types'
-import { CreateClientsInput } from './dto/createClientsInput'
-import { ApplicationType } from '../models/applicationType'
-import { Auth } from '@island.is/auth-nest-tools'
-import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
+import type { User } from '@island.is/auth-nest-tools'
 import {
-  AdminCreateClientDto,
-  AdminCreateClientDtoClientTypeEnum,
+  ClientType,
   MeClientsControllerCreateRequest,
 } from '@island.is/clients/auth/admin-api'
+import { Environment } from '@island.is/shared/types'
+
+import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
+import { CreateClientsInput } from './dto/createClientsInput'
 import { CreateApplicationResponseDto } from './dto/create-application-response'
+import { ClientEnvironment } from './models/client-environment.model'
+import { Client } from './models/client.model'
 
 @Injectable()
-export class ApplicationsService extends MultiEnvironmentService {
-  getApplications(tenantId: string) {
-    const resp = getMockData()
-    resp.data = resp.data.filter((x) => {
-      return x.tenantId === tenantId
-    })
-    return resp
+export class ClientsService extends MultiEnvironmentService {
+  async getClients(tenantId: string, user: User) {
+    const clients = await Promise.all([
+      this.adminDevApiWithAuth(user)
+        ?.meClientsControllerFindByTenantId({
+          tenantId,
+        })
+        .catch(this.handleError.bind(this)),
+      ,
+      this.adminStagingApiWithAuth(user)
+        ?.meClientsControllerFindByTenantId({
+          tenantId,
+        })
+        .catch(this.handleError.bind(this)),
+      ,
+      this.adminProdApiWithAuth(user)
+        ?.meClientsControllerFindByTenantId({
+          tenantId,
+        })
+        .catch(this.handleError.bind(this)),
+      ,
+    ])
+
+    const clientsMap = new Map<string, ClientEnvironment[]>()
+
+    for (const [index, env] of [
+      Environment.Development,
+      Environment.Staging,
+      Environment.Production,
+    ].entries()) {
+      for (const client of clients[index] ?? []) {
+        if (!clientsMap.has(client.clientId)) {
+          clientsMap.set(client.clientId, [])
+        }
+
+        // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+        clientsMap.get(client.clientId)!.push({
+          id: `${client.clientId}#${env}`,
+          clientId: client.clientId,
+          environment: env,
+          clientType: client.clientType,
+          displayName: client.displayName,
+        })
+      }
+    }
+
+    const clientsArray: Client[] = []
+    for (const [clientId, environments] of clientsMap.entries()) {
+      clientsArray.push({
+        clientId,
+        clientType: environments[0].clientType,
+        environments,
+      })
+    }
+
+    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+    clientsArray.sort((a, b) => a.clientId!.localeCompare(b.clientId!))
+
+    return {
+      data: clientsArray,
+      totalCount: clientsArray.length,
+      pageInfo: { hasNextPage: false },
+    }
   }
 
-  getApplicationById(tenantId: string, applicationId: string) {
+  getClientById(tenantId: string, clientId: string) {
     const resp = getMockData()
     resp.data = resp.data.filter((x) => {
-      return x.tenantId === tenantId && x.applicationId === applicationId
+      return x.tenantId === tenantId && x.applicationId === clientId
     })
 
     return resp.data[0]
@@ -33,13 +90,13 @@ export class ApplicationsService extends MultiEnvironmentService {
 
   async createApplication(
     input: CreateClientsInput,
-    user: Auth,
+    user: User,
   ): Promise<CreateApplicationResponseDto[]> {
     const applicationRequest: MeClientsControllerCreateRequest = {
       tenantId: input.tenantId,
       adminCreateClientDto: {
         clientId: input.applicationId,
-        clientType: (input.applicationType as string) as AdminCreateClientDtoClientTypeEnum,
+        clientType: (input.applicationType as string) as ClientType,
         clientName: input.displayName,
       },
     }
@@ -78,7 +135,7 @@ const getMockData = () => {
     data: [
       {
         applicationId: '@island.is/web',
-        applicationType: ApplicationType.Web,
+        applicationType: ClientType.web,
         tenantId: '@island.is',
         environments: [
           {
@@ -159,7 +216,7 @@ const getMockData = () => {
       },
       {
         applicationId: '@island.is/auth-admin-web',
-        applicationType: ApplicationType.Web,
+        applicationType: ClientType.web,
         tenantId: '@admin.island.is',
         environments: [
           {
@@ -275,7 +332,7 @@ const getMockData = () => {
       },
       {
         applicationId: '@island.is/auth',
-        applicationType: ApplicationType.Web,
+        applicationType: ClientType.web,
         tenantId: '@admin.island.is',
         environments: [
           {

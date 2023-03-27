@@ -15,8 +15,8 @@ import {
 } from '@island.is/testing/fixtures'
 import { TestApp, testServer, useAuth } from '@island.is/testing/nest'
 
-import { ApplicationsResolver } from './applications.resolver'
-import { ApplicationsService } from './applications.service'
+import { ClientsResolver } from './clientsResolver'
+import { ClientsService } from './clients.service'
 import { ApplicationType } from '../models/applicationType'
 import { ConfigType } from '@island.is/nest/config'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -41,8 +41,8 @@ const mockAdminProdApi = createMockAdminApi()
     }),
   ],
   controllers: [],
-  providers: [ApplicationsResolver, ApplicationsService],
-  exports: [ApplicationsResolver],
+  providers: [ClientsResolver, ClientsService],
+  exports: [ClientsResolver],
 })
 class TestModule {}
 
@@ -57,7 +57,7 @@ describe('ApplicationsService', () => {
 
   describe('with multiple environments', () => {
     let app: TestApp
-    let applicationsService: ApplicationsService
+    let applicationsService: ClientsService
 
     beforeAll(async () => {
       app = await testServer({
@@ -74,7 +74,7 @@ describe('ApplicationsService', () => {
         hooks: [useAuth({ auth: currentUser })],
       })
 
-      applicationsService = app.get(ApplicationsService)
+      applicationsService = app.get(ClientsService)
     })
 
     afterAll(async () => {

@@ -16,6 +16,7 @@ export class AdminCreateClientDto {
   @ApiProperty({
     example: 'spa',
     enum: ClientType,
+    enumName: 'ClientType',
   })
   readonly clientType!: ClientType
 

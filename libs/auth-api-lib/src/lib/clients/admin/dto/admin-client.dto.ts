@@ -10,6 +10,7 @@ export class AdminClientDto {
   @ApiProperty({
     example: 'web',
     enum: ClientType,
+    enumName: 'ClientType',
   })
   clientType!: string
 

@@ -5,9 +5,8 @@ import { AuthAdminApiClientModule } from '@island.is/clients/auth/admin-api'
 import { TenantResolver } from './tenant/tenant.resolver'
 import { TenantEnvironmentResolver } from './tenant/tenant-environment.resolver'
 import { TenantsService } from './tenant/tenants.service'
-import { ApplicationEnvironmentResolver } from './application/applications-environment.resolver'
-import { ApplicationsResolver } from './application/applications.resolver'
-import { ApplicationsService } from './application/applications.service'
+import { ClientsResolver } from './client/clientsResolver'
+import { ClientsService } from './client/clients.service'
 
 @Module({
   imports: [AuthAdminApiClientModule],
@@ -16,15 +15,9 @@ import { ApplicationsService } from './application/applications.service'
     TenantResolver,
     TenantEnvironmentResolver,
     TenantsService,
-    ApplicationEnvironmentResolver,
-    ApplicationsResolver,
-    ApplicationsService,
+    ClientsResolver,
+    ClientsService,
   ],
-  exports: [
-    TenantResolver,
-    TenantEnvironmentResolver,
-    ApplicationEnvironmentResolver,
-    ApplicationsResolver,
-  ],
+  exports: [TenantResolver, TenantEnvironmentResolver, ClientsResolver],
 })
 export class AuthAdminModule {}

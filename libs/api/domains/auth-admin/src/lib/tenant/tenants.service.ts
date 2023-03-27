@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
 
 import { User } from '@island.is/auth-nest-tools'
-import { FetchError } from '@island.is/clients/middlewares'
 import { Environment } from '@island.is/shared/types'
 
 import { TenantEnvironment } from './models/tenant-environment.model'
@@ -11,19 +10,6 @@ import { MultiEnvironmentService } from '../shared/services/multi-environment.se
 
 @Injectable()
 export class TenantsService extends MultiEnvironmentService {
-  private handleError(error: Error) {
-    if (error instanceof FetchError && error.status === 401) {
-      // If 401 is returned we log it as info as it is intentional
-      this.logger.info('Unauthorized request to admin api', error)
-    } else {
-      // Otherwise we log it as error
-      this.logger.error('Error while fetching tenants', error)
-    }
-
-    // We swallow the errors
-    return undefined
-  }
-
   async getTenant(id: string): Promise<Tenant> {
     return {
       id: id,
