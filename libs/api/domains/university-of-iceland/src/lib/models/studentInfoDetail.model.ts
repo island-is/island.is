@@ -7,7 +7,7 @@ export class StudentDetailModel {
   name!: string
 
   @Field(() => String, { nullable: true })
-  kennitala?: string
+  nationalId?: string
 
   @Field(() => String)
   graduationDate!: string
