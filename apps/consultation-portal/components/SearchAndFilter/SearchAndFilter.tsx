@@ -10,6 +10,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { useEffect, useState } from 'react'
 
 interface SearchAndFilterProps {
   PolicyAreas: Array<ArrOfValueAndLabel>
@@ -18,6 +19,7 @@ interface SearchAndFilterProps {
   defaultInstitutions: Array<number>
   filters: CaseFilter
   setFilters: (arr: CaseFilter) => void
+  loading?: boolean
 }
 
 const SearchAndFilter = ({
@@ -27,13 +29,25 @@ const SearchAndFilter = ({
   defaultInstitutions,
   filters,
   setFilters,
+  loading,
 }: SearchAndFilterProps) => {
   const options = []
+  const [searchValue, setSearchValue] = useState(filters?.searchQuery)
+
+  useEffect(() => {
+    const identifier = setTimeout(() => {
+      const filtersCopy = { ...filters }
+      filtersCopy.searchQuery = searchValue
+      setFilters(filtersCopy)
+    }, 500)
+
+    return () => {
+      clearTimeout(identifier)
+    }
+  }, [searchValue, setSearchValue])
 
   const onChangeSearch = (value: string) => {
-    const filtersCopy = { ...filters }
-    filtersCopy.searchQuery = value
-    setFilters(filtersCopy)
+    setSearchValue(value)
   }
 
   const onChange = (e, isInstitutions: boolean) => {
@@ -64,18 +78,20 @@ const SearchAndFilter = ({
                   </Text>
                   <div style={{ marginBottom: '6px' }} />
                   <AsyncSearch
+                    loading={loading}
                     label="Leit"
                     size="medium"
                     options={options}
                     placeholder="Að hverju ertu að leita?"
-                    initialInputValue={filters.searchQuery}
-                    inputValue={filters.searchQuery}
+                    initialInputValue={searchValue}
+                    inputValue={searchValue}
                     onInputValueChange={(value) => onChangeSearch(value)}
                   />
                 </Stack>
               </GridColumn>
               <GridColumn span={['2/12', '2/12', '3/12', '3/12', '3/12']}>
                 <Select
+                  disabled={loading}
                   isSearchable
                   size="xs"
                   label="Málefnasvið"
@@ -88,15 +104,17 @@ const SearchAndFilter = ({
                   onChange={(e) => onChange(e, false)}
                   isClearable
                   value={
-                    filters.policyAreas.length === 1 &&
+                    filters?.policyAreas.length === 1 &&
                     [...PolicyAreas].filter(
-                      (item) => parseInt(item.value) === filters.policyAreas[0],
+                      (item) =>
+                        parseInt(item.value) === filters?.policyAreas[0],
                     )
                   }
                 />
               </GridColumn>
               <GridColumn span={['2/12', '2/12', '3/12', '3/12', '3/12']}>
                 <Select
+                  disabled={loading}
                   isSearchable
                   size="xs"
                   label="Stofnun"
@@ -108,10 +126,10 @@ const SearchAndFilter = ({
                   placeholder="Veldu stofnun"
                   onChange={(e) => onChange(e, true)}
                   value={
-                    filters.institutions.length === 1 &&
+                    filters?.institutions.length === 1 &&
                     [...Institutions].filter(
                       (item) =>
-                        parseInt(item.value) === filters.institutions[0],
+                        parseInt(item.value) === filters?.institutions[0],
                     )
                   }
                   isClearable
@@ -125,13 +143,14 @@ const SearchAndFilter = ({
         <GridContainer>
           <Box paddingY={4}>
             <AsyncSearch
+              loading={loading}
               colored
               label="Leit"
               size="medium"
               options={options}
               placeholder="Að hverju ertu að leita?"
-              initialInputValue={filters.searchQuery}
-              inputValue={filters.searchQuery}
+              initialInputValue={searchValue}
+              inputValue={searchValue}
               onInputValueChange={(value) => onChangeSearch(value)}
             />
           </Box>
