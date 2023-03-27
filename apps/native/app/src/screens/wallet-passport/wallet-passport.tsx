@@ -212,7 +212,10 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
               </Label>
               <Accordion>
                 {childrenPassport?.map((child: any) => {
-                  const isInvalid = child?.status?.toLowerCase() === 'invalid';
+                  const isInvalid =
+                    child?.status?.toLowerCase() === 'invalid' ||
+                    child?.passports?.length === 0;
+                  const noPassport = child?.passports?.length === 0;
                   return (
                     <AccordionItem
                       key={child.childNationalId}
@@ -300,6 +303,31 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
                             </View>
                           );
                         })}
+                        {noPassport && (
+                          <View
+                            style={{marginVertical: 16, paddingHorizontal: 16}}
+                          >
+                            <Label>
+                              {intl.formatMessage({
+                                id: 'walletPassport.noPassport',
+                              })}
+                            </Label>
+                            <TouchableOpacity
+                              onPress={() =>
+                                openBrowser(
+                                  `https://island.is/vegabref`,
+                                  componentId,
+                                )
+                              }
+                            >
+                              <LinkText>
+                                {intl.formatMessage({
+                                  id: 'walletPassport.noPassportLink',
+                                })}
+                              </LinkText>
+                            </TouchableOpacity>
+                          </View>
+                        )}
                       </View>
                     </AccordionItem>
                   );

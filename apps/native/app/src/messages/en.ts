@@ -188,6 +188,8 @@ export const en: TranslatedMessages = {
   'walletPassport.expirationDate': 'Expiration date',
   'walletPassport.mrzName': 'Machine-readable name',
   'walletPassport.children': 'Childrens passport',
+  'walletPassport.noPassport': 'No passport.',
+  'walletPassport.noPassportLink': 'Read more at island.is/vegabref',
 
   // license scanner
   'licenseScanner.title': 'Scan barcode',
