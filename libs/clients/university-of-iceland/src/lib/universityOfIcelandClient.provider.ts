@@ -1,4 +1,4 @@
-import { Configuration, DefaultApi } from '../../gen/fetch'
+import { Configuration, StudentTranscriptApi } from '../../gen/fetch'
 import { Provider } from '@nestjs/common'
 import {
   ConfigType,
@@ -9,15 +9,15 @@ import {
 import { UniversityOfIcelandClientConfig } from './universityOfIcelandClient.config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 
-export const UniversityOfIcelandApiProvider: Provider<DefaultApi> = {
-  provide: DefaultApi,
+export const UniversityOfIcelandApiProvider: Provider<StudentTranscriptApi> = {
+  provide: StudentTranscriptApi,
   scope: LazyDuringDevScope,
   useFactory: (
     xroadConfig: ConfigType<typeof XRoadConfig>,
     config: ConfigType<typeof UniversityOfIcelandClientConfig>,
     idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) =>
-    new DefaultApi(
+    new StudentTranscriptApi(
       new Configuration({
         fetchApi: createEnhancedFetch({
           logErrorResponseBody: true,

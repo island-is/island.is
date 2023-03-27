@@ -1,17 +1,17 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
-  DefaultApi,
+  StudentTranscriptApi,
   NemandiFerillFerillFileTranscriptGetLocaleEnum,
   NemandiFerillFerillGetLocaleEnum,
   NemandiGetLocaleEnum,
   StudentTrackOverview,
-  StudentTrackTranscripts,
+  Transcripts,
 } from '../../gen/fetch'
 
 @Injectable()
 export class UniversityOfIcelandService {
-  constructor(private readonly universityOfIcelandApi: DefaultApi) {}
+  constructor(private readonly universityOfIcelandApi: StudentTranscriptApi) {}
 
   private universityOfIcelandApiWithAuth = (user: User) =>
     this.universityOfIcelandApi.withMiddleware(new AuthMiddleware(user as Auth))
@@ -19,7 +19,7 @@ export class UniversityOfIcelandService {
   async studentInfo(
     user: User,
     locale?: NemandiGetLocaleEnum,
-  ): Promise<StudentTrackTranscripts> {
+  ): Promise<Transcripts> {
     return await this.universityOfIcelandApiWithAuth(user).nemandiGet({
       locale: locale,
     })

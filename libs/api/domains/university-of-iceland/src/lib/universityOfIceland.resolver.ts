@@ -15,7 +15,7 @@ import {
   UniversityOfIcelandService,
   NemandiGetLocaleEnum,
   NemandiFerillFerillGetLocaleEnum,
-  StudentTrackTranscripts,
+  Transcripts,
 } from '@island.is/clients/university-of-iceland'
 import { ApiScope } from '@island.is/auth/scopes'
 import { StudentInfoModel } from './models/studentInfo.model'
@@ -41,7 +41,7 @@ export class UniversityOfIcelandResolver {
   async getStudentInfo(
     @CurrentUser() user: User,
     @Args('input') input: GetStudentInfoInput,
-  ): Promise<StudentTrackTranscripts> {
+  ): Promise<Transcripts> {
     const data = await this.universityOfIcelandApi.studentInfo(
       user,
       input.locale as NemandiGetLocaleEnum,
