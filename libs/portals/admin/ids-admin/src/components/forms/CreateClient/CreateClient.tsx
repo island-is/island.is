@@ -16,12 +16,12 @@ import {
   useRouteLoaderData,
 } from 'react-router-dom'
 import {
-  AuthAdminApplicationType,
+  AuthAdminClientType,
   AuthAdminEnvironment,
 } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
-import { CreateApplicationResult } from './CreateApplication.action'
+import { CreateClientResult } from './CreateClient.action'
 import {
   tenantLoaderId,
   TenantLoaderResult,
@@ -35,25 +35,25 @@ const environments = [
   AuthAdminEnvironment.Staging,
   AuthAdminEnvironment.Production,
 ]
-const applicationTypes = [
-  AuthAdminApplicationType.Web,
-  AuthAdminApplicationType.Native,
-  AuthAdminApplicationType.Machine,
+const clientTypes = [
+  AuthAdminClientType.web,
+  AuthAdminClientType.native,
+  AuthAdminClientType.machine,
 ]
 
 /**
- * Formats the application id to be lowercase and replace spaces with dashes
+ * Formats the client id to be lowercase and replace spaces with dashes
  */
-const formatApplicationId = (value: string) =>
+const formatClientId = (value: string) =>
   value.trim().toLowerCase().replace(/\s+/g, '-')
 
 /**
- * Parses the application id to be lowercase and replace spaces with dashes
+ * Parses the client id to be lowercase and replace spaces with dashes
  * Also makes sure that the prefix is always present and cannot be erased
  * @param prefix
  * @param value
  */
-const parseApplicationId = ({
+const parseClientId = ({
   prefix,
   value,
 }: {
@@ -67,7 +67,7 @@ const parseApplicationId = ({
 
   if (value.includes(prefix)) {
     value = value.replace(prefix, '')
-    return `${prefix}${formatApplicationId(value)}`
+    return `${prefix}${formatClientId(value)}`
   }
 
   const prefixWithoutSlash = prefix.split('/')[0]
@@ -77,7 +77,7 @@ const parseApplicationId = ({
   }
 
   // If user tries to erase the prefix, we add it back
-  return `${prefix}${formatApplicationId(value).split('/').pop()}`
+  return `${prefix}${formatClientId(value).split('/').pop()}`
 }
 
 type InputState = {
@@ -86,48 +86,47 @@ type InputState = {
 }
 
 /**
- * Create application form within a modal
+ * Create client form within a modal
  */
-export default function CreateApplication() {
+export default function CreateClient() {
   const navigate = useNavigate()
   const tenant = useRouteLoaderData(tenantLoaderId) as TenantLoaderResult
-  const actionData = useActionData() as CreateApplicationResult
+  const actionData = useActionData() as CreateClientResult
   const { formatMessage } = useLocale()
   const prefix = `${tenant.id}/`
-  const initialApplicationIdState: InputState = {
+  const initialClientIdState: InputState = {
     value: prefix,
     dirty: false,
   }
 
-  const [
-    applicationType,
-    setApplicationState,
-  ] = useState<AuthAdminApplicationType>(AuthAdminApplicationType.Web)
-  const [applicationIdState, setApplicationIdState] = useState<InputState>(
-    initialApplicationIdState,
+  const [clientType, setClientState] = useState<AuthAdminClientType>(
+    AuthAdminClientType.web,
+  )
+  const [clientIdState, setClientIdState] = useState<InputState>(
+    initialClientIdState,
   )
 
   const onNameChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    if (applicationIdState.dirty) return
+    if (clientIdState.dirty) return
 
-    setApplicationIdState({
-      ...applicationIdState,
-      value: parseApplicationId({
+    setClientIdState({
+      ...clientIdState,
+      value: parseClientId({
         value: e.target.value,
         prefix,
       }),
     })
   }
 
-  const onApplicationIdChange = (
+  const onClientIdChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const val = e.target.value
 
-    setApplicationIdState({
-      value: parseApplicationId({
+    setClientIdState({
+      value: parseClientId({
         value: val,
         prefix,
       }),
@@ -141,22 +140,22 @@ export default function CreateApplication() {
     return message ? formatMessage(message) : undefined
   }
 
-  const getRadioLabels = (applicationType: AuthAdminApplicationType) => {
-    switch (applicationType) {
-      case AuthAdminApplicationType.Web:
+  const getRadioLabels = (clientType: AuthAdminClientType) => {
+    switch (clientType) {
+      case AuthAdminClientType.web:
         return {
-          label: formatMessage(m.webApplicationsTitle),
-          subLabel: formatMessage(m.webApplicationsDescription),
+          label: formatMessage(m.webClientsTitle),
+          subLabel: formatMessage(m.webClientsDescription),
         }
-      case AuthAdminApplicationType.Native:
+      case AuthAdminClientType.native:
         return {
-          label: formatMessage(m.nativeApplicationsTitle),
-          subLabel: formatMessage(m.nativeApplicationsDescription),
+          label: formatMessage(m.nativeClientsTitle),
+          subLabel: formatMessage(m.nativeClientsDescription),
         }
-      case AuthAdminApplicationType.Machine:
+      case AuthAdminClientType.machine:
         return {
-          label: formatMessage(m.machineApplicationsTitle),
-          subLabel: formatMessage(m.machineApplicationsDescription),
+          label: formatMessage(m.machineClientsTitle),
+          subLabel: formatMessage(m.machineClientsDescription),
         }
     }
   }
@@ -172,9 +171,9 @@ export default function CreateApplication() {
 
   return (
     <Modal
-      id="create-application"
+      id="create-client"
       isVisible
-      title={formatMessage(m.createApplication)}
+      title={formatMessage(m.createClient)}
       onClose={onCancel}
     >
       {actionData?.globalError && (
@@ -205,14 +204,12 @@ export default function CreateApplication() {
 
             <Input
               type="text"
-              name="applicationId"
-              label={formatMessage(m.applicationId)}
+              name="clientId"
+              label={formatMessage(m.clientId)}
               size="sm"
-              value={applicationIdState.value}
-              onChange={onApplicationIdChange}
-              errorMessage={formatErrorMessage(
-                actionData?.errors?.applicationId,
-              )}
+              value={clientIdState.value}
+              onChange={onClientIdChange}
+              errorMessage={formatErrorMessage(actionData?.errors?.clientId)}
             />
           </Box>
         </Box>
@@ -255,21 +252,19 @@ export default function CreateApplication() {
         </Box>
         <Box marginTop={4}>
           <Box display="flex" flexDirection="column" rowGap={2}>
-            <Text variant="h4">{formatMessage(m.chooseApplicationType)}</Text>
-            {applicationTypes.map((type) => (
+            <Text variant="h4">{formatMessage(m.chooseClientType)}</Text>
+            {clientTypes.map((type) => (
               <Box width="full" key={type}>
                 <RadioButton
                   {...getRadioLabels(type)}
                   backgroundColor="blue"
-                  name="applicationType"
-                  id={`applicationType.${type}`}
+                  name="clientType"
+                  id={`clientType.${type}`}
                   value={type}
                   onChange={(e) =>
-                    setApplicationState(
-                      e.target.value as AuthAdminApplicationType,
-                    )
+                    setClientState(e.target.value as AuthAdminClientType)
                   }
-                  checked={applicationType === type}
+                  checked={clientType === type}
                   large
                 />
               </Box>
@@ -279,7 +274,7 @@ export default function CreateApplication() {
             <InputError
               id="applicationType"
               errorMessage={formatErrorMessage(
-                (actionData?.errors?.applicationType as unknown) as string,
+                (actionData?.errors?.clientType as unknown) as string,
               )}
             />
           )}

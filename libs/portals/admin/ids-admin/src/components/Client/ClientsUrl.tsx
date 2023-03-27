@@ -1,36 +1,45 @@
+import { ChangeEvent, useEffect, useState } from 'react'
+
 import { Input, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React, { useEffect, useState } from 'react'
+
 import { m } from '../../lib/messages'
 import ContentCard from './ContentCard'
-import { AuthApplicationApplicationUrl } from './Application.loader'
+import { AuthClient } from './Client.loader'
 
-interface ApplicationsUrlProps {
-  applicationUrls: AuthApplicationApplicationUrl
+interface ClientsUrlProps {
+  redirectUris: string[]
+  postLogoutRedirectUris: string[]
 }
-const ApplicationsUrl = ({ applicationUrls }: ApplicationsUrlProps) => {
+const ClientsUrl = ({
+  redirectUris,
+  postLogoutRedirectUris,
+}: ClientsUrlProps) => {
   const { formatMessage } = useLocale()
-  const [appUrls, setAppUrls] = useState(applicationUrls)
+  const [uris, setUris] = useState({
+    redirectUris,
+    postLogoutRedirectUris,
+  })
 
   // Generic onChange handler, name in input will need to match object name to change
   const onChangeURLS = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    setAppUrls((prev) => ({
+    setUris((prev) => ({
       ...prev,
       [event.target.name]: event.target.value.split(', '),
     }))
   }
 
   useEffect(() => {
-    setAppUrls(applicationUrls)
-  }, [applicationUrls])
+    setUris({ redirectUris, postLogoutRedirectUris })
+  }, [redirectUris, postLogoutRedirectUris])
 
   return (
     <ContentCard
-      title={formatMessage(m.applicationsURLS)}
+      title={formatMessage(m.clientUris)}
       onSave={(saveOnAllEnvironments) => {
-        console.log('saveOnAllEnvironments: ', saveOnAllEnvironments, appUrls)
+        console.log('saveOnAllEnvironments: ', saveOnAllEnvironments, uris)
       }}
     >
       <Stack space={3}>
@@ -44,7 +53,7 @@ const ApplicationsUrl = ({ applicationUrls }: ApplicationsUrlProps) => {
             rows={4}
             onChange={onChangeURLS}
             backgroundColor="blue"
-            value={appUrls.callbackUrls.join(', ')}
+            value={redirectUris.join(', ')}
             placeholder={formatMessage(m.callBackUrlPlaceholder)}
           />
           <Text variant="small">{formatMessage(m.callBackUrlDescription)}</Text>
@@ -59,29 +68,14 @@ const ApplicationsUrl = ({ applicationUrls }: ApplicationsUrlProps) => {
             rows={4}
             onChange={onChangeURLS}
             backgroundColor="blue"
-            value={appUrls.logoutUrls.join(', ')}
+            value={postLogoutRedirectUris.join(', ')}
             placeholder={formatMessage(m.logoutUrlPlaceholder)}
           />
           <Text variant="small">{formatMessage(m.logoutUrlDescription)}</Text>
-        </Stack>
-        <Stack space={1}>
-          <Input
-            name="cors"
-            type="text"
-            size="sm"
-            label={formatMessage(m.cors)}
-            textarea
-            rows={4}
-            onChange={onChangeURLS}
-            backgroundColor="blue"
-            value={appUrls.cors.join(', ')}
-            placeholder={formatMessage(m.corsPlaceholder)}
-          />
-          <Text variant="small">{formatMessage(m.corsDescription)}</Text>
         </Stack>
       </Stack>
     </ContentCard>
   )
 }
 
-export default ApplicationsUrl
+export default ClientsUrl

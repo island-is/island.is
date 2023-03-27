@@ -3,7 +3,7 @@ import { useLocale } from '@island.is/localization'
 import React, { useState } from 'react'
 import { m } from '../../lib/messages'
 import ContentCard from './ContentCard'
-import { AuthApplicationTranslation } from './Application.loader'
+import { AuthApplicationTranslation } from './Client.loader'
 
 interface TranslationsProps {
   translations: AuthApplicationTranslation[]

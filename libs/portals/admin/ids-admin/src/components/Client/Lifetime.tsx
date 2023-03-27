@@ -9,19 +9,28 @@ import React, { useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import ContentCard from './ContentCard'
-import { AuthApplicationLifeTime } from './Application.loader'
 
 interface LifetimeProps {
-  lifetime: AuthApplicationLifeTime
+  absoluteLifetime: number
+  inactivityExpiration: boolean
+  inactivityLifetime: number
 }
 
-const Lifetime = ({ lifetime }: LifetimeProps) => {
+const Lifetime = ({
+  absoluteLifetime,
+  inactivityLifetime,
+  inactivityExpiration,
+}: LifetimeProps) => {
   const { formatMessage } = useLocale()
-  const [lifeTimeCopy, setLifeTimeCopy] = useState(lifetime)
+  const [lifetime, setLifetime] = useState({
+    absoluteLifetime,
+    inactivityExpiration,
+    inactivityLifetime,
+  })
   const setLifeTimeLength = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    setLifeTimeCopy((prev) => ({
+    setLifetime((prev) => ({
       ...prev,
       [event.target.name]: +event.target.value,
     }))
@@ -39,22 +48,22 @@ const Lifetime = ({ lifetime }: LifetimeProps) => {
     }
     if (currentValue.get('inactivityExpiration')) {
       return (
-        currentValue.get('absoluteLifeTime') !==
-          originalValue.get('absoluteLifeTime') ||
-        currentValue.get('inactivityLifeTime') !==
-          originalValue.get('inactivityLifeTime')
+        currentValue.get('absoluteLifetime') !==
+          originalValue.get('absoluteLifetime') ||
+        currentValue.get('inactivityLifetime') !==
+          originalValue.get('inactivityLifetime')
       )
     } else {
       return (
-        currentValue.get('absoluteLifeTime') !==
-        originalValue.get('absoluteLifeTime')
+        currentValue.get('absoluteLifetime') !==
+        originalValue.get('absoluteLifetime')
       )
     }
   }
 
   return (
     <ContentCard
-      title={formatMessage(m.lifeTime)}
+      title={formatMessage(m.lifetime)}
       onSave={(saveOnAllEnvironments) => {
         return saveOnAllEnvironments
       }}
@@ -65,8 +74,8 @@ const Lifetime = ({ lifetime }: LifetimeProps) => {
           <Input
             size="sm"
             type="number"
-            name="absoluteLifeTime"
-            value={lifeTimeCopy.absoluteLifeTime}
+            name="absoluteLifetime"
+            value={lifetime.absoluteLifetime}
             backgroundColor="blue"
             onChange={setLifeTimeLength}
             label={formatMessage(m.absoluteLifetime)}
@@ -78,13 +87,13 @@ const Lifetime = ({ lifetime }: LifetimeProps) => {
         <Stack space={1}>
           <ToggleSwitchCheckbox
             label={formatMessage(m.inactivityExpiration)}
-            checked={lifeTimeCopy.inactivityExpiration}
+            checked={lifetime.inactivityExpiration}
             name="inactivityExpiration"
-            value={lifeTimeCopy.inactivityExpiration.toString()}
+            value={lifetime.inactivityExpiration.toString()}
             onChange={() =>
-              setLifeTimeCopy((prev) => ({
+              setLifetime((prev) => ({
                 ...prev,
-                inactivityExpiration: !lifeTimeCopy.inactivityExpiration,
+                inactivityExpiration: !lifetime.inactivityExpiration,
               }))
             }
           />
@@ -92,13 +101,13 @@ const Lifetime = ({ lifetime }: LifetimeProps) => {
             {formatMessage(m.inactivityExpirationDescription)}
           </Text>
         </Stack>
-        <Box hidden={!lifeTimeCopy.inactivityExpiration}>
+        <Box hidden={!lifetime.inactivityExpiration}>
           <Stack space={1}>
             <Input
               size="sm"
               type="number"
-              name="inactivityLifeTime"
-              value={lifeTimeCopy.inactivityLifeTime}
+              name="inactivityLifetime"
+              value={lifetime.inactivityLifetime}
               backgroundColor="blue"
               onChange={setLifeTimeLength}
               label={formatMessage(m.inactivityLifetime)}

@@ -21,20 +21,18 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { replaceParams } from '@island.is/react-spa/shared'
 import { IDSAdminPaths } from '../../lib/paths'
-import * as styles from './Applications.css'
-import { AuthApplicationsList } from './Applications.loader'
+import * as styles from './Clients.css'
+import { AuthClients } from './Clients.loader'
 import { useTenant } from '../../screens/Tenant/Tenant'
 
-const Applications = () => {
-  const originalApplications = useLoaderData() as AuthApplicationsList
+const Clients = () => {
+  const originalClients = useLoaderData() as AuthClients
   const { tenant } = useParams()
   const { formatMessage } = useLocale()
   const { setNavTitle } = useTenant()
   const navigate = useNavigate()
 
-  const [applications, setApplications] = useState<AuthApplicationsList>(
-    originalApplications,
-  )
+  const [clients, setClients] = useState<AuthClients>(originalClients)
   const [inputSearchValue, setInputSearchValue] = useState<string>('')
 
   useEffect(() => {
@@ -45,25 +43,25 @@ const Applications = () => {
     setInputSearchValue(value)
 
     if (value.length > 0) {
-      const filteredList = applications.filter((application: any) => {
+      const filteredList = clients.filter((client: any) => {
         return (
-          application?.defaultEnvironment.displayName[0].value
+          client?.defaultEnvironment.displayName[0].value
             .toLowerCase()
             .includes(value.toLowerCase()) ||
-          application.applicationId.toLowerCase().includes(value.toLowerCase())
+          client.applicationId.toLowerCase().includes(value.toLowerCase())
         )
       })
 
-      setApplications(filteredList)
+      setClients(filteredList)
     } else {
-      setApplications(originalApplications)
+      setClients(originalClients)
     }
   }
 
-  const openCreateApplicationModal = () => {
+  const openCreateClientModal = () => {
     navigate(
       replaceParams({
-        href: IDSAdminPaths.IDSAdminApplicationCreate,
+        href: IDSAdminPaths.IDSAdminClientCreate,
         params: { tenant },
       }),
     )
@@ -80,15 +78,15 @@ const Applications = () => {
           alignItems={'center'}
         >
           <Stack space={2}>
-            <Text variant={'h2'}>{formatMessage(m.applications)}</Text>
+            <Text variant={'h2'}>{formatMessage(m.clients)}</Text>
             <Text variant={'default'}>
-              {formatMessage(m.applicationsDescription)}
+              {formatMessage(m.clientsDescription)}
             </Text>
           </Stack>
           {withCreateButton && (
             <Box>
-              <Button size={'small'} onClick={openCreateApplicationModal}>
-                {formatMessage(m.createApplication)}
+              <Button size={'small'} onClick={openCreateClientModal}>
+                {formatMessage(m.createClient)}
               </Button>
             </Box>
           )}
@@ -97,7 +95,7 @@ const Applications = () => {
     )
   }
 
-  return applications.length === 0 ? (
+  return clients.length === 0 ? (
     <GridContainer>
       {getHeader(false)}
       <GridRow>
@@ -113,11 +111,11 @@ const Applications = () => {
         >
           <Text variant="h3">{formatMessage(m.noApplications)}</Text>
           <Text paddingTop="gutter">
-            {formatMessage(m.noApplicationsDescription)}
+            {formatMessage(m.noClientsDescription)}
           </Text>
           <Box marginTop={6}>
-            <Button size="small" onClick={openCreateApplicationModal}>
-              {formatMessage(m.createApplication)}
+            <Button size="small" onClick={openCreateClientModal}>
+              {formatMessage(m.createClient)}
             </Button>
           </Box>
           <Box marginTop="gutter">
@@ -156,15 +154,15 @@ const Applications = () => {
               }}
             ></Filter>
           </GridRow>
-          {applications.map((item) => (
-            <GridRow key={`applications-${item.applicationId}`}>
+          {clients.map((item) => (
+            <GridRow key={`clients-${item.clientId}`}>
               <Link
                 className={styles.fill}
                 to={replaceParams({
-                  href: IDSAdminPaths.IDSAdminApplication,
+                  href: IDSAdminPaths.IDSAdminClient,
                   params: {
                     tenant,
-                    application: item.applicationId,
+                    client: item.clientId,
                   },
                 })}
               >
@@ -196,7 +194,7 @@ const Applications = () => {
                       >
                         <Box marginRight={1} marginBottom={1}>
                           <Tag variant="blue" outlined>
-                            {item.applicationType}
+                            {item.clientType}
                           </Tag>
                         </Box>
                       </Box>
@@ -213,7 +211,7 @@ const Applications = () => {
                       >
                         {item.availableEnvironments.map((tag) => (
                           <Box
-                            key={`applications-${tag}`}
+                            key={`clients-${tag}`}
                             marginLeft={1}
                             marginBottom={1}
                           >
@@ -237,16 +235,13 @@ const Applications = () => {
                           {item.defaultEnvironment.displayName[0].value}
                         </Text>
                         <Text variant="default">
-                          {item.defaultEnvironment.name}
+                          {item.defaultEnvironment.clientId}
                         </Text>
                       </Box>
                       <Button
                         title={formatMessage(m.change)}
                         icon="pencil"
                         variant="utility"
-                        onClick={(e) => {
-                          e.preventDefault()
-                        }}
                       >
                         <Text variant="eyebrow">{formatMessage(m.change)}</Text>
                       </Button>
@@ -263,4 +258,4 @@ const Applications = () => {
   )
 }
 
-export default Applications
+export default Clients

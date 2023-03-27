@@ -7,14 +7,14 @@ import {
   ValidateFormDataResult,
 } from '@island.is/react-spa/shared'
 import {
-  AuthAdminApplicationType,
+  AuthAdminClientType,
   AuthAdminEnvironment,
 } from '@island.is/api/schema'
 import {
-  CreateApplicationDocument,
-  CreateApplicationMutation,
-  CreateApplicationMutationVariables,
-} from './CreateApplication.generated'
+  CreateClientDocument,
+  CreateClientMutation,
+  CreateClientMutationVariables,
+} from './CreateClient.generated'
 import { redirect } from 'react-router-dom'
 import { IDSAdminPaths } from '../../../lib/paths'
 
@@ -22,7 +22,7 @@ import { IDSAdminPaths } from '../../../lib/paths'
  * Validates that the applicationId is prefixed with the tenant and that it matches the regex
  * Value can only contain alphanumeric characters, hyphens, underscores, periods and forward slashes.
  */
-export const validateApplicationId = ({
+export const validateClientId = ({
   prefix,
   value,
 }: {
@@ -33,34 +33,34 @@ export const validateApplicationId = ({
 const schema = z
   .object({
     displayName: z.string().nonempty('errorDisplayName'),
-    applicationId: z.string(),
+    clientId: z.string(),
     tenant: z.string(),
     environments: zfd.repeatable(
       z.array(z.nativeEnum(AuthAdminEnvironment)).nonempty('errorEnvironment'),
     ),
-    applicationType: z.nativeEnum(AuthAdminApplicationType, {
-      required_error: 'errorApplicationType',
+    clientType: z.nativeEnum(AuthAdminClientType, {
+      required_error: 'errorClientType',
     }),
   })
   // First refine is to check if the applicationId is prefixed with the tenant and is empty
-  .refine((data) => `${data.tenant}/` !== data.applicationId, {
-    message: 'errorApplicationId',
-    path: ['applicationId'],
+  .refine((data) => `${data.tenant}/` !== data.clientId, {
+    message: 'errorClientId',
+    path: ['clientId'],
   })
   // Second refine is to check if the applicationId is prefixed with the tenant and matches the regex
   .refine(
     (data) =>
-      validateApplicationId({
+      validateClientId({
         prefix: data.tenant,
-        value: data.applicationId,
+        value: data.clientId,
       }),
     {
-      message: 'errorApplicationIdRegex',
-      path: ['applicationId'],
+      message: 'errorClientIdRegex',
+      path: ['clientId'],
     },
   )
 
-export type CreateApplicationResult =
+export type CreateClientResult =
   | (ValidateFormDataResult<typeof schema> & {
       /**
        * Global error message if the mutation fails
@@ -69,7 +69,7 @@ export type CreateApplicationResult =
     })
   | undefined
 
-export const createApplicationAction: WrappedActionFn = ({ client }) => async ({
+export const createClientAction: WrappedActionFn = ({ client }) => async ({
   request,
 }) => {
   const result = await validateFormData({ request, schema })
@@ -80,18 +80,15 @@ export const createApplicationAction: WrappedActionFn = ({ client }) => async ({
 
   const { data } = result
   try {
-    await client.mutate<
-      CreateApplicationMutation,
-      CreateApplicationMutationVariables
-    >({
-      mutation: CreateApplicationDocument,
+    await client.mutate<CreateClientMutation, CreateClientMutationVariables>({
+      mutation: CreateClientDocument,
       variables: {
         input: {
           displayName: data.displayName,
-          applicationId: data.applicationId,
+          clientId: data.clientId,
           environments: data.environments,
           tenantId: data.tenant,
-          applicationType: data.applicationType,
+          clientType: data.clientType,
         },
       },
     })
@@ -100,10 +97,10 @@ export const createApplicationAction: WrappedActionFn = ({ client }) => async ({
 
     return redirect(
       replaceParams({
-        href: IDSAdminPaths.IDSAdminApplication,
+        href: IDSAdminPaths.IDSAdminClient,
         params: {
           tenant: data?.tenant,
-          application: data?.applicationId,
+          client: data?.clientId,
         },
       }),
     )

@@ -1,4 +1,4 @@
-import { validateApplicationId } from './CreateApplication.action'
+import { validateClientId } from './CreateClient.action'
 
 const validValues = [
   '@island-is/ids-admin',
@@ -16,10 +16,10 @@ const invalidValues = [
   '@island-is/123/admin__front-end.1',
 ]
 
-describe('CreateApplicationAction', () => {
-  it('Should be valid application id', () => {
+describe('CreateClientAction', () => {
+  it('Should be valid client id', () => {
     validValues.forEach((value) => {
-      const valid = validateApplicationId({
+      const valid = validateClientId({
         prefix: '@island-is',
         value,
       })
@@ -27,9 +27,9 @@ describe('CreateApplicationAction', () => {
     })
   })
 
-  it('Should be invalid application id', () => {
+  it('Should be invalid client id', () => {
     invalidValues.forEach((value) => {
-      const valid = validateApplicationId({
+      const valid = validateClientId({
         prefix: '@island-is',
         value,
       })
