@@ -336,6 +336,7 @@ export const JudgeOverview: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`}
           onNextButtonClick={() =>
             handleNavigationTo(

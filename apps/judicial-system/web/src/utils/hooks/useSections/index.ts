@@ -396,10 +396,8 @@ const useSections = (
                       )
                   : undefined,
             },
-            ...((features.includes(Feature.INDICTMENT_ROUTE) ||
-              user?.name === 'Árni Bergur Sigurðsson') &&
-            workingCase.type === CaseType.Indictment &&
-            isTrafficViolationCase(workingCase.indictmentSubtypes)
+            ...(workingCase.type === CaseType.Indictment &&
+            isTrafficViolationCase(workingCase, features, user)
               ? [
                   {
                     name: formatMessage(

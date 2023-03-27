@@ -265,6 +265,11 @@ export const titles = {
       description:
         'Notaður sem titill fyrir skjá sem birtir upplýsingar um lokið mál',
     }),
+    appealToCourtOfAppeals: defineMessage({
+      id: 'judicial.system.core:titles.shared.appeal_to_court_of_appeals',
+      defaultMessage: 'Kæra til Landsréttar - Réttarvörslugátt',
+      description: 'Notaður sem titill fyrir Kæra til Landsréttar skjá',
+    }),
   },
   admin: {
     users: defineMessage({
