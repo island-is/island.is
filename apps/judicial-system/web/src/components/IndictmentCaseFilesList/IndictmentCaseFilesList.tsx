@@ -69,7 +69,8 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
 
   const isTrafficViolationCaseCheck =
     (features.includes(Feature.INDICTMENT_ROUTE) ||
-      user?.name === 'Árni Bergur Sigurðsson' ||
+      user?.institution?.id === '26136a67-c3d6-4b73-82e2-3265669a36d3' || // Lögreglustjórinn á Suðurlandi
+      user?.institution?.id === '53581d7b-0591-45e5-9cbe-c96b2f82da85' || // Lögreglustjórinn á höfuðborgarsvæðinu
       user?.name === 'Ásmundur Jónsson') &&
     isTrafficViolationCase(workingCase.indictmentSubtypes)
 
