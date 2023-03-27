@@ -222,6 +222,18 @@ export const indicatorsContainer = style(
   'indicatorsContainer',
 )
 
+export const indicatorsContainerDisabled = style(
+  {
+    pointerEvents: 'none',
+    selectors: {
+      [`${wrapper} &`]: {
+        display: 'none',
+      },
+    },
+  },
+  'indicatorsContainer',
+)
+
 export const indicatorContainerWithLabel = style(
   {
     selectors: {

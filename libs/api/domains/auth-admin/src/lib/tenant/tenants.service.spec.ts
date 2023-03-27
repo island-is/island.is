@@ -6,6 +6,7 @@ import {
   AdminProdApi,
   AdminStagingApi,
   AuthAdminApiClientConfig,
+  AuthAdminApiClientModule,
   TenantDto,
 } from '@island.is/clients/auth/admin-api'
 import { Environment } from '@island.is/shared/types'
@@ -15,11 +16,12 @@ import {
 } from '@island.is/testing/fixtures'
 import { TestApp, testServer, useAuth } from '@island.is/testing/nest'
 
-import { AuthAdminModule } from '../auth-admin.module'
 import { TenantsPayload } from './dto/tenants.payload'
 import { TenantsService } from './tenants.service'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ConfigType } from '@island.is/nest/config'
+import { TenantResolver } from './tenant.resolver'
+import { TenantEnvironmentResolver } from './tenant-environment.resolver'
 
 const mockTenants = {
   tenant1: {
@@ -73,12 +75,15 @@ const mockAdminProdApi = createMockAdminApi([mockTenants.tenant1])
 
 @Module({
   imports: [
-    AuthAdminModule,
+    AuthAdminApiClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [AuthAdminApiClientConfig],
     }),
   ],
+  controllers: [],
+  providers: [TenantResolver, TenantEnvironmentResolver, TenantsService],
+  exports: [TenantResolver, TenantEnvironmentResolver],
 })
 class TestModule {}
 
@@ -300,6 +305,7 @@ describe('TenantsService', () => {
       const mockLogger = {
         error: jest.fn(),
       }
+
       const authAdminClientConfig: ConfigType<
         typeof AuthAdminApiClientConfig
       > = {
