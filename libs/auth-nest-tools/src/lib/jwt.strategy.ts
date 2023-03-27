@@ -9,15 +9,17 @@ import { createKeyProvider } from './create-key-provider'
 
 const AUTH_BODY_FIELD_NAME = '__accessToken'
 
+const jwtCookieExtractor = ExtractJwt.fromExtractors([
+  ExtractJwt.fromAuthHeaderAsBearerToken(),
+  ExtractJwt.fromBodyField(AUTH_BODY_FIELD_NAME),
+])
+
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private config: AuthConfig) {
     super({
       secretOrKeyProvider: createKeyProvider(config.issuer),
-      jwtFromRequest: ExtractJwt.fromExtractors([
-        ExtractJwt.fromAuthHeaderAsBearerToken(),
-        ExtractJwt.fromBodyField(AUTH_BODY_FIELD_NAME),
-      ]),
+      jwtFromRequest: jwtCookieExtractor,
       audience: config.audience,
       issuer: config.issuer,
       algorithms: ['RS256'],
@@ -47,7 +49,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       nationalId: payload.nationalId,
       scope: this.parseScopes(payload.scope),
       client: payload.client_id,
-      authorization: request.headers.authorization ?? '',
+      authorization: jwtCookieExtractor(request) ?? '',
       delegationType: payload.delegationType,
       actor: actor && {
         nationalId: actor.nationalId,
