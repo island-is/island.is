@@ -6,13 +6,16 @@ import { TagVariant } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseCustodyRestrictions,
+  CaseFileCategory,
+  Feature,
   Gender,
   IndictmentSubtype,
-  IndictmentSubtypeMap,
+  isCourtRole,
   Notification,
   NotificationType,
 } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { User } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export const getShortGender = (gender?: Gender): string => {
   switch (gender) {
@@ -86,16 +89,31 @@ export const createCaseResentExplanation = (
 }
 
 export const isTrafficViolationCase = (
-  indictmentSubtypes: IndictmentSubtypeMap | undefined,
+  workingCase: Case,
+  features: Feature[],
+  user?: User,
 ): boolean => {
-  if (!indictmentSubtypes) {
+  if (!workingCase.indictmentSubtypes) {
     return false
   }
 
-  const flatIndictmentSubtypes = flatten(Object.values(indictmentSubtypes))
+  const flatIndictmentSubtypes = flatten(
+    Object.values(workingCase.indictmentSubtypes),
+  )
 
   return Boolean(
-    flatIndictmentSubtypes.length > 0 &&
+    (features.includes(Feature.INDICTMENT_ROUTE) ||
+      user?.institution?.id === '26136a67-c3d6-4b73-82e2-3265669a36d3' || // Lögreglustjórinn á Suðu
+      user?.institution?.id === '53581d7b-0591-45e5-9cbe-c96b2f82da85' || // Lögreglustjórinn á höfuðborgarsvæðinu
+      user?.name === 'Ásmundur Jónsson' ||
+      (user && isCourtRole(user.role))) &&
+      !(
+        workingCase.caseFiles &&
+        workingCase.caseFiles.find(
+          (file) => file.category === CaseFileCategory.INDICTMENT,
+        )
+      ) &&
+      flatIndictmentSubtypes.length > 0 &&
       flatIndictmentSubtypes.every(
         (val) => val === IndictmentSubtype.TRAFFIC_VIOLATION,
       ),
