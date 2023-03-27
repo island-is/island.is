@@ -16,8 +16,8 @@ export class TenantResolver {
   constructor(private readonly tenantsService: TenantsService) {}
 
   @Query(() => Tenant, { name: 'authAdminTenant' })
-  getTenant(@Args('id') id: string) {
-    return this.tenantsService.getTenant(id)
+  getTenant(@Args('id') id: string, @CurrentUser() user: User) {
+    return this.tenantsService.getTenantById(id, user)
   }
 
   @Query(() => TenantsPayload, { name: 'authAdminTenants' })
