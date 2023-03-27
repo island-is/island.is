@@ -24,44 +24,6 @@ export class TenantsService extends MultiEnvironmentService {
     return undefined
   }
 
-  async getTenant(id: string): Promise<Tenant> {
-    return {
-      id: id,
-      environments: [
-        {
-          name: id,
-          environment: Environment.Production,
-          displayName: [
-            {
-              locale: 'is',
-              value: 'Ísland.is stjórnborð',
-            },
-          ],
-        },
-        {
-          name: id,
-          environment: Environment.Staging,
-          displayName: [
-            {
-              locale: 'is',
-              value: 'Ísland.is stjórnborð',
-            },
-          ],
-        },
-        {
-          name: id,
-          environment: Environment.Development,
-          displayName: [
-            {
-              locale: 'is',
-              value: 'Ísland.is stjórnborð',
-            },
-          ],
-        },
-      ],
-    }
-  }
-
   async getTenants(user: User): Promise<TenantsPayload> {
     const tenants = await Promise.all([
       this.adminDevApiWithAuth(user)
@@ -112,5 +74,39 @@ export class TenantsService extends MultiEnvironmentService {
       totalCount: tenantArray.length,
       pageInfo: { hasNextPage: false },
     }
+  }
+
+  async getTenantById(id: string, user: User): Promise<Tenant> {
+    const tenants = await Promise.all([
+      this.adminDevApiWithAuth(user)
+        ?.meTenantsControllerFindById({ tenantId: id })
+        .catch(this.handleError.bind(this)),
+      this.adminStagingApiWithAuth(user)
+        ?.meTenantsControllerFindById({ tenantId: id })
+        .catch(this.handleError.bind(this)),
+      this.adminProdApiWithAuth(user)
+        ?.meTenantsControllerFindById({ tenantId: id })
+        .catch(this.handleError.bind(this)),
+    ])
+
+    const tenantMap: TenantEnvironment[] = []
+
+    for (const [index, env] of [
+      Environment.Development,
+      Environment.Staging,
+      Environment.Production,
+    ].entries()) {
+      if (tenants[index]) {
+        tenantMap.push({
+          name: tenants[index]?.name ?? '',
+          environment: env,
+          displayName: tenants[index]?.displayName ?? [],
+        })
+      }
+    }
+    return {
+      id: id,
+      environments: tenantMap,
+    } as Tenant
   }
 }
