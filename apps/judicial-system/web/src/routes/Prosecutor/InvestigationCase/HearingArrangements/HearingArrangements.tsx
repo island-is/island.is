@@ -130,14 +130,14 @@ const HearingArrangements = () => {
     <PageLayout
       workingCase={workingCase}
       activeSection={
-        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
+        workingCase.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={
         RestrictionCaseProsecutorSubsections.HEARING_ARRANGEMENTS
       }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
-      isExtension={workingCase?.parentCase && true}
+      isExtension={workingCase.parentCase && true}
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
