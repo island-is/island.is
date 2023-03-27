@@ -34,20 +34,20 @@ export const Substance: React.FC<Props> = (props) => {
       key={`substance-${substance}`}
       name={substance}
       autoComplete="off"
-      label={`${formatMessage(substanceEnum[substance])} ${
-        [SubstanceEnum.GABAPENTIN, SubstanceEnum.PREGABALIN].includes(substance)
-          ? '(µg/ml)'
-          : '(ng/ml)'
-      }`}
+      label={`${formatMessage(substanceEnum[substance])} ${[SubstanceEnum.GABAPENTIN, SubstanceEnum.PREGABALIN].includes(substance)
+        ? '(µg/ml)'
+        : '(ng/ml)'
+        }`}
       placeholder={'0'}
       size="xs"
       value={substanceAmount}
-      icon={{
+      buttons={[{
         name: 'close',
         onClick: () => {
           onDelete(substance)
         },
-      }}
+        label: 'Eyða'
+      }]}
       onChange={(event) => {
         removeErrorMessageIfValid(
           ['empty'],
