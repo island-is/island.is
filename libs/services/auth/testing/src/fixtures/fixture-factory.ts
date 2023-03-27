@@ -1,10 +1,9 @@
-import faker from 'faker'
-import addYears from 'date-fns/addYears'
 import { getModelToken } from '@nestjs/sequelize'
+import addYears from 'date-fns/addYears'
+import startOfDay from 'date-fns/startOfDay'
+import faker from 'faker'
 import { Model } from 'sequelize'
 
-import { TestApp } from '@island.is/testing/nest'
-import { createNationalId } from '@island.is/testing/fixtures'
 import {
   ApiScope,
   ApiScopeGroup,
@@ -19,8 +18,18 @@ import {
   Delegation,
   DelegationScope,
   Domain,
+  IdentityResource,
   Translation,
 } from '@island.is/auth-api-lib'
+import { createNationalId } from '@island.is/testing/fixtures'
+import { TestApp } from '@island.is/testing/nest'
+
+import { CreateApiScopeGroup } from './apiScopeGroup.fixture'
+import {
+  CreateClient,
+  createClient as createClientFixture,
+} from './client.fixture'
+import { CreateDomain } from './domain.fixture'
 import {
   CreateApiScope,
   CreateApiScopeUserAccess,
@@ -28,14 +37,8 @@ import {
   CreateClientUri,
   CreateClientClaim,
   CreateClientGrantType,
+  CreateIdentityResource,
 } from './types'
-import startOfDay from 'date-fns/startOfDay'
-import { CreateDomain } from './domain.fixture'
-import { CreateApiScopeGroup } from './apiScopeGroup.fixture'
-import {
-  CreateClient,
-  createClient as createClientFixture,
-} from './client.fixture'
 
 export class FixtureFactory {
   constructor(private app: TestApp) {}
@@ -73,6 +76,22 @@ export class FixtureFactory {
     scope: Partial<ClientAllowedScope>,
   ): Promise<ClientAllowedScope> {
     return this.get(ClientAllowedScope).create(scope)
+  }
+
+  async createIdentityResource(
+    identityResource: CreateIdentityResource = {},
+  ): Promise<IdentityResource> {
+    return this.get(IdentityResource).create({
+      enabled: identityResource.enabled ?? true,
+      name: identityResource.name ?? faker.random.word(),
+      displayName: identityResource.displayName ?? faker.random.word(),
+      description: identityResource.description ?? faker.random.word(),
+      showInDiscoveryDocument: identityResource.showInDiscoveryDocument ?? true,
+      required: identityResource.required ?? false,
+      emphasize: identityResource.emphasize ?? false,
+      automaticDelegationGrant:
+        identityResource.automaticDelegationGrant ?? false,
+    })
   }
 
   async createClientRedirectUri({

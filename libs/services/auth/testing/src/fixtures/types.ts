@@ -1,4 +1,5 @@
 import { Optional } from 'sequelize'
+
 import {
   ApiScopesDTO,
   ApiScopeUserAccessDTO,
@@ -6,6 +7,7 @@ import {
   ClientGrantType,
   DelegationDTO,
   DelegationScopeDTO,
+  IdentityResource,
 } from '@island.is/auth-api-lib'
 
 export type CreateClientClaim = Optional<
@@ -18,6 +20,7 @@ export type CreateClientGrantType = Optional<
   'grantType'
 >
 export type CreateClientUri = { clientId: string; uri?: string }
+export type CreateIdentityResource = Partial<IdentityResource>
 export type CreateApiScope = Partial<ApiScopesDTO>
 export type CreateApiScopeUserAccess = ApiScopeUserAccessDTO
 export type CreateCustomDelegationScope = Optional<

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/javascript">
+      parcelRequire = (function (e, r, t, n) {
+        var o,
+          i = 'function' == typeof parcelRequire && parcelRequire,
+          u = 'function' == typeof require && require
+        function f(t, n) {
+          if (!r[t]) {
+            if (!e[t]) {
+              var o = 'function' == typeof parcelRequire && parcelRequire
+              if (!n && o) return o(t, !0)
+              if (i) return i(t, !0)
+              if (u && 'string' == typeof t) return u(t)
+              var c = new Error("Cannot find module '" + t + "'")
+              throw ((c.code = 'MODULE_NOT_FOUND'), c)
+            }
+            ;(p.resolve = function (r) {
+              return e[t][1][r] || r
+            }),
+              (p.cache = {})
+            var a = (r[t] = new f.Module(t))
+            e[t][0].call(a.exports, p, a, a.exports, this)
+          }
+          return r[t].exports
+          function p(e) {
+            return f(p.resolve(e))
+          }
+        }
+        ;(f.isParcelRequire = !0),
+          (f.Module = function (e) {
+            ;(this.id = e), (this.bundle = f), (this.exports = {})
+          }),
+          (f.modules = e),
+          (f.cache = r),
+          (f.parent = i),
+          (f.register = function (r, t) {
+            e[r] = [
+              function (e, r) {
+                r.exports = t
+              },
+              {},
+            ]
+          })
+        for (var c = 0; c < t.length; c++)
+          try {
+            f(t[c])
+          } catch (e) {
+            o || (o = e)
+          }
+        if (t.length) {
+          var a = f(t[t.length - 1])
+          'object' == typeof exports && 'undefined' != typeof module
+            ? (module.exports = a)
+            : 'function' == typeof define &&
+              define.amd &&
+              define(function () {
+                return a
+              })
+        }
+        if (((parcelRequire = f), o)) throw o
+        return f
+      })(
+        {
+          zo2T: [
+            function (e, r, t) {
+              r.exports = 'ce8d93a16385590b555954a5f69400ca.tsx'
+            },
+            {},
+          ],
+        },
+        {},
+        ['zo2T'],
+      )
+    </script>
+  </body>
+</html>

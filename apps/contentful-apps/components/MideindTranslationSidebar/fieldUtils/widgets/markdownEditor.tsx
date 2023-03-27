@@ -99,7 +99,7 @@ function linesToStringHelper(node: MarkdownNode, deep = false): string {
     return node.left as string
   } else {
     if (node.left) {
-      let leftValue =
+      const leftValue =
         node.type === 'formatting'
           ? `${deep ? ' ' : ''}${node.symbol}${linesToStringHelper(
               node.left as MarkdownNode,
@@ -126,7 +126,7 @@ function linesToStringHelper(node: MarkdownNode, deep = false): string {
 
 // Generates markdown string from a left-right markdown tree
 function linesToString(lines: MarkdownNode[]) {
-  let results = []
+  const results = []
   for (const tree of lines) {
     results.push(linesToStringHelper(tree))
   }
@@ -202,7 +202,9 @@ function createValue(texts: string[], scaffold: string) {
   return linesToString(lines)
 }
 
-export default {
+const functions = {
   extractText,
   createValue,
 }
+
+export default functions
