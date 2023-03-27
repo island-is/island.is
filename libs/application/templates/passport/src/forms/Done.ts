@@ -4,11 +4,7 @@ import {
   buildMultiField,
 } from '@island.is/application/core'
 import { Application, Form, FormModes } from '@island.is/application/types'
-import {
-  ChildsPersonalInfo,
-  Passport,
-  PersonalInfo,
-} from '../lib/constants'
+import { ChildsPersonalInfo, Passport, PersonalInfo } from '../lib/constants'
 import { m } from '../lib/messages'
 
 export const Done: Form = buildForm({
