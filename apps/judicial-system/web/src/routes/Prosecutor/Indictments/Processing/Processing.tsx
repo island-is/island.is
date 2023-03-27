@@ -52,11 +52,11 @@ const Processing: React.FC = () => {
   const { features } = useContext(FeatureContext)
   const { user } = useContext(UserContext)
 
-  const isTrafficViolationCaseCheck =
-    (features.includes(Feature.INDICTMENT_ROUTE) ||
-      user?.name === 'Árni Bergur Sigurðsson' ||
-      user?.name === 'Ásmundur Jónsson') &&
-    isTrafficViolationCase(workingCase.indictmentSubtypes)
+  const isTrafficViolationCaseCheck = isTrafficViolationCase(
+    workingCase,
+    features,
+    user,
+  )
 
   const handleCourtChange = (court: Institution) => {
     if (workingCase) {
