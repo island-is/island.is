@@ -1,13 +1,10 @@
-import React, { useEffect } from 'react'
-import { Button, Spinner } from '@contentful/forma-36-react-components'
+import { useEffect, useState } from 'react'
+import { Button, Spinner } from '@contentful/f36-components'
+import { TextIcon } from '@contentful/f36-icons'
 import { SidebarExtensionSDK } from '@contentful/app-sdk'
-import { useState } from 'react'
-import { extractField, populateField } from '../fieldUtils/index'
-import { translateTexts, sendTexts } from '../api'
-
-interface SidebarProps {
-  sdk: SidebarExtensionSDK
-}
+import { useSDK } from '@contentful/react-apps-toolkit'
+import { extractField, populateField } from './fieldUtils/index'
+import { translateTexts, sendTexts } from './api'
 
 interface SysVersion {
   id: string
@@ -22,7 +19,7 @@ const hasPublishedDiff = (
   publishedVersion: number,
 ): boolean => {
   return (
-    (!!sys.publishedVersion && sys.publishedVersion != publishedVersion) ||
+    (!!sys.publishedVersion && sys.publishedVersion !== publishedVersion) ||
     sys.publishedCounter === 1
   )
 }
@@ -39,12 +36,12 @@ const handleClick = async (sdk: any) => {
 
   // 1 - Gather
   let texts: string[] = [] // Untranslated text collection
-  let lines: any[] = [] // Keeps track of the lines of texts per field
+  const lines: any[] = [] // Keeps track of the lines of texts per field
 
   for (const key of keys) {
     const field = fields[key]
     const eInterface = sdk.editor.editorInterface
-    let extractedTexts = extractField(field, eInterface) ?? []
+    const extractedTexts = extractField(field, eInterface) ?? []
 
     texts = [...texts, ...extractedTexts]
     lines.push(extractedTexts.length)
@@ -62,33 +59,39 @@ const handleClick = async (sdk: any) => {
     const eInterface = sdk.editor.editorInterface
 
     // Take the correct amount of translated texts from the translation pool
-    let stride = lines.pop() | 0
+    const stride = lines.pop() | 0
 
     if (stride === 0) {
       continue
     }
 
-    let translatedFieldTexts = translatedTexts.splice(-stride)
+    const translatedFieldTexts = translatedTexts.splice(-stride)
 
     populateField(field, eInterface, translatedFieldTexts)
   }
 }
 
-const Sidebar = (props: SidebarProps) => {
+export const MideindTranslationSidebar = () => {
+  const sdk = useSDK<SidebarExtensionSDK>()
+
   const [loading, setLoading] = useState(false)
   const [publishedVersion, setPublishedVersion] = useState(
-    props.sdk.entry.getSys().publishedVersion,
+    sdk?.entry?.getSys()?.publishedVersion as number,
   )
+
+  useEffect(() => {
+    setPublishedVersion(sdk.entry.getSys().publishedVersion as number)
+  }, [sdk.entry])
 
   const handlePublished = async (ref: any) => {
     if (isPublished(ref) && hasPublishedDiff(ref, publishedVersion)) {
-      const fields = props.sdk.entry.fields
+      const fields = sdk.entry.fields
       const keys = Object.keys(fields)
 
       // A reference for Miðeind
       // {content-id}:{versionNumberAtTranslateTime}
-      const translationReference = `${props.sdk.entry.getSys().id}:${
-        parseInt(publishedVersion, 10) - 1
+      const translationReference = `${sdk.entry.getSys().id}:${
+        parseInt(String(publishedVersion), 10) - 1
       }`
 
       let iceTexts: string[] = []
@@ -96,16 +99,16 @@ const Sidebar = (props: SidebarProps) => {
 
       for (const key of keys) {
         const field = fields[key]
-        const eInterface = props.sdk.editor.editorInterface
-        let iceExtractedTexts = extractField(field, eInterface) ?? []
+        const eInterface = sdk.editor.editorInterface
+        const iceExtractedTexts = extractField(field, eInterface) ?? []
 
         iceTexts = [...iceTexts, ...iceExtractedTexts]
       }
 
       for (const key of keys) {
         const field = fields[key]
-        const eInterface = props.sdk.editor.editorInterface
-        let enExtractedTexts = extractField(field, eInterface, 'en') ?? []
+        const eInterface = sdk.editor.editorInterface
+        const enExtractedTexts = extractField(field, eInterface, 'en') ?? []
 
         enTexts = [...enTexts, ...enExtractedTexts]
       }
@@ -115,27 +118,25 @@ const Sidebar = (props: SidebarProps) => {
   }
 
   useEffect(() => {
-    props.sdk.entry.onSysChanged(handlePublished)
+    sdk.entry.onSysChanged(handlePublished)
   }, [])
 
   return (
-    <>
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
       <Button
-        icon="Text"
-        buttonType="positive"
-        disabled={loading}
+        startIcon={<TextIcon />}
+        color="white"
+        variant="positive"
+        isDisabled={loading}
         style={{ width: '100%' }}
         onClick={async () => {
           setLoading(true)
-          await handleClick(props.sdk)
+          await handleClick(sdk)
           setLoading(false)
         }}
       >
-        {loading ? 'Translating...' : 'Translate to English'}
+        {loading ? <Spinner /> : 'Translate to English'}
       </Button>
-      {loading && <Spinner />}
-    </>
+    </div>
   )
 }
-
-export default Sidebar
