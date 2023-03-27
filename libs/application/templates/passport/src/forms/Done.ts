@@ -8,7 +8,6 @@ import {
   ChildsPersonalInfo,
   Passport,
   PersonalInfo,
-  SubmitResponse,
 } from '../lib/constants'
 import { m } from '../lib/messages'
 
@@ -30,16 +29,6 @@ export const Done: Form = buildForm({
         },
       }),
       children: [
-        // TODO: Add back in once preregistration service starts returing an orederID
-        // buildDescriptionField({
-        //   id: 'applicationNr',
-        //   title: m.applicationCompleteNumber,
-        //   titleVariant: 'h3',
-        //   description: (application: Application) =>
-        //     (application.externalData.submitPassportApplication
-        //       ?.data as SubmitResponse)?.orderId ?? '',
-        //   space: 'gutter',
-        // }),
         buildDescriptionField({
           id: 'nextStepsDescription',
           title: m.applicationCompleteNextSteps,
@@ -48,7 +37,6 @@ export const Done: Form = buildForm({
             (application.answers.passport as Passport)?.userPassport !== ''
               ? m.applicationCompleteNextStepsDescriptionPersonalApplication
               : m.applicationCompleteNextStepsDescription,
-          space: 'containerGutter',
         }),
       ],
     }),
