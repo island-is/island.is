@@ -1,6 +1,5 @@
 import {
   buildDescriptionField,
-  buildKeyValueField,
   buildMultiField,
   buildSubmitField,
   buildTextField,

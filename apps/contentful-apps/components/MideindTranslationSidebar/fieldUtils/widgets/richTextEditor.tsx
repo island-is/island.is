@@ -1,5 +1,5 @@
 function flattenParagraphContent(content: any) {
-  var contentText = ''
+  let contentText = ''
 
   for (const node of content) {
     if (node['nodeType']) {
@@ -47,7 +47,7 @@ function reverseTraverse(arr: string[], node: any) {
     }
     if (node['nodeType'] === 'text' && node['value'].trim().length !== 0) {
       // Change data in traversal
-      let translation = arr.pop() || ''
+      const translation = arr.pop() || ''
       node['value'] = translation
     }
     if (node['content']) {
@@ -60,7 +60,7 @@ function reverseTraverse(arr: string[], node: any) {
 
 // Traverses the richText object and collects text from the text nodeTypes
 function extractText(root: any) {
-  var texts: string[] = []
+  const texts: string[] = []
   if (root) {
     return traverseNodes(texts, root)
   } else {
@@ -87,7 +87,9 @@ function createValue(texts: string[], scaffold: any) {
   return scaffoldCopy
 }
 
-export default {
+const functions = {
   extractText,
   createValue,
 }
+
+export default functions

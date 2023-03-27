@@ -60,7 +60,11 @@ export const prosecutionRoles: string[] = [
   UserRole.REPRESENTATIVE,
 ]
 
-export function isProsecutionRole(role: string): boolean {
+export function isProsecutionRole(role?: string): boolean {
+  if (!role) {
+    return false
+  }
+
   return prosecutionRoles.includes(role)
 }
 
