@@ -137,7 +137,7 @@ const HearingArrangements = () => {
       }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
-      isExtension={workingCase.parentCase && true}
+      isExtension={!!workingCase.parentCase}
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >

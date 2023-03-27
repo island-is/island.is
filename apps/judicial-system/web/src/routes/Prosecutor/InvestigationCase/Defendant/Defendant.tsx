@@ -250,7 +250,7 @@ const Defendant = () => {
       activeSubSection={RestrictionCaseProsecutorSubsections.DEFENDANT}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
-      isExtension={workingCase.parentCase && true}
+      isExtension={!!workingCase.parentCase}
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
