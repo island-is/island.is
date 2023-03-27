@@ -54,23 +54,18 @@ export interface InputComponentProps {
   }
 }
 
-export type InputIconButton = {
+export type InputButton = {
   name: IconType
   type?: Type
-  onClick: React.HTMLAttributes<HTMLButtonElement>['onClick']
   label: string
+  onClick?: React.HTMLAttributes<HTMLButtonElement>['onClick']
   disabled?: boolean
 }
 
-export type InputIconIcon = {
+export type InputIcon = {
   name: IconType
   type?: Type
-  onClick?: never
-  label?: never
-  disabled?: never
 }
-
-export type InputIcon = InputIconButton | InputIconIcon
 
 export interface InputProps extends InputComponentProps {
   label?: string
@@ -81,11 +76,13 @@ export interface InputProps extends InputComponentProps {
   textarea?: boolean
   maxLength?: number
   loading?: boolean
-  icon?: InputIcon | InputIcon[]
+  icon?: InputIcon
+  buttons?: InputButton[]
 }
 
 export interface AsideProps {
   icon: InputProps['icon']
+  buttons: InputProps['buttons']
   size: InputProps['size']
   loading: boolean
   hasError: boolean

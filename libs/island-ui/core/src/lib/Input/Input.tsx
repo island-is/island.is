@@ -1,5 +1,5 @@
 import cn from 'classnames'
-import React, { forwardRef, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import React, { forwardRef, useLayoutEffect, useRef, useState } from 'react'
 import { VisuallyHidden } from 'reakit'
 import { resolveResponsiveProp } from '../../utils/responsiveProp'
 import { Box } from '../Box/Box'
@@ -84,6 +84,7 @@ export const Input = forwardRef(
       fixedFocusState,
       autoExpand,
       loading,
+      buttons,
       ...inputProps
     } = props
     const [hasFocus, setHasFocus] = useState(false)
@@ -243,6 +244,7 @@ export const Input = forwardRef(
 
           <AsideIcons
             icon={icon}
+            buttons={buttons}
             size={size}
             loading={!!loading}
             hasError={hasError}
@@ -259,15 +261,9 @@ export const Input = forwardRef(
 )
 
 
-function AsideIcons({ icon, size, loading, hasError, hasLabel }: AsideProps) {
-  const [icons, buttons] = useMemo(() => {
-    const iconsArray = (Array.isArray(icon) ? icon : [icon]).filter((i): i is InputIcon => Boolean(i))
-    const onlyWarning: InputIcon[] = [{ name: 'warning', onClick: undefined }]
-    const icons = loading ? [] : hasError ? onlyWarning : iconsArray.filter(i => !i?.onClick)
-    const buttons = iconsArray.filter(i => !!i?.onClick)
-    return [icons, buttons]
-  }, [hasError, icon, loading])
+function AsideIcons({ icon, buttons = [], size, loading, hasError, hasLabel }: AsideProps) {
 
+  const displayedIcon: InputIcon | undefined = hasError ? { name: 'warning' } : icon
 
   const renderIcon = (item: InputIcon) => (
     <Icon
@@ -281,21 +277,19 @@ function AsideIcons({ icon, size, loading, hasError, hasLabel }: AsideProps) {
 
   return (
     <div className={styles.aside}>
-      {loading && (
+
+      {loading ? (
         <Box
           className={styles.spinner}
           flexShrink={0}
           borderRadius="circle"
         />
-      )}
+      ) : displayedIcon ? (
+        <div className={styles.iconWrapper({ size })} key={displayedIcon.name} aria-hidden>
+          {renderIcon(displayedIcon)}
+        </div>
+      ) : null}
 
-      {icons.map((item) => {
-        return (
-          <div className={styles.iconWrapper({ size })} key={item.name}>
-            {renderIcon(item)}
-          </div>
-        )
-      })}
       {buttons.map((item) => {
         const { name, type, label, ...rest } = item
         return (
