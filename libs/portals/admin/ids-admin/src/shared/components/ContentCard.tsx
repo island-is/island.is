@@ -2,8 +2,8 @@ import React, { FC, useEffect, useRef, useState } from 'react'
 import { Box, Button, Checkbox, Text } from '@island.is/island-ui/core'
 import { Form } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../../lib/messages'
-import { ClientFormTypes } from './EditApplication.action'
+import { m } from '../../lib/messages'
+import { ClientFormTypes } from '../../components/forms/EditApplication/EditApplication.action'
 
 interface ContentCardProps {
   title: string
@@ -46,7 +46,6 @@ const ContentCard: FC<ContentCardProps> = ({
   useEffect(() => {
     originalFormData.current = new FormData(ref.current as HTMLFormElement)
   }, [ref])
-
   return (
     <Box
       borderRadius="large"

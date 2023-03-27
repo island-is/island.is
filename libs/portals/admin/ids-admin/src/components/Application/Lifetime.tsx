@@ -8,7 +8,7 @@ import {
 import React, { useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import ContentCard from '../forms/EditApplication/ContentCard'
+import ContentCard from '../../shared/components/ContentCard'
 import { useActionData } from 'react-router-dom'
 import {
   ClientFormTypes,

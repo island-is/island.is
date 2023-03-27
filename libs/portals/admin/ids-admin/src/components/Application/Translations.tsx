@@ -2,7 +2,7 @@ import { Box, Input, Stack, Tabs } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { useState } from 'react'
 import { m } from '../../lib/messages'
-import ContentCard from '../forms/EditApplication/ContentCard'
+import ContentCard from '../../shared/components/ContentCard'
 import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
 import { AuthApplicationTranslation } from './Application.loader'
 

@@ -2,7 +2,7 @@ import { AccordionCard, Input, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React from 'react'
 import { m } from '../../lib/messages'
-import ContentCard from '../forms/EditApplication/ContentCard'
+import ContentCard from '../../shared/components/ContentCard'
 import { AuthApplicationLBasicInfo } from './Application.loader'
 
 interface BasicInfoProps {
