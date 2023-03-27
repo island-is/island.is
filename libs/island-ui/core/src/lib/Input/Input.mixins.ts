@@ -234,7 +234,6 @@ export const labelErrorState = {
 }
 
 // Focus state
-// Focus state
 export const containerFocus = {
   outline: 'none',
   boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
