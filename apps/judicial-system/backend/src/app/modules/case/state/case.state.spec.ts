@@ -8,20 +8,26 @@ import { transitionCase } from './case.state'
 
 describe('Transition Case', () => {
   each`
-      transition                | oldState               | newState
-      ${CaseTransition.OPEN}    | ${CaseState.NEW}       | ${CaseState.DRAFT}
-      ${CaseTransition.SUBMIT}  | ${CaseState.DRAFT}     | ${CaseState.SUBMITTED}
-      ${CaseTransition.RECEIVE} | ${CaseState.SUBMITTED} | ${CaseState.RECEIVED}
-      ${CaseTransition.ACCEPT}  | ${CaseState.RECEIVED}  | ${CaseState.ACCEPTED}
-      ${CaseTransition.REJECT}  | ${CaseState.RECEIVED}  | ${CaseState.REJECTED}
-      ${CaseTransition.DISMISS} | ${CaseState.RECEIVED}  | ${CaseState.DISMISSED}
-      ${CaseTransition.DELETE}  | ${CaseState.NEW}       | ${CaseState.DELETED}
-      ${CaseTransition.DELETE}  | ${CaseState.DRAFT}     | ${CaseState.DELETED}
-      ${CaseTransition.DELETE}  | ${CaseState.SUBMITTED} | ${CaseState.DELETED}
-      ${CaseTransition.DELETE}  | ${CaseState.RECEIVED}  | ${CaseState.DELETED}
-      ${CaseTransition.REOPEN}  | ${CaseState.ACCEPTED}  | ${CaseState.RECEIVED}
-      ${CaseTransition.REOPEN}  | ${CaseState.REJECTED}  | ${CaseState.RECEIVED}
-      ${CaseTransition.REOPEN}  | ${CaseState.DISMISSED}  | ${CaseState.RECEIVED}
+      transition                        | oldState               | newState
+      ${CaseTransition.OPEN}            | ${CaseState.NEW}       | ${CaseState.DRAFT}
+      ${CaseTransition.SUBMIT}          | ${CaseState.DRAFT}     | ${CaseState.SUBMITTED}
+      ${CaseTransition.RECEIVE}         | ${CaseState.SUBMITTED} | ${CaseState.RECEIVED}
+      ${CaseTransition.ACCEPT}          | ${CaseState.RECEIVED}  | ${CaseState.ACCEPTED}
+      ${CaseTransition.REJECT}          | ${CaseState.RECEIVED}  | ${CaseState.REJECTED}
+      ${CaseTransition.DISMISS}         | ${CaseState.RECEIVED}  | ${CaseState.DISMISSED}
+      ${CaseTransition.DELETE}          | ${CaseState.NEW}       | ${CaseState.DELETED}
+      ${CaseTransition.DELETE}          | ${CaseState.DRAFT}     | ${CaseState.DELETED}
+      ${CaseTransition.DELETE}          | ${CaseState.SUBMITTED} | ${CaseState.DELETED}
+      ${CaseTransition.DELETE}          | ${CaseState.RECEIVED}  | ${CaseState.DELETED}
+      ${CaseTransition.REOPEN}          | ${CaseState.ACCEPTED}  | ${CaseState.RECEIVED}
+      ${CaseTransition.REOPEN}          | ${CaseState.REJECTED}  | ${CaseState.RECEIVED}
+      ${CaseTransition.REOPEN}          | ${CaseState.DISMISSED} | ${CaseState.RECEIVED}
+      ${CaseTransition.APPEAL}          | ${CaseState.ACCEPTED}  | ${CaseState.ACCEPTED}
+      ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.ACCEPTED}  | ${CaseState.ACCEPTED}
+      ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.ACCEPTED}  | ${CaseState.ACCEPTED}
+      ${CaseTransition.APPEAL}          | ${CaseState.REJECTED}  | ${CaseState.REJECTED}
+      ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.REJECTED}  | ${CaseState.REJECTED}
+      ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.REJECTED}  | ${CaseState.REJECTED}
     `.it(
     'should $transition $oldState case resulting in $newState case',
     ({ transition, oldState, newState }) => {
@@ -85,6 +91,24 @@ describe('Transition Case', () => {
       ${CaseTransition.REOPEN}  | ${CaseState.DRAFT}
       ${CaseTransition.REOPEN}  | ${CaseState.SUBMITTED}
       ${CaseTransition.REOPEN}  | ${CaseState.DELETED}
+      ${CaseTransition.APPEAL}  | ${CaseState.NEW}
+      ${CaseTransition.APPEAL}  | ${CaseState.DRAFT}
+      ${CaseTransition.APPEAL}  | ${CaseState.SUBMITTED}
+      ${CaseTransition.APPEAL}  | ${CaseState.RECEIVED}
+      ${CaseTransition.APPEAL}  | ${CaseState.DISMISSED}
+      ${CaseTransition.APPEAL}  | ${CaseState.DELETED}
+      ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.NEW}
+      ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.DRAFT}
+      ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.SUBMITTED}
+      ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.RECEIVED}
+      ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.DISMISSED}
+      ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.DELETED}
+      ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.NEW}
+      ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.DRAFT}
+      ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.SUBMITTED}
+      ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.RECEIVED}
+      ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.DISMISSED}
+      ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.DELETED}
     `.it(
     'should not $transition $oldState case',
     ({ transition, oldState }) => {

@@ -4,10 +4,10 @@ import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
 
 interface Rule {
   from: CaseState[]
-  to: CaseState
+  to: CaseState | undefined
 }
 
-const caseStateMachine: Map<CaseTransition, Rule> = new Map([
+export const caseStateMachine: Map<CaseTransition, Rule> = new Map([
   [CaseTransition.OPEN, { from: [CaseState.NEW], to: CaseState.DRAFT }],
   [CaseTransition.SUBMIT, { from: [CaseState.DRAFT], to: CaseState.SUBMITTED }],
   [
@@ -45,6 +45,29 @@ const caseStateMachine: Map<CaseTransition, Rule> = new Map([
       to: CaseState.RECEIVED,
     },
   ],
+  // APPEAL, RECEIVE_APPEAL and COMPLETE_APPEAL transitions do not affect the case state,
+  // but they should be blocked if case is not in a state that allows for this transition to take place
+  [
+    CaseTransition.APPEAL,
+    {
+      from: [CaseState.ACCEPTED, CaseState.REJECTED],
+      to: undefined,
+    },
+  ],
+  [
+    CaseTransition.RECEIVE_APPEAL,
+    {
+      from: [CaseState.ACCEPTED, CaseState.REJECTED],
+      to: undefined,
+    },
+  ],
+  [
+    CaseTransition.COMPLETE_APPEAL,
+    {
+      from: [CaseState.ACCEPTED, CaseState.REJECTED],
+      to: undefined,
+    },
+  ],
 ])
 
 export const transitionCase = function (
@@ -59,5 +82,5 @@ export const transitionCase = function (
     )
   }
 
-  return rule.to
+  return rule.to ?? currentState
 }

@@ -26,6 +26,7 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import {
+  CaseAppealState,
   CaseState,
   CaseTransition,
   CaseType,
@@ -81,6 +82,7 @@ import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { transitionCase } from './state/case.state'
+import { transitionAppealCase } from './state/caseAppeal.state'
 import { CaseService, UpdateCase } from './case.service'
 
 @Controller('api')
@@ -214,21 +216,42 @@ export class CaseController {
     this.logger.debug(`Transitioning case ${caseId}`)
 
     const state = transitionCase(transition.transition, theCase.state)
+    const appealState = transitionAppealCase(
+      transition.transition,
+      theCase.state,
+      theCase.appealState,
+    )
 
-    const update: UpdateCase = { state }
+    let update: UpdateCase = {}
+
+    if (state !== theCase.state) {
+      update = { state }
+      if (
+        isIndictmentCase(theCase.type) &&
+        completedCaseStates.includes(state)
+      ) {
+        update.rulingDate = nowFactory()
+      }
+    }
 
     if (transition.transition === CaseTransition.DELETE) {
       update.parentCaseId = null
-    }
-
-    if (isIndictmentCase(theCase.type) && completedCaseStates.includes(state)) {
-      update.rulingDate = nowFactory()
     }
 
     if (transition.transition === CaseTransition.REOPEN) {
       update.rulingDate = null
       update.courtRecordSignatoryId = null
       update.courtRecordSignatureDate = null
+    }
+
+    if (appealState !== undefined) {
+      // TODO: What if user is neither prosecutor nor defender?
+      if (user.role === UserRole.PROSECUTOR) {
+        update.prosecutorPostponedAppealDate = nowFactory()
+      } else if (user.role === UserRole.DEFENDER) {
+        update.accusedPostponedAppealDate = nowFactory()
+      }
+      update.appealState = appealState
     }
 
     const updatedCase = await this.caseService.update(

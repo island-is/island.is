@@ -24,6 +24,7 @@ import {
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
+  CaseAppealState,
   CaseFileCategory,
   CaseFileState,
   CaseOrigin,
@@ -130,6 +131,7 @@ export interface UpdateCase
     | 'indictmentIntroduction'
     | 'requestDriversLicenseSuspension'
     | 'creatingProsecutorId'
+    | 'appealState'
   > {
   type?: CaseType
   state?: CaseState
@@ -590,6 +592,15 @@ export class CaseService {
     return this.messageService.sendMessagesToQueue(messages)
   }
 
+  addMessagesForAppealedCaseToQueue(theCase: Case, user: TUser): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
+        userId: user.id,
+        caseId: theCase.id,
+      },
+    ])
+  }
   private async addMessagesForUpdatedCaseToQueue(
     theCase: Case,
     updatedCase: Case,
@@ -611,6 +622,12 @@ export class CaseService {
           // Indictment cases are not signed
           await this.addMessagesForCompletedIndictmentCaseToQueue(theCase, user)
         }
+      }
+    }
+
+    if (updatedCase.appealState !== theCase.appealState) {
+      if (updatedCase.appealState === CaseAppealState.APPEALED) {
+        await this.addMessagesForAppealedCaseToQueue(theCase, user)
       }
     }
 
