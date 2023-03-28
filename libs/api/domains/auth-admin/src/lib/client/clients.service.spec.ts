@@ -18,7 +18,7 @@ import {
 import { TestApp, testServer, useAuth } from '@island.is/testing/nest'
 
 import { ClientType } from '../models/client-type.enum'
-import { ClientsResolver } from './clientsResolver'
+import { ClientsResolver } from './clients.resolver'
 import { ClientsService } from './clients.service'
 import { CreateClientInput } from './dto/create-client.input'
 
