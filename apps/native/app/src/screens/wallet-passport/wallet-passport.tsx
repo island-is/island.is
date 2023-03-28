@@ -17,8 +17,9 @@ import {GET_IDENTITY_DOCUMENT_QUERY} from '../../graphql/queries/get-identity-do
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {LicenseStatus, LicenseType} from '../../types/license-type';
 import IconStatusVerified from '../../assets/icons/valid.png';
-import IconStatusNonVerified from '../../assets/icons/danger.png';
+import IconStatusNonVerified from '../../assets/icons/warning.png';
 import {useFeatureFlag} from '../../contexts/feature-flag-provider';
+import {openBrowser} from '../../lib/rn-island';
 
 const Information = styled.ScrollView`
   flex: 1;
