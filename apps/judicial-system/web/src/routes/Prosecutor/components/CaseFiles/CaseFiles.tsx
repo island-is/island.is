@@ -46,12 +46,14 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   CaseFileState,
-  CaseOrigin,
   isRestrictionCase,
   PoliceCaseFile,
 } from '@island.is/judicial-system/types'
 import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
-import { GetPoliceCaseFilesQuery } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  GetPoliceCaseFilesQuery,
+  CaseOrigin,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -88,7 +90,7 @@ export const CaseFiles: React.FC = () => {
   } = useQuery<GetPoliceCaseFilesQuery>(PoliceCaseFilesQuery, {
     variables: { input: { caseId: workingCase.id } },
     fetchPolicy: 'no-cache',
-    skip: workingCase.origin !== CaseOrigin.LOKE,
+    skip: workingCase.origin !== CaseOrigin.Loke,
   })
   const router = useRouter()
   const { formatMessage } = useIntl()
@@ -113,7 +115,7 @@ export const CaseFiles: React.FC = () => {
   useDeb(workingCase, 'caseFilesComments')
 
   useEffect(() => {
-    if (workingCase.origin !== CaseOrigin.LOKE) {
+    if (workingCase.origin !== CaseOrigin.Loke) {
       setPoliceCaseFiles({
         files: [],
         isLoading: false,
