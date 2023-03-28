@@ -1,8 +1,9 @@
 import { uuid } from 'uuidv4'
 
-import { Gender } from '@island.is/judicial-system/types'
+import { Gender, User } from '@island.is/judicial-system/types'
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 
-import { CreateDefendantDto } from '../../dto/createDefendant.dto'
+import { Case } from '../../../case'
 import { Defendant } from '../../models/defendant.model'
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
@@ -11,53 +12,55 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (
-  caseId: string,
-  defendantToCreate: CreateDefendantDto,
-) => Promise<Then>
+type GivenWhenThen = (theCase: Case) => Promise<Then>
 
 describe('DefendantController - Create', () => {
+  const userId = uuid()
+  const caseId = uuid()
+  const theCase = { id: caseId } as Case
+  const defendantToCreate = {
+    nationalId: '0000000000',
+    name: 'John Doe',
+    gender: Gender.MALE,
+    address: 'Somewhere',
+  }
+  const defendantId = uuid()
+  const createdDefendant = { id: defendantId, caseId }
+
+  let mockMessageService: MessageService
   let mockDefendantModel: typeof Defendant
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
+      messageService,
       defendantModel,
       defendantController,
     } = await createTestingDefendantModule()
 
+    mockMessageService = messageService
     mockDefendantModel = defendantModel
 
-    givenWhenThen = async (
-      caseId: string,
-      defendantToCreate: CreateDefendantDto,
-    ) => {
+    const mockCreate = mockDefendantModel.create as jest.Mock
+    mockCreate.mockResolvedValue(createdDefendant)
+
+    givenWhenThen = async (theCase: Case) => {
       const then = {} as Then
 
-      try {
-        then.result = await defendantController.create(
-          caseId,
-          defendantToCreate,
-        )
-      } catch (error) {
-        then.error = error as Error
-      }
+      await defendantController
+        .create(theCase.id, { id: userId } as User, theCase, defendantToCreate)
+        .then((result) => (then.result = result))
+        .catch((error) => (then.error = error))
 
       return then
     }
   })
 
   describe('defendant created', () => {
-    const caseId = uuid()
-    const defendantToCreate = {
-      nationalId: '0000000000',
-      name: 'John Doe',
-      gender: Gender.MALE,
-      address: 'Somewhere',
-    }
+    let then: Then
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, defendantToCreate)
+      then = await givenWhenThen(theCase)
     })
 
     it('should create a defendant', () => {
@@ -66,36 +69,46 @@ describe('DefendantController - Create', () => {
         caseId,
       })
     })
-  })
-
-  describe('defendant returned', () => {
-    const caseId = uuid()
-    const defendantToCreate = {}
-    const createdDefendant = {}
-    let then: Then
-
-    beforeEach(async () => {
-      const mockCreate = mockDefendantModel.create as jest.Mock
-      mockCreate.mockResolvedValueOnce(createdDefendant)
-
-      then = await givenWhenThen(caseId, defendantToCreate)
-    })
 
     it('should return defendant', () => {
       expect(then.result).toBe(createdDefendant)
     })
+
+    it('should not queue any messages', () => {
+      expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('defendant created after case is delivered to court', () => {
+    beforeEach(async () => {
+      await givenWhenThen({ ...theCase, courtCaseNumber: uuid() } as Case)
+    })
+
+    it('should queue messages', () => {
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        {
+          type: MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
+          caseId,
+          userId,
+        },
+        {
+          type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+          caseId,
+          defendantId,
+          userId,
+        },
+      ])
+    })
   })
 
   describe('defendant creation fails', () => {
-    const caseId = uuid()
-    const defendantToCreate = {}
     let then: Then
 
     beforeEach(async () => {
       const mockCreate = mockDefendantModel.create as jest.Mock
       mockCreate.mockRejectedValueOnce(new Error('Some error'))
 
-      then = await givenWhenThen(caseId, defendantToCreate)
+      then = await givenWhenThen(theCase)
     })
 
     it('should throw Error', () => {

@@ -713,7 +713,7 @@ export class CaseService {
           transaction,
         )
 
-        await this.defendantService.create(caseId, {}, transaction)
+        await this.defendantService.createForNewCase(caseId, {}, transaction)
 
         return caseId
       })
@@ -1096,7 +1096,7 @@ export class CaseService {
         if (theCase.defendants && theCase.defendants?.length > 0) {
           await Promise.all(
             theCase.defendants?.map((defendant) =>
-              this.defendantService.create(
+              this.defendantService.createForNewCase(
                 caseId,
                 {
                   noNationalId: defendant.noNationalId,

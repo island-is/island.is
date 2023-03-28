@@ -278,7 +278,7 @@ describe('InternalCaseController - Archive', () => {
     })
 
     it('should clear encrypted defendant one properties', () => {
-      expect(mockDefendantService.update).toHaveBeenCalledWith(
+      expect(mockDefendantService.updateForArcive).toHaveBeenCalledWith(
         caseId,
         defendantId1,
         { nationalId: '', name: '', address: '' },
@@ -287,7 +287,7 @@ describe('InternalCaseController - Archive', () => {
     })
 
     it('should clear encrypted defendant two properties', () => {
-      expect(mockDefendantService.update).toHaveBeenCalledWith(
+      expect(mockDefendantService.updateForArcive).toHaveBeenCalledWith(
         caseId,
         defendantId2,
         { nationalId: '', name: '', address: '' },

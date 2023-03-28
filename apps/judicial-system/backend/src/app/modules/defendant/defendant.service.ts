@@ -9,8 +9,17 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { CaseState, CaseType } from '@island.is/judicial-system/types'
-import { MessageService } from '@island.is/judicial-system/message'
+import {
+  CaseState,
+  CaseType,
+  isIndictmentCase,
+  User as TUser,
+} from '@island.is/judicial-system/types'
+import {
+  CaseMessage,
+  MessageService,
+  MessageType,
+} from '@island.is/judicial-system/message'
 
 import { User } from '../user'
 import { CourtService } from '../court'
@@ -29,38 +38,37 @@ export class DefendantService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async create(
+  private getMessagesForSendDefendantsNotUpdatedAtCourtNotification(
     caseId: string,
-    defendantToCreate: CreateDefendantDto,
-    transaction?: Transaction,
-  ): Promise<Defendant> {
-    return transaction
-      ? this.defendantModel.create(
-          { ...defendantToCreate, caseId },
-          { transaction },
-        )
-      : this.defendantModel.create({ ...defendantToCreate, caseId })
+    userId: string,
+  ): CaseMessage {
+    return {
+      type: MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
+      caseId,
+      userId,
+    }
   }
 
-  async update(
-    caseId: string,
+  private getMessageForDeliverDefendantToCourt(
+    defendant: Defendant,
+    user: TUser,
+  ): CaseMessage {
+    const message = {
+      type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+      caseId: defendant.caseId,
+      defendantId: defendant.id,
+      userId: user.id,
+    }
+
+    return message
+  }
+
+  private getUpdatedDefendant(
+    numberOfAffectedRows: number,
+    defendants: Defendant[],
     defendantId: string,
-    update: UpdateDefendantDto,
-    transaction?: Transaction,
-  ): Promise<Defendant> {
-    const promisedUpdate = transaction
-      ? this.defendantModel.update(update, {
-          where: { id: defendantId, caseId },
-          returning: true,
-          transaction,
-        })
-      : this.defendantModel.update(update, {
-          where: { id: defendantId, caseId },
-          returning: true,
-        })
-
-    const [numberOfAffectedRows, defendants] = await promisedUpdate
-
+    caseId: string,
+  ): Defendant {
     if (numberOfAffectedRows > 1) {
       // Tolerate failure, but log error
       this.logger.error(
@@ -75,20 +83,135 @@ export class DefendantService {
     return defendants[0]
   }
 
-  async delete(caseId: string, defendantId: string): Promise<boolean> {
+  async createForNewCase(
+    caseId: string,
+    defendantToCreate: CreateDefendantDto,
+    transaction: Transaction,
+  ): Promise<Defendant> {
+    return this.defendantModel.create(
+      { ...defendantToCreate, caseId },
+      { transaction },
+    )
+  }
+
+  async create(
+    theCase: Case,
+    defendantToCreate: CreateDefendantDto,
+    user: TUser,
+  ): Promise<Defendant> {
+    const defendant = await this.defendantModel.create({
+      ...defendantToCreate,
+      caseId: theCase.id,
+    })
+
+    if (!isIndictmentCase(theCase.type) && theCase.courtCaseNumber) {
+      // A defendant is added after the case has been received by the court.
+      // Attempt to add the new defendant, but also ask the court to verify defendants.
+      await this.messageService.sendMessagesToQueue([
+        this.getMessagesForSendDefendantsNotUpdatedAtCourtNotification(
+          theCase.id,
+          user.id,
+        ),
+        this.getMessageForDeliverDefendantToCourt(defendant, user),
+      ])
+    }
+
+    return defendant
+  }
+
+  async updateForArcive(
+    caseId: string,
+    defendantId: string,
+    update: UpdateDefendantDto,
+    transaction: Transaction,
+  ): Promise<Defendant> {
+    const [numberOfAffectedRows, defendants] = await this.defendantModel.update(
+      update,
+      {
+        where: { id: defendantId, caseId },
+        returning: true,
+        transaction,
+      },
+    )
+
+    return this.getUpdatedDefendant(
+      numberOfAffectedRows,
+      defendants,
+      defendantId,
+      caseId,
+    )
+  }
+
+  async update(
+    theCase: Case,
+    defendant: Defendant,
+    update: UpdateDefendantDto,
+    user: TUser,
+  ): Promise<Defendant> {
+    const [numberOfAffectedRows, defendants] = await this.defendantModel.update(
+      update,
+      {
+        where: { id: defendant.id, caseId: theCase.id },
+        returning: true,
+      },
+    )
+
+    const updatedDefendant = this.getUpdatedDefendant(
+      numberOfAffectedRows,
+      defendants,
+      defendant.id,
+      theCase.id,
+    )
+
+    if (
+      !isIndictmentCase(theCase.type) &&
+      theCase.courtCaseNumber &&
+      (updatedDefendant.noNationalId !== defendant.noNationalId ||
+        updatedDefendant.nationalId !== defendant.nationalId)
+    ) {
+      // A defendant is replaced after the case has been received by the court.
+      // Attempt to add the new defendant, but also ask the court to verify defendants.
+      await this.messageService.sendMessagesToQueue([
+        this.getMessagesForSendDefendantsNotUpdatedAtCourtNotification(
+          theCase.id,
+          user.id,
+        ),
+        this.getMessageForDeliverDefendantToCourt(defendant, user),
+      ])
+    }
+
+    return updatedDefendant
+  }
+
+  async delete(
+    theCase: Case,
+    defendantId: string,
+    user: TUser,
+  ): Promise<boolean> {
     const numberOfAffectedRows = await this.defendantModel.destroy({
-      where: { id: defendantId, caseId },
+      where: { id: defendantId, caseId: theCase.id },
     })
 
     if (numberOfAffectedRows > 1) {
       // Tolerate failure, but log error
       this.logger.error(
-        `Unexpected number of rows (${numberOfAffectedRows}) affected when deleting defendant ${defendantId} of case ${caseId}`,
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when deleting defendant ${defendantId} of case ${theCase.id}`,
       )
     } else if (numberOfAffectedRows < 1) {
       throw new InternalServerErrorException(
-        `Could not delete defendant ${defendantId} of case ${caseId}`,
+        `Could not delete defendant ${defendantId} of case ${theCase.id}`,
       )
+    }
+
+    if (!isIndictmentCase(theCase.type) && theCase.courtCaseNumber) {
+      // A defendant is removed after the case has been received by the court.
+      // Ask the court to verify defendants.
+      await this.messageService.sendMessagesToQueue([
+        this.getMessagesForSendDefendantsNotUpdatedAtCourtNotification(
+          theCase.id,
+          user.id,
+        ),
+      ])
     }
 
     return true
@@ -131,11 +254,12 @@ export class DefendantService {
       !defendant.nationalId ||
       defendant.nationalId.replace('-', '').length !== 10
     ) {
-      // TODO: Uncomment when we are ready to send notifications
-      // await this.messageService.sendMessagesToQueue([{
-      //   type: MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
-      //   caseId: theCase.id,
-      // }])
+      await this.messageService.sendMessagesToQueue([
+        this.getMessagesForSendDefendantsNotUpdatedAtCourtNotification(
+          theCase.id,
+          user.id,
+        ),
+      ])
 
       return { delivered: true }
     }
