@@ -889,7 +889,7 @@ consultation-portal:
       hosts:
         - host: 'beta.dev01.devland.is'
           paths:
-            - '/consultation-portal'
+            - '/samradsgatt'
   namespace: 'consultation-portal'
   pvcs: []
   replicaCount:
