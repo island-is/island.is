@@ -478,6 +478,7 @@ const Defendant: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={constants.CASES_ROUTE}
           onNextButtonClick={() =>
             handleNavigationTo(constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE)

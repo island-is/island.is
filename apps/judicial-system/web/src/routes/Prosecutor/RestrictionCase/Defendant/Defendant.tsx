@@ -241,6 +241,7 @@ export const Defendant: React.FC = () => {
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
+              nextButtonIcon="arrowForward"
               previousUrl={constants.CASES_ROUTE}
               nextIsLoading={isCreatingCase}
               nextIsDisabled={!stepIsValid}
