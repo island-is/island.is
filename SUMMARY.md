@@ -218,7 +218,6 @@
 - [Content Search Metrics](libs/content-search-metrics/README.md)
 - [Content Search Toolkit](libs/content-search-toolkit/README.md)
 - [Contentful Extensions Overview](libs/contentful-extensions/README.md)
-  - [Miðeind](libs/contentful-extensions/mideind-translation/README.md)
   - [Parent Slug](libs/contentful-extensions/parent-slug/README.md)
   - [Translation](libs/contentful-extensions/translation/README.md)
 - [Dokobit Signing](libs/dokobit-signing/README.md)

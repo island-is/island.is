@@ -55,7 +55,6 @@ import {
   formatCourtRevokedSmsNotification,
   formatPrisonRevokedEmailNotification,
   formatDefenderRevokedEmailNotification,
-  getCustodyNoticePdfAsString,
   formatProsecutorReceivedByCourtSmsNotification,
   formatCourtResubmittedToCourtSmsNotification,
   formatProsecutorReadyForCourtEmailNotification,
@@ -860,14 +859,16 @@ export class NotificationService {
 
     if (isIndictmentCase(theCase.type)) {
       theCase.defendants?.forEach((defendant) => {
-        promises.push(
-          this.sendRulingEmailNotificationToDefender(
-            theCase,
-            defendant.defenderNationalId,
-            defendant.defenderName,
-            defendant.defenderEmail,
-          ),
-        )
+        if (defendant.defenderEmail) {
+          promises.push(
+            this.sendRulingEmailNotificationToDefender(
+              theCase,
+              defendant.defenderNationalId,
+              defendant.defenderName,
+              defendant.defenderEmail,
+            ),
+          )
+        }
       })
     } else if (
       theCase.defenderEmail &&
@@ -978,26 +979,12 @@ export class NotificationService {
     )
 
     if (shouldSendCustodyNoticeToPrison) {
-      const custodyNoticePdf = await getCustodyNoticePdfAsString(
-        theCase,
-        this.formatMessage,
-      )
-
-      const attachments = [
-        {
-          filename: `Vistunarseðill ${theCase.courtCaseNumber}.pdf`,
-          content: custodyNoticePdf,
-          encoding: 'binary',
-        },
-      ]
-
       promises.push(
         this.sendEmail(
           subject,
           html,
           'Gæsluvarðhaldsfangelsi',
           this.config.email.prisonEmail,
-          attachments,
         ),
       )
     }

@@ -49,7 +49,7 @@ export const serviceSetup = (services: {
             'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
           },
         },
-        paths: ['/consultation-portal'],
+        paths: ['/samradsgatt'],
       },
     })
   return consultationService

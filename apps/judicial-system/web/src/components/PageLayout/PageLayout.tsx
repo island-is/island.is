@@ -110,8 +110,8 @@ const DisplaySection: React.FC<SectionProps> = (props) => {
 }
 
 interface SidePanelProps {
-  user: User | undefined
-  workingCase?: Case
+  workingCase: Case
+  user?: User
   activeSection?: number
   activeSubSection?: number
   onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
@@ -140,7 +140,7 @@ const SidePanel: React.FC<SidePanelProps> = ({
       <div className={styles.formStepperContainer}>
         <Box marginLeft={[0, 0, 2]}>
           <Box marginBottom={7} display={['none', 'none', 'block']}>
-            <Logo defaultInstitution={workingCase?.court?.name} />
+            <Logo defaultInstitution={workingCase.court?.name} />
           </Box>
           <Box marginBottom={6}>
             <Text variant="h3" as="h3">
@@ -148,7 +148,7 @@ const SidePanel: React.FC<SidePanelProps> = ({
                 workingCase && isIndictmentCase(workingCase.type)
                   ? formStepperSections.indictmentTitle
                   : formStepperSections.title,
-                { caseType: workingCase?.type },
+                { caseType: workingCase.type },
               )}
             </Text>
           </Box>
@@ -192,9 +192,7 @@ const PageLayout: React.FC<PageProps> = ({
   isValid,
 }) => {
   const { user } = useContext(UserContext)
-
   const { formatMessage } = useIntl()
-  // Remove the extension parts of the formstepper if the user is not applying for an extension
 
   useEffect(() => {
     window.scrollTo(0, 0)

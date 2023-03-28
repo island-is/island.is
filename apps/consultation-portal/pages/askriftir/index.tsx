@@ -24,34 +24,43 @@ interface SubProps {
 
 export const getServerSideProps = async (ctx) => {
   const client = initApollo()
-  const [
-    {
-      data: { consultationPortalGetCases },
-    },
-    {
-      data: { consultationPortalAllTypes },
-    },
-  ] = await Promise.all([
-    client.query<
-      ConsultationPortalGetCasesQuery,
-      QueryConsultationPortalGetCasesArgs
-    >({
-      query: GET_CASES,
-      variables: {
-        input: {
-          caseStatuses: STATUSES_TO_FETCH,
-          // pageSize: PAGE_SIZE,
-        },
+  try {
+    const [
+      {
+        data: { consultationPortalGetCases },
       },
-    }),
-    client.query<ConsultationPortalAllTypesQuery>({
-      query: GET_TYPES,
-    }),
-  ])
+      {
+        data: { consultationPortalAllTypes },
+      },
+    ] = await Promise.all([
+      client.query<
+        ConsultationPortalGetCasesQuery,
+        QueryConsultationPortalGetCasesArgs
+      >({
+        query: GET_CASES,
+        variables: {
+          input: {
+            caseStatuses: STATUSES_TO_FETCH,
+            // pageSize: PAGE_SIZE,
+          },
+        },
+      }),
+      client.query<ConsultationPortalAllTypesQuery>({
+        query: GET_TYPES,
+      }),
+    ])
+    return {
+      props: {
+        cases: consultationPortalGetCases.cases,
+        types: consultationPortalAllTypes,
+      },
+    }
+  } catch (e) {
+    console.error(e)
+  }
   return {
-    props: {
-      cases: consultationPortalGetCases.cases,
-      types: consultationPortalAllTypes,
+    redirect: {
+      destination: '/500',
     },
   }
 }

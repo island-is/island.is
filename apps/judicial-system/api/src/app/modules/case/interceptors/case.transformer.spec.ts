@@ -98,7 +98,7 @@ describe('transformCase', () => {
   })
 
   describe('isAppealDeadlineExpired', () => {
-    it('should be false when no ruling date is set', () => {
+    it('should be false when no court date is set', () => {
       // Arrange
       const theCase = {} as Case
 
@@ -111,10 +111,10 @@ describe('transformCase', () => {
 
     it('should be false while the appeal window is open', () => {
       // Arrange
-      const rulingDate = new Date()
-      rulingDate.setDate(rulingDate.getDate() - 3)
-      rulingDate.setSeconds(rulingDate.getSeconds() + 1)
-      const theCase = { rulingDate: rulingDate.toISOString() } as Case
+      const courtEndTime = new Date()
+      courtEndTime.setDate(courtEndTime.getDate() - 3)
+      courtEndTime.setSeconds(courtEndTime.getSeconds() + 1)
+      const theCase = { courtEndTime: courtEndTime.toISOString() } as Case
 
       // Act
       const res = transformCase(theCase)
@@ -125,9 +125,9 @@ describe('transformCase', () => {
 
     it('should be true when the appeal window has closed', () => {
       // Arrange
-      const rulingDate = new Date()
-      rulingDate.setDate(rulingDate.getDate() - 3)
-      const theCase = { rulingDate: rulingDate.toISOString() } as Case
+      const courtEndTime = new Date()
+      courtEndTime.setDate(courtEndTime.getDate() - 3)
+      const theCase = { courtEndTime: courtEndTime.toISOString() } as Case
 
       // Act
       const res = transformCase(theCase)
@@ -138,7 +138,7 @@ describe('transformCase', () => {
   })
 
   describe('isAppealGracePeriodExpired', () => {
-    it('should be false when no ruling date is set', () => {
+    it('should be false when no court end time is set', () => {
       // Arrange
       const theCase = {} as Case
 
@@ -151,10 +151,10 @@ describe('transformCase', () => {
 
     it('should be false while the appeal window is open', () => {
       // Arrange
-      const rulingDate = new Date()
-      rulingDate.setDate(rulingDate.getDate() - 7)
-      rulingDate.setSeconds(rulingDate.getSeconds() + 1)
-      const theCase = { rulingDate: rulingDate.toISOString() } as Case
+      const courtEndTime = new Date()
+      courtEndTime.setDate(courtEndTime.getDate() - 7)
+      courtEndTime.setSeconds(courtEndTime.getSeconds() + 1)
+      const theCase = { courtEndTime: courtEndTime.toISOString() } as Case
 
       // Act
       const res = transformCase(theCase)
@@ -165,9 +165,9 @@ describe('transformCase', () => {
 
     it('should be true when the appeal window has closed', () => {
       // Arrange
-      const rulingDate = new Date()
-      rulingDate.setDate(rulingDate.getDate() - 7)
-      const theCase = { rulingDate: rulingDate.toISOString() } as Case
+      const courtEndTime = new Date()
+      courtEndTime.setDate(courtEndTime.getDate() - 7)
+      const theCase = { courtEndTime: courtEndTime.toISOString() } as Case
 
       // Act
       const res = transformCase(theCase)
