@@ -1,11 +1,13 @@
 import {
   Box,
   Breadcrumbs,
+  Button,
   Divider,
   GridColumn,
   GridContainer,
   GridRow,
   Hidden,
+  LinkV2,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -20,23 +22,19 @@ import Layout from '../../components/Layout/Layout'
 import { Advice } from '../../types/viewModels'
 import { SimpleCardSkeleton } from '../../components/Card'
 import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
+import { getTimeLineDate } from '../../utils/helpers/dateFormatter'
+import Link from 'next/link'
+import { useUser } from '../../context/UserContext'
 
-const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
-  // Remove following lines after connecting to API
+const CaseScreen = ({ chosenCase, advices }) => {
   const { contactEmail, contactName } = chosenCase
-  const card = {
-    caseNumber: '76/2022',
-    nameOfReviewer: 'Jon Jonsson',
-    reviewPeriod: '01.08.2022 – 01.12.2022',
-  }
-
-  isLoggedIn = true // remove when functionality for logged in has been implemented
+  const { isAuthenticated, user } = useUser()
 
   return (
     <Layout
       seo={{
-        title: `Mál: ${chosenCase?.caseNumber}`,
-        url: `mal/${chosenCase?.caseNumber}`,
+        title: `Mál: S-${chosenCase?.caseNumber}`,
+        url: `mal/${chosenCase?.id}`,
       }}
     >
       <GridContainer>
@@ -44,7 +42,7 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
           <Breadcrumbs
             items={[
               { title: 'Öll mál', href: '/' },
-              { title: `Mál nr. ${chosenCase?.caseNumber}` },
+              { title: `Mál nr. S-${chosenCase?.caseNumber}` },
             ]}
           />
         </Box>
@@ -64,7 +62,7 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
               <Divider />
               <CaseTimeline
                 status={chosenCase.statusName}
-                updatedDate={chosenCase.changed}
+                updatedDate={getTimeLineDate(chosenCase)}
               />
               <Divider />
               <Box paddingLeft={1}>
@@ -92,7 +90,12 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
                   {advices?.map((advice: Advice) => {
                     return <ReviewCard advice={advice} key={advice.number} />
                   })}
-                  <WriteReviewCard card={card} isLoggedIn={isLoggedIn} />
+                  <WriteReviewCard
+                    card={chosenCase}
+                    isLoggedIn={isAuthenticated}
+                    username={user?.name}
+                    caseId={chosenCase.id}
+                  />
                 </Stack>
               </Box>
             </Stack>
@@ -107,10 +110,40 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
                   headingColor="blue400"
                   title="Skjöl til samráðs"
                 >
-                  {chosenCase.shortDescription}
+                  {chosenCase.documents
+                    ? chosenCase.documents.map((doc, index) => {
+                        return (
+                          <LinkV2
+                            href={`https://samradapi-test.island.is/api/Documents/${doc.id}`}
+                            color="blue400"
+                            underline="normal"
+                            underlineVisibility="always"
+                            newTab
+                            key={index}
+                          >
+                            {doc.fileName}
+                          </LinkV2>
+                        )
+                      })
+                    : 'Engin skjöl'}
                 </StackedTitleAndDescription>
               </SimpleCardSkeleton>
-
+              <SimpleCardSkeleton>
+                <StackedTitleAndDescription
+                  headingColor="blue400"
+                  title="Viltu senda umsögn?"
+                >
+                  Öllum er frjálst að taka þátt í samráðinu. Skráðu þig inn og
+                  sendu umsögn.
+                </StackedTitleAndDescription>
+                <Box paddingTop={2}>
+                  <Link href="#write-review" shallow>
+                    <Button fluid iconType="outline" nowrap as="a">
+                      Senda umsögn
+                    </Button>
+                  </Link>
+                </Box>
+              </SimpleCardSkeleton>
               <SimpleCardSkeleton>
                 <StackedTitleAndDescription
                   headingColor="blue400"

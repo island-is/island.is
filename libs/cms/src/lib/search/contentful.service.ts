@@ -246,12 +246,34 @@ export class ContentfulService {
     locale: Locale,
     chunkSize: number,
   ) {
-    // gets all changes in all locales
+    // Gets all changes in all locales
     const {
       entries,
       nextSyncToken: newNextSyncToken,
       deletedEntries,
     } = await this.getSyncData(typeOfSync)
+
+    // In case someone in the CMS triggers a sync by setting the translation of an entry to an inactive state we'd like to remove that entry
+    const isDeltaUpdate = !('initial' in typeOfSync)
+    const entriesThatHadTheirTranslationTurnedOff = new Set<string>()
+
+    if (isDeltaUpdate && locale !== 'is') {
+      const localizedEntries = entries.filter((entry) =>
+        environment.localizedContentTypes.includes(
+          entry.sys.contentType.sys.id,
+        ),
+      )
+      for (const localizedEntry of localizedEntries) {
+        const translationIsActive =
+          localizedEntry.fields.activeTranslations?.[
+            this.contentfulLocaleMap.is
+          ]?.[locale] ?? true
+
+        if (!translationIsActive) {
+          entriesThatHadTheirTranslationTurnedOff.add(localizedEntry.sys.id)
+        }
+      }
+    }
 
     const nestedEntryIds = entries
       .filter((entry) =>
@@ -265,11 +287,13 @@ export class ContentfulService {
       nestedEntries: nestedEntryIds.length,
     })
 
-    // get all sync entries from Contentful endpoints for this locale, we could parse the sync response into locales but we are opting for this for simplicity
+    // Get all sync entries from Contentful endpoints for this locale, we could parse the sync response into locales but we are opting for this for simplicity
     const indexableEntries = await this.getPopulatedContentulEntries(
-      entries.filter((entry) =>
-        // Only populate the indexable entries
-        environment.indexableTypes.includes(entry.sys.contentType.sys.id),
+      entries.filter(
+        (entry) =>
+          !entriesThatHadTheirTranslationTurnedOff.has(entry.sys.id) &&
+          // Only populate the indexable entries
+          environment.indexableTypes.includes(entry.sys.contentType.sys.id),
       ),
       locale,
       chunkSize,
@@ -277,6 +301,10 @@ export class ContentfulService {
 
     // extract ids from deletedEntries
     const deletedEntryIds = deletedEntries.map((entry) => entry.sys.id)
+
+    for (const entryId of entriesThatHadTheirTranslationTurnedOff) {
+      deletedEntryIds.push(entryId)
+    }
 
     return {
       indexableEntries,

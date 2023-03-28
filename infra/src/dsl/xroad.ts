@@ -6,7 +6,7 @@ import {
 } from './types/input-types'
 import { json, ref } from './dsl'
 
-type XroadSectionConfig = {
+export type XroadSectionConfig = {
   secrets?: Secrets
   env?: EnvironmentVariables
 }
@@ -475,6 +475,12 @@ export const TransportAuthority = new XroadConf({
         'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOrdering-V1',
       prod:
         'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateOrdering-V1',
+    },
+    XROAD_VEHICLE_PLATE_RENEWAL_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateRenewal-V1',
+      staging:
+        'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateRenewal-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateRenewal-V1',
     },
     XROAD_VEHICLE_PRINTING_PATH: {
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1',

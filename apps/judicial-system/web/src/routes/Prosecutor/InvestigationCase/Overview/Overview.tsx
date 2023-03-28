@@ -118,7 +118,7 @@ export const Overview: React.FC = () => {
     <PageLayout
       workingCase={workingCase}
       activeSection={
-        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
+        workingCase.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={
         RestrictionCaseProsecutorSubsections.PROSECUTOR_OVERVIEW
@@ -368,6 +368,7 @@ export const Overview: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.INVESTIGATION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextButtonText={
             workingCase.state === CaseState.NEW ||

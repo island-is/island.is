@@ -5,7 +5,6 @@ import {
   FormStepperThemes,
   Stack,
 } from '@island.is/island-ui/core'
-import format from 'date-fns/format'
 
 interface CaseTimelineProps {
   status: string
@@ -25,7 +24,7 @@ export const CaseTimeline = ({ status, updatedDate }: CaseTimelineProps) => {
       subSections={
         item === status && [
           <Text variant="medium" key="sub1">
-            {`frá ${format(new Date(updatedDate), 'dd.MM.yyyy')}`}
+            {updatedDate}
           </Text>,
         ]
       }

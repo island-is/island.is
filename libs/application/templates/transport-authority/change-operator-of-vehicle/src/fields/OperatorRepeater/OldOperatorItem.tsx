@@ -7,7 +7,7 @@ import {
   GridColumn,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { information } from '../../lib/messages'
 import { OldOperatorInformationFormField } from '../../shared'
@@ -31,12 +31,20 @@ export const OldOperatorItem: FC<Props & FieldBaseProps> = ({
   errors,
 }) => {
   const { formatMessage } = useLocale()
-  const { register } = useFormContext()
+  const { setValue } = useFormContext()
   const fieldIndex = `${id}[${index}]`
   const wasRemovedField = `${fieldIndex}.wasRemoved`
   const startDateField = `${fieldIndex}.startDate`
   const nationaIdField = `${fieldIndex}.nationalId`
   const nameField = `${fieldIndex}.name`
+
+  useEffect(() => {
+    setValue(wasRemovedField, `${repeaterField.wasRemoved || 'false'}`)
+    setValue(
+      startDateField,
+      `${repeaterField.startDate || new Date().toString()}`,
+    )
+  }, [repeaterField.wasRemoved, repeaterField.startDate, setValue])
 
   return (
     <Box
@@ -81,16 +89,6 @@ export const OldOperatorItem: FC<Props & FieldBaseProps> = ({
           />
         </GridColumn>
       </GridRow>
-      <input
-        type="hidden"
-        value={`${repeaterField.wasRemoved || 'false'}`}
-        {...register(wasRemovedField, { required: true })}
-      />
-      <input
-        type="hidden"
-        value={`${repeaterField.startDate || new Date().toString()}`}
-        {...register(startDateField, { required: true })}
-      />
     </Box>
   )
 }

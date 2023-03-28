@@ -79,7 +79,7 @@ applicationTest.describe('Marriage Conditions', () => {
         .click()
       // await page.getByText('Áætlaður hjónavígsludagur').click()
       await page.getByText('Áætlaður hjónavígsludagur').click()
-      await page.getByRole('button', { name: 'Choose Tuesday' }).first().click()
+      await page.getByRole('option', { name: 'Choose' }).first().click()
       // Place
       const placeRegion = page.getByRole('region', {
         name: 'Hvar er hjónavígsla áformuð?',
