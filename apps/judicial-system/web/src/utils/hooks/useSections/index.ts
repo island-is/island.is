@@ -58,7 +58,6 @@ const useSections = (
     const { type, id } = workingCase
 
     return {
-      id: 'adc0cca7-9e91-45ec-b079-d55945fdf843',
       name: formatMessage(sections.restrictionCaseProsecutorSection.caseTitle, {
         caseType: type,
       }),
@@ -192,7 +191,6 @@ const useSections = (
     const { id } = workingCase
 
     return {
-      id: 'adc0cca7-9e91-45ec-b079-d55945fdf843',
       name: formatMessage(sections.investigationCaseProsecutorSection.title),
       children:
         user?.institution?.type !== InstitutionType.ProsecutorsOffice
@@ -321,7 +319,6 @@ const useSections = (
     const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
     return {
-      id: 'adc0cca7-9e91-45ec-b079-d55945fdf843',
       name: formatMessage(sections.indictmentCaseProsecutorSection.title),
       // Prosecutor can only view the overview when case has been received by court
       children: caseHasBeenReceivedByCourt
@@ -484,7 +481,6 @@ const useSections = (
     const { id } = workingCase
 
     return {
-      id: '127060fd-596a-45d7-b26f-d906b4e3d083',
       name: formatMessage(sections.courtSection.title),
       children:
         user?.institution?.type !== InstitutionType.Court
@@ -600,7 +596,6 @@ const useSections = (
     const { id } = workingCase
 
     return {
-      id: '127060fd-596a-45d7-b26f-d906b4e3d083',
       name: formatMessage(sections.investigationCaseCourtSection.title),
       children:
         user?.institution?.type !== InstitutionType.Court
@@ -725,7 +720,6 @@ const useSections = (
     const { id } = workingCase
 
     return {
-      id: '1bf8e3bc-9d68-40af-b637-2a88c772daf7',
       name: formatMessage(sections.indictmentsCourtSection.title),
       children: [
         {
@@ -811,7 +805,6 @@ const useSections = (
     const section = getRestrictionCaseProsecutorSection(workingCase, user)
 
     return {
-      id: '15d5aa57-83c8-4247-badd-f02b40b1f920',
       name: formatMessage(sections.extensionSection.title),
       children:
         user?.institution?.type !== InstitutionType.ProsecutorsOffice
@@ -888,7 +881,6 @@ const useSections = (
     const section = getInvestigationCaseProsecutorSection(workingCase, user)
 
     return {
-      id: '15d5aa57-83c8-4247-badd-f02b40b1f920',
       name: formatMessage(sections.investigationCaseExtensionSection.title),
       children:
         user?.institution?.type !== InstitutionType.ProsecutorsOffice
@@ -965,7 +957,6 @@ const useSections = (
         ? getInvestigationCaseCourtSections(workingCase, user)
         : getIndictmentsCourtSections(workingCase),
       {
-        id: '26eb8a72-e2e4-4575-a419-c718849ef9ca',
         name: caseResult(formatMessage, workingCase),
         children: [],
       },
@@ -973,7 +964,6 @@ const useSections = (
       workingCase.prosecutorPostponedAppealDate
         ? [
             {
-              id: 'c1b1364b-fc3b-4626-9324-617e4e23fd7e',
               name: formatMessage(sections.caseResults.appealed),
               children: [],
             },

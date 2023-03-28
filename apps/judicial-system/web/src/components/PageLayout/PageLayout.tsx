@@ -37,7 +37,6 @@ import * as styles from './PageLayout.css'
 import { stepValidationsType } from '../../utils/formHelper'
 
 export interface RouteSection {
-  id: string
   name: string
   children: {
     name: string
