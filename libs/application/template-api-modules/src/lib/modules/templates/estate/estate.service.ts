@@ -90,7 +90,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
             nationalId: '0101304929',
           },
         ],
-        caseNumber: '011515',
+        caseNumber: '2020-000123',
         dateOfDeath: new Date(Date.now() - 1000 * 3600 * 24 * 100),
         nameOfDeceased: 'Lizzy B. Gone',
         nationalIdOfDeceased: '0101301234',
@@ -164,6 +164,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
 
     const uploadData: UploadData = {
       applicationType: answers.selectedEstate,
+      caseNumber: externalData?.estate?.caseNumber ?? '',
       assets: processedAssets,
       claims: answers.claims ?? [],
       bankAccounts: answers.bankAccounts ?? [],
