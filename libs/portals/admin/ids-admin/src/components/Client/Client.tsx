@@ -26,7 +26,6 @@ const Client = () => {
   const [selectedEnvironment, setSelectedEnvironment] = useState<
     AuthClient['environments'][0]
   >(client.environments[0])
-
   return (
     <GridContainer>
       <Stack space={4}>

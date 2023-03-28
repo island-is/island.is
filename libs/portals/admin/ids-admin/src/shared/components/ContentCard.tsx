@@ -3,11 +3,13 @@ import { Box, Button, Checkbox, Text } from '@island.is/island-ui/core'
 import { Form } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
+import { ClientFormTypes } from '../../components/forms/EditApplication/EditApplication.action'
 
 interface ContentCardProps {
   title: string
   onSave?: (saveOnAllEnvironments: boolean) => void
   isDirty?: (currentValue: FormData, originalValue: FormData) => boolean
+  intent?: ClientFormTypes | 'none'
 }
 
 function defaultIsDirty(newFormData: FormData, originalFormData: FormData) {
@@ -25,6 +27,7 @@ const ContentCard: FC<ContentCardProps> = ({
   title,
   onSave,
   isDirty = defaultIsDirty,
+  intent = 'none',
 }) => {
   const { formatMessage } = useLocale()
   const [allEnvironments, setAllEnvironments] = useState<boolean>(false)
@@ -43,7 +46,6 @@ const ContentCard: FC<ContentCardProps> = ({
   useEffect(() => {
     originalFormData.current = new FormData(ref.current as HTMLFormElement)
   }, [ref])
-
   return (
     <Box
       borderRadius="large"
@@ -80,6 +82,8 @@ const ContentCard: FC<ContentCardProps> = ({
               disabled={!dirty}
               type="submit"
               onClick={() => onSave(allEnvironments)}
+              name="intent"
+              value={intent}
             >
               {formatMessage(m.saveSettings)}
             </Button>

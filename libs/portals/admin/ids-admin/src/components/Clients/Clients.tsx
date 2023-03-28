@@ -33,6 +33,9 @@ const Clients = () => {
   const navigate = useNavigate()
 
   const [clients, setClients] = useState<AuthClients>(originalClients)
+  clients.map((client: any) => {
+    console.log(client.defaultEnvironment.displayName)
+  })
   const [inputSearchValue, setInputSearchValue] = useState<string>('')
 
   useEffect(() => {

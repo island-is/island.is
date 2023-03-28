@@ -300,4 +300,12 @@ export const m = defineMessages({
     id: 'ap.ids-admin:jsonWebKeySet',
     defaultMessage: 'JSON Web Key Set',
   },
+  errorInvalidUrls: {
+    id: 'ap.ids-admin:error-invalid-urls',
+    defaultMessage: 'List of URLs, comma separated',
+  },
+  errorPositiveNumber: {
+    id: 'ap.ids-admin:error-positive-number',
+    defaultMessage: 'Must be a positive number',
+  },
 })

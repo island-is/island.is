@@ -10,6 +10,7 @@ import { tenantLoader, tenantLoaderId } from './screens/Tenant/Tenant.loader'
 import { clientsLoader } from './components/Clients/Clients.loader'
 import Client from './components/Client/Client'
 import { clientLoader } from './components/Client/Client.loader'
+import { editApplicationAction } from './components/forms/EditApplication/EditApplication.action'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 const Tenant = lazy(() => import('./screens/Tenant/Tenant'))
@@ -17,7 +18,7 @@ const TenantsList = lazy(() => import('./components/TenantsList/TenantsList'))
 const CreateApplication = lazy(() =>
   import('./components/forms/CreateClient/CreateClient'),
 )
-const Applications = lazy(() => import('./components/Clients/Clients'))
+const Clients = lazy(() => import('./components/Clients/Clients'))
 const ApplicationsScreen = lazy(() => import('./screens/ApplicationsScreen'))
 
 const allowedScopes: string[] = [AdminPortalScope.idsAdmin]
@@ -62,6 +63,7 @@ export const idsAdminModule: PortalModule = {
                 path: IDSAdminPaths.IDSAdminClient,
                 element: <Client />,
                 loader: clientLoader(props),
+                action: editApplicationAction(props),
                 handle: {
                   backPath: IDSAdminPaths.IDSAdminTenants,
                 },
@@ -98,7 +100,7 @@ export const idsAdminModule: PortalModule = {
                 name: m.clients,
                 path: IDSAdminPaths.IDSAdminTenants,
                 loader: clientsLoader(props),
-                element: <Applications />,
+                element: <Clients />,
                 handle: {
                   backPath: IDSAdminPaths.IDSAdmin,
                 },
