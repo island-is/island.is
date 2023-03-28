@@ -63,7 +63,11 @@ import {
   AlertMessage,
   AlertBanner,
 } from '@island.is/island-ui/core'
-import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  caseTypes,
+  formatDate,
+} from '@island.is/judicial-system/formatters'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   core,
@@ -275,6 +279,8 @@ export const SignedVerdictOverview: React.FC = () => {
   // skip loading institutions if the user does not have an id
   const { prosecutorsOffices } = useInstitution(!user?.id)
 
+  const isAppealedCase = true // TODO: Replace with actual value
+
   /**
    * If the case is not rejected it must be accepted because
    * this screen is only rendered if the case is either accepted
@@ -286,7 +292,6 @@ export const SignedVerdictOverview: React.FC = () => {
    * decided only accept an alternative travel ban and finally we
    * assume that the actual custody was accepted.
    */
-
   const canModifyCaseDates = useCallback(() => {
     return (
       user &&
@@ -510,9 +515,25 @@ export const SignedVerdictOverview: React.FC = () => {
 
   return (
     <>
-      {workingCase.courtEndTime &&
+      {isAppealedCase ? (
+        <AlertBanner
+          title={formatMessage(strings.statementAlertBannerTitle)}
+          description={formatMessage(strings.statementAlertBannerMessage, {
+            actor: 'Sækjandi', // TODO: Replace with correct actor once implemented
+            appealDate: formatDate(
+              workingCase.prosecutorPostponedAppealDate,
+              'PPPp',
+            ),
+          })}
+          variant="warning"
+          link={{
+            href: `${constants.APPEAL_ROUTE}/${workingCase.id}`, // TODO: Replace with actual route once implemented
+            title: formatMessage(strings.statementAlertBannerLinkText),
+          }}
+        />
+      ) : workingCase.courtEndTime &&
         !workingCase.isAppealDeadlineExpired &&
-        user?.role &&
+        user?.role ? (
         isProsecutionRole(user.role) &&
         features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) && (
           <AlertBanner
@@ -521,11 +542,12 @@ export const SignedVerdictOverview: React.FC = () => {
             })}
             variant="warning"
             link={{
-              href: '/krofur',
+              href: `${constants.APPEAL_ROUTE}/${workingCase.id}`,
               title: formatMessage(strings.appealAlertBannerLinkText),
             }}
           />
-        )}
+        )
+      ) : null}
       <PageLayout
         workingCase={workingCase}
         activeSection={Sections.CASE_CLOSED}

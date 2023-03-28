@@ -39,6 +39,7 @@ import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/util
 import * as constants from '@island.is/judicial-system/consts'
 
 import { appealToCourtOfAppeals as strings } from './AppealToCourtOfAppeals.strings'
+import { Sections } from '@island.is/judicial-system-web/src/types'
 
 const AppealToCourtOfAppeals = () => {
   const { workingCase } = useContext(FormContext)
@@ -96,7 +97,12 @@ const AppealToCourtOfAppeals = () => {
   }, [workingCase.caseFiles])
 
   return (
-    <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
+    <PageLayout
+      workingCase={workingCase}
+      isLoading={false}
+      notFound={false}
+      activeSection={Sections.CASE_CLOSED}
+    >
       <PageHeader title={formatMessage(titles.shared.appealToCourtOfAppeals)} />
       <FormContentContainer>
         <Box marginBottom={2}>
