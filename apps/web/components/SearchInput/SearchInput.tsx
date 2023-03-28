@@ -120,6 +120,7 @@ const useSearch = (
                 SearchableContentTypes['WebOrganizationPage'],
                 SearchableContentTypes['WebOrganizationSubpage'],
                 SearchableContentTypes['WebQna'],
+                SearchableContentTypes['WebDigitalIcelandService'],
               ],
               highlightResults: true,
               useQuery: 'suggestions',

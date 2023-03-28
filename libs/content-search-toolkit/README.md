@@ -10,3 +10,8 @@ Run the following command to unit test the util functions:
 ```
 yarn nx test content-search-toolkit
 ```
+
+write stuff about where how and what
+default vs suggestions
+etc
+
