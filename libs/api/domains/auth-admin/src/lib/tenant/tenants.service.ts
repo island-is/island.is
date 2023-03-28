@@ -1,50 +1,16 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import {
-  AdminApi,
-  AdminDevApi,
-  AdminProdApi,
-  AdminStagingApi,
-} from '@island.is/clients/auth/admin-api'
+import { User } from '@island.is/auth-nest-tools'
 import { FetchError } from '@island.is/clients/middlewares'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Environment } from '@island.is/shared/types'
 
 import { TenantEnvironment } from './models/tenant-environment.model'
 import { TenantsPayload } from './dto/tenants.payload'
 import { Tenant } from './models/tenant.model'
+import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
 
 @Injectable()
-export class TenantsService {
-  constructor(
-    @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
-    @Inject(AdminDevApi.key)
-    private readonly adminDevApi?: AdminApi,
-    @Inject(AdminStagingApi.key)
-    private readonly adminStagingApi?: AdminApi,
-    @Inject(AdminProdApi.key)
-    private readonly adminProdApi?: AdminApi,
-  ) {
-    if (!this.adminDevApi && !this.adminStagingApi && !this.adminProdApi) {
-      logger.error(
-        'No admin api clients configured, at least one configured api is required.',
-      )
-    }
-  }
-
-  private adminDevApiWithAuth(auth: Auth) {
-    return this.adminDevApi?.withMiddleware(new AuthMiddleware(auth))
-  }
-  private adminStagingApiWithAuth(auth: Auth) {
-    return this.adminStagingApi?.withMiddleware(new AuthMiddleware(auth))
-  }
-  private adminProdApiWithAuth(auth: Auth) {
-    return this.adminProdApi?.withMiddleware(new AuthMiddleware(auth))
-  }
-
+export class TenantsService extends MultiEnvironmentService {
   private handleError(error: Error) {
     if (error instanceof FetchError && error.status === 401) {
       // If 401 is returned we log it as info as it is intentional
@@ -56,44 +22,6 @@ export class TenantsService {
 
     // We swallow the errors
     return undefined
-  }
-
-  async getTenant(id: string): Promise<Tenant> {
-    return {
-      id: id,
-      environments: [
-        {
-          name: id,
-          environment: Environment.Production,
-          displayName: [
-            {
-              locale: 'is',
-              value: 'Ísland.is stjórnborð',
-            },
-          ],
-        },
-        {
-          name: id,
-          environment: Environment.Staging,
-          displayName: [
-            {
-              locale: 'is',
-              value: 'Ísland.is stjórnborð',
-            },
-          ],
-        },
-        {
-          name: id,
-          environment: Environment.Development,
-          displayName: [
-            {
-              locale: 'is',
-              value: 'Ísland.is stjórnborð',
-            },
-          ],
-        },
-      ],
-    }
   }
 
   async getTenants(user: User): Promise<TenantsPayload> {
@@ -146,5 +74,39 @@ export class TenantsService {
       totalCount: tenantArray.length,
       pageInfo: { hasNextPage: false },
     }
+  }
+
+  async getTenantById(id: string, user: User): Promise<Tenant> {
+    const tenants = await Promise.all([
+      this.adminDevApiWithAuth(user)
+        ?.meTenantsControllerFindById({ tenantId: id })
+        .catch(this.handleError.bind(this)),
+      this.adminStagingApiWithAuth(user)
+        ?.meTenantsControllerFindById({ tenantId: id })
+        .catch(this.handleError.bind(this)),
+      this.adminProdApiWithAuth(user)
+        ?.meTenantsControllerFindById({ tenantId: id })
+        .catch(this.handleError.bind(this)),
+    ])
+
+    const tenantMap: TenantEnvironment[] = []
+
+    for (const [index, env] of [
+      Environment.Development,
+      Environment.Staging,
+      Environment.Production,
+    ].entries()) {
+      if (tenants[index]) {
+        tenantMap.push({
+          name: tenants[index]?.name ?? '',
+          environment: env,
+          displayName: tenants[index]?.displayName ?? [],
+        })
+      }
+    }
+    return {
+      id: id,
+      environments: tenantMap,
+    } as Tenant
   }
 }
