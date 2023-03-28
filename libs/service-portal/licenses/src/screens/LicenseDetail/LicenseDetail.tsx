@@ -146,7 +146,7 @@ const DataFields = ({
                             <Text>
                               {field.value && isJSONDate(field.value)
                                 ? format(
-                                    new Date(field.value).getTime(),
+                                    +new Date(field.value).getTime(),
                                     dateFormat.is,
                                   )
                                 : field.value}
