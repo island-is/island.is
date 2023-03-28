@@ -36,13 +36,15 @@ import {
   CaseFile,
   CaseFileCategory,
   CaseFileState,
-  CaseOrigin,
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { GetPoliceCaseFilesQuery } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  GetPoliceCaseFilesQuery,
+  CaseOrigin,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -75,7 +77,7 @@ const UploadFilesToPoliceCase: React.FC<{
   } = useQuery<GetPoliceCaseFilesQuery>(PoliceCaseFilesQuery, {
     variables: { input: { caseId } },
     fetchPolicy: 'no-cache',
-    skip: caseOrigin !== CaseOrigin.LOKE,
+    skip: caseOrigin !== CaseOrigin.Loke,
   })
 
   const [displayFiles, setDisplayFiles] = useState<UploadFile[]>(
@@ -108,7 +110,7 @@ const UploadFilesToPoliceCase: React.FC<{
   }, [setAllUploaded, displayFiles])
 
   useEffect(() => {
-    if (caseOrigin !== CaseOrigin.LOKE) {
+    if (caseOrigin !== CaseOrigin.Loke) {
       setPoliceCaseFiles({
         files: [],
         isLoading: false,

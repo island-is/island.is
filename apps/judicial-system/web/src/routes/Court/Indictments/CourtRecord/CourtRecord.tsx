@@ -44,7 +44,6 @@ import {
   mapCaseFileToUploadFile,
   stepValidationsType,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { courtRecord as m } from './CourtRecord.strings'
@@ -135,8 +134,11 @@ const CourtRecord: React.FC = () => {
             fileList={displayFiles.filter(
               (file) => file.category === CaseFileCategory.COURT_RECORD,
             )}
-            accept={Object.values(fileExtensionWhitelist)}
+            accept="application/pdf"
             header={formatMessage(m.inputFieldLabel)}
+            description={formatMessage(core.uploadBoxDescription, {
+              fileEndings: '.pdf',
+            })}
             buttonLabel={formatMessage(m.uploadButtonText)}
             onChange={(files) => {
               handleChange(
@@ -156,8 +158,11 @@ const CourtRecord: React.FC = () => {
             fileList={displayFiles.filter(
               (file) => file.category === CaseFileCategory.RULING,
             )}
-            accept={Object.values(fileExtensionWhitelist)}
+            accept="application/pdf"
             header={formatMessage(m.inputFieldLabel)}
+            description={formatMessage(core.uploadBoxDescription, {
+              fileEndings: '.pdf',
+            })}
             buttonLabel={formatMessage(m.uploadButtonText)}
             onChange={(files) =>
               handleChange(
