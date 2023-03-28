@@ -146,7 +146,7 @@ export const HearingArrangements: React.FC = () => {
     <PageLayout
       workingCase={workingCase}
       activeSection={
-        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
+        workingCase.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={RestrictionCaseCourtSubsections.HEARING_ARRANGEMENTS}
       isLoading={isLoadingWorkingCase}
@@ -197,6 +197,7 @@ export const HearingArrangements: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(constants.RESTRICTION_CASE_RULING_ROUTE)

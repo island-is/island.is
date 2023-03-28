@@ -29,6 +29,7 @@ import { Notification } from './notification.model'
 
 registerEnumType(CaseType, { name: 'CaseType' })
 registerEnumType(SessionArrangements, { name: 'SessionArrangements' })
+registerEnumType(CaseOrigin, { name: 'CaseOrigin' })
 
 @ObjectType()
 export class Case implements TCase {
@@ -41,7 +42,7 @@ export class Case implements TCase {
   @Field()
   readonly modified!: string
 
-  @Field(() => String)
+  @Field(() => CaseOrigin)
   readonly origin!: CaseOrigin
 
   @Field(() => CaseType)
