@@ -14,7 +14,7 @@ interface CaseProps {
   advices: Advice[]
 }
 const CaseDetails: React.FC<CaseProps> = ({ case: Case, advices }) => {
-  return <CaseScreen chosenCase={Case} advices={advices} isLoggedIn={true} />
+  return <CaseScreen chosenCase={Case} advices={advices} />
 }
 export default CaseDetails
 
