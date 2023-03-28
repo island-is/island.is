@@ -16,10 +16,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { NotificationType } from '@island.is/judicial-system/types'
-import {
-  RestrictionCaseCourtSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
+import { RestrictionCaseCourtSubsections } from '@island.is/judicial-system-web/src/types'
 import {
   useCase,
   useOnceOn,
@@ -136,11 +133,6 @@ const HearingArrangements = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase.parentCase
-          ? Sections.indexOf('JUDGE_EXTENSION')
-          : Sections.indexOf('JUDGE')
-      }
       activeSubSection={RestrictionCaseCourtSubsections.HEARING_ARRANGEMENTS}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}

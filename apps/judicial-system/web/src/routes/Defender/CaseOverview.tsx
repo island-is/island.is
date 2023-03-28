@@ -1,7 +1,6 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Sections } from '@island.is/judicial-system-web/src/types'
 import {
   BlueBox,
   CaseDates,
@@ -111,13 +110,6 @@ export const CaseOverview: React.FC = () => {
         )}
       <PageLayout
         workingCase={workingCase}
-        activeSection={
-          completedCaseStates.includes(workingCase.state)
-            ? Sections.indexOf('CASE_CLOSED')
-            : workingCase.parentCase
-            ? Sections.indexOf('JUDGE_EXTENSION')
-            : Sections.indexOf('JUDGE')
-        }
         isLoading={isLoadingWorkingCase}
         notFound={caseNotFound}
       >

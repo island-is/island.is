@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import { FC, useState } from 'react'
 import { Colors } from '@island.is/island-ui/theme'
 
 import { Box } from '../Box/Box'
@@ -7,7 +7,6 @@ import { Icon } from '../IconRC/Icon'
 import { IconMapIcon } from '../IconRC/types'
 import { Text } from '../Text/Text'
 import { LinkContext } from '../context/LinkContext/LinkContext'
-import { Link } from '../Link/Link'
 import { LinkV2 } from '../Link/LinkV2'
 
 export type AlertBannerVariants =

@@ -15,10 +15,7 @@ import {
   FormContext,
 } from '@island.is/judicial-system-web/src/components'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import {
-  RestrictionCaseCourtSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
+import { RestrictionCaseCourtSubsections } from '@island.is/judicial-system-web/src/types'
 import {
   useCase,
   useDeb,
@@ -209,11 +206,6 @@ const CourtRecord = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase.parentCase
-          ? Sections.indexOf('JUDGE_EXTENSION')
-          : Sections.indexOf('JUDGE')
-      }
       activeSubSection={RestrictionCaseCourtSubsections.COURT_RECORD}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}

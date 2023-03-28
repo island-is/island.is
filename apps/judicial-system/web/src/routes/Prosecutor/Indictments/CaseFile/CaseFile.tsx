@@ -14,10 +14,7 @@ import {
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import { Accordion, AlertMessage, Box, Text } from '@island.is/island-ui/core'
-import {
-  IndictmentsProsecutorSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
+import { IndictmentsProsecutorSubsections } from '@island.is/judicial-system-web/src/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
@@ -37,7 +34,6 @@ const CaseFile = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.indexOf('PROSECUTOR')}
       activeSubSection={IndictmentsProsecutorSubsections.CASE_FILE}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}

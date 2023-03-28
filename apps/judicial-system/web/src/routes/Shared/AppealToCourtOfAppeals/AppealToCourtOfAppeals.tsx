@@ -36,7 +36,6 @@ import {
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { Sections } from '@island.is/judicial-system-web/src/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { appealToCourtOfAppeals as strings } from './AppealToCourtOfAppeals.strings'
@@ -97,12 +96,7 @@ const AppealToCourtOfAppeals = () => {
   }, [workingCase.caseFiles])
 
   return (
-    <PageLayout
-      workingCase={workingCase}
-      isLoading={false}
-      notFound={false}
-      activeSection={Sections.indexOf('CASE_CLOSED')}
-    >
+    <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
       <PageHeader title={formatMessage(titles.shared.appealToCourtOfAppeals)} />
       <FormContentContainer>
         <Box marginBottom={2}>

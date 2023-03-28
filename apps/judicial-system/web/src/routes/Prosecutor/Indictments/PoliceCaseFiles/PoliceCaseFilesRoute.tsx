@@ -23,10 +23,7 @@ import {
   ProsecutorCaseInfo,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  IndictmentsProsecutorSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
+import { IndictmentsProsecutorSubsections } from '@island.is/judicial-system-web/src/types'
 import {
   titles,
   errors as errorMessages,
@@ -373,7 +370,6 @@ const PoliceCaseFilesRoute = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.indexOf('PROSECUTOR')}
       activeSubSection={IndictmentsProsecutorSubsections.POLICE_CASE_FILES}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}

@@ -19,7 +19,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   IndictmentsProsecutorSubsections,
-  Sections,
   TempIndictmentCount as TIndictmentCount,
 } from '@island.is/judicial-system-web/src/types'
 import { titles } from '@island.is/judicial-system-web/messages'
@@ -257,7 +256,6 @@ const Indictment: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.indexOf('PROSECUTOR')}
       activeSubSection={IndictmentsProsecutorSubsections.INDICTMENT}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}

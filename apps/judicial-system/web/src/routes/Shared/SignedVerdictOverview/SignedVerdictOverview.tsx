@@ -47,7 +47,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   ReactSelectOption,
-  Sections,
   TempCase as Case,
   TempUpdateCase as UpdateCase,
 } from '@island.is/judicial-system-web/src/types'
@@ -555,12 +554,6 @@ export const SignedVerdictOverview: React.FC = () => {
       ) : null}
       <PageLayout
         workingCase={workingCase}
-        activeSection={
-          // If the case is appealed there is an extra section in the form stepper
-          isAppealedCase
-            ? Sections.indexOf('CASE_CLOSED') + 1
-            : Sections.indexOf('CASE_CLOSED')
-        }
         isLoading={isLoadingWorkingCase}
         notFound={caseNotFound}
       >

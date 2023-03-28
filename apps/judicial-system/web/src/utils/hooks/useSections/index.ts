@@ -3,7 +3,10 @@ import { useIntl } from 'react-intl'
 
 import {
   CaseState,
+  completedCaseStates,
   Gender,
+  isCourtRole,
+  isIndictmentCase,
   isInvestigationCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
@@ -15,6 +18,7 @@ import {
   CaseType,
   InstitutionType,
   User,
+  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
@@ -54,12 +58,17 @@ const useSections = (
     workingCase: Case,
     user?: User,
   ): RouteSection => {
-    const { type, id } = workingCase
+    const { type, id, parentCase } = workingCase
 
     return {
       name: formatMessage(sections.restrictionCaseProsecutorSection.caseTitle, {
         caseType: type,
       }),
+      isActive:
+        user?.role === UserRole.Prosecutor &&
+        isRestrictionCase(type) &&
+        !completedCaseStates.includes(workingCase.state) &&
+        !parentCase,
       children:
         user?.institution?.type !== InstitutionType.ProsecutorsOffice
           ? []
@@ -187,10 +196,15 @@ const useSections = (
     workingCase: Case,
     user?: User,
   ): RouteSection => {
-    const { id } = workingCase
+    const { id, type, parentCase } = workingCase
 
     return {
       name: formatMessage(sections.investigationCaseProsecutorSection.title),
+      isActive:
+        user?.role === UserRole.Prosecutor &&
+        isInvestigationCase(type) &&
+        !completedCaseStates.includes(workingCase.state) &&
+        !parentCase,
       children:
         user?.institution?.type !== InstitutionType.ProsecutorsOffice
           ? []
@@ -313,12 +327,16 @@ const useSections = (
     workingCase: Case,
     user?: User,
   ): RouteSection => {
-    const { id } = workingCase
+    const { id, type } = workingCase
 
     const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
     return {
       name: formatMessage(sections.indictmentCaseProsecutorSection.title),
+      isActive:
+        user?.role === UserRole.Prosecutor &&
+        isIndictmentCase(type) &&
+        !completedCaseStates.includes(workingCase.state),
       // Prosecutor can only view the overview when case has been received by court
       children: caseHasBeenReceivedByCourt
         ? []
@@ -477,10 +495,15 @@ const useSections = (
     workingCase: Case,
     user?: User,
   ): RouteSection => {
-    const { id } = workingCase
+    const { id, type, parentCase } = workingCase
 
     return {
       name: formatMessage(sections.courtSection.title),
+      isActive:
+        isCourtRole(user?.role) &&
+        isRestrictionCase(type) &&
+        !completedCaseStates.includes(workingCase.state) &&
+        !parentCase,
       children:
         user?.institution?.type !== InstitutionType.Court
           ? []
@@ -592,10 +615,15 @@ const useSections = (
     workingCase: Case,
     user?: User,
   ): RouteSection => {
-    const { id } = workingCase
+    const { id, type, parentCase } = workingCase
 
     return {
       name: formatMessage(sections.investigationCaseCourtSection.title),
+      isActive:
+        isCourtRole(user?.role) &&
+        isInvestigationCase(type) &&
+        !completedCaseStates.includes(workingCase.state) &&
+        !parentCase,
       children:
         user?.institution?.type !== InstitutionType.Court
           ? []
@@ -715,11 +743,15 @@ const useSections = (
     }
   }
 
-  const getIndictmentsCourtSections = (workingCase: Case) => {
-    const { id } = workingCase
+  const getIndictmentsCourtSections = (workingCase: Case, user?: User) => {
+    const { id, type } = workingCase
 
     return {
       name: formatMessage(sections.indictmentsCourtSection.title),
+      isActive:
+        isCourtRole(user?.role) &&
+        isIndictmentCase(type) &&
+        !completedCaseStates.includes(workingCase.state),
       children: [
         {
           name: formatMessage(sections.indictmentsCourtSection.overview),
@@ -802,9 +834,14 @@ const useSections = (
     user?: User,
   ): RouteSection => {
     const section = getRestrictionCaseProsecutorSection(workingCase, user)
+    const { type, parentCase } = workingCase
 
     return {
       name: formatMessage(sections.extensionSection.title),
+      isActive:
+        user?.role === UserRole.Prosecutor &&
+        isRestrictionCase(type) &&
+        parentCase !== undefined,
       children:
         user?.institution?.type !== InstitutionType.ProsecutorsOffice
           ? []
@@ -878,9 +915,14 @@ const useSections = (
     user?: User,
   ): RouteSection => {
     const section = getInvestigationCaseProsecutorSection(workingCase, user)
+    const { type, parentCase } = workingCase
 
     return {
       name: formatMessage(sections.investigationCaseExtensionSection.title),
+      isActive:
+        user?.role === UserRole.Prosecutor &&
+        isInvestigationCase(type) &&
+        parentCase !== undefined,
       children:
         user?.institution?.type !== InstitutionType.ProsecutorsOffice
           ? []
@@ -943,6 +985,30 @@ const useSections = (
     }
   }
 
+  const getRestrictionCaseExtensionCourtSections = (
+    workingCase: Case,
+    user?: User,
+  ) => {
+    const { type } = workingCase
+
+    return {
+      ...getRestrictionCaseCourtSections(workingCase, user),
+      isActive: isRestrictionCase(type) && isCourtRole(user?.role),
+    }
+  }
+
+  const getInvestigationCaseExtensionCourtSections = (
+    workingCase: Case,
+    user?: User,
+  ) => {
+    const { type } = workingCase
+
+    return {
+      ...getInvestigationCaseCourtSections(workingCase, user),
+      isActive: isInvestigationCase(type) && isCourtRole(user?.role),
+    }
+  }
+
   const getSections = (workingCase: Case, user?: User): RouteSection[] => {
     return [
       isRestrictionCase(workingCase.type)
@@ -954,9 +1020,13 @@ const useSections = (
         ? getRestrictionCaseCourtSections(workingCase, user)
         : isInvestigationCase(workingCase.type)
         ? getInvestigationCaseCourtSections(workingCase, user)
-        : getIndictmentsCourtSections(workingCase),
+        : getIndictmentsCourtSections(workingCase, user),
       {
         name: caseResult(formatMessage, workingCase),
+        isActive:
+          completedCaseStates.includes(workingCase.state) &&
+          !workingCase.prosecutorPostponedAppealDate &&
+          !workingCase.accusedPostponedAppealDate,
         children: [],
       },
       ...(workingCase.accusedPostponedAppealDate ||
@@ -964,16 +1034,21 @@ const useSections = (
         ? [
             {
               name: formatMessage(sections.caseResults.appealed),
+              isActive: true, // Whenever this is shown, it is active
               children: [],
             },
           ]
         : []),
-      isRestrictionCase(workingCase.type)
-        ? getRestrictionCaseExtenstionSections(workingCase, user)
-        : getInvestigationCaseExtenstionSections(workingCase, user),
-      isRestrictionCase(workingCase.type)
-        ? getRestrictionCaseCourtSections(workingCase, user)
-        : getInvestigationCaseCourtSections(workingCase, user),
+      ...(workingCase.parentCase
+        ? [
+            isRestrictionCase(workingCase.type)
+              ? getRestrictionCaseExtenstionSections(workingCase, user)
+              : getInvestigationCaseExtenstionSections(workingCase, user),
+            isRestrictionCase(workingCase.type)
+              ? getRestrictionCaseExtensionCourtSections(workingCase, user)
+              : getInvestigationCaseExtensionCourtSections(workingCase, user),
+          ]
+        : []),
     ]
   }
 

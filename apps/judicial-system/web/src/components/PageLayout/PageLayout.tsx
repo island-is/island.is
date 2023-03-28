@@ -15,10 +15,7 @@ import {
   LinkV2,
 } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
-import {
-  Sections,
-  TempCase as Case,
-} from '@island.is/judicial-system-web/src/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   sections as formStepperSections,
   pageLayout,
@@ -38,6 +35,7 @@ import { stepValidationsType } from '../../utils/formHelper'
 
 export interface RouteSection {
   name: string
+  isActive: boolean
   children: {
     name: string
     href?: string
@@ -69,7 +67,7 @@ const DisplaySection: React.FC<SectionProps> = (props) => {
     <Section
       section={section.name}
       sectionIndex={index}
-      isActive={activeSection !== undefined && activeSection === index}
+      isActive={section.isActive}
       isComplete={activeSection ? index < activeSection : false}
       subSections={section.children.map((subSection, index) =>
         subSection.href && activeSubSection && activeSubSection > index ? (
@@ -112,7 +110,6 @@ const DisplaySection: React.FC<SectionProps> = (props) => {
 interface SidePanelProps {
   workingCase: Case
   user?: User
-  activeSection?: number
   activeSubSection?: number
   onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
   isValid?: boolean
@@ -122,29 +119,12 @@ const SidePanel: React.FC<SidePanelProps> = ({
   user,
   isValid,
   onNavigationTo,
-  activeSection,
   workingCase,
   activeSubSection,
 }) => {
   const { getSections } = useSections(isValid, onNavigationTo)
+  const sections = getSections(workingCase, user)
   const { formatMessage } = useIntl()
-  /**
-   * Remove the extension parts of the formstepper if the user is not
-   * applying for an extension or appealing the case
-   **/
-  const isAppeal =
-    workingCase.prosecutorPostponedAppealDate ||
-    workingCase.accusedPostponedAppealDate
-
-  const sections =
-    activeSection &&
-    !isAppeal &&
-    (Sections[activeSection] === 'EXTENSION' ||
-      Sections[activeSection] === 'JUDGE_EXTENSION')
-      ? getSections(workingCase, user)
-      : getSections(workingCase, user).filter(
-          (_, index) => index <= (isAppeal ? 3 : 2),
-        )
 
   return (
     <GridColumn span={['12/12', '12/12', '4/12', '3/12']}>
@@ -169,7 +149,7 @@ const SidePanel: React.FC<SidePanelProps> = ({
                 key={`${section.name}-${index}`}
                 section={section}
                 index={index}
-                activeSection={activeSection}
+                activeSection={sections.findIndex((s) => s.isActive)}
                 activeSubSection={activeSubSection}
               />
             ))}
@@ -182,7 +162,6 @@ const SidePanel: React.FC<SidePanelProps> = ({
 interface PageProps {
   children: ReactNode
   workingCase: Case
-  activeSection?: number
   isLoading: boolean
   notFound: boolean
   isExtension?: boolean
@@ -195,7 +174,6 @@ interface PageProps {
 const PageLayout: React.FC<PageProps> = ({
   workingCase,
   children,
-  activeSection,
   activeSubSection,
   isLoading,
   notFound,
@@ -256,7 +234,6 @@ const PageLayout: React.FC<PageProps> = ({
             user={user}
             isValid={isValid}
             onNavigationTo={onNavigationTo}
-            activeSection={activeSection}
             workingCase={workingCase}
             activeSubSection={activeSubSection}
           />

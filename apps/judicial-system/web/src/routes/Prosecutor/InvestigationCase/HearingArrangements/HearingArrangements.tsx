@@ -11,10 +11,7 @@ import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  RestrictionCaseProsecutorSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
+import { RestrictionCaseProsecutorSubsections } from '@island.is/judicial-system-web/src/types'
 import {
   CaseState,
   CaseTransition,
@@ -129,11 +126,6 @@ const HearingArrangements = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase.parentCase
-          ? Sections.indexOf('EXTENSION')
-          : Sections.indexOf('PROSECUTOR')
-      }
       activeSubSection={
         RestrictionCaseProsecutorSubsections.HEARING_ARRANGEMENTS
       }

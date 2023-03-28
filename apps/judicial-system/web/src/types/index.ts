@@ -20,14 +20,6 @@ export enum AppealDecisionRole {
   ACCUSED = 'ACCUSED',
 }
 
-export const Sections = [
-  'PROSECUTOR',
-  'JUDGE',
-  'CASE_CLOSED',
-  'EXTENSION',
-  'JUDGE_EXTENSION',
-]
-
 export enum RestrictionCaseProsecutorSubsections {
   DEFENDANT = 0,
   HEARING_ARRANGEMENTS = 1,

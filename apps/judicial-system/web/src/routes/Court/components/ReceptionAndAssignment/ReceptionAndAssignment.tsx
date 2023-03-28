@@ -15,7 +15,6 @@ import {
   IndictmentsCourtSubsections,
   ReactSelectOption,
   RestrictionCaseCourtSubsections,
-  Sections,
   UserData,
 } from '@island.is/judicial-system-web/src/types'
 import {
@@ -125,7 +124,6 @@ const ReceptionAndAssignment = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.indexOf('JUDGE')}
       activeSubSection={getActiveSubSection()}
       isLoading={isLoadingWorkingCase || userLoading}
       notFound={caseNotFound}

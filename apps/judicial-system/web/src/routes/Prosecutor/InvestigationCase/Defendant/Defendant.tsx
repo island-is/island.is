@@ -17,7 +17,6 @@ import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDef
 import {
   RestrictionCaseProsecutorSubsections,
   ReactSelectOption,
-  Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
@@ -246,11 +245,6 @@ const Defendant = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase.parentCase
-          ? Sections.indexOf('EXTENSION')
-          : Sections.indexOf('PROSECUTOR')
-      }
       activeSubSection={RestrictionCaseProsecutorSubsections.DEFENDANT}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
