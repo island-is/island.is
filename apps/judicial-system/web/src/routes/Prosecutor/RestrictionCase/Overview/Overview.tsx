@@ -120,7 +120,7 @@ export const Overview: React.FC = () => {
     <PageLayout
       workingCase={workingCase}
       activeSection={
-        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
+        workingCase.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={
         RestrictionCaseProsecutorSubsections.PROSECUTOR_OVERVIEW
@@ -159,7 +159,7 @@ export const Overview: React.FC = () => {
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(m.headingV3, {
-              isExtended: Boolean(workingCase?.parentCase),
+              isExtended: Boolean(workingCase.parentCase),
               caseType: workingCase.type,
             })}
           </Text>
