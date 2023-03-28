@@ -13,9 +13,16 @@ interface FilterBoxProps {
   filters: CaseFilter
   setFilters: (arr: CaseFilter) => void
   type: string
+  loading?: boolean
 }
 
-const FilterBox = ({ title, filters, setFilters, type }: FilterBoxProps) => {
+const FilterBox = ({
+  title,
+  filters,
+  setFilters,
+  type,
+  loading,
+}: FilterBoxProps) => {
   const thisFilters = filters[type]
 
   const onChangeIsOpen = () => {
@@ -62,10 +69,7 @@ const FilterBox = ({ title, filters, setFilters, type }: FilterBoxProps) => {
   }
 
   const renderLabel = (item) => {
-    if (item.count) {
-      return `${item.label} (${item.count})`
-    }
-    return `${item.label}`
+    return `${item.label} (${item.count})`
   }
 
   return (
@@ -81,25 +85,27 @@ const FilterBox = ({ title, filters, setFilters, type }: FilterBoxProps) => {
           <Button
             colorScheme="light"
             circle
-            icon={thisFilters.isOpen ? 'remove' : 'add'}
-            title={thisFilters.isOpen ? 'Loka' : 'Opna'}
+            icon={thisFilters?.isOpen ? 'remove' : 'add'}
+            title={thisFilters?.isOpen ? 'Loka' : 'Opna'}
             onClick={onChangeIsOpen}
           />
         </Inline>
-        {thisFilters.isOpen && (
+        {thisFilters?.isOpen && (
           <>
-            {thisFilters.items.map((item) =>
+            {thisFilters?.items.map((item, index) =>
               type === 'sorting' ? (
                 <Checkbox
-                  checked={item.checked}
-                  label={item.label}
-                  onChange={() => onChangeRadio(item.value)}
+                  key={index}
+                  checked={item?.checked}
+                  label={item?.label}
+                  onChange={() => onChangeRadio(item?.value)}
                 />
               ) : (
                 <Checkbox
-                  checked={item.checked}
+                  key={index}
+                  checked={item?.checked}
                   label={renderLabel(item)}
-                  onChange={() => onChangeCheckbox(item.value)}
+                  onChange={() => onChangeCheckbox(item?.value)}
                 />
               ),
             )}
@@ -109,6 +115,7 @@ const FilterBox = ({ title, filters, setFilters, type }: FilterBoxProps) => {
                 icon="arrowForward"
                 variant="text"
                 onClick={onClean}
+                loading={loading}
               >
                 Hreinsa síu
               </Button>

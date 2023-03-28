@@ -24,20 +24,17 @@ import { SimpleCardSkeleton } from '../../components/Card'
 import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
 import { getTimeLineDate } from '../../utils/helpers/dateFormatter'
 import Link from 'next/link'
+import { useUser } from '../../context/UserContext'
 
-const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
-  // Remove following lines after connecting to API
+const CaseScreen = ({ chosenCase, advices }) => {
   const { contactEmail, contactName } = chosenCase
-
-  const api = process.env.API_URL ?? 'https://localhost:4444/'
-
-  isLoggedIn = true // remove when functionality for logged in has been implemented
+  const { isAuthenticated, user } = useUser()
 
   return (
     <Layout
       seo={{
         title: `Mál: S-${chosenCase?.caseNumber}`,
-        url: `mal/${chosenCase?.caseNumber}`,
+        url: `mal/${chosenCase?.id}`,
       }}
     >
       <GridContainer>
@@ -93,7 +90,12 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
                   {advices?.map((advice: Advice) => {
                     return <ReviewCard advice={advice} key={advice.number} />
                   })}
-                  <WriteReviewCard card={chosenCase} isLoggedIn={isLoggedIn} />
+                  <WriteReviewCard
+                    card={chosenCase}
+                    isLoggedIn={isAuthenticated}
+                    username={user?.name}
+                    caseId={chosenCase.id}
+                  />
                 </Stack>
               </Box>
             </Stack>
