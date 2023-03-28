@@ -12,8 +12,8 @@ import {
   Inline,
   Divider,
   UploadFile,
-  fileToObject,
   Hidden,
+  fileToObject,
 } from '@island.is/island-ui/core'
 
 import Link from 'next/link'
@@ -50,7 +50,7 @@ const fileExtensionWhitelist = {
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 }
 
-// taken from InputFileUpload.stories.tsx
+// InputFileUpload.stories.tsx
 const uploadFile = (file: UploadFile, dispatch: (action: Action) => void) => {
   return new Promise((resolve, reject) => {
     const req = new XMLHttpRequest()
@@ -84,7 +84,7 @@ const uploadFile = (file: UploadFile, dispatch: (action: Action) => void) => {
 
     const formData = new FormData()
     formData.append('file', file.originalFileObj || '', file.name)
-
+    
     // TODO: add backend url if multipart upload
     //req.open('POST', 'http://localhost:5000/')
     //req.send(formData)
@@ -131,7 +131,6 @@ export const WriteReviewCard = ({
   const [state, dispatch] = useReducer(reducer, initialUploadFiles)
   const [error, setError] = useState<string | undefined>(undefined)
   const { LogIn, loginLoading } = useLogin()
-
   const [review, setReview] = useState('')
 
   const client = initApollo()

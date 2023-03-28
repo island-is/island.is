@@ -11,7 +11,6 @@ import {
 
 import {
   getExtensionInfoText,
-  rulingDateLabel,
   shouldHideNextButton,
   titleForCase,
 } from './SignedVerdictOverview'
@@ -113,18 +112,6 @@ describe('titleForCase', () => {
     expect(res).toEqual('Farbann virkt')
   })
 })
-
-describe('rulingDateLabel', () => {
-  const formatMessage = createIntl({ locale: 'is', onError: jest.fn })
-    .formatMessage
-  test('should format correctly', () => {
-    const theCase = { courtEndTime: '2020-09-16T19:51:28.224Z' } as Case
-    expect(rulingDateLabel(formatMessage, theCase)).toEqual(
-      'Úrskurðað 16. september 2020 kl. 19:51',
-    )
-  })
-})
-
 describe('shouldHideNextButton', () => {
   const prosecutor = { id: uuid(), role: UserRole.Prosecutor } as User
 

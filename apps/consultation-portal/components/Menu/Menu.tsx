@@ -34,55 +34,90 @@ export const Menu = ({ isFrontPage = false }: MenuProps) => {
   const biggerMarginLeft = [3, 3, 3, 4] as ResponsiveSpace
 
   return (
-    <>
-      <header className={styles.menu}>
-        <Hidden print={true}>
-          <GridContainer>
-            <GridRow>
-              <GridColumn span="12/12" paddingTop={3} paddingBottom={3}>
-                <Columns alignY="center" space={2}>
-                  {isFrontPage && (
+    <header className={styles.menu}>
+      <Hidden print={true}>
+        <GridContainer>
+          <GridRow>
+            <GridColumn span="12/12" paddingTop={3} paddingBottom={3}>
+              <Columns alignY="center" space={2}>
+                {isFrontPage && (
+                  <Column width="content">
+                    <FocusableBox href="https://island.is/">
+                      <Logo iconOnly width={26} />
+                    </FocusableBox>
+                  </Column>
+                )}
+                {!isFrontPage && (
+                  <Hidden below="xl">
                     <Column width="content">
                       <FocusableBox href="https://island.is/">
                         <Logo iconOnly width={26} />
                       </FocusableBox>
                     </Column>
-                  )}
-                  {!isFrontPage && (
+                  </Hidden>
+                )}
+                {!isFrontPage && (
+                  <>
                     <Hidden below="xl">
                       <Column width="content">
-                        <FocusableBox href="https://island.is/">
-                          <Logo iconOnly width={26} />
-                        </FocusableBox>
+                        <Box>
+                          <Box
+                            style={{
+                              transform: 'rotate(90deg)',
+                              width: 56,
+                            }}
+                            marginX={1}
+                          >
+                            <Divider />
+                          </Box>
+                        </Box>
                       </Column>
                     </Hidden>
-                  )}
-                  {!isFrontPage && (
-                    <>
-                      <Hidden below="xl">
-                        <Column width="content">
-                          <Box>
-                            <Box
-                              style={{
-                                transform: 'rotate(90deg)',
-                                width: 56,
-                              }}
-                              marginX={1}
-                            >
-                              <Divider />
-                            </Box>
-                          </Box>
-                        </Column>
+                    <Column width="content">
+                      <Hidden below="md">
+                        <FocusableBox href="/" alignItems="center">
+                          <MenuLogo />
+                        </FocusableBox>
                       </Hidden>
-                      <Column width="content">
-                        <Hidden below="md">
-                          <FocusableBox href="/" alignItems="center">
-                            <MenuLogo />
-                          </FocusableBox>
-                        </Hidden>
-                        <Hidden above="sm">
-                          <FocusableBox href="/" alignItems="center">
-                            <MenuLogoMobile />
+                      <Hidden above="sm">
+                        <FocusableBox href="/" alignItems="center">
+                          <MenuLogoMobile />
+                        </FocusableBox>
+                      </Hidden>
+                    </Column>
+                  </>
+                )}
+
+                <Column>
+                  <Hidden below="xl">
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="flexEnd"
+                      width="full"
+                    >
+                      {menuItems.map((item, index) => {
+                        return (
+                          <FocusableBox
+                            marginLeft={index !== 0 ? marginLeft : 0}
+                            key={index}
+                            href={item.href}
+                          >
+                            <div
+                              style={{
+                                backgroundColor: checkActiveHeaderLink(
+                                  router,
+                                  item.href,
+                                )
+                                  ? '#00E4CA'
+                                  : 'transparent',
+                                borderRadius: '8px',
+                              }}
+                            >
+                              <Button variant="utility" size="small">
+                                {item.label}
+                              </Button>
+                            </div>
                           </FocusableBox>
                         </Hidden>
                       </Column>
@@ -160,16 +195,33 @@ export const Menu = ({ isFrontPage = false }: MenuProps) => {
                           isFrontPage={isFrontPage}
                         />
                       </Box>
-                    </Hidden>
-                  </Column>
-                </Columns>
-              </GridColumn>
-            </GridRow>
-          </GridContainer>
-        </Hidden>
-      </header>
-      <Divider />
-    </>
+                    </Box>
+                  </Hidden>
+                  <Hidden above="lg">
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="flexEnd"
+                      width="full"
+                    >
+                      <MenuModal
+                        baseId="menuModal"
+                        modalLabel="Menu modal"
+                        isLoggedIn={isAuthenticated}
+                        logIn={LogIn}
+                        logOut={logoutUser}
+                        router={router}
+                        isFrontPage={isFrontPage}
+                      />
+                    </Box>
+                  </Hidden>
+                </Column>
+              </Columns>
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      </Hidden>
+    </header>
   )
 }
 export default Menu

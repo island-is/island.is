@@ -88,10 +88,11 @@ const CreateCaseButton: React.FC<{
     return []
   }, [formatMessage, user?.role])
 
-  // TODO Remove procecutor office id check when indictments are ready
+  // TODO Remove prosecutor office id check when indictments are ready
   const itemsFiltered = useMemo(() => {
     if (
       features.includes(Feature.INDICTMENTS) ||
+      user.name === 'Ásmundur Jónsson' ||
       [
         '1c45b4c5-e5d3-45ba-96f8-219568982268', // Lögreglustjórinn á Austurlandi
         '26136a67-c3d6-4b73-82e2-3265669a36d3', // Lögreglustjórinn á Suðurlandi
