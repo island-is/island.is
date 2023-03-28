@@ -8,6 +8,7 @@ import { IconMapIcon } from '../IconRC/types'
 import { Text } from '../Text/Text'
 import { LinkContext } from '../context/LinkContext/LinkContext'
 import { Link } from '../Link/Link'
+import { LinkV2 } from '../Link/LinkV2'
 
 export type AlertBannerVariants =
   | 'error'
@@ -128,14 +129,14 @@ export const AlertBanner: FC<AlertBannerProps> = ({
             <LinkContext.Provider
               value={{
                 linkRenderer: (href, children) => (
-                  <Link
+                  <LinkV2
                     href={href}
                     color="blue400"
                     underline="small"
                     underlineVisibility="always"
                   >
                     {children}
-                  </Link>
+                  </LinkV2>
                 ),
               }}
             >
