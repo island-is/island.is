@@ -185,12 +185,12 @@ export const m = defineMessages({
   },
   parent1: {
     id: 'pa.application:parent1',
-    defaultMessage: 'Forráðamaður 1',
+    defaultMessage: 'Forsjáraðili 1',
     description: 'Some description',
   },
   parent2: {
     id: 'pa.application:parent2',
-    defaultMessage: 'Forráðamaður 2',
+    defaultMessage: 'Forsjáraðili 2',
     description: 'Some description',
   },
 

@@ -118,3 +118,25 @@ export interface ValueCountPair {
   value?: string
   count?: string
 }
+
+export interface AdviceFileRequest {
+  filename?: string
+  base64Document?: string
+}
+
+export interface AdviceRequest {
+  content?: string
+  adviceFiles?: AdviceFileRequest
+}
+
+export interface PostAdviceForm {
+  caseId?: number
+  adviceRequest?: AdviceRequest
+}
+
+export interface FileObject {
+  name: string
+  originalFileObj: File
+  size?: number
+  type?: string
+}
