@@ -38,3 +38,8 @@ export const getExpiresIn = (currentDate: Date, date: Date) => {
 export const isExpired = (currentDate: Date, date: Date) => {
   return !isAfter(date, currentDate)
 }
+
+export const hasPassedTimeout = (initialTime?: Date, timeout = 30) =>
+  initialTime
+    ? Math.abs(new Date().getTime() - initialTime.getTime()) / 1000 > timeout
+    : false

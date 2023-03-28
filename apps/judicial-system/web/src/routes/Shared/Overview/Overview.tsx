@@ -80,6 +80,7 @@ const Overview = () => {
       {!caseIsClosed && !isDefender && (
         <FormContentContainer isFooter>
           <FormFooter
+            nextButtonIcon="arrowForward"
             previousUrl={`${constants.CASES_ROUTE}`}
             nextIsLoading={isLoadingWorkingCase}
             onNextButtonClick={() =>

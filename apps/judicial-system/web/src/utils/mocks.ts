@@ -1,4 +1,4 @@
-import { Gender, CaseState, CaseOrigin } from '@island.is/judicial-system/types'
+import { Gender, CaseState } from '@island.is/judicial-system/types'
 import { CurrentUserQuery } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
@@ -6,6 +6,7 @@ import {
   User,
   UserRole,
   CaseType,
+  CaseOrigin,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export const mockCourt = {
@@ -118,7 +119,7 @@ export const mockCase = (caseType: CaseType): Case => {
     created: '2020-09-16T19:50:08.033Z',
     modified: '2020-09-16T19:51:39.466Z',
     state: CaseState.DRAFT,
-    origin: CaseOrigin.RVG,
+    origin: CaseOrigin.Rvg,
     type: caseType,
     policeCaseNumbers: ['007-2021-202000'],
     defendants: [

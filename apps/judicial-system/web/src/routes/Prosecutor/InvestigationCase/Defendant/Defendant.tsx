@@ -28,7 +28,6 @@ import {
   errors,
 } from '@island.is/judicial-system-web/messages'
 import {
-  CaseOrigin,
   Defendant as TDefendant,
   UpdateDefendant,
 } from '@island.is/judicial-system/types'
@@ -45,7 +44,10 @@ import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import { theme } from '@island.is/island-ui/theme'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseType,
+  CaseOrigin,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import {
@@ -245,12 +247,12 @@ const Defendant = () => {
     <PageLayout
       workingCase={workingCase}
       activeSection={
-        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
+        workingCase.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={RestrictionCaseProsecutorSubsections.DEFENDANT}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
-      isExtension={workingCase?.parentCase && true}
+      isExtension={!!workingCase.parentCase}
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
@@ -389,7 +391,7 @@ const Defendant = () => {
                           workingCase.defendants &&
                           workingCase.defendants.length > 1 &&
                           !(
-                            workingCase.origin === CaseOrigin.LOKE &&
+                            workingCase.origin === CaseOrigin.Loke &&
                             index === 0
                           )
                             ? handleDeleteDefendant
@@ -398,7 +400,7 @@ const Defendant = () => {
                         onChange={handleUpdateDefendant}
                         updateDefendantState={updateDefendantState}
                         nationalIdImmutable={
-                          workingCase.origin === CaseOrigin.LOKE && index === 0
+                          workingCase.origin === CaseOrigin.Loke && index === 0
                         }
                       />
                     </Box>
@@ -448,6 +450,7 @@ const Defendant = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.CASES_ROUTE}`}
           onNextButtonClick={() =>
             handleNavigationTo(

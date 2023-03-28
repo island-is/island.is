@@ -31,17 +31,6 @@ const renderMessage = (getMessage: Props['getMessage']) => {
 
 describe('Page layout utils', () => {
   describe('caseResult function', () => {
-    it('should return an empty string workingCase parameter is not set', async () => {
-      // Arrange
-      const workingCase = undefined
-
-      // Act
-      renderMessage((formatMessage) => caseResult(formatMessage, workingCase))
-
-      // Assert
-      expect(await screen.findByTestId('message')).toBeEmptyDOMElement()
-    })
-
     describe('isRejected', () => {
       it('should return the correct string if the case is an investigation case and the state is REJECTED', async () => {
         // Arrange

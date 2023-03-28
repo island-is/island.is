@@ -3,10 +3,10 @@ import { useLocale } from '@island.is/localization'
 import React from 'react'
 import { m } from '../../lib/messages'
 import ContentCard from './ContentCard'
-import { AuthApplicationLBasicInfoList } from './Application.loader'
+import { AuthApplicationLBasicInfo } from './Application.loader'
 
 interface BasicInfoProps {
-  basicInfo: AuthApplicationLBasicInfoList
+  basicInfo: AuthApplicationLBasicInfo
 }
 const BasicInfoContent = ({ basicInfo }: BasicInfoProps) => {
   const { formatMessage } = useLocale()
