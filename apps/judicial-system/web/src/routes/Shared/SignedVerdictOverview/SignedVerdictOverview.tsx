@@ -279,7 +279,9 @@ export const SignedVerdictOverview: React.FC = () => {
   // skip loading institutions if the user does not have an id
   const { prosecutorsOffices } = useInstitution(!user?.id)
 
-  const isAppealedCase = true // TODO: Replace with actual value
+  const isAppealedCase =
+    workingCase.prosecutorPostponedAppealDate ||
+    workingCase.accusedPostponedAppealDate
 
   /**
    * If the case is not rejected it must be accepted because
@@ -519,15 +521,18 @@ export const SignedVerdictOverview: React.FC = () => {
         <AlertBanner
           title={formatMessage(strings.statementAlertBannerTitle)}
           description={formatMessage(strings.statementAlertBannerMessage, {
-            actor: 'Sækjandi', // TODO: Replace with correct actor once implemented
+            actor: workingCase.prosecutorPostponedAppealDate
+              ? formatMessage(core.prosecutorPerson)
+              : formatMessage(core.defender),
             appealDate: formatDate(
-              workingCase.prosecutorPostponedAppealDate,
+              workingCase.prosecutorPostponedAppealDate ??
+                workingCase.accusedPostponedAppealDate,
               'PPPp',
             ),
           })}
           variant="warning"
           link={{
-            href: `${constants.APPEAL_ROUTE}/${workingCase.id}`, // TODO: Replace with actual route once implemented
+            href: `${constants.APPEAL_ROUTE}/${workingCase.id}`, // TODO: Replace with statements route once implemented
             title: formatMessage(strings.statementAlertBannerLinkText),
           }}
         />
@@ -550,7 +555,9 @@ export const SignedVerdictOverview: React.FC = () => {
       ) : null}
       <PageLayout
         workingCase={workingCase}
-        activeSection={Sections.CASE_CLOSED}
+        activeSection={Sections.indexOf(
+          isAppealedCase ? 'CASE_APPEALED' : 'CASE_CLOSED',
+        )}
         isLoading={isLoadingWorkingCase}
         notFound={caseNotFound}
       >

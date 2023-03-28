@@ -112,7 +112,7 @@ const CourtRecord: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.JUDGE}
+      activeSection={Sections.indexOf('JUDGE')}
       activeSubSection={IndictmentsCourtSubsections.COURT_RECORD}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}

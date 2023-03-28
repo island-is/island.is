@@ -100,7 +100,7 @@ const Subpoena: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.JUDGE}
+      activeSection={Sections.indexOf('JUDGE')}
       activeSubSection={IndictmentsCourtSubsections.SUBPEONA}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}

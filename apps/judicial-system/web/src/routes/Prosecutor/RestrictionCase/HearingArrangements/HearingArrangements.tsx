@@ -131,7 +131,9 @@ export const HearingArrangements: React.FC = () => {
     <PageLayout
       workingCase={workingCase}
       activeSection={
-        workingCase.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
+        workingCase.parentCase
+          ? Sections.indexOf('EXTENSION')
+          : Sections.indexOf('PROSECUTOR')
       }
       activeSubSection={
         RestrictionCaseProsecutorSubsections.HEARING_ARRANGEMENTS

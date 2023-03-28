@@ -125,7 +125,7 @@ const ReceptionAndAssignment = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.JUDGE}
+      activeSection={Sections.indexOf('JUDGE')}
       activeSubSection={getActiveSubSection()}
       isLoading={isLoadingWorkingCase || userLoading}
       notFound={caseNotFound}

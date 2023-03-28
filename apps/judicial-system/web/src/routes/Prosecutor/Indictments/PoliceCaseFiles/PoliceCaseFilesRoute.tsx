@@ -373,7 +373,7 @@ const PoliceCaseFilesRoute = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.PROSECUTOR}
+      activeSection="PROSECUTOR"
       activeSubSection={IndictmentsProsecutorSubsections.POLICE_CASE_FILES}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}

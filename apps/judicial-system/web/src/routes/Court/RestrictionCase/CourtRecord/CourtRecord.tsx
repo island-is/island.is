@@ -245,7 +245,9 @@ export const CourtRecord: React.FC = () => {
     <PageLayout
       workingCase={workingCase}
       activeSection={
-        workingCase.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
+        workingCase.parentCase
+          ? Sections.indexOf('JUDGE_EXTENSION')
+          : Sections.indexOf('JUDGE')
       }
       activeSubSection={RestrictionCaseCourtSubsections.COURT_RECORD}
       isLoading={isLoadingWorkingCase}

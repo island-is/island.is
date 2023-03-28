@@ -100,7 +100,7 @@ const CaseFiles: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.PROSECUTOR}
+      activeSection="PROSECUTOR"
       activeSubSection={
         IndictmentsProsecutorSubsections.CASE_FILES +
         (isTrafficViolationCaseCheck ? 1 : 0)

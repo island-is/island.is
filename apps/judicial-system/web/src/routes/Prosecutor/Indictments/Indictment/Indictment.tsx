@@ -257,7 +257,7 @@ const Indictment: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.PROSECUTOR}
+      activeSection="PROSECUTOR"
       activeSubSection={IndictmentsProsecutorSubsections.INDICTMENT}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}

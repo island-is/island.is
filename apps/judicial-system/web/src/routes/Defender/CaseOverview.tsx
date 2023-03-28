@@ -113,10 +113,10 @@ export const CaseOverview: React.FC = () => {
         workingCase={workingCase}
         activeSection={
           completedCaseStates.includes(workingCase.state)
-            ? 2
+            ? Sections.indexOf('CASE_CLOSED')
             : workingCase.parentCase
-            ? Sections.JUDGE_EXTENSION
-            : Sections.JUDGE
+            ? Sections.indexOf('JUDGE_EXTENSION')
+            : Sections.indexOf('JUDGE')
         }
         isLoading={isLoadingWorkingCase}
         notFound={caseNotFound}

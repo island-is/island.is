@@ -37,6 +37,7 @@ import * as styles from './PageLayout.css'
 import { stepValidationsType } from '../../utils/formHelper'
 
 export interface RouteSection {
+  id: string
   name: string
   children: {
     name: string
@@ -69,7 +70,7 @@ const DisplaySection: React.FC<SectionProps> = (props) => {
     <Section
       section={section.name}
       sectionIndex={index}
-      isActive={index === activeSection}
+      isActive={activeSection !== undefined && activeSection === index}
       isComplete={activeSection ? index < activeSection : false}
       subSections={section.children.map((subSection, index) =>
         subSection.href && activeSubSection && activeSubSection > index ? (
@@ -128,12 +129,22 @@ const SidePanel: React.FC<SidePanelProps> = ({
 }) => {
   const { getSections } = useSections(isValid, onNavigationTo)
   const { formatMessage } = useIntl()
-  // Remove the extension parts of the formstepper if the user is not applying for an extension
+  /**
+   * Remove the extension parts of the formstepper if the user is not
+   * applying for an extension or appealing the case
+   **/
+  const isAppeal =
+    workingCase.prosecutorPostponedAppealDate ||
+    workingCase.accusedPostponedAppealDate
+
   const sections =
-    activeSection === Sections.EXTENSION ||
-    activeSection === Sections.JUDGE_EXTENSION
+    activeSection &&
+    (Sections[activeSection] === 'EXTENSION' ||
+      Sections[activeSection] === 'JUDGE_EXTENSION')
       ? getSections(workingCase, user)
-      : getSections(workingCase, user).filter((_, index) => index <= 2)
+      : getSections(workingCase, user).filter(
+          (_, index) => index <= (isAppeal ? 3 : 2),
+        )
 
   return (
     <GridColumn span={['12/12', '12/12', '4/12', '3/12']}>

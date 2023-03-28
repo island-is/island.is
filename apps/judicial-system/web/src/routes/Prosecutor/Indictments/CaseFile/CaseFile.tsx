@@ -37,7 +37,7 @@ const CaseFile = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.PROSECUTOR}
+      activeSection={Sections.indexOf('PROSECUTOR')}
       activeSubSection={IndictmentsProsecutorSubsections.CASE_FILE}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}

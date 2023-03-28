@@ -96,7 +96,7 @@ const Processing: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.PROSECUTOR}
+      activeSection="PROSECUTOR"
       activeSubSection={IndictmentsProsecutorSubsections.PROCESSING}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}

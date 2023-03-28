@@ -353,7 +353,7 @@ const Defendant: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.PROSECUTOR}
+      activeSection="PROSECUTOR"
       activeSubSection={IndictmentsProsecutorSubsections.DEFENDANT}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}

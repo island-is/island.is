@@ -275,7 +275,9 @@ export const CaseFiles: React.FC = () => {
     <PageLayout
       workingCase={workingCase}
       activeSection={
-        workingCase.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
+        workingCase.parentCase
+          ? Sections.indexOf('EXTENSION')
+          : Sections.indexOf('PROSECUTOR')
       }
       activeSubSection={RestrictionCaseProsecutorSubsections.CASE_FILES}
       isLoading={isLoadingWorkingCase}
