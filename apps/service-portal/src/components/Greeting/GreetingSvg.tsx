@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-const GreetingSvg = (
+const GreetingSVG = (
   props: JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>,
 ) => (
   <svg
@@ -3566,4 +3566,4 @@ const GreetingSvg = (
   </svg>
 )
 
-export default GreetingSvg
+export default GreetingSVG
