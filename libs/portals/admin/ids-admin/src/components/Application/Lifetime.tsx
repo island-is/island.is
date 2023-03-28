@@ -9,10 +9,10 @@ import React, { useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import ContentCard from './ContentCard'
-import { AuthApplicationLifeTimeList } from './Application.loader'
+import { AuthApplicationLifeTime } from './Application.loader'
 
 interface LifetimeProps {
-  lifetime: AuthApplicationLifeTimeList
+  lifetime: AuthApplicationLifeTime
 }
 
 const Lifetime = ({ lifetime }: LifetimeProps) => {

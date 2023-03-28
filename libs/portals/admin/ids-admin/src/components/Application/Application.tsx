@@ -16,30 +16,15 @@ import Lifetime from './Lifetime'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { useLoaderData } from 'react-router-dom'
-import {
-  AuthApplicationApplicationUrlList,
-  AuthApplicationLBasicInfoList,
-  AuthApplicationList,
-  AuthApplicationTranslationList,
-  AuthApplicationLifeTimeList,
-} from './Application.loader'
+import { AuthApplication } from './Application.loader'
 
 const Application = () => {
-  const applications = useLoaderData() as AuthApplicationList
-  const [application] = useState<AuthApplicationList[0]>(
-    applications[0] ? applications[0] : ({} as AuthApplicationList[0]),
-  )
-  const { formatMessage } = useLocale()
-  const [selectedEnvironment, setSelectedEnvironment] = useState<string>(
-    application.defaultEnvironment.environment,
-  )
+  const application = useLoaderData() as AuthApplication
 
-  const getEnv = () => {
-    if (!selectedEnvironment) return application.defaultEnvironment
-    return application.environments.find(
-      (env) => env.environment === selectedEnvironment,
-    )
-  }
+  const { formatMessage } = useLocale()
+  const [selectedEnvironment, setSelectedEnvironment] = useState<
+    AuthApplication['environments'][0]
+  >(application.environments[0])
 
   return (
     <GridContainer>
@@ -49,7 +34,7 @@ const Application = () => {
             <Stack space="smallGutter">
               <Tag outlined>{application.applicationType}</Tag>
               <Text variant="h2">
-                {application.defaultEnvironment.displayName[0].value}
+                {application.environments[0].displayName[0].value}
               </Text>
             </Stack>
           </GridColumn>
@@ -61,10 +46,16 @@ const Application = () => {
                 size="sm"
                 backgroundColor="blue"
                 label={formatMessage(m.environment)}
-                onChange={(event: any) => setSelectedEnvironment(event.value)}
+                onChange={(event: any) =>
+                  setSelectedEnvironment(
+                    application.environments.find(
+                      (env) => env.environment === event.value,
+                    ) as AuthApplication['environments'][0],
+                  )
+                }
                 value={{
-                  label: selectedEnvironment,
-                  value: selectedEnvironment,
+                  label: selectedEnvironment.environment,
+                  value: selectedEnvironment.environment,
                 }}
                 options={application.environments.map((env) => {
                   return {
@@ -76,23 +67,12 @@ const Application = () => {
             </Box>
           </GridColumn>
         </GridRow>
-
-        <BasicInfo
-          basicInfo={getEnv()?.basicInfo as AuthApplicationLBasicInfoList}
-        />
-        <Translations
-          translations={
-            getEnv()?.displayName as AuthApplicationTranslationList[]
-          }
-        />
+        <BasicInfo basicInfo={selectedEnvironment.basicInfo} />
+        <Translations translations={selectedEnvironment.displayName} />
         <ApplicationsUrl
-          applicationUrls={
-            getEnv()?.applicationUrls as AuthApplicationApplicationUrlList
-          }
+          applicationUrls={selectedEnvironment.applicationUrls}
         />
-        <Lifetime
-          lifetime={getEnv()?.lifeTime as AuthApplicationLifeTimeList}
-        />
+        <Lifetime lifetime={selectedEnvironment.lifeTime} />
       </Stack>
     </GridContainer>
   )

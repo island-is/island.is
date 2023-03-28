@@ -175,6 +175,7 @@ const ReceptionAndAssignment = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={
             isIndictmentCase(workingCase.type)
               ? `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`
