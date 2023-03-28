@@ -39,7 +39,7 @@ import { useDebouncedSliderValues } from './useDebouncedSliderValues'
 // Might need to define specific fields for each one
 export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
-  const { register } = useFormContext()
+  const { register, setValue } = useFormContext()
   const getDistribution = useLazyDistribution()
 
   const [isLoading, setIsLoading] = useState(false)
@@ -161,6 +161,12 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
     initialMinMaxData,
   ])
 
+  useEffect(() => {
+    if (distributionData) {
+      setValue(`${entry}.distribution`, distributionData.payments)
+    }
+  }, [distributionData, entry, setValue])
+
   const handleSelectPaymentMode = (mode: any) => {
     setPaymentMode(mode)
   }
@@ -219,7 +225,6 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
       </Box>
     )
   }
-
   return (
     <div>
       <input
@@ -231,11 +236,6 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
         type="hidden"
         value={payment.totalAmount}
         {...register(`${entry}.totalAmount`, { required: true })}
-      />
-      <input
-        type="hidden"
-        value={JSON.stringify(distributionData?.payments || '')}
-        {...register(`${entry}.distribution`, { required: true })}
       />
       {isPerson && (
         <Text marginBottom={5}>
