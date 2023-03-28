@@ -453,6 +453,15 @@ const serviceMockDef = (options: {
       max: 1,
       default: 1,
     },
+    hpa: {
+      scaling: {
+        replicas: {
+          min: 1,
+          max: 1,
+        },
+        metric: { cpuAverageUtilization: 70 },
+      },
+    },
     securityContext: {
       privileged: false,
       allowPrivilegeEscalation: false,
