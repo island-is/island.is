@@ -1,26 +1,20 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class UniversityOfIcelandStudentInfoModel {
-  @Field(() => [StudentModel], { nullable: true })
-  transcripts?: StudentModel[]
-  @Field(() => StudentTrackModel, { nullable: true })
-  track?: StudentTrackModel
+export class InstitutionModel {
+  @Field(() => String)
+  id!: string
+
+  @Field(() => String)
+  displayName!: string
 }
-
 @ObjectType()
-export class StudentTrackModel {
-  @Field(() => StudentModel)
-  transcript!: StudentModel
+export class StudentDescription {
+  @Field(() => String)
+  description!: string
 
-  @Field(() => [StudentFiles])
-  files!: StudentFiles[]
-
-  @Field(() => StudentDescription)
-  body!: StudentDescription
-
-  @Field(() => String, { nullable: true })
-  downloadServiceURL?: string
+  @Field(() => String)
+  footer!: string
 }
 
 @ObjectType()
@@ -53,6 +47,28 @@ export class StudentModel {
   degree!: string
 }
 @ObjectType()
+export class StudentTrackModel {
+  @Field(() => StudentModel)
+  transcript!: StudentModel
+
+  @Field(() => [StudentFiles])
+  files!: StudentFiles[]
+
+  @Field(() => StudentDescription)
+  body!: StudentDescription
+
+  @Field(() => String, { nullable: true })
+  downloadServiceURL?: string
+}
+
+@ObjectType()
+export class UniversityOfIcelandStudentInfoModel {
+  @Field(() => [StudentModel], { nullable: true })
+  transcripts?: StudentModel[]
+  @Field(() => StudentTrackModel, { nullable: true })
+  track?: StudentTrackModel
+}
+@ObjectType()
 export class StudentFiles {
   @Field(() => String)
   type!: string
@@ -65,22 +81,4 @@ export class StudentFiles {
 
   @Field(() => String)
   fileName!: string
-}
-
-@ObjectType()
-export class StudentDescription {
-  @Field(() => String)
-  description!: string
-
-  @Field(() => String)
-  footer!: string
-}
-
-@ObjectType()
-export class InstitutionModel {
-  @Field(() => String)
-  id!: string
-
-  @Field(() => String)
-  displayName!: string
 }

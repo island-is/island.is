@@ -1,4 +1,4 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, ResolveField, Resolver } from '@nestjs/graphql'
 
 import { Inject, UseGuards } from '@nestjs/common'
 import format from 'date-fns/format'
@@ -15,19 +15,20 @@ import {
   UniversityOfIcelandService,
   NemandiGetLocaleEnum,
   NemandiFerillFerillGetLocaleEnum,
-  Transcripts,
 } from '@island.is/clients/university-of-iceland'
 import { ApiScope } from '@island.is/auth/scopes'
-import { StudentInfoModel } from './models/studentInfo.model'
-import { StudentInfoDetailModel } from './models/studentInfoDetail.model'
-import { GetStudentInfoDetailInput } from './dto/getStudentInfoDetail.input'
-import { GetStudentInfoInput } from './dto/getStudentInfo.input'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
+import {
+  StudentModel,
+  StudentTrackModel,
+  UniversityOfIcelandStudentInfoModel,
+} from './models/universityOfIcelandStudentInfo.model'
+import { UniversityOfIcelandStudentInfoQueryInput } from './dto/universityOfIcelandStudentInfo.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
-@Resolver()
+@Resolver(() => UniversityOfIcelandStudentInfoModel)
 export class UniversityOfIcelandResolver {
   constructor(
     private universityOfIcelandApi: UniversityOfIcelandService,
@@ -37,28 +38,35 @@ export class UniversityOfIcelandResolver {
     >,
   ) {}
 
-  @Query(() => StudentInfoModel)
-  async getStudentInfo(
+  @Query(() => UniversityOfIcelandStudentInfoModel, {
+    name: 'universityOfIcelandStudentInfo',
+  })
+  async getUniversityOfIcelandStudentInfoModel(
     @CurrentUser() user: User,
-    @Args('input') input: GetStudentInfoInput,
-  ): Promise<Transcripts> {
+    @Args('input') input: UniversityOfIcelandStudentInfoQueryInput,
+  ): Promise<UniversityOfIcelandStudentInfoModel> {
     const data = await this.universityOfIcelandApi.studentInfo(
       user,
       input.locale as NemandiGetLocaleEnum,
     )
-    return data
+    return {
+      transcripts: data.transcripts as Array<StudentModel>,
+    }
   }
 
-  @Query(() => StudentInfoDetailModel)
-  async getStudentInfoDetail(
-    @Args('input') input: GetStudentInfoDetailInput,
+  @ResolveField('track', () => StudentTrackModel)
+  async getStudentTrackModel(
+    @Args('input') input: UniversityOfIcelandStudentInfoQueryInput,
     @CurrentUser() user: User,
-  ): Promise<StudentInfoDetailModel> {
+  ): Promise<StudentTrackModel | null> {
+    if (!input.trackNumber) {
+      return null
+    }
     const data = (await this.universityOfIcelandApi.studentCareer(
       user,
       input.trackNumber,
       input.locale as NemandiFerillFerillGetLocaleEnum,
-    )) as StudentInfoDetailModel
+    )) as StudentTrackModel
 
     let date = data.transcript.graduationDate
     date = format(new Date(date), 'dd.MM.yy', { locale: is })

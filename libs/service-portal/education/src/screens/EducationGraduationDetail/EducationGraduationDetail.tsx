@@ -25,10 +25,36 @@ import { gql, useQuery } from '@apollo/client'
 import { formatNationalId } from '@island.is/portals/core'
 import { useParams } from 'react-router-dom'
 
-const GetStudentInfoDetailQuery = gql`
-  query GetStudentInfoDetail($input: GetStudentInfoDetailInput!) {
-    getStudentInfoDetail(input: $input) {
-      downloadServiceURL
+const GetStudentInfoQuery = gql`
+  query GetStudentInfo($input: UniversityOfIcelandStudentInfoQueryInput!) {
+    getUniversityOfIcelandStudentInfoModel(input: $input) {
+      track {
+        transcript {
+          degree
+          faculty
+          graduationDate
+          instutution {
+            id
+            displayName
+          }
+          name
+          nationalId
+          school
+          studyProgram
+          trackNumber
+        }
+        files {
+          type
+          locale
+          displayName
+          fileName
+        }
+        body {
+          description
+          footer
+        }
+        downloadServiceURL
+      }
     }
   }
 `
@@ -42,7 +68,7 @@ export const EducationGraduationDetail = () => {
   const { id } = useParams() as UseParams
   const { formatMessage, lang } = useLocale()
 
-  const { data, loading, error } = useQuery<Query>(GetStudentInfoDetailQuery, {
+  const { data, loading, error } = useQuery<Query>(GetStudentInfoQuery, {
     variables: {
       input: {
         trackNumber: parseInt(id),
@@ -51,10 +77,11 @@ export const EducationGraduationDetail = () => {
     },
   })
 
-  const studentInfo = data?.getStudentInfoDetail.transcript
-  const text = data?.getStudentInfoDetail.body
-  const files = data?.getStudentInfoDetail.files
-  const downloadServiceURL = data?.getStudentInfoDetail.downloadServiceURL
+  const studentInfo = data?.universityOfIcelandStudentInfo.track.transcript
+  const text = data?.universityOfIcelandStudentInfo.track.body
+  const files = data?.universityOfIcelandStudentInfo.track.files
+  const downloadServiceURL =
+    data?.universityOfIcelandStudentInfo.track.downloadServiceURL
 
   if (error && !loading) {
     return (
@@ -185,7 +212,7 @@ export const EducationGraduationDetail = () => {
             })}
             loading={loading}
             content={formatNationalId(
-              studentInfo?.instutution.displayName ?? '',
+              studentInfo?.institution.displayName ?? '',
             )}
           />
           <Divider />

@@ -2,11 +2,11 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
   StudentTranscriptApi,
-  NemandiFerillFerillFileTranscriptGetLocaleEnum,
-  NemandiFerillFerillGetLocaleEnum,
   NemandiGetLocaleEnum,
-  StudentTrackOverview,
   Transcripts,
+  NemandiFerillFerillGetLocaleEnum,
+  StudentTrackOverview,
+  NemandiFerillFerillFileTranscriptGetLocaleEnum,
 } from '../../gen/fetch'
 
 @Injectable()

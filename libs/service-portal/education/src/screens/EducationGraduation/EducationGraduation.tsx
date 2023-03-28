@@ -18,10 +18,21 @@ import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import { EducationPaths } from '../../lib/paths'
 
 const GetStudentInfoQuery = gql`
-  query GetStudentInfo($input: GetStudentInfoInput!) {
-    getStudentInfo(input: $input) {
+  query GetStudentInfo($input: UniversityOfIcelandStudentInfoQueryInput!) {
+    getUniversityOfIcelandStudentInfoModel(input: $input) {
       transcripts {
         degree
+        faculty
+        graduationDate
+        institution {
+          id
+          displayName
+        }
+        name
+        nationalId
+        school
+        studyProgram
+        trackNumber
       }
     }
   }
@@ -48,7 +59,7 @@ export const EducationGraduation = () => {
   })
   const organizations = orgData?.getOrganizations?.items || {}
 
-  const studentInfo = data?.getStudentInfo.transcripts || []
+  const studentInfo = data?.universityOfIcelandStudentInfo.transcripts || []
   if (error && !loading) {
     return (
       <ErrorScreen
@@ -91,7 +102,7 @@ export const EducationGraduation = () => {
             return (
               <ActionCard
                 key={`education-graduation-${index}`}
-                heading={item.instutution.displayName}
+                heading={item.institution.displayName}
                 text={
                   item.faculty + ' - ' + item.studyProgram + ' ' + item.degree
                 }
@@ -109,7 +120,7 @@ export const EducationGraduation = () => {
                 image={{
                   type: 'image',
                   url: getOrganizationLogoUrl(
-                    item.instutution.displayName,
+                    item.institution.displayName,
                     organizations,
                   ),
                 }}
