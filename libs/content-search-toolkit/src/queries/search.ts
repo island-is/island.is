@@ -4,10 +4,10 @@ import { TagQuery, tagQuery } from './tagQuery'
 import { typeAggregationQuery } from './typeAggregation'
 import { processAggregationQuery } from './processAggregation'
 
-// const getBoostForType = (type: string, defaultBoost: string | number = 1) => {
-//   // normalizing all types before boosting
-//   return defaultBoost
-// }
+const getBoostForType = (type: string, defaultBoost: string | number = 1) => {
+  // normalizing all types before boosting
+  return defaultBoost
+}
 
 export const searchQuery = (
   {
@@ -27,8 +27,8 @@ export const searchQuery = (
   highlightSection = false,
 ) => {
   const should = []
-  const must: any[] = [] // overriding tagquery type
-  const mustNot: any[] = [] // overriding tagquery type
+  const must: TagQuery[] = [] // overriding tagquery type
+  const mustNot: TagQuery[] = [] // overriding tagquery type
   let minimumShouldMatch = 1
 
   // const fieldsWeights = [
@@ -56,7 +56,7 @@ export const searchQuery = (
       // the search logic used for search drop down suggestions
       // term and prefix queries on content title
       case 'suggestions':
-        must.push({ terms: { type: types } })
+        // must.push({ terms: { type: types } }) ADDRESS THIS SOMEHOW..........
         if (queryString.split(' ').length > 1) {
           should.push({
             multi_match: {
@@ -99,22 +99,22 @@ export const searchQuery = (
     }
   }
 
-  // // if we have types restrict the query to those types
-  // if (types?.length) {
-  //   minimumShouldMatch++ // now we have to match at least one type and the search query
+  // if we have types restrict the query to those types
+  if (types?.length) {
+    minimumShouldMatch++ // now we have to match at least one type and the search query
 
-  //   types.forEach((type) => {
-  //     const [value, boost = 1] = type.split('^')
-  //     should.push({
-  //       term: {
-  //         type: {
-  //           value,
-  //           boost: getBoostForType(value, boost),
-  //         },
-  //       },
-  //     })
-  //   })
-  // }
+    types.forEach((type) => {
+      const [value, boost = 1] = type.split('^')
+      should.push({
+        term: {
+          type: {
+            value,
+            boost: getBoostForType(value, boost),
+          },
+        },
+      })
+    })
+  }
 
   if (tags?.length) {
     tags.forEach((tag) => {

@@ -14,4 +14,3 @@ yarn nx test content-search-toolkit
 write stuff about where how and what
 default vs suggestions
 etc
-
