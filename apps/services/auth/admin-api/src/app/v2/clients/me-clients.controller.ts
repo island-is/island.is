@@ -73,6 +73,6 @@ export class MeClientsController {
     @Param('tenantId') tenantId: string,
     @Body() input: AdminCreateClientDto,
   ): Promise<AdminClientDto> {
-    return this.clientsService.create(input)
+    return this.clientsService.create(input, user, tenantId)
   }
 }

@@ -45,7 +45,7 @@ const Applications = () => {
     setInputSearchValue(value)
 
     if (value.length > 0) {
-      const filteredList = applications.filter((application) => {
+      const filteredList = applications.filter((application: any) => {
         return (
           application?.defaultEnvironment.displayName[0].value
             .toLowerCase()

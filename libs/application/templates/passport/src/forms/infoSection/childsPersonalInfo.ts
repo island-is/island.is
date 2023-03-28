@@ -1,6 +1,5 @@
 import {
   buildDescriptionField,
-  buildKeyValueField,
   buildMultiField,
   buildSubmitField,
   buildTextField,
@@ -83,6 +82,7 @@ export const childsPersonalInfo = buildMultiField({
       id: 'childsPersonalInfo.guardian1.email',
       title: m.email,
       width: 'half',
+      required: true,
       defaultValue: (application: Application) =>
         (application.externalData.userProfile?.data as {
           email?: string
@@ -94,6 +94,7 @@ export const childsPersonalInfo = buildMultiField({
       width: 'half',
       variant: 'tel',
       format: '###-####',
+      required: true,
       defaultValue: (application: Application) => {
         const phone =
           (application.externalData.userProfile?.data as {
@@ -150,6 +151,7 @@ export const childsPersonalInfo = buildMultiField({
       width: 'half',
       defaultValue: '',
       backgroundColor: 'blue',
+      required: true,
     }),
     buildTextField({
       id: 'childsPersonalInfo.guardian2.phoneNumber',
@@ -159,6 +161,7 @@ export const childsPersonalInfo = buildMultiField({
       format: '###-####',
       backgroundColor: 'blue',
       defaultValue: '',
+      required: true,
     }),
     buildSubmitField({
       id: 'approveCheckForDisability',

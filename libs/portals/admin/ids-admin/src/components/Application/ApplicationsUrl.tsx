@@ -3,10 +3,10 @@ import { useLocale } from '@island.is/localization'
 import React, { useEffect, useState } from 'react'
 import { m } from '../../lib/messages'
 import ContentCard from './ContentCard'
-import { AuthApplicationApplicationUrlList } from './Application.loader'
+import { AuthApplicationApplicationUrl } from './Application.loader'
 
 interface ApplicationsUrlProps {
-  applicationUrls: AuthApplicationApplicationUrlList
+  applicationUrls: AuthApplicationApplicationUrl
 }
 const ApplicationsUrl = ({ applicationUrls }: ApplicationsUrlProps) => {
   const { formatMessage } = useLocale()
