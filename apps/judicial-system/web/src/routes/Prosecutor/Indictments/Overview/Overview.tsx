@@ -75,7 +75,7 @@ const Overview: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection="PROSECUTOR"
+      activeSection={Sections.indexOf('PROSECUTOR')}
       activeSubSection={
         caseHasBeenReceivedByCourt
           ? undefined

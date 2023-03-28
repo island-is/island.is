@@ -555,9 +555,12 @@ export const SignedVerdictOverview: React.FC = () => {
       ) : null}
       <PageLayout
         workingCase={workingCase}
-        activeSection={Sections.indexOf(
-          isAppealedCase ? 'CASE_APPEALED' : 'CASE_CLOSED',
-        )}
+        activeSection={
+          // If the case is appealed there is an extra section in the form stepper
+          isAppealedCase
+            ? Sections.indexOf('CASE_CLOSED') + 1
+            : Sections.indexOf('CASE_CLOSED')
+        }
         isLoading={isLoadingWorkingCase}
         notFound={caseNotFound}
       >

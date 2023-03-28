@@ -138,6 +138,7 @@ const SidePanel: React.FC<SidePanelProps> = ({
 
   const sections =
     activeSection &&
+    !isAppeal &&
     (Sections[activeSection] === 'EXTENSION' ||
       Sections[activeSection] === 'JUDGE_EXTENSION')
       ? getSections(workingCase, user)

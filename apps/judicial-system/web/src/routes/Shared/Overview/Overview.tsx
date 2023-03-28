@@ -43,7 +43,11 @@ const Overview = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={caseIsClosed ? Sections.CASE_CLOSED : Sections.JUDGE}
+      activeSection={
+        caseIsClosed
+          ? Sections.indexOf('CASE_CLOSED')
+          : Sections.indexOf('JUDGE')
+      }
       activeSubSection={
         isDefender ? undefined : IndictmentsCourtSubsections.JUDGE_OVERVIEW
       }

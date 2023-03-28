@@ -3,7 +3,6 @@ import { useIntl } from 'react-intl'
 
 import {
   CaseState,
-  Feature,
   Gender,
   isInvestigationCase,
   isRestrictionCase,

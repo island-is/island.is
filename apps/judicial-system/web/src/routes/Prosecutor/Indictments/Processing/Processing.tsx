@@ -20,11 +20,7 @@ import {
   processing as m,
 } from '@island.is/judicial-system-web/messages'
 import { Box, Text } from '@island.is/island-ui/core'
-import {
-  CaseState,
-  CaseTransition,
-  Feature,
-} from '@island.is/judicial-system/types'
+import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
 import {
   useCase,
   useInstitution,
@@ -96,7 +92,7 @@ const Processing: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection="PROSECUTOR"
+      activeSection={Sections.indexOf('PROSECUTOR')}
       activeSubSection={IndictmentsProsecutorSubsections.PROCESSING}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}

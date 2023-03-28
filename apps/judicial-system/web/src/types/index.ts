@@ -20,20 +20,10 @@ export enum AppealDecisionRole {
   ACCUSED = 'ACCUSED',
 }
 
-// export enum Sections {
-//   PROSECUTOR = 'adc0cca7-9e91-45ec-b079-d55945fdf843',
-//   JUDGE = '1bf8e3bc-9d68-40af-b637-2a88c772daf7',
-//   CASE_CLOSED = '26eb8a72-e2e4-4575-a419-c718849ef9ca',
-//   CASE_APPEALED = 'c1b1364b-fc3b-4626-9324-617e4e23fd7e',
-//   EXTENSION = '15d5aa57-83c8-4247-badd-f02b40b1f920',
-//   JUDGE_EXTENSION = '127060fd-596a-45d7-b26f-d906b4e3d083',
-// }
-
 export const Sections = [
   'PROSECUTOR',
   'JUDGE',
   'CASE_CLOSED',
-  'CASE_APPEALED',
   'EXTENSION',
   'JUDGE_EXTENSION',
 ]
