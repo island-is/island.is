@@ -31,6 +31,10 @@ const SubArticleUrlField = () => {
   }, [sdk.field])
 
   useEffect(() => {
+    sdk.window.startAutoResizer()
+  }, [sdk.window])
+
+  useEffect(() => {
     const parentArticleId = sdk.entry.fields['parent']?.getValue()?.sys?.id
 
     if (!parentArticleId) {
@@ -70,6 +74,7 @@ const SubArticleUrlField = () => {
         setLoading(false)
         // TODO: perhaps also log the error that occured
       })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cma.entry, sdk.entry, sdk.field])
 
   useDebounce(
