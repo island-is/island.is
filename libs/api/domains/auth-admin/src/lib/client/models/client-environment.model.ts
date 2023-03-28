@@ -9,10 +9,6 @@ import { TranslatedValue } from '../../models/translated-value.model'
 
 registerEnumType(RefreshTokenExpiration, { name: 'RefreshTokenExpiration' })
 
-// type CustomClaims = {
-//   [key: string]: string
-// }
-
 @ObjectType('AuthAdminClientEnvironment')
 export class ClientEnvironment {
   @Field(() => ID)
@@ -82,5 +78,5 @@ export class ClientEnvironment {
   accessTokenLifetime!: number
 
   @Field(() => GraphQLJSON, { nullable: true })
-  customClaims?: object // Record<string, string>
+  customClaims?: object
 }

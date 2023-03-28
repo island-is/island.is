@@ -45,7 +45,7 @@ const ClientsUrl = ({
       <Stack space={3}>
         <Stack space={1}>
           <Input
-            name="callbackUrls"
+            name="redirectUris"
             type="text"
             size="sm"
             label={formatMessage(m.callbackUrl)}
@@ -53,14 +53,14 @@ const ClientsUrl = ({
             rows={4}
             onChange={onChangeURLS}
             backgroundColor="blue"
-            value={redirectUris.join(', ')}
+            value={uris.redirectUris.join(', ')}
             placeholder={formatMessage(m.callBackUrlPlaceholder)}
           />
           <Text variant="small">{formatMessage(m.callBackUrlDescription)}</Text>
         </Stack>
         <Stack space={1}>
           <Input
-            name="logoutUrls"
+            name="postLogoutRedirectUris"
             type="text"
             size="sm"
             label={formatMessage(m.logoutUrl)}
@@ -68,7 +68,7 @@ const ClientsUrl = ({
             rows={4}
             onChange={onChangeURLS}
             backgroundColor="blue"
-            value={postLogoutRedirectUris.join(', ')}
+            value={uris.postLogoutRedirectUris.join(', ')}
             placeholder={formatMessage(m.logoutUrlPlaceholder)}
           />
           <Text variant="small">{formatMessage(m.logoutUrlDescription)}</Text>

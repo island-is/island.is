@@ -1,3 +1,10 @@
+import React, { useState } from 'react'
+import { useLoaderData } from 'react-router-dom'
+
+import {
+  AuthAdminEnvironment,
+  RefreshTokenExpiration,
+} from '@island.is/api/schema'
 import {
   GridColumn,
   GridContainer,
@@ -8,16 +15,22 @@ import {
   Box,
   Select,
 } from '@island.is/island-ui/core'
-import React, { useState } from 'react'
+import { useLocale } from '@island.is/localization'
+
+import { m } from '../../lib/messages'
 import BasicInfo from './BasicInfo'
-import Translations from './Translations'
+import { AuthClient } from './Client.loader'
 import ClientsUrl from './ClientsUrl'
 import Lifetime from './Lifetime'
-import { useLocale } from '@island.is/localization'
-import { m } from '../../lib/messages'
-import { useLoaderData } from 'react-router-dom'
-import { AuthClient } from './Client.loader'
-import { RefreshTokenExpiration } from '@island.is/api/schema'
+import Translations from './Translations'
+
+const IssuerUrls = {
+  [AuthAdminEnvironment.Development]:
+    'https://identity-server.dev01.devland.is',
+  [AuthAdminEnvironment.Staging]:
+    'https://identity-server.staging01.devland.is',
+  [AuthAdminEnvironment.Production]: 'https://innskra.island.is',
+}
 
 const Client = () => {
   const client = useLoaderData() as AuthClient
@@ -68,7 +81,10 @@ const Client = () => {
             </Box>
           </GridColumn>
         </GridRow>
-        <BasicInfo clientId={selectedEnvironment.clientId} />
+        <BasicInfo
+          clientId={selectedEnvironment.clientId}
+          issuerUrl={IssuerUrls[selectedEnvironment.environment]}
+        />
         <Translations translations={selectedEnvironment.displayName} />
         <ClientsUrl
           redirectUris={selectedEnvironment.redirectUris}

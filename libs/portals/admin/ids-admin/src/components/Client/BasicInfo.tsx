@@ -1,5 +1,6 @@
 import { AccordionCard, Input, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { Environment } from '@island.is/shared/types'
 import React from 'react'
 import { m } from '../../lib/messages'
 import ContentCard from './ContentCard'
@@ -7,10 +8,15 @@ import ContentCard from './ContentCard'
 interface BasicInfoProps {
   clientId: string
   clientSecret?: string
+  issuerUrl: string
 }
-const BasicInfoContent = ({ clientId, clientSecret }: BasicInfoProps) => {
+
+const BasicInfoContent = ({
+  clientId,
+  clientSecret,
+  issuerUrl,
+}: BasicInfoProps) => {
   const { formatMessage } = useLocale()
-  const idsUrl = 'https://identity-server.dev01.devland.is'
 
   return (
     <ContentCard title={formatMessage(m.basicInfo)}>
@@ -41,64 +47,64 @@ const BasicInfoContent = ({ clientId, clientSecret }: BasicInfoProps) => {
           type="text"
           size="sm"
           name="application"
-          value={idsUrl}
+          value={issuerUrl}
           label={formatMessage(m.idsUrl)}
         />
-        {/*<AccordionCard*/}
-        {/*  id="otherEndpoints"*/}
-        {/*  label={formatMessage(m.otherEndpoints)}*/}
-        {/*>*/}
-        {/*  <Stack space={3}>*/}
-        {/*    <Input*/}
-        {/*      readOnly*/}
-        {/*      type="text"*/}
-        {/*      size="sm"*/}
-        {/*      name="application"*/}
-        {/*      value={basicInfo.oAuthAuthorizationUrl}*/}
-        {/*      label={formatMessage(m.oAuthAuthorizationUrl)}*/}
-        {/*    />*/}
-        {/*    <Input*/}
-        {/*      readOnly*/}
-        {/*      type="text"*/}
-        {/*      size="sm"*/}
-        {/*      name="application"*/}
-        {/*      value={basicInfo.deviceAuthorizationUrl}*/}
-        {/*      label={formatMessage(m.deviceAuthorizationUrl)}*/}
-        {/*    />*/}
-        {/*    <Input*/}
-        {/*      readOnly*/}
-        {/*      type="text"*/}
-        {/*      size="sm"*/}
-        {/*      name="application"*/}
-        {/*      value={basicInfo.oAuthTokenUrl}*/}
-        {/*      label={formatMessage(m.oAuthTokenUrl)}*/}
-        {/*    />*/}
-        {/*    <Input*/}
-        {/*      readOnly*/}
-        {/*      type="text"*/}
-        {/*      size="sm"*/}
-        {/*      name="application"*/}
-        {/*      value={basicInfo.oAuthUserInfoUrl}*/}
-        {/*      label={formatMessage(m.oAuthUserInfoUrl)}*/}
-        {/*    />*/}
-        {/*    <Input*/}
-        {/*      readOnly*/}
-        {/*      type="text"*/}
-        {/*      size="sm"*/}
-        {/*      name="application"*/}
-        {/*      value={basicInfo.openIdConfiguration}*/}
-        {/*      label={formatMessage(m.openIdConfiguration)}*/}
-        {/*    />*/}
-        {/*    <Input*/}
-        {/*      readOnly*/}
-        {/*      type="text"*/}
-        {/*      size="sm"*/}
-        {/*      name="application"*/}
-        {/*      value={basicInfo.jsonWebKeySet}*/}
-        {/*      label={formatMessage(m.jsonWebKeySet)}*/}
-        {/*    />*/}
-        {/*  </Stack>*/}
-        {/*</AccordionCard>*/}
+        <AccordionCard
+          id="otherEndpoints"
+          label={formatMessage(m.otherEndpoints)}
+        >
+          <Stack space={3}>
+            <Input
+              readOnly
+              type="text"
+              size="sm"
+              name="application"
+              value={issuerUrl + 'connect/authorize'}
+              label={formatMessage(m.oAuthAuthorizationUrl)}
+            />
+            <Input
+              readOnly
+              type="text"
+              size="sm"
+              name="application"
+              value={issuerUrl + 'connect/token'}
+              label={formatMessage(m.oAuthTokenUrl)}
+            />
+            <Input
+              readOnly
+              type="text"
+              size="sm"
+              name="application"
+              value={issuerUrl + 'connect/userinfo'}
+              label={formatMessage(m.oAuthUserInfoUrl)}
+            />
+            <Input
+              readOnly
+              type="text"
+              size="sm"
+              name="application"
+              value={issuerUrl + 'connect/endsession'}
+              label={formatMessage(m.endSessionUrl)}
+            />
+            <Input
+              readOnly
+              type="text"
+              size="sm"
+              name="application"
+              value={issuerUrl + '.well-known/openid-configuration'}
+              label={formatMessage(m.openIdConfiguration)}
+            />
+            <Input
+              readOnly
+              type="text"
+              size="sm"
+              name="application"
+              value={issuerUrl + '.well-known/openid-configuration/jwks'}
+              label={formatMessage(m.jsonWebKeySet)}
+            />
+          </Stack>
+        </AccordionCard>
       </Stack>
     </ContentCard>
   )

@@ -57,17 +57,17 @@ export class ClientsResolver {
   }
 
   @ResolveField('defaultEnvironment', () => ClientEnvironment)
-  resolveDefaultEnvironment(@Parent() application: Client): ClientEnvironment {
-    if (application.environments.length === 0) {
-      throw new Error(`Application ${application.clientId} has no environments`)
+  resolveDefaultEnvironment(@Parent() client: Client): ClientEnvironment {
+    if (client.environments.length === 0) {
+      throw new Error(`Client ${client.clientId} has no environments`)
     }
 
     // Depends on the priority order being decided in the service
-    return application.environments[0]
+    return client.environments[0]
   }
 
   @ResolveField('availableEnvironments', () => [Environment])
-  resolveAvailableEnvironments(@Parent() application: Client): Environment[] {
-    return application.environments.map((env) => env.environment)
+  resolveAvailableEnvironments(@Parent() client: Client): Environment[] {
+    return client.environments.map((env) => env.environment)
   }
 }
