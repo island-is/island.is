@@ -21,7 +21,6 @@ const createRandomClient = (): CreateClient => {
     nationalId: faker.datatype.string(10),
     clientType: 'web',
     clientName: faker.random.word(),
-    domainName: faker.random.word(),
     supportsCustomDelegation: false,
     supportsLegalGuardians: false,
     supportsProcuringHolders: false,

@@ -22,19 +22,16 @@ export class ClientsService extends MultiEnvironmentService {
           tenantId,
         })
         .catch(this.handleError.bind(this)),
-      ,
       this.adminStagingApiWithAuth(user)
         ?.meClientsControllerFindByTenantId({
           tenantId,
         })
         .catch(this.handleError.bind(this)),
-      ,
       this.adminProdApiWithAuth(user)
         ?.meClientsControllerFindByTenantId({
           tenantId,
         })
         .catch(this.handleError.bind(this)),
-      ,
     ])
 
     const clientsMap = new Map<string, ClientEnvironment[]>()

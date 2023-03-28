@@ -97,36 +97,34 @@ describe('MeClientsController with auth', () => {
     userAccess  | currentUser
     ${'normal'} | ${user}
     ${'super'}  | ${superUser}
-  `(
-    'should create client as $userAccess user',
-    async ({ userAccess, currentUser }) => {
-      // Arrange
-      const app = await setupApp({
-        AppModule,
-        SequelizeConfigService,
-        user: currentUser,
-      })
-      const server = request(app.getHttpServer())
-      await createTestClientData(app, user)
-      const newClient = {
-        clientId: '@test.is/new-test-client',
-        clientType: 'web',
-      }
+  `('should create client as $userAccess user', async ({ currentUser }) => {
+    // Arrange
+    const app = await setupApp({
+      AppModule,
+      SequelizeConfigService,
+      user: currentUser,
+    })
+    const server = request(app.getHttpServer())
+    await createTestClientData(app, user)
+    const newClient = {
+      clientId: '@test.is/new-test-client',
+      clientType: 'web',
+      clientName: 'New Test Client',
+    }
 
-      // Act
-      const res = await server
-        .post(`/v2/me/tenants/${tenantId}/clients`)
-        .send(newClient)
+    // Act
+    const res = await server
+      .post(`/v2/me/tenants/${tenantId}/clients`)
+      .send(newClient)
 
-      // Assert
-      expect(res.status).toEqual(201)
-      expect(res.body).toMatchObject({
-        clientId: newClient.clientId,
-        clientType: newClient.clientType,
-        tenantId,
-      })
-    },
-  )
+    // Assert
+    expect(res.status).toEqual(201)
+    expect(res.body).toMatchObject({
+      clientId: newClient.clientId,
+      clientType: newClient.clientType,
+      tenantId,
+    })
+  })
 
   it.each`
     userAccess  | currentUser
