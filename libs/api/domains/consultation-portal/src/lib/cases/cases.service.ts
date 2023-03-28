@@ -11,8 +11,8 @@ import { CaseResult } from '../models/caseResult.model'
 import { AdviceResult } from '../models/adviceResult.model'
 import { GetCasesInput } from '../dto/cases.input'
 import { CasesAggregateResult } from '../models/casesAggregateResult.model'
-import { AdviceRequest } from '../models/adviceRequest.model'
 import { AuthMiddleware } from '../auth-tools/auth.middleware'
+import { PostAdviceInput } from '../dto/postAdvice.input'
 
 @Injectable()
 export class CaseResultService {
@@ -57,9 +57,10 @@ export class CaseResultService {
     return response
   }
 
-  async postAdvice(auth: string, caseId: number) {
+  async postAdvice(auth: string, input: PostAdviceInput) {
     const request: ApiCasesCaseIdAdvicesPostRequest = {
-      caseId: caseId,
+      caseId: input.caseId,
+      adviceRequest: input.adviceRequest,
     }
 
     const response = await this.postAdviceWithAuth(
