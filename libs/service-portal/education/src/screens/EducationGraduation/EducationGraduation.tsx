@@ -22,17 +22,6 @@ const GetStudentInfoQuery = gql`
     getStudentInfo(input: $input) {
       transcripts {
         degree
-        faculty
-        graduationDate
-        instutution {
-          id
-          displayName
-        }
-        name
-        nationalId
-        school
-        studyProgram
-        trackNumber
       }
     }
   }

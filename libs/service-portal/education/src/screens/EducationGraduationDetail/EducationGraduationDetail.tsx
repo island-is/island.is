@@ -28,30 +28,6 @@ import { useParams } from 'react-router-dom'
 const GetStudentInfoDetailQuery = gql`
   query GetStudentInfoDetail($input: GetStudentInfoDetailInput!) {
     getStudentInfoDetail(input: $input) {
-      transcript {
-        degree
-        faculty
-        graduationDate
-        instutution {
-          id
-          displayName
-        }
-        name
-        kennitala
-        school
-        studyProgram
-        trackNumber
-      }
-      files {
-        type
-        locale
-        displayName
-        fileName
-      }
-      body {
-        description
-        footer
-      }
       downloadServiceURL
     }
   }
