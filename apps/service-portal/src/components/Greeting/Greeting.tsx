@@ -11,6 +11,7 @@ import { useLocale } from '@island.is/localization'
 import { useAuth } from '@island.is/auth/react'
 import { m } from '@island.is/service-portal/core'
 import * as styles from './Greeting.css'
+import GreetingSvg from './GreetingSvg'
 
 const Greeting: FC<{}> = () => {
   const { formatMessage } = useLocale()
@@ -48,9 +49,9 @@ const Greeting: FC<{}> = () => {
           </Box>
         </GridColumn>
         <GridColumn span={'6/12'}>
-          <Hidden below="md">
+          <Hidden below="lg">
             <Box display="flex" justifyContent="center">
-              <img src={'./assets/images/company.svg'} alt="" />
+              <GreetingSvg className={styles.greetingSvg} />
             </Box>
           </Hidden>
         </GridColumn>
