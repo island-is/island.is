@@ -1,4 +1,8 @@
-const base = 'https://stafraentisland.greynir.is/translate'
+import getConfig from 'next/config'
+
+const baseUrl = 'https://stafraentisland.greynir.is/translate'
+
+const { publicRuntimeConfig } = getConfig()
 
 const defaultParams = {
   sourceLanguageCode: 'is',
@@ -6,17 +10,17 @@ const defaultParams = {
 }
 
 async function translateTexts(texts: string[]) {
-  var translations = []
-  const body: any = {
+  const translations = []
+  const body = {
     contents: texts,
     ...defaultParams,
   }
 
-  const response = await fetch(`${base}/`, {
+  const response = await fetch(`${baseUrl}/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-API-Key': process.env.MIDEIND_TOKEN || '',
+      'X-API-Key': publicRuntimeConfig.MIDEIND_TRANSLATION_API_KEY,
     },
     body: JSON.stringify(body),
   }).then((res) => res.json())
@@ -33,7 +37,7 @@ async function sendTexts(
   enTexts: string[],
   reference: string,
 ) {
-  const body: any = {
+  const body = {
     machineTranslatedText: '', // Required even if empty
     translationReference: 1 || reference, // Reference to be accepted later by Miðeind
     originalText: iceTexts.join(' '), // String expected, not array
@@ -42,11 +46,11 @@ async function sendTexts(
     model: 'transformer-base',
   }
 
-  const response = await fetch(`${base}/corrected`, {
+  const response = await fetch(`${baseUrl}/corrected`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-API-Key': process.env.MIDEIND_TOKEN || '',
+      'X-API-Key': publicRuntimeConfig.MIDEIND_TRANSLATION_API_KEY,
     },
     body: JSON.stringify(body),
   })

@@ -396,11 +396,8 @@ const useSections = (
                       )
                   : undefined,
             },
-            ...((features.includes(Feature.INDICTMENT_ROUTE) ||
-              user?.name === 'Árni Bergur Sigurðsson' ||
-              user?.name === 'Ásmundur Jónsson') &&
-            workingCase.type === CaseType.Indictment &&
-            isTrafficViolationCase(workingCase.indictmentSubtypes)
+            ...(workingCase.type === CaseType.Indictment &&
+            isTrafficViolationCase(workingCase, features, user)
               ? [
                   {
                     name: formatMessage(
@@ -947,7 +944,7 @@ const useSections = (
     }
   }
 
-  const getSections = (workingCase?: Case, user?: User): RouteSection[] => {
+  const getSections = (workingCase: Case, user?: User): RouteSection[] => {
     if (!workingCase) {
       return []
     }

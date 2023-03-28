@@ -79,7 +79,6 @@ export const createApplicationAction: WrappedActionFn = ({ client }) => async ({
   }
 
   const { data } = result
-
   try {
     await client.mutate<
       CreateApplicationMutation,
@@ -89,17 +88,23 @@ export const createApplicationAction: WrappedActionFn = ({ client }) => async ({
       variables: {
         input: {
           displayName: data.displayName,
-          applicationId: `${data.tenant}/${data.applicationId}`,
+          applicationId: data.applicationId,
           environments: data.environments,
+          tenantId: data.tenant,
           applicationType: data.applicationType,
         },
       },
     })
 
+    // TODO: Check for partial creation, and show a warning modal
+
     return redirect(
       replaceParams({
-        href: IDSAdminPaths.IDSAdminTenants,
-        params: { tenant: data?.tenant },
+        href: IDSAdminPaths.IDSAdminApplication,
+        params: {
+          tenant: data?.tenant,
+          application: data?.applicationId,
+        },
       }),
     )
   } catch (e) {

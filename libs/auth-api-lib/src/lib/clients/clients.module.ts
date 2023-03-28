@@ -14,6 +14,7 @@ import { ClientAllowedScope } from './models/client-allowed-scope.model'
 import { ClientIdpRestrictions } from './models/client-idp-restrictions.model'
 import { ClientSecret } from './models/client-secret.model'
 import { ClientsTranslationService } from './clients-translation.service'
+import { Domain } from '../resources/models/domain.model'
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ClientsTranslationService } from './clients-translation.service'
       ClientPostLogoutRedirectUri,
       ClientRedirectUri,
       ClientSecret,
+      Domain,
     ]),
     TranslationModule,
   ],

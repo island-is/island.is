@@ -2,7 +2,6 @@ import React, { useContext, useCallback, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
-import { CaseOrigin } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -11,6 +10,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { policeCaseNumber as m } from './PoliceCaseNumbers.strings'
 
@@ -45,7 +45,7 @@ export const PoliceCaseNumbers: React.FC<Props> = (props) => {
   const { user } = useContext(UserContext)
   const { setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
-  const isLOKECase = workingCase.origin === CaseOrigin.LOKE
+  const isLOKECase = workingCase.origin === CaseOrigin.Loke
 
   const [hasError, setHasError] = useState(false)
   const updatePoliceNumbers = useCallback(

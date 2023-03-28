@@ -2,13 +2,12 @@ import React, { createContext, ReactNode, useEffect, useState } from 'react'
 import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 
-import {
-  CaseOrigin,
-  CaseState,
-  Defendant,
-} from '@island.is/judicial-system/types'
+import { CaseState, Defendant } from '@island.is/judicial-system/types'
 import { DEFENDER_ROUTE, USERS_ROUTE } from '@island.is/judicial-system/consts'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseType,
+  CaseOrigin,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { CaseData, LimitedAccessCaseData, TempCase as Case } from '../../types'
 import LimitedAccessCaseQuery from './limitedAccessCaseGql'
@@ -39,7 +38,7 @@ const initialState: Case = {
   id: '',
   created: '',
   modified: '',
-  origin: CaseOrigin.UNKNOWN,
+  origin: CaseOrigin.Unknown,
   type: CaseType.Custody,
   state: CaseState.NEW,
   policeCaseNumbers: [],
