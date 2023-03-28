@@ -6,7 +6,6 @@ import {
   CaseFile,
   CaseFileCategory,
   completedCaseStates,
-  Feature,
   isExtendedCourtRole,
 } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
@@ -67,12 +66,11 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
     caseId: workingCase.id,
   })
 
-  const isTrafficViolationCaseCheck =
-    (features.includes(Feature.INDICTMENT_ROUTE) ||
-      user?.institution?.id === '26136a67-c3d6-4b73-82e2-3265669a36d3' || // Lögreglustjórinn á Suðurlandi
-      user?.institution?.id === '53581d7b-0591-45e5-9cbe-c96b2f82da85' || // Lögreglustjórinn á höfuðborgarsvæðinu
-      user?.name === 'Ásmundur Jónsson') &&
-    isTrafficViolationCase(workingCase.indictmentSubtypes)
+  const showTrafficViolationCaseFiles = isTrafficViolationCase(
+    workingCase,
+    features,
+    user,
+  )
 
   const cf = workingCase.caseFiles
 
@@ -127,7 +125,7 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
             />
           </Box>
         )}
-        {isTrafficViolationCaseCheck && (
+        {showTrafficViolationCaseFiles && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4" marginBottom={1}>
               {formatMessage(caseFiles.indictmentSection)}
