@@ -73,7 +73,7 @@ const PoliceReport = () => {
     <PageLayout
       workingCase={workingCase}
       activeSection={
-        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
+        workingCase.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={RestrictionCaseProsecutorSubsections.POLICE_REPORT}
       isLoading={isLoadingWorkingCase}
@@ -258,6 +258,7 @@ const PoliceReport = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(constants.INVESTIGATION_CASE_CASE_FILES_ROUTE)

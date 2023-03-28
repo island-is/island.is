@@ -7,6 +7,7 @@ import {
   GridContainer,
   GridRow,
   Hidden,
+  LinkV2,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -23,23 +24,17 @@ import { SimpleCardSkeleton } from '../../components/Card'
 import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
 import { getTimeLineDate } from '../../utils/helpers/dateFormatter'
 import Link from 'next/link'
+import { useUser } from '../../context/UserContext'
 
-const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
-  // Remove following lines after connecting to API
+const CaseScreen = ({ chosenCase, advices }) => {
   const { contactEmail, contactName } = chosenCase
-  const card = {
-    caseNumber: '76/2022',
-    nameOfReviewer: 'Jon Jonsson',
-    reviewPeriod: '01.08.2022 – 01.12.2022',
-  }
-
-  isLoggedIn = true // remove when functionality for logged in has been implemented
+  const { isAuthenticated, user } = useUser()
 
   return (
     <Layout
       seo={{
         title: `Mál: S-${chosenCase?.caseNumber}`,
-        url: `mal/${chosenCase?.caseNumber}`,
+        url: `mal/${chosenCase?.id}`,
       }}
     >
       <GridContainer>
@@ -95,7 +90,12 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
                   {advices?.map((advice: Advice) => {
                     return <ReviewCard advice={advice} key={advice.number} />
                   })}
-                  <WriteReviewCard card={chosenCase} isLoggedIn={isLoggedIn} />
+                  <WriteReviewCard
+                    card={chosenCase}
+                    isLoggedIn={isAuthenticated}
+                    username={user?.name}
+                    caseId={chosenCase.id}
+                  />
                 </Stack>
               </Box>
             </Stack>
@@ -110,7 +110,22 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
                   headingColor="blue400"
                   title="Skjöl til samráðs"
                 >
-                  {chosenCase.shortDescription}
+                  {chosenCase.documents
+                    ? chosenCase.documents.map((doc, index) => {
+                        return (
+                          <LinkV2
+                            href={`https://samradapi-test.island.is/api/Documents/${doc.id}`}
+                            color="blue400"
+                            underline="normal"
+                            underlineVisibility="always"
+                            newTab
+                            key={index}
+                          >
+                            {doc.fileName}
+                          </LinkV2>
+                        )
+                      })
+                    : 'Engin skjöl'}
                 </StackedTitleAndDescription>
               </SimpleCardSkeleton>
               <SimpleCardSkeleton>

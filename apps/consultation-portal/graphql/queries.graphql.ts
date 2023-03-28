@@ -5,3 +5,11 @@ export const GET_AUTH_URL = gql`
     consultationPortalAuthenticationUrl
   }
 `
+
+export const POST_ADVICE = gql`
+  mutation consultationPortalPostAdvice(
+    $input: ConsultationPortalPostAdviceInput!
+  ) {
+    consultationPortalPostAdvice(input: $input)
+  }
+`

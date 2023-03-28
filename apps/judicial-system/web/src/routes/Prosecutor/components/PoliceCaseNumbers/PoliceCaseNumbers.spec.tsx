@@ -3,8 +3,11 @@ import faker from 'faker'
 import { render, screen } from '@testing-library/react'
 
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
-import { CaseOrigin, CaseState } from '@island.is/judicial-system/types'
+import {
+  CaseType,
+  CaseOrigin,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseState } from '@island.is/judicial-system/types'
 
 import { PoliceCaseNumbers } from './PoliceCaseNumbers'
 import { IntlProvider } from 'react-intl'
@@ -18,7 +21,7 @@ describe('PoliceCaseNumbers component', () => {
       modified: faker.date.past().toISOString(),
       id: faker.datatype.uuid(),
       type: CaseType.Custody,
-      origin: CaseOrigin.LOKE,
+      origin: CaseOrigin.Loke,
       state: CaseState.DRAFT,
       policeCaseNumbers: ['007-0000-0000', '008-0000-0000'],
     }
