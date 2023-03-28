@@ -37,7 +37,7 @@ export const m = defineMessages({
     id: 'ap.ids-admin:search-placeholder',
     defaultMessage: 'Sláðu inn leitarorð',
   },
-  applications: {
+  clients: {
     id: 'ap.ids-admin:applications',
     defaultMessage: 'Forrit',
   },
@@ -65,7 +65,7 @@ export const m = defineMessages({
     id: 'ap.ids-admin:back',
     defaultMessage: 'Til baka',
   },
-  applicationsDescription: {
+  clientsDescription: {
     id: 'ap.ids-admin:applications-description',
     defaultMessage: 'Forrit sem tengjast þessum tenant',
   },
@@ -77,7 +77,7 @@ export const m = defineMessages({
     id: 'ap.ids-admin:no-applications',
     defaultMessage: 'Engin forrit til staðar',
   },
-  noApplicationsDescription: {
+  noClientsDescription: {
     id: 'ap.ids-admin:no-applications-description',
     defaultMessage:
       'Þú getur búið til forrit með því að smella á Búa til forrit',
@@ -94,7 +94,7 @@ export const m = defineMessages({
     id: 'ap.ids-admin:display-name',
     defaultMessage: 'Nafn',
   },
-  applicationId: {
+  clientId: {
     id: 'ap.ids-admin:clientId',
     defaultMessage: 'Application ID',
   },
@@ -102,7 +102,7 @@ export const m = defineMessages({
     id: 'ap.ids-admin:choose-environment',
     defaultMessage: 'Veldu umhverfi',
   },
-  chooseApplicationType: {
+  chooseClientType: {
     id: 'ap.ids-admin:choose-application-type',
     defaultMessage: 'Veldu tegund forrits',
   },
@@ -110,11 +110,11 @@ export const m = defineMessages({
     id: 'ap.ids-admin:error-display-name',
     defaultMessage: 'Nafn má ekki vera tómt',
   },
-  errorApplicationId: {
+  errorClientId: {
     id: 'ap.ids-admin:error-application-id',
     defaultMessage: 'Application ID má ekki vera tómt',
   },
-  errorApplicationIdRegex: {
+  errorClientIdRegex: {
     id: 'ap.ids-admin:error-application-id-regex',
     defaultMessage: 'Gildir stafir eru A-Z a-z 0-9 . _ - /',
   },
@@ -122,7 +122,7 @@ export const m = defineMessages({
     id: 'ap.ids-admin:error-environment',
     defaultMessage: 'Veldu a.m.k. eitt umhverfi',
   },
-  errorApplicationType: {
+  errorClientType: {
     id: 'ap.ids-admin:error-application-type',
     defaultMessage: 'Veldu tegund forrits',
   },
@@ -131,34 +131,34 @@ export const m = defineMessages({
     defaultMessage: 'Úps, óvænt villa kom upp!',
     description: 'An unknown error has occurred',
   },
-  webApplicationsTitle: {
+  webClientsTitle: {
     id: 'ap.ids-admin:web-applications-title',
     defaultMessage: 'Vefforrit',
   },
-  webApplicationsDescription: {
+  webClientsDescription: {
     id: 'ap.ids-admin:web-applications-description',
     defaultMessage:
       'Hefðbundin vefforrit sem nota tilvísanir. T.d. Node.js, Express, ASP.net, Java, PHP',
   },
-  nativeApplicationsTitle: {
+  nativeClientsTitle: {
     id: 'ap.ids-admin:native-applications-title',
     defaultMessage: 'Smáforrið forrit',
   },
-  nativeApplicationsDescription: {
+  nativeClientsDescription: {
     id: 'ap.ids-admin:native-applications-description',
     defaultMessage:
       'Farsíma-, skjáborðs-, CLI- og snjalltækjaforrit sem keyra innbyggt. T.d. iOS, Electron, Apple TV öppum',
   },
-  machineApplicationsTitle: {
+  machineClientsTitle: {
     id: 'ap.ids-admin:machine-applications-title',
     defaultMessage: 'Kerfi í kerfi',
   },
-  machineApplicationsDescription: {
+  machineClientsDescription: {
     id: 'ap.ids-admin:machine-applications-description',
     defaultMessage:
       'CLI, púkar eða þjónustur sem keyra á bakendanum þínum. T.d. Skeljahandrit',
   },
-  createApplication: {
+  createClient: {
     id: 'ap.ids-admin:create-application',
     defaultMessage: 'Stofna forrit',
   },
@@ -201,11 +201,11 @@ export const m = defineMessages({
     id: 'ap.ids-admin:save-for-all-environments',
     defaultMessage: 'Save in all environments',
   },
-  applicationSecret: {
+  clientSecret: {
     id: 'ap.ids-admin:application-secret',
     defaultMessage: 'Application secret',
   },
-  applicationSecretDescription: {
+  clientSecretDescription: {
     id: 'ap.ids-admin:application-secret-description',
     defaultMessage: 'The Client Secret is not base64 encoded.',
   },
@@ -268,11 +268,11 @@ export const m = defineMessages({
     id: 'ap.ids-admin:basic-info',
     defaultMessage: 'Basic information',
   },
-  applicationsURLS: {
+  clientUris: {
     id: 'ap.ids-admin:applications-urls',
     defaultMessage: 'Application URLs',
   },
-  lifeTime: {
+  lifetime: {
     id: 'ap.ids-admin:life-time',
     defaultMessage: 'Life time',
   },

@@ -1,6 +1,0 @@
-mutation CreateApplication($input: CreateAuthAdminApplicationInput!) {
-  createAuthAdminApplication(input: $input) {
-    applicationId
-    environment
-  }
-}

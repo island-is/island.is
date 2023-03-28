@@ -1,13 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
   AdminApi,
   AdminDevApi,
   AdminProdApi,
   AdminStagingApi,
 } from '@island.is/clients/auth/admin-api'
-import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { FetchError } from '@island.is/clients/middlewares'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Environment } from '@island.is/shared/types'
 
 @Injectable()
@@ -53,5 +55,18 @@ export abstract class MultiEnvironmentService {
       default:
         return null
     }
+  }
+
+  protected handleError(error: Error) {
+    if (error instanceof FetchError && error.status === 401) {
+      // If 401 is returned we log it as info as it is intentional
+      this.logger.info('Unauthorized request to admin api', error)
+    } else {
+      // Otherwise we log it as error
+      this.logger.error('Error while fetching tenants', error)
+    }
+
+    // We swallow the errors
+    return undefined
   }
 }
