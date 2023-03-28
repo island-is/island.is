@@ -107,6 +107,7 @@ const HearingArrangements: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_SUBPOENA_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase || isSendingNotification}
           nextButtonText={formatMessage(m.nextButtonText)}
