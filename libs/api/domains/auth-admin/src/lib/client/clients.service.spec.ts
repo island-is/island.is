@@ -106,12 +106,12 @@ describe('ClientsService', () => {
       expect(response).toEqual([
         {
           environment: Environment.Development,
-          applicationId: 'test-client-id',
+          clientId: 'test-client-id',
         },
-        { environment: Environment.Staging, applicationId: 'test-client-id' },
+        { environment: Environment.Staging, clientId: 'test-client-id' },
         {
           environment: Environment.Production,
-          applicationId: 'test-client-id',
+          clientId: 'test-client-id',
         },
       ])
     })
@@ -136,7 +136,7 @@ describe('ClientsService', () => {
       expect(response).toEqual([
         {
           environment: Environment.Development,
-          applicationId: 'test-client-id',
+          clientId: 'test-client-id',
         },
       ])
     })
