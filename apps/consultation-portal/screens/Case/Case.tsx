@@ -7,6 +7,7 @@ import {
   GridContainer,
   GridRow,
   Hidden,
+  LinkV2,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -26,15 +27,14 @@ import Link from 'next/link'
 import { useUser } from '../../context/UserContext'
 
 const CaseScreen = ({ chosenCase, advices }) => {
-  // Remove following lines after connecting to API
   const { contactEmail, contactName } = chosenCase
-  const { isAuthenticated } = useUser()
+  const { isAuthenticated, user } = useUser()
 
   return (
     <Layout
       seo={{
         title: `Mál: S-${chosenCase?.caseNumber}`,
-        url: `mal/${chosenCase?.caseNumber}`,
+        url: `mal/${chosenCase?.id}`,
       }}
     >
       <GridContainer>
@@ -93,6 +93,8 @@ const CaseScreen = ({ chosenCase, advices }) => {
                   <WriteReviewCard
                     card={chosenCase}
                     isLoggedIn={isAuthenticated}
+                    username={user?.name}
+                    caseId={chosenCase.id}
                   />
                 </Stack>
               </Box>
@@ -108,7 +110,22 @@ const CaseScreen = ({ chosenCase, advices }) => {
                   headingColor="blue400"
                   title="Skjöl til samráðs"
                 >
-                  {chosenCase.shortDescription}
+                  {chosenCase.documents
+                    ? chosenCase.documents.map((doc, index) => {
+                        return (
+                          <LinkV2
+                            href={`https://samradapi-test.island.is/api/Documents/${doc.id}`}
+                            color="blue400"
+                            underline="normal"
+                            underlineVisibility="always"
+                            newTab
+                            key={index}
+                          >
+                            {doc.fileName}
+                          </LinkV2>
+                        )
+                      })
+                    : 'Engin skjöl'}
                 </StackedTitleAndDescription>
               </SimpleCardSkeleton>
               <SimpleCardSkeleton>
