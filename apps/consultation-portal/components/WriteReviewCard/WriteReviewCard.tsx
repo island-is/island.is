@@ -20,10 +20,16 @@ import Link from 'next/link'
 import { useReducer, useState } from 'react'
 import { useLogin } from '../../utils/helpers'
 import { SubscriptionActionBox } from '../Card'
+import { POST_ADVICE } from '../../graphql/queries.graphql'
+import { useMutation } from '@apollo/client'
+import initApollo from '../../graphql/client'
+import { resolveFileToObject } from '../../utils/helpers'
 
 type CardProps = {
   card: Case
   isLoggedIn: boolean
+  username: string
+  caseId: number
 }
 
 enum ActionTypes {
@@ -35,6 +41,13 @@ enum ActionTypes {
 type Action = {
   type: ActionTypes
   payload: any
+}
+
+const fileExtensionWhitelist = {
+  '.pdf': 'application/pdf',
+  '.doc': 'application/msword',
+  '.docx':
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 }
 
 // taken from InputFileUpload.stories.tsx
@@ -72,7 +85,7 @@ const uploadFile = (file: UploadFile, dispatch: (action: Action) => void) => {
     const formData = new FormData()
     formData.append('file', file.originalFileObj || '', file.name)
 
-    // TODO: add backend url
+    // TODO: add backend url if multipart upload
     //req.open('POST', 'http://localhost:5000/')
     //req.send(formData)
   })
@@ -108,11 +121,59 @@ function reducer(state: UploadFile[], action: Action) {
 
 const date = getShortDate(new Date())
 
-export const WriteReviewCard = ({ card, isLoggedIn }: CardProps) => {
+export const WriteReviewCard = ({
+  card,
+  isLoggedIn,
+  username,
+  caseId,
+}: CardProps) => {
   const [showUpload, setShowUpload] = useState<boolean>(false)
   const [state, dispatch] = useReducer(reducer, initialUploadFiles)
   const [error, setError] = useState<string | undefined>(undefined)
   const { LogIn, loginLoading } = useLogin()
+
+  const [review, setReview] = useState('')
+
+  const client = initApollo()
+  const [postAdviceMutation, { loading: postAdviceLoading }] = useMutation(
+    POST_ADVICE,
+    {
+      client: client,
+    },
+  )
+
+  const onClick = async () => {
+    if (review.length >= 10) {
+      const files = await Promise.all(
+        state.map((item: UploadFile) =>
+          resolveFileToObject(item.originalFileObj as File),
+        ),
+      )
+
+      const objToSend = {
+        caseId: caseId,
+        adviceRequest: {
+          content: review,
+          adviceFiles: files,
+        },
+      }
+
+      const req = await fetch('/consultation-portal/api/auth/check')
+      const data = await req.json()
+      const token = data?.token
+
+      const posting = await postAdviceMutation({
+        variables: {
+          input: objToSend,
+          context: { token },
+        },
+      })
+
+      // reloading page, would be better if we got the object back
+      // from the server or sent a refetch request for data
+      location.reload()
+    }
+  }
 
   const onChange = (newFiles: File[]) => {
     const newUploadFiles = newFiles.map((f) => fileToObject(f))
@@ -185,13 +246,16 @@ export const WriteReviewCard = ({ card, isLoggedIn }: CardProps) => {
         <Link href="/um">um samráðsgáttina.</Link>
       </Text>
 
-      <Text marginBottom={2}>Umsagnaraðili: </Text>
+      <Text marginBottom={2}>Umsagnaraðili: {username}</Text>
+
       <Input
         textarea
         label="Umsögn"
         name="Test"
         placeholder="Hér skal skrifa umsögn"
         rows={10}
+        value={review}
+        onChange={(e) => setReview(e.target.value)}
       />
       <Box paddingTop={3}>
         {showUpload && (
@@ -199,13 +263,13 @@ export const WriteReviewCard = ({ card, isLoggedIn }: CardProps) => {
             <InputFileUpload
               name="fileUpload"
               fileList={state}
+              accept={Object.values(fileExtensionWhitelist)}
               header="Dragðu skrár hingað til að hlaða upp"
               description="Hlaðaðu upp skrár sem þu vilt senda með þinni umsögn"
               buttonLabel="Velja skrár til að hlaða upp"
               showFileSize
               onChange={onChange}
               onRemove={onRemove}
-              errorMessage={state.length > 0 ? error : undefined}
             />
           </Box>
         )}
@@ -224,7 +288,12 @@ export const WriteReviewCard = ({ card, isLoggedIn }: CardProps) => {
           ) : (
             <div />
           )}
-          <Button fluid size="small">
+          <Button
+            disabled={review.length <= 10}
+            fluid
+            size="small"
+            onClick={onClick}
+          >
             Staðfesta umsögn
           </Button>
         </Inline>
