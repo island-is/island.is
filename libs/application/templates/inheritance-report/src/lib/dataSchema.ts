@@ -1,8 +1,13 @@
-import { formatBankInfo } from '@island.is/application/ui-components'
 import * as z from 'zod'
 
 export const inheritanceReportSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
+
+  applicant: z.object({
+    email: z.string().email(),
+    phone: z.string(),
+    nationalId: z.string(),
+  }),
 
   /* assets */
   assets: z.object({
@@ -48,10 +53,7 @@ export const inheritanceReportSchema = z.object({
       .object({
         data: z
           .object({
-            accountNumber: z.string().refine((v) => {
-              const bankAccount = formatBankInfo(v)
-              return bankAccount.length === 14
-            }),
+            accountNumber: z.string(),
             balance: z.string().refine((v) => v),
           })
           .array()
@@ -195,6 +197,10 @@ export const inheritanceReportSchema = z.object({
       .refine((v) => v === 100)
       .optional(),
   }),
+
+  heirsAdditionalInfo: z.string().optional(),
+
+  totalDeduction: z.string(),
 })
 
 export type InheritanceReport = z.TypeOf<typeof inheritanceReportSchema>

@@ -1,25 +1,71 @@
-import { test } from '@playwright/test'
+import { BrowserContext, Page, expect, test } from '@playwright/test'
 import { urls } from '../../../../support/urls'
+import slugify from 'slugify'
+import { session } from '../../../../support/session'
+
+type GetByRole = Pick<Page, 'getByRole'>['getByRole']
+type GetByRoleParameters = Parameters<GetByRole>
 
 test.use({ baseURL: urls.islandisBaseUrl })
+type Orgs = {
+  organisationName: string
+  organisationHome?: string
+  enabled?: boolean
+  target?: { role: GetByRoleParameters[0]; options?: GetByRoleParameters[1] }
+}
+const orgs: Orgs[] = [
+  { organisationName: 'Opinberir aðilar', organisationHome: '/' },
+  { organisationName: 'Fiskistofa' },
+  {
+    organisationName: 'Heilbrigðisstofnun Norðurlands',
+    organisationHome: '/hsn',
+  },
+  { organisationName: 'Sjúkratryggingar', target: { role: 'link' } },
+  { organisationName: 'Ríkislögmaður' },
+  { organisationName: 'Landskjörstjórn' },
+  { organisationName: 'Opinber nýsköpun', enabled: true },
+  { organisationName: 'Sýslumenn' },
+  { organisationName: 'Fjársýslan' },
+  {
+    organisationName: 'Heilbrigðisstofnun Suðurlands',
+    organisationHome: '/hsu',
+  },
+  { organisationName: 'Landlæknir', target: { role: 'link' } },
+  { organisationName: 'Útlendingastofnun', target: { role: 'link' } },
+]
 
-test.describe.skip('Sites of institutions', () => {
-  for (const { testCase } of [
-    { testCase: 'Opinberir aðilar', home: '/' },
-    { testCase: 'Fiskistofa' },
-    { testCase: 'HSN' },
-    { testCase: 'Sjúkratryggingar', target: 'Efnisyfirlit' },
-    { testCase: 'Ríkislögmaður' },
-    { testCase: 'Landskjörstjórn' },
-    { testCase: 'Opinber nýsköpun', disabled: true },
-    { testCase: 'Sýslumenn' },
-    { testCase: 'Fjársýslan' },
-    { testCase: 'HSU' },
-    { testCase: 'Landlæknir' },
-    { testCase: 'Útlendingastofnun' },
-  ]) {
-    test(`Vefir stofnana - ${testCase}`, () => {
-      return
+test.describe('Sites of institutions', () => {
+  let context: BrowserContext
+  test.beforeAll(async ({ browser }) => {
+    context = await session({
+      browser,
+      idsLoginOn: false,
+      homeUrl: '/s',
+    })
+  })
+  test.afterAll(async () => {
+    await context.close()
+  })
+  for (const {
+    organisationName,
+    organisationHome = `/${slugify(organisationName, { lower: true })}`,
+    target,
+    enabled,
+  } of orgs) {
+    test(organisationName, async () => {
+      if (enabled) return
+      const page = await context.newPage()
+      const url = `/s${organisationHome}`
+      await page.goto(url)
+      await expect(
+        page
+          .getByRole(target?.role ?? 'heading', {
+            ...{ name: organisationName },
+            ...target?.options,
+          })
+          .first(),
+      ).toBeVisible()
+      await page.close()
     })
   }
 })

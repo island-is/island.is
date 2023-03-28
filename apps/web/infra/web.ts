@@ -55,7 +55,7 @@ export const serviceSetup = (services: {
     .readiness('/readiness')
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },
-      requests: { cpu: '200m', memory: '256Mi' },
+      requests: { cpu: '100m', memory: '256Mi' },
     })
     .replicaCount({
       default: 2,

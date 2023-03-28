@@ -5,6 +5,7 @@ import {
   InMemoryCache,
   NormalizedCacheObject,
 } from '@apollo/client'
+import { setContext } from '@apollo/client/link/context'
 import { BatchHttpLink } from '@apollo/client/link/batch-http'
 import { onError } from '@apollo/client/link/error'
 import { GraphQLError } from 'graphql'
@@ -34,7 +35,15 @@ function create(initialState?: any) {
   // const graphqlUrl = graphqlServerUrl || graphqlClientUrl
   const graphqlEndpoint = graphqlServerEndpoint || graphqlClientEndpoint
   const httpLink = new BatchHttpLink({ uri: `${graphqlEndpoint}` })
-  const link = ApolloLink.from([errorLink, httpLink])
+  const authLink = setContext((_, context) => {
+    return {
+      headers: {
+        ...context.headers,
+        authorization: context.token ? `Bearer ${context.token}` : '',
+      },
+    }
+  })
+  const link = ApolloLink.from([errorLink, authLink, httpLink])
 
   // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
   return new ApolloClient({

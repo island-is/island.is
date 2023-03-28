@@ -130,14 +130,14 @@ const HearingArrangements = () => {
     <PageLayout
       workingCase={workingCase}
       activeSection={
-        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
+        workingCase.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={
         RestrictionCaseProsecutorSubsections.HEARING_ARRANGEMENTS
       }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
-      isExtension={workingCase?.parentCase && true}
+      isExtension={!!workingCase.parentCase}
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
@@ -218,6 +218,7 @@ const HearingArrangements = () => {
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
+              nextButtonIcon="arrowForward"
               previousUrl={`${constants.INVESTIGATION_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
               onNextButtonClick={async () =>
                 await handleNavigationTo(
