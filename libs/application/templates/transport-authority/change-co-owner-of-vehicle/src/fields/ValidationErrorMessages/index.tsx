@@ -30,24 +30,16 @@ export const ValidationErrorMessages: FC<FieldBaseProps> = (props) => {
             email: answers?.owner?.email,
             nationalId: answers?.owner?.nationalId,
           },
-          buyerCoOwnerAndOperator: [
-            ...(answers?.ownerCoOwners
-              ? answers.ownerCoOwners.map((x) => ({
-                  email: x.email,
-                  nationalId: x.nationalId,
-                  type: 'coowner',
-                }))
-              : []),
-            ...(answers?.coOwners
-              ? answers.coOwners
-                  .filter(({ wasRemoved }) => wasRemoved !== 'true')
-                  .map((x) => ({
-                    email: x.email,
-                    nationalId: x.nationalId,
-                    type: 'coowner',
-                  }))
-              : []),
-          ],
+          ownerCoOwners: answers?.ownerCoOwners?.map((x) => ({
+            nationalId: x.nationalId,
+            email: x.email,
+            wasRemoved: x.wasRemoved,
+          })),
+          coOwners: answers?.coOwners?.map((x) => ({
+            nationalId: x.nationalId,
+            email: x.email,
+            wasRemoved: x.wasRemoved,
+          })),
         },
       },
     },

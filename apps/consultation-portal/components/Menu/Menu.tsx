@@ -18,40 +18,20 @@ import React from 'react'
 import { MenuLogo, MenuLogoMobile } from '../svg'
 import { menuItems } from './MenuItems'
 import MenuModal from '../Modal/MenuModal'
-import { checkActiveHeaderLink } from '../../utils/helpers'
+import { checkActiveHeaderLink, useLogin } from '../../utils/helpers'
 import { useRouter } from 'next/router'
-import initApollo from '../../graphql/client'
-import { useQuery } from '@apollo/client'
-import { GET_AUTH_URL } from '../../graphql/queries.graphql'
 import { useUser } from '../../context/UserContext'
 type MenuProps = {
   isFrontPage: boolean
 }
 
 export const Menu = ({ isFrontPage = false }: MenuProps) => {
-  const client = initApollo()
-
-  const { data, loading } = useQuery(GET_AUTH_URL, {
-    client: client,
-    ssr: true,
-    fetchPolicy: 'cache-first',
-  })
-
+  const { LogIn, loginLoading } = useLogin()
   const { isAuthenticated, user, logoutUser } = useUser()
 
   const router = useRouter()
   const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
   const biggerMarginLeft = [3, 3, 3, 4] as ResponsiveSpace
-
-  const LogIn = () => {
-    localStorage.setItem('pathname', router.asPath)
-
-    const { consultationPortalAuthenticationUrl: authUrl = '' } = data ?? ''
-
-    if (authUrl) {
-      window.location.href = authUrl.slice(1, -1)
-    }
-  }
 
   return (
     <header className={styles.menu}>
@@ -151,7 +131,11 @@ export const Menu = ({ isFrontPage = false }: MenuProps) => {
                             dropdownItems={<Divider />}
                           />
                         ) : (
-                          <Button size="small" onClick={LogIn}>
+                          <Button
+                            size="small"
+                            onClick={LogIn}
+                            loading={loginLoading}
+                          >
                             Innskráning
                           </Button>
                         )}

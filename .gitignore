@@ -32,6 +32,7 @@ node_modules/
 TODO
 *.todo
 .env
+.env.*
 .nvmrc
 .node-version
 # IDE - VSCode
