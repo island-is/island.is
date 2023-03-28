@@ -84,7 +84,7 @@ const uploadFile = (file: UploadFile, dispatch: (action: Action) => void) => {
 
     const formData = new FormData()
     formData.append('file', file.originalFileObj || '', file.name)
-    
+
     // TODO: add backend url if multipart upload
     //req.open('POST', 'http://localhost:5000/')
     //req.send(formData)

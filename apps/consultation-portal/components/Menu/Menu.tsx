@@ -119,81 +119,26 @@ export const Menu = ({ isFrontPage = false }: MenuProps) => {
                               </Button>
                             </div>
                           </FocusableBox>
-                        </Hidden>
-                      </Column>
-                    </>
-                  )}
-
-                  <Column>
-                    <Hidden below="xl">
-                      <Box
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="flexEnd"
-                        width="full"
-                      >
-                        {menuItems.map((item, index) => {
-                          return (
-                            <FocusableBox
-                              marginLeft={index !== 0 ? marginLeft : 0}
-                              key={index}
-                              href={item.href}
-                            >
-                              <div
-                                style={{
-                                  backgroundColor: checkActiveHeaderLink(
-                                    router,
-                                    item.href,
-                                  )
-                                    ? '#00E4CA'
-                                    : 'transparent',
-                                  borderRadius: '8px',
-                                }}
-                              >
-                                <Button variant="utility" size="small">
-                                  {item.label}
-                                </Button>
-                              </div>
-                            </FocusableBox>
-                          )
-                        })}
-                        <Box marginLeft={biggerMarginLeft}>
-                          {isAuthenticated ? (
-                            <UserMenu
-                              username={user?.name}
-                              authenticated={isAuthenticated}
-                              language={'IS'}
-                              onLogout={logoutUser}
-                              dropdownItems={<Divider />}
-                            />
-                          ) : (
-                            <Button
-                              size="small"
-                              onClick={LogIn}
-                              loading={loginLoading}
-                            >
-                              Innskráning
-                            </Button>
-                          )}
-                        </Box>
-                      </Box>
-                    </Hidden>
-                    <Hidden above="lg">
-                      <Box
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="flexEnd"
-                        width="full"
-                      >
-                        <MenuModal
-                          baseId="menuModal"
-                          modalLabel="Menu modal"
-                          isLoggedIn={isAuthenticated}
-                          logIn={LogIn}
-                          logOut={logoutUser}
-                          router={router}
-                          isFrontPage={isFrontPage}
-                        />
+                        )
+                      })}
+                      <Box marginLeft={biggerMarginLeft}>
+                        {isAuthenticated ? (
+                          <UserMenu
+                            username={user?.name}
+                            authenticated={isAuthenticated}
+                            language={'IS'}
+                            onLogout={logoutUser}
+                            dropdownItems={<Divider />}
+                          />
+                        ) : (
+                          <Button
+                            size="small"
+                            onClick={LogIn}
+                            loading={loginLoading}
+                          >
+                            Innskráning
+                          </Button>
+                        )}
                       </Box>
                     </Box>
                   </Hidden>
