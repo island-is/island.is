@@ -2,11 +2,6 @@ import { defineMessage, defineMessages } from 'react-intl'
 
 // Strings on signed verdict overview screen
 export const signedVerdictOverview = {
-  rulingDateLabel: defineMessage({
-    id: 'judicial.system.core:signed_verdict_overview.ruling_date_label',
-    defaultMessage: 'Úrskurðað {courtEndTime}',
-    description: 'Notaður sem label fyrir hvenær úrskurðurinn var.',
-  }),
   dismissedTitle: defineMessage({
     id: 'judicial.system.core:signed_verdict_overview.dismissed_title',
     defaultMessage: 'Kröfu vísað frá',
