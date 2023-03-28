@@ -1,6 +1,7 @@
 {
   "platform": "node",
   "external": [
+    "@elastic/elasticsearch",
     "@nestjs/mongoose",
     "@nestjs/microservices",
     "@nestjs/microservices/microservices-module",
