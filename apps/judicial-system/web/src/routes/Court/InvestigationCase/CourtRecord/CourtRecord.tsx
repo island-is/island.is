@@ -15,7 +15,6 @@ import {
   FormContext,
 } from '@island.is/judicial-system-web/src/components'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { RestrictionCaseCourtSubsections } from '@island.is/judicial-system-web/src/types'
 import {
   useCase,
   useDeb,
@@ -206,7 +205,6 @@ const CourtRecord = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSubSection={RestrictionCaseCourtSubsections.COURT_RECORD}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}

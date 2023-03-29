@@ -11,7 +11,6 @@ import {
   ProsecutorCaseInfo,
   FormContext,
 } from '@island.is/judicial-system-web/src/components'
-import { RestrictionCaseProsecutorSubsections } from '@island.is/judicial-system-web/src/types'
 import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
@@ -51,7 +50,6 @@ export const PoliceReport: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSubSection={RestrictionCaseProsecutorSubsections.POLICE_REPORT}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}

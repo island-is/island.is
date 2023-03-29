@@ -35,18 +35,20 @@ import { capitalize } from '@island.is/judicial-system/formatters'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { findFirstInvalidStep } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
+  CaseType,
   InstitutionType,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
 import ActiveCases from './ActiveCases'
 import PastCases from './PastCases'
 import TableSkeleton from './TableSkeleton'
+import { FilterOption, useFilter } from './useFilter'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
-import { FilterOption, useFilter } from './useFilter'
 
 const CreateCaseButton: React.FC<{
   features: Feature[]
@@ -222,6 +224,9 @@ export const Cases: React.FC = () => {
 
   const openCase = (caseToOpen: Case, role: UserRole) => {
     let routeTo = null
+    const isTrafficViolation =
+      caseToOpen.type === CaseType.Indictment &&
+      isTrafficViolationCase(caseToOpen, features, user)
 
     if (
       caseToOpen.state === CaseState.ACCEPTED ||
@@ -262,7 +267,7 @@ export const Cases: React.FC = () => {
         )
       } else {
         routeTo = findFirstInvalidStep(
-          constants.prosecutorIndictmentRoutes,
+          constants.prosecutorIndictmentRoutes(isTrafficViolation),
           caseToOpen,
         )
       }

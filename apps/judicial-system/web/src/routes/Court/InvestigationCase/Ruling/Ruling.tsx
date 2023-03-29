@@ -15,7 +15,6 @@ import {
   RulingInput,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { RestrictionCaseCourtSubsections } from '@island.is/judicial-system-web/src/types'
 import {
   useCase,
   useDeb,
@@ -118,7 +117,6 @@ const Ruling = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSubSection={RestrictionCaseCourtSubsections.RULING}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}

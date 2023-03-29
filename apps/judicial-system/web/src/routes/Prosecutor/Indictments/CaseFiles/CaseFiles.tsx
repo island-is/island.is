@@ -18,7 +18,6 @@ import {
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { IndictmentsProsecutorSubsections } from '@island.is/judicial-system-web/src/types'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -97,10 +96,6 @@ const CaseFiles: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSubSection={
-        IndictmentsProsecutorSubsections.CASE_FILES +
-        (isTrafficViolationCaseCheck ? 1 : 0)
-      }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}

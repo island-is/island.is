@@ -69,13 +69,17 @@ const useSections = (
     user?: User,
   ): RouteSection => {
     const { type, id, parentCase } = workingCase
-    const routeIndex = prosecutorRestrictionCasesRoutes.findIndex(
-      /**
-       * We do .slice here because router.pathname is /something/[:id]
-       * and we want to remove the /[:id] part
-       */
-      (route) => route === router.pathname.slice(0, -5),
-    )
+    const routeIndex =
+      router.pathname.includes(constants.CREATE_RESTRICTION_CASE_ROUTE) ||
+      router.pathname.includes(constants.CREATE_TRAVEL_BAN_ROUTE)
+        ? 0
+        : prosecutorRestrictionCasesRoutes.findIndex(
+            /**
+             * We do .slice here because router.pathname is /something/[:id]
+             * and we want to remove the /[:id] part
+             */
+            (route) => route === router.pathname.slice(0, -5),
+          )
 
     return {
       name: formatMessage(sections.restrictionCaseProsecutorSection.caseTitle, {
@@ -220,13 +224,17 @@ const useSections = (
     user?: User,
   ): RouteSection => {
     const { id, type, parentCase } = workingCase
-    const routeIndex = prosecutorInvestigationCasesRoutes.findIndex(
-      /**
-       * We do .slice here because router.pathname is /something/[:id]
-       * and we want to remove the /[:id] part
-       */
-      (route) => route === router.pathname.slice(0, -5),
+    const routeIndex = router.pathname.includes(
+      constants.CREATE_INVESTIGATION_CASE_ROUTE,
     )
+      ? 0
+      : prosecutorInvestigationCasesRoutes.findIndex(
+          /**
+           * We do .slice here because router.pathname is /something/[:id]
+           * and we want to remove the /[:id] part
+           */
+          (route) => route === router.pathname.slice(0, -5),
+        )
 
     return {
       name: formatMessage(sections.investigationCaseProsecutorSection.title),
@@ -368,20 +376,20 @@ const useSections = (
     const isTrafficViolation =
       workingCase.type === CaseType.Indictment &&
       isTrafficViolationCase(workingCase, features, user)
-    const indictmentRoutes = isTrafficViolation
-      ? prosecutorIndictmentRoutes.splice(
-          4,
-          0,
-          constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE,
-        )
-      : prosecutorIndictmentRoutes
-    const routeIndex = indictmentRoutes.findIndex(
-      /**
-       * We do .slice here because router.pathname is /something/[:id]
-       * and we want to remove the /[:id] part
-       */
-      (route) => route === router.pathname.slice(0, -5),
+
+    const routes = prosecutorIndictmentRoutes(isTrafficViolation)
+
+    const routeIndex = router.pathname.includes(
+      constants.CREATE_INDICTMENT_ROUTE,
     )
+      ? 0
+      : routes.findIndex(
+          /**
+           * We do .slice here because router.pathname is /something/[:id]
+           * and we want to remove the /[:id] part
+           */
+          (route) => route === router.pathname.slice(0, -5),
+        )
 
     return {
       name: formatMessage(sections.indictmentCaseProsecutorSection.title),
@@ -503,7 +511,10 @@ const useSections = (
                 ),
               ),
               href: `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${id}`,
-              isActive: routeIndex === (isTrafficViolation ? 5 : 4),
+              isActive:
+                workingCase.state === CaseState.RECEIVED
+                  ? false
+                  : routeIndex === (isTrafficViolation ? 5 : 4),
               onClick:
                 validateFormStepper(
                   isValid,
@@ -845,12 +856,14 @@ const useSections = (
       children: [
         {
           name: formatMessage(sections.indictmentsCourtSection.overview),
+          isActive: user?.role === UserRole.Defender ? false : routeIndex === 0,
           href: `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`,
         },
         {
           name: formatMessage(
             sections.indictmentsCourtSection.receptionAndAssignment,
           ),
+          isActive: routeIndex === 1,
           href: `${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`,
           onClick:
             validateFormStepper(isValid, [], workingCase) && onNavigationTo
@@ -862,6 +875,7 @@ const useSections = (
         },
         {
           name: formatMessage(sections.indictmentsCourtSection.subpoena),
+          isActive: routeIndex === 2,
           href: `${constants.INDICTMENTS_SUBPOENA_ROUTE}/${workingCase.id}`,
           onClick:
             validateFormStepper(
@@ -880,6 +894,7 @@ const useSections = (
           name: formatMessage(
             sections.indictmentsCourtSection.prosecutorAndDefender,
           ),
+          isActive: routeIndex === 3,
           href: `${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`,
           onClick:
             validateFormStepper(
@@ -899,6 +914,7 @@ const useSections = (
         },
         {
           name: formatMessage(sections.indictmentsCourtSection.courtRecord),
+          isActive: routeIndex === 4,
           href: `${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`,
           onClick:
             validateFormStepper(
@@ -925,6 +941,13 @@ const useSections = (
   ): RouteSection => {
     const section = getRestrictionCaseProsecutorSection(workingCase, user)
     const { type, parentCase } = workingCase
+    const routeIndex = prosecutorRestrictionCasesRoutes.findIndex(
+      /**
+       * We do .slice here because router.pathname is /something/[:id]
+       * and we want to remove the /[:id] part
+       */
+      (route) => route === router.pathname.slice(0, -5),
+    )
 
     return {
       name: formatMessage(sections.extensionSection.title),
@@ -940,6 +963,7 @@ const useSections = (
                 name: capitalize(
                   formatMessage(core.defendant, { suffix: 'i' }),
                 ),
+                isActive: routeIndex === 0,
                 href:
                   (section.children.length > 0 && section.children[0].href) ||
                   undefined,
@@ -948,6 +972,7 @@ const useSections = (
                 name: formatMessage(
                   sections.extensionSection.hearingArrangements,
                 ),
+                isActive: routeIndex === 1,
                 href:
                   (section.children.length > 0 && section.children[1].href) ||
                   undefined,
@@ -958,6 +983,7 @@ const useSections = (
               },
               {
                 name: formatMessage(sections.extensionSection.policeDemands),
+                isActive: routeIndex === 2,
                 href:
                   (section.children.length > 0 && section.children[2].href) ||
                   undefined,
@@ -968,6 +994,7 @@ const useSections = (
               },
               {
                 name: formatMessage(sections.extensionSection.policeReport),
+                isActive: routeIndex === 3,
                 href:
                   (section.children.length > 0 && section.children[3].href) ||
                   undefined,
@@ -978,6 +1005,7 @@ const useSections = (
               },
               {
                 name: formatMessage(sections.extensionSection.caseFiles),
+                isActive: routeIndex === 4,
                 href:
                   (section.children.length > 0 && section.children[4].href) ||
                   undefined,
@@ -988,6 +1016,7 @@ const useSections = (
               },
               {
                 name: formatMessage(sections.extensionSection.overview),
+                isActive: routeIndex === 5,
                 href:
                   (section.children.length > 0 && section.children[5].href) ||
                   undefined,
@@ -1006,6 +1035,13 @@ const useSections = (
   ): RouteSection => {
     const section = getInvestigationCaseProsecutorSection(workingCase, user)
     const { type, parentCase } = workingCase
+    const routeIndex = prosecutorInvestigationCasesRoutes.findIndex(
+      /**
+       * We do .slice here because router.pathname is /something/[:id]
+       * and we want to remove the /[:id] part
+       */
+      (route) => route === router.pathname.slice(0, -5),
+    )
 
     return {
       name: formatMessage(sections.investigationCaseExtensionSection.title),
@@ -1021,6 +1057,7 @@ const useSections = (
                 name: capitalize(
                   formatMessage(core.defendant, { suffix: 'i' }),
                 ),
+                isActive: routeIndex === 0,
                 href:
                   (section.children.length > 0 && section.children[5].href) ||
                   undefined,
@@ -1030,6 +1067,7 @@ const useSections = (
                   sections.investigationCaseExtensionSection
                     .hearingArrangements,
                 ),
+                isActive: routeIndex === 1,
                 href:
                   (section.children.length > 0 && section.children[1].href) ||
                   undefined,
@@ -1039,6 +1077,7 @@ const useSections = (
                 name: formatMessage(
                   sections.investigationCaseExtensionSection.policeDemands,
                 ),
+                isActive: routeIndex === 2,
                 href:
                   (section.children.length > 0 && section.children[2].href) ||
                   undefined,
@@ -1048,6 +1087,7 @@ const useSections = (
                 name: formatMessage(
                   sections.investigationCaseExtensionSection.policeReport,
                 ),
+                isActive: routeIndex === 3,
                 href:
                   (section.children.length > 0 && section.children[3].href) ||
                   undefined,
@@ -1057,6 +1097,7 @@ const useSections = (
                 name: formatMessage(
                   sections.investigationCaseExtensionSection.caseFiles,
                 ),
+                isActive: routeIndex === 4,
                 href:
                   (section.children.length > 0 && section.children[4].href) ||
                   undefined,
@@ -1066,6 +1107,7 @@ const useSections = (
                 name: formatMessage(
                   sections.investigationCaseExtensionSection.overview,
                 ),
+                isActive: routeIndex === 5,
                 href:
                   (section.children.length > 0 && section.children[5].href) ||
                   undefined,

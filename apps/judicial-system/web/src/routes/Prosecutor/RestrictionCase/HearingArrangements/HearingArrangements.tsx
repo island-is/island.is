@@ -7,7 +7,6 @@ import {
   CaseTransition,
   NotificationType,
 } from '@island.is/judicial-system/types'
-import { RestrictionCaseProsecutorSubsections } from '@island.is/judicial-system-web/src/types'
 import {
   ProsecutorCaseInfo,
   FormContentContainer,
@@ -127,9 +126,6 @@ export const HearingArrangements: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSubSection={
-        RestrictionCaseProsecutorSubsections.HEARING_ARRANGEMENTS
-      }
       isLoading={isLoadingWorkingCase || institutionLoading}
       notFound={caseNotFound}
       isValid={stepIsValid}

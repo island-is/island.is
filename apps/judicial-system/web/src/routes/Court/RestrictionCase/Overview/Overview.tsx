@@ -14,7 +14,6 @@ import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { RestrictionCaseCourtSubsections } from '@island.is/judicial-system-web/src/types'
 import {
   UploadState,
   useCourtUpload,
@@ -98,7 +97,6 @@ export const JudgeOverview: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSubSection={RestrictionCaseCourtSubsections.JUDGE_OVERVIEW}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={true}

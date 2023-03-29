@@ -111,7 +111,6 @@ const DisplaySection: React.FC<SectionProps> = (props) => {
 interface SidePanelProps {
   workingCase: Case
   user?: User
-  activeSubSection?: number
   onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
   isValid?: boolean
 }
@@ -121,11 +120,14 @@ const SidePanel: React.FC<SidePanelProps> = ({
   isValid,
   onNavigationTo,
   workingCase,
-  activeSubSection,
 }) => {
   const { getSections } = useSections(isValid, onNavigationTo)
   const sections = getSections(workingCase, user)
   const { formatMessage } = useIntl()
+  const activeSection = sections.findIndex((s) => s.isActive)
+  const activeSubSection = sections[activeSection]?.children.findIndex(
+    (s) => s.isActive,
+  )
 
   return (
     <GridColumn span={['12/12', '12/12', '4/12', '3/12']}>
@@ -150,7 +152,7 @@ const SidePanel: React.FC<SidePanelProps> = ({
                 key={`${section.name}-${index}`}
                 section={section}
                 index={index}
-                activeSection={sections.findIndex((s) => s.isActive)}
+                activeSection={activeSection}
                 activeSubSection={activeSubSection}
               />
             ))}
@@ -167,7 +169,6 @@ interface PageProps {
   notFound: boolean
   isExtension?: boolean
   // These props are optional because not all pages need them, f.x. SignedVerdictOverview page
-  activeSubSection?: number
   onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
   isValid?: boolean
 }
@@ -175,7 +176,6 @@ interface PageProps {
 const PageLayout: React.FC<PageProps> = ({
   workingCase,
   children,
-  activeSubSection,
   isLoading,
   notFound,
   onNavigationTo,
@@ -236,7 +236,6 @@ const PageLayout: React.FC<PageProps> = ({
             isValid={isValid}
             onNavigationTo={onNavigationTo}
             workingCase={workingCase}
-            activeSubSection={activeSubSection}
           />
         </GridRow>
       </GridContainer>

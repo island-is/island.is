@@ -12,9 +12,7 @@ import {
   SelectCourtOfficials,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  IndictmentsCourtSubsections,
   ReactSelectOption,
-  RestrictionCaseCourtSubsections,
   UserData,
 } from '@island.is/judicial-system-web/src/types'
 import {
@@ -108,13 +106,6 @@ const ReceptionAndAssignment = () => {
       : constants.INDICTMENTS_SUBPOENA_ROUTE
   }
 
-  const getActiveSubSection = () => {
-    return isIndictmentCase(workingCase.type)
-      ? IndictmentsCourtSubsections.RECEPTION_AND_ASSIGNMENT
-      : // Restriction cases and investigation cases have the same subsections
-        RestrictionCaseCourtSubsections.RECEPTION_AND_ASSIGNMENT
-  }
-
   const stepIsValid = isReceptionAndAssignmentStepValid(workingCase)
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -124,7 +115,6 @@ const ReceptionAndAssignment = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSubSection={getActiveSubSection()}
       isLoading={isLoadingWorkingCase || userLoading}
       notFound={caseNotFound}
       isValid={stepIsValid}

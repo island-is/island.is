@@ -13,7 +13,6 @@ import {
   PageLayout,
   PageTitle,
 } from '@island.is/judicial-system-web/src/components'
-import { IndictmentsCourtSubsections } from '@island.is/judicial-system-web/src/types'
 import { titles, core } from '@island.is/judicial-system-web/messages'
 import { Box } from '@island.is/island-ui/core'
 import { completedCaseStates } from '@island.is/judicial-system/types'
@@ -40,9 +39,6 @@ const Overview = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSubSection={
-        isDefender ? undefined : IndictmentsCourtSubsections.JUDGE_OVERVIEW
-      }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={true}

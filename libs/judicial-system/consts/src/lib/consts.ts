@@ -178,11 +178,12 @@ export const prosecutorInvestigationCasesRoutes = [
   INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
 ]
 
-export const prosecutorIndictmentRoutes = [
+export const prosecutorIndictmentRoutes = (isTrafficViolation: boolean) => [
   INDICTMENTS_DEFENDANT_ROUTE,
   INDICTMENTS_POLICE_CASE_FILES_ROUTE,
   INDICTMENTS_CASE_FILE_ROUTE,
   INDICTMENTS_PROCESSING_ROUTE,
+  ...(isTrafficViolation ? [INDICTMENTS_TRAFFIC_VIOLATION_ROUTE] : []),
   INDICTMENTS_CASE_FILES_ROUTE,
   INDICTMENTS_OVERVIEW_ROUTE,
 ]

@@ -17,10 +17,7 @@ import {
   PdfButton,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  IndictmentsProsecutorSubsections,
-  TempIndictmentCount as TIndictmentCount,
-} from '@island.is/judicial-system-web/src/types'
+import { TempIndictmentCount as TIndictmentCount } from '@island.is/judicial-system-web/src/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   removeTabsValidateAndSet,
@@ -256,7 +253,6 @@ const Indictment: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSubSection={IndictmentsProsecutorSubsections.INDICTMENT}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
