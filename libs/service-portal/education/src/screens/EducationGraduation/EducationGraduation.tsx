@@ -25,14 +25,9 @@ const GetStudentInfoQuery = gql`
       transcripts {
         degree
         faculty
-        graduationDate
         institution {
-          id
           displayName
         }
-        name
-        nationalId
-        school
         studyProgram
         trackNumber
       }

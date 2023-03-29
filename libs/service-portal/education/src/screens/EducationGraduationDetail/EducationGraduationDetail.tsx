@@ -24,6 +24,8 @@ import { Query } from '@island.is/api/schema'
 import { gql, useQuery } from '@apollo/client'
 import { formatNationalId } from '@island.is/portals/core'
 import { useParams } from 'react-router-dom'
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
 
 const GetStudentInfoQuery = gql`
   query universityOfIcelandStudentInfo(
@@ -84,6 +86,10 @@ export const EducationGraduationDetail = () => {
   const files = data?.universityOfIcelandStudentInfo.track.files
   const downloadServiceURL =
     data?.universityOfIcelandStudentInfo.track.downloadServiceURL
+
+  const graduationDate = studentInfo
+    ? format(new Date(studentInfo?.graduationDate), 'dd.MM.yy', { locale: is })
+    : undefined
 
   if (error && !loading) {
     return (
@@ -168,7 +174,7 @@ export const EducationGraduationDetail = () => {
           <UserInfoLine
             label={m.date}
             loading={loading}
-            content={studentInfo?.graduationDate}
+            content={graduationDate}
           />
           <Divider />
           <UserInfoLine
