@@ -62,7 +62,7 @@ describe('Testing utility functions for applicatios', () => {
   })
 })
 
-it('Should return name of the application when a function isnt defined just a string', () => {
+it('Should return the name of the application when defined with a string', () => {
   expect(
     getApplicationNameTranslationString(
       createApplicationTemplate(),
