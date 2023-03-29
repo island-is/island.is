@@ -3,11 +3,11 @@ import UserContextProvider from '../context/UserContext'
 
 const ConsultationPortalApplication: any = ({ Component, pageProps }) => {
   return (
-    <UserContextProvider>
+    // <UserContextProvider>
       <AppLayout>
         <Component {...pageProps} />
       </AppLayout>
-    </UserContextProvider>
+    // </UserContextProvider>
   )
 }
 

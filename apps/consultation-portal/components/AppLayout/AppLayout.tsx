@@ -1,25 +1,25 @@
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
-import { useUser } from '../../context/UserContext'
+// import { useUser } from '../../context/UserContext'
 
 const AppLayout = ({ children }) => {
-  const { isAuthenticated, persistLoginUser, setUserNull, user } = useUser()
+  // const { isAuthenticated, persistLoginUser, setUserNull, user } = useUser()
 
-  const checkAuth = async () => {
-    const check = await fetch(
-      `${window.location.origin}/consultation-portal/api/auth/check`,
-    )
-    const data = await check.json()
-    if (data.token) {
-      persistLoginUser({ token: data.token })
-    }
-  }
+  // const checkAuth = async () => {
+  //   const check = await fetch(
+  //     `${window.location.origin}/consultation-portal/api/auth/check`,
+  //   )
+  //   const data = await check.json()
+  //   if (data.token) {
+  //     persistLoginUser({ token: data.token })
+  //   }
+  // }
 
-  if (!isAuthenticated && typeof window !== 'undefined') {
-    checkAuth()
-  } else if (!user) {
-    setUserNull()
-  }
+  // if (!isAuthenticated && typeof window !== 'undefined') {
+  //   checkAuth()
+  // } else if (!user) {
+  //   setUserNull()
+  // }
 
   return (
     <div>

@@ -24,11 +24,11 @@ import { SimpleCardSkeleton } from '../../components/Card'
 import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
 import { getTimeLineDate } from '../../utils/helpers/dateFormatter'
 import Link from 'next/link'
-import { useUser } from '../../context/UserContext'
+// import { useUser } from '../../context/UserContext'
 
 const CaseScreen = ({ chosenCase, advices }) => {
   const { contactEmail, contactName } = chosenCase
-  const { isAuthenticated, user } = useUser()
+  // const { isAuthenticated, user } = useUser()
 
   return (
     <Layout
@@ -90,12 +90,12 @@ const CaseScreen = ({ chosenCase, advices }) => {
                   {advices?.map((advice: Advice) => {
                     return <ReviewCard advice={advice} key={advice.number} />
                   })}
-                  <WriteReviewCard
+                  {/* <WriteReviewCard
                     card={chosenCase}
                     isLoggedIn={isAuthenticated}
                     username={user?.name}
                     caseId={chosenCase.id}
-                  />
+                  /> */}
                 </Stack>
               </Box>
             </Stack>

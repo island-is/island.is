@@ -20,14 +20,15 @@ import { menuItems } from './MenuItems'
 import MenuModal from '../Modal/MenuModal'
 import { checkActiveHeaderLink, useLogin } from '../../utils/helpers'
 import { useRouter } from 'next/router'
-import { useUser } from '../../context/UserContext'
+// import { useUser } from '../../context/UserContext'
 type MenuProps = {
   isFrontPage: boolean
 }
 
 export const Menu = ({ isFrontPage = false }: MenuProps) => {
   const { LogIn, loginLoading } = useLogin()
-  const { isAuthenticated, user, logoutUser } = useUser()
+  // const { isAuthenticated, user, logoutUser } = useUser()
+  const isAuthenticated = true
 
   const router = useRouter()
   const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
@@ -121,7 +122,7 @@ export const Menu = ({ isFrontPage = false }: MenuProps) => {
                           </FocusableBox>
                         )
                       })}
-                      <Box marginLeft={biggerMarginLeft}>
+                      {/* <Box marginLeft={biggerMarginLeft}>
                         {isAuthenticated ? (
                           <UserMenu
                             username={user?.name}
@@ -139,11 +140,11 @@ export const Menu = ({ isFrontPage = false }: MenuProps) => {
                             Innskráning
                           </Button>
                         )}
-                      </Box>
+                      </Box> */}
                     </Box>
                   </Hidden>
                   <Hidden above="lg">
-                    <Box
+                    {/* <Box
                       display="flex"
                       alignItems="center"
                       justifyContent="flexEnd"
@@ -158,7 +159,7 @@ export const Menu = ({ isFrontPage = false }: MenuProps) => {
                         router={router}
                         isFrontPage={isFrontPage}
                       />
-                    </Box>
+                    </Box> */}
                   </Hidden>
                 </Column>
               </Columns>
