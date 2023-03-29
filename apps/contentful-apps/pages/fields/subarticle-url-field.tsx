@@ -74,7 +74,7 @@ const SubArticleUrlField = () => {
         setLoading(false)
         // TODO: perhaps also log the error that occured
       })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cma.entry, sdk.entry, sdk.field])
 
   useDebounce(
