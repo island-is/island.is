@@ -1161,8 +1161,9 @@ const useSections = (
           !workingCase.accusedPostponedAppealDate,
         children: [],
       },
-      ...(workingCase.accusedPostponedAppealDate ||
-      workingCase.prosecutorPostponedAppealDate
+      ...(isRestrictionCase(workingCase.type) &&
+      (workingCase.accusedPostponedAppealDate ||
+        workingCase.prosecutorPostponedAppealDate)
         ? [
             {
               name: formatMessage(sections.caseResults.appealed),
