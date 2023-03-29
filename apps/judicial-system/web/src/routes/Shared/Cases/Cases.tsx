@@ -35,7 +35,6 @@ import { capitalize } from '@island.is/judicial-system/formatters'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { findFirstInvalidStep } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
-  CaseType,
   InstitutionType,
   User,
   UserRole,
@@ -224,9 +223,11 @@ export const Cases: React.FC = () => {
 
   const openCase = (caseToOpen: Case, role: UserRole) => {
     let routeTo = null
-    const isTrafficViolation =
-      caseToOpen.type === CaseType.Indictment &&
-      isTrafficViolationCase(caseToOpen, features, user)
+    const isTrafficViolation = isTrafficViolationCase(
+      caseToOpen,
+      features,
+      user,
+    )
 
     if (
       caseToOpen.state === CaseState.ACCEPTED ||
