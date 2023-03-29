@@ -12,6 +12,22 @@ import { AdminClientType } from './dto/admin-client-type.enum'
 import { AdminClientDto } from './dto/admin-client.dto'
 import { AdminCreateClientDto } from './dto/admin-create-client.dto'
 
+export const clientBaseAttributes: Partial<Client> = {
+  absoluteRefreshTokenLifetime: 8 * 60 * 60, // 8 hours
+  accessTokenLifetime: 5 * 60, // 5 minutes
+  allowOfflineAccess: true,
+  allowRememberConsent: true,
+  alwaysIncludeUserClaimsInIdToken: true,
+  alwaysSendClientClaims: true,
+  identityTokenLifetime: 5 * 60, // 5 minutes
+  refreshTokenExpiration: 1, // ToDo when #10673 is merged use RefreshTokenExpiration.Absolute
+  refreshTokenUsage: 1, // Single usage
+  requireClientSecret: true,
+  requirePkce: true,
+  slidingRefreshTokenLifetime: 20 * 60, // 20 minutes
+  updateAccessTokenClaimsOnRefresh: true,
+}
+
 @Injectable()
 export class AdminClientsService {
   constructor(
@@ -82,35 +98,19 @@ export class AdminClientsService {
   }
 
   private defaultClientAttributes(clientType: AdminClientType) {
-    const baseAttributes: Partial<Client> = {
-      absoluteRefreshTokenLifetime: 8 * 60 * 60, // 8 hours
-      accessTokenLifetime: 5 * 60, // 5 minutes
-      allowOfflineAccess: true,
-      allowRememberConsent: true,
-      alwaysIncludeUserClaimsInIdToken: true,
-      alwaysSendClientClaims: true,
-      identityTokenLifetime: 5 * 60, // 5 minutes
-      refreshTokenExpiration: 1, // ToDo when #10673 is merged use RefreshTokenExpiration.Absolute
-      refreshTokenUsage: 1, // Single usage
-      requireClientSecret: true,
-      requirePkce: true,
-      slidingRefreshTokenLifetime: 20 * 60, // 20 minutes
-      updateAccessTokenClaimsOnRefresh: true,
-    }
-
     switch (clientType) {
       case AdminClientType.web:
-        return baseAttributes
+        return clientBaseAttributes
       case AdminClientType.native:
         return {
-          ...baseAttributes,
-          absoluteRefreshTokenLifetime: 30 * 24 * 60 * 60, // 30 days
+          ...clientBaseAttributes,
+          absoluteRefreshTokenLifetime: 365 * 24 * 60 * 60, // 1 year
           requireClientSecret: false,
-          slidingRefreshTokenLifetime: 7 * 24 * 60 * 60, // 7 days
+          slidingRefreshTokenLifetime: 90 * 24 * 60 * 60, // 3 months
         }
       case AdminClientType.machine:
         return {
-          ...baseAttributes,
+          ...clientBaseAttributes,
           allowOfflineAccess: false,
           requirePkce: false,
         }
