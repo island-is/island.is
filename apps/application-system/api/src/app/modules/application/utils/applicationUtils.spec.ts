@@ -4,13 +4,6 @@ import {
   getPaymentStatusForAdmin,
 } from './application'
 import {
-  Application,
-  ApplicationStatus,
-  ApplicationTypes,
-  ExternalData,
-  FormValue,
-} from '@island.is/application/types'
-import {
   createApplication,
   createApplicationTemplate,
 } from '@island.is/application/testing'
@@ -21,11 +14,13 @@ describe('Testing utility functions for applicatios', () => {
       getPaymentStatusForAdmin({ fulfilled: false, created: new Date() }),
     ).toEqual('unpaid')
   })
+
   it('Should return paid when fulfilled and payment created date defined', () => {
     expect(
       getPaymentStatusForAdmin({ fulfilled: true, created: new Date() }),
     ).toEqual('paid')
   })
+
   it('Should return null when payment object is not defined', () => {
     expect(getPaymentStatusForAdmin(null)).toEqual(null)
   })

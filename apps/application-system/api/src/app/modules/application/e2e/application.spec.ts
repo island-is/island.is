@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common'
 
 import { EmailService } from '@island.is/email-service'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
-import { AdminPortalScope, ApplicationScope } from '@island.is/auth/scopes'
+import { ApplicationScope } from '@island.is/auth/scopes'
 import {
   ApplicationStatus,
   ApplicationTypes,
@@ -60,11 +60,7 @@ let server: request.SuperTest<request.Test>
 const nationalId = '1234564321'
 const mockAuthGuard = new MockAuthGuard({
   nationalId,
-  scope: [
-    ApplicationScope.read,
-    ApplicationScope.write,
-    AdminPortalScope.applicationSystem,
-  ],
+  scope: [ApplicationScope.read, ApplicationScope.write],
 })
 
 beforeAll(async () => {
