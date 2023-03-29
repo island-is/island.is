@@ -39,7 +39,7 @@ export class UniversityOfIcelandResolver {
   ) {}
 
   @Query(() => UniversityOfIcelandStudentInfoModel)
-  async getUniversityOfIcelandStudentInfo(
+  async universityOfIcelandStudentInfo(
     @CurrentUser() user: User,
     @Args('input') input: UniversityOfIcelandStudentInfoQueryInput,
   ): Promise<UniversityOfIcelandStudentInfoModel> {
@@ -66,9 +66,10 @@ export class UniversityOfIcelandResolver {
       input.locale as NemandiFerillFerillGetLocaleEnum,
     )) as StudentTrackModel
 
-    let date = data.transcript.graduationDate
-    date = format(new Date(date), 'dd.MM.yy', { locale: is })
-    const transcriptData = { ...data.transcript, graduationDate: date }
+    const transcriptData = {
+      ...data.transcript,
+      graduationDate: data.transcript.graduationDate,
+    }
     return {
       transcript: transcriptData,
       files: data.files,
