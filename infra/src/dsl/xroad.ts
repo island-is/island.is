@@ -176,7 +176,7 @@ export const Payment = new XroadConf({
       prod: 'IS/GOV/5402697509/FJS-Public',
     },
     XROAD_PAYMENT_BASE_CALLBACK_URL: {
-      dev: 'XROAD:/IS-DEV/GOV/10000/island-is/application-payment-v1/',
+      dev: 'XROAD:/IS-DEV/GOV/10000/island-is/application-callback-v2/application-payment',
       staging: 'XROAD:',
       prod: 'XROAD:/IS/GOV/5501692829/island-is/application-payment-v1/',
     },
