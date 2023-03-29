@@ -77,7 +77,7 @@ const DisplaySection: React.FC<SectionProps> = (props) => {
             underline="small"
             key={`${subSection.name}-${index}`}
           >
-            <SubsectionChild isActive={subSection.isActive || false}>
+            <SubsectionChild isActive={subSection.isActive}>
               {subSection.name}
             </SubsectionChild>
           </LinkV2>
@@ -91,14 +91,14 @@ const DisplaySection: React.FC<SectionProps> = (props) => {
               linkStyles.underlines['small'],
             )}
           >
-            <SubsectionChild isActive={subSection.isActive || false}>
+            <SubsectionChild isActive={subSection.isActive}>
               {subSection.name}
             </SubsectionChild>
           </Box>
         ) : (
           <SubsectionChild
             key={`${subSection.name}-${index}`}
-            isActive={subSection.isActive || false}
+            isActive={subSection.isActive}
           >
             {subSection.name}
           </SubsectionChild>
