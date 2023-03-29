@@ -36,6 +36,7 @@ jobs:
     env:
       GIT_BRANCH: "main"
       SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: Prepare
@@ -61,7 +62,7 @@ jobs:
         run: yarn ts scripts/ci/spinnaker.ts
 
   cleanup:
-    name: cleanup
+    name: Cleanup
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
@@ -73,8 +74,8 @@ jobs:
           stript: |
             github.rest.pull_request.removeLabels({
               pull_request_numbe: context.pull_request.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            labels: ["acceptance test"]
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ["acceptance test"]
             })
 
