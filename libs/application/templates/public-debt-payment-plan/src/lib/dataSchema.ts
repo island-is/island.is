@@ -9,7 +9,7 @@ export const PaymentPlanSchema = z
     id: z.string().min(1),
     amountPerMonth: z.number().optional(),
     numberOfMonths: z.number().optional(),
-    distribution: z.string().min(1),
+    distribution: z.array(z.any()).min(1),
     totalAmount: z.string().min(1),
     paymentMode: z.enum([AMOUNT, MONTHS]).refine((x) => x !== null, {
       params: error.paymentMode,
