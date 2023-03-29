@@ -17,6 +17,7 @@ const trigger = new Request(
         parameters: {
           docker_tag: dockerTag,
           feature_name: "system-e2e-nightly",
+          with_mocks: true,
         },
       })
   })
