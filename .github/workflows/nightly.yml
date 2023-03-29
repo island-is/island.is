@@ -36,7 +36,6 @@ jobs:
     env:
       GIT_BRANCH: "main"
       SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
-      DOCKER_TAG: ${{ steps.last_build.outputs.DOCKER_TAG }}
 
     steps:
       - name: Prepare
