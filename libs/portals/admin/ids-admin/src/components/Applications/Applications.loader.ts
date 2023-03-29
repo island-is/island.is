@@ -5,6 +5,7 @@ import {
 } from './Applications.generated'
 
 export type AuthApplicationsList = GetApplicationsByIdQuery['authAdminApplications']['data']
+
 export const applicationsLoader: WrappedLoaderFn = ({ client }) => {
   return async ({ params }): Promise<AuthApplicationsList> => {
     if (!params['tenant']) {

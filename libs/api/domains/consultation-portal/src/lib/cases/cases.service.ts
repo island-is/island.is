@@ -8,22 +8,23 @@ import {
 } from '@island.is/clients/consultation-portal'
 import { GetCaseInput } from '../dto/case.input'
 import { CaseResult } from '../models/caseResult.model'
-import { CaseItemResult } from '../models/caseItemResult.model'
 import { AdviceResult } from '../models/adviceResult.model'
 import { GetCasesInput } from '../dto/cases.input'
+import { CasesAggregateResult } from '../models/casesAggregateResult.model'
+import { AuthMiddleware } from '../auth-tools/auth.middleware'
+import { PostAdviceInput } from '../dto/postAdvice.input'
 
 @Injectable()
 export class CaseResultService {
   constructor(private casesApi: CasesApi) {}
 
-  async getAllCases(): Promise<CaseItemResult[]> {
-    const cases = await this.casesApi.apiCasesGet({})
-    return cases
+  private postAdviceWithAuth(auth: string) {
+    return this.casesApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async getCases(input: GetCasesInput) {
+  async getCases(input: GetCasesInput): Promise<CasesAggregateResult> {
     const request: ApiCasesGetRequest = {
-      query: input.query,
+      searchQuery: input.searchQuery,
       policyAreas: input.policyAreas,
       institutions: input.institutions,
       caseStatuses: input.caseStatuses,
@@ -56,14 +57,15 @@ export class CaseResultService {
     return response
   }
 
-  async postAdvice(caseId: number, content: string, files: Blob[]) {
+  async postAdvice(auth: string, input: PostAdviceInput) {
     const request: ApiCasesCaseIdAdvicesPostRequest = {
-      caseId: caseId,
-      content: content,
-      files: files,
+      caseId: input.caseId,
+      adviceRequest: input.adviceRequest,
     }
 
-    const response = await this.casesApi.apiCasesCaseIdAdvicesPost(request)
+    const response = await this.postAdviceWithAuth(
+      auth,
+    ).apiCasesCaseIdAdvicesPost(request)
     return response
   }
 }

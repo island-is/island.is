@@ -1,7 +1,6 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { CaseResultService } from './cases.service'
 import { CaseResult } from '../models/caseResult.model'
-import { CaseItemResult } from '../models/caseItemResult.model'
 import { AdviceResult } from '../models/adviceResult.model'
 import { UseGuards } from '@nestjs/common'
 import {
@@ -11,6 +10,9 @@ import {
 } from '@island.is/nest/feature-flags'
 import { GetCaseInput } from '../dto/case.input'
 import { GetCasesInput } from '../dto/cases.input'
+import { CasesAggregateResult } from '../models/casesAggregateResult.model'
+import { CurrentAuthorization } from '../auth-tools/current-authorization'
+import { PostAdviceInput } from '../dto/postAdvice.input'
 
 @Resolver()
 @UseGuards(FeatureFlagGuard)
@@ -18,16 +20,10 @@ export class CaseResultResolver {
   constructor(private caseResultService: CaseResultService) {}
 
   @FeatureFlag(Features.consultationPortalApplication)
-  @Query(() => [CaseItemResult], { name: 'consultationPortalAllCases' })
-  async getAllCases(): Promise<CaseItemResult[]> {
-    return await this.caseResultService.getAllCases()
-  }
-
-  @FeatureFlag(Features.consultationPortalApplication)
-  @Query(() => [CaseItemResult], { name: 'consultationPortalGetCases' })
+  @Query(() => CasesAggregateResult, { name: 'consultationPortalGetCases' })
   async getCases(
     @Args('input', { type: () => GetCasesInput }) input: GetCasesInput,
-  ): Promise<CaseItemResult[]> {
+  ): Promise<CasesAggregateResult> {
     return await this.caseResultService.getCases(input)
   }
 
@@ -48,18 +44,16 @@ export class CaseResultResolver {
     return advices
   }
 
-  @Mutation(() => CaseResult, { name: 'postConsultationPortalAdvice' })
+  @Mutation(() => Boolean!, {
+    nullable: true,
+    name: 'consultationPortalPostAdvice',
+  })
   @FeatureFlag(Features.consultationPortalApplication)
   async postAdvice(
-    @Args('caseId') caseId: number,
-    @Args('content') content: string,
-    @Args('files', { type: () => [String] }) files: Blob[],
+    @Args('input', { type: () => PostAdviceInput }) input: PostAdviceInput,
+    @CurrentAuthorization() auth: string,
   ): Promise<void> {
-    const response = await this.caseResultService.postAdvice(
-      caseId,
-      content,
-      files,
-    )
+    const response = await this.caseResultService.postAdvice(auth, input)
     return response
   }
 }

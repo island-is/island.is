@@ -80,7 +80,7 @@ const TenantsList = () => {
           </GridRow>
           <Stack space={[1, 1, 2, 2]}>
             {tenantList.map((item) => (
-              <GridRow key={item.id}>
+              <GridRow key={`tenants-${item.id}`}>
                 <Link
                   className={styles.fill}
                   to={replaceParams({
@@ -118,8 +118,8 @@ const TenantsList = () => {
                       justifyContent={'flexEnd'}
                     >
                       {item.availableEnvironments.map((tag, index) => (
-                        <Box margin={'smallGutter'} key={index}>
-                          <Tag variant="purple" outlined>
+                        <Box margin={'smallGutter'} key={`tenant-${index}`}>
+                          <Tag key={`tenant-${tag}`} variant="purple" outlined>
                             {tag}
                           </Tag>
                         </Box>

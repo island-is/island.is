@@ -10,11 +10,12 @@ import {
   GET_TYPES,
 } from '../../screens/Subscriptions/queries.graphql'
 import {
-  ConsultationPortalAllCasesQuery,
+  ConsultationPortalGetCasesQuery,
   ConsultationPortalAllTypesQuery,
 } from '../../screens/Subscriptions/queries.graphql.generated'
 
 const STATUSES_TO_FETCH = [1, 2, 3]
+const PAGE_SIZE = 2000
 
 interface SubProps {
   cases: CaseForSubscriptions[]
@@ -23,33 +24,43 @@ interface SubProps {
 
 export const getServerSideProps = async (ctx) => {
   const client = initApollo()
-  const [
-    {
-      data: { consultationPortalAllCases },
-    },
-    {
-      data: { consultationPortalAllTypes },
-    },
-  ] = await Promise.all([
-    client.query<
-      ConsultationPortalAllCasesQuery,
-      QueryConsultationPortalGetCasesArgs
-    >({
-      query: GET_CASES,
-      variables: {
-        input: {
-          caseStatuses: STATUSES_TO_FETCH,
-        },
+  try {
+    const [
+      {
+        data: { consultationPortalGetCases },
       },
-    }),
-    client.query<ConsultationPortalAllTypesQuery>({
-      query: GET_TYPES,
-    }),
-  ])
+      {
+        data: { consultationPortalAllTypes },
+      },
+    ] = await Promise.all([
+      client.query<
+        ConsultationPortalGetCasesQuery,
+        QueryConsultationPortalGetCasesArgs
+      >({
+        query: GET_CASES,
+        variables: {
+          input: {
+            caseStatuses: STATUSES_TO_FETCH,
+            // pageSize: PAGE_SIZE,
+          },
+        },
+      }),
+      client.query<ConsultationPortalAllTypesQuery>({
+        query: GET_TYPES,
+      }),
+    ])
+    return {
+      props: {
+        cases: consultationPortalGetCases.cases,
+        types: consultationPortalAllTypes,
+      },
+    }
+  } catch (e) {
+    console.error(e)
+  }
   return {
-    props: {
-      cases: consultationPortalAllCases,
-      types: consultationPortalAllTypes,
+    redirect: {
+      destination: '/500',
     },
   }
 }

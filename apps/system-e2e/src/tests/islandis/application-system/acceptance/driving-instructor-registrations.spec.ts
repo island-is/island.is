@@ -13,14 +13,14 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     const applicationContext = await session({
       browser,
       homeUrl,
-      phoneNumber: '0107789',
+      phoneNumber: '0103019',
       idsLoginOn: true,
     })
 
     const applicationPage = await applicationContext.newPage()
     // await disableObjectKey(applicationPage, 'existing')
-    await disablePreviousApplications(applicationPage)
-    await disableI18n(applicationPage)
+    // await disablePreviousApplications(applicationPage)
+    // await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
     await expect(applicationPage).toBeApplication()
     await use(applicationPage)
@@ -44,6 +44,7 @@ applicationTest.describe('Driving Instructor Registrations', () => {
       await page
         .getByRole('cell', { name: 'Skrá' })
         .getByRole('button', { name: 'Skrá' })
+        .first()
         .click()
 
       // Register 45 minute driving
@@ -54,6 +55,7 @@ applicationTest.describe('Driving Instructor Registrations', () => {
 
       // Change most recent registration to many minutes last month
       // Change minutes
+      await page.waitForTimeout(5000)
       await page
         .getByRole('row')
         .getByRole('button', { name: 'Breyta' })
@@ -65,8 +67,12 @@ applicationTest.describe('Driving Instructor Registrations', () => {
       // Change date
       await page.getByPlaceholder('Veldu dagsetningu').click()
       await page.getByRole('button', { name: 'Previous month' }).click()
-      await page.getByRole('button', { name: 'Choose' }).first().click()
+      await page.getByRole('option', { name: 'Choose' }).first().click()
+      await page.getByRole('button', { name: 'Breyta' }).first().click()
       await expect(page.getByRole('cell', { name: '999' })).toBeVisible()
+      // Cleanup
+      await page.getByRole('button', { name: 'Breyta' }).first().click()
+      await page.getByRole('button', { name: 'Eyða skráningu' }).click()
 
       // Attempt to go back and register for forbidden student
       await page.getByRole('button', { name: 'Til baka' }).click()

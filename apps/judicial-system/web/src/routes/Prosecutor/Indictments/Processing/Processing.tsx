@@ -8,6 +8,7 @@ import {
   FormFooter,
   PageLayout,
   ProsecutorCaseInfo,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   IndictmentsProsecutorSubsections,
@@ -49,9 +50,13 @@ const Processing: React.FC = () => {
   const { courts } = useInstitution()
   const router = useRouter()
   const { features } = useContext(FeatureContext)
-  const isTrafficViolationCaseCheck =
-    features.includes(Feature.INDICTMENT_ROUTE) &&
-    isTrafficViolationCase(workingCase.indictmentSubtypes)
+  const { user } = useContext(UserContext)
+
+  const isTrafficViolationCaseCheck = isTrafficViolationCase(
+    workingCase,
+    features,
+    user,
+  )
 
   const handleCourtChange = (court: Institution) => {
     if (workingCase) {
@@ -125,6 +130,7 @@ const Processing: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
           onNextButtonClick={() =>

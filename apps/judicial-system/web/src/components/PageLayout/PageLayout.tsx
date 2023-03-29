@@ -110,8 +110,8 @@ const DisplaySection: React.FC<SectionProps> = (props) => {
 }
 
 interface SidePanelProps {
-  user: User | undefined
-  workingCase?: Case
+  workingCase: Case
+  user?: User
   activeSection?: number
   activeSubSection?: number
   onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
@@ -140,7 +140,7 @@ const SidePanel: React.FC<SidePanelProps> = ({
       <div className={styles.formStepperContainer}>
         <Box marginLeft={[0, 0, 2]}>
           <Box marginBottom={7} display={['none', 'none', 'block']}>
-            <Logo defaultInstitution={workingCase?.court?.name} />
+            <Logo defaultInstitution={workingCase.court?.name} />
           </Box>
           <Box marginBottom={6}>
             <Text variant="h3" as="h3">
@@ -148,7 +148,7 @@ const SidePanel: React.FC<SidePanelProps> = ({
                 workingCase && isIndictmentCase(workingCase.type)
                   ? formStepperSections.indictmentTitle
                   : formStepperSections.title,
-                { caseType: workingCase?.type },
+                { caseType: workingCase.type },
               )}
             </Text>
           </Box>
@@ -170,12 +170,11 @@ const SidePanel: React.FC<SidePanelProps> = ({
 }
 interface PageProps {
   children: ReactNode
-  workingCase?: Case
+  workingCase: Case
   activeSection?: number
   isLoading: boolean
   notFound: boolean
   isExtension?: boolean
-  showSidepanel?: boolean
   // These props are optional because not all pages need them, f.x. SignedVerdictOverview page
   activeSubSection?: number
   onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
@@ -189,14 +188,11 @@ const PageLayout: React.FC<PageProps> = ({
   activeSubSection,
   isLoading,
   notFound,
-  showSidepanel = true,
   onNavigationTo,
   isValid,
 }) => {
   const { user } = useContext(UserContext)
-
   const { formatMessage } = useIntl()
-  // Remove the extension parts of the formstepper if the user is not applying for an extension
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -207,16 +203,12 @@ const PageLayout: React.FC<PageProps> = ({
   ) : notFound ? (
     <AlertBanner
       title={
-        user?.role === UserRole.Admin
-          ? formatMessage(pageLayout.adminRole.alertTitle)
-          : user?.role === UserRole.Defender
+        user?.role === UserRole.Defender
           ? formatMessage(pageLayout.defenderRole.alertTitle)
           : formatMessage(pageLayout.otherRoles.alertTitle)
       }
       description={
-        user?.role === UserRole.Admin
-          ? formatMessage(pageLayout.adminRole.alertMessage)
-          : user?.role === UserRole.Defender
+        user?.role === UserRole.Defender
           ? formatMessage(pageLayout.defenderRole.alertMessage)
           : formatMessage(pageLayout.otherRoles.alertMessage)
       }
@@ -225,10 +217,7 @@ const PageLayout: React.FC<PageProps> = ({
         user?.role === UserRole.Defender
           ? undefined
           : {
-              href:
-                user?.role === UserRole.Admin
-                  ? constants.USERS_ROUTE
-                  : constants.CASES_ROUTE,
+              href: constants.CASES_ROUTE,
               title: 'Fara á yfirlitssíðu',
             }
       }
@@ -252,16 +241,14 @@ const PageLayout: React.FC<PageProps> = ({
               {children}
             </Box>
           </GridColumn>
-          {showSidepanel && (
-            <SidePanel
-              user={user}
-              isValid={isValid}
-              onNavigationTo={onNavigationTo}
-              activeSection={activeSection}
-              workingCase={workingCase}
-              activeSubSection={activeSubSection}
-            />
-          )}
+          <SidePanel
+            user={user}
+            isValid={isValid}
+            onNavigationTo={onNavigationTo}
+            activeSection={activeSection}
+            workingCase={workingCase}
+            activeSubSection={activeSubSection}
+          />
         </GridRow>
       </GridContainer>
     </Box>

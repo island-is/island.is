@@ -3,6 +3,9 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { Environment } from '@island.is/shared/types'
 
 import { TranslatedValue } from '../../models/translated-value.model'
+import { ApplicationUrl } from './application-applicationUrl.model'
+import { ApplicationLifeTime } from './application-lifetime.model'
+import { ApplicationBasicInfo } from './application-basic-info.model'
 
 @ObjectType('AuthAdminApplicationEnvironment')
 export class ApplicationEnvironment {
@@ -18,6 +21,12 @@ export class ApplicationEnvironment {
   @Field(() => [TranslatedValue])
   displayName!: TranslatedValue[]
 
-  @Field(() => [String])
-  callbackUrls!: string[]
+  @Field(() => ApplicationUrl)
+  applicationUrls!: ApplicationUrl
+
+  @Field(() => ApplicationLifeTime)
+  lifeTime!: ApplicationLifeTime
+
+  @Field(() => ApplicationBasicInfo)
+  basicInfo!: ApplicationBasicInfo
 }

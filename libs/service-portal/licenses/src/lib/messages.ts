@@ -281,4 +281,8 @@ export const m = defineMessages({
     id: 'sp.license:see-licenses',
     defaultMessage: 'Skoða skírteini',
   },
+  licenseFetchError: {
+    id: 'sp.license:license-fetch-error',
+    defaultMessage: 'Í augnablikinu er ekki hægt að senda skilríki í síma',
+  },
 })

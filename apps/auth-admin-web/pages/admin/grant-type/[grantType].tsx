@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import { LoadingScreen } from '../../../components/common/LoadingScreen'
 import ContentWrapper from '../../../components/Layout/ContentWrapper'
 import { GrantTypeService } from './../../../services/GrantTypeService'
 import { GrantType } from './../../../entities/models/grant-type.model'
@@ -10,7 +11,7 @@ import LocalizationUtils from '../../../utils/localization.utils'
 const Index: React.FC = () => {
   const { query } = useRouter()
   const grantTypeName = query.grantType
-  const [grantType, setGrantType] = useState<GrantType>(new GrantType())
+  const [grantType, setGrantType] = useState<GrantType>()
   const router = useRouter()
 
   useEffect(() => {
@@ -41,6 +42,14 @@ const Index: React.FC = () => {
     if (grantTypeSaved) {
       router.push(`/admin/?tab=${AdminTab.GrantTypes}`)
     }
+  }
+
+  if (!grantType) {
+    return (
+      <ContentWrapper>
+        <LoadingScreen />
+      </ContentWrapper>
+    )
   }
 
   return (

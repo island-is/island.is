@@ -45,7 +45,7 @@ const Applications = () => {
     setInputSearchValue(value)
 
     if (value.length > 0) {
-      const filteredList = applications.filter((application) => {
+      const filteredList = applications.filter((application: any) => {
         return (
           application?.defaultEnvironment.displayName[0].value
             .toLowerCase()
@@ -88,7 +88,7 @@ const Applications = () => {
           {withCreateButton && (
             <Box>
               <Button size={'small'} onClick={openCreateApplicationModal}>
-                {m.createApplication}
+                {formatMessage(m.createApplication)}
               </Button>
             </Box>
           )}
@@ -157,7 +157,7 @@ const Applications = () => {
             ></Filter>
           </GridRow>
           {applications.map((item) => (
-            <GridRow key={item.applicationId}>
+            <GridRow key={`applications-${item.applicationId}`}>
               <Link
                 className={styles.fill}
                 to={replaceParams({
@@ -212,7 +212,11 @@ const Applications = () => {
                         ]}
                       >
                         {item.availableEnvironments.map((tag) => (
-                          <Box key={tag} marginLeft={1} marginBottom={1}>
+                          <Box
+                            key={`applications-${tag}`}
+                            marginLeft={1}
+                            marginBottom={1}
+                          >
                             <Tag variant="purple" outlined>
                               {tag}
                             </Tag>

@@ -37,8 +37,11 @@ export const PartyOverview = ({
 }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
   const [approveOverview, setApproveOverview] = useState(false)
-  const { errors, setError, setValue } = useFormContext()
-
+  const {
+    setError,
+    setValue,
+    formState: { errors },
+  } = useFormContext()
   const answers = application.answers as FinancialStatementsInao
   const fileName = answers.attachments?.file?.[0]?.name
   const [
@@ -182,7 +185,7 @@ export const PartyOverview = ({
           name="applicationApprove"
           defaultValue={approveOverview}
           rules={{ required: true }}
-          render={({ value, onChange }) => {
+          render={({ field: { onChange, value } }) => {
             return (
               <Checkbox
                 onChange={(e) => {

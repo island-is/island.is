@@ -13,6 +13,7 @@ export interface Case {
   processBegins?: string
   processEnds?: string
   created?: string
+  summaryDate?: string
 }
 
 export interface UserAdvice {
@@ -61,6 +62,12 @@ export interface ArrOfTypes {
   caseTypes: { [key: string]: string }
 }
 
+export interface ArrOfStatistics {
+  casesInReview?: number
+  totalAdvices?: number
+  totalCases?: number
+}
+
 export interface ArrOfTypesForSubscriptions {
   policyAreas: { [key: string]: string }
   institutions: { [key: string]: string }
@@ -91,11 +98,45 @@ export interface CaseFilter {
   pageNumber?: number
   pageSize?: number
   policyAreas?: Array<number>
-  query?: string
+  searchQuery?: string
 }
 
 export interface SEOProps {
   title: string
   url?: string
   image?: string
+}
+
+export interface FilterGroups {
+  CaseTypes?: { [key: string]: string }
+  Institutions?: { [key: string]: string }
+  PolicyAreas?: { [key: string]: string }
+  Statuses?: { [key: string]: string }
+}
+
+export interface ValueCountPair {
+  value?: string
+  count?: string
+}
+
+export interface AdviceFileRequest {
+  filename?: string
+  base64Document?: string
+}
+
+export interface AdviceRequest {
+  content?: string
+  adviceFiles?: AdviceFileRequest
+}
+
+export interface PostAdviceForm {
+  caseId?: number
+  adviceRequest?: AdviceRequest
+}
+
+export interface FileObject {
+  name: string
+  originalFileObj: File
+  size?: number
+  type?: string
 }

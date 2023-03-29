@@ -1,14 +1,19 @@
 import { Injectable } from '@nestjs/common'
 
 import { Environment } from '@island.is/shared/types'
-import { CreateApplicationInput } from './dto/createApplication.input'
-import { Application } from './models/application.model'
-import { ApplicationEnvironment } from './models/applications-environment.model'
-import { TranslatedValue } from '../models/translated-value.model'
+import { CreateClientsInput } from './dto/createClientsInput'
 import { ApplicationType } from '../models/applicationType'
+import { Auth } from '@island.is/auth-nest-tools'
+import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
+import {
+  AdminCreateClientDto,
+  AdminCreateClientDtoClientTypeEnum,
+  MeClientsControllerCreateRequest,
+} from '@island.is/clients/auth/admin-api'
+import { CreateApplicationResponseDto } from './dto/create-application-response'
 
 @Injectable()
-export class ApplicationsService {
+export class ApplicationsService extends MultiEnvironmentService {
   getApplications(tenantId: string) {
     const resp = getMockData()
     resp.data = resp.data.filter((x) => {
@@ -17,27 +22,54 @@ export class ApplicationsService {
     return resp
   }
 
-  createClient(input: CreateApplicationInput) {
-    const displayName = new TranslatedValue()
-    displayName.locale = 'is'
-    displayName.value = input.displayName
-
-    const application = new Application()
-    application.applicationId = input.applicationId
-    application.applicationType = input.applicationType
-    application.environments = input.environments.map((env) => {
-      const applicationEnv = new ApplicationEnvironment()
-      applicationEnv.name = input.applicationId
-      applicationEnv.environment = env
-      applicationEnv.displayName = [displayName]
-      applicationEnv.callbackUrls = []
-
-      return applicationEnv
+  getApplicationById(tenantId: string, applicationId: string) {
+    const resp = getMockData()
+    resp.data = resp.data.filter((x) => {
+      return x.tenantId === tenantId && x.applicationId === applicationId
     })
 
-    // TODO connect to REST service
+    return resp.data[0]
+  }
 
-    return application
+  async createApplication(
+    input: CreateClientsInput,
+    user: Auth,
+  ): Promise<CreateApplicationResponseDto[]> {
+    const applicationRequest: MeClientsControllerCreateRequest = {
+      tenantId: input.tenantId,
+      adminCreateClientDto: {
+        clientId: input.applicationId,
+        clientType: (input.applicationType as string) as AdminCreateClientDtoClientTypeEnum,
+        clientName: input.displayName,
+      },
+    }
+
+    const createApplicationResponse = [] as CreateApplicationResponseDto[]
+
+    const created = await Promise.allSettled(
+      input.environments.map(async (environment) => {
+        return this.adminApiByEnvironmentWithAuth(
+          environment,
+          user,
+        )?.meClientsControllerCreate(applicationRequest)
+      }),
+    )
+
+    created.map((resp, index) => {
+      if (resp.status === 'fulfilled' && resp.value) {
+        createApplicationResponse.push({
+          applicationId: resp.value.clientId,
+          environment: input.environments[index],
+        })
+      } else if (resp.status === 'rejected') {
+        this.logger.error(
+          `Failed to create application ${input.applicationId} in environment ${input.environments[index]}`,
+          resp.reason,
+        )
+      }
+    })
+
+    return createApplicationResponse
   }
 }
 
@@ -58,7 +90,33 @@ const getMockData = () => {
                 value: 'Ísland.is Web',
               },
             ],
-            callbackUrls: ['https://island.is'],
+            basicInfo: {
+              applicationId: '@hugverk.is/web/hugverkastofa-dev',
+              applicationSecret: 'secret',
+              idsURL: 'http://innskra.island.is',
+              oAuthAuthorizationUrl: 'http://innskra.island.is/authorize',
+              deviceAuthorizationUrl: 'http://innskra.island.is/oauth/device',
+              oAuthTokenUrl: 'http://innskra.island.is/oauth/token ',
+              oAuthUserInfoUrl: 'http://innskra.island.is/userinfo',
+              openIdConfiguration: 'http://innskra.island.is/openid',
+              jsonWebKeySet: 'http://innskra.island.is/web-key',
+            },
+            applicationUrls: {
+              callbackUrls: [
+                'http://localhost:4200/callbackdev',
+                'http://localhost:4200/callback2dev',
+              ],
+              logoutUrls: [
+                'http://localhost:4200/logout',
+                'http://localhost:4200/logout2',
+              ],
+              cors: ['http://localhost:4200', 'http://localhost:4200'],
+            },
+            lifeTime: {
+              absoluteLifeTime: 2592000,
+              inactivityExpiration: false,
+              inactivityLifeTime: 1296000,
+            },
           },
           {
             name: '@island.is/web',
@@ -69,7 +127,33 @@ const getMockData = () => {
                 value: 'Ísland.is Web',
               },
             ],
-            callbackUrls: ['https://island.is'],
+            basicInfo: {
+              applicationId: '@hugverk.is/web/hugverkastofa-staging',
+              applicationSecret: 'secret',
+              idsURL: 'http://innskra.island.is',
+              oAuthAuthorizationUrl: 'http://innskra.island.is/authorize',
+              deviceAuthorizationUrl: 'http://innskra.island.is/oauth/device',
+              oAuthTokenUrl: 'http://innskra.island.is/oauth/token ',
+              oAuthUserInfoUrl: 'http://innskra.island.is/userinfo',
+              openIdConfiguration: 'http://innskra.island.is/openid',
+              jsonWebKeySet: 'http://innskra.island.is/web-key',
+            },
+            applicationUrls: {
+              callbackUrls: [
+                'http://localhost:4200/callback',
+                'http://localhost:4200/callback2',
+              ],
+              logoutUrls: [
+                'http://localhost:4200/logout',
+                'http://localhost:4200/logout2',
+              ],
+              cors: ['http://localhost:4200', 'http://localhost:4200'],
+            },
+            lifeTime: {
+              absoluteLifeTime: 2592000,
+              inactivityExpiration: false,
+              inactivityLifeTime: 1296000,
+            },
           },
         ],
       },
@@ -84,10 +168,40 @@ const getMockData = () => {
             displayName: [
               {
                 locale: 'is',
+                value: 'Auth Admin Web - IS',
+              },
+              {
+                locale: 'en',
                 value: 'Auth Admin Web',
               },
             ],
-            callbackUrls: ['https://island.is'],
+            basicInfo: {
+              applicationId: '@hugverk.is/web/hugverkastofa-dev',
+              applicationSecret: 'secret',
+              idsURL: 'http://innskra.island.is',
+              oAuthAuthorizationUrl: 'http://innskra.island.is/authorize',
+              deviceAuthorizationUrl: 'http://innskra.island.is/oauth/device',
+              oAuthTokenUrl: 'http://innskra.island.is/oauth/token ',
+              oAuthUserInfoUrl: 'http://innskra.island.is/userinfo',
+              openIdConfiguration: 'http://innskra.island.is/openid',
+              jsonWebKeySet: 'http://innskra.island.is/web-key',
+            },
+            applicationUrls: {
+              callbackUrls: [
+                'http://localhost:4200/callbackdev',
+                'http://localhost:4200/callback2dev',
+              ],
+              logoutUrls: [
+                'http://localhost:4200/logout',
+                'http://localhost:4200/logout2',
+              ],
+              cors: ['http://localhost:4200', 'http://localhost:4200'],
+            },
+            lifeTime: {
+              absoluteLifeTime: 2592000,
+              inactivityExpiration: false,
+              inactivityLifeTime: 1296000,
+            },
           },
           {
             name: '@island.is/auth-admin-web',
@@ -98,7 +212,33 @@ const getMockData = () => {
                 value: 'Auth Admin Web',
               },
             ],
-            callbackUrls: ['https://island.is'],
+            basicInfo: {
+              applicationId: '@hugverk.is/web/hugverkastofa-staging',
+              applicationSecret: 'secret',
+              idsURL: 'http://innskra.island.is',
+              oAuthAuthorizationUrl: 'http://innskra.island.is/authorize',
+              deviceAuthorizationUrl: 'http://innskra.island.is/oauth/device',
+              oAuthTokenUrl: 'http://innskra.island.is/oauth/token ',
+              oAuthUserInfoUrl: 'http://innskra.island.is/userinfo',
+              openIdConfiguration: 'http://innskra.island.is/openid',
+              jsonWebKeySet: 'http://innskra.island.is/web-key',
+            },
+            applicationUrls: {
+              callbackUrls: [
+                'http://localhost:4200/callback',
+                'http://localhost:4200/callback2',
+              ],
+              logoutUrls: [
+                'http://localhost:4200/logout',
+                'http://localhost:4200/logout2',
+              ],
+              cors: ['http://localhost:4200', 'http://localhost:4200'],
+            },
+            lifeTime: {
+              absoluteLifeTime: 2592000,
+              inactivityExpiration: false,
+              inactivityLifeTime: 1296000,
+            },
           },
           {
             name: '@island.is/auth-admin-web',
@@ -109,7 +249,27 @@ const getMockData = () => {
                 value: 'Auth Admin Web',
               },
             ],
-            callbackUrls: ['https://island.is'],
+            basicInfo: {
+              applicationId: '@hugverk.is/web/hugverkastofa-prod',
+              applicationSecret: 'secret',
+              idsURL: 'http://innskra.island.is',
+              oAuthAuthorizationUrl: 'http://innskra.island.is/authorize',
+              deviceAuthorizationUrl: 'http://innskra.island.is/oauth/device',
+              oAuthTokenUrl: 'http://innskra.island.is/oauth/token ',
+              oAuthUserInfoUrl: 'http://innskra.island.is/userinfo',
+              openIdConfiguration: 'http://innskra.island.is/openid',
+              jsonWebKeySet: 'http://innskra.island.is/web-key',
+            },
+            applicationUrls: {
+              callbackUrls: [],
+              logoutUrls: [],
+              cors: [],
+            },
+            lifeTime: {
+              absoluteLifeTime: 2592000,
+              inactivityExpiration: false,
+              inactivityLifeTime: 1296000,
+            },
           },
         ],
       },
@@ -127,7 +287,27 @@ const getMockData = () => {
                 value: 'Auth',
               },
             ],
-            callbackUrls: ['https://island.is'],
+            basicInfo: {
+              applicationId: '@hugverk.is/web/hugverkastofa-prod',
+              applicationSecret: 'secret',
+              idsURL: 'http://innskra.island.is',
+              oAuthAuthorizationUrl: 'http://innskra.island.is/authorize',
+              deviceAuthorizationUrl: 'http://innskra.island.is/oauth/device',
+              oAuthTokenUrl: 'http://innskra.island.is/oauth/token ',
+              oAuthUserInfoUrl: 'http://innskra.island.is/userinfo',
+              openIdConfiguration: 'http://innskra.island.is/openid',
+              jsonWebKeySet: 'http://innskra.island.is/web-key',
+            },
+            applicationUrls: {
+              callbackUrls: [],
+              logoutUrls: [],
+              cors: [],
+            },
+            lifeTime: {
+              absoluteLifeTime: 2592000,
+              inactivityExpiration: false,
+              inactivityLifeTime: 1296000,
+            },
           },
         ],
       },

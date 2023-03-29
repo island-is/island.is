@@ -1,4 +1,4 @@
-# Get Applications by ID
+# Get Applications by TenantId
 query GetApplicationsById($tenantId: String!) {
   authAdminApplications(tenantId: $tenantId) {
     data {
