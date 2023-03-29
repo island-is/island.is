@@ -1,5 +1,6 @@
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
 
 import {
   CaseState,
@@ -22,11 +23,6 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import * as constants from '@island.is/judicial-system/consts'
-
-import { stepValidations, stepValidationsType } from '../../formHelper'
-import { isTrafficViolationCase } from '../../stepHelper'
-import { useRouter } from 'next/router'
 import {
   courtIndictmentRoutes,
   courtInvestigationCasesRoutes,
@@ -35,6 +31,10 @@ import {
   prosecutorInvestigationCasesRoutes,
   prosecutorRestrictionCasesRoutes,
 } from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
+
+import { stepValidations, stepValidationsType } from '../../formHelper'
+import { isTrafficViolationCase } from '../../stepHelper'
 
 const validateFormStepper = (
   isActiveSubSectionValid: boolean,
