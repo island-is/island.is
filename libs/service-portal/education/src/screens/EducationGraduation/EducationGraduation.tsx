@@ -18,8 +18,10 @@ import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import { EducationPaths } from '../../lib/paths'
 
 const GetStudentInfoQuery = gql`
-  query GetStudentInfo($input: UniversityOfIcelandStudentInfoQueryInput!) {
-    getUniversityOfIcelandStudentInfoModel(input: $input) {
+  query universityOfIcelandStudentInfo(
+    $input: UniversityOfIcelandStudentInfoQueryInput!
+  ) {
+    universityOfIcelandStudentInfo(input: $input) {
       transcripts {
         degree
         faculty

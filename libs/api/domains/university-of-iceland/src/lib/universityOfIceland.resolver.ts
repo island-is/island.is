@@ -38,10 +38,8 @@ export class UniversityOfIcelandResolver {
     >,
   ) {}
 
-  @Query(() => UniversityOfIcelandStudentInfoModel, {
-    name: 'universityOfIcelandStudentInfo',
-  })
-  async getUniversityOfIcelandStudentInfoModel(
+  @Query(() => UniversityOfIcelandStudentInfoModel)
+  async getUniversityOfIcelandStudentInfo(
     @CurrentUser() user: User,
     @Args('input') input: UniversityOfIcelandStudentInfoQueryInput,
   ): Promise<UniversityOfIcelandStudentInfoModel> {
@@ -55,7 +53,7 @@ export class UniversityOfIcelandResolver {
   }
 
   @ResolveField('track', () => StudentTrackModel)
-  async getStudentTrackModel(
+  async resolveTrack(
     @Args('input') input: UniversityOfIcelandStudentInfoQueryInput,
     @CurrentUser() user: User,
   ): Promise<StudentTrackModel | null> {

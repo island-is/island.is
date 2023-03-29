@@ -26,8 +26,10 @@ import { formatNationalId } from '@island.is/portals/core'
 import { useParams } from 'react-router-dom'
 
 const GetStudentInfoQuery = gql`
-  query GetStudentInfo($input: UniversityOfIcelandStudentInfoQueryInput!) {
-    getUniversityOfIcelandStudentInfoModel(input: $input) {
+  query universityOfIcelandStudentInfo(
+    $input: UniversityOfIcelandStudentInfoQueryInput!
+  ) {
+    universityOfIcelandStudentInfo(input: $input) {
       track {
         transcript {
           degree
