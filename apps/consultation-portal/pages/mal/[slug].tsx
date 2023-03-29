@@ -14,7 +14,7 @@ interface CaseProps {
   advices: Advice[]
 }
 const CaseDetails: React.FC<CaseProps> = ({ case: Case, advices }) => {
-  return <CaseScreen chosenCase={Case} advices={advices} isLoggedIn={true} />
+  return <CaseScreen chosenCase={Case} advices={advices} />
 }
 export default CaseDetails
 
@@ -62,6 +62,8 @@ export const getServerSideProps = async (ctx) => {
     console.error(e)
   }
   return {
-    notFound: true,
+    redirect: {
+      destination: '/500',
+    },
   }
 }

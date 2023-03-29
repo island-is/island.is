@@ -1,8 +1,6 @@
 import React, { useContext, useState, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
-import compareAsc from 'date-fns/compareAsc'
-import parseISO from 'date-fns/parseISO'
 
 import { Box, Text, AlertMessage } from '@island.is/island-ui/core'
 import {
@@ -33,6 +31,7 @@ import { titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -99,22 +98,6 @@ export const HearingArrangements: React.FC = () => {
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
-      const isCorrectingRuling = workingCase.notifications?.some(
-        (notification) => notification.type === NotificationType.RULING,
-      )
-
-      const courtDateNotifications = workingCase.notifications?.filter(
-        (notification) => notification.type === NotificationType.COURT_DATE,
-      )
-
-      const latestCourtDateNotification = courtDateNotifications?.sort((a, b) =>
-        compareAsc(parseISO(b.created), parseISO(a.created)),
-      )[0]
-
-      const hasSentNotification = latestCourtDateNotification?.recipients.some(
-        (recipient) => recipient.success,
-      )
-
       await setAndSendCaseToServer(
         [
           {
@@ -128,7 +111,18 @@ export const HearingArrangements: React.FC = () => {
         setWorkingCase,
       )
 
-      if (isCorrectingRuling || (hasSentNotification && !courtDateHasChanged)) {
+      const isCorrectingRuling = workingCase.notifications?.some(
+        (notification) => notification.type === NotificationType.RULING,
+      )
+
+      if (
+        isCorrectingRuling ||
+        (hasSentNotification(
+          NotificationType.COURT_DATE,
+          workingCase.notifications,
+        ) &&
+          !courtDateHasChanged)
+      ) {
         router.push(`${destination}/${workingCase.id}`)
       } else {
         setNavigateTo(constants.RESTRICTION_CASE_RULING_ROUTE)
@@ -152,7 +146,7 @@ export const HearingArrangements: React.FC = () => {
     <PageLayout
       workingCase={workingCase}
       activeSection={
-        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
+        workingCase.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={RestrictionCaseCourtSubsections.HEARING_ARRANGEMENTS}
       isLoading={isLoadingWorkingCase}
@@ -203,6 +197,7 @@ export const HearingArrangements: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(constants.RESTRICTION_CASE_RULING_ROUTE)

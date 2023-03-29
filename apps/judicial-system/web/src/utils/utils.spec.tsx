@@ -1,10 +1,19 @@
 import React from 'react'
+import faker from 'faker'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { Gender } from '@island.is/judicial-system/types'
-import { getShortGender, isDirty } from './stepHelper'
+import {
+  Gender,
+  Notification,
+  NotificationType,
+} from '@island.is/judicial-system/types'
 
+import {
+  getAppealEndDate,
+  getShortGender,
+  hasSentNotification,
+} from './stepHelper'
 import * as formatters from './formatters'
 
 describe('Formatters utils', () => {
@@ -222,41 +231,16 @@ describe('Step helper', () => {
     })
   })
 
-  describe('isDirty', () => {
-    test('should return true if value is an empty string', () => {
+  describe('getAppealEndDate', () => {
+    test('should return the correct end date', () => {
       // Arrange
-      const emptyString = ''
+      const date = '2020-10-24T12:25:00Z'
 
       // Act
-      const result = isDirty(emptyString)
+      const result = getAppealEndDate(date)
 
       // Assert
-      expect(result).toEqual(true)
-    })
-
-    test('should return true if value is a non empty string', () => {
-      // Arrange
-      const str = 'test'
-
-      // Act
-      const result = isDirty(str)
-
-      // Assert
-      expect(result).toEqual(true)
-    })
-
-    test('should return false if value is undefined or null', () => {
-      // Arrange
-      const und = undefined
-      const n = null
-
-      // Act
-      const resultUnd = isDirty(und)
-      const resultN = isDirty(n)
-
-      // Assert
-      expect(resultUnd).toEqual(false)
-      expect(resultN).toEqual(false)
+      expect(result).toEqual('27. október 2020 kl. 12:25')
     })
   })
 
@@ -288,5 +272,124 @@ describe('Step helper', () => {
       // Assert
       expect(res).toEqual('')
     })
+  })
+
+  describe('hasSentNotification', () => {
+    test('should return false if notifications are not provided', () => {
+      // Arrange
+      const n1 = undefined
+      const n2: Notification[] = []
+      const nt = NotificationType.COURT_DATE
+
+      // Act
+      const res1 = hasSentNotification(nt, n1)
+      const res2 = hasSentNotification(nt, n2)
+
+      // Assert
+      expect(res1).toEqual(false)
+      expect(res2).toEqual(false)
+    })
+
+    test('should return false if a notification has been sent in the past but the last time it was sent it failed', () => {
+      // Arrange
+      const email = faker.internet.email()
+      const n: Notification[] = [
+        {
+          id: faker.datatype.uuid(),
+          created: faker.date.future().toISOString(),
+          caseId: faker.datatype.uuid(),
+          type: NotificationType.COURT_DATE,
+          recipients: [
+            {
+              success: false,
+              address: email,
+            },
+          ],
+        },
+        {
+          id: faker.datatype.uuid(),
+          created: faker.date.past().toISOString(),
+          caseId: faker.datatype.uuid(),
+          type: NotificationType.COURT_DATE,
+          recipients: [
+            {
+              success: true,
+              address: email,
+            },
+          ],
+        },
+      ]
+      const nt = NotificationType.COURT_DATE
+
+      // Act
+      const res = hasSentNotification(nt, n)
+
+      // Assert
+      expect(res).toEqual(false)
+    })
+  })
+
+  test('should return false if no notification is found of a spesific notification type', () => {
+    // Arrange
+    const email = faker.internet.email()
+    const n: Notification[] = [
+      {
+        id: faker.datatype.uuid(),
+        created: faker.date.future().toISOString(),
+        caseId: faker.datatype.uuid(),
+        type: NotificationType.COURT_DATE,
+        recipients: [
+          {
+            success: true,
+            address: email,
+          },
+        ],
+      },
+    ]
+    const nt = NotificationType.REVOKED
+
+    // Act
+    const res = hasSentNotification(nt, n)
+
+    // Assert
+    expect(res).toEqual(false)
+  })
+
+  test('should return true if the latest notification has been sent successfully', () => {
+    // Arrange
+    const email = faker.internet.email()
+    const n: Notification[] = [
+      {
+        id: faker.datatype.uuid(),
+        created: faker.date.future().toISOString(),
+        caseId: faker.datatype.uuid(),
+        type: NotificationType.COURT_DATE,
+        recipients: [
+          {
+            success: true,
+            address: email,
+          },
+        ],
+      },
+      {
+        id: faker.datatype.uuid(),
+        created: faker.date.past().toISOString(),
+        caseId: faker.datatype.uuid(),
+        type: NotificationType.COURT_DATE,
+        recipients: [
+          {
+            success: true,
+            address: email,
+          },
+        ],
+      },
+    ]
+    const nt = NotificationType.COURT_DATE
+
+    // Act
+    const res = hasSentNotification(nt, n)
+
+    // Assert
+    expect(res).toEqual(true)
   })
 })

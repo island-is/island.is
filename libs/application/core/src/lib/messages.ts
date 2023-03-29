@@ -481,6 +481,36 @@ export const coreErrorMessages = defineMessages({
   },
 })
 export const coreDelegationsMessages = defineMessages({
+  delegationPersons: {
+    id: 'application.system:core.delegations.delegationPersons',
+    defaultMessage: 'Einstaklingar',
+    description: 'Delegations person in choose user',
+  },
+  delegationCompanies: {
+    id: 'application.system:core.delegations.delegationCompanies',
+    defaultMessage: 'Fyrirtæki',
+    description: 'Delegations company in choose user',
+  },
+  procurationHolder: {
+    id: 'application.system:core.delegations.procurationHolder',
+    defaultMessage: 'Prókúra',
+    description: 'Delegations procurationHolder',
+  },
+  personalRepresentative: {
+    id: 'application.system:core.delegations.personalRepresentative',
+    defaultMessage: 'Umboð',
+    description: 'Delegations personalRepresentative',
+  },
+  legalGuardian: {
+    id: 'application.system:core.delegations.legalGuardian',
+    defaultMessage: 'Forsjá',
+    description: 'Delegations legalGuardian',
+  },
+  custom: {
+    id: 'application.system:core.delegations.custom',
+    defaultMessage: 'Annað umboð',
+    description: 'Delegations custom',
+  },
   delegationScreenTitle: {
     id: 'application.system:core.delegations.delegationScreenTitle',
     defaultMessage: 'Umsóknaraðili',

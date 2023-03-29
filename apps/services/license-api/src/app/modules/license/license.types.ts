@@ -21,6 +21,15 @@ export type PassTemplateIds = {
   disability: string
 }
 
+export type VerifyLicenseResult = {
+  valid: boolean
+  passIdentity?: {
+    name: string
+    nationalId: string
+    picture?: string
+  }
+}
+
 /**
  * Interface for client services, fetches generic payload and status from a third party API.
  * Only one license per client to start with.
@@ -32,7 +41,7 @@ export interface GenericLicenseClient {
   ) => Promise<Result<Pass | undefined>>
   pullUpdate: (nationalId: string) => Promise<Result<Pass | undefined>>
   revoke: (nationalId: string) => Promise<Result<RevokePassData>>
-  verify: (inputData: string) => Promise<Result<VerifyPassData>>
+  verify: (inputData: string) => Promise<Result<VerifyLicenseResult>>
 }
 
 export const CLIENT_FACTORY = 'client-factory'
