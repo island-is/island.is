@@ -5,6 +5,7 @@ import { AdminPortalScope } from '@island.is/auth/scopes'
 import {
   Client,
   clientBaseAttributes,
+  ClientGrantType,
   GrantTypeEnum,
   SequelizeConfigService,
   TranslatedValueDto,
@@ -15,6 +16,7 @@ import { createCurrentUser } from '@island.is/testing/fixtures'
 import { getRequestMethod, setupApp, TestApp } from '@island.is/testing/nest'
 
 import { AppModule } from '../../../app.module'
+import { getModelToken } from '@nestjs/sequelize'
 
 const tenantId = '@test.is'
 const clientId = '@test.is/test-client'
@@ -132,61 +134,58 @@ describe('MeClientsController with auth', () => {
     userAccess  | currentUser
     ${'normal'} | ${user}
     ${'super'}  | ${superUser}
-  `(
-    'should return clients as $userAccess user',
-    async ({ userAccess, currentUser }) => {
-      // Arrange
-      const app = await setupApp({
-        AppModule,
-        SequelizeConfigService,
-        user: currentUser,
-      })
-      const server = request(app.getHttpServer())
-      const testClientData = await createTestClientData(app, user)
+  `('should return clients as $userAccess user', async ({ currentUser }) => {
+    // Arrange
+    const app = await setupApp({
+      AppModule,
+      SequelizeConfigService,
+      user: currentUser,
+    })
+    const server = request(app.getHttpServer())
+    const testClientData = await createTestClientData(app, user)
 
-      // Act
-      const res = await server.get(`/v2/me/tenants/${tenantId}/clients`)
+    // Act
+    const res = await server.get(`/v2/me/tenants/${tenantId}/clients`)
 
-      // Assert
-      expect(res.status).toEqual(200)
-      expect(res.body).toEqual([
-        {
-          absoluteRefreshTokenLifetime: 2592000,
-          accessTokenLifetime: 3600,
-          allowOfflineAccess: false,
-          clientId,
-          clientType: 'web',
-          tenantId,
-          customClaims: {
-            [testClientData.customClaim.type]: testClientData.customClaim.value,
-          },
-          displayName: [
-            {
-              locale: 'is',
-              value: testClientData.client.clientName,
-            },
-            {
-              locale: testClientData.clientNameTranslation.locale,
-              value: testClientData.clientNameTranslation.value,
-            },
-          ],
-          postLogoutRedirectUris: [testClientData.postLogoutRedirectUri],
-          promptDelegations: false,
-          redirectUris: [testClientData.redirectUri],
-          refreshTokenExpiration: 1,
-          requireApiScopes: false,
-          requireConsent: false,
-          requirePkce: true,
-          slidingRefreshTokenLifetime: 1296000,
-          supportTokenExchange: true,
-          supportsCustomDelegation: false,
-          supportsLegalGuardians: false,
-          supportsPersonalRepresentatives: false,
-          supportsProcuringHolders: false,
+    // Assert
+    expect(res.status).toEqual(200)
+    expect(res.body).toEqual([
+      {
+        absoluteRefreshTokenLifetime: 2592000,
+        accessTokenLifetime: 3600,
+        allowOfflineAccess: false,
+        clientId,
+        clientType: 'web',
+        tenantId,
+        customClaims: {
+          [testClientData.customClaim.type]: testClientData.customClaim.value,
         },
-      ])
-    },
-  )
+        displayName: [
+          {
+            locale: 'is',
+            value: testClientData.client.clientName,
+          },
+          {
+            locale: testClientData.clientNameTranslation.locale,
+            value: testClientData.clientNameTranslation.value,
+          },
+        ],
+        postLogoutRedirectUris: [testClientData.postLogoutRedirectUri],
+        promptDelegations: false,
+        redirectUris: [testClientData.redirectUri],
+        refreshTokenExpiration: 1,
+        requireApiScopes: false,
+        requireConsent: false,
+        requirePkce: true,
+        slidingRefreshTokenLifetime: 1296000,
+        supportTokenExchange: true,
+        supportsCustomDelegation: false,
+        supportsLegalGuardians: false,
+        supportsPersonalRepresentatives: false,
+        supportsProcuringHolders: false,
+      },
+    ])
+  })
 
   it.each`
     clientType   | typeSpecificDefaults
@@ -203,6 +202,7 @@ describe('MeClientsController with auth', () => {
         user,
       })
       const server = request(app.getHttpServer())
+      const clientModel = app.get(getModelToken(Client))
       await createTestClientData(app, user)
       const newClient = {
         clientId: '@test.is/new-test-client',
@@ -215,17 +215,59 @@ describe('MeClientsController with auth', () => {
         .post(`/v2/me/tenants/${tenantId}/clients`)
         .send(newClient)
 
-      // Assert
+      // Assert - response
       expect(res.status).toEqual(201)
       expect(res.body).toEqual({
-        // Todo: Uncomment when merged in #10673
-        //...clientBaseAttributes,
+        clientId: newClient.clientId,
+        clientType,
+        tenantId,
+        displayName: [
+          {
+            locale: 'is',
+            value: newClient.clientName,
+          },
+        ],
+        refreshTokenExpiration: clientBaseAttributes.refreshTokenExpiration,
+        absoluteRefreshTokenLifetime:
+          typeSpecificDefaults.absoluteRefreshTokenLifetime ??
+          clientBaseAttributes.absoluteRefreshTokenLifetime,
+        slidingRefreshTokenLifetime:
+          typeSpecificDefaults.slidingRefreshTokenLifetime ??
+          clientBaseAttributes.slidingRefreshTokenLifetime,
+        accessTokenLifetime: clientBaseAttributes.accessTokenLifetime,
+        allowOfflineAccess:
+          typeSpecificDefaults.allowOfflineAccess ??
+          clientBaseAttributes.allowOfflineAccess,
+        redirectUris: [],
+        postLogoutRedirectUris: [],
+        requireApiScopes: false,
+        requireConsent: false,
+        requirePkce:
+          typeSpecificDefaults.requirePkce ?? clientBaseAttributes.requirePkce,
+        supportTokenExchange: false,
+        supportsCustomDelegation: false,
+        supportsLegalGuardians: false,
+        supportsPersonalRepresentatives: false,
+        supportsProcuringHolders: false,
+        promptDelegations: false,
+        customClaims: {},
+      })
+
+      // Assert - db record
+      const dbClient = await clientModel.findByPk(newClient.clientId, {
+        include: [{ model: ClientGrantType, as: 'allowedGrantTypes' }],
+      })
+      expect(dbClient).toMatchObject({
+        ...clientBaseAttributes,
+        allowRememberConsent: clientBaseAttributes.allowRememberConsent
+          ? '1'
+          : '0',
         clientId: newClient.clientId,
         clientType: newClient.clientType,
-        //clientName: newClient.clientName,
-        //tenantId,
+        clientName: newClient.clientName,
+        domainName: tenantId,
 
-        //...typeSpecificDefaults,
+        ...typeSpecificDefaults,
       })
     },
   )

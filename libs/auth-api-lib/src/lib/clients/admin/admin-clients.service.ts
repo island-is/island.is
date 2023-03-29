@@ -7,7 +7,7 @@ import { NoContentException } from '@island.is/nest/problem'
 
 import { Domain } from '../../resources/models/domain.model'
 import { TranslationService } from '../../translation/translation.service'
-import { ClientType, GrantTypeEnum } from '../../types'
+import { ClientType, GrantTypeEnum, RefreshTokenExpiration } from '../../types'
 import { Client } from '../models/client.model'
 import { ClientClaim } from '../models/client-claim.model'
 import { ClientGrantType } from '../models/client-grant-type.model'
@@ -24,7 +24,7 @@ export const clientBaseAttributes: Partial<Client> = {
   alwaysIncludeUserClaimsInIdToken: true,
   alwaysSendClientClaims: true,
   identityTokenLifetime: 5 * 60, // 5 minutes
-  refreshTokenExpiration: 1, // ToDo when #10673 is merged use RefreshTokenExpiration.Absolute
+  refreshTokenExpiration: RefreshTokenExpiration.Absolute,
   refreshTokenUsage: 1, // Single usage
   requireClientSecret: true,
   requirePkce: true,
