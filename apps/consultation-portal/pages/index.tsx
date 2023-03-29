@@ -40,7 +40,9 @@ export const getServerSideProps = async (ctx) => {
     console.error(e)
   }
   return {
-    notFound: true,
+    redirect: {
+      destination: '/500',
+    },
   }
 }
 
