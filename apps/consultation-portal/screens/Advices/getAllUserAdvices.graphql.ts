@@ -1,19 +1,33 @@
 import gql from 'graphql-tag'
 
 export const GET_ALL_USER_ADVICES = gql`
-  query consultationPortalAllUserAdvices {
-    consultationPortalAllUserAdvices {
-      id
-      caseId
-      participantName
-      participantEmail
-      content
-      created
-      adviceDocuments {
+  query consultationPortalAllUserAdvices(
+    $input: ConsultationPortalUserAdvicesInput!
+  ) {
+    consultationPortalAllUserAdvices(input: $input) {
+      total
+      cases {
         id
-        fileName
-        fileType
-        size
+        caseId
+        participantName
+        participantEmail
+        content
+        created
+        _case {
+          caseNumber
+          name
+          institutionName
+          typeName
+          policyAreaName
+          processBegins
+          processEnds
+        }
+        adviceDocuments {
+          id
+          fileName
+          fileType
+          size
+        }
       }
     }
   }

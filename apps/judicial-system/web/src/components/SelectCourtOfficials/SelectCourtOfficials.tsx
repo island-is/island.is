@@ -42,18 +42,18 @@ const SelectCourtOfficials: React.FC<Props> = (props) => {
     .filter(
       (user: User) =>
         user.role === UserRole.Registrar &&
-        user.institution?.id === workingCase?.court?.id,
+        user.institution?.id === workingCase.court?.id,
     )
     .map((registrar: User) => {
       return { label: registrar.name, value: registrar.id, registrar }
     })
 
   const defaultJudge = judges?.find(
-    (judge: Option) => judge.value === workingCase?.judge?.id,
+    (judge: Option) => judge.value === workingCase.judge?.id,
   )
 
   const defaultRegistrar = registrars?.find(
-    (registrar: Option) => registrar.value === workingCase?.registrar?.id,
+    (registrar: Option) => registrar.value === workingCase.registrar?.id,
   )
 
   return (

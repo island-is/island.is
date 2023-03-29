@@ -6,7 +6,7 @@ import {
 } from './types/input-types'
 import { json, ref } from './dsl'
 
-type XroadSectionConfig = {
+export type XroadSectionConfig = {
   secrets?: Secrets
   env?: EnvironmentVariables
 }

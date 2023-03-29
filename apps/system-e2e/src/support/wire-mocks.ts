@@ -9,7 +9,12 @@ import {
   Response,
   Stub,
 } from '@anev/ts-mountebank'
-import { Base, XroadConf, XRoadEnvs } from '../../../../infra/src/dsl/xroad'
+import {
+  Base,
+  XroadConf,
+  XRoadEnvs,
+  XroadSectionConfig,
+} from '../../../../infra/src/dsl/xroad'
 import { getEnvVariables } from '../../../../infra/src/dsl/service-to-environment/pre-process-service'
 import { XRoadMemberClass } from '@island.is/shared/utils/server'
 import { serializeValueSource } from '../../../../infra/src/dsl/output-generators/serialization-helpers'
@@ -99,7 +104,7 @@ export const wildcard = async () => {
   )
   await mb.createImposter(mockedServices.xroad.imposter)
 }
-export const addXroadMock = async <Conf>(
+export const addXroadMock = async <Conf extends XroadSectionConfig>(
   options:
     | {
         config: XroadConf<Conf>
