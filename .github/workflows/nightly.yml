@@ -51,11 +51,11 @@ jobs:
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     needs:
-      jobs.prepare
+      - prepare
     env:
       GIT_BRANCH: "main"
       SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
-      DOCKER_TAG: ${{ needs.pre.DOCKER_TAG }}
+      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
     steps:
       - uses: actions/checkout@v3
       - name: Trigger Acceptance Test deployment
@@ -66,7 +66,8 @@ jobs:
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    needs: jobs.runner
+    needs:
+      - jobs.runner
     steps:
       - uses: actions/github-script@v6
         with:
