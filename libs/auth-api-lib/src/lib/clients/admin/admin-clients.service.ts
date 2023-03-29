@@ -1,14 +1,32 @@
-import { NoContentException } from '@island.is/nest/problem'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { and, Op } from 'sequelize'
 
+import { User } from '@island.is/auth-nest-tools'
+import { NoContentException } from '@island.is/nest/problem'
+
+import { Domain } from '../../resources/models/domain.model'
 import { Client } from '../models/client.model'
+import { ClientGrantType } from '../models/client-grant-type.model'
 import { AdminClientType } from './dto/admin-client-type.enum'
 import { AdminClientDto } from './dto/admin-client.dto'
 import { AdminCreateClientDto } from './dto/admin-create-client.dto'
-import { User } from '@island.is/auth-nest-tools'
-import { Domain } from '../../resources/models/domain.model'
+
+export const clientBaseAttributes: Partial<Client> = {
+  absoluteRefreshTokenLifetime: 8 * 60 * 60, // 8 hours
+  accessTokenLifetime: 5 * 60, // 5 minutes
+  allowOfflineAccess: true,
+  allowRememberConsent: true,
+  alwaysIncludeUserClaimsInIdToken: true,
+  alwaysSendClientClaims: true,
+  identityTokenLifetime: 5 * 60, // 5 minutes
+  refreshTokenExpiration: 1, // ToDo when #10673 is merged use RefreshTokenExpiration.Absolute
+  refreshTokenUsage: 1, // Single usage
+  requireClientSecret: true,
+  requirePkce: true,
+  slidingRefreshTokenLifetime: 20 * 60, // 20 minutes
+  updateAccessTokenClaimsOnRefresh: true,
+}
 
 @Injectable()
 export class AdminClientsService {
@@ -17,6 +35,8 @@ export class AdminClientsService {
     private clientModel: typeof Client,
     @InjectModel(Domain)
     private readonly domainModel: typeof Domain,
+    @InjectModel(ClientGrantType)
+    private readonly clientGrantType: typeof ClientGrantType,
   ) {}
 
   async findByTenantId(tenantId: string): Promise<AdminClientDto[]> {
@@ -71,20 +91,58 @@ export class AdminClientsService {
       clientName: clientDto.clientName,
       ...this.defaultClientAttributes(clientDto.clientType),
     })
+
+    await this.clientGrantType.create(this.defaultClientGrantTypes(client))
+
     return this.formatClient(client)
   }
 
-  defaultClientAttributes(clientType: AdminClientType) {
+  private defaultClientAttributes(clientType: AdminClientType) {
     switch (clientType) {
+      case AdminClientType.web:
+        return clientBaseAttributes
+      case AdminClientType.native:
+        return {
+          ...clientBaseAttributes,
+          absoluteRefreshTokenLifetime: 365 * 24 * 60 * 60, // 1 year
+          requireClientSecret: false,
+          slidingRefreshTokenLifetime: 90 * 24 * 60 * 60, // 3 months
+        }
+      case AdminClientType.machine:
+        return {
+          ...clientBaseAttributes,
+          allowOfflineAccess: false,
+          requirePkce: false,
+        }
       default:
-        return {}
+        throw new Error(`Unknown client type: ${clientType}`)
     }
   }
 
-  formatClient(client: Client): AdminClientDto {
+  private formatClient(client: Client): AdminClientDto {
     return {
       clientId: client.clientId,
       clientType: client.clientType,
+    }
+  }
+
+  private defaultClientGrantTypes(client: Client) {
+    switch (client.clientType) {
+      case AdminClientType.web:
+        return {
+          clientId: client.clientId,
+          grantType: 'authorization_code',
+        }
+      case AdminClientType.native:
+        return {
+          clientId: client.clientId,
+          grantType: 'authorization_code',
+        }
+      case AdminClientType.machine:
+        return {
+          clientId: client.clientId,
+          grantType: 'client_credentials',
+        }
     }
   }
 }
