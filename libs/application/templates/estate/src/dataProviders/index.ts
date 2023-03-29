@@ -1,2 +1,2 @@
 export { NationalRegistryProvider } from './NationalRegistryProvider'
-export { EstateNoticeProvider } from './EstateNoticeProvider'
+export { EstateApi } from './EstateNoticeProvider'
