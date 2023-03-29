@@ -19,6 +19,7 @@ import {
   AuthCustomDelegationOutgoing,
 } from '../../../types/customDelegation'
 import { m } from '../../../lib/messages'
+import { useDynamicShadow } from '../../../hooks/useDynamicShadow'
 
 type AccessDeleteModalProps = Pick<ModalProps, 'onClose' | 'isVisible'> & {
   delegation?: AuthCustomDelegation
@@ -87,6 +88,8 @@ export const AccessDeleteModal = ({
   const fromName = userInfo?.profile.name
   const fromNationalId = userInfo?.profile.nationalId
 
+  const { showShadow, pxProps } = useDynamicShadow({ rootMargin: '-128px' }, true)
+
   return (
     <Modal
       id={`access-delete-modal`}
@@ -145,11 +148,12 @@ export const AccessDeleteModal = ({
           loading={scopeTreeLoading}
           listMarginBottom={[0, 0, 10]}
         />
+        <div {...pxProps} data-delete={delegation?.id} />
       </Box>
       <Box position="sticky" bottom={0}>
         <DelegationsFormFooter
           loading={loading}
-          showShadow={md}
+          showShadow={md && showShadow}
           confirmButtonColorScheme="destructive"
           onCancel={onClose}
           onConfirm={onDeleteHandler}
