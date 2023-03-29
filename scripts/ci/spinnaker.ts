@@ -21,4 +21,5 @@ const trigger = new Request(
         },
       })
   })
-fetch(trigger)
+await fetch(trigger)
+export { }

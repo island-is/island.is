@@ -1,5 +1,10 @@
 {
+  "compilerOptions": {
+    "target": "es2017"
+  },
   "extends": "../tsconfig.base.json",
   "files": [],
-  "include": ["**/*.ts"]
+  "include": [
+    "**/*.ts"
+  ]
 }
