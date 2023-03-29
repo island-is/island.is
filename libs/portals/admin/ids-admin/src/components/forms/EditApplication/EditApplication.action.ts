@@ -9,6 +9,7 @@ export enum ClientFormTypes {
   applicationUrls = 'applicationUrl',
   lifeTime = 'lifeTime',
   translations = 'translations',
+  delegations = 'delegations',
 }
 
 const splitStringOnCommaOrSpaceOrNewLine = (s: string) => {
@@ -94,7 +95,7 @@ export const schema = {
     .merge(defaultSchema),
   [ClientFormTypes.translations]: z
     .object({
-      is_displayName: z.string(),
+      is_displayName: z.string().nonempty({ message: 'errorRequired' }),
       en_displayName: z.string(),
     })
     .merge(defaultSchema)
@@ -112,6 +113,28 @@ export const schema = {
         ],
       }
     }),
+  [ClientFormTypes.delegations]: z
+    .object({
+      supportsProcuringHolders: z.optional(z.string()).transform((s) => {
+        return s === 'true'
+      }),
+      supportsLegalGuardians: z.optional(z.string()).transform((s) => {
+        return s === 'true'
+      }),
+      promptDelegations: z.optional(z.string()).transform((s) => {
+        return s === 'true'
+      }),
+      supportsPersonalRepresentatives: z.optional(z.string()).transform((s) => {
+        return s === 'true'
+      }),
+      supportsCustomDelegation: z.optional(z.string()).transform((s) => {
+        return s === 'true'
+      }),
+      requireApiScopes: z.optional(z.string()).transform((s) => {
+        return s === 'true'
+      }),
+    })
+    .merge(defaultSchema),
 }
 
 export type EditApplicationResult<T extends ZodType> =

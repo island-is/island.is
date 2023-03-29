@@ -7,6 +7,7 @@ import { ClientFormTypes } from '../../components/forms/EditApplication/EditAppl
 
 interface ContentCardProps {
   title: string
+  description?: string
   onSave?: (saveOnAllEnvironments: boolean) => void
   isDirty?: (currentValue: FormData, originalValue: FormData) => boolean
   intent?: ClientFormTypes | 'none'
@@ -25,6 +26,7 @@ function defaultIsDirty(newFormData: FormData, originalFormData: FormData) {
 const ContentCard: FC<ContentCardProps> = ({
   children,
   title,
+  description,
   onSave,
   isDirty = defaultIsDirty,
   intent = 'none',
@@ -49,7 +51,8 @@ const ContentCard: FC<ContentCardProps> = ({
   return (
     <Box
       borderRadius="large"
-      padding={2}
+      paddingY={2}
+      paddingX={4}
       display="flex"
       flexDirection="column"
       justifyContent="spaceBetween"
@@ -61,6 +64,7 @@ const ContentCard: FC<ContentCardProps> = ({
         <Text marginTop={2} marginBottom={4} variant="h3">
           {title}
         </Text>
+        {description && <Text marginBottom={4}>{description}</Text>}
       </Box>
       <Form ref={ref} onChange={onChange} method="post">
         {children}

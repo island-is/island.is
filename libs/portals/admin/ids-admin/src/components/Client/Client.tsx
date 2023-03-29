@@ -18,6 +18,7 @@ import { m } from '../../lib/messages'
 import { useLoaderData } from 'react-router-dom'
 import { AuthClient } from './Client.loader'
 import { RefreshTokenExpiration } from '@island.is/api/schema'
+import Delegation from './Delegations'
 
 const Client = () => {
   const client = useLoaderData() as AuthClient
@@ -26,6 +27,7 @@ const Client = () => {
   const [selectedEnvironment, setSelectedEnvironment] = useState<
     AuthClient['environments'][0]
   >(client.environments[0])
+
   return (
     <GridContainer>
       <Stack space={4}>
@@ -80,6 +82,20 @@ const Client = () => {
             selectedEnvironment.refreshTokenExpiration ===
             RefreshTokenExpiration.Sliding
           }
+        />
+        <Delegation
+          supportsProcuringHolders={
+            selectedEnvironment.supportsProcuringHolders
+          }
+          supportsLegalGuardians={selectedEnvironment.supportsLegalGuardians}
+          promptDelegations={selectedEnvironment.promptDelegations}
+          supportsPersonalRepresentatives={
+            selectedEnvironment.supportsPersonalRepresentatives
+          }
+          supportsCustomDelegation={
+            selectedEnvironment.supportsCustomDelegation
+          }
+          requireApiScopes={selectedEnvironment.requireApiScopes}
         />
       </Stack>
     </GridContainer>

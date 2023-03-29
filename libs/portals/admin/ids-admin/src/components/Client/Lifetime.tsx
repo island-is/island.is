@@ -75,6 +75,7 @@ const Lifetime = ({
   return (
     <ContentCard
       title={formatMessage(m.lifetime)}
+      description={formatMessage(m.lifeTimeDescription)}
       onSave={(saveOnAllEnvironments) => {
         return saveOnAllEnvironments
       }}
