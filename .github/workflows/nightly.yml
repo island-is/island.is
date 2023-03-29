@@ -5,13 +5,19 @@ on:
   schedule:
     - cron: '0 0 * * *'
   push:
+    branches:
+      - qa/ci-acceptance
   workflow_dispatch:
   create:
   pull_request:
+    types: [labeled]
 
 defaults:
   run:
     shell: bash
+  runs-on: ec2-runners
+  container:
+    image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
 
 env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
@@ -22,21 +28,47 @@ env:
   TEST_ENVIRONMENT: dev
 
 jobs:
-  acceptance-system-e2e:
-    name: System-e2e Acceptance tests
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+  prepare:
+    name: Prepare run
+    if: ${{ github.event.label.name == 'acceptance test' }}
+    outputs:
+      DOCKER_TAG: ${{ steps.last_build.outputs.DOCKER_TAG }}
     env:
       GIT_BRANCH: "main"
       SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
-    steps:
-      - uses: actions/checkout@v3
+      DOCKER_TAG: ${{ outputs.DOCKER_TAG }}
 
+    steps:
       - name: Prepare
+        id: last_build
         run: |
           ./scripts/ci/00_prepare-base-tags.sh
           echo "::set-output name=DOCKER_TAG::${DOCKER_TAG}"
 
+  runner:
+    name: System-e2e Acceptance tests
+    needs:
+      jobs.prepare
+    env:
+      GIT_BRANCH: "main"
+      SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
+      DOCKER_TAG: ${{ needs.pre.DOCKER_TAG }}
+    steps:
+      - uses: actions/checkout@v3
       - name: Trigger Acceptance Test deployment
         run: yarn ts scripts/ci/spinnaker.ts
+
+  cleanup:
+    name: cleanup
+    needs: jobs.runner
+    steps:
+      - uses: actions/github-script@v6
+        with:
+          stript: |
+            github.rest.pull_request.removeLabels({
+              pull_request_numbe: context.pull_request.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            labels: ["acceptance test"]
+            })
+
