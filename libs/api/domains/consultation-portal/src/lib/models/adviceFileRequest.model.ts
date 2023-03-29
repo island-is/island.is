@@ -1,6 +1,7 @@
-import { ObjectType, Field } from '@nestjs/graphql'
+import { ObjectType, Field, InputType } from '@nestjs/graphql'
 
 @ObjectType('ConsultationPortalAdviceFileRequest')
+@InputType('ConsultationPortalAdviceFileRequestInput')
 export class AdviceFileRequest {
   @Field(() => String, { nullable: true })
   fileName?: string | null
