@@ -55,11 +55,6 @@ export class LicenseServiceService {
     licenseType: GenericLicenseType,
     error: Partial<FetchError>,
   ): unknown {
-    // Ignore 403/404
-    if (error.status === 403 || error.status === 404) {
-      return null
-    }
-
     this.logger.warn(`${licenseType} fetch failed`, {
       exception: error,
       message: (error as Error)?.message,
