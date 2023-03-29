@@ -15,9 +15,6 @@ on:
 defaults:
   run:
     shell: bash
-  runs-on: ec2-runners
-  container:
-    image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
 
 env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
@@ -31,6 +28,9 @@ jobs:
   prepare:
     name: Prepare run
     if: ${{ github.event.label.name == 'acceptance test' }}
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     outputs:
       DOCKER_TAG: ${{ steps.last_build.outputs.DOCKER_TAG }}
     env:
@@ -47,6 +47,9 @@ jobs:
 
   runner:
     name: System-e2e Acceptance tests
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     needs:
       jobs.prepare
     env:
@@ -60,6 +63,9 @@ jobs:
 
   cleanup:
     name: cleanup
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     needs: jobs.runner
     steps:
       - uses: actions/github-script@v6
