@@ -130,6 +130,7 @@ const Processing: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
           onNextButtonClick={() =>

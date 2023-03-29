@@ -94,6 +94,9 @@ export const CREATE_INVESTIGATION_CASE_ROUTE = '/krafa/ny/rannsoknarheimild'
 export const CREATE_INDICTMENT_ROUTE = '/akaera/ny'
 
 export const DEFENDER_ROUTE = '/verjandi'
+export const DEFENDER_APPEAL_ROUTE = '/verjandi/kaera'
+
+export const APPEAL_ROUTE = '/kaera'
 
 /* PROSECUTOR ROUTES START */
 export const RESTRICTION_CASE_DEFENDANT_ROUTE = '/krafa/sakborningur'
@@ -203,6 +206,5 @@ export const courtInvestigationCasesRoutes = [
 ]
 
 // Feedback
-export const FEEDBACK_FORM_ROUTE = '/feedback-from'
 export const FEEDBACK_FORM_URL =
   'https://form.asana.com?k=45fPB_e65kYFDjvG-18f0w&d=203394141643832'
