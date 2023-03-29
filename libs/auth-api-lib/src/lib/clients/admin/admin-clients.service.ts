@@ -97,6 +97,9 @@ export class AdminClientsService {
       clientName: clientDto.clientName,
       ...this.defaultClientAttributes(clientDto.clientType),
     })
+
+    // TODO: Add client type specific openid profile identity resources
+
     return this.findByTenantIdAndClientId(tenantId, client.clientId)
   }
 
