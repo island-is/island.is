@@ -3,6 +3,8 @@ import request from 'supertest'
 
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import {
+  Client,
+  clientBaseAttributes,
   GrantTypeEnum,
   SequelizeConfigService,
   TranslatedValueDto,
@@ -186,8 +188,45 @@ describe('MeClientsController with auth', () => {
     },
   )
 
-  // Then list more business logic tests here, eg
-  it.todo('should create machine client with correct defaults')
-  it.todo('should create web client with correct defaults')
-  it.todo('should create native client with correct defaults')
+  it.each`
+    clientType   | typeSpecificDefaults
+    ${'web'}     | ${{}}
+    ${'machine'} | ${{ allowOfflineAccess: false, requirePkce: false }}
+    ${'native'}  | ${{ absoluteRefreshTokenLifetime: 365 * 24 * 60 * 60, requireClientSecret: false, slidingRefreshTokenLifetime: 90 * 24 * 60 * 60 }}
+  `(
+    'should create $clientType client with correct defaults',
+    async ({ clientType, typeSpecificDefaults }) => {
+      // Arrange
+      const app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user,
+      })
+      const server = request(app.getHttpServer())
+      await createTestClientData(app, user)
+      const newClient = {
+        clientId: '@test.is/new-test-client',
+        clientName: 'New test client',
+        clientType,
+      }
+
+      // Act
+      const res = await server
+        .post(`/v2/me/tenants/${tenantId}/clients`)
+        .send(newClient)
+
+      // Assert
+      expect(res.status).toEqual(201)
+      expect(res.body).toEqual({
+        // Todo: Uncomment when merged in #10673
+        //...clientBaseAttributes,
+        clientId: newClient.clientId,
+        clientType: newClient.clientType,
+        //clientName: newClient.clientName,
+        //tenantId,
+
+        //...typeSpecificDefaults,
+      })
+    },
+  )
 })

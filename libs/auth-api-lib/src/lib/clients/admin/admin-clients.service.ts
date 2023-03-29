@@ -5,6 +5,7 @@ import { and, Includeable, Op } from 'sequelize'
 import { User } from '@island.is/auth-nest-tools'
 import { NoContentException } from '@island.is/nest/problem'
 
+import { Domain } from '../../resources/models/domain.model'
 import { TranslationService } from '../../translation/translation.service'
 import { ClientType, GrantTypeEnum } from '../../types'
 import { Client } from '../models/client.model'
@@ -14,7 +15,22 @@ import { ClientRedirectUri } from '../models/client-redirect-uri.model'
 import { ClientPostLogoutRedirectUri } from '../models/client-post-logout-redirect-uri.model'
 import { AdminClientDto } from './dto/admin-client.dto'
 import { AdminCreateClientDto } from './dto/admin-create-client.dto'
-import { Domain } from '../../resources/models/domain.model'
+
+export const clientBaseAttributes: Partial<Client> = {
+  absoluteRefreshTokenLifetime: 8 * 60 * 60, // 8 hours
+  accessTokenLifetime: 5 * 60, // 5 minutes
+  allowOfflineAccess: true,
+  allowRememberConsent: true,
+  alwaysIncludeUserClaimsInIdToken: true,
+  alwaysSendClientClaims: true,
+  identityTokenLifetime: 5 * 60, // 5 minutes
+  refreshTokenExpiration: 1, // ToDo when #10673 is merged use RefreshTokenExpiration.Absolute
+  refreshTokenUsage: 1, // Single usage
+  requireClientSecret: true,
+  requirePkce: true,
+  slidingRefreshTokenLifetime: 20 * 60, // 20 minutes
+  updateAccessTokenClaimsOnRefresh: true,
+}
 
 @Injectable()
 export class AdminClientsService {
@@ -23,6 +39,8 @@ export class AdminClientsService {
     private clientModel: typeof Client,
     @InjectModel(Domain)
     private readonly domainModel: typeof Domain,
+    @InjectModel(ClientGrantType)
+    private readonly clientGrantType: typeof ClientGrantType,
     private readonly translationService: TranslationService,
   ) {}
 
@@ -99,14 +117,30 @@ export class AdminClientsService {
     })
 
     // TODO: Add client type specific openid profile identity resources
+    await this.clientGrantType.create(this.defaultClientGrantTypes(client))
 
     return this.findByTenantIdAndClientId(tenantId, client.clientId)
   }
 
-  defaultClientAttributes(clientType: ClientType) {
+  private defaultClientAttributes(clientType: ClientType) {
     switch (clientType) {
+      case ClientType.web:
+        return clientBaseAttributes
+      case ClientType.native:
+        return {
+          ...clientBaseAttributes,
+          absoluteRefreshTokenLifetime: 365 * 24 * 60 * 60, // 1 year
+          requireClientSecret: false,
+          slidingRefreshTokenLifetime: 90 * 24 * 60 * 60, // 3 months
+        }
+      case ClientType.machine:
+        return {
+          ...clientBaseAttributes,
+          allowOfflineAccess: false,
+          requirePkce: false,
+        }
       default:
-        return {}
+        throw new Error(`Unknown client type: ${clientType}`)
     }
   }
 
@@ -158,6 +192,26 @@ export class AdminClientsService {
           (acc, curr) => ({ ...acc, [curr.type]: curr.value }),
           {},
         ) ?? {},
+    }
+  }
+
+  private defaultClientGrantTypes(client: Client) {
+    switch (client.clientType) {
+      case ClientType.web:
+        return {
+          clientId: client.clientId,
+          grantType: 'authorization_code',
+        }
+      case ClientType.native:
+        return {
+          clientId: client.clientId,
+          grantType: 'authorization_code',
+        }
+      case ClientType.machine:
+        return {
+          clientId: client.clientId,
+          grantType: 'client_credentials',
+        }
     }
   }
 
