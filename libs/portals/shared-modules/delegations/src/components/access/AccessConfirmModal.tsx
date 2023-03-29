@@ -41,10 +41,7 @@ export const AccessConfirmModal = ({
   const { md } = useBreakpoint()
   const [error, setError] = useState(formError ?? false)
 
-  const { showShadow, pxProps } = useDynamicShadow({ rootMargin: '-128px' }, true)
-
-  console.log('AccessConfirmModal render')
-
+  const { showShadow, pxProps } = useDynamicShadow({ rootMargin: '-128px', debug: true, isDisabled: !rest.isVisible })
 
 
   const onConfirmHandler = async () => {

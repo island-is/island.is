@@ -61,7 +61,7 @@ export const AccessForm = ({
   const [formError, setFormError] = useState(false)
   const [updateError, setUpdateError] = useState(false)
 
-  const { showShadow, pxProps } = useDynamicShadow({ rootMargin: '-112px' }, true)
+  const { showShadow, pxProps } = useDynamicShadow({ rootMargin: '-112px', debug: true, })
 
   const onError = () => {
     toast.error(formatMessage(portalMessages.somethingWrong))

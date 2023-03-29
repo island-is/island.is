@@ -10,20 +10,17 @@ const debugStyle: CSSProperties = {
   backgroundColor: 'springgreen',
 }
 
-const defaultOptions: IntersectionObserverInit = {
-  threshold: [0, 1],
+
+interface UseDynamicShadowOptions extends Omit<IntersectionObserverInit, 'threshold'> {
+  debug?: boolean
+  isDisabled?: boolean
 }
 
 /**
  * This hooks works by observing if a tranparent element is inview or not.
  */
-export const useDynamicShadow = (options?: IntersectionObserverInit, debug = false) => {
-  // return {
-  //   showShadow: true,
-  //   pxProps: {
-
-  //   }
-  // }
+export const useDynamicShadow = (config: UseDynamicShadowOptions) => {
+  const { debug, isDisabled, ...options } = config
   const ref = useRef<HTMLDivElement>(null)
   const [showShadow, setShowShadow] = useState(false);
   const isObserving = useRef(false);
@@ -32,43 +29,38 @@ export const useDynamicShadow = (options?: IntersectionObserverInit, debug = fal
     if (debug) console.log('useDynamicShadow, useEffect', ref.current)
 
     if (!ref.current) return;
-    if (isObserving.current) return;
+    if (isObserving.current || isDisabled) return;
 
     const observer = new IntersectionObserver(function (entries) {
       if (entries[0].intersectionRatio === 0) {
-        if (!showShadow) {
-          if (debug) console.log('useDynamicShadow, 🔴 No intersection with screen')
-          setShowShadow(true)
-        }
+        if (debug) console.log('useDynamicShadow, 🔴 No intersection with screen')
+        setShowShadow(true)
       }
 
       else if (entries[0].intersectionRatio === 1) {
 
-        // if (showShadow) {
         if (debug) console.log('useDynamicShadow, 🟢 Fully intersects with screen')
         setShowShadow(false)
-        // }
       }
-    }, { ...defaultOptions, ...options });
+    }, { threshold: [0, 1], ...options });
 
     if (debug) console.log('useDynamicShadow, 🔌 connect')
     isObserving.current = true;
     observer.observe(ref.current);
 
-    // return () => {
-    //   if (debug) console.log('useDynamicShadow, ✂️ disconnect')
-    //   isObserving.current = false;
-    //   observer.disconnect()
-    // };
+    return () => {
+      if (debug) console.log('useDynamicShadow, ✂️ disconnect')
+      isObserving.current = false;
+      observer.disconnect()
+    };
 
-  }, [debug, options, showShadow]);
-
+  }, [setShowShadow, debug, isDisabled, options.root, options.rootMargin]);
 
   return {
     showShadow,
     pxProps: {
       ref,
-      style: debug ? debugStyle : style,
+      style: config.debug ? debugStyle : style,
     }
   };
 }
