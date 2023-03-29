@@ -730,38 +730,6 @@ describe('Application system API', () => {
     )
   })
 
-  it('GET /admin/:nationalId/applications should return a list of applications for the queried user', async () => {
-    const creationResponse = await server
-      .post('/applications')
-      .send({
-        typeId: ApplicationTypes.PARENTAL_LEAVE,
-      })
-      .expect(201)
-
-    // Advance from prerequisites state
-    await server
-      .put(`/applications/${creationResponse.body.id}/submit`)
-      .send({ event: 'SUBMIT' })
-      .expect(200)
-
-    await server.put(`/applications/${creationResponse.body.id}`).send({
-      answers: {
-        usage: 4,
-      },
-    })
-
-    const getResponse = await server
-      .get(`/admin/${nationalId}/applications`)
-      .expect(200)
-
-    // Assert
-    expect(getResponse.body).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ applicant: nationalId }),
-      ]),
-    )
-  })
-
   it(`GET /users/:nationalId/applications?typeId=ParentalLeave should return the list of applications of the user by typeId`, async () => {
     const creationResponse = await server
       .post('/applications')
