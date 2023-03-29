@@ -68,6 +68,7 @@ jobs:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     needs:
       - runner
+    if: always()
     steps:
       - uses: actions/github-script@v6
         with:
