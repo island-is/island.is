@@ -10,7 +10,6 @@ import { SimpleCardSkeleton } from '../Card'
 import { useEffect, useRef, useState } from 'react'
 import * as styles from './ReviewCard.css'
 import { getShortDate } from '../../utils/helpers/dateFormatter'
-import { UserAdvice } from '@island.is/consultation-portal/types/interfaces'
 
 // One line is 27
 const SCROLL_HEIGHT = 27
