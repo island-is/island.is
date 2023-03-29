@@ -26,6 +26,15 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
 import { isTrafficViolationCase } from '../../stepHelper'
+import { useRouter } from 'next/router'
+import {
+  courtIndictmentRoutes,
+  courtInvestigationCasesRoutes,
+  courtRestrictionCasesRoutes,
+  prosecutorIndictmentRoutes,
+  prosecutorInvestigationCasesRoutes,
+  prosecutorRestrictionCasesRoutes,
+} from '@island.is/judicial-system/consts'
 
 const validateFormStepper = (
   isActiveSubSectionValid: boolean,
@@ -53,12 +62,20 @@ const useSections = (
 ) => {
   const { formatMessage } = useIntl()
   const { features } = useContext(FeatureContext)
+  const router = useRouter()
 
   const getRestrictionCaseProsecutorSection = (
     workingCase: Case,
     user?: User,
   ): RouteSection => {
     const { type, id, parentCase } = workingCase
+    const routeIndex = prosecutorRestrictionCasesRoutes.findIndex(
+      /**
+       * We do .slice here because router.pathname is /something/[:id]
+       * and we want to remove the /[:id] part
+       */
+      (route) => route === router.pathname.slice(0, -5),
+    )
 
     return {
       name: formatMessage(sections.restrictionCaseProsecutorSection.caseTitle, {
@@ -79,6 +96,7 @@ const useSections = (
                     suffix: 'i',
                   }),
                 ),
+                isActive: routeIndex === 0,
                 href: `${constants.RESTRICTION_CASE_DEFENDANT_ROUTE}/${id}`,
               },
               {
@@ -86,6 +104,7 @@ const useSections = (
                   sections.restrictionCaseProsecutorSection.hearingArrangements,
                 ),
                 href: `${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${id}`,
+                isActive: routeIndex === 1,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -107,6 +126,7 @@ const useSections = (
                   sections.restrictionCaseProsecutorSection.policeDemands,
                 ),
                 href: `${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${id}`,
+                isActive: routeIndex === 2,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -127,6 +147,7 @@ const useSections = (
                   sections.restrictionCaseProsecutorSection.policeReport,
                 ),
                 href: `${constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE}/${id}`,
+                isActive: routeIndex === 3,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -148,6 +169,7 @@ const useSections = (
                   sections.restrictionCaseProsecutorSection.caseFiles,
                 ),
                 href: `${constants.RESTRICTION_CASE_CASE_FILES_ROUTE}/${id}`,
+                isActive: routeIndex === 4,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -170,6 +192,7 @@ const useSections = (
                   sections.restrictionCaseProsecutorSection.overview,
                 ),
                 href: `${constants.RESTRICTION_CASE_OVERVIEW_ROUTE}/${id}`,
+                isActive: routeIndex === 5,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -197,6 +220,13 @@ const useSections = (
     user?: User,
   ): RouteSection => {
     const { id, type, parentCase } = workingCase
+    const routeIndex = prosecutorInvestigationCasesRoutes.findIndex(
+      /**
+       * We do .slice here because router.pathname is /something/[:id]
+       * and we want to remove the /[:id] part
+       */
+      (route) => route === router.pathname.slice(0, -5),
+    )
 
     return {
       name: formatMessage(sections.investigationCaseProsecutorSection.title),
@@ -213,6 +243,7 @@ const useSections = (
                 name: capitalize(
                   formatMessage(core.defendant, { suffix: 'i' }),
                 ),
+                isActive: routeIndex === 0,
                 href: `${constants.INVESTIGATION_CASE_DEFENDANT_ROUTE}/${id}`,
               },
               {
@@ -220,6 +251,7 @@ const useSections = (
                   sections.investigationCaseProsecutorSection
                     .hearingArrangements,
                 ),
+                isActive: routeIndex === 1,
                 href: `${constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
@@ -237,6 +269,7 @@ const useSections = (
                 name: formatMessage(
                   sections.investigationCaseProsecutorSection.policeDemands,
                 ),
+                isActive: routeIndex === 2,
                 href: `${constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
@@ -258,6 +291,7 @@ const useSections = (
                   sections.investigationCaseProsecutorSection.policeReport,
                 ),
                 href: `${constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE}/${id}`,
+                isActive: routeIndex === 3,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -279,6 +313,7 @@ const useSections = (
                   sections.investigationCaseProsecutorSection.caseFiles,
                 ),
                 href: `${constants.INVESTIGATION_CASE_CASE_FILES_ROUTE}/${id}`,
+                isActive: routeIndex === 4,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -300,6 +335,7 @@ const useSections = (
                 name: formatMessage(
                   sections.investigationCaseProsecutorSection.overview,
                 ),
+                isActive: routeIndex === 5,
                 href: `${constants.INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
@@ -328,8 +364,24 @@ const useSections = (
     user?: User,
   ): RouteSection => {
     const { id, type } = workingCase
-
     const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
+    const isTrafficViolation =
+      workingCase.type === CaseType.Indictment &&
+      isTrafficViolationCase(workingCase, features, user)
+    const indictmentRoutes = isTrafficViolation
+      ? prosecutorIndictmentRoutes.splice(
+          4,
+          0,
+          constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE,
+        )
+      : prosecutorIndictmentRoutes
+    const routeIndex = indictmentRoutes.findIndex(
+      /**
+       * We do .slice here because router.pathname is /something/[:id]
+       * and we want to remove the /[:id] part
+       */
+      (route) => route === router.pathname.slice(0, -5),
+    )
 
     return {
       name: formatMessage(sections.indictmentCaseProsecutorSection.title),
@@ -347,6 +399,7 @@ const useSections = (
                   gender: Gender.MALE,
                 }),
               ),
+              isActive: routeIndex === 0,
               href: `${constants.INDICTMENTS_DEFENDANT_ROUTE}/${id}`,
             },
             {
@@ -355,6 +408,7 @@ const useSections = (
                   sections.indictmentCaseProsecutorSection.policeCaseFiles,
                 ),
               ),
+              isActive: routeIndex === 1,
               href: `${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${id}`,
               onClick:
                 validateFormStepper(
@@ -374,6 +428,7 @@ const useSections = (
                   sections.indictmentCaseProsecutorSection.caseFile,
                 ),
               ),
+              isActive: routeIndex === 2,
               href: `${constants.INDICTMENTS_CASE_FILE_ROUTE}/${id}`,
               onClick:
                 validateFormStepper(
@@ -396,6 +451,7 @@ const useSections = (
                   sections.indictmentCaseProsecutorSection.processing,
                 ),
               ),
+              isActive: routeIndex === 3,
               href: `${constants.INDICTMENTS_PROCESSING_ROUTE}/${id}`,
               onClick:
                 validateFormStepper(
@@ -413,14 +469,14 @@ const useSections = (
                       )
                   : undefined,
             },
-            ...(workingCase.type === CaseType.Indictment &&
-            isTrafficViolationCase(workingCase, features, user)
+            ...(isTrafficViolation
               ? [
                   {
                     name: formatMessage(
                       sections.indictmentCaseProsecutorSection.indictment,
                     ),
                     href: `${constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE}/${id}`,
+                    isActive: routeIndex === 4,
                     onClick:
                       validateFormStepper(
                         isValid,
@@ -447,6 +503,7 @@ const useSections = (
                 ),
               ),
               href: `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${id}`,
+              isActive: routeIndex === (isTrafficViolation ? 5 : 4),
               onClick:
                 validateFormStepper(
                   isValid,
@@ -471,6 +528,7 @@ const useSections = (
                 ),
               ),
               href: `${constants.INDICTMENTS_OVERVIEW_ROUTE}/${id}`,
+              isActive: routeIndex === (isTrafficViolation ? 6 : 5),
               onClick:
                 validateFormStepper(
                   isValid,
@@ -496,7 +554,13 @@ const useSections = (
     user?: User,
   ): RouteSection => {
     const { id, type, parentCase } = workingCase
-
+    const routeIndex = courtRestrictionCasesRoutes.findIndex(
+      /**
+       * We do .slice here because router.pathname is /something/[:id]
+       * and we want to remove the /[:id] part
+       */
+      (route) => route === router.pathname.slice(0, -5),
+    )
     return {
       name: formatMessage(sections.courtSection.title),
       isActive:
@@ -512,11 +576,13 @@ const useSections = (
                 name: formatMessage(
                   sections.courtSection.receptionAndAssignment,
                 ),
+                isActive: routeIndex === 0,
                 href: `${constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`,
               },
               {
                 name: formatMessage(sections.courtSection.overview),
                 href: `${constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${id}`,
+                isActive: routeIndex === 1,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -531,6 +597,7 @@ const useSections = (
               },
               {
                 name: formatMessage(sections.courtSection.hearingArrangements),
+                isActive: routeIndex === 2,
                 href: `${constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
@@ -549,6 +616,7 @@ const useSections = (
               },
               {
                 name: formatMessage(sections.courtSection.ruling),
+                isActive: routeIndex === 3,
                 href: `${constants.RESTRICTION_CASE_RULING_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
@@ -568,6 +636,7 @@ const useSections = (
               },
               {
                 name: formatMessage(sections.courtSection.courtRecord),
+                isActive: routeIndex === 4,
                 href: `${constants.RESTRICTION_CASE_COURT_RECORD_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
@@ -588,6 +657,7 @@ const useSections = (
               },
               {
                 name: formatMessage(sections.courtSection.conclusion),
+                isActive: routeIndex === 5,
                 href: `${constants.RESTRICTION_CASE_CONFIRMATION_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
@@ -616,6 +686,13 @@ const useSections = (
     user?: User,
   ): RouteSection => {
     const { id, type, parentCase } = workingCase
+    const routeIndex = courtInvestigationCasesRoutes.findIndex(
+      /**
+       * We do .slice here because router.pathname is /something/[:id]
+       * and we want to remove the /[:id] part
+       */
+      (route) => route === router.pathname.slice(0, -5),
+    )
 
     return {
       name: formatMessage(sections.investigationCaseCourtSection.title),
@@ -632,12 +709,14 @@ const useSections = (
                 name: formatMessage(
                   sections.courtSection.receptionAndAssignment,
                 ),
+                isActive: routeIndex === 0,
                 href: `${constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`,
               },
               {
                 name: formatMessage(
                   sections.investigationCaseCourtSection.overview,
                 ),
+                isActive: routeIndex === 1,
                 href: `${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
@@ -657,6 +736,7 @@ const useSections = (
                 name: formatMessage(
                   sections.investigationCaseCourtSection.hearingArrangements,
                 ),
+                isActive: routeIndex === 2,
                 href: `${constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
@@ -677,6 +757,7 @@ const useSections = (
                 name: formatMessage(
                   sections.investigationCaseCourtSection.ruling,
                 ),
+                isActive: routeIndex === 3,
                 href: `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
@@ -698,6 +779,7 @@ const useSections = (
                 name: formatMessage(
                   sections.investigationCaseCourtSection.courtRecord,
                 ),
+                isActive: routeIndex === 4,
                 href: `${constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
@@ -720,6 +802,7 @@ const useSections = (
                 name: formatMessage(
                   sections.investigationCaseCourtSection.conclusion,
                 ),
+                isActive: routeIndex === 5,
                 href: `${constants.INVESTIGATION_CASE_CONFIRMATION_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
@@ -745,6 +828,13 @@ const useSections = (
 
   const getIndictmentsCourtSections = (workingCase: Case, user?: User) => {
     const { id, type } = workingCase
+    const routeIndex = courtIndictmentRoutes.findIndex(
+      /**
+       * We do .slice here because router.pathname is /something/[:id]
+       * and we want to remove the /[:id] part
+       */
+      (route) => route === router.pathname.slice(0, -5),
+    )
 
     return {
       name: formatMessage(sections.indictmentsCourtSection.title),

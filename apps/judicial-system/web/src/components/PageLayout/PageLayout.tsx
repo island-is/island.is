@@ -39,6 +39,7 @@ export interface RouteSection {
   children: {
     name: string
     href?: string
+    isActive: boolean
     onClick?: () => void
   }[]
 }
@@ -76,7 +77,7 @@ const DisplaySection: React.FC<SectionProps> = (props) => {
             underline="small"
             key={`${subSection.name}-${index}`}
           >
-            <SubsectionChild isActive={index === activeSubSection}>
+            <SubsectionChild isActive={subSection.isActive || false}>
               {subSection.name}
             </SubsectionChild>
           </LinkV2>
@@ -90,14 +91,14 @@ const DisplaySection: React.FC<SectionProps> = (props) => {
               linkStyles.underlines['small'],
             )}
           >
-            <SubsectionChild isActive={index === activeSubSection}>
+            <SubsectionChild isActive={subSection.isActive || false}>
               {subSection.name}
             </SubsectionChild>
           </Box>
         ) : (
           <SubsectionChild
             key={`${subSection.name}-${index}`}
-            isActive={index === activeSubSection}
+            isActive={subSection.isActive || false}
           >
             {subSection.name}
           </SubsectionChild>
