@@ -7,6 +7,7 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
+import { EstateApi } from '../../dataProviders'
 import { m } from '../../lib/messages'
 
 export const dataCollection = buildSection({
@@ -20,7 +21,7 @@ export const dataCollection = buildSection({
       checkboxLabel: m.dataCollectionCheckbox,
       dataProviders: [
         buildDataProviderItem({
-          provider: undefined, //'EstateNoticeProvider',
+          provider: EstateApi,
           title: m.deceasedInfoProviderTitle,
           subTitle: m.deceasedInfoProviderSubtitle,
         }),
