@@ -7,6 +7,5 @@ export {
 
 export const EstateApi = defineTemplateApi({
   action: 'estateProvider',
-  shouldPersistToExternalData: false
+  shouldPersistToExternalData: false,
 })
-
