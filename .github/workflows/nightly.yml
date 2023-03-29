@@ -6,7 +6,7 @@ on:
     - cron: '0 0 * * *'
   push:
     branches:
-      - qa/ci-acceptance
+      - qa/**
   workflow_dispatch:
   create:
   pull_request:
