@@ -18,9 +18,7 @@
         "jestConfig": "libs/application/templates/driving-learners-permit/jest.config.js",
         "passWithNoTests": true
       },
-      "outputs": [
-        "coverage/libs/application/templates/driving-learners-permit"
-      ]
+      "outputs": ["coverage/libs/application/templates/driving-learners-permit"]
     },
     "extract-strings": {
       "builder": "@nrwl/workspace:run-commands",

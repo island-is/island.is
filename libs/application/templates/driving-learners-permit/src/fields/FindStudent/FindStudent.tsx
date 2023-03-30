@@ -93,7 +93,7 @@ const FindStudent: FC<FindStudentFieldBaseProps> = ({ application }) => {
         console.log('getStudentMentorabilityError:', error)
       },
       onCompleted: (data) => {
-        console.log("WE HAVE DATA", data)
+        console.log('WE HAVE DATA', data)
         if (data.studentMentorability) {
           clearErrors(fieldNames.studentMentorabilityError)
           setValue(
@@ -201,12 +201,14 @@ const FindStudent: FC<FindStudentFieldBaseProps> = ({ application }) => {
             <ContentBlock>
               {getValues(fieldNames.studentIsMentorable) === 'loading' && (
                 <>
-                <LoadingDots />
-                <AlertMessage
-                  type="info"
-                  title={formatMessage(m.studentIsMentorableLoadingHeader)}
-                  message={formatMessage(m.studentIsMentorableLoadingDescription)}
-                />
+                  <LoadingDots />
+                  <AlertMessage
+                    type="info"
+                    title={formatMessage(m.studentIsMentorableLoadingHeader)}
+                    message={formatMessage(
+                      m.studentIsMentorableLoadingDescription,
+                    )}
+                  />
                 </>
               )}
               {getValues(fieldNames.studentIsMentorable) === 'isMentorable' && (

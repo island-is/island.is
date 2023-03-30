@@ -45,7 +45,9 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
   type: ApplicationTypes.EXAMPLE,
   name: m.name,
   institution: m.institutionName,
-  translationNamespaces: [ApplicationConfigurations.DrivingLearnersPermit.translation],
+  translationNamespaces: [
+    ApplicationConfigurations.DrivingLearnersPermit.translation,
+  ],
   dataSchema: dataSchema,
   featureFlag: Features.drivingLearnersPermit,
   readyForProduction: true,
@@ -75,9 +77,7 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
                   allowFakeData,
                 })
               },
-              api: [
-                CurrentLicenseApi
-              ],
+              api: [CurrentLicenseApi],
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],

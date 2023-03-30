@@ -72,7 +72,7 @@ export class DrivingLicenseBookService {
     const student = await this.getStudent(input)
 
     return {
-      eligible: student.book.practiceDriving ?? false
+      eligible: student.book.practiceDriving ?? false,
     }
   }
 
