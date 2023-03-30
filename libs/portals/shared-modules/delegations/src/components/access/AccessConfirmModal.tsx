@@ -41,8 +41,10 @@ export const AccessConfirmModal = ({
   const { md } = useBreakpoint()
   const [error, setError] = useState(formError ?? false)
 
-  const { showShadow, pxProps } = useDynamicShadow({ rootMargin: '-128px', isDisabled: !rest.isVisible })
-
+  const { showShadow, pxProps } = useDynamicShadow({
+    rootMargin: '-128px',
+    isDisabled: !rest.isVisible,
+  })
 
   const onConfirmHandler = async () => {
     if (!delegation.id || !scopes) {

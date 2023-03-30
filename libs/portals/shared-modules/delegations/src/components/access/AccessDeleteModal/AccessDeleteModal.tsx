@@ -88,7 +88,10 @@ export const AccessDeleteModal = ({
   const fromName = userInfo?.profile.name
   const fromNationalId = userInfo?.profile.nationalId
 
-  const { showShadow, pxProps } = useDynamicShadow({ rootMargin: '-128px', isDisabled: !rest.isVisible })
+  const { showShadow, pxProps } = useDynamicShadow({
+    rootMargin: '-128px',
+    isDisabled: !rest.isVisible,
+  })
 
   return (
     <Modal
