@@ -7,9 +7,8 @@ import {
   Result,
   RevokePassData,
   SmartSolutionsApi,
-  VerifyPassData,
 } from '@island.is/clients/smartsolutions'
-import { GenericLicenseClient } from '../../license.types'
+import { GenericLicenseClient, VerifyLicenseResult } from '../../license.types'
 import { VerifyInputData } from '../../dto/verifyLicense.input'
 
 @Injectable()
@@ -35,7 +34,7 @@ export class DisabilityLicenseClientService implements GenericLicenseClient {
   }
 
   /** We need to verify the pk pass AND the license itself! */
-  async verify(inputData: string): Promise<Result<VerifyPassData>> {
+  async verify(inputData: string): Promise<Result<VerifyLicenseResult>> {
     //need to parse the scanner data
     let parsedInput
     try {
@@ -64,6 +63,17 @@ export class DisabilityLicenseClientService implements GenericLicenseClient {
       }
     }
 
-    return this.smartApi.verifyPkPass({ code, date })
+    const verifyRes = await this.smartApi.verifyPkPass({ code, date })
+
+    if (!verifyRes.ok) {
+      return verifyRes
+    }
+
+    return {
+      ok: true,
+      data: {
+        valid: verifyRes.data.valid,
+      },
+    }
   }
 }

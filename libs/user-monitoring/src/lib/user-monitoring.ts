@@ -19,6 +19,7 @@ const initDdRum = (params: DdRumInitParams) => {
     env: params.env,
     version: params.version,
     sampleRate: 100,
+    sessionReplaySampleRate: 0,
     trackInteractions: true,
     allowedTracingOrigins: [
       'https://island.is',

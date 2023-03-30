@@ -6,6 +6,7 @@ import {
   AdminProdApi,
   AdminStagingApi,
   AuthAdminApiClientConfig,
+  AuthAdminApiClientModule,
   TenantDto,
 } from '@island.is/clients/auth/admin-api'
 import { Environment } from '@island.is/shared/types'
@@ -15,11 +16,12 @@ import {
 } from '@island.is/testing/fixtures'
 import { TestApp, testServer, useAuth } from '@island.is/testing/nest'
 
-import { AuthAdminModule } from '../auth-admin.module'
 import { TenantsPayload } from './dto/tenants.payload'
 import { TenantsService } from './tenants.service'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ConfigType } from '@island.is/nest/config'
+import { TenantResolver } from './tenant.resolver'
+import { TenantEnvironmentResolver } from './tenant-environment.resolver'
 
 const mockTenants = {
   tenant1: {
@@ -54,6 +56,11 @@ const mockTenants = {
 const createMockAdminApi = (tenants: TenantDto[]) => ({
   withMiddleware: jest.fn().mockReturnThis(),
   meTenantsControllerFindAll: jest.fn().mockResolvedValue(tenants),
+  meTenantsControllerFindById: jest.fn().mockImplementation(({ tenantId }) => {
+    return new Promise((resolve) => {
+      resolve(tenants.find((t) => t.name === tenantId))
+    })
+  }),
 })
 const mockAdminDevApi = createMockAdminApi([
   mockTenants.tenant1,
@@ -68,12 +75,15 @@ const mockAdminProdApi = createMockAdminApi([mockTenants.tenant1])
 
 @Module({
   imports: [
-    AuthAdminModule,
+    AuthAdminApiClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [AuthAdminApiClientConfig],
     }),
   ],
+  controllers: [],
+  providers: [TenantResolver, TenantEnvironmentResolver, TenantsService],
+  exports: [TenantResolver, TenantEnvironmentResolver],
 })
 class TestModule {}
 
@@ -86,6 +96,9 @@ describe('TenantsService', () => {
     mockAdminDevApi.meTenantsControllerFindAll.mockClear()
     mockAdminStagingApi.meTenantsControllerFindAll.mockClear()
     mockAdminProdApi.meTenantsControllerFindAll.mockClear()
+    mockAdminDevApi.meTenantsControllerFindById.mockClear()
+    mockAdminStagingApi.meTenantsControllerFindById.mockClear()
+    mockAdminProdApi.meTenantsControllerFindById.mockClear()
   })
 
   describe('with multiple environments', () => {
@@ -112,6 +125,56 @@ describe('TenantsService', () => {
 
     afterAll(async () => {
       await app.cleanUp()
+    })
+
+    it('should return single merged tenant for all environments', async () => {
+      const tenantName = 'tenant-1'
+      const tenants = await tenantsService.getTenantById(
+        tenantName,
+        currentUser,
+      )
+
+      expect(mockAdminDevApi.meTenantsControllerFindById).toBeCalledTimes(1)
+      expect(mockAdminStagingApi.meTenantsControllerFindById).toBeCalledTimes(1)
+      expect(mockAdminProdApi.meTenantsControllerFindById).toBeCalledTimes(1)
+      expect(tenants).toEqual({
+        id: mockTenants.tenant1.name,
+        environments: [
+          {
+            ...mockTenants.tenant1,
+            environment: Environment.Development,
+          },
+          {
+            ...mockTenants.tenant1,
+            environment: Environment.Staging,
+          },
+          {
+            ...mockTenants.tenant1,
+            environment: Environment.Production,
+          },
+        ],
+      })
+    })
+
+    it('should return single merged tenant for development environments', async () => {
+      const tenantName = 'tenant-3'
+      const tenants = await tenantsService.getTenantById(
+        tenantName,
+        currentUser,
+      )
+
+      expect(mockAdminDevApi.meTenantsControllerFindById).toBeCalledTimes(1)
+      expect(mockAdminStagingApi.meTenantsControllerFindById).toBeCalledTimes(1)
+      expect(mockAdminProdApi.meTenantsControllerFindById).toBeCalledTimes(1)
+      expect(tenants).toEqual({
+        id: mockTenants.tenant3.name,
+        environments: [
+          {
+            ...mockTenants.tenant3,
+            environment: Environment.Development,
+          },
+        ],
+      })
     })
 
     it('merges tenants', async () => {
@@ -242,6 +305,7 @@ describe('TenantsService', () => {
       const mockLogger = {
         error: jest.fn(),
       }
+
       const authAdminClientConfig: ConfigType<
         typeof AuthAdminApiClientConfig
       > = {

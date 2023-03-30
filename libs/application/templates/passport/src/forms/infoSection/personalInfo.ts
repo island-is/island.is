@@ -47,6 +47,7 @@ export const personalInfo = buildMultiField({
       id: 'personalInfo.email',
       title: m.email,
       width: 'half',
+      required: true,
       defaultValue: (application: Application) =>
         (application.externalData.userProfile?.data as {
           email?: string
@@ -58,6 +59,7 @@ export const personalInfo = buildMultiField({
       width: 'half',
       variant: 'tel',
       format: '###-####',
+      required: true,
       defaultValue: (application: Application) => {
         const phone =
           (application.externalData.userProfile?.data as {
