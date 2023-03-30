@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { m } from '../../lib/messages'
 import ContentCard from '../../shared/components/ContentCard'
 import { useLocale } from '@island.is/localization'
@@ -12,6 +12,7 @@ interface DelegationProps {
   supportsPersonalRepresentatives: boolean
   supportsCustomDelegation: boolean
   requireApiScopes: boolean
+  inSync?: boolean
 }
 
 const Delegation = ({
@@ -21,6 +22,7 @@ const Delegation = ({
   supportsProcuringHolders,
   promptDelegations,
   requireApiScopes,
+  inSync = true,
 }: DelegationProps) => {
   const { formatMessage } = useLocale()
   const [procuring, setProcuring] = useState(supportsProcuringHolders)
@@ -33,6 +35,23 @@ const Delegation = ({
   const [customDelegation, setCustomDelegation] = useState(
     supportsCustomDelegation,
   )
+
+  useEffect(() => {
+    setProcuring(supportsProcuringHolders)
+    setLegalGuardian(supportsLegalGuardians)
+    setPrompt(promptDelegations)
+    setApiScope(requireApiScopes)
+    setPersonalRepresentative(supportsPersonalRepresentatives)
+    setCustomDelegation(supportsCustomDelegation)
+  }, [
+    supportsCustomDelegation,
+    supportsLegalGuardians,
+    supportsPersonalRepresentatives,
+    supportsProcuringHolders,
+    promptDelegations,
+    requireApiScopes,
+  ])
+
   return (
     <ContentCard
       title={formatMessage(m.delegations)}
@@ -40,6 +59,7 @@ const Delegation = ({
       isDirty={() => true}
       onSave={() => Promise.resolve()}
       intent={ClientFormTypes.delegations}
+      inSync={inSync}
     >
       <Stack space={2}>
         <Checkbox

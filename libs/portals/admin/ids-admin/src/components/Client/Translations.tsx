@@ -1,6 +1,6 @@
 import { Box, Input, Stack, Tabs } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { m } from '../../lib/messages'
 import { AuthApplicationTranslation } from './Client.loader'
 import ContentCard from '../../shared/components/ContentCard'
@@ -8,8 +8,9 @@ import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action
 
 interface TranslationsProps {
   translations: AuthApplicationTranslation[]
+  inSync?: boolean
 }
-const Translations = ({ translations }: TranslationsProps) => {
+const Translations = ({ translations, inSync = true }: TranslationsProps) => {
   const { formatMessage } = useLocale()
   const [activeTab, setActiveTab] = useState<string>('0')
   const [copyTranslations, setCopyTranslations] = useState(
@@ -18,6 +19,15 @@ const Translations = ({ translations }: TranslationsProps) => {
       value: translations.find((t) => t.locale === locale)?.value || '',
     })),
   )
+
+  useEffect(() => {
+    setCopyTranslations(
+      ['is', 'en'].map((locale) => ({
+        locale: locale,
+        value: translations.find((t) => t.locale === locale)?.value || '',
+      })),
+    )
+  }, [translations])
 
   const onChangeTranslations = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -34,6 +44,7 @@ const Translations = ({ translations }: TranslationsProps) => {
         console.log('saveOnAllEnvironments: ', saveOnAllEnvironments)
       }}
       intent={ClientFormTypes.translations}
+      inSync={inSync}
     >
       <Stack space={3}>
         <Tabs

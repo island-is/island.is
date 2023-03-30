@@ -22,11 +22,30 @@ import Delegation from './Delegations'
 
 const Client = () => {
   const client = useLoaderData() as AuthClient
-
   const { formatMessage } = useLocale()
   const [selectedEnvironment, setSelectedEnvironment] = useState<
     AuthClient['environments'][0]
   >(client.environments[0])
+
+  const checkIfInSync = (variables: string[]) => {
+    for (const variable of variables) {
+      for (const env of client.environments) {
+        if (
+          JSON.stringify(
+            env[variable as keyof AuthClient['environments'][0]],
+          ) !==
+          JSON.stringify(
+            selectedEnvironment[
+              variable as keyof AuthClient['environments'][0]
+            ],
+          )
+        ) {
+          return false
+        }
+      }
+    }
+    return true
+  }
 
   return (
     <GridContainer>
@@ -38,6 +57,7 @@ const Client = () => {
               <Text variant="h2">
                 {client.environments[0].displayName[0].value}
               </Text>
+              {selectedEnvironment.environment}
             </Stack>
           </GridColumn>
           <GridColumn span="6/12">
@@ -70,10 +90,14 @@ const Client = () => {
           </GridColumn>
         </GridRow>
         <BasicInfo clientId={selectedEnvironment.clientId} />
-        <Translations translations={selectedEnvironment.displayName} />
+        <Translations
+          translations={selectedEnvironment.displayName}
+          inSync={checkIfInSync(['displayName'])}
+        />
         <ClientsUrl
           redirectUris={selectedEnvironment.redirectUris}
           postLogoutRedirectUris={selectedEnvironment.postLogoutRedirectUris}
+          inSync={checkIfInSync(['redirectUris', 'postLogoutRedirectUris'])}
         />
         <Lifetime
           absoluteLifetime={selectedEnvironment.absoluteRefreshTokenLifetime}
@@ -82,6 +106,11 @@ const Client = () => {
             selectedEnvironment.refreshTokenExpiration ===
             RefreshTokenExpiration.Sliding
           }
+          inSync={checkIfInSync([
+            'absoluteRefreshTokenLifetime',
+            'slidingRefreshTokenLifetime',
+            'refreshTokenExpiration',
+          ])}
         />
         <Delegation
           supportsProcuringHolders={
@@ -96,6 +125,14 @@ const Client = () => {
             selectedEnvironment.supportsCustomDelegation
           }
           requireApiScopes={selectedEnvironment.requireApiScopes}
+          inSync={checkIfInSync([
+            'supportsProcuringHolders',
+            'supportsLegalGuardians',
+            'promptDelegations',
+            'supportsPersonalRepresentatives',
+            'supportsCustomDelegation',
+            'requireApiScopes',
+          ])}
         />
       </Stack>
     </GridContainer>

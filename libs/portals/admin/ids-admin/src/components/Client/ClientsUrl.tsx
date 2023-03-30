@@ -15,10 +15,12 @@ import ContentCard from '../../shared/components/ContentCard'
 interface ClientsUrlProps {
   redirectUris: string[]
   postLogoutRedirectUris: string[]
+  inSync?: boolean
 }
 const ClientsUrl = ({
   redirectUris,
   postLogoutRedirectUris,
+  inSync = true,
 }: ClientsUrlProps) => {
   const actionData = useActionData() as EditApplicationResult<
     typeof schema.applicationUrl
@@ -29,6 +31,10 @@ const ClientsUrl = ({
     postLogoutRedirectUris,
   })
   const { formatErrorMessage } = useErrorFormatMessage()
+
+  useEffect(() => {
+    setUris({ redirectUris, postLogoutRedirectUris })
+  }, [redirectUris, postLogoutRedirectUris])
 
   // Generic onChange handler, name in input will need to match object name to change
   const onChangeURLS = (
@@ -51,6 +57,7 @@ const ClientsUrl = ({
         return
       }}
       intent={ClientFormTypes.applicationUrls}
+      inSync={inSync}
     >
       <Stack space={3}>
         <Stack space={1}>
