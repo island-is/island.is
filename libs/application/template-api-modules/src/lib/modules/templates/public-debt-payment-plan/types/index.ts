@@ -1,3 +1,5 @@
+import { PaymentsDT } from '@island.is/clients/payment-schedule'
+
 export type chargeType = {
   id: string
   name: string
@@ -10,7 +12,7 @@ export type chargeType = {
 export type PublicDebtPaymentPlanPayment = {
   id: PublicDebtPaymentScheduleType
   totalAmount: number
-  distribution: string
+  distribution: PaymentsDT[]
   amountPerMonth: number
   numberOfMonths: number
   organization: string
