@@ -99,7 +99,7 @@ export const EducationGraduation = () => {
             return (
               <ActionCard
                 key={`education-graduation-${index}`}
-                heading={item.institution.displayName}
+                heading={item.institution?.displayName}
                 text={
                   item.faculty + ' - ' + item.studyProgram + ' ' + item.degree
                 }
@@ -109,18 +109,24 @@ export const EducationGraduation = () => {
                     defaultMessage: 'Skoða',
                   }).defaultMessage,
                   variant: 'text',
-                  url: EducationPaths.EducationHaskoliGraduationDetail.replace(
-                    ':id',
-                    item.trackNumber.toString(),
-                  ),
+                  url: item?.trackNumber
+                    ? EducationPaths.EducationHaskoliGraduationDetail.replace(
+                        ':id',
+                        item.trackNumber.toString(),
+                      )
+                    : '',
                 }}
-                image={{
-                  type: 'image',
-                  url: getOrganizationLogoUrl(
-                    item.institution.displayName,
-                    organizations,
-                  ),
-                }}
+                image={
+                  item.institution?.displayName
+                    ? {
+                        type: 'image',
+                        url: getOrganizationLogoUrl(
+                          item.institution.displayName,
+                          organizations,
+                        ),
+                      }
+                    : undefined
+                }
               />
             )
           })}

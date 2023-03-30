@@ -22,8 +22,8 @@ export class StudentModel {
   @Field(() => String)
   name!: string
 
-  @Field(() => String)
-  nationalId!: string
+  @Field(() => String, { nullable: true })
+  nationalId?: string
 
   @Field(() => String)
   graduationDate!: string
@@ -31,8 +31,8 @@ export class StudentModel {
   @Field(() => Number)
   trackNumber!: number
 
-  @Field(() => InstitutionModel)
-  institution!: InstitutionModel
+  @Field(() => InstitutionModel, { nullable: true })
+  institution?: InstitutionModel
 
   @Field(() => String)
   school!: string

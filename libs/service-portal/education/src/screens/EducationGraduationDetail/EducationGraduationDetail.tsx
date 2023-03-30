@@ -32,12 +32,12 @@ const GetStudentInfoQuery = gql`
     $input: UniversityOfIcelandStudentInfoQueryInput!
   ) {
     universityOfIcelandStudentInfo(input: $input) {
-      track {
+      track(input: $input) {
         transcript {
           degree
           faculty
           graduationDate
-          instutution {
+          institution {
             id
             displayName
           }
@@ -220,7 +220,7 @@ export const EducationGraduationDetail = () => {
             })}
             loading={loading}
             content={formatNationalId(
-              studentInfo?.institution.displayName ?? '',
+              studentInfo?.institution?.displayName ?? '',
             )}
           />
           <Divider />

@@ -3,7 +3,7 @@ import { IsNumber, IsOptional, IsString } from 'class-validator'
 
 @InputType()
 export class UniversityOfIcelandStudentInfoQueryInput {
-  @Field()
+  @Field({ nullable: true })
   @IsNumber()
   @IsOptional()
   trackNumber?: number
