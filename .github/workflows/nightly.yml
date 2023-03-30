@@ -42,7 +42,13 @@ jobs:
       - name: Prepare
         id: last_build
         run: |
-          ./scripts/ci/00_prepare-base-tags.sh
+          echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
+          export HEAD_REF="$GITHUB_HEAD_REF"
+          export BASE_REF="$GITHUB_BASE_REF"
+          export PR_REF=$GITHUB_SHA
+          export SHELL=/usr/bin/bash
+          export WORKFLOW_ID=pullrequest
+          source ./scripts/ci/00_prepare-base-tags.sh $(git merge-base HEAD $GITHUB_BASE_REF)
           echo "::set-output name=DOCKER_TAG::${DOCKER_TAG}"
 
   runner:
