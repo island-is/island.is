@@ -162,7 +162,15 @@ export const representativeTransitionRule: RolesRule = {
     CaseTransition.OPEN,
     CaseTransition.SUBMIT,
     CaseTransition.DELETE,
+    CaseTransition.APPEAL,
   ],
+}
+
+export const defenderTransitionRule: RolesRule = {
+  role: UserRole.DEFENDER,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'transition',
+  dtoFieldValues: [CaseTransition.APPEAL],
 }
 
 // Allows judges to receive, accept, reject and dismiss cases,
