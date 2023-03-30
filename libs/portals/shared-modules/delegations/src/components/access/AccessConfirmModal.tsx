@@ -41,7 +41,7 @@ export const AccessConfirmModal = ({
   const { md } = useBreakpoint()
   const [error, setError] = useState(formError ?? false)
 
-  const { showShadow, pxProps } = useDynamicShadow({ rootMargin: '-128px', debug: true, isDisabled: !rest.isVisible })
+  const { showShadow, pxProps } = useDynamicShadow({ rootMargin: '-128px', isDisabled: !rest.isVisible })
 
 
   const onConfirmHandler = async () => {
@@ -119,7 +119,7 @@ export const AccessConfirmModal = ({
         validityPeriod={validityPeriod}
         listMarginBottom={[0, 0, 10]}
       />
-      <div {...pxProps} data-confirm={delegation?.id} />
+      <div {...pxProps} />
 
       <Box position="sticky" bottom={0}>
         <DelegationsFormFooter

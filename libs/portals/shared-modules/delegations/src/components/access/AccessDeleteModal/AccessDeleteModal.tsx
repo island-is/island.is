@@ -88,7 +88,7 @@ export const AccessDeleteModal = ({
   const fromName = userInfo?.profile.name
   const fromNationalId = userInfo?.profile.nationalId
 
-  const { showShadow, pxProps } = useDynamicShadow({ rootMargin: '-128px', debug: true, isDisabled: !rest.isVisible })
+  const { showShadow, pxProps } = useDynamicShadow({ rootMargin: '-128px', isDisabled: !rest.isVisible })
 
   return (
     <Modal
@@ -148,7 +148,7 @@ export const AccessDeleteModal = ({
           loading={scopeTreeLoading}
           listMarginBottom={[0, 0, 10]}
         />
-        <div {...pxProps} data-delete={delegation?.id} />
+        <div {...pxProps} />
       </Box>
       <Box position="sticky" bottom={0}>
         <DelegationsFormFooter

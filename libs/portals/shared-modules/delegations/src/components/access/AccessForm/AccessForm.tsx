@@ -55,13 +55,13 @@ export const AccessForm = ({
   const routes = useRoutes()
   const { delegationId } = useParams() as UseParams
   const navigate = useNavigate()
-  const { lg } = useBreakpoint()
+  const { lg, md } = useBreakpoint()
   const [openConfirmModal, setOpenConfirmModal] = useState(false)
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const [formError, setFormError] = useState(false)
   const [updateError, setUpdateError] = useState(false)
 
-  const { showShadow, pxProps } = useDynamicShadow({ rootMargin: '-112px', debug: true, })
+  const { showShadow, pxProps } = useDynamicShadow({ rootMargin: md ? '112px' : '0px' })
 
   const onError = () => {
     toast.error(formatMessage(portalMessages.somethingWrong))
@@ -164,7 +164,7 @@ export const AccessForm = ({
               />
             ))}
           </div>
-          <div {...pxProps} data-form />
+          <div {...pxProps} />
         </form>
         <Box position="sticky" bottom={0} marginTop={20}>
           <DelegationsFormFooter

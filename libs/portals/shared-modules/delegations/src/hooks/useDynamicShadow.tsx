@@ -18,38 +18,40 @@ interface UseDynamicShadowOptions extends Omit<IntersectionObserverInit, 'thresh
 
 /**
  * This hooks works by observing if a tranparent element is inview or not.
+ * The debug prop will show the pixel element in green and console.log the events.
  */
-export const useDynamicShadow = (config: UseDynamicShadowOptions) => {
-  const { debug, isDisabled, ...options } = config
+export const useDynamicShadow = (config: UseDynamicShadowOptions = {}) => {
+  const { debug = false, isDisabled = false, ...options } = config
   const ref = useRef<HTMLDivElement>(null)
   const [showShadow, setShowShadow] = useState(false);
   const isObserving = useRef(false);
 
   useEffect(() => {
-    if (debug) console.log('useDynamicShadow, useEffect', ref.current)
+    if (debug) {
+      console.log('useDynamicShadow, useEffect', ref.current)
+    }
 
     if (!ref.current) return;
     if (isObserving.current || isDisabled) return;
 
     const observer = new IntersectionObserver(function (entries) {
       if (entries[0].intersectionRatio === 0) {
-        if (debug) console.log('useDynamicShadow, 🔴 No intersection with screen')
+        if (debug) { console.log('useDynamicShadow, 🔴 No intersection with screen') }
         setShowShadow(true)
       }
 
       else if (entries[0].intersectionRatio === 1) {
-
         if (debug) console.log('useDynamicShadow, 🟢 Fully intersects with screen')
         setShowShadow(false)
       }
-    }, { threshold: [0, 1], ...options });
+    }, { threshold: [0, 1], root: options.root, rootMargin: options.rootMargin });
 
-    if (debug) console.log('useDynamicShadow, 🔌 connect')
+    if (debug) { console.log('useDynamicShadow, 🔌 connect') }
     isObserving.current = true;
     observer.observe(ref.current);
 
     return () => {
-      if (debug) console.log('useDynamicShadow, ✂️ disconnect')
+      if (debug) { console.log('useDynamicShadow, ✂️ disconnect') }
       isObserving.current = false;
       observer.disconnect()
     };
