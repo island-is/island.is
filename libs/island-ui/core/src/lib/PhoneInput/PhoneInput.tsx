@@ -39,9 +39,10 @@ const getDefaultValue = (
   defaultValue?: string,
   defaultCountryCode?: string,
 ) => {
-  return !defaultValue || defaultValue?.startsWith('+')
-    ? defaultValue
-    : `${defaultCountryCode ?? ''}${defaultValue}`
+  const cleanedValue = defaultValue?.replace(/-/g, '')
+  return !cleanedValue || cleanedValue?.startsWith('+')
+    ? cleanedValue
+    : `${defaultCountryCode ?? ''}${cleanedValue}`
 }
 
 /**
@@ -160,10 +161,14 @@ export const PhoneInput = forwardRef(
       extract the country code from it and set it as the selected country code.
      */
     const handleInputChange = (e: SyntheticEvent<HTMLInputElement>) => {
-      if (e.currentTarget.value.startsWith('+') && !disableDropdown) {
+      if (e.currentTarget.value.startsWith('+')) {
         const updatedCC = getDefaultCountryCode(e.currentTarget.value)
         e.currentTarget.value = e.currentTarget.value.replace(updatedCC, '')
-        setSelectedCountryCode(countryCodes.find((x) => x.value === updatedCC))
+        if (!disableDropdown) {
+          setSelectedCountryCode(
+            countryCodes.find((x) => x.value === updatedCC),
+          )
+        }
       }
     }
 
@@ -285,6 +290,10 @@ export const PhoneInput = forwardRef(
                       styles.inputBackgroundXl,
                     ),
                     styles.inputSize[size],
+                    {
+                      [styles.inputDisabled]:
+                        disabled || readOnly || disableDropdown,
+                    },
                   )}
                   id={id}
                   name={name}
