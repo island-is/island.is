@@ -1,6 +1,5 @@
 import { FC, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { FieldErrors, FieldValues } from 'react-hook-form/dist/types/form'
 import * as kennitala from 'kennitala'
 import {
   AlertMessage,
@@ -9,7 +8,6 @@ import {
   GridColumn,
   GridRow,
   LoadingDots,
-  Text,
 } from '@island.is/island-ui/core'
 import { formatText, getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
@@ -26,10 +24,6 @@ import { IDENTITY_QUERY } from '../../graphql/'
 import { STUDENT_MENTORABILITY_QUERY } from '../../graphql'
 import { LearnersPermitFakeData, YES } from '../../lib/constants'
 
-interface FindStudentFieldBaseProps extends FieldBaseProps {
-  errors: FieldErrors<FieldValues>
-}
-
 const prefix = 'studentMentorability'
 
 const fieldNames = {
@@ -40,20 +34,13 @@ const fieldNames = {
   studentIsMentorable: `${prefix}.studentIsMentorable`,
 }
 
-const FindStudent: FC<FindStudentFieldBaseProps> = ({ application }) => {
+const FindStudent: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const fakeData = getValueViaPath<LearnersPermitFakeData>(
     application.answers,
     'fakeData',
   )
-  const {
-    setValue,
-    watch,
-    errors,
-    clearErrors,
-    setError,
-    getValues,
-  } = useFormContext()
+  const { setValue, watch, clearErrors, setError, getValues } = useFormContext()
   const [getIdentity, { loading: identityQueryLoading }] = useLazyQuery<
     Query,
     { input: IdentityInput }
@@ -169,11 +156,6 @@ const FindStudent: FC<FindStudentFieldBaseProps> = ({ application }) => {
             backgroundColor="blue"
             icon={studentName ? 'checkmarkCircle' : undefined}
             loading={identityQueryLoading}
-            error={
-              errors?.pickRole?.electPerson?.lookupError?.message ||
-              errors?.pickRole?.electPerson?.electedPersonNationalId ||
-              undefined
-            }
           />
         </GridColumn>
         <GridColumn span="6/12">
