@@ -191,6 +191,7 @@ describe('ClientsController', () => {
         await factory.createDomain({ name: domainName })
         const client = await factory.createClient({
           clientId: `${domainName}/c1`,
+          domainName,
         })
 
         await factory.createTranslations(client, 'en', clientTranslations)
