@@ -96,9 +96,11 @@ export const getRecipients = (
       approved: answers.buyer.approved,
     })
   }
+
   const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
     ({ wasRemoved }) => wasRemoved !== 'true',
   )
+
   // Buyer's co-owners
   const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(
     (x) => x.type === 'coOwner',
@@ -180,9 +182,11 @@ export const getRecipientBySsn = (
       approved: answers.buyer.approved,
     }
   }
+
   const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
     ({ wasRemoved }) => wasRemoved !== 'true',
   )
+
   // Buyer's co-owners
   const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(
     (x) => x.type === 'coOwner',

@@ -64,16 +64,14 @@ export const getRecipients = (
   const currentCoOwners = answers.ownerCoOwners
   if (roles.includes(EmailRole.currentCoOwner) && currentCoOwners) {
     for (let i = 0; i < currentCoOwners.length; i++) {
-      if (currentCoOwners[i].wasRemoved !== 'true') {
-        recipientList.push({
-          ssn: currentCoOwners[i].nationalId,
-          name: currentCoOwners[i].name,
-          email: currentCoOwners[i].email,
-          phone: currentCoOwners[i].phone,
-          role: EmailRole.currentCoOwner,
-          approved: currentCoOwners[i].approved,
-        })
-      }
+      recipientList.push({
+        ssn: currentCoOwners[i].nationalId,
+        name: currentCoOwners[i].name,
+        email: currentCoOwners[i].email,
+        phone: currentCoOwners[i].phone,
+        role: EmailRole.currentCoOwner,
+        approved: currentCoOwners[i].approved,
+      })
     }
   }
 
