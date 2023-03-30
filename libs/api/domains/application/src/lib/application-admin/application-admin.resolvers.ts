@@ -12,16 +12,12 @@ import { Scopes } from '@island.is/auth-nest-tools'
 import { ApplicationApplicationsAdminInput } from './dto/applications-applications-admin-input'
 import { ApplicationAdmin } from '../application.model'
 import { ApplicationService } from '../application.service'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => ApplicationAdmin)
 @Scopes(AdminPortalScope.applicationSystem)
 export class ApplicationAdminResolver {
-  constructor(
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    private applicationService: ApplicationService,
-  ) {}
+  constructor(private applicationService: ApplicationService) {}
 
   @Query(() => [ApplicationAdmin], { nullable: true })
   async applicationApplicationsAdmin(
@@ -31,7 +27,6 @@ export class ApplicationAdminResolver {
     @Args('input')
     input: ApplicationApplicationsAdminInput,
   ): Promise<ApplicationAdmin[] | null> {
-    this.logger.debug('applicationApplicationsAdmin in the admin resolver')
     return this.applicationService.findAllAdmin(user, locale, input)
   }
 }
