@@ -2,10 +2,7 @@ import { CanActivate } from '@nestjs/common'
 
 import { RolesGuard } from '@island.is/judicial-system/auth'
 
-import {
-  CaseExistsGuard,
-  CaseWriteGuard,
-} from '../../../case'
+import { CaseExistsGuard, CaseWriteGuard } from '../../../case'
 import { FileController } from '../../file.controller'
 
 describe('FileController - Create presigned post guards', () => {

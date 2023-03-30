@@ -2,10 +2,7 @@ import { CanActivate } from '@nestjs/common'
 
 import { RolesGuard } from '@island.is/judicial-system/auth'
 
-import {
-  CaseExistsGuard,
-  CaseWriteGuard,
-} from '../../../case'
+import { CaseExistsGuard, CaseWriteGuard } from '../../../case'
 import { CaseFileExistsGuard } from '../../guards/caseFileExists.guard'
 import { FileController } from '../../file.controller'
 
