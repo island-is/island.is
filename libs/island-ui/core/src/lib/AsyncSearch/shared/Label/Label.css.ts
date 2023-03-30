@@ -10,3 +10,8 @@ export const label = style({
   fontSize: 14,
   lineHeight: 1.142857,
 })
+
+export const hasError = style({
+  color: `${theme.color.red600} !important`,
+})
+

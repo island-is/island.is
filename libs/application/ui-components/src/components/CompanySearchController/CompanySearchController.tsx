@@ -1,15 +1,16 @@
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import { AlertMessage, AsyncSearch, Box, Icon } from '@island.is/island-ui/core'
 import { Controller, useFormContext } from 'react-hook-form'
-import { AsyncSearch, Box, AlertMessage } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import React, { FC, useEffect, useMemo, useState } from 'react'
+import {
+  useIsEmployerValidLazyQuery,
+  useSearchCompaniesLazyQuery,
+} from '../../../gen/graphql'
+
+import { CompanySearchItem } from './CompanySearchItem'
 import { coreErrorMessages } from '@island.is/application/core'
 import debounce from 'lodash/debounce'
-import { CompanySearchItem } from './CompanySearchItem'
 import { debounceTime } from '@island.is/shared/constants'
-import {
-  useSearchCompaniesLazyQuery,
-  useIsEmployerValidLazyQuery,
-} from '../../../gen/graphql'
+import { useLocale } from '@island.is/localization'
 
 interface Props {
   id: string
@@ -19,11 +20,14 @@ interface Props {
   placeholder?: string
   initialInputValue?: string
   inputValue?: string
+  icon?: React.ComponentProps<typeof Icon>['icon']
   colored?: boolean
   setLabelToDataSchema?: boolean
   shouldIncludeIsatNumber?: boolean
+  error?: string
   setNationalId?: (s: string) => void
   checkIfEmployerIsOnForbiddenList?: boolean
+  required?: boolean
 }
 
 export const CompanySearchController: FC<Props> = ({
@@ -33,12 +37,14 @@ export const CompanySearchController: FC<Props> = ({
   name = id,
   label,
   placeholder,
+  error,
   initialInputValue = '',
   inputValue = '',
   colored = true,
   setLabelToDataSchema = true,
   setNationalId,
   checkIfEmployerIsOnForbiddenList,
+  required,
 }) => {
   const { clearErrors, setValue, getValues } = useFormContext()
   const { formatMessage } = useLocale()
@@ -155,9 +161,14 @@ export const CompanySearchController: FC<Props> = ({
             <AsyncSearch
               label={label}
               loading={loading || employerValidLoading}
+              required={required}
               options={getSearchOptions(
                 searchQuery,
                 data?.companyRegistryCompanies,
+              )}
+              hasError={error !== undefined}
+              errorMessage={formatMessage(
+                coreErrorMessages.defaultError,
               )}
               size="large"
               placeholder={placeholder}
@@ -184,9 +195,9 @@ export const CompanySearchController: FC<Props> = ({
                     id,
                     setLabelToDataSchema
                       ? {
-                          nationalId: value,
-                          label,
-                        }
+                        nationalId: value,
+                        label,
+                      }
                       : { nationalId: value },
                   )
                   getIsatNumber(value)
@@ -229,3 +240,4 @@ export const CompanySearchController: FC<Props> = ({
 }
 
 export default CompanySearchController
+

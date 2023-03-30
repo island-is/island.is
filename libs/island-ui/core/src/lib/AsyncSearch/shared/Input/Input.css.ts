@@ -1,6 +1,10 @@
 import { style, styleVariants } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
+export const hasLabel = style({
+  padding: '16px 46px 0 16px',
+})
+
 export const input = style({
   appearance: 'none',
   position: 'relative',
@@ -30,10 +34,6 @@ export const input = style({
   },
 })
 
-export const hasLabel = style({
-  padding: '16px 46px 0 16px',
-})
-
 export const open = style({
   borderBottomLeftRadius: 0,
   borderBottomRightRadius: 0,
@@ -46,8 +46,6 @@ export const open = style({
 })
 
 export const colored = style({
-  background: theme.color.blue100,
-  borderColor: theme.color.blue200,
   selectors: {
     [`&:focus:hover`]: {
       borderColor: theme.color.blue200,
@@ -127,4 +125,9 @@ export const blueberry = style({
       border: 'none',
     },
   },
+})
+
+export const hasError = style({
+  borderColor: `${theme.color.red600}`,
+  background: `${theme.color.red100}`,
 })
