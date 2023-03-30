@@ -115,6 +115,15 @@ Disabled.args = {
   disabled: true,
 }
 
+export const DisabledWithValue = Template.bind({})
+DisabledWithValue.args = {
+  label: 'This is the label',
+  placeholder: 'This is the placeholder',
+  name: 'DisabledWithValue',
+  defaultValue: 'This is the value',
+  disabled: true,
+}
+
 export const ReadOnly = Template.bind({})
 ReadOnly.args = {
   label: 'Read only label',

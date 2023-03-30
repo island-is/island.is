@@ -119,7 +119,7 @@ export const Input = forwardRef(
               styles.label({
                 hasError,
                 readOnly,
-                disabledEmptyInput: disabled && !value && !defaultValue,
+                disabled,
               }),
               styles.labelSizes[size],
             )}
@@ -162,7 +162,7 @@ export const Input = forwardRef(
                   styles.label({
                     hasError,
                     readOnly,
-                    disabledEmptyInput: disabled && !value && !defaultValue,
+                    disabled,
                   }),
                   styles.labelSizes[size],
                 )}
@@ -183,7 +183,7 @@ export const Input = forwardRef(
             )}
             <InputComponent
               className={cn(
-                styles.input({ hasLabel, rightAlign, textarea }),
+                styles.input({ hasLabel, rightAlign, textarea, disabled }),
                 resolveResponsiveProp(
                   backgroundColor,
                   styles.inputBackgroundXs,
