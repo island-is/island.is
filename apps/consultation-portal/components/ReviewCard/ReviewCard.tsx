@@ -7,21 +7,37 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { SimpleCardSkeleton } from '../Card'
-import format from 'date-fns/format'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import * as styles from './ReviewCard.css'
+import { getShortDate } from '../../utils/helpers/dateFormatter'
+
+// One line is 27
+const SCROLL_HEIGHT = 27
 
 export const ReviewCard = ({ advice }) => {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(true)
+  const [scrollHeight, setScrollHeight] = useState(null)
+
+  const ref = useRef(null)
+
+  useEffect(() => {
+    if (ref.current) {
+      setScrollHeight(ref.current.scrollHeight)
+      if (ref.current.scrollHeight > SCROLL_HEIGHT) {
+        setOpen(false)
+      }
+    }
+    ref.current && setScrollHeight(ref.current.scrollHeight)
+  }, [])
 
   return (
     <SimpleCardSkeleton>
       <Stack space={1}>
         <Inline justifyContent="spaceBetween" flexWrap="nowrap" alignY="center">
           <Text variant="eyebrow" color="purple400">
-            {format(new Date(advice.created), 'dd.MM.yyyy')}
+            {getShortDate(advice.created)}
           </Text>
-          {advice.content && advice.content.length > 50 && (
+          {scrollHeight > SCROLL_HEIGHT && (
             <FocusableBox onClick={() => setOpen(!open)}>
               <Icon
                 icon={open ? 'close' : 'open'}
@@ -35,7 +51,7 @@ export const ReviewCard = ({ advice }) => {
         <Text variant="h3">
           {advice?.number} - {advice?.participantName}
         </Text>
-        <Text variant="default" truncate={!open}>
+        <Text variant="default" truncate={!open} ref={ref}>
           {advice.content}
         </Text>
         {advice?.adviceDocuments &&

@@ -44,6 +44,25 @@ export const Draft: Form = buildForm({
   renderLastScreenBackButton: true,
   children: [
     buildSection({
+      id: 'introSection',
+      title: m.introTitle,
+      children: [
+        buildMultiField({
+          id: 'introApplicant',
+          title: m.passport,
+          description: m.introDescription,
+          children: [
+            buildDescriptionField({
+              id: 'introDescription',
+              title: '',
+              description: '',
+            }),
+          ],
+        }),
+      ],
+    }),
+
+    buildSection({
       id: 'externalDataSection',
       title: m.dataCollectionTitle,
       children: [

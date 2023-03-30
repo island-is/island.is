@@ -100,6 +100,9 @@ export class TransportAuthorityApi {
     const sellerEmail = answers?.seller?.email
     const buyerSsn = answers?.buyer?.nationalId
     const buyerEmail = answers?.buyer?.email
+
+    // Note: Since we dont have application.created here, we will just use
+    // the current timestamp
     const todayStr = new Date().toISOString()
 
     // No need to continue with this validation in user is neither seller nor buyer
@@ -108,10 +111,13 @@ export class TransportAuthorityApi {
       return null
     }
 
-    const buyerCoOwners = answers?.buyerCoOwnerAndOperator?.filter(
+    const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'coOwner',
     )
-    const buyerOperators = answers?.buyerCoOwnerAndOperator?.filter(
+    const buyerOperators = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'operator',
     )
 
@@ -156,10 +162,14 @@ export class TransportAuthorityApi {
     const permno = answers?.pickVehicle?.plate
     const ownerSsn = answers?.owner?.nationalId
     const ownerEmail = answers?.owner?.email
+
+    // Note: Since we dont have application.created here, we will just use
+    // the current timestamp
     const todayStr = new Date().toISOString()
 
-    const newCoOwners = answers?.buyerCoOwnerAndOperator?.filter(
-      (x) => x.type === 'coOwner',
+    const currentOperators = await this.vehicleOperatorsClient.getOperators(
+      user,
+      permno,
     )
 
     const currentOwnerChange = await this.vehicleOwnerChangeClient.getNewestOwnerChange(
@@ -167,10 +177,16 @@ export class TransportAuthorityApi {
       permno,
     )
 
-    const currentOperators = await this.vehicleOperatorsClient.getOperators(
-      user,
-      permno,
+    const filteredOldCoOwners = answers?.ownerCoOwners?.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
     )
+    const filteredNewCoOwners = answers?.coOwners?.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const filteredCoOwners = [
+      ...(filteredOldCoOwners ? filteredOldCoOwners : []),
+      ...(filteredNewCoOwners ? filteredNewCoOwners : []),
+    ]
 
     const result = await this.vehicleOwnerChangeClient.validateAllForOwnerChange(
       user,
@@ -196,9 +212,9 @@ export class TransportAuthorityApi {
           email: null,
           isMainOperator: operator.isMainOperator || false,
         })),
-        coOwners: newCoOwners?.map((coOwner) => ({
-          ssn: coOwner.nationalId,
-          email: coOwner.email,
+        coOwners: filteredCoOwners.map((x) => ({
+          ssn: x.nationalId,
+          email: x.email,
         })),
       },
     )
@@ -260,10 +276,21 @@ export class TransportAuthorityApi {
 
     const permno = answers?.pickVehicle?.plate
 
-    const operators = (answers?.operators || []).map((operator) => ({
+    const filteredOldOperators = answers?.oldOperators?.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const filteredNewOperators = answers?.operators?.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const filteredOperators = [
+      ...(filteredOldOperators ? filteredOldOperators : []),
+      ...(filteredNewOperators ? filteredNewOperators : []),
+    ]
+
+    const operators = filteredOperators.map((operator) => ({
       ssn: operator.nationalId,
       isMainOperator:
-        answers.operators && answers.operators?.length > 1
+        filteredOperators.length > 1
           ? operator.nationalId === answers?.mainOperator?.nationalId
           : true,
     }))
