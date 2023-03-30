@@ -151,12 +151,6 @@ describe('CaseController - Transition', () => {
               state: newState,
               parentCaseId:
                 transition === CaseTransition.DELETE ? null : undefined,
-              rulingDate:
-                isIndictmentCase(type) && completedCaseStates.includes(newState)
-                  ? date
-                  : transition === CaseTransition.REOPEN
-                  ? null
-                  : undefined,
               courtRecordSignatoryId:
                 transition === CaseTransition.REOPEN ? null : undefined,
               courtRecordSignatureDate:
@@ -273,7 +267,7 @@ describe('CaseController - Transition', () => {
 
 
     `.describe(
-    '$transition $caseState case transitioning from appeal state $currentAppealState to $newAppealState appeal state',
+    '$transition $caseState case transitioning from $currentAppealState to $newAppealState appeal state',
     ({ transition, caseState, currentAppealState, newAppealState }) => {
       each([...restrictionCases]).describe('%s case', (type) => {
         const caseId = uuid()
@@ -312,7 +306,9 @@ describe('CaseController - Transition', () => {
           expect(mockCaseModel.update).toHaveBeenCalledWith(
             {
               appealState: newAppealState,
-              prosecutorPostponedAppealDate: date,
+              prosecutorPostponedAppealDate: currentAppealState
+                ? undefined
+                : date,
             },
             { where: { id: caseId }, transaction },
           )

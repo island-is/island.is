@@ -749,7 +749,11 @@ export class CaseService {
     return this.sequelize
       .transaction(async (transaction) => {
         if (receivingCase) {
-          update.state = transitionCase(CaseTransition.RECEIVE, theCase.state)
+          update.state = transitionCase(
+            CaseTransition.RECEIVE,
+            theCase.state,
+            theCase.appealState,
+          ).state
         }
 
         const [numberOfAffectedRows] = await this.caseModel.update(update, {

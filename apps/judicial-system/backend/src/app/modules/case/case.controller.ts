@@ -82,7 +82,6 @@ import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { transitionCase } from './state/case.state'
-import { transitionAppealCase } from './state/caseAppeal.state'
 import { CaseService, UpdateCase } from './case.service'
 
 @Controller('api')
@@ -215,24 +214,13 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Transitioning case ${caseId}`)
 
-    const state = transitionCase(transition.transition, theCase.state)
-    const appealState = transitionAppealCase(
+    const states = transitionCase(
       transition.transition,
       theCase.state,
       theCase.appealState,
     )
 
-    let update: UpdateCase = {}
-
-    if (state !== theCase.state) {
-      update = { state }
-      if (
-        isIndictmentCase(theCase.type) &&
-        completedCaseStates.includes(state)
-      ) {
-        update.rulingDate = nowFactory()
-      }
-    }
+    const update: UpdateCase = states
 
     if (transition.transition === CaseTransition.DELETE) {
       update.parentCaseId = null
@@ -244,21 +232,16 @@ export class CaseController {
       update.courtRecordSignatureDate = null
     }
 
-    if (appealState !== undefined) {
-      // TODO: What if user is neither prosecutor nor defender?
-      if (user.role === UserRole.PROSECUTOR) {
-        update.prosecutorPostponedAppealDate = nowFactory()
-      } else if (user.role === UserRole.DEFENDER) {
-        update.accusedPostponedAppealDate = nowFactory()
-      }
-      update.appealState = appealState
+    // The only roles that can appeal a case are prosecutor roles
+    if (states.appealState === CaseAppealState.APPEALED) {
+      update.prosecutorPostponedAppealDate = nowFactory()
     }
 
     const updatedCase = await this.caseService.update(
       theCase,
       update,
       user,
-      state !== CaseState.DELETED,
+      states.state !== CaseState.DELETED,
     )
 
     // No need to wait
@@ -466,7 +449,6 @@ export class CaseController {
     }
 
     const pdf = await this.caseService.getCustodyPdf(theCase)
-
     res.end(pdf)
   }
 
