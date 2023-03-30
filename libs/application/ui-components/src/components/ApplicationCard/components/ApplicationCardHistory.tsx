@@ -1,43 +1,39 @@
-import useComponentSize from '@rehooks/component-size'
 import React, { useRef, useState } from 'react'
+import {
+  Box,
+  Button,
+  FormStepperThemes,
+  HistorySection,
+  HistoryStepper,
+} from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import useComponentSize from '@rehooks/component-size'
 import AnimateHeight from 'react-animate-height'
-import { Box } from '../../Box/Box'
-import { Button } from '../../Button/Button'
-import HistorySection from '../../FormStepper/HistorySection'
-import HistoryStepper from '../../FormStepper/HistoryStepper'
-import { FormStepperThemes } from '../../FormStepper/types'
+import { ApplicationCardHistoryItem } from '../types'
+import { coreMessages } from '@island.is/application/core'
 
-export type ActionCardHistoryConfig = {
-  openButtonLabel: string
-  closeButtonLabel: string
-  items?: {
-    date?: string
-    title: string
-    content?: React.ReactNode
-  }[]
-}
-
-type ActionCardHistorySize = 'sm' | 'lg'
+type ApplicationCardHistorySize = 'sm' | 'lg'
 
 interface Props {
-  history: ActionCardHistoryConfig
-  size?: ActionCardHistorySize
+  items: ApplicationCardHistoryItem[]
 }
 
-const sizeMapper: Record<ActionCardHistorySize, number> = {
+const sizeMapper: Record<ApplicationCardHistorySize, number> = {
   sm: 144,
   lg: 216,
 }
 
-export const ActionCardHistory = ({ history, size = 'sm' }: Props) => {
-  const maxHistoryHeight = sizeMapper[size]
+export const ApplicationCardHistory = ({ items }: Props) => {
   const containerRef = useRef<HTMLDivElement>(null)
+  const { formatMessage } = useLocale()
   const { height: historyHeight } = useComponentSize(containerRef)
+  const size = items?.some((x) => !!x.content) ? 'lg' : 'sm'
+  const maxHistoryHeight = sizeMapper[size]
   const [historyState, setHistoryState] = useState<'open' | 'closed'>(
-    history?.items && history.items.length > 1 ? 'closed' : 'open',
+    items && items.length > 1 ? 'closed' : 'open',
   )
 
-  if (!history.items) return null
+  if (!items || items.length === 0) return null
 
   const height = historyState === 'open' ? 'auto' : maxHistoryHeight
 
@@ -46,14 +42,14 @@ export const ActionCardHistory = ({ history, size = 'sm' }: Props) => {
       <AnimateHeight height={height} duration={300}>
         <div ref={containerRef}>
           <HistoryStepper
-            sections={history.items.map(({ date, title, content }, index) => (
+            sections={items.map(({ date, title, content }, index) => (
               <HistorySection
                 key={`history-section-${index}`}
                 section={title}
                 sectionIndex={index}
                 isComplete
                 theme={FormStepperThemes.PURPLE}
-                isLast={index + 1 === history?.items?.length}
+                isLast={index + 1 === items.length}
                 date={date}
                 description={content}
               />
@@ -72,8 +68,8 @@ export const ActionCardHistory = ({ history, size = 'sm' }: Props) => {
               icon={historyState === 'open' ? 'arrowUp' : 'arrowDown'}
             >
               {historyState === 'open'
-                ? history.closeButtonLabel
-                : history.openButtonLabel}
+                ? formatMessage(coreMessages.closeApplicationHistoryLabel)
+                : formatMessage(coreMessages.openApplicationHistoryLabel)}
             </Button>
           </Box>
         </Box>
