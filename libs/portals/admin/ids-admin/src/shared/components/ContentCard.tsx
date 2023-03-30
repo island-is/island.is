@@ -104,8 +104,9 @@ const ContentCard: FC<ContentCardProps> = ({
                 items={[
                   {
                     title: '',
+
                     render: () => (
-                      <>
+                      <div key={`sync-${title}-text`}>
                         <Box
                           justifyContent="center"
                           alignItems="center"
@@ -121,12 +122,12 @@ const ContentCard: FC<ContentCardProps> = ({
                           />
                           <Text variant="small" color="blue400">
                             {inSync
-                              ? 'Settings are the same in all environments.'
-                              : 'SyncSettings are different in some enviroments'}
+                              ? formatMessage(m.syncNotNeeded)
+                              : formatMessage(m.syncNeeded)}
                           </Text>
                         </Box>
                         <Divider />
-                      </>
+                      </div>
                     ),
                   },
                   ...(inSync || dirty
@@ -136,6 +137,7 @@ const ContentCard: FC<ContentCardProps> = ({
                           title: '',
                           render: () => (
                             <Box
+                              key={`sync-${title}-button`}
                               display="flex"
                               justifyContent="center"
                               padding={2}
@@ -151,7 +153,7 @@ const ContentCard: FC<ContentCardProps> = ({
                                   color="blue400"
                                   fontWeight="semiBold"
                                 >
-                                  Sync settings (from this environment)
+                                  {formatMessage(m.syncSettings)}
                                 </Text>
                               </button>
                             </Box>

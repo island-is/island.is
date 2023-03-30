@@ -377,4 +377,16 @@ export const m = defineMessages({
     defaultMessage:
       'Only allow delegations which have access to one or more requested permissions. Can be combined with permission settings to block access to the application for certain individuals or delegations.',
   },
+  syncNeeded: {
+    id: 'ap.ids-admin:sync-needed',
+    defaultMessage: 'Settings are different in some environments',
+  },
+  syncNotNeeded: {
+    id: 'ap.ids-admin:sync-not-needed',
+    defaultMessage: 'Settings are the same in all environments.',
+  },
+  syncSettings: {
+    id: 'ap.ids-admin:sync-settings',
+    defaultMessage: 'Sync settings (from this environment)',
+  },
 })
