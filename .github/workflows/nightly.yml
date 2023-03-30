@@ -78,7 +78,7 @@ jobs:
     steps:
       - uses: actions/github-script@v6
         with:
-          stript: |
+          script: |
             github.rest.pull_request.removeLabels({
               pull_request_numbe: context.pull_request.number,
               owner: context.repo.owner,
