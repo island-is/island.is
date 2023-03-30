@@ -175,7 +175,12 @@ const ReceptionAndAssignment = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`}
+          nextButtonIcon="arrowForward"
+          previousUrl={
+            isIndictmentCase(workingCase.type)
+              ? `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`
+              : constants.CASES_ROUTE
+          }
           onNextButtonClick={() => handleNavigationTo(getNextRoute())}
           nextIsDisabled={!stepIsValid}
         />

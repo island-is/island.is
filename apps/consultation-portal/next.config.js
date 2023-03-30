@@ -16,7 +16,7 @@ const {
 const apiPath = '/api'
 const graphqlPath = '/api/graphql'
 const withVanillaExtract = createVanillaExtractPlugin()
-const path = process.env.NODE_ENV === 'production' ? '/consultation-portal' : ''
+const path = process.env.NODE_ENV === 'production' ? '/samradsgatt' : ''
 module.exports = withNx(
   withVanillaExtract({
     webpack: (config, options) => {
@@ -37,5 +37,8 @@ module.exports = withNx(
     },
     basePath: path,
     presets: ['next/babel'],
+    env: {
+      WEB_PUBLIC_URL: 'http://localhost:4200/consultation-portal' || '',
+    },
   }),
 )

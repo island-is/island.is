@@ -13,11 +13,11 @@ export function transformCase(theCase: Case): Case {
     isValidToDateInThePast: theCase.validToDate
       ? Date.now() > new Date(theCase.validToDate).getTime()
       : theCase.isValidToDateInThePast,
-    isAppealDeadlineExpired: theCase.rulingDate
-      ? Date.now() >= new Date(theCase.rulingDate).getTime() + threeDays
+    isAppealDeadlineExpired: theCase.courtEndTime
+      ? Date.now() >= new Date(theCase.courtEndTime).getTime() + threeDays
       : false,
-    isAppealGracePeriodExpired: theCase.rulingDate
-      ? Date.now() >= new Date(theCase.rulingDate).getTime() + sevenDays
+    isAppealGracePeriodExpired: theCase.courtEndTime
+      ? Date.now() >= new Date(theCase.courtEndTime).getTime() + sevenDays
       : false,
   }
 }
