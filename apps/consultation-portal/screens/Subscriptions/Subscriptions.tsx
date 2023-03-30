@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Divider,
   GridContainer,
   ResponsiveSpace,
@@ -26,6 +27,11 @@ import { BreadcrumbsWithMobileDivider } from '../../components/BreadcrumbsWithMo
 import { sorting } from '../../utils/helpers'
 import getInitValues from './getInitValues'
 import TabsList from './tabsList'
+import { useUser } from '../../context/UserContext'
+import { useQuery } from '@apollo/client'
+import EmailBox from '../../components/EmailBox/EmailBox'
+import { GET_EMAIL } from './queries.graphql'
+import initApollo from '../../graphql/client'
 
 interface SubProps {
   cases: CaseForSubscriptions[]
@@ -34,8 +40,8 @@ interface SubProps {
 
 const SubscriptionsScreen = ({ cases, types }: SubProps) => {
   // user logged in logic needed
-  const [loggedIn, setLoggedIn] = useState(false)
   const [currentTab, setCurrentTab] = useState<Area>(Area.case)
+  const { isAuthenticated, user } = useUser()
 
   const [searchValue, setSearchValue] = useState('')
 
@@ -50,7 +56,14 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
   const [subscriptionArray, setSubscriptionArray] = useState<SubscriptionArray>(
     SubscriptionsArray,
   )
+  const client = initApollo()
 
+  // const { data: datame } = useQuery(GET_EMAIL, {
+  //   client: client,
+  //   ssr: true,
+  //   fetchPolicy: 'cache-first',
+  //   variables: {token}
+  // })
   const [sortTitle, setSortTitle] = useState<SortTitle>({
     Mál: SortOptions.latest,
     Stofnanir: SortOptions.aToZ,
@@ -121,7 +134,6 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
       setSortTitle(_sortTitle)
     },
   })
-
   return (
     <Layout seo={{ title: 'Áskriftir', url: 'askriftir' }}>
       <Divider />
@@ -155,32 +167,7 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
                   </Text>
                 </Stack>
               </Stack>
-              {loggedIn ? (
-                <SubscriptionActionCard
-                  userIsLoggedIn={true}
-                  heading="Skrá áskrift"
-                  text="Skráðu netfang hérna og svo hefst staðfestingaferlið. Þú færð tölvupóst sem þú þarft að staðfesta til að áskriftin taki gildi."
-                  button={{
-                    label: 'Skrá áskrift',
-                    onClick: () => setLoggedIn(false),
-                  }}
-                  input={{
-                    name: 'subscriptionEmail',
-                    label: 'Netfang',
-                    placeholder: 'Hér skal skrifa netfang',
-                  }}
-                />
-              ) : (
-                <SubscriptionActionCard
-                  userIsLoggedIn={false}
-                  heading="Skrá áskrift"
-                  text="Þú verður að vera skráð(ur) inn til þess að geta skráð þig í áskrift."
-                  button={{
-                    label: 'Skrá mig inn',
-                    onClick: () => setLoggedIn(true),
-                  }}
-                />
-              )}
+              <EmailBox />
             </Stack>
             <Stack space={0}>
               {!(

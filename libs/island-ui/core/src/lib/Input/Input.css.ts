@@ -67,6 +67,11 @@ export const input = recipe({
   },
 
   variants: {
+    disabled: {
+      true: {
+        color: theme.color.dark300,
+      },
+    },
     hasLabel: {
       false: {
         color: theme.color.dark400,
@@ -128,7 +133,7 @@ export const label = recipe({
     hasError: {
       true: mixins.labelErrorState,
     },
-    disabledEmptyInput: {
+    disabled: {
       true: mixins.labelDisabledEmptyInput,
     },
   },
