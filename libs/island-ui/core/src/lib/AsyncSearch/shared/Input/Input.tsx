@@ -15,7 +15,10 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ isOpen, colored, hasLabel, inputSize, hasError, color, ...props }, ref) => {
+  (
+    { isOpen, colored, hasLabel, inputSize, hasError, color, ...props },
+    ref,
+  ) => {
     return (
       <input
         spellCheck={false}

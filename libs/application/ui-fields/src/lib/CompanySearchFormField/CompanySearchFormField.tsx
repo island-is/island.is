@@ -13,7 +13,11 @@ interface Props extends FieldBaseProps {
   field: CompanySearchField
 }
 
-export const CompanySearchFormField: FC<Props> = ({ application, field, error }) => {
+export const CompanySearchFormField: FC<Props> = ({
+  application,
+  field,
+  error,
+}) => {
   const {
     id,
     title,

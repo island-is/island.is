@@ -14,4 +14,3 @@ export const label = style({
 export const hasError = style({
   color: `${theme.color.red600} !important`,
 })
-

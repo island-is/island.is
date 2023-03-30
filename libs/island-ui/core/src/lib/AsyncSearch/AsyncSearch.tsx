@@ -54,7 +54,7 @@ export interface AsyncSearchProps {
   loading?: boolean
   closeMenuOnSubmit?: boolean
   required?: boolean
-  errorMessage?: string,
+  errorMessage?: string
   hasError?: boolean
   white?: boolean
   onSubmit?: (
@@ -212,11 +212,11 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
                 onBlur,
                 ...(onSubmit
                   ? {
-                    onClick: () => {
-                      closeMenuOnSubmit && closeMenu()
-                      onSubmit && onSubmit(inputValue || '', null)
-                    },
-                  }
+                      onClick: () => {
+                        closeMenuOnSubmit && closeMenu()
+                        onSubmit && onSubmit(inputValue || '', null)
+                      },
+                    }
                   : getToggleButtonProps()),
               }}
               label={label}
@@ -371,7 +371,7 @@ export const AsyncSearchInput = forwardRef<
               <Icon icon="reload" color={iconColor} />
             </span>
           )}
-          {showLabel &&
+          {showLabel && (
             <Label {...labelProps} hasError={hasError}>
               {label}
               {required && (
@@ -380,7 +380,8 @@ export const AsyncSearchInput = forwardRef<
                   *
                 </span>
               )}
-            </Label>}
+            </Label>
+          )}
           {!showLabel && (
             <label
               className={helperStyles.srOnly}
@@ -393,11 +394,8 @@ export const AsyncSearchInput = forwardRef<
             {children}
           </Menu>
         </div>
-        {hasError && (
-          <ErrorMessage>{errorMessage}</ErrorMessage>
-        )}
+        {hasError && <ErrorMessage>{errorMessage}</ErrorMessage>}
       </>
     )
   },
 )
-

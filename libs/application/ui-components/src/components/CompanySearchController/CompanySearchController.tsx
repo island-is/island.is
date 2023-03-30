@@ -167,9 +167,7 @@ export const CompanySearchController: FC<Props> = ({
                 data?.companyRegistryCompanies,
               )}
               hasError={error !== undefined}
-              errorMessage={formatMessage(
-                coreErrorMessages.defaultError,
-              )}
+              errorMessage={formatMessage(coreErrorMessages.defaultError)}
               size="large"
               placeholder={placeholder}
               initialInputValue={initialInputValue}
@@ -195,9 +193,9 @@ export const CompanySearchController: FC<Props> = ({
                     id,
                     setLabelToDataSchema
                       ? {
-                        nationalId: value,
-                        label,
-                      }
+                          nationalId: value,
+                          label,
+                        }
                       : { nationalId: value },
                   )
                   getIsatNumber(value)
@@ -240,4 +238,3 @@ export const CompanySearchController: FC<Props> = ({
 }
 
 export default CompanySearchController
-
