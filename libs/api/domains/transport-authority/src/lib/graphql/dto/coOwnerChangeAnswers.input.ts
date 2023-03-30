@@ -16,15 +16,27 @@ export class CoOwnerChangeAnswersUser {
 }
 
 @InputType()
-export class CoOwnerChangeAnswersBuyerOrCoOwner {
+export class CoOwnerChangeAnswersOwnerCoOwners {
   @Field(() => String, { nullable: false })
   nationalId!: string
 
   @Field(() => String, { nullable: false })
   email!: string
 
+  @Field(() => String, { nullable: true })
+  wasRemoved?: string
+}
+
+@InputType()
+export class CoOwnerChangeAnswersCoOwners {
   @Field(() => String, { nullable: false })
-  type!: string
+  nationalId!: string
+
+  @Field(() => String, { nullable: false })
+  email!: string
+
+  @Field(() => String, { nullable: true })
+  wasRemoved?: string
 }
 
 @InputType()
@@ -35,6 +47,9 @@ export class CoOwnerChangeAnswers {
   @Field(() => CoOwnerChangeAnswersUser, { nullable: false })
   owner!: CoOwnerChangeAnswersUser
 
-  @Field(() => [CoOwnerChangeAnswersBuyerOrCoOwner], { nullable: true })
-  buyerCoOwnerAndOperator?: CoOwnerChangeAnswersBuyerOrCoOwner[]
+  @Field(() => [CoOwnerChangeAnswersOwnerCoOwners], { nullable: true })
+  ownerCoOwners?: CoOwnerChangeAnswersOwnerCoOwners[]
+
+  @Field(() => [CoOwnerChangeAnswersCoOwners], { nullable: true })
+  coOwners?: CoOwnerChangeAnswersCoOwners[]
 }

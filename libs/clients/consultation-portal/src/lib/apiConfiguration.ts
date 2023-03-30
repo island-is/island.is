@@ -1,6 +1,7 @@
 import {
   AuthenticationApi,
   CasesApi,
+  CaseSubscriptionApi,
   Configuration,
   DocumentsApi,
   StatisticsApi,
@@ -39,3 +40,4 @@ export const DocumentsApiProvider = provideApi(DocumentsApi)
 export const StatisticsApiProvider = provideApi(StatisticsApi)
 export const TypesApiProvider = provideApi(TypesApi)
 export const UserApiProvider = provideApi(UserApi)
+export const CaseSubscriptionApiProvider = provideApi(CaseSubscriptionApi)

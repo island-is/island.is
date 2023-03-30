@@ -5,6 +5,9 @@ export const NATIONAL_REGISTRY_CHILDREN = gql`
     nationalRegistryChildren {
       nationalId
       fullName
+      firstName
+      middleName
+      lastName
       displayName
       genderDisplay
       birthplace

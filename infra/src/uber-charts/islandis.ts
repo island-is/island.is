@@ -66,7 +66,6 @@ const appSystemApiWorker = appSystemApiWorkerSetup()
 
 const servicePortalApi = servicePortalApiSetup()
 const adminPortal = adminPortalSetup()
-const consultationPortal = consultationPortalSetup()
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
 
 const adsBackend = adsBackendSetup()
@@ -96,6 +95,7 @@ const web = webSetup({ api: api })
 const searchIndexer = searchIndexerSetup()
 const contentfulEntryTagger = contentfulEntryTaggerSetup()
 const contentfulApps = contentfulAppsSetup()
+const consultationPortal = consultationPortalSetup({ api: api })
 
 const xroadCollector = xroadCollectorSetup()
 

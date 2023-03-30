@@ -42,12 +42,15 @@ export const Substance: React.FC<Props> = (props) => {
       placeholder={'0'}
       size="xs"
       value={substanceAmount}
-      icon={{
-        name: 'close',
-        onClick: () => {
-          onDelete(substance)
+      buttons={[
+        {
+          name: 'close',
+          onClick: () => {
+            onDelete(substance)
+          },
+          label: 'Eyða',
         },
-      }}
+      ]}
       onChange={(event) => {
         removeErrorMessageIfValid(
           ['empty'],
