@@ -485,13 +485,9 @@ export class CmsContentfulService {
 
             const url = result?.fields?.url?.[localeMap[k]] ?? ''
 
-            if (parentSlug) {
-              if (url?.includes('/')) {
-                obj.urls[k] = `${parentSlug}/${url.split('/').pop()}`
-              } else {
-                obj.urls[k] = `${parentSlug}/${url}`
-              }
-            }
+            obj.urls[k] = parentSlug
+              ? `${parentSlug}/${url?.split('/')?.pop() ?? ''}`
+              : ''
           } else {
             obj.urls[k] = result?.fields?.url?.[localeMap[k]] ?? ''
           }

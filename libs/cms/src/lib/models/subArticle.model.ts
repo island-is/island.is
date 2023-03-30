@@ -33,11 +33,7 @@ export const mapSubArticle = ({
   const parentSlug = fields.parent?.fields?.slug ?? ''
 
   if (parentSlug) {
-    if (fields.url?.includes('/')) {
-      slug = `${parentSlug}/${fields.url.split('/').pop()}`
-    } else {
-      slug = `${parentSlug}/${fields?.url ?? ''}`
-    }
+    slug = `${parentSlug}/${fields.url?.split('/')?.pop() ?? ''}`
   }
 
   return {

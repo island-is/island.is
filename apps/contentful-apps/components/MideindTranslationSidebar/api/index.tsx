@@ -1,8 +1,8 @@
 import getConfig from 'next/config'
 
-const baseUrl = 'https://stafraentisland.greynir.is/translate'
-
 const { publicRuntimeConfig } = getConfig()
+
+const baseUrl = publicRuntimeConfig.MIDEIND_TRANSLATION_API_BASE_URL
 
 const defaultParams = {
   sourceLanguageCode: 'is',

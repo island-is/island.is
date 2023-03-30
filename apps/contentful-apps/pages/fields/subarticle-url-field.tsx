@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react'
+import getConfig from 'next/config'
 import { useDebounce } from 'react-use'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 import { TextInput, Text, Spinner } from '@contentful/f36-components'
 import { EntryProps, SysLink } from 'contentful-management'
+
+const { publicRuntimeConfig } = getConfig()
 
 type Article = EntryProps<{
   subArticles: { 'is-IS': SysLink[] }
@@ -13,8 +16,8 @@ type Article = EntryProps<{
   }
 }>
 
-const environmentId = 'stefna' // TODO: change this to master or even have an environment variable
-const spaceId = '8k0h54kbe6bj'
+const environmentId = publicRuntimeConfig.CONTENTFUL_ENVIRONMENT
+const spaceId = publicRuntimeConfig.CONTENTFUL_SPACE
 
 const SubArticleUrlField = () => {
   const sdk = useSDK<FieldExtensionSDK>()
@@ -23,11 +26,14 @@ const SubArticleUrlField = () => {
   const defaultLocale = sdk.locales.default
 
   const [prefix, setPrefix] = useState('')
-  const [value, setValue] = useState('')
+  const [value, setValue] = useState(
+    sdk.field?.getValue()?.split('/')?.pop() ?? '',
+  )
   const [loading, setLoading] = useState(true)
+  const [firstRender, setFirstRender] = useState(true)
 
   useEffect(() => {
-    setValue(sdk.field?.getValue()?.split('/')?.[1] ?? '')
+    setValue(sdk.field?.getValue()?.split('/')?.pop() ?? '')
   }, [sdk.field])
 
   useEffect(() => {
@@ -65,7 +71,6 @@ const SubArticleUrlField = () => {
 
         if (parentSlug) {
           setPrefix(parentSlug)
-          sdk.field.setValue(`${parentSlug}/${value}`)
         }
 
         setLoading(false)
@@ -79,6 +84,15 @@ const SubArticleUrlField = () => {
 
   useDebounce(
     () => {
+      if (firstRender) {
+        setFirstRender(false)
+
+        // No need to change the value if the value is already up to date
+        if (sdk.field.getValue() === `${prefix}/${value}`) {
+          return
+        }
+      }
+
       sdk.field.setValue(`${prefix}/${value}`)
       sdk.field.setInvalid(
         value.length === 0 && sdk.field.locale === defaultLocale,
