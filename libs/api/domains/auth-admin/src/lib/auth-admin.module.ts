@@ -6,7 +6,7 @@ import { TenantResolver } from './tenant/tenant.resolver'
 import { TenantEnvironmentResolver } from './tenant/tenant-environment.resolver'
 import { TenantsService } from './tenant/tenants.service'
 import { ApplicationEnvironmentResolver } from './application/applications-environment.resolver'
-import { ApplicationResolver } from './application/application.resolver'
+import { ApplicationsResolver } from './application/applications.resolver'
 import { ApplicationsService } from './application/applications.service'
 
 @Module({
@@ -17,14 +17,14 @@ import { ApplicationsService } from './application/applications.service'
     TenantEnvironmentResolver,
     TenantsService,
     ApplicationEnvironmentResolver,
-    ApplicationResolver,
+    ApplicationsResolver,
     ApplicationsService,
   ],
   exports: [
     TenantResolver,
     TenantEnvironmentResolver,
     ApplicationEnvironmentResolver,
-    ApplicationResolver,
+    ApplicationsResolver,
   ],
 })
 export class AuthAdminModule {}

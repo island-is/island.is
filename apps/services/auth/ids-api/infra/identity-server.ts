@@ -79,6 +79,11 @@ export const serviceSetup = (services: {
       },
       Application__MinCompletionPortThreads: '10',
       NO_UPDATE_NOTIFIER: 'true',
+      ContentfulSettings__BaseAddress: {
+        dev: 'https://preview.contentful.com',
+        staging: 'https://cdn.contentful.com',
+        prod: 'https://cdn.contentful.com',
+      },
     })
     .secrets({
       IdentityServer__LicenseKey: '/k8s/identity-server/LicenseKey',
@@ -92,6 +97,8 @@ export const serviceSetup = (services: {
         '/k8s/identity-server/ClientSecret',
       Scopes__Admin__RootAccessList: '/k8s/identity-server/AdminRootAccessList',
       FeatureFlags__ConfigCatSdkKey: '/k8s/configcat/CONFIGCAT_SDK_KEY',
+      ContentfulSettings__AccessToken:
+        '/k8s/identity-server/CONTENTFUL_ACCESS_TOKEN',
     })
     .ingress({
       primary: {

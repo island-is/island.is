@@ -37,7 +37,7 @@ applicationTest.describe('Driving Instructor Registrations', () => {
   applicationTest.beforeEach(async ({ applicationPage }) => {
     const page = applicationPage
     // Handle fake-data from RLS
-    if (env == 'local') {
+    if (env == 'local' || env == 'dev') {
       await page.getByLabel('Já').check()
       await page
         .getByRole('region', { name: 'Núverandi ökuréttindi umsækjanda' })

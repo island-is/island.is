@@ -1,8 +1,6 @@
 import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
-import compareAsc from 'date-fns/compareAsc'
-import parseISO from 'date-fns/parseISO'
 
 import {
   BlueBox,
@@ -38,6 +36,7 @@ import {
 import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -90,18 +89,6 @@ const HearingArrangements = () => {
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
-      const courtDateNotifications = workingCase.notifications?.filter(
-        (notification) => notification.type === NotificationType.COURT_DATE,
-      )
-
-      const latestCourtDateNotification = courtDateNotifications?.sort((a, b) =>
-        compareAsc(parseISO(b.created), parseISO(a.created)),
-      )[0]
-
-      const hasSentNotification = latestCourtDateNotification?.recipients.some(
-        (recipient) => recipient.success,
-      )
-
       await setAndSendCaseToServer(
         [
           {
@@ -115,7 +102,18 @@ const HearingArrangements = () => {
         setWorkingCase,
       )
 
-      if (hasSentNotification && !courtDateHasChanged) {
+      const isCorrectingRuling = workingCase.notifications?.some(
+        (notification) => notification.type === NotificationType.RULING,
+      )
+
+      if (
+        isCorrectingRuling ||
+        (hasSentNotification(
+          NotificationType.COURT_DATE,
+          workingCase.notifications,
+        ) &&
+          !courtDateHasChanged)
+      ) {
         router.push(`${destination}/${workingCase.id}`)
       } else {
         setNavigateTo(destination)
@@ -139,7 +137,7 @@ const HearingArrangements = () => {
     <PageLayout
       workingCase={workingCase}
       activeSection={
-        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
+        workingCase.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={RestrictionCaseCourtSubsections.HEARING_ARRANGEMENTS}
       isLoading={isLoadingWorkingCase}
@@ -318,6 +316,7 @@ const HearingArrangements = () => {
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
+              nextButtonIcon="arrowForward"
               previousUrl={`${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${workingCase.id}`}
               onNextButtonClick={() =>
                 handleNavigationTo(constants.INVESTIGATION_CASE_RULING_ROUTE)

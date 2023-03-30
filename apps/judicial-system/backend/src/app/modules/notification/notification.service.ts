@@ -55,7 +55,6 @@ import {
   formatCourtRevokedSmsNotification,
   formatPrisonRevokedEmailNotification,
   formatDefenderRevokedEmailNotification,
-  getCustodyNoticePdfAsString,
   formatProsecutorReceivedByCourtSmsNotification,
   formatCourtResubmittedToCourtSmsNotification,
   formatProsecutorReadyForCourtEmailNotification,
@@ -186,6 +185,10 @@ export class NotificationService {
     attachments?: Attachment[],
   ): Promise<Recipient> {
     try {
+      // This is to handle a comma separated list of emails
+      // We use the first one as the main recipient and the rest as CC
+      const recipients = recipientEmail ? recipientEmail.split(',') : undefined
+
       await this.emailService.sendEmail({
         from: {
           name: this.config.email.fromName,
@@ -198,9 +201,11 @@ export class NotificationService {
         to: [
           {
             name: recipientName ?? '',
-            address: recipientEmail ?? '',
+            address: recipients ? recipients[0] : '',
           },
         ],
+        cc:
+          recipients && recipients.length > 1 ? recipients.slice(1) : undefined,
         subject: subject,
         text: stripHtmlTags(html),
         html: html,
@@ -854,14 +859,16 @@ export class NotificationService {
 
     if (isIndictmentCase(theCase.type)) {
       theCase.defendants?.forEach((defendant) => {
-        promises.push(
-          this.sendRulingEmailNotificationToDefender(
-            theCase,
-            defendant.defenderNationalId,
-            defendant.defenderName,
-            defendant.defenderEmail,
-          ),
-        )
+        if (defendant.defenderEmail) {
+          promises.push(
+            this.sendRulingEmailNotificationToDefender(
+              theCase,
+              defendant.defenderNationalId,
+              defendant.defenderName,
+              defendant.defenderEmail,
+            ),
+          )
+        }
       })
     } else if (
       theCase.defenderEmail &&
@@ -972,26 +979,12 @@ export class NotificationService {
     )
 
     if (shouldSendCustodyNoticeToPrison) {
-      const custodyNoticePdf = await getCustodyNoticePdfAsString(
-        theCase,
-        this.formatMessage,
-      )
-
-      const attachments = [
-        {
-          filename: `Vistunarseðill ${theCase.courtCaseNumber}.pdf`,
-          content: custodyNoticePdf,
-          encoding: 'binary',
-        },
-      ]
-
       promises.push(
         this.sendEmail(
           subject,
           html,
           'Gæsluvarðhaldsfangelsi',
           this.config.email.prisonEmail,
-          attachments,
         ),
       )
     }

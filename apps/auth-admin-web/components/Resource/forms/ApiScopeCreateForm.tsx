@@ -24,7 +24,12 @@ interface FormOutput {
 }
 
 const ApiScopeCreateForm: React.FC<Props> = (props) => {
-  const { register, handleSubmit, formState } = useForm<FormOutput>()
+  const {
+    register,
+    handleSubmit,
+    formState,
+    resetField,
+  } = useForm<FormOutput>()
   const { isSubmitting, errors } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [available, setAvailable] = useState<boolean>(false)
@@ -51,6 +56,9 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
       const response = await ResourcesService.findAllDomains()
       if (response) {
         setDomains(response as Domain[])
+        resetField('apiScope.domainName', {
+          defaultValue: props.apiScope.domainName,
+        })
       }
     }
 
@@ -67,6 +75,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
 
     if (response) {
       setGroups([...(response as ApiScopeGroup[])])
+      resetField('apiScope.groupId', { defaultValue: props.apiScope.groupId })
     }
   }
 

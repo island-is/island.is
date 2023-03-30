@@ -25,7 +25,7 @@ describe('Testing utility functions for applicatios', () => {
     expect(getPaymentStatusForAdmin(null)).toEqual(null)
   })
 
-  it('Should return null when payment object is not defined', () => {
+  it('Should return the applicant name  when nationalRegistry has a fullName', () => {
     expect(
       getApplicantName(
         createApplication({
@@ -62,7 +62,7 @@ describe('Testing utility functions for applicatios', () => {
   })
 })
 
-it('Should return name of the application when a function isnt defined just a string', () => {
+it('Should return the name of the application when defined with a string', () => {
   expect(
     getApplicationNameTranslationString(
       createApplicationTemplate(),
