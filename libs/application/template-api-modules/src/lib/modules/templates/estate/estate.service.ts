@@ -170,10 +170,14 @@ export class EstateTemplateService extends BaseTemplateApiService {
       bankAccounts: answers.bankAccounts ?? [],
       debts: answers.debts ?? [],
       estateMembers: processedEstateMembers,
-      inventory: answers.inventory ?? '',
-      inventoryValue: answers.inventoryValue ?? '',
-      moneyAndDepositBoxesInfo: answers.moneyAndDepositBoxesInfo ?? '',
-      moneyAndDepositBoxesValue: answers.moneyAndDepositBoxesValue ?? '',
+      inventory: {
+        info: answers.inventory?.info ?? '',
+        value: answers.inventory?.value ?? '',
+      },
+      moneyAndDeposit: {
+        info: answers.moneyAndDeposit?.info ?? '',
+        value: answers.moneyAndDeposit?.value ?? '',
+      },
       notifier: {
         email: answers.applicant.email ?? '',
         name: answers.applicant.name,
@@ -181,8 +185,10 @@ export class EstateTemplateService extends BaseTemplateApiService {
         relation: relation ?? '',
         ssn: answers.applicant.nationalId,
       },
-      otherAssets: answers.otherAssets ?? '',
-      otherAssetsValue: answers.otherAssetsValue ?? '',
+      otherAssets: {
+        info: answers.otherAssets?.info ?? '',
+        value: answers.otherAssets?.value ?? '',
+      },
       stocks: answers.stocks ?? [],
       vehicles: processedVehicles,
       ...(answers.representative?.representativeName
