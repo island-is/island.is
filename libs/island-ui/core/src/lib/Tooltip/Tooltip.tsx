@@ -56,6 +56,7 @@ interface TooltipProps {
   iconSize?: Size
   color?: Colors
   children?: ReactElement
+  size?: 'lg'
   as?: ElementType
 }
 
@@ -66,6 +67,7 @@ export const Tooltip: FC<TooltipProps> = ({
   color = 'dark200',
   children,
   as = 'span',
+  size = 'sm',
 }) => {
   const tooltip = useTooltipState({
     animated: 250,
@@ -88,7 +90,11 @@ export const Tooltip: FC<TooltipProps> = ({
         </TooltipReference>
       )}
       <ReakitTooltip {...tooltip}>
-        <div className={styles.tooltip}>
+        <div
+          className={cn(styles.tooltip, {
+            [styles.lg]: size === 'lg',
+          })}
+        >
           <TooltipArrow {...tooltip}>
             <ArrowIcon placement={tooltip.placement} />
           </TooltipArrow>
