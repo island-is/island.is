@@ -253,7 +253,7 @@ const UploadFilesToPoliceCase: React.FC<{
             CaseFileCategory.CASE_FILE,
             setDisplayFiles,
             handleUIUpdate,
-            policeCaseNumber
+            policeCaseNumber,
           )
         }
         onRemove={(file) => handleRemove(file, removeFileCB)}

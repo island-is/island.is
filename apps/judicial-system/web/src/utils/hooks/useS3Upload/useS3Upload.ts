@@ -216,7 +216,7 @@ export const useS3Upload = (caseId: string) => {
         ),
         ...previous,
       ])
-      upload(filesWithId, cb, category,policeCaseNumber)
+      upload(filesWithId, cb, category, policeCaseNumber)
     },
     [upload],
   )
