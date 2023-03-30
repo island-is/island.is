@@ -14,13 +14,13 @@ export class TenantsService extends MultiEnvironmentService {
     const tenants = await Promise.all([
       this.adminDevApiWithAuth(user)
         ?.meTenantsControllerFindAll()
-        .catch(this.handleError.bind(this)),
+        .catch((error) => this.handleError(error, Environment.Development)),
       this.adminStagingApiWithAuth(user)
         ?.meTenantsControllerFindAll()
-        .catch(this.handleError.bind(this)),
+        .catch((error) => this.handleError(error, Environment.Staging)),
       this.adminProdApiWithAuth(user)
         ?.meTenantsControllerFindAll()
-        .catch(this.handleError.bind(this)),
+        .catch((error) => this.handleError(error, Environment.Production)),
     ])
 
     const tenantMap = new Map<string, TenantEnvironment[]>()
@@ -66,13 +66,13 @@ export class TenantsService extends MultiEnvironmentService {
     const tenants = await Promise.all([
       this.adminDevApiWithAuth(user)
         ?.meTenantsControllerFindById({ tenantId: id })
-        .catch(this.handleError.bind(this)),
+        .catch((error) => this.handleError(error, Environment.Development)),
       this.adminStagingApiWithAuth(user)
         ?.meTenantsControllerFindById({ tenantId: id })
-        .catch(this.handleError.bind(this)),
+        .catch((error) => this.handleError(error, Environment.Staging)),
       this.adminProdApiWithAuth(user)
         ?.meTenantsControllerFindById({ tenantId: id })
-        .catch(this.handleError.bind(this)),
+        .catch((error) => this.handleError(error, Environment.Production)),
     ])
 
     const tenantMap: TenantEnvironment[] = []

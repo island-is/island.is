@@ -6,6 +6,7 @@ import {
   Client,
   clientBaseAttributes,
   ClientGrantType,
+  ClientType,
   GrantTypeEnum,
   SequelizeConfigService,
   TranslatedValueDto,
@@ -28,37 +29,55 @@ const createTestClientData = async (app: TestApp, user: User) => {
     nationalId: user.nationalId,
   })
   const client = await fixtureFactory.createClient({
+    ...clientBaseAttributes,
     clientId: clientId,
     domainName: tenantId,
-  })
-  const redirectUri = await fixtureFactory.createClientRedirectUri({ clientId })
-  const postLogoutRedirectUri = await fixtureFactory.createClientPostLogoutRedirectUri(
-    {
-      clientId,
-    },
-  )
-  await fixtureFactory.createClientGrantType({
-    clientId,
-    grantType: GrantTypeEnum.TokenExchange,
+    redirectUris: [faker.internet.url()],
+    postLogoutRedirectUris: [faker.internet.url()],
+    allowedGrantTypes: [GrantTypeEnum.TokenExchange],
+    claims: [{ type: faker.random.word(), value: faker.random.word() }],
   })
   const [translation] = await fixtureFactory.createTranslations(client, 'en', {
     clientName: faker.random.word(),
   })
-  const clientClaim = await fixtureFactory.createClientClaim({
-    clientId,
-    type: faker.random.word(),
-    value: faker.random.word(),
-  })
 
   return {
-    client,
-    clientNameTranslation: {
-      locale: translation.language,
-      value: translation.value,
-    } as TranslatedValueDto,
-    redirectUri: redirectUri.redirectUri,
-    postLogoutRedirectUri: postLogoutRedirectUri.redirectUri,
-    customClaim: { type: clientClaim.type, value: clientClaim.value },
+    clientId: client.clientId,
+    clientType: client.clientType,
+    tenantId: client.domainName ?? '',
+    absoluteRefreshTokenLifetime: client.absoluteRefreshTokenLifetime,
+    slidingRefreshTokenLifetime: client.slidingRefreshTokenLifetime,
+    accessTokenLifetime: client.accessTokenLifetime,
+    allowOfflineAccess: client.allowOfflineAccess,
+    customClaims: Object.fromEntries(
+      client.claims?.map((claim) => [claim.type, claim.value]) ?? [],
+    ),
+    displayName: [
+      {
+        locale: 'is',
+        value: client.clientName,
+      },
+      {
+        locale: translation.language,
+        value: translation.value,
+      },
+    ],
+    redirectUris:
+      client.redirectUris?.map((redirectUri) => redirectUri.redirectUri) ?? [],
+    postLogoutRedirectUris:
+      client.postLogoutRedirectUris?.map(
+        (postLogoutRedirectUri) => postLogoutRedirectUri.redirectUri,
+      ) ?? [],
+    refreshTokenExpiration: 1,
+    requireApiScopes: false,
+    requireConsent: false,
+    requirePkce: true,
+    supportTokenExchange: true,
+    supportsCustomDelegation: false,
+    supportsLegalGuardians: false,
+    supportsPersonalRepresentatives: false,
+    supportsProcuringHolders: false,
+    promptDelegations: false,
   }
 }
 
@@ -142,50 +161,42 @@ describe('MeClientsController with auth', () => {
       user: currentUser,
     })
     const server = request(app.getHttpServer())
-    const testClientData = await createTestClientData(app, user)
+    const expected = await createTestClientData(app, user)
 
     // Act
     const res = await server.get(`/v2/me/tenants/${tenantId}/clients`)
 
     // Assert
     expect(res.status).toEqual(200)
-    expect(res.body).toEqual([
-      {
-        absoluteRefreshTokenLifetime: 2592000,
-        accessTokenLifetime: 3600,
-        allowOfflineAccess: false,
-        clientId,
-        clientType: 'web',
-        tenantId,
-        customClaims: {
-          [testClientData.customClaim.type]: testClientData.customClaim.value,
-        },
-        displayName: [
-          {
-            locale: 'is',
-            value: testClientData.client.clientName,
-          },
-          {
-            locale: testClientData.clientNameTranslation.locale,
-            value: testClientData.clientNameTranslation.value,
-          },
-        ],
-        postLogoutRedirectUris: [testClientData.postLogoutRedirectUri],
-        promptDelegations: false,
-        redirectUris: [testClientData.redirectUri],
-        refreshTokenExpiration: 1,
-        requireApiScopes: false,
-        requireConsent: false,
-        requirePkce: true,
-        slidingRefreshTokenLifetime: 1296000,
-        supportTokenExchange: true,
-        supportsCustomDelegation: false,
-        supportsLegalGuardians: false,
-        supportsPersonalRepresentatives: false,
-        supportsProcuringHolders: false,
-      },
-    ])
+    expect(res.body).toEqual([expected])
   })
+
+  it.each`
+    userAccess  | currentUser
+    ${'normal'} | ${user}
+    ${'super'}  | ${superUser}
+  `(
+    'should return single client as $userAccess user',
+    async ({ currentUser }) => {
+      // Arrange
+      const app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: currentUser,
+      })
+      const server = request(app.getHttpServer())
+      const expected = await createTestClientData(app, user)
+
+      // Act
+      const res = await server.get(
+        `/v2/me/tenants/${tenantId}/clients/${encodeURIComponent(clientId)}`,
+      )
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toEqual(expected)
+    },
+  )
 
   it.each`
     clientType   | typeSpecificDefaults
@@ -271,4 +282,68 @@ describe('MeClientsController with auth', () => {
       })
     },
   )
+
+  describe('create client with invalid request body', () => {
+    it('should return 400 Bad Request with invalid client id', async () => {
+      // Arrange
+      const app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user,
+      })
+      const server = request(app.getHttpServer())
+      await createTestClientData(app, user)
+      const newClient = {
+        clientId: 'invalid-client-id',
+        clientType: 'web',
+        clientName: 'New test client',
+      }
+
+      // Act
+      const res = await server
+        .post(`/v2/me/tenants/${tenantId}/clients`)
+        .send(newClient)
+
+      // Assert
+      expect(res.status).toEqual(400)
+      expect(res.body).toEqual({
+        type: 'https://httpstatuses.org/400',
+        title: 'Bad Request',
+        status: 400,
+        detail: 'Invalid client id',
+      })
+    })
+
+    it('should return 400 Bad Request with invalid client type', async () => {
+      // Arrange
+      const app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user,
+      })
+      const server = request(app.getHttpServer())
+      await createTestClientData(app, user)
+      const newClient = {
+        clientId: '@test.is/new-test-client',
+        clientType: 'invalid-client-type',
+        clientName: 'New test client',
+      }
+
+      // Act
+      const res = await server
+        .post(`/v2/me/tenants/${tenantId}/clients`)
+        .send(newClient)
+
+      // Assert
+      expect(res.status).toEqual(400)
+      expect(res.body).toEqual({
+        type: 'https://httpstatuses.org/400',
+        title: 'Bad Request',
+        status: 400,
+        detail: [
+          'clientType must be one of the following values: native, web, machine',
+        ],
+      })
+    })
+  })
 })

@@ -12,7 +12,9 @@ export const clientsLoader: WrappedLoaderFn = ({ client }) => {
     const clients = await client.query<GetClientsQuery>({
       query: GetClientsDocument,
       variables: {
-        tenantId: params['tenant'],
+        input: {
+          tenantId: params['tenant'],
+        },
       },
     })
 

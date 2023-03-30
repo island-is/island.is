@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { and, Includeable, Op } from 'sequelize'
 
@@ -15,6 +15,7 @@ import { ClientRedirectUri } from '../models/client-redirect-uri.model'
 import { ClientPostLogoutRedirectUri } from '../models/client-post-logout-redirect-uri.model'
 import { AdminClientDto } from './dto/admin-client.dto'
 import { AdminCreateClientDto } from './dto/admin-create-client.dto'
+import { TranslatedValueDto } from '../../translation/dto/translated-value.dto'
 
 export const clientBaseAttributes: Partial<Client> = {
   absoluteRefreshTokenLifetime: 8 * 60 * 60, // 8 hours
@@ -57,7 +58,6 @@ export class AdminClientsService {
     const clientTranslations = await this.translationService.findTranslationMap(
       'client',
       clients.map((client) => client.clientId),
-      'en',
     )
 
     return clients.map((client) =>
@@ -87,7 +87,6 @@ export class AdminClientsService {
     const clientTranslation = await this.translationService.findTranslationMap(
       'client',
       [client.clientId],
-      'en',
     )
 
     return this.formatClient(client, clientTranslation.get(client.clientId))
@@ -105,6 +104,11 @@ export class AdminClientsService {
     })
     if (!tenant) {
       throw new NoContentException()
+    }
+
+    // validate that client id starts with the tenant id
+    if (!clientDto.clientId.startsWith(`${tenantId}/`)) {
+      throw new BadRequestException('Invalid client id')
     }
 
     const client = await this.clientModel.create({
@@ -146,27 +150,13 @@ export class AdminClientsService {
 
   private formatClient(
     client: Client,
-    translations?: Map<string, string>,
+    translations?: Map<string, Map<string, string>>,
   ): AdminClientDto {
-    const enDisplayName = translations?.get('clientName')
-
     return {
       clientId: client.clientId,
       clientType: client.clientType,
       tenantId: client.domainName ?? '',
-      displayName: client.clientName
-        ? [
-            { locale: 'is', value: client.clientName },
-            ...(enDisplayName
-              ? [
-                  {
-                    locale: 'en',
-                    value: enDisplayName,
-                  },
-                ]
-              : []),
-          ]
-        : [],
+      displayName: this.formatDisplayName(client.clientName, translations),
       absoluteRefreshTokenLifetime: client.absoluteRefreshTokenLifetime,
       slidingRefreshTokenLifetime: client.slidingRefreshTokenLifetime,
       refreshTokenExpiration: client.refreshTokenExpiration,
@@ -187,12 +177,28 @@ export class AdminClientsService {
         client.allowedGrantTypes?.some(
           (grantType) => grantType.grantType === GrantTypeEnum.TokenExchange,
         ) ?? false,
-      customClaims:
-        client.claims?.reduce(
-          (acc, curr) => ({ ...acc, [curr.type]: curr.value }),
-          {},
-        ) ?? {},
+      customClaims: client.claims
+        ? Object.fromEntries(
+            client.claims.map((claim) => [claim.type, claim.value]),
+          )
+        : {},
     }
+  }
+
+  private formatDisplayName(
+    clientName?: string,
+    translations?: Map<string, Map<string, string>>,
+  ): TranslatedValueDto[] {
+    const displayNames = [{ locale: 'is', value: clientName ?? '' }]
+
+    for (const [locale, translation] of translations?.entries() ?? []) {
+      displayNames.push({
+        locale,
+        value: translation.get('clientName') ?? '',
+      })
+    }
+
+    return displayNames
   }
 
   private defaultClientGrantTypes(client: Client) {

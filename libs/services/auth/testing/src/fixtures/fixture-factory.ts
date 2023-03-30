@@ -39,6 +39,7 @@ import {
   CreateClientGrantType,
   CreateIdentityResource,
 } from './types'
+import { isDefined } from '@island.is/shared/utils'
 
 export class FixtureFactory {
   constructor(private app: TestApp) {}
@@ -69,7 +70,56 @@ export class FixtureFactory {
   }
 
   async createClient(client?: Partial<CreateClient>): Promise<Client> {
-    return this.get(Client).create(createClientFixture(client))
+    const createdClient = await this.get(Client).create(
+      createClientFixture(client),
+    )
+
+    createdClient.redirectUris = await Promise.all(
+      client?.redirectUris
+        ?.map((redirectUri) =>
+          this.createClientRedirectUri({
+            clientId: createdClient.clientId,
+            uri: redirectUri,
+          }),
+        )
+        .filter(isDefined) ?? [],
+    )
+
+    createdClient.postLogoutRedirectUris = await Promise.all(
+      client?.postLogoutRedirectUris
+        ?.map((redirectUri) =>
+          this.createClientPostLogoutRedirectUri({
+            clientId: createdClient.clientId,
+            uri: redirectUri,
+          }),
+        )
+        .filter(isDefined) ?? [],
+    )
+
+    createdClient.allowedGrantTypes = await Promise.all(
+      client?.allowedGrantTypes
+        ?.map((grantType) =>
+          this.createClientGrantType({
+            clientId: createdClient.clientId,
+            grantType,
+          }),
+        )
+        .filter(isDefined) ?? [],
+    )
+
+    createdClient.claims = await Promise.all(
+      client?.claims
+        ?.map((claim) =>
+          this.createClientClaim({
+            clientId: createdClient.clientId,
+            type: claim.type,
+            value: claim.value,
+          }),
+        )
+        .filter(isDefined) ?? [],
+    )
+
+    return createdClient
   }
 
   async createClientAllowedScope(

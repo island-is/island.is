@@ -10,7 +10,6 @@ import { ClientsService } from './client/clients.service'
 
 @Module({
   imports: [AuthAdminApiClientModule],
-  controllers: [],
   providers: [
     TenantResolver,
     TenantEnvironmentResolver,
@@ -18,6 +17,5 @@ import { ClientsService } from './client/clients.service'
     ClientsResolver,
     ClientsService,
   ],
-  exports: [TenantResolver, TenantEnvironmentResolver, ClientsResolver],
 })
 export class AuthAdminModule {}

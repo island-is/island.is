@@ -1,5 +1,5 @@
 import * as faker from 'faker'
-import { Client } from '@island.is/auth-api-lib'
+import { Client, ClientType } from '@island.is/auth-api-lib'
 
 export type CreateClient = Pick<
   Client,
@@ -13,13 +13,18 @@ export type CreateClient = Pick<
   | 'supportsProcuringHolders'
   | 'supportsPersonalRepresentatives'
   | 'requireApiScopes'
->
+> & {
+  redirectUris?: string[]
+  postLogoutRedirectUris?: string[]
+  allowedGrantTypes?: string[]
+  claims?: { type: string; value: string }[]
+}
 
 const createRandomClient = (): CreateClient => {
   return {
     clientId: faker.random.word(),
     nationalId: faker.datatype.string(10),
-    clientType: 'web',
+    clientType: ClientType.web,
     clientName: faker.random.word(),
     supportsCustomDelegation: false,
     supportsLegalGuardians: false,

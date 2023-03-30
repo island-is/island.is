@@ -21,17 +21,17 @@ export class ClientsService extends MultiEnvironmentService {
         ?.meClientsControllerFindByTenantId({
           tenantId,
         })
-        .catch(this.handleError.bind(this)),
+        .catch((error) => this.handleError(error, Environment.Development)),
       this.adminStagingApiWithAuth(user)
         ?.meClientsControllerFindByTenantId({
           tenantId,
         })
-        .catch(this.handleError.bind(this)),
+        .catch((error) => this.handleError(error, Environment.Staging)),
       this.adminProdApiWithAuth(user)
         ?.meClientsControllerFindByTenantId({
           tenantId,
         })
-        .catch(this.handleError.bind(this)),
+        .catch((error) => this.handleError(error, Environment.Production)),
     ])
 
     const clientsMap = new Map<string, ClientEnvironment[]>()
@@ -51,10 +51,6 @@ export class ClientsService extends MultiEnvironmentService {
           ...client,
           id: this.formatClientId(client.clientId, env),
           environment: env,
-          // clientId: client.clientId,
-          // tenantId: client.tenantId,
-          // clientType: client.clientType,
-          // displayName: client.displayName,
         })
       }
     }
@@ -68,8 +64,7 @@ export class ClientsService extends MultiEnvironmentService {
       })
     }
 
-    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-    clientsArray.sort((a, b) => a.clientId!.localeCompare(b.clientId!))
+    clientsArray.sort((a, b) => a.clientId.localeCompare(b.clientId))
 
     return {
       data: clientsArray,
@@ -86,13 +81,13 @@ export class ClientsService extends MultiEnvironmentService {
     const clients = await Promise.all([
       this.adminDevApiWithAuth(user)
         ?.meClientsControllerFindByTenantIdAndClientId({ tenantId, clientId })
-        .catch(this.handleError.bind(this)),
+        .catch((error) => this.handleError(error, Environment.Development)),
       this.adminStagingApiWithAuth(user)
         ?.meClientsControllerFindByTenantIdAndClientId({ tenantId, clientId })
-        .catch(this.handleError.bind(this)),
+        .catch((error) => this.handleError(error, Environment.Staging)),
       this.adminProdApiWithAuth(user)
         ?.meClientsControllerFindByTenantIdAndClientId({ tenantId, clientId })
-        .catch(this.handleError.bind(this)),
+        .catch((error) => this.handleError(error, Environment.Production)),
     ])
 
     const clientEnvs: ClientEnvironment[] = []

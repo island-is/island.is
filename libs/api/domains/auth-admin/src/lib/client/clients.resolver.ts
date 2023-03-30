@@ -8,8 +8,8 @@ import {
   Resolver,
 } from '@nestjs/graphql'
 
-import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import { Environment } from '@island.is/shared/types'
 
 import { ClientsService } from './clients.service'
@@ -17,6 +17,7 @@ import { ClientsPayload } from './dto/clients.payload'
 import { Client } from './models/client.model'
 import { ClientEnvironment } from './models/client-environment.model'
 import { ClientInput } from './dto/client.input'
+import { ClientsInput } from './dto/clients.input'
 import { CreateClientResponse } from './dto/create-client.response'
 import { CreateClientInput } from './dto/create-client.input'
 
@@ -28,9 +29,9 @@ export class ClientsResolver {
   @Query(() => ClientsPayload, { name: 'authAdminClients' })
   getClients(
     @CurrentUser() user: User,
-    @Args('tenantId') tenantId: string,
+    @Args('input') input: ClientsInput,
   ): Promise<ClientsPayload> {
-    return this.clientsService.getClients(user, tenantId)
+    return this.clientsService.getClients(user, input.tenantId)
   }
 
   @Query(() => Client, { name: 'authAdminClient' })

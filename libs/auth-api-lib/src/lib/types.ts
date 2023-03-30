@@ -1,6 +1,8 @@
 export const DEFAULT_DOMAIN = '@island.is'
 
 export enum GrantTypeEnum {
+  AuthorizationCode = 'authorization_code',
+  ClientCredentials = 'client_credentials',
   TokenExchange = 'urn:ietf:params:oauth:grant-type:token-exchange',
 }
 

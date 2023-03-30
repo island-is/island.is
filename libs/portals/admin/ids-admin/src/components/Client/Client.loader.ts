@@ -3,9 +3,6 @@ import { GetClientQuery, GetClientDocument } from './Client.generated'
 
 export type AuthClient = GetClientQuery['authAdminClient']
 export type AuthApplicationTranslation = GetClientQuery['authAdminClient']['environments'][0]['displayName'][0]
-// export type AuthApplicationLifeTime = GetClientQuery['authAdminClient']['environments'][0]['lifeTime']
-// export type AuthApplicationLBasicInfo = GetClientQuery['authAdminClient']['environments'][0]['basicInfo']
-// export type AuthApplicationApplicationUrl = GetClientQuery['authAdminClient']['environments'][0]['applicationUrls']
 
 export const clientLoader: WrappedLoaderFn = ({ client }) => {
   return async ({ params }): Promise<AuthClient> => {

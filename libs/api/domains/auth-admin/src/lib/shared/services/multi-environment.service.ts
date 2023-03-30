@@ -7,7 +7,6 @@ import {
   AdminProdApi,
   AdminStagingApi,
 } from '@island.is/clients/auth/admin-api'
-import { FetchError } from '@island.is/clients/middlewares'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Environment } from '@island.is/shared/types'
@@ -57,14 +56,8 @@ export abstract class MultiEnvironmentService {
     }
   }
 
-  protected handleError(error: Error) {
-    if (error instanceof FetchError && error.status === 401) {
-      // If 401 is returned we log it as info as it is intentional
-      this.logger.info('Unauthorized request to admin api', error)
-    } else {
-      // Otherwise we log it as error
-      this.logger.error('Error while fetching tenants', error)
-    }
+  protected handleError(error: Error, environment: Environment) {
+    this.logger.error(`Error while fetching data from ${environment}`, error)
 
     // We swallow the errors
     return undefined
