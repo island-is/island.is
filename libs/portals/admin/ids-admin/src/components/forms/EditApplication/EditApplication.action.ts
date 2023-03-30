@@ -158,7 +158,7 @@ export const editApplicationAction: WrappedActionFn = ({ client }) => async ({
   })
 
   const { data, errors } = result
-  console.log(result)
+
   if (errors || !data) {
     return result
   }
