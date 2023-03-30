@@ -6,6 +6,7 @@ import { User } from '@island.is/auth-nest-tools'
 import { NoContentException } from '@island.is/nest/problem'
 
 import { Domain } from '../../resources/models/domain.model'
+import { TranslatedValueDto } from '../../translation/dto/translated-value.dto'
 import { TranslationService } from '../../translation/translation.service'
 import { ClientType, GrantTypeEnum, RefreshTokenExpiration } from '../../types'
 import { Client } from '../models/client.model'
@@ -15,7 +16,8 @@ import { ClientRedirectUri } from '../models/client-redirect-uri.model'
 import { ClientPostLogoutRedirectUri } from '../models/client-post-logout-redirect-uri.model'
 import { AdminClientDto } from './dto/admin-client.dto'
 import { AdminCreateClientDto } from './dto/admin-create-client.dto'
-import { TranslatedValueDto } from '../../translation/dto/translated-value.dto'
+import { AdminPatchClientDto } from './dto/admin-patch-client.dto'
+
 
 export const clientBaseAttributes: Partial<Client> = {
   absoluteRefreshTokenLifetime: 8 * 60 * 60, // 8 hours
@@ -124,6 +126,15 @@ export class AdminClientsService {
     await this.clientGrantType.create(this.defaultClientGrantTypes(client))
 
     return this.findByTenantIdAndClientId(tenantId, client.clientId)
+  }
+
+  async update(
+    user: User,
+    tenantId: string,
+    clientId: string,
+    input: AdminPatchClientDto,
+  ): Promise<AdminClientDto> {
+    return this.findByTenantIdAndClientId(tenantId, clientId)
   }
 
   private defaultClientAttributes(clientType: ClientType) {
