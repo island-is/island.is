@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const externalData = defineMessages({
   formTitle: {
     id: 'atr.application:externalData.formTitle',
-    defaultMessage: 'Umsókn um endurgreiðslu áfengisgjalda',
+    defaultMessage: 'Umsókn um endurgreiðslu áfengisútgjalda',
     description: 'Title for externalDataSection',
   },
   sectionTitle: {
