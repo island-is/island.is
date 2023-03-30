@@ -8,6 +8,8 @@ const style: CSSProperties = {
 const debugStyle: CSSProperties = {
   height: '1px',
   backgroundColor: 'springgreen',
+  position: 'relative',
+  zIndex: 9999,
 }
 
 
@@ -40,7 +42,7 @@ export const useDynamicShadow = (config: UseDynamicShadowOptions = {}) => {
         setShowShadow(true)
       }
 
-      else if (entries[0].intersectionRatio === 1) {
+      else if (entries[0].intersectionRatio > 0) {
         if (debug) console.log('useDynamicShadow, 🟢 Fully intersects with screen')
         setShowShadow(false)
       }
