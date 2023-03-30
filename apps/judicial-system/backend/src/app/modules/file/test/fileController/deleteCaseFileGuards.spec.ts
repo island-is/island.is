@@ -4,7 +4,6 @@ import { RolesGuard } from '@island.is/judicial-system/auth'
 
 import {
   CaseExistsGuard,
-  CaseNotCompletedGuard,
   CaseWriteGuard,
 } from '../../../case'
 import { CaseFileExistsGuard } from '../../guards/caseFileExists.guard'
@@ -21,8 +20,8 @@ describe('FileController - Delete case file guards', () => {
     )
   })
 
-  it('should have file guards', () => {
-    expect(guards).toHaveLength(5)
+  it('should have four guards', () => {
+    expect(guards).toHaveLength(4)
   })
 
   describe('RolesGuard', () => {
@@ -61,26 +60,14 @@ describe('FileController - Delete case file guards', () => {
     })
   })
 
-  describe('CaseNotCompletedGuard', () => {
+  describe('CaseFileExistsGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[3]()
     })
 
-    it('should have CaseNotCompletedGuard as quard 4', () => {
-      expect(guard).toBeInstanceOf(CaseNotCompletedGuard)
-    })
-  })
-
-  describe('CaseFileExistsGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[4]()
-    })
-
-    it('should have CaseFileExistsGuard as quard 5', () => {
+    it('should have CaseFileExistsGuard as quard 4', () => {
       expect(guard).toBeInstanceOf(CaseFileExistsGuard)
     })
   })
