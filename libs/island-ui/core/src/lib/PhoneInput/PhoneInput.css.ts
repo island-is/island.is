@@ -32,7 +32,7 @@ export const containerSizes = styleVariants(inputMixins.containerSizes)
 export const input = style({
   ...inputMixins.input,
   zIndex: 2,
-  marginLeft: '140px',
+  marginLeft: '120px',
   '::placeholder': inputMixins.inputPlaceholder,
   ':focus': inputMixins.inputFocus,
   selectors: {
@@ -40,6 +40,20 @@ export const input = style({
       color: theme.color.dark400,
     },
   },
+  ...themeUtils.responsiveStyle({
+    xl: {
+      marginLeft: '140px',
+    },
+  }),
+})
+
+export const inputDisabled = style({
+  marginLeft: '110px',
+  ...themeUtils.responsiveStyle({
+    xl: {
+      marginLeft: '110px',
+    },
+  }),
 })
 
 export const inputSize = styleVariants(inputMixins.inputSizes)
