@@ -1,40 +1,40 @@
-import { Colors } from '@island.is/island-ui/theme'
-
 import {
+  AlertMessageField,
   Application,
+  AsyncSelectField,
   BaseField,
   CallToAction,
-  Condition,
   CheckboxField,
+  CompanySearchField,
+  Condition,
   CustomField,
   DateField,
+  DescriptionField,
   DividerField,
-  KeyValueField,
-  FormText,
-  FormTextArray,
+  ExpandableDescriptionField,
+  Field,
   FieldComponents,
   FieldTypes,
   FieldWidth,
   FileUploadField,
-  DescriptionField,
-  Option,
-  RadioField,
-  SubmitField,
-  SelectField,
-  TextField,
+  FormText,
+  FormTextArray,
+  KeyValueField,
+  LinkField,
   MaybeWithApplicationAndField,
-  AsyncSelectField,
-  RecordObject,
-  Field,
-  CompanySearchField,
-  RedirectToServicePortalField,
+  MessageWithLinkButtonField,
+  Option,
   PaymentPendingField,
   PhoneField,
-  MessageWithLinkButtonField,
-  ExpandableDescriptionField,
-  AlertMessageField,
-  LinkField,
+  RadioField,
+  RecordObject,
+  RedirectToServicePortalField,
+  SelectField,
+  SubmitField,
+  TextField,
 } from '@island.is/application/types'
+
+import { Colors } from '@island.is/island-ui/theme'
 import { SpanType } from '@island.is/island-ui/core/types'
 
 const extractCommonFields = (
@@ -219,6 +219,7 @@ export function buildCompanySearchField(
     placeholder,
     shouldIncludeIsatNumber,
     checkIfEmployerIsOnForbiddenList,
+    required,
   } = data
 
   return {
@@ -227,6 +228,7 @@ export function buildCompanySearchField(
     placeholder,
     shouldIncludeIsatNumber,
     checkIfEmployerIsOnForbiddenList,
+    required,
     type: FieldTypes.COMPANY_SEARCH,
     component: FieldComponents.COMPANY_SEARCH,
   }
