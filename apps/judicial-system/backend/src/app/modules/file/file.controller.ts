@@ -46,7 +46,6 @@ import {
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { ViewCaseFileGuard } from './guards/viewCaseFile.guard'
-import { defenderFileRule } from './guards/rolesRules'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFilesDto } from './dto/updateFile.dto'
@@ -125,7 +124,6 @@ export class FileController {
     judgeRule,
     registrarRule,
     assistantRule,
-    defenderFileRule,
   )
   @Get('file/:fileId/url')
   @ApiOkResponse({

@@ -118,7 +118,6 @@ function getAllowedTypes(
       UserRole.JUDGE,
       UserRole.REGISTRAR,
       UserRole.PROSECUTOR,
-      UserRole.DEFENDER,
     ].includes(role)
   ) {
     return [...indictmentCases, ...investigationCases, ...restrictionCases]
