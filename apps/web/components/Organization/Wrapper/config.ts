@@ -17,6 +17,12 @@ export const liveChatIncConfig: Record<string, LiveChatIncChatPanelProps> = {
     license: 15092154,
     version: '2.0',
   },
+  // HVE - Organization
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/Un4jJk0rPybt9fu8gk94m
+  Un4jJk0rPybt9fu8gk94m: {
+    license: 15092154,
+    version: '2.0',
+  },
 }
 
 export const watsonConfig: Record<

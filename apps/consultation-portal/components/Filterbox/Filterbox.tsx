@@ -72,8 +72,6 @@ const FilterBox = ({
     return `${item.label} (${item.count})`
   }
 
-  console.log('thisFilters', thisFilters)
-
   return (
     <Box
       borderColor="blue200"

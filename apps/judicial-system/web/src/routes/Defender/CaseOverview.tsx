@@ -269,7 +269,7 @@ export const CaseOverview: React.FC = () => {
                   </Box>
                 </Box>
                 <Box marginBottom={1} textAlign="center">
-                  <Text variant="h4">{workingCase?.judge?.name}</Text>
+                  <Text variant="h4">{workingCase.judge?.name}</Text>
                 </Box>
               </BlueBox>
             </Box>

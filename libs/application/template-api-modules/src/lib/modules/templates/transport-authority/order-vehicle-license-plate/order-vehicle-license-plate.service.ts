@@ -178,8 +178,8 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
 
     await this.vehiclePlateOrderingClient.savePlateOrders(auth, {
       permno: answers?.pickVehicle?.plate,
-      frontType: answers?.plateSize?.frontPlateSize,
-      rearType: answers?.plateSize?.rearPlateSize,
+      frontType: answers?.plateSize?.frontPlateSize?.[0],
+      rearType: answers?.plateSize?.rearPlateSize?.[0],
       deliveryStationType: deliveryStationType,
       deliveryStationCode: deliveryStationCode,
       expressOrder: includeRushFee,

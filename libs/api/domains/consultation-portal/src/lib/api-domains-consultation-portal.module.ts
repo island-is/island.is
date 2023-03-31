@@ -14,6 +14,8 @@ import { StatisticsResultService } from './statistics/statistics.service'
 import { StatisticsResultResolver } from './statistics/statistics.resolver'
 import { AuthenticationService } from './authentication/authentication.service'
 import { AuthenticationResolver } from './authentication/authentication.resolver'
+import { UserEmailResultResolver } from './user/userEmail.resolver'
+import { UserEmailResultService } from './user/userEmail.services'
 
 @Module({
   providers: [
@@ -25,6 +27,8 @@ import { AuthenticationResolver } from './authentication/authentication.resolver
     AllTypesResultResolver,
     UserAdviceResultService,
     UserAdviceResultResolver,
+    UserEmailResultResolver,
+    UserEmailResultService,
     StatisticsResultService,
     StatisticsResultResolver,
     AuthenticationService,
