@@ -1961,6 +1961,9 @@ export interface INewsFields {
 
   /** Generic tags */
   genericTags?: IGenericTag[] | undefined
+
+  /** Initial Publish Date */
+  initialPublishDate?: string | undefined
 }
 
 export interface INews extends Entry<INewsFields> {
