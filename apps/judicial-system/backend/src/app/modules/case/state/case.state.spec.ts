@@ -44,75 +44,75 @@ describe('Transition Case', () => {
   )
 
   each`
-      transition                    | oldState                | currentAppealState
-      ${CaseTransition.OPEN}        | ${CaseState.DRAFT}      | ${undefined} 
-      ${CaseTransition.OPEN}    | ${CaseState.SUBMITTED}  | ${undefined} 
-      ${CaseTransition.OPEN}    | ${CaseState.RECEIVED}   | ${undefined} 
-      ${CaseTransition.OPEN}    | ${CaseState.ACCEPTED}   | ${undefined} 
-      ${CaseTransition.OPEN}    | ${CaseState.REJECTED}   | ${undefined}
-      ${CaseTransition.OPEN}    | ${CaseState.DISMISSED}  | ${undefined}
-      ${CaseTransition.OPEN}    | ${CaseState.DELETED}    | ${undefined}
-      ${CaseTransition.SUBMIT}  | ${CaseState.NEW}        | ${undefined}
-      ${CaseTransition.SUBMIT}  | ${CaseState.SUBMITTED}  | ${undefined}
-      ${CaseTransition.SUBMIT}  | ${CaseState.RECEIVED}   | ${undefined}
-      ${CaseTransition.SUBMIT}  | ${CaseState.ACCEPTED}   | ${undefined}
-      ${CaseTransition.SUBMIT}  | ${CaseState.REJECTED}   | ${undefined}
-      ${CaseTransition.SUBMIT}  | ${CaseState.DISMISSED}  | ${undefined}
-      ${CaseTransition.SUBMIT}  | ${CaseState.DELETED}    | ${undefined}
-      ${CaseTransition.RECEIVE} | ${CaseState.NEW}        | ${undefined}
-      ${CaseTransition.RECEIVE} | ${CaseState.DRAFT}      | ${undefined}
-      ${CaseTransition.RECEIVE} | ${CaseState.RECEIVED}   | ${undefined}
-      ${CaseTransition.RECEIVE} | ${CaseState.ACCEPTED}   | ${undefined}
-      ${CaseTransition.RECEIVE} | ${CaseState.REJECTED}   | ${undefined}
-      ${CaseTransition.RECEIVE} | ${CaseState.DISMISSED}  | ${undefined}
-      ${CaseTransition.RECEIVE} | ${CaseState.DELETED}    | ${undefined}
-      ${CaseTransition.ACCEPT}  | ${CaseState.NEW}        | ${undefined}
-      ${CaseTransition.ACCEPT}  | ${CaseState.DRAFT}      | ${undefined}
-      ${CaseTransition.ACCEPT}  | ${CaseState.SUBMITTED}  | ${undefined}
-      ${CaseTransition.ACCEPT}  | ${CaseState.ACCEPTED}   | ${undefined}
-      ${CaseTransition.ACCEPT}  | ${CaseState.REJECTED}   | ${undefined}
-      ${CaseTransition.ACCEPT}  | ${CaseState.DISMISSED}  | ${undefined}
-      ${CaseTransition.ACCEPT}  | ${CaseState.DELETED}    | ${undefined}
-      ${CaseTransition.REJECT}  | ${CaseState.NEW}        | ${undefined}
-      ${CaseTransition.REJECT}  | ${CaseState.DRAFT}      | ${undefined}
-      ${CaseTransition.REJECT}  | ${CaseState.SUBMITTED}  | ${undefined}
-      ${CaseTransition.REJECT}  | ${CaseState.ACCEPTED}   | ${undefined}
-      ${CaseTransition.REJECT}  | ${CaseState.REJECTED}   | ${undefined}
-      ${CaseTransition.REJECT}  | ${CaseState.DISMISSED}  | ${undefined}
-      ${CaseTransition.REJECT}  | ${CaseState.DELETED}    | ${undefined}
-      ${CaseTransition.DISMISS} | ${CaseState.NEW}        | ${undefined}
-      ${CaseTransition.DISMISS} | ${CaseState.DRAFT}      | ${undefined}
-      ${CaseTransition.DISMISS} | ${CaseState.SUBMITTED}  | ${undefined}
-      ${CaseTransition.DISMISS} | ${CaseState.ACCEPTED}   | ${undefined}
-      ${CaseTransition.DISMISS} | ${CaseState.REJECTED}   | ${undefined}
-      ${CaseTransition.DISMISS} | ${CaseState.DISMISSED}  | ${undefined}
-      ${CaseTransition.DISMISS} | ${CaseState.DELETED}    | ${undefined}
-      ${CaseTransition.DELETE}  | ${CaseState.ACCEPTED}   | ${undefined}
-      ${CaseTransition.DELETE}  | ${CaseState.REJECTED}   | ${undefined}
-      ${CaseTransition.DELETE}  | ${CaseState.DISMISSED}  | ${undefined}
-      ${CaseTransition.DELETE}  | ${CaseState.DELETED}    | ${undefined}
-      ${CaseTransition.REOPEN}  | ${CaseState.NEW}        | ${undefined}
-      ${CaseTransition.REOPEN}          | ${CaseState.DRAFT}      | ${undefined}
-      ${CaseTransition.REOPEN}          | ${CaseState.SUBMITTED}  | ${undefined}
-      ${CaseTransition.REOPEN}          | ${CaseState.DELETED}    | ${undefined}
-      ${CaseTransition.APPEAL}          | ${CaseState.NEW}        | ${undefined}
-      ${CaseTransition.APPEAL}          | ${CaseState.DRAFT}      | ${undefined}
-      ${CaseTransition.APPEAL}          | ${CaseState.SUBMITTED}  | ${undefined}
-      ${CaseTransition.APPEAL}          | ${CaseState.RECEIVED}   | ${undefined}
-      ${CaseTransition.APPEAL}          | ${CaseState.DISMISSED}  | ${undefined}
-      ${CaseTransition.APPEAL}          | ${CaseState.DELETED}    | ${undefined}
-      ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.NEW}        | ${undefined}
-      ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.DRAFT}      | ${undefined}
-      ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.SUBMITTED}  | ${undefined}
-      ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.RECEIVED}   | ${undefined}
-      ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.DISMISSED}  | ${undefined}
-      ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.DELETED}    | ${undefined}
-      ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.NEW}        | ${undefined}
-      ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.DRAFT}      | ${undefined}
-      ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.SUBMITTED}  | ${undefined}
-      ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.RECEIVED}   | ${undefined}
-      ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.DISMISSED}  | ${undefined}
-      ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.DELETED}    | ${undefined}
+      transition                        | oldState                
+      ${CaseTransition.OPEN}            | ${CaseState.DRAFT}     
+      ${CaseTransition.OPEN}            | ${CaseState.SUBMITTED}
+      ${CaseTransition.OPEN}            |  ${CaseState.RECEIVED}     
+      ${CaseTransition.OPEN}            |  ${CaseState.ACCEPTED}     
+      ${CaseTransition.OPEN}            |  ${CaseState.REJECTED}    
+      ${CaseTransition.OPEN}            |  ${CaseState.DISMISSED}   
+      ${CaseTransition.OPEN}            |  ${CaseState.DELETED}     
+      ${CaseTransition.SUBMIT}          |  ${CaseState.NEW}         
+      ${CaseTransition.SUBMIT}          |  ${CaseState.SUBMITTED}   
+      ${CaseTransition.SUBMIT}          |  ${CaseState.RECEIVED}    
+      ${CaseTransition.SUBMIT}          |  ${CaseState.ACCEPTED}    
+      ${CaseTransition.SUBMIT}          |  ${CaseState.REJECTED}    
+      ${CaseTransition.SUBMIT}          |  ${CaseState.DISMISSED}   
+      ${CaseTransition.SUBMIT}          |  ${CaseState.DELETED}     
+      ${CaseTransition.RECEIVE}         | ${CaseState.NEW}         
+      ${CaseTransition.RECEIVE}         | ${CaseState.DRAFT}       
+      ${CaseTransition.RECEIVE}         | ${CaseState.RECEIVED}    
+      ${CaseTransition.RECEIVE}         | ${CaseState.ACCEPTED}    
+      ${CaseTransition.RECEIVE}         | ${CaseState.REJECTED}    
+      ${CaseTransition.RECEIVE}         | ${CaseState.DISMISSED}   
+      ${CaseTransition.RECEIVE}         | ${CaseState.DELETED}     
+      ${CaseTransition.ACCEPT}          |  ${CaseState.NEW}         
+      ${CaseTransition.ACCEPT}          |  ${CaseState.DRAFT}       
+      ${CaseTransition.ACCEPT}          |  ${CaseState.SUBMITTED}   
+      ${CaseTransition.ACCEPT}          |  ${CaseState.ACCEPTED}    
+      ${CaseTransition.ACCEPT}          |  ${CaseState.REJECTED}    
+      ${CaseTransition.ACCEPT}          |  ${CaseState.DISMISSED}   
+      ${CaseTransition.ACCEPT}          |  ${CaseState.DELETED}     
+      ${CaseTransition.REJECT}          |  ${CaseState.NEW}         
+      ${CaseTransition.REJECT}          |  ${CaseState.DRAFT}       
+      ${CaseTransition.REJECT}          |  ${CaseState.SUBMITTED}   
+      ${CaseTransition.REJECT}          |  ${CaseState.ACCEPTED}    
+      ${CaseTransition.REJECT}          |  ${CaseState.REJECTED}    
+      ${CaseTransition.REJECT}          |  ${CaseState.DISMISSED}   
+      ${CaseTransition.REJECT}          |  ${CaseState.DELETED}     
+      ${CaseTransition.DISMISS}         | ${CaseState.NEW}         
+      ${CaseTransition.DISMISS}         | ${CaseState.DRAFT}       
+      ${CaseTransition.DISMISS}         | ${CaseState.SUBMITTED}   
+      ${CaseTransition.DISMISS}         | ${CaseState.ACCEPTED}    
+      ${CaseTransition.DISMISS}         | ${CaseState.REJECTED}    
+      ${CaseTransition.DISMISS}         | ${CaseState.DISMISSED}   
+      ${CaseTransition.DISMISS}         | ${CaseState.DELETED}     
+      ${CaseTransition.DELETE}          |  ${CaseState.ACCEPTED}    
+      ${CaseTransition.DELETE}          |  ${CaseState.REJECTED}    
+      ${CaseTransition.DELETE}          |  ${CaseState.DISMISSED}   
+      ${CaseTransition.DELETE}          |  ${CaseState.DELETED}     
+      ${CaseTransition.REOPEN}          |  ${CaseState.NEW}         
+      ${CaseTransition.REOPEN}          | ${CaseState.DRAFT}       
+      ${CaseTransition.REOPEN}          | ${CaseState.SUBMITTED}   
+      ${CaseTransition.REOPEN}          | ${CaseState.DELETED}     
+      ${CaseTransition.APPEAL}          | ${CaseState.NEW}         
+      ${CaseTransition.APPEAL}          | ${CaseState.DRAFT}       
+      ${CaseTransition.APPEAL}          | ${CaseState.SUBMITTED}   
+      ${CaseTransition.APPEAL}          | ${CaseState.RECEIVED}    
+      ${CaseTransition.APPEAL}          | ${CaseState.DISMISSED}   
+      ${CaseTransition.APPEAL}          | ${CaseState.DELETED}     
+      ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.NEW}         
+      ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.DRAFT}       
+      ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.SUBMITTED}   
+      ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.RECEIVED}    
+      ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.DISMISSED}   
+      ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.DELETED}     
+      ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.NEW}         
+      ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.DRAFT}       
+      ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.SUBMITTED}   
+      ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.RECEIVED}    
+      ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.DISMISSED}   
+      ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.DELETED}     
     `.it(
     'should not $transition $oldState case',
     ({ transition, oldState }) => {
