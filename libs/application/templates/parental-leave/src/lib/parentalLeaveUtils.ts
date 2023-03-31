@@ -1665,28 +1665,37 @@ export const convertBirthDay = (birthDay: string) => {
   const date = Number(birthDaySliced.slice(6, 8))
   return { year, month, date }
 }
+
 export const residentGrantIsOpenForApplication = (childBirthDay: string) => {
   // We expect the childBirthDay to be yyyymmdd
-  const convertedBirthDay = convertBirthDay(childBirthDay)
-  // Guard that the method used above did not return 0 0 0
+  const convertedBirthDay = convertBirthDay(childBirthDay) // Guard that the method used above did not return 0 0 0
+
   if (
     convertedBirthDay.date === 0 &&
     convertedBirthDay.month === 0 &&
     convertedBirthDay.year === 0
   )
     return false
+
   const birthDay = new Date(
     convertedBirthDay?.year,
     convertedBirthDay.month,
     convertedBirthDay.date,
   )
+
   const dateToday = new Date().setHours(0, 0, 0, 0)
+
   if (isEqual(dateToday, birthDay)) return true
-  if (!isAfter(dateToday, birthDay)) return false
-  // Adds 6 months to the birthday
+  if (!isAfter(dateToday, birthDay)) return false // Adds 6 months to the birthday
+
   const fullPeriod = addMonths(birthDay, 6)
-  if (isEqual(dateToday, fullPeriod)) return true
-  if (!isBefore(dateToday, fullPeriod)) return false
+
+  if (isEqual(subMonths(new Date(dateToday), 6), subMonths(fullPeriod, 6)))
+    return true
+
+  if (!isBefore(subMonths(new Date(dateToday), 6), subMonths(fullPeriod, 6)))
+    return false
+
   return true
 }
 
