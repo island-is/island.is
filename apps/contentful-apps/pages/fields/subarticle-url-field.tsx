@@ -75,9 +75,9 @@ const SubArticleUrlField = () => {
 
         setLoading(false)
       })
-      .catch(() => {
+      .catch((error) => {
         setLoading(false)
-        // TODO: perhaps also log the error that occured
+        console.error(error)
       })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cma.entry, sdk.entry, sdk.field])
