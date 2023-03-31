@@ -8,13 +8,13 @@ export interface AdminApplication {
   state: string
   created: string
   modified: string
-  name?: string | null
-  institution?: string | null
-  progress?: number | null
-  actionCard?: ActionCardMetaData | null
+  name?: string
+  institution?: string
+  progress?: number
+  actionCard?: ActionCardMetaData
   assignees: Array<string>
   applicantActors: Array<string>
   status: Types.ApplicationListAdminResponseDtoStatusEnum
-  applicantName?: string | null
-  paymentStatus?: string | null
+  applicantName?: string
+  paymentStatus?: string
 }

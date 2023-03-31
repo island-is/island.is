@@ -1,5 +1,4 @@
 import {
-  ActionCard,
   AlertMessage,
   AlertMessageType,
   Box,
@@ -16,8 +15,9 @@ import { getLogo, statusMapper } from '../../shared/utils'
 import { m } from '../../lib/messages'
 import { AdminApplication } from '../../types/adminApplication'
 import { Organization } from '@island.is/shared/types'
-import { FormatMessage } from '@island.is/application/types'
+import { ActionCardMetaData, FormatMessage } from '@island.is/application/types'
 import { ApplicationListAdminResponseDtoStatusEnum } from '@island.is/api/schema'
+import { ApplicationCard } from '@island.is/application/ui-components'
 
 interface ValueLineProps {
   title?: string
@@ -168,39 +168,19 @@ export const ApplicationDetails = ({
           </button>
         </Tooltip>
       </Box>
-      <ActionCard
-        cta={{ label: '' }}
-        heading={actionCard?.title ?? application.name ?? undefined}
-        text={actionCard?.description ?? undefined}
-        date={format(new Date(application.created), 'dd.MM.yyyy')}
-        logo={logo}
-        status={application.status}
-        tag={{
-          label: formatMessage(tag.label),
-          variant: tag.variant,
-          outlined: false,
-        }}
-        renderApplicationData
-        renderDraftStatusBar
-        progressMeter={
-          showHistory
-            ? undefined
-            : {
-                active:
-                  application.progress !== undefined &&
-                  application.progress !== null,
-                progress: application.progress ?? undefined,
-                variant: 'blue',
-                draftFinishedSteps: actionCard?.draftFinishedSteps ?? undefined,
-                draftTotalSteps: actionCard?.draftTotalSteps ?? undefined,
-              }
-        }
-        history={{
-          openButtonLabel: formatMessage(m.openApplicationHistory),
-          closeButtonLabel: formatMessage(m.closeApplicationHistory),
-          items: historyItems,
-        }}
-      />
+      {application && (
+        <ApplicationCard
+          application={{
+            id: application.id,
+            modified: new Date(application.modified),
+            status: application.status,
+            typeId: application.typeId,
+            name: application.name,
+            progress: application.progress,
+            actionCard: application.actionCard as ActionCardMetaData,
+          }}
+        />
+      )}
     </Box>
   )
 }
