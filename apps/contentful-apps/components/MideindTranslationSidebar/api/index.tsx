@@ -2,14 +2,14 @@ import getConfig from 'next/config'
 
 const { publicRuntimeConfig } = getConfig()
 
-const baseUrl = publicRuntimeConfig.MIDEIND_TRANSLATION_API_BASE_URL
-
 const defaultParams = {
   sourceLanguageCode: 'is',
   targetLanguageCode: 'en',
 }
 
 async function translateTexts(texts: string[]) {
+  const baseUrl = publicRuntimeConfig.MIDEIND_TRANSLATION_API_BASE_URL
+
   const translations = []
   const body = {
     contents: texts,
@@ -37,6 +37,8 @@ async function sendTexts(
   enTexts: string[],
   reference: string,
 ) {
+  const baseUrl = publicRuntimeConfig.MIDEIND_TRANSLATION_API_BASE_URL
+
   const body = {
     machineTranslatedText: '', // Required even if empty
     translationReference: 1 || reference, // Reference to be accepted later by Miðeind
