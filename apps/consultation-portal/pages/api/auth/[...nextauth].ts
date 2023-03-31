@@ -1,7 +1,7 @@
 import NextAuth, { CallbacksOptions } from 'next-auth'
 import { NextApiRequest, NextApiResponse } from 'next'
 import Providers from 'next-auth/providers'
-import { identityServerConfig } from '@island.is/consultation-portal/lib/idsConfig'
+import { identityServerConfig } from '../../../lib/idsConfig'
 import env from '../../../lib/environment'
 
 import {

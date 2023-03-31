@@ -5,7 +5,7 @@ import fetch from 'isomorphic-unfetch'
 const { publicRuntimeConfig, serverRuntimeConfig } = getConfig()
 
 // Polyfill fetch() on the server (used by apollo-client)
-if (!Boolean(process.browser)) {
+if (!process.browser) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ;(global as any).fetch = fetch
 }

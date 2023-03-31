@@ -1,5 +1,5 @@
-import { UserContext } from '@island.is/consultation-portal/context'
-import useUser from '@island.is/consultation-portal/utils/helpers/useUser'
+import { UserContext } from '../../context'
+import useUser from '../../utils/helpers/useUser'
 import { ReactNode } from 'react'
 
 export interface UserProps {

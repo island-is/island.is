@@ -1,8 +1,8 @@
 import SubscriptionActionCard from '../Card/SubscriptionActionCard'
 import { useQuery } from '@apollo/client'
-import initApollo from '@island.is/consultation-portal/graphql/client'
-import { GET_EMAIL } from '@island.is/consultation-portal/screens/Subscriptions/queries.graphql'
-import { useLogIn, useUser } from '@island.is/consultation-portal/utils/helpers'
+import initApollo from '../../graphql/client'
+import { GET_EMAIL } from '../../screens/Subscriptions/queries.graphql'
+import { useLogIn, useUser } from '../../utils/helpers'
 import { useState } from 'react'
 
 export const EmailBox = () => {
