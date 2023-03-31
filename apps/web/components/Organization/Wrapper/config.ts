@@ -25,6 +25,61 @@ export const liveChatIncConfig: Record<string, LiveChatIncChatPanelProps> = {
   },
 }
 
+const onDirectorateOfImmigrationChatLoad = (instance) => {
+  instance.on({
+    type: 'window:open',
+    handler: () => {
+      const customPanel = instance.customPanels.getPanel()
+
+      const emailInputId = 'email'
+      const nameInputId = 'name'
+      const submitButtonId = 'submit-button'
+
+      customPanel.hostElement.innerHTML = `
+        <div style="padding: 8px">
+
+          <div class="bx--form-item">
+            <label for="${emailInputId}" class="bx--label">Netfang/Email</label>
+            <input id="${emailInputId}" name="${emailInputId}" type="text" class="bx--text-input">
+          </div>
+
+          <br />
+
+          <div class="bx--form-item">
+            <label for="${nameInputId}" class="bx--label">Nafn/Name</label>
+            <input id="${nameInputId}" type="text" class="bx--text-input">
+          </div>
+
+          <br />
+          
+          <div class="bx--form-item" style="display: flex; justify-content: center">
+            <button id="${submitButtonId}" class="bx--btn" type="button">Áfram / Continue</button>
+          </div>
+        </div>
+      `
+
+      customPanel.open({
+        title: 'Netspjall Útlendingastofnunar',
+        hideBackButton: true,
+      })
+
+      const emailInput = document.getElementById(
+        emailInputId,
+      ) as HTMLInputElement
+      const nameInput = document.getElementById(nameInputId) as HTMLInputElement
+      const submitButton = document.getElementById(submitButtonId)
+
+      submitButton.onclick = () => {
+        const emailValue = emailInput?.value ?? ''
+        const nameValue = nameInput?.value ?? ''
+
+        console.log('email entered:', emailValue)
+        console.log('name entered:', nameValue)
+      }
+    },
+  })
+}
+
 export const watsonConfig: Record<
   Locale,
   Record<string, WatsonChatPanelProps>
@@ -39,6 +94,9 @@ export const watsonConfig: Record<
       showLauncher: false,
       carbonTheme: 'g10',
       namespaceKey: 'default',
+      onLoad(instance) {
+        onDirectorateOfImmigrationChatLoad(instance)
+      },
     },
   },
   is: {
@@ -84,30 +142,7 @@ export const watsonConfig: Record<
       carbonTheme: 'g10',
       namespaceKey: 'default',
       onLoad(instance) {
-        const customPanel = instance.customPanels.getPanel()
-
-        customPanel.hostElement.innerHTML = `
-        
-        <div class="bx--form-item" style="margin-top: 16px">
-          <label for="text-input-3" class="bx--label">Netfang/Email</label>
-          <input id="text-input-3" type="text"
-            class="bx--text-input">
-        </div>
-        <br />
-        <div class="bx--form-item">
-          <label for="text-area-2" class="bx--label">Nafn/Name</label>
-          <input id="text-input-3" type="email" class="bx--text-input">
-        </div>
-        
-        <div class="bx--form-item">
-          <button class="bx--btn" type="button">Submit</button>
-        </div>`
-        setTimeout(() => {
-          customPanel.open({
-            title: 'utl-custom-auth-panel',
-            hideBackButton: true,
-          })
-        }, 500)
+        onDirectorateOfImmigrationChatLoad(instance)
       },
     },
   },
