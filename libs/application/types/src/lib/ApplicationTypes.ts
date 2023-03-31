@@ -219,7 +219,7 @@ export const ApplicationConfigurations = {
     translation: 'dlbui.application',
   },
   [ApplicationTypes.ALCOHOL_TAX_REDEMPTION]: {
-    slug: 'afengisgjold',
+    slug: 'endugreidsla-afengisutgjalda',
     translation: 'atr.application',
   },
 }
