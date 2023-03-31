@@ -6,9 +6,11 @@ import {
 import { Injectable } from '@nestjs/common'
 import { GetUserAdvicesInput } from '../dto/userAdvices.input'
 import { UserAdviceAggregate } from '../models/userAdviceAggregate.model'
+import { UserSubscriptionsResult } from '../models/userSubscriptionsResult.model'
+import { UserSubscriptionsAggregate } from '../models/userSubscriptionsAggregate.model'
 
 @Injectable()
-export class UserAdviceResultService {
+export class UserDataResultService {
   constructor(private userApi: UserApi) {}
 
   private getAllUserAdvicesWithAuth(authString: string) {
@@ -32,4 +34,10 @@ export class UserAdviceResultService {
 
     return advicesResponse
   }
+  async getUserSubscriptions(): Promise<UserSubscriptionsAggregate> {
+    const response = await this.userApi.apiUserSubscriptionsGet()
+    return response
+  }
+
+  // async postUserSubscriptions(input: ApiUs)
 }
