@@ -194,6 +194,7 @@ export const useS3Upload = (caseId: string) => {
       category: CaseFileCategory,
       setDisplayFiles: React.Dispatch<React.SetStateAction<TUploadFile[]>>,
       cb: (displayFile: TUploadFile, newId?: string) => void,
+      policeCaseNumber?: string,
     ) => {
       // We generate an id for each file so that we find the file again when
       // updating the file's progress and onRetry.
@@ -215,7 +216,7 @@ export const useS3Upload = (caseId: string) => {
         ),
         ...previous,
       ])
-      upload(filesWithId, cb, category)
+      upload(filesWithId, cb, category, policeCaseNumber)
     },
     [upload],
   )
