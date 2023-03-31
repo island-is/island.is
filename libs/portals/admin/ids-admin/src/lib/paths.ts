@@ -2,8 +2,8 @@ export enum IDSAdminPaths {
   IDSAdmin = '/innskraningarkerfi',
   IDSAdminTenants = '/innskraningarkerfi/:tenant',
   IDSAdminDomainsAPIS = '/innskraningarkerfi/:tenant/vefthjonustur',
-  IDSAdminApplication = '/innskraningarkerfi/:tenant/forrit/:application',
-  IDSAdminApplicationCreate = '/innskraningarkerfi/:tenant/forrit/stofna',
-  IDSAdminApplicationAuthentication = '/innskraningarkerfi/:tenant/forrit/:application/rettindi',
-  IDSAdminApplicationAdvancedSettings = '/innskraningarkerfi/:tenant/forrit/:application/stillingar',
+  IDSAdminClient = '/innskraningarkerfi/:tenant/forrit/:client',
+  IDSAdminClientCreate = '/innskraningarkerfi/:tenant/forrit/stofna',
+  IDSAdminClientAuthentication = '/innskraningarkerfi/:tenant/forrit/:client/rettindi',
+  IDSAdminClientAdvancedSettings = '/innskraningarkerfi/:tenant/forrit/:client/stillingar',
 }
