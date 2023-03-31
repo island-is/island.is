@@ -65,7 +65,7 @@ export const container = {
 }
 
 export const containerWithBefore: StyleRule = {
-  ...omit(container, ['boxShadow', 'transition']),
+  ...omit(container, ['boxShadow', 'transition', 'backgroundColor']),
 
   // This is only for displaying the border.
   '::before': {

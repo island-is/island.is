@@ -418,6 +418,14 @@ export const useCreateRegulationDraft = () => {
 
 // ---------------------------------------------------------------------------
 
+export const RegulationSearchListQuery = gql`
+  query RegulationsSearchQuery($input: GetRegulationsSearchInput!) {
+    getRegulationsSearch(input: $input)
+  }
+`
+
+// ---------------------------------------------------------------------------
+
 export const RegulationOptionListQuery = gql`
   query RegulationOptionList($input: GetRegulationOptionListInput!) {
     getRegulationOptionList(input: $input)
