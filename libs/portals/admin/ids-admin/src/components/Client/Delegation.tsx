@@ -4,6 +4,8 @@ import ContentCard from '../../shared/components/ContentCard'
 import { useLocale } from '@island.is/localization'
 import { Checkbox, Stack } from '@island.is/island-ui/core'
 import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
+import { useAuth } from '@island.is/auth/react'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
 interface DelegationProps {
   supportsProcuringHolders: boolean
@@ -22,6 +24,7 @@ const Delegation = ({
   promptDelegations,
   requireApiScopes,
 }: DelegationProps) => {
+  const { userInfo } = useAuth()
   const { formatMessage } = useLocale()
   const [procuring, setProcuring] = useState(supportsProcuringHolders)
   const [legalGuardian, setLegalGuardian] = useState(supportsLegalGuardians)
@@ -33,6 +36,11 @@ const Delegation = ({
   const [customDelegation, setCustomDelegation] = useState(
     supportsCustomDelegation,
   )
+
+  const isSuperAdmin = userInfo?.scopes.includes(
+    AdminPortalScope.idsAdminSuperUser,
+  )
+
   return (
     <ContentCard
       title={formatMessage(m.delegations)}
@@ -47,6 +55,7 @@ const Delegation = ({
           backgroundColor={'blue'}
           large
           name="supportsCustomDelegation"
+          disabled={!isSuperAdmin}
           value={`${customDelegation}`}
           subLabel={formatMessage(m.supportCustomDelegationDescription)}
           checked={customDelegation}
@@ -60,6 +69,7 @@ const Delegation = ({
           backgroundColor={'blue'}
           large
           name="supportsLegalGuardians"
+          disabled={!isSuperAdmin}
           value={`${legalGuardian}`}
           subLabel={formatMessage(m.supportLegalGuardianDelegationDescription)}
           checked={legalGuardian}
@@ -69,6 +79,7 @@ const Delegation = ({
           label={formatMessage(m.supportPersonalRepresentativeDelegation)}
           backgroundColor={'blue'}
           large
+          disabled={!isSuperAdmin}
           name="supportsPersonalRepresentatives"
           value={`${personalRepresentative}`}
           subLabel={formatMessage(
@@ -81,6 +92,7 @@ const Delegation = ({
           label={formatMessage(m.supportProcuringHolderDelegation)}
           backgroundColor={'blue'}
           large
+          disabled={!isSuperAdmin}
           name="supportsProcuringHolders"
           value={`${procuring}`}
           subLabel={formatMessage(
@@ -93,6 +105,7 @@ const Delegation = ({
           label={formatMessage(m.alwaysPromptDelegations)}
           backgroundColor={'blue'}
           large
+          disabled={!isSuperAdmin}
           name="promptDelegations"
           value={`${prompt}`}
           subLabel={formatMessage(m.alwaysPromptDelegationsDescription)}
@@ -103,6 +116,7 @@ const Delegation = ({
           label={formatMessage(m.requirePermissions)}
           backgroundColor={'blue'}
           large
+          disabled={!isSuperAdmin}
           name="requireApiScopes"
           value={`${apiScope}`}
           subLabel={formatMessage(m.requirePermissionsDescription)}
