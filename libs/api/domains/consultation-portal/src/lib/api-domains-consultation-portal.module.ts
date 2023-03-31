@@ -12,6 +12,8 @@ import { UserAdviceResultService } from './user/userAdvice.services'
 import { UserAdviceResultResolver } from './user/userAdvice.resolver'
 import { StatisticsResultService } from './statistics/statistics.service'
 import { StatisticsResultResolver } from './statistics/statistics.resolver'
+import { UserEmailResultResolver } from './user/userEmail.resolver'
+import { UserEmailResultService } from './user/userEmail.services'
 
 @Module({
   providers: [
