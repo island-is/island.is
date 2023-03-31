@@ -8,12 +8,8 @@ import { Args, Query, Resolver } from '@nestjs/graphql'
 import { UserAdviceResultService } from './userAdvice.services'
 import { GetUserAdvicesInput } from '../dto/userAdvices.input'
 import { UserAdviceAggregate } from '../models/userAdviceAggregate.model'
-import {
-  CurrentUser,
-  IdsUserGuard,
-  Scopes,
-  User,
-} from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard, Scopes } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import { ConsultationPortalScope } from '@island.is/auth/scopes'
 
 @Resolver()

@@ -1,5 +1,5 @@
 import cookies from 'next-cookies'
-import environment from '@island.is/consultation-portal/lib/environment'
+import environment from '../../lib/environment'
 
 type CookieContext = { req?: { headers: { cookie?: string } } }
 

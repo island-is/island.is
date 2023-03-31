@@ -7,13 +7,9 @@ import {
 } from '@island.is/nest/feature-flags'
 import { UserEmailResultService } from './userEmail.services'
 import { UserEmailResult } from '../models/userEmailResult.model'
-import {
-  CurrentUser,
-  IdsUserGuard,
-  Scopes,
-  User,
-} from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard, Scopes } from '@island.is/auth-nest-tools'
 import { ConsultationPortalScope } from '@island.is/auth/scopes'
+import type { User } from '@island.is/auth-nest-tools'
 
 @Resolver()
 @UseGuards(FeatureFlagGuard)
