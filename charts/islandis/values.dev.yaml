@@ -914,6 +914,9 @@ consultation-portal:
 contentful-apps:
   enabled: true
   env:
+    CONTENTFUL_ENVIRONMENT: 'master'
+    CONTENTFUL_SPACE: '8k0h54kbe6bj'
+    MIDEIND_TRANSLATION_API_BASE_URL: 'https://stafraentisland.greynir.is/translate'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
