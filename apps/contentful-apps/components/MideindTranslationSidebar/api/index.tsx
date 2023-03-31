@@ -1,13 +1,12 @@
 import getConfig from 'next/config'
 
-const { publicRuntimeConfig } = getConfig()
-
 const defaultParams = {
   sourceLanguageCode: 'is',
   targetLanguageCode: 'en',
 }
 
 async function translateTexts(texts: string[]) {
+  const { publicRuntimeConfig } = getConfig()
   const baseUrl = publicRuntimeConfig.MIDEIND_TRANSLATION_API_BASE_URL
 
   const translations = []
@@ -37,6 +36,7 @@ async function sendTexts(
   enTexts: string[],
   reference: string,
 ) {
+  const { publicRuntimeConfig } = getConfig()
   const baseUrl = publicRuntimeConfig.MIDEIND_TRANSLATION_API_BASE_URL
 
   const body = {
