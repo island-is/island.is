@@ -23,6 +23,8 @@ import { StatisticsResultResolver } from './statistics/statistics.resolver'
     AllTypesResultResolver,
     UserAdviceResultService,
     UserAdviceResultResolver,
+    UserEmailResultResolver,
+    UserEmailResultService,
     StatisticsResultService,
     StatisticsResultResolver,
   ],

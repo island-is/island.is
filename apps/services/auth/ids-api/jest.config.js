@@ -3,8 +3,6 @@ module.exports = {
   rootDir: '../../../..',
   roots: [__dirname],
   coverageDirectory: '<rootDir>/coverage/apps/services/auth/ids-api',
-  globalSetup: `${__dirname}/test/globalSetup.ts`,
-  globalTeardown: `${__dirname}/test/globalTeardown.ts`,
   setupFilesAfterEnv: [`${__dirname}/test/setup.ts`],
   moduleFileExtensions: ['ts', 'js', 'html', 'json'],
   globals: {
