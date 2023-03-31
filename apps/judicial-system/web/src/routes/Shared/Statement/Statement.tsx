@@ -36,10 +36,10 @@ import {
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { statement as strings } from './Statement.strings'
-import { formatDate } from '@island.is/judicial-system/formatters'
 
 const Statement = () => {
   const { workingCase } = useContext(FormContext)
