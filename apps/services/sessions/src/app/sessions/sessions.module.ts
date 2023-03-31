@@ -25,6 +25,7 @@ if (process.env.INIT_SCHEMA === 'true' || process.env.TESTS === 'true') {
   BullModule = NestBullModule.registerQueueAsync({
     name: sessionsQueueName,
     useFactory: (config: ConfigType<typeof SessionsConfig>) => ({
+      prefix: `{${bullModuleName}}`,
       createClient: () =>
         createRedisCluster({
           name: `{${bullModuleName}}`,
