@@ -8,7 +8,6 @@ export interface SubscriptionActionBoxProps {
     label: string
     onClick?: () => void
     disabled?: boolean
-    isLoading?: boolean
   }
 }
 
@@ -52,7 +51,6 @@ export const SubscriptionActionBox = ({
           size="small"
           onClick={cta.onClick}
           disabled={cta.disabled}
-          loading={cta.isLoading}
         >
           {cta.label}
         </Button>

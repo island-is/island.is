@@ -2,7 +2,7 @@ import { useSession } from 'next-auth/client'
 import { useEffect, useState } from 'react'
 import { User } from '../../types/interfaces'
 
-const useUser = () => {
+export const useUser = () => {
   const [user, setUser] = useState<User>()
   const [session, loading] = useSession()
 

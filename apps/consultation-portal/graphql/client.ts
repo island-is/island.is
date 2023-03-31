@@ -23,7 +23,6 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 })
 const isBrowser: boolean = process.browser
 
-
 let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
 
 function create(initialState?: any) {

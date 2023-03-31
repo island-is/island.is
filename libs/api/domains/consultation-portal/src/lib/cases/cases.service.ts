@@ -19,7 +19,7 @@ export class CaseResultService {
   constructor(private casesApi: CasesApi) {}
 
   private postAdviceWithAuth(auth: User) {
-    console.log("test", this.casesApi.withMiddleware(new AuthMiddleware(auth)))
+    console.log('test', this.casesApi.withMiddleware(new AuthMiddleware(auth)))
     return this.casesApi.withMiddleware(new AuthMiddleware(auth))
   }
 
@@ -63,11 +63,11 @@ export class CaseResultService {
       caseId: input.caseId,
       adviceRequest: input.adviceRequest,
     }
-    console.log("auth", auth)
+    console.log('auth', auth)
     const response = await this.postAdviceWithAuth(
       auth,
     ).apiCasesCaseIdAdvicesPost(request)
-    console.log("response", response)
+    console.log('response', response)
     return response
   }
 }

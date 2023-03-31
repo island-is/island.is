@@ -28,7 +28,7 @@ const providers = [
 const callbacks: CallbacksOptions = {
   signIn: signIn,
   jwt: jwt,
-  session: session
+  session: session,
 }
 
 async function signIn(

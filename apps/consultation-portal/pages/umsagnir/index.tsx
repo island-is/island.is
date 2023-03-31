@@ -10,12 +10,6 @@ interface UserAdvicesProps {
 }
 
 export const getServerSideProps = async (ctx) => {
-  const cookie = ctx.req.headers.cookie
-  const parsedCookie = parseCookie(cookie)
-  const token = Object.prototype.hasOwnProperty.call(parsedCookie, 'token')
-    ? parsedCookie['token']
-    : ''
-
   const input = {
     oldestFirst: false,
     pageNumber: 1,
@@ -32,7 +26,6 @@ export const getServerSideProps = async (ctx) => {
     ] = await Promise.all([
       client.query<ConsultationPortalAllUserAdvicesQuery>({
         query: GET_ALL_USER_ADVICES,
-        context: { token },
         variables: { input },
       }),
     ])

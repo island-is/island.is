@@ -18,7 +18,7 @@ import {
 
 import Link from 'next/link'
 import { useReducer, useState } from 'react'
-import { useLogin } from '../../utils/helpers'
+import { useLogIn } from '../../utils/helpers'
 import { SubscriptionActionBox } from '../Card'
 import { POST_ADVICE } from '../../graphql/queries.graphql'
 import { useMutation } from '@apollo/client'
@@ -130,7 +130,7 @@ export const WriteReviewCard = ({
   const [showUpload, setShowUpload] = useState<boolean>(false)
   const [state, dispatch] = useReducer(reducer, initialUploadFiles)
   const [error, setError] = useState<string | undefined>(undefined)
-  const { LogIn, loginLoading } = useLogin()
+  const LogIn = useLogIn()
   const [review, setReview] = useState('')
 
   const client = initApollo()
@@ -142,36 +142,32 @@ export const WriteReviewCard = ({
   )
 
   const onClick = async () => {
-    if (review.length >= 10) {
-      const files = await Promise.all(
-        state.map((item: UploadFile) =>
-          resolveFileToObject(item.originalFileObj as File),
-        ),
-      )
-
-      const objToSend = {
-        caseId: caseId,
-        adviceRequest: {
-          content: review,
-          adviceFiles: files,
-        },
-      }
-
-      // const req = await fetch('/consultation-portal/api/auth/check')
-      // const data = await req.json()
-      // const token = data?.token
-
-      const posting = await postAdviceMutation({
-        variables: {
-          input: objToSend,
-          // context: { token },
-        },
-      })
-
-      // reloading page, would be better if we got the object back
-      // from the server or sent a refetch request for data
-      location.reload()
-    }
+    // if (review.length >= 10) {
+    //   const files = await Promise.all(
+    //     state.map((item: UploadFile) =>
+    //       resolveFileToObject(item.originalFileObj as File),
+    //     ),
+    //   )
+    //   const objToSend = {
+    //     caseId: caseId,
+    //     adviceRequest: {
+    //       content: review,
+    //       adviceFiles: files,
+    //     },
+    //   }
+    //   // const req = await fetch('/consultation-portal/api/auth/check')
+    //   // const data = await req.json()
+    //   // const token = data?.token
+    //   const posting = await postAdviceMutation({
+    //     variables: {
+    //       input: objToSend,
+    //       // context: { token },
+    //     },
+    //   })
+    //   // reloading page, would be better if we got the object back
+    //   // from the server or sent a refetch request for data
+    //   location.reload()
+    // }
   }
 
   const onChange = (newFiles: File[]) => {
@@ -307,7 +303,7 @@ export const WriteReviewCard = ({
       <SubscriptionActionBox
         heading="Skrifa umsögn"
         text="Þú verður að vera skráð(ur) inn til þess að geta skrifað umsögn um tillögur."
-        cta={{ label: 'Skrá mig inn', onClick: LogIn, isLoading: loginLoading }}
+        cta={{ label: 'Skrá mig inn', onClick: LogIn }}
       />
       <Text marginTop={2}>
         Ef umsögnin er send fyrir hönd samtaka, fyrirtækis eða stofnunar þarf
