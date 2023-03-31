@@ -86,8 +86,6 @@ const uploadFile = (file: UploadFile, dispatch: (action: Action) => void) => {
     formData.append('file', file.originalFileObj || '', file.name)
 
     // TODO: add backend url if multipart upload
-    //req.open('POST', 'http://localhost:5000/')
-    //req.send(formData)
   })
 }
 
@@ -142,32 +140,28 @@ export const WriteReviewCard = ({
   )
 
   const onClick = async () => {
-    // if (review.length >= 10) {
-    //   const files = await Promise.all(
-    //     state.map((item: UploadFile) =>
-    //       resolveFileToObject(item.originalFileObj as File),
-    //     ),
-    //   )
-    //   const objToSend = {
-    //     caseId: caseId,
-    //     adviceRequest: {
-    //       content: review,
-    //       adviceFiles: files,
-    //     },
-    //   }
-    //   // const req = await fetch('/consultation-portal/api/auth/check')
-    //   // const data = await req.json()
-    //   // const token = data?.token
-    //   const posting = await postAdviceMutation({
-    //     variables: {
-    //       input: objToSend,
-    //       // context: { token },
-    //     },
-    //   })
-    //   // reloading page, would be better if we got the object back
-    //   // from the server or sent a refetch request for data
-    //   location.reload()
-    // }
+    if (review.length >= 10) {
+      const files = await Promise.all(
+        state.map((item: UploadFile) =>
+          resolveFileToObject(item.originalFileObj as File),
+        ),
+      )
+      const objToSend = {
+        caseId: caseId,
+        adviceRequest: {
+          content: review,
+          adviceFiles: files,
+        },
+      }
+      const posting = await postAdviceMutation({
+        variables: {
+          input: objToSend,
+        },
+      })
+      // reloading page, would be better if we got the object back
+      // from the server or sent a refetch request for data
+      location.reload()
+    }
   }
 
   const onChange = (newFiles: File[]) => {

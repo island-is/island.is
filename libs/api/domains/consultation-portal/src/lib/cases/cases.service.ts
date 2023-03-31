@@ -62,11 +62,9 @@ export class CaseResultService {
       caseId: input.caseId,
       adviceRequest: input.adviceRequest,
     }
-    console.log('auth', auth)
     const response = await this.postAdviceWithAuth(
       auth,
     ).apiCasesCaseIdAdvicesPost(request)
-    console.log('response', response)
     return response
   }
 }

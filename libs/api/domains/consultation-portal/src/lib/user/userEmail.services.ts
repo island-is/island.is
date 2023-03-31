@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common'
-import { AuthMiddleware } from '../auth-tools/auth.middleware'
 
 import { UserApi } from '@island.is/clients/consultation-portal'
 import { UserEmailResult } from '../models/userEmailResult.model'
+import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class UserEmailResultService {
   constructor(private userApi: UserApi) {}
 
-  private getUserEmailWithAuth(authString: string) {
-    return this.userApi.withMiddleware(new AuthMiddleware(authString))
+  private getUserEmailWithAuth(auth: User) {
+    return this.userApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async getUserEmail(authString: string): Promise<UserEmailResult> {
+  async getUserEmail(auth: User): Promise<UserEmailResult> {
     const emailResponse = await this.getUserEmailWithAuth(
-      authString,
+      auth,
     ).apiUserEmailGet()
 
     return emailResponse

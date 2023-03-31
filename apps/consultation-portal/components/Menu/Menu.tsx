@@ -31,13 +31,13 @@ type MenuProps = {
 
 export const Menu = ({ isFrontPage = false }: MenuProps) => {
   const { isAuthenticated, user } = useUser()
-  const logOut = useLogOut()
 
   const router = useRouter()
   const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
   const biggerMarginLeft = [3, 3, 3, 4] as ResponsiveSpace
 
   const LogIn = useLogIn()
+  const LogOut = useLogOut()
 
   return (
     <header className={styles.menu}>
@@ -133,7 +133,7 @@ export const Menu = ({ isFrontPage = false }: MenuProps) => {
                             username={user?.name}
                             authenticated={isAuthenticated}
                             language={'IS'}
-                            onLogout={() => logOut()}
+                            onLogout={LogOut}
                             dropdownItems={<Divider />}
                           />
                         ) : (
@@ -156,7 +156,7 @@ export const Menu = ({ isFrontPage = false }: MenuProps) => {
                         modalLabel="Menu modal"
                         isLoggedIn={isAuthenticated}
                         logIn={LogIn}
-                        logOut={() => logOut()}
+                        logOut={LogOut}
                         router={router}
                         isFrontPage={isFrontPage}
                       />
