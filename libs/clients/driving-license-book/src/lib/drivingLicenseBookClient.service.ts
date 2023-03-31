@@ -230,9 +230,11 @@ export class DrivingLicenseBookClientApiFactory {
       showInactiveBooks: true,
     })
     if (data?.books) {
-      const book = data.books.reduce((a, b) =>
-        new Date(a.createdOn ?? '') > new Date(b.createdOn ?? '') ? a : b,
-      )
+      const book = data.books
+        .filter((item) => item.status !== 9)
+        .reduce((a, b) =>
+          new Date(a.createdOn ?? '') > new Date(b.createdOn ?? '') ? a : b,
+        )
 
       return getStudentAndBookMapper(data, book)
     }
