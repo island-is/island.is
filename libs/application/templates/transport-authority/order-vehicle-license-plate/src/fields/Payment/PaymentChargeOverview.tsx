@@ -3,13 +3,13 @@ import { Box, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { payment } from '../../lib/messages'
-import { formatIsk, getChargeItemCodes } from '../../utils'
+import { formatIsk, getChargeItemCodesWithInfo, PlateType } from '../../utils'
 import { OrderVehicleLicensePlate } from '../../lib/dataSchema'
 
 export const PaymentChargeOverview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
 
-  const chargeItemCodes = getChargeItemCodes(
+  const chargeItemCodes = getChargeItemCodesWithInfo(
     application.answers as OrderVehicleLicensePlate,
   )
   const { externalData } = application
@@ -20,9 +20,12 @@ export const PaymentChargeOverview: FC<FieldBaseProps> = ({ application }) => {
       chargeItemCode: string
     },
   ]
-  const items = allItems.filter(({ chargeItemCode }) =>
-    chargeItemCodes.includes(chargeItemCode),
-  )
+  const items = chargeItemCodes.map(({ chargeItemCode, type }) => {
+    return {
+      ...allItems.find((item) => item.chargeItemCode === chargeItemCode),
+      type,
+    }
+  })
 
   const totalPrice = items.reduce(
     (sum, item) => sum + (item?.priceAmount || 0),
@@ -37,7 +40,16 @@ export const PaymentChargeOverview: FC<FieldBaseProps> = ({ application }) => {
         </Text>
         {items.map((item) => (
           <Box paddingTop={1} display="flex" justifyContent="spaceBetween">
-            <Text>{item?.chargeItemName}</Text>
+            <Text>
+              {item?.chargeItemName}
+              {item?.type
+                ? item?.type === PlateType.front
+                  ? ' - ' +
+                    formatMessage(payment.paymentChargeOverview.frontLabel)
+                  : ' - ' +
+                    formatMessage(payment.paymentChargeOverview.rearLabel)
+                : ''}
+            </Text>
             <Text>{formatIsk(item?.priceAmount || 0)}</Text>
           </Box>
         ))}

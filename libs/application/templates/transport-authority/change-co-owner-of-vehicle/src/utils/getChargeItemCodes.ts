@@ -9,7 +9,7 @@ export const getChargeItemCodes = (
     0
   const coOwnerWasRemoved = !!answers.ownerCoOwners?.find((x) => x.wasRemoved)
 
-  const result = []
+  const result: Array<string> = []
 
   if (coOwnerWasAdded) {
     result.push(
