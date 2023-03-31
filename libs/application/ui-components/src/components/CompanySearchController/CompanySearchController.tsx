@@ -20,7 +20,6 @@ interface Props {
   placeholder?: string
   initialInputValue?: string
   inputValue?: string
-  icon?: React.ComponentProps<typeof Icon>['icon']
   colored?: boolean
   setLabelToDataSchema?: boolean
   shouldIncludeIsatNumber?: boolean
