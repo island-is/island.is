@@ -15,7 +15,7 @@ const mockAuthGaurdUserWithoutAdminScope = new MockAuthGuard({
   scope: [ApplicationScope.read, ApplicationScope.write],
 })
 
-const nationalIdUserWithAdminScope = '1234564322'
+const nationalIdUserWithAdminScope = '1234564321'
 const mockAuthGaurdUserWithAdminScope = new MockAuthGuard({
   nationalId: nationalIdUserWithAdminScope,
   scope: [
@@ -65,7 +65,7 @@ describe('testing get all for user with admin scope', () => {
     const creationResponse = await server
       .post('/applications')
       .send({
-        typeId: ApplicationTypes.PARENTAL_LEAVE,
+        typeId: ApplicationTypes.EXAMPLE,
       })
       .expect(201)
 
