@@ -1,4 +1,3 @@
-import { AuthMiddleware } from '../auth-tools/auth.middleware'
 import {
   ApiUserAdvicesGetRequest,
   UserApi,
@@ -6,17 +5,18 @@ import {
 import { Injectable } from '@nestjs/common'
 import { GetUserAdvicesInput } from '../dto/userAdvices.input'
 import { UserAdviceAggregate } from '../models/userAdviceAggregate.model'
+import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class UserAdviceResultService {
   constructor(private userApi: UserApi) {}
 
-  private getAllUserAdvicesWithAuth(authString: string) {
-    return this.userApi.withMiddleware(new AuthMiddleware(authString))
+  private getAllUserAdvicesWithAuth(auth: User) {
+    return this.userApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async getAllUserAdvices(
-    authString: string,
+    auth: User,
     input: GetUserAdvicesInput,
   ): Promise<UserAdviceAggregate> {
     const request: ApiUserAdvicesGetRequest = {
@@ -27,7 +27,7 @@ export class UserAdviceResultService {
     }
 
     const advicesResponse = await this.getAllUserAdvicesWithAuth(
-      authString,
+      auth,
     ).apiUserAdvicesGet(request)
 
     return advicesResponse

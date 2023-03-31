@@ -11,18 +11,15 @@ import {
 import { GetCaseInput } from '../dto/case.input'
 import { GetCasesInput } from '../dto/cases.input'
 import { CasesAggregateResult } from '../models/casesAggregateResult.model'
-import { CurrentAuthorization } from '../auth-tools/current-authorization'
 import { PostAdviceInput } from '../dto/postAdvice.input'
 import {
   CurrentUser,
-  IdsAuthGuard,
   IdsUserGuard,
   Scopes,
   ScopesGuard,
   User,
 } from '@island.is/auth-nest-tools'
 import { ConsultationPortalScope } from '@island.is/auth/scopes'
-import { Audit } from '@island.is/nest/audit'
 
 @UseGuards(FeatureFlagGuard)
 @Resolver()

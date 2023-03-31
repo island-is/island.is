@@ -19,7 +19,6 @@ export class CaseResultService {
   constructor(private casesApi: CasesApi) {}
 
   private postAdviceWithAuth(auth: User) {
-    console.log('test', this.casesApi.withMiddleware(new AuthMiddleware(auth)))
     return this.casesApi.withMiddleware(new AuthMiddleware(auth))
   }
 

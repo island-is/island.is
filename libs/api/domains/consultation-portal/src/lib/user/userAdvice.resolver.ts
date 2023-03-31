@@ -5,10 +5,16 @@ import {
 } from '@island.is/nest/feature-flags'
 import { UseGuards } from '@nestjs/common'
 import { Args, Query, Resolver } from '@nestjs/graphql'
-import { CurrentAuthorization } from '../auth-tools/current-authorization'
 import { UserAdviceResultService } from './userAdvice.services'
 import { GetUserAdvicesInput } from '../dto/userAdvices.input'
 import { UserAdviceAggregate } from '../models/userAdviceAggregate.model'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  User,
+} from '@island.is/auth-nest-tools'
+import { ConsultationPortalScope } from '@island.is/auth/scopes'
 
 @Resolver()
 @UseGuards(FeatureFlagGuard)
@@ -19,13 +25,15 @@ export class UserAdviceResultResolver {
   @Query(() => UserAdviceAggregate, {
     name: 'consultationPortalAllUserAdvices',
   })
+  @UseGuards(IdsUserGuard)
+  @Scopes(ConsultationPortalScope.default)
   async getAllUserAdvices(
-    @CurrentAuthorization() authString: string,
+    @CurrentUser() user: User,
     @Args('input', { type: () => GetUserAdvicesInput })
     input: GetUserAdvicesInput,
   ): Promise<UserAdviceAggregate> {
     const userAdvices = await this.userAdviceResultService.getAllUserAdvices(
-      authString,
+      user,
       input,
     )
     return userAdvices
