@@ -7,7 +7,7 @@ import {
 } from '../../../gen/graphql'
 
 import { CompanySearchItem } from './CompanySearchItem'
-import { coreErrorMessages } from '@island.is/application/core'
+import { coreErrorMessages, getErrorViaPath } from '@island.is/application/core'
 import debounce from 'lodash/debounce'
 import { debounceTime } from '@island.is/shared/constants'
 import { useLocale } from '@island.is/localization'
@@ -37,7 +37,6 @@ export const CompanySearchController: FC<Props> = ({
   name = id,
   label,
   placeholder,
-  error,
   initialInputValue = '',
   inputValue = '',
   colored = true,
@@ -46,7 +45,12 @@ export const CompanySearchController: FC<Props> = ({
   checkIfEmployerIsOnForbiddenList,
   required,
 }) => {
-  const { clearErrors, setValue, getValues } = useFormContext()
+  const {
+    clearErrors,
+    setValue,
+    getValues,
+    formState: { errors },
+  } = useFormContext()
   const { formatMessage } = useLocale()
   const [searchQuery, setSearchQuery] = useState('')
   const [search, { loading, data }] = useSearchCompaniesLazyQuery()
@@ -55,7 +59,6 @@ export const CompanySearchController: FC<Props> = ({
     { loading: employerValidLoading, data: employerValidData },
   ] = useIsEmployerValidLazyQuery()
   const [companyIsValid, setCompanyIsValid] = useState<boolean>(false)
-
   useEffect(() => {
     const isValid = employerValidData?.isEmployerValid ?? true
     const currForm = getValues(id)
@@ -166,8 +169,9 @@ export const CompanySearchController: FC<Props> = ({
                 searchQuery,
                 data?.companyRegistryCompanies,
               )}
-              hasError={error !== undefined}
-              errorMessage={formatMessage(coreErrorMessages.defaultError)}
+              errorMessage={
+                errors && getErrorViaPath(errors, `${id}.nationalId`)
+              }
               size="large"
               placeholder={placeholder}
               initialInputValue={initialInputValue}
