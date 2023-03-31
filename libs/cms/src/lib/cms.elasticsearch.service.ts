@@ -118,7 +118,10 @@ export class CmsElasticsearchService {
 
     const query = {
       types: ['webNews'],
-      sort: [{ dateCreated: { order } }] as sortRule[],
+      sort: [
+        { dateCreated: { order } },
+        { releaseDate: { order } },
+      ] as sortRule[],
       ...dateQuery,
       ...tagQuery,
       page,
