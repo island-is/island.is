@@ -90,12 +90,12 @@ const CaseScreen = ({ chosenCase, advices }) => {
                   {advices?.map((advice: Advice) => {
                     return <ReviewCard advice={advice} key={advice.number} />
                   })}
-                  {/* <WriteReviewCard
+                  <WriteReviewCard
                     card={chosenCase}
-                    isLoggedIn={isAuthenticated}
-                    username={user?.name}
+                    isLoggedIn={true}
+                    username={"test"}
                     caseId={chosenCase.id}
-                  /> */}
+                  />
                 </Stack>
               </Box>
             </Stack>

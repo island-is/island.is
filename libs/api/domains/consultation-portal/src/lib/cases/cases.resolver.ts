@@ -13,9 +13,12 @@ import { GetCasesInput } from '../dto/cases.input'
 import { CasesAggregateResult } from '../models/casesAggregateResult.model'
 import { CurrentAuthorization } from '../auth-tools/current-authorization'
 import { PostAdviceInput } from '../dto/postAdvice.input'
+import { CurrentUser, IdsAuthGuard, IdsUserGuard, Scopes, ScopesGuard, User } from '@island.is/auth-nest-tools'
+import { ConsultationPortalScope } from '@island.is/auth/scopes'
+import { Audit } from '@island.is/nest/audit'
 
-@Resolver()
 @UseGuards(FeatureFlagGuard)
+@Resolver()
 export class CaseResultResolver {
   constructor(private caseResultService: CaseResultService) {}
 
@@ -49,11 +52,13 @@ export class CaseResultResolver {
     name: 'consultationPortalPostAdvice',
   })
   @FeatureFlag(Features.consultationPortalApplication)
+  @UseGuards(IdsUserGuard)
+  @Scopes(ConsultationPortalScope.default)
   async postAdvice(
     @Args('input', { type: () => PostAdviceInput }) input: PostAdviceInput,
-    @CurrentAuthorization() auth: string,
+    @CurrentUser() user: User,
   ): Promise<void> {
-    const response = await this.caseResultService.postAdvice(auth, input)
+    const response = await this.caseResultService.postAdvice(user, input)
     return response
   }
 }

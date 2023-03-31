@@ -1,33 +1,20 @@
-import React, { ReactNode } from 'react'
-import useUser from '@island.is/air-discount-scheme-web/utils/hooks/useUser'
-import { UserContext } from '../../context'
+import { UserContext } from '@island.is/consultation-portal/context'
+import useUser from '@island.is/consultation-portal/utils/helpers/useUser'
+import { ReactNode } from 'react'
 
-interface Props {
+export interface UserProps {
   children: ReactNode
 }
 
-const AuthProvider = ({ children }: Props) => {
-//   const {
-//     isAuthenticated,
-//     setIsAuthenticated,
-//     user,
-//     setUser,
-//     loadingUser,
-//   } = useUser()
-//   return (
-//     <UserContext.Provider
-//       value={{
-//         isAuthenticated,
-//         setIsAuthenticated,
-//         user,
-//         loadingUser,
-//         setUser,
-//       }}
-//     >
-//       {children}
-//     </UserContext.Provider>
-//   )
-return {}
+const AuthProvider = ({ children }: UserProps) => {
+  const { isAuthenticated, setIsAuthenticated, user, setUser } = useUser()
+  return (
+    <UserContext.Provider
+      value={{ isAuthenticated, setIsAuthenticated, user, setUser }}
+    >
+      {children}
+    </UserContext.Provider>
+  )
 }
 
 export default AuthProvider

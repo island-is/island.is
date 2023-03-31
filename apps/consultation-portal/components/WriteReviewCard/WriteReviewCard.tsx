@@ -157,14 +157,14 @@ export const WriteReviewCard = ({
         },
       }
 
-      const req = await fetch('/consultation-portal/api/auth/check')
-      const data = await req.json()
-      const token = data?.token
+      // const req = await fetch('/consultation-portal/api/auth/check')
+      // const data = await req.json()
+      // const token = data?.token
 
       const posting = await postAdviceMutation({
         variables: {
           input: objToSend,
-          context: { token },
+          // context: { token },
         },
       })
 
