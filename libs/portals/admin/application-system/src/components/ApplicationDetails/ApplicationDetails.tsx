@@ -15,7 +15,12 @@ import { getLogo, statusMapper } from '../../shared/utils'
 import { m } from '../../lib/messages'
 import { AdminApplication } from '../../types/adminApplication'
 import { Organization } from '@island.is/shared/types'
-import { ActionCardMetaData, FormatMessage } from '@island.is/application/types'
+import {
+  ActionCardMetaData,
+  ApplicationStatus,
+  ApplicationTypes,
+  FormatMessage,
+} from '@island.is/application/types'
 import { ApplicationListAdminResponseDtoStatusEnum } from '@island.is/api/schema'
 import { ApplicationCard } from '@island.is/application/ui-components'
 
@@ -173,8 +178,8 @@ export const ApplicationDetails = ({
           application={{
             id: application.id,
             modified: new Date(application.modified),
-            status: application.status,
-            typeId: application.typeId,
+            status: application.status as ApplicationStatus,
+            typeId: application.typeId as ApplicationTypes,
             name: application.name,
             progress: application.progress,
             actionCard: application.actionCard as ActionCardMetaData,

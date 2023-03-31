@@ -21,6 +21,7 @@ import { ApplicationFilters, MultiChoiceFilter } from '../../types/filters'
 import { Organization } from '@island.is/shared/types'
 import { institutionMapper } from '@island.is/application/types'
 import { getFilteredApplications } from '../../shared/utils'
+import { AdminApplication } from '../../types/adminApplication'
 
 const defaultFilters: ApplicationFilters = {
   nationalId: '',
@@ -73,7 +74,8 @@ const Overview = () => {
   })
 
   const isLoading = queryLoading || orgsLoading
-  const { applicationApplicationsAdmin: applicationAdminList = [] } = data ?? {}
+  const { applicationApplicationsAdmin = [] } = data ?? {}
+  const applicationAdminList = applicationApplicationsAdmin as AdminApplication[]
   const organizations = (orgData?.getOrganizations?.items ??
     []) as Organization[]
 
