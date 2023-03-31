@@ -274,7 +274,6 @@ export interface AsyncSearchInputProps {
   menuProps?: Partial<MenuProps>
   white?: boolean
   hasError?: boolean
-  test?: string
   required?: boolean
   label?: string
   errorMessage?: string
