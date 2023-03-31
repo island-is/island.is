@@ -135,11 +135,14 @@ export class LicenseService {
   ): Promise<VerifyLicenseResponse> {
     const { passTemplateId } = JSON.parse(inputData.barcodeData)
 
+    let licenseId: LicenseId | null
     if (!passTemplateId) {
-      throw new BadRequestException('Missing passTemplateId from request input')
+      //No pass template id means old drivers license
+      licenseId = LicenseId.DRIVING_LICENSE
+      //throw new BadRequestException('Missing passTemplateId from request input')
+    } else {
+      licenseId = this.getTypeFromPassTemplateId(passTemplateId)
     }
-
-    const licenseId = this.getTypeFromPassTemplateId(passTemplateId)
 
     if (!licenseId) {
       throw new InternalServerErrorException('PassTemplateID parsing failed')

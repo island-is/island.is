@@ -14,6 +14,7 @@ import {
 import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
 import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-license'
 import { ProblemModule } from '@island.is/nest/problem'
+import { DrivingLicenseApiClientConfig } from './modules/license/clients/drivingLicense/drivingLicenseApiClient.config'
 
 @Module({
   imports: [
@@ -29,6 +30,8 @@ import { ProblemModule } from '@island.is/nest/problem'
         FirearmLicenseApiClientConfig,
         DisabilityLicenseClientConfig,
         DisabilityLicenseApiClientConfig,
+        XRoadConfig,
+        DrivingLicenseApiClientConfig,
       ],
     }),
     LicenseModule,
