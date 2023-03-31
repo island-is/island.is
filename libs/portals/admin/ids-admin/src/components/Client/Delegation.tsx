@@ -50,10 +50,7 @@ const Delegation = ({
           value={`${customDelegation}`}
           subLabel={formatMessage(m.supportCustomDelegationDescription)}
           checked={customDelegation}
-          onChange={() => {
-            console.log('change', customDelegation)
-            setCustomDelegation(!customDelegation)
-          }}
+          onChange={() => setCustomDelegation(!customDelegation)}
         />
         <Checkbox
           label={formatMessage(m.supportLegalGuardianDelegation)}
