@@ -96,7 +96,7 @@ export class ApiScopeGroup extends Model<
   readonly modified?: Date
 
   @HasMany(() => ApiScope)
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: () => [ApiScope] })
   scopes?: ApiScope[]
 
   @BelongsTo(() => Domain)

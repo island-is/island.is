@@ -317,6 +317,11 @@ RegulationsHome.getInitialProps = async (ctx) => {
     apolloClient
       .query<GetRegulationsMinistriesQuery>({
         query: GET_REGULATIONS_MINISTRIES_QUERY,
+        variables: {
+          input: {
+            slugs: undefined,
+          },
+        },
       })
       .then((res) => res.data?.getRegulationsMinistries as MinistryList),
 

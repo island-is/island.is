@@ -47,7 +47,7 @@ export interface IAlertBannerFields {
   showAlertBanner: boolean
 
   /** Banner variant */
-  bannerVariant: 'default' | 'warning' | 'error' | 'info' | 'success'
+  bannerVariant: 'default' | 'warning' | 'error' | 'info'
 
   /** Title */
   title?: string | undefined
@@ -210,6 +210,9 @@ export interface IArticleFields {
 
   /** Process Entry Button Text */
   processEntryButtonText?: 'application' | 'stepByStep' | undefined
+
+  /** Active Translations */
+  activeTranslations?: Record<string, any> | undefined
 }
 
 export interface IArticle extends Entry<IArticleFields> {
@@ -1958,6 +1961,9 @@ export interface INewsFields {
 
   /** Generic tags */
   genericTags?: IGenericTag[] | undefined
+
+  /** Initial Publish Date */
+  initialPublishDate?: string | undefined
 }
 
 export interface INews extends Entry<INewsFields> {
@@ -2238,36 +2244,11 @@ export interface IOrganization extends Entry<IOrganizationFields> {
 }
 
 export interface IOrganizationPageFields {
-  /** Organization */
-  organization: IOrganization
-
   /** Title */
   title: string
 
-  /** Slug */
-  slug: string
-
   /** Intro */
   intro?: string | undefined
-
-  /** Theme */
-  theme:
-    | 'default'
-    | 'utlendingastofnun'
-    | 'sjukratryggingar'
-    | 'syslumenn'
-    | 'digital_iceland'
-    | 'hsn'
-    | 'fiskistofa'
-    | 'landlaeknir'
-    | 'rikislogmadur'
-    | 'landskjorstjorn'
-    | 'landing_page'
-    | 'fjarsysla-rikisins'
-    | 'fjarsyslan'
-    | 'custom'
-    | 'hsu'
-    | 'tryggingastofnun'
 
   /** Description */
   description?: string | undefined
@@ -2327,9 +2308,6 @@ export interface IOrganizationPageFields {
   /** Featured Image */
   featuredImage: Asset
 
-  /** Theme Properties */
-  themeProperties?: Record<string, any> | undefined
-
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
 
@@ -2339,8 +2317,39 @@ export interface IOrganizationPageFields {
   /** Alert Banner */
   alertBanner?: IAlertBanner | undefined
 
+  /** Organization */
+  organization: IOrganization
+
   /** News tag */
   newsTag?: IGenericTag | undefined
+
+  /** Slug */
+  slug: string
+
+  /** Theme */
+  theme:
+    | 'default'
+    | 'utlendingastofnun'
+    | 'sjukratryggingar'
+    | 'syslumenn'
+    | 'digital_iceland'
+    | 'hsn'
+    | 'fiskistofa'
+    | 'landlaeknir'
+    | 'rikislogmadur'
+    | 'landskjorstjorn'
+    | 'landing_page'
+    | 'fjarsysla-rikisins'
+    | 'fjarsyslan'
+    | 'custom'
+    | 'hsu'
+    | 'tryggingastofnun'
+    | 'sak'
+    | 'gev'
+    | 'hve'
+
+  /** Theme Properties */
+  themeProperties?: Record<string, any> | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
@@ -2911,6 +2920,9 @@ export interface ISliceConnectedComponentFields {
     | 'Fiskistofa/StraddlingStockCalculator'
     | 'Fiskistofa/SelectedShip'
     | 'Fiskistofa/ShipSearchBoxedInput'
+    | 'Áfengisleyfi/AlcoholLicences'
+    | 'Tækifærisleyfi/TemporaryEventLicences'
+    | 'OrganizationSearchBox'
     | undefined
 
   /** Localized JSON */
@@ -3604,28 +3616,6 @@ export interface ITellUsAStory extends Entry<ITellUsAStoryFields> {
   }
 }
 
-export interface ITestHnippFieldFields {
-  /** Key */
-  key?: string | undefined
-}
-
-export interface ITestHnippField extends Entry<ITestHnippFieldFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'testHnippField'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
 export interface ITimelineFields {
   /** Title */
   title?: string | undefined
@@ -4083,7 +4073,6 @@ export type CONTENT_TYPE =
   | 'teamList'
   | 'teamMember'
   | 'tellUsAStory'
-  | 'testHnippField'
   | 'timeline'
   | 'timelineEvent'
   | 'twoColumnText'

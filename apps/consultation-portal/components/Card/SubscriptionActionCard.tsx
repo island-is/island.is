@@ -9,15 +9,16 @@ import {
 } from '@island.is/island-ui/core'
 import * as styles from './SubscriptionActionCard.css'
 
+interface SubscriptionButton {
+  label: string
+  onClick?: () => void
+  disabled?: boolean
+}
+
 export interface SubscriptionActionCardProps {
-  userIsLoggedIn: boolean
-  heading: string
+  heading?: string
   text: string
-  button: {
-    label: string
-    onClick?: () => void
-    disabled?: boolean
-  }
+  button: Array<SubscriptionButton>
   input?: {
     label: string
     placeholder: string
@@ -28,29 +29,25 @@ export interface SubscriptionActionCardProps {
 }
 
 export const SubscriptionActionCard = ({
-  userIsLoggedIn,
   heading,
   text,
   button,
   input,
 }: SubscriptionActionCardProps) => {
+  const noInput = typeof input !== 'undefined'
   return (
     <Box
       display="flex"
-      flexDirection={
-        userIsLoggedIn ? 'column' : ['column', 'column', 'row', 'row']
-      }
+      flexDirection={noInput ? 'column' : ['column', 'column', 'row', 'row']}
       justifyContent={
-        userIsLoggedIn
+        noInput
           ? 'flexStart'
           : ['flexStart', 'flexStart', 'spaceBetween', 'spaceBetween']
       }
       alignItems={
-        userIsLoggedIn
-          ? 'flexStart'
-          : ['flexStart', 'flexStart', 'center', 'center']
+        noInput ? 'flexStart' : ['flexStart', 'flexStart', 'center', 'center']
       }
-      borderColor={userIsLoggedIn ? 'blue400' : 'blue200'}
+      borderColor={noInput ? 'blue400' : 'blue200'}
       borderRadius="large"
       borderWidth="standard"
       background="white"
@@ -60,10 +57,10 @@ export const SubscriptionActionCard = ({
       rowGap={2}
     >
       <Box display="flex" flexDirection="column">
-        <Text variant="h3">{heading}</Text>
+        {heading && <Text variant="h3">{heading}</Text>}
         <Text paddingTop={1}>{text}</Text>
       </Box>
-      {userIsLoggedIn ? (
+      {noInput ? (
         <GridContainer>
           <Columns space={[2, 2, 3, 3]} collapseBelow="md">
             <Column width="9/12">
@@ -75,17 +72,23 @@ export const SubscriptionActionCard = ({
               />
             </Column>
             <Column width="3/12">
-              <Button
-                icon={'open'}
-                iconType="outline"
-                nowrap
-                fluid
-                size="default"
-                onClick={button.onClick}
-                disabled={button.disabled}
-              >
-                {button.label}
-              </Button>
+              {button &&
+                button.map((btn, index) => {
+                  return (
+                    <Button
+                      key={index}
+                      icon={'open'}
+                      iconType="outline"
+                      nowrap
+                      fluid
+                      size="default"
+                      onClick={btn.onClick}
+                      disabled={btn.disabled}
+                    >
+                      {btn.label}
+                    </Button>
+                  )
+                })}
             </Column>
           </Columns>
         </GridContainer>
@@ -94,17 +97,32 @@ export const SubscriptionActionCard = ({
           paddingTop={[3, 3, 0, 0]}
           display="flex"
           alignItems="center"
-          className={styles.button}
+          flexDirection="row"
+          className={styles.buttoncontainer}
         >
-          <Button
-            nowrap
-            fluid
-            size="small"
-            onClick={button.onClick}
-            disabled={button.disabled}
-          >
-            {button.label}
-          </Button>
+          {button &&
+            button.map((btn, index) => {
+              return (
+                <Box
+                  key={index}
+                  marginX={1}
+                  alignItems="center"
+                  className={styles.button}
+                  display="flex"
+                >
+                  <Button
+                    nowrap
+                    variant={index > 0 ? 'ghost' : 'primary'}
+                    fluid
+                    size="small"
+                    onClick={btn.onClick}
+                    disabled={btn.disabled}
+                  >
+                    {btn.label}
+                  </Button>
+                </Box>
+              )
+            })}
         </Box>
       )}
     </Box>

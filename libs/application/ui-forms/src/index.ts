@@ -1,3 +1,4 @@
+export * from './lib/payment'
 export {
   applicantInformationMultiField,
   applicantInformationSchema,

@@ -380,6 +380,7 @@ export const UserForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           onNextButtonClick={() => props.onSave(user)}
           nextIsDisabled={!isValid()}
           nextIsLoading={props.loading}

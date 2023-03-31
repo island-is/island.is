@@ -9,6 +9,7 @@ export const GET_CASE_BY_ID = gql`
       typeName
       shortDescription
       detailedDescription
+
       contactName
       contactEmail
       institutionName
@@ -22,6 +23,11 @@ export const GET_CASE_BY_ID = gql`
       created
       changed
       oldInstitutionName
+      statusName
+      documents {
+        id
+        fileName
+      }
     }
   }
 `

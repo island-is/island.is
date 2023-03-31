@@ -33,6 +33,7 @@ import { OperatingLicenseFakeData } from '@island.is/application/templates/opera
 import { JudicialAdministrationService } from '@island.is/clients/judicial-administration'
 import { BANNED_BANKRUPTCY_STATUSES } from './constants'
 import { error } from '@island.is/application/templates/operating-license'
+import { isPerson } from 'kennitala'
 
 @Injectable()
 export class OperatingLicenseService extends BaseTemplateApiService {
@@ -264,20 +265,13 @@ export class OperatingLicenseService extends BaseTemplateApiService {
           uploadDataId,
         )
         .catch((e) => {
-          return {
-            success: false,
-            errorMessage: e.message,
-          }
+          throw new Error(`Application submission failed ${e}`)
         })
       return {
         success: result.success,
-        orderId: '',
       }
     } catch (e) {
-      return {
-        success: false,
-        orderId: '',
-      }
+      throw new Error(`Application submission failed ${e}`)
     }
   }
 
@@ -309,12 +303,27 @@ export class OperatingLicenseService extends BaseTemplateApiService {
 
     const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
 
-    const criminalRecord = await this.getCriminalRecord(application.applicant)
+    let criminalRecordSSN = application.applicant
 
-    attachments.push({
-      name: `sakavottord_${application.applicant}_${dateStr}.pdf`,
-      content: criminalRecord.contentBase64,
-    })
+    if (!isPerson(application.applicant)) {
+      // Go through actors until a person is found
+      // if no person then an error is thrown in the next step
+      application.applicantActors.every((actor) => {
+        if (isPerson(actor)) {
+          criminalRecordSSN = actor
+          return false
+        }
+        return true
+      })
+    }
+
+    const criminalRecord = await this.getCriminalRecord(criminalRecordSSN)
+    if (criminalRecord.contentBase64) {
+      attachments.push({
+        name: `sakavottord_${application.applicant}_${dateStr}.pdf`,
+        content: criminalRecord.contentBase64,
+      })
+    }
 
     for (let i = 0; i < AttachmentPaths.length; i++) {
       const { path, prefix } = AttachmentPaths[i]

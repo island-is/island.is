@@ -23,3 +23,11 @@ export const GET_TYPES = gql`
     }
   }
 `
+export const GET_EMAIL = gql`
+  query consultationPortalUserEmail {
+    consultationPortalUserEmail {
+      email
+      emailVerified
+    }
+  }
+`

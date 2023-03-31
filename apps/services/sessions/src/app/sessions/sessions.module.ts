@@ -28,10 +28,10 @@ if (process.env.INIT_SCHEMA === 'true' || process.env.TESTS === 'true') {
       prefix: `{${bullModuleName}}`,
       createClient: () =>
         createRedisCluster({
-          name: bullModuleName,
+          name: `{${bullModuleName}}`,
           nodes: config.redis.nodes,
           ssl: config.redis.ssl,
-          noPrefix: true,
+          noPrefix: false,
         }),
     }),
     inject: [SessionsConfig.KEY],

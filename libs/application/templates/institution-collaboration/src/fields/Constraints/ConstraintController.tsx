@@ -35,7 +35,7 @@ const ConstraintController: FC<Props> = ({
         <Controller
           name={checkboxId}
           defaultValue={defaultValue}
-          render={({ value, onChange }) => {
+          render={({ field: { onChange, value } }) => {
             return (
               <Checkbox
                 onChange={(e) => {
@@ -60,13 +60,12 @@ const ConstraintController: FC<Props> = ({
           backgroundColor="blue"
           required={isChecked}
           type="text"
-          name={id}
+          {...register(id)}
           id={id}
           label={label}
           textarea
           rows={5}
           maxLength={250}
-          ref={register}
         />
       )}
     </Stack>

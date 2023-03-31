@@ -10,6 +10,12 @@ import { AllTypesResultService } from './types/types.service'
 import { AllTypesResultResolver } from './types/types.resolver'
 import { UserAdviceResultService } from './user/userAdvice.services'
 import { UserAdviceResultResolver } from './user/userAdvice.resolver'
+import { StatisticsResultService } from './statistics/statistics.service'
+import { StatisticsResultResolver } from './statistics/statistics.resolver'
+import { AuthenticationService } from './authentication/authentication.service'
+import { AuthenticationResolver } from './authentication/authentication.resolver'
+import { UserEmailResultResolver } from './user/userEmail.resolver'
+import { UserEmailResultService } from './user/userEmail.services'
 
 @Module({
   providers: [
@@ -21,6 +27,12 @@ import { UserAdviceResultResolver } from './user/userAdvice.resolver'
     AllTypesResultResolver,
     UserAdviceResultService,
     UserAdviceResultResolver,
+    UserEmailResultResolver,
+    UserEmailResultService,
+    StatisticsResultService,
+    StatisticsResultResolver,
+    AuthenticationService,
+    AuthenticationResolver,
   ],
   imports: [ConsultationPortalClientModule, AuthModule, FeatureFlagModule],
   exports: [],

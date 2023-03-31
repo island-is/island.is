@@ -6,7 +6,7 @@ import {
 } from './types/input-types'
 import { json, ref } from './dsl'
 
-type XroadSectionConfig = {
+export type XroadSectionConfig = {
   secrets?: Secrets
   env?: EnvironmentVariables
 }
@@ -176,7 +176,8 @@ export const Payment = new XroadConf({
       prod: 'IS/GOV/5402697509/FJS-Public',
     },
     XROAD_PAYMENT_BASE_CALLBACK_URL: {
-      dev: 'XROAD:/IS-DEV/GOV/10000/island-is/application-payment-v1/',
+      dev:
+        'XROAD:/IS-DEV/GOV/10000/island-is/application-callback-v2/application-payment/',
       staging: 'XROAD:',
       prod: 'XROAD:/IS/GOV/5501692829/island-is/application-payment-v1/',
     },
@@ -475,6 +476,12 @@ export const TransportAuthority = new XroadConf({
         'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOrdering-V1',
       prod:
         'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateOrdering-V1',
+    },
+    XROAD_VEHICLE_PLATE_RENEWAL_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateRenewal-V1',
+      staging:
+        'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateRenewal-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateRenewal-V1',
     },
     XROAD_VEHICLE_PRINTING_PATH: {
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1',
