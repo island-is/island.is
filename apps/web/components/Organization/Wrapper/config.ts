@@ -83,6 +83,32 @@ export const watsonConfig: Record<
       showLauncher: false,
       carbonTheme: 'g10',
       namespaceKey: 'default',
+      onLoad(instance) {
+        const customPanel = instance.customPanels.getPanel()
+
+        customPanel.hostElement.innerHTML = `
+        
+        <div class="bx--form-item" style="margin-top: 16px">
+          <label for="text-input-3" class="bx--label">Netfang/Email</label>
+          <input id="text-input-3" type="text"
+            class="bx--text-input">
+        </div>
+        <br />
+        <div class="bx--form-item">
+          <label for="text-area-2" class="bx--label">Nafn/Name</label>
+          <input id="text-input-3" type="email" class="bx--text-input">
+        </div>
+        
+        <div class="bx--form-item">
+          <button class="bx--btn" type="button">Submit</button>
+        </div>`
+        setTimeout(() => {
+          customPanel.open({
+            title: 'utl-custom-auth-panel',
+            hideBackButton: true,
+          })
+        }, 500)
+      },
     },
   },
 }
