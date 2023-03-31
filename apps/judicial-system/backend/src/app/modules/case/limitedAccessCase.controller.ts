@@ -87,12 +87,12 @@ export class LimitedAccessCaseController {
     CaseDefenderGuard,
   )
   @RolesRules(defenderTransitionRule)
-  @Patch('case/:caseId/state/limitedAccess')
+  @Patch('state/limitedAccess')
   @ApiOkResponse({
     type: Case,
     description: 'Updates the state of a case',
   })
-  async transition(
+  transition(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
     @Body() transition: TransitionCaseDto,
@@ -111,7 +111,7 @@ export class LimitedAccessCaseController {
       update.accusedPostponedAppealDate = nowFactory()
     }
 
-    return await this.limitedAccessCaseService.update(theCase, update)
+    return this.limitedAccessCaseService.update(theCase, update)
   }
 
   @UseGuards(TokenGuard, LimitedAccessCaseExistsGuard)

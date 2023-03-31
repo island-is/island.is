@@ -193,6 +193,7 @@ const AppealToCourtOfAppeals = () => {
               workingCase.id,
               CaseTransition.APPEAL,
             )
+
             if (caseTransitioned) {
               setVisibleModal('APPEAL_SENT')
             }

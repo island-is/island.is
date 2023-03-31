@@ -162,10 +162,11 @@ export const representativeTransitionRule: RolesRule = {
     CaseTransition.OPEN,
     CaseTransition.SUBMIT,
     CaseTransition.DELETE,
-    CaseTransition.APPEAL,
   ],
 }
 
+// Allows defenders to appeal cases.
+// Note that defenders can not appeal indictment cases.
 export const defenderTransitionRule: RolesRule = {
   role: UserRole.DEFENDER,
   type: RulesType.FIELD_VALUES,

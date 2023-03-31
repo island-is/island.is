@@ -5,12 +5,14 @@ import formatISO from 'date-fns/formatISO'
 import omitBy from 'lodash/omitBy'
 import isUndefined from 'lodash/isUndefined'
 import isNil from 'lodash/isNil'
+import router from 'next/router'
 
 import type {
   NotificationType,
   SendNotificationResponse,
   CaseTransition,
   RequestSignatureResponse,
+  CaseState,
 } from '@island.is/judicial-system/types'
 import {
   TempCase as Case,
@@ -20,6 +22,9 @@ import {
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
 
+import { CaseAppealState } from '@island.is/judicial-system-web/src/graphql/schema'
+import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
+
 import { CreateCaseMutation } from './createCaseGql'
 import { CreateCourtCaseMutation } from './createCourtCaseGql'
 import { UpdateCaseMutation } from './updateCaseGql'
@@ -27,6 +32,7 @@ import { SendNotificationMutation } from './sendNotificationGql'
 import { TransitionCaseMutation } from './transitionCaseGql'
 import { RequestCourtRecordSignatureMutation } from './requestCourtRecordSignatureGql'
 import { ExtendCaseMutation } from './extendCaseGql'
+import { TransitionLimitedAccessCaseMutation } from './transitionLimitedAccessCaseGql'
 
 type ChildKeys = Pick<
   UpdateCase,
@@ -61,6 +67,10 @@ interface UpdateCaseMutationResponse {
 
 interface TransitionCaseMutationResponse {
   transitionCase: Case
+}
+
+interface TransitionLimitedAccessCaseMutationResponse {
+  transitionLimitedAccessCase: Case
 }
 
 interface SendNotificationMutationResponse {
@@ -167,6 +177,12 @@ const useCase = () => {
     transitionCaseMutation,
     { loading: isTransitioningCase },
   ] = useMutation<TransitionCaseMutationResponse>(TransitionCaseMutation)
+  const [
+    transitionLimitedAccessCaseMutation,
+    { loading: isTransitioningLimitedAccessCase },
+  ] = useMutation<TransitionLimitedAccessCaseMutationResponse>(
+    TransitionLimitedAccessCaseMutation,
+  )
   const [
     sendNotificationMutation,
     { loading: isSendingNotification, error: sendNotificationError },
@@ -277,8 +293,19 @@ const useCase = () => {
       transition: CaseTransition,
       setWorkingCase?: React.Dispatch<React.SetStateAction<Case>>,
     ): Promise<boolean> => {
+      const limitedAccess = router.pathname.includes(DEFENDER_ROUTE)
+      console.log('caseid', caseId)
+
+      const mutation = !limitedAccess
+        ? transitionCaseMutation
+        : transitionLimitedAccessCaseMutation
+
+      const resultType = limitedAccess
+        ? 'transitionLimitedAccessCase'
+        : 'transitionCase'
+
       try {
-        const { data } = await transitionCaseMutation({
+        const { data } = await mutation({
           variables: {
             input: {
               id: caseId,
@@ -287,14 +314,21 @@ const useCase = () => {
           },
         })
 
-        if (!data?.transitionCase?.state) {
+        const res = data as TransitionCaseMutationResponse &
+          TransitionLimitedAccessCaseMutationResponse
+
+        const state = res[resultType].state
+        const appealState = res[resultType].appealState
+
+        if (!state && !appealState) {
           return false
         }
 
         if (setWorkingCase) {
           setWorkingCase((theCase) => ({
             ...theCase,
-            state: data.transitionCase.state,
+            state,
+            appealState,
           }))
         }
 
@@ -304,7 +338,11 @@ const useCase = () => {
         return false
       }
     },
-    [formatMessage, transitionCaseMutation],
+    [
+      formatMessage,
+      transitionCaseMutation,
+      transitionLimitedAccessCaseMutation,
+    ],
   )
 
   const sendNotification = useMemo(
@@ -402,6 +440,7 @@ const useCase = () => {
     isUpdatingCase,
     transitionCase,
     isTransitioningCase,
+    isTransitioningLimitedAccessCase,
     sendNotification,
     isSendingNotification,
     sendNotificationError,
