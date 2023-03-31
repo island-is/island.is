@@ -62,7 +62,7 @@ export const getNextWorkday = (date: Date) => {
 // ---------------------------------------------------------------------------
 
 /**
- * Get the next workday with a minimum number.
+ * Get the date of the nth workday from now
  * @param num number of working days
  * @returns Date {num} working days from now
  */
