@@ -19,6 +19,7 @@ import {
   DelegationScope,
   Domain,
   IdentityResource,
+  Language,
   Translation,
 } from '@island.is/auth-api-lib'
 import { createNationalId } from '@island.is/testing/fixtures'
@@ -314,6 +315,11 @@ export class FixtureFactory {
       }),
     )
 
+    await this.get(Language).create({
+      isoKey: language,
+      description: 'Lang description',
+      englishDescription: 'Lang en description',
+    })
     return this.get(Translation).bulkCreate(translationObjs)
   }
 }

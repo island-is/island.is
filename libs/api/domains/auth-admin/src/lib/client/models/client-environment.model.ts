@@ -6,6 +6,7 @@ import { Environment } from '@island.is/shared/types'
 
 import { ClientType } from '../../models/client-type.enum'
 import { TranslatedValue } from '../../models/translated-value.model'
+import { ClientClaim } from './client-claim.model'
 
 registerEnumType(RefreshTokenExpiration, { name: 'RefreshTokenExpiration' })
 
@@ -77,6 +78,6 @@ export class ClientEnvironment {
   @Field(() => Int)
   accessTokenLifetime!: number
 
-  @Field(() => GraphQLJSON, { nullable: true })
-  customClaims?: object
+  @Field(() => [ClientClaim], { nullable: true })
+  customClaims?: ClientClaim[]
 }

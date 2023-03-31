@@ -5,6 +5,7 @@ import {
   Param,
   Patch,
   Post,
+  Req,
   UseGuards,
 } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
@@ -106,8 +107,10 @@ export class MeClientsController {
         namespace,
         auth: user,
         action: 'update',
-        resources: clientId,
-        meta: {},
+        resources: (client) => client.clientId,
+        meta: {
+          fields: Object.keys(input),
+        },
       },
       this.clientsService.update(user, tenantId, clientId, input),
     )
