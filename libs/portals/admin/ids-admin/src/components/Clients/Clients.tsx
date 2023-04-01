@@ -138,28 +138,6 @@ const Clients = () => {
               onChange={handleSearch}
               backgroundColor="blue"
             />
-            {/*<Filter*/}
-            {/*  variant="popover"*/}
-            {/*  align="left"*/}
-            {/*  reverse*/}
-            {/*  labelClear={formatMessage(m.clearFilter)}*/}
-            {/*  labelClearAll={formatMessage(m.clearAllFilters)}*/}
-            {/*  labelOpen={formatMessage(m.openFilter)}*/}
-            {/*  labelClose={formatMessage(m.closeFilter)}*/}
-            {/*  resultCount={0}*/}
-            {/*  filterInput={*/}
-            {/*    <FilterInput*/}
-            {/*      placeholder={formatMessage(m.searchPlaceholder)}*/}
-            {/*      name="session-nationalId-input"*/}
-            {/*      value={inputSearchValue}*/}
-            {/*      onChange={handleSearch}*/}
-            {/*      backgroundColor="blue"*/}
-            {/*    />*/}
-            {/*  }*/}
-            {/*  onFilterClear={() => {*/}
-            {/*    setInputSearchValue('')*/}
-            {/*  }}*/}
-            {/*></Filter>*/}
           </GridRow>
           {clients.map((item) => (
             <GridRow key={`clients-${item.clientId}`}>
