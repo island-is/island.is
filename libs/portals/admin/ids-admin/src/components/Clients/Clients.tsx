@@ -13,6 +13,7 @@ import {
   FilterInput,
   GridContainer,
   GridRow,
+  Input,
   Stack,
   Tag,
   Text,
@@ -41,14 +42,13 @@ const Clients = () => {
 
   const handleSearch = (value: string) => {
     setInputSearchValue(value)
-
     if (value.length > 0) {
-      const filteredList = clients.filter((client: any) => {
+      const filteredList = originalClients.filter((client: any) => {
         return (
           client?.defaultEnvironment.displayName[0].value
             .toLowerCase()
             .includes(value.toLowerCase()) ||
-          client.applicationId.toLowerCase().includes(value.toLowerCase())
+          client.clientId?.toLowerCase().includes(value.toLowerCase())
         )
       })
 
@@ -95,7 +95,7 @@ const Clients = () => {
     )
   }
 
-  return clients.length === 0 ? (
+  return originalClients.length === 0 ? (
     <GridContainer>
       {getHeader(false)}
       <GridRow>
@@ -131,28 +131,35 @@ const Clients = () => {
       <Box paddingTop="gutter">
         <Stack space={[1, 1, 2, 2]}>
           <GridRow>
-            <Filter
-              variant="popover"
-              align="left"
-              reverse
-              labelClear={formatMessage(m.clearFilter)}
-              labelClearAll={formatMessage(m.clearAllFilters)}
-              labelOpen={formatMessage(m.openFilter)}
-              labelClose={formatMessage(m.closeFilter)}
-              resultCount={0}
-              filterInput={
-                <FilterInput
-                  placeholder={formatMessage(m.searchPlaceholder)}
-                  name="session-nationalId-input"
-                  value={inputSearchValue}
-                  onChange={handleSearch}
-                  backgroundColor="blue"
-                />
-              }
-              onFilterClear={() => {
-                setInputSearchValue('')
-              }}
-            ></Filter>
+            <FilterInput
+              placeholder={formatMessage(m.searchPlaceholder)}
+              name="session-nationalId-input"
+              value={inputSearchValue}
+              onChange={handleSearch}
+              backgroundColor="blue"
+            />
+            {/*<Filter*/}
+            {/*  variant="popover"*/}
+            {/*  align="left"*/}
+            {/*  reverse*/}
+            {/*  labelClear={formatMessage(m.clearFilter)}*/}
+            {/*  labelClearAll={formatMessage(m.clearAllFilters)}*/}
+            {/*  labelOpen={formatMessage(m.openFilter)}*/}
+            {/*  labelClose={formatMessage(m.closeFilter)}*/}
+            {/*  resultCount={0}*/}
+            {/*  filterInput={*/}
+            {/*    <FilterInput*/}
+            {/*      placeholder={formatMessage(m.searchPlaceholder)}*/}
+            {/*      name="session-nationalId-input"*/}
+            {/*      value={inputSearchValue}*/}
+            {/*      onChange={handleSearch}*/}
+            {/*      backgroundColor="blue"*/}
+            {/*    />*/}
+            {/*  }*/}
+            {/*  onFilterClear={() => {*/}
+            {/*    setInputSearchValue('')*/}
+            {/*  }}*/}
+            {/*></Filter>*/}
           </GridRow>
           {clients.map((item) => (
             <GridRow key={`clients-${item.clientId}`}>
