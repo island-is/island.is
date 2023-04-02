@@ -98,7 +98,7 @@ export const getApplicantName = (application: Application) => {
     )
   }
   if (application.externalData.identity) {
-    return getValueViaPath(application.externalData, 'identity.data.fullName')
+    return getValueViaPath(application.externalData, 'identity.data.name')
   }
   return null
 }
