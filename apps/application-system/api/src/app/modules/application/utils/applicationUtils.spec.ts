@@ -50,7 +50,7 @@ describe('Testing utility functions for applicatios', () => {
           externalData: {
             identity: {
               data: {
-                fullName: 'Test User',
+                name: 'Test User',
               },
               date: new Date(),
               status: 'success',
@@ -70,7 +70,7 @@ it('Should return the name of the application when defined with a string', () =>
         externalData: {
           identity: {
             data: {
-              fullName: 'Test User',
+              name: 'Test User',
             },
             date: new Date(),
             status: 'success',
