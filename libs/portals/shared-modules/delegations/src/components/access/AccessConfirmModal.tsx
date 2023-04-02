@@ -13,6 +13,7 @@ import { AccessListContainer } from './AccessList/AccessListContainer/AccessList
 import { AuthScopeTreeQuery } from './AccessList/AccessListContainer/AccessListContainer.generated'
 import { AuthCustomDelegationOutgoing } from '../../types/customDelegation'
 import { m } from '../../lib/messages'
+import { useDynamicShadow } from '../../hooks/useDynamicShadow'
 
 type AccessConfirmModalProps = Pick<ModalProps, 'onClose' | 'isVisible'> & {
   delegation: AuthCustomDelegationOutgoing
@@ -39,6 +40,11 @@ export const AccessConfirmModal = ({
   const { userInfo } = useAuth()
   const { md } = useBreakpoint()
   const [error, setError] = useState(formError ?? false)
+
+  const { showShadow, pxProps } = useDynamicShadow({
+    rootMargin: '-128px',
+    isDisabled: !rest.isVisible,
+  })
 
   const onConfirmHandler = async () => {
     if (!delegation.id || !scopes) {
@@ -115,10 +121,12 @@ export const AccessConfirmModal = ({
         validityPeriod={validityPeriod}
         listMarginBottom={[0, 0, 10]}
       />
+      <div {...pxProps} />
+
       <Box position="sticky" bottom={0}>
         <DelegationsFormFooter
           loading={loading}
-          showShadow={md}
+          showShadow={md && showShadow}
           onCancel={onClose}
           onConfirm={onConfirmHandler}
           confirmLabel={formatMessage(coreMessages.codeConfirmation)}
