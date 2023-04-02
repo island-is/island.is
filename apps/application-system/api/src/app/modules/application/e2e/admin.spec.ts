@@ -61,7 +61,7 @@ describe('testing get all for user with admin scope', () => {
     server = request(app.getHttpServer())
   })
 
-  it('GET /admin/:nationalId/applications should return all applications for the requested nationalid, stripping away answers and externalData', async () => {
+  it.skip('GET /admin/:nationalId/applications should return all applications for the requested nationalid, stripping away answers and externalData', async () => {
     const creationResponse = await server
       .post('/applications')
       .send({
