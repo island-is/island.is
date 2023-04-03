@@ -118,6 +118,7 @@ const formatListItemDiff = (item: Element) => {
       const isLiAddition = oldLiText === '' || oldLiText === null
 
       const liLidur = isStaflidur ? 'stafliður' : 'töluliður'
+      const liLidurShortened = isStaflidur ? 'stafl.' : 'tölul.'
 
       const lidurMaybeCapitalized =
         liItemHtml === ''
@@ -145,10 +146,10 @@ const formatListItemDiff = (item: Element) => {
         liItemHtml = '' as HTMLText
       } else {
         liItemHtml = (liItemHtml +
-          `${lidurMaybeCapitalized} ${getLiPoint(
+          `${getLiPoint(
             lidur,
             isStaflidur,
-          )}, orðast svo: ${newLiText}`) as HTMLText
+          )}. ${liLidurShortened} orðast svo: ${newLiText}`) as HTMLText
 
         // Finish up:
         returningArray.push(liItemHtml)

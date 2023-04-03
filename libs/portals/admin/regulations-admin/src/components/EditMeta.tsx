@@ -11,6 +11,7 @@ import { useLocale } from '@island.is/localization'
 import { LawChaptersSelect } from './LawChaptersSelect'
 import { useDraftingState } from '../state/useDraftingState'
 import { RegulationDraftTypes } from '../types'
+import { getWorkdayMinimumDate } from '../utils'
 
 export const EditMeta = () => {
   const { formatMessage: t } = useLocale()
@@ -50,7 +51,7 @@ export const EditMeta = () => {
               label={t(msg.effectiveDate)}
               placeholderText={t(msg.effectiveDate_default)}
               minDate={draft.idealPublishDate.value || null}
-              selected={draft.effectiveDate.value}
+              selected={draft.effectiveDate.value || getWorkdayMinimumDate(10)}
               handleChange={(date: Date) =>
                 actions.updateState('effectiveDate', date)
               }
