@@ -90,7 +90,7 @@ const ProjectNewsList: Screen<ProjectNewsListProps> = ({
     },
   ]
 
-  const baseRouterPath = router.asPath.split('?')[0].split('#')[0]
+  const baseRouterPath = router.asPath.split('#')[0]
 
   const currentNavItem = projectPage.sidebarLinks.find(
     ({ primaryLink }) => primaryLink?.url === baseRouterPath,

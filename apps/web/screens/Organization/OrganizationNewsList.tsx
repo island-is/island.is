@@ -93,7 +93,7 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
     },
   ]
 
-  const baseRouterPath = router.asPath.split('?')[0].split('#')[0]
+  const baseRouterPath = router.asPath.split('#')[0]
 
   const currentNavItem =
     organizationPage.menuLinks.find(
