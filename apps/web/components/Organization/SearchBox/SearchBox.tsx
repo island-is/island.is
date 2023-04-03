@@ -94,7 +94,7 @@ export const SearchBox = ({
             setOptions([])
           }}
         >
-          <Text as="span">{item.title}</Text>asdf
+          <Text as="span">{item.title}</Text>
         </Box>
       )
     },
