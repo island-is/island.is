@@ -42,6 +42,29 @@ const clientTypes = [
   AuthAdminClientType.machine,
 ]
 
+const isToEnChar = {
+  ð: 'd',
+  þ: 'th',
+  æ: 'ae',
+  ö: 'o',
+  á: 'a',
+  é: 'e',
+  í: 'i',
+  ó: 'o',
+  ú: 'u',
+  ý: 'y',
+  Ð: 'd',
+  Þ: 'th',
+  Æ: 'ae',
+  Ö: 'o',
+  Á: 'a',
+  É: 'e',
+  Í: 'i',
+  Ó: 'o',
+  Ú: 'u',
+  Ý: 'y',
+}
+
 /**
  * Formats the client id to be lowercase and replace spaces with dashes
  */
@@ -76,6 +99,10 @@ const parseClientId = ({
   if (value.startsWith(prefixWithoutSlash)) {
     value = value.replace(prefixWithoutSlash, '')
   }
+
+  value = value.replace(/[ðþæöáéíóúýÐÞÆÖÁÉÍÓÚÝ]/g, (m) => {
+    return isToEnChar[m as keyof typeof isToEnChar]
+  })
 
   // If user tries to erase the prefix, we add it back
   return `${prefix}${formatClientId(value).split('/').pop()}`
@@ -153,6 +180,8 @@ export default function CreateClient() {
           label: formatMessage(m.machineClientsTitle),
           subLabel: formatMessage(m.machineClientsDescription),
         }
+      default:
+        return null
     }
   }
 
