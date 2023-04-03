@@ -18,7 +18,7 @@ const ConstraintController: FC<Props> = ({
   placeholder,
   defaultValue,
   extraText,
-  subLabel
+  subLabel,
 }) => {
   const { register, setValue } = useFormContext()
   const [isChecked, setIsChecked] = useState(defaultValue)
