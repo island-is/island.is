@@ -143,11 +143,6 @@ export const m = defineMessages({
     description:
       'You can also find the no debt certificate for companies in your inbox',
   },
-  noDebtCertificateInboxLink: {
-    id: 'ndc.application:noDebtCertificateInboxLink',
-    defaultMessage: 'https://island.is/minarsidur/postholf',
-    description: 'Link to the island.is inbox',
-  },
   downloadNoDebtCertificate: {
     id: 'ndc.application:downloadNoDebtCertificate',
     defaultMessage: 'Hlaða niður skuldleysisvottorði',
