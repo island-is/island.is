@@ -31,6 +31,8 @@ export type VerifyLicenseResult = {
   }
 }
 
+export type ErrorType = 'BadRequest' | 'ServerError'
+
 /**
  * Interface for client services, fetches generic payload and status from a third party API.
  * Only one license per client to start with.

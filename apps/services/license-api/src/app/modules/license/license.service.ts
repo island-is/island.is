@@ -16,6 +16,7 @@ import {
 import { Pass, PassDataInput, Result } from '@island.is/clients/smartsolutions'
 import {
   CLIENT_FACTORY,
+  ErrorType,
   GenericLicenseClient,
   LicenseId,
   PASS_TEMPLATE_IDS,
@@ -33,6 +34,17 @@ export class LicenseService {
     ) => Promise<GenericLicenseClient>,
   ) {}
 
+  private getErrorTypeByCode = (code: number): ErrorType =>
+    code < 10 ? 'BadRequest' : 'ServerError'
+
+  //Error message is an array to maintain consistency
+  private getException = (errorType: ErrorType, message?: string) => {
+    const errorMessage = [message ?? 'Unknown error']
+    throw errorType === 'BadRequest'
+      ? new BadRequestException(errorMessage)
+      : new InternalServerErrorException(errorMessage)
+  }
+
   private async pushUpdateLicense(
     service: GenericLicenseClient,
     expirationDate: string,
@@ -48,7 +60,7 @@ export class LicenseService {
       try {
         parsedInputPayload = JSON.parse(payload)
       } catch (e) {
-        throw new BadRequestException('Unable to parse payload')
+        throw this.getException('BadRequest', 'Unable to parse payload')
       }
       updatePayload = {
         ...updatePayload,
@@ -84,7 +96,8 @@ export class LicenseService {
       const { expiryDate, payload } = inputData
 
       if (!expiryDate)
-        throw new BadRequestException(
+        throw this.getException(
+          'BadRequest',
           'Invalid request body, missing expiryDate',
         )
 
@@ -104,11 +117,10 @@ export class LicenseService {
         data: updateRes.data,
       }
     }
-    // code < 10 means malformed request
-    if (updateRes.error.code < 10) {
-      throw new BadRequestException(updateRes.error.message)
-    }
-    throw new InternalServerErrorException(updateRes.error.message)
+    throw this.getException(
+      this.getErrorTypeByCode(updateRes.error.code),
+      updateRes.error.message,
+    )
   }
 
   async revokeLicense(
@@ -121,13 +133,10 @@ export class LicenseService {
     if (revokeData.ok) {
       return { revokeSuccess: revokeData.data.success }
     }
-
-    const code = revokeData.error.code
-    // code < 10 means malformed request
-    if (code < 10) {
-      throw new BadRequestException(revokeData.error.message)
-    }
-    throw new InternalServerErrorException(revokeData.error.message)
+    throw this.getException(
+      this.getErrorTypeByCode(revokeData.error.code),
+      revokeData.error.message,
+    )
   }
 
   async verifyLicense(
@@ -145,7 +154,7 @@ export class LicenseService {
     }
 
     if (!licenseId) {
-      throw new InternalServerErrorException('PassTemplateID parsing failed')
+      throw this.getException('ServerError', 'PassTemplateID parsing failed')
     }
 
     const service = await this.clientFactory(licenseId)
@@ -157,13 +166,10 @@ export class LicenseService {
         passIdentity: verifyData.data.passIdentity,
       }
     }
-
-    const code = verifyData.error.code
-    // code < 10 means malformed request
-    if (code < 10) {
-      throw new BadRequestException(verifyData.error.message)
-    }
-    throw new InternalServerErrorException(verifyData.error.message)
+    throw this.getException(
+      this.getErrorTypeByCode(verifyData.error.code),
+      verifyData.error.message,
+    )
   }
 
   private getTypeFromPassTemplateId(passTemplateId: string): LicenseId | null {
