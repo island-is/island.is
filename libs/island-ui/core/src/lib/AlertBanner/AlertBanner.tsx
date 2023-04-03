@@ -8,6 +8,7 @@ import { IconMapIcon } from '../IconRC/types'
 import { Text } from '../Text/Text'
 import { LinkContext } from '../context/LinkContext/LinkContext'
 import { Link } from '../Link/Link'
+import { Tooltip } from '../Tooltip/Tooltip'
 
 export type AlertBannerVariants =
   | 'error'
@@ -69,6 +70,7 @@ export interface AlertBannerProps {
   link?: {
     href: string
     title: string
+    tooltip?: string
   }
   /**
    * Fires when banner gets dismissed, useful for keeping track in storage that the user has dismissed the banner if we don't want it to show up again on page reload
@@ -143,6 +145,11 @@ export const AlertBanner: FC<AlertBannerProps> = ({
                 {description}
                 {description && link && ` `}
                 {link && <a href={link.href}>{link.title}</a>}
+                {link && link.tooltip && (
+                  <Box component="span" marginLeft={1}>
+                    <Tooltip text={link.tooltip} />
+                  </Box>
+                )}
               </Text>
             </LinkContext.Provider>
           </Box>
