@@ -35,18 +35,6 @@ export const applicationNav: PortalNavigationItem = {
       description: m.idsAdmin,
       activeIfExact: true,
     },
-    // {
-    //   name: m.authentication,
-    //   path: IDSAdminPaths.IDSAdminClientAuthentication,
-    //   description: m.idsAdmin,
-    //   activeIfExact: true,
-    // },
-    // {
-    //   name: m.advancedSettings,
-    //   path: IDSAdminPaths.IDSAdminClientAdvancedSettings,
-    //   description: m.idsAdmin,
-    //   activeIfExact: true,
-    // },
   ],
 }
 
