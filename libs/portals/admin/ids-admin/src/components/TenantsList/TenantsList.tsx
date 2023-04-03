@@ -30,7 +30,7 @@ const TenantsList = () => {
     setInputSearchValue(value)
 
     if (value.length > 0) {
-      const filteredList = tenantList.filter((tenant) => {
+      const filteredList = originalTenantsList.filter((tenant) => {
         return (
           tenant.defaultEnvironment.displayName[0].value
             .toLowerCase()
@@ -55,27 +55,12 @@ const TenantsList = () => {
       <GridContainer className={styles.relative}>
         <Stack space={[2, 2, 3, 3]}>
           <GridRow>
-            <Filter
-              variant={'popover'}
-              align="left"
-              reverse
-              labelClear={formatMessage(m.clearFilter)}
-              labelClearAll={formatMessage(m.clearAllFilters)}
-              labelOpen={formatMessage(m.openFilter)}
-              labelClose={formatMessage(m.closeFilter)}
-              resultCount={0}
-              filterInput={
-                <FilterInput
-                  placeholder={formatMessage(m.searchPlaceholder)}
-                  name="session-nationalId-input"
-                  value={inputSearchValue}
-                  onChange={handleSearch}
-                  backgroundColor="blue"
-                />
-              }
-              onFilterClear={() => {
-                setInputSearchValue('')
-              }}
+            <FilterInput
+              placeholder={formatMessage(m.searchPlaceholder)}
+              name="session-nationalId-input"
+              value={inputSearchValue}
+              onChange={handleSearch}
+              backgroundColor="blue"
             />
           </GridRow>
           <Stack space={[1, 1, 2, 2]}>
