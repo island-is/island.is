@@ -10,6 +10,10 @@ export const healthNavigation: PortalNavigationItem = {
       name: m.therapies,
       path: HealthPaths.HealthTherapies,
     },
+    {
+      name: m.supportProducts,
+      path: HealthPaths.HealthSupportProducts,
+    },
   ],
   icon: {
     icon: 'heart',

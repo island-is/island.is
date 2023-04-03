@@ -86,7 +86,7 @@ import { FishingLicenseModule } from '@island.is/api/domains/fishing-license'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
-import { RigthsPortalClientConfig } from '@island.is/clients/icelandic-health-insurance/rights-portal'
+import { RightsPortalClientConfig } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
 import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
@@ -288,7 +288,7 @@ const autoSchemaFile = environment.production
         GenericDrivingLicenseConfig,
         GenericDisabilityLicenseConfig,
         VehiclesClientConfig,
-        RigthsPortalClientConfig,
+        RightsPortalClientConfig,
         AuthPublicApiClientConfig,
         AuthDelegationApiClientConfig,
         DownloadServiceConfig,

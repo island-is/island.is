@@ -112,8 +112,8 @@ const Therapies = () => {
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
-        title={formatMessage(messages.title)}
-        intro={formatMessage(messages.description)}
+        title={formatMessage(messages.therapyTitle)}
+        intro={formatMessage(messages.therapyDescription)}
       />
       {!loading && !error && tabs.length === 0 && (
         <Box marginTop={8}>

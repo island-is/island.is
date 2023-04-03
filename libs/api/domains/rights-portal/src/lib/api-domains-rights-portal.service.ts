@@ -2,6 +2,8 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import {
+  AidsAndNutritionDTO,
+  AidsandnutritionApi,
   TherapyApi,
   TherapyDTO,
 } from '@island.is/clients/icelandic-health-insurance/rights-portal'
@@ -14,8 +16,8 @@ const LOG_CATEGORY = 'rights-portal-service'
 export class RightsPortalService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    @Inject(TherapyApi)
-    private rightsPortalApi: TherapyApi,
+    private therapyApi: TherapyApi,
+    private aidsAndNutritionApi: AidsandnutritionApi,
   ) {}
 
   handleError(error: any, detail?: string): ApolloError | null {
@@ -37,7 +39,7 @@ export class RightsPortalService {
     nationalId: string,
   ): Promise<TherapyDTO[] | null | ApolloError> {
     try {
-      const res = await this.rightsPortalApi.therapies({
+      const res = await this.therapyApi.therapies({
         usernationalid: nationalId,
       })
 
@@ -45,6 +47,21 @@ export class RightsPortalService {
       return res
     } catch (e) {
       return this.handle4xx(e, 'Failed to get therapies list')
+    }
+  }
+
+  async getAidsAndNutrition(
+    nationalId: string,
+  ): Promise<AidsAndNutritionDTO | null | ApolloError> {
+    try {
+      const res = await this.aidsAndNutritionApi.aidsandnutrition({
+        usernationalid: nationalId,
+      })
+
+      if (!res) return null
+      return res
+    } catch (e) {
+      return this.handle4xx(e, 'Failed to get aids and nutrition list')
     }
   }
 }
