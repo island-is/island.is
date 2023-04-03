@@ -1,9 +1,8 @@
 import { AccordionCard, Input, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Environment } from '@island.is/shared/types'
 import React from 'react'
 import { m } from '../../lib/messages'
-import ContentCard from './ContentCard'
+import ContentCard from '../../shared/components/ContentCard'
 
 interface BasicInfoProps {
   clientId: string
