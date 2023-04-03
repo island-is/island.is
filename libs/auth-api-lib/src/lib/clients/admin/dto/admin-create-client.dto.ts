@@ -3,6 +3,17 @@ import { IsEnum, IsNotEmpty, IsString } from 'class-validator'
 
 import { ClientType } from '../../../types'
 
+type CreateClientType = Extract<
+  ClientType,
+  ClientType.machine | ClientType.native | ClientType.web
+>
+
+const CreateClientType = {
+  [ClientType.machine]: ClientType.machine,
+  [ClientType.native]: ClientType.native,
+  [ClientType.web]: ClientType.web,
+}
+
 export class AdminCreateClientDto {
   @IsNotEmpty()
   @IsString()
@@ -12,13 +23,13 @@ export class AdminCreateClientDto {
   readonly clientId!: string
 
   @IsNotEmpty()
-  @IsEnum(ClientType)
+  @IsEnum(CreateClientType)
   @ApiProperty({
     example: 'spa',
-    enum: ClientType,
-    enumName: 'ClientType',
+    enum: CreateClientType,
+    enumName: 'CreateClientType',
   })
-  readonly clientType!: ClientType
+  readonly clientType!: CreateClientType
 
   @IsNotEmpty()
   @IsString()
