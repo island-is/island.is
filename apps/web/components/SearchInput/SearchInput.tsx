@@ -399,7 +399,6 @@ const Results = ({
 
     return <CommonSearchTerms suggestions={suggestions} />
   }
-  console.log('search.results', search.results)
   return (
     <Box
       display="flex"
