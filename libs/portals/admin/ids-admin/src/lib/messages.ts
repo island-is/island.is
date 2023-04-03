@@ -274,7 +274,12 @@ export const m = defineMessages({
   },
   lifetime: {
     id: 'ap.ids-admin:life-time',
-    defaultMessage: 'Life time',
+    defaultMessage: 'Refresh token life cycle',
+  },
+  lifeTimeDescription: {
+    id: 'ap.ids-admin:life-time-description',
+    defaultMessage:
+      'Refresh tokens are useful if you use access tokens to authorise API calls.  Access tokens only last 5 minutes but you can use refresh tokens to request new access tokens. Here you can configure how long refresh tokens can be used to request new access tokens.',
   },
   oAuthAuthorizationUrl: {
     id: 'ap.ids-admin:oAuthAuthorizationUrl',
@@ -299,5 +304,77 @@ export const m = defineMessages({
   jsonWebKeySet: {
     id: 'ap.ids-admin:jsonWebKeySet',
     defaultMessage: 'JSON Web Key Set',
+  },
+  errorInvalidUrls: {
+    id: 'ap.ids-admin:error-invalid-urls',
+    defaultMessage: 'List of URLs, comma separated',
+  },
+  errorPositiveNumber: {
+    id: 'ap.ids-admin:error-positive-number',
+    defaultMessage: 'Must be a positive number',
+  },
+  delegations: {
+    id: 'ap.ids-admin:delegations',
+    defaultMessage: 'Delegations',
+  },
+  delegationsDescription: {
+    id: 'ap.ids-admin:delegations-description',
+    defaultMessage:
+      'Configure which delegations the user can choose when authenticating to the application.',
+  },
+  supportCustomDelegation: {
+    id: 'ap.ids-admin:support-custom-delegation',
+    defaultMessage: 'Support custom delegations',
+  },
+  supportCustomDelegationDescription: {
+    id: 'ap.ids-admin:support-custom-delegation-description',
+    defaultMessage:
+      'Allow users to sign into this application with custom delegations which were manually granted to them on Mínar síður Ísland.is.\n' +
+      'The application must request permissions which support custom delegations. The user must have a valid custom delegation with one of these permissions.\n',
+  },
+  supportLegalGuardianDelegation: {
+    id: 'ap.ids-admin:support-legal-guardian-delegation',
+    defaultMessage: 'Support legal guardian delegations',
+  },
+  supportLegalGuardianDelegationDescription: {
+    id: 'ap.ids-admin:support-legal-guardian-delegation-description',
+    defaultMessage:
+      'Allow users to sign into this application as children which they are legal guardians of according to the Registers Iceland.',
+  },
+  supportPersonalRepresentativeDelegation: {
+    id: 'ap.ids-admin:support-personal-representative-delegation',
+    defaultMessage: 'Support personal representative delegations',
+  },
+  supportPersonalRepresentativeDelegationDescription: {
+    id: 'ap.ids-admin:support-personal-representative-delegation-description',
+    defaultMessage:
+      'Allow users to sign into this application on behalf of disabled individuals with an active personal representation contract at the Ministry of Social Affairs and Labour.',
+  },
+  supportProcuringHolderDelegation: {
+    id: 'ap.ids-admin:support-procuring-holder-delegation',
+    defaultMessage: 'Support procuring holder delegations',
+  },
+  supportProcuringHolderDelegationDescription: {
+    id: 'ap.ids-admin:support-procuring-holder-delegation-description',
+    defaultMessage:
+      'Allow users to sign into this application as legal entities which they are procuring holders of according to the company registry of Iceland.',
+  },
+  alwaysPromptDelegations: {
+    id: 'ap.ids-admin:always-prompt-delegations',
+    defaultMessage: 'Always prompt delegations',
+  },
+  alwaysPromptDelegationsDescription: {
+    id: 'ap.ids-admin:always-prompt-delegations-description',
+    defaultMessage:
+      'With this setting, the user always sees the delegation screen when authenticating with your application. For most applications we recommend keeping this off and to provide an explicit action to authenticate with delegation using the prompt=select_account argument.',
+  },
+  requirePermissions: {
+    id: 'ap.ids-admin:require-permissions',
+    defaultMessage: 'Require permissions',
+  },
+  requirePermissionsDescription: {
+    id: 'ap.ids-admin:require-permissions-description',
+    defaultMessage:
+      'Only allow delegations which have access to one or more requested permissions. Can be combined with permission settings to block access to the application for certain individuals or delegations.',
   },
 })
