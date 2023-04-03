@@ -27,6 +27,11 @@ export const courtOfAppealOverview = defineMessages({
     defaultMessage: 'Gæsluvarðhald virkt',
     description: 'Title of the court of appeal overview page',
   },
+  appealFilesTitle: {
+    id: 'judicial.system.core:court_of_appeal_overview.appeal_files_title',
+    defaultMessage: 'Skjöl kærumáls',
+    description: 'Title of the appeal files section',
+  },
   courtCaseFilesTitle: {
     id: 'judicial.system.core:court_of_appeal_overview.court_case_files_title',
     defaultMessage: 'Skjöl héraðsdómsmáls',

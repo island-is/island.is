@@ -25,6 +25,7 @@ import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion
 import * as constants from '@island.is/judicial-system/consts'
 
 import { courtOfAppealOverview as strings } from './Overview.strings'
+import { CaseFileCategory } from '@island.is/judicial-system/types'
 
 const CourtOfAppealOverview: React.FC = () => {
   const {
@@ -37,6 +38,25 @@ const CourtOfAppealOverview: React.FC = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const router = useRouter()
+
+  const appealCaseFiles = workingCase.caseFiles?.filter(
+    (caseFile) =>
+      caseFile.category &&
+      /* 
+      Please do not change the order of the following lines as they
+      are rendered in the same order as they are listed here
+      */
+      [
+        CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+        CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+        CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+        CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+        CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+        CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+        CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+        CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+      ].includes(caseFile.category),
+  )
 
   return (
     <>
@@ -175,6 +195,13 @@ const CourtOfAppealOverview: React.FC = () => {
               judgeName={workingCase.judge?.name}
             />
           </Box>
+          {appealCaseFiles && appealCaseFiles.length > 0 && (
+            <Box>
+              <Text as="h3" variant="h3">
+                {formatMessage(strings.appealFilesTitle)}
+              </Text>
+            </Box>
+          )}
           <Box marginBottom={6}>
             <Text as="h3" variant="h3">
               {formatMessage(strings.courtCaseFilesTitle)}
