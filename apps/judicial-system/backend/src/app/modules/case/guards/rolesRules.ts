@@ -196,10 +196,14 @@ export const judgeTransitionRule: RolesRule = {
       return false
     }
 
-    // Deny if reopening an indictment case
+    // Deny if rejecting, dismissing or reopening an indictment case
     if (
       isIndictmentCase(theCase.type) &&
-      request.body.transition === CaseTransition.REOPEN
+      [
+        CaseTransition.REJECT,
+        CaseTransition.DISMISS,
+        CaseTransition.REOPEN,
+      ].includes(request.body.transition)
     ) {
       return false
     }
