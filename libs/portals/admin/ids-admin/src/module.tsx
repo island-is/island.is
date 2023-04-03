@@ -68,22 +68,6 @@ export const idsAdminModule: PortalModule = {
                   backPath: IDSAdminPaths.IDSAdminTenants,
                 },
               },
-              {
-                name: m.authentication,
-                path: IDSAdminPaths.IDSAdminClientAuthentication,
-                element: <div>Authentication</div>,
-                handle: {
-                  backPath: IDSAdminPaths.IDSAdminTenants,
-                },
-              },
-              {
-                name: m.advancedSettings,
-                path: IDSAdminPaths.IDSAdminClientAdvancedSettings,
-                element: <div>AdvancedSettings</div>,
-                handle: {
-                  backPath: IDSAdminPaths.IDSAdminTenants,
-                },
-              },
             ],
           },
           {

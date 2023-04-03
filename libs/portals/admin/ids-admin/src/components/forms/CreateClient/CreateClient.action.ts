@@ -7,7 +7,7 @@ import {
   ValidateFormDataResult,
 } from '@island.is/react-spa/shared'
 import {
-  AuthAdminClientType,
+  AuthAdminCreateClientType,
   AuthAdminEnvironment,
 } from '@island.is/api/schema'
 import {
@@ -38,7 +38,7 @@ const schema = z
     environments: zfd.repeatable(
       z.array(z.nativeEnum(AuthAdminEnvironment)).nonempty('errorEnvironment'),
     ),
-    clientType: z.nativeEnum(AuthAdminClientType, {
+    clientType: z.nativeEnum(AuthAdminCreateClientType, {
       required_error: 'errorClientType',
     }),
   })
