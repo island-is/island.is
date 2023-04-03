@@ -9,7 +9,6 @@ import {
   AuthUser,
   signIn as handleSignIn,
   jwt as handleJwt,
-  session as handleSession,
   AuthSession,
 } from '@island.is/next-ids-auth'
 import { JWT } from 'next-auth/jwt'
