@@ -376,4 +376,8 @@ export const m = defineMessages({
     defaultMessage:
       'Only allow delegations which have access to one or more requested permissions. Can be combined with permission settings to block access to the application for certain individuals or delegations.',
   },
+  copySuccess: {
+    id: 'ap.ids-admin:copy-success',
+    defaultMessage: 'Copied to clipboard',
+  },
 })
