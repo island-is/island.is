@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
   Link,
   useNavigate,
@@ -23,32 +23,26 @@ import { replaceParams } from '@island.is/react-spa/shared'
 import { IDSAdminPaths } from '../../lib/paths'
 import * as styles from './Clients.css'
 import { AuthClients } from './Clients.loader'
-import { useTenant } from '../../screens/Tenant/Tenant'
 
 const Clients = () => {
   const originalClients = useLoaderData() as AuthClients
   const { tenant } = useParams()
   const { formatMessage } = useLocale()
-  const { setNavTitle } = useTenant()
   const navigate = useNavigate()
 
   const [clients, setClients] = useState<AuthClients>(originalClients)
   const [inputSearchValue, setInputSearchValue] = useState<string>('')
 
-  useEffect(() => {
-    setNavTitle(tenant ? tenant : formatMessage(m.tenants))
-  })
-
   const handleSearch = (value: string) => {
     setInputSearchValue(value)
 
     if (value.length > 0) {
-      const filteredList = clients.filter((client: any) => {
+      const filteredList = clients.filter((client) => {
         return (
           client?.defaultEnvironment.displayName[0].value
             .toLowerCase()
             .includes(value.toLowerCase()) ||
-          client.applicationId.toLowerCase().includes(value.toLowerCase())
+          client.clientId.toLowerCase().includes(value.toLowerCase())
         )
       })
 

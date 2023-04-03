@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const m = defineMessages({
   idsAdmin: {
     id: 'ap.ids-admin:ids-admin',
-    defaultMessage: 'Innskraningarkerfi',
+    defaultMessage: 'Innskráningarkerfi',
   },
   idsAdminDescription: {
     id: 'ap.ids-admin:ids-admin-description',
