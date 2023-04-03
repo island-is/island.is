@@ -309,7 +309,11 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
                         {getLicenceTypeRepresentation(alcoholLicence)}
                       </Text>
                       <Box marginBottom={[2, 2, 2, 0]}>
-                        <Tag disabled>{alcoholLicence.office}</Tag>
+                        <Tag disabled>
+                          {alcoholLicence.office}
+                          {alcoholLicence.location &&
+                            ` - ${alcoholLicence.location}`}
+                        </Tag>
                       </Box>
                     </Box>
                     <Box>
@@ -317,10 +321,7 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
 
                       <Text paddingBottom={2}>
                         {t('licenseNumber', 'Leyfisnúmer')}:{' '}
-                        {/* TODO: Find a good placement for the licence location field. */}
                         {alcoholLicence.licenseNumber}
-                        {alcoholLicence.location &&
-                          ` (${alcoholLicence.location})`}
                       </Text>
 
                       <Text>
