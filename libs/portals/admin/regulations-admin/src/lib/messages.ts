@@ -31,12 +31,12 @@ export const editorMsgs = defineMessages({
   },
   stepSignatureHeadline: {
     id: 'ap.regulations-admin:draft-step_signature-headline',
-    defaultMessage: 'Undirritun ráðherra',
+    defaultMessage: 'Undirritun',
   },
   stepSignatureIntro: {
     id: 'ap.regulations-admin:draft-step_signature-intro',
     defaultMessage:
-      'Hér skal hlaða upp eintaki af reglugerðinni með undirritun ráðherra. Það skjal verður að lokum framsent til Stjórnartíðinda.',
+      'Hér skal hlaða upp eintaki af reglugerðinni með undirritun. Það skjal verður að lokum framsent til Stjórnartíðinda.',
   },
   stepImpactHeadline: {
     id: 'ap.regulations-admin:draft-step_impacts-headline',
@@ -420,7 +420,7 @@ export const impactMsgs = defineMessages({
   },
   regSelectAmmending_placeholder: {
     id: 'ap.regulations-admin:draft-opts-impactedreg_ammending_placeholder',
-    defaultMessage: 'Sláðu inn númer stofnreglugerðar (Dæmi: 0438/2022)',
+    defaultMessage: 'Sláðu inn númer stofnreglugerðar (Dæmi: 438/2022)',
   },
   effectiveDate: {
     id: 'ap.regulations-admin:draft-labels-impacteffectivedate',

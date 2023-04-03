@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 
 import { TemplateApiModuleActionProps } from '../../../types'
 import { NationalRegistry, UploadData } from './types'
@@ -14,6 +14,8 @@ import { estateSchema } from '@island.is/application/templates/estate'
 import { estateTransformer, filterAndRemoveRepeaterMetadata } from './utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { coreErrorMessages } from '@island.is/application/core'
 
 type EstateSchema = zinfer<typeof estateSchema>
 
@@ -21,6 +23,26 @@ type EstateSchema = zinfer<typeof estateSchema>
 export class EstateTemplateService extends BaseTemplateApiService {
   constructor(private readonly syslumennService: SyslumennService) {
     super(ApplicationTypes.ESTATE)
+  }
+
+  async estateProvider({
+    application,
+  }: TemplateApiModuleActionProps): Promise<boolean> {
+    const applicationData: any =
+      application.externalData?.syslumennOnEntry?.data
+    if (
+      !applicationData?.estate?.caseNumber?.length ||
+      applicationData.estate?.caseNumber.length === 0
+    ) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary: coreErrorMessages.drivingLicenseNoTeachingRightsSummary,
+        },
+        400,
+      )
+    }
+    return true
   }
 
   stringifyObject(obj: Record<string, unknown>): Record<string, string> {
