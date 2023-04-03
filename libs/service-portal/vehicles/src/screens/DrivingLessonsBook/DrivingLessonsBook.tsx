@@ -115,7 +115,6 @@ const DrivingLessonsBook = () => {
             <Divider />
             <UserInfoLine
               label={formatMessage(messages.vehicleDrivingLessonsTeacher)}
-              // content={book?.teacherName}
               content={
                 <Box>
                   <div>{book?.teacherName}</div>
