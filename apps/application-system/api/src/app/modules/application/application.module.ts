@@ -7,6 +7,7 @@ import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { SigningModule } from '@island.is/dokobit-signing'
 import { AuditModule } from '@island.is/nest/audit'
 
+import { AdminController } from './admin.controller'
 import { ApplicationController } from './application.controller'
 import { environment } from '../../../environments'
 
@@ -43,7 +44,7 @@ import { HistoryModule } from '@island.is/application/api/history'
     LoggingModule,
     ApplicationChargeModule,
   ],
-  controllers: [ApplicationController],
+  controllers: [ApplicationController, AdminController],
   providers: [
     ApplicationAccessService,
     ApplicationValidationService,

@@ -57,6 +57,7 @@ export * from './lib/Filter/FilterInput/FilterInput'
 export * from './lib/PdfViewer/PdfViewer'
 export * from './lib/PageLoader'
 export * from './lib/VisuallyHidden/VisuallyHidden'
+export * from './lib/Drawer/Drawer'
 
 // Cards
 export * from './lib/LinkCard/LinkCard'
