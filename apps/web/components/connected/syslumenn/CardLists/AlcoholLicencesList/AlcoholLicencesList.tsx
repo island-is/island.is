@@ -5,7 +5,7 @@ import {
   AlcoholLicence,
   ConnectedComponent,
   Query,
-} from '@island.is/api/schema'
+} from '@island.is/web/graphql/schema'
 import { useLocalization } from '../../../utils'
 import {
   prepareCsvString,
