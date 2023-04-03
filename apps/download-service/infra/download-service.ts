@@ -1,5 +1,11 @@
 import { service, ServiceBuilder, ref } from '../../../infra/src/dsl/dsl'
-import { Base, Client, Finance, Vehicles } from '../../../infra/src/dsl/xroad'
+import {
+  Base,
+  Client,
+  Finance,
+  UniversityOfIceland,
+  Vehicles,
+} from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
   regulationsAdminBackend: ServiceBuilder<'regulations-admin-backend'>
@@ -33,7 +39,7 @@ export const serviceSetup = (services: {
       REGULATIONS_FILE_UPLOAD_KEY_PUBLISH:
         '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH',
     })
-    .xroad(Base, Client, Finance, Vehicles)
+    .xroad(Base, Client, Finance, Vehicles, UniversityOfIceland)
     .ingress({
       primary: {
         host: {

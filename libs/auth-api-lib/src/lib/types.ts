@@ -10,6 +10,7 @@ export enum ClientType {
   native = 'native',
   web = 'web',
   machine = 'machine',
+  spa = 'spa',
 }
 
 export enum RefreshTokenExpiration {
