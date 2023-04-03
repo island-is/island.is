@@ -72,7 +72,8 @@ export type CreateClientResult =
 export const createClientAction: WrappedActionFn = ({ client }) => async ({
   request,
 }) => {
-  const result = await validateFormData({ request, schema })
+  const formData = await request.formData()
+  const result = await validateFormData({ formData, schema })
 
   if (result.errors || !result.data) {
     return result
