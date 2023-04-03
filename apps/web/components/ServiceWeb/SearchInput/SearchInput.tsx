@@ -167,7 +167,6 @@ export const SearchInput = ({
                 onSelect(item)
               }}
             >
-              {/* <Text as="span">{item.title}</Text> */}
               <span dangerouslySetInnerHTML={{ __html: item.title }} />
             </Box>
           )
