@@ -28,12 +28,21 @@ export class SubArticle {
 export const mapSubArticle = ({
   sys,
   fields,
-}: ISubArticle): SystemMetadata<SubArticle> => ({
-  typename: 'SubArticle',
-  id: sys.id,
-  title: fields.title ?? '',
-  slug: (fields.url || fields.slug) ?? '',
-  parent: fields.parent?.fields && mapArticleReference(fields.parent),
-  body: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
-  showTableOfContents: fields.showTableOfContents ?? false,
-})
+}: ISubArticle): SystemMetadata<SubArticle> => {
+  let slug = ''
+  const parentSlug = fields.parent?.fields?.slug ?? ''
+
+  if (parentSlug) {
+    slug = `${parentSlug}/${fields.url?.split('/')?.pop() ?? ''}`
+  }
+
+  return {
+    typename: 'SubArticle',
+    id: sys.id,
+    title: fields.title ?? '',
+    slug,
+    parent: fields.parent?.fields && mapArticleReference(fields.parent),
+    body: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
+    showTableOfContents: fields.showTableOfContents ?? false,
+  }
+}

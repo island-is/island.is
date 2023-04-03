@@ -41,6 +41,7 @@ export const application: Form = buildForm({
               id: 'applicant.institution',
               title: m.applicant.institutionLabel,
               setLabelToDataSchema: true,
+              required: true,
             }),
 
             buildTextField({

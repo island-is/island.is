@@ -36,7 +36,7 @@
 /libs/clients/zendesk/                                                                                   @island-is/juni
 /libs/icelandic-names-registry/                                                                          @island-is/juni
 /libs/service-portal/petitions/                                                                          @island-is/juni
-/libs/service-portal/education/                                                                          @island-is/juni
+/libs/service-portal/education/                                                                          @island-is/juni @island-is/hugsmidjan
 /libs/service-portal/education-career/                                                                   @island-is/juni
 /libs/service-portal/education-degree/                                                                   @island-is/juni
 /libs/service-portal/education-license/                                                                  @island-is/juni
@@ -166,6 +166,7 @@
 /libs/application/template-api-modules/src/lib/modules/templates/data-protection-complaint/              @island-is/norda
 /libs/shared/form-fields/                                                                                @island-is/norda @island-is/island-ui
 
+/libs/portals/admin/application-system/                                                                  @island-is/norda-applications
 /libs/api/domains/application/                                                                           @island-is/norda-applications
 /libs/api/domains/payment/                                                                               @island-is/norda-applications
 

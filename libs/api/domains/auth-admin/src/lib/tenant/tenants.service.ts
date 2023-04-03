@@ -1,40 +1,26 @@
 import { Injectable } from '@nestjs/common'
 
 import { User } from '@island.is/auth-nest-tools'
-import { FetchError } from '@island.is/clients/middlewares'
 import { Environment } from '@island.is/shared/types'
 
+import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
 import { TenantEnvironment } from './models/tenant-environment.model'
 import { TenantsPayload } from './dto/tenants.payload'
 import { Tenant } from './models/tenant.model'
-import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
 
 @Injectable()
 export class TenantsService extends MultiEnvironmentService {
-  private handleError(error: Error) {
-    if (error instanceof FetchError && error.status === 401) {
-      // If 401 is returned we log it as info as it is intentional
-      this.logger.info('Unauthorized request to admin api', error)
-    } else {
-      // Otherwise we log it as error
-      this.logger.error('Error while fetching tenants', error)
-    }
-
-    // We swallow the errors
-    return undefined
-  }
-
   async getTenants(user: User): Promise<TenantsPayload> {
     const tenants = await Promise.all([
       this.adminDevApiWithAuth(user)
         ?.meTenantsControllerFindAll()
-        .catch(this.handleError.bind(this)),
+        .catch((error) => this.handleError(error, Environment.Development)),
       this.adminStagingApiWithAuth(user)
         ?.meTenantsControllerFindAll()
-        .catch(this.handleError.bind(this)),
+        .catch((error) => this.handleError(error, Environment.Staging)),
       this.adminProdApiWithAuth(user)
         ?.meTenantsControllerFindAll()
-        .catch(this.handleError.bind(this)),
+        .catch((error) => this.handleError(error, Environment.Production)),
     ])
 
     const tenantMap = new Map<string, TenantEnvironment[]>()
@@ -80,13 +66,13 @@ export class TenantsService extends MultiEnvironmentService {
     const tenants = await Promise.all([
       this.adminDevApiWithAuth(user)
         ?.meTenantsControllerFindById({ tenantId: id })
-        .catch(this.handleError.bind(this)),
+        .catch((error) => this.handleError(error, Environment.Development)),
       this.adminStagingApiWithAuth(user)
         ?.meTenantsControllerFindById({ tenantId: id })
-        .catch(this.handleError.bind(this)),
+        .catch((error) => this.handleError(error, Environment.Staging)),
       this.adminProdApiWithAuth(user)
         ?.meTenantsControllerFindById({ tenantId: id })
-        .catch(this.handleError.bind(this)),
+        .catch((error) => this.handleError(error, Environment.Production)),
     ])
 
     const tenantMap: TenantEnvironment[] = []
@@ -96,17 +82,18 @@ export class TenantsService extends MultiEnvironmentService {
       Environment.Staging,
       Environment.Production,
     ].entries()) {
-      if (tenants[index]) {
+      const tenant = tenants[index]
+      if (tenant) {
         tenantMap.push({
-          name: tenants[index]?.name ?? '',
+          name: tenant.name,
           environment: env,
-          displayName: tenants[index]?.displayName ?? [],
+          displayName: tenant.displayName,
         })
       }
     }
     return {
       id: id,
       environments: tenantMap,
-    } as Tenant
+    }
   }
 }
