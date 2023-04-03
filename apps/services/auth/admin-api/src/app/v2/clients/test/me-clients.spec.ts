@@ -341,7 +341,7 @@ describe('MeClientsController with auth', () => {
         title: 'Bad Request',
         status: 400,
         detail: [
-          'clientType must be one of the following values: native, web, machine',
+          'clientType must be one of the following values: machine, native, web',
         ],
       })
     })
