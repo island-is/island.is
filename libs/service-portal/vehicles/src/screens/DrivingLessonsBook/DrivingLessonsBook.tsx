@@ -3,6 +3,7 @@ import { useQuery, gql } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import {
   Box,
+  Button,
   Divider,
   SkeletonLoader,
   Stack,
@@ -16,6 +17,7 @@ import {
   formatDate,
   IntroHeader,
   EmptyState,
+  LinkResolver,
 } from '@island.is/service-portal/core'
 
 import { messages } from '../../lib/messages'
@@ -113,7 +115,17 @@ const DrivingLessonsBook = () => {
             <Divider />
             <UserInfoLine
               label={formatMessage(messages.vehicleDrivingLessonsTeacher)}
-              content={book?.teacherName}
+              // content={book?.teacherName}
+              content={
+                <Box>
+                  <div>{book?.teacherName}</div>
+                  <LinkResolver href="https://island.is/umsoknir/okunam-okukennari">
+                    <Button variant="text" size="small" type="button">
+                      Skipta um ökukennara
+                    </Button>
+                  </LinkResolver>
+                </Box>
+              }
               loading={loading}
               // Removed until application is ready
               // editLink={{
@@ -181,6 +193,11 @@ const DrivingLessonsBook = () => {
       {!loading && !error && !book?.createdOn && (
         <Box marginTop={8}>
           <EmptyState />
+          <Box display="flex" alignItems="center" justifyContent="center">
+            <LinkResolver href="https://island.is/umsoknir/okuskirteini">
+              <Button type="button">Skrá mig í ökunám</Button>
+            </LinkResolver>
+          </Box>
         </Box>
       )}
     </>
