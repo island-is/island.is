@@ -57,6 +57,11 @@ type Debt = {
   balance?: string | number
 }
 
+type InfoValueField = {
+  info?: string
+  value?: string
+}
+
 export interface UploadData {
   [key: string]:
     | string
@@ -70,18 +75,16 @@ export interface UploadData {
     | Representative
     | 'Yes'
     | 'No'
+    | InfoValueField
   //caseNumber: string
   notifier: Notifier
   estateMembers: EstateMember[]
   assets: AssetFrame[]
   vehicles: AssetFrame[]
-  inventory: string
-  inventoryValue: string | number
+  inventory: InfoValueField
   bankAccounts: BankAccount[]
   stocks: Stock[]
-  moneyAndDepositBoxesInfo: string
-  moneyAndDepositBoxesValue: string | number
-  otherAssets: string
-  otherAssetsValue: string
+  moneyAndDeposit: InfoValueField
+  otherAssets: InfoValueField
   debts: Debt[]
 }
