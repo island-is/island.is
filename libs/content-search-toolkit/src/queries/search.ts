@@ -27,20 +27,10 @@ export const searchQuery = (
   highlightSection = false,
 ) => {
   const should = []
-  const must: TagQuery[] = [] // overriding tagquery type
-  const mustNot: TagQuery[] = [] // overriding tagquery type
+  const must: TagQuery[] = []
+  const mustNot: TagQuery[] = []
   let minimumShouldMatch = 1
 
-  // const fieldsWeights = [
-  //   'title^6', // note boosting ..
-  //   'title.stemmed^2', // note boosting ..
-  //   'content',
-  //   'content.stemmed',
-  // ]
-  // const words = queryString.split(' ')
-  // // const lastWord = words.pop()
-  console.log('queryString: ', queryString)
-  console.log('types: ', types)
   // * wildcard support for internal clients - eg. used by island.is app
   if (queryString.trim() === '*') {
     should.push({
@@ -56,12 +46,11 @@ export const searchQuery = (
       // the search logic used for search drop down suggestions
       // term and prefix queries on content title
       case 'suggestions':
-        // must.push({ terms: { type: types } }) ADDRESS THIS SOMEHOW..........
         if (queryString.split(' ').length > 1) {
           should.push({
             multi_match: {
               query: queryString + '*',
-              fields: ['title'], //U ??? ^100
+              fields: ['title'],
 
               fuzziness: 1,
               operator: 'and',
@@ -170,7 +159,7 @@ export const searchQuery = (
     },
   }
 
-  const esQ = {
+  return {
     query: {
       function_score: {
         query: {
@@ -205,6 +194,4 @@ export const searchQuery = (
     size,
     from: (page - 1) * size, // if we have a page number add it as offset for pagination
   }
-  // console.log(JSON.stringify(esQ, null, 2))
-  return esQ
 }

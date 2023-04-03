@@ -19,7 +19,6 @@ import { useRouter } from 'next/router'
 import { useDebounce } from 'react-use'
 import { trackSearchQuery } from '@island.is/plausible'
 
-
 interface AsyncSearchOptionWithIsArticleField extends AsyncSearchOption {
   isArticle: boolean
 }

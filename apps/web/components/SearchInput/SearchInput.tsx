@@ -119,7 +119,6 @@ const useSearch = (
                 SearchableContentTypes['WebProjectPage'],
                 SearchableContentTypes['WebOrganizationPage'],
                 SearchableContentTypes['WebOrganizationSubpage'],
-                SearchableContentTypes['WebQna'],
                 SearchableContentTypes['WebDigitalIcelandService'],
               ],
               highlightResults: true,
@@ -139,9 +138,6 @@ const useSearch = (
       const hasSpace = indexOfLastSpace !== -1
       const prefix = hasSpace ? term.slice(0, indexOfLastSpace) : ''
       const queryString = hasSpace ? term.slice(indexOfLastSpace) : term
-      console.log('prefix', prefix)
-      console.log('queryString', queryString)
-      console.log('term', term)
       dispatch({
         type: 'searchString',
         term: term,

@@ -111,11 +111,6 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           title
           slug
         }
-        ... on SupportQNA {
-          id
-          title
-          slug
-        }
       }
       processEntryCount
     }
