@@ -3,11 +3,11 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import Providers from 'next-auth/providers'
 import { identityServerConfig } from '../../../lib/idsConfig'
 import env from '../../../lib/environment'
-import { decode } from 'jsonwebtoken'
 
 import {
   AuthUser,
   signIn as handleSignIn,
+  session as handleSession,
   jwt as handleJwt,
   AuthSession,
 } from '@island.is/next-ids-auth'
@@ -60,23 +60,7 @@ async function jwt(token: JWT, user: AuthUser) {
 }
 
 async function session(session: AuthSession, user: AuthUser) {
-  // should use session function from next-ids-auth but
-  // it shows a type error on decode(session.accessToken)
-  session.accessToken = user.accessToken
-  session.idToken = user.idToken
-  const decoded = decode(session.accessToken as string)
-
-  if (
-    decoded &&
-    !(typeof decoded === 'string') &&
-    decoded['exp'] &&
-    decoded['scope']
-  ) {
-    session.expires = JSON.stringify(new Date(decoded.exp * 1000))
-    session.scope = decoded.scope
-  }
-
-  return session
+  return handleSession(session, user)
 }
 
 const options = { providers, callbacks }
