@@ -367,8 +367,8 @@ export const m = defineMessages({
     defaultMessage: 'Útgefandi',
     description: '',
   },
-  stocksSsn: {
-    id: 'es.application:stocksSsn',
+  stocksNationalId: {
+    id: 'es.application:stocksNationalId',
     defaultMessage: 'Kennitala',
     description: '',
   },
@@ -474,8 +474,8 @@ export const m = defineMessages({
     defaultMessage: 'Nafn kröfuhafa',
     description: '',
   },
-  debtsSsn: {
-    id: 'es.application:debtsSsn',
+  debtsNationalId: {
+    id: 'es.application:debtsNationalId',
     defaultMessage: 'Kennitala',
     description: '',
   },
@@ -600,6 +600,11 @@ export const m = defineMessages({
     defaultMessage: 'Tengsl virðast ekki vera rétt',
     description: 'Relation is invalid',
   },
+  fillOutRates: {
+    id: 'es.application:error.fillOutRates',
+    defaultMessage: 'Vinsamlegast fylltu út í alla reiti',
+    description: '',
+  },
 
   // Assets
   errorNumberEmpty: {
@@ -652,7 +657,7 @@ export const m = defineMessages({
   inheritanceForeignCitizenshipLabel: {
     id: 'es.application:inheritanceForeignCitizenshipLabel',
     defaultMessage: 'Aðili án íslenskrar kennitölu',
-    description: 'No icelandic ssn label',
+    description: '',
   },
   inheritanceDayOfBirthLabel: {
     id: 'es.application:inheritanceDayOfBirthLabel',
