@@ -88,6 +88,17 @@ const Constraints: FC<FieldBaseProps> = ({ field, application }) => {
           extraText={false}
         />
         <ConstraintController
+          id={`${id}.robot`}
+          checkboxId={`${id}.hasRobot`}
+          label={formatText(
+            m.constraints.constraintRobotLabel,
+            application,
+            formatMessage,
+          )}
+          defaultValue={getConstraintVal('hasRobot')}
+          extraText={false}
+        />
+        <ConstraintController
           id={`${id}.apply`}
           checkboxId={`${id}.hasApply`}
           label={formatText(
@@ -101,6 +112,11 @@ const Constraints: FC<FieldBaseProps> = ({ field, application }) => {
             formatMessage,
           )}
           defaultValue={getConstraintVal('hasApply')}
+          subLabel={formatText(
+            m.constraints.constraintsReqSubLabel,
+            application,
+            formatMessage,
+          )}
           extraText={true}
         />
 
@@ -118,6 +134,11 @@ const Constraints: FC<FieldBaseProps> = ({ field, application }) => {
             formatMessage,
           )}
           defaultValue={getConstraintVal('hasMyPages')}
+          subLabel={formatText(
+            m.constraints.constraintsReqSubLabel,
+            application,
+            formatMessage,
+          )}
           extraText={true}
         />
 
@@ -135,9 +156,29 @@ const Constraints: FC<FieldBaseProps> = ({ field, application }) => {
             formatMessage,
           )}
           defaultValue={getConstraintVal('hasCert')}
+          subLabel={formatText(
+            m.constraints.constraintsReqSubLabel,
+            application,
+            formatMessage,
+          )}
           extraText={true}
         />
-
+        <ConstraintController
+          id={`${id}.legacy`}
+          checkboxId={`${id}.hasLegacy`}
+          label={formatText(
+            m.constraints.constraintLegacyLabel,
+            application,
+            formatMessage,
+          )}
+          placeholder={formatText(
+            m.constraints.constraintLegacyPlaceholder,
+            application,
+            formatMessage,
+          )}
+          defaultValue={getConstraintVal('hasLegacy')}
+          extraText={true}
+        />
         <ConstraintController
           id={`${id}.consult`}
           checkboxId={`${id}.hasConsult`}

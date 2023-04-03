@@ -113,9 +113,13 @@ const useSearch = (
               queryString: term.trim(),
               language: locale as ContentLanguage,
               types: [
+                // RÁ suggestions has only been searching particular types for some time - SYNC SUGGESTIONS SCOPE WITH DEFAULT - keep it in sync
                 SearchableContentTypes['WebArticle'],
                 SearchableContentTypes['WebSubArticle'],
                 SearchableContentTypes['WebProjectPage'],
+                SearchableContentTypes['WebOrganizationPage'],
+                SearchableContentTypes['WebOrganizationSubpage'],
+                SearchableContentTypes['WebDigitalIcelandService'],
               ],
               highlightResults: true,
               useQuery: 'suggestions',
@@ -134,7 +138,6 @@ const useSearch = (
       const hasSpace = indexOfLastSpace !== -1
       const prefix = hasSpace ? term.slice(0, indexOfLastSpace) : ''
       const queryString = hasSpace ? term.slice(indexOfLastSpace) : term
-
       dispatch({
         type: 'searchString',
         term,
@@ -396,7 +399,6 @@ const Results = ({
 
     return <CommonSearchTerms suggestions={suggestions} />
   }
-
   return (
     <Box
       display="flex"

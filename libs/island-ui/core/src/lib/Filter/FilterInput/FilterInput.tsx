@@ -30,7 +30,7 @@ export const FilterInput: React.FC<FilterInputProps> = ({
       name={name}
       placeholder={placeholder}
       backgroundColor={backgroundColor}
-      size="sm"
+      size="xs"
       icon={{ name: 'search', type: 'outline' }}
       value={value}
       onChange={(event) => onChange(event.target.value)}

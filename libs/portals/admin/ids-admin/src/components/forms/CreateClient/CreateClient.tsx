@@ -29,6 +29,7 @@ import {
 import { Modal } from '../../Modal/Modal'
 import { IDSAdminPaths } from '../../../lib/paths'
 import { replaceParams } from '@island.is/react-spa/shared'
+import { useErrorFormatMessage } from '../../../shared/hooks/useFormatErrorMessage'
 
 const environments = [
   AuthAdminEnvironment.Development,
@@ -93,6 +94,7 @@ export default function CreateClient() {
   const tenant = useRouteLoaderData(tenantLoaderId) as TenantLoaderResult
   const actionData = useActionData() as CreateClientResult
   const { formatMessage } = useLocale()
+  const { formatErrorMessage } = useErrorFormatMessage()
   const prefix = `${tenant.id}/`
   const initialClientIdState: InputState = {
     value: prefix,
@@ -132,12 +134,6 @@ export default function CreateClient() {
       }),
       dirty: true,
     })
-  }
-
-  const formatErrorMessage = (messageKey?: string) => {
-    const message = m[messageKey as keyof typeof m]
-
-    return message ? formatMessage(message) : undefined
   }
 
   const getRadioLabels = (clientType: AuthAdminClientType) => {
