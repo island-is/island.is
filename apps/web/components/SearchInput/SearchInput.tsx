@@ -140,8 +140,8 @@ const useSearch = (
       const queryString = hasSpace ? term.slice(indexOfLastSpace) : term
       dispatch({
         type: 'searchString',
-        term: term,
-        prefix: term,
+        term,
+        prefix,
       })
     }, DEBOUNCE_TIMER))
 
