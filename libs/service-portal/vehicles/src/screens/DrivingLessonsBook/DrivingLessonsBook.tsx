@@ -120,7 +120,7 @@ const DrivingLessonsBook = () => {
                   <div>{book?.teacherName}</div>
                   <LinkResolver href="https://island.is/umsoknir/okunam-okukennari">
                     <Button variant="text" size="small" type="button">
-                      Skipta um ökukennara
+                      {formatMessage(messages.changeInstructor)}
                     </Button>
                   </LinkResolver>
                 </Box>
@@ -194,7 +194,9 @@ const DrivingLessonsBook = () => {
           <EmptyState />
           <Box display="flex" alignItems="center" justifyContent="center">
             <LinkResolver href="https://island.is/umsoknir/okuskirteini">
-              <Button type="button">Skrá mig í ökunám</Button>
+              <Button type="button">
+                {formatMessage(messages.signupToDrivingSchool)}
+              </Button>
             </LinkResolver>
           </Box>
         </Box>

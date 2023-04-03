@@ -614,4 +614,12 @@ export const messages = defineMessages({
     id: 'sp.vehicles:renew-private-registration',
     defaultMessage: 'Endurnýja einkamerki',
   },
+  changeInstructor: {
+    id: 'sp.vehicles:change-driving-instructor',
+    defaultMessage: 'Skipta um ökukennara',
+  },
+  signupToDrivingSchool: {
+    id: 'sp.vehicles:signup-to-driving-school',
+    defaultMessage: 'Skrá mig í ökunám',
+  },
 })
