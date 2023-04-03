@@ -32,7 +32,7 @@ air-discount-scheme-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 4
       replicas:
         max: 3
         min: 1
@@ -118,7 +118,7 @@ air-discount-scheme-backend:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 4
       replicas:
         max: 3
         min: 1
@@ -213,7 +213,7 @@ air-discount-scheme-web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 4
       replicas:
         max: 3
         min: 1
@@ -375,7 +375,7 @@ api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 4
       replicas:
         max: 50
         min: 2
@@ -400,10 +400,10 @@ api:
     min: 2
   resources:
     limits:
-      cpu: '800m'
+      cpu: '400m'
       memory: '2048Mi'
     requests:
-      cpu: '50m'
+      cpu: '150m'
       memory: '512Mi'
   secrets:
     ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
@@ -585,7 +585,7 @@ application-system-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 4
       replicas:
         max: 60
         min: 2
@@ -740,7 +740,7 @@ application-system-api-worker:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 4
       replicas:
         max: 3
         min: 1
@@ -813,7 +813,7 @@ application-system-form:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 4
       replicas:
         max: 3
         min: 1
@@ -872,7 +872,7 @@ contentful-translation-extension:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 4
       replicas:
         max: 3
         min: 1
@@ -938,7 +938,7 @@ download-service:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 4
       replicas:
         max: 3
         min: 1
@@ -1017,7 +1017,7 @@ endorsement-system-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 4
       replicas:
         max: 3
         min: 1
@@ -1116,7 +1116,7 @@ icelandic-names-registry-backend:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 4
       replicas:
         max: 3
         min: 1
@@ -1199,7 +1199,7 @@ island-ui-storybook:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 4
       replicas:
         max: 3
         min: 1
@@ -1260,7 +1260,7 @@ license-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 4
       replicas:
         max: 10
         min: 2
@@ -1343,7 +1343,7 @@ portals-admin:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 4
       replicas:
         max: 30
         min: 2
@@ -1418,7 +1418,7 @@ regulations-admin-backend:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 4
       replicas:
         max: 3
         min: 1
@@ -1498,7 +1498,7 @@ search-indexer-service:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 4
       replicas:
         max: 1
         min: 1
@@ -1623,7 +1623,7 @@ service-portal:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 4
       replicas:
         max: 30
         min: 2
@@ -1693,7 +1693,7 @@ service-portal-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 4
       replicas:
         max: 30
         min: 2
@@ -1791,7 +1791,7 @@ services-documents:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 4
       replicas:
         max: 3
         min: 1
@@ -1869,7 +1869,7 @@ services-sessions:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 4
       replicas:
         max: 10
         min: 1
@@ -1937,7 +1937,7 @@ services-sessions-worker:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 4
       replicas:
         max: 3
         min: 1
@@ -2016,7 +2016,7 @@ skilavottord-web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 4
       replicas:
         max: 3
         min: 1
@@ -2083,7 +2083,7 @@ skilavottord-ws:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 4
       replicas:
         max: 3
         min: 1
@@ -2177,7 +2177,7 @@ user-notification:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 4
       replicas:
         max: 3
         min: 1
@@ -2253,7 +2253,7 @@ user-notification-worker:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 4
       replicas:
         max: 3
         min: 1
@@ -2319,7 +2319,7 @@ web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 4
       replicas:
         max: 50
         min: 2
@@ -2387,7 +2387,7 @@ xroad-collector:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 4
       replicas:
         max: 3
         min: 1

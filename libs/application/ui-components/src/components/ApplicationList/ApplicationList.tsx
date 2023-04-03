@@ -1,7 +1,10 @@
 import React, { useCallback, useState } from 'react'
 import { Box, Pagination, Stack } from '@island.is/island-ui/core'
-import { Application, ApplicationTypes } from '@island.is/application/types'
-import { institutionMapper } from '@island.is/application/core'
+import {
+  Application,
+  ApplicationTypes,
+  institutionMapper,
+} from '@island.is/application/types'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import { Organization } from '@island.is/shared/types'
 import { ApplicationCard } from '../ApplicationCard/ApplicationCard'
