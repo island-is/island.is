@@ -419,7 +419,7 @@ export const institutionApplicationMessages = {
       description: 'Form placeholder for constraints other formfield',
     },
     constraintLegacyLabel: {
-      id: 'ia.application:applicant.constraints.legacy.placeholder',
+      id: 'ia.application:applicant.constraints.legacy.label',
       defaultMessage: 'Arfleifðarkerfi (e. legacy system)',
       description: 'Form placeholder for constraints other formfield',
     },
