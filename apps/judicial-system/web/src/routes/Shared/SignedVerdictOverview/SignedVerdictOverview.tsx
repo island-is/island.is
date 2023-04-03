@@ -79,6 +79,7 @@ import {
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
+import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion'
 import * as constants from '@island.is/judicial-system/consts'
 
 import AppealSection from './Components/AppealSection/AppealSection'
@@ -545,7 +546,7 @@ export const SignedVerdictOverview: React.FC = () => {
                 preTextIcon="arrowBack"
                 onClick={() => router.push(constants.CASES_ROUTE)}
               >
-                Til baka
+                {formatMessage(core.back)}
               </Button>
             </Box>
             <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
@@ -725,21 +726,10 @@ export const SignedVerdictOverview: React.FC = () => {
                 </Accordion>
               </Box>
               <Box marginBottom={6}>
-                <BlueBox>
-                  <Box marginBottom={2} textAlign="center">
-                    <Text as="h3" variant="h3">
-                      {formatMessage(m.conclusionTitle)}
-                    </Text>
-                  </Box>
-                  <Box marginBottom={3}>
-                    <Box marginTop={1}>
-                      <Text variant="intro">{workingCase.conclusion}</Text>
-                    </Box>
-                  </Box>
-                  <Box marginBottom={1} textAlign="center">
-                    <Text variant="h4">{workingCase.judge?.name}</Text>
-                  </Box>
-                </BlueBox>
+                <Conclusion
+                  conclusionText={workingCase.conclusion}
+                  judgeName={workingCase.judge?.name}
+                />
               </Box>
             </>
           )}
