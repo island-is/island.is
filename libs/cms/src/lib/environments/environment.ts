@@ -71,6 +71,8 @@ export default {
     'organizationTag',
     'logoListSlice',
     'article',
+    'overviewLinks',
+    'introLinkImage',
   ],
   // Content types that have the 'activeTranslations' JSON field
   localizedContentTypes: ['article'],
