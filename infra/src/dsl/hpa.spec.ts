@@ -40,7 +40,7 @@ describe('HPA definitions', () => {
           min: 2,
           max: 3,
         },
-        metric: { cpuAverageUtilization: 70, nginxRequestsIrate: 3 },
+        metric: { cpuAverageUtilization: 70, nginxRequestsIrate: 6 },
       },
     })
   })
@@ -49,7 +49,7 @@ describe('HPA definitions', () => {
       min: 1,
       max: 2,
       default: 2,
-      scalingMagicNumber: 5,
+      scalingMagicNumber: 6,
     })
     const result = (await generateOutputOne({
       outputFormat: renderers.helm,
@@ -69,7 +69,7 @@ describe('HPA definitions', () => {
           min: 1,
           max: 2,
         },
-        metric: { nginxRequestsIrate: 5, cpuAverageUtilization: 70 },
+        metric: { nginxRequestsIrate: 6, cpuAverageUtilization: 70 },
       },
     })
   })
