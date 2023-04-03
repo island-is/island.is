@@ -90,7 +90,6 @@ export const SearchBox = ({
           background={active ? 'blue100' : 'white'}
           onClick={() => {
             trackSearchQuery(value, 'Organization Sidebar Suggestion')
-            console.log(value, 'Organization Sidebar Suggestion')
             setOptions([])
           }}
         >
