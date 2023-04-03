@@ -1,11 +1,6 @@
 import { lazy } from 'react'
 
 import { ApiScope } from '@island.is/auth/scopes'
-import {
-  ServicePortalModule,
-  ServicePortalPath,
-  ServicePortalRoute,
-} from '@island.is/service-portal/core'
 import { HealthPaths } from './lib/paths'
 import { PortalModule } from '@island.is/portals/core'
 
@@ -14,6 +9,9 @@ const HealthOverview = lazy(() =>
 )
 
 const Therapies = lazy(() => import('./screens/Therapies/Therapies'))
+const SupportProducts = lazy(() =>
+  import('./screens/SupportProducts/SupportProducts'),
+)
 
 export const healthModule: PortalModule = {
   name: 'Heilsa',
@@ -29,6 +27,12 @@ export const healthModule: PortalModule = {
       path: HealthPaths.HealthTherapies,
       enabled: userInfo.scopes.includes(ApiScope.internal),
       element: <Therapies />,
+    },
+    {
+      name: 'Stuðningsvörur',
+      path: HealthPaths.HealthSupportProducts,
+      enabled: userInfo.scopes.includes(ApiScope.internal),
+      element: <SupportProducts />,
     },
   ],
 }

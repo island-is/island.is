@@ -7,8 +7,8 @@ const schema = z.object({
   }),
 })
 
-export const RigthsPortalClientConfig = defineConfig<z.infer<typeof schema>>({
-  name: 'RightsPortal',
+export const RightsPortalClientConfig = defineConfig<z.infer<typeof schema>>({
+  name: 'RightsPortalConfig',
   schema,
   load(env) {
     return {

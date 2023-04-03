@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common'
-import { RightsPortalApiProvider } from './clients-rights-portal.service'
+import { ApiConfig } from './rightsPortalProvider'
+import { exportedApis } from './providers'
 
 @Module({
-  providers: [RightsPortalApiProvider],
-  exports: [RightsPortalApiProvider],
+  providers: [ApiConfig, ...exportedApis],
+  exports: exportedApis,
 })
 export class RightsPortalClientModule {}

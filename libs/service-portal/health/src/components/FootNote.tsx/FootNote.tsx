@@ -4,25 +4,25 @@ import { FC } from 'react'
 import { getFootNoteByType } from './helper'
 
 interface Props {
-  therapyType: string
+  type: string
 }
 
-export const FootNote: FC<Props> = ({ therapyType }) => {
+export const FootNote: FC<Props> = ({ type }) => {
   const { formatMessage } = useLocale()
 
   return (
     <Box paddingTop={4}>
       <Text variant="small" paddingBottom={2}>
-        {getFootNoteByType(therapyType, formatMessage).first}
+        {getFootNoteByType(type, formatMessage).first}
       </Text>
       <Text variant="small" paddingBottom={2}>
-        {getFootNoteByType(therapyType, formatMessage).second}
+        {getFootNoteByType(type, formatMessage).second}
       </Text>
       <Text variant="small" paddingBottom={2}>
-        {getFootNoteByType(therapyType, formatMessage).third}
+        {getFootNoteByType(type, formatMessage).third}
       </Text>
       <Text variant="small">
-        {getFootNoteByType(therapyType, formatMessage).fourth}
+        {getFootNoteByType(type, formatMessage).fourth}
       </Text>
     </Box>
   )

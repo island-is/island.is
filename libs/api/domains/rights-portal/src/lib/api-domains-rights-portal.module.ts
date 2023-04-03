@@ -6,8 +6,8 @@ import { RightsPortalResolver } from './api-domains-rights-portal.resolver'
 import { RightsPortalService } from './api-domains-rights-portal.service'
 
 @Module({
-  providers: [RightsPortalResolver, RightsPortalService],
   imports: [RightsPortalClientModule, AuthModule],
+  providers: [RightsPortalResolver, RightsPortalService],
   exports: [RightsPortalService],
 })
 export class RightsPortalModule {}

@@ -1,4 +1,9 @@
-export * from './lib/clients-rights-portal.service'
+export * from './lib/rightsPortalProvider'
 export { RightsPortalClientModule } from './lib/clients-rights-portal.module'
-export { TherapyApi, TherapyDTO } from '../gen/fetch'
-export { RigthsPortalClientConfig } from './lib/clients-rights-portal.config'
+export { RightsPortalClientConfig } from './lib/clients-rights-portal.config'
+export {
+  TherapyApi,
+  TherapyDTO,
+  AidsandnutritionApi,
+  AidsAndNutritionDTO,
+} from '../gen/fetch'

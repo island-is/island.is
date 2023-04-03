@@ -109,7 +109,7 @@ export const TherapiesTabContent: FC<Props> = ({ data }) => {
         />
         <Divider />
       </Stack>
-      <FootNote therapyType={data[0].id.toString()} />
+      <FootNote type={data[0].id.toString()} />
     </Box>
   )
 }

@@ -1,14 +1,40 @@
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
-  title: {
+  therapyTitle: {
     id: 'sp.health:therapies-title',
     defaultMessage: 'Þjálfun',
   },
-  description: {
+  therapyDescription: {
     id: 'sp.health:therapies-intro',
     defaultMessage:
       'Sjúkratryggingar greiða hluta af kostnaði við meðferð hjá sjúkraþjálfara.',
+  },
+  mySupportProducts: {
+    id: 'sp.health:my-support-products',
+    defaultMessage: 'Stuðningsvörurnar mínar',
+  },
+  supportProductsTitle: {
+    id: 'sp.health:support-title',
+    defaultMessage: 'Stuðningsvörur',
+  },
+  supportProductsDescription: {
+    id: 'sp.health:support-title',
+    defaultMessage:
+      'Hjálpartækjamiðstöð Sjúkratrygginga Íslands annast afgreiðslu umsókna um styrki vegna stuðningsvara, næringar og sérfæðis, veitir faglega ráðgjöf um val á þeim og sinnir viðgerðarþjónustu.',
+  },
+  supportProductsDescriptionInfo1: {
+    id: 'sp.health:support-description-info-1',
+    defaultMessage: '<link>Nánari um næringu og sérfæði<link>',
+  },
+  supportProductsDescriptionInfo2: {
+    id: 'sp.health:support-description-info-2',
+    defaultMessage: '<link>Nánar um hjálpartæki<link>',
+  },
+  supportProductsDisclaimer: {
+    id: 'sp.health:support-disclaimer',
+    defaultMessage:
+      'Styrkur getur ýmist verið greiddur sem ákveðið hlutfall af verði hjálpartækis og næringar og/eða ákveðin fjárhæð til kaupa á hjálpartæki eða næringu. Í neðangreindri töflu birta SÍ þín réttindi til notkunar/úttektar á hjálpartækjum og næringu sem sótt hefur verið um til Hjálpartækjamiðstöðvar. Þegar innan við 60 dagar eru eftir af heimild, þá litast viðkomandi lína gul í töflu. Sjá frekari upplýsingar um hjálpartæki',
   },
   physicalTherapy: {
     id: 'sp.health:physical-therapy',
@@ -124,5 +150,25 @@ export const messages = defineMessages({
   unknownStatus: {
     id: 'sp.health:unknown-status',
     defaultMessage: 'Staða óþekkt',
+  },
+  name: {
+    id: 'sp.health:name',
+    defaultMessage: 'Heiti',
+  },
+  maxUnitRefund: {
+    id: 'sp.health:max-unit-refund',
+    defaultMessage: 'Hámarksgr. af stk.',
+  },
+  availableRefund: {
+    id: 'sp.health:available-unit-refund',
+    defaultMessage: 'Heimild til úttektar',
+  },
+  location: {
+    id: 'sp.health:location',
+    defaultMessage: 'Afgr. staður',
+  },
+  insuranceRatio: {
+    id: 'sp.health:max-unit-refund',
+    defaultMessage: 'Hámarksgr. af stk.',
   },
 })
