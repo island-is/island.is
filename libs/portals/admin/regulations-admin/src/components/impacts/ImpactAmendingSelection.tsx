@@ -2,23 +2,16 @@ import { useEffect, useState } from 'react'
 
 import { impactMsgs } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import {
-  ensureRegName,
-  HTMLText,
-  RegulationOptionList,
-  RegulationType,
-} from '@island.is/regulations'
+import { RegulationOptionList, RegulationType } from '@island.is/regulations'
 import { DraftImpactName } from '@island.is/regulations/admin'
 
 import { AsyncSearch, Option } from '@island.is/island-ui/core'
-import { RegulationOptionListQuery } from '../../utils/dataHooks'
+import { RegulationSearchListQuery } from '../../utils/dataHooks'
 import { formatSelRegOptions } from '../../utils/formatSelRegOptions'
 import { useLazyQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { useDebounce } from 'react-use'
 import * as s from './Impacts.css'
-import { findAffectedRegulationsInText } from '../../utils/guessers'
-import { RegulationDraftTypes } from '../../types'
 
 export type SelRegOption = Option & {
   value?: DraftImpactName | ''
@@ -30,13 +23,6 @@ type ImpactAmendingSelectionProps = {
   setImpactRegOption: (option: SelRegOption) => void
 }
 
-const findRegNames = (text: string) => {
-  if (ensureRegName(text)) {
-    return [text]
-  }
-  return findAffectedRegulationsInText('', text as HTMLText)
-}
-
 // ---------------------------------------------------------------------------
 
 export const ImpactAmendingSelection = ({
@@ -46,15 +32,22 @@ export const ImpactAmendingSelection = ({
     SelRegOption[] | undefined
   >()
   const [isLoading, setIsLoading] = useState(false)
+  const [results, setResults] = useState<RegulationOptionList | undefined>()
   const [value, setValue] = useState<string | undefined>()
   const t = useLocale().formatMessage
 
-  const [
-    getRegulationList,
-    { data: regulationList, loading, error },
-  ] = useLazyQuery<Query>(RegulationOptionListQuery, {
-    fetchPolicy: 'no-cache',
-  })
+  const [getRegulationList, { loading, error }] = useLazyQuery<Query>(
+    RegulationSearchListQuery,
+    {
+      onCompleted: (data) => {
+        setResults(
+          (data.getRegulationsSearch?.data as RegulationOptionList) ||
+            undefined,
+        )
+      },
+      fetchPolicy: 'no-cache',
+    },
+  )
 
   const handleOptionSelect = (selected: SelRegOption) => {
     setImpactRegOption(selected)
@@ -62,29 +55,27 @@ export const ImpactAmendingSelection = ({
 
   useDebounce(
     () => {
-      const valueRegulation = findRegNames(value || '')
-      if (valueRegulation.length > 0) {
+      if (value && value.length > 0) {
         getRegulationList({
-          variables: { input: { names: valueRegulation } },
+          /**
+           * Exclude these from the search.
+           * iA: amending
+           * iR: repealed
+           * */
+          variables: { input: { q: value, iA: false, iR: false } },
         })
       }
       setIsLoading(false)
     },
-    500,
+    600,
     [value],
   )
 
   useEffect(() => {
-    const valueRegulation = findRegNames(value || '')
-
     const regulationListRes =
-      (valueRegulation.length > 0 &&
-        (regulationList?.getRegulationOptionList as RegulationOptionList)) ||
-      []
+      (results && results.length > 0 && (results as RegulationOptionList)) || []
 
-    const optionNames = regulationListRes
-      .filter((reg) => reg.type === RegulationDraftTypes.base)
-      .map((reg) => reg.name)
+    const optionNames = regulationListRes.map((reg) => reg.name)
 
     let selRegOptionsArray: SelRegOption[] = []
 
@@ -102,7 +93,7 @@ export const ImpactAmendingSelection = ({
           disabled: true,
           value: '',
           label:
-            valueRegulation.length > 0
+            results && results.length > 0
               ? t(impactMsgs.regSelect_baseNotFound) + ' ' + value
               : 'Nafn reglugerðar ekki rétt slegið inn',
         },
@@ -111,7 +102,7 @@ export const ImpactAmendingSelection = ({
 
     setSelRegOptions(selRegOptionsArray)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [regulationList, value])
+  }, [results, value])
 
   const updateValue = (val: string) => {
     setIsLoading(val !== value)

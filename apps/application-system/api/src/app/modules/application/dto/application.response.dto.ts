@@ -98,7 +98,7 @@ class ActionCardMetaData {
   draftTotalSteps?: number
 }
 
-export class ApplicationResponseDto {
+export class BaseApplicationResponseDto {
   @ApiProperty()
   @Expose()
   @IsString()
@@ -179,7 +179,9 @@ export class ApplicationResponseDto {
   @IsEnum(ApplicationStatus)
   status!: ApplicationStatus
 
-  constructor(partial: Partial<ApplicationResponseDto>) {
+  constructor(partial: Partial<BaseApplicationResponseDto>) {
     Object.assign(this, partial)
   }
 }
+
+export class ApplicationResponseDto extends BaseApplicationResponseDto {}
