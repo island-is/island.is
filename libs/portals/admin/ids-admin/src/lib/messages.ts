@@ -37,7 +37,7 @@ export const m = defineMessages({
     id: 'ap.ids-admin:search-placeholder',
     defaultMessage: 'Sláðu inn leitarorð',
   },
-  applications: {
+  clients: {
     id: 'ap.ids-admin:applications',
     defaultMessage: 'Forrit',
   },
@@ -65,7 +65,7 @@ export const m = defineMessages({
     id: 'ap.ids-admin:back',
     defaultMessage: 'Til baka',
   },
-  applicationsDescription: {
+  clientsDescription: {
     id: 'ap.ids-admin:applications-description',
     defaultMessage: 'Forrit sem tengjast þessum tenant',
   },
@@ -77,7 +77,7 @@ export const m = defineMessages({
     id: 'ap.ids-admin:no-applications',
     defaultMessage: 'Engin forrit til staðar',
   },
-  noApplicationsDescription: {
+  noClientsDescription: {
     id: 'ap.ids-admin:no-applications-description',
     defaultMessage:
       'Þú getur búið til forrit með því að smella á Búa til forrit',
@@ -94,7 +94,7 @@ export const m = defineMessages({
     id: 'ap.ids-admin:display-name',
     defaultMessage: 'Nafn',
   },
-  applicationId: {
+  clientId: {
     id: 'ap.ids-admin:clientId',
     defaultMessage: 'Application ID',
   },
@@ -102,7 +102,7 @@ export const m = defineMessages({
     id: 'ap.ids-admin:choose-environment',
     defaultMessage: 'Veldu umhverfi',
   },
-  chooseApplicationType: {
+  chooseClientType: {
     id: 'ap.ids-admin:choose-application-type',
     defaultMessage: 'Veldu tegund forrits',
   },
@@ -110,11 +110,11 @@ export const m = defineMessages({
     id: 'ap.ids-admin:error-display-name',
     defaultMessage: 'Nafn má ekki vera tómt',
   },
-  errorApplicationId: {
+  errorClientId: {
     id: 'ap.ids-admin:error-application-id',
     defaultMessage: 'Application ID má ekki vera tómt',
   },
-  errorApplicationIdRegex: {
+  errorClientIdRegex: {
     id: 'ap.ids-admin:error-application-id-regex',
     defaultMessage: 'Gildir stafir eru A-Z a-z 0-9 . _ - /',
   },
@@ -122,7 +122,7 @@ export const m = defineMessages({
     id: 'ap.ids-admin:error-environment',
     defaultMessage: 'Veldu a.m.k. eitt umhverfi',
   },
-  errorApplicationType: {
+  errorClientType: {
     id: 'ap.ids-admin:error-application-type',
     defaultMessage: 'Veldu tegund forrits',
   },
@@ -131,34 +131,34 @@ export const m = defineMessages({
     defaultMessage: 'Úps, óvænt villa kom upp!',
     description: 'An unknown error has occurred',
   },
-  webApplicationsTitle: {
+  webClientsTitle: {
     id: 'ap.ids-admin:web-applications-title',
     defaultMessage: 'Vefforrit',
   },
-  webApplicationsDescription: {
+  webClientsDescription: {
     id: 'ap.ids-admin:web-applications-description',
     defaultMessage:
       'Hefðbundin vefforrit sem nota tilvísanir. T.d. Node.js, Express, ASP.net, Java, PHP',
   },
-  nativeApplicationsTitle: {
+  nativeClientsTitle: {
     id: 'ap.ids-admin:native-applications-title',
     defaultMessage: 'Smáforrið forrit',
   },
-  nativeApplicationsDescription: {
+  nativeClientsDescription: {
     id: 'ap.ids-admin:native-applications-description',
     defaultMessage:
       'Farsíma-, skjáborðs-, CLI- og snjalltækjaforrit sem keyra innbyggt. T.d. iOS, Electron, Apple TV öppum',
   },
-  machineApplicationsTitle: {
+  machineClientsTitle: {
     id: 'ap.ids-admin:machine-applications-title',
     defaultMessage: 'Kerfi í kerfi',
   },
-  machineApplicationsDescription: {
+  machineClientsDescription: {
     id: 'ap.ids-admin:machine-applications-description',
     defaultMessage:
       'CLI, púkar eða þjónustur sem keyra á bakendanum þínum. T.d. Skeljahandrit',
   },
-  createApplication: {
+  createClient: {
     id: 'ap.ids-admin:create-application',
     defaultMessage: 'Stofna forrit',
   },
@@ -201,11 +201,11 @@ export const m = defineMessages({
     id: 'ap.ids-admin:save-for-all-environments',
     defaultMessage: 'Save in all environments',
   },
-  applicationSecret: {
+  clientSecret: {
     id: 'ap.ids-admin:application-secret',
     defaultMessage: 'Application secret',
   },
-  applicationSecretDescription: {
+  clientSecretDescription: {
     id: 'ap.ids-admin:application-secret-description',
     defaultMessage: 'The Client Secret is not base64 encoded.',
   },
@@ -268,29 +268,34 @@ export const m = defineMessages({
     id: 'ap.ids-admin:basic-info',
     defaultMessage: 'Basic information',
   },
-  applicationsURLS: {
+  clientUris: {
     id: 'ap.ids-admin:applications-urls',
     defaultMessage: 'Application URLs',
   },
-  lifeTime: {
+  lifetime: {
     id: 'ap.ids-admin:life-time',
-    defaultMessage: 'Life time',
+    defaultMessage: 'Refresh token life cycle',
+  },
+  lifeTimeDescription: {
+    id: 'ap.ids-admin:life-time-description',
+    defaultMessage:
+      'Refresh tokens are useful if you use access tokens to authorise API calls.  Access tokens only last 5 minutes but you can use refresh tokens to request new access tokens. Here you can configure how long refresh tokens can be used to request new access tokens.',
   },
   oAuthAuthorizationUrl: {
     id: 'ap.ids-admin:oAuthAuthorizationUrl',
-    defaultMessage: 'OAuth Authorization URL',
-  },
-  deviceAuthorizationUrl: {
-    id: 'ap.ids-admin:deviceAuthorizationUrl',
-    defaultMessage: 'Device Authorization URL',
+    defaultMessage: 'Authorization Endpoint',
   },
   oAuthTokenUrl: {
     id: 'ap.ids-admin:oAuthTokenUrl',
-    defaultMessage: 'OAuth Token URL',
+    defaultMessage: 'Token Endpoint',
   },
   oAuthUserInfoUrl: {
     id: 'ap.ids-admin:oAuthUserInfoUrl',
-    defaultMessage: 'OAuth User Info URL',
+    defaultMessage: 'User Info Endpoint',
+  },
+  endSessionUrl: {
+    id: 'ap.ids-admin:deviceAuthorizationUrl',
+    defaultMessage: 'End Session Endpoint',
   },
   openIdConfiguration: {
     id: 'ap.ids-admin:openIdConfiguration',
@@ -299,5 +304,77 @@ export const m = defineMessages({
   jsonWebKeySet: {
     id: 'ap.ids-admin:jsonWebKeySet',
     defaultMessage: 'JSON Web Key Set',
+  },
+  errorInvalidUrls: {
+    id: 'ap.ids-admin:error-invalid-urls',
+    defaultMessage: 'List of URLs, comma separated',
+  },
+  errorPositiveNumber: {
+    id: 'ap.ids-admin:error-positive-number',
+    defaultMessage: 'Must be a positive number',
+  },
+  delegations: {
+    id: 'ap.ids-admin:delegations',
+    defaultMessage: 'Delegations',
+  },
+  delegationsDescription: {
+    id: 'ap.ids-admin:delegations-description',
+    defaultMessage:
+      'Configure which delegations the user can choose when authenticating to the application.',
+  },
+  supportCustomDelegation: {
+    id: 'ap.ids-admin:support-custom-delegation',
+    defaultMessage: 'Support custom delegations',
+  },
+  supportCustomDelegationDescription: {
+    id: 'ap.ids-admin:support-custom-delegation-description',
+    defaultMessage:
+      'Allow users to sign into this application with custom delegations which were manually granted to them on Mínar síður Ísland.is.\n' +
+      'The application must request permissions which support custom delegations. The user must have a valid custom delegation with one of these permissions.\n',
+  },
+  supportLegalGuardianDelegation: {
+    id: 'ap.ids-admin:support-legal-guardian-delegation',
+    defaultMessage: 'Support legal guardian delegations',
+  },
+  supportLegalGuardianDelegationDescription: {
+    id: 'ap.ids-admin:support-legal-guardian-delegation-description',
+    defaultMessage:
+      'Allow users to sign into this application as children which they are legal guardians of according to the Registers Iceland.',
+  },
+  supportPersonalRepresentativeDelegation: {
+    id: 'ap.ids-admin:support-personal-representative-delegation',
+    defaultMessage: 'Support personal representative delegations',
+  },
+  supportPersonalRepresentativeDelegationDescription: {
+    id: 'ap.ids-admin:support-personal-representative-delegation-description',
+    defaultMessage:
+      'Allow users to sign into this application on behalf of disabled individuals with an active personal representation contract at the Ministry of Social Affairs and Labour.',
+  },
+  supportProcuringHolderDelegation: {
+    id: 'ap.ids-admin:support-procuring-holder-delegation',
+    defaultMessage: 'Support procuring holder delegations',
+  },
+  supportProcuringHolderDelegationDescription: {
+    id: 'ap.ids-admin:support-procuring-holder-delegation-description',
+    defaultMessage:
+      'Allow users to sign into this application as legal entities which they are procuring holders of according to the company registry of Iceland.',
+  },
+  alwaysPromptDelegations: {
+    id: 'ap.ids-admin:always-prompt-delegations',
+    defaultMessage: 'Always prompt delegations',
+  },
+  alwaysPromptDelegationsDescription: {
+    id: 'ap.ids-admin:always-prompt-delegations-description',
+    defaultMessage:
+      'With this setting, the user always sees the delegation screen when authenticating with your application. For most applications we recommend keeping this off and to provide an explicit action to authenticate with delegation using the prompt=select_account argument.',
+  },
+  requirePermissions: {
+    id: 'ap.ids-admin:require-permissions',
+    defaultMessage: 'Require permissions',
+  },
+  requirePermissionsDescription: {
+    id: 'ap.ids-admin:require-permissions-description',
+    defaultMessage:
+      'Only allow delegations which have access to one or more requested permissions. Can be combined with permission settings to block access to the application for certain individuals or delegations.',
   },
 })

@@ -287,18 +287,20 @@ export const Cases: React.FC = () => {
             <CreateCaseButton user={user} features={features} />
           ) : null}
         </div>
-        <Box marginBottom={[2, 5, 5]} className={styles.filterContainer}>
-          <Select
-            name="filter-cases"
-            options={filterOptions}
-            label={formatMessage(m.filter.label)}
-            onChange={(value) => {
-              setIsFiltering(true)
-              setFilter(value as FilterOption)
-            }}
-            value={filter}
-          />
-        </Box>
+        {user?.role !== UserRole.Staff && (
+          <Box marginBottom={[2, 5, 5]} className={styles.filterContainer}>
+            <Select
+              name="filter-cases"
+              options={filterOptions}
+              label={formatMessage(m.filter.label)}
+              onChange={(value) => {
+                setIsFiltering(true)
+                setFilter(value as FilterOption)
+              }}
+              value={filter}
+            />
+          </Box>
+        )}
         {error ? (
           <div
             className={styles.infoContainer}
