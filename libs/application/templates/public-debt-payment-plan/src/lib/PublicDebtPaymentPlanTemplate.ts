@@ -13,7 +13,6 @@ import {
   IdentityApi,
 } from '@island.is/application/types'
 import { PaymentPlanPrerequisitesApi } from '../dataProviders'
-import { Features } from '@island.is/feature-flags'
 import { PublicDebtPaymentPlanSchema } from './dataSchema'
 import { application } from './messages'
 import { AuthDelegationType } from 'delegation'
@@ -45,14 +44,7 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
   type: ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN,
   name: application.name,
   institution: application.institutionName,
-  readyForProduction: true,
-  allowedDelegations: [
-    {
-      type: AuthDelegationType.ProcurationHolder,
-      featureFlag:
-        Features.applicationTemplatePublicDeptPaymentPlanAllowDelegation,
-    },
-  ],
+  allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   translationNamespaces: [
     ApplicationConfigurations.PublicDebtPaymentPlan.translation,
   ],
