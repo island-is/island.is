@@ -12,7 +12,6 @@ import type {
   SendNotificationResponse,
   CaseTransition,
   RequestSignatureResponse,
-  CaseState,
 } from '@island.is/judicial-system/types'
 import {
   TempCase as Case,
@@ -22,7 +21,6 @@ import {
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
 
-import { CaseAppealState } from '@island.is/judicial-system-web/src/graphql/schema'
 import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
 
 import { CreateCaseMutation } from './createCaseGql'
@@ -294,7 +292,6 @@ const useCase = () => {
       setWorkingCase?: React.Dispatch<React.SetStateAction<Case>>,
     ): Promise<boolean> => {
       const limitedAccess = router.pathname.includes(DEFENDER_ROUTE)
-      console.log('caseid', caseId)
 
       const mutation = !limitedAccess
         ? transitionCaseMutation
