@@ -9,11 +9,9 @@ import {
 import {
   Box,
   Button,
-  Filter,
   FilterInput,
   GridContainer,
   GridRow,
-  Input,
   Stack,
   Tag,
   Text,
@@ -43,7 +41,7 @@ const Clients = () => {
   const handleSearch = (value: string) => {
     setInputSearchValue(value)
     if (value.length > 0) {
-      const filteredList = originalClients.filter((client: any) => {
+      const filteredList = originalClients.filter((client) => {
         return (
           client?.defaultEnvironment.displayName[0].value
             .toLowerCase()
