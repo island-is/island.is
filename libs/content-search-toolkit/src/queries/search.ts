@@ -36,7 +36,6 @@ export const searchQuery = (
     should.push({
       simple_query_string: {
         query: queryString,
-        // fields: fieldsWeights,
         analyze_wildcard: true,
         default_operator: 'and',
       },
