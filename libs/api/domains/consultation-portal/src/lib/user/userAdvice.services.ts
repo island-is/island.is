@@ -11,7 +11,7 @@ import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 export class UserAdviceResultService {
   constructor(private userApi: UserApi) {}
 
-  private getAllUserAdvicesWithAuth(auth: User) {
+  private userApiWithAuth(auth: User) {
     return this.userApi.withMiddleware(new AuthMiddleware(auth))
   }
 
@@ -26,7 +26,7 @@ export class UserAdviceResultService {
       pageSize: input.pageSize,
     }
 
-    const advicesResponse = await this.getAllUserAdvicesWithAuth(
+    const advicesResponse = await this.userApiWithAuth(
       auth,
     ).apiUserAdvicesGet(request)
 
