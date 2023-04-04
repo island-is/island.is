@@ -16,33 +16,28 @@ export class UniversityOfIcelandService {
   private universityOfIcelandApiWithAuth = (user: User) =>
     this.universityOfIcelandApi.withMiddleware(new AuthMiddleware(user as Auth))
 
-  async studentInfo(
-    user: User,
-    locale?: NemandiGetLocaleEnum,
-  ): Promise<Transcripts> {
-    return await this.universityOfIcelandApiWithAuth(user).nemandiGet({
+  studentInfo(user: User, locale?: NemandiGetLocaleEnum): Promise<Transcripts> {
+    return this.universityOfIcelandApiWithAuth(user).nemandiGet({
       locale: locale,
     })
   }
-  async studentCareer(
+  studentCareer(
     user: User,
     trackNumber: number,
     locale?: NemandiFerillFerillGetLocaleEnum,
   ): Promise<StudentTrackOverview> {
-    return await this.universityOfIcelandApiWithAuth(
-      user,
-    ).nemandiFerillFerillGet({
+    return this.universityOfIcelandApiWithAuth(user).nemandiFerillFerillGet({
       ferill: trackNumber,
       locale: locale,
     })
   }
 
-  async studentCareerPDF(
+  studentCareerPDF(
     user: User,
     trackNumber: number,
     locale?: NemandiFerillFerillFileTranscriptGetLocaleEnum,
   ): Promise<Blob> {
-    return await this.universityOfIcelandApiWithAuth(
+    return this.universityOfIcelandApiWithAuth(
       user,
     ).nemandiFerillFerillFileTranscriptGet({
       ferill: trackNumber,
