@@ -6,7 +6,6 @@ import {
   ConnectedComponent,
   Query,
 } from '@island.is/web/graphql/schema'
-import { useLocalization } from '../../../utils'
 import {
   prepareCsvString,
   textSearch,
@@ -28,6 +27,7 @@ import {
   GridColumn,
 } from '@island.is/island-ui/core'
 import { SyslumennListCsvExport } from '@island.is/web/components'
+import { useNamespace } from '@island.is/web/hooks'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
 const DEFAULT_PAGE_SIZE = 10
@@ -39,10 +39,10 @@ interface AlcoholLicencesListProps {
 type ListState = 'loading' | 'loaded' | 'error'
 
 const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
-  const t = useLocalization(slice.json)
+  const n = useNamespace(slice.json ?? {})
   const { format } = useDateUtils()
   const PAGE_SIZE = slice?.configJson?.pageSize ?? DEFAULT_PAGE_SIZE
-  const DATE_FORMAT = t('dateFormat', 'd. MMMM yyyy')
+  const DATE_FORMAT = n('dateFormat', 'd. MMMM yyyy')
 
   const [listState, setListState] = useState<ListState>('loading')
   const [showCount, setShowCount] = useState(PAGE_SIZE)
@@ -85,15 +85,15 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
     return new Promise<string>((resolve, reject) => {
       if (alcoholLicences) {
         const headerRow = [
-          t('csvHeaderLicenceType', 'Tegund'),
-          t('csvHeaderLicenceSubType', 'Tegund leyfis'),
-          t('csvHeaderLicenseNumber', 'Leyfisnúmer'),
-          t('csvHeaderLicenseHolder', 'Leyfishafi'),
-          t('csvHeaderLicenseResponsible', 'Ábyrgðarmaður'),
-          t('csvHeaderValidFrom', 'Gildir frá'),
-          t('csvHeaderValidTo', 'Gildir til'),
-          t('csvHeaderOffice', 'Embætti'),
-          t('csvHeaderLocation', 'Starfsstöð embættis'),
+          n('csvHeaderLicenceType', 'Tegund'),
+          n('csvHeaderLicenceSubType', 'Tegund leyfis'),
+          n('csvHeaderLicenseNumber', 'Leyfisnúmer'),
+          n('csvHeaderLicenseHolder', 'Leyfishafi'),
+          n('csvHeaderLicenseResponsible', 'Ábyrgðarmaður'),
+          n('csvHeaderValidFrom', 'Gildir frá'),
+          n('csvHeaderValidTo', 'Gildir til'),
+          n('csvHeaderOffice', 'Embætti'),
+          n('csvHeaderLocation', 'Starfsstöð embættis'),
         ]
         const dataRows = []
         for (const alcoholLicence of alcoholLicences) {
@@ -116,7 +116,7 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
   }
 
   // Filter - Office
-  const allOfficesOption = t('filterOfficeAll', 'Öll embætti')
+  const allOfficesOption = n('filterOfficeAll', 'Öll embætti')
   const avaibleOfficesOptions = [
     allOfficesOption,
     ...Array.from(
@@ -128,7 +128,7 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
   )
 
   // Filter - Type
-  const allLicenceTypeOption = t('filterLicenceTypeAll', 'Allar tegundir')
+  const allLicenceTypeOption = n('filterLicenceTypeAll', 'Allar tegundir')
   const avaibleLicenceTypeOptions = [
     allLicenceTypeOption,
     ...Array.from(
@@ -174,8 +174,8 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
       )}
       {listState === 'error' && (
         <AlertMessage
-          title={t('errorTitle', 'Villa')}
-          message={t('errorMessage', 'Ekki tókst að sækja áfengisleyfi.')}
+          title={n('errorTitle', 'Villa')}
+          message={n('errorMessage', 'Ekki tókst að sækja áfengisleyfi.')}
           type="error"
         />
       )}
@@ -193,7 +193,7 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
                   icon="chevronDown"
                   size="sm"
                   isSearchable
-                  label={t('alcoholLicencesFilterLicenceType', 'Tegund')}
+                  label={n('alcoholLicencesFilterLicenceType', 'Tegund')}
                   name="licenceTypeSelect"
                   options={avaibleLicenceTypeOptions.map((x) => ({
                     label: x,
@@ -219,7 +219,7 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
                   icon="chevronDown"
                   size="sm"
                   isSearchable
-                  label={t('alcoholLicencesFilterOffice', 'Embætti')}
+                  label={n('alcoholLicencesFilterOffice', 'Embætti')}
                   name="officeSelect"
                   options={avaibleOfficesOptions.map((x) => ({
                     label: x,
@@ -241,7 +241,7 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
               <GridColumn paddingBottom={[1, 1, 1]} span={'12/12'}>
                 <Input
                   name="alcoholLicencesSearchInput"
-                  placeholder={t('searchPlaceholder', 'Leita')}
+                  placeholder={n('searchPlaceholder', 'Leita')}
                   backgroundColor={['blue', 'blue', 'white']}
                   size="sm"
                   icon={{
@@ -252,19 +252,19 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
                 />
                 <Box textAlign="right" marginRight={1} marginTop={1}>
                   <SyslumennListCsvExport
-                    defaultLabel={t(
+                    defaultLabel={n(
                       'csvButtonLabelDefault',
                       'Sækja öll leyfi (CSV)',
                     )}
-                    loadingLabel={t(
+                    loadingLabel={n(
                       'csvButtonLabelLoading',
                       'Sæki öll leyfi...',
                     )}
-                    errorLabel={t(
+                    errorLabel={n(
                       'csvButtonLabelError',
                       'Ekki tókst að sækja leyfi, reyndu aftur',
                     )}
-                    csvFilenamePrefix={t('csvFileTitlePrefix', 'Áfengisleyfi')}
+                    csvFilenamePrefix={n('csvFileTitlePrefix', 'Áfengisleyfi')}
                     csvStringProvider={csvStringProvider}
                   />
                 </Box>
@@ -275,7 +275,7 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
       )}
       {listState === 'loaded' && filteredAlcoholLicences.length === 0 && (
         <Box display="flex" marginTop={4} justifyContent="center">
-          <Text variant="h3">{t('noResults', 'Engin leyfi fundust.')}</Text>
+          <Text variant="h3">{n('noResults', 'Engin leyfi fundust.')}</Text>
         </Box>
       )}
       {listState === 'loaded' && filteredAlcoholLicences.length > 0 && (
@@ -320,26 +320,26 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
                       <Text variant="h3">{alcoholLicence.licenseHolder}</Text>
 
                       <Text paddingBottom={2}>
-                        {t('licenseNumber', 'Leyfisnúmer')}:{' '}
+                        {n('licenseNumber', 'Leyfisnúmer')}:{' '}
                         {alcoholLicence.licenseNumber}
                       </Text>
 
                       <Text>
-                        {t('validPeriodLabel', 'Gildistími')}:{' '}
+                        {n('validPeriodLabel', 'Gildistími')}:{' '}
                         {getValidPeriodRepresentation(
                           alcoholLicence.validFrom,
                           alcoholLicence.validTo,
                           DATE_FORMAT,
                           format,
-                          t('validPeriodUntil', 'Til'),
-                          t('validPeriodIndefinite', 'Ótímabundið'),
+                          n('validPeriodUntil', 'Til'),
+                          n('validPeriodIndefinite', 'Ótímabundið'),
                         )}
                       </Text>
 
                       <Text>
-                        {t('licenseResponsible', 'Ábyrgðarmaður')}:{' '}
+                        {n('licenseResponsible', 'Ábyrgðarmaður')}:{' '}
                         {alcoholLicence.licenseResponsible ||
-                          t(
+                          n(
                             'licenseResponsibleNotRegistered',
                             'Enginn skráður',
                           )}
@@ -357,7 +357,7 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
           >
             {showCount < filteredAlcoholLicences.length && (
               <Button onClick={() => setShowCount(showCount + PAGE_SIZE)}>
-                {t('loadMore', 'Sjá fleiri')} (
+                {n('loadMore', 'Sjá fleiri')} (
                 {filteredAlcoholLicences.length - showCount})
               </Button>
             )}

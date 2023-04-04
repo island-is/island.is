@@ -6,7 +6,6 @@ import {
   Query,
   TemporaryEventLicence,
 } from '@island.is/web/graphql/schema'
-import { useLocalization } from '../../../utils'
 import {
   prepareCsvString,
   textSearch,
@@ -28,6 +27,7 @@ import {
   GridColumn,
 } from '@island.is/island-ui/core'
 import { SyslumennListCsvExport } from '@island.is/web/components'
+import { useNamespace } from '@island.is/web/hooks'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
 const DEFAULT_PAGE_SIZE = 10
@@ -41,10 +41,10 @@ type ListState = 'loading' | 'loaded' | 'error'
 const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
   slice,
 }) => {
-  const t = useLocalization(slice.json)
+  const n = useNamespace(slice.json ?? {})
   const { format } = useDateUtils()
   const PAGE_SIZE = slice?.configJson?.pageSize ?? DEFAULT_PAGE_SIZE
-  const DATE_FORMAT = t('dateFormat', "d. MMMM yyyy 'kl.' HH:mm")
+  const DATE_FORMAT = n('dateFormat', "d. MMMM yyyy 'kl.' HH:mm")
 
   const [listState, setListState] = useState<ListState>('loading')
   const [showCount, setShowCount] = useState(PAGE_SIZE)
@@ -89,14 +89,14 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
     return new Promise<string>((resolve, reject) => {
       if (temporaryEventLicences) {
         const headerRow = [
-          t('csvHeaderLicenceType', 'Tegund'),
-          t('csvHeaderLicenceSubType', 'Tegund leyfis'),
-          t('csvHeaderLicenseNumber', 'Leyfisnúmer'),
-          t('csvHeaderLicenseHolder', 'Leyfishafi'),
-          t('csvHeaderLicenseResponsible', 'Ábyrgðarmaður'),
-          t('csvHeaderValidFrom', 'Gildir frá'),
-          t('csvHeaderValidTo', 'Gildir til'),
-          t('csvHeaderIssuedBy', 'Útgefið af'),
+          n('csvHeaderLicenceType', 'Tegund'),
+          n('csvHeaderLicenceSubType', 'Tegund leyfis'),
+          n('csvHeaderLicenseNumber', 'Leyfisnúmer'),
+          n('csvHeaderLicenseHolder', 'Leyfishafi'),
+          n('csvHeaderLicenseResponsible', 'Ábyrgðarmaður'),
+          n('csvHeaderValidFrom', 'Gildir frá'),
+          n('csvHeaderValidTo', 'Gildir til'),
+          n('csvHeaderIssuedBy', 'Útgefið af'),
         ]
         const dataRows = []
         for (const temporaryEventLicence of temporaryEventLicences) {
@@ -118,7 +118,7 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
   }
 
   // Filter - Office
-  const allOfficesOption = t('filterOfficeAll', 'Öll embætti')
+  const allOfficesOption = n('filterOfficeAll', 'Öll embætti')
   const avaibleOfficesOptions = [
     allOfficesOption,
     ...Array.from(
@@ -130,7 +130,7 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
   )
 
   // Filter - SubType
-  const allLicenceSubTypeOption = t('filterLicenceSubTypeAll', 'Allar tegundir')
+  const allLicenceSubTypeOption = n('filterLicenceSubTypeAll', 'Allar tegundir')
   const avaibleLicenceSubTypeOptions = [
     allLicenceSubTypeOption,
     ...Array.from(
@@ -178,8 +178,8 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
       )}
       {listState === 'error' && (
         <AlertMessage
-          title={t('errorTitle', 'Villa')}
-          message={t('errorMessage', 'Ekki tókst að sækja tækifærisleyfi.')}
+          title={n('errorTitle', 'Villa')}
+          message={n('errorMessage', 'Ekki tókst að sækja tækifærisleyfi.')}
           type="error"
         />
       )}
@@ -197,7 +197,7 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
                   icon="chevronDown"
                   size="sm"
                   isSearchable
-                  label={t('alcoholLicencesFilterLicenceSubType', 'Tegund')}
+                  label={n('alcoholLicencesFilterLicenceSubType', 'Tegund')}
                   name="licenceSubTypeSelect"
                   options={avaibleLicenceSubTypeOptions.map((x) => ({
                     label: x,
@@ -223,7 +223,7 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
                   icon="chevronDown"
                   size="sm"
                   isSearchable
-                  label={t('alcoholLicencesFilterOffice', 'Embætti')}
+                  label={n('alcoholLicencesFilterOffice', 'Embætti')}
                   name="officeSelect"
                   options={avaibleOfficesOptions.map((x) => ({
                     label: x,
@@ -245,7 +245,7 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
               <GridColumn paddingBottom={[1, 1, 1]} span={'12/12'}>
                 <Input
                   name="temporaryEventLicencesSearchInput"
-                  placeholder={t('searchPlaceholder', 'Leita')}
+                  placeholder={n('searchPlaceholder', 'Leita')}
                   backgroundColor={['blue', 'blue', 'white']}
                   size="sm"
                   icon={{
@@ -256,19 +256,19 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
                 />
                 <Box textAlign="right" marginRight={1} marginTop={1}>
                   <SyslumennListCsvExport
-                    defaultLabel={t(
+                    defaultLabel={n(
                       'csvButtonLabelDefault',
                       'Sækja öll leyfi (CSV)',
                     )}
-                    loadingLabel={t(
+                    loadingLabel={n(
                       'csvButtonLabelLoading',
                       'Sæki öll leyfi...',
                     )}
-                    errorLabel={t(
+                    errorLabel={n(
                       'csvButtonLabelError',
                       'Ekki tókst að sækja leyfi, reyndu aftur',
                     )}
-                    csvFilenamePrefix={t(
+                    csvFilenamePrefix={n(
                       'csvFileTitlePrefix',
                       'Tækifærisleyfi',
                     )}
@@ -282,7 +282,7 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
       )}
       {listState === 'loaded' && filteredTemporaryEventLicences.length === 0 && (
         <Box display="flex" marginTop={4} justifyContent="center">
-          <Text variant="h3">{t('noResults', 'Engin leyfi fundust.')}</Text>
+          <Text variant="h3">{n('noResults', 'Engin leyfi fundust.')}</Text>
         </Box>
       )}
       {listState === 'loaded' && filteredTemporaryEventLicences.length > 0 && (
@@ -325,26 +325,26 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
                       </Text>
 
                       <Text paddingBottom={2}>
-                        {t('licenseNumber', 'Leyfisnúmer')}:{' '}
+                        {n('licenseNumber', 'Leyfisnúmer')}:{' '}
                         {temporaryEventLicence.licenseNumber}
                       </Text>
 
                       <Text>
-                        {t('validPeriodLabel', 'Gildistími')}:{' '}
+                        {n('validPeriodLabel', 'Gildistími')}:{' '}
                         {getValidPeriodRepresentation(
                           temporaryEventLicence.validFrom,
                           temporaryEventLicence.validTo,
                           DATE_FORMAT,
                           format,
-                          t('validPeriodUntil', 'Til'),
-                          t('validPeriodIndefinite', 'Ótímabundið'),
+                          n('validPeriodUntil', 'Til'),
+                          n('validPeriodIndefinite', 'Ótímabundið'),
                         )}
                       </Text>
 
                       <Text>
-                        {t('licenseResponsible', 'Ábyrgðarmaður')}:{' '}
+                        {n('licenseResponsible', 'Ábyrgðarmaður')}:{' '}
                         {temporaryEventLicence.licenseResponsible ||
-                          t(
+                          n(
                             'licenseResponsibleNotRegistered',
                             'Enginn skráður',
                           )}
@@ -352,7 +352,7 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
 
                       {temporaryEventLicence.estimatedNumberOfGuests && (
                         <Text>
-                          {t(
+                          {n(
                             'licenseEstimatedNumberOfGuests',
                             'Áætlaður fjöldi gesta',
                           )}
@@ -362,7 +362,7 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
 
                       {temporaryEventLicence.maximumNumberOfGuests && (
                         <Text>
-                          {t(
+                          {n(
                             'licenseMaximumNumberOfGuests',
                             'Hámarksfjöldi gesta',
                           )}
@@ -382,7 +382,7 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
           >
             {showCount < filteredTemporaryEventLicences.length && (
               <Button onClick={() => setShowCount(showCount + PAGE_SIZE)}>
-                {t('loadMore', 'Sjá fleiri')} (
+                {n('loadMore', 'Sjá fleiri')} (
                 {filteredTemporaryEventLicences.length - showCount})
               </Button>
             )}
