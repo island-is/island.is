@@ -115,7 +115,7 @@ const serializeService: SerializeMethod<HelmService> = async (
     },
   }
   result.hpa.scaling.metric.nginxRequestsIrate =
-    serviceDef.replicaCount?.scalingMagicNumber || 4
+    serviceDef.replicaCount?.scalingMagicNumber || 5
 
   if (serviceDef.extraAttributes) {
     result.extra = serviceDef.extraAttributes
