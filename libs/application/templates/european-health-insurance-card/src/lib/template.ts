@@ -106,11 +106,6 @@ const template: ApplicationTemplate<
           status: 'draft',
           progress: 0.4,
           lifecycle: DefaultStateLifeCycle,
-          onExit: defineTemplateApi({
-            action: ApiActions.applyForPhysicalAndTemporary,
-            shouldPersistToExternalData: true,
-            throwOnError: true,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -145,6 +140,8 @@ const template: ApplicationTemplate<
           progress: 0.8,
           onExit: defineTemplateApi({
             action: ApiActions.applyForPhysicalAndTemporary,
+            shouldPersistToExternalData: true,
+            throwOnError: true,
           }),
           lifecycle: DefaultStateLifeCycle,
           roles: [
