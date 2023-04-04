@@ -4,38 +4,40 @@ export const courtOfAppealOverview = defineMessages({
   alertBannerTitle: {
     id: 'judicial.system.core:court_of_appeal_overview.alert_banner_title',
     defaultMessage: 'Úrskurður kærður',
-    description: 'Title of the alert banner',
+    description: 'Titill á tilkynningu um móttöku kæru',
   },
   alertBannerMessage: {
     id: 'judicial.system.core:court_of_appeal_overview.alert_banner_message',
     defaultMessage: '{actor} hefur kært úrskurðinn {appealDate}',
-    description: 'Message of the alert banner',
+    description: 'Texti á tilkynningu um móttöku kæru',
   },
   alertBannerLinkText: {
     id: 'judicial.system.core:court_of_appeal_overview.alert_banner_link_text',
     defaultMessage: 'Senda tilkynningu um móttöku',
-    description: 'Link text of the alert banner',
+    description: 'Texti í link á tilkynningu um móttöku kæru',
   },
   alertBannerTooltip: {
     id: 'judicial.system.core:court_of_appeal_overview.alert_banner_tooltip',
     defaultMessage:
       'Tilkynning um móttöku kæru og frest til að skila greinargerð sendist á Landsrétt og aðila málsins',
-    description: 'Tooltip of the alert banner',
+    description: 'Texti í tooltip á tilkynningu um móttöku kæru',
   },
   title: {
     id: 'judicial.system.core:court_of_appeal_overview.title',
     defaultMessage: 'Gæsluvarðhald virkt',
-    description: 'Title of the court of appeal overview page',
+    description: 'Titill á yfirlitsskjá afgreiddra mála hjá Landsrétti',
   },
   appealFilesTitle: {
     id: 'judicial.system.core:court_of_appeal_overview.appeal_files_title',
     defaultMessage: 'Skjöl kærumáls',
-    description: 'Title of the appeal files section',
+    description:
+      'Titill á skjöl kærumáls hlutanum á yfirlitsskjá afgreiddra mála hjá Landsrétti',
   },
   courtCaseFilesTitle: {
     id: 'judicial.system.core:court_of_appeal_overview.court_case_files_title',
     defaultMessage: 'Skjöl héraðsdómsmáls',
-    description: 'Title of the court case files section',
+    description:
+      'Titill á skjöl héraðsdómsmáls hlutanum á yfirlitsskjá afgreiddra mála hjá Landsrétti',
   },
   unsignedDocument: {
     id: 'judicial.system.core:court_of_appeal_overview.unsigned_document',
