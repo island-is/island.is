@@ -20,10 +20,6 @@ import {
   MarkdownWrapper,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  RestrictionCaseProsecutorSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { errors } from '@island.is/judicial-system-web/messages'
 import {
@@ -274,10 +270,6 @@ export const CaseFiles: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
-      }
-      activeSubSection={RestrictionCaseProsecutorSubsections.CASE_FILES}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}

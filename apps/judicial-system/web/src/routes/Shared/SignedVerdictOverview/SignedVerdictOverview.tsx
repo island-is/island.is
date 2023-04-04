@@ -47,7 +47,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   ReactSelectOption,
-  Sections,
   TempCase as Case,
   TempUpdateCase as UpdateCase,
 } from '@island.is/judicial-system-web/src/types'
@@ -280,6 +279,10 @@ export const SignedVerdictOverview: React.FC = () => {
   // skip loading institutions if the user does not have an id
   const { prosecutorsOffices } = useInstitution(!user?.id)
 
+  const isAppealedCase =
+    workingCase.prosecutorPostponedAppealDate ||
+    workingCase.accusedPostponedAppealDate
+
   /**
    * If the case is not rejected it must be accepted because
    * this screen is only rendered if the case is either accepted
@@ -291,7 +294,6 @@ export const SignedVerdictOverview: React.FC = () => {
    * decided only accept an alternative travel ban and finally we
    * assume that the actual custody was accepted.
    */
-
   const canModifyCaseDates = useCallback(() => {
     return (
       user &&
@@ -565,7 +567,6 @@ export const SignedVerdictOverview: React.FC = () => {
         renderAlertBanner()}
       <PageLayout
         workingCase={workingCase}
-        activeSection={Sections.CASE_CLOSED}
         isLoading={isLoadingWorkingCase}
         notFound={caseNotFound}
       >
