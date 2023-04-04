@@ -21,7 +21,6 @@ export class UserEmailResultResolver {
   @Query(() => UserEmailResult, {
     name: 'consultationPortalUserEmail',
   })
-  
   async getUserEmail(@CurrentUser() user: User): Promise<UserEmailResult> {
     const userEmail = await this.userEmailResultService.getUserEmail(user)
 

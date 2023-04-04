@@ -26,9 +26,9 @@ export class UserAdviceResultService {
       pageSize: input.pageSize,
     }
 
-    const advicesResponse = await this.userApiWithAuth(
-      auth,
-    ).apiUserAdvicesGet(request)
+    const advicesResponse = await this.userApiWithAuth(auth).apiUserAdvicesGet(
+      request,
+    )
 
     return advicesResponse
   }
