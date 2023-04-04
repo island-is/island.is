@@ -48,7 +48,7 @@ export class GenericMachineLicenseService
       .catch(handle404)
 
     if (!license) {
-      this.logger.info('No license found for user', {
+      this.logger.debug('No license found for user', {
         category: LOG_CATEGORY,
       })
       return null

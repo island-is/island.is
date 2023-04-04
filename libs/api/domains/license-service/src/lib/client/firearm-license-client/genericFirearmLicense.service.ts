@@ -39,14 +39,14 @@ export class GenericFirearmLicenseService
   async fetchLicenseData(user: User) {
     const licenseInfo = await this.firearmApi.getLicenseInfo(user)
     if (!licenseInfo) {
-      this.logger.info('No license info found for user', {
+      this.logger.debug('No license info found for user', {
         category: LOG_CATEGORY,
       })
       return null
     }
     const categories = await this.firearmApi.getCategories(user)
     if (!categories) {
-      this.logger.info('No category info found for user', {
+      this.logger.debug('No category info found for user', {
         category: LOG_CATEGORY,
       })
       return null
