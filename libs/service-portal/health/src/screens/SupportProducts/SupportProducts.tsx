@@ -1,13 +1,16 @@
 import { gql, useQuery } from '@apollo/client'
 import { AidOrNutrition, Query } from '@island.is/api/schema'
-import { Box, Table as T, Text } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  EmptyState,
-  ErrorScreen,
-  IntroHeader,
-  m,
-} from '@island.is/service-portal/core'
+  Box,
+  Table as T,
+  Text,
+  Inline,
+  LinkV2,
+  Icon,
+} from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { ErrorScreen, IntroHeader, m } from '@island.is/service-portal/core'
+import * as styles from './SupportProducts.css'
 import { messages } from '../../lib/messages'
 import { SUPPORT_PRODUCTS } from '../../utils/constants'
 import { FootNote } from '../../components/FootNote.tsx/FootNote'
@@ -43,22 +46,22 @@ const generateRow = (rowItem: AidOrNutrition) => {
   const row = (
     <T.Row>
       <T.Data>
-        <Text>{rowItem.name}</Text>
+        <Text variant="medium">{rowItem.name}</Text>
       </T.Data>
       <T.Data>
-        <Text>{rowItem.maxUnitRefund}</Text>
+        <Text variant="medium">{rowItem.maxUnitRefund}</Text>
       </T.Data>
       <T.Data>
-        <Text>0 kr.</Text>
+        <Text variant="medium">0 kr.</Text>
       </T.Data>
       <T.Data>
-        <Text>{rowItem.available}</Text>
+        <Text variant="medium">{rowItem.available}</Text>
       </T.Data>
       <T.Data>
-        <Text>{rowItem.refund.value ?? '0 kr.'}</Text>
+        <Text variant="medium">{rowItem.refund.value ?? '0 kr.'}</Text>
       </T.Data>
       <T.Data>
-        <Text>{rowItem.location}</Text>
+        <Text variant="medium">{rowItem.location}</Text>
       </T.Data>
     </T.Row>
   )
@@ -73,8 +76,6 @@ const SupportProducts = () => {
 
   const { loading, error, data } = useQuery<Query>(GetSupportProducts)
   const supportData = data?.getRightsPortalAidsAndNutrition
-
-  console.log(supportData)
 
   if (error && !loading) {
     return (
@@ -92,8 +93,10 @@ const SupportProducts = () => {
 
   if (!supportData) {
     return (
-      <Box marginTop={8}>
-        <EmptyState />
+      <Box width="full" marginTop={4} display="flex" justifyContent="center">
+        <Text variant="h5" as="h3">
+          {formatMessage(messages.noData)}
+        </Text>
       </Box>
     )
   }
@@ -112,28 +115,86 @@ const SupportProducts = () => {
           </a>
         </>
   */
-
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
         title={formatMessage(messages.supportProductsTitle)}
         intro={formatMessage(messages.supportProductsDescription)}
       />
+      <Inline space={3}>
+        <LinkV2
+          color="blue400"
+          underline="normal"
+          underlineVisibility="always"
+          newTab={true}
+          href={
+            'https://island.is/greidsluthatttaka-vegna-naeringar-og-serfaedis'
+          }
+        >
+          {formatMessage(messages.supportProductsDescriptionInfo1)}
+          <Icon
+            aria-hidden="true"
+            icon="open"
+            type="outline"
+            size="small"
+            className={styles.iconStyle}
+          />
+        </LinkV2>
+        <LinkV2
+          color="blue400"
+          underline="normal"
+          underlineVisibility="always"
+          newTab={true}
+          href="https://island.is/einnota-hjalpartaeki"
+        >
+          {formatMessage(messages.supportProductsDescriptionInfo2)}
+          <Icon
+            aria-hidden="true"
+            icon="open"
+            type="outline"
+            size="small"
+            className={styles.iconStyle}
+          />
+        </LinkV2>
+      </Inline>
 
-      <Box marginTop={[1, 1, 4]}>
+      <Box marginTop={[2, 2, 5]}>
         <Box marginTop={2}>
+          <Box marginBottom={[1, 1, 3]}>
+            <Text variant="h3">
+              {formatMessage(messages.mySupportProducts)}
+            </Text>
+          </Box>
           <T.Table>
             <T.Head>
               <T.Row>
-                <T.HeadData>{formatMessage(messages.name)}</T.HeadData>
-                <T.HeadData>{formatMessage(messages.maxUnitRefund)}</T.HeadData>
                 <T.HeadData>
-                  {formatMessage(messages.insuranceRatio)}
+                  <Text variant="medium" fontWeight="semiBold">
+                    {formatMessage(messages.name)}
+                  </Text>
                 </T.HeadData>
                 <T.HeadData>
-                  {formatMessage(messages.availableRefund)}
+                  <Text variant="medium" fontWeight="semiBold">
+                    {formatMessage(messages.maxUnitRefund)}
+                  </Text>
                 </T.HeadData>
-                <T.HeadData> {formatMessage(messages.location)}</T.HeadData>
+                <T.HeadData>
+                  <Text variant="medium" fontWeight="semiBold">
+                    {formatMessage(messages.insuranceRatio)}
+                  </Text>
+                </T.HeadData>
+                <T.HeadData>
+                  <Text variant="medium" fontWeight="semiBold">
+                    {formatMessage(messages.availableRefund)}
+                  </Text>
+                </T.HeadData>
+                <T.HeadData>
+                  <Text variant="medium" fontWeight="semiBold">
+                    {' '}
+                    {formatMessage(messages.location)}
+                  </Text>
+                </T.HeadData>
+                <T.HeadData />
               </T.Row>
             </T.Head>
             <T.Body>

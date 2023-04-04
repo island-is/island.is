@@ -25,11 +25,11 @@ export const messages = defineMessages({
   },
   supportProductsDescriptionInfo1: {
     id: 'sp.health:support-description-info-1',
-    defaultMessage: '<link>Nánari um næringu og sérfæði<link>',
+    defaultMessage: 'Nánari um næringu og sérfæði',
   },
   supportProductsDescriptionInfo2: {
     id: 'sp.health:support-description-info-2',
-    defaultMessage: '<link>Nánar um hjálpartæki<link>',
+    defaultMessage: 'Nánar um hjálpartæki',
   },
   supportProductsDisclaimer: {
     id: 'sp.health:support-disclaimer',
@@ -101,7 +101,7 @@ export const messages = defineMessages({
   },
   physioDisclaimer4: {
     id: 'sp.health:therapy-disclaimer-3',
-    defaultMessage: '<link>Frekari upplýsingar um sjúkraþjáflun</link>',
+    defaultMessage: '<link>Frekari upplýsingar um sjúkraþjálfun</link>',
   },
   noValidTimePeriod: {
     id: 'sp.health:no-valid-time-period',
