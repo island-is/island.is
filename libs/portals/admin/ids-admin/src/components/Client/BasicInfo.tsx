@@ -1,6 +1,6 @@
 import { AccordionCard, Input, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React from 'react'
+import React, { RefObject } from 'react'
 import { m } from '../../lib/messages'
 import ContentCard from '../../shared/components/ContentCard'
 import { toast } from '@island.is/island-ui/core'
@@ -19,19 +19,18 @@ const BasicInfoContent = ({
   const { formatMessage } = useLocale()
   const [showSecret, setShowSecret] = React.useState(false)
   const clientIdRef = React.useRef<HTMLInputElement>(null)
-  const clientSecretRef = React.useRef<HTMLInputElement>(null)
+  //const clientSecretRef = React.useRef<HTMLInputElement>(null)
   const issuerUrlRef = React.useRef<HTMLInputElement>(null)
   const authorizationUrlRef = React.useRef<HTMLInputElement>(null)
   const tokenUrlRef = React.useRef<HTMLInputElement>(null)
   const userInfoUrlRef = React.useRef<HTMLInputElement>(null)
-  const jwksUrlRef = React.useRef<HTMLInputElement>(null)
   const endSessionUrlRef = React.useRef<HTMLInputElement>(null)
   const openIdConfigurationUrlRef = React.useRef<HTMLInputElement>(null)
   const jsonWebSetKeyUrlRef = React.useRef<HTMLInputElement>(null)
 
   const handleCopy = (
     ev: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    ref: any,
+    ref: RefObject<HTMLInputElement>,
   ) => {
     if (!ref.current) return
 
