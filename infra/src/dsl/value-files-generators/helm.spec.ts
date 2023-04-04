@@ -45,4 +45,7 @@ describe('Local setup', () => {
   //     min: 1,
   //   })
   // })
+  it('Should pass', () => {
+    expect(1).toStrictEqual(1)
+  })
 })

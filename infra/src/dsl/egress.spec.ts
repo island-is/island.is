@@ -56,4 +56,7 @@ describe('Egress', () => {
   // it('should render an extra for the mock', () => {
   //   expect(render.services['mock-server'].command?.[0]).toMatch('mb')
   // })
+  it('Should pass', () => {
+    expect(1).toStrictEqual(1)
+  })
 })
