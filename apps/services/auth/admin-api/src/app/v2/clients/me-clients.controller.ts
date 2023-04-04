@@ -52,7 +52,7 @@ export class MeClientsController {
   @Audit<AdminClientDto>({
     resources: (client) => client.clientId,
   })
-  findById(
+  findByTenantIdAndClientId(
     @CurrentUser() user: User,
     @Param('tenantId') tenantId: string,
     @Param('clientId') clientId: string,
