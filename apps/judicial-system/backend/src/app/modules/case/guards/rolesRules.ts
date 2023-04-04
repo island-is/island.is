@@ -148,6 +148,7 @@ export const prosecutorTransitionRule: RolesRule = {
     CaseTransition.OPEN,
     CaseTransition.SUBMIT,
     CaseTransition.DELETE,
+    CaseTransition.APPEAL,
   ],
 }
 
@@ -164,6 +165,15 @@ export const representativeTransitionRule: RolesRule = {
   ],
 }
 
+// Allows defenders to appeal cases.
+// Note that defenders can not appeal indictment cases.
+export const defenderTransitionRule: RolesRule = {
+  role: UserRole.DEFENDER,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'transition',
+  dtoFieldValues: [CaseTransition.APPEAL],
+}
+
 // Allows judges to receive, accept, reject and dismiss cases,
 // and to reopen non indictment cases
 export const judgeTransitionRule: RolesRule = {
@@ -176,6 +186,7 @@ export const judgeTransitionRule: RolesRule = {
     CaseTransition.REJECT,
     CaseTransition.DISMISS,
     CaseTransition.REOPEN,
+    CaseTransition.RECEIVE_APPEAL,
   ],
   canActivate: (request) => {
     const theCase = request.case
