@@ -385,7 +385,7 @@ judicial-system-web:
       cpu: '200m'
       memory: '256Mi'
     requests:
-      cpu: '10m'
+      cpu: '15m'
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'

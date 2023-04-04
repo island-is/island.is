@@ -1288,7 +1288,7 @@ license-api:
       cpu: '400m'
       memory: '512Mi'
     requests:
-      cpu: '10m'
+      cpu: '15m'
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -1893,10 +1893,10 @@ services-sessions:
     min: 1
   resources:
     limits:
-      cpu: '400m'
+      cpu: '250m'
       memory: '512Mi'
     requests:
-      cpu: '10m'
+      cpu: '25m'
       memory: '300Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -2045,7 +2045,7 @@ skilavottord-web:
       cpu: '200m'
       memory: '256Mi'
     requests:
-      cpu: '10m'
+      cpu: '20m'
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -2161,7 +2161,7 @@ user-notification:
   env:
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     MAIN_QUEUE_NAME: 'user-notification'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=336'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -2206,10 +2206,10 @@ user-notification:
   resources:
     limits:
       cpu: '200m'
-      memory: '256Mi'
+      memory: '384Mi'
     requests:
-      cpu: '10m'
-      memory: '128Mi'
+      cpu: '15m'
+      memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN'
