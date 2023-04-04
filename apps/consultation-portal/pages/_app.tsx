@@ -2,6 +2,7 @@ import { ApolloProvider } from '@apollo/client'
 import { getSession, Provider } from 'next-auth/client'
 import { AppContext } from 'next/app'
 import AppLayout from '../components/AppLayout/AppLayout'
+import PageLoader from '../components/PageLoader/PageLoader'
 import AuthProvider from '../components/AuthProvier/AuthProvider'
 import initApollo from '../graphql/client'
 import { isAuthenticated } from '../utils/authentication/isAuthenticated'
@@ -12,6 +13,7 @@ const ConsultationPortalApplication: any = ({ Component, pageProps }) => {
       <Provider session={pageProps.session}>
         <AuthProvider>
           <AppLayout>
+            <PageLoader />
             <Component {...pageProps} />
           </AppLayout>
         </AuthProvider>
