@@ -6,6 +6,7 @@ import {
   IndictmentCount,
   SessionArrangements,
   CaseOrigin,
+  CaseAppealState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   Case,
@@ -231,6 +232,7 @@ export interface TempCase
     | 'type'
     | 'indictmentCounts'
     | 'sessionArrangements'
+    | 'appealState'
   > {
   origin: CaseOrigin
   sharedWithProsecutorsOffice?: Institution
@@ -241,13 +243,18 @@ export interface TempCase
   type: CaseType
   indictmentCounts?: TempIndictmentCount[]
   sessionArrangements?: SessionArrangements
+  appealState?: CaseAppealState
 }
 
 export interface TempUpdateCase
-  extends Omit<UpdateCase, 'courtDocuments' | 'type' | 'sessionArrangements'> {
+  extends Omit<
+    UpdateCase,
+    'courtDocuments' | 'type' | 'sessionArrangements' | 'appealState'
+  > {
   courtDocuments?: CourtDocument[]
   type?: CaseType
   sessionArrangements?: SessionArrangements
+  appealState?: CaseAppealState
 }
 
 export interface TempCreateCase extends Omit<CreateCase, 'type'> {

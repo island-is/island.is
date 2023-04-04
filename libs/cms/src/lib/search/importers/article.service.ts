@@ -74,14 +74,19 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
             if (!fields?.parent || !fields?.title) {
               return undefined
             }
-            const { title, url, content, showTableOfContents } = fields
+
+            const parent = {
+              ...fields.parent,
+              fields: { ...fields.parent.fields },
+            }
+
+            delete parent['fields']['subArticles']
+
             return {
               sys,
               fields: {
-                title,
-                slug: url,
-                content,
-                showTableOfContents,
+                ...fields,
+                parent,
               },
             }
           })

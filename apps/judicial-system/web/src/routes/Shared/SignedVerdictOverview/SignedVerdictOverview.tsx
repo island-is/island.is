@@ -78,6 +78,7 @@ import {
   User,
   UserRole,
   CaseType,
+  CaseAppealState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
@@ -502,6 +503,52 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
+  const renderAlertBanner = () => {
+    let alertTitle, alertLinkText, alertLinkHref, appealDate
+
+    const shouldDisplayAppealAlertBanner =
+      workingCase.courtEndTime &&
+      !workingCase.isAppealDeadlineExpired &&
+      user?.role &&
+      isProsecutionRole(user.role)
+
+    const shouldDisplayAppealedAlertBanner =
+      workingCase.appealState &&
+      workingCase.appealState === CaseAppealState.Appealed
+
+    if (shouldDisplayAppealAlertBanner) {
+      alertTitle = formatMessage(strings.appealAlertBannerTitle, {
+        appealDeadline: getAppealEndDate(workingCase.courtEndTime ?? ''),
+      })
+      alertLinkText = formatMessage(strings.appealAlertBannerLinkText)
+      alertLinkHref = '/krofur'
+    } else if (shouldDisplayAppealedAlertBanner) {
+      const isAppealedByProsecutor = workingCase.prosecutorPostponedAppealDate
+      appealDate = isAppealedByProsecutor
+        ? workingCase.prosecutorPostponedAppealDate
+        : workingCase.accusedPostponedAppealDate
+      alertTitle = formatMessage(strings.appealedAlertBannerTitle, {
+        isAppealedByProsecutor: isAppealedByProsecutor,
+        appealDate: formatDate(appealDate, 'PPPp'),
+      })
+      alertLinkText = formatMessage(strings.appealedAlertBannerLinkText)
+      alertLinkHref = '/krofur'
+    } else {
+      return undefined
+    }
+
+    return (
+      <AlertBanner
+        title={alertTitle}
+        variant="warning"
+        link={{
+          href: alertLinkHref,
+          title: alertLinkText,
+        }}
+      />
+    )
+  }
+
   const onModifyDatesSubmit = async (update: UpdateCase) => {
     const updatedCase = await updateCase(workingCase.id, { ...update })
 
@@ -516,42 +563,8 @@ export const SignedVerdictOverview: React.FC = () => {
 
   return (
     <>
-      {isAppealedCase ? (
-        <AlertBanner
-          title={formatMessage(strings.statementAlertBannerTitle)}
-          description={formatMessage(strings.statementAlertBannerMessage, {
-            actor: workingCase.prosecutorPostponedAppealDate
-              ? formatMessage(core.prosecutorPerson)
-              : formatMessage(core.defender),
-            appealDate: formatDate(
-              workingCase.prosecutorPostponedAppealDate ??
-                workingCase.accusedPostponedAppealDate,
-              'PPPp',
-            ),
-          })}
-          variant="warning"
-          link={{
-            href: `${constants.APPEAL_ROUTE}/${workingCase.id}`, // TODO: Replace with statements route once implemented
-            title: formatMessage(strings.statementAlertBannerLinkText),
-          }}
-        />
-      ) : workingCase.courtEndTime &&
-        !workingCase.isAppealDeadlineExpired &&
-        user?.role ? (
-        isProsecutionRole(user.role) &&
-        features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) && (
-          <AlertBanner
-            title={formatMessage(strings.appealAlertBannerTitle, {
-              appealDeadline: getAppealEndDate(workingCase.courtEndTime),
-            })}
-            variant="warning"
-            link={{
-              href: `${constants.APPEAL_ROUTE}/${workingCase.id}`,
-              title: formatMessage(strings.appealAlertBannerLinkText),
-            }}
-          />
-        )
-      ) : null}
+      {features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) &&
+        renderAlertBanner()}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}

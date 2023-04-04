@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 
 import type { User } from '@island.is/auth-nest-tools'
 import {
-  ClientType,
+  CreateClientType,
   MeClientsControllerCreateRequest,
 } from '@island.is/clients/auth/admin-api'
 import { Environment } from '@island.is/shared/types'
@@ -121,7 +121,7 @@ export class ClientsService extends MultiEnvironmentService {
       tenantId: input.tenantId,
       adminCreateClientDto: {
         clientId: input.clientId,
-        clientType: (input.clientType as string) as ClientType,
+        clientType: (input.clientType as string) as CreateClientType,
         clientName: input.displayName,
       },
     }

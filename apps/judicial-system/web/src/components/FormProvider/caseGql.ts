@@ -188,6 +188,7 @@ const CaseQuery = gql`
         legalArguments
       }
       requestDriversLicenseSuspension
+      appealState
     }
   }
 `

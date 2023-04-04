@@ -1,11 +1,4 @@
-import {
-  Args,
-  Query,
-  Resolver,
-  Mutation,
-  ResolveField,
-  Parent,
-} from '@nestjs/graphql'
+import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
@@ -16,11 +9,7 @@ import { UseGuards } from '@nestjs/common'
 import type { Locale } from '@island.is/shared/types'
 
 import { ApplicationService } from './application.service'
-import {
-  Application,
-  ApplicationHistory,
-  ApplicationPayment,
-} from './application.model'
+import { Application, ApplicationPayment } from './application.model'
 import { CreateApplicationInput } from './dto/createApplication.input'
 import { UpdateApplicationInput } from './dto/updateApplication.input'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
