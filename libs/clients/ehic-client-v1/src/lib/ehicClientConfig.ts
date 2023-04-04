@@ -8,7 +8,7 @@ const schema = z.object({
 })
 
 export const EhicClientConfig = defineConfig<z.infer<typeof schema>>({
-  name: 'EhicClientV1',
+  name: 'clients-ehic-client-v1',
   schema,
   load(env) {
     return {
