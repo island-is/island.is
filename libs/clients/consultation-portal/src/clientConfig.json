@@ -7,7 +7,9 @@
   "paths": {
     "/api/auth/RequestUrl": {
       "get": {
-        "tags": ["Authentication"],
+        "tags": [
+          "Authentication"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -34,7 +36,9 @@
     },
     "/api/auth/EndSessionUrl": {
       "get": {
-        "tags": ["Authentication"],
+        "tags": [
+          "Authentication"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -61,7 +65,9 @@
     },
     "/api/Cases": {
       "get": {
-        "tags": ["Cases"],
+        "tags": [
+          "Cases"
+        ],
         "parameters": [
           {
             "name": "SearchQuery",
@@ -190,7 +196,9 @@
     },
     "/api/Cases/{caseId}": {
       "get": {
-        "tags": ["Cases"],
+        "tags": [
+          "Cases"
+        ],
         "parameters": [
           {
             "name": "caseId",
@@ -232,7 +240,9 @@
     },
     "/api/Cases/{caseId}/Advices": {
       "get": {
-        "tags": ["Cases"],
+        "tags": [
+          "Cases"
+        ],
         "parameters": [
           {
             "name": "caseId",
@@ -281,7 +291,9 @@
         }
       },
       "post": {
-        "tags": ["Cases"],
+        "tags": [
+          "Cases"
+        ],
         "parameters": [
           {
             "name": "caseId",
@@ -345,7 +357,9 @@
     },
     "/api/CaseSubscription/{caseId}": {
       "get": {
-        "tags": ["CaseSubscription"],
+        "tags": [
+          "CaseSubscription"
+        ],
         "parameters": [
           {
             "name": "caseId",
@@ -382,7 +396,9 @@
         }
       },
       "post": {
-        "tags": ["CaseSubscription"],
+        "tags": [
+          "CaseSubscription"
+        ],
         "parameters": [
           {
             "name": "caseId",
@@ -424,7 +440,9 @@
         }
       },
       "delete": {
-        "tags": ["CaseSubscription"],
+        "tags": [
+          "CaseSubscription"
+        ],
         "parameters": [
           {
             "name": "caseId",
@@ -446,7 +464,9 @@
     },
     "/api/Documents/{documentId}": {
       "get": {
-        "tags": ["Documents"],
+        "tags": [
+          "Documents"
+        ],
         "parameters": [
           {
             "name": "documentId",
@@ -471,7 +491,9 @@
     },
     "/api/Statistics": {
       "get": {
-        "tags": ["Statistics"],
+        "tags": [
+          "Statistics"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -498,7 +520,9 @@
     },
     "/api/Types": {
       "get": {
-        "tags": ["Types"],
+        "tags": [
+          "Types"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -525,7 +549,9 @@
     },
     "/api/User/Advices": {
       "get": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "parameters": [
           {
             "name": "OldestFirst",
@@ -588,7 +614,9 @@
     },
     "/api/User/Subscriptions": {
       "get": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -613,7 +641,9 @@
         }
       },
       "post": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -642,7 +672,9 @@
     },
     "/api/User/Email": {
       "get": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -667,7 +699,9 @@
         }
       },
       "post": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -991,7 +1025,10 @@
         "additionalProperties": false
       },
       "CaseSubscriptionType": {
-        "enum": ["AllChanges", "StatusChanges"],
+        "enum": [
+          "AllChanges",
+          "StatusChanges"
+        ],
         "type": "string"
       },
       "CasesAggregateResult": {
@@ -1023,7 +1060,11 @@
         "additionalProperties": false
       },
       "CasesOrderBy": {
-        "enum": ["LastUpdated", "LatestCases", "AdviceDeadline"],
+        "enum": [
+          "LastUpdated",
+          "LatestCases",
+          "AdviceDeadline"
+        ],
         "type": "string"
       },
       "DocumentInfoResult": {
@@ -1099,7 +1140,11 @@
         "additionalProperties": false
       },
       "SubscriptionType": {
-        "enum": ["AllChanges", "StatusChanges", "OnlyNew"],
+        "enum": [
+          "AllChanges",
+          "StatusChanges",
+          "OnlyNew"
+        ],
         "type": "string"
       },
       "UserAdviceAggregate": {
@@ -1275,6 +1320,10 @@
           "subscribeToAll": {
             "type": "boolean"
           },
+          "subscribeToAllType": {
+            "type": "string",
+            "nullable": true
+          },
           "caseIds": {
             "type": "array",
             "items": {
@@ -1331,7 +1380,7 @@
   },
   "security": [
     {
-      "Bearer": []
+      "Bearer": [ ]
     }
   ]
 }
