@@ -1,5 +1,4 @@
 import { Response } from 'express'
-
 import {
   Body,
   Controller,
@@ -30,10 +29,8 @@ import {
   CaseState,
   CaseTransition,
   CaseType,
-  completedCaseStates,
   indictmentCases,
   investigationCases,
-  isIndictmentCase,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
