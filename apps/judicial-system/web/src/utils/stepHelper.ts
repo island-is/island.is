@@ -98,7 +98,7 @@ export const isTrafficViolationCase = (
 ): boolean => {
   if (
     !workingCase.indictmentSubtypes ||
-    workingCase.type === CaseType.Indictment
+    workingCase.type !== CaseType.Indictment
   ) {
     return false
   }
