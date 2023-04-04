@@ -13,7 +13,8 @@ import type { User } from '@island.is/auth-nest-tools'
 import { ConsultationPortalScope } from '@island.is/auth/scopes'
 
 @Resolver()
-@UseGuards(FeatureFlagGuard)
+@UseGuards(FeatureFlagGuard, IdsUserGuard)
+@Scopes(ConsultationPortalScope.default)
 export class UserAdviceResultResolver {
   constructor(private userAdviceResultService: UserAdviceResultService) {}
 
@@ -21,8 +22,6 @@ export class UserAdviceResultResolver {
   @Query(() => UserAdviceAggregate, {
     name: 'consultationPortalAllUserAdvices',
   })
-  @UseGuards(IdsUserGuard)
-  @Scopes(ConsultationPortalScope.default)
   async getAllUserAdvices(
     @CurrentUser() user: User,
     @Args('input', { type: () => GetUserAdvicesInput })
