@@ -6,8 +6,6 @@ import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 import { TextInput, Text, Spinner } from '@contentful/f36-components'
 import { EntryProps, SysLink } from 'contentful-management'
 
-const { publicRuntimeConfig } = getConfig()
-
 type Article = EntryProps<{
   subArticles: { 'is-IS': SysLink[] }
   slug: {
@@ -16,10 +14,11 @@ type Article = EntryProps<{
   }
 }>
 
-const environmentId = publicRuntimeConfig.CONTENTFUL_ENVIRONMENT
-const spaceId = publicRuntimeConfig.CONTENTFUL_SPACE
-
 const SubArticleUrlField = () => {
+  const { publicRuntimeConfig } = getConfig()
+  const environmentId = publicRuntimeConfig.CONTENTFUL_ENVIRONMENT
+  const spaceId = publicRuntimeConfig.CONTENTFUL_SPACE
+
   const sdk = useSDK<FieldExtensionSDK>()
   const cma = useCMA()
 

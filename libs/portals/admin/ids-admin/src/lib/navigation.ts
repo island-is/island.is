@@ -14,12 +14,12 @@ export const domainNav: PortalNavigationItem = {
       description: m.idsAdmin,
       activeIfExact: true,
     },
-    {
-      name: m.apis,
-      path: IDSAdminPaths.IDSAdminDomainsAPIS,
-      description: m.idsAdmin,
-      activeIfExact: true,
-    },
+    // {
+    //   name: m.apis,
+    //   path: IDSAdminPaths.IDSAdminDomainsAPIS,
+    //   description: m.idsAdmin,
+    //   activeIfExact: true,
+    // },
   ],
 }
 
@@ -30,20 +30,8 @@ export const applicationNav: PortalNavigationItem = {
   activeIfExact: true,
   children: [
     {
-      name: m.settings,
+      name: m.clients,
       path: IDSAdminPaths.IDSAdminClient,
-      description: m.idsAdmin,
-      activeIfExact: true,
-    },
-    {
-      name: m.authentication,
-      path: IDSAdminPaths.IDSAdminClientAuthentication,
-      description: m.idsAdmin,
-      activeIfExact: true,
-    },
-    {
-      name: m.advancedSettings,
-      path: IDSAdminPaths.IDSAdminClientAdvancedSettings,
       description: m.idsAdmin,
       activeIfExact: true,
     },

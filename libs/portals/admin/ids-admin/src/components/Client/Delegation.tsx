@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { m } from '../../lib/messages'
 import ContentCard from '../../shared/components/ContentCard'
 import { useLocale } from '@island.is/localization'
@@ -37,6 +37,22 @@ const Delegation = ({
     supportsCustomDelegation,
   )
 
+  useEffect(() => {
+    setProcuring(supportsProcuringHolders)
+    setLegalGuardian(supportsLegalGuardians)
+    setPrompt(promptDelegations)
+    setApiScope(requireApiScopes)
+    setPersonalRepresentative(supportsPersonalRepresentatives)
+    setCustomDelegation(supportsCustomDelegation)
+  }, [
+    supportsCustomDelegation,
+    supportsLegalGuardians,
+    supportsPersonalRepresentatives,
+    supportsProcuringHolders,
+    promptDelegations,
+    requireApiScopes,
+  ])
+
   const isSuperAdmin = userInfo?.scopes.includes(
     AdminPortalScope.idsAdminSuperUser,
   )
@@ -59,10 +75,7 @@ const Delegation = ({
           value={`${customDelegation}`}
           subLabel={formatMessage(m.supportCustomDelegationDescription)}
           checked={customDelegation}
-          onChange={() => {
-            console.log('change', customDelegation)
-            setCustomDelegation(!customDelegation)
-          }}
+          onChange={() => setCustomDelegation(!customDelegation)}
         />
         <Checkbox
           label={formatMessage(m.supportLegalGuardianDelegation)}

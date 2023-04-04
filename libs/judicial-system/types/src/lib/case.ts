@@ -98,6 +98,12 @@ export enum CaseState {
   DISMISSED = 'DISMISSED',
 }
 
+export enum CaseAppealState {
+  APPEALED = 'APPEALED',
+  RECEIVED = 'RECEIVED',
+  COMPLETED = 'COMPLETED',
+}
+
 export enum CaseTransition {
   OPEN = 'OPEN',
   SUBMIT = 'SUBMIT',
@@ -107,6 +113,9 @@ export enum CaseTransition {
   DELETE = 'DELETE',
   DISMISS = 'DISMISS',
   REOPEN = 'REOPEN',
+  APPEAL = 'APPEAL',
+  RECEIVE_APPEAL = 'RECEIVE_APPEAL',
+  COMPLETE_APPEAL = 'COMPLETE_APPEAL',
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -245,6 +254,7 @@ export interface Case {
   crimeScenes?: CrimeSceneMap
   indictmentIntroduction?: string
   requestDriversLicenseSuspension?: boolean
+  appealState?: CaseAppealState
 }
 
 export interface CaseListEntry
@@ -356,6 +366,7 @@ export interface UpdateCase
     | 'crimeScenes'
     | 'indictmentIntroduction'
     | 'requestDriversLicenseSuspension'
+    | 'appealState'
   > {
   type?: CaseType
   policeCaseNumbers?: string[]
