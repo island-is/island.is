@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { m } from '../../lib/messages'
 import ContentCard from '../../shared/components/ContentCard'
 import { useLocale } from '@island.is/localization'
@@ -36,6 +36,22 @@ const Delegation = ({
   const [customDelegation, setCustomDelegation] = useState(
     supportsCustomDelegation,
   )
+
+  useEffect(() => {
+    setProcuring(supportsProcuringHolders)
+    setLegalGuardian(supportsLegalGuardians)
+    setPrompt(promptDelegations)
+    setApiScope(requireApiScopes)
+    setPersonalRepresentative(supportsPersonalRepresentatives)
+    setCustomDelegation(supportsCustomDelegation)
+  }, [
+    supportsCustomDelegation,
+    supportsLegalGuardians,
+    supportsPersonalRepresentatives,
+    supportsProcuringHolders,
+    promptDelegations,
+    requireApiScopes,
+  ])
 
   const isSuperAdmin = userInfo?.scopes.includes(
     AdminPortalScope.idsAdminSuperUser,
