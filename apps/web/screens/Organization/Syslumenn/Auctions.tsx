@@ -826,7 +826,10 @@ const Auctions: Screen<AuctionsProps> = ({
                           'Fasteign nr. ',
                         )}
                         linkText={auction.lotId}
-                        href={`https://www.skra.is/default.aspx?pageid=d5db1b6d-0650-11e6-943c-005056851dd2&selector=streetname&streetname=${auction.lotId}&submitbutton=Leita`}
+                        href={(n(
+                          'realEstateRegistryLinkTemplate',
+                          'https://fasteignaskra.is/default.aspx?pageid=d5db1b6d-0650-11e6-943c-005056851dd2&selector=streetname&streetname={{ID}}&submitbutton=Leita',
+                        ) as string).replace('{{ID}}', auction.lotId)}
                       />
                     )}
 
@@ -835,7 +838,10 @@ const Auctions: Screen<AuctionsProps> = ({
                     <LotLink
                       prefix={n('auctionVehicleNumberPrefix', 'Bílnúmer: ')}
                       linkText={auction.lotId}
-                      href={`https://www.samgongustofa.is/umferd/okutaeki/okutaekjaskra/uppfletting?vq=${auction.lotId}`}
+                      href={(n(
+                        'carRegistryLinkTemplate',
+                        'https://www.samgongustofa.is/umferd/okutaeki/okutaekjaskra/uppfletting?vq={{ID}}',
+                      ) as string).replace('{{ID}}', auction.lotId)}
                     />
                   )}
 
@@ -847,7 +853,10 @@ const Auctions: Screen<AuctionsProps> = ({
                         'Númer loftfars: ',
                       )}
                       linkText={auction.lotId}
-                      href={`https://www.samgongustofa.is/flug/loftfor/loftfaraskra?aq=${auction.lotId}`}
+                      href={(n(
+                        'aircraftRegistryLinkTemplate',
+                        'https://www.samgongustofa.is/flug/loftfor/loftfaraskra?aq={{ID}}',
+                      ) as string).replace('{{ID}}', auction.lotId)}
                     />
                   )}
 
@@ -856,7 +865,10 @@ const Auctions: Screen<AuctionsProps> = ({
                     <LotLink
                       prefix={n('auctionShipNumberPrefix', 'Númer skips: ')}
                       linkText={auction.lotId}
-                      href={`https://www.samgongustofa.is/siglingar/skrar-og-utgafa/skipaskra/uppfletting?sq=${auction.lotId}`}
+                      href={(n(
+                        'shipRegistryLinkTemplate',
+                        'https://www.samgongustofa.is/siglingar/skrar-og-utgafa/skipaskra/uppfletting?sq={{ID}}',
+                      ) as string).replace('{{ID}}', auction.lotId)}
                     />
                   )}
 
