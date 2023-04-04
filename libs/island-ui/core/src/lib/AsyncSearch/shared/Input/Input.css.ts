@@ -46,6 +46,8 @@ export const open = style({
 })
 
 export const colored = style({
+  background: theme.color.blue100,
+  borderColor: theme.color.blue200,
   selectors: {
     [`&:focus:hover`]: {
       borderColor: theme.color.blue200,

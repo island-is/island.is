@@ -143,6 +143,13 @@ export class BackendApi extends DataSource<{ req: Request }> {
     return this.patch(`case/${id}/state`, transitionCase)
   }
 
+  transitionLimitedAccessCase(
+    id: string,
+    transitionCase: TransitionCase,
+  ): Promise<Case> {
+    return this.patch(`case/${id}/state/limitedAccess`, transitionCase)
+  }
+
   requestCourtRecordSignature(id: string): Promise<RequestSignatureResponse> {
     return this.post(`case/${id}/courtRecord/signature`)
   }

@@ -29,52 +29,55 @@ import { core, titles } from '@island.is/judicial-system-web/messages'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import {
   CaseFileCategory,
-  CaseTransition,
   isProsecutionRole,
 } from '@island.is/judicial-system/types'
 import {
   TUploadFile,
   useS3Upload,
-  useCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import * as constants from '@island.is/judicial-system/consts'
 
-import { appealToCourtOfAppeals as strings } from './AppealToCourtOfAppeals.strings'
+import { statement as strings } from './Statement.strings'
 
-const AppealToCourtOfAppeals = () => {
+const Statement = () => {
   const { workingCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
-  const [visibleModal, setVisibleModal] = useState<'APPEAL_SENT'>()
+  const [visibleModal, setVisibleModal] = useState<'STATEMENT_SENT'>()
+  const { id } = router.query
   const {
     handleChange,
     handleRemove,
     handleRetry,
     generateSingleFileUpdate,
   } = useS3Upload(workingCase.id)
-  const { transitionCase } = useCase()
-  const { id } = router.query
-  const appealBriefType = isProsecutionRole(user?.role)
-    ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF
-    : CaseFileCategory.DEFENDANT_APPEAL_BRIEF
+
+  const appealStatementType = isProsecutionRole(user?.role)
+    ? CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT
+    : CaseFileCategory.DEFENDANT_APPEAL_STATEMENT
+
   const appealCaseFilesType = isProsecutionRole(user?.role)
-    ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE
-    : CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE
+    ? CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE
+    : CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE
+
   const previousUrl = `${
     isProsecutionRole(user?.role)
       ? constants.SIGNED_VERDICT_OVERVIEW_ROUTE
       : constants.DEFENDER_ROUTE
   }/${id}`
+
   const allFilesUploaded = useMemo(() => {
     return displayFiles.every(
       (file) => file.status === 'done' || file.status === 'error',
     )
   }, [displayFiles])
+
   const isStepValid =
-    displayFiles.some((file) => file.category === appealBriefType) &&
+    displayFiles.some((file) => file.category === appealStatementType) &&
     allFilesUploaded
 
   const removeFileCB = useCallback((file: UploadFile) => {
@@ -116,21 +119,37 @@ const AppealToCourtOfAppeals = () => {
             {formatMessage(strings.title)}
           </Text>
         </Box>
-        {workingCase.courtEndTime && (
-          <Box marginBottom={7}>
+        <Box marginBottom={7}>
+          {workingCase.courtEndTime && (
             <RulingDateLabel courtEndTime={workingCase.courtEndTime} />
-          </Box>
-        )}
+          )}
+          {(workingCase.prosecutorPostponedAppealDate ||
+            workingCase.accusedPostponedAppealDate) && (
+            <Text variant="h5" as="h5">
+              {formatMessage(strings.appealActorAndDate, {
+                actor: workingCase.prosecutorPostponedAppealDate
+                  ? 'sækjanda'
+                  : 'varnaraðila',
+                date: formatDate(
+                  workingCase.prosecutorPostponedAppealDate ??
+                    workingCase.accusedPostponedAppealDate,
+                  'PPPp',
+                ),
+              })}
+            </Text>
+          )}
+        </Box>
+
         {user && (
           <>
             <Box component="section" marginBottom={5}>
               <SectionHeading
-                title={formatMessage(strings.appealBriefTitle)}
+                title={formatMessage(strings.uploadStatementTitle)}
                 required
               />
               <InputFileUpload
                 fileList={displayFiles.filter(
-                  (file) => file.category === appealBriefType,
+                  (file) => file.category === appealStatementType,
                 )}
                 accept={'application/pdf'}
                 header={formatMessage(core.uploadBoxTitle)}
@@ -142,7 +161,7 @@ const AppealToCourtOfAppeals = () => {
                 onChange={(files) =>
                   handleChange(
                     files,
-                    appealBriefType,
+                    appealStatementType,
                     setDisplayFiles,
                     handleUIUpdate,
                   )
@@ -153,11 +172,11 @@ const AppealToCourtOfAppeals = () => {
             </Box>
             <Box component="section" marginBottom={10}>
               <SectionHeading
-                title={formatMessage(strings.appealCaseFilesTitle)}
+                title={formatMessage(strings.uploadStatementCaseFilesTitle)}
                 marginBottom={1}
               />
               <Text marginBottom={3}>
-                {formatMessage(strings.appealCaseFilesSubtitle)}
+                {formatMessage(strings.uploadStatementCaseFilesSubtitle)}
               </Text>
               <InputFileUpload
                 fileList={displayFiles.filter(
@@ -188,33 +207,22 @@ const AppealToCourtOfAppeals = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={previousUrl}
-          onNextButtonClick={async () => {
-            const caseTransitioned = await transitionCase(
-              workingCase.id,
-              CaseTransition.APPEAL,
-            )
-
-            if (caseTransitioned) {
-              setVisibleModal('APPEAL_SENT')
-            }
-          }}
+          onNextButtonClick={() => setVisibleModal('STATEMENT_SENT')}
           nextButtonText={formatMessage(strings.nextButtonText)}
           nextIsDisabled={!isStepValid}
           nextButtonIcon={undefined}
         />
       </FormContentContainer>
-      {visibleModal === 'APPEAL_SENT' && (
+      {visibleModal === 'STATEMENT_SENT' && (
         <Modal
-          title={formatMessage(strings.appealSentModalTitle)}
-          text={formatMessage(strings.appealSentModalText)}
+          title={formatMessage(strings.statementSentModalTitle)}
+          text={formatMessage(strings.statementSentModalText)}
           secondaryButtonText={formatMessage(core.closeModal)}
-          onSecondaryButtonClick={() => {
-            router.push(previousUrl)
-          }}
+          onSecondaryButtonClick={() => router.push(previousUrl)}
         />
       )}
     </PageLayout>
   )
 }
 
-export default AppealToCourtOfAppeals
+export default Statement
