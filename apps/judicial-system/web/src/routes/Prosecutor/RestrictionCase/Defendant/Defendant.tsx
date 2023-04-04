@@ -10,10 +10,6 @@ import {
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  RestrictionCaseProsecutorSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
-import {
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -133,10 +129,6 @@ export const Defendant: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
-      }
-      activeSubSection={RestrictionCaseProsecutorSubsections.DEFENDANT}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isExtension={!!workingCase.parentCase}

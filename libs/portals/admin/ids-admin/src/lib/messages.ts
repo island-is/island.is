@@ -3,11 +3,11 @@ import { defineMessages } from 'react-intl'
 export const m = defineMessages({
   idsAdmin: {
     id: 'ap.ids-admin:ids-admin',
-    defaultMessage: 'Innskraningarkerfi',
+    defaultMessage: 'Innskráningarkerfi',
   },
   idsAdminDescription: {
     id: 'ap.ids-admin:ids-admin-description',
-    defaultMessage: 'Veldu það domain sem þú villt skoða frekar',
+    defaultMessage: 'Choose the domain you want to manage.',
   },
   tenants: {
     id: 'ap.ids-admin:tenants',
@@ -15,84 +15,84 @@ export const m = defineMessages({
   },
   errorLoadingData: {
     id: 'ap.ids-admin:error-loading-data',
-    defaultMessage: 'Villa kom upp, vinsamlegast reyndu aftur síðar',
+    defaultMessage: 'Error loading data. Please try again later.',
   },
   clearFilter: {
     id: 'ap.ids-admin:clear-filter',
-    defaultMessage: 'Hreinsa síu',
+    defaultMessage: 'Clear filter',
   },
   clearAllFilters: {
     id: 'ap.ids-admin:clear-all-filters',
-    defaultMessage: 'Hreinsa allar síur',
+    defaultMessage: 'Clear all filters',
   },
   openFilter: {
     id: 'ap.ids-admin:open-filter',
-    defaultMessage: 'Opna síu',
+    defaultMessage: 'Open filter',
   },
   closeFilter: {
     id: 'ap.ids-admin:close-filter',
-    defaultMessage: 'Loka síu',
+    defaultMessage: 'Close filter',
   },
   searchPlaceholder: {
     id: 'ap.ids-admin:search-placeholder',
-    defaultMessage: 'Sláðu inn leitarorð',
+    defaultMessage: 'Search',
   },
   clients: {
     id: 'ap.ids-admin:applications',
-    defaultMessage: 'Forrit',
+    defaultMessage: 'Application',
   },
   applicationCreate: {
     id: 'ap.ids-admin:application-create',
-    defaultMessage: 'Stofna forrit',
+    defaultMessage: 'Create application',
   },
   apis: {
     id: 'ap.ids-admin:apis',
-    defaultMessage: 'Vefþjónustur',
+    defaultMessage: 'APIs',
   },
   settings: {
     id: 'ap.ids-admin:settings',
-    defaultMessage: 'Stillingar',
+    defaultMessage: 'Settings',
   },
   authentication: {
     id: 'ap.ids-admin:authentication',
-    defaultMessage: 'Réttindi',
+    defaultMessage: 'Permissions',
   },
   advancedSettings: {
     id: 'ap.ids-admin:advanced-settings',
-    defaultMessage: 'Ítarlegar stillingar',
+    defaultMessage: 'Avanced settings',
   },
   back: {
     id: 'ap.ids-admin:back',
-    defaultMessage: 'Til baka',
+    defaultMessage: 'Back',
   },
   clientsDescription: {
     id: 'ap.ids-admin:applications-description',
-    defaultMessage: 'Forrit sem tengjast þessum tenant',
+    defaultMessage: 'Here you can view and create applications.',
   },
   learnMore: {
     id: 'ap.ids-admin:learn-more',
-    defaultMessage: 'Nánari upplýsingar',
+    defaultMessage: 'Learn more',
   },
   noApplications: {
     id: 'ap.ids-admin:no-applications',
-    defaultMessage: 'Engin forrit til staðar',
+    defaultMessage: 'No applications',
   },
   noClientsDescription: {
     id: 'ap.ids-admin:no-applications-description',
     defaultMessage:
-      'Þú getur búið til forrit með því að smella á Búa til forrit',
+      'You can create an application by clicking on Create application',
   },
   cancel: {
     id: 'ap.ids-admin:cancel',
-    defaultMessage: 'Hætta við',
+    defaultMessage: 'Cancel',
   },
   create: {
     id: 'ap.ids-admin:create',
-    defaultMessage: 'Skrá nýtt forrit',
+    defaultMessage: 'Create',
   },
   displayName: {
     id: 'ap.ids-admin:display-name',
-    defaultMessage: 'Nafn',
+    defaultMessage: 'Name',
   },
   clientId: {
     id: 'ap.ids-admin:clientId',
@@ -100,71 +100,70 @@ export const m = defineMessages({
   },
   chooseEnvironment: {
     id: 'ap.ids-admin:choose-environment',
-    defaultMessage: 'Veldu umhverfi',
+    defaultMessage: 'Choose environment',
   },
   chooseClientType: {
     id: 'ap.ids-admin:choose-application-type',
-    defaultMessage: 'Veldu tegund forrits',
+    defaultMessage: 'Choose application type',
   },
   errorDisplayName: {
     id: 'ap.ids-admin:error-display-name',
-    defaultMessage: 'Nafn má ekki vera tómt',
+    defaultMessage: 'Name is required.',
   },
   errorClientId: {
     id: 'ap.ids-admin:error-application-id',
-    defaultMessage: 'Application ID má ekki vera tómt',
+    defaultMessage: 'Application ID is required.',
   },
   errorClientIdRegex: {
     id: 'ap.ids-admin:error-application-id-regex',
-    defaultMessage: 'Gildir stafir eru A-Z a-z 0-9 . _ - /',
+    defaultMessage: 'Allowed characters are A-Z a-z 0-9 . _ - /',
   },
   errorEnvironment: {
     id: 'ap.ids-admin:error-environment',
-    defaultMessage: 'Veldu a.m.k. eitt umhverfi',
+    defaultMessage: 'Choose at least one environment.',
   },
   errorClientType: {
     id: 'ap.ids-admin:error-application-type',
-    defaultMessage: 'Veldu tegund forrits',
+    defaultMessage: 'Application type is required.',
   },
   errorDefault: {
     id: 'ap.ids-admin:error-default',
-    defaultMessage: 'Úps, óvænt villa kom upp!',
-    description: 'An unknown error has occurred',
+    defaultMessage: 'Oops, an unknown error has occurred.',
   },
   webClientsTitle: {
     id: 'ap.ids-admin:web-applications-title',
-    defaultMessage: 'Vefforrit',
+    defaultMessage: 'Web application',
   },
   webClientsDescription: {
     id: 'ap.ids-admin:web-applications-description',
     defaultMessage:
-      'Hefðbundin vefforrit sem nota tilvísanir. T.d. Node.js, Express, ASP.net, Java, PHP',
+      'Traditional web apps using redirects. E.g. Node.js, Express, ASP.net, Java, PHP.',
   },
   nativeClientsTitle: {
     id: 'ap.ids-admin:native-applications-title',
-    defaultMessage: 'Smáforrið forrit',
+    defaultMessage: 'Native application',
   },
   nativeClientsDescription: {
     id: 'ap.ids-admin:native-applications-description',
     defaultMessage:
-      'Farsíma-, skjáborðs-, CLI- og snjalltækjaforrit sem keyra innbyggt. T.d. iOS, Electron, Apple TV öppum',
+      'Mobile, desktop, CLI and smart device app running natively. E.g. iOS, Electron, Apple TV app.',
   },
   machineClientsTitle: {
     id: 'ap.ids-admin:machine-applications-title',
-    defaultMessage: 'Kerfi í kerfi',
+    defaultMessage: 'Machine to machine application',
   },
   machineClientsDescription: {
     id: 'ap.ids-admin:machine-applications-description',
     defaultMessage:
-      'CLI, púkar eða þjónustur sem keyra á bakendanum þínum. T.d. Skeljahandrit',
+      'CLIs, daemons, or services running on your backend. E.g. APIs, CRON jobs or shell script.',
   },
   createClient: {
     id: 'ap.ids-admin:create-application',
-    defaultMessage: 'Stofna forrit',
+    defaultMessage: 'Create application',
   },
   change: {
     id: 'ap.ids-admin:change',
-    defaultMessage: 'Breyta',
+    defaultMessage: 'Change',
   },
   absoluteLifetime: {
     id: 'ap.ids-admin:absolute-lifetime',
@@ -173,7 +172,7 @@ export const m = defineMessages({
   absoluteLifetimeDescription: {
     id: 'ap.ids-admin:absolute-lifetime-description',
     defaultMessage:
-      'Sets the absolute lifetime of a refresh_token (in seconds).',
+      'Sets the absolute lifetime of a refresh token (in seconds).',
   },
   inactivityExpiration: {
     id: 'ap.ids-admin:inactivity-expiration',
@@ -182,7 +181,7 @@ export const m = defineMessages({
   inactivityExpirationDescription: {
     id: 'ap.ids-admin:inactivity-expiration-description',
     defaultMessage:
-      'When enabled, a refresh_token will expire based on a specified inactivity lifetime, after which the token can no longer be used.',
+      'When enabled, a refresh token will expire based on a specified inactivity lifetime, after which the token can no longer be used.',
   },
   inactivityLifetime: {
     id: 'ap.ids-admin:inactivity-lifetime',
@@ -191,7 +190,7 @@ export const m = defineMessages({
   inactivityLifetimeDescription: {
     id: 'ap.ids-admin:inactivity-lifetime-description',
     defaultMessage:
-      'Sets the absolute lifetime of a refresh_token (in seconds).',
+      'Sets the absolute lifetime of a refresh token (in seconds).',
   },
   saveSettings: {
     id: 'ap.ids-admin:save-settings',
@@ -207,7 +206,7 @@ export const m = defineMessages({
   },
   clientSecretDescription: {
     id: 'ap.ids-admin:application-secret-description',
-    defaultMessage: 'The Client Secret is not base64 encoded.',
+    defaultMessage: 'The application Secret is not base64 encoded.',
   },
   otherEndpoints: {
     id: 'ap.ids-admin:other-endpoints',
@@ -215,7 +214,7 @@ export const m = defineMessages({
   },
   idsUrl: {
     id: 'ap.ids-admin:ids-url',
-    defaultMessage: 'IDS Url',
+    defaultMessage: 'Issuer Url',
   },
   callbackUrl: {
     id: 'ap.ids-admin:callback-url',
@@ -241,7 +240,7 @@ export const m = defineMessages({
   logoutUrlDescription: {
     id: 'ap.ids-admin:logout-url-description',
     defaultMessage:
-      'A set of URLs that are valid to redirect to after logout from Auth0. After a user logs out from Auth0 you can redirect them with the returnTo query parameter. The URL that you use in returnTo must be listed here. You can specify multiple valid URLs by comma-separating them. You can use the star symbol as a wildcard for subdomains (*.google.com). Query strings and hash information are not taken into account when validating these URLs',
+      'A set of URLs that are valid to redirect to after logout from ísland.is authentication service. After a user logs out from ísland.is you can redirect them with the post_logout_redirect_uri query parameter. The URL that you use in post_logout_redirect_uri must be listed here. You can specify multiple valid URLs by comma-separating them.',
   },
   cors: {
     id: 'ap.ids-admin:cors',
@@ -279,7 +278,7 @@ export const m = defineMessages({
   lifeTimeDescription: {
     id: 'ap.ids-admin:life-time-description',
     defaultMessage:
-      'Refresh tokens are useful if you use access tokens to authorise API calls.  Access tokens only last 5 minutes but you can use refresh tokens to request new access tokens. Here you can configure how long refresh tokens can be used to request new access tokens.',
+      'Refresh tokens are useful if you use access tokens to authorise API calls. Access tokens only last 5 minutes but you can use refresh tokens to request new access tokens. Here you can configure how long refresh tokens can be used to request new access tokens.',
   },
   oAuthAuthorizationUrl: {
     id: 'ap.ids-admin:oAuthAuthorizationUrl',
