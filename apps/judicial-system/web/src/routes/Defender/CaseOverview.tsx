@@ -17,6 +17,7 @@ import {
 import CaseResentExplanation from '@island.is/judicial-system-web/src/components/CaseResentExplanation/CaseResentExplanation'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
+  CaseAppealDecision,
   CaseDecision,
   CaseState,
   CaseType,
@@ -94,10 +95,13 @@ export const CaseOverview: React.FC = () => {
   }
 
   const renderAlertBanner = () => {
-    let alertTitle, alertLinkText, alertLinkHref, appealDate
+    let alertTitle, alertLinkText, alertLinkHref
 
     const shouldDisplayAppealAlertBanner =
-      workingCase.courtEndTime && !workingCase.isAppealDeadlineExpired
+      workingCase.courtEndTime &&
+      !workingCase.isAppealDeadlineExpired &&
+      (workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
+        workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE)
 
     const shouldDisplayAppealedAlertBanner =
       workingCase.appealState &&
@@ -111,7 +115,7 @@ export const CaseOverview: React.FC = () => {
       alertLinkHref = '/krofur'
     } else if (shouldDisplayAppealedAlertBanner) {
       const isAppealedByProsecutor = workingCase.prosecutorPostponedAppealDate
-      appealDate = isAppealedByProsecutor
+      const appealDate = isAppealedByProsecutor
         ? workingCase.prosecutorPostponedAppealDate
         : workingCase.accusedPostponedAppealDate
       alertTitle = formatMessage(m.appealedAlertBannerTitle, {

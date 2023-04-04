@@ -508,6 +508,8 @@ export const SignedVerdictOverview: React.FC = () => {
 
     const shouldDisplayAppealAlertBanner =
       workingCase.courtEndTime &&
+      (workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
+        workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE) &&
       !workingCase.isAppealDeadlineExpired &&
       user?.role &&
       isProsecutionRole(user.role)
