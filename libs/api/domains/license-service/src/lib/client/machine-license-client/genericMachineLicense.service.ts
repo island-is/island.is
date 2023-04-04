@@ -42,20 +42,8 @@ export class GenericMachineLicenseService
   private machineApiWithAuth = (user: User) =>
     this.machineApi.withMiddleware(new AuthMiddleware(user as Auth))
 
-  async fetchLicense(user: User) {
-    const license = await this.machineApiWithAuth(user)
-      .getVinnuvela()
-      .catch(handle404)
-
-    if (!license) {
-      this.logger.debug('No license found for user', {
-        category: LOG_CATEGORY,
-      })
-      return null
-    }
-
-    return license
-  }
+  fetchLicense = (user: User) =>
+    this.machineApiWithAuth(user).getVinnuvela().catch(handle404)
 
   async getLicense(
     user: User,
