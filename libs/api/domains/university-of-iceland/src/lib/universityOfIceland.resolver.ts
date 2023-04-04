@@ -1,8 +1,6 @@
 import { Args, Query, ResolveField, Resolver } from '@nestjs/graphql'
 
 import { Inject, UseGuards } from '@nestjs/common'
-import format from 'date-fns/format'
-import is from 'date-fns/locale/is'
 
 import {
   CurrentUser,
