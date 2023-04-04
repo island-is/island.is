@@ -129,9 +129,7 @@ export const CASE_GET_ADVICES_BY_ID = gql`
 `
 
 export const CASE_POST_ADVICE = gql`
-  mutation CASE_POST_ADVICE(
-    $input: ConsultationPortalPostAdviceInput!
-  ) {
+  mutation CASE_POST_ADVICE($input: ConsultationPortalPostAdviceInput!) {
     consultationPortalPostAdvice(input: $input)
   }
 `
