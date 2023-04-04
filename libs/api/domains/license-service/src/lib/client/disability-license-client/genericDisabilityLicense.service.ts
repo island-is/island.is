@@ -43,7 +43,7 @@ export class GenericDisabilityLicenseService
     const license = await this.disabilityLicenseApi.getDisabilityLicense(user)
 
     if (!license) {
-      this.logger.info('No disability license found for user', {
+      this.logger.debug('No disability license found for user', {
         category: LOG_CATEGORY,
       })
       return null
