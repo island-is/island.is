@@ -6,8 +6,6 @@ import {
 } from '@island.is/application/types'
 import { CardResponse, NationalRegistry, NridName } from '../types'
 
-import { getValueViaPath } from '@island.is/application/core'
-
 function getObjectKey(obj: any, value: any) {
   return Object.keys(obj).filter((key) => obj[key] === value)
 }
@@ -117,7 +115,7 @@ export function someCanApplyForPlasticOrPdf(
 ): boolean {
   if (externalData?.cardResponse?.data) {
     const cardResponse = externalData?.cardResponse?.data as CardResponse[]
-    for (let i = 0; i < cardResponse.length; i++) {
+    for (let i = 0; i < cardResponse?.length; i++) {
       if (cardResponse[i].isInsured && cardResponse[i].canApply) {
         return true
       }
@@ -155,7 +153,7 @@ export function someHavePDF(externalData: ExternalData): boolean {
   if (externalData?.cardResponse?.data) {
     const cardResponse = externalData?.cardResponse?.data as CardResponse[]
 
-    for (let i = 0; i < cardResponse.length; i++) {
+    for (let i = 0; i < cardResponse?.length; i++) {
       if (cardResponse[i].isInsured && !cardResponse[i].canApply) {
         const card = cardResponse[i].cards?.find((x) => x.isTemp === true)
         if (card) {
@@ -171,7 +169,7 @@ export function someHavePlasticButNotPdf(externalData: ExternalData): boolean {
   if (externalData?.cardResponse?.data) {
     const cardResponse = externalData?.cardResponse?.data as CardResponse[]
 
-    for (let i = 0; i < cardResponse.length; i++) {
+    for (let i = 0; i < cardResponse?.length; i++) {
       if (cardResponse[i].isInsured && !cardResponse[i].canApply) {
         const card = cardResponse[i].cards?.find((x) => x.isPlastic === true)
         if (card) {
@@ -209,7 +207,7 @@ export function getDefaultValuesForPDFApplicants(
 ) {
   const defaultValues: string[] = []
 
-  const ans = formValues.answers.addForPDF as Array<any>
+  const ans = formValues.answers?.addForPDF as Array<any>
   if (ans) {
     ans.forEach((item) => defaultValues.push(item))
   }
@@ -226,6 +224,8 @@ export function hasAPDF(cardInfo: CardResponse) {
   return false
 }
 
-export const canApply = (value = false) => ({ application }: ApplicationContext) => {
+export const canApply = (value = false) => ({
+  application,
+}: ApplicationContext) => {
   return value === someCanApplyForPlasticOrPdf(application.externalData)
 }

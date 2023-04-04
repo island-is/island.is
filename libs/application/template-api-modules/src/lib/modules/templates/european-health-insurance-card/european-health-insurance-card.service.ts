@@ -129,13 +129,13 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
   }
 
   async getCardResponse({ auth, application }: TemplateApiModuleActionProps) {
+    this.logger.info('getCardResponse')
     const nridArr = this.getApplicants(application)
 
     try {
       const resp = await this.ehicApi
         .withMiddleware(new AuthMiddleware(auth as Auth))
         .cardStatus({
-          usernationalid: auth.nationalId,
           applicantnationalids: this.toCommaDelimitedList(nridArr),
         })
 
@@ -151,6 +151,7 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
       this.logger.info('ná í card response error')
       this.logger.info(e)
       this.logger.error('EHIC.API error getCardResponse', e)
+      throw e
     }
     return null
   }
@@ -165,22 +166,25 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps) {
+    this.logger.info('applyForPhysicalCard')
     const applicants = this.getApplicants(
       application,
       FormApplyType.APPLYING_FOR_PLASTIC,
     )
     const cardResponses: CardResponse[] = []
 
-    for (let i = 0; i < applicants.length; i++) {
+    for (let i = 0; i < applicants?.length; i++) {
       try {
-        const res = await this.ehicApi.requestCard({
-          applicantnationalid: applicants[i],
-          cardtype: CardType.PLASTIC,
-          usernationalid: auth.nationalId,
-        })
+        const res = await this.ehicApi
+          .withMiddleware(new AuthMiddleware(auth as Auth))
+          .requestCard({
+            applicantnationalid: applicants[i],
+            cardtype: CardType.PLASTIC,
+          })
         cardResponses.push(res)
       } catch (error) {
         this.logger.error('EHIC.API error applyForPhysicalCard', error)
+        throw error
       }
     }
     return cardResponses
@@ -190,22 +194,23 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps) {
+    this.logger.info('applyForTemporaryCard')
     const applicants = this.getApplicants(
       application,
       FormApplyType.APPLYING_FOR_PDF,
     )
 
-    for (let i = 0; i < applicants.length; i++) {
+    for (let i = 0; i < applicants?.length; i++) {
       try {
         await this.ehicApi
           .withMiddleware(new AuthMiddleware(auth as Auth))
           .requestCard({
             applicantnationalid: applicants[i],
             cardtype: CardType.PDF,
-            usernationalid: auth.nationalId,
           })
       } catch (error) {
         this.logger.error('EHIC.API error applyForTemporaryCard', error)
+        throw error
       }
     }
   }
@@ -214,18 +219,18 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     const applicants = this.getPDFApplicantsAndCardNumber(application)
     const pdfArray: TempData[] = []
 
-    for (let i = 0; i < applicants.length; i++) {
+    for (let i = 0; i < applicants?.length; i++) {
       try {
         const res = await this.ehicApi
           .withMiddleware(new AuthMiddleware(auth as Auth))
           .fetchTempPDFCard({
             applicantnationalid: applicants[i].nationalId ?? '',
             cardnumber: applicants[i].cardNumber ?? '',
-            usernationalid: auth.nationalId,
           })
         pdfArray.push(res)
       } catch (error) {
         this.logger.error('EHIC.API error getTemporaryCard', error)
+        throw error
       }
     }
     return pdfArray
