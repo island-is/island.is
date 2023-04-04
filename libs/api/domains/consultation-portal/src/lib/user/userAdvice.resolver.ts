@@ -5,29 +5,29 @@ import {
 } from '@island.is/nest/feature-flags'
 import { UseGuards } from '@nestjs/common'
 import { Args, Query, Resolver } from '@nestjs/graphql'
-import { CurrentAuthorization } from '../auth-tools/current-authorization'
-import { UserAdviceResultService } from './userAdvice.services'
 import { GetUserAdvicesInput } from '../dto/userAdvices.input'
 import { UserAdviceAggregate } from '../models/userAdviceAggregate.model'
+import { CurrentUser, IdsUserGuard, Scopes } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
+import { ConsultationPortalScope } from '@island.is/auth/scopes'
+import { UserService } from './user.service'
 
 @Resolver()
-@UseGuards(FeatureFlagGuard)
+@UseGuards(FeatureFlagGuard, IdsUserGuard)
+@Scopes(ConsultationPortalScope.default)
 export class UserAdviceResultResolver {
-  constructor(private userAdviceResultService: UserAdviceResultService) {}
+  constructor(private userService: UserService) {}
 
   @FeatureFlag(Features.consultationPortalApplication)
   @Query(() => UserAdviceAggregate, {
     name: 'consultationPortalAllUserAdvices',
   })
   async getAllUserAdvices(
-    @CurrentAuthorization() authString: string,
+    @CurrentUser() user: User,
     @Args('input', { type: () => GetUserAdvicesInput })
     input: GetUserAdvicesInput,
   ): Promise<UserAdviceAggregate> {
-    const userAdvices = await this.userAdviceResultService.getAllUserAdvices(
-      authString,
-      input,
-    )
+    const userAdvices = await this.userService.getAllUserAdvices(user, input)
     return userAdvices
   }
 }

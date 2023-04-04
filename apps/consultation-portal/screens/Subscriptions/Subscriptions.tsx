@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Divider,
   GridContainer,
   ResponsiveSpace,
@@ -11,10 +10,7 @@ import {
 import { useEffect, useState } from 'react'
 import { Layout } from '../../components/Layout/Layout'
 import { SubscriptionsArray } from '../../utils/dummydata'
-import {
-  SubscriptionActionCard,
-  ChosenSubscriptionCard,
-} from '../../components/Card'
+import { ChosenSubscriptionCard } from '../../components/Card'
 import { Area, SortOptions } from '../../types/enums'
 import {
   ArrOfIdAndName,
@@ -27,11 +23,7 @@ import { BreadcrumbsWithMobileDivider } from '../../components/BreadcrumbsWithMo
 import { sorting } from '../../utils/helpers'
 import getInitValues from './getInitValues'
 import TabsList from './tabsList'
-import { useUser } from '../../context/UserContext'
-import { useQuery } from '@apollo/client'
 import EmailBox from '../../components/EmailBox/EmailBox'
-import { GET_EMAIL } from './queries.graphql'
-import initApollo from '../../graphql/client'
 
 interface SubProps {
   cases: CaseForSubscriptions[]
@@ -39,9 +31,7 @@ interface SubProps {
 }
 
 const SubscriptionsScreen = ({ cases, types }: SubProps) => {
-  // user logged in logic needed
   const [currentTab, setCurrentTab] = useState<Area>(Area.case)
-  const { isAuthenticated, user } = useUser()
 
   const [searchValue, setSearchValue] = useState('')
 
@@ -56,14 +46,7 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
   const [subscriptionArray, setSubscriptionArray] = useState<SubscriptionArray>(
     SubscriptionsArray,
   )
-  const client = initApollo()
 
-  // const { data: datame } = useQuery(GET_EMAIL, {
-  //   client: client,
-  //   ssr: true,
-  //   fetchPolicy: 'cache-first',
-  //   variables: {token}
-  // })
   const [sortTitle, setSortTitle] = useState<SortTitle>({
     Mál: SortOptions.latest,
     Stofnanir: SortOptions.aToZ,
