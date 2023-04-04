@@ -20,7 +20,7 @@ import Link from 'next/link'
 import { useReducer, useState } from 'react'
 import { useLogIn } from '../../utils/helpers'
 import { SubscriptionActionBox } from '../Card'
-import { POST_ADVICE } from '../../graphql/queries.graphql'
+import { CASE_POST_ADVICE } from '../../graphql/queries.graphql'
 import { useMutation } from '@apollo/client'
 import initApollo from '../../graphql/client'
 import { resolveFileToObject } from '../../utils/helpers'
@@ -133,7 +133,7 @@ export const WriteReviewCard = ({
 
   const client = initApollo()
   const [postAdviceMutation, { loading: postAdviceLoading }] = useMutation(
-    POST_ADVICE,
+    CASE_POST_ADVICE,
     {
       client: client,
     },

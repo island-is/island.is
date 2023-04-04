@@ -1,7 +1,7 @@
 import SubscriptionActionCard from '../Card/SubscriptionActionCard'
 import { useQuery } from '@apollo/client'
 import initApollo from '../../graphql/client'
-import { GET_EMAIL } from '../../screens/Subscriptions/queries.graphql'
+import { SUB_GET_EMAIL } from '../../graphql/queries.graphql'
 import { useLogIn, useUser } from '../../utils/helpers'
 import { useState } from 'react'
 
@@ -12,7 +12,7 @@ export const EmailBox = () => {
 
   const client = initApollo()
 
-  const { data: datame } = useQuery(GET_EMAIL, {
+  const { data: datame } = useQuery(SUB_GET_EMAIL, {
     client: client,
     ssr: true,
     fetchPolicy: 'cache-first',
