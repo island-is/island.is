@@ -47,7 +47,7 @@ judicial-system-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -141,7 +141,7 @@ judicial-system-backend:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 2
@@ -249,7 +249,7 @@ judicial-system-message-handler:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -309,7 +309,7 @@ judicial-system-scheduler:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 1
         min: 1
@@ -358,7 +358,7 @@ judicial-system-web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -420,7 +420,7 @@ judicial-system-xrd-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
