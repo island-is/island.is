@@ -32,7 +32,7 @@ air-discount-scheme-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -116,7 +116,7 @@ air-discount-scheme-backend:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -207,7 +207,7 @@ air-discount-scheme-web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -366,7 +366,7 @@ api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 50
         min: 2
@@ -579,7 +579,7 @@ application-system-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 60
         min: 2
@@ -734,7 +734,7 @@ application-system-api-worker:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -807,7 +807,7 @@ application-system-form:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -868,7 +868,7 @@ contentful-translation-extension:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -933,7 +933,7 @@ download-service:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -1011,7 +1011,7 @@ endorsement-system-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -1110,7 +1110,7 @@ icelandic-names-registry-backend:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -1193,7 +1193,7 @@ island-ui-storybook:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -1253,7 +1253,7 @@ license-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 2
@@ -1278,7 +1278,7 @@ license-api:
       cpu: '400m'
       memory: '512Mi'
     requests:
-      cpu: '10m'
+      cpu: '15m'
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -1335,7 +1335,7 @@ portals-admin:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 30
         min: 2
@@ -1412,7 +1412,7 @@ regulations-admin-backend:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -1492,7 +1492,7 @@ search-indexer-service:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 1
         min: 1
@@ -1617,7 +1617,7 @@ service-portal:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 30
         min: 2
@@ -1689,7 +1689,7 @@ service-portal-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 30
         min: 2
@@ -1787,7 +1787,7 @@ services-documents:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -1865,7 +1865,7 @@ services-sessions:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 1
@@ -1887,10 +1887,10 @@ services-sessions:
     min: 1
   resources:
     limits:
-      cpu: '400m'
+      cpu: '250m'
       memory: '512Mi'
     requests:
-      cpu: '10m'
+      cpu: '25m'
       memory: '300Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -1933,7 +1933,7 @@ services-sessions-worker:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -2012,7 +2012,7 @@ skilavottord-web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -2042,7 +2042,7 @@ skilavottord-web:
       cpu: '200m'
       memory: '256Mi'
     requests:
-      cpu: '10m'
+      cpu: '20m'
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -2082,7 +2082,7 @@ skilavottord-ws:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -2161,7 +2161,7 @@ user-notification:
   env:
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     MAIN_QUEUE_NAME: 'user-notification'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=336'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -2179,7 +2179,7 @@ user-notification:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -2206,10 +2206,10 @@ user-notification:
   resources:
     limits:
       cpu: '200m'
-      memory: '256Mi'
+      memory: '384Mi'
     requests:
-      cpu: '10m'
-      memory: '128Mi'
+      cpu: '15m'
+      memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN'
@@ -2255,7 +2255,7 @@ user-notification-worker:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -2320,7 +2320,7 @@ web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 50
         min: 2
@@ -2392,7 +2392,7 @@ xroad-collector:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 4
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
