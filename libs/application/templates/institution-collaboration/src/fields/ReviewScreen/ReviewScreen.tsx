@@ -61,6 +61,16 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
     'constraints.hasConsult',
   ) as string
 
+  const robotContraint = getValueViaPath(
+    application.answers,
+    'constraints.hasRobot',
+  ) as string
+
+  const legacyContraint = getValueViaPath(
+    application.answers,
+    'constraints.hasLegacy',
+  ) as string
+
   const applyConstraintsText = getValueViaPath(
     application.answers,
     'constraints.apply',
@@ -74,6 +84,11 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
   const certConstraintsText = getValueViaPath(
     application.answers,
     'constraints.cert',
+  ) as string
+
+  const legacyConstraintsText = getValueViaPath(
+    application.answers,
+    'constraints.legacy',
   ) as string
 
   const consultConstraintsText = getValueViaPath(
@@ -103,6 +118,14 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
     servicesTextArr.push(
       formatText(
         m.constraints.constraintsStraumurLabel,
+        application,
+        formatMessage,
+      ),
+    )
+  robotContraint &&
+    servicesTextArr.push(
+      formatText(
+        m.constraints.constraintRobotLabel,
         application,
         formatMessage,
       ),
@@ -139,6 +162,16 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
         formatMessage,
       ),
     )
+
+  legacyContraint &&
+    servicesTextArr.push(
+      formatText(
+        m.constraints.constraintLegacyLabel,
+        application,
+        formatMessage,
+      ),
+    )
+
   consultContraint &&
     servicesTextArr.push(
       formatText(
@@ -378,6 +411,20 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
                 formatMessage,
               ),
               certConstraintsText,
+            )}
+          {legacyConstraintsText?.length > 0 &&
+            getServiceDescriptionStack(
+              formatText(
+                m.constraints.constraintLegacyPlaceholder,
+                application,
+                formatMessage,
+              ),
+              formatText(
+                m.constraints.constraintLegacyLabel,
+                application,
+                formatMessage,
+              ),
+              legacyConstraintsText,
             )}
           {consultConstraintsText?.length > 0 &&
             getServiceDescriptionStack(

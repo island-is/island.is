@@ -140,7 +140,7 @@ describe('Application system API', () => {
     )
   })
 
-  it('should fetch Applicaiton History for overview', async () => {
+  it('should fetch Application History for overview', async () => {
     const creationResponse = await server
       .post('/applications')
       .send({
