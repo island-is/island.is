@@ -18,7 +18,7 @@ import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 export class CaseResultService {
   constructor(private casesApi: CasesApi) {}
 
-  private postAdviceWithAuth(auth: User) {
+  private casesApiWithAuth(auth: User) {
     return this.casesApi.withMiddleware(new AuthMiddleware(auth))
   }
 
@@ -62,7 +62,7 @@ export class CaseResultService {
       caseId: input.caseId,
       adviceRequest: input.adviceRequest,
     }
-    const response = await this.postAdviceWithAuth(
+    const response = await this.casesApiWithAuth(
       auth,
     ).apiCasesCaseIdAdvicesPost(request)
     return response
