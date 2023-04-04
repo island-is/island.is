@@ -5,10 +5,16 @@ import { SUB_GET_EMAIL } from '../../graphql/queries.graphql'
 import { useLogIn, useUser } from '../../utils/helpers'
 import { useState } from 'react'
 
+const emailIsValid = (email: string) => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+}
+
 export const EmailBox = () => {
   const { isAuthenticated, user } = useUser()
   const [isVerified, setIsVerified] = useState<boolean>(false)
   const LogIn = useLogIn()
+  const [email, setEmail] = useState('')
+  const [inputVal, setInputVal] = useState('')
 
   const client = initApollo()
 
@@ -19,7 +25,25 @@ export const EmailBox = () => {
     variables: {},
   })
 
-  const email = 'email@email.is'
+  const onChangeEmail = (e) => {
+    const nextInputVal = e.target.value
+    setInputVal(nextInputVal)
+  }
+
+  const onSetEmail = () => {
+    const nextEmail = inputVal
+    setEmail(nextEmail)
+  }
+
+  const resetEmail = () => {
+    const nextInputVal = ''
+    setInputVal(nextInputVal)
+    setEmail(nextInputVal)
+  }
+
+  const verifyEmail = () => {
+    setIsVerified(true)
+  }
 
   if (!isAuthenticated) {
     return (
@@ -36,33 +60,54 @@ export const EmailBox = () => {
     )
   }
 
+  if (!email) {
+    return (
+      <SubscriptionActionCard
+        heading="Skrá netfang"
+        text="Skráðu netfang hérna. Þú færð svo tölvupóst sem þú þarf að staðfesta til að hægt sé að skrá áskrift á það."
+        input={{
+          name: 'subscriptionEmail',
+          label: 'Netfang',
+          placeholder: 'nonni@island.is',
+          value: inputVal,
+          onChange: onChangeEmail,
+        }}
+        button={[
+          {
+            label: 'Skrá netfang',
+            onClick: onSetEmail,
+            disabled: !emailIsValid(inputVal),
+          },
+        ]}
+      />
+    )
+  }
+
   return isVerified ? (
     <SubscriptionActionCard
-      heading="Skrá netfang"
-      text="Skráðu netfang hérna. Þú færð svo tölvupóst sem þú þarft að staðfesta til að hægt sé að skrá áskrift á það."
-      button={[
-        {
-          label: 'Skrá netfang',
-          onClick: () => console.log('Skrá'),
-        },
-      ]}
-      input={{
-        name: 'subscriptionEmail',
-        label: 'Netfang',
-        placeholder: 'Hér skal skrifa netfang',
-      }}
-    />
-  ) : (
-    <SubscriptionActionCard
-      text={`Skráð netfang: ${email}`}
+      text={`Núverandi skráð netfang: ${email}`}
       button={[
         {
           label: 'Breyta netfangi',
-          onClick: () => console.log('Breyta'),
+          onClick: resetEmail,
         },
         {
           label: 'Sjá áskriftir',
-          onClick: () => console.log('Breyta'),
+          onClick: () => console.log('should render a list of subscriptions'),
+        },
+      ]}
+    />
+  ) : (
+    <SubscriptionActionCard
+      text={`Beðið er eftir staðfestingu fyrir netfangið ${email}`}
+      button={[
+        {
+          label: 'Breyta netfangi',
+          onClick: resetEmail,
+        },
+        {
+          label: 'Staðfesta',
+          onClick: verifyEmail,
         },
       ]}
     />
