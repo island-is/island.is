@@ -22,10 +22,11 @@ import { core } from '@island.is/judicial-system-web/messages'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion'
+import { CaseFileCategory } from '@island.is/judicial-system/types'
+import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { courtOfAppealOverview as strings } from './Overview.strings'
-import { CaseFileCategory } from '@island.is/judicial-system/types'
 
 const CourtOfAppealOverview: React.FC = () => {
   const {
@@ -34,6 +35,10 @@ const CourtOfAppealOverview: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
+
+  const { onOpen } = useFileList({
+    caseId: workingCase.id,
+  })
 
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
@@ -196,10 +201,18 @@ const CourtOfAppealOverview: React.FC = () => {
             />
           </Box>
           {appealCaseFiles && appealCaseFiles.length > 0 && (
-            <Box>
+            <Box marginBottom={5}>
               <Text as="h3" variant="h3">
                 {formatMessage(strings.appealFilesTitle)}
               </Text>
+              {appealCaseFiles.map((file) => (
+                <PdfButton
+                  renderAs="row"
+                  caseId={workingCase.id}
+                  title={file.name}
+                  handleClick={() => onOpen(file.id)}
+                />
+              ))}
             </Box>
           )}
           <Box marginBottom={6}>
