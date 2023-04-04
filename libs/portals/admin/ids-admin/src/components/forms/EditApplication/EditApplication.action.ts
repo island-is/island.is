@@ -10,6 +10,7 @@ export enum ClientFormTypes {
   lifeTime = 'lifeTime',
   translations = 'translations',
   delegations = 'delegations',
+  advancedSettings = 'advancedSettings',
 }
 
 const splitStringOnCommaOrSpaceOrNewLine = (s: string) => {
@@ -31,6 +32,23 @@ const checkIfStringIsListOfUrls = (urls: string) => {
     }
   }
 
+  return true
+}
+
+const checkIfStringIsArrayOfValidClaims = (claims: string) => {
+  if (!claims) {
+    return true
+  }
+
+  const array = splitStringOnCommaOrSpaceOrNewLine(claims)
+
+  const regex = /^\w+=\w+$/
+
+  for (const claim of array) {
+    if (!regex.test(claim)) {
+      return false
+    }
+  }
   return true
 }
 
@@ -133,6 +151,38 @@ export const schema = {
       requireApiScopes: z.optional(z.string()).transform((s) => {
         return s === 'true'
       }),
+    })
+    .merge(defaultSchema),
+  [ClientFormTypes.advancedSettings]: z
+    .object({
+      requirePkce: z.optional(z.string()).transform((s) => {
+        return s === 'true'
+      }),
+      allowOfflineAccess: z.optional(z.string()).transform((s) => {
+        return s === 'true'
+      }),
+      supportsTokenExchange: z.optional(z.string()).transform((s) => {
+        return s === 'true'
+      }),
+      requireConsent: z.optional(z.string()).transform((s) => {
+        return s === 'true'
+      }),
+      slidingRefreshTokenLifetime: z
+        .string()
+        .refine(checkIfStringIsPositiveNumber, {
+          message: 'errorPositiveNumber',
+        })
+        .transform((s) => {
+          return Number(s)
+        }),
+      customClaims: z
+        .string()
+        .refine(checkIfStringIsArrayOfValidClaims, {
+          message: 'errorInvalidClaims',
+        })
+        .transform((s) => {
+          return splitStringOnCommaOrSpaceOrNewLine(s)
+        }),
     })
     .merge(defaultSchema),
 }

@@ -1,6 +1,6 @@
 import { Box, Input, Stack, Tabs } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { m } from '../../lib/messages'
 import ContentCard from '../../shared/components/ContentCard'
 import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
@@ -18,6 +18,15 @@ const Translations = ({ translations }: TranslationsProps) => {
       value: translations.find((t) => t.locale === locale)?.value || '',
     })),
   )
+
+  useEffect(() => {
+    setCopyTranslations(
+      ['is', 'en'].map((locale) => ({
+        locale: locale,
+        value: translations.find((t) => t.locale === locale)?.value || '',
+      })),
+    )
+  }, [translations])
 
   const onChangeTranslations = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
