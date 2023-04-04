@@ -39,18 +39,8 @@ export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
   private adrApiWithAuth = (user: User) =>
     this.adrApi.withMiddleware(new AuthMiddleware(user as Auth))
 
-  async fetchLicense(user: User) {
-    const license = await this.adrApiWithAuth(user).getAdr().catch(handle404)
-
-    if (!license) {
-      this.logger.debug('No license found for user', {
-        category: LOG_CATEGORY,
-      })
-      return null
-    }
-
-    return license
-  }
+  fetchLicense = (user: User) =>
+    this.adrApiWithAuth(user).getAdr().catch(handle404)
 
   async getLicense(
     user: User,
