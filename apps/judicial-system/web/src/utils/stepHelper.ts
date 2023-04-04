@@ -15,7 +15,10 @@ import {
   NotificationType,
 } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { User } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseType,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 export const getShortGender = (gender?: Gender): string => {
   switch (gender) {
@@ -93,7 +96,10 @@ export const isTrafficViolationCase = (
   features: Feature[],
   user?: User,
 ): boolean => {
-  if (!workingCase.indictmentSubtypes) {
+  if (
+    !workingCase.indictmentSubtypes ||
+    workingCase.type !== CaseType.Indictment
+  ) {
     return false
   }
 

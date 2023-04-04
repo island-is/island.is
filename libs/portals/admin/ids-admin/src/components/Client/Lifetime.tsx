@@ -5,7 +5,7 @@ import {
   Text,
   ToggleSwitchCheckbox,
 } from '@island.is/island-ui/core'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import ContentCard from '../../shared/components/ContentCard'
@@ -38,6 +38,14 @@ const Lifetime = ({
   const actionData = useActionData() as EditApplicationResult<
     typeof schema.lifeTime
   >
+
+  useEffect(() => {
+    setLifetime({
+      absoluteLifetime,
+      inactivityExpiration,
+      inactivityLifetime,
+    })
+  }, [absoluteLifetime, inactivityExpiration, inactivityLifetime])
 
   const setLifeTimeLength = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,

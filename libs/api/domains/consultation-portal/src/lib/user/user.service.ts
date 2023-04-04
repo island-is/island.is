@@ -1,4 +1,3 @@
-import { AuthMiddleware } from '../auth-tools/auth.middleware'
 import {
   ApiUserAdvicesGetRequest,
   UserApi,
@@ -6,17 +5,19 @@ import {
 import { Injectable } from '@nestjs/common'
 import { GetUserAdvicesInput } from '../dto/userAdvices.input'
 import { UserAdviceAggregate } from '../models/userAdviceAggregate.model'
+import { UserEmailResult } from '../models/userEmailResult.model'
+import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 
 @Injectable()
-export class UserAdviceResultService {
+export class UserService {
   constructor(private userApi: UserApi) {}
 
-  private getAllUserAdvicesWithAuth(authString: string) {
-    return this.userApi.withMiddleware(new AuthMiddleware(authString))
+  private userApiWithAuth(auth: User) {
+    return this.userApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async getAllUserAdvices(
-    authString: string,
+    auth: User,
     input: GetUserAdvicesInput,
   ): Promise<UserAdviceAggregate> {
     const request: ApiUserAdvicesGetRequest = {
@@ -26,10 +27,14 @@ export class UserAdviceResultService {
       pageSize: input.pageSize,
     }
 
-    const advicesResponse = await this.getAllUserAdvicesWithAuth(
-      authString,
-    ).apiUserAdvicesGet(request)
-
+    const advicesResponse = await this.userApiWithAuth(auth).apiUserAdvicesGet(
+      request,
+    )
     return advicesResponse
+  }
+
+  async getUserEmail(auth: User): Promise<UserEmailResult> {
+    const emailResponse = await this.userApiWithAuth(auth).apiUserEmailGet()
+    return emailResponse
   }
 }

@@ -376,6 +376,63 @@ export const m = defineMessages({
     defaultMessage:
       'Only allow delegations which have access to one or more requested permissions. Can be combined with permission settings to block access to the application for certain individuals or delegations.',
   },
+  requirePkce: {
+    id: 'ap.ids-admin:require-pkce',
+    defaultMessage: 'Require PKCE',
+  },
+  requirePkceDescription: {
+    id: 'ap.ids-admin:require-pkce-description',
+    defaultMessage:
+      'Proof Key for Code Exchange (PKCE) is a security extension for the Authorization Code Flow. PKCE is heavily recommended but some frameworks do not support it.',
+  },
+  allowOfflineAccess: {
+    id: 'ap.ids-admin:allow-offline-access',
+    defaultMessage: 'Allow offline access',
+  },
+  allowOfflineAccessDescription: {
+    id: 'ap.ids-admin:allow-offline-access-description',
+    defaultMessage:
+      'Allows the application to request the offline_access scope. This results in refresh tokens which can used to get access tokens according to the refresh token lifecycle settings',
+  },
+  supportsTokenExchange: {
+    id: 'ap.ids-admin:supports-token-exchange',
+    defaultMessage: 'Supports token exchange grant',
+  },
+  supportsTokenExchangeDescription: {
+    id: 'ap.ids-admin:supports-token-exchange-description',
+    defaultMessage:
+      'Allows the application to exchange an existing access token with a new access token with specified scope.',
+  },
+  accessTokenExpiration: {
+    id: 'ap.ids-admin:access-token-expiration',
+    defaultMessage: 'Access token expiration (seconds)',
+  },
+  accessTokenExpirationDescription: {
+    id: 'ap.ids-admin:access-token-expiration-description',
+    defaultMessage: 'Sets the lifetime of access tokens (in seconds).',
+  },
+  customClaims: {
+    id: 'ap.ids-admin:custom-claims',
+    defaultMessage: 'Custom claims',
+  },
+  requireConsent: {
+    id: 'ap.ids-admin:require-consent',
+    defaultMessage: 'Require consent',
+  },
+  requireConsentDescription: {
+    id: 'ap.ids-admin:require-consent-description',
+    defaultMessage:
+      'When true, the application requires user consent for third party permissions as well as standard scopes like email and phone.',
+  },
+  customClaimsDescription: {
+    id: 'ap.ids-admin:custom-claims-description',
+    defaultMessage:
+      'Configure custom claims (hard-coded) in access tokens created for this application. Each line should have the form claimName=value. Claim names are automatically prefixed with "client_" to avoid collisions. Claim values are always stored as strings.',
+  },
+  errorInvalidClaims: {
+    id: 'ap.ids-admin:error-invalid-claims',
+    defaultMessage: 'Invalid claim format',
+  },
   copySuccess: {
     id: 'ap.ids-admin:copy-success',
     defaultMessage: 'Copied to clipboard',

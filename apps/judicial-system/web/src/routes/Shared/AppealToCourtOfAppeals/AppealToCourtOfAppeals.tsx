@@ -29,11 +29,13 @@ import { core, titles } from '@island.is/judicial-system-web/messages'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import {
   CaseFileCategory,
+  CaseTransition,
   isProsecutionRole,
 } from '@island.is/judicial-system/types'
 import {
   TUploadFile,
   useS3Upload,
+  useCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as constants from '@island.is/judicial-system/consts'
@@ -53,6 +55,7 @@ const AppealToCourtOfAppeals = () => {
     handleRetry,
     generateSingleFileUpdate,
   } = useS3Upload(workingCase.id)
+  const { transitionCase } = useCase()
   const { id } = router.query
   const appealBriefType = isProsecutionRole(user?.role)
     ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF
@@ -185,7 +188,16 @@ const AppealToCourtOfAppeals = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={previousUrl}
-          onNextButtonClick={() => setVisibleModal('APPEAL_SENT')}
+          onNextButtonClick={async () => {
+            const caseTransitioned = await transitionCase(
+              workingCase.id,
+              CaseTransition.APPEAL,
+            )
+
+            if (caseTransitioned) {
+              setVisibleModal('APPEAL_SENT')
+            }
+          }}
           nextButtonText={formatMessage(strings.nextButtonText)}
           nextIsDisabled={!isStepValid}
           nextButtonIcon={undefined}
@@ -196,7 +208,9 @@ const AppealToCourtOfAppeals = () => {
           title={formatMessage(strings.appealSentModalTitle)}
           text={formatMessage(strings.appealSentModalText)}
           secondaryButtonText={formatMessage(core.closeModal)}
-          onSecondaryButtonClick={() => router.push(previousUrl)}
+          onSecondaryButtonClick={() => {
+            router.push(previousUrl)
+          }}
         />
       )}
     </PageLayout>

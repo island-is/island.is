@@ -1,39 +1,15 @@
-import { useQuery } from '@apollo/client'
-import initApollo from '../../graphql/client'
-import { GET_AUTH_URL } from '../../graphql/queries.graphql'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { signIn } from 'next-auth/client'
 
-export const useLogin = () => {
-  const client = initApollo()
-  const { data, loading } = useQuery(GET_AUTH_URL, {
-    client: client,
-    ssr: true,
-    fetchPolicy: 'cache-first',
-  })
-
-  const { consultationPortalAuthenticationUrl: authUrl = '' } = data ?? ''
-
+export const useLogIn = () => {
   const router = useRouter()
-  const [loginLoading, setIsLoginLoading] = useState(false)
+  const path = router.basePath + router.asPath
 
-  let authUrlSliced = ''
-  if (!loading && authUrl) {
-    const path = router.basePath + router.asPath
-    localStorage.setItem('pathname', path)
-    authUrlSliced = authUrl.slice(1, -1)
+  const LogIn = async () => {
+    signIn('identity-server', { callbackUrl: path })
   }
 
-  const LogIn = () => {
-    setIsLoginLoading(true)
-    if (authUrlSliced) {
-      window.location.href = authUrlSliced
-    } else {
-      setIsLoginLoading(false)
-    }
-  }
-
-  return { LogIn, loginLoading }
+  return LogIn
 }
 
-export default useLogin
+export default useLogIn
