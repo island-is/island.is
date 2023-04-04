@@ -48,7 +48,7 @@ export const application: Form = buildForm({
               id: 'applicant.institutionEmail',
               title: m.applicant.contactInstitutionEmailLabel,
               variant: 'email',
-              backgroundColor: 'white',
+              backgroundColor: 'blue',
               required: true,
               defaultValue: '',
             }),
@@ -66,7 +66,7 @@ export const application: Form = buildForm({
             buildTextField({
               id: 'contact.name',
               title: m.applicant.contactNameLabel,
-              backgroundColor: 'white',
+              backgroundColor: 'blue',
               required: true,
               defaultValue: '',
             }),
@@ -76,7 +76,7 @@ export const application: Form = buildForm({
               title: m.applicant.contactPhoneLabel,
               variant: 'tel',
               format: '###-####',
-              backgroundColor: 'white',
+              backgroundColor: 'blue',
               required: true,
               defaultValue: '',
             }),
@@ -84,7 +84,7 @@ export const application: Form = buildForm({
               id: 'contact.email',
               title: m.applicant.contactEmailLabel,
               variant: 'email',
-              backgroundColor: 'white',
+              backgroundColor: 'blue',
               required: true,
               defaultValue: '',
             }),
@@ -96,7 +96,7 @@ export const application: Form = buildForm({
             buildTextField({
               id: 'secondaryContact.name',
               title: m.applicant.contactNameLabel,
-              backgroundColor: 'white',
+              backgroundColor: 'blue',
               defaultValue: '',
               condition: {
                 questionId: 'hasSecondaryContact',
@@ -109,7 +109,7 @@ export const application: Form = buildForm({
               title: m.applicant.contactPhoneLabel,
               variant: 'tel',
               format: '###-####',
-              backgroundColor: 'white',
+              backgroundColor: 'blue',
               defaultValue: '',
               condition: {
                 questionId: 'hasSecondaryContact',
@@ -121,7 +121,7 @@ export const application: Form = buildForm({
               id: 'secondaryContact.email',
               title: m.applicant.contactEmailLabel,
               variant: 'email',
-              backgroundColor: 'white',
+              backgroundColor: 'blue',
               defaultValue: '',
               condition: {
                 questionId: 'hasSecondaryContact',
