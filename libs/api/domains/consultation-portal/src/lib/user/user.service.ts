@@ -5,10 +5,11 @@ import {
 import { Injectable } from '@nestjs/common'
 import { GetUserAdvicesInput } from '../dto/userAdvices.input'
 import { UserAdviceAggregate } from '../models/userAdviceAggregate.model'
+import { UserEmailResult } from '../models/userEmailResult.model'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 
 @Injectable()
-export class UserAdviceResultService {
+export class UserService {
   constructor(private userApi: UserApi) {}
 
   private userApiWithAuth(auth: User) {
@@ -29,7 +30,11 @@ export class UserAdviceResultService {
     const advicesResponse = await this.userApiWithAuth(auth).apiUserAdvicesGet(
       request,
     )
-
     return advicesResponse
+  }
+
+  async getUserEmail(auth: User): Promise<UserEmailResult> {
+    const emailResponse = await this.userApiWithAuth(auth).apiUserEmailGet()
+    return emailResponse
   }
 }
