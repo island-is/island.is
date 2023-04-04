@@ -31,10 +31,6 @@ import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  RestrictionCaseProsecutorSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   core,
@@ -119,12 +115,6 @@ export const Overview: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
-      }
-      activeSubSection={
-        RestrictionCaseProsecutorSubsections.PROSECUTOR_OVERVIEW
-      }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
