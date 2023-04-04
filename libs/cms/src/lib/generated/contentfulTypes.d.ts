@@ -2922,6 +2922,7 @@ export interface ISliceConnectedComponentFields {
     | 'Fiskistofa/ShipSearchBoxedInput'
     | 'Áfengisleyfi/AlcoholLicences'
     | 'Tækifærisleyfi/TemporaryEventLicences'
+    | 'OrganizationSearchBox'
     | undefined
 
   /** Localized JSON */
