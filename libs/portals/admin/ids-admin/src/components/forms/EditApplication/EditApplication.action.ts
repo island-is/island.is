@@ -36,13 +36,13 @@ const checkIfStringIsListOfUrls = (urls: string) => {
 }
 
 const checkIfStringIsArrayOfValidClaims = (claims: string) => {
-  if (claims.length === 0) {
+  if (!claims) {
     return true
   }
 
   const array = splitStringOnCommaOrSpaceOrNewLine(claims)
 
-  const regex = /^\w+=\w+$|^\w+=\d+$/
+  const regex = /^\w+=\w+$/
 
   for (const claim of array) {
     if (!regex.test(claim)) {

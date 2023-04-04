@@ -428,7 +428,7 @@ export const m = defineMessages({
   customClaimsDescription: {
     id: 'ap.ids-admin:custom-claims-description',
     defaultMessage:
-      'Configure custom claims (hard-coded) in access tokens created for this application. Each line should have the form claimName=value. Claim names automatically prefixed with "client_" to avoid collisions. Claim values are always stored as strings.',
+      'Configure custom claims (hard-coded) in access tokens created for this application. Each line should have the form claimName=value. Claim names are automatically prefixed with "client_" to avoid collisions. Claim values are always stored as strings.',
   },
   errorInvalidClaims: {
     id: 'ap.ids-admin:error-invalid-claims',
