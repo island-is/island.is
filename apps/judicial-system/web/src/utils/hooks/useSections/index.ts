@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
+  CaseAppealDecision,
   CaseState,
   completedCaseStates,
   Gender,
@@ -20,12 +21,14 @@ import {
   InstitutionType,
   User,
   UserRole,
+  CaseAppealState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   courtIndictmentRoutes,
   courtInvestigationCasesRoutes,
+  courtOfAppealRoutes,
   courtRestrictionCasesRoutes,
   prosecutorIndictmentRoutes,
   prosecutorInvestigationCasesRoutes,
@@ -1119,6 +1122,47 @@ const useSections = (
     }
   }
 
+  const getCourtOfAppealSections = (user?: User) => {
+    const routeIndex = courtOfAppealRoutes.findIndex(
+      /**
+       * We do .slice here because router.pathname is /something/[:id]
+       * and we want to remove the /[:id] part
+       */
+      (route) => route === router.pathname.slice(0, -5),
+    )
+
+    return [
+      {
+        name: formatMessage(sections.courtOfAppealSection.appealed),
+        isActive: user?.institution?.type !== InstitutionType.HighCourt,
+        children: [],
+      },
+      {
+        name: formatMessage(sections.courtOfAppealSection.result),
+        isActive: user?.institution?.type === InstitutionType.HighCourt,
+        children: [
+          {
+            name: formatMessage(sections.courtOfAppealSection.overview),
+            isActive: routeIndex === 0,
+          },
+          {
+            name: formatMessage(sections.courtOfAppealSection.reception),
+            isActive: routeIndex === 1,
+          },
+          {
+            name: formatMessage(sections.courtOfAppealSection.ruling),
+            isActive: routeIndex === 2,
+          },
+        ],
+      },
+      {
+        name: formatMessage(sections.caseResults.result),
+        isActive: false,
+        children: [],
+      },
+    ]
+  }
+
   const getRestrictionCaseExtensionCourtSections = (
     workingCase: Case,
     user?: User,
@@ -1164,15 +1208,8 @@ const useSections = (
         children: [],
       },
       ...(isRestrictionCase(workingCase.type) &&
-      (workingCase.accusedPostponedAppealDate ||
-        workingCase.prosecutorPostponedAppealDate)
-        ? [
-            {
-              name: formatMessage(sections.caseResults.appealed),
-              isActive: true, // Whenever this is shown, it is active
-              children: [],
-            },
-          ]
+      workingCase.appealState === CaseAppealState.Appealed
+        ? getCourtOfAppealSections(user)
         : []),
       ...(workingCase.parentCase
         ? [

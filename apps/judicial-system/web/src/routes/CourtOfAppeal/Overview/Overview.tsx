@@ -68,12 +68,8 @@ const CourtOfAppealOverview: React.FC = () => {
       <AlertBanner
         title={formatMessage(strings.alertBannerTitle)}
         description={formatMessage(strings.alertBannerMessage, {
-          actor: workingCase.prosecutorPostponedAppealDate
-            ? formatMessage(core.prosecutorPerson)
-            : capitalize(formatMessage(core.defendant)),
-          appealDate: formatDate(
-            workingCase.prosecutorPostponedAppealDate ??
-              workingCase.accusedPostponedAppealDate,
+          statementDate: formatDate(
+            '', // TODO: Add statement date
             'PPPp',
           ),
         })}
@@ -86,7 +82,6 @@ const CourtOfAppealOverview: React.FC = () => {
       />
       <PageLayout
         workingCase={workingCase}
-        activeSection={Sections.CASE_CLOSED}
         isLoading={isLoadingWorkingCase}
         notFound={caseNotFound}
       >

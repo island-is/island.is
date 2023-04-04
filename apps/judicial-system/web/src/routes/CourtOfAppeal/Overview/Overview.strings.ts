@@ -8,7 +8,8 @@ export const courtOfAppealOverview = defineMessages({
   },
   alertBannerMessage: {
     id: 'judicial.system.core:court_of_appeal_overview.alert_banner_message',
-    defaultMessage: '{actor} hefur kært úrskurðinn {appealDate}',
+    defaultMessage:
+      'Frestur til að skila greinargerð rennur út {statementDeadline}',
     description: 'Texti á tilkynningu um móttöku kæru',
   },
   alertBannerLinkText: {

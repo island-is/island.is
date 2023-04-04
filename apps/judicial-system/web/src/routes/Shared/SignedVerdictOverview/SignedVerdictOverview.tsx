@@ -57,8 +57,6 @@ import {
   Button,
   Select,
   Tooltip,
-  Stack,
-  Divider,
   AlertMessage,
   AlertBanner,
 } from '@island.is/island-ui/core'
@@ -776,89 +774,86 @@ export const SignedVerdictOverview: React.FC = () => {
               {formatMessage(m.caseDocuments)}
             </Text>
             <Box marginBottom={2}>
-              <Stack space={2} dividers>
-                {user?.role !== UserRole.Staff && (
-                  <PdfButton
-                    renderAs="row"
-                    caseId={workingCase.id}
-                    title={formatMessage(core.pdfButtonRequest)}
-                    pdfType={'request'}
-                  />
-                )}
-                {showCustodyNotice(
-                  workingCase.type,
-                  workingCase.state,
-                  workingCase.decision,
-                ) && (
-                  <PdfButton
-                    renderAs="row"
-                    caseId={workingCase.id}
-                    title={formatMessage(core.pdfButtonCustodyNotice)}
-                    pdfType="custodyNotice"
-                  />
-                )}
+              {user?.role !== UserRole.Staff && (
                 <PdfButton
                   renderAs="row"
                   caseId={workingCase.id}
-                  title={formatMessage(core.pdfButtonRulingShortVersion)}
-                  pdfType={'courtRecord'}
+                  title={formatMessage(core.pdfButtonRequest)}
+                  pdfType={'request'}
+                />
+              )}
+              {showCustodyNotice(
+                workingCase.type,
+                workingCase.state,
+                workingCase.decision,
+              ) && (
+                <PdfButton
+                  renderAs="row"
+                  caseId={workingCase.id}
+                  title={formatMessage(core.pdfButtonCustodyNotice)}
+                  pdfType="custodyNotice"
+                />
+              )}
+              <PdfButton
+                renderAs="row"
+                caseId={workingCase.id}
+                title={formatMessage(core.pdfButtonRulingShortVersion)}
+                pdfType={'courtRecord'}
+              >
+                {isInvestigationCase(workingCase.type) &&
+                  (workingCase.courtRecordSignatory ? (
+                    <SignedDocument
+                      signatory={workingCase.courtRecordSignatory.name}
+                      signingDate={workingCase.courtRecordSignatureDate}
+                    />
+                  ) : user?.role && isCourtRole(user.role) ? (
+                    <Button
+                      variant="ghost"
+                      size="small"
+                      data-testid="signCourtRecordButton"
+                      loading={isRequestingCourtRecordSignature}
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        handleRequestCourtRecordSignature()
+                      }}
+                    >
+                      {formatMessage(m.signButton)}
+                    </Button>
+                  ) : isRestrictionCase(workingCase.type) ? null : (
+                    <Text>{formatMessage(m.unsignedDocument)}</Text>
+                  ))}
+              </PdfButton>
+              {user?.role !== UserRole.Staff && (
+                <PdfButton
+                  renderAs="row"
+                  caseId={workingCase.id}
+                  title={formatMessage(core.pdfButtonRuling)}
+                  pdfType={'ruling'}
                 >
-                  {isInvestigationCase(workingCase.type) &&
-                    (workingCase.courtRecordSignatory ? (
+                  <Box display="flex" flexDirection="row">
+                    {workingCase.rulingDate ? (
                       <SignedDocument
-                        signatory={workingCase.courtRecordSignatory.name}
-                        signingDate={workingCase.courtRecordSignatureDate}
+                        signatory={workingCase.judge?.name}
+                        signingDate={workingCase.rulingDate}
                       />
-                    ) : user?.role && isCourtRole(user.role) ? (
+                    ) : user && user.id === workingCase.judge?.id ? (
                       <Button
-                        variant="ghost"
                         size="small"
-                        data-testid="signCourtRecordButton"
-                        loading={isRequestingCourtRecordSignature}
+                        loading={isRequestingRulingSignature}
                         onClick={(event) => {
                           event.stopPropagation()
-                          handleRequestCourtRecordSignature()
+                          requestRulingSignature()
                         }}
                       >
                         {formatMessage(m.signButton)}
                       </Button>
-                    ) : isRestrictionCase(workingCase.type) ? null : (
+                    ) : (
                       <Text>{formatMessage(m.unsignedDocument)}</Text>
-                    ))}
+                    )}
+                  </Box>
                 </PdfButton>
-                {user?.role !== UserRole.Staff && (
-                  <PdfButton
-                    renderAs="row"
-                    caseId={workingCase.id}
-                    title={formatMessage(core.pdfButtonRuling)}
-                    pdfType={'ruling'}
-                  >
-                    <Box display="flex" flexDirection="row">
-                      {workingCase.rulingDate ? (
-                        <SignedDocument
-                          signatory={workingCase.judge?.name}
-                          signingDate={workingCase.rulingDate}
-                        />
-                      ) : user && user.id === workingCase.judge?.id ? (
-                        <Button
-                          size="small"
-                          loading={isRequestingRulingSignature}
-                          onClick={(event) => {
-                            event.stopPropagation()
-                            requestRulingSignature()
-                          }}
-                        >
-                          {formatMessage(m.signButton)}
-                        </Button>
-                      ) : (
-                        <Text>{formatMessage(m.unsignedDocument)}</Text>
-                      )}
-                    </Box>
-                  </PdfButton>
-                )}
-              </Stack>
+              )}
             </Box>
-            <Divider />
           </Box>
           {user?.role === UserRole.Prosecutor &&
             user.institution?.id ===
