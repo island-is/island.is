@@ -280,10 +280,6 @@ export const SignedVerdictOverview: React.FC = () => {
   // skip loading institutions if the user does not have an id
   const { prosecutorsOffices } = useInstitution(!user?.id)
 
-  const isAppealedCase =
-    workingCase.prosecutorPostponedAppealDate ||
-    workingCase.accusedPostponedAppealDate
-
   /**
    * If the case is not rejected it must be accepted because
    * this screen is only rendered if the case is either accepted
