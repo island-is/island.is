@@ -90,6 +90,7 @@ import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureCon
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
 import ReopenModal from './Components/ReopenModal/ReopenModal'
 import { strings } from './SignedVerdictOverview.strings'
+import { APPEAL_ROUTE } from '@island.is/judicial-system/consts'
 
 interface ModalControls {
   open: boolean
@@ -504,27 +505,28 @@ export const SignedVerdictOverview: React.FC = () => {
   }
 
   const renderAlertBanner = () => {
+    if (!isProsecutionRole(user?.role)) return undefined
+
     let alertTitle, alertLinkText, alertLinkHref, appealDate
 
-    const shouldDisplayAppealAlertBanner =
+    const canCaseBeAppealed =
       workingCase.courtEndTime &&
-      (workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
-        workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE) &&
+      !workingCase.appealState &&
       !workingCase.isAppealDeadlineExpired &&
-      user?.role &&
-      isProsecutionRole(user.role)
+      (workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
+        workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE)
 
-    const shouldDisplayAppealedAlertBanner =
+    const hasCaseBeenAppealed =
       workingCase.appealState &&
       workingCase.appealState === CaseAppealState.Appealed
 
-    if (shouldDisplayAppealAlertBanner) {
+    if (canCaseBeAppealed) {
       alertTitle = formatMessage(strings.appealAlertBannerTitle, {
         appealDeadline: getAppealEndDate(workingCase.courtEndTime ?? ''),
       })
       alertLinkText = formatMessage(strings.appealAlertBannerLinkText)
-      alertLinkHref = '/krofur'
-    } else if (shouldDisplayAppealedAlertBanner) {
+      alertLinkHref = `${APPEAL_ROUTE}/${workingCase.id}`
+    } else if (hasCaseBeenAppealed) {
       const isAppealedByProsecutor = workingCase.prosecutorPostponedAppealDate
       appealDate = isAppealedByProsecutor
         ? workingCase.prosecutorPostponedAppealDate

@@ -35,7 +35,10 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { TIME_FORMAT } from '@island.is/judicial-system/consts'
+import {
+  DEFENDER_APPEAL_ROUTE,
+  TIME_FORMAT,
+} from '@island.is/judicial-system/consts'
 import {
   capitalize,
   caseTypes,
@@ -99,6 +102,7 @@ export const CaseOverview: React.FC = () => {
 
     const shouldDisplayAppealAlertBanner =
       workingCase.courtEndTime &&
+      !workingCase.appealState &&
       !workingCase.isAppealDeadlineExpired &&
       (workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
         workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE)
@@ -112,7 +116,7 @@ export const CaseOverview: React.FC = () => {
         appealDeadline: getAppealEndDate(workingCase.courtEndTime ?? ''),
       })
       alertLinkText = formatMessage(m.appealAlertBannerLinkText)
-      alertLinkHref = '/krofur'
+      alertLinkHref = `${DEFENDER_APPEAL_ROUTE}/${workingCase.id}`
     } else if (shouldDisplayAppealedAlertBanner) {
       const isAppealedByProsecutor = workingCase.prosecutorPostponedAppealDate
       const appealDate = isAppealedByProsecutor
