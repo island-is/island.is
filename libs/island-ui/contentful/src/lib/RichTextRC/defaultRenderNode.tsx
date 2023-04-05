@@ -175,9 +175,10 @@ export const defaultRenderNodeObject: RenderNode = {
 
     let postfix = 'krónur'
 
-    const amountString = String(amount)
+    const amountEndsWithOne = amount % 10 === 1
+    const amountEndsWithEleven = amount % 100 === 11
 
-    if (amountString.endsWith('1') && !amountString.endsWith('11')) {
+    if (amountEndsWithOne && !amountEndsWithEleven) {
       postfix = 'króna'
     }
 
@@ -186,7 +187,7 @@ export const defaultRenderNodeObject: RenderNode = {
 
     return (
       <span>
-        {formatter.format(amount)} {postfix}{' '}
+        {formatter.format(amount)} {postfix}
       </span>
     )
   },
