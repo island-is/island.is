@@ -104,10 +104,6 @@ export class SessionsService {
 
   private formatIp(ip: string): string | undefined {
     const geoLocation = lookup(ip)
-    return geoLocation
-      ? geoLocation.city
-        ? `${geoLocation.city}, ${geoLocation.country}`
-        : geoLocation.country
-      : undefined
+    return geoLocation?.country ?? undefined
   }
 }
