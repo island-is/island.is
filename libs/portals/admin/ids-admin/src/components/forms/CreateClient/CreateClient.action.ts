@@ -7,7 +7,7 @@ import {
   ValidateFormDataResult,
 } from '@island.is/react-spa/shared'
 import {
-  AuthAdminClientType,
+  AuthAdminCreateClientType,
   AuthAdminEnvironment,
 } from '@island.is/api/schema'
 import {
@@ -38,7 +38,7 @@ const schema = z
     environments: zfd.repeatable(
       z.array(z.nativeEnum(AuthAdminEnvironment)).nonempty('errorEnvironment'),
     ),
-    clientType: z.nativeEnum(AuthAdminClientType, {
+    clientType: z.nativeEnum(AuthAdminCreateClientType, {
       required_error: 'errorClientType',
     }),
   })
@@ -72,7 +72,8 @@ export type CreateClientResult =
 export const createClientAction: WrappedActionFn = ({ client }) => async ({
   request,
 }) => {
-  const result = await validateFormData({ request, schema })
+  const formData = await request.formData()
+  const result = await validateFormData({ formData, schema })
 
   if (result.errors || !result.data) {
     return result

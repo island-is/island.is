@@ -17,7 +17,7 @@ import {
 } from '@island.is/testing/fixtures'
 import { TestApp, testServer, useAuth } from '@island.is/testing/nest'
 
-import { ClientType } from '../models/client-type.enum'
+import { CreateClientType } from '../models/client-type.enum'
 import { ClientsResolver } from './clients.resolver'
 import { ClientsService } from './clients.service'
 import { CreateClientInput } from './dto/create-client.input'
@@ -85,7 +85,7 @@ describe('ClientsService', () => {
     it('should create application in all environments', async function () {
       const createClientsInput: CreateClientInput = {
         clientId: 'test-application-id',
-        clientType: ClientType.web,
+        clientType: CreateClientType.web,
         environments: [
           Environment.Development,
           Environment.Staging,
@@ -119,7 +119,7 @@ describe('ClientsService', () => {
     it('should only create application in development', async function () {
       const createClientsInput: CreateClientInput = {
         clientId: 'test-application-id',
-        clientType: ClientType.web,
+        clientType: CreateClientType.web,
         environments: [Environment.Development],
         displayName: 'Test Application',
         tenantId: 'test-tenant-id',

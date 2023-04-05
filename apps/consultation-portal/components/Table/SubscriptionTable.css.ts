@@ -7,7 +7,7 @@ export const checkmarkIcon = style({
 
 export const tableRowLeft = style({
   borderTopLeftRadius: theme.spacing[1],
-  borderBottomLeftRadius: '8px',
+  borderBottomLeftRadius: theme.spacing[1],
 })
 
 export const tableRowRight = style({

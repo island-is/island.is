@@ -504,7 +504,10 @@ describe('MessageHandlerService - Handle message', () => {
             'Content-Type': 'application/json',
             authorization: `Bearer ${config.backendAccessToken}`,
           },
-          body: JSON.stringify({ type: NotificationType.MODIFIED, userId }),
+          body: JSON.stringify({
+            type: NotificationType.READY_FOR_COURT,
+            userId,
+          }),
         },
       )
       expect(then.result).toBe(true)
@@ -560,6 +563,36 @@ describe('MessageHandlerService - Handle message', () => {
           },
           body: JSON.stringify({
             type: NotificationType.DEFENDER_ASSIGNED,
+            userId,
+          }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('send appeal to court of appeals notification', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
+        userId,
+        caseId,
+      })
+    })
+
+    it('should send a defender assigned notification', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/notification`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({
+            type: NotificationType.APPEAL_TO_COURT_OF_APPEALS,
             userId,
           }),
         },

@@ -23,6 +23,8 @@ import { AuthClient } from './Client.loader'
 import ClientsUrl from './ClientsUrl'
 import Lifetime from './Lifetime'
 import Translations from './Translations'
+import Delegation from './Delegation'
+import AdvancedSettings from './AdvancedSettings'
 
 const IssuerUrls = {
   [AuthAdminEnvironment.Development]:
@@ -97,6 +99,30 @@ const Client = () => {
             selectedEnvironment.refreshTokenExpiration ===
             RefreshTokenExpiration.Sliding
           }
+        />
+        <Delegation
+          supportsProcuringHolders={
+            selectedEnvironment.supportsProcuringHolders
+          }
+          supportsLegalGuardians={selectedEnvironment.supportsLegalGuardians}
+          promptDelegations={selectedEnvironment.promptDelegations}
+          supportsPersonalRepresentatives={
+            selectedEnvironment.supportsPersonalRepresentatives
+          }
+          supportsCustomDelegation={
+            selectedEnvironment.supportsCustomDelegation
+          }
+          requireApiScopes={selectedEnvironment.requireApiScopes}
+        />
+        <AdvancedSettings
+          requirePkce={selectedEnvironment.requirePkce}
+          allowOfflineAccess={selectedEnvironment.allowOfflineAccess}
+          requireConsent={selectedEnvironment.requireConsent}
+          supportsTokenExchange={selectedEnvironment.supportTokenExchange}
+          slidingRefreshTokenLifetime={
+            selectedEnvironment.slidingRefreshTokenLifetime
+          }
+          customClaims={selectedEnvironment.customClaims}
         />
       </Stack>
     </GridContainer>
