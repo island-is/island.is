@@ -56,15 +56,13 @@ const TenantsList = () => {
       <GridContainer className={styles.relative}>
         <Stack space={[2, 2, 3, 3]}>
           <GridRow>
-            <GridColumn>
-              <FilterInput
-                placeholder={formatMessage(m.searchPlaceholder)}
-                name="session-nationalId-input"
-                value={inputSearchValue}
-                onChange={handleSearch}
-                backgroundColor="blue"
-              />
-            </GridColumn>
+            <FilterInput
+              placeholder={formatMessage(m.searchPlaceholder)}
+              name="session-nationalId-input"
+              value={inputSearchValue}
+              onChange={handleSearch}
+              backgroundColor="blue"
+            />
           </GridRow>
           <Stack space={[1, 1, 2, 2]}>
             {tenantList.map((item) => (
