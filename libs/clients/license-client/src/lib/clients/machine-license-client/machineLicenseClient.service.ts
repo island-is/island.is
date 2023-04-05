@@ -56,9 +56,6 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
       if (e instanceof FetchError) {
         //404 - no license for user, still ok!
         if (e.status === 404) {
-          this.logger.info('Machine license not found for user', {
-            LOG_CATEGORY,
-          })
           return { ok: true, data: null }
         } else {
           error = {

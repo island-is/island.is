@@ -56,6 +56,15 @@ export type VerifyInputData = {
   passTemplateId?: string
 }
 
+export type PassVerificationData = {
+  valid: boolean
+  passIdentity?: {
+    name: string
+    nationalId: string
+    picture?: string
+  }
+}
+
 export type Result<ResultType, ErrorType = ServiceError> =
   | {
       ok: true

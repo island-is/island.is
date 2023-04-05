@@ -30,6 +30,8 @@ import {
   LicenseType,
 } from '@island.is/clients/license-client'
 
+const LOG_CATEGORY = 'license-service'
+
 export type GetGenericLicenseOptions = {
   includedTypes?: Array<GenericLicenseTypeType>
   excludedTypes?: Array<GenericLicenseTypeType>

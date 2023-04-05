@@ -2,7 +2,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
-import { createPkPassDataInput } from './disabilityLicenseMapper'
+import { createPkPassDataInput } from '../disabilityLicenseMapper'
 import {
   DisabilityLicenseService,
   OrorkuSkirteini,
@@ -20,7 +20,7 @@ import {
   PkPassVerification,
   PkPassVerificationInputData,
   Result,
-} from '../../licenseClient.type'
+} from '../../../licenseClient.type'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'disability-license-service'

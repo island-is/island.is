@@ -1,13 +1,11 @@
-import { DisabilityLicenseClientModule } from '@island.is/clients/disability-license'
 import { SmartSolutionsApiClientModule } from '@island.is/clients/smartsolutions'
 import { Module } from '@nestjs/common'
 import { ConfigType } from '@island.is/nest/config'
-import { DisabilityLicenseClient } from './disabilityLicenseClient.service'
-import { DisabilityDigitalLicenseClientConfig } from './disabilityLicenseClient.config'
+import { DisabilityDigitalLicenseClientConfig } from '../disabilityLicenseClient.config'
+import { DisabilityLicenseUpdateClient } from '../services/disabilityLicenseUpdateClient.service'
 
 @Module({
   imports: [
-    DisabilityLicenseClientModule,
     SmartSolutionsApiClientModule.registerAsync({
       useFactory: (
         config: ConfigType<typeof DisabilityDigitalLicenseClientConfig>,
@@ -15,7 +13,7 @@ import { DisabilityDigitalLicenseClientConfig } from './disabilityLicenseClient.
       inject: [DisabilityDigitalLicenseClientConfig.KEY],
     }),
   ],
-  providers: [DisabilityLicenseClient],
-  exports: [DisabilityLicenseClient],
+  providers: [DisabilityLicenseUpdateClient],
+  exports: [DisabilityLicenseUpdateClient],
 })
-export class DisabilityClientModule {}
+export class DisabilityUpdateClientModule {}

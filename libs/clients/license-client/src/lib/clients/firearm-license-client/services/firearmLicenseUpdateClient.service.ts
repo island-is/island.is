@@ -13,9 +13,9 @@ import {
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
 import {
+  PassVerificationData,
   Result,
   VerifyInputData,
-  VerifyLicenseData,
 } from '../../../licenseClient.type'
 import { createPkPassDataInput } from '../firearmLicenseMapper'
 import { BaseLicenseUpdateClient } from '../../baseLicenseUpdateClient'
@@ -103,7 +103,7 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
   }
 
   /** We need to verify the pk pass AND the license itself! */
-  async verify(inputData: string): Promise<Result<VerifyLicenseData>> {
+  async verify(inputData: string): Promise<Result<PassVerificationData>> {
     //need to parse the scanner data
     let parsedInput
     try {

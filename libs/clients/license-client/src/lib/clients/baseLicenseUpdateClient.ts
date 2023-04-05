@@ -5,9 +5,8 @@ import {
   PassDataInput,
   RevokePassData,
   SmartSolutionsApi,
-  VerifyPassData,
 } from '@island.is/clients/smartsolutions'
-import { Result } from '../licenseClient.type'
+import { PassVerificationData, Result } from '../licenseClient.type'
 
 /** Category to attach each log message to */
 //const LOG_CATEGORY = 'disability-license-service'
@@ -32,5 +31,5 @@ export abstract class BaseLicenseUpdateClient {
     return this.smartApi.revokePkPass(nationalId)
   }
 
-  abstract verify(inputData: string): Promise<Result<VerifyPassData>>
+  abstract verify(inputData: string): Promise<Result<PassVerificationData>>
 }
