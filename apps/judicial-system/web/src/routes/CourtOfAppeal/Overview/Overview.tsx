@@ -1,6 +1,8 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
+import isValid from 'date-fns/isValid'
+import addDays from 'date-fns/addDays'
 
 import {
   CaseDates,
@@ -16,7 +18,6 @@ import {
   SignedDocument,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { Sections } from '@island.is/judicial-system-web/src/types'
 import { AlertBanner, Box, Button, Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
@@ -27,6 +28,19 @@ import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { courtOfAppealOverview as strings } from './Overview.strings'
+
+const getStatementDeadline = (appealDate?: string) => {
+  if (appealDate === undefined) {
+    return
+  }
+
+  const appealDateAsDate = new Date(appealDate)
+  if (!isValid(appealDateAsDate)) {
+    return
+  }
+
+  return addDays(appealDateAsDate, 1)
+}
 
 const CourtOfAppealOverview: React.FC = () => {
   const {
@@ -68,8 +82,13 @@ const CourtOfAppealOverview: React.FC = () => {
       <AlertBanner
         title={formatMessage(strings.alertBannerTitle)}
         description={formatMessage(strings.alertBannerMessage, {
-          statementDate: formatDate(
-            '', // TODO: Add statement date
+          isStatementDeadlineExpired:
+            workingCase.isStatementDeadlineExpired || false,
+          statementDeadline: formatDate(
+            getStatementDeadline(
+              workingCase.prosecutorPostponedAppealDate ??
+                workingCase.accusedPostponedAppealDate,
+            ),
             'PPPp',
           ),
         })}

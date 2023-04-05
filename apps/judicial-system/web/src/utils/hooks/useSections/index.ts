@@ -3,7 +3,6 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
-  CaseAppealDecision,
   CaseState,
   completedCaseStates,
   Gender,
