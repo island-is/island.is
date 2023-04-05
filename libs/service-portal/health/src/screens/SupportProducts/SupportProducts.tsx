@@ -131,7 +131,9 @@ const SupportProducts = () => {
             'https://island.is/greidsluthatttaka-vegna-naeringar-og-serfaedis'
           }
         >
-          {formatMessage(messages.supportProductsDescriptionInfo1)}
+          <Text variant="small">
+            {formatMessage(messages.supportProductsDescriptionInfo1)}
+          </Text>
           <Icon
             aria-hidden="true"
             icon="open"
@@ -147,7 +149,10 @@ const SupportProducts = () => {
           newTab={true}
           href="https://island.is/einnota-hjalpartaeki"
         >
-          {formatMessage(messages.supportProductsDescriptionInfo2)}
+          <Text variant="small">
+            {formatMessage(messages.supportProductsDescriptionInfo2)}
+          </Text>
+
           <Icon
             aria-hidden="true"
             icon="open"
