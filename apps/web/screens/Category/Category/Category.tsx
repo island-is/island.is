@@ -241,8 +241,7 @@ const Category: Screen<CategoryProps> = ({
   const handleAccordionClick = (groupSlug: string) => {
     const updatedArr = updateHashArray(hashArray, groupSlug)
     setHashArray(updatedArr)
-    // eslint-disable-next-line no-restricted-globals
-    history?.replaceState({}, '', `#${getHashString(updatedArr)}`)
+    window.location.href = `#${getHashString(updatedArr)}`
   }
 
   const sortArticles = (articles: Articles) => {

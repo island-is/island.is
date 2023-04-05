@@ -32,7 +32,7 @@ air-discount-scheme-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -118,7 +118,7 @@ air-discount-scheme-backend:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -213,7 +213,7 @@ air-discount-scheme-web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -319,6 +319,7 @@ api:
     XROAD_DRIVING_LICENSE_BOOK_TIMEOUT: '20000'
     XROAD_DRIVING_LICENSE_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v1'
     XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2'
+    XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/okuskirteini-v5'
     XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
     XROAD_FINANCES_TIMEOUT: '20000'
     XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS-TEST/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend'
@@ -341,6 +342,7 @@ api:
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
+    XROAD_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1'
     XROAD_VEHICLES_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1'
     XROAD_VEHICLE_CODETABLES_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Codetables-V1'
     XROAD_VEHICLE_INFOLOCKS_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Infolocks-V1'
@@ -374,7 +376,7 @@ api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 50
         min: 2
@@ -399,10 +401,10 @@ api:
     min: 2
   resources:
     limits:
-      cpu: '800m'
+      cpu: '400m'
       memory: '2048Mi'
     requests:
-      cpu: '50m'
+      cpu: '150m'
       memory: '512Mi'
   secrets:
     ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
@@ -538,6 +540,7 @@ application-system-api:
     XROAD_DIGITAL_TACHOGRAPH_DRIVERS_CARD_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Okuritar-V1'
     XROAD_DRIVING_LICENSE_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v1'
     XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2'
+    XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/okuskirteini-v5'
     XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
     XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS-TEST/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend'
     XROAD_HEALTH_INSURANCE_ID: 'IS-TEST/GOV/4804080550/SJUKRA-Protected'
@@ -584,7 +587,7 @@ application-system-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 60
         min: 2
@@ -739,7 +742,7 @@ application-system-api-worker:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -812,7 +815,7 @@ application-system-form:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -871,7 +874,7 @@ contentful-translation-extension:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -918,6 +921,7 @@ download-service:
     XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
+    XROAD_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1'
     XROAD_VEHICLES_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1'
   grantNamespaces:
     - 'islandis'
@@ -936,7 +940,7 @@ download-service:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -1015,7 +1019,7 @@ endorsement-system-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -1114,7 +1118,7 @@ icelandic-names-registry-backend:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -1197,7 +1201,7 @@ island-ui-storybook:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -1258,7 +1262,7 @@ license-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 2
@@ -1284,7 +1288,7 @@ license-api:
       cpu: '400m'
       memory: '512Mi'
     requests:
-      cpu: '10m'
+      cpu: '15m'
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -1341,7 +1345,7 @@ portals-admin:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 30
         min: 2
@@ -1416,7 +1420,7 @@ regulations-admin-backend:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -1496,7 +1500,7 @@ search-indexer-service:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 1
         min: 1
@@ -1621,7 +1625,7 @@ service-portal:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 30
         min: 2
@@ -1691,7 +1695,7 @@ service-portal-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 30
         min: 2
@@ -1789,7 +1793,7 @@ services-documents:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -1867,7 +1871,7 @@ services-sessions:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 1
@@ -1889,10 +1893,10 @@ services-sessions:
     min: 1
   resources:
     limits:
-      cpu: '400m'
+      cpu: '250m'
       memory: '512Mi'
     requests:
-      cpu: '10m'
+      cpu: '25m'
       memory: '300Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -1935,7 +1939,7 @@ services-sessions-worker:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -2014,7 +2018,7 @@ skilavottord-web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -2041,7 +2045,7 @@ skilavottord-web:
       cpu: '200m'
       memory: '256Mi'
     requests:
-      cpu: '10m'
+      cpu: '20m'
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -2081,7 +2085,7 @@ skilavottord-ws:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -2157,7 +2161,7 @@ user-notification:
   env:
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     MAIN_QUEUE_NAME: 'user-notification'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=336'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -2175,7 +2179,7 @@ user-notification:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -2202,10 +2206,10 @@ user-notification:
   resources:
     limits:
       cpu: '200m'
-      memory: '256Mi'
+      memory: '384Mi'
     requests:
-      cpu: '10m'
-      memory: '128Mi'
+      cpu: '15m'
+      memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN'
@@ -2251,7 +2255,7 @@ user-notification-worker:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -2317,7 +2321,7 @@ web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 50
         min: 2
@@ -2385,7 +2389,7 @@ xroad-collector:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1

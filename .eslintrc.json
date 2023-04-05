@@ -41,6 +41,7 @@
                 "sourceTag": "scope:portals-admin",
                 "onlyDependOnLibsWithTags": [
                   "lib:portals-admin",
+                  "lib:application-system",
                   "lib:portals",
                   "lib:react-spa",
                   "lib:react",

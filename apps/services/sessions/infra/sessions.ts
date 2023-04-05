@@ -41,11 +41,11 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
     })
     .resources({
       limits: {
-        cpu: '400m',
+        cpu: '250m',
         memory: '512Mi',
       },
       requests: {
-        cpu: '10m',
+        cpu: '25m',
         memory: '300Mi',
       },
     })
