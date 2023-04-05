@@ -1,5 +1,4 @@
 import { Response } from 'express'
-
 import {
   Body,
   Controller,
@@ -26,13 +25,12 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import {
+  CaseAppealState,
   CaseState,
   CaseTransition,
   CaseType,
-  completedCaseStates,
   indictmentCases,
   investigationCases,
-  isIndictmentCase,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -213,16 +211,16 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Transitioning case ${caseId}`)
 
-    const state = transitionCase(transition.transition, theCase.state)
+    const states = transitionCase(
+      transition.transition,
+      theCase.state,
+      theCase.appealState,
+    )
 
-    const update: UpdateCase = { state }
+    const update: UpdateCase = states
 
     if (transition.transition === CaseTransition.DELETE) {
       update.parentCaseId = null
-    }
-
-    if (isIndictmentCase(theCase.type) && completedCaseStates.includes(state)) {
-      update.rulingDate = nowFactory()
     }
 
     if (transition.transition === CaseTransition.REOPEN) {
@@ -231,11 +229,16 @@ export class CaseController {
       update.courtRecordSignatureDate = null
     }
 
+    // The only roles that can appeal a case are prosecutor roles
+    if (states.appealState === CaseAppealState.APPEALED) {
+      update.prosecutorPostponedAppealDate = nowFactory()
+    }
+
     const updatedCase = await this.caseService.update(
       theCase,
       update,
       user,
-      state !== CaseState.DELETED,
+      states.state !== CaseState.DELETED,
     )
 
     // No need to wait
@@ -443,7 +446,6 @@ export class CaseController {
     }
 
     const pdf = await this.caseService.getCustodyPdf(theCase)
-
     res.end(pdf)
   }
 

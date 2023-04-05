@@ -55,7 +55,6 @@ import {
   formatCourtRevokedSmsNotification,
   formatPrisonRevokedEmailNotification,
   formatDefenderRevokedEmailNotification,
-  getCustodyNoticePdfAsString,
   formatProsecutorReceivedByCourtSmsNotification,
   formatCourtResubmittedToCourtSmsNotification,
   formatProsecutorReadyForCourtEmailNotification,
@@ -860,14 +859,16 @@ export class NotificationService {
 
     if (isIndictmentCase(theCase.type)) {
       theCase.defendants?.forEach((defendant) => {
-        promises.push(
-          this.sendRulingEmailNotificationToDefender(
-            theCase,
-            defendant.defenderNationalId,
-            defendant.defenderName,
-            defendant.defenderEmail,
-          ),
-        )
+        if (defendant.defenderEmail) {
+          promises.push(
+            this.sendRulingEmailNotificationToDefender(
+              theCase,
+              defendant.defenderNationalId,
+              defendant.defenderName,
+              defendant.defenderEmail,
+            ),
+          )
+        }
       })
     } else if (
       theCase.defenderEmail &&
@@ -978,26 +979,12 @@ export class NotificationService {
     )
 
     if (shouldSendCustodyNoticeToPrison) {
-      const custodyNoticePdf = await getCustodyNoticePdfAsString(
-        theCase,
-        this.formatMessage,
-      )
-
-      const attachments = [
-        {
-          filename: `Vistunarseðill ${theCase.courtCaseNumber}.pdf`,
-          content: custodyNoticePdf,
-          encoding: 'binary',
-        },
-      ]
-
       promises.push(
         this.sendEmail(
           subject,
           html,
           'Gæsluvarðhaldsfangelsi',
           this.config.email.prisonEmail,
-          attachments,
         ),
       )
     }
@@ -1369,6 +1356,40 @@ export class NotificationService {
     )
   }
 
+  /* Appeals notifications */
+
+  private async sendAppealToCourtOfAppealsNotifications(
+    theCase: Case,
+  ): Promise<SendNotificationResponse> {
+    const subject = this.formatMessage(
+      notifications.caseAppealedToCourtOfAppeals.subject,
+      {
+        courtCaseNumber: theCase.courtCaseNumber,
+      },
+    )
+
+    const html = this.formatMessage(
+      notifications.caseAppealedToCourtOfAppeals.body,
+      {
+        courtCaseNumber: theCase.courtCaseNumber,
+        linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
+        linkEnd: '</a>',
+      },
+    )
+
+    const promises = [
+      this.sendEmail(subject, html, theCase.judge?.name, theCase.judge?.email),
+    ]
+
+    const recipients = await Promise.all(promises)
+
+    return this.recordNotification(
+      theCase.id,
+      NotificationType.APPEAL_TO_COURT_OF_APPEALS,
+      recipients,
+    )
+  }
+
   /* Messages */
 
   private getNotificationMessage(
@@ -1439,6 +1460,8 @@ export class NotificationService {
         return this.sendDefenderAssignedNotifications(theCase)
       case NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT:
         return this.sendDefendantsNotUpdatedAtCourtNotifications(theCase)
+      case NotificationType.APPEAL_TO_COURT_OF_APPEALS:
+        return this.sendAppealToCourtOfAppealsNotifications(theCase)
     }
   }
 

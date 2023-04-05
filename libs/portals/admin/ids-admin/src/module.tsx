@@ -4,22 +4,21 @@ import { PortalModule } from '@island.is/portals/core'
 import { IDSAdminPaths } from './lib/paths'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { m } from './lib/messages'
-import { createApplicationAction } from './components/forms/CreateApplication/CreateApplication.action'
+import { createClientAction } from './components/forms/CreateClient/CreateClient.action'
 import { tenantsListLoader } from './components/TenantsList/TenantsList.loader'
 import { tenantLoader, tenantLoaderId } from './screens/Tenant/Tenant.loader'
-import { applicationsLoader } from './components/Applications/Applications.loader'
-import Application from './components/Application/Application'
-import { applicationLoader } from './components/Application/Application.loader'
+import { clientsLoader } from './components/Clients/Clients.loader'
+import Client from './components/Client/Client'
+import { clientLoader } from './components/Client/Client.loader'
+import { editApplicationAction } from './components/forms/EditApplication/EditApplication.action'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 const Tenant = lazy(() => import('./screens/Tenant/Tenant'))
 const TenantsList = lazy(() => import('./components/TenantsList/TenantsList'))
 const CreateApplication = lazy(() =>
-  import('./components/forms/CreateApplication/CreateApplication'),
+  import('./components/forms/CreateClient/CreateClient'),
 )
-const Applications = lazy(() =>
-  import('./components/Applications/Applications'),
-)
+const Applications = lazy(() => import('./components/Clients/Clients'))
 const ApplicationsScreen = lazy(() => import('./screens/ApplicationsScreen'))
 
 const allowedScopes: string[] = [AdminPortalScope.idsAdmin]
@@ -52,7 +51,7 @@ export const idsAdminModule: PortalModule = {
             },
           },
           {
-            name: m.applications,
+            name: m.clients,
             path: '',
             element: <ApplicationsScreen />,
             handle: {
@@ -61,25 +60,10 @@ export const idsAdminModule: PortalModule = {
             children: [
               {
                 name: m.settings,
-                path: IDSAdminPaths.IDSAdminApplication,
-                element: <Application />,
-                loader: applicationLoader(props),
-                handle: {
-                  backPath: IDSAdminPaths.IDSAdminTenants,
-                },
-              },
-              {
-                name: m.authentication,
-                path: IDSAdminPaths.IDSAdminApplicationAuthentication,
-                element: <div>Authentication</div>,
-                handle: {
-                  backPath: IDSAdminPaths.IDSAdminTenants,
-                },
-              },
-              {
-                name: m.advancedSettings,
-                path: IDSAdminPaths.IDSAdminApplicationAdvancedSettings,
-                element: <div>AdvancedSettings</div>,
+                path: IDSAdminPaths.IDSAdminClient,
+                element: <Client />,
+                loader: clientLoader(props),
+                action: editApplicationAction(props),
                 handle: {
                   backPath: IDSAdminPaths.IDSAdminTenants,
                 },
@@ -97,9 +81,9 @@ export const idsAdminModule: PortalModule = {
             },
             children: [
               {
-                name: m.applications,
+                name: m.clients,
                 path: IDSAdminPaths.IDSAdminTenants,
-                loader: applicationsLoader(props),
+                loader: clientsLoader(props),
                 element: <Applications />,
                 handle: {
                   backPath: IDSAdminPaths.IDSAdmin,
@@ -108,9 +92,9 @@ export const idsAdminModule: PortalModule = {
                   {
                     name: m.applicationCreate,
                     navHide: true,
-                    path: IDSAdminPaths.IDSAdminApplicationCreate,
+                    path: IDSAdminPaths.IDSAdminClientCreate,
                     element: <CreateApplication />,
-                    action: createApplicationAction(props),
+                    action: createClientAction(props),
                   },
                 ],
               },

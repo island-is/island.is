@@ -1,23 +1,6 @@
 import Head from 'next/head'
-import { useUser } from '../../context/UserContext'
 
 const AppLayout = ({ children }) => {
-  const { isAuthenticated, persistLoginUser, setUserNull, user } = useUser()
-
-  const checkAuth = async () => {
-    const check = await fetch('http://localhost:4200/api/auth/check')
-    const data = await check.json()
-    if (data.token) {
-      persistLoginUser({ token: data.token })
-    }
-  }
-
-  if (!isAuthenticated) {
-    checkAuth()
-  } else if (!user) {
-    setUserNull()
-  }
-
   return (
     <div>
       <Head>
@@ -39,8 +22,8 @@ const AppLayout = ({ children }) => {
           sizes="16x16"
           href="/favicon-16x16.png"
         ></link>
-        <link rel="manifest" href="/site.webmanifest"></link>
-        <link rel="shortcut icon" href="/favicon.ico" />
+        {/* <link rel="manifest" href="/site.webmanifest"></link>
+        <link rel="shortcut icon" href="/favicon.ico" /> */}
       </Head>
       {children}
     </div>

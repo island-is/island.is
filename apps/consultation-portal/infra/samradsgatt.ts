@@ -1,7 +1,10 @@
 import { ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
 
-export const serviceSetup = (): ServiceBuilder<'consultation-portal'> =>
-  service('consultation-portal')
+export const serviceSetup = (services: {
+  api: ServiceBuilder<'api'>
+}): ServiceBuilder<'consultation-portal'> => {
+  const consultationService = service('consultation-portal')
+  consultationService
     .image('consultation-portal')
     .namespace('consultation-portal')
     .liveness('/liveness')
@@ -18,6 +21,7 @@ export const serviceSetup = (): ServiceBuilder<'consultation-portal'> =>
     .env({
       BASEPATH: '/consultation-portal',
       ENVIRONMENT: ref((h) => h.env.type),
+      API_URL: ref((h) => `http://${h.svc(services.api)}`),
     })
     .secrets({
       DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID',
@@ -45,6 +49,8 @@ export const serviceSetup = (): ServiceBuilder<'consultation-portal'> =>
             'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
           },
         },
-        paths: ['/consultation-portal'],
+        paths: ['/samradsgatt'],
       },
     })
+  return consultationService
+}

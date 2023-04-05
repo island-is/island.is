@@ -26,10 +26,6 @@ import {
   UserContext,
   PageHeader,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  RestrictionCaseCourtSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 
@@ -93,10 +89,6 @@ export const Confirmation: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
-      }
-      activeSubSection={RestrictionCaseCourtSubsections.CONFIRMATION}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -130,7 +122,7 @@ export const Confirmation: React.FC = () => {
               </Box>
             </Box>
             <Box marginBottom={1} textAlign="center">
-              <Text variant="h4">{workingCase?.judge?.name}</Text>
+              <Text variant="h4">{workingCase.judge?.name}</Text>
             </Box>
           </BlueBox>
         </Box>

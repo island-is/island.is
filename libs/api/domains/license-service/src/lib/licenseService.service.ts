@@ -253,6 +253,9 @@ export class LicenseServiceService {
 
   async verifyPkPass(data: string): Promise<PkPassVerification> {
     if (!data) {
+      this.logger.warn('Missing input data for pkpass verification', {
+        category: LOG_CATEGORY,
+      })
       throw new Error(`Missing input data`)
     }
 

@@ -1,20 +1,20 @@
-import { Colors } from '@island.is/island-ui/theme'
 import type {
-  DatePickerBackgroundColor,
-  InputBackgroundColor,
   BoxProps,
-  SpanType,
+  DatePickerBackgroundColor,
   IconProps,
+  InputBackgroundColor,
+  SpanType,
 } from '@island.is/island-ui/core/types'
+import { FormItem, FormText, FormTextArray, StaticText } from './Form'
 
 import { ApolloClient } from '@apollo/client'
-import { FormText, FormTextArray, FormItem, StaticText } from './Form'
-import { Condition } from './Condition'
-import { CallToAction } from './StateMachine'
 import { Application } from './Application'
+import { CallToAction } from './StateMachine'
+import { Colors } from '@island.is/island-ui/theme'
+import { Condition } from './Condition'
 import { FormatInputValueFunction } from 'react-number-format'
-import { TestSupport } from '@island.is/island-ui/utils'
 import React from 'react'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 export type RecordObject<T = unknown> = Record<string, T>
 export type MaybeWithApplicationAndField<T> =
@@ -121,9 +121,9 @@ export enum FieldComponents {
   KEY_VALUE = 'KeyValueFormField',
   SUBMIT = 'SubmitFormField',
   ASYNC_SELECT = 'AsyncSelectFormField',
-  PAYMENT_PENDING = 'PaymentPendingField',
   COMPANY_SEARCH = 'CompanySearchFormField',
   REDIRECT_TO_SERVICE_PORTAL = 'RedirectToServicePortalFormField',
+  PAYMENT_PENDING = 'PaymentPendingFormField',
   PHONE = 'PhoneFormField',
   MESSAGE_WITH_LINK_BUTTON_FIELD = 'MessageWithLinkButtonFormField',
   EXPANDABLE_DESCRIPTION = 'ExpandableDescriptionFormField',
@@ -193,6 +193,7 @@ export interface CompanySearchField extends BaseField {
   setLabelToDataSchema?: boolean
   shouldIncludeIsatNumber?: boolean
   checkIfEmployerIsOnForbiddenList?: boolean
+  required?: boolean
 }
 
 export interface AsyncSelectField extends BaseField {
@@ -293,6 +294,11 @@ export interface RedirectToServicePortalField extends BaseField {
   component: FieldComponents.REDIRECT_TO_SERVICE_PORTAL
 }
 
+export interface PaymentPendingField extends BaseField {
+  readonly type: FieldTypes.PAYMENT_PENDING
+  component: FieldComponents.PAYMENT_PENDING
+}
+
 export interface MessageWithLinkButtonField extends BaseField {
   readonly type: FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD
   component: FieldComponents.MESSAGE_WITH_LINK_BUTTON_FIELD
@@ -339,6 +345,7 @@ export type Field =
   | AsyncSelectField
   | CompanySearchField
   | RedirectToServicePortalField
+  | PaymentPendingField
   | PhoneField
   | MessageWithLinkButtonField
   | ExpandableDescriptionField

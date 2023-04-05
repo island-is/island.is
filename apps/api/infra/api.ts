@@ -25,6 +25,7 @@ import {
   VehicleServiceFjsV1,
   TransportAuthority,
   ChargeFjsV2,
+  UniversityOfIceland,
 } from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
 import { MissingSetting } from '../../../infra/src/dsl/types/input-types'
@@ -309,6 +310,7 @@ export const serviceSetup = (services: {
       VehicleServiceFjsV1,
       TransportAuthority,
       ChargeFjsV2,
+      UniversityOfIceland,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
@@ -332,8 +334,8 @@ export const serviceSetup = (services: {
     .readiness('/health')
     .liveness('/liveness')
     .resources({
-      limits: { cpu: '800m', memory: '2048Mi' },
-      requests: { cpu: '50m', memory: '1024Mi' },
+      limits: { cpu: '400m', memory: '2048Mi' },
+      requests: { cpu: '150m', memory: '512Mi' },
     })
     .replicaCount({
       default: 2,
@@ -344,5 +346,6 @@ export const serviceSetup = (services: {
       'nginx-ingress-external',
       'api-catalogue',
       'application-system',
+      'consultation-portal',
     )
 }

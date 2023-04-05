@@ -1,6 +1,7 @@
 import {
   AuthenticationApi,
   CasesApi,
+  CaseSubscriptionApi,
   Configuration,
   DocumentsApi,
   StatisticsApi,
@@ -35,6 +36,7 @@ const provideApi = <T>(
 
 export const AuthenticationApiProvider = provideApi(AuthenticationApi)
 export const CasesApiProvider = provideApi(CasesApi)
+export const CaseSubscriptionApiProvider = provideApi(CaseSubscriptionApi)
 export const DocumentsApiProvider = provideApi(DocumentsApi)
 export const StatisticsApiProvider = provideApi(StatisticsApi)
 export const TypesApiProvider = provideApi(TypesApi)

@@ -10,10 +10,6 @@ import {
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  RestrictionCaseProsecutorSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
-import {
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -29,10 +25,13 @@ import {
   validateAndSendToServer,
   validateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { CaseOrigin, UpdateDefendant } from '@island.is/judicial-system/types'
+import { UpdateDefendant } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseType,
+  CaseOrigin,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import {
@@ -130,13 +129,9 @@ export const Defendant: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
-      }
-      activeSubSection={RestrictionCaseProsecutorSubsections.DEFENDANT}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
-      isExtension={workingCase?.parentCase && true}
+      isExtension={!!workingCase.parentCase}
       onNavigationTo={handleNavigationTo}
       isValid={stepIsValid}
     >
@@ -172,7 +167,7 @@ export const Defendant: React.FC = () => {
                   setWorkingCase={setWorkingCase}
                   onChange={handleUpdateDefendant}
                   updateDefendantState={updateDefendantState}
-                  nationalIdImmutable={workingCase.origin === CaseOrigin.LOKE}
+                  nationalIdImmutable={workingCase.origin === CaseOrigin.Loke}
                 />
               </Box>
             )}
@@ -238,6 +233,7 @@ export const Defendant: React.FC = () => {
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
+              nextButtonIcon="arrowForward"
               previousUrl={constants.CASES_ROUTE}
               nextIsLoading={isCreatingCase}
               nextIsDisabled={!stepIsValid}

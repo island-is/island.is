@@ -11,9 +11,12 @@ import {
   PassDataInput,
   RevokePassData,
   SmartSolutionsApi,
-  VerifyPassData,
 } from '@island.is/clients/smartsolutions'
-import { Result, VerifyInputData } from '../../../licenseClient.type'
+import {
+  Result,
+  VerifyInputData,
+  VerifyLicenseData,
+} from '../../../licenseClient.type'
 import { createPkPassDataInput } from '../firearmLicenseMapper'
 import { BaseLicenseUpdateClient } from '../../baseLicenseUpdateClient'
 
@@ -100,7 +103,7 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
   }
 
   /** We need to verify the pk pass AND the license itself! */
-  async verify(inputData: string): Promise<Result<VerifyPassData>> {
+  async verify(inputData: string): Promise<Result<VerifyLicenseData>> {
     //need to parse the scanner data
     let parsedInput
     try {
@@ -172,21 +175,27 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
       }
     }
 
-    if (!licenseInfo.ssn) {
+    if (!licenseInfo.ssn || !licenseInfo.name) {
       return {
         ok: false,
         error: {
           code: 3,
-          message: 'Missing ssn for user',
+          message: 'Missing nationalId or name for user',
         },
       }
     }
+
     //now we compare the data
 
     return {
       ok: true,
       data: {
         valid: licenseInfo.ssn === sanitizedPassNationalId,
+        passIdentity: {
+          name: licenseInfo.name,
+          nationalId: licenseInfo.ssn,
+          picture: licenseInfo.licenseImgBase64 ?? '',
+        },
       },
     }
   }

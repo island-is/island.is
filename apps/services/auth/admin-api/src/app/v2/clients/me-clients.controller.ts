@@ -52,7 +52,7 @@ export class MeClientsController {
   @Audit<AdminClientDto>({
     resources: (client) => client.clientId,
   })
-  findById(
+  findByTenantIdAndClientId(
     @CurrentUser() user: User,
     @Param('tenantId') tenantId: string,
     @Param('clientId') clientId: string,
@@ -73,6 +73,6 @@ export class MeClientsController {
     @Param('tenantId') tenantId: string,
     @Body() input: AdminCreateClientDto,
   ): Promise<AdminClientDto> {
-    return this.clientsService.create(input)
+    return this.clientsService.create(input, user, tenantId)
   }
 }

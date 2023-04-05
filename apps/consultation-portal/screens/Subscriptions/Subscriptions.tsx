@@ -10,10 +10,7 @@ import {
 import { useEffect, useState } from 'react'
 import { Layout } from '../../components/Layout/Layout'
 import { SubscriptionsArray } from '../../utils/dummydata'
-import {
-  SubscriptionActionCard,
-  ChosenSubscriptionCard,
-} from '../../components/Card'
+import { ChosenSubscriptionCard } from '../../components/Card'
 import { Area, SortOptions } from '../../types/enums'
 import {
   ArrOfIdAndName,
@@ -26,6 +23,7 @@ import { BreadcrumbsWithMobileDivider } from '../../components/BreadcrumbsWithMo
 import { sorting } from '../../utils/helpers'
 import getInitValues from './getInitValues'
 import TabsList from './tabsList'
+import EmailBox from '../../components/EmailBox/EmailBox'
 
 interface SubProps {
   cases: CaseForSubscriptions[]
@@ -33,8 +31,6 @@ interface SubProps {
 }
 
 const SubscriptionsScreen = ({ cases, types }: SubProps) => {
-  // user logged in logic needed
-  const [loggedIn, setLoggedIn] = useState(false)
   const [currentTab, setCurrentTab] = useState<Area>(Area.case)
 
   const [searchValue, setSearchValue] = useState('')
@@ -121,7 +117,6 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
       setSortTitle(_sortTitle)
     },
   })
-
   return (
     <Layout seo={{ title: 'Áskriftir', url: 'askriftir' }}>
       <Divider />
@@ -155,32 +150,7 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
                   </Text>
                 </Stack>
               </Stack>
-              {loggedIn ? (
-                <SubscriptionActionCard
-                  userIsLoggedIn={true}
-                  heading="Skrá áskrift"
-                  text="Skráðu netfang hérna og svo hefst staðfestingaferlið. Þú færð tölvupóst sem þú þarft að staðfesta til að áskriftin taki gildi."
-                  button={{
-                    label: 'Skrá áskrift',
-                    onClick: () => setLoggedIn(false),
-                  }}
-                  input={{
-                    name: 'subscriptionEmail',
-                    label: 'Netfang',
-                    placeholder: 'Hér skal skrifa netfang',
-                  }}
-                />
-              ) : (
-                <SubscriptionActionCard
-                  userIsLoggedIn={false}
-                  heading="Skrá áskrift"
-                  text="Þú verður að vera skráð(ur) inn til þess að geta skráð þig í áskrift."
-                  button={{
-                    label: 'Skrá mig inn',
-                    onClick: () => setLoggedIn(true),
-                  }}
-                />
-              )}
+              <EmailBox />
             </Stack>
             <Stack space={0}>
               {!(

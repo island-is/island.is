@@ -94,6 +94,9 @@ export const CREATE_INVESTIGATION_CASE_ROUTE = '/krafa/ny/rannsoknarheimild'
 export const CREATE_INDICTMENT_ROUTE = '/akaera/ny'
 
 export const DEFENDER_ROUTE = '/verjandi'
+export const DEFENDER_APPEAL_ROUTE = '/verjandi/kaera'
+
+export const APPEAL_ROUTE = '/kaera'
 
 /* PROSECUTOR ROUTES START */
 export const RESTRICTION_CASE_DEFENDANT_ROUTE = '/krafa/sakborningur'
@@ -175,11 +178,12 @@ export const prosecutorInvestigationCasesRoutes = [
   INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
 ]
 
-export const prosecutorIndictmentRoutes = [
+export const prosecutorIndictmentRoutes = (isTrafficViolation: boolean) => [
   INDICTMENTS_DEFENDANT_ROUTE,
   INDICTMENTS_POLICE_CASE_FILES_ROUTE,
   INDICTMENTS_CASE_FILE_ROUTE,
   INDICTMENTS_PROCESSING_ROUTE,
+  ...(isTrafficViolation ? [INDICTMENTS_TRAFFIC_VIOLATION_ROUTE] : []),
   INDICTMENTS_CASE_FILES_ROUTE,
   INDICTMENTS_OVERVIEW_ROUTE,
 ]
@@ -202,7 +206,14 @@ export const courtInvestigationCasesRoutes = [
   INVESTIGATION_CASE_CONFIRMATION_ROUTE,
 ]
 
+export const courtIndictmentRoutes = [
+  INDICTMENTS_COURT_OVERVIEW_ROUTE,
+  INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
+  INDICTMENTS_SUBPOENA_ROUTE,
+  INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE,
+  INDICTMENTS_COURT_RECORD_ROUTE,
+]
+
 // Feedback
-export const FEEDBACK_FORM_ROUTE = '/feedback-from'
 export const FEEDBACK_FORM_URL =
   'https://form.asana.com?k=45fPB_e65kYFDjvG-18f0w&d=203394141643832'
