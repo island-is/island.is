@@ -433,4 +433,8 @@ export const m = defineMessages({
     id: 'ap.ids-admin:error-invalid-claims',
     defaultMessage: 'Invalid claim format',
   },
+  copySuccess: {
+    id: 'ap.ids-admin:copy-success',
+    defaultMessage: 'Copied to clipboard',
+  },
 })
