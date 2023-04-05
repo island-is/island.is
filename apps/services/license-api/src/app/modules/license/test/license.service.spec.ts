@@ -131,16 +131,17 @@ class MockLicenseClient implements GenericLicenseClient {
     }
 
     const { code } = parsedInput
-
     if (!code) {
       return Promise.resolve<Result<VerifyPassData>>({
         ok: false,
         error: {
-          code: 12,
-          message: 'Invalid input data',
+          code: 4,
+          message:
+            'Invalid input data,  either code or date are missing or invalid',
         },
       })
     }
+
     if (code === 'success') {
       return Promise.resolve<Result<VerifyPassData>>({
         ok: true,
@@ -178,7 +179,9 @@ describe('LicenseService', () => {
         LicenseService,
         {
           provide: LOGGER_PROVIDER,
-          useClass: jest.fn(() => ({})),
+          useClass: jest.fn(() => ({
+            error: () => ({}),
+          })),
         },
         {
           provide: PASS_TEMPLATE_IDS,
@@ -238,7 +241,7 @@ describe('LicenseService', () => {
           valid: false,
         })
       })
-      it(`should return user error on bad input when trying to verify the ${licenseId} license`, async () => {
+      it(`should throw user error on bad input when trying to verify the ${licenseId} license`, async () => {
         //act
         const result = licenseService.verifyLicense({
           barcodeData: JSON.stringify({
@@ -254,7 +257,7 @@ describe('LicenseService', () => {
 
         //assert
         await expect(result).rejects.toThrow(
-          new BadRequestException('Invalid input data'),
+          new BadRequestException(['Invalid input data']),
         )
       })
 
@@ -274,7 +277,7 @@ describe('LicenseService', () => {
 
         //assert
         await expect(result).rejects.toThrow(
-          new InternalServerErrorException('some service error'),
+          new InternalServerErrorException(['some service error']),
         )
       })
     })
@@ -303,16 +306,16 @@ describe('LicenseService', () => {
 
         //assert
         await expect(result).rejects.toThrow(
-          new BadRequestException('some user error'),
+          new BadRequestException(['some user error']),
         )
       })
-      it(`should throw service error when trying to revoke the ${licenseId} license with an invalid national id`, async () => {
+      it(`should throw server error when trying to revoke the ${licenseId} license with an invalid national id`, async () => {
         //act
         const result = licenseService.revokeLicense(licenseId, 'invalid')
 
         //assert
         await expect(result).rejects.toThrow(
-          new BadRequestException('some service error'),
+          new InternalServerErrorException(['some service error']),
         )
       })
     })
@@ -337,7 +340,7 @@ describe('LicenseService', () => {
             data: undefined,
           })
         })
-        it(`should return user error on bad input when trying to ${licenseUpdateType}-update the ${licenseId} `, async () => {
+        it(`should throw user error on bad input when trying to ${licenseUpdateType}-update the ${licenseId} `, async () => {
           //act
           const result = licenseService.updateLicense(licenseId, '', {
             licenseUpdateType,
@@ -346,10 +349,10 @@ describe('LicenseService', () => {
 
           //assert
           await expect(result).rejects.toThrowError(
-            new BadRequestException('some user error'),
+            new BadRequestException(['some user error']),
           )
         })
-        it(`should return server error when trying to ${licenseUpdateType}-update the ${licenseId} with an invalid national id `, async () => {
+        it(`should throw server error when trying to ${licenseUpdateType}-update the ${licenseId} with an invalid national id `, async () => {
           //act
           const result = licenseService.updateLicense(licenseId, 'invalid', {
             licenseUpdateType,
@@ -358,7 +361,7 @@ describe('LicenseService', () => {
 
           //assert
           await expect(result).rejects.toThrowError(
-            new InternalServerErrorException('some service error'),
+            new InternalServerErrorException(['some service error']),
           )
         })
       },
