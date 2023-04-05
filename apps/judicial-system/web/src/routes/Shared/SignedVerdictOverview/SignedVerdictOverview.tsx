@@ -40,6 +40,7 @@ import {
   useRequestRulingSignature,
   SigningModal,
   UserContext,
+  AppealAlertBanner,
 } from '@island.is/judicial-system-web/src/components'
 import {
   useCase,
@@ -60,13 +61,8 @@ import {
   Stack,
   Divider,
   AlertMessage,
-  AlertBanner,
 } from '@island.is/island-ui/core'
-import {
-  capitalize,
-  caseTypes,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
+import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   core,
@@ -78,10 +74,9 @@ import {
   User,
   UserRole,
   CaseType,
-  CaseAppealState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
-import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -90,7 +85,6 @@ import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureCon
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
 import ReopenModal from './Components/ReopenModal/ReopenModal'
 import { strings } from './SignedVerdictOverview.strings'
-import { APPEAL_ROUTE } from '@island.is/judicial-system/consts'
 
 interface ModalControls {
   open: boolean
@@ -500,55 +494,6 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
-  const renderAlertBanner = () => {
-    if (!isProsecutionRole(user?.role)) return undefined
-
-    let alertTitle, alertLinkText, alertLinkHref, appealDate
-
-    const canCaseBeAppealed =
-      workingCase.courtEndTime &&
-      !workingCase.appealState &&
-      !workingCase.isAppealDeadlineExpired &&
-      (workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
-        workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE)
-
-    const hasCaseBeenAppealed =
-      workingCase.appealState &&
-      workingCase.appealState === CaseAppealState.Appealed
-
-    if (canCaseBeAppealed) {
-      alertTitle = formatMessage(strings.appealAlertBannerTitle, {
-        appealDeadline: getAppealEndDate(workingCase.courtEndTime ?? ''),
-      })
-      alertLinkText = formatMessage(strings.appealAlertBannerLinkText)
-      alertLinkHref = `${APPEAL_ROUTE}/${workingCase.id}`
-    } else if (hasCaseBeenAppealed) {
-      const isAppealedByProsecutor = workingCase.prosecutorPostponedAppealDate
-      appealDate = isAppealedByProsecutor
-        ? workingCase.prosecutorPostponedAppealDate
-        : workingCase.accusedPostponedAppealDate
-      alertTitle = formatMessage(strings.appealedAlertBannerTitle, {
-        isAppealedByProsecutor: isAppealedByProsecutor,
-        appealDate: formatDate(appealDate, 'PPPp'),
-      })
-      alertLinkText = formatMessage(strings.appealedAlertBannerLinkText)
-      alertLinkHref = '/krofur'
-    } else {
-      return undefined
-    }
-
-    return (
-      <AlertBanner
-        title={alertTitle}
-        variant="warning"
-        link={{
-          href: alertLinkHref,
-          title: alertLinkText,
-        }}
-      />
-    )
-  }
-
   const onModifyDatesSubmit = async (update: UpdateCase) => {
     const updatedCase = await updateCase(workingCase.id, { ...update })
 
@@ -564,7 +509,9 @@ export const SignedVerdictOverview: React.FC = () => {
   return (
     <>
       {features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) &&
-        renderAlertBanner()}
+        isProsecutionRole(user?.role) && (
+          <AppealAlertBanner workingCase={workingCase} />
+        )}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
