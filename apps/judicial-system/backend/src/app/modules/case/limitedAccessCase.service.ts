@@ -63,6 +63,8 @@ export const attributes: (keyof Case)[] = [
   'appealState',
   'accusedAppealDecision',
   'prosecutorAppealDecision',
+  'accusedPostponedAppealDate',
+  'prosecutorPostponedAppealDate',
 ]
 
 export interface LimitedUpdateCase

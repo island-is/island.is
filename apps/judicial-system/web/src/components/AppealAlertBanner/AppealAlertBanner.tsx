@@ -24,12 +24,14 @@ interface Props {
   workingCase: TempCase
 }
 
-const AppealAlertBanner: React.FC<Props> = (props) => {
-  const { workingCase } = props
+interface AppealInfo {
+  appealedByRole: UserRole
+  appealedDate: string
+  hasBeenAppealed: boolean
+  canBeAppealed: boolean
+}
 
-  const { formatMessage } = useIntl()
-  const limitedAccess = router.pathname.includes(DEFENDER_ROUTE)
-
+const getAppealInfo = (workingCase: TempCase): AppealInfo => {
   const {
     courtEndTime,
     appealState,
@@ -50,30 +52,49 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
   const hasCaseBeenAppealed =
     appealState && appealState === CaseAppealState.Appealed
 
-  let alertTitle,
-    alertLinkTitle = '',
-    alertLinkHref = '',
-    alertDescription
+  const caseAppealedBy = prosecutorPostponedAppealDate
+    ? UserRole.Prosecutor
+    : UserRole.Defender
 
-  if (hasCaseBeenAppealed) {
-    const caseAppealedBy = prosecutorPostponedAppealDate
-      ? UserRole.Prosecutor
-      : UserRole.Defender
-    const caseAppealedDate =
-      caseAppealedBy === UserRole.Prosecutor
-        ? prosecutorPostponedAppealDate ?? ''
-        : accusedPostponedAppealDate ?? ''
+  const caseAppealedDate =
+    caseAppealedBy === UserRole.Prosecutor
+      ? prosecutorPostponedAppealDate ?? ''
+      : accusedPostponedAppealDate ?? ''
+
+  return {
+    hasBeenAppealed: hasCaseBeenAppealed,
+    canBeAppealed: canCaseBeAppealed,
+    appealedByRole: caseAppealedBy,
+    appealedDate: caseAppealedDate,
+  } as AppealInfo
+}
+
+const AppealAlertBanner: React.FC<Props> = (props) => {
+  const { formatMessage } = useIntl()
+  const limitedAccess = router.pathname.includes(DEFENDER_ROUTE)
+
+  const { workingCase } = props
+  const {
+    appealedByRole,
+    appealedDate,
+    canBeAppealed,
+    hasBeenAppealed,
+  } = getAppealInfo(workingCase)
+
+  let alertTitle, alertLinkTitle, alertLinkHref, alertDescription
+
+  if (hasBeenAppealed) {
     alertTitle = formatMessage(strings.statementTitle)
     alertDescription = formatMessage(strings.statementDescription, {
       actor:
-        caseAppealedBy === UserRole.Prosecutor
+        appealedByRole === UserRole.Prosecutor
           ? formatMessage(core.prosecutor)
           : formatMessage(core.defender),
-      appealDate: formatDate(caseAppealedDate, 'PPPp'),
+      appealDate: formatDate(appealedDate, 'PPPp'),
     })
     alertLinkTitle = formatMessage(strings.statementLinkText)
     alertLinkHref = '/krofur'
-  } else if (canCaseBeAppealed) {
+  } else if (canBeAppealed) {
     alertTitle = formatMessage(strings.appealTitle, {
       appealDeadline: getAppealEndDate(workingCase.courtEndTime ?? ''),
     })
@@ -83,14 +104,14 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
       : `${APPEAL_ROUTE}/${workingCase.id}`
   }
 
-  return canCaseBeAppealed || hasCaseBeenAppealed ? (
+  return canBeAppealed || hasBeenAppealed ? (
     <AlertBanner
       title={alertTitle}
       description={alertDescription}
       variant="warning"
       link={{
-        href: alertLinkHref,
-        title: alertLinkTitle,
+        href: alertLinkHref ?? '',
+        title: alertLinkTitle ?? '',
       }}
     />
   ) : null

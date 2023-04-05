@@ -100,6 +100,8 @@ const LimitedAccessCaseQuery = gql`
       accusedAppealDecision
       prosecutorAppealDecision
       isAppealDeadlineExpired
+      accusedPostponedAppealDate
+      prosecutorPostponedAppealDate
     }
   }
 `
