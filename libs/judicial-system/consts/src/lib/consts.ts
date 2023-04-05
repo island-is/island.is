@@ -97,6 +97,7 @@ export const DEFENDER_ROUTE = '/verjandi'
 export const DEFENDER_APPEAL_ROUTE = '/verjandi/kaera'
 
 export const APPEAL_ROUTE = '/kaera'
+export const STATEMENT_ROUTE = '/greinargerd'
 
 /* PROSECUTOR ROUTES START */
 export const RESTRICTION_CASE_DEFENDANT_ROUTE = '/krafa/sakborningur'

@@ -279,10 +279,6 @@ export const SignedVerdictOverview: React.FC = () => {
   // skip loading institutions if the user does not have an id
   const { prosecutorsOffices } = useInstitution(!user?.id)
 
-  const isAppealedCase =
-    workingCase.prosecutorPostponedAppealDate ||
-    workingCase.accusedPostponedAppealDate
-
   /**
    * If the case is not rejected it must be accepted because
    * this screen is only rendered if the case is either accepted
@@ -508,9 +504,8 @@ export const SignedVerdictOverview: React.FC = () => {
 
     const shouldDisplayAppealAlertBanner =
       workingCase.courtEndTime &&
-      !workingCase.isAppealDeadlineExpired &&
-      user?.role &&
-      isProsecutionRole(user.role)
+      !workingCase.isAppealGracePeriodExpired &&
+      isProsecutionRole(user?.role)
 
     const shouldDisplayAppealedAlertBanner =
       workingCase.appealState &&
@@ -518,10 +513,11 @@ export const SignedVerdictOverview: React.FC = () => {
 
     if (shouldDisplayAppealAlertBanner) {
       alertTitle = formatMessage(strings.appealAlertBannerTitle, {
+        isAppealDeadlineExpired: workingCase.isAppealDeadlineExpired,
         appealDeadline: getAppealEndDate(workingCase.courtEndTime ?? ''),
       })
       alertLinkText = formatMessage(strings.appealAlertBannerLinkText)
-      alertLinkHref = '/krofur'
+      alertLinkHref = `${constants.APPEAL_ROUTE}/${workingCase.id}`
     } else if (shouldDisplayAppealedAlertBanner) {
       const isAppealedByProsecutor = workingCase.prosecutorPostponedAppealDate
       appealDate = isAppealedByProsecutor
@@ -532,7 +528,7 @@ export const SignedVerdictOverview: React.FC = () => {
         appealDate: formatDate(appealDate, 'PPPp'),
       })
       alertLinkText = formatMessage(strings.appealedAlertBannerLinkText)
-      alertLinkHref = '/krofur'
+      alertLinkHref = `${constants.STATEMENT_ROUTE}/${workingCase.id}`
     } else {
       return undefined
     }

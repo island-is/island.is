@@ -4,7 +4,8 @@ export const strings = defineMessages({
   appealAlertBannerTitle: {
     id:
       'judicial.system.core:signed_verdict_overview.appeal_alert_banner_title',
-    defaultMessage: 'Kærufrestur rennur út {appealDeadline}',
+    defaultMessage:
+      'Kærufrestur {isAppealDeadlineExpired, select, true {rann} other {rennur}} út {appealDeadline}',
     description: 'Texti í viðvörunarglugga um kærufrest',
   },
   statementAlertBannerTitle: {

@@ -1,7 +1,6 @@
 import { Case } from '../models/case.model'
 
-const threeDays = 3 * 24 * 60 * 60 * 1000
-const sevenDays = 7 * 24 * 60 * 60 * 1000
+const getDays = (days: number) => days * 24 * 60 * 60 * 1000
 
 export function transformCase(theCase: Case): Case {
   return {
@@ -14,10 +13,10 @@ export function transformCase(theCase: Case): Case {
       ? Date.now() > new Date(theCase.validToDate).getTime()
       : theCase.isValidToDateInThePast,
     isAppealDeadlineExpired: theCase.courtEndTime
-      ? Date.now() >= new Date(theCase.courtEndTime).getTime() + threeDays
+      ? Date.now() >= new Date(theCase.courtEndTime).getTime() + getDays(3)
       : false,
     isAppealGracePeriodExpired: theCase.courtEndTime
-      ? Date.now() >= new Date(theCase.courtEndTime).getTime() + sevenDays
+      ? Date.now() >= new Date(theCase.courtEndTime).getTime() + getDays(31)
       : false,
   }
 }
