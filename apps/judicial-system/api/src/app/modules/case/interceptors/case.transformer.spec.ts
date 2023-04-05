@@ -152,7 +152,7 @@ describe('transformCase', () => {
     it('should be false while the appeal window is open', () => {
       // Arrange
       const courtEndTime = new Date()
-      courtEndTime.setDate(courtEndTime.getDate() - 7)
+      courtEndTime.setDate(courtEndTime.getDate() - 31)
       courtEndTime.setSeconds(courtEndTime.getSeconds() + 1)
       const theCase = { courtEndTime: courtEndTime.toISOString() } as Case
 
@@ -166,7 +166,7 @@ describe('transformCase', () => {
     it('should be true when the appeal window has closed', () => {
       // Arrange
       const courtEndTime = new Date()
-      courtEndTime.setDate(courtEndTime.getDate() - 7)
+      courtEndTime.setDate(courtEndTime.getDate() - 31)
       const theCase = { courtEndTime: courtEndTime.toISOString() } as Case
 
       // Act
