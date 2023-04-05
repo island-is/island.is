@@ -1,32 +1,29 @@
-import React from 'react'
-import { useRouter } from 'next/router'
-import { NextPageContext } from 'next'
-import { ApolloProvider } from '@apollo/client/react'
+import { NextComponentType } from 'next'
 import initApollo from './client'
+import { BaseContext, NextPageContext } from 'next/dist/shared/lib/utils'
 
-export const withApollo = (Component) => {
-  const NewComponent = ({ apolloState, pageProps }) => {
-    const { asPath } = useRouter()
-    return (
-      <ApolloProvider client={initApollo({ ...apolloState })}>
-        <Component {...pageProps} />
-      </ApolloProvider>
-    )
+export const withApollo = <
+  C extends BaseContext = NextPageContext,
+  IP = {},
+  P = {}
+>(
+  Component: NextComponentType<C, IP, P>,
+): NextComponentType<C, IP> => {
+  const getInitialProps = Component.getInitialProps
+  if (!getInitialProps) {
+    return Component
   }
-  return NewComponent
-}
-export const getServerSideProps = async (ctx, Component) => {
-  const apolloClient = initApollo({})
-  const newContext = { ...ctx, apolloClient }
-  const props = Component.getInitialProps
-    ? await Component.getInitialProps(newContext)
-    : {}
-  const cache = apolloClient.cache.extract()
-  return {
-    pageProps: props,
-    apolloState: cache,
-    apolloClient,
-  }
-}
 
-export default withApollo
+  Component.getInitialProps = async (ctx) => {
+    const apolloClient = initApollo({})
+    const newContext = Object.assign({}, ctx, { apolloClient })
+    const props = await getInitialProps(newContext)
+    const cache = apolloClient.cache.extract()
+    return {
+      ...props,
+      apolloState: cache,
+    }
+  }
+
+  return Component
+}

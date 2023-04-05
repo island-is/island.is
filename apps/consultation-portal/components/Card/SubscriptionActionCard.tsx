@@ -8,6 +8,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import * as styles from './SubscriptionActionCard.css'
+import { useState } from 'react'
 
 interface SubscriptionButton {
   label: string
@@ -25,6 +26,7 @@ export interface SubscriptionActionCardProps {
     name: string
     value?: string
     disabled?: boolean
+    onChange?: (e) => void
   }
 }
 
@@ -35,6 +37,7 @@ export const SubscriptionActionCard = ({
   input,
 }: SubscriptionActionCardProps) => {
   const noInput = typeof input !== 'undefined'
+
   return (
     <Box
       display="flex"
@@ -69,6 +72,8 @@ export const SubscriptionActionCard = ({
                 size="sm"
                 label={input.label}
                 placeholder={input.placeholder}
+                value={input.value}
+                onChange={input.onChange}
               />
             </Column>
             <Column width="3/12">
