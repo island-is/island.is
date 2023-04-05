@@ -29,7 +29,7 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import { courtOfAppealOverview as strings } from './Overview.strings'
 
-const getStatementDeadline = (appealDate?: string) => {
+export const getStatementDeadline = (appealDate?: string) => {
   if (appealDate === undefined) {
     return
   }
