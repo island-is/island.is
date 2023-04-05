@@ -728,8 +728,7 @@ export const SignedVerdictOverview: React.FC = () => {
             workingCase.prosecutorAppealDecision ===
               CaseAppealDecision.APPEAL) &&
             user?.role &&
-            isCourtRole(user.role) &&
-            user?.institution?.type !== InstitutionType.HighCourt && (
+            isCourtRole(user.role) && (
               <Box marginBottom={7}>
                 <AppealSection
                   workingCase={workingCase}
