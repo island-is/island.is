@@ -169,6 +169,27 @@ export const defaultRenderNodeObject: RenderNode = {
       </Box>
     )
   },
+  [INLINES.EMBEDDED_ENTRY]: (node) => {
+    const amount = node?.data?.target?.fields?.amount
+    if (typeof amount !== 'number') return null
+
+    let postfix = 'krónur'
+
+    const amountString = String(amount)
+
+    if (amountString.endsWith('1') && !amountString.endsWith('11')) {
+      postfix = 'króna'
+    }
+
+    // Format the amount so it displays dots (Example of a displayed value: 2.700 krónur)
+    const formatter = new Intl.NumberFormat('de-DE')
+
+    return (
+      <span>
+        {formatter.format(amount)} {postfix}{' '}
+      </span>
+    )
+  },
   [INLINES.HYPERLINK]: (node, children) => (
     <Hyperlink href={node.data.uri}>{children}</Hyperlink>
   ),
