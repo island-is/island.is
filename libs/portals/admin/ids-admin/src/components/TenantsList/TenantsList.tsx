@@ -7,6 +7,7 @@ import {
   GridRow,
   Stack,
   Tag,
+  GridColumn,
   Text,
 } from '@island.is/island-ui/core'
 import * as styles from './TenantsList.css'
@@ -47,7 +48,7 @@ const TenantsList = () => {
   }
 
   return (
-    <>
+    <GridColumn span={['12/12', '12/12', '10/12']} offset={['0', '0', '1/12']}>
       <IntroHeader
         title={formatMessage(m.idsAdmin)}
         intro={formatMessage(m.idsAdminDescription)}
@@ -55,13 +56,15 @@ const TenantsList = () => {
       <GridContainer className={styles.relative}>
         <Stack space={[2, 2, 3, 3]}>
           <GridRow>
-            <FilterInput
-              placeholder={formatMessage(m.searchPlaceholder)}
-              name="session-nationalId-input"
-              value={inputSearchValue}
-              onChange={handleSearch}
-              backgroundColor="blue"
-            />
+            <GridColumn>
+              <FilterInput
+                placeholder={formatMessage(m.searchPlaceholder)}
+                name="session-nationalId-input"
+                value={inputSearchValue}
+                onChange={handleSearch}
+                backgroundColor="blue"
+              />
+            </GridColumn>
           </GridRow>
           <Stack space={[1, 1, 2, 2]}>
             {tenantList.map((item) => (
@@ -117,7 +120,7 @@ const TenantsList = () => {
           </Stack>
         </Stack>
       </GridContainer>
-    </>
+    </GridColumn>
   )
 }
 
