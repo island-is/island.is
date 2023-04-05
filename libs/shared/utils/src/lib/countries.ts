@@ -1,4 +1,3 @@
-//iso 3166-1 alpha-2
 /**
  * Get a country by its country code
  * @param {string} code - The country code to get the country by (e.g. 'IS') - Uses ISO 3166-1 alpha-2 standard: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
