@@ -140,3 +140,9 @@ export interface FileObject {
   size?: number
   type?: string
 }
+
+export interface User {
+  name?: string
+  email?: string
+  image?: string
+}

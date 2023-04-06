@@ -13,6 +13,7 @@ import { getSessionType } from '../../utils/utils'
 import * as styles from '../LogTable/LogTable.css'
 import Person from '../PersonIcon/PersonIcon'
 import { Client } from '../Client/Client'
+import { getCountryByCode, Country } from '@island.is/shared/utils'
 
 interface LogTableProps {
   data: SessionsSession[]
@@ -51,6 +52,7 @@ const LogTable: React.FC<LogTableProps> = ({ data }) => {
             session,
             userInfo?.profile.nationalId ?? '',
           )
+          const country = getCountryByCode(session?.ipLocation ?? '') as Country
 
           return (
             <Table.Row key={session.id}>
@@ -80,7 +82,7 @@ const LogTable: React.FC<LogTableProps> = ({ data }) => {
                     text={formatMessage(m.ipLocation) + ' ' + session.ip}
                   >
                     <div style={{ width: 'fit-content' }}>
-                      {session.ipLocation}
+                      {country?.name ?? session.ipLocation}
                     </div>
                   </Tooltip>
                 )}

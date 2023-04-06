@@ -66,7 +66,7 @@ export class FileController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard, CaseNotCompletedGuard)
+  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorRule,
     representativeRule,
@@ -89,7 +89,7 @@ export class FileController {
     return this.fileService.createPresignedPost(theCase, createPresignedPost)
   }
 
-  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard, CaseNotCompletedGuard)
+  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorRule,
     representativeRule,
@@ -144,13 +144,7 @@ export class FileController {
     return this.fileService.getCaseFileSignedUrl(caseFile)
   }
 
-  @UseGuards(
-    RolesGuard,
-    CaseExistsGuard,
-    CaseWriteGuard,
-    CaseNotCompletedGuard,
-    CaseFileExistsGuard,
-  )
+  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard, CaseFileExistsGuard)
   @RolesRules(prosecutorRule, representativeRule, registrarRule, judgeRule)
   @Delete('file/:fileId')
   @ApiOkResponse({

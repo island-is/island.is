@@ -1,15 +1,11 @@
-import getConfig from 'next/config'
-
-const baseUrl = 'https://stafraentisland.greynir.is/translate'
-
-const { publicRuntimeConfig } = getConfig()
-
 const defaultParams = {
   sourceLanguageCode: 'is',
   targetLanguageCode: 'en',
 }
 
 async function translateTexts(texts: string[]) {
+  const baseUrl = process.env.MIDEIND_TRANSLATION_API_BASE_URL
+
   const translations = []
   const body = {
     contents: texts,
@@ -20,7 +16,7 @@ async function translateTexts(texts: string[]) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-API-Key': publicRuntimeConfig.MIDEIND_TRANSLATION_API_KEY,
+      'X-API-Key': process.env.MIDEIND_TRANSLATION_API_KEY,
     },
     body: JSON.stringify(body),
   }).then((res) => res.json())
@@ -37,6 +33,8 @@ async function sendTexts(
   enTexts: string[],
   reference: string,
 ) {
+  const baseUrl = process.env.MIDEIND_TRANSLATION_API_BASE_URL
+
   const body = {
     machineTranslatedText: '', // Required even if empty
     translationReference: 1 || reference, // Reference to be accepted later by Miðeind
@@ -50,7 +48,7 @@ async function sendTexts(
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-API-Key': publicRuntimeConfig.MIDEIND_TRANSLATION_API_KEY,
+      'X-API-Key': process.env.MIDEIND_TRANSLATION_API_KEY,
     },
     body: JSON.stringify(body),
   })

@@ -1,20 +1,20 @@
-import { Colors } from '@island.is/island-ui/theme'
 import type {
-  DatePickerBackgroundColor,
-  InputBackgroundColor,
   BoxProps,
-  SpanType,
+  DatePickerBackgroundColor,
   IconProps,
+  InputBackgroundColor,
+  SpanType,
 } from '@island.is/island-ui/core/types'
+import { FormItem, FormText, FormTextArray, StaticText } from './Form'
 
 import { ApolloClient } from '@apollo/client'
-import { FormText, FormTextArray, FormItem, StaticText } from './Form'
-import { Condition } from './Condition'
-import { CallToAction } from './StateMachine'
 import { Application } from './Application'
+import { CallToAction } from './StateMachine'
+import { Colors } from '@island.is/island-ui/theme'
+import { Condition } from './Condition'
 import { FormatInputValueFunction } from 'react-number-format'
-import { TestSupport } from '@island.is/island-ui/utils'
 import React from 'react'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 export type RecordObject<T = unknown> = Record<string, T>
 export type MaybeWithApplicationAndField<T> =
@@ -193,6 +193,7 @@ export interface CompanySearchField extends BaseField {
   setLabelToDataSchema?: boolean
   shouldIncludeIsatNumber?: boolean
   checkIfEmployerIsOnForbiddenList?: boolean
+  required?: boolean
 }
 
 export interface AsyncSelectField extends BaseField {

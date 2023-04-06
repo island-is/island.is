@@ -1,6 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator'
-import { AdminClientType } from './admin-client-type.enum'
+
+import { ClientType } from '../../../types'
+
+type CreateClientType = Extract<
+  ClientType,
+  ClientType.machine | ClientType.native | ClientType.web
+>
+
+const CreateClientType = {
+  [ClientType.machine]: ClientType.machine,
+  [ClientType.native]: ClientType.native,
+  [ClientType.web]: ClientType.web,
+}
 
 export class AdminCreateClientDto {
   @IsNotEmpty()
@@ -11,12 +23,13 @@ export class AdminCreateClientDto {
   readonly clientId!: string
 
   @IsNotEmpty()
-  @IsEnum(AdminClientType)
+  @IsEnum(CreateClientType)
   @ApiProperty({
     example: 'spa',
-    enum: AdminClientType,
+    enum: CreateClientType,
+    enumName: 'CreateClientType',
   })
-  readonly clientType!: AdminClientType
+  readonly clientType!: CreateClientType
 
   @IsNotEmpty()
   @IsString()

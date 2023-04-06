@@ -11,7 +11,7 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
     .namespace('license-api')
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },
-      requests: { cpu: '10m', memory: '256Mi' },
+      requests: { cpu: '15m', memory: '256Mi' },
     })
     .secrets({
       SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL',

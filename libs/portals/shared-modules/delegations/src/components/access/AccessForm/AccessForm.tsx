@@ -33,6 +33,7 @@ import {
   usePortalMeta,
   useRoutes,
 } from '@island.is/portals/core'
+import { useDynamicShadow } from '../../../hooks/useDynamicShadow'
 
 type AccessFormProps = {
   delegation: AuthCustomDelegationOutgoing
@@ -59,6 +60,8 @@ export const AccessForm = ({
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const [formError, setFormError] = useState(false)
   const [updateError, setUpdateError] = useState(false)
+
+  const { showShadow, pxProps } = useDynamicShadow({ rootMargin: '-112px' })
 
   const onError = () => {
     toast.error(formatMessage(portalMessages.somethingWrong))
@@ -161,6 +164,7 @@ export const AccessForm = ({
               />
             ))}
           </div>
+          <div {...pxProps} />
         </form>
         <Box position="sticky" bottom={0} marginTop={20}>
           <DelegationsFormFooter
@@ -175,6 +179,7 @@ export const AccessForm = ({
               }
             }}
             confirmLabel={formatMessage(m.saveAccess)}
+            showShadow={showShadow}
             confirmIcon="arrowForward"
             disabled={
               delegation.scopes.length === 0 && (!scopes || scopes.length === 0)

@@ -1,7 +1,6 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Sections } from '@island.is/judicial-system-web/src/types'
 import {
   BlueBox,
   CaseDates,
@@ -45,6 +44,7 @@ import { FeatureContext } from '@island.is/judicial-system-web/src/components/Fe
 import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 import { defenderCaseOverview as m } from './CaseOverview.strings'
+import { CaseAppealState } from '../../graphql/schema'
 
 export const CaseOverview: React.FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
@@ -93,31 +93,55 @@ export const CaseOverview: React.FC = () => {
         })
   }
 
+  const renderAlertBanner = () => {
+    let alertTitle, alertLinkText, alertLinkHref, appealDate
+
+    const shouldDisplayAppealAlertBanner =
+      workingCase.courtEndTime && !workingCase.isAppealDeadlineExpired
+
+    const shouldDisplayAppealedAlertBanner =
+      workingCase.appealState &&
+      workingCase.appealState === CaseAppealState.Appealed
+
+    if (shouldDisplayAppealAlertBanner) {
+      alertTitle = formatMessage(m.appealAlertBannerTitle, {
+        appealDeadline: getAppealEndDate(workingCase.courtEndTime ?? ''),
+      })
+      alertLinkText = formatMessage(m.appealAlertBannerLinkText)
+      alertLinkHref = '/krofur'
+    } else if (shouldDisplayAppealedAlertBanner) {
+      const isAppealedByProsecutor = workingCase.prosecutorPostponedAppealDate
+      appealDate = isAppealedByProsecutor
+        ? workingCase.prosecutorPostponedAppealDate
+        : workingCase.accusedPostponedAppealDate
+      alertTitle = formatMessage(m.appealedAlertBannerTitle, {
+        isAppealedByProsecutor: isAppealedByProsecutor,
+        appealDate: formatDate(appealDate, 'PPPp'),
+      })
+      alertLinkText = formatMessage(m.appealedAlertBannerLinkText)
+      alertLinkHref = '/krofur'
+    } else {
+      return undefined
+    }
+
+    return (
+      <AlertBanner
+        title={alertTitle}
+        variant="warning"
+        link={{
+          href: alertLinkHref,
+          title: alertLinkText,
+        }}
+      />
+    )
+  }
+
   return (
     <>
-      {workingCase.courtEndTime &&
-        !workingCase.isAppealDeadlineExpired &&
-        features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) && (
-          <AlertBanner
-            title={formatMessage(m.appealAlertBannerTitle, {
-              appealDeadline: getAppealEndDate(workingCase.courtEndTime),
-            })}
-            variant="warning"
-            link={{
-              href: '/krofur',
-              title: formatMessage(m.appealAlertBannerLinkText),
-            }}
-          />
-        )}
+      {features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) &&
+        renderAlertBanner()}
       <PageLayout
         workingCase={workingCase}
-        activeSection={
-          completedCaseStates.includes(workingCase.state)
-            ? 2
-            : workingCase.parentCase
-            ? Sections.JUDGE_EXTENSION
-            : Sections.JUDGE
-        }
         isLoading={isLoadingWorkingCase}
         notFound={caseNotFound}
       >

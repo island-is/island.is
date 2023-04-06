@@ -24,7 +24,7 @@ import { SimpleCardSkeleton } from '../../components/Card'
 import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
 import { getTimeLineDate } from '../../utils/helpers/dateFormatter'
 import Link from 'next/link'
-import { useUser } from '../../context/UserContext'
+import { useUser } from '../../utils/helpers'
 
 const CaseScreen = ({ chosenCase, advices }) => {
   const { contactEmail, contactName } = chosenCase

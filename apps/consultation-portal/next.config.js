@@ -39,6 +39,11 @@ module.exports = withNx(
     presets: ['next/babel'],
     env: {
       WEB_PUBLIC_URL: 'http://localhost:4200/consultation-portal' || '',
+      NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+      IDENTITYSERVER_SECRET: process.env.IDENTITYSERVER_SECRET,
+      IDENTITYSERVER_CLIENT_ID: process.env.IDENTITYSERVER_CLIENT_ID,
+      IDENTITYSERVER_DOMAIN: process.env.IDENTITYSERVER_DOMAIN,
+      IDENTITYSERVER_SCOPE: process.env.IDENTITYSERVER_SCOPE,
     },
   }),
 )
