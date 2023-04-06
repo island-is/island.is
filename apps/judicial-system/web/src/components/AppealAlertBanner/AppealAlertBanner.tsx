@@ -25,10 +25,11 @@ interface Props {
 }
 
 interface AppealInfo {
+  canBeAppealed: boolean
+  appealDeadline: string
+  hasBeenAppealed: boolean
   appealedByRole: UserRole
   appealedDate: string
-  hasBeenAppealed: boolean
-  canBeAppealed: boolean
 }
 
 const getAppealInfo = (workingCase: TempCase): AppealInfo => {
@@ -42,30 +43,33 @@ const getAppealInfo = (workingCase: TempCase): AppealInfo => {
     accusedPostponedAppealDate,
   } = workingCase
 
-  const canCaseBeAppealed =
+  const canBeAppealed =
     courtEndTime &&
     !appealState &&
     !isAppealDeadlineExpired &&
     (accusedAppealDecision === CaseAppealDecision.POSTPONE ||
       prosecutorAppealDecision === CaseAppealDecision.POSTPONE)
 
-  const hasCaseBeenAppealed =
+  const hasBeenAppealed =
     appealState && appealState === CaseAppealState.Appealed
 
-  const caseAppealedBy = prosecutorPostponedAppealDate
+  const appealedByRole = prosecutorPostponedAppealDate
     ? UserRole.Prosecutor
     : UserRole.Defender
 
-  const caseAppealedDate =
-    caseAppealedBy === UserRole.Prosecutor
+  const appealedDate =
+    appealedByRole === UserRole.Prosecutor
       ? prosecutorPostponedAppealDate ?? ''
       : accusedPostponedAppealDate ?? ''
 
+  const appealDeadline = getAppealEndDate(courtEndTime ?? '')
+
   return {
-    hasBeenAppealed: hasCaseBeenAppealed,
-    canBeAppealed: canCaseBeAppealed,
-    appealedByRole: caseAppealedBy,
-    appealedDate: caseAppealedDate,
+    hasBeenAppealed,
+    canBeAppealed,
+    appealedByRole,
+    appealedDate,
+    appealDeadline,
   } as AppealInfo
 }
 
@@ -79,6 +83,7 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
     appealedDate,
     canBeAppealed,
     hasBeenAppealed,
+    appealDeadline,
   } = getAppealInfo(workingCase)
 
   let alertTitle, alertLinkTitle, alertLinkHref, alertDescription
@@ -96,7 +101,7 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
     alertLinkHref = '/krofur'
   } else if (canBeAppealed) {
     alertTitle = formatMessage(strings.appealTitle, {
-      appealDeadline: getAppealEndDate(workingCase.courtEndTime ?? ''),
+      appealDeadline,
     })
     alertLinkTitle = formatMessage(strings.appealLinkText)
     alertLinkHref = limitedAccess
