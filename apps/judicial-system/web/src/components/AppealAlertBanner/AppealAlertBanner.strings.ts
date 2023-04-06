@@ -23,8 +23,8 @@ export const strings = defineMessages({
   },
   statementLinkText: {
     id: 'judicial.system.core:appeal_alert_banner.statement_link_text',
-    defaultMessage: 'Senda greinagerð',
+    defaultMessage: 'Senda greinargerð',
     description:
-      'Texti í hlekk í viðvörunarglugga um að senda greinagerð í kærumáli',
+      'Texti í hlekk í viðvörunarglugga um að senda greinargerð í kærumáli',
   },
 })
