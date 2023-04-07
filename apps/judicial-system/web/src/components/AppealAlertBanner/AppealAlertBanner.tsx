@@ -113,19 +113,23 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
     alertLinkHref = limitedAccess
       ? `${DEFENDER_APPEAL_ROUTE}/${workingCase.id}`
       : `${APPEAL_ROUTE}/${workingCase.id}`
-  }
+  } else return false
 
-  return canBeAppealed || hasBeenAppealed ? (
+  return (
     <AlertBanner
       title={alertTitle}
       description={alertDescription}
       variant="warning"
-      link={{
-        href: alertLinkHref ?? '',
-        title: alertLinkTitle ?? '',
-      }}
+      link={
+        alertLinkHref && alertLinkTitle
+          ? {
+              href: alertLinkHref,
+              title: alertLinkTitle,
+            }
+          : undefined
+      }
     />
-  ) : null
+  )
 }
 
 export default AppealAlertBanner
