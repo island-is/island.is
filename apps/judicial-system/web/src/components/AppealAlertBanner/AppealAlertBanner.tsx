@@ -113,7 +113,7 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
     alertLinkHref = limitedAccess
       ? `${DEFENDER_APPEAL_ROUTE}/${workingCase.id}`
       : `${APPEAL_ROUTE}/${workingCase.id}`
-  } else return false
+  } else return null
 
   return (
     <AlertBanner
