@@ -26,13 +26,13 @@ interface Props {
 
 interface AppealInfo {
   canBeAppealed: boolean
-  appealDeadline: string
   hasBeenAppealed: boolean
-  appealedByRole: UserRole
-  appealedDate: string
+  appealDeadline?: string
+  appealedByRole?: UserRole
+  appealedDate?: string
 }
 
-const getAppealInfo = (workingCase: TempCase): AppealInfo => {
+export const getAppealInfo = (workingCase: TempCase): AppealInfo => {
   const {
     courtEndTime,
     appealState,
@@ -43,26 +43,32 @@ const getAppealInfo = (workingCase: TempCase): AppealInfo => {
     accusedPostponedAppealDate,
   } = workingCase
 
-  const canBeAppealed =
+  const canBeAppealed = Boolean(
     courtEndTime &&
-    !appealState &&
-    !isAppealDeadlineExpired &&
-    (accusedAppealDecision === CaseAppealDecision.POSTPONE ||
-      prosecutorAppealDecision === CaseAppealDecision.POSTPONE)
+      !appealState &&
+      !isAppealDeadlineExpired &&
+      (accusedAppealDecision === CaseAppealDecision.POSTPONE ||
+        prosecutorAppealDecision === CaseAppealDecision.POSTPONE),
+  )
 
-  const hasBeenAppealed =
-    appealState && appealState === CaseAppealState.Appealed
+  const hasBeenAppealed = Boolean(
+    appealState && appealState === CaseAppealState.Appealed,
+  )
 
   const appealedByRole = prosecutorPostponedAppealDate
     ? UserRole.Prosecutor
-    : UserRole.Defender
+    : accusedPostponedAppealDate
+    ? UserRole.Defender
+    : undefined
 
   const appealedDate =
     appealedByRole === UserRole.Prosecutor
-      ? prosecutorPostponedAppealDate ?? ''
-      : accusedPostponedAppealDate ?? ''
+      ? prosecutorPostponedAppealDate ?? undefined
+      : accusedPostponedAppealDate ?? undefined
 
-  const appealDeadline = getAppealEndDate(courtEndTime ?? '')
+  const appealDeadline = courtEndTime
+    ? getAppealEndDate(courtEndTime ?? '')
+    : undefined
 
   return {
     hasBeenAppealed,
