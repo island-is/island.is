@@ -52,6 +52,7 @@ export interface InputComponentProps {
     on: boolean
     maxHeight?: number
   }
+  inputMode?: string
 }
 
 export type InputButton = {
