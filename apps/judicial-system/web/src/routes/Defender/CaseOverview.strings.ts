@@ -83,21 +83,6 @@ export const defenderCaseOverview = defineMessages({
     description:
       'Texti sem birtist ef úrskurður er ekki undirritaður á yfirlitsskjá verjanda',
   },
-  appealedAlertBannerTitle: {
-    id:
-      'judicial.system.core:defender_case_overview.appealed_alert_banner_title',
-    defaultMessage:
-      '{isAppealedByProsecutor, select, true {Sækjandi} other {Verjandi}} hefur kært úrskurðinn {appealDate}',
-    description:
-      'Texti í viðvörunarglugga á yfirlitsskjá verjanda þegar mál hefur verið kært og hægt er að senda greinargerð.',
-  },
-  appealedAlertBannerLinkText: {
-    id:
-      'judicial.system.core:defender_case_overview.appealed_alert_banner_link_text',
-    defaultMessage: 'Senda greinargerð',
-    description:
-      'Texti í hlekk í viðvörunarglugga á yfirlitsskjá verjanda þegar mál hefur verið kært',
-  },
   confirmAppealAfterDeadlineModalTitle: {
     id:
       'judicial.system.core:defender_case_overview.confirm_appeal_after_deadline_modal_title',
