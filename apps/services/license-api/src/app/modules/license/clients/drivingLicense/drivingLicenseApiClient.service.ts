@@ -38,7 +38,6 @@ export class DrivingLicenseApiClientService implements GenericLicenseClient {
     this.logger = logger
     this.cacheManager = cacheManager
 
-    // TODO this should be injected by nest
     this.pkpassClient = new PkPassClient(config, logger, cacheManager)
   }
 
