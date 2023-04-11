@@ -85,6 +85,11 @@ export const core = defineMessages({
     defaultMessage: 'Sækjandi',
     description: 'Notað fyrir orðið sækjandi í öllum flæðum.',
   },
+  defender: {
+    id: 'judicial.system.core:defender_v2',
+    defaultMessage: 'Verjandi',
+    description: 'Notað fyrir orðið verjandi í öllum flæðum.',
+  },
   accused: {
     id: 'judicial.system.core:accused-v3',
     defaultMessage: 'kærð{suffix}',

@@ -61,6 +61,29 @@ export const getNextWorkday = (date: Date) => {
 
 // ---------------------------------------------------------------------------
 
+/**
+ * Get the next workday with a minimum number.
+ * @param num number of working days
+ * @returns Date {num} working days from now
+ */
+export const getWorkdayMinimumDate = (num: number) => {
+  let d = new Date()
+  let dateNum = 0
+
+  while (num > dateNum) {
+    if (isWorkday(d)) {
+      dateNum++
+    }
+    d = addDays(d, 1)
+  }
+
+  d = getNextWorkday(d)
+
+  return d
+}
+
+// ---------------------------------------------------------------------------
+
 export const workingDaysUntil = (date: Date | ISODate) => {
   const targetDate = date instanceof Date ? startOfDay(date) : new Date(date)
   const refDate = startOfDay(Date.now())

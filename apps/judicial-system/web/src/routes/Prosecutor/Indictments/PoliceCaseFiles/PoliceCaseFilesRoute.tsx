@@ -24,10 +24,6 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  IndictmentsProsecutorSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
-import {
   titles,
   errors as errorMessages,
 } from '@island.is/judicial-system-web/messages'
@@ -253,6 +249,7 @@ const UploadFilesToPoliceCase: React.FC<{
             CaseFileCategory.CASE_FILE,
             setDisplayFiles,
             handleUIUpdate,
+            policeCaseNumber,
           )
         }
         onRemove={(file) => handleRemove(file, removeFileCB)}
@@ -373,8 +370,6 @@ const PoliceCaseFilesRoute = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.PROSECUTOR}
-      activeSubSection={IndictmentsProsecutorSubsections.POLICE_CASE_FILES}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}

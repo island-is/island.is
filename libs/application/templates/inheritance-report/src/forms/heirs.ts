@@ -180,7 +180,7 @@ export const heirs = buildSection({
       ],
     }),
     buildSubSection({
-      id: 'heirsAddintionalInfo',
+      id: 'heirsAdditionalInfo',
       title: m.heirAdditionalInfo,
       children: [
         buildMultiField({

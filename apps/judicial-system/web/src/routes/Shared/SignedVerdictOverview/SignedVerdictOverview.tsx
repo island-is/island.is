@@ -40,6 +40,7 @@ import {
   useRequestRulingSignature,
   SigningModal,
   UserContext,
+  AppealAlertBanner,
 } from '@island.is/judicial-system-web/src/components'
 import {
   useCase,
@@ -47,7 +48,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   ReactSelectOption,
-  Sections,
   TempCase as Case,
   TempUpdateCase as UpdateCase,
 } from '@island.is/judicial-system-web/src/types'
@@ -61,7 +61,6 @@ import {
   Stack,
   Divider,
   AlertMessage,
-  AlertBanner,
 } from '@island.is/island-ui/core'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
@@ -76,8 +75,8 @@ import {
   UserRole,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
-import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -286,7 +285,6 @@ export const SignedVerdictOverview: React.FC = () => {
    * decided only accept an alternative travel ban and finally we
    * assume that the actual custody was accepted.
    */
-
   const canModifyCaseDates = useCallback(() => {
     return (
       user &&
@@ -510,25 +508,12 @@ export const SignedVerdictOverview: React.FC = () => {
 
   return (
     <>
-      {workingCase.courtEndTime &&
-        !workingCase.isAppealDeadlineExpired &&
-        user?.role &&
-        isProsecutionRole(user.role) &&
-        features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) && (
-          <AlertBanner
-            title={formatMessage(strings.appealAlertBannerTitle, {
-              appealDeadline: getAppealEndDate(workingCase.courtEndTime),
-            })}
-            variant="warning"
-            link={{
-              href: '/krofur',
-              title: formatMessage(strings.appealAlertBannerLinkText),
-            }}
-          />
+      {features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) &&
+        isProsecutionRole(user?.role) && (
+          <AppealAlertBanner workingCase={workingCase} />
         )}
       <PageLayout
         workingCase={workingCase}
-        activeSection={Sections.CASE_CLOSED}
         isLoading={isLoadingWorkingCase}
         notFound={caseNotFound}
       >

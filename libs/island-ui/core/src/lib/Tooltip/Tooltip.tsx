@@ -57,6 +57,7 @@ interface TooltipProps {
   color?: Colors
   children?: ReactElement
   size?: 'lg'
+  renderInPortal?: boolean
   as?: ElementType
 }
 
@@ -68,6 +69,7 @@ export const Tooltip: FC<TooltipProps> = ({
   children,
   as = 'span',
   size = 'sm',
+  renderInPortal = true,
 }) => {
   const tooltip = useTooltipState({
     animated: 250,
@@ -89,7 +91,7 @@ export const Tooltip: FC<TooltipProps> = ({
           <Icon icon="informationCircle" color={color} size={iconSize} />
         </TooltipReference>
       )}
-      <ReakitTooltip {...tooltip}>
+      <ReakitTooltip {...tooltip} unstable_portal={renderInPortal}>
         <div
           className={cn(styles.tooltip, {
             [styles.lg]: size === 'lg',

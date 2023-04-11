@@ -181,20 +181,35 @@ export class TranslationService {
   }
 
   /**
-   * Returns a map of translations for a given set of class instances.
+   * Returns a map of translations for a given set of class instances for all languages.
+   */
+  async findTranslationMap(
+    className: string,
+    keys: string[],
+  ): Promise<Map<string, Map<string, Map<string, string>>>>
+  /**
+   * Returns a map of translations for a given set of class instances for specific language.
    */
   async findTranslationMap(
     className: string,
     keys: string[],
     language: string,
-  ): Promise<Map<string, Map<string, string>>> {
+  ): Promise<Map<string, Map<string, string>>>
+  async findTranslationMap(
+    className: string,
+    keys: string[],
+    language?: string,
+  ): Promise<
+    | Map<string, Map<string, string>>
+    | Map<string, Map<string, Map<string, string>>>
+  > {
     if (keys.length === 0) {
       return new Map()
     }
 
     const translations = await this.translationModel.findAll({
       where: {
-        language,
+        ...(language && { language }),
         className,
         key: keys,
       },
@@ -205,8 +220,18 @@ export class TranslationService {
         acc.set(translation.key, new Map())
       }
 
+      let translationMap
+      if (!language) {
+        if (!acc.get(translation.key).has(translation.language)) {
+          acc.get(translation.key).set(translation.language, new Map())
+        }
+        translationMap = acc.get(translation.key).get(translation.language)
+      } else {
+        translationMap = acc.get(translation.key)
+      }
+
       if (translation.value) {
-        acc.get(translation.key).set(translation.property, translation.value)
+        translationMap.set(translation.property, translation.value)
       }
       return acc
     }, new Map())

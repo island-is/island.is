@@ -1,6 +1,9 @@
 import { FC, useState, useEffect } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
-import { InputController } from '@island.is/shared/form-fields'
+import {
+  InputController,
+  SelectController,
+} from '@island.is/shared/form-fields'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
   Box,
@@ -82,6 +85,14 @@ export const ReportFieldsRepeater: FC<
   const [total, setTotal] = useState(
     answersValues?.length ? answersValuesTotal : 0,
   )
+
+  const relations =
+    (externalData.syslumennOnEntry?.data as any).relationOptions?.map(
+      (relation: any) => ({
+        value: relation,
+        label: relation,
+      }),
+    ) || []
 
   const handleAddRepeaterFields = () => {
     //reset stocks
@@ -228,52 +239,62 @@ export const ReportFieldsRepeater: FC<
                     paddingBottom={2}
                     key={field.id}
                   >
-                    <InputController
-                      id={`${fieldIndex}.${field.id}`}
-                      name={`${fieldIndex}.${field.id}`}
-                      defaultValue={
-                        repeaterField[field.id]
-                          ? repeaterField[field.id]
-                          : getDefaults(field.id)
-                      }
-                      format={field.format}
-                      label={field.title}
-                      placeholder={field.placeholder}
-                      backgroundColor={field.color ? field.color : 'blue'}
-                      currency={field.currency}
-                      readOnly={field.readOnly}
-                      type={field.type}
-                      textarea={field.variant}
-                      rows={field.rows}
-                      required={field.required}
-                      error={
-                        error && error[index]
-                          ? error[index][field.id]
-                          : undefined
-                      }
-                      onChange={(elem) => {
-                        const value = elem.target.value.replace(/\D/g, '')
-
-                        // heirs
-                        if (field.id === 'heirsPercentage') {
-                          setPercentage(Number(value) / 100)
+                    {field.id === 'relation' ? (
+                      <SelectController
+                        id={`${fieldIndex}.${field.id}`}
+                        name={`${fieldIndex}.${field.id}`}
+                        label={field.title}
+                        placeholder={field.placeholder}
+                        options={relations}
+                      />
+                    ) : (
+                      <InputController
+                        id={`${fieldIndex}.${field.id}`}
+                        name={`${fieldIndex}.${field.id}`}
+                        defaultValue={
+                          repeaterField[field.id]
+                            ? repeaterField[field.id]
+                            : getDefaults(field.id)
                         }
-
-                        // stocks
-                        if (field.id === 'rateOfExchange') {
-                          setRateOfExchange(Number(value))
-                        } else if (field.id === 'faceValue') {
-                          setFaceValue(Number(value))
+                        format={field.format}
+                        label={field.title}
+                        placeholder={field.placeholder}
+                        backgroundColor={field.color ? field.color : 'blue'}
+                        currency={field.currency}
+                        readOnly={field.readOnly}
+                        type={field.type}
+                        textarea={field.variant}
+                        rows={field.rows}
+                        required={field.required}
+                        error={
+                          error && error[index]
+                            ? error[index][field.id]
+                            : undefined
                         }
+                        onChange={(elem) => {
+                          const value = elem.target.value.replace(/\D/g, '')
 
-                        // total
-                        if (props.sumField === field.id) {
-                          calculateTotal(currencyStringToNumber(value), index)
-                        }
+                          // heirs
+                          if (field.id === 'heirsPercentage') {
+                            setPercentage(Number(value) / 100)
+                          }
 
-                        setIndex(fieldIndex)
-                      }}
-                    />
+                          // stocks
+                          if (field.id === 'rateOfExchange') {
+                            setRateOfExchange(Number(value))
+                          } else if (field.id === 'faceValue') {
+                            setFaceValue(Number(value))
+                          }
+
+                          // total
+                          if (props.sumField === field.id) {
+                            calculateTotal(currencyStringToNumber(value), index)
+                          }
+
+                          setIndex(fieldIndex)
+                        }}
+                      />
+                    )}
                   </GridColumn>
                 )
               })}
