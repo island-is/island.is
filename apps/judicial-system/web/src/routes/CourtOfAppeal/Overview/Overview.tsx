@@ -92,11 +92,6 @@ const CourtOfAppealOverview: React.FC = () => {
             'PPPp',
           ),
         })}
-        link={{
-          href: constants.CASES_ROUTE,
-          title: formatMessage(strings.alertBannerLinkText),
-          tooltip: formatMessage(strings.alertBannerTooltip),
-        }}
         variant="warning"
       />
       <PageLayout
