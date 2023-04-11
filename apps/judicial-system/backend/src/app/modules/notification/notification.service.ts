@@ -1230,7 +1230,8 @@ export class NotificationService {
     const { subject, body } = formatDefenderAssignedEmailNotification(
       this.formatMessage,
       theCase,
-      defenderNationalId && formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id)
+      defenderNationalId &&
+        formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
     )
 
     return this.sendEmail(subject, body, defenderName, defenderEmail)
