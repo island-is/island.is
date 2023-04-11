@@ -234,6 +234,7 @@ const ViewOwnedList = () => {
                         </Text>
                         <DatePicker
                           label={formatMessage(m.date)}
+                          locale="is"
                           placeholderText={formatMessage(m.selectDate)}
                           handleChange={(date) =>
                             setSelectedDateToOpenList(date)

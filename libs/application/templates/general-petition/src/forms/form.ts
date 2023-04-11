@@ -63,6 +63,7 @@ export const form: Form = buildForm({
               variant: 'textarea',
               rows: 1,
               backgroundColor: 'white',
+              maxLength: 100,
               defaultValue: () => '',
             }),
             buildTextField({
