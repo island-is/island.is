@@ -12,6 +12,23 @@ export const m = defineMessages({
     description: 'Title for external data acquisition',
   },
 
+  introSectionTitle: {
+    id: 'dlp.application:introSectionTitle',
+    defaultMessage: 'Velkomin/nn/ið í umsókn um ökuskírteini',
+    description: 'Title for intro section',
+  },
+  introSectionSubTitle: {
+    id: 'dlp.application:introSectionTitle',
+    defaultMessage: 'Varðandi umsókn',
+    description: 'Title for intro section',
+  },
+  introSectionDescription: {
+    id: 'dlp.application:introSectionDescription',
+    defaultMessage:
+      'Þú ert að fara að sækja um réttindi til þess að vera leiðbeinandi fyrir æfingarakstur. Þú þarft að fylla út kennitölu nemanda sem þú vilt vera leiðbeinandi fyrir. Eftir það verða upplýsingar sóttar úr Ökuskírteinaskrá og úrskurðað um hvort þú hafir tilskilin réttindi til þess að gerast leiðbeinandi fyrir valinn nemanda.',
+    description: 'Description for intro section',
+  },
+
   /* Current License Provider */
   titleCurrentLicenseProvider: {
     id: 'dlp.application:titleCurrentLicenseProvider',
@@ -30,6 +47,25 @@ export const m = defineMessages({
       'Tókst ekki að sækja upplýsingar um núgildandi ökuskírteini',
     description:
       "Message to display when user's Driver License Data cannot be retrieved",
+  },
+
+  /* Can Apply For Practice Permit Provider */
+  titleCanApplyForPracticePermit: {
+    id: 'dlp.application:titleCanApplyForPracticePermit',
+    defaultMessage: 'Upplýsinggaar úr Ökuskírteinaskrá',
+    description: 'Can Apply For Practice Permit Provider Title',
+  },
+  descriptionCanApplyForPracticePermit: {
+    id: 'dlp.application:descriptionCanApplyForPracticePermit',
+    defaultMessage:
+      'Sóttar eru upplýsingar um réttindi til að vera leiðbeinandi í æfingarakstri.',
+    description: 'Can Apply For Practice Permit Provider Title',
+  },
+  errorCanApplyForPracticePermit: {
+    id: 'dlp.application:errorCanApplyForPracticePermit',
+    defaultMessage: 'Tókst ekki að sækja upplýsingar um réttindi',
+    description:
+      "Message to display when user's Practice Permit Application Data cannot be retrieved",
   },
 
   /* Requirements Subsection */

@@ -16,6 +16,7 @@ import {
   Teacher,
 } from './drivingLicenseApi.types'
 import { handleCreateResponse } from './utils/handleCreateResponse'
+import { PracticePermitDto } from '../v5'
 
 @Injectable()
 export class DrivingLicenseApi {
@@ -364,5 +365,24 @@ export class DrivingLicenseApi {
     return {
       data: image,
     }
+  }
+
+  async canApplyForPracticePermit(params: {
+    token: string
+    mentorSSN: string
+    studentSSN: string
+  }): Promise<PracticePermitDto> {
+    return await this.v5.apiDrivinglicenseV5ApplicationsCanapplyforPracticepermitPost(
+      {
+        apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+        apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+        jwttoken: params.token,
+        postPracticePermit: {
+          dateFrom: new Date(),
+          studentSSN: params.studentSSN,
+          userId: params.mentorSSN,
+        },
+      },
+    )
   }
 }

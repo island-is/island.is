@@ -9,12 +9,16 @@ import { BaseTemplateAPIModuleConfig } from '../../../types'
 
 // Here you import your module service
 import { DrivingLearnersPermitService } from './driving-learners-permit.service'
+import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
 
 export class DrivingLearnersPermitModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: DrivingLearnersPermitModule,
-      imports: [SharedTemplateAPIModule.register(config)],
+      imports: [
+        DrivingLicenseApiModule,
+        SharedTemplateAPIModule.register(config),
+      ],
       providers: [DrivingLearnersPermitService],
       exports: [DrivingLearnersPermitService],
     }

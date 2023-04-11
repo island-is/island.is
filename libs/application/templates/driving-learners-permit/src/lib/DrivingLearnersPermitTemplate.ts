@@ -11,11 +11,12 @@ import {
   CurrentLicenseApi,
 } from '@island.is/application/types'
 import { FeatureFlagClient, Features } from '@island.is/feature-flags'
-import { ApiActions, FakeDataFeature } from '../shared'
+import { FakeDataFeature } from '../shared'
 import { m } from './messages'
 import { assign } from 'xstate'
 import { dataSchema } from './dataSchema'
 import { truthyFeatureFromClient } from '../shared/utils'
+import { CanApplyForPracticePermitApi } from '../dataProviders'
 
 const States = {
   prerequisites: 'prerequisites',
@@ -77,7 +78,7 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
                   allowFakeData,
                 })
               },
-              api: [CurrentLicenseApi],
+              api: [CurrentLicenseApi, CanApplyForPracticePermitApi],
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
