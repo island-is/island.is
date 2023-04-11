@@ -170,6 +170,9 @@ export const defaultRenderNodeObject: RenderNode = {
     )
   },
   [INLINES.EMBEDDED_ENTRY]: (node) => {
+    // In case something other than the price content type is inline embedded we ignore it
+    if (node?.data?.target?.sys?.contentType?.sys?.id !== 'price') return null
+
     const amount = node?.data?.target?.fields?.amount
     if (typeof amount !== 'number') return null
 
@@ -185,11 +188,9 @@ export const defaultRenderNodeObject: RenderNode = {
     // Format the amount so it displays dots (Example of a displayed value: 2.700 krónur)
     const formatter = new Intl.NumberFormat('de-DE')
 
-    return (
-      <span>
-        {formatter.format(amount)} {postfix}
-      </span>
-    )
+    const displayedValue = `${formatter.format(amount)} ${postfix}`
+
+    return <span>{displayedValue}</span>
   },
   [INLINES.HYPERLINK]: (node, children) => (
     <Hyperlink href={node.data.uri}>{children}</Hyperlink>
