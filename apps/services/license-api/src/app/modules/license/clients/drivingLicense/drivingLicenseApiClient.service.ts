@@ -29,7 +29,6 @@ export class DrivingLicenseApiClientService implements GenericLicenseClient {
     private config: ConfigType<typeof DrivingLicenseApiClientConfig>,
     private cacheManager?: CacheManager | null,
   ) {
-    // TODO inject the actual RLS x-road client
     this.xroadApiUrl = xroadConfig.xRoadBasePath
     this.xroadClientId = xroadConfig.xRoadClient
     this.xroadPath = config.xroad.path
