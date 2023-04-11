@@ -15,7 +15,7 @@ const Conclusion: React.FC<Props> = (props) => {
   const { formatMessage } = useIntl()
   const { conclusionText, judgeName } = props
 
-  return !conclusionText ? null : (
+  return conclusionText ? (
     <BlueBox>
       <Box marginBottom={2} textAlign="center">
         <Text as="h3" variant="h3">
@@ -33,7 +33,7 @@ const Conclusion: React.FC<Props> = (props) => {
         </Box>
       ) : null}
     </BlueBox>
-  )
+  ) : null
 }
 
 export default Conclusion
