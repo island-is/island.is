@@ -195,10 +195,7 @@ describe('transformCase', () => {
       // Arrange
       const prosecutorPostponedAppealDate = new Date()
       prosecutorPostponedAppealDate.setDate(
-        prosecutorPostponedAppealDate.getDate() + 1,
-      )
-      prosecutorPostponedAppealDate.setSeconds(
-        prosecutorPostponedAppealDate.getSeconds() + 1,
+        prosecutorPostponedAppealDate.getDate() - 2,
       )
       const theCase = {
         prosecutorPostponedAppealDate: prosecutorPostponedAppealDate.toISOString(),
@@ -216,7 +213,7 @@ describe('transformCase', () => {
       const accusedPostponedAppealDate = new Date()
       accusedPostponedAppealDate.setDate(accusedPostponedAppealDate.getDate())
       accusedPostponedAppealDate.setSeconds(
-        accusedPostponedAppealDate.getSeconds() + 100,
+        accusedPostponedAppealDate.getSeconds() - 100,
       )
       const theCase = {
         accusedPostponedAppealDate: accusedPostponedAppealDate.toISOString(),
