@@ -12,14 +12,15 @@ import type { User } from '@island.is/auth-nest-tools'
 import { ConsultationPortalScope } from '@island.is/auth/scopes'
 import { UserService } from './user.service'
 import { UserEmailResult } from '../models/userEmailResult.model'
+import { UserSubscriptionsAggregate } from '../models/userSubscriptionsAggregate.model'
 
 @Resolver()
 @UseGuards(FeatureFlagGuard, IdsUserGuard)
 @Scopes(ConsultationPortalScope.default)
+@FeatureFlag(Features.consultationPortalApplication)
 export class UserResolver {
   constructor(private userService: UserService) {}
 
-  @FeatureFlag(Features.consultationPortalApplication)
   @Query(() => UserAdviceAggregate, {
     name: 'consultationPortalAllUserAdvices',
   })
@@ -32,7 +33,6 @@ export class UserResolver {
     return userAdvices
   }
 
-  @FeatureFlag(Features.consultationPortalApplication)
   @Query(() => UserEmailResult, {
     name: 'consultationPortalUserEmail',
   })
@@ -40,5 +40,15 @@ export class UserResolver {
     const userEmail = await this.userService.getUserEmail(user)
 
     return userEmail
+  }
+
+  @Query(() => UserSubscriptionsAggregate, {
+    name: 'consultationPortalUserSubscriptions',
+  })
+  async getUserSubscriptions(
+    @CurrentUser() user: User,
+  ): Promise<UserSubscriptionsAggregate> {
+    const response = await this.userService.getUserSubscriptions(user)
+    return response
   }
 }
