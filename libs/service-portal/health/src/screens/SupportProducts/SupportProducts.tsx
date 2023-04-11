@@ -5,12 +5,10 @@ import {
   Table as T,
   Text,
   Inline,
-  LinkV2,
-  Icon,
+  Button,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { ErrorScreen, IntroHeader, m } from '@island.is/service-portal/core'
-import * as styles from './SupportProducts.css'
 import { messages } from '../../lib/messages'
 import { SUPPORT_PRODUCTS } from '../../utils/constants'
 import { FootNote } from '../../components/FootNote.tsx/FootNote'
@@ -114,6 +112,7 @@ const SupportProducts = () => {
             </Button>
           </a>
         </>
+
   */
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -122,45 +121,26 @@ const SupportProducts = () => {
         intro={formatMessage(messages.supportProductsDescription)}
       />
       <Inline space={3}>
-        <LinkV2
-          color="blue400"
-          newTab={true}
-          href={
-            'https://island.is/greidsluthatttaka-vegna-naeringar-og-serfaedis'
-          }
-        >
-          <>
-            <Text variant="small">
+        <>
+          <a
+            href="https://island.is/loftbru/notendaskilmalar-vegagerdarinnar-fyrir-loftbru"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <Button size="small" variant="text" icon="open" iconType="outline">
               {formatMessage(messages.supportProductsDescriptionInfo1)}
-            </Text>
-            <Icon
-              aria-hidden="true"
-              icon="open"
-              type="outline"
-              size="small"
-              className={styles.iconStyle}
-            />
-          </>
-        </LinkV2>
-        <LinkV2
-          color="blue400"
-          newTab={true}
-          href="https://island.is/einnota-hjalpartaeki"
-        >
-          <>
-            <Text variant="small">
+            </Button>
+          </a>
+          <a
+            href="https://island.is/einnota-hjalpartaeki"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <Button size="small" variant="text" icon="open" iconType="outline">
               {formatMessage(messages.supportProductsDescriptionInfo2)}
-            </Text>
-
-            <Icon
-              aria-hidden="true"
-              icon="open"
-              type="outline"
-              size="small"
-              className={styles.iconStyle}
-            />
-          </>
-        </LinkV2>
+            </Button>
+          </a>
+        </>
       </Inline>
 
       <Box marginTop={[2, 2, 5]}>

@@ -25,7 +25,7 @@ export const messages = defineMessages({
   },
   supportProductsDescriptionInfo1: {
     id: 'sp.health:support-description-info-1',
-    defaultMessage: 'Nánari um næringu og sérfæði',
+    defaultMessage: 'Nánar um næringu og sérfæði',
   },
   supportProductsDescriptionInfo2: {
     id: 'sp.health:support-description-info-2',
