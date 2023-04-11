@@ -11512,7 +11512,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node-rsa@npm:^1.1.1":
+"@types/node-rsa@npm:1.1.1":
   version: 1.1.1
   resolution: "@types/node-rsa@npm:1.1.1"
   dependencies:
@@ -26697,7 +26697,7 @@ __metadata:
     "@types/mailparser": 3.4.0
     "@types/memoizee": 0.4.5
     "@types/node": 18.14.2
-    "@types/node-rsa": ^1.1.1
+    "@types/node-rsa": 1.1.1
     "@types/nodemailer": 6.4.1
     "@types/opossum": 4.1.1
     "@types/passport-jwt": 3.0.8
@@ -26864,7 +26864,7 @@ __metadata:
     next-secure-headers: 2.1.0
     node-fetch: 2.6.7
     node-gyp: 9.1.0
-    node-rsa: ^1.1.1
+    node-rsa: 1.1.1
     nodemailer: 6.7.2
     nx: 13.10.3
     oidc-client-ts: 2.0.3
@@ -32123,7 +32123,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-rsa@npm:^1.1.1":
+"node-rsa@npm:1.1.1":
   version: 1.1.1
   resolution: "node-rsa@npm:1.1.1"
   dependencies:
