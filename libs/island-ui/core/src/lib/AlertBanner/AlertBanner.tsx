@@ -7,7 +7,6 @@ import { Icon } from '../IconRC/Icon'
 import { IconMapIcon } from '../IconRC/types'
 import { Text } from '../Text/Text'
 import { LinkContext } from '../context/LinkContext/LinkContext'
-import { Tooltip } from '../Tooltip/Tooltip'
 import { LinkV2 } from '../Link/LinkV2'
 
 export type AlertBannerVariants =
