@@ -1,15 +1,5 @@
 import initApollo from '@island.is/web/graphql/client'
-import gql from 'graphql-tag'
-
-const GET_DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_IDENTITY_TOKEN = gql`
-  query GetDirectorateOfImmigrationWatsonAssistantChatIdentityToken(
-    $input: WatsonAssistantChatIdentityTokenInput!
-  ) {
-    WatsonAssistantChatIdentityToken(input: $input) {
-      token
-    }
-  }
-`
+import { GET_DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_IDENTITY_TOKEN } from '@island.is/web/screens/queries/WatsonAssistantChat'
 
 export const onDirectorateOfImmigrationChatLoad = (instance) => {
   const apolloClient = initApollo({})
