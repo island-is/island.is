@@ -202,27 +202,41 @@ describe('View Case File Guard', () => {
   })
 
   describe.each(completedCaseStates)('for %s cases', (state) => {
-    describe('a defender can view a ruling', () => {
-      let then: Then
+    const allowedCaseFileCategories = [
+      CaseFileCategory.RULING,
+      CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+      CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+      CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+      CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+      CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+      CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+    ]
 
-      beforeEach(() => {
-        mockRequest.mockImplementationOnce(() => ({
-          user: { role: UserRole.DEFENDER },
-          case: { state },
-          caseFile: { category: CaseFileCategory.RULING },
-        }))
+    describe.each(allowedCaseFileCategories)(
+      'a defender can view %s',
+      (category) => {
+        let then: Then
 
-        then = givenWhenThen()
-      })
+        beforeEach(() => {
+          mockRequest.mockImplementationOnce(() => ({
+            user: { role: UserRole.DEFENDER },
+            case: { state },
+            caseFile: { category },
+          }))
 
-      it('should activate', () => {
-        expect(then.result).toBe(true)
-      })
-    })
+          then = givenWhenThen()
+        })
+
+        it('should activate', () => {
+          expect(then.result).toBe(true)
+        })
+      },
+    )
 
     describe.each(
       Object.keys(CaseFileCategory).filter(
-        (category) => category !== CaseFileCategory.RULING,
+        (category) =>
+          !allowedCaseFileCategories.includes(category as CaseFileCategory),
       ),
     )('a defender can not view %s', (category) => {
       let then: Then

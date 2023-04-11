@@ -68,7 +68,16 @@ export class ViewCaseFileGuard implements CanActivate {
     if (
       user.role === UserRole.DEFENDER &&
       completedCaseStates.includes(theCase.state) &&
-      caseFile.category === CaseFileCategory.RULING
+      caseFile.category &&
+      [
+        CaseFileCategory.RULING,
+        CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+        CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+        CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+        CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+        CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+        CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+      ].includes(caseFile.category)
     ) {
       return true
     }
