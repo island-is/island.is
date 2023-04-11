@@ -28,7 +28,7 @@ export class DisabilityLicenseUpdateClient extends BaseLicenseUpdateClient {
   pushUpdate(
     inputData: PassDataInput,
     nationalId: string,
-  ): Promise<Result<Pass>> {
+  ): Promise<Result<Pass | undefined>> {
     return this.smartApi.updatePkPass(inputData, nationalId)
   }
 

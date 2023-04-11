@@ -21,11 +21,11 @@ export abstract class BaseLicenseUpdateClient {
   pushUpdate(
     inputData: PassDataInput,
     nationalId: string,
-  ): Promise<Result<Pass>> {
+  ): Promise<Result<Pass | undefined>> {
     return this.smartApi.updatePkPass(inputData, nationalId)
   }
 
-  abstract pullUpdate(nationalId: string): Promise<Result<Pass>>
+  abstract pullUpdate(nationalId: string): Promise<Result<Pass | undefined>>
 
   revoke(nationalId: string): Promise<Result<RevokePassData>> {
     return this.smartApi.revokePkPass(nationalId)

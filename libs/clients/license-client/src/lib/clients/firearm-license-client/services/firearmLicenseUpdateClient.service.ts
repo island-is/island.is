@@ -35,7 +35,7 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
   pushUpdate(
     inputData: PassDataInput,
     nationalId: string,
-  ): Promise<Result<Pass>> {
+  ): Promise<Result<Pass | undefined>> {
     return super.pushUpdate(inputData, formatNationalId(nationalId))
   }
 

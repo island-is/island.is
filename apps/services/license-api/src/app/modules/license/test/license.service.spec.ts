@@ -1,9 +1,8 @@
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Test } from '@nestjs/testing'
 import { LicenseService } from '../license.service'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
-  CLIENT_FACTORY,
-  GenericLicenseClient,
   LicenseId,
   LicenseUpdateType,
   PASS_TEMPLATE_IDS,
@@ -14,16 +13,30 @@ import {
   Pass,
   RevokePassData,
   VerifyPassData,
+  SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
 import { VerifyInputData } from '../dto/verifyLicense.input'
 import {
   BadRequestException,
+  Inject,
+  Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
+import {
+  BaseLicenseUpdateClient,
+  LicenseUpdateClientService,
+} from '@island.is/clients/license-client'
 
 const licenseIds = Object.values(LicenseId)
 
-class MockLicenseClient implements GenericLicenseClient {
+@Injectable()
+export class MockUpdateClient extends BaseLicenseUpdateClient {
+  constructor(
+    @Inject(LOGGER_PROVIDER) protected logger: Logger,
+    protected smartApi: SmartSolutionsApi,
+  ) {
+    super(logger, smartApi)
+  }
   pushUpdate = (inputData: PassDataInput, nationalId: string) => {
     if (nationalId === 'success') {
       return Promise.resolve<Result<Pass | undefined>>({
@@ -181,6 +194,10 @@ describe('LicenseService', () => {
           useClass: jest.fn(() => ({})),
         },
         {
+          provide: SmartSolutionsApi,
+          useClass: jest.fn(() => ({})),
+        },
+        {
           provide: PASS_TEMPLATE_IDS,
           useValue: {
             disability: LicenseId.DISABILITY_LICENSE,
@@ -188,9 +205,14 @@ describe('LicenseService', () => {
           },
         },
         {
-          provide: CLIENT_FACTORY,
-          useFactory: () => async (): Promise<GenericLicenseClient | null> =>
-            new MockLicenseClient(),
+          provide: LicenseUpdateClientService,
+          useFactory: (logger, smart) => ({
+            getLicenseUpdateClientByType: async (): Promise<BaseLicenseUpdateClient | null> =>
+              new MockUpdateClient(logger, smart),
+            getLicenseUpdateClientByPassTemplateId: async (): Promise<BaseLicenseUpdateClient | null> =>
+              new MockUpdateClient(logger, smart),
+          }),
+          inject: [LOGGER_PROVIDER, SmartSolutionsApi],
         },
       ],
     }).compile()
