@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # api-domains-watson-assistant-chat
 
 This library was generated with [Nx](https://nx.dev).
