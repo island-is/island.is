@@ -21,42 +21,6 @@ export enum AppealDecisionRole {
   ACCUSED = 'ACCUSED',
 }
 
-export enum Sections {
-  PROSECUTOR = 0,
-  JUDGE = 1,
-  CASE_CLOSED = 2,
-  EXTENSION = 3,
-  JUDGE_EXTENSION = 4,
-}
-
-export enum RestrictionCaseProsecutorSubsections {
-  DEFENDANT = 0,
-  HEARING_ARRANGEMENTS = 1,
-  POLICE_DEMANDS = 2,
-  POLICE_REPORT = 3,
-  CASE_FILES = 4,
-  PROSECUTOR_OVERVIEW = 5,
-}
-
-export enum RestrictionCaseCourtSubsections {
-  RECEPTION_AND_ASSIGNMENT = 0,
-  JUDGE_OVERVIEW = 1,
-  HEARING_ARRANGEMENTS = 2,
-  RULING = 3,
-  COURT_RECORD = 4,
-  CONFIRMATION = 5,
-}
-
-export enum IndictmentsProsecutorSubsections {
-  DEFENDANT = 0,
-  POLICE_CASE_FILES = 1,
-  CASE_FILE = 2,
-  PROCESSING = 3,
-  INDICTMENT = 4,
-  CASE_FILES = 4,
-  OVERVIEW = 5,
-}
-
 export enum IndictmentsCourtSubsections {
   JUDGE_OVERVIEW = 0,
   RECEPTION_AND_ASSIGNMENT = 1,

@@ -40,6 +40,7 @@ import {
   useRequestRulingSignature,
   SigningModal,
   UserContext,
+  AppealAlertBanner,
 } from '@island.is/judicial-system-web/src/components'
 import {
   useCase,
@@ -47,7 +48,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   ReactSelectOption,
-  Sections,
   TempCase as Case,
   TempUpdateCase as UpdateCase,
 } from '@island.is/judicial-system-web/src/types'
@@ -61,13 +61,8 @@ import {
   Stack,
   Divider,
   AlertMessage,
-  AlertBanner,
 } from '@island.is/island-ui/core'
-import {
-  capitalize,
-  caseTypes,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
+import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   core,
@@ -79,10 +74,9 @@ import {
   User,
   UserRole,
   CaseType,
-  CaseAppealState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
-import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -291,7 +285,6 @@ export const SignedVerdictOverview: React.FC = () => {
    * decided only accept an alternative travel ban and finally we
    * assume that the actual custody was accepted.
    */
-
   const canModifyCaseDates = useCallback(() => {
     return (
       user &&
@@ -501,52 +494,6 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
-  const renderAlertBanner = () => {
-    let alertTitle, alertLinkText, alertLinkHref, appealDate
-
-    const shouldDisplayAppealAlertBanner =
-      workingCase.courtEndTime &&
-      !workingCase.isAppealDeadlineExpired &&
-      user?.role &&
-      isProsecutionRole(user.role)
-
-    const shouldDisplayAppealedAlertBanner =
-      workingCase.appealState &&
-      workingCase.appealState === CaseAppealState.Appealed
-
-    if (shouldDisplayAppealAlertBanner) {
-      alertTitle = formatMessage(strings.appealAlertBannerTitle, {
-        appealDeadline: getAppealEndDate(workingCase.courtEndTime ?? ''),
-      })
-      alertLinkText = formatMessage(strings.appealAlertBannerLinkText)
-      alertLinkHref = '/krofur'
-    } else if (shouldDisplayAppealedAlertBanner) {
-      const isAppealedByProsecutor = workingCase.prosecutorPostponedAppealDate
-      appealDate = isAppealedByProsecutor
-        ? workingCase.prosecutorPostponedAppealDate
-        : workingCase.accusedPostponedAppealDate
-      alertTitle = formatMessage(strings.appealedAlertBannerTitle, {
-        isAppealedByProsecutor: isAppealedByProsecutor,
-        appealDate: formatDate(appealDate, 'PPPp'),
-      })
-      alertLinkText = formatMessage(strings.appealedAlertBannerLinkText)
-      alertLinkHref = '/krofur'
-    } else {
-      return undefined
-    }
-
-    return (
-      <AlertBanner
-        title={alertTitle}
-        variant="warning"
-        link={{
-          href: alertLinkHref,
-          title: alertLinkText,
-        }}
-      />
-    )
-  }
-
   const onModifyDatesSubmit = async (update: UpdateCase) => {
     const updatedCase = await updateCase(workingCase.id, { ...update })
 
@@ -562,10 +509,11 @@ export const SignedVerdictOverview: React.FC = () => {
   return (
     <>
       {features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) &&
-        renderAlertBanner()}
+        isProsecutionRole(user?.role) && (
+          <AppealAlertBanner workingCase={workingCase} />
+        )}
       <PageLayout
         workingCase={workingCase}
-        activeSection={Sections.CASE_CLOSED}
         isLoading={isLoadingWorkingCase}
         notFound={caseNotFound}
       >

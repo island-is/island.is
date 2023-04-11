@@ -1275,6 +1275,10 @@
           "subscribeToAll": {
             "type": "boolean"
           },
+          "subscribeToAllType": {
+            "type": "string",
+            "nullable": true
+          },
           "caseIds": {
             "type": "array",
             "items": {
