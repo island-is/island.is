@@ -1,5 +1,6 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
 
 import {
   BlueBox,
@@ -13,6 +14,7 @@ import {
   RestrictionTags,
   SignedDocument,
   PageHeader,
+  Modal,
 } from '@island.is/judicial-system-web/src/components'
 import CaseResentExplanation from '@island.is/judicial-system-web/src/components/CaseResentExplanation/CaseResentExplanation'
 import { core, titles } from '@island.is/judicial-system-web/messages'
@@ -42,18 +44,23 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import * as constants from '@island.is/judicial-system/consts'
 
 import { defenderCaseOverview as m } from './CaseOverview.strings'
 import { CaseAppealState } from '../../graphql/schema'
 
+type availableModals = 'NoModal' | 'ConfirmAppealAfterDeadline'
+
 export const CaseOverview: React.FC = () => {
+  const { formatMessage } = useIntl()
+  const { features } = useContext(FeatureContext)
+  const router = useRouter()
+  const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
+  const appealDeadlineHash = '#kaerufrestur_utrunninn'
+
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
     FormContext,
   )
-
-  const { formatMessage } = useIntl()
-
-  const { features } = useContext(FeatureContext)
 
   const titleForCase = (theCase: Case) => {
     if (theCase.state === CaseState.REJECTED) {
@@ -97,7 +104,7 @@ export const CaseOverview: React.FC = () => {
     let alertTitle, alertLinkText, alertLinkHref, appealDate
 
     const shouldDisplayAppealAlertBanner =
-      workingCase.courtEndTime && !workingCase.isAppealDeadlineExpired
+      workingCase.courtEndTime && !workingCase.isAppealGracePeriodExpired
 
     const shouldDisplayAppealedAlertBanner =
       workingCase.appealState &&
@@ -105,10 +112,13 @@ export const CaseOverview: React.FC = () => {
 
     if (shouldDisplayAppealAlertBanner) {
       alertTitle = formatMessage(m.appealAlertBannerTitle, {
+        isAppealDeadlineExpired: workingCase.isAppealDeadlineExpired,
         appealDeadline: getAppealEndDate(workingCase.courtEndTime ?? ''),
       })
       alertLinkText = formatMessage(m.appealAlertBannerLinkText)
-      alertLinkHref = '/krofur'
+      alertLinkHref = workingCase.isAppealDeadlineExpired
+        ? `${constants.DEFENDER_ROUTE}/${workingCase.id}${appealDeadlineHash}`
+        : `${constants.DEFENDER_APPEAL_ROUTE}/${workingCase.id}`
     } else if (shouldDisplayAppealedAlertBanner) {
       const isAppealedByProsecutor = workingCase.prosecutorPostponedAppealDate
       appealDate = isAppealedByProsecutor
@@ -347,6 +357,26 @@ export const CaseOverview: React.FC = () => {
             <Divider />
           </Box>
         </FormContentContainer>
+        {modalVisible === 'ConfirmAppealAfterDeadline' && (
+          <Modal
+            title={formatMessage(m.confirmAppealAfterDeadlineModalTitle)}
+            text={formatMessage(m.confirmAppealAfterDeadlineModalText)}
+            primaryButtonText={formatMessage(
+              m.confirmAppealAfterDeadlineModalPrimaryButtonText,
+            )}
+            secondaryButtonText={formatMessage(
+              m.confirmAppealAfterDeadlineModalSecondaryButtonText,
+            )}
+            onPrimaryButtonClick={async () => {
+              await removeHash() // TODO REUSE THIS FUNTION FROM SIGNED VERDICT OVERVIWE PAGE
+              router.push(`${constants.APPEAL_ROUTE}/${workingCase.id}`)
+            }}
+            onSecondaryButtonClick={async () => {
+              await removeHash()
+              setModalVisible('NoModal')
+            }}
+          />
+        )}
       </PageLayout>
     </>
   )

@@ -1,4 +1,10 @@
-import React, { ReactNode, useCallback, useContext, useState } from 'react'
+import React, {
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
@@ -219,32 +225,9 @@ export const getExtensionInfoText = (
       })
 }
 
-type availableModals = 'NoModal' | 'SigningModal'
+type availableModals = 'NoModal' | 'SigningModal' | 'ConfirmAppealAfterDeadline'
 
 export const SignedVerdictOverview: React.FC = () => {
-  // Date modification state
-  const [isModifyingDates, setIsModifyingDates] = useState<boolean>(false)
-
-  // Case sharing state
-  const [shareCaseModal, setSharedCaseModal] = useState<ModalControls>()
-  const [
-    selectedSharingInstitutionId,
-    setSelectedSharingInstitutionId,
-  ] = useState<ValueType<ReactSelectOption>>()
-
-  // Court record signature state
-  const [
-    requestCourtRecordSignatureResponse,
-    setRequestCourtRecordSignatureResponse,
-  ] = useState<RequestSignatureResponse>()
-  const [
-    courtRecordSignatureConfirmationResponse,
-    setCourtRecordSignatureConfirmationResponse,
-  ] = useState<SignatureConfirmationResponse>()
-
-  // Reopen case state
-  const [isReopeningCase, setIsReopeningCase] = useState<boolean>(false)
-
   const {
     workingCase,
     setWorkingCase,
@@ -253,8 +236,27 @@ export const SignedVerdictOverview: React.FC = () => {
     refreshCase,
   } = useContext(FormContext)
 
-  // Ruling signature state
+  const appealDeadlineHash = '#kaerufrestur_utrunninn'
+  const [isModifyingDates, setIsModifyingDates] = useState<boolean>(false)
+  const [shareCaseModal, setSharedCaseModal] = useState<ModalControls>()
+  const [isReopeningCase, setIsReopeningCase] = useState<boolean>(false)
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
+
+  const [
+    selectedSharingInstitutionId,
+    setSelectedSharingInstitutionId,
+  ] = useState<ValueType<ReactSelectOption>>()
+
+  const [
+    requestCourtRecordSignatureResponse,
+    setRequestCourtRecordSignatureResponse,
+  ] = useState<RequestSignatureResponse>()
+
+  const [
+    courtRecordSignatureConfirmationResponse,
+    setCourtRecordSignatureConfirmationResponse,
+  ] = useState<SignatureConfirmationResponse>()
+
   const {
     requestRulingSignature,
     requestRulingSignatureResponse,
@@ -517,7 +519,9 @@ export const SignedVerdictOverview: React.FC = () => {
         appealDeadline: getAppealEndDate(workingCase.courtEndTime ?? ''),
       })
       alertLinkText = formatMessage(strings.appealAlertBannerLinkText)
-      alertLinkHref = `${constants.APPEAL_ROUTE}/${workingCase.id}`
+      alertLinkHref = workingCase.isAppealDeadlineExpired
+        ? `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}${appealDeadlineHash}`
+        : `${constants.APPEAL_ROUTE}/${workingCase.id}`
     } else if (shouldDisplayAppealedAlertBanner) {
       const isAppealedByProsecutor = workingCase.prosecutorPostponedAppealDate
       appealDate = isAppealedByProsecutor
@@ -556,6 +560,28 @@ export const SignedVerdictOverview: React.FC = () => {
 
     return true
   }
+
+  const removeHash = async () => {
+    await router.replace(
+      `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}${appealDeadlineHash}`,
+      `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`,
+      { scroll: false },
+    )
+  }
+
+  useEffect(() => {
+    const onHashChangeStart = (url: string) => {
+      if (url.includes(appealDeadlineHash)) {
+        setModalVisible('ConfirmAppealAfterDeadline')
+      }
+    }
+
+    router.events.on('hashChangeStart', onHashChangeStart)
+
+    return () => {
+      router.events.off('hashChangeStart', onHashChangeStart)
+    }
+  }, [router.events, router.query])
 
   return (
     <>
@@ -1044,6 +1070,30 @@ export const SignedVerdictOverview: React.FC = () => {
         )}
         {isReopeningCase && (
           <ReopenModal onClose={() => setIsReopeningCase(false)} />
+        )}
+        {modalVisible === 'ConfirmAppealAfterDeadline' && (
+          <Modal
+            title={formatMessage(
+              m.sections.confirmAppealAfterDeadlineModal.title,
+            )}
+            text={formatMessage(
+              m.sections.confirmAppealAfterDeadlineModal.text,
+            )}
+            primaryButtonText={formatMessage(
+              m.sections.confirmAppealAfterDeadlineModal.primaryButtonText,
+            )}
+            secondaryButtonText={formatMessage(
+              m.sections.confirmAppealAfterDeadlineModal.secondaryButtonText,
+            )}
+            onPrimaryButtonClick={async () => {
+              await removeHash()
+              router.push(`${constants.APPEAL_ROUTE}/${workingCase.id}`)
+            }}
+            onSecondaryButtonClick={async () => {
+              await removeHash()
+              setModalVisible('NoModal')
+            }}
+          />
         )}
       </PageLayout>
     </>

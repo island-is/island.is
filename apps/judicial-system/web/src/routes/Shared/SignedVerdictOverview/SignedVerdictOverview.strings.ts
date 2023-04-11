@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const strings = defineMessages({
   appealAlertBannerTitle: {
     id:
-      'judicial.system.core:signed_verdict_overview.appeal_alert_banner_title',
+      'judicial.system.core:signed_verdict_overview.appeal_alert_banner_title_v2',
     defaultMessage:
       'Kærufrestur {isAppealDeadlineExpired, select, true {rann} other {rennur}} út {appealDeadline}',
     description: 'Texti í viðvörunarglugga um kærufrest',
