@@ -191,14 +191,11 @@ describe('transformCase', () => {
       expect(res.isStatementDeadlineExpired).toBe(false)
     })
 
-    it('should be false when more than one day has passed since the case was appealed', () => {
+    it('should be true when more than one day has passed since the case was appealed', () => {
       // Arrange
       const prosecutorPostponedAppealDate = new Date()
       prosecutorPostponedAppealDate.setDate(
-        prosecutorPostponedAppealDate.getDate() - 1,
-      )
-      prosecutorPostponedAppealDate.setSeconds(
-        prosecutorPostponedAppealDate.getSeconds() + 1,
+        prosecutorPostponedAppealDate.getDate() - 2,
       )
       const theCase = {
         prosecutorPostponedAppealDate: prosecutorPostponedAppealDate.toISOString(),
@@ -208,15 +205,15 @@ describe('transformCase', () => {
       const res = transformCase(theCase)
 
       // Assert
-      expect(res.isStatementDeadlineExpired).toBe(false)
+      expect(res.isStatementDeadlineExpired).toBe(true)
     })
 
-    it('should be true when less that one day has passed since the case was appealed', () => {
+    it('should be false when less that one day has passed since the case was appealed', () => {
       // Arrange
       const accusedPostponedAppealDate = new Date()
       accusedPostponedAppealDate.setDate(accusedPostponedAppealDate.getDate())
       accusedPostponedAppealDate.setSeconds(
-        accusedPostponedAppealDate.getSeconds() + 100,
+        accusedPostponedAppealDate.getSeconds() - 100,
       )
       const theCase = {
         accusedPostponedAppealDate: accusedPostponedAppealDate.toISOString(),
@@ -226,7 +223,7 @@ describe('transformCase', () => {
       const res = transformCase(theCase)
 
       // Assert
-      expect(res.isStatementDeadlineExpired).toBe(true)
+      expect(res.isStatementDeadlineExpired).toBe(false)
     })
   })
 })
