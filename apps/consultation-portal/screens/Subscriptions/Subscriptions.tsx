@@ -125,7 +125,6 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
           items={[
             { title: 'Samráðsgátt', href: '/samradsgatt' },
             { title: 'Mínar áskriftir ', href: '/samradsgatt/askriftir' },
-            { title: currentTab },
           ]}
         />
 
