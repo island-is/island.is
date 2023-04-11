@@ -301,4 +301,7 @@ export class Case implements TCase {
 
   @Field(() => CaseAppealState, { nullable: true })
   readonly appealState?: CaseAppealState
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isStatementDeadlineExpired?: boolean
 }

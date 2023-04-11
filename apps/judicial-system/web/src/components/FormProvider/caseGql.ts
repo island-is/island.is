@@ -189,6 +189,7 @@ const CaseQuery = gql`
       }
       requestDriversLicenseSuspension
       appealState
+      isStatementDeadlineExpired
     }
   }
 `
