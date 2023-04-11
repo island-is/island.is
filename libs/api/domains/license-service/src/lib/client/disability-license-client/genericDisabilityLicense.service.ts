@@ -39,18 +39,8 @@ export class GenericDisabilityLicenseService
     private smartApi: SmartSolutionsApi,
   ) {}
 
-  async fetchLicense(user: User) {
-    const license = await this.disabilityLicenseApi.getDisabilityLicense(user)
-
-    if (!license) {
-      this.logger.info('No disability license found for user', {
-        category: LOG_CATEGORY,
-      })
-      return null
-    }
-
-    return license
-  }
+  fetchLicense = (user: User) =>
+    this.disabilityLicenseApi.getDisabilityLicense(user)
 
   async getLicense(
     user: User,

@@ -20,7 +20,7 @@ export const caseResult = (
 
   /**
    * No need to check the parent case state because you can't extend
-   * travel ban cases, dissmissed or rejected cases
+   * travel ban cases, dissmissed, rejected or appealed cases
    */
   const isRejected = workingCase.state === CaseState.REJECTED
   const isDismissed = workingCase.state === CaseState.DISMISSED

@@ -2,11 +2,7 @@ import { CanActivate } from '@nestjs/common'
 
 import { RolesGuard } from '@island.is/judicial-system/auth'
 
-import {
-  CaseExistsGuard,
-  CaseNotCompletedGuard,
-  CaseWriteGuard,
-} from '../../../case'
+import { CaseExistsGuard, CaseWriteGuard } from '../../../case'
 import { FileController } from '../../file.controller'
 
 describe('FileController - Create case file guards', () => {
@@ -20,8 +16,8 @@ describe('FileController - Create case file guards', () => {
     )
   })
 
-  it('should have four guards', () => {
-    expect(guards).toHaveLength(4)
+  it('should have three guards', () => {
+    expect(guards).toHaveLength(3)
   })
 
   describe('RolesGuard', () => {
@@ -57,18 +53,6 @@ describe('FileController - Create case file guards', () => {
 
     it('should have CaseWriteGuard as quard 3', () => {
       expect(guard).toBeInstanceOf(CaseWriteGuard)
-    })
-  })
-
-  describe('CaseNotCompletedGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[3]()
-    })
-
-    it('should have CaseNotCompletedGuard as quard 4', () => {
-      expect(guard).toBeInstanceOf(CaseNotCompletedGuard)
     })
   })
 })

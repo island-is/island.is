@@ -1,8 +1,8 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import { NextApiRequest, NextApiResponse } from 'next'
+import env from '../../../lib/environment'
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  res.setHeader('Set-Cookie', ['token=; expires=0; path=/'])
-  return res.status(200).json({
-    success: 'success',
-  })
+  res.redirect(
+    `https://${env.identityServerDomain}/connect/endsession?id_token_hint=${req.query.id_token}&post_logout_redirect_uri=${env.identityServerLogoutURL}`,
+  )
 }

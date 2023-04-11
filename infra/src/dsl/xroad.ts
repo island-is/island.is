@@ -117,6 +117,11 @@ export const DrivingLicense = new XroadConf({
         'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2',
       prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v1',
     },
+    XROAD_DRIVING_LICENSE_V5_PATH: {
+      dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/okuskirteini-v5',
+      staging: 'r1/IS/GOV/5309672079/Logreglan-Protected/okuskirteini-v5',
+      prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/okuskirteini-v5',
+    },
   },
   secrets: {
     XROAD_DRIVING_LICENSE_SECRET: '/k8s/api/DRIVING_LICENSE_SECRET',
@@ -255,6 +260,16 @@ export const Disability = new XroadConf({
       dev: 'IS-DEV/GOV/10008/TR-Protected/oryrki-v1',
       staging: 'IS-TEST/GOV/5012130120/TR-Protected/oryrki-v1',
       prod: 'IS/GOV/5012130120/TR-Protected/oryrki-v1',
+    },
+  },
+})
+
+export const UniversityOfIceland = new XroadConf({
+  env: {
+    XROAD_UNIVERSITY_OF_ICELAND_PATH: {
+      dev: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1',
+      staging: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1',
+      prod: 'IS/EDU/6001692039/HI-Protected/brautskraning-v1',
     },
   },
 })

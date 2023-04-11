@@ -18,9 +18,9 @@ import {
 
 import Link from 'next/link'
 import { useReducer, useState } from 'react'
-import { useLogin } from '../../utils/helpers'
+import { useLogIn } from '../../utils/helpers'
 import { SubscriptionActionBox } from '../Card'
-import { POST_ADVICE } from '../../graphql/queries.graphql'
+import { CASE_POST_ADVICE } from '../../graphql/queries.graphql'
 import { useMutation } from '@apollo/client'
 import initApollo from '../../graphql/client'
 import { resolveFileToObject } from '../../utils/helpers'
@@ -86,8 +86,6 @@ const uploadFile = (file: UploadFile, dispatch: (action: Action) => void) => {
     formData.append('file', file.originalFileObj || '', file.name)
 
     // TODO: add backend url if multipart upload
-    //req.open('POST', 'http://localhost:5000/')
-    //req.send(formData)
   })
 }
 
@@ -130,12 +128,12 @@ export const WriteReviewCard = ({
   const [showUpload, setShowUpload] = useState<boolean>(false)
   const [state, dispatch] = useReducer(reducer, initialUploadFiles)
   const [error, setError] = useState<string | undefined>(undefined)
-  const { LogIn, loginLoading } = useLogin()
+  const LogIn = useLogIn()
   const [review, setReview] = useState('')
 
   const client = initApollo()
   const [postAdviceMutation, { loading: postAdviceLoading }] = useMutation(
-    POST_ADVICE,
+    CASE_POST_ADVICE,
     {
       client: client,
     },
@@ -148,7 +146,6 @@ export const WriteReviewCard = ({
           resolveFileToObject(item.originalFileObj as File),
         ),
       )
-
       const objToSend = {
         caseId: caseId,
         adviceRequest: {
@@ -156,18 +153,11 @@ export const WriteReviewCard = ({
           adviceFiles: files,
         },
       }
-
-      const req = await fetch('/consultation-portal/api/auth/check')
-      const data = await req.json()
-      const token = data?.token
-
       const posting = await postAdviceMutation({
         variables: {
           input: objToSend,
-          context: { token },
         },
       })
-
       // reloading page, would be better if we got the object back
       // from the server or sent a refetch request for data
       location.reload()
@@ -307,7 +297,7 @@ export const WriteReviewCard = ({
       <SubscriptionActionBox
         heading="Skrifa umsögn"
         text="Þú verður að vera skráð(ur) inn til þess að geta skrifað umsögn um tillögur."
-        cta={{ label: 'Skrá mig inn', onClick: LogIn, isLoading: loginLoading }}
+        cta={{ label: 'Skrá mig inn', onClick: LogIn }}
       />
       <Text marginTop={2}>
         Ef umsögnin er send fyrir hönd samtaka, fyrirtækis eða stofnunar þarf

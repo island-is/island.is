@@ -24,6 +24,7 @@ import {
   CourtDocument,
   CaseOrigin,
   SubpoenaType,
+  CaseAppealState,
 } from '@island.is/judicial-system/types'
 import type {
   IndictmentSubtypeMap,
@@ -968,4 +969,15 @@ export class Case extends Model {
   })
   @ApiProperty()
   requestDriversLicenseSuspension?: boolean
+
+  /**********
+   * The case appeal state
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(CaseAppealState),
+  })
+  @ApiProperty({ enum: CaseAppealState })
+  appealState?: CaseAppealState
 }
