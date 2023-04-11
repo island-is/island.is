@@ -1,5 +1,6 @@
 export { CourtCaseInfo, ProsecutorCaseInfo } from './CaseInfo/CaseInfo'
 export { default as AccordionListItem } from './AccordionListItem/AccordionListItem'
+export { default as AppealAlertBanner } from './AppealAlertBanner/AppealAlertBanner'
 export { default as BlueBox } from './BlueBox/BlueBox'
 export { default as CaseDates } from './CaseDates/CaseDates'
 export { default as CaseFile } from './CaseFile/CaseFile'

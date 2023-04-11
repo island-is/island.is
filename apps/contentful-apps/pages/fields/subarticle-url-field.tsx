@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import getConfig from 'next/config'
 import { useDebounce } from 'react-use'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
@@ -15,10 +14,6 @@ type Article = EntryProps<{
 }>
 
 const SubArticleUrlField = () => {
-  const { publicRuntimeConfig } = getConfig()
-  const environmentId = publicRuntimeConfig.CONTENTFUL_ENVIRONMENT
-  const spaceId = publicRuntimeConfig.CONTENTFUL_SPACE
-
   const sdk = useSDK<FieldExtensionSDK>()
   const cma = useCMA()
 
@@ -50,8 +45,8 @@ const SubArticleUrlField = () => {
     cma.entry
       .get({
         entryId: parentArticleId,
-        environmentId,
-        spaceId,
+        environmentId: process.env.CONTENTFUL_ENVIRONMENT,
+        spaceId: process.env.CONTENTFUL_SPACE,
       })
       .then((parentArticle: Article) => {
         const subArticles =
