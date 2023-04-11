@@ -91,7 +91,9 @@ export const UserInfoLine: FC<Props> = ({
           >
             <Text variant="h5" as="span" lineHeight="lg">
               {formatMessage(label)}{' '}
-              {tooltip && <Tooltip size="lg" text={tooltip} />}
+              {tooltip && (
+                <Tooltip placement="right" fullWidth text={tooltip} />
+              )}
             </Text>
           </Box>
         </GridColumn>

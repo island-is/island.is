@@ -31,8 +31,8 @@ export const icon = style({
   position: 'relative',
 })
 
-export const lg = style({
-  maxWidth: '360px',
+export const fullWidth = style({
+  maxWidth: '100%',
   whiteSpace: 'pre-line',
 })
 

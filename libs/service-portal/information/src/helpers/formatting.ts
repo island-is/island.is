@@ -13,13 +13,13 @@ export const formatNameBreaks = (
   const { firstName, middleName, lastName } = user
 
   const first = firstName
-    ? `${labels?.givenName || 'Eiginnafn'}: ${firstName}`
+    ? `${labels?.givenName || 'Eiginnafn'}: Þetta er ógeðslega ógeðsla`
     : undefined
-  const middle = middleName
-    ? `${labels?.middleName || 'Millinafn'}: ${middleName}`
-    : undefined
+  const middle = `${labels?.middleName || 'Millinafn'}: mjög mjög lang nafn`
   const last = lastName
-    ? `${labels?.lastName || 'Kenninafn'}: ${lastName}`
+    ? `${
+        labels?.lastName || 'Kenninafn'
+      }: og sömuleiðis virkilega langt eftirnafn`
     : undefined
 
   const formatted = [first, middle, last]

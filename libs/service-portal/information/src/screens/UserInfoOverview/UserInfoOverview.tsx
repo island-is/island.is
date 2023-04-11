@@ -35,9 +35,6 @@ const UserInfoOverview = () => {
 
   const spouseData = nationalRegistryUser?.spouse
 
-  console.log('nationalRegistryUser', nationalRegistryUser)
-  console.log('userInfo', userInfo)
-
   return (
     <>
       <IntroHeader title={m.myInfo} intro={spmm.userInfoDesc} />
