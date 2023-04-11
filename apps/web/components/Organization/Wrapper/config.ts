@@ -3,6 +3,7 @@ import {
   LiveChatIncChatPanelProps,
   WatsonChatPanelProps,
 } from '../../ChatPanel'
+import { onDirectorateOfImmigrationChatLoad } from '../../ChatPanel/WatsonChatPanel'
 
 export const liveChatIncConfig: Record<string, LiveChatIncChatPanelProps> = {
   // HSN - Organization
@@ -23,61 +24,6 @@ export const liveChatIncConfig: Record<string, LiveChatIncChatPanelProps> = {
     license: 15092154,
     version: '2.0',
   },
-}
-
-const onDirectorateOfImmigrationChatLoad = (instance) => {
-  instance.on({
-    type: 'window:open',
-    handler: () => {
-      const customPanel = instance.customPanels.getPanel()
-
-      const emailInputId = 'email'
-      const nameInputId = 'name'
-      const submitButtonId = 'submit-button'
-
-      customPanel.hostElement.innerHTML = `
-        <div style="padding: 8px">
-
-          <div class="bx--form-item">
-            <label for="${emailInputId}" class="bx--label">Netfang/Email</label>
-            <input id="${emailInputId}" name="${emailInputId}" type="text" class="bx--text-input">
-          </div>
-
-          <br />
-
-          <div class="bx--form-item">
-            <label for="${nameInputId}" class="bx--label">Nafn/Name</label>
-            <input id="${nameInputId}" type="text" class="bx--text-input">
-          </div>
-
-          <br />
-          
-          <div class="bx--form-item" style="display: flex; justify-content: center">
-            <button id="${submitButtonId}" class="bx--btn" type="button">Áfram / Continue</button>
-          </div>
-        </div>
-      `
-
-      customPanel.open({
-        title: 'Netspjall Útlendingastofnunar',
-        hideBackButton: true,
-      })
-
-      const emailInput = document.getElementById(
-        emailInputId,
-      ) as HTMLInputElement
-      const nameInput = document.getElementById(nameInputId) as HTMLInputElement
-      const submitButton = document.getElementById(submitButtonId)
-
-      submitButton.onclick = () => {
-        const emailValue = emailInput?.value ?? ''
-        const nameValue = nameInput?.value ?? ''
-
-        console.log('email entered:', emailValue)
-        console.log('name entered:', nameValue)
-      }
-    },
-  })
 }
 
 export const watsonConfig: Record<
