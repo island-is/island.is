@@ -170,6 +170,7 @@ export const UpdateCaseMutation = gql`
       crimeScenes
       indictmentIntroduction
       requestDriversLicenseSuspension
+      appealState
     }
   }
 `

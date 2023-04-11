@@ -364,6 +364,12 @@ export const sections = {
     },
   }),
   caseResults: defineMessages({
+    appealed: {
+      id: 'judicial.system.core:sections.case_results.appealed',
+      defaultMessage: 'Kærumál',
+      description:
+        'Notaður sem texti í skrefum á hliðarstiku þegar krafa er kærð',
+    },
     dissmissed: {
       id: 'judicial.system.core:sections.case_results.dissmissed',
       defaultMessage: 'Kröfu vísað frá',

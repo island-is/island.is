@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
   Link,
   useNavigate,
@@ -9,7 +9,6 @@ import {
 import {
   Box,
   Button,
-  Filter,
   FilterInput,
   GridContainer,
   GridRow,
@@ -23,32 +22,26 @@ import { replaceParams } from '@island.is/react-spa/shared'
 import { IDSAdminPaths } from '../../lib/paths'
 import * as styles from './Clients.css'
 import { AuthClients } from './Clients.loader'
-import { useTenant } from '../../screens/Tenant/Tenant'
 
 const Clients = () => {
   const originalClients = useLoaderData() as AuthClients
   const { tenant } = useParams()
   const { formatMessage } = useLocale()
-  const { setNavTitle } = useTenant()
   const navigate = useNavigate()
 
   const [clients, setClients] = useState<AuthClients>(originalClients)
   const [inputSearchValue, setInputSearchValue] = useState<string>('')
 
-  useEffect(() => {
-    setNavTitle(tenant ? tenant : formatMessage(m.tenants))
-  })
-
   const handleSearch = (value: string) => {
     setInputSearchValue(value)
 
     if (value.length > 0) {
-      const filteredList = clients.filter((client: any) => {
+      const filteredList = originalClients.filter((client) => {
         return (
           client?.defaultEnvironment.displayName[0].value
             .toLowerCase()
             .includes(value.toLowerCase()) ||
-          client.applicationId.toLowerCase().includes(value.toLowerCase())
+          client.clientId.toLowerCase().includes(value.toLowerCase())
         )
       })
 
@@ -95,7 +88,7 @@ const Clients = () => {
     )
   }
 
-  return clients.length === 0 ? (
+  return originalClients.length === 0 ? (
     <GridContainer>
       {getHeader(false)}
       <GridRow>
@@ -131,28 +124,13 @@ const Clients = () => {
       <Box paddingTop="gutter">
         <Stack space={[1, 1, 2, 2]}>
           <GridRow>
-            <Filter
-              variant="popover"
-              align="left"
-              reverse
-              labelClear={formatMessage(m.clearFilter)}
-              labelClearAll={formatMessage(m.clearAllFilters)}
-              labelOpen={formatMessage(m.openFilter)}
-              labelClose={formatMessage(m.closeFilter)}
-              resultCount={0}
-              filterInput={
-                <FilterInput
-                  placeholder={formatMessage(m.searchPlaceholder)}
-                  name="session-nationalId-input"
-                  value={inputSearchValue}
-                  onChange={handleSearch}
-                  backgroundColor="blue"
-                />
-              }
-              onFilterClear={() => {
-                setInputSearchValue('')
-              }}
-            ></Filter>
+            <FilterInput
+              placeholder={formatMessage(m.searchPlaceholder)}
+              name="session-nationalId-input"
+              value={inputSearchValue}
+              onChange={handleSearch}
+              backgroundColor="blue"
+            />
           </GridRow>
           {clients.map((item) => (
             <GridRow key={`clients-${item.clientId}`}>

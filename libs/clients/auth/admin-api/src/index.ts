@@ -2,6 +2,7 @@ export {
   AdminApi,
   AdminCreateClientDto,
   ClientType,
+  CreateClientType,
   MeClientsControllerCreateRequest,
   RefreshTokenExpiration,
   TenantDto,

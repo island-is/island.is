@@ -64,6 +64,7 @@ export const Menu = ({
                 colorScheme={buttonColorScheme}
                 variant="utility"
                 icon="search"
+                value={t.search}
                 onClick={(e) => {
                   onClick(e)
                   setTimeout(() => {
