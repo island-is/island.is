@@ -124,42 +124,42 @@ const SupportProducts = () => {
       <Inline space={3}>
         <LinkV2
           color="blue400"
-          underline="normal"
-          underlineVisibility="always"
           newTab={true}
           href={
             'https://island.is/greidsluthatttaka-vegna-naeringar-og-serfaedis'
           }
         >
-          <Text variant="small">
-            {formatMessage(messages.supportProductsDescriptionInfo1)}
-          </Text>
-          <Icon
-            aria-hidden="true"
-            icon="open"
-            type="outline"
-            size="small"
-            className={styles.iconStyle}
-          />
+          <>
+            <Text variant="small">
+              {formatMessage(messages.supportProductsDescriptionInfo1)}
+            </Text>
+            <Icon
+              aria-hidden="true"
+              icon="open"
+              type="outline"
+              size="small"
+              className={styles.iconStyle}
+            />
+          </>
         </LinkV2>
         <LinkV2
           color="blue400"
-          underline="normal"
-          underlineVisibility="always"
           newTab={true}
           href="https://island.is/einnota-hjalpartaeki"
         >
-          <Text variant="small">
-            {formatMessage(messages.supportProductsDescriptionInfo2)}
-          </Text>
+          <>
+            <Text variant="small">
+              {formatMessage(messages.supportProductsDescriptionInfo2)}
+            </Text>
 
-          <Icon
-            aria-hidden="true"
-            icon="open"
-            type="outline"
-            size="small"
-            className={styles.iconStyle}
-          />
+            <Icon
+              aria-hidden="true"
+              icon="open"
+              type="outline"
+              size="small"
+              className={styles.iconStyle}
+            />
+          </>
         </LinkV2>
       </Inline>
 
