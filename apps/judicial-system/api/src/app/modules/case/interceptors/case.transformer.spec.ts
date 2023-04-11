@@ -1,5 +1,7 @@
 import each from 'jest-each'
 
+import { CaseAppealState } from '@island.is/judicial-system/types'
+
 import { Case } from '../models/case.model'
 import { transformCase } from './case.transformer'
 
@@ -98,7 +100,7 @@ describe('transformCase', () => {
   })
 
   describe('isAppealDeadlineExpired', () => {
-    it('should be false when no ruling date is set', () => {
+    it('should be false when no court date is set', () => {
       // Arrange
       const theCase = {} as Case
 
@@ -111,10 +113,10 @@ describe('transformCase', () => {
 
     it('should be false while the appeal window is open', () => {
       // Arrange
-      const rulingDate = new Date()
-      rulingDate.setDate(rulingDate.getDate() - 3)
-      rulingDate.setSeconds(rulingDate.getSeconds() + 1)
-      const theCase = { rulingDate: rulingDate.toISOString() } as Case
+      const courtEndTime = new Date()
+      courtEndTime.setDate(courtEndTime.getDate() - 3)
+      courtEndTime.setSeconds(courtEndTime.getSeconds() + 1)
+      const theCase = { courtEndTime: courtEndTime.toISOString() } as Case
 
       // Act
       const res = transformCase(theCase)
@@ -125,9 +127,9 @@ describe('transformCase', () => {
 
     it('should be true when the appeal window has closed', () => {
       // Arrange
-      const rulingDate = new Date()
-      rulingDate.setDate(rulingDate.getDate() - 3)
-      const theCase = { rulingDate: rulingDate.toISOString() } as Case
+      const courtEndTime = new Date()
+      courtEndTime.setDate(courtEndTime.getDate() - 3)
+      const theCase = { courtEndTime: courtEndTime.toISOString() } as Case
 
       // Act
       const res = transformCase(theCase)
@@ -138,7 +140,7 @@ describe('transformCase', () => {
   })
 
   describe('isAppealGracePeriodExpired', () => {
-    it('should be false when no ruling date is set', () => {
+    it('should be false when no court end time is set', () => {
       // Arrange
       const theCase = {} as Case
 
@@ -151,10 +153,10 @@ describe('transformCase', () => {
 
     it('should be false while the appeal window is open', () => {
       // Arrange
-      const rulingDate = new Date()
-      rulingDate.setDate(rulingDate.getDate() - 7)
-      rulingDate.setSeconds(rulingDate.getSeconds() + 1)
-      const theCase = { rulingDate: rulingDate.toISOString() } as Case
+      const courtEndTime = new Date()
+      courtEndTime.setDate(courtEndTime.getDate() - 7)
+      courtEndTime.setSeconds(courtEndTime.getSeconds() + 1)
+      const theCase = { courtEndTime: courtEndTime.toISOString() } as Case
 
       // Act
       const res = transformCase(theCase)
@@ -165,15 +167,63 @@ describe('transformCase', () => {
 
     it('should be true when the appeal window has closed', () => {
       // Arrange
-      const rulingDate = new Date()
-      rulingDate.setDate(rulingDate.getDate() - 7)
-      const theCase = { rulingDate: rulingDate.toISOString() } as Case
+      const courtEndTime = new Date()
+      courtEndTime.setDate(courtEndTime.getDate() - 7)
+      const theCase = { courtEndTime: courtEndTime.toISOString() } as Case
 
       // Act
       const res = transformCase(theCase)
 
       // Assert
       expect(res.isAppealGracePeriodExpired).toBe(true)
+    })
+  })
+
+  describe('isStatementDeadlineExpired', () => {
+    it('should be false if the case has not been appealed', () => {
+      // Arrange
+      const theCase = { appealState: undefined } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isStatementDeadlineExpired).toBe(false)
+    })
+
+    it('should be true when more than one day has passed since the case was appealed', () => {
+      // Arrange
+      const prosecutorPostponedAppealDate = new Date()
+      prosecutorPostponedAppealDate.setDate(
+        prosecutorPostponedAppealDate.getDate() - 2,
+      )
+      const theCase = {
+        prosecutorPostponedAppealDate: prosecutorPostponedAppealDate.toISOString(),
+      } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isStatementDeadlineExpired).toBe(true)
+    })
+
+    it('should be false when less that one day has passed since the case was appealed', () => {
+      // Arrange
+      const accusedPostponedAppealDate = new Date()
+      accusedPostponedAppealDate.setDate(accusedPostponedAppealDate.getDate())
+      accusedPostponedAppealDate.setSeconds(
+        accusedPostponedAppealDate.getSeconds() - 100,
+      )
+      const theCase = {
+        accusedPostponedAppealDate: accusedPostponedAppealDate.toISOString(),
+      } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isStatementDeadlineExpired).toBe(false)
     })
   })
 })

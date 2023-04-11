@@ -7,6 +7,7 @@ import {
   GridRow,
   Stack,
   Tag,
+  GridColumn,
   Text,
 } from '@island.is/island-ui/core'
 import * as styles from './TenantsList.css'
@@ -30,7 +31,7 @@ const TenantsList = () => {
     setInputSearchValue(value)
 
     if (value.length > 0) {
-      const filteredList = tenantList.filter((tenant) => {
+      const filteredList = originalTenantsList.filter((tenant) => {
         return (
           tenant.defaultEnvironment.displayName[0].value
             .toLowerCase()
@@ -47,7 +48,7 @@ const TenantsList = () => {
   }
 
   return (
-    <>
+    <GridColumn span={['12/12', '12/12', '10/12']} offset={['0', '0', '1/12']}>
       <IntroHeader
         title={formatMessage(m.idsAdmin)}
         intro={formatMessage(m.idsAdminDescription)}
@@ -55,27 +56,12 @@ const TenantsList = () => {
       <GridContainer className={styles.relative}>
         <Stack space={[2, 2, 3, 3]}>
           <GridRow>
-            <Filter
-              variant={'popover'}
-              align="left"
-              reverse
-              labelClear={formatMessage(m.clearFilter)}
-              labelClearAll={formatMessage(m.clearAllFilters)}
-              labelOpen={formatMessage(m.openFilter)}
-              labelClose={formatMessage(m.closeFilter)}
-              resultCount={0}
-              filterInput={
-                <FilterInput
-                  placeholder={formatMessage(m.searchPlaceholder)}
-                  name="session-nationalId-input"
-                  value={inputSearchValue}
-                  onChange={handleSearch}
-                  backgroundColor="blue"
-                />
-              }
-              onFilterClear={() => {
-                setInputSearchValue('')
-              }}
+            <FilterInput
+              placeholder={formatMessage(m.searchPlaceholder)}
+              name="session-nationalId-input"
+              value={inputSearchValue}
+              onChange={handleSearch}
+              backgroundColor="blue"
             />
           </GridRow>
           <Stack space={[1, 1, 2, 2]}>
@@ -132,7 +118,7 @@ const TenantsList = () => {
           </Stack>
         </Stack>
       </GridContainer>
-    </>
+    </GridColumn>
   )
 }
 

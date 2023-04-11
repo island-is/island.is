@@ -18,13 +18,14 @@ import {
   DelegationType,
   MergedDelegationDTO,
 } from '@island.is/auth-api-lib'
-import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
   IdsUserGuard,
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
+
+import type { User } from '@island.is/auth-nest-tools'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('delegations')
@@ -107,7 +108,11 @@ export class DelegationsController {
 
     let scopes = ([] as string[]).concat(...scopeSets)
 
-    if (scopes.length > 0) {
+    if (
+      scopes.length > 0 ||
+      delegationType.includes(DelegationType.ProcurationHolder) ||
+      delegationType.includes(DelegationType.LegalGuardian)
+    ) {
       scopes = [
         ...scopes,
         ...(await this.delegationScopeService.findAllAutomaticScopes()),

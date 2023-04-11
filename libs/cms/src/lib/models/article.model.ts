@@ -134,7 +134,7 @@ export const mapArticle = ({
     )
     .map(mapOrganization),
   subArticles: (fields.subArticles ?? [])
-    .filter((subArticle) => subArticle.fields?.title && subArticle.fields?.slug)
+    .filter((subArticle) => subArticle.fields?.title && subArticle.fields?.url)
     .map(mapSubArticle),
   relatedArticles: [], // populated by resolver
   relatedContent: (fields.relatedContent ?? []).map(mapLink),

@@ -1,23 +1,49 @@
-import App, { AppContext, AppProps } from 'next/app'
+import { ApolloProvider } from '@apollo/client'
+import { getSession, Provider } from 'next-auth/client'
+import { AppContext } from 'next/app'
 import AppLayout from '../components/AppLayout/AppLayout'
-import UserContextProvider from '../context/UserContext'
+import PageLoader from '../components/PageLoader/PageLoader'
+import AuthProvider from '../components/AuthProvier/AuthProvider'
+import initApollo from '../graphql/client'
+import { isAuthenticated } from '../utils/authentication/isAuthenticated'
 
 const ConsultationPortalApplication: any = ({ Component, pageProps }) => {
   return (
-    <UserContextProvider>
-      <AppLayout>
-        <Component {...pageProps} />
-      </AppLayout>
-    </UserContextProvider>
+    <ApolloProvider client={initApollo(pageProps.apolloState)}>
+      <Provider session={pageProps.session}>
+        <AuthProvider>
+          <AppLayout>
+            <PageLoader />
+            <Component {...pageProps} />
+          </AppLayout>
+        </AuthProvider>
+      </Provider>
+    </ApolloProvider>
   )
 }
 
 ConsultationPortalApplication.getInitialProps = async (
   appContext: AppContext,
 ) => {
-  const pageProps = await App.getInitialProps(appContext)
-
-  return { ...pageProps }
+  const { Component, ctx } = appContext
+  const apolloClient = initApollo({})
+  const customContext = {
+    ...ctx,
+    apolloClient,
+  }
+  let pageProps
+  if (Component.getInitialProps) {
+    pageProps = (await Component.getInitialProps(customContext)) as any
+  }
+  const apolloState = apolloClient.cache.extract()
+  const session = await getSession()
+  return {
+    pageProps: {
+      session: session,
+      isAuthenticated: isAuthenticated(appContext.ctx),
+      apolloState: apolloState,
+    },
+  }
 }
 
 export default ConsultationPortalApplication

@@ -6,9 +6,15 @@ interface FilterProps {
   filters: CaseFilter
   setFilters: (arr: CaseFilter) => void
   defaultValues: CaseFilter
+  loading?: boolean
 }
 
-export const Filter = ({ filters, setFilters, defaultValues }: FilterProps) => {
+export const Filter = ({
+  filters,
+  setFilters,
+  defaultValues,
+  loading,
+}: FilterProps) => {
   const onChange = (e, type: string) => {
     const filtersCopy = { ...filters }
     filtersCopy.period[type] = e
@@ -26,37 +32,50 @@ export const Filter = ({ filters, setFilters, defaultValues }: FilterProps) => {
         filters={filters}
         setFilters={setFilters}
         type="sorting"
+        loading={loading}
       />
       <FilterBox
         title="Staða máls"
         filters={filters}
         setFilters={setFilters}
         type="caseStatuses"
+        loading={loading}
       />
       <FilterBox
         title="Tegund máls"
         filters={filters}
         setFilters={setFilters}
         type="caseTypes"
+        loading={loading}
       />
+
       <DatePicker
+        disabled={loading}
         size="sm"
         locale="is"
         label="Frá"
         placeholderText="Veldu dagsetningu"
-        selected={filters.period.from}
+        selected={new Date(filters.period.from)}
         handleChange={(e) => onChange(e, 'from')}
       />
       <DatePicker
+        disabled={loading}
         size="sm"
         locale="is"
         label="Til"
         placeholderText="Veldu dagsetningu"
-        selected={filters.period.to}
+        selected={new Date(filters.period.to)}
         handleChange={(e) => onChange(e, 'to')}
       />
+
       <Box textAlign={'right'}>
-        <Button size="small" icon="reload" variant="text" onClick={handleClear}>
+        <Button
+          size="small"
+          icon="reload"
+          variant="text"
+          onClick={handleClear}
+          loading={loading}
+        >
           Hreinsa allar síur
         </Button>
       </Box>

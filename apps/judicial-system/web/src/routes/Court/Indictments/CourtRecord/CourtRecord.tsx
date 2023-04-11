@@ -7,7 +7,6 @@ import React, {
 } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
-import { uuid } from 'uuidv4'
 
 import {
   CourtCaseInfo,
@@ -19,10 +18,6 @@ import {
   PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  IndictmentsCourtSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -45,7 +40,6 @@ import {
   mapCaseFileToUploadFile,
   stepValidationsType,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { courtRecord as m } from './CourtRecord.strings'
@@ -60,9 +54,12 @@ const CourtRecord: React.FC = () => {
   const { formatMessage } = useIntl()
   const { transitionCase } = useCase()
 
-  const { upload, remove, generateSingleFileUpdate } = useS3Upload(
-    workingCase.id,
-  )
+  const {
+    handleChange,
+    handleRemove,
+    handleRetry,
+    generateSingleFileUpdate,
+  } = useS3Upload(workingCase.id)
 
   useEffect(() => {
     if (workingCase.caseFiles) {
@@ -76,7 +73,7 @@ const CourtRecord: React.FC = () => {
     )
   }, [displayFiles])
 
-  const uploadCallback = useCallback(
+  const handleUIUpdate = useCallback(
     (displayFile: TUploadFile, newId?: string) => {
       setDisplayFiles((previous) =>
         generateSingleFileUpdate(previous, displayFile, newId),
@@ -101,78 +98,15 @@ const CourtRecord: React.FC = () => {
     [transitionCase, workingCase, formatMessage],
   )
 
-  const handleChange = useCallback(
-    (files: File[], category: CaseFileCategory) => {
-      // We generate an id for each file so that we find the file again when
-      // updating the file's progress and onRetry.
-      // Also we cannot spread File since it contains read-only properties.
-      const filesWithId: Array<[File, string]> = files.map((file) => [
-        file,
-        `${file.name}-${uuid()}`,
-      ])
-      setDisplayFiles((previous) => [
-        ...filesWithId.map(
-          ([file, id]): TUploadFile => ({
-            status: 'uploading',
-            percent: 1,
-            name: file.name,
-            id: id,
-            type: file.type,
-            category,
-          }),
-        ),
-        ...previous,
-      ])
-      upload(filesWithId, uploadCallback, category)
-    },
-    [upload, uploadCallback],
-  )
-
-  const handleRemoveFile = useCallback(
-    async (file: UploadFile) => {
-      try {
-        if (file.id) {
-          await remove(file.id)
-          setDisplayFiles((prev) => {
-            return prev.filter((caseFile) => caseFile.id !== file.id)
-          })
-        }
-      } catch {
-        toast.error(formatMessage(errors.general))
-      }
-    },
-    [formatMessage, remove],
-  )
-
-  const handleRetry = useCallback(
-    (file: TUploadFile) => {
-      uploadCallback({
-        name: file.name,
-        id: file.id,
-        percent: 1,
-        status: 'uploading',
-        type: file.type,
-        category: file.category,
-      })
-      upload(
-        [
-          [
-            { name: file.name, type: file.type ?? '' } as File,
-            file.id ?? file.name,
-          ],
-        ],
-        uploadCallback,
-        file.category,
-      )
-    },
-    [uploadCallback, upload],
-  )
+  const removeFileCB = useCallback((file: UploadFile) => {
+    setDisplayFiles((previous) =>
+      previous.filter((caseFile) => caseFile.id !== file.id),
+    )
+  }, [])
 
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.JUDGE}
-      activeSubSection={IndictmentsCourtSubsections.COURT_RECORD}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={allFilesUploaded}
@@ -194,14 +128,22 @@ const CourtRecord: React.FC = () => {
             fileList={displayFiles.filter(
               (file) => file.category === CaseFileCategory.COURT_RECORD,
             )}
-            accept={Object.values(fileExtensionWhitelist)}
+            accept="application/pdf"
             header={formatMessage(m.inputFieldLabel)}
+            description={formatMessage(core.uploadBoxDescription, {
+              fileEndings: '.pdf',
+            })}
             buttonLabel={formatMessage(m.uploadButtonText)}
-            onChange={(files) =>
-              handleChange(files, CaseFileCategory.COURT_RECORD)
-            }
-            onRemove={handleRemoveFile}
-            onRetry={handleRetry}
+            onChange={(files) => {
+              handleChange(
+                files,
+                CaseFileCategory.COURT_RECORD,
+                setDisplayFiles,
+                handleUIUpdate,
+              )
+            }}
+            onRemove={(file) => handleRemove(file, removeFileCB)}
+            onRetry={(file) => handleRetry(file, handleUIUpdate)}
           />
         </Box>
         <Box component="section" marginBottom={10}>
@@ -210,17 +152,28 @@ const CourtRecord: React.FC = () => {
             fileList={displayFiles.filter(
               (file) => file.category === CaseFileCategory.RULING,
             )}
-            accept={Object.values(fileExtensionWhitelist)}
+            accept="application/pdf"
             header={formatMessage(m.inputFieldLabel)}
+            description={formatMessage(core.uploadBoxDescription, {
+              fileEndings: '.pdf',
+            })}
             buttonLabel={formatMessage(m.uploadButtonText)}
-            onChange={(files) => handleChange(files, CaseFileCategory.RULING)}
-            onRemove={handleRemoveFile}
-            onRetry={handleRetry}
+            onChange={(files) =>
+              handleChange(
+                files,
+                CaseFileCategory.RULING,
+                setDisplayFiles,
+                handleUIUpdate,
+              )
+            }
+            onRemove={(file) => handleRemove(file, removeFileCB)}
+            onRetry={(file) => handleRetry(file, handleUIUpdate)}
           />
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE)

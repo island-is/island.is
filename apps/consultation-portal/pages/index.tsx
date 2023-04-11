@@ -1,11 +1,11 @@
 import initApollo from '../graphql/client'
-import { GET_ALL_TYPES } from '../screens/Home/getAllTypes.graphql'
-import { ConsultationPortalAllTypesQuery } from '../screens/Home/getAllTypes.graphql.generated'
-
-import { ArrOfStatistics, ArrOfTypes, Case } from '../types/interfaces'
+import { HOME_GET_TYPES, HOME_GET_STATISTICS } from '../graphql/queries.graphql'
+import {
+  HomeGetTypesQuery,
+  HomeGetStatisticsQuery,
+} from '../graphql/queries.graphql.generated'
+import { ArrOfStatistics, ArrOfTypes } from '../types/interfaces'
 import Home from '../screens/Home/Home'
-import { ConsultationPortalStatisticsQuery } from '../screens/Home/getStatistics.graphql.generated'
-import { GET_STATISTICS } from '../screens/Home/getStatistics.graphql'
 
 interface HomeProps {
   types: ArrOfTypes
@@ -23,11 +23,11 @@ export const getServerSideProps = async (ctx) => {
         data: { consultationPortalStatistics },
       },
     ] = await Promise.all([
-      client.query<ConsultationPortalAllTypesQuery>({
-        query: GET_ALL_TYPES,
+      client.query<HomeGetTypesQuery>({
+        query: HOME_GET_TYPES,
       }),
-      client.query<ConsultationPortalStatisticsQuery>({
-        query: GET_STATISTICS,
+      client.query<HomeGetStatisticsQuery>({
+        query: HOME_GET_STATISTICS,
       }),
     ])
     return {
@@ -40,7 +40,9 @@ export const getServerSideProps = async (ctx) => {
     console.error(e)
   }
   return {
-    notFound: true,
+    redirect: {
+      destination: '/500',
+    },
   }
 }
 

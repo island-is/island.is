@@ -1,3 +1,6 @@
+// Types
+export * from './lib/types'
+
 // Core module
 export * from './lib/core/sequelizeConfig.service'
 export * from './lib/core/types/paged-rows.dto'
@@ -33,7 +36,6 @@ export * from './lib/delegations/models/delegation.model'
 export * from './lib/delegations/models/delegation-scope.model'
 export * from './lib/delegations/DelegationConfig'
 export * from './lib/delegations/utils/scopes'
-export * from './lib/types/defaultDomain'
 
 // Resources module
 export * from './lib/resources/resources.module'
@@ -94,7 +96,6 @@ export * from './lib/clients/models/client.model'
 export * from './lib/clients/admin/admin-clients.service'
 export * from './lib/clients/admin/dto/admin-client.dto'
 export * from './lib/clients/admin/dto/admin-create-client.dto'
-export * from './lib/clients/admin/dto/admin-client-type.enum'
 
 // Translation module
 export * from './lib/translation/translation.module'
@@ -148,4 +149,3 @@ export * from './lib/personal-representative/dto/paginated-personal-representati
 export * from './lib/personal-representative/dto/personal-representative-scope-permission.dto'
 export * from './lib/clients/admin/dto/admin-create-client.dto'
 export * from './lib/clients/admin/dto/admin-client.dto'
-export * from './lib/clients/admin/dto/admin-client-type.enum'
