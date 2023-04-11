@@ -66,7 +66,11 @@ export const ChosenSubscriptionCard = ({
               {data?.area === 'Mál' ? data?.caseNumber : data?.name}
             </Text>
           </FocusableBox>
-          {data?.area === 'Mál' && <Text variant="medium">{data?.name}</Text>}
+          {data?.area === 'Mál' && (
+            <FocusableBox onClick={onClick}>
+              <Text variant="medium">{data?.name}</Text>
+            </FocusableBox>
+          )}
         </Box>
         <FocusableBox onClick={onClick} style={{ height: '24px' }}>
           <Icon icon={isOpen ? 'chevronUp' : 'chevronDown'} color="blue400" />

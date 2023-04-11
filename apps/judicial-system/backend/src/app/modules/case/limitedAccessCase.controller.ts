@@ -1,11 +1,13 @@
 import { Response } from 'express'
 
 import {
+  Body,
   Controller,
   Get,
   Header,
   Inject,
   Param,
+  Patch,
   Query,
   Res,
   UseGuards,
@@ -22,6 +24,7 @@ import {
   TokenGuard,
 } from '@island.is/judicial-system/auth'
 import {
+  CaseAppealState,
   investigationCases,
   restrictionCases,
 } from '@island.is/judicial-system/types'
@@ -38,7 +41,14 @@ import { CaseTypeGuard } from './guards/caseType.guard'
 import { CurrentCase } from './guards/case.decorator'
 import { Case } from './models/case.model'
 import { CaseService } from './case.service'
-import { LimitedAccessCaseService } from './limitedAccessCase.service'
+import {
+  LimitedAccessCaseService,
+  LimitedUpdateCase,
+} from './limitedAccessCase.service'
+import { defenderTransitionRule } from './guards/rolesRules'
+import { TransitionCaseDto } from './dto/transitionCase.dto'
+import { transitionCase } from './state/case.state'
+import { nowFactory } from '../../factories'
 
 @Controller('api/case/:caseId/limitedAccess')
 @ApiTags('limited access cases')
@@ -66,6 +76,42 @@ export class LimitedAccessCaseController {
     this.logger.debug(`Getting limitedAccess case ${caseId} by id`)
 
     return theCase
+  }
+
+  @UseGuards(
+    JwtAuthGuard,
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseCompletedGuard,
+    CaseDefenderGuard,
+  )
+  @RolesRules(defenderTransitionRule)
+  @Patch('state/limitedAccess')
+  @ApiOkResponse({
+    type: Case,
+    description: 'Updates the state of a case',
+  })
+  transition(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() transition: TransitionCaseDto,
+  ): Promise<Case> {
+    this.logger.debug(
+      `Transitioning case ${caseId} to ${transition.transition}`,
+    )
+
+    const update: LimitedUpdateCase = transitionCase(
+      transition.transition,
+      theCase.state,
+      theCase.appealState,
+    )
+
+    if (update.appealState === CaseAppealState.APPEALED) {
+      update.accusedPostponedAppealDate = nowFactory()
+    }
+
+    return this.limitedAccessCaseService.update(theCase, update)
   }
 
   @UseGuards(TokenGuard, LimitedAccessCaseExistsGuard)

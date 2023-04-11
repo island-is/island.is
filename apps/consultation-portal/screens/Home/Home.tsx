@@ -30,6 +30,7 @@ interface HomeProps {
   types: ArrOfTypes
   statistics: ArrOfStatistics
 }
+
 export const Home = ({ types, statistics }: HomeProps) => {
   const [page, setPage] = useState<number>(0)
 

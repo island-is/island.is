@@ -39,14 +39,22 @@ export const useDynamicRoutes = () => {
     drivingLessonsFlagEnabled,
     setDrivingLessonsFlagEnabled,
   ] = useState<boolean>(false)
-
+  const [
+    educationGraduationFlagEnabled,
+    setEducationGraduationFlagEnabled,
+  ] = useState<boolean>(false)
   useEffect(() => {
     const isFlagEnabled = async () => {
       const ffEnabled = await featureFlagClient.getValue(
         Features.servicePortalDrivingLessonsBookModule,
         false,
       )
+      const eduFfEnabled = await featureFlagClient.getValue(
+        Features.servicePortalEducationGraduation,
+        false,
+      )
       setDrivingLessonsFlagEnabled(ffEnabled as boolean)
+      setEducationGraduationFlagEnabled(eduFfEnabled as boolean)
     }
     isFlagEnabled()
   }, [])
@@ -86,6 +94,16 @@ export const useDynamicRoutes = () => {
     const licenseBookData = licenseBook?.drivingLicenseBookUserBook
     if (drivingLessonsFlagEnabled && licenseBookData?.book?.id) {
       dynamicPathArray.push(ServicePortalPath.AssetsVehiclesDrivingLessons)
+    }
+
+    /**
+     * service-portal/education
+     * Tabs control for education graduation (brautskráning)
+     */
+
+    if (educationGraduationFlagEnabled) {
+      dynamicPathArray.push(ServicePortalPath.EducationHaskoliGraduation)
+      dynamicPathArray.push(ServicePortalPath.EducationHaskoliGraduationDetail)
     }
 
     // Combine routes, no duplicates.

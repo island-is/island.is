@@ -24,7 +24,7 @@ import { SimpleCardSkeleton } from '../../components/Card'
 import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
 import { getTimeLineDate } from '../../utils/helpers/dateFormatter'
 import Link from 'next/link'
-import { useUser } from '../../context/UserContext'
+import { useUser } from '../../utils/helpers'
 
 const CaseScreen = ({ chosenCase, advices }) => {
   const { contactEmail, contactName } = chosenCase
@@ -110,7 +110,7 @@ const CaseScreen = ({ chosenCase, advices }) => {
                   headingColor="blue400"
                   title="Skjöl til samráðs"
                 >
-                  {chosenCase.documents
+                  {chosenCase.documents.length > 0
                     ? chosenCase.documents.map((doc, index) => {
                         return (
                           <LinkV2
@@ -125,7 +125,7 @@ const CaseScreen = ({ chosenCase, advices }) => {
                           </LinkV2>
                         )
                       })
-                    : 'Engin skjöl'}
+                    : 'Engin skjöl fundust'}
                 </StackedTitleAndDescription>
               </SimpleCardSkeleton>
               <SimpleCardSkeleton>

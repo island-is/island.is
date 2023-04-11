@@ -6,6 +6,7 @@
       "modified": "2021-02-17T14:12:56.015Z",
       "prosecutor": null,
       "state": "SUBMITTED",
+      "appealState": null,
       "__typename": "Case"
     }
   }

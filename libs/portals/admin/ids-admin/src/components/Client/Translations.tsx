@@ -1,8 +1,9 @@
 import { Box, Input, Stack, Tabs } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { m } from '../../lib/messages'
-import ContentCard from './ContentCard'
+import ContentCard from '../../shared/components/ContentCard'
+import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
 import { AuthApplicationTranslation } from './Client.loader'
 
 interface TranslationsProps {
@@ -18,6 +19,15 @@ const Translations = ({ translations }: TranslationsProps) => {
     })),
   )
 
+  useEffect(() => {
+    setCopyTranslations(
+      ['is', 'en'].map((locale) => ({
+        locale: locale,
+        value: translations.find((t) => t.locale === locale)?.value || '',
+      })),
+    )
+  }, [translations])
+
   const onChangeTranslations = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
@@ -32,6 +42,7 @@ const Translations = ({ translations }: TranslationsProps) => {
       onSave={(saveOnAllEnvironments) => {
         console.log('saveOnAllEnvironments: ', saveOnAllEnvironments)
       }}
+      intent={ClientFormTypes.translations}
     >
       <Stack space={3}>
         <Tabs
@@ -50,7 +61,7 @@ const Translations = ({ translations }: TranslationsProps) => {
                     type="text"
                     size="sm"
                     onChange={(e) => onChangeTranslations(e)}
-                    name={language.locale + '-displayName'}
+                    name={language.locale + '_displayName'}
                     value={language.value}
                     label={formatMessage(m.displayName)}
                   />
