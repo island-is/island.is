@@ -99,7 +99,8 @@ export const PaperMail = () => {
                   }}
                   label={formatMessage({
                     id: 'sp.settings:request-paper-mail',
-                    defaultMessage: 'Óska eftir bréfpósti',
+                    defaultMessage:
+                      'Óska eftir því að fá erindi jafnframt í bréfpósti',
                   })}
                   hasError={!!submitError}
                   errorMessage={submitError}
