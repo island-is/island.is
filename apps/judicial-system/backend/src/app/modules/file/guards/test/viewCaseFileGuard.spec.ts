@@ -7,7 +7,9 @@ import {
 } from '@nestjs/common'
 
 import {
+  CaseFileCategory,
   CaseState,
+  completedCaseStates,
   prosecutionRoles,
   User,
   UserRole,
@@ -78,7 +80,7 @@ describe('View Case File Guard', () => {
     ${UserRole.ASSISTANT} | ${CaseState.REJECTED}
     ${UserRole.ASSISTANT} | ${CaseState.DISMISSED}
   `.describe(
-    'registrars and judges can view case files of completed cases',
+    'registrars, judges and assistants can view case files of submitted cases',
     ({ role, state }) => {
       const user = { role } as User
       const theCase = { state } as Case
@@ -105,14 +107,18 @@ describe('View Case File Guard', () => {
     ${UserRole.ASSISTANT} | ${CaseState.NEW}
     ${UserRole.ASSISTANT} | ${CaseState.DRAFT}
   `.describe(
-    'registrars and judges can not view case files of unreceived cases',
+    'registrars, judges and assistants can not view case files of unsubmitted cases',
     ({ role, state }) => {
       const user = { role } as User
       const theCase = { state } as Case
       let then: Then
 
       beforeEach(() => {
-        mockRequest.mockImplementationOnce(() => ({ user, case: theCase }))
+        mockRequest.mockImplementationOnce(() => ({
+          user,
+          case: theCase,
+          caseFile: {},
+        }))
 
         then = givenWhenThen()
       })
@@ -134,7 +140,11 @@ describe('View Case File Guard', () => {
     let then: Then
 
     beforeEach(() => {
-      mockRequest.mockImplementationOnce(() => ({ user, case: theCase }))
+      mockRequest.mockImplementationOnce(() => ({
+        user,
+        case: theCase,
+        caseFile: {},
+      }))
 
       then = givenWhenThen()
     })
@@ -174,5 +184,91 @@ describe('View Case File Guard', () => {
       expect(then.error).toBeInstanceOf(InternalServerErrorException)
       expect(then.error.message).toBe('Missing case')
     })
+  })
+
+  describe('missing case file', () => {
+    let then: Then
+
+    beforeEach(() => {
+      mockRequest.mockImplementationOnce(() => ({ user: {}, case: {} }))
+
+      then = givenWhenThen()
+    })
+
+    it('should throw InternalServerErrorException', () => {
+      expect(then.error).toBeInstanceOf(InternalServerErrorException)
+      expect(then.error.message).toBe('Missing case file')
+    })
+  })
+
+  describe.each(completedCaseStates)('for %s cases', (state) => {
+    describe('a defender can view a ruling', () => {
+      let then: Then
+
+      beforeEach(() => {
+        mockRequest.mockImplementationOnce(() => ({
+          user: { role: UserRole.DEFENDER },
+          case: { state },
+          caseFile: { category: CaseFileCategory.RULING },
+        }))
+
+        then = givenWhenThen()
+      })
+
+      it('should activate', () => {
+        expect(then.result).toBe(true)
+      })
+    })
+
+    describe.each(
+      Object.keys(CaseFileCategory).filter(
+        (category) => category !== CaseFileCategory.RULING,
+      ),
+    )('a defender can not view %s', (category) => {
+      let then: Then
+
+      beforeEach(() => {
+        mockRequest.mockImplementationOnce(() => ({
+          user: { role: UserRole.DEFENDER },
+          case: { state },
+          caseFile: { category },
+        }))
+
+        then = givenWhenThen()
+      })
+
+      it('should throw ForbiddenException', () => {
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(then.error.message).toBe(`Forbidden for ${UserRole.DEFENDER}`)
+      })
+    })
+  })
+
+  describe.each(
+    Object.keys(CaseState).filter(
+      (state) => !completedCaseStates.includes(state as CaseState),
+    ),
+  )('for %s cases', (state) => {
+    describe.each(Object.keys(CaseFileCategory))(
+      'a defender can not view %s',
+      (category) => {
+        let then: Then
+
+        beforeEach(() => {
+          mockRequest.mockImplementationOnce(() => ({
+            user: { role: UserRole.DEFENDER },
+            case: { state },
+            caseFile: { category },
+          }))
+
+          then = givenWhenThen()
+        })
+
+        it('should throw ForbiddenException', () => {
+          expect(then.error).toBeInstanceOf(ForbiddenException)
+          expect(then.error.message).toBe(`Forbidden for ${UserRole.DEFENDER}`)
+        })
+      },
+    )
   })
 })

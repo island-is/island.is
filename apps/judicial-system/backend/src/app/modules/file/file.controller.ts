@@ -112,10 +112,10 @@ export class FileController {
   }
 
   @UseGuards(
-    CaseFileExistsGuard,
     RolesGuard,
     CaseExistsGuard,
     CaseReadGuard,
+    CaseFileExistsGuard,
     ViewCaseFileGuard,
   )
   @RolesRules(
@@ -127,7 +127,7 @@ export class FileController {
   )
   @Get('file/:fileId/url')
   @ApiOkResponse({
-    type: PresignedPost,
+    type: SignedUrl,
     description: 'Gets a signed url for a case file',
   })
   getCaseFileSignedUrl(
@@ -195,7 +195,8 @@ export class FileController {
   @RolesRules(prosecutorRule, representativeRule)
   @Patch('files')
   @ApiOkResponse({
-    type: Boolean,
+    type: CaseFile,
+    isArray: true,
     description: 'Updates multiple files of the case',
   })
   updateFiles(

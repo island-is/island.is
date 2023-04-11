@@ -40,6 +40,14 @@ export const GetSignedUrlQuery = gql`
   }
 `
 
+export const GetLimitedAccessSignedUrlQuery = gql`
+  query GetLimitedAccessSignedUrlQuery($input: GetSignedUrlInput!) {
+    getLimitedAccessSignedUrl(input: $input) {
+      url
+    }
+  }
+`
+
 export const UploadFileToCourtMutation = gql`
   mutation UploadFileToCourtMutation($input: UploadFileToCourtInput!) {
     uploadFileToCourt(input: $input) {

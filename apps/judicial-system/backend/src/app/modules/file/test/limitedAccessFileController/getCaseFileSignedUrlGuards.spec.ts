@@ -2,19 +2,19 @@ import { CanActivate } from '@nestjs/common'
 
 import { RolesGuard } from '@island.is/judicial-system/auth'
 
-import { CaseExistsGuard, CaseReadGuard } from '../../../case'
+import { CaseDefenderGuard, LimitedAccessCaseExistsGuard } from '../../../case'
 import { CaseFileExistsGuard } from '../../guards/caseFileExists.guard'
 import { ViewCaseFileGuard } from '../../guards/viewCaseFile.guard'
-import { FileController } from '../../file.controller'
+import { LimitedAccessFileController } from '../../limitedAccessFile.controller'
 
-describe('FileController - Get case file signed url guards', () => {
+describe('LimitedAccessFileController - Get case file signed url guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
     guards = Reflect.getMetadata(
       '__guards__',
-      FileController.prototype.getCaseFileSignedUrl,
+      LimitedAccessFileController.prototype.getCaseFileSignedUrl,
     )
   })
 
@@ -34,27 +34,27 @@ describe('FileController - Get case file signed url guards', () => {
     })
   })
 
-  describe('CaseExistsGuard', () => {
+  describe('LimitedAccessCaseExistsGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[1]()
     })
 
-    it('should have CaseExistsGuard as quard 3', () => {
-      expect(guard).toBeInstanceOf(CaseExistsGuard)
+    it('should have LimitedAccessCaseExistsGuard as quard 3', () => {
+      expect(guard).toBeInstanceOf(LimitedAccessCaseExistsGuard)
     })
   })
 
-  describe('CaseReadGuard', () => {
+  describe('CaseDefenderGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[2]()
     })
 
-    it('should have CaseReadGuard as quard 4', () => {
-      expect(guard).toBeInstanceOf(CaseReadGuard)
+    it('should have CaseDefenderGuard as quard 4', () => {
+      expect(guard).toBeInstanceOf(CaseDefenderGuard)
     })
   })
 

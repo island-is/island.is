@@ -291,6 +291,13 @@ export class BackendApi extends DataSource<{ req: Request }> {
   getLimitedAccessCase(id: string): Promise<Case> {
     return this.get(`case/${id}/limitedAccess`)
   }
+
+  getLimitedAccessCaseFileSignedUrl(
+    caseId: string,
+    id: string,
+  ): Promise<SignedUrl> {
+    return this.get(`case/${caseId}/limitedAccess/file/${id}/url`)
+  }
 }
 
 export default BackendApi

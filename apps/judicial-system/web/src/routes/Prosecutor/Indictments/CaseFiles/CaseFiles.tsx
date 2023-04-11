@@ -34,7 +34,7 @@ import {
   TUploadFile,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { CaseFileCategory, Feature } from '@island.is/judicial-system/types'
+import { CaseFileCategory } from '@island.is/judicial-system/types'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
