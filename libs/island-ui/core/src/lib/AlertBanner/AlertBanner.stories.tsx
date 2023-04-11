@@ -86,3 +86,20 @@ export const Info = () => {
     </Box>
   )
 }
+
+export const WithTooltip = () => {
+  return (
+    <Box paddingY={2}>
+      <AlertBanner
+        title="Viðbrögð við Covid-19"
+        description="Lokað verður fyrir að sækja um fæðingarorlof á meðan Covid-19 veikin gengur yfir."
+        link={{
+          title: 'Frekari upplýsingar',
+          href: '#',
+          tooltip: 'Þetta er tooltip',
+        }}
+        variant="info"
+      />
+    </Box>
+  )
+}
