@@ -20,12 +20,7 @@ const CaseDetails: React.FC<CaseProps> = ({
   case: Case,
   advices,
 }: CaseProps) => {
-  return (
-    <CaseScreen
-      chosenCase={Case}
-      advices={advices}
-    />
-  )
+  return <CaseScreen chosenCase={Case} advices={advices} />
 }
 export default CaseDetails
 
