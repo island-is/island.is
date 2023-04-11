@@ -1,5 +1,7 @@
 import each from 'jest-each'
 
+import { CaseAppealState } from '@island.is/judicial-system/types'
+
 import { Case } from '../models/case.model'
 import { transformCase } from './case.transformer'
 
@@ -174,6 +176,54 @@ describe('transformCase', () => {
 
       // Assert
       expect(res.isAppealGracePeriodExpired).toBe(true)
+    })
+  })
+
+  describe('isStatementDeadlineExpired', () => {
+    it('should be false if the case has not been appealed', () => {
+      // Arrange
+      const theCase = { appealState: undefined } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isStatementDeadlineExpired).toBe(false)
+    })
+
+    it('should be true when more than one day has passed since the case was appealed', () => {
+      // Arrange
+      const prosecutorPostponedAppealDate = new Date()
+      prosecutorPostponedAppealDate.setDate(
+        prosecutorPostponedAppealDate.getDate() - 2,
+      )
+      const theCase = {
+        prosecutorPostponedAppealDate: prosecutorPostponedAppealDate.toISOString(),
+      } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isStatementDeadlineExpired).toBe(true)
+    })
+
+    it('should be false when less that one day has passed since the case was appealed', () => {
+      // Arrange
+      const accusedPostponedAppealDate = new Date()
+      accusedPostponedAppealDate.setDate(accusedPostponedAppealDate.getDate())
+      accusedPostponedAppealDate.setSeconds(
+        accusedPostponedAppealDate.getSeconds() - 100,
+      )
+      const theCase = {
+        accusedPostponedAppealDate: accusedPostponedAppealDate.toISOString(),
+      } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isStatementDeadlineExpired).toBe(false)
     })
   })
 })

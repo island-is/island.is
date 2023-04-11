@@ -77,19 +77,6 @@ export const defenderCaseOverview = defineMessages({
     description:
       'Notaður sem titill fyrir skjöl málsins á yfirlitsskjá verjanda.',
   },
-  appealAlertBannerTitle: {
-    id:
-      'judicial.system.core:defender_case_overview.appeal_alert_banner_title_v2',
-    defaultMessage:
-      'Kærufrestur {isAppealDeadlineExpired, select, true {rann} other {rennur}} út {appealDeadline}',
-    description: 'Texti í viðvörunarglugga um kærufrest fyrir verjanda',
-  },
-  appealAlertBannerLinkText: {
-    id:
-      'judicial.system.core:defender_case_overview.appeal_alert_banner_link_text',
-    defaultMessage: 'Senda inn kæru',
-    description: 'Texti í hlekk í viðvörunarglugga um kærufrest fyrir verjanda',
-  },
   unsignedRuling: {
     id: 'judicial.system.core:defender_case_overview.unsigned_ruling',
     defaultMessage: 'Úrskurður ekki undirritaður',

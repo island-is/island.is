@@ -29,12 +29,6 @@ export const signedVerdictOverview = {
     description:
       'Notaður sem titil á yfirlitsskjá afreiddra mála krafa um rannsóknarheimild samþykkt.',
   }),
-  conclusionTitle: defineMessage({
-    id: 'judicial.system.core:signed_verdict_overview.conclusion_title',
-    defaultMessage: 'Úrskurðarorð',
-    description:
-      'Notaður sem titill fyrir "Úrskurðarorð" hlutanum á úrskurðar skrefi á yfirlitsskjá afgreiddra mála.',
-  }),
   caseDocuments: defineMessage({
     id: 'judicial.system.core:signed_verdict_overview.case_documents',
     defaultMessage: 'Skjöl málsins',

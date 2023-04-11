@@ -18,5 +18,12 @@ export function transformCase(theCase: Case): Case {
     isAppealGracePeriodExpired: theCase.courtEndTime
       ? Date.now() >= new Date(theCase.courtEndTime).getTime() + getDays(31)
       : false,
+    isStatementDeadlineExpired: theCase.prosecutorPostponedAppealDate
+      ? Date.now() >=
+        new Date(theCase.prosecutorPostponedAppealDate).getTime() + getDays(1)
+      : theCase.accusedPostponedAppealDate
+      ? Date.now() >=
+        new Date(theCase.accusedPostponedAppealDate).getTime() + getDays(1)
+      : false,
   }
 }
