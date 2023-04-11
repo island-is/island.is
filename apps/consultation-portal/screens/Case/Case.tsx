@@ -110,7 +110,7 @@ const CaseScreen = ({ chosenCase, advices }) => {
                   headingColor="blue400"
                   title="Skjöl til samráðs"
                 >
-                  {chosenCase.documents
+                  {chosenCase.documents.length > 0
                     ? chosenCase.documents.map((doc, index) => {
                         return (
                           <LinkV2
@@ -125,7 +125,7 @@ const CaseScreen = ({ chosenCase, advices }) => {
                           </LinkV2>
                         )
                       })
-                    : 'Engin skjöl'}
+                    : 'Engin skjöl fundust'}
                 </StackedTitleAndDescription>
               </SimpleCardSkeleton>
               <SimpleCardSkeleton>
