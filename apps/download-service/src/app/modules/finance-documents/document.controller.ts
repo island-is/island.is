@@ -7,7 +7,7 @@ import {
   Param,
   UseGuards,
 } from '@nestjs/common'
-import { ApiOkResponse, ApiHeader } from '@nestjs/swagger'
+import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
 import { FinanceClientService } from '@island.is/clients/finance'
 import { ApiScope } from '@island.is/auth/scopes'
