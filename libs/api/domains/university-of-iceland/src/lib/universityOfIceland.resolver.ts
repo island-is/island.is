@@ -40,13 +40,13 @@ export class UniversityOfIcelandResolver {
   async studentInfo(
     @CurrentUser() user: User,
     @Args('input') input: StudentInfoInput,
-  ): Promise<StudentInfo> {
+  ): Promise<StudentInfo | null> {
     const data = await this.universityOfIcelandApi.studentInfo(
       user,
       input.locale as NemandiGetLocaleEnum,
     )
     return {
-      transcripts: data.transcripts as Array<Student>,
+      transcripts: data?.transcripts as Array<Student>,
     }
   }
 
