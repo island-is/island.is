@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { HTMLAttributes } from 'react'
 
 import * as styles from './Input.css'
 import { Icon as IconType, Type } from '../IconRC/iconMap'
@@ -52,7 +52,7 @@ export interface InputComponentProps {
     on: boolean
     maxHeight?: number
   }
-  inputMode?: string
+  inputMode?: HTMLAttributes<HTMLInputElement>['inputMode']
 }
 
 export type InputButton = {
