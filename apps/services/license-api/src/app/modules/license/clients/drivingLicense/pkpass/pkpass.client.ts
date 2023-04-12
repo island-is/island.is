@@ -2,7 +2,7 @@ import FormData from 'form-data'
 import fetch, { Response } from 'node-fetch'
 
 import { Cache as CacheManager } from 'cache-manager'
-import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 import {
   PkPassServiceErrorResponse,
@@ -12,6 +12,7 @@ import {
 } from './pkpass.type'
 import { ConfigType } from '@island.is/nest/config'
 import { DrivingLicenseApiClientConfig } from '../drivingLicenseApiClient.config'
+import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common'
 /** Set TTL to less than given expiry from service */
 const DEFAULT_CACHE_TOKEN_EXPIRY_DELTA_IN_MS = 2000
 
@@ -36,9 +37,8 @@ function strToPositiveNum(s: string): number | undefined {
 
 /**
  * Client for PkPass generation and verification via SmartSolution API.
- *
- * TODO: Move this to an actual client. This will be done in drivers license V2 which is coming up soon.
  */
+@Injectable()
 export class PkPassClient {
   private readonly pkpassApiKey: string
   private readonly pkpassSecretKey: string
@@ -48,8 +48,11 @@ export class PkPassClient {
   private readonly pkpassAuthRetries: number
 
   constructor(
+    @Inject(DrivingLicenseApiClientConfig.KEY)
     private config: ConfigType<typeof DrivingLicenseApiClientConfig>,
+    @Inject(LOGGER_PROVIDER)
     private logger: Logger,
+    @Inject(CACHE_MANAGER)
     private cacheManager?: CacheManager | null,
   ) {
     this.pkpassApiKey = config.pkpass.apiKey

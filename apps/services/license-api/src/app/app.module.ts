@@ -30,7 +30,6 @@ import { DrivingLicenseApiClientConfig } from './modules/license/clients/driving
         FirearmLicenseApiClientConfig,
         DisabilityLicenseClientConfig,
         DisabilityLicenseApiClientConfig,
-        XRoadConfig,
         DrivingLicenseApiClientConfig,
       ],
     }),

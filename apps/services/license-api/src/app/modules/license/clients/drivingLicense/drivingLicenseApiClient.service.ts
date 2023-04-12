@@ -11,39 +11,22 @@ import { PkPassClient } from './pkpass/pkpass.client'
 import { ConfigType } from '@nestjs/config'
 import { XRoadConfig } from '@island.is/nest/config'
 import { DrivingLicenseApiClientConfig } from './drivingLicenseApiClient.config'
-import { Cache as CacheManager } from 'cache-manager'
 
 @Injectable()
 export class DrivingLicenseApiClientService implements GenericLicenseClient {
-  private readonly xroadApiUrl: string
-  private readonly xroadClientId: string
-  private readonly xroadPath: string
-  private readonly xroadSecret: string
-
-  private pkpassClient: PkPassClient
-
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     @Inject(XRoadConfig.KEY)
     private xroadConfig: ConfigType<typeof XRoadConfig>,
+    @Inject(DrivingLicenseApiClientConfig.KEY)
     private config: ConfigType<typeof DrivingLicenseApiClientConfig>,
-    private cacheManager?: CacheManager | null,
-  ) {
-    this.xroadApiUrl = xroadConfig.xRoadBasePath
-    this.xroadClientId = xroadConfig.xRoadClient
-    this.xroadPath = config.xroad.path
-    this.xroadSecret = config.xroad.secret
-
-    this.logger = logger
-    this.cacheManager = cacheManager
-
-    this.pkpassClient = new PkPassClient(config, logger, cacheManager)
-  }
+    private pkpassClient: PkPassClient,
+  ) {}
 
   private headers() {
     return {
-      'X-Road-Client': this.xroadClientId,
-      SECRET: this.xroadSecret,
+      'X-Road-Client': this.xroadConfig.xRoadClient,
+      SECRET: this.config.xroad.secret,
       Accept: 'application/json',
     }
   }
@@ -146,7 +129,7 @@ export class DrivingLicenseApiClientService implements GenericLicenseClient {
     let res: Response | null = null
 
     try {
-      res = await fetch(`${this.xroadApiUrl}/${url}`, {
+      res = await fetch(`${this.xroadConfig.xRoadBasePath}/${url}`, {
         headers: this.headers(),
       })
 
@@ -185,7 +168,7 @@ export class DrivingLicenseApiClientService implements GenericLicenseClient {
     nationalId: string,
   ): Promise<DrivingLicenseResponse[] | null> {
     const response = await this.requestApi(
-      `${this.xroadPath}/api/Okuskirteini/${nationalId}`,
+      `${this.config.xroad.path}/api/Okuskirteini/${nationalId}`,
     )
 
     if (!response) {

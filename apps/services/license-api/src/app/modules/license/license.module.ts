@@ -20,12 +20,16 @@ import { FirearmLicenseApiClientService } from './clients/firearmLicense/firearm
 import { ConfigType } from '@nestjs/config'
 import { FirearmLicenseApiClientConfig } from './clients/firearmLicense/firearmLicenseApiClient.config'
 import { DisabilityLicenseApiClientConfig } from './clients/disabilityLicense/disabilityLicenseClient.config'
-import { DrivingLicenseApiClientConfig } from './clients/drivingLicense/drivingLicenseApiClient.config'
-import { XRoadConfig } from '@island.is/nest/config'
+
 import { DrivingLicenseApiClientService } from './clients/drivingLicense/drivingLicenseApiClient.service'
+import { DrivingLicenseApiClientModule } from './clients/drivingLicense/drivingLicenseApiClient.module'
 
 @Module({
-  imports: [DisabilityLicenseApiClientModule, FirearmLicenseApiClientModule],
+  imports: [
+    DisabilityLicenseApiClientModule,
+    FirearmLicenseApiClientModule,
+    DrivingLicenseApiClientModule,
+  ],
   controllers: [LicensesController, UserLicensesController],
   providers: [
     {
@@ -54,20 +58,11 @@ import { DrivingLicenseApiClientService } from './clients/drivingLicense/driving
       useFactory: (
         disabilityClient: DisabilityLicenseClientService,
         firearmClient: FirearmLicenseApiClientService,
-        drivingLicenseConfig: ConfigType<typeof DrivingLicenseApiClientConfig>,
-        xRoadConfig: ConfigType<typeof XRoadConfig>,
-      ) => async (
-        type: LicenseId,
-        cacheManager: CacheManager,
-      ): Promise<GenericLicenseClient | null> => {
+        drivingClient: DrivingLicenseApiClientService,
+      ) => async (type: LicenseId): Promise<GenericLicenseClient | null> => {
         switch (type) {
           case LicenseId.DRIVING_LICENSE:
-            return new DrivingLicenseApiClientService(
-              logger,
-              xRoadConfig,
-              drivingLicenseConfig,
-              cacheManager,
-            )
+            return drivingClient
           case LicenseId.DISABILITY_LICENSE:
             return disabilityClient
           case LicenseId.FIREARM_LICENSE:
@@ -79,8 +74,7 @@ import { DrivingLicenseApiClientService } from './clients/drivingLicense/driving
       inject: [
         DisabilityLicenseClientService,
         FirearmLicenseApiClientService,
-        DrivingLicenseApiClientConfig.KEY,
-        XRoadConfig.KEY,
+        DrivingLicenseApiClientService,
       ],
     },
     LicenseService,
