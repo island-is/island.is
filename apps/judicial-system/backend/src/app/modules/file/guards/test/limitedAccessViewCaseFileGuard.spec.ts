@@ -25,7 +25,7 @@ interface Then {
 
 type GivenWhenThen = () => Then
 
-describe('Defender View Case File Guard', () => {
+describe('Limited Access View Case File Guard', () => {
   const mockRequest = jest.fn()
   let givenWhenThen: GivenWhenThen
 

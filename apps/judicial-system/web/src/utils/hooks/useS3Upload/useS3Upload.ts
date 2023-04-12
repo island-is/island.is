@@ -163,7 +163,7 @@ export const useS3Upload = (caseId: string) => {
           ? limitedAccessCreateFileMutation
           : createFileMutation
 
-        const data = await mutation({
+        const { data } = await mutation({
           variables: {
             input: {
               caseId,
@@ -181,7 +181,7 @@ export const useS3Upload = (caseId: string) => {
               ?.limitedAccessCreateFile
           : (data as CreateFileMutationMutation)?.createFile
 
-        if (createdFile?.id) {
+        if (!createdFile?.id) {
           throw Error('failed to add file to case')
         }
 
@@ -393,14 +393,14 @@ export const useS3Upload = (caseId: string) => {
 
       try {
         if (file.id) {
-          const response = await remove(file.id)
+          const { data } = await remove(file.id)
 
           const success = limitedAccess
-            ? (response.data as LimitedAccessDeleteFileMutationMutation)
+            ? (data as LimitedAccessDeleteFileMutationMutation)
                 ?.limitedAccessDeleteFile.success
-            : (response.data as DeleteFileMutationMutation)?.deleteFile.success
+            : (data as DeleteFileMutationMutation)?.deleteFile.success
 
-          if (success) {
+          if (!success) {
             throw new Error(`Failed to delete file: ${file.id}`)
           }
 

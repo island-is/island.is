@@ -17,6 +17,10 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import {
+  investigationCases,
+  restrictionCases,
+} from '@island.is/judicial-system/types'
 
 import { defenderRule } from '../../guards'
 import {
@@ -25,6 +29,7 @@ import {
   CaseCompletedGuard,
   CurrentCase,
   Case,
+  CaseTypeGuard,
 } from '../case'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
 import { LimitedAccessViewCaseFileGuard } from './guards/limitedAccessViewCaseFile.guard'
@@ -53,6 +58,7 @@ export class LimitedAccessFileController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
+  @UseGuards(new CaseTypeGuard([...restrictionCases, ...investigationCases]))
   @RolesRules(defenderRule)
   @Post('file/url')
   @ApiCreatedResponse({
@@ -69,7 +75,10 @@ export class LimitedAccessFileController {
     return this.fileService.createPresignedPost(theCase, createPresignedPost)
   }
 
-  @UseGuards(LimitedAccessWriteCaseFileGuard)
+  @UseGuards(
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    LimitedAccessWriteCaseFileGuard,
+  )
   @RolesRules(defenderRule)
   @Post('file')
   @ApiCreatedResponse({
@@ -105,7 +114,11 @@ export class LimitedAccessFileController {
     return this.fileService.getCaseFileSignedUrl(caseFile)
   }
 
-  @UseGuards(CaseFileExistsGuard, LimitedAccessWriteCaseFileGuard)
+  @UseGuards(
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseFileExistsGuard,
+    LimitedAccessWriteCaseFileGuard,
+  )
   @RolesRules(defenderRule)
   @Delete('file/:fileId')
   @ApiOkResponse({

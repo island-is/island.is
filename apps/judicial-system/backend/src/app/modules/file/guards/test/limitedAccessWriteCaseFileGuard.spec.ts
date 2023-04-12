@@ -4,17 +4,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import {
-  CaseFileCategory,
-  CaseState,
-  CaseType,
-  completedCaseStates,
-  indictmentCases,
-  investigationCases,
-  restrictionCases,
-  User,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { CaseFileCategory, UserRole } from '@island.is/judicial-system/types'
 
 import { LimitedAccessWriteCaseFileGuard } from '../limitedAccessWriteCaseFile.guard'
 
@@ -25,7 +15,13 @@ interface Then {
 
 type GivenWhenThen = () => Then
 
-describe('Defender View Case File Guard', () => {
+describe('LimitedAccess Write Case File Guard', () => {
+  const allowedCaseFileCategories = [
+    CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+    CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+    CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+    CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+  ]
   const mockRequest = jest.fn()
   let givenWhenThen: GivenWhenThen
 
@@ -46,108 +42,118 @@ describe('Defender View Case File Guard', () => {
     }
   })
 
-  describe.each([...restrictionCases, ...investigationCases])(
-    'for %s cases',
-    (type) => {
-      describe.each(completedCaseStates)('in state %s', (state) => {
-        const allowedCaseFileCategories = [
-          CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
-          CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-          CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-          CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-        ]
+  describe.each(allowedCaseFileCategories)(
+    'a defender can view %s',
+    (category) => {
+      describe('when creating a case file', () => {
+        let then: Then
 
-        describe.each(allowedCaseFileCategories)(
-          'a defender can view %s',
-          (category) => {
-            let then: Then
+        beforeEach(() => {
+          mockRequest.mockImplementationOnce(() => ({
+            user: { role: UserRole.DEFENDER },
+            body: { category },
+          }))
 
-            beforeEach(() => {
-              mockRequest.mockImplementationOnce(() => ({
-                user: { role: UserRole.DEFENDER },
-                case: { type, state },
-                caseFile: { category },
-              }))
+          then = givenWhenThen()
+        })
 
-              then = givenWhenThen()
-            })
-
-            it('should activate', () => {
-              expect(then.result).toBe(true)
-            })
-          },
-        )
-
-        describe.each(
-          Object.keys(CaseFileCategory).filter(
-            (category) =>
-              !allowedCaseFileCategories.includes(category as CaseFileCategory),
-          ),
-        )('a defender can not view %s', (category) => {
-          let then: Then
-
-          beforeEach(() => {
-            mockRequest.mockImplementationOnce(() => ({
-              user: { role: UserRole.DEFENDER },
-              case: { type, state },
-              caseFile: { category },
-            }))
-
-            then = givenWhenThen()
-          })
-
-          it('should throw ForbiddenException', () => {
-            expect(then.error).toBeInstanceOf(ForbiddenException)
-            expect(then.error.message).toBe(
-              `Forbidden for ${UserRole.DEFENDER}`,
-            )
-          })
+        it('should activate', () => {
+          expect(then.result).toBe(true)
         })
       })
 
-      describe.each(
-        Object.keys(CaseState).filter(
-          (state) => !completedCaseStates.includes(state as CaseState),
-        ),
-      )('in state %s', (state) => {
-        describe.each(Object.keys(CaseFileCategory))(
-          'a defender can not view %s',
-          (category) => {
-            let then: Then
+      describe('when deleting a case file', () => {
+        let then: Then
 
-            beforeEach(() => {
-              mockRequest.mockImplementationOnce(() => ({
-                user: { role: UserRole.DEFENDER },
-                case: { type, state },
-                caseFile: { category },
-              }))
+        beforeEach(() => {
+          mockRequest.mockImplementationOnce(() => ({
+            user: { role: UserRole.DEFENDER },
+            caseFile: { category },
+          }))
 
-              then = givenWhenThen()
-            })
+          then = givenWhenThen()
+        })
 
-            it('should throw ForbiddenException', () => {
-              expect(then.error).toBeInstanceOf(ForbiddenException)
-              expect(then.error.message).toBe(
-                `Forbidden for ${UserRole.DEFENDER}`,
-              )
-            })
-          },
-        )
+        it('should activate', () => {
+          expect(then.result).toBe(true)
+        })
       })
     },
   )
 
-  describe.each(indictmentCases)('for %s cases', (type) => {
-    describe.each(Object.keys(CaseState))('in state %s', (state) => {
-      describe.each(Object.keys(CaseFileCategory))(
-        'a defender can not view %s',
-        (category) => {
+  describe.each(
+    Object.keys(CaseFileCategory).filter(
+      (category) =>
+        !allowedCaseFileCategories.includes(category as CaseFileCategory),
+    ),
+  )('a defender can not view %s', (category) => {
+    describe('when creating a case file', () => {
+      let then: Then
+
+      beforeEach(() => {
+        mockRequest.mockImplementationOnce(() => ({
+          user: { role: UserRole.DEFENDER },
+          body: { category },
+        }))
+
+        then = givenWhenThen()
+      })
+
+      it('should throw ForbiddenException', () => {
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(then.error.message).toBe(`Forbidden for ${UserRole.DEFENDER}`)
+      })
+    })
+
+    describe('when deleting a case file', () => {
+      let then: Then
+
+      beforeEach(() => {
+        mockRequest.mockImplementationOnce(() => ({
+          user: { role: UserRole.DEFENDER },
+          caseFile: { category },
+        }))
+
+        then = givenWhenThen()
+      })
+
+      it('should throw ForbiddenException', () => {
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(then.error.message).toBe(`Forbidden for ${UserRole.DEFENDER}`)
+      })
+    })
+  })
+
+  describe.each(
+    Object.keys(UserRole).filter((role) => role !== UserRole.DEFENDER),
+  )('role %s', (role) => {
+    describe.each(Object.keys(CaseFileCategory))(
+      'can not view %s',
+      (category) => {
+        describe('when creating a case file', () => {
           let then: Then
 
           beforeEach(() => {
             mockRequest.mockImplementationOnce(() => ({
-              user: { role: UserRole.DEFENDER },
-              case: { type, state },
+              user: { role },
+              body: { category },
+            }))
+
+            then = givenWhenThen()
+          })
+
+          it('should throw ForbiddenException', () => {
+            expect(then.error).toBeInstanceOf(ForbiddenException)
+            expect(then.error.message).toBe(`Forbidden for ${role}`)
+          })
+        })
+
+        describe('when deleting a case file', () => {
+          let then: Then
+
+          beforeEach(() => {
+            mockRequest.mockImplementationOnce(() => ({
+              user: { role },
               caseFile: { category },
             }))
 
@@ -156,43 +162,11 @@ describe('Defender View Case File Guard', () => {
 
           it('should throw ForbiddenException', () => {
             expect(then.error).toBeInstanceOf(ForbiddenException)
-            expect(then.error.message).toBe(
-              `Forbidden for ${UserRole.DEFENDER}`,
-            )
+            expect(then.error.message).toBe(`Forbidden for ${role}`)
           })
-        },
-      )
-    })
-  })
-
-  describe.each(Object.keys(CaseType))('for %s cases', (type) => {
-    describe.each(Object.keys(CaseState))('in state %s', (state) => {
-      describe.each(
-        Object.keys(UserRole).filter((role) => role !== UserRole.DEFENDER),
-      )('role %s', (role) => {
-        describe.each(Object.keys(CaseFileCategory))(
-          'can not view %s',
-          (category) => {
-            let then: Then
-
-            beforeEach(() => {
-              mockRequest.mockImplementationOnce(() => ({
-                user: { role },
-                case: { type, state },
-                caseFile: { category },
-              }))
-
-              then = givenWhenThen()
-            })
-
-            it('should throw ForbiddenException', () => {
-              expect(then.error).toBeInstanceOf(ForbiddenException)
-              expect(then.error.message).toBe(`Forbidden for ${role}`)
-            })
-          },
-        )
-      })
-    })
+        })
+      },
+    )
   })
 
   describe('missing user', () => {
@@ -210,23 +184,7 @@ describe('Defender View Case File Guard', () => {
     })
   })
 
-  describe('missing case', () => {
-    const user = {} as User
-    let then: Then
-
-    beforeEach(() => {
-      mockRequest.mockImplementationOnce(() => ({ user }))
-
-      then = givenWhenThen()
-    })
-
-    it('should throw InternalServerErrorException', () => {
-      expect(then.error).toBeInstanceOf(InternalServerErrorException)
-      expect(then.error.message).toBe('Missing case')
-    })
-  })
-
-  describe('missing case file', () => {
+  describe('missing case file category', () => {
     let then: Then
 
     beforeEach(() => {
@@ -237,7 +195,7 @@ describe('Defender View Case File Guard', () => {
 
     it('should throw InternalServerErrorException', () => {
       expect(then.error).toBeInstanceOf(InternalServerErrorException)
-      expect(then.error.message).toBe('Missing case file')
+      expect(then.error.message).toBe('Missing case file category')
     })
   })
 })

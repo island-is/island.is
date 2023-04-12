@@ -7,16 +7,10 @@ import {
 } from '@nestjs/common'
 
 import {
-  completedCaseStates,
   User,
   UserRole,
   CaseFileCategory,
-  restrictionCases,
-  investigationCases,
 } from '@island.is/judicial-system/types'
-
-import { Case } from '../../case'
-import { CaseFile } from '../models/file.model'
 
 @Injectable()
 export class LimitedAccessWriteCaseFileGuard implements CanActivate {
@@ -29,29 +23,23 @@ export class LimitedAccessWriteCaseFileGuard implements CanActivate {
       throw new InternalServerErrorException('Missing user')
     }
 
-    const theCase: Case = request.case
+    // The case file category is either in the request body (creating case file)
+    // or in the case file (deleting case file)
+    const caseFileCategory: CaseFileCategory =
+      request.body?.category ?? request.caseFile?.category
 
-    if (!theCase) {
-      throw new InternalServerErrorException('Missing case')
-    }
-
-    const caseFile: CaseFile = request.caseFile
-
-    if (!caseFile) {
-      throw new InternalServerErrorException('Missing case file')
+    if (!caseFileCategory) {
+      throw new InternalServerErrorException('Missing case file category')
     }
 
     if (
       user.role === UserRole.DEFENDER &&
-      [...restrictionCases, ...investigationCases].includes(theCase.type) &&
-      completedCaseStates.includes(theCase.state) &&
-      caseFile.category &&
       [
         CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
         CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-      ].includes(caseFile.category)
+      ].includes(caseFileCategory)
     ) {
       return true
     }
