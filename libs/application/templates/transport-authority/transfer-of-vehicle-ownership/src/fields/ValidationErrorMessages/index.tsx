@@ -38,7 +38,7 @@ export const ValidationErrorMessages: FC<FieldBaseProps> = (props) => {
             email: answers?.buyer?.email,
             nationalId: answers?.buyer?.nationalId,
           },
-          buyerCoOwnerAndOperator: answers?.buyerCoOwnerAndOperator.map(
+          buyerCoOwnerAndOperator: answers?.buyerCoOwnerAndOperator?.map(
             (x) => ({
               nationalId: x.nationalId,
               email: x.email,
