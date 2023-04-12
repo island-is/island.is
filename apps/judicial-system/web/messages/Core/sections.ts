@@ -363,13 +363,35 @@ export const sections = {
         'Notaður sem texti fyrir Yfirlit kröfu skref í hliðarstiku í framlengdum rannsóknarheimildum hjá sækjendum',
     },
   }),
-  caseResults: defineMessages({
+  courtOfAppealSection: defineMessages({
     appealed: {
-      id: 'judicial.system.core:sections.case_results.appealed',
+      id: 'judicial.system.core:sections.court_of_appeal_section.appealed',
       defaultMessage: 'Kærumál',
       description:
         'Notaður sem texti í skrefum á hliðarstiku þegar krafa er kærð',
     },
+    result: {
+      id: 'judicial.system.core:sections.court_of_appeal_section.appealed',
+      defaultMessage: 'Úrskurður Landsréttar',
+      description: 'Notaður sem texti í skrefum á hliðarstiku Landsréttar',
+    },
+    overview: {
+      id: 'judicial.system.core:sections.court_of_appeal_section.overview',
+      defaultMessage: 'Yfirlit',
+      description: 'Notaður sem texti í skrefum á hliðarstiku Landsréttar',
+    },
+    reception: {
+      id: 'judicial.system.core:sections.court_of_appeal_section.reception',
+      defaultMessage: 'Skráning',
+      description: 'Notaður sem texti í skrefum á hliðarstiku Landsréttar',
+    },
+    ruling: {
+      id: 'judicial.system.core:sections.court_of_appeal_section.ruling',
+      defaultMessage: 'Úrskurður',
+      description: 'Notaður sem texti í skrefum á hliðarstiku Landsréttar',
+    },
+  }),
+  caseResults: defineMessages({
     dissmissed: {
       id: 'judicial.system.core:sections.case_results.dissmissed',
       defaultMessage: 'Kröfu vísað frá',
