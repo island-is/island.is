@@ -6,6 +6,7 @@ import Advices from '../../screens/Advices/Advices'
 
 interface UserAdvicesProps {
   allUserAdvices: UserAdvice
+  isNotAuthorized: boolean
 }
 
 export const getServerSideProps = async (ctx) => {
@@ -31,10 +32,19 @@ export const getServerSideProps = async (ctx) => {
     return {
       props: {
         allUserAdvices: consultationPortalAllUserAdvices,
+        isNotAuthorized: false,
       },
     }
   } catch (e) {
     console.error(e)
+    if (e.message === 'Unauthorized') {
+      return {
+        props: {
+          allUserAdvices: {},
+          isNotAuthorized: true,
+        },
+      }
+    }
   }
   return {
     redirect: {
@@ -43,8 +53,16 @@ export const getServerSideProps = async (ctx) => {
   }
 }
 
-export const Index = ({ allUserAdvices }: UserAdvicesProps) => {
-  return <Advices allUserAdvices={allUserAdvices} />
+export const Index = ({
+  allUserAdvices,
+  isNotAuthorized,
+}: UserAdvicesProps) => {
+  return (
+    <Advices
+      allUserAdvices={allUserAdvices}
+      isNotAuthorized={isNotAuthorized}
+    />
+  )
 }
 
 export default Index
