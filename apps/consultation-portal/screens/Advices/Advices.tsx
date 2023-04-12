@@ -12,13 +12,53 @@ import Layout from '../../components/Layout/Layout'
 import SearchAndSort from '../../components/SearchAndSort/SearchAndSort'
 import { Area, SortOptions } from '../../types/enums'
 import BreadcrumbsWithMobileDivider from '../../components/BreadcrumbsWithMobileDivider/BreadcrumbsWithMobileDivider'
-import { sorting } from '../../utils/helpers'
+import { sorting, useLogIn } from '../../utils/helpers'
 import EmptyState from '../../components/EmptyState/EmptyState'
 import Pagination from '../../components/Pagination/Pagination'
+import { SubscriptionActionCard } from '@island.is/consultation-portal/components/Card'
 
 const CARDS_PER_PAGE = 12
 
-export const AdvicesScreen = ({ allUserAdvices }) => {
+export const AdvicesLayout = ({ children }) => {
+  return (
+    <Layout seo={{ title: 'umsagnir', url: 'umsagnir' }}>
+      <BreadcrumbsWithMobileDivider
+        items={[
+          { title: 'Samráðsgátt', href: '/' },
+          { title: 'Mínar umsagnir' },
+        ]}
+      />
+      <GridContainer>
+        <Stack space={[3, 3, 3, 5, 5]}>
+          <Stack space={3}>
+            <Text variant="h1">Mínar umsagnir</Text>
+            <Text variant="default">
+              Hér er hægt að fylgjast með þeim áskriftum sem þú ert skráð(ur) í
+              ásamt því að sjá allar umsagnir sem þú ert búin að skrifa í gegnum
+              tíðina.
+            </Text>
+          </Stack>
+          {children}
+        </Stack>
+      </GridContainer>
+    </Layout>
+  )
+}
+
+export const AdvicesScreen = ({ allUserAdvices, isNotAuthorized }) => {
+  const LogIn = useLogIn()
+  if (isNotAuthorized) {
+    return (
+      <AdvicesLayout>
+        <SubscriptionActionCard
+          heading="Mínar umsagnir"
+          text="Þú verður að vera skráð(ur) inn til þess að geta séð þínar umsagnir."
+          button={[{ label: 'Skrá mig inn', onClick: LogIn }]}
+        />
+      </AdvicesLayout>
+    )
+  }
+
   const [sortTitle, setSortTitle] = useState(SortOptions.aToZ)
   const [searchValue, setSearchValue] = useState('')
   const [page, setPage] = useState<number>(0)
