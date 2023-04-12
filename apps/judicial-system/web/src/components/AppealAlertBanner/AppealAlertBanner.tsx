@@ -130,11 +130,11 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
       title={alertTitle}
       description={alertDescription}
       variant="warning"
-      link={
+      button={
         alertLinkHref && alertLinkTitle
           ? {
-              href: alertLinkHref,
               title: alertLinkTitle,
+              onClick: () => console.log(23),
             }
           : undefined
       }

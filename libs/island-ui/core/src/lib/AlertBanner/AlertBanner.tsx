@@ -8,6 +8,7 @@ import { IconMapIcon } from '../IconRC/types'
 import { Text } from '../Text/Text'
 import { LinkContext } from '../context/LinkContext/LinkContext'
 import { LinkV2 } from '../Link/LinkV2'
+import { Button } from '../Button/Button'
 
 export type AlertBannerVariants =
   | 'error'
@@ -67,8 +68,12 @@ export interface AlertBannerProps {
   title?: string
   description?: string
   link?: {
-    href: string
     title: string
+    href: string
+  }
+  button?: {
+    title: string
+    onClick: () => void
   }
   /**
    * Fires when banner gets dismissed, useful for keeping track in storage that the user has dismissed the banner if we don't want it to show up again on page reload
@@ -82,6 +87,7 @@ export const AlertBanner: FC<AlertBannerProps> = ({
   title,
   description,
   link,
+  button,
   onDismiss,
 }) => {
   const [dismissed, setDismissed] = useState(false)
@@ -145,6 +151,18 @@ export const AlertBanner: FC<AlertBannerProps> = ({
                 {link && <a href={link.href}>{link.title}</a>}
               </Text>
             </LinkContext.Provider>
+          </Box>
+        )}
+        {button && (
+          <Box marginRight={[0, 0, 0, 2]} marginBottom={[1, 1, 1, 0]}>
+            <Button
+              title={button.title}
+              onClick={button.onClick}
+              variant="text"
+              size="small"
+            >
+              {button.title}
+            </Button>
           </Box>
         )}
       </Box>
