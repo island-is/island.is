@@ -645,6 +645,9 @@
       "@island.is/portals/admin/ids-admin": [
         "libs/portals/admin/ids-admin/src/index.ts"
       ],
+      "@island.is/portals/admin/petition": [
+        "libs/portals/admin/petition/src/index.ts"
+      ],
       "@island.is/portals/admin/regulations-admin": [
         "libs/portals/admin/regulations-admin/src/index.ts"
       ],
